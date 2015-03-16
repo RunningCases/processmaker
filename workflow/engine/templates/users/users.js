@@ -400,226 +400,226 @@ Ext.onReady(function () {
     triggerAction : 'all',
     mode          : 'local'
   });
-  
-  var informationFields = new Ext.form.FieldSet({
-    title : _('ID_PERSONAL_INFORMATION'),
-    items : [
-      {
-        id         : 'USR_FIRSTNAME',
-        fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_FIRSTNAME')) +'"> * </span>' + _('ID_FIRSTNAME'),
-        xtype      : 'textfield',
-        width      : 260,
-        allowBlank : false
-      },
-      {
-        id         : 'USR_LASTNAME',
-        fieldLabel : _('ID_LASTNAME'),
-        xtype      : 'textfield',
-        width      : 260,
-        allowBlank : false
-      },
-      {
-        id         : 'USR_USERNAME',
-        fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_USER_ID')) +'"> * </span>' + _('ID_USER_ID'),
-        xtype      : 'textfield',
-        width      : 260,
-        allowBlank : false,
-        hidden     : (typeof EDITPROFILE != "undefined" && EDITPROFILE == 1)? true : false,
-        listeners: {
-          blur : function(ob)
-          {
-            // trim
-            this.value = this.getValue().replace(/^\s+|\s+$/g,"");
-            document.getElementById('USR_USERNAME').value = this.getValue().replace(/^\s+|\s+$/g,"");
 
-            Ext.getCmp('saveB').disable();
-            Ext.getCmp('cancelB').disable();
+    var informationFields = new Ext.form.FieldSet({
+      title : _('ID_PERSONAL_INFORMATION'),
+      items : [
+        {
+          id         : 'USR_FIRSTNAME',
+          fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_FIRSTNAME')) +'"> * </span>' + _('ID_FIRSTNAME'),
+          xtype      : 'textfield',
+          width      : 260,
+          allowBlank : false
+        },
+        {
+          id         : 'USR_LASTNAME',
+          fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_LASTNAME')) +'"> * </span>' + _('ID_LASTNAME'),
+          xtype      : 'textfield',
+          width      : 260,
+          allowBlank : false
+        },
+        {
+          id         : 'USR_USERNAME',
+          fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_USER_ID')) +'"> * </span>' + _('ID_USER_ID'),
+          xtype      : 'textfield',
+          width      : 260,
+          allowBlank : false,
+          hidden     : (typeof EDITPROFILE != "undefined" && EDITPROFILE == 1)? true : false,
+          listeners: {
+            blur : function(ob)
+            {
+              // trim
+              this.value = this.getValue().replace(/^\s+|\s+$/g,"");
+              document.getElementById('USR_USERNAME').value = this.getValue().replace(/^\s+|\s+$/g,"");
 
-            var spanAjax  = '<span style="font: 9px tahoma,arial,helvetica,sans-serif;">';
-            var imageAjax = '<img width="13" height="13" border="0" src="/images/ajax-loader.gif">';
-            var labelAjax = _('ID_USERNAME_TESTING');
+              Ext.getCmp('saveB').disable();
+              Ext.getCmp('cancelB').disable();
 
-            Ext.getCmp('usernameReview').setText(spanAjax + imageAjax + labelAjax + '</span>', false);
-            Ext.getCmp('usernameReview').setVisible(true);
+              var spanAjax  = '<span style="font: 9px tahoma,arial,helvetica,sans-serif;">';
+              var imageAjax = '<img width="13" height="13" border="0" src="/images/ajax-loader.gif">';
+              var labelAjax = _('ID_USERNAME_TESTING');
 
-            usernameText = this.getValue();
+              Ext.getCmp('usernameReview').setText(spanAjax + imageAjax + labelAjax + '</span>', false);
+              Ext.getCmp('usernameReview').setVisible(true);
 
-            validateUserName();
+              usernameText = this.getValue();
 
-            Ext.getCmp('usernameReview').setVisible(true);
+              validateUserName();
+
+              Ext.getCmp('usernameReview').setVisible(true);
+            }
           }
-        }
-      },
-      {
-        xtype: 'label',
-        fieldLabel: ' ',
-        id:'usernameReview',
-        width: 300,
-        labelSeparator: ''
-      },
-      {
-        id         : 'USR_EMAIL',
-        fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_EMAIL')) +'"> * </span>' + _('ID_EMAIL'),
-        vtype      : 'email',
-        xtype      : 'textfield',
-        width      : 260,
-        allowBlank : false
-      },
-      {
-        xtype          : 'textarea',
-        name           : 'USR_ADDRESS',
-        fieldLabel     : _('ID_ADDRESS'),
-        labelSeparator : '',
-        height         : 50,
-        width          : 260
-      },
-      {
-        id         : 'USR_ZIP_CODE',
-        fieldLabel : _('ID_ZIP_CODE'),
-        xtype      : 'textfield',
-        width      : 260
-      },
-      comboCountry,
-      comboRegion,
-      comboLocation,
-      {
-        id         : 'USR_PHONE',
-        fieldLabel : _('ID_PHONE'),
-        xtype      : 'textfield',
-        width      : 260
-      },
-      {
-        id         : 'USR_POSITION',
-        fieldLabel : _('ID_POSITION'),
-        xtype      : 'textfield',
-        width      : 260
-      },
-      comboReplacedBy,
-      dateField,
-      comboCalendar,
-      comboStatus,
-      comboRole
-      ]
-  });
-
-  var passwordFields = new Ext.form.FieldSet({
-    title : _('ID_CHANGE_PASSWORD'),
-    items : [
-       {
-          xtype      : "textfield",
-          id         : "currentPassword",
-          name       : "currentPassword",
-          fieldLabel : _("ID_PASSWORD_CURRENT"),
-          inputType  : "password",
-          hidden     : (typeof EDITPROFILE != "undefined" && EDITPROFILE == 1)? false : true,
+        },
+        {
+          xtype: 'label',
+          fieldLabel: ' ',
+          id:'usernameReview',
+          width: 300,
+          labelSeparator: ''
+        },
+        {
+          id         : 'USR_EMAIL',
+          fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_EMAIL')) +'"> * </span>' + _('ID_EMAIL'),
+          vtype      : 'email',
+          xtype      : 'textfield',
+          width      : 260,
+          allowBlank : false
+        },
+        {
+          xtype          : 'textarea',
+          name           : 'USR_ADDRESS',
+          fieldLabel     : _('ID_ADDRESS'),
+          labelSeparator : '',
+          height         : 50,
+          width          : 260
+        },
+        {
+          id         : 'USR_ZIP_CODE',
+          fieldLabel : _('ID_ZIP_CODE'),
+          xtype      : 'textfield',
           width      : 260
-      },
-      {
-        id         : 'USR_NEW_PASS',
-        fieldLabel : _('ID_NEW_PASSWORD'),
-        xtype      : 'textfield',
-        inputType  : 'password',
-        width      : 260,
-        allowBlank : allowBlackStatus,
-        listeners: {
-          blur : function(ob)
-          {
-            Ext.getCmp('saveB').disable();
-            Ext.getCmp('cancelB').disable();
-            var spanAjax = '<span style="font: 9px tahoma,arial,helvetica,sans-serif;">';
-            var imageAjax = '<img width="13" height="13" border="0" src="/images/ajax-loader.gif">';
-            var labelAjax = _('ID_PASSWORD_TESTING');
+        },
+        comboCountry,
+        comboRegion,
+        comboLocation,
+        {
+          id         : 'USR_PHONE',
+          fieldLabel : _('ID_PHONE'),
+          xtype      : 'textfield',
+          width      : 260
+        },
+        {
+          id         : 'USR_POSITION',
+          fieldLabel : _('ID_POSITION'),
+          xtype      : 'textfield',
+          width      : 260
+        },
+        comboReplacedBy,
+        dateField,
+        comboCalendar,
+        comboStatus,
+        comboRole
+        ]
+    });
 
-            Ext.getCmp('passwordReview').setText(spanAjax + imageAjax + labelAjax + '</span>', false);
-            Ext.getCmp('passwordReview').setVisible(true);
+    var passwordFields = new Ext.form.FieldSet({
+      title : _('ID_CHANGE_PASSWORD'),
+      items : [
+         {
+            xtype      : "textfield",
+            id         : "currentPassword",
+            name       : "currentPassword",
+            fieldLabel : _("ID_PASSWORD_CURRENT"),
+            inputType  : "password",
+            hidden     : (typeof EDITPROFILE != "undefined" && EDITPROFILE == 1)? false : true,
+            width      : 260
+        },
+        {
+          id         : 'USR_NEW_PASS',
+          fieldLabel : MODE == 'edit' ? _('ID_NEW_PASSWORD') : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_NEW_PASSWORD')) +'"> * </span>' + _('ID_NEW_PASSWORD'),
+          xtype      : 'textfield',
+          inputType  : 'password',
+          width      : 260,
+          allowBlank : allowBlackStatus,
+          listeners: {
+            blur : function(ob)
+            {
+              Ext.getCmp('saveB').disable();
+              Ext.getCmp('cancelB').disable();
+              var spanAjax = '<span style="font: 9px tahoma,arial,helvetica,sans-serif;">';
+              var imageAjax = '<img width="13" height="13" border="0" src="/images/ajax-loader.gif">';
+              var labelAjax = _('ID_PASSWORD_TESTING');
 
-            var passwordText = this.getValue();
+              Ext.getCmp('passwordReview').setText(spanAjax + imageAjax + labelAjax + '</span>', false);
+              Ext.getCmp('passwordReview').setVisible(true);
 
-            Ext.Ajax.request({
-              url    : 'usersAjax',
-              method:'POST',
-              params : {
-                'action'        : 'testPassword',
-                'PASSWORD_TEXT' : passwordText
-              },
-              success: function(r,o){
-                var resp = Ext.util.JSON.decode(r.responseText);
+              var passwordText = this.getValue();
 
-                if (resp.STATUS) {
-                  flagPoliciesPassword = true;
-                } else {
-                  flagPoliciesPassword = false;
+              Ext.Ajax.request({
+                url    : 'usersAjax',
+                method:'POST',
+                params : {
+                  'action'        : 'testPassword',
+                  'PASSWORD_TEXT' : passwordText
+                },
+                success: function(r,o){
+                  var resp = Ext.util.JSON.decode(r.responseText);
+
+                  if (resp.STATUS) {
+                    flagPoliciesPassword = true;
+                  } else {
+                    flagPoliciesPassword = false;
+                  }
+
+                  Ext.getCmp('passwordReview').setText(resp.DESCRIPTION, false);
+                  Ext.getCmp('saveB').enable();
+                  Ext.getCmp('cancelB').enable();
+                },
+                failure: function () {
+                  Ext.MessageBox.show({
+                    title: _('ID_ERROR'),
+                    msg: _('ID_FAILED_STORE_DATA'),
+                    buttons: Ext.MessageBox.OK,
+                    animEl: 'mb9',
+                    icon: Ext.MessageBox.ERROR
+                  });
+                  Ext.getCmp('saveB').enable();
+                  Ext.getCmp('cancelB').enable();
                 }
+              });
 
-                Ext.getCmp('passwordReview').setText(resp.DESCRIPTION, false);
-                Ext.getCmp('saveB').enable();
-                Ext.getCmp('cancelB').enable();
-              },
-              failure: function () {
-                Ext.MessageBox.show({
-                  title: _('ID_ERROR'),
-                  msg: _('ID_FAILED_STORE_DATA'),
-                  buttons: Ext.MessageBox.OK,
-                  animEl: 'mb9',
-                  icon: Ext.MessageBox.ERROR
-                });
-                Ext.getCmp('saveB').enable();
-                Ext.getCmp('cancelB').enable();
+              Ext.getCmp('passwordReview').setVisible(true);
+
+              if (Ext.getCmp('USR_CNF_PASS').getValue() != '') {
+                userExecuteEvent(document.getElementById('USR_CNF_PASS'), 'blur');
               }
-            });
 
-            Ext.getCmp('passwordReview').setVisible(true);
-
-            if (Ext.getCmp('USR_CNF_PASS').getValue() != '') {
-              userExecuteEvent(document.getElementById('USR_CNF_PASS'), 'blur');
-            }
-
-          }
-        }
-      },
-      {
-        xtype: 'label',
-        fieldLabel: ' ',
-        id:'passwordReview',
-        width: 300,
-        labelSeparator: ''
-      },
-      {
-        id         : 'USR_CNF_PASS',
-        fieldLabel : _('ID_CONFIRM_PASSWORD'),
-        xtype      : 'textfield',
-        inputType  : 'password',
-        width      : 260,
-        allowBlank : allowBlackStatus,
-        listeners: {
-          blur : function(ob)
-          {
-            var passwordText    = Ext.getCmp('USR_NEW_PASS').getValue();
-            var passwordConfirm = this.getValue();
-
-            if (passwordText != passwordConfirm) {
-              var spanErrorConfirm  = '<span style="color: red; font: 9px tahoma,arial,helvetica,sans-serif;">';
-              var imageErrorConfirm = '<img width="13" height="13" border="0" src="/images/delete.png">';
-              var labelErrorConfirm = _('ID_NEW_PASS_SAME_OLD_PASS');
-
-              Ext.getCmp('passwordConfirm').setText(spanErrorConfirm + imageErrorConfirm + labelErrorConfirm + '</span>', false);
-              Ext.getCmp('passwordConfirm').setVisible(true);
-            } else {
-              Ext.getCmp('passwordConfirm').setVisible(false);
             }
           }
-        }
-      },
-      {
-        xtype: 'label',
-        fieldLabel: ' ',
-        id:'passwordConfirm',
-        width: 300,
-        labelSeparator: ''
-      }
+        },
+        {
+          xtype: 'label',
+          fieldLabel: ' ',
+          id:'passwordReview',
+          width: 300,
+          labelSeparator: ''
+        },
+        {
+          id         : 'USR_CNF_PASS',
+          fieldLabel : MODE == 'edit' ? _('ID_CONFIRM_PASSWORD') : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_CONFIRM_PASSWORD')) +'"> * </span>' + _('ID_CONFIRM_PASSWORD'),
+          xtype      : 'textfield',
+          inputType  : 'password',
+          width      : 260,
+          allowBlank : allowBlackStatus,
+          listeners: {
+            blur : function(ob)
+            {
+              var passwordText    = Ext.getCmp('USR_NEW_PASS').getValue();
+              var passwordConfirm = this.getValue();
 
-    ]
-  });
+              if (passwordText != passwordConfirm) {
+                var spanErrorConfirm  = '<span style="color: red; font: 9px tahoma,arial,helvetica,sans-serif;">';
+                var imageErrorConfirm = '<img width="13" height="13" border="0" src="/images/delete.png">';
+                var labelErrorConfirm = _('ID_NEW_PASS_SAME_OLD_PASS');
+
+                Ext.getCmp('passwordConfirm').setText(spanErrorConfirm + imageErrorConfirm + labelErrorConfirm + '</span>', false);
+                Ext.getCmp('passwordConfirm').setVisible(true);
+              } else {
+                Ext.getCmp('passwordConfirm').setVisible(false);
+              }
+            }
+          }
+        },
+        {
+          xtype: 'label',
+          fieldLabel: ' ',
+          id:'passwordConfirm',
+          width: 300,
+          labelSeparator: ''
+        }
+
+      ]
+    });
     
     var accountOptions = new Ext.form.FieldSet({
         title: _('ID_ACCOUNT_OPTIONS'),

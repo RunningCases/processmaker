@@ -31,6 +31,28 @@ class System extends Api
     }
 
     /**
+     * Get count for all lists
+     *
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /counters-lists
+     */
+    public function doGetCountersLists()
+    {
+        try {
+            $userId   = $this->getUserId();
+            $lists    = new \ProcessMaker\BusinessModel\Lists();
+            $response = $lists->getCounters($userId);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
      * @return array
      *
      * @author Gustavo Cruz <gustavo.cruz@colosa.com>

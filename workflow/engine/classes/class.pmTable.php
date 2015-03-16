@@ -135,7 +135,7 @@ class PmTable
      * @param string $dbsUid corresponding to DBS_UID key
      * @return string contains resolved DBS_UID
      */
-    public function resolveDbSource ($dbsUid)
+    public static function resolveDbSource($dbsUid)
     {
         switch ($dbsUid) {
             case 'workflow':

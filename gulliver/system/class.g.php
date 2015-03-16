@@ -463,8 +463,11 @@ class G
      * @return void
      */
     public static function LoadSystem ($strClass)
-    {
-        require_once (PATH_GULLIVER . 'class.' . $strClass . '.php');
+    {   require_once (PATH_GULLIVER . 'class.inputfilter.php');
+        $filter = new InputFilter();
+        $path  = PATH_GULLIVER . 'class.' . $strClass . '.php';
+        $path  = $filter->validateInput($path, 'path');
+        require_once ($path);
     }
 
     public function LoadSystemExist ($strClass)
@@ -3314,10 +3317,10 @@ class G
       *
       * @author Erik A.O. <erik@colosa.com>
      */
-    public function json_decode($Json)
+    public function json_decode($Json, $assoc = false)
     {
         if (function_exists('json_decode')) {
-            return json_decode($Json);
+            return json_decode($Json, $assoc);
         } else {
             G::LoadThirdParty('pear/json', 'class.json');
             $oJSON = new Services_JSON();

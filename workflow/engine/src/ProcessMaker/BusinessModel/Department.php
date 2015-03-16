@@ -12,6 +12,65 @@ use \DepartmentPeer;
 class Department
 {
     /**
+     * Verify if exists the title of a Department
+     *
+     * @param string $departmentTitle      Title
+     * @param string $departmentUidExclude Unique id of Department to exclude
+     *
+     * return bool Return true if exists the title of a Department, false otherwise
+     */
+    public function existsTitle($departmentTitle, $departmentUidExclude = "")
+    {
+        try {
+            $delimiter = \DBAdapter::getStringDelimiter();
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\DepartmentPeer::DEP_UID);
+
+            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\DepartmentPeer::DEP_UID, "CT.CON_ID", \Criteria::EQUAL);
+            $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "DEPO_TITLE" . $delimiter, \Criteria::EQUAL);
+            $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+            if ($departmentUidExclude != "") {
+                $criteria->add(\DepartmentPeer::DEP_UID, $departmentUidExclude, \Criteria::NOT_EQUAL);
+            }
+
+            $criteria->add("CT.CON_VALUE", $departmentTitle, \Criteria::EQUAL);
+
+            $rsCriteria = \DepartmentPeer::doSelectRS($criteria);
+
+            return ($rsCriteria->next())? true : false;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Verify if exists the title of a Department
+     *
+     * @param string $departmentTitle       Title
+     * @param string $fieldNameForException Field name for the exception
+     * @param string $departmentUidExclude  Unique id of Department to exclude
+     *
+     * return void Throw exception if exists the title of a Department
+     */
+    public function throwExceptionIfExistsTitle($departmentTitle, $fieldNameForException, $departmentUidExclude = "")
+    {
+        try {
+            if ($this->existsTitle($departmentTitle, $departmentUidExclude)) {
+                throw new \Exception(\G::LoadTranslation("ID_DEPARTMENT_TITLE_ALREADY_EXISTS", array($fieldNameForException, $departmentTitle)));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Get list for Departments
      *
      * @access public
@@ -99,25 +158,63 @@ class Department
     }
 
     /**
-     * Put Assign User
+     * Assign User to Department
      *
-     * @access public
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @param string $departmentUid Unique id of Department
+     * @param array  $arrayData     Data
      *
-     * @return void
+     * return array Return data of the User assigned to Department
      */
-    public function assignUser($dep_uid, $usr_uid)
+    public function assignUser($departmentUid, array $arrayData)
     {
-        $dep_uid = Validator::depUid($dep_uid);
-        $usr_uid = Validator::usrUid($usr_uid);
+        try {
+            //Verify data
+            $process = new \ProcessMaker\BusinessModel\Process();
+            $validator = new \ProcessMaker\BusinessModel\Validator();
 
-        $dep = new \Department();
-        $dep->load($dep_uid);
-        $dep_manager = $dep->getDepManager();
-        $manager = ($dep_manager == '') ? true : false;
-        $dep->addUserToDepartment( $dep_uid, $usr_uid, $manager, false );
-        $dep->updateDepartmentManager( $dep_uid );
+            $validator->throwExceptionIfDataIsNotArray($arrayData, "\$arrayData");
+            $validator->throwExceptionIfDataIsEmpty($arrayData, "\$arrayData");
+
+            //Set data
+            $arrayData = array_change_key_case($arrayData, CASE_UPPER);
+
+            unset($arrayData["DEP_UID"]);
+
+            //Set variables
+            $arrayUserFieldDefinition = array(
+                "DEP_UID" => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "departmentUid"),
+                "USR_UID" => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(), "fieldNameAux" => "userUid")
+            );
+
+            $arrayUserFieldNameForException = array(
+                "departmentUid" => strtolower("DEP_UID"),
+                "userUid"       => strtolower("USR_UID")
+            );
+
+            //Verify data
+            $departmentUid = \ProcessMaker\BusinessModel\Validator::depUid($departmentUid);
+
+            $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $arrayUserFieldDefinition, $arrayUserFieldNameForException, true);
+
+            $process->throwExceptionIfNotExistsUser($arrayData["USR_UID"], $arrayUserFieldNameForException["userUid"]);
+
+            //Assign User
+            $department = new \Department();
+
+            $department->load($departmentUid);
+
+            $department->addUserToDepartment($departmentUid, $arrayData["USR_UID"], ($department->getDepManager() == "")? true : false, false);
+            $department->updateDepartmentManager($departmentUid);
+
+            //Return
+            $arrayData = array_merge(array("DEP_UID" => $departmentUid), $arrayData);
+
+            $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+
+            return $arrayData;
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -239,6 +336,11 @@ class Department
         Validator::isBoolean($create, '$create');
 
         $dep_data = array_change_key_case($dep_data, CASE_UPPER);
+
+        if ($create) {
+            unset($dep_data["DEP_UID"]);
+        }
+
         $oDepartment = new \Department();
         if (isset($dep_data['DEP_UID']) && $dep_data['DEP_UID'] != '') {
             Validator::depUid($dep_data['DEP_UID']);
@@ -254,18 +356,21 @@ class Department
         }
 
         if (!$create) {
-            $dep_data['DEPO_TITLE'] = $dep_data['DEP_TITLE'];
-            if (isset($dep_data['DEP_TITLE'])) {
-                Validator::depTitle($dep_data['DEP_TITLE'], $dep_data['DEP_UID']);
+            if (isset($dep_data["DEP_TITLE"])) {
+                $this->throwExceptionIfExistsTitle($dep_data["DEP_TITLE"], strtolower("DEP_TITLE"), $dep_data["DEP_UID"]);
+
+                $dep_data["DEPO_TITLE"] = $dep_data["DEP_TITLE"];
             }
+
             $oDepartment->update($dep_data);
             $oDepartment->updateDepartmentManager($dep_data['DEP_UID']);
         } else {
             if (isset($dep_data['DEP_TITLE'])) {
-                Validator::depTitle($dep_data['DEP_TITLE']);
+                $this->throwExceptionIfExistsTitle($dep_data["DEP_TITLE"], strtolower("DEP_TITLE"));
             } else {
                 throw (new \Exception(\G::LoadTranslation("ID_FIELD_REQUIRED", array('dep_title'))));
             }
+
             $dep_uid = $oDepartment->create($dep_data);
             $response = $this->getDepartment($dep_uid);
             return $response;
