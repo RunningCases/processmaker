@@ -436,7 +436,7 @@ class InputFilter
                                     $inputFiltered = str_replace('&amp;','&',$inputFiltered);
                                 }
                             } else {
-                                $jsArray = (array)G::json_decode($val);  
+                                $jsArray = G::json_decode($val,true);  
                                 if(is_array($jsArray) && sizeof($jsArray)) {
                                     foreach($jsArray as $j => $jsVal){
                                         if(is_array($jsVal) && sizeof($jsVal)) {
@@ -472,7 +472,7 @@ class InputFilter
                         $input = str_replace('&amp;','&',$input);
                     }
                 } else {
-                    $jsArray = (array)G::json_decode($input);
+                    $jsArray = G::json_decode($input,true);
                     if(is_array($jsArray) && sizeof($jsArray)) {
                         foreach($jsArray as $j => $jsVal){
                             if(is_array($jsVal) && sizeof($jsVal)) {
@@ -526,34 +526,43 @@ class InputFilter
       * @access protected
       * @param String $value
       * @param String or Array $types
+      * @param String $valType
       * @return String $value
       */
-    function validateInput($value, $types = 'string')
+    function validateInput($value, $types = 'string', $valType = 'sanitize')
     {
-        if(!isset($value) || trim($value) === '' || $value === NULL ) {
+        if(!isset($value) || empty($value)) {
             return '';
         } 
         
-        if($pos = strpos($value,";")) {
-           $value = substr($value,0,$pos);
-        }
-        
         if(is_array($types) && sizeof($types)){
             foreach($types as $type){
-                $value = $this->validateInputValue($value, $type);
+                if($valType == 'sanitize') {
+                    $value = $this->sanitizeInputValue($value, $type);
+                } else {
+                    $value = $this->validateInputValue($value, $type);        
+                }
             }    
         } elseif(is_string($types)) {
-            $value = $this->validateInputValue($value, $types);
+            if($types == 'sanitize' || $types == 'validate') {
+                $valType = $types;
+                $types = 'string';
+            }
+            if($valType == 'sanitize') {
+                $value = $this->sanitizeInputValue($value, $types);
+            } else {
+                $value = $this->validateInputValue($value, $types);        
+            }
         }
          
         return $value;
     }
     
-    function validateInputValue($value, $type) {
+    function sanitizeInputValue($value, $type) {
         
         switch($type) {
             case 'float':
-                $value = (float)filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT);
+                $value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION | FILTER_FLAG_ALLOW_THOUSAND);
             break;
             case 'int':
                 $value = (int)filter_var($value, FILTER_SANITIZE_NUMBER_INT);
@@ -568,16 +577,53 @@ class InputFilter
             break;
             case 'nosql':
                 $value = (string)filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
-                if(preg_match('/\b(or|and|xor|drop|insert|update|delete|select)\b/i' , $value)) {
-                   $value = '';
+                if(preg_match('/\b(or|and|xor|drop|insert|update|delete|select)\b/i' , $value, $matches, PREG_OFFSET_CAPTURE)) {
+                       $value = substr($value,0,$matches[0][1]);
                 }
-            break;
-            case 'db':
             break;
             default:
                 $value = (string)filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
         }
         
         return $value;    
+    } 
+    
+   
+    function validateInputValue($value, $type) {
+        
+        switch($type) {
+            case 'float':
+                $value = str_replace(',', '.', $value);
+                if(!filter_var($value, FILTER_VALIDATE_FLOAT)) {
+                    throw new Exception('not a float value'); 
+                }
+            break;
+            case 'int':
+                if(!filter_var($value, FILTER_VALIDATE_INT)) {
+                    throw new Exception('not a int value');    
+                }
+            break;
+            case 'boolean':
+                if(!preg_match('/\b(yes|no|false|true|1|0)\b/i' , $value)) {
+                    throw new Exception('not a boolean value');
+                }
+            break;
+            case 'path':
+                if(!file_exists($value)) {
+                    throw new Exception('not a valid path');
+                }
+            break;
+            case 'nosql':
+                if(preg_match('/\b(or|and|xor|drop|insert|update|delete|select)\b/i' , $value)) {
+                    throw new Exception('sql command found');
+                }
+            break;
+            default:
+                if(!is_string($value)) {
+                    throw new Exception('not a string value');
+                }
+        }
+     
+ 
     } 
 }
