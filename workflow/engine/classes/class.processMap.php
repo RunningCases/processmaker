@@ -2356,7 +2356,11 @@ class processMap
               $G_PUBLISH->AddContent('propeltable', 'paged-table', '/cases/cases_Scheduler_List', $oCriteria, array('CONFIRM' => G::LoadTranslation('ID_MSG_CONFIRM_DELETE_CASE_SCHEDULER')));
               G::RenderPage('publish');
               //return true; */
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
             $schedulerPath = SYS_URI . "cases/cases_Scheduler_List";
+            $schedulerPath = $filter->xssFilterHard($schedulerPath);
+            $sProcessUID = $filter->xssFilterHard($sProcessUID);
             $html = "<iframe  WIDTH=820 HEIGHT=530 FRAMEBORDER=0 src='" . $schedulerPath . '?PRO_UID=' . $sProcessUID . "'></iframe>";
             echo $html;
         } catch (Exception $oError) {
