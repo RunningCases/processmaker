@@ -24,8 +24,8 @@ if ($actionAjax == "streaming") {
 
     $file = \G::getPathFromFileUID($oAppDocument->Fields['APP_UID'], $sAppDocUid);
 
-    $realPath  = PATH_DOCUMENT .  $app_uid . '/' . $file[0] . $file[1] . '_' . $iDocVersion . '.' . $ext;
-    $realPath1 = PATH_DOCUMENT . $app_uid . '/' . $file[0] . $file[1] . '.' . $ext;
+    $realPath  = PATH_DOCUMENT . G::getPathFromUID($app_uid) . '/' . $file[0] . $file[1] . '_' . $iDocVersion . '.' . $ext;
+    $realPath1 = PATH_DOCUMENT . G::getPathFromUID($app_uid) . '/' . $file[0] . $file[1] . '.' . $ext;
 
     if (file_exists( $realPath )) {
         $finfo    = finfo_open(FILEINFO_MIME_TYPE);
