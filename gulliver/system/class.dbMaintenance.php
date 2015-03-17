@@ -305,8 +305,12 @@ class DataBaseMaintenance
     function backupData ()
     {
         $aTables = $this->getTablesList();
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $aTables = $filter->xssFilterHard($aTables);
         foreach ($aTables as $table) {
             if ($this->dumpData( $table ) !== false) {
+                $this->outfile = $filter->xssFilterHard($this->outfile);
                 printf( "%20s %s %s\n", 'Dump of table:', $table, " in file {$this->outfile}" );
             } else {
                 return false;
@@ -343,6 +347,11 @@ class DataBaseMaintenance
     {
 
         $aTables = $this->getTablesList();
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $aTables = $filter->xssFilterHard($aTables);
+        $this->tmpDir = $filter->xssFilterHard($this->tmpDir);
+        $this->infile = $filter->xssFilterHard($this->infile);
 
         foreach ($aTables as $table) {
             if (isset( $type ) && $type == 'sql') {
@@ -467,6 +476,7 @@ class DataBaseMaintenance
 
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
+        $table = $filter->xssFilterHard($table);
         $table = $filter->validateInput($table, 'nosql');
         $bytesSaved = 0;
         $query = "SELECT * FROM `%s`";
@@ -492,6 +502,7 @@ class DataBaseMaintenance
             $data .= ");\n";
         }
 
+        $data = $filter->xssFilterHard($data);
         printf( "%-59s%20s", "Dump of table $table", strlen( $data ) . " Bytes Saved\n" );
         return $data;
     }
