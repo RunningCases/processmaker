@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 3.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-02-24 12:12:47\n"
+"PO-Revision-Date: 2015-03-06 19:05:43\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -15412,8 +15412,8 @@ msgstr "You have unsaved changes in popup! If you leave the page all the windows
 # TRANSLATION
 # LABEL/ID_INSTALL_USE_CURRENT_USER
 #: LABEL/ID_INSTALL_USE_CURRENT_USER
-msgid "Use the current user as a Database owner (It doesn't create new users in the Database )"
-msgstr "Use the current user as a Database owner (It doesn't create new users in the Database )"
+msgid "The MySQL user from the previous step will be the database owner. (Do not create a new user.)"
+msgstr "The MySQL user from the previous step will be the database owner. (Do not create a new user.)"
 
 # TRANSLATION
 # LABEL/ID_ACCOUNT_OPTIONS
@@ -18318,6 +18318,12 @@ msgstr "Process Edited"
 #: LABEL/ID_EVENT_DELETED
 msgid "Event deleted"
 msgstr "Event deleted"
+
+# TRANSLATION
+# LABEL/ID_DEL_THREAD_STATUS
+#: LABEL/ID_DEL_THREAD_STATUS
+msgid "Thread Status"
+msgstr "Thread Status"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml

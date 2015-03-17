@@ -748,8 +748,16 @@ class Derivation
             //SETS THE APP_PROC_CODE
             //if (isset($nextDel['TAS_DEF_PROC_CODE']))
             //$appFields['APP_PROC_CODE'] = $nextDel['TAS_DEF_PROC_CODE'];
+            /*----------------------------------********---------------------------------*/
+            if (!empty($iNewDelIndex) && empty($aSP)) {
+                $oAppDel = AppDelegationPeer::retrieveByPK( $appFields['APP_UID'], $iNewDelIndex );
+                $aFields = $oAppDel->toArray( BasePeer::TYPE_FIELDNAME );
+                $aFields['APP_STATUS'] = $currentDelegation['APP_STATUS'];
+                $inbox = new ListInbox();
+                $inbox->newRow($aFields, $appFields['CURRENT_USER_UID'], false, array(), ($nextDel['TAS_ASSIGN_TYPE'] == 'SELF_SERVICE' ? true : false));
+            }
+            /*----------------------------------********---------------------------------*/
             unset( $aSP );
-
         } //end foreach
 
 
@@ -854,7 +862,7 @@ class Derivation
         if (isset( $aSP )) {
             //Create the new case in the sub-process
             // set the initial date to null the time its created
-            $aNewCase = $this->case->startCase( $aSP['TAS_UID'], $aSP['USR_UID'], true );
+            $aNewCase = $this->case->startCase( $aSP['TAS_UID'], $aSP['USR_UID'], true, $appFields);
             //Copy case variables to sub-process case
             $aFields = unserialize( $aSP['SP_VARIABLES_OUT'] );
             $aNewFields = array ();

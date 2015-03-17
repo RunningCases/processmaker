@@ -11,25 +11,27 @@ class pmDynaform
 {
 
     public static $instance = null;
-    private $debugMode = false;
-    public $dyn_uid = null;
+    public $fields = null;
     public $record = null;
-    public $app_data = null;
     public $credentials = null;
-    public $items = array();
     public $data = array();
-    public $variables = array();
-    public $arrayFieldRequired = array();
 
-    public function __construct($dyn_uid, $app_data = array())
+    public function __construct($fields)
     {
-        $this->dyn_uid = $dyn_uid;
-        $this->app_data = $app_data;
+        $this->fields = $fields;
         $this->getDynaform();
         $this->getCredentials();
-        if (isset($app_data["APPLICATION"])) {
+        if (isset($this->fields["APP_UID"])) {
+            //current
             $cases = new \ProcessMaker\BusinessModel\Cases();
-            $this->data = $cases->getCaseVariables($app_data["APPLICATION"]);
+            $this->data = $cases->getCaseVariables($this->fields["APP_UID"]);
+        } else {
+            //history
+            $this->fields["APP_UID"] = null;
+            if (isset($this->fields["APP_DATA"]))
+                $this->data = $this->fields["APP_DATA"];
+            if (isset($this->data["DYN_CONTENT_HISTORY"]))
+                $this->record["DYN_CONTENT"] = $this->data["DYN_CONTENT_HISTORY"];
         }
     }
 
@@ -43,7 +45,7 @@ class pmDynaform
         $a->addSelectColumn(DynaformPeer::DYN_CONTENT);
         $a->addSelectColumn(DynaformPeer::PRO_UID);
         $a->addSelectColumn(DynaformPeer::DYN_UID);
-        $a->add(DynaformPeer::DYN_UID, $this->dyn_uid, Criteria::EQUAL);
+        $a->add(DynaformPeer::DYN_UID, $this->fields["CURRENT_DYNAFORM"], Criteria::EQUAL);
         $ds = ProcessPeer::doSelectRS($a);
         $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $ds->next();
@@ -88,17 +90,34 @@ class pmDynaform
                     }
                 }
                 //query & options
-                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "suggest" || $value === "checkbox" || $value === "radio")) {
+                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "suggest" || $value === "checkbox" || $value === "radio" || $value === "datetime")) {
+                    if (!isset($json->data)) {
+                        $json->data = array(
+                            "value" => "",
+                            "label" => ""
+                        );
+                    }
                     if (!isset($json->dbConnection))
                         $json->dbConnection = "none";
                     if (!isset($json->sql))
                         $json->sql = "";
                     if (!isset($json->options))
                         $json->options = array();
+                    else {
+                        //convert stdClass to array
+                        $option = array();
+                        foreach ($json->options as $valueOptions) {
+                            array_push($option, array(
+                                "value" => $valueOptions->value,
+                                "label" => $valueOptions->label
+                            ));
+                        }
+                        $json->options = $option;
+                    }
                     if ($json->dbConnection !== "none" && $json->sql !== "") {
                         $cnn = Propel::getConnection($json->dbConnection);
                         $stmt = $cnn->createStatement();
-                        $rs = $stmt->executeQuery(\G::replaceDataField($json->sql, array()), \ResultSet::FETCHMODE_NUM);
+                        $rs = $stmt->executeQuery(strtoupper($json->sql), \ResultSet::FETCHMODE_NUM);
                         while ($rs->next()) {
                             $row = $rs->getRow();
                             $option = array(
@@ -107,22 +126,40 @@ class pmDynaform
                             );
                             array_push($json->options, $option);
                         }
-                        if (isset($json->options[0])) {
-                            $json->data = $json->options[0];
-                        }
+                    }
+                    if (isset($json->options[0])) {
+                        $json->data = $json->options[0];
                     }
                 }
                 //data
-                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "checkbox" || $value === "radio")) {
+                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "suggest" || $value === "dropdown" || $value === "checkbox" || $value === "radio" || $value === "datetime")) {
                     $json->data = array(
-                        "value" => isset($this->data[$json->name]) ? $this->data[$json->name] : "",
-                        "label" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : ""
+                        "value" => isset($this->data[$json->name]) ? $this->data[$json->name] : $json->data["value"],
+                        "label" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : $json->data["label"]
                     );
                 }
-                if ($key === "type" && ($value === "suggest")) {
+                if ($key === "type" && ($value === "checkbox")) {
                     $json->data = array(
-                        "value" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : "",
-                        "label" => isset($this->data[$json->name]) ? $this->data[$json->name] : ""
+                        "value" => isset($this->data[$json->name]) ? $this->data[$json->name] : array(),
+                        "label" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : "[]"
+                    );
+                }
+                if ($key === "type" && ($value === "file") && isset($this->app_data["APPLICATION"])) {
+                    $oCriteria = new Criteria("workflow");
+                    $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
+                    $oCriteria->addSelectColumn(AppDocumentPeer::DOC_VERSION);
+                    $oCriteria->add(AppDocumentPeer::APP_UID, $this->app_data["APPLICATION"]);
+                    $oCriteria->add(AppDocumentPeer::APP_DOC_FIELDNAME, $json->name);
+                    $rs = AppDocumentPeer::doSelectRS($oCriteria);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $links = array();
+                    while ($rs->next()) {
+                        $row = $rs->getRow();
+                        array_push($links, "../cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"]);
+                    }
+                    $json->data = array(
+                        "value" => $links,
+                        "label" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : "[]"
                     );
                 }
                 //grid
@@ -135,7 +172,7 @@ class pmDynaform
                             $cells = array();
                             foreach ($json->columns as $column) {
                                 //data
-                                if ($column->type === "text" || $column->type === "textarea" || $column->type === "dropdown") {
+                                if ($column->type === "checkbox" || $column->type === "text" || $column->type === "textarea" || $column->type === "dropdown" || $column->type === "datetime") {
                                     array_push($cells, array(
                                         "value" => isset($row[$column->name]) ? $row[$column->name] : "",
                                         "label" => isset($row[$column->name . "_label"]) ? $row[$column->name . "_label"] : ""
@@ -163,40 +200,28 @@ class pmDynaform
         return $this->record != null && $this->record["DYN_VERSION"] == 2 ? true : false;
     }
 
-    public function printView($pm_run_outside_main_app, $application)
+    public function printView()
     {
         ob_clean();
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
-
-        $a = $this->clientToken();
-        $clientToken = array(
-            "accessToken" => $a["access_token"],
-            "expiresIn" => $a["expires_in"],
-            "tokenType" => $a["token_type"],
-            "scope" => $a["scope"],
-            "refreshToken" => $a["refresh_token"],
-            "clientId" => $a["client_id"],
-            "clientSecret" => $a["client_secret"]
-        );
-
         $javascrip = "" .
                 "<script type='text/javascript'>\n" .
                 "var jsondata = " . G::json_encode($json) . ";\n" .
-                "var pm_run_outside_main_app = '" . $pm_run_outside_main_app . "';\n" .
-                "var dyn_uid = '" . $this->dyn_uid . "';\n" .
+                "var pm_run_outside_main_app = null;\n" .
+                "var dyn_uid = '" . $this->fields["CURRENT_DYNAFORM"] . "';\n" .
                 "var __DynaformName__ = '" . $this->record["PRO_UID"] . "_" . $this->record["DYN_UID"] . "';\n" .
-                "var app_uid = '" . $application . "';\n" .
-                "var prj_uid = '" . $this->app_data["PROCESS"] . "';\n" .
+                "var app_uid = '" . $this->fields["APP_UID"] . "';\n" .
+                "var prj_uid = '" . $this->fields["PRO_UID"] . "';\n" .
                 "var step_mode = null;\n" .
-                "var workspace = '" . $this->app_data["SYS_SYS"] . "';\n" .
-                "var credentials = " . G::json_encode($clientToken) . ";\n" .
+                "var workspace = '" . SYS_SYS . "';\n" .
+                "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var filePost = null;\n" .
                 "var fieldsRequired = null;\n" .
                 "var triggerDebug = null;\n" .
                 "$(window).load(function () {\n" .
                 "    var data = jsondata;\n" .
-                "    data.items[0].mode = 'view';\n" .
+                "    data.items[0].mode = 'disabled';\n" .
                 "    window.project = new PMDynaform.core.Project({\n" .
                 "        data: data,\n" .
                 "        keys: {\n" .
@@ -216,55 +241,57 @@ class pmDynaform
 
         $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
         $file = str_replace("{javascript}", $javascrip, $file);
-
-        $this->debug();
         echo $file;
+        echo "<pre>";
+        //echo print_r($this->fields, true);
+//        echo print_r($this->data, true);
+        echo "</pre>";
         exit();
     }
 
-    public function printEdit($pm_run_outside_main_app, $application, $headData, $step_mode = 'EDIT')
+    public function printEdit()
     {
-        error_log(print_r($this->app_data, true));
         ob_clean();
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
+        if (!isset($this->fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["PREVIOUS_STEP"])) {
+            $this->fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["PREVIOUS_STEP"] = "";
+        }
         $title = "<table width='100%' align='center'>\n" .
                 "    <tr class='userGroupTitle'>\n" .
-                "        <td width='100%' align='center'>" . $headData["CASE"] . " #: " . $headData["APP_NUMBER"] . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $headData["TITLE"] . ": " . $headData["APP_TITLE"] . "</td>\n" .
+                "        <td width='100%' align='center'>" . G::LoadTranslation('ID_CASE') . " #: " . $this->fields["APP_NUMBER"] . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . G::LoadTranslation('ID_TITLE') . ": " . $this->fields["APP_TITLE"] . "</td>\n" .
                 "    </tr>\n" .
                 "</table>\n";
         $javascrip = "" .
                 "<script type='text/javascript'>\n" .
                 "var jsondata = " . G::json_encode($json) . ";\n" .
-                "var pm_run_outside_main_app = '" . $pm_run_outside_main_app . "';\n" .
-                "var dyn_uid = '" . $this->dyn_uid . "';\n" .
+                "var pm_run_outside_main_app = '" . $this->fields["PM_RUN_OUTSIDE_MAIN_APP"] . "';\n" .
+                "var dyn_uid = '" . $this->fields["CURRENT_DYNAFORM"] . "';\n" .
                 "var __DynaformName__ = '" . $this->record["PRO_UID"] . "_" . $this->record["DYN_UID"] . "';\n" .
-                "var app_uid = '" . $application . "';\n" .
-                "var prj_uid = '" . $this->app_data["PROCESS"] . "';\n" .
-                "var step_mode = '" . $step_mode . "';\n" .
-                "var workspace = '" . $this->app_data["SYS_SYS"] . "';\n" .
+                "var app_uid = '" . $this->fields["APP_UID"] . "';\n" .
+                "var prj_uid = '" . $this->fields["PRO_UID"] . "';\n" .
+                "var step_mode = '" . $this->fields["STEP_MODE"] . "';\n" .
+                "var workspace = '" . SYS_SYS . "';\n" .
                 "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var filePost = null;\n" .
                 "var fieldsRequired = null;\n" .
-                "var triggerDebug = " . ($this->app_data["TRIGGER_DEBUG"] === 1 ? "true" : "false") . ";\n" .
+                "var triggerDebug = " . ($this->fields["TRIGGER_DEBUG"] === 1 ? "true" : "false") . ";\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/cases_Step.js'></script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
-                ($this->app_data["PRO_SHOW_MESSAGE"] === 1 ? '' : $title ) .
+                ($this->fields["PRO_SHOW_MESSAGE"] === 1 ? '' : $title ) .
                 "<div style='width:100%;padding:0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
                 "    <img src='/images/bulletButtonLeft.gif' style='float:left;'>&nbsp;\n" .
-                "    <a id='dyn_backward' href='' style='float:left;'>\n" .
+                "    <a id='dyn_backward' href='" . $this->fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["PREVIOUS_STEP"] . "' style='float:left;font-size:12px;line-height:1;margin:0px 0px 1px 5px;'>\n" .
+                "    " . $this->fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["PREVIOUS_STEP_LABEL"] . "" .
                 "    </a>\n" .
                 "    <img src='/images/bulletButton.gif' style='float:right;'>&nbsp;\n" .
-                "    <a id='dyn_forward' href='' style='float:right;font-size:12px;line-height:1;margin:0px 5px 1px 0px;'>\n" .
-                "        Next Step\n" .
+                "    <a id='dyn_forward' href='" . $this->fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["NEXT_STEP"] . "' style='float:right;font-size:12px;line-height:1;margin:0px 5px 1px 0px;'>\n" .
+                "    " . $this->fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["NEXT_STEP_LABEL"] . "" .
                 "    </a>\n" .
                 "</div>";
-
         $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
         $file = str_replace("{javascript}", $javascrip, $file);
-
-        $this->debug();
         echo $file;
         exit();
     }
@@ -278,7 +305,7 @@ class pmDynaform
                 "<script type='text/javascript'>\n" .
                 "var jsondata = " . G::json_encode($json) . ";\n" .
                 "var pm_run_outside_main_app = null;\n" .
-                "var dyn_uid = '" . $this->dyn_uid . "';\n" .
+                "var dyn_uid = '" . $this->fields["CURRENT_DYNAFORM"] . "';\n" .
                 "var __DynaformName__ = null;\n" .
                 "var app_uid = null;\n" .
                 "var prj_uid = '" . $this->record["PRO_UID"] . "';\n" .
@@ -286,7 +313,7 @@ class pmDynaform
                 "var workspace = '" . SYS_SYS . "';\n" .
                 "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var filePost = '" . $filename . "';\n" .
-                "var fieldsRequired = " . G::json_encode($this->arrayFieldRequired) . ";\n" .
+                "var fieldsRequired = " . G::json_encode(array()) . ";\n" .
                 "var triggerDebug = null;\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
@@ -299,8 +326,6 @@ class pmDynaform
 
         $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
         $file = str_replace("{javascript}", $javascrip, $file);
-
-        $this->debug();
         echo $file;
         exit();
     }
@@ -317,7 +342,6 @@ class pmDynaform
         $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
         $file = str_replace("{javascript}", $javascrip, $file);
 
-        $this->debug();
         echo $file;
         exit();
     }
@@ -387,15 +411,6 @@ class pmDynaform
         $dsn = DB_ADAPTER . ':host=' . $host . ';dbname=' . DB_NAME . $port;
 
         return array('dsn' => $dsn, 'username' => DB_USER, 'password' => DB_PASS);
-    }
-
-    private function debug()
-    {
-        if ($this->debugMode) {
-            echo "<pre>";
-            echo G::json_encode(array($this->app_data, $this->data));
-            echo "</pre>";
-        }
     }
 
 }

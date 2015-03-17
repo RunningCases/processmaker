@@ -29,7 +29,10 @@ $pluginStatus = $_GET['status'];
 $items = array ();
 G::LoadClass( 'plugin' );
 //here we are enabling or disabling the plugin and all related options registered.
-
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$path = PATH_PLUGINS . $pluginFile;
+$path = $filter->validateInput($path, 'path');
 
 $oPluginRegistry = & PMPluginRegistry::getSingleton();
 
@@ -69,7 +72,7 @@ if ($handle = opendir( PATH_PLUGINS )) {
                     }
                     /*----------------------------------********---------------------------------*/
                     //print "change to ENABLED";
-                    require_once(PATH_PLUGINS . $pluginFile);
+                    require_once($path);
                     $details = $oPluginRegistry->getPluginDetails($pluginFile);
                     $oPluginRegistry->enablePlugin($details->sNamespace);
                     $oPluginRegistry->setupPlugins(); //get and setup enabled plugins

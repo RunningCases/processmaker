@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * cliWorkspaces.php
  *
@@ -199,6 +199,19 @@ EOT
 );
 CLI::taskArg("workspace-name", true, true);
 CLI::taskRun("run_check_workspace_disabled_code");
+
+CLI::taskName('migrate-new-cases-lists');
+CLI::taskDescription(<<<EOT
+  Migrating the list cases schema to match the latest version
+
+  Specify the WORKSPACE to migrate from a existing workspace.
+
+  If no workspace is specified, then the tables schema will be upgraded or
+  migrate on all available workspaces.
+EOT
+);
+CLI::taskArg('workspace', true, true);
+CLI::taskRun("run_migrate_new_cases_lists");
 /*----------------------------------********---------------------------------*/
 
   /**
@@ -284,6 +297,10 @@ function run_database_upgrade($args, $opts) {
 
 function run_database_check($args, $opts) {
   database_upgrade("check", $args);
+}
+
+function run_migrate_new_cases_lists($args, $opts) {
+  migrate_new_cases_lists("migrate", $args);
 }
 
 function database_upgrade($command, $args) {
@@ -641,5 +658,40 @@ function run_check_workspace_disabled_code($args, $opts)
     } catch (Exception $e) {
         echo CLI::error($e->getMessage()) . "\n";
     }
+}
+
+function migrate_new_cases_lists($command, $args) { 
+  $workspaces = get_workspaces_from_args($args);
+  $checkOnly = (strcmp($command, "migrate") == 0);
+  foreach ($workspaces as $workspace) {
+    if ($checkOnly){
+      print_r("Checking database in ".pakeColor::colorize($workspace->name, "INFO")."\n");
+    } else {
+      print_r("Upgrading database in ".pakeColor::colorize($workspace->name, "INFO")."\n");
+    }
+    try {
+      $ws = $workspace->name;
+      $sContent = file_get_contents (PATH_DB . $ws . PATH_SEP . 'db.php');
+      if (strpos($sContent, 'rb_')) {
+        $workspace->onedb = false;
+      } else {
+        $workspace->onedb = true;
+      }
+      //check if is the tables List are empty
+      $changes = $workspace->listFirstExecution('check');
+      if ($workspace->onedb && $changes != true) {
+        $workspace->migrateList($workspace->name);
+      }      
+      if ($changes) {
+        if ($checkOnly) {
+          echo "-> List tables are done\n";
+        } 
+      } else {
+        echo "> List tables are done\n";
+      }
+    } catch (Exception $e) {
+      echo "> Error: ".CLI::error($e->getMessage()) . "\n";
+    }
+  }
 }
 /*----------------------------------********---------------------------------*/

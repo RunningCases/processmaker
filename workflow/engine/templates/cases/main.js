@@ -573,7 +573,14 @@ function updateCasesTree() {
     ReloadTreeMenuItemDetail({item:currentSelectedTreeMenuItem});
   }
   Ext.Ajax.request({
-    url: 'casesMenuLoader?action=getAllCounters&r='+Math.random(),
+    url: urlProxy + Math.random(),
+    /*----------------------------------********---------------------------------*/
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + credentials.access_token
+    },
+    method: 'GET',
+    /*----------------------------------********---------------------------------*/
     success: function(response){
       result = Ext.util.JSON.decode(response.responseText);
 

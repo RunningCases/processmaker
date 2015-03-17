@@ -21,7 +21,7 @@ EOT
 /*----------------------------------********---------------------------------*/
 CLI::taskName('change-password-hash-method');
 CLI::taskDescription(<<<EOT
-    Change password hash method to md5 or sha256 for the specified workspace
+     Change password hash method to md5 or sha256 for the specified workspace 
 EOT
 );
 CLI::taskArg('workspace', false);

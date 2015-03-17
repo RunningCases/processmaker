@@ -351,26 +351,27 @@ class Light extends Api
                 foreach ($d as $field => $value) {
                     if (array_key_exists($field, $structure)) {
                         $newName           = $structure[$field];
-                        $newData[$newName] = $value;
+                        $newData[$newName] = is_null($value) ? "":$value;
                     } else {
                         foreach ($structure as $name => $str) {
                             if (is_array($str) && array_key_exists($field, $str)) {
                                 $newName                  = $str[$field];
-                                $newData[$name][$newName] = $value;
+                                $newData[$name][$newName] = is_null($value) ? "":$value;
                             }
                         }
                     }
                 }
-                $response[] = $newData;
+                if (count($newData) > 0)
+                    $response[] = $newData;
             } else {
                 if (array_key_exists($field, $structure)) {
                     $newName           = $structure[$field];
-                    $response[$newName] = $d;
+                    $response[$newName] = is_null($d) ? "":$d;
                 } else {
                     foreach ($structure as $name => $str) {
                         if (is_array($str) && array_key_exists($field, $str)) {
                             $newName                  = $str[$field];
-                            $response[$name][$newName] = $d;
+                            $response[$name][$newName] = is_null($d) ? "":$d;
                         }
                     }
                 }
@@ -726,9 +727,95 @@ class Light extends Api
         try {
             $userUid       = $this->getUserId();
             $oMobile = new \ProcessMaker\BusinessModel\Light();
-            $oMobile->getInformation($userUid, $type, $app_uid);
+            $response = $oMobile->getInformation($userUid, $type, $app_uid);
+            $response = $this->parserGetInformation($response);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
+        return $response;
+    }
+
+    public function parserGetInformation ($data)
+    {
+        $structure = array(
+            'case' => array(
+                'PRO_TITLE'   => 'processTitle',
+                'APP_TITLE'   => 'caseTitle',
+                'APP_NUMBER'  => 'caseNumber',
+                'APP_STATUS'  => 'caseStatus',
+                'APP_UID'     => 'caseId',
+                'CREATOR'     => 'caseCreator',
+                'CREATE_DATE' => 'caseCreateDate',
+                'UPDATE_DATE' => 'caseUpdateData',
+                'DESCRIPTION' => 'caseDescription'
+            ),
+            'task' => array(
+                'TAS_TITLE'         => 'taskTitle',
+                'CURRENT_USER'      => 'currentUser',
+                'DEL_DELEGATE_DATE' => 'delDelegateDate',
+                'DEL_INIT_DATE'     => 'delInitDate',
+                'DEL_TASK_DUE_DATE' => 'delDueDate',
+                'DEL_FINISH_DATE'   => 'delFinishDate'
+            )
+        );
+
+        $response = $this->replaceFields($data, $structure);
+        return $response;
+    }
+
+    /**
+     * @url POST /case/:app_uid/upload
+     *
+     * @param $access
+     * @param $refresh
+     * @return mixed
+     */
+    public function uidUploadFiles($app_uid, $request_data)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $filesUids = $oMobile->postUidUploadFiles($userUid, $app_uid, $request_data);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $filesUids;
+    }
+
+    /**
+     * @url POST /case/:app_uid/upload/:app_doc_uid
+     *
+     * @param $access
+     * @param $refresh
+     * @return mixed
+     */
+    public function documentUploadFiles($app_uid, $app_doc_uid, $request_data)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $response = $oMobile->documentUploadFiles($userUid, $app_uid, $app_doc_uid, $request_data);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $response;
+    }
+
+    /**
+     * @url POST /case/:app_uid/claim
+     *
+     * @param $app_uid
+     * @return mixed
+     */
+    public function claimCaseUser($app_uid)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $response = $oMobile->claimCaseUser($userUid, $app_uid);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $response;
     }
 }

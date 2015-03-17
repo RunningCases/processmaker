@@ -5,7 +5,7 @@ function ajax_post(action, form, method, callback, asynchronous) {
     };
 }
 function dynaFormChanged(frm) {
-    return true;
+    return false;
 }
 $(window).load(function () {
     if (pm_run_outside_main_app === 'true') {
@@ -30,23 +30,10 @@ $(window).load(function () {
         token: credentials,
         submitRest: false
     });
-
-    var type = document.createElement("input");
-    type.type = "hidden";
-    type.name = "TYPE";
-    type.value = "ASSIGN_TASK";
-    var uid = document.createElement("input");
-    uid.type = "hidden";
-    uid.name = "UID";
-    uid.value = dyn_uid;
-    var position = document.createElement("input");
-    position.type = "hidden";
-    position.name = "POSITION";
-    position.value = "10000";
-    var action = document.createElement("input");
-    action.type = "hidden";
-    action.name = "ACTION";
-    action.value = "ASSIGN";
+    var dyn_content_history = document.createElement("input");
+    dyn_content_history.type = "hidden";
+    dyn_content_history.name = "form[DYN_CONTENT_HISTORY]";
+    dyn_content_history.value = JSON.stringify(jsondata);
     var dynaformname = document.createElement("input");
     dynaformname.type = "hidden";
     dynaformname.name = "__DynaformName__";
@@ -63,16 +50,15 @@ $(window).load(function () {
     form.action = filePost ? filePost : "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
     form.method = "post";
     form.enctype = "multipart/form-data";
-    form.appendChild(type);
-    form.appendChild(uid);
-    form.appendChild(position);
-    form.appendChild(action);
+    form.appendChild(dyn_content_history);
     form.appendChild(dynaformname);
     form.appendChild(appuid);
     form.appendChild(arrayRequired);
     var dyn_forward = document.getElementById("dyn_forward");
     dyn_forward.onclick = function () {
-        form.submit();
+        if (window.project.getForms()[0].isValid()) {
+            form.submit();
+        }
         return false;
     };
     if (triggerDebug === true) {

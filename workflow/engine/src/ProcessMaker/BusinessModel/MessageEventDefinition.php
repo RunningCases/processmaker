@@ -240,10 +240,6 @@ class MessageEventDefinition
                     throw new \Exception(\G::LoadTranslation("ID_MESSAGE_EVENT_DEFINITION_VARIABLES_DO_NOT_MEET_DEFINITION"));
                 }
             }
-
-            if (isset($arrayData["MSGED_USR_UID"])) {
-                $process->throwExceptionIfNotExistsUser($arrayData["MSGED_USR_UID"], $this->arrayFieldNameForException["messageEventDefinitionUserUid"]);
-            }
         } catch (\Exception $e) {
             throw $e;
         }
@@ -295,27 +291,13 @@ class MessageEventDefinition
                     $arrayData["MSGED_VARIABLES"] = array();
                 }
 
-                if (isset($arrayData["MSGED_USR_UID"]) && $arrayData["MSGED_USR_UID"] != "") {
-                    $criteria = new \Criteria("workflow");
-
-                    $criteria->addSelectColumn(\UsersPeer::USR_UID);
-                    $criteria->add(\UsersPeer::USR_UID, $arrayData["MSGED_USR_UID"], \Criteria::EQUAL);
-
-                    //QUERY
-                    $rsCriteria = \UsersPeer::doSelectRS($criteria);
-                    $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-                    if (!$rsCriteria->next()) {
-                        $arrayData["MSGED_USR_UID"] = "";
-                    }
-                }
-
                 $messageEventDefinitionUid = \ProcessMaker\Util\Common::generateUID();
 
                 $messageEventDefinition->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
 
                 $messageEventDefinition->setMsgedUid($messageEventDefinitionUid);
                 $messageEventDefinition->setPrjUid($projectUid);
+                $messageEventDefinition->setMsgedUsrUid("00000000000000000000000000000001"); //admin
 
                 if (isset($arrayData["MSGED_VARIABLES"])) {
                     $messageEventDefinition->setMsgedVariables(serialize($arrayData["MSGED_VARIABLES"]));
@@ -327,32 +309,6 @@ class MessageEventDefinition
                     $result = $messageEventDefinition->save();
 
                     $cnn->commit();
-
-                    //Task - User
-                    if (isset($arrayData["MSGED_USR_UID"]) && $arrayData["MSGED_USR_UID"] != "") {
-                        $bpmnEvent = \BpmnEventPeer::retrieveByPK($arrayData["EVN_UID"]);
-
-                        //Event - START-MESSAGE-EVENT
-                        if (!is_null($bpmnEvent) && $bpmnEvent->getEvnType() == "START" && $bpmnEvent->getEvnMarker() == "MESSAGECATCH") {
-                            //Message-Event-Task-Relation - Get Task
-                            $messageEventTaskRelation = new \ProcessMaker\BusinessModel\MessageEventTaskRelation();
-
-                            $arrayMessageEventTaskRelationData = $messageEventTaskRelation->getMessageEventTaskRelationWhere(
-                                array(
-                                    \MessageEventTaskRelationPeer::PRJ_UID => $projectUid,
-                                    \MessageEventTaskRelationPeer::EVN_UID => $bpmnEvent->getEvnUid()
-                                ),
-                                true
-                            );
-
-                            if (!is_null($arrayMessageEventTaskRelationData)) {
-                                //Assign
-                                $task = new \Tasks();
-
-                                $result = $task->assignUser($arrayMessageEventTaskRelationData["TAS_UID"], $arrayData["MSGED_USR_UID"], 1);
-                            }
-                        }
-                    }
 
                     //Return
                     return $this->getMessageEventDefinition($messageEventDefinitionUid);
@@ -430,48 +386,6 @@ class MessageEventDefinition
                     $result = $messageEventDefinition->save();
 
                     $cnn->commit();
-
-                    //Task - User
-                    if (isset($arrayData["MSGED_USR_UID"]) && $arrayData["MSGED_USR_UID"] != $arrayMessageEventDefinitionData["MSGED_USR_UID"]) {
-                        $bpmnEvent = \BpmnEventPeer::retrieveByPK($arrayMessageEventDefinitionData["EVN_UID"]);
-
-                        //Event - START-MESSAGE-EVENT
-                        if (!is_null($bpmnEvent) && $bpmnEvent->getEvnType() == "START" && $bpmnEvent->getEvnMarker() == "MESSAGECATCH") {
-                            //Message-Event-Task-Relation - Get Task
-                            $messageEventTaskRelation = new \ProcessMaker\BusinessModel\MessageEventTaskRelation();
-
-                            $arrayMessageEventTaskRelationData = $messageEventTaskRelation->getMessageEventTaskRelationWhere(
-                                array(
-                                    \MessageEventTaskRelationPeer::PRJ_UID => $arrayMessageEventDefinitionData["PRJ_UID"],
-                                    \MessageEventTaskRelationPeer::EVN_UID => $bpmnEvent->getEvnUid()
-                                ),
-                                true
-                            );
-
-                            if (!is_null($arrayMessageEventTaskRelationData)) {
-                                //Unassign
-                                $taskUser = new \TaskUser();
-
-                                $criteria = new \Criteria("workflow");
-
-                                $criteria->add(\TaskUserPeer::TAS_UID, $arrayMessageEventTaskRelationData["TAS_UID"]);
-
-                                $rsCriteria = \TaskUserPeer::doSelectRS($criteria);
-                                $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-                                while ($rsCriteria->next()) {
-                                    $row = $rsCriteria->getRow();
-
-                                    $result = $taskUser->remove($row["TAS_UID"], $row["USR_UID"], $row["TU_TYPE"], $row["TU_RELATION"]);
-                                }
-
-                                //Assign
-                                $task = new \Tasks();
-
-                                $result = $task->assignUser($arrayMessageEventTaskRelationData["TAS_UID"], $arrayData["MSGED_USR_UID"], 1);
-                            }
-                        }
-                    }
 
                     //Return
                     $arrayData = $arrayDataBackup;

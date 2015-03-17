@@ -992,12 +992,11 @@ class Cases
             if (isset($Fields["APP_STATUS"]) && $Fields["APP_STATUS"] == "COMPLETED") {
                 if (isset($Fields['CURRENT_USER_UID'])) {
                     $Fields['USR_UID'] = $Fields['CURRENT_USER_UID'];
-                    /*This "list" code is discussed to operate with sub-processes. It should adjust the code for operation with sub-processes.
-                    $listCompleted = new ListCompleted();
-                    $listCompleted->create($Fields);
-                    $listMyInbox = new ListMyInbox();
-                    $listMyInbox->refresh($Fields);*/
                 }
+                /*----------------------------------********---------------------------------*/
+                $completed = new ListCompleted();
+                $completed->create($Fields);
+                /*----------------------------------********---------------------------------*/
             }
             $oApp->update($Fields);
 
@@ -1066,7 +1065,7 @@ class Cases
               $Fields['DEL_INDEX'] = 1;
             }
             $inbox = new ListInbox();
-            $inbox->update($Fields);            
+            $inbox->update($Fields);
             /*----------------------------------********---------------------------------*/
 
             //Return
@@ -1176,7 +1175,26 @@ class Cases
             if ($this->appSolr != null) {
                 $this->appSolr->deleteApplicationSearchIndex($sAppUid);
             }
+            /*----------------------------------********---------------------------------*/
+            $criteria = new Criteria();
+            $criteria->addSelectColumn( ListInboxPeer::USR_UID );
+            $criteria->add( ListInboxPeer::APP_UID, $sAppUid, Criteria::EQUAL );
+            $dataset = ApplicationPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            while($dataset->next()) {
+                $aRow = $dataset->getRow();
+                $users = new Users();
+                $users->refreshTotal($aRow['USR_UID'], 'remove', 'draft');
+                $users->refreshTotal($aRow['USR_UID'], 'remove', 'participated');
+            }
 
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListInboxPeer::APP_UID, $sAppUid);
+            ListInboxPeer::doDelete($oCriteria);
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListParticipatedLastPeer::APP_UID, $sAppUid);
+            ListParticipatedLastPeer::doDelete($oCriteria);
+            /*----------------------------------********---------------------------------*/
             return $result;
         } catch (exception $e) {
             throw ($e);
@@ -1238,6 +1256,12 @@ class Cases
             $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
 
             $appAssignSelfServiceValue->remove($sAppUid, $iDelIndex);
+            /*----------------------------------********---------------------------------*/
+            $aFields = $oAppDel->toArray(BasePeer::TYPE_FIELDNAME);
+            $aFields['APP_STATUS'] = 'TO_DO';
+            $inbox = new ListInbox();
+            $inbox->update($aFields, true);
+            /*----------------------------------********---------------------------------*/
         } catch (exception $e) {
             throw ($e);
         }
@@ -1906,11 +1930,11 @@ class Cases
             $c->add(AppDelegationPeer::APP_UID, $sAppUid);
             $c->add(AppDelegationPeer::DEL_INDEX, $iDelIndex);
             $rowObj = AppDelegationPeer::doSelect($c);
-            G::LoadClass('dates');
-            $oDates = new dates();
+            $user = '';
             foreach ($rowObj as $appDel) {
                 $appDel->setDelThreadStatus('CLOSED');
                 $appDel->setDelFinishDate('now');
+                $user = $appDel->getUsrUid();
                 if ($appDel->Validate()) {
                     $appDel->Save();
                 } else {
@@ -1927,7 +1951,7 @@ class Cases
             $data['DEL_THREAD_STATUS'] = 'CLOSED';
             $data['APP_UID']   = $sAppUid;
             $data['DEL_INDEX'] = $iDelIndex;
-            $data['USR_UID']   = $appDel->getUsrUid();
+            $data['USR_UID']   = $user;
             $listParticipatedLast = new ListParticipatedLast();
             $listParticipatedLast->refresh($data);
             /*----------------------------------********---------------------------------*/
@@ -1982,7 +2006,7 @@ class Cases
      * @return Fields
      */
 
-    public function startCase($sTasUid, $sUsrUid, $isSubprocess = false)
+    public function startCase($sTasUid, $sUsrUid, $isSubprocess = false, $dataPreviusApplication = array())
     {
         if ($sTasUid != '') {
             try {
@@ -2040,6 +2064,19 @@ class Cases
                 if ($this->appSolr != null) {
                     $this->appSolr->updateApplicationSearchIndex($sAppUid);
                 }
+
+                /*----------------------------------********---------------------------------*/
+                $Fields['TAS_UID'] = $sTasUid;
+                $Fields['USR_UID'] = $sUsrUid;
+                $Fields['DEL_INDEX'] = $iDelIndex;
+                $Fields['APP_STATUS'] = 'TO_DO';
+                $Fields['DEL_DELEGATE_DATE'] = $Fields['APP_INIT_DATE'];
+                if(!$isSubprocess){
+                    $Fields['APP_STATUS'] = 'DRAFT';
+                }
+                $inbox = new ListInbox();
+                $inbox->newRow($Fields, $sUsrUid, $isSubprocess, $dataPreviusApplication);
+                /*----------------------------------********---------------------------------*/
             } catch (exception $e) {
                 throw ($e);
             }
@@ -4030,8 +4067,9 @@ class Cases
         $this->getExecuteTriggerProcess($sApplicationUID, "UNPAUSE");
 
         /*----------------------------------********---------------------------------*/
+        $aData = array_merge($aFieldsDel, $aData);
         $oListPaused = new ListPaused();
-        $oListPaused->remove($sApplicationUID, $iDelegation, true);
+        $oListPaused->remove($sApplicationUID, $iDelegation, $aData);
         /*----------------------------------********---------------------------------*/
     }
 
@@ -4243,6 +4281,27 @@ class Cases
             $this->appSolr->updateApplicationSearchIndex($sApplicationUID);
         }
 
+        /*----------------------------------********---------------------------------*/
+        $oCriteria = new Criteria('workflow');
+        $oCriteria->add(ListParticipatedLastPeer::APP_UID, $aData['APP_UID']);
+        $oCriteria->add(ListParticipatedLastPeer::USR_UID, $sUserUID);
+        $oCriteria->add(ListParticipatedLastPeer::DEL_INDEX, $iDelegation);
+        ListParticipatedLastPeer::doDelete($oCriteria);
+        $users = new Users();
+        $users->refreshTotal($sUserUID, 'remove', 'participated');
+
+        $aFieldsDel = array_merge($aData, $aFieldsDel);
+        $aFieldsDel['USR_UID'] = $newUserUID;
+        $inbox = new ListInbox();
+        $inbox->newRow($aFieldsDel, $sUserUID);
+        $users = new Users();
+        if ($aFields['APP_STATUS'] == 'DRAFT') {
+            $users->refreshTotal($sUserUID, 'remove', 'draft');
+        } else if ($iDelegation == 2) {
+            $users->refreshTotal($sUserUID, 'add', 'draft');
+            $users->refreshTotal($sUserUID, 'remove', 'inbox');
+        }
+        /*----------------------------------********---------------------------------*/
         $this->getExecuteTriggerProcess($sApplicationUID, 'REASSIGNED');
         return true;
     }
@@ -6635,7 +6694,6 @@ class Cases
             }
         }
 
-        require_once 'classes/model/Users.php';
         $c = new Criteria('workflow');
         $c->addSelectColumn(UsersPeer::USR_UID);
         $c->addSelectColumn(UsersPeer::USR_USERNAME);

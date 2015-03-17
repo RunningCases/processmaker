@@ -216,6 +216,7 @@ if ($actionAjax == "getUsersToReassign") {
     G::LoadClass( 'tasks' );
     $task = new Task();
     $tasks = $task->load($_SESSION['TASK']);
+    $result = new stdclass();
     $result->data = $case->getUsersToReassign( $_SESSION['TASK'], $_SESSION['USER_LOGGED'], $tasks['PRO_UID'] );
     print G::json_encode( $result );
 }
@@ -240,6 +241,7 @@ if ($actionAjax == 'reassignCase') {
         //print_r($caseData);
         $data['APP_NUMBER'] = $caseData['APP_NUMBER'];
         $data['USER'] = $userData['USR_LASTNAME'] . ' ' . $userData['USR_FIRSTNAME']; //TODO change with the farmated username from environment conf
+        $result = new stdclass();
         $result->status = 0;
         $result->msg = G::LoadTranslation( 'ID_REASSIGNMENT_SUCCESS', SYS_LANG, $data );
     } catch (Exception $e) {

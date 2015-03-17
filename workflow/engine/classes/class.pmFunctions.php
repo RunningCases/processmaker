@@ -885,7 +885,7 @@ function PMFSendMessage(
     if ($result->status_code == 0) {
         return 1;
     } else {
-    	error_log($result->message);
+        error_log($result->message);
         return 0;
     }
 }
@@ -1402,8 +1402,8 @@ function WSUnpauseCase ($caseUid, $delIndex, $userUid)
  *
  * Add a case note.
  *
- * @name WSAddCaseNote
- * @label WS Add case note
+ * @name WSAddACaseNote
+ * @label WS Add a case note
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#WSAddCaseNote.28.29
  *
  * @param string(32) | $caseUid | ID of the case | The unique ID of the case.
@@ -1539,8 +1539,8 @@ function PMFUserList () //its test was successfull
  *
  * Add an Input Document.
  *
- * @name PMFAddInputDocument
- * @label PMF Add a input document
+ * @name PMFAddAnInputDocument
+ * @label PMF Add an input document
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFAddInputDocument.28.29
  *
  * @param string(32) | $inputDocumentUid | ID of the input document | The unique ID of the input document.
@@ -2771,10 +2771,10 @@ function PMFUnpauseCase ($caseUid, $delIndex, $userUid)
  *
  * @method
  *
- * Add case note.
+ * Add a case note.
  *
- * @name PMFAddCaseNote
- * @label PMF Add case note
+ * @name PMFAddACaseNote
+ * @label PMF Add a case note
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFAddCaseNote.28.29
  *
  * @param string(32) | $caseUid | ID of the case | The unique ID of the case.
@@ -2783,7 +2783,7 @@ function PMFUnpauseCase ($caseUid, $delIndex, $userUid)
  * @param string(32) | $userUid | ID user | The unique ID of the user who will add note case.
  * @param string | $note | Note of the case | Note of the case.
  * @param int | $sendMail = 1 | Send mail | Optional parameter. If set to 1, will send an email to all participants in the case.
- * @return int | $result | Result of the add case note | Returns 1 if the note has been added to the case.; otherwise, returns 0 if an error occurred.
+ * @return int | $result | Result of the add a case note | Returns 1 if the note has been added to the case.; otherwise, returns 0 if an error occurred.
  *
  */
 function PMFAddCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendMail = 1)

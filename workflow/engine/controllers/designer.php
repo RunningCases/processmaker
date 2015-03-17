@@ -26,7 +26,6 @@ class Designer extends Controller
         $proUid = isset($httpData->prj_uid) ? $httpData->prj_uid : '';
         $appUid = isset($httpData->app_uid) ? $httpData->app_uid : '';
         $proReadOnly = isset($httpData->prj_readonly) ? $httpData->prj_readonly : 'false';
-        $stringBpmn = isset($httpData->stringBpmn) ? '<textarea id="stringBpmn" style="display:none">' . base64_decode($httpData->stringBpmn) . '</textarea>' : '';
         $client = $this->getClientCredentials();
         $authCode = $this->getAuthorizationCode($client);
         $debug = false; //System::isDebugMode();
@@ -57,7 +56,6 @@ class Designer extends Controller
 
         $this->setVar('prj_uid', $proUid);
         $this->setVar('app_uid', $appUid);
-        $this->setVar('stringBpmn', $stringBpmn);
         $this->setVar('prj_readonly', $proReadOnly);
         $this->setVar('credentials', base64_encode(json_encode($clientToken)));
         $this->setVar('isDebugMode', $debug);
