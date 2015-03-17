@@ -80,9 +80,49 @@ if ($oServerConf->isRtl( SYS_LANG )) {
     $regionTreePanel = 'west';
     $regionDebug = 'east';
 }
+
+$urlProxy = 'casesMenuLoader?action=getAllCounters&r=';
+/*----------------------------------********---------------------------------*/
+$urlProxy = '/api/1.0/' . SYS_SYS . '/system/counters-lists?r=';
+$clientId = 'x-pm-local-client';
+$client = getClientCredentials($clientId);
+$authCode = getAuthorizationCode($client);
+$debug = false; //System::isDebugMode();
+
+$loader = Maveriks\Util\ClassLoader::getInstance();
+$loader->add(PATH_TRUNK . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");
+
+$request = array(
+    'grant_type' => 'authorization_code',
+    'code' => $authCode
+);
+$server = array(
+    'REQUEST_METHOD' => 'POST'
+);
+$headers = array(
+    "PHP_AUTH_USER" => $client['CLIENT_ID'],
+    "PHP_AUTH_PW" => $client['CLIENT_SECRET'],
+    "Content-Type" => "multipart/form-data;",
+    "Authorization" => "Basic " . base64_encode($client['CLIENT_ID'] . ":" . $client['CLIENT_SECRET'])
+);
+
+$request = new \OAuth2\Request(array(), $request, array(), array(), array(), $server, null, $headers);
+$oauthServer = new \ProcessMaker\Services\OAuth2\Server();
+$response = $oauthServer->postToken($request, true);
+
+$clientToken = $response->getParameters();
+$clientToken["client_id"] = $client['CLIENT_ID'];
+$clientToken["client_secret"] = $client['CLIENT_SECRET'];
+/*----------------------------------********---------------------------------*/
+
+
 $oHeadPublisher->assign( 'regionTreePanel', $regionTreePanel );
 $oHeadPublisher->assign( 'regionDebug', $regionDebug );
 $oHeadPublisher->assign( "defaultOption", $defaultOption ); //User menu permissions
+$oHeadPublisher->assign( 'urlProxy', $urlProxy ); //sending the urlProxy to make
+/*----------------------------------********---------------------------------*/
+$oHeadPublisher->assign( 'credentials', $clientToken );
+/*----------------------------------********---------------------------------*/
 $oHeadPublisher->assign( "_nodeId", isset( $confDefaultOption ) ? $confDefaultOption : "PM_USERS" ); //User menu permissions
 $oHeadPublisher->assign( "FORMATS", $conf->getFormats() );
 
@@ -90,3 +130,41 @@ $_SESSION["current_ux"] = "NORMAL";
 
 G::RenderPage( "publish", "extJs" );
 
+
+/*----------------------------------********---------------------------------*/
+function getClientCredentials($clientId)
+{
+    $oauthQuery = new ProcessMaker\Services\OAuth2\PmPdo(getDsn());
+    return $oauthQuery->getClientDetails($clientId);
+}
+
+function getDsn()
+{
+    list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
+    $port = empty($port) ? '' : ";port=$port";
+    $dsn = DB_ADAPTER.':host='.$host.';dbname='.DB_NAME.$port;
+
+    return array('dsn' => $dsn, 'username' => DB_USER, 'password' => DB_PASS);
+}
+
+
+function getAuthorizationCode($client)
+{
+    \ProcessMaker\Services\OAuth2\Server::setDatabaseSource(getDsn());
+    \ProcessMaker\Services\OAuth2\Server::setPmClientId($client['CLIENT_ID']);
+
+    $oauthServer = new \ProcessMaker\Services\OAuth2\Server();
+    $userId = $_SESSION['USER_LOGGED'];
+    $authorize = true;
+    $_GET = array_merge($_GET, array(
+        'response_type' => 'code',
+        'client_id' => $client['CLIENT_ID'],
+        'scope' => implode(' ', $oauthServer->getScope())
+    ));
+
+    $response = $oauthServer->postAuthorize($authorize, $userId, true);
+    $code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=')+5, 40);
+
+    return $code;
+}
+/*----------------------------------********---------------------------------*/

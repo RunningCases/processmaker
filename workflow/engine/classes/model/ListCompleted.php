@@ -94,6 +94,14 @@ class ListCompleted extends BaseListCompleted
         $criteriaSet->add(ListParticipatedLastPeer::APP_STATUS, 'COMPLETED');
         BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
 
+        $users = new Users();
+        $users->refreshTotal($data['USR_UID'], 'add', 'completed');
+        if ($data['DEL_PREVIOUS'] != 0) {
+            $users->refreshTotal($data['USR_UID'], 'remove', 'inbox');
+        } else {
+            $users->refreshTotal($data['USR_UID'], 'remove', 'draft');
+        }
+
         $con = Propel::getConnection( ListCompletedPeer::DATABASE_NAME );
         try {
             $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
