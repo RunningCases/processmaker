@@ -403,8 +403,8 @@ class Light
                 //$app_uid = \G::getPathFromUID($oAppDocument->Fields['APP_UID']);
                 $file = \G::getPathFromFileUID($oAppDocument->Fields['APP_UID'], $sAppDocUid);
 
-                $realPath  = PATH_DOCUMENT .  $app_uid . '/' . $file[0] . $file[1] . '_' . $iDocVersion . '.' . $ext;
-                $realPath1 = PATH_DOCUMENT . $app_uid . '/' . $file[0] . $file[1] . '.' . $ext;
+                $realPath  = PATH_DOCUMENT .  G::getPathFromUID($app_uid) . '/' . $file[0] . $file[1] . '_' . $iDocVersion . '.' . $ext;
+                $realPath1 = PATH_DOCUMENT . G::getPathFromUID($app_uid) . '/' . $file[0] . $file[1] . '.' . $ext;
 
                 $width  = isset($fileData['width']) ? $fileData['width']:null;
                 $height = isset($fileData['height']) ? $fileData['height']:null;
@@ -604,8 +604,9 @@ class Light
      */
     public function getInformation($userUid, $type, $app_uid)
     {
-        //$response = array();
+        $response = array();
         switch ($type) {
+            case 'unassigned':
             case 'paused':
             case 'participated':
                 $oCase = new \Cases();
