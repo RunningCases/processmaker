@@ -362,7 +362,7 @@ switch ($_POST['action']) {
         $dep_manager = $_POST['USR_UID'];
         $dep_uid = $_POST['DEP_UID'];
         $editDepartment['DEP_UID'] = $dep_uid;
-        $editDepartment['DEP_MANAGER'] = $dep_manager;
+        $editDepartment['DEP_MANAGER'] = (!isset($_POST['NO_DEP_MANAGER'])? $dep_manager : '');
         $oDept = new Department();
         $oDept->update( $editDepartment );
         $oDept->updateDepartmentManager( $dep_uid );

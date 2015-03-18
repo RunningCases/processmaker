@@ -71,6 +71,13 @@ Ext.onReady(function(){
     disabled: true
   });
 
+  NoSupervisorButton = new Ext.Action({
+    text: _('ID_SET_NO_MANAGER'),
+    iconCls: 'button_menu_ext ss_sprite ss_user_edit',
+    handler: RemoveSupervisor,
+    disabled: true
+  });
+
   backButton = new Ext.Action({
     text : _('ID_BACK'),
     iconCls: 'button_menu_ext ss_sprite ss_arrow_redo',
@@ -133,12 +140,15 @@ Ext.onReady(function(){
         switch(sm.getCount()){
           case 0: Ext.getCmp('removeButton').disable();
                   supervisorButton.disable();
+                  NoSupervisorButton.disable();
                   break;
           case 1: Ext.getCmp('removeButton').enable();
                   supervisorButton.enable();
+                  NoSupervisorButton.enable();
                   break;
           default: Ext.getCmp('removeButton').enable();
                    supervisorButton.disable();
+                   NoSupervisorButton.disable();
                    break;
         }
       }
@@ -248,7 +258,7 @@ Ext.onReady(function(){
     frame      : false,
     columnLines    : false,
     viewConfig    : {forceFit:true},
-    tbar: [editMembersButton,'-',supervisorButton,{xtype: 'tbfill'},'-',searchTextP,clearTextButtonP],
+    tbar: [editMembersButton,'-',supervisorButton, NoSupervisorButton,{xtype: 'tbfill'},'-',searchTextP,clearTextButtonP],
     //bbar: [{xtype: 'tbfill'},editMembersButton],
     listeners: {rowdblclick: function(){
          (availableGrid.hidden)? DoNothing() : RemoveGroupsAction();
@@ -493,6 +503,7 @@ EditMembersAction = function(){
   buttonsPanel.show();
   editMembersButton.disable();
   supervisorButton.disable();
+  //NoSupervisorButton.disable();
   UsersPanel.doLayout();
 };
 
@@ -502,10 +513,14 @@ CancelEditMembersAction = function(){
   buttonsPanel.hide();
   editMembersButton.enable();
   rowsSelected = assignedGrid.getSelectionModel().getSelections();
-  if (rowsSelected.length == 1)
+  if (rowsSelected.length == 1){
     supervisorButton.enable();
-  else
-	supervisorButton.disable();
+    NoSupervisorButton.enable();
+  }    
+  else{
+    supervisorButton.disable();
+    NoSupervisorButton.disable();
+  } 
   UsersPanel.doLayout();
 };
 
@@ -514,6 +529,26 @@ show_user = function(v,i,s){
 	var sName = _FNF(v,s.data.USR_FIRSTNAME, s.data.USR_LASTNAME);
 	if (s.data.USR_SUPERVISOR) sName = sName + '&nbsp;<font color="green">[' + _('ID_MANAGER') + ']</font>';
 	return sName;
+};
+
+//Removes assignment Manager on Department(Desetea)
+RemoveSupervisor = function(){
+  rowsSelected = assignedGrid.getSelectionModel().getSelections();
+  viewport.getEl().mask(_('ID_PROCESSING'));
+  Ext.Ajax.request({
+    url: 'departments_Ajax',
+    params: {action: 'updateSupervisor', USR_UID: rowsSelected[0].get('USR_UID'), DEP_UID: DEPARTMENT.DEP_UID, NO_DEP_MANAGER:'0'},
+    success: function(r,o){
+      viewport.getEl().unmask();
+      supervisorButton.disable();
+      NoSupervisorButton.disable();
+      DoSearchP();
+      PMExt.notify(_('ID_DEPARTMENTS'),_('ID_NO_SET_MANAGER_SUCCES'));
+    },
+    failure: function (r,o){
+      viewport.getEl().unmask();
+    }
+  });
 };
 
 //Update Department Supervisor
@@ -526,6 +561,7 @@ UpdateSupervisor = function(){
 		success: function(r,o){
 			viewport.getEl().unmask();
 			supervisorButton.disable();
+      NoSupervisorButton.disable();
 			DoSearchP();
 			PMExt.notify(_('ID_DEPARTMENTS'),_('ID_SET_MANAGER_SUCCESS'));
 		},
