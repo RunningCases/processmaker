@@ -130,7 +130,13 @@ if (isset( $oProcessFieds['PRO_DEBUG'] ) && $oProcessFieds['PRO_DEBUG']) {
 }
 
 //cleaning debug variables
-if (! isset( $_GET['breakpoint'] )) {
+$flagExecuteBeforeTriggers = !isset($_GET["breakpoint"]);
+
+if (isset($_GET["TYPE"]) && $_GET["TYPE"] == "OUTPUT_DOCUMENT" && isset($_GET["ACTION"]) && $_GET["ACTION"] != "GENERATE") {
+    $flagExecuteBeforeTriggers = false;
+}
+
+if ($flagExecuteBeforeTriggers) {
     if (isset( $_SESSION['TRIGGER_DEBUG']['info'] )) {
         unset( $_SESSION['TRIGGER_DEBUG']['info'] );
     }
