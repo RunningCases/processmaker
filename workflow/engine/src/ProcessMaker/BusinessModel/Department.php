@@ -135,9 +135,24 @@ class Department
      *
      * @return array
      */
-    public function getAvailableUser($dep_uid)
+    public function getAvailableUser($dep_uid, $start = 0, $limit = 0, $search = '')
     {
         $dep_uid = Validator::depUid($dep_uid);
+
+        $start = (int)$start;
+        $start = abs($start);
+        if ($start != 0) {
+            $start+1;
+        }
+
+        $limit = (int)$limit;
+        $limit = abs($limit);
+        if ($limit == 0) {
+            $limit = 25;
+        } else {
+            $limit = (int)$limit;
+        }
+
         $oCriteria = new \Criteria( 'workflow' );
         $oCriteria->addSelectColumn( UsersPeer::USR_UID );
         $oCriteria->addSelectColumn( UsersPeer::USR_USERNAME );
@@ -146,6 +161,13 @@ class Department
         $oCriteria->addSelectColumn( UsersPeer::USR_STATUS );
         $oCriteria->add( UsersPeer::DEP_UID, '' );
         $oCriteria->add( UsersPeer::USR_STATUS, 'CLOSED', \Criteria::NOT_EQUAL );
+
+        $oCriteria->setLimit( $limit );
+        $oCriteria->setOffset( $start );
+
+        if ($search != '') {
+            $oCriteria->add( $oCriteria->getNewCriterion( UsersPeer::USR_USERNAME, '%' . $search . '%', \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( UsersPeer::USR_FIRSTNAME, '%' . $search . '%', \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( UsersPeer::USR_LASTNAME, '%' . $search . '%', \Criteria::LIKE ) ) ) );    
+        }
 
         $oDataset = UsersPeer::doSelectRS( $oCriteria );
         $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
@@ -257,11 +279,26 @@ class Department
         $dep_uid = Validator::depUid($dep_uid);
         $usr_uid = Validator::usrUid($usr_uid);
 
+        $oCriteria = new \Criteria( 'workflow' );
+        $oCriteria->addSelectColumn( DepartmentPeer::DEP_UID );
+        $oCriteria->add( DepartmentPeer::DEP_MANAGER, $usr_uid, \Criteria::EQUAL );
+
+        $oDataset = DepartmentPeer::doSelectRS( $oCriteria );
+        $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+        if ($oDataset->next()) {
+            throw (new \Exception(\G::LoadTranslation("ID_DEPARTMENT_MANAGER_EXIST", array('usr_uid',$usr_uid))));
+        }
+
         $editDepartment['DEP_UID'] = $dep_uid;
         $editDepartment['DEP_MANAGER'] = $usr_uid;
         $oDept = new \Department();
         $oDept->update( $editDepartment );
         $oDept->updateDepartmentManager( $dep_uid );
+
+        $oDept = new \Department();
+        $oDept->load($dep_uid);
+        $oDept->addUserToDepartment($dep_uid, $usr_uid, ($oDept->getDepManager() == "")? true : false, false);
+        $oDept->updateDepartmentManager($dep_uid);
     }
 
     /**

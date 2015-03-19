@@ -59,6 +59,9 @@ class Department extends Api
 
     /**
      * @param string $dep_uid {@min 1}{@max 32}
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $search {@from path}
      *
      * @access public
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -68,11 +71,11 @@ class Department extends Api
      *
      * @url GET /:dep_uid/available-user
      */
-    public function doGetAvailableUser($dep_uid)
+    public function doGetAvailableUser($dep_uid, $start = 0, $limit = 0, $search = '')
     {
         try {
             $oDepartment = new \ProcessMaker\BusinessModel\Department();
-            $response = $oDepartment->getAvailableUser($dep_uid);
+            $response = $oDepartment->getAvailableUser($dep_uid, $start, $limit, $search);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
