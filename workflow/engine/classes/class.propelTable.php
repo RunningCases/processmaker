@@ -559,7 +559,13 @@ class propelTable
      * @return string
      */
     public function renderTable ($block = '', $fields = '')
-    {
+    { 
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $fields = $filter->xssFilterHard($fields);
+        $this->orderBy = $filter->xssFilterHard($this->orderBy);
+        $this->currentPage = $filter->xssFilterHard($this->currentPage);
+        
         //Render Title
         $thereisnotitle = true;
         foreach ($this->fields as $r => $rval) {
@@ -603,6 +609,11 @@ class propelTable
             $this->tpl->assign( 'pagedTable_Name', $this->name );
             $this->tpl->assign( 'pagedTable_Height', $this->xmlForm->height );
             $this->tpl->assign( "title", $this->title );
+            
+            $this->xmlForm->home = $filter->xssFilterHard($this->xmlForm->home);
+            $this->filterForm = $filter->xssFilterHard($this->filterForm);
+            $this->menu = $filter->xssFilterHard($this->menu);
+            
             if (file_exists( $this->xmlForm->home . $this->filterForm . '.xml' )) {
                 $filterForm = new filterForm( $this->filterForm, $this->xmlForm->home );
                 if ($this->menu === '') {
@@ -839,6 +850,12 @@ class propelTable
                 }
                 $this->tpl->assign( "pagesEnum", $pagesEnum );
             }
+            
+            $this->name = $filter->xssFilterHard($this->name);
+            $this->orderBy = $filter->xssFilterHard($this->orderBy);
+            $this->currentPage = $filter->xssFilterHard($this->currentPage);
+            $this->id = $filter->xssFilterHard($this->id);
+            
             ?>
 
             <script language='JavaScript'>

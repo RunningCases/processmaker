@@ -33,6 +33,12 @@
 //require_once 'classes/model/AppDelay.php';
 //require_once 'classes/model/Process.php';
 //require_once 'classes/model/Task.php';
+
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_REQUEST = $filter->xssFilterHard($_REQUEST);
+$_POST = $filter->xssFilterHard($_POST);
+
 if(isset($_REQUEST['action']) && $_REQUEST['action'] == "verifySession" ) {
     if (!isset($_SESSION['USER_LOGGED'])) {
         $response = new stdclass();

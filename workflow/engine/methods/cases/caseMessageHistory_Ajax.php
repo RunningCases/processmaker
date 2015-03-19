@@ -21,6 +21,10 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_POST = $filter->xssFilterHard($_POST);
+$_REQUEST = $filter->xssFilterHard($_REQUEST);
 
 $arrayToTranslation = array(
     "TRIGGER"    => G::LoadTranslation("ID_TRIGGER_DB"),
@@ -31,11 +35,11 @@ $actionAjax = isset( $_REQUEST['actionAjax'] ) ? $_REQUEST['actionAjax'] : null;
 
 if ($actionAjax == 'messageHistoryGridList_JXP') {
 
-    if (!isset($_REQUEST['start'])) {
+    if (!isset($_REQUEST['start']) || $_REQUEST['start'] =='') {
         $_REQUEST['start'] = 0;
     }
 
-    if (!isset($_REQUEST['limit'])) {
+    if (!isset($_REQUEST['limit']) || $_REQUEST['limit'] =='') {
         $_REQUEST['limit'] = 20;
     }
 
