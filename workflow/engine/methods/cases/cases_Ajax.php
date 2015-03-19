@@ -1,4 +1,11 @@
 <?php
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_GET = $filter->xssFilterHard($_GET);
+$_POST = $filter->xssFilterHard($_POST);
+$_REQUEST = $filter->xssFilterHard($_REQUEST);
+$_SESSION = $filter->xssFilterHard($_SESSION);
+
 if (!isset($_SESSION['USER_LOGGED'])) {
     $response = new stdclass();
     $response->message = G::LoadTranslation('ID_LOGIN_AGAIN');
@@ -243,12 +250,16 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         G::RenderPage( 'publish', 'raw' );
         break;
     case 'showUsers':
+        $_POST['TAS_ASSIGN_TYPE'] = $filter->xssFilterHard($_POST['TAS_ASSIGN_TYPE']);
         switch ($_POST['TAS_ASSIGN_TYPE']) {
             // switch verify $_POST['TAS_ASSIGN_TYPE']
             case 'BALANCED':
+                $_POST['USR_UID'] = $filter->xssFilterHard($_POST['USR_UID']);
                 G::LoadClass( 'user' );
                 $oUser = new User( new DBConnection() );
                 $oUser->load( $_POST['USR_UID'] );
+                $oUser->Fields['USR_FIRSTNAME'] = $filter->xssFilterHard($oUser->Fields['USR_FIRSTNAME']);
+                $oUser->Fields['USR_LASTNAME'] = $filter->xssFilterHard($oUser->Fields['USR_LASTNAME']);
                 echo $oUser->Fields['USR_FIRSTNAME'] . ' ' . $oUser->Fields['USR_LASTNAME'] . '<input type="hidden" name="form[TASKS][1][USR_UID]" id="form[TASKS][1][USR_UID]" value="' . $_POST['USR_UID'] . '">';
                 break;
             case 'MANUAL':
@@ -300,6 +311,8 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
                 echo $sAux;
                 break;
             case 'EVALUATE':
+                $_POST['TAS_ASSIGN_VARIABLE'] = $filter->xssFilterHard($_POST['TAS_ASSIGN_VARIABLE']);
+                $_SESSION['APPLICATION'] = $filter->xssFilterHard($_SESSION['APPLICATION']);
                 G::LoadClass( 'application' );
                 $oApplication = new Application( new DBConnection() );
                 $oApplication->load( $_SESSION['APPLICATION'] );
@@ -315,7 +328,8 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
                     $oUser->load( $sUser );
                     echo $oUser->Fields['USR_FIRSTNAME'] . ' ' . $oUser->Fields['USR_LASTNAME'] . '<input type="hidden" name="form[TASKS][1][USR_UID]" id="form[TASKS][1][USR_UID]" value="' . $sUser . '">';
                 } else {
-                    echo '<strong>Error: </strong>' . $_POST['TAS_ASSIGN_VARIABLE'] . ' ' . G::LoadTranslation( 'ID_EMPTY' );
+                    $ID_EMPTY = $filter->xssFilterHard(G::LoadTranslation( 'ID_EMPTY' ));
+                    echo '<strong>Error: </strong>' . $_POST['TAS_ASSIGN_VARIABLE'] . ' ' . $ID_EMPTY;
                     echo '<input type="hidden" name="_ERROR_" id="_ERROR_" value="">';
                 }
                 break;
@@ -447,6 +461,9 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         $cases->reassignCase( $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED'], $_POST['USR_UID'], $_POST['THETYPE'] );
         break;
     case 'toRevisePanel':
+        $_POST['APP_UID'] = $filter->xssFilterHard($_POST['APP_UID']);
+        $_POST['DEL_INDEX'] = $filter->xssFilterHard($_POST['DEL_INDEX']);
+
         $_GET['APP_UID'] = $_POST['APP_UID'];
         $_GET['DEL_INDEX'] = $_POST['DEL_INDEX'];
         $G_PUBLISH = new Publisher();

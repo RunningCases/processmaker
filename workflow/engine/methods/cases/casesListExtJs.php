@@ -213,7 +213,6 @@ $menuPerms = $menuPerms . ($RBAC->userCanAccess( 'PM_REASSIGNCASE' ) == 1) ? 'R'
 $oHeadPublisher->assign( '___p34315105', $menuPerms ); // user menu permissions
 G::LoadClass( 'configuration' );
 $c = new Configurations();
-
 //$oHeadPublisher->addExtJsScript('cases/caseUtils', true);
 $oHeadPublisher->addExtJsScript( 'app/main', true );
 $oHeadPublisher->addExtJsScript( 'cases/casesList', false ); //adding a javascript file .js

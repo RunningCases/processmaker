@@ -446,11 +446,11 @@ class AdditionalTables extends BaseAdditionalTables
             eval('$count = ' . $sClassPeerName . '::doCount($oCriteria);');
         }
         G::LoadSystem('inputfilter');
-        $filter = new InputFilter();
-        $sort = $filter->validateInput($_POST['sort']);
+        $filter = new InputFilter();        
         $sClassPeerName = $filter->validateInput($sClassPeerName);
 
         if (isset($_POST['sort'])) {
+            $_POST['sort'] = $filter->validateInput($_POST['sort']);
             if ($_POST['dir'] == 'ASC') {
                 if ($keyOrderUppercase) {
                     eval('$oCriteria->addAscendingOrderByColumn("' . $sort . '");');
