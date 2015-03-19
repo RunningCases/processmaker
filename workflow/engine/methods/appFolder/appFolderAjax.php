@@ -1,4 +1,9 @@
 <?php
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_POST = $filter->xssFilterHard($_POST);
+$_GET = $filter->xssFilterHard($_GET);
+$_REQUEST = $filter->xssFilterHard($_REQUEST);
 if (! isset ($_SESSION ['USER_LOGGED'])) {
     $res ['success'] = false;
     $res ['error'] = G::LoadTranslation('ID_LOGIN_AGAIN');

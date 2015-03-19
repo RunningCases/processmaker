@@ -967,11 +967,15 @@ class ProcessMakerWebDav extends HTTP_WebDAV_Server
      */
     public function checkLock($path)
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $path = $filter->validateInput($path, 'nosql');
         $result = false;
 
         $query = "SELECT owner, token, expires, exclusivelock
               FROM locks
-            WHERE path = '$path' ";
+            WHERE path = '%s' ";
+        $query = $filter->preventSqlInjection($query, array($path));
         $res = mysql_query($query);
 
         if ($res) {

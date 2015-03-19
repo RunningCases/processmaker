@@ -1,4 +1,8 @@
 <?php
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_REQUEST = $filter->xssFilterHard($_REQUEST);
+
 if (! isset( $_REQUEST['action'] )) {
     $res['success'] = false;
     $res['error'] = $res['message'] = G::LoadTranslation('ID_REQUEST_ACTION');
@@ -162,7 +166,7 @@ function newSkin ($baseSkin = 'classic')
         $configFileFinal = PATH_CUSTOM_SKINS . $skinFolder . PATH_SEP . 'config.xml';
 
         $xmlConfiguration = file_get_contents( $configFileOriginal );
-
+        
         $workspace = ($_REQUEST['workspace'] == 'global') ? '' : SYS_SYS;
 
         $xmlConfigurationObj = G::xmlParser($xmlConfiguration);
@@ -360,6 +364,10 @@ function exportSkin ($skinToExport = "")
 function deleteSkin ()
 {
     try {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $_REQUEST['SKIN_FOLDER_ID'] = $filter->xssFilterHard($_REQUEST['SKIN_FOLDER_ID']);
+    
         if (! (isset( $_REQUEST['SKIN_FOLDER_ID'] ))) {
             throw (new Exception( G::LoadTranslation( 'ID_SKIN_FOLDER_REQUIRED' ) ));
         }
