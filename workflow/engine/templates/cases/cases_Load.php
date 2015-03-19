@@ -1,3 +1,8 @@
+<?php 
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_POST['qs'] = $filter->xssFilterHard($_POST['qs']);
+?>
 <html>
   <style type="text/css">
    .Footer .content {
