@@ -403,8 +403,8 @@ class Light
                 //$app_uid = \G::getPathFromUID($oAppDocument->Fields['APP_UID']);
                 $file = \G::getPathFromFileUID($oAppDocument->Fields['APP_UID'], $sAppDocUid);
 
-                $realPath  = PATH_DOCUMENT .  $app_uid . '/' . $file[0] . $file[1] . '_' . $iDocVersion . '.' . $ext;
-                $realPath1 = PATH_DOCUMENT . $app_uid . '/' . $file[0] . $file[1] . '.' . $ext;
+                $realPath  = PATH_DOCUMENT .  G::getPathFromUID($app_uid) . '/' . $file[0] . $file[1] . '_' . $iDocVersion . '.' . $ext;
+                $realPath1 = PATH_DOCUMENT . G::getPathFromUID($app_uid) . '/' . $file[0] . $file[1] . '.' . $ext;
 
                 $width  = isset($fileData['width']) ? $fileData['width']:null;
                 $height = isset($fileData['height']) ? $fileData['height']:null;
@@ -604,8 +604,9 @@ class Light
      */
     public function getInformation($userUid, $type, $app_uid)
     {
-        //$response = array();
+        $response = array();
         switch ($type) {
+            case 'unassigned':
             case 'paused':
             case 'participated':
                 $oCase = new \Cases();
@@ -723,6 +724,7 @@ class Light
      */
     public function documentUploadFiles($userUid, $app_uid, $app_doc_uid, $request_data)
     {
+        $response = array("status" => "fail");
         if (isset( $_FILES["form"]["name"] ) && count( $_FILES["form"]["name"] ) > 0) {
             $arrayField = array ();
             $arrayFileName = array ();
@@ -773,11 +775,39 @@ class Light
                         $sPathName = PATH_DOCUMENT . $pathUID . PATH_SEP;
                         $sFileName = $sAppDocUid . "_" . $iDocVersion . "." . $sExtension;
                         G::uploadFile( $arrayFileTmpName[$i], $sPathName, $sFileName );
+                        $response = array("status" => "ok");
                     }
                 }
             }
         }
 
+        return $response;
+    }
+
+    /**
+     * claim case
+     *
+     * @param $userUid
+     * @param $Fields
+     * @param $type
+     * @throws \Exception
+     */
+    public function claimCaseUser($userUid, $sAppUid)
+    {
+        $response = array("status" => "fail");
+        $oCase = new \Cases();
+        $iDelIndex = $oCase->getCurrentDelegation( $sAppUid, $userUid );
+
+        $oAppDelegation = new \AppDelegation();
+        $aDelegation = $oAppDelegation->load( $sAppUid, $iDelIndex );
+
+        //if there are no user in the delegation row, this case is still in selfservice
+        if ($aDelegation['USR_UID'] == "") {
+            $oCase->setCatchUser( $sAppUid,$iDelIndex, $userUid );
+            $response = array("status" => "ok");
+        } else {
+            //G::SendMessageText( G::LoadTranslation( 'ID_CASE_ALREADY_DERIVATED' ), 'error' );
+        }
         return $response;
     }
 }

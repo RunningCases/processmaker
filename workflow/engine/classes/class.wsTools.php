@@ -1970,6 +1970,39 @@ class workspaceTools
         }        
         CLI::logging("> Completed table LIST_UNASSIGNED\n");
         CLI::logging("> Completed table LIST_UNASSIGNED_GROUP\n");
+
+        // ADD LISTS COUNTS
+        $aTypes = array(
+            'to_do',
+            'draft',
+            'cancelled',
+            'sent',
+            'paused',
+            'completed',
+            'selfservice'
+        );
+
+        $users = new Users();
+        $criteria = new Criteria();
+        $criteria->addSelectColumn(UsersPeer::USR_UID);
+        $dataset = UsersPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        while($dataset->next()) {
+            $aRow = $dataset->getRow();
+            $oAppCache = new AppCacheView();
+            $aCount = $oAppCache->getAllCounters( $aTypes, $aRow['USR_UID'] );
+            $newData = array(
+                'USR_UID'                   => $aRow['USR_UID'],
+                'USR_TOTAL_INBOX'           => $aCount['to_do'],
+                'USR_TOTAL_DRAFT'           => $aCount['draft'],
+                'USR_TOTAL_CANCELLED'       => $aCount['cancelled'],
+                'USR_TOTAL_PARTICIPATED'    => $aCount['sent'],
+                'USR_TOTAL_PAUSED'          => $aCount['paused'],
+                'USR_TOTAL_COMPLETED'       => $aCount['completed'],
+                'USR_TOTAL_UNASSIGNED'      => $aCount['selfservice']
+            );
+            $users->update($newData);
+        }
         $this->listFirstExecution('insert');
         return true;
     } 

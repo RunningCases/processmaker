@@ -1,4 +1,13 @@
 <?php
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_POST = $filter->xssFilterHard($_POST);
+if(isset($_SESSION['USER_LOGGED'])) { 
+    $_SESSION['USER_LOGGED'] = $filter->xssFilterHard($_SESSION['USER_LOGGED']); 
+}
+if(isset($_SESSION['USR_USERNAME'])) { 
+$_SESSION['USR_USERNAME'] = $filter->xssFilterHard($_SESSION['USR_USERNAME']);
+}
 
 global $RBAC;
 $result = new StdClass();

@@ -38,6 +38,13 @@ try {
       break;
       } */
     //$oJSON = new Services_JSON();
+    
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
+    $_GET = $filter->xssFilterHard($_GET);
+    $_POST = $filter->xssFilterHard($_POST);
+    $_REQUEST = $filter->xssFilterHard($_REQUEST);
+    //$_SESSION = $filter->xssFilterHard($_SESSION); 
 
     if (isset($_REQUEST['data'])) {
         if($_REQUEST['action']=="addText"||$_REQUEST['action']=="updateText") {
@@ -741,6 +748,8 @@ try {
             // G::RenderPage( 'publish', 'blank' );
             break;
         case 'saveFile':
+            $_REQUEST['pro_uid'] = $filter->xssFilterHard($_REQUEST['pro_uid']);
+            $_REQUEST['filename'] = $filter->xssFilterHard($_REQUEST['filename']);
             global $G_PUBLISH;
             $G_PUBLISH = new Publisher();
             global $RBAC;
@@ -754,6 +763,7 @@ try {
 
                 $sDir = "";
                 if (isset($_REQUEST['MAIN_DIRECTORY'])) {
+                    $_REQUEST['MAIN_DIRECTORY'] = $filter->xssFilterHard($_REQUEST['MAIN_DIRECTORY']);
                     $sDir = $_REQUEST['MAIN_DIRECTORY'];
                 }
                 switch ($sDir) {
@@ -775,6 +785,7 @@ try {
                 $content = base64_decode($content);
                 fwrite($fp, $content);
                 fclose($fp);
+                $sDirectory = $filter->xssFilterHard($sDirectory);
                 echo 'saved: ' . $sDirectory;
             }
             break;
@@ -830,8 +841,10 @@ try {
             *
             */
         case 'getVariablePrefix':
+            $_REQUEST['prefix'] = $filter->xssFilterHard($_REQUEST['prefix']);
             $_REQUEST['prefix'] = $_REQUEST['prefix'] != null ? $_REQUEST['prefix'] : 'ID_TO_STRING';
-            echo G::LoadTranslation($_REQUEST['prefix']);
+            $prefix = $filter->xssFilterHard(G::LoadTranslation($_REQUEST['prefix']));
+            echo G::LoadTranslation($prefix);
             break;
             /**
             * return an array with all Variables of Grid type
