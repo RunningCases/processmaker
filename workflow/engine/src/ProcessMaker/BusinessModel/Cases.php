@@ -1991,7 +1991,7 @@ class Cases
             }
 
             //Element origin and dest
-            $messageEventTaskRelation = new \ProcessMaker\BusinessModel\MessageEventTaskRelation();
+            $elementTaskRelation = new \ProcessMaker\BusinessModel\ElementTaskRelation();
 
             $arrayElement = array(
                 "elementOrigin" => array("uid" => $elementOriginUid, "type" => "bpmnActivity"),
@@ -1999,16 +1999,17 @@ class Cases
             );
 
             foreach ($arrayElement as $key => $value) {
-                $arrayMessageEventTaskRelationData = $messageEventTaskRelation->getMessageEventTaskRelationWhere(
+                $arrayElementTaskRelationData = $elementTaskRelation->getElementTaskRelationWhere(
                     array(
-                        \MessageEventTaskRelationPeer::PRJ_UID => $arrayApplicationData["PRO_UID"],
-                        \MessageEventTaskRelationPeer::TAS_UID => $arrayElement[$key]["uid"]
+                        \ElementTaskRelationPeer::PRJ_UID      => $arrayApplicationData["PRO_UID"],
+                        \ElementTaskRelationPeer::ELEMENT_TYPE => "bpmnEvent",
+                        \ElementTaskRelationPeer::TAS_UID      => $arrayElement[$key]["uid"]
                     ),
                     true
                 );
 
-                if (!is_null($arrayMessageEventTaskRelationData)) {
-                    $arrayElement[$key]["uid"]  = $arrayMessageEventTaskRelationData["EVN_UID"];
+                if (!is_null($arrayElementTaskRelationData)) {
+                    $arrayElement[$key]["uid"]  = $arrayElementTaskRelationData["ELEMENT_UID"];
                     $arrayElement[$key]["type"] = "bpmnEvent";
                 }
             }
