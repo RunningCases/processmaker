@@ -23,6 +23,12 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 try {
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
+    $_GET = $filter->xssFilterHard($_GET);
+    $_POST = $filter->xssFilterHard($_POST);
+    $_REQUEST = $filter->xssFilterHard($_REQUEST);
+    
     global $RBAC;
     switch ($RBAC->userCanAccess('PM_LOGIN')) {
         case - 2:

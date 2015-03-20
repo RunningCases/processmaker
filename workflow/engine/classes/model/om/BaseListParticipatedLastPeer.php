@@ -487,6 +487,9 @@ abstract class BaseListParticipatedLastPeer
             $comparison = $criteria->getComparison(ListParticipatedLastPeer::USR_UID);
             $selectCriteria->add(ListParticipatedLastPeer::USR_UID, $criteria->remove(ListParticipatedLastPeer::USR_UID), $comparison);
 
+            $comparison = $criteria->getComparison(ListParticipatedLastPeer::DEL_INDEX);
+            $selectCriteria->add(ListParticipatedLastPeer::DEL_INDEX, $criteria->remove(ListParticipatedLastPeer::DEL_INDEX), $comparison);
+
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
@@ -560,10 +563,12 @@ abstract class BaseListParticipatedLastPeer
 
                 $vals[0][] = $value[0];
                 $vals[1][] = $value[1];
+                $vals[2][] = $value[2];
             }
 
             $criteria->add(ListParticipatedLastPeer::APP_UID, $vals[0], Criteria::IN);
             $criteria->add(ListParticipatedLastPeer::USR_UID, $vals[1], Criteria::IN);
+            $criteria->add(ListParticipatedLastPeer::DEL_INDEX, $vals[2], Criteria::IN);
         }
 
         // Set the correct dbName
@@ -626,10 +631,11 @@ abstract class BaseListParticipatedLastPeer
      * Retrieve object using using composite pkey values.
      * @param string $app_uid
        * @param string $usr_uid
+       * @param int $del_index
         * @param      Connection $con
      * @return     ListParticipatedLast
      */
-    public static function retrieveByPK($app_uid, $usr_uid, $con = null)
+    public static function retrieveByPK($app_uid, $usr_uid, $del_index, $con = null)
     {
         if ($con === null) {
             $con = Propel::getConnection(self::DATABASE_NAME);
@@ -637,6 +643,7 @@ abstract class BaseListParticipatedLastPeer
         $criteria = new Criteria();
         $criteria->add(ListParticipatedLastPeer::APP_UID, $app_uid);
         $criteria->add(ListParticipatedLastPeer::USR_UID, $usr_uid);
+        $criteria->add(ListParticipatedLastPeer::DEL_INDEX, $del_index);
         $v = ListParticipatedLastPeer::doSelect($criteria, $con);
 
         return !empty($v) ? $v[0] : null;

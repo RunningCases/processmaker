@@ -1,6 +1,9 @@
 <?php
 require_once ('classes/model/AppCacheView.php');
-
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_POST = $filter->xssFilterHard($_POST);
+$_GET = $filter->xssFilterHard($_GET);
 $request = isset( $_POST['request'] ) ? $_POST['request'] : (isset( $_GET['request'] ) ? $_GET['request'] : null);
 
 function testConnection($type, $server, $user, $passwd, $port = 'none', $dbName = "")
