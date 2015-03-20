@@ -1686,6 +1686,7 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         $criteria->add(ListParticipatedLastPeer::APP_UID, $this->app_uid);
         $criteria->add(ListParticipatedLastPeer::USR_UID, $this->usr_uid);
+        $criteria->add(ListParticipatedLastPeer::DEL_INDEX, $this->del_index);
 
         return $criteria;
     }
@@ -1703,6 +1704,8 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         $pks[1] = $this->getUsrUid();
 
+        $pks[2] = $this->getDelIndex();
+
         return $pks;
     }
 
@@ -1719,6 +1722,8 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         $this->setUsrUid($keys[1]);
 
+        $this->setDelIndex($keys[2]);
+
     }
 
     /**
@@ -1733,8 +1738,6 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
      */
     public function copyInto($copyObj, $deepCopy = false)
     {
-
-        $copyObj->setDelIndex($this->del_index);
 
         $copyObj->setTasUid($this->tas_uid);
 
@@ -1780,6 +1783,8 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
         $copyObj->setAppUid(''); // this is a pkey column, so set to default value
 
         $copyObj->setUsrUid(''); // this is a pkey column, so set to default value
+
+        $copyObj->setDelIndex('0'); // this is a pkey column, so set to default value
 
     }
 
