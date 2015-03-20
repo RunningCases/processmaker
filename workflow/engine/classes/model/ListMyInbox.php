@@ -123,6 +123,7 @@ class ListMyInbox extends BaseListMyInbox
 
         if ($data['DEL_INDEX'] == 1 && $data['APP_STATUS'] == 'TO_DO') {
             $data['APP_CREATE_DATE'] = $data['APP_UPDATE_DATE'];
+            $this->remove($data['APP_UID'], $data['USR_UID']);
             $this->create($data);
         } else {
             unset($data['USR_UID']);

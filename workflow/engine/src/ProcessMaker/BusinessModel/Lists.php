@@ -176,6 +176,7 @@ class Lists {
             $filtersData['date_to']     = $filters["dateTo"];
             $response['filters']        = $filtersData;
             $response['data']           = $result;
+            $filtersData['action']      = $filters["action"];
             $response['totalCount']     = $list->countTotal($userUid, $filtersData);
         } else {
             $response = $result;

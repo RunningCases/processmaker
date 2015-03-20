@@ -1842,12 +1842,14 @@ class workspaceTools
             throw $e;
         }
     }
+
     /**
      * Migrate all cases to New list
      *
      * return all LIST TABLES with data
      */
-    public function migrateList ($workSpace){
+    public function migrateList ($workSpace)
+    {
         $this->initPropel(true);
         $appCache = new AppCacheView();
         G::LoadClass("case");
@@ -1877,7 +1879,7 @@ class workspaceTools
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         //Insert new data LIST_COMPLETED
         while ($rsCriteria->next()) {
-              $row = $rsCriteria->getRow();             
+              $row = $rsCriteria->getRow();
               $listCompleted = new ListCompleted();
               $listCompleted->remove($row["APP_UID"]);
               $listCompleted->setDeleted(false);
@@ -1887,32 +1889,39 @@ class workspaceTools
         
         //Select data TO_DO OR DRAFT
         $inbCriteria = $appCache->getSelAllColumns();
-        $inbCriteria->add(AppCacheViewPeer::APP_STATUS, "CANCELLED", CRITERIA::NOT_EQUAL);
         $rsCriteria = AppCacheViewPeer::doSelectRS($inbCriteria);
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
         //Insert new data LIST_INBOX
         while ($rsCriteria->next()) {
-              $row = $rsCriteria->getRow();
-              if($row["DEL_THREAD_STATUS"] == 'OPEN'){
-                  $listInbox = new ListInbox();
-                  $listInbox->remove($row["APP_UID"],$row["DEL_INDEX"]);
-                  $listInbox->setDeleted(false);
-                  $listInbox->create($row);
-              } else {
-                 // create participated List when the thread is CLOSED
-                 $listParticipatedHistory = new ListParticipatedHistory();
-                 $listParticipatedHistory->remove($row['APP_UID'],$row['DEL_INDEX']);
-                 $listParticipatedHistory = new ListParticipatedHistory();
-                 $listParticipatedHistory->create($row);
-                 $listParticipatedLast = new ListParticipatedLast();
-                 $listParticipatedLast->remove($row['APP_UID'], $row['USR_UID']);
-                 $listParticipatedLast = new ListParticipatedLast();
-                 $listParticipatedLast->create($row);        
-                 $listParticipatedLast = new ListParticipatedLast();
-                 $listParticipatedLast->refresh($row);
-              }
+            $row = $rsCriteria->getRow();
+            $isSelfService = ($row['USR_UID'] == '') ? true : false;
+            if($row["DEL_THREAD_STATUS"] == 'OPEN'){
+                $row["DEL_PREVIOUS_USR_UID"] = $row["PREVIOUS_USR_UID"];
+                $listInbox = new ListInbox();
+                $listInbox->remove($row["APP_UID"],$row["DEL_INDEX"]);
+                $listInbox->setDeleted(false);
+                $listInbox->create($row, $isSelfService);
+            } else {
+                // create participated List when the thread is CLOSED
+                $listParticipatedHistory = new ListParticipatedHistory();
+                $listParticipatedHistory->remove($row['APP_UID'], $row['DEL_INDEX']);
+                $listParticipatedHistory = new ListParticipatedHistory();
+                $listParticipatedHistory->create($row);
+
+                $oCriteria = new Criteria('workflow');
+                $oCriteria->add(ListParticipatedLastPeer::APP_UID, $row['APP_UID']);
+                $oCriteria->add(ListParticipatedLastPeer::USR_UID, $row['USR_UID']);
+                ListParticipatedLastPeer::doDelete($oCriteria);
+
+                $listParticipatedLast = new ListParticipatedLast();
+                $listParticipatedLast->create($row);
+                $listParticipatedLast = new ListParticipatedLast();
+                $listParticipatedLast->refresh($row);
+            }
               
         }
+
         CLI::logging("> Completed table LIST_INBOX\n");
         //With this List is populated the LIST_PARTICIPATED_HISTORY and LIST_PARTICIPATED_LAST
         CLI::logging("> Completed table LIST_PARTICIPATED_HISTORY\n");
@@ -1922,7 +1931,7 @@ class workspaceTools
         $myiCriteria = $appCache->getSelAllColumns();
         $myiCriteria->add(AppCacheViewPeer::DEL_INDEX, "1", CRITERIA::EQUAL);
         $rsCriteria = AppCacheViewPeer::doSelectRS($myiCriteria);
-        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);        
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         //Insert new data LIST_MY_INBOX
         while ($rsCriteria->next()) {
               $row = $rsCriteria->getRow();             
@@ -1939,7 +1948,13 @@ class workspaceTools
         $delaycriteria->addSelectColumn(AppDelayPeer::PRO_UID);
         $delaycriteria->addSelectColumn(AppDelayPeer::APP_DEL_INDEX);
         $delaycriteria->addSelectColumn(AppCacheViewPeer::APP_NUMBER);
-        $delaycriteria->addJoin( AppCacheViewPeer::APP_UID, AppDelayPeer::APP_UID, Criteria::INNER_JOIN );
+        $delaycriteria->addSelectColumn(AppCacheViewPeer::USR_UID);
+        $delaycriteria->addSelectColumn(AppCacheViewPeer::APP_STATUS);
+        $delaycriteria->addSelectColumn(AppCacheViewPeer::TAS_UID);
+
+        $delaycriteria->addJoin( AppCacheViewPeer::APP_UID, AppDelayPeer::APP_UID . ' AND ' . AppCacheViewPeer::DEL_INDEX . ' = ' . AppDelayPeer::APP_DEL_INDEX, Criteria::INNER_JOIN );
+        $delaycriteria->add(AppDelayPeer::APP_DISABLE_ACTION_USER, "0", CRITERIA::EQUAL);
+        $delaycriteria->add(AppDelayPeer::APP_TYPE, "PAUSE", CRITERIA::EQUAL);
         $rsCriteria = AppDelayPeer::doSelectRS($delaycriteria);
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         //Insert new data LIST_PAUSED
@@ -1948,7 +1963,6 @@ class workspaceTools
               $data = $row;
               $data["DEL_INDEX"] = $row["APP_DEL_INDEX"];
               $listPaused = new ListPaused();
-              $listPaused->remove($data["APP_UID"],$data["DEL_INDEX"]);
               $listPaused->setDeleted(false);
               $listPaused->create($data);
         }
@@ -1965,7 +1979,7 @@ class workspaceTools
         $del->doDeleteAll(); 
         while ($rsCriteria->next()) {
             $row = $rsCriteria->getRow();
-            $listUnassigned = new ListUnassigned();            
+            $listUnassigned = new ListUnassigned();
             $unaUid = $listUnassigned->generateData($row["APP_UID"],$row["PREVIOUS_USR_UID"]); 
         }        
         CLI::logging("> Completed table LIST_UNASSIGNED\n");
@@ -2005,7 +2019,8 @@ class workspaceTools
         }
         $this->listFirstExecution('insert');
         return true;
-    } 
+    }
+
     /**
      * This function checks if List tables are going to migrated 
      *
