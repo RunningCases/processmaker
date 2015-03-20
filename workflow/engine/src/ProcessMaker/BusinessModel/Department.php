@@ -342,6 +342,10 @@ class Department
                 $node['DEP_MANAGER_LASTNAME'] = '';
             }
 
+            $criteria = new \Criteria();
+            $criteria->add(UsersPeer::DEP_UID, $dep_uid, \Criteria::EQUAL );
+            $node['DEP_MEMBERS'] = UsersPeer::doCount($criteria);
+
             $criteriaCount = new \Criteria( 'workflow' );
             $criteriaCount->clearSelectColumns();
             $criteriaCount->addSelectColumn( 'COUNT(*)' );
