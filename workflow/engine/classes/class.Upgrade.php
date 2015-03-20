@@ -33,6 +33,8 @@ class Upgrade
 
     public function install()
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
         //echo "Starting core installation...\n";
         $start = microtime(1);
         $filename = $this->addon->getDownloadFilename();
