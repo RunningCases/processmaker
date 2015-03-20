@@ -288,7 +288,7 @@ class WebEntryEvent
                     throw new \Exception(\G::LoadTranslation("ID_EVENT_NOT_EXIST", array($this->arrayFieldNameForException["eventUid"], $arrayData["EVN_UID"])));
                 }
 
-                if ($obj->getEvnType() != "START") {
+                if (($obj->getEvnType() != "START") || ($obj->getEvnType() == "START" && $obj->getEvnMarker() != "EMPTY")) {
                     throw new \Exception(\G::LoadTranslation("ID_EVENT_NOT_IS_START_EVENT", array($this->arrayFieldNameForException["eventUid"], $arrayData["EVN_UID"])));
                 }
             }
