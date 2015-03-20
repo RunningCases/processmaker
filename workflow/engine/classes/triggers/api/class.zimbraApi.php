@@ -803,6 +803,9 @@ class Zimbra
     protected function message($message)
     {
         if ($this->debug) {
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
+            $message = $filter->xssFilterHard($message);
             echo $message;
         }
     }
@@ -823,6 +826,9 @@ class Zimbra
      */
     protected function soapRequest($body, $header = false, $connecting = false)
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        
         if (!$connecting && !$this->_connected) {
             throw new Exception('zimbra.class: soapRequest called without a connection to Zimbra server');
         }
@@ -842,7 +848,9 @@ class Zimbra
 
         curl_setopt($this->_curl, CURLOPT_POSTFIELDS, $soap_message);
 
-        if (!($response = curl_exec($this->_curl))) {
+        $this->_curl = $filter->xssFilterHard($this->_curl,"url");
+        $response = curl_exec($this->_curl);
+        if (!$response) {
             $this->error = 'ERROR: curl_exec - (' . curl_errno($this->_curl) . ') ' . curl_error($this->_curl);
             return false;
         } elseif (strpos($response, '<soap:Body><soap:Fault>') !== false) {
