@@ -143,9 +143,9 @@ class ListParticipatedLast extends BaseListParticipatedLast
      * @throws type
      *
      */
-    public function remove ($app_uid, $usr_uid)
+    public function remove ($app_uid, $usr_uid, $del_index)
     {
-        $existField = ListParticipatedLastPeer::retrieveByPK($app_uid, $usr_uid);
+        $existField = ListParticipatedLastPeer::retrieveByPK($app_uid, $usr_uid, $del_index);
         if (! is_null( $existField )) {
             $users = new Users();
             $users->refreshTotal($usr_uid, 'removed', 'participated');

@@ -2285,7 +2285,7 @@ CREATE TABLE `LIST_PARTICIPATED_LAST`
 	`DEL_DUE_DATE` DATETIME,
 	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
 	`DEL_THREAD_STATUS` VARCHAR(32) default 'OPEN' NOT NULL,
-	PRIMARY KEY (`APP_UID`,`USR_UID`)
+	PRIMARY KEY (`APP_UID`,`USR_UID`,`DEL_INDEX`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Participated last list';
 #-----------------------------------------------------------------------------
 #-- LIST_COMPLETED

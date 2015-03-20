@@ -744,6 +744,7 @@ function xgetFieldsFromPMTable($tabUid)
     $oCriteria->addSelectColumn ( FieldsPeer::FLD_INDEX );
     $oCriteria->add (FieldsPeer::ADD_TAB_UID, $tabUid , CRITERIA::EQUAL );
     $oCriteria->add (FieldsPeer::FLD_NAME, 'APP_UID' , CRITERIA::NOT_EQUAL );
+    $oCriteria->addAnd (FieldsPeer::FLD_NAME, 'APP_NUMBER' , CRITERIA::NOT_EQUAL );
     $oCriteria->addDescendingOrderByColumn('FLD_INDEX');
     $oDataset = FieldsPeer::doSelectRS($oCriteria);
     $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);

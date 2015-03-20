@@ -1,4 +1,9 @@
 <?php
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_POST = $filter->xssFilterHard($_POST);
+$_REQUEST = $filter->xssFilterHard($_REQUEST);
+$_SESSION = $filter->xssFilterHard($_SESSION);
 if (!isset($_SESSION['USER_LOGGED'])) {
     $res = new stdclass();
     $res->message = G::LoadTranslation('ID_LOGIN_AGAIN');
@@ -215,6 +220,11 @@ function lookinginforContentProcess ($sproUid)
 function startCase ()
 {
     G::LoadClass( 'case' );
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
+    $_POST = $filter->xssFilterHard($_POST);
+    $_REQUEST = $filter->xssFilterHard($_REQUEST);
+    $_SESSION = $filter->xssFilterHard($_SESSION);
 
     /* GET , POST & $_SESSION Vars */
     /* unset any variable, because we are starting a new case */
@@ -241,6 +251,7 @@ function startCase ()
         lookinginforContentProcess( $_POST['processId'] );
 
         $aData = $oCase->startCase( $_REQUEST['taskId'], $_SESSION['USER_LOGGED'] );
+        $aData = $filter->xssFilterHard($aData);
 
         $_SESSION['APPLICATION'] = $aData['APPLICATION'];
         $_SESSION['INDEX'] = $aData['INDEX'];

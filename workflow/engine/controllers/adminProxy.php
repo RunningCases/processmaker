@@ -1009,6 +1009,12 @@ class adminProxy extends HttpProxyController
     public function uploadImage()
     {
         //!dataSystem
+        
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $_SERVER["REQUEST_URI"] = $filter->xssFilterHard($_SERVER["REQUEST_URI"]);
+        $_FILES = $filter->xssFilterHard($_FILES);
+        
         $ainfoSite = explode("/", $_SERVER["REQUEST_URI"]);
         $dir       = PATH_DATA."sites".PATH_SEP.str_replace("sys","",$ainfoSite[1]).PATH_SEP."files/logos";
         global $_FILES;
@@ -1035,8 +1041,10 @@ class adminProxy extends HttpProxyController
 
         $uploaded = 0;
         $failed   = 0;
+        
+        $files_img_type = $filter->xssFilterHard($_FILES['img']['type']);
 
-        if (in_array($_FILES['img']['type'], $allowedType)) {
+        if (in_array($files_img_type, $allowedType)) {
              // max upload file is 500 KB
             if ($_FILES['img']['size'] <= 500000) {
                 $formf     = $_FILES['img'];
@@ -1055,7 +1063,7 @@ class adminProxy extends HttpProxyController
                         $arrayInfo = getimagesize($dir . '/' . 'tmp' . $fileName);
                         $typeMime  = $arrayInfo[2];
                     }
-                    if ($typeMime == $allowedTypeArray['index' . base64_encode($_FILES['img']['type'])]) {
+                    if ($typeMime == $allowedTypeArray['index' . base64_encode($files_img_type)]) {
                         $error = false;
                         try {
                             list($imageWidth, $imageHeight, $imageType) = @getimagesize($dir . '/' . 'tmp' . $fileName);
@@ -1075,10 +1083,10 @@ class adminProxy extends HttpProxyController
             } else {
                 $failed = "2";
             }
-        } elseif ($_FILES['img']['type'] != '') {
+        } elseif ($files_img_type != '') {
             $failed = "1";
         }
-        echo '{success: true, failed: ' . $failed . ', uploaded: ' . $uploaded . ', type: "' . $_FILES['img']['type'] . '"}';
+        echo '{success: true, failed: ' . $failed . ', uploaded: ' . $uploaded . ', type: "' . $files_img_type . '"}';
         exit();
     }
 
