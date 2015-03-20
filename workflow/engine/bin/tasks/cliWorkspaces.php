@@ -228,6 +228,10 @@ function run_info($args, $opts) {
 }
 
 function run_workspace_upgrade($args, $opts) {
+  G::LoadSystem('inputfilter');
+  $filter = new InputFilter();
+  $opts = $filter->xssFilterHard($opts);
+  $args = $filter->xssFilterHard($args);
   $workspaces = get_workspaces_from_args($args);
   $first = true;
   $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
@@ -242,6 +246,10 @@ function run_workspace_upgrade($args, $opts) {
 }
 
 function run_translation_upgrade($args, $opts) {
+  G::LoadSystem('inputfilter');
+  $filter = new InputFilter();
+  $opts = $filter->xssFilterHard($opts);
+  $args = $filter->xssFilterHard($args);
   $workspaces = get_workspaces_from_args($args);
   $first = true;
   foreach ($workspaces as $workspace) {
@@ -256,6 +264,10 @@ function run_translation_upgrade($args, $opts) {
 }
 
 function run_cacheview_upgrade($args, $opts) {
+  G::LoadSystem('inputfilter');
+  $filter = new InputFilter();
+  $opts = $filter->xssFilterHard($opts);
+  $args = $filter->xssFilterHard($args);
   $workspaces = get_workspaces_from_args($args);
   $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
   foreach ($workspaces as $workspace) {
@@ -304,6 +316,10 @@ function run_migrate_new_cases_lists($args, $opts) {
 }
 
 function database_upgrade($command, $args) {
+  G::LoadSystem('inputfilter');
+  $filter = new InputFilter();
+  $command = $filter->xssFilterHard($command);
+  $args = $filter->xssFilterHard($args);
   $workspaces = get_workspaces_from_args($args);
   $checkOnly = (strcmp($command, "check") == 0);
   foreach ($workspaces as $workspace) {
@@ -587,6 +603,10 @@ function runStructureDirectories($command, $args) {
 
 function run_database_generate_self_service_by_value($args, $opts)
 {
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
+    $opts = $filter->xssFilterHard($opts);
+    $args = $filter->xssFilterHard($args);
     try {
         $arrayWorkspace = get_workspaces_from_args($args);
 
