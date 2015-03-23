@@ -2,46 +2,49 @@
 
 require_once 'propel/util/BasePeer.php';
 // The object class -- needed for instanceof checks in this class.
-// actual class may be a subclass -- as returned by MessageEventTaskRelationPeer::getOMClass()
-include_once 'classes/model/MessageEventTaskRelation.php';
+// actual class may be a subclass -- as returned by ElementTaskRelationPeer::getOMClass()
+include_once 'classes/model/ElementTaskRelation.php';
 
 /**
- * Base static class for performing query and update operations on the 'MESSAGE_EVENT_TASK_RELATION' table.
+ * Base static class for performing query and update operations on the 'ELEMENT_TASK_RELATION' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseMessageEventTaskRelationPeer
+abstract class BaseElementTaskRelationPeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'workflow';
 
     /** the table name for this class */
-    const TABLE_NAME = 'MESSAGE_EVENT_TASK_RELATION';
+    const TABLE_NAME = 'ELEMENT_TASK_RELATION';
 
     /** A class that can be returned by this peer. */
-    const CLASS_DEFAULT = 'classes.model.MessageEventTaskRelation';
+    const CLASS_DEFAULT = 'classes.model.ElementTaskRelation';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 4;
+    const NUM_COLUMNS = 5;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
 
-    /** the column name for the MSGETR_UID field */
-    const MSGETR_UID = 'MESSAGE_EVENT_TASK_RELATION.MSGETR_UID';
+    /** the column name for the ETR_UID field */
+    const ETR_UID = 'ELEMENT_TASK_RELATION.ETR_UID';
 
     /** the column name for the PRJ_UID field */
-    const PRJ_UID = 'MESSAGE_EVENT_TASK_RELATION.PRJ_UID';
+    const PRJ_UID = 'ELEMENT_TASK_RELATION.PRJ_UID';
 
-    /** the column name for the EVN_UID field */
-    const EVN_UID = 'MESSAGE_EVENT_TASK_RELATION.EVN_UID';
+    /** the column name for the ELEMENT_UID field */
+    const ELEMENT_UID = 'ELEMENT_TASK_RELATION.ELEMENT_UID';
+
+    /** the column name for the ELEMENT_TYPE field */
+    const ELEMENT_TYPE = 'ELEMENT_TASK_RELATION.ELEMENT_TYPE';
 
     /** the column name for the TAS_UID field */
-    const TAS_UID = 'MESSAGE_EVENT_TASK_RELATION.TAS_UID';
+    const TAS_UID = 'ELEMENT_TASK_RELATION.TAS_UID';
 
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
@@ -54,10 +57,10 @@ abstract class BaseMessageEventTaskRelationPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('MsgetrUid', 'PrjUid', 'EvnUid', 'TasUid', ),
-        BasePeer::TYPE_COLNAME => array (MessageEventTaskRelationPeer::MSGETR_UID, MessageEventTaskRelationPeer::PRJ_UID, MessageEventTaskRelationPeer::EVN_UID, MessageEventTaskRelationPeer::TAS_UID, ),
-        BasePeer::TYPE_FIELDNAME => array ('MSGETR_UID', 'PRJ_UID', 'EVN_UID', 'TAS_UID', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+        BasePeer::TYPE_PHPNAME => array ('EtrUid', 'PrjUid', 'ElementUid', 'ElementType', 'TasUid', ),
+        BasePeer::TYPE_COLNAME => array (ElementTaskRelationPeer::ETR_UID, ElementTaskRelationPeer::PRJ_UID, ElementTaskRelationPeer::ELEMENT_UID, ElementTaskRelationPeer::ELEMENT_TYPE, ElementTaskRelationPeer::TAS_UID, ),
+        BasePeer::TYPE_FIELDNAME => array ('ETR_UID', 'PRJ_UID', 'ELEMENT_UID', 'ELEMENT_TYPE', 'TAS_UID', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
     /**
@@ -67,10 +70,10 @@ abstract class BaseMessageEventTaskRelationPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('MsgetrUid' => 0, 'PrjUid' => 1, 'EvnUid' => 2, 'TasUid' => 3, ),
-        BasePeer::TYPE_COLNAME => array (MessageEventTaskRelationPeer::MSGETR_UID => 0, MessageEventTaskRelationPeer::PRJ_UID => 1, MessageEventTaskRelationPeer::EVN_UID => 2, MessageEventTaskRelationPeer::TAS_UID => 3, ),
-        BasePeer::TYPE_FIELDNAME => array ('MSGETR_UID' => 0, 'PRJ_UID' => 1, 'EVN_UID' => 2, 'TAS_UID' => 3, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+        BasePeer::TYPE_PHPNAME => array ('EtrUid' => 0, 'PrjUid' => 1, 'ElementUid' => 2, 'ElementType' => 3, 'TasUid' => 4, ),
+        BasePeer::TYPE_COLNAME => array (ElementTaskRelationPeer::ETR_UID => 0, ElementTaskRelationPeer::PRJ_UID => 1, ElementTaskRelationPeer::ELEMENT_UID => 2, ElementTaskRelationPeer::ELEMENT_TYPE => 3, ElementTaskRelationPeer::TAS_UID => 4, ),
+        BasePeer::TYPE_FIELDNAME => array ('ETR_UID' => 0, 'PRJ_UID' => 1, 'ELEMENT_UID' => 2, 'ELEMENT_TYPE' => 3, 'TAS_UID' => 4, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
     );
 
     /**
@@ -80,8 +83,8 @@ abstract class BaseMessageEventTaskRelationPeer
      */
     public static function getMapBuilder()
     {
-        include_once 'classes/model/map/MessageEventTaskRelationMapBuilder.php';
-        return BasePeer::getMapBuilder('classes.model.map.MessageEventTaskRelationMapBuilder');
+        include_once 'classes/model/map/ElementTaskRelationMapBuilder.php';
+        return BasePeer::getMapBuilder('classes.model.map.ElementTaskRelationMapBuilder');
     }
     /**
      * Gets a map (hash) of PHP names to DB column names.
@@ -94,7 +97,7 @@ abstract class BaseMessageEventTaskRelationPeer
     public static function getPhpNameMap()
     {
         if (self::$phpNameMap === null) {
-            $map = MessageEventTaskRelationPeer::getTableMap();
+            $map = ElementTaskRelationPeer::getTableMap();
             $columns = $map->getColumns();
             $nameMap = array();
             foreach ($columns as $column) {
@@ -149,12 +152,12 @@ abstract class BaseMessageEventTaskRelationPeer
      *      $c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. MessageEventTaskRelationPeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. ElementTaskRelationPeer::COLUMN_NAME).
      * @return     string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(MessageEventTaskRelationPeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(ElementTaskRelationPeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -171,18 +174,20 @@ abstract class BaseMessageEventTaskRelationPeer
     public static function addSelectColumns(Criteria $criteria)
     {
 
-        $criteria->addSelectColumn(MessageEventTaskRelationPeer::MSGETR_UID);
+        $criteria->addSelectColumn(ElementTaskRelationPeer::ETR_UID);
 
-        $criteria->addSelectColumn(MessageEventTaskRelationPeer::PRJ_UID);
+        $criteria->addSelectColumn(ElementTaskRelationPeer::PRJ_UID);
 
-        $criteria->addSelectColumn(MessageEventTaskRelationPeer::EVN_UID);
+        $criteria->addSelectColumn(ElementTaskRelationPeer::ELEMENT_UID);
 
-        $criteria->addSelectColumn(MessageEventTaskRelationPeer::TAS_UID);
+        $criteria->addSelectColumn(ElementTaskRelationPeer::ELEMENT_TYPE);
+
+        $criteria->addSelectColumn(ElementTaskRelationPeer::TAS_UID);
 
     }
 
-    const COUNT = 'COUNT(MESSAGE_EVENT_TASK_RELATION.MSGETR_UID)';
-    const COUNT_DISTINCT = 'COUNT(DISTINCT MESSAGE_EVENT_TASK_RELATION.MSGETR_UID)';
+    const COUNT = 'COUNT(ELEMENT_TASK_RELATION.ETR_UID)';
+    const COUNT_DISTINCT = 'COUNT(DISTINCT ELEMENT_TASK_RELATION.ETR_UID)';
 
     /**
      * Returns the number of rows matching criteria.
@@ -200,9 +205,9 @@ abstract class BaseMessageEventTaskRelationPeer
         // clear out anything that might confuse the ORDER BY clause
         $criteria->clearSelectColumns()->clearOrderByColumns();
         if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->addSelectColumn(MessageEventTaskRelationPeer::COUNT_DISTINCT);
+            $criteria->addSelectColumn(ElementTaskRelationPeer::COUNT_DISTINCT);
         } else {
-            $criteria->addSelectColumn(MessageEventTaskRelationPeer::COUNT);
+            $criteria->addSelectColumn(ElementTaskRelationPeer::COUNT);
         }
 
         // just in case we're grouping: add those columns to the select statement
@@ -210,7 +215,7 @@ abstract class BaseMessageEventTaskRelationPeer
             $criteria->addSelectColumn($column);
         }
 
-        $rs = MessageEventTaskRelationPeer::doSelectRS($criteria, $con);
+        $rs = ElementTaskRelationPeer::doSelectRS($criteria, $con);
         if ($rs->next()) {
             return $rs->getInt(1);
         } else {
@@ -223,7 +228,7 @@ abstract class BaseMessageEventTaskRelationPeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      Connection $con
-     * @return     MessageEventTaskRelation
+     * @return     ElementTaskRelation
      * @throws     PropelException Any exceptions caught during processing will be
      *       rethrown wrapped into a PropelException.
      */
@@ -231,7 +236,7 @@ abstract class BaseMessageEventTaskRelationPeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = MessageEventTaskRelationPeer::doSelect($critcopy, $con);
+        $objects = ElementTaskRelationPeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -248,7 +253,7 @@ abstract class BaseMessageEventTaskRelationPeer
      */
     public static function doSelect(Criteria $criteria, $con = null)
     {
-        return MessageEventTaskRelationPeer::populateObjects(MessageEventTaskRelationPeer::doSelectRS($criteria, $con));
+        return ElementTaskRelationPeer::populateObjects(ElementTaskRelationPeer::doSelectRS($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect()
@@ -272,7 +277,7 @@ abstract class BaseMessageEventTaskRelationPeer
 
         if (!$criteria->getSelectColumns()) {
             $criteria = clone $criteria;
-            MessageEventTaskRelationPeer::addSelectColumns($criteria);
+            ElementTaskRelationPeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
@@ -294,7 +299,7 @@ abstract class BaseMessageEventTaskRelationPeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = MessageEventTaskRelationPeer::getOMClass();
+        $cls = ElementTaskRelationPeer::getOMClass();
         $cls = Propel::import($cls);
         // populate the object(s)
         while ($rs->next()) {
@@ -329,13 +334,13 @@ abstract class BaseMessageEventTaskRelationPeer
      */
     public static function getOMClass()
     {
-        return MessageEventTaskRelationPeer::CLASS_DEFAULT;
+        return ElementTaskRelationPeer::CLASS_DEFAULT;
     }
 
     /**
-     * Method perform an INSERT on the database, given a MessageEventTaskRelation or Criteria object.
+     * Method perform an INSERT on the database, given a ElementTaskRelation or Criteria object.
      *
-     * @param      mixed $values Criteria or MessageEventTaskRelation object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or ElementTaskRelation object containing data that is used to create the INSERT statement.
      * @param      Connection $con the connection to use
      * @return     mixed The new primary key.
      * @throws     PropelException Any exceptions caught during processing will be
@@ -350,7 +355,7 @@ abstract class BaseMessageEventTaskRelationPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from MessageEventTaskRelation object
+            $criteria = $values->buildCriteria(); // build Criteria from ElementTaskRelation object
         }
 
 
@@ -372,9 +377,9 @@ abstract class BaseMessageEventTaskRelationPeer
     }
 
     /**
-     * Method perform an UPDATE on the database, given a MessageEventTaskRelation or Criteria object.
+     * Method perform an UPDATE on the database, given a ElementTaskRelation or Criteria object.
      *
-     * @param      mixed $values Criteria or MessageEventTaskRelation object containing data create the UPDATE statement.
+     * @param      mixed $values Criteria or ElementTaskRelation object containing data create the UPDATE statement.
      * @param      Connection $con The connection to use (specify Connection exert more control over transactions).
      * @return     int The number of affected rows (if supported by underlying database driver).
      * @throws     PropelException Any exceptions caught during processing will be
@@ -391,8 +396,8 @@ abstract class BaseMessageEventTaskRelationPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(MessageEventTaskRelationPeer::MSGETR_UID);
-            $selectCriteria->add(MessageEventTaskRelationPeer::MSGETR_UID, $criteria->remove(MessageEventTaskRelationPeer::MSGETR_UID), $comparison);
+            $comparison = $criteria->getComparison(ElementTaskRelationPeer::ETR_UID);
+            $selectCriteria->add(ElementTaskRelationPeer::ETR_UID, $criteria->remove(ElementTaskRelationPeer::ETR_UID), $comparison);
 
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
@@ -406,7 +411,7 @@ abstract class BaseMessageEventTaskRelationPeer
     }
 
     /**
-     * Method to DELETE all rows from the MESSAGE_EVENT_TASK_RELATION table.
+     * Method to DELETE all rows from the ELEMENT_TASK_RELATION table.
      *
      * @return     int The number of affected rows (if supported by underlying database driver).
      */
@@ -420,7 +425,7 @@ abstract class BaseMessageEventTaskRelationPeer
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->begin();
-            $affectedRows += BasePeer::doDeleteAll(MessageEventTaskRelationPeer::TABLE_NAME, $con);
+            $affectedRows += BasePeer::doDeleteAll(ElementTaskRelationPeer::TABLE_NAME, $con);
             $con->commit();
             return $affectedRows;
         } catch (PropelException $e) {
@@ -430,9 +435,9 @@ abstract class BaseMessageEventTaskRelationPeer
     }
 
     /**
-     * Method perform a DELETE on the database, given a MessageEventTaskRelation or Criteria object OR a primary key value.
+     * Method perform a DELETE on the database, given a ElementTaskRelation or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or MessageEventTaskRelation object or primary key or array of primary keys
+     * @param      mixed $values Criteria or ElementTaskRelation object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      Connection $con the connection to use
      * @return     int  The number of affected rows (if supported by underlying database driver).
@@ -444,18 +449,18 @@ abstract class BaseMessageEventTaskRelationPeer
     public static function doDelete($values, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(MessageEventTaskRelationPeer::DATABASE_NAME);
+            $con = Propel::getConnection(ElementTaskRelationPeer::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
-        } elseif ($values instanceof MessageEventTaskRelation) {
+        } elseif ($values instanceof ElementTaskRelation) {
 
             $criteria = $values->buildPkeyCriteria();
         } else {
             // it must be the primary key
             $criteria = new Criteria(self::DATABASE_NAME);
-            $criteria->add(MessageEventTaskRelationPeer::MSGETR_UID, (array) $values, Criteria::IN);
+            $criteria->add(ElementTaskRelationPeer::ETR_UID, (array) $values, Criteria::IN);
         }
 
         // Set the correct dbName
@@ -478,24 +483,24 @@ abstract class BaseMessageEventTaskRelationPeer
     }
 
     /**
-     * Validates all modified columns of given MessageEventTaskRelation object.
+     * Validates all modified columns of given ElementTaskRelation object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      MessageEventTaskRelation $obj The object to validate.
+     * @param      ElementTaskRelation $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
      */
-    public static function doValidate(MessageEventTaskRelation $obj, $cols = null)
+    public static function doValidate(ElementTaskRelation $obj, $cols = null)
     {
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(MessageEventTaskRelationPeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(MessageEventTaskRelationPeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(ElementTaskRelationPeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(ElementTaskRelationPeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -511,7 +516,7 @@ abstract class BaseMessageEventTaskRelationPeer
 
         }
 
-        return BasePeer::doValidate(MessageEventTaskRelationPeer::DATABASE_NAME, MessageEventTaskRelationPeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(ElementTaskRelationPeer::DATABASE_NAME, ElementTaskRelationPeer::TABLE_NAME, $columns);
     }
 
     /**
@@ -519,7 +524,7 @@ abstract class BaseMessageEventTaskRelationPeer
      *
      * @param      mixed $pk the primary key.
      * @param      Connection $con the connection to use
-     * @return     MessageEventTaskRelation
+     * @return     ElementTaskRelation
      */
     public static function retrieveByPK($pk, $con = null)
     {
@@ -527,12 +532,12 @@ abstract class BaseMessageEventTaskRelationPeer
             $con = Propel::getConnection(self::DATABASE_NAME);
         }
 
-        $criteria = new Criteria(MessageEventTaskRelationPeer::DATABASE_NAME);
+        $criteria = new Criteria(ElementTaskRelationPeer::DATABASE_NAME);
 
-        $criteria->add(MessageEventTaskRelationPeer::MSGETR_UID, $pk);
+        $criteria->add(ElementTaskRelationPeer::ETR_UID, $pk);
 
 
-        $v = MessageEventTaskRelationPeer::doSelect($criteria, $con);
+        $v = ElementTaskRelationPeer::doSelect($criteria, $con);
 
         return !empty($v) > 0 ? $v[0] : null;
     }
@@ -556,8 +561,8 @@ abstract class BaseMessageEventTaskRelationPeer
             $objs = array();
         } else {
             $criteria = new Criteria();
-            $criteria->add(MessageEventTaskRelationPeer::MSGETR_UID, $pks, Criteria::IN);
-            $objs = MessageEventTaskRelationPeer::doSelect($criteria, $con);
+            $criteria->add(ElementTaskRelationPeer::ETR_UID, $pks, Criteria::IN);
+            $objs = ElementTaskRelationPeer::doSelect($criteria, $con);
         }
         return $objs;
     }
@@ -569,14 +574,14 @@ if (Propel::isInit()) {
     // the MapBuilder classes register themselves with Propel during initialization
     // so we need to load them here.
     try {
-        BaseMessageEventTaskRelationPeer::getMapBuilder();
+        BaseElementTaskRelationPeer::getMapBuilder();
     } catch (Exception $e) {
         Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
     }
 } else {
     // even if Propel is not yet initialized, the map builder class can be registered
     // now and then it will be loaded when Propel initializes.
-    require_once 'classes/model/map/MessageEventTaskRelationMapBuilder.php';
-    Propel::registerMapBuilder('classes.model.map.MessageEventTaskRelationMapBuilder');
+    require_once 'classes/model/map/ElementTaskRelationMapBuilder.php';
+    Propel::registerMapBuilder('classes.model.map.ElementTaskRelationMapBuilder');
 }
 

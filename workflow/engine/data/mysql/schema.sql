@@ -2562,21 +2562,6 @@ CREATE TABLE `MESSAGE_EVENT_RELATION`
 	PRIMARY KEY (`MSGER_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
-#-- MESSAGE_EVENT_TASK_RELATION
-#-----------------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `MESSAGE_EVENT_TASK_RELATION`;
-
-
-CREATE TABLE `MESSAGE_EVENT_TASK_RELATION`
-(
-	`MSGETR_UID` VARCHAR(32)  NOT NULL,
-	`PRJ_UID` VARCHAR(32)  NOT NULL,
-	`EVN_UID` VARCHAR(32)  NOT NULL,
-	`TAS_UID` VARCHAR(32)  NOT NULL,
-	PRIMARY KEY (`MSGETR_UID`)
-)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
-#-----------------------------------------------------------------------------
 #-- MESSAGE_APPLICATION
 #-----------------------------------------------------------------------------
 
@@ -2596,6 +2581,22 @@ CREATE TABLE `MESSAGE_APPLICATION`
 	`MSGAPP_CATCH_DATE` DATETIME,
 	`MSGAPP_STATUS` VARCHAR(25) default 'UNREAD' NOT NULL,
 	PRIMARY KEY (`MSGAPP_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
+#-----------------------------------------------------------------------------
+#-- ELEMENT_TASK_RELATION
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ELEMENT_TASK_RELATION`;
+
+
+CREATE TABLE `ELEMENT_TASK_RELATION`
+(
+	`ETR_UID` VARCHAR(32)  NOT NULL,
+	`PRJ_UID` VARCHAR(32)  NOT NULL,
+	`ELEMENT_UID` VARCHAR(32)  NOT NULL,
+	`ELEMENT_TYPE` VARCHAR(50) default '' NOT NULL,
+	`TAS_UID` VARCHAR(32)  NOT NULL,
+	PRIMARY KEY (`ETR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- ABE_CONFIGURATION

@@ -61,7 +61,7 @@ abstract class BaseMessageApplication extends BaseObject implements Persistent
      * The value for the msgapp_variables field.
      * @var        string
      */
-    protected $msgapp_variables = '';
+    protected $msgapp_variables;
 
     /**
      * The value for the msgapp_correlation field.
@@ -378,7 +378,7 @@ abstract class BaseMessageApplication extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->msgapp_variables !== $v || $v === '') {
+        if ($this->msgapp_variables !== $v) {
             $this->msgapp_variables = $v;
             $this->modifiedColumns[] = MessageApplicationPeer::MSGAPP_VARIABLES;
         }

@@ -828,9 +828,9 @@ class Workflow extends Handler
             $messageEventRelation->deleteWhere(array(\MessageEventRelationPeer::PRJ_UID => $sProcessUID));
 
             //Delete Message-Event-Task-Relation
-            $messageEventTaskRelation = new \ProcessMaker\BusinessModel\MessageEventTaskRelation();
+            $elementTaskRelation = new \ProcessMaker\BusinessModel\ElementTaskRelation();
 
-            $messageEventTaskRelation->deleteWhere(array(\MessageEventTaskRelationPeer::PRJ_UID => $sProcessUID));
+            $elementTaskRelation->deleteWhere(array(\ElementTaskRelationPeer::PRJ_UID => $sProcessUID));
 
             //Delete Message-Event-Definition
             $messageEventDefinition = new \ProcessMaker\BusinessModel\MessageEventDefinition();
@@ -1280,34 +1280,6 @@ class Workflow extends Handler
 
             //Return
             return array($arrayWorkflowData, $arrayWorkflowFile);
-        } catch (\Exception $e) {
-            self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
-
-            throw $e;
-        }
-    }
-
-    public function deleteTaskByArrayType($processUid, array $arrayTaskType)
-    {
-        try {
-            $task = new \Tasks();
-
-            $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\TaskPeer::TAS_UID);
-            $criteria->add(\TaskPeer::PRO_UID, $processUid, \Criteria::EQUAL);
-            $criteria->add(\TaskPeer::TAS_TYPE, $arrayTaskType, \Criteria::IN);
-
-            $rsCriteria = \TaskPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            while ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
-
-                $taskUid = $row["TAS_UID"];
-
-                $task->deleteTask($taskUid);
-            }
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
 

@@ -4419,25 +4419,6 @@
         <column name="EVN_UID_CATCH" type="VARCHAR" size="32" required="true" />
     </table>
 
-    <table name="MESSAGE_EVENT_TASK_RELATION">
-        <vendor type="mysql">
-            <parameter name="Name" value="MESSAGE_EVENT_TASK_RELATION" />
-            <parameter name="Engine" value="InnoDB" />
-            <parameter name="Version" value="10" />
-            <parameter name="Row_format" value="Dynamic" />
-            <parameter name="Data_free" value="0" />
-            <parameter name="Auto_increment" value="" />
-            <parameter name="Check_time" value="" />
-            <parameter name="Collation" value="utf8_general_ci" />
-            <parameter name="Checksum" value="" />
-            <parameter name="Create_options" value="" />
-        </vendor>
-        <column name="MSGETR_UID" type="VARCHAR" size="32" required="true" primaryKey="true" />
-        <column name="PRJ_UID"    type="VARCHAR" size="32" required="true" />
-        <column name="EVN_UID"    type="VARCHAR" size="32" required="true" />
-        <column name="TAS_UID"    type="VARCHAR" size="32" required="true" />
-    </table>
-
     <table name="MESSAGE_APPLICATION">
         <vendor type="mysql">
             <parameter name="Name" value="MESSAGE_APPLICATION" />
@@ -4464,6 +4445,25 @@
         <validator column="MSGAPP_STATUS">
             <rule name="validValues" value="READ|UNREAD" message="Please enter a valid value for MSGAPP_STATUS" />
         </validator>
+    </table>
+    <table name="ELEMENT_TASK_RELATION">
+        <vendor type="mysql">
+            <parameter name="Name" value="ELEMENT_TASK_RELATION" />
+            <parameter name="Engine" value="InnoDB" />
+            <parameter name="Version" value="10" />
+            <parameter name="Row_format" value="Dynamic" />
+            <parameter name="Data_free" value="0" />
+            <parameter name="Auto_increment" value="" />
+            <parameter name="Check_time" value="" />
+            <parameter name="Collation" value="utf8_general_ci" />
+            <parameter name="Checksum" value="" />
+            <parameter name="Create_options" value="" />
+        </vendor>
+        <column name="ETR_UID"      type="VARCHAR" size="32" required="true" primaryKey="true" />
+        <column name="PRJ_UID"      type="VARCHAR" size="32" required="true" />
+        <column name="ELEMENT_UID"  type="VARCHAR" size="32" required="true" />
+        <column name="ELEMENT_TYPE" type="VARCHAR" size="50" required="true" default=""/>
+        <column name="TAS_UID"      type="VARCHAR" size="32" required="true" />
     </table>
     <table name="ABE_CONFIGURATION">
     <vendor type="mysql">

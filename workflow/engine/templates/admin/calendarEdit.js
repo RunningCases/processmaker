@@ -770,7 +770,7 @@ Ext.onReady( function() {
                       items : [
                         {
                           xtype  : 'displayfield',
-                          width  : 192,
+                          width  : 90,
                           value  : ''
                         },
                         {
@@ -780,6 +780,7 @@ Ext.onReady( function() {
                           hideLabel   : true,
                           name        : 'label1',
                           checked     : true,
+                          style       : 'margin-left: 10px',
                           boxLabel    : _('ID_ACTIVE')
                         }
                       ]
