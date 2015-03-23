@@ -44,7 +44,9 @@ class Upgrade
         //printf("Time to open archive: %f\n", microtime(1) - $time);
         $time = microtime(1);
         $extractDir = dirname($this->addon->getDownloadFilename()) . "/extract";
+        $extractDir = $filter->xssFilterHard($extractDir);
         $backupDir = dirname($this->addon->getDownloadFilename()) . "/backup";
+        $backupDir = $filter->xssFilterHard($backupDir);
         if (file_exists($extractDir)) {
             G::rm_dir($extractDir);
         }
@@ -87,6 +89,7 @@ class Upgrade
         $checksumTime = 0;
         foreach ($checksums as $filename => $checksum) {
             if (is_dir("$extractDir/$filename")) {
+                $filename = $filter->xssFilterHard($filename);
                 print $filename;
                 continue;
             }
