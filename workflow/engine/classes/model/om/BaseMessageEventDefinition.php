@@ -61,7 +61,7 @@ abstract class BaseMessageEventDefinition extends BaseObject implements Persiste
      * The value for the msged_variables field.
      * @var        string
      */
-    protected $msged_variables = '';
+    protected $msged_variables;
 
     /**
      * The value for the msged_correlation field.
@@ -285,7 +285,7 @@ abstract class BaseMessageEventDefinition extends BaseObject implements Persiste
             $v = (string) $v;
         }
 
-        if ($this->msged_variables !== $v || $v === '') {
+        if ($this->msged_variables !== $v) {
             $this->msged_variables = $v;
             $this->modifiedColumns[] = MessageEventDefinitionPeer::MSGED_VARIABLES;
         }
