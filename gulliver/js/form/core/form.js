@@ -3877,6 +3877,14 @@ function getNumericValue(val, decimalSeparator)
         }
     }
 
+    //Check if number is + or -
+    var arrayMatch = [];
+
+    if (num != "" && (arrayMatch = eval("/^[^\\d\\+\\-]*(\\+|\\-)\\s*\\d+[\\d\\.\\,\\;" + ((decimalSeparator != "")? "\\" + decimalSeparator : "") + "]*[^\\d\\+\\-]*$/").exec(val))) {
+        num = arrayMatch[1] + num;
+    }
+
+    //Return
     return num;
 }
 

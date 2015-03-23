@@ -1282,6 +1282,7 @@ if(dir=="reverse"){newStr=newStr.split("").reverse().join("");}
 return newStr;}
 function getNumericValue(val,decimalSeparator)
 {var arrayNum=val.split("");var num="";for(var i=0;i<=arrayNum.length-1;i++){switch(arrayNum[i]){case"0":case"1":case"2":case"3":case"4":case"5":case"6":case"7":case"8":case"9":num=num+arrayNum[i];break;case decimalSeparator:num=num+".";break;}}
+var arrayMatch=[];if(num!=""&&(arrayMatch=eval("/^[^\\d\\+\\-]*(\\+|\\-)\\s*\\d+[\\d\\.\\,\\;"+((decimalSeparator!="")?"\\"+decimalSeparator:"")+"]*[^\\d\\+\\-]*$/").exec(val))){num=arrayMatch[1]+num;}
 return num;}
 function gridGetAllFieldAndValue(fieldId,swCurrentField)
 {var frm=G.getObject(getField(fieldId).form);var arrayAux=fieldId.split("][");var gridName=arrayAux[0];var row=parseInt(arrayAux[1]);var fieldName=arrayAux[2];var grid;var gridField="";var fieldNameAux="";var fieldValueAux="";var i1=0;var i2=0;for(i1=0;i1<=frm.aElements.length-1;i1++){if(frm.aElements[i1].name==gridName){grid=frm.aElements[i1];for(i2=0;i2<=grid.aFields.length-1;i2++){fieldNameAux=grid.aFields[i2].sFieldName;fieldValueAux=grid.getElementByName(row,fieldNameAux).value();if((swCurrentField==1||fieldNameAux!=fieldName)&&typeof fieldValueAux!="undefined"){gridField=gridField+((gridField!="")?",":"")+"\""+fieldNameAux+"\":\""+fieldValueAux+"\"";}}}}
