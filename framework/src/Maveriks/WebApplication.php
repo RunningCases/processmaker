@@ -337,7 +337,6 @@ class WebApplication
                     $this->rest->addAPIClass($namespace);
                 }
             }
-
             // adding aliases for Restler
             if (array_key_exists('alias', $config)) {
                 foreach ($config['alias'] as $alias => $aliasData) {
