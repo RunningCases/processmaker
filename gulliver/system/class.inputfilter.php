@@ -423,8 +423,8 @@ class InputFilter
         $purifier = new HTMLPurifier($config);
         if(is_array($input)) {
             if(sizeof($input)) {
-                foreach($input as $i => $val) {
-                    if(is_array($val) && sizeof($val)) {
+                foreach($input as $i => $val) { 
+                    if(is_array($val) || is_object($val) && sizeof($val)) {
                         $input[$i] = $this->xssFilterHard($val);
                     } else {
                         if(!empty($val)) {
@@ -464,6 +464,20 @@ class InputFilter
             if(!isset($input) || empty($input)) {
                 return '';
             } else {
+                if(is_object($input)) {
+                    if(sizeof($input)) {
+                        foreach($input as $j => $jsVal){
+                            if(is_array($jsVal) || is_object($jsVal) && sizeof($jsVal)) {
+                                $input->j = $this->xssFilterHard($jsVal);
+                            } else {
+                                if(!empty($jsVal)) {
+                                    $input->j = $purifier->purify($jsVal);
+                                }
+                            }
+                        }
+                    }
+                    return $input;
+                }
                 if(!is_object(G::json_decode($input))) {
                     $input = $purifier->purify($input);
                     if($type != "url" && !strpos(basename($input), "=")) {
@@ -475,7 +489,7 @@ class InputFilter
                     $jsArray = G::json_decode($input,true);
                     if(is_array($jsArray) && sizeof($jsArray)) {
                         foreach($jsArray as $j => $jsVal){
-                            if(is_array($jsVal) && sizeof($jsVal)) {
+                            if(is_array($jsVal) || is_object($jsVal) && sizeof($jsVal)) {
                                 $jsArray[$j] = $this->xssFilterHard($jsVal);
                             } else {
                                 if(!empty($jsVal)) {
