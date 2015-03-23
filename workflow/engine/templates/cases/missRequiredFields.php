@@ -30,7 +30,11 @@
  * @LastModification 30/05/2008
  */
 
-	
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_POST = $filter->xssFilterHard($_POST);
+$ID_ERROR = $filter->xssFilterHard(G::LoadTranslation('ID_ERROR'));
+$ID_REQUIRED_FIELDS_ERROR = $filter->xssFilterHard(G::LoadTranslation('ID_REQUIRED_FIELDS_ERROR'));
 
     $width_content = '500px';
 	
@@ -39,7 +43,7 @@
 	<div class="boxContentBlue">
   		<table width="100%" style="margin:0px;" cellspacing="0" cellpadding="0">
   			<tr>
-	  			<td class="userGroupTitle"><font color="red">'.G::LoadTranslation('ID_ERROR').'! </font> '.G::LoadTranslation('ID_REQUIRED_FIELDS_ERROR').'</td>
+	  			<td class="userGroupTitle"><font color="red">'.$ID_ERROR.'! </font> '.$ID_REQUIRED_FIELDS_ERROR.'</td>
   			</tr>
 		</table>
 	</div>
