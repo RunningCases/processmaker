@@ -2061,7 +2061,7 @@ function PMFNewCase ($processId, $userId, $taskId, $variables)
  *
  * @method
  *
- * 
+ *
  *
  * Assigns a user to a group. Note that the logged-in user must have the PM_USERS permission in his/her role to be able to assign a user to a group.
  *
@@ -2806,7 +2806,7 @@ function PMFAddCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendM
  * Adds a filename and file path to an associative array of files which can be passed to the PMFSendMessage() to send emails with attachments. It renames files with the same filename so existing files will not be replaced in the array.
  *
  * @name PMFAddAttachmentToArray
- * @label Add File to Array 
+ * @label Add File to Array
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFAddAttachmentToArray.28.29
  *
  * @param array | $arrayData | Array of files | Associative array where the index of each element is its new filename and its value is the path to the file or its web address.
@@ -2859,12 +2859,13 @@ function PMFAddAttachmentToArray($arrayData, $index, $value, $suffix = " Copy({i
 
 function PMFRemoveMask ($field, $separator = '.', $currency = '')
 {
-    $sep = array();
-    if ( trim($currency) != '') {
-        $sep[] = $currency;
-    }
-    $sep[] = ($separator == ',') ? '.' : ',';
-    $field = str_replace($sep, '', $field);
-    $field = trim(str_replace($separator, '.', $field));
+    $thousandSeparator = $separator;
+    $decimalSeparator = ($thousandSeparator == ".") ? "," : ".";
+
+    $field = str_replace($thousandSeparator, "", $field);
+    $field = str_replace($decimalSeparator, ".", $field);
+    $field = str_replace($currency, "", $field);
+    $field = floatval(trim($field));
+
     return $field;
 }
