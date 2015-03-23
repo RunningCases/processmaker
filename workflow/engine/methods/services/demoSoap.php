@@ -61,12 +61,17 @@ a.krumo-name {
 </style>
 <?php
 
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_POST = $filter->xssFilterHard($_POST);
+$_SESSION = $filter->xssFilterHard($_SESSION);
 if (isset( $_POST["epr"] )) {
     $_SESSION['END_POINT'] = $_POST["epr"];
 }
 $endpoint = isset( $_SESSION['END_POINT'] ) ? $_SESSION['END_POINT'] : 'http://sugar.opensource.colosa.net/soap.php';
-
+$endpoint = $filter->xssFilterHard($endpoint);
 $sessionId = isset( $_SESSION['SESSION_ID'] ) ? $_SESSION['SESSION_ID'] : '';
+$sessionId = $filter->xssFilterHard($sessionId);
 ?>
 <form method="post" action="">
 
