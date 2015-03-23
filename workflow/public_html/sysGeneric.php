@@ -627,7 +627,6 @@ if (file_exists( $sSerializedFile )) {
 } else{
     $oPluginRegistry = PMPluginRegistry::getSingleton();
 }
-
 // setup propel definitions and logging
 //changed to autoloader
 //require_once ("propel/Propel.php");

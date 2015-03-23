@@ -1,3 +1,19 @@
+<?php 
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+if(isset($_GET['srv'])) {
+    $_GET['srv'] = $filter->xssFilterHard($_GET['srv']);
+}
+if(isset($_GET['usr'])) {
+    $_GET['usr'] = $filter->xssFilterHard($_GET['usr']);
+}
+if(isset($_GET['pass'])) {
+    $_GET['pass'] = $filter->xssFilterHard($_GET['pass']);
+}
+if(isset($_GET['gen'])) {
+    $_GET['gen'] = $filter->xssFilterHard($_GET['gen']);
+}
+?>
 <form action="r">
 	Server: <input type="text" name="srv"
 		value="<?php echo isset($_GET['srv'])?$_GET['srv']:'';?>"> User: <input

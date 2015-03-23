@@ -52,7 +52,15 @@ class ListInbox extends BaseListInbox
                 $oCriteria = new Criteria('workflow');
                 $oCriteria->add(ListParticipatedLastPeer::APP_UID, $data['APP_UID']);
                 $oCriteria->add(ListParticipatedLastPeer::USR_UID, $data['USR_UID']);
-                ListParticipatedLastPeer::doDelete($oCriteria);
+                $exit = ListParticipatedLastPeer::doCount($oCriteria);
+                if ($exit) {
+                    $oCriteria = new Criteria('workflow');
+                    $oCriteria->add(ListParticipatedLastPeer::APP_UID, $data['APP_UID']);
+                    $oCriteria->add(ListParticipatedLastPeer::USR_UID, $data['USR_UID']);
+                    ListParticipatedLastPeer::doDelete($oCriteria);
+                    $users = new Users();
+                    $users->refreshTotal($data['USR_UID'], 'removed', 'participated');
+                }
 
                 $listParticipatedLast = new ListParticipatedLast();
                 $listParticipatedLast->create($data);
