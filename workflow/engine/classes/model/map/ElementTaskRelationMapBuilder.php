@@ -5,7 +5,7 @@ include_once 'creole/CreoleTypes.php';
 
 
 /**
- * This class adds structure of 'MESSAGE_EVENT_TASK_RELATION' table to 'workflow' DatabaseMap object.
+ * This class adds structure of 'ELEMENT_TASK_RELATION' table to 'workflow' DatabaseMap object.
  *
  *
  *
@@ -16,13 +16,13 @@ include_once 'creole/CreoleTypes.php';
  *
  * @package    workflow.classes.model.map
  */
-class MessageEventTaskRelationMapBuilder
+class ElementTaskRelationMapBuilder
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'classes.model.map.MessageEventTaskRelationMapBuilder';
+    const CLASS_NAME = 'classes.model.map.ElementTaskRelationMapBuilder';
 
     /**
      * The database map.
@@ -60,19 +60,21 @@ class MessageEventTaskRelationMapBuilder
     {
         $this->dbMap = Propel::getDatabaseMap('workflow');
 
-        $tMap = $this->dbMap->addTable('MESSAGE_EVENT_TASK_RELATION');
-        $tMap->setPhpName('MessageEventTaskRelation');
+        $tMap = $this->dbMap->addTable('ELEMENT_TASK_RELATION');
+        $tMap->setPhpName('ElementTaskRelation');
 
         $tMap->setUseIdGenerator(false);
 
-        $tMap->addPrimaryKey('MSGETR_UID', 'MsgetrUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addPrimaryKey('ETR_UID', 'EtrUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addColumn('PRJ_UID', 'PrjUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
-        $tMap->addColumn('EVN_UID', 'EvnUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addColumn('ELEMENT_UID', 'ElementUid', 'string', CreoleTypes::VARCHAR, true, 32);
+
+        $tMap->addColumn('ELEMENT_TYPE', 'ElementType', 'string', CreoleTypes::VARCHAR, true, 50);
 
         $tMap->addColumn('TAS_UID', 'TasUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
     } // doBuild()
 
-} // MessageEventTaskRelationMapBuilder
+} // ElementTaskRelationMapBuilder
