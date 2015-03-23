@@ -38,7 +38,7 @@ class Installer extends Controller
 
     public function index ($httpData)
     {
-        if ((strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') && (file_exists($this->path_shared . 'partner.info'))){
+        if ((strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') && (file_exists($this->path_shared . 'partner.info'))) {
             $this->includeExtJS( 'installer/stopInstall');
             $this->setView( 'installer/mainStopInstall' );
             G::RenderPage( 'publish', 'extJs' );
@@ -433,6 +433,9 @@ class Installer extends Controller
      */
     public function mysqlQuery ($sql)
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $sql = $filter->preventSqlInjection($sql, Array());
         $this->installLog( $sql );
         $query = @mysql_query( $sql, $this->link );
         if (! $query) {
@@ -450,6 +453,9 @@ class Installer extends Controller
      */
     public function mssqlQuery ($sql)
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $sql = $filter->preventSqlInjection($sql, Array());
         $this->installLog( $sql );
         $query = @mssql_query( $sql, $this->link );
         if (! $query) {
@@ -587,9 +593,13 @@ class Installer extends Controller
      */
     public function setGrantPrivilegesMySQL ($psUser, $psPassword, $psDatabase, $host)
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
         $host = ($host == 'localhost' || $host == '127.0.0.1' ? 'localhost' : '%');
 
-        $sql = sprintf( "GRANT ALL PRIVILEGES ON `%s`.* TO %s@'%s' IDENTIFIED BY '%s' WITH GRANT OPTION", $psDatabase, $psUser, $host, $psPassword );
+        $query = "GRANT ALL PRIVILEGES ON `%s`.* TO %s@'%s' IDENTIFIED BY '%s' WITH GRANT OPTION";
+        $sql = sprintf( $query, $psDatabase, $psUser, $host, $psPassword );
+        $sql = $filter->preventSqlInjection($query, array($psDatabase, $psUser, $host, $psPassword ));
         $query = @mysql_query( $sql, $this->link );
 
         if (! $query) {
@@ -776,11 +786,12 @@ class Installer extends Controller
 
             $this->mysqlFileQuery( PATH_RBAC_HOME . 'engine/data/mysql/schema.sql' );
             $this->mysqlFileQuery( PATH_RBAC_HOME . 'engine/data/mysql/insert.sql' );
-
+            
             $query = sprintf( "USE %s;", $wf_workpace );
             $this->mysqlQuery( $query );
             $this->mysqlFileQuery( PATH_HOME . 'engine/data/mysql/schema.sql' );
             $this->mysqlFileQuery( PATH_HOME . 'engine/data/mysql/insert.sql' );
+            
 
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
                 $this->setPartner();
@@ -1200,25 +1211,39 @@ class Installer extends Controller
 
     public function checkDatabases ()
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
         $this->setResponseType( 'json' );
         $info = new stdclass();
 
         if ($_REQUEST['db_engine'] == 'mysql') {
             $link = @mysql_connect( $_REQUEST['db_hostname'], $_REQUEST['db_username'], $_REQUEST['db_password'] );
-            $dataset = @mysql_query( "show databases like '" . $_REQUEST['wfDatabase'] . "'", $link );
+            $_REQUEST['wfDatabase'] = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
+            $query = "show databases like '%s' ";
+            $query = $filter->preventSqlInjection( $query, array($_REQUEST['wfDatabase']) );
+            $dataset = @mysql_query( $query, $link );
             $info->wfDatabaseExists = (@mysql_num_rows( $dataset ) > 0);
         } else if ($_REQUEST['db_engine'] == 'mssql') {
             $link = @mssql_connect( $_REQUEST['db_hostname'], $_REQUEST['db_username'], $_REQUEST['db_password'] );
-            $dataset = @mssql_query( "select * from sys.databases where name = '" . $_REQUEST['wfDatabase'] . "'", $link );
+            $_REQUEST['wfDatabase'] = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
+            $query = "select * from sys.databases where name = '%s' ";
+            $query = $filter->preventSqlInjection( $query, array($_REQUEST['wfDatabase']) );
+            $dataset = @mssql_query( $query , $link );
             $info->wfDatabaseExists = (@mssql_num_rows( $dataset ) > 0);
         } else if ($_REQUEST['db_engine'] == 'sqlsrv') {
             $arguments = array("UID" => $_REQUEST['db_username'], "PWD" => $_REQUEST['db_password']);
             $link = @sqlsrv_connect( $_REQUEST['db_hostname'], $arguments);
-            $dataset = @sqlsrv_query( $link, "select * from sys.databases where name = '" . $_REQUEST['wfDatabase'] . "'");
+            $_REQUEST['wfDatabase'] = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
+            $query = "select * from sys.databases where name = '%s' ";
+            $query = $filter->preventSqlInjection( $query, array($_REQUEST['wfDatabase']) );
+            $dataset = @sqlsrv_query( $link, $query );
             $info->wfDatabaseExists = (@sqlsrv_num_rows( $dataset ) > 0);
         } else {
             $link = @mssql_connect( $_REQUEST['db_hostname'], $_REQUEST['db_username'], $_REQUEST['db_password'] );
-            $dataset = @mssql_query( "select * from sys.databases where name = '" . $_REQUEST['wfDatabase'] . "'", $link );
+            $_REQUEST['wfDatabase'] = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
+            $query = "select * from sys.databases where name = '%s' ";
+            $query = $filter->preventSqlInjection( $query, array($_REQUEST['wfDatabase']) );
+            $dataset = @mssql_query( $query , $link );
             $info->wfDatabaseExists = (@mssql_num_rows( $dataset ) > 0);
         }
 
@@ -1233,6 +1258,8 @@ class Installer extends Controller
 
     private function testMySQLconnection ()
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
         $info = new StdClass();
         $info->result = false;
         $info->message = '';
@@ -1256,7 +1283,11 @@ class Installer extends Controller
             $info->message .= G::LoadTranslation('ID_MYSQL_CREDENTIALS_WRONG');
             return $info;
         }
-        $res = @mysql_query( "SELECT * FROM `information_schema`.`USER_PRIVILEGES` where (GRANTEE = \"'$db_username'@'$db_hostname'\" OR GRANTEE = \"'$db_username'@'%'\") ", $link );
+        $db_username = $filter->validateInput($db_username, 'nosql');
+        $db_hostname = $filter->validateInput($db_hostname, 'nosql');
+        $query = "SELECT * FROM `information_schema`.`USER_PRIVILEGES` where (GRANTEE = \"'%s'@'%s'\" OR GRANTEE = \"'%s'@'%'\") ";
+        $query = $filter->preventSqlInjection($query, array($db_username, $db_hostname, $db_username));
+        $res = @mysql_query( $query, $link );
         $row = @mysql_fetch_array( $res );
         $hasSuper = is_array( $row );
         @mysql_free_result( $res );

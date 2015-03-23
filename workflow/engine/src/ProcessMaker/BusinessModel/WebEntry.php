@@ -398,7 +398,7 @@ class WebEntry
                                         
 
                     $fileContent .= "G::LoadClass('pmDynaform');\n"; 
-                    $fileContent .= "\$a = new pmDynaform('".$arrayWebEntryData["DYN_UID"]."', array());\n";                                                            
+                    $fileContent .= "\$a = new pmDynaform(array('CURRENT_DYNAFORM'=>'" . $arrayWebEntryData["DYN_UID"] . "'));\n";
                     $fileContent .= "if(\$a->isResponsive()){";                                        
                     $fileContent .= "\$a->printWebEntry('".$fileName."Post.php');";                                        
                     $fileContent .= "}else {";                    

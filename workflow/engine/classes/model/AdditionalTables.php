@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /**
  * AdditionalTables.php
@@ -445,19 +445,23 @@ class AdditionalTables extends BaseAdditionalTables
             $oCriteriaCount = clone $oCriteria;
             eval('$count = ' . $sClassPeerName . '::doCount($oCriteria);');
         }
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();        
+        $sClassPeerName = $filter->validateInput($sClassPeerName);
 
         if (isset($_POST['sort'])) {
+            $_POST['sort'] = $filter->validateInput($_POST['sort']);
             if ($_POST['dir'] == 'ASC') {
                 if ($keyOrderUppercase) {
-                    eval('$oCriteria->addAscendingOrderByColumn("' . $_POST['sort'] . '");');
+                    eval('$oCriteria->addAscendingOrderByColumn("' . $sort . '");');
                 } else {
-                    eval('$oCriteria->addAscendingOrderByColumn(' . $sClassPeerName . '::' . $_POST['sort'] . ');');
+                    eval('$oCriteria->addAscendingOrderByColumn(' . $sClassPeerName . '::' . $sort . ');');
                 }
             } else {
                 if ($keyOrderUppercase) {
-                    eval('$oCriteria->addDescendingOrderByColumn("' . $_POST['sort'] . '");');
+                    eval('$oCriteria->addDescendingOrderByColumn("' . $sort . '");');
                 } else {
-                    eval('$oCriteria->addDescendingOrderByColumn(' . $sClassPeerName . '::' . $_POST['sort'] . ');');
+                    eval('$oCriteria->addDescendingOrderByColumn(' . $sClassPeerName . '::' . $sort . ');');
                 }
             }
         }

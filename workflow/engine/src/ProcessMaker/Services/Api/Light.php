@@ -351,26 +351,27 @@ class Light extends Api
                 foreach ($d as $field => $value) {
                     if (array_key_exists($field, $structure)) {
                         $newName           = $structure[$field];
-                        $newData[$newName] = $value;
+                        $newData[$newName] = is_null($value) ? "":$value;
                     } else {
                         foreach ($structure as $name => $str) {
                             if (is_array($str) && array_key_exists($field, $str)) {
                                 $newName                  = $str[$field];
-                                $newData[$name][$newName] = $value;
+                                $newData[$name][$newName] = is_null($value) ? "":$value;
                             }
                         }
                     }
                 }
-                $response[] = $newData;
+                if (count($newData) > 0)
+                    $response[] = $newData;
             } else {
                 if (array_key_exists($field, $structure)) {
                     $newName           = $structure[$field];
-                    $response[$newName] = $d;
+                    $response[$newName] = is_null($d) ? "":$d;
                 } else {
                     foreach ($structure as $name => $str) {
                         if (is_array($str) && array_key_exists($field, $str)) {
                             $newName                  = $str[$field];
-                            $response[$name][$newName] = $d;
+                            $response[$name][$newName] = is_null($d) ? "":$d;
                         }
                     }
                 }
@@ -610,52 +611,18 @@ class Light extends Api
     }
 
     /**
-     * @url POST /case/:app_uid/input-document
+     * @url POST /case/:app_uid/upload/location
      *
-     * @param string $app_uid         { @min 32}{@max 32}
-     * @param string $tas_uid         {@min 32}{@max 32}
-     * @param string $app_doc_comment
-     * @param string $inp_doc_uid     {@min 32}{@max 32}
-     */
-    public function doPostInputDocument($app_uid, $tas_uid, $app_doc_comment, $inp_doc_uid)
-    {
-        try {
-            $userUid = $this->getUserId();
-            $inputDocument = new \ProcessMaker\BusinessModel\Cases\InputDocument();
-            $file = $inputDocument->addCasesInputDocument($app_uid, $tas_uid, $app_doc_comment, $inp_doc_uid, $userUid);
-            $response   = $this->parserInputDocument($file);
-        } catch (\Exception $e) {
-            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
-        }
-        return $response;
-    }
-
-    public function parserInputDocument ($data)
-    {
-        $structure = array(
-            'app_doc_uid'      => 'fileId',
-            'app_doc_filename' => 'fileName',
-            'app_doc_version'  => 'version'
-        );
-        $response = $this->replaceFields($data, $structure);
-        return $response;
-    }
-
-    /**
-     * @url POST /case/:app_uid/input-document/location
-     *
-     * @param string $app_uid         { @min 32}{@max 32}
-     * @param string $tas_uid         {@min 32}{@max 32}
-     * @param string $app_doc_comment
-     * @param string $inp_doc_uid     {@min 32}{@max 32}
-     * @param float $latitude     {@min -90}{@max 90}
+     * @param string $app_uid      { @min 32}{@max 32}
+     * @param float $latitude      {@min -90}{@max 90}
      * @param float $longitude     {@min -180}{@max 180}
      */
-    public function postInputDocumentLocation($app_uid, $tas_uid, $app_doc_comment, $inp_doc_uid, $latitude, $longitude)
+    public function postInputDocumentLocation($app_uid, $latitude, $longitude)
     {
         try {
             $userUid       = $this->getUserId();
-            $inputDocument = new \ProcessMaker\BusinessModel\Cases\InputDocument();
+            $oMobile       = new \ProcessMaker\BusinessModel\Light();
+
             $url           = "http://maps.googleapis.com/maps/api/staticmap?center=".$latitude.','.$longitude."&format=jpg&size=600x600&zoom=15&markers=color:blue%7Clabel:S%7C".$latitude.','.$longitude;
             $imageLocation = imagecreatefromjpeg($url);
             $tmpfname = tempnam("php://temp","pmm");
@@ -667,17 +634,21 @@ class Light extends Api
             $_FILES["form"]["error"] = 0;
             $sizes = getimagesize($tmpfname);
             $_FILES["form"]["size"] = ($sizes['0'] * $sizes['1']);
-            $file = $inputDocument->addCasesInputDocument($app_uid, $tas_uid, $app_doc_comment, $inp_doc_uid, $userUid);
+
+            $request_data = array(array('name' => $_FILES["form"]["name"]));
+            $file = $oMobile->postUidUploadFiles($userUid, $app_uid, $request_data);
 
             $strPathName = PATH_DOCUMENT . G::getPathFromUID($app_uid) . PATH_SEP;
-            $strFileName = $file->app_doc_uid . "_" . $file->app_doc_version . ".jpg";
-            copy($tmpfname, $strPathName . "/" . $strFileName);
-            $response   = $this->parserInputDocument($file);
+            $strFileName = $file[0]['appDocUid'] . "_" . $file[0]['docVersion'] . ".jpg";
+            if (! is_dir( $strPathName )) {
+                G::verifyPath( $strPathName, true );
+            }
+            copy($tmpfname, $strPathName . $strFileName);
             unlink($tmpfname);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
-        return $response;
+        return $file;
     }
 
     /**
@@ -726,9 +697,95 @@ class Light extends Api
         try {
             $userUid       = $this->getUserId();
             $oMobile = new \ProcessMaker\BusinessModel\Light();
-            $oMobile->getInformation($userUid, $type, $app_uid);
+            $response = $oMobile->getInformation($userUid, $type, $app_uid);
+            $response = $this->parserGetInformation($response);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
+        return $response;
+    }
+
+    public function parserGetInformation ($data)
+    {
+        $structure = array(
+            'case' => array(
+                'PRO_TITLE'   => 'processTitle',
+                'APP_TITLE'   => 'caseTitle',
+                'APP_NUMBER'  => 'caseNumber',
+                'APP_STATUS'  => 'caseStatus',
+                'APP_UID'     => 'caseId',
+                'CREATOR'     => 'caseCreator',
+                'CREATE_DATE' => 'caseCreateDate',
+                'UPDATE_DATE' => 'caseUpdateData',
+                'DESCRIPTION' => 'caseDescription'
+            ),
+            'task' => array(
+                'TAS_TITLE'         => 'taskTitle',
+                'CURRENT_USER'      => 'currentUser',
+                'DEL_DELEGATE_DATE' => 'delDelegateDate',
+                'DEL_INIT_DATE'     => 'delInitDate',
+                'DEL_TASK_DUE_DATE' => 'delDueDate',
+                'DEL_FINISH_DATE'   => 'delFinishDate'
+            )
+        );
+
+        $response = $this->replaceFields($data, $structure);
+        return $response;
+    }
+
+    /**
+     * @url POST /case/:app_uid/upload
+     *
+     * @param $access
+     * @param $refresh
+     * @return mixed
+     */
+    public function uidUploadFiles($app_uid, $request_data)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $filesUids = $oMobile->postUidUploadFiles($userUid, $app_uid, $request_data);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $filesUids;
+    }
+
+    /**
+     * @url POST /case/:app_uid/upload/:app_doc_uid
+     *
+     * @param $access
+     * @param $refresh
+     * @return mixed
+     */
+    public function documentUploadFiles($app_uid, $app_doc_uid, $request_data)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $response = $oMobile->documentUploadFiles($userUid, $app_uid, $app_doc_uid, $request_data);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $response;
+    }
+
+    /**
+     * @url POST /case/:app_uid/claim
+     *
+     * @param $app_uid
+     * @return mixed
+     */
+    public function claimCaseUser($app_uid)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $response = $oMobile->claimCaseUser($userUid, $app_uid);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $response;
     }
 }

@@ -403,8 +403,8 @@ class Light
                 //$app_uid = \G::getPathFromUID($oAppDocument->Fields['APP_UID']);
                 $file = \G::getPathFromFileUID($oAppDocument->Fields['APP_UID'], $sAppDocUid);
 
-                $realPath  = PATH_DOCUMENT .  $app_uid . '/' . $file[0] . $file[1] . '_' . $iDocVersion . '.' . $ext;
-                $realPath1 = PATH_DOCUMENT . $app_uid . '/' . $file[0] . $file[1] . '.' . $ext;
+                $realPath  = PATH_DOCUMENT .  G::getPathFromUID($app_uid) . '/' . $file[0] . $file[1] . '_' . $iDocVersion . '.' . $ext;
+                $realPath1 = PATH_DOCUMENT . G::getPathFromUID($app_uid) . '/' . $file[0] . $file[1] . '.' . $ext;
 
                 $width  = isset($fileData['width']) ? $fileData['width']:null;
                 $height = isset($fileData['height']) ? $fileData['height']:null;
@@ -604,15 +604,18 @@ class Light
      */
     public function getInformation($userUid, $type, $app_uid)
     {
+        $response = array();
         switch ($type) {
+            case 'unassigned':
             case 'paused':
             case 'participated':
                 $oCase = new \Cases();
                 $iDelIndex = $oCase->getCurrentDelegationCase( $app_uid );
                 $aFields = $oCase->loadCase( $app_uid, $iDelIndex );
-                $this->getInfoResume($userUid, $aFields, $type);
+                $response = $this->getInfoResume($userUid, $aFields, $type);
                 break;
         }
+        return $response;
     }
 
     /**
@@ -662,9 +665,149 @@ class Light
             $Fields['TAS_TITLE'] = $aTask['TAS_TITLE'];
         }
 
-        require_once(PATH_GULLIVER .'../thirdparty/smarty/libs/Smarty.class.php');
-        $G_PUBLISH = new \Publisher();
-        $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume.xml', '', $Fields, '' );
-        $G_PUBLISH->RenderContent();
+//        require_once(PATH_GULLIVER .'../thirdparty/smarty/libs/Smarty.class.php');
+//        $G_PUBLISH = new \Publisher();
+//        $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume.xml', '', $Fields, '' );
+//        $G_PUBLISH->RenderContent();
+        return $Fields;
+    }
+
+    /**
+     * first step for upload file
+     * create uid app_document for upload file
+     *
+     * @param $userUid
+     * @param $Fields
+     * @param $type
+     * @throws \Exception
+     */
+    public function postUidUploadFiles($userUid, $app_uid, $request_data)
+    {
+        $response = array();
+        if (count( $request_data ) > 0) {
+            foreach ($request_data as $k => $file) {
+                $indocUid = null;
+                $fieldName = null;
+                $oCase = new \Cases();
+                $DEL_INDEX = $oCase->getCurrentDelegation( $app_uid, $userUid );
+
+                $aFields = array (
+                    "APP_UID"             => $app_uid,
+                    "DEL_INDEX"           => $DEL_INDEX,
+                    "USR_UID"             => $userUid,
+                    "DOC_UID"             => - 1,
+                    "APP_DOC_TYPE"        => "ATTACHED",
+                    "APP_DOC_CREATE_DATE" => date( "Y-m-d H:i:s" ),
+                    "APP_DOC_COMMENT"     => "",
+                    "APP_DOC_TITLE"       => "",
+                    "APP_DOC_FILENAME"    => $file['name'],
+                    "APP_DOC_FIELDNAME"   => $fieldName
+                );
+
+                $oAppDocument = new \AppDocument();
+                $oAppDocument->create( $aFields );
+                $response[$k]['docVersion'] = $iDocVersion = $oAppDocument->getDocVersion();
+                $response[$k]['appDocUid'] =   $sAppDocUid = $oAppDocument->getAppDocUid();
+            }
+        }
+        return $response;
+    }
+
+    /**
+     * second step for upload file
+     * upload file in foler app_uid
+     *
+     * @param $userUid
+     * @param $Fields
+     * @param $type
+     * @throws \Exception
+     */
+    public function documentUploadFiles($userUid, $app_uid, $app_doc_uid, $request_data)
+    {
+        $response = array("status" => "fail");
+        if (isset( $_FILES["form"]["name"] ) && count( $_FILES["form"]["name"] ) > 0) {
+            $arrayField = array ();
+            $arrayFileName = array ();
+            $arrayFileTmpName = array ();
+            $arrayFileError = array ();
+            $i = 0;
+
+            foreach ($_FILES["form"]["name"] as $fieldIndex => $fieldValue) {
+                if (is_array( $fieldValue )) {
+                    foreach ($fieldValue as $index => $value) {
+                        if (is_array( $value )) {
+                            foreach ($value as $grdFieldIndex => $grdFieldValue) {
+                                $arrayField[$i]["grdName"] = $fieldIndex;
+                                $arrayField[$i]["grdFieldName"] = $grdFieldIndex;
+                                $arrayField[$i]["index"] = $index;
+
+                                $arrayFileName[$i] = $_FILES["form"]["name"][$fieldIndex][$index][$grdFieldIndex];
+                                $arrayFileTmpName[$i] = $_FILES["form"]["tmp_name"][$fieldIndex][$index][$grdFieldIndex];
+                                $arrayFileError[$i] = $_FILES["form"]["error"][$fieldIndex][$index][$grdFieldIndex];
+                                $i = $i + 1;
+                            }
+                        }
+                    }
+                } else {
+                    $arrayField[$i] = $fieldIndex;
+
+                    $arrayFileName[$i] = $_FILES["form"]["name"][$fieldIndex];
+                    $arrayFileTmpName[$i] = $_FILES["form"]["tmp_name"][$fieldIndex];
+                    $arrayFileError[$i] = $_FILES["form"]["error"][$fieldIndex];
+                    $i = $i + 1;
+                }
+            }
+            if (count( $arrayField ) > 0) {
+                for ($i = 0; $i <= count( $arrayField ) - 1; $i ++) {
+                    if ($arrayFileError[$i] == 0) {
+                        $indocUid = null;
+                        $fieldName = null;
+                        $fileSizeByField = 0;
+
+                        $oAppDocument = new \AppDocument();
+                        $aAux = $oAppDocument->load($app_doc_uid);
+
+                        $iDocVersion = $oAppDocument->getDocVersion();
+                        $sAppDocUid = $oAppDocument->getAppDocUid();
+                        $aInfo = pathinfo( $oAppDocument->getAppDocFilename() );
+                        $sExtension = ((isset( $aInfo["extension"] )) ? $aInfo["extension"] : "");
+                        $pathUID = G::getPathFromUID($app_uid);
+                        $sPathName = PATH_DOCUMENT . $pathUID . PATH_SEP;
+                        $sFileName = $sAppDocUid . "_" . $iDocVersion . "." . $sExtension;
+                        G::uploadFile( $arrayFileTmpName[$i], $sPathName, $sFileName );
+                        $response = array("status" => "ok");
+                    }
+                }
+            }
+        }
+
+        return $response;
+    }
+
+    /**
+     * claim case
+     *
+     * @param $userUid
+     * @param $Fields
+     * @param $type
+     * @throws \Exception
+     */
+    public function claimCaseUser($userUid, $sAppUid)
+    {
+        $response = array("status" => "fail");
+        $oCase = new \Cases();
+        $iDelIndex = $oCase->getCurrentDelegation( $sAppUid, $userUid );
+
+        $oAppDelegation = new \AppDelegation();
+        $aDelegation = $oAppDelegation->load( $sAppUid, $iDelIndex );
+
+        //if there are no user in the delegation row, this case is still in selfservice
+        if ($aDelegation['USR_UID'] == "") {
+            $oCase->setCatchUser( $sAppUid,$iDelIndex, $userUid );
+            $response = array("status" => "ok");
+        } else {
+            //G::SendMessageText( G::LoadTranslation( 'ID_CASE_ALREADY_DERIVATED' ), 'error' );
+        }
+        return $response;
     }
 }

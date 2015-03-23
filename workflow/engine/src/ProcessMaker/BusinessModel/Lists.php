@@ -1,6 +1,8 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 use \G;
+use \Criteria;
+use \UsersPeer;
 
 /**
  * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -174,10 +176,52 @@ class Lists {
             $filtersData['date_to']     = $filters["dateTo"];
             $response['filters']        = $filtersData;
             $response['data']           = $result;
+            $filtersData['action']      = $filters["action"];
             $response['totalCount']     = $list->countTotal($userUid, $filtersData);
         } else {
             $response = $result;
         }
+        return $response;
+    }
+
+    /**
+     * Get counters for lists
+     *
+     * @access public
+     * @param array $userId, User Uid
+     * @return array
+     *
+     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function getCounters($userId)
+    {
+        $criteria = new Criteria();
+        $criteria->addSelectColumn(UsersPeer::USR_TOTAL_INBOX);
+        $criteria->addSelectColumn(UsersPeer::USR_TOTAL_DRAFT);
+        $criteria->addSelectColumn(UsersPeer::USR_TOTAL_CANCELLED);
+        $criteria->addSelectColumn(UsersPeer::USR_TOTAL_PARTICIPATED);
+        $criteria->addSelectColumn(UsersPeer::USR_TOTAL_PAUSED);
+        $criteria->addSelectColumn(UsersPeer::USR_TOTAL_COMPLETED);
+        $criteria->add( UsersPeer::USR_UID, $userId, Criteria::EQUAL );
+        $dataset = UsersPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+
+        $oAppCache = new \AppCacheView();
+        $totalUnassigned = $oAppCache->getListCounters('selfservice', $userId, false);
+
+        $response = array(
+            array('count' => $aRow['USR_TOTAL_INBOX'],          'item' => 'CASES_INBOX'),
+            array('count' => $aRow['USR_TOTAL_DRAFT'],          'item' => 'CASES_DRAFT'),
+            array('count' => $aRow['USR_TOTAL_CANCELLED'],      'item' => 'CASES_CANCELLED'),
+            array('count' => $aRow['USR_TOTAL_PARTICIPATED'],   'item' => 'CASES_SENT'),
+            array('count' => $aRow['USR_TOTAL_PAUSED'],         'item' => 'CASES_PAUSED'),
+            array('count' => $aRow['USR_TOTAL_COMPLETED'],      'item' => 'CASES_COMPLETED'),
+            array('count' => $totalUnassigned,                  'item' => 'CASES_SELFSERVICE')
+        );
+
         return $response;
     }
 }

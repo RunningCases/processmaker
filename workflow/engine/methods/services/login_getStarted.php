@@ -42,7 +42,7 @@ $oTemplatePower->assign('USR_UID', $aUser['USR_UID']);
 $oTemplatePower->assign('USR_FULLNAME', $aData['USR_FIRSTNAME'] . ' ' . $aData['USR_LASTNAME'] . ' (' . $aData['USR_USERNAME'] . ')');
 */
 $userName = 'admin';
-$userPass = 'The password introduced at the time of installing the application';
+$userPass = 'The password introduced at the time of installing the application. (If you did not change the password by default is "admin")';
 if(isset($_SESSION['NW_PASSWORD'])){
   if($_SESSION['NW_PASSWORD'] != ''){
     $userPass = $_SESSION['NW_PASSWORD'];

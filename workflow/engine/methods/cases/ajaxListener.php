@@ -33,6 +33,12 @@
 //require_once 'classes/model/AppDelay.php';
 //require_once 'classes/model/Process.php';
 //require_once 'classes/model/Task.php';
+
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_REQUEST = $filter->xssFilterHard($_REQUEST);
+$_POST = $filter->xssFilterHard($_POST);
+
 if(isset($_REQUEST['action']) && $_REQUEST['action'] == "verifySession" ) {
     if (!isset($_SESSION['USER_LOGGED'])) {
         $response = new stdclass();
@@ -852,11 +858,11 @@ class Ajax
         $Fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["NEXT_STEP"] = "#";
         $Fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["NEXT_ACTION"] = "return false;";
         G::LoadClass('pmDynaform');
-        $a = new pmDynaform($_REQUEST['DYN_UID'], $Fields['APP_DATA']);
+        $FieldsPmDynaform["PRO_UID"] = $_SESSION['PROCESS'];
+        $FieldsPmDynaform["CURRENT_DYNAFORM"] = $_REQUEST['DYN_UID'];
+        $a = new pmDynaform($FieldsPmDynaform);
         if ($a->isResponsive()) {
-            $a->app_data["PROCESS"] = $_SESSION['PROCESS'];
-            $a->app_data["SYS_SYS"] = SYS_SYS;
-            $a->printView((!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false", $_SESSION['APPLICATION']);
+            $a->printView();
         } else {
             $G_PUBLISH->AddContent("dynaform", "xmlform", $_SESSION["PROCESS"] . "/" . $_POST["DYN_UID"], "", $Fields["APP_DATA"], "", "", "view");
         }
