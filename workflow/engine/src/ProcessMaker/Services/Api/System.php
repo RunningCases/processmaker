@@ -63,7 +63,7 @@ class System extends Api
     public function doGetEnabledFeatures()
     {
         try {
-            $enabledFeatures = [];
+            $enabledFeatures = array();
             $keys = array ('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=');
             foreach ($keys as $key) {
                 if (\PMLicensedFeatures
