@@ -895,13 +895,6 @@ function generateGrid(proUid, tasUid, dynUid)
                //currentFieldEdited = e.field;
                //comboStore.load();
 
-               storeAux = Ext.StoreMgr.get("store" + e.field + "_" + proUid);
-               storeAux.setBaseParam("appUid", selRow.data["APP_UID"]);
-               storeAux.setBaseParam("dynUid", dynUid);
-               storeAux.setBaseParam("proUid", proUid);
-               storeAux.setBaseParam("fieldName", e.field);
-               //currentFieldEdited = e.field;
-               storeAux.load();
              }
            },
 

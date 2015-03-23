@@ -432,14 +432,47 @@ class Consolidated
             $dateFormat = "Y/m/d";
         }
 
-        $filename = $pro_uid . PATH_SEP . $dyn_uid . ".xml";
+        $oDyna = new \Dynaform();
+        $dataTask = $oDyna->load($dyn_uid);
+        if ($dataTask['DYN_VERSION'] > 0) {
+            G::LoadClass("pmDynaform");
+            $pmDyna = new \pmDynaform(array('APP_DATA' => array()));
+            $pmDyna->fields["CURRENT_DYNAFORM"] = $dyn_uid;
+            $json = G::json_decode($dataTask["DYN_CONTENT"]);
+            $pmDyna->jsonr($json);
+            $fieldsDyna = $json->items[0]->items;
+            
+            $xmlfrm = new \stdclass();
+            $xmlfrm->fields = array();
+            foreach ($fieldsDyna as $key => $value) {
+                //$temp = $value[0];
+                $temp = new \stdclass();
+                $temp->type = $value[0]->type;
+                $temp->label = $value[0]->label;
+                $temp->name = $value[0]->name;
+                $temp->required = $value[0]->required;
+                $temp->mode = $value[0]->mode;
 
-        if (!class_exists('Smarty')) {
-            require_once(PATH_THIRDPARTY . 'smarty' . PATH_SEP . 'libs' . PATH_SEP . 'Smarty.class.php');  
+                $temp->storeData = '[';
+                foreach ($value[0]->options as $valueOption) {
+                    $temp->storeData .= '{"value":"' . $valueOption['value'] . '", "text":"' . $valueOption['value'] . '"},';
+                }
+                $temp->storeData = substr($temp->storeData,0,-1);
+                $temp->storeData .= ']';
+
+                $temp->readOnly = ($value[0]->mode == 'view') ? "0" : "1";
+                $temp->colWidth = 200;
+                $xmlfrm->fields[] = $temp;
+            }
+        } else {
+            $filename = $pro_uid . PATH_SEP . $dyn_uid . ".xml";
+            if (!class_exists('Smarty')) {
+                require_once(PATH_THIRDPARTY . 'smarty' . PATH_SEP . 'libs' . PATH_SEP . 'Smarty.class.php');  
+            }
+            $xmlfrm = new \XmlForm();
+            $xmlfrm->home = PATH_DYNAFORM;
+            $xmlfrm->parseFile($filename, SYS_LANG, true);    
         }
-        $xmlfrm = new \XmlForm();
-        $xmlfrm->home = PATH_DYNAFORM;
-        $xmlfrm->parseFile($filename, SYS_LANG, true);
 
         $caseColumns      = array();
         $caseReaderFields = array();
@@ -482,7 +515,6 @@ class Consolidated
                 case "dropdown":
                     $dropList[] = $field->name;
                     $align = "left";
-
                     $editor = "* new Ext.form.ComboBox({
                                    id: \"cbo" . $field->name . "_" . $pro_uid . "\",
 
@@ -491,18 +523,14 @@ class Consolidated
 
                                    /*store: comboStore,*/
                                    store: new Ext.data.JsonStore({
-                                     storeId: \"store" . $field->name . "_" . $pro_uid . "\",
-                                     proxy: new Ext.data.HttpProxy({
-                                       url: 'proxyDataCombobox'
-                                     }),
-                                     root: 'records',
+                                     data: " . htmlspecialchars_decode($field->storeData) . ",
                                      fields: [{name: 'value'},
                                               {name: 'text'}
                                              ]
                                    }),
 
-                                   triggerAction: 'all',
-                                   mode:     'local',
+
+                                   queryMode: 'local',
                                    editable: false,
                                    disabled: $fieldDisabled,
                                    lazyRender: false,
@@ -512,9 +540,9 @@ class Consolidated
                                    $fieldValidate
                                    cls: \"\"
                                  }) *";
-
+                    $editor = eregi_replace("[\n|\r|\n\r]", ' ', $editor);
                     $width = $field->colWidth;
-
+                    
                     $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
                     $caseReaderFields[] = array("name" => $field->name);
                     break;

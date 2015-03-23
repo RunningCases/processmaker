@@ -383,6 +383,23 @@ class Task
             }
 
             $result = $task->update($arrayProperty);
+            if (!empty($arrayProperty['CONSOLIDATE_DATA'])) {
+                G::LoadClass("consolidatedCases");
+                $consolidated = new \ConsolidatedCases();
+                $dataConso = array(
+                    'tas_uid'       => $arrayProperty['TAS_UID'],
+                    'dyn_uid'       => $arrayProperty['CONSOLIDATE_DATA']['consolidated_dynaform'],
+                    'status'        => true,
+                    'pro_uid'       => $arrayProperty['PRO_UID'],
+                    'rep_uid'       => '',
+                    'table_name'    => $arrayProperty['CONSOLIDATE_DATA']['consolidated_table'],
+                    'title'         => $arrayProperty['CONSOLIDATE_DATA']['consolidated_title'],
+                    'overwrite'     => true,
+                    'isBPMN'        => true
+                );
+                $consolidated->cochalo($dataConso);
+                
+            }
             $arrayResult["status"] = "OK";
 
             if ($result == 3) {
