@@ -1227,7 +1227,7 @@ importProcess = function()
               handler : function(){
                   var arrayMatch = [];
 
-                  if ((arrayMatch = eval("/^.+\.(" + arrayPmFileExtension.join("|") + ")$/i").exec(Ext.getCmp("form-file").getValue()))) {
+                  if ((arrayMatch = eval("/^.+\.(" + arrayImportFileExtension.join("|") + ")$/i").exec(Ext.getCmp("form-file").getValue()))) {
                       var fileExtension = arrayMatch[1];
 
                       switch (fileExtension) {
