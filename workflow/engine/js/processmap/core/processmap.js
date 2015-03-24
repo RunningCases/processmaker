@@ -1698,6 +1698,13 @@ var processmap=function(){
                   noClear : true
                 }]
               };
+              if (this.options.consolidated == '1') {
+                panel.tab.options.push({
+                  title : _('ID_CONSOLIDATED_CASE_LIST'),
+                  content : this.parent.closure({instance:this,method:iForm,args:[panel,index,8]}),
+                  noClear : true
+                });
+              }
             var taskOptions = this.data.db.taskOptions;
             this.loadExtendedProperties = function(){
               for(i=0;i<taskOptions.length;i++){
