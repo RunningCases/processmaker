@@ -14,26 +14,20 @@ class pmDynaform
     public $fields = null;
     public $record = null;
     public $credentials = null;
-    public $data = array();
 
     public function __construct($fields)
     {
         $this->fields = $fields;
-        if (count($fields) && count($fields['APP_DATA'])) {
-            $this->getDynaform();
-            $this->getCredentials();    
-        }
+        $this->getDynaform();
+        $this->getCredentials();
         if (isset($this->fields["APP_UID"])) {
             //current
             $cases = new \ProcessMaker\BusinessModel\Cases();
-            $this->data = $cases->getCaseVariables($this->fields["APP_UID"]);
         } else {
             //history
             $this->fields["APP_UID"] = null;
-            if (isset($this->fields["APP_DATA"]))
-                $this->data = $this->fields["APP_DATA"];
-            if (isset($this->data["DYN_CONTENT_HISTORY"]))
-                $this->record["DYN_CONTENT"] = $this->data["DYN_CONTENT_HISTORY"];
+            if (isset($this->fields["APP_DATA"]["DYN_CONTENT_HISTORY"]))
+                $this->record["DYN_CONTENT"] = $this->fields["APP_DATA"]["DYN_CONTENT_HISTORY"];
         }
     }
 
@@ -87,8 +81,8 @@ class pmDynaform
                 $prefixs = array("@@", "@#", "@%", "@?", "@$", "@=");
                 if (is_string($value) && in_array(substr($value, 0, 2), $prefixs)) {
                     $triggerValue = substr($value, 2);
-                    if (isset($this->app_data[$triggerValue])) {
-                        $json->$key = $this->app_data[$triggerValue];
+                    if (isset($this->fields["APP_DATA"][$triggerValue])) {
+                        $json->$key = $this->fields["APP_DATA"][$triggerValue];
                     }
                 }
                 //query & options
@@ -107,16 +101,18 @@ class pmDynaform
                         $json->options = array();
                     else {
                         //convert stdClass to array
-                        $option = array();
-                        foreach ($json->options as $valueOptions) {
-                            array_push($option, array(
-                                "value" => $valueOptions->value,
-                                "label" => $valueOptions->label
-                            ));
+                        if (is_array($json->options)) {
+                            $option = array();
+                            foreach ($json->options as $valueOptions) {
+                                array_push($option, array(
+                                    "value" => $valueOptions->value,
+                                    "label" => isset($valueOptions->label) ? $valueOptions->label : ""
+                                ));
+                            }
+                            $json->options = $option;
                         }
-                        $json->options = $option;
                     }
-                    if ($json->dbConnection !== "none" && $json->sql !== "") {
+                    if ($json->dbConnection !== "" && $json->dbConnection !== "none" && $json->sql !== "") {
                         $cnn = Propel::getConnection($json->dbConnection);
                         $stmt = $cnn->createStatement();
                         $rs = $stmt->executeQuery(strtoupper($json->sql), \ResultSet::FETCHMODE_NUM);
@@ -136,21 +132,21 @@ class pmDynaform
                 //data
                 if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "suggest" || $value === "dropdown" || $value === "checkbox" || $value === "radio" || $value === "datetime")) {
                     $json->data = array(
-                        "value" => isset($this->data[$json->name]) ? $this->data[$json->name] : $json->data["value"],
-                        "label" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : $json->data["label"]
+                        "value" => isset($this->fields["APP_DATA"][$json->name]) ? $this->fields["APP_DATA"][$json->name] : (is_array($json->data) ? $json->data["value"] : $json->data->value),
+                        "label" => isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : (is_array($json->data) ? $json->data["label"] : $json->data->label)
                     );
                 }
                 if ($key === "type" && ($value === "checkbox")) {
                     $json->data = array(
-                        "value" => isset($this->data[$json->name]) ? $this->data[$json->name] : array(),
-                        "label" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : "[]"
+                        "value" => isset($this->fields["APP_DATA"][$json->name]) ? $this->fields["APP_DATA"][$json->name] : array(),
+                        "label" => isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : "[]"
                     );
                 }
-                if ($key === "type" && ($value === "file") && isset($this->app_data["APPLICATION"])) {
+                if ($key === "type" && ($value === "file") && isset($this->fields["APP_DATA"]["APPLICATION"])) {
                     $oCriteria = new Criteria("workflow");
                     $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
                     $oCriteria->addSelectColumn(AppDocumentPeer::DOC_VERSION);
-                    $oCriteria->add(AppDocumentPeer::APP_UID, $this->app_data["APPLICATION"]);
+                    $oCriteria->add(AppDocumentPeer::APP_UID, $this->fields["APP_DATA"]["APPLICATION"]);
                     $oCriteria->add(AppDocumentPeer::APP_DOC_FIELDNAME, $json->name);
                     $rs = AppDocumentPeer::doSelectRS($oCriteria);
                     $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -161,14 +157,14 @@ class pmDynaform
                     }
                     $json->data = array(
                         "value" => $links,
-                        "label" => isset($this->data[$json->name . "_label"]) ? $this->data[$json->name . "_label"] : "[]"
+                        "label" => isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : "[]"
                     );
                 }
                 //grid
                 if ($key === "type" && ($value === "grid")) {
-                    if (isset($this->data[$json->name])) {
+                    if (isset($this->fields["APP_DATA"][$json->name])) {
                         //rows
-                        $rows = $this->data[$json->name];
+                        $rows = $this->fields["APP_DATA"][$json->name];
                         foreach ($rows as $keyRow => $row) {
                             //cells
                             $cells = array();
@@ -244,10 +240,6 @@ class pmDynaform
         $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
         $file = str_replace("{javascript}", $javascrip, $file);
         echo $file;
-        echo "<pre>";
-        //echo print_r($this->fields, true);
-//        echo print_r($this->data, true);
-        echo "</pre>";
         exit();
     }
 
