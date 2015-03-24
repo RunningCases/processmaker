@@ -29,6 +29,12 @@
  * @date Apr 5th, 2010
  */
 
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_GET['i18'] = $filter->xssFilterHard($_GET['i18']);
+$_GET['newSite'] = $filter->xssFilterHard($_GET['newSite']);
+$_GET['module'] = $filter->xssFilterHard($_GET['module']);
+
 if (($RBAC_Response = $RBAC->userCanAccess( "PM_SETUP" )) != 1)
     return $RBAC_Response;
 

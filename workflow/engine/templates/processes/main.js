@@ -175,6 +175,37 @@ Ext.onReady(function(){
     emptyMsg: "",
     items:[_('ID_PAGE_SIZE')+':',comboPageSize]
   })  */
+
+  var mnuNewBpmnProject = {
+      text: "New BPMN Project",
+      iconCls: "silk-add",
+      icon: "",
+      handler: function ()
+      {
+          newProcess({type:"bpmnProject"});
+      }
+  };
+
+  var mnuNewProject = {
+      text: "New Project",
+      iconCls: "silk-add",
+      icon: "",
+      handler: function ()
+      {
+          newProcess({type: "classicProject"});
+      }
+  };
+
+  var arrayMenuNew = [];
+
+  if (typeof(arrayMenuNewOption["bpmn"]) != "undefined") {
+      arrayMenuNew.push(mnuNewBpmnProject);
+  }
+
+  if (typeof(arrayMenuNewOption["pm"]) != "undefined") {
+      arrayMenuNew.push(mnuNewProject);
+  }
+
   processesGrid = new Ext.grid.GridPanel( {
     region: 'center',
     layout: 'fit',
@@ -245,24 +276,7 @@ Ext.onReady(function(){
         xtype: 'tbsplit',
         text: _('ID_NEW'),
         iconCls: 'button_menu_ext ss_sprite ss_add',
-        menu: [
-            {
-                text: "New BPMN Project",
-                iconCls: 'silk-add',
-                icon: '',
-                handler: function () {
-                    newProcess({type:"bpmnProject"});
-                }
-            },
-            {
-                text: "New Project",
-                iconCls: 'silk-add',
-                icon: '',
-                handler: function () {
-                    newProcess({type:"classicProject"});
-                }
-            }
-        ],
+        menu: arrayMenuNew,
         listeners: {
             "click": function (obj, e) {
                 obj.showMenu();
@@ -1213,7 +1227,7 @@ importProcess = function()
               handler : function(){
                   var arrayMatch = [];
 
-                  if ((arrayMatch = eval("/^.+\.(pm|pmx|bpmn)$/i").exec(Ext.getCmp("form-file").getValue()))) {
+                  if ((arrayMatch = eval("/^.+\.(" + arrayPmFileExtension.join("|") + ")$/i").exec(Ext.getCmp("form-file").getValue()))) {
                       var fileExtension = arrayMatch[1];
 
                       switch (fileExtension) {

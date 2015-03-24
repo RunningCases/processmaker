@@ -43,6 +43,9 @@ function testConnection($type, $server, $user, $passwd, $port = 'none', $dbName 
                     if ($Server->errno == 0) {
                         $message = "";
                         $response = $Server->tryConnectServer($type);
+                        $server = $filter->validateInput($server);
+                        $user   = $filter->validateInput($user);
+                        $passwd = $filter->validateInput($passwd);
                         $connDatabase = @mysql_connect($server, $user, $passwd);
                         $dbNameTest = "PROCESSMAKERTESTDC";
                         $dbNameTest = $filter->validateInput($dbNameTest, 'nosql');

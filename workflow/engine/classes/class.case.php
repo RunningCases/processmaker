@@ -4294,6 +4294,17 @@ class Cases
         $aFieldsDel['USR_UID'] = $newUserUID;
         $inbox = new ListInbox();
         $inbox->newRow($aFieldsDel, $sUserUID);
+
+        //Update - WHERE
+        $criteriaWhere = new Criteria("workflow");
+        $criteriaWhere->add(ListInboxPeer::APP_UID, $aFieldsDel["APP_UID"], Criteria::EQUAL);
+        $criteriaWhere->add(ListInboxPeer::USR_UID, $aFieldsDel['USR_UID'], Criteria::EQUAL);
+        $criteriaWhere->add(ListInboxPeer::DEL_INDEX, $aFieldsDel['DEL_INDEX'], Criteria::EQUAL);
+        //Update - SET
+        $criteriaSet = new Criteria("workflow");
+        $criteriaSet->add(ListInboxPeer::DEL_INDEX, $aData['DEL_INDEX']);
+        BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
+
         $users = new Users();
         if ($aFields['APP_STATUS'] == 'DRAFT') {
             $users->refreshTotal($sUserUID, 'remove', 'draft');

@@ -104,11 +104,17 @@ try {
     $generalConfCasesList = array ();
 }
 
+$caseListBuilder = (count($confCasesList)) ? 1 : 0;
+if ($caseListBuilder) {
+    $urlProxy = 'proxyCasesList';
+}
+
 // reassign header configuration
 $confReassignList = getReassignList();
 
 // evaluates an action and the configuration for the list that will be rendered
 $config = getAdditionalFields( $action, $confCasesList );
+
 $columns = $config['caseColumns'];
 $readerFields = $config['caseReaderFields'];
 $reassignColumns = $confReassignList['caseColumns'];
@@ -188,6 +194,7 @@ $oHeadPublisher->assign( 'readerFields', $readerFields ); //sending the fields t
 $oHeadPublisher->assign( 'reassignColumns', $reassignColumns ); //sending the columns to display in grid
 $oHeadPublisher->assign( 'action', $action ); //sending the action to make
 $oHeadPublisher->assign( 'urlProxy', $urlProxy ); //sending the urlProxy to make
+$oHeadPublisher->assign( 'caseListBuilder', $caseListBuilder ); //sending the caseListBuilder
 /*----------------------------------********---------------------------------*/
 $oHeadPublisher->assign( 'credentials', $clientToken ); //sending the SYS_SYS to make
 /*----------------------------------********---------------------------------*/
@@ -486,7 +493,6 @@ function getAdditionalFields($action, $confCasesList = array())
                 $caseReaderFieldsAux[] = $arrayField["name"];
             }
         }
-
         foreach ($arrayConfig["caseReaderFields"] as $index => $value) {
             if (!in_array($value["name"], $caseReaderFieldsAux)) {
                 $caseReaderFields[] = $value;

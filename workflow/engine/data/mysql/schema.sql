@@ -205,6 +205,7 @@ CREATE TABLE `DYNAFORM`
 	`DYN_TYPE` VARCHAR(20) default 'xmlform' NOT NULL,
 	`DYN_FILENAME` VARCHAR(100) default '' NOT NULL,
 	`DYN_CONTENT` MEDIUMTEXT,
+	`DYN_LABEL` MEDIUMTEXT,
 	`DYN_VERSION` INTEGER  NOT NULL,
 	PRIMARY KEY (`DYN_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Forms required';
@@ -878,6 +879,21 @@ CREATE TABLE `CASE_TRACKER_OBJECT`
 	`CTO_POSITION` INTEGER default 0 NOT NULL,
 	PRIMARY KEY (`CTO_UID`),
 	KEY `indexCaseTrackerObject`(`PRO_UID`, `CTO_UID_OBJ`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
+#-----------------------------------------------------------------------------
+#-- CASE_CONSOLIDATED
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `CASE_CONSOLIDATED`;
+
+
+CREATE TABLE `CASE_CONSOLIDATED`
+(
+	`TAS_UID` VARCHAR(32) default '' NOT NULL,
+	`DYN_UID` VARCHAR(32) default '' NOT NULL,
+	`REP_TAB_UID` VARCHAR(32) default '' NOT NULL,
+	`CON_STATUS` VARCHAR(20) default 'ACTIVE' NOT NULL,
+	PRIMARY KEY (`TAS_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- STAGE
@@ -2591,13 +2607,74 @@ DROP TABLE IF EXISTS `ELEMENT_TASK_RELATION`;
 
 CREATE TABLE `ELEMENT_TASK_RELATION`
 (
- `ETR_UID`      VARCHAR(32) NOT NULL,
- `PRJ_UID`      VARCHAR(32) NOT NULL,
- `ELEMENT_UID`  VARCHAR(32) NOT NULL,
- `ELEMENT_TYPE` VARCHAR(50) default '' NOT NULL,
- `TAS_UID`      VARCHAR(32) NOT NULL,
- PRIMARY KEY (`ETR_UID`)
+	`ETR_UID` VARCHAR(32)  NOT NULL,
+	`PRJ_UID` VARCHAR(32)  NOT NULL,
+	`ELEMENT_UID` VARCHAR(32)  NOT NULL,
+	`ELEMENT_TYPE` VARCHAR(50) default '' NOT NULL,
+	`TAS_UID` VARCHAR(32)  NOT NULL,
+	PRIMARY KEY (`ETR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
+#-----------------------------------------------------------------------------
+#-- ABE_CONFIGURATION
+#-----------------------------------------------------------------------------
 
+DROP TABLE IF EXISTS `ABE_CONFIGURATION`;
+
+
+CREATE TABLE `ABE_CONFIGURATION`
+(
+	`ABE_UID` VARCHAR(32) default '' NOT NULL,
+	`PRO_UID` VARCHAR(32) default '' NOT NULL,
+	`TAS_UID` VARCHAR(32) default '' NOT NULL,
+	`ABE_TYPE` VARCHAR(10) default '' NOT NULL,
+	`ABE_TEMPLATE` VARCHAR(100) default '' NOT NULL,
+	`ABE_DYN_TYPE` VARCHAR(10) default 'NORMAL' NOT NULL,
+	`DYN_UID` VARCHAR(32) default '' NOT NULL,
+	`ABE_EMAIL_FIELD` VARCHAR(255) default '' NOT NULL,
+	`ABE_ACTION_FIELD` VARCHAR(255) default '',
+	`ABE_CASE_NOTE_IN_RESPONSE` INTEGER default 0,
+	`ABE_CREATE_DATE` DATETIME  NOT NULL,
+	`ABE_UPDATE_DATE` DATETIME,
+	PRIMARY KEY (`ABE_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='The plugin table for actionsByEmail';
+#-----------------------------------------------------------------------------
+#-- ABE_REQUESTS
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ABE_REQUESTS`;
+
+
+CREATE TABLE `ABE_REQUESTS`
+(
+	`ABE_REQ_UID` VARCHAR(32) default '' NOT NULL,
+	`ABE_UID` VARCHAR(32) default '' NOT NULL,
+	`APP_UID` VARCHAR(32) default '' NOT NULL,
+	`DEL_INDEX` INTEGER default 0 NOT NULL,
+	`ABE_REQ_SENT_TO` VARCHAR(100) default '' NOT NULL,
+	`ABE_REQ_SUBJECT` VARCHAR(150) default '' NOT NULL,
+	`ABE_REQ_BODY` MEDIUMTEXT  NOT NULL,
+	`ABE_REQ_DATE` DATETIME  NOT NULL,
+	`ABE_REQ_STATUS` VARCHAR(10) default '',
+	`ABE_REQ_ANSWERED` TINYINT default 0 NOT NULL,
+	PRIMARY KEY (`ABE_REQ_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='The plugin table for actionsByEmail';
+#-----------------------------------------------------------------------------
+#-- ABE_RESPONSES
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `ABE_RESPONSES`;
+
+
+CREATE TABLE `ABE_RESPONSES`
+(
+	`ABE_RES_UID` VARCHAR(32) default '' NOT NULL,
+	`ABE_REQ_UID` VARCHAR(32) default '' NOT NULL,
+	`ABE_RES_CLIENT_IP` VARCHAR(20) default '' NOT NULL,
+	`ABE_RES_DATA` MEDIUMTEXT  NOT NULL,
+	`ABE_RES_DATE` DATETIME  NOT NULL,
+	`ABE_RES_STATUS` VARCHAR(10) default '' NOT NULL,
+	`ABE_RES_MESSAGE` VARCHAR(255) default '',
+	PRIMARY KEY (`ABE_RES_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='The plugin table for actionsByEmail';
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

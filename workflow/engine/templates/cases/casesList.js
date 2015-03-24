@@ -736,18 +736,26 @@ Ext.onReady ( function() {
 
 
   // Create HttpProxy instance, all CRUD requests will be directed to single proxy url.
-  var proxyCasesList = new Ext.data.HttpProxy({
-    api: {
-      read : urlProxy
-    }
-    /*----------------------------------********---------------------------------*/
-    ,method: 'GET'
-    ,headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + credentials.access_token
-    }
-    /*----------------------------------********---------------------------------*/
-  });
+  if (caseListBuilder) {
+    var proxyCasesList = new Ext.data.HttpProxy({
+      api: {
+        read : urlProxy
+      }
+    });
+  } else {
+    var proxyCasesList = new Ext.data.HttpProxy({
+      api: {
+        read : urlProxy
+      }
+      /*----------------------------------********---------------------------------*/
+      ,method: 'GET'
+      ,headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + credentials.access_token
+      }
+      /*----------------------------------********---------------------------------*/
+    });
+  }
 
   // Typical JsonReader with additional meta-data params for defining the core attributes of your json-response
   // the readerFields is defined in PHP server side
