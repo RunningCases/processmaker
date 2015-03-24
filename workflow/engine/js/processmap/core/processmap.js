@@ -2232,6 +2232,7 @@ var processmap=function(){
     /*
     * Aca se definen  TASK inicio y TASK a la que se deriva.
     */
+    event = event || window.event;
 
     if (event)
     {
