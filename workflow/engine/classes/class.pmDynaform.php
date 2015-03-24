@@ -14,6 +14,8 @@ class pmDynaform
     public $fields = null;
     public $record = null;
     public $credentials = null;
+    public $lang = null;
+    public $langs = null;
 
     public function __construct($fields)
     {
@@ -38,6 +40,7 @@ class pmDynaform
         }
         $a = new Criteria("workflow");
         $a->addSelectColumn(DynaformPeer::DYN_VERSION);
+        $a->addSelectColumn(DynaformPeer::DYN_LABEL);
         $a->addSelectColumn(DynaformPeer::DYN_CONTENT);
         $a->addSelectColumn(DynaformPeer::PRO_UID);
         $a->addSelectColumn(DynaformPeer::DYN_UID);
@@ -47,6 +50,7 @@ class pmDynaform
         $ds->next();
         $row = $ds->getRow();
         $this->record = isset($row) ? $row : null;
+        $this->langs = ($this->record["DYN_LABEL"] !== "" && $this->record["DYN_LABEL"] !== null) ? G::json_decode($this->record["DYN_LABEL"]) : null;
         return $this->record;
     }
 
@@ -187,6 +191,24 @@ class pmDynaform
                         }
                         $json->rows = count($rows);
                         $json->data = $rows;
+                    }
+                }
+                //languages
+                if ($this->lang === null && $key === "language" && isset($json->language)) {
+                    $this->lang = $json->language;
+                }
+                if ($key === "label" && isset($json->label) && $this->langs !== null && isset($this->langs->{$this->lang})) {
+                    $langs = $this->langs->{$this->lang}->Labels;
+                    foreach ($langs as $langsValue) {
+                        if ($json->label === $langsValue->msgid)
+                            $json->label = $langsValue->msgstr;
+                    }
+                }
+                if ($key === "title" && isset($json->title) && $this->langs !== null && isset($this->langs->{$this->lang})) {
+                    $langs = $this->langs->{$this->lang}->Labels;
+                    foreach ($langs as $langsValue) {
+                        if ($json->title === $langsValue->msgid)
+                            $json->title = $langsValue->msgstr;
                     }
                 }
             }

@@ -1190,7 +1190,7 @@ class DynaForm
                 $name = $_FILES["LANGUAGE"]["name"];
                 $name = explode(".", $name);
                 $content = $i18n->getHeaders();
-                $content["File-Name"] = $name;
+                $content["File-Name"] = $_FILES["LANGUAGE"]["name"];
                 $content["Labels"] = $translation;
 
                 $dynaForm = new \Dynaform();
