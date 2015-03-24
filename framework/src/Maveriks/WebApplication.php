@@ -480,15 +480,21 @@ class WebApplication
         define("PATH_TEMPORAL", PATH_C . "dynEditor/");
         define("PATH_DB", PATH_DATA . "sites" . PATH_SEP);
 
+        \Bootstrap::LoadTranslationObject((defined("SYS_LANG"))? SYS_LANG : "en");
+
         if (empty($workspace)) {
             return true;
         }
 
         define("SYS_SYS", $workspace);
 
-        if (! file_exists( PATH_DB . SYS_SYS . "/db.php" )) {
-            throw new \Exception(\G::loadTranslation("ID_NOT_WORKSPACE"));
+        if (!file_exists(PATH_DB . SYS_SYS . PATH_SEP . "db.php")) {
+            $rest = new \Maveriks\Extension\Restler();
+            $rest->setMessage(new RestException(Api::STAT_APP_EXCEPTION, \G::LoadTranslation("ID_NOT_WORKSPACE")));
+
+            exit(0);
         }
+
         require_once (PATH_DB . SYS_SYS . "/db.php");
 
         // defining constant for workspace shared directory
@@ -545,8 +551,6 @@ class WebApplication
         //$memcache = PMmemcached::getSingleton( SYS_SYS );
 
         \Propel::init(PATH_CONFIG . "databases.php");
-
-        \Bootstrap::LoadTranslationObject(defined( 'SYS_LANG' ) ? SYS_LANG : "en");
 
         return true;
     }
