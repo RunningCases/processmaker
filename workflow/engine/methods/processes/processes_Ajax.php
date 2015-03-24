@@ -571,7 +571,7 @@ try {
             $taskInfo=$oTaskNewPattern->load($oData->tas_uid);
             $titleTask=$taskInfo['TAS_TITLE'];
             G::auditlog("DeleteSubProcess",'Delete Sub-Process -> '.$titleTask.' : '.$oData->tas_uid);
-            $sOutput = $oProcessMap->deleteSubPrcocess($oData->pro_uid, $oData->tas_uid);
+            $sOutput = $oProcessMap->deleteSubProcess($oData->pro_uid, $oData->tas_uid);
             break;
         case 'subProcess_Properties':
             $oProcessMap->subProcess_Properties($oData->pro_uid, $oData->tas_uid, $oData->index);
