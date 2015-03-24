@@ -35,10 +35,12 @@ if (preg_match("/^([\d\.]+).*$/", System::getVersion(), $arrayMatch)) {
     $pmVersion = ""; //Branch master
 }
 
-$arrayPmFileExtension = array("pm", "pmx", "bpmn");
+$arrayImportFileExtension = array("pm", "pmx", "bpmn");
+$arrayMenuNewOption       = array("pm" => true, "bpmn" => true);
 
 if ($pmVersion != "") {
-    $arrayPmFileExtension = (version_compare($pmVersion . "", "3", ">="))? $arrayPmFileExtension : array("pm");
+    $arrayImportFileExtension = (version_compare($pmVersion . "", "3", ">="))? $arrayImportFileExtension : array("pm");
+    $arrayMenuNewOption       = (version_compare($pmVersion . "", "3", ">="))? array("bpmn" => true) : array("pm" => true);
 }
 
 $oHeadPublisher->addExtJsScript( 'processes/main', true ); //adding a javascript file .js
@@ -47,6 +49,7 @@ $oHeadPublisher->addContent( 'processes/main' ); //adding a html file  .html.
 $partnerFlag = (defined('PARTNER_FLAG')) ? PARTNER_FLAG : false;
 $oHeadPublisher->assign( 'PARTNER_FLAG', $partnerFlag );
 $oHeadPublisher->assign( 'pageSize', $conf->getEnvSetting( 'casesListRowNumber' ) );
-$oHeadPublisher->assign("arrayPmFileExtension", $arrayPmFileExtension);
+$oHeadPublisher->assign("arrayImportFileExtension", $arrayImportFileExtension);
+$oHeadPublisher->assign("arrayMenuNewOption", $arrayMenuNewOption);
 
 G::RenderPage( 'publish', 'extJs' );
