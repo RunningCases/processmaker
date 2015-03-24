@@ -29,11 +29,24 @@ $RBAC->requirePermissions( 'PM_FACTORY' );
 G::loadClass( 'configuration' );
 $conf = new Configurations();
 
+if (preg_match("/^([\d\.]+).*$/", System::getVersion(), $arrayMatch)) {
+    $pmVersion = $arrayMatch[1];
+} else {
+    $pmVersion = ""; //Branch master
+}
+
+$arrayPmFileExtension = array("pm", "pmx", "bpmn");
+
+if ($pmVersion != "") {
+    $arrayPmFileExtension = (version_compare($pmVersion . "", "3", ">="))? $arrayPmFileExtension : array("pm");
+}
+
 $oHeadPublisher->addExtJsScript( 'processes/main', true ); //adding a javascript file .js
 $oHeadPublisher->addContent( 'processes/main' ); //adding a html file  .html.
 
 $partnerFlag = (defined('PARTNER_FLAG')) ? PARTNER_FLAG : false;
 $oHeadPublisher->assign( 'PARTNER_FLAG', $partnerFlag );
 $oHeadPublisher->assign( 'pageSize', $conf->getEnvSetting( 'casesListRowNumber' ) );
+$oHeadPublisher->assign("arrayPmFileExtension", $arrayPmFileExtension);
 
 G::RenderPage( 'publish', 'extJs' );
