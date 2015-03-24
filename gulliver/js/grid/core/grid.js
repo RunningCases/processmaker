@@ -745,12 +745,11 @@ var G_Grid = function(oForm, sGridName){
 
     this.deleteGridRow = function (sRow, bWithoutConfirm)
     {
-      
         if (leimnud.browser.isIE) {
             if (typeof(bWithoutConfirm) == "undefined") {
                 bWithoutConfirm = false;
             }
-            if (this.oGrid.rows.length == 2) {
+            if (document.getElementById(this.sGridName).rows.length == 2) {
                 new leimnud.module.app.alert().make({
                     label: G_STRINGS.ID_MSG_NODELETE_GRID_ITEM,
                     width:400, height:120
@@ -758,13 +757,13 @@ var G_Grid = function(oForm, sGridName){
                 return false;
             }
             if (bWithoutConfirm) {
-                if (this.oGrid.rows.length == 3) {
+                if (document.getElementById(this.sGridName).rows.length == 3) {
                     this.clearRowWC(this, sRow);
                 } else {
                     this.deleteRowWC(this, sRow);
                 }
             } else {
-                if (this.oGrid.rows.length == 3) {
+                if (document.getElementById(this.sGridName).rows.length == 3) {
                     new leimnud.module.app.confirm().make({
                         label: _('ID_MSG_CLEAR_GRID_FIRST_ITEM'),
                         width:400, height:120,
@@ -786,20 +785,20 @@ var G_Grid = function(oForm, sGridName){
             if (typeof(bWithoutConfirm) == "undefined") {
                 bWithoutConfirm = false;
             }
-            if (this.oGrid.rows.length == 2) {
+            if (document.getElementById(this.sGridName).rows.length == 2) {
                 new leimnud.module.app.alert().make({
                     label: G_STRINGS.ID_MSG_NODELETE_GRID_ITEM
                 });
                 return false;
             }
             if (bWithoutConfirm) {
-                if (this.oGrid.rows.length == 3) {
+                if (document.getElementById(this.sGridName).rows.length == 3) {
                     this.clearRowWC(this, sRow);
                 } else {
                     this.deleteRowWC(this, sRow);
                 }
             } else {
-                if (this.oGrid.rows.length == 3) {
+                if (document.getElementById(this.sGridName).rows.length == 3) {
                     new leimnud.module.app.confirm().make({
                         label: _('ID_MSG_CLEAR_GRID_FIRST_ITEM'),
                         action: function () {
@@ -825,7 +824,7 @@ var G_Grid = function(oForm, sGridName){
     sRow = sRow.replace("]", "");
     var iRow = Number(sRow);
     var iRowAux = iRow + 1;
-    var lastItem = oObj.oGrid.rows.length - 2;
+    var lastItem = document.getElementById(this.sGridName).rows.length - 2;
     var elemNodeName = "";
     var elem2ParentNode;
     var elem2Id   = "";
@@ -837,9 +836,9 @@ var G_Grid = function(oForm, sGridName){
     var i = 0;
 
     while (iRowAux <= (lastItem)) {
-      for (i = 1; i < oObj.oGrid.rows[iRowAux - 1].cells.length; i++) {
-        var oCell1 = oObj.oGrid.rows[iRowAux - 1].cells[i];
-        var oCell2 = oObj.oGrid.rows[iRowAux].cells[i];
+      for (i = 1; i < document.getElementById(this.sGridName).rows[iRowAux - 1].cells.length; i++) {
+        var oCell1 = document.getElementById(this.sGridName).rows[iRowAux - 1].cells[i];
+        var oCell2 = document.getElementById(this.sGridName).rows[iRowAux].cells[i];
 
         elemNodeName = oCell1.innerHTML.substring(oCell1.innerHTML.indexOf("<") + 1, oCell1.innerHTML.indexOf(" ")).toLowerCase();
 
@@ -955,7 +954,7 @@ var G_Grid = function(oForm, sGridName){
     }
 
     //Delete row
-    this.oGrid.deleteRow(lastItem);
+    document.getElementById(this.sGridName).deleteRow(lastItem);
 
     for (i = 0; i <= this.aFields.length - 1; i++) {
         this.aElements.pop();
@@ -995,8 +994,8 @@ var G_Grid = function(oForm, sGridName){
         var pmLabel = '';
         var elemNodeName = '';
         var objects = '';
-        for (i = 1; i < oObj.oGrid.rows[1].cells.length; i++) {
-            var oCell1 = oObj.oGrid.rows[1].cells[i];
+        for (i = 1; i < document.getElementById(this.sGridName).rows[1].cells.length; i++) {
+            var oCell1 = document.getElementById(this.sGridName).rows[1].cells[i];
             elemNodeName = oCell1.innerHTML.substring(oCell1.innerHTML.indexOf("<") + 1, oCell1.innerHTML.indexOf(" ")).toLowerCase();
             switch (elemNodeName) {
                 case "input":
