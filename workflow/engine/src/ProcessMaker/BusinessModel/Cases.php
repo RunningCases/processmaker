@@ -528,8 +528,25 @@ class Cases
     public function getTaskCase($applicationUid, $userUid)
     {
         try {
-            $result = array ();
-            \G::LoadClass('wsBase');
+            //Verify data
+            $this->throwExceptionIfNotExistsCase($applicationUid, $this->getFieldNameByFormatFieldName("APP_UID"));
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\ApplicationPeer::APP_UID);
+
+            $criteria->add(\ApplicationPeer::APP_UID, $applicationUid, \Criteria::EQUAL);
+            $criteria->add(\ApplicationPeer::APP_STATUS, "COMPLETED", \Criteria::EQUAL);
+
+            $rsCriteria = \ApplicationPeer::doSelectRS($criteria);
+
+            if ($rsCriteria->next()) {
+                throw new \Exception(\G::LoadTranslation("ID_CASE_NO_CURRENT_TASKS_BECAUSE_CASE_ITS_COMPLETED", array($this->getFieldNameByFormatFieldName("APP_UID"), $applicationUid)));
+            }
+
+            //Get data
+            $result = array();
+
             $oCriteria = new \Criteria( 'workflow' );
             $del       = \DBAdapter::getStringDelimiter();
             $oCriteria->addSelectColumn( \AppDelegationPeer::DEL_INDEX );
