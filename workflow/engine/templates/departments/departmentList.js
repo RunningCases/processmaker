@@ -327,6 +327,8 @@ SaveNewDepartment = function(){
     return;
   }
   var dep_parent = newForm.getForm().findField('parent').getValue();
+  newForm.getForm().findField('dep_name').reset();
+  CloseWindow();
   Ext.Ajax.request({
     url: 'departments_Ajax',
     params: {action: 'checkDepartmentName', name: dep_name, parent: dep_parent},
@@ -344,9 +346,8 @@ SaveNewDepartment = function(){
             editButton.disable();
             deleteButton.disable();
             usersButton.disable();
-            newForm.getForm().findField('dep_name').reset();
-            CloseWindow();
             PMExt.notify(_('ID_DEPARTMENTS'), _('ID_DEPARTMENT_SUCCESS_NEW'));
+            return;
           },
           failure: function(r,o){
             waitLoading.hide();
