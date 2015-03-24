@@ -953,7 +953,11 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         $Fields['DOC_UID'] = $_POST['docID'];
         $Fields['APP_DOC_UID'] = $_POST['appDocId'];
         $Fields['actionType'] = $_POST['actionType'];
-        $Fields['docVersion'] = $_POST['docVersion'];
+        $Fields["docVersion"] = (int)($_POST["docVersion"]);
+
+        $appDocument = new AppDocument();
+        $arrayAppDocumentData = $appDocument->load($_POST["appDocId"]);
+
         $oInputDocument = new InputDocument();
         $InpDocData = $oInputDocument->load( $Fields['DOC_UID'] );
 
@@ -966,7 +970,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         $Fields["INP_DOC_MAX_FILESIZE_LABEL"] = ($inpDocMaxFilesize > 0)? "[" . $InpDocData["INP_DOC_MAX_FILESIZE"] . " " . $InpDocData["INP_DOC_MAX_FILESIZE_UNIT"] . "]" : "";
         $Fields['fileTypes'] = $InpDocData['INP_DOC_TYPE_FILE'];
 
-        $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_AttachInputDocumentGeneral', '', $Fields, 'cases_SupervisorSaveDocument?UID=' . $_POST['docID'] . '&APP_UID=' . $_POST['appDocId'] );
+        $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_AttachInputDocumentGeneral', '', $Fields, 'cases_SupervisorSaveDocument?APP_DOC_UID=' . $_POST['appDocId'] . "&DOC_VERSION=" . ($Fields['docVersion'] + 1) . '&APP_UID=' . $arrayAppDocumentData["APP_UID"] . '&UID=' . $_POST['docID']);
         G::RenderPage( 'publish', 'raw' );
         break;
     case "inputDocumentVersionHistory":
