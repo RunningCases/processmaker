@@ -1285,7 +1285,7 @@ class Installer extends Controller
         }
         $db_username = $filter->validateInput($db_username, 'nosql');
         $db_hostname = $filter->validateInput($db_hostname, 'nosql');
-        $query = "SELECT * FROM `information_schema`.`USER_PRIVILEGES` where (GRANTEE = \"'%s'@'%s'\" OR GRANTEE = \"'%s'@'%'\") ";
+        $query = "SELECT * FROM `information_schema`.`USER_PRIVILEGES` where (GRANTEE = \"'%s'@'%s'\" OR GRANTEE = \"'%s'@'%%'\") ";   
         $query = $filter->preventSqlInjection($query, array($db_username, $db_hostname, $db_username));
         $res = @mysql_query( $query, $link );
         $row = @mysql_fetch_array( $res );
