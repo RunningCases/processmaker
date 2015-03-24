@@ -1930,6 +1930,32 @@
       </vendor>
     </index>
   </table>
+  <table name="CASE_CONSOLIDATED">
+    <vendor type="mysql">
+      <parameter name="Name" value="CASE_CONSOLIDATED"/>
+      <parameter name="Engine" value="InnoDB"/>
+      <parameter name="Version" value="10"/>
+      <parameter name="Row_format" value="Dynamic"/>
+      <parameter name="Rows" value="18"/>
+      <parameter name="Avg_row_length" value="106"/>
+      <parameter name="Data_length" value="1956"/>
+      <parameter name="Max_data_length" value="281474976710655"/>
+      <parameter name="Index_length" value="2048"/>
+      <parameter name="Data_free" value="40"/>
+      <parameter name="Auto_increment" value=""/>
+      <parameter name="Create_time" value="2015-16-03 11:50:00"/>
+      <parameter name="Update_time" value="2015-16-03 11:50:00"/>
+      <parameter name="Check_time" value=""/>
+      <parameter name="Collation" value="utf8_general_ci"/>
+      <parameter name="Checksum" value=""/>
+      <parameter name="Create_options" value=""/>
+      <parameter name="Comment" value=""/>
+    </vendor>
+    <column name="TAS_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+    <column name="DYN_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="REP_TAB_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="CON_STATUS" type="VARCHAR" size="20" required="true" default="ACTIVE"/>
+  </table>
   <table name="STAGE">
     <vendor type="mysql">
       <parameter name="Name" value="STAGE"/>

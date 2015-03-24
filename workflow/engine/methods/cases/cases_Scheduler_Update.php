@@ -44,6 +44,12 @@ try {
     if (empty( $_POST )) {
         die( 'The information sended is empty!' );
     }
+
+    foreach ($_POST["form"] as $key => $value) {
+        $_POST["form"][$key] = trim($value);
+    }
+
+    $aData = array();
     $aData['SCH_UID'] = $_POST['form']['SCH_UID'];
     $aData['SCH_NAME'] = $_POST['form']['SCH_NAME'];
     $aData['PRO_UID'] = $_POST['form']['PRO_UID'];

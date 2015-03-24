@@ -880,6 +880,21 @@ CREATE TABLE `CASE_TRACKER_OBJECT`
 	KEY `indexCaseTrackerObject`(`PRO_UID`, `CTO_UID_OBJ`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
+#-- CASE_CONSOLIDATED
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `CASE_CONSOLIDATED`;
+
+
+CREATE TABLE `CASE_CONSOLIDATED`
+(
+	`TAS_UID` VARCHAR(32) default '' NOT NULL,
+	`DYN_UID` VARCHAR(32) default '' NOT NULL,
+	`REP_TAB_UID` VARCHAR(32) default '' NOT NULL,
+	`CON_STATUS` VARCHAR(20) default 'ACTIVE' NOT NULL,
+	PRIMARY KEY (`TAS_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
+#-----------------------------------------------------------------------------
 #-- STAGE
 #-----------------------------------------------------------------------------
 
