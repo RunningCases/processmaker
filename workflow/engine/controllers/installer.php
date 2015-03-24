@@ -38,7 +38,7 @@ class Installer extends Controller
 
     public function index ($httpData)
     {
-        if ((strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') && (file_exists($this->path_shared . 'partner.info'))){
+        if ((strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') && (file_exists($this->path_shared . 'partner.info'))) {
             $this->includeExtJS( 'installer/stopInstall');
             $this->setView( 'installer/mainStopInstall' );
             G::RenderPage( 'publish', 'extJs' );
@@ -786,11 +786,12 @@ class Installer extends Controller
 
             $this->mysqlFileQuery( PATH_RBAC_HOME . 'engine/data/mysql/schema.sql' );
             $this->mysqlFileQuery( PATH_RBAC_HOME . 'engine/data/mysql/insert.sql' );
-
+            
             $query = sprintf( "USE %s;", $wf_workpace );
             $this->mysqlQuery( $query );
             $this->mysqlFileQuery( PATH_HOME . 'engine/data/mysql/schema.sql' );
             $this->mysqlFileQuery( PATH_HOME . 'engine/data/mysql/insert.sql' );
+            
 
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
                 $this->setPartner();
@@ -1284,7 +1285,7 @@ class Installer extends Controller
         }
         $db_username = $filter->validateInput($db_username, 'nosql');
         $db_hostname = $filter->validateInput($db_hostname, 'nosql');
-        $query = "SELECT * FROM `information_schema`.`USER_PRIVILEGES` where (GRANTEE = \"'%s'@'%s'\" OR GRANTEE = \"'%s'@'%'\") ";
+        $query = "SELECT * FROM `information_schema`.`USER_PRIVILEGES` where (GRANTEE = \"'%s'@'%s'\" OR GRANTEE = \"'%s'@'%%'\") ";   
         $query = $filter->preventSqlInjection($query, array($db_username, $db_hostname, $db_username));
         $res = @mysql_query( $query, $link );
         $row = @mysql_fetch_array( $res );

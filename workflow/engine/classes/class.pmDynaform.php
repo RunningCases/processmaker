@@ -19,8 +19,10 @@ class pmDynaform
     public function __construct($fields)
     {
         $this->fields = $fields;
-        $this->getDynaform();
-        $this->getCredentials();
+        if (count($fields) && count($fields['APP_DATA'])) {
+            $this->getDynaform();
+            $this->getCredentials();    
+        }
         if (isset($this->fields["APP_UID"])) {
             //current
             $cases = new \ProcessMaker\BusinessModel\Cases();

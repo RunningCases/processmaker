@@ -49,8 +49,19 @@ class ListInbox extends BaseListInbox
 
             // remove and create participated last
             if (!$isSelfService) {
-                $listParticipatedLast = new ListParticipatedLast();
-                $listParticipatedLast->remove($data['APP_UID'], $data['USR_UID']);
+                $oCriteria = new Criteria('workflow');
+                $oCriteria->add(ListParticipatedLastPeer::APP_UID, $data['APP_UID']);
+                $oCriteria->add(ListParticipatedLastPeer::USR_UID, $data['USR_UID']);
+                $exit = ListParticipatedLastPeer::doCount($oCriteria);
+                if ($exit) {
+                    $oCriteria = new Criteria('workflow');
+                    $oCriteria->add(ListParticipatedLastPeer::APP_UID, $data['APP_UID']);
+                    $oCriteria->add(ListParticipatedLastPeer::USR_UID, $data['USR_UID']);
+                    ListParticipatedLastPeer::doDelete($oCriteria);
+                    $users = new Users();
+                    $users->refreshTotal($data['USR_UID'], 'removed', 'participated');
+                }
+
                 $listParticipatedLast = new ListParticipatedLast();
                 $listParticipatedLast->create($data);
                 $listParticipatedLast = new ListParticipatedLast();
@@ -367,6 +378,11 @@ class ListInbox extends BaseListInbox
     {
         $criteria = new Criteria();
         $criteria->add( ListInboxPeer::USR_UID, $usr_uid, Criteria::EQUAL );
+        if ($filters['action'] == 'draft') {
+            $criteria->add( ListInboxPeer::APP_STATUS, 'DRAFT', Criteria::EQUAL );
+        } else {
+            $criteria->add( ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL );
+        }
         self::loadFilters($criteria, $filters);
         $total = ListInboxPeer::doCount( $criteria );
         return (int)$total;

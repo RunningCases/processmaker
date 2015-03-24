@@ -340,7 +340,7 @@ class MessageApplication
             $criteria->addSelectColumn(\MessageEventDefinitionPeer::MSGED_USR_UID);
             $criteria->addSelectColumn(\MessageEventDefinitionPeer::MSGED_VARIABLES);
             $criteria->addSelectColumn(\MessageEventDefinitionPeer::MSGED_CORRELATION);
-            $criteria->addSelectColumn(\MessageEventTaskRelationPeer::TAS_UID);
+            $criteria->addSelectColumn(\ElementTaskRelationPeer::TAS_UID);
 
             $arrayEventType   = array("START", "INTERMEDIATE");
             $arrayEventMarker = array("MESSAGECATCH");
@@ -351,7 +351,8 @@ class MessageApplication
 
             $criteria->addJoin(\MessageApplicationPeer::EVN_UID_CATCH, \MessageEventDefinitionPeer::EVN_UID, \Criteria::INNER_JOIN);
 
-            $criteria->addJoin(\MessageApplicationPeer::EVN_UID_CATCH, \MessageEventTaskRelationPeer::EVN_UID, \Criteria::INNER_JOIN);
+            $criteria->addJoin(\MessageApplicationPeer::EVN_UID_CATCH, \ElementTaskRelationPeer::ELEMENT_UID, \Criteria::INNER_JOIN);
+            $criteria->add(\ElementTaskRelationPeer::ELEMENT_TYPE, "bpmnEvent", \Criteria::EQUAL);
 
             if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["messageApplicationStatus"]) && trim($arrayFilterData["messageApplicationStatus"]) != "") {
                 $criteria->add(\MessageApplicationPeer::MSGAPP_STATUS, $arrayFilterData["messageApplicationStatus"], \Criteria::EQUAL);
