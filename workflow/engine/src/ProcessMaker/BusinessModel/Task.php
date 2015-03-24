@@ -321,7 +321,7 @@ class Task
             }
 
             //Validating TAS_TRANSFER_FLY value
-            if ($arrayProperty["TAS_TRANSFER_FLY"] == "FALSE") {
+            if ($arrayProperty["TAS_TRANSFER_FLY"] == "TRUE") {
                 if (!isset($arrayProperty["TAS_DURATION"])) {
                     throw (new \Exception("Invalid value specified for 'tas_duration'"));
                 }
