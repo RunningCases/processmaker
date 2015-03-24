@@ -400,6 +400,7 @@ var G_Grid = function(oForm, sGridName){
           eNodeName = eNodeName.toLowerCase();
         switch(eNodeName){
           case 'input':
+            oNewRow.getElementsByTagName('td')[i].innerHTML  = oNewRow.getElementsByTagName('td')[i].innerHTML.replace(/\[1\]/g, '\[' + currentRow + '\]');
             aObjects = oNewRow.getElementsByTagName('td')[i].getElementsByTagName('input');
             if (aObjects){
               newID = aObjects[0].id.replace(/\[1\]/g, '\[' + currentRow + '\]');
@@ -537,7 +538,9 @@ var G_Grid = function(oForm, sGridName){
                       break;
                   case 'hidden': //HIDDEN
                     if ((attributes.gridtype != "yesno" && attributes.gridtype != "dropdown") || typeof(attributes.gridtype) == "undefined") {
-                        aObjects[n].value = defaultValue;
+                        if(defaultValue != ''){
+                            aObjects[n].value = defaultValue;
+                        }
                         newID = aObjects[n].id.replace(/\[1\]/g, '\[' + currentRow + '\]');
                         aObjects[n].id = newID;
                         aObjects[n].name = newID;
