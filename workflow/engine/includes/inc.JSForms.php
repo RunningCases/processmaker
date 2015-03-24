@@ -23,12 +23,19 @@
  * 
  */
 
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
 global $HTTP_SESSION_VARS;
 global $G_FORM;
+$HTTP_SESSION_VARS = $filter->xssFilterHard($HTTP_SESSION_VARS);
+$HTTP_GET_VARS = $filter->xssFilterHard($HTTP_GET_VARS);
+$_GET = $filter->xssFilterHard($_GET);
+
 $path = '';
 $showFieldAjax = 'showFieldAjax.php';
 
 $serverAjax = G::encryptLink($path.$showFieldAjax);
+$serverAjax = $filter->xssFilterHard($serverAjax);
 
 ?>
 <script language="JavaScript">
@@ -40,10 +47,14 @@ function RefreshDependentFields(ObjectName, Fields, InitValue) {
   global $HTTP_GET_VARS;
   if ($HTTP_SESSION_VARS['CURRENT_APPLICATION'] == '') $HTTP_SESSION_VARS['CURRENT_APPLICATION'] = '0';
   	$appid = $HTTP_SESSION_VARS['CURRENT_APPLICATION'];
-  	if ($HTTP_GET_VARS['dynaform'] != '')
+  	if ($HTTP_GET_VARS['dynaform'] != ''){
   	  $Dynaform = '&__dynaform__=' . $HTTP_GET_VARS['dynaform'];
-  	if ($HTTP_GET_VARS['filename'] != '')
+  	  $Dynaform = $filter->xssFilterHard($Dynaform);
+  	}
+  	if ($HTTP_GET_VARS['filename'] != ''){
   	  $Dynaform = '&__filename__=' . $HTTP_GET_VARS['filename'];
+  	  $Dynaform = $filter->xssFilterHard($Dynaform);
+  	}
 
 ?>
 

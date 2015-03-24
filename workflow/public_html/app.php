@@ -28,11 +28,9 @@ try {
             );
         }
     }
-
     $loader->add($rootDir . 'workflow/engine/src/', "ProcessMaker");
-    //$loader->add($rootDir . "workflow/engine/classes/model/");
     $loader->add($rootDir . 'workflow/engine/src/');
-
+    
     // add vendors to autoloader
     $loader->add($rootDir . 'vendor/luracast/restler/vendor', "Luracast");
     $loader->add($rootDir . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");

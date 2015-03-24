@@ -35,7 +35,15 @@
 </head>
 <body>
 <?php
-	$Action = isset($_GET["q"]) ? $_GET["q"] : "none";
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
+    if(isset($_GET["q"])) {
+        $_GET["q"] = $filter->xssFilterHard($_GET["q"]);
+        $Action = $_GET["q"];
+    } else {
+        $Action = "none";
+    }
+	//$Action = isset($_GET["q"]) ? $_GET["q"] : "none";
 	if($Action =="none"){
             displayUploadForm();
         }else if($Action=="upload"){
@@ -50,6 +58,12 @@
 // displays the upload form
 function displayUploadForm()
 {
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
+    if(isset($_SERVER["QUERY_STRING"])) {
+        $_SERVER["QUERY_STRING"] = $filter->xssFilterHard($_SERVER["QUERY_STRING"],'url');
+    }
+    
     $html = "
     <div id=\"containerDataForm\">
         <form method=\"post\" enctype=\"multipart/form-data\" action=\"uploader.php?" . $_SERVER["QUERY_STRING"] . "&q=upload\" onsubmit=\"return validateForm();\">
@@ -70,6 +84,10 @@ function displayUploadForm()
 // uploads the file to the destination path, and returns a link with link path substituted for destination path
 function uploadContentFile()
 {
+	G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
+    $_FILES["upload_file"] = $filter->xssFilterHard($_FILES["upload_file"]);
+    
 	$StatusMessage = "";
 	$ActualFileName = "";
     $DestPath = sys_get_temp_dir();
@@ -85,6 +103,9 @@ function uploadContentFile()
 
 function showPopUp($PopupText)
 {
+	G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
+    $PopupText = $filter->xssFilterHard($PopupText);
 	echo "<script type=\"text/javascript\" language=\"javascript\">alert (\"$PopupText\");</script>";
 }
 

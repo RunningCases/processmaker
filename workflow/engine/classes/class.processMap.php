@@ -2500,8 +2500,8 @@ class processMap
             //      echo $sql;
             //      var_dump($aRow);
             //      die();
-
-
+            
+           
             if (is_array($aRow)) {
                 $aFields['ROU_TYPE'] = $aRow['ROU_TYPE'];
                 $aFields['ROU_TYPE_OLD'] = $aRow['ROU_TYPE'];
@@ -2586,6 +2586,9 @@ class processMap
                         throw new Exception(G::loadTranslation('ID_INVALID_ROU_TYPE_DEFINITION_ON_ROUTE_TABLE'));
                         break;
                 }
+                
+            } else {
+                throw new Exception(G::loadTranslation('ID_INVALID_ROU_TYPE_DEFINITION_ON_ROUTE_TABLE'));
             }
 
             $aFields['action'] = 'savePattern';

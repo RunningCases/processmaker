@@ -174,7 +174,20 @@ class AppDelegation extends BaseAppDelegation
             $data->DEL_INDEX = $delIndex;
             $data->USR_UID = $sUsrUid;
             $oPluginRegistry = &PMPluginRegistry::getSingleton();
-            $oPluginRegistry->executeTriggers( PM_CREATE_NEW_DELEGATION, $data );
+            $oPluginRegistry->executeTriggers(PM_CREATE_NEW_DELEGATION, $data);
+
+            /*----------------------------------********---------------------------------*/
+            // this section evaluates the actions by email trigger execution please 
+            // modify this section carefully, the if evaluation checks if the license has been 
+            // activated in order to send the mail according to the configuration table
+            if (PMLicensedFeatures
+                ::getSingleton()
+                ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
+                G::LoadClass('actionsByEmail');
+                $actionsByEmail = new actionsByEmailClass();
+                $actionsByEmail->sendActionsByEmail($data);
+            }
+            /*----------------------------------********---------------------------------*/
         }
 
         return $delIndex;

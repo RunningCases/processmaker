@@ -59,7 +59,44 @@ class Activity extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
-
+    
+/*----------------------------------********---------------------------------*/
+    /**
+     * @param string $pro_uid {@min 32} {@max 32}
+     * @param string $tas_uid {@min 32} {@max 32}
+     * @param string $filter {@choice definition,,properties}
+     *
+     * @author Gustavo Cruz <gustavo.cruz@colosa.com>
+     * @copyright Colosa - Bolivia
+     * @return array
+     *
+     * @url GET /:pro_uid/activity/:tas_uid/feature-configuration
+     */
+    public function doGetProjectActivityFeatureConfiguration($pro_uid, $tas_uid, $filter = '')
+    {
+        try {
+            $configurations = array();
+            /*** starts retrieval of action by emails configuration ***/
+            if (\PMLicensedFeatures
+                ::getSingleton()
+                ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
+                $params = array(
+                    'type' => 'activity',
+                    'form' => 'configuration',
+                    'PRO_UID' => $pro_uid,
+                    'TAS_UID' => $tas_uid
+                );
+                $actionsByEmailService = new \ProcessMaker\BusinessModel\ActionsByEmail();
+                $configurations[] = $actionsByEmailService->loadConfiguration($params);
+            }
+            /*** end retrieval of action by emails configuration ***/
+            return $configurations;
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+/*----------------------------------********---------------------------------*/
+    
     /**
      * @param string $prj_uid {@min 32} {@max 32}
      * @param string $act_uid {@min 32} {@max 32}
@@ -79,6 +116,15 @@ class Activity extends Api
             }
             $task = new \ProcessMaker\BusinessModel\Task();
             $properties = $task->updateProperties($prj_uid, $act_uid, $request_data);
+            
+             /*----------------------------------********---------------------------------*/
+            if (\PMLicensedFeatures
+                ::getSingleton()
+                ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
+                $actionsByEmailService = new \ProcessMaker\BusinessModel\ActionsByEmail();
+                $actionsByEmailService->saveConfiguration($request_data['properties']['_features']);
+            }
+             /*----------------------------------********---------------------------------*/
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }

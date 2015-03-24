@@ -51,5 +51,30 @@ class System extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
-}
 
+    /**
+     * @return array
+     *
+     * @author Gustavo Cruz <gustavo.cruz@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /enabled-features
+     */
+    public function doGetEnabledFeatures()
+    {
+        try {
+            $enabledFeatures = array();
+            $keys = array ('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=');
+            foreach ($keys as $key) {
+                if (\PMLicensedFeatures
+                    ::getSingleton()
+                    ->verifyfeature($key)) {
+                    $enabledFeatures[] = $key;
+                }
+            }
+            return $enabledFeatures;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+}

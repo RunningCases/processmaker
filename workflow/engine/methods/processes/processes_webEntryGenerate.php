@@ -162,7 +162,7 @@ try {
             }
         }
 
-        print_r( '<textarea cols="70" rows="20">' . htmlentities( str_replace( '</body>', '</form></body>', str_replace( '</form>', '', $template->getOutputContent() ) ) ) . '</textarea>' );
+        print_r( '<textarea cols="77" rows="26" style="width:100%; height:99%">' . htmlentities( str_replace( '</body>', '</form></body>', str_replace( '</form>', '', $template->getOutputContent() ) ) ) . '</textarea>' );
         G::auditLog('WebEntry','Generate web entry with single HTML (dynaform uid: '.$sDYNAFORM.') in process "'.$resultProcess['PRO_TITLE'].'"');
     }
 
