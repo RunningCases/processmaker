@@ -201,7 +201,7 @@ img {
   font: normal 8pt "Open Sans", Tahoma, sans-serif, MiscFixed;
   color: #000;
   height: 0px;
-  padding-top: 100px;
+  padding-top: 1px;
   text-align: center;
 }
 .Footer .image {
