@@ -817,15 +817,9 @@ class Installer extends Controller
                 ) ) ) . "'
                            )" );
 
-                /*----------------------------------********---------------------------------*/
-                if (true) {
-                    $dummy = true;
-                } else {
-                /*----------------------------------********---------------------------------*/
+                if (!file_exists(PATH_CORE . 'methods/login/licenseUpdate.php')) {
                     $this->mysqlQuery("INSERT INTO EMAIL_SERVER(MESS_ENGINE) VALUES('MAIL')");
-                /*----------------------------------********---------------------------------*/
                 }
-                /*----------------------------------********---------------------------------*/
             }
 
             // Change admin user
@@ -1123,15 +1117,9 @@ class Installer extends Controller
                 ) ) ) . "'
                            )" );
 
-                /*----------------------------------********---------------------------------*/
-                if (true) {
-                    $dummy = true;
-                } else {
-                /*----------------------------------********---------------------------------*/
-                    $this->mssqlQuery("INSERT INTO EMAIL_SERVER(MESS_ENGINE) VALUES('MAIL')");
-                /*----------------------------------********---------------------------------*/
+                if (!file_exists(PATH_CORE . 'methods/login/licenseUpdate.php')) {
+                    $this->mysqlQuery("INSERT INTO EMAIL_SERVER(MESS_ENGINE) VALUES('MAIL')");
                 }
-                /*----------------------------------********---------------------------------*/
             }
 
             //change admin user
