@@ -1848,7 +1848,7 @@ SELECT 'LABEL','ID_MSG_CONFIRM_REMOVE_USER','en','Are you sure you want to remov
   UNION ALL
 SELECT 'LABEL','ID_MSG_CONFIRM_DEASIGN_USER_GROUP_MESSAGE','en','Are you sure you want to remove this user or group?','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_DASHBOARD','en','Dashboards','2014-01-15' 
+SELECT 'LABEL','ID_DASHBOARD','en','Dashboards','2015-03-09' 
   UNION ALL
 SELECT 'LABEL','ID_MSG_CONFIRM_REMOVE_TRIGGER','en','Are you sure you want to remove this trigger?','2014-01-15' 
   UNION ALL
@@ -6426,7 +6426,7 @@ SELECT 'LABEL','ID_ACCEPT','en','Accept','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_ERROR_SEND_NOTIFICATIONS','en','The following error has occurred when trying to send the notifications:','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_DATE_FORMAT_17','en','dd de M de Y','2014-01-15' 
+SELECT 'LABEL','ID_DATE_FORMAT_17','en','dd de M de Y (Date format only for Spanish language)','2015-03-17' 
   UNION ALL
 SELECT 'LABEL','ID_THIS_QUARTER','en','This quarter','2014-01-15' 
   UNION ALL
@@ -6626,7 +6626,7 @@ SELECT 'LABEL','ID_PMTABLE_PRIMARY_KEY_FIELD_IS_MISSING_IN_ATTRIBUTE','en','The 
   UNION ALL
 SELECT 'LABEL','ID_PMTABLE_TOTAL_PRIMARY_KEY_FIELDS_IS_NOT_EQUAL_IN_ATTRIBUTE','en','The total primary key fields of the PM Table is {0}, the attribute {1} has {2} primary keys.','2014-05-20' 
   UNION ALL
-SELECT 'LABEL','ID_USER_DOES_NOT_EXIST','en','The user with {0}: {1} does not exist.','2014-05-20' 
+SELECT 'LABEL','ID_USER_DOES_NOT_EXIST','en','The User with {0}: {1} does not exist.','2015-03-23' 
   UNION ALL
 SELECT 'LABEL','ID_USER_DOES_NOT_HAVE_ACTIVITY_ASSIGNED','en','The user "{0}" does not have the activity "{1}" assigned.','2014-05-20' 
   UNION ALL
@@ -6880,7 +6880,7 @@ SELECT 'LABEL','ID_DBC_ENCODE_INVALID','en','The database connection with dbs_en
   UNION ALL
 SELECT 'LABEL','ID_CANT_DELETE_DEPARTMENT_HAS_CHILDREN','en','It is not possible to delete the department because it has subdepartments.','2014-10-21' 
   UNION ALL
-SELECT 'LABEL','ID_CANT_DELETE_DEPARTMENT_HAS_USERS','en','Department cannot be deleted while has assigned users.','2014-05-29' 
+SELECT 'LABEL','ID_CANT_DELETE_DEPARTMENT_HAS_USERS','en','Department cannot be deleted while it has assigned users.','2015-03-23' 
   UNION ALL
 SELECT 'LABEL','ID_CANT_SAVE_TRIGGER','en','A trigger with the same name already exists in this process.','2014-05-29' 
   UNION ALL
@@ -7569,6 +7569,114 @@ SELECT 'LABEL','ID_EDIT_PROCESS','en','Process Edited','2015-02-21'
 SELECT 'LABEL','ID_EVENT_DELETED','en','Event deleted','2015-02-21' 
   UNION ALL
 SELECT 'LABEL','ID_DEL_THREAD_STATUS','en','Thread Status','2015-02-27' 
+  UNION ALL
+SELECT 'LABEL','ID_GRID_PAGE_DISPLAYING_DASHBOARD_MESSAGE','en','Displaying Dashboards {0} - {1} of {2}','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_GRID_PAGE_NO_DASHBOARD_MESSAGE','en','No Dashboards to display','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_CONFIRM_DELETE_DASHBOARD','en','Do you want to delete selected Dashboard?','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_DASHBOARD_SUCCESS_DELETE','en','Dashboard has been deleted correctly.','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_GRID_PAGE_DISPLAYING_0WNER_MESSAGE','en','Displaying Owners {0} - {1} of {2}','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_GRID_PAGE_NO_OWNER_MESSAGE','en','No Owners to display','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_OWNER_TYPE','en','Type owner','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_OWNER_INFORMATION','en','Owner Information','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_NEW_TAB_INDICATOR','en','Add Indicator','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_TITLE_DASHBOARD','en','Dashboard Indicator Title','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_DASHBOARD_INDICATOR_INFORMATION','en','Indicator Information','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_INDICATOR','en','Indicator','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_INDICATOR_TITLE','en','Indicator Title','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_DASHBOARD_TITLE','en','Dashboard Title','2015-03-15' 
+  UNION ALL
+SELECT 'LABEL','ID_INDICATOR_TYPE','en','Indicator Type','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_INDICATOR_GOAL','en','Goal','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_FIRST_FIGURE','en','First Graph','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_PERIODICITY','en','Periodicity','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_SECOND_FIGURE','en','Second Graph','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_DASHBOARD_OWNER_SUCCESS_DELETE','en','Owner Dashboard has been deleted correctly.','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_PROCESS_EFFICIENCE','en','Process Efficience Index','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_PROCESS_INEFFICIENCE','en','Process Inefficience Cost','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_EMPLYEE_EFFICIENCIE','en','Employee Efficience Index','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_USER_INEFFICIENCE','en','Inefficience Cost By User','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_OVER_DUE','en','% Over due','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_NEW_CASES','en','New Cases','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_COMPLETED_CASES','en','Completed Cases','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_WORKING_CASES','en','Working Cases','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_BARS','en','Bars','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_LINES','en','Lines','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_MONTH','en','Month','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_QUARTER','en','Quarter','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_SEMESTER','en','Semester','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_YEAR','en','Year','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_SET_MANAGER','en','Set Manager','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_SET_MANAGER_SUCCESS','en','Manager assigned correctly','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_MANAGER','en','You cannot unassign the manager','2015-03-09' 
+  UNION ALL
+SELECT 'LABEL','ID_DEPARTMENT_TITLE_ALREADY_EXISTS','en','The department title with {0}: "{1}" already exists.','2015-03-10' 
+  UNION ALL
+SELECT 'LABEL','ID_DASH_COMPARE_MONTH','en','Compare this month to','2015-03-18' 
+  UNION ALL
+SELECT 'LABEL','ID_DASH_COMPARE','en','Compare','2015-03-18' 
+  UNION ALL
+SELECT 'LABEL','ID_DASH_CLICK_TO_VIEW','en','You can click on one of the dashboards to view the data or click on the favorite icon to make it your main dashboard.','2015-03-18' 
+  UNION ALL
+SELECT 'LABEL','ID_SET_NO_MANAGER','en','No set Manager','2015-03-18' 
+  UNION ALL
+SELECT 'LABEL','ID_NO_SET_MANAGER_SUCCES','en','Manager unassigned correctly','2015-03-18' 
+  UNION ALL
+SELECT 'LABEL','ID_INDICATOR_PROCESS_REQUIRED','en','The field Process of indicator "{0}" is required.','2015-03-18' 
+  UNION ALL
+SELECT 'LABEL','ID_INDICATOR_TITLE_REQUIRED','en','The field Title of indicator "{0}" is required.','2015-03-18' 
+  UNION ALL
+SELECT 'LABEL','ID_INDICATOR_TYPE_REQUIRED','en','The field Type of indicator "{0}" is required.','2015-03-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAX_INDICATOR_DASHBOARD','en','Maximum number of tabs','2015-03-18' 
+  UNION ALL
+SELECT 'LABEL','ID_USER_NAME_ALREADY_EXISTS','en','The User Name with {0}: "{1}" already exists.','2015-03-23' 
+  UNION ALL
+SELECT 'LABEL','ID_LESS_THAN','en','less than','2015-03-23' 
+  UNION ALL
+SELECT 'LABEL','ID_MORE_THAN','en','more than','2015-03-23' 
+  UNION ALL
+SELECT 'LABEL','ID_CASE_NO_CURRENT_TASKS_BECAUSE_CASE_ITS_COMPLETED','en','There are no current tasks because case {0}: {1} has COMPLETED status','2015-03-24' 
+  UNION ALL
+SELECT 'LABEL','ID_CONSOLIDATED_CASE_LIST','en','Consolidated Case List','2015-03-24' 
+  UNION ALL
+SELECT 'LABEL','ID_CONSOLIDATED_DYNAFORM_REQUIRED','en','The process has no type template Dynaform grid, this Dynaform is required','2015-03-24' 
+  UNION ALL
+SELECT 'LABEL','ID_DEPARTMENT_MANAGER_EXIST','en','The user: {0} is other department manager.','2015-03-24' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 
