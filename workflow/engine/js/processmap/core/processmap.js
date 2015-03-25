@@ -2239,7 +2239,10 @@ var processmap=function(){
     /*
     * Aca se definen  TASK inicio y TASK a la que se deriva.
     */
-    event = event || window.event;
+    //In IE the event is undefined or 0
+    if(event === 0 || typeof(event) === 'undefined'){
+      event = window.event;
+    }
 
     if (event)
     {

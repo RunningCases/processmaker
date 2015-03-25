@@ -112,5 +112,97 @@ class DynaForm extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
+    
+    /**
+     * @url GET /:prj_uid/dynaform/:dyn_uid/download-language/:lang
+     *
+     * @param string $dyn_uid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doGetDynaFormLanguage($dyn_uid, $prj_uid, $lang)
+    {
+        try {
+            $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
+            $dynaForm->setFormatFieldNameInUppercase(false);
+            $response = $dynaForm->downloadLanguage($prj_uid, $dyn_uid, $lang);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
 }
+    }
+
+    /**
+     * @url POST /:prj_uid/dynaform/:dyn_uid/upload-language
+     *
+     * @param string $dyn_uid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doPostDynaFormLanguage($dyn_uid, $prj_uid)
+    {
+        try {
+            $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
+            $dynaForm->setFormatFieldNameInUppercase(false);
+            $response = $dynaForm->uploadLanguage($prj_uid, $dyn_uid);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url POST /:prj_uid/dynaform/:dyn_uid/delete-language/:lang
+     *
+     * @param string $dyn_uid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doDeleteDynaFormLanguage($dyn_uid, $prj_uid, $lang)
+    {
+        try {
+            $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
+            $dynaForm->setFormatFieldNameInUppercase(false);
+            $response = $dynaForm->deleteLanguage($prj_uid, $dyn_uid, $lang);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:prj_uid/dynaform/:dyn_uid/list-language
+     *
+     * @param string $dyn_uid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doGetListDynaFormLanguage($dyn_uid, $prj_uid)
+    {
+        try {
+            $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
+            $dynaForm->setFormatFieldNameInUppercase(false);
+            $response = $dynaForm->listLanguage($prj_uid, $dyn_uid);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * @url GET /:prj_uid/dynaform/:dyn_uid/download-labels
+     *
+     * @param string $dyn_uid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doGetListDynaFormLabels($dyn_uid, $prj_uid)
+    {
+        try {
+            $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
+            $dynaForm->setFormatFieldNameInUppercase(false);
+            $response = $dynaForm->downloadLabels($prj_uid, $dyn_uid);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+}
+
 

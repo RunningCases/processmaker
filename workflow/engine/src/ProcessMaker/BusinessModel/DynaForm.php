@@ -1134,5 +1134,218 @@ class DynaForm
             throw $e;
         }
     }
+    
+    /**
+     * download file *.po
+     *
+     * @param string $projectUid Unique id of Project
+     * @param string $dynaFormUid Unique id of DynaForm
+     *
+     * return 
+     */
+    public function downloadLanguage($projectUid, $dynaFormUid, $lang)
+    {
+        try {
+            $dynaForm = new \Dynaform();
+            $arraydata = $dynaForm->Load($dynaFormUid);
+            $data = \G::json_decode($arraydata["DYN_LABEL"]);
+            $string = "";
+            $string = $string . "msgid \"\"\n";
+            $string = $string . "msgstr \"\"\n";
+            foreach ($data->{$lang} as $key => $value) {
+                if (is_string($value)) {
+                    $string = $string . "\"" . $key . ":" . $value . "\\n\"\n";
 }
+            }
+            $string = $string . "\n";
+            foreach ($data->{$lang}->Labels as $key => $value) {
+                $string = $string . "msgid \"" . $value->msgid . "\"\n";
+                $string = $string . "msgstr \"" . $value->msgstr . "\"\n\n";
+            }
+            return array("labels" => $string, "lang" => $lang);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * upload file *.po
+     *
+     * @param string $projectUid Unique id of Project
+     * @param string $dynaFormUid Unique id of DynaForm
+     *
+     * return 
+     */
+    public function uploadLanguage($projectUid, $dynaFormUid)
+    {
+        try {
+            if (isset($_FILES["LANGUAGE"]) && pathinfo($_FILES["LANGUAGE"]["name"], PATHINFO_EXTENSION) == "po") {
+                $translation = array();
+                \G::LoadSystem('i18n_po');
+                $i18n = new \i18n_PO($_FILES["LANGUAGE"]["tmp_name"]);
+                $i18n->readInit();
+                while ($rowTranslation = $i18n->getTranslation()) {
+                    array_push($translation, $rowTranslation);
+                }
+                $name = $_FILES["LANGUAGE"]["name"];
+                $name = explode(".", $name);
+                $content = $i18n->getHeaders();
+                $content["File-Name"] = $_FILES["LANGUAGE"]["name"];
+                $content["Labels"] = $translation;
+
+                $dynaForm = new \Dynaform();
+                $arraydata = $dynaForm->Load($dynaFormUid);
+
+                if ($arraydata["DYN_LABEL"] !== null && $arraydata["DYN_LABEL"] !== "") {
+                    $dyn_labels = \G::json_decode($arraydata["DYN_LABEL"]);
+                    $dyn_labels->$name[count($name) - 2] = $content;
+                } else {
+                    $dyn_labels = array();
+                }
+
+                $arraydata["DYN_LABEL"] = \G::json_encode($dyn_labels);
+                $dynaForm->update($arraydata);
+                return $dyn_labels;
+            } else {
+                throw new \Exception(\G::LoadTranslation("ID_DYNAFORM_INCORRECT_FILE_NAME"));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * list file .po
+     *
+     * @param string $projectUid Unique id of Project
+     * @param string $dynaFormUid Unique id of DynaForm
+     *
+     * return 
+     */
+    public function listLanguage($projectUid, $dynaFormUid)
+    {
+        try {
+            $dynaForm = new \Dynaform();
+            $arraydata = $dynaForm->Load($dynaFormUid);
+
+            $dyn_labels = \G::json_decode($arraydata["DYN_LABEL"]);
+            $list = array();
+            foreach ($dyn_labels as $key => $value) {
+                array_push($list, array(
+                    "Lang" => $key,
+                    "File-Name" => isset($value->{"File-Name"}) ? $value->{"File-Name"} : "",
+                    "Project-Id-Version" => isset($value->{"Project-Id-Version"}) ? $value->{"Project-Id-Version"} : "",
+                    "POT-Creation-Date" => isset($value->{"POT-Creation-Date"}) ? $value->{"POT-Creation-Date"} : "",
+                    "PO-Revision-Date" => isset($value->{"PO-Revision-Date"}) ? $value->{"PO-Revision-Date"} : "",
+                    "Last-Translator" => isset($value->{"Last-Translator"}) ? $value->{"Last-Translator"} : "",
+                    "Language-Team" => isset($value->{"Language-Team"}) ? $value->{"Language-Team"} : "",
+                    "MIME-Version" => isset($value->{"MIME-Version"}) ? $value->{"MIME-Version"} : "",
+                    "Content-Type" => isset($value->{"Content-Type"}) ? $value->{"Content-Type"} : "",
+                    "Content-Transfer_Encoding" => isset($value->{"Content-Transfer_Encoding"}) ? $value->{"Content-Transfer_Encoding"} : "",
+                    "X-Poedit-Language" => isset($value->{"X-Poedit-Language"}) ? $value->{"X-Poedit-Language"} : "",
+                    "X-Poedit-Country" => isset($value->{"X-Poedit-Country"}) ? $value->{"X-Poedit-Country"} : "",
+                    "X-Poedit-SourceCharset" => isset($value->{"X-Poedit-SourceCharset"}) ? $value->{"X-Poedit-SourceCharset"} : "",
+                    "Content-Transfer-Encoding" => isset($value->{"Content-Transfer-Encoding"}) ? $value->{"Content-Transfer-Encoding"} : ""
+                ));
+            }
+            return $list;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * list file .po
+     *
+     * @param string $projectUid Unique id of Project
+     * @param string $dynaFormUid Unique id of DynaForm
+     *
+     * return 
+     */
+    public function downloadLabels($projectUid, $dynaFormUid)
+    {
+        try {
+            $dynaForm = new \Dynaform();
+            $arraydata = $dynaForm->Load($dynaFormUid);
+            $json = \G::json_decode($arraydata["DYN_CONTENT"]);
+            $this->jsonr($json);
+            $string = "";
+            $string = $string . "msgid \"\"\n";
+            $string = $string . "msgstr \"\"\n";
+            $string = $string . "\"Project-Id-Version: PM 4.0.1\\n\"\n";
+            $string = $string . "\"POT-Creation-Date: \\n\"\n";
+            $string = $string . "\"PO-Revision-Date: 2010-12-02 11:44+0100 \\n\"\n";
+            $string = $string . "\"Last-Translator: Colosa<colosa@colosa.com>\\n\"\n";
+            $string = $string . "\"Language-Team: Colosa Developers Team <developers@colosa.com>\\n\"\n";
+            $string = $string . "\"MIME-Version: 1.0\\n\"\n";
+            $string = $string . "\"Content-Type: text/plain; charset=utf-8\\n\"\n";
+            $string = $string . "\"Content-Transfer_Encoding: 8bit\\n\"\n";
+            $string = $string . "\"X-Poedit-Language: English\\n\"\n";
+            $string = $string . "\"X-Poedit-Country: United States\\n\"\n";
+            $string = $string . "\"X-Poedit-SourceCharset: utf-8\\n\"\n";
+            $string = $string . "\"Content-Transfer-Encoding: 8bit\\n\"\n\n";
+
+            $n = count($this->dyn_conten_labels);
+            for ($i = 0; $i < $n; $i++) {
+                $string = $string . "msgid \"" . $this->dyn_conten_labels[$i] . "\"\n";
+                $string = $string . "msgstr \"" . $this->dyn_conten_labels[$i] . "\"\n\n";
+            }
+            return array("labels" => $string, "lang" => "en");
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    private $dyn_conten_labels = array();
+
+    /**
+     * labels in dyn_content
+     *
+     * @param array $dyn_content
+     */
+    private function jsonr(&$json)
+    {
+        foreach ($json as $key => $value) {
+            $sw1 = is_array($value);
+            $sw2 = is_object($value);
+            if ($sw1 || $sw2) {
+                $this->jsonr($value);
+            }
+            if (!$sw1 && !$sw2) {
+                if ($key === "label") {
+                    $json->label;
+                    array_push($this->dyn_conten_labels, $json->label);
+                }
+            }
+        }
+    }
+
+    /**
+     * delete labels
+     *
+     * @param string $projectUid Unique id of Project
+     * @param string $dynaFormUid Unique id of DynaForm
+     *
+     * return 
+     */
+    public function deleteLanguage($projectUid, $dynaFormUid, $lang)
+    {
+        try {
+            $dynaForm = new \Dynaform();
+            $arraydata = $dynaForm->Load($dynaFormUid);
+
+            if ($arraydata["DYN_LABEL"] !== null && $arraydata["DYN_LABEL"] !== "") {
+                $dyn_labels = \G::json_decode($arraydata["DYN_LABEL"]);
+                unset($dyn_labels->{$lang});
+            }
+
+            $arraydata["DYN_LABEL"] = \G::json_encode($dyn_labels);
+            $dynaForm->update($arraydata);
+            return;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+}
+
 
