@@ -79,7 +79,7 @@ $G_ID_SUB_MENU_SELECTED = '_';
 $G_PUBLISH = new Publisher();
 $G_PUBLISH->AddContent( 'template', '', '', '', $oTemplatePower );
 
-$consolidated = 1;
+$consolidated = 0;
 /*----------------------------------********---------------------------------*/
 $licensedFeatures = & PMLicensedFeatures::getSingleton();
 if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
