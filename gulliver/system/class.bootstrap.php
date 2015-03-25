@@ -399,7 +399,7 @@ class Bootstrap
                 // Detect by creating a temporary file
                 // Try to use system's temporary directory as random name
                 // shouldn't exist
-                $temp_file = tempnam(md5(uniqid(rand(), true)), '');
+                $temp_file = tempnam(G::encryptOld(uniqid(rand(), true)), '');
                 if ($temp_file) {
                     $temp_dir = realpath(dirname($temp_file));
                     unlink($temp_file);
@@ -1077,7 +1077,7 @@ class Bootstrap
         $mtime = date('U');
         $gmt_mtime = gmdate("D, d M Y H:i:s", $mtime) . " GMT";
         header('Pragma: cache');
-        header('ETag: "' . md5($mtime . $filename) . '"');
+        header('ETag: "' . G::encryptOld($mtime . $filename) . '"');
         header("Last-Modified: " . $gmt_mtime);
         header('Cache-Control: public');
         header("Expires: " . gmdate("D, d M Y H:i:s", time() + 30 * 60 * 60 * 24) . " GMT"); //1 month
@@ -1090,7 +1090,7 @@ class Bootstrap
         }
 
         if (isset($_SERVER['HTTP_IF_NONE_MATCH'])) {
-            if (str_replace('"', '', stripslashes($_SERVER['HTTP_IF_NONE_MATCH'])) == md5($mtime . $filename)) {
+            if (str_replace('"', '', stripslashes($_SERVER['HTTP_IF_NONE_MATCH'])) == G::encryptOld($mtime . $filename)) {
                 header("HTTP/1.1 304 Not Modified");
                 exit();
             }
@@ -1216,7 +1216,7 @@ class Bootstrap
                 $mtime = date('U');
             }
             $gmt_mtime = gmdate("D, d M Y H:i:s", $mtime) . " GMT";
-            header('ETag: "' . md5($mtime . $filename) . '"');
+            header('ETag: "' . G::encryptOld($mtime . $filename) . '"');
             header("Last-Modified: " . $gmt_mtime);
             header('Cache-Control: public');
             header("Expires: " . gmdate("D, d M Y H:i:s", time() + 60 * 10) . " GMT"); // ten
@@ -1234,7 +1234,7 @@ class Bootstrap
                 $mtime = date('U');
             }
             $gmt_mtime = gmdate("D, d M Y H:i:s", $mtime) . " GMT";
-            header('ETag: "' . md5($mtime . $filename) . '"');
+            header('ETag: "' . G::encryptOld($mtime . $filename) . '"');
             header("Last-Modified: " . $gmt_mtime);
             header('Cache-Control: public');
             header("Expires: " . gmdate("D, d M Y H:i:s", time() + 90 * 60 * 60 * 24) . " GMT");
@@ -1246,7 +1246,7 @@ class Bootstrap
             }
 
             if (isset($_SERVER ['HTTP_IF_NONE_MATCH'])) {
-                if (str_replace('"', '', stripslashes($_SERVER ['HTTP_IF_NONE_MATCH'])) == md5($mtime . $filename)) {
+                if (str_replace('"', '', stripslashes($_SERVER ['HTTP_IF_NONE_MATCH'])) == G::encryptOld($mtime . $filename)) {
                     header("HTTP/1.1 304 Not Modified");
                     exit();
                 }
@@ -1276,7 +1276,7 @@ class Bootstrap
                 $checkSum .= md5_file($file);
             }
         }
-        return md5($checkSum . $key);
+        return G::encryptOld($checkSum . $key);
     }
 
     /**

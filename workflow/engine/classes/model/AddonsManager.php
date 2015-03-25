@@ -216,7 +216,7 @@ class AddonsManager extends BaseAddonsManager
 
         ///////
         $boundary = "---------------------" . substr(md5(rand(0, 32000)), 0, 10);
-        $data = null;
+        $data = "";
 
         for ($i = 0; $i <= count($var) - 1; $i++) {
             $aux = explode("=", $var[$i]);
