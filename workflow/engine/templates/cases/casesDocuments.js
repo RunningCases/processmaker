@@ -578,7 +578,7 @@ function handleCallback(requestParams, node) {
         }
       }
       else {
-        Ext.Msg.alert( _('ID_ERROR'), _('ID_SERVER_COMMUNICATION_ERROR'));
+        //Ext.Msg.alert( _('ID_ERROR'), _('ID_SERVER_COMMUNICATION_ERROR'));
       }
 
     }
@@ -1597,6 +1597,14 @@ function copymove(action) {
     // alert('Move ' + dropEvent.data.node.id.replace( /_RRR_/g, '/' )+' to
     // '+ dropEvent.target.id.replace( /_RRR_/g, '/' ));
     requestParams = getRequestParams();
+    Ext.getCmp('dirTreePanel').dragZone.lock();
+    if (requestParams.item!='') {
+        var tree=Ext.getCmp('dirTreePanel');
+        tree.getRootNode().reload(function(){             
+             window.location.href=window.location.href;
+             tree.getRootNode().reload();
+        });          
+    } 
     requestParams.copyMove = 'all';
     //requestParams.dir = datastore.directory.substring(0,
     //  datastore.directory.lastIndexOf('/'));
@@ -1836,7 +1844,7 @@ var documentsTab = {
           return true;
         }
       },
-      'nodedrop' : {
+      'beforenodedrop' : {
         fn : function(e) {       
           dropEvent = e;         
           copymoveCtx(e);       
