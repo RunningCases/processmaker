@@ -1125,7 +1125,7 @@ class Installer extends Controller
 
                 /*----------------------------------********---------------------------------*/
                 if (true) {
-                    //
+                    $dummy = true;
                 } else {
                 /*----------------------------------********---------------------------------*/
                     $this->mssqlQuery("INSERT INTO EMAIL_SERVER(MESS_ENGINE) VALUES('MAIL')");
