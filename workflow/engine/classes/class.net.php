@@ -208,6 +208,13 @@ class NET
      */
     public function tryConnectServer($pDbDriver, array $arrayServerData = array())
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $this->ip = $filter->validateInput($this->ip);
+        $this->db_port = $filter->validateInput($this->db_port,'int');
+        $this->db_user = $filter->validateInput($this->db_user);
+        $this->db_passwd = $filter->validateInput($this->db_passwd);
+        $this->db_sourcename = $filter->validateInput($this->db_sourcename);
         if ($this->errno != 0) {
             return 0;
         }
@@ -324,6 +331,13 @@ class NET
      */
     public function tryOpenDataBase($pDbDriver, array $arrayServerData = array())
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $this->ip = $filter->validateInput($this->ip);
+        $this->db_port = $filter->validateInput($this->db_port,'int');
+        $this->db_user = $filter->validateInput($this->db_user);
+        $this->db_passwd = $filter->validateInput($this->db_passwd);
+        $this->db_sourcename = $filter->validateInput($this->db_sourcename);
         if ($this->errno != 0) {
             return 0;
         }
