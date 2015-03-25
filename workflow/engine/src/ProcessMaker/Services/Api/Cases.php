@@ -616,10 +616,14 @@ class Cases extends Api
     public function doGetTaskCase($app_uid)
     {
         try {
-            $userUid = $this->getUserId();
-            $cases = new \ProcessMaker\BusinessModel\Cases();
-            $oData = $cases->getTaskCase($app_uid, $userUid);
-            return $oData;
+            $case = new \ProcessMaker\BusinessModel\Cases();
+            $case->setFormatFieldNameInUppercase(false);
+
+            $arrayData = $case->getTaskCase($app_uid, $this->getUserId());
+
+            $response = $arrayData;
+
+            return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 3.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-03-06 19:05:43\n"
+"PO-Revision-Date: 2015-03-24 14:24:23\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -14938,8 +14938,8 @@ msgstr "The following error has occurred when trying to send the notifications:"
 # TRANSLATION
 # LABEL/ID_DATE_FORMAT_17
 #: LABEL/ID_DATE_FORMAT_17
-msgid "dd de M de Y"
-msgstr "dd de M de Y"
+msgid "dd de M de Y (Date format only for Spanish language)"
+msgstr "dd de M de Y (Date format only for Spanish language)"
 
 # TRANSLATION
 # LABEL/ID_THIS_QUARTER
@@ -15532,8 +15532,8 @@ msgstr "The total primary key fields of the PM Table is {0}, the attribute {1} h
 # TRANSLATION
 # LABEL/ID_USER_DOES_NOT_EXIST
 #: LABEL/ID_USER_DOES_NOT_EXIST
-msgid "The user with {0}: {1} does not exist."
-msgstr "The user with {0}: {1} does not exist."
+msgid "The User with {0}: {1} does not exist."
+msgstr "The User with {0}: {1} does not exist."
 
 # TRANSLATION
 # LABEL/ID_USER_DOES_NOT_HAVE_ACTIVITY_ASSIGNED
@@ -16288,8 +16288,8 @@ msgstr "It is not possible to delete the department because it has subdepartment
 # TRANSLATION
 # LABEL/ID_CANT_DELETE_DEPARTMENT_HAS_USERS
 #: LABEL/ID_CANT_DELETE_DEPARTMENT_HAS_USERS
-msgid "Department cannot be deleted while has assigned users."
-msgstr "Department cannot be deleted while has assigned users."
+msgid "Department cannot be deleted while it has assigned users."
+msgstr "Department cannot be deleted while it has assigned users."
 
 # TRANSLATION
 # LABEL/ID_CANT_SAVE_TRIGGER
@@ -18324,6 +18324,330 @@ msgstr "Event deleted"
 #: LABEL/ID_DEL_THREAD_STATUS
 msgid "Thread Status"
 msgstr "Thread Status"
+
+# TRANSLATION
+# LABEL/ID_GRID_PAGE_DISPLAYING_DASHBOARD_MESSAGE
+#: LABEL/ID_GRID_PAGE_DISPLAYING_DASHBOARD_MESSAGE
+msgid "Displaying Dashboards {0} - {1} of {2}"
+msgstr "Displaying Dashboards {0} - {1} of {2}"
+
+# TRANSLATION
+# LABEL/ID_GRID_PAGE_NO_DASHBOARD_MESSAGE
+#: LABEL/ID_GRID_PAGE_NO_DASHBOARD_MESSAGE
+msgid "No Dashboards to display"
+msgstr "No Dashboards to display"
+
+# TRANSLATION
+# LABEL/ID_CONFIRM_DELETE_DASHBOARD
+#: LABEL/ID_CONFIRM_DELETE_DASHBOARD
+msgid "Do you want to delete selected Dashboard?"
+msgstr "Do you want to delete selected Dashboard?"
+
+# TRANSLATION
+# LABEL/ID_DASHBOARD_SUCCESS_DELETE
+#: LABEL/ID_DASHBOARD_SUCCESS_DELETE
+msgid "Dashboard has been deleted correctly."
+msgstr "Dashboard has been deleted correctly."
+
+# TRANSLATION
+# LABEL/ID_GRID_PAGE_DISPLAYING_0WNER_MESSAGE
+#: LABEL/ID_GRID_PAGE_DISPLAYING_0WNER_MESSAGE
+msgid "Displaying Owners {0} - {1} of {2}"
+msgstr "Displaying Owners {0} - {1} of {2}"
+
+# TRANSLATION
+# LABEL/ID_GRID_PAGE_NO_OWNER_MESSAGE
+#: LABEL/ID_GRID_PAGE_NO_OWNER_MESSAGE
+msgid "No Owners to display"
+msgstr "No Owners to display"
+
+# TRANSLATION
+# LABEL/ID_OWNER_TYPE
+#: LABEL/ID_OWNER_TYPE
+msgid "Type owner"
+msgstr "Type owner"
+
+# TRANSLATION
+# LABEL/ID_OWNER_INFORMATION
+#: LABEL/ID_OWNER_INFORMATION
+msgid "Owner Information"
+msgstr "Owner Information"
+
+# TRANSLATION
+# LABEL/ID_NEW_TAB_INDICATOR
+#: LABEL/ID_NEW_TAB_INDICATOR
+msgid "Add Indicator"
+msgstr "Add Indicator"
+
+# TRANSLATION
+# LABEL/ID_TITLE_DASHBOARD
+#: LABEL/ID_TITLE_DASHBOARD
+msgid "Dashboard Indicator Title"
+msgstr "Dashboard Indicator Title"
+
+# TRANSLATION
+# LABEL/ID_DASHBOARD_INDICATOR_INFORMATION
+#: LABEL/ID_DASHBOARD_INDICATOR_INFORMATION
+msgid "Indicator Information"
+msgstr "Indicator Information"
+
+# TRANSLATION
+# LABEL/ID_INDICATOR
+#: LABEL/ID_INDICATOR
+msgid "Indicator"
+msgstr "Indicator"
+
+# TRANSLATION
+# LABEL/ID_INDICATOR_TITLE
+#: LABEL/ID_INDICATOR_TITLE
+msgid "Indicator Title"
+msgstr "Indicator Title"
+
+# TRANSLATION
+# LABEL/ID_DASHBOARD_TITLE
+#: LABEL/ID_DASHBOARD_TITLE
+msgid "Dashboard Title"
+msgstr "Dashboard Title"
+
+# TRANSLATION
+# LABEL/ID_INDICATOR_TYPE
+#: LABEL/ID_INDICATOR_TYPE
+msgid "Indicator Type"
+msgstr "Indicator Type"
+
+# TRANSLATION
+# LABEL/ID_INDICATOR_GOAL
+#: LABEL/ID_INDICATOR_GOAL
+msgid "Goal"
+msgstr "Goal"
+
+# TRANSLATION
+# LABEL/ID_FIRST_FIGURE
+#: LABEL/ID_FIRST_FIGURE
+msgid "First Graph"
+msgstr "First Graph"
+
+# TRANSLATION
+# LABEL/ID_PERIODICITY
+#: LABEL/ID_PERIODICITY
+msgid "Periodicity"
+msgstr "Periodicity"
+
+# TRANSLATION
+# LABEL/ID_SECOND_FIGURE
+#: LABEL/ID_SECOND_FIGURE
+msgid "Second Graph"
+msgstr "Second Graph"
+
+# TRANSLATION
+# LABEL/ID_DASHBOARD_OWNER_SUCCESS_DELETE
+#: LABEL/ID_DASHBOARD_OWNER_SUCCESS_DELETE
+msgid "Owner Dashboard has been deleted correctly."
+msgstr "Owner Dashboard has been deleted correctly."
+
+# TRANSLATION
+# LABEL/ID_PROCESS_EFFICIENCE
+#: LABEL/ID_PROCESS_EFFICIENCE
+msgid "Process Efficience Index"
+msgstr "Process Efficience Index"
+
+# TRANSLATION
+# LABEL/ID_PROCESS_INEFFICIENCE
+#: LABEL/ID_PROCESS_INEFFICIENCE
+msgid "Process Inefficience Cost"
+msgstr "Process Inefficience Cost"
+
+# TRANSLATION
+# LABEL/ID_EMPLYEE_EFFICIENCIE
+#: LABEL/ID_EMPLYEE_EFFICIENCIE
+msgid "Employee Efficience Index"
+msgstr "Employee Efficience Index"
+
+# TRANSLATION
+# LABEL/ID_USER_INEFFICIENCE
+#: LABEL/ID_USER_INEFFICIENCE
+msgid "Inefficience Cost By User"
+msgstr "Inefficience Cost By User"
+
+# TRANSLATION
+# LABEL/ID_OVER_DUE
+#: LABEL/ID_OVER_DUE
+msgid "% Over due"
+msgstr "% Over due"
+
+# TRANSLATION
+# LABEL/ID_NEW_CASES
+#: LABEL/ID_NEW_CASES
+msgid "New Cases"
+msgstr "New Cases"
+
+# TRANSLATION
+# LABEL/ID_COMPLETED_CASES
+#: LABEL/ID_COMPLETED_CASES
+msgid "Completed Cases"
+msgstr "Completed Cases"
+
+# TRANSLATION
+# LABEL/ID_WORKING_CASES
+#: LABEL/ID_WORKING_CASES
+msgid "Working Cases"
+msgstr "Working Cases"
+
+# TRANSLATION
+# LABEL/ID_BARS
+#: LABEL/ID_BARS
+msgid "Bars"
+msgstr "Bars"
+
+# TRANSLATION
+# LABEL/ID_LINES
+#: LABEL/ID_LINES
+msgid "Lines"
+msgstr "Lines"
+
+# TRANSLATION
+# LABEL/ID_MONTH
+#: LABEL/ID_MONTH
+msgid "Month"
+msgstr "Month"
+
+# TRANSLATION
+# LABEL/ID_QUARTER
+#: LABEL/ID_QUARTER
+msgid "Quarter"
+msgstr "Quarter"
+
+# TRANSLATION
+# LABEL/ID_SEMESTER
+#: LABEL/ID_SEMESTER
+msgid "Semester"
+msgstr "Semester"
+
+# TRANSLATION
+# LABEL/ID_YEAR
+#: LABEL/ID_YEAR
+msgid "Year"
+msgstr "Year"
+
+# TRANSLATION
+# LABEL/ID_SET_MANAGER
+#: LABEL/ID_SET_MANAGER
+msgid "Set Manager"
+msgstr "Set Manager"
+
+# TRANSLATION
+# LABEL/ID_SET_MANAGER_SUCCESS
+#: LABEL/ID_SET_MANAGER_SUCCESS
+msgid "Manager assigned correctly"
+msgstr "Manager assigned correctly"
+
+# TRANSLATION
+# LABEL/ID_DELETE_MANAGER
+#: LABEL/ID_DELETE_MANAGER
+msgid "You cannot unassign the manager"
+msgstr "You cannot unassign the manager"
+
+# TRANSLATION
+# LABEL/ID_DEPARTMENT_TITLE_ALREADY_EXISTS
+#: LABEL/ID_DEPARTMENT_TITLE_ALREADY_EXISTS
+msgid "The department title with {0}: \"{1}\" already exists."
+msgstr "The department title with {0}: \"{1}\" already exists."
+
+# TRANSLATION
+# LABEL/ID_DASH_COMPARE_MONTH
+#: LABEL/ID_DASH_COMPARE_MONTH
+msgid "Compare this month to"
+msgstr "Compare this month to"
+
+# TRANSLATION
+# LABEL/ID_DASH_COMPARE
+#: LABEL/ID_DASH_COMPARE
+msgid "Compare"
+msgstr "Compare"
+
+# TRANSLATION
+# LABEL/ID_DASH_CLICK_TO_VIEW
+#: LABEL/ID_DASH_CLICK_TO_VIEW
+msgid "You can click on one of the dashboards to view the data or click on the favorite icon to make it your main dashboard."
+msgstr "You can click on one of the dashboards to view the data or click on the favorite icon to make it your main dashboard."
+
+# TRANSLATION
+# LABEL/ID_SET_NO_MANAGER
+#: LABEL/ID_SET_NO_MANAGER
+msgid "No set Manager"
+msgstr "No set Manager"
+
+# TRANSLATION
+# LABEL/ID_NO_SET_MANAGER_SUCCES
+#: LABEL/ID_NO_SET_MANAGER_SUCCES
+msgid "Manager unassigned correctly"
+msgstr "Manager unassigned correctly"
+
+# TRANSLATION
+# LABEL/ID_INDICATOR_PROCESS_REQUIRED
+#: LABEL/ID_INDICATOR_PROCESS_REQUIRED
+msgid "The field Process of indicator \"{0}\" is required."
+msgstr "The field Process of indicator \"{0}\" is required."
+
+# TRANSLATION
+# LABEL/ID_INDICATOR_TITLE_REQUIRED
+#: LABEL/ID_INDICATOR_TITLE_REQUIRED
+msgid "The field Title of indicator \"{0}\" is required."
+msgstr "The field Title of indicator \"{0}\" is required."
+
+# TRANSLATION
+# LABEL/ID_INDICATOR_TYPE_REQUIRED
+#: LABEL/ID_INDICATOR_TYPE_REQUIRED
+msgid "The field Type of indicator \"{0}\" is required."
+msgstr "The field Type of indicator \"{0}\" is required."
+
+# TRANSLATION
+# LABEL/ID_MAX_INDICATOR_DASHBOARD
+#: LABEL/ID_MAX_INDICATOR_DASHBOARD
+msgid "Maximum number of tabs"
+msgstr "Maximum number of tabs"
+
+# TRANSLATION
+# LABEL/ID_USER_NAME_ALREADY_EXISTS
+#: LABEL/ID_USER_NAME_ALREADY_EXISTS
+msgid "The User Name with {0}: \"{1}\" already exists."
+msgstr "The User Name with {0}: \"{1}\" already exists."
+
+# TRANSLATION
+# LABEL/ID_LESS_THAN
+#: LABEL/ID_LESS_THAN
+msgid "less than"
+msgstr "less than"
+
+# TRANSLATION
+# LABEL/ID_MORE_THAN
+#: LABEL/ID_MORE_THAN
+msgid "more than"
+msgstr "more than"
+
+# TRANSLATION
+# LABEL/ID_CASE_NO_CURRENT_TASKS_BECAUSE_CASE_ITS_COMPLETED
+#: LABEL/ID_CASE_NO_CURRENT_TASKS_BECAUSE_CASE_ITS_COMPLETED
+msgid "There are no current tasks because case {0}: {1} has COMPLETED status"
+msgstr "There are no current tasks because case {0}: {1} has COMPLETED status"
+
+# TRANSLATION
+# LABEL/ID_CONSOLIDATED_CASE_LIST
+#: LABEL/ID_CONSOLIDATED_CASE_LIST
+msgid "Consolidated Case List"
+msgstr "Consolidated Case List"
+
+# TRANSLATION
+# LABEL/ID_CONSOLIDATED_DYNAFORM_REQUIRED
+#: LABEL/ID_CONSOLIDATED_DYNAFORM_REQUIRED
+msgid "The process has no type template Dynaform grid, this Dynaform is required"
+msgstr "The process has no type template Dynaform grid, this Dynaform is required"
+
+# TRANSLATION
+# LABEL/ID_DEPARTMENT_MANAGER_EXIST
+#: LABEL/ID_DEPARTMENT_MANAGER_EXIST
+msgid "The user: {0} is other department manager."
+msgstr "The user: {0} is other department manager."
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
