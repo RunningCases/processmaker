@@ -55,10 +55,12 @@ class Designer extends Controller
         $clientToken["client_secret"] = $client['CLIENT_SECRET'];
 
         $consolidated = 0;
+        /*----------------------------------********---------------------------------*/
         $licensedFeatures = & PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
             $consolidated = 1;
         }
+        /*----------------------------------********---------------------------------*/
 
         $this->setVar('prj_uid', $proUid);
         $this->setVar('app_uid', $appUid);
