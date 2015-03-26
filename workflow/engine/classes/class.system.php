@@ -281,11 +281,14 @@ class System
      */
     public function verifyFileForUpgrade ()
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
         $upgradeFilename = isset( $_FILES['form']['name']['UPGRADE_FILENAME'] ) ? $_FILES['form']['name']['UPGRADE_FILENAME'] : '';
         $tempFilename = isset( $_FILES['form']['tmp_name']['UPGRADE_FILENAME'] ) ? $_FILES['form']['tmp_name']['UPGRADE_FILENAME'] : '';
         $this->sRevision = str_replace( '.tar.gz', '', str_replace( 'pmos-patch-', '', $upgradeFilename ) );
         $sTemFilename = $tempFilename;
-        $this->sFilename = PATH_DATA . 'upgrade' . PATH_SEP . $upgradeFilename;
+        $pathFile = $filter->xssFilterHard(PATH_DATA . 'upgrade' . PATH_SEP . $upgradeFilename, 'path');
+        $this->sFilename = $pathFile;
         $this->sPath = dirname( $this->sFilename ) . PATH_SEP;
         G::mk_dir( PATH_DATA . 'upgrade' );
         if (! move_uploaded_file( $sTemFilename, $this->sFilename )) {
@@ -615,8 +618,12 @@ class System
             }
         }
 
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+
         //clean up xmlform folders
         $sDir = PATH_C . 'xmlform';
+        $sDir = $filter->xssFilterHard($sDir, 'path');
         if (file_exists( $sDir ) && is_dir( $sDir )) {
             $oDirectory = dir( $sDir );
             while ($sObjectName = $oDirectory->read()) {
@@ -729,8 +736,11 @@ class System
      */
     public static function getPluginSchema ($pluginName)
     {
-        if (file_exists( PATH_PLUGINS . $pluginName . "/config/schema.xml" )) {
-            return System::getSchema( PATH_PLUGINS . $pluginName . "/config/schema.xml" );
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $pathFile = $filter->xssFilterHard(PATH_PLUGINS . $pluginName . "/config/schema.xml", 'path');
+        if (file_exists( $pathFile )) {
+            return System::getSchema( $pathFile );
         } else {
             return false;
         }
