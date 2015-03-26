@@ -31,6 +31,7 @@ class Consolidated
         $criteria = new Criteria();
         $criteria->addSelectColumn(CaseConsolidatedPeer::DYN_UID);
         $criteria->addSelectColumn(\ReportTablePeer::REP_TAB_NAME);
+        $criteria->addSelectColumn(\ReportTablePeer::REP_TAB_UID);
         $criteria->addSelectColumn(ContentPeer::CON_VALUE);
         $criteria->addSelectColumn(CaseConsolidatedPeer::CON_STATUS);
 
@@ -48,8 +49,9 @@ class Consolidated
             $response = $dataset->getRow();
         } else {
             $response = array(
-                'REP_TAB_NAME' => '__' . $tas_uid,
-                'CON_VALUE' => '__' . $tas_uid,
+                'REP_TAB_UID'   => '',
+                'REP_TAB_NAME'  => '__' . $tas_uid,
+                'CON_VALUE'     => '__' . $tas_uid,
             );
         }
         return array_change_key_case($response, CASE_LOWER);;
@@ -441,26 +443,30 @@ class Consolidated
             $json = G::json_decode($dataTask["DYN_CONTENT"]);
             $pmDyna->jsonr($json);
             $fieldsDyna = $json->items[0]->items;
-            
+
             $xmlfrm = new \stdclass();
             $xmlfrm->fields = array();
             foreach ($fieldsDyna as $key => $value) {
-                //$temp = $value[0];
+                if ($value[0]->type == 'title' || $value[0]->type == 'submit') {
+                    continue;
+                }
                 $temp = new \stdclass();
                 $temp->type = $value[0]->type;
                 $temp->label = $value[0]->label;
                 $temp->name = $value[0]->name;
-                $temp->required = $value[0]->required;
-                $temp->mode = $value[0]->mode;
+                $temp->required = (isset($value[0]->required)) ? $value[0]->required : 0;
+                $temp->mode = (isset($value[0]->mode)) ? $value[0]->mode : 'edit';
 
-                $temp->storeData = '[';
-                foreach ($value[0]->options as $valueOption) {
-                    $temp->storeData .= '{"value":"' . $valueOption['value'] . '", "text":"' . $valueOption['value'] . '"},';
+                if (!empty($value[0]->options)) {
+                    $temp->storeData = '[';
+                    foreach ($value[0]->options as $valueOption) {
+                        $temp->storeData .= '["' . $valueOption['value'] . '", "' . $valueOption['label'] . '"],';
+                    }
+                    $temp->storeData = substr($temp->storeData,0,-1);
+                    $temp->storeData .= ']';
                 }
-                $temp->storeData = substr($temp->storeData,0,-1);
-                $temp->storeData .= ']';
 
-                $temp->readOnly = ($value[0]->mode == 'view') ? "0" : "1";
+                $temp->readOnly = ($temp->mode == 'view') ? "1" : "0";
                 $temp->colWidth = 200;
                 $xmlfrm->fields[] = $temp;
             }
@@ -515,31 +521,66 @@ class Consolidated
                 case "dropdown":
                     $dropList[] = $field->name;
                     $align = "left";
-                    $editor = "* new Ext.form.ComboBox({
+
+                    if (empty($field->storeData)) {
+                        $editor = "* new Ext.form.ComboBox({
+                               id: \"cbo" . $field->name . "_" . $pro_uid . "\",
+
+                               valueField:   'value',
+                               displayField: 'text',
+
+                               /*store: comboStore,*/
+                               store: new Ext.data.JsonStore({
+                                 storeId: \"store" . $field->name . "_" . $pro_uid . "\",
+                                 proxy: new Ext.data.HttpProxy({
+                                   url: 'proxyDataCombobox'
+                                 }),
+                                 root: 'records',
+                                 fields: [{name: 'value'},
+                                          {name: 'text'}
+                                         ]
+                               }),
+
+                               triggerAction: 'all',
+                               mode:     'local',
+                               editable: false,
+                               disabled: $fieldDisabled,
+                               lazyRender: false,
+
+                               $fieldReadOnly
+                               $fieldRequired
+                               $fieldValidate
+                               cls: \"\"
+                             }) *";
+                    } else {
+                        $editor = "* new Ext.form.ComboBox({
                                    id: \"cbo" . $field->name . "_" . $pro_uid . "\",
+
+                                   typeAhead: true,
+                                   autocomplete:true,
+                                   editable:false,
+                                   lazyRender:true,
+                                   mode:'local',
+                                   triggerAction:'all',
+                                   forceSelection:true,
 
                                    valueField:   'value',
                                    displayField: 'text',
-
-                                   /*store: comboStore,*/
-                                   store: new Ext.data.JsonStore({
-                                     data: " . htmlspecialchars_decode($field->storeData) . ",
-                                     fields: [{name: 'value'},
-                                              {name: 'text'}
-                                             ]
-                                   }),
-
-
-                                   queryMode: 'local',
-                                   editable: false,
-                                   disabled: $fieldDisabled,
-                                   lazyRender: false,
+                                   store:new Ext.data.SimpleStore({
+                                        fields: [{name: 'value'},
+                                              {name: 'text'}],
+                                        data: " . htmlspecialchars_decode($field->storeData) . ",
+                                        sortInfo:{field:'text',direction:'ASC'}
+                                    }),
 
                                    $fieldReadOnly
                                    $fieldRequired
                                    $fieldValidate
                                    cls: \"\"
-                                 }) *";
+                                 }) *";    
+                    }
+
+                    
                     $editor = eregi_replace("[\n|\r|\n\r]", ' ', $editor);
                     $width = $field->colWidth;
                     
@@ -789,7 +830,7 @@ class Consolidated
                     $width = $size;
                     $editor = "* new Ext.form.TextField({ $fieldReadOnly $fieldRequired $fieldValidate cls: \"\"}) *";
 
-                    if ($field->mode != "edit") {
+                    if ($field->mode != "edit" && $field->mode != "parent") {
                         $editor = null;
                     }
 
@@ -930,11 +971,9 @@ class Consolidated
 
         $array = array();
         $array["form"] = $dataUpdate;
-
         $appUid = $array["form"]["APP_UID"];
 
         $fields = $oCase->loadCase($appUid);
-
         if (!isset($fields["DEL_INIT_DATE"])) {
             $oCase->setDelInitDate($appUid, $delIndex);
             //$aFields = $oCase->loadCase($appUid, $delIndex);
@@ -948,7 +987,8 @@ class Consolidated
 
         foreach ($array["form"] as $key => $value) {
             $array["form"][$key] = (string)$array["form"][$key];
-        }    
+        }
+        /*
         $_POST['form'] = $array["form"];
         if (!class_exists('Smarty')) {
             require_once(PATH_THIRDPARTY . 'smarty' . PATH_SEP . 'libs' . PATH_SEP . 'Smarty.class.php');  
@@ -956,6 +996,7 @@ class Consolidated
         $oForm = new \Form( $auxAppDataProcess . "/" . $dynaformUid , PATH_DYNAFORM );
         $oForm->validatePost();
         $array["form"] = $_POST['form'];
+        */
 
         $fields["APP_DATA"] = array_merge($fields["APP_DATA"], G::getSystemConstants());
         $fields["APP_DATA"] = array_merge($fields["APP_DATA"], $array["form"]);

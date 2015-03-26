@@ -49,7 +49,8 @@ $(window).load(function () {
     var form = document.getElementsByTagName("form")[0];
     form.action = filePost ? filePost : "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
     form.method = "post";
-    form.enctype = "multipart/form-data";
+    //form.enctype = "multipart/form-data";
+    form.setAttribute("encType","multipart/form-data");
     form.appendChild(dyn_content_history);
     form.appendChild(dynaformname);
     form.appendChild(appuid);
