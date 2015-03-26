@@ -2635,9 +2635,15 @@ class G
             if (! is_dir( $path )) {
                 G::verifyPath( $path, true );
             }
-            move_uploaded_file( $file, $path . "/" . $nameToSave );
+            
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
+            $file = $filter->xssFilterHard($file, "path"); 
+            
+            $f = move_uploaded_file( $file, $path . "/" . $nameToSave );
             @chmod( $path . "/" . $nameToSave, $permission );
             umask( $oldumask );
+
         } catch (Exception $oException) {
             throw $oException;
         }
