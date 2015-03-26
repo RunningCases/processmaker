@@ -54,8 +54,15 @@ class Designer extends Controller
         $clientToken["client_id"] = $client['CLIENT_ID'];
         $clientToken["client_secret"] = $client['CLIENT_SECRET'];
 
+        $consolidated = 0;
+        $licensedFeatures = & PMLicensedFeatures::getSingleton();
+        if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
+            $consolidated = 1;
+        }
+
         $this->setVar('prj_uid', $proUid);
         $this->setVar('app_uid', $appUid);
+        $this->setVar('consolidated', $consolidated);
         $this->setVar('prj_readonly', $proReadOnly);
         $this->setVar('credentials', base64_encode(json_encode($clientToken)));
         $this->setVar('isDebugMode', $debug);

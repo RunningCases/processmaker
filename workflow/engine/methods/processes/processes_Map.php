@@ -79,6 +79,14 @@ $G_ID_SUB_MENU_SELECTED = '_';
 $G_PUBLISH = new Publisher();
 $G_PUBLISH->AddContent( 'template', '', '', '', $oTemplatePower );
 
+$consolidated = 0;
+/*----------------------------------********---------------------------------*/
+$licensedFeatures = & PMLicensedFeatures::getSingleton();
+if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
+    $consolidated = 1;
+}
+/*----------------------------------********---------------------------------*/
+
 $oHeadPublisher = & headPublisher::getSingleton();
 $oHeadPublisher->addScriptFile( '/jscore/dbConnections/main.js' );
 $oHeadPublisher->addScriptCode( '
@@ -99,6 +107,7 @@ $oHeadPublisher->addScriptCode( '
 			dataServer	:"processes_Ajax.php",
 			uid		:"' . $processUID . '",
 			lang		:"' . SYS_LANG . '",
+            consolidated :"' . $consolidated . '",
 			theme		:"processmaker",
 			size		:{w:pb.offsetWidth-10,h:pb.offsetHeight},
 			images_dir	:"/jscore/processmap/core/images/"
