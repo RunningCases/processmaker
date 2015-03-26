@@ -2640,7 +2640,7 @@ class G
             $filter = new InputFilter();
             $file = $filter->xssFilterHard($file, "path"); 
             
-            $f = move_uploaded_file( $file, $path . "/" . $nameToSave );
+            move_uploaded_file( $file, $path . "/" . $nameToSave );
             @chmod( $path . "/" . $nameToSave, $permission );
             umask( $oldumask );
 
