@@ -35,6 +35,9 @@ class pmDynaform
 
     public function getDynaform()
     {
+        if (!isset($this->fields["CURRENT_DYNAFORM"])) {
+            return;
+        }
         if ($this->record != null) {
             return $this->record;
         }
@@ -56,6 +59,9 @@ class pmDynaform
 
     public function getCredentials()
     {
+        if (!isset($_SESSION['USER_LOGGED'])) {
+            return;
+        }
         if ($this->credentials != null) {
             return $this->credentials;
         }
@@ -430,3 +436,4 @@ class pmDynaform
     }
 
 }
+
