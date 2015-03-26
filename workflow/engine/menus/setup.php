@@ -74,7 +74,7 @@ if ($RBAC->userCanAccess('PM_SETUP') == 1) {
     $G_TMP_MENU->AddIdRawOption('DASHBOARD', '../dashboard/dashletsList', ucfirst(G::LoadTranslation('ID_DASHBOARD')), '', '', 'settings');
     /*----------------------------------********---------------------------------*/
 
-    if ($licensedFeatures->verifyfeature('bvZTnIraUhCSXIxNEVOcGluVVR6Y3E3NStiMW9tWU54aU5tb0FrRnJ0MXMzLzRWMHZtakJIN3dRPT0=')) {
+	if ($licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjBsZEJ6dnpJa3dTeWVLVT0=')) {
         $G_TMP_MENU->AddIdRawOption('NEW_DASHBOARD', '../strategicDashboard/dashboardList', ucfirst(G::LoadTranslation('ID_STRATEGIC_DASHBOARD')), '', '', 'settings');
     }
 
