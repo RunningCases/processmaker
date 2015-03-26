@@ -1698,6 +1698,13 @@ var processmap=function(){
                   noClear : true
                 }]
               };
+              if (this.options.consolidated == '1') {
+                panel.tab.options.push({
+                  title : _('ID_CONSOLIDATED_CASE_LIST'),
+                  content : this.parent.closure({instance:this,method:iForm,args:[panel,index,8]}),
+                  noClear : true
+                });
+              }
             var taskOptions = this.data.db.taskOptions;
             this.loadExtendedProperties = function(){
               for(i=0;i<taskOptions.length;i++){
@@ -2232,7 +2239,10 @@ var processmap=function(){
     /*
     * Aca se definen  TASK inicio y TASK a la que se deriva.
     */
-    event = event || window.event;
+    //In IE the event is undefined or 0
+    if(event === 0 || typeof(event) === 'undefined'){
+      event = window.event;
+    }
 
     if (event)
     {

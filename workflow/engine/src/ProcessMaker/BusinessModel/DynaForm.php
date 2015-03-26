@@ -1195,13 +1195,13 @@ class DynaForm
 
                 $dynaForm = new \Dynaform();
                 $arraydata = $dynaForm->Load($dynaFormUid);
-
+                
                 if ($arraydata["DYN_LABEL"] !== null && $arraydata["DYN_LABEL"] !== "") {
                     $dyn_labels = \G::json_decode($arraydata["DYN_LABEL"]);
-                    $dyn_labels->$name[count($name) - 2] = $content;
                 } else {
-                    $dyn_labels = array();
+                    $dyn_labels = new \stdClass();
                 }
+                $dyn_labels->$name[count($name) - 2] = $content;
 
                 $arraydata["DYN_LABEL"] = \G::json_encode($dyn_labels);
                 $dynaForm->update($arraydata);
@@ -1225,11 +1225,13 @@ class DynaForm
     public function listLanguage($projectUid, $dynaFormUid)
     {
         try {
+            $list = array();
             $dynaForm = new \Dynaform();
             $arraydata = $dynaForm->Load($dynaFormUid);
-
+            
+            if ($arraydata["DYN_LABEL"] === null || $arraydata["DYN_LABEL"] === "")
+                return $list;
             $dyn_labels = \G::json_decode($arraydata["DYN_LABEL"]);
-            $list = array();
             foreach ($dyn_labels as $key => $value) {
                 array_push($list, array(
                     "Lang" => $key,
@@ -1267,8 +1269,10 @@ class DynaForm
         try {
             $dynaForm = new \Dynaform();
             $arraydata = $dynaForm->Load($dynaFormUid);
-            $json = \G::json_decode($arraydata["DYN_CONTENT"]);
-            $this->jsonr($json);
+            if ($arraydata["DYN_CONTENT"] !== null && $arraydata["DYN_CONTENT"] !== "") {
+                $json = \G::json_decode($arraydata["DYN_CONTENT"]);
+                $this->jsonr($json);
+            }
             $string = "";
             $string = $string . "msgid \"\"\n";
             $string = $string . "msgstr \"\"\n";

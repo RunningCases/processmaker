@@ -75,7 +75,11 @@ class PMLicensedFeatures
         $padl = new padl();
         $value = $padl->_decrypt($featureName);
 
-        $enable = in_array($value[0], $licenseManager->licensedfeatures);
+        if (is_array($value)) {
+            $trueValue = $value[0];
+        }
+        $trueValue = $value;
+        $enable = in_array($trueValue, $licenseManager->licensedfeatures);
 
         if (!isset($this->featuresDetails[$value[0]]) || !is_object($this->featuresDetails[$value[0]])) {
             $this->featuresDetails[$value[0]] = new stdclass();
