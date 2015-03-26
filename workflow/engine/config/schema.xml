@@ -1476,6 +1476,8 @@
     <column name="USR_TOTAL_PAUSED" type="INTEGER" default="0"/>
     <column name="USR_TOTAL_COMPLETED" type="INTEGER" default="0"/>
     <column name="USR_TOTAL_UNASSIGNED" type="INTEGER" default="0"/>
+    <column name="USR_COST_BY_HOUR" type="DOUBLE" size="11,2" required="false" default="0"/>
+    <column name="USR_UNIT_COST" type="VARCHAR" size="50" required="false" default=""/>
     <validator column="USR_STATUS">
       <rule name="validValues" value="ACTIVE|INACTIVE|VACATION|CLOSED" message="Please select a valid type."/>
       <rule name="required" message="Type is required."/>
@@ -4816,5 +4818,217 @@
       </vendor>
     </column>
   </table>
+  
+  <table name="USR_REPORTING">
+        <vendor type="mysql">
+            <parameter name="Name" value="USR_REPORTING" />
+            <parameter name="Engine" value="InnoDB" />
+            <parameter name="Version" value="10" />
+            <parameter name="Row_format" value="Dynamic" />
+            <parameter name="Data_free" value="0" />
+            <parameter name="Auto_increment" value="" />
+            <parameter name="Check_time" value="" />
+            <parameter name="Collation" value="utf8_general_ci" />
+            <parameter name="Checksum" value="" />
+            <parameter name="Create_options" value="" />
+            <parameter name="Comment" value="Data calculated users by task"/>
+        </vendor>
+        <column name="USR_UID"              type="VARCHAR"  size="32" required="true" primaryKey="true" />
+        <column name="TAS_UID"              type="VARCHAR"  size="32" required="true" primaryKey="true" />
+        <column name="PRO_UID"              type="VARCHAR"  size="32" required="true" />
+        <column name="MONTH"                type="INTEGER"  required="true" default="0" primaryKey="true" />
+        <column name="YEAR"                 type="INTEGER"  required="true" default="0" primaryKey="true" />
+        <column name="TOTAL_TIME_BY_TASK"   type="DECIMAL"  size="7,2"/>
+        <column name="TOTAL_CASES_IN"       type="DECIMAL"  size="7,2"/>
+        <column name="TOTAL_CASES_OUT"      type="DECIMAL"  size="7,2"/>
+        <column name="USER_HOUR_COST"       type="DECIMAL"  size="7,2"/>
+        <column name="AVG_TIME"             type="DECIMAL"  size="7,2"/>
+        <column name="SDV_TIME"             type="DECIMAL"  size="7,2"/>
+        <column name="CONFIGURED_TASK_TIME" type="DECIMAL"  size="7,2"/>
+        <column name="TOTAL_CASES_OVERDUE"  type="DECIMAL"  size="7,2"/>
+        <column name="TOTAL_CASES_ON_TIME"  type="DECIMAL"  size="7,2"/>
+        <index name="indexReporting">
+            <index-column name="USR_UID"/>
+            <index-column name="TAS_UID"/>
+            <index-column name="PRO_UID"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="USR_REPORTING"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexReporting"/>
+                <parameter name="Seq_in_index" value="1"/>
+                <parameter name="Column_name" value="USR_UID"/>
+                <parameter name="Collation" value="A"/>
+                <parameter name="Cardinality" value=""/>
+                <parameter name="Sub_part" value=""/>
+                <parameter name="Packed" value=""/>
+                <parameter name="Null" value=""/>
+                <parameter name="Index_type" value="BTREE"/>
+                <parameter name="Comment" value=""/>
+            </vendor>
+        </index>
+    </table>
+
+    <table name="PRO_REPORTING">
+        <vendor type="mysql">
+            <parameter name="Name" value="PRO_REPORTING" />
+            <parameter name="Engine" value="InnoDB" />
+            <parameter name="Version" value="10" />
+            <parameter name="Row_format" value="Dynamic" />
+            <parameter name="Data_free" value="0" />
+            <parameter name="Auto_increment" value="" />
+            <parameter name="Check_time" value="" />
+            <parameter name="Collation" value="utf8_general_ci" />
+            <parameter name="Checksum" value="" />
+            <parameter name="Create_options" value="" />
+            <parameter name="Comment" value="Data calculated by process"/>
+        </vendor>
+        <column name="PRO_UID"                  type="VARCHAR"  size="32" required="true" primaryKey="true" />
+        <column name="MONTH"                    type="INTEGER"  required="true" default="0" primaryKey="true" />
+        <column name="YEAR"                     type="INTEGER"  required="true" default="0" primaryKey="true" />
+        <column name="AVG_TIME"                 type="DECIMAL"  size="7,2"/>
+        <column name="SDV_TIME"                 type="DECIMAL"  size="7,2"/>
+        <column name="TOTAL_CASES_IN"           type="DECIMAL"  size="7,2"/>
+        <column name="TOTAL_CASES_OUT"          type="DECIMAL"  size="7,2"/>
+        <column name="CONFIGURED_PROCESS_TIME"  type="DECIMAL"  size="7,2"/>
+        <column name="CONFIGURED_PROCESS_COST"  type="DECIMAL"  size="7,2"/>
+        <column name="TOTAL_CASES_OPEN"         type="DECIMAL"  size="7,2"/>
+        <column name="TOTAL_CASES_OVERDUE"      type="DECIMAL"  size="7,2"/>
+        <column name="TOTAL_CASES_ON_TIME"      type="DECIMAL"  size="7,2"/>
+    </table>
+
+    <table name="DASHBOARD">
+        <vendor type="mysql">
+            <parameter name="Name" value="DASHBOARD" />
+            <parameter name="Engine" value="InnoDB" />
+            <parameter name="Version" value="10" />
+            <parameter name="Row_format" value="Dynamic" />
+            <parameter name="Data_free" value="0" />
+            <parameter name="Auto_increment" value="" />
+            <parameter name="Check_time" value="" />
+            <parameter name="Collation" value="utf8_general_ci" />
+            <parameter name="Checksum" value="" />
+            <parameter name="Create_options" value="" />
+            <parameter name="Comment" value="Dashboard definitions."/>
+        </vendor>
+        <column name="DAS_UID"          type="VARCHAR"      size="32" required="true" primaryKey="true" default="" />
+        <column name="DAS_TITLE"        type="VARCHAR"      size="255" required="true" default="" />
+        <column name="DAS_DESCRIPTION"  type="LONGVARCHAR"  required="false" />
+        <column name="DAS_CREATE_DATE"  type="TIMESTAMP"    required="true" />
+        <column name="DAS_UPDATE_DATE"  type="TIMESTAMP"    required="false" />
+        <column name="DAS_STATUS"       type="TINYINT"      required="true" default="1"/>
+    </table>
+
+    <table name="DASHBOARD_INDICATOR">
+        <vendor type="mysql">
+            <parameter name="Name" value="DASHBOARD_INDICATOR" />
+            <parameter name="Engine" value="InnoDB" />
+            <parameter name="Version" value="10" />
+            <parameter name="Row_format" value="Dynamic" />
+            <parameter name="Data_free" value="0" />
+            <parameter name="Auto_increment" value="" />
+            <parameter name="Check_time" value="" />
+            <parameter name="Collation" value="utf8_general_ci" />
+            <parameter name="Checksum" value="" />
+            <parameter name="Create_options" value="" />
+            <parameter name="Comment" value="Dashboard Indicators definitions."/>
+        </vendor>
+        <column name="DAS_IND_UID"              type="VARCHAR"      size="32" required="true" primaryKey="true"  default="" />
+        <column name="DAS_UID"                  type="VARCHAR"      size="32" required="true" default="" />
+        <column name="DAS_IND_TYPE"             type="VARCHAR"      size="32" required="true" default="" />
+        <column name="DAS_IND_TITLE"            type="VARCHAR"      size="255" required="true" default="" />
+        <column name="DAS_IND_GOAL"             type="DECIMAL"      size="7,2" required="true" />
+        <column name="DAS_IND_DIRECTION"        type="TINYINT"      required="true" default="2"/>
+        <column name="DAS_UID_PROCESS"          type="VARCHAR"      size="32" required="true" default="" />
+        <column name="DAS_IND_FIRST_FIGURE"     type="VARCHAR"      size="32" required="false" default="" />
+        <column name="DAS_IND_FIRST_FREQUENCY"  type="VARCHAR"      size="32" required="false" default="" />
+        <column name="DAS_IND_SECOND_FIGURE"    type="VARCHAR"      size="32" required="false" default="" />
+        <column name="DAS_IND_SECOND_FREQUENCY" type="VARCHAR"      size="32" required="false" default="" />
+        <column name="DAS_IND_CREATE_DATE"      type="TIMESTAMP"    required="true" />
+        <column name="DAS_IND_UPDATE_DATE"      type="TIMESTAMP"    required="false" />
+        <column name="DAS_IND_STATUS"           type="TINYINT"      required="true" default="1"/>
+        <foreign-key name="fk_dashboard_indicator_dashboard" foreignTable="DASHBOARD">
+            <reference local="DAS_UID" foreign="DAS_UID"/>
+        </foreign-key>
+        <index name="indexDashboard">
+            <index-column name="DAS_UID"/>
+            <index-column name="DAS_IND_TYPE"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="DASHBOARD_INDICATOR"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexDashboard"/>
+                <parameter name="Seq_in_index" value="1"/>
+                <parameter name="Column_name" value="DAS_UID"/>
+                <parameter name="Collation" value="A"/>
+                <parameter name="Cardinality" value=""/>
+                <parameter name="Sub_part" value=""/>
+                <parameter name="Packed" value=""/>
+                <parameter name="Null" value=""/>
+                <parameter name="Index_type" value="BTREE"/>
+                <parameter name="Comment" value=""/>
+            </vendor>
+        </index>
+    </table>
+
+    <table name="DASHBOARD_DAS_IND">
+        <vendor type="mysql">
+            <parameter name="Name" value="DASHBOARD_DAS_IND" />
+            <parameter name="Engine" value="InnoDB" />
+            <parameter name="Version" value="10" />
+            <parameter name="Row_format" value="Dynamic" />
+            <parameter name="Data_free" value="0" />
+            <parameter name="Auto_increment" value="" />
+            <parameter name="Check_time" value="" />
+            <parameter name="Collation" value="utf8_general_ci" />
+            <parameter name="Checksum" value="" />
+            <parameter name="Create_options" value="" />
+            <parameter name="Comment" value="Dashboard definitions to user."/>
+        </vendor>
+        <column name="DAS_UID"      type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="OWNER_UID"    type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="OWNER_TYPE"   type="VARCHAR" size="15" required="true" default=""/>
+        <foreign-key name="fk_dashboard_indicator_dashboard_das_ind" foreignTable="DASHBOARD">
+            <reference local="DAS_UID" foreign="DAS_UID"/>
+        </foreign-key>
+    </table>
+
+    <table name="CATALOG">
+        <vendor type="mysql">
+            <parameter name="Name" value="CATALOG" />
+            <parameter name="Engine" value="InnoDB" />
+            <parameter name="Version" value="10" />
+            <parameter name="Row_format" value="Dynamic" />
+            <parameter name="Data_free" value="0" />
+            <parameter name="Auto_increment" value="" />
+            <parameter name="Check_time" value="" />
+            <parameter name="Collation" value="utf8_general_ci" />
+            <parameter name="Checksum" value="" />
+            <parameter name="Create_options" value="" />
+            <parameter name="Comment" value="Definitions catalog."/>
+        </vendor>
+        <column name="CAT_UID"          type="VARCHAR" size="32"  required="true"  primaryKey="true" default="0"/>
+        <column name="CAT_LABEL_ID"     type="VARCHAR" size="100" required="true"  default=""/>
+        <column name="CAT_TYPE"         type="VARCHAR" size="100" required="true"  primaryKey="true" default=""/>
+        <column name="CAT_FLAG"         type="VARCHAR" size="50"  required="false" default=""/>
+        <column name="CAT_OBSERVATION"  type="LONGVARCHAR"        required="false" default=""/>
+        <column name="CAT_CREATE_DATE"  type="TIMESTAMP"          required="true" />
+        <column name="CAT_UPDATE_DATE"  type="TIMESTAMP"          required="false" />
+        <index name="indexType">
+            <index-column name="CAT_TYPE"/>
+            <vendor type="mysql">
+                <parameter name="Table" value="CATALOG"/>
+                <parameter name="Non_unique" value="1"/>
+                <parameter name="Key_name" value="indexDashboard"/>
+                <parameter name="Seq_in_index" value="1"/>
+                <parameter name="Column_name" value="CAT_TYPE"/>
+                <parameter name="Collation" value="A"/>
+                <parameter name="Cardinality" value=""/>
+                <parameter name="Sub_part" value=""/>
+                <parameter name="Packed" value=""/>
+                <parameter name="Null" value=""/>
+                <parameter name="Index_type" value="BTREE"/>
+                <parameter name="Comment" value=""/>
+            </vendor>
+        </index>
+    </table>
 </database>
 

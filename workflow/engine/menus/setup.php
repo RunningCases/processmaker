@@ -72,6 +72,14 @@ if ($RBAC->userCanAccess('PM_SETUP') == 1) {
     }
     $G_TMP_MENU->AddIdRawOption('LOGIN', 'loginSettings', G::LoadTranslation('LOGIN'), "",'', 'settings');
     $G_TMP_MENU->AddIdRawOption('DASHBOARD', '../dashboard/dashletsList', ucfirst(G::LoadTranslation('ID_DASHBOARD')), '', '', 'settings');
+    /*----------------------------------********---------------------------------*/
+
+    if ($licensedFeatures->verifyfeature('bvZTnIraUhCSXIxNEVOcGluVVR6Y3E3NStiMW9tWU54aU5tb0FrRnJ0MXMzLzRWMHZtakJIN3dRPT0=')) {
+        $G_TMP_MENU->AddIdRawOption('NEW_DASHBOARD', '../strategicDashboard/dashboardList', ucfirst(G::LoadTranslation('ID_STRATEGIC_DASHBOARD')), '', '', 'settings');
+    }
+
+    /*----------------------------------********---------------------------------*/
+
 }
 //tools options
 if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') == 1 ) {
@@ -150,4 +158,3 @@ if ($RBAC->userCanAccess("PM_SETUP") == 1) {
     /*----------------------------------********---------------------------------*/
     $G_TMP_MENU->AddIdRawOption("CASES_LIST_SETUP", "../cases/casesListSetup", G::LoadTranslation('ID_CASES_LIST'), "", "", "settings");
 }
-
