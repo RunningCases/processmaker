@@ -1464,6 +1464,9 @@ class processMap
                 case 7:
                     $sFilename = 'tasks/tasks_Notifications.xml';
                     break;
+                case 8:
+                    $sFilename = 'tasks/tasks_Consolidated.xml';
+                    break;
                 default:
                     //if the $iForm is not one of the defaults then search under Plugins for an extended property. By JHL Jan 18, 2011
                     $oPluginRegistry = & PMPluginRegistry::getSingleton();
@@ -1538,6 +1541,55 @@ class processMap
                     case "SELF_SERVICE":
                         $aFields["TAS_ASSIGN_TYPE"] = (!empty($aFields["TAS_GROUP_VARIABLE"])) ? "SELF_SERVICE_EVALUATE" : $aFields["TAS_ASSIGN_TYPE"];
                         break;
+                }
+            }
+
+            if ($iForm == 8) {
+                $oCaseConsolidated = CaseConsolidatedPeer::retrieveByPK($_SESSION["cDhTajE2T2lxSkhqMzZUTXVacWYyNcKwV3A4eWYybDdyb1p3"]["TAS_UID"]);
+                if ((is_object($oCaseConsolidated)) && get_class($oCaseConsolidated) == "CaseConsolidated") {
+                    require_once ("classes/model/ReportTable.php");
+
+                    $aFields["CON_STATUS"]  = $oCaseConsolidated->getConStatus();
+                    $aFields["DYN_UID"]     = $oCaseConsolidated->getDynUid();
+                    $aFields["REP_TAB_UID"] = $oCaseConsolidated->getRepTabUid();
+
+                    $oReportTables = new ReportTable();
+                    $oReportTables = $oReportTables->load($aFields["REP_TAB_UID"]);
+                    if (count($oReportTables)>0) {
+                        if ($oReportTables['REP_TAB_STATUS'] == 'ACTIVE') {
+                            $aFields["TABLE_NAME"] = $oReportTables['REP_TAB_NAME'];
+                            $aFields["TITLE"] = $oReportTables['REP_TAB_TITLE'];
+                        }
+                    }
+                }
+                $aFields["PRO_UID"]  = $_SESSION["PROCESS"];
+                $aFields["TAS_UID"]  = $_SESSION["cDhTajE2T2lxSkhqMzZUTXVacWYyNcKwV3A4eWYybDdyb1p3"]["TAS_UID"];
+                $aFields["SYS_LANG"] = SYS_LANG;
+                $aFields['INDEX']    = 0;
+                $aFields["TABLE_NAME_DEFAULT"] = "__" . $aFields["TAS_UID"];
+
+                $oCriteria = new Criteria("workflow");
+                $del = DBAdapter::getStringDelimiter();
+
+                $oCriteria->setDistinct();
+                $oCriteria->addSelectColumn(DynaformPeer::DYN_UID);
+                $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
+                
+                $aConditions   = array();
+                $aConditions[] = array(DynaformPeer::DYN_UID, ContentPeer::CON_ID);
+                $aConditions[] = array(ContentPeer::CON_CATEGORY, $del . "DYN_TITLE" . $del);
+                $aConditions[] = array(ContentPeer::CON_LANG, $del . "en" . $del);
+                $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+                
+                $oCriteria->add(DynaformPeer::PRO_UID, $_SESSION["PROCESS"]);
+                $oCriteria->add(DynaformPeer::DYN_TYPE, "grid");
+                
+                $oCriteria->addAscendingOrderByColumn(ContentPeer::CON_VALUE);
+
+                $numRows = DynaformPeer::doCount($oCriteria);
+                if ($numRows == 0) {
+                    echo "<div style=\"margin:1em;\"><strong>".G::LoadTranslation('ID_ALERT')."</strong><br />".G::LoadTranslation('ID_CONSOLIDATED_DYNAFORM_REQUIRED')."</div>";
+                    die;
                 }
             }
 

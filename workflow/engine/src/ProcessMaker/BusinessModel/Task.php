@@ -321,7 +321,7 @@ class Task
             }
 
             //Validating TAS_TRANSFER_FLY value
-            if ($arrayProperty["TAS_TRANSFER_FLY"] == "FALSE") {
+            if ($arrayProperty["TAS_TRANSFER_FLY"] == "TRUE") {
                 if (!isset($arrayProperty["TAS_DURATION"])) {
                     throw (new \Exception("Invalid value specified for 'tas_duration'"));
                 }
@@ -389,15 +389,12 @@ class Task
                 $dataConso = array(
                     'tas_uid'       => $arrayProperty['TAS_UID'],
                     'dyn_uid'       => $arrayProperty['CONSOLIDATE_DATA']['consolidated_dynaform'],
-                    'status'        => true,
                     'pro_uid'       => $arrayProperty['PRO_UID'],
-                    'rep_uid'       => '',
+                    'rep_uid'       => $arrayProperty['CONSOLIDATE_DATA']['consolidated_report_table'],
                     'table_name'    => $arrayProperty['CONSOLIDATE_DATA']['consolidated_table'],
-                    'title'         => $arrayProperty['CONSOLIDATE_DATA']['consolidated_title'],
-                    'overwrite'     => true,
-                    'isBPMN'        => true
+                    'title'         => $arrayProperty['CONSOLIDATE_DATA']['consolidated_title']
                 );
-                $consolidated->cochalo($dataConso);
+                $consolidated->saveConsolidated($dataConso);
                 
             }
             $arrayResult["status"] = "OK";

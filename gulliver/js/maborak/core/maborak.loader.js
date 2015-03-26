@@ -950,7 +950,8 @@ var text=this.data.db.text[index];var pos=this.parent.dom.position(text.object.e
 {tt=options;var index=this.tools.getIndexOfUid(options.tas_uid);var from=this.data.db.task[index];this.data.render.deleteDerivation(options.tas_uid);var affe=options.data;from.derivation.type=options.type;for(var i=0;i<affe.length;i++)
 {from.derivation.to[i]={task:affe[i]};}
 this.data.render.lineDerivation(index);}},save:function()
-{}}.expand(this,true);this.patternPanel=function(event,index,din){var options=this.data.db.task[index];var db=this.data.db,task=db.task[index];var derivation=task.derivation.to;var vars={tas_uid:task.uid,pro_uid:this.options.uid}.concatMaborak((din)?{type:din.type,next_task:this.data.db.task[din.to].uid}:{});if(event)
+{}}.expand(this,true);this.patternPanel=function(event,index,din){var options=this.data.db.task[index];var db=this.data.db,task=db.task[index];var derivation=task.derivation.to;var vars={tas_uid:task.uid,pro_uid:this.options.uid}.concatMaborak((din)?{type:din.type,next_task:this.data.db.task[din.to].uid}:{});if(event===0||typeof(event)==='undefined'){event=window.event;}
+if(event)
 {if(typeof(this.data.db.task[index].derivation.type)=='undefined')
 {new leimnud.module.app.alert().make({label:G_STRINGS.ID_NO_DERIVATIONS_DEFINED});return false;}
 var iWidth,iHeight;switch(this.data.db.task[index].derivation.type)
