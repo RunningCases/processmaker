@@ -593,6 +593,7 @@ class Derivation
 
         //Count how many tasks should be derivated.
         //$countNextTask = count($nextDelegations);
+        $removeList = true;
         foreach ($nextDelegations as $nextDel) {
             //BpmnEvent - END-MESSAGE-EVENT - Check and get unique id
             if (preg_match("/^(.{32})\/(\-1)$/", $nextDel["TAS_UID"], $arrayMatch)) {
@@ -749,12 +750,27 @@ class Derivation
             //if (isset($nextDel['TAS_DEF_PROC_CODE']))
             //$appFields['APP_PROC_CODE'] = $nextDel['TAS_DEF_PROC_CODE'];
             /*----------------------------------********---------------------------------*/
-            if (!empty($iNewDelIndex) && empty($aSP)) {
-                $oAppDel = AppDelegationPeer::retrieveByPK( $appFields['APP_UID'], $iNewDelIndex );
-                $aFields = $oAppDel->toArray( BasePeer::TYPE_FIELDNAME );
-                $aFields['APP_STATUS'] = $currentDelegation['APP_STATUS'];
-                $inbox = new ListInbox();
-                $inbox->newRow($aFields, $appFields['CURRENT_USER_UID'], false, array(), ($nextDel['TAS_ASSIGN_TYPE'] == 'SELF_SERVICE' ? true : false));
+            $taskCur = TaskPeer::retrieveByPK( $nextDel['TAS_UID']);
+            $aTask = $taskCur->toArray( BasePeer::TYPE_FIELDNAME );
+            $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
+            if (!in_array($aTask['TAS_TYPE'], $arrayTaskTypeToExclude)) {
+                if (!empty($iNewDelIndex) && empty($aSP)) {
+                    $oAppDel = AppDelegationPeer::retrieveByPK( $appFields['APP_UID'], $iNewDelIndex );
+                    $aFields = $oAppDel->toArray( BasePeer::TYPE_FIELDNAME );
+                    $aFields['APP_STATUS'] = $currentDelegation['APP_STATUS'];
+                    $inbox = new ListInbox();
+                    $inbox->newRow($aFields, $appFields['CURRENT_USER_UID'], false, array(), ($nextDel['TAS_ASSIGN_TYPE'] == 'SELF_SERVICE' ? true : false));
+                    $removeList = false;
+                }
+            } else {
+                $oRow = ApplicationPeer::retrieveByPK($appFields['APP_UID']);
+                $aFields = $oRow->toArray( BasePeer::TYPE_FIELDNAME );
+                $users = new Users();
+                if ($aFields['APP_STATUS'] == 'DRAFT') {
+                    $users->refreshTotal($appFields['CURRENT_USER_UID'], 'remove', 'draft');
+                } else {
+                    $users->refreshTotal($appFields['CURRENT_USER_UID'], 'remove', 'inbox');
+                }
             }
             /*----------------------------------********---------------------------------*/
             unset( $aSP );

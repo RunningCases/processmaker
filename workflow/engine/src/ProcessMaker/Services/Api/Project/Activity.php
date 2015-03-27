@@ -60,7 +60,7 @@ class Activity extends Api
         }
     }
     
-/*----------------------------------********---------------------------------*/
+
     /**
      * @param string $pro_uid {@min 32} {@max 32}
      * @param string $tas_uid {@min 32} {@max 32}
@@ -76,6 +76,7 @@ class Activity extends Api
     {
         try {
             $configurations = array();
+            /*----------------------------------********---------------------------------*/
             /*** starts retrieval of action by emails configuration ***/
             if (\PMLicensedFeatures
                 ::getSingleton()
@@ -90,12 +91,13 @@ class Activity extends Api
                 $configurations[] = $actionsByEmailService->loadConfiguration($params);
             }
             /*** end retrieval of action by emails configuration ***/
+            /*----------------------------------********---------------------------------*/
             return $configurations;
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
-/*----------------------------------********---------------------------------*/
+
     
     /**
      * @param string $prj_uid {@min 32} {@max 32}
