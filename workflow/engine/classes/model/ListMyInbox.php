@@ -236,12 +236,6 @@ class ListMyInbox extends BaseListMyInbox
         $criteria->addSelectColumn(ListMyInboxPeer::DEL_INIT_DATE);
         $criteria->addSelectColumn(ListMyInboxPeer::DEL_DUE_DATE);
         $criteria->addSelectColumn(ListMyInboxPeer::DEL_PRIORITY);
-
-        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
-
-        $criteria->addJoin(ListMyInboxPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
-        $criteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
-
         $criteria->add( ListMyInboxPeer::USR_UID, $usr_uid, Criteria::EQUAL );
         self::loadFilters($criteria, $filters);
 

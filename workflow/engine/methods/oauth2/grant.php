@@ -23,7 +23,7 @@ $data = array(
 $ch = curl_init($endpoint);
 
 curl_setopt($ch, CURLOPT_HEADER, false);
-curl_setopt($ch, CURLOPT_USERPWD, "$clientId:$secret");
+curl_setopt($ch, CURLOPT_USERPWD, $clientId.':'.$secret);
 curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);

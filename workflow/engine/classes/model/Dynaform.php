@@ -173,6 +173,9 @@ class Dynaform extends BaseDynaform
             if (isset($aData["DYN_CONTENT"])) {
                 $this->setDynContent($aData["DYN_CONTENT"]);
             }
+            if (isset($aData["DYN_LABEL"])) {
+                $this->setDynLabel($aData["DYN_LABEL"]);
+            }
             if (!isset($aData['DYN_VERSION'])) {
                 $aData['DYN_VERSION'] = 0;
             }
