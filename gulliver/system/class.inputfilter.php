@@ -585,7 +585,7 @@ class InputFilter
                 $value = (boolean)filter_var($value, FILTER_VALIDATE_BOOLEAN,FILTER_NULL_ON_FAILURE);
             break;
             case 'path':
-                if(!file_exists($value) || !is_dir($value)) {
+                if(!file_exists($value)) {
                     $value = '';
                 }
             break;
@@ -623,7 +623,7 @@ class InputFilter
                 }
             break;
             case 'path':
-                if(!file_exists($value) || !is_dir($value)) {
+                if(!file_exists($value)) {
                     throw new Exception('not a valid path');
                 }
             break;
