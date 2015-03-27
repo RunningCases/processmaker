@@ -758,6 +758,7 @@ class Derivation
                     $oAppDel = AppDelegationPeer::retrieveByPK( $appFields['APP_UID'], $iNewDelIndex );
                     $aFields = $oAppDel->toArray( BasePeer::TYPE_FIELDNAME );
                     $aFields['APP_STATUS'] = $currentDelegation['APP_STATUS'];
+                    $aFields['REMOVED_LIST'] = $removeList;
                     $inbox = new ListInbox();
                     $inbox->newRow($aFields, $appFields['CURRENT_USER_UID'], false, array(), ($nextDel['TAS_ASSIGN_TYPE'] == 'SELF_SERVICE' ? true : false));
                     $removeList = false;
