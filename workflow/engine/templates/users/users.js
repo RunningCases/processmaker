@@ -383,7 +383,7 @@ Ext.onReady(function () {
           ]
       })
   });
-  
+
   comboRole = new Ext.form.ComboBox({
     fieldLabel    : _('ID_ROLE'),
     hiddenName    : 'USR_ROLE',
@@ -449,7 +449,6 @@ Ext.onReady(function () {
               Ext.getCmp('usernameReview').setVisible(true);
             }
           }
-<<<<<<< HEAD
         },
         {
           xtype: 'label',
@@ -478,58 +477,28 @@ Ext.onReady(function () {
           id         : 'USR_ZIP_CODE',
           fieldLabel : _('ID_ZIP_CODE'),
           xtype      : 'textfield',
-=======
-        }
-      },
-      {
-        xtype: 'label',
-        fieldLabel: ' ',
-        id:'usernameReview',
-        width: 300,
-        labelSeparator: ''
-      },
-      {
-        id         : 'USR_EMAIL',
-        fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_EMAIL')) +'"> * </span>' + _('ID_EMAIL'),
-        vtype      : 'email',
-        xtype      : 'textfield',
-        width      : 260,
-        allowBlank : false
-      },
-      {
-        xtype          : 'textarea',
-        name           : 'USR_ADDRESS',
-        fieldLabel     : _('ID_ADDRESS'),
-        labelSeparator : '',
-        height         : 50,
-        width          : 260
-      },
-      {
-        id         : 'USR_ZIP_CODE',
-        fieldLabel : _('ID_ZIP_CODE'),
-        xtype      : 'textfield',
-        width      : 260
-      },
-      comboCountry,
-      comboRegion,
-      comboLocation,
-      {
-        id         : 'USR_PHONE',
-        fieldLabel : _('ID_PHONE'),
-        xtype      : 'textfield',
-        width      : 260
-      },
-      {
-        id         : 'USR_POSITION',
-        fieldLabel : _('ID_POSITION'),
-        xtype      : 'textfield',
-        width      : 260
-      },
-      comboReplacedBy,
-      dateField,
-      comboCalendar,
-      comboStatus,
-      comboRole
+          width      : 260
+        },
+        comboCountry,
+        comboRegion,
+        comboLocation,
+        {
+          id         : 'USR_PHONE',
+          fieldLabel : _('ID_PHONE'),
+          xtype      : 'textfield',
+          width      : 260
+        },
+        {
+          id         : 'USR_POSITION',
+          fieldLabel : _('ID_POSITION'),
+          xtype      : 'textfield',
+          width      : 260
+        },
+        comboReplacedBy,
+        dateField,
+        comboCalendar,
+        comboStatus,
+        comboRole
       ]
   });
     /*----------------------------------********---------------------------------*/
@@ -564,68 +533,9 @@ Ext.onReady(function () {
           fieldLabel : _("ID_PASSWORD_CURRENT"),
           inputType  : "password",
           hidden     : (typeof EDITPROFILE != "undefined" && EDITPROFILE == 1)? false : true,
->>>>>>> upstream/dashboards
           width      : 260
-        },
-        comboCountry,
-        comboRegion,
-        comboLocation,
-        {
-          id         : 'USR_PHONE',
-          fieldLabel : _('ID_PHONE'),
-          xtype      : 'textfield',
-          width      : 260
-        },
-        {
-          id         : 'USR_POSITION',
-          fieldLabel : _('ID_POSITION'),
-          xtype      : 'textfield',
-          width      : 260
-        },
-        comboReplacedBy,
-        dateField,
-        comboCalendar,
-        comboStatus,
-        comboRole
-        ]
-    });
-
-    /*----------------------------------********---------------------------------*/
-    var costByHour = new Ext.form.FieldSet({
-    title : _('ID_COSTS'),
-    items : [
-            {
-                id         : 'USR_COST_BY_HOUR',
-                fieldLabel : _('ID_COST_BY_HOUR'),
-                xtype      : 'numberfield',
-                decimalSeparator : '.',
-                maxLength  : 13,
-                width      : 80
-            },
-            {
-                id         : 'USR_UNIT_COST',
-                fieldLabel : _('ID_UNITS'),
-                xtype      : 'textfield',
-                maxLength  : 50,
-                width      : 80
-            }
-        ]
-    });
-    /*----------------------------------********---------------------------------*/
-
-    var passwordFields = new Ext.form.FieldSet({
-      title : _('ID_CHANGE_PASSWORD'),
-      items : [
-         {
-            xtype      : "textfield",
-            id         : "currentPassword",
-            name       : "currentPassword",
-            fieldLabel : _("ID_PASSWORD_CURRENT"),
-            inputType  : "password",
-            hidden     : (typeof EDITPROFILE != "undefined" && EDITPROFILE == 1)? false : true,
-            width      : 260
-        },
-        {
+       },
+       {
           id         : 'USR_NEW_PASS',
           fieldLabel : MODE == 'edit' ? _('ID_NEW_PASSWORD') : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_NEW_PASSWORD')) +'"> * </span>' + _('ID_NEW_PASSWORD'),
           xtype      : 'textfield',
