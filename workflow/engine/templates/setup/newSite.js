@@ -39,8 +39,10 @@ Ext.onReady(function(){
         xtype:'textfield',
         value:'wf_sample',
         width: 200,
+        regex: /^\w+$/,
         autoCreate: {tag: 'input', type: 'text', size: '20', autocomplete: 'off', maxlength: '13'},
-        allowBlank: false
+        allowBlank: false,
+        msgTarget: 'under'
       },
       /*{
         id: 'AO_DB_RB',
