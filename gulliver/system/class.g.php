@@ -2638,7 +2638,7 @@ class G
             
             G::LoadSystem('inputfilter');
             $filter = new InputFilter();
-            $file = $filter->xssFilterHard($file, "path"); 
+            $file = $filter->validateInput($file, "path"); 
             
             move_uploaded_file( $file, $path . "/" . $nameToSave );
             @chmod( $path . "/" . $nameToSave, $permission );

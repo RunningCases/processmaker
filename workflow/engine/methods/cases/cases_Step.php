@@ -525,7 +525,7 @@ try {
                             //$content = file_get_contents ( PATH_DYNAFORM . $aOD['PRO_UID'] . PATH_SEP . $aOD['OUT_DOC_UID'] . '.jrxml' );
                             //$iSize = file_put_contents ( $javaInput .  $aOD['OUT_DOC_UID'] . '.jrxml', $content );
                             $locationFrom = PATH_DYNAFORM . $aOD['PRO_UID'] . PATH_SEP . $aOD['OUT_DOC_UID'] . '.jrxml';
-                            $locationFrom = $filter->xssFilterHard($locationFrom, "path");
+                            $locationFrom = $filter->validateInput($locationFrom, "path");
                             copy( $locationFrom, $javaInput . $aOD['OUT_DOC_UID'] . '.jrxml' );
 
                             $outputFile = $javaOutput . $sFilename . '.pdf';
@@ -533,7 +533,7 @@ try {
 
                             //$content = file_get_contents ( $outputFile );
                             //$iSize = file_put_contents ( $pathOutput .  $sFilename . '.pdf' , $content );
-                            $outputFile = $filter->xssFilterHard($outputFile, "path");
+                            $outputFile = $filter->validateInput($outputFile, "path");
                             copy( $outputFile, $pathOutput . $sFilename . '.pdf' );
                             //die;
                             break;
@@ -558,14 +558,14 @@ try {
                             $filter = new InputFilter();
                             
                             $locationFrom = PATH_DYNAFORM . $aOD['PRO_UID'] . PATH_SEP . $aOD['OUT_DOC_UID'] . '.pdf';
-                            $locationFrom = $filter->xssFilterHard($locationFrom, "path");
+                            $locationFrom = $filter->validateInput($locationFrom, "path");
                             copy( $locationFrom, $javaInput . $aOD['OUT_DOC_UID'] . '.pdf' );
 
                             $outputFile = $javaOutput . $sFilename . '.pdf';
                             print $util->writeVarsToAcroFields( $aOD['OUT_DOC_UID'] . '.pdf', $xmlData );
                             
                             $locationFrom = $javaOutput . $aOD['OUT_DOC_UID'] . '.pdf';
-                            $locationFrom = $filter->xssFilterHard($locationFrom, "path");
+                            $locationFrom = $filter->validateInput($locationFrom, "path");
                             copy( $locationFrom, $pathOutput . $sFilename . '.pdf' );
 
                             break;
