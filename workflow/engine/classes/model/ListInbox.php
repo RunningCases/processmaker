@@ -192,6 +192,11 @@ class ListInbox extends BaseListInbox
 
     public function newRow ($data, $delPreviusUsrUid, $isInitSubprocess = false, $dataPreviusApplication = array(), $isSelfService = false)
     {
+        $removeList = true;
+        if (isset($data['REMOVED_LIST'])) {
+            $removeList = $data['REMOVED_LIST'];
+            unset($data['REMOVED_LIST']);
+        }
         $data['DEL_PREVIOUS_USR_UID'] = $delPreviusUsrUid;
         if (isset($data['DEL_TASK_DUE_DATE'])) {
             $data['DEL_DUE_DATE'] = $data['DEL_TASK_DUE_DATE'];
@@ -281,18 +286,20 @@ class ListInbox extends BaseListInbox
             } else {
                 $oRow = ApplicationPeer::retrieveByPK($data['APP_UID']);
                 $aFields = $oRow->toArray( BasePeer::TYPE_FIELDNAME );
-                if ($data['DEL_INDEX'] == 2 || $aFields['APP_STATUS'] == 'DRAFT') {
-                    $criteria = new Criteria();
-                    $criteria->addSelectColumn(SubApplicationPeer::APP_UID);
-                    $criteria->add( SubApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
-                    $dataset = SubApplicationPeer::doSelectRS($criteria);
-                    if ($dataset->next()) {
-                        $users->refreshTotal($delPreviusUsrUid, 'remove', 'inbox');
+                if ($removeList) {
+                    if ($data['DEL_INDEX'] == 2 || $aFields['APP_STATUS'] == 'DRAFT') {
+                        $criteria = new Criteria();
+                        $criteria->addSelectColumn(SubApplicationPeer::APP_UID);
+                        $criteria->add( SubApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
+                        $dataset = SubApplicationPeer::doSelectRS($criteria);
+                        if ($dataset->next()) {
+                            $users->refreshTotal($delPreviusUsrUid, 'remove', 'inbox');
+                        } else {
+                            $users->refreshTotal($delPreviusUsrUid, 'remove', 'draft');
+                        }
                     } else {
-                        $users->refreshTotal($delPreviusUsrUid, 'remove', 'draft');
+                        $users->refreshTotal($delPreviusUsrUid, 'remove', 'inbox');
                     }
-                } else {
-                    $users->refreshTotal($delPreviusUsrUid, 'remove', 'inbox');
                 }
                 if (!$isSelfService) {
                     $users->refreshTotal($data['USR_UID'], 'add', 'inbox');
@@ -411,12 +418,6 @@ class ListInbox extends BaseListInbox
         $criteria->addSelectColumn(ListInboxPeer::DEL_INIT_DATE);
         $criteria->addSelectColumn(ListInboxPeer::DEL_DUE_DATE);
         $criteria->addSelectColumn(ListInboxPeer::DEL_PRIORITY);
-
-        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
-
-        $criteria->addJoin(ListInboxPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
-        $criteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
-
         $criteria->add( ListInboxPeer::USR_UID, $usr_uid, Criteria::EQUAL );
         self::loadFilters($criteria, $filters);
 
