@@ -272,12 +272,6 @@ class ListCanceled extends BaseListCanceled {
         $criteria->addSelectColumn(ListCanceledPeer::DEL_INIT_DATE);
         $criteria->addSelectColumn(ListCanceledPeer::DEL_DUE_DATE);
         $criteria->addSelectColumn(ListCanceledPeer::DEL_PRIORITY);
-
-        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
-
-        $criteria->addJoin(ListCanceledPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
-        $criteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
-
         $criteria->add( ListCanceledPeer::USR_UID, $usr_uid, Criteria::EQUAL );
         self::loadFilters($criteria, $filters);
 
