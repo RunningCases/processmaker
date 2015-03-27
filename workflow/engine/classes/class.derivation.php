@@ -593,6 +593,7 @@ class Derivation
 
         //Count how many tasks should be derivated.
         //$countNextTask = count($nextDelegations);
+        $removeList = true;
         foreach ($nextDelegations as $nextDel) {
             //BpmnEvent - END-MESSAGE-EVENT - Check and get unique id
             if (preg_match("/^(.{32})\/(\-1)$/", $nextDel["TAS_UID"], $arrayMatch)) {
@@ -759,6 +760,7 @@ class Derivation
                     $aFields['APP_STATUS'] = $currentDelegation['APP_STATUS'];
                     $inbox = new ListInbox();
                     $inbox->newRow($aFields, $appFields['CURRENT_USER_UID'], false, array(), ($nextDel['TAS_ASSIGN_TYPE'] == 'SELF_SERVICE' ? true : false));
+                    $removeList = false;
                 }
             } else {
                 $oRow = ApplicationPeer::retrieveByPK($appFields['APP_UID']);
