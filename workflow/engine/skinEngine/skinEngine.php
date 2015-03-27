@@ -392,7 +392,7 @@ class SkinEngine
             if (file_exists($fileFooter)) {
               $footer .= file_get_contents($fileFooter);
             } else {
-              $footer .= "<br />Copyright &copy; 2003-" . date('Y') . " <a href=\"http://www.processmaker.com\" alt=\"ProcessMaker, Inc.\" target=\"_blank\">ProcessMaker, Inc.</a> All rights reserved.<br /> $freeOfChargeText " . "<br><br/><a href=\"http://www.processmaker.com\" alt=\"Powered by ProcessMaker - Open Source Workflow & Business Process Management (BPM) Management Software\" title=\"Powered by ProcessMaker\" target=\"_blank\"></a>";
+              $footer .= "<br />Copyright &copy; 2000-" . date('Y') . " <a href=\"http://www.processmaker.com\" alt=\"ProcessMaker Inc.\" target=\"_blank\">ProcessMaker Inc.</a> All rights reserved.<br /> $freeOfChargeText " . "<br><br/><a href=\"http://www.processmaker.com\" alt=\"Powered by ProcessMaker - Open Source Workflow & Business Process Management (BPM) Management Software\" title=\"Powered by ProcessMaker\" target=\"_blank\"></a>";
             }
           }
         }
@@ -505,7 +505,7 @@ class SkinEngine
             if (file_exists($fileFooter)) {
               $footer .= file_get_contents($fileFooter);
             } else {
-              $footer .= "<br />Copyright &copy; 2003-" . date('Y') . " <a href=\"http://www.processmaker.com\" alt=\"ProcessMaker, Inc.\" target=\"_blank\">ProcessMaker, Inc.</a> All rights reserved.<br /> $freeOfChargeText " . "<br><br/><a href=\"http://www.processmaker.com\" alt=\"Powered by ProcessMaker - Open Source Workflow & Business Process Management (BPM) Management Software\" title=\"Powered by ProcessMaker\" target=\"_blank\"></a>";
+              $footer .= "<br />Copyright &copy; 2000-" . date('Y') . " <a href=\"http://www.processmaker.com\" alt=\"ProcessMaker Inc.\" target=\"_blank\">ProcessMaker Inc.</a> All rights reserved.<br /> $freeOfChargeText " . "<br><br/><a href=\"http://www.processmaker.com\" alt=\"Powered by ProcessMaker - Open Source Workflow & Business Process Management (BPM) Management Software\" title=\"Powered by ProcessMaker\" target=\"_blank\"></a>";
             }
           }
         }
@@ -713,7 +713,7 @@ class SkinEngine
             if (file_exists($fileFooter)) {
               $footer .= file_get_contents($fileFooter);
             } else {
-              $footer .= "<br />Copyright &copy; 2003-" . date('Y') . " <a href=\"http://www.processmaker.com\" alt=\"ProcessMaker, Inc.\" target=\"_blank\">ProcessMaker, Inc.</a> All rights reserved.<br /> $freeOfChargeText " . "<br><br/><a href=\"http://www.processmaker.com\" alt=\"Powered by ProcessMaker - Open Source Workflow & Business Process Management (BPM) Management Software\" title=\"Powered by ProcessMaker\" target=\"_blank\"></a>";
+              $footer .= "<br />Copyright &copy; 2000-" . date('Y') . " <a href=\"http://www.processmaker.com\" alt=\"ProcessMaker Inc.\" target=\"_blank\">ProcessMaker Inc.</a> All rights reserved.<br /> $freeOfChargeText " . "<br><br/><a href=\"http://www.processmaker.com\" alt=\"Powered by ProcessMaker - Open Source Workflow & Business Process Management (BPM) Management Software\" title=\"Powered by ProcessMaker\" target=\"_blank\"></a>";
             }
           }
         }
