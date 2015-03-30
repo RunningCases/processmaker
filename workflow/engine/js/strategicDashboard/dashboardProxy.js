@@ -442,7 +442,7 @@ DashboardProxy.prototype.getJson = function (endPoint, callBack) {
         datatype: 'json',
         success: function(response) { callBack(response);  },
         error: function(jqXHR, textStatus, errorThrown) {
-                          console.log(textStatus, errorThrown);
+							throw new Error(textStatus);
                         },
         beforeSend: function (xhr) {
 						xhr.setRequestHeader('Authorization', 'Bearer ' + that.oauthToken);
