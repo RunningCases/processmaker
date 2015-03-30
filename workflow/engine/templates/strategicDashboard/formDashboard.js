@@ -106,7 +106,7 @@ Ext.onReady( function() {
         disabled: true
     });
 
-    actionButtons = [deleteButton];
+    actionButtons = [deleteButton , '->'];
 
 
     var owner = Ext.data.Record.create ([
@@ -387,20 +387,21 @@ Ext.onReady( function() {
 
     ownerInfoGrid = new Ext.grid.GridPanel({
         region      : 'center',
-        layout      : 'fit',
+        //layout      : 'fit',
         id          : 'ownerInfoGrid',
         height      : 200,
-        autoWidth   : true,
+        //autoWidth   : true,
         //anchor      : '80%',
-        stateful    : true,
+        width       : '100%',
+        //stateful    : true,
         stateId     : 'gridDashboardList',
-        enableColumnResize  : true,
+        //enableColumnResize  : true,
         enableHdMenu: true,
         frame       : false,
         columnLines : false,
-        viewConfig : {
+        /*viewConfig : {
           forceFit:true
-        },
+        },*/
         store: store,
         cm: cmodel,
         sm: smodel,
@@ -422,6 +423,7 @@ Ext.onReady( function() {
     dashboardOwnerFields = new Ext.form.FieldSet({
         title       : _('ID_OWNER_INFORMATION'),
         collapsible : true,
+        width       : '100%',
         //collapsed   : true,
         items       : [
             {
@@ -485,10 +487,8 @@ Ext.onReady( function() {
             },
             {
                 title:  _('ID_PRO_USER'),
-                anchor  : '100%',
-                autoHeight: true,
-                items : ownerInfoGrid
-            }
+            },
+            ownerInfoGrid
         ]
     });
 
@@ -503,7 +503,8 @@ Ext.onReady( function() {
         minTabWidth     : 115,
         tabWidth        : 135,
         enableTabScroll : true,
-        anchor          : '98%',
+        //anchor          : '98%',
+        width           : '100%',
         height          : 300,
         defaults        : {
             autoScroll  :true
@@ -512,6 +513,11 @@ Ext.onReady( function() {
             scope: this,
             beforeremove : function ( that, component ) {
                 if (flag) {
+                    if (tabPanel.items.items.length == 1 ) {
+                        PMExt.warning(_('ID_DASHBOARD'), _('ID_MIN_INDICATOR_DASHBOARD'));
+                        return false;
+                    }
+
                     tabPanel.getItem(component.id).show();
                     Ext.MessageBox.show({
                         title: _('ID_CONFIRM'),
@@ -631,7 +637,7 @@ Ext.onReady( function() {
         labelAlign    :'right',
         autoScroll    : true,
         fileUpload    : true,
-        width         : 800,
+        width         : '100%',
         bodyStyle     : 'padding:10px',
         waitMsgTarget : true,
         frame         : true,
