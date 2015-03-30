@@ -30,9 +30,9 @@ class User
         "USR_BIRTHDAY"         => array("type" => "date",   "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrBirthday"),
         "USR_FAX"              => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrFax"),
         "USR_CELLULAR"         => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrCellular"),
-        /*----------------------------------********---------------------------------*/
-		"USR_COST_BY_HOUR"     => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrCostByHour"),
 
+        /*----------------------------------********---------------------------------*/
+        "USR_COST_BY_HOUR"     => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrCostByHour"),
         "USR_UNIT_COST"        => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrUnitCost"),
         /*----------------------------------********---------------------------------*/
         "USR_LOGGED_NEXT_TIME" => array("type" => "int",    "required" => false, "empty" => false, "defaultValues" => array(0, 1),                                           "fieldNameAux" => "usrLoggedNextTime")
