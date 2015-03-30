@@ -596,7 +596,7 @@ class InputFilter
                 }
             break;
             default:
-                $value = (string)filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+                $value = (string)filter_var($value, FILTER_SANITIZE_STRING);
         }
         
         return $value;    
