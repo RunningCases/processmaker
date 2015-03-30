@@ -102,10 +102,6 @@ class AppCacheView extends BaseAppCacheView
         $criteria->addSelectColumn(AppCacheViewPeer::TAS_UID);
         $criteria->addSelectColumn(AppCacheViewPeer::PRO_UID);
 
-        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
-        $criteria->addJoin(AppCacheViewPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
-        $criteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
-
         $criteria->add(AppCacheViewPeer::APP_STATUS, "TO_DO", CRITERIA::EQUAL);
 
         if (!empty($userUid)) {

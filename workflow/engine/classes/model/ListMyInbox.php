@@ -123,7 +123,10 @@ class ListMyInbox extends BaseListMyInbox
 
         if ($data['DEL_INDEX'] == 1 && $data['APP_STATUS'] == 'TO_DO') {
             $data['APP_CREATE_DATE'] = $data['APP_UPDATE_DATE'];
-            $this->remove($data['APP_UID'], $data['USR_UID']);
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListMyInboxPeer::APP_UID, $data['APP_UID']);
+            $oCriteria->add(ListMyInboxPeer::USR_UID, $data['USR_UID']);
+            ListMyInboxPeer::doDelete($oCriteria);
             $this->create($data);
         } else {
             unset($data['USR_UID']);
