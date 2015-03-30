@@ -518,16 +518,22 @@ try {
                             $util = new Java( "com.processmaker.util.pmutils" );
                             $util->setInputPath( $javaInput );
                             $util->setOutputPath( $javaOutput );
+                            
+                            G::LoadSystem('inputfilter');
+                            $filter = new InputFilter();
 
                             //$content = file_get_contents ( PATH_DYNAFORM . $aOD['PRO_UID'] . PATH_SEP . $aOD['OUT_DOC_UID'] . '.jrxml' );
                             //$iSize = file_put_contents ( $javaInput .  $aOD['OUT_DOC_UID'] . '.jrxml', $content );
-                            copy( PATH_DYNAFORM . $aOD['PRO_UID'] . PATH_SEP . $aOD['OUT_DOC_UID'] . '.jrxml', $javaInput . $aOD['OUT_DOC_UID'] . '.jrxml' );
+                            $locationFrom = PATH_DYNAFORM . $aOD['PRO_UID'] . PATH_SEP . $aOD['OUT_DOC_UID'] . '.jrxml';
+                            $locationFrom = $filter->validateInput($locationFrom, "path");
+                            copy( $locationFrom, $javaInput . $aOD['OUT_DOC_UID'] . '.jrxml' );
 
                             $outputFile = $javaOutput . $sFilename . '.pdf';
                             print $util->jrxml2pdf( $aOD['OUT_DOC_UID'] . '.jrxml', basename( $outputFile ) );
 
                             //$content = file_get_contents ( $outputFile );
                             //$iSize = file_put_contents ( $pathOutput .  $sFilename . '.pdf' , $content );
+                            $outputFile = $filter->validateInput($outputFile, "path");
                             copy( $outputFile, $pathOutput . $sFilename . '.pdf' );
                             //die;
                             break;
@@ -547,13 +553,20 @@ try {
                             $util = new Java( "com.processmaker.util.pmutils" );
                             $util->setInputPath( $javaInput );
                             $util->setOutputPath( $javaOutput );
-
-                            copy( PATH_DYNAFORM . $aOD['PRO_UID'] . PATH_SEP . $aOD['OUT_DOC_UID'] . '.pdf', $javaInput . $aOD['OUT_DOC_UID'] . '.pdf' );
+                            
+                            G::LoadSystem('inputfilter');
+                            $filter = new InputFilter();
+                            
+                            $locationFrom = PATH_DYNAFORM . $aOD['PRO_UID'] . PATH_SEP . $aOD['OUT_DOC_UID'] . '.pdf';
+                            $locationFrom = $filter->validateInput($locationFrom, "path");
+                            copy( $locationFrom, $javaInput . $aOD['OUT_DOC_UID'] . '.pdf' );
 
                             $outputFile = $javaOutput . $sFilename . '.pdf';
                             print $util->writeVarsToAcroFields( $aOD['OUT_DOC_UID'] . '.pdf', $xmlData );
-
-                            copy( $javaOutput . $aOD['OUT_DOC_UID'] . '.pdf', $pathOutput . $sFilename . '.pdf' );
+                            
+                            $locationFrom = $javaOutput . $aOD['OUT_DOC_UID'] . '.pdf';
+                            $locationFrom = $filter->validateInput($locationFrom, "path");
+                            copy( $locationFrom, $pathOutput . $sFilename . '.pdf' );
 
                             break;
                         default:
