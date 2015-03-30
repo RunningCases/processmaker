@@ -1793,7 +1793,6 @@ RingChart.prototype.drawRing = function(data, canvas, param){
             if (typeof _mouseClick == "function") {
                 //DL: original call back function commented
                 //_mouseClick.call();
-                alert(1);
             }
         }
     }
@@ -2127,7 +2126,6 @@ function drawVelocimeter(selector,param){
             this.config.lightBlueColor = configuration.lightBlueColor || "6085A0";
 
         };
-        //alert(value);
         
         this.render = function () {
             this.body = this.myContainer//dashContainer//d3.select("#" + this.placeholderName)
@@ -2160,7 +2158,6 @@ function drawVelocimeter(selector,param){
             this.redrawDimmableFace(xDim);//0);
 
             var pointerContainer = this.body.append("svg:g").attr("class", "pointerContainer");
-            //alert(value);
             this.drawPointer(value);
             pointerContainer.append("svg:circle")
                 .attr("cx", this.config.cx)
