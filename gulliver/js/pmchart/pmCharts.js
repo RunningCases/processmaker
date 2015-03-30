@@ -89,9 +89,6 @@ BarChart.prototype.addBarTransition = function (bars, scaleX, scaleY) {
 }
 
 BarChart.prototype.drawBars = function(data, canvas, param) {
-	if (data == null || data.length == 0) {
-		this.$container.html( "<div class='pm-charts-no-draw'>No data to draw ...</div>" );
-	}
 	var parameter = createDefaultParamsForGraph(param);
 	//graph part of the parameters passed to this object
 	var graphParam = createDefaultParamsForLineChart(param.graph);
@@ -111,6 +108,17 @@ BarChart.prototype.drawBars = function(data, canvas, param) {
 	//		JavaScript things...
 	var currObj = this;
 
+	if (data == null || data.length == 0) {
+		canvas.append("text")
+		    .attr('class','pm-charts-no-draw')
+			.attr("y", graphDim.height/2)
+			.attr("x", graphDim.left*2 + graphDim.width/2)
+			.attr("dy", "1.5em")
+			.style("text-anchor", "end")
+			.text("No data to draw...");
+		data = [ {"value":"0", "datalabel":"None"} ];
+	}
+
 	var xScaleLabels = data.map(function(data){
 		return data.datalabel;
 	});
@@ -129,6 +137,11 @@ BarChart.prototype.drawBars = function(data, canvas, param) {
 					.nice();
 
 	var chart = canvas.append('g');
+	/*chart.append("text")
+			.attr('class','pm-charts-no-draw')
+			.text("No data to draw!");*/
+
+	var graphDim = new GraphDim(parameter);
 
 	drawAxisX(data, chart, xScale, parameter);
 	drawAxisY(data, chart, yScale, parameter);
@@ -400,8 +413,17 @@ function stretchCanvas(canvas, $container, params) {
 			.attr('height', '98%')
 			.attr("viewBox", "0 0 " + .$container.width()+ " " + $containr.height())
 			.attr("preserveAspectRatio", "xMidYMid meet")
+			.attr("pointer-events", "all");*/
+
+	if (canvas == null) {
+		return;
+	}
+	canvas.attr('width', '100%')
+			.attr('height', '98%')
+			.attr("viewBox", "0 0 " + widthToUse+ " " + heightToUse)
+			.attr("preserveAspectRatio", "xMidYMid meet")
 			.attr("pointer-events", "all");
-	return canvas;*/
+	return canvas;
 }
 
 function redrawChart(chart) {
@@ -792,6 +814,7 @@ LineChart.prototype.drawChart = function() {
 	stretchCanvas(null, this.$container, this.params);
 
 	this.canvas = createCanvas(this.params.canvas.containerId, this.params.canvas);
+	stretchCanvas(this.canvas, this.$container, this.params);
 	this.drawLines(this.originalData, this.canvas, this.params);
 	refreshBreadCrumbs(this);
 };
@@ -806,7 +829,7 @@ LineChart.prototype.addTransitionToCircle = function(circle, ratio) {
 
 LineChart.prototype.drawLines = function (data, canvas, param) {
 	if (data == null || data.length == 0) {
-		this.$container.html( "<div class='pm-charts-no-draw'>No data to draw ...</div>" );
+		//this.$container.html( "<div class='pm-charts-no-draw'>No data to draw ...</div>" );
 	}
 
 	var parameter = createDefaultParamsForGraph(param);
@@ -821,6 +844,19 @@ LineChart.prototype.drawLines = function (data, canvas, param) {
 	//HACK: to avoid  context change in closure we store object's reference(this) here.
 	//		JavaScript things...
 	var currObj = this;
+
+
+	var chart = canvas.append("g");
+	if (data == null || data.length == 0) {
+		canvas.append("text")
+		    .attr('class','pm-charts-no-draw')
+			.attr("y", graphDim.height / 2)
+			.attr("x", graphDim.width/2)
+			.attr("dy", "1.5em")
+			.style("text-anchor", "end")
+			.text("No data to draw...");
+		data = [{"value":"0", "datalabel":"None"}];
+	}
 
 	var xScaleLabels = data.map(function(data){
 		return data.datalabel;
@@ -837,8 +873,6 @@ LineChart.prototype.drawLines = function (data, canvas, param) {
 					.linear()
 					.domain([0, maxValue])
 					.range([graphDim.bottom, graphDim.top]).nice();
-
-	var chart = canvas.append("g");
 
 	drawAxisX(data, chart, xScale, parameter);
 	drawAxisY(data, chart, yScale, parameter);
