@@ -502,7 +502,7 @@ class DataBaseMaintenance
             $data .= ");\n";
         }
 
-        $data = $filter->xssFilterHard($data);
+        $data = $filter->preventSqlInjection($data);
         printf( "%-59s%20s", "Dump of table $table", strlen( $data ) . " Bytes Saved\n" );
         return $data;
     }

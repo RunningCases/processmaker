@@ -320,6 +320,8 @@ function importSkin ()
 function exportSkin ($skinToExport = "")
 {
     try {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
         if (! isset( $_REQUEST['SKIN_FOLDER_ID'] )) {
             throw (new Exception( G::LoadTranslation( 'ID_SKIN_NAME_REQUIRED' ) ));
         }
@@ -329,6 +331,7 @@ function exportSkin ($skinToExport = "")
         $skinFolderBase = PATH_CUSTOM_SKINS . $skinName;
         $skinFolder = $skinFolderBase . PATH_SEP;
         $skinTar = PATH_CUSTOM_SKINS . $skinName . '.tar';
+        $skinTar = $filter->xssFilterHard($skinTar, 'path');
         if (! is_dir( $skinFolder )) {
             throw (new Exception( G::LoadTranslation( 'ID_SKIN_DOESNT_EXIST' ) ));
         }
