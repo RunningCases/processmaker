@@ -396,11 +396,9 @@ DashboardProxy.prototype.userTasksData = function(processId, monthCompare, yearC
 }
 
 DashboardProxy.prototype.getPositionIndicator = function(callBack) {
-    console.log("GET");
     this.getJson('dashboard/config', function (r) {
         var graphData = [];
         $.each(r, function(index, originalObject) {
-            console.log(originalObject);
             var map = {
                 "widgetId" : originalObject.widgetId,
                 "x" : originalObject.x,
@@ -436,8 +434,8 @@ DashboardProxy.prototype.setPositionIndicator = function(data, callBack) {
 DashboardProxy.prototype.getJson = function (endPoint, callBack) {
     var that = this;
     var callUrl = this.baseUrl + endPoint
-	console.log('Llamando:');
-	console.log(callUrl)
+	//For Debug: console.log('Llamando:');
+	//For Debug: console.log(callUrl)
     $.ajax({
         url: callUrl,
         type: 'GET',
@@ -466,14 +464,14 @@ DashboardProxy.prototype.postJson = function (endPoint, data, callBack) {
             callBack(response);  
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            console.log(textStatus, errorThrown);
+			throw new Error(textStatus);
         },
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', 'Bearer ' + that.oauthToken);
             xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
         }       
     }).fail(function () {
-        console.log('Fail server');
+		throw new Error('Fail server');
     });
 };
 
@@ -490,13 +488,13 @@ DashboardProxy.prototype.putJson = function (endPoint, data, callBack) {
             callBack(response);  
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            console.log(textStatus, errorThrown);
+			throw new Error(textStatus);
         },
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', 'Bearer ' + that.oauthToken);
             xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
         }       
     }).fail(function () {
-        console.log('Fail server');
+		throw new Error('Fail server');
     });
 };

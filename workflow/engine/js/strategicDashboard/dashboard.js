@@ -731,7 +731,7 @@
     };
 
     function hideScrollIfAllDivsAreVisible(){
-        console.log('ocultos  ' +  $('.hideme').length);
+        //For Debug: console.log('hidden  ' +  $('.hideme').length);
         if ($('.hideme').length <= 0) {
                 $('#theImg').hide();
         }
@@ -1161,7 +1161,7 @@
         $('#indicatorsDataGridStack').gridstack();
         var gridIndicators = $('#indicatorsDataGridStack').data('gridstack');
         gridIndicators.remove_all();
-          console.log(dateActualEnd);
+          //For Debug: console.log(dateActualEnd);
         //calling backend
         proxy.dashboardIndicators(actualDashId, dateActual, dateActualEnd,
            function(widgetsObj) {
