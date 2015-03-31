@@ -215,8 +215,8 @@ class AddonsManager extends BaseAddonsManager
         $var = explode("&", $aux[1]);
 
         ///////
-        $boundary = "---------------------" . substr(md5(rand(0, 32000)), 0, 10);
-        $data = "";
+        $boundary = "---------------------" . substr(G::encryptOld(rand(0, 32000)), 0, 10);
+        $data = null;
 
         for ($i = 0; $i <= count($var) - 1; $i++) {
             $aux = explode("=", $var[$i]);
