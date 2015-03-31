@@ -180,7 +180,7 @@ if( isset($request) ){
           $gKey = (int)$row['lastId'] + 1;
 
         } else {
-          $gKey = md5(date('Y-m-d H:i:s').'@'.rand());
+          $gKey = G::encryptOld(date('Y-m-d H:i:s').'@'.rand());
         }
 
         $rs = $con->executeQuery("INSERT INTO {$_GET['table']} ({$_GET['pk']}, {$_GET['fld']}) VALUES ('$gKey', '{$_GET['value']}');");
