@@ -413,7 +413,7 @@ class InputFilter
       * @author Marcelo Cuiza
       * @access protected
       * @param Array or String $input
-      * @param String $type
+      * @param String $type (url)
       * @return Array or String $input
       */
     function xssFilterHard($input, $type = "")
@@ -514,7 +514,7 @@ class InputFilter
       * @param Array $values
       * @return String $query
       */
-    function preventSqlInjection($query, $values = Array(), &$con = NULL)
+    function preventSqlInjection($query, $values = Array(), $con = NULL)
     {
         if(is_array($values) && sizeof($values)) {
             foreach($values as $k1 => $val1) {
@@ -535,12 +535,12 @@ class InputFilter
     }
     
     /** 
-      * Internal method: protect against SQL injenction 
+      * Internal method: validate user input 
       * @author Marcelo Cuiza
       * @access protected
-      * @param String $value
-      * @param String or Array $types
-      * @param String $valType
+      * @param String $value (required)
+      * @param Array or String $types ( string | int | float | boolean | path | nosql )
+      * @param String $valType ( validate | sanitize )
       * @return String $value
       */
     function validateInput($value, $types = 'string', $valType = 'sanitize')
@@ -596,7 +596,7 @@ class InputFilter
                 }
             break;
             default:
-                $value = (string)filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW | FILTER_FLAG_STRIP_HIGH);
+                $value = (string)filter_var($value, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
         }
         
         return $value;    

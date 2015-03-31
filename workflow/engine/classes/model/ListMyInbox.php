@@ -123,7 +123,10 @@ class ListMyInbox extends BaseListMyInbox
 
         if ($data['DEL_INDEX'] == 1 && $data['APP_STATUS'] == 'TO_DO') {
             $data['APP_CREATE_DATE'] = $data['APP_UPDATE_DATE'];
-            $this->remove($data['APP_UID'], $data['USR_UID']);
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListMyInboxPeer::APP_UID, $data['APP_UID']);
+            $oCriteria->add(ListMyInboxPeer::USR_UID, $data['USR_UID']);
+            ListMyInboxPeer::doDelete($oCriteria);
             $this->create($data);
         } else {
             unset($data['USR_UID']);
@@ -236,12 +239,6 @@ class ListMyInbox extends BaseListMyInbox
         $criteria->addSelectColumn(ListMyInboxPeer::DEL_INIT_DATE);
         $criteria->addSelectColumn(ListMyInboxPeer::DEL_DUE_DATE);
         $criteria->addSelectColumn(ListMyInboxPeer::DEL_PRIORITY);
-
-        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
-
-        $criteria->addJoin(ListMyInboxPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
-        $criteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
-
         $criteria->add( ListMyInboxPeer::USR_UID, $usr_uid, Criteria::EQUAL );
         self::loadFilters($criteria, $filters);
 
