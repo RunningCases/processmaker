@@ -153,8 +153,6 @@ class AppDelegation extends BaseAppDelegation
         if ($this->validate()) {
             try {
                 $res = $this->save();
-                //$inbox = new ListInbox();
-                //$inbox->newRow($this->toArray(BasePeer::TYPE_FIELDNAME), $delPreviusUsrUid);
             } catch (PropelException $e) {
                 throw ($e);
             }
