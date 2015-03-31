@@ -521,7 +521,7 @@ Ext.onReady( function() {
                     tabPanel.getItem(component.id).show();
                     Ext.MessageBox.show({
                         title: _('ID_CONFIRM'),
-                        msg: _('ID_DELETE_FIELD_SURE'),
+                        msg: _('ID_DELETE_INDICATOR_SURE'),
                         buttons: Ext.MessageBox.YESNOCANCEL,
                         fn: function(buttonId) {
                             switch(buttonId) {
