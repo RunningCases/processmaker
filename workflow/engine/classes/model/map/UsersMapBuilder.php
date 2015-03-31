@@ -130,7 +130,7 @@ class UsersMapBuilder
         $tMap->addColumn('USR_TOTAL_COMPLETED', 'UsrTotalCompleted', 'int', CreoleTypes::INTEGER, false, null);
 
         $tMap->addColumn('USR_TOTAL_UNASSIGNED', 'UsrTotalUnassigned', 'int', CreoleTypes::INTEGER, false, null);
-        
+
         $tMap->addColumn('USR_COST_BY_HOUR', 'UsrCostByHour', 'double', CreoleTypes::DOUBLE, false, 11,2);
 
         $tMap->addColumn('USR_UNIT_COST', 'UsrUnitCost', 'string', CreoleTypes::VARCHAR, false, 50);
