@@ -130,6 +130,7 @@ class AppHistory extends BaseAppHistory
 
         $c->add(AppHistoryPeer::PRO_UID, $PRO_UID);
         $c->add(AppHistoryPeer::APP_UID, $APP_UID);
+        $c->add(AppHistoryPeer::TAS_UID, $TAS_UID);
         if ((isset($DYN_UID))&&($DYN_UID!="")) {
             $c->add(AppHistoryPeer::DYN_UID, $DYN_UID);
         }
