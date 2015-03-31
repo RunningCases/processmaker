@@ -264,12 +264,6 @@ class ListCompleted extends BaseListCompleted
         $criteria->addSelectColumn(ListCompletedPeer::DEL_CURRENT_USR_FIRSTNAME);
         $criteria->addSelectColumn(ListCompletedPeer::DEL_CURRENT_USR_LASTNAME);
         $criteria->addSelectColumn(ListCompletedPeer::DEL_CURRENT_USR_USERNAME);
-
-        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
-
-        $criteria->addJoin(ListCompletedPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
-        $criteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
-
         $criteria->add( ListCompletedPeer::USR_UID, $usr_uid, Criteria::EQUAL );
         self::loadFilters($criteria, $filters);
 

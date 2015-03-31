@@ -263,12 +263,6 @@ class ListUnassigned extends BaseListUnassigned
         $criteria->addSelectColumn(ListUnassignedPeer::DEL_DELEGATE_DATE);
         $criteria->addSelectColumn(ListUnassignedPeer::DEL_DUE_DATE);
         $criteria->addSelectColumn(ListUnassignedPeer::DEL_PRIORITY);
-
-        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
-
-        $criteria->addJoin(ListUnassignedPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
-        $criteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
-
         $aConditions   = array();
         $aConditions[] = array(ListUnassignedPeer::UNA_UID, ListUnassignedGroupPeer::UNA_UID);
         $aConditions[] = array(ListUnassignedGroupPeer::USR_UID, "'" . $usr_uid . "'");

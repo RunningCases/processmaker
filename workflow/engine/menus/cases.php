@@ -30,7 +30,10 @@ $G_TMP_MENU->AddIdRawOption('CASES_START_CASE', 'casesStartPage?action=startCase
 G::LoadTranslation('ID_NEW_CASE'), '');
 
 /*----------------------------------********---------------------------------*/
-$G_TMP_MENU->AddIdRawOption('CASE_CONSOLIDATED_1', 'casesConsolidatedListExtJs?action=consolidated', 'Batch Routing', '');
+$licensedFeatures = & PMLicensedFeatures::getSingleton();
+if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
+    $G_TMP_MENU->AddIdRawOption('CONSOLIDATED_CASES', 'casesConsolidatedListExtJs?action=consolidated', 'Batch Routing', '');
+}
 /*----------------------------------********---------------------------------*/
 
 $G_TMP_MENU->AddIdRawOption('CASES_INBOX', 'casesListExtJs?action=todo', G::LoadTranslation('ID_INBOX'),
