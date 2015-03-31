@@ -129,7 +129,13 @@ class Variable
             $cnn = \Propel::getConnection("workflow");
             try {
                 $variable = \ProcessVariablesPeer::retrieveByPK($variableUid);
-
+                $oldVariable = array(
+                    "VAR_NAME" => $variable->getVarName(),
+                    "VAR_FIELD_TYPE" => $variable->getVarFieldType(),
+                    "VAR_DBCONNECTION" => $variable->getVarDbconnection(),
+                    "VAR_SQL" => $variable->getVarSql(),
+                    "VAR_ACCEPTED_VALUES" => $variable->getVarAcceptedValues()
+                );
                 if ($variable->validate()) {
                     $cnn->begin();
                     if (isset($arrayData["VAR_NAME"])) {
@@ -163,6 +169,17 @@ class Variable
                     }
                     $variable->save();
                     $cnn->commit();
+                    //update dynaforms
+                    $newVariable = array(
+                        "VAR_NAME" => $variable->getVarName(),
+                        "VAR_FIELD_TYPE" => $variable->getVarFieldType(),
+                        "VAR_DBCONNECTION" => $variable->getVarDbconnection(),
+                        "VAR_SQL" => $variable->getVarSql(),
+                        "VAR_ACCEPTED_VALUES" => $variable->getVarAcceptedValues()
+                    );
+                    \G::LoadClass('pmDynaform');
+                    $pmDynaform = new \pmDynaform();
+                    $pmDynaform->synchronizeVariable($processUid, $newVariable, $oldVariable);
                 } else {
 
                     $msg = "";
@@ -200,7 +217,13 @@ class Variable
 
             $this->throwExceptionIfNotExistsVariable($variableUid);
 
-            $this->verifyUse($processUid, $variableUid);
+            $variable = $this->getVariable($processUid, $variableUid);
+            \G::LoadClass('pmDynaform');
+            $pmDynaform = new \pmDynaform();
+            $isUsed = $pmDynaform->isUsed($processUid, $variable);
+            if ($isUsed !== false) {
+                throw new \Exception(\G::LoadTranslation("ID_VARIABLE_IN_USE", array($variableUid, $isUsed)));
+            }
             //Delete
             $criteria = new \Criteria("workflow");
 
