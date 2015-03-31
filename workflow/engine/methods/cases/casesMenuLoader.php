@@ -30,6 +30,15 @@ function getLoadTreeMenuData ()
     //'to_revise',
     //'to_reassign'
     $aTypesID = Array ('CASES_INBOX' => 'to_do','CASES_DRAFT' => 'draft','CASES_CANCELLED' => 'cancelled','CASES_SENT' => 'sent','CASES_PAUSED' => 'paused','CASES_COMPLETED' => 'completed','CASES_SELFSERVICE' => 'selfservice');
+
+    /*----------------------------------********---------------------------------*/
+    $licensedFeatures = & PMLicensedFeatures::getSingleton();
+    if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
+        $aTypesID['CONSOLIDATED_CASES'] = 'batch_routing';
+        $aTypes[] = 'batch_routing';
+    }
+    /*----------------------------------********---------------------------------*/
+
     //'CASES_TO_REVISE'=>'to_revise',
     //'CASES_TO_REASSIGN'=>'to_reassign'
         $list = array ();
