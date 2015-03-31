@@ -1,4 +1,15 @@
 <?php
+register_shutdown_function(
+    create_function(
+        "",
+        "
+        if (class_exists(\"Propel\")) {
+            Propel::close();
+        }
+        "
+    )
+);
+
 /**
  * cron_single.php
  * @package workflow-engine-bin
