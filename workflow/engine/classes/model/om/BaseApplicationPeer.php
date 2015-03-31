@@ -652,3 +652,4 @@ if (Propel::isInit()) {
     require_once 'classes/model/map/ApplicationMapBuilder.php';
     Propel::registerMapBuilder('classes.model.map.ApplicationMapBuilder');
 }
+
