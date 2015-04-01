@@ -5439,7 +5439,7 @@ class XmlForm
         }
         $filesToDelete = substr( (defined( 'PATH_C' ) ? PATH_C : PATH_DATA) . 'xmlform/', 0, - 1 ) . $realPath . '.*.js';
         $auxPath = explode( PATH_SEP, $realPath );
-        $auxPath[count( $auxPath ) - 1] = $auxPath[count( $auxPath ) - 1] . '.' . md5( filemtime( $this->fileName ) );
+        $auxPath[count( $auxPath ) - 1] = $auxPath[count( $auxPath ) - 1] . '.' . G::encryptOld( filemtime( $this->fileName ) );
         $realPath = implode( PATH_SEP, $auxPath );
         // Improvement for the js cache - End
         $this->parsedFile = $parsedFilePath;
