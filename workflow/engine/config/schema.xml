@@ -37,6 +37,8 @@
     <column name="APP_UPDATE_DATE" type="TIMESTAMP" required="true"/>
     <column name="APP_DATA" type="LONGVARCHAR" required="true"/>
     <column name="APP_PIN" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="APP_DURATION" type="DOUBLE" default="0"/>
+    <column name="APP_DELAY_DURATION" type="DOUBLE" default="0"/>
     <validator column="APP_STATUS">
       <rule name="validValues" value="DRAFT|TO_DO|PAUSED|COMPLETED|CANCELLED" message="Please select a valid status." />
     </validator>

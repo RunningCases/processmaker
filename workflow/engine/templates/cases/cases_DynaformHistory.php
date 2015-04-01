@@ -172,7 +172,7 @@ if (!isset($changedValues)) {
     $tpl->assign("noResults", G::LoadTranslation("ID_NO_RECORDS_FOUND"));
 }
 
-$_SESSION['HISTORY_DATA'] = serialize($historyData);
+$_SESSION['HISTORY_DATA'] = $historyData;
 $tpl->gotoBlock("_ROOT");
 
 $tpl->printToScreen();

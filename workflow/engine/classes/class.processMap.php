@@ -2640,7 +2640,7 @@ class processMap
                 }
                 
             } else {
-                throw new Exception(G::loadTranslation('ID_INVALID_ROU_TYPE_DEFINITION_ON_ROUTE_TABLE'));
+                throw new Exception(G::loadTranslation('ID_NO_DERIVATIONS_DEFINED'));
             }
 
             $aFields['action'] = 'savePattern';
@@ -2658,7 +2658,8 @@ class processMap
             $aMessage = array();
             $aMessage['MESSAGE'] = $oError->getMessage();
             $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/showMessage', '', $aMessage);
-            G::RenderPage('publish', 'blank');
+            G::RenderPage('publish', 'raw');
+            return true;
             die();
         }
     }
