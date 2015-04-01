@@ -29,13 +29,13 @@
     <script type="text/javascript" src="/js/d3/d3.js" ></script>
     <script type="text/javascript" src="/js/d3/d3.tip.js"></script>
     <script type="text/javascript" src="/js/pmchart/pmCharts.js"></script>
-    <script>
+    <script type="text/javascript" >
         var urlProxy = '{$urlProxy}';
         var usrId = '{$usrId}';
         var token = '{$credentials.access_token}';
         var G_STRING = [];
         {foreach from=$translation key=index item=option}
-            G_STRING['{$index}'] = '{$option}';
+            G_STRING['{$index}'] = "{$option}";
         {/foreach}
     </script>
     <script type="text/javascript" src="/jscore/strategicDashboard/dashboardProxyTest.js"></script>

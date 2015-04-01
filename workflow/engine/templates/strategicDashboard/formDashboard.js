@@ -474,7 +474,8 @@ Ext.onReady( function() {
                                 OWNER_LABEL : selection.data.field1,
                                 OWNER_TYPE  : selection.data.field3
                             });
-                            store.insert(store.getCount(), ow);
+                            ownerInfoGrid.store.insert(store.getCount(), ow);
+                            ownerInfoGrid.store.totalCount = data.length +1;
                             ownerInfoGrid.getView().refresh();
 
                             Ext.getCmp('searchIem').clearValue();
@@ -663,7 +664,7 @@ Ext.onReady( function() {
                 text    : _('ID_CANCEL'),
                 id      : 'cancel',
                 handler : function(){
-                    location.href = 'dashboardList';
+                    window.location = 'dashboardList';
                 }
             }
         ]
@@ -710,7 +711,6 @@ Ext.onReady( function() {
         loadIndicators(DAS_UID);
     } else {
         addTab();
-        tabPanel.getItem(0).show();
     }
 
     if (typeof(__DASHBOARD_ERROR__) !== 'undefined') {
@@ -719,12 +719,13 @@ Ext.onReady( function() {
 });
 
 //==============================================================//
-var addTab = function () {
+var addTab = function (flag) {
+    console.log('flag', flag);
     if (tabPanel.items.items.length > 3 ) {
         PMExt.warning(_('ID_DASHBOARD'), _('ID_MAX_INDICATOR_DASHBOARD'));
         return false;
     }
-    tabPanel.add({
+    var tab = {
             //title   : _('ID_INDICATOR') + (++indexTab),
             title   : _('ID_INDICATOR')+ ' '+ (++indexTab),
             id      : indexTab,
@@ -789,38 +790,43 @@ var addTab = function () {
                                         } 
                                     }
                                 }),
-                                {
-                                    fieldLabel  : _('ID_INDICATOR_GOAL'),
-                                    id          : 'IND_GOAL_'+ indexTab,
-                                    xtype       : 'textfield',
-                                    anchor      : '40%',
-                                    maskRe      : /([0-9\.]+)$/,
-                                    maxLength   : 9,
-                                    width       : 8,
-                                    allowBlank  : false
-                                },
-                                new Ext.form.ComboBox({
-                                    anchor          : '85%',
-                                    editable        : false,
-                                    fieldLabel      : _('ID_DIRECTION'),
-                                    id              : 'DAS_IND_DIRECTION_'+ indexTab,
-                                    displayField    : 'label',
-                                    valueField      : 'id',
-                                    value           : 2,
-                                    forceSelection  : false,
-                                    selectOnFocus   : true,
-                                    typeAhead       : true,
-                                    autocomplete    : true,
-                                    triggerAction   : 'all',
-                                    mode            : 'local',
-                                    store           : new Ext.data.ArrayStore({
-                                        id: 0,
-                                        fields: [
-                                            'id',
-                                            'label'
-                                        ],
-                                        data: [['1', _('ID_LESS_THAN')], ['2', _('ID_MORE_THAN')]]
-                                    })
+                                new Ext.form.FieldSet({
+                                    title : _('ID_INDICATOR_GOAL'),
+                                    bodyStyle: 'paddingLeft: 143px',
+                                    layout : 'hbox',
+                                    items       : [
+                                        new Ext.form.ComboBox({
+                                            editable        : false,
+                                            id              : 'DAS_IND_DIRECTION_'+ indexTab,
+                                            displayField    : 'label',
+                                            valueField      : 'id',
+                                            value           : 2,
+                                            forceSelection  : false,
+                                            selectOnFocus   : true,
+                                            typeAhead       : true,
+                                            autocomplete    : true,
+                                            triggerAction   : 'all',
+                                            mode            : 'local',
+                                            store           : new Ext.data.ArrayStore({
+                                                id: 0,
+                                                fields: [
+                                                    'id',
+                                                    'label'
+                                                ],
+                                                data: [['1', _('ID_LESS_THAN')], ['2', _('ID_MORE_THAN')]]
+                                            })
+                                        }),
+                                        {
+                                            fieldLabel  : _('ID_INDICATOR_GOAL'),
+                                            id          : 'IND_GOAL_'+ indexTab,
+                                            xtype       : 'textfield',
+                                            anchor      : '40%',
+                                            maskRe      : /([0-9\.]+)$/,
+                                            maxLength   : 9,
+                                            width       : 80,
+                                            allowBlank  : false
+                                        }
+                                    ]
                                 }),
                                 new Ext.form.ComboBox({
                                     anchor          : '85%',
@@ -915,7 +921,12 @@ var addTab = function () {
                 },
             },
             closable:true
-        })/*.show(false)*/;
+        };
+    if (flag != 'load') {
+        tabPanel.add(tab).show();
+    } else {
+        tabPanel.add(tab);
+    }
 };
 
 
@@ -1116,7 +1127,7 @@ var saveAllIndicators = function (DAS_UID) {
         }
         saveDashboardIndicator(data);
     }
-    location.href = 'dashboardList';
+    window.location = 'dashboardList';
 };
 
 
@@ -1233,12 +1244,12 @@ var loadIndicators = function (DAS_UID) {
         success: function (response) {
             var jsonResp = Ext.util.JSON.decode(response.responseText);
             if (jsonResp == '') {
-                addTab();
+                addTab('load');
             }
             dataIndicator = jsonResp;
             
             for (var i=0; i<=jsonResp.length-1; i++) {
-                addTab();
+                addTab('load');
                 tabPanel.getItem(i+1).setTitle(jsonResp[i]['DAS_IND_TITLE']);
             }
             tabPanel.getItem(0).show();
