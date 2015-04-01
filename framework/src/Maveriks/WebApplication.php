@@ -576,7 +576,7 @@ class WebApplication
             }
 
             return (isset($arrayConfig["api"]["version"]))? $arrayConfig["api"]["version"] : "1.0";
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             throw $e;
         }
     }
