@@ -2635,9 +2635,15 @@ class G
             if (! is_dir( $path )) {
                 G::verifyPath( $path, true );
             }
+            
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
+            $file = $filter->validateInput($file, "path"); 
+            
             move_uploaded_file( $file, $path . "/" . $nameToSave );
             @chmod( $path . "/" . $nameToSave, $permission );
             umask( $oldumask );
+
         } catch (Exception $oException) {
             throw $oException;
         }
