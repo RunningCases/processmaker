@@ -1,4 +1,4 @@
-<?php 
+<?php
 G::LoadSystem('inputfilter');
 $filter = new InputFilter();
 if(isset($_GET['srv'])) {
