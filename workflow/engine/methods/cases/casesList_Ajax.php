@@ -44,7 +44,7 @@ G::LoadSystem('inputfilter');
 $filter = new InputFilter();
 $_POST = $filter->xssFilterHard($_POST);
 $_REQUEST = $filter->xssFilterHard($_REQUEST);
-$_SESSION = $filter->xssFilterHard($_SESSION); 
+$_SESSION = $filter->xssFilterHard($_SESSION);
 
 $actionAjax = isset( $_REQUEST['actionAjax'] ) ? $_REQUEST['actionAjax'] : null;
 
