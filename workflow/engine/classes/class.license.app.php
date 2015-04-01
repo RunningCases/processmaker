@@ -420,7 +420,7 @@ class license_application extends padl
             $DATA = $this->_unwrap_license($dat_str);
             if (is_array($DATA)) {
                 # missing / incorrect id therefore it has been tampered with
-                if ($DATA['ID'] != md5($this->ID1)) {
+                if ($DATA['ID'] != G::encryptOld($this->ID1)) {
                     $DATA['RESULT'] = 'CORRUPT';
                 }
                 if ($this->USE_TIME) {
@@ -463,7 +463,7 @@ class license_application extends padl
                         # create the details to send to the home server
                         $stuff_to_send = array();
                         $stuff_to_send['LICENSE_DATA'] = $DATA;
-                        $stuff_to_send['LICENSE_DATA']['KEY'] = md5($dat_str);
+                        $stuff_to_send['LICENSE_DATA']['KEY'] = G::encryptOld($dat_str);
                         # dial home
                         $DATA['RESULT'] = $this->_call_home($stuff_to_send, $dialhost, $dialpath, $dialport);
                     } else {

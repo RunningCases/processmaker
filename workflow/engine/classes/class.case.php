@@ -5687,7 +5687,7 @@ class Cases
     {
         //CASE INSENSITIVE pin
         $pin = G::toUpper($pin);
-        $pin = md5($pin);
+        $pin = G::encryptOld($pin);
 
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(ApplicationPeer::APP_UID);

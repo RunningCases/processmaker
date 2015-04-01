@@ -253,7 +253,7 @@ try {
         file_put_contents(PATH_DATA_SITE . PATH_SEP . '.server_info', $cput);
     } else {
         $c = file_get_contents(PATH_DATA_SITE . PATH_SEP . '.server_info');
-        if (md5($c) != md5($cput)) {
+        if (G::encryptOld($c) != G::encryptOld($cput)) {
             file_put_contents(PATH_DATA_SITE . PATH_SEP . '.server_info', $cput);
         }
     }
@@ -286,7 +286,7 @@ try {
         die();
     }
 
-    $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($_SESSION['USER_LOGGED'], array('USR_PASSWORD_HISTORY' => serialize(array(md5($pwd)))));
+    $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($_SESSION['USER_LOGGED'], array('USR_PASSWORD_HISTORY' => serialize(array(G::encryptOld($pwd)))));
     $aErrors       = $oUserProperty->validatePassword($_POST['form']['USR_PASSWORD'], $aUserProperty['USR_LAST_UPDATE_DATE'], $aUserProperty['USR_LOGGED_NEXT_TIME'], true);
 
     if (!empty($aErrors) && in_array("ID_PPP_CHANGE_PASSWORD_AFTER_NEXT_LOGIN", $aErrors)) {
