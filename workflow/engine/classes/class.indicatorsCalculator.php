@@ -70,8 +70,6 @@ abstract class IndicatorDataSourcesEnum extends BasicEnum {
 
 class indicatorsCalculator
 {
-	private static $connectionName = 'workflow';
-
 	private $userReportingMetadata = array("tableName" => "USR_REPORTING", "keyField" => "USR_UID");
 	private $processReportingMetadata = array("tableName" => "PRO_REPORTING", "keyField" => "PRO_UID");
 	private $userGroupReportingMetadata = array("tableName" => "USR_REPORTING", "keyField" => "USR_UID");
@@ -83,30 +81,58 @@ class indicatorsCalculator
 	private $ueiCostFormula = "SUM(TOTAL_CASES_OUT * CONFIGURED_TASK_TIME - TOTAL_TIME_BY_TASK * USER_HOUR_COST)";
 	private $ueiFormula = "SUM(TOTAL_CASES_OUT * CONFIGURED_TASK_TIME) / SUM(TOTAL_TIME_BY_TASK * USER_HOUR_COST)";
 
-//
-//	public function processEfficiencyIndex($processList, $initDate, $endDate)
-//	{
-//		$resultList = $this->processEfficiencyIndexList($processList, $initDate, $endDate, ReportingPeriodicityEnum::NONE);
-//		return ($resultList[0]['PEI']);
-//	}
+	public function getSkewOfDataDistribution($table, $field) {
+		/*$sqlString = "SET @median = (SELECT x.$field from $table x, $table y
+						GROUP BY x.$field
+						HAVING SUM(SIGN(1-SIGN(y.$field-x.$field)))/COUNT(*) > .5
+						LIMIT 1)";
+		*/
+
+		$sqlString = "SELECT x.$field from $table x, $table y
+						GROUP BY x.$field
+						HAVING SUM(SIGN(1-SIGN(y.$field-x.$field)))/COUNT(*) > .5
+						LIMIT 1";
+
+		$returnValue = 0;
+		$connection = $this->pdoConnection();
+		$result = $this->pdoExecutorWithConnection($sqlString, array(), $connection);
+		$result2 = $this->pdoExecutorWithConnection("select @median", array(), $connection);
+		print_r($result2);
+		if (sizeof($result) > 0) {
+			$returnValue = current(reset($result2));
+		}
+		return $returnValue;
+	}
 
 	public function peiHistoric($processId, $initDate, $endDate, $periodicity) {
 		if (!is_a($initDate, 'DateTime')) throw new InvalidArgumentException ('initDate parameter must be a DateTime object.', 0);
 		if (!is_a($endDate, 'DateTime')) throw new InvalidArgumentException ('endDate parameter must be a DateTime object.', 0);
 
-		$sqlString = $this->indicatorsBasicQueryBuilder(IndicatorDataSourcesEnum::USER
+		/*$sqlString = $this->indicatorsBasicQueryBuilder(IndicatorDataSourcesEnum::USER
 			, $processId, $periodicity, $initDate, $endDate
-			, $this->peiFormula);
+			, $this->peiFormula);*/
 	
-		$returnValue = $this->propelExecutor($sqlString);
+		$qryParams = Array();
+		$sqlString = $this->indicatorsParamsQueryBuilder(IndicatorDataSourcesEnum::USER
+			, $processId, $periodicity, $initDate, $endDate
+			, $this->peiFormula, $qryParams);
+
+		//$returnValue = $this->propelExecutor($sqlString);
+
+		$returnValue = $this->pdoExecutor($sqlString, $qryParams);
 		return $returnValue;
 	}
 
 	public function indicatorData($indicatorId)
 	{
-		$sqlString = "select * from DASHBOARD_INDICATOR  where DAS_IND_UID= '$indicatorId'";
-		$retval = $this->propelExecutor($sqlString);
-		return $retval;
+		$qryParams = Array();
+		$qryParams[':indicatorId'] = $indicatorId;
+		$sqlString = "select * from DASHBOARD_INDICATOR  where DAS_IND_UID= :indicatorId";
+		$returnValue = $this->pdoExecutor($sqlString, $qryParams);
+
+		/*$sqlString = "select * from DASHBOARD_INDICATOR  where DAS_IND_UID= '$indicatorId'";
+		$retval = $this->propelExecutor($sqlString);*/
+		return $returnValue;
 	}
 
 	public function peiProcesses($indicatorId, $initDate, $endDate, $language)
@@ -119,6 +145,12 @@ class indicatorsCalculator
 		$initDay = $endDay = 1;
 		$endYear = $endDate->format("Y");
 		$endMonth = $endDate->format("m");
+
+		//$params[":initYear"] = $initYear;
+		//$params[":initMonth"] = $initMonth;
+		$params[":endYear"] = $endYear;
+		$params[":endMonth"] = $endMonth;
+		$params[":language"] = $language;
 
 		$sqlString = "
 					select
@@ -139,17 +171,17 @@ class indicatorsCalculator
 								(select DAS_UID_PROCESS from  DASHBOARD_INDICATOR where DAS_IND_UID = '$indicatorId')= '0'
 							)
 							AND
-                            IF (`YEAR` = $initYear, `MONTH`, `YEAR`) >= IF (`YEAR` = $initYear, $initMonth, $initYear)
-                            AND
-                            IF(`YEAR` = $endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = $endYear, $endMonth, $endYear)
+								IF(`YEAR` = :endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = :endYear, :endMonth, :endYear)
                         group by PRO_UID
                     ) i
                     left join (select *
                                         from CONTENT
                                         where CON_CATEGORY = 'PRO_TITLE'
-                                                and CON_LANG = '$language'
+                                                and CON_LANG = :language
                                 ) tp on i.PRO_UID = tp.CON_ID";
-		$retval = $this->propelExecutor($sqlString);
+
+		//$retval = $this->propelExecutor($sqlString);
+		$retval = $this->pdoExecutor($sqlString, $params);
 		return $retval;
 	}
 
@@ -164,6 +196,12 @@ class indicatorsCalculator
 		$initDay = $endDay = 1;
 		$endYear = $endDate->format("Y");
 		$endMonth = $endDate->format("m");
+
+		//$params[":initYear"] = $initYear;
+		//$params[":initMonth"] = $initMonth;
+		$params[":endYear"] = $endYear;
+		$params[":endMonth"] = $endMonth;
+		$params[":language"] = $language;
 
 		//TODO ADD to USR_REPORTING the user's Group to speed up the query.
 		$sqlString = "
@@ -185,18 +223,17 @@ class indicatorsCalculator
 				   left join
 				   GROUP_USER gu on gu.USR_UID = ur.USR_UID
 				   WHERE
-					IF (`YEAR` = $initYear, `MONTH`, `YEAR`) >= IF (`YEAR` = $initYear, $initMonth, $initYear)
-					AND
-					IF(`YEAR` = $endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = $endYear, $endMonth, $endYear)
+					IF(`YEAR` = :endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = :endYear, :endMonth, :endYear)
 				   group by gu.GRP_UID
 				) i
 				left join (select *
 								from CONTENT
 							where CON_CATEGORY = 'GRP_TITLE'
-									and CON_LANG = 'en'
+									and CON_LANG = :language 
 						   ) tp on i.GRP_UID = tp.CON_ID";
 
-		$retval = $this->propelExecutor($sqlString);
+		$retval = $this->pdoExecutor($sqlString, $params);
+		//$retval = $this->propelExecutor($sqlString);
 		return $retval;
 	}
 
@@ -212,6 +249,13 @@ class indicatorsCalculator
 		$initDay = $endDay = 1;
 		$endYear = $endDate->format("Y");
 		$endMonth = $endDate->format("m");
+
+		//$params[":initYear"] = $initYear;
+		//$params[":initMonth"] = $initMonth;
+		$params[":endYear"] = $endYear;
+		$params[":endMonth"] = $endMonth;
+		$params[":language"] = $language;
+		$params[":groupId"] = $groupId;
 
 		$sqlString = " select
 						   i.USR_UID as uid,
@@ -232,77 +276,31 @@ class indicatorsCalculator
 						   left join
 							   GROUP_USER gu on gu.USR_UID = ur.USR_UID
 						   LEFT JOIN USERS u on u.USR_UID = ur.USR_UID
-						   where (gu.GRP_UID = '$groupId' or ('$groupId' = '0' && gu.GRP_UID is null ))
+						   where (gu.GRP_UID = :groupId or (:groupId = '0' && gu.GRP_UID is null ))
 							   AND
-							   IF (`YEAR` = $initYear, `MONTH`, `YEAR`) >= IF (`YEAR` = $initYear, $initMonth, $initYear)
-								AND
-								IF(`YEAR` = $endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = $endYear, $endMonth, $endYear)
+								IF(`YEAR` = :endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = :endYear, :endMonth, :endYear)
 						   group by ur.USR_UID
 						) i";
-		$returnValue = $this->propelExecutor($sqlString);
-		return $returnValue;
+
+		$retval = $this->pdoExecutor($sqlString, $params);
+		//$returnValue = $this->propelExecutor($sqlString);
+		return $retval;
 	}
-//
-//	public function employeeEfficiencyIndex($employeeList, $initDate, $endDate)
-//	{
-//		$resultList = $this->employeeEfficiencyIndexList($employeeList, $initDate, $endDate, ReportingPeriodicityEnum::NONE);
-//		return current(reset($resultList));
-//	}
 
 	public function ueiHistoric($employeeId, $initDate, $endDate, $periodicity)
 	{
 		if (!is_a($initDate, 'DateTime')) throw new InvalidArgumentException ('initDate parameter must be a DateTime object.', 0);
 		if (!is_a($endDate, 'DateTime')) throw new InvalidArgumentException ('endDate parameter must be a DateTime object.', 0);
 
-		$sqlString = $this->indicatorsBasicQueryBuilder(IndicatorDataSourcesEnum::USER
+		$qryParams = Array();
+		$sqlString = $this->indicatorsParamsQueryBuilder(IndicatorDataSourcesEnum::USER
 			, $employeeId, $periodicity, $initDate, $endDate
-			, $this->ueiFormula);
-		$returnValue = $this->propelExecutor($sqlString);
-		return $returnValue;
+			, $this->ueiFormula, $qryParams);
+
+		$retval = $this->pdoExecutor($sqlString, $qryParams);
+		//$returnValue = $this->propelExecutor($sqlString);
+		return $retval;
 	}
-
-//	public function employeeEfficiencyCost($employeeList, $initDate, $endDate)
-//	{
-//		$resultList = $this->employeeEfficiencyCostList($employeeList, $initDate, $endDate, ReportingPeriodicityEnum::NONE);
-//		return current(reset($resultList));
-//	}
-//
-//	public function userCostByGroupHistoric($groupId, $initDate, $endDate, $periodicity) {
-//		if (!is_a($initDate, 'DateTime')) throw new InvalidArgumentException ('initDate parameter must be a DateTime object.', 0);
-//		if (!is_a($endDate, 'DateTime')) throw new InvalidArgumentException ('endDate parameter must be a DateTime object.', 0);
-//
-//		$periodicitySelectFields = $this->periodicityFieldsForSelect($periodicity);
-//		$periodicityGroup = $this->periodicityFieldsForGrouping($periodicity);
-//		$initYear = $initDate->format("Y");
-//		$initMonth = $initDate->format("m");
-//		$initDay = $endDay = 1;
-//		$endYear = $endDate->format("Y");
-//		$endMonth = $endDate->format("m");
-//
-//		$filterCondition = "";
-//		if ($groupId != null && $groupId > 0) {
-//			$filterCondition = " AND GRP_UID = '$groupId'";
-//		}
-//
-//		$sqlString = "SELECT  (SUM(CONFIGURED_TASK_TIME) - SUM(TOTAL_TIME_BY_TASK)) * USER_HOUR_COST as EEC
-//						FROM  USR_REPORTING ur
-//							LEFT JOIN GROUP_USER gu on gu.USR_UID =ur.USR_UID
-//							LEFT JOIN GROUP_USER gu on gu.USR_UID =ur.USR_UID
-//						WHERE
-//						IF (`YEAR` = $initYear, `MONTH`, `YEAR`) >= IF (`YEAR` = $initYear, $initMonth, $initYear)
-//						AND
-//						IF(`YEAR` = $endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = $endYear, $endMonth, $endYear)"
-//			. $filterCondition
-//			. $periodicityGroup;
-//		$returnValue = $this->propelExecutor($sqlString);
-//		return $returnValue;
-//	}
-
-//	public function processEfficiencyCost($processList, $initDate, $endDate)
-//	{
-//		$resultList = $this->processEfficiencyCostList($processList, $initDate, $endDate, ReportingPeriodicityEnum::NONE);
-//		return current(reset($resultList));
-//	}
 
 	public function peiCostHistoric($processId, $initDate, $endDate, $periodicity)
 	{
@@ -317,21 +315,26 @@ class indicatorsCalculator
 		$endYear = $endDate->format("Y");
 		$endMonth = $endDate->format("m");
 
+		//$params[":initYear"] = $initYear;
+		//$params[":initMonth"] = $initMonth;
+		$params[":endYear"] = $endYear;
+		$params[":endMonth"] = $endMonth;
+		$params[":processId"] = $processId;
+
 		$filterCondition = "";
 		if ($processId != null && $processId > 0) {
-			$filterCondition = " AND PRO_UID =  '$processId'";
+			$filterCondition = " AND PRO_UID =  :processId";
 		}
 
 		$sqlString = "SELECT $periodicitySelectFields " . $this->peiCostFormula . " as PEC
 						FROM  USR_REPORTING
 						WHERE
-						IF (`YEAR` = $initYear, `MONTH`, `YEAR`) >= IF (`YEAR` = $initYear, $initMonth, $initYear)
-						AND
-						IF(`YEAR` = $endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = $endYear, $endMonth, $endYear)"
-			. $filterCondition
-			. $periodicityGroup;
+							IF(`YEAR` = :endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = :endYear, :endMonth, :endYear)"
+						. $filterCondition
+						. $periodicityGroup;
 
-		$retval = $this->propelExecutor($sqlString);
+		$retval = $this->pdoExecutor($sqlString, $params);
+		//$retval = $this->propelExecutor($sqlString);
 		return $retval;
 	}
 
@@ -350,14 +353,6 @@ class indicatorsCalculator
 		if ($indicatorProcessId == "0" || strlen($indicatorProcessId) ==0) {
 			$indicatorProcessId = null;
 		}
-		//$indicatorJson = unserialize($indicator['DAS_IND_PROPERTIES']);
-		//$indicatorConfig = json_decode($indicatorJson);
-        
-        /*$graph1 = $indicatorConfig->{'IND_FIRST_FIGURE'};
-        $freq1 = $indicatorConfig->{'IND_FIRST_FREQUENCY'};
-        $graph2 = $indicatorConfig->{'IND_SECOND_FIGURE'};
-        $freq2 = $indicatorConfig->{'IND_SECOND_FREQUENCY'};
-		*/
 
         $graph1 = $indicator['DAS_IND_FIRST_FIGURE'];
         $freq1 = $indicator['DAS_IND_FIRST_FREQUENCY'];
@@ -396,180 +391,16 @@ class indicatorsCalculator
 				throw new Exception(" The indicator id '$indicatorId' with type $indicatorType hasn't an associated operation.");
 		}
 
-		$sqlString = $this->indicatorsBasicQueryBuilder(IndicatorDataSourcesEnum::PROCESS
+		$params = Array();
+		$sqlString = $this->indicatorsParamsQueryBuilder(IndicatorDataSourcesEnum::PROCESS
                             , $indicatorProcessId, $periodicity
 							, $initDate, $endDate
-                            , $calcField);
-		$returnValue = $this->propelExecutor($sqlString);
-		return $returnValue;
-	}
-//	/***** Indicators for overdue, new, completed ******/
-//	public function totalOverdueCasesByProcess($processList, $initDate, $endDate)
-//	{
-//		$returnList = $this->totalOverdueCasesByProcessList($processList, $initDate, $endDate, ReportingPeriodicityEnum::NONE);
-//		return current(reset($returnList));
-//	}
-//
-//	public function totalOverdueCasesByProcessList($processList, $initDate, $endDate, $periodicity)
-//	{
-//		return $this->sumCasesListByProcess($processList, $initDate, $endDate, $periodicity, "SUM(TOTAL_CASES_OVERDUE)", "");
-//	}
-//
-//	public function totalOverdueCasesByUser($userList, $initDate, $endDate)
-//	{
-//		$returnList = $this->totalOverdueCasesByUserList($userList, $initDate, $endDate, ReportingPeriodicityEnum::NONE);
-//		return current(reset($returnList));
-//	}
-//
-//	public function totalOverdueCasesByUserList($userList, $initDate, $endDate, $periodicity)
-//	{
-//		return $this->sumCasesListByUser($userList, $initDate, $endDate, $periodicity, "SUM(TOTAL_CASES_OVERDUE)", "");
-//	}
-//
-//	//percent
-//	public function percentOverdueCasesByProcess($processList, $initDate, $endDate)
-//	{
-//		$returnList = $this->percentOverdueCasesByProcessList($processList, $initDate, $endDate, ReportingPeriodicityEnum::NONE);
-//		return current(reset($returnList));
-//	}
-//
+                            , $calcField, $params);
 
-//	public function percentOverdueCasesByProcessList($processList, $initDate, $endDate, $periodicity)
-//	{
-//		return $this->sumCasesListByProcess($processList, $initDate, $endDate, $periodicity, "100 * SUM(TOTAL_CASES_OVERDUE)", "SUM(TOTAL_CASES_ON_TIME + TOTAL_CASES_OVERDUE)");
-//	}
-//
-//	public function percentOverdueCasesByUser($userList, $initDate, $endDate)
-//	{
-//		$returnList = $this->percentOverdueCasesByUserList($userList, $initDate, $endDate, ReportingPeriodicityEnum::NONE);
-//		return current(reset($returnList));
-//	}
-//
-//	public function percentOverdueCasesByUserList($userList, $initDate, $endDate, $periodicity)
-//	{
-//		return $this->sumCasesListByUser($userList, $initDate, $endDate, $periodicity, "100 * SUM(TOTAL_CASES_OVERDUE)", "SUM(TOTAL_CASES_ON_TIME + TOTAL_CASES_OVERDUE)");
-//	}
-//
-//	//new cases
-//	public function totalNewCasesByProcess($processList, $initDate, $endDate)
-//	{
-//		$returnList = $this->totalNewCasesByProcessList($processList, $initDate, $endDate, ReportingPeriodicityEnum::NONE);
-//		return current(reset($returnList));
-//	}
-//
-//	public function totalNewCasesByProcessList($processList, $initDate, $endDate, $periodicity)
-//	{
-//		return $this->sumCasesListByProcess($processList, $initDate, $endDate, $periodicity, "SUM(TOTAL_CASES_IN)", "");
-//	}
-//
-//	public function totalNewCasesByUser($userList, $initDate, $endDate)
-//	{
-//		$returnList = $this->totalNewCasesByUserList($userList, $initDate, $endDate, ReportingPeriodicityEnum::NONE);
-//		return current(reset($returnList));
-//	}
-//
-//	public function totalNewCasesByUserList($userList, $initDate, $endDate, $periodicity)
-//	{
-//		return $this->sumCasesListByUser($userList, $initDate, $endDate, $periodicity, "SUM(TOTAL_CASES_IN)", "");
-//	}
-//
-//
-//	//completed cases
-//	public function totalCompletedCasesByProcess($processList, $initDate, $endDate)
-//	{
-//		$returnList = $this->totalCompletedCasesByProcessList($processList, $initDate, $endDate, ReportingPeriodicityEnum::NONE);
-//		return current(reset($returnList));
-//	}
-//
-//	public function totalCompletedCasesByProcessList($processList, $initDate, $endDate, $periodicity)
-//	{
-//		return $this->sumCasesListByProcess($processList, $initDate, $endDate, $periodicity, "SUM(TOTAL_CASES_OUT)", "");
-//	}
-//
-//	public function totalCompletedCasesByUser($userList, $initDate, $endDate)
-//	{
-//		$returnList = $this->totalCompletedCasesByUserList($userList, $initDate, $endDate, ReportingPeriodicityEnum::NONE);
-//		return current(reset($returnList));
-//	}
-//
-//	public function totalCompletedCasesByUserList($userList, $initDate, $endDate, $periodicity)
-//	{
-//		return $this->sumCasesListByUser($userList, $initDate, $endDate, $periodicity, "SUM(TOTAL_CASES_OUT)", "");
-//	}
-//
-//	public function sumCasesListByProcess($processList, $initDate, $endDate, $periodicity, $fieldToProcess, $fieldToCompare)
-//	{
-//		if ($processList != null && !is_array($processList)) throw new InvalidArgumentException ('employeeList parameter must be an Array or null value.', 0);
-//		if (!is_a($initDate, 'DateTime')) throw new InvalidArgumentException ('initDate parameter must be a DateTime object.', 0);
-//		if (!is_a($endDate, 'DateTime')) throw new InvalidArgumentException ('endDate parameter must be a DateTime object.', 0);
-//
-//		$periodicitySelectFields = $this->periodicityFieldsForSelect($periodicity);
-//		$periodicityGroup = $this->periodicityFieldsForGrouping($periodicity);
-//		$initYear = $initDate->format("Y");
-//		$initMonth = $initDate->format("m");
-//		$initDay = $endDay = 1;
-//		$endYear = $endDate->format("Y");
-//		$endMonth = $endDate->format("m");
-//
-//
-//		$userCondition = "";
-//		if ($processList != null && sizeof($processList) > 0) {
-//			$userCondition = " AND PRO_UID IN " . "('" . implode("','", $processList) . "')";
-//		}
-//		$comparationOperation = "";
-//		if (strlen($fieldToCompare) > 0) {
-//			$comparationOperation = "/$fieldToCompare";
-//		}
-//
-//		$sqlString = "SELECT $periodicitySelectFields $fieldToProcess$comparationOperation as Indicator
-//						FROM  PRO_REPORTING
-//						WHERE
-//						IF (`YEAR` = $initYear, `MONTH`, `YEAR`) >= IF (`YEAR` = $initYear, $initMonth, $initYear)
-//						AND
-//						IF(`YEAR` = $endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = $endYear, $endMonth, $endYear)"
-//			. $userCondition
-//			. $periodicityGroup;
-//
-//		$retval = $this->propelExecutor($sqlString);
-//		return $retval;
-//	}
-//
-//	public function sumCasesListByUser($processList, $initDate, $endDate, $periodicity, $fieldToProcess, $fieldToCompare)
-//	{
-//		if ($processList != null && !is_array($processList)) throw new InvalidArgumentException ('employeeList parameter must be an Array or null value.', 0);
-//		if (!is_a($initDate, 'DateTime')) throw new InvalidArgumentException ('initDate parameter must be a DateTime object.', 0);
-//		if (!is_a($endDate, 'DateTime')) throw new InvalidArgumentException ('endDate parameter must be a DateTime object.', 0);
-//
-//		$periodicitySelectFields = $this->periodicityFieldsForSelect($periodicity);
-//		$periodicityGroup = $this->periodicityFieldsForGrouping($periodicity);
-//		$initYear = $initDate->format("Y");
-//		$initMonth = $initDate->format("m");
-//		$initDay = $endDay = 1;
-//		$endYear = $endDate->format("Y");
-//		$endMonth = $endDate->format("m");
-//
-//		$userCondition = "";
-//		if ($processList != null && sizeof($processList) > 0) {
-//			$userCondition = " AND USR_UID IN " . "('" . implode("','", $processList) . "')";
-//		}
-//
-//		$comparationOperation = "";
-//		if (strlen($fieldToCompare) > 0) {
-//			$comparationOperation = "/" . $fieldToCompare;
-//		}
-//
-//		$sqlString = "SELECT $periodicitySelectFields $fieldToProcess$comparationOperation as Indicator
-//						FROM  USR_REPORTING
-//						WHERE
-//						IF (`YEAR` = $initYear, `MONTH`, `YEAR`) >= IF (`YEAR` = $initYear, $initMonth, $initYear)
-//						AND
-//						IF(`YEAR` = $endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = $endYear, $endMonth, $endYear)"
-//			. $userCondition
-//			. $periodicityGroup;
-//
-//		$retval = $this->propelExecutor($sqlString);
-//		return $retval;
-//	}
+		$retval = $this->pdoExecutor($sqlString, $params);
+		//$returnValue = $this->propelExecutor($sqlString);
+		return $retval;
+	}
 
 	public function peiTasks($processList, $initDate, $endDate, $language)
 	{
@@ -577,7 +408,8 @@ class indicatorsCalculator
 		if ($processList != null && sizeof($processList) > 0) {
 			$processCondition = " WHERE PRO_UID IN " . "('" . implode("','", $processList) . "')";
 		}
-		//TODO add dates condition in query
+		$params[':language'] = $language;
+
 		$sqlString = " select
                             i.TAS_UID as uid,
                             t.CON_VALUE as name,
@@ -599,53 +431,13 @@ class indicatorsCalculator
                         left join (select *
                                             from CONTENT
                                             where CON_CATEGORY = 'TAS_TITLE'
-                                                    and CON_LANG = '$language'
+                                                    and CON_LANG = :language 
                                     ) t on i.TAS_UID = t.CON_ID";
-		$retval = $this->propelExecutor($sqlString);
+		$retval = $this->pdoExecutor($sqlString, $params);
+		//$retval = $this->propelExecutor($sqlString);
 		return $retval;
 	}
 
-//	public function employeeTasksInfoList($userList, $initDate, $endDate, $language)
-//	{
-//		$userCondition = "";
-//		if ($userList != null && sizeof($userList) > 0) {
-//			$userCondition = " WHERE USR_UID IN " . "('" . implode("','", $userList) . "')";
-//		}
-//		//TODO add dates contidion to query
-//		$sqlString = " select
-//                            i.PRO_UID as ProcessId,
-//                            tp.CON_VALUE as ProcessTitle,
-//                            i.TAS_UID as TaskId,
-//                            tt.CON_VALUE as TaskTitle,
-//                            i.EfficienceIndex,
-//                            i.TimeAverage,
-//                            i.TimeSdv,
-//                            i.CONFIGURED_TASK_TIME as ConfiguredTime
-//                         FROM
-//                        (	select
-//                                PRO_UID,
-//                                TAS_UID,
-//                                (AVG(CONFIGURED_TASK_TIME) + AVG(SDV_TIME))/ AVG(AVG_TIME) as EfficienceIndex,
-//                                AVG(AVG_TIME) as TimeAverage,
-//                                AVG(SDV_TIME) as TimeSdv,
-//                                CONFIGURED_TASK_TIME
-//                            from USR_REPORTING
-//                            $userCondition
-//                            group by PRO_UID, TAS_UID
-//                        ) i
-//                        left join (select *
-//                                            from CONTENT
-//                                            where CON_CATEGORY = 'TAS_TITLE'
-//                                                    and CON_LANG = '$language'
-//                                    ) tt on i.TAS_UID = tt.CON_ID
-//                        left join (select *
-//                                            from CONTENT
-//                                            where CON_CATEGORY = 'PRO_TITLE'
-//                                                    and CON_LANG = '$language'
-//                                    ) tp on i.PRO_UID = tp.CON_ID";
-//		$retval = $this->propelExecutor($sqlString);
-//		return $retval;
-//	}
 
 	private function periodicityFieldsForSelect($periodicity) {
 		$periodicityFields = $this->periodicityFieldsString($periodicity);
@@ -685,7 +477,7 @@ class indicatorsCalculator
 		return $retval;
 	}
 
-	private function propelExecutor($sqlString) {
+	/*private function propelExecutor($sqlString) {
 		$con = Propel::getConnection(self::$connectionName);
 		$qry = $con->PrepareStatement($sqlString);
 		try {
@@ -700,8 +492,49 @@ class indicatorsCalculator
 		}
 		return $rows;
 	}
+*/
+	private function pdoExecutor($sqlString, $params) {
+		/*G::loadClass('wsTools');
+	    $currentWS = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
+		$workSpace = new workspaceTools($currentWS);
+		$host = $workSpace->dbHost;
+		$db = $workSpace->dbName;
+		$user = $workSpace->dbUser;
+		$pass = $workSpace->dbPass;
 
-	private function indicatorsBasicQueryBuilder($reportingTable, $filterId, $periodicity, $initDate, $endDate, $fields ) {
+
+		$dbh = new PDO("mysql:host=".$host.";dbname=$db;charset=utf8", $user, $pass);
+
+		$statement = $dbh->prepare($sqlString);
+
+		$statement->execute($params);
+		$result = $statement->fetchAll(PDO::FETCH_ASSOC); */
+
+		$connection = $this->pdoConnection ();
+		$result = $this->pdoExecutorWithConnection($sqlString, $params, $connection);
+		return $result;
+	}
+
+	private function pdoConnection() {
+		G::loadClass('wsTools');
+	    $currentWS = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
+		$workSpace = new workspaceTools($currentWS);
+		$host = $workSpace->dbHost;
+		$db = $workSpace->dbName;
+		$user = $workSpace->dbUser;
+		$pass = $workSpace->dbPass;
+		$dbh = new PDO("mysql:host=".$host.";dbname=$db;charset=utf8", $user, $pass);
+		return $dbh;
+	}
+
+	private function pdoExecutorWithConnection($sqlString, $params, $connection) {
+		$statement = $connection->prepare($sqlString);
+		$statement->execute($params);
+		$result = $statement->fetchAll(PDO::FETCH_ASSOC);
+		return $result;
+	}
+
+	/*private function indicatorsBasicQueryBuilder($reportingTable, $filterId, $periodicity, $initDate, $endDate, $fields ) {
 		if (!is_a($initDate, 'DateTime')) throw new InvalidArgumentException ('initDate parameter must be a DateTime object.', 0);
 		if (!is_a($endDate, 'DateTime')) throw new InvalidArgumentException ('endDate parameter must be a DateTime object.', 0);
 
@@ -727,7 +560,40 @@ class indicatorsCalculator
 			. $filterCondition
 			. $periodicityGroup;
 		return $sqlString;
+	}*/
+
+
+	private function indicatorsParamsQueryBuilder($reportingTable, $filterId, $periodicity, $initDate, $endDate, $fields, &$params) {
+		if (!is_a($initDate, 'DateTime')) throw new InvalidArgumentException ('initDate parameter must be a DateTime object.', 0);
+		if (!is_a($endDate, 'DateTime')) throw new InvalidArgumentException ('endDate parameter must be a DateTime object.', 0);
+
+		$tableMetadata = $this->metadataForTable($reportingTable);
+		$periodicitySelectFields = $this->periodicityFieldsForSelect($periodicity);
+		$periodicityGroup = $this->periodicityFieldsForGrouping($periodicity);
+		$initYear = $initDate->format("Y");
+		$initMonth = $initDate->format("m");
+		$endYear = $endDate->format("Y");
+		$endMonth = $endDate->format("m");
+
+		$filterCondition = "";
+		if ($filterId != null && $filterId > 0) {
+			$filterCondition = " AND ".$tableMetadata["keyField"]." = '$filterId'";
+		}
+
+		//$params[":initYear"] = $initYear;
+		//$params[":initMonth"] = $initMonth;
+		$params[":endYear"] = $endYear;
+		$params[":endMonth"] = $endMonth;
+
+		$sqlString = "SELECT $periodicitySelectFields $fields
+						FROM  ".$tableMetadata["tableName"].
+					" WHERE
+						IF(`YEAR` = :endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = :endYear, :endMonth, :endYear)"
+					. $filterCondition
+					. $periodicityGroup;
+		return $sqlString;
 	}
+
 
 	private function metadataForTable($table)  {
 		$returnVal = null;
@@ -749,6 +615,22 @@ class indicatorsCalculator
 			throw new Exception("'$table' it's not supportes. It has not associated a template.");
 		}
 		return $returnVal;
+	}
+
+
+	public function interpolateQuery($query, $params) {
+		$keys = array();
+		# build a regular expression for each parameter
+		foreach ($params as $key => $value) {
+			echo "<br>llave", $key, " -- valor", $value;
+			if (is_string($key)) {
+				$keys[] = '/:'.$key.'/';
+			} else {
+				$keys[] = '/[?]/';
+			}
+		}
+		$query = preg_replace($keys, $params, $query, 1, $count);
+		return $query;
 	}
 }
 
