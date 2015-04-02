@@ -451,6 +451,17 @@ Wrote: /usr/src/redhat/RPMS/i386/PEAR::Net_Socket-1.0-1.i386.rpm
         }
         $plist = implode(" ", $params);
         $cmd = "$php -C -d include_path=$cwd$ps$ip -f $run_tests -- $plist";
+        
+        $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+        $docuroot = explode( '/', $realdocuroot );
+        array_pop( $docuroot );
+        $pathhome = implode( '/', $docuroot ) . '/';  
+        array_pop( $docuroot );
+        $pathTrunk = implode( '/', $docuroot ) . '/';  
+        require_once($pathTrunk.'gulliver/system/class.inputfilter.php');
+        $filter = new InputFilter();
+        $cmd  = $filter->validateInput($cmd);
+        
         system($cmd);
         return true;
     }
