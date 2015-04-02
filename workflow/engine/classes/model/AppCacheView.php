@@ -1794,65 +1794,50 @@ class AppCacheView extends BaseAppCacheView
     }
 
     /*----------------------------------********---------------------------------*/
-    function fillReportByUser ()
+    public function fillReportByUser ($dateInit, $dateFinish)
     {
-    	try {
-    		global $sFilter;
-    		global $dateInit;
-    		global $dateFinish;
-    
-    		if (strpos($sFilter, 'report_by_user') === false) {
-    			return false;
-    		}
-    		if ($dateInit == null) {
-    			eprintln("You must enter the starting date.", "red");
-    			eprintln('Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"', "red");
-    			return false;
-    		}
-    
-    		$dateFinish = ($dateFinish != null) ? $dateFinish : date("Y-m-d H:i:s");
-    
-    		$appcv = new AppCacheView();
-    		$appcv->setPathToAppCacheFiles( PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP );
-    		setExecutionMessage("Calculating data to fill the 'User Reporting'...");
-    		$appcv->fillReportByUser($dateInit, $dateFinish);
-    		setExecutionResultMessage("DONE");
-    	} catch (Exception $e) {
-    		setExecutionResultMessage("WITH ERRORS", "error");
-    		eprintln("  '-" . $e->getMessage(), "red");
-    		saveLog("fillReportByUser", "error", "Error in fill report by user: " . $e->getMessage());
-    	}
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+
+        $filenameSql = $this->pathToAppCacheFiles . "triggerFillReportByUser.sql";
+
+        if (!file_exists($filenameSql)) {
+            throw (new Exception("file triggerFillReportByUser.sql doesn't exist"));
+        }
+
+        $sql = "TRUNCATE TABLE USR_REPORTING";
+        $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
+
+        $sql = explode(';', file_get_contents($filenameSql));
+
+        foreach ($sql as $key => $val) {
+            $val = str_replace('{init_date}', $dateInit, $val);
+            $val = str_replace('{finish_date}', $dateFinish, $val);
+            $stmt->executeQuery($val);
+        }
     }
-    
-    function fillReportByProcess ()
+
+    public function fillReportByProcess ($dateInit, $dateFinish)
     {
-    	try {
-    		global $sFilter;
-    		global $dateInit;
-    		global $dateFinish;
-    
-    		if (strpos($sFilter, 'report_by_process') === false) {
-    			return false;
-    		}
-    
-    		if ($dateInit == null) {
-    			eprintln("You must enter the starting date.", "red");
-    			eprintln('Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"', "red");
-    			return false;
-    		}
-    
-    		$dateFinish = ($dateFinish != null) ? $dateFinish : date("Y-m-d H:i:s");
-    		$appcv = new AppCacheView();
-    		$appcv->setPathToAppCacheFiles( PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP );
-    
-    		setExecutionMessage("Calculating data to fill the 'Process Reporting'...");
-    		$appcv->fillReportByProcess($dateInit, $dateFinish);
-    		setExecutionResultMessage("DONE");
-    	} catch (Exception $e) {
-    		setExecutionResultMessage("WITH ERRORS", "error");
-    		eprintln("  '-" . $e->getMessage(), "red");
-    		saveLog("fillReportByProcess", "error", "Error in fill report by process: " . $e->getMessage());
-    	}
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+
+        $filenameSql = $this->pathToAppCacheFiles . "triggerFillReportByProcess.sql";
+
+        if (!file_exists($filenameSql)) {
+            throw (new Exception("file triggerFillReportByProcess.sql doesn't exist"));
+        }
+
+        $sql = "TRUNCATE TABLE PRO_REPORTING";
+        $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
+
+        $sql = explode(';', file_get_contents($filenameSql));
+
+        foreach ($sql as $key => $val) {
+            $val = str_replace('{init_date}', $dateInit, $val);
+            $val = str_replace('{finish_date}', $dateFinish, $val);
+            $stmt->executeQuery($val);
+        }
     }
     /*----------------------------------********---------------------------------*/
 }

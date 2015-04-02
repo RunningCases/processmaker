@@ -49,8 +49,10 @@ class Light extends Api
         );
         $response = array();
         foreach ($data as $counterList) {
-            $name = $structure[$counterList['item']];
-            $response[$name] = $counterList['count'];
+            if(isset($structure[$counterList['item']])){
+                $name = $structure[$counterList['item']];
+                $response[$name] = $counterList['count'];
+            }
         }
         return $response;
     }
