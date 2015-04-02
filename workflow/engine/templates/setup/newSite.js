@@ -42,7 +42,20 @@ Ext.onReady(function(){
         regex: /^\w+$/,
         autoCreate: {tag: 'input', type: 'text', size: '20', autocomplete: 'off', maxlength: '13'},
         allowBlank: false,
-        msgTarget: 'under'
+        msgTarget: 'under',
+        monitorValid: true,
+        listeners: { 
+        change: { 
+                  fn: function(){
+                    valueField=this.setValue(this.getValue());
+                    if(typeof valueField.activeError!=='undefined'){
+                        Ext.getCmp('_idTest').disable();
+                    }else{
+                        Ext.getCmp('_idTest').enable();
+                    }
+                  }
+                }
+        } 
       },
       /*{
         id: 'AO_DB_RB',
@@ -133,6 +146,7 @@ Ext.onReady(function(){
 
       },
       {
+        id: '_idTest',
         text: _('ID_TEST'),
         handler: TestSite
       }
@@ -145,6 +159,7 @@ Ext.onReady(function(){
  });
  function resetfields(){
     formNewSite.getForm().reset();
+    Ext.getCmp('_idTest').enable();
  }
  function TestSite(){
  formNewSite.getForm().submit({
