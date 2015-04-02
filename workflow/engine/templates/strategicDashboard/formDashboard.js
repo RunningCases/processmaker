@@ -209,7 +209,8 @@ Ext.onReady( function() {
         store: store,
         displayInfo: true,
         displayMsg: _('ID_GRID_PAGE_DISPLAYING_0WNER_MESSAGE') + '&nbsp; &nbsp; ',
-        emptyMsg: _('ID_GRID_PAGE_NO_OWNER_MESSAGE'),
+        //emptyMsg: _('ID_GRID_PAGE_NO_OWNER_MESSAGE')
+        emptyMsg: ''
     });
 
     cmodel = new Ext.grid.ColumnModel({
@@ -517,7 +518,7 @@ Ext.onReady( function() {
                     Ext.MessageBox.show({
                         title: _('ID_CONFIRM'),
                         msg: _('ID_DELETE_INDICATOR_SURE'),
-                        buttons: Ext.MessageBox.YESNOCANCEL,
+                        buttons: Ext.MessageBox.YESNO,
                         fn: function(buttonId) {
                             switch(buttonId) {
                                 case 'no':
@@ -531,9 +532,6 @@ Ext.onReady( function() {
                                     }
                                     tabActivate.remove(component.id);
                                     tabPanel.remove(component);
-                                    break;
-                                case 'cancel':
-                                    flag = true;
                                     break;
                             }
                         },
@@ -803,6 +801,7 @@ var addTab = function (flag) {
                                             selectOnFocus   : true,
                                             typeAhead       : true,
                                             autocomplete    : true,
+                                            width           : 90,
                                             triggerAction   : 'all',
                                             mode            : 'local',
                                             allowBlank      : false,
@@ -823,7 +822,16 @@ var addTab = function (flag) {
                                             maskRe      : /([0-9\.]+)$/,
                                             maxLength   : 9,
                                             width       : 80,
-                                            allowBlank  : false
+                                            allowBlank  : false,
+                                            listeners   : {
+                                                focus : function(tb, e) {
+                                                     Ext.QuickTips.register({
+                                                       target: tb,
+                                                       title: _('ID_HELP'),
+                                                       text: _('ID_GOAL_HELP')
+                                                     });
+                                                 }
+                                           }  
                                         }
                                     ],
                                     listeners:
@@ -1070,7 +1078,7 @@ var saveDashboard = function () {
 
 var saveAllIndicators = function (DAS_UID) {
     for (var tab in tabActivate) {
-        if (tab == 'remove') {
+        if (tab == 'remove' || tab == 'indexOf' || tab == 'map') {
             continue;
         }
         tabPanel.getItem(tabActivate[tab]).show();
@@ -1085,12 +1093,12 @@ var saveAllIndicators = function (DAS_UID) {
 
         for (var index in fieldsTab) {
             var node = fieldsTab[index];
-            if (index == 'remove') {
+            if (index == 'remove' || index == 'map') {
                 continue;
             }
 
             id = node.id;
-            if (id.indexOf('fieldSet_') != -1 ) {
+            if (typeof id == 'undefined' || id.indexOf('fieldSet_') != -1 ) {
                 continue;
             }
             id = id.split('_');
