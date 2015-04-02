@@ -147,7 +147,8 @@ Ext.onReady( function() {
         sortInfo: {
             field: 'OWNER_TYPE',
             direction: 'ASC'
-        }
+        },
+        autoLoad: true
     });
 
     storeGroup = new Ext.data.GroupingStore( {
@@ -387,21 +388,13 @@ Ext.onReady( function() {
 
     ownerInfoGrid = new Ext.grid.GridPanel({
         region      : 'center',
-        //layout      : 'fit',
         id          : 'ownerInfoGrid',
         height      : 200,
-        //autoWidth   : true,
-        //anchor      : '80%',
         width       : '100%',
-        //stateful    : true,
         stateId     : 'gridDashboardList',
-        //enableColumnResize  : true,
         enableHdMenu: true,
         frame       : false,
         columnLines : false,
-        /*viewConfig : {
-          forceFit:true
-        },*/
         store: store,
         cm: cmodel,
         sm: smodel,
@@ -476,6 +469,7 @@ Ext.onReady( function() {
                             });
                             ownerInfoGrid.store.insert(store.getCount(), ow);
                             ownerInfoGrid.store.totalCount = data.length +1;
+                            ownerInfoGrid.store.sort('OWNER_LABEL', 'ASC');
                             ownerInfoGrid.getView().refresh();
 
                             Ext.getCmp('searchIem').clearValue();
@@ -720,7 +714,6 @@ Ext.onReady( function() {
 
 //==============================================================//
 var addTab = function (flag) {
-    console.log('flag', flag);
     if (tabPanel.items.items.length > 3 ) {
         PMExt.warning(_('ID_DASHBOARD'), _('ID_MAX_INDICATOR_DASHBOARD'));
         return false;
@@ -805,15 +798,16 @@ var addTab = function (flag) {
                                             id              : 'DAS_IND_DIRECTION_'+ indexTab,
                                             displayField    : 'label',
                                             valueField      : 'id',
-                                            value           : 2,
+                                            value           : '2',
                                             forceSelection  : false,
                                             selectOnFocus   : true,
                                             typeAhead       : true,
                                             autocomplete    : true,
                                             triggerAction   : 'all',
                                             mode            : 'local',
+                                            allowBlank      : false,
                                             store           : new Ext.data.ArrayStore({
-                                                id: 0,
+                                                id: 2,
                                                 fields: [
                                                     'id',
                                                     'label'
@@ -1081,11 +1075,10 @@ var saveAllIndicators = function (DAS_UID) {
         }
         tabPanel.getItem(tabActivate[tab]).show();
         var fieldsTab = tabPanel.getItem(tabActivate[tab]).items.items[0].items.items[0].items.items;
+
         var goal = fieldsTab[3];
-        delete fieldsTab[3];
         fieldsTab.push(goal.items.items[0]);
         fieldsTab.push(goal.items.items[1]);
-
 
         data = [];
         data['DAS_UID'] = DAS_UID;
@@ -1097,6 +1090,9 @@ var saveAllIndicators = function (DAS_UID) {
             }
 
             id = node.id;
+            if (id.indexOf('fieldSet_') != -1 ) {
+                continue;
+            }
             id = id.split('_');
             field = '';
             for (var part = 0; part<id.length-1; part++) {
@@ -1108,13 +1104,16 @@ var saveAllIndicators = function (DAS_UID) {
             }
             value = node.getValue();
 
-
             if (field == 'IND_TITLE' && value.trim() == '') {
                 PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TITLE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
                 node.focus(true,10);
                 return false;
             } else if (field == 'IND_TYPE' && value.trim() == '') {
                 PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TYPE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
+                node.focus(true,10);
+                return false;
+            } else if (field == 'IND_GOAL' && value.trim() == '') {
+                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_GOAL_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
                 node.focus(true,10);
                 return false;
             } else if (field == 'IND_PROCESS' && value.trim() == '') {
@@ -1134,7 +1133,6 @@ var saveAllIndicators = function (DAS_UID) {
     }
     window.location = 'dashboardList';
 };
-
 
 var saveDashboardIndicator = function (options) {
     if (options['DAS_IND_UID'] == '') {
@@ -1212,8 +1210,6 @@ var saveAllDashboardOwner = function (DAS_UID) {
 };
 
 var saveDashboardOwner = function (DAS_UID, uid, type) {
-    myMask.msg = _('ID_SAVING');
-    myMask.show();
     Ext.Ajax.request({
         url : urlProxy + 'dashboard/owner',
         method: 'POST',
@@ -1228,11 +1224,9 @@ var saveDashboardOwner = function (DAS_UID, uid, type) {
         },
         success: function (response) {
             var jsonResp = Ext.util.JSON.decode(response.responseText);
-            myMask.hide();
         },
         failure: function (response) {
             var jsonResp = Ext.util.JSON.decode(response.responseText);
-            myMask.hide();
             PMExt.error(_('ID_ERROR'),jsonResp.error.message);
         }
     });
