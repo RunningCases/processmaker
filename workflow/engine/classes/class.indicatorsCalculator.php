@@ -520,10 +520,16 @@ class indicatorsCalculator
 	    $currentWS = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
 		$workSpace = new workspaceTools($currentWS);
 		$host = $workSpace->dbHost;
-		$db = $workSpace->dbName;
+
+		$arrayHost = split(":", $workSpace->dbHost);
+		$host = "host=".$arrayHost[0];
+		$port = sizeof($arrayHost) > 0 ? ";port=".$arrayHost[1] : "";
+		$db = ";dbname=".$workSpace->dbName;
 		$user = $workSpace->dbUser;
 		$pass = $workSpace->dbPass;
-		$dbh = new PDO("mysql:host=".$host.";dbname=$db;charset=utf8", $user, $pass);
+		$connString = "mysql:$host$port$db;";
+
+		$dbh = new PDO($connString, $user, $pass);
 		return $dbh;
 	}
 
