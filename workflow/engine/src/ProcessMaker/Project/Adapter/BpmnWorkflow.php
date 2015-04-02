@@ -132,6 +132,8 @@ class BpmnWorkflow extends Project\Bpmn
         $bpmnProjectsUid = array_keys($bpmnProjectsList);
 
         foreach ($workflowProjects as $workflowProject) {
+            $data = array();
+
             $data["PRJ_UID"] = $workflowProject["PRO_UID"];
             $data["PRJ_NAME"] = $workflowProject["PRO_TITLE"];
             $data["PRJ_DESCRIPTION"] = $workflowProject["PRO_DESCRIPTION"];
@@ -146,6 +148,8 @@ class BpmnWorkflow extends Project\Bpmn
                 $data["PRJ_CREATE_DATE"] = $workflowProject["PRO_CREATE_DATE"];
                 $data["PRJ_UPDATE_DATE"] = $workflowProject["PRO_UPDATE_DATE"];
             }
+
+            $data["PRJ_STATUS"] = $workflowProject["PRO_STATUS"];
 
             if ($changeCaseTo != CASE_UPPER) {
                 $data = array_change_key_case($data, $changeCaseTo);

@@ -1,0 +1,134 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Dashboards</title>
+
+    
+    <!--<link rel="stylesheet" href="/lib/pmdynaform/libs/bootstrap-3.1.1/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/sb-admin-2.css">
+    <link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <link href="/css/gridstack.css" rel="stylesheet">
+    <link href="/css/general.css" rel="stylesheet">
+    <link href="/css/dashboardStylesForIE.css" rel="stylesheet">
+
+    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Chivo:400,400italic' rel='stylesheet' type='text/css'>
+
+    <script type="text/javascript" src="/js/jquery/jquery-1.8.2.min.js" ></script>
+    <script type="text/javascript" src="/js/jquery/jquery-ui-1.11.2.min.js" ></script>
+    <!--<script src="/lib/pmdynaform/libs/bootstrap-3.1.1/js/bootstrap.min.js"></script>-->
+    <script type="text/javascript" src="/jscore/strategicDashboard/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/jscore/strategicDashboard/underscore.js"></script>
+    <!--<script src="/lib/pmdynaform/libs/underscore/underscore.js"></script>-->
+    <script type="text/javascript" src="/js/gridstack/gridstack.js"></script>
+    <script type="text/javascript" src="/js/d3/d3.js" ></script>
+    <script type="text/javascript" src="/js/d3/d3.tip.js"></script>
+    <script type="text/javascript" src="/js/pmchart/pmCharts.js"></script>
+    <script>
+        var urlProxy = '{$urlProxy}';
+        var usrId = '{$usrId}';
+        var token = '{$credentials.access_token}';
+        var G_STRING = [];
+        {foreach from=$translation key=index item=option}
+            G_STRING['{$index}'] = '{$option}';
+        {/foreach}
+    </script>
+    <script type="text/javascript" src="/jscore/strategicDashboard/dashboardProxyTest.js"></script>
+    <script type="text/javascript" src="/jscore/strategicDashboard/dashboard.js"></script>
+    <script type="text/javascript" src="/jscore/strategicDashboard/dashboardProxy.js"></script>
+</head>
+<body id="page-top" class="index">
+  <img id="theImg" class="floating" src="/images/scrolldown.gif" width="80" height="80"/>
+  <div id="wrapper">
+    <div id="page-wrapper">
+          <!--Cabezera-->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                      <div class="panel-body">
+                        <a class="btn btn-primary dashboard-button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+                        <i class="fa fa-bar-chart fa-2x"></i>
+                        <i class="fa fa-chevron-down fa-1x"></i>
+                        </a>
+                        <h4 id="titleH4" class="header-dashboard">{translate label="ID_MANAGERS_DASHBOARDS"}</h4>
+                        <div class="pull-right dashboard-right">
+                            <h5 class="pull-left">{translate label="ID_DASH_COMPARE_MONTH"}:</h5>
+                            <button type="button" class="btn btn-compare btn-success pull-right btn-date">{translate label="ID_DASH_COMPARE"}</button>
+
+                            <select id="year" class="form-control pull-right ">
+                            {literal}
+                            <script> 
+                                now = new Date(); 
+                                anio = now.getFullYear();
+                                for(a=anio;a>=anio-7;a--){ 
+                                document.write('<option value="'+a+'">'+a+'</option>'); 
+                                } 
+                            </script>
+                            {/literal}
+                            </select>
+
+                            <select id="mounth" class="form-control pull-right ">
+                              <option value="1">{translate label="ID_MONTH_ABB_1"}</option>
+                              <option value="2">{translate label="ID_MONTH_ABB_2"}</option>
+                              <option value="3">{translate label="ID_MONTH_ABB_3"}</option>
+                              <option value="4">{translate label="ID_MONTH_ABB_4"}</option>
+                              <option value="5">{translate label="ID_MONTH_ABB_5"}</option>
+                              <option value="6">{translate label="ID_MONTH_ABB_6"}</option>
+                              <option value="7">{translate label="ID_MONTH_ABB_7"}</option>
+                              <option value="8">{translate label="ID_MONTH_ABB_8"}</option>
+                              <option value="9">{translate label="ID_MONTH_ABB_9"}</option>
+                              <option value="10">{translate label="ID_MONTH_ABB_10"}</option>
+                              <option value="11">{translate label="ID_MONTH_ABB_11"}</option>
+                              <option value="12">{translate label="ID_MONTH_ABB_12"}</option>
+                            </select>
+
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="collapse" id="collapseExample">
+                          <div class="well">
+                            <p class="text-center">{translate label="ID_DASH_CLICK_TO_VIEW"}</p>
+                            <p>
+                                <!-- Split button -->
+                              <div id="dasbuttons">
+                              </div>
+                            </p>
+                            <div class="clearfix"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <!-- /.col-lg-12 -->
+            </div>
+          <!-- Indicators -->
+          <div class="row">
+              <div class="indicators">
+                <div id="indicatorsGridStack" class="grid-stack" data-gs-width="12" data-gs-animate="no" >
+                  <!--Here are added dynamically the Indicators-->
+                </div>
+              </div>
+            <!-- Details by Indicator -->
+              <div class="col-lg-12 col-md-12 bottom">
+                  <div id="indicatorsDataGridStack" class="grid-stack" data-gs-width="12" data-gs-animate="no" >
+                  <!--Here are added dynamically the Dat by indicator-->
+                  </div>
+              </div>
+              <div id="relatedLabel"></div>
+              <div class="col-lg-12 col-md-12">
+                  <div id="relatedDataGridStack" class="grid-stack" data-gs-width="12" data-gs-animate="no" >
+                   </div>
+              </div>
+            </div>
+    </div>
+  </div>
+
+
+</body>
+</html>
+
+

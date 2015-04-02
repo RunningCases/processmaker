@@ -2246,7 +2246,18 @@ var processmap=function(){
 
     if (event)
     {
-      if (typeof(this.data.db.task[index].derivation.type) == 'undefined')
+      if(typeof(this.data.db.task[index].derivation.type.length) == 'undefined')
+      {
+        var derivationFlag = '1';
+      } 
+      else
+      {
+        if(this.data.db.task[index].derivation.type.length == '0')
+        {
+          var derivationFlag = '0';
+        }  
+      }
+      if (typeof(this.data.db.task[index].derivation.type) == 'undefined' || derivationFlag == '0')
       {
         new leimnud.module.app.alert().make(
             {
@@ -2281,10 +2292,13 @@ var processmap=function(){
           iWidth  = 450;
           iHeight = 205;
         break;
-                                case 8:
+        case 8:
           iWidth  = 550;
           iHeight = 300;
         break;
+        default:
+          iWidth  = 400;
+          iHeight = 110;
       }
 
       this.tmp.derivationsPanel = panel =new leimnud.module.panel();

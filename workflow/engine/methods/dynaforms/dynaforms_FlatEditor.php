@@ -33,6 +33,8 @@ G::LoadClass( 'dynaFormField' );
 G::LoadClass( 'process' );
 G::LoadClass( 'dynaform' );
 //G::LoadClass('configuration');
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
 
 
 $G_MAIN_MENU = 'processmaker';
@@ -73,9 +75,10 @@ if (! file_exists( PATH_DYNAFORM . $file . '.xml' )) {
 /* End Comment */
 
   /* Start Comment: Create and temporal copy. */
-  $copy = implode( '', file( PATH_DYNAFORM . $file . '.xml' ) );
+$pathFile = $filter->xssFilterHard(PATH_DYNAFORM . $file . '.xml', 'path');
+$copy = implode( '', file( $pathFile ) );
 $file .= '_tmp0';
-$fcopy = fopen( PATH_DYNAFORM . $file . '.xml', "w" );
+$fcopy = fopen( $pathFile , "w" );
 fwrite( $fcopy, $copy );
 fclose( $fcopy );
 /* End Comment */

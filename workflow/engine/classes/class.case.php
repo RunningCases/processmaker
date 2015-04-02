@@ -348,7 +348,14 @@ class Cases
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $rs->next();
+        $countTaskLabel = 1;
         while ($row = $rs->getRow()) {
+            if($row['TAS_TITLE'] != ''){
+                $taskTitleLabel = $row['TAS_TITLE'];
+            } else {
+                $taskTitleLabel = G::LoadTranslation('ID_UNTITLED_TASK').' '.$countTaskLabel;
+                $countTaskLabel++;
+            }
             if ($typeView == 'category') {
                 $taskTitle = TaskPeer::retrieveByPK($row['TAS_UID']);
                 $row['TAS_TITLE'] = $taskTitle->getTasTitle();
@@ -356,7 +363,7 @@ class Cases
                         G::LoadTranslation('ID_PROCESS_NOCATEGORY') : $row['CATEGORY_NAME'];
                 $rows[] = array(
                     'uid' => $row['TAS_UID'],
-                    'value' => $row['PRO_TITLE'] . ' (' . $row['TAS_TITLE'] . ')',
+                    'value' => $row['PRO_TITLE'] . ' (' . $taskTitleLabel . ')',
                     'pro_uid' => $row['PRO_UID'],
                     'cat' => $row['PRO_CATEGORY'],
                     'catname' => $row['CATEGORY_NAME']
@@ -364,7 +371,7 @@ class Cases
             } else {
                 $rows[] = array(
                     'uid' => $row['TAS_UID'],
-                    'value' => $row['PRO_TITLE'] . ' (' . $row['TAS_TITLE'] . ')',
+                    'value' => $row['PRO_TITLE'] . ' (' . $taskTitleLabel . ')',
                     'pro_uid' => $row['PRO_UID']
                 );
             }
@@ -5687,7 +5694,7 @@ class Cases
     {
         //CASE INSENSITIVE pin
         $pin = G::toUpper($pin);
-        $pin = md5($pin);
+        $pin = G::encryptOld($pin);
 
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(ApplicationPeer::APP_UID);

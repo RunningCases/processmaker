@@ -658,6 +658,8 @@ class Installer extends Controller
 
     public function createMySQLWorkspace ()
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
         ini_set( 'max_execution_time', '0' );
         $info = new StdClass();
         $info->result = false;
@@ -666,8 +668,11 @@ class Installer extends Controller
 
         $db_hostname = trim( $_REQUEST['db_hostname'] );
         $db_port = trim( $_REQUEST['db_port'] );
+        $db_port = $filter->validateInput($db_port);
         $db_username = trim( $_REQUEST['db_username'] );
+        $db_username = $filter->validateInput($db_username);
         $db_password = trim( $_REQUEST['db_password'] );
+        $db_password = $filter->validateInput($db_password);
         $wf = trim( $_REQUEST['wfDatabase'] );
         $rb = trim( $_REQUEST['wfDatabase'] );
         $rp = trim( $_REQUEST['wfDatabase'] );
@@ -678,9 +683,12 @@ class Installer extends Controller
         $pathShared = trim( $_REQUEST['pathShared'] );
         $pathXmlforms = trim( $_REQUEST['pathXmlforms'] );
         $adminPassword = trim( $_REQUEST['adminPassword'] );
+        $adminPassword = $filter->validateInput($adminPassword);
         $adminUsername = trim( $_REQUEST['adminUsername'] );
+        $adminUsername = $filter->validateInput($adminUsername);
         $deleteDB = ($_REQUEST['deleteDB'] == 'true');
         $userLogged = (isset($_REQUEST['userLogged']) ? ($_REQUEST['userLogged'] == 'true') : false);
+        $userLogged = $filter->validateInput($userLogged);
 
         if (substr( $pathShared, - 1 ) != '/') {
             $pathShared .= '/';
@@ -986,6 +994,8 @@ class Installer extends Controller
 
     public function createMSSQLWorkspace ()
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
         ini_set( 'max_execution_time', '0' );
 
         $info = new stdClass();
@@ -993,9 +1003,13 @@ class Installer extends Controller
         $info->message = '';
 
         $db_hostname = trim( $_REQUEST['db_hostname'] );
+        $db_hostname = $filter->validateInput($db_hostname);
         $db_port = trim( $_REQUEST['db_port'] );
+        $db_port = $filter->validateInput($db_port);
         $db_username = trim( $_REQUEST['db_username'] );
+        $db_username = $filter->validateInput($db_username);
         $db_password = trim( $_REQUEST['db_password'] );
+        $db_password = $filter->validateInput($db_password);
         $wf = trim( $_REQUEST['wfDatabase'] );
         $rb = trim( $_REQUEST['wfDatabase'] );
         $rp = trim( $_REQUEST['wfDatabase'] );
@@ -1268,9 +1282,13 @@ class Installer extends Controller
             return $info;
         }
         $db_hostname = $_REQUEST['db_hostname'];
-        $db_port = $_REQUEST['db_port'];
+        $db_hostname = $filter->validateInput($db_hostname);
+        $db_port     = $_REQUEST['db_port'];
+        $db_port     = $filter->validateInput($db_port);
         $db_username = $_REQUEST['db_username'];
+        $db_username = $filter->validateInput($db_username);
         $db_password = $_REQUEST['db_password'];
+        $db_password = $filter->validateInput($db_password);
         $fp = @fsockopen( $db_hostname, $db_port, $errno, $errstr, 30 );
         if (! $fp) {
             $info->message .= G::LoadTranslation('ID_CONNECTION_ERROR', SYS_LANG, Array("$errstr ($errno)"));
@@ -1303,6 +1321,8 @@ class Installer extends Controller
 
     private function testMSSQLconnection ()
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
         $info = new stdClass();
         $info->result = false;
         $info->message = '';
@@ -1313,9 +1333,13 @@ class Installer extends Controller
         }
 
         $db_hostname = $_REQUEST['db_hostname'];
-        $db_port = $_REQUEST['db_port'];
+        $db_hostname = $filter->validateInput($db_hostname);
+        $db_port     = $_REQUEST['db_port'];
+        $db_port     = $filter->validateInput($db_port);
         $db_username = $_REQUEST['db_username'];
+        $db_username = $filter->validateInput($db_username);
         $db_password = $_REQUEST['db_password'];
+        $db_password = $filter->validateInput($db_password);
 
         $fp = @fsockopen( $db_hostname, $db_port, $errno, $errstr, 30 );
         if (! $fp) {
@@ -1483,6 +1507,8 @@ class Installer extends Controller
 
     public function buildParternExtras($username, $password, $workspace, $lang, $skinName)
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
         ini_set('max_execution_time', '0');
         ini_set('memory_limit', '256M');
 
@@ -1503,8 +1529,11 @@ class Installer extends Controller
         chmod($cookiefile, 0777);
 
         $user = urlencode($username);
+        $user = $filter->validateInput($user);
         $pass = urlencode($password);
+        $pass = $filter->validateInput($pass);
         $lang = urlencode($lang);
+        $lang = $filter->validateInput($lang);
 
         $ch = curl_init();
 
@@ -1622,9 +1651,13 @@ class Installer extends Controller
             $namePlugin = $dataPlugin['filename'];
             if ($value != 'enterprise') {
                 $db_hostname = trim( $_REQUEST['db_hostname'] );
+                $db_hostname = $filter->validateInput($db_hostname);
                 $db_port = trim( $_REQUEST['db_port'] );
+                $db_port = $filter->validateInput($db_port);
                 $db_username = trim( $_REQUEST['db_username'] );
+                $db_username = $filter->validateInput($db_username);
                 $db_password = trim( $_REQUEST['db_password'] );
+                $db_password = $filter->validateInput($db_password);
                 $wf = trim( $_REQUEST['wfDatabase'] );
 
                 $db_host = ($db_port != '' && $db_port != 3306) ? $db_hostname . ':' . $db_port : $db_hostname;

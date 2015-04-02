@@ -26,14 +26,36 @@ class Light extends Api
     public function countersCases ()
     {
         try {
-            $oMobile     = new \ProcessMaker\BusinessModel\Light();
-            $counterCase = $oMobile->getCounterCase($this->getUserId());
+            $userId   = $this->getUserId();
+            $lists    = new \ProcessMaker\BusinessModel\Lists();
+            $response = $lists->getCounters($userId);
+            $result   = $this->parserCountersCases($response);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
-        return $counterCase;
+        return $result;
     }
 
+    public function parserCountersCases ($data)
+    {
+        $structure = array(
+            "CASES_INBOX" => "toDo",
+            "CASES_DRAFT" => "draft",
+            "CASES_CANCELLED" => "cancelled",
+            "CASES_SENT" => "participated",
+            "CASES_PAUSED" => "paused",
+            "CASES_COMPLETED" => "completed",
+            "CASES_SELFSERVICE" => "unassigned",
+        );
+        $response = array();
+        foreach ($data as $counterList) {
+            if(isset($structure[$counterList['item']])){
+                $name = $structure[$counterList['item']];
+                $response[$name] = $counterList['count'];
+            }
+        }
+        return $response;
+    }
     /**
      * Get list process start
      * @return array

@@ -175,10 +175,28 @@ Ext.onReady(function(){
              selectOnFocus:true
            }
            ],
-           buttons: [
-                     {text: _('ID_SAVE'), handler: SaveNewGroupAction},
-                     {text: _('ID_CANCEL'), handler: CloseWindow}
-                     ]
+    buttons: [
+        {
+            xtype: "button",
+            id: "btnCreateSave",
+            text: _("ID_SAVE"),
+            handler: function (btn, ev)
+            {
+                Ext.getCmp("btnCreateSave").setDisabled(true);
+
+                SaveNewGroupAction();
+            }
+        },
+        {
+            xtype: "button",
+            id: "btnCreateCancel",
+            text: _("ID_CANCEL"),
+            handler: function (btn, ev)
+            {
+                CloseWindow();
+            }
+        }
+    ]
   });
 
   editForm = new Ext.FormPanel({
@@ -205,10 +223,28 @@ Ext.onReady(function(){
              selectOnFocus:true
            }
            ],
-           buttons: [
-                     {text: _('ID_SAVE'), handler: SaveEditGroupAction},
-                     {text: _('ID_CANCEL'), handler: CloseWindow}
-                     ]
+    buttons: [
+        {
+            xtype: "button",
+            id: "btnUpdateSave",
+            text: _("ID_SAVE"),
+            handler: function (btn, ev)
+            {
+                Ext.getCmp("btnUpdateSave").setDisabled(true);
+
+                SaveEditGroupAction();
+            }
+        },
+        {
+            xtype: "button",
+            id: "btnUpdateCancel",
+            text: _("ID_CANCEL"),
+            handler: function (btn, ev)
+            {
+                CloseWindow();
+            }
+        }
+    ]
   });
 
   store = new Ext.data.GroupingStore( {
@@ -354,6 +390,8 @@ NewGroupWindow = function(){
   newForm.getForm().items.items[0].focus('',500);
   newForm.getForm().items.items[1].setEditable(false);
 
+  Ext.getCmp("btnCreateSave").setDisabled(false);
+
   w = new Ext.Window({
     autoHeight: true,
     width: 400,
@@ -409,6 +447,9 @@ SaveNewGroupAction = function(){
 
 //Show Duplicate Group Name Message
 DuplicateGroupName = function(){
+  Ext.getCmp("btnCreateSave").setDisabled(false);
+  Ext.getCmp("btnUpdateSave").setDisabled(false);
+
   PMExt.warning(_('ID_GROUPS'), _('ID_MSG_GROUP_NAME_EXISTS'));
 };
 
@@ -446,6 +487,9 @@ EditGroupWindow = function(){
   editForm.getForm().findField('name').setValue(strName);
   var valueEditChangeInt = (rowSelected.data.GRP_STATUS == 'ACTIVE') ? '1' : '0';
   editForm.getForm().findField('status').setValue(valueEditChangeInt);
+
+  Ext.getCmp("btnUpdateSave").setDisabled(false);
+
   w = new Ext.Window({
     autoHeight: true,
     width: 440,
