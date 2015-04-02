@@ -1,4 +1,4 @@
-<?php 
+<?php
 G::LoadSystem('inputfilter');
 $filter = new InputFilter();
 $_POST['qs'] = $filter->xssFilterHard($_POST['qs']);

@@ -44,7 +44,7 @@ G::LoadSystem('inputfilter');
 $filter = new InputFilter();
 $_POST = $filter->xssFilterHard($_POST);
 $_REQUEST = $filter->xssFilterHard($_REQUEST);
-$_SESSION = $filter->xssFilterHard($_SESSION); 
+$_SESSION = $filter->xssFilterHard($_SESSION);
 
 $actionAjax = isset( $_REQUEST['actionAjax'] ) ? $_REQUEST['actionAjax'] : null;
 
@@ -549,7 +549,7 @@ if ($actionAjax == 'dynaformChangeLogViewHistory') {
 
     global $G_PUBLISH;
     $G_PUBLISH = new Publisher();
-    $FieldsHistory = unserialize( $_SESSION['HISTORY_DATA'] );
+    $FieldsHistory = $_SESSION['HISTORY_DATA'];
     $Fields['APP_DATA'] = $FieldsHistory[$_POST['HISTORY_ID']];
     $Fields['APP_DATA']['__DYNAFORM_OPTIONS']['PREVIOUS_STEP_LABEL'] = '';
     $Fields['APP_DATA']['__DYNAFORM_OPTIONS']['NEXT_STEP_LABEL'] = '';

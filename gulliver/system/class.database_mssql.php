@@ -747,11 +747,14 @@ class database extends database_base
     public function getServerVersion ($driver, $dbIP, $dbPort, $dbUser, $dbPasswd, $dbSourcename)
     {
 
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $DB_NAME = $filter->validateInput(DB_NAME);
         if (strlen( trim( $dbIP ) ) <= 0) {
             $dbIP = DB_HOST;
         }
         if ($link = @mssql_connect( $dbIP, $dbUser, $dbPasswd )) {
-            @mssql_select_db( DB_NAME, $link );
+            @mssql_select_db( $DB_NAME, $link );
             $oResult = @mssql_query( "select substring(@@version, 21, 6) + ' (' + CAST(SERVERPROPERTY ('productlevel') as varchar(10)) + ') ' + CAST(SERVERPROPERTY('productversion') AS VARCHAR(15)) + ' ' + CAST(SERVERPROPERTY ('edition') AS VARCHAR(25)) as version; ", $link );
             $aResult = @mssql_fetch_array( $oResult );
             @mssql_free_result( $oResult );
@@ -813,9 +816,12 @@ class database extends database_base
      */
     public function reportTableExist ()
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $DB_NAME = $filter->validateInput(DB_NAME);
         $bExists = true;
         $oConnection = mssql_connect( DB_HOST, DB_USER, DB_PASS );
-        mssql_select_db( DB_NAME );
+        mssql_select_db( $DB_NAME );
         $oDataset = mssql_query( 'SELECT COUNT(*) FROM REPORT_TABLE' ) || ($bExists = false);
 
         return $bExists;
@@ -835,10 +841,13 @@ class database extends database_base
      */
     public function tableExists ($table, $db)
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $DB_NAME = $filter->validateInput(DB_NAME);
         $sql = "SELECT * FROM sysobjects WHERE name='" . $table . "' AND type='u'";
         $bExists = true;
         $oConnection = mssql_connect( DB_HOST, DB_USER, DB_PASS );
-        mssql_select_db( DB_NAME );
+        mssql_select_db( $DB_NAME );
         $oDataset = mssql_query( $sql ) || ($bExists = false);
         return $bExists;
     }

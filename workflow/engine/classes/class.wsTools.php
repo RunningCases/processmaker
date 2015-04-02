@@ -1387,6 +1387,9 @@ class workspaceTools
 
     static public function dirPerms($filename, $owner, $group, $perms)
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $filename = $filter->xssFilterHard($filename, 'path');
         $chown = @chown($filename, $owner);
         $chgrp = @chgrp($filename, $group);
         $chmod = @chmod($filename, $perms);

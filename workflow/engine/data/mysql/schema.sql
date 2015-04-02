@@ -2678,3 +2678,135 @@ CREATE TABLE `ABE_RESPONSES`
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='The plugin table for actionsByEmail';
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
+
+
+#-----------------------------------------------------------------------------
+#-- USR_REPORTING
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `USR_REPORTING`;
+
+
+CREATE TABLE `USR_REPORTING`
+(
+    `USR_UID`               VARCHAR(32)  NOT NULL,
+    `TAS_UID`               VARCHAR(32)  NOT NULL,
+    `PRO_UID`               VARCHAR(32)  NOT NULL,
+    `MONTH`                 INTEGER default 0 NOT NULL,
+    `YEAR`                  INTEGER default 0 NOT NULL,
+    `TOTAL_TIME_BY_TASK`    DECIMAL(7,2) default 0,
+    `TOTAL_CASES_IN`        DECIMAL(7,2) default 0,
+    `TOTAL_CASES_OUT`       DECIMAL(7,2) default 0,
+    `AVG_TIME`              DECIMAL(7,2) default 0,
+    `SDV_TIME`              DECIMAL(7,2) default 0,
+    `CONFIGURED_TASK_TIME`  DECIMAL(7,2) default 0,
+    `TOTAL_CASES_OVERDUE`   DECIMAL(7,2) default 0,
+    `TOTAL_CASES_ON_TIME`   DECIMAL(7,2) default 0,
+    PRIMARY KEY (`USR_UID`, `TAS_UID`,`MONTH`,`YEAR`)
+    KEY `indexApp`(`USR_UID`, `TAS_UID`, `PRO_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Data calculated users by task';
+#-----------------------------------------------------------------------------
+#-- PRO_REPORTING
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `PRO_REPORTING`;
+
+
+CREATE TABLE `PRO_REPORTING`
+(
+    `PRO_UID`                   VARCHAR(32)  NOT NULL,
+    `MONTH`                     INTEGER default 0 NOT NULL,
+    `YEAR`                      INTEGER default 0 NOT NULL,
+    `AVG_TIME`                  DECIMAL(7,2) default 0,
+    `SDV_TIME`                  DECIMAL(7,2) default 0,
+    `TOTAL_CASES_IN`            DECIMAL(7,2) default 0,
+    `TOTAL_CASES_OUT`           DECIMAL(7,2) default 0,
+    `CONFIGURED_PROCESS_TIME`   DECIMAL(7,2) default 0,
+    `CONFIGURED_PROCESS_COST`   DECIMAL(7,2) default 0,
+    `TOTAL_CASES_OPEN`          DECIMAL(7,2) default 0,
+    `TOTAL_CASES_OVERDUE`       DECIMAL(7,2) default 0,
+    `TOTAL_CASES_ON_TIME`       DECIMAL(7,2) default 0,
+    PRIMARY KEY (`PRO_UID`,`MONTH`,`YEAR`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Data calculated by process';
+#-----------------------------------------------------------------------------
+#-- DASHBOARD
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `DASHBOARD`;
+
+
+CREATE TABLE `DASHBOARD`
+(
+    `DAS_UID`           VARCHAR(32) default '' NOT NULL,
+    `DAS_TITLE`         VARCHAR(255) default '' NOT NULL,
+    `DAS_DESCRIPTION`   MEDIUMTEXT,
+    `DAS_VERSION`       VARCHAR(10) default '1.0' NOT NULL,
+    `DAS_CREATE_DATE`   DATETIME  NOT NULL,
+    `DAS_UPDATE_DATE`   DATETIME,
+    `DAS_STATUS`        TINYINT default 1 NOT NULL,
+    PRIMARY KEY (`DAS_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Dashboard definitions';
+#-----------------------------------------------------------------------------
+#-- DASHBOARD_INDICATOR
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `DASHBOARD_INDICATOR`;
+
+
+CREATE TABLE `DASHBOARD_INDICATOR`
+(
+    `DAS_IND_UID`           VARCHAR(32) default '' NOT NULL,
+    `DAS_UID`               VARCHAR(32) default '' NOT NULL,
+    `DAS_IND_TYPE`          VARCHAR(32) default '' NOT NULL,
+    `DAS_IND_TITLE`         VARCHAR(255) default '' NOT NULL,
+    `DAS_IND_GOAL`          DECIMAL(7,2) default 0,
+    `DAS_UID_PROCESS`       VARCHAR(32) default '' NOT NULL,
+    `DAS_IND_PROPERTIES`    MEDIUMTEXT,
+    `DAS_CREATE_DATE`       DATETIME  NOT NULL,
+    `DAS_UPDATE_DATE`       DATETIME,
+    `DAS_STATUS`            TINYINT default 1 NOT NULL,
+    PRIMARY KEY (`DAS_UID`),
+    KEY `indexDashboard`(`DAS_UID`, `DAS_IND_TYPE`),
+    CONSTRAINT `fk_dashboard_indicator_dashboard`
+        FOREIGN KEY (`DAS_UID`)
+        REFERENCES `DASHBOARD` (`DAS_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Dashboard Indicators definitions.';
+#-----------------------------------------------------------------------------
+#-- DASHBOARD_DAS_IND
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `DASHBOARD_DAS_IND`;
+
+
+CREATE TABLE `DASHBOARD_DAS_IND`
+(
+    `DAS_UID`               VARCHAR(32) default '' NOT NULL,
+    `OWNER_UID`             VARCHAR(32) default '' NOT NULL,
+    `OWNER_TYPE`            VARCHAR(15) default '' NOT NULL
+    PRIMARY KEY (`DAS_UID`),
+    CONSTRAINT `fk_dashboard_indicator_dashboard_das_ind`
+        FOREIGN KEY (`DAS_UID`)
+        REFERENCES `DASHBOARD` (`DAS_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Dashboard definitions to user.';
+#-----------------------------------------------------------------------------
+#-- CATALOG
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `CATALOG`;
+
+
+CREATE TABLE `CATALOG`
+(
+    `CAT_UID`           VARCHAR(32) default '' NOT NULL,
+    `CAT_LABEL_ID`      VARCHAR(100) default '' NOT NULL,
+    `CAT_TYPE`          VARCHAR(100) default '' NOT NULL,
+    `CAT_FLAG`          VARCHAR(50) default '',
+    `CAT_OBSERVATION`   MEDIUMTEXT,
+    `CAT_CREATE_DATE`   DATETIME  NOT NULL,
+    `CAT_UPDATE_DATE`   DATETIME,
+    `CAT_STATUS`        TINYINT default 1 NOT NULL,
+    PRIMARY KEY (`CAT_UID`, `CAT_TYPE`),
+    KEY `indexType`( `CAT_TYPE`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Definitions catalog.';
+# This restores the fkey checks, after having unset them earlier
+SET FOREIGN_KEY_CHECKS = 1;

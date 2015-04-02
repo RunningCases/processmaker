@@ -102,7 +102,7 @@ $sPMfunction .= $aDataTriggers['PMFUNTION_NAME'] . " (" . implode(",", $methodPa
 //Create Trigger
 $aDataTriggers['TRI_WEBBOT'] = $sPMfunction;
 $aDataTriggersParams = array();
-$aDataTriggersParams['hash'] = md5($sPMfunction);
+$aDataTriggersParams['hash'] = G::encryptOld($sPMfunction);
 $aDataTriggersParams['params'] = $aDataTriggers;
 
 $aDataTriggers['TRI_PARAM'] = serialize($aDataTriggersParams);
