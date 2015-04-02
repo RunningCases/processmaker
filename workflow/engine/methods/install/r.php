@@ -1,4 +1,4 @@
-<?php 
+<?php
 G::LoadSystem('inputfilter');
 $filter = new InputFilter();
 if(isset($_GET['srv'])) {
@@ -27,14 +27,14 @@ if(isset($_GET['gen'])) {
 <?php
 
 if (isset( $_GET['gen'] )) {
-    $sh = md5( filemtime( PATH_GULLIVER . "/class.g.php" ) );
+    $sh = G::encryptOld( filemtime( PATH_GULLIVER . "/class.g.php" ) );
     $h = G::encrypt( $_GET['srv'] . $sh . $_GET['usr'] . $sh . $_GET['pass'] . $sh . (1), $sh );
     echo "HASH_INSTALLATION<br/>";
     echo "<textarea cols=120>$h</textarea><br/>";
     echo "SYSTEM_HASH<br/>";
     echo "<textarea cols=120>$sh</textarea>";
 } elseif (isset( $_GET['reg'] )) {
-    $sh = md5( filemtime( PATH_GULLIVER . "/class.g.php" ) );
+    $sh = G::encryptOld( filemtime( PATH_GULLIVER . "/class.g.php" ) );
     $h = G::encrypt( $_GET['srv'] . $sh . $_GET['usr'] . $sh . $_GET['pass'] . $sh . (1), $sh );
     echo "HASH_INSTALLATION<br/>";
     echo "<textarea cols=120>$h</textarea><br/>";

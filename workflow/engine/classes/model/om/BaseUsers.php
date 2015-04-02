@@ -226,6 +226,18 @@ abstract class BaseUsers extends BaseObject implements Persistent
     protected $usr_total_unassigned = 0;
 
     /**
+     * The value for the usr_cost_by_hour field.
+     * @var        double
+     */
+    protected $usr_cost_by_hour = 0;
+
+    /**
+     * The value for the usr_unit_cost field.
+     * @var        string
+     */
+    protected $usr_unit_cost = '';
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -684,6 +696,28 @@ abstract class BaseUsers extends BaseObject implements Persistent
     {
 
         return $this->usr_total_unassigned;
+    }
+
+    /**
+     * Get the [usr_cost_by_hour] column value.
+     * 
+     * @return     double
+     */
+    public function getUsrCostByHour()
+    {
+
+        return $this->usr_cost_by_hour;
+    }
+
+    /**
+     * Get the [usr_unit_cost] column value.
+     * 
+     * @return     string
+     */
+    public function getUsrUnitCost()
+    {
+
+        return $this->usr_unit_cost;
     }
 
     /**
@@ -1441,6 +1475,44 @@ abstract class BaseUsers extends BaseObject implements Persistent
     } // setUsrTotalUnassigned()
 
     /**
+     * Set the value of [usr_cost_by_hour] column.
+     * 
+     * @param      double $v new value
+     * @return     void
+     */
+    public function setUsrCostByHour($v)
+    {
+
+        if ($this->usr_cost_by_hour !== $v || $v === 0) {
+            $this->usr_cost_by_hour = $v;
+            $this->modifiedColumns[] = UsersPeer::USR_COST_BY_HOUR;
+        }
+
+    } // setUsrCostByHour()
+
+    /**
+     * Set the value of [usr_unit_cost] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setUsrUnitCost($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->usr_unit_cost !== $v || $v === '') {
+            $this->usr_unit_cost = $v;
+            $this->modifiedColumns[] = UsersPeer::USR_UNIT_COST;
+        }
+
+    } // setUsrUnitCost()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -1523,12 +1595,16 @@ abstract class BaseUsers extends BaseObject implements Persistent
 
             $this->usr_total_unassigned = $rs->getInt($startcol + 32);
 
+            $this->usr_cost_by_hour = $rs->getFloat($startcol + 33);
+
+            $this->usr_unit_cost = $rs->getString($startcol + 34);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 33; // 33 = UsersPeer::NUM_COLUMNS - UsersPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 35; // 35 = UsersPeer::NUM_COLUMNS - UsersPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Users object", $e);
@@ -1831,6 +1907,12 @@ abstract class BaseUsers extends BaseObject implements Persistent
             case 32:
                 return $this->getUsrTotalUnassigned();
                 break;
+            case 33:
+                return $this->getUsrCostByHour();
+                break;
+            case 34:
+                return $this->getUsrUnitCost();
+                break;
             default:
                 return null;
                 break;
@@ -1884,6 +1966,8 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $keys[30] => $this->getUsrTotalPaused(),
             $keys[31] => $this->getUsrTotalCompleted(),
             $keys[32] => $this->getUsrTotalUnassigned(),
+            $keys[33] => $this->getUsrCostByHour(),
+            $keys[34] => $this->getUsrUnitCost(),
         );
         return $result;
     }
@@ -2013,6 +2097,12 @@ abstract class BaseUsers extends BaseObject implements Persistent
                 break;
             case 32:
                 $this->setUsrTotalUnassigned($value);
+                break;
+            case 33:
+                $this->setUsrCostByHour($value);
+                break;
+            case 34:
+                $this->setUsrUnitCost($value);
                 break;
         } // switch()
     }
@@ -2169,6 +2259,14 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $this->setUsrTotalUnassigned($arr[$keys[32]]);
         }
 
+        if (array_key_exists($keys[33], $arr)) {
+            $this->setUsrCostByHour($arr[$keys[33]]);
+        }
+
+        if (array_key_exists($keys[34], $arr)) {
+            $this->setUsrUnitCost($arr[$keys[34]]);
+        }
+
     }
 
     /**
@@ -2312,6 +2410,14 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $criteria->add(UsersPeer::USR_TOTAL_UNASSIGNED, $this->usr_total_unassigned);
         }
 
+        if ($this->isColumnModified(UsersPeer::USR_COST_BY_HOUR)) {
+            $criteria->add(UsersPeer::USR_COST_BY_HOUR, $this->usr_cost_by_hour);
+        }
+
+        if ($this->isColumnModified(UsersPeer::USR_UNIT_COST)) {
+            $criteria->add(UsersPeer::USR_UNIT_COST, $this->usr_unit_cost);
+        }
+
 
         return $criteria;
     }
@@ -2429,6 +2535,10 @@ abstract class BaseUsers extends BaseObject implements Persistent
         $copyObj->setUsrTotalCompleted($this->usr_total_completed);
 
         $copyObj->setUsrTotalUnassigned($this->usr_total_unassigned);
+
+        $copyObj->setUsrCostByHour($this->usr_cost_by_hour);
+
+        $copyObj->setUsrUnitCost($this->usr_unit_cost);
 
 
         $copyObj->setNew(true);

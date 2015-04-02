@@ -1042,7 +1042,7 @@ class adminProxy extends HttpProxyController
         $uploaded = 0;
         $failed   = 0;
         
-        $files_img_type = $filter->xssFilterHard($_FILES['img']['type']);
+        $files_img_type = $_FILES['img']['type'];
 
         if (in_array($files_img_type, $allowedType)) {
              // max upload file is 500 KB

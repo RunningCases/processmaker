@@ -536,7 +536,7 @@ class headPublisher
             $cacheFilename = PATH_C . 'ExtJs' . PATH_SEP . $cacheName . '.js';
             file_put_contents($cacheFilename, file_get_contents($jsFilename));
         } else {
-            $cacheName = md5($mtime . $jsFilename);
+            $cacheName = G::encryptOld($mtime . $jsFilename);
             $cacheFilename = PATH_C . 'ExtJs' . PATH_SEP . $cacheName . '.js';
 
             if (!file_exists($cacheFilename)) {
@@ -581,7 +581,7 @@ class headPublisher
                     }
                     if (file_exists(PATH_PLUGINS . $pluginJsFile)) {
                         $mtime = filemtime(PATH_PLUGINS . $pluginJsFile);
-                        $jsPluginCacheName = md5($mtime . $pluginJsFile);
+                        $jsPluginCacheName = G::encryptOld($mtime . $pluginJsFile);
                         $cacheFilename = PATH_C . 'ExtJs' . PATH_SEP . $jsPluginCacheName . '.js';
 
                         if (!file_exists($cacheFilename)) {

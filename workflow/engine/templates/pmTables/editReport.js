@@ -876,7 +876,8 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
       }
     }
   });
-
+  
+  comboReport.setReadOnly(isBpmn);
 
   processStore = new Ext.data.Store( {
     autoLoad: true,
