@@ -129,6 +129,14 @@ class WebApplication
         switch ($type) {
             case self::SERVICE_API:
                 $request = $this->parseApiRequestUri();
+
+                if ($request["version"] != $this->getApiVersion()) {
+                    $rest = new \Maveriks\Extension\Restler();
+                    $rest->setMessage(new RestException(Api::STAT_APP_EXCEPTION, "Invalid API version."));
+
+                    exit(0);
+                }
+
                 $this->loadEnvironment($request["workspace"]);
 
                 Util\Logger::log("REST API Dispatching url: ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
@@ -554,4 +562,23 @@ class WebApplication
 
         return true;
     }
+
+    public function getApiVersion()
+    {
+        try {
+            $arrayConfig = array();
+
+            //$apiIniFile - Contains file name of api ini configuration
+            $apiIniFile = $this->workflowDir . "engine" . DS . "src" . DS . "ProcessMaker" . DS . "Services" . DS . "api.ini";
+
+            if (file_exists($apiIniFile)) {
+                $arrayConfig = Util\Common::parseIniFile($apiIniFile);
+            }
+
+            return (isset($arrayConfig["api"]["version"]))? $arrayConfig["api"]["version"] : "1.0";
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
+
