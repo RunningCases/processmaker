@@ -2,11 +2,11 @@
 G::LoadSystem('inputfilter');
 $filter = new InputFilter();
 $_POST = $filter->xssFilterHard($_POST);
-if(isset($_SESSION['USER_LOGGED'])) { 
-    $_SESSION['USER_LOGGED'] = $filter->xssFilterHard($_SESSION['USER_LOGGED']); 
+if(isset($_SESSION['USER_LOGGED'])) {
+	$_SESSION['USER_LOGGED'] = $filter->xssFilterHard($_SESSION['USER_LOGGED']);
 }
-if(isset($_SESSION['USR_USERNAME'])) { 
-$_SESSION['USR_USERNAME'] = $filter->xssFilterHard($_SESSION['USR_USERNAME']);
+if(isset($_SESSION['USR_USERNAME'])) {
+	$_SESSION['USR_USERNAME'] = $filter->xssFilterHard($_SESSION['USR_USERNAME']);
 }
 
 global $RBAC;
@@ -164,6 +164,10 @@ switch ($_POST['action']) {
             $zipCode = $form['USR_ZIP_CODE'] ? " - Zip Code: ". $form['USR_ZIP_CODE'] : "";  
             $position = $form['USR_POSITION'] ? " - Position: ". $form['USR_POSITION'] : "";  
             $role = $form['USR_ROLE'] ? " - Role: ". $form['USR_ROLE'] : "";
+            /*----------------------------------********---------------------------------*/
+            $costByHour = $form['USR_COST_BY_HOUR'] ? $form['USR_COST_BY_HOUR'] : "";
+            $unit = $form['USR_UNIT_COST'] ? $form['USR_UNIT_COST'] : "";
+            /*----------------------------------********---------------------------------*/
 
             if ($form['USR_UID'] == '') {
                 $criteria = new Criteria();
@@ -182,6 +186,7 @@ switch ($_POST['action']) {
                 $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
                 $aData['USR_BIRTHDAY'] = date('Y-m-d');
                 $aData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];
+
                 //fixing bug in inactive user when the admin create a new user.
                 $statusWF = $form['USR_STATUS'];
                 $aData['USR_STATUS'] = $form['USR_STATUS'] ;//== 'ACTIVE' ? 1 : 0;
@@ -202,6 +207,10 @@ switch ($_POST['action']) {
                 $aData['USR_POSITION'] = $form['USR_POSITION'];
                 //        $aData['USR_RESUME']       = $form['USR_RESUME'];
                 $aData['USR_ROLE'] = $form['USR_ROLE'];
+                /*----------------------------------********---------------------------------*/
+                $aData['USR_COST_BY_HOUR'] = $form['USR_COST_BY_HOUR'];
+                $aData['USR_UNIT_COST'] = $form['USR_UNIT_COST'];
+                /*----------------------------------********---------------------------------*/
                 $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
 
                 require_once 'classes/model/Users.php';
@@ -373,7 +382,14 @@ switch ($_POST['action']) {
                 if (isset($form['USR_ROLE'])) {
                     $aData['USR_ROLE'] = $form['USR_ROLE'];
                 }
-
+                /*----------------------------------********---------------------------------*/
+                if (isset($form['USR_COST_BY_HOUR'])) {
+                    $aData['USR_COST_BY_HOUR'] = $form['USR_COST_BY_HOUR'];
+                }
+                if (isset($form['USR_UNIT_COST'])) {
+                    $aData['USR_UNIT_COST'] = $form['USR_UNIT_COST'];
+                }
+                /*----------------------------------********---------------------------------*/
                 if (isset($form['USR_REPLACED_BY'])) {
                     $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
                 }
