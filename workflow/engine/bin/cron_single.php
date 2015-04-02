@@ -352,6 +352,9 @@ Bootstrap::registerClass('wsResponse',          PATH_HOME . "engine/classes/clas
 
 Bootstrap::registerClass("PMLicensedFeatures",  PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.licensedFeatures.php");
 Bootstrap::registerClass("AddonsManagerPeer",   PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "AddonsManagerPeer.php");
+/*----------------------------------********---------------------------------*/
+Bootstrap::registerClass('dashboards',   PATH_HOME . "engine/classes/class.dashboards.php");
+/*----------------------------------********---------------------------------*/
 
 $arrayClass = array("EmailServer", "ListInbox", "ListParticipatedHistory");
 
@@ -365,14 +368,33 @@ foreach ($arrayClass as $value) {
 G::LoadClass("serverConfiguration");
 G::LoadClass("dates"); //Load Criteria
 
+/*----------------------------------********---------------------------------*/
+global $dateInit;
+global $dateFinish;
+/*----------------------------------********---------------------------------*/
+
 if (!defined('SYS_SYS')) {
-    $sObject = $argv[1];
-    $sNow    = $argv[2];
+    $sObject    = $argv[1];
+    $sNow       = $argv[2];
     $dateSystem = $argv[3];
-    $sFilter = '';
+    /*----------------------------------********---------------------------------*/
+    $dateInit   = null;
+    $dateFinish = null;
+    /*----------------------------------********---------------------------------*/
+    $sFilter    = '';
 
     for ($i = 4; $i <= count($argv) - 1; $i++) {
-        $sFilter .= ' ' . $argv[$i];
+        /*----------------------------------********---------------------------------*/
+    	if (strpos($argv[$i], "+init-date") !== false) {
+            $dateInit = substr($argv[$i],10);
+        } else if (strpos($argv[$i], "+finish-date") !== false) {
+            $dateFinish = substr($argv[$i], 12);
+        } else {
+        /*----------------------------------********---------------------------------*/
+            $sFilter .= ' ' . $argv[$i];
+        /*----------------------------------********---------------------------------*/
+        }
+        /*----------------------------------********---------------------------------*/
     }
 
     $oDirectory = dir(PATH_DB);
@@ -470,7 +492,7 @@ if (!defined('SYS_SYS')) {
             } catch (Exception $e) {
                 echo $e->getMessage();
 
-                eprintln("Probelm in workspace: " . $sObject . " it was omitted.", "red");
+                eprintln("Problem in workspace: " . $sObject . " it was omitted.", "red");
             }
 
             eprintln();
@@ -502,11 +524,18 @@ function processWorkspace()
         resendEmails();
         unpauseApplications();
         calculateDuration();
+        /*----------------------------------********---------------------------------*/
+        calculateAppDuration();
+        /*----------------------------------********---------------------------------*/
         executeEvents($sLastExecution);
         executeScheduledCases();
         executeUpdateAppTitle();
         executeCaseSelfService();
         executePlugins();
+        /*----------------------------------********---------------------------------*/
+        fillReportByUser();
+        fillReportByProcess();
+        /*----------------------------------********---------------------------------*/
     } catch (Exception $oError) {
         saveLog("main", "error", "Error processing workspace : " . $oError->getMessage() . "\n");
     }
@@ -695,6 +724,31 @@ function calculateDuration()
         saveLog('calculateDuration', 'error', 'Error Calculating Duration: ' . $oError->getMessage());
     }
 }
+
+/*----------------------------------********---------------------------------*/
+function calculateAppDuration()
+{
+	global $sFilter;
+
+	if ($sFilter != '' && strpos($sFilter, 'calculateapp') === false) {
+		return false;
+	}
+
+	setExecutionMessage("Calculating Duration by Application");
+
+	try {
+		$oApplication = new Application();
+		$oApplication->calculateAppDuration(1);
+
+		setExecutionResultMessage('DONE');
+		saveLog('calculateDurationByApp', 'action', 'Calculating Duration by Application');
+	} catch (Exception $oError) {
+		setExecutionResultMessage('WITH ERRORS', 'error');
+		eprintln("  '-".$oError->getMessage(), 'red');
+		saveLog('calculateDurationByApp', 'error', 'Error Calculating Duration: ' . $oError->getMessage());
+	}
+}
+/*----------------------------------********---------------------------------*/
 
 function executeEvents($sLastExecution, $sNow=null)
 {
@@ -1037,4 +1091,67 @@ function setExecutionResultMessage($m, $t='')
 
     eprintln("[$m]", $c);
 }
+
+/*----------------------------------********---------------------------------*/
+function fillReportByUser ()
+{
+	try {
+		global $sFilter;
+		global $dateInit;
+		global $dateFinish;
+
+		if (strpos($sFilter, 'report_by_user') === false) {
+			return false;
+		}
+		if ($dateInit == null) {
+			eprintln("You must enter the starting date.", "red");
+			eprintln('Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"', "red");
+			return false;
+		}
+
+		$dateFinish = ($dateFinish != null) ? $dateFinish : date("Y-m-d H:i:s");
+
+		$appcv = new AppCacheView();
+		$appcv->setPathToAppCacheFiles( PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP );
+		setExecutionMessage("Calculating data to fill the 'User Reporting'...");
+		$appcv->fillReportByUser($dateInit, $dateFinish);
+		setExecutionResultMessage("DONE");
+	} catch (Exception $e) {
+		setExecutionResultMessage("WITH ERRORS", "error");
+		eprintln("  '-" . $e->getMessage(), "red");
+		saveLog("fillReportByUser", "error", "Error in fill report by user: " . $e->getMessage());
+	}
+}
+
+function fillReportByProcess ()
+{
+	try {
+		global $sFilter;
+		global $dateInit;
+		global $dateFinish;
+
+		if (strpos($sFilter, 'report_by_process') === false) {
+			return false;
+		}
+
+		if ($dateInit == null) {
+			eprintln("You must enter the starting date.", "red");
+			eprintln('Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"', "red");
+			return false;
+		}
+
+		$dateFinish = ($dateFinish != null) ? $dateFinish : date("Y-m-d H:i:s");
+		$appcv = new AppCacheView();
+		$appcv->setPathToAppCacheFiles( PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP );
+
+		setExecutionMessage("Calculating data to fill the 'Process Reporting'...");
+		$appcv->fillReportByProcess($dateInit, $dateFinish);
+		setExecutionResultMessage("DONE");
+	} catch (Exception $e) {
+		setExecutionResultMessage("WITH ERRORS", "error");
+		eprintln("  '-" . $e->getMessage(), "red");
+		saveLog("fillReportByProcess", "error", "Error in fill report by process: " . $e->getMessage());
+	}
+}
+/*----------------------------------********---------------------------------*/
 

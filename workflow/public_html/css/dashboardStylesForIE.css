@@ -1,0 +1,18 @@
+_:-ms-lang(x), .ie-progress-dark-base {
+					top:-105px;
+					zoom: 1;
+					position:relative;
+					z-index: -10;
+				}
+
+
+_:-ms-lang(x), .ie-panel-content {
+					height:150px !important;
+				}
+
+
+_:-ms-lang(x), .ie-panel-footer {
+					margin-top:-105px
+				}
+ 
+

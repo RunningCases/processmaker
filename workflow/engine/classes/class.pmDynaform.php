@@ -17,7 +17,7 @@ class pmDynaform
     public $lang = null;
     public $langs = null;
 
-    public function __construct($fields)
+    public function __construct($fields = array())
     {
         $this->fields = $fields;
         $this->getDynaform();
@@ -129,7 +129,7 @@ class pmDynaform
                         while ($rs->next()) {
                             $row = $rs->getRow();
                             $option = array(
-                                "label" => $row[1],
+                                "label" => isset($row[1]) ? $row[1] : $row[0],
                                 "value" => $row[0]
                             );
                             array_push($json->options, $option);
@@ -368,6 +368,107 @@ class pmDynaform
         exit();
     }
 
+    public function synchronizeVariable($processUid, $newVariable, $oldVariable)
+    {
+        $criteria = new Criteria("workflow");
+
+        $criteria->addSelectColumn(DynaformPeer::DYN_UID);
+        $criteria->addSelectColumn(DynaformPeer::DYN_CONTENT);
+
+        $criteria->add(DynaformPeer::PRO_UID, $processUid, Criteria::EQUAL);
+
+        $rsCriteria = DynaformPeer::doSelectRS($criteria);
+
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+        while ($rsCriteria->next()) {
+            $aRow = $rsCriteria->getRow();
+            $json = G::json_decode($aRow['DYN_CONTENT']);
+            $this->jsons($json, $newVariable, $oldVariable);
+            $json2 = G::json_encode($json);
+            //update dynaform
+            if ($json2 !== $aRow['DYN_CONTENT']) {
+                $con = Propel::getConnection(DynaformPeer::DATABASE_NAME);
+                $con->begin();
+                $oPro = DynaformPeer::retrieveByPk($aRow["DYN_UID"]);
+                $oPro->setDynContent($json2);
+                $oPro->save();
+                $con->commit();
+            }
+        }
+    }
+
+    private function jsons(&$json, $newVariable, $oldVariable)
+    {
+        foreach ($json as $key => $value) {
+            $sw1 = is_array($value);
+            $sw2 = is_object($value);
+            if ($sw1 || $sw2) {
+                $this->jsons($value, $newVariable, $oldVariable);
+            }
+            if (!$sw1 && !$sw2) {
+                if ($key === "variable" && $json->variable === $oldVariable["VAR_NAME"]) {
+                    $json->variable = $newVariable["VAR_NAME"];
+                    if (isset($json->dataType))
+                        $json->dataType = $newVariable["VAR_FIELD_TYPE"];
+                    if (isset($json->name))
+                        $json->name = $newVariable["VAR_NAME"];
+                    if (isset($json->dbConnection) && $json->dbConnection === $oldVariable["VAR_DBCONNECTION"])
+                        $json->dbConnection = $newVariable["VAR_DBCONNECTION"];
+
+                    if (isset($json->sql) && $json->sql === $oldVariable["VAR_SQL"])
+                        $json->sql = $newVariable["VAR_SQL"];
+
+                    if (isset($json->options) && G::json_encode($json->options) === $oldVariable["VAR_ACCEPTED_VALUES"]) {
+                        $json->options = G::json_decode($newVariable["VAR_ACCEPTED_VALUES"]);
+                    }
+                }
+            }
+        }
+    }
+
+    public function isUsed($processUid, $variable)
+    {
+        $criteria = new Criteria("workflow");
+
+        $criteria->addSelectColumn(DynaformPeer::DYN_UID);
+        $criteria->addSelectColumn(DynaformPeer::DYN_CONTENT);
+
+        $criteria->add(DynaformPeer::PRO_UID, $processUid, Criteria::EQUAL);
+
+        $rsCriteria = DynaformPeer::doSelectRS($criteria);
+
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+        while ($rsCriteria->next()) {
+            $aRow = $rsCriteria->getRow();
+            $json = G::json_decode($aRow['DYN_CONTENT']);
+            if ($this->jsoni($json, $variable)) {
+                return $aRow['DYN_UID'];
+            }
+        }
+        return false;
+    }
+
+    private function jsoni(&$json, $variable)
+    {
+        foreach ($json as $key => $value) {
+            $sw1 = is_array($value);
+            $sw2 = is_object($value);
+            if ($sw1 || $sw2) {
+                if ($this->jsoni($value, $variable)) {
+                    return true;
+                }
+            }
+            if (!$sw1 && !$sw2) {
+                if ($key === "variable" && $json->variable === $variable["var_name"]) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private function clientToken()
     {
         $client = $this->getClientCredentials();
@@ -436,4 +537,3 @@ class pmDynaform
     }
 
 }
-

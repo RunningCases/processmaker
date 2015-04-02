@@ -1539,24 +1539,23 @@ Ext.onReady(function(){
 	                  TabPanel.setActiveTab(tabId);
 	                }
 	                else {
-                    if(!isBrowserIE()){
-                      TabPanel.add({
-                          id: tabId,
-                          title: menuSelectedTitle[name],
-                          frameConfig: {name: name + 'Frame', id: name + 'Frame'},
-                          defaultSrc: uri,
-                          loadMask: {msg: _('ID_LOADING_GRID') + '...'},
-                          autoWidth: true,
-                          closable: true,
-                          autoScroll: true,
-                          bodyStyle: {height: (PMExt.getBrowser().screen.height - 60) + 'px', overflow: 'auto'}
-                      }).show();
-
-                      TabPanel.doLayout();
-                    }else{
-                      var windContainer = window.open(uri,"winContainer");
-                    }
-	              }
+	                  if(name == "processMap" && isBrowserIE()){
+	                      var windContainer = window.open(uri,"winContainer");
+	                  } else {
+	                      TabPanel.add({
+	                         id: tabId,
+	                         title: menuSelectedTitle[name],
+	                         frameConfig:{name: name + 'Frame', id: name + 'Frame'},
+	                         defaultSrc : uri,
+	                         loadMask:{msg:_('ID_LOADING_GRID')+'...'},
+	                         autoWidth: true,
+	                         closable:true,
+	                         autoScroll: true,
+	                         bodyStyle:{height: (PMExt.getBrowser().screen.height-60) + 'px', overflow:'auto'}
+	                      }).show();
+	                      TabPanel.doLayout();
+	                  }
+	                }
 	            }
 	          },
 	          failure: function ( result, request) {

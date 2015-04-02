@@ -2234,7 +2234,7 @@ function setCaseTrackerCode ($sApplicationUID, $sCode, $sPIN = '')
         $aFields['APP_PROC_CODE'] = $sCode;
         if ($sPIN != '') {
             $aFields['APP_DATA']['PIN'] = $sPIN;
-            $aFields['APP_PIN'] = md5( $sPIN );
+            $aFields['APP_PIN'] = G::encryptOld( $sPIN );
         }
         $oCase->updateCase( $sApplicationUID, $aFields );
         if (isset($_SESSION['APPLICATION'])) {

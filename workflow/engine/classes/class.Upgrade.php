@@ -104,11 +104,11 @@ class Upgrade
             $archiveMD5 = $checksum;
             if (strcasecmp($archiveMD5, $installedMD5) != 0) {
                 $changedFiles[] = $filename;
-                if (!is_dir(dirname("$backupDir/$filename"))) {
-                    mkdir(dirname("$backupDir/$filename"), 0777, true);
+                if (!is_dir(dirname($backupDir.'/'.$filename))) {
+                    mkdir(dirname($backupDir.'/'.$filename), 0777, true);
                 }
                 if (file_exists($installedFile) && is_file($installedFile)) {
-                    copy($installedFile, "$backupDir/$filename");
+                    copy($installedFile, $backupDir.'/'.$filename);
                 }
                 if (!is_dir(dirname($installedFile))) {
                     mkdir(dirname($installedFile), 0777, true);

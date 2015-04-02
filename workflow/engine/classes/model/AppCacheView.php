@@ -1792,5 +1792,68 @@ class AppCacheView extends BaseAppCacheView
         $criteria->addSelectColumn(AppCacheViewPeer::APP_OVERDUE_PERCENTAGE);
         return $criteria;
     }
+
+    /*----------------------------------********---------------------------------*/
+    function fillReportByUser ()
+    {
+    	try {
+    		global $sFilter;
+    		global $dateInit;
+    		global $dateFinish;
+    
+    		if (strpos($sFilter, 'report_by_user') === false) {
+    			return false;
+    		}
+    		if ($dateInit == null) {
+    			eprintln("You must enter the starting date.", "red");
+    			eprintln('Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"', "red");
+    			return false;
+    		}
+    
+    		$dateFinish = ($dateFinish != null) ? $dateFinish : date("Y-m-d H:i:s");
+    
+    		$appcv = new AppCacheView();
+    		$appcv->setPathToAppCacheFiles( PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP );
+    		setExecutionMessage("Calculating data to fill the 'User Reporting'...");
+    		$appcv->fillReportByUser($dateInit, $dateFinish);
+    		setExecutionResultMessage("DONE");
+    	} catch (Exception $e) {
+    		setExecutionResultMessage("WITH ERRORS", "error");
+    		eprintln("  '-" . $e->getMessage(), "red");
+    		saveLog("fillReportByUser", "error", "Error in fill report by user: " . $e->getMessage());
+    	}
+    }
+    
+    function fillReportByProcess ()
+    {
+    	try {
+    		global $sFilter;
+    		global $dateInit;
+    		global $dateFinish;
+    
+    		if (strpos($sFilter, 'report_by_process') === false) {
+    			return false;
+    		}
+    
+    		if ($dateInit == null) {
+    			eprintln("You must enter the starting date.", "red");
+    			eprintln('Example: +init-date"YYYY-MM-DD HH:MM:SS" +finish-date"YYYY-MM-DD HH:MM:SS"', "red");
+    			return false;
+    		}
+    
+    		$dateFinish = ($dateFinish != null) ? $dateFinish : date("Y-m-d H:i:s");
+    		$appcv = new AppCacheView();
+    		$appcv->setPathToAppCacheFiles( PATH_METHODS . 'setup' . PATH_SEP . 'setupSchemas' . PATH_SEP );
+    
+    		setExecutionMessage("Calculating data to fill the 'Process Reporting'...");
+    		$appcv->fillReportByProcess($dateInit, $dateFinish);
+    		setExecutionResultMessage("DONE");
+    	} catch (Exception $e) {
+    		setExecutionResultMessage("WITH ERRORS", "error");
+    		eprintln("  '-" . $e->getMessage(), "red");
+    		saveLog("fillReportByProcess", "error", "Error in fill report by process: " . $e->getMessage());
+    	}
+    }
+    /*----------------------------------********---------------------------------*/
 }
 

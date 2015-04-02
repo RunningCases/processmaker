@@ -572,5 +572,111 @@ class Application extends BaseApplication
 
         return $this->getAppUid();
     }
+
+    /*----------------------------------********---------------------------------*/
+    public function calculateAppDuration ($cron = 0)
+    {
+    	try {
+    		if ($cron == 1) {
+    			$arrayCron = unserialize( trim( @file_get_contents( PATH_DATA . "cron" ) ) );
+    			$arrayCron["processcTimeStart"] = time();
+    			@file_put_contents( PATH_DATA . "cron", serialize( $arrayCron ) );
+    		}
+
+    		$calendar = new calendar();
+    
+    		$c = new Criteria( 'workflow' );
+    		$c->clearSelectColumns();
+    		$c->addSelectColumn( ApplicationPeer::APP_UID );
+    		$c->addSelectColumn( ApplicationPeer::APP_NUMBER );
+    		$c->addSelectColumn( ApplicationPeer::APP_STATUS );
+    		$c->addSelectColumn( ApplicationPeer::PRO_UID );
+    		$c->addSelectColumn( ApplicationPeer::APP_INIT_USER );
+    		$c->addSelectColumn( ApplicationPeer::APP_CUR_USER );
+    		$c->addSelectColumn( ApplicationPeer::APP_CREATE_DATE );
+    		$c->addSelectColumn( ApplicationPeer::APP_INIT_DATE );
+    		$c->addSelectColumn( ApplicationPeer::APP_FINISH_DATE );
+    		$c->addSelectColumn( ApplicationPeer::APP_UPDATE_DATE );
+    		$c->addSelectColumn( ApplicationPeer::APP_DURATION );
+    		$c->addSelectColumn( ApplicationPeer::APP_DELAY_DURATION );
+    		$c->addSelectColumn( ProcessPeer::PRO_TIME );
+    		$c->addSelectColumn( ProcessPeer::PRO_TIMEUNIT );
+
+    		$c->addJoin( ApplicationPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN );
+
+    		$rs = ApplicationPeer::doSelectRS( $c );
+    		$rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+    		$rs->next();
+    		$row = $rs->getRow();
+    		$i = 0;
+    
+    		$now = strtotime( 'now' );
+    		while (is_array( $row )) {
+    			$appNumber = $row['APP_NUMBER'];
+    			$appStatus = $row['APP_STATUS'];
+    			$appInitUser = $row['APP_INIT_USER'];
+    			$appCurUser = $row['APP_CUR_USER'];
+    			$appCreateDate = $row['APP_CREATE_DATE'];
+    			$appInitDate = $row['APP_INIT_DATE'];
+    			$appFinishDate = $row['APP_FINISH_DATE'];
+    			$appUpdateDate = $row['APP_UPDATE_DATE'];
+    			$appDuration = $row['APP_DURATION'];
+    			$proTime = $row['PRO_TIME'];
+    			$proTimeUnit = $row['PRO_TIMEUNIT'];
+    			$proUid = $row['PRO_UID'];
+
+    			//get the object,
+    			$oApp = ApplicationPeer::retrieveByPk( $row['APP_UID'] );
+    
+    			//getting the calendar
+    			$calendar->getCalendar(null, $proUid);
+    			$calData = $calendar->getCalendarData();
+
+    			/*if(G::toUpper($proTimeUnit) != 'DAYS'){ //if it is not in days must be in mins.
+    				$proTime = $proTime / (24 * 60 * 60); //converting to Days
+    			}*/
+
+    			$proDueDate = $calendar->dashCalculateDate($row['APP_INIT_DATE'], $proTime, $proTimeUnit, $calData); //date when the process has to finish
+
+    			if($appFinishDate == null){//When the process didnt finish yet.
+    				//Duration
+    				$appDuration = $calendar->dashCalculateDurationWithCalendar($appInitDate, date("Y-m-d H:i:s"), $calData );
+    				
+    				
+    				$appDuration = $appDuration / (24 * 60 * 60); //Saving the proDuration in days. The calculateDurationWithCalendar func returns segs.
+    				$oApp->setAppDuration( $appDuration );
+
+    				//Delay Duration
+    				$delayDuration = $calendar->dashCalculateDurationWithCalendar( $proDueDate, date("Y-m-d H:i:s"), $calData );//it returns in mins
+    				$delayDuration = $delayDuration / (24 * 60 * 60); //Days
+     				$oApp->setAppDelayDuration( $delayDuration );
+    			} else {
+    				//Duration
+    				$appDuration = $calendar->dashCalculateDurationWithCalendar($appInitDate, $appFinishDate, $calData );
+    				$appDuration = $appDuration / (24 * 60 * 60); //Saving the proDuration in days. The calculateDurationWithCalendar func returns mins.
+    				$oApp->setAppDuration( $appDuration );
+    				
+    				//Delay Duration
+    				$delayDuration = $calendar->dashCalculateDurationWithCalendar( $proDueDate, $appFinishDate, $calData );
+    				$delayDuration = $delayDuration / (24 * 60 * 60); //Days
+    				$oApp->setAppDelayDuration( $delayDuration );
+    			}
+
+    			//and finally save the record
+    			$RES = $oApp->save();
+    			$rs->next();
+    			$row = $rs->getRow();
+    		}
+    
+    		if ($cron == 1) {
+    			$arrayCron = unserialize( trim( @file_get_contents( PATH_DATA . "cron" ) ) );
+    			$arrayCron["processcTimeStart"] = time();
+    			@file_put_contents( PATH_DATA . "cron", serialize( $arrayCron ) );
+    		}
+    	} catch (Exception $oError) {
+    		error_log( $oError->getMessage() );
+    	}
+    } 
+    /*----------------------------------********---------------------------------*/
 }
 
