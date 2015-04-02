@@ -506,7 +506,7 @@ Ext.onReady( function() {
         enableTabScroll : true,
         //anchor          : '98%',
         width           : '100%',
-        height          : 300,
+        height          : 315,
         defaults        : {
             autoScroll  :true
         },
@@ -663,7 +663,7 @@ Ext.onReady( function() {
             {
                 text    : _('ID_CANCEL'),
                 id      : 'cancel',
-                handler : function(){
+                handler : function() {
                     window.location = 'dashboardList';
                 }
             }
@@ -726,13 +726,14 @@ var addTab = function (flag) {
         return false;
     }
     var tab = {
-            //title   : _('ID_INDICATOR') + (++indexTab),
             title   : _('ID_INDICATOR')+ ' '+ (++indexTab),
             id      : indexTab,
             iconCls : 'tabs',
+            width       : "100%",
             items   : [
                 new Ext.Panel({
-                    height      : 260,
+                    height      : 275,
+                    width       : "100%",
                     border      : true,
                     bodyStyle   : 'padding:10px',
                     items : [
@@ -792,7 +793,11 @@ var addTab = function (flag) {
                                 }),
                                 new Ext.form.FieldSet({
                                     title : _('ID_INDICATOR_GOAL'),
-                                    bodyStyle: 'paddingLeft: 143px',
+                                    width : "90%",
+                                    id  : 'fieldSet_'+ indexTab,
+                                    bodyStyle: 'paddingLeft: 75px;',
+                                    paddingLeft: "30px",
+                                    marginLeft : "60px",
                                     layout : 'hbox',
                                     items       : [
                                         new Ext.form.ComboBox({
@@ -826,7 +831,18 @@ var addTab = function (flag) {
                                             width       : 80,
                                             allowBlank  : false
                                         }
-                                    ]
+                                    ],
+                                    listeners:
+                                    {
+                                        render: function()
+                                        {
+                                            var index = tabPanel.getActiveTab().id;
+                                            var myfieldset = document.getElementById('fieldSet_'+index);
+                                            myfieldset.style.marginLeft = "70px";
+                                            myfieldset.style.marginRight = "70px";
+                                        }
+                                    }
+
                                 }),
                                 new Ext.form.ComboBox({
                                     anchor          : '85%',
@@ -1065,6 +1081,11 @@ var saveAllIndicators = function (DAS_UID) {
         }
         tabPanel.getItem(tabActivate[tab]).show();
         var fieldsTab = tabPanel.getItem(tabActivate[tab]).items.items[0].items.items[0].items.items;
+        var goal = fieldsTab[3];
+        delete fieldsTab[3];
+        fieldsTab.push(goal.items.items[0]);
+        fieldsTab.push(goal.items.items[1]);
+
 
         data = [];
         data['DAS_UID'] = DAS_UID;
@@ -1076,54 +1097,38 @@ var saveAllIndicators = function (DAS_UID) {
             }
 
             id = node.id;
-            value = node.getValue();
-            switch (index) {
-                case "0":
-                    data['DAS_IND_UID'] = value.trim();
-                    break;
-                case "1":
-                    if (value.trim() == '') {
-                        PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TITLE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
-                        node.focus(true,10);
-                        return false;
-                    }
-                    data['DAS_IND_TITLE'] = value.trim();
-                    break;
-                case "2":
-                    if (value.trim() == '') {
-                        PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TYPE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
-                        node.focus(true,10);
-                        return false;
-                    }
-                    data['DAS_IND_TYPE'] = value.trim();
-                    break;
-                case "3":
-                    data['DAS_IND_GOAL'] = value.trim();
-                    break;
-                case "4":
-                    data['DAS_IND_DIRECTION'] = value;
-                    break;
-                case "5":
-                    if (value.trim() == '') {
-                        PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_PROCESS_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
-                        node.focus(true,10);
-                        return false;
-                    }
-                    data['DAS_UID_PROCESS'] = value;
-                    break;
-                case "6":
-                    data['DAS_IND_FIRST_FIGURE'] = value;
-                    break;
-                case "7":
-                    data['DAS_IND_FIRST_FREQUENCY'] = value;
-                    break;
-                case "8":
-                    data['DAS_IND_SECOND_FIGURE'] = value;
-                    break;
-                case "9":
-                    data['DAS_IND_SECOND_FREQUENCY'] = value;
-                    break;
+            id = id.split('_');
+            field = '';
+            for (var part = 0; part<id.length-1; part++) {
+                if (part == 0) {
+                    field = id[part];
+                } else {
+                    field = field+'_'+id[part];
+                }
             }
+            value = node.getValue();
+
+
+            if (field == 'IND_TITLE' && value.trim() == '') {
+                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TITLE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
+                node.focus(true,10);
+                return false;
+            } else if (field == 'IND_TYPE' && value.trim() == '') {
+                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TYPE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
+                node.focus(true,10);
+                return false;
+            } else if (field == 'IND_PROCESS' && value.trim() == '') {
+                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_PROCESS_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
+                node.focus(true,10);
+                return false;
+            }
+
+            field = field == 'IND_TITLE' ? 'DAS_IND_TITLE' : field;
+            field = field == 'IND_TYPE' ? 'DAS_IND_TYPE' : field;
+            field = field == 'IND_PROCESS' ? 'DAS_UID_PROCESS' : field;
+            field = field == 'IND_GOAL' ? 'DAS_IND_GOAL' : field;
+
+            data[field] = value.trim();
         }
         saveDashboardIndicator(data);
     }
