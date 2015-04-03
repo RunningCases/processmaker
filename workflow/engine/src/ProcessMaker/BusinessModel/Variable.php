@@ -494,30 +494,12 @@ class Variable
             $process->throwExceptionIfNotExistsProcess($processUid, strtolower("PRJ_UID"));
 
             //Set data
-            $variableDbConnectionUid = "";
-            $variableSql = "";
-
-            $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DBCONNECTION);
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_SQL);
-            $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid, \Criteria::EQUAL);
-            $criteria->add(\ProcessVariablesPeer::VAR_NAME, $variableName, \Criteria::EQUAL);
-
-            $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            if ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
-
-                $variableDbConnectionUid = $row["VAR_DBCONNECTION"];
-                $variableSql = strtoupper($row["VAR_SQL"]);
-            } else {
-                throw new \Exception(G::LoadTranslation("ID_PROCESS_VARIABLE_DOES_NOT_EXIST", array("VAR_NAME", $variableName)));
-            }
-
-            //Verify data
-            $this->throwExceptionIfSomeRequiredVariableSqlIsMissingInVariables($variableName, $variableSql, $arrayVariable);
-
+            \G::LoadClass('pmDynaform');
+            $pmDynaform = new \pmDynaform();
+            $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $arrayVariable["field_id"]);
+            $variableDbConnectionUid = $field !== null ? $field->dbConnection : "";
+            $variableSql = $field !== null ? $field->sql : "";
+            
             //Get data
             $_SESSION["PROCESS"] = $processUid;
 
@@ -533,7 +515,7 @@ class Variable
 
                 $arrayRecord[] = array(
                     strtolower("VALUE") => $row[0],
-                    strtolower("TEXT")  => $row[1]
+                    strtolower("TEXT") => isset($row[1]) ? $row[1] : $row[0]
                 );
             }
 
