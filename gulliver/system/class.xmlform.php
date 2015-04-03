@@ -4819,16 +4819,37 @@ class XmlForm_Field_Date extends XmlForm_Field_SimpleText
             }
         }
 
-        $withHours = (strpos($mask, '%H') !== false || strpos($mask, '%M') !== false || strpos($mask, '%S') !== false);
+        $withHours = (strpos($mask, '%H') !== false || strpos($mask, '%I') !== false || strpos($mask, '%k') !== false || strpos($mask, '%l') !== false || strpos($mask, '%M') !== false || strpos($mask, '%S') !== false);
 
         $tmp = str_replace( "%", "", $mask );
         return $this->date_create_from_format($tmp, $value, $withHours);
     }
 
+    /*
+      //Year
+      %Y year with the century
+      %y year without the century (range 00 to 99)
+      //Month
+      %m month, range 01 to 12
+      %B full month name
+      %b abbreviated month name
+      //Day
+      %d the day of the month (range 01 to 31)
+      %e the day of the month (range 1 to 31)
+      //Hour
+      %H hour, range 00 to 23 (24h format)
+      %I hour, range 01 to 12 (12h format)
+      %k hour, range 0 to 23 (24h format)
+      %l hour, range 1 to 12 (12h format)
+      //Min
+      %M minute, range 00 to 59
+      //Sec
+      %S seconds, range 00 to 59
+    */
     function date_create_from_format( $dformat, $dvalue, $withHours = false )
     {
         $schedule = $dvalue;
-        $schedule_format = str_replace(array('Y','m','d','H','M','S'),array('%Y','%m','%d','%H','%M','%S') ,$dformat);
+        $schedule_format = str_replace(array('Y','y','m','B','b','d','e','H','I','k','l','M','S'),array('%Y','%y','%m','%B','%b','%d','%e','%H','%I','%k','%l','%M','%S') ,$dformat);
         $ugly = strptime($schedule, $schedule_format);
         $ymd = sprintf(
             '%04d-%02d-%02d %02d:%02d:%02d',
