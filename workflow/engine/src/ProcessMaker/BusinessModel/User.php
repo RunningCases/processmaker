@@ -1060,7 +1060,7 @@ class User
                     }
                 }
             }
-            $oCriteria->add(\UsersPeer::USR_STATUS, 'CLOSED', \Criteria::ALT_NOT_EQUAL);
+            $oCriteria->add(\UsersPeer::USR_STATUS, "ACTIVE", \Criteria::EQUAL);
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             while ($oDataset->next()) {
