@@ -125,14 +125,18 @@ class pmDynaform
                     if ($json->dbConnection !== "" && $json->dbConnection !== "none" && $json->sql !== "") {
                         $cnn = Propel::getConnection($json->dbConnection);
                         $stmt = $cnn->createStatement();
-                        $rs = $stmt->executeQuery(strtoupper($json->sql), \ResultSet::FETCHMODE_NUM);
-                        while ($rs->next()) {
-                            $row = $rs->getRow();
-                            $option = array(
-                                "label" => isset($row[1]) ? $row[1] : $row[0],
-                                "value" => $row[0]
-                            );
-                            array_push($json->options, $option);
+                        try {
+                            $rs = $stmt->executeQuery($json->sql, \ResultSet::FETCHMODE_NUM);
+                            while ($rs->next()) {
+                                $row = $rs->getRow();
+                                $option = array(
+                                    "label" => isset($row[1]) ? $row[1] : $row[0],
+                                    "value" => $row[0]
+                                );
+                                array_push($json->options, $option);
+                            }
+                        } catch (Exception $e) {
+                            
                         }
                     }
                     if (isset($json->options[0])) {
@@ -371,16 +375,11 @@ class pmDynaform
     public function synchronizeVariable($processUid, $newVariable, $oldVariable)
     {
         $criteria = new Criteria("workflow");
-
         $criteria->addSelectColumn(DynaformPeer::DYN_UID);
         $criteria->addSelectColumn(DynaformPeer::DYN_CONTENT);
-
         $criteria->add(DynaformPeer::PRO_UID, $processUid, Criteria::EQUAL);
-
         $rsCriteria = DynaformPeer::doSelectRS($criteria);
-
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
         while ($rsCriteria->next()) {
             $aRow = $rsCriteria->getRow();
             $json = G::json_decode($aRow['DYN_CONTENT']);
@@ -415,10 +414,8 @@ class pmDynaform
                         $json->name = $newVariable["VAR_NAME"];
                     if (isset($json->dbConnection) && $json->dbConnection === $oldVariable["VAR_DBCONNECTION"])
                         $json->dbConnection = $newVariable["VAR_DBCONNECTION"];
-
                     if (isset($json->sql) && $json->sql === $oldVariable["VAR_SQL"])
                         $json->sql = $newVariable["VAR_SQL"];
-
                     if (isset($json->options) && G::json_encode($json->options) === $oldVariable["VAR_ACCEPTED_VALUES"]) {
                         $json->options = G::json_decode($newVariable["VAR_ACCEPTED_VALUES"]);
                     }
@@ -430,16 +427,11 @@ class pmDynaform
     public function isUsed($processUid, $variable)
     {
         $criteria = new Criteria("workflow");
-
         $criteria->addSelectColumn(DynaformPeer::DYN_UID);
         $criteria->addSelectColumn(DynaformPeer::DYN_CONTENT);
-
         $criteria->add(DynaformPeer::PRO_UID, $processUid, Criteria::EQUAL);
-
         $rsCriteria = DynaformPeer::doSelectRS($criteria);
-
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
         while ($rsCriteria->next()) {
             $aRow = $rsCriteria->getRow();
             $json = G::json_decode($aRow['DYN_CONTENT']);
@@ -467,6 +459,210 @@ class pmDynaform
             }
         }
         return false;
+    }
+
+    public function searchField($dyn_uid, $field_id)
+    {
+        $a = new Criteria("workflow");
+        $a->addSelectColumn(DynaformPeer::DYN_CONTENT);
+        $a->add(DynaformPeer::DYN_UID, $dyn_uid, Criteria::EQUAL);
+        $ds = ProcessPeer::doSelectRS($a);
+        $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $ds->next();
+        $row = $ds->getRow();
+        $json = G::json_decode($row["DYN_CONTENT"]);
+        return $this->jsonsf($json, $field_id);
+    }
+
+    private function jsonsf(&$json, $id)
+    {
+        foreach ($json as $key => $value) {
+            $sw1 = is_array($value);
+            $sw2 = is_object($value);
+            if ($sw1 || $sw2) {
+                $val = $this->jsonsf($value, $id);
+                if ($val !== null)
+                    return $val;
+            }
+            if (!$sw1 && !$sw2) {
+                if ($key === "id" && $id === $value) {
+                    return $json;
+                }
+            }
+        }
+        return null;
+    }
+
+    public function downloadLanguage($dyn_uid, $lang)
+    {
+        if ($lang === "en") {
+            $a = new Criteria("workflow");
+            $a->addSelectColumn(DynaformPeer::DYN_CONTENT);
+            $a->add(DynaformPeer::DYN_UID, $dyn_uid, Criteria::EQUAL);
+            $ds = ProcessPeer::doSelectRS($a);
+            $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $ds->next();
+            $row = $ds->getRow();
+            if ($row["DYN_CONTENT"] !== null && $row["DYN_CONTENT"] !== "") {
+                $json = \G::json_decode($row["DYN_CONTENT"]);
+                $this->jsonl($json);
+            }
+            $string = "";
+            $string = $string . "msgid \"\"\n";
+            $string = $string . "msgstr \"\"\n";
+            $string = $string . "\"Project-Id-Version: PM 4.0.1\\n\"\n";
+            $string = $string . "\"POT-Creation-Date: \\n\"\n";
+            $string = $string . "\"PO-Revision-Date: 2010-12-02 11:44+0100 \\n\"\n";
+            $string = $string . "\"Last-Translator: Colosa<colosa@colosa.com>\\n\"\n";
+            $string = $string . "\"Language-Team: Colosa Developers Team <developers@colosa.com>\\n\"\n";
+            $string = $string . "\"MIME-Version: 1.0\\n\"\n";
+            $string = $string . "\"Content-Type: text/plain; charset=utf-8\\n\"\n";
+            $string = $string . "\"Content-Transfer_Encoding: 8bit\\n\"\n";
+            $string = $string . "\"X-Poedit-Language: English\\n\"\n";
+            $string = $string . "\"X-Poedit-Country: United States\\n\"\n";
+            $string = $string . "\"X-Poedit-SourceCharset: utf-8\\n\"\n";
+            $string = $string . "\"Content-Transfer-Encoding: 8bit\\n\"\n";
+            $string = $string . "\"File-Name: processmaker.en.po\\n\"\n\n";
+
+            $n = count($this->dyn_conten_labels);
+            for ($i = 0; $i < $n; $i++) {
+                $string = $string . "msgid \"" . $this->dyn_conten_labels[$i] . "\"\n";
+                $string = $string . "msgstr \"" . $this->dyn_conten_labels[$i] . "\"\n\n";
+            }
+            return array("labels" => $string, "lang" => $lang);
+        } else {
+            $a = new Criteria("workflow");
+            $a->addSelectColumn(DynaformPeer::DYN_LABEL);
+            $a->add(DynaformPeer::DYN_UID, $dyn_uid, Criteria::EQUAL);
+            $ds = ProcessPeer::doSelectRS($a);
+            $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $ds->next();
+            $row = $ds->getRow();
+            $data = G::json_decode($row["DYN_LABEL"]);
+            $string = "";
+            $string = $string . "msgid \"\"\n";
+            $string = $string . "msgstr \"\"\n";
+            foreach ($data->{$lang} as $key => $value) {
+                if (is_string($value)) {
+                    $string = $string . "\"" . $key . ": " . $value . "\\n\"\n";
+                }
+            }
+            $string = $string . "\n";
+            foreach ($data->{$lang}->Labels as $key => $value) {
+                $string = $string . "msgid \"" . $value->msgid . "\"\n";
+                $string = $string . "msgstr \"" . $value->msgstr . "\"\n\n";
+            }
+            return array("labels" => $string, "lang" => $lang);
+        }
+    }
+
+    public function uploadLanguage($dyn_uid)
+    {
+        if (!isset($_FILES["LANGUAGE"])) {
+            throw new Exception(G::LoadTranslation("ID_ERROR_UPLOADING_FILENAME"));
+        }
+        if (pathinfo($_FILES["LANGUAGE"]["name"], PATHINFO_EXTENSION) != "po") {
+            throw new Exception(G::LoadTranslation("ID_FILE_UPLOAD_INCORRECT_EXTENSION"));
+        }
+        $translation = array();
+        G::LoadSystem('i18n_po');
+        $i18n = new i18n_PO($_FILES["LANGUAGE"]["tmp_name"]);
+        $i18n->readInit();
+        while ($rowTranslation = $i18n->getTranslation()) {
+            array_push($translation, $rowTranslation);
+        }
+        $name = $_FILES["LANGUAGE"]["name"];
+        $name = explode(".", $name);
+        if (isset($name[1]) && isset($name[2]) && $name[1] . "." . $name[2] === "en.po") {
+            return;
+        }
+        $content = $i18n->getHeaders();
+        $content["File-Name"] = $_FILES["LANGUAGE"]["name"];
+        $content["Labels"] = $translation;
+
+        $con = Propel::getConnection(DynaformPeer::DATABASE_NAME);
+        $con->begin();
+        $oPro = DynaformPeer::retrieveByPk($dyn_uid);
+
+        $dyn_labels = new stdClass();
+        if ($oPro->getDynLabel() !== null && $oPro->getDynLabel() !== "") {
+            $dyn_labels = G::json_decode($oPro->getDynLabel());
+        }
+        $dyn_labels->$name[count($name) - 2] = $content;
+
+        $oPro->setDynLabel(G::json_encode($dyn_labels));
+        $oPro->save();
+        $con->commit();
+    }
+
+    public function listLanguage($dyn_uid)
+    {
+        $list = array();
+        $a = new Criteria("workflow");
+        $a->addSelectColumn(DynaformPeer::DYN_LABEL);
+        $a->add(DynaformPeer::DYN_UID, $dyn_uid, Criteria::EQUAL);
+        $ds = ProcessPeer::doSelectRS($a);
+        $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $ds->next();
+        $row = $ds->getRow();
+
+        if ($row["DYN_LABEL"] === null || $row["DYN_LABEL"] === "") {
+            return $list;
+        }
+
+        $dyn_label = \G::json_decode($row["DYN_LABEL"]);
+        foreach ($dyn_label as $key => $value) {
+            array_push($list, array(
+                "Lang" => $key,
+                "File-Name" => isset($value->{"File-Name"}) ? $value->{"File-Name"} : "",
+                "Project-Id-Version" => isset($value->{"Project-Id-Version"}) ? $value->{"Project-Id-Version"} : "",
+                "POT-Creation-Date" => isset($value->{"POT-Creation-Date"}) ? $value->{"POT-Creation-Date"} : "",
+                "PO-Revision-Date" => isset($value->{"PO-Revision-Date"}) ? $value->{"PO-Revision-Date"} : "",
+                "Last-Translator" => isset($value->{"Last-Translator"}) ? $value->{"Last-Translator"} : "",
+                "Language-Team" => isset($value->{"Language-Team"}) ? $value->{"Language-Team"} : "",
+                "MIME-Version" => isset($value->{"MIME-Version"}) ? $value->{"MIME-Version"} : "",
+                "Content-Type" => isset($value->{"Content-Type"}) ? $value->{"Content-Type"} : "",
+                "Content-Transfer_Encoding" => isset($value->{"Content-Transfer_Encoding"}) ? $value->{"Content-Transfer_Encoding"} : "",
+                "X-Poedit-Language" => isset($value->{"X-Poedit-Language"}) ? $value->{"X-Poedit-Language"} : "",
+                "X-Poedit-Country" => isset($value->{"X-Poedit-Country"}) ? $value->{"X-Poedit-Country"} : "",
+                "X-Poedit-SourceCharset" => isset($value->{"X-Poedit-SourceCharset"}) ? $value->{"X-Poedit-SourceCharset"} : "",
+                "Content-Transfer-Encoding" => isset($value->{"Content-Transfer-Encoding"}) ? $value->{"Content-Transfer-Encoding"} : ""
+            ));
+        }
+        return $list;
+    }
+
+    private $dyn_conten_labels = array();
+
+    private function jsonl(&$json)
+    {
+        foreach ($json as $key => $value) {
+            $sw1 = is_array($value);
+            $sw2 = is_object($value);
+            if ($sw1 || $sw2) {
+                $this->jsonl($value);
+            }
+            if (!$sw1 && !$sw2) {
+                if ($key === "label") {
+                    $json->label;
+                    array_push($this->dyn_conten_labels, $json->label);
+                }
+            }
+        }
+    }
+
+    public function deleteLanguage($dyn_uid, $lang)
+    {
+        $con = Propel::getConnection(DynaformPeer::DATABASE_NAME);
+        $con->begin();
+        $oPro = DynaformPeer::retrieveByPk($dyn_uid);
+
+        $dyn_labels = \G::json_decode($oPro->getDynLabel());
+        unset($dyn_labels->{$lang});
+
+        $oPro->setDynLabel(G::json_encode($dyn_labels));
+        $oPro->save();
+        $con->commit();
     }
 
     private function clientToken()
