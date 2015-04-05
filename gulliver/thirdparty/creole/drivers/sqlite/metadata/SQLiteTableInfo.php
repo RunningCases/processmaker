@@ -103,13 +103,23 @@ class SQLiteTableInfo extends TableInfo {
         include_once 'creole/metadata/IndexInfo.php';        
 
         // columns have to be loaded first
-        if (!$this->colsLoaded) $this->initColumns();        
+        if (!$this->colsLoaded) $this->initColumns();      
+        
+        $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+        $docuroot = explode( '/', $realdocuroot );
+        array_pop( $docuroot );
+        $pathhome = implode( '/', $docuroot ) . '/';  
+        array_pop( $docuroot );
+        $pathTrunk = implode( '/', $docuroot ) . '/';  
+        require_once($pathTrunk.'gulliver/system/class.inputfilter.php');
+        $filter = new InputFilter();
 
         $sql = "PRAGMA index_list('".$this->name."')";
         $res = sqlite_query($this->conn->getResource(), $sql);
         
         while($row = sqlite_fetch_array($res, SQLITE_ASSOC)) {        
             $name = $row['name'];
+            $name = $filter->validateInput($name);
             $this->indexes[$name] = new IndexInfo($name);
             
             // get columns for that index

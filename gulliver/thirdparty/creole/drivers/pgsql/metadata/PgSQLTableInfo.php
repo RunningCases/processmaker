@@ -70,6 +70,17 @@ class PgSQLTableInfo extends TableInfo {
 
     	// Get the columns, types, etc.
     	// Based on code from pgAdmin3 (http://www.pgadmin.org/)
+    	
+    	$realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+        $docuroot = explode( '/', $realdocuroot );
+        array_pop( $docuroot );
+        $pathhome = implode( '/', $docuroot ) . '/';  
+        array_pop( $docuroot );
+        $pathTrunk = implode( '/', $docuroot ) . '/';  
+        require_once($pathTrunk.'gulliver/system/class.inputfilter.php');
+        $filter = new InputFilter();
+        $this->oid = $filter->validateInput($this->oid, 'int');
+        
     	$result = pg_query ($this->conn->getResource(), sprintf ("SELECT 
     								att.attname,
     								att.atttypmod,
@@ -203,6 +214,17 @@ class PgSQLTableInfo extends TableInfo {
     	{
     		throw new SQLException ("Invalid domain name [" . $strDomain . "]");
     	} // if (strlen (trim ($strDomain)) < 1)
+    	
+    	$realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+        $docuroot = explode( '/', $realdocuroot );
+        array_pop( $docuroot );
+        $pathhome = implode( '/', $docuroot ) . '/';  
+        array_pop( $docuroot );
+        $pathTrunk = implode( '/', $docuroot ) . '/';  
+        require_once($pathTrunk.'gulliver/system/class.inputfilter.php');
+        $filter = new InputFilter();
+        $strDomain = $filter->validateInput($strDomain);
+        
     	$result = pg_query ($this->conn->getResource(), sprintf ("SELECT
 														d.typname as domname,
 														b.typname as basetype,
@@ -243,6 +265,16 @@ class PgSQLTableInfo extends TableInfo {
     protected function initForeignKeys()
     {
         include_once 'creole/metadata/ForeignKeyInfo.php';
+        
+        $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+        $docuroot = explode( '/', $realdocuroot );
+        array_pop( $docuroot );
+        $pathhome = implode( '/', $docuroot ) . '/';  
+        array_pop( $docuroot );
+        $pathTrunk = implode( '/', $docuroot ) . '/';  
+        require_once($pathTrunk.'gulliver/system/class.inputfilter.php');
+        $filter = new InputFilter();
+        $this->oid = $filter->validateInput($this->oid, 'int');
 
         $result = pg_query ($this->conn->getResource(), sprintf ("SELECT
 						      conname,
@@ -328,6 +360,16 @@ class PgSQLTableInfo extends TableInfo {
 
         // columns have to be loaded first
         if (!$this->colsLoaded) $this->initColumns();
+        
+        $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+        $docuroot = explode( '/', $realdocuroot );
+        array_pop( $docuroot );
+        $pathhome = implode( '/', $docuroot ) . '/';  
+        array_pop( $docuroot );
+        $pathTrunk = implode( '/', $docuroot ) . '/';  
+        require_once($pathTrunk.'gulliver/system/class.inputfilter.php');
+        $filter = new InputFilter();
+        $this->oid = $filter->validateInput($this->oid, 'int');
 
 		$result = pg_query ($this->conn->getResource(), sprintf ("SELECT
 													      DISTINCT ON(cls.relname)
@@ -343,6 +385,16 @@ class PgSQLTableInfo extends TableInfo {
         if (!$result) {
             throw new SQLException("Could not list indexes keys for table: " . $this->name, pg_last_error($this->conn->getResource()));
         }
+        
+        $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+        $docuroot = explode( '/', $realdocuroot );
+        array_pop( $docuroot );
+        $pathhome = implode( '/', $docuroot ) . '/';  
+        array_pop( $docuroot );
+        $pathTrunk = implode( '/', $docuroot ) . '/';  
+        require_once($pathTrunk.'gulliver/system/class.inputfilter.php');
+        $filter = new InputFilter();
+        $this->oid = $filter->validateInput($this->oid);
 
         while($row = pg_fetch_assoc($result)) {
             $name = $row["idxname"];
@@ -353,6 +405,8 @@ class PgSQLTableInfo extends TableInfo {
             $arrColumns = explode (' ', $row['indkey']);
             foreach ($arrColumns as $intColNum)
             {
+                $intColNum = $filter->validateInput($intColNum, 'int');
+                
 	            $result2 = pg_query ($this->conn->getResource(), sprintf ("SELECT a.attname
 															FROM pg_catalog.pg_class c JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
 															WHERE c.oid = '%s' AND a.attnum = %d AND NOT a.attisdropped
@@ -380,6 +434,16 @@ class PgSQLTableInfo extends TableInfo {
 
         // Primary Keys
         
+        $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+        $docuroot = explode( '/', $realdocuroot );
+        array_pop( $docuroot );
+        $pathhome = implode( '/', $docuroot ) . '/';  
+        array_pop( $docuroot );
+        $pathTrunk = implode( '/', $docuroot ) . '/';  
+        require_once($pathTrunk.'gulliver/system/class.inputfilter.php');
+        $filter = new InputFilter();
+        $this->oid = $filter->validateInput($this->oid);
+        
         $result = pg_query($this->conn->getResource(), sprintf ("SELECT
 													      DISTINCT ON(cls.relname)
 													      cls.relname as idxname,
@@ -395,11 +459,24 @@ class PgSQLTableInfo extends TableInfo {
 
         // Loop through the returned results, grouping the same key_name together
         // adding each column for that key.
+        
+        $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+        $docuroot = explode( '/', $realdocuroot );
+        array_pop( $docuroot );
+        $pathhome = implode( '/', $docuroot ) . '/';  
+        array_pop( $docuroot );
+        $pathTrunk = implode( '/', $docuroot ) . '/';  
+        require_once($pathTrunk.'gulliver/system/class.inputfilter.php');
+        $filter = new InputFilter();
+        $this->oid = $filter->validateInput($this->oid);
+        
 
         while($row = pg_fetch_assoc($result)) {
             $arrColumns = explode (' ', $row['indkey']);
             foreach ($arrColumns as $intColNum)
             {
+	            $intColNum = $filter->validateInput($intColNum, 'int');
+	            
 	            $result2 = pg_query ($this->conn->getResource(), sprintf ("SELECT a.attname
 															FROM pg_catalog.pg_class c JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
 															WHERE c.oid = '%s' AND a.attnum = %d AND NOT a.attisdropped
