@@ -20,10 +20,16 @@ class StrategicDashboard extends Controller
     {
         global $RBAC;
 
-        if ($RBAC->userCanAccess('PM_DASHBOARD') != 1) {
+        if ($RBAC->userCanAccess('PM_SETUP') != 1) {
             G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels');
             G::header( 'location: login/login' );
             exit(0);
+        }
+        $licensedFeatures = & PMLicensedFeatures::getSingleton();
+        if (!$licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjBsZEJ6dnpJa3dTeWVLVT0=')) {
+            G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels' );
+            G::header( 'location: ../login/login' );
+            die;
         }
         $this->usrId = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
         $this->urlProxy = '/api/1.0/' . SYS_SYS . '/';

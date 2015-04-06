@@ -255,7 +255,7 @@
 
     //Items by each type:
     var proEffic = '<div class="col-lg-3 col-md-6 dashPro" id="proEfficItem" data-gs-min-width="3" data-gs-min-height="2" data-gs-max-height="2">\
-                        <div class="proGreen panel panel-green grid-stack-item-content">\
+                        <div class="proGreen panel panel-green grid-stack-item-content" style="min-width: 200px;">\
                             <a data-toggle="collapse" href="#efficiencyindex" aria-expanded="false" aria-controls="efficiencyindex">\
                                 <div class="panel-heading">\
                                     <div class="row">\
@@ -273,7 +273,7 @@
                     </div>';
 
     var userEffic = '<div class="col-lg-3 col-md-6 dashUsr" id="userEfficItem" data-gs-min-width="3" data-gs-min-height="2" data-gs-max-height="2">\
-                        <div class="proRed panel panel-red grid-stack-item-content">\
+                        <div class="proRed panel panel-red grid-stack-item-content" style="min-width: 200px;">\
                             <a data-toggle="collapse" href="#userefficiency" aria-expanded="false" aria-controls="userefficiency">\
                                 <div class="panel-heading">\
                                     <div class="row">\
@@ -291,7 +291,7 @@
                     </div>';
 
     var compCases = '<div class="col-lg-3 col-md-6" id="generalLowItem" data-gs-min-width="3" data-gs-min-height="2" data-gs-max-height="2">\
-                        <div class="panel ie-panel panel-primary grid-stack-item-content">\
+                        <div class="panel ie-panel panel-primary grid-stack-item-content" style="min-width: 200px;">\
                             <a data-toggle="collapse" href="#completedcases" aria-expanded="false" aria-controls="completedcases">\
                                 <div class="panel-heading">\
                                     <div class="row">\
@@ -312,7 +312,7 @@
                     </div>';
 
     var numCases = '<div class="col-lg-3 col-md-6" id="generalGreatItem" data-gs-min-width="3" data-gs-min-height="2" data-gs-max-height="2">\
-                        <div class="panel ie-panel panel-yellow grid-stack-item-content">\
+                        <div class="panel ie-panel panel-yellow grid-stack-item-content" style="min-width: 200px;">\
                             <a data-toggle="collapse" href="#numbercases" aria-expanded="false" aria-controls="numbercases">\
                                 <div class="panel-heading">\
                                     <div class="row">\
@@ -333,11 +333,44 @@
                     </div>';
 
     //Data by Indicator elements:
-    var proEfficDataGen = '<div class="process-div well" id="proEfficiencyData"  data-gs-no-resize="true" style="height:auto;"><div class="panel-heading greenbg"><span id="proEfficTitle"> '+ G_STRING.ID_PRO_EFFICIENCY_INDEX +' </span></div><div class="text-center huge"><div class="col-xs-3 vcenter"><div id="proEfficIndex" class="green">26%</div><div class="small grey">'+ G_STRING.ID_EFFICIENCY_INDEX +'</div></div><div class="col-xs-3 vcenter"><div id="proEfficCost" class="red">$1813.50</div><div class="small grey">'+ G_STRING.ID_INEFFICIENCY_COST +'</div></div><div class="col-xs-6" id="proEfficGenGraph" style="width:500px;height:300px; margin-left:80px;"><img src="../dist/img/graph.png"/></div></div><div class="clearfix"></div></div>';
+    var proEfficDataGen = '<div class="process-div well" id="proEfficiencyData" data-gs-no-resize="true"  style="clear:both;position:relative;height:auto;">\
+								<div class="panel-heading greenbg"><span id="proEfficTitle"> '+ G_STRING.ID_PRO_EFFICIENCY_INDEX +' </span></div>\
+								<div class="text-center huge">\
+									<div class="col-xs-3 vcenter">\
+										<div id="proEfficIndex" class="green">26%</div>\
+										<div class="small grey">'+ G_STRING.ID_EFFICIENCY_INDEX +'</div>\
+									</div>\
+									<div class="col-xs-3 vcenter">\
+										<div id="proEfficCost" class="red">$1813.50</div>\
+										<div class="small grey">'+ G_STRING.ID_INEFFICIENCY_COST +'</div>\
+									</div>\
+									<div class="col-xs-6" id="proEfficGenGraph" style="width:500px;height:300px; margin-left:80px;"><img src="../dist/img/graph.png" /></div>\
+								</div>\
+								<div class="clearfix"></div>\
+							</div>';
 
-    var proEfficData = '<div class="process-div well" id="proEfficiencyData"  data-gs-no-resize="true"><div class="panel-heading greenbg"><ol class="breadcrumb"><li><a id="link" href="javascript:back();"><i class="fa fa-chevron-left fa-fw"></i><span id="proEfficTitle"> '+ G_STRING.ID_PRO_EFFICIENCY_INDEX +' </span></a></li><li id="proDetName">Process 1 name</li></ol></div><div class="text-center huge"><div class="col-xs-3 vcenter"><div id="proEfficIndex" class="green">26%</div><div class="small grey">'+ G_STRING.ID_EFFICIENCY_INDEX +'</div></div><div class="col-xs-3 vcenter"><div id="proEfficCost" class="red">$1813.50</div><div class="small grey">'+ G_STRING.ID_INEFFICIENCY_COST +'</div></div><div class="col-xs-6"  id="proEfficGraph" style="width:570px; height:300px; margin-left:70px; "><img src="../dist/img/graph.png"/></div></div><div class="clearfix"></div></div>';
+    var proEfficData = '<div class="process-div well" id="proEfficiencyData" data-gs-no-resize="true" style="clear:both;position:relative;">\
+							<div class="panel-heading greenbg">\
+								<ol class="breadcrumb">\
+									<li><a id="link" href="javascript:back();"><i class="fa fa-chevron-left fa-fw"></i><span id="proEfficTitle"> '+ G_STRING.ID_PRO_EFFICIENCY_INDEX +' </span></a></li>\
+									<li id="proDetName">Process 1 name</li>\
+								</ol>\
+							</div>\
+							<div class="text-center huge">\
+								<div class="col-xs-3 vcenter">\
+									<div id="proEfficIndex" class="green">26%</div>\
+									<div class="small grey">'+ G_STRING.ID_EFFICIENCY_INDEX +'</div>\
+								</div>\
+								<div class="col-xs-3 vcenter">\
+									<div id="proEfficCost" class="red">$1813.50</div>\
+									<div class="small grey">'+ G_STRING.ID_INEFFICIENCY_COST +'</div>\
+								</div>\
+								<div class="col-xs-6" id="proEfficGraph" style="width:570px; height:300px; margin-left:70px; "><img src="../dist/img/graph.png" /></div>\
+							</div>\
+							<div class="clearfix"></div>\
+						</div>';
 
-    var proEfficDetail = '<div id="process" class="process-div well hideme" data-gs-no-resize="true">\
+    var proEfficDetail = '<div id="process" class="process-div well hideme" data-gs-no-resize="true" style="clear:both;position:relative;">\
                                 <div class="col-lg-12 vcenter-task">\
                                     <a href="#" class="process-button">\
                                         <div class="col-xs-3 text-left title-process">\
@@ -402,11 +435,32 @@
                                 </div>\
                             </div>';
 
-    var generalDataLow = '<div class="process-div well"  data-gs-no-resize="true"><div class="panel-heading bluebg"><ol class="breadcrumb"><li id="generalLowTitle">'+ G_STRING.ID_COMPLETED_CASES +'</li></ol></div><div class="text-center huge"><div class="col-xs-6"  id="generalGraph1" style="width:600px; height:300px;"><img src="../dist/img/graph.png"/></div><div class="col-xs-6" id="generalGraph2" style="width:600px; height:300px;margin-left:60px;"><img src="../dist/img/graph.png"/></div></div><div class="clearfix"></div></div>';
+    var generalDataLow = '<div class="process-div well" data-gs-no-resize="true" style="clear:both;position:relative;height:auto;">\
+							<div class="panel-heading bluebg">\
+								<ol class="breadcrumb">\
+									<li id="generalLowTitle">'+ G_STRING.ID_COMPLETED_CASES +'</li>\
+								</ol>\
+							</div>\
+							<div class="text-center huge">\
+								<div class="col-xs-6" id="generalGraph1" style="width:600px; height:300px;"><img src="../dist/img/graph.png" /></div>\
+								<div class="col-xs-6" id="generalGraph2" style="width:600px; height:300px;margin-left:60px;"><img src="../dist/img/graph.png" /></div>\
+							</div>\
+							<div class="clearfix"></div>\
+						</div>';
 
-    var generalDataGreat = ' <div class="process-div well"  data-gs-no-resize="true"><div class="panel-heading yellowbg"><ol class="breadcrumb"><li id="generalGreatTitle">'+ G_STRING.ID_NUMBER_CASES +'</li></ol></div><div class="text-center huge"><div class="col-xs-6" id="generalGraph1" style="width:600px; height:300px;"><img src="../dist/img/graph.png"/></div><div class="col-xs-6" id="generalGraph2" style="width:600px; height:300px; margin-left:60px;"><img src="../dist/img/graph.png"/></div></div><div class="clearfix"></div></div>';
+    var generalDataGreat = '<div class="process-div well" data-gs-no-resize="true" style="clear:both;position:relative;height:auto;">\
+								<div class="panel-heading yellowbg">\
+									<ol class="breadcrumb">\
+										<li id="generalGreatTitle">'+ G_STRING.ID_NUMBER_CASES +'</li>\
+									</ol>\
+								</div>\
+								<div class="text-center huge">\
+									<div class="col-xs-6" id="generalGraph1" style="width:600px; height:300px;"><img src="../dist/img/graph.png" /></div>\
+									<div class="col-xs-6" id="generalGraph2" style="width:600px; height:300px; margin-left:60px;"><img src="../dist/img/graph.png" /></div>\
+								</div>\
+								<div class="clearfix"></div>\
+							</div>';
 
- 
     var oType;
     var actualDashId; 
  
