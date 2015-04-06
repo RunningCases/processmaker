@@ -322,7 +322,7 @@ class Installer extends Controller
             if (is_dir( $aux['dirname'] )) {
                 if (! file_exists( $_REQUEST['pathLogFile'] )) {
                     @file_put_contents( $_REQUEST['pathLogFile'], '' );
-                    chmod($_REQUEST['pathShared'], 0770);
+                    @chmod($_REQUEST['pathShared'], 0770);
                 }
             }
         }
