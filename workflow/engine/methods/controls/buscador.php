@@ -22,14 +22,15 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 $frm = $HTTP_GET_VARS;
-
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
 ?>
 
 <h1>demo de buscador</h1>
 <form method=post action="buscador2.php">
-	<input type=hidden name=ticket value="<?php echo $frm['ticket'] ?>"> <input
-		type=hidden name=tipo value="<?php echo $frm['tipo'] ?>">
-Buscador tipo : <?php echo $frm['tipo'] ?><br>
+	<input type=hidden name=ticket value="<?php echo $filter->xssFilterHard($frm['ticket']) ?>"> <input
+		type=hidden name=tipo value="<?php echo $filter->xssFilterHard($frm['tipo']) ?>">
+Buscador tipo : <?php echo $filter->xssFilterHard($frm['tipo']) ?><br>
 
 	<table>
 		<tr>
