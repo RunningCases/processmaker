@@ -486,14 +486,7 @@ span.XtreeMinus:hover {
 /*	Theme leimnud.module.grid	END */
 /* Menues */
 TD.mainMenuBG {
-  background-image: url(/skins/neoclassic/images/ext/gray/toolbar/bg.gif);
-  background-repeat: repeat-x;
-  /*height: 25px;*/
-
-  left: 46px;
-  top: 72px;
-  direction: ltr;
-  text-align: left;
+  vertical-align: top;
 }
 TD.mainMenu {
   background-image: url(/skins/neoclassic/images/classic/bm.jpg);
@@ -3262,7 +3255,6 @@ table.DynarchCalendar-titleCont {
 }
 /*Menu Principal*/
 #pm_main_table .mainMenuBG {
-  background: #676767;
 }
 ul#pm_menu {
   list-style: none;
@@ -3272,21 +3264,27 @@ ul#pm_menu {
 ul#pm_menu li {
   float: left;
   padding: 0;
-  height: 25px;
+  margin-top: 6.5px;
 }
 ul#pm_menu a {
-  color: #fff;
-  font-size: 13px;
+  color: #7b7c80;
+  font-size: 15px;
   text-decoration: none;
   display: block;
-  padding: 0px 25px;
-  text-transform: uppercase;
-  line-height: 25px;
+  text-transform: capitalize;
   font-weight: bold;
+  padding: 16px 3px 3px 3px;
+  margin: 0 12px 0 12px;
+}
+ul#pm_menu a:hover {
+    color:#3397e1;
+}
+ul#pm_menu li.SelectedMenu a{
+    color:#3397e1;
+    border-bottom: 2px solid #3397e1;
 }
 ul#pm_menu li.SelectedMenu,
 ul#pm_menu li:hover {
-  background: #00a1e4;
 }
 ul#pm_submenu {
   list-style: none;
@@ -3485,5 +3483,5 @@ button.x-btn-text:focus,
 }
 
 .logo_company {
-    padding-left: 10px;
+    padding: 7px 10px;
 }
