@@ -761,7 +761,7 @@ function NewCase ($params)
             if (! is_object( $val->value )) {
                 $val->name  = $filter->validateInput($val->name);
                 $val->value = $filter->validateInput($val->value);
-                eval( "\$field[" . $val->name . "]= \$val->value;" );
+                eval( "\$field['" . $val->name . "']= \$val->value;" );
             }
         }
     }
