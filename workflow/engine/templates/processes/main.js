@@ -601,13 +601,7 @@ function saveProcess()
             if (projectType == 'classicProject') {
               location.href = 'processes_Map?PRO_UID='+resp.result.PRO_UID;
             } else {
-                    if ((navigator.userAgent.indexOf("MSIE") != -1) || (navigator.userAgent.indexOf("Trident") != -1)) {
-                        winDesigner = window.open("../designer?prj_uid=" + resp.result.PRO_UID, 'winDesigner');
-                        Ext.getCmp('newProjectWin').close();
-                        processesGrid.store.reload();
-                    } else {
-                        location.href = '../designer?prj_uid=' + resp.result.PRO_UID;
-                    }
+                    openWindowIfIE('../designer?prj_uid=' + resp.result.PRO_UID);
             }
           },
           failure: function(obj, resp) {
@@ -656,12 +650,7 @@ editProcess = function(typeParam)
   } else {
       url = 'processes_Map?PRO_UID=' + pro_uid;
   }
-
-  if ( ((navigator.userAgent.indexOf("MSIE")!=-1) || (navigator.userAgent.indexOf("Trident")!=-1)) && (type == "bpmn") ) {
-        winDesigner = window.open(url, 'winDesigner');
-  } else {
-	  location.href = url;
-  }
+    openWindowIfIE(url);
 }
 
 editNewProcess = function(){
@@ -870,6 +859,7 @@ importProcessExistGroup = function()
   var processFileType = importProcessGlobal.processFileType;
 
   var w = new Ext.Window({
+    id          : 'importProcessExistGroupWindow',
     title       : _('ID_IMPORT_PROCESS') + processFileTypeTitle,
     header      : false,
     width       : 460,
@@ -966,13 +956,7 @@ importProcessExistGroup = function()
                     var sNewProUid       = resp_.sNewProUid;
 
                     if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                        if ((navigator.userAgent.indexOf("MSIE") != -1) || (navigator.userAgent.indexOf("Trident") != -1)) {
-                            winDesigner = window.open("../designer?prj_uid=" + sNewProUid, 'winDesigner');
-                            w.close();
-                            processesGrid.store.reload();
-                        } else {
-                            window.location.href = "../designer?prj_uid=" + sNewProUid;
-                        }
+                        openWindowIfIE("../designer?prj_uid=" + sNewProUid);
                     } else {
                         window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                     }
@@ -1012,6 +996,7 @@ importProcessExistProcess = function()
   var proFileName          = importProcessGlobal.proFileName;
 
   var w = new Ext.Window({
+    id          : 'importProcessExistProcessWindow',
     title       : _('ID_IMPORT_PROCESS') + processFileTypeTitle,
     header      : false,
     width       : 460,
@@ -1115,14 +1100,7 @@ importProcessExistProcess = function()
 
                     if (resp_.ExistGroupsInDatabase == 0) {
                         if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                            if ((navigator.userAgent.indexOf("MSIE") != -1) || (navigator.userAgent.indexOf("Trident") != -1)) {
-                                winDesigner = window.open("../designer?prj_uid=" + sNewProUid,'winDesigner');
-                                Ext.getCmp('importProcessWindow').close();
-                                w.close();
-                                processesGrid.store.reload();
-                            } else {
-                                window.location.href = "../designer?prj_uid=" + sNewProUid;
-                            }
+                            openWindowIfIE("../designer?prj_uid=" + sNewProUid);
                         } else {
                             window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                         }
@@ -1263,13 +1241,7 @@ importProcess = function()
                                                       var sNewProUid = resp_.sNewProUid;
 
                                                       if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                                                        if ((navigator.userAgent.indexOf("MSIE") != -1) || (navigator.userAgent.indexOf("Trident") != -1)) {
-                                                            winDesigner = window.open("../designer?prj_uid=" + sNewProUid,"winDesigner");
-                                                            w.close();
-                                                            processesGrid.store.reload();
-                                                        } else {
-                                                            window.location.href = "../designer?prj_uid=" + sNewProUid;
-                                                        }
+                                                          openWindowIfIE("../designer?prj_uid=" + sNewProUid);
                                                       } else {
                                                           window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                                                       }
@@ -1334,6 +1306,7 @@ importProcess = function()
 }
 
 var windowbpmnoption = new Ext.Window({
+    id: 'windowBpmnOptionWindow',
     title: _('ID_IMPORT_PROCESS'),
     header: false,
     width: 420,
@@ -1507,3 +1480,31 @@ Ext.EventManager.on(window, 'beforeunload', function () {
     if (winDesigner)
         winDesigner.close();
 });
+
+
+function openWindowIfIE(pathDesigner) {
+    if ((navigator.userAgent.indexOf("MSIE") != -1) || (navigator.userAgent.indexOf("Trident") != -1)) {
+        if (Ext.getCmp('newProjectWin'))
+            Ext.getCmp('newProjectWin').close();
+        if (Ext.getCmp('importProcessWindow'))
+            Ext.getCmp('importProcessWindow').close();
+        if (Ext.getCmp('importProcessExistGroupWindow'))
+            Ext.getCmp('importProcessExistGroupWindow').close();
+        if (Ext.getCmp('importProcessExistProcessWindow'))
+            Ext.getCmp('importProcessExistProcessWindow').close();
+        if (Ext.getCmp('windowBpmnOptionWindow'))
+            Ext.getCmp('windowBpmnOptionWindow').close();
+        processesGrid.store.reload();
+        if (winDesigner && winDesigner.closed === false) {
+            if (winDesigner.window.PMDesigner.project.isDirty()) {
+                Ext.Msg.alert(_('ID_REFRESH_LABEL'), _('ID_UNSAVED_TRIGGERS_WINDOW'));
+            } else {
+                winDesigner = window.open(pathDesigner, 'winDesigner');
+            }
+        } else {
+            winDesigner = window.open(pathDesigner, 'winDesigner');
+        }
+        return;
+    }
+    location.href = pathDesigner;
+}
