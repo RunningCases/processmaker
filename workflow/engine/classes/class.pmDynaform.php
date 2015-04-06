@@ -207,18 +207,13 @@ class pmDynaform
                 if ($this->lang === null && $key === "language" && isset($json->language)) {
                     $this->lang = $json->language;
                 }
-                if ($key === "label" && isset($json->label) && $this->langs !== null && isset($this->langs->{$this->lang})) {
-                    $langs = $this->langs->{$this->lang}->Labels;
-                    foreach ($langs as $langsValue) {
-                        if ($json->label === $langsValue->msgid)
-                            $json->label = $langsValue->msgstr;
-                    }
-                }
-                if ($key === "title" && isset($json->title) && $this->langs !== null && isset($this->langs->{$this->lang})) {
-                    $langs = $this->langs->{$this->lang}->Labels;
-                    foreach ($langs as $langsValue) {
-                        if ($json->title === $langsValue->msgid)
-                            $json->title = $langsValue->msgstr;
+                if ($this->langs !== null) {
+                    if (($key === "label" || $key === "hint" || $key === "placeholder" || $key === "validateMessage" || $key === "alternateText" || $key === "comment" || $key === "alt") && isset($json->{$key}) && isset($this->langs->{$this->lang})) {
+                        $langs = $this->langs->{$this->lang}->Labels;
+                        foreach ($langs as $langsValue) {
+                            if ($json->{$key} === $langsValue->msgid)
+                                $json->{$key} = $langsValue->msgstr;
+                        }
                     }
                 }
             }
@@ -644,8 +639,25 @@ class pmDynaform
             }
             if (!$sw1 && !$sw2) {
                 if ($key === "label") {
-                    $json->label;
                     array_push($this->dyn_conten_labels, $json->label);
+                }
+                if ($key === "hint") {
+                    array_push($this->dyn_conten_labels, $json->hint);
+                }
+                if ($key === "placeholder") {
+                    array_push($this->dyn_conten_labels, $json->placeholder);
+                }
+                if ($key === "validateMessage") {
+                    array_push($this->dyn_conten_labels, $json->validateMessage);
+                }
+                if ($key === "alternateText") {
+                    array_push($this->dyn_conten_labels, $json->alternateText);
+                }
+                if ($key === "comment") {
+                    array_push($this->dyn_conten_labels, $json->comment);
+                }
+                if ($key === "alt") {
+                    array_push($this->dyn_conten_labels, $json->alt);
                 }
             }
         }
