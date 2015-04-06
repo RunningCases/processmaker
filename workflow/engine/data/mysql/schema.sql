@@ -28,6 +28,8 @@ CREATE TABLE `APPLICATION`
 	`APP_UPDATE_DATE` DATETIME  NOT NULL,
 	`APP_DATA` MEDIUMTEXT  NOT NULL,
 	`APP_PIN` VARCHAR(32) default '' NOT NULL,
+    `APP_DURATION` DOUBLE default 0,
+    `APP_DELAY_DURATION` DOUBLE default 0,
 	PRIMARY KEY (`APP_UID`),
 	KEY `indexApp`(`PRO_UID`, `APP_STATUS`, `APP_UID`),
 	KEY `indexAppNumber`(`APP_NUMBER`),
@@ -705,6 +707,8 @@ CREATE TABLE `USERS`
 	`USR_TOTAL_PAUSED` INTEGER default 0,
 	`USR_TOTAL_COMPLETED` INTEGER default 0,
 	`USR_TOTAL_UNASSIGNED` INTEGER default 0,
+    `USR_COST_BY_HOUR` DECIMAL(7,2) default 0,
+    `USR_UNIT_COST` VARCHAR(50) default '',
 	PRIMARY KEY (`USR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Users';
 #-----------------------------------------------------------------------------
