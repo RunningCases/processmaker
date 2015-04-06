@@ -6,6 +6,7 @@ class ConsolidatedCases
 {
     function saveConsolidated ($data)
     {
+        $status         = $data['con_status'];
         $sTasUid        = $data['tas_uid'];
         $sDynUid        = $data['dyn_uid'];
         $sProUid        = $data['pro_uid'];
@@ -14,11 +15,21 @@ class ConsolidatedCases
         $title          = $data['title'];
 
         if ($sRepTabUid != '') {
+            if (!$status) {
+                $oCaseConsolidated = new CaseConsolidated();
+                $oCaseConsolidated = CaseConsolidatedPeer::retrieveByPK($sTasUid);
+                if (!(is_object($oCaseConsolidated)) || get_class($oCaseConsolidated) != 'CaseConsolidated') {
+                    $oCaseConsolidated = new CaseConsolidated();
+                    $oCaseConsolidated->setTasUid($sTasUid);
+                    $oCaseConsolidated->setConStatus('INACTIVE');
+                    $oCaseConsolidated->save();
+                }
+                return 1;
+            }
             $rptUid = null;
             $criteria = new Criteria();
-
             $criteria->addSelectColumn(ReportTablePeer::REP_TAB_UID);
-            $criteria->add(ReportTablePeer::REP_TAB_NAME, $tableName);
+            $criteria->add(ReportTablePeer::REP_TAB_UID, $sRepTabUid);
             $rsCriteria = ReportTablePeer::doSelectRS($criteria);
             
             if ($rsCriteria->next()) {
@@ -39,6 +50,7 @@ class ConsolidatedCases
             @unlink($sPath . PATH_SEP . 'map' . PATH_SEP . $sClassName . 'MapBuilder.php');
             @unlink($sPath . PATH_SEP . 'om' . PATH_SEP . 'Base' . $sClassName . '.php');
             @unlink($sPath . PATH_SEP . 'om' . PATH_SEP . 'Base' . $sClassName . 'Peer.php');
+
             $sRepTabUid = '';
         }
 
