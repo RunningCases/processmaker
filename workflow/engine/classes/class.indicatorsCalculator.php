@@ -373,28 +373,59 @@ class indicatorsCalculator
 										'$graph2' as graph2Type, 
 										'$freq2' as frequency2Type,";
 
+		$params = Array();
+
         switch ($indicatorType) {
+			//process inefficience
+			case "1020":
+				$calcField = "$graphConfigurationString 100 * SUM(TOTAL_TIME_BY_TASK) / SUM(CONFIGURED_TASK_TIME) as value";
+				$sqlString = $this->indicatorsParamsQueryBuilder(IndicatorDataSourcesEnum::USER
+									, $indicatorProcessId, $periodicity
+									, $initDate, $endDate
+									, $calcField, $params);
+				break;
+			//employee inefficience
+			case "1040":
+				$calcField = "$graphConfigurationString 100 * SUM(TOTAL_TIME_BY_TASK) / SUM(CONFIGURED_TASK_TIME) as value";
+				$sqlString = $this->indicatorsParamsQueryBuilder(IndicatorDataSourcesEnum::USER
+									, $indicatorProcessId, $periodicity
+									, $initDate, $endDate
+									, $calcField, $params);
+				break;
 			//overdue
 			case "1050":
 				$calcField = "$graphConfigurationString 100 * SUM(TOTAL_CASES_OVERDUE) / SUM(TOTAL_CASES_ON_TIME + TOTAL_CASES_OVERDUE) as value";
+				$sqlString = $this->indicatorsParamsQueryBuilder(IndicatorDataSourcesEnum::USER
+									, $indicatorProcessId, $periodicity
+									, $initDate, $endDate
+									, $calcField, $params);
 				break;
 			//new cases
 			case "1060":
 				$calcField = "$graphConfigurationString 100 * SUM(TOTAL_CASES_IN) / SUM(TOTAL_CASES_ON_TIME + TOTAL_CASES_OVERDUE) as value";
+				$sqlString = $this->indicatorsParamsQueryBuilder(IndicatorDataSourcesEnum::PROCESS
+									, $indicatorProcessId, $periodicity
+									, $initDate, $endDate
+									, $calcField, $params);
 				break;
 			//completed
 			case "1070":
 				$calcField = "$graphConfigurationString 100 * SUM(TOTAL_CASES_OUT) / SUM(TOTAL_CASES_ON_TIME + TOTAL_CASES_OVERDUE) as value";
+				$sqlString = $this->indicatorsParamsQueryBuilder(IndicatorDataSourcesEnum::PROCESS
+									, $indicatorProcessId, $periodicity
+									, $initDate, $endDate
+									, $calcField, $params);
+				break;
+			case "1080":
+				$calcField = "$graphConfigurationString 100 * SUM(TOTAL_CASES_OPEN) / SUM(TOTAL_CASES_ON_TIME + TOTAL_CASES_OVERDUE) as value";
+				$sqlString = $this->indicatorsParamsQueryBuilder(IndicatorDataSourcesEnum::PROCESS
+									, $indicatorProcessId, $periodicity
+									, $initDate, $endDate
+									, $calcField, $params);
 				break;
 			default:
 				throw new Exception(" The indicator id '$indicatorId' with type $indicatorType hasn't an associated operation.");
 		}
-
-		$params = Array();
-		$sqlString = $this->indicatorsParamsQueryBuilder(IndicatorDataSourcesEnum::PROCESS
-                            , $indicatorProcessId, $periodicity
-							, $initDate, $endDate
-                            , $calcField, $params);
 
 		$retval = $this->pdoExecutor($sqlString, $params);
 		//$returnValue = $this->propelExecutor($sqlString);
@@ -476,38 +507,7 @@ class indicatorsCalculator
 		return $retval;
 	}
 
-	/*private function propelExecutor($sqlString) {
-		$con = Propel::getConnection(self::$connectionName);
-		$qry = $con->PrepareStatement($sqlString);
-		try {
-			$dataSet = $qry->executeQuery();
-		} catch (Exception $e) {
-			throw new Exception("Can't execute query " . $sqlString);
-		}
-
-		$rows = Array();
-		while ($dataSet->next()) {
-			$rows[] = $dataSet->getRow();
-		}
-		return $rows;
-	}
-*/
 	private function pdoExecutor($sqlString, $params) {
-		/*G::loadClass('wsTools');
-	    $currentWS = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
-		$workSpace = new workspaceTools($currentWS);
-		$host = $workSpace->dbHost;
-		$db = $workSpace->dbName;
-		$user = $workSpace->dbUser;
-		$pass = $workSpace->dbPass;
-
-
-		$dbh = new PDO("mysql:host=".$host.";dbname=$db;charset=utf8", $user, $pass);
-
-		$statement = $dbh->prepare($sqlString);
-
-		$statement->execute($params);
-		$result = $statement->fetchAll(PDO::FETCH_ASSOC); */
 
 		$connection = $this->pdoConnection ();
 		$result = $this->pdoExecutorWithConnection($sqlString, $params, $connection);
