@@ -97,7 +97,6 @@ class indicatorsCalculator
 		$connection = $this->pdoConnection();
 		$result = $this->pdoExecutorWithConnection($sqlString, array(), $connection);
 		$result2 = $this->pdoExecutorWithConnection("select @median", array(), $connection);
-		print_r($result2);
 		if (sizeof($result) > 0) {
 			$returnValue = current(reset($result2));
 		}
@@ -624,11 +623,12 @@ class indicatorsCalculator
 	}
 
 
-	public function interpolateQuery($query, $params) {
+	/* For debug only:
+	 * public function interpolateQuery($query, $params) {
 		$keys = array();
 		# build a regular expression for each parameter
 		foreach ($params as $key => $value) {
-			echo "<br>llave", $key, " -- valor", $value;
+			echo "<br>key", $key, " -- value", $value;
 			if (is_string($key)) {
 				$keys[] = '/:'.$key.'/';
 			} else {
@@ -637,7 +637,7 @@ class indicatorsCalculator
 		}
 		$query = preg_replace($keys, $params, $query, 1, $count);
 		return $query;
-	}
+	}*/
 }
 
 
