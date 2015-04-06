@@ -923,6 +923,18 @@ class wsBase
             $licensedFeatures = & PMLicensedFeatures::getSingleton();
             /*----------------------------------********---------------------------------*/
             if (!empty($config) && $licensedFeatures->verifyfeature('nKaNTNuT1MzK0RsMEtXTnYzR09ucHF2WGNuS0hRdDBBak42WXJhNVVOOG1INEVoaU1EaTllbjBBeEJNeG9wRVJ6NmxQelhyVTBvdThzPQ==')) {
+                if(!is_array($config)){
+                    $emailServer = new EmailServer();
+                    $criteria = $emailServer->getSelAllColumns();
+                    $criteria->add(EmailServerPeer::MESS_UID, $config, CRITERIA::EQUAL);
+                    $criteria = EmailServerPeer::doSelectRS($criteria);
+                    $criteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    while ($criteria->next()) {
+                      $row = $criteria->getRow();
+                      $config = $row;
+                      $config['SMTPSecure'] = $row['SMTPSECURE'];
+                    }
+                }
                 $aSetup = $config;
             } else {
             /*----------------------------------********---------------------------------*/

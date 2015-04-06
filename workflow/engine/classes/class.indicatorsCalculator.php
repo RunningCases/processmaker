@@ -97,7 +97,6 @@ class indicatorsCalculator
 		$connection = $this->pdoConnection();
 		$result = $this->pdoExecutorWithConnection($sqlString, array(), $connection);
 		$result2 = $this->pdoExecutorWithConnection("select @median", array(), $connection);
-		print_r($result2);
 		if (sizeof($result) > 0) {
 			$returnValue = current(reset($result2));
 		}
@@ -520,10 +519,16 @@ class indicatorsCalculator
 	    $currentWS = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
 		$workSpace = new workspaceTools($currentWS);
 		$host = $workSpace->dbHost;
-		$db = $workSpace->dbName;
+
+		$arrayHost = split(":", $workSpace->dbHost);
+		$host = "host=".$arrayHost[0];
+		$port = sizeof($arrayHost) > 0 ? ";port=".$arrayHost[1] : "";
+		$db = ";dbname=".$workSpace->dbName;
 		$user = $workSpace->dbUser;
 		$pass = $workSpace->dbPass;
-		$dbh = new PDO("mysql:host=".$host.";dbname=$db;charset=utf8", $user, $pass);
+		$connString = "mysql:$host$port$db;";
+
+		$dbh = new PDO($connString, $user, $pass);
 		return $dbh;
 	}
 
@@ -618,11 +623,12 @@ class indicatorsCalculator
 	}
 
 
-	public function interpolateQuery($query, $params) {
+	/* For debug only:
+	 * public function interpolateQuery($query, $params) {
 		$keys = array();
 		# build a regular expression for each parameter
 		foreach ($params as $key => $value) {
-			echo "<br>llave", $key, " -- valor", $value;
+			echo "<br>key", $key, " -- value", $value;
 			if (is_string($key)) {
 				$keys[] = '/:'.$key.'/';
 			} else {
@@ -631,7 +637,7 @@ class indicatorsCalculator
 		}
 		$query = preg_replace($keys, $params, $query, 1, $count);
 		return $query;
-	}
+	}*/
 }
 
 
