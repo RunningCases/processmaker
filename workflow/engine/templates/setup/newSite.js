@@ -43,19 +43,15 @@ Ext.onReady(function(){
         autoCreate: {tag: 'input', type: 'text', size: '20', autocomplete: 'off', maxlength: '13'},
         allowBlank: false,
         msgTarget: 'under',
-        monitorValid: true,
-        listeners: { 
-        change: { 
-                  fn: function(){
-                    valueField=this.setValue(this.getValue());
-                    if(typeof valueField.activeError!=='undefined'){
-                        Ext.getCmp('_idTest').disable();
-                    }else{
-                        Ext.getCmp('_idTest').enable();
-                    }
-                  }
-                }
-        } 
+        validator: function(v) {
+          var valueInputField= /^\w+$/.test(v)?true:"Invalid Workflow Database";
+          if (valueInputField==true) {
+            Ext.getCmp('_idTest').enable();
+          }else{
+            Ext.getCmp('_idTest').disable();
+          }
+          return valueInputField;
+        }
       },
       /*{
         id: 'AO_DB_RB',
