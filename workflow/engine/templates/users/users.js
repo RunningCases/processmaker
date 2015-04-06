@@ -383,7 +383,7 @@ Ext.onReady(function () {
           ]
       })
   });
-	
+
   comboRole = new Ext.form.ComboBox({
     fieldLabel    : _('ID_ROLE'),
     hiddenName    : 'USR_ROLE',
@@ -499,22 +499,43 @@ Ext.onReady(function () {
         comboCalendar,
         comboStatus,
         comboRole
+      ]
+  });
+    /*----------------------------------********---------------------------------*/
+    var costByHour = new Ext.form.FieldSet({
+    title : _('ID_COSTS'),
+    items : [
+            {
+                id         : 'USR_COST_BY_HOUR',
+                fieldLabel : _('ID_COST_BY_HOUR'),
+                xtype      : 'numberfield',
+                decimalSeparator : '.',
+                maxLength  : 13,
+                width      : 80
+            },
+            {
+                id         : 'USR_UNIT_COST',
+                fieldLabel : _('ID_UNITS'),
+                xtype      : 'textfield',
+                maxLength  : 50,
+                width      : 80
+            }
         ]
     });
-
-    var passwordFields = new Ext.form.FieldSet({
-      title : _('ID_CHANGE_PASSWORD'),
-      items : [
-         {
-            xtype      : "textfield",
-            id         : "currentPassword",
-            name       : "currentPassword",
-            fieldLabel : _("ID_PASSWORD_CURRENT"),
-            inputType  : "password",
-            hidden     : (typeof EDITPROFILE != "undefined" && EDITPROFILE == 1)? false : true,
-            width      : 260
-        },
-        {
+    /*----------------------------------********---------------------------------*/
+  var passwordFields = new Ext.form.FieldSet({
+    title : _('ID_CHANGE_PASSWORD'),
+    items : [
+       {
+          xtype      : "textfield",
+          id         : "currentPassword",
+          name       : "currentPassword",
+          fieldLabel : _("ID_PASSWORD_CURRENT"),
+          inputType  : "password",
+          hidden     : (typeof EDITPROFILE != "undefined" && EDITPROFILE == 1)? false : true,
+          width      : 260
+       },
+       {
           id         : 'USR_NEW_PASS',
           fieldLabel : MODE == 'edit' ? _('ID_NEW_PASSWORD') : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_NEW_PASSWORD')) +'"> * </span>' + _('ID_NEW_PASSWORD'),
           xtype      : 'textfield',
@@ -739,6 +760,9 @@ Ext.onReady(function () {
     },
     items : [
       informationFields,
+      /*----------------------------------********---------------------------------*/
+      costByHour,
+      /*----------------------------------********---------------------------------*/
       passwordFields,
       accountOptions,
       profileFields,
@@ -885,11 +909,29 @@ Ext.onReady(function () {
         fieldLabel : _('ID_ROLE'),
         xtype      : 'label',
         width      : 260
-      }
-
+      },
     ]
   });
+    /*----------------------------------********---------------------------------*/
+    costByHour2 = new Ext.form.FieldSet({
+        title : _('ID_COSTS'),
+        items : [
+            {
+                id         : 'USR_COST_BY_HOUR2',
+                fieldLabel : _('ID_COST_BY_HOUR'),
+                xtype      : 'label',
+                width      : 260
+            },
+            {
+                id         : 'USR_UNIT_COST2',
+                fieldLabel : _('ID_UNITS'),
+                xtype      : 'label',
+                width      : 260
+            }
 
+        ]
+    });
+    /*----------------------------------********---------------------------------*/
   passwordFields2 = new Ext.form.FieldSet({
     title : _('ID_PASSWORD'),
     items : [
@@ -938,6 +980,9 @@ Ext.onReady(function () {
       box2,
       //profileFields2,
       informationFields2,
+      /*----------------------------------********---------------------------------*/
+      costByHour2,
+      /*----------------------------------********---------------------------------*/
       //passwordFields2,
       preferencesFields2
            ],
@@ -1103,11 +1148,11 @@ function saveUser()
   if (Ext.getCmp('USR_USERNAME').getValue() != '') {
     if (previousUsername != '') {
       if (Ext.getCmp('USR_USERNAME').getValue() != previousUsername) {
-	    if (!flagValidateUsername) {
-		  Ext.Msg.alert( _('ID_ERROR'), Ext.getCmp('usernameReview').html);
-		  return false;
-		}
-	  }
+        if (!flagValidateUsername) {
+          Ext.Msg.alert( _('ID_ERROR'), Ext.getCmp('usernameReview').html);
+          return false;
+        }
+      }
     } else {
       if (!flagValidateUsername) {
         Ext.Msg.alert( _('ID_ERROR'), Ext.getCmp('usernameReview').html);
@@ -1117,9 +1162,9 @@ function saveUser()
 
     if (USR_UID == '00000000000000000000000000000001') {
         if (Ext.getCmp('USR_ROLE').getValue() != PROCESSMAKER_ADMIN) {
-    		Ext.Msg.alert( _('ID_ERROR'), _('ID_ADMINISTRATOR_ROLE_CANT_CHANGED'));
+            Ext.Msg.alert( _('ID_ERROR'), _('ID_ADMINISTRATOR_ROLE_CANT_CHANGED'));
             return false;
-    	}
+        }
     }
 
   } else {
@@ -1291,6 +1336,10 @@ function loadUserData()
                 USR_POSITION  : data.user.USR_POSITION,
                 USR_DUE_DATE  : data.user.USR_DUE_DATE,
                 USR_STATUS    : data.user.USR_STATUS,
+                /*----------------------------------********---------------------------------*/
+                USR_COST_BY_HOUR : data.user.USR_COST_BY_HOUR,
+                USR_UNIT_COST : data.user.USR_UNIT_COST,
+                /*----------------------------------********---------------------------------*/
                 USR_LOGGED_NEXT_TIME    : data.user.USR_LOGGED_NEXT_TIME
             });
 
@@ -1312,9 +1361,11 @@ function loadUserData()
                 Ext.getCmp("USR_DUE_DATE2").setText(data.user.USR_DUE_DATE);
                 Ext.getCmp("USR_STATUS2").setText(_('ID_' + data.user.USR_STATUS));
                 Ext.getCmp("USR_ROLE2").setText(data.user.USR_ROLE_NAME);
-                
+                /*----------------------------------********---------------------------------*/
+                Ext.getCmp("USR_COST_BY_HOUR2").setText(data.user.USR_COST_BY_HOUR);
+                Ext.getCmp("USR_UNIT_COST2").setText(data.user.USR_UNIT_COST);
+                /*----------------------------------********---------------------------------*/
                 Ext.getCmp("USR_CALENDAR2").setText(data.user.CALENDAR_NAME);
-
                 Ext.getCmp("PREF_DEFAULT_MAIN_MENU_OPTION2").setText(data.user.MENUSELECTED_NAME);
                 Ext.getCmp("PREF_DEFAULT_CASES_MENUSELECTED2").setText(data.user.CASES_MENUSELECTED_NAME);
             } else {

@@ -102,10 +102,6 @@ class AppCacheView extends BaseAppCacheView
         $criteria->addSelectColumn(AppCacheViewPeer::TAS_UID);
         $criteria->addSelectColumn(AppCacheViewPeer::PRO_UID);
 
-        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
-        $criteria->addJoin(AppCacheViewPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
-        $criteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
-
         $criteria->add(AppCacheViewPeer::APP_STATUS, "TO_DO", CRITERIA::EQUAL);
 
         if (!empty($userUid)) {
@@ -1796,5 +1792,53 @@ class AppCacheView extends BaseAppCacheView
         $criteria->addSelectColumn(AppCacheViewPeer::APP_OVERDUE_PERCENTAGE);
         return $criteria;
     }
+
+    /*----------------------------------********---------------------------------*/
+    public function fillReportByUser ($dateInit, $dateFinish)
+    {
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+
+        $filenameSql = $this->pathToAppCacheFiles . "triggerFillReportByUser.sql";
+
+        if (!file_exists($filenameSql)) {
+            throw (new Exception("file triggerFillReportByUser.sql doesn't exist"));
+        }
+
+        $sql = "TRUNCATE TABLE USR_REPORTING";
+        $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
+
+        $sql = explode(';', file_get_contents($filenameSql));
+
+        foreach ($sql as $key => $val) {
+            $val = str_replace('{init_date}', $dateInit, $val);
+            $val = str_replace('{finish_date}', $dateFinish, $val);
+            $stmt->executeQuery($val);
+        }
+    }
+
+    public function fillReportByProcess ($dateInit, $dateFinish)
+    {
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+
+        $filenameSql = $this->pathToAppCacheFiles . "triggerFillReportByProcess.sql";
+
+        if (!file_exists($filenameSql)) {
+            throw (new Exception("file triggerFillReportByProcess.sql doesn't exist"));
+        }
+
+        $sql = "TRUNCATE TABLE PRO_REPORTING";
+        $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
+
+        $sql = explode(';', file_get_contents($filenameSql));
+
+        foreach ($sql as $key => $val) {
+            $val = str_replace('{init_date}', $dateInit, $val);
+            $val = str_replace('{finish_date}', $dateFinish, $val);
+            $stmt->executeQuery($val);
+        }
+    }
+    /*----------------------------------********---------------------------------*/
 }
 

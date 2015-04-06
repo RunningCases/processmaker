@@ -851,7 +851,7 @@ class Ajax
         $_POST["DYN_UID"] = $_REQUEST["DYN_UID"];
 
         $G_PUBLISH = new Publisher();
-        $FieldsHistory = unserialize($_SESSION["HISTORY_DATA"]);
+        $FieldsHistory = $_SESSION["HISTORY_DATA"];
         $Fields["APP_DATA"] = $FieldsHistory[$_POST["HISTORY_ID"]]; //isset($FieldsHistory[$_POST["HISTORY_ID"]])? $FieldsHistory[$_POST["HISTORY_ID"]] : "";
         $Fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["PREVIOUS_STEP_LABEL"] = "";
         $Fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["NEXT_STEP_LABEL"] = "";

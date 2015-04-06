@@ -129,7 +129,7 @@ switch ($option) {
             }
 
             ///////
-            $boundary = "---------------------" . substr(md5(rand(0, 32000)), 0, 10);
+            $boundary = "---------------------" . substr(G::encryptOld(rand(0, 32000)), 0, 10);
             $data = null;
 
             $data = $data . "--$boundary\n";

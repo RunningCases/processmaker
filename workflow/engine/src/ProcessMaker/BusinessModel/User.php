@@ -30,6 +30,11 @@ class User
         "USR_BIRTHDAY"         => array("type" => "date",   "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrBirthday"),
         "USR_FAX"              => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrFax"),
         "USR_CELLULAR"         => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrCellular"),
+
+        /*----------------------------------********---------------------------------*/
+        "USR_COST_BY_HOUR"     => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrCostByHour"),
+        "USR_UNIT_COST"        => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrUnitCost"),
+        /*----------------------------------********---------------------------------*/
         "USR_LOGGED_NEXT_TIME" => array("type" => "int",    "required" => false, "empty" => false, "defaultValues" => array(0, 1),                                           "fieldNameAux" => "usrLoggedNextTime")
     );
 
@@ -364,6 +369,10 @@ class User
                 $this->getFieldNameByFormatFieldName("USR_REPORTS_TO")         => $record["USR_REPORTS_TO"],
                 $this->getFieldNameByFormatFieldName("USR_REPLACED_BY")        => $record["USR_REPLACED_BY"],
                 $this->getFieldNameByFormatFieldName("USR_UX")                 => $record["USR_UX"],
+                /*----------------------------------********---------------------------------*/
+                $this->getFieldNameByFormatFieldName("USR_COST_BY_HOUR")       => $record["USR_COST_BY_HOUR"],
+                $this->getFieldNameByFormatFieldName("USR_UNIT_COST")          => $record["USR_UNIT_COST"],
+                /*---------------------------------********---------------------------------*/
                 $this->getFieldNameByFormatFieldName("USR_TOTAL_INBOX")        => $record["USR_TOTAL_INBOX"],
                 $this->getFieldNameByFormatFieldName("USR_TOTAL_DRAFT")        => $record["USR_TOTAL_DRAFT"],
                 $this->getFieldNameByFormatFieldName("USR_TOTAL_CANCELLED")    => $record["USR_TOTAL_CANCELLED"],
@@ -413,6 +422,10 @@ class User
             $criteria->addSelectColumn(\UsersPeer::USR_REPORTS_TO);
             $criteria->addSelectColumn(\UsersPeer::USR_REPLACED_BY);
             $criteria->addSelectColumn(\UsersPeer::USR_UX);
+            /*----------------------------------********---------------------------------*/
+            $criteria->addSelectColumn(\UsersPeer::USR_COST_BY_HOUR);
+            $criteria->addSelectColumn(\UsersPeer::USR_UNIT_COST);
+            /*----------------------------------********---------------------------------*/
             $criteria->addSelectColumn(\UsersPeer::USR_TOTAL_INBOX);
             $criteria->addSelectColumn(\UsersPeer::USR_TOTAL_DRAFT);
             $criteria->addSelectColumn(\UsersPeer::USR_TOTAL_CANCELLED);
@@ -1047,7 +1060,7 @@ class User
                     }
                 }
             }
-            $oCriteria->add(\UsersPeer::USR_STATUS, 'CLOSED', \Criteria::ALT_NOT_EQUAL);
+            $oCriteria->add(\UsersPeer::USR_STATUS, "ACTIVE", \Criteria::EQUAL);
             $oDataset = \UsersPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             while ($oDataset->next()) {
@@ -1098,4 +1111,3 @@ class User
         }
     }
 }
-

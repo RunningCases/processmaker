@@ -1211,7 +1211,7 @@ class G
                 $mtime = date( 'U' );
             }
             $gmt_mtime = gmdate( "D, d M Y H:i:s", $mtime ) . " GMT";
-            header( 'ETag: "' . md5( $mtime . $filename ) . '"' );
+            header( 'ETag: "' . G::encryptOld( $mtime . $filename ) . '"' );
             header( "Last-Modified: " . $gmt_mtime );
             header( 'Cache-Control: public' );
             header( "Expires: " . gmdate( "D, d M Y H:i:s", time() + 60 * 10 ) . " GMT" ); //ten minutes
@@ -1228,7 +1228,7 @@ class G
                 $mtime = date( 'U' );
             }
             $gmt_mtime = gmdate( "D, d M Y H:i:s", $mtime ) . " GMT";
-            header( 'ETag: "' . md5( $mtime . $filename ) . '"' );
+            header( 'ETag: "' . G::encryptOld( $mtime . $filename ) . '"' );
             header( "Last-Modified: " . $gmt_mtime );
             header( 'Cache-Control: public' );
             header( "Expires: " . gmdate( "D, d M Y H:i:s", time() + 90 * 60 * 60 * 24 ) . " GMT" );
@@ -1240,7 +1240,7 @@ class G
             }
 
             if (isset( $_SERVER['HTTP_IF_NONE_MATCH'] )) {
-                if (str_replace( '"', '', stripslashes( $_SERVER['HTTP_IF_NONE_MATCH'] ) ) == md5( $mtime . $filename )) {
+                if (str_replace( '"', '', stripslashes( $_SERVER['HTTP_IF_NONE_MATCH'] ) ) == G::encryptOld( $mtime . $filename )) {
                     header( "HTTP/1.1 304 Not Modified" );
                     exit();
                 }
@@ -2635,9 +2635,15 @@ class G
             if (! is_dir( $path )) {
                 G::verifyPath( $path, true );
             }
+            
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
+            $file = $filter->validateInput($file, "path"); 
+            
             move_uploaded_file( $file, $path . "/" . $nameToSave );
             @chmod( $path . "/" . $nameToSave, $permission );
             umask( $oldumask );
+
         } catch (Exception $oException) {
             throw $oException;
         }
@@ -3206,7 +3212,7 @@ class G
             } else {
                 // Detect by creating a temporary file
                 // Try to use system's temporary directory as random name shouldn't exist
-                $temp_file = tempnam( md5( uniqid( rand(), true ) ), '' );
+                $temp_file = tempnam( G::encryptOld( uniqid( rand(), true ) ), '' );
                 if ($temp_file) {
                     $temp_dir = realpath( dirname( $temp_file ) );
                     unlink( $temp_file );
@@ -4565,7 +4571,7 @@ class G
                 $checkSum .= md5_file( $file );
             }
         }
-        return md5( $checkSum . $key );
+        return G::encryptOld( $checkSum . $key );
     }
 
     /**
@@ -5568,6 +5574,28 @@ class G
        $clean = ($lowercase) ? (function_exists('mb_strtolower')) ? mb_strtolower($clean, 'UTF-8') : strtolower($clean) : $clean;
        return $clean;
    }
+   /**
+    * encryptOld
+    *
+    * @param string $string
+    *
+    * @return md5($string)
+    */
+    public function encryptOld ($string)
+    {
+        return md5($string);
+    }
+    /**
+    * crc32
+    *
+    * @param string $string
+    *
+    * @return crc32($string)
+    */
+    public function encryptCrc32 ($string)
+    {
+        return crc32($string);
+    }
 }
 
 /**

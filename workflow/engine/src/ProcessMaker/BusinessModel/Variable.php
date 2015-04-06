@@ -129,7 +129,13 @@ class Variable
             $cnn = \Propel::getConnection("workflow");
             try {
                 $variable = \ProcessVariablesPeer::retrieveByPK($variableUid);
-
+                $oldVariable = array(
+                    "VAR_NAME" => $variable->getVarName(),
+                    "VAR_FIELD_TYPE" => $variable->getVarFieldType(),
+                    "VAR_DBCONNECTION" => $variable->getVarDbconnection(),
+                    "VAR_SQL" => $variable->getVarSql(),
+                    "VAR_ACCEPTED_VALUES" => $variable->getVarAcceptedValues()
+                );
                 if ($variable->validate()) {
                     $cnn->begin();
                     if (isset($arrayData["VAR_NAME"])) {
@@ -163,6 +169,17 @@ class Variable
                     }
                     $variable->save();
                     $cnn->commit();
+                    //update dynaforms
+                    $newVariable = array(
+                        "VAR_NAME" => $variable->getVarName(),
+                        "VAR_FIELD_TYPE" => $variable->getVarFieldType(),
+                        "VAR_DBCONNECTION" => $variable->getVarDbconnection(),
+                        "VAR_SQL" => $variable->getVarSql(),
+                        "VAR_ACCEPTED_VALUES" => $variable->getVarAcceptedValues()
+                    );
+                    \G::LoadClass('pmDynaform');
+                    $pmDynaform = new \pmDynaform();
+                    $pmDynaform->synchronizeVariable($processUid, $newVariable, $oldVariable);
                 } else {
 
                     $msg = "";
@@ -200,7 +217,13 @@ class Variable
 
             $this->throwExceptionIfNotExistsVariable($variableUid);
 
-            $this->verifyUse($processUid, $variableUid);
+            $variable = $this->getVariable($processUid, $variableUid);
+            \G::LoadClass('pmDynaform');
+            $pmDynaform = new \pmDynaform();
+            $isUsed = $pmDynaform->isUsed($processUid, $variable);
+            if ($isUsed !== false) {
+                throw new \Exception(\G::LoadTranslation("ID_VARIABLE_IN_USE", array($variableUid, $isUsed)));
+            }
             //Delete
             $criteria = new \Criteria("workflow");
 
@@ -471,30 +494,12 @@ class Variable
             $process->throwExceptionIfNotExistsProcess($processUid, strtolower("PRJ_UID"));
 
             //Set data
-            $variableDbConnectionUid = "";
-            $variableSql = "";
-
-            $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DBCONNECTION);
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_SQL);
-            $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid, \Criteria::EQUAL);
-            $criteria->add(\ProcessVariablesPeer::VAR_NAME, $variableName, \Criteria::EQUAL);
-
-            $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            if ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
-
-                $variableDbConnectionUid = $row["VAR_DBCONNECTION"];
-                $variableSql = strtoupper($row["VAR_SQL"]);
-            } else {
-                throw new \Exception(G::LoadTranslation("ID_PROCESS_VARIABLE_DOES_NOT_EXIST", array("VAR_NAME", $variableName)));
-            }
-
-            //Verify data
-            $this->throwExceptionIfSomeRequiredVariableSqlIsMissingInVariables($variableName, $variableSql, $arrayVariable);
-
+            \G::LoadClass('pmDynaform');
+            $pmDynaform = new \pmDynaform();
+            $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $arrayVariable["field_id"]);
+            $variableDbConnectionUid = $field !== null ? $field->dbConnection : "";
+            $variableSql = $field !== null ? $field->sql : "";
+            
             //Get data
             $_SESSION["PROCESS"] = $processUid;
 
@@ -510,7 +515,7 @@ class Variable
 
                 $arrayRecord[] = array(
                     strtolower("VALUE") => $row[0],
-                    strtolower("TEXT")  => $row[1]
+                    strtolower("TEXT") => isset($row[1]) ? $row[1] : $row[0]
                 );
             }
 

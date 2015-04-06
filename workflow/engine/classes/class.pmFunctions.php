@@ -831,7 +831,7 @@ function getEmailConfiguration ()
  * @param array | $aAttachment = array() | Attachment | An Optional arrray. An array of files (full paths) to be attached to the email.
  * @param boolean | $showMessage = true | Show message | Optional parameter. Set to TRUE to show the message in the case's message history.
  * @param int | $delIndex = 0 | Delegation index of the case | Optional parameter. The delegation index of the current task in the case.
- * @param array | $config = array() | Email server configuration | An optional array: An array of parameters to be used in the Email sent (MESS_ENGINE, MESS_SERVER, MESS_PORT, MESS_FROM_MAIL, MESS_RAUTH, MESS_ACCOUNT, MESS_PASSWORD, and SMTPSecure).
+ * @param string(100) | $config = '' | Email server configuration | An optional array: An array of parameters to be used in the Email sent (MESS_ENGINE, MESS_SERVER, MESS_PORT, MESS_FROM_MAIL, MESS_RAUTH, MESS_ACCOUNT, MESS_PASSWORD, and SMTPSecure) Or String: UID of Email server .
  * @return int | | result | Result of sending email
  *
  */
@@ -2234,7 +2234,7 @@ function setCaseTrackerCode ($sApplicationUID, $sCode, $sPIN = '')
         $aFields['APP_PROC_CODE'] = $sCode;
         if ($sPIN != '') {
             $aFields['APP_DATA']['PIN'] = $sPIN;
-            $aFields['APP_PIN'] = md5( $sPIN );
+            $aFields['APP_PIN'] = G::encryptOld( $sPIN );
         }
         $oCase->updateCase( $sApplicationUID, $aFields );
         if (isset($_SESSION['APPLICATION'])) {

@@ -178,7 +178,7 @@ ini_set( "soap.wsdl_cache_enabled", "0" ); // disabling WSDL cache
 switch ($action) {
     case 'login':
         $user = $_POST["user"];
-        $pass = md5( $_POST["pass"] );
+        $pass = G::encryptOld( $_POST["pass"] );
         $wsdl = $endpoint;
         //$client = new SoapClient( $endpoint );
         $client = new SoapClient( null, array ('location' => $endpoint,'uri' => 'http://www.sugarcrm.com/sugarcrm','soap_version' => SOAP_1_1,        //SOAP_1_2 - 1.2 not supported by sugar nusoap

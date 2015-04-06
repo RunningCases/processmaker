@@ -443,8 +443,16 @@ class DataBaseMaintenance
         if (empty( $aTables ))
             return false;
         printf( "%-70s", "LOCK TABLES" );
+        
+        if(is_array($aTables)) {
+            foreach($aTables as $k => $v) {
+                $aTables[$k] = mysql_real_escape_string($v);
+            }
+        }
+            
         $sQuery = "LOCK TABLES " . implode( " READ, ", $aTables ) . " READ; ";
         $sQuery = $filter->preventSqlInjection($sQuery);
+        
         if (@mysql_query( $sQuery )) {
             echo "    [OK]\n";
             return true;
@@ -502,7 +510,7 @@ class DataBaseMaintenance
             $data .= ");\n";
         }
 
-        $data = $filter->xssFilterHard($data);
+        $data = $filter->preventSqlInjection($data);
         printf( "%-59s%20s", "Dump of table $table", strlen( $data ) . " Bytes Saved\n" );
         return $data;
     }

@@ -1,0 +1,397 @@
+<?php
+namespace ProcessMaker\Services\Api;
+
+use \ProcessMaker\Services\Api;
+use \Luracast\Restler\RestException;
+
+
+/**
+ * Calendar Api Controller
+ *
+ * @protected
+ */
+class ReportingIndicators extends Api
+{
+//   /**
+//     * Returns the aggregate Efficiency of a process or set of precesses
+//     *
+//     * @param string $process_list {@from path}
+//     * @param string $init_date {@from path}
+//     * @param string $end_date {@from path}
+//     * @return array
+//     *
+//     * @url GET /process-efficiency-index
+//     */
+//
+//    public function doGetProcessEfficiencyIndex($process_list, $init_date, $end_date)
+//    {
+//        try {
+//            $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
+//            $listArray = (strlen($process_list) > 1)
+//                                ? $listArray = explode(',', $process_list)
+//                                : null;
+//
+//            $response = $indicatorsObj->getProcessEfficiencyIndex($listArray,
+//                            new \DateTime($init_date),
+//                            new \DateTime($end_date));
+//
+//            return $response;
+//        } catch (\Exception $e) {
+//            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+//        }
+//    }
+
+   /**
+     * Lists tasks of a process and it's statistics (efficiency, average times, etc.)
+     *
+     * @param string $process_list {@from path}
+     * @param string $init_date {@from path}
+     * @param string $end_date {@from path}
+     * @param string $language {@from path}
+     * @return array
+     *
+     * @url GET /process-tasks
+     */
+    public function doGetProcessTasksInfo($process_list, $init_date, $end_date, $language)
+    {
+
+        if ($process_list == null || strlen($process_list) <= 1)
+            throw new InvalidArgumentException ('process_list must have at least a value', 0);
+
+        try {
+            $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
+            $listArray =  $listArray = explode(',', $process_list);
+            $response = $indicatorsObj->getPeiTasksStatistics($listArray,
+                            new \DateTime($init_date),
+                            new \DateTime($end_date),
+                            $language);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+//   /**
+//     * Returns the aggregate Efficiency of a employee or set of employees
+//     *
+//     * @param string $employee_list {@from path}
+//     * @param string $init_date {@from path}
+//     * @param string $end_date {@from path}
+//     * @return array
+//     *
+//     * @url GET /employee-efficiency-index
+//     */
+//    public function doGetEmployeeEfficiencyIndex($employee_list, $init_date, $end_date)
+//    {
+//        try {
+//            $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
+//            $listArray = (strlen($employee_list) > 1)
+//                                ? $listArray = explode(',', $employee_list)
+//                                : null;
+//            $response = $indicatorsObj->getEmployeeEfficiencyIndex($listArray,
+//                            new \DateTime($init_date),
+//                            new \DateTime($end_date));
+//            return $response;
+//        } catch (\Exception $e) {
+//            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+//        }
+//    }
+//
+//     /**
+//     * Lists tasks of a employee and it's statistics (efficiency, average times, etc.)
+//     *
+//     * @param string $employee_list {@from path}
+//     * @param string $init_date {@from path}
+//     * @param string $end_date {@from path}
+//     * @param string $language {@from path}
+//     * @return array
+//     *
+//     * @url GET /employee-tasks
+//     */
+//    public function doGetEmployeeTasksInfo($employee_list, $init_date, $end_date, $language)
+//    {
+//        if ($employee_list == null || strlen($employee_list) <= 1)
+//            throw new InvalidArgumentException ('employee_list must have at least a value', 0);
+//
+//        try {
+//            $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
+//            $listArray =  $listArray = explode(',', $employee_list);
+//            $response = $indicatorsObj->getEmployeeTasksInfoList($listArray,
+//                            new \DateTime($init_date),
+//                            new \DateTime($end_date),
+//                            $language);
+//            return $response;
+//        } catch (\Exception $e) {
+//            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+//        }
+//    }
+//
+//     /**
+//     * Returns the percent of Cases with Overdue time
+//     *
+//     * @param string $$process_list {@from path}
+//     * @param string $init_date {@from path}
+//     * @param string $end_date {@from path}
+//     * @return array
+//     *
+//     * @url GET /percent-overdue-cases
+//     */
+//    public function doGetPercentOverdueByProcess($process_list, $init_date, $end_date)
+//    {
+//        try {
+//            $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
+//            $listArray = (strlen($process_list) > 1)
+//                                ? $listArray = explode(',', $process_list)
+//                                : null;
+//            $response = $indicatorsObj->getPercentOverdueCasesByProcess($listArray,
+//                            new \DateTime($init_date),
+//                            new \DateTime($end_date));
+//            return $response;
+//        } catch (\Exception $e) {
+//            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+//        }
+//    }
+//
+//     /**
+//     * Returns the percent of Cases with Overdue time with the selected periodicity
+//     *
+//     * @param string $$process_list {@from path}
+//     * @param string $init_date {@from path}
+//     * @param string $end_date {@from path}
+//     * @param string $periodicity {@from path}
+//     * @return array
+//     *
+//     * @url GET /percent-overdue-cases-history
+//     */
+//    public function doGetPercentOverdueByProcessHistory($process_list, $init_date, $end_date, $periodicity)
+//    {
+//        try {
+//            $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
+//            $listArray = (strlen($process_list) > 1)
+//                                ? $listArray = explode(',', $process_list)
+//                                : null;
+//            $response = $indicatorsObj->getPercentOverdueCasesByProcessHistory($listArray,
+//                            new \DateTime($init_date),
+//                            new \DateTime($end_date),
+//                            $periodicity);
+//            return $response;
+//        } catch (\Exception $e) {
+//            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+//        }
+//    }
+//
+//     /**
+//     * Returns the total of Cases with New time
+//     *
+//     * @param string $$process_list {@from path}
+//     * @param string $init_date {@from path}
+//     * @param string $end_date {@from path}
+//     * @return array
+//     *
+//     * @url GET /total-new-cases
+//     */
+//    public function doGetTotalNewByProcess($process_list, $init_date, $end_date)
+//    {
+//        try {
+//            $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
+//            $listArray = (strlen($process_list) > 1)
+//                                ? $listArray = explode(',', $process_list)
+//                                : null;
+//            $response = $indicatorsObj->getPercentNewCasesByProcess($listArray,
+//                            new \DateTime($init_date),
+//                            new \DateTime($end_date));
+//            return $response;
+//        } catch (\Exception $e) {
+//            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+//        }
+//    }
+//
+//     /**
+//     * Returns the total of Cases with New time with the selected periodicity
+//     *
+//     * @param string $$process_list {@from path}
+//     * @param string $init_date {@from path}
+//     * @param string $end_date {@from path}
+//     * @param string $periodicity {@from path}
+//     * @return array
+//     *
+//     * @url GET /total-new-cases-history
+//     */
+//    public function doGetTotalNewByProcessHistory($process_list, $init_date, $end_date, $periodicity)
+//    {
+//        try {
+//            $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
+//            $listArray = (strlen($process_list) > 1)
+//                                ? $listArray = explode(',', $process_list)
+//                                : null;
+//            $response = $indicatorsObj->getPercentNewCasesByProcessHistory($listArray,
+//                            new \DateTime($init_date),
+//                            new \DateTime($end_date),
+//                            $periodicity);
+//            return $response;
+//        } catch (\Exception $e) {
+//            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+//        }
+//    }
+//
+//     /**
+//     * Returns the total of Cases with Completed time
+//     *
+//     * @param string $$process_list {@from path}
+//     * @param string $init_date {@from path}
+//     * @param string $end_date {@from path}
+//     * @return array
+//     *
+//     * @url GET /total-completed-cases
+//     */
+//    public function doGetTotalCompletedByProcess($process_list, $init_date, $end_date)
+//    {
+//        try {
+//            $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
+//            $listArray = (strlen($process_list) > 1)
+//                                ? $listArray = explode(',', $process_list)
+//                                : null;
+//            $response = $indicatorsObj->getPercentCompletedCasesByProcess($listArray,
+//                            new \DateTime($init_date),
+//                            new \DateTime($end_date));
+//            return $response;
+//        } catch (\Exception $e) {
+//            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+//        }
+//    }
+//
+//     /**
+//     * Returns the total of Cases with Completed time with the selected periodicity
+//     *
+//     * @param string $$process_list {@from path}
+//     * @param string $init_date {@from path}
+//     * @param string $end_date {@from path}
+//     * @param string $periodicity {@from path}
+//     * @return array
+//     *
+//     * @url GET /total-completed-cases-history
+//     */
+//    public function doGetTotalCompletedByProcessHistory($process_list, $init_date, $end_date, $periodicity)
+//    {
+//        try {
+//            $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
+//            $listArray = (strlen($process_list) > 1)
+//                                ? $listArray = explode(',', $process_list)
+//                                : null;
+//            $response = $indicatorsObj->getPercentCompletedCasesByProcessHistory($listArray,
+//                            new \DateTime($init_date),
+//                            new \DateTime($end_date),
+//                            $periodicity);
+//            return $response;
+//        } catch (\Exception $e) {
+//            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+//        }
+//    }
+//
+     /**
+     * Returns the total of Cases with Completed time with the selected periodicity
+     *
+     * @param string $indicator_uid {@from path}
+     * @param string $measure_date {@from path}
+     * @param string $compare_date {@from path}
+     * @param string $language {@from path}
+     * @return array
+     *
+     * @url GET /process-efficiency-data
+     */
+    public function doGetProcessEficciencyData($indicator_uid, $measure_date, $compare_date, $language)
+    {
+        try {
+            $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
+			$response = $indicatorsObj->getPeiCompleteData
+							($indicator_uid,
+                            new \DateTime($measure_date),
+                            new \DateTime($compare_date),
+                            $language);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+     /**
+     * Returns the total of Cases with Completed time with the selected periodicity
+     *
+     * @param string $indicator_uid {@from path}
+     * @param string $measure_date {@from path}
+     * @param string $compare_date {@from path}
+     * @param string $language {@from path}
+     * @return array
+     *
+     * @url GET /employee-efficiency-data
+     */
+    public function doGetEmployeeEficciencyData($indicator_uid, $measure_date, $compare_date, $language)
+    {
+        try {
+            $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
+			$response = $indicatorsObj->getUeiCompleteData
+							($indicator_uid,
+                            new \DateTime($measure_date),
+                            new \DateTime($compare_date),
+                            $language);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Returns the total of Cases with Completed time with the selected periodicity
+     *
+     * @param string $indicator_uid {@from path}
+     * @param string $measure_date {@from path}
+     * @param string $compare_date {@from path}
+     * @param string $language {@from path}
+     * @return array
+     *
+     * @url GET /group-employee-data
+     */
+    public function doGetGroupEmployeesData($group_uid, $init_date, $end_date, $language)
+    {
+        try {
+            $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
+			$response = $indicatorsObj->getUeiGroupsStatistics
+							($group_uid,
+                            new \DateTime($init_date),
+                            new \DateTime($end_date),
+                            $language);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Returns the total of Cases with Completed time with the selected periodicity
+     *
+     * @param string $indicator_uid {@from path}
+     * @param string $measure_date {@from path}
+     * @param string $compare_date {@from path}
+     * @param string $language {@from path}
+     * @return array
+     *
+     * @url GET /general-indicator-data
+     */
+    public function doGetGeneralIndicatorData ($indicator_uid, $init_date, $end_date, $language)
+    {
+        try {
+            $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
+            $response = $indicatorsObj->getGeneralIndicatorStatistics
+                ($indicator_uid,
+                new \DateTime($init_date),
+                new \DateTime($end_date),
+                $language);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+}
+
+
+
+
