@@ -1060,6 +1060,8 @@
             var widget = userEffic;
             var id = "userEffic";
             break;
+        case "1020":
+        case "1040":
         case "1050":
         case "1060":
         case "1070":
