@@ -930,7 +930,7 @@ class System
                             }
 
                             //#1067 - Invalid default value for int field
-                            if (substr( $newField['Type'], 0, 3 ) == "int" && isset( $newField['Default'] ) && $newField['Default'] == '') {
+                            if (substr( $newField['Type'], 0, 3 ) == "INT" && isset( $newField['Default'] ) && $newField['Default'] == '') {
                                 $changeDefaultAttr = false;
                             }
 
