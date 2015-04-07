@@ -660,7 +660,7 @@ class Net_POP3 {
         if ($this->_state == NET_POP3_STATE_AUTHORISATION) {
 
             if (!empty($this->_timestamp)) {
-                if(PEAR::isError($data = $this->_sendCmd('APOP ' . $user . ' ' . md5($this->_timestamp . $pass)) ) ){
+                if(PEAR::isError($data = $this->_sendCmd('APOP ' . $user . ' ' . $this->encryptOld($this->_timestamp . $pass)) ) ){
                     return $data;
                 }
                 $this->_state = NET_POP3_STATE_TRANSACTION;
@@ -1217,6 +1217,11 @@ class Net_POP3 {
     
         }
         return $this->_raiseError("Unknown Response ($response)");
+    }
+    
+    public function encryptOld($string)
+    {
+        return md5($string);
     }
     
 
