@@ -76,7 +76,7 @@ class PMLicensedFeatures
         $value = $padl->_decrypt($featureName);
 
         if (is_array($value)) {
-            $trueValue = $value[0];
+            $value = $value[0];
         }
         $trueValue = $value;
         $enable = in_array($trueValue, $licenseManager->licensedfeatures);
