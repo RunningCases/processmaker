@@ -478,6 +478,14 @@ class Form extends XmlForm
                                     }
                                 }
                                 break;
+                            case 'yesno':
+                                $values[$k] = $newValues[$k];
+                                if($newValues[$k] == 1){
+                                    $values[$k . "_label"] = 'Yes';
+                                } else {
+                                    $values[$k . "_label"] = 'No';
+                                }
+                                break;
                             case "link":
                                 $values[$k] = $newValues[$k];
                                 $values[$k . "_label"] = $newValues[$k . "_label"];
