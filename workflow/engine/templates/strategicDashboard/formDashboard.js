@@ -147,7 +147,8 @@ Ext.onReady( function() {
         sortInfo: {
             field: 'OWNER_TYPE',
             direction: 'ASC'
-        }
+        },
+        autoLoad: true
     });
 
     storeGroup = new Ext.data.GroupingStore( {
@@ -208,7 +209,8 @@ Ext.onReady( function() {
         store: store,
         displayInfo: true,
         displayMsg: _('ID_GRID_PAGE_DISPLAYING_0WNER_MESSAGE') + '&nbsp; &nbsp; ',
-        emptyMsg: _('ID_GRID_PAGE_NO_OWNER_MESSAGE'),
+        //emptyMsg: _('ID_GRID_PAGE_NO_OWNER_MESSAGE')
+        emptyMsg: ''
     });
 
     cmodel = new Ext.grid.ColumnModel({
@@ -387,21 +389,13 @@ Ext.onReady( function() {
 
     ownerInfoGrid = new Ext.grid.GridPanel({
         region      : 'center',
-        //layout      : 'fit',
         id          : 'ownerInfoGrid',
         height      : 200,
-        //autoWidth   : true,
-        //anchor      : '80%',
         width       : '100%',
-        //stateful    : true,
         stateId     : 'gridDashboardList',
-        //enableColumnResize  : true,
         enableHdMenu: true,
         frame       : false,
         columnLines : false,
-        /*viewConfig : {
-          forceFit:true
-        },*/
         store: store,
         cm: cmodel,
         sm: smodel,
@@ -474,7 +468,9 @@ Ext.onReady( function() {
                                 OWNER_LABEL : selection.data.field1,
                                 OWNER_TYPE  : selection.data.field3
                             });
-                            store.insert(store.getCount(), ow);
+                            ownerInfoGrid.store.insert(store.getCount(), ow);
+                            ownerInfoGrid.store.totalCount = data.length +1;
+                            ownerInfoGrid.store.sort('OWNER_LABEL', 'ASC');
                             ownerInfoGrid.getView().refresh();
 
                             Ext.getCmp('searchIem').clearValue();
@@ -505,7 +501,7 @@ Ext.onReady( function() {
         enableTabScroll : true,
         //anchor          : '98%',
         width           : '100%',
-        height          : 300,
+        height          : 315,
         defaults        : {
             autoScroll  :true
         },
@@ -522,7 +518,7 @@ Ext.onReady( function() {
                     Ext.MessageBox.show({
                         title: _('ID_CONFIRM'),
                         msg: _('ID_DELETE_INDICATOR_SURE'),
-                        buttons: Ext.MessageBox.YESNOCANCEL,
+                        buttons: Ext.MessageBox.YESNO,
                         fn: function(buttonId) {
                             switch(buttonId) {
                                 case 'no':
@@ -536,9 +532,6 @@ Ext.onReady( function() {
                                     }
                                     tabActivate.remove(component.id);
                                     tabPanel.remove(component);
-                                    break;
-                                case 'cancel':
-                                    flag = true;
                                     break;
                             }
                         },
@@ -662,8 +655,8 @@ Ext.onReady( function() {
             {
                 text    : _('ID_CANCEL'),
                 id      : 'cancel',
-                handler : function(){
-                    location.href = 'dashboardList';
+                handler : function() {
+                    window.location = 'dashboardList';
                 }
             }
         ]
@@ -710,7 +703,6 @@ Ext.onReady( function() {
         loadIndicators(DAS_UID);
     } else {
         addTab();
-        tabPanel.getItem(0).show();
     }
 
     if (typeof(__DASHBOARD_ERROR__) !== 'undefined') {
@@ -719,19 +711,20 @@ Ext.onReady( function() {
 });
 
 //==============================================================//
-var addTab = function () {
+var addTab = function (flag) {
     if (tabPanel.items.items.length > 3 ) {
         PMExt.warning(_('ID_DASHBOARD'), _('ID_MAX_INDICATOR_DASHBOARD'));
         return false;
     }
-    tabPanel.add({
-            //title   : _('ID_INDICATOR') + (++indexTab),
+    var tab = {
             title   : _('ID_INDICATOR')+ ' '+ (++indexTab),
             id      : indexTab,
             iconCls : 'tabs',
+            width       : "100%",
             items   : [
                 new Ext.Panel({
-                    height      : 260,
+                    height      : 275,
+                    width       : "100%",
                     border      : true,
                     bodyStyle   : 'padding:10px',
                     items : [
@@ -789,38 +782,69 @@ var addTab = function () {
                                         } 
                                     }
                                 }),
-                                {
-                                    fieldLabel  : _('ID_INDICATOR_GOAL'),
-                                    id          : 'IND_GOAL_'+ indexTab,
-                                    xtype       : 'textfield',
-                                    anchor      : '40%',
-                                    maskRe      : /([0-9\.]+)$/,
-                                    maxLength   : 9,
-                                    width       : 8,
-                                    allowBlank  : false
-                                },
-                                new Ext.form.ComboBox({
-                                    anchor          : '85%',
-                                    editable        : false,
-                                    fieldLabel      : _('ID_DIRECTION'),
-                                    id              : 'DAS_IND_DIRECTION_'+ indexTab,
-                                    displayField    : 'label',
-                                    valueField      : 'id',
-                                    value           : 2,
-                                    forceSelection  : false,
-                                    selectOnFocus   : true,
-                                    typeAhead       : true,
-                                    autocomplete    : true,
-                                    triggerAction   : 'all',
-                                    mode            : 'local',
-                                    store           : new Ext.data.ArrayStore({
-                                        id: 0,
-                                        fields: [
-                                            'id',
-                                            'label'
-                                        ],
-                                        data: [['1', _('ID_LESS_THAN')], ['2', _('ID_MORE_THAN')]]
-                                    })
+                                new Ext.form.FieldSet({
+                                    title : _('ID_INDICATOR_GOAL'),
+                                    width : "90%",
+                                    id  : 'fieldSet_'+ indexTab,
+                                    bodyStyle: 'paddingLeft: 75px;',
+                                    paddingLeft: "30px",
+                                    marginLeft : "60px",
+                                    layout : 'hbox',
+                                    items       : [
+                                        new Ext.form.ComboBox({
+                                            editable        : false,
+                                            id              : 'DAS_IND_DIRECTION_'+ indexTab,
+                                            displayField    : 'label',
+                                            valueField      : 'id',
+                                            value           : '2',
+                                            forceSelection  : false,
+                                            selectOnFocus   : true,
+                                            typeAhead       : true,
+                                            autocomplete    : true,
+                                            width           : 90,
+                                            triggerAction   : 'all',
+                                            mode            : 'local',
+                                            allowBlank      : false,
+                                            store           : new Ext.data.ArrayStore({
+                                                id: 2,
+                                                fields: [
+                                                    'id',
+                                                    'label'
+                                                ],
+                                                data: [['1', _('ID_LESS_THAN')], ['2', _('ID_MORE_THAN')]]
+                                            })
+                                        }),
+                                        {
+                                            fieldLabel  : _('ID_INDICATOR_GOAL'),
+                                            id          : 'IND_GOAL_'+ indexTab,
+                                            xtype       : 'textfield',
+                                            anchor      : '40%',
+                                            maskRe      : /([0-9\.]+)$/,
+                                            maxLength   : 9,
+                                            width       : 80,
+                                            allowBlank  : false,
+                                            listeners   : {
+                                                focus : function(tb, e) {
+                                                     Ext.QuickTips.register({
+                                                       target: tb,
+                                                       title: _('ID_HELP'),
+                                                       text: _('ID_GOAL_HELP')
+                                                     });
+                                                 }
+                                           }  
+                                        }
+                                    ],
+                                    listeners:
+                                    {
+                                        render: function()
+                                        {
+                                            var index = tabPanel.getActiveTab().id;
+                                            var myfieldset = document.getElementById('fieldSet_'+index);
+                                            myfieldset.style.marginLeft = "70px";
+                                            myfieldset.style.marginRight = "70px";
+                                        }
+                                    }
+
                                 }),
                                 new Ext.form.ComboBox({
                                     anchor          : '85%',
@@ -915,7 +939,12 @@ var addTab = function () {
                 },
             },
             closable:true
-        })/*.show(false)*/;
+        };
+    if (flag != 'load') {
+        tabPanel.add(tab).show();
+    } else {
+        tabPanel.add(tab);
+    }
 };
 
 
@@ -1049,76 +1078,69 @@ var saveDashboard = function () {
 
 var saveAllIndicators = function (DAS_UID) {
     for (var tab in tabActivate) {
-        if (tab == 'remove') {
+        if (tab == 'remove' || tab == 'indexOf' || tab == 'map') {
             continue;
         }
         tabPanel.getItem(tabActivate[tab]).show();
         var fieldsTab = tabPanel.getItem(tabActivate[tab]).items.items[0].items.items[0].items.items;
+
+        var goal = fieldsTab[3];
+        fieldsTab.push(goal.items.items[0]);
+        fieldsTab.push(goal.items.items[1]);
 
         data = [];
         data['DAS_UID'] = DAS_UID;
 
         for (var index in fieldsTab) {
             var node = fieldsTab[index];
-            if (index == 'remove') {
+            if (index == 'remove' || index == 'map') {
                 continue;
             }
 
             id = node.id;
-            value = node.getValue();
-            switch (index) {
-                case "0":
-                    data['DAS_IND_UID'] = value.trim();
-                    break;
-                case "1":
-                    if (value.trim() == '') {
-                        PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TITLE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
-                        node.focus(true,10);
-                        return false;
-                    }
-                    data['DAS_IND_TITLE'] = value.trim();
-                    break;
-                case "2":
-                    if (value.trim() == '') {
-                        PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TYPE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
-                        node.focus(true,10);
-                        return false;
-                    }
-                    data['DAS_IND_TYPE'] = value.trim();
-                    break;
-                case "3":
-                    data['DAS_IND_GOAL'] = value.trim();
-                    break;
-                case "4":
-                    data['DAS_IND_DIRECTION'] = value;
-                    break;
-                case "5":
-                    if (value.trim() == '') {
-                        PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_PROCESS_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
-                        node.focus(true,10);
-                        return false;
-                    }
-                    data['DAS_UID_PROCESS'] = value;
-                    break;
-                case "6":
-                    data['DAS_IND_FIRST_FIGURE'] = value;
-                    break;
-                case "7":
-                    data['DAS_IND_FIRST_FREQUENCY'] = value;
-                    break;
-                case "8":
-                    data['DAS_IND_SECOND_FIGURE'] = value;
-                    break;
-                case "9":
-                    data['DAS_IND_SECOND_FREQUENCY'] = value;
-                    break;
+            if (typeof id == 'undefined' || id.indexOf('fieldSet_') != -1 ) {
+                continue;
             }
+            id = id.split('_');
+            field = '';
+            for (var part = 0; part<id.length-1; part++) {
+                if (part == 0) {
+                    field = id[part];
+                } else {
+                    field = field+'_'+id[part];
+                }
+            }
+            value = node.getValue();
+
+            if (field == 'IND_TITLE' && value.trim() == '') {
+                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TITLE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
+                node.focus(true,10);
+                return false;
+            } else if (field == 'IND_TYPE' && value.trim() == '') {
+                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TYPE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
+                node.focus(true,10);
+                return false;
+            } else if (field == 'IND_GOAL' && value.trim() == '') {
+                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_GOAL_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
+                node.focus(true,10);
+                return false;
+            } else if (field == 'IND_PROCESS' && value.trim() == '') {
+                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_PROCESS_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
+                node.focus(true,10);
+                return false;
+            }
+
+            field = field == 'IND_TITLE' ? 'DAS_IND_TITLE' : field;
+            field = field == 'IND_TYPE' ? 'DAS_IND_TYPE' : field;
+            field = field == 'IND_PROCESS' ? 'DAS_UID_PROCESS' : field;
+            field = field == 'IND_GOAL' ? 'DAS_IND_GOAL' : field;
+
+            data[field] = value.trim();
         }
         saveDashboardIndicator(data);
     }
-    location.href = 'dashboardList';
+    window.location = 'dashboardList';
 };
-
 
 var saveDashboardIndicator = function (options) {
     if (options['DAS_IND_UID'] == '') {
@@ -1196,8 +1218,6 @@ var saveAllDashboardOwner = function (DAS_UID) {
 };
 
 var saveDashboardOwner = function (DAS_UID, uid, type) {
-    myMask.msg = _('ID_SAVING');
-    myMask.show();
     Ext.Ajax.request({
         url : urlProxy + 'dashboard/owner',
         method: 'POST',
@@ -1212,11 +1232,9 @@ var saveDashboardOwner = function (DAS_UID, uid, type) {
         },
         success: function (response) {
             var jsonResp = Ext.util.JSON.decode(response.responseText);
-            myMask.hide();
         },
         failure: function (response) {
             var jsonResp = Ext.util.JSON.decode(response.responseText);
-            myMask.hide();
             PMExt.error(_('ID_ERROR'),jsonResp.error.message);
         }
     });
@@ -1233,12 +1251,12 @@ var loadIndicators = function (DAS_UID) {
         success: function (response) {
             var jsonResp = Ext.util.JSON.decode(response.responseText);
             if (jsonResp == '') {
-                addTab();
+                addTab('load');
             }
             dataIndicator = jsonResp;
             
             for (var i=0; i<=jsonResp.length-1; i++) {
-                addTab();
+                addTab('load');
                 tabPanel.getItem(i+1).setTitle(jsonResp[i]['DAS_IND_TITLE']);
             }
             tabPanel.getItem(0).show();

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 3.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-03-24 14:24:23\n"
+"PO-Revision-Date: 2015-04-06 16:20:16\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -18448,14 +18448,14 @@ msgstr "Owner Dashboard has been deleted correctly."
 # TRANSLATION
 # LABEL/ID_PROCESS_EFFICIENCE
 #: LABEL/ID_PROCESS_EFFICIENCE
-msgid "Process Efficience Index"
-msgstr "Process Efficience Index"
+msgid "Process Efficiency Index"
+msgstr "Process Efficiency Index"
 
 # TRANSLATION
 # LABEL/ID_PROCESS_INEFFICIENCE
 #: LABEL/ID_PROCESS_INEFFICIENCE
-msgid "Process Inefficience Cost"
-msgstr "Process Inefficience Cost"
+msgid "Process Inefficiency Cost"
+msgstr "Process Inefficiency Cost"
 
 # TRANSLATION
 # LABEL/ID_EMPLYEE_EFFICIENCIE
@@ -18472,14 +18472,14 @@ msgstr "Inefficience Cost By User"
 # TRANSLATION
 # LABEL/ID_OVER_DUE
 #: LABEL/ID_OVER_DUE
-msgid "% Over due"
-msgstr "% Over due"
+msgid "% Overdue"
+msgstr "% Overdue"
 
 # TRANSLATION
 # LABEL/ID_NEW_CASES
 #: LABEL/ID_NEW_CASES
-msgid "New Cases"
-msgstr "New Cases"
+msgid "% New Cases"
+msgstr "% New Cases"
 
 # TRANSLATION
 # LABEL/ID_COMPLETED_CASES
@@ -18490,8 +18490,8 @@ msgstr "Completed Cases"
 # TRANSLATION
 # LABEL/ID_WORKING_CASES
 #: LABEL/ID_WORKING_CASES
-msgid "Working Cases"
-msgstr "Working Cases"
+msgid "% In Progress"
+msgstr "% In Progress"
 
 # TRANSLATION
 # LABEL/ID_BARS
@@ -18604,8 +18604,8 @@ msgstr "The field Type of indicator \"{0}\" is required."
 # TRANSLATION
 # LABEL/ID_MAX_INDICATOR_DASHBOARD
 #: LABEL/ID_MAX_INDICATOR_DASHBOARD
-msgid "Maximum number of tabs"
-msgstr "Maximum number of tabs"
+msgid "Maximum number of Indicators"
+msgstr "Maximum number of Indicators"
 
 # TRANSLATION
 # LABEL/ID_USER_NAME_ALREADY_EXISTS
@@ -18648,6 +18648,132 @@ msgstr "The process has no type template Dynaform grid, this Dynaform is require
 #: LABEL/ID_DEPARTMENT_MANAGER_EXIST
 msgid "The user: {0} is other department manager."
 msgstr "The user: {0} is other department manager."
+
+# TRANSLATION
+# LABEL/ID_STRATEGIC_DASHBOARD
+#: LABEL/ID_STRATEGIC_DASHBOARD
+msgid "KPI"
+msgstr "KPI"
+
+# TRANSLATION
+# LABEL/ID_MANAGERS_DASHBOARDS
+#: LABEL/ID_MANAGERS_DASHBOARDS
+msgid "Managers dashboard"
+msgstr "Managers dashboard"
+
+# TRANSLATION
+# LABEL/ID_PRO_EFFICIENCY_INDEX
+#: LABEL/ID_PRO_EFFICIENCY_INDEX
+msgid "[LABEL/ID_PRO_EFFICIENCY_INDEX] Process Efficiency Index"
+msgstr "Process Efficiency Index"
+
+# TRANSLATION
+# LABEL/ID_EFFICIENCY_USER
+#: LABEL/ID_EFFICIENCY_USER
+msgid "User Efficiency"
+msgstr "User Efficiency"
+
+# TRANSLATION
+# LABEL/ID_WELL_DONE
+#: LABEL/ID_WELL_DONE
+msgid "Well Done!"
+msgstr "Well Done!"
+
+# TRANSLATION
+# LABEL/ID_NUMBER_CASES
+#: LABEL/ID_NUMBER_CASES
+msgid "Number cases"
+msgstr "Number cases"
+
+# TRANSLATION
+# LABEL/ID_EFFICIENCY_INDEX
+#: LABEL/ID_EFFICIENCY_INDEX
+msgid "Efficiency Index"
+msgstr "Efficiency Index"
+
+# TRANSLATION
+# LABEL/ID_INEFFICIENCY_COST
+#: LABEL/ID_INEFFICIENCY_COST
+msgid "Inefficiency Cost"
+msgstr "Inefficiency Cost"
+
+# TRANSLATION
+# LABEL/ID_EFFICIENCY_COST
+#: LABEL/ID_EFFICIENCY_COST
+msgid "Efficiency cost"
+msgstr "Efficiency cost"
+
+# TRANSLATION
+# LABEL/ID_RELATED_PROCESS
+#: LABEL/ID_RELATED_PROCESS
+msgid "Related Process"
+msgstr "Related Process"
+
+# TRANSLATION
+# LABEL/ID_RELATED_GROUPS
+#: LABEL/ID_RELATED_GROUPS
+msgid "Related Groups"
+msgstr "Related Groups"
+
+# TRANSLATION
+# LABEL/ID_RELATED_TASKS
+#: LABEL/ID_RELATED_TASKS
+msgid "Related Tasks"
+msgstr "Related Tasks"
+
+# TRANSLATION
+# LABEL/ID_RELATED_USERS
+#: LABEL/ID_RELATED_USERS
+msgid "Related Users"
+msgstr "Related Users"
+
+# TRANSLATION
+# LABEL/ID_PROCESS_TASKS
+#: LABEL/ID_PROCESS_TASKS
+msgid "Process's Task"
+msgstr "Process's Task"
+
+# TRANSLATION
+# LABEL/ID_TIME_HOURS
+#: LABEL/ID_TIME_HOURS
+msgid "Time (Hours)"
+msgstr "Time (Hours)"
+
+# TRANSLATION
+# LABEL/ID_HELP
+#: LABEL/ID_HELP
+msgid "Help"
+msgstr "Help"
+
+# TRANSLATION
+# LABEL/ID_MIN_INDICATOR_DASHBOARD
+#: LABEL/ID_MIN_INDICATOR_DASHBOARD
+msgid "You can not delete more Indicators."
+msgstr "You can not delete more Indicators."
+
+# TRANSLATION
+# LABEL/ID_DELETE_INDICATOR_SURE
+#: LABEL/ID_DELETE_INDICATOR_SURE
+msgid "Are you sure you want to delete this Indicator?"
+msgstr "Are you sure you want to delete this Indicator?"
+
+# TRANSLATION
+# LABEL/ID_DIRECTION
+#: LABEL/ID_DIRECTION
+msgid "Direction"
+msgstr "Direction"
+
+# TRANSLATION
+# LABEL/ID_UNTITLED_TASK
+#: LABEL/ID_UNTITLED_TASK
+msgid "Untitled task"
+msgstr "Untitled task"
+
+# TRANSLATION
+# LABEL/ID_GOAL_HELP
+#: LABEL/ID_GOAL_HELP
+msgid "(Goal value)"
+msgstr "(Goal value)"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml

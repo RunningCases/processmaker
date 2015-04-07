@@ -1,4 +1,15 @@
 <?php
+register_shutdown_function(
+    create_function(
+        "",
+        "
+        if (class_exists(\"Propel\")) {
+            Propel::close();
+        }
+        "
+    )
+);
+
 ini_set("memory_limit", "512M");
 
 try {
