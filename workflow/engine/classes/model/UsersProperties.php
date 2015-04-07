@@ -433,6 +433,14 @@ class UsersProperties extends BaseUsersProperties
                         $url = 'dashboard/main';
                     }
                     break;
+                /*----------------------------------********---------------------------------*/
+                case 'PM_STRATEGIC_DASHBOARD':
+                    $licensedFeatures = & PMLicensedFeatures::getSingleton();
+                    if ($licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjBsZEJ6dnpJa3dTeWVLVT0=') && $RBAC->userCanAccess( 'PM_SETUP' ) == 1) {
+                        $url = 'strategicDashboard/main';
+                    }
+                    break;
+                /*----------------------------------********---------------------------------*/
             }
         }
 
