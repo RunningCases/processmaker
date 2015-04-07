@@ -1,4 +1,15 @@
 <?php
+register_shutdown_function(
+    create_function(
+        "",
+        "
+        if (class_exists(\"Propel\")) {
+            Propel::close();
+        }
+        "
+    )
+);
+
 /*
  * ProcessMaker Web Application Bootstrap
  */
@@ -30,7 +41,7 @@ try {
     }
     $loader->add($rootDir . 'workflow/engine/src/', "ProcessMaker");
     $loader->add($rootDir . 'workflow/engine/src/');
-    
+
     // add vendors to autoloader
     $loader->add($rootDir . 'vendor/luracast/restler/vendor', "Luracast");
     $loader->add($rootDir . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");

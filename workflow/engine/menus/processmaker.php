@@ -48,7 +48,7 @@ if ($RBAC->userCanAccess('PM_DASHBOARD') == 1) {
 
 // ADMIN MODULE
 if ($RBAC->userCanAccess('PM_SETUP') == 1 || $RBAC->userCanAccess('PM_USERS') == 1) {
-  $G_TMP_MENU->AddIdRawOption('SETUP', 'setup/main', G::LoadTranslation('ID_SETUP'), '', '', '', 'x-pm-setup');
+  $G_TMP_MENU->AddIdRawOption('SETUP', 'setup/main', strtolower(G::LoadTranslation('ID_SETUP')), '', '', '', 'x-pm-setup');
 }
 
 /*----------------------------------********---------------------------------*/
