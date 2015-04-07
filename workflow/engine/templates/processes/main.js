@@ -647,10 +647,11 @@ editProcess = function(typeParam)
 
   if (type == "bpmn") {
       url = '../designer?prj_uid=' + pro_uid;
+      openWindowIfIE(url);
   } else {
       url = 'processes_Map?PRO_UID=' + pro_uid;
+      location.href = url;
   }
-    openWindowIfIE(url);
 }
 
 editNewProcess = function(){
