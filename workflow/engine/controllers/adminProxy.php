@@ -1055,6 +1055,22 @@ class adminProxy extends HttpProxyController
                 $aMessage1 = array();
                 $fileName  = trim(str_replace(' ', '_', $namefile));
                 $fileName  = self::changeNamelogo($fileName);
+                
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    $tmpFile = str_replace("\\\\","\\",$tmpFile,$count);
+                    if(!$count) {
+                        $tmpFileName = basename($tmpFile);
+                        $winPath = explode("\\", $tmpFile);
+                        $tmpFile = "";
+                        foreach($winPath as $k => $v){
+                            if($v != "") {
+                                $tmpFile.= $v."\\";
+                            }
+                        }
+                        $tmpFile = substr($tmpFile,0,-1);
+                    }   
+                }
+                
                 G::uploadFile($tmpFile, $dir, 'tmp' . $fileName);
                 try {
                     if (extension_loaded('exif')) {
