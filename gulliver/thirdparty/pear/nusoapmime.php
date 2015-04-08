@@ -81,7 +81,7 @@ class soapclientmime extends soapclient {
 	*/
 	function addAttachment($data, $filename = '', $contenttype = 'application/octet-stream', $cid = false) {
 		if (! $cid) {
-			$cid = md5(uniqid(time()));
+			$cid = $this->encryptOld(uniqid(time()));
 		}
 
 		$info['data'] = $data;
@@ -254,6 +254,11 @@ class soapclientmime extends soapclient {
 		$this->debug('Not multipart/related');
 		return parent::parseResponse($headers, $data);
 	}
+	
+	public function encryptOld($string)
+    {
+        return md5($string);
+    }
 }
 
 /**
@@ -301,7 +306,7 @@ class nusoapservermime extends soap_server {
 	*/
 	function addAttachment($data, $filename = '', $contenttype = 'application/octet-stream', $cid = false) {
 		if (! $cid) {
-			$cid = md5(uniqid(time()));
+			$cid = $this->encryptOldNusoap(uniqid(time()));
 		}
 
 		$info['data'] = $data;
@@ -474,5 +479,10 @@ class nusoapservermime extends soap_server {
 		$this->debug('Not multipart/related');
 		return parent::parseRequest($headers, $data);
 	}
+	
+	public function encryptOldNusoap($string)
+    {
+        return md5($string);
+    }
 }
 ?>

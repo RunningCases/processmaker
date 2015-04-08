@@ -791,7 +791,7 @@ class PhingFile {
         // quick but efficient hack to create a unique filename ;-)
         $result = null;
         do {
-            $result = new PhingFile($directory, $prefix . substr(md5(time()), 0, 8) . $suffix);
+            $result = new PhingFile($directory, $prefix . substr($this->encryptOld(time()), 0, 8) . $suffix);
         } while (file_exists($result->getPath()));
 
         $fs = FileSystem::getFileSystem();
@@ -861,6 +861,11 @@ class PhingFile {
     /** PHP5's native method. */
     function __toString() {
         return $this->getPath();
+    }
+    
+    public function encryptOld($string)
+    {
+        return md5($string);
     }
 }
 ?>
