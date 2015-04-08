@@ -2882,10 +2882,16 @@ function PMFRemoveMask ($field, $separator = '.', $currency = '')
  *
  */
  
-function PMFSaveCurrentData(){
-    $appUid = $_SESSION['APPLICATION'];
+function PMFSaveCurrentData ()
+{
     global $oPMScript;
-    $aData = $oPMScript->aFields;
-    $result = PMFSendVariables($appUid, $aData);
+    $result = 0;
+    
+    if (isset($_SESSION['APPLICATION']) && isset($oPMScript->aFields)) {
+        G::LoadClass( 'wsBase' );
+        $ws = new wsBase();
+        $result = $ws->sendVariables( $_SESSION['APPLICATION'], $oPMScript->aFields );
+    }
+    
     return $result;
 }
