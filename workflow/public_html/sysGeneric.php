@@ -373,6 +373,10 @@ $virtualURITable['/skins/(*)'] = PATH_HTML . 'skins/'; //ugly
 $virtualURITable['/images/(*)'] = PATH_HTML . 'images/'; //ugly
 $virtualURITable['/[a-zA-Z][a-zA-Z0-9]{0,}/'] = 'errorFile';
 
+//Load filter class
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+
 // Verify if we need to redirect or stream the file, if G:VirtualURI returns true means we are going to redirect the page
 if (Bootstrap::virtualURI( $_SERVER['REQUEST_URI'], $virtualURITable, $realPath )) {
     // review if the file requested belongs to public_html plugin
@@ -725,10 +729,6 @@ if (SYS_COLLECTION == 'login' && SYS_TARGET == 'login') {
 $bWE = false;
 $isControllerCall = false;
 $isPluginController = false;
-
-//Load filter class
-G::LoadSystem('inputfilter');
-$filter = new InputFilter();
 
 if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
     $phpFile = PATH_GULLIVER_HOME . 'methods/' . substr( SYS_COLLECTION, 8 ) . SYS_TARGET . '.php';
