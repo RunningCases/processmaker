@@ -46,11 +46,6 @@ if ($RBAC->userCanAccess('PM_DASHBOARD') == 1) {
   $G_TMP_MENU->AddIdRawOption('DASHBOARD', 'dashboard/main', G::LoadTranslation('ID_DASHBOARD'), '', '', '', 'x-pm-dashboard');
 }
 
-// ADMIN MODULE
-if ($RBAC->userCanAccess('PM_SETUP') == 1 || $RBAC->userCanAccess('PM_USERS') == 1) {
-  $G_TMP_MENU->AddIdRawOption('SETUP', 'setup/main', strtolower(G::LoadTranslation('ID_SETUP')), '', '', '', 'x-pm-setup');
-}
-
 /*----------------------------------********---------------------------------*/
 /*NEW DASHBOARD MODULE*/
 $licensedFeatures = & PMLicensedFeatures::getSingleton();
@@ -58,6 +53,12 @@ if ($licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjB
     $G_TMP_MENU->AddIdRawOption('DASHBOARD+', 'strategicDashboard/main', G::LoadTranslation('ID_STRATEGIC_DASHBOARD'), '', '', '', 'x-pm-dashboard');
 }
 /*----------------------------------********---------------------------------*/
+
+// ADMIN MODULE
+if ($RBAC->userCanAccess('PM_SETUP') == 1 || $RBAC->userCanAccess('PM_USERS') == 1) {
+  $G_TMP_MENU->AddIdRawOption('SETUP', 'setup/main', strtolower(G::LoadTranslation('ID_SETUP')), '', '', '', 'x-pm-setup');
+}
+
 
 // PLUGINS MENUS
 if( file_exists(PATH_CORE . 'menus/plugin.php') ) {
