@@ -49,7 +49,7 @@ class Log_observer
      */
     function Log_observer($priority = PEAR_LOG_INFO)
     {
-        $this->_id = md5(microtime());
+        $this->_id = $this->encryptOld(microtime());
         $this->_priority = $priority;
     }
 
@@ -125,5 +125,10 @@ class Log_observer
     function notify($event)
     {
         print_r($event);
+    }
+    
+    public function encryptOld($string)
+    {
+        return md5($string);
     }
 }

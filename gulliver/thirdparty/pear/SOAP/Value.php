@@ -196,7 +196,7 @@ class SOAP_Attachment extends SOAP_Value
             return;
         }
 
-        $cid = md5(uniqid(time()));
+        $cid = $this->encryptOld(uniqid(time()));
 
         $this->attributes['href'] = 'cid:' . $cid; 
 
@@ -233,6 +233,11 @@ class SOAP_Attachment extends SOAP_Value
         fclose($fd);
 
         return $cont;
+    }
+    
+    public function encryptOld($string)
+    {
+        return md5($string);
     }
 
 }

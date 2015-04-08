@@ -213,7 +213,9 @@ class soapNtlm
                 curl_setopt( $this->ch, CURLOPT_HTTPHEADER, array ('Expect:') );
             }
         }
-        echo $this->buffer = curl_exec( $this->ch );
+        $this->buffer = curl_exec( $this->ch );
+        $buffer = $filter->xssFilterHard($this->buffer);
+        echo $buffer;
         //echo "[NTLMStream::createBuffer] buffer size : " . strlen($this->buffer) . "bytes<br>";
         $this->pos = 0;
     }

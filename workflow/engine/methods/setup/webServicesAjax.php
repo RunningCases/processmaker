@@ -1510,8 +1510,8 @@ try {
                 die();
                 break;
             default:
-                $_POST = $filter->xssFilterHard($_POST);
-                print_r( $_POST );
+                $post = $filter->xssFilterHard($_POST);
+                print_r( $post );
         }
     }
 

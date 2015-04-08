@@ -1393,14 +1393,14 @@ class Archive_Zip
           $v_content_compressed = @fread($v_file, $p_header['size']);
 
           // ----- Calculate the CRC
-          $p_header['crc'] = crc32($v_content_compressed);
+          $p_header['crc'] = $this->encryptCrc32($v_content_compressed);
         }
         else {
           // ----- Read the file content
           $v_content = @fread($v_file, $p_header['size']);
 
           // ----- Calculate the CRC
-          $p_header['crc'] = crc32($v_content);
+          $p_header['crc'] = $this->encryptCrc32($v_content);
 
           // ----- Compress the file
           $v_content_compressed = gzdeflate($v_content);
@@ -3581,7 +3581,12 @@ class Archive_Zip
     return $p_path;
   }
   // ---------------------------------------------------------------------------
-
+  
+  public function encryptCrc32($string)
+  {
+    return crc32($string);
+  }
+    
   }
   // End of class
 
