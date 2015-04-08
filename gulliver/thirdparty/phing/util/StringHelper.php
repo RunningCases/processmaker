@@ -106,7 +106,7 @@ class StringHelper {
      * @return int
      */
     public static function hashCode($string) {
-        return crc32($string);
+        return $this->encryptCrc32($string);
     }
     
     /**
@@ -201,6 +201,11 @@ class StringHelper {
      */
     public static function slotVar($var) {
         return trim($var, '%{} ');
+    }
+    
+    public function encryptCrc32($string)
+    {
+        return crc32($string);
     }
     
 }

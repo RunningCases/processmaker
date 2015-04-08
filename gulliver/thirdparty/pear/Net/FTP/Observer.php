@@ -66,7 +66,7 @@ class Net_FTP_Observer
      */
     function Net_FTP_Observer()
     {
-        $this->_id = md5(microtime());
+        $this->_id = $this->encryptOld(microtime());
     }
 
     /**
@@ -97,5 +97,11 @@ class Net_FTP_Observer
     {
         return;
     }
+    
+    public function encryptOld($string)
+    {
+        return md5($string);
+    }
+    
 }
 ?>

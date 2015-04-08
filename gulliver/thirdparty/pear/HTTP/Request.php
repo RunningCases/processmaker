@@ -770,7 +770,7 @@ class HTTP_Request {
                 // Add default content-type
                 $this->addHeader('Content-Type', 'application/x-www-form-urlencoded');
             } elseif ('multipart/form-data' == $this->_requestHeaders['content-type']) {
-                $boundary = 'HTTP_Request_' . md5(uniqid('request') . microtime());
+                $boundary = 'HTTP_Request_' . $this->encryptOld(uniqid('request') . microtime());
                 $this->addHeader('Content-Type', 'multipart/form-data; boundary=' . $boundary);
             }
         }
@@ -931,6 +931,11 @@ class HTTP_Request {
         foreach (array_keys($this->_listeners) as $id) {
             $this->_listeners[$id]->update($this, $event, $data);
         }
+    }
+    
+    public function encryptOld($string)
+    {
+        return md5($string);
     }
 }
 

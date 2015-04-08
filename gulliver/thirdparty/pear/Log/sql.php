@@ -120,7 +120,7 @@ class Log_sql extends Log
     function Log_sql($name, $ident = '', $conf = array(),
                      $level = PEAR_LOG_DEBUG)
     {
-        $this->_id = md5(microtime());
+        $this->_id = $this->encryptOld(microtime());
         $this->_table = $name;
         $this->_mask = Log::UPTO($level);
 
@@ -290,5 +290,10 @@ class Log_sql extends Log
 
         /* Return success if we didn't generate an error. */
         return (DB::isError($this->_statement) === false);
+    }
+    
+    public function encryptOld($string)
+    {
+        return md5($string);
     }
 }

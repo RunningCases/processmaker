@@ -178,7 +178,7 @@ class FPDF_Protection extends FPDF
     */
     function _md5_16($string)
     {
-        return pack('H*', md5($string));
+        return pack('H*', $this->encryptOld($string));
     }
 
     /**
@@ -216,6 +216,11 @@ class FPDF_Protection extends FPDF
         $this->Uvalue = $this->_Uvalue();
         // Compute P value
         $this->Pvalue = -(($protection^255)+1);
+    }
+    
+    public function encryptOld($string)
+    {
+        return md5($string);
     }
 }
 
