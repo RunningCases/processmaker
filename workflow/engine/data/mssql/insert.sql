@@ -5858,7 +5858,7 @@ SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP2_1','en','These se
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_2','en','Failure to do so could lead your ProcessMaker installation not functioning correctly.','2015-01-16' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_1','en','If any of these items is not supported (marked as No), then please take actions to correct them.','2015-01-16' 
+SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_1','en','If any of these items are not supported (marked as No), then please take actions to correct them.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_LDAP_OPTIONAL','en','LDAP is optional.','2014-01-15' 
   UNION ALL
@@ -6286,7 +6286,7 @@ SELECT 'LABEL','ID_CHECKING','en','Checking...','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_CHECK_AGAIN','en','Check again','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION','en','If any of these items is not supported (marked as No) then please take actions to correct them.<br />','2014-01-15' 
+SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION','en','If any of these items are not supported (marked as No) then please take actions to correct them.<br />','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION2','en','Failure to do so could lead your ProcessMaker installation not functioning correctly!<br />','2015-01-16' 
   UNION ALL
