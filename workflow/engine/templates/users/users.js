@@ -409,14 +409,16 @@ Ext.onReady(function () {
           fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_FIRSTNAME')) +'"> * </span>' + _('ID_FIRSTNAME'),
           xtype      : 'textfield',
           width      : 260,
-          allowBlank : false
+          allowBlank : false,
+          regex      : /^[a-zA-Z]+$/
         },
         {
           id         : 'USR_LASTNAME',
           fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_LASTNAME')) +'"> * </span>' + _('ID_LASTNAME'),
           xtype      : 'textfield',
           width      : 260,
-          allowBlank : false
+          allowBlank : false,
+          regex      : /^[a-zA-Z]+$/
         },
         {
           id         : 'USR_USERNAME',
@@ -463,7 +465,7 @@ Ext.onReady(function () {
           vtype      : 'email',
           xtype      : 'textfield',
           width      : 260,
-          allowBlank : false
+          allowBlank : false,
         },
         {
           xtype          : 'textarea',
