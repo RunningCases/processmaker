@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 3.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-04-06 16:20:16\n"
+"PO-Revision-Date: 2015-04-07 17:56:03\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -13258,8 +13258,8 @@ msgstr "Failure to do so could lead your ProcessMaker installation not functioni
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_1
 #: LABEL/ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_1
-msgid "If any of these items is not supported (marked as No), then please take actions to correct them."
-msgstr "If any of these items is not supported (marked as No), then please take actions to correct them."
+msgid "If any of these items are not supported (marked as No), then please take actions to correct them."
+msgstr "If any of these items are not supported (marked as No), then please take actions to correct them."
 
 # TRANSLATION
 # LABEL/ID_LDAP_OPTIONAL
@@ -14524,8 +14524,8 @@ msgstr "Check again"
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION
 #: LABEL/ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION
-msgid "If any of these items is not supported (marked as No) then please take actions to correct them.<br />"
-msgstr "If any of these items is not supported (marked as No) then please take actions to correct them.<br />"
+msgid "If any of these items are not supported (marked as No), then please take actions to correct them.<br />"
+msgstr "If any of these items are not supported (marked as No), then please take actions to correct them.<br />"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION2
