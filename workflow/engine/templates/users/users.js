@@ -410,7 +410,7 @@ Ext.onReady(function () {
           xtype      : 'textfield',
           width      : 260,
           allowBlank : false,
-          regex      : /^[a-zA-Z]+$/
+          regex      : /^\S*$/
         },
         {
           id         : 'USR_LASTNAME',
@@ -418,7 +418,7 @@ Ext.onReady(function () {
           xtype      : 'textfield',
           width      : 260,
           allowBlank : false,
-          regex      : /^[a-zA-Z]+$/
+          regex      : /^\S*$/
         },
         {
           id         : 'USR_USERNAME',
@@ -465,7 +465,7 @@ Ext.onReady(function () {
           vtype      : 'email',
           xtype      : 'textfield',
           width      : 260,
-          allowBlank : false,
+          allowBlank : false
         },
         {
           xtype          : 'textarea',
