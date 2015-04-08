@@ -542,6 +542,10 @@ switch ($_POST['action']) {
                             $menuSelected = strtoupper(G::LoadTranslation('ID_DASHBOARD'));
                             break;
                     }
+                } else {
+                   if($aFields['PREF_DEFAULT_MENUSELECTED'] == 'PM_STRATEGIC_DASHBOARD'){
+                       $menuSelected = strtoupper(G::LoadTranslation('ID_STRATEGIC_DASHBOARD'));
+                   }
                 }
             }
         }
