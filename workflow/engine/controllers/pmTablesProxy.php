@@ -669,10 +669,12 @@ class pmTablesProxy extends HttpProxyController
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
         $countRow = 250;
-        if (preg_match( '/[\x00-\x08\x0b-\x0c\x0e\x1f]/', file_get_contents( $_FILES['form']['tmp_name']['CSV_FILE'] ) ) === 0) {
+        $tmpfilename = $_FILES['form']['tmp_name']['CSV_FILE'];
+        $tmpfilename = $filter->xssFilterHard($tmpfilename, 'path');
+        if (preg_match( '/[\x00-\x08\x0b-\x0c\x0e\x1f]/', file_get_contents( $tmpfilename ) ) === 0) {
             $filename = $_FILES['form']['name']['CSV_FILE'];
             $filename = $filter->xssFilterHard($filename, 'path');
-            if ($oFile = fopen( $_FILES['form']['tmp_name']['CSV_FILE'], 'r' )) {
+            if ($oFile = fopen( $tmpfilename, 'r' )) {
                 require_once 'classes/model/AdditionalTables.php';
                 $oAdditionalTables = new AdditionalTables();
                 $aAdditionalTables = $oAdditionalTables->load( $_POST['form']['ADD_TAB_UID'], true );
@@ -767,10 +769,12 @@ class pmTablesProxy extends HttpProxyController
     {
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
-        if (preg_match( '/[\x00-\x08\x0b-\x0c\x0e\x1f]/', file_get_contents( $_FILES['form']['tmp_name']['CSV_FILE'] ) ) === 0) {
+        $tmpfilename = $_FILES['form']['tmp_name']['CSV_FILE'];
+        $tmpfilename = $filter->xssFilterHard($tmpfilename, 'path');
+        if (preg_match( '/[\x00-\x08\x0b-\x0c\x0e\x1f]/', file_get_contents( $tmpfilename ) ) === 0) {
             $filename = $_FILES['form']['name']['CSV_FILE'];
             $filename = $filter->xssFilterHard($filename, 'path');
-            if ($oFile = fopen( $_FILES['form']['tmp_name']['CSV_FILE'], 'r' )) {
+            if ($oFile = fopen( $tmpfilename, 'r' )) {
                 require_once 'classes/model/AdditionalTables.php';
                 $oAdditionalTables = new AdditionalTables();
                 $aAdditionalTables = $oAdditionalTables->load( $_POST['form']['ADD_TAB_UID'], true );

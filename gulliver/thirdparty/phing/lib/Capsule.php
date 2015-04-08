@@ -121,7 +121,10 @@ class Capsule {
         // prepend template path to include path, 
         // so that include "path/relative/to/templates"; can be used within templates
         $__old_inc_path = ini_get('include_path');
-        ini_set('include_path', $this->templatePath . PATH_SEPARATOR . $__old_inc_path);
+
+        if(is_dir($this->templatePath . PATH_SEPARATOR . $__old_inc_path)) {
+            ini_set('include_path', $this->templatePath . PATH_SEPARATOR . $__old_inc_path);
+        }
                 
         @ini_set('track_errors', true);
         include $__template;
