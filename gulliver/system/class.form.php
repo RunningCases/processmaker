@@ -481,9 +481,9 @@ class Form extends XmlForm
                             case 'yesno':
                                 $values[$k] = $newValues[$k];
                                 if($newValues[$k] == 1){
-                                    $values[$k . "_label"] = 'Yes';
+                                    $values[$k . "_label"] = G::LoadTranslation('ID_FIELD_DYNAFORM_YES_LABEL');
                                 } else {
-                                    $values[$k . "_label"] = 'No';
+                                    $values[$k . "_label"] = G::LoadTranslation('ID_FIELD_DYNAFORM_NO_LABEL');
                                 }
                                 break;
                             case "link":
