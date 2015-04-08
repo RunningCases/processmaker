@@ -1410,7 +1410,7 @@ SELECT 'LABEL','ID_LOGOUT','en','Logout','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_MY_ACCOUNT','en','My account','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_USERS','en','Users','2014-01-15' 
+SELECT 'LABEL','ID_USERS','en','Users','2015-03-30' 
   UNION ALL
 SELECT 'LABEL','ID_CASES','en','HOME','2014-01-15' 
   UNION ALL
@@ -5858,7 +5858,7 @@ SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP2_1','en','These se
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_2','en','Failure to do so could lead your ProcessMaker installation not functioning correctly.','2015-01-16' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_1','en','If any of these items is not supported (marked as No), then please take actions to correct them.','2015-01-16' 
+SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_1','en','If any of these items are not supported (marked as No), then please take actions to correct them.','2015-01-16' 
   UNION ALL
 SELECT 'LABEL','ID_LDAP_OPTIONAL','en','LDAP is optional.','2014-01-15' 
   UNION ALL
@@ -6286,7 +6286,7 @@ SELECT 'LABEL','ID_CHECKING','en','Checking...','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_CHECK_AGAIN','en','Check again','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION','en','If any of these items is not supported (marked as No) then please take actions to correct them.<br />','2014-01-15' 
+SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION','en','If any of these items are not supported (marked as No) then please take actions to correct them.<br />','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION2','en','Failure to do so could lead your ProcessMaker installation not functioning correctly!<br />','2015-01-16' 
   UNION ALL
@@ -7610,21 +7610,21 @@ SELECT 'LABEL','ID_SECOND_FIGURE','en','Second Graph','2015-03-09'
   UNION ALL
 SELECT 'LABEL','ID_DASHBOARD_OWNER_SUCCESS_DELETE','en','Owner Dashboard has been deleted correctly.','2015-03-09' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESS_EFFICIENCE','en','Process Efficience Index','2015-03-09' 
+SELECT 'LABEL','ID_PROCESS_EFFICIENCE','en','Process Efficiency Index','2015-04-01' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESS_INEFFICIENCE','en','Process Inefficience Cost','2015-03-09' 
+SELECT 'LABEL','ID_PROCESS_INEFFICIENCE','en','Process Inefficiency Cost','2015-04-01' 
   UNION ALL
 SELECT 'LABEL','ID_EMPLYEE_EFFICIENCIE','en','Employee Efficience Index','2015-03-09' 
   UNION ALL
 SELECT 'LABEL','ID_USER_INEFFICIENCE','en','Inefficience Cost By User','2015-03-09' 
   UNION ALL
-SELECT 'LABEL','ID_OVER_DUE','en','% Over due','2015-03-09' 
+SELECT 'LABEL','ID_OVER_DUE','en','% Overdue','2015-04-01' 
   UNION ALL
-SELECT 'LABEL','ID_NEW_CASES','en','New Cases','2015-03-09' 
+SELECT 'LABEL','ID_NEW_CASES','en','% New Cases','2015-04-06' 
   UNION ALL
 SELECT 'LABEL','ID_COMPLETED_CASES','en','Completed Cases','2015-03-09' 
   UNION ALL
-SELECT 'LABEL','ID_WORKING_CASES','en','Working Cases','2015-03-09' 
+SELECT 'LABEL','ID_WORKING_CASES','en','% In Progress','2015-04-06' 
   UNION ALL
 SELECT 'LABEL','ID_BARS','en','Bars','2015-03-09' 
   UNION ALL
@@ -7636,7 +7636,7 @@ SELECT 'LABEL','ID_QUARTER','en','Quarter','2015-03-09'
   UNION ALL
 SELECT 'LABEL','ID_SEMESTER','en','Semester','2015-03-09' 
   UNION ALL
-SELECT 'LABEL','ID_YEAR','en','Year','2015-03-09' 
+SELECT 'LABEL','ID_YEAR','en','Year','2015-03-30' 
   UNION ALL
 SELECT 'LABEL','ID_SET_MANAGER','en','Set Manager','2015-03-09' 
   UNION ALL
@@ -7662,7 +7662,7 @@ SELECT 'LABEL','ID_INDICATOR_TITLE_REQUIRED','en','The field Title of indicator 
   UNION ALL
 SELECT 'LABEL','ID_INDICATOR_TYPE_REQUIRED','en','The field Type of indicator "{0}" is required.','2015-03-18' 
   UNION ALL
-SELECT 'LABEL','ID_MAX_INDICATOR_DASHBOARD','en','Maximum number of tabs','2015-03-18' 
+SELECT 'LABEL','ID_MAX_INDICATOR_DASHBOARD','en','Maximum number of Indicators','2015-03-31' 
   UNION ALL
 SELECT 'LABEL','ID_USER_NAME_ALREADY_EXISTS','en','The User Name with {0}: "{1}" already exists.','2015-03-23' 
   UNION ALL
@@ -7677,6 +7677,50 @@ SELECT 'LABEL','ID_CONSOLIDATED_CASE_LIST','en','Consolidated Case List','2015-0
 SELECT 'LABEL','ID_CONSOLIDATED_DYNAFORM_REQUIRED','en','The process has no type template Dynaform grid, this Dynaform is required','2015-03-24' 
   UNION ALL
 SELECT 'LABEL','ID_DEPARTMENT_MANAGER_EXIST','en','The user: {0} is other department manager.','2015-03-24' 
+  UNION ALL
+SELECT 'LABEL','ID_STRATEGIC_DASHBOARD','en','KPI','2015-04-06' 
+  UNION ALL
+SELECT 'LABEL','ID_MANAGERS_DASHBOARDS','en','Managers dashboard','2015-03-30' 
+  UNION ALL
+SELECT 'LABEL','ID_PRO_EFFICIENCY_INDEX','en','Process Efficiency Index','2015-03-30' 
+  UNION ALL
+SELECT 'LABEL','ID_EFFICIENCY_USER','en','User Efficiency','2015-03-30' 
+  UNION ALL
+SELECT 'LABEL','ID_WELL_DONE','en','Well Done!','2015-03-30' 
+  UNION ALL
+SELECT 'LABEL','ID_NUMBER_CASES','en','Number cases','2015-03-30' 
+  UNION ALL
+SELECT 'LABEL','ID_EFFICIENCY_INDEX','en','Efficiency Index','2015-03-30' 
+  UNION ALL
+SELECT 'LABEL','ID_INEFFICIENCY_COST','en','Inefficiency Cost','2015-03-30' 
+  UNION ALL
+SELECT 'LABEL','ID_EFFICIENCY_COST','en','Efficiency cost','2015-03-30' 
+  UNION ALL
+SELECT 'LABEL','ID_RELATED_PROCESS','en','Related Process','2015-03-30' 
+  UNION ALL
+SELECT 'LABEL','ID_RELATED_GROUPS','en','Related Groups','2015-03-30' 
+  UNION ALL
+SELECT 'LABEL','ID_RELATED_TASKS','en','Related Tasks','2015-03-30' 
+  UNION ALL
+SELECT 'LABEL','ID_RELATED_USERS','en','Related Users','2015-03-30' 
+  UNION ALL
+SELECT 'LABEL','ID_PROCESS_TASKS','en','Process''s Task','2015-03-30' 
+ ;
+INSERT INTO [TRANSLATION] ([TRN_CATEGORY],[TRN_ID],[TRN_LANG],[TRN_VALUE],[TRN_UPDATE_DATE]) 
+
+SELECT 'LABEL','ID_TIME_HOURS','en','Time (Hours)','2015-03-30' 
+  UNION ALL
+SELECT 'LABEL','ID_HELP','en','Help','2015-04-06' 
+  UNION ALL
+SELECT 'LABEL','ID_MIN_INDICATOR_DASHBOARD','en','You can not delete more Indicators.','2015-03-31' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_INDICATOR_SURE','en','Are you sure you want to delete this Indicator?','2015-03-31' 
+  UNION ALL
+SELECT 'LABEL','ID_DIRECTION','en','Direction','2015-03-31' 
+  UNION ALL
+SELECT 'LABEL','ID_UNTITLED_TASK','en','Untitled task','2015-04-01' 
+  UNION ALL
+SELECT 'LABEL','ID_GOAL_HELP','en','(Goal value)','2015-04-06' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 

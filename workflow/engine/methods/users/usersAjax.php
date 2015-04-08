@@ -158,7 +158,10 @@ switch ($_POST['action']) {
             $lastName = $form['USR_LASTNAME'] ? " - Last Name: ". $form['USR_LASTNAME'] : "";
             $email = $form['USR_EMAIL'] ? " - Email: ". $form['USR_EMAIL'] : "";
             $dueDate = $form['USR_DUE_DATE'] ? " - Due Date: ". $form['USR_DUE_DATE'] : "";
-            $status = $form['USR_STATUS'] ? " - Status: ". $form['USR_STATUS'] : "";
+            $status = "";
+            if(isset($form['USR_STATUS'])){
+                $status = $form['USR_STATUS'] ? " - Status: ". $form['USR_STATUS'] : "";
+            }
             $address = $form['USR_ADDRESS'] ? " - Address: ". $form['USR_ADDRESS'] : "";
             $phone = $form['USR_PHONE'] ? " - Phone: ". $form['USR_PHONE'] : "";  
             $zipCode = $form['USR_ZIP_CODE'] ? " - Zip Code: ". $form['USR_ZIP_CODE'] : "";  
@@ -539,6 +542,10 @@ switch ($_POST['action']) {
                             $menuSelected = strtoupper(G::LoadTranslation('ID_DASHBOARD'));
                             break;
                     }
+                } else {
+                   if($aFields['PREF_DEFAULT_MENUSELECTED'] == 'PM_STRATEGIC_DASHBOARD'){
+                       $menuSelected = strtoupper(G::LoadTranslation('ID_STRATEGIC_DASHBOARD'));
+                   }
                 }
             }
         }
@@ -595,6 +602,14 @@ switch ($_POST['action']) {
                 case 'PM_DASHBOARD':
                     $rows[] = Array('id' => 'PM_DASHBOARD', 'name' => strtoupper(G::LoadTranslation('ID_DASHBOARD'))
                     );
+                    /*----------------------------------********---------------------------------*/
+                    // NEW DASHBOARD MODULE
+                    $licensedFeatures = & PMLicensedFeatures::getSingleton();
+                    if ($licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjBsZEJ6dnpJa3dTeWVLVT0=')) {
+                        $rows[] = Array('id' => 'PM_STRATEGIC_DASHBOARD', 'name' => strtoupper(G::LoadTranslation('ID_STRATEGIC_DASHBOARD'))
+                        );
+                    }
+                    /*----------------------------------********---------------------------------*/
                     break;
             }
         }
