@@ -222,7 +222,8 @@ class Variable
             $pmDynaform = new \pmDynaform();
             $isUsed = $pmDynaform->isUsed($processUid, $variable);
             if ($isUsed !== false) {
-                throw new \Exception(\G::LoadTranslation("ID_VARIABLE_IN_USE", array($variableUid, $isUsed)));
+                $titleDynaform=$pmDynaform->getDynaformTitle($isUsed);
+                throw new \Exception(\G::LoadTranslation("ID_VARIABLE_IN_USE", array($titleDynaform)));
             }
             //Delete
             $criteria = new \Criteria("workflow");
