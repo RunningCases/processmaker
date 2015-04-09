@@ -103,13 +103,34 @@ input.module_app_button___gray{
     font-weight: 700;
     //transition: all 0.3s ease-in-out 0s;
     max-width: 400px;
-    
+    filter:none;   
+}
+
+input.module_app_buttonjs___gray{
+    background-image: none;
+    width: 100%;  
+    color: #fff;
+    border-radius: 6px;
+    font-size: 18px;
+    line-height: 1.33;
+    padding: 10px 16px;
+    display: block;
+    padding-left: 0;
+    padding-right: 0;
+    width: 100%;
+    background-color: #1fbc99;
+    border-color: #1fbc99;
+    color: #fff;
+    font-weight: 700;
+    //transition: all 0.3s ease-in-out 0s;
+    max-width: 400px;    
 }
 
 .module_app_button___gray:hover:hover{
    background-color: #1ba385; 
    background-image:none;
-   color: #fff;   
+   color: #fff;
+   filter:none;   
 }
 
 .panel-body table{
