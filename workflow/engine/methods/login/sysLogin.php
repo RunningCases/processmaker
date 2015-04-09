@@ -160,13 +160,21 @@ switch (WS_IN_LOGIN) {
         //Get Server Configuration
         $oServerConf = & serverConf::getSingleton ();
         if ($oServerConf->getProperty ('LOGIN_NO_WS')) {
-            $fileLogin = 'login/sysLoginNoWS';
+            if(SYS_SKIN == 'neoclassic'){
+                $fileLogin = 'login/sysLoginNoWSpm3';
+            }else{
+                $fileLogin = 'login/sysLoginNoWS';
+            }            
         } else {
             $fileLogin = 'login/sysLogin';
         }
         break;
     case 'no':
-        $fileLogin = 'login/sysLoginNoWS';
+        if(SYS_SKIN == 'neoclassic'){
+            $fileLogin = 'login/sysLoginNoWSpm3';
+        }else{
+            $fileLogin = 'login/sysLoginNoWS';
+        }
         break;
     case 'yes':
         $fileLogin = 'login/sysLogin';

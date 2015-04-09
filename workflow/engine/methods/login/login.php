@@ -192,7 +192,12 @@ if (isset($myUrl) && $myUrl != "") {
 }
 
 $G_PUBLISH = new Publisher();
-$G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/login', '', $aFields, SYS_URI . 'login/authentication.php');
+if(SYS_SKIN == 'neoclassic'){
+    $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/loginpm3', '', $aFields, SYS_URI . 'login/authentication.php');
+}else{
+    $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/login', '', $aFields, SYS_URI . 'login/authentication.php');
+}
+
 G::LoadClass('serverConfiguration');
 //Bootstrap::LoadClass('serverConfiguration');
 //get the serverconf singleton, and check if we can send the heartbeat

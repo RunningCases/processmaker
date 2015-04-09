@@ -1,0 +1,117 @@
+/*
+*  LOGIN PM3 STYLES
+*/
+body.login {
+    background: url("/images/backgroundpm3.jpg") repeat scroll 0 0 / cover rgba(0, 0, 0, 0);
+}
+
+.vertical-offset-100 {
+    padding-top: 50px;
+}
+
+img.img-responsive {
+    margin-bottom: 20px;
+}
+.img-responsive {
+    display: block;
+    height: auto;
+    margin: auto;
+    max-width: 100%;
+}
+
+.login .panel {
+    border-radius: 0;
+    padding: 20px;
+}
+.panel {
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid transparent;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+
+.login .panel-default > .panel-heading {
+    background: none repeat scroll 0 0 transparent;
+}
+
+
+.module_app_input___gray {
+ background-color: #fff;
+    background-image: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+    color: #555;
+    display: block;
+    font-size: 14px;
+    height: 34px;
+    line-height: 1.42857;
+    padding: 6px 12px;
+    transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
+    width: 100%;
+}
+
+.form-signin .module_app_input___gray {
+    border-radius: 0;
+    box-sizing: border-box;
+    color: #949494;
+    font-family: "Open Sans",Arial,Helvetica,sans-serif;
+    font-size: 16px;
+    height: 45px;
+    padding: 10px;
+    position: relative;
+    margin-bottom: 6px;
+}
+
+.module_app_input___gray::-moz-placeholder {
+    color: #999;
+    opacity: 1;
+}
+
+.login .panel h3 {
+    margin-bottom: 8px;
+}
+h1, h2, h3, h4, h5, h6 {
+    color: #444;
+    font-family: "Montserrat",sans-serif;
+    font-weight: 400;
+    margin: 0 0 30px;
+}
+p {
+    font-size: 16px;
+    line-height: 1.5em;
+    margin: 0 0 20px;
+}
+
+
+input.module_app_button___gray{
+    background-image: none;
+    width: 100%;  
+    color: #fff;
+    border-radius: 6px;
+    font-size: 18px;
+    line-height: 1.33;
+    padding: 10px 16px;
+    display: block;
+    padding-left: 0;
+    padding-right: 0;
+    width: 100%;
+    background-color: #1fbc99;
+    border-color: #1fbc99;
+    color: #fff;
+    font-weight: 700;
+    //transition: all 0.3s ease-in-out 0s;
+    max-width: 400px;
+    
+}
+
+.module_app_button___gray:hover:hover{
+   background-color: #1ba385; 
+   background-image:none;
+   color: #fff;   
+}
+
+.panel-body table{
+	width: 100%;
+}
