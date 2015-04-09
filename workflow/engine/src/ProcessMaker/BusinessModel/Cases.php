@@ -551,6 +551,8 @@ class Cases
             $del       = \DBAdapter::getStringDelimiter();
             $oCriteria->addSelectColumn( \AppDelegationPeer::DEL_INDEX );
             $oCriteria->addSelectColumn( \AppDelegationPeer::TAS_UID );
+            $oCriteria->addSelectColumn(\AppDelegationPeer::DEL_INIT_DATE);
+            $oCriteria->addSelectColumn(\AppDelegationPeer::DEL_TASK_DUE_DATE);
             $oCriteria->addAsColumn( 'TAS_TITLE', 'C1.CON_VALUE' );
             $oCriteria->addAlias( "C1", 'CONTENT' );
             $tasTitleConds   = array ();
@@ -568,7 +570,9 @@ class Cases
             while ($aRow = $oDataset->getRow()) {
                 $result = array ('tas_uid'   => $aRow['TAS_UID'],
                                  'tas_title'  => $aRow['TAS_TITLE'],
-                                 'del_index' => $aRow['DEL_INDEX']);
+                                 'del_index' => $aRow['DEL_INDEX'],
+                                 "del_init_date"     => $aRow["DEL_INIT_DATE"] . "",
+                                 "del_task_due_date" => $aRow["DEL_TASK_DUE_DATE"]);
                 $oDataset->next();
             }
             //Return
@@ -2206,4 +2210,3 @@ class Cases
         }
     }
 }
-
