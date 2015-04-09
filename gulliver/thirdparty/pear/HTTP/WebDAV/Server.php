@@ -1031,7 +1031,7 @@ class HTTP_WebDAV_Server
 
                 // a little naive, this sequence *might* be part of the content
                 // but it's really not likely and rather expensive to check
-                $this->multipart_separator = "SEPARATOR_".md5(microtime());
+                $this->multipart_separator = "SEPARATOR_".$this->encryptOld(microtime());
 
                 // generate HTTP header
                 header("Content-type: multipart/byteranges; boundary=".$this->multipart_separator);
@@ -1582,7 +1582,7 @@ class HTTP_WebDAV_Server
         }
 
         // fallback
-        $uuid = md5(microtime().getmypid());    // this should be random enough for now
+        $uuid = $this->encryptOld(microtime().getmypid());    // this should be random enough for now
 
         // set variant and version fields for 'true' random uuid
         $uuid{12} = "4";
@@ -2003,5 +2003,10 @@ class HTTP_WebDAV_Server
         } else {
             return $this->_slashify($parent).$child;
         }
+    }
+    
+    public function encryptOld($string)
+    {
+        return md5($string);
     }
 }

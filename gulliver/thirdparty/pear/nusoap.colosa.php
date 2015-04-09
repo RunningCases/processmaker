@@ -2311,13 +2311,13 @@ class soap_transport_http extends nusoap_base_colosa {
 				$A1 = $username. ':' . (isset($digestRequest['realm']) ? $digestRequest['realm'] : '') . ':' . $password;
 	
 				// H(A1) = MD5(A1)
-				$HA1 = md5($A1);
+				$HA1 = $this->encryptOld($A1);
 	
 				// A2 = Method ":" digest-uri-value
 				$A2 = 'POST:' . $this->digest_uri;
 	
 				// H(A2)
-				$HA2 =  md5($A2);
+				$HA2 =  $this->encryptOld($A2);
 	
 				// KD(secret, data) = H(concat(secret, ":", data))
 				// if qop == auth:
@@ -2339,7 +2339,7 @@ class soap_transport_http extends nusoap_base_colosa {
 					$unhashedDigest = $HA1 . ':' . $nonce . ':' . $HA2;
 				}
 	
-				$hashedDigest = md5($unhashedDigest);
+				$hashedDigest = $this->encryptOld($unhashedDigest);
 	
 				$this->outgoing_headers['Authorization'] = 'Digest username="' . $username . '", realm="' . $digestRequest['realm'] . '", nonce="' . $nonce . '", uri="' . $this->digest_uri . '", cnonce="' . $cnonce . '", nc=' . sprintf("%08x", $digestRequest['nc']) . ', qop="' . $digestRequest['qop'] . '", response="' . $hashedDigest . '"';
 			}
@@ -3026,6 +3026,11 @@ class soap_transport_http extends nusoap_base_colosa {
 		}
 		return $cookie_str;
   }
+  
+    public function encryptOld($string)
+    {
+        return md5($string);
+    }
 }
 
 ?><?php

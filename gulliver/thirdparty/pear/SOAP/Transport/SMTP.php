@@ -98,7 +98,7 @@ class SOAP_Transport_SMTP extends SOAP_Transport
         $headers['From'] = $options['from'];
         $headers['X-Mailer'] = $this->_userAgent;
         $headers['MIME-Version'] = '1.0';
-        $headers['Message-ID'] = md5(time()) . '.soap@' . $this->host;
+        $headers['Message-ID'] = $this->encryptOld(time()) . '.soap@' . $this->host;
         $headers['To'] = $this->urlparts['path'];
         if (isset($options['soapaction'])) {
             $headers['Soapaction'] = "\"{$options['soapaction']}\"";
@@ -201,6 +201,11 @@ class SOAP_Transport_SMTP extends SOAP_Transport
             return false;
         }
         return true;
+    }
+    
+    public function encryptOld($string)
+    {
+        return md5($string);
     }
 
 }
