@@ -3797,6 +3797,10 @@ class Cases
                 if (!is_dir($strPathName)) {
                     G::verifyPath($strPathName, true);
                 }
+                
+                G::LoadSystem('inputfilter');
+                $filter = new InputFilter();
+                $file = $filter->xssFilterHard($file, 'path');
 
                 copy($file, $strPathName . $strFileName);
                 chmod($strPathName . $strFileName, 0666);
