@@ -8,12 +8,18 @@
   <body>
     <table width="100%" height="100%" cellpadding="0" cellspacing="0" border="0" id="pm_main_table">
       <tr>
-        <td id="pm_header" valign="top">
+        <td id="pm_header" valign="top" {if $user_logged neq '' or $tracker neq ''}style="border-bottom:1px solid #e7e7e7;"{/if}>
           <table width="100%" height="32" border="0" cellspacing="0" cellpadding="0" bgcolor="#FFFFFF">
             <tr>
                 {if $user_logged neq '' or $tracker neq ''}
-                <td width="50%" rowspan="2" valign="center"><img src="{$logo_company}" class="logo_company"/></td>
-                <td width="50%" height="16" align="right" valign="top">
+                <td rowspan="2" style="vertical-align:top;width: 245px;"><img src="{$logo_company}" class="logo_company"/></td>
+                <td class="mainMenuBG" rowspan="2" valign="center" >
+                    {include file="$tpl_menu"}
+                    {if (count($subMenus)>0) }
+                        {include file= "$tpl_submenu"}
+                    {/if}
+                </td>
+                <td height="16" align="right" valign="top">
                   <div align="right" class="logout">
                     <small>
                     {if $user_logged neq ''}
@@ -37,7 +43,7 @@
                 {/if}
             </tr>
             <tr>
-              <td width="50%" height="16" valign="bottom" class="title">
+              <td height="16" valign="bottom" class="title">
                 <div align="right"></div>
               </td>
             </tr>
@@ -47,25 +53,6 @@
       <tr>
         <td>
           <table width="100%" cellspacing="0" cellpadding="0" border="0" >
-            <tr>
-              {if $user_logged neq '' or $tracker neq ''}
-              <td width="100%" class="mainMenuBG" style="height:25px">
-                {include file="$tpl_menu"}
-              </td>
-              {else}
-              <td width="100%" style="height:25px">
-              </td>
-              {/if}
-            </tr>
-            {if (count($subMenus)>0) }
-            <tr>
-              <td >
-              <table width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr><td width="100%" class="mainMenuBG">{include file= "$tpl_submenu"}</td></tr>
-              </table>
-              </td>
-            </tr>
-            {/if}
             <tr>
               <td width="100%" align="center">
                 {php}

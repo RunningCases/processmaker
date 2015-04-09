@@ -596,16 +596,20 @@ class Propel {
 	 *
 	 * @return     void
 	 */
-	public static function close()
-	{
-		$last = '';
- 		foreach(self::$connectionMap as $conn) {
-			if ($last != $conn->lastQuery) {
-				$conn->close();
-			}
-			$last = $conn->lastQuery;
- 		}
-	}
+    public static function close()
+    {
+        $lastQuery = "";
+
+        foreach (self::$connectionMap as $cnn) {
+            if (!($cnn instanceof DBArrayConnection)) {
+                if (gettype($cnn->getResource()) == "resource" && $cnn->isConnected() && $cnn->lastQuery != $lastQuery) {
+                    $cnn->close();
+                }
+
+                $lastQuery = $cnn->lastQuery;
+            }
+        }
+    }
 
     /**
      * @param  $name string The connection name
@@ -622,7 +626,7 @@ class Propel {
         /*----------------------------------********---------------------------------*/
          }
         /*----------------------------------********---------------------------------*/
-        
+
         if (! empty(self::$configuration['datasources'][$name]['connection'])) {
             return self::getConnection($name);
         }
@@ -630,7 +634,7 @@ class Propel {
         // the connection names always should be have a underscore like: workflow_ro, rbac_rw
         // on fallback, we will try found a connection named: "workflow" if "workflow_ro" does not exist.
         // the name without the "_ro" part.
-        
+
         $defaultDbName = substr($name, 0, strrpos($name, '_'));
 
         if (! empty(self::$configuration['datasources'][$defaultDbName]['connection'])) {

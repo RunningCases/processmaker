@@ -287,6 +287,7 @@ class System
         $tempFilename = isset( $_FILES['form']['tmp_name']['UPGRADE_FILENAME'] ) ? $_FILES['form']['tmp_name']['UPGRADE_FILENAME'] : '';
         $this->sRevision = str_replace( '.tar.gz', '', str_replace( 'pmos-patch-', '', $upgradeFilename ) );
         $sTemFilename = $tempFilename;
+        $sTemFilename = $filter->xssFilterHard($sTemFilename, 'path');
         $pathFile = $filter->xssFilterHard(PATH_DATA . 'upgrade' . PATH_SEP . $upgradeFilename, 'path');
         $this->sFilename = $pathFile;
         $this->sPath = dirname( $this->sFilename ) . PATH_SEP;
@@ -930,7 +931,7 @@ class System
                             }
 
                             //#1067 - Invalid default value for int field
-                            if (substr( $newField['Type'], 0, 3 ) == "int" && isset( $newField['Default'] ) && $newField['Default'] == '') {
+                            if (substr( $newField['Type'], 0, 3 ) == "INT" && isset( $newField['Default'] ) && $newField['Default'] == '') {
                                 $changeDefaultAttr = false;
                             }
 
