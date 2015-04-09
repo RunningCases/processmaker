@@ -1678,14 +1678,14 @@ class Criterion  {
 			$pathTrunk = implode( '/', $docuroot ) . '/';
 			require_once($pathTrunk.'gulliver/system/class.g.php');
 		}
-		$h = G::encryptCrc3(serialize($this->value)) ^ G::encryptCrc3($this->comparison);
+		$h = G::encryptCrc32(serialize($this->value)) ^ G::encryptCrc32($this->comparison);
 
 		if ($this->table !== null) {
-			$h ^= G::encryptCrc3($this->table);
+			$h ^= G::encryptCrc32($this->table);
 		}
 
 		if ($this->column !== null) {
-			$h ^= G::encryptCrc3($this->column);
+			$h ^= G::encryptCrc32($this->column);
 		}
 
 		foreach ( $this->clauses as $clause ) {
