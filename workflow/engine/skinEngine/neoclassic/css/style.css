@@ -786,6 +786,7 @@ form.formDefault .content,
 .pagedTableDefault {
   background-color: #FFF;
   border: #dddddd 1px solid;
+  width:500px;
 }
 .pagedTableDefault {
   padding: 10px;
