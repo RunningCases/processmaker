@@ -2637,17 +2637,17 @@ class G
             }
             
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                    $file = str_replace("\\\\","\\",$file,$count);
-                    if(!$count) {
-                        $winPath = explode("\\", $file);
-                        $file = "";
-                        foreach($winPath as $k => $v){
-                            if($v != "") {
-                                $file.= $v."\\";
-                            }
+                $file = str_replace("\\\\","\\",$file,$count);
+                if(!$count) {
+                    $winPath = explode("\\", $file);
+                    $file = "";
+                    foreach($winPath as $k => $v){
+                        if($v != "") {
+                            $file.= $v."\\";
                         }
-                        $file = substr($file,0,-1);                       }
-                    }   
+                    }
+                    $file = substr($file,0,-1);                       }
+                }
             }
             
             G::LoadSystem('inputfilter');
