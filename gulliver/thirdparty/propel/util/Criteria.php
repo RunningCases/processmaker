@@ -1696,7 +1696,7 @@ class Criterion  {
 			$sb = '';
 			$params = array();
 			$clause->appendPsTo($sb,$params);
-			$h ^= G::encryptCrc3(serialize(array($sb,$params)));
+			$h ^= G::encryptCrc32(serialize(array($sb,$params)));
 			unset ( $sb, $params );
 		}
 
