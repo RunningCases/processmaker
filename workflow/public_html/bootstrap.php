@@ -266,6 +266,10 @@
   G::LoadSystem('headPublisher');
   $oHeadPublisher =& headPublisher::getSingleton();
 
+  //Load filter class
+  G::LoadSystem('inputfilter');
+  $filter = new InputFilter();
+  
   // Installer, redirect to install if we don't have a valid shared data folder
   if ( !defined('PATH_DATA') || !file_exists(PATH_DATA)) {
 
@@ -331,12 +335,15 @@
   else {  //when we are in global pages, outside any valid workspace
     if (SYS_TARGET==='newSite') {
       $phpFile = G::ExpandPath('methods') . SYS_COLLECTION . "/" . SYS_TARGET.'.php';
+      $phpFile = $filter->validateInput($phpFile,'path');
       require_once($phpFile);
       die();
     }
     else {
       if(SYS_TARGET=="dbInfo"){ //Show dbInfo when no SYS_SYS
-          require_once( PATH_METHODS . "login/dbInfo.php" );
+          $pathFile = PATH_METHODS . "login/dbInfo.php";
+          $pathFile = $filter->validateInput($pathFile,'path');
+          require_once($pathFile);
       }
       else{
 
@@ -352,7 +359,9 @@
           }
         }
         else { // classic sysLogin interface
-          require_once( PATH_METHODS . "login/sysLogin.php" ) ;
+          $pathFile = PATH_METHODS . "login/sysLogin.php";
+          $pathFile = $filter->validateInput($pathFile,'path');
+          require_once($pathFile) ;
           die();
         }
       }
