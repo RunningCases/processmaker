@@ -811,6 +811,12 @@ class Cases
         }
         Validator::isInteger($del_index, '$del_index');
 
+        $oDelay = new \AppDelay();
+
+        if (!$oDelay->isPaused($app_uid, $del_index)) {
+            throw (new \Exception(\G::LoadTranslation("ID_CASE_NOT_PAUSED", array($app_uid))));
+        }
+
         $case = new \Cases();
         $case->unpauseCase( $app_uid, $del_index, $usr_uid );
     }
