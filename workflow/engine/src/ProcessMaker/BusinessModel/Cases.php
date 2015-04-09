@@ -481,6 +481,8 @@ class Cases
                         $current_task['del_index'] = $current_task['delIndex'];
                         $current_task['del_thread'] = $current_task['delThread'];
                         $current_task['del_thread_status'] = $current_task['delThreadStatus'];
+                        $current_task["del_init_date"] = $current_task["delInitDate"] . "";
+                        $current_task["del_task_due_date"] = $current_task["delTaskDueDate"];
                         unset($current_task['userId']);
                         unset($current_task['userName']);
                         unset($current_task['taskId']);

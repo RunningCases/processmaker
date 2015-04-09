@@ -1057,6 +1057,8 @@ class wsBase
             $oCriteria->addSelectColumn( AppDelegationPeer::DEL_THREAD );
             $oCriteria->addSelectColumn( AppDelegationPeer::DEL_THREAD_STATUS );
             $oCriteria->addSelectColumn( AppDelegationPeer::DEL_FINISH_DATE );
+            $oCriteria->addSelectColumn(AppDelegationPeer::DEL_INIT_DATE);
+            $oCriteria->addSelectColumn(AppDelegationPeer::DEL_TASK_DUE_DATE);
             $oCriteria->add( AppDelegationPeer::APP_UID, $caseId );
             $oCriteria->add( AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL );
 
@@ -1096,6 +1098,8 @@ class wsBase
                 $currentUser->delIndex = $aAppDel['DEL_INDEX'];
                 $currentUser->delThread = $aAppDel['DEL_THREAD'];
                 $currentUser->delThreadStatus = $aAppDel['DEL_THREAD_STATUS'];
+                $currentUser->delInitDate = $aAppDel["DEL_INIT_DATE"];
+                $currentUser->delTaskDueDate = $aAppDel["DEL_TASK_DUE_DATE"];
                 $aCurrentUsers[] = $currentUser;
             }
 
@@ -3304,4 +3308,3 @@ class wsBase
         }
     }
 }
-
