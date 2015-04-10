@@ -810,4 +810,93 @@ class Light extends Api
         }
         return $response;
     }
+
+    /**
+     * Get Case Notes
+     *
+     * @param string $app_uid {@min 1}{@max 32}
+     * @param string $start {@from path}
+     * @param string $limit {@from path}
+     * @param string $sort {@from path}
+     * @param string $dir {@from path}
+     * @param string $usr_uid {@from path}
+     * @param string $date_from {@from path}
+     * @param string $date_to {@from path}
+     * @param string $search {@from path}
+     * @return array
+     *
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /case/:app_uid/notes
+     */
+    public function doGetCaseNotes(
+        $app_uid,
+        $start = 0,
+        $limit = 25,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $usr_uid = '',
+        $date_from = '',
+        $date_to = '',
+        $search = ''
+    ) {
+        try {
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['user'] = $usr_uid;
+            $dataList['dateFrom'] = $date_from;
+            $dataList['dateTo'] = $date_to;
+            $dataList['search'] = $search;
+
+            $usr_uid = $this->getUserId();
+            $cases = new \ProcessMaker\BusinessModel\Cases();
+            $response = $cases->getCaseNotes($app_uid, $usr_uid, $dataList);
+            $result   = $this->parserDataNotes($response['data']);
+            return $result;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    public function parserDataNotes ($data)
+    {
+        $structure = array(
+            'app_uid'          => 'caseId',
+            'usr_uid'          => 'userId',
+            'notes' => array(
+                'note_date'    => 'date',
+                'note_content' => 'content'
+            )
+        );
+
+        $response = $this->replaceFields($data, $structure);
+        return $response;
+    }
+
+    /**
+     * Post Case Notes
+     *
+     * @param string $app_uid {@min 1}{@max 32}
+     * @param string $noteContent {@min 1}{@max 500}
+     * @param int $sendMail {@choice 1,0}
+     *
+     * @copyright Colosa - Bolivia
+     *
+     * @url POST /case/:app_uid/note
+     */
+    public function doPostCaseNote($app_uid, $noteContent, $sendMail = 0)
+    {
+        try {
+            $usr_uid = $this->getUserId();
+            $cases = new \ProcessMaker\BusinessModel\Cases();
+            $sendMail = ($sendMail == 0) ? false : true;
+            $cases->saveCaseNote($app_uid, $usr_uid, $noteContent, $sendMail);
+            $result = array("status" => 'ok');
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $result;
+    }
 }
