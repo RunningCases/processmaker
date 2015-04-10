@@ -373,6 +373,10 @@ $virtualURITable['/skins/(*)'] = PATH_HTML . 'skins/'; //ugly
 $virtualURITable['/images/(*)'] = PATH_HTML . 'images/'; //ugly
 $virtualURITable['/[a-zA-Z][a-zA-Z0-9]{0,}/'] = 'errorFile';
 
+//Load filter class
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+
 // Verify if we need to redirect or stream the file, if G:VirtualURI returns true means we are going to redirect the page
 if (Bootstrap::virtualURI( $_SERVER['REQUEST_URI'], $virtualURITable, $realPath )) {
     // review if the file requested belongs to public_html plugin
@@ -564,6 +568,7 @@ if (defined( 'SYS_TEMP' ) && SYS_TEMP != '') {
 } else { //when we are in global pages, outside any valid workspace
     if (SYS_TARGET === 'newSite') {
         $phpFile = G::ExpandPath( 'methods' ) . SYS_COLLECTION . "/" . SYS_TARGET . '.php';
+        $phpFile = $filter->validateInput($phpFile,'path');
         //NewRelic Snippet - By JHL
         transactionLog($phpFile);
         require_once ($phpFile);
@@ -786,14 +791,16 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
 
         $pluginControllerPath = PATH_PLUGINS . $pluginName . PATH_SEP . 'controllers' . PATH_SEP;
 
-        if (is_file($pluginControllerPath. $controllerClass . '.php')) {
-            require_once $pluginControllerPath. $controllerClass . '.php';
+        $pathFile = $pluginControllerPath. $controllerClass . '.php';
+        $pathFile = $filter->validateInput($pathFile,'path');
+        if (is_file($pathFile)) {
+            require_once $pathFile;
         } elseif (is_file($pluginControllerPath. ucfirst($controllerClass) . '.php')) {
             $controllerClass = ucfirst($controllerClass);
-            require_once $pluginControllerPath. $controllerClass . '.php';
+            require_once $pathFile;
         } elseif (is_file($pluginControllerPath. ucfirst($controllerClass) . 'Controller.php')) {
             $controllerClass = ucfirst($controllerClass) . 'Controller';
-            require_once $pluginControllerPath. $controllerClass . '.php';
+            require_once $pathFile;
         }
 
         //if the method exists
