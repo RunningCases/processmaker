@@ -489,7 +489,7 @@ if (defined( 'PATH_DATA' ) && file_exists( PATH_DATA )) {
     $oServerConf = & serverConf::getSingleton();
 }
 $pathFile = PATH_THIRDPARTY . '/pear/PEAR.php';
-//$pathFile = $filter->validateInput($pathFile,'path');
+$pathFile = $filter->validateInput($pathFile,'path');
 require_once $pathFile;
 
 //Bootstrap::LoadSystem( 'pmException' );
