@@ -79,7 +79,6 @@
     </body>
   {else}
 
-
     <body id="page-top" class="login" data-spy="scroll" data-target=".navbar-custom">
       <!-- Preloader -->
       <div style="display: none;" id="preloader">
@@ -99,42 +98,17 @@
                             
                             <p>Please enter your credentials below</p>
                         </div>
-                        <div class="panel-body">
-                            <!--form accept-charset="UTF-8" role="form" class="form-signin">
-                                <fieldset>
-                                    <label class="panel-login">
-                                        <div class="login_result"></div>
-                                    </label>
-                                    <input class="form-control" placeholder="Email" id="email" type="text">
-                                    <input class="form-control" placeholder="Password" id="password" type="password">
-                                </fieldset>
-
-                                <fieldset>
-                                    <label class="panel-login">
-                                        <div class="login_result"></div>
-                                    </label>
-                                    
-
-                         
-
-                                    <br>
-                                    <input class="btn btn-lg btn-success btn-block" id="login" value="Login" type="submit">
-                                </fieldset>
-                            </form-->
+                        <div class="panel-body">                           
                             {php}
                             global $G_TEMPLATE;
                             if ($G_TEMPLATE != '') G::LoadTemplate($G_TEMPLATE);
                             {/php}
-
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
     </body>
-
-
   {/if}
 </html>
 
