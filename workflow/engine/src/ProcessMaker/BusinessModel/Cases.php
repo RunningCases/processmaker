@@ -481,6 +481,8 @@ class Cases
                         $current_task['del_index'] = $current_task['delIndex'];
                         $current_task['del_thread'] = $current_task['delThread'];
                         $current_task['del_thread_status'] = $current_task['delThreadStatus'];
+                        $current_task["del_init_date"] = $current_task["delInitDate"] . "";
+                        $current_task["del_task_due_date"] = $current_task["delTaskDueDate"];
                         unset($current_task['userId']);
                         unset($current_task['userName']);
                         unset($current_task['taskId']);
@@ -551,6 +553,8 @@ class Cases
             $del       = \DBAdapter::getStringDelimiter();
             $oCriteria->addSelectColumn( \AppDelegationPeer::DEL_INDEX );
             $oCriteria->addSelectColumn( \AppDelegationPeer::TAS_UID );
+            $oCriteria->addSelectColumn(\AppDelegationPeer::DEL_INIT_DATE);
+            $oCriteria->addSelectColumn(\AppDelegationPeer::DEL_TASK_DUE_DATE);
             $oCriteria->addAsColumn( 'TAS_TITLE', 'C1.CON_VALUE' );
             $oCriteria->addAlias( "C1", 'CONTENT' );
             $tasTitleConds   = array ();
@@ -568,7 +572,9 @@ class Cases
             while ($aRow = $oDataset->getRow()) {
                 $result = array ('tas_uid'   => $aRow['TAS_UID'],
                                  'tas_title'  => $aRow['TAS_TITLE'],
-                                 'del_index' => $aRow['DEL_INDEX']);
+                                 'del_index' => $aRow['DEL_INDEX'],
+                                 "del_init_date"     => $aRow["DEL_INIT_DATE"] . "",
+                                 "del_task_due_date" => $aRow["DEL_TASK_DUE_DATE"]);
                 $oDataset->next();
             }
             //Return
@@ -2212,4 +2218,3 @@ class Cases
         }
     }
 }
-
