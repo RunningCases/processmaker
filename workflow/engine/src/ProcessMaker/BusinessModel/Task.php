@@ -384,18 +384,20 @@ class Task
 
             $result = $task->update($arrayProperty);
             if (!empty($arrayProperty['CONSOLIDATE_DATA'])) {
-                G::LoadClass("consolidatedCases");
-                $consolidated = new \ConsolidatedCases();
-                $dataConso = array(
-                    'con_status'    => $arrayProperty['CONSOLIDATE_DATA']['consolidated_enable'],
-                    'tas_uid'       => $arrayProperty['TAS_UID'],
-                    'dyn_uid'       => $arrayProperty['CONSOLIDATE_DATA']['consolidated_dynaform'],
-                    'pro_uid'       => $arrayProperty['PRO_UID'],
-                    'rep_uid'       => $arrayProperty['CONSOLIDATE_DATA']['consolidated_report_table'],
-                    'table_name'    => $arrayProperty['CONSOLIDATE_DATA']['consolidated_table'],
-                    'title'         => $arrayProperty['CONSOLIDATE_DATA']['consolidated_title']
-                );
-                $consolidated->saveConsolidated($dataConso);
+                if (isset($arrayProperty['CONSOLIDATE_DATA']['consolidated_dynaform'])) {
+                    G::LoadClass("consolidatedCases");
+                    $consolidated = new \ConsolidatedCases();
+                    $dataConso = array(
+                        'con_status'    => $arrayProperty['CONSOLIDATE_DATA']['consolidated_enable'],
+                        'tas_uid'       => $arrayProperty['TAS_UID'],
+                        'dyn_uid'       => $arrayProperty['CONSOLIDATE_DATA']['consolidated_dynaform'],
+                        'pro_uid'       => $arrayProperty['PRO_UID'],
+                        'rep_uid'       => $arrayProperty['CONSOLIDATE_DATA']['consolidated_report_table'],
+                        'table_name'    => $arrayProperty['CONSOLIDATE_DATA']['consolidated_table'],
+                        'title'         => $arrayProperty['CONSOLIDATE_DATA']['consolidated_title']
+                    );
+                    $consolidated->saveConsolidated($dataConso);
+                }
             }
             $arrayResult["status"] = "OK";
 
