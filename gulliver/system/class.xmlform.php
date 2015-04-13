@@ -1109,6 +1109,7 @@ class XmlForm_Field_Text extends XmlForm_Field_SimpleText
     public $replaceTags = 0;
     public $renderMode = '';
     public $comma_separator = '.';
+    public $autocomplete = "on";
 
     /**
      * Function render
@@ -1121,6 +1122,13 @@ class XmlForm_Field_Text extends XmlForm_Field_SimpleText
      */
     public function render ($value = null, $owner = null)
     {
+        if ($this->autocomplete === '1') {
+            $this->autocomplete = "on";
+        } else {
+            if ($this->autocomplete === '0') {
+                $this->autocomplete = "off";
+            }
+        }
         if ($this->renderMode == '') {
             $this->renderMode = $this->mode;
         }
@@ -1168,6 +1176,7 @@ class XmlForm_Field_Text extends XmlForm_Field_SimpleText
             $html .= 'id="form[' . $this->name . ']" ';
             $html .= 'name="form[' . $this->name . ']" ';
             $html .= 'type="text" size="' . $this->size . '" maxlength="' . $this->maxLength . '" ';
+            $html .= 'autocomplete="' . $this->autocomplete . '" ';
             $html .= 'value="' . $this->htmlentities( $value, ENT_QUOTES, 'utf-8' ) . '" ';
             $html .= 'style="' . $this->htmlentities( $this->style, ENT_COMPAT, 'utf-8' ) . '" ';
             $html .= 'onkeypress="' . $this->htmlentities( $onkeypress, ENT_COMPAT, 'utf-8' ) . '" ';

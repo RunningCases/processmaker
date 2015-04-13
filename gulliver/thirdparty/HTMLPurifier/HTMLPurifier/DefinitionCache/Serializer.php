@@ -182,7 +182,11 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
      */
     private function _write($file, $data, $config)
     {
-        $result = file_put_contents($file, $data);
+        if(is_file($file)) {
+            $result = file_put_contents($file, $data);
+        } else {
+            $result = false;
+        }
         if ($result !== false) {
             // set permissions of the new file (no execute)
             $chmod = $config->get('Cache.SerializerPermissions');

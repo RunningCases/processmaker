@@ -442,6 +442,10 @@ class pmLicenseManager
             $LicenseStatus = $this->lookForStatusLicense(); //we're looking for a status ACTIVE
 
             //getting the content from file
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
+            $path = $filter->xssFilterHard($path, 'path');
+                
             $handle = fopen ( $path, "r" );
             $contents = fread ( $handle, filesize ( $path ) );
             fclose ( $handle );

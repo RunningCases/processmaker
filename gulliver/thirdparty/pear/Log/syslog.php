@@ -59,7 +59,7 @@ class Log_syslog extends Log
             $this->_opened = $this->_inherit;
         }
 
-        $this->_id = md5(microtime());
+        $this->_id = $this->encryptOld(microtime());
         $this->_name = $name;
         $this->_ident = $ident;
         $this->_mask = Log::UPTO($level);
@@ -174,6 +174,11 @@ class Log_syslog extends Log
         }
 
         return $priorities[$priority];
+    }
+    
+    public function encryptOld($string)
+    {
+        return md5($string);
     }
 
 }
