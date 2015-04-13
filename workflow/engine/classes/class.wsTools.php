@@ -634,16 +634,14 @@ class workspaceTools
                 $oStatement_sleep->executeQuery();
             }
 
-            $sql_query = "SELECT * FROM information_schema.processlist WHERE user = SUBSTRING_INDEX(USER(),'@',1) and db = DATABASE() ORDER BY id;";
+            $sql_query = "SELECT * FROM information_schema.processlist WHERE user = SUBSTRING_INDEX(USER(),'@',1) and db = DATABASE() and time > 200 ORDER BY id;";
             $stmt_query = $connection->createStatement();
             $rs_query = $stmt_query->executeQuery( $sql_query, ResultSet::FETCHMODE_ASSOC );
 
             while ($rs_query->next()) {
                 $row_query = $rs_query->getRow();
-                if($row_query['TIME']>0){
-                   $oStatement_query = $connection->prepareStatement( "kill ". $row_query['ID'] );
-                   $oStatement_query->executeQuery();
-                }
+                $oStatement_query = $connection->prepareStatement( "kill ". $row_query['ID'] );
+                $oStatement_query->executeQuery();
             }
         }
     }
