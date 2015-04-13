@@ -640,8 +640,10 @@ class workspaceTools
 
             while ($rs_query->next()) {
                 $row_query = $rs_query->getRow();
-                $oStatement_query = $connection->prepareStatement( "kill ". $row_query['ID'] );
-                $oStatement_query->executeQuery();
+                if($row_query['TIME']>0){
+                   $oStatement_query = $connection->prepareStatement( "kill ". $row_query['ID'] );
+                   $oStatement_query->executeQuery();
+                }
             }
         }
     }
