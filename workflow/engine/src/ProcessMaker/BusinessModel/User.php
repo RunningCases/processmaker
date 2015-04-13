@@ -24,7 +24,6 @@ class User
         "USR_STATUS"           => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("ACTIVE", "INACTIVE", "VACATION"),               "fieldNameAux" => "usrStatus"),
         "USR_ROLE"             => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                                               "fieldNameAux" => "usrRole"),
         "USR_NEW_PASS"         => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                                               "fieldNameAux" => "usrNewPass"),
-        "USR_CNF_PASS"         => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                                               "fieldNameAux" => "usrCnfPass"),
         "USR_UX"               => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("NORMAL", "SIMPLIFIED", "SWITCHABLE", "SINGLE"), "fieldNameAux" => "usrUx"),
         "DEP_UID"              => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "depUid"),
         "USR_BIRTHDAY"         => array("type" => "date",   "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrBirthday"),
@@ -216,14 +215,6 @@ class User
 
             if (isset($arrayData["USR_NEW_PASS"])) {
                 $this->throwExceptionIfPasswordIsInvalid($arrayData["USR_NEW_PASS"], $this->arrayFieldNameForException["usrNewPass"]);
-
-                if (!isset($arrayData["USR_CNF_PASS"])) {
-                    throw new \Exception(\G::LoadTranslation("ID_UNDEFINED_VALUE_IS_REQUIRED", array($this->arrayFieldNameForException["usrCnfPass"])));
-                }
-
-                if ($arrayData["USR_NEW_PASS"] != $arrayData["USR_CNF_PASS"]) {
-                    throw new \Exception($this->arrayFieldNameForException["usrNewPass"] . ", " . $this->arrayFieldNameForException["usrCnfPass"] . ": " . \G::LoadTranslation("ID_NEW_PASS_SAME_OLD_PASS"));
-                }
             }
 
             if (isset($arrayData["USR_REPLACED_BY"]) && $arrayData["USR_REPLACED_BY"] != "") {
@@ -609,13 +600,13 @@ class User
                         $userProperty = new \UsersProperties();
                         $aUserProperty = $userProperty->loadOrCreateIfNotExists($userUid, array("USR_PASSWORD_HISTORY" => serialize(array(\Bootstrap::hashPassword($arrayData["USR_PASSWORD"])))));
 
-                        //$memKey = "rbacSession" . session_id();
-                        //$memcache = & \PMmemcached::getSingleton(defined("SYS_SYS")? SYS_SYS : "");
-                        //
-                        //if (($rbac->aUserInfo = $memcache->get($memKey)) == false) {
-                        //    $rbac->loadUserRolePermission("PROCESSMAKER", $userUidLogged);
-                        //    $memcache->set($memKey, $rbac->aUserInfo, \PMmemcached::EIGHT_HOURS);
-                        //}
+                        $memKey = "rbacSession" . session_id();
+                        $memcache = & \PMmemcached::getSingleton(defined("SYS_SYS")? SYS_SYS : "");
+
+                        if (($rbac->aUserInfo = $memcache->get($memKey)) == false) {
+                            $rbac->loadUserRolePermission("PROCESSMAKER", $userUidLogged);
+                            $memcache->set($memKey, $rbac->aUserInfo, \PMmemcached::EIGHT_HOURS);
+                        }
 
                         if ($rbac->aUserInfo["PROCESSMAKER"]["ROLE"]["ROL_CODE"] == "PROCESSMAKER_ADMIN") {
                             $aUserProperty["USR_LAST_UPDATE_DATE"] = date("Y-m-d H:i:s");
@@ -651,7 +642,7 @@ class User
                                 $sDescription = $sDescription . " - " . G::LoadTranslation("PASSWORD_HISTORY") . ": " . PPP_PASSWORD_HISTORY . "\n";
                                 $sDescription = $sDescription . "\n" . G::LoadTranslation("ID_PLEASE_CHANGE_PASSWORD_POLICY") . "";
 
-                                throw new \Exception($this->arrayFieldNameForException["usrNewPass"] . ", " . $this->arrayFieldNameForException["usrCnfPass"] . ": " . $sDescription);
+                                throw new \Exception($this->arrayFieldNameForException["usrNewPass"] . ": " . $sDescription);
                             }
 
                             if (count($aHistory) >= PPP_PASSWORD_HISTORY) {
