@@ -318,7 +318,8 @@
   if ( defined('SYS_TEMP') && SYS_TEMP != '')  {
     //this is the default, the workspace db.php file is in /shared/workflow/sites/SYS_SYS
     if ( file_exists( PATH_DB .  SYS_TEMP . '/db.php' ) ) {
-      require_once( PATH_DB .  SYS_TEMP . '/db.php' );
+      $pathFile = $filter->validateInput(PATH_DB .  SYS_TEMP . '/db.php','path');
+      require_once( $pathFile );
       define ( 'SYS_SYS' , SYS_TEMP );
 
       // defining constant for workspace shared directory
@@ -348,7 +349,8 @@
       else{
 
         if (substr(SYS_SKIN, 0, 2) === 'ux' && SYS_TARGET != 'sysLoginVerify') { // new ux sysLogin - extjs based form
-          require_once PATH_CONTROLLERS . 'main.php';
+          $pathFile = $filter->validateInput(PATH_CONTROLLERS . 'main.php','path');
+          require_once $pathFile;
           $controllerClass  = 'Main';
           $controllerAction = SYS_TARGET == 'sysLoginVerify' ? SYS_TARGET : 'sysLogin';
           //if the method exists
@@ -552,7 +554,8 @@
 
     //erik: verify if it is a Controller Class or httpProxyController Class
     if (is_file(PATH_CONTROLLERS . SYS_COLLECTION . '.php')) {
-      require_once PATH_CONTROLLERS . SYS_COLLECTION . '.php';
+      $pathFile = $filter->validateInput(PATH_CONTROLLERS . SYS_COLLECTION . '.php','path');
+      require_once $pathFile;
       $controllerClass  = SYS_COLLECTION;
       //if the method name is empty set default to index method
       $controllerAction = SYS_TARGET != '' ? SYS_TARGET : 'index';
