@@ -1175,6 +1175,7 @@ CREATE TABLE `APP_CACHE_VIEW`
 	`APP_FINISH_DATE` DATETIME,
 	`APP_UPDATE_DATE` DATETIME  NOT NULL,
 	`APP_OVERDUE_PERCENTAGE` DOUBLE  NOT NULL,
+	`TAS_DURATION` DOUBLE default 0 NOT NULL,
 	PRIMARY KEY (`APP_UID`,`DEL_INDEX`),
 	KEY `indexAppNumber`(`APP_NUMBER`),
 	KEY `protitle`(`APP_PRO_TITLE`),
@@ -2786,7 +2787,7 @@ CREATE TABLE `DASHBOARD_DAS_IND`
 (
     `DAS_UID`               VARCHAR(32) default '' NOT NULL,
     `OWNER_UID`             VARCHAR(32) default '' NOT NULL,
-    `OWNER_TYPE`            VARCHAR(15) default '' NOT NULL
+    `OWNER_TYPE`            VARCHAR(15) default '' NOT NULL,
     PRIMARY KEY (`DAS_UID`),
     CONSTRAINT `fk_dashboard_indicator_dashboard_das_ind`
         FOREIGN KEY (`DAS_UID`)
