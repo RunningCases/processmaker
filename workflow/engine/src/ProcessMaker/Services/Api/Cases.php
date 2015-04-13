@@ -599,12 +599,12 @@ class Cases extends Api
     public function doGetCaseInfo($app_uid)
     {
         try {
-            $userUid = $this->getUserId();
-            $cases = new \ProcessMaker\BusinessModel\Cases();
-            $oData = $cases->getCaseInfo($app_uid, $userUid);
-            return $oData;
+            $case = new \ProcessMaker\BusinessModel\Cases();
+            $case->setFormatFieldNameInUppercase(false);
+
+            return $case->getCaseInfo($app_uid, $this->getUserId());
         } catch (\Exception $e) {
-            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
 
