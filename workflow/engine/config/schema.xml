@@ -2458,7 +2458,6 @@
     <column name="APP_FINISH_DATE" type="TIMESTAMP" required="false"/>
     <column name="APP_UPDATE_DATE" type="TIMESTAMP" required="true"/>
     <column name="APP_OVERDUE_PERCENTAGE" type="DOUBLE" required="true"/>
-    <column name="TAS_DURATION" type="DOUBLE" required="true" default="0"/>
     <index name="indexAppNumber">
       <index-column name="APP_NUMBER"/>
       <vendor type="mysql">
