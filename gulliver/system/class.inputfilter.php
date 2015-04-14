@@ -586,7 +586,9 @@ class InputFilter
             break;
             case 'path':
                 if(!file_exists($value)) {
-                    $value = '';
+                    if(!is_dir($value)) {
+                        $value = '';
+                    }
                 }
             break;
             case 'nosql':
@@ -624,7 +626,9 @@ class InputFilter
             break;
             case 'path':
                 if(!file_exists($value)) {
-                    throw new Exception('not a valid path');
+                    if(!is_dir($value)) {
+                        throw new Exception('not a valid path');
+                    }
                 }
             break;
             case 'nosql':

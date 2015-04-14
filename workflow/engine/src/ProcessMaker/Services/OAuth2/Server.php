@@ -204,7 +204,7 @@ class Server implements iAuthenticate
         $clientId = $_GET['client_id'];
         $requestedScope = isset($_GET['scope']) ? $_GET['scope'] : '*';
         $requestedScope = empty($requestedScope) ? array() : explode(' ', $requestedScope);
-        $client = $this->storage->getClientDetails($clientId);;
+        $client = $this->storage->getClientDetails($clientId);
 
         if (empty($client)) {
             // throw error, client does not exist.
@@ -309,7 +309,17 @@ class Server implements iAuthenticate
         if ($returnResponse) {
             return $response;
         } else {
-            $response->send();
+            if ($response->getStatusCode() == 400) {
+                $msg = $response->getParameter("error_description", "");
+                $msg = ($msg != "")? $msg : $response->getParameter("error", "");
+
+                $rest = new \Maveriks\Extension\Restler();
+                $rest->setMessage(new \Luracast\Restler\RestException(\ProcessMaker\Services\Api::STAT_APP_EXCEPTION, $msg));
+
+                exit(0);
+            } else {
+                $response->send();
+            }
         }
     }
 
