@@ -32,13 +32,9 @@ try {
         throw (new Exception( G::LoadTranslation('ID_TASK') . "'" . $TaskFields['TAS_TITLE'] . "'" . G::LoadTranslation('ID_NOT_HAVE_USERS')));
     }
 
-    if (G::is_https())
-        $http = 'https://';
-    else
-        $http = 'http://';
-
+    $http = (G::is_https())? "https://" : "http://";
     $sContent = '';
-    
+
     $infoProcess = new Process();
     $resultProcess = $infoProcess->load($sPRO_UID);
 
@@ -76,7 +72,7 @@ try {
         $template->assign( 'wsUser', $sWS_USER );
         $template->assign( 'wsPass', Bootstrap::hashPassword($sWS_PASS, '', true) );
         $template->assign( 'wsRoundRobin', $sWS_ROUNDROBIN );
-        
+
         G::auditLog('WebEntry','Generate web entry with web services ('.$dynTitle.'.php) in process "'.$resultProcess['PRO_TITLE'].'"');
 
         if ($sWE_USR == "2") {
@@ -94,7 +90,7 @@ try {
         file_put_contents( $fileName, $template->getOutputContent() );
         //creating the third file, only if this wsClient.php file doesn't exist.
         $fileName = $pathProcess . 'wsClient.php';
-        $pluginTpl = file_exists(PATH_CORE . 'test' . PATH_SEP . 'unit' . PATH_SEP . 'ws' . PATH_SEP . 'wsClient.php') ? PATH_CORE . 'test' . PATH_SEP . 'unit' . PATH_SEP . 'ws' . PATH_SEP . 'wsClient.php' : PATH_CORE . 'templates' . PATH_SEP . 'processes' . PATH_SEP . 'wsClient.php';
+        $pluginTpl = PATH_CORE . "templates" . PATH_SEP . "processes" . PATH_SEP . "wsClient.php";
         if (file_exists( $fileName )) {
             if (filesize( $fileName ) != filesize( $pluginTpl )) {
                 @copy( $fileName, $pathProcess . 'wsClient.php.bck' );
@@ -123,7 +119,7 @@ try {
         $link = $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/' . $sPRO_UID . '/' . $dynTitle . '.php';
         print $link;
         //print "\n<a href='$link' target='_new' > $link </a>";
-        
+
     } else {
         $G_FORM = new Form( $sPRO_UID . '/' . $sDYNAFORM, PATH_DYNAFORM, SYS_LANG, false );
         $G_FORM->action = $http . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/cases_StartExternal.php';
