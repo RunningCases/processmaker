@@ -752,17 +752,7 @@ class SkinEngine
         } else {
             $smarty->assign('udate', G::getformatedDate(date('Y-m-d H:i:s'), 'M d, yyyy', SYS_LANG));
         }
-        $name = $conf->userNameFormat(isset($_SESSION['USR_USERNAME']) ? $_SESSION['USR_USERNAME']: '', isset($_SESSION['USR_FULLNAME']) ? htmlentities($_SESSION['USR_FULLNAME'] , ENT_QUOTES, 'UTF-8'): '', isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : '');
-        $countSpacesOfName = substr_count($name, ' ');
-        $letter=",";
-        $searchLetter = strstr($name, $letter);
-        if ($countSpacesOfName>1 && strlen($searchLetter)>0) {              
-              if ($name[0]==" ") {
-                  $positionLetter = strpos ($name, $letter);
-                  $removeLetter = substr ($name, ($positionLetter+1)); 
-                  $name = $removeLetter; 
-              }                       
-        }              
+        $name = $conf->userNameFormat(isset($_SESSION['USR_USERNAME']) ? $_SESSION['USR_USERNAME']: '', isset($_SESSION['USR_FULLNAME']) ? htmlentities($_SESSION['USR_FULLNAME'] , ENT_QUOTES, 'UTF-8'): '', isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : '');            
         $smarty->assign('user',$name);
       }
 
