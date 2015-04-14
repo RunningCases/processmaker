@@ -504,7 +504,7 @@ Ext.onReady( function() {
         enableTabScroll : true,
         //anchor          : '98%',
         width           : '100%',
-        height          : 315,
+        height          : 260,
         defaults        : {
             autoScroll  :true
         },
@@ -730,7 +730,7 @@ var addTab = function (flag) {
             width       : "100%",
             items   : [
                 new Ext.Panel({
-                    height      : 275,
+                    height      : 230,
                     width       : "100%",
                     border      : true,
                     bodyStyle   : 'padding:10px',
@@ -797,6 +797,7 @@ var addTab = function (flag) {
                                     paddingLeft: "30px",
                                     marginLeft : "60px",
                                     layout : 'hbox',
+                                    hidden : true,
                                     items       : [
                                         new Ext.form.ComboBox({
                                             editable        : false,
@@ -828,6 +829,7 @@ var addTab = function (flag) {
                                             anchor      : '40%',
                                             maskRe      : /([0-9\.]+)$/,
                                             maxLength   : 9,
+                                            value       : 1,
                                             width       : 80,
                                             allowBlank  : false,
                                             listeners   : {

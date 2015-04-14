@@ -2786,7 +2786,7 @@ CREATE TABLE `DASHBOARD_DAS_IND`
 (
     `DAS_UID`               VARCHAR(32) default '' NOT NULL,
     `OWNER_UID`             VARCHAR(32) default '' NOT NULL,
-    `OWNER_TYPE`            VARCHAR(15) default '' NOT NULL
+    `OWNER_TYPE`            VARCHAR(15) default '' NOT NULL,
     PRIMARY KEY (`DAS_UID`),
     CONSTRAINT `fk_dashboard_indicator_dashboard_das_ind`
         FOREIGN KEY (`DAS_UID`)
