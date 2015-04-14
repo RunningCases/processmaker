@@ -208,7 +208,8 @@ Ext.onReady( function() {
         pageSize: 10,
         store: store,
         displayInfo: true,
-        displayMsg: _('ID_GRID_PAGE_DISPLAYING_0WNER_MESSAGE') + '&nbsp; &nbsp; ',
+        //displayMsg: _('ID_GRID_PAGE_DISPLAYING_0WNER_MESSAGE') + '&nbsp; &nbsp; ',
+        displayMsg : '',
         //emptyMsg: _('ID_GRID_PAGE_NO_OWNER_MESSAGE')
         emptyMsg: ''
     });
@@ -216,12 +217,12 @@ Ext.onReady( function() {
     cmodel = new Ext.grid.ColumnModel({
         defaults: {
             width: 50,
-            sortable: true
+            sortable: false
         },
         columns: [
             {   id:'DAS_UID',               dataIndex: 'DAS_UID', hidden:true, hideable:false},
             {   header: _("ID_OWNER"),      dataIndex: "OWNER_LABEL", width: 150, hidden: false, align: "left"},
-            {   header: _("ID_OWNER_TYPE"),    dataIndex: "OWNER_TYPE", width: 80, hidden: false, align: "left"}
+            {   header: _("ID_OWNER_TYPE"), dataIndex: "OWNER_TYPE", width: 80, hidden: false, align: "left"}
         ]
     });
 
@@ -396,6 +397,7 @@ Ext.onReady( function() {
         enableHdMenu: true,
         frame       : false,
         columnLines : false,
+        sortable    : false,
         store: store,
         cm: cmodel,
         sm: smodel,
@@ -462,10 +464,11 @@ Ext.onReady( function() {
                             }
                         }
                         if (!sw) {
+                            label = selection.data.field1.split('(');
                             var ow = new owner({
                                 DAS_UID     : '',
                                 OWNER_UID   : selection.data.field2,
-                                OWNER_LABEL : selection.data.field1,
+                                OWNER_LABEL : label[0],
                                 OWNER_TYPE  : selection.data.field3
                             });
                             ownerInfoGrid.store.insert(store.getCount(), ow);
@@ -663,6 +666,10 @@ Ext.onReady( function() {
     });
 
     ownerInfoGrid.store.load();
+    ownerInfoGrid.on("afterrender", function(component) {
+        component.getBottomToolbar().refresh.hideParent = true;
+        component.getBottomToolbar().refresh.hide(); 
+    });
 
     viewport = new Ext.Viewport({
         layout: 'fit',
@@ -677,7 +684,7 @@ Ext.onReady( function() {
         for (var i=0; i< store.data.length; i++) {
             row = [];
             if (store.data.items[i].data.grp_status == 'ACTIVE') {
-                row.push(store.data.items[i].data.grp_title);
+                row.push(store.data.items[i].data.grp_title + ' (' + _('ID_GROUP') + ')' );
                 row.push(store.data.items[i].data.grp_uid);
                 row.push('GROUP');
                 dataUserGroup.push(row);
@@ -689,7 +696,7 @@ Ext.onReady( function() {
         for (var i=0; i< store.data.length; i++) {
             row = [];
             if (store.data.items[i].data.usr_status == 'ACTIVE') {
-                row.push(storeUsers.data.items[i].data.usr_firstname + ' ' + storeUsers.data.items[i].data.usr_lastname);
+                row.push(storeUsers.data.items[i].data.usr_firstname + ' ' + storeUsers.data.items[i].data.usr_lastname + ' (' + _('ID_USER') + ')' );
                 row.push(storeUsers.data.items[i].data.usr_uid);
                 row.push('USER');
                 dataUserGroup.push(row);
@@ -1013,65 +1020,63 @@ var validateNameDashboard = function () {
 
 var saveDashboard = function () {
     var title = Ext.getCmp('DAS_TITLE').getValue();
-    title = title.trim();
+    var data = {};
     if (title == '') {
         PMExt.warning(_('ID_DASHBOARD'), _('ID_DASHBOARD_TITLE') + ' '+ _('ID_IS_REQUIRED'));
         Ext.getCmp('DAS_TITLE').focus(true,10);
         return false;
     }
+    data['DAS_TITLE'] = title;
     var description = Ext.getCmp('DAS_DESCRIPTION').getValue();
+
+    data['DAS_DESCRIPTION'] = description;
     myMask.msg = _('ID_SAVING');
     myMask.show();
 
     if (DAS_UID == '') {
-        Ext.Ajax.request({
+        $.ajax({
             url : urlProxy + 'dashboard',
-            method: 'POST',
+            type: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json; charset=utf-8',
                 'Authorization': 'Bearer ' + credentials.access_token
             },
-            jsonData: {
-                "DAS_TITLE" : title,
-                "DAS_DESCRIPTION" : description
-            },
+            data: JSON.stringify(data),
             success: function (response) {
-                var jsonResp = Ext.util.JSON.decode(response.responseText);
-                DAS_UID = jsonResp;
-                saveAllDashboardOwner(jsonResp);
-                saveAllIndicators(jsonResp);
+                DAS_UID = response;
+                saveAllDashboardOwner(response);
+                saveAllIndicators(response);
                 myMask.hide();
             },
             failure: function (response) {
                 var jsonResp = Ext.util.JSON.decode(response.responseText);
                 myMask.hide();
                 PMExt.error(_('ID_ERROR'), jsonResp.error.message);
-            }
+            },
+            async: false
         });
     } else {
-        Ext.Ajax.request({
+        data['DAS_UID'] = DAS_UID
+        $.ajax({
             url : urlProxy + 'dashboard',
-            method: 'PUT',
+            type: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json; charset=utf-8',
                 'Authorization': 'Bearer ' + credentials.access_token
             },
-            jsonData: {
-                "DAS_UID"           : DAS_UID,
-                "DAS_TITLE"         : title,
-                "DAS_DESCRIPTION"   : description
-            },
+            data: JSON.stringify(data),
             success: function (response) {
                 var jsonResp = Ext.util.JSON.decode(response.responseText);
-                saveAllDashboardOwner(jsonResp);
-                saveAllIndicators(jsonResp);
+                saveAllDashboardOwner(DAS_UID);
+                saveAllIndicators(DAS_UID);
                 myMask.hide();
             },
             failure: function (response) {
                 var jsonResp = Ext.util.JSON.decode(response.responseText);
                 myMask.hide();
                 PMExt.error(_('ID_ERROR'), jsonResp.error.message);
-            }
+            },
+            async: false
         });
     }
 };
@@ -1143,65 +1148,56 @@ var saveAllIndicators = function (DAS_UID) {
 };
 
 var saveDashboardIndicator = function (options) {
+    var data = {};
+    data["DAS_UID"] = options['DAS_UID'];
+    data["DAS_IND_TYPE"] = options['DAS_IND_TYPE'];
+    data["DAS_IND_TITLE"] = options['DAS_IND_TITLE'];
+    data["DAS_IND_GOAL"] = options['DAS_IND_GOAL'];
+    data["DAS_IND_DIRECTION"] = options['DAS_IND_DIRECTION'];
+    data["DAS_UID_PROCESS"] = options['DAS_UID_PROCESS'];
+    data["DAS_IND_FIRST_FIGURE"] = options['DAS_IND_FIRST_FIGURE'];
+    data["DAS_IND_FIRST_FREQUENCY"] = options['DAS_IND_FIRST_FREQUENCY'];
+    data["DAS_IND_SECOND_FIGURE"] = options['DAS_IND_SECOND_FIGURE'];
+    data["DAS_IND_SECOND_FREQUENCY"] = options['DAS_IND_SECOND_FREQUENCY'];
+
     if (options['DAS_IND_UID'] == '') {
-        Ext.Ajax.request({
+        $.ajax({
             url : urlProxy + 'dashboard/indicator',
-            method: 'POST',
+            type: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json; charset=utf-8',
                 'Authorization': 'Bearer ' + credentials.access_token
             },
-            jsonData: {
-                "DAS_UID"                   : options['DAS_UID'],
-                "DAS_IND_TYPE"              : options['DAS_IND_TYPE'],
-                "DAS_IND_TITLE"             : options['DAS_IND_TITLE'],
-                "DAS_IND_GOAL"              : options['DAS_IND_GOAL'],
-                "DAS_IND_DIRECTION"         : options['DAS_IND_DIRECTION'],
-                "DAS_UID_PROCESS"           : options['DAS_UID_PROCESS'],
-                "DAS_IND_FIRST_FIGURE"      : options['DAS_IND_FIRST_FIGURE'],
-                "DAS_IND_FIRST_FREQUENCY"   : options['DAS_IND_FIRST_FREQUENCY'],
-                "DAS_IND_SECOND_FIGURE"     : options['DAS_IND_SECOND_FIGURE'],
-                "DAS_IND_SECOND_FREQUENCY"  : options['DAS_IND_SECOND_FREQUENCY']
-            },
+            data: JSON.stringify(data),
             success: function (response) {
                 var jsonResp = Ext.util.JSON.decode(response.responseText);
             },
             failure: function (response) {
                 var jsonResp = Ext.util.JSON.decode(response.responseText);
                 PMExt.error(_('ID_ERROR'),jsonResp.error.message);
-            }
+            },
+            async: false
         });
     } else {
-        Ext.Ajax.request({
+        data["DAS_IND_UID"] = options['DAS_IND_UID'];
+        $.ajax({
             url : urlProxy + 'dashboard/indicator',
-            method: 'PUT',
+            type: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json; charset=utf-8',
                 'Authorization': 'Bearer ' + credentials.access_token
             },
-            jsonData: {
-                "DAS_UID"                   : options['DAS_UID'],
-                "DAS_IND_UID"               : options['DAS_IND_UID'],
-                "DAS_IND_TYPE"              : options['DAS_IND_TYPE'],
-                "DAS_IND_TITLE"             : options['DAS_IND_TITLE'],
-                "DAS_IND_GOAL"              : options['DAS_IND_GOAL'],
-                "DAS_IND_DIRECTION"         : options['DAS_IND_DIRECTION'],
-                "DAS_UID_PROCESS"           : options['DAS_UID_PROCESS'],
-                "DAS_IND_FIRST_FIGURE"      : options['DAS_IND_FIRST_FIGURE'],
-                "DAS_IND_FIRST_FREQUENCY"   : options['DAS_IND_FIRST_FREQUENCY'],
-                "DAS_IND_SECOND_FIGURE"     : options['DAS_IND_SECOND_FIGURE'],
-                "DAS_IND_SECOND_FREQUENCY"  : options['DAS_IND_SECOND_FREQUENCY']
-            },
+            data: JSON.stringify(data),
             success: function (response) {
                 var jsonResp = Ext.util.JSON.decode(response.responseText);
             },
             failure: function (response) {
                 var jsonResp = Ext.util.JSON.decode(response.responseText);
                 PMExt.error(_('ID_ERROR'),jsonResp.error.message);
-            }
+            },
+            async: false
         });
     }
-    
 };
 
 var saveAllDashboardOwner = function (DAS_UID) {
@@ -1218,25 +1214,26 @@ var saveAllDashboardOwner = function (DAS_UID) {
 };
 
 var saveDashboardOwner = function (DAS_UID, uid, type) {
-    Ext.Ajax.request({
+    var data = {};
+    data['DAS_UID'] = DAS_UID;
+    data['OWNER_UID'] = uid;
+    data['OWNER_TYPE'] = type;
+    $.ajax({
         url : urlProxy + 'dashboard/owner',
-        method: 'POST',
+        type: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8',
             'Authorization': 'Bearer ' + credentials.access_token
         },
-        jsonData: {
-            "DAS_UID" : DAS_UID,
-            "OWNER_UID" : uid,
-            "OWNER_TYPE" : type
-        },
+        data: JSON.stringify(data),
         success: function (response) {
             var jsonResp = Ext.util.JSON.decode(response.responseText);
         },
         failure: function (response) {
             var jsonResp = Ext.util.JSON.decode(response.responseText);
             PMExt.error(_('ID_ERROR'),jsonResp.error.message);
-        }
+        },
+        async: false
     });
 };
 

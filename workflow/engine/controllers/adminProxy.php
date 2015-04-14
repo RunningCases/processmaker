@@ -1086,6 +1086,8 @@ class adminProxy extends HttpProxyController
         } elseif ($files_img_type != '') {
             $failed = "1";
         }
+        $uploaded = $filter->validateInput($uploaded,'int');
+        $files_img_type = $filter->xssFilterHard($files_img_type);
         echo '{success: true, failed: ' . $failed . ', uploaded: ' . $uploaded . ', type: "' . $files_img_type . '"}';
         exit();
     }
