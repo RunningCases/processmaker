@@ -395,17 +395,16 @@ class WebEntry
                     $fileContent .= "\$_SESSION[\"PROCESS\"] = \"" . $processUid . "\";\n";
                     $fileContent .= "\$_SESSION[\"CURRENT_DYN_UID\"] = \"" . $dynaFormUid . "\";\n";
                     $fileContent .= "\$G_PUBLISH = new Publisher();\n";
-                                        
 
-                    $fileContent .= "G::LoadClass('pmDynaform');\n"; 
-                    $fileContent .= "\$a = new pmDynaform(array('CURRENT_DYNAFORM'=>'" . $arrayWebEntryData["DYN_UID"] . "'));\n";
-                    $fileContent .= "if(\$a->isResponsive()){";                                        
-                    $fileContent .= "\$a->printWebEntry('".$fileName."Post.php');";                                        
-                    $fileContent .= "}else {";                    
-                    $fileContent .= "\$G_PUBLISH->AddContent(\"dynaform\", \"xmlform\", \"" . $processUid . "/" . $dynaFormUid . "\", \"\", array(), \"" . $fileName . "Post.php\");\n";
-                    $fileContent .= "G::RenderPage(\"publish\", \"blank\");";
-                    $fileContent .= "}";                    
-                    
+                    $fileContent .= "G::LoadClass(\"pmDynaform\");\n";
+                    $fileContent .= "\$a = new pmDynaform(array(\"CURRENT_DYNAFORM\" => \"" . $arrayWebEntryData["DYN_UID"] . "\"));\n";
+                    $fileContent .= "if (\$a->isResponsive()) {";
+                    $fileContent .= "  \$a->printWebEntry(\"" . $fileName . "Post.php\");";
+                    $fileContent .= "} else {";
+                    $fileContent .= "  \$G_PUBLISH->AddContent(\"dynaform\", \"xmlform\", \"" . $processUid . PATH_SEP . $dynaFormUid . "\", \"\", array(), \"" . $fileName . "Post.php\");\n";
+                    $fileContent .= "  G::RenderPage(\"publish\", \"blank\");";
+                    $fileContent .= "}";
+
                     file_put_contents($pathDataPublicProcess . PATH_SEP . $fileName . ".php", $fileContent);
 
                     //Creating the second file, the  post file who receive the post form.
@@ -442,7 +441,7 @@ class WebEntry
 
                     //Creating the third file, only if this wsClient.php file doesn't exist.
                     $fileName = $pathDataPublicProcess . PATH_SEP . "wsClient.php";
-                    $pluginTpl = PATH_TEST . "unit" . PATH_SEP . "ws" . PATH_SEP . "wsClient.php";
+                    $pluginTpl = PATH_CORE . "templates" . PATH_SEP . "processes" . PATH_SEP . "wsClient.php";
 
                     if (file_exists($fileName)) {
                         if (filesize($fileName) != filesize($pluginTpl)) {

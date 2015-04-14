@@ -2869,3 +2869,29 @@ function PMFRemoveMask ($field, $separator = '.', $currency = '')
 
     return $field;
 }
+
+/**
+ *@method
+ *
+ * Sends an array of case variables to a specified case.
+ *
+ * @name PMFSaveCurrentData
+ * @label PMF Save Current Data
+ *
+ * @return int | $result | Result of send variables | Returns 1 if the variables were sent successfully to the case; otherwise, returns 0 if an error occurred.
+ *
+ */
+ 
+function PMFSaveCurrentData ()
+{
+    global $oPMScript;
+    $result = 0;
+    
+    if (isset($_SESSION['APPLICATION']) && isset($oPMScript->aFields)) {
+        G::LoadClass( 'wsBase' );
+        $ws = new wsBase();
+        $result = $ws->sendVariables( $_SESSION['APPLICATION'], $oPMScript->aFields );
+    }
+    
+    return $result;
+}
