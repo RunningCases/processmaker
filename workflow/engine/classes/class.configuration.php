@@ -321,23 +321,14 @@ class Configurations // extends Configuration
             $oUser = UsersPeer::retrieveByPK($usrUid);
             $aux = str_replace('@userName', trim($username), $this->UserConfig['format']);
 
-            if(($aux === "@lastName @firstName" || $aux === "@lastName, @firstName") && strlen($oUser->getUsrFirstname())==0 && strlen($oUser->getUsrLastname())==0){
-                return $oUser->getUsrUsername();
+            $theFormat = $this->UserConfig['format'];
+            if (strpos($theFormat, ',') !== false && ($oUser->getUsrFirstname() == '' || $oUser->getUsrLastname() == '')) {
+              $theFormat = str_replace(',', '', $theFormat);
             }
 
-            if (strlen($oUser->getUsrFirstname())!=0) {
-                $aux = str_replace('@firstName', $oUser->getUsrFirstname(), $aux);
-            }else{
-                $aux = str_replace('@firstName', "", $aux);
-            }
-            if (strlen($oUser->getUsrLastname())!=0) {
-                $aux = str_replace('@lastName', $oUser->getUsrLastname(), $aux);
-            }else{
-                $aux = str_replace('@lastName', "", $aux);
-            }
-            if (strlen(strstr($aux, ","))>0 && (strlen($oUser->getUsrFirstname())==0 || strlen($oUser->getUsrLastname())==0)) {
-              $aux = substr ($aux, ((strpos ($aux, ","))+1));
-            }            
+            $aux = str_replace('@userName', trim($username), $theFormat);
+            $aux = str_replace('@firstName', $oUser->getUsrFirstname(), $aux);
+            $aux = str_replace('@lastName', $oUser->getUsrLastname(), $aux);           
         }
         return $aux;
     }
