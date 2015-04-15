@@ -296,5 +296,27 @@ class ReportingIndicators
 		);
         return $returnValue;
     }
+
+    /**
+     * Get list status indicator
+     *
+     * @access public
+     * @param array $options, Data for list
+     * @return array
+     *
+     * @author Marco Antonio Nina <marco.antonio.nina@colosa.com>
+     * @copyright Colosa - Bolivia
+     */
+    public function getStatusIndicator($options = array())
+    {
+        Validator::isArray($options, '$options');
+
+        $usrUid = isset( $options["usrUid"] ) ? $options["usrUid"] : "";
+
+        G::loadClass('indicatorsCalculator');
+        $calculator = new \IndicatorsCalculator();
+        $result = $calculator->statusIndicator($usrUid);
+        return $result;
+    }
 }
 
