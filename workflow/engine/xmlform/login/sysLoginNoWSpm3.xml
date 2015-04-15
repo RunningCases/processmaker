@@ -27,7 +27,9 @@ SELECT LANG_ID, LANG_NAME FROM langOptions
 window.onload= function(){  
   document.getElementById('form[USR_USERNAME]').placeholder = _('ID_USER');
   document.getElementById('form[USR_PASSWORD_MASK]').placeholder = _('ID_PASSWORD');
-  document.getElementById('form[USER_ENV]').placeholder = _('ID_WORKSPACE');  
+  document.getElementById('form[USER_ENV]').placeholder = _('ID_WORKSPACE');
+  document.getElementById('form[BSUBMIT]').classList.remove('module_app_button___gray');
+  document.getElementById('form[BSUBMIT]').classList.add('button-login-success'); 
 };
 
 setFocus (getField ('USR_USERNAME'));

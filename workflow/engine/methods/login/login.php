@@ -148,7 +148,11 @@ if (!class_exists('pmLicenseManager')) {
 $licenseManager =& pmLicenseManager::getSingleton();
 if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
     $G_PUBLISH = new Publisher();
-    $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/licenseExpired', '', array(), 'licenseUpdate');
+    if(SYS_SKIN == 'neoclassic'){
+        $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/licenseExpiredpm3', '', array(), 'licenseUpdate');
+    }else{
+        $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/licenseExpired', '', array(), 'licenseUpdate');
+    }
     G::RenderPage('publish');
     die();
 }
