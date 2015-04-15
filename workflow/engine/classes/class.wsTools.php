@@ -113,6 +113,13 @@ class workspaceTools
 
         CLI::logging("> Updating Files Manager...\n\n");
         $this->upgradeFilesManager($workSpace);
+
+        $start = microtime(true);
+        CLI::logging("> Migrate new lists...\n");
+        $this->migrateList($workSpace);
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Migrate new lists Process took $final seconds.\n");
     }
 
     /**
@@ -1853,6 +1860,9 @@ class workspaceTools
      */
     public function migrateList ($workSpace)
     {
+        if ($this->listFirstExecution('check')) {
+            return 1;
+        }
         $this->initPropel(true);
         $appCache = new AppCacheView();
         G::LoadClass("case");
@@ -2034,13 +2044,15 @@ class workspaceTools
         switch ($action) {
            case 'insert':
                 $conf  = new Configuration();
-                $data["CFG_UID"]  ='MIGRATED_LIST';
-                $data["OBJ_UID"]  ='list';
-                $data["CFG_VALUE"]='true';
-                $data["PRO_UID"]  ='list';
-                $data["USR_UID"]  ='list';
-                $data["APP_UID"]  ='list';
-                $conf->create($data);
+                if (!($conf->exists('MIGRATED_LIST', 'list', 'list', 'list', 'list'))) {
+                    $data["CFG_UID"]  ='MIGRATED_LIST';
+                    $data["OBJ_UID"]  ='list';
+                    $data["CFG_VALUE"]='true';
+                    $data["PRO_UID"]  ='list';
+                    $data["USR_UID"]  ='list';
+                    $data["APP_UID"]  ='list';
+                    $conf->create($data);
+                }
                 return true;
                 break;
            case 'check':
