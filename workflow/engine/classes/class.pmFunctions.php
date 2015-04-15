@@ -2133,7 +2133,7 @@ function PMFCreateUser ($userId, $password, $firstname, $lastname, $email, $role
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFUpdateUser.28.29
  *
  * @param string(32) | $userUid | User UID | The user UID.
- * @param string(32) | $userName | User ID | The username for the user.
+ * @param string(32) | $userName | Username | The username for the user.
  * @param string(32) | $firstName=null | Firstname of the user | Optional parameter. The first name of the user, which can be up to 50 characters long.
  * @param string(32) | $lastName=null | Lastname of the user | Optional parameter. The last name of the user, which can be up to 50 characters long.
  * @param string(32) | $email=null | Email the user | Optional parameter. The email of the user, which can be up to 100 characters long.
