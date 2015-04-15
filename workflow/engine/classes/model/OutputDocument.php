@@ -178,7 +178,12 @@ class OutputDocument extends BaseOutputDocument
                 if(!empty($aData['OUT_DOC_DESCRIPTION'])){
                   $description .= ", Description: ".$aData['OUT_DOC_DESCRIPTION'];
                 }
-                $description .= ", Report Generator: ". $aData['OUT_DOC_REPORT_GENERATOR'].", Output Document to Generate: ".$aData['OUT_DOC_GENERATE'];
+                if(!empty($aData['OUT_DOC_REPORT_GENERATOR'])){
+                    $description .= ", Report Generator: ". $aData['OUT_DOC_REPORT_GENERATOR'];
+                }
+                if(!empty($aData['OUT_DOC_GENERATE'])){
+                    $description .= ", Output Document to Generate: ".$aData['OUT_DOC_GENERATE'];
+                }
                 if($aData['OUT_DOC_PDF_SECURITY_ENABLED']==0){
                   $pdfSecurity = 'Disabled';
                 }else{
@@ -194,12 +199,14 @@ class OutputDocument extends BaseOutputDocument
                 if(!empty($aData['OUT_DOC_TAGS'])){
                   $description .= ", Tags: ".$aData['OUT_DOC_TAGS'];
                 }
-                if($aData['OUT_DOC_OPEN_TYPE']==0){
-                  $genLink = 'Open the file';
-                }else{
-                  $genLink = 'Download the file';
+                if(!empty($aData['OUT_DOC_OPEN_TYPE'])){
+                    if($aData['OUT_DOC_OPEN_TYPE']==0){
+                        $genLink = 'Open the file';
+                    }else{
+                        $genLink = 'Download the file';
+                    }
+                    $description .= ", By clicking on the generated file link: ".$genLink;
                 }
-                $description .= ", By clicking on the generated file link: ".$genLink;
                 G::auditLog("CreateOutputDocument", $description);
 
                 return $aData['OUT_DOC_UID'];
@@ -261,7 +268,12 @@ class OutputDocument extends BaseOutputDocument
                     if(!empty($aData['OUT_DOC_DESCRIPTION'])){
                       $description .= ", Description: ".$aData['OUT_DOC_DESCRIPTION'];
                     }
-                    $description .= ", Report Generator: ". $aData['OUT_DOC_REPORT_GENERATOR'].", Output Document to Generate: ".$aData['OUT_DOC_GENERATE'];
+                    if(!empty($aData['OUT_DOC_REPORT_GENERATOR'])){
+                        $description .= ", Report Generator: ". $aData['OUT_DOC_REPORT_GENERATOR'];
+                    }
+                    if(!empty($aData['OUT_DOC_REPORT_GENERATOR'])){
+                        $description .= ", Output Document to Generate: ".$aData['OUT_DOC_GENERATE'];
+                    }
                     if($aData['OUT_DOC_PDF_SECURITY_ENABLED']==0){
                       $pdfSecurity = 'Disabled';
                     }else{
@@ -277,12 +289,14 @@ class OutputDocument extends BaseOutputDocument
                     if(!empty($aData['OUT_DOC_TAGS'])){
                       $description .= ", Tags: ".$aData['OUT_DOC_TAGS'];
                     }
-                    if($aData['OUT_DOC_OPEN_TYPE']==0){
-                      $genLink = 'Open the file';
-                    }else{
-                      $genLink = 'Download the file';
+                    if(!empty($aData['OUT_DOC_OPEN_TYPE'])){
+                       if($aData['OUT_DOC_OPEN_TYPE']==0){
+                          $genLink = 'Open the file';
+                       }else{
+                          $genLink = 'Download the file';
+                       }
+                       $description .= ", By clicking on the generated file link: ".$genLink;
                     }
-                    $description .= ", By clicking on the generated file link: ".$genLink;
                     if (isset($aData['OUT_DOC_TEMPLATE'])) {
                         $description .= ", [EDIT TEMPLATE]";
                     }

@@ -266,6 +266,10 @@
   G::LoadSystem('headPublisher');
   $oHeadPublisher =& headPublisher::getSingleton();
 
+  //Load filter class
+  G::LoadSystem('inputfilter');
+  $filter = new InputFilter();
+  
   // Installer, redirect to install if we don't have a valid shared data folder
   if ( !defined('PATH_DATA') || !file_exists(PATH_DATA)) {
 
@@ -314,7 +318,8 @@
   if ( defined('SYS_TEMP') && SYS_TEMP != '')  {
     //this is the default, the workspace db.php file is in /shared/workflow/sites/SYS_SYS
     if ( file_exists( PATH_DB .  SYS_TEMP . '/db.php' ) ) {
-      require_once( PATH_DB .  SYS_TEMP . '/db.php' );
+      $pathFile = $filter->validateInput(PATH_DB .  SYS_TEMP . '/db.php','path');
+      require_once( $pathFile );
       define ( 'SYS_SYS' , SYS_TEMP );
 
       // defining constant for workspace shared directory
@@ -331,17 +336,21 @@
   else {  //when we are in global pages, outside any valid workspace
     if (SYS_TARGET==='newSite') {
       $phpFile = G::ExpandPath('methods') . SYS_COLLECTION . "/" . SYS_TARGET.'.php';
+      $phpFile = $filter->validateInput($phpFile,'path');
       require_once($phpFile);
       die();
     }
     else {
       if(SYS_TARGET=="dbInfo"){ //Show dbInfo when no SYS_SYS
-          require_once( PATH_METHODS . "login/dbInfo.php" );
+          $pathFile = PATH_METHODS . "login/dbInfo.php";
+          $pathFile = $filter->validateInput($pathFile,'path');
+          require_once($pathFile);
       }
       else{
 
         if (substr(SYS_SKIN, 0, 2) === 'ux' && SYS_TARGET != 'sysLoginVerify') { // new ux sysLogin - extjs based form
-          require_once PATH_CONTROLLERS . 'main.php';
+          $pathFile = $filter->validateInput(PATH_CONTROLLERS . 'main.php','path');
+          require_once $pathFile;
           $controllerClass  = 'Main';
           $controllerAction = SYS_TARGET == 'sysLoginVerify' ? SYS_TARGET : 'sysLogin';
           //if the method exists
@@ -352,7 +361,9 @@
           }
         }
         else { // classic sysLogin interface
-          require_once( PATH_METHODS . "login/sysLogin.php" ) ;
+          $pathFile = PATH_METHODS . "login/sysLogin.php";
+          $pathFile = $filter->validateInput($pathFile,'path');
+          require_once($pathFile) ;
           die();
         }
       }
@@ -543,7 +554,8 @@
 
     //erik: verify if it is a Controller Class or httpProxyController Class
     if (is_file(PATH_CONTROLLERS . SYS_COLLECTION . '.php')) {
-      require_once PATH_CONTROLLERS . SYS_COLLECTION . '.php';
+      $pathFile = $filter->validateInput(PATH_CONTROLLERS . SYS_COLLECTION . '.php','path');
+      require_once $pathFile;
       $controllerClass  = SYS_COLLECTION;
       //if the method name is empty set default to index method
       $controllerAction = SYS_TARGET != '' ? SYS_TARGET : 'index';

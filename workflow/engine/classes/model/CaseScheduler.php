@@ -666,11 +666,11 @@ class CaseScheduler extends BaseCaseScheduler
         $this->Update( $Fields );
     }
 
-    public function updateNextRun ($sOption, $sValue = '', $sActualTime = '', $sDaysPerformTask = '', $sWeeks = '', $sStartDay = '', $sMonths = '', $currentDate = '')
+    public function updateNextRun($sOption, $sValue = "", $sActualTime = "", $sDaysPerformTask = "", $sWeeks = "", $sStartDay = "", $sMonths = "", $currentDate = "", $flagNextRun = true)
     {
         $nActualDate = $currentDate . " " . $sActualTime;
         $dEstimatedDate = '';
-        $sWeeks = trim($sWeeks, "|");
+        $sWeeks = trim($sWeeks, " |");
 
         switch ($sOption) {
             case '1':
@@ -694,48 +694,47 @@ class CaseScheduler extends BaseCaseScheduler
                 }
                 break;
             case '2':
-                if (strlen( $sWeeks ) > 0) {
-                    //die($sActualTime);
-                    $nDayOfTheWeek = (int)(date("w", strtotime($sActualTime)));
-                    //$nDayOfTheWeek = 1;
-                    $aWeeks = explode( '|', $sWeeks );
-                    $nFirstDay = (int)($aWeeks[0]) - 1;
+                if ($sWeeks != "") {
                     $aDaysWeek = array ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday');
-                    $nDayOfTheWeek = ($nDayOfTheWeek == 0) ? 7 : $nDayOfTheWeek;
-                    $day = 0;
-                    $nSW = 0;
-                    $flagIsTheSameDay = false;
 
-                    foreach ($aWeeks as $value) {
-                        if ($nDayOfTheWeek <= (int)($value)) {
-                            $day = (int)($value) - 1;
-                            $nSW = 1;
-                            $flagIsTheSameDay = $nDayOfTheWeek == (int)($value);
-                            break;
+                    $nDayOfTheWeek = (int)(date("w", strtotime($sActualTime)));
+                    $nDayOfTheWeek = ($nDayOfTheWeek == 0)? 7 : $nDayOfTheWeek;
+
+                    $arrayWeekdays = explode("|", $sWeeks);
+                    $firstDay = (int)($arrayWeekdays[0]);
+
+                    $flagFound = $nDayOfTheWeek < $firstDay || in_array($nDayOfTheWeek, $arrayWeekdays);
+
+                    if ($flagFound) {
+                        $typeStatement = "this";
+                        $indexDay = (in_array($nDayOfTheWeek, $arrayWeekdays))? $nDayOfTheWeek : $firstDay;
+
+                        if ($flagNextRun) {
+                            $index = array_search($nDayOfTheWeek, $arrayWeekdays);
+
+                            if ($index !== false && isset($arrayWeekdays[$index + 1])) {
+                                $indexDay = $arrayWeekdays[$index + 1];
+                            } else {
+                                $typeStatement = "next";
+                                $indexDay = $firstDay;
+                            }
                         }
-                    }
 
-                    if ($nSW == 1) {
-                        $dEstimatedDate = date("Y-m-d", strtotime("$nActualDate " . (($flagIsTheSameDay)? "this" : "next") . " " . $aDaysWeek[$day])) . " " . date("H:i:s", strtotime($sActualTime));
+                        $indexDay--;
+
+                        $dEstimatedDate = date("Y-m-d", strtotime($nActualDate . " " . $typeStatement . " " . $aDaysWeek[$indexDay])) . " " . date("H:i:s", strtotime($sActualTime));
                     } else {
                         $nEveryDays = $sDaysPerformTask;
-                        //                                                                $nEveryDays = '1';
-                        if ($nFirstDay >= $nDayOfTheWeek || $nEveryDays == 1) {
-                            $sTypeOperation = "next";
-                        } else {
-                            $sTypeOperation = "last";
-                        }
+
+                        $typeStatement = ($firstDay >= $nDayOfTheWeek || $nEveryDays == 1)? "next" : "last";
+                        $indexDay = $firstDay - 1;
 
                         if ($nEveryDays == 1) {
-                            //echo "**** $nActualDate *" . $sTypeOperation . "* *" . $aDaysWeek[$nFirstDay] . '*****' . date('H:i:s', strtotime($sActualTime)). "**";
-                            $dEstimatedDate = date( 'Y-m-d', strtotime( "$nActualDate " . $sTypeOperation . " " . $aDaysWeek[$nFirstDay] ) ) . ' ' . date( 'H:i:s', strtotime( $sActualTime ) );
-                            //echo "(date)*".$dEstimatedDate."*";
-                            //die("01");
+                            $dEstimatedDate = date("Y-m-d", strtotime($nActualDate . " " . $typeStatement . " " . $aDaysWeek[$indexDay])) . " " . date("H:i:s", strtotime($sActualTime));
                         } else {
                             $nEveryDays = 1;
-                            //$nActualDate = date('Y-m-d').' '.$sActualTime;
                             $nDataTmp = date( 'Y-m-d', strtotime( "$nActualDate + " . $nEveryDays . " Week" ) );
-                            $dEstimatedDate = date( 'Y-m-d', strtotime( "$nDataTmp " . $sTypeOperation . " " . $aDaysWeek[$nFirstDay] ) ) . ' ' . date( 'H:i:s', strtotime( $sActualTime ) );
+                            $dEstimatedDate = date("Y-m-d", strtotime($nDataTmp . " " . $typeStatement . " " . $aDaysWeek[$indexDay])) . " " . date("H:i:s", strtotime($sActualTime));
                         }
                     }
                 }
