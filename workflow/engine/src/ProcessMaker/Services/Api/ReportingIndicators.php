@@ -390,6 +390,29 @@ class ReportingIndicators extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
+
+    /**
+     * Get list Status indicator
+     *
+     * @return array
+     *
+     * @author Marco Antonio Nina <marco.antonio.nina@colosa.com>
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /status-indicator
+     */
+    public function doGetStatusIndicator() {
+        try {
+            $options['usrUid'] = $this->getUserId();
+
+            $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
+            $response = $indicatorsObj->getStatusIndicator($options);
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
 }
 
 
