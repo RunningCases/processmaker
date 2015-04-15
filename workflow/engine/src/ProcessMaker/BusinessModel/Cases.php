@@ -431,40 +431,51 @@ class Cases
                     throw (new \Exception($arrayData));
                 }
             } else {
+                \G::LoadClass("wsBase");
+
+                //Verify data
+                $this->throwExceptionIfNotExistsCase($applicationUid, $this->getFieldNameByFormatFieldName("APP_UID"));
+
                 $criteria = new \Criteria("workflow");
-                $criteria->addSelectColumn(\AppCacheViewPeer::DEL_INDEX);
-                $criteria->add(\AppCacheViewPeer::USR_UID, $userUid);
-                $criteria->add(\AppCacheViewPeer::APP_UID, $applicationUid);
-                $criteria->add(
-                //ToDo - getToDo()
-                    $criteria->getNewCriterion(\AppCacheViewPeer::APP_STATUS, "TO_DO", \CRITERIA::EQUAL)->addAnd(
-                        $criteria->getNewCriterion(\AppCacheViewPeer::DEL_FINISH_DATE, null, \Criteria::ISNULL))->addAnd(
-                            $criteria->getNewCriterion(\AppCacheViewPeer::APP_THREAD_STATUS, "OPEN"))->addAnd(
-                            $criteria->getNewCriterion(\AppCacheViewPeer::DEL_THREAD_STATUS, "OPEN"))
-                )->addOr(
-                    //Draft - getDraft()
-                        $criteria->getNewCriterion(\AppCacheViewPeer::APP_STATUS, "DRAFT", \CRITERIA::EQUAL)->addAnd(
-                            $criteria->getNewCriterion(\AppCacheViewPeer::APP_THREAD_STATUS, "OPEN"))->addAnd(
-                                $criteria->getNewCriterion(\AppCacheViewPeer::DEL_THREAD_STATUS, "OPEN"))
-                    );
-                $criteria->addDescendingOrderByColumn(\AppCacheViewPeer::APP_NUMBER);
-                $rsCriteria = \AppCacheViewPeer::doSelectRS($criteria);
-                $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-                $row["DEL_INDEX"] = '';
-                while ($rsCriteria->next()) {
-                    $row = $rsCriteria->getRow();
+
+                $criteria->addSelectColumn(\AppDelegationPeer::APP_UID);
+                $criteria->add(\AppDelegationPeer::APP_UID, $applicationUid);
+                $criteria->add(\AppDelegationPeer::USR_UID, $userUid);
+
+                $rsCriteria = \AppDelegationPeer::doSelectRS($criteria);
+
+                if (!$rsCriteria->next()) {
+                    throw new \Exception(\G::LoadTranslation("ID_NO_PERMISSION_NO_PARTICIPATED"));
                 }
-                \G::LoadClass('wsBase');
+
+                //Get data
+                $arrayStatusInfo = $this->getStatusInfo($applicationUid);
+
+                $applicationStatus = "";
+                $delIndex = 0;
+                $flagUseDelIndex = false;
+
+                if (count($arrayStatusInfo) > 0) {
+                    $applicationStatus = $arrayStatusInfo["APP_STATUS"];
+                    $delIndex = $arrayStatusInfo["DEL_INDEX"];
+
+                    if (in_array($applicationStatus, array("DRAFT", "PAUSED", "CANCELLED"))) {
+                        $flagUseDelIndex = true;
+                    }
+                }
+
                 $ws = new \wsBase();
-                $fields = $ws->getCaseInfo($applicationUid, $row["DEL_INDEX"]);
+
+                $fields = $ws->getCaseInfo($applicationUid, $delIndex, $flagUseDelIndex);
                 $array = json_decode(json_encode($fields), true);
+
                 if ($array ["status_code"] != 0) {
                     throw (new \Exception($array ["message"]));
                 } else {
                     $array['app_uid'] = $array['caseId'];
                     $array['app_number'] = $array['caseNumber'];
                     $array['app_name'] = $array['caseName'];
-                    $array['app_status'] = $array['caseStatus'];
+                    $array["app_status"] = ($applicationStatus != "")? $applicationStatus : $array["caseStatus"];
                     $array['app_init_usr_uid'] = $array['caseCreatorUser'];
                     $array['app_init_usr_username'] = trim($array['caseCreatorUserName']);
                     $array['pro_uid'] = $array['processId'];
@@ -472,6 +483,9 @@ class Cases
                     $array['app_create_date'] = $array['createDate'];
                     $array['app_update_date'] = $array['updateDate'];
                     $array['current_task'] = $array['currentUsers'];
+
+                    $aCurrent_task = array();
+
                     for ($i = 0; $i<=count($array['current_task'])-1; $i++) {
                         $current_task = $array['current_task'][$i];
                         $current_task['usr_uid'] = $current_task['userId'];
@@ -481,6 +495,8 @@ class Cases
                         $current_task['del_index'] = $current_task['delIndex'];
                         $current_task['del_thread'] = $current_task['delThread'];
                         $current_task['del_thread_status'] = $current_task['delThreadStatus'];
+                        $current_task["del_init_date"] = $current_task["delInitDate"] . "";
+                        $current_task["del_task_due_date"] = $current_task["delTaskDueDate"];
                         unset($current_task['userId']);
                         unset($current_task['userName']);
                         unset($current_task['taskId']);
@@ -551,6 +567,8 @@ class Cases
             $del       = \DBAdapter::getStringDelimiter();
             $oCriteria->addSelectColumn( \AppDelegationPeer::DEL_INDEX );
             $oCriteria->addSelectColumn( \AppDelegationPeer::TAS_UID );
+            $oCriteria->addSelectColumn(\AppDelegationPeer::DEL_INIT_DATE);
+            $oCriteria->addSelectColumn(\AppDelegationPeer::DEL_TASK_DUE_DATE);
             $oCriteria->addAsColumn( 'TAS_TITLE', 'C1.CON_VALUE' );
             $oCriteria->addAlias( "C1", 'CONTENT' );
             $tasTitleConds   = array ();
@@ -568,7 +586,9 @@ class Cases
             while ($aRow = $oDataset->getRow()) {
                 $result = array ('tas_uid'   => $aRow['TAS_UID'],
                                  'tas_title'  => $aRow['TAS_TITLE'],
-                                 'del_index' => $aRow['DEL_INDEX']);
+                                 'del_index' => $aRow['DEL_INDEX'],
+                                 "del_init_date"     => $aRow["DEL_INIT_DATE"] . "",
+                                 "del_task_due_date" => $aRow["DEL_TASK_DUE_DATE"]);
                 $oDataset->next();
             }
             //Return
@@ -2207,6 +2227,109 @@ class Cases
             $messageApplication->frontEndShow("TEXT", "Total Message-Events pending: " . ($totalMessageEvent - ($counterStartMessageEvent + $counterIntermediateCatchMessageEvent)));
 
             $messageApplication->frontEndShow("END");
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get status info Case
+     *
+     * @param string $applicationUid Unique id of Case
+     *
+     * return array Return an array with status info Case, array empty otherwise
+     */
+    public function getStatusInfo($applicationUid)
+    {
+        try {
+            //Verify data
+            $this->throwExceptionIfNotExistsCase($applicationUid, $this->getFieldNameByFormatFieldName("APP_UID"));
+
+            //Get data
+            //Status is PAUSED
+            $delimiter = \DBAdapter::getStringDelimiter();
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn($delimiter . "PAUSED" . $delimiter . " AS APP_STATUS");
+            $criteria->addSelectColumn(\AppDelayPeer::APP_DEL_INDEX . " AS DEL_INDEX");
+
+            $criteria->add(\AppDelayPeer::APP_UID, $applicationUid, \Criteria::EQUAL);
+            $criteria->add(\AppDelayPeer::APP_TYPE, "PAUSE", \Criteria::EQUAL);
+            $criteria->add(
+                $criteria->getNewCriterion(\AppDelayPeer::APP_DISABLE_ACTION_USER, null, \Criteria::ISNULL)->addOr(
+                $criteria->getNewCriterion(\AppDelayPeer::APP_DISABLE_ACTION_USER, 0, \Criteria::EQUAL))
+            );
+
+            $rsCriteria = \AppDelayPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                //Return
+                return array("APP_STATUS" => $row["APP_STATUS"], "DEL_INDEX" => $row["DEL_INDEX"]);
+            }
+
+            //Status is TO_DO, DRAFT
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\ApplicationPeer::APP_STATUS);
+            $criteria->addSelectColumn(\AppDelegationPeer::DEL_INDEX);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\ApplicationPeer::APP_UID, \AppDelegationPeer::APP_UID, \Criteria::EQUAL);
+            $arrayCondition[] = array(\ApplicationPeer::APP_UID, \AppThreadPeer::APP_UID, \Criteria::EQUAL);
+            $arrayCondition[] = array(\ApplicationPeer::APP_UID, $delimiter . $applicationUid . $delimiter, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+            $criteria->add(
+                $criteria->getNewCriterion(\ApplicationPeer::APP_STATUS, "TO_DO", \Criteria::EQUAL)->addAnd(
+                $criteria->getNewCriterion(\AppDelegationPeer::DEL_FINISH_DATE, null, \Criteria::ISNULL))->addAnd(
+                $criteria->getNewCriterion(\AppDelegationPeer::DEL_THREAD_STATUS, "OPEN"))->addAnd(
+                $criteria->getNewCriterion(\AppThreadPeer::APP_THREAD_STATUS, "OPEN"))
+            )->addOr(
+                $criteria->getNewCriterion(\ApplicationPeer::APP_STATUS, "DRAFT", \Criteria::EQUAL)->addAnd(
+                $criteria->getNewCriterion(\AppDelegationPeer::DEL_THREAD_STATUS, "OPEN"))->addAnd(
+                $criteria->getNewCriterion(\AppThreadPeer::APP_THREAD_STATUS, "OPEN"))
+            );
+
+            $rsCriteria = \ApplicationPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                //Return
+                return array("APP_STATUS" => $row["APP_STATUS"], "DEL_INDEX" => $row["DEL_INDEX"]);
+            }
+
+            //Status is CANCELLED, COMPLETED
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\ApplicationPeer::APP_STATUS);
+            $criteria->addSelectColumn(\AppDelegationPeer::DEL_INDEX);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\ApplicationPeer::APP_UID, \AppDelegationPeer::APP_UID, \Criteria::EQUAL);
+            $arrayCondition[] = array(\ApplicationPeer::APP_UID, $delimiter . $applicationUid . $delimiter, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+            $criteria->add(\ApplicationPeer::APP_STATUS, array("CANCELLED", "COMPLETED"), \Criteria::IN);
+            $criteria->add(\AppDelegationPeer::DEL_LAST_INDEX, 1, \Criteria::EQUAL);
+
+            $rsCriteria = \ApplicationPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                //Return
+                return array("APP_STATUS" => $row["APP_STATUS"], "DEL_INDEX" => $row["DEL_INDEX"]);
+            }
+
+            //Return
+            return array();
         } catch (\Exception $e) {
             throw $e;
         }
