@@ -384,7 +384,7 @@ class Task
 
             $result = $task->update($arrayProperty);
             if (!empty($arrayProperty['CONSOLIDATE_DATA'])) {
-                if (isset($arrayProperty['CONSOLIDATE_DATA']['consolidated_dynaform'])) {
+                if (!empty($arrayProperty['CONSOLIDATE_DATA']['consolidated_dynaform'])) {
                     G::LoadClass("consolidatedCases");
                     $consolidated = new \ConsolidatedCases();
                     $dataConso = array(
