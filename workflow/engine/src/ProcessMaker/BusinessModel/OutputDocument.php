@@ -333,6 +333,8 @@ class OutputDocument
                         $oOutputDocument->setOutDocFilename($outputDocumentData['OUT_DOC_FILENAME']);
                     }
                     if (isset($outputDocumentData['OUT_DOC_TEMPLATE'])) {
+                        $outputDocumentData['OUT_DOC_TEMPLATE'] = stripslashes($outputDocumentData['OUT_DOC_TEMPLATE']);
+                        $outputDocumentData['OUT_DOC_TEMPLATE'] = str_replace("@amp@", "&", $outputDocumentData['OUT_DOC_TEMPLATE']);
                         $oOutputDocument->setOutDocTemplate($outputDocumentData['OUT_DOC_TEMPLATE']);
                     }
                     $oOutputDocument->save();
