@@ -468,29 +468,56 @@ class indicatorsCalculator
 		return $retval;
 	}
 
-    public function statusIndicator($usrUid)
+    public function statusIndicatorGeneral ($usrUid)
     {
         $params[':usrUid'] = $usrUid;
 
-        $response = array();
+        $sqlString = "SELECT
+            COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) <  0 ) , 0 ) AS OVERDUE,
+            COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) >  0 ) , 0 ) AS ONTIME,
+            COALESCE( SUM( DATEDIFF( DEL_RISK_DATE , NOW( ) ) < 0 ) , 0 ) AS ATRISK
+            FROM  LIST_INBOX
+            WHERE  USR_UID =  :usrUid
+            AND APP_STATUS = 'TO_DO'
+            AND  DEL_DUE_DATE IS NOT NULL ";
+
+        return $this->pdoExecutor($sqlString, $params);
+    }
+
+    public function statusIndicatorDetail ($usrUid)
+    {
+        $params[':usrUid'] = $usrUid;
 
         $sqlString = "SELECT
-			COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) <  0 ) , 0 ) AS OVERDUE,
-			COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) >  0 ) , 0 ) AS ONTIME,
-			COALESCE( SUM( DATEDIFF( DEL_RICK_DATE , NOW( ) ) < 0 ) , 0 ) AS ATRISK
-			FROM  LIST_INBOX
-			WHERE  USR_UID =  :usrUid
-			AND APP_STATUS = 'TO_DO'
-			AND  DEL_DUE_DATE IS NOT NULL ";
-        $result = $this->pdoExecutor($sqlString, $params);
+            TAS_UID as tasUid,
+            PRO_UID as proUid,
+            APP_TAS_TITLE AS taskTitle,
+            APP_PRO_TITLE AS proTitle,
+
+            COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) <  0 ) , 0 ) AS overdue,
+            COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) >  0 ) , 0 ) AS onTime,
+            COALESCE( SUM( DATEDIFF( DEL_RISK_DATE , NOW( ) ) < 0 ) , 0 ) AS atRisk
+            FROM  LIST_INBOX
+            WHERE  USR_UID =  :usrUid
+            AND APP_STATUS = 'TO_DO'
+            AND  DEL_DUE_DATE IS NOT NULL
+            GROUP BY TAS_UID";
+
+        return $this->pdoExecutor($sqlString, $params);
+    }
+
+    public function statusIndicator($usrUid)
+    {
+        $response = array();
+        $result = $this->statusIndicatorGeneral($usrUid);
 
         $response['overdue'] = 0;
         $response['atRisk'] = 0;
         $response['onTime'] = 0;
-        $response['porcentageOverdue'] = 0;
-        $response['porcentageAtRisk'] = 0;
-        $response['procentageOnTime'] = 0;
-        $response['DATALIST'] = array();
+        $response['percentageOverdue'] = 0;
+        $response['percentageAtRisk'] = 0;
+        $response['percentageOnTime'] = 0;
+        $response['dataList'] = array();
 
         if (is_array($result) && isset($result[0])) {
             $response['overdue'] = $result[0]['OVERDUE'];
@@ -499,28 +526,13 @@ class indicatorsCalculator
 
             $total = $response['overdue'] + $response['atRisk'] + $response['onTime'];
             if ($total != 0) {
-                $response['porcentageOverdue'] = ($response['overdue']*100)/$total;
-                $response['porcentageAtRisk']  = ($response['atRisk']*100)/$total;
-                $response['procentageOnTime']  = ($response['onTime']*100)/$total;
+                $response['percentageOverdue'] = ($response['overdue']*100)/$total;
+                $response['percentageAtRisk']  = ($response['atRisk']*100)/$total;
+                $response['percentageOnTime']  = ($response['onTime']*100)/$total;
             }
         }
 
-
-        $sqlString = "SELECT
-			TAS_UID,
-			PRO_UID,
-			APP_TAS_TITLE AS taskTitle,
-			APP_PRO_TITLE AS proTitle,
-
-			COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) <  0 ) , 0 ) AS overdue,
-			COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) >  0 ) , 0 ) AS onTime,
-			COALESCE( SUM( DATEDIFF( DEL_RICK_DATE , NOW( ) ) < 0 ) , 0 ) AS atRisk
-			FROM  LIST_INBOX
-			WHERE  USR_UID =  :usrUid
-			AND APP_STATUS = 'TO_DO'
-			AND  DEL_DUE_DATE IS NOT NULL
-			GROUP BY TAS_UID";
-        $result = $this->pdoExecutor($sqlString, $params);
+        $result = $this->statusIndicatorDetail($usrUid);
 
         foreach ($result as $key => $value) {
             $result[$key]['overdue'] = $value['overdue'];
@@ -528,13 +540,12 @@ class indicatorsCalculator
             $result[$key]['onTime'] = $value['onTime'];
             $total = $value['overdue'] + $value['onTime'] + $value['atRisk'];
             if ($total != 0) {
-                $result[$key]['porcentageOverdue'] = ($value['overdue']*100)/$total;
-                $result[$key]['porcentageAtRisk']  = ($value['atRisk']*100)/$total;
-                $result[$key]['procentageOnTime']  = ($value['onTime']*100)/$total;
+                $result[$key]['percentageOverdue'] = ($value['overdue']*100)/$total;
+                $result[$key]['percentageAtRisk']  = ($value['atRisk']*100)/$total;
+                $result[$key]['percentageOnTime']  = ($value['onTime']*100)/$total;
             }
         }
-
-        $response['DATALIST'] = $result;
+        $response['dataList'] = $result;
         return $response;
     }
 
