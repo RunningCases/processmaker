@@ -642,9 +642,8 @@ ImportPMTableCSV = function(){
                     waitTitle : "&nbsp;",
                     success  : function(o, resp){
                       w.close();
-                      infoGrid.store.reload();
-
                       PMExt.notify('IMPORT RESULT', resp.result.message);
+                      setTimeout(function(){location.reload();},1500);
                     },
                     failure: function(o, resp){
                       w.close();
