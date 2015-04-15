@@ -1654,18 +1654,23 @@ class AppCacheView extends BaseAppCacheView
     public function getTotalCasesByAllUsers()
     {
         $oCriteria = new Criteria("workflow");
-
         $oCriteria->addSelectColumn(AppCacheViewPeer::USR_UID);
-        $oCriteria->addAsColumn("CNT", "COUNT(DISTINCT(APP_UID))");
+        $oCriteria->addAsColumn("CNT", "COUNT(DISTINCT(APP_CACHE_VIEW.APP_UID))");
+
+        $oCriteria->addJoin(AppCacheViewPeer::DEL_INDEX , AppDelayPeer::APP_DEL_INDEX, Criteria::LEFT_JOIN);
+
+        $oCriteria->add(
+            $oCriteria->getNewCriterion(AppDelayPeer::APP_TYPE, NULL, Criteria::ISNULL)->addOr(                
+            $oCriteria->getNewCriterion(AppDelayPeer::APP_TYPE, 'REASSIGN', Criteria::NOT_EQUAL))
+        );
+
         $oCriteria->addGroupByColumn(AppCacheViewPeer::USR_UID);
         $dat = AppCacheViewPeer::doSelectRS($oCriteria);
         $dat->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
         $aRows = array();
-
         while ($dat->next()) {
             $row = $dat->getRow();
-
             $aRows[$row["USR_UID"]] = $row["CNT"];
         }
 

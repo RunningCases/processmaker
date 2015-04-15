@@ -601,7 +601,7 @@ class Propel {
         $lastQuery = "";
 
         foreach (self::$connectionMap as $cnn) {
-            if (!($cnn instanceof DBArrayConnection)) {
+            if (get_class($cnn) != "DBArrayConnection") {
                 if (gettype($cnn->getResource()) == "resource" && $cnn->isConnected() && $cnn->lastQuery != $lastQuery) {
                     $cnn->close();
                 }
