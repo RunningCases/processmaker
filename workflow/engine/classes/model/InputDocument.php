@@ -150,8 +150,15 @@ class InputDocument extends BaseInputDocument
                 if(!empty($aData['INP_DOC_DESTINATION_PATH'])){
                   $description .= ", Destination Path: ".$aData['INP_DOC_DESTINATION_PATH'];
                 }
-                $inputDocMaxFileSize = $aData['INP_DOC_MAX_FILESIZE']? $aData['INP_DOC_MAX_FILESIZE'].' '.$aData['INP_DOC_MAX_FILESIZE_UNIT'] : "256 MB";
-                $description .= ", Extensions: ".$aData['INP_DOC_TYPE_FILE'].", Maximum Input Document file size: ".$inputDocMaxFileSize;
+                $inputDocMaxFileSize = "";
+                if(!empty($aData['INP_DOC_MAX_FILESIZE'])){
+                  $inputDocMaxFileSize = $aData['INP_DOC_MAX_FILESIZE']? $aData['INP_DOC_MAX_FILESIZE'].' '.$aData['INP_DOC_MAX_FILESIZE_UNIT'] : "256 MB";
+                  $inputDocMaxFileSize = ", Maximum Input Document file size: ".$inputDocMaxFileSize;
+                }
+                if(!empty($aData['INP_DOC_MAX_FILESIZE'])){
+                  $description .= ", Extensions: ".$aData['INP_DOC_TYPE_FILE'];
+                }
+                $description .= $inputDocMaxFileSize;
                 G::auditLog("CreateInputDocument", $description);
                 
                 return $aData['INP_DOC_UID'];
@@ -217,8 +224,15 @@ class InputDocument extends BaseInputDocument
                     if(!empty($aData['INP_DOC_DESTINATION_PATH'])){
                       $description .= ", Destination Path: ".$aData['INP_DOC_DESTINATION_PATH'];
                     }
-                    $inputDocMaxFileSize = $aData['INP_DOC_MAX_FILESIZE']? $aData['INP_DOC_MAX_FILESIZE'].' '.$aData['INP_DOC_MAX_FILESIZE_UNIT'] : "256 MB";
-                    $description .= ", Extensions: ".$aData['INP_DOC_TYPE_FILE'].", Maximum Input Document file size: ".$inputDocMaxFileSize;
+                    $inputDocMaxFileSize = "";
+                    if(!empty($aData['INP_DOC_MAX_FILESIZE'])){
+                      $inputDocMaxFileSize = $aData['INP_DOC_MAX_FILESIZE']? $aData['INP_DOC_MAX_FILESIZE'].' '.$aData['INP_DOC_MAX_FILESIZE_UNIT'] : "256 MB";
+                      $inputDocMaxFileSize = ", Maximum Input Document file size: ".$inputDocMaxFileSize;
+                    }
+                    if(!empty($aData['INP_DOC_MAX_FILESIZE'])){
+                      $description .= ", Extensions: ".$aData['INP_DOC_TYPE_FILE'];
+                    }
+                    $description .= $inputDocMaxFileSize;
                     G::auditLog("UpdateInputDocument", $description);
                  
                     return $iResult;
