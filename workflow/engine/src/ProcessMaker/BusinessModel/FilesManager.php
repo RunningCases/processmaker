@@ -224,7 +224,8 @@ class FilesManager
             $oProcessFiles->setPrfCreateDate($sDate);
             $oProcessFiles->save();
             $fp = fopen($sDirectory, 'w');
-            $content = $aData['prf_content'];
+            $content = stripslashes($aData['prf_content']);
+            $content = str_replace("@amp@", "&", $content);
             fwrite($fp, $content);
             fclose($fp);
             $oProcessFile = array('prf_uid' => $oProcessFiles->getPrfUid(),
@@ -372,7 +373,8 @@ class FilesManager
             $oProcessFiles->setPrfUpdateDate($sDate);
             $oProcessFiles->save();
             $fp = fopen($path, 'w');
-            $content = $aData['prf_content'];
+            $content = stripslashes($aData['prf_content']);
+            $content = str_replace("@amp@", "&", $content);
             fwrite($fp, $content);
             fclose($fp);
             $oProcessFile = array('prf_uid' => $oProcessFiles->getPrfUid(),
