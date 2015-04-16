@@ -118,12 +118,12 @@ class Activity extends Api
             }
             $task = new \ProcessMaker\BusinessModel\Task();
             $properties = $task->updateProperties($prj_uid, $act_uid, $request_data);
-            
+
             /*----------------------------------********---------------------------------*/
             if (\PMLicensedFeatures
                 ::getSingleton()
                 ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
-                if (isset($request_data['properties']['_features'])) {
+                if (isset($request_data['properties']['_features']) && !empty($request_data['properties']['_features']['ActionsByEmail']['fields']['ABE_UID'])) {
                     $actionsByEmailService = new \ProcessMaker\BusinessModel\ActionsByEmail();
                     $actionsByEmailService->saveConfiguration($request_data['properties']['_features']);
                 }
