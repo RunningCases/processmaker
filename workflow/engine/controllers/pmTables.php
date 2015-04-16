@@ -112,11 +112,12 @@ class pmTables extends Controller
         $this->setJSVar( 'dataNumRows', $dataNumRows );
         $this->setJSVar( '_plugin_permissions', $repTabPluginPermissions );
         $this->setJSVar( 'sizeTableName', $this->getSizeTableName());
-        
-        require_once 'classes/model/AdditionalTables.php';
-        $process = new Process();
-        $isBpmn = $process->isBpmnProcess($_GET['PRO_UID']);
-        
+
+        $isBpmn = 0;
+        if (isset( $_GET['PRO_UID'] )) {
+            $process = new Process();
+            $isBpmn = $process->isBpmnProcess($_GET['PRO_UID']);
+        }
         $this->setJSVar( 'isBpmn', $isBpmn );
 
         G::RenderPage( 'publish', 'extJs' );
