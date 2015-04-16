@@ -136,6 +136,12 @@ abstract class BaseListInbox extends BaseObject implements Persistent
     protected $del_due_date;
 
     /**
+     * The value for the del_risk_date field.
+     * @var        int
+     */
+    protected $del_risk_date;
+
+    /**
      * The value for the del_priority field.
      * @var        string
      */
@@ -427,6 +433,38 @@ abstract class BaseListInbox extends BaseObject implements Persistent
             }
         } else {
             $ts = $this->del_due_date;
+        }
+        if ($format === null) {
+            return $ts;
+        } elseif (strpos($format, '%') !== false) {
+            return strftime($format, $ts);
+        } else {
+            return date($format, $ts);
+        }
+    }
+
+    /**
+     * Get the [optionally formatted] [del_risk_date] column value.
+     * 
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                          If format is NULL, then the integer unix timestamp will be returned.
+     * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+     * @throws     PropelException - if unable to convert the date/time to timestamp.
+     */
+    public function getDelRiskDate($format = 'Y-m-d H:i:s')
+    {
+
+        if ($this->del_risk_date === null || $this->del_risk_date === '') {
+            return null;
+        } elseif (!is_int($this->del_risk_date)) {
+            // a non-timestamp value was set externally, so we convert it
+            $ts = strtotime($this->del_risk_date);
+            if ($ts === -1 || $ts === false) {
+                throw new PropelException("Unable to parse value of [del_risk_date] as date/time value: " .
+                    var_export($this->del_risk_date, true));
+            }
+        } else {
+            $ts = $this->del_risk_date;
         }
         if ($format === null) {
             return $ts;
@@ -873,6 +911,35 @@ abstract class BaseListInbox extends BaseObject implements Persistent
     } // setDelDueDate()
 
     /**
+     * Set the value of [del_risk_date] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setDelRiskDate($v)
+    {
+
+        if ($v !== null && !is_int($v)) {
+            $ts = strtotime($v);
+            //Date/time accepts null values
+            if ($v == '') {
+                $ts = null;
+            }
+            if ($ts === -1 || $ts === false) {
+                throw new PropelException("Unable to parse date/time value for [del_risk_date] from input: " .
+                    var_export($v, true));
+            }
+        } else {
+            $ts = $v;
+        }
+        if ($this->del_risk_date !== $ts) {
+            $this->del_risk_date = $ts;
+            $this->modifiedColumns[] = ListInboxPeer::DEL_RISK_DATE;
+        }
+
+    } // setDelRiskDate()
+
+    /**
      * Set the value of [del_priority] column.
      * 
      * @param      string $v new value
@@ -947,14 +1014,16 @@ abstract class BaseListInbox extends BaseObject implements Persistent
 
             $this->del_due_date = $rs->getTimestamp($startcol + 17, null);
 
-            $this->del_priority = $rs->getString($startcol + 18);
+            $this->del_risk_date = $rs->getTimestamp($startcol + 18, null);
+
+            $this->del_priority = $rs->getString($startcol + 19);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 19; // 19 = ListInboxPeer::NUM_COLUMNS - ListInboxPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 20; // 20 = ListInboxPeer::NUM_COLUMNS - ListInboxPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating ListInbox object", $e);
@@ -1213,6 +1282,9 @@ abstract class BaseListInbox extends BaseObject implements Persistent
                 return $this->getDelDueDate();
                 break;
             case 18:
+                return $this->getDelRiskDate();
+                break;
+            case 19:
                 return $this->getDelPriority();
                 break;
             default:
@@ -1253,7 +1325,8 @@ abstract class BaseListInbox extends BaseObject implements Persistent
             $keys[15] => $this->getDelDelegateDate(),
             $keys[16] => $this->getDelInitDate(),
             $keys[17] => $this->getDelDueDate(),
-            $keys[18] => $this->getDelPriority(),
+            $keys[18] => $this->getDelRiskDate(),
+            $keys[19] => $this->getDelPriority(),
         );
         return $result;
     }
@@ -1340,6 +1413,9 @@ abstract class BaseListInbox extends BaseObject implements Persistent
                 $this->setDelDueDate($value);
                 break;
             case 18:
+                $this->setDelRiskDate($value);
+                break;
+            case 19:
                 $this->setDelPriority($value);
                 break;
         } // switch()
@@ -1438,7 +1514,11 @@ abstract class BaseListInbox extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[18], $arr)) {
-            $this->setDelPriority($arr[$keys[18]]);
+            $this->setDelRiskDate($arr[$keys[18]]);
+        }
+
+        if (array_key_exists($keys[19], $arr)) {
+            $this->setDelPriority($arr[$keys[19]]);
         }
 
     }
@@ -1522,6 +1602,10 @@ abstract class BaseListInbox extends BaseObject implements Persistent
 
         if ($this->isColumnModified(ListInboxPeer::DEL_DUE_DATE)) {
             $criteria->add(ListInboxPeer::DEL_DUE_DATE, $this->del_due_date);
+        }
+
+        if ($this->isColumnModified(ListInboxPeer::DEL_RISK_DATE)) {
+            $criteria->add(ListInboxPeer::DEL_RISK_DATE, $this->del_risk_date);
         }
 
         if ($this->isColumnModified(ListInboxPeer::DEL_PRIORITY)) {
@@ -1625,6 +1709,8 @@ abstract class BaseListInbox extends BaseObject implements Persistent
         $copyObj->setDelInitDate($this->del_init_date);
 
         $copyObj->setDelDueDate($this->del_due_date);
+
+        $copyObj->setDelRiskDate($this->del_risk_date);
 
         $copyObj->setDelPriority($this->del_priority);
 
