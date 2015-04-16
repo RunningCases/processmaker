@@ -123,8 +123,9 @@
     <column name="DEL_PRIORITY" type="VARCHAR" size="32" required="true" default="3"/>
     <column name="DEL_DELEGATE_DATE" type="TIMESTAMP" required="true"/>
     <column name="DEL_INIT_DATE" type="TIMESTAMP" required="false"/>
-    <column name="DEL_TASK_DUE_DATE" type="TIMESTAMP" required="false"/>
     <column name="DEL_FINISH_DATE" type="TIMESTAMP" required="false"/>
+    <column name="DEL_TASK_DUE_DATE" type="TIMESTAMP" required="false" />
+    <column name="DEL_RISK_DATE" type="TIMESTAMP" required="false" />
     <column name="DEL_DURATION" type="DOUBLE" default="0"/>
     <column name="DEL_QUEUE_DURATION" type="DOUBLE" default="0"/>
     <column name="DEL_DELAY_DURATION" type="DOUBLE" default="0"/>
@@ -2438,8 +2439,9 @@
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="DEL_DELEGATE_DATE" type="TIMESTAMP" required="true"/>
     <column name="DEL_INIT_DATE" type="TIMESTAMP" required="false"/>
-    <column name="DEL_TASK_DUE_DATE" type="TIMESTAMP" required="false"/>
     <column name="DEL_FINISH_DATE" type="TIMESTAMP" required="false"/>
+    <column name="DEL_TASK_DUE_DATE" type="TIMESTAMP" required="false" />
+    <column name="DEL_RISK_DATE" type="TIMESTAMP" required="false" />
     <column name="DEL_THREAD_STATUS" type="VARCHAR" size="32" default="OPEN"/>
     <column name="APP_THREAD_STATUS" type="VARCHAR" size="32" default="OPEN"/>
     <column name="APP_TITLE" type="VARCHAR" size="255" required="true" default=""/>
@@ -3961,6 +3963,7 @@
         <column name="DEL_DELEGATE_DATE" type="TIMESTAMP" required="true"/>
         <column name="DEL_INIT_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>
+        <column name="DEL_RISK_DATE" type="TIMESTAMP" required="false" />
         <column name="DEL_PRIORITY" type="VARCHAR" size="32" required="true" default="3"/>
         <index name="indexInboxUser">
             <index-column name="USR_UID"/>
@@ -4820,7 +4823,7 @@
       </vendor>
     </column>
   </table>
-  
+
   <table name="USR_REPORTING">
         <vendor type="mysql">
             <parameter name="Name" value="USR_REPORTING" />
