@@ -152,7 +152,11 @@ if (!class_exists('pmLicenseManager')) {
 $licenseManager =& pmLicenseManager::getSingleton();
 if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
     $G_PUBLISH = new Publisher();
-    $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/licenseExpired', '', array(), 'licenseUpdate');
+    if(SYS_SKIN == 'neoclassic'){
+        $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/licenseExpiredpm3', '', array(), 'licenseUpdate');
+    }else{
+        $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/licenseExpired', '', array(), 'licenseUpdate');
+    }
     G::RenderPage('publish');
     die();
 }
@@ -196,7 +200,12 @@ if (isset($myUrl) && $myUrl != "") {
 }
 
 $G_PUBLISH = new Publisher();
-$G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/login', '', $aFields, SYS_URI . 'login/authentication.php');
+if(SYS_SKIN == 'neoclassic'){
+    $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/loginpm3', '', $aFields, SYS_URI . 'login/authentication.php');
+}else{
+    $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/login', '', $aFields, SYS_URI . 'login/authentication.php');
+}
+
 G::LoadClass('serverConfiguration');
 //Bootstrap::LoadClass('serverConfiguration');
 //get the serverconf singleton, and check if we can send the heartbeat

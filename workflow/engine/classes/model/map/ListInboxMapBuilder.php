@@ -101,6 +101,8 @@ class ListInboxMapBuilder
 
         $tMap->addColumn('DEL_DUE_DATE', 'DelDueDate', 'int', CreoleTypes::TIMESTAMP, false, null);
 
+        $tMap->addColumn('DEL_RISK_DATE', 'DelRiskDate', 'int', CreoleTypes::TIMESTAMP, false, null);
+
         $tMap->addColumn('DEL_PRIORITY', 'DelPriority', 'string', CreoleTypes::VARCHAR, true, 32);
 
     } // doBuild()
