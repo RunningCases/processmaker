@@ -538,11 +538,20 @@ class indicatorsCalculator
             $result[$key]['overdue'] = $value['overdue'];
             $result[$key]['atRisk'] = $value['atRisk'];
             $result[$key]['onTime'] = $value['onTime'];
+			$result[$key]['percentageOverdue'] = 0;
+			$result[$key]['percentageAtRisk']  = 0;
+			$result[$key]['percentageOnTime']  = 0;
+			$result[$key]['percentageTotalOverdue'] = 0;
+			$result[$key]['percentageTotalAtRisk']  = 0;
+			$result[$key]['percentageTotalOnTime']  = 0;
             $total = $value['overdue'] + $value['onTime'] + $value['atRisk'];
             if ($total != 0) {
                 $result[$key]['percentageOverdue'] = ($value['overdue']*100)/$total;
                 $result[$key]['percentageAtRisk']  = ($value['atRisk']*100)/$total;
                 $result[$key]['percentageOnTime']  = ($value['onTime']*100)/$total;
+				$result[$key]['percentageTotalOverdue'] = ($value['overdue']*100)/$response['overdue'];
+				$result[$key]['percentageTotalAtRisk']  = ($value['atRisk']*100)/$response['atRisk'];
+				$result[$key]['percentageTotalOnTime']  = ($value['onTime']*100)/$response['onTime'];
             }
         }
         $response['dataList'] = $result;
