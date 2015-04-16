@@ -407,6 +407,7 @@ class ReportingIndicators extends Api
 
             $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
             $response = $indicatorsObj->getStatusIndicator($options);
+            print_r($response);die;
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
