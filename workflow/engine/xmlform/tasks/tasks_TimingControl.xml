@@ -23,7 +23,7 @@ SELECT CALENDAR_UID, CALENDAR_NAME FROM availableCalendars
 
 var toggleFields = function()
 {
-    if(getField('TAS_TRANSFER_FLY').checked == true)
+    if(getField('TAS_TRANSFER_FLY').checked == false)
     {
       showRowById('TAS_DURATION');
       showRowById('TAS_TIMEUNIT');
