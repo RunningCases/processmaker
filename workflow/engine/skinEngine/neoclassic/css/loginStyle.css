@@ -1,9 +1,18 @@
 /*
 *  LOGIN PM3 STYLES
 */
+
+@font-face {
+        font-family: "Chivo";
+        font-style: normal;
+        font-weight: normal;
+        src: local("?"), url("/fonts/Chivo-Regular.ttf") format("truetype");
+    }
 body.login {
     background: url("/images/backgroundpm3.jpg") repeat scroll 0 0 / cover rgba(0, 0, 0, 0);
-    //background-position-y: -30px;     
+    //background-position-y: -30px;
+    font-family: "Chivo",sans-serif; 
+    height: 100%;    
 }
 
 .vertical-offset-100 {
@@ -48,7 +57,8 @@ img.img-responsive {
 
 
 .module_app_input___gray {
- background-color: #fff;
+    font-family: "Chivo",sans-serif; 
+    background-color: #fff;
     background-image: none;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -71,9 +81,11 @@ img.img-responsive {
     color: #555;
     display: block;
     font-size: 14px;
-    height: 45px;
+    //height: 45px;
+    box-sizing: border-box;
+    //padding-top: 12px;
     line-height: 1.42857;
-    padding: 9px 12px;
+    //padding: 9px 12px;
     transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
     width: 100%;
 }
@@ -82,6 +94,7 @@ img.img-responsive {
     box-sizing: border-box;
     color: #444;
     font-family: "Open Sans",Arial,Helvetica,sans-serif;
+    //font-family: "Chivo",sans-serif; 
     font-size: 16px;
     height: 45px;
     padding: 10px;
@@ -159,7 +172,7 @@ p {
     font-weight: 700;
     //transition: all 0.3s ease-in-out 0s;
     max-width: 400px;
-    filter:none; 
+    filter:none;    
 }
 
 .button-login-success:hover{
@@ -211,13 +224,10 @@ p {
     font-size: 11px;    
 }
 
-.footer-login .content{
+.footer-login span{
     color: white;
     font-weight: 900;
-}
-
-.footer-login{
-    text-align: center;
+    font-size: 12px;
 }
 
 .login_result span{
@@ -227,6 +237,7 @@ p {
 
 
 .login .module_app_inputFailed___gray{
+    font-family: "Chivo",sans-serif; 
     background-color: #fff;
     background-image: none;
     border: 1px solid #ccc;
@@ -241,4 +252,29 @@ p {
     transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
     width: 100%;
     border:1px solid #e14333;
+}
+
+.page-wrap{
+    height: auto;
+    margin: 0 auto -60px;
+    min-height: 95%;
+    padding: 0 0 60px;
+}
+
+.page-wrap:after{
+    width: 100%;
+    display:block;
+    clear:both;
+}
+ 
+.footer-login{
+    text-align: center;
+    height: auto;
+    margin: -0px auto 0;
+}
+
+#form[FORGOT_PASWORD_LINK]{
+    font-family: Chivo;
+    font-size: 14px;
+    padding-top: 10px;    
 }
