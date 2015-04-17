@@ -309,17 +309,9 @@ class Server implements iAuthenticate
         if ($returnResponse) {
             return $response;
         } else {
-            if ($response->getStatusCode() == 400) {
-                $msg = $response->getParameter("error_description", "");
-                $msg = ($msg != "")? $msg : $response->getParameter("error", "");
+            $response->send();
 
-                $rest = new \Maveriks\Extension\Restler();
-                $rest->setMessage(new \Luracast\Restler\RestException(\ProcessMaker\Services\Api::STAT_APP_EXCEPTION, $msg));
-
-                exit(0);
-            } else {
-                $response->send();
-            }
+            exit(0);
         }
     }
 

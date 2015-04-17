@@ -34,6 +34,20 @@ window.onload= function(){
 
 setFocus (getField ('USR_USERNAME'));
 
+leimnud.event.add(document.getElementById('form[USR_PASSWORD_MASK]'), 'keypress', function(event) {
+  var key;
+  if(window.event)
+    key = window.event.keyCode;     //IE
+  else
+    key = event.which;     //firefox
+  if(key == 13) {
+    document.getElementById('form[BSUBMIT]').click();
+    return true;
+  } else {
+    return true;
+  }
+});
+
 leimnud.event.add(document.getElementById('form[BSUBMIT]'), 'click', function() {
     ws = getField('USER_ENV').value;
     createCookie('pmos_generik2', '{"ws":"'+ws+'"}', 365);
