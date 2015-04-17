@@ -29,8 +29,7 @@ window.onload= function(){
   document.getElementById('form[USR_USERNAME]').placeholder = _('ID_USER');
   document.getElementById('form[USR_PASSWORD_MASK]').placeholder = _('ID_PASSWORD');
   document.getElementById('form[BSUBMIT]').classList.remove('module_app_button___gray');
-  document.getElementById('form[BSUBMIT]').classList.add('button-login-success');
-  document.getElementById('form[BSUBMIT]').setAttribute("tabindex",-1);  
+  document.getElementById('form[BSUBMIT]').classList.add('button-login-success');  
 };
 
 // enable/disable forgot password link
