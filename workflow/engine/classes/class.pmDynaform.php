@@ -211,7 +211,7 @@ class pmDynaform
                                 if ($column->type === "text" || $column->type === "textarea" || $column->type === "dropdown" || $column->type === "datetime" || $column->type === "checkbox" || $column->type === "file" || $column->type === "link") {
                                     array_push($cells, array(
                                         "value" => isset($row[$column->name]) ? $row[$column->name] : "",
-                                        "label" => isset($row[$column->name . "_label"]) ? $row[$column->name . "_label"] : ""
+                                        "label" => isset($row[$column->name . "_label"]) ? $row[$column->name . "_label"] : (isset($row[$column->name]) ? $row[$column->name] : "")
                                     ));
                                 }
                                 if ($column->type === "suggest") {
