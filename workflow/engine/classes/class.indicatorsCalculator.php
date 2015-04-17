@@ -443,14 +443,16 @@ class indicatorsCalculator
 		$sqlString = " select
                             i.TAS_UID as uid,
                             t.CON_VALUE as name,
-                            i.efficienceIndex,
+                            i.efficiencyIndex,
+                            i.inefficiencyCost,
                             i.averageTime,
                             i.deviationTime,
                             i.configuredTime
                          FROM
                         (	select
                                 TAS_UID,
-                                $this->peiFormula as efficienceIndex,
+                                $this->peiFormula as efficiencyIndex,
+								$this->peiCostFormula as inefficiencyCost,
                                 AVG(AVG_TIME) as averageTime,
                                 AVG(SDV_TIME) as deviationTime,
                                 CONFIGURED_TASK_TIME as configuredTime
