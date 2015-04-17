@@ -410,7 +410,20 @@ Ext.onReady(function () {
           xtype      : 'textfield',
           width      : 260,
           allowBlank : false,
-          regex      : /^\S*$/
+          regex      : /^[a-z\d\-_\s]+$/i,
+          validator: function(v) {
+            if (v == " " && v.length==1) {
+              return false;
+            }else{
+                for (var i = 0; i < v.length; i++) {
+                  if (v[i]==" " && v[i+1]==" ") {
+                      return false;
+                  }
+                }
+            }
+            var valueInputField= /^[a-z\d\-_\s]+$/i.test(v) ? true : false;
+            return valueInputField;
+          }
         },
         {
           id         : 'USR_LASTNAME',
@@ -418,7 +431,20 @@ Ext.onReady(function () {
           xtype      : 'textfield',
           width      : 260,
           allowBlank : false,
-          regex      : /^\S*$/
+          regex      : /^[a-z\d\-_\s]+$/i,
+          validator: function(v) {
+            if (v == " " && v.length==1) {
+              return false;
+            }else{
+                for (var i = 0; i < v.length; i++) {
+                  if (v[i]==" " && v[i+1]==" ") {
+                      return false;
+                  }
+                }
+            }
+            var valueInputField= /^[a-z\d\-_\s]+$/i.test(v) ? true : false;
+            return valueInputField;
+          }
         },
         {
           id         : 'USR_USERNAME',
