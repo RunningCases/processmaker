@@ -225,7 +225,7 @@ class pmDynaform
         return $this->record != null && $this->record["DYN_VERSION"] == 2 ? true : false;
     }
 
-    public function printViewWitoutSubmit()
+    public function printViewWithoutSubmit()
     {
         ob_clean();
 
