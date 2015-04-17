@@ -159,6 +159,12 @@ class pmDynaform
                     }
                     if (isset($json->options[0])) {
                         $json->data = $json->options[0];
+                        $no = count($json->options);
+                        for ($io = 0; $io < $no; $io++) {
+                            if ($json->options[$io]["value"] === $json->defaultValue) {
+                                $json->data = $json->options[$io];
+                            }
+                        }
                     }
                 }
                 //data
