@@ -414,7 +414,7 @@ class calendar extends CalendarDefinition
     			$hoursDuration -= (float)($secondRes/3600);
     			//$dataLog[] = (float)($secondRes/3600);
     		} else {
-    			$newDate = date('Y-m-d H:i:s', strtotime('+' . (((float)$hoursDuration)*3600) . ' seconds', strtotime($newDate)));
+    			$newDate = date("Y-m-d H:i:s", strtotime("+" . round(((float)($hoursDuration)) * 3600) . " seconds", strtotime($newDate)));
     			//$dataLog[] = (float)($hoursDuration);
     			$hoursDuration = 0;
     		}
