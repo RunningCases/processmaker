@@ -912,7 +912,6 @@ function createReportTable()
       try {
         result = Ext.util.JSON.decode(resp.responseText);
         Ext.MessageBox.hide();
-
         if (result.success) {
           proParam = PRO_UID !== false ? '?PRO_UID='+PRO_UID : '';
           location.href = '../pmTables' + proParam; //history.back();
