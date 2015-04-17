@@ -885,6 +885,7 @@ var addTab = function (flag) {
                                     typeAhead       : true,
                                     autocomplete    : true,
                                     triggerAction   : 'all',
+                                    value           : '0',
                                     store           : storeProject
                                 }),
                                 new Ext.form.ComboBox({
