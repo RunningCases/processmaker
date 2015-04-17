@@ -198,20 +198,23 @@ Ext.onReady(function(){
   function createNW(nwTitle, aoDbWf, aoDbRb, aoDbRp, nwUsername, nwPassword, nwPassword2){
     PMExt.confirm(_('ID_CONFIRM'), _('NEW_SITE_CONFIRM_TO_CREATE'), function(){
     var loadMask = new Ext.LoadMask(document.body, {msg : _('ID_SITE_CREATING')});
+    var oParams = {
+        action : 'create',
+        NW_TITLE : nwTitle,
+        AO_DB_WF : aoDbWf,
+        AO_DB_RB : aoDbRb,
+        AO_DB_RP : aoDbRp,
+        NW_USERNAME : nwUsername,
+        NW_PASSWORD : nwPassword,
+        NW_PASSWORD2 : nwPassword2
+    };
+    if(aoDbDrop){
+        oParams.AO_DB_DROP = 'On';
+    }    
     loadMask.show();
      Ext.Ajax.request({
       url: '../newSiteProxy/testingNW',
-      params: {
-      action : 'create',
-      NW_TITLE : nwTitle,
-      AO_DB_WF : aoDbWf,
-      AO_DB_RB : aoDbRb,
-      AO_DB_RP : aoDbRp,
-      NW_USERNAME : nwUsername,
-      NW_PASSWORD : nwPassword,
-      NW_PASSWORD2 : nwPassword2,
-      AO_DB_DROP : aoDbDrop
-      },
+      params: oParams,
       method: 'POST',
       success: function ( result, request ) {
       loadMask.hide();
