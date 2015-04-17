@@ -356,17 +356,18 @@ class AppDelegation extends BaseAppDelegation
             $aCalendarUID = '';
         }
 
-        //use the dates class to calculate dates
+        //Calendar - Use the dates class to calculate dates
         $calendar = new calendar();
 
         $arrayCalendarData = array();
 
         if ($calendar->pmCalendarUid == "") {
-            $calendar->getCalendar(null, $task->getProUid(), $this->getTasUid());
+            $calendar->getCalendar(null, $this->getProUid(), $this->getTasUid());
 
             $arrayCalendarData = $calendar->getCalendarData();
         }
 
+        //Due date
         /*$iDueDate = $calendar->calculateDate( $this->getDelDelegateDate(), $aData['TAS_DURATION'], $aData['TAS_TIMEUNIT']         //hours or days, ( we only accept this two types or maybe weeks
         );*/
         $dueDate = $calendar->dashCalculateDate($this->getDelDelegateDate(), $aData["TAS_DURATION"], $aData["TAS_TIMEUNIT"], $arrayCalendarData);
@@ -378,10 +379,22 @@ class AppDelegation extends BaseAppDelegation
     public function calculateRiskDate($dueDate, $risk)
     {
         try {
-            $numDueDate = strtotime($dueDate); //Seconds
-            $numDueDate = $numDueDate - ($numDueDate * $risk);
+            $riskTime = strtotime($dueDate) - strtotime($this->getDelDelegateDate()); //Seconds
+            $riskTime = $riskTime - ($riskTime * $risk);
 
-            $riskDate = date("Y-m-d H:i:s", round($numDueDate));
+            //Calendar - Use the dates class to calculate dates
+            $calendar = new calendar();
+
+            $arrayCalendarData = array();
+
+            if ($calendar->pmCalendarUid == "") {
+                $calendar->getCalendar(null, $this->getProUid(), $this->getTasUid());
+
+                $arrayCalendarData = $calendar->getCalendarData();
+            }
+
+            //Risk date
+            $riskDate = $calendar->dashCalculateDate($this->getDelDelegateDate(), round($riskTime / (60 * 60)), "HOURS", $arrayCalendarData);
 
             //Return
             return $riskDate;
