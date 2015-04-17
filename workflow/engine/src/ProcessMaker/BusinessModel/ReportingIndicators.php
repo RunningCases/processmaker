@@ -30,7 +30,9 @@ class ReportingIndicators
 		$peiCost = current(reset($calculator->peiCostHistoric($processesId, $measureDate, $measureDate, \ReportingPeriodicityEnum::NONE)));
 		$peiCompare = current(reset($calculator->peiHistoric($processesId, $compareDate, $compareDate, \ReportingPeriodicityEnum::NONE)));
 
-		$retval = array("efficiencyIndex" => $peiValue,
+		$retval = array(
+						"id" => $indicatorUid,
+						"efficiencyIndex" => $peiValue,
 						"efficiencyVariation" => ($peiValue-$peiCompare),
 						"inefficiencyCost" => $peiCost,
 						"data"=>$processes);
@@ -72,7 +74,9 @@ class ReportingIndicators
 
         $ueiCompare = current(reset($calculator->ueiHistoric(null, $compareDate, $compareDate, \ReportingPeriodicityEnum::NONE)));
 
-        $retval = array("efficiencyIndex" => $ueiValue,
+		$retval = array(
+						"id" => $indicatorUid,
+						"efficiencyIndex" => $ueiValue,
                         "efficiencyVariation" => ($ueiValue-$ueiCompare),
                         "inefficiencyCost" => $ueiCost,
                         "data"=>$groups);
