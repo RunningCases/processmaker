@@ -1588,8 +1588,9 @@ class processMap
 
                 $numRows = DynaformPeer::doCount($oCriteria);
                 if ($numRows == 0) {
-                    echo "<div style=\"margin:1em;\"><strong>".G::LoadTranslation('ID_ALERT')."</strong><br />".G::LoadTranslation('ID_CONSOLIDATED_DYNAFORM_REQUIRED')."</div>";
-                    die;
+                    $aFields['TITLE_ALERT'] = G::LoadTranslation('ID_ALERT');
+                    $aFields['SUBTITLE_MESSAGE'] = G::LoadTranslation('ID_CONSOLIDATED_DYNAFORM_REQUIRED');
+                    $sFilename = 'tasks/tasks_Consolidated_Error.xml';
                 }
             }
 
