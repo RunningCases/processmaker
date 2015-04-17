@@ -342,6 +342,7 @@ class CaseScheduler extends BaseCaseScheduler
                 @file_put_contents( PATH_DATA . "cron", serialize( $arrayCron ) );
             }
 
+
             $sSchedulerUid = $aRow['SCH_UID'];
             $sOption = $aRow['SCH_OPTION'];
             switch ($sOption) {
@@ -445,12 +446,18 @@ class CaseScheduler extends BaseCaseScheduler
                         $paramsLogResult = $paramsLogResultFromPlugin['paramsLogResult'];
                         $paramsRouteLogResult = $paramsLogResultFromPlugin['paramsRouteLogResult'];
                     } else {
+
                         eprint( " - Creating the new case............." );
 
                         $paramsAux = $params;
                         $paramsAux["executeTriggers"] = 1;
 
+                        $oPluginRegistry = &PMPluginRegistry::getSingleton();
+                        $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_BEFORE, $paramsAux);
+
                         $result = $client->__SoapCall("NewCase", array($paramsAux));
+
+                        $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_AFTER, $result);
 
                         if ($result->status_code == 0) {
                             eprintln( "OK+ CASE #{$result->caseNumber} was created!", 'green' );
@@ -568,7 +575,12 @@ class CaseScheduler extends BaseCaseScheduler
                     $paramsAux = $params;
                     $paramsAux["executeTriggers"] = 1;
 
+                    $oPluginRegistry = &PMPluginRegistry::getSingleton();
+                    $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_BEFORE, $paramsAux);
+
                     $result = $client->__SoapCall("NewCase", array($paramsAux));
+
+                    $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_AFTER, $result);
 
                     eprint( " - Creating the new case............." );
                     if ($result->status_code == 0) {
