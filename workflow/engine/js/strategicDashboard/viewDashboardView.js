@@ -175,8 +175,6 @@ WidgetBuilder.prototype.buildGeneralIndicatorFirstView = function (indicatorData
 /**********************************************************************/
 helper = new ViewDashboardHelper();
 var ws = urlProxy.split('/');
-console.log(urlProxy);
-console.log(ws);
 model = new ViewDashboardModel(token, urlProxy, ws[3]);
 presenter = new ViewDashboardPresenter(model);
 
@@ -291,20 +289,20 @@ $(document).ready(function() {
 				.done(function(indicatorsVM) {
 					fillIndicatorWidgets(indicatorsVM);
 					//TODO use real data
-					loadIndicator(getFavoriteIndicator().id, '2010-01-01' , '2016-12-31');
+					loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
 				});
 	});
 
 	$('#indicatorsGridStack').on('click','.ind-button-selector', function() {
 		var indicatorId = $(this).data('indicator-id');
 		//TODO use real data
-		loadIndicator(indicatorId, '2012-01-01', '2016-01-01');
+		loadIndicator(indicatorId, defaultInitDate(), defaultEndDate());
 	});
 
 	$('body').on('click','.bread-back-selector', function() {
 		var indicatorId = window.currentIndicator.id;
 		//TODO use real data
-		loadIndicator(indicatorId, '2011-01-01', '2017-01-01');
+		loadIndicator(indicatorId, defaultInitDate(), defaultEndDate());
 		return false;
 	});
 
@@ -317,7 +315,7 @@ $(document).ready(function() {
                             "name":$(this).data('detail-name')
 		};
 		//TODO PASS REAL VALUES
-		presenter.getSpecialIndicatorSecondLevel(detailId, '1030', '2012-11-01', '2019-11-05')
+		presenter.getSpecialIndicatorSecondLevel(detailId, window.currentIndicator.type, defaultInitDate(), defaultEndDate())
 			.done(function (viewModel) {
 				fillSpecialIndicatorSecondView(viewModel);
 			});
@@ -621,7 +619,7 @@ function fillSpecialIndicatorSecondView (presenterData) {
 	var indicatorPrincipalData = widgetBuilder.getIndicatorLoadedById(window.currentEntityData.indicatorId);
 
 	if (window.currentIndicator.type == "1010") {
-		var graph = new Pie3DChart(presenterData.dataToDraw, detailParams, null, null);
+		var graph = new BarChart(presenterData.dataToDraw, detailParams, null, null);
 		graph.drawChart();
 	}
 

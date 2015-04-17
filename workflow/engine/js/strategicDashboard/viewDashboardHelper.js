@@ -1,6 +1,6 @@
 
-var ViewDashboardHelper = function () {
 
+var ViewDashboardHelper = function () {
 };
 
 ViewDashboardHelper.prototype.userDashboards = function(userId, callBack) {

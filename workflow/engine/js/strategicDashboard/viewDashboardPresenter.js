@@ -314,7 +314,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelPei = function(modelD
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
-		newObject.datalabel = newObject.datalabel.substring(0, 7);
+		newObject.datalabel = ((newObject.datalabel == null) ? "" : newObject.datalabel.substring(0, 7));
 		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		graphData.push(newObject);

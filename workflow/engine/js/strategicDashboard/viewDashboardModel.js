@@ -1,4 +1,3 @@
-
 var ViewDashboardModel = function (oauthToken, server, workspace) {
     this.server = server;
     this.workspace = workspace;
