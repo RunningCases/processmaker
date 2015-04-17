@@ -80,19 +80,37 @@ class pmDynaform
 
     public function jsonr(&$json)
     {
-        foreach ($json as $key => $value) {
+        foreach ($json as $key => &$value) {
             $sw1 = is_array($value);
             $sw2 = is_object($value);
             if ($sw1 || $sw2) {
                 $this->jsonr($value);
             }
             if (!$sw1 && !$sw2) {
-                //property
+                //set properties from trigger
                 $prefixs = array("@@", "@#", "@%", "@?", "@$", "@=");
                 if (is_string($value) && in_array(substr($value, 0, 2), $prefixs)) {
                     $triggerValue = substr($value, 2);
                     if (isset($this->fields["APP_DATA"][$triggerValue])) {
-                        $json->$key = $this->fields["APP_DATA"][$triggerValue];
+                        $json->{$key} = $this->fields["APP_DATA"][$triggerValue];
+                    }
+                }
+                //set properties from 'formInstance' variable
+                if (isset($this->fields["APP_DATA"]["formInstance"])) {
+                    $formInstance = $this->fields["APP_DATA"]["formInstance"];
+                    if (!is_array($formInstance)) {
+                        $formInstance = array($formInstance);
+                    }
+                    $nfi = count($formInstance);
+                    for ($ifi = 0; $ifi < $nfi; $ifi++) {
+                        $fi = $formInstance[$ifi];
+                        if (is_object($fi) && isset($fi->id) && $key === "id" && $json->{$key} === $fi->id) {
+                            foreach ($fi as $keyfi => $valuefi) {
+                                if (isset($json->{$keyfi})) {
+                                    $json->{$keyfi} = $valuefi;
+                                }
+                            }
+                        }
                     }
                 }
                 //query & options
@@ -208,11 +226,15 @@ class pmDynaform
                     $this->lang = $json->language;
                 }
                 if ($this->langs !== null) {
-                    if (($key === "label" || $key === "hint" || $key === "placeholder" || $key === "validateMessage" || $key === "alternateText" || $key === "comment" || $key === "alt") && isset($json->{$key}) && isset($this->langs->{$this->lang})) {
+                    if (($key === "label" || $key === "title" || $key === "hint" || $key === "placeholder" || $key === "validateMessage" || $key === "alternateText" || $key === "comment" || $key === "alt") && isset($this->langs->{$this->lang})) {
                         $langs = $this->langs->{$this->lang}->Labels;
                         foreach ($langs as $langsValue) {
-                            if ($json->{$key} === $langsValue->msgid)
+                            if (is_object($json) && $json->{$key} === $langsValue->msgid) {
                                 $json->{$key} = $langsValue->msgstr;
+                            }
+                            if (is_array($json) && $json[$key] === $langsValue->msgid) {
+                                $json[$key] = $langsValue->msgstr;
+                            }
                         }
                     }
                 }
@@ -409,6 +431,8 @@ class pmDynaform
                         $json->name = $newVariable["VAR_NAME"];
                     if (isset($json->dbConnection) && $json->dbConnection === $oldVariable["VAR_DBCONNECTION"])
                         $json->dbConnection = $newVariable["VAR_DBCONNECTION"];
+                    if (isset($json->dbConnectionLabel) && $json->dbConnectionLabel === $oldVariable["VAR_DBCONNECTION_LABEL"])
+                        $json->dbConnectionLabel = $newVariable["VAR_DBCONNECTION_LABEL"];
                     if (isset($json->sql) && $json->sql === $oldVariable["VAR_SQL"])
                         $json->sql = $newVariable["VAR_SQL"];
                     if (isset($json->options) && G::json_encode($json->options) === $oldVariable["VAR_ACCEPTED_VALUES"]) {
