@@ -102,6 +102,12 @@ img.img-responsive {
     margin-bottom: 6px;
 }
 
+
+.form-signin .module_app_input___gray:-ms-input-placeholder {
+    font-family: "Open Sans",Arial,Helvetica,sans-serif;    
+    color:#999;
+  }
+
 .module_app_input___gray::-moz-placeholder {
     color: #999;
     opacity: 1;
