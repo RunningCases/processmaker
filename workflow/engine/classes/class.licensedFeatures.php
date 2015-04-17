@@ -29,7 +29,7 @@ class PMLicensedFeatures
     private $features = array ();
     private $newFeatures = array(
             0 => array(
-                "description" => "Enables de Actions By Email feature",
+                "description" => "Enables de Actions By Email feature.",
                 "enabled" => false,
                 "id" => "actionsByEmail",
                 "latest_version" => "",
@@ -46,7 +46,7 @@ class PMLicensedFeatures
                 "version" => ""
             ),
             1 => array(
-                "description" => "Enables de Batch Routing feature",
+                "description" => "Enables de Batch Routing feature.",
                 "enabled" => false,
                 "id" => "pmConsolidatedCL",
                 "latest_version" => "",
