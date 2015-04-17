@@ -908,7 +908,7 @@ try {
                             $daysSelected = "selected = 'selected'";
                         }
 
-                        $sAux = '<select name=' . $hiddenName . '[NEXT_TASK][TAS_TIMEUNIT] id= ' . $hiddenName . '[NEXT_TASK][TAS_TIMEUNIT] ';
+                        $sAux = '<select name=' . $hiddenName . '[NEXT_TASK][TAS_TIMEUNIT] id= ' . $hiddenName . '[NEXT_TASK][TAS_TIMEUNIT] >';
                         $sAux .= "<option " . $hoursSelected . " value='HOURS'>Hours</option> ";
                         $sAux .= "<option " . $daysSelected . " value='DAYS'>Days</option> ";
                         $sAux .= '</select>';
@@ -921,7 +921,7 @@ try {
                             $calendarSelected = "selected = 'selected'";
                         }
 
-                        $sAux = '<select name=' . $hiddenName . '[NEXT_TASK][TAS_TYPE_DAY] id= ' . $hiddenName . '[NEXT_TASK][TAS_TYPE_DAY] ';
+                        $sAux = '<select name=' . $hiddenName . '[NEXT_TASK][TAS_TYPE_DAY] id= ' . $hiddenName . '[NEXT_TASK][TAS_TYPE_DAY] >';
                         $sAux .= "<option " . $workSelected . " value='1'>Work Days</option> ";
                         $sAux .= "<option " . $calendarSelected . " value='2'>Calendar Days</option> ";
                         $sAux .= '</select>';
