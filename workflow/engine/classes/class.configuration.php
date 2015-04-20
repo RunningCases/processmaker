@@ -322,7 +322,9 @@ class Configurations // extends Configuration
             $aux = str_replace('@userName', trim($username), $this->UserConfig['format']);
 
             $theFormat = $this->UserConfig['format'];
-            if (strpos($theFormat, ',') !== false && ($oUser->getUsrFirstname() == '' || $oUser->getUsrLastname() == '')) {
+            $fname = $oUser->getUsrFirstname();
+            $lname = $oUser->getUsrLastname();
+            if (strpos($theFormat, ',') !== false && ( trim($fname) == '' || trim($lname) == '')) {
               $theFormat = str_replace(',', '', $theFormat);
             }
 
