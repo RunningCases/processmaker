@@ -410,19 +410,11 @@ Ext.onReady(function () {
           xtype      : 'textfield',
           width      : 260,
           allowBlank : false,
-          regex      : /^[a-z\d\-_\s]+$/i,
-          validator: function(v) {
-            if (v == " " && v.length==1) {
-              return false;
-            }else{
-                for (var i = 0; i < v.length; i++) {
-                  if (v[i]==" " && v[i+1]==" ") {
-                      return false;
-                  }
-                }
-            }
-            var valueInputField= /^[a-z\d\-_\s]+$/i.test(v) ? true : false;
-            return valueInputField;
+          listeners: {
+            'change': function(field, newVal, oldVal){
+                var fname = newVal.replace(/^\s+/,'').replace(/\s+$/,'');
+                field.setValue(fname.trim());
+              } 
           }
         },
         {
@@ -431,19 +423,11 @@ Ext.onReady(function () {
           xtype      : 'textfield',
           width      : 260,
           allowBlank : false,
-          regex      : /^[a-z\d\-_\s]+$/i,
-          validator: function(v) {
-            if (v == " " && v.length==1) {
-              return false;
-            }else{
-                for (var i = 0; i < v.length; i++) {
-                  if (v[i]==" " && v[i+1]==" ") {
-                      return false;
-                  }
-                }
-            }
-            var valueInputField= /^[a-z\d\-_\s]+$/i.test(v) ? true : false;
-            return valueInputField;
+          listeners: {
+            'change': function(field, newVal, oldVal){
+                var lname = newVal.replace(/^\s+/,'').replace(/\s+$/,'');
+                field.setValue(lname.trim());
+              } 
           }
         },
         {
