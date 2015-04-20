@@ -109,6 +109,7 @@ BarChart.prototype.drawBars = function(data, canvas, param) {
 	var currObj = this;
 
 	if (data == null || data.length == 0) {
+		console.log(graphDim);
 		canvas.append("text")
 		    .attr('class','pm-charts-no-draw')
 			.attr("y", graphDim.height/2)
@@ -1385,6 +1386,7 @@ PieChart.prototype.drawPie2D = function (dataset, canvas, param) {
             .enter()
             .append("text")
             .attr("x", width + 30)
+            .attr("class", "legend")
             .text(function (d, i) {
                 return (d.datalabel + "-" + getPercent(d.value))
             })
