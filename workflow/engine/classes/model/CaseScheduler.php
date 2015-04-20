@@ -453,11 +453,15 @@ class CaseScheduler extends BaseCaseScheduler
                         $paramsAux["executeTriggers"] = 1;
 
                         $oPluginRegistry = &PMPluginRegistry::getSingleton();
-                        $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_BEFORE, $paramsAux);
+                        if ($oPluginRegistry->existsTrigger ( PM_SCHEDULER_CREATE_CASE_BEFORE )) {
+                            $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_BEFORE, $paramsAux);
+                        }
 
                         $result = $client->__SoapCall("NewCase", array($paramsAux));
 
-                        $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_AFTER, $result);
+                        if ($oPluginRegistry->existsTrigger ( PM_SCHEDULER_CREATE_CASE_AFTER )) {
+                            $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_AFTER, $result);
+                        }
 
                         if ($result->status_code == 0) {
                             eprintln( "OK+ CASE #{$result->caseNumber} was created!", 'green' );
@@ -576,11 +580,15 @@ class CaseScheduler extends BaseCaseScheduler
                     $paramsAux["executeTriggers"] = 1;
 
                     $oPluginRegistry = &PMPluginRegistry::getSingleton();
-                    $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_BEFORE, $paramsAux);
+                    if ($oPluginRegistry->existsTrigger ( PM_SCHEDULER_CREATE_CASE_BEFORE )) {
+                        $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_BEFORE, $paramsAux);
+                    }
 
                     $result = $client->__SoapCall("NewCase", array($paramsAux));
 
-                    $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_AFTER, $result);
+                    if ($oPluginRegistry->existsTrigger ( PM_SCHEDULER_CREATE_CASE_AFTER )) {
+                        $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_AFTER, $result);
+                    }
 
                     eprint( " - Creating the new case............." );
                     if ($result->status_code == 0) {
