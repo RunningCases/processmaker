@@ -337,6 +337,36 @@ class indicatorsCalculator
 		return $retval;
 	}
 
+	public function ueiCostHistoric($employeeId, $initDate, $endDate, $periodicity)
+	{
+		if (!is_a($initDate, 'DateTime')) throw new InvalidArgumentException ('initDate parameter must be a DateTime object.', 0);
+		if (!is_a($endDate, 'DateTime')) throw new InvalidArgumentException ('endDate parameter must be a DateTime object.', 0);
+
+		$periodicitySelectFields = $this->periodicityFieldsForSelect($periodicity);
+		$periodicityGroup = $this->periodicityFieldsForGrouping($periodicity);
+		$initYear = $initDate->format("Y");
+		$initMonth = $initDate->format("m");
+		$initDay = $endDay = 1;
+		$endYear = $endDate->format("Y");
+		$endMonth = $endDate->format("m");
+
+		//$params[":initYear"] = $initYear;
+		//$params[":initMonth"] = $initMonth;
+		$params[":endYear"] = $endYear;
+		$params[":endMonth"] = $endMonth;
+
+
+		$sqlString = "SELECT $periodicitySelectFields " . $this->ueiCostFormula . " as EEC
+						FROM  USR_REPORTING
+						WHERE
+							IF(`YEAR` = :endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = :endYear, :endMonth, :endYear)"
+						. $periodicityGroup;
+
+		$retval = $this->pdoExecutor($sqlString, $params);
+		//$retval = $this->propelExecutor($sqlString);
+		return $retval;
+	}
+
 	public function generalIndicatorData($indicatorId, $initDate, $endDate, $periodicity) {
 		if (!is_a($initDate, 'DateTime')) throw new InvalidArgumentException ('initDate parameter must be a DateTime object.', 0);
 		if (!is_a($endDate, 'DateTime')) throw new InvalidArgumentException ('endDate parameter must be a DateTime object.', 0);
@@ -443,14 +473,16 @@ class indicatorsCalculator
 		$sqlString = " select
                             i.TAS_UID as uid,
                             t.CON_VALUE as name,
-                            i.efficienceIndex,
+                            i.efficiencyIndex,
+                            i.inefficiencyCost,
                             i.averageTime,
                             i.deviationTime,
                             i.configuredTime
                          FROM
                         (	select
                                 TAS_UID,
-                                $this->peiFormula as efficienceIndex,
+                                $this->peiFormula as efficiencyIndex,
+								$this->peiCostFormula as inefficiencyCost,
                                 AVG(AVG_TIME) as averageTime,
                                 AVG(SDV_TIME) as deviationTime,
                                 CONFIGURED_TASK_TIME as configuredTime
@@ -468,6 +500,95 @@ class indicatorsCalculator
 		return $retval;
 	}
 
+    public function statusIndicatorGeneral ($usrUid)
+    {
+        $params[':usrUid'] = $usrUid;
+
+        $sqlString = "SELECT
+            COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) <  0 ) , 0 ) AS OVERDUE,
+            COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) >  0 ) , 0 ) AS ONTIME,
+            COALESCE( SUM( DATEDIFF( DEL_RISK_DATE , NOW( ) ) < 0 ) , 0 ) AS ATRISK
+            FROM  LIST_INBOX
+            WHERE  USR_UID =  :usrUid
+            AND APP_STATUS = 'TO_DO'
+            AND  DEL_DUE_DATE IS NOT NULL ";
+
+        return $this->pdoExecutor($sqlString, $params);
+    }
+
+    public function statusIndicatorDetail ($usrUid)
+    {
+        $params[':usrUid'] = $usrUid;
+
+        $sqlString = "SELECT
+            TAS_UID as tasUid,
+            PRO_UID as proUid,
+            APP_TAS_TITLE AS taskTitle,
+            APP_PRO_TITLE AS proTitle,
+
+            COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) <  0 ) , 0 ) AS overdue,
+            COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) >  0 ) , 0 ) AS onTime,
+            COALESCE( SUM( DATEDIFF( DEL_RISK_DATE , NOW( ) ) < 0 ) , 0 ) AS atRisk
+            FROM  LIST_INBOX
+            WHERE  USR_UID =  :usrUid
+            AND APP_STATUS = 'TO_DO'
+            AND  DEL_DUE_DATE IS NOT NULL
+            GROUP BY TAS_UID";
+
+        return $this->pdoExecutor($sqlString, $params);
+    }
+
+    public function statusIndicator($usrUid)
+    {
+        $response = array();
+        $result = $this->statusIndicatorGeneral($usrUid);
+
+        $response['overdue'] = 0;
+        $response['atRisk'] = 0;
+        $response['onTime'] = 0;
+        $response['percentageOverdue'] = 0;
+        $response['percentageAtRisk'] = 0;
+        $response['percentageOnTime'] = 0;
+        $response['dataList'] = array();
+
+        if (is_array($result) && isset($result[0])) {
+            $response['overdue'] = $result[0]['OVERDUE'];
+            $response['atRisk'] = $result[0]['ONTIME'];
+            $response['onTime'] = $result[0]['ATRISK'];
+
+            $total = $response['overdue'] + $response['atRisk'] + $response['onTime'];
+            if ($total != 0) {
+                $response['percentageOverdue'] = ($response['overdue']*100)/$total;
+                $response['percentageAtRisk']  = ($response['atRisk']*100)/$total;
+                $response['percentageOnTime']  = ($response['onTime']*100)/$total;
+            }
+        }
+
+        $result = $this->statusIndicatorDetail($usrUid);
+
+        foreach ($result as $key => $value) {
+            $result[$key]['overdue'] = $value['overdue'];
+            $result[$key]['atRisk'] = $value['atRisk'];
+            $result[$key]['onTime'] = $value['onTime'];
+			$result[$key]['percentageOverdue'] = 0;
+			$result[$key]['percentageAtRisk']  = 0;
+			$result[$key]['percentageOnTime']  = 0;
+			$result[$key]['percentageTotalOverdue'] = 0;
+			$result[$key]['percentageTotalAtRisk']  = 0;
+			$result[$key]['percentageTotalOnTime']  = 0;
+            $total = $value['overdue'] + $value['onTime'] + $value['atRisk'];
+            if ($total != 0) {
+                $result[$key]['percentageOverdue'] = ($value['overdue']*100)/$total;
+                $result[$key]['percentageAtRisk']  = ($value['atRisk']*100)/$total;
+                $result[$key]['percentageOnTime']  = ($value['onTime']*100)/$total;
+				$result[$key]['percentageTotalOverdue'] = $response['overdue'] != 0 ? ($value['overdue']*100)/$response['overdue']: 0;
+				$result[$key]['percentageTotalAtRisk']  = $response['atRisk'] != 0 ? ($value['atRisk']*100)/$response['atRisk'] : 0;
+				$result[$key]['percentageTotalOnTime']  = $response['onTime'] != 0 ? ($value['onTime']*100)/$response['onTime']: 0;
+            }
+        }
+        $response['dataList'] = $result;
+        return $response;
+    }
 
 	private function periodicityFieldsForSelect($periodicity) {
 		$periodicityFields = $this->periodicityFieldsString($periodicity);

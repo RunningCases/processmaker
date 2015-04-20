@@ -68,7 +68,10 @@ class Server implements iAuthenticate
         $this->server->addGrantType(new \ProcessMaker\Services\OAuth2\PmClientCredentials($this->storage));
 
         // Add the "Refresh token" grant type
-        $this->server->addGrantType(new \OAuth2\GrantType\RefreshToken($this->storage));
+        $this->server->addGrantType(new \OAuth2\GrantType\RefreshToken(
+            $this->storage,
+            array("always_issue_new_refresh_token" => true)
+        ));
 
         // create some users in memory
         //$users = array('bshaffer' => array('password' => 'brent123', 'first_name' => 'Brent', 'last_name' => 'Shaffer'));
@@ -261,7 +264,9 @@ class Server implements iAuthenticate
         if ($returnResponse) {
             return $response;
         } else {
-            die($response->send());
+            $response->send();
+
+            exit(0);
         }
     }
 
@@ -279,9 +284,11 @@ class Server implements iAuthenticate
         if ($request == null) {
             $request = \OAuth2\Request::createFromGlobals();
         }
-        $response = $this->server->handleTokenRequest($request);
+
+        $response = $this->server->handleTokenRequest($request); //Set/Get token //PmPdo->setAccessToken()
 
         $token = $response->getParameters();
+
         if (array_key_exists('access_token', $token)
             && array_key_exists('refresh_token', $token)
         ) {
@@ -309,17 +316,9 @@ class Server implements iAuthenticate
         if ($returnResponse) {
             return $response;
         } else {
-            if ($response->getStatusCode() == 400) {
-                $msg = $response->getParameter("error_description", "");
-                $msg = ($msg != "")? $msg : $response->getParameter("error", "");
+            $response->send();
 
-                $rest = new \Maveriks\Extension\Restler();
-                $rest->setMessage(new \Luracast\Restler\RestException(\ProcessMaker\Services\Api::STAT_APP_EXCEPTION, $msg));
-
-                exit(0);
-            } else {
-                $response->send();
-            }
+            exit(0);
         }
     }
 
