@@ -42,8 +42,7 @@ leimnud.event.add(document.getElementById('form[USR_PASSWORD_MASK]'), 'keypress'
 });
 
 leimnud.event.add(document.getElementById('form[BSUBMIT]'), 'click', function() {
-    ws = getField('USER_ENV').value;
-    createCookie('pmos_generik2', '{"ws":"'+ws+'"}', 365);
+    createCookie("pm_sys_sys", "{\"sys_sys\": \"" + getField("USER_ENV").value + "\"}", 365);
 
     /*
     var client = getBrowserClient();
@@ -59,12 +58,14 @@ leimnud.event.add(document.getElementById('form[BSUBMIT]'), 'click', function() 
 }.extend(document.getElementById('form[BSUBMIT]')));
 
 try{
-    c = new String(readCookie('pmos_generik2'));
-    o = eval("("+c+")");
-    if( o != null){
-        getField('USER_ENV').value = o.ws;
+    var s = new String(readCookie("pm_sys_sys"));
+    var obj = eval("(" + s + ")");
+
+    if (obj != null) {
+        getField("USER_ENV").value = obj.sys_sys;
     }
 } catch(e){}
 
 ]]></JS>
 </dynaForm>
+

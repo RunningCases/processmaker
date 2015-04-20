@@ -125,7 +125,11 @@ if (isset ($_SESSION['USER_LOGGED'])) {
 session_start();
 session_regenerate_id();
 
-setcookie("workspaceSkin", SYS_SKIN, time() + 24*60*60, "/sys".SYS_SYS);
+if (PHP_VERSION < 5.2) {
+    setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . SYS_SYS, "; HttpOnly");
+} else {
+    setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . SYS_SYS, null, false, true);
+}
 
 if (strlen($msg) > 0) {
     $_SESSION['G_MESSAGE'] = $msg;
