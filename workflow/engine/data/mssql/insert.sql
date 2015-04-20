@@ -3118,7 +3118,7 @@ SELECT 'LABEL','ID_OPEN_IN_:POPUP','en','Open in a popup','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_DEATACH','en','Detach','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PRO_USER','en','User Owner','2014-01-15' 
+SELECT 'LABEL','ID_PRO_USER','en','Assigned users','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_SYSTEM','en','System','2014-01-15' 
   UNION ALL
@@ -5716,11 +5716,11 @@ SELECT 'LABEL','ID_AGREE','en','I agree','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_PROCESS_UID_NOT_DEFINED','en','the process uid is not defined!','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_MYSQL_SUCCESS_CONNECT','en','Succesfully connected to MySQL Server','2014-01-15' 
+SELECT 'LABEL','ID_MYSQL_SUCCESS_CONNECT','en','Successfully connected to MySQL Server','2015-04-08' 
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_INSTALLATION','en','ProcessMaker Installation','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_MSSQL_SUCCESS_CONNECT','en','Succesfully connected to MSSQL Server','2014-01-15' 
+SELECT 'LABEL','ID_MSSQL_SUCCESS_CONNECT','en','Successfully connected to MSSQL Server','2015-04-08' 
   UNION ALL
 SELECT 'LABEL','ID_CONNECTION_ERROR_SECURITYADMIN','en','Connection Error: User "{0}"  can''t create databases and Users <br>Please provide an user with sysadmin role or dbcreator and securityadmin roles.','2014-01-15' 
   UNION ALL
@@ -5858,7 +5858,7 @@ SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP2_1','en','These se
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_2','en','Failure to do so could lead your ProcessMaker installation not functioning correctly.','2015-01-16' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_1','en','If any of these items are not supported (marked as No), then please take actions to correct them.','2015-01-16' 
+SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP1_1','en','If any of these items are not supported (marked as No), then please take actions to correct them.','2015-04-07' 
   UNION ALL
 SELECT 'LABEL','ID_LDAP_OPTIONAL','en','LDAP is optional.','2014-01-15' 
   UNION ALL
@@ -6286,7 +6286,7 @@ SELECT 'LABEL','ID_CHECKING','en','Checking...','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_CHECK_AGAIN','en','Check again','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION','en','If any of these items are not supported (marked as No) then please take actions to correct them.<br />','2014-01-15' 
+SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION','en','If any of these items are not supported (marked as No), then please take actions to correct them.<br />','2015-04-07' 
   UNION ALL
 SELECT 'LABEL','ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION2','en','Failure to do so could lead your ProcessMaker installation not functioning correctly!<br />','2015-01-16' 
   UNION ALL
@@ -6906,7 +6906,7 @@ SELECT 'LABEL','ID_EXISTS_FILES','en','The file exists.','2014-07-17'
   UNION ALL
 SELECT 'LABEL','ID_FILENAME_REQUIRED','en','The filename is required.','2014-07-17' 
   UNION ALL
-SELECT 'LABEL','ID_VARIABLE_IN_USE','en','The variable with var_uid: {0} is being used by dynaform with dyn_uid: {1}','2014-08-01' 
+SELECT 'LABEL','ID_VARIABLE_IN_USE','en','This variable can not be deleted because it is being used in DynaForm : {0}. To delete it, first remove it from the DynaForm.','2015-04-08' 
   UNION ALL
 SELECT 'LABEL','ID_ROUTE_IS_SECJOIN','en','The route is of "SEC-JOIN" type.','2014-07-29' 
   UNION ALL
@@ -7358,7 +7358,7 @@ SELECT 'LABEL','ID_EMAIL_SERVER_RESULT_TESTING','en','Result Testing Email Serve
   UNION ALL
 SELECT 'LABEL','ID_EMAIL_SERVER_TITLE','en','Email Servers','2015-01-21' 
   UNION ALL
-SELECT 'LABEL','ID_EMAIL_SERVER_THIS_CONFIGURATION_IS_DEFAULT','en','Set that this configuration is the default','2014-12-24' 
+SELECT 'LABEL','ID_EMAIL_SERVER_THIS_CONFIGURATION_IS_DEFAULT','en','Set as default configuration','2015-04-17' 
   UNION ALL
 SELECT 'LABEL','ID_EMAIL_SERVER_TESTING','en','Testing Email Server','2014-12-24' 
   UNION ALL
@@ -7618,7 +7618,7 @@ SELECT 'LABEL','ID_EMPLYEE_EFFICIENCIE','en','Employee Efficience Index','2015-0
   UNION ALL
 SELECT 'LABEL','ID_USER_INEFFICIENCE','en','Inefficience Cost By User','2015-03-09' 
   UNION ALL
-SELECT 'LABEL','ID_OVER_DUE','en','% Overdue','2015-04-01' 
+SELECT 'LABEL','ID_OVER_DUE','en','Status','2015-04-01' 
   UNION ALL
 SELECT 'LABEL','ID_NEW_CASES','en','% New Cases','2015-04-06' 
   UNION ALL
@@ -7678,7 +7678,7 @@ SELECT 'LABEL','ID_CONSOLIDATED_DYNAFORM_REQUIRED','en','The process has no type
   UNION ALL
 SELECT 'LABEL','ID_DEPARTMENT_MANAGER_EXIST','en','The user: {0} is other department manager.','2015-03-24' 
   UNION ALL
-SELECT 'LABEL','ID_STRATEGIC_DASHBOARD','en','KPI','2015-04-06' 
+SELECT 'LABEL','ID_STRATEGIC_DASHBOARD','en','KPIs','2015-04-06' 
   UNION ALL
 SELECT 'LABEL','ID_MANAGERS_DASHBOARDS','en','Managers dashboard','2015-03-30' 
   UNION ALL
@@ -7721,6 +7721,8 @@ SELECT 'LABEL','ID_DIRECTION','en','Direction','2015-03-31'
 SELECT 'LABEL','ID_UNTITLED_TASK','en','Untitled task','2015-04-01' 
   UNION ALL
 SELECT 'LABEL','ID_GOAL_HELP','en','(Goal value)','2015-04-06' 
+  UNION ALL
+SELECT 'LABEL','ID_PLEASE_ENTER_CREDENTIALS','en','Please enter your credentials below','2015-04-09' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 
