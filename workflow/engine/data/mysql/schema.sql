@@ -124,6 +124,7 @@ CREATE TABLE `APP_MESSAGE`
 	`APP_MSG_ATTACH` MEDIUMTEXT,
 	`APP_MSG_SEND_DATE` DATETIME  NOT NULL,
 	`APP_MSG_SHOW_MESSAGE` TINYINT default 1 NOT NULL,
+	`APP_MSG_ERROR` MEDIUMTEXT default '' NOT NULL,
 	PRIMARY KEY (`APP_MSG_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Messages in an Application';
 #-----------------------------------------------------------------------------
