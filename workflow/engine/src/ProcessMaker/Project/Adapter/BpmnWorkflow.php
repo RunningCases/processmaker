@@ -1384,10 +1384,6 @@ class BpmnWorkflow extends Project\Bpmn
 
             $activity = $bwp->getActivity($activityData["ACT_UID"]);
 
-            if ($activity["BOU_CONTAINER"] != $activityData["BOU_CONTAINER"]) {
-                $activity = null;
-            }
-
             if ($forceInsert || is_null($activity)) {
                 if ($generateUid) {
                     //Generate and update UID
