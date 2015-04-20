@@ -175,9 +175,11 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
     {
         $access_token = new \OauthAccessTokens();
         $access_token->load($token);
+
         $stmt = $this->db->prepare(sprintf('DELETE FROM %s WHERE ACCESS_TOKEN = :token', $this->config['access_token_table']));
         $stmt->execute(compact('token'));
-        $stmt = $this->db->prepare(sprintf('DELETE FROM %s WHERE EXPIRES>%s', $this->config['refresh_token_table'], "'".Date('Y-m-d H:i:s')."'"));
+
+        $stmt = $this->db->prepare(sprintf("DELETE FROM %s WHERE EXPIRES < %s", $this->config["refresh_token_table"], "'" . date("Y-m-d H:i:s") . "'"));
         return $stmt->execute(compact('token'));
     }
 

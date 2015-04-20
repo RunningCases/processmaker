@@ -70,6 +70,28 @@ class DashboardIndicator extends BaseDashboardIndicator
 						$oldValue = current(reset($calculator->ueiHistoric($uid, $compareDate, $compareDate, \ReportingPeriodicityEnum::NONE)));
 						$row['DAS_IND_VARIATION'] = $value - $oldValue;
 						break;
+                    case '1050':
+                        $value = $calculator->statusIndicatorGeneral($userUid);
+                        $row['OVERDUE'] = 0;
+                        $row['ON_TIME'] = 0;
+                        $row['AT_RISK'] = 0;
+                        $row['PERCENTAGE_OVERDUE'] = 0;
+                        $row['PERCENTAGE_AT_RISK'] = 0;
+                        $row['PERCENTAGE_ON_TIME'] = 0;
+
+                        if (is_array($value) && isset($value[0])) {
+                            $row['OVERDUE'] = $value[0]['OVERDUE'];
+                            $row['ON_TIME'] = $value[0]['ONTIME'];
+                            $row['AT_RISK'] = $value[0]['ATRISK'];
+
+                            $total = $row['OVERDUE'] + $row['AT_RISK'] + $row['ON_TIME'];
+                            if ($total != 0) {
+                                $row['PERCENTAGE_OVERDUE'] = ($row['OVERDUE']*100)/$total;
+                                $row['PERCENTAGE_AT_RISK']  = ($row['AT_RISK']*100)/$total;
+                                $row['PERCENTAGE_ON_TIME']  = ($row['ON_TIME']*100)/$total;
+                            }
+                        }
+                        break;
 					default:
 						$arrResult = $calculator->generalIndicatorData($row['DAS_IND_UID'], $measureDate, $measureDate, \ReportingPeriodicityEnum::NONE);
 						$value = $arrResult[0]['value'];

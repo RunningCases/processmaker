@@ -1,4 +1,6 @@
 
+
+
 .pm-charts-no-draw {
 	font-size:16px;
 	font-family:"Arial";
@@ -11,10 +13,56 @@
 	color:#e14333;
 }
 
+.status-graph-title-low,
+.status-graph-title-medium,
+.status-graph-title-high {
+    text-align:center;
+	font-size:17px;
+    font-family: 'Chivo', sans-serif;
+	width:90%;
+	margin:0 auto;
+	border:1px solid #eaeaea;
+	margin-top:10px;
+    border-radius: 5px;
+}
+
+.status-graph-title-low {
+	background-color: #e14333;
+}
+.status-graph-title-medium {
+	background-color:#fada5e;
+}
+.status-graph-title-high {
+	background-color:#1fbc99;
+}
+
+.status-indicator-low,
+.status-indicator-medium,
+.status-indicator-high {
+    padding:0px;
+	padding-top:30px;
+    color:#444;
+    float:left;
+}
+
+.section-title {
+
+}
+
+.status-indicator-low {
+  background-color: #e14333;
+}
+.status-indicator-medium {
+  background-color: #fada5e;
+}
+.status-indicator-high  {
+  background-color: #1fbc99;
+}
 
 .hideme {opacity:0;}
 
 .pie-label {font-size:10px;}
+
 .axis-label {font-size:10px;}
 
 .errorBar, .errorBarLowerMark, .errorBarUpperMark{
@@ -29,15 +77,34 @@
 	font-size:9px;
 }
 
+.das-title-selector {
+	width:160px;
+	text-overflow: ellipsis;
+   	white-space: nowrap;
+   	overflow:hidden;
+}
+
+.ind-title-selector {
+	text-overflow: ellipsis;
+   	white-space: nowrap;
+   	overflow:hidden;
+}
+
+.ellipsis {
+	text-overflow: ellipsis;
+   	white-space: nowrap;
+   	overflow:hidden;
+}
+
 img.floating {
-position:fixed;
-right:0;
-bottom:0;
-margin:0;
-padding:0;
-z-index:1000;
-opacity: 0.9;
-filter: alpha(opacity=90);
+	position:fixed;
+	right:0;
+	bottom:0;
+	margin:0;
+	padding:0;
+	z-index:1000;
+	opacity: 0.9;
+	filter: alpha(opacity=90);
 }
 
 
