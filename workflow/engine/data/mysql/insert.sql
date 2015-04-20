@@ -59981,3 +59981,12 @@ INSERT INTO CATALOG (CAT_UID, CAT_LABEL_ID, CAT_TYPE, CAT_FLAG, CAT_OBSERVATION,
 ('1060','ID_NEW_CASES','INDICATOR','','','2015-03-04','2015-03-04'),
 ('1070','ID_COMPLETED_CASES','INDICATOR','','','2015-03-04','2015-03-04'),
 ('1080','ID_WORKING_CASES','INDICATOR','','','2015-03-04','2015-03-04');
+
+INSERT INTO ADDONS_MANAGER (ADDON_DESCRIPTION,ADDON_ID,ADDON_NAME,ADDON_NICK,ADDON_PUBLISHER,ADDON_RELEASE_TYPE,ADDON_STATUS,STORE_ID,ADDON_TYPE,ADDON_DOWNLOAD_URL,ADDON_VERSION,ADDON_DOWNLOAD_PROGRESS) VALUES
+('Enables de Actions By Email feature.','actionsByEmail','actionsByEmail','actionsByEmail','Colosa','localRegistry','ready','00000000000000000000000000010004','features','','','0'),
+('Enables de Batch Routing feature.','pmConsolidatedCL','pmConsolidatedCL','pmConsolidatedCL','Colosa','localRegistry','ready','00000000000000000000000000010005','features','','','0'),
+('Dashboard with improved charting graphics and optimized to show strategic information like Process Efficiency and User Efficiency indicators.','strategicDashboards','strategicDashboards','Strategic Dashboards','Colosa','localRegistry','ready','00000000000000000000000000010006','features','','','0'),
+('Enables the configuration of a second database connection in order to divide the database requests in read and write operations. This features is used with database clusters to improve the application performance.','secondDatabaseConnection','secondDatabaseConnection','secondDatabaseConnection','Colosa','localRegistry','ready','00000000000000000000000000010000','features','','','0'),
+('A more secure option to store user passwords in ProcessMaker. The modern algorithm SHA-2 is used to store the passwords.','secureUserPasswordHash','secureUserPasswordHash','secureUserPasswordHash','Colosa','localRegistry','ready','00000000000000000000000000010002','features','','','0'),
+('This functionality enables the flexibility to send mails from different email servers or configurations.','sendEmailFromDifferentEmailServers','sendEmailFromDifferentEmailServers','sendEmailFromDifferentEmailServers','Colosa','localRegistry','ready','00000000000000000000000000010003','features','','','0'),
+('Registers every admin action in a log. The actions in administration settings options are registered in the log.','auditLog','auditLog','auditLog','Colosa','localRegistry','ready','00000000000000000000000000010001','features','','','0');
