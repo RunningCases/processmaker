@@ -2,8 +2,11 @@ var ViewDashboardModel = function (oauthToken, server, workspace) {
     this.server = server;
     this.workspace = workspace;
     this.baseUrl =  "/api/1.0/" + workspace + "/";
+    //this.baseUrl =  "http://127.0.0.1:8080/api/1.0/workflow/";
     this.oauthToken = oauthToken;
 	this.helper = new ViewDashboardHelper();
+	this.cache = [];
+	this.forceRemote=false; //if true, the next call will go to the remote server
 };
 
 ViewDashboardModel.prototype.userDashboards = function(userId) {
@@ -14,16 +17,16 @@ ViewDashboardModel.prototype.dashboardIndicators = function(dashboardId, initDat
     return this.getJson('dashboard/' + dashboardId + '/indicator?dateIni=' + initDate + '&dateFin=' + endDate);
 };
 
-ViewDashboardModel.prototype.peiData = function(indicatorId, measureDate, compareDate) {
+ViewDashboardModel.prototype.peiData = function(indicatorId, compareDate, measureDate) {
 	var endPoint = "ReportingIndicators/process-efficiency-data?" +
 				"indicator_uid=" + indicatorId + 
-				"&measure_date=" + measureDate + 
 				"&compare_date=" + compareDate +
+				"&measure_date=" + measureDate + 
 				"&language=en";
     return this.getJson(endPoint);
 }
 
-ViewDashboardModel.prototype.statusData = function(indicatorId, measureDate, compareDate) {
+ViewDashboardModel.prototype.statusData = function() {
     var endPoint = "ReportingIndicators/status-indicator";
     return this.getJson(endPoint);
 }
@@ -37,11 +40,11 @@ ViewDashboardModel.prototype.peiDetailData = function(process, initDate, endDate
     return this.getJson(endPoint);
 }
 
-ViewDashboardModel.prototype.ueiData = function(indicatorId, measureDate, compareDate) {
+ViewDashboardModel.prototype.ueiData = function(indicatorId, compareDate, measureDate ) {
 	var endPoint = "ReportingIndicators/employee-efficiency-data?" +
 				"indicator_uid=" + indicatorId + 
-				"&measure_date=" + measureDate + 
 				"&compare_date=" + compareDate +
+				"&measure_date=" + measureDate + 
 				"&language=en";
     return this.getJson(endPoint);
 }
@@ -100,18 +103,34 @@ ViewDashboardModel.prototype.setPositionIndicator = function(data) {
 ViewDashboardModel.prototype.getJson = function (endPoint) {
     var that = this;
     var callUrl = this.baseUrl + endPoint
-    return $.ajax({
-        url: callUrl,
-        type: 'GET',
-        datatype: 'json',
-        error: function(jqXHR, textStatus, errorThrown) {
-							throw new Error(callUrl + ' --  ' + errorThrown);
-                        },
-        beforeSend: function (xhr) {
-						xhr.setRequestHeader('Authorization', 'Bearer ' + that.oauthToken);
-						//xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-					}
-    });
+	var requestFinished = $.Deferred();
+	var itemInCache = that.getCacheItem(endPoint);
+
+	if (itemInCache != null && !this.forceRemote) {
+		that.forceRemote = false;
+		requestFinished.resolve(itemInCache);
+		return requestFinished.promise();
+	}
+	else {
+		return $.ajax({
+			url: callUrl,
+			type: 'GET',
+			datatype: 'json',
+			success: function (data) {
+				that.forceRemote = false;
+				requestFinished.resolve(data);
+				that.putInCache(endPoint, data);
+			//	return requestFinished.promise();
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+								throw new Error(callUrl + ' --  ' + errorThrown);
+							},
+			beforeSend: function (xhr) {
+							xhr.setRequestHeader('Authorization', 'Bearer ' + that.oauthToken);
+							//xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+						}
+		});
+	}
 }
 
 ViewDashboardModel.prototype.postJson = function (endPoint, data) {
@@ -154,3 +173,22 @@ ViewDashboardModel.prototype.putJson = function (endPoint, data) {
     });
 };
 
+ViewDashboardModel.prototype.getCacheItem = function (endPoint) {
+	var retval = null;
+	$.each(this.cache, function(index, objectItem) {
+		if (objectItem.key == endPoint) {
+			retval = objectItem.value;
+		}
+	});
+	return retval;
+}
+
+ViewDashboardModel.prototype.putInCache = function (endPoint, data) {
+	var cacheItem = this.getCacheItem(endPoint);
+	if (cacheItem == null) {
+		this.cache.push ({ key: endPoint, value:data });
+	}
+	else {
+		cacheItem.value = data;
+	}
+}

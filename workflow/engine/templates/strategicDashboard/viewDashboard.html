@@ -35,10 +35,12 @@
         {/foreach}
     </script>
 
-    <script type="text/javascript" src="/jscore/strategicdashboard/viewDashboardHelper.js"></script>
-    <script type="text/javascript" src="/jscore/strategicdashboard/viewDashboardModel.js"></script>
-    <script type="text/javascript" src="/jscore/strategicdashboard/viewDashboardPresenter.js"></script>
-    <script type="text/javascript" src="/jscore/strategicdashboard/viewDashboardView.js"></script>
+    <script type="text/javascript" src="/jscore/strategicDashboard/viewDashboardHelper.js"></script>
+    <script type="text/javascript" src="/jscore/strategicDashboard/viewDashboardModel.js"></script>
+    <script type="text/javascript" src="/jscore/strategicDashboard/viewDashboardPresenter.js"></script>
+    <script type="text/javascript" src="/jscore/strategicDashboard/viewDashboardView.js"></script>
+
+
 	<script type="text/template" class="specialIndicatorButtonTemplate">
 		<div class="col-lg-3 col-md-6 dashPro ind-button-selector"
 			 id="indicatorButton-<%- indicator.id %>"
@@ -156,11 +158,11 @@
 					<div class="green"><%- indicator.efficiencyIndexToShow %></div>
 					<div class="small grey sind-index-selector ellipsis"></div>
 				</div>
-				<div class="col-xs-3 vcenter" style="margin-right:80px">
-					<div id="proEfficCost" class="red"><%- indicator.inefficiencyCostToShow %></div>
+				<div class="col-xs-3 vcenter" style="margin-right:40px">
+					<div class="red sind-cost-number-selector"><%- indicator.inefficiencyCostToShow %></div>
 					<div class="small grey sind-cost-selector ellipsis"></div>
 				</div>
-				<div class="col-xs-6" id="specialIndicatorGraph" style="width:600px;height:300px;"></div>
+				<div class="col-xs-6" id="specialIndicatorGraph" style="width:540px;height:300px;"></div>
 			</div>
 			<div class="clearfix"></div>
 		</div>
@@ -172,7 +174,8 @@
 			  data-indicator-id="<%- detailData.indicatorId %>"
 			  data-detail-id="<%- detailData.uid %>"
 			  data-detail-index="<%- detailData.efficiencyIndexToShow %>"
-			  data-detail-cost="<%- detailData.inefficiencyCostToShow %>"
+			  data-detail-cost-to-show="<%- detailData.inefficiencyCostToShow %>"
+			  data-detail-cost="<%- detailData.inefficiencyCost%>"
 			  data-detail-name="<%- detailData.name %>"
             >
 			<div class="col-lg-12 vcenter-task">
@@ -181,11 +184,11 @@
 						<div  class="small grey detail-title-selector"> <%- detailData.name %></div>
 					</div>
 					<div class="col-xs-3 text-center ">
-						<div class="blue"><%- detailData.efficiencyIndexToShow %></div>
+						<div class="blue"><%- detailData.efficiencyIndexToShow%></div>
 						<div class="small grey detail-efficiency-selector ellipsis"></div>
 					</div>
 					<div class="col-xs-3 text-center ">
-						<div class="blue"><%- detailData.inefficiencyCostToShow %></div>
+						<div class="red detail-cost-number-selector"><%- detailData.inefficiencyCostToShow %></div>
 						<div class="small grey detail-cost-selector ellipsis"></div>
 					</div>
 					<div class="col-xs-1 text-right arrow"><i class="fa fa-chevron-right fa-fw"></i></div>
@@ -195,7 +198,7 @@
 		</div>
 	</script>
 
-	<script type="text/template" class="ueiDetail">
+	<script type="text/template" class="specialIndicatorSencondViewDetail">
 		<div class="process-div well hideme detail-button-selector" data-gs-no-resize="true"
 			 id="detailData-<%- detailData.uid %>"
 			 data-indicator-id="<%- detailData.indicatorId %>"
@@ -207,11 +210,11 @@
 			<div class="text-center huge">
 				<div class="col-xs-12 vcenter-task">
 					<div class="col-xs-5 ">
-						<div id="usrEffic" class="blue small"><%- detailData.efficiencyIndexToShow%></div>
+						<div class="blue small"><%- detailData.efficiencyIndexToShow%></div>
 						<div class="smallB grey fontMedium detail-efficiency-selector ellipsis"></div>
 					</div>
 					<div class="col-xs-5 ">
-						<div id="usrCost" class="blue small"><%- detailData.inefficiencyCostToShow%></div>
+						<div class="small detail-cost-number-selector"><%- detailData.inefficiencyCostToShow%></div>
 						<div class="smallB grey detail-cost-selector ellipsis"></div>
 					</div>
 				</div>
@@ -300,10 +303,11 @@
 			<div class="clearfix"></div>
 		</div>
 	</script>
-
+	
 </head>
+
 <body id="page-top" class="index">
-	<img id="scrollImg" class="floating" src="/images/scrolldown.gif" width="80" height="80" style="border-radius:85px;"/>
+	<img id="scrollImg" class="floating" src="viewDashboard_data/images/scrolldown.gif" width="80" height="80" style="border-radius:85px;"/>
   <div id="wrapper">
     <div id="page-wrapper">
           <!--Cabezera-->
@@ -340,7 +344,7 @@
 									{/literal}
 									</select>
 
-									<select id="mounth" class="form-control pull-right ">
+									<select id="month" class="form-control pull-right ">
 									  <option value="1">{translate label="ID_MONTH_ABB_1"}</option>
 									  <option value="2">{translate label="ID_MONTH_ABB_2"}</option>
 									  <option value="3">{translate label="ID_MONTH_ABB_3"}</option>
@@ -389,7 +393,14 @@
                   </div>
               </div>
 
-			  <div id="relatedLabel" style="clear:both;"><center><h3></h3></center></div>
+			  <div id="relatedLabel" style="clear:both;">
+					<div>
+						<center><h3></h3></center>
+					</div>
+					<div>
+						Sort: &nbsp; &nbsp;<a id="sortListButton" class="fa fa-chevron-down fa-1x" style="color:#000;" href="#"></a>
+					</div>
+			  </div>
 
               <div class="col-lg-12 col-md-12">
 				  <div id="relatedDetailGridStack" class="grid-stack" data-gs-width="12" 
@@ -403,7 +414,4 @@
 
 </body>
 </html>
-
-
-
 

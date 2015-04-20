@@ -80,6 +80,7 @@ WidgetBuilder.prototype.buildSpecialIndicatorFirstView = function (indicatorData
 	$retval.find('.breadcrumb').append ('<li><b>'+indicatorPrincipalData.title+'</b></li>')
 	$retval.find(".sind-index-selector").text(G_STRING.ID_EFFICIENCY_INDEX);
 	$retval.find(".sind-cost-selector").text(G_STRING.ID_INEFFICIENCY_COST);
+	this.setColorForInefficiency($retval.find(".sind-cost-number-selector"), indicatorData);
 	return $retval;
 }
 
@@ -93,7 +94,8 @@ WidgetBuilder.prototype.buildSpecialIndicatorFirstViewDetail = function (oneItem
 	var template = _.template ($("script.specialIndicatorDetail").html());
 	var $retval =  $(template(oneItemDetail));
 	$retval.find(".detail-efficiency-selector").text(G_STRING.ID_EFFICIENCY_INDEX);
-	$retval.find(".detail-cost-selector").text(G_STRING.ID_EFFICIENCY_COST);
+	$retval.find(".detail-cost-selector").text(G_STRING.ID_INEFFICIENCY_COST);
+	this.setColorForInefficiency($retval.find(".detail-cost-number-selector"), oneItemDetail);
 	return $retval;
 }
 
@@ -136,6 +138,7 @@ WidgetBuilder.prototype.buildSpecialIndicatorSecondView = function (secondViewDa
 	$retval.find('.breadcrumb').find('li').remove();
 	$retval.find('.breadcrumb').append ('<li><a class="bread-back-selector" href="#"><i class="fa fa-chevron-left fa-fw"></i>' + window.currentIndicator.title +  '</a></li>');
 	$retval.find('.breadcrumb').append ('<li><b>' + window.currentEntityData.name + '</b></li>');
+	this.setColorForInefficiency($retval.find(".sind-cost-number-selector"), window.currentEntityData);
 	return $retval;
 };
 
@@ -145,10 +148,11 @@ WidgetBuilder.prototype.buildSpecialIndicatorSecondViewDetail = function (oneIte
 	if (!oneItemDetail.hasOwnProperty("name")){throw new Error("buildSpecialIndicatorFirstViewDetail -> detailData has not the name param. Has it the correct Type? ->" + oneItemDetail);}
 
 	_.templateSettings.variable = "detailData";
-	var template = _.template ($("script.ueiDetail").html());
+	var template = _.template ($("script.specialIndicatorSencondViewDetail").html());
 	var $retval =  $(template(oneItemDetail));
 	$retval.find(".detail-efficiency-selector").text(G_STRING.ID_EFFICIENCY_INDEX);
-	$retval.find(".detail-cost-selector").text(G_STRING.ID_EFFICIENCY_COST);
+	$retval.find(".detail-cost-selector").text(G_STRING.ID_INEFFICIENCY_COST);
+	this.setColorForInefficiency($retval.find(".detail-cost-number-selector"), oneItemDetail);
 	return $retval;
 }
 
@@ -172,6 +176,19 @@ WidgetBuilder.prototype.buildGeneralIndicatorFirstView = function (indicatorData
 	return $retval;
 }
 
+
+WidgetBuilder.prototype.setColorForInefficiency = function ($widget, indicatorData) {
+	//turn red/gree the font according if is positive or negative: var $widget = $retval.find(".sind-cost-number-selector");
+	$widget.removeClass("red");
+	$widget.removeClass("green");
+	if (indicatorData.inefficiencyCost >= 0) {
+		$widget.addClass("green");
+	}
+	else {
+		$widget.addClass("red");
+	}
+}
+
 /**********************************************************************/
 helper = new ViewDashboardHelper();
 var ws = urlProxy.split('/');
@@ -182,24 +199,37 @@ window.loadedIndicators = []; //updated in das-title-selector.click->fillIndicat
 window.currentEntityData = null;
 window.currentIndicator = null;//updated in ind-button-selector.click ->loadIndicator, ready->loadIndicator
 window.currentDashboardId = null;
-
-
-function hideScrollIfAllDivsAreVisible(){
-	if ($('.hideme').length <= 0) {
-			$('#scrollImg').hide();
-	}
-	else {
-			$('#scrollImg').show();
-	}
-}
+window.currentDetailFunction = null;
+window.currentDetailList = null;
 
 $(document).ready(function() {
 	$('#indicatorsGridStack').gridstack();
 	$('#indicatorsDataGridStack').gridstack();
 	$('#relatedDetailGridStack').gridstack();
 
+	$('#sortListButton').click(function() {
+		var btn = $(this);
+		if (btn.hasClass('fa-chevron-up')) {
+			btn.removeClass('fa-chevron-up');
+			btn.addClass('fa-chevron-down');
+		}
+		else {
+			btn.removeClass('fa-chevron-down');
+			btn.addClass('fa-chevron-up');
+		}
 
-	/* Show on scroll functionality... */
+		window.currentDetailFunction (presenter.orderDataList (
+													window.currentDetailList, 
+													selectedOrderOfDetailList()));
+		//send scroll +1 and -1 to activate the show/hide event. 
+		//both scrolls are sent cause if the scroll at the end
+		//scroll +1 has no effect but -1 yes
+		$(window).scrollTop($(window).scrollTop() + 1);
+		$(window).scrollTop($(window).scrollTop() - 1);
+		return false;
+	});
+	
+	/* Show on scroll functionality */
 	$(window).scroll( function() {
 		/* Check the location of each desired element */
 		$('.hideme').each( function(i){
@@ -218,12 +248,12 @@ $(document).ready(function() {
 	$('#scrollImg').mouseover(function() {
 		isHover = true;
 		var interval =  window.setInterval(function () {
-				var newPos = $(window).scrollTop() + 200;
+				var newPos = $(window).scrollTop() + 100;
 				$(window).scrollTop(newPos);
 				if (isHover == false) {
 					window.clearInterval(interval);
 				}
-		}, 100);
+		}, 200);
 	});
 	
 	$('#scrollImg').mouseleave(function() {
@@ -282,6 +312,14 @@ $(document).ready(function() {
 
 
 	/*-------------------------------clicks----------------------------*/
+	$('body').on('click','.btn-compare', function() {
+		presenter.getDashboardIndicators(window.currentDashboardId, defaultInitDate(), defaultEndDate())
+				.done(function(indicatorsVM) {
+					fillIndicatorWidgets(indicatorsVM);
+					loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
+				});
+	});
+
 	$('#dashboardsList').on('click','.das-title-selector', function() {
 		var dashboardId = $(this).parent().data('dashboard-id');
 		window.currentDashboardId  = dashboardId;
@@ -311,7 +349,8 @@ $(document).ready(function() {
 		window.currentEntityData = {"entityId":$(this).data('detail-id'),
 							"indicatorId":$(this).data('indicator-id'),
                             "efficiencyIndexToShow":$(this).data('detail-index'),
-                            "inefficiencyCostToShow":$(this).data('detail-cost'),
+                            "inefficiencyCostToShow":$(this).data('detail-cost-to-show'),
+                            "inefficiencyCost":$(this).data('detail-cost'),
                             "name":$(this).data('detail-name')
 		};
 		//TODO PASS REAL VALUES
@@ -319,12 +358,24 @@ $(document).ready(function() {
 			.done(function (viewModel) {
 				fillSpecialIndicatorSecondView(viewModel);
 			});
-		$('.breadcrum').find('ol').append('<li>lalal</li>');
 	});
 	initialDraw();
 });
 
-function initialDraw() {
+var hideScrollIfAllDivsAreVisible = function(){
+	if ($('.hideme').length <= 0) {
+			$('#scrollImg').hide();
+	}
+	else {
+			$('#scrollImg').show();
+	}
+}
+
+var selectedOrderOfDetailList = function () {
+	return ($('#sortListButton').hasClass('fa-chevron-up') ? "up" : "down");
+}
+
+var initialDraw = function () {
 	presenter.getUserDashboards(pageUserId)
 		.then(function(dashboardsVM) {
 				fillDashboardsList(dashboardsVM);
@@ -337,7 +388,7 @@ function initialDraw() {
 			});
 }
 
-function loadIndicator(indicatorId, initDate, endDate) {
+var loadIndicator = function (indicatorId, initDate, endDate) {
     var builder = new WidgetBuilder();
     window.currentIndicator = builder.getIndicatorLoadedById(indicatorId);
 	presenter.getIndicatorData(indicatorId, window.currentIndicator.type, initDate, endDate)
@@ -357,7 +408,7 @@ function loadIndicator(indicatorId, initDate, endDate) {
 			});
 }
 
-function setIndicatorActiveMarker () {
+var setIndicatorActiveMarker = function () {
 	$('.panel-footer').each (function () {
 		$(this).removeClass('panel-active');
 		var indicatorId = $(this).parents('.ind-button-selector').data('indicator-id');
@@ -367,7 +418,7 @@ function setIndicatorActiveMarker () {
 	});
 }
 
-function getFavoriteIndicator() {
+var getFavoriteIndicator = function() {
 	var retval = (window.loadedIndicators.length > 0)
 					? window.loadedIndicators[0] 
 					: null;
@@ -381,21 +432,22 @@ function getFavoriteIndicator() {
 	return retval;
 }
 
-function defaultInitDate() {
+var defaultInitDate = function() {
     var date = new Date();
     var dateMonth = date.getMonth();
     var dateYear = date.getFullYear();
-	return "01-"+(dateMonth+1)+"-"+dateYear;
+	var initDate = $('#year').val() + '-' + $('#month').val() + '-' + '01';
+	return initDate;
 }
 
-function defaultEndDate() {
+var defaultEndDate = function () {
     var date = new Date();
     var dateMonth = date.getMonth();
     var dateYear = date.getFullYear();
-	return "30-"+(dateMonth)+"-"+dateYear;
+	return dateYear + "-" + (dateMonth + 1) + "-30";
 }
 
-function fillDashboardsList (presenterData) {
+var fillDashboardsList = function (presenterData) {
 	if (presenterData == null || presenterData.length == 0) {
 		$('#dashboardsList').append(G_STRING['ID_NO_DATA_TO_DISPLAY']);
 	}
@@ -414,7 +466,7 @@ function fillDashboardsList (presenterData) {
 	
 };
 
-function fillIndicatorWidgets (presenterData) {
+var fillIndicatorWidgets = function (presenterData) {
 	var widgetBuilder = new WidgetBuilder();
     var grid = $('#indicatorsGridStack').data('gridstack');
 	grid.remove_all();
@@ -433,7 +485,7 @@ function fillIndicatorWidgets (presenterData) {
 	});
 }
 
-function fillStatusIndicatorFirstView (presenterData) {
+var fillStatusIndicatorFirstView = function (presenterData) {
 	var widgetBuilder = new WidgetBuilder();
 	var panel = $('#indicatorsDataGridStack').data('gridstack');
 	panel.remove_all();
@@ -475,11 +527,10 @@ function fillStatusIndicatorFirstView (presenterData) {
 	graph3.drawChart();
 
 	var indicatorPrincipalData = widgetBuilder.getIndicatorLoadedById(presenterData.id)
-	//this.fillStatusIndicatorFirstViewDetail(presenterData);
 	setIndicatorActiveMarker();
 }
 
-function fillStatusIndicatorFirstViewDetail (presenterData) {
+var fillStatusIndicatorFirstViewDetail = function(presenterData) {
 	var widgetBuilder = new WidgetBuilder();
 	var gridDetail = $('#relatedDetailGridStack').data('gridstack');
 	//gridDetail.remove_all();
@@ -499,7 +550,7 @@ function fillStatusIndicatorFirstViewDetail (presenterData) {
 	}
 }
 
-function fillSpecialIndicatorFirstView (presenterData) {
+var fillSpecialIndicatorFirstView = function(presenterData) {
 	var widgetBuilder = new WidgetBuilder();
 	var panel = $('#indicatorsDataGridStack').data('gridstack');
 	panel.remove_all();
@@ -519,7 +570,7 @@ function fillSpecialIndicatorFirstView (presenterData) {
             allowTransition:true,
             showTip: true,
             allowZoom: false,
-            gapWidth:0.2,
+            gapWidth:0.3,
             useShadows: true,
             thickness: 30,
             showLabels: true,
@@ -554,6 +605,8 @@ function fillSpecialIndicatorFirstView (presenterData) {
 	if (indicatorPrincipalData.type == "1010") {
 		var graph = new Pie3DChart(presenterData.dataToDraw, peiParams, null, null);
 		graph.drawChart();
+		//the pie chart goes to much upwards,so a margin is added:
+		$('#specialIndicatorGraph').css('margin-top','60px');
 	}
 
 	if (indicatorPrincipalData.type == "1030") {
@@ -561,21 +614,29 @@ function fillSpecialIndicatorFirstView (presenterData) {
 		graph.drawChart();
 	}
 	
-	this.fillSpecialIndicatorFirstViewDetail(presenterData);
+
+	this.fillSpecialIndicatorFirstViewDetail(presenter.orderDataList(presenterData.data, selectedOrderOfDetailList()));
 	setIndicatorActiveMarker();
 }
 
-function fillSpecialIndicatorFirstViewDetail (presenterData) {
+var fillSpecialIndicatorFirstViewDetail = function (list) {
 	//presenterData = { id: "indId", efficiencyIndex: "0.11764706", efficiencyVariation: -0.08235294,
 	// 					inefficiencyCost: "-127.5000", inefficiencyCostToShow: -127, efficiencyIndexToShow: 0.12
 	// 					data: {indicatorId, uid, name, averateTime...}, dataToDraw: [{datalabe, value}] }
 	var widgetBuilder = new WidgetBuilder();
 	var gridDetail = $('#relatedDetailGridStack').data('gridstack');
-	//gridDetail.remove_all();
+	gridDetail.remove_all();
 	
-	$.each(presenterData.data, function(index, dataItem) {
+	window.currentDetailList = list;	
+	window.currentDetailFunction = fillSpecialIndicatorFirstViewDetail;
+
+	$.each(list, function(index, dataItem) {
 		var $widget = widgetBuilder.buildSpecialIndicatorFirstViewDetail(dataItem);
 		var x = (index % 2 == 0) ? 6 : 0;
+		//the first 2 elements are not hidden
+		if (index < 2) {
+			$widget.removeClass("hideme");
+		}
 		gridDetail.add_widget($widget, x, 15, 6, 2, true);
 	});
 	if (window.currentIndicator.type == "1010") {
@@ -584,9 +645,10 @@ function fillSpecialIndicatorFirstViewDetail (presenterData) {
 	if (window.currentIndicator.type == "1030") {
 		$('#relatedLabel').find('h3').text(G_STRING['ID_RELATED_GROUPS']);
 	}
+	hideScrollIfAllDivsAreVisible();
 }
 
-function fillSpecialIndicatorSecondView (presenterData) {
+var fillSpecialIndicatorSecondView = function(presenterData) {
 	//presenterData= object {dataToDraw[], entityData[] //user/tasks data}
 	var widgetBuilder = new WidgetBuilder();
 	var panel = $('#indicatorsDataGridStack').data('gridstack');
@@ -627,10 +689,10 @@ function fillSpecialIndicatorSecondView (presenterData) {
 		var graph = new BarChart(presenterData.dataToDraw, detailParams, null, null);
 		graph.drawChart();
 	}
-	this.fillSpecialIndicatorSecondViewDetail(presenterData);
+	this.fillSpecialIndicatorSecondViewDetail(presenter.orderDataList(presenterData.entityData, selectedOrderOfDetailList()));
 }
 
-function fillSpecialIndicatorSecondViewDetail (presenterData) {
+var fillSpecialIndicatorSecondViewDetail = function (list) {
 	//presenterData =  { entityData: Array[{name,uid,inefficiencyCost,
 	// 									inefficiencyIndex, deviationTime,
 	// 									averageTime}],
@@ -639,9 +701,16 @@ function fillSpecialIndicatorSecondViewDetail (presenterData) {
 	var gridDetail = $('#relatedDetailGridStack').data('gridstack');
 	gridDetail.remove_all();
 
-	$.each(presenterData.entityData, function(index, dataItem) {
+	window.currentDetailList = list;	
+	window.currentDetailFunction = fillSpecialIndicatorSecondViewDetail;
+
+	$.each(list, function(index, dataItem) {
 		var $widget = widgetBuilder.buildSpecialIndicatorSecondViewDetail(dataItem);
 		var x = (index % 2 == 0) ? 6 : 0;
+		//the first 2 elements are not hidden
+		if (index < 2) {
+			$widget.removeClass("hideme");
+		}
 		gridDetail.add_widget($widget, x, 15, 6, 2, true);
 	});
 
@@ -651,9 +720,10 @@ function fillSpecialIndicatorSecondViewDetail (presenterData) {
 	if (window.currentIndicator.type == "1030") {
 		$('#relatedLabel').find('h3').text(G_STRING['ID_RELATED_USERS']);
 	}
+	hideScrollIfAllDivsAreVisible();
 }
 
-function fillGeneralIndicatorFirstView (presenterData) {
+var fillGeneralIndicatorFirstView = function (presenterData) {
 	var widgetBuilder = new WidgetBuilder();
 	var panel = $('#indicatorsDataGridStack').data('gridstack');
 	panel.remove_all();
@@ -779,7 +849,7 @@ function fillGeneralIndicatorFirstView (presenterData) {
 	setIndicatorActiveMarker();
 }
 
-function animateProgress (indicatorItem, widget){
+var animateProgress = function (indicatorItem, widget){
       var getRequestAnimationFrame = function () {
         return window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||   
