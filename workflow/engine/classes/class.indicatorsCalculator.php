@@ -337,6 +337,36 @@ class indicatorsCalculator
 		return $retval;
 	}
 
+	public function ueiCostHistoric($employeeId, $initDate, $endDate, $periodicity)
+	{
+		if (!is_a($initDate, 'DateTime')) throw new InvalidArgumentException ('initDate parameter must be a DateTime object.', 0);
+		if (!is_a($endDate, 'DateTime')) throw new InvalidArgumentException ('endDate parameter must be a DateTime object.', 0);
+
+		$periodicitySelectFields = $this->periodicityFieldsForSelect($periodicity);
+		$periodicityGroup = $this->periodicityFieldsForGrouping($periodicity);
+		$initYear = $initDate->format("Y");
+		$initMonth = $initDate->format("m");
+		$initDay = $endDay = 1;
+		$endYear = $endDate->format("Y");
+		$endMonth = $endDate->format("m");
+
+		//$params[":initYear"] = $initYear;
+		//$params[":initMonth"] = $initMonth;
+		$params[":endYear"] = $endYear;
+		$params[":endMonth"] = $endMonth;
+
+
+		$sqlString = "SELECT $periodicitySelectFields " . $this->ueiCostFormula . " as EEC
+						FROM  USR_REPORTING
+						WHERE
+							IF(`YEAR` = :endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = :endYear, :endMonth, :endYear)"
+						. $periodicityGroup;
+
+		$retval = $this->pdoExecutor($sqlString, $params);
+		//$retval = $this->propelExecutor($sqlString);
+		return $retval;
+	}
+
 	public function generalIndicatorData($indicatorId, $initDate, $endDate, $periodicity) {
 		if (!is_a($initDate, 'DateTime')) throw new InvalidArgumentException ('initDate parameter must be a DateTime object.', 0);
 		if (!is_a($endDate, 'DateTime')) throw new InvalidArgumentException ('endDate parameter must be a DateTime object.', 0);

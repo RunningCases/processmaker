@@ -18,7 +18,7 @@ class ReportingIndicators
      *
      * return decimal  value
      */
-    public function getPeiCompleteData($indicatorUid, $measureDate, $compareDate, $language)
+    public function getPeiCompleteData($indicatorUid,  $compareDate, $measureDate, $language)
     {
         G::loadClass('indicatorsCalculator');
         $calculator = new \IndicatorsCalculator();
@@ -33,6 +33,7 @@ class ReportingIndicators
 		$retval = array(
 						"id" => $indicatorUid,
 						"efficiencyIndex" => $peiValue,
+						"efficiencyIndexCompare" => $peiCompare,
 						"efficiencyVariation" => ($peiValue-$peiCompare),
 						"inefficiencyCost" => $peiCost,
 						"data"=>$processes);
@@ -49,29 +50,17 @@ class ReportingIndicators
      *
      * return decimal  value
      */
-    public function getUeiCompleteData($indicatorUid, $measureDate, $compareDate, $language)
+    public function getUeiCompleteData($indicatorUid, $compareDate, $measureDate,$language)
     {
         G::loadClass('indicatorsCalculator');
         $calculator = new \IndicatorsCalculator();
         $groups = $calculator->ueiUserGroups($indicatorUid, $measureDate, $measureDate, $language);
 
-        $groupIds = array();
-        foreach($groups as $p) {
-            array_push($groupIds, $p['uid']);
-        }
-
-        if (sizeof($groupIds) == 0) {
-            $groupIds = null;
-        }
-
         //TODO think what if each indicators has a group or user subset assigned. Now are all
         $ueiValue = current(reset($calculator->ueiHistoric(null, $measureDate, $measureDate, \ReportingPeriodicityEnum::NONE)));
         $arrCost = $calculator->ueiUserGroups($indicatorUid, $measureDate, $measureDate, $language);
 
-        $ueiCost = (sizeof($arrCost) >  0)
-                ? $arrCost[0]['inefficiencyCost']
-                : null;
-
+		$ueiCost = current(reset($calculator->ueiCostHistoric(null, $measureDate, $measureDate, \ReportingPeriodicityEnum::NONE)));
         $ueiCompare = current(reset($calculator->ueiHistoric(null, $compareDate, $compareDate, \ReportingPeriodicityEnum::NONE)));
 
 		$retval = array(

@@ -566,7 +566,7 @@ table.dataTable thead .sorting:after {
 }
 
 .panel-active{
-    background-color: #000;
+    background-color: #D99058;
     position: relative;
 }
 
@@ -729,11 +729,18 @@ table.dataTable thead .sorting:after {
     font-size: 14px;
 }
 
-.process-button .blue{
+.process-button .blue,
+.process-button .red,
+.process-button .green{
     font-size: 24px;
 }
 
-.process-button:hover .blue, .process-button:hover, .process-button:hover .grey{
+.process-button:hover .blue, 
+.process-button:hover, 
+.process-button:hover .grey,
+.process-button:hover .red,
+.process-button:hover .green
+{
     background: #337AB8;
     color:#fff !important;
 }

@@ -78,10 +78,8 @@
       </table>
     </body>
   {else}
-    <body id="page-top" class="login" data-spy="scroll" data-target=".navbar-custom">
-      <div style="display: none;" id="preloader">
-        <div style="display: none;" id="load"></div>
-      </div>
+    <body id="page-top" class="login" data-spy="scroll" data-target=".navbar-custom">      
+      <div class="page-wrap">
         <div class="container">         
             <div class="row vertical-offset-100">
                 <div class="col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3">
@@ -102,8 +100,13 @@
                 </div>
             </div>
         </div>
-        <div class ="footer-login">
-            <div class="content">{$footer}</div>
+      </div>       
+        <div class="footer-login">
+          <div class="container">
+            <span>
+              {$footer}
+            </span>
+          </div>
         </div>
     </body>
   {/if}

@@ -9,7 +9,7 @@ var ViewDashboardPresenter = function (model) {
 ViewDashboardPresenter.prototype.getUserDashboards = function (userId) {
 	var that = this;
 	var requestFinished = $.Deferred();
-	this.model.userDashboards(userId)
+	that.model.userDashboards(userId)
 			.done(function(modelData){
 			   	var viewModel = that.userDashboardsViewModel(modelData)
 				requestFinished.resolve(viewModel);
@@ -159,7 +159,7 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 	$.each(data.data, function(index, originalObject) {
 		var map = {
 			"name" : "datalabel",
-			"efficiencyIndex" : "value"
+			"inefficiencyCost" : "value"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
 		var shortLabel = (newObject.datalabel == null) 
@@ -168,18 +168,22 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 
 		newObject.datalabel = shortLabel;
 		graphData.push(newObject);
-		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.indicatorId = data.id;
 		originalObject.json = JSON.stringify(originalObject);
 	});
 
 	var retval = {};
-	//TODO selecte de 7 worst cases no the first 7
 	retval = data;
+	graphData.sort(function(a,b) {
+							var retval = 0;
+							retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
+							return retval;
+						})
 	retval.dataToDraw = graphData.splice(0,7);
 	//TODO aumentar el símbolo de moneda $
-	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
+	retval.inefficiencyCostToShow = "$ " +Math.round(retval.inefficiencyCost);
 	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
 	return retval;
 };
@@ -190,7 +194,7 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 	$.each(data.data, function(index, originalObject) {
 		var map = {
 			"name" : "datalabel",
-			"averageTime" : "value",
+			"inefficiencyCost" : "value",
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
@@ -200,18 +204,22 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 
 		newObject.datalabel = shortLabel;
 		graphData.push(newObject);
-		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.indicatorId = data.id;
 		originalObject.json = JSON.stringify(originalObject);
 	});
 
 	var retval = {};
-	//TODO selecte de 7 worst cases no the first 7
 	retval = data;
+	graphData.sort(function(a,b) {
+							var retval = 0;
+							retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
+							return retval;
+						})
 	retval.dataToDraw = graphData.splice(0,7);
 	//TODO aumentar el símbolo de moneda $
-	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
+	retval.inefficiencyCostToShow = "$ " + Math.round(retval.inefficiencyCost);
 	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
 	return retval;
 };
@@ -280,7 +288,9 @@ ViewDashboardPresenter.prototype.indicatorViewModel = function(data) {
 ViewDashboardPresenter.prototype.getSpecialIndicatorSecondLevel = function (entityId, indicatorType, initDate, endDate) {
 	var that = this;
 	var requestFinished = $.Deferred();
-	//entityid is the process id or group id
+	//if modelData is passed (because it was cached on the view) no call is made to the server.
+	//and just a order is applied to the list
+	
 	switch (indicatorType) {
 		case "1010":
 			this.model.peiDetailData(entityId, initDate, endDate)
@@ -307,6 +317,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelPei = function(modelD
 	//returns object {dataToDraw[], entityData[] //user/tasks data}
 	var that = this;
 	var graphData = [];
+
 	$.each(modelData, function(index, originalObject) {
 		var map = {
 			"name" : "datalabel",
@@ -315,7 +326,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelPei = function(modelD
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
 		newObject.datalabel = ((newObject.datalabel == null) ? "" : newObject.datalabel.substring(0, 7));
-		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		graphData.push(newObject);
 	});
@@ -330,6 +341,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelUei = function(modelD
 	//returns object {dataToDraw[], entityData[] //user/tasks data}
 	var that = this;
 	var graphData = [];
+
 	$.each(modelData, function(index, originalObject) {
 		var map = {
 			"name" : "datalabel",
@@ -338,7 +350,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelUei = function(modelD
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
 		newObject.datalabel = ((newObject.datalabel == null) ? "" : newObject.datalabel.substring(0, 7));
-		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow = "$ " +Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		graphData.push(newObject);
 	});
@@ -349,11 +361,21 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelUei = function(modelD
 };
 /*-------SECOND LEVEL INDICATOR DATA*/
 
-
-
-
- 
-
-
-
-
+ViewDashboardPresenter.prototype.orderDataList = function(listData, orderDirection, orderFunction) { 
+	//orderDirection is passed in case no order FUnction is passed (to use in the default ordering)
+	var orderToUse = orderFunction;
+	if (orderFunction == undefined) {
+		orderToUse = function (a ,b) {
+			var retval = 0;
+			if (orderDirection == "down") {
+				retval = ((a.inefficiencyCost*1.0 <= b.inefficiencyCost*1.0) ? 1 : -1);
+			}
+			else {
+				//the 1,-1 are flipped
+				retval = ((a.inefficiencyCost*1.0 <= b.inefficiencyCost*1.0) ? -1 : 1);
+			}
+			return 	retval;
+		}
+	}
+	return listData.sort(orderToUse);
+}

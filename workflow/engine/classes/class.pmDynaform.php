@@ -3,7 +3,7 @@
 /**
  * class.pmDynaform.php
  * Implementing pmDynaform library in the running case.
- * 
+ *
  * @author Roly Rudy Gutierrez Pinto
  * @package engine.classes
  */
@@ -80,19 +80,37 @@ class pmDynaform
 
     public function jsonr(&$json)
     {
-        foreach ($json as $key => $value) {
+        foreach ($json as $key => &$value) {
             $sw1 = is_array($value);
             $sw2 = is_object($value);
             if ($sw1 || $sw2) {
                 $this->jsonr($value);
             }
             if (!$sw1 && !$sw2) {
-                //property
+                //set properties from trigger
                 $prefixs = array("@@", "@#", "@%", "@?", "@$", "@=");
                 if (is_string($value) && in_array(substr($value, 0, 2), $prefixs)) {
                     $triggerValue = substr($value, 2);
                     if (isset($this->fields["APP_DATA"][$triggerValue])) {
-                        $json->$key = $this->fields["APP_DATA"][$triggerValue];
+                        $json->{$key} = $this->fields["APP_DATA"][$triggerValue];
+                    }
+                }
+                //set properties from 'formInstance' variable
+                if (isset($this->fields["APP_DATA"]["formInstance"])) {
+                    $formInstance = $this->fields["APP_DATA"]["formInstance"];
+                    if (!is_array($formInstance)) {
+                        $formInstance = array($formInstance);
+                    }
+                    $nfi = count($formInstance);
+                    for ($ifi = 0; $ifi < $nfi; $ifi++) {
+                        $fi = $formInstance[$ifi];
+                        if (is_object($fi) && isset($fi->id) && $key === "id" && $json->{$key} === $fi->id) {
+                            foreach ($fi as $keyfi => $valuefi) {
+                                if (isset($json->{$keyfi})) {
+                                    $json->{$keyfi} = $valuefi;
+                                }
+                            }
+                        }
                     }
                 }
                 //query & options
@@ -136,11 +154,17 @@ class pmDynaform
                                 array_push($json->options, $option);
                             }
                         } catch (Exception $e) {
-                            
+
                         }
                     }
                     if (isset($json->options[0])) {
                         $json->data = $json->options[0];
+                        $no = count($json->options);
+                        for ($io = 0; $io < $no; $io++) {
+                            if ($json->options[$io]["value"] === $json->defaultValue) {
+                                $json->data = $json->options[$io];
+                            }
+                        }
                     }
                 }
                 //data
@@ -187,7 +211,7 @@ class pmDynaform
                                 if ($column->type === "text" || $column->type === "textarea" || $column->type === "dropdown" || $column->type === "datetime" || $column->type === "checkbox" || $column->type === "file" || $column->type === "link") {
                                     array_push($cells, array(
                                         "value" => isset($row[$column->name]) ? $row[$column->name] : "",
-                                        "label" => isset($row[$column->name . "_label"]) ? $row[$column->name . "_label"] : ""
+                                        "label" => isset($row[$column->name . "_label"]) ? $row[$column->name . "_label"] : (isset($row[$column->name]) ? $row[$column->name] : "")
                                     ));
                                 }
                                 if ($column->type === "suggest") {
@@ -208,11 +232,15 @@ class pmDynaform
                     $this->lang = $json->language;
                 }
                 if ($this->langs !== null) {
-                    if (($key === "label" || $key === "hint" || $key === "placeholder" || $key === "validateMessage" || $key === "alternateText" || $key === "comment" || $key === "alt") && isset($json->{$key}) && isset($this->langs->{$this->lang})) {
+                    if (($key === "label" || $key === "title" || $key === "hint" || $key === "placeholder" || $key === "validateMessage" || $key === "alternateText" || $key === "comment" || $key === "alt") && isset($this->langs->{$this->lang})) {
                         $langs = $this->langs->{$this->lang}->Labels;
                         foreach ($langs as $langsValue) {
-                            if ($json->{$key} === $langsValue->msgid)
+                            if (is_object($json) && $json->{$key} === $langsValue->msgid) {
                                 $json->{$key} = $langsValue->msgstr;
+                            }
+                            if (is_array($json) && $json[$key] === $langsValue->msgid) {
+                                $json[$key] = $langsValue->msgstr;
+                            }
                         }
                     }
                 }
@@ -223,6 +251,72 @@ class pmDynaform
     public function isResponsive()
     {
         return $this->record != null && $this->record["DYN_VERSION"] == 2 ? true : false;
+    }
+
+    public function printViewWithoutSubmit()
+    {
+        ob_clean();
+
+        $json = G::json_decode($this->record["DYN_CONTENT"]);
+
+        foreach ($json->items[0]->items as $key => $value) {
+            switch ($json->items[0]->items[$key][0]->type) {
+                case "submit":
+                    unset($json->items[0]->items[$key]);
+                    break;
+            }
+        }
+
+        $this->jsonr($json);
+
+        $javascript = "
+            <script type=\"text/javascript\">
+                var jsondata = " . G::json_encode($json) . ";
+                var pm_run_outside_main_app = \"\";
+                var dyn_uid = \"" . $this->fields["CURRENT_DYNAFORM"] . "\";
+                var __DynaformName__ = \"" . $this->record["PRO_UID"] . "_" . $this->record["DYN_UID"] . "\";
+                var app_uid = \"" . $this->fields["APP_UID"] . "\";
+                var prj_uid = \"" . $this->fields["PRO_UID"] . "\";
+                var step_mode = \"\";
+                var workspace = \"" . SYS_SYS . "\";
+                var credentials = " . G::json_encode($this->credentials) . ";
+                var filePost = \"\";
+                var fieldsRequired = null;
+                var triggerDebug = false;
+
+                $(window).load(function ()
+                {
+                    var data = jsondata;
+                    data.items[0].mode = \"disabled\";
+
+                    window.project = new PMDynaform.core.Project({
+                        data: data,
+                        keys: {
+                            server: location.host,
+                            projectId: prj_uid,
+                            workspace: workspace
+                        },
+                        token: credentials,
+                        submitRest: false
+                    });
+                    $(document).find(\"form\").submit(function (e) {
+                        e.preventDefault();
+                        return false;
+                    });
+                });
+            </script>
+
+            <div style=\"margin: 10px 20px 10px 0;\">
+                <div style=\"float: right\"><a href=\"javascript: window.history.go(-1);\" style=\"text-decoration: none;\">&lt; " . G::LoadTranslation("ID_BACK") . "</a></div>
+                <div style=\"clear: both\"></div>
+            </div>
+        ";
+
+        $file = file_get_contents(PATH_HOME . "public_html" . PATH_SEP . "lib" . PATH_SEP . "pmdynaform" . PATH_SEP . "build" . PATH_SEP . "pmdynaform.html");
+        $file = str_replace("{javascript}", $javascript, $file);
+
+        echo $file;
+        exit(0);
     }
 
     public function printView()
@@ -409,6 +503,8 @@ class pmDynaform
                         $json->name = $newVariable["VAR_NAME"];
                     if (isset($json->dbConnection) && $json->dbConnection === $oldVariable["VAR_DBCONNECTION"])
                         $json->dbConnection = $newVariable["VAR_DBCONNECTION"];
+                    if (isset($json->dbConnectionLabel) && $json->dbConnectionLabel === $oldVariable["VAR_DBCONNECTION_LABEL"])
+                        $json->dbConnectionLabel = $newVariable["VAR_DBCONNECTION_LABEL"];
                     if (isset($json->sql) && $json->sql === $oldVariable["VAR_SQL"])
                         $json->sql = $newVariable["VAR_SQL"];
                     if (isset($json->options) && G::json_encode($json->options) === $oldVariable["VAR_ACCEPTED_VALUES"]) {
