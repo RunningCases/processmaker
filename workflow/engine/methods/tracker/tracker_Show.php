@@ -67,7 +67,7 @@ switch ($_GET['CTO_TYPE_OBJ']) {
             $pmDynaForm = new pmDynaform($Fields);
 
             if ($pmDynaForm->isResponsive()) {
-                $pmDynaForm->printViewWithoutSubmit();
+                $pmDynaForm->printTracker();
             }
         } else {
             $G_PUBLISH = new Publisher();
