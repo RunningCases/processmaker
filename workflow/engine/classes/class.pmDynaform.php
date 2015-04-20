@@ -154,7 +154,7 @@ class pmDynaform
                                 array_push($json->options, $option);
                             }
                         } catch (Exception $e) {
-
+                            
                         }
                     }
                     if (isset($json->options[0])) {
@@ -173,6 +173,9 @@ class pmDynaform
                         "value" => isset($this->fields["APP_DATA"][$json->name]) ? $this->fields["APP_DATA"][$json->name] : (is_array($json->data) ? $json->data["value"] : $json->data->value),
                         "label" => isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : (is_array($json->data) ? $json->data["label"] : $json->data->label)
                     );
+                    if ($json->data["label"] === "") {
+                        $json->data["label"] = $json->data["value"];
+                    }
                 }
                 if ($key === "type" && ($value === "checkbox")) {
                     $json->data = array(
