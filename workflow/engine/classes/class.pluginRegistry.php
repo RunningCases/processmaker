@@ -277,12 +277,15 @@ class PMPluginRegistry
                 $pluginSrcDir = PATH_PLUGINS . $detail->sNamespace . PATH_SEP . 'src';
 
                 if (is_dir($pluginSrcDir)) {
-                    Bootstrap::registerDir($detail->sNamespace.'/src', $pluginSrcDir);
+                    //Bootstrap::registerDir($detail->sNamespace.'/src', $pluginSrcDir);
+                    $loader = \Maveriks\Util\ClassLoader::getInstance();
+                    $loader->add($pluginSrcDir);
                 }
 
                 if (array_key_exists($detail->sNamespace, $this->_restServiceEnabled)
                     && $this->_restServiceEnabled[$detail->sNamespace] == true
                 ) {
+
                     $oPlugin->registerRestService();
                 }
 
@@ -1400,7 +1403,6 @@ class PMPluginRegistry
 
         foreach ($classesList as $classFile) {
             if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
-
                 $ns = str_replace(
                     DIRECTORY_SEPARATOR,
                     '\\',
@@ -1413,6 +1415,8 @@ class PMPluginRegistry
                         "filepath" => $classFile,
                         "namespace" => $ns
                     );
+
+                    \Maveriks\WebApplication::purgeRestApiCache(basename(PATH_DATA_SITE));
                 }
             }
         }
@@ -1601,4 +1605,3 @@ class PMPluginRegistry
         }
     }
 }
-
