@@ -244,6 +244,7 @@ class PMLicensedFeatures
             }
         }
         
+        $i = 0;
         foreach($newFeaturesList as $k => $newFeature){
             $newData[] = array (
                     'db' => 'wf',

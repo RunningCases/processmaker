@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <database name="workflow">
   <table name="APPLICATION">
     <vendor type="mysql">
@@ -269,6 +269,7 @@
     <column name="APP_MSG_ATTACH" type="LONGVARCHAR" required="false"/>
     <column name="APP_MSG_SEND_DATE" type="TIMESTAMP" required="true"/>
     <column name="APP_MSG_SHOW_MESSAGE" type="TINYINT" required="true" default="1"/>
+    <column name="APP_MSG_ERROR" type="LONGVARCHAR" required="false" default=""/>
   </table>
   <table name="APP_OWNER">
     <vendor type="mysql">
