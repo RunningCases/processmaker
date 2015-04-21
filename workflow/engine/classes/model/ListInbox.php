@@ -444,7 +444,7 @@ class ListInbox extends BaseListInbox
             $criteria->setOffset( $start );
         }
 
-        $dataset = ListInboxPeer::doSelectRS($criteria);
+        $dataset = ListInboxPeer::doSelectRS($criteria, Propel::getDbConnection('workflow_ro') );
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $data = array();
         $aPriorities = array ('1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH');
