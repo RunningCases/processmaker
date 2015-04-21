@@ -379,6 +379,7 @@ var initialDraw = function () {
 	presenter.getUserDashboards(pageUserId)
 		.then(function(dashboardsVM) {
 				fillDashboardsList(dashboardsVM);
+				if (window.currentDashboardId == null) {return;}
 				/**** window initialization  with favorite dashboard*****/
 				presenter.getDashboardIndicators(window.currentDashboardId, defaultInitDate(), defaultEndDate())
 						.done(function(indicatorsVM) {
@@ -389,6 +390,7 @@ var initialDraw = function () {
 }
 
 var loadIndicator = function (indicatorId, initDate, endDate) {
+	if (indicatorId == null || indicatorId === undefined) {return;}
     var builder = new WidgetBuilder();
     window.currentIndicator = builder.getIndicatorLoadedById(indicatorId);
 	presenter.getIndicatorData(indicatorId, window.currentIndicator.type, initDate, endDate)
@@ -467,6 +469,7 @@ var fillDashboardsList = function (presenterData) {
 };
 
 var fillIndicatorWidgets = function (presenterData) {
+	if (presenterData == null || presenterData === undefined) {return;}
 	var widgetBuilder = new WidgetBuilder();
     var grid = $('#indicatorsGridStack').data('gridstack');
 	grid.remove_all();
@@ -502,21 +505,17 @@ var fillStatusIndicatorFirstView = function (presenterData) {
 			stretch:true
 		},
 		graph: {
-			allowDrillDown:false,
+
+			allowDrillDown:true,
 			allowTransition:true,
 			showTip: true,
 			allowZoom: false,
-			gapWidth:0.2,
-			useShadows: true,
-			thickness: 30,
-			showLabels: true,
-			colorPalette: ['#5486bf','#bf8d54','#acb30c','#7a0c0c','#bc0000','#906090','#007efb','#62284a','#0c7a7a']
+			showLabels: true
 		}
 	};
 	
 	var graph1 = new PieChart(presenterData.graph1Data, graphParams1, null, null);
 	graph1.drawChart();
-
 	var graphParams2 = graphParams1;
 	graphParams2.canvas.containerId = "graph2";
 	var graph2 = new PieChart(presenterData.graph2Data, graphParams2, null, null);
@@ -528,6 +527,7 @@ var fillStatusIndicatorFirstView = function (presenterData) {
 
 	var indicatorPrincipalData = widgetBuilder.getIndicatorLoadedById(presenterData.id)
 	setIndicatorActiveMarker();
+	$('#relatedLabel').hide();
 }
 
 var fillStatusIndicatorFirstViewDetail = function(presenterData) {
@@ -551,6 +551,7 @@ var fillStatusIndicatorFirstViewDetail = function(presenterData) {
 }
 
 var fillSpecialIndicatorFirstView = function(presenterData) {
+	$('#relatedLabel').show();
 	var widgetBuilder = new WidgetBuilder();
 	var panel = $('#indicatorsDataGridStack').data('gridstack');
 	panel.remove_all();
@@ -573,8 +574,7 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
             gapWidth:0.3,
             useShadows: true,
             thickness: 30,
-            showLabels: true,
-            colorPalette: ['#5486bf','#bf8d54','#acb30c','#7a0c0c','#bc0000','#906090','#007efb','#62284a','#0c7a7a']
+            showLabels: true
         }
     };
 
@@ -595,8 +595,7 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
 			showTip: true,
 			allowZoom: false,
 			useShadows: true,
-			paddingTop: 50,
-			colorPalette: ['#5486bf','#bf8d54','#acb30c','#7a0c0c','#bc0000','#906090','#007efb','#62284a','#0c7a7a','#74a9a9']
+			paddingTop: 50
 		}
     };
 
