@@ -367,7 +367,7 @@ class Application extends BaseApplication
 
             $pin = G::generateCode(4, 'ALPHANUMERIC');
             $this->setAppData(serialize(array('PIN' => $pin)));
-            $this->setAppPin(md5($pin));
+            $this->setAppPin(G::encryptOld($pin));
 
             $c = new Criteria();
             $c->clearSelectColumns();
