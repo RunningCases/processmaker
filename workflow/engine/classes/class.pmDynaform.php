@@ -33,6 +33,14 @@ class pmDynaform
         }
     }
 
+    public function getDynaformTitle($idDynaform)
+    {
+         $d = new Dynaform();
+         $d->setDynUid($idDynaform);
+         $titleDynaform = $d->getDynTitle();
+         return $titleDynaform;
+    }
+
     public function getDynaform()
     {
         if (!isset($this->fields["CURRENT_DYNAFORM"])) {
