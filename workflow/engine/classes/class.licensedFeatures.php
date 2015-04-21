@@ -224,6 +224,7 @@ class PMLicensedFeatures
         $rs = AddonsManagerPeer::doSelectRS($criteria);
         $rs->next();
         $row = $rs->getRow();
+        $ids = array();
         if(sizeof($row)) {  
             while (is_array($row)) {
                 $ids[] = $row[0];
