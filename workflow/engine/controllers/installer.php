@@ -840,15 +840,15 @@ class Installer extends Controller
             $query = sprintf( "USE %s;", $wf_workpace );
             $this->mysqlQuery( $query );
 
-            $query = sprintf( "UPDATE USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, md5( $adminPassword ) );
+            $query = sprintf( "UPDATE USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, G::encryptOld( $adminPassword ) );
             $this->mysqlQuery( $query );
 
-            $query = sprintf( "UPDATE RBAC_USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, md5( $adminPassword ) );
+            $query = sprintf( "UPDATE RBAC_USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, G::encryptOld( $adminPassword ) );
             $this->mysqlQuery( $query );
 
             // Write the paths_installed.php file (contains all the information configured so far)
             if (! file_exists( FILE_PATHS_INSTALLED )) {
-                $sh = md5( filemtime( PATH_GULLIVER . '/class.g.php' ) );
+                $sh = G::encryptOld( filemtime( PATH_GULLIVER . '/class.g.php' ) );
                 $h = G::encrypt( $db_hostname . $sh . $db_username . $sh . $db_password, $sh );
                 $dbText = "<?php\n";
                 $dbText .= sprintf( "  define('PATH_DATA',         '%s');\n", $pathShared );
@@ -1152,18 +1152,18 @@ class Installer extends Controller
             $query = sprintf( "USE %s;", $wf );
             $this->mssqlQuery( $query );
 
-            $query = sprintf( "UPDATE USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, md5( $adminPassword ) );
+            $query = sprintf( "UPDATE USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, G::encryptOld( $adminPassword ) );
             $this->mssqlQuery( $query );
 
             $query = sprintf( "USE %s;", $wf );
             $this->mssqlQuery( $query );
 
-            $query = sprintf( "UPDATE RBAC_USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, md5( $adminPassword ) );
+            $query = sprintf( "UPDATE RBAC_USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, G::encryptOld( $adminPassword ) );
             $this->mssqlQuery( $query );
 
             // Write the paths_installed.php file (contains all the information configured so far)
             if (! file_exists( FILE_PATHS_INSTALLED )) {
-                $sh = md5( filemtime( PATH_GULLIVER . '/class.g.php' ) );
+                $sh = G::encryptOld( filemtime( PATH_GULLIVER . '/class.g.php' ) );
                 $h = G::encrypt( $db_hostname . $sh . $db_username . $sh . $db_password . '1', $sh );
                 $dbText = "<?php\n";
                 $dbText .= sprintf( "  define ('PATH_DATA',        '%s' );\n", $pathShared );

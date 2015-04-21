@@ -1273,7 +1273,7 @@ class Bootstrap
         $checkSum = '';
         foreach ($files as $file) {
             if (is_file($file)) {
-                $checkSum .= md5_file($file);
+                $checkSum .= G::encryptFileOld($file);
             }
         }
         return Bootstrap::encryptOld($checkSum . $key);
