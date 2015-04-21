@@ -692,16 +692,22 @@ ob_start();
 
 // Rebuild the base Workflow translations if not exists
 if (! is_file( PATH_LANGUAGECONT . 'translation.en' )) {
-    $pathFile = $filter->validateInput("classes/model/Translation.php",'path');
+    $pathFile = $filter->validateInput(PATH_CLASSES . "model" . PATH_SEP . "Translation.php", "path");
+
     require_once ($pathFile);
-    $fields = Translation::generateFileTranslation( 'en' );
+
+    $pmTranslation = new Translation();
+    $fields = $pmTranslation->generateFileTranslation("en");
 }
 
 // TODO: Verify if the language set into url is defined in translations env.
 if (SYS_LANG != 'en' && ! is_file( PATH_LANGUAGECONT . 'translation.' . SYS_LANG )) {
-    $pathFile = $filter->validateInput("classes/model/Translation.php",'path');
+    $pathFile = $filter->validateInput(PATH_CLASSES . "model" . PATH_SEP . "Translation.php", "path");
+
     require_once ($pathFile);
-    $fields = Translation::generateFileTranslation( SYS_LANG );
+
+    $pmTranslation = new Translation();
+    $fields = $pmTranslation->generateFileTranslation(SYS_LANG);
 }
 
 // Setup plugins
