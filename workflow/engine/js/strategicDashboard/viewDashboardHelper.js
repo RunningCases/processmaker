@@ -6,11 +6,21 @@ var ViewDashboardHelper = function () {
 ViewDashboardHelper.prototype.userDashboards = function(userId, callBack) {
 };
 
+//TODO refactor to a good name...
 ViewDashboardHelper.prototype.stringIfNull = function (val){
 	if(val === null || val == undefined || val == "?"){
 		val = "?";
 	} else {
 		val = (parseFloat(val)).toFixed(2);
+	}
+	return val;
+};
+
+ViewDashboardHelper.prototype.labelIfEmpty = function (val){
+	if(val === null || val == undefined || val == ""){
+		val = "(No Name)";
+	} else {
+		val = val
 	}
 	return val;
 };
