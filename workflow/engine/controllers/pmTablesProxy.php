@@ -6,6 +6,7 @@
  * @inherits HttpProxyController
  * @access public
  */
+header("Content-type: text/html;charset=utf-8");
 require_once 'classes/model/AdditionalTables.php';
 
 class pmTablesProxy extends HttpProxyController
