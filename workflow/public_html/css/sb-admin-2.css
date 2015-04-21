@@ -348,21 +348,21 @@ table.dataTable thead .sorting:after {
     text-decoration: none;
 }
 
-.panel-yellow {
+.panel-high {
     border-color: #ddd;
 }
 
-.panel-yellow .panel-heading {
+.panel-high .panel-heading {
     border-color: #fcb322;
     color: #fff;
     background-color: #fcb322;
 }
 
-.panel-yellow a {
+.panel-high a {
     color: #606368;
 }
 
-.panel-yellow a:hover {
+.panel-high a:hover {
     color: #fcb322;
     text-decoration: none;
 }
@@ -520,15 +520,15 @@ table.dataTable thead .sorting:after {
 
 /*title panel ends*/
 
-.panel-primary{
+.panel-low{
     border-color: #ddd;
 }
 
-.panel-primary a{
+.panel-low a{
     color: #606368;
 }
 
-.panel-primary a:hover{
+.panel-low a:hover{
     color: #3397e1;
     text-decoration: none;
 }
@@ -549,7 +549,7 @@ table.dataTable thead .sorting:after {
     margin-bottom: 20px;
 }
 
-.panel-green:hover, .panel-red:hover, .panel-yellow:hover, .panel-primary:hover{
+.panel-green:hover, .panel-red:hover, .panel-high:hover, .panel-low:hover{
     box-shadow:0px 3px 2px #dfdfdf;
 }
 
@@ -566,7 +566,7 @@ table.dataTable thead .sorting:after {
 }
 
 .panel-active{
-    background-color: #fff;
+    background-color: #D99058;
     position: relative;
 }
 
@@ -583,6 +583,7 @@ table.dataTable thead .sorting:after {
 
 .panel-active:after {
     border-color: rgba(136, 183, 213, 0);
+    background-color: #000;
     border-top-color: #fff;
     border-width: 20px;
     margin-left: -20px;
@@ -614,11 +615,11 @@ table.dataTable thead .sorting:after {
     margin-top:10px;
 }
 
-.panel-red .panel-heading, .panel-primary .panel-heading{
+.panel-red .panel-heading, .panel-low .panel-heading{
     color:rgba(0,0,0,0.4) !important;
 }
 
-.panel-yellow .progress-bar{
+.panel-high .progress-bar{
     background: #fcb322;
 }
 
@@ -728,11 +729,18 @@ table.dataTable thead .sorting:after {
     font-size: 14px;
 }
 
-.process-button .blue{
+.process-button .blue,
+.process-button .red,
+.process-button .green{
     font-size: 24px;
 }
 
-.process-button:hover .blue, .process-button:hover, .process-button:hover .grey{
+.process-button:hover .blue, 
+.process-button:hover, 
+.process-button:hover .grey,
+.process-button:hover .red,
+.process-button:hover .green
+{
     background: #337AB8;
     color:#fff !important;
 }

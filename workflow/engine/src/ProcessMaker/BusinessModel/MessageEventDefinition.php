@@ -374,11 +374,11 @@ class MessageEventDefinition
                     $arrayData["MSGED_VARIABLES"] = array();
                 }
 
-                $messageEventDefinition->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
-
                 if (isset($arrayData["MSGED_VARIABLES"])) {
                     $messageEventDefinition->setMsgedVariables(serialize($arrayData["MSGED_VARIABLES"]));
                 }
+
+                $messageEventDefinition->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
 
                 if ($messageEventDefinition->validate()) {
                     $cnn->begin();

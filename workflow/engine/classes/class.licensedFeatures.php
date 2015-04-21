@@ -224,6 +224,7 @@ class PMLicensedFeatures
         $rs = AddonsManagerPeer::doSelectRS($criteria);
         $rs->next();
         $row = $rs->getRow();
+        $ids = array();
         if(sizeof($row)) {  
             while (is_array($row)) {
                 $ids[] = $row[0];
@@ -244,6 +245,7 @@ class PMLicensedFeatures
             }
         }
         
+        $i = 0;
         foreach($newFeaturesList as $k => $newFeature){
             $newData[] = array (
                     'db' => 'wf',

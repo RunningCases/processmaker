@@ -124,6 +124,7 @@ CREATE TABLE `APP_MESSAGE`
 	`APP_MSG_ATTACH` MEDIUMTEXT,
 	`APP_MSG_SEND_DATE` DATETIME  NOT NULL,
 	`APP_MSG_SHOW_MESSAGE` TINYINT default 1 NOT NULL,
+	`APP_MSG_ERROR` MEDIUMTEXT default '' NOT NULL,
 	PRIMARY KEY (`APP_MSG_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Messages in an Application';
 #-----------------------------------------------------------------------------
@@ -2789,7 +2790,7 @@ CREATE TABLE `DASHBOARD_DAS_IND`
 (
     `DAS_UID`               VARCHAR(32) default '' NOT NULL,
     `OWNER_UID`             VARCHAR(32) default '' NOT NULL,
-    `OWNER_TYPE`            VARCHAR(15) default '' NOT NULL
+    `OWNER_TYPE`            VARCHAR(15) default '' NOT NULL,
     PRIMARY KEY (`DAS_UID`),
     CONSTRAINT `fk_dashboard_indicator_dashboard_das_ind`
         FOREIGN KEY (`DAS_UID`)
