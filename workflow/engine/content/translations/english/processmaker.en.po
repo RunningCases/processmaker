@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 3.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-04-07 17:56:03\n"
+"PO-Revision-Date: 2015-04-20 14:19:11\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -5140,8 +5140,8 @@ msgstr "Detach"
 # TRANSLATION
 # LABEL/ID_PRO_USER
 #: LABEL/ID_PRO_USER
-msgid "User Owner"
-msgstr "User Owner"
+msgid "Assigned users"
+msgstr "Assigned users"
 
 # TRANSLATION
 # LABEL/ID_SYSTEM
@@ -12838,8 +12838,8 @@ msgstr "the process uid is not defined!"
 # TRANSLATION
 # LABEL/ID_MYSQL_SUCCESS_CONNECT
 #: LABEL/ID_MYSQL_SUCCESS_CONNECT
-msgid "Succesfully connected to MySQL Server"
-msgstr "Succesfully connected to MySQL Server"
+msgid "Successfully connected to MySQL Server"
+msgstr "Successfully connected to MySQL Server"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_INSTALLATION
@@ -12850,8 +12850,8 @@ msgstr "ProcessMaker Installation"
 # TRANSLATION
 # LABEL/ID_MSSQL_SUCCESS_CONNECT
 #: LABEL/ID_MSSQL_SUCCESS_CONNECT
-msgid "Succesfully connected to MSSQL Server"
-msgstr "Succesfully connected to MSSQL Server"
+msgid "Successfully connected to MSSQL Server"
+msgstr "Successfully connected to MSSQL Server"
 
 # TRANSLATION
 # LABEL/ID_CONNECTION_ERROR_SECURITYADMIN
@@ -16360,8 +16360,8 @@ msgstr "The filename is required."
 # TRANSLATION
 # LABEL/ID_VARIABLE_IN_USE
 #: LABEL/ID_VARIABLE_IN_USE
-msgid "The variable with var_uid: {0} is being used by dynaform with dyn_uid: {1}"
-msgstr "The variable with var_uid: {0} is being used by dynaform with dyn_uid: {1}"
+msgid "This variable can not be deleted because it is being used in DynaForm : {0}. To delete it, first remove it from the DynaForm."
+msgstr "This variable can not be deleted because it is being used in DynaForm : {0}. To delete it, first remove it from the DynaForm."
 
 # TRANSLATION
 # LABEL/ID_ROUTE_IS_SECJOIN
@@ -17704,8 +17704,8 @@ msgstr "Email Servers"
 # TRANSLATION
 # LABEL/ID_EMAIL_SERVER_THIS_CONFIGURATION_IS_DEFAULT
 #: LABEL/ID_EMAIL_SERVER_THIS_CONFIGURATION_IS_DEFAULT
-msgid "Set that this configuration is the default"
-msgstr "Set that this configuration is the default"
+msgid "Set as default configuration"
+msgstr "Set as default configuration"
 
 # TRANSLATION
 # LABEL/ID_EMAIL_SERVER_TESTING
@@ -18472,8 +18472,8 @@ msgstr "Inefficience Cost By User"
 # TRANSLATION
 # LABEL/ID_OVER_DUE
 #: LABEL/ID_OVER_DUE
-msgid "% Overdue"
-msgstr "% Overdue"
+msgid "[LABEL/ID_OVER_DUE] Status"
+msgstr "Status"
 
 # TRANSLATION
 # LABEL/ID_NEW_CASES
@@ -18652,8 +18652,8 @@ msgstr "The user: {0} is other department manager."
 # TRANSLATION
 # LABEL/ID_STRATEGIC_DASHBOARD
 #: LABEL/ID_STRATEGIC_DASHBOARD
-msgid "KPI"
-msgstr "KPI"
+msgid "KPIs"
+msgstr "KPIs"
 
 # TRANSLATION
 # LABEL/ID_MANAGERS_DASHBOARDS
@@ -18774,6 +18774,12 @@ msgstr "Untitled task"
 #: LABEL/ID_GOAL_HELP
 msgid "(Goal value)"
 msgstr "(Goal value)"
+
+# TRANSLATION
+# LABEL/ID_PLEASE_ENTER_CREDENTIALS
+#: LABEL/ID_PLEASE_ENTER_CREDENTIALS
+msgid "Please enter your credentials below"
+msgstr "Please enter your credentials below"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml

@@ -210,7 +210,7 @@ class WebApplication
      */
     public function dispatchApiRequest($uri, $version = "1.0", $multipart = false, $inputExecute = '')
     {
-        $this->initRest($uri, "1.0", $multipart);
+        $uri = $this->initRest($uri, "1.0", $multipart);
 
         // to handle a request with "OPTIONS" method
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -328,50 +328,60 @@ class WebApplication
 
         // Override $_SERVER['REQUEST_URI'] to Restler handles the modified url
 
-        if (! $isPluginRequest) { // if it is not a request for a plugin endpoint
-            // scan all api directory to find api classes
-            $classesList = Util\Common::rglob($apiDir . "/*");
+        // scan all api directory to find api classes
+        $classesList = Util\Common::rglob($apiDir . "/*");
 
-            foreach ($classesList as $classFile) {
-                if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
-                    $relClassPath = str_replace('.php', '', str_replace($servicesDir, '', $classFile));
-                    $namespace = '\\ProcessMaker\\Services\\' . str_replace(DS, '\\', $relClassPath);
-                    $namespace = strpos($namespace, "//") === false? $namespace: str_replace("//", '', $namespace);
+        foreach ($classesList as $classFile) {
+            if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
+                $relClassPath = str_replace('.php', '', str_replace($servicesDir, '', $classFile));
+                $namespace = '\\ProcessMaker\\Services\\' . str_replace(DS, '\\', $relClassPath);
+                $namespace = strpos($namespace, "//") === false? $namespace: str_replace("//", '', $namespace);
 
-                    //if (! class_exists($namespace)) {
-                    require_once $classFile;
-                    //}
+                //if (! class_exists($namespace)) {
+                require_once $classFile;
+                //}
 
-                    $this->rest->addAPIClass($namespace);
+                $this->rest->addAPIClass($namespace);
+            }
+        }
+        // adding aliases for Restler
+        if (array_key_exists('alias', $config)) {
+            foreach ($config['alias'] as $alias => $aliasData) {
+                if (is_array($aliasData)) {
+                    foreach ($aliasData as $label => $namespace) {
+                        $namespace = '\\' . ltrim($namespace, '\\');
+                        $this->rest->addAPIClass($namespace, $alias);
+                    }
                 }
             }
-            // adding aliases for Restler
-            if (array_key_exists('alias', $config)) {
-                foreach ($config['alias'] as $alias => $aliasData) {
-                    if (is_array($aliasData)) {
-                        foreach ($aliasData as $label => $namespace) {
-                            $namespace = '\\' . ltrim($namespace, '\\');
-                            $this->rest->addAPIClass($namespace, $alias);
+        }
+
+        //if (! $isPluginRequest) { // if it is not a request for a plugin endpoint
+        // hook to get rest api classes from plugins
+        if (class_exists('PMPluginRegistry')) {
+            $pluginRegistry = \PMPluginRegistry::loadSingleton(PATH_DATA_SITE . 'plugin.singleton');
+            $plugins = $pluginRegistry->getRegisteredRestServices();
+
+            if (! empty($plugins)) {
+                $pluginSourceDir = PATH_PLUGINS . $pluginName . DIRECTORY_SEPARATOR . 'src';
+
+                $loader = \Maveriks\Util\ClassLoader::getInstance();
+                $loader->add($pluginSourceDir);
+
+                if (is_array($plugins) && array_key_exists($pluginName, $plugins)) {
+                    foreach ($plugins[$pluginName] as $class) {
+                        if (class_exists($class['namespace'])) {
+                            $this->rest->addAPIClass($class['namespace']);
                         }
                     }
                 }
             }
-        } else {
-            // hook to get rest api classes from plugins
-//            if (class_exists('PMPluginRegistry')) {
-//                $pluginRegistry = & PMPluginRegistry::getSingleton();
-//                $plugins = $pluginRegistry->getRegisteredRestServices();
-//
-//                if (is_array($plugins) && array_key_exists($pluginName, $plugins)) {
-//                    foreach ($plugins[$pluginName] as $class) {
-//                        $rest->addAPIClass($class['namespace']);
-//                    }
-//                }
-//            }
         }
 
         Services\OAuth2\Server::setWorkspace(SYS_SYS);
         $this->rest->addAPIClass('\ProcessMaker\\Services\\OAuth2\\Server', 'oauth2');
+
+        return $uri;
     }
 
     public function parseApiRequestUri()
@@ -580,5 +590,10 @@ class WebApplication
             throw $e;
         }
     }
-}
 
+    public static function purgeRestApiCache($workspace)
+    {
+        @unlink(PATH_DATA . 'compiled' . DS . 'routes.php');
+        @unlink(PATH_DATA . 'sites' . DS . $workspace . DS . 'api-config.php');
+    }
+}

@@ -33,6 +33,14 @@ class pmDynaform
         }
     }
 
+    public function getDynaformTitle($idDynaform)
+    {
+         $d = new Dynaform();
+         $d->setDynUid($idDynaform);
+         $titleDynaform = $d->getDynTitle();
+         return $titleDynaform;
+    }
+
     public function getDynaform()
     {
         if (!isset($this->fields["CURRENT_DYNAFORM"])) {
@@ -173,6 +181,9 @@ class pmDynaform
                         "value" => isset($this->fields["APP_DATA"][$json->name]) ? $this->fields["APP_DATA"][$json->name] : (is_array($json->data) ? $json->data["value"] : $json->data->value),
                         "label" => isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : (is_array($json->data) ? $json->data["label"] : $json->data->label)
                     );
+                    if ($json->data["label"] === "") {
+                        $json->data["label"] = $json->data["value"];
+                    }
                 }
                 if ($key === "type" && ($value === "checkbox")) {
                     $json->data = array(
@@ -253,7 +264,7 @@ class pmDynaform
         return $this->record != null && $this->record["DYN_VERSION"] == 2 ? true : false;
     }
 
-    public function printViewWithoutSubmit()
+    public function printTracker()
     {
         ob_clean();
 

@@ -555,7 +555,7 @@ class Light
         session_start();
         session_regenerate_id();
 
-        setcookie("workspaceSkin", SYS_SKIN, time() + 24*60*60, "/sys".SYS_SYS);
+        setcookie("workspaceSkin", SYS_SKIN, time() + (24 * 60 * 60), "/sys" . SYS_SYS, null, false, true);
 
         if (strlen($msg) > 0) {
             $_SESSION['G_MESSAGE'] = $msg;
@@ -811,3 +811,4 @@ class Light
         return $response;
     }
 }
+

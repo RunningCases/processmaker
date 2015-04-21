@@ -943,6 +943,11 @@ class wsBase
             }
             /*----------------------------------********---------------------------------*/
 
+            $msgError = "";
+            if(sizeof($aSetup) == 0){
+               $msgError = "The default configuration wasn't defined";
+            }
+
             $oSpool = new spoolRun();
 
             $oSpool->setConfig($aSetup);
@@ -989,6 +994,7 @@ class wsBase
                 "app_msg_template" => "",
                 "app_msg_status"   => "pending",
                 "app_msg_show_message" => $showMessage,
+                "app_msg_error" => $msgError,
                 "contentTypeIsHtml" => (preg_match("/^.+\.html?$/i", $fileTemplate))? true : false
             );
 
