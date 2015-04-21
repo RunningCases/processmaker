@@ -162,7 +162,7 @@ class pmDynaform
                                 array_push($json->options, $option);
                             }
                         } catch (Exception $e) {
-                            
+
                         }
                     }
                     if (isset($json->options[0])) {
@@ -264,7 +264,7 @@ class pmDynaform
         return $this->record != null && $this->record["DYN_VERSION"] == 2 ? true : false;
     }
 
-    public function printViewWithoutSubmit()
+    public function printTracker()
     {
         ob_clean();
 
