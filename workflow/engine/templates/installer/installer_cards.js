@@ -207,8 +207,8 @@ Ext.onReady(function(){
     Ext.Ajax.request({
       url: 'checkDatabases',
       success: function(response){
-        var existMsg = '<span style="color: red;">' + _('ID_EXIST') + '</span>';
-        var noExistsMsg = '<span style="color: green;">' + _('ID_NO_EXIST') + '</span>';
+        var existMsg = '<span style="color: red;">' + _('ID_NOT_AVAILABLE_DATABASE') + '</span>';
+        var noExistsMsg = '<span style="color: green;">' + _('ID_AVAILABLE_DATABASE') + '</span>';
         var response = Ext.util.JSON.decode(response.responseText);
         Ext.get('wfDatabaseSpan').dom.innerHTML = (response.wfDatabaseExists ? existMsg : noExistsMsg);
 
@@ -784,11 +784,12 @@ Ext.onReady(function(){
                  }),
                  {
                     xtype     : 'textfield',
-                    fieldLabel: _('ID_WF_DATABASE_NAME') + ' <span id="wfDatabaseSpan"></span>',
+                    fieldLabel: _('ID_WF_DATABASE_NAME') + ':<br>' + ' <span id="wfDatabaseSpan"></span>',
                     id : 'wfDatabase',
                     value  :'wf_workflow',
                     allowBlank : false,
                     maxLength: 32,
+                    labelSeparator : "",
                     validator  : function(v){
                         var t = /^[a-zA-Z_0-9]+$/;
                         return t.test(v);
