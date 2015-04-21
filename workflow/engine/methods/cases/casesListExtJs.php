@@ -11,70 +11,39 @@ if ($action == 'selfservice') {
 }
 
 /*----------------------------------********---------------------------------*/
-$urlProxy = '/api/1.0/' . SYS_SYS . '/lists/';
+$urlProxy = 'proxyNewCasesList';
 switch ($action) {
     case 'todo':
     case 'draft':
-        $urlProxy .= 'inbox';
+        $urlProxy .= '?list=inbox';
         break;
     case 'sent':
-        $urlProxy .= 'participated';
+        $urlProxy .= '?list=participated';
         break;
     case 'search':
     case 'participated-history':
         $urlProxy = 'proxyCasesList';
         break;
     case 'paused':
-        $urlProxy .= 'paused';
+        $urlProxy .= '?list=paused';
         break;
     case 'cancel':
     case 'canceled':
-        $urlProxy .= 'canceled';
+        $urlProxy .= '?list=canceled';
         break;
     case 'completed':
-        $urlProxy .= 'completed';
+        $urlProxy .= '?list=completed';
         break;
     case 'myinbox':
     case 'my-inbox':
-        $urlProxy .= 'my-inbox';
+        $urlProxy .= '?list=myInbox';
         break;
     case 'unassigned':
         $urlProxy = 'proxyCasesList';
         $action = 'unassigned';
         break;
 }
-
-$clientId = 'x-pm-local-client';
-$client = getClientCredentials($clientId);
-$authCode = getAuthorizationCode($client);
-$debug = false; //System::isDebugMode();
-
-$loader = Maveriks\Util\ClassLoader::getInstance();
-$loader->add(PATH_TRUNK . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");
-
-$request = array(
-    'grant_type' => 'authorization_code',
-    'code' => $authCode
-);
-$server = array(
-    'REQUEST_METHOD' => 'POST'
-);
-$headers = array(
-    "PHP_AUTH_USER" => $client['CLIENT_ID'],
-    "PHP_AUTH_PW" => $client['CLIENT_SECRET'],
-    "Content-Type" => "multipart/form-data;",
-    "Authorization" => "Basic " . base64_encode($client['CLIENT_ID'] . ":" . $client['CLIENT_SECRET'])
-);
-
-$request = new \OAuth2\Request(array(), $request, array(), array(), array(), $server, null, $headers);
-$oauthServer = new \ProcessMaker\Services\OAuth2\Server();
-$response = $oauthServer->postToken($request, true);
-$clientToken = $response->getParameters();
-$clientToken["client_id"] = $client['CLIENT_ID'];
-$clientToken["client_secret"] = $client['CLIENT_SECRET'];
 /*----------------------------------********---------------------------------*/
-
-
 
 G::LoadClass("BasePeer");
 G::LoadClass("configuration");
@@ -195,9 +164,6 @@ $oHeadPublisher->assign( 'reassignColumns', $reassignColumns ); //sending the co
 $oHeadPublisher->assign( 'action', $action ); //sending the action to make
 $oHeadPublisher->assign( 'urlProxy', $urlProxy ); //sending the urlProxy to make
 $oHeadPublisher->assign( 'caseListBuilder', $caseListBuilder ); //sending the caseListBuilder
-/*----------------------------------********---------------------------------*/
-$oHeadPublisher->assign( 'credentials', $clientToken ); //sending the SYS_SYS to make
-/*----------------------------------********---------------------------------*/
 $oHeadPublisher->assign( 'PMDateFormat', $dateFormat ); //sending the fields to get from proxy
 $oHeadPublisher->assign( 'statusValues', $status ); //Sending the listing of status
 $oHeadPublisher->assign( 'processValues', $processes ); //Sending the listing of processes
