@@ -102,7 +102,7 @@ class ListInbox extends BaseListInbox
             $users->refreshTotal($data['USR_UID'], 'add', 'inbox');
 
             $listParticipatedLast = new ListParticipatedLast();
-            $listParticipatedLast->remove($data['APP_UID'], $data['USR_UID']);
+            $listParticipatedLast->remove($data['APP_UID'], $data['USR_UID'], $data['DEL_INDEX']);
 
             //Update - WHERE
             $criteriaWhere = new Criteria("workflow");
