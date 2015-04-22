@@ -840,10 +840,10 @@ class Installer extends Controller
             $query = sprintf( "USE %s;", $wf_workpace );
             $this->mysqlQuery( $query );
 
-            $query = sprintf( "UPDATE USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, G::encryptOld( $adminPassword ) );
+            $query = sprintf( "UPDATE USERS SET USR_USERNAME = '%s', USR_LASTNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, $adminUsername, md5( $adminPassword ) );
             $this->mysqlQuery( $query );
 
-            $query = sprintf( "UPDATE RBAC_USERS SET USR_USERNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, G::encryptOld( $adminPassword ) );
+            $query = sprintf( "UPDATE RBAC_USERS SET USR_USERNAME = '%s', USR_LASTNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, $adminUsername, md5( $adminPassword ) );
             $this->mysqlQuery( $query );
 
             // Write the paths_installed.php file (contains all the information configured so far)
