@@ -4629,6 +4629,16 @@
         <parameter name="Extra" value=""/>
       </vendor>
     </column>
+    <column name="ABE_SUBJECT_FIELD" type="VARCHAR" size="100" required="false" default="">
+      <vendor type="mysql">
+        <parameter name="Field" value="ABE_SUBJECT_FIELD"/>
+        <parameter name="Type" value="varchar(100)"/>
+        <parameter name="Null" value="NO"/>
+        <parameter name="Key" value=""/>
+        <parameter name="Default" value=""/>
+        <parameter name="Extra" value=""/>
+      </vendor>
+    </column>
   </table>
 
   <table name="ABE_REQUESTS">
