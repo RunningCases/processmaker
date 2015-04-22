@@ -2705,12 +2705,13 @@ CREATE TABLE `USR_REPORTING`
     `TOTAL_TIME_BY_TASK`    DECIMAL(7,2) default 0,
     `TOTAL_CASES_IN`        DECIMAL(7,2) default 0,
     `TOTAL_CASES_OUT`       DECIMAL(7,2) default 0,
+    `USER_HOUR_COST`        DECIMAL(7,2) default 0,
     `AVG_TIME`              DECIMAL(7,2) default 0,
     `SDV_TIME`              DECIMAL(7,2) default 0,
     `CONFIGURED_TASK_TIME`  DECIMAL(7,2) default 0,
     `TOTAL_CASES_OVERDUE`   DECIMAL(7,2) default 0,
     `TOTAL_CASES_ON_TIME`   DECIMAL(7,2) default 0,
-    PRIMARY KEY (`USR_UID`, `TAS_UID`,`MONTH`,`YEAR`)
+    PRIMARY KEY (`USR_UID`, `TAS_UID`,`MONTH`,`YEAR`),
     KEY `indexApp`(`USR_UID`, `TAS_UID`, `PRO_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Data calculated users by task';
 #-----------------------------------------------------------------------------
@@ -2763,16 +2764,20 @@ DROP TABLE IF EXISTS `DASHBOARD_INDICATOR`;
 
 CREATE TABLE `DASHBOARD_INDICATOR`
 (
-    `DAS_IND_UID`           VARCHAR(32) default '' NOT NULL,
-    `DAS_UID`               VARCHAR(32) default '' NOT NULL,
-    `DAS_IND_TYPE`          VARCHAR(32) default '' NOT NULL,
-    `DAS_IND_TITLE`         VARCHAR(255) default '' NOT NULL,
-    `DAS_IND_GOAL`          DECIMAL(7,2) default 0,
-    `DAS_UID_PROCESS`       VARCHAR(32) default '' NOT NULL,
-    `DAS_IND_PROPERTIES`    MEDIUMTEXT,
-    `DAS_CREATE_DATE`       DATETIME  NOT NULL,
-    `DAS_UPDATE_DATE`       DATETIME,
-    `DAS_STATUS`            TINYINT default 1 NOT NULL,
+    `DAS_IND_UID`               VARCHAR(32) default '' NOT NULL,
+    `DAS_UID`                   VARCHAR(32) default '' NOT NULL,
+    `DAS_IND_TYPE`              VARCHAR(32) default '' NOT NULL,
+    `DAS_IND_TITLE`             VARCHAR(255) default '' NOT NULL,
+    `DAS_IND_GOAL`              DECIMAL(7,2) default 0,
+    `DAS_IND_DIRECTION`         TINYINT default 2 NOT NULL,
+    `DAS_UID_PROCESS`           VARCHAR(32) default '' NOT NULL,
+    `DAS_IND_FIRST_FIGURE`      VARCHAR(32) default '',
+    `DAS_IND_FIRST_FREQUENCY`   VARCHAR(32) default '',
+    `DAS_IND_SECOND_FIGURE`     VARCHAR(32) default '',
+    `DAS_IND_SECOND_FREQUENCY`  VARCHAR(32) default '',
+    `DAS_IND_CREATE_DATE`       DATETIME  NOT NULL,
+    `DAS_IND_UPDATE_DATE`       DATETIME,
+    `DAS_IND_STATUS`            TINYINT default 1 NOT NULL,
     PRIMARY KEY (`DAS_UID`),
     KEY `indexDashboard`(`DAS_UID`, `DAS_IND_TYPE`),
     CONSTRAINT `fk_dashboard_indicator_dashboard`
@@ -2812,7 +2817,6 @@ CREATE TABLE `CATALOG`
     `CAT_OBSERVATION`   MEDIUMTEXT,
     `CAT_CREATE_DATE`   DATETIME  NOT NULL,
     `CAT_UPDATE_DATE`   DATETIME,
-    `CAT_STATUS`        TINYINT default 1 NOT NULL,
     PRIMARY KEY (`CAT_UID`, `CAT_TYPE`),
     KEY `indexType`( `CAT_TYPE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Definitions catalog.';
