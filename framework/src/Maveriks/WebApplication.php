@@ -358,7 +358,7 @@ class WebApplication
 
         //if (! $isPluginRequest) { // if it is not a request for a plugin endpoint
         // hook to get rest api classes from plugins
-        if (class_exists('PMPluginRegistry')) {
+        if (class_exists('PMPluginRegistry') && file_exists(PATH_DATA_SITE . 'plugin.singleton')) {
             $pluginRegistry = \PMPluginRegistry::loadSingleton(PATH_DATA_SITE . 'plugin.singleton');
             $plugins = $pluginRegistry->getRegisteredRestServices();
 
