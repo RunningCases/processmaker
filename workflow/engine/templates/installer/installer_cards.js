@@ -210,7 +210,7 @@ Ext.onReady(function(){
         var existMsg = '<span style="color: red;">' + _('ID_NOT_AVAILABLE_DATABASE') + '</span>';
         var noExistsMsg = '<span style="color: green;">' + _('ID_AVAILABLE_DATABASE') + '</span>';
         var response = Ext.util.JSON.decode(response.responseText);
-        Ext.get('wfDatabaseSpan').dom.innerHTML = (response.wfDatabaseExists ? existMsg : noExistsMsg);
+        Ext.get('database_message').dom.innerHTML = (response.wfDatabaseExists ? existMsg : noExistsMsg);
 
         var dbFlag = ((!response.wfDatabaseExists) || Ext.getCmp('deleteDB').getValue());
         wizard.onClientValidation(4, dbFlag);
@@ -784,12 +784,11 @@ Ext.onReady(function(){
                  }),
                  {
                     xtype     : 'textfield',
-                    fieldLabel: _('ID_WF_DATABASE_NAME') + ':<br>' + ' <span id="wfDatabaseSpan"></span>',
+                    fieldLabel: _('ID_WF_DATABASE_NAME'),
                     id : 'wfDatabase',
                     value  :'wf_workflow',
                     allowBlank : false,
                     maxLength: 32,
-                    labelSeparator : "",
                     validator  : function(v){
                         var t = /^[a-zA-Z_0-9]+$/;
                         return t.test(v);
@@ -799,6 +798,10 @@ Ext.onReady(function(){
                     listeners: {keyup: function() {
                       wizard.onClientValidation(4, false);
                     }}
+                  },
+                  {
+                    xtype     : 'displayfield',
+                    id  : 'database_message'
                   },
                   new Ext.form.Checkbox({
                     boxLabel   : _('ID_DELETE_DATABASES'),
