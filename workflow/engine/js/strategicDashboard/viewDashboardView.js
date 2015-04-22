@@ -134,7 +134,6 @@ WidgetBuilder.prototype.buildSpecialIndicatorSecondView = function (secondViewDa
 	$retval.find(".sind-index-selector").text(G_STRING.ID_EFFICIENCY_INDEX);
 	$retval.find(".sind-cost-selector").text(G_STRING.ID_INEFFICIENCY_COST);
 
-
 	$retval.find('.breadcrumb').find('li').remove();
 	$retval.find('.breadcrumb').append ('<li><a class="bread-back-selector" href="#"><i class="fa fa-chevron-left fa-fw"></i>' + window.currentIndicator.title +  '</a></li>');
 	$retval.find('.breadcrumb').append ('<li><b>' + window.currentEntityData.name + '</b></li>');
@@ -273,7 +272,7 @@ $(document).ready(function() {
             } else {
                 favoriteData = 0;
             }*/
-            if (typeof idWidGet != "undefined") {
+            if (typeof idWidGet != "undefined" && el.hasClass('ind-button-selector')) {
                 var widgetsObj = {
                         'indicatorId': idWidGet,
                         'x': item.x,
@@ -282,6 +281,7 @@ $(document).ready(function() {
                         'height': item.height <= 1 ? 2 : item.height
                 }
                 widgets.push(widgetsObj);
+				console.log(widgetsObj);
             }
         }); 
         
@@ -513,7 +513,7 @@ var fillStatusIndicatorFirstView = function (presenterData) {
 			showLabels: true
 		}
 	};
-	
+
 	var graph1 = new PieChart(presenterData.graph1Data, graphParams1, null, null);
 	graph1.drawChart();
 	var graphParams2 = graphParams1;
@@ -588,8 +588,8 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
 		graph: {
 			allowDrillDown:false,
 			allowTransition:true,
-			axisX:{ showAxis: true, label: G_STRING.ID_YEAR },
-			axisY:{ showAxis: true, label: "Q" },
+			axisX:{ showAxis: true, label: "Group" },
+			axisY:{ showAxis: true, label: "Cost" },
 			gridLinesX:false,
 			gridLinesY:true,
 			showTip: true,
@@ -670,8 +670,8 @@ var fillSpecialIndicatorSecondView = function(presenterData) {
 			gridLinesX: true,
 			gridLinesY: true,
 			area: {visible: false, css:"area"},
-			axisX:{ showAxis: true, label: G_STRING.ID_USERS },
-			axisY:{ showAxis: true, label: G_STRING.ID_TIME_HOURS },
+			axisX:{ showAxis: true, label: "User" },
+			axisY:{ showAxis: true, label: "Cost" },
 			showErrorBars: true
 
 		}
@@ -680,6 +680,7 @@ var fillSpecialIndicatorSecondView = function(presenterData) {
 	var indicatorPrincipalData = widgetBuilder.getIndicatorLoadedById(window.currentEntityData.indicatorId);
 
 	if (window.currentIndicator.type == "1010") {
+		detailParams.graph.axisX.label = "Task";
 		var graph = new BarChart(presenterData.dataToDraw, detailParams, null, null);
 		graph.drawChart();
 	}

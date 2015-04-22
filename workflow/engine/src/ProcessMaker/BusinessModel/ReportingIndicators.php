@@ -33,7 +33,7 @@ class ReportingIndicators
 		$retval = array(
 						"id" => $indicatorUid,
 						"efficiencyIndex" => $peiValue,
-						"efficiencyIndexCompare" => $peiCompare,
+						"efficiencyIndexToCompare" => $peiCompare,
 						"efficiencyVariation" => ($peiValue-$peiCompare),
 						"inefficiencyCost" => $peiCost,
 						"data"=>$processes);
@@ -68,6 +68,7 @@ class ReportingIndicators
 						"efficiencyIndex" => $ueiValue,
                         "efficiencyVariation" => ($ueiValue-$ueiCompare),
                         "inefficiencyCost" => $ueiCost,
+                        "efficiencyIndexToCompare" => $ueiCompare,
                         "data"=>$groups);
         return $retval;
     }
