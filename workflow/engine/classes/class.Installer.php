@@ -104,7 +104,16 @@ class Installer
         $result['name']['message'] = ($result['isset']) ? 'Workspace already exist' : $result['name']['message'];
         $result['name']['status'] = ($result['isset']) ? false : $result['name']['status'];
         //print_r($result);
-        return Array('created' => G::var_compare(true, $result['path_data'], $result['database']['connection'], $result['name']['status'], $result['database']['version'], $result['database']['ao']['ao_db_wf']['status'], $result['database']['ao']['ao_db_rb']['status'], $result['database']['ao']['ao_db_rp']['status'], $result['admin']['username'], (($result['isset']) ? false : true), $result['admin']['password']), 'result' => $result
+        return Array('created' => G::var_compare(true,
+                                                 $result['path_data'],
+                                                 $result['database']['connection'],
+                                                 $result['name']['status'],
+                                                 $result['database']['version'],
+                                                 $result['database']['ao']['ao_db_wf']['status'],
+                                                 $result['admin']['username'],
+                                                 (($result['isset']) ? false : true),
+                                                 $result['admin']['password']),
+                     'result' => $result
         );
     }
 

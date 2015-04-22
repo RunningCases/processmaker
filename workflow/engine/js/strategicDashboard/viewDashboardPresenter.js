@@ -47,6 +47,7 @@ ViewDashboardPresenter.prototype.getDashboardIndicators = function (dashboardId,
 };
 
 ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
+	if (data == null) {return null;}
 	var that = this;
 	var returnList = [];
 	var i = 1;
@@ -154,9 +155,11 @@ ViewDashboardPresenter.prototype.getIndicatorData = function (indicatorId, indic
 };
 
 ViewDashboardPresenter.prototype.peiViewModel = function(data) {
+	if (data == null) {return null;}
 	var that = this;
 	var graphData = [];
 	$.each(data.data, function(index, originalObject) {
+		originalObject.name = that.helper.labelIfEmpty(originalObject.name);
 		var map = {
 			"name" : "datalabel",
 			"inefficiencyCost" : "value"
@@ -178,10 +181,22 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 	retval = data;
 	graphData.sort(function(a,b) {
 							var retval = 0;
-							retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
+							retval = ((a.value*1.0 <= b.value*1.0) ? -1 : 1);
 							return retval;
 						})
 	retval.dataToDraw = graphData.splice(0,7);
+
+	//use positive values for drawing;
+	$.each(retval.dataToDraw, function(index, item) { 
+		if (item.value > 0) {
+			item.value = 0;
+		}
+		if (item.value < 0) {
+			item.value = Math.abs(item.value);
+		}
+	});
+
+
 	//TODO aumentar el símbolo de moneda $
 	retval.inefficiencyCostToShow = "$ " +Math.round(retval.inefficiencyCost);
 	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
@@ -189,9 +204,11 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 };
 
 ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
+	if (data == null) {return null;}
 	var that = this;
 	var graphData = [];
 	$.each(data.data, function(index, originalObject) {
+		originalObject.name = that.helper.labelIfEmpty(originalObject.name);
 		var map = {
 			"name" : "datalabel",
 			"inefficiencyCost" : "value",
@@ -214,10 +231,22 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 	retval = data;
 	graphData.sort(function(a,b) {
 							var retval = 0;
-							retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
+							retval = ((a.value*1.0 <= b.value*1.0) ? -1 : 1);
 							return retval;
 						})
 	retval.dataToDraw = graphData.splice(0,7);
+
+	//use positive values for drawing;
+	$.each(retval.dataToDraw, function(index, item) { 
+		if (item.value > 0) {
+			item.value = 0;
+		}
+		if (item.value < 0) {
+			item.value = Math.abs(item.value);
+		}
+	});
+
+
 	//TODO aumentar el símbolo de moneda $
 	retval.inefficiencyCostToShow = "$ " + Math.round(retval.inefficiencyCost);
 	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
@@ -225,45 +254,60 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 };
 
 ViewDashboardPresenter.prototype.statusViewModel = function(indicatorId, data) {
+	if (data == null) {return null;}
 	var that = this;
 	data.id = indicatorId;
 	var graph1Data = [];
 	var graph2Data = [];
 	var graph3Data = [];
 	$.each(data.dataList, function(index, originalObject) {
-		var title = (originalObject.taskTitle == null)
-                                ? ""
-                                : originalObject.taskTitle.substring(0,15);
+
+		originalObject.taskTitle = that.helper.labelIfEmpty(originalObject.taskTitle);
+		//TODO use more that 10 chars when the label and color problem in pie 2D is solved.
+		var title = originalObject.taskTitle.substring(0,10);
+
+		//TODO Do not use the str. replace when color and lable in pie 2D is solved.
 		var newObject1 = {
-			datalabel : title,
+			datalabel : title.trim().replace(" ", "_"),
 			value : originalObject.percentageTotalOverdue
 		};
 		var newObject2 = {
-			datalabel : title,
+			datalabel : title.trim().replace(" ", "_"),
 			value : originalObject.percentageTotalAtRisk
 		};
 		var newObject3 = {
-			datalabel : title,
+			datalabel : title.trim().replace(" ", "_"),
 			value : originalObject.percentageTotalOnTime
 		};
 
-		graph1Data.push(newObject1);
-		graph2Data.push(newObject2);
-		graph3Data.push(newObject3);
+		if (newObject1.value > 0) {
+			graph1Data.push(newObject1);
+		}
+		if (newObject2.value > 0) {
+			graph2Data.push(newObject2);
+		}
+		if (newObject3.value > 0) {
+			graph3Data.push(newObject3);
+		}
 		//we add the indicator id for reference
 		originalObject.indicatorId = indicatorId;
 	});
 
 	var retval = data;
 	//TODO selecte de 7 worst cases no the first 7
-	retval.graph1Data = graph1Data.splice(0,7)
-	retval.graph2Data = graph2Data.splice(0,7)
-	retval.graph3Data = graph3Data.splice(0,7)
+	retval.graph1Data = this.orderGraphData(graph1Data, "down").splice(0,7)
+	retval.graph2Data = this.orderGraphData(graph2Data, "down").splice(0,7)
+	retval.graph3Data = this.orderGraphData(graph3Data, "down").splice(0,7)
+	//TODO correct 2D Pie so we don't depend on label name
 	
+	$.each(retval.graph1Data, function(index, item) { item.datalabel = (index + 1) + "." + item.datalabel;  });
+	$.each(retval.graph2Data, function(index, item) { item.datalabel = (index + 1) + "." + item.datalabel;  });
+	$.each(retval.graph3Data, function(index, item) { item.datalabel = (index + 1) + "." + item.datalabel;  });
 	return retval;
 };
 
 ViewDashboardPresenter.prototype.indicatorViewModel = function(data) {
+	if (data == null) {return null;}
 	var that = this;
 	$.each(data.graph1Data, function(index, originalObject) {
 		var label = (('YEAR' in originalObject) ? originalObject.YEAR : "") ;
@@ -313,6 +357,7 @@ ViewDashboardPresenter.prototype.getSpecialIndicatorSecondLevel = function (enti
 };
 
 ViewDashboardPresenter.prototype.returnIndicatorSecondLevelPei = function(modelData) {
+	if (modelData == null) {return null;}
 	//modelData arrives in format [{users/tasks}]
 	//returns object {dataToDraw[], entityData[] //user/tasks data}
 	var that = this;
@@ -337,6 +382,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelPei = function(modelD
 };
 
 ViewDashboardPresenter.prototype.returnIndicatorSecondLevelUei = function(modelData) {
+	if (modelData == null) {return null;}
 	//modelData arrives in format [{users/tasks}]
 	//returns object {dataToDraw[], entityData[] //user/tasks data}
 	var that = this;
@@ -362,6 +408,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelUei = function(modelD
 /*-------SECOND LEVEL INDICATOR DATA*/
 
 ViewDashboardPresenter.prototype.orderDataList = function(listData, orderDirection, orderFunction) { 
+	if (listData == null) {return null;}
 	//orderDirection is passed in case no order FUnction is passed (to use in the default ordering)
 	var orderToUse = orderFunction;
 	if (orderFunction == undefined) {
@@ -373,6 +420,26 @@ ViewDashboardPresenter.prototype.orderDataList = function(listData, orderDirecti
 			else {
 				//the 1,-1 are flipped
 				retval = ((a.inefficiencyCost*1.0 <= b.inefficiencyCost*1.0) ? -1 : 1);
+			}
+			return 	retval;
+		}
+	}
+	return listData.sort(orderToUse);
+}
+
+ViewDashboardPresenter.prototype.orderGraphData = function(listData, orderDirection, orderFunction) { 
+	if (listData == null) {return null;}
+	//orderDirection is passed in case no order FUnction is passed (to use in the default ordering)
+	var orderToUse = orderFunction;
+	if (orderFunction == undefined) {
+		orderToUse = function (a ,b) {
+			var retval = 0;
+			if (orderDirection == "down") {
+				retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
+			}
+			else {
+				//the 1,-1 are flipped
+				retval = ((a.value*1.0 <= b.value*1.0) ? -1 : 1);
 			}
 			return 	retval;
 		}

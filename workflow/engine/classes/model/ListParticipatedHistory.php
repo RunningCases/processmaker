@@ -214,7 +214,7 @@ class ListParticipatedHistory extends BaseListParticipatedHistory
             $criteria->setOffset( $start );
         }
 
-        $dataset = ListParticipatedHistoryPeer::doSelectRS($criteria);
+        $dataset = ListParticipatedHistoryPeer::doSelectRS($criteria, Propel::getDbConnection('workflow_ro') );
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $data = array();
         $aPriorities = array ('1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH');

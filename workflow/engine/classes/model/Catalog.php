@@ -14,9 +14,11 @@ require_once 'classes/model/om/BaseCatalog.php';
  *
  * @package    classes.model
  */
-class Catalog extends BaseCatalog 
+class Catalog extends BaseCatalog
 {
-	public function load ($catUid, $catType)
+    private $records = array();
+
+    public function load ($catUid, $catType)
     {
         try {
             $catalog = CatalogPeer::retrieveByPK($catUid, $catType);
@@ -106,6 +108,106 @@ class Catalog extends BaseCatalog
         } catch (Exception $error) {
             throw $error;
         }
-    }    
+    }
+    private function dataCatalog ()
+    {
+        $this->records[] = array('10','ID_BARS','GRAPHIC','','','2015-03-04','2015-03-04');
+        $this->records[] = array('20','ID_LINES','GRAPHIC','','','2015-03-04','2015-03-04');
+        $this->records[] = array('100','ID_MONTH','PERIODICITY','','','2015-03-04','2015-03-04');
+        $this->records[] = array('200','ID_QUARTER','PERIODICITY','','','2015-03-04','2015-03-04');
+        $this->records[] = array('300','ID_SEMESTER','PERIODICITY','','','2015-03-04','2015-03-04');
+        $this->records[] = array('400','ID_YEAR','PERIODICITY','','','2015-03-04','2015-03-04');
+        $this->records[] = array('1010','ID_PROCESS_EFFICIENCE','INDICATOR','','','2015-03-04','2015-03-04');
+        $this->records[] = array('1030','ID_EMPLYEE_EFFICIENCIE','INDICATOR','','','2015-03-04','2015-03-04');
+        $this->records[] = array('1050','ID_OVER_DUE','INDICATOR','%','Unit for displaying','2015-03-04','2015-03-04');
+    }
+    public function registerRows($data)
+    {
+        $this->dataCatalog();
+        $newData = array();
+
+        $criteria = new Criteria();
+        $criteria->clearSelectColumns();
+        $criteria->addSelectColumn(CatalogPeer::CAT_UID);
+        $criteria->addSelectColumn(CatalogPeer::CAT_TYPE);
+        $rs = CatalogPeer::doSelectRS($criteria);
+        $dataCatalog  = array();
+        while ($rs->next()) {
+            $row = $rs->getRow();
+            $dataCatalog[] = $row;
+        }
+
+        foreach($this->records as $k => $record) {
+            $flag = false;
+
+            foreach ($dataCatalog as $key => $catalog) {
+                if ($record[0] == $catalog[0] && $record[2] == $catalog[1]) {
+                    $flag = true;
+                    break;
+                }
+            }
+            if ($flag) {
+                continue;
+            }
+            $newData[] = array (
+                'db' => 'wf',
+                'table' => 'CATALOG',
+                'keys' =>
+                    array (
+                        0 => 'CAT_UID',
+                        1 => 'CAT_TYPE'
+                    ),
+                'data' =>
+                    array (
+                        0 =>
+                            array (
+                                'field' => 'CAT_UID',
+                                'type' => 'text',
+                                'value' => $record[0],
+                            ),
+                        1 =>
+                            array (
+                                'field' => 'CAT_LABEL_ID',
+                                'type' => 'text',
+                                'value' => $record[1],
+                            ),
+                        2 =>
+                            array (
+                                'field' => 'CAT_TYPE',
+                                'type' => 'text',
+                                'value' => $record[2],
+                            ),
+                        3 =>
+                            array (
+                                'field' => 'CAT_FLAG',
+                                'type' => 'text',
+                                'value' => $record[3],
+                            ),
+                        4 =>
+                            array (
+                                'field' => 'CAT_OBSERVATION',
+                                'type' => 'text',
+                                'value' => $record[4],
+                            ),
+                        5 =>
+                            array (
+                                'field' => 'CAT_CREATE_DATE',
+                                'type' => 'text',
+                                'value' => $record[5],
+                            ),
+                        6 =>
+                            array (
+                                'field' => 'CAT_UPDATE_DATE',
+                                'type' => 'text',
+                                'value' => $record[6],
+                            )
+                    ),
+                'action' => 1,
+            );
+
+        }
+        return array_merge($data, $newData);
+
+    }
 }
 
