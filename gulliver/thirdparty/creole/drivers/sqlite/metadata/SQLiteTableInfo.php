@@ -123,7 +123,9 @@ class SQLiteTableInfo extends TableInfo {
             $this->indexes[$name] = new IndexInfo($name);
             
             // get columns for that index
-            $res2 = sqlite_query($this->conn->getResource(), "PRAGMA index_info('$name')");
+            $query = "PRAGMA index_info('$name')";
+            $query = $filter->preventSqlInjection($query);
+            $res2 = sqlite_query($this->conn->getResource(), $query);
             while($row2 = sqlite_fetch_array($res2, SQLITE_ASSOC)) {
                 $colname = $row2['name'];
                 $this->indexes[$name]->addColumn($this->columns[ $colname ]);
