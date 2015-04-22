@@ -2712,7 +2712,7 @@ CREATE TABLE `USR_REPORTING`
     `TOTAL_CASES_OVERDUE`   DECIMAL(7,2) default 0,
     `TOTAL_CASES_ON_TIME`   DECIMAL(7,2) default 0,
     PRIMARY KEY (`USR_UID`, `TAS_UID`,`MONTH`,`YEAR`),
-    KEY `indexApp`(`USR_UID`, `TAS_UID`, `PRO_UID`)
+    KEY `indexReporting`(`USR_UID`, `TAS_UID`, `PRO_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Data calculated users by task';
 #-----------------------------------------------------------------------------
 #-- PRO_REPORTING
@@ -2749,7 +2749,6 @@ CREATE TABLE `DASHBOARD`
     `DAS_UID`           VARCHAR(32) default '' NOT NULL,
     `DAS_TITLE`         VARCHAR(255) default '' NOT NULL,
     `DAS_DESCRIPTION`   MEDIUMTEXT,
-    `DAS_VERSION`       VARCHAR(10) default '1.0' NOT NULL,
     `DAS_CREATE_DATE`   DATETIME  NOT NULL,
     `DAS_UPDATE_DATE`   DATETIME,
     `DAS_STATUS`        TINYINT default 1 NOT NULL,
@@ -2778,7 +2777,7 @@ CREATE TABLE `DASHBOARD_INDICATOR`
     `DAS_IND_CREATE_DATE`       DATETIME  NOT NULL,
     `DAS_IND_UPDATE_DATE`       DATETIME,
     `DAS_IND_STATUS`            TINYINT default 1 NOT NULL,
-    PRIMARY KEY (`DAS_UID`),
+    PRIMARY KEY (`DAS_IND_UID`),
     KEY `indexDashboard`(`DAS_UID`, `DAS_IND_TYPE`),
     CONSTRAINT `fk_dashboard_indicator_dashboard`
         FOREIGN KEY (`DAS_UID`)
@@ -2796,7 +2795,7 @@ CREATE TABLE `DASHBOARD_DAS_IND`
     `DAS_UID`               VARCHAR(32) default '' NOT NULL,
     `OWNER_UID`             VARCHAR(32) default '' NOT NULL,
     `OWNER_TYPE`            VARCHAR(15) default '' NOT NULL,
-    PRIMARY KEY (`DAS_UID`),
+    PRIMARY KEY (`DAS_UID`,`OWNER_UID`),
     CONSTRAINT `fk_dashboard_indicator_dashboard_das_ind`
         FOREIGN KEY (`DAS_UID`)
         REFERENCES `DASHBOARD` (`DAS_UID`)
