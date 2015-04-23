@@ -363,7 +363,7 @@ class User
                 /*----------------------------------********---------------------------------*/
                 $this->getFieldNameByFormatFieldName("USR_COST_BY_HOUR")       => $record["USR_COST_BY_HOUR"],
                 $this->getFieldNameByFormatFieldName("USR_UNIT_COST")          => $record["USR_UNIT_COST"],
-                /*---------------------------------********---------------------------------*/
+                /*----------------------------------********---------------------------------*/
                 $this->getFieldNameByFormatFieldName("USR_TOTAL_INBOX")        => $record["USR_TOTAL_INBOX"],
                 $this->getFieldNameByFormatFieldName("USR_TOTAL_DRAFT")        => $record["USR_TOTAL_DRAFT"],
                 $this->getFieldNameByFormatFieldName("USR_TOTAL_CANCELLED")    => $record["USR_TOTAL_CANCELLED"],
