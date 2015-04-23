@@ -193,7 +193,7 @@ class actionsByEmailClass extends PMPlugin
                             G::LoadClass("Users");
 
                             $user = new Users();
-                            $userDetails = $user->loadDetails($data->USR_UID);
+                            $userDetails = $user->loadDetails($data->PREVIOUS_USR_UID);
                             $emailFrom = $userDetails["USR_EMAIL"];
 
                             G::LoadClass('wsBase');
