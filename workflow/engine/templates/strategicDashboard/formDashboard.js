@@ -79,11 +79,13 @@ Ext.onReady( function() {
         items       : [
             {
                 id          : 'DAS_TITLE',
-                fieldLabel  : _('ID_DASHBOARD_TITLE'),
+                fieldLabel  : _('ID_DASHBOARD_TITLE')+ ' *',
                 xtype       : 'textfield',
                 anchor      : '85%',
                 maxLength   : 250,
-                maskRe      : /([a-zA-Z0-9\s]+)$/,
+                maskRe      : /([a-zA-Z0-9_'\s]+)$/,
+                regex       : /([a-zA-Z0-9_'\s]+)$/,
+                regexText   : _('ID_INVALID_VALUE', _('ID_DASHBOARD_TITLE')),
                 allowBlank  : false
             },
             {
@@ -92,7 +94,7 @@ Ext.onReady( function() {
                 fieldLabel      : _('ID_DESCRIPTION'),
                 labelSeparator  : '',
                 anchor          : '85%',
-                maskRe          : /([a-zA-Z0-9\s]+)$/,
+                maskRe          : /([a-zA-Z0-9_'\s]+)$/,
                 height          : 50,
             }
         ]
@@ -671,7 +673,6 @@ Ext.onReady( function() {
         ]
     });
 
-    ownerInfoGrid.store.load();
     ownerInfoGrid.on("afterrender", function(component) {
         component.getBottomToolbar().refresh.hideParent = true;
         component.getBottomToolbar().refresh.hide(); 
@@ -698,6 +699,7 @@ Ext.onReady( function() {
         }
         dashboardOwnerFields.items.items[0].bindStore(dataUserGroup);
     } );
+
     storeUsers.on( 'load', function( store, records, options ) {
         for (var i=0; i< store.data.length; i++) {
             row = [];
@@ -751,11 +753,13 @@ var addTab = function (flag) {
                                     hidden      : true
                                 },
                                 {
-                                    fieldLabel  : _('ID_INDICATOR_TITLE'),
+                                    fieldLabel  : _('ID_INDICATOR_TITLE')+ ' *',
                                     id          : 'IND_TITLE_'+ indexTab,
                                     xtype       : 'textfield',
                                     anchor      : '85%',
-                                    maskRe      : /([a-zA-Z0-9\s]+)$/,
+                                    maskRe      : /([a-zA-Z0-9_'\s]+)$/,
+                                    regex       : /([a-zA-Z0-9_'\s]+)$/,
+                                    regexText   : _('ID_INVALID_VALUE', _('ID_INDICATOR_TITLE')),
                                     maxLength   : 250,
                                     allowBlank  : false
                                 },
@@ -763,7 +767,7 @@ var addTab = function (flag) {
                                     anchor          : '85%',
                                     editable        : false,
                                     id              : 'IND_TYPE_'+ indexTab,
-                                    fieldLabel      : _('ID_INDICATOR_TYPE'),
+                                    fieldLabel      : _('ID_INDICATOR_TYPE')+ ' *',
                                     displayField    : 'CAT_LABEL_ID',
                                     valueField      : 'CAT_UID',
                                     forceSelection  : false,
@@ -874,7 +878,7 @@ var addTab = function (flag) {
                                 new Ext.form.ComboBox({
                                     anchor          : '85%',
                                     editable        : false,
-                                    fieldLabel      : _('ID_PROCESS'),
+                                    fieldLabel      : _('ID_PROCESS')+ ' *',
                                     id              : 'IND_PROCESS_'+ indexTab,
                                     displayField    : 'prj_name',
                                     valueField      : 'prj_uid',
@@ -1086,7 +1090,6 @@ var saveDashboard = function () {
             },
             data: JSON.stringify(data),
             success: function (response) {
-                var jsonResp = Ext.util.JSON.decode(response.responseText);
                 saveAllDashboardOwner(DAS_UID);
                 saveAllIndicators(DAS_UID);
                 myMask.hide();
@@ -1113,7 +1116,7 @@ var saveAllIndicators = function (DAS_UID) {
         fieldsTab.push(goal.items.items[0]);
         fieldsTab.push(goal.items.items[1]);
 
-        data = [];
+        var data = [];
         data['DAS_UID'] = DAS_UID;
 
         for (var index in fieldsTab) {
