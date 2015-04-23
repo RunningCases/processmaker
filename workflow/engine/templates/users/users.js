@@ -521,7 +521,11 @@ Ext.onReady(function () {
                 id         : 'USR_COST_BY_HOUR',
                 fieldLabel : _('ID_COST_BY_HOUR'),
                 xtype      : 'numberfield',
+                allowNegative: false,
                 decimalSeparator : '.',
+                maskRe     : /^[0-9]/i,
+                regex      : /^[0-9]/i,
+                regexText  : _('ID_INVALID_VALUE', _('ID_COST_BY_HOUR')),
                 maxLength  : 13,
                 width      : 80
             },
