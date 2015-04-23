@@ -4100,6 +4100,7 @@ class Cases
 
         $oApplication = new Application();
         $aFields = $oApplication->load($sApplicationUID);
+        $appStatusCurrent = $aFields['APP_STATUS'];
         $oCriteria = new Criteria('workflow');
         $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
         $oCriteria->add(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL);
@@ -4168,9 +4169,10 @@ class Cases
         }
         /*----------------------------------********---------------------------------*/
         $data = array (
-            'APP_UID'   => $sApplicationUID,
-            'DEL_INDEX' => $iIndex,
-            'USR_UID'   => $user_logged
+            'APP_UID'            => $sApplicationUID,
+            'DEL_INDEX'          => $iIndex,
+            'USR_UID'            => $user_logged,
+            'APP_STATUS_CURRENT' => $appStatusCurrent
         );
         $data = array_merge($aFields, $data);
         $oListCanceled = new ListCanceled();
