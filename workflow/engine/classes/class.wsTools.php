@@ -113,6 +113,13 @@ class workspaceTools
 
         CLI::logging("> Updating Files Manager...\n\n");
         $this->upgradeFilesManager($workSpace);
+
+        $start = microtime(true);
+        CLI::logging("> Migrate new lists...\n");
+        $this->migrateList($workSpace);
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Migrate new lists Process took $final seconds.\n");
     }
 
     /**
@@ -634,7 +641,7 @@ class workspaceTools
                 $oStatement_sleep->executeQuery();
             }
 
-            $sql_query = "SELECT * FROM information_schema.processlist WHERE user = SUBSTRING_INDEX(USER(),'@',1) and db = DATABASE() ORDER BY id;";
+            $sql_query = "SELECT * FROM information_schema.processlist WHERE user = SUBSTRING_INDEX(USER(),'@',1) and db = DATABASE() and time > 0 ORDER BY id;";
             $stmt_query = $connection->createStatement();
             $rs_query = $stmt_query->executeQuery( $sql_query, ResultSet::FETCHMODE_ASSOC );
 
@@ -912,6 +919,13 @@ class workspaceTools
         if (file_exists(PATH_CORE . 'data' . PATH_SEP . 'check.data')) {
             $checkData = unserialize(file_get_contents(PATH_CORE . 'data' . PATH_SEP . 'check.data'));
             if (is_array($checkData)) {
+                /*----------------------------------********---------------------------------*/
+                $licensedFeatures = & PMLicensedFeatures::getSingleton();
+                $checkData = $licensedFeatures->addNewFeatures($checkData);
+
+                $catalog = new Catalog();
+                $checkData = $catalog->registerRows($checkData);
+                /*----------------------------------********---------------------------------*/
                 foreach ($checkData as $checkThis) {
                     $this->updateThisRegistry($checkThis);
                 }
@@ -1853,6 +1867,9 @@ class workspaceTools
      */
     public function migrateList ($workSpace)
     {
+        if ($this->listFirstExecution('check')) {
+            return 1;
+        }
         $this->initPropel(true);
         $appCache = new AppCacheView();
         G::LoadClass("case");
@@ -2034,13 +2051,15 @@ class workspaceTools
         switch ($action) {
            case 'insert':
                 $conf  = new Configuration();
-                $data["CFG_UID"]  ='MIGRATED_LIST';
-                $data["OBJ_UID"]  ='list';
-                $data["CFG_VALUE"]='true';
-                $data["PRO_UID"]  ='list';
-                $data["USR_UID"]  ='list';
-                $data["APP_UID"]  ='list';
-                $conf->create($data);
+                if (!($conf->exists('MIGRATED_LIST', 'list', 'list', 'list', 'list'))) {
+                    $data["CFG_UID"]  ='MIGRATED_LIST';
+                    $data["OBJ_UID"]  ='list';
+                    $data["CFG_VALUE"]='true';
+                    $data["PRO_UID"]  ='list';
+                    $data["USR_UID"]  ='list';
+                    $data["APP_UID"]  ='list';
+                    $conf->create($data);
+                }
                 return true;
                 break;
            case 'check':

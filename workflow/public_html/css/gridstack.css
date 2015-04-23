@@ -103,7 +103,7 @@
         width: auto !important;
         left: 0 !important;
         top: auto !important;
-        margin-bottom: 20px;
+        margin-bottom:20px;
     }
 
     .grid-stack {
@@ -127,3 +127,4 @@
     -o-transition: left .0s, top .0s, height .0s, width .0s;
     transition:  left .0s, top .0s, height .0s, width .0s;
 }
+

@@ -284,7 +284,7 @@ class ListCompleted extends BaseListCompleted
             $criteria->setOffset( $start );
         }
 
-        $dataset = ListCompletedPeer::doSelectRS($criteria);
+        $dataset = ListCompletedPeer::doSelectRS($criteria, Propel::getDbConnection('workflow_ro') );
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $data = array();
         while ($dataset->next()) {

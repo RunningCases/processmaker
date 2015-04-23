@@ -409,14 +409,26 @@ Ext.onReady(function () {
           fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_FIRSTNAME')) +'"> * </span>' + _('ID_FIRSTNAME'),
           xtype      : 'textfield',
           width      : 260,
-          allowBlank : false
+          allowBlank : false,
+          listeners: {
+            'change': function(field, newVal, oldVal){
+                var fname = newVal.replace(/^\s+/,'').replace(/\s+$/,'');
+                field.setValue(fname.trim());
+              } 
+          }
         },
         {
           id         : 'USR_LASTNAME',
           fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_LASTNAME')) +'"> * </span>' + _('ID_LASTNAME'),
           xtype      : 'textfield',
           width      : 260,
-          allowBlank : false
+          allowBlank : false,
+          listeners: {
+            'change': function(field, newVal, oldVal){
+                var lname = newVal.replace(/^\s+/,'').replace(/\s+$/,'');
+                field.setValue(lname.trim());
+              } 
+          }
         },
         {
           id         : 'USR_USERNAME',

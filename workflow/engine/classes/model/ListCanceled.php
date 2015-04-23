@@ -292,7 +292,7 @@ class ListCanceled extends BaseListCanceled {
             $criteria->setOffset( $start );
         }
 
-        $dataset = ListCanceledPeer::doSelectRS($criteria);
+        $dataset = ListCanceledPeer::doSelectRS($criteria, Propel::getDbConnection('workflow_ro') );
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $data = array();
         while ($dataset->next()) {

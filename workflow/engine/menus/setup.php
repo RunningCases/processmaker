@@ -75,7 +75,7 @@ if ($RBAC->userCanAccess('PM_SETUP') == 1) {
     /*----------------------------------********---------------------------------*/
 
 	if ($licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjBsZEJ6dnpJa3dTeWVLVT0=')) {
-        $G_TMP_MENU->AddIdRawOption('NEW_DASHBOARD', '../strategicDashboard/dashboardList', ucfirst(G::LoadTranslation('ID_STRATEGIC_DASHBOARD')), '', '', 'settings');
+        $G_TMP_MENU->AddIdRawOption('STRATEGIC_DASHBOARD', '../strategicDashboard/dashboardList', ucfirst(G::LoadTranslation('ID_STRATEGIC_DASHBOARD')), '', '', 'settings');
     }
 
     /*----------------------------------********---------------------------------*/

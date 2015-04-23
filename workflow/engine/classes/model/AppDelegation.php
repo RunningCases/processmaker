@@ -132,10 +132,12 @@ class AppDelegation extends BaseAppDelegation
         $this->setDelDelegateDate( 'now' );
 
         //The function return an array now.  By JHL
-        $delTaskDueDate = $this->calculateDueDate( $sNextTasParam );
+        $delTaskDueDate = $this->calculateDueDate($sNextTasParam);
+        $delRiskDate    = $this->calculateRiskDate($delTaskDueDate, $this->getRisk());
 
         //$this->setDelTaskDueDate( $delTaskDueDate['DUE_DATE'] ); // Due date formatted
-        $this->setDelTaskDueDate( $delTaskDueDate );
+        $this->setDelTaskDueDate($delTaskDueDate);
+        $this->setDelRiskDate($delRiskDate);
 
         if ((defined( "DEBUG_CALENDAR_LOG" )) && (DEBUG_CALENDAR_LOG)) {
             //$this->setDelData( $delTaskDueDate['DUE_DATE_LOG'] ); // Log of actions made by Calendar Engine
@@ -164,7 +166,7 @@ class AppDelegation extends BaseAppDelegation
                 $msg .= $objValidationFailure->getMessage() . "<br/>";
             }
             throw (new Exception( 'Failed Data validation. ' . $msg ));
-        } 
+        }
 
         $delIndex = $this->getDelIndex();
 
@@ -179,8 +181,8 @@ class AppDelegation extends BaseAppDelegation
             $oPluginRegistry->executeTriggers(PM_CREATE_NEW_DELEGATION, $data);
 
             /*----------------------------------********---------------------------------*/
-            // this section evaluates the actions by email trigger execution please 
-            // modify this section carefully, the if evaluation checks if the license has been 
+            // this section evaluates the actions by email trigger execution please
+            // modify this section carefully, the if evaluation checks if the license has been
             // activated in order to send the mail according to the configuration table
             if (PMLicensedFeatures
                 ::getSingleton()
@@ -354,19 +356,51 @@ class AppDelegation extends BaseAppDelegation
             $aCalendarUID = '';
         }
 
-        //use the dates class to calculate dates
+        //Calendar - Use the dates class to calculate dates
         $calendar = new calendar();
 
-        if ($calendar->pmCalendarUid == '') {
-        	$calendar->getCalendar(null, $task->getProUid(), $aData['TAS_UID']);
-        	$calData = $calendar->getCalendarData();
+        $arrayCalendarData = array();
+
+        if ($calendar->pmCalendarUid == "") {
+            $calendar->getCalendar(null, $this->getProUid(), $this->getTasUid());
+
+            $arrayCalendarData = $calendar->getCalendarData();
         }
 
+        //Due date
         /*$iDueDate = $calendar->calculateDate( $this->getDelDelegateDate(), $aData['TAS_DURATION'], $aData['TAS_TIMEUNIT']         //hours or days, ( we only accept this two types or maybe weeks
         );*/
-        $iDueDate = $calendar->dashCalculateDate($this->getDelDelegateDate(), $aData['TAS_DURATION'], $aData['TAS_TIMEUNIT'], $calData);
+        $dueDate = $calendar->dashCalculateDate($this->getDelDelegateDate(), $aData["TAS_DURATION"], $aData["TAS_TIMEUNIT"], $arrayCalendarData);
 
-        return $iDueDate;
+        //Return
+        return $dueDate;
+    }
+
+    public function calculateRiskDate($dueDate, $risk)
+    {
+        try {
+            $riskTime = strtotime($dueDate) - strtotime($this->getDelDelegateDate()); //Seconds
+            $riskTime = $riskTime - ($riskTime * $risk);
+
+            //Calendar - Use the dates class to calculate dates
+            $calendar = new calendar();
+
+            $arrayCalendarData = array();
+
+            if ($calendar->pmCalendarUid == "") {
+                $calendar->getCalendar(null, $this->getProUid(), $this->getTasUid());
+
+                $arrayCalendarData = $calendar->getCalendarData();
+            }
+
+            //Risk date
+            $riskDate = $calendar->dashCalculateDate($this->getDelDelegateDate(), round($riskTime / (60 * 60)), "HOURS", $arrayCalendarData);
+
+            //Return
+            return $riskDate;
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     public function getDiffDate ($date1, $date2)
@@ -455,7 +489,7 @@ class AppDelegation extends BaseAppDelegation
             $i = 0;
             //print "<table colspacing='2' border='1'>";
             //print "<tr><td>iDelegateDate </td><td>iInitDate </td><td>iDueDate </td><td>iFinishDate </td><td>isStarted </td><td>isFinished </td><td>isDelayed </td><td>queueDuration </td><td>delDuration </td><td>delayDuration</td></tr>";
-            
+
             $calendar = new calendar();
 
             $now = strtotime( 'now' );
@@ -576,8 +610,8 @@ class AppDelegation extends BaseAppDelegation
             error_log( $oError->getMessage() );
         }
     }
-    
-    
+
+
     public function getLastDeleration ($APP_UID)
     {
         $c = new Criteria( 'workflow' );
@@ -628,7 +662,7 @@ class AppDelegation extends BaseAppDelegation
         $data = $oRuleSet->getRow();
         return $data['TAS_UID'];
     }
-    
+
     /**
     * Verify if the current case is already routed.
     *
@@ -653,5 +687,16 @@ class AppDelegation extends BaseAppDelegation
         }
     }
 
+    public function getRisk()
+    {
+        try {
+            $risk = 0.2;
+
+            //Return
+            return $risk;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 }
 

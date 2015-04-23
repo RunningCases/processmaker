@@ -377,8 +377,8 @@ class SkinEngine
       if (strpos($_SERVER['REQUEST_URI'], '/login/login') !== false) {
         $freeOfChargeText = "";
         if (! defined('SKIP_FREE_OF_CHARGE_TEXT'))
-        $freeOfChargeText = "Supplied free of charge with no support, certification, warranty, <br>maintenance nor indemnity by Colosa and its Certified Partners.";
-        if(class_exists('pmLicenseManager')) $freeOfChargeText="";
+        $freeOfChargeText = "Supplied free of charge with no support, certification, warranty, <br>maintenance nor indemnity by Processmaker and its Certified Partners.";
+        if(file_exists(PATH_CLASSES."class.pmLicenseManager.php")) $freeOfChargeText="";  
 
         $fileFooter = PATH_SKINS . SYS_SKIN . PATH_SEP . 'footer.html';
         if (file_exists($fileFooter)) {
@@ -392,7 +392,7 @@ class SkinEngine
             if (file_exists($fileFooter)) {
               $footer .= file_get_contents($fileFooter);
             } else {
-              $footer .= "<br />Copyright &copy; 2000-" . date('Y') . " <a href=\"http://www.processmaker.com\" alt=\"ProcessMaker Inc.\" target=\"_blank\">ProcessMaker Inc.</a> All rights reserved.<br /> $freeOfChargeText " . "<br><br/><a href=\"http://www.processmaker.com\" alt=\"Powered by ProcessMaker - Open Source Workflow & Business Process Management (BPM) Management Software\" title=\"Powered by ProcessMaker\" target=\"_blank\"></a>";
+              $footer .= "$freeOfChargeText  <br />Copyright &copy; 2000-" . date('Y') . " <a href=\"http://www.processmaker.com\" alt=\"ProcessMaker Inc.\" target=\"_blank\">ProcessMaker </a>Inc. All rights reserved.<br />" . "<br><br/><a href=\"http://www.processmaker.com\" alt=\"Powered by ProcessMaker - Open Source Workflow & Business Process Management (BPM) Management Software\" title=\"Powered by ProcessMaker\" target=\"_blank\"></a>";
             }
           }
         }
@@ -505,7 +505,7 @@ class SkinEngine
             if (file_exists($fileFooter)) {
               $footer .= file_get_contents($fileFooter);
             } else {
-              $footer .= "<br />Copyright &copy; 2000-" . date('Y') . " <a href=\"http://www.processmaker.com\" alt=\"ProcessMaker Inc.\" target=\"_blank\">ProcessMaker Inc.</a> All rights reserved.<br /> $freeOfChargeText " . "<br><br/><a href=\"http://www.processmaker.com\" alt=\"Powered by ProcessMaker - Open Source Workflow & Business Process Management (BPM) Management Software\" title=\"Powered by ProcessMaker\" target=\"_blank\"></a>";
+              $footer .= "$freeOfChargeText <br />Copyright &copy; 2000-" . date('Y') . " <a href=\"http://www.processmaker.com\" alt=\"ProcessMaker Inc.\" target=\"_blank\">ProcessMaker </a>Inc. All rights reserved.<br />  " . "<br><br/><a href=\"http://www.processmaker.com\" alt=\"Powered by ProcessMaker - Open Source Workflow & Business Process Management (BPM) Management Software\" title=\"Powered by ProcessMaker\" target=\"_blank\"></a>";
             }
           }
         }
@@ -698,8 +698,8 @@ class SkinEngine
       if (strpos($_SERVER['REQUEST_URI'], '/login/login') !== false) {
         $freeOfChargeText = "";
         if (! defined('SKIP_FREE_OF_CHARGE_TEXT'))
-        $freeOfChargeText = "Supplied free of charge with no support, certification, warranty, <br>maintenance nor indemnity by Colosa and its Certified Partners.";
-        if(class_exists('pmLicenseManager')) $freeOfChargeText="";
+        $freeOfChargeText = "Supplied free of charge with no support, certification, warranty, maintenance nor indemnity by ProcessMaker and its Certified Partners.";
+        if(file_exists(PATH_CLASSES."class.pmLicenseManager.php")) $freeOfChargeText="";        
 
         $fileFooter = PATH_SKINS . SYS_SKIN . PATH_SEP . 'footer.html';
         if (file_exists($fileFooter)) {
@@ -713,7 +713,7 @@ class SkinEngine
             if (file_exists($fileFooter)) {
               $footer .= file_get_contents($fileFooter);
             } else {
-              $footer .= "<br />Copyright &copy; 2000-" . date('Y') . " <a href=\"http://www.processmaker.com\" alt=\"ProcessMaker Inc.\" target=\"_blank\">ProcessMaker Inc.</a> All rights reserved.<br /> $freeOfChargeText " . "<br><br/><a href=\"http://www.processmaker.com\" alt=\"Powered by ProcessMaker - Open Source Workflow & Business Process Management (BPM) Management Software\" title=\"Powered by ProcessMaker\" target=\"_blank\"></a>";
+              $footer .= "$freeOfChargeText <br />Copyright &copy; 2000-" . date('Y') . " <a href=\"http://www.processmaker.com\" alt=\"ProcessMaker Inc.\" target=\"_blank\">ProcessMaker </a>Inc. All rights reserved.<br />" . "<br><br/><a href=\"http://www.processmaker.com\" alt=\"Powered by ProcessMaker - Open Source Workflow & Business Process Management (BPM) Management Software\" title=\"Powered by ProcessMaker\" target=\"_blank\"></a>";
             }
           }
         }
@@ -752,7 +752,7 @@ class SkinEngine
         } else {
             $smarty->assign('udate', G::getformatedDate(date('Y-m-d H:i:s'), 'M d, yyyy', SYS_LANG));
         }
-        $name = $conf->userNameFormat(isset($_SESSION['USR_USERNAME']) ? $_SESSION['USR_USERNAME']: '', isset($_SESSION['USR_FULLNAME']) ? htmlentities($_SESSION['USR_FULLNAME'] , ENT_QUOTES, 'UTF-8'): '', isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : '');
+        $name = $conf->userNameFormat(isset($_SESSION['USR_USERNAME']) ? $_SESSION['USR_USERNAME']: '', isset($_SESSION['USR_FULLNAME']) ? htmlentities($_SESSION['USR_FULLNAME'] , ENT_QUOTES, 'UTF-8'): '', isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : '');            
         $smarty->assign('user',$name);
       }
 
