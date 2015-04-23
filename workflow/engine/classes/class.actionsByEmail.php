@@ -82,7 +82,10 @@ class actionsByEmailClass extends PMPlugin
                     }
 
                     if ($email != '') {
-                        $subject = $caseFields['APP_TITLE'];
+                        $subject = G::replaceDataField( $configuration['ABE_SUBJECT_FIELD'], $caseFields['APP_DATA'] );
+                        if($subject == ''){
+                            $subject = $caseFields['APP_TITLE'];
+                        }
 
                         // Create
                         require_once 'classes/model/AbeRequests.php';
