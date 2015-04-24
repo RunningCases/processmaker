@@ -751,7 +751,16 @@ Ext.onReady( function() {
                       width      : 200 ,
                       fieldLabel : _('ID_NAME') ,
                       name       : 'name' ,
-                      allowBlank : false
+                      allowBlank : false,
+                      msgTarget: 'side',
+                      validator: function(valueField){
+                        if(valueField.length<=100){
+                            return true;
+                        }else{
+                          Ext.MessageBox.alert(_('ID_WARNING'), _("ID_PPP_MAXIMUM_LENGTH")+":100", function(){ return true;});
+                          return false;
+                        }
+                      }
                     },
                     {
                       id         : 'dynaformCalendarDescription' ,
