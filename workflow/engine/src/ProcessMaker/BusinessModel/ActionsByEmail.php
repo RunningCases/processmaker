@@ -19,9 +19,11 @@ class ActionsByEmail
                 case 'configuration':
                     require_once 'classes/model/AbeConfiguration.php';
                     $abeConfigurationInstance = new \AbeConfiguration();
-                    $noteValues = json_decode($feature['fields']['ABE_CASE_NOTE_IN_RESPONSE']);
-                    foreach ($noteValues as $value) {
-                        $feature['fields']['ABE_CASE_NOTE_IN_RESPONSE'] = $value;
+                    if(isset($feature['fields']['ABE_CASE_NOTE_IN_RESPONSE'])){
+                        $noteValues = json_decode($feature['fields']['ABE_CASE_NOTE_IN_RESPONSE']);
+                        foreach ($noteValues as $value) {
+                            $feature['fields']['ABE_CASE_NOTE_IN_RESPONSE'] = $value;
+                        }
                     }
                     $abeConfigurationInstance->createOrUpdate($feature['fields']);
                     break;
@@ -50,8 +52,12 @@ class ActionsByEmail
         $result->next();
         $configuration = array();
         if ($configuration = $result->getRow()) {
-            $configuration['ABE_EMAIL_FIELD_VALUE'] = $configuration['ABE_EMAIL_FIELD'];
-            $configuration['ABE_ACTION_FIELD_VALUE'] = $configuration['ABE_ACTION_FIELD'];
+            $configuration['ABE_UID'] = $configuration['ABE_UID'];
+            $configuration['ABE_TYPE'] = $configuration['ABE_TYPE'];
+            $configuration['ABE_TEMPLATE'] = $configuration['ABE_TEMPLATE'];
+            $configuration['ABE_SUBJECT_FIELD'] = $configuration['ABE_SUBJECT_FIELD'];
+            $configuration['ABE_EMAIL_FIELD'] = $configuration['ABE_EMAIL_FIELD'];
+            $configuration['ABE_ACTION_FIELD'] = $configuration['ABE_ACTION_FIELD'];
             $configuration['ABE_CASE_NOTE_IN_RESPONSE'] = $configuration['ABE_CASE_NOTE_IN_RESPONSE'] ? '["1"]' : '[]';
         }
         $configuration['feature'] = 'ActionsByEmail';
