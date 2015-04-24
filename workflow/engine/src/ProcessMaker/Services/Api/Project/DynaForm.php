@@ -47,6 +47,8 @@ class DynaForm extends Api
             $dynaForm->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
             $arrayData = $dynaForm->executeCreate($prj_uid, $request_data);
+            $request_data['dyn_content']="{}";
+            $arrayData = $dynaForm->update($arrayData['dyn_uid'], $request_data);
 
             $response = $arrayData;
 
