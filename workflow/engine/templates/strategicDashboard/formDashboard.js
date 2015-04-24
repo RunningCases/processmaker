@@ -530,13 +530,14 @@ Ext.onReady( function() {
                                     flag = true;
                                     break;
                                 case 'yes':
+                                    tabPanel.getItem(component.id).show();
                                     flag = false;
                                     var dasIndUid = Ext.getCmp('DAS_IND_UID_'+component.id).getValue();
                                     if (typeof dasIndUid != 'undefined' && dasIndUid != '') {
                                         removeIndicator(dasIndUid);
                                     }
                                     tabActivate.remove(component.id);
-                                    tabPanel.remove(component);
+                                    tabPanel.remove(component, true);
                                     break;
                             }
                         },
@@ -786,6 +787,7 @@ var addTab = function (flag) {
                                             var fields = ['DAS_IND_FIRST_FIGURE_'+index,'DAS_IND_FIRST_FREQUENCY_'+index,'DAS_IND_SECOND_FIGURE_'+index, 'DAS_IND_SECOND_FREQUENCY_'+index];
                                             if (value == '1050') {
                                                 field = Ext.getCmp('IND_PROCESS_'+index);
+                                                field.setValue('0');
                                                 field.disable();
                                                 field.hide();
                                             } else {
@@ -882,14 +884,13 @@ var addTab = function (flag) {
                                     id              : 'IND_PROCESS_'+ indexTab,
                                     displayField    : 'prj_name',
                                     valueField      : 'prj_uid',
-                                    forceSelection  : false,
+                                    forceSelection  : true,
                                     emptyText       : _('ID_EMPTY_PROCESSES'),
                                     selectOnFocus   : true,
                                     hidden          : true,
                                     typeAhead       : true,
                                     autocomplete    : true,
                                     triggerAction   : 'all',
-                                    value           : '0',
                                     store           : storeProject
                                 }),
                                 new Ext.form.ComboBox({
@@ -1112,6 +1113,20 @@ var saveAllIndicators = function (DAS_UID) {
         tabPanel.getItem(tabActivate[tab]).show();
         var fieldsTab = tabPanel.getItem(tabActivate[tab]).items.items[0].items.items[0].items.items;
 
+        if (fieldsTab[1].getValue().trim() == '') {
+            PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TITLE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
+            fieldsTab[1].focus(true,10);
+            return false;
+        } else if (fieldsTab[2].getValue().trim() == '') {
+            PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TYPE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
+            fieldsTab[2].focus(true,10);
+            return false;
+        } else if (fieldsTab[2].getValue() != '1050' && fieldsTab[4].getValue().trim() == '') {
+            PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_PROCESS_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
+            fieldsTab[4].focus(true,10);
+            return false;
+        }
+
         var goal = fieldsTab[3];
         fieldsTab.push(goal.items.items[0]);
         fieldsTab.push(goal.items.items[1]);
@@ -1125,12 +1140,12 @@ var saveAllIndicators = function (DAS_UID) {
                 continue;
             }
 
-            id = node.id;
+            var id = node.id;
             if (typeof id == 'undefined' || id.indexOf('fieldSet_') != -1 ) {
                 continue;
             }
             id = id.split('_');
-            field = '';
+            var field = '';
             for (var part = 0; part<id.length-1; part++) {
                 if (part == 0) {
                     field = id[part];
@@ -1138,25 +1153,7 @@ var saveAllIndicators = function (DAS_UID) {
                     field = field+'_'+id[part];
                 }
             }
-            value = node.getValue();
-
-            if (field == 'IND_TITLE' && value.trim() == '') {
-                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TITLE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
-                node.focus(true,10);
-                return false;
-            } else if (field == 'IND_TYPE' && value.trim() == '') {
-                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TYPE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
-                node.focus(true,10);
-                return false;
-            } else if (field == 'IND_GOAL' && value.trim() == '') {
-                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_GOAL_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
-                node.focus(true,10);
-                return false;
-            } else if (field == 'IND_PROCESS' && value.trim() == '') {
-                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_PROCESS_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
-                node.focus(true,10);
-                return false;
-            }
+            var value = node.getValue();
 
             field = field == 'IND_TITLE' ? 'DAS_IND_TITLE' : field;
             field = field == 'IND_TYPE' ? 'DAS_IND_TYPE' : field;
