@@ -317,6 +317,11 @@ CloseWindow = function(){
   Ext.getCmp('w').hide();
 };
 SaveNewDepartment = function(){
+  if( newForm.getForm().findField('dep_name').getValue().trim() == "") {
+    Ext.Msg.alert(_('ID_WARNING'), _("ID_FIELD_REQUIRED", _("ID_DEPARTMENT_NAME")));
+    newForm.getForm().findField('dep_name').setValue("");
+    return false;
+  }  
   waitLoading.show();
   var dep_node = Ext.getCmp('treePanel').getSelectionModel().getSelectedNode();
   if (dep_node) dep_node.unselect();
