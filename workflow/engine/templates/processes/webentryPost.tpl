@@ -22,12 +22,11 @@ try {
         throw (new Exception("function ws_open() is not defined. File wsClient.php is missing"));
     }
 
-    $postForm = $_POST["form"];
     $oForm = new Form("{processUid}" . "/" . "{dynaformUid}", PATH_DYNAFORM);
     $oForm->validatePost();
 
     ws_open();
-    $result = ws_newCase("{processUid}", "{taskUid}", convertFormToWSObjects($postForm));
+    $result = ws_newCase("{processUid}", "{taskUid}", convertFormToWSObjects($_POST["form"]));
 
     if ($result->status_code == 0) {
         $caseId = $result->caseId;
