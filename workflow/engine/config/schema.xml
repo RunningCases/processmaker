@@ -4997,6 +4997,7 @@
         </foreign-key>
     </table>
 
+
     <table name="CATALOG">
         <vendor type="mysql">
             <parameter name="Name" value="CATALOG" />

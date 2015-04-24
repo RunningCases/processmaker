@@ -151,12 +151,12 @@ class indicatorsCalculator
 		$params[":endMonth"] = $endMonth;
 		$params[":language"] = $language;
 
-		$sqlString = "
-					select
+		$sqlString = "select
                         i.PRO_UID as uid,
                         tp.CON_VALUE as name,
                         efficiencyIndex,
-                        inefficiencyCost
+                        inefficiencyCost,
+						@curRow := @curRow + 1 AS rank
                     from
                     (	select
                             PRO_UID,
@@ -172,12 +172,14 @@ class indicatorsCalculator
 							AND
 								IF(`YEAR` = :endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = :endYear, :endMonth, :endYear)
                         group by PRO_UID
+						order by $this->peiFormula DESC
                     ) i
                     left join (select *
-                                        from CONTENT
-                                        where CON_CATEGORY = 'PRO_TITLE'
-                                                and CON_LANG = :language
-                                ) tp on i.PRO_UID = tp.CON_ID";
+								from CONTENT
+								where CON_CATEGORY = 'PRO_TITLE'
+										and CON_LANG = :language
+									) tp on i.PRO_UID = tp.CON_ID
+					join  (SELECT @curRow := 0) order_table"; 
 
 		//$retval = $this->propelExecutor($sqlString);
 		$retval = $this->pdoExecutor($sqlString, $params);
@@ -210,7 +212,8 @@ class indicatorsCalculator
 						 efficiencyIndex,
 						 inefficiencyCost,
 						 averageTime,
-						 deviationTime
+						 deviationTime,
+						 @curRow := @curRow + 1 AS rank
 				from
 				(	select
 					   gu.GRP_UID,
@@ -224,12 +227,14 @@ class indicatorsCalculator
 				   WHERE
 					IF(`YEAR` = :endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = :endYear, :endMonth, :endYear)
 				   group by gu.GRP_UID
+					order by $this->ueiFormula DESC
 				) i
 				left join (select *
 								from CONTENT
 							where CON_CATEGORY = 'GRP_TITLE'
 									and CON_LANG = :language 
-						   ) tp on i.GRP_UID = tp.CON_ID";
+						   ) tp on i.GRP_UID = tp.CON_ID
+				join  (SELECT @curRow := 0) order_table"; 
 
 		$retval = $this->pdoExecutor($sqlString, $params);
 		//$retval = $this->propelExecutor($sqlString);
@@ -262,7 +267,8 @@ class indicatorsCalculator
 						   efficiencyIndex,
 						   inefficiencyCost,
 						   averageTime,
-						   deviationTime
+						   deviationTime,
+						 @curRow := @curRow + 1 AS rank
 						from
 						(	select
 							   u.USR_UID,
@@ -279,7 +285,9 @@ class indicatorsCalculator
 							   AND
 								IF(`YEAR` = :endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = :endYear, :endMonth, :endYear)
 						   group by ur.USR_UID
-						) i";
+							order by $this->ueiFormula DESC
+						) i
+						join  (SELECT @curRow := 0) order_table"; 
 
 		$retval = $this->pdoExecutor($sqlString, $params);
 		//$returnValue = $this->propelExecutor($sqlString);
