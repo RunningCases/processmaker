@@ -4844,15 +4844,15 @@
         <column name="PRO_UID"              type="VARCHAR"  size="32" required="true" />
         <column name="MONTH"                type="INTEGER"  required="true" default="0" primaryKey="true" />
         <column name="YEAR"                 type="INTEGER"  required="true" default="0" primaryKey="true" />
-        <column name="TOTAL_TIME_BY_TASK"   type="DECIMAL"  size="7,2"/>
-        <column name="TOTAL_CASES_IN"       type="DECIMAL"  size="7,2"/>
-        <column name="TOTAL_CASES_OUT"      type="DECIMAL"  size="7,2"/>
-        <column name="USER_HOUR_COST"       type="DECIMAL"  size="7,2"/>
-        <column name="AVG_TIME"             type="DECIMAL"  size="7,2"/>
-        <column name="SDV_TIME"             type="DECIMAL"  size="7,2"/>
-        <column name="CONFIGURED_TASK_TIME" type="DECIMAL"  size="7,2"/>
-        <column name="TOTAL_CASES_OVERDUE"  type="DECIMAL"  size="7,2"/>
-        <column name="TOTAL_CASES_ON_TIME"  type="DECIMAL"  size="7,2"/>
+        <column name="TOTAL_TIME_BY_TASK"   type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_IN"       type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_OUT"      type="DECIMAL"  size="7,2"  default="0" />
+        <column name="USER_HOUR_COST"       type="DECIMAL"  size="7,2"  default="0" />
+        <column name="AVG_TIME"             type="DECIMAL"  size="7,2"  default="0" />
+        <column name="SDV_TIME"             type="DECIMAL"  size="7,2"  default="0" />
+        <column name="CONFIGURED_TASK_TIME" type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_OVERDUE"  type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_ON_TIME"  type="DECIMAL"  size="7,2"  default="0" />
         <index name="indexReporting">
             <index-column name="USR_UID"/>
             <index-column name="TAS_UID"/>
@@ -4891,15 +4891,15 @@
         <column name="PRO_UID"                  type="VARCHAR"  size="32" required="true" primaryKey="true" />
         <column name="MONTH"                    type="INTEGER"  required="true" default="0" primaryKey="true" />
         <column name="YEAR"                     type="INTEGER"  required="true" default="0" primaryKey="true" />
-        <column name="AVG_TIME"                 type="DECIMAL"  size="7,2"/>
-        <column name="SDV_TIME"                 type="DECIMAL"  size="7,2"/>
-        <column name="TOTAL_CASES_IN"           type="DECIMAL"  size="7,2"/>
-        <column name="TOTAL_CASES_OUT"          type="DECIMAL"  size="7,2"/>
-        <column name="CONFIGURED_PROCESS_TIME"  type="DECIMAL"  size="7,2"/>
-        <column name="CONFIGURED_PROCESS_COST"  type="DECIMAL"  size="7,2"/>
-        <column name="TOTAL_CASES_OPEN"         type="DECIMAL"  size="7,2"/>
-        <column name="TOTAL_CASES_OVERDUE"      type="DECIMAL"  size="7,2"/>
-        <column name="TOTAL_CASES_ON_TIME"      type="DECIMAL"  size="7,2"/>
+        <column name="AVG_TIME"                 type="DECIMAL"  size="7,2"  default="0" />
+        <column name="SDV_TIME"                 type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_IN"           type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_OUT"          type="DECIMAL"  size="7,2"  default="0" />
+        <column name="CONFIGURED_PROCESS_TIME"  type="DECIMAL"  size="7,2"  default="0" />
+        <column name="CONFIGURED_PROCESS_COST"  type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_OPEN"         type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_OVERDUE"      type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_ON_TIME"      type="DECIMAL"  size="7,2"  default="0" />
     </table>
 
     <table name="DASHBOARD">
@@ -4942,7 +4942,7 @@
         <column name="DAS_UID"                  type="VARCHAR"      size="32" required="true" default="" />
         <column name="DAS_IND_TYPE"             type="VARCHAR"      size="32" required="true" default="" />
         <column name="DAS_IND_TITLE"            type="VARCHAR"      size="255" required="true" default="" />
-        <column name="DAS_IND_GOAL"             type="DECIMAL"      size="7,2" required="true" />
+        <column name="DAS_IND_GOAL"             type="DECIMAL"      size="7,2" default="0" />
         <column name="DAS_IND_DIRECTION"        type="TINYINT"      required="true" default="2"/>
         <column name="DAS_UID_PROCESS"          type="VARCHAR"      size="32" required="true" default="" />
         <column name="DAS_IND_FIRST_FIGURE"     type="VARCHAR"      size="32" required="false" default="" />
@@ -4997,6 +4997,7 @@
         </foreign-key>
     </table>
 
+
     <table name="CATALOG">
         <vendor type="mysql">
             <parameter name="Name" value="CATALOG" />
@@ -5011,7 +5012,7 @@
             <parameter name="Create_options" value="" />
             <parameter name="Comment" value="Definitions catalog."/>
         </vendor>
-        <column name="CAT_UID"          type="VARCHAR" size="32"  required="true"  primaryKey="true" default="0"/>
+        <column name="CAT_UID"          type="VARCHAR" size="32"  required="true"  primaryKey="true" default=""/>
         <column name="CAT_LABEL_ID"     type="VARCHAR" size="100" required="true"  default=""/>
         <column name="CAT_TYPE"         type="VARCHAR" size="100" required="true"  primaryKey="true" default=""/>
         <column name="CAT_FLAG"         type="VARCHAR" size="50"  required="false" default=""/>

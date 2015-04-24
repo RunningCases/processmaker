@@ -27,7 +27,7 @@ class DashboardIndicator extends BaseDashboardIndicator
             throw $error;
         }
     }
- function loadbyDasUid ($dasUid, $vmeasureDate, $vcompareDate, $userUid)
+ function loadbyDasUid ($dasUid, $vcompareDate, $vmeasureDate, $userUid)
 	{
 		G::loadClass('indicatorsCalculator');
         $calculator = new \IndicatorsCalculator();
@@ -64,11 +64,15 @@ class DashboardIndicator extends BaseDashboardIndicator
 						$value = current(reset($calculator->peiHistoric($uid, $measureDate, $measureDate, \ReportingPeriodicityEnum::NONE)));
 						$oldValue = current(reset($calculator->peiHistoric($uid, $compareDate, $compareDate, \ReportingPeriodicityEnum::NONE)));
 						$row['DAS_IND_VARIATION'] = $value - $oldValue;
+						$row['DAS_IND_OLD_VALUE'] = $oldValue;
+						$row['DAS_IND_PERCENT_VARIATION'] = round(($value - $oldValue) * 100 / (($oldValue == 0) ? 1 : $oldValue), 1);
 						break;
 					case '1030':
 						$value = current(reset($calculator->ueiHistoric(null, $measureDate, $measureDate, \ReportingPeriodicityEnum::NONE)));
 						$oldValue = current(reset($calculator->ueiHistoric($uid, $compareDate, $compareDate, \ReportingPeriodicityEnum::NONE)));
 						$row['DAS_IND_VARIATION'] = $value - $oldValue;
+						$row['DAS_IND_OLD_VALUE'] = $oldValue;
+						$row['DAS_IND_PERCENT_VARIATION'] = round(($value - $oldValue) * 100 / (($oldValue == 0) ? 1 : $oldValue), 1);
 						break;
                     case '1050':
                         $value = $calculator->statusIndicatorGeneral($userUid);
