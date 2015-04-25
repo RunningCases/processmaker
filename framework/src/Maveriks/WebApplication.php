@@ -315,19 +315,6 @@ class WebApplication
 
         $this->rest->setOverridingFormats('JsonFormat', 'UploadFormat');
 
-        $isPluginRequest = strpos($uri, '/plugin-') !== false ? true : false;
-
-        if ($isPluginRequest) {
-            $tmp = explode('/', $uri);
-            array_shift($tmp);
-            $tmp = array_shift($tmp);
-            $tmp = explode('-', $tmp);
-            $pluginName = $tmp[1];
-            $uri = str_replace('/plugin-'.$pluginName, '', $uri);
-        }
-
-        // Override $_SERVER['REQUEST_URI'] to Restler handles the modified url
-
         // scan all api directory to find api classes
         $classesList = Util\Common::rglob($apiDir . "/*");
 
@@ -356,24 +343,36 @@ class WebApplication
             }
         }
 
-        //if (! $isPluginRequest) { // if it is not a request for a plugin endpoint
+        // 
+        // Register API Plugins classes
+        $isPluginRequest = strpos($uri, '/plugin-') !== false ? true : false;
+
+        if ($isPluginRequest) {
+            $tmp = explode('/', $uri);
+            array_shift($tmp);
+            $tmp = array_shift($tmp);
+            $tmp = explode('-', $tmp);
+            $pluginName = $tmp[1];
+            $uri = str_replace('/plugin-'.$pluginName, '', $uri);
+        }
+        
         // hook to get rest api classes from plugins
         if (class_exists('PMPluginRegistry') && file_exists(PATH_DATA_SITE . 'plugin.singleton')) {
             $pluginRegistry = \PMPluginRegistry::loadSingleton(PATH_DATA_SITE . 'plugin.singleton');
             $plugins = $pluginRegistry->getRegisteredRestServices();
 
             if (! empty($plugins)) {
-                $pluginSourceDir = PATH_PLUGINS . $pluginName . DIRECTORY_SEPARATOR . 'src';
+                foreach ($plugins as $pluginName => $plugin) {
+                    $pluginSourceDir = PATH_PLUGINS . $pluginName . DIRECTORY_SEPARATOR . 'src';
 
-                $loader = \Maveriks\Util\ClassLoader::getInstance();
-                $loader->add($pluginSourceDir);
-
-                if (is_array($plugins) && array_key_exists($pluginName, $plugins)) {
-                    foreach ($plugins[$pluginName] as $class) {
+                    $loader = \Maveriks\Util\ClassLoader::getInstance();
+                    $loader->add($pluginSourceDir);
+                    
+                    foreach ($plugin as $class) {
                         if (class_exists($class['namespace'])) {
                             $this->rest->addAPIClass($class['namespace']);
-                        }
-                    }
+                        }             
+                    }                    
                 }
             }
         }
@@ -597,3 +596,4 @@ class WebApplication
         @unlink(PATH_DATA . 'sites' . DS . $workspace . DS . 'api-config.php');
     }
 }
+
