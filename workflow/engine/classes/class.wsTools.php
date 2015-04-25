@@ -922,6 +922,9 @@ class workspaceTools
                 /*----------------------------------********---------------------------------*/
                 $licensedFeatures = & PMLicensedFeatures::getSingleton();
                 $checkData = $licensedFeatures->addNewFeatures($checkData);
+
+                $catalog = new Catalog();
+                $checkData = $catalog->registerRows($checkData);
                 /*----------------------------------********---------------------------------*/
                 foreach ($checkData as $checkThis) {
                     $this->updateThisRegistry($checkThis);

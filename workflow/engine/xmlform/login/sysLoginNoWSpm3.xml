@@ -24,12 +24,12 @@ SELECT LANG_ID, LANG_NAME FROM langOptions
   </BSUBMIT>
   <JS type="javascript"><![CDATA[
 
-window.onload= function(){  
+window.onload= function(){
   document.getElementById('form[USR_USERNAME]').placeholder = _('ID_USER');
   document.getElementById('form[USR_PASSWORD_MASK]').placeholder = _('ID_PASSWORD');
   document.getElementById('form[USER_ENV]').placeholder = _('ID_WORKSPACE');
   document.getElementById('form[BSUBMIT]').classList.remove('module_app_button___gray');
-  document.getElementById('form[BSUBMIT]').classList.add('button-login-success');  
+  document.getElementById('form[BSUBMIT]').classList.add('button-login-success');
 };
 
 setFocus (getField ('USR_USERNAME'));
@@ -48,9 +48,22 @@ leimnud.event.add(document.getElementById('form[USR_PASSWORD_MASK]'), 'keypress'
   }
 });
 
+leimnud.event.add(document.getElementById('form[USER_ENV]'), 'keypress', function(event) {
+  var key;
+  if(window.event)
+    key = window.event.keyCode;     //IE
+  else
+    key = event.which;     //firefox
+  if(key == 13) {
+    document.getElementById('form[BSUBMIT]').click();
+    return true;
+  } else {
+    return true;
+  }
+});
+
 leimnud.event.add(document.getElementById('form[BSUBMIT]'), 'click', function() {
-    ws = getField('USER_ENV').value;
-    createCookie('pmos_generik2', '{"ws":"'+ws+'"}', 365);
+    createCookie("pm_sys_sys", "{\"sys_sys\": \"" + getField("USER_ENV").value + "\"}", 365);
 
     var client = getBrowserClient();
     if (client.browser == "msie" || client.browser == "safari"){
@@ -63,12 +76,14 @@ leimnud.event.add(document.getElementById('form[BSUBMIT]'), 'click', function() 
 }.extend(document.getElementById('form[BSUBMIT]')));
 
 try{
-    c = new String(readCookie('pmos_generik2'));
-    o = eval("("+c+")");
-    if( o != null){
-        getField('USER_ENV').value = o.ws;
+    var s = new String(readCookie("pm_sys_sys"));
+    var obj = eval("(" + s + ")");
+
+    if (obj != null) {
+        getField("USER_ENV").value = obj.sys_sys;
     }
 } catch(e){}
 
 ]]></JS>
 </dynaForm>
+

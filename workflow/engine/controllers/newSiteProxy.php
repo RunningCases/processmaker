@@ -12,12 +12,13 @@ class newSiteProxy extends HttpProxyController
     public function testingNW ($params) {
         if (isset( $_POST['NW_TITLE'] )) {
             $action = (isset( $_POST['action'] )) ? trim( $_POST['action'] ) : 'test';
+            $ao_db_drop = (isset( $_POST['AO_DB_DROP'] )) ? true : false;
 
             G::LoadClass( 'Installer' );
             //G::LoadClass( 'json' );
             $name = trim( $_POST['NW_TITLE'] );
             $inst = new Installer();
-            if ($inst->isset_site($name)) {
+            if ($inst->isset_site($name) && $ao_db_drop !==true) {
                 $this->error = true;
                 return;
             }
@@ -25,7 +26,6 @@ class newSiteProxy extends HttpProxyController
             $pass = (isset( $_POST['NW_PASSWORD'] )) ? $_POST['NW_PASSWORD'] : 'admin';
             $pass1 = (isset( $_POST['NW_PASSWORD2'] )) ? $_POST['NW_PASSWORD2'] : 'admin';
 
-            $ao_db_drop = (isset( $_POST['AO_DB_DROP'] )) ? true : false;
 
             $ao_db_wf = (isset( $_POST['AO_DB_WF'] )) ? $_POST['AO_DB_WF'] : false;
             $ao_db_rb = (isset( $_POST['AO_DB_RB'] )) ? $_POST['AO_DB_RB'] : false;

@@ -115,6 +115,7 @@ class spoolRun
             $this->fileData['bcc'] = $rs->getString( 'APP_MSG_BCC' );
             $this->fileData['template'] = $rs->getString( 'APP_MSG_TEMPLATE' );
             $this->fileData['attachments'] = array (); //$rs->getString('APP_MSG_ATTACH');
+            $this->fileData['error'] = $rs->getString( 'APP_MSG_ERROR' );
             if ($this->config['MESS_ENGINE'] == 'OPENMAIL') {
                 if ($this->config['MESS_SERVER'] != '') {
                     if (($sAux = @gethostbyaddr( $this->config['MESS_SERVER'] ))) {
@@ -148,6 +149,7 @@ class spoolRun
         }
         $aData['app_msg_attach'] = serialize($attachment);
         $aData['app_msg_show_message'] = (isset($aData['app_msg_show_message'])) ? $aData['app_msg_show_message'] : 1;
+        $aData["app_msg_error"] = (isset($aData["app_msg_error"]))? $aData["app_msg_error"] : '';
         $sUID = $this->db_insert( $aData );
 
         $aData['app_msg_date'] = isset( $aData['app_msg_date'] ) ? $aData['app_msg_date'] : '';
@@ -158,7 +160,7 @@ class spoolRun
 
         $aData["contentTypeIsHtml"] = (isset($aData["contentTypeIsHtml"]))? $aData["contentTypeIsHtml"] : true;
 
-        $this->setData($sUID, $aData["app_msg_subject"], $aData["app_msg_from"], $aData["app_msg_to"], $aData["app_msg_body"], $aData["app_msg_date"], $aData["app_msg_cc"], $aData["app_msg_bcc"], $aData["app_msg_template"], $aData["app_msg_attach"], $aData["contentTypeIsHtml"]);
+        $this->setData($sUID, $aData["app_msg_subject"], $aData["app_msg_from"], $aData["app_msg_to"], $aData["app_msg_body"], $aData["app_msg_date"], $aData["app_msg_cc"], $aData["app_msg_bcc"], $aData["app_msg_template"], $aData["app_msg_attach"], $aData["contentTypeIsHtml"], $aData["app_msg_error"]);
     }
 
     /**
@@ -214,7 +216,7 @@ class spoolRun
      * @param string $sAppMsgUid, $sSubject, $sFrom, $sTo, $sBody, $sDate, $sCC, $sBCC, $sTemplate
      * @return none
      */
-    public function setData($sAppMsgUid, $sSubject, $sFrom, $sTo, $sBody, $sDate = "", $sCC = "", $sBCC = "", $sTemplate = "", $aAttachment = array(), $bContentTypeIsHtml = true)
+    public function setData($sAppMsgUid, $sSubject, $sFrom, $sTo, $sBody, $sDate = "", $sCC = "", $sBCC = "", $sTemplate = "", $aAttachment = array(), $bContentTypeIsHtml = true, $sError = "")
     {
         $this->spool_id = $sAppMsgUid;
         $this->fileData['subject'] = $sSubject;
@@ -228,6 +230,7 @@ class spoolRun
         $this->fileData['attachments'] = $aAttachment;
         $this->fileData['envelope_to'] = array ();
         $this->fileData["contentTypeIsHtml"] = $bContentTypeIsHtml;
+        $this->fileData["error"] = $sError;
 
         if (array_key_exists('MESS_ENGINE',$this->config)) {
             if ($this->config['MESS_ENGINE'] == 'OPENMAIL') {
@@ -685,6 +688,7 @@ class spoolRun
         $spool->setAppMsgStatus( $db_spool['app_msg_status'] );
         $spool->setAppMsgSendDate( date( 'Y-m-d H:i:s' ) ); // Add by Ankit
         $spool->setAppMsgShowMessage( $db_spool['app_msg_show_message'] ); // Add by Ankit
+        $spool->setAppMsgError( $db_spool['app_msg_error'] );
 
 
         if (! $spool->validate()) {
