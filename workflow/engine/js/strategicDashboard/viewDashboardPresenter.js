@@ -100,7 +100,7 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 		//to be sure that percentages sum up to 100 (the rounding will lost decimals)%
 		newObject.percentageOnTime = 100 - newObject.percentageOverdue - newObject.percentageAtRisk;
 		newObject.overdueVisibility = (newObject.percentageOverdue > 0)? "visible" : "hidden";
-		newObject.atRiskVisiblity = (newObject.percentageAtRisk > 0)? "visible" : "hidden";
+		newObject.atRiskVisibility = (newObject.percentageAtRisk > 0)? "visible" : "hidden";
 		newObject.onTimeVisibility = (newObject.percentageOnTime > 0)? "visible" : "hidden";
 		returnList.push(newObject);
 		i++;
@@ -174,7 +174,7 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 	var retval = {};
 	retval = data;
 
-	this.makeShortLabel(graphData, 12);
+	this.makeShortLabel(graphData, 10);
 	retval.dataToDraw = this.adaptGraphData(graphData);
 
 	//TODO aumentar el símbolo de moneda $
