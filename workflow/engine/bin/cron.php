@@ -5,7 +5,7 @@
  */
 
 if ( !defined('PATH_SEP') ) {
-  define('PATH_SEP', ( substr(PHP_OS, 0, 3) == 'WIN' ) ? '\\' : '/');
+    define("PATH_SEP", (substr(PHP_OS, 0, 3) == "WIN")? "\\" : "/");
 }
 
 $docuroot = explode(PATH_SEP, str_replace('engine' . PATH_SEP . 'methods' . PATH_SEP . 'services', '', dirname(__FILE__)));
@@ -129,7 +129,7 @@ if ($force || !$bCronIsRunning) {
             $oDirectory = dir(PATH_DB);
             $cws = 0;
 
-            while($sObject = $oDirectory->read()) {
+            while (($sObject = $oDirectory->read()) !== false) {
                 if (($sObject != ".") && ($sObject != "..")) {
                     if (is_dir(PATH_DB . $sObject)) {
                         if (file_exists(PATH_DB . $sObject . PATH_SEP . "db.php")) {
@@ -141,6 +141,10 @@ if ($force || !$bCronIsRunning) {
                 }
             }
         } else {
+            if (!is_dir(PATH_DB . $ws) || !file_exists(PATH_DB . $ws . PATH_SEP . "db.php")) {
+                throw new Exception("Error: The workspace \"$ws\" does not exist");
+            }
+
             $cws = 1;
 
             system("php -f \"" . dirname(__FILE__) . PATH_SEP . "cron_single.php\" $ws \"$sDate\" \"$dateSystem\" $argsx", $retval);

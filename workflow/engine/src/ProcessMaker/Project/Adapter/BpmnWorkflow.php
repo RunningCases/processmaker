@@ -497,7 +497,10 @@ class BpmnWorkflow extends Project\Bpmn
                             //Setting as start Task
                             //or
                             //Remove as start Task
-                            $this->wp->setStartTask($arrayFlowData["FLO_ELEMENT_DEST"], $flagStartTask);
+                            $bwp = new self;
+                            if ($bwp->getActivity($arrayFlowData["FLO_ELEMENT_DEST"])) {
+                                $this->wp->setStartTask($arrayFlowData["FLO_ELEMENT_DEST"], $flagStartTask);
+                            }
                             break;
                     }
                 }
@@ -1383,6 +1386,10 @@ class BpmnWorkflow extends Project\Bpmn
             $activityData = Util\ArrayUtil::boolToIntValues($activityData);
 
             $activity = $bwp->getActivity($activityData["ACT_UID"]);
+
+            if ($activity["BOU_CONTAINER"] != $activityData["BOU_CONTAINER"]) {
+                $activity = null;
+            }
 
             if ($forceInsert || is_null($activity)) {
                 if ($generateUid) {

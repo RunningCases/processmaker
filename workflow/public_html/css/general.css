@@ -53,7 +53,7 @@
   background-color: #e14333;
 }
 .status-indicator-medium {
-  background-color: #fada5e;
+  background-color: #fcb322;
 }
 .status-indicator-high  {
   background-color: #1fbc99;
@@ -87,7 +87,7 @@
 .ind-title-selector {
 	text-overflow: ellipsis;
    	white-space: nowrap;
-   	overflow:hidden;
+   	/*overflow:hidden;*/
 }
 
 .ellipsis {

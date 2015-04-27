@@ -861,15 +861,33 @@ class Cases
      *
      * @access public
      * @param string $app_uid, Uid for case
+     * @param string $usr_uid, Uid user
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function deleteCase($app_uid)
+    public function deleteCase($app_uid, $usr_uid)
     {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
+
+        $criteria = new \Criteria();
+        $criteria->addSelectColumn( \ApplicationPeer::APP_STATUS );
+        $criteria->addSelectColumn( \ApplicationPeer::APP_INIT_USER );
+        $criteria->add( \ApplicationPeer::APP_UID, $app_uid, \Criteria::EQUAL );
+        $dataset = \ApplicationPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        if ($aRow['APP_STATUS'] != 'DRAFT') {
+            throw (new \Exception(\G::LoadTranslation("ID_DELETE_CASE_NO_STATUS")));
+        }
+
+        if ($aRow['APP_INIT_USER'] != $usr_uid) {
+            throw (new \Exception(\G::LoadTranslation("ID_DELETE_CASE_NO_OWNER")));
+        }
+
         $case = new \Cases();
         $case->removeCase( $app_uid );
     }

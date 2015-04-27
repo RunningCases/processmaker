@@ -302,7 +302,7 @@ switch ($request) {
         list($sucess, $msgErr) = testConnection(DB_ADAPTER, $serverName, $user, $passwd, $port);
 
         if ($sucess) {
-            $sh = md5( filemtime( PATH_GULLIVER . "/class.g.php" ) );
+            $sh = G::encryptOld( filemtime( PATH_GULLIVER . "/class.g.php" ) );
             $h = G::encrypt( $_POST['host'] . $sh . $_POST['user'] . $sh . $_POST['password'] . $sh . (1), $sh );
             $insertStatements = "define ( 'HASH_INSTALLATION','{$h}' );  \ndefine ( 'SYSTEM_HASH', '{$sh}' ); \n";
             $lines = array ();
