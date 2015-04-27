@@ -98,7 +98,7 @@ class Upgrade
                 $installedMD5 = "";
             } else {
                 $time = microtime(1);
-                $installedMD5 = md5_file($installedFile);
+                $installedMD5 = G::encryptFileOld($installedFile);
                 $checksumTime += microtime(1) - $time;
             }
             $archiveMD5 = $checksum;

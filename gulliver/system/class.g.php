@@ -3133,6 +3133,9 @@ class G
      */
     public function evalJScript ($c)
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $c = $filter->xssFilterHard($c);
         print ("<script language=\"javascript\">{$c}</script>") ;
     }
 
@@ -4582,7 +4585,7 @@ class G
         $checkSum = '';
         foreach ($files as $file) {
             if (is_file( $file )) {
-                $checkSum .= md5_file( $file );
+                $checkSum .= G::encryptFileOld( $file );
             }
         }
         return G::encryptOld( $checkSum . $key );
@@ -5598,6 +5601,17 @@ class G
     public function encryptOld ($string)
     {
         return md5($string);
+    }
+    /**
+    * encryptFileOld
+    *
+    * @param string $string
+    *
+    * @return md5_file($string)
+    */
+    public function encryptFileOld ($string)
+    {
+        return md5_file($string);
     }
     /**
     * crc32
