@@ -395,7 +395,24 @@ var hideScrollIfAllDivsAreVisible = function(){
 			$('#scrollImg').hide();
 	}
 	else {
+			$('#scrollImg').css('visibility', 'visible');
 			$('#scrollImg').show();
+	}
+}
+
+var hideTitleAndSortDiv = function(){
+	if (window.currentIndicator == null) {
+		$('#relatedLabel').hide();
+	} 
+	switch (window.currentIndicator.type) {
+		case "1010":
+		case "1030":
+			$('#relatedLabel').css('visibility', 'visible');
+			$('#relatedLabel').show();
+			break;
+		default:
+			$('#relatedLabel').hide();
+			break;
 	}
 }
 
@@ -436,6 +453,8 @@ var loadIndicator = function (indicatorId, initDate, endDate) {
 						break;
 				}
 			});
+	hideScrollIfAllDivsAreVisible();
+	hideTitleAndSortDiv();
 }
 
 var setIndicatorActiveMarker = function () {
@@ -555,7 +574,6 @@ var fillStatusIndicatorFirstView = function (presenterData) {
 
 	var indicatorPrincipalData = widgetBuilder.getIndicatorLoadedById(presenterData.id)
 	setIndicatorActiveMarker();
-	$('#relatedLabel').hide();
 }
 
 var fillStatusIndicatorFirstViewDetail = function(presenterData) {
@@ -579,7 +597,6 @@ var fillStatusIndicatorFirstViewDetail = function(presenterData) {
 }
 
 var fillSpecialIndicatorFirstView = function(presenterData) {
-	$('#relatedLabel').show();
 	var widgetBuilder = new WidgetBuilder();
 	var panel = $('#indicatorsDataGridStack').data('gridstack');
 	panel.remove_all();
