@@ -463,7 +463,7 @@ class Bootstrap
         $filter = new InputFilter();
         $file = $filter->xssFilterHard($file);
         $downloadFileName = $filter->xssFilterHard($downloadFileName);
-        
+
         $fileNameIni = $file;
 
         $browserCacheFilesUid = G::browserCacheFilesGetUid();
@@ -1376,7 +1376,7 @@ class Bootstrap
     {
         global $translation;
 
-        // if the second parameter $lang is an array does mean it was especified to use as data
+        // if the second parameter $lang is an array does mean it was specify to use as data
         if (is_array($lang)) {
             $data = $lang;
             $lang = SYS_LANG;
@@ -1409,7 +1409,7 @@ class Bootstrap
      *
      * @param $path path to scan recursively the write permission
      * @param $flags to notive glob function
-     * @param $pattern pattern to filter some especified files
+     * @param $pattern pattern to filter some specify files
      * @return <array> array containing the recursive glob results
      */
     public function rglob($pattern = '*', $flags = 0, $path = '')
@@ -2894,7 +2894,7 @@ class Bootstrap
         if ($hashType == '') {
             $hashType = Bootstrap::getPasswordHashType();
         }
-        
+
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
         $hashType = $filter->validateInput($hashType);
@@ -2934,4 +2934,3 @@ class Bootstrap
         return md5($string);
     }
 }
-
