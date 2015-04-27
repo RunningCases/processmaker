@@ -41,7 +41,6 @@ var frmDashboard;
 var addTabButton;
 var tabPanel;
 var dashboardIndicatorFields;
-var dashboardIndicatorPanel;
 var store;
 
 var indexTab = 0;
@@ -49,7 +48,7 @@ var comboPageSize = 10;
 var resultTpl;
 var storeIndicatorType;
 var storeGraphic;
-var storeFrecuency;
+var storeFrequency;
 var storeProject;
 var storeGroup;
 var storeUsers;
@@ -79,7 +78,7 @@ Ext.onReady( function() {
         items       : [
             {
                 id          : 'DAS_TITLE',
-                fieldLabel  : _('ID_DASHBOARD_TITLE')+ ' *',
+                fieldLabel  : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_DASHBOARD_TITLE')) +'"> * </span>' + _('ID_DASHBOARD_TITLE'),
                 xtype       : 'textfield',
                 anchor      : '85%',
                 maxLength   : 250,
@@ -297,7 +296,7 @@ Ext.onReady( function() {
         }
     });
 
-    storeFrecuency = new Ext.data.GroupingStore( {
+    storeFrequency = new Ext.data.GroupingStore( {
         proxy : new Ext.data.HttpProxy({
             api: {
                 read : urlProxy + 'catalog/periodicity'
@@ -754,7 +753,7 @@ var addTab = function (flag) {
                                     hidden      : true
                                 },
                                 {
-                                    fieldLabel  : _('ID_INDICATOR_TITLE')+ ' *',
+                                    fieldLabel  : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_INDICATOR_TITLE')) +'"> * </span>' + _('ID_INDICATOR_TITLE'),
                                     id          : 'IND_TITLE_'+ indexTab,
                                     xtype       : 'textfield',
                                     anchor      : '85%',
@@ -768,7 +767,7 @@ var addTab = function (flag) {
                                     anchor          : '85%',
                                     editable        : false,
                                     id              : 'IND_TYPE_'+ indexTab,
-                                    fieldLabel      : _('ID_INDICATOR_TYPE')+ ' *',
+                                    fieldLabel      : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_INDICATOR_TYPE')) +'"> * </span>' + _('ID_INDICATOR_TYPE'),
                                     displayField    : 'CAT_LABEL_ID',
                                     valueField      : 'CAT_UID',
                                     forceSelection  : false,
@@ -880,7 +879,7 @@ var addTab = function (flag) {
                                 new Ext.form.ComboBox({
                                     anchor          : '85%',
                                     editable        : false,
-                                    fieldLabel      : _('ID_PROCESS')+ ' *',
+                                    fieldLabel      : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_PROCESS')) +'"> * </span>' + _('ID_PROCESS'),
                                     id              : 'IND_PROCESS_'+ indexTab,
                                     displayField    : 'prj_name',
                                     valueField      : 'prj_uid',
@@ -923,7 +922,7 @@ var addTab = function (flag) {
                                     typeAhead       : true,
                                     autocomplete    : true,
                                     triggerAction   : 'all',
-                                    store           : storeFrecuency
+                                    store           : storeFrequency
                                 }),
                                 new Ext.form.ComboBox({
                                     anchor          : '85%',
@@ -955,7 +954,7 @@ var addTab = function (flag) {
                                     typeAhead       : true,
                                     autocomplete    : true,
                                     triggerAction   : 'all',
-                                    store           : storeFrecuency
+                                    store           : storeFrequency
                                 })
                             ]
                         })
