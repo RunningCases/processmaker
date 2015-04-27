@@ -23,7 +23,7 @@ class Dashboard {
     	require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "DashboardDasInd.php");
     	$oDashboardDasInd = new \DashboardDasInd();
 
-    	$response = $oDashboardDasInd->loadByOwner($usr_uid);
+    	$response = $oDashboardDasInd->loadOwnerByUserId($usr_uid);
         return $response;
     }
 
