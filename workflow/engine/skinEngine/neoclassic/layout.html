@@ -15,7 +15,7 @@
               <tr>
                   {if $user_logged neq '' or $tracker neq ''}
                   <td rowspan="2" style="vertical-align:top;width: 245px;"><img src="{$logo_company}" class="logo_company"/></td>
-                  <td class="mainMenuBG" rowspan="2" valign="center" >
+                  <td id="mainMenuBG" class="mainMenuBG" rowspan="2" valign="center" >
                       {include file="$tpl_menu"}
                       {if (count($subMenus)>0) }
                           {include file= "$tpl_submenu"}
