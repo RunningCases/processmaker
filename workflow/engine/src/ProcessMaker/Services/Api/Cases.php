@@ -809,8 +809,9 @@ class Cases extends Api
     public function doDeleteCase($cas_uid)
     {
         try {
+            $usr_uid = $this->getUserId();
             $cases = new \ProcessMaker\BusinessModel\Cases();
-            $cases->deleteCase($cas_uid);
+            $cases->deleteCase($cas_uid, $usr_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
