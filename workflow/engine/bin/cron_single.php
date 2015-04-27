@@ -10,11 +10,6 @@ register_shutdown_function(
     )
 );
 
-/**
- * cron_single.php
- * @package workflow-engine-bin
- */
-
 if (!defined('SYS_LANG')) {
     define('SYS_LANG', 'en');
 }
@@ -220,9 +215,6 @@ Bootstrap::registerClass('CaseTrackerObject',    PATH_HOME . "engine/classes/mod
 Bootstrap::registerClass('BaseCaseTrackerObjectPeer',PATH_HOME . "engine/classes/model/om/BaseCaseTrackerObjectPeer.php");
 Bootstrap::registerClass('CaseTrackerObjectPeer',    PATH_HOME . "engine/classes/model/CaseTrackerObjectPeer.php");
 
-Bootstrap::registerClass('BaseConfiguration',   PATH_HOME . "engine/classes/model/om/BaseConfiguration.php");
-Bootstrap::registerClass('Configuration',       PATH_HOME . "engine/classes/model/Configuration.php");
-
 Bootstrap::registerClass('BaseDbSource',        PATH_HOME . "engine/classes/model/om/BaseDbSource.php");
 Bootstrap::registerClass('DbSource',            PATH_HOME . "engine/classes/model/DbSource.php");
 
@@ -367,7 +359,7 @@ Bootstrap::registerClass("AddonsManagerPeer",   PATH_HOME . "engine" . PATH_SEP 
 Bootstrap::registerClass('dashboards',   PATH_HOME . "engine/classes/class.dashboards.php");
 /*----------------------------------********---------------------------------*/
 
-$arrayClass = array("EmailServer", "ListInbox", "ListParticipatedHistory");
+$arrayClass = array("Configuration", "EmailServer", "ListInbox", "ListParticipatedHistory");
 
 foreach ($arrayClass as $value) {
     Bootstrap::registerClass("Base" . $value,          PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "om" . PATH_SEP . "Base" . $value . ".php");
