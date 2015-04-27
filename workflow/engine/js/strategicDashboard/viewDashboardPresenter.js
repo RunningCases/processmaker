@@ -57,6 +57,7 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 			"DAS_IND_TITLE" : "title",
 			"DAS_IND_TYPE" : "type",
 			"DAS_IND_VARIATION" : "comparative",
+			"DAS_IND_PERCENT_VARIATION" : "percentComparative",
 			"DAS_IND_DIRECTION" : "direction",
 			"DAS_IND_VALUE" : "value",
 			"DAS_IND_X" : "x",
@@ -76,7 +77,6 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 		newObject.toDrawY = (newObject.y == 0) ? 6 : newObject.y;
 		newObject.toDrawHeight = (newObject.y == 0) ? 2 : newObject.height;
 		newObject.toDrawWidth = (newObject.y == 0) ? 12 / data.length : newObject.width;
-		newObject.comparative = ((newObject.comparative > 0)? "+": "") +  that.helper.stringIfNull(newObject.comparative);
 		newObject.directionSymbol = (newObject.direction == "1") ? "<" : ">";
 		newObject.isWellDone = (newObject.direction == "1") 
 								? parseFloat(newObject.value) <= parseFloat(newObject.comparative)
@@ -86,10 +86,9 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 									? "special"
 									: "normal";
 
-		//round goals for normal indicators
-		newObject.comparative = (newObject.category == "normal")
-								? Math.round(newObject.comparative) + ""
-								: newObject.comparative;
+		//rounding
+		newObject.comparative =  Math.round(newObject.comparative*1000)/1000;
+		newObject.comparative = ((newObject.comparative > 0)? "+": "") + newObject.comparative;
 
 		newObject.value = (newObject.category == "normal")
 								? Math.round(newObject.value) + ""
@@ -170,7 +169,19 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 									: newObject.datalabel.substring(0,15);
 
 		newObject.datalabel = shortLabel;
-		graphData.push(newObject);
+
+		//use positive values for drawing;
+		if (newObject.value > 0) {
+			newObject.value = 0;
+		}
+		if (newObject.value < 0) {
+			newObject.value = Math.abs(newObject.value);
+		}
+
+		if (newObject.value > 0) {
+			graphData.push(newObject);
+		}
+
 		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.indicatorId = data.id;
@@ -185,16 +196,6 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 							return retval;
 						})
 	retval.dataToDraw = graphData.splice(0,7);
-
-	//use positive values for drawing;
-	$.each(retval.dataToDraw, function(index, item) { 
-		if (item.value > 0) {
-			item.value = 0;
-		}
-		if (item.value < 0) {
-			item.value = Math.abs(item.value);
-		}
-	});
 
 
 	//TODO aumentar el símbolo de moneda $
@@ -220,7 +221,17 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 									: newObject.datalabel.substring(0,7);
 
 		newObject.datalabel = shortLabel;
-		graphData.push(newObject);
+		//use positive values for drawing;
+		if (newObject.value > 0) {
+			newObject.value = 0;
+		}
+		if (newObject.value < 0) {
+			newObject.value = Math.abs(newObject.value);
+		}
+
+		if (newObject.value > 0) {
+			graphData.push(newObject);
+		}
 		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.indicatorId = data.id;
@@ -231,21 +242,10 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 	retval = data;
 	graphData.sort(function(a,b) {
 							var retval = 0;
-							retval = ((a.value*1.0 <= b.value*1.0) ? -1 : 1);
+							retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
 							return retval;
 						})
 	retval.dataToDraw = graphData.splice(0,7);
-
-	//use positive values for drawing;
-	$.each(retval.dataToDraw, function(index, item) { 
-		if (item.value > 0) {
-			item.value = 0;
-		}
-		if (item.value < 0) {
-			item.value = Math.abs(item.value);
-		}
-	});
-
 
 	//TODO aumentar el símbolo de moneda $
 	retval.inefficiencyCostToShow = "$ " + Math.round(retval.inefficiencyCost);
@@ -366,16 +366,32 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelPei = function(modelD
 	$.each(modelData, function(index, originalObject) {
 		var map = {
 			"name" : "datalabel",
-			"averageTime" : "value",
+			"inefficiencyCost" : "value",
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
 		newObject.datalabel = ((newObject.datalabel == null) ? "" : newObject.datalabel.substring(0, 7));
 		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
-		graphData.push(newObject);
+		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
+		//use positive values for drawing;
+		if (newObject.value > 0) {
+			newObject.value = 0;
+		}
+		if (newObject.value < 0) {
+			newObject.value = Math.abs(newObject.value);
+		}
+
+		if (newObject.value > 0) {
+			graphData.push(newObject);
+		}
 	});
 	var retval = {};
+	graphData.sort(function(a,b) {
+							var retval = 0;
+							retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
+							return retval;
+						})
 	retval.dataToDraw = graphData.splice(0,7);
 	retval.entityData = modelData;
 	return retval;
@@ -391,16 +407,33 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelUei = function(modelD
 	$.each(modelData, function(index, originalObject) {
 		var map = {
 			"name" : "datalabel",
-			"averageTime" : "value",
+			"inefficiencyCost" : "value",
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
 		newObject.datalabel = ((newObject.datalabel == null) ? "" : newObject.datalabel.substring(0, 7));
 		originalObject.inefficiencyCostToShow = "$ " +Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
-		graphData.push(newObject);
+		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
+		//use positive values for drawing;
+		if (newObject.value > 0) {
+			newObject.value = 0;
+		}
+		if (newObject.value < 0) {
+			newObject.value = Math.abs(newObject.value);
+		}
+
+		if (newObject.value > 0) {
+			graphData.push(newObject);
+		}
+
 	});
 	var retval = {};
+	graphData.sort(function(a,b) {
+							var retval = 0;
+							retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
+							return retval;
+						})
 	retval.dataToDraw = graphData.splice(0,7);
 	retval.entityData = modelData;
 	return retval;
