@@ -104,8 +104,20 @@ class ListCanceled extends BaseListCanceled {
         $oListInbox->removeAll($data['APP_UID']);
 
         $users = new Users();
-        $users->refreshTotal($data['USR_UID'], 'removed', 'inbox');
+        if (!empty($data['APP_STATUS_CURRENT']) && $data['APP_STATUS_CURRENT'] == 'DRAFT') {
+            $users->refreshTotal($data['USR_UID'], 'removed', 'draft');
+        } else {
+            $users->refreshTotal($data['USR_UID'], 'removed', 'inbox');
+        }
         $users->refreshTotal($data['USR_UID'], 'add', 'canceled');
+
+        //Update - WHERE
+        $criteriaWhere = new Criteria("workflow");
+        $criteriaWhere->add(ListParticipatedLastPeer::APP_UID, $data["APP_UID"], Criteria::EQUAL);
+        //Update - SET
+        $criteriaSet = new Criteria("workflow");
+        $criteriaSet->add(ListParticipatedLastPeer::APP_STATUS, 'CANCELLED');
+        BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
 
         $con = Propel::getConnection( ListCanceledPeer::DATABASE_NAME );
         try {
