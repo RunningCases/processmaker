@@ -2095,7 +2095,7 @@ class G
     {
         global $translation;
 
-        // if the second parameter $lang is an array does mean it was specify to use as data
+        // if the second parameter ($lang) is an array, it was specified to use as data
         if (is_array( $lang )) {
             $data = $lang;
             $lang = SYS_LANG;
@@ -3634,7 +3634,7 @@ class G
      * @author Erik Amaru Ortiz <erik@colosa.com>
      *
      * @param $path path to scan recursively the write permission
-     * @param $pattern pattern to filter some specify files
+     * @param $pattern pattern to filter some specified files
      * @return <boolean> if the $path, assuming that is a directory -> all files in it are writeables or not
      */
     public function is_rwritable($path, $pattern = '*')
@@ -3655,7 +3655,7 @@ class G
      *
      * @param $path path to scan recursively the write permission
      * @param $flags to notive glob function
-     * @param $pattern pattern to filter some specify files
+     * @param $pattern pattern to filter some specified files
      * @return <array> array containing the recursive glob results
      */
     public static function rglob($pattern = '*', $flags = 0, $path = '')
