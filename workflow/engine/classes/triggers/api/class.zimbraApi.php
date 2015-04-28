@@ -77,7 +77,11 @@ class Zimbra
     public function sso($options = '')
     {
         if ($this->_username) {
-            setcookie('ZM_SKIN', 'plymouth', time() + 60 * 60 * 24 * 30, '/', '.plymouth.edu');
+            if (PHP_VERSION < 5.2) {
+                setcookie("ZM_SKIN", "plymouth", time() + (60 * 60 * 24 * 30), "/", ".plymouth.edu");
+            } else {
+                setcookie("ZM_SKIN", "plymouth", time() + (60 * 60 * 24 * 30), "/", ".plymouth.edu", false, true);
+            }
 
             $pre_auth = $this->getPreAuth($this->_username);
             $url = $this->_protocol . '/service/preauth?account=' . $this->_username . '@' . $this->_server . '&expires=' . $this->_preauth_expiration . '&timestamp=' . $this->_timestamp . '&preauth=' . $pre_auth; //.'&'.$options;
@@ -828,7 +832,7 @@ class Zimbra
     {
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
-        
+
         if (!$connecting && !$this->_connected) {
             throw new Exception('zimbra.class: soapRequest called without a connection to Zimbra server');
         }

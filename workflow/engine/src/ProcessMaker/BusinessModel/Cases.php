@@ -449,24 +449,9 @@ class Cases
                 }
 
                 //Get data
-                $arrayStatusInfo = $this->getStatusInfo($applicationUid);
-
-                $applicationStatus = "";
-                $delIndex = 0;
-                $flagUseDelIndex = false;
-
-                if (count($arrayStatusInfo) > 0) {
-                    $applicationStatus = $arrayStatusInfo["APP_STATUS"];
-                    $delIndex = $arrayStatusInfo["DEL_INDEX"];
-
-                    if (in_array($applicationStatus, array("DRAFT", "PAUSED", "CANCELLED"))) {
-                        $flagUseDelIndex = true;
-                    }
-                }
-
                 $ws = new \wsBase();
 
-                $fields = $ws->getCaseInfo($applicationUid, $delIndex, $flagUseDelIndex);
+                $fields = $ws->getCaseInfo($applicationUid, 0);
                 $array = json_decode(json_encode($fields), true);
 
                 if ($array ["status_code"] != 0) {
@@ -475,7 +460,7 @@ class Cases
                     $array['app_uid'] = $array['caseId'];
                     $array['app_number'] = $array['caseNumber'];
                     $array['app_name'] = $array['caseName'];
-                    $array["app_status"] = ($applicationStatus != "")? $applicationStatus : $array["caseStatus"];
+                    $array["app_status"] = $array["caseStatus"];
                     $array['app_init_usr_uid'] = $array['caseCreatorUser'];
                     $array['app_init_usr_username'] = trim($array['caseCreatorUserName']);
                     $array['pro_uid'] = $array['processId'];
@@ -876,15 +861,33 @@ class Cases
      *
      * @access public
      * @param string $app_uid, Uid for case
+     * @param string $usr_uid, Uid user
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function deleteCase($app_uid)
+    public function deleteCase($app_uid, $usr_uid)
     {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
+
+        $criteria = new \Criteria();
+        $criteria->addSelectColumn( \ApplicationPeer::APP_STATUS );
+        $criteria->addSelectColumn( \ApplicationPeer::APP_INIT_USER );
+        $criteria->add( \ApplicationPeer::APP_UID, $app_uid, \Criteria::EQUAL );
+        $dataset = \ApplicationPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        if ($aRow['APP_STATUS'] != 'DRAFT') {
+            throw (new \Exception(\G::LoadTranslation("ID_DELETE_CASE_NO_STATUS")));
+        }
+
+        if ($aRow['APP_INIT_USER'] != $usr_uid) {
+            throw (new \Exception(\G::LoadTranslation("ID_DELETE_CASE_NO_OWNER")));
+        }
+
         $case = new \Cases();
         $case->removeCase( $app_uid );
     }

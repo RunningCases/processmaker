@@ -328,7 +328,7 @@ class ListPaused extends BaseListPaused {
             $criteria->setOffset( $start );
         }
 
-        $dataset = ListPausedPeer::doSelectRS($criteria);
+        $dataset = ListPausedPeer::doSelectRS($criteria, Propel::getDbConnection('workflow_ro') );
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $data = array();
         while ($dataset->next()) {

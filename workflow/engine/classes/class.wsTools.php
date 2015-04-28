@@ -919,6 +919,13 @@ class workspaceTools
         if (file_exists(PATH_CORE . 'data' . PATH_SEP . 'check.data')) {
             $checkData = unserialize(file_get_contents(PATH_CORE . 'data' . PATH_SEP . 'check.data'));
             if (is_array($checkData)) {
+                /*----------------------------------********---------------------------------*/
+                $licensedFeatures = & PMLicensedFeatures::getSingleton();
+                $checkData = $licensedFeatures->addNewFeatures($checkData);
+
+                $catalog = new Catalog();
+                $checkData = $catalog->registerRows($checkData);
+                /*----------------------------------********---------------------------------*/
                 foreach ($checkData as $checkThis) {
                     $this->updateThisRegistry($checkThis);
                 }

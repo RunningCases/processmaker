@@ -79,11 +79,13 @@ Ext.onReady( function() {
         items       : [
             {
                 id          : 'DAS_TITLE',
-                fieldLabel  : _('ID_DASHBOARD_TITLE'),
+                fieldLabel  : _('ID_DASHBOARD_TITLE')+ ' *',
                 xtype       : 'textfield',
                 anchor      : '85%',
                 maxLength   : 250,
-                maskRe      : /([a-zA-Z0-9\s]+)$/,
+                maskRe      : /([a-zA-Z0-9_'\s]+)$/,
+                regex       : /([a-zA-Z0-9_'\s]+)$/,
+                regexText   : _('ID_INVALID_VALUE', _('ID_DASHBOARD_TITLE')),
                 allowBlank  : false
             },
             {
@@ -92,7 +94,7 @@ Ext.onReady( function() {
                 fieldLabel      : _('ID_DESCRIPTION'),
                 labelSeparator  : '',
                 anchor          : '85%',
-                maskRe          : /([a-zA-Z0-9\s]+)$/,
+                maskRe          : /([a-zA-Z0-9_'\s]+)$/,
                 height          : 50,
             }
         ]
@@ -504,7 +506,7 @@ Ext.onReady( function() {
         enableTabScroll : true,
         //anchor          : '98%',
         width           : '100%',
-        height          : 315,
+        height          : 260,
         defaults        : {
             autoScroll  :true
         },
@@ -528,13 +530,14 @@ Ext.onReady( function() {
                                     flag = true;
                                     break;
                                 case 'yes':
+                                    tabPanel.getItem(component.id).show();
                                     flag = false;
                                     var dasIndUid = Ext.getCmp('DAS_IND_UID_'+component.id).getValue();
                                     if (typeof dasIndUid != 'undefined' && dasIndUid != '') {
                                         removeIndicator(dasIndUid);
                                     }
                                     tabActivate.remove(component.id);
-                                    tabPanel.remove(component);
+                                    tabPanel.remove(component, true);
                                     break;
                             }
                         },
@@ -574,7 +577,13 @@ Ext.onReady( function() {
                 if (typeof dataIndicator[id-1]['DAS_IND_DIRECTION'] != 'undefined') {
                     Ext.getCmp('DAS_IND_DIRECTION_'+id).setValue(idDirection);
                 }
-                if (dataIndicator[id-1]['DAS_IND_TYPE'] != '1010' && dataIndicator[id-1]['DAS_IND_TYPE'] != '1030') {
+                var field = '';
+                if (dataIndicator[id-1]['DAS_IND_TYPE'] != '1050') {
+                    field = Ext.getCmp('IND_PROCESS_'+id);
+                    field.enable();
+                    field.show();
+                }
+                if (dataIndicator[id-1]['DAS_IND_TYPE'] != '1010' && dataIndicator[id-1]['DAS_IND_TYPE'] != '1030' && dataIndicator[id-1]['DAS_IND_TYPE'] != '1050') {
                     var fields = ['DAS_IND_FIRST_FIGURE_'+id,'DAS_IND_FIRST_FREQUENCY_'+ id,'DAS_IND_SECOND_FIGURE_'+id, 'DAS_IND_SECOND_FREQUENCY_'+ id];
                     for (var k=0; k<fields.length; k++) {
                         field = Ext.getCmp(fields[k]);
@@ -665,7 +674,6 @@ Ext.onReady( function() {
         ]
     });
 
-    ownerInfoGrid.store.load();
     ownerInfoGrid.on("afterrender", function(component) {
         component.getBottomToolbar().refresh.hideParent = true;
         component.getBottomToolbar().refresh.hide(); 
@@ -692,6 +700,7 @@ Ext.onReady( function() {
         }
         dashboardOwnerFields.items.items[0].bindStore(dataUserGroup);
     } );
+
     storeUsers.on( 'load', function( store, records, options ) {
         for (var i=0; i< store.data.length; i++) {
             row = [];
@@ -730,7 +739,7 @@ var addTab = function (flag) {
             width       : "100%",
             items   : [
                 new Ext.Panel({
-                    height      : 275,
+                    height      : 230,
                     width       : "100%",
                     border      : true,
                     bodyStyle   : 'padding:10px',
@@ -745,11 +754,13 @@ var addTab = function (flag) {
                                     hidden      : true
                                 },
                                 {
-                                    fieldLabel  : _('ID_INDICATOR_TITLE'),
+                                    fieldLabel  : _('ID_INDICATOR_TITLE')+ ' *',
                                     id          : 'IND_TITLE_'+ indexTab,
                                     xtype       : 'textfield',
                                     anchor      : '85%',
-                                    maskRe      : /([a-zA-Z0-9\s]+)$/,
+                                    maskRe      : /([a-zA-Z0-9_'\s]+)$/,
+                                    regex       : /([a-zA-Z0-9_'\s]+)$/,
+                                    regexText   : _('ID_INVALID_VALUE', _('ID_INDICATOR_TITLE')),
                                     maxLength   : 250,
                                     allowBlank  : false
                                 },
@@ -757,7 +768,7 @@ var addTab = function (flag) {
                                     anchor          : '85%',
                                     editable        : false,
                                     id              : 'IND_TYPE_'+ indexTab,
-                                    fieldLabel      : _('ID_INDICATOR_TYPE'),
+                                    fieldLabel      : _('ID_INDICATOR_TYPE')+ ' *',
                                     displayField    : 'CAT_LABEL_ID',
                                     valueField      : 'CAT_UID',
                                     forceSelection  : false,
@@ -771,9 +782,20 @@ var addTab = function (flag) {
                                         scope: this,
                                         select: function(combo, record, index) {
                                             var value = combo.getValue();
+                                            var field = '';
                                             var index = tabPanel.getActiveTab().id;
                                             var fields = ['DAS_IND_FIRST_FIGURE_'+index,'DAS_IND_FIRST_FREQUENCY_'+index,'DAS_IND_SECOND_FIGURE_'+index, 'DAS_IND_SECOND_FREQUENCY_'+index];
-                                            if (value == '1010' || value == '1030') {
+                                            if (value == '1050') {
+                                                field = Ext.getCmp('IND_PROCESS_'+index);
+                                                field.setValue('0');
+                                                field.disable();
+                                                field.hide();
+                                            } else {
+                                                field = Ext.getCmp('IND_PROCESS_'+index);
+                                                field.enable();
+                                                field.show();
+                                            }
+                                            if (value == '1010' || value == '1030' || value == '1050') {
                                                 for (var i=0; i<fields.length; i++) {
                                                     field = Ext.getCmp(fields[i]);
                                                     field.disable();
@@ -797,6 +819,7 @@ var addTab = function (flag) {
                                     paddingLeft: "30px",
                                     marginLeft : "60px",
                                     layout : 'hbox',
+                                    hidden : true,
                                     items       : [
                                         new Ext.form.ComboBox({
                                             editable        : false,
@@ -828,6 +851,7 @@ var addTab = function (flag) {
                                             anchor      : '40%',
                                             maskRe      : /([0-9\.]+)$/,
                                             maxLength   : 9,
+                                            value       : 1,
                                             width       : 80,
                                             allowBlank  : false,
                                             listeners   : {
@@ -856,13 +880,14 @@ var addTab = function (flag) {
                                 new Ext.form.ComboBox({
                                     anchor          : '85%',
                                     editable        : false,
-                                    fieldLabel      : _('ID_PROCESS'),
+                                    fieldLabel      : _('ID_PROCESS')+ ' *',
                                     id              : 'IND_PROCESS_'+ indexTab,
                                     displayField    : 'prj_name',
                                     valueField      : 'prj_uid',
-                                    forceSelection  : false,
+                                    forceSelection  : true,
                                     emptyText       : _('ID_EMPTY_PROCESSES'),
                                     selectOnFocus   : true,
+                                    hidden          : true,
                                     typeAhead       : true,
                                     autocomplete    : true,
                                     triggerAction   : 'all',
@@ -1066,7 +1091,6 @@ var saveDashboard = function () {
             },
             data: JSON.stringify(data),
             success: function (response) {
-                var jsonResp = Ext.util.JSON.decode(response.responseText);
                 saveAllDashboardOwner(DAS_UID);
                 saveAllIndicators(DAS_UID);
                 myMask.hide();
@@ -1089,11 +1113,25 @@ var saveAllIndicators = function (DAS_UID) {
         tabPanel.getItem(tabActivate[tab]).show();
         var fieldsTab = tabPanel.getItem(tabActivate[tab]).items.items[0].items.items[0].items.items;
 
+        if (fieldsTab[1].getValue().trim() == '') {
+            PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TITLE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
+            fieldsTab[1].focus(true,10);
+            return false;
+        } else if (fieldsTab[2].getValue().trim() == '') {
+            PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TYPE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
+            fieldsTab[2].focus(true,10);
+            return false;
+        } else if (fieldsTab[2].getValue() != '1050' && fieldsTab[4].getValue().trim() == '') {
+            PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_PROCESS_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
+            fieldsTab[4].focus(true,10);
+            return false;
+        }
+
         var goal = fieldsTab[3];
         fieldsTab.push(goal.items.items[0]);
         fieldsTab.push(goal.items.items[1]);
 
-        data = [];
+        var data = [];
         data['DAS_UID'] = DAS_UID;
 
         for (var index in fieldsTab) {
@@ -1102,12 +1140,12 @@ var saveAllIndicators = function (DAS_UID) {
                 continue;
             }
 
-            id = node.id;
+            var id = node.id;
             if (typeof id == 'undefined' || id.indexOf('fieldSet_') != -1 ) {
                 continue;
             }
             id = id.split('_');
-            field = '';
+            var field = '';
             for (var part = 0; part<id.length-1; part++) {
                 if (part == 0) {
                     field = id[part];
@@ -1115,25 +1153,7 @@ var saveAllIndicators = function (DAS_UID) {
                     field = field+'_'+id[part];
                 }
             }
-            value = node.getValue();
-
-            if (field == 'IND_TITLE' && value.trim() == '') {
-                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TITLE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
-                node.focus(true,10);
-                return false;
-            } else if (field == 'IND_TYPE' && value.trim() == '') {
-                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TYPE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
-                node.focus(true,10);
-                return false;
-            } else if (field == 'IND_GOAL' && value.trim() == '') {
-                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_GOAL_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
-                node.focus(true,10);
-                return false;
-            } else if (field == 'IND_PROCESS' && value.trim() == '') {
-                PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_PROCESS_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
-                node.focus(true,10);
-                return false;
-            }
+            var value = node.getValue();
 
             field = field == 'IND_TITLE' ? 'DAS_IND_TITLE' : field;
             field = field == 'IND_TYPE' ? 'DAS_IND_TYPE' : field;

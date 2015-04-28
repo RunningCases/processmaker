@@ -2133,7 +2133,7 @@ function PMFCreateUser ($userId, $password, $firstname, $lastname, $email, $role
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFUpdateUser.28.29
  *
  * @param string(32) | $userUid | User UID | The user UID.
- * @param string(32) | $userName | User ID | The username for the user.
+ * @param string(32) | $userName | Username | The username for the user.
  * @param string(32) | $firstName=null | Firstname of the user | Optional parameter. The first name of the user, which can be up to 50 characters long.
  * @param string(32) | $lastName=null | Lastname of the user | Optional parameter. The last name of the user, which can be up to 50 characters long.
  * @param string(32) | $email=null | Email the user | Optional parameter. The email of the user, which can be up to 100 characters long.
@@ -2706,10 +2706,10 @@ function PMFCancelCase ($caseUid, $delIndex, $userUid)
  * @label PMF Pauses a specified case.
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFPauseCase.28.29
  *
- * @param string(32) | $caseUid | ID of the case | The unique ID of the case.
+ * @param string(32) | $caseUid | Case UID | The unique ID of the case.
  * @param int | $delIndex | Delegation index of the case | The delegation index of the current task in the case.
- * @param string(32) | $userUid | ID user | The unique ID of the user who will pause the case.
- * @param string(32) | $unpauseDate=null | Date | Optional parameter. The date in the format "yyyy-mm-dd" indicating when to unpause the case.
+ * @param string(32) | $userUid | User UID | The unique ID of the user who will pause the case.
+ * @param string(32) | $unpauseDate=null | Unpaused date | The date in the format "yyyy-mm-dd" indicating when to unpause the case.
  * @return int | $result | Result of the pause | Returns 1 if the case is paused successfully; otherwise, returns 0 if an error occurred.
  *
  */

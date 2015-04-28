@@ -943,6 +943,11 @@ class wsBase
             }
             /*----------------------------------********---------------------------------*/
 
+            $msgError = "";
+            if(sizeof($aSetup) == 0){
+               $msgError = "The default configuration wasn't defined";
+            }
+
             $oSpool = new spoolRun();
 
             $oSpool->setConfig($aSetup);
@@ -989,6 +994,7 @@ class wsBase
                 "app_msg_template" => "",
                 "app_msg_status"   => "pending",
                 "app_msg_show_message" => $showMessage,
+                "app_msg_error" => $msgError,
                 "contentTypeIsHtml" => (preg_match("/^.+\.html?$/i", $fileTemplate))? true : false
             );
 
@@ -1051,6 +1057,21 @@ class wsBase
             $result->createDate = $aRows['CREATE_DATE'];
             $result->updateDate = $aRows['UPDATE_DATE'];
 
+            //now fill the array of AppDelay
+            $oCriteria = new Criteria( 'workflow' );
+            $oCriteria->addSelectColumn( AppDelayPeer::APP_DEL_INDEX );
+            $oCriteria->add( AppDelayPeer::APP_UID, $caseId );
+            $oCriteria->add( AppDelayPeer::APP_TYPE, 'PAUSE' );
+            $oCriteria->add( AppDelayPeer::APP_DISABLE_ACTION_USER, '0' );
+
+            $oDataset = AppDelayPeer::doSelectRS( $oCriteria );
+            $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+            $aIndexsPaused = array();
+            while ($oDataset->next()) {
+                $data = $oDataset->getRow();
+                $aIndexsPaused[] = $data['APP_DEL_INDEX'];
+            }
+
             //now fill the array of AppDelegationPeer
             $oCriteria = new Criteria( 'workflow' );
             $oCriteria->addSelectColumn( AppDelegationPeer::DEL_INDEX );
@@ -1063,8 +1084,11 @@ class wsBase
             $oCriteria->addSelectColumn(AppDelegationPeer::DEL_TASK_DUE_DATE);
             $oCriteria->add( AppDelegationPeer::APP_UID, $caseId );
 
-            if ($flagUseDelIndex) {
-                $oCriteria->add(AppDelegationPeer::DEL_INDEX, $iDelIndex, Criteria::EQUAL);
+            if (count($aIndexsPaused)) {
+                $cton1 = $oCriteria->getNewCriterion( AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL);
+                $cton2 = $oCriteria->getNewCriterion( AppDelegationPeer::DEL_INDEX, $aIndexsPaused, Criteria::IN );
+                $cton1->addOR( $cton2 );
+                $oCriteria->add( $cton1 );
             } else {
                 $oCriteria->add(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL);
             }
@@ -1105,6 +1129,7 @@ class wsBase
                 $currentUser->delIndex = $aAppDel['DEL_INDEX'];
                 $currentUser->delThread = $aAppDel['DEL_THREAD'];
                 $currentUser->delThreadStatus = $aAppDel['DEL_THREAD_STATUS'];
+                $currentUser->delStatus = ($aAppDel["DEL_THREAD_STATUS"] == 'CLOSED') ? 'PAUSED' : $aRows['APP_STATUS'];
                 $currentUser->delInitDate = $aAppDel["DEL_INIT_DATE"];
                 $currentUser->delTaskDueDate = $aAppDel["DEL_TASK_DUE_DATE"];
                 $aCurrentUsers[] = $currentUser;

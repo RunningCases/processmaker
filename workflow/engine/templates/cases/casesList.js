@@ -734,7 +734,6 @@ Ext.onReady ( function() {
   }
 
 
-
   // Create HttpProxy instance, all CRUD requests will be directed to single proxy url.
   if (caseListBuilder) {
     var proxyCasesList = new Ext.data.HttpProxy({
@@ -747,13 +746,6 @@ Ext.onReady ( function() {
       api: {
         read : urlProxy
       }
-      /*----------------------------------********---------------------------------*/
-      ,method: 'GET'
-      ,headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + credentials.access_token
-      }
-      /*----------------------------------********---------------------------------*/
     });
   }
 

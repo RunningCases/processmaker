@@ -27,7 +27,7 @@ class DashboardIndicator extends BaseDashboardIndicator
             throw $error;
         }
     }
- function loadbyDasUid ($dasUid, $vmeasureDate, $vcompareDate, $userUid)
+ function loadbyDasUid ($dasUid, $vcompareDate, $vmeasureDate, $userUid)
 	{
 		G::loadClass('indicatorsCalculator');
         $calculator = new \IndicatorsCalculator();
@@ -64,12 +64,38 @@ class DashboardIndicator extends BaseDashboardIndicator
 						$value = current(reset($calculator->peiHistoric($uid, $measureDate, $measureDate, \ReportingPeriodicityEnum::NONE)));
 						$oldValue = current(reset($calculator->peiHistoric($uid, $compareDate, $compareDate, \ReportingPeriodicityEnum::NONE)));
 						$row['DAS_IND_VARIATION'] = $value - $oldValue;
+						$row['DAS_IND_OLD_VALUE'] = $oldValue;
+						$row['DAS_IND_PERCENT_VARIATION'] = round(($value - $oldValue) * 100 / (($oldValue == 0) ? 1 : $oldValue), 1);
 						break;
 					case '1030':
 						$value = current(reset($calculator->ueiHistoric(null, $measureDate, $measureDate, \ReportingPeriodicityEnum::NONE)));
 						$oldValue = current(reset($calculator->ueiHistoric($uid, $compareDate, $compareDate, \ReportingPeriodicityEnum::NONE)));
 						$row['DAS_IND_VARIATION'] = $value - $oldValue;
+						$row['DAS_IND_OLD_VALUE'] = $oldValue;
+						$row['DAS_IND_PERCENT_VARIATION'] = round(($value - $oldValue) * 100 / (($oldValue == 0) ? 1 : $oldValue), 1);
 						break;
+                    case '1050':
+                        $value = $calculator->statusIndicatorGeneral($userUid);
+                        $row['OVERDUE'] = 0;
+                        $row['ON_TIME'] = 0;
+                        $row['AT_RISK'] = 0;
+                        $row['PERCENTAGE_OVERDUE'] = 0;
+                        $row['PERCENTAGE_AT_RISK'] = 0;
+                        $row['PERCENTAGE_ON_TIME'] = 0;
+
+                        if (is_array($value) && isset($value[0])) {
+                            $row['OVERDUE'] = $value[0]['OVERDUE'];
+                            $row['ON_TIME'] = $value[0]['ONTIME'];
+                            $row['AT_RISK'] = $value[0]['ATRISK'];
+
+                            $total = $row['OVERDUE'] + $row['AT_RISK'] + $row['ON_TIME'];
+                            if ($total != 0) {
+                                $row['PERCENTAGE_OVERDUE'] = ($row['OVERDUE']*100)/$total;
+                                $row['PERCENTAGE_AT_RISK']  = ($row['AT_RISK']*100)/$total;
+                                $row['PERCENTAGE_ON_TIME']  = ($row['ON_TIME']*100)/$total;
+                            }
+                        }
+                        break;
 					default:
 						$arrResult = $calculator->generalIndicatorData($row['DAS_IND_UID'], $measureDate, $measureDate, \ReportingPeriodicityEnum::NONE);
 						$value = $arrResult[0]['value'];

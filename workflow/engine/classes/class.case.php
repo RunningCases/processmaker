@@ -4100,6 +4100,7 @@ class Cases
 
         $oApplication = new Application();
         $aFields = $oApplication->load($sApplicationUID);
+        $appStatusCurrent = $aFields['APP_STATUS'];
         $oCriteria = new Criteria('workflow');
         $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
         $oCriteria->add(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL);
@@ -4168,9 +4169,10 @@ class Cases
         }
         /*----------------------------------********---------------------------------*/
         $data = array (
-            'APP_UID'   => $sApplicationUID,
-            'DEL_INDEX' => $iIndex,
-            'USR_UID'   => $user_logged
+            'APP_UID'            => $sApplicationUID,
+            'DEL_INDEX'          => $iIndex,
+            'USR_UID'            => $user_logged,
+            'APP_STATUS_CURRENT' => $appStatusCurrent
         );
         $data = array_merge($aFields, $data);
         $oListCanceled = new ListCanceled();
@@ -5067,8 +5069,10 @@ class Cases
             }
             $aConfiguration = System::getEmailConfiguration();
 
+            $msgError = "";
             if (!isset($aConfiguration['MESS_ENABLED']) || $aConfiguration['MESS_ENABLED'] != '1') {
-                return false;
+                $msgError = "The default configuration wasn't defined";
+                $aConfiguration['MESS_ENGINE'] = '';
             }
 
             //Send derivation notification - Start
@@ -5225,13 +5229,16 @@ class Cases
                         "app_msg_bcc" => "",
                         "app_msg_attach" => "",
                         "app_msg_template" => "",
-                        "app_msg_status" => "pending"
+                        "app_msg_status" => "pending",
+                        "app_msg_error" => $msgError
                     ));
 
-                    if (($aConfiguration["MESS_BACKGROUND"] == "") ||
-                            ($aConfiguration["MESS_TRY_SEND_INMEDIATLY"] == "1")
-                    ) {
-                        $oSpool->sendMail();
+                    if ($msgError == '') {
+                        if (($aConfiguration["MESS_BACKGROUND"] == "") ||
+                                ($aConfiguration["MESS_TRY_SEND_INMEDIATLY"] == "1")
+                        ) {
+                            $oSpool->sendMail();
+                        }
                     }
                 }
             }

@@ -6,6 +6,8 @@ var processesGrid;
 var store;
 var comboCategory;
 var winDesigner;
+var typeMnuNew;
+var newTypeProcess;
 
 
 /**
@@ -200,10 +202,35 @@ Ext.onReady(function(){
 
   if (typeof(arrayMenuNewOption["bpmn"]) != "undefined") {
       arrayMenuNew.push(mnuNewBpmnProject);
+      typeMnuNew = "bpmnProject";
   }
 
   if (typeof(arrayMenuNewOption["pm"]) != "undefined") {
       arrayMenuNew.push(mnuNewProject);
+      typeMnuNew = "classicProject";
+  }
+
+  if(typeof(arrayMenuNewOption["bpmn"]) != "undefined" && typeof(arrayMenuNewOption["pm"]) != "undefined"){
+    newTypeProcess = {
+                        xtype: 'tbsplit',
+                        text: _('ID_NEW'),
+                        iconCls: 'button_menu_ext ss_sprite ss_add',
+                        menu: arrayMenuNew,
+                        listeners: {
+                          "click": function (obj, e) {
+                            obj.showMenu();
+                          }
+                        }
+                      };
+  } else {
+    newTypeProcess = {
+                        xtype: 'tbsplit',
+                        text: _('ID_NEW'),
+                        iconCls: 'button_menu_ext ss_sprite ss_add',
+                        handler: function (){
+                          newProcess({type: typeMnuNew});
+                        }
+                      };
   }
 
   processesGrid = new Ext.grid.GridPanel( {
@@ -272,17 +299,7 @@ Ext.onReady(function(){
     }),
     store: store,
     tbar:[
-      {
-        xtype: 'tbsplit',
-        text: _('ID_NEW'),
-        iconCls: 'button_menu_ext ss_sprite ss_add',
-        menu: arrayMenuNew,
-        listeners: {
-            "click": function (obj, e) {
-                obj.showMenu();
-            }
-        }
-      },/*
+      newTypeProcess,/*
       {
         text: _('ID_NEW'),
         iconCls: 'button_menu_ext ss_sprite ss_add',
@@ -1385,7 +1402,11 @@ importProcessBpmnSubmit = function () {
                     return;
                 }
                 Ext.getCmp('importProcessWindow').close();
-                window.location.href = "../designer?prj_uid=" + resp_.prj_uid;
+                if (typeof(importProcessGlobal.processFileType) != "undefined" && importProcessGlobal.processFileType == "bpmn") {
+                    openWindowIfIE("../designer?prj_uid=" + resp_.prj_uid);
+                } else {
+                    window.location.href = "processes_Map?PRO_UID=" + resp_.prj_uid;
+                }
             },
             failure: function (o, resp) {
                 Ext.getCmp('importProcessWindow').close();

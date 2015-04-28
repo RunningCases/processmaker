@@ -409,14 +409,26 @@ Ext.onReady(function () {
           fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_FIRSTNAME')) +'"> * </span>' + _('ID_FIRSTNAME'),
           xtype      : 'textfield',
           width      : 260,
-          allowBlank : false
+          allowBlank : false,
+          listeners: {
+            'change': function(field, newVal, oldVal){
+                var fname = newVal.replace(/^\s+/,'').replace(/\s+$/,'');
+                field.setValue(fname.trim());
+              } 
+          }
         },
         {
           id         : 'USR_LASTNAME',
           fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_LASTNAME')) +'"> * </span>' + _('ID_LASTNAME'),
           xtype      : 'textfield',
           width      : 260,
-          allowBlank : false
+          allowBlank : false,
+          listeners: {
+            'change': function(field, newVal, oldVal){
+                var lname = newVal.replace(/^\s+/,'').replace(/\s+$/,'');
+                field.setValue(lname.trim());
+              } 
+          }
         },
         {
           id         : 'USR_USERNAME',
@@ -509,7 +521,11 @@ Ext.onReady(function () {
                 id         : 'USR_COST_BY_HOUR',
                 fieldLabel : _('ID_COST_BY_HOUR'),
                 xtype      : 'numberfield',
+                allowNegative: false,
                 decimalSeparator : '.',
+                maskRe     : /^[0-9]/i,
+                regex      : /^[0-9]/i,
+                regexText  : _('ID_INVALID_VALUE', _('ID_COST_BY_HOUR')),
                 maxLength  : 13,
                 width      : 80
             },

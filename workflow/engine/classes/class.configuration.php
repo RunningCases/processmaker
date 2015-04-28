@@ -320,8 +320,17 @@ class Configurations // extends Configuration
         if ($usrUid != '') {
             $oUser = UsersPeer::retrieveByPK($usrUid);
             $aux = str_replace('@userName', trim($username), $this->UserConfig['format']);
+
+            $theFormat = $this->UserConfig['format'];
+            $fname = $oUser->getUsrFirstname();
+            $lname = $oUser->getUsrLastname();
+            if (strpos($theFormat, ',') !== false && ( trim($fname) == '' || trim($lname) == '')) {
+              $theFormat = str_replace(',', '', $theFormat);
+            }
+
+            $aux = str_replace('@userName', trim($username), $theFormat);
             $aux = str_replace('@firstName', $oUser->getUsrFirstname(), $aux);
-            $aux = str_replace('@lastName', $oUser->getUsrLastname(), $aux);
+            $aux = str_replace('@lastName', $oUser->getUsrLastname(), $aux);           
         }
         return $aux;
     }

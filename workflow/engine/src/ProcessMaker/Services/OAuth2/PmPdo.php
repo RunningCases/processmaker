@@ -116,6 +116,12 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
 
     public function setAccessToken($access_token, $client_id, $user_id, $expires, $scope = null)
     {
+        //Delete expired Access and Refresh Token
+        foreach (array($this->config["access_token_table"], $this->config["refresh_token_table"]) as $value) {
+            $stmt = $this->db->prepare(sprintf("DELETE FROM %s WHERE EXPIRES < %s", $value, "'" . date("Y-m-d H:i:s") . "'"));
+            $result = $stmt->execute();
+        }
+
         // convert expires to datestring
         $expires = date('Y-m-d H:i:s', $expires);
 
@@ -175,10 +181,10 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
     {
         $access_token = new \OauthAccessTokens();
         $access_token->load($token);
+
         $stmt = $this->db->prepare(sprintf('DELETE FROM %s WHERE ACCESS_TOKEN = :token', $this->config['access_token_table']));
-        $stmt->execute(compact('token'));
-        $stmt = $this->db->prepare(sprintf('DELETE FROM %s WHERE EXPIRES>%s', $this->config['refresh_token_table'], "'".Date('Y-m-d H:i:s')."'"));
-        return $stmt->execute(compact('token'));
+
+        return $stmt->execute(compact("token"));
     }
 
     /* OAuth2_Storage_UserCredentialsInterface */

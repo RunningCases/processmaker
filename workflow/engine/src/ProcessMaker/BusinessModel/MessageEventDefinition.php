@@ -293,15 +293,15 @@ class MessageEventDefinition
 
                 $messageEventDefinitionUid = \ProcessMaker\Util\Common::generateUID();
 
+                if (isset($arrayData["MSGED_VARIABLES"])) {
+                    $arrayData["MSGED_VARIABLES"] = serialize($arrayData["MSGED_VARIABLES"]);
+                }
+
                 $messageEventDefinition->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
 
                 $messageEventDefinition->setMsgedUid($messageEventDefinitionUid);
                 $messageEventDefinition->setPrjUid($projectUid);
                 $messageEventDefinition->setMsgedUsrUid("00000000000000000000000000000001"); //admin
-
-                if (isset($arrayData["MSGED_VARIABLES"])) {
-                    $messageEventDefinition->setMsgedVariables(serialize($arrayData["MSGED_VARIABLES"]));
-                }
 
                 if ($messageEventDefinition->validate()) {
                     $cnn->begin();
@@ -374,11 +374,11 @@ class MessageEventDefinition
                     $arrayData["MSGED_VARIABLES"] = array();
                 }
 
-                $messageEventDefinition->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
-
                 if (isset($arrayData["MSGED_VARIABLES"])) {
-                    $messageEventDefinition->setMsgedVariables(serialize($arrayData["MSGED_VARIABLES"]));
+                    $arrayData["MSGED_VARIABLES"] = serialize($arrayData["MSGED_VARIABLES"]);
                 }
+
+                $messageEventDefinition->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
 
                 if ($messageEventDefinition->validate()) {
                     $cnn->begin();
@@ -632,4 +632,3 @@ class MessageEventDefinition
         }
     }
 }
-

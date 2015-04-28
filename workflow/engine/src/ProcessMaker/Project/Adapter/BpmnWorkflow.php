@@ -497,7 +497,10 @@ class BpmnWorkflow extends Project\Bpmn
                             //Setting as start Task
                             //or
                             //Remove as start Task
-                            $this->wp->setStartTask($arrayFlowData["FLO_ELEMENT_DEST"], $flagStartTask);
+                            $bwp = new self;
+                            if ($bwp->getActivity($arrayFlowData["FLO_ELEMENT_DEST"])) {
+                                $this->wp->setStartTask($arrayFlowData["FLO_ELEMENT_DEST"], $flagStartTask);
+                            }
                             break;
                     }
                 }

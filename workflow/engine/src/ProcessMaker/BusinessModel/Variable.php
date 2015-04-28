@@ -129,10 +129,13 @@ class Variable
             $cnn = \Propel::getConnection("workflow");
             try {
                 $variable = \ProcessVariablesPeer::retrieveByPK($variableUid);
+                $dbConnection = \DbSourcePeer::retrieveByPK($variable->getVarDbconnection(), $variable->getPrjUid());
+
                 $oldVariable = array(
                     "VAR_NAME" => $variable->getVarName(),
                     "VAR_FIELD_TYPE" => $variable->getVarFieldType(),
                     "VAR_DBCONNECTION" => $variable->getVarDbconnection(),
+                    "VAR_DBCONNECTION_LABEL" => $dbConnection !== null ? '[' . $dbConnection->getDbsServer() . ':' . $dbConnection->getDbsPort() . '] ' . $dbConnection->getDbsType() . ': ' . $dbConnection->getDbsDatabaseName() : 'PM Database',
                     "VAR_SQL" => $variable->getVarSql(),
                     "VAR_ACCEPTED_VALUES" => $variable->getVarAcceptedValues()
                 );
@@ -170,10 +173,12 @@ class Variable
                     $variable->save();
                     $cnn->commit();
                     //update dynaforms
+                    $dbConnection = \DbSourcePeer::retrieveByPK($variable->getVarDbconnection(), $variable->getPrjUid());
                     $newVariable = array(
                         "VAR_NAME" => $variable->getVarName(),
                         "VAR_FIELD_TYPE" => $variable->getVarFieldType(),
                         "VAR_DBCONNECTION" => $variable->getVarDbconnection(),
+                        "VAR_DBCONNECTION_LABEL" => $dbConnection !== null ? '[' . $dbConnection->getDbsServer() . ':' . $dbConnection->getDbsPort() . '] ' . $dbConnection->getDbsType() . ': ' . $dbConnection->getDbsDatabaseName() : 'PM Database',
                         "VAR_SQL" => $variable->getVarSql(),
                         "VAR_ACCEPTED_VALUES" => $variable->getVarAcceptedValues()
                     );
@@ -222,7 +227,8 @@ class Variable
             $pmDynaform = new \pmDynaform();
             $isUsed = $pmDynaform->isUsed($processUid, $variable);
             if ($isUsed !== false) {
-                throw new \Exception(\G::LoadTranslation("ID_VARIABLE_IN_USE", array($variableUid, $isUsed)));
+                $titleDynaform=$pmDynaform->getDynaformTitle($isUsed);
+                throw new \Exception(\G::LoadTranslation("ID_VARIABLE_IN_USE", array($titleDynaform)));
             }
             //Delete
             $criteria = new \Criteria("workflow");
@@ -265,9 +271,14 @@ class Variable
             $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NULL);
             $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DEFAULT);
             $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_ACCEPTED_VALUES);
+            $criteria->addSelectColumn(\DbSourcePeer::DBS_SERVER);
+            $criteria->addSelectColumn(\DbSourcePeer::DBS_PORT);
+            $criteria->addSelectColumn(\DbSourcePeer::DBS_DATABASE_NAME);
+            $criteria->addSelectColumn(\DbSourcePeer::DBS_TYPE);
 
             $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid, \Criteria::EQUAL);
             $criteria->add(\ProcessVariablesPeer::VAR_UID, $variableUid, \Criteria::EQUAL);
+            $criteria->addJoin(\ProcessVariablesPeer::VAR_DBCONNECTION, \DbSourcePeer::DBS_UID, \Criteria::LEFT_JOIN);
 
             $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
 
@@ -283,7 +294,8 @@ class Variable
                     'var_field_type' => $aRow['VAR_FIELD_TYPE'],
                     'var_field_size' => (int)$aRow['VAR_FIELD_SIZE'],
                     'var_label' => $aRow['VAR_LABEL'],
-                    'var_dbconnection' => $aRow['VAR_DBCONNECTION'],
+                    'var_dbconnection' => $aRow['VAR_DBCONNECTION'] === 'none' ? 'workflow' : $aRow['VAR_DBCONNECTION'],
+                    'var_dbconnection_label' => $aRow['DBS_SERVER'] !== null ? '[' . $aRow['DBS_SERVER'] . ':' . $aRow['DBS_PORT'] . '] ' . $aRow['DBS_TYPE'] . ': ' . $aRow['DBS_DATABASE_NAME'] : 'PM Database',
                     'var_sql' => $aRow['VAR_SQL'],
                     'var_null' => (int)$aRow['VAR_NULL'],
                     'var_default' => $aRow['VAR_DEFAULT'],
@@ -326,8 +338,13 @@ class Variable
             $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NULL);
             $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DEFAULT);
             $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_ACCEPTED_VALUES);
+            $criteria->addSelectColumn(\DbSourcePeer::DBS_SERVER);
+            $criteria->addSelectColumn(\DbSourcePeer::DBS_PORT);
+            $criteria->addSelectColumn(\DbSourcePeer::DBS_DATABASE_NAME);
+            $criteria->addSelectColumn(\DbSourcePeer::DBS_TYPE);
 
             $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid, \Criteria::EQUAL);
+            $criteria->addJoin(\ProcessVariablesPeer::VAR_DBCONNECTION, \DbSourcePeer::DBS_UID, \Criteria::LEFT_JOIN);
 
             $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
 
@@ -343,7 +360,8 @@ class Variable
                     'var_field_type' => $aRow['VAR_FIELD_TYPE'],
                     'var_field_size' => (int)$aRow['VAR_FIELD_SIZE'],
                     'var_label' => $aRow['VAR_LABEL'],
-                    'var_dbconnection' => $aRow['VAR_DBCONNECTION'],
+                    'var_dbconnection' => $aRow['VAR_DBCONNECTION'] === 'none' ? 'workflow' : $aRow['VAR_DBCONNECTION'],
+                    'var_dbconnection_label' => $aRow['DBS_SERVER'] !== null ? '[' . $aRow['DBS_SERVER'] . ':' . $aRow['DBS_PORT'] . '] ' . $aRow['DBS_TYPE'] . ': ' . $aRow['DBS_DATABASE_NAME'] : 'PM Database',
                     'var_sql' => $aRow['VAR_SQL'],
                     'var_null' => (int)$aRow['VAR_NULL'],
                     'var_default' => $aRow['VAR_DEFAULT'],
@@ -690,4 +708,3 @@ class Variable
         }
     }
 }
-

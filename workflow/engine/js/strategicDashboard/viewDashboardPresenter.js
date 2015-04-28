@@ -1,0 +1,481 @@
+
+
+var ViewDashboardPresenter = function (model) {
+	this.helper = new ViewDashboardHelper();
+	this.helper.assert(model != null, "A model must be passed for the presenter work.")
+    this.model = model;
+};
+
+ViewDashboardPresenter.prototype.getUserDashboards = function (userId) {
+	var that = this;
+	var requestFinished = $.Deferred();
+	that.model.userDashboards(userId)
+			.done(function(modelData){
+			   	var viewModel = that.userDashboardsViewModel(modelData)
+				requestFinished.resolve(viewModel);
+			});
+	return requestFinished.promise();
+};
+
+ViewDashboardPresenter.prototype.userDashboardsViewModel = function(data) {
+	var that = this;
+	//if null data is returned we default to an empty array
+	if (data == null) { data = []; }
+	var returnList = [];
+	$.each(data, function(index, originalObject) {
+		var map = {
+			"DAS_TITLE" : "title",
+			"DAS_UID" : "id",
+			"DAS_FAVORITE" : "isFavorite"
+		};
+		var newObject = that.helper.merge(originalObject, {}, map);
+		returnList.push(newObject);
+	});
+	return returnList;
+};
+
+ViewDashboardPresenter.prototype.getDashboardIndicators = function (dashboardId,initDate, endDate) {
+	if (dashboardId == null) {throw new Error ("getDashboardIndicators -> dashboardId can't be null");};
+	var that = this;
+	var requestFinished = $.Deferred();
+	this.model.dashboardIndicators (dashboardId,  initDate, endDate)
+		.done(function (modelData) {
+			var viewModel = that.dashboardIndicatorsViewModel(modelData)
+			requestFinished.resolve(viewModel);
+		});
+	return requestFinished.promise();
+};
+
+ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
+	if (data == null) {return null;}
+	var that = this;
+	var returnList = [];
+	var i = 1;
+	$.each(data, function(index, originalObject) {
+		var map = {
+			"DAS_IND_UID" : "id",
+			"DAS_IND_TITLE" : "title",
+			"DAS_IND_TYPE" : "type",
+			"DAS_IND_VARIATION" : "comparative",
+			"DAS_IND_PERCENT_VARIATION" : "percentComparative",
+			"DAS_IND_DIRECTION" : "direction",
+			"DAS_IND_VALUE" : "value",
+			"DAS_IND_X" : "x",
+			"DAS_IND_Y" : "y",
+			"DAS_IND_WIDTH" : "width",
+			"DAS_IND_HEIGHT" : "height",
+			"DAS_UID_PROCESS" : "process",
+			"PERCENTAGE_OVERDUE" : "percentageOverdue",
+			"PERCENTAGE_AT_RISK" : "percentageAtRisk",
+			"PERCENTAGE_ON_TIME" : "percentageOnTime"
+		};
+
+		var newObject = that.helper.merge(originalObject, {}, map);
+		newObject.toDrawX =  newObject.x;
+		//newObject.toDrawX =  (newObject.x == 0) ? 12 - 12/i : newObject.x;
+
+		newObject.toDrawY = (newObject.y == 0) ? 6 : newObject.y;
+		newObject.toDrawHeight = (newObject.y == 0) ? 2 : newObject.height;
+		newObject.toDrawWidth = (newObject.y == 0) ? 12 / data.length : newObject.width;
+		newObject.directionSymbol = (newObject.direction == "1") ? "<" : ">";
+		newObject.isWellDone = (newObject.direction == "1") 
+								? parseFloat(newObject.value) <= parseFloat(newObject.comparative)
+								: parseFloat(newObject.value) >= parseFloat(newObject.comparative);
+        
+		newObject.category = (newObject.type == "1010" || newObject.type == "1030")
+									? "special"
+									: "normal";
+
+		//rounding
+		newObject.comparative =  Math.round(newObject.comparative*1000)/1000;
+		newObject.comparative = ((newObject.comparative > 0)? "+": "") + newObject.comparative;
+
+		newObject.value = (newObject.category == "normal")
+								? Math.round(newObject.value) + ""
+								: Math.round(newObject.value*100)/100 + ""
+
+		newObject.favorite = 0;
+		newObject.percentageOverdue = Math.round(newObject.percentageOverdue);
+		newObject.percentageAtRisk = Math.round(newObject.percentageAtRisk);
+		//to be sure that percentages sum up to 100 (the rounding will lost decimals)%
+		newObject.percentageOnTime = 100 - newObject.percentageOverdue - newObject.percentageAtRisk;
+		newObject.overdueVisibility = (newObject.percentageOverdue > 0)? "visible" : "hidden";
+		newObject.atRiskVisiblity = (newObject.percentageAtRisk > 0)? "visible" : "hidden";
+		newObject.onTimeVisibility = (newObject.percentageOnTime > 0)? "visible" : "hidden";
+		returnList.push(newObject);
+		i++;
+	});
+
+	//sort the array for drawing in toDrawX order
+	returnList.sort(function (a, b) {
+		return ((a.toDrawX <= b.toDrawX) ? -1 : 1);
+	});
+	if (returnList.length > 0)  {
+		returnList[0].favorite = 1;
+	}
+	return returnList;
+};
+
+/*++++++++ FIRST LEVEL INDICATOR DATA +++++++++++++*/
+ViewDashboardPresenter.prototype.getIndicatorData = function (indicatorId, indicatorType, initDate, endDate) {
+	var that = this;
+	var requestFinished = $.Deferred();
+	switch (indicatorType) {
+		case "1010":
+			this.model.peiData(indicatorId, initDate, endDate)
+				.done(function(modelData) {
+						var viewModel = that.peiViewModel(modelData)
+						requestFinished.resolve(viewModel);
+				});
+			break;
+		case "1030":
+			this.model.ueiData(indicatorId, initDate, endDate)
+				.done(function(modelData) {
+						var viewModel = that.ueiViewModel(modelData)
+						requestFinished.resolve(viewModel);
+				});
+			break;
+		case "1050":
+			this.model.statusData(indicatorId)
+				.done(function(modelData) {
+					var viewModel = that.statusViewModel(indicatorId, modelData)
+					requestFinished.resolve(viewModel);
+				});
+			break;
+		default:
+			this.model.generalIndicatorData(indicatorId, initDate, endDate)
+				.done(function(modelData) {
+						var viewModel = that.indicatorViewModel(modelData)
+						requestFinished.resolve(viewModel);
+				});
+			break;
+	}
+	return requestFinished.promise();
+};
+
+ViewDashboardPresenter.prototype.peiViewModel = function(data) {
+	if (data == null) {return null;}
+	var that = this;
+	var graphData = [];
+	$.each(data.data, function(index, originalObject) {
+		originalObject.name = that.helper.labelIfEmpty(originalObject.name);
+		var map = {
+			"name" : "datalabel",
+			"inefficiencyCost" : "value"
+		};
+		var newObject = that.helper.merge(originalObject, {}, map);
+		var shortLabel = (newObject.datalabel == null) 
+									? "" 
+									: newObject.datalabel.substring(0,15);
+
+		newObject.datalabel = shortLabel;
+
+		//use positive values for drawing;
+		if (newObject.value > 0) {
+			newObject.value = 0;
+		}
+		if (newObject.value < 0) {
+			newObject.value = Math.abs(newObject.value);
+		}
+
+		if (newObject.value > 0) {
+			graphData.push(newObject);
+		}
+
+		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
+		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
+		originalObject.indicatorId = data.id;
+		originalObject.json = JSON.stringify(originalObject);
+	});
+
+	var retval = {};
+	retval = data;
+	graphData.sort(function(a,b) {
+							var retval = 0;
+							retval = ((a.value*1.0 <= b.value*1.0) ? -1 : 1);
+							return retval;
+						})
+	retval.dataToDraw = graphData.splice(0,7);
+
+
+	//TODO aumentar el símbolo de moneda $
+	retval.inefficiencyCostToShow = "$ " +Math.round(retval.inefficiencyCost);
+	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
+	return retval;
+};
+
+ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
+	if (data == null) {return null;}
+	var that = this;
+	var graphData = [];
+	$.each(data.data, function(index, originalObject) {
+		originalObject.name = that.helper.labelIfEmpty(originalObject.name);
+		var map = {
+			"name" : "datalabel",
+			"inefficiencyCost" : "value",
+			"deviationTime" : "dispersion"
+		};
+		var newObject = that.helper.merge(originalObject, {}, map);
+		var shortLabel = (newObject.datalabel == null) 
+									? "" 
+									: newObject.datalabel.substring(0,7);
+
+		newObject.datalabel = shortLabel;
+		//use positive values for drawing;
+		if (newObject.value > 0) {
+			newObject.value = 0;
+		}
+		if (newObject.value < 0) {
+			newObject.value = Math.abs(newObject.value);
+		}
+
+		if (newObject.value > 0) {
+			graphData.push(newObject);
+		}
+		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
+		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
+		originalObject.indicatorId = data.id;
+		originalObject.json = JSON.stringify(originalObject);
+	});
+
+	var retval = {};
+	retval = data;
+	graphData.sort(function(a,b) {
+							var retval = 0;
+							retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
+							return retval;
+						})
+	retval.dataToDraw = graphData.splice(0,7);
+
+	//TODO aumentar el símbolo de moneda $
+	retval.inefficiencyCostToShow = "$ " + Math.round(retval.inefficiencyCost);
+	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
+	return retval;
+};
+
+ViewDashboardPresenter.prototype.statusViewModel = function(indicatorId, data) {
+	if (data == null) {return null;}
+	var that = this;
+	data.id = indicatorId;
+	var graph1Data = [];
+	var graph2Data = [];
+	var graph3Data = [];
+	$.each(data.dataList, function(index, originalObject) {
+
+		originalObject.taskTitle = that.helper.labelIfEmpty(originalObject.taskTitle);
+		//TODO use more that 10 chars when the label and color problem in pie 2D is solved.
+		var title = originalObject.taskTitle.substring(0,10);
+
+		//TODO Do not use the str. replace when color and lable in pie 2D is solved.
+		var newObject1 = {
+			datalabel : title.trim().replace(" ", "_"),
+			value : originalObject.percentageTotalOverdue
+		};
+		var newObject2 = {
+			datalabel : title.trim().replace(" ", "_"),
+			value : originalObject.percentageTotalAtRisk
+		};
+		var newObject3 = {
+			datalabel : title.trim().replace(" ", "_"),
+			value : originalObject.percentageTotalOnTime
+		};
+
+		if (newObject1.value > 0) {
+			graph1Data.push(newObject1);
+		}
+		if (newObject2.value > 0) {
+			graph2Data.push(newObject2);
+		}
+		if (newObject3.value > 0) {
+			graph3Data.push(newObject3);
+		}
+		//we add the indicator id for reference
+		originalObject.indicatorId = indicatorId;
+	});
+
+	var retval = data;
+	//TODO selecte de 7 worst cases no the first 7
+	retval.graph1Data = this.orderGraphData(graph1Data, "down").splice(0,7)
+	retval.graph2Data = this.orderGraphData(graph2Data, "down").splice(0,7)
+	retval.graph3Data = this.orderGraphData(graph3Data, "down").splice(0,7)
+	//TODO correct 2D Pie so we don't depend on label name
+	
+	$.each(retval.graph1Data, function(index, item) { item.datalabel = (index + 1) + "." + item.datalabel;  });
+	$.each(retval.graph2Data, function(index, item) { item.datalabel = (index + 1) + "." + item.datalabel;  });
+	$.each(retval.graph3Data, function(index, item) { item.datalabel = (index + 1) + "." + item.datalabel;  });
+	return retval;
+};
+
+ViewDashboardPresenter.prototype.indicatorViewModel = function(data) {
+	if (data == null) {return null;}
+	var that = this;
+	$.each(data.graph1Data, function(index, originalObject) {
+		var label = (('YEAR' in originalObject) ? originalObject.YEAR : "") ;
+		label += (('MONTH' in originalObject) ? "/" + originalObject.MONTH : "") ;
+		label += (('QUARTER' in originalObject) ?  "/" + originalObject.QUARTER : "");
+		label += (('SEMESTER' in originalObject) ?  "/" + originalObject.SEMESTER : "");
+		originalObject.datalabel = label;
+	});
+
+	$.each(data.graph2Data, function(index, originalObject) {
+		var label = (('YEAR' in originalObject) ? originalObject.YEAR : "") ;
+		label += (('MONTH' in originalObject) ? "/" + originalObject.MONTH : "") ;
+		label += (('QUARTER' in originalObject) ?  "/" + originalObject.QUARTER : "");
+		label += (('SEMESTER' in originalObject) ?  "/" + originalObject.SEMESTER : "") ;
+		originalObject.datalabel = label;
+	});
+	return data;
+};
+/*-------FIRST LEVEL INDICATOR DATA */
+
+/*++++++++ SECOND LEVEL INDICATOR DATA +++++++++++++*/
+ViewDashboardPresenter.prototype.getSpecialIndicatorSecondLevel = function (entityId, indicatorType, initDate, endDate) {
+	var that = this;
+	var requestFinished = $.Deferred();
+	//if modelData is passed (because it was cached on the view) no call is made to the server.
+	//and just a order is applied to the list
+	
+	switch (indicatorType) {
+		case "1010":
+			this.model.peiDetailData(entityId, initDate, endDate)
+				.done(function (modelData) {
+					var viewModel = that.returnIndicatorSecondLevelPei(modelData);
+					requestFinished.resolve(viewModel);
+				});
+			break;
+		case "1030":
+			this.model.ueiDetailData(entityId, initDate, endDate)
+				.done(function (modelData) {
+					var viewModel = that.returnIndicatorSecondLevelUei(modelData);
+					requestFinished.resolve(viewModel);
+				});
+			break;
+		default:
+			throw new Error("Indicator type " + indicatorType + " has not detail data implemented of special indicator kind.");
+	}
+	return requestFinished.promise();
+};
+
+ViewDashboardPresenter.prototype.returnIndicatorSecondLevelPei = function(modelData) {
+	if (modelData == null) {return null;}
+	//modelData arrives in format [{users/tasks}]
+	//returns object {dataToDraw[], entityData[] //user/tasks data}
+	var that = this;
+	var graphData = [];
+
+	$.each(modelData, function(index, originalObject) {
+		var map = {
+			"name" : "datalabel",
+			"inefficiencyCost" : "value",
+			"deviationTime" : "dispersion"
+		};
+		var newObject = that.helper.merge(originalObject, {}, map);
+		newObject.datalabel = ((newObject.datalabel == null) ? "" : newObject.datalabel.substring(0, 7));
+		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
+		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
+		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
+		//use positive values for drawing;
+		if (newObject.value > 0) {
+			newObject.value = 0;
+		}
+		if (newObject.value < 0) {
+			newObject.value = Math.abs(newObject.value);
+		}
+
+		if (newObject.value > 0) {
+			graphData.push(newObject);
+		}
+	});
+	var retval = {};
+	graphData.sort(function(a,b) {
+							var retval = 0;
+							retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
+							return retval;
+						})
+	retval.dataToDraw = graphData.splice(0,7);
+	retval.entityData = modelData;
+	return retval;
+};
+
+ViewDashboardPresenter.prototype.returnIndicatorSecondLevelUei = function(modelData) {
+	if (modelData == null) {return null;}
+	//modelData arrives in format [{users/tasks}]
+	//returns object {dataToDraw[], entityData[] //user/tasks data}
+	var that = this;
+	var graphData = [];
+
+	$.each(modelData, function(index, originalObject) {
+		var map = {
+			"name" : "datalabel",
+			"inefficiencyCost" : "value",
+			"deviationTime" : "dispersion"
+		};
+		var newObject = that.helper.merge(originalObject, {}, map);
+		newObject.datalabel = ((newObject.datalabel == null) ? "" : newObject.datalabel.substring(0, 7));
+		originalObject.inefficiencyCostToShow = "$ " +Math.round(originalObject.inefficiencyCost);
+		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
+		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
+		//use positive values for drawing;
+		if (newObject.value > 0) {
+			newObject.value = 0;
+		}
+		if (newObject.value < 0) {
+			newObject.value = Math.abs(newObject.value);
+		}
+
+		if (newObject.value > 0) {
+			graphData.push(newObject);
+		}
+
+	});
+	var retval = {};
+	graphData.sort(function(a,b) {
+							var retval = 0;
+							retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
+							return retval;
+						})
+	retval.dataToDraw = graphData.splice(0,7);
+	retval.entityData = modelData;
+	return retval;
+};
+/*-------SECOND LEVEL INDICATOR DATA*/
+
+ViewDashboardPresenter.prototype.orderDataList = function(listData, orderDirection, orderFunction) { 
+	if (listData == null) {return null;}
+	//orderDirection is passed in case no order FUnction is passed (to use in the default ordering)
+	var orderToUse = orderFunction;
+	if (orderFunction == undefined) {
+		orderToUse = function (a ,b) {
+			var retval = 0;
+			if (orderDirection == "down") {
+				retval = ((a.inefficiencyCost*1.0 <= b.inefficiencyCost*1.0) ? 1 : -1);
+			}
+			else {
+				//the 1,-1 are flipped
+				retval = ((a.inefficiencyCost*1.0 <= b.inefficiencyCost*1.0) ? -1 : 1);
+			}
+			return 	retval;
+		}
+	}
+	return listData.sort(orderToUse);
+}
+
+ViewDashboardPresenter.prototype.orderGraphData = function(listData, orderDirection, orderFunction) { 
+	if (listData == null) {return null;}
+	//orderDirection is passed in case no order FUnction is passed (to use in the default ordering)
+	var orderToUse = orderFunction;
+	if (orderFunction == undefined) {
+		orderToUse = function (a ,b) {
+			var retval = 0;
+			if (orderDirection == "down") {
+				retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
+			}
+			else {
+				//the 1,-1 are flipped
+				retval = ((a.value*1.0 <= b.value*1.0) ? -1 : 1);
+			}
+			return 	retval;
+		}
+	}
+	return listData.sort(orderToUse);
+}
