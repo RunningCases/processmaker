@@ -210,6 +210,7 @@ class StrategicDashboard extends Controller
             $translation['ID_OVERDUE'] = G::LoadTranslation( 'ID_OVERDUE');
             $translation['ID_AT_RISK'] = G::LoadTranslation( 'ID_AT_RISK');
             $translation['ID_ON_TIME'] = G::LoadTranslation( 'ID_ON_TIME');
+
             $this->setVar('translation', $translation);
             $this->render();
         } catch (Exception $error) {
