@@ -33,7 +33,6 @@ G::LoadSystem('inputfilter');
 $filter = new InputFilter();
 $_GET['i18'] = $filter->xssFilterHard($_GET['i18']);
 $_GET['newSite'] = $filter->xssFilterHard($_GET['newSite']);
-$_GET['module'] = $filter->xssFilterHard($_GET['module']);
 
 if (($RBAC_Response = $RBAC->userCanAccess( "PM_SETUP" )) != 1)
     return $RBAC_Response;
@@ -78,10 +77,10 @@ foreach ($toolItems as $item) {
 $G_PUBLISH->AddContent( 'template', '', '', '', $template );
 G::RenderPage( 'publish' );
 if (isset( $_GET['module'] )) {
-
+  $module = $filter->xssFilterHard($_GET['module']);
     print "
   <script>
-  admToolsContent.location='" . $_GET['module'] . "';
+  admToolsContent.location='" . $module . "';
   </script>
   ";
 }

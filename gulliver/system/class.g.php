@@ -245,7 +245,7 @@ class G
         }
 
         $result = base64_encode( $result );
-        $result = str_replace( '/', '°', $result );
+        $result = str_replace( '/', 'Â°', $result );
         $result = str_replace( '=', '', $result );
         return $result;
     }
@@ -264,7 +264,7 @@ class G
         //   if ( defined ( 'ENABLE_ENCRYPT' ) && ENABLE_ENCRYPT == 'yes' ) {
         //if (strpos($string, '|', 0) !== false) return $string;
         $result = '';
-        $string = str_replace( '°', '/', $string );
+        $string = str_replace( 'Â°', '/', $string );
         $string_jhl = explode( "?", $string );
         $string = base64_decode( $string );
         $string = base64_decode( $string_jhl[0] );
@@ -784,7 +784,7 @@ class G
 
             for ($i = 2; $i < count( $aRequestUri ); $i ++) {
                 $decoded = G::decrypt( urldecode( $aRequestUri[$i] ), URL_KEY );
-                if ($decoded == 'sWì›') {
+                if ($decoded == 'sWÃ¬â€º') {
                     $decoded = $VARS[$i]; //this is for the string  "../"
                 }
                 $plain .= '/' . $decoded;
@@ -1349,7 +1349,7 @@ class G
             $lang = defined( SYS_LANG ) ? SYS_LANG : 'en';
         }
         $aux = explode( ' ', $datetime ); //para dividir la fecha del dia
-        $date = explode( '-', isset( $aux[0] ) ? $aux[0] : '00-00-00' ); //para obtener los dias, el mes, y el año.
+        $date = explode( '-', isset( $aux[0] ) ? $aux[0] : '00-00-00' ); //para obtener los dias, el mes, y el aÃ±o.
         $time = explode( ':', isset( $aux[1] ) ? $aux[1] : '00:00:00' ); //para obtener las horas, minutos, segundos.
         $date[0] = (int) ((isset( $date[0] )) ? $date[0] : '0');
         $date[1] = (int) ((isset( $date[1] )) ? $date[1] : '0');
@@ -1365,7 +1365,7 @@ class G
         );
 
         // Spanish days
-        $ARR_WEEKDAYS['es'] = array ("Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"
+        $ARR_WEEKDAYS['es'] = array ("Domingo","Lunes","Martes","MiÃ©rcoles","Jueves","Viernes","SÃ¡bado"
         );
         // English days
         $ARR_WEEKDAYS['en'] = array ("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
@@ -1461,7 +1461,7 @@ class G
         }
 
         $aux = explode( ' ', $date ); //para dividir la fecha del dia
-        $date = explode( '-', isset( $aux[0] ) ? $aux[0] : '00-00-00' ); //para obtener los dias, el mes, y el año.
+        $date = explode( '-', isset( $aux[0] ) ? $aux[0] : '00-00-00' ); //para obtener los dias, el mes, y el aÃ±o.
         $time = explode( ':', isset( $aux[1] ) ? $aux[1] : '00:00:00' ); //para obtener las horas, minutos, segundos.
 
         $year = (int) ((isset( $date[0] )) ? $date[0] : '0'); //year
@@ -2438,12 +2438,12 @@ class G
             $loginhtml = (ENABLE_ENCRYPT == 'yes' ? G::encrypt( urldecode( $aux[1] ), URL_KEY ) : $aux[1]);
 
             //header ("location: /$sys/$lang/$skin/$login/$loginhtml");
-            header( "location: /fluid/mNE/o9A/mNGm1aLiop3V4qU/dtij4J°gmaLPwKDU3qNn2qXanw" );
+            header( "location: /fluid/mNE/o9A/mNGm1aLiop3V4qU/dtij4JÂ°gmaLPwKDU3qNn2qXanw" );
             die();
         }
 
         if ($sw == 0) {
-            header( "location: /fluid/mNE/o9A/mNGm1aLiop3V4qU/dtij4J°gmaLPwKDU3qNn2qXanw" );
+            header( "location: /fluid/mNE/o9A/mNGm1aLiop3V4qU/dtij4JÂ°gmaLPwKDU3qNn2qXanw" );
             die();
         }
     }
@@ -2653,6 +2653,7 @@ class G
             G::LoadSystem('inputfilter');
             $filter = new InputFilter();
             $file = $filter->validateInput($file, "path");
+            $path = $filter->validateInput($path, "path");
 
             move_uploaded_file( $file, $path . "/" . $nameToSave );
             @chmod( $path . "/" . $nameToSave, $permission );
@@ -2791,7 +2792,7 @@ class G
     /**
      * Generate a numeric or alphanumeric code
      *
-     * @author Julio Cesar Laura Avendaힼjuliocesar@colosa.com>
+     * @author Julio Cesar Laura Avendaíž¼juliocesar@colosa.com>
      * @access public
      * @return string
      */
@@ -3157,7 +3158,7 @@ class G
 
         $quotedReplacement = preg_quote( $replacement, '/' );
 
-        $default = array ('/à|á|å|â/' => 'a','/è|é|ê|ẽ|ë/' => 'e','/ì|í|î/' => 'i','/ò|ó|ô|ø/' => 'o','/ù|ú|ů|û/' => 'u','/ç/' => 'c','/ñ/' => 'n','/ä|æ/' => 'ae','/ö/' => 'oe','/ü/' => 'ue','/Ä/' => 'Ae','/Ü/' => 'Ue','/Ö/' => 'Oe','/ß/' => 'ss','/\.|\,|\:|\-|\\|\//' => " ",'/\\s+/' => $replacement
+        $default = array ('/Ã |Ã¡|Ã¥|Ã¢/' => 'a','/Ã¨|Ã©|Ãª|áº½|Ã«/' => 'e','/Ã¬|Ã­|Ã®/' => 'i','/Ã²|Ã³|Ã´|Ã¸/' => 'o','/Ã¹|Ãº|Å¯|Ã»/' => 'u','/Ã§/' => 'c','/Ã±/' => 'n','/Ã¤|Ã¦/' => 'ae','/Ã¶/' => 'oe','/Ã¼/' => 'ue','/Ã„/' => 'Ae','/Ãœ/' => 'Ue','/Ã–/' => 'Oe','/ÃŸ/' => 'ss','/\.|\,|\:|\-|\\|\//' => " ",'/\\s+/' => $replacement
         );
 
         $map = array_merge( $default, $map );
@@ -5584,7 +5585,7 @@ class G
     {
        $strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "_", "=", "+", "[", "{", "]",
                       "}", "\\", "|", ";", ":", "\"", "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
-                      "â€”", "â€“", ",", "<", ".", ">", "/", "?");
+                      "Ã¢â‚¬â€", "Ã¢â‚¬â€œ", ",", "<", ".", ">", "/", "?");
        $clean = trim(str_replace($strip, "", strip_tags($string)));
        $clean = preg_replace('/\s+/', "-", $clean);
        $clean = ($alpha) ? preg_replace("/[^a-zA-Z0-9]/", "", $clean) : $clean ;
