@@ -632,8 +632,8 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
 		graph: {
 			allowDrillDown:false,
 			allowTransition:true,
-			axisX:{ showAxis: true, label: "Group" },
-			axisY:{ showAxis: true, label: "Cost" },
+			axisX:{ showAxis: true, label: G_STRING['ID_GROUPS']},
+			axisY:{ showAxis: true, label: G_STRING['ID_COSTS']},
 			gridLinesX:false,
 			gridLinesY:true,
 			showTip: true,
@@ -714,8 +714,8 @@ var fillSpecialIndicatorSecondView = function(presenterData) {
 			gridLinesX: true,
 			gridLinesY: true,
 			area: {visible: false, css:"area"},
-			axisX:{ showAxis: true, label: "User" },
-			axisY:{ showAxis: true, label: "Cost" },
+			axisX:{ showAxis: true, label: G_STRING['ID_USER'] },
+			axisY:{ showAxis: true, label: G_STRING['ID_COSTS'] },
 			showErrorBars: true
 
 		}
@@ -724,7 +724,7 @@ var fillSpecialIndicatorSecondView = function(presenterData) {
 	var indicatorPrincipalData = widgetBuilder.getIndicatorLoadedById(window.currentEntityData.indicatorId);
 
 	if (window.currentIndicator.type == "1010") {
-		detailParams.graph.axisX.label = "Task";
+		detailParams.graph.axisX.label = G_STRING['ID_TASK'] ;
 		var graph = new BarChart(presenterData.dataToDraw, detailParams, null, null);
 		graph.drawChart();
 	}
@@ -840,7 +840,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 			allowDrillDown:false,
 			allowTransition:true,
 			axisX:{ showAxis: true, label: G_STRING.ID_YEAR },
-			axisY:{ showAxis: true, label: "Q" },
+			axisY:{ showAxis: true, label: G_STRING.ID_TIME_HOURS },
 			gridLinesX:false,
 			gridLinesY:true,
 			showTip: true,
@@ -862,7 +862,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 			allowDrillDown:false,
 			allowTransition:true,
 			axisX:{ showAxis: true, label: G_STRING.ID_YEAR },
-			axisY:{ showAxis: true, label: "Q" },
+			axisY:{ showAxis: true, label: G_STRING.ID_TIME_HOURS  },
 			gridLinesX:false,
 			gridLinesY:true,
 			showTip: true,
