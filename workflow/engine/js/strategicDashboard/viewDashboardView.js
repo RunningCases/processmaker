@@ -555,7 +555,7 @@ var fillStatusIndicatorFirstView = function (presenterData) {
 
 			allowDrillDown:true,
 			allowTransition:true,
-			showTip: true,
+			showTip: false,
 			allowZoom: false,
 			showLabels: true
 		}
