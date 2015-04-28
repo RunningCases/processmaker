@@ -64,6 +64,18 @@ class actionsByEmailClass extends PMPlugin
                 $cases = new Cases();
                 $caseFields = $cases->loadCase($data->APP_UID);
                 $criteria = new Criteria();
+                $criteria->addSelectColumn(AbeConfigurationPeer::ABE_UID);
+                $criteria->addSelectColumn(AbeConfigurationPeer::PRO_UID);
+                $criteria->addSelectColumn(AbeConfigurationPeer::ABE_TYPE);
+                $criteria->addSelectColumn(AbeConfigurationPeer::TAS_UID);
+                $criteria->addSelectColumn(AbeConfigurationPeer::ABE_TEMPLATE);
+                $criteria->addSelectColumn(AbeConfigurationPeer::ABE_DYN_TYPE);
+                $criteria->addSelectColumn(AbeConfigurationPeer::DYN_UID);
+                $criteria->addSelectColumn(AbeConfigurationPeer::ABE_EMAIL_FIELD);
+                $criteria->addSelectColumn(AbeConfigurationPeer::ABE_ACTION_FIELD);
+                $criteria->addSelectColumn(AbeConfigurationPeer::ABE_SUBJECT_FIELD);
+                $criteria->addSelectColumn(DynaformPeer::DYN_CONTENT);
+                $criteria->addJoin( AbeConfigurationPeer::DYN_UID, DynaformPeer::DYN_UID, Criteria::LEFT_JOIN );
                 $criteria->add(AbeConfigurationPeer::PRO_UID, $caseFields['PRO_UID']);
                 $criteria->add(AbeConfigurationPeer::TAS_UID, $data->TAS_UID);
                 $result = AbeConfigurationPeer::doSelectRS($criteria);
@@ -136,19 +148,29 @@ class actionsByEmailClass extends PMPlugin
                                         $field->type = 'dropdown';
                                         $field->options = array();
                                         $actionField = str_replace('@@', '', $configuration['ABE_ACTION_FIELD']);
-                                        foreach ($variables as $variable) {
-                                            if ($variable['var_name'] == $actionField) {
-                                                $field->label = $variable['var_name'];
-                                                $field->type = 'dropdown';
-                                                $values = json_decode($variable['var_accepted_values']);
-                                                foreach ($values as $value) {
-                                                    $field->options[$value->keyValue] = $value->value;
+                                        $dynaform = $configuration['DYN_UID'];
+                                        $variables = G::json_decode($configuration['DYN_CONTENT'], true);
+                                        if(isset($variables['items'][0]['items'])){
+                                            $fields = $variables['items'][0]['items'];
+                                            foreach ($fields as $key => $value) {
+                                                foreach($value as $var){ G::pr($var);
+                                                    if(isset($var['variable'])){
+                                                        if ($var['variable'] == $actionField) {
+                                                             $field->label = $var['label'];
+                                                             $field->type  = $var['type'];
+                                                             $values = $var['options'];
+                                                             foreach ($values as $val){
+                                                               $field->options[$val['value']] = $val['value'];
+                                                             }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }
-
+                                        G::LoadClass('pmDynaform');
+                                        $obj = new pmDynaform($configuration['DYN_UID']);
+                                        $file = $obj->printPmDynaformAbe($configuration['DYN_CONTENT']);
                                         $__ABE__ .= '<strong>' . $field->label . '</strong><br /><table align="left" border="0"><tr>';
-                                        
                                         switch ($field->type) {
                                             case 'dropdown':
                                             case 'radiogroup':

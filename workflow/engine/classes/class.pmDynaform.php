@@ -472,6 +472,17 @@ class pmDynaform
         exit();
     }
 
+    public function printPmDynaformAbe($content)
+    {
+        $this->record["DYN_CONTENT"] = $content;
+        $json = G::json_decode($this->record["DYN_CONTENT"]);
+        $this->jsonr($json);
+        $javascrip = "";
+        $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
+        $file = str_replace("{javascript}", $javascrip, $file);
+        return $file;
+    }
+
     public function synchronizeVariable($processUid, $newVariable, $oldVariable)
     {
         $criteria = new Criteria("workflow");

@@ -54,6 +54,7 @@ class ActionsByEmail
         if ($configuration = $result->getRow()) {
             $configuration['ABE_UID'] = $configuration['ABE_UID'];
             $configuration['ABE_TYPE'] = $configuration['ABE_TYPE'];
+            $configuration['DYN_UID'] = $configuration['DYN_UID'];
             $configuration['ABE_TEMPLATE'] = $configuration['ABE_TEMPLATE'];
             $configuration['ABE_SUBJECT_FIELD'] = $configuration['ABE_SUBJECT_FIELD'];
             $configuration['ABE_EMAIL_FIELD'] = $configuration['ABE_EMAIL_FIELD'];
