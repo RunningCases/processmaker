@@ -1415,11 +1415,11 @@ class PMPluginRegistry
                         "filepath" => $classFile,
                         "namespace" => $ns
                     );
-
-                    \Maveriks\WebApplication::purgeRestApiCache(basename(PATH_DATA_SITE));
                 }
             }
         }
+
+        \Maveriks\WebApplication::purgeRestApiCache(basename(PATH_DATA_SITE));
 
         return true;
     }
@@ -1432,6 +1432,7 @@ class PMPluginRegistry
     public function unregisterRestService ($sNamespace)
     {
         unset($this->_restServices[$sNamespace]);
+        \Maveriks\WebApplication::purgeRestApiCache(basename(PATH_DATA_SITE));
     }
 
     public function getRegisteredRestServices()
