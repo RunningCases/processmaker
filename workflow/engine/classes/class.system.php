@@ -260,7 +260,7 @@ class System
                 continue;
             }
             if (file_exists( realpath( $filename ) )) {
-                if (strcmp( $checksum, md5_file( realpath( $filename ) ) ) != 0) {
+                if (strcmp( $checksum, G::encryptFileOld( realpath( $filename ) ) ) != 0) {
                     $result['diff'][] = $filename;
                 }
             } else {
@@ -542,7 +542,7 @@ class System
                     $file = PATH_TRUNK . trim( $line[2] );
                     if (is_readable( $file )) {
                         $size = sprintf( "%07d", filesize( $file ) );
-                        $checksum = sprintf( "%010u", crc32( file_get_contents( $file ) ) );
+                        $checksum = sprintf( "%010u", G::encryptCrc32( file_get_contents( $file ) ) );
                         if (! ($line[0] == $size && $line[1] == $checksum) && substr( $file, - 4 ) != '.xml') {
                             $distinctFiles .= $file . "\n";
                             $distinct ++;
