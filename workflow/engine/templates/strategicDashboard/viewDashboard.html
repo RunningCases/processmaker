@@ -106,7 +106,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="panel-footer text-center ind-title-selector" style="clear:both;">
+					<div class="panel-footer text-center ind-title-selector" style="clear:both; color:#606368;">
 						<%- indicator.title %>
 					</div>
 				</a>
@@ -159,7 +159,7 @@
 
 			<div class="text-center huge">
 				<div class="col-xs-3 vcenter">
-					<div class="green"><%- indicator.efficiencyIndexToShow %></div>
+					<div class="blue"><%- indicator.efficiencyIndexToShow %></div>
 					<div class="small grey sind-index-selector ellipsis"></div>
 				</div>
 				<div class="col-xs-3 vcenter" style="margin-right:40px">
@@ -344,7 +344,7 @@
 	
 
 <body id="page-top" class="index">
-  <img id="scrollImg" class="floating" src="/images/scrolldown.gif" width="80" height="80" style="border-radius:85px;"/>
+  <img id="scrollImg" class="floating" src="/images/scrolldown.gif" width="80" height="80" style="border-radius:85px; visibility:hidden;"/>
   <div id="wrapper">
     <div id="page-wrapper">
           <!--Cabezera-->
@@ -431,12 +431,12 @@
                   </div>
               </div>
 
-			  <div id="relatedLabel" style="clear:both;">
+			  <div id="relatedLabel" style="clear:both; visibility:hidden;">
 					<div>
 						<center><h3></h3></center>
 					</div>
 					<div>
-						Sort by Cost: &nbsp; &nbsp;<a id="sortListButton" class="fa fa-chevron-up fa-1x" style="color:#000;" href="#"></a>
+						Sort by Cost: &nbsp; <a id="sortListButton" class="fa fa-chevron-up fa-1x" style="color:#000;" href="#"></a>
 					</div>
 			  </div>
 
