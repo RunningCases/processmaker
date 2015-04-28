@@ -6,7 +6,7 @@ if (PMLicensedFeatures
     // since all the request parameters using this script are encrypted 
     // using the URL_KEY the probability of injecting any kind of code using
     // this entry point are only possible knowing the aforementioned key.
-    switch (true) {
+    switch (G::decrypt(urldecode(utf8_encode($_REQUEST['ACTION'])), URL_KEY)) {
         case 'processABE' :
             $G_PUBLISH = new Publisher();
             try {

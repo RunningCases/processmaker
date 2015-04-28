@@ -137,7 +137,7 @@ class actionsByEmailClass extends PMPlugin
                             switch ($configuration['ABE_TYPE']) {
                                 case 'LINK':
                                     // $__ABE__ .= $dynaform->render(PATH_FEATURES . 'actionsByEmail/xmlform.html', $scriptCode) . '<br />';
-                                    $__ABE__ .= '<a href="' . $link . 'dataForm?APP_UID=' . G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY) . '&DYN_UID=' . G::encrypt($configuration['DYN_UID'], URL_KEY) . '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY) . '" target="_blank">Please complete this form</a>';
+                                    $__ABE__ .= '<a href="' . $link . 'DataForm?APP_UID=' . G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY) . '&DYN_UID=' . G::encrypt($configuration['DYN_UID'], URL_KEY) . '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY) . '" target="_blank">Please complete this form</a>';
                                     break;
                                 // coment
                                 case 'FIELD':
@@ -169,7 +169,9 @@ class actionsByEmailClass extends PMPlugin
                                         }
                                         G::LoadClass('pmDynaform');
                                         $obj = new pmDynaform($configuration['DYN_UID']);
-                                        $file = $obj->printPmDynaformAbe($configuration['DYN_CONTENT']);
+                                        $configuration['CURRENT_DYNAFORM'] = $configuration['DYN_UID'];
+                                        $file = $obj->printPmDynaformAbe($configuration);
+                                        $__ABE__ .= $file;
                                         $__ABE__ .= '<strong>' . $field->label . '</strong><br /><table align="left" border="0"><tr>';
                                         switch ($field->type) {
                                             case 'dropdown':
