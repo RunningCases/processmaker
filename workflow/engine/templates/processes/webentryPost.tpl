@@ -22,11 +22,32 @@ try {
         throw (new Exception("function ws_open() is not defined. File wsClient.php is missing"));
     }
 
+    /*
+     * PMDynaform
+     * DYN_VERSION is 1: classic Dynaform,
+     * DYN_VERSION is 2: responsive form, Pmdynaform.
+     */
+    $a = new Criteria("workflow");
+    $a->addSelectColumn(DynaformPeer::DYN_VERSION);
+    $a->add(DynaformPeer::DYN_UID, "{dynaformUid}", Criteria::EQUAL);
+    $a = ProcessPeer::doSelectRS($a);
+    $a->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+    $a->next();
+    $row = $a->getRow();
+    $swpmdynaform = isset($row) && $row["DYN_VERSION"] == 2;
+    if ($swpmdynaform) {
+        $pmdynaform = $_POST["form"];
+    }
+
     $oForm = new Form("{processUid}" . "/" . "{dynaformUid}", PATH_DYNAFORM);
     $oForm->validatePost();
 
     ws_open();
-    $result = ws_newCase("{processUid}", "{taskUid}", convertFormToWSObjects($_POST["form"]));
+    if ($swpmdynaform) {
+        $result = ws_newCase("{processUid}", "{taskUid}", convertFormToWSObjects($pmdynaform));
+    } else {
+      $result = ws_newCase("{processUid}", "{taskUid}", convertFormToWSObjects($_POST["form"]));
+    }
 
     if ($result->status_code == 0) {
         $caseId = $result->caseId;
