@@ -14,6 +14,7 @@ class StrategicDashboard extends Controller
     private $urlProxy;
     private $clientToken;
     private $usrId;
+    private $usrUnitCost;
 
     // Class constructor
     public function __construct ()
@@ -32,6 +33,13 @@ class StrategicDashboard extends Controller
             die;
         }
         $this->usrId = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
+        $user = new Users();
+        $user = $user->load($RBAC->aUserInfo['USER_INFO']['USR_UID']);
+        $this->usrUnitCost = '$';
+        if (isset($user['USR_UNIT_COST'])) {
+            $this->usrUnitCost = $user['USR_UNIT_COST'];
+        }
+
         $this->urlProxy = '/api/1.0/' . SYS_SYS . '/';
         //change
         $clientId = 'x-pm-local-client';
@@ -170,13 +178,12 @@ class StrategicDashboard extends Controller
             }
             $this->setView( 'strategicDashboard/viewDashboard' );
 
-            $this->setVar('urlProxy',$this->urlProxy);
-            $this->setVar('usrId',$this->usrId);
-            $this->setVar('credentials',$this->clientToken);
+            $this->setVar('urlProxy', $this->urlProxy);
+            $this->setVar('usrId', $this->usrId);
+            $this->setVar('credentials', $this->clientToken);
+            $this->setVar('unitCost', $this->usrUnitCost);
 
             $translation = array();
-
-
             $translation['ID_MANAGERS_DASHBOARDS'] = G::LoadTranslation( 'ID_MANAGERS_DASHBOARDS');
             $translation['ID_PRO_EFFICIENCY_INDEX'] = G::LoadTranslation( 'ID_PRO_EFFICIENCY_INDEX');
             $translation['ID_EFFICIENCY_USER'] = G::LoadTranslation( 'ID_EFFICIENCY_USER');
@@ -203,6 +210,7 @@ class StrategicDashboard extends Controller
             $translation['ID_OVERDUE'] = G::LoadTranslation( 'ID_OVERDUE');
             $translation['ID_AT_RISK'] = G::LoadTranslation( 'ID_AT_RISK');
             $translation['ID_ON_TIME'] = G::LoadTranslation( 'ID_ON_TIME');
+
             $this->setVar('translation', $translation);
             $this->render();
         } catch (Exception $error) {
@@ -215,12 +223,12 @@ class StrategicDashboard extends Controller
     {
         try {
             $this->setView( 'strategicDashboard/viewDashboardIE' );
-            $this->setVar('urlProxy',$this->urlProxy);
-            $this->setVar('usrId',$this->usrId);
-            $this->setVar('credentials',$this->clientToken);
+            $this->setVar('urlProxy', $this->urlProxy);
+            $this->setVar('usrId', $this->usrId);
+            $this->setVar('credentials', $this->clientToken);
+            $this->setVar('unitCost', $this->usrUnitCost);
 
             $translation = array();
-
             $translation['ID_MANAGERS_DASHBOARDS'] = G::LoadTranslation( 'ID_MANAGERS_DASHBOARDS');
             $translation['ID_PRO_EFFICIENCY_INDEX'] = G::LoadTranslation( 'ID_PRO_EFFICIENCY_INDEX');
             $translation['ID_EFFICIENCY_USER'] = G::LoadTranslation( 'ID_EFFICIENCY_USER');

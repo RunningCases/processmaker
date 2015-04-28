@@ -108,10 +108,40 @@ class DashboardDasInd extends BaseDashboardDasInd
         }
     }
 
-    public function getOwnerByDashboard ($dasUid)
+    public function loadOwnerByUserId ($usrId)
     {
-        
-    }
+        try {
 
+            $criteria = new Criteria('workflow');
+            $criteria->add(DashboardDasIndPeer::OWNER_UID, $usrId);
+            $criteria->add(DashboardDasIndPeer::OWNER_TYPE, "USER");
+
+            $dataset = DashboardDasIndPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $fields = array();
+
+            while ($dataset->next()) {
+                $auxField = $dataset->getRow();
+                $fields[] = $auxField;
+            }
+
+            $criteria = new Criteria('workflow');
+            $criteria->add(DashboardDasIndPeer::OWNER_TYPE, "GROUP");
+            $criteria->add(GroupUserPeer::USR_UID, $usrId);
+            $criteria->addJoin(GroupUserPeer::GRP_UID, DashboardDasIndPeer::OWNER_UID);
+
+            $dataset = DashboardDasIndPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($dataset->next()) {
+                $auxField = $dataset->getRow();
+                $fields[] = $auxField;
+            }
+
+            return $fields;
+        } catch (Exception $error) {
+            throw $error;
+        }
+    }
 }
 
