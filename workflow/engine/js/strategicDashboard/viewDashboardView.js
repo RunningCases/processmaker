@@ -309,7 +309,6 @@ $(document).ready(function() {
                         'height': item.height <= 1 ? 2 : item.height
                 }
                 widgets.push(widgetsObj);
-				console.log(widgetsObj);
             }
         }); 
         
