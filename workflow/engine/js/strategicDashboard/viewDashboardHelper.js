@@ -139,7 +139,8 @@ ViewDashboardHelper.prototype.merge = function (objFrom, objTo, propMap) {
       toKey = propMap[fromKey];
 
       //force toKey to an array of toKeys
-      if (!Array.isArray(toKey)) {
+      //if (!Array.isArray(toKey)) {
+      if (!$.isArray(toKey)) {
         toKey = [toKey];
       }
 
@@ -147,14 +148,17 @@ ViewDashboardHelper.prototype.merge = function (objFrom, objTo, propMap) {
         def = null;
         transform = null;
         key = toKey[x];
-        keyIsArray = Array.isArray(key);
+        //keyIsArray = Array.isArray(key);
+        keyIsArray = $.isArray(key);
 
         if (typeof(key) === "object" && !keyIsArray) {
-          def = key.default || null;
+          //def = (key.default || null);
+		  def = null;
           transform = key.transform || null;
           key = key.key;
 	  //evaluate if the new key is an array
-	  keyIsArray = Array.isArray(key);
+	 // keyIsArray = Array.isArray(key);
+	    keyIsArray = $.isArray(key);
         }
 
 	if (keyIsArray) {

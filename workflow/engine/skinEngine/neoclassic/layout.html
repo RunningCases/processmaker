@@ -15,7 +15,7 @@
               <tr>
                   {if $user_logged neq '' or $tracker neq ''}
                   <td rowspan="2" style="vertical-align:top;width: 245px;"><img src="{$logo_company}" class="logo_company"/></td>
-                  <td class="mainMenuBG" rowspan="2" valign="center" >
+                  <td id="mainMenuBG" class="mainMenuBG" rowspan="2" valign="center" >
                       {include file="$tpl_menu"}
                       {if (count($subMenus)>0) }
                           {include file= "$tpl_submenu"}
@@ -30,7 +30,7 @@
                         <label class="textBlue"><a href="../../uxs/home">{$switch_interface_label}</a> | </label>
                         {/if}
                         <a href="{$linklogout}" class="tableOption">{$logout}</a>&nbsp;&nbsp;<br/>
-                        <label class="textBlack"><b>{$rolename}</b> {$workspace_label} <b><u>{$workspace}</u></b> &nbsp; &nbsp; <br/>
+                        <label class="textBlack"><b>{$rolename}</b> {$workspace_label} <b><u>{$workspace}</u></b><br />
                         {$udate}</label>&nbsp; &nbsp;
                       {else}
                           {if $tracker eq 1}

@@ -182,7 +182,13 @@ Ext.onReady(function(){
             text: _("ID_SAVE"),
             handler: function (btn, ev)
             {
-                Ext.getCmp("btnCreateSave").setDisabled(true);
+                if( newForm.getForm().findField('name').getValue().trim() == "") {
+                    Ext.Msg.alert(_('ID_WARNING'), _("ID_FIELD_REQUIRED", _("ID_GROUP_NAME")));
+                    newForm.getForm().findField('name').setValue("");
+                    return false;
+                } else {
+                    Ext.getCmp("btnCreateSave").setDisabled(true);
+                }
 
                 SaveNewGroupAction();
             }

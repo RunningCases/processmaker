@@ -61,7 +61,7 @@ class AddonsManager extends BaseAddonsManager
         if ($download_md5 == null) {
             return null;
         }
-        return (strcasecmp(md5_file($filename), $download_md5) == 0);
+        return (strcasecmp(G::encryptFileOld($filename), $download_md5) == 0);
     }
 
     /**
