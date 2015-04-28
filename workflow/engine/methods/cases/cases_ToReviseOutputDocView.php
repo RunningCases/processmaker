@@ -104,7 +104,7 @@ if (! isset( $_GET['ex'] )) {
 /*------------------------------ To Revise Routines ---------------------------*/
 function setSelect()
 {
-  var ex=<?php echo $_GET['ex']?>;
+  var ex=<?php echo $filter->xssFilterHard($_GET['ex'])?>;
   try{
     for(i=1; i<50; i++)
     {

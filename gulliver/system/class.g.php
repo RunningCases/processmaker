@@ -2095,7 +2095,7 @@ class G
     {
         global $translation;
 
-        // if the second parameter $lang is an array does mean it was especified to use as data
+        // if the second parameter ($lang) is an array, it was specified to use as data
         if (is_array( $lang )) {
             $data = $lang;
             $lang = SYS_LANG;
@@ -2634,8 +2634,8 @@ class G
             $oldumask = umask( 0 );
             if (! is_dir( $path )) {
                 G::verifyPath( $path, true );
-            }     
-            
+            }
+
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                 $file = str_replace("\\\\","\\",$file,$count);
                 if(!$count) {
@@ -2647,13 +2647,13 @@ class G
                         }
                     }
                     $file = substr($file,0,-1);
-                }   
+                }
             }
-            
+
             G::LoadSystem('inputfilter');
             $filter = new InputFilter();
-            $file = $filter->validateInput($file, "path"); 
-            
+            $file = $filter->validateInput($file, "path");
+
             move_uploaded_file( $file, $path . "/" . $nameToSave );
             @chmod( $path . "/" . $nameToSave, $permission );
             umask( $oldumask );
@@ -3133,6 +3133,9 @@ class G
      */
     public function evalJScript ($c)
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $c = $filter->xssFilterHard($c);
         print ("<script language=\"javascript\">{$c}</script>") ;
     }
 
@@ -3634,7 +3637,7 @@ class G
      * @author Erik Amaru Ortiz <erik@colosa.com>
      *
      * @param $path path to scan recursively the write permission
-     * @param $pattern pattern to filter some especified files
+     * @param $pattern pattern to filter some specified files
      * @return <boolean> if the $path, assuming that is a directory -> all files in it are writeables or not
      */
     public function is_rwritable($path, $pattern = '*')
@@ -3655,7 +3658,7 @@ class G
      *
      * @param $path path to scan recursively the write permission
      * @param $flags to notive glob function
-     * @param $pattern pattern to filter some especified files
+     * @param $pattern pattern to filter some specified files
      * @return <array> array containing the recursive glob results
      */
     public static function rglob($pattern = '*', $flags = 0, $path = '')
@@ -4582,7 +4585,7 @@ class G
         $checkSum = '';
         foreach ($files as $file) {
             if (is_file( $file )) {
-                $checkSum .= md5_file( $file );
+                $checkSum .= G::encryptFileOld( $file );
             }
         }
         return G::encryptOld( $checkSum . $key );
@@ -5600,6 +5603,17 @@ class G
         return md5($string);
     }
     /**
+    * encryptFileOld
+    *
+    * @param string $string
+    *
+    * @return md5_file($string)
+    */
+    public function encryptFileOld ($string)
+    {
+        return md5_file($string);
+    }
+    /**
     * crc32
     *
     * @param string $string
@@ -5705,4 +5719,3 @@ function __ ($msgID, $lang = SYS_LANG, $data = null)
 {
     return G::LoadTranslation( $msgID, $lang, $data );
 }
-
