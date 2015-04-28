@@ -29,6 +29,7 @@
         var urlProxy = '{$urlProxy}';
         var pageUserId = '{$usrId}';
         var token = '{$credentials.access_token}';
+        var moneyUnit = '{$unitCost}';
         var G_STRING = [];
         {foreach from=$translation key=index item=option}
             G_STRING['{$index}'] = "{$option}";
@@ -163,7 +164,7 @@
 					<div class="small grey sind-index-selector ellipsis"></div>
 				</div>
 				<div class="col-xs-3 vcenter" style="margin-right:40px">
-					<div class="red sind-cost-number-selector"><%- indicator.inefficiencyCostToShow %></div>
+					<div class="red sind-cost-number-selector">{$unitCost} <%- indicator.inefficiencyCostToShow %></div>
 					<div class="small grey sind-cost-selector ellipsis"></div>
 				</div>
 				<div class="col-xs-6" id="specialIndicatorGraph" style="width:540px;height:300px;"></div>
@@ -192,7 +193,7 @@
 						<div class="small grey detail-efficiency-selector ellipsis"></div>
 					</div>
 					<div class="col-xs-3 text-center ">
-						<div class="red detail-cost-number-selector"><%- detailData.inefficiencyCostToShow %></div>
+						<div class="red detail-cost-number-selector">{$unitCost}<%- detailData.inefficiencyCostToShow %></div>
 						<div class="small grey detail-cost-selector ellipsis"></div>
 					</div>
 					<div class="col-xs-1 text-right arrow"><i class="fa fa-chevron-right fa-fw"></i></div>
@@ -222,7 +223,7 @@
 						<div class="smallB grey detail-efficiency-selector ellipsis"></div>
 					</div>
 					<div class="col-xs-6 ">
-						<div class="small detail-cost-number-selector"><%- detailData.inefficiencyCostToShow%></div>
+						<div class="small detail-cost-number-selector">{$unitCost}<%- detailData.inefficiencyCostToShow%></div>
 						<div class="smallB grey detail-cost-selector ellipsis"></div>
 					</div>
 				</div>
@@ -250,7 +251,7 @@
 						<div class="smallB grey detail-efficiency-selector ellipsis"></div>
 					</div>
 					<div class="col-xs-6 ">
-						<div class="small detail-cost-number-selector"><%- detailData.inefficiencyCostToShow%></div>
+						<div class="small detail-cost-number-selector">{$unitCost}<%- detailData.inefficiencyCostToShow%></div>
 						<div class="smallB grey detail-cost-selector ellipsis"></div>
 					</div>
 				</div>

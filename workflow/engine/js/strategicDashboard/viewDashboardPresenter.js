@@ -165,7 +165,7 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
 		graphData.push(newObject);
-		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.indicatorId = data.id;
 		originalObject.json = JSON.stringify(originalObject);
@@ -177,8 +177,7 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 	this.makeShortLabel(graphData, 10);
 	retval.dataToDraw = this.adaptGraphData(graphData);
 
-	//TODO aumentar el símbolo de moneda $
-	retval.inefficiencyCostToShow = "$ " +Math.round(retval.inefficiencyCost);
+	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
 	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
 	return retval;
 };
@@ -196,7 +195,7 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
 		graphData.push(newObject);
-		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.indicatorId = data.id;
 		originalObject.json = JSON.stringify(originalObject);
@@ -207,8 +206,7 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 	this.makeShortLabel(graphData, 10);
 	retval.dataToDraw = this.adaptGraphData(graphData);
 
-	//TODO aumentar el símbolo de moneda $
-	retval.inefficiencyCostToShow = "$ " + Math.round(retval.inefficiencyCost);
+	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
 	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
 	return retval;
 };
@@ -223,10 +221,8 @@ ViewDashboardPresenter.prototype.statusViewModel = function(indicatorId, data) {
 	$.each(data.dataList, function(index, originalObject) {
 
 		originalObject.taskTitle = that.helper.labelIfEmpty(originalObject.taskTitle);
-		//TODO use more that 10 chars when the label and color problem in pie 2D is solved.
 		var title = originalObject.taskTitle.substring(0,10);
 
-		//TODO Do not use the str. replace when color and lable in pie 2D is solved.
 		var newObject1 = {
 			datalabel : title,
 			value : originalObject.percentageTotalOverdue
@@ -258,7 +254,7 @@ ViewDashboardPresenter.prototype.statusViewModel = function(indicatorId, data) {
 	retval.graph1Data = this.orderGraphData(graph1Data, "down").splice(0,7)
 	retval.graph2Data = this.orderGraphData(graph2Data, "down").splice(0,7)
 	retval.graph3Data = this.orderGraphData(graph3Data, "down").splice(0,7)
-	//TODO correct 2D Pie so we don't depend on label name
+
 	$.each(retval.graph1Data, function(index, item) { item.datalabel = (index + 1) + "." + item.datalabel;  });
 	$.each(retval.graph2Data, function(index, item) { item.datalabel = (index + 1) + "." + item.datalabel;  });
 	$.each(retval.graph3Data, function(index, item) { item.datalabel = (index + 1) + "." + item.datalabel;  });
@@ -329,7 +325,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelPei = function(modelD
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
-		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
 		originalObject.rankToShow = originalObject.rank + "/" + modelData.length;
@@ -356,7 +352,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelUei = function(modelD
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
-		originalObject.inefficiencyCostToShow = "$ " +Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
 		originalObject.rankToShow = originalObject.rank + "/" + modelData.length;
