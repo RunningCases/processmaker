@@ -342,7 +342,7 @@
     }
     else {
       if(SYS_TARGET=="dbInfo"){ //Show dbInfo when no SYS_SYS
-          $pathFile = PATH_METHODS . "login/dbInfo.php";
+          $pathFile = PATH_METHODS . 'login/dbInfo.php';
           $pathFile = $filter->validateInput($pathFile,'path');
           require_once($pathFile);
       }
@@ -361,7 +361,7 @@
           }
         }
         else { // classic sysLogin interface
-          $pathFile = PATH_METHODS . "login/sysLogin.php";
+          $pathFile = PATH_METHODS . 'login/sysLogin.php';
           $pathFile = $filter->validateInput($pathFile,'path');
           require_once($pathFile) ;
           die();

@@ -752,14 +752,19 @@ class Derivation
             //$appFields['APP_PROC_CODE'] = $nextDel['TAS_DEF_PROC_CODE'];
             /*----------------------------------********---------------------------------*/
             if ($nextDel['TAS_UID'] != '-1') {
-                $taskCur = TaskPeer::retrieveByPK($nextDel['TAS_UID']);
-                $aTask = $taskCur->toArray( BasePeer::TYPE_FIELDNAME );
+                $taskNex = TaskPeer::retrieveByPK($nextDel['TAS_UID']);
+                $aTask = $taskNex->toArray( BasePeer::TYPE_FIELDNAME );
                 $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
                 if (!in_array($aTask['TAS_TYPE'], $arrayTaskTypeToExclude)) {
                     if (!empty($iNewDelIndex) && empty($aSP)) {
                         $oAppDel = AppDelegationPeer::retrieveByPK( $appFields['APP_UID'], $iNewDelIndex );
                         $aFields = $oAppDel->toArray( BasePeer::TYPE_FIELDNAME );
                         $aFields['APP_STATUS'] = $currentDelegation['APP_STATUS'];
+                        $taskCur  = TaskPeer::retrieveByPK($currentDelegation['TAS_UID']);
+                        $aTaskCur = $taskCur->toArray( BasePeer::TYPE_FIELDNAME );
+                        if ($aTaskCur['TAS_TYPE'] == "INTERMEDIATE-CATCH-MESSAGE-EVENT") {
+                            $removeList = false;
+                        }
                         $aFields['REMOVED_LIST'] = $removeList;
                         $inbox = new ListInbox();
                         $inbox->newRow($aFields, $appFields['CURRENT_USER_UID'], false, array(), ($nextDel['TAS_ASSIGN_TYPE'] == 'SELF_SERVICE' ? true : false));

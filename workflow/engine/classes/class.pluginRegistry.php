@@ -399,22 +399,19 @@ class PMPluginRegistry
     }
 
     /**
-     * get status plugin in the singleton
+     * Get status plugin in the singleton
      *
-     * @param unknown_type $sNamespace
+     * @param string $name Plugin name
+     *
+     * return mixed Return a string with status plugin, 0 otherwise
      */
-    public function getStatusPlugin ($sNamespace)
+    public function getStatusPlugin($name)
     {
-        foreach ($this->_aPluginDetails as $namespace => $detail) {
-            if ($sNamespace == $namespace) {
-                if ($this->_aPluginDetails[$sNamespace]->enabled) {
-                    return 'enabled';
-                } else {
-                    return 'disabled';
-                }
-            }
+        try {
+            return (isset($this->_aPluginDetails[$name]))? (($this->_aPluginDetails[$name]->enabled)? "enabled" : "disabled") : 0;
+        } catch (Excepton $e) {
+            throw $e;
         }
-        return 0;
     }
 
     /**

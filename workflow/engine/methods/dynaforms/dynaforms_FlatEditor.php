@@ -170,12 +170,12 @@ G::RenderPage( "publish", "raw" );
 <script>
   var toolbar = document.getElementById('fields_Toolbar')
   var fieldsList = document.getElementById('dynaformEditor[0]')
-  var tableHeight=<?php echo $config['FieldsList']['height'] ?>;
-  var tableWidth=<?php echo $config['FieldsList']['width'] ?>;
-  var toolbarTop=<?php echo $config['Toolbar']['top'] ?>;
-  var toolbarLeft=<?php echo $config['Toolbar']['left'] ?>;
-  var fieldsListTop=<?php echo $config['FieldsList']['top'] ?>//(toolbarTop+toolbar.clientHeight+44+8 );
-  var fieldsListLeft=<?php echo $config['FieldsList']['left'] ?>;
+  var tableHeight=<?php echo $filter->xssFilterHard($config['FieldsList']['height']) ?>;
+  var tableWidth=<?php echo $filter->xssFilterHard($config['FieldsList']['width']) ?>;
+  var toolbarTop=<?php echo $filter->xssFilterHard($config['Toolbar']['top']) ?>;
+  var toolbarLeft=<?php echo $filter->xssFilterHard($config['Toolbar']['left']) ?>;
+  var fieldsListTop=<?php echo $filter->xssFilterHard($config['FieldsList']['top']) ?>//(toolbarTop+toolbar.clientHeight+44+8 );
+  var fieldsListLeft=<?php echo $filter->xssFilterHard($config['FieldsList']['left']) ?>;
   mainPanel.elements.headerBar.style.backgroundColor='#CBDAEF';
   mainPanel.elements.headerBar.style.borderBottom='1px solid #808080';
   mainPanel.elements.headerBar.appendChild(toolbar);
