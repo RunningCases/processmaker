@@ -115,7 +115,7 @@ BarChart.prototype.drawBars = function(data, canvas, param) {
 			.attr("x", graphDim.left*2 + graphDim.width/2)
 			.attr("dy", "1.5em")
 			.style("text-anchor", "end")
-			.text("No data to draw...");
+			.text(param.canvas.noDataText);
 		data = [ {"value":"0", "datalabel":"None"} ];
 	}
 
@@ -1097,7 +1097,7 @@ PieChart.prototype.drawChart = function () {
 
 PieChart.prototype.drawPie2D = function (dataset, canvas, param) {
 	if (dataset == null || dataset.length == 0) {
-		this.$container.html( "<div class='pm-charts-no-draw'>No data to draw ...</div>" );
+		this.$container.html( "<div class='pm-charts-no-draw'>"+param.canvas.noDataText+"</div>" );
 	}
 
     var parameter = createDefaultParamsForGraphPie(param);
@@ -1443,7 +1443,7 @@ Pie3DChart.prototype.drawChart = function () {
 Pie3DChart.prototype.drawPie3D = function (data, canvas, param) {
 
 	if (data == null || data.length == 0) {
-		this.$container.html( "<div class='pm-charts-no-draw'>No data to draw ...</div>" );
+		this.$container.html( "<div class='pm-charts-no-draw'>"+param.canvas.noDataText+"</div>" );
 	}
 
     var duration_transition = 0;
@@ -1613,7 +1613,7 @@ RingChart.prototype.drawChart = function () {
 
 RingChart.prototype.drawRing = function(data, canvas, param){
 	if (data == null || data.length == 0) {
-		this.$container.html( "<div class='pm-charts-no-draw'>No data to draw ...</div>" );
+		this.$container.html( "<div class='pm-charts-no-draw'>"+param.canvas.noDataText+"</div>" );
 	}
 
 	//d3.select('#'+parent).select('svg').remove();

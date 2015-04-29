@@ -699,6 +699,9 @@ class Installer extends Controller
 
         try {
             $db_host = ($db_port != '' && $db_port != 3306) ? $db_hostname . ':' . $db_port : $db_hostname;
+            $db_host = $filter->validateInput($db_host);
+            $db_username = $filter->validateInput($db_username);
+            $db_password = $filter->validateInput($db_password);
             $this->link = @mysql_connect( $db_host, $db_username, $db_password );
             $this->installLog( G::LoadTranslation('ID_CONNECT_TO_SERVER', SYS_LANG, Array($db_hostname, $db_port, $db_username ) ));
 
@@ -1032,6 +1035,9 @@ class Installer extends Controller
 
         try {
             $db_host = ($db_port != '' && $db_port != 1433) ? $db_hostname . ':' . $db_port : $db_hostname;
+            $db_host = $filter->validateInput($db_host);
+            $db_username = $filter->validateInput($db_username);
+            $db_password = $filter->validateInput($db_password);
             $this->link = @mssql_connect( $db_host, $db_username, $db_password );
             $this->installLog( G::LoadTranslation('ID_CONNECT_TO_SERVER', SYS_LANG, Array( $db_hostname, $db_port, $db_username )) );
 
@@ -1231,6 +1237,9 @@ class Installer extends Controller
         $info = new stdclass();
 
         if ($_REQUEST['db_engine'] == 'mysql') {
+            $_REQUEST['db_hostname'] = $filter->validateInput($_REQUEST['db_hostname']);
+            $_REQUEST['db_username'] = $filter->validateInput($_REQUEST['db_username']);
+            $_REQUEST['db_password'] = $filter->validateInput($_REQUEST['db_password']);
             $link = @mysql_connect( $_REQUEST['db_hostname'], $_REQUEST['db_username'], $_REQUEST['db_password'] );
             $_REQUEST['wfDatabase'] = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
             $query = "show databases like '%s' ";
@@ -1296,6 +1305,7 @@ class Installer extends Controller
         }
 
         $db_host = ($db_port != '' && $db_port != 1433) ? $db_hostname . ':' . $db_port : $db_hostname;
+       
         $link = @mysql_connect( $db_host, $db_username, $db_password );
         if (! $link) {
             $info->message .= G::LoadTranslation('ID_MYSQL_CREDENTIALS_WRONG');
@@ -1348,6 +1358,7 @@ class Installer extends Controller
         }
 
         $db_host = ($db_port != '' && $db_port != 1433) ? $db_hostname . ':' . $db_port : $db_hostname;
+            
         $link = @mssql_connect( $db_host, $db_username, $db_password );
         if (! $link) {
             $info->message .= G::LoadTranslation('ID_MYSQL_CREDENTIALS_WRONG');
@@ -1661,6 +1672,7 @@ class Installer extends Controller
                 $wf = trim( $_REQUEST['wfDatabase'] );
 
                 $db_host = ($db_port != '' && $db_port != 3306) ? $db_hostname . ':' . $db_port : $db_hostname;
+            
                 $link = @mysql_connect( $db_host, $db_username, $db_password );
                 @mysql_select_db($wf, $link);
                 $res = mysql_query( "SELECT STORE_ID FROM ADDONS_MANAGER WHERE ADDON_NAME = '" . $namePlugin . "'", $link );
