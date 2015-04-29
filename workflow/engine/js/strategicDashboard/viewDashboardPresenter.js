@@ -106,18 +106,21 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 		//to be sure that percentages sum up to 100 (the rounding will lose decimals)%
 		newObject.percentageOnTimeWidth = 100 - newObject.percentageOverdueWidth - newObject.percentageAtRiskWidth;
 
-		newObject.percentageOverdueToShow = ((newObject.percentageOverdue == 0 ||newObject.percentageOverdue == null  ) ? "" : newObject.percentageOverdueWidth + "%");
-		newObject.percentageAtRiskToShow = ((newObject.percentageAtRisk == 0 || newObject.percentageAtRisk == null) ? "" : newObject.percentageAtRiskWidth + "%");
+		newObject.percentageOverdueToShow = ((newObject.percentageOverdue == 0 ||newObject.percentageOverdue == null  ) 
+											? "" 
+											: newObject.percentageOverdueWidth + "%");
+
+		newObject.percentageAtRiskToShow = ((newObject.percentageAtRisk == 0 || newObject.percentageAtRisk == null) 
+											? "" 
+											: newObject.percentageAtRiskWidth + "%");
+
 		newObject.percentageOnTimeToShow = ((newObject.percentageOnTime == 0 || newObject.percentageOnTime == 0) 
 											? G_STRING['ID_INBOX']  + ' ' + G_STRING['ID_EMPTY'] 
 											: newObject.percentageOnTimeWidth + "%");
 
-
-
-
-		newObject.overdueVisibility = (newObject.percentageOverdue > 0)? "visible" : "hidden";
-		newObject.atRiskVisibility = (newObject.percentageAtRisk > 0)? "visible" : "hidden";
-		newObject.onTimeVisibility = (newObject.percentageOnTime > 0)? "visible" : "hidden";
+		newObject.overdueVisibility = (newObject.percentageOverdueWidth > 0) ? "visible" : "hidden";
+		newObject.atRiskVisibility = (newObject.percentageAtRiskWidth > 0) ? "visible" : "hidden";
+		newObject.onTimeVisibility = (newObject.percentageOnTimeWidth > 0) ? "visible" : "hidden";
 		returnList.push(newObject);
 		i++;
 	});
