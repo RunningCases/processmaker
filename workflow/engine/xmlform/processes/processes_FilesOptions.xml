@@ -16,8 +16,11 @@ var CURRENT_MAIN_DIRECTORY;
 var CURRENT_CURRENT_DIRECTORY;
 var oUploadFilesPanel;
 var oUploadFilesPanel;
-var showPromptLogin = function(lastAction) {
+var showPromptLogin = function(lastAction, pro_uid, fileName, fc64) {
     lastActionPerformed = lastAction;
+    prouid = pro_uid;
+    filename = fileName;
+    fcont = fc64;
     promptPanel = new leimnud.module.panel();
     promptPanel.options={
         statusBarButtons:[{value: _('LOGIN')}],
@@ -104,6 +107,15 @@ var verifyLogin = function() {
     rpc.callback = function(rpc) {
         if (rpc.xmlhttp.responseText.indexOf('form[USR_USERNAME]') == -1) {
             promptPanel.remove();
+            if(lastActionPerformed=='save'){
+                var oRPC = new leimnud.module.rpc.xmlhttp({
+                  url : 'processes_Ajax',
+                  args: 'action=saveFile&filename='+filename+'&pro_uid='+prouid+'&MAIN_DIRECTORY='+CURRENT_MAIN_DIRECTORY+'&fcontent='+fcont
+                });
+                oRPC.callback = function(rpc) {
+                };
+                oRPC.make();
+            }
             lastActionPerformed = '';
         } else {
             new leimnud.module.app.alert().make({
@@ -121,7 +133,7 @@ var uploadFilesScreen = function(PRO_UID, MAIN_DIRECTORY, CURRENT_DIRECTORY) {
 
   oRPC.callback = function(rpc) {
     if(rpc.xmlhttp.response==0){
-        showPromptLogin('session');
+        showPromptLogin('upload','','','');
     }else{
         var swNavigator;
         if(navigator.appName=='Microsoft Internet Explorer'){
@@ -183,7 +195,7 @@ function editFile(pro_uid, fileName){
 
     oRPC.callback = function(rpc) {
       if(rpc.xmlhttp.response==0){
-          showPromptLogin('session');
+          showPromptLogin('edit','','','');
       }
     }.extend(this);
     oRPC.make();
@@ -223,6 +235,11 @@ function editFile(pro_uid, fileName){
 /*refresh content tiny*/
 
 function saveFile(pro_uid, fileName){
+
+    var fc64 = base64_encode(getField('fcontent').value);
+    tinyMCE.execCommand('mceRemoveControl',false,'form[fcontent]');
+    fc64 = fc64.replace(/&amp;/g, "@amp@");
+    fc64 = fc64.replace(/\+/g, '%2B');
   
     var oRPC = new leimnud.module.rpc.xmlhttp({
       url : 'processes_Ajax',
@@ -232,15 +249,10 @@ function saveFile(pro_uid, fileName){
     oPanel.loader.show();
     oRPC.callback = function(rpc) {
       if(rpc.xmlhttp.response==0){
-          showPromptLogin('session');
+          showPromptLogin('save',pro_uid, fileName, fc64);
       }
     }.extend(this);
     oRPC.make();    
-
-    var fc64 = base64_encode(getField('fcontent').value);
-    tinyMCE.execCommand('mceRemoveControl',false,'form[fcontent]');
-    fc64 = fc64.replace(/&amp;/g, "@amp@");
-    fc64 = fc64.replace(/\+/g, '%2B');
 
     var oRPC = new leimnud.module.rpc.xmlhttp({
       url : 'processes_Ajax',
@@ -264,7 +276,7 @@ function showCreateEmptyOptions(e, MAIN_DIRECTORY){
 
   oRPC.callback = function(rpc) {
     if(rpc.xmlhttp.response==0){
-        showPromptLogin('session');
+        showPromptLogin('createEmty','','','');
     }
   }.extend(this);
   oRPC.make();
