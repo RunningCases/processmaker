@@ -353,20 +353,17 @@ $(document).ready(function() {
 		presenter.getDashboardIndicators(dashboardId, defaultInitDate(), defaultEndDate())
 				.done(function(indicatorsVM) {
 					fillIndicatorWidgets(indicatorsVM);
-					//TODO use real data
 					loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
 				});
 	});
 
 	$('#indicatorsGridStack').on('click','.ind-button-selector', function() {
 		var indicatorId = $(this).data('indicator-id');
-		//TODO use real data
 		loadIndicator(indicatorId, defaultInitDate(), defaultEndDate());
 	});
 
 	$('body').on('click','.bread-back-selector', function() {
 		var indicatorId = window.currentIndicator.id;
-		//TODO use real data
 		loadIndicator(indicatorId, defaultInitDate(), defaultEndDate());
 		return false;
 	});
@@ -380,7 +377,6 @@ $(document).ready(function() {
                             "inefficiencyCost":$(this).data('detail-cost'),
                             "name":$(this).data('detail-name')
 		};
-		//TODO PASS REAL VALUES
 		presenter.getSpecialIndicatorSecondLevel(detailId, window.currentIndicator.type, defaultInitDate(), defaultEndDate())
 			.done(function (viewModel) {
 				fillSpecialIndicatorSecondView(viewModel);
@@ -406,8 +402,15 @@ var hideTitleAndSortDiv = function(){
 	switch (window.currentIndicator.type) {
 		case "1010":
 		case "1030":
-			$('#relatedLabel').css('visibility', 'visible');
-			$('#relatedLabel').show();
+			if($('.detail-button-selector').length == 0) {
+				$('#relatedLabel').hide();
+				//$('#relatedLabel').find('h3').text(G_STRING['ID_NO_DATA_TO_DISPLAY']);
+			}
+			else {
+				$('#relatedLabel').css('visibility', 'visible');
+				$('#relatedLabel').show();
+			}
+
 			break;
 		default:
 			$('#relatedLabel').hide();
@@ -419,6 +422,15 @@ var selectedOrderOfDetailList = function () {
 	return ($('#sortListButton').hasClass('fa-chevron-up') ? "up" : "down");
 }
 
+var selectDefaultMonthAndYear = function () {
+	var compareDate = new Date();
+	compareDate.setMonth(compareDate.getMonth() - 1);
+	var compareMonth = compareDate.getMonth() + 1;
+	var compareYear = compareDate.getYear();
+	$('#month').val(compareMonth);
+	$('#year').val(compareYear);
+}
+
 var initialDraw = function () {
 	presenter.getUserDashboards(pageUserId)
 		.then(function(dashboardsVM) {
@@ -427,6 +439,7 @@ var initialDraw = function () {
 				/**** window initialization  with favorite dashboard*****/
 				presenter.getDashboardIndicators(window.currentDashboardId, defaultInitDate(), defaultEndDate())
 						.done(function(indicatorsVM) {
+							selectDefaultMonthAndYear();
 							fillIndicatorWidgets(indicatorsVM);
 							loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
 						});
@@ -523,10 +536,6 @@ var fillIndicatorWidgets = function (presenterData) {
 	$.each(presenterData, function(key, indicator) {
 		var $widget = widgetBuilder.getIndicatorWidget(indicator);
 		grid.add_widget($widget, indicator.toDrawX, indicator.toDrawY, indicator.toDrawWidth, indicator.toDrawHeight, true);
-		//TODO will exist animation?
-		/*if (indicator.category == "normal") {
-			animateProgress(indicator, $widget);
-		}*/
 		var $title = $widget.find('.ind-title-selector');
 		if (indicator.favorite == "1") {
 			$title.addClass("panel-active");
