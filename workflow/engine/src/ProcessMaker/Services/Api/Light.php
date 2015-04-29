@@ -3,7 +3,7 @@
 namespace ProcessMaker\Services\Api;
 
 use \G;
-
+use \ProcessMaker\Project\Adapter;
 use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
 
@@ -487,11 +487,10 @@ class Light extends Api
 
             $activitySteps = $task->getSteps($act_uid);
 
-            //$step = new \ProcessMaker\Services\Api\Project\Activity\Step();
-
             $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
             $dynaForm->setFormatFieldNameInUppercase(false);
-
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $step = new \ProcessMaker\Services\Api\Project\Activity\Step();
             $response = array();
             for ($i = 0; $i < count($activitySteps); $i++) {
                 if ($activitySteps[$i]['step_type_obj'] == "DYNAFORM") {
@@ -499,7 +498,9 @@ class Light extends Api
                     $result   = $this->parserDataDynaForm($dataForm);
                     $result['formContent'] = (isset($result['formContent']) && $result['formContent'] != null)?json_decode($result['formContent']):"";
                     $result['index']       = $i;
-                    //$activitySteps[$i]["triggers"] = $step->doGetActivityStepTriggers($activitySteps[$i]["step_uid"], $act_uid, $prj_uid);
+                    $result['stepId']      = $activitySteps[$i]["step_uid"];
+                    $trigger = $oMobile->statusTriggers($step->doGetActivityStepTriggers($activitySteps[$i]["step_uid"], $act_uid, $prj_uid));
+                    $result["triggers"]    = $trigger;
                     $response[] = $result;
                 }
             }
@@ -507,6 +508,41 @@ class Light extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
         return $response;
+    }
+
+    /**
+     * Execute Trigger case
+     *
+     * @param string $prj_uid  {@min 1}{@max 32}
+     * @param string $act_uid  {@min 1}{@max 32}
+     * @param string $cas_uid  {@min 1}{@max 32}
+     * @param string $step_uid {@min 32}{@max 32}
+     * @param string $type     {@choice before,after}
+     *
+     * @copyright Colosa - Bolivia
+     *
+     * @url POST /process/:prj_uid/task/:act_uid/case/:cas_uid/step/:step_uid/execute-trigger/:type
+     */
+    public function doPutExecuteTriggerCase($prj_uid, $act_uid, $cas_uid, $step_uid, $type)
+    {
+        try {
+            $userUid = $this->getUserId();
+            $step = new \ProcessMaker\Services\Api\Project\Activity\Step();
+            $triggers= $step->doGetActivityStepTriggers($step_uid, $act_uid, $prj_uid);
+
+            $step = new \ProcessMaker\BusinessModel\Step();
+            $step->setFormatFieldNameInUppercase(false);
+            $step->setArrayParamException(array("stepUid" => "step_uid", "taskUid" => "act_uid", "processUid" => "prj_uid"));
+
+            $cases = new \ProcessMaker\BusinessModel\Cases();
+            foreach($triggers as $trigger){
+                if (strtolower($trigger['st_type']) == $type) {
+                    $cases->putExecuteTriggerCase($cas_uid, $trigger['tri_uid'], $userUid);
+                }
+            }
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
     }
 
     /**
@@ -898,5 +934,187 @@ class Light extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
         return $result;
+    }
+
+    /**
+     * GET list category
+     *
+     * @return array
+     * @throws RestException
+     *
+     * @url GET /category
+     */
+    public function getCategoryList()
+    {
+        try {
+            $oLight = new \ProcessMaker\BusinessModel\Light();
+            $category = $oLight->getCategoryList();
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $category;
+    }
+
+    /**
+     * GET list process
+     *
+     * @return array
+     * @throws RestException
+     *
+     * @param string $action {@min 1}{@max 32}
+     * @param string $cat_uid {@max 32}{@from path}
+     *
+     * @url GET /process/:action
+     */
+    public function getProcessList ($action, $cat_uid = null)
+    {
+        try {
+            $usr_uid = $this->getUserId();
+            $oLight = new \ProcessMaker\BusinessModel\Light();
+            $process = $oLight->getProcessList($action, $cat_uid, $usr_uid);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $process;
+    }
+
+    /**
+     * GET list process
+     *
+     * @return array
+     * @throws RestException
+     *
+     * @param string $task_uid {@min 1}{@max 32}
+     *
+     * @url GET /userstoreassign/:task_uid
+     */
+    public function getUsersToReassign ($task_uid)
+    {
+        try {
+            $usr_uid = $this->getUserId();
+            $oLight = new \ProcessMaker\BusinessModel\Light();
+            $process = $oLight->getUsersToReassign($usr_uid, $task_uid);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $process;
+    }
+
+    /**
+     * @return \stdclass
+     * @throws RestException
+     *
+     * @param string $app_uid {@min 1}{@max 32}
+     * @param string $to_usr_uid {@min 1}{@max 32}
+     *
+     * @url POST /reassign/:app_uid/user/:to_usr_uid
+     */
+    public function reassignCase ($app_uid, $to_usr_uid)
+    {
+        try {
+            $usr_uid = $this->getUserId();
+            $oLight = new \ProcessMaker\BusinessModel\Light();
+            $process = $oLight->reassignCase($usr_uid, $app_uid, $to_usr_uid);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $process;
+    }
+
+    /**
+     * Paused Case
+     *
+     * @return \stdclass
+     * @throws RestException
+     *
+     * @param string $app_uid {@min 1}{@max 32}
+     *
+     * @url POST /cases/:app_uid/pause
+     */
+    public function pauseCase ($app_uid, $request_data)
+    {
+        try {
+            $usr_uid = $this->getUserId();
+            $oLight = new \ProcessMaker\BusinessModel\Light();
+            $process = $oLight->pauseCase($usr_uid, $app_uid, $request_data);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $process;
+    }
+
+    /**
+     * Unpaused Case
+     *
+     * @return \stdclass
+     * @throws RestException
+     *
+     * @param string $app_uid {@min 1}{@max 32}
+     *
+     * @url POST /cases/:app_uid/unpause
+     */
+    public function unpauseCase ($app_uid)
+    {
+        $result = array();
+        try {
+            $usr_uid = $this->getUserId();
+            $cases = new \ProcessMaker\BusinessModel\Cases();
+            $cases->putUnpauseCase($app_uid, $usr_uid);
+            $result["status"] = "ok";
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $result;
+    }
+
+    /**
+     * Cancel Case
+     *
+     * @param string $cas_uid {@min 1}{@max 32}
+     *
+     * @copyright Colosa - Bolivia
+     *
+     * @url POST /cases/:app_uid/cancel
+     */
+    public function doPutCancelCase($app_uid)
+    {
+        $response = array("status" => "false");
+        try {
+            $userUid = $this->getUserId();
+            $cases = new \ProcessMaker\BusinessModel\Cases();
+            $cases->putCancelCase($app_uid, $userUid);
+            $response["status"] = "ok";
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
+
+    /**
+     * @url GET /project/:prj_uid/case/:app_uid
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doGetProcessMapImage($prj_uid, $app_uid)
+    {
+        $return = array();
+        try {
+            $oPMap = new \ProcessMaker\BusinessModel\ProcessMap();
+            $schema = Adapter\BpmnWorkflow::getStruct($prj_uid);
+
+            $case = new \ProcessMaker\BusinessModel\Cases();
+            $case->setFormatFieldNameInUppercase(false);
+            $schemaStatus = $case->getTasks($app_uid);
+
+            $file = $oPMap->get_image($schema, $schemaStatus);
+            ob_start();
+            imagepng($file);
+            $image  = ob_get_clean();
+            $return["map"] = base64_encode($image);
+
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $return;
     }
 }
