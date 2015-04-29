@@ -451,17 +451,18 @@ class AdditionalTables extends BaseAdditionalTables
 
         if (isset($_POST['sort'])) {
             $_POST['sort'] = $filter->validateInput($_POST['sort']);
+            $_POST['dir'] = $filter->validateInput($_POST['dir']);
             if ($_POST['dir'] == 'ASC') {
                 if ($keyOrderUppercase) {
-                    eval('$oCriteria->addAscendingOrderByColumn("' . $sort . '");');
+                    eval('$oCriteria->addAscendingOrderByColumn("' . $_POST['sort'] . '");');
                 } else {
-                    eval('$oCriteria->addAscendingOrderByColumn(' . $sClassPeerName . '::' . $sort . ');');
+                    eval('$oCriteria->addAscendingOrderByColumn(' . $sClassPeerName . '::' . $_POST['sort'] . ');');
                 }
             } else {
                 if ($keyOrderUppercase) {
-                    eval('$oCriteria->addDescendingOrderByColumn("' . $sort . '");');
+                    eval('$oCriteria->addDescendingOrderByColumn("' . $_POST['sort'] . '");');
                 } else {
-                    eval('$oCriteria->addDescendingOrderByColumn(' . $sClassPeerName . '::' . $sort . ');');
+                    eval('$oCriteria->addDescendingOrderByColumn(' . $sClassPeerName . '::' . $_POST['sort'] . ');');
                 }
             }
         }
