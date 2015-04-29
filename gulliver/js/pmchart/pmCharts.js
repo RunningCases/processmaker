@@ -109,7 +109,6 @@ BarChart.prototype.drawBars = function(data, canvas, param) {
 	var currObj = this;
 
 	if (data == null || data.length == 0) {
-		console.log(graphDim);
 		canvas.append("text")
 		    .attr('class','pm-charts-no-draw')
 			.attr("y", graphDim.height/2)
@@ -1204,7 +1203,7 @@ PieChart.prototype.drawPie2D = function (dataset, canvas, param) {
         });
         gradients.enter().append("svg:radialGradient")
             .attr("id", function (d, i) {
-                return "gradient" + d.datalabel;
+                return "gradient" + i;
             })
             .attr("class", "gradient")
             .attr("xlink:href", "#master");
@@ -1245,7 +1244,7 @@ PieChart.prototype.drawPie2D = function (dataset, canvas, param) {
 
         // Each sector will refer to its gradient fill
         paths.attr("fill", function (d, i) {
-            return "url(#gradient" + d.data.datalabel + ")";
+            return "url(#gradient" + i + ")";
         })
             .transition().duration(1000).attrTween("d", tweenIn).each("end", function () {
                 this._listenToEvents = true;
@@ -1549,7 +1548,7 @@ Pie3DChart.prototype.drawPie3D = function (data, canvas, param) {
             .enter()
             .append("text")
             .attr("x", w + 30)
-            .attr("class", "pie-label")
+            .attr("class", "legend")
             //.attr("y",i*10+50)
             .text(function (d, i) {
                 return d.datalabel +  " - " + getPercent(d.value * 1)

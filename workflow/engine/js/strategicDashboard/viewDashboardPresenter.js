@@ -100,7 +100,7 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 		//to be sure that percentages sum up to 100 (the rounding will lost decimals)%
 		newObject.percentageOnTime = 100 - newObject.percentageOverdue - newObject.percentageAtRisk;
 		newObject.overdueVisibility = (newObject.percentageOverdue > 0)? "visible" : "hidden";
-		newObject.atRiskVisiblity = (newObject.percentageAtRisk > 0)? "visible" : "hidden";
+		newObject.atRiskVisibility = (newObject.percentageAtRisk > 0)? "visible" : "hidden";
 		newObject.onTimeVisibility = (newObject.percentageOnTime > 0)? "visible" : "hidden";
 		returnList.push(newObject);
 		i++;
@@ -164,25 +164,8 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 			"inefficiencyCost" : "value"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
-		var shortLabel = (newObject.datalabel == null) 
-									? "" 
-									: newObject.datalabel.substring(0,15);
-
-		newObject.datalabel = shortLabel;
-
-		//use positive values for drawing;
-		if (newObject.value > 0) {
-			newObject.value = 0;
-		}
-		if (newObject.value < 0) {
-			newObject.value = Math.abs(newObject.value);
-		}
-
-		if (newObject.value > 0) {
-			graphData.push(newObject);
-		}
-
-		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
+		graphData.push(newObject);
+		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.indicatorId = data.id;
 		originalObject.json = JSON.stringify(originalObject);
@@ -190,16 +173,11 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 
 	var retval = {};
 	retval = data;
-	graphData.sort(function(a,b) {
-							var retval = 0;
-							retval = ((a.value*1.0 <= b.value*1.0) ? -1 : 1);
-							return retval;
-						})
-	retval.dataToDraw = graphData.splice(0,7);
 
+	this.makeShortLabel(graphData, 10);
+	retval.dataToDraw = this.adaptGraphData(graphData);
 
-	//TODO aumentar el símbolo de moneda $
-	retval.inefficiencyCostToShow = "$ " +Math.round(retval.inefficiencyCost);
+	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
 	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
 	return retval;
 };
@@ -216,23 +194,8 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
-		var shortLabel = (newObject.datalabel == null) 
-									? "" 
-									: newObject.datalabel.substring(0,7);
-
-		newObject.datalabel = shortLabel;
-		//use positive values for drawing;
-		if (newObject.value > 0) {
-			newObject.value = 0;
-		}
-		if (newObject.value < 0) {
-			newObject.value = Math.abs(newObject.value);
-		}
-
-		if (newObject.value > 0) {
-			graphData.push(newObject);
-		}
-		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
+		graphData.push(newObject);
+		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.indicatorId = data.id;
 		originalObject.json = JSON.stringify(originalObject);
@@ -240,15 +203,10 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 
 	var retval = {};
 	retval = data;
-	graphData.sort(function(a,b) {
-							var retval = 0;
-							retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
-							return retval;
-						})
-	retval.dataToDraw = graphData.splice(0,7);
+	this.makeShortLabel(graphData, 10);
+	retval.dataToDraw = this.adaptGraphData(graphData);
 
-	//TODO aumentar el símbolo de moneda $
-	retval.inefficiencyCostToShow = "$ " + Math.round(retval.inefficiencyCost);
+	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
 	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
 	return retval;
 };
@@ -263,20 +221,18 @@ ViewDashboardPresenter.prototype.statusViewModel = function(indicatorId, data) {
 	$.each(data.dataList, function(index, originalObject) {
 
 		originalObject.taskTitle = that.helper.labelIfEmpty(originalObject.taskTitle);
-		//TODO use more that 10 chars when the label and color problem in pie 2D is solved.
 		var title = originalObject.taskTitle.substring(0,10);
 
-		//TODO Do not use the str. replace when color and lable in pie 2D is solved.
 		var newObject1 = {
-			datalabel : title.trim().replace(" ", "_"),
+			datalabel : title,
 			value : originalObject.percentageTotalOverdue
 		};
 		var newObject2 = {
-			datalabel : title.trim().replace(" ", "_"),
+			datalabel : title,
 			value : originalObject.percentageTotalAtRisk
 		};
 		var newObject3 = {
-			datalabel : title.trim().replace(" ", "_"),
+			datalabel : title,
 			value : originalObject.percentageTotalOnTime
 		};
 
@@ -298,8 +254,7 @@ ViewDashboardPresenter.prototype.statusViewModel = function(indicatorId, data) {
 	retval.graph1Data = this.orderGraphData(graph1Data, "down").splice(0,7)
 	retval.graph2Data = this.orderGraphData(graph2Data, "down").splice(0,7)
 	retval.graph3Data = this.orderGraphData(graph3Data, "down").splice(0,7)
-	//TODO correct 2D Pie so we don't depend on label name
-	
+
 	$.each(retval.graph1Data, function(index, item) { item.datalabel = (index + 1) + "." + item.datalabel;  });
 	$.each(retval.graph2Data, function(index, item) { item.datalabel = (index + 1) + "." + item.datalabel;  });
 	$.each(retval.graph3Data, function(index, item) { item.datalabel = (index + 1) + "." + item.datalabel;  });
@@ -370,29 +325,15 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelPei = function(modelD
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
-		newObject.datalabel = ((newObject.datalabel == null) ? "" : newObject.datalabel.substring(0, 7));
-		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
-		//use positive values for drawing;
-		if (newObject.value > 0) {
-			newObject.value = 0;
-		}
-		if (newObject.value < 0) {
-			newObject.value = Math.abs(newObject.value);
-		}
-
-		if (newObject.value > 0) {
-			graphData.push(newObject);
-		}
+		originalObject.rankToShow = originalObject.rank + "/" + modelData.length;
+		graphData.push(newObject);
 	});
 	var retval = {};
-	graphData.sort(function(a,b) {
-							var retval = 0;
-							retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
-							return retval;
-						})
-	retval.dataToDraw = graphData.splice(0,7);
+	this.makeShortLabel(graphData, 10);
+	retval.dataToDraw = this.adaptGraphData(graphData);
 	retval.entityData = modelData;
 	return retval;
 };
@@ -411,30 +352,16 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelUei = function(modelD
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
-		newObject.datalabel = ((newObject.datalabel == null) ? "" : newObject.datalabel.substring(0, 7));
-		originalObject.inefficiencyCostToShow = "$ " +Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
-		//use positive values for drawing;
-		if (newObject.value > 0) {
-			newObject.value = 0;
-		}
-		if (newObject.value < 0) {
-			newObject.value = Math.abs(newObject.value);
-		}
-
-		if (newObject.value > 0) {
-			graphData.push(newObject);
-		}
+		originalObject.rankToShow = originalObject.rank + "/" + modelData.length;
+		graphData.push(newObject);
 
 	});
 	var retval = {};
-	graphData.sort(function(a,b) {
-							var retval = 0;
-							retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
-							return retval;
-						})
-	retval.dataToDraw = graphData.splice(0,7);
+	this.makeShortLabel(graphData, 10);
+	retval.dataToDraw = this.adaptGraphData(graphData);
 	retval.entityData = modelData;
 	return retval;
 };
@@ -478,4 +405,34 @@ ViewDashboardPresenter.prototype.orderGraphData = function(listData, orderDirect
 		}
 	}
 	return listData.sort(orderToUse);
+}
+
+ViewDashboardPresenter.prototype.adaptGraphData = function(listData) { 
+	var workList = this.orderGraphData(listData, "up");
+	var newList = [];
+	$.each(workList, function(index, item) {
+		item.datalabel = (index + 1) + "." + item.datalabel;
+		//use positive values for drawing;
+		if (item.value > 0) {
+			item.value = 0;
+		}
+		if (item.value < 0) {
+			item.value = Math.abs(item.value);
+		}
+
+		if (item.value > 0) {
+			newList.push(item);
+		}
+	});
+	return newList.splice(0,7);
+}
+
+ViewDashboardPresenter.prototype.makeShortLabel = function(listData, labelLength) { 
+	$.each(listData, function(index, item) {
+		var shortLabel = (item.datalabel == null) 
+									? "" 
+									: item.datalabel.substring(0,labelLength);
+		item.datalabel = shortLabel;
+		item.datalabel = shortLabel;
+	});
 }
