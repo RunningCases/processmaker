@@ -323,11 +323,15 @@ class Consolidated
                     $oCriteria->add($oCriteria->getNewCriterion(AppCacheViewPeer::APP_NUMBER, $search, Criteria::LIKE));
                 }
             }
+            
+            G::LoadSystem('inputfilter');
+            $filter = new \InputFilter();
 
             if ($sort != "") {
                 $reportTable = new ReportTables();
                 $arrayReportTableVar = $reportTable->getTableVars($tableUid);
-
+                $tableName = $filter->validateInput($tableName);
+                $sort = $filter->validateInput($sort);
                 if (in_array($sort, $arrayReportTableVar)) {
                     $sort = strtoupper($sort);
                     eval("\$field = " . $tableName . "Peer::" . $sort . ";");
