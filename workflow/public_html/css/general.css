@@ -39,8 +39,7 @@
 .status-indicator-low,
 .status-indicator-medium,
 .status-indicator-high {
-    padding:0px;
-	padding-top:30px;
+    padding:30px 0px 0px 0;
     color:#444;
     float:left;
 }
