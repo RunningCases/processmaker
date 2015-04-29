@@ -319,9 +319,9 @@ function importSkin ()
 
 function exportSkin ($skinToExport = "")
 {
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
     try {
-        G::LoadSystem('inputfilter');
-        $filter = new InputFilter();
         if (! isset( $_REQUEST['SKIN_FOLDER_ID'] )) {
             throw (new Exception( G::LoadTranslation( 'ID_SKIN_NAME_REQUIRED' ) ));
         }
@@ -356,19 +356,23 @@ function exportSkin ($skinToExport = "")
         $response['success'] = true;
         $response['message'] = $skinTar;
         G::auditLog("ExportSkin", "Skin Name: ".$skinName);
+        
+        $response = $filter->xssFilterHard($response);
+        
         print_r( G::json_encode( $response ) );
     } catch (Exception $e) {
         $response['success'] = false;
         $response['message'] = $e->getMessage();
+        $response = $filter->xssFilterHard($response);
         print_r( G::json_encode( $response ) );
     }
 }
 
 function deleteSkin ()
 {
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
     try {
-        G::LoadSystem('inputfilter');
-        $filter = new InputFilter();
         $_REQUEST['SKIN_FOLDER_ID'] = $filter->xssFilterHard($_REQUEST['SKIN_FOLDER_ID']);
     
         if (! (isset( $_REQUEST['SKIN_FOLDER_ID'] ))) {
@@ -389,6 +393,7 @@ function deleteSkin ()
     } catch (Exception $e) {
         $response['success'] = false;
         $response['error'] = $response['message'] = $e->getMessage();
+        $response = $filter->xssFilterHard($response);
         print_r( G::json_encode( $response ) );
     }
 }

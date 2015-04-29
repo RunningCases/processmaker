@@ -109,14 +109,13 @@ BarChart.prototype.drawBars = function(data, canvas, param) {
 	var currObj = this;
 
 	if (data == null || data.length == 0) {
-		console.log(graphDim);
 		canvas.append("text")
 		    .attr('class','pm-charts-no-draw')
 			.attr("y", graphDim.height/2)
 			.attr("x", graphDim.left*2 + graphDim.width/2)
 			.attr("dy", "1.5em")
 			.style("text-anchor", "end")
-			.text("No data to draw...");
+			.text(param.canvas.noDataText);
 		data = [ {"value":"0", "datalabel":"None"} ];
 	}
 
@@ -1098,7 +1097,7 @@ PieChart.prototype.drawChart = function () {
 
 PieChart.prototype.drawPie2D = function (dataset, canvas, param) {
 	if (dataset == null || dataset.length == 0) {
-		this.$container.html( "<div class='pm-charts-no-draw'>No data to draw ...</div>" );
+		this.$container.html( "<div class='pm-charts-no-draw'>"+param.canvas.noDataText+"</div>" );
 	}
 
     var parameter = createDefaultParamsForGraphPie(param);
@@ -1204,7 +1203,7 @@ PieChart.prototype.drawPie2D = function (dataset, canvas, param) {
         });
         gradients.enter().append("svg:radialGradient")
             .attr("id", function (d, i) {
-                return "gradient" + d.datalabel;
+                return "gradient" + i;
             })
             .attr("class", "gradient")
             .attr("xlink:href", "#master");
@@ -1245,7 +1244,7 @@ PieChart.prototype.drawPie2D = function (dataset, canvas, param) {
 
         // Each sector will refer to its gradient fill
         paths.attr("fill", function (d, i) {
-            return "url(#gradient" + d.data.datalabel + ")";
+            return "url(#gradient" + i + ")";
         })
             .transition().duration(1000).attrTween("d", tweenIn).each("end", function () {
                 this._listenToEvents = true;
@@ -1444,7 +1443,7 @@ Pie3DChart.prototype.drawChart = function () {
 Pie3DChart.prototype.drawPie3D = function (data, canvas, param) {
 
 	if (data == null || data.length == 0) {
-		this.$container.html( "<div class='pm-charts-no-draw'>No data to draw ...</div>" );
+		this.$container.html( "<div class='pm-charts-no-draw'>"+param.canvas.noDataText+"</div>" );
 	}
 
     var duration_transition = 0;
@@ -1549,7 +1548,7 @@ Pie3DChart.prototype.drawPie3D = function (data, canvas, param) {
             .enter()
             .append("text")
             .attr("x", w + 30)
-            .attr("class", "pie-label")
+            .attr("class", "legend")
             //.attr("y",i*10+50)
             .text(function (d, i) {
                 return d.datalabel +  " - " + getPercent(d.value * 1)
@@ -1614,7 +1613,7 @@ RingChart.prototype.drawChart = function () {
 
 RingChart.prototype.drawRing = function(data, canvas, param){
 	if (data == null || data.length == 0) {
-		this.$container.html( "<div class='pm-charts-no-draw'>No data to draw ...</div>" );
+		this.$container.html( "<div class='pm-charts-no-draw'>"+param.canvas.noDataText+"</div>" );
 	}
 
 	//d3.select('#'+parent).select('svg').remove();

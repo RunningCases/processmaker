@@ -41,7 +41,6 @@ var frmDashboard;
 var addTabButton;
 var tabPanel;
 var dashboardIndicatorFields;
-var dashboardIndicatorPanel;
 var store;
 
 var indexTab = 0;
@@ -49,12 +48,11 @@ var comboPageSize = 10;
 var resultTpl;
 var storeIndicatorType;
 var storeGraphic;
-var storeFrecuency;
+var storeFrequency;
 var storeProject;
 var storeGroup;
 var storeUsers;
 var dataUserGroup;
-var dasIndUid;
 var flag = true;
 var myMask;
 var dataIndicator = '';
@@ -63,13 +61,13 @@ var tabActivate = [];
 Ext.onReady( function() {
 
     myMask = new Ext.LoadMask(Ext.getBody(), {msg:_('ID_LOADING')});
-    
+
 
     Ext.QuickTips.init();
 
     resultTpl = new Ext.XTemplate(
         '<tpl for="."><div class="x-combo-list-item" style="white-space:normal !important;word-wrap: break-word;">',
-            '<span> {APP_PRO_TITLE}</span>',
+        '<span> {APP_PRO_TITLE}</span>',
         '</div></tpl>'
     );
 
@@ -79,7 +77,7 @@ Ext.onReady( function() {
         items       : [
             {
                 id          : 'DAS_TITLE',
-                fieldLabel  : _('ID_DASHBOARD_TITLE')+ ' *',
+                fieldLabel  : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_DASHBOARD_TITLE')) +'"> * </span>' + _('ID_DASHBOARD_TITLE'),
                 xtype       : 'textfield',
                 anchor      : '85%',
                 maxLength   : 250,
@@ -92,10 +90,9 @@ Ext.onReady( function() {
                 xtype           : 'textarea',
                 id              : 'DAS_DESCRIPTION',
                 fieldLabel      : _('ID_DESCRIPTION'),
-                labelSeparator  : '',
                 anchor          : '85%',
                 maskRe          : /([a-zA-Z0-9_'\s]+)$/,
-                height          : 50,
+                height          : 50
             }
         ]
     });
@@ -240,7 +237,7 @@ Ext.onReady( function() {
         }
     });
 
-    
+
     storeIndicatorType = new Ext.data.GroupingStore( {
         proxy : new Ext.data.HttpProxy({
             api: {
@@ -297,7 +294,7 @@ Ext.onReady( function() {
         }
     });
 
-    storeFrecuency = new Ext.data.GroupingStore( {
+    storeFrequency = new Ext.data.GroupingStore( {
         proxy : new Ext.data.HttpProxy({
             api: {
                 read : urlProxy + 'catalog/periodicity'
@@ -450,7 +447,7 @@ Ext.onReady( function() {
                         return '<div class="search-item">' +
                             '<h3><span>{owner_uid}</span>{owner_label}</h3>' +
                             '{excerpt}' +
-                        '</div>';
+                            '</div>';
                     }
                 },
                 //pageSize    : 10,
@@ -487,7 +484,7 @@ Ext.onReady( function() {
                 }
             },
             {
-                title:  _('ID_PRO_USER'),
+                title:  _('ID_PRO_USER')
             },
             ownerInfoGrid
         ]
@@ -496,7 +493,7 @@ Ext.onReady( function() {
     addTabButton = new Ext.Button ({
         text: _('ID_NEW_TAB_INDICATOR'),
         iconCls: 'button_menu_ext ss_sprite ss_add',
-        handler: addTab,
+        handler: addTab
     });
 
     tabPanel = new Ext.TabPanel({
@@ -543,11 +540,11 @@ Ext.onReady( function() {
                         },
                         scope: that
                     });
-                    return false; 
+                    return false;
                 } else {
                     flag = true;
                 }
-                
+
             },
             tabchange : function ( that, tab  ) {
                 var id = tabPanel.getActiveTab().id;
@@ -629,11 +626,8 @@ Ext.onReady( function() {
         items       : [
             addTabButton,
             tabPanel
-            
         ]
     });
-
-
 
     //form
     frmDashboard = new Ext.FormPanel({
@@ -647,11 +641,11 @@ Ext.onReady( function() {
         waitMsgTarget : true,
         frame         : true,
         defaults : {
-              anchor     : '100%',
-              allowBlank : false,
-              resizable  : true,
-              msgTarget  : 'side',
-              align      : 'center'
+            anchor     : '100%',
+            allowBlank : false,
+            resizable  : true,
+            msgTarget  : 'side',
+            align      : 'center'
         },
         items : [
             dashboardFields,
@@ -676,7 +670,7 @@ Ext.onReady( function() {
 
     ownerInfoGrid.on("afterrender", function(component) {
         component.getBottomToolbar().refresh.hideParent = true;
-        component.getBottomToolbar().refresh.hide(); 
+        component.getBottomToolbar().refresh.hide();
     });
 
     viewport = new Ext.Viewport({
@@ -733,245 +727,245 @@ var addTab = function (flag) {
         return false;
     }
     var tab = {
-            title   : _('ID_INDICATOR')+ ' '+ (++indexTab),
-            id      : indexTab,
-            iconCls : 'tabs',
-            width       : "100%",
-            items   : [
-                new Ext.Panel({
-                    height      : 230,
-                    width       : "100%",
-                    border      : true,
-                    bodyStyle   : 'padding:10px',
-                    items : [
-                        new Ext.form.FieldSet({
-                            labelWidth  : 150,
-                            labelAlign  :'right',
-                            items : [
-                                {
-                                    id          : 'DAS_IND_UID_' + indexTab,
-                                    xtype       : 'textfield',
-                                    hidden      : true
-                                },
-                                {
-                                    fieldLabel  : _('ID_INDICATOR_TITLE')+ ' *',
-                                    id          : 'IND_TITLE_'+ indexTab,
-                                    xtype       : 'textfield',
-                                    anchor      : '85%',
-                                    maskRe      : /([a-zA-Z0-9_'\s]+)$/,
-                                    regex       : /([a-zA-Z0-9_'\s]+)$/,
-                                    regexText   : _('ID_INVALID_VALUE', _('ID_INDICATOR_TITLE')),
-                                    maxLength   : 250,
-                                    allowBlank  : false
-                                },
-                                new Ext.form.ComboBox({
-                                    anchor          : '85%',
-                                    editable        : false,
-                                    id              : 'IND_TYPE_'+ indexTab,
-                                    fieldLabel      : _('ID_INDICATOR_TYPE')+ ' *',
-                                    displayField    : 'CAT_LABEL_ID',
-                                    valueField      : 'CAT_UID',
-                                    forceSelection  : false,
-                                    emptyText       : _('ID_SELECT'),
-                                    selectOnFocus   : true,
-                                    typeAhead       : true,
-                                    autocomplete    : true,
-                                    triggerAction   : 'all',
-                                    store           : storeIndicatorType,
-                                    listeners:{
-                                        scope: this,
-                                        select: function(combo, record, index) {
-                                            var value = combo.getValue();
-                                            var field = '';
-                                            var index = tabPanel.getActiveTab().id;
-                                            var fields = ['DAS_IND_FIRST_FIGURE_'+index,'DAS_IND_FIRST_FREQUENCY_'+index,'DAS_IND_SECOND_FIGURE_'+index, 'DAS_IND_SECOND_FREQUENCY_'+index];
-                                            if (value == '1050') {
-                                                field = Ext.getCmp('IND_PROCESS_'+index);
-                                                field.setValue('0');
+        title   : _('ID_INDICATOR')+ ' '+ (++indexTab),
+        id      : indexTab,
+        iconCls : 'tabs',
+        width       : "100%",
+        items   : [
+            new Ext.Panel({
+                height      : 230,
+                width       : "100%",
+                border      : true,
+                bodyStyle   : 'padding:10px',
+                items : [
+                    new Ext.form.FieldSet({
+                        labelWidth  : 150,
+                        labelAlign  :'right',
+                        items : [
+                            {
+                                id          : 'DAS_IND_UID_' + indexTab,
+                                xtype       : 'textfield',
+                                hidden      : true
+                            },
+                            {
+                                fieldLabel  : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_INDICATOR_TITLE')) +'"> * </span>' + _('ID_INDICATOR_TITLE'),
+                                id          : 'IND_TITLE_'+ indexTab,
+                                xtype       : 'textfield',
+                                anchor      : '85%',
+                                maskRe      : /([a-zA-Z0-9_'\s]+)$/,
+                                regex       : /([a-zA-Z0-9_'\s]+)$/,
+                                regexText   : _('ID_INVALID_VALUE', _('ID_INDICATOR_TITLE')),
+                                maxLength   : 250,
+                                allowBlank  : false
+                            },
+                            new Ext.form.ComboBox({
+                                anchor          : '85%',
+                                editable        : false,
+                                id              : 'IND_TYPE_'+ indexTab,
+                                fieldLabel      : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_INDICATOR_TYPE')) +'"> * </span>' + _('ID_INDICATOR_TYPE'),
+                                displayField    : 'CAT_LABEL_ID',
+                                valueField      : 'CAT_UID',
+                                forceSelection  : false,
+                                emptyText       : _('ID_SELECT'),
+                                selectOnFocus   : true,
+                                typeAhead       : true,
+                                autocomplete    : true,
+                                triggerAction   : 'all',
+                                store           : storeIndicatorType,
+                                listeners:{
+                                    scope: this,
+                                    select: function(combo, record, index) {
+                                        var value = combo.getValue();
+                                        var field = '';
+                                        var index = tabPanel.getActiveTab().id;
+                                        var fields = ['DAS_IND_FIRST_FIGURE_'+index,'DAS_IND_FIRST_FREQUENCY_'+index,'DAS_IND_SECOND_FIGURE_'+index, 'DAS_IND_SECOND_FREQUENCY_'+index];
+                                        if (value == '1050') {
+                                            field = Ext.getCmp('IND_PROCESS_'+index);
+                                            field.setValue('0');
+                                            field.disable();
+                                            field.hide();
+                                        } else {
+                                            field = Ext.getCmp('IND_PROCESS_'+index);
+                                            field.enable();
+                                            field.show();
+                                        }
+                                        if (value == '1010' || value == '1030' || value == '1050') {
+                                            for (var i=0; i<fields.length; i++) {
+                                                field = Ext.getCmp(fields[i]);
                                                 field.disable();
                                                 field.hide();
-                                            } else {
-                                                field = Ext.getCmp('IND_PROCESS_'+index);
+                                            }
+                                        } else {
+                                            for (var i=0; i<fields.length; i++) {
+                                                field = Ext.getCmp(fields[i]);
                                                 field.enable();
                                                 field.show();
                                             }
-                                            if (value == '1010' || value == '1030' || value == '1050') {
-                                                for (var i=0; i<fields.length; i++) {
-                                                    field = Ext.getCmp(fields[i]);
-                                                    field.disable();
-                                                    field.hide();
-                                                }
-                                            } else {
-                                                for (var i=0; i<fields.length; i++) {
-                                                    field = Ext.getCmp(fields[i]);
-                                                    field.enable();
-                                                    field.show();
-                                                }
-                                            }
-                                        } 
-                                    }
-                                }),
-                                new Ext.form.FieldSet({
-                                    title : _('ID_INDICATOR_GOAL'),
-                                    width : "90%",
-                                    id  : 'fieldSet_'+ indexTab,
-                                    bodyStyle: 'paddingLeft: 75px;',
-                                    paddingLeft: "30px",
-                                    marginLeft : "60px",
-                                    layout : 'hbox',
-                                    hidden : true,
-                                    items       : [
-                                        new Ext.form.ComboBox({
-                                            editable        : false,
-                                            id              : 'DAS_IND_DIRECTION_'+ indexTab,
-                                            displayField    : 'label',
-                                            valueField      : 'id',
-                                            value           : '2',
-                                            forceSelection  : false,
-                                            selectOnFocus   : true,
-                                            typeAhead       : true,
-                                            autocomplete    : true,
-                                            width           : 90,
-                                            triggerAction   : 'all',
-                                            mode            : 'local',
-                                            allowBlank      : false,
-                                            store           : new Ext.data.ArrayStore({
-                                                id: 2,
-                                                fields: [
-                                                    'id',
-                                                    'label'
-                                                ],
-                                                data: [['1', _('ID_LESS_THAN')], ['2', _('ID_MORE_THAN')]]
-                                            })
-                                        }),
-                                        {
-                                            fieldLabel  : _('ID_INDICATOR_GOAL'),
-                                            id          : 'IND_GOAL_'+ indexTab,
-                                            xtype       : 'textfield',
-                                            anchor      : '40%',
-                                            maskRe      : /([0-9\.]+)$/,
-                                            maxLength   : 9,
-                                            value       : 1,
-                                            width       : 80,
-                                            allowBlank  : false,
-                                            listeners   : {
-                                                focus : function(tb, e) {
-                                                     Ext.QuickTips.register({
-                                                       target: tb,
-                                                       title: _('ID_HELP'),
-                                                       text: _('ID_GOAL_HELP')
-                                                     });
-                                                 }
-                                           }  
                                         }
-                                    ],
-                                    listeners:
+                                    }
+                                }
+                            }),
+                            new Ext.form.FieldSet({
+                                title : _('ID_INDICATOR_GOAL'),
+                                width : "90%",
+                                id  : 'fieldSet_'+ indexTab,
+                                bodyStyle: 'paddingLeft: 75px;',
+                                paddingLeft: "30px",
+                                marginLeft : "60px",
+                                layout : 'hbox',
+                                hidden : true,
+                                items       : [
+                                    new Ext.form.ComboBox({
+                                        editable        : false,
+                                        id              : 'DAS_IND_DIRECTION_'+ indexTab,
+                                        displayField    : 'label',
+                                        valueField      : 'id',
+                                        value           : '2',
+                                        forceSelection  : false,
+                                        selectOnFocus   : true,
+                                        typeAhead       : true,
+                                        autocomplete    : true,
+                                        width           : 90,
+                                        triggerAction   : 'all',
+                                        mode            : 'local',
+                                        allowBlank      : false,
+                                        store           : new Ext.data.ArrayStore({
+                                            id: 2,
+                                            fields: [
+                                                'id',
+                                                'label'
+                                            ],
+                                            data: [['1', _('ID_LESS_THAN')], ['2', _('ID_MORE_THAN')]]
+                                        })
+                                    }),
                                     {
-                                        render: function()
-                                        {
-                                            var index = tabPanel.getActiveTab().id;
-                                            var myfieldset = document.getElementById('fieldSet_'+index);
-                                            myfieldset.style.marginLeft = "70px";
-                                            myfieldset.style.marginRight = "70px";
+                                        fieldLabel  : _('ID_INDICATOR_GOAL'),
+                                        id          : 'IND_GOAL_'+ indexTab,
+                                        xtype       : 'textfield',
+                                        anchor      : '40%',
+                                        maskRe      : /([0-9\.]+)$/,
+                                        maxLength   : 9,
+                                        value       : 1,
+                                        width       : 80,
+                                        allowBlank  : false,
+                                        listeners   : {
+                                            focus : function(tb, e) {
+                                                Ext.QuickTips.register({
+                                                    target: tb,
+                                                    title: _('ID_HELP'),
+                                                    text: _('ID_GOAL_HELP')
+                                                });
+                                            }
                                         }
                                     }
+                                ],
+                                listeners:
+                                {
+                                    render: function()
+                                    {
+                                        var index = tabPanel.getActiveTab().id;
+                                        var myfieldset = document.getElementById('fieldSet_'+index);
+                                        myfieldset.style.marginLeft = "70px";
+                                        myfieldset.style.marginRight = "70px";
+                                    }
+                                }
 
-                                }),
-                                new Ext.form.ComboBox({
-                                    anchor          : '85%',
-                                    editable        : false,
-                                    fieldLabel      : _('ID_PROCESS')+ ' *',
-                                    id              : 'IND_PROCESS_'+ indexTab,
-                                    displayField    : 'prj_name',
-                                    valueField      : 'prj_uid',
-                                    forceSelection  : true,
-                                    emptyText       : _('ID_EMPTY_PROCESSES'),
-                                    selectOnFocus   : true,
-                                    hidden          : true,
-                                    typeAhead       : true,
-                                    autocomplete    : true,
-                                    triggerAction   : 'all',
-                                    store           : storeProject
-                                }),
-                                new Ext.form.ComboBox({
-                                    anchor          : '85%',
-                                    editable        : false,
-                                    fieldLabel      : _('ID_FIRST_FIGURE'),
-                                    displayField    : 'CAT_LABEL_ID',
-                                    id              : 'DAS_IND_FIRST_FIGURE_'+ indexTab,
-                                    valueField      : 'CAT_UID',
-                                    forceSelection  : false,
-                                    emptyText       : _('ID_SELECT'),
-                                    selectOnFocus   : true,
-                                    hidden          : true,
-                                    typeAhead       : true,
-                                    autocomplete    : true,
-                                    triggerAction   : 'all',
-                                    store           : storeGraphic
-                                }),
-                                new Ext.form.ComboBox({
-                                    anchor          : '85%',
-                                    editable        : false,
-                                    fieldLabel      : _('ID_PERIODICITY'),
-                                    displayField    : 'CAT_LABEL_ID',
-                                    id              : 'DAS_IND_FIRST_FREQUENCY_'+ indexTab,
-                                    valueField      : 'CAT_UID',
-                                    forceSelection  : false,
-                                    emptyText       : _('ID_SELECT'),
-                                    selectOnFocus   : true,
-                                    hidden          : true, 
-                                    typeAhead       : true,
-                                    autocomplete    : true,
-                                    triggerAction   : 'all',
-                                    store           : storeFrecuency
-                                }),
-                                new Ext.form.ComboBox({
-                                    anchor          : '85%',
-                                    editable        : false,
-                                    fieldLabel      : _('ID_SECOND_FIGURE'),
-                                    id              : 'DAS_IND_SECOND_FIGURE_'+ indexTab,
-                                    displayField    : 'CAT_LABEL_ID',
-                                    valueField      : 'CAT_UID',
-                                    forceSelection  : false,
-                                    emptyText       : _('ID_SELECT'),
-                                    selectOnFocus   : true,
-                                    hidden          : true,
-                                    typeAhead       : true,
-                                    autocomplete    : true,
-                                    triggerAction   : 'all',
-                                    store           : storeGraphic
-                                }),
-                                new Ext.form.ComboBox({
-                                    anchor          : '85%',
-                                    editable        : false,
-                                    fieldLabel      : _('ID_PERIODICITY'),
-                                    displayField    : 'CAT_LABEL_ID',
-                                    id              : 'DAS_IND_SECOND_FREQUENCY_'+ indexTab,
-                                    valueField      : 'CAT_UID',
-                                    forceSelection  : false,
-                                    emptyText       : _('ID_SELECT'),
-                                    selectOnFocus   : true,
-                                    hidden          : true,
-                                    typeAhead       : true,
-                                    autocomplete    : true,
-                                    triggerAction   : 'all',
-                                    store           : storeFrecuency
-                                })
-                            ]
-                        })
-                    ]
-                })
-            ],
-            listeners : {
-                scope: this,
-                activate : function (that) {
-                    if (tabActivate.indexOf(that.id) == -1 ) {
-                        tabActivate.push(that.id);
-                    }
-                },
-            },
-            closable:true
-        };
+                            }),
+                            new Ext.form.ComboBox({
+                                anchor          : '85%',
+                                editable        : false,
+                                fieldLabel      : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_PROCESS')) +'"> * </span>' + _('ID_PROCESS'),
+                                id              : 'IND_PROCESS_'+ indexTab,
+                                displayField    : 'prj_name',
+                                valueField      : 'prj_uid',
+                                forceSelection  : true,
+                                emptyText       : _('ID_EMPTY_PROCESSES'),
+                                selectOnFocus   : true,
+                                hidden          : true,
+                                typeAhead       : true,
+                                autocomplete    : true,
+                                triggerAction   : 'all',
+                                store           : storeProject
+                            }),
+                            new Ext.form.ComboBox({
+                                anchor          : '85%',
+                                editable        : false,
+                                fieldLabel      : _('ID_FIRST_FIGURE'),
+                                displayField    : 'CAT_LABEL_ID',
+                                id              : 'DAS_IND_FIRST_FIGURE_'+ indexTab,
+                                valueField      : 'CAT_UID',
+                                forceSelection  : false,
+                                emptyText       : _('ID_SELECT'),
+                                selectOnFocus   : true,
+                                hidden          : true,
+                                typeAhead       : true,
+                                autocomplete    : true,
+                                triggerAction   : 'all',
+                                store           : storeGraphic
+                            }),
+                            new Ext.form.ComboBox({
+                                anchor          : '85%',
+                                editable        : false,
+                                fieldLabel      : _('ID_PERIODICITY'),
+                                displayField    : 'CAT_LABEL_ID',
+                                id              : 'DAS_IND_FIRST_FREQUENCY_'+ indexTab,
+                                valueField      : 'CAT_UID',
+                                forceSelection  : false,
+                                emptyText       : _('ID_SELECT'),
+                                selectOnFocus   : true,
+                                hidden          : true,
+                                typeAhead       : true,
+                                autocomplete    : true,
+                                triggerAction   : 'all',
+                                store           : storeFrequency
+                            }),
+                            new Ext.form.ComboBox({
+                                anchor          : '85%',
+                                editable        : false,
+                                fieldLabel      : _('ID_SECOND_FIGURE'),
+                                id              : 'DAS_IND_SECOND_FIGURE_'+ indexTab,
+                                displayField    : 'CAT_LABEL_ID',
+                                valueField      : 'CAT_UID',
+                                forceSelection  : false,
+                                emptyText       : _('ID_SELECT'),
+                                selectOnFocus   : true,
+                                hidden          : true,
+                                typeAhead       : true,
+                                autocomplete    : true,
+                                triggerAction   : 'all',
+                                store           : storeGraphic
+                            }),
+                            new Ext.form.ComboBox({
+                                anchor          : '85%',
+                                editable        : false,
+                                fieldLabel      : _('ID_PERIODICITY'),
+                                displayField    : 'CAT_LABEL_ID',
+                                id              : 'DAS_IND_SECOND_FREQUENCY_'+ indexTab,
+                                valueField      : 'CAT_UID',
+                                forceSelection  : false,
+                                emptyText       : _('ID_SELECT'),
+                                selectOnFocus   : true,
+                                hidden          : true,
+                                typeAhead       : true,
+                                autocomplete    : true,
+                                triggerAction   : 'all',
+                                store           : storeFrequency
+                            })
+                        ]
+                    })
+                ]
+            })
+        ],
+        listeners : {
+            scope: this,
+            activate : function (that) {
+                if (tabActivate.indexOf(that.id) == -1 ) {
+                    tabActivate.push(that.id);
+                }
+            }
+        },
+        closable:true
+    };
     if (flag != 'load') {
         tabPanel.add(tab).show();
     } else {
@@ -1033,7 +1027,7 @@ var validateNameDashboard = function () {
                     PMExt.warning(_('ID_DASHBOARD'), _('ID_DIRECTORY_NAME_EXISTS_ENTER_ANOTHER', title));
                     return;
                 }
-            }   
+            }
             saveDashboard();
         },
         failure: function (response) {
@@ -1271,7 +1265,7 @@ var loadIndicators = function (DAS_UID) {
                 addTab('load');
             }
             dataIndicator = jsonResp;
-            
+
             for (var i=0; i<=jsonResp.length-1; i++) {
                 addTab('load');
                 tabPanel.getItem(i+1).setTitle(jsonResp[i]['DAS_IND_TITLE']);

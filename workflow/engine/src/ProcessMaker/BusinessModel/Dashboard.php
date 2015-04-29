@@ -23,7 +23,7 @@ class Dashboard {
     	require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "DashboardDasInd.php");
     	$oDashboardDasInd = new \DashboardDasInd();
 
-    	$response = $oDashboardDasInd->loadByOwner($usr_uid);
+    	$response = $oDashboardDasInd->loadOwnerByUserId($usr_uid);
         return $response;
     }
 
@@ -40,27 +40,32 @@ class Dashboard {
     {
         $resp = array();
         $dashboards = $this->getDashboardsUidByUser($usr_uid);
-	    $existFavorite = false;
-	    foreach($dashboards as $i=>$x) {
-                $resp[$i] = $this->getDashboard($x['DAS_UID']);
-                $Dashboard = new \ProcessMaker\BusinessModel\Dashboard();
-                $dashConfig = $Dashboard->getConfig($usr_uid);
-                $resp[$i]['DAS_FAVORITE'] = 0;
-                foreach ($dashConfig as $dashId=>$dashData) {
-                    if($dashId == $x['DAS_UID'] ) {
-                        $resp[$i]['DAS_FAVORITE'] = $dashData['dashFavorite'];
-                        if ($dashData['dashFavorite']==1) {
-                                $existFavorite = true;
-                        }
+        $existFavorite = false;
+        foreach($dashboards as $i=>$x) {
+            //$resp[$i] = $this->getDashboard($x['DAS_UID']);
+            $dashboardUser = $this->getDashboard($x['DAS_UID']);
+            if ($dashboardUser['DAS_STATUS'] == 0) {
+                continue;
+            }
+            $resp[$i] = $dashboardUser;
+            $Dashboard = new \ProcessMaker\BusinessModel\Dashboard();
+            $dashConfig = $Dashboard->getConfig($usr_uid);
+            $resp[$i]['DAS_FAVORITE'] = 0;
+            foreach ($dashConfig as $dashId=>$dashData) {
+                if($dashId == $x['DAS_UID'] ) {
+                    $resp[$i]['DAS_FAVORITE'] = $dashData['dashFavorite'];
+                    if ($dashData['dashFavorite']==1) {
+                        $existFavorite = true;
                     }
                 }
-		}
-
-        //if no favorite is set, the default vavorite is the first one
-        if ($existFavorite == false && $dashboards != null &&  sizeof($dashboards)>0) {
-                $resp[0]['DAS_FAVORITE'] = 1;
+            }
         }
-    	return $resp; 
+
+        //if no favorite is set, the default favorite is the first one
+        if ($existFavorite == false && $resp != null &&  sizeof($resp)>0) {
+            $resp[0]['DAS_FAVORITE'] = 1;
+        }
+        return $resp;
     }
 
     /**
