@@ -557,7 +557,8 @@ var fillStatusIndicatorFirstView = function (presenterData) {
 			containerId:'graph1',
 			width:300,
 			height:300,
-			stretch:true
+			stretch:true,
+			noDataText: G_STRING.ID_DISPLAY_EMPTY
 		},
 		graph: {
 
@@ -617,7 +618,8 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
             containerId:'specialIndicatorGraph',
             width:300,
             height:300,
-            stretch:true
+            stretch:true,
+			noDataText: G_STRING.ID_NO_INEFFICIENT_PROCESSES
         },
         graph: {
             allowDrillDown:false,
@@ -636,7 +638,8 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
 			containerId:'specialIndicatorGraph',
 			width:500,
 			height:300,
-			stretch:true
+			stretch:true,
+			noDataText: G_STRING.ID_NO_INEFFICIENT_USER_GROUPS
 		},
 		graph: {
 			allowDrillDown:false,
@@ -734,11 +737,13 @@ var fillSpecialIndicatorSecondView = function(presenterData) {
 
 	if (window.currentIndicator.type == "1010") {
 		detailParams.graph.axisX.label = G_STRING['ID_TASK'] ;
+		detailParams.canvas.noDataText = G_STRING['ID_NO_INEFFICIENT_TASKS'] ;
 		var graph = new BarChart(presenterData.dataToDraw, detailParams, null, null);
 		graph.drawChart();
 	}
 
 	if (window.currentIndicator.type == "1030") {
+		detailParams.canvas.noDataText = G_STRING['ID_NO_INEFFICIENT_USERS'] ;
 		var graph = new BarChart(presenterData.dataToDraw, detailParams, null, null);
 		graph.drawChart();
 	}
