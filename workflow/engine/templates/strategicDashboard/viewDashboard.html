@@ -29,16 +29,19 @@
         var urlProxy = '{$urlProxy}';
         var pageUserId = '{$usrId}';
         var token = '{$credentials.access_token}';
+        var moneyUnit = '{$unitCost}';
         var G_STRING = [];
         {foreach from=$translation key=index item=option}
             G_STRING['{$index}'] = "{$option}";
         {/foreach}
     </script>
 
+	<!-- View Dashboard Files-->
     <script type="text/javascript" src="/jscore/strategicDashboard/viewDashboardHelper.js"></script>
     <script type="text/javascript" src="/jscore/strategicDashboard/viewDashboardModel.js"></script>
     <script type="text/javascript" src="/jscore/strategicDashboard/viewDashboardPresenter.js"></script>
     <script type="text/javascript" src="/jscore/strategicDashboard/viewDashboardView.js"></script>
+
 
 
 	<script type="text/template" class="specialIndicatorButtonTemplate">
@@ -104,7 +107,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="panel-footer text-center ind-title-selector" style="clear:both;">
+					<div class="panel-footer text-center ind-title-selector" style="clear:both; color:#606368;">
 						<%- indicator.title %>
 					</div>
 				</a>
@@ -157,11 +160,11 @@
 
 			<div class="text-center huge">
 				<div class="col-xs-3 vcenter">
-					<div class="green"><%- indicator.efficiencyIndexToShow %></div>
+					<div class="blue"><%- indicator.efficiencyIndexToShow %></div>
 					<div class="small grey sind-index-selector ellipsis"></div>
 				</div>
 				<div class="col-xs-3 vcenter" style="margin-right:40px">
-					<div class="red sind-cost-number-selector"><%- indicator.inefficiencyCostToShow %></div>
+					<div class="red sind-cost-number-selector">{$unitCost} <%- indicator.inefficiencyCostToShow %></div>
 					<div class="small grey sind-cost-selector ellipsis"></div>
 				</div>
 				<div class="col-xs-6" id="specialIndicatorGraph" style="width:540px;height:300px;"></div>
@@ -190,7 +193,7 @@
 						<div class="small grey detail-efficiency-selector ellipsis"></div>
 					</div>
 					<div class="col-xs-3 text-center ">
-						<div class="red detail-cost-number-selector"><%- detailData.inefficiencyCostToShow %></div>
+						<div class="red detail-cost-number-selector">{$unitCost}<%- detailData.inefficiencyCostToShow %></div>
 						<div class="small grey detail-cost-selector ellipsis"></div>
 					</div>
 					<div class="col-xs-1 text-right arrow"><i class="fa fa-chevron-right fa-fw"></i></div>
@@ -200,28 +203,56 @@
 		</div>
 	</script>
 
-	<script type="text/template" class="specialIndicatorSencondViewDetail">
+	<script type="text/template" class="specialIndicatorSecondViewDetailUei">
 		<div class="process-div well hideme detail-button-selector" data-gs-no-resize="true"
 			 id="detailData-<%- detailData.uid %>"
 			 data-indicator-id="<%- detailData.indicatorId %>"
 			 data-detail-id="<%- detailData.uid %>">
 			<div class="panel-heading greenbg">
-				<div class="col-xs-12 text-center detail-title-selector"><i class="fa fa-tasks fa-fw"></i> <span id="usrName"><%- detailData.name %></span> </div>
+				<div class="col-xs-12 text-center detail-title-selector">
+					<i class="fa fa-tasks fa-fw"></i> 
+					<span id="usrName"><%- detailData.name %> </span>
+					<span>(<%- detailData.rankToShow %>)</span>
+				 </div>
 				<div class="clearfix"></div>
 			</div>
 			<div class="text-center huge">
 				<div class="col-xs-12 vcenter-task">
-					<div class="col-xs-4 ">
+					<div class="col-xs-6 ">
 						<div class="blue small"><%- detailData.efficiencyIndexToShow%></div>
 						<div class="smallB grey detail-efficiency-selector ellipsis"></div>
 					</div>
-					<div class="col-xs-4 ">
-						<div class="small detail-cost-number-selector"><%- detailData.inefficiencyCostToShow%></div>
+					<div class="col-xs-6 ">
+						<div class="small detail-cost-number-selector">{$unitCost}<%- detailData.inefficiencyCostToShow%></div>
 						<div class="smallB grey detail-cost-selector ellipsis"></div>
 					</div>
-					<div class="col-xs-4 ">
-						<div class="blue small"><%- detailData.deviationTimeToShow%></div>
-						<div class="smallB grey detail-sdv-selector ellipsis">SDV</div>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+		</div>
+	</script>
+
+	<script type="text/template" class="specialIndicatorSecondViewDetailPei">
+		<div class="process-div well hideme detail-button-selector" data-gs-no-resize="true"
+			 id="detailData-<%- detailData.uid %>"
+			 data-indicator-id="<%- detailData.indicatorId %>"
+			 data-detail-id="<%- detailData.uid %>">
+			<div class="panel-heading greenbg">
+				<div class="col-xs-12 text-center detail-title-selector">
+					<i class="fa fa-tasks fa-fw"></i> 
+					<span id="usrName"><%- detailData.name %> </span>
+				 </div>
+				<div class="clearfix"></div>
+			</div>
+			<div class="text-center huge">
+				<div class="col-xs-12 vcenter-task">
+					<div class="col-xs-6 ">
+						<div class="blue small"><%- detailData.efficiencyIndexToShow%></div>
+						<div class="smallB grey detail-efficiency-selector ellipsis"></div>
+					</div>
+					<div class="col-xs-6 ">
+						<div class="small detail-cost-number-selector">{$unitCost}<%- detailData.inefficiencyCostToShow%></div>
+						<div class="smallB grey detail-cost-selector ellipsis"></div>
 					</div>
 				</div>
 				<div class="clearfix"></div>
@@ -311,9 +342,10 @@
 	</script>
 	
 </head>
+	
 
 <body id="page-top" class="index">
-	<img id="scrollImg" class="floating" src="/images/scrolldown.gif" width="80" height="80" style="border-radius:85px;"/>
+  <img id="scrollImg" class="floating" src="/images/scrolldown.gif" width="80" height="80" style="border-radius:85px; visibility:hidden;"/>
   <div id="wrapper">
     <div id="page-wrapper">
           <!--Cabezera-->
@@ -400,12 +432,12 @@
                   </div>
               </div>
 
-			  <div id="relatedLabel" style="clear:both;">
+			  <div id="relatedLabel" style="clear:both; visibility:hidden;">
 					<div>
 						<center><h3></h3></center>
 					</div>
 					<div>
-						Sort by Cost: &nbsp; &nbsp;<a id="sortListButton" class="fa fa-chevron-up fa-1x" style="color:#000;" href="#"></a>
+						{translate label="ID_SORT_BY"} {translate label="ID_COSTS"} : &nbsp; <a id="sortListButton" class="fa fa-chevron-up fa-1x" style="color:#000;" href="#"></a>
 					</div>
 			  </div>
 
@@ -417,7 +449,6 @@
             </div>
     </div>
   </div>
-
 
 </body>
 </html>

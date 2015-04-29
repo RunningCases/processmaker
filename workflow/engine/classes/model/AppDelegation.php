@@ -133,7 +133,7 @@ class AppDelegation extends BaseAppDelegation
 
         //The function return an array now.  By JHL
         $delTaskDueDate = $this->calculateDueDate($sNextTasParam);
-        $delRiskDate    = $this->calculateRiskDate($delTaskDueDate, $this->getRisk());
+        $delRiskDate    = $this->calculateRiskDate($sNextTasParam, $this->getRisk());
 
         //$this->setDelTaskDueDate( $delTaskDueDate['DUE_DATE'] ); // Due date formatted
         $this->setDelTaskDueDate($delTaskDueDate);
@@ -379,8 +379,18 @@ class AppDelegation extends BaseAppDelegation
     public function calculateRiskDate($dueDate, $risk)
     {
         try {
-            $riskTime = strtotime($dueDate) - strtotime($this->getDelDelegateDate()); //Seconds
-            $riskTime = $riskTime - ($riskTime * $risk);
+
+            $data = array();
+            if (isset( $sNextTasParam['NEXT_TASK']['TAS_TRANSFER_HIDDEN_FLY'] ) && $sNextTasParam['NEXT_TASK']['TAS_TRANSFER_HIDDEN_FLY'] == 'true') {
+                $data['TAS_DURATION'] = $sNextTasParam['NEXT_TASK']['TAS_DURATION'];
+                $data['TAS_TIMEUNIT'] = $sNextTasParam['NEXT_TASK']['TAS_TIMEUNIT'];
+            } else {
+                $task = TaskPeer::retrieveByPK( $this->getTasUid() );
+                $data['TAS_DURATION'] = $task->getTasDuration();
+                $data['TAS_TIMEUNIT'] = $task->getTasTimeUnit();
+            }
+
+            $riskTime = $data['TAS_DURATION'] - ($data['TAS_DURATION'] * $risk);
 
             //Calendar - Use the dates class to calculate dates
             $calendar = new calendar();
@@ -394,9 +404,8 @@ class AppDelegation extends BaseAppDelegation
             }
 
             //Risk date
-            $riskDate = $calendar->dashCalculateDate($this->getDelDelegateDate(), round($riskTime / (60 * 60)), "HOURS", $arrayCalendarData);
+            $riskDate = $calendar->dashCalculateDate($this->getDelDelegateDate(), round($riskTime), $data['TAS_TIMEUNIT'], $arrayCalendarData);
 
-            //Return
             return $riskDate;
         } catch (Exception $e) {
             throw $e;
