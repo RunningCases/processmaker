@@ -244,11 +244,16 @@ class PEAR_Installer extends PEAR_Common
             if (isset($atts['md5sum'])) {
                 $md5sum = G::encryptOld($contents);
             }
+            
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
+            
             $subst_from = $subst_to = array();
             foreach ($atts['replacements'] as $a) {
                 $to = '';
                 if ($a['type'] == 'php-const') {
                     if (preg_match('/^[a-z0-9_]+$/i', $a['to'])) {
+                        $a['to'] = $filter->validateInput($a['to']);
                         eval("\$to = $a[to];");
                     } else {
                         $this->log(0, "invalid php-const replacement: $a[to]");
