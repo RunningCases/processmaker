@@ -1408,7 +1408,7 @@ class PMPluginRegistry
 
                 // Ensure that is registering only existent classes.
                 if (class_exists($ns)) {
-                    $this->_restServices[strtolower($sNamespace)][] = array(
+                    $this->_restServices[$sNamespace][] = array(
                         "filepath" => $classFile,
                         "namespace" => $ns
                     );

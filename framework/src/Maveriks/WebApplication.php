@@ -353,7 +353,7 @@ class WebApplication
             $tmp = array_shift($tmp);
             $tmp = explode('-', $tmp);
             $pluginName = $tmp[1];
-            $uri = str_replace('/plugin-'.$pluginName, '', $uri);
+            $uri = str_replace('plugin-'.$pluginName, strtolower($pluginName), $uri);
         }
         
         // hook to get rest api classes from plugins
@@ -370,7 +370,7 @@ class WebApplication
                     
                     foreach ($plugin as $class) {
                         if (class_exists($class['namespace'])) {
-                            $this->rest->addAPIClass($class['namespace']);
+                            $this->rest->addAPIClass($class['namespace'], strtolower($pluginName));
                         }             
                     }                    
                 }
