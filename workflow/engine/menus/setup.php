@@ -156,5 +156,5 @@ if ($RBAC->userCanAccess("PM_SETUP") == 1) {
     /*----------------------------------********---------------------------------*/
     $G_TMP_MENU->AddIdRawOption("PMENTERPRISE", "../enterprise/addonsStore", G::LoadTranslation('ID_MENU_NAME') . $licStatusMsg, "", "", "plugins");
     /*----------------------------------********---------------------------------*/
-    $G_TMP_MENU->AddIdRawOption("CASES_LIST_SETUP", "../cases/casesListSetup", G::LoadTranslation("ID_CUSTOM_CASES_LIST"), "", "", "settings");
+    $G_TMP_MENU->AddIdRawOption("CASES_LIST_SETUP", "../cases/casesListSetup", G::LoadTranslation("ID_CUSTOM_CASES_LISTS"), "", "", "settings");
 }
