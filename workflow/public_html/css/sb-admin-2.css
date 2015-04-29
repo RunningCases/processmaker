@@ -616,9 +616,11 @@ table.dataTable thead .sorting:after {
     margin-top:10px;
 }
 
-.panel-red .panel-heading, .panel-low .panel-heading{
+/*panel red for color must be white
+ * .panel-red .panel-heading, .panel-low .panel-heading{
     color:rgba(0,0,0,0.4) !important;
 }
+*/
 
 .panel-high .progress-bar{
     background: #fcb322;

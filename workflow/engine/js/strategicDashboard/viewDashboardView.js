@@ -353,20 +353,17 @@ $(document).ready(function() {
 		presenter.getDashboardIndicators(dashboardId, defaultInitDate(), defaultEndDate())
 				.done(function(indicatorsVM) {
 					fillIndicatorWidgets(indicatorsVM);
-					//TODO use real data
 					loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
 				});
 	});
 
 	$('#indicatorsGridStack').on('click','.ind-button-selector', function() {
 		var indicatorId = $(this).data('indicator-id');
-		//TODO use real data
 		loadIndicator(indicatorId, defaultInitDate(), defaultEndDate());
 	});
 
 	$('body').on('click','.bread-back-selector', function() {
 		var indicatorId = window.currentIndicator.id;
-		//TODO use real data
 		loadIndicator(indicatorId, defaultInitDate(), defaultEndDate());
 		return false;
 	});
@@ -380,7 +377,6 @@ $(document).ready(function() {
                             "inefficiencyCost":$(this).data('detail-cost'),
                             "name":$(this).data('detail-name')
 		};
-		//TODO PASS REAL VALUES
 		presenter.getSpecialIndicatorSecondLevel(detailId, window.currentIndicator.type, defaultInitDate(), defaultEndDate())
 			.done(function (viewModel) {
 				fillSpecialIndicatorSecondView(viewModel);
@@ -406,8 +402,15 @@ var hideTitleAndSortDiv = function(){
 	switch (window.currentIndicator.type) {
 		case "1010":
 		case "1030":
-			$('#relatedLabel').css('visibility', 'visible');
-			$('#relatedLabel').show();
+			if($('.detail-button-selector').length == 0) {
+				$('#relatedLabel').hide();
+				//$('#relatedLabel').find('h3').text(G_STRING['ID_NO_DATA_TO_DISPLAY']);
+			}
+			else {
+				$('#relatedLabel').css('visibility', 'visible');
+				$('#relatedLabel').show();
+			}
+
 			break;
 		default:
 			$('#relatedLabel').hide();
@@ -419,7 +422,17 @@ var selectedOrderOfDetailList = function () {
 	return ($('#sortListButton').hasClass('fa-chevron-up') ? "up" : "down");
 }
 
+var selectDefaultMonthAndYear = function () {
+	var compareDate = new Date();
+	compareDate.setMonth(compareDate.getMonth() - 1);
+	var compareMonth = compareDate.getMonth() + 1;
+	var compareYear = compareDate.getYear();
+	$('#month').val(compareMonth);
+	$('#year').val(compareYear);
+}
+
 var initialDraw = function () {
+	selectDefaultMonthAndYear();
 	presenter.getUserDashboards(pageUserId)
 		.then(function(dashboardsVM) {
 				fillDashboardsList(dashboardsVM);
@@ -523,10 +536,6 @@ var fillIndicatorWidgets = function (presenterData) {
 	$.each(presenterData, function(key, indicator) {
 		var $widget = widgetBuilder.getIndicatorWidget(indicator);
 		grid.add_widget($widget, indicator.toDrawX, indicator.toDrawY, indicator.toDrawWidth, indicator.toDrawHeight, true);
-		//TODO will exist animation?
-		/*if (indicator.category == "normal") {
-			animateProgress(indicator, $widget);
-		}*/
 		var $title = $widget.find('.ind-title-selector');
 		if (indicator.favorite == "1") {
 			$title.addClass("panel-active");
@@ -548,7 +557,8 @@ var fillStatusIndicatorFirstView = function (presenterData) {
 			containerId:'graph1',
 			width:300,
 			height:300,
-			stretch:true
+			stretch:true,
+			noDataText: G_STRING.ID_DISPLAY_EMPTY
 		},
 		graph: {
 
@@ -608,7 +618,8 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
             containerId:'specialIndicatorGraph',
             width:300,
             height:300,
-            stretch:true
+            stretch:true,
+			noDataText: G_STRING.ID_NO_INEFFICIENT_PROCESSES
         },
         graph: {
             allowDrillDown:false,
@@ -627,7 +638,8 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
 			containerId:'specialIndicatorGraph',
 			width:500,
 			height:300,
-			stretch:true
+			stretch:true,
+			noDataText: G_STRING.ID_NO_INEFFICIENT_USER_GROUPS
 		},
 		graph: {
 			allowDrillDown:false,
@@ -725,11 +737,13 @@ var fillSpecialIndicatorSecondView = function(presenterData) {
 
 	if (window.currentIndicator.type == "1010") {
 		detailParams.graph.axisX.label = G_STRING['ID_TASK'] ;
+		detailParams.canvas.noDataText = G_STRING['ID_NO_INEFFICIENT_TASKS'] ;
 		var graph = new BarChart(presenterData.dataToDraw, detailParams, null, null);
 		graph.drawChart();
 	}
 
 	if (window.currentIndicator.type == "1030") {
+		detailParams.canvas.noDataText = G_STRING['ID_NO_INEFFICIENT_USERS'] ;
 		var graph = new BarChart(presenterData.dataToDraw, detailParams, null, null);
 		graph.drawChart();
 	}
