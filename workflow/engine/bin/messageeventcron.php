@@ -43,7 +43,11 @@ try {
     G::LoadClass("system");
 
     $config = System::getSystemConfiguration();
-
+    
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();  
+    $config['time_zone'] = $filter->validateInput($config['time_zone']);
+    
     ini_set("date.timezone", $config["time_zone"]);
 
     //CRON command options

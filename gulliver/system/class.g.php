@@ -2653,6 +2653,7 @@ class G
             G::LoadSystem('inputfilter');
             $filter = new InputFilter();
             $file = $filter->validateInput($file, "path");
+            $path = $filter->validateInput($path, "path");
 
             move_uploaded_file( $file, $path . "/" . $nameToSave );
             @chmod( $path . "/" . $nameToSave, $permission );
