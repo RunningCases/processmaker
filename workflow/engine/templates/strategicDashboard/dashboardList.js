@@ -76,6 +76,8 @@ Ext.onReady(function() {
 
     statusButton = new Ext.Action({
         text: _('ID_STATUS'),
+        icon : '',
+        id : 'activator',
         iconCls: 'silk-add',
         handler: statusDashboard,
         disabled: true
@@ -105,19 +107,19 @@ Ext.onReady(function() {
                     }
                 }
 
+                var activator = Ext.getCmp('activator');
+
                 if( record.data.DAS_STATUS == 1 ){
-                    statusButton.setIconClass('icon-activate');
-                    statusButton.setText( _('ID_DEACTIVATE') );
+                    activator.setIcon('/images/deactivate.png');
+                    activator.setText( _('ID_DEACTIVATE') );
                     editButton.enable();
                     deleteButton.enable();
-                    //statusButton.enable();
                 } else {
-                    statusButton.setIconClass('icon-deactivate');
-                    statusButton.setText( _('ID_ACTIVATE') );
+                    activator.setIcon('/images/activate.png');
+                    activator.setText( _('ID_ACTIVATE') );
                     editButton.disable();
                     deleteButton.disable();
-                    //statusButton.disable();
-                } 
+                }
             },
             rowdeselect: function(sm, index, record){
                 editButton.disable();
@@ -237,7 +239,7 @@ Ext.onReady(function() {
         viewConfig: {
           forceFit:true
         },
-        title : _('ID_DASHBOARD'),
+        title : _('ID_STRATEGIC_DASHBOARD'),
         store: store,
         cm: cmodel,
         sm: smodel,

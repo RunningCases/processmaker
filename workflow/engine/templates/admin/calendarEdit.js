@@ -753,12 +753,23 @@ Ext.onReady( function() {
                       name       : 'name' ,
                       allowBlank : false,
                       msgTarget: 'side',
-                      validator: function(valueField){
-                        if(valueField.length<=100){
-                            return true;
-                        }else{
-                          Ext.MessageBox.alert(_('ID_WARNING'), _("ID_PPP_MAXIMUM_LENGTH")+":100", function(){ return true;});
-                          return false;
+                      enableKeyEvents: true,
+                      listeners: {
+                        focus : function(textfield){
+                          var element = document.getElementById('dynaformCalendarName');
+                          element.setAttribute('maxlength','100');
+                          element.onpaste = function (e){
+                                var textValue = undefined;
+                                if(window.clipboardData && window.clipboardData.getData) {
+                                  textValue = window.clipboardData.getData('Text');
+                                }else if(e.clipboardData && e.clipboardData.getData) {
+                                  textValue = e.clipboardData.getData('text/plain');
+                                }
+                                if(textValue.length>99){
+                                    Ext.MessageBox.alert(_('ID_WARNING'), _("ID_PPP_MAXIMUM_LENGTH")+":100", function(){ return true;});
+                                } 
+                                return true; 
+                          }
                         }
                       }
                     },
@@ -944,6 +955,9 @@ Ext.onReady( function() {
                     Ext.getCmp('dynaformCalendarName').setValue(Ext.getCmp('dynaformCalendarName').getValue().trim());
                     var canlendarName = Ext.getCmp('dynaformCalendarName').getValue().trim();
                     if(canlendarName === ""){
+                        Ext.apply(Ext.getCmp('dynaformCalendarName'), {allowBlank: false}, {});
+                        Ext.Msg.alert(_('ID_WARNING'), _("ID_FIELD_REQUIRED", _("ID_NAME")));
+                        Ext.getCmp('dynaformCalendarName').setValue("");
                         return;
                     }
                     Ext.Ajax.request({

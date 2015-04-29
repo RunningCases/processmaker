@@ -134,7 +134,7 @@ class wsdlcache {
 			$this->debug("Lock for $filename already exists");
 			return false;
 		}
-		$this->fplock[md5($filename)] = fopen($filename.".lock", "w");
+		$this->fplock[G::encryptOld($filename)] = fopen($filename.".lock", "w");
 		if ($mode == "r") {
 			return flock($this->fplock[G::encryptOld($filename)], LOCK_SH);
 		} else {
@@ -173,9 +173,18 @@ class wsdlcache {
 	* @access private
 	*/
 	function releaseMutex($filename) {
-		$ret = flock($this->fplock[md5($filename)], LOCK_UN);
-		fclose($this->fplock[md5($filename)]);
-		unset($this->fplock[md5($filename)]);
+		if(!class_exists('G')){
+			$realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+			$docuroot = explode( '/', $realdocuroot );
+			array_pop( $docuroot );
+			$pathhome = implode( '/', $docuroot ) . '/';
+			array_pop( $docuroot );
+			$pathTrunk = implode( '/', $docuroot ) . '/';
+			require_once($pathTrunk.'gulliver/system/class.g.php');
+		}
+		$ret = flock($this->fplock[G::encryptOld($filename)], LOCK_UN);
+		fclose($this->fplock[G::encryptOld($filename)]);
+		unset($this->fplock[G::encryptOld($filename)]);
 		if (! $ret) {
 			$this->debug("Not able to release lock for $filename");
 		}
