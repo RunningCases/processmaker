@@ -53,7 +53,6 @@ var storeProject;
 var storeGroup;
 var storeUsers;
 var dataUserGroup;
-var dasIndUid;
 var flag = true;
 var myMask;
 var dataIndicator = '';
@@ -93,7 +92,7 @@ Ext.onReady( function() {
                 fieldLabel      : _('ID_DESCRIPTION'),
                 anchor          : '85%',
                 maskRe          : /([a-zA-Z0-9_'\s]+)$/,
-                height          : 50,
+                height          : 50
             }
         ]
     });
@@ -485,7 +484,7 @@ Ext.onReady( function() {
                 }
             },
             {
-                title:  _('ID_PRO_USER'),
+                title:  _('ID_PRO_USER')
             },
             ownerInfoGrid
         ]
@@ -494,7 +493,7 @@ Ext.onReady( function() {
     addTabButton = new Ext.Button ({
         text: _('ID_NEW_TAB_INDICATOR'),
         iconCls: 'button_menu_ext ss_sprite ss_add',
-        handler: addTab,
+        handler: addTab
     });
 
     tabPanel = new Ext.TabPanel({
@@ -627,11 +626,8 @@ Ext.onReady( function() {
         items       : [
             addTabButton,
             tabPanel
-
         ]
     });
-
-
 
     //form
     frmDashboard = new Ext.FormPanel({
@@ -966,7 +962,7 @@ var addTab = function (flag) {
                 if (tabActivate.indexOf(that.id) == -1 ) {
                     tabActivate.push(that.id);
                 }
-            },
+            }
         },
         closable:true
     };
