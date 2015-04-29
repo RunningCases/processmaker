@@ -82,7 +82,7 @@
 				<a data-toggle="collapse" href="#efficiencyindex" aria-expanded="false" aria-controls="efficiencyindex">
 					<div class="panel-heading status-indicator-low"
 						 style=" width:<%- indicator.percentageOverdueWidth %>%;
-						 		visibility: <%- indicator.overdueVisibility %>" >
+						 		visibility: <%- indicator.overdueVisibility %>;overflow:hidden;" >
 						<div class="row">
 							<div class="col-xs-12">
 								<div class="small ind-comparative-selector"><%- indicator.percentageOverdueToShow %></div>
@@ -91,7 +91,7 @@
 					</div>
 					<div class="panel-heading status-indicator-medium"
 						 style=" width:<%- indicator.percentageAtRiskWidth %>%;
-						 		visibility: <%- indicator.atRiskVisibility %>;" >
+						 		visibility: <%- indicator.atRiskVisibility %>;overflow:hidden;" >
 						<div class="row">
 							<div class="col-xs-12">
 								<div class="small ind-comparative-selector"><%- indicator.percentageAtRiskToShow %></div>
@@ -100,7 +100,7 @@
 					</div>
 					<div class="panel-heading status-indicator-high"
 						 style=" width:<%- indicator.percentageOnTimeWidth %>%;
-						 		visibility: <%- indicator.onTimeVisibility %>;">
+						 		visibility: <%- indicator.onTimeVisibility %>; overflow:hidden;">
 						<div class="row">
 							<div class="col-xs-12">
 								<div class="small ind-comparative-selector"><%- indicator.percentageOnTimeToShow %></div>
@@ -347,7 +347,7 @@
 	
 
 <body id="page-top" class="index">
-  <img id="scrollImg" class="floating" src="/images/scrolldown.gif" width="80" height="80" style="border-radius:85px; visibility:hidden;"/>
+  <img id="scrollImg" class="floating" src="images/scrolldown.gif" width="80" height="80" style="border-radius:85px; visibility:hidden;"/>
   <div id="wrapper">
     <div id="page-wrapper">
           <!--Cabezera-->

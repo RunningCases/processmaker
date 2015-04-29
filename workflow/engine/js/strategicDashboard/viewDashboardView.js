@@ -432,6 +432,7 @@ var selectDefaultMonthAndYear = function () {
 }
 
 var initialDraw = function () {
+	selectDefaultMonthAndYear();
 	presenter.getUserDashboards(pageUserId)
 		.then(function(dashboardsVM) {
 				fillDashboardsList(dashboardsVM);
@@ -439,7 +440,6 @@ var initialDraw = function () {
 				/**** window initialization  with favorite dashboard*****/
 				presenter.getDashboardIndicators(window.currentDashboardId, defaultInitDate(), defaultEndDate())
 						.done(function(indicatorsVM) {
-							selectDefaultMonthAndYear();
 							fillIndicatorWidgets(indicatorsVM);
 							loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
 						});
