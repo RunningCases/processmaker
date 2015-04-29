@@ -404,7 +404,7 @@ class AppDelegation extends BaseAppDelegation
             }
 
             //Risk date
-            $riskDate = $calendar->dashCalculateDate($this->getDelDelegateDate(), round($riskTime), $data['TAS_TIMEUNIT'], $arrayCalendarData);
+            $riskDate = $calendar->dashCalculateDate($this->getDelDelegateDate(), $riskTime, $data['TAS_TIMEUNIT'], $arrayCalendarData);
 
             return $riskDate;
         } catch (Exception $e) {
