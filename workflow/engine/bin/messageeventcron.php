@@ -114,6 +114,10 @@ try {
                     }
                 }
             } else {
+                if (!is_dir(PATH_DB . $workspace) || !file_exists(PATH_DB . $workspace . PATH_SEP . "db.php")) {
+                    throw new Exception("Error: The workspace \"$workspace\" does not exist");
+                }
+
                 $countw++;
 
                 passthru("php -f \"$messageEventCronSinglePath\" $workspace \"" . base64_encode(PATH_HOME) . "\" \"" . base64_encode(PATH_TRUNK) . "\" \"" . base64_encode(PATH_OUTTRUNK) . "\"");

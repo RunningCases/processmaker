@@ -47,6 +47,7 @@ ViewDashboardPresenter.prototype.getDashboardIndicators = function (dashboardId,
 };
 
 ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
+	if (data == null) {return null;}
 	var that = this;
 	var returnList = [];
 	var i = 1;
@@ -56,6 +57,7 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 			"DAS_IND_TITLE" : "title",
 			"DAS_IND_TYPE" : "type",
 			"DAS_IND_VARIATION" : "comparative",
+			"DAS_IND_PERCENT_VARIATION" : "percentComparative",
 			"DAS_IND_DIRECTION" : "direction",
 			"DAS_IND_VALUE" : "value",
 			"DAS_IND_X" : "x",
@@ -75,7 +77,6 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 		newObject.toDrawY = (newObject.y == 0) ? 6 : newObject.y;
 		newObject.toDrawHeight = (newObject.y == 0) ? 2 : newObject.height;
 		newObject.toDrawWidth = (newObject.y == 0) ? 12 / data.length : newObject.width;
-		newObject.comparative = ((newObject.comparative > 0)? "+": "") +  that.helper.stringIfNull(newObject.comparative);
 		newObject.directionSymbol = (newObject.direction == "1") ? "<" : ">";
 		newObject.isWellDone = (newObject.direction == "1") 
 								? parseFloat(newObject.value) <= parseFloat(newObject.comparative)
@@ -85,10 +86,9 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 									? "special"
 									: "normal";
 
-		//round goals for normal indicators
-		newObject.comparative = (newObject.category == "normal")
-								? Math.round(newObject.comparative) + ""
-								: newObject.comparative;
+		//rounding
+		newObject.comparative =  Math.round(newObject.comparative*1000)/1000;
+		newObject.comparative = ((newObject.comparative > 0)? "+": "") + newObject.comparative;
 
 		newObject.value = (newObject.category == "normal")
 								? Math.round(newObject.value) + ""
@@ -100,7 +100,7 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 		//to be sure that percentages sum up to 100 (the rounding will lost decimals)%
 		newObject.percentageOnTime = 100 - newObject.percentageOverdue - newObject.percentageAtRisk;
 		newObject.overdueVisibility = (newObject.percentageOverdue > 0)? "visible" : "hidden";
-		newObject.atRiskVisiblity = (newObject.percentageAtRisk > 0)? "visible" : "hidden";
+		newObject.atRiskVisibility = (newObject.percentageAtRisk > 0)? "visible" : "hidden";
 		newObject.onTimeVisibility = (newObject.percentageOnTime > 0)? "visible" : "hidden";
 		returnList.push(newObject);
 		i++;
@@ -154,21 +154,18 @@ ViewDashboardPresenter.prototype.getIndicatorData = function (indicatorId, indic
 };
 
 ViewDashboardPresenter.prototype.peiViewModel = function(data) {
+	if (data == null) {return null;}
 	var that = this;
 	var graphData = [];
 	$.each(data.data, function(index, originalObject) {
+		originalObject.name = that.helper.labelIfEmpty(originalObject.name);
 		var map = {
 			"name" : "datalabel",
 			"inefficiencyCost" : "value"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
-		var shortLabel = (newObject.datalabel == null) 
-									? "" 
-									: newObject.datalabel.substring(0,15);
-
-		newObject.datalabel = shortLabel;
 		graphData.push(newObject);
-		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.indicatorId = data.id;
 		originalObject.json = JSON.stringify(originalObject);
@@ -176,35 +173,29 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 
 	var retval = {};
 	retval = data;
-	graphData.sort(function(a,b) {
-							var retval = 0;
-							retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
-							return retval;
-						})
-	retval.dataToDraw = graphData.splice(0,7);
-	//TODO aumentar el símbolo de moneda $
-	retval.inefficiencyCostToShow = "$ " +Math.round(retval.inefficiencyCost);
+
+	this.makeShortLabel(graphData, 10);
+	retval.dataToDraw = this.adaptGraphData(graphData);
+
+	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
 	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
 	return retval;
 };
 
 ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
+	if (data == null) {return null;}
 	var that = this;
 	var graphData = [];
 	$.each(data.data, function(index, originalObject) {
+		originalObject.name = that.helper.labelIfEmpty(originalObject.name);
 		var map = {
 			"name" : "datalabel",
 			"inefficiencyCost" : "value",
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
-		var shortLabel = (newObject.datalabel == null) 
-									? "" 
-									: newObject.datalabel.substring(0,7);
-
-		newObject.datalabel = shortLabel;
 		graphData.push(newObject);
-		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.indicatorId = data.id;
 		originalObject.json = JSON.stringify(originalObject);
@@ -212,28 +203,26 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 
 	var retval = {};
 	retval = data;
-	graphData.sort(function(a,b) {
-							var retval = 0;
-							retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
-							return retval;
-						})
-	retval.dataToDraw = graphData.splice(0,7);
-	//TODO aumentar el símbolo de moneda $
-	retval.inefficiencyCostToShow = "$ " + Math.round(retval.inefficiencyCost);
+	this.makeShortLabel(graphData, 10);
+	retval.dataToDraw = this.adaptGraphData(graphData);
+
+	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
 	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
 	return retval;
 };
 
 ViewDashboardPresenter.prototype.statusViewModel = function(indicatorId, data) {
+	if (data == null) {return null;}
 	var that = this;
 	data.id = indicatorId;
 	var graph1Data = [];
 	var graph2Data = [];
 	var graph3Data = [];
 	$.each(data.dataList, function(index, originalObject) {
-		var title = (originalObject.taskTitle == null)
-                                ? ""
-                                : originalObject.taskTitle.substring(0,15);
+
+		originalObject.taskTitle = that.helper.labelIfEmpty(originalObject.taskTitle);
+		var title = originalObject.taskTitle.substring(0,10);
+
 		var newObject1 = {
 			datalabel : title,
 			value : originalObject.percentageTotalOverdue
@@ -247,23 +236,33 @@ ViewDashboardPresenter.prototype.statusViewModel = function(indicatorId, data) {
 			value : originalObject.percentageTotalOnTime
 		};
 
-		graph1Data.push(newObject1);
-		graph2Data.push(newObject2);
-		graph3Data.push(newObject3);
+		if (newObject1.value > 0) {
+			graph1Data.push(newObject1);
+		}
+		if (newObject2.value > 0) {
+			graph2Data.push(newObject2);
+		}
+		if (newObject3.value > 0) {
+			graph3Data.push(newObject3);
+		}
 		//we add the indicator id for reference
 		originalObject.indicatorId = indicatorId;
 	});
 
 	var retval = data;
 	//TODO selecte de 7 worst cases no the first 7
-	retval.graph1Data = graph1Data.splice(0,7)
-	retval.graph2Data = graph2Data.splice(0,7)
-	retval.graph3Data = graph3Data.splice(0,7)
-	
+	retval.graph1Data = this.orderGraphData(graph1Data, "down").splice(0,7)
+	retval.graph2Data = this.orderGraphData(graph2Data, "down").splice(0,7)
+	retval.graph3Data = this.orderGraphData(graph3Data, "down").splice(0,7)
+
+	$.each(retval.graph1Data, function(index, item) { item.datalabel = (index + 1) + "." + item.datalabel;  });
+	$.each(retval.graph2Data, function(index, item) { item.datalabel = (index + 1) + "." + item.datalabel;  });
+	$.each(retval.graph3Data, function(index, item) { item.datalabel = (index + 1) + "." + item.datalabel;  });
 	return retval;
 };
 
 ViewDashboardPresenter.prototype.indicatorViewModel = function(data) {
+	if (data == null) {return null;}
 	var that = this;
 	$.each(data.graph1Data, function(index, originalObject) {
 		var label = (('YEAR' in originalObject) ? originalObject.YEAR : "") ;
@@ -313,6 +312,7 @@ ViewDashboardPresenter.prototype.getSpecialIndicatorSecondLevel = function (enti
 };
 
 ViewDashboardPresenter.prototype.returnIndicatorSecondLevelPei = function(modelData) {
+	if (modelData == null) {return null;}
 	//modelData arrives in format [{users/tasks}]
 	//returns object {dataToDraw[], entityData[] //user/tasks data}
 	var that = this;
@@ -321,22 +321,25 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelPei = function(modelD
 	$.each(modelData, function(index, originalObject) {
 		var map = {
 			"name" : "datalabel",
-			"averageTime" : "value",
+			"inefficiencyCost" : "value",
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
-		newObject.datalabel = ((newObject.datalabel == null) ? "" : newObject.datalabel.substring(0, 7));
-		originalObject.inefficiencyCostToShow = "$ " + Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
+		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
+		originalObject.rankToShow = originalObject.rank + "/" + modelData.length;
 		graphData.push(newObject);
 	});
 	var retval = {};
-	retval.dataToDraw = graphData.splice(0,7);
+	this.makeShortLabel(graphData, 10);
+	retval.dataToDraw = this.adaptGraphData(graphData);
 	retval.entityData = modelData;
 	return retval;
 };
 
 ViewDashboardPresenter.prototype.returnIndicatorSecondLevelUei = function(modelData) {
+	if (modelData == null) {return null;}
 	//modelData arrives in format [{users/tasks}]
 	//returns object {dataToDraw[], entityData[] //user/tasks data}
 	var that = this;
@@ -345,23 +348,27 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelUei = function(modelD
 	$.each(modelData, function(index, originalObject) {
 		var map = {
 			"name" : "datalabel",
-			"averageTime" : "value",
+			"inefficiencyCost" : "value",
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
-		newObject.datalabel = ((newObject.datalabel == null) ? "" : newObject.datalabel.substring(0, 7));
-		originalObject.inefficiencyCostToShow = "$ " +Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
 		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
+		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
+		originalObject.rankToShow = originalObject.rank + "/" + modelData.length;
 		graphData.push(newObject);
+
 	});
 	var retval = {};
-	retval.dataToDraw = graphData.splice(0,7);
+	this.makeShortLabel(graphData, 10);
+	retval.dataToDraw = this.adaptGraphData(graphData);
 	retval.entityData = modelData;
 	return retval;
 };
 /*-------SECOND LEVEL INDICATOR DATA*/
 
 ViewDashboardPresenter.prototype.orderDataList = function(listData, orderDirection, orderFunction) { 
+	if (listData == null) {return null;}
 	//orderDirection is passed in case no order FUnction is passed (to use in the default ordering)
 	var orderToUse = orderFunction;
 	if (orderFunction == undefined) {
@@ -378,4 +385,54 @@ ViewDashboardPresenter.prototype.orderDataList = function(listData, orderDirecti
 		}
 	}
 	return listData.sort(orderToUse);
+}
+
+ViewDashboardPresenter.prototype.orderGraphData = function(listData, orderDirection, orderFunction) { 
+	if (listData == null) {return null;}
+	//orderDirection is passed in case no order FUnction is passed (to use in the default ordering)
+	var orderToUse = orderFunction;
+	if (orderFunction == undefined) {
+		orderToUse = function (a ,b) {
+			var retval = 0;
+			if (orderDirection == "down") {
+				retval = ((a.value*1.0 <= b.value*1.0) ? 1 : -1);
+			}
+			else {
+				//the 1,-1 are flipped
+				retval = ((a.value*1.0 <= b.value*1.0) ? -1 : 1);
+			}
+			return 	retval;
+		}
+	}
+	return listData.sort(orderToUse);
+}
+
+ViewDashboardPresenter.prototype.adaptGraphData = function(listData) { 
+	var workList = this.orderGraphData(listData, "up");
+	var newList = [];
+	$.each(workList, function(index, item) {
+		item.datalabel = (index + 1) + "." + item.datalabel;
+		//use positive values for drawing;
+		if (item.value > 0) {
+			item.value = 0;
+		}
+		if (item.value < 0) {
+			item.value = Math.abs(item.value);
+		}
+
+		if (item.value > 0) {
+			newList.push(item);
+		}
+	});
+	return newList.splice(0,7);
+}
+
+ViewDashboardPresenter.prototype.makeShortLabel = function(listData, labelLength) { 
+	$.each(listData, function(index, item) {
+		var shortLabel = (item.datalabel == null) 
+									? "" 
+									: item.datalabel.substring(0,labelLength);
+		item.datalabel = shortLabel;
+		item.datalabel = shortLabel;
+	});
 }

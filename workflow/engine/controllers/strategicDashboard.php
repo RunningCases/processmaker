@@ -14,6 +14,7 @@ class StrategicDashboard extends Controller
     private $urlProxy;
     private $clientToken;
     private $usrId;
+    private $usrUnitCost;
 
     // Class constructor
     public function __construct ()
@@ -32,6 +33,13 @@ class StrategicDashboard extends Controller
             die;
         }
         $this->usrId = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
+        $user = new Users();
+        $user = $user->load($RBAC->aUserInfo['USER_INFO']['USR_UID']);
+        $this->usrUnitCost = '$';
+        if (isset($user['USR_UNIT_COST'])) {
+            $this->usrUnitCost = $user['USR_UNIT_COST'];
+        }
+
         $this->urlProxy = '/api/1.0/' . SYS_SYS . '/';
         //change
         $clientId = 'x-pm-local-client';
@@ -170,12 +178,12 @@ class StrategicDashboard extends Controller
             }
             $this->setView( 'strategicDashboard/viewDashboard' );
 
-            $this->setVar('urlProxy',$this->urlProxy);
-            $this->setVar('usrId',$this->usrId);
-            $this->setVar('credentials',$this->clientToken);
+            $this->setVar('urlProxy', $this->urlProxy);
+            $this->setVar('usrId', $this->usrId);
+            $this->setVar('credentials', $this->clientToken);
+            $this->setVar('unitCost', $this->usrUnitCost);
 
             $translation = array();
-
             $translation['ID_MANAGERS_DASHBOARDS'] = G::LoadTranslation( 'ID_MANAGERS_DASHBOARDS');
             $translation['ID_PRO_EFFICIENCY_INDEX'] = G::LoadTranslation( 'ID_PRO_EFFICIENCY_INDEX');
             $translation['ID_EFFICIENCY_USER'] = G::LoadTranslation( 'ID_EFFICIENCY_USER');
@@ -193,8 +201,15 @@ class StrategicDashboard extends Controller
             $translation['ID_PROCESS_TASKS'] = G::LoadTranslation( 'ID_PROCESS_TASKS');
             $translation['ID_TIME_HOURS'] = G::LoadTranslation( 'ID_TIME_HOURS');
             $translation['ID_GROUPS'] = G::LoadTranslation( 'ID_GROUPS');
+            $translation['ID_COSTS'] = G::LoadTranslation( 'ID_COSTS');
+            $translation['ID_TASK'] = G::LoadTranslation( 'ID_TASK');
+            $translation['ID_USER'] = G::LoadTranslation( 'ID_USER');
             $translation['ID_YEAR'] = G::LoadTranslation( 'ID_YEAR');
             $translation['ID_USERS'] = G::LoadTranslation( 'ID_USERS');
+            $translation['ID_USERS'] = G::LoadTranslation( 'ID_USERS');
+            $translation['ID_OVERDUE'] = G::LoadTranslation( 'ID_OVERDUE');
+            $translation['ID_AT_RISK'] = G::LoadTranslation( 'ID_AT_RISK');
+            $translation['ID_ON_TIME'] = G::LoadTranslation( 'ID_ON_TIME');
 
             $this->setVar('translation', $translation);
             $this->render();
@@ -208,7 +223,41 @@ class StrategicDashboard extends Controller
     {
         try {
             $this->setView( 'strategicDashboard/viewDashboardIE' );
+            $this->setVar('urlProxy', $this->urlProxy);
+            $this->setVar('usrId', $this->usrId);
+            $this->setVar('credentials', $this->clientToken);
+            $this->setVar('unitCost', $this->usrUnitCost);
+
+            $translation = array();
+            $translation['ID_MANAGERS_DASHBOARDS'] = G::LoadTranslation( 'ID_MANAGERS_DASHBOARDS');
+            $translation['ID_PRO_EFFICIENCY_INDEX'] = G::LoadTranslation( 'ID_PRO_EFFICIENCY_INDEX');
+            $translation['ID_EFFICIENCY_USER'] = G::LoadTranslation( 'ID_EFFICIENCY_USER');
+            $translation['ID_COMPLETED_CASES'] = G::LoadTranslation( 'ID_COMPLETED_CASES');
+            $translation['ID_WELL_DONE'] = G::LoadTranslation( 'ID_WELL_DONE');
+            $translation['ID_NUMBER_CASES'] = G::LoadTranslation( 'ID_NUMBER_CASES');
+            $translation['ID_EFFICIENCY_INDEX'] = G::LoadTranslation( 'ID_EFFICIENCY_INDEX');
+            $translation['ID_INEFFICIENCY_COST'] = G::LoadTranslation( 'ID_INEFFICIENCY_COST');
+            $translation['ID_EFFICIENCY_COST'] = G::LoadTranslation( 'ID_EFFICIENCY_COST');
+            $translation['ID_RELATED_PROCESS'] = G::LoadTranslation( 'ID_RELATED_PROCESS');
+            $translation['ID_RELATED_GROUPS'] = G::LoadTranslation( 'ID_RELATED_GROUPS');
+            $translation['ID_RELATED_TASKS'] = G::LoadTranslation( 'ID_RELATED_TASKS');
+            $translation['ID_RELATED_USERS'] = G::LoadTranslation( 'ID_RELATED_USERS');
+            $translation['ID_GRID_PAGE_NO_DASHBOARD_MESSAGE'] = G::LoadTranslation( 'ID_GRID_PAGE_NO_DASHBOARD_MESSAGE');
+            $translation['ID_PROCESS_TASKS'] = G::LoadTranslation( 'ID_PROCESS_TASKS');
+            $translation['ID_TIME_HOURS'] = G::LoadTranslation( 'ID_TIME_HOURS');
+            $translation['ID_GROUPS'] = G::LoadTranslation( 'ID_GROUPS');
+            $translation['ID_COSTS'] = G::LoadTranslation( 'ID_COSTS');
+            $translation['ID_TASK'] = G::LoadTranslation( 'ID_TASK');
+            $translation['ID_USER'] = G::LoadTranslation( 'ID_USER');
+            $translation['ID_YEAR'] = G::LoadTranslation( 'ID_YEAR');
+            $translation['ID_USERS'] = G::LoadTranslation( 'ID_USERS');
+            $translation['ID_OVERDUE'] = G::LoadTranslation( 'ID_OVERDUE');
+            $translation['ID_AT_RISK'] = G::LoadTranslation( 'ID_AT_RISK');
+            $translation['ID_ON_TIME'] = G::LoadTranslation( 'ID_ON_TIME');
+
+            $this->setVar('translation', $translation);
             $this->render();
+        } catch (Exception $error) {
         } catch (Exception $error) {
             $_SESSION['__DASHBOARD_ERROR__'] = $error->getMessage();
             die();

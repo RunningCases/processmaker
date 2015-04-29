@@ -1402,7 +1402,11 @@ importProcessBpmnSubmit = function () {
                     return;
                 }
                 Ext.getCmp('importProcessWindow').close();
-                window.location.href = "../designer?prj_uid=" + resp_.prj_uid;
+                if (typeof(importProcessGlobal.processFileType) != "undefined" && importProcessGlobal.processFileType == "bpmn") {
+                    openWindowIfIE("../designer?prj_uid=" + resp_.prj_uid);
+                } else {
+                    window.location.href = "processes_Map?PRO_UID=" + resp_.prj_uid;
+                }
             },
             failure: function (o, resp) {
                 Ext.getCmp('importProcessWindow').close();

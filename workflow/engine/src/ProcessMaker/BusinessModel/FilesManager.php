@@ -190,12 +190,11 @@ class FilesManager
                     break;
             }
             $content = $aData['prf_content'];
-            if (is_string($content)) {
-                if (file_exists($sDirectory)) {
-                    $directory = $sMainDirectory. PATH_SEP . $sSubDirectory . $aData['prf_filename'];
-                    throw new \Exception(\G::LoadTranslation("ID_EXISTS_FILE", array($directory)));
-                }
+            if (file_exists($sDirectory) ) {
+                $directory = $sMainDirectory. PATH_SEP . $sSubDirectory . $aData['prf_filename'];
+                throw new \Exception(\G::LoadTranslation("ID_EXISTS_FILE", array($directory)));
             }
+            
             if (!file_exists($sCheckDirectory)) {
                 $sPkProcessFiles = \G::generateUniqueID();
                 $oProcessFiles = new \ProcessFiles();
@@ -555,4 +554,3 @@ class FilesManager
         }
     }
 }
-

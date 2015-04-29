@@ -48,6 +48,20 @@ leimnud.event.add(document.getElementById('form[USR_PASSWORD_MASK]'), 'keypress'
   }
 });
 
+leimnud.event.add(document.getElementById('form[USER_ENV]'), 'keypress', function(event) {
+  var key;
+  if(window.event)
+    key = window.event.keyCode;     //IE
+  else
+    key = event.which;     //firefox
+  if(key == 13) {
+    document.getElementById('form[BSUBMIT]').click();
+    return true;
+  } else {
+    return true;
+  }
+});
+
 leimnud.event.add(document.getElementById('form[BSUBMIT]'), 'click', function() {
     createCookie("pm_sys_sys", "{\"sys_sys\": \"" + getField("USER_ENV").value + "\"}", 365);
 

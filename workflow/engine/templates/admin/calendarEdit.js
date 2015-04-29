@@ -750,8 +750,7 @@ Ext.onReady( function() {
                       xtype      : 'textfield' ,
                       width      : 200 ,
                       fieldLabel : _('ID_NAME') ,
-                      name       : 'name' ,
-                      allowBlank : false
+                      name       : 'name' 
                     },
                     {
                       id         : 'dynaformCalendarDescription' ,
@@ -935,6 +934,9 @@ Ext.onReady( function() {
                     Ext.getCmp('dynaformCalendarName').setValue(Ext.getCmp('dynaformCalendarName').getValue().trim());
                     var canlendarName = Ext.getCmp('dynaformCalendarName').getValue().trim();
                     if(canlendarName === ""){
+                        Ext.apply(Ext.getCmp('dynaformCalendarName'), {allowBlank: false}, {});
+                        Ext.Msg.alert(_('ID_WARNING'), _("ID_FIELD_REQUIRED", _("ID_NAME")));
+                        Ext.getCmp('dynaformCalendarName').setValue("");
                         return;
                     }
                     Ext.Ajax.request({

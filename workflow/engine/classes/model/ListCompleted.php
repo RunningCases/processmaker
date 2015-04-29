@@ -26,6 +26,15 @@ class ListCompleted extends BaseListCompleted
     public function create($data)
     {
         $criteria = new Criteria();
+        $criteria->addSelectColumn(ListCompletedPeer::APP_UID);
+        $criteria->add( ListCompletedPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
+        $dataset = ListCompletedPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        if ($dataset->next()) {
+            return 1;
+        }
+
+        $criteria = new Criteria();
         $criteria->addSelectColumn(ContentPeer::CON_VALUE);
         $criteria->add( ContentPeer::CON_ID, $data['APP_UID'], Criteria::EQUAL );
         $criteria->add( ContentPeer::CON_CATEGORY, 'APP_TITLE', Criteria::EQUAL );
@@ -97,9 +106,27 @@ class ListCompleted extends BaseListCompleted
         $users = new Users();
         $users->refreshTotal($data['USR_UID'], 'add', 'completed');
         if ($data['DEL_PREVIOUS'] != 0) {
-            $users->refreshTotal($data['USR_UID'], 'remove', 'inbox');
+            $criteria = new Criteria();
+            $criteria->addSelectColumn(TaskPeer::TAS_TYPE);
+            $criteria->add( TaskPeer::TAS_UID, $data['TAS_UID'], Criteria::EQUAL );
+            $dataset = TaskPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $dataset->next();
+            $aRow = $dataset->getRow();
+            if ($aRow['TAS_TYPE'] != 'SUBPROCESS') {
+                $users->refreshTotal($data['USR_UID'], 'remove', 'inbox');
+            }
         } else {
-            $users->refreshTotal($data['USR_UID'], 'remove', 'draft');
+            $criteria = new Criteria();
+            $criteria->addSelectColumn(SubApplicationPeer::APP_UID);
+            $criteria->add( SubApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
+            $dataset = SubApplicationPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            if ($dataset->next()) {
+                $users->refreshTotal($data['USR_UID'], 'remove', 'inbox');
+            } else {
+                $users->refreshTotal($data['USR_UID'], 'remove', 'draft');
+            }
         }
 
         $con = Propel::getConnection( ListCompletedPeer::DATABASE_NAME );
@@ -284,7 +311,7 @@ class ListCompleted extends BaseListCompleted
             $criteria->setOffset( $start );
         }
 
-        $dataset = ListCompletedPeer::doSelectRS($criteria);
+        $dataset = ListCompletedPeer::doSelectRS($criteria, Propel::getDbConnection('workflow_ro') );
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $data = array();
         while ($dataset->next()) {

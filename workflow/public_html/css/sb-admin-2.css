@@ -547,6 +547,7 @@ table.dataTable thead .sorting:after {
 
 .indicators{
     margin-bottom: 20px;
+    margin-bottom: 45px;
 }
 
 .panel-green:hover, .panel-red:hover, .panel-high:hover, .panel-low:hover{
@@ -566,7 +567,7 @@ table.dataTable thead .sorting:after {
 }
 
 .panel-active{
-    background-color: #D99058;
+    /*background-color: #D99058;*/
     position: relative;
 }
 
@@ -583,7 +584,7 @@ table.dataTable thead .sorting:after {
 
 .panel-active:after {
     border-color: rgba(136, 183, 213, 0);
-    background-color: #000;
+    /*background-color: #000;*/
     border-top-color: #fff;
     border-width: 20px;
     margin-left: -20px;
@@ -633,6 +634,7 @@ table.dataTable thead .sorting:after {
 
 .process-div .panel-heading{
     color:#606368;
+	font-size: 20px;
 }
 
 .process-div .panel-heading a{

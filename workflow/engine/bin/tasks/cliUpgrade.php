@@ -217,7 +217,7 @@ function run_unify_database($args)
 
     if ($count > 1) {
         if(!Bootstrap::isLinuxOs()){
-            CLI::error("This is not a Linux enviroment, please especify workspace.\n");
+            CLI::error("This is not a Linux enviroment, please specify workspace.\n");
             return;
         }
     }
