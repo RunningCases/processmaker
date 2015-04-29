@@ -303,6 +303,20 @@ session_start();
 //$e_all = $config['debug'] ? $e_all : $e_all & ~ E_NOTICE;
 //$e_all = E_ALL & ~ E_DEPRECATED & ~ E_STRICT & ~ E_NOTICE  & ~E_WARNING;
 
+//Call Gulliver Classes
+Bootstrap::LoadThirdParty("smarty/libs", "Smarty.class");
+
+//Loading the autoloader libraries feature
+Bootstrap::registerSystemClasses();
+
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$config['display_errors'] = $filter->validateInput($config['display_errors']);
+$config['error_reporting'] = $filter->validateInput($config['error_reporting']);
+$config['memory_limit'] = $filter->validateInput($config['memory_limit']);
+$config['wsdl_cache'] = $filter->validateInput($config['wsdl_cache'],'int');
+$config['time_zone'] = $filter->validateInput($config['time_zone']);
+
 // Do not change any of these settings directly, use env.ini instead
 ini_set( 'display_errors', $config['display_errors']);
 ini_set( 'error_reporting', $config['error_reporting']);
@@ -334,15 +348,7 @@ define( 'PATH_C', (rtrim( Bootstrap::sys_get_temp_dir(), PATH_SEP ) . PATH_SEP) 
 define( 'PATH_LANGUAGECONT', PATH_HOME . 'engine/content/languages/' );
 }
 
-//Call Gulliver Classes
-Bootstrap::LoadThirdParty("smarty/libs", "Smarty.class");
-
-//Loading the autoloader libraries feature
-Bootstrap::registerSystemClasses();
-
 //Load filter class
-G::LoadSystem('inputfilter');
-$filter = new InputFilter();
 $skinPathErrors = G::skinGetPathToSrcByVirtualUri("errors", $config);
 $skinPathUpdate = G::skinGetPathToSrcByVirtualUri("update", $config);
 

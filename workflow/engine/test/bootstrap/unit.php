@@ -61,8 +61,9 @@
  
   //$_test_dir = realpath(dirname(__FILE__).'/..');
   //require_once( 'lime/lime.php');
-
-  require_once (PATH_GULLIVER . "class.bootstrap.php");
+  if(file_exists(PATH_GULLIVER . "class.bootstrap.php")) {
+    require_once (PATH_GULLIVER . "class.bootstrap.php");
+  }
   spl_autoload_register(array('Bootstrap', 'autoloadClass'));
   Bootstrap::registerClass('G', PATH_GULLIVER . "class.g.php");
   Bootstrap::registerClass('System',        PATH_HOME . "engine/classes/class.system.php");

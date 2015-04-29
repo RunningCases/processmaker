@@ -90,6 +90,12 @@ if (!defined('PATH_HOME')) {
     $e_all  = defined('E_STRICT')     ? $e_all & ~E_STRICT     : $e_all;
     $e_all  = $config['debug']        ? $e_all                 : $e_all & ~E_NOTICE;
 
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();  
+    $config['debug'] = $filter->validateInput($config['debug']);
+    $config['memory_limit'] = $filter->validateInput($config['memory_limit']);
+    $config['wsdl_cache'] = $filter->validateInput($config['wsdl_cache'],'int');
+    $config['time_zone'] = $filter->validateInput($config['time_zone']);
     // Do not change any of these settings directly, use env.ini instead
     ini_set('display_errors', $config['debug']);
     ini_set('error_reporting', $e_all);
