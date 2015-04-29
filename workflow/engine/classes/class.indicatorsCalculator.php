@@ -515,7 +515,7 @@ class indicatorsCalculator
         $sqlString = "SELECT
             COALESCE( SUM( TIMEDIFF( DEL_DUE_DATE , NOW( ) ) <  0 ) , 0 ) AS OVERDUE,
             COALESCE( SUM( TIMEDIFF( DEL_RISK_DATE , NOW( ) ) >  0 ) , 0 ) AS ONTIME,
-            COALESCE( SUM( TIMEDIFF( DEL_RISK_DATE , NOW( ) ) < 0 ) , 0 ) AS ATRISK
+            COALESCE( SUM( TIMEDIFF( DEL_RISK_DATE , NOW( ) ) < 0 && TIMEDIFF( DEL_DUE_DATE , NOW( ) ) >  0) , 0 ) AS ATRISK
             FROM  LIST_INBOX
             WHERE  USR_UID =  :usrUid
             AND APP_STATUS = 'TO_DO'
@@ -536,7 +536,7 @@ class indicatorsCalculator
 
             COALESCE( SUM( TIMEDIFF( DEL_DUE_DATE , NOW( ) ) <  0 ) , 0 ) AS overdue,
             COALESCE( SUM( TIMEDIFF( DEL_RISK_DATE , NOW( ) ) >  0 ) , 0 ) AS onTime,
-            COALESCE( SUM( TIMEDIFF( DEL_RISK_DATE , NOW( ) ) < 0 ) , 0 ) AS atRisk
+            COALESCE( SUM( TIMEDIFF( DEL_RISK_DATE , NOW( ) ) < 0 && TIMEDIFF( DEL_DUE_DATE , NOW( ) ) >  0) , 0 ) AS atRisk
             FROM  LIST_INBOX
             WHERE  USR_UID =  :usrUid
             AND APP_STATUS = 'TO_DO'
