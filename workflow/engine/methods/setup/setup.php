@@ -78,10 +78,10 @@ $G_PUBLISH->AddContent( 'template', '', '', '', $template );
 G::RenderPage( 'publish' );
 if (isset( $_GET['module'] )) {
   $module = $filter->xssFilterHard($_GET['module']);
-    print "
+    print '
   <script>
-  admToolsContent.location='" . $module . "';
+  admToolsContent.location=\'$module\';
   </script>
-  ";
+  ';
 }
 

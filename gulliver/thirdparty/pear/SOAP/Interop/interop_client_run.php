@@ -82,15 +82,20 @@ function print_test_names()
 function print_endpoint_names()
 {
     global $iop;
-    $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
-    $docuroot = explode( '/', $realdocuroot );
-    array_pop( $docuroot );
-    $pathhome = implode( '/', $docuroot ) . '/';
-    array_pop( $docuroot );
-    $pathTrunk = implode( '/', $docuroot ) . '/';
-    require_once($pathTrunk.'gulliver/system/class.inputfilter.php');
+    
+    if (!class_exists('G')) {
+        $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+        $docuroot = explode( '/', $realdocuroot );
+        array_pop( $docuroot );
+        $pathhome = implode( '/', $docuroot ) . '/';
+        array_pop( $docuroot );
+        $pathTrunk = implode( '/', $docuroot ) . '/';
+        require_once($pathTrunk.'gulliver/system/class.g.php');
+    }
+    G::LoadSystem('inputfilter');
     $filter = new InputFilter();
     $currTest = $filter->xssFilterHard($iop->currentTest);
+    
     if (!$iop->getEndpoints($iop->currentTest)) {
         die("Unable to retrieve endpoints for $currTest\n");
     }
@@ -148,6 +153,20 @@ foreach ($args[0] as $arg) {
         break;
     case 'v':
         if ($arg[1] != 'php' && $arg[1] != 'soapval') {
+            
+            if (!class_exists('G')) {
+                $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+                $docuroot = explode( '/', $realdocuroot );
+                array_pop( $docuroot );
+                $pathhome = implode( '/', $docuroot ) . '/';
+                array_pop( $docuroot );
+                $pathTrunk = implode( '/', $docuroot ) . '/';
+                require_once($pathTrunk.'gulliver/system/class.g.php');
+            }
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
+            $arg[1] = $filter->xssFilterHard($arg[1]);
+    
             die('Incorrect value for argument v: ' . $arg[1] . "\n");
         }
         $iop->paramType = $arg[1];
