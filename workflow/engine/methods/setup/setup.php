@@ -80,7 +80,7 @@ if (isset( $_GET['module'] )) {
   $module = $filter->xssFilterHard($_GET['module']);
     print '
   <script>
-  admToolsContent.location=\'$module\';
+  admToolsContent.location=\''.$module.'\';
   </script>
   ';
 }
