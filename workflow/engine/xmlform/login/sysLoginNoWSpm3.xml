@@ -24,12 +24,28 @@ SELECT LANG_ID, LANG_NAME FROM langOptions
   </BSUBMIT>
   <JS type="javascript"><![CDATA[
 
+function getElementsByClassNameIE8(node, classname) {
+    var a = [];
+    var re = new RegExp('(^| )'+classname+'( |$)');
+    var els = node.getElementsByTagName("*");
+    for(var i=0,j=els.length; i<j; i++)
+        if(re.test(els[i].className))a.push(els[i]);
+    return a;
+};
+
 window.onload= function(){
-  document.getElementById('form[USR_USERNAME]').placeholder = _('ID_USER');
-  document.getElementById('form[USR_PASSWORD_MASK]').placeholder = _('ID_PASSWORD');
-  document.getElementById('form[USER_ENV]').placeholder = _('ID_WORKSPACE');
-  document.getElementById('form[BSUBMIT]').classList.remove('module_app_button___gray');
-  document.getElementById('form[BSUBMIT]').classList.add('button-login-success');
+  if(document.getElementById('form[USR_USERNAME]').placeholder === undefined && document.getElementById('form[BSUBMIT]').classList == undefined){
+    document.getElementById('form[USR_USERNAME]').value = _('ID_USER');
+    document.getElementById('form[USR_PASSWORD_MASK]').value = _('ID_PASSWORD');
+    document.getElementById('form[USER_ENV]').value = _('ID_WORKSPACE');
+    document.getElementById('form[BSUBMIT]').className = "button-login-success";
+  }else{
+    document.getElementById('form[USR_USERNAME]').placeholder = _('ID_USER');
+    document.getElementById('form[USR_PASSWORD_MASK]').placeholder = _('ID_PASSWORD');
+    document.getElementById('form[USER_ENV]').placeholder = _('ID_WORKSPACE');
+    document.getElementById('form[BSUBMIT]').classList.remove('module_app_button___gray');
+    document.getElementById('form[BSUBMIT]').classList.add('button-login-success');
+  }
 };
 
 setFocus (getField ('USR_USERNAME'));
@@ -64,11 +80,6 @@ leimnud.event.add(document.getElementById('form[USER_ENV]'), 'keypress', functio
 
 leimnud.event.add(document.getElementById('form[BSUBMIT]'), 'click', function() {
     createCookie("pm_sys_sys", "{\"sys_sys\": \"" + getField("USER_ENV").value + "\"}", 365);
-
-    var client = getBrowserClient();
-    if (client.browser == "msie" || client.browser == "safari"){
-        document.sysLogin.submit();
-    }
     document.getElementById('form[USR_PASSWORD]').value = document.getElementById('form[USR_PASSWORD_MASK]').value;
     document.getElementById('form[USR_PASSWORD_MASK]').value = '';
     document.getElementById('form[USR_PASSWORD_MASK]').setAttribute('type', 'text');
