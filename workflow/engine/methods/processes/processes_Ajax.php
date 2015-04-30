@@ -789,6 +789,13 @@ try {
                 echo 'saved: ' . $sDirectory;
             }
             break;
+        case 'getSessid':
+            if(isset($_SESSION['USER_LOGGED'])){
+                echo Bootstrap::json_encode(1);
+            }else{
+                echo Bootstrap::json_encode(0);
+            }
+            break;
         case 'events':
             $oProcessMap->eventsList($oData->pro_uid, $oData->type);
             break;

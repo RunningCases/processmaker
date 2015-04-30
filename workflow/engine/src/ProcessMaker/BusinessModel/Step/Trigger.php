@@ -411,6 +411,8 @@ class Trigger
         }
 
         $range = range($iniPos, $finPos);
+        $stepChangeIds = array();
+        $stepChangePos = array();
         foreach ($aStepTriggers as $dataStep) {
             if (($dataStep['st_type'] == $typeCompare) && (in_array($dataStep['st_position'], $range)) && ($dataStep['tri_uid'] != $triUid)) {
                 $stepChangeIds[] = $dataStep['tri_uid'];
