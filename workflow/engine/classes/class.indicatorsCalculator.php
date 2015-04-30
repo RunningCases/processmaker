@@ -750,6 +750,7 @@ class indicatorsCalculator
 	}
 
 
+	
 	/* For debug only:
 	 * public function interpolateQuery($query, $params) {
 		$keys = array();
