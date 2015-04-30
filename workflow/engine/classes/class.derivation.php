@@ -1013,6 +1013,9 @@ class Derivation
                     $sTargetField = str_replace( '$', '', $sTargetField );
                     $sTargetField = str_replace( '=', '', $sTargetField );
                     $aNewFields[$sTargetField] = isset( $appFields['APP_DATA'][$sOriginField] ) ? $appFields['APP_DATA'][$sOriginField] : '';
+                    if(isset($aParentCase['APP_DATA'][$sTargetField.'_label'])){
+                        $aNewFields[$sTargetField.'_label'] = isset( $appFields['APP_DATA'][$sOriginField.'_label'] ) ? $appFields['APP_DATA'][$sOriginField.'_label'] : '';
+                    }
                 }
                 $aParentCase['APP_DATA'] = array_merge( $aParentCase['APP_DATA'], $aNewFields );
                 $oCase->updateCase( $aSA['APP_PARENT'], $aParentCase );
