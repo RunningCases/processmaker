@@ -68,7 +68,7 @@ class Designer extends Controller
         $this->setVar('prj_readonly', $proReadOnly);
         $this->setVar('credentials', base64_encode(json_encode($clientToken)));
         $this->setVar('isDebugMode', $debug);
-        $this->setVar('distribution', file_exists(PATH_CLASSES . "class.pmLicenseManager.php"));
+        $this->setVar('distribution', file_exists(PATH_METHODS . "login/licenseUpdate.php"));
 
         if ($debug) {
             if (! file_exists(PATH_HTML . "lib-dev/pmUI/build.cache")) {
