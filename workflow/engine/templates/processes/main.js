@@ -224,7 +224,6 @@ Ext.onReady(function(){
                       };
   } else {
     newTypeProcess = {
-                        xtype: 'tbsplit',
                         text: _('ID_NEW'),
                         iconCls: 'button_menu_ext ss_sprite ss_add',
                         handler: function (){
