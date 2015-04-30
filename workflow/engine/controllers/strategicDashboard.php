@@ -210,6 +210,13 @@ class StrategicDashboard extends Controller
             $translation['ID_OVERDUE'] = G::LoadTranslation( 'ID_OVERDUE');
             $translation['ID_AT_RISK'] = G::LoadTranslation( 'ID_AT_RISK');
             $translation['ID_ON_TIME'] = G::LoadTranslation( 'ID_ON_TIME');
+            $translation['ID_NO_INEFFICIENT_PROCESSES'] = G::LoadTranslation('ID_NO_INEFFICIENT_PROCESSES');
+            $translation['ID_NO_INEFFICIENT_TASKS'] = G::LoadTranslation('ID_NO_INEFFICIENT_TASKS');
+            $translation['ID_NO_INEFFICIENT_USER_GROUPS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USER_GROUPS');
+            $translation['ID_NO_INEFFICIENT_USERS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USERS');
+            $translation['ID_DISPLAY_EMPTY'] = G::LoadTranslation('ID_DISPLAY_EMPTY');
+            $translation['ID_EMPTY'] = G::LoadTranslation('ID_EMPTY');
+            $translation['ID_INBOX'] = G::LoadTranslation('ID_INBOX');
 
             $this->setVar('translation', $translation);
             $this->render();
@@ -254,6 +261,14 @@ class StrategicDashboard extends Controller
             $translation['ID_OVERDUE'] = G::LoadTranslation( 'ID_OVERDUE');
             $translation['ID_AT_RISK'] = G::LoadTranslation( 'ID_AT_RISK');
             $translation['ID_ON_TIME'] = G::LoadTranslation( 'ID_ON_TIME');
+            $translation['ID_NO_INEFFICIENT_PROCESSES'] = G::LoadTranslation('ID_NO_INEFFICIENT_PROCESSES');
+            $translation['ID_NO_INEFFICIENT_TASKS'] = G::LoadTranslation('ID_NO_INEFFICIENT_TASKS');
+            $translation['ID_NO_INEFFICIENT_USER_GROUPS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USER_GROUPS');
+            $translation['ID_NO_INEFFICIENT_USERS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USERS');
+            $translation['ID_DISPLAY_EMPTY'] = G::LoadTranslation('ID_DISPLAY_EMPTY');
+            $translation['ID_EMPTY'] = G::LoadTranslation('ID_EMPTY');
+            $translation['ID_INBOX'] = G::LoadTranslation('ID_INBOX');
+
 
             $this->setVar('translation', $translation);
             $this->render();
