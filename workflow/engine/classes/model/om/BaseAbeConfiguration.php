@@ -100,6 +100,12 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
     protected $abe_update_date;
 
     /**
+     * The value for the abe_subject_field field.
+     * @var        string
+     */
+    protected $abe_subject_field;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -285,6 +291,17 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
         } else {
             return date($format, $ts);
         }
+    }
+
+    /**
+     * Get the [abe_subject_field] column value.
+     *
+     * @return     string
+     */
+    public function getAbeSubjectField()
+    {
+
+        return $this->abe_subject_field;
     }
 
     /**
@@ -566,6 +583,28 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
     } // setAbeUpdateDate()
 
     /**
+     * Set the value of [abe_subject_field] column.
+     *
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setAbeSubjectField($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->abe_subject_field !== $v || $v === '') {
+            $this->abe_subject_field = $v;
+            $this->modifiedColumns[] = AbeConfigurationPeer::ABE_SUBJECT_FIELD;
+        }
+
+    } // setAbeSubjectField()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -606,12 +645,14 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
             $this->abe_update_date = $rs->getTimestamp($startcol + 11, null);
 
+            $this->abe_subject_field = $rs->getString($startcol + 12, null);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 12; // 12 = AbeConfigurationPeer::NUM_COLUMNS - AbeConfigurationPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 13; // 13 = AbeConfigurationPeer::NUM_COLUMNS - AbeConfigurationPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating AbeConfiguration object", $e);
@@ -851,6 +892,9 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             case 11:
                 return $this->getAbeUpdateDate();
                 break;
+            case 12:
+                return $this->getAbeSubjectField();
+                break;
             default:
                 return null;
                 break;
@@ -883,6 +927,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $keys[9] => $this->getAbeCaseNoteInResponse(),
             $keys[10] => $this->getAbeCreateDate(),
             $keys[11] => $this->getAbeUpdateDate(),
+            $keys[12] => $this->getAbeSubjectField(),
         );
         return $result;
     }
@@ -949,6 +994,9 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
                 break;
             case 11:
                 $this->setAbeUpdateDate($value);
+                break;
+            case 12:
+                $this->setAbeSubjectField($value);
                 break;
         } // switch()
     }
@@ -1021,6 +1069,9 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $this->setAbeUpdateDate($arr[$keys[11]]);
         }
 
+        if (array_key_exists($keys[12], $arr)) {
+            $this->setAbeSubjectField($arr[$keys[12]]);
+        }
     }
 
     /**
@@ -1080,6 +1131,9 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
             $criteria->add(AbeConfigurationPeer::ABE_UPDATE_DATE, $this->abe_update_date);
         }
 
+        if ($this->isColumnModified(AbeConfigurationPeer::ABE_SUBJECT_FIELD)) {
+            $criteria->add(AbeConfigurationPeer::ABE_SUBJECT_FIELD, $this->abe_subject_field);
+        }
 
         return $criteria;
     }
@@ -1156,6 +1210,7 @@ abstract class BaseAbeConfiguration extends BaseObject implements Persistent
 
         $copyObj->setAbeUpdateDate($this->abe_update_date);
 
+        $copyObj->setAbeSubjectField($this->abe_subject_field);
 
         $copyObj->setNew(true);
 

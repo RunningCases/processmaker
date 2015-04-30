@@ -3,6 +3,12 @@ namespace ProcessMaker\Services\Api;
 
 use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
+use \G;
+use \Smarty;
+use \Criteria;
+use \ResultSet;
+use \DynaformPeer;
+use \ContentPeer;
 
 require_once 'classes/model/AbeConfiguration.php';
 require_once 'classes/model/AbeRequests.php';
@@ -544,5 +550,28 @@ class ActionsByEmail extends Api
         }
         return $templates;
     }
-    
+
+    /**
+     *
+     * @url GET /Dynaforms/:proUid
+     */
+    public function getDynaforms($proUid)
+    {
+        $criteria = new Criteria();
+        $criteria->addSelectColumn(DynaformPeer::DYN_UID);
+        $criteria->addSelectColumn(ContentPeer::CON_VALUE);
+        $criteria->addJoin( DynaformPeer::DYN_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN );
+        $criteria->add( DynaformPeer::PRO_UID, $proUid, Criteria::EQUAL );
+        $criteria->add( DynaformPeer::DYN_TYPE, 'xmlform', Criteria::EQUAL );
+        $criteria->add( ContentPeer::CON_CATEGORY, 'DYN_TITLE');
+        $criteria->add( ContentPeer::CON_LANG, SYS_LANG);
+        $dataset = DynaformPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dynaform = array();
+        while ($dataset->next()) {
+            $aRow = $dataset->getRow();
+            $dynaform[] = array('DYN_UID' => $aRow['DYN_UID'], 'DYN_NAME' => $aRow['CON_VALUE']);
+        }
+        return $dynaform;
+    }
 }

@@ -746,10 +746,10 @@ Ext.onReady( function() {
                     anchor:'90%'
                  },
                     {
-                      id         : 'dynaformCalendarName' ,
-                      xtype      : 'textfield' ,
+                      id         : 'dynaformCalendarName' ,                      
                       width      : 200 ,
-                      fieldLabel : _('ID_NAME') ,
+                      fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_NAME')) +'"> * </span>' + _('ID_NAME') ,
+                      xtype      : 'textfield' ,
                       name       : 'name' ,
                       msgTarget: 'side',
                       enableKeyEvents: true,
