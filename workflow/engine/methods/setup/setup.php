@@ -28,7 +28,6 @@
  * @author Erik A. O. <erik@colosa.com, aortiz.erik@gmail.com>
  * @date Apr 5th, 2010
  */
-
 G::LoadSystem('inputfilter');
 $filter = new InputFilter();
 $_GET['i18'] = $filter->xssFilterHard($_GET['i18']);
