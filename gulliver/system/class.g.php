@@ -3137,7 +3137,7 @@ class G
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
         $c = $filter->xssFilterHard($c);
-        print ('<script language=\'javascript\'>{'.$c.'}</script>') ;
+        print ('<script language=\'javascript\'>'.$c.'</script>') ;
     }
 
     /**
