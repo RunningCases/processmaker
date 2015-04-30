@@ -682,7 +682,7 @@ class HTTP_WebDAV_Server
             $filter = new InputFilter();
             $ns_defs = $filter->xssFilterHard($ns_defs);
 
-            echo ' <D:response $ns_defs>\n';
+            echo ' <D:response '.$ns_defs.'>\n';
 
             /* TODO right now the user implementation has to make sure
              collections end in a slash, this should be done in here
@@ -1171,7 +1171,7 @@ class HTTP_WebDAV_Server
                     $filter = new InputFilter();
                     $val = $filter->xssFilterHard($val);
                     
-                    echo 'The service does not support \'$val\' content encoding';
+                    echo 'The service does not support \''.$val.'\' content encoding';
                     return;
 
                 case 'HTTP_CONTENT_LANGUAGE': // RFC 2616 14.12
@@ -1230,7 +1230,7 @@ class HTTP_WebDAV_Server
                     $filter = new InputFilter();
                     $key = $filter->xssFilterHard($key);
             
-                    echo 'The service does not support \'$key\' ';
+                    echo 'The service does not support \''.$key.'\' ';
                     return;
                 }
             }
