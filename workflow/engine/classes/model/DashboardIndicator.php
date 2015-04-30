@@ -52,6 +52,7 @@ class DashboardIndicator extends BaseDashboardIndicator
             $rs = DashboardIndicatorPeer::doSelectRS( $criteria );
             $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
             $dashboardIndicator = array();
+
             while ($rs->next()) {
                 $row = $rs->getRow();
 

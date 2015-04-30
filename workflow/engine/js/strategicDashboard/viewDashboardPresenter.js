@@ -269,7 +269,6 @@ ViewDashboardPresenter.prototype.statusViewModel = function(indicatorId, data) {
 	});
 
 	var retval = data;
-	//TODO selecte de 7 worst cases no the first 7
 	retval.graph1Data = this.orderGraphData(graph1Data, "down").splice(0,7)
 	retval.graph2Data = this.orderGraphData(graph2Data, "down").splice(0,7)
 	retval.graph3Data = this.orderGraphData(graph3Data, "down").splice(0,7)

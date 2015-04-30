@@ -1117,4 +1117,22 @@ class Light extends Api
         }
         return $return;
     }
+
+    /**
+     * Get configuration ProcessMaker
+     *
+     * @return array
+     *
+     * @url GET /config
+     */
+    public function getConfiguration()
+    {
+        try {
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $response = $oMobile->getConfiguration();
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
 }

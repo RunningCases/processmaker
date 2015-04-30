@@ -1051,5 +1051,18 @@ class Light
         }
         return $result;
     }
+
+    /**
+     * Get configuration
+     * @return mixed
+     */
+    public function getConfiguration()
+    {
+        $sysConf = \System::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
+        $offset = timezone_offset_get( new \DateTimeZone( $sysConf['time_zone'] ), new \DateTime() );
+        $response['timeZone'] = sprintf( "GMT%s%02d:%02d", ( $offset >= 0 ) ? '+' : '-', abs( $offset / 3600 ), abs( ($offset % 3600) / 60 ) );
+        return $response;
+    }
+
 }
 
