@@ -464,9 +464,9 @@ var loadIndicator = function (indicatorId, initDate, endDate) {
 						fillGeneralIndicatorFirstView(viewModel);
 						break;
 				}
+				hideScrollIfAllDivsAreVisible();
+				hideTitleAndSortDiv();
 			});
-	hideScrollIfAllDivsAreVisible();
-	hideTitleAndSortDiv();
 }
 
 var setIndicatorActiveMarker = function () {
