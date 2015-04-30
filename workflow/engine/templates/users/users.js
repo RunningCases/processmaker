@@ -1,6 +1,6 @@
 var storeCountry;
 var storeRegion;
-var storeLocation; 
+var storeLocation;
 var storeReplacedBy;
 var storeCalendar;
 var storeRole;
@@ -389,9 +389,9 @@ Ext.onReady(function () {
     hiddenName    : 'USR_ROLE',
     id            : 'USR_ROLE',
     readOnly      : readMode,
-    store         : storeRole,    
+    store         : storeRole,
     valueField    : 'ROL_UID',
-    displayField  : 'ROL_CODE',    
+    displayField  : 'ROL_CODE',
     emptyText     : TRANSLATIONS.ID_SELECT,
     width         : 260,
     selectOnFocus : true,
@@ -414,7 +414,7 @@ Ext.onReady(function () {
             'change': function(field, newVal, oldVal){
                 var fname = newVal.replace(/^\s+/,'').replace(/\s+$/,'');
                 field.setValue(fname.trim());
-              } 
+              }
           }
         },
         {
@@ -427,7 +427,7 @@ Ext.onReady(function () {
             'change': function(field, newVal, oldVal){
                 var lname = newVal.replace(/^\s+/,'').replace(/\s+$/,'');
                 field.setValue(lname.trim());
-              } 
+              }
           }
         },
         {
@@ -657,7 +657,7 @@ Ext.onReady(function () {
 
       ]
     });
-    
+
     var accountOptions = new Ext.form.FieldSet({
         title: _('ID_ACCOUNT_OPTIONS'),
         items: [{
@@ -670,7 +670,7 @@ Ext.onReady(function () {
             uncheckedValue: 0
         }]
     });
-    
+
   storeDefaultMainMenuOption = new Ext.data.Store({
       proxy: new Ext.data.HttpProxy({
           url: "usersAjax",
@@ -925,7 +925,7 @@ Ext.onReady(function () {
         fieldLabel : _('ID_ROLE'),
         xtype      : 'label',
         width      : 260
-      },
+      }
     ]
   });
     /*----------------------------------********---------------------------------*/
@@ -1312,7 +1312,7 @@ function loadData()
 
     comboRole.store.on("load", function (store) {
         comboRole.setValue(store.getAt(1).get("ROL_UID"));
-    });    
+    });
     comboRole.store.load();
 
     comboDefaultMainMenuOption.store.on("load", function (store) {
