@@ -54,7 +54,7 @@ class Light
             $task = new \ProcessMaker\BusinessModel\Task();
             $task->setFormatFieldNameInUppercase(false);
             $task->setArrayParamException(array("taskUid" => "act_uid", "stepUid" => "step_uid"));
-
+            $step = new \ProcessMaker\Services\Api\Project\Activity\Step();
             $response = array();
             foreach ($processList as $key => $processInfo) {
                 $tempTreeChildren = array ();
@@ -71,6 +71,9 @@ class Light
                             $newForm[$c]['index'] = $c+1;
                             $newForm[$c]['title'] = $form['obj_title'];
                             $newForm[$c]['description'] = $form['obj_description'];
+                            $newForm[$c]['stepId']      = $form["step_uid"];
+                            $trigger = $this->statusTriggers($step->doGetActivityStepTriggers($form["step_uid"], $tempTreeChild['taskId'], $tempTreeChild['processId']));
+                            $newForm[$c]["triggers"]    = $trigger;
                             $c++;
                         }
                     }
@@ -87,6 +90,20 @@ class Light
         return $response;
     }
 
+    public function statusTriggers($triggers)
+    {
+        $return = array("before" => false, "after"=> false);
+        foreach($triggers as $trigger){
+            if ($trigger['st_type'] == "BEFORE"){
+                $return["before"]= true;
+            }
+            if ($trigger['st_type'] == "AFTER"){
+                $return["after"]= true;
+            }
+        }
+        return $return;
+    }
+    
     /**
      * Get counters each type of list
      * @param $userId
@@ -809,6 +826,230 @@ class Light
             //G::SendMessageText( G::LoadTranslation( 'ID_CASE_ALREADY_DERIVATED' ), 'error' );
         }
         return $response;
+    }
+
+    /**
+     * GET return array category
+     *
+     * @return array
+     */
+    public function getCategoryList ()
+    {
+        $category = array ();
+        $category[] = array ("", G::LoadTranslation( "ID_ALL_CATEGORIES" ));
+
+        $criteria = new Criteria( 'workflow' );
+        $criteria->addSelectColumn( \ProcessCategoryPeer::CATEGORY_UID );
+        $criteria->addSelectColumn( \ProcessCategoryPeer::CATEGORY_NAME );
+        $criteria->addAscendingOrderByColumn(\ProcessCategoryPeer::CATEGORY_NAME);
+
+        $dataset = \ProcessCategoryPeer::doSelectRS( $criteria );
+        $dataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+        $dataset->next();
+
+        while ($row = $dataset->getRow()) {
+            $category[] = array ($row['CATEGORY_UID'],$row['CATEGORY_NAME']);
+            $dataset->next();
+        }
+        return $category;
+    }
+
+    /**
+     * @param $action
+     * @param $categoryUid
+     * @param $userUid
+     * @return array
+     * @throws \PropelException
+     */
+    public function getProcessList ($action, $categoryUid, $userUid)
+    {
+        //$action = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : null;
+        //$categoryUid = isset( $_REQUEST['CATEGORY_UID'] ) ? $_REQUEST['CATEGORY_UID'] : null;
+        //$userUid = (isset( $_SESSION['USER_LOGGED'] ) && $_SESSION['USER_LOGGED'] != '') ? $_SESSION['USER_LOGGED'] : null;
+
+        // global $oAppCache;
+        $oAppCache = new \AppCacheView();
+        $processes = array ();
+        $processes[] = array ('',G::LoadTranslation( 'ID_ALL_PROCESS' ));
+
+        //get the list based in the action provided
+        switch ($action) {
+            case 'draft':
+                $cProcess = $oAppCache->getDraftListCriteria( $userUid ); //fast enough
+                break;
+            case 'sent':
+                $cProcess = $oAppCache->getSentListProcessCriteria( $userUid ); // fast enough
+                break;
+            case 'simple_search':
+            case 'search':
+                //in search action, the query to obtain all process is too slow, so we need to query directly to
+                //process and content tables, and for that reason we need the current language in AppCacheView.
+                G::loadClass( 'configuration' );
+                $oConf = new \Configurations();
+                $oConf->loadConfig( $x, 'APP_CACHE_VIEW_ENGINE', '', '', '', '' );
+                $appCacheViewEngine = $oConf->aConfig;
+                $lang = isset( $appCacheViewEngine['LANG'] ) ? $appCacheViewEngine['LANG'] : 'en';
+
+                $cProcess = new Criteria( 'workflow' );
+                $cProcess->clearSelectColumns();
+                $cProcess->addSelectColumn( \ProcessPeer::PRO_UID );
+                $cProcess->addSelectColumn( \ContentPeer::CON_VALUE );
+                if ($categoryUid) {
+                    $cProcess->add( \ProcessPeer::PRO_CATEGORY, $categoryUid );
+                }
+                $del = DBAdapter::getStringDelimiter();
+                $conds = array ();
+                $conds[] = array (ProcessPeer::PRO_UID,ContentPeer::CON_ID);
+                $conds[] = array (ContentPeer::CON_CATEGORY,$del . 'PRO_TITLE' . $del);
+                $conds[] = array (ContentPeer::CON_LANG,$del . $lang . $del);
+                $cProcess->addJoinMC( $conds, Criteria::LEFT_JOIN );
+                $cProcess->add( ProcessPeer::PRO_STATUS, 'ACTIVE' );
+                $cProcess->addAscendingOrderByColumn(ContentPeer::CON_VALUE);
+
+                $oDataset = ProcessPeer::doSelectRS( $cProcess );
+                $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+                $oDataset->next();
+
+                while ($aRow = $oDataset->getRow()) {
+                    $processes[] = array ($aRow['PRO_UID'],$aRow['CON_VALUE']
+                    );
+                    $oDataset->next();
+                }
+                return print G::json_encode( $processes );
+                break;
+            case 'unassigned':
+                $cProcess = $oAppCache->getUnassignedListCriteria( $userUid );
+                break;
+            case 'paused':
+                $cProcess = $oAppCache->getPausedListCriteria( $userUid );
+                break;
+            case 'to_revise':
+                $cProcess = $oAppCache->getToReviseListCriteria( $userUid );
+                break;
+            case 'to_reassign':
+                $cProcess = $oAppCache->getToReassignListCriteria($userUid);
+                break;
+            case 'gral':
+                $cProcess = $oAppCache->getGeneralListCriteria();
+                break;
+            case 'todo':
+            default:
+                $cProcess = $oAppCache->getToDoListCriteria( $userUid ); //fast enough
+                break;
+        }
+        //get the processes for this user in this action
+        $cProcess->clearSelectColumns();
+        $cProcess->addSelectColumn( \AppCacheViewPeer::PRO_UID );
+        $cProcess->addSelectColumn( \AppCacheViewPeer::APP_PRO_TITLE );
+        $cProcess->setDistinct( \AppCacheViewPeer::PRO_UID );
+        if ($categoryUid) {
+            require_once 'classes/model/Process.php';
+            $cProcess->addAlias( 'CP', 'PROCESS' );
+            $cProcess->add( 'CP.PRO_CATEGORY', $categoryUid, Criteria::EQUAL );
+            $cProcess->addJoin( \AppCacheViewPeer::PRO_UID, 'CP.PRO_UID', Criteria::LEFT_JOIN );
+            $cProcess->addAsColumn( 'CATEGORY_UID', 'CP.PRO_CATEGORY' );
+        }
+
+        $cProcess->addAscendingOrderByColumn(\AppCacheViewPeer::APP_PRO_TITLE);
+
+        $oDataset = \AppCacheViewPeer::doSelectRS( $cProcess, \Propel::getDbConnection('workflow_ro') );
+        $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+        $oDataset->next();
+
+        while ($aRow = $oDataset->getRow()) {
+            $processes[] = array ($aRow['PRO_UID'],$aRow['APP_PRO_TITLE']
+            );
+            $oDataset->next();
+        }
+        return $processes;
+    }
+
+    /**
+     * lista de usuarios a reasignar
+     */
+    public function getUsersToReassign($usr_uid, $task_uid)
+    {
+        //G::LoadClass( 'tasks' );
+        G::LoadSystem( 'rbac' );
+        G::LoadClass( 'memcached' );
+        $memcache = \PMmemcached::getSingleton( SYS_SYS );
+        $RBAC = \RBAC::getSingleton( PATH_DATA, session_id() );
+        $RBAC->sSystem = 'PROCESSMAKER';
+        $RBAC->initRBAC();
+        $memKey = 'rbacSession' . session_id();
+        if (($RBAC->aUserInfo = $memcache->get( $memKey )) === false) {
+            $RBAC->loadUserRolePermission( $RBAC->sSystem, $usr_uid );
+            $memcache->set( $memKey, $RBAC->aUserInfo, \PMmemcached::EIGHT_HOURS );
+        }
+        $GLOBALS['RBAC'] = $RBAC;
+
+        $task = new \Task();
+        $tasks = $task->load($task_uid);
+        $case = new \Cases();
+        $result = new \stdclass();
+        $result->data = $case->getUsersToReassign($task_uid, $usr_uid, $tasks['PRO_UID']);
+        return $result;
+    }
+
+    /**
+     *
+     */
+    public function reassignCase($usr_uid, $app_uid, $TO_USR_UID)
+    {
+        $cases = new \Cases();
+        $user = new \Users();
+        $app = new \Application();
+        $result = new \stdclass();
+
+        try {
+            $iDelIndex = $cases->getCurrentDelegation( $app_uid, $usr_uid );
+            $cases->reassignCase($app_uid, $iDelIndex, $usr_uid, $TO_USR_UID);
+            $caseData = $app->load($app_uid);
+            $userData = $user->load($TO_USR_UID);
+            $data['APP_NUMBER'] = $caseData['APP_NUMBER'];
+            $data['USER'] = $userData['USR_LASTNAME'] . ' ' . $userData['USR_FIRSTNAME']; //TODO change with the farmated username from environment conf
+            $result->status = 0;
+            $result->msg = G::LoadTranslation('ID_REASSIGNMENT_SUCCESS', SYS_LANG, $data);
+        } catch (\Exception $e) {
+            $result->status = 1;
+            $result->msg = $e->getMessage();
+        }
+
+        return $result;
+    }
+
+    /**
+     *
+     */
+    public function pauseCase($usr_uid, $app_uid, $request_data)
+    {
+        $result = new \stdclass();
+
+        try {
+            $unpauseDate = $request_data['unpauseDate'] . ' '. $request_data['unpauseTime'];
+            $oCase = new \Cases();
+            $iDelIndex = $oCase->getCurrentDelegation( $app_uid, $usr_uid );
+            // Save the note pause reason
+            if ($request_data['noteContent'] != '') {
+                $request_data['noteContent'] = G::LoadTranslation('ID_CASE_PAUSE_LABEL_NOTE') . ' ' . $request_data['noteContent'];
+                $appNotes = new \AppNotes();
+                $noteContent = addslashes($request_data['noteContent']);
+                $appNotes->postNewNote($app_uid, $usr_uid, $noteContent, $request_data['notifyUser']);
+            }
+            // End save
+
+            $oCase->pauseCase($app_uid, $iDelIndex, $usr_uid, $unpauseDate);
+            $app = new \Application();
+            $caseData = $app->load($app_uid);
+            $data['APP_NUMBER'] = $caseData['APP_NUMBER'];
+            $data['UNPAUSE_DATE'] = $unpauseDate;
+
+            $result->success = true;
+            $result->msg = G::LoadTranslation('ID_CASE_PAUSED_SUCCESSFULLY', SYS_LANG, $data);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+        return $result;
     }
 }
 

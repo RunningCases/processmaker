@@ -50,6 +50,22 @@ if ($actionAjax == "streaming") {
     exit(0);
 }
 
+if ($actionAjax == "fileMobile") {
+    $app_uid = isset( $_REQUEST['a'] ) ? $_REQUEST['a'] : null;
+    $inp_doc_uid = isset( $_REQUEST['d'] ) ? $_REQUEST['d'] : null;
+
+    $structure = file_get_contents(PATH_HTML ."/mobile/index.json");
+    $structure = json_decode($structure);
+    foreach($structure as $build){
+        foreach($build as $file){
+            $file->lastModified = date ("D, d M Y H:i:s \G\M\T", filemtime(PATH_HTML ."/mobile/".$file->file));
+        }
+    }
+    G::header( 'Content-Type: application/json' );
+    echo G::json_encode($structure);
+    exit(0);
+}
+
 exit;
 
 function rangeDownload($location,$mimeType)

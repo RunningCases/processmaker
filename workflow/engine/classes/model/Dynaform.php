@@ -180,6 +180,10 @@ class Dynaform extends BaseDynaform
                 $aData['DYN_VERSION'] = 0;
             }
             $this->setDynVersion( $aData['DYN_VERSION'] );
+            if (!isset($aData['DYN_CONTENT'])) {
+                $aData['DYN_CONTENT'] = "{}";
+            }
+            $this->setDynContent( $aData['DYN_CONTENT'] );
             if ($this->validate()) {
                 $con->begin();
                 $res = $this->save();

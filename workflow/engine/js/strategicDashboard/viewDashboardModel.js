@@ -78,7 +78,6 @@ ViewDashboardModel.prototype.getPositionIndicator = function(callBack) {
                 "y" : originalObject.y,
                 "width" : originalObject.width,
                 "height" : originalObject.height
-
             };
             graphData.push(map);
         });

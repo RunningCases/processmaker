@@ -90,18 +90,37 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 		newObject.comparative =  Math.round(newObject.comparative*1000)/1000;
 		newObject.comparative = ((newObject.comparative > 0)? "+": "") + newObject.comparative;
 
+		newObject.percentComparative = (newObject.percentComparative != '--')
+										? '(' + newObject.percentComparative + '%)'
+										: "";
+
+
 		newObject.value = (newObject.category == "normal")
 								? Math.round(newObject.value) + ""
 								: Math.round(newObject.value*100)/100 + ""
 
 		newObject.favorite = 0;
-		newObject.percentageOverdue = Math.round(newObject.percentageOverdue);
-		newObject.percentageAtRisk = Math.round(newObject.percentageAtRisk);
-		//to be sure that percentages sum up to 100 (the rounding will lost decimals)%
-		newObject.percentageOnTime = 100 - newObject.percentageOverdue - newObject.percentageAtRisk;
-		newObject.overdueVisibility = (newObject.percentageOverdue > 0)? "visible" : "hidden";
-		newObject.atRiskVisibility = (newObject.percentageAtRisk > 0)? "visible" : "hidden";
-		newObject.onTimeVisibility = (newObject.percentageOnTime > 0)? "visible" : "hidden";
+
+		newObject.percentageOverdueWidth = Math.round(newObject.percentageOverdue);
+		newObject.percentageAtRiskWidth = Math.round(newObject.percentageAtRisk);
+		//to be sure that percentages sum up to 100 (the rounding will lose decimals)%
+		newObject.percentageOnTimeWidth = 100 - newObject.percentageOverdueWidth - newObject.percentageAtRiskWidth;
+
+		newObject.percentageOverdueToShow = ((newObject.percentageOverdue == 0 ||newObject.percentageOverdue == null  ) 
+											? "" 
+											: newObject.percentageOverdueWidth + "%");
+
+		newObject.percentageAtRiskToShow = ((newObject.percentageAtRisk == 0 || newObject.percentageAtRisk == null) 
+											? "" 
+											: newObject.percentageAtRiskWidth + "%");
+
+		newObject.percentageOnTimeToShow = ((newObject.percentageOnTime == 0 || newObject.percentageOnTime == 0) 
+											? G_STRING['ID_INBOX']  + ' ' + G_STRING['ID_EMPTY'] 
+											: newObject.percentageOnTimeWidth + "%");
+
+		newObject.overdueVisibility = (newObject.percentageOverdueWidth > 0) ? "visible" : "hidden";
+		newObject.atRiskVisibility = (newObject.percentageAtRiskWidth > 0) ? "visible" : "hidden";
+		newObject.onTimeVisibility = (newObject.percentageOnTimeWidth > 0) ? "visible" : "hidden";
 		returnList.push(newObject);
 		i++;
 	});
