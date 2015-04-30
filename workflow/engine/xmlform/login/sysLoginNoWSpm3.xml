@@ -81,8 +81,9 @@ leimnud.event.add(document.getElementById('form[USER_ENV]'), 'keypress', functio
 leimnud.event.add(document.getElementById('form[BSUBMIT]'), 'click', function() {
     createCookie("pm_sys_sys", "{\"sys_sys\": \"" + getField("USER_ENV").value + "\"}", 365);
     document.getElementById('form[USR_PASSWORD]').value = document.getElementById('form[USR_PASSWORD_MASK]').value;
-    document.getElementById('form[USR_PASSWORD_MASK]').value = '';
-    document.getElementById('form[USR_PASSWORD_MASK]').setAttribute('type', 'text');
+    document.getElementById('form[USR_PASSWORD_MASK]').value = '';    
+    if(!navigator.userAgent.indexOf("MSIE 8.0")>0)
+      document.getElementById("form[USR_PASSWORD_MASK]").setAttribute("type", "text");       
     document.sysLogin.submit();
 }.extend(document.getElementById('form[BSUBMIT]')));
 

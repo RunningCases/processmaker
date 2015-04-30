@@ -129,8 +129,8 @@ leimnud.event.add(document.getElementById('form[BSUBMIT]'), 'click', function() 
 
     document.getElementById("form[USR_PASSWORD]").value = document.getElementById("form[USR_PASSWORD_MASK]").value;
     document.getElementById("form[USR_PASSWORD_MASK]").value = "";
-    document.getElementById("form[USR_PASSWORD_MASK]").setAttribute("type", "text");
-
+    if(!navigator.userAgent.indexOf("MSIE 8.0")>0)
+      document.getElementById("form[USR_PASSWORD_MASK]").setAttribute("type", "text");    
     document.login.submit();
 }.extend(document.getElementById('form[BSUBMIT]')));
 
