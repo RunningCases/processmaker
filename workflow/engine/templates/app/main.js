@@ -268,11 +268,17 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
     ],
     listeners: {
       show:function() {
+        if (typeof(parent.setFlag) != 'undefined') {
+          parent.setFlag(false);
+        }
         this.loadMask = new Ext.LoadMask(this.body, {
           msg:_('ID_LOADING')
         });
       },
       close:function(){
+        if (typeof(parent.setFlag) != 'undefined') {
+          parent.setFlag(true);
+        }
         if (Ext.get("caseNotes")) {
           Ext.getCmp("caseNotes").toggle(false);
           //Ext.getCmp('caseNotes').show();
