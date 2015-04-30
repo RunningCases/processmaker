@@ -10,11 +10,6 @@
     }
 
   body.login {
-    //background: url("/images/backgroundpm3.jpg") repeat scroll 0 0 / cover rgba(0, 0, 0, 0);
-    //background-position-y: -30px;
-    //font-family: "Chivo",sans-serif; 
-    //height: 100%;    
-
     background-color: #444;
     background: url(/images/backgroundpm3.jpg);
     background-size: cover;
