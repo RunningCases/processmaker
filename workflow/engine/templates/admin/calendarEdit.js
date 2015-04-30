@@ -751,7 +751,6 @@ Ext.onReady( function() {
                       width      : 200 ,
                       fieldLabel : _('ID_NAME') ,
                       name       : 'name' ,
-                      allowBlank : false,
                       msgTarget: 'side',
                       enableKeyEvents: true,
                       listeners: {
