@@ -36,10 +36,39 @@ function getElementsByClassNameIE8(node, classname) {
 };
 
 window.onload= function(){
+   var inputUser,
+       inputPass;
    if(document.getElementById('form[USR_USERNAME]').placeholder == undefined && document.getElementById('form[BSUBMIT]').classList == undefined){     
     document.getElementById('form[USR_USERNAME]').value = _('ID_USER');
     document.getElementById('form[USR_PASSWORD_MASK]').value = _('ID_PASSWORD');
-    document.getElementById('form[BSUBMIT]').className = "button-login-success";            
+    document.getElementById('form[BSUBMIT]').className = "button-login-success";
+    inputUser = document.getElementById('form[USR_USERNAME]');
+    inputPass = document.getElementById('form[USR_PASSWORD_MASK]');
+    
+    inputUser.attachEvent("onclick", function (){
+      if(_('ID_USER') == inputUser.value){
+        inputUser.value="";
+      }        
+    });
+    inputUser.attachEvent("onblur", function (){
+      if(inputUser.value == ""){
+        inputUser.value=_('ID_USER');
+      }        
+    });
+    
+    inputPass.attachEvent("onclick", function (){
+      if(_('ID_PASSWORD') == inputPass.value){
+        inputPass.value="";
+      }        
+    });
+    
+    inputPass.attachEvent("onblur", function (){
+      if(inputPass.value == ""){
+        inputPass.value = _('ID_PASSWORD');
+      }        
+    });
+
+
   }else{
     document.getElementById('form[USR_USERNAME]').placeholder = _('ID_USER');
     document.getElementById('form[USR_PASSWORD_MASK]').placeholder = _('ID_PASSWORD');
