@@ -89,7 +89,7 @@ class AppDelegation extends BaseAppDelegation
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
         $delIndex = 1;
-        $delPreviusUsrUid = '';
+        $delPreviusUsrUid = $sUsrUid;
         if ($rs->next()) {
             $row = $rs->getRow();
 
