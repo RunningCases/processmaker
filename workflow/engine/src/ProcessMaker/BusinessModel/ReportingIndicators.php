@@ -3,7 +3,6 @@ namespace ProcessMaker\BusinessModel;
 
 use \G;
 
- 
 class ReportingIndicators
 {
 //    /**et

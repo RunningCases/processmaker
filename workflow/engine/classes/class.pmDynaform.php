@@ -456,6 +456,39 @@ class pmDynaform
         exit();
     }
 
+    public function printABE($filename, $record)
+    {
+        ob_clean();
+        $this->record = $record;
+        $json = G::json_decode($this->record["DYN_CONTENT"]);
+        $this->jsonr($json);
+        $javascrip = "" .
+                "<script type='text/javascript'>\n" .
+                "var jsondata = " . G::json_encode($json) . ";\n" .
+                "var pm_run_outside_main_app = null;\n" .
+                "var dyn_uid = '" . $this->fields["CURRENT_DYNAFORM"] . "';\n" .
+                "var __DynaformName__ = null;\n" .
+                "var app_uid = null;\n" .
+                "var prj_uid = '" . $this->record["PRO_UID"] . "';\n" .
+                "var step_mode = null;\n" .
+                "var workspace = '" . SYS_SYS . "';\n" .
+                "var credentials = " . G::json_encode($this->credentials) . ";\n" .
+                "var filePost = '" . $filename . "';\n" .
+                "var fieldsRequired = " . G::json_encode(array()) . ";\n" .
+                "var triggerDebug = null;\n" .
+                "</script>\n" .
+                "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
+                "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
+                "    <a id='dyn_forward' href='' style='float:right;font-size:12px;line-height:1;margin:0px 5px 1px 0px;'>\n" .
+                "    </a>\n" .
+                "</div>";
+
+        $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
+        $file = str_replace("{javascript}", $javascrip, $file);
+        echo $file;
+        exit();
+    }
+
     public function printPmDynaform()
     {
         $json = G::json_decode($this->record["DYN_CONTENT"]);
@@ -470,6 +503,34 @@ class pmDynaform
 
         echo $file;
         exit();
+    }
+
+    public function printPmDynaformAbe($record)
+    {
+        ob_clean();
+        $this->record = $record;
+        $json = G::json_decode($this->record["DYN_CONTENT"]);
+        $this->jsonr($json);
+        $javascrip = "" .
+                "<script type='text/javascript'>\n" .
+                "var jsondata = " . G::json_encode($json) . ";\n" .
+                "var pm_run_outside_main_app = null;\n" .
+                "var dyn_uid = '" . $this->fields["CURRENT_DYNAFORM"] . "';\n" .
+                "var __DynaformName__ = null;\n" .
+                "var app_uid = null;\n" .
+                "var prj_uid = '" . $this->record["PRO_UID"] . "';\n" .
+                "var step_mode = null;\n" .
+                "var workspace = '" . SYS_SYS . "';\n" .
+                "var credentials = " . G::json_encode($this->credentials) . ";\n" .
+                "var fieldsRequired = " . G::json_encode(array()) . ";\n" .
+                "var triggerDebug = null;\n" .
+                "</script>\n" .
+                "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
+                "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
+                "</div>";
+        $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
+        $file = str_replace("{javascript}", $javascrip, $file);
+        return $file;
     }
 
     public function synchronizeVariable($processUid, $newVariable, $oldVariable)
