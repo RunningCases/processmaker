@@ -147,7 +147,8 @@ try {
     $response['data']           = $result;
     $filtersData['action']      = $filters["action"];
     $response['totalCount']     = $list->countTotal($userUid, $filtersData);
-
+    
+    $response = $filter->xssFilterHard($response);
     echo G::json_encode($response);
 } catch (Exception $e) {
     $msg = array("error" => $e->getMessage());

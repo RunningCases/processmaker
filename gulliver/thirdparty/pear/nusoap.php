@@ -805,6 +805,20 @@ class nusoap_base {
 	 */
     function varDump($data) {
 		ob_start();
+		
+		if (!class_exists('G')) {
+            $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+            $docuroot = explode( '/', $realdocuroot );
+            array_pop( $docuroot );
+            $pathhome = implode( '/', $docuroot ) . '/';
+            array_pop( $docuroot );
+            $pathTrunk = implode( '/', $docuroot ) . '/';
+            require_once($pathTrunk.'gulliver/system/class.g.php');
+        }
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $data = $filter->xssFilterHard($data);
+                
 		var_dump($data);
 		$ret_val = ob_get_contents();
 		ob_end_clean();
@@ -3032,7 +3046,16 @@ class soap_transport_http extends nusoap_base {
   
     public function encryptOld($string)
     {
-        return md5($string);
+        if (!class_exists('G')) {
+            $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+            $docuroot = explode( '/', $realdocuroot );
+            array_pop( $docuroot );
+            $pathhome = implode( '/', $docuroot ) . '/';
+            array_pop( $docuroot );
+            $pathTrunk = implode( '/', $docuroot ) . '/';
+            require_once($pathTrunk.'gulliver/system/class.g.php');
+        }
+        return G::encryptOld($string);
     }
 }
 
@@ -3254,6 +3277,20 @@ class soap_server extends nusoap_base {
 			$this->appendDebug($this->wsdl->getDebug());
 			$this->wsdl->clearDebug();
 			if($err = $this->wsdl->getError()){
+			    
+			    if (!class_exists('G')) {
+                    $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+                    $docuroot = explode( '/', $realdocuroot );
+                    array_pop( $docuroot );
+                    $pathhome = implode( '/', $docuroot ) . '/';
+                    array_pop( $docuroot );
+                    $pathTrunk = implode( '/', $docuroot ) . '/';
+                    require_once($pathTrunk.'gulliver/system/class.g.php');
+                }
+                G::LoadSystem('inputfilter');
+                $filter = new InputFilter();
+                $err = $filter->xssFilterHard($err);
+            
 				die('WSDL ERROR: '.$err);
 			}
 		}
@@ -3301,7 +3338,21 @@ class soap_server extends nusoap_base {
 			}
 		} elseif ($data == '' && $this->wsdl) {
 			$this->debug("In service, there is no data, so return Web description");
-			print $this->wsdl->webDescription();
+			
+			if (!class_exists('G')) {
+                $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+                $docuroot = explode( '/', $realdocuroot );
+                array_pop( $docuroot );
+                $pathhome = implode( '/', $docuroot ) . '/';
+                array_pop( $docuroot );
+                $pathTrunk = implode( '/', $docuroot ) . '/';
+                require_once($pathTrunk.'gulliver/system/class.g.php');
+            }
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
+            $webDescription = $filter->xssFilterHard($this->wsdl->webDescription());
+            
+			print $webDescription;
 		} else {
 			$this->debug("In service, invoke the request");
 			$this->parse_request($data);
