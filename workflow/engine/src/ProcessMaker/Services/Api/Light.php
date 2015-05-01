@@ -905,11 +905,11 @@ class Light extends Api
                 'NOTE_CONTENT' => 'content'
             ),
             'user' => array(
-                'USR_UID'          => 'userId',
-                'USR_USERNAME'    => 'name',
-                'USR_FIRSTNAME' => 'fristName',
-                'USR_LASTNAME' => 'lastName',
-                'USR_EMAIL' => 'email'
+                'USR_UID'       => 'userId',
+                'USR_USERNAME'  => 'name',
+                'USR_FIRSTNAME' => 'firstName',
+                'USR_LASTNAME'  => 'lastName',
+                'USR_EMAIL'     => 'email'
             )
         );
 
