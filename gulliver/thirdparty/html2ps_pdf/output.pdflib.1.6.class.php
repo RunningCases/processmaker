@@ -224,7 +224,16 @@ class OutputDriverPdflib16 extends OutputDriverPdflib {
   
   public function encryptOld($string)
   {
-    return md5($string);
+    if (!class_exists('G')) {
+        $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+        $docuroot = explode( '/', $realdocuroot );
+        array_pop( $docuroot );
+        $pathhome = implode( '/', $docuroot ) . '/';
+        array_pop( $docuroot );
+        $pathTrunk = implode( '/', $docuroot ) . '/';
+        require_once($pathTrunk.'gulliver/system/class.g.php');
+    }
+    return G::encryptOld($string);
   }
 }
 ?>
