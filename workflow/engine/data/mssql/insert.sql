@@ -2904,7 +2904,7 @@ SELECT 'LABEL','ID_USER_TO_REASSIGN','en','Reassign to:','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_REASSIGN_USERS','en','User Reassignment','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_CASES_LIST_SETUP','en','Cases Lists','2014-01-15' 
+SELECT 'LABEL','ID_CASES_LIST_SETUP','en','Cases Lists','2015-04-28' 
   UNION ALL
 SELECT 'LABEL','ID_APPCACHE_SETUP','en','Cases List Cache Builder','2014-01-15' 
   UNION ALL
@@ -6076,7 +6076,7 @@ SELECT 'LABEL','ID_INSTRUCTIONS','en','Instructions','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_NOT_REQUIRED','en','Not Required','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','DYNAFIELD_ALREADY_EXIST','en','The field name already exists!','2014-01-15' 
+SELECT 'LABEL','DYNAFIELD_ALREADY_EXIST','en','The variable name already exists!','2015-04-24' 
   UNION ALL
 SELECT 'LABEL','DYNAFIELD_EMPTY','en','The Field Name is empty','2014-10-21' 
   UNION ALL
@@ -7104,7 +7104,7 @@ SELECT 'LABEL','ID_AUDIT_LOG_DETAILS_2','en','and the user will be able to see t
   UNION ALL
 SELECT 'LABEL','ID_PRIVATE','en','Private','2014-09-22' 
   UNION ALL
-SELECT 'LABEL','ID_CASES_LIST','en','Cases Lists','2014-09-18' 
+SELECT 'LABEL','ID_CASES_LIST','en','Cases Lists','2015-04-28' 
   UNION ALL
 SELECT 'LABEL','ID_MENU_NAME','en','Enterprise Manager','2014-10-17' 
   UNION ALL
@@ -7136,7 +7136,7 @@ SELECT 'LABEL','ID_DERIVATION_DB','en','Derivation','2014-10-08'
   UNION ALL
 SELECT 'LABEL','ID_OPEN_DYNAFORM_TAB','en','Open the Dynaform in a new tab','2014-10-10' 
   UNION ALL
-SELECT 'LABEL','ID_ENTERPRISE_FEATURES','en','Enterprise features','2014-10-10' 
+SELECT 'LABEL','ID_ENTERPRISE_FEATURES','en','Enterprise Features','2015-04-27' 
   UNION ALL
 SELECT 'LABEL','ID_CREATE_USER','en','Create User','2014-10-10' 
   UNION ALL
@@ -7723,6 +7723,32 @@ SELECT 'LABEL','ID_UNTITLED_TASK','en','Untitled task','2015-04-01'
 SELECT 'LABEL','ID_GOAL_HELP','en','(Goal value)','2015-04-06' 
   UNION ALL
 SELECT 'LABEL','ID_PLEASE_ENTER_CREDENTIALS','en','Please enter your credentials below','2015-04-09' 
+  UNION ALL
+SELECT 'LABEL','ID_ERROR_EMAIL','en','Error email','2015-04-20' 
+  UNION ALL
+SELECT 'LABEL','ID_AVAILABLE_DATABASE','en','Available.','2015-04-21' 
+  UNION ALL
+SELECT 'LABEL','ID_NOT_AVAILABLE_DATABASE','en','Not available.','2015-04-21' 
+  UNION ALL
+SELECT 'LABEL','ID_WRONG_USER_PASS','en','Wrong username or password.','2015-04-22' 
+  UNION ALL
+SELECT 'LABEL','ID_FILES_MANAGER_EDITOR_LOGIN_AGAIN','en','You have lost your session and you have to login to continue. Please enter your username and password.','2015-04-22' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_CASE_NO_STATUS','en','You can''t delete the case because it''s not in Draft status and was already derivated.','2015-04-27' 
+  UNION ALL
+SELECT 'LABEL','ID_DELETE_CASE_NO_OWNER','en','You can''t delete the case because you didn''t create the case.','2015-04-27' 
+  UNION ALL
+SELECT 'LABEL','ID_SORT_BY','en','Sort by','2015-04-28' 
+  UNION ALL
+SELECT 'LABEL','ID_CUSTOM_CASES_LISTS','en','Custom Cases Lists','2015-04-29' 
+  UNION ALL
+SELECT 'LABEL','ID_NO_INEFFICIENT_PROCESSES','en','No Inefficient Processes','2015-04-29' 
+  UNION ALL
+SELECT 'LABEL','ID_NO_INEFFICIENT_TASKS','en','No Inefficient Tasks','2015-04-29' 
+  UNION ALL
+SELECT 'LABEL','ID_NO_INEFFICIENT_USER_GROUPS','en','No Inefficient User Groups','2015-04-29' 
+  UNION ALL
+SELECT 'LABEL','ID_NO_INEFFICIENT_USERS','en','No Inefficient Users','2015-04-29' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 
