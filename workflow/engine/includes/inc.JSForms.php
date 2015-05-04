@@ -47,6 +47,7 @@ function RefreshDependentFields(ObjectName, Fields, InitValue) {
   global $HTTP_GET_VARS;
   if ($HTTP_SESSION_VARS['CURRENT_APPLICATION'] == '') $HTTP_SESSION_VARS['CURRENT_APPLICATION'] = '0';
   	$appid = $HTTP_SESSION_VARS['CURRENT_APPLICATION'];
+  	$appid = $filter->xssFilterHard($appid);
   	if ($HTTP_GET_VARS['dynaform'] != ''){
   	  $Dynaform = '&__dynaform__=' . $HTTP_GET_VARS['dynaform'];
   	  $Dynaform = $filter->xssFilterHard($Dynaform);

@@ -3134,9 +3134,9 @@ class G
      */
     public function evalJScript ($c)
     {
-        G::LoadSystem('inputfilter');
+        /*G::LoadSystem('inputfilter');
         $filter = new InputFilter();
-        $c = $filter->xssFilterHard($c);
+        $c = $filter->xssFilterHard($c);*/
         print ("<script language=\"javascript\">{$c}</script>") ;
     }
 

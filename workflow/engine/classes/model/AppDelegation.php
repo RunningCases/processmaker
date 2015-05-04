@@ -537,7 +537,7 @@ class AppDelegation extends BaseAppDelegation
 
                         //we are putting negative number if the task is not delayed, and positive number for the time the task is delayed
                         //$delayDuration = $this->getDiffDate( $now, $iDueDate );
-                        $delayDuration = $calendar->dashCalculateDurationWithCalendar( $iDueDate, date("Y-m-d H:i:s"), $calData );
+                        $delayDuration = $calendar->dashCalculateDurationWithCalendar( $row['DEL_TASK_DUE_DATE'], date("Y-m-d H:i:s"), $calData );
                         $delayDuration = $delayDuration / (24 * 60 * 60); //Days
                         $oAppDel->setDelDelayDuration( $delayDuration );
                         if ($fTaskDuration != 0) {
@@ -566,7 +566,7 @@ class AppDelegation extends BaseAppDelegation
                         if ($dueDate < $finishDate) {
                             $oAppDel->setDelDelayed( 1 );
                             //$delayDuration = $this->getDiffDate( $iFinishDate, $iDueDate );
-                            $delayDuration = $calendar->dashCalculateDurationWithCalendar( $iDueDate, $row['DEL_FINISH_DATE'], $calData );
+                            $delayDuration = $calendar->dashCalculateDurationWithCalendar( $row['DEL_TASK_DUE_DATE'], $row['DEL_FINISH_DATE'], $calData );
                             $delayDuration = $delayDuration / (24 * 60 * 60); //Days
                         } else {
                             $oAppDel->setDelDelayed( 0 );
@@ -590,7 +590,7 @@ class AppDelegation extends BaseAppDelegation
                         //$delayDuration = $this->getDiffDate( $now, $iDueDate );
                         $delayDuration = 0;
                         if($now > $iDueDate){
-                        	$delayDuration = $calendar->dashCalculateDurationWithCalendar( $iDueDate, date("Y-m-d H:i:s"), $calData );
+                        	$delayDuration = $calendar->dashCalculateDurationWithCalendar( $row['DEL_TASK_DUE_DATE'], date("Y-m-d H:i:s"), $calData );
                         	$delayDuration = $delayDuration / (24 * 60 * 60);
                         }
                          //Days
