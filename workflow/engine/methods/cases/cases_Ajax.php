@@ -468,7 +468,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         $_GET['DEL_INDEX'] = $_POST['DEL_INDEX'];
         $G_PUBLISH = new Publisher();
 
-        echo '<iframe scrolling="no" style="border:none;height=300px;width:240px;"' . ' src=casesToRevisePanelExtJs?APP_UID={'.$_GET['APP_UID'].'}&DEL_INDEX={'.$_GET['DEL_INDEX'].'}></iframe>';
+        echo '<iframe scrolling="no" style="border:none;height=300px;width:240px;"' . ' src="casesToRevisePanelExtJs?APP_UID='.$_GET['APP_UID'].'&DEL_INDEX='.$_GET['DEL_INDEX'].'"></iframe>';
         //  $G_PUBLISH->AddContent( 'smarty', 'cases/cases_toRevise' );
         //  $G_PUBLISH->AddContent('smarty', 'cases/cases_toReviseIn', '', '', array());
         G::RenderPage( 'publish', 'raw' );
