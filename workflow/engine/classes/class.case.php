@@ -793,11 +793,13 @@ class Cases
             $c->addSelectColumn(ContentPeer::CON_VALUE);
             $c->add(ContentPeer::CON_ID, $rowCri['TAS_UID']);
             $c->add(ContentPeer::CON_LANG, $lang);
+            $c->add(ContentPeer::CON_CATEGORY, array("TAS_DEF_TITLE", "TAS_DEF_DESCRIPTION"), Criteria::IN);
             $rs = TaskPeer::doSelectRS($c);
             $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $rs->next();
-            $row = $rs->getRow();
-            while (is_array($row)) {
+
+            while ($rs->next()) {
+                $row = $rs->getRow();
+
                 switch ($row['CON_CATEGORY']) {
                     case 'TAS_DEF_TITLE':
                         if ($bUpdatedDefTitle) {
@@ -850,9 +852,8 @@ class Cases
                         }
                         break;
                 }
-                $rs->next();
-                $row = $rs->getRow();
             }
+
             $rsCri->next();
             $rowCri = $rsCri->getRow();
         }
@@ -964,7 +965,8 @@ class Cases
             if (isset($Fields['APP_DESCRIPTION'])) {
                 $appFields['APP_DESCRIPTION'] = $Fields['APP_DESCRIPTION'];
             }
-            $newValues = $this->newRefreshCaseTitleAndDescription($sAppUid, $appFields, $aApplicationFields);
+
+            $arrayNewCaseTitleAndDescription = $this->newRefreshCaseTitleAndDescription($sAppUid, $appFields, $aApplicationFields);
 
             //Start: Save History --By JHL
             if (isset($Fields['CURRENT_DYNAFORM'])) {
@@ -1002,7 +1004,7 @@ class Cases
                 }
                 /*----------------------------------********---------------------------------*/
                 $completed = new ListCompleted();
-                $completed->create($Fields);
+                $completed->create(array_merge($Fields, $arrayNewCaseTitleAndDescription));
                 /*----------------------------------********---------------------------------*/
             }
             $oApp->update($Fields);
@@ -1066,13 +1068,13 @@ class Cases
 
                 $appAssignSelfServiceValue->remove($sAppUid);
             }
-            
+
             /*----------------------------------********---------------------------------*/
             if(!isset($Fields['DEL_INDEX'])){
               $Fields['DEL_INDEX'] = 1;
             }
             $inbox = new ListInbox();
-            $inbox->update($Fields);
+            $inbox->update(array_merge($Fields, $arrayNewCaseTitleAndDescription));
             /*----------------------------------********---------------------------------*/
 
             //Return
@@ -3797,7 +3799,7 @@ class Cases
                 if (!is_dir($strPathName)) {
                     G::verifyPath($strPathName, true);
                 }
-                
+
                 G::LoadSystem('inputfilter');
                 $filter = new InputFilter();
                 $file = $filter->xssFilterHard($file, 'path');

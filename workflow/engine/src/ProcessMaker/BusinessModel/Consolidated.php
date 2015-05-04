@@ -991,6 +991,9 @@ class Consolidated
 
         foreach ($array["form"] as $key => $value) {
             $array["form"][$key] = (string)$array["form"][$key];
+            if (isset($fields["APP_DATA"][$key.'_label'])) {
+                $array["form"][$key.'_label']   = (string)$array["form"][$key];
+            }
         }
         /*
         $_POST['form'] = $array["form"];
