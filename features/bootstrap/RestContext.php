@@ -1515,9 +1515,20 @@ class RestContext extends BehatContext
      */
     public function postIWantToUploadTheImageToUser($imageFile, $usrUid, $url)
     {
+        if (!class_exists('G')) {
+          $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+          $docuroot = explode( '/', $realdocuroot );
+          array_pop( $docuroot );
+          $pathhome = implode( '/', $docuroot ) . '/';
+          array_pop( $docuroot );
+          $pathTrunk = implode( '/', $docuroot ) . '/';
+          require_once($pathTrunk.'gulliver/system/class.g.php');
+        }
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
         $imageFile = $this->getParameter('uploadFilesFolder') . $imageFile;
         $baseUrl = $this->getParameter('base_url');
-        $url = $baseUrl.$url.$usrUid."/image-upload";
+        $url = $baseUrl.$url.$usrUid.'/image-upload';
 
         $accesstoken = $this->getParameter('access_token');
         $headr = array();
@@ -1533,10 +1544,11 @@ class RestContext extends BehatContext
         if(  $postResult === false)
         {
             //trigger_error(curl_error($ch));
-            throw new Exception("Image upload failed ($imageFile):\n\n"
+            throw new Exception('Image upload failed ('.$imageFile.'):\n\n'
                 . curl_error($ch));
         }
         curl_close($ch);
+        $postResult = $filter->xssFilterHard($postResult);
         echo $postResult;
     }
 
