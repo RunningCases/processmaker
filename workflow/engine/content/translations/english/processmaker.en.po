@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 3.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-04-30 20:07:17\n"
+"PO-Revision-Date: 2015-05-04 12:02:00\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -18858,6 +18858,12 @@ msgstr "No Inefficient User Groups"
 #: LABEL/ID_NO_INEFFICIENT_USERS
 msgid "No Inefficient Users"
 msgstr "No Inefficient Users"
+
+# TRANSLATION
+# LABEL/ID_REQUIRED_FIELDS_GRID
+#: LABEL/ID_REQUIRED_FIELDS_GRID
+msgid "The marked fields in the form are required and/or have errors in their format. Please verify the fields before continuing."
+msgstr "The marked fields in the form are required and/or have errors in their format. Please verify the fields before continuing."
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
