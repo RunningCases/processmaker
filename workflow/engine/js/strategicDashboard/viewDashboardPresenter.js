@@ -101,23 +101,26 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 
 		newObject.favorite = 0;
 
-		newObject.percentageOverdueWidth = Math.round(newObject.percentageOverdue);
+		/*newObject.percentageOverdueWidth = Math.round(newObject.percentageOverdue);
 		newObject.percentageAtRiskWidth = Math.round(newObject.percentageAtRisk);
 		//to be sure that percentages sum up to 100 (the rounding will lose decimals)%
 		newObject.percentageOnTimeWidth = 100 - newObject.percentageOverdueWidth - newObject.percentageAtRiskWidth;
 
-		newObject.percentageOverdueToShow = ((newObject.percentageOverdue == 0 ||newObject.percentageOverdue == null  ) 
+		newObject.percentageOverdueToShow = ((newObject.percentageOverdue == null || newObject.percentageOverdue <= 20 ) 
 											? "" 
 											: newObject.percentageOverdueWidth + "%");
 
-		newObject.percentageAtRiskToShow = ((newObject.percentageAtRisk == 0 || newObject.percentageAtRisk == null) 
+		newObject.percentageAtRiskToShow = ((newObject.percentageAtRisk == null || newObject.percentageAtRisk == 0) 
 											? "" 
 											: newObject.percentageAtRiskWidth + "%");
 
-		newObject.percentageOnTimeToShow = ((newObject.percentageOnTime == 0 || newObject.percentageOnTime == 0) 
+		newObject.percentageOnTimeToShow = ((newObject.percentageOnTime == 0 
+											&& newObject.percentageAtRisk == 0
+											&& newObject.percentageOverdue == 0) 
 											? G_STRING['ID_INBOX']  + ' ' + G_STRING['ID_EMPTY'] 
 											: newObject.percentageOnTimeWidth + "%");
-
+		*/
+		that.setStatusButtonWidthsAndDisplayValues(newObject);
 		newObject.overdueVisibility = (newObject.percentageOverdueWidth > 0) ? "visible" : "hidden";
 		newObject.atRiskVisibility = (newObject.percentageAtRiskWidth > 0) ? "visible" : "hidden";
 		newObject.onTimeVisibility = (newObject.percentageOnTimeWidth > 0) ? "visible" : "hidden";
@@ -134,6 +137,77 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 	}
 	return returnList;
 };
+
+
+ViewDashboardPresenter.prototype.setStatusButtonWidthsAndDisplayValues = function (data) {
+	var minPercent = 10;
+	var barsLessThanMin = [];
+	var barsNormal = [];
+
+	var classifyBar = function (bar) {
+		if (bar.valueRounded <= minPercent && bar.valueRounded > 0) {
+			barsLessThanMin.push (bar);
+		} else {
+			barsNormal.push (bar)	
+		}
+	}
+
+	var atRisk = {
+		type : "atRisk",
+		value : data.percentageAtRisk,
+		valueRounded : Math.round(data.percentageAtRisk)
+	};
+
+	var overdue = {
+		type : "overdue",
+		value : data.percentageOverdue,
+		valueRounded : Math.round(data.percentageOverdue)
+	};
+
+	var onTime = {
+		type : "onTime",
+		value : data.percentageOnTime,
+		valueRounded : Math.round(data.percentageOnTime)
+	};
+
+	atRisk.valueToShow = (this.helper.zeroIfNull(atRisk.valueRounded) == 0) 
+						? ""
+						: atRisk.valueRounded + "%";
+
+	overdue.valueToShow = (this.helper.zeroIfNull(overdue.valueRounded) == 0) 
+						? ""
+						: overdue.valueRounded + "%";
+
+	onTime.valueToShow = (this.helper.zeroIfNull(onTime.valueRounded) == 0) 
+						? G_STRING['ID_INBOX']  + ' ' + G_STRING['ID_EMPTY'] 
+						: onTime.valueRounded + "%";
+
+	classifyBar(atRisk);
+	classifyBar(overdue);
+	classifyBar(onTime);
+
+	var widthToDivide = 100 - barsLessThanMin.length * minPercent;
+	var normalsSum = 0;
+	$.each (barsNormal, function() {
+		normalsSum += this.valueRounded;
+	});
+
+	$.each(barsNormal, function(key, bar) {
+		bar.width = widthToDivide * bar.valueRounded / normalsSum;
+	});
+
+	$.each(barsLessThanMin, function(key, bar) {
+		bar.width = minPercent;
+	});
+
+	data.percentageOverdueWidth = overdue.width;
+	data.percentageOnTimeWidth = onTime.width;
+	data.percentageAtRiskWidth = atRisk.width;
+
+	data.percentageOverdueToShow = overdue.valueToShow;
+	data.percentageAtRiskToShow = atRisk.valueToShow;
+	data.percentageOnTimeToShow = onTime.valueToShow;
+}
 
 /*++++++++ FIRST LEVEL INDICATOR DATA +++++++++++++*/
 ViewDashboardPresenter.prototype.getIndicatorData = function (indicatorId, indicatorType, initDate, endDate) {

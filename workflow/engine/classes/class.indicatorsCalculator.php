@@ -653,7 +653,7 @@ class indicatorsCalculator
 		$db = ";dbname=".$workSpace->dbName;
 		$user = $workSpace->dbUser;
 		$pass = $workSpace->dbPass;
-		$connString = "mysql:$host$port$db;";
+		$connString = "mysql:$host$port$db;charset=utf8;";
 
 		$dbh = new PDO($connString, $user, $pass);
 		return $dbh;

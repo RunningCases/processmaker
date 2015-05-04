@@ -195,6 +195,18 @@ WidgetBuilder.prototype.getIndicatorLoadedById = function (searchedIndicatorId) 
 	return retval;
 }
 
+WidgetBuilder.prototype.getDashboardLoadedById = function (searchedDashboardId) {
+	var retval = null;
+	for (key in window.loadedDashboards) {
+		var dashboard = window.loadedDashboards[key];
+		if (dashboard.id == searchedDashboardId) {
+			retval = dashboard;		
+		}
+	}
+	if (retval == null) { throw new Error(searchedIndicatorId + " was not found in the loaded indicators.");}
+	return retval;
+}
+
 WidgetBuilder.prototype.buildGeneralIndicatorFirstView = function (indicatorData) {
 	_.templateSettings.variable = "indicator";
 	var template = _.template ($("script.generalIndicatorMainPanel").html());
@@ -223,6 +235,7 @@ model = new ViewDashboardModel(token, urlProxy, ws[3]);
 presenter = new ViewDashboardPresenter(model);
 
 window.loadedIndicators = []; //updated in das-title-selector.click->fillIndicatorWidgets, ready->fillIndicatorWidgets
+window.loadedDashboards = [];
 window.currentEntityData = null;
 window.currentIndicator = null;//updated in ind-button-selector.click ->loadIndicator, ready->loadIndicator
 window.currentDashboardId = null;
@@ -354,6 +367,7 @@ $(document).ready(function() {
 				.done(function(indicatorsVM) {
 					fillIndicatorWidgets(indicatorsVM);
 					loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
+					setActiveDashboard();
 				});
 	});
 
@@ -431,6 +445,15 @@ var selectDefaultMonthAndYear = function () {
 	$('#year').val(compareYear);
 }
 
+var setActiveDashboard = function () {
+	var builder = new WidgetBuilder();
+	var dashboard = builder.getDashboardLoadedById(window.currentDashboardId);
+	if (dashboard == null) {
+		return;
+	}
+	$('#titleH4').text(dashboard.title);
+}
+
 var initialDraw = function () {
 	selectDefaultMonthAndYear();
 	presenter.getUserDashboards(pageUserId)
@@ -442,6 +465,7 @@ var initialDraw = function () {
 						.done(function(indicatorsVM) {
 							fillIndicatorWidgets(indicatorsVM);
 							loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
+							setActiveDashboard();
 						});
 			});
 }
@@ -514,6 +538,7 @@ var fillDashboardsList = function (presenterData) {
 	}
 	_.templateSettings.variable = "dashboard";
 	var template = _.template ($("script.dashboardButtonTemplate").html())
+	window.loadedDashboards = presenterData;
 	for (key in presenterData) {
 		var dashboard = presenterData[key];
 		$('#dashboardsList').append(template(dashboard));
