@@ -465,7 +465,7 @@ Wrote: /usr/src/redhat/RPMS/i386/PEAR::Net_Socket-1.0-1.i386.rpm
             }
         }
         $plist = implode(" ", $params);
-        $cmd = "$php -C -d include_path=$cwd$ps$ip -f $run_tests -- $plist";
+        $cmd = $php.' -C -d include_path='.$cwd.$ps.$ip.' -f '.$run_tests.' -- '.$plist;
         
         if (!class_exists('G')) {
             $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );

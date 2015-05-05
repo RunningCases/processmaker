@@ -334,9 +334,9 @@ class Consolidated
                 $sort = $filter->validateInput($sort);
                 if (in_array($sort, $arrayReportTableVar)) {
                     $sort = strtoupper($sort);
-                    eval("\$field = " . $tableName . "Peer::" . $sort . ";");
+                    eval('$field = ' . $tableName . 'Peer::' . $sort . ';');
                 } else {
-                    eval("\$field = AppCacheViewPeer::" . $sort . ";");
+                    eval('$field = AppCacheViewPeer::' . $sort . ';');
                 }
 
                 if ($dir == "ASC") {
