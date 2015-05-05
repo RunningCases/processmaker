@@ -96,7 +96,7 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
         
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
-        $file = $filter->validateInput($file,"path");
+        $file = $filter->validateInput($file,'path');
         
         return unlink($file);
     }
@@ -209,7 +209,7 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
         
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
-        $file = $filter->validateInput($file,"path");
+        $file = $filter->validateInput($file,'path');
         
         if(is_file($file)) {
             $result = file_put_contents($file, $data);
