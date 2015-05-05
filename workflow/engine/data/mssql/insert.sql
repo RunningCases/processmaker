@@ -7749,6 +7749,8 @@ SELECT 'LABEL','ID_NO_INEFFICIENT_TASKS','en','No Inefficient Tasks','2015-04-29
 SELECT 'LABEL','ID_NO_INEFFICIENT_USER_GROUPS','en','No Inefficient User Groups','2015-04-29' 
   UNION ALL
 SELECT 'LABEL','ID_NO_INEFFICIENT_USERS','en','No Inefficient Users','2015-04-29' 
+  UNION ALL
+SELECT 'LABEL','ID_REQUIRED_FIELDS_GRID','en','The marked fields in the form are required and/or have errors in their format. Please verify the fields before continuing.','2015-05-04' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 
