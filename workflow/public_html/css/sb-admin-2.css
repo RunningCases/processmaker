@@ -336,7 +336,8 @@ table.dataTable thead .sorting:after {
 .panel-red .panel-heading {
     border-color: #e14333;
     color: #fff;
-    background-color: #e14333;
+    /*background-color: #e14333;*/
+	background-color: #EA3C53;
 }
 
 .panel-red a {

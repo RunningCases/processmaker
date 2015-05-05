@@ -179,7 +179,7 @@ ViewDashboardPresenter.prototype.setStatusButtonWidthsAndDisplayValues = functio
 						: overdue.valueRounded + "%";
 
 	onTime.valueToShow = (this.helper.zeroIfNull(onTime.valueRounded) == 0) 
-						? G_STRING['ID_INBOX']  + ' ' + G_STRING['ID_EMPTY'] 
+						? ""
 						: onTime.valueRounded + "%";
 
 	classifyBar(atRisk);
@@ -199,6 +199,11 @@ ViewDashboardPresenter.prototype.setStatusButtonWidthsAndDisplayValues = functio
 	$.each(barsLessThanMin, function(key, bar) {
 		bar.width = minPercent;
 	});
+
+	if (atRisk.valueToShow == 0 && overdue.valueToShow == 0 && onTime.valueToShow == 0) {
+		onTime.valueToShow = G_STRING['ID_INBOX']  + ' ' + G_STRING['ID_EMPTY'];
+		onTime.width = 100;
+	}
 
 	data.percentageOverdueWidth = overdue.width;
 	data.percentageOnTimeWidth = onTime.width;
