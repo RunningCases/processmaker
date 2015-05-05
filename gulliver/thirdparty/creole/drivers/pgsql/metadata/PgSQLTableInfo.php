@@ -295,7 +295,7 @@ class PgSQLTableInfo extends TableInfo {
 						     AND a2.attnum = ct.conkey[1]
 						     AND a1.attnum = ct.confkey[1]
 						ORDER BY conname";
-        $result = pg_query ($this->conn->getResource(), sprintf ($query = $filter->preventSqlInjection($query), $this->oid));
+        $result = pg_query ($this->conn->getResource(), sprintf ($filter->preventSqlInjection($query), $this->oid));
         if (!$result) {
             throw new SQLException("Could not list foreign keys for table: " . $this->name, pg_last_error($this->conn->getResource()));
         }
