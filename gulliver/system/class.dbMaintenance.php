@@ -450,7 +450,7 @@ class DataBaseMaintenance
             }
         }
             
-        $sQuery = "LOCK TABLES " . implode( " READ, ", $aTables ) . " READ; ";
+        $sQuery = 'LOCK TABLES ' . implode( ' READ, ', $aTables ) . ' READ; ';
         $sQuery = $filter->preventSqlInjection($sQuery);
         
         if (@mysql_query( $sQuery )) {
@@ -664,7 +664,7 @@ class DataBaseMaintenance
         $filter = new InputFilter();
         $tablename = $filter->validateInput($tablename, 'nosql');
         $tableSchema = "";
-        $sql = "show create table `%s`; ";
+        $sql = 'show create table `%s`; ';
         $sql = $filter->preventSqlInjection($sql, array($tablename));
         $result = @mysql_query( $sql );
         if ($result) {

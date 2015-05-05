@@ -321,8 +321,13 @@ class Installer extends Controller
             G::verifyPath( $aux['dirname'], true );
             if (is_dir( $aux['dirname'] )) {
                 if (! file_exists( $_REQUEST['pathLogFile'] )) {
-                    @file_put_contents( $_REQUEST['pathLogFile'], '' );
-                    @chmod($_REQUEST['pathShared'], 0770);
+                    G::LoadSystem('inputfilter');
+                    $filter = new InputFilter();
+                    $pathLogFile = $filter->validateInput($_REQUEST['pathLogFile'], "path");
+                    $pathShared = $filter->validateInput($_REQUEST['pathShared'], "path");
+                    
+                    @file_put_contents( $pathLogFile, '' );
+                    @chmod($pathShared, 0770);
                 }
             }
         }
@@ -843,10 +848,10 @@ class Installer extends Controller
             $query = sprintf( "USE %s;", $wf_workpace );
             $this->mysqlQuery( $query );
 
-            $query = sprintf( "UPDATE USERS SET USR_USERNAME = '%s', USR_LASTNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, $adminUsername, md5( $adminPassword ) );
+            $query = sprintf( "UPDATE USERS SET USR_USERNAME = '%s', USR_LASTNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, $adminUsername, G::encryptOld( $adminPassword ) );
             $this->mysqlQuery( $query );
 
-            $query = sprintf( "UPDATE RBAC_USERS SET USR_USERNAME = '%s', USR_LASTNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, $adminUsername, md5( $adminPassword ) );
+            $query = sprintf( "UPDATE RBAC_USERS SET USR_USERNAME = '%s', USR_LASTNAME = '%s', USR_PASSWORD = '%s' WHERE USR_UID = '00000000000000000000000000000001' ", $adminUsername, $adminUsername, G::encryptOld( $adminPassword ) );
             $this->mysqlQuery( $query );
 
             // Write the paths_installed.php file (contains all the information configured so far)
@@ -1091,6 +1096,8 @@ class Installer extends Controller
             }
 
             $this->installLog( G::LoadTranslation('ID_CREATING', SYS_LANG, Array($db_file) ));
+            
+            $db_file = $filter->validateInput($db_file, "path");
             file_put_contents( $db_file, $dbText );
 
             // Generate the databases.php file
@@ -1111,6 +1118,8 @@ class Installer extends Controller
             $databasesText = str_replace( '{dbData}', $dbData, @file_get_contents( PATH_HOME . 'engine/templates/installer/databases.tpl' ) );
 
             $this->installLog( G::LoadTranslation('ID_CREATING', SYS_LANG, Array($databases_file) ));
+            
+            $databases_file = $filter->validateInput($databases_file, "path");
             file_put_contents( $databases_file, $databasesText );
 
             //execute scripts to create and populates databases
@@ -1237,35 +1246,35 @@ class Installer extends Controller
         $info = new stdclass();
 
         if ($_REQUEST['db_engine'] == 'mysql') {
-            $_REQUEST['db_hostname'] = $filter->validateInput($_REQUEST['db_hostname']);
-            $_REQUEST['db_username'] = $filter->validateInput($_REQUEST['db_username']);
-            $_REQUEST['db_password'] = $filter->validateInput($_REQUEST['db_password']);
-            $link = @mysql_connect( $_REQUEST['db_hostname'], $_REQUEST['db_username'], $_REQUEST['db_password'] );
-            $_REQUEST['wfDatabase'] = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
+            $db_hostname = $filter->validateInput($_REQUEST['db_hostname']);
+            $db_username = $filter->validateInput($_REQUEST['db_username']);
+            $db_password = $filter->validateInput($_REQUEST['db_password']);
+            $link = @mysql_connect( $db_hostname, $db_username, $db_password );
+            $wfDatabase = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
             $query = "show databases like '%s' ";
-            $query = $filter->preventSqlInjection( $query, array($_REQUEST['wfDatabase']) );
+            $query = $filter->preventSqlInjection( $query, array($wfDatabase) );
             $dataset = @mysql_query( $query, $link );
             $info->wfDatabaseExists = (@mysql_num_rows( $dataset ) > 0);
         } else if ($_REQUEST['db_engine'] == 'mssql') {
-            $link = @mssql_connect( $_REQUEST['db_hostname'], $_REQUEST['db_username'], $_REQUEST['db_password'] );
-            $_REQUEST['wfDatabase'] = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
+            $link = @mssql_connect( $db_hostname, $db_username, $db_password );
+            $wfDatabase = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
             $query = "select * from sys.databases where name = '%s' ";
-            $query = $filter->preventSqlInjection( $query, array($_REQUEST['wfDatabase']) );
+            $query = $filter->preventSqlInjection( $query, array($wfDatabase) );
             $dataset = @mssql_query( $query , $link );
             $info->wfDatabaseExists = (@mssql_num_rows( $dataset ) > 0);
         } else if ($_REQUEST['db_engine'] == 'sqlsrv') {
-            $arguments = array("UID" => $_REQUEST['db_username'], "PWD" => $_REQUEST['db_password']);
-            $link = @sqlsrv_connect( $_REQUEST['db_hostname'], $arguments);
-            $_REQUEST['wfDatabase'] = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
+            $arguments = array("UID" => $db_username, "PWD" => $db_password);
+            $link = @sqlsrv_connect( $db_hostname, $arguments);
+            $wfDatabase = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
             $query = "select * from sys.databases where name = '%s' ";
-            $query = $filter->preventSqlInjection( $query, array($_REQUEST['wfDatabase']) );
+            $query = $filter->preventSqlInjection( $query, array($wfDatabase) );
             $dataset = @sqlsrv_query( $link, $query );
             $info->wfDatabaseExists = (@sqlsrv_num_rows( $dataset ) > 0);
         } else {
-            $link = @mssql_connect( $_REQUEST['db_hostname'], $_REQUEST['db_username'], $_REQUEST['db_password'] );
-            $_REQUEST['wfDatabase'] = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
+            $link = @mssql_connect( $db_hostname, $db_username, $db_password );
+            $wfDatabase = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
             $query = "select * from sys.databases where name = '%s' ";
-            $query = $filter->preventSqlInjection( $query, array($_REQUEST['wfDatabase']) );
+            $query = $filter->preventSqlInjection( $query, array($wfDatabase) );
             $dataset = @mssql_query( $query , $link );
             $info->wfDatabaseExists = (@mssql_num_rows( $dataset ) > 0);
         }
@@ -1670,6 +1679,7 @@ class Installer extends Controller
                 $db_password = trim( $_REQUEST['db_password'] );
                 $db_password = $filter->validateInput($db_password);
                 $wf = trim( $_REQUEST['wfDatabase'] );
+                $wf = $filter->validateInput($wf);
 
                 $db_host = ($db_port != '' && $db_port != 3306) ? $db_hostname . ':' . $db_port : $db_hostname;
             
@@ -1701,4 +1711,3 @@ class Installer extends Controller
         }
     }
 }
-

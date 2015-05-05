@@ -310,8 +310,12 @@ class G
         while (! @is_dir( dirname( end( $folder_path ) ) ) && dirname( end( $folder_path ) ) != '/' && dirname( end( $folder_path ) ) != '.' && dirname( end( $folder_path ) ) != '') {
             array_push( $folder_path, dirname( end( $folder_path ) ) ); //var_dump($folder_path); die;
         }
+        
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
 
         while ($parent_folder_path = array_pop( $folder_path )) {
+            $parent_folder_path = $filter->validateInput($parent_folder_path,"path");
             if (! @is_dir( $parent_folder_path )) {
                 if (! @mkdir( $parent_folder_path, $rights)) {
                     error_log( "Can't create folder \"$parent_folder_path\"");
@@ -2718,6 +2722,12 @@ class G
         $image = $inputFn( $path );
         imagecopyresampled( $image_p, $image, 0, 0, 0, 0, $resWidth, $resHeight, $width, $height );
         $outputFn( $image_p, $saveTo );
+        
+        if(!is_null($saveTo)) {
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
+            $saveTo = $filter->validateInput($saveTo, "path");
+        }
 
         @chmod( $saveTo, 0666 );
     }
@@ -2792,7 +2802,7 @@ class G
     /**
      * Generate a numeric or alphanumeric code
      *
-     * @author Julio Cesar Laura Avendaힼjuliocesar@colosa.com>
+     * @author Julio Cesar Laura Avenda?juliocesar@colosa.com>
      * @access public
      * @return string
      */
@@ -3137,7 +3147,7 @@ class G
         /*G::LoadSystem('inputfilter');
         $filter = new InputFilter();
         $c = $filter->xssFilterHard($c);*/
-        print ("<script language=\"javascript\">{$c}</script>") ;
+        print ('<script language="javascript">'.$c.'</script>') ;
     }
 
     /**
@@ -3158,7 +3168,7 @@ class G
 
         $quotedReplacement = preg_quote( $replacement, '/' );
 
-        $default = array ('/à|á|å|â/' => 'a','/è|é|ê|ẽ|ë/' => 'e','/ì|í|î/' => 'i','/ò|ó|ô|ø/' => 'o','/ù|ú|ů|û/' => 'u','/ç/' => 'c','/ñ/' => 'n','/ä|æ/' => 'ae','/ö/' => 'oe','/ü/' => 'ue','/Ä/' => 'Ae','/Ü/' => 'Ue','/Ö/' => 'Oe','/ß/' => 'ss','/\.|\,|\:|\-|\\|\//' => " ",'/\\s+/' => $replacement
+        $default = array ('/à|á|å|â/' => 'a','/è|é|ê|?|ë/' => 'e','/ì|í|î/' => 'i','/ò|ó|ô|ø/' => 'o','/ù|ú|u|û/' => 'u','/ç/' => 'c','/ñ/' => 'n','/ä|æ/' => 'ae','/ö/' => 'oe','/ü/' => 'ue','/Ä/' => 'Ae','/Ü/' => 'Ue','/Ö/' => 'Oe','/ß/' => 'ss','/\.|\,|\:|\-|\\|\//' => " ",'/\\s+/' => $replacement
         );
 
         $map = array_merge( $default, $map );
