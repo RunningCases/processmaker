@@ -2802,7 +2802,7 @@ class G
     /**
      * Generate a numeric or alphanumeric code
      *
-     * @author Julio Cesar Laura Avenda?juliocesar@colosa.com>
+     * @author Julio Cesar Laura Avendaힼjuliocesar@colosa.com>
      * @access public
      * @return string
      */
@@ -3168,7 +3168,7 @@ class G
 
         $quotedReplacement = preg_quote( $replacement, '/' );
 
-        $default = array ('/à|á|å|â/' => 'a','/è|é|ê|?|ë/' => 'e','/ì|í|î/' => 'i','/ò|ó|ô|ø/' => 'o','/ù|ú|u|û/' => 'u','/ç/' => 'c','/ñ/' => 'n','/ä|æ/' => 'ae','/ö/' => 'oe','/ü/' => 'ue','/Ä/' => 'Ae','/Ü/' => 'Ue','/Ö/' => 'Oe','/ß/' => 'ss','/\.|\,|\:|\-|\\|\//' => " ",'/\\s+/' => $replacement
+        $default = array ('/à|á|å|â/' => 'a','/è|é|ê|ẽ|ë/' => 'e','/ì|í|î/' => 'i','/ò|ó|ô|ø/' => 'o','/ù|ú|ů|û/' => 'u','/ç/' => 'c','/ñ/' => 'n','/ä|æ/' => 'ae','/ö/' => 'oe','/ü/' => 'ue','/Ä/' => 'Ae','/Ü/' => 'Ue','/Ö/' => 'Oe','/ß/' => 'ss','/\.|\,|\:|\-|\\|\//' => " ",'/\\s+/' => $replacement
         );
 
         $map = array_merge( $default, $map );
