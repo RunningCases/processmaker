@@ -104,34 +104,45 @@ try {
         $filters['dir'] = 'DESC';
     }
 
-    $result = $list->loadList($userUid, $filters);
-    if (!empty($result)) {
-        foreach ($result as &$value) {
-            if (isset($value['DEL_PREVIOUS_USR_UID'])) {
-                $value['PREVIOUS_USR_UID']       = $value['DEL_PREVIOUS_USR_UID'];
-                $value['PREVIOUS_USR_USERNAME']  = $value['DEL_PREVIOUS_USR_USERNAME'];
-                $value['PREVIOUS_USR_FIRSTNAME'] = $value['DEL_PREVIOUS_USR_FIRSTNAME'];
-                $value['PREVIOUS_USR_LASTNAME']  = $value['DEL_PREVIOUS_USR_LASTNAME'];
-            }
-            if (isset($value['DEL_DUE_DATE'])) {
-                $value['DEL_TASK_DUE_DATE'] = $value['DEL_DUE_DATE'];
-            }
-            if (isset($value['APP_PAUSED_DATE'])) {
-                $value['APP_UPDATE_DATE']   = $value['APP_PAUSED_DATE'];
-            }
-            if (isset($value['DEL_CURRENT_USR_USERNAME'])) {
-                $value['USR_USERNAME']      = $value['DEL_CURRENT_USR_USERNAME'];
-                $value['USR_FIRSTNAME']     = $value['DEL_CURRENT_USR_FIRSTNAME'];
-                $value['USR_LASTNAME']      = $value['DEL_CURRENT_USR_LASTNAME'];
-                $value['APP_UPDATE_DATE']   = $value['DEL_DELEGATE_DATE'];
-            }
-            if (isset($value['APP_STATUS'])) {
-                $value['APP_STATUS_LABEL']  = G::LoadTranslation( "ID_{$value['APP_STATUS']}" );
-            }
+    $result = $list->loadList(
+        $userUid,
+        $filters,
+        function (array $record)
+        {
+            try {
+                if (isset($record["DEL_PREVIOUS_USR_UID"])) {
+                    $record["PREVIOUS_USR_UID"]       = $record["DEL_PREVIOUS_USR_UID"];
+                    $record["PREVIOUS_USR_USERNAME"]  = $record["DEL_PREVIOUS_USR_USERNAME"];
+                    $record["PREVIOUS_USR_FIRSTNAME"] = $record["DEL_PREVIOUS_USR_FIRSTNAME"];
+                    $record["PREVIOUS_USR_LASTNAME"]  = $record["DEL_PREVIOUS_USR_LASTNAME"];
+                }
 
-            //$value = array_change_key_case($value, CASE_LOWER);
+                if (isset($record["DEL_DUE_DATE"])) {
+                    $record["DEL_TASK_DUE_DATE"] = $record["DEL_DUE_DATE"];
+                }
+
+                if (isset($record["APP_PAUSED_DATE"])) {
+                    $record["APP_UPDATE_DATE"] = $record["APP_PAUSED_DATE"];
+                }
+
+                if (isset($record["DEL_CURRENT_USR_USERNAME"])) {
+                    $record["USR_USERNAME"]    = $record["DEL_CURRENT_USR_USERNAME"];
+                    $record["USR_FIRSTNAME"]   = $record["DEL_CURRENT_USR_FIRSTNAME"];
+                    $record["USR_LASTNAME"]    = $record["DEL_CURRENT_USR_LASTNAME"];
+                    $record["APP_UPDATE_DATE"] = $record["DEL_DELEGATE_DATE"];
+                }
+
+                if (isset($record["APP_STATUS"])) {
+                    $record["APP_STATUS_LABEL"] = G::LoadTranslation("ID_" . $record["APP_STATUS"]);
+                }
+
+                //Return
+                return $record;
+            } catch (Exception $e) {
+                throw $e;
+            }
         }
-    }
+    );
 
     $filtersData = array();
     $filtersData['start']       = $filters['start'];
@@ -143,12 +154,16 @@ try {
     $filtersData['search']      = $filters['search'];
     $filtersData['date_from']   = $filters['dateFrom'];
     $filtersData['date_to']     = $filters['dateTo'];
+    $filtersData["action"]      = $filters["action"];
+
+    $response = array();
     $response['filters']        = $filtersData;
-    $response['data']           = $result;
-    $filtersData['action']      = $filters['action'];
     $response['totalCount']     = $list->countTotal($userUid, $filtersData);
-    
+
     $response = $filter->xssFilterHard($response);
+
+    $response["data"] = $result;
+
     echo G::json_encode($response);
 } catch (Exception $e) {
     $msg = array("error" => $e->getMessage());
