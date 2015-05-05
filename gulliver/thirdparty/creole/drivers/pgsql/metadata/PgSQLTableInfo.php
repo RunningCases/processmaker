@@ -102,8 +102,7 @@ class PgSQLTableInfo extends TableInfo {
 								WHERE att.attrelid = %d AND att.attnum > 0
 									AND att.attisdropped IS FALSE
 								ORDER BY att.attnum";
-				$query = $filter->preventSqlInjection($query);
-    	$result = pg_query ($this->conn->getResource(), sprintf ($query, $this->oid));
+    	$result = pg_query ($this->conn->getResource(), sprintf ($filter->preventSqlInjection($query), $this->oid));
 
         if (!$result) {
             throw new SQLException("Could not list fields for table: " . $this->name, pg_last_error($this->conn->getResource()));
@@ -238,8 +237,7 @@ class PgSQLTableInfo extends TableInfo {
 														d.typtype = 'd'
 														AND d.typname = '%s'
 													ORDER BY d.typname";
-    	$query = $filter->preventSqlInjection($query);
-    	$result = pg_query ($this->conn->getResource(), sprintf ($query, $strDomain));
+    	$result = pg_query ($this->conn->getResource(), sprintf ($filter->preventSqlInjection($query), $strDomain));
 
         if (!$result) {
             throw new SQLException("Query for domain [" . $strDomain . "] failed.", pg_last_error($this->conn->getResource()));
@@ -297,8 +295,7 @@ class PgSQLTableInfo extends TableInfo {
 						     AND a2.attnum = ct.conkey[1]
 						     AND a1.attnum = ct.confkey[1]
 						ORDER BY conname";
-        $query = $filter->preventSqlInjection($query);
-        $result = pg_query ($this->conn->getResource(), sprintf ($query, $this->oid));
+        $result = pg_query ($this->conn->getResource(), sprintf ($query = $filter->preventSqlInjection($query), $this->oid));
         if (!$result) {
             throw new SQLException("Could not list foreign keys for table: " . $this->name, pg_last_error($this->conn->getResource()));
         }
@@ -384,8 +381,7 @@ class PgSQLTableInfo extends TableInfo {
 									JOIN pg_class cls ON cls.oid=indexrelid
 									WHERE indrelid = %d AND NOT indisprimary
 									ORDER BY cls.relname";
-		    $query = $filter->preventSqlInjection($query);
-		    $result = pg_query ($this->conn->getResource(), sprintf ($query, $this->oid));
+		    $result = pg_query ($this->conn->getResource(), sprintf ($filter->preventSqlInjection($query), $this->oid));
 
 
         if (!$result) {
@@ -417,8 +413,7 @@ class PgSQLTableInfo extends TableInfo {
 															FROM pg_catalog.pg_class c JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
 															WHERE c.oid = '%s' AND a.attnum = %d AND NOT a.attisdropped
 															ORDER BY a.attnum";
-	            $query = $filter->preventSqlInjection($query);
-	            $result2 = pg_query ($this->conn->getResource(), sprintf ($query, $this->oid, $intColNum));
+	            $result2 = pg_query ($this->conn->getResource(), sprintf ($filter->preventSqlInjection($query), $this->oid, $intColNum));
 				if (!$result2)
 				{
             		throw new SQLException("Could not list indexes keys for table: " . $this->name, pg_last_error($this->conn->getResource()));
@@ -461,8 +456,7 @@ class PgSQLTableInfo extends TableInfo {
 													     JOIN pg_class cls ON cls.oid=indexrelid
 													WHERE indrelid = %s AND indisprimary
 													ORDER BY cls.relname";
-        $query = $filter->preventSqlInjection($query);
-        $result = pg_query($this->conn->getResource(), sprintf ($query, $this->oid));
+        $result = pg_query($this->conn->getResource(), sprintf ($filter->preventSqlInjection($query), $this->oid));
         if (!$result) {
             throw new SQLException("Could not list primary keys for table: " . $this->name, pg_last_error($this->conn->getResource()));
         }
@@ -491,8 +485,7 @@ class PgSQLTableInfo extends TableInfo {
 															FROM pg_catalog.pg_class c JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
 															WHERE c.oid = '%s' AND a.attnum = %d AND NOT a.attisdropped
 															ORDER BY a.attnum";
-	            $query = $filter->preventSqlInjection($query);
-	            $result2 = pg_query ($this->conn->getResource(), sprintf ($query, $this->oid, $intColNum));
+	            $result2 = pg_query ($this->conn->getResource(), sprintf ($filter->preventSqlInjection($query), $this->oid, $intColNum));
 				if (!$result2)
 				{
             		throw new SQLException("Could not list indexes keys for table: " . $this->name, pg_last_error($this->conn->getResource()));

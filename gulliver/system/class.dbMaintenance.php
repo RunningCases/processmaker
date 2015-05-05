@@ -451,9 +451,8 @@ class DataBaseMaintenance
         }
             
         $sQuery = "LOCK TABLES " . implode( " READ, ", $aTables ) . " READ; ";
-        $sQuery = $filter->preventSqlInjection($sQuery);
         
-        if (@mysql_query( $sQuery )) {
+        if (@mysql_query( $filter->preventSqlInjection($sQuery) )) {
             echo "    [OK]\n";
             return true;
         } else {
