@@ -25,7 +25,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
      *
      */
     public function create($data)
-    { 
+    {
         $criteria = new Criteria();
         $criteria->addSelectColumn(ApplicationPeer::APP_STATUS);
         $criteria->add( ApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
@@ -108,7 +108,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
      *
      */
     public function refresh ($data, $isSelfService = false)
-    {   
+    {
         $data['APP_STATUS'] = (empty($data['APP_STATUS'])) ? 'TO_DO' : $data['APP_STATUS'];
         if (!$isSelfService) {
             $criteria = new Criteria();
@@ -133,7 +133,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
 
         }
         $this->update($data);
-        
+
     }
     /**
      * Remove List Participated History
@@ -239,7 +239,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
         return (int)$total;
     }
 
-    public function loadList ($usr_uid, $filters = array())
+    public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
         $criteria = new Criteria();
 
@@ -252,7 +252,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_TITLE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_PRO_TITLE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_TAS_TITLE);
-        $criteria->addSelectColumn(ListParticipatedLastPeer::APP_STATUS);        
+        $criteria->addSelectColumn(ListParticipatedLastPeer::APP_STATUS);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_UID);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_USERNAME);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PREVIOUS_USR_FIRSTNAME);
@@ -290,7 +290,8 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $data = array();
         $aPriorities = array ('1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH');
         while ($dataset->next()) {
-            $aRow = $dataset->getRow();
+            $aRow = (is_null($callbackRecord))? $dataset->getRow() : $callbackRecord($dataset->getRow());
+
             $aRow['DEL_PRIORITY'] = G::LoadTranslation( "ID_PRIORITY_{$aPriorities[$aRow['DEL_PRIORITY']]}" );
             $data[] = $aRow;
         }

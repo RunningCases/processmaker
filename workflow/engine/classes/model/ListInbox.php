@@ -13,7 +13,7 @@ require_once 'classes/model/om/BaseListInbox.php';
  *
  * @package    classes.model
  */
- 
+
 class ListInbox extends BaseListInbox
 {
     /**
@@ -131,7 +131,7 @@ class ListInbox extends BaseListInbox
 
                 // update participated history
                 $listParticipatedHistory = new ListParticipatedHistory();
-                $listParticipatedHistory->update($data);                
+                $listParticipatedHistory->update($data);
                 return $result;
             } else {
                 $con->rollback();
@@ -395,7 +395,7 @@ class ListInbox extends BaseListInbox
         return (int)$total;
     }
 
-    public function loadList ($usr_uid, $filters = array())
+    public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
         $criteria = new Criteria();
 
@@ -429,7 +429,7 @@ class ListInbox extends BaseListInbox
 
         if ($filters['action'] == 'draft') {
             $criteria->add( ListInboxPeer::APP_STATUS, 'DRAFT', Criteria::EQUAL );
-        } else {            
+        } else {
             $criteria->add( ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL );
         }
 
@@ -449,7 +449,8 @@ class ListInbox extends BaseListInbox
         $data = array();
         $aPriorities = array ('1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH');
         while ($dataset->next()) {
-            $aRow = $dataset->getRow();
+            $aRow = (is_null($callbackRecord))? $dataset->getRow() : $callbackRecord($dataset->getRow());
+
             $aRow['DEL_PRIORITY'] = G::LoadTranslation( "ID_PRIORITY_{$aPriorities[$aRow['DEL_PRIORITY']]}" );
             $data[] = $aRow;
         }
