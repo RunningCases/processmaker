@@ -649,7 +649,7 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
         graph: {
             allowDrillDown:false,
             allowTransition:true,
-            showTip: true,
+            showTip: false,
             allowZoom: false,
             gapWidth:0.3,
             useShadows: true,
@@ -673,10 +673,11 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
 			axisY:{ showAxis: true, label: G_STRING['ID_COSTS']},
 			gridLinesX:false,
 			gridLinesY:true,
-			showTip: true,
+			showTip: false,
 			allowZoom: false,
 			useShadows: true,
-			paddingTop: 50
+			paddingTop: 50,
+			colorPalette: ['#5486bf','#bf8d54','#acb30c','#7a0c0c','#bc0000','#906090','#007efb','#62284a','#0c7a7a','#74a9a9']
 		}
     };
 
@@ -745,7 +746,7 @@ var fillSpecialIndicatorSecondView = function(presenterData) {
 		graph: {
 			allowTransition: false,
 			allowDrillDown: true,
-			showTip: true,
+			showTip: false,
 			allowZoom: false,
 			useShadows: false,
 			gridLinesX: true,
@@ -753,7 +754,8 @@ var fillSpecialIndicatorSecondView = function(presenterData) {
 			area: {visible: false, css:"area"},
 			axisX:{ showAxis: true, label: G_STRING['ID_USER'] },
 			axisY:{ showAxis: true, label: G_STRING['ID_COSTS'] },
-			showErrorBars: true
+			showErrorBars: true,
+			colorPalette: ['#5486bf','#bf8d54','#acb30c','#7a0c0c','#bc0000','#906090','#007efb','#62284a','#0c7a7a','#74a9a9']
 
 		}
 	};
@@ -834,7 +836,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 		graph: {
 			allowTransition: false,
 			allowDrillDown: true,
-			showTip: true,
+			showTip: false,
 			allowZoom: false,
 			useShadows: false,
 			gridLinesX: true,
@@ -856,7 +858,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 		graph: {
 			allowTransition: false,
 			allowDrillDown: true,
-			showTip: true,
+			showTip: false,
 			allowZoom: false,
 			useShadows: false,
 			gridLinesX: true,
@@ -882,7 +884,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 			axisY:{ showAxis: true, label: G_STRING.ID_TIME_HOURS },
 			gridLinesX:false,
 			gridLinesY:true,
-			showTip: true,
+			showTip: false,
 			allowZoom: false,
 			useShadows: true,
 			paddingTop: 50,
@@ -904,7 +906,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 			axisY:{ showAxis: true, label: G_STRING.ID_TIME_HOURS  },
 			gridLinesX:false,
 			gridLinesY:true,
-			showTip: true,
+			showTip: false,
 			allowZoom: false,
 			useShadows: true,
 			paddingTop: 50,
