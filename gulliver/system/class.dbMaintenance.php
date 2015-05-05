@@ -450,7 +450,7 @@ class DataBaseMaintenance
             }
         }
             
-        $sQuery = 'LOCK TABLES ' . implode( ' READ, ', $aTables ) . ' READ; ';
+        $sQuery = "LOCK TABLES " . implode( " READ, ", $aTables ) . " READ; ";
         
         if (@mysql_query( $filter->preventSqlInjection($sQuery) )) {
             echo "    [OK]\n";
@@ -712,4 +712,3 @@ $o2->connect();
 $o2->restoreFromSql('/home/erik/backs/schema_os.sql');
 $o2->restoreAllData('sql');
 */
-
