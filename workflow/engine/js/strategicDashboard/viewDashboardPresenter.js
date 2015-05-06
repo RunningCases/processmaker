@@ -192,7 +192,7 @@ ViewDashboardPresenter.prototype.setStatusButtonWidthsAndDisplayValues = functio
 	});
 
 	if (atRisk.valueToShow == 0 && overdue.valueToShow == 0 && onTime.valueToShow == 0) {
-		onTime.valueToShow = G_STRING['ID_INBOX']  + ' ' + G_STRING['ID_EMPTY'];
+		onTime.valueToShow = G_STRING['ID_INBOX_EMPTY'];
 		onTime.width = 100;
 	}
 
