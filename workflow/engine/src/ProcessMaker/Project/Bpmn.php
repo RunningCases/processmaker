@@ -353,6 +353,10 @@ class Bpmn extends Handler
         $data["ACT_UID"] = (array_key_exists("ACT_UID", $data))? $data["ACT_UID"] : Common::generateUID();
         $data["PRO_UID"] = $processUid;
 
+        if (isset($data["ACT_LOOP_TYPE"]) && $data["ACT_LOOP_TYPE"] == "NONE") {
+            $data["ACT_LOOP_TYPE"] = "EMPTY";
+        }
+
         try {
             self::log("Add Activity with data: ", $data);
 
@@ -400,6 +404,10 @@ class Bpmn extends Handler
     public function updateActivity($actUid, $data)
     {
         try {
+            if (isset($data["ACT_LOOP_TYPE"]) && $data["ACT_LOOP_TYPE"] == "NONE") {
+                $data["ACT_LOOP_TYPE"] = "EMPTY";
+            }
+
             self::log("Update Activity: $actUid, with data: ", $data);
 
             $activity = ActivityPeer::retrieveByPk($actUid);
