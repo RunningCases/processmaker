@@ -128,6 +128,11 @@ class Designer extends Controller
         \ProcessMaker\Services\OAuth2\Server::setPmClientId($client['CLIENT_ID']);
 
         $oauthServer = new \ProcessMaker\Services\OAuth2\Server();
+
+        if (!isset($_SESSION["USER_LOGGED"])) {
+            $_SESSION["USER_LOGGED"] = "00000000000000000000000000000001";
+        }
+
         $userId = $_SESSION['USER_LOGGED'];
         $authorize = true;
         $_GET = array_merge($_GET, array(
@@ -151,4 +156,3 @@ class Designer extends Controller
         return array('dsn' => $dsn, 'username' => DB_USER, 'password' => DB_PASS);
     }
 }
-
