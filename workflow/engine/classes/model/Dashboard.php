@@ -44,7 +44,10 @@ class Dashboard extends BaseDashboard
                 $dashboard = DashboardPeer::retrieveByPK($data['DAS_UID']);
             }
 
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
             $data['DAS_UPDATE_DATE'] = date('Y-m-d H:i:s');
+            $data['DAS_TITLE'] = $filter ->validateInput($data['DAS_TITLE'], "string");
             $dashboard->fromArray($data, BasePeer::TYPE_FIELDNAME);
             if ($dashboard->validate()) {
                 $connection->begin();
