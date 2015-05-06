@@ -243,7 +243,7 @@ class ListUnassigned extends BaseListUnassigned
         return (int)$total;
     }
 
-    public function loadList ($usr_uid, $filters = array())
+    public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
         $resp = array();
         $criteria = new Criteria();
@@ -298,7 +298,8 @@ class ListUnassigned extends BaseListUnassigned
         $data = array();
         $aPriorities = array ('1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH');
         while ($dataset->next()) {
-            $aRow = $dataset->getRow();
+            $aRow = (is_null($callbackRecord))? $dataset->getRow() : $callbackRecord($dataset->getRow());
+
             $aRow['DEL_PRIORITY'] = G::LoadTranslation( "ID_PRIORITY_{$aPriorities[$aRow['DEL_PRIORITY']]}" );
             $data[] = $aRow;
         }
@@ -313,7 +314,7 @@ class ListUnassigned extends BaseListUnassigned
     /**
      * Generate Data
      *
-     * @return object criteria 
+     * @return object criteria
      */
     public function generateData($appUid,$delPreviusUsrUid){
         try {
@@ -348,7 +349,7 @@ class ListUnassigned extends BaseListUnassigned
                 $taskGroupVariable = trim($row["TAS_GROUP_VARIABLE"], " @#");
                 $delPreviusUsrUid = '';
                 $unaUid = $this->newRow($row,$delPreviusUsrUid);
-                //Selfservice by group                 
+                //Selfservice by group
                 if ($taskGroupVariable != "" && isset($applicationData[$taskGroupVariable]) && trim($applicationData[$taskGroupVariable]) != "") {
                    $gprUid = trim($applicationData[$taskGroupVariable]);
                    //Define Users by Group
@@ -362,13 +363,13 @@ class ListUnassigned extends BaseListUnassigned
                 } else {
                     //Define all users assigned to Task
                     $task = new TaskUser();
-                    $arrayUsers = $task->getAllUsersTask($row["TAS_UID"]);                  
+                    $arrayUsers = $task->getAllUsersTask($row["TAS_UID"]);
                     foreach($arrayUsers as $urow){
                        $newRow["USR_UID"] = $urow["USR_UID"];
                        $listUnassignedGpr = new ListUnassignedGroup();
                        $listUnassignedGpr->newRow($unaUid,$urow["USR_UID"],"USER","");
                    }
-                }  
+                }
             }
         } catch (Exception $e) {
             throw $e;

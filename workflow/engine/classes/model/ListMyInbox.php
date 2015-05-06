@@ -210,7 +210,7 @@ class ListMyInbox extends BaseListMyInbox
         return (int)$total;
     }
 
-    public function loadList ($usr_uid, $filters = array())
+    public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
         $criteria = new Criteria();
 
@@ -264,7 +264,8 @@ class ListMyInbox extends BaseListMyInbox
         $data = array();
         $aPriorities = array ('1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH');
         while ($dataset->next()) {
-            $aRow = $dataset->getRow();
+            $aRow = (is_null($callbackRecord))? $dataset->getRow() : $callbackRecord($dataset->getRow());
+
             $aRow['DEL_PRIORITY'] = G::LoadTranslation( "ID_PRIORITY_{$aPriorities[$aRow['DEL_PRIORITY']]}" );
             $data[] = $aRow;
         }
