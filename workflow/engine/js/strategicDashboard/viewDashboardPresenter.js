@@ -87,40 +87,19 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 									: "normal";
 
 		//rounding
-		newObject.comparative =  Math.round(newObject.comparative*1000)/1000;
+		newObject.comparative =  Math.round(newObject.comparative*100)/100;
 		newObject.comparative = ((newObject.comparative > 0)? "+": "") + newObject.comparative;
 
 		newObject.percentComparative = (newObject.percentComparative != '--')
 										? '(' + newObject.percentComparative + '%)'
 										: "";
-
-
-		//newObject.value = (newObject.category == "normal")
-								//? Math.round(newObject.value) + ""
-								//: Math.round(newObject.value*100)/100 + ""
+		newObject.percentComparative = (newObject.comparative == 0)
+										? "(0%)"
+										: newObject.percentComparative;
 
 		newObject.value = that.roundedIndicatorValue(newObject.value);
 		newObject.favorite = 0;
 
-		/*newObject.percentageOverdueWidth = Math.round(newObject.percentageOverdue);
-		newObject.percentageAtRiskWidth = Math.round(newObject.percentageAtRisk);
-		//to be sure that percentages sum up to 100 (the rounding will lose decimals)%
-		newObject.percentageOnTimeWidth = 100 - newObject.percentageOverdueWidth - newObject.percentageAtRiskWidth;
-
-		newObject.percentageOverdueToShow = ((newObject.percentageOverdue == null || newObject.percentageOverdue <= 20 ) 
-											? "" 
-											: newObject.percentageOverdueWidth + "%");
-
-		newObject.percentageAtRiskToShow = ((newObject.percentageAtRisk == null || newObject.percentageAtRisk == 0) 
-											? "" 
-											: newObject.percentageAtRiskWidth + "%");
-
-		newObject.percentageOnTimeToShow = ((newObject.percentageOnTime == 0 
-											&& newObject.percentageAtRisk == 0
-											&& newObject.percentageOverdue == 0) 
-											? G_STRING['ID_INBOX']  + ' ' + G_STRING['ID_EMPTY'] 
-											: newObject.percentageOnTimeWidth + "%");
-		*/
 		that.setStatusButtonWidthsAndDisplayValues(newObject);
 		newObject.overdueVisibility = (newObject.percentageOverdueWidth > 0) ? "visible" : "hidden";
 		newObject.atRiskVisibility = (newObject.percentageAtRiskWidth > 0) ? "visible" : "hidden";
@@ -144,9 +123,9 @@ ViewDashboardPresenter.prototype.roundedIndicatorValue = function (value) {
 	if (value == 0) {
 		return "0";
 	}
-	if (value > 0 && value < 0.1) {
+	/*if (value > 0 && value < 0.1) {
 		return "<0.1";
-	}
+	}*/
 	return Math.round(value*100)/100 + ""
 
 }
