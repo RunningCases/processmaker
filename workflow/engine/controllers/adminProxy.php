@@ -1095,7 +1095,7 @@ class adminProxy extends HttpProxyController
             'uploaded'  => $uploaded,
             'type'      => $files_img_type
         );
-        echo json_encode($resp);
+        echo G::json_encode($resp);
         exit();
     }
 
