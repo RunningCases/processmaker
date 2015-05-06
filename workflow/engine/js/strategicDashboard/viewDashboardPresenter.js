@@ -87,37 +87,20 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 									: "normal";
 
 		//rounding
-		newObject.comparative =  Math.round(newObject.comparative*1000)/1000;
+		newObject.comparative =  Math.round(newObject.comparative*100)/100;
 		newObject.comparative = ((newObject.comparative > 0)? "+": "") + newObject.comparative;
 
 		newObject.percentComparative = (newObject.percentComparative != '--')
 										? '(' + newObject.percentComparative + '%)'
 										: "";
+		newObject.percentComparative = (newObject.comparative == 0)
+										? "(0%)"
+										: newObject.percentComparative;
 
-
-		newObject.value = (newObject.category == "normal")
-								? Math.round(newObject.value) + ""
-								: Math.round(newObject.value*100)/100 + ""
-
+		newObject.value = that.roundedIndicatorValue(newObject.value);
 		newObject.favorite = 0;
 
-		newObject.percentageOverdueWidth = Math.round(newObject.percentageOverdue);
-		newObject.percentageAtRiskWidth = Math.round(newObject.percentageAtRisk);
-		//to be sure that percentages sum up to 100 (the rounding will lose decimals)%
-		newObject.percentageOnTimeWidth = 100 - newObject.percentageOverdueWidth - newObject.percentageAtRiskWidth;
-
-		newObject.percentageOverdueToShow = ((newObject.percentageOverdue == 0 ||newObject.percentageOverdue == null  ) 
-											? "" 
-											: newObject.percentageOverdueWidth + "%");
-
-		newObject.percentageAtRiskToShow = ((newObject.percentageAtRisk == 0 || newObject.percentageAtRisk == null) 
-											? "" 
-											: newObject.percentageAtRiskWidth + "%");
-
-		newObject.percentageOnTimeToShow = ((newObject.percentageOnTime == 0 || newObject.percentageOnTime == 0) 
-											? G_STRING['ID_INBOX']  + ' ' + G_STRING['ID_EMPTY'] 
-											: newObject.percentageOnTimeWidth + "%");
-
+		that.setStatusButtonWidthsAndDisplayValues(newObject);
 		newObject.overdueVisibility = (newObject.percentageOverdueWidth > 0) ? "visible" : "hidden";
 		newObject.atRiskVisibility = (newObject.percentageAtRiskWidth > 0) ? "visible" : "hidden";
 		newObject.onTimeVisibility = (newObject.percentageOnTimeWidth > 0) ? "visible" : "hidden";
@@ -134,6 +117,93 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 	}
 	return returnList;
 };
+
+
+ViewDashboardPresenter.prototype.roundedIndicatorValue = function (value) { 
+	if (value == 0) {
+		return "0";
+	}
+	/*if (value > 0 && value < 0.1) {
+		return "<0.1";
+	}*/
+	return Math.round(value*100)/100 + "";
+
+}
+
+ViewDashboardPresenter.prototype.setStatusButtonWidthsAndDisplayValues = function (data) {
+	var minPercent = 10;
+	var barsLessThanMin = [];
+	var barsNormal = [];
+
+	var classifyBar = function (bar) {
+		if (bar.valueRounded <= minPercent && bar.valueRounded > 0) {
+			barsLessThanMin.push (bar);
+		} else {
+			barsNormal.push (bar)	
+		}
+	}
+
+	var atRisk = {
+		type : "atRisk",
+		value : data.percentageAtRisk,
+		valueRounded : Math.round(data.percentageAtRisk)
+	};
+
+	var overdue = {
+		type : "overdue",
+		value : data.percentageOverdue,
+		valueRounded : Math.round(data.percentageOverdue)
+	};
+
+	var onTime = {
+		type : "onTime",
+		value : data.percentageOnTime,
+		valueRounded : Math.round(data.percentageOnTime)
+	};
+
+	atRisk.valueToShow = (this.helper.zeroIfNull(atRisk.valueRounded) == 0) 
+						? ""
+						: atRisk.valueRounded + "%";
+
+	overdue.valueToShow = (this.helper.zeroIfNull(overdue.valueRounded) == 0) 
+						? ""
+						: overdue.valueRounded + "%";
+
+	onTime.valueToShow = (this.helper.zeroIfNull(onTime.valueRounded) == 0) 
+						? ""
+						: onTime.valueRounded + "%";
+
+	classifyBar(atRisk);
+	classifyBar(overdue);
+	classifyBar(onTime);
+
+	var widthToDivide = 100 - barsLessThanMin.length * minPercent;
+	var normalsSum = 0;
+	$.each (barsNormal, function() {
+		normalsSum += this.valueRounded;
+	});
+
+	$.each(barsNormal, function(key, bar) {
+		bar.width = widthToDivide * bar.valueRounded / normalsSum;
+	});
+
+	$.each(barsLessThanMin, function(key, bar) {
+		bar.width = minPercent;
+	});
+
+	if (atRisk.valueToShow == 0 && overdue.valueToShow == 0 && onTime.valueToShow == 0) {
+		onTime.valueToShow = G_STRING['ID_INBOX']  + ' ' + G_STRING['ID_EMPTY'];
+		onTime.width = 100;
+	}
+
+	data.percentageOverdueWidth = overdue.width;
+	data.percentageOnTimeWidth = onTime.width;
+	data.percentageAtRiskWidth = atRisk.width;
+
+	data.percentageOverdueToShow = overdue.valueToShow;
+	data.percentageAtRiskToShow = atRisk.valueToShow;
+	data.percentageOnTimeToShow = onTime.valueToShow;
+}
 
 /*++++++++ FIRST LEVEL INDICATOR DATA +++++++++++++*/
 ViewDashboardPresenter.prototype.getIndicatorData = function (indicatorId, indicatorType, initDate, endDate) {
@@ -184,8 +254,8 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
 		graphData.push(newObject);
+		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
 		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost);
-		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.indicatorId = data.id;
 		originalObject.json = JSON.stringify(originalObject);
 	});
@@ -197,7 +267,7 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 	retval.dataToDraw = this.adaptGraphData(graphData);
 
 	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
-	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
+	retval.efficiencyIndexToShow = that.roundedIndicatorValue(retval.efficiencyIndex);
 	return retval;
 };
 
@@ -215,7 +285,7 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 		var newObject = that.helper.merge(originalObject, {}, map);
 		graphData.push(newObject);
 		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
-		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
+		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
 		originalObject.indicatorId = data.id;
 		originalObject.json = JSON.stringify(originalObject);
 	});
@@ -226,7 +296,7 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 	retval.dataToDraw = this.adaptGraphData(graphData);
 
 	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
-	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
+	retval.efficiencyIndexToShow = that.roundedIndicatorValue(retval.efficiencyIndex);
 	return retval;
 };
 
@@ -344,7 +414,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelPei = function(modelD
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
 		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost);
-		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
+		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
 		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
 		originalObject.rankToShow = originalObject.rank + "/" + modelData.length;
 		graphData.push(newObject);
@@ -371,7 +441,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelUei = function(modelD
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
 		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
-		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
+		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
 		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
 		originalObject.rankToShow = originalObject.rank + "/" + modelData.length;
 		graphData.push(newObject);

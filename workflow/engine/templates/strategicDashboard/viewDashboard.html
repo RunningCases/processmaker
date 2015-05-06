@@ -14,9 +14,6 @@
     <link href="/css/general.css" rel="stylesheet">
     <link href="/css/dashboardStylesForIE.css" rel="stylesheet">
 
-    <link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Chivo:400,400italic' rel='stylesheet' type='text/css'>
-
     <script type="text/javascript" src="/js/jquery/jquery-1.7.1.min.js"></script>
     <script type="text/javascript" src="/js/jquery/jquery-ui-1.11.2.min.js" ></script>
     <script src="/lib/pmdynaform/libs/bootstrap-3.1.1/js/bootstrap.min.js"></script>
@@ -65,7 +62,7 @@
 						</div>
 					</div>
 					<div class="panel-footer text-center ind-title-selector">
-						<%- indicator.title %>
+						<div class="ellipsis"><%- indicator.title %></div>
 					</div>
 				</a>
 			</div>
@@ -108,7 +105,7 @@
 						</div>
 					</div>
 					<div class="panel-footer text-center ind-title-selector" style="clear:both; color:#606368;">
-						<%- indicator.title %>
+						<div class="ellipsis"><%- indicator.title %></div>
 					</div>
 				</a>
 			</div>
@@ -139,9 +136,7 @@
 						</div>
 					</div>
 					<div class="panel-footer text-center ind-title-selector">
-						<span>
-						<%- indicator.title %>
-						</span>
+						<div class="ellipsis"><%- indicator.title %></div>
 					</div>
 				</a>
 			</div>
@@ -360,7 +355,7 @@
                         <i class="fa fa-bar-chart fa-2x"></i>
                         <i class="fa fa-chevron-down fa-1x"></i>
                         </a>
-                        <h4 id="titleH4" class="header-dashboard">{translate label="ID_MANAGERS_DASHBOARDS"}</h4>
+                        <h4 id="titleH4" class="header-dashboard"></h4>
                         <div class="pull-right dashboard-right container-fluid">
 
 							<div class="row pull-left">
@@ -375,7 +370,7 @@
 									<script>
 										now = new Date();
 										anio = now.getFullYear();
-										for(a=anio;a>=anio-7;a--){
+										for(a=anio;a>=anio-10;a--){
 										document.write('<option value="'+a+'">'+a+'</option>');
 										}
 									</script>
@@ -435,7 +430,7 @@
                   </div>
               </div>
 
-			  <div id="relatedLabel" style="clear:both; visibility:hidden;">
+			  <div id="relatedLabel" class="col-lg-12 col-md-12 bottom" style="clear:both; visibility:hidden;">
 					<div>
 						<center><h3></h3></center>
 					</div>

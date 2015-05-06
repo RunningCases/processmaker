@@ -321,13 +321,8 @@ class Installer extends Controller
             G::verifyPath( $aux['dirname'], true );
             if (is_dir( $aux['dirname'] )) {
                 if (! file_exists( $_REQUEST['pathLogFile'] )) {
-                    G::LoadSystem('inputfilter');
-                    $filter = new InputFilter();
-                    $pathLogFile = $filter->validateInput($_REQUEST['pathLogFile'], "path");
-                    $pathShared = $filter->validateInput($_REQUEST['pathShared'], "path");
-                    
-                    @file_put_contents( $pathLogFile, '' );
-                    @chmod($pathShared, 0770);
+                    @file_put_contents( $_REQUEST['pathLogFile'], '' );
+                    @chmod($_REQUEST['pathShared'], 0770);
                 }
             }
         }
@@ -1096,8 +1091,6 @@ class Installer extends Controller
             }
 
             $this->installLog( G::LoadTranslation('ID_CREATING', SYS_LANG, Array($db_file) ));
-            
-            $db_file = $filter->validateInput($db_file, "path");
             file_put_contents( $db_file, $dbText );
 
             // Generate the databases.php file
@@ -1118,8 +1111,6 @@ class Installer extends Controller
             $databasesText = str_replace( '{dbData}', $dbData, @file_get_contents( PATH_HOME . 'engine/templates/installer/databases.tpl' ) );
 
             $this->installLog( G::LoadTranslation('ID_CREATING', SYS_LANG, Array($databases_file) ));
-            
-            $databases_file = $filter->validateInput($databases_file, "path");
             file_put_contents( $databases_file, $databasesText );
 
             //execute scripts to create and populates databases
