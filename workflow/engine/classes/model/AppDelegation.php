@@ -523,10 +523,7 @@ class AppDelegation extends BaseAppDelegation
 				//getting the calendar
 				$calendar->getCalendar($row['USR_UID'], $row['PRO_UID'], $row['TAS_UID']);
 				$calData = $calendar->getCalendarData();
-
-				//Recalculating DueDate with the user calendar if it exist. It allways will take the derivation date like initial date.
-				$iDueDate = $calendar->dashCalculateDate($row['DEL_DELEGATE_DATE'], $fTaskDuration, $fTaskDurationUnit, $calData);
-
+				
                 //if the task is not started
                 if ($isStarted == 0) {
                     if ($row['DEL_INIT_DATE'] != null && $row['DEL_INIT_DATE'] != '') {
@@ -540,7 +537,7 @@ class AppDelegation extends BaseAppDelegation
 
                         //we are putting negative number if the task is not delayed, and positive number for the time the task is delayed
                         //$delayDuration = $this->getDiffDate( $now, $iDueDate );
-                        $delayDuration = $calendar->dashCalculateDurationWithCalendar( $iDueDate, date("Y-m-d H:i:s"), $calData );
+                        $delayDuration = $calendar->dashCalculateDurationWithCalendar( $row['DEL_TASK_DUE_DATE'], date("Y-m-d H:i:s"), $calData );
                         $delayDuration = $delayDuration / (24 * 60 * 60); //Days
                         $oAppDel->setDelDelayDuration( $delayDuration );
                         if ($fTaskDuration != 0) {
@@ -562,7 +559,6 @@ class AppDelegation extends BaseAppDelegation
                         //$delDuration = $this->getDiffDate( $iFinishDate, $iInitDate );
                         $delDuration = $calendar->dashCalculateDurationWithCalendar($row['DEL_INIT_DATE'], $row['DEL_FINISH_DATE'], $calData );//by jen
                         $delDuration = $delDuration / (24 * 60 * 60); //Saving the delDuration in days. The calculateDurationSLA func returns mins.
-
                         $oAppDel->setDelDuration( $delDuration );
                         //calculate due date if correspond
                         $dueDate = strtotime($iDueDate);
@@ -570,7 +566,7 @@ class AppDelegation extends BaseAppDelegation
                         if ($dueDate < $finishDate) {
                             $oAppDel->setDelDelayed( 1 );
                             //$delayDuration = $this->getDiffDate( $iFinishDate, $iDueDate );
-                            $delayDuration = $calendar->dashCalculateDurationWithCalendar( $iDueDate, $row['DEL_FINISH_DATE'], $calData );
+                            $delayDuration = $calendar->dashCalculateDurationWithCalendar( $row['DEL_TASK_DUE_DATE'], $row['DEL_FINISH_DATE'], $calData );
                             $delayDuration = $delayDuration / (24 * 60 * 60); //Days
                         } else {
                             $oAppDel->setDelDelayed( 0 );
@@ -592,8 +588,12 @@ class AppDelegation extends BaseAppDelegation
 
                         //we are putting negative number if the task is not delayed, and positive number for the time the task is delayed
                         //$delayDuration = $this->getDiffDate( $now, $iDueDate );
-                        $delayDuration = $calendar->dashCalculateDurationWithCalendar( $iDueDate, date("Y-m-d H:i:s"), $calData );
-                        $delayDuration = $delayDuration / (24 * 60 * 60); //Days
+                        $delayDuration = 0;
+                        if($now > $iDueDate){
+                        	$delayDuration = $calendar->dashCalculateDurationWithCalendar( $row['DEL_TASK_DUE_DATE'], date("Y-m-d H:i:s"), $calData );
+                        	$delayDuration = $delayDuration / (24 * 60 * 60);
+                        }
+                         //Days
                         $oAppDel->setDelDelayDuration( $delayDuration );
                         if ($fTaskDuration != 0) {
                             $overduePercentage = $delayDuration / $fTaskDuration;

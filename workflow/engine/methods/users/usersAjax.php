@@ -200,7 +200,7 @@ switch ($_POST['action']) {
                 }
                 $aData['USR_STATUS'] = $statusWF;
                 $aData['USR_UID'] = $sUserUID;
-                $aData['USR_PASSWORD'] = md5($sUserUID); //fake :p
+                $aData['USR_PASSWORD'] = G::encryptOld($sUserUID); //fake :p
                 $aData['USR_COUNTRY'] = $form['USR_COUNTRY'];
                 $aData['USR_CITY'] = $form['USR_CITY'];
                 $aData['USR_LOCATION'] = $form['USR_LOCATION'];

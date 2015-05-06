@@ -6,7 +6,6 @@ var ViewDashboardHelper = function () {
 ViewDashboardHelper.prototype.userDashboards = function(userId, callBack) {
 };
 
-//TODO refactor to a good name...
 ViewDashboardHelper.prototype.stringIfNull = function (val){
 	if(val === null || val == undefined || val == "?"){
 		val = "?";

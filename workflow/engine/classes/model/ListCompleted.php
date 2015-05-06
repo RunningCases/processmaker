@@ -271,7 +271,7 @@ class ListCompleted extends BaseListCompleted
         return (int)$total;
     }
 
-    public function loadList ($usr_uid, $filters = array())
+    public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
         $resp = array();
         $criteria = new Criteria();
@@ -315,7 +315,8 @@ class ListCompleted extends BaseListCompleted
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $data = array();
         while ($dataset->next()) {
-            $aRow = $dataset->getRow();
+            $aRow = (is_null($callbackRecord))? $dataset->getRow() : $callbackRecord($dataset->getRow());
+
             $data[] = $aRow;
         }
 
