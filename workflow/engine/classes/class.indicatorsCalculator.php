@@ -75,10 +75,10 @@ class indicatorsCalculator
 	private $userGroupReportingMetadata = array("tableName" => "USR_REPORTING", "keyField" => "PRO_UID");
 	private $processCategoryReportingMetadata = array("tableName" => "PRO_REPORTING", "keyField" => "PRO_UID");
 
-	private $peiCostFormula = "SUM(TOTAL_CASES_OUT * CONFIGURED_TASK_TIME - TOTAL_TIME_BY_TASK * USER_HOUR_COST)";
+	private $peiCostFormula = "USER_HOUR_COST * SUM(case when TOTAL_TIME_BY_TASK >0 then TOTAL_CASES_OUT * CONFIGURED_TASK_TIME - TOTAL_TIME_BY_TASK * USER_HOUR_COST else 0 end)";
 	private $peiFormula = "SUM(TOTAL_CASES_OUT*CONFIGURED_TASK_TIME) / SUM(SDV_TIME * TOTAL_CASES_OUT + TOTAL_TIME_BY_TASK)";
 
-	private $ueiCostFormula = "SUM(TOTAL_CASES_OUT * CONFIGURED_TASK_TIME - TOTAL_TIME_BY_TASK * USER_HOUR_COST)";
+	private $ueiCostFormula = " USER_HOUR_COST * SUM(case when TOTAL_TIME_BY_TASK >0 then TOTAL_CASES_OUT * CONFIGURED_TASK_TIME - TOTAL_TIME_BY_TASK * USER_HOUR_COST else 0 end)";
 	private $ueiFormula = "SUM(TOTAL_CASES_OUT * CONFIGURED_TASK_TIME) / SUM(TOTAL_TIME_BY_TASK * USER_HOUR_COST)";
 
 	public function getSkewOfDataDistribution($table, $field) {
@@ -288,7 +288,6 @@ class indicatorsCalculator
 							order by $this->ueiFormula DESC
 						) i
 						join  (SELECT @curRow := 0) order_table"; 
-
 		$retval = $this->pdoExecutor($sqlString, $params);
 		//$returnValue = $this->propelExecutor($sqlString);
 		return $retval;
@@ -653,7 +652,7 @@ class indicatorsCalculator
 		$db = ";dbname=".$workSpace->dbName;
 		$user = $workSpace->dbUser;
 		$pass = $workSpace->dbPass;
-		$connString = "mysql:$host$port$db;";
+		$connString = "mysql:$host$port$db;charset=utf8;";
 
 		$dbh = new PDO($connString, $user, $pass);
 		return $dbh;
