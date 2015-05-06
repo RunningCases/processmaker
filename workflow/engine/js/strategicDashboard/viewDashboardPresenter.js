@@ -126,7 +126,7 @@ ViewDashboardPresenter.prototype.roundedIndicatorValue = function (value) {
 	/*if (value > 0 && value < 0.1) {
 		return "<0.1";
 	}*/
-	return Math.round(value*100)/100 + ""
+	return Math.round(value*100)/100 + "";
 
 }
 
@@ -267,7 +267,7 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 	retval.dataToDraw = this.adaptGraphData(graphData);
 
 	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
-	retval.efficiencyIndexToShow = that.roundedIndicatorValue(retval.efficiencyIndex)
+	retval.efficiencyIndexToShow = that.roundedIndicatorValue(retval.efficiencyIndex);
 	return retval;
 };
 
@@ -296,7 +296,7 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 	retval.dataToDraw = this.adaptGraphData(graphData);
 
 	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
-	retval.efficiencyIndexToShow = that.roundedIndicatorValue(retval.efficiencyIndex)
+	retval.efficiencyIndexToShow = that.roundedIndicatorValue(retval.efficiencyIndex);
 	return retval;
 };
 
