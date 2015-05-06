@@ -310,12 +310,8 @@ class G
         while (! @is_dir( dirname( end( $folder_path ) ) ) && dirname( end( $folder_path ) ) != '/' && dirname( end( $folder_path ) ) != '.' && dirname( end( $folder_path ) ) != '') {
             array_push( $folder_path, dirname( end( $folder_path ) ) ); //var_dump($folder_path); die;
         }
-        
-        G::LoadSystem('inputfilter');
-        $filter = new InputFilter();
 
         while ($parent_folder_path = array_pop( $folder_path )) {
-            $parent_folder_path = $filter->validateInput($parent_folder_path,"path");
             if (! @is_dir( $parent_folder_path )) {
                 if (! @mkdir( $parent_folder_path, $rights)) {
                     error_log( "Can't create folder \"$parent_folder_path\"");
