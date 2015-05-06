@@ -95,10 +95,11 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 										: "";
 
 
-		newObject.value = (newObject.category == "normal")
-								? Math.round(newObject.value) + ""
-								: Math.round(newObject.value*100)/100 + ""
+		//newObject.value = (newObject.category == "normal")
+								//? Math.round(newObject.value) + ""
+								//: Math.round(newObject.value*100)/100 + ""
 
+		newObject.value = that.roundedIndicatorValue(newObject.value);
 		newObject.favorite = 0;
 
 		/*newObject.percentageOverdueWidth = Math.round(newObject.percentageOverdue);
@@ -138,6 +139,17 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 	return returnList;
 };
 
+
+ViewDashboardPresenter.prototype.roundedIndicatorValue = function (value) { 
+	if (value == 0) {
+		return "0";
+	}
+	if (value > 0 && value < 0.1) {
+		return "<0.1";
+	}
+	return Math.round(value*100)/100 + ""
+
+}
 
 ViewDashboardPresenter.prototype.setStatusButtonWidthsAndDisplayValues = function (data) {
 	var minPercent = 10;
@@ -263,8 +275,8 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
 		graphData.push(newObject);
+		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
 		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost);
-		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
 		originalObject.indicatorId = data.id;
 		originalObject.json = JSON.stringify(originalObject);
 	});
@@ -276,7 +288,7 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 	retval.dataToDraw = this.adaptGraphData(graphData);
 
 	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
-	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
+	retval.efficiencyIndexToShow = that.roundedIndicatorValue(retval.efficiencyIndex)
 	return retval;
 };
 
@@ -294,7 +306,7 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 		var newObject = that.helper.merge(originalObject, {}, map);
 		graphData.push(newObject);
 		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
-		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
+		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
 		originalObject.indicatorId = data.id;
 		originalObject.json = JSON.stringify(originalObject);
 	});
@@ -305,7 +317,7 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 	retval.dataToDraw = this.adaptGraphData(graphData);
 
 	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
-	retval.efficiencyIndexToShow = Math.round(retval.efficiencyIndex * 100) / 100;
+	retval.efficiencyIndexToShow = that.roundedIndicatorValue(retval.efficiencyIndex)
 	return retval;
 };
 
@@ -423,7 +435,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelPei = function(modelD
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
 		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost);
-		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
+		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
 		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
 		originalObject.rankToShow = originalObject.rank + "/" + modelData.length;
 		graphData.push(newObject);
@@ -450,7 +462,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelUei = function(modelD
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
 		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
-		originalObject.efficiencyIndexToShow = Math.round(originalObject.efficiencyIndex * 100) / 100;
+		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
 		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
 		originalObject.rankToShow = originalObject.rank + "/" + modelData.length;
 		graphData.push(newObject);

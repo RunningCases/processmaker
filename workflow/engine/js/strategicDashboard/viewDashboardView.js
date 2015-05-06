@@ -438,9 +438,10 @@ var selectedOrderOfDetailList = function () {
 
 var selectDefaultMonthAndYear = function () {
 	var compareDate = new Date();
+	compareDate.setDate(1);
 	compareDate.setMonth(compareDate.getMonth() - 1);
 	var compareMonth = compareDate.getMonth() + 1;
-	var compareYear = compareDate.getYear();
+	var compareYear = compareDate.getFullYear();
 	$('#month').val(compareMonth);
 	$('#year').val(compareYear);
 }
