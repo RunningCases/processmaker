@@ -195,6 +195,18 @@ WidgetBuilder.prototype.getIndicatorLoadedById = function (searchedIndicatorId) 
 	return retval;
 }
 
+WidgetBuilder.prototype.getDashboardLoadedById = function (searchedDashboardId) {
+	var retval = null;
+	for (key in window.loadedDashboards) {
+		var dashboard = window.loadedDashboards[key];
+		if (dashboard.id == searchedDashboardId) {
+			retval = dashboard;		
+		}
+	}
+	if (retval == null) { throw new Error(searchedIndicatorId + " was not found in the loaded indicators.");}
+	return retval;
+}
+
 WidgetBuilder.prototype.buildGeneralIndicatorFirstView = function (indicatorData) {
 	_.templateSettings.variable = "indicator";
 	var template = _.template ($("script.generalIndicatorMainPanel").html());
@@ -223,6 +235,7 @@ model = new ViewDashboardModel(token, urlProxy, ws[3]);
 presenter = new ViewDashboardPresenter(model);
 
 window.loadedIndicators = []; //updated in das-title-selector.click->fillIndicatorWidgets, ready->fillIndicatorWidgets
+window.loadedDashboards = [];
 window.currentEntityData = null;
 window.currentIndicator = null;//updated in ind-button-selector.click ->loadIndicator, ready->loadIndicator
 window.currentDashboardId = null;
@@ -354,6 +367,7 @@ $(document).ready(function() {
 				.done(function(indicatorsVM) {
 					fillIndicatorWidgets(indicatorsVM);
 					loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
+					setActiveDashboard();
 				});
 	});
 
@@ -424,11 +438,21 @@ var selectedOrderOfDetailList = function () {
 
 var selectDefaultMonthAndYear = function () {
 	var compareDate = new Date();
+	compareDate.setDate(1);
 	compareDate.setMonth(compareDate.getMonth() - 1);
 	var compareMonth = compareDate.getMonth() + 1;
-	var compareYear = compareDate.getYear();
+	var compareYear = compareDate.getFullYear();
 	$('#month').val(compareMonth);
 	$('#year').val(compareYear);
+}
+
+var setActiveDashboard = function () {
+	var builder = new WidgetBuilder();
+	var dashboard = builder.getDashboardLoadedById(window.currentDashboardId);
+	if (dashboard == null) {
+		return;
+	}
+	$('#titleH4').text(dashboard.title);
 }
 
 var initialDraw = function () {
@@ -442,6 +466,7 @@ var initialDraw = function () {
 						.done(function(indicatorsVM) {
 							fillIndicatorWidgets(indicatorsVM);
 							loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
+							setActiveDashboard();
 						});
 			});
 }
@@ -514,6 +539,7 @@ var fillDashboardsList = function (presenterData) {
 	}
 	_.templateSettings.variable = "dashboard";
 	var template = _.template ($("script.dashboardButtonTemplate").html())
+	window.loadedDashboards = presenterData;
 	for (key in presenterData) {
 		var dashboard = presenterData[key];
 		$('#dashboardsList').append(template(dashboard));
@@ -624,7 +650,7 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
         graph: {
             allowDrillDown:false,
             allowTransition:true,
-            showTip: true,
+            showTip: false,
             allowZoom: false,
             gapWidth:0.3,
             useShadows: true,
@@ -648,10 +674,11 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
 			axisY:{ showAxis: true, label: G_STRING['ID_COSTS']},
 			gridLinesX:false,
 			gridLinesY:true,
-			showTip: true,
+			showTip: false,
 			allowZoom: false,
 			useShadows: true,
-			paddingTop: 50
+			paddingTop: 50,
+			colorPalette: ['#5486bf','#bf8d54','#acb30c','#7a0c0c','#bc0000','#906090','#007efb','#62284a','#0c7a7a','#74a9a9']
 		}
     };
 
@@ -720,7 +747,7 @@ var fillSpecialIndicatorSecondView = function(presenterData) {
 		graph: {
 			allowTransition: false,
 			allowDrillDown: true,
-			showTip: true,
+			showTip: false,
 			allowZoom: false,
 			useShadows: false,
 			gridLinesX: true,
@@ -728,7 +755,8 @@ var fillSpecialIndicatorSecondView = function(presenterData) {
 			area: {visible: false, css:"area"},
 			axisX:{ showAxis: true, label: G_STRING['ID_USER'] },
 			axisY:{ showAxis: true, label: G_STRING['ID_COSTS'] },
-			showErrorBars: true
+			showErrorBars: true,
+			colorPalette: ['#5486bf','#bf8d54','#acb30c','#7a0c0c','#bc0000','#906090','#007efb','#62284a','#0c7a7a','#74a9a9']
 
 		}
 	};
@@ -809,7 +837,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 		graph: {
 			allowTransition: false,
 			allowDrillDown: true,
-			showTip: true,
+			showTip: false,
 			allowZoom: false,
 			useShadows: false,
 			gridLinesX: true,
@@ -831,7 +859,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 		graph: {
 			allowTransition: false,
 			allowDrillDown: true,
-			showTip: true,
+			showTip: false,
 			allowZoom: false,
 			useShadows: false,
 			gridLinesX: true,
@@ -857,7 +885,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 			axisY:{ showAxis: true, label: G_STRING.ID_TIME_HOURS },
 			gridLinesX:false,
 			gridLinesY:true,
-			showTip: true,
+			showTip: false,
 			allowZoom: false,
 			useShadows: true,
 			paddingTop: 50,
@@ -879,7 +907,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 			axisY:{ showAxis: true, label: G_STRING.ID_TIME_HOURS  },
 			gridLinesX:false,
 			gridLinesY:true,
-			showTip: true,
+			showTip: false,
 			allowZoom: false,
 			useShadows: true,
 			paddingTop: 50,
