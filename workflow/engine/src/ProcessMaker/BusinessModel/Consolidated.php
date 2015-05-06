@@ -334,9 +334,9 @@ class Consolidated
                 $sort = $filter->validateInput($sort);
                 if (in_array($sort, $arrayReportTableVar)) {
                     $sort = strtoupper($sort);
-                    eval("\$field = " . $tableName . "Peer::" . $sort . ";");
+                    eval('$field = ' . $tableName . 'Peer::' . $sort . ';');
                 } else {
-                    eval("\$field = AppCacheViewPeer::" . $sort . ";");
+                    eval('$field = AppCacheViewPeer::' . $sort . ';');
                 }
 
                 if ($dir == "ASC") {
@@ -991,6 +991,9 @@ class Consolidated
 
         foreach ($array["form"] as $key => $value) {
             $array["form"][$key] = (string)$array["form"][$key];
+            if (isset($fields["APP_DATA"][$key.'_label'])) {
+                $array["form"][$key.'_label']   = (string)$array["form"][$key];
+            }
         }
         /*
         $_POST['form'] = $array["form"];

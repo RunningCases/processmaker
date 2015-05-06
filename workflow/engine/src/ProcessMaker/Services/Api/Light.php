@@ -886,11 +886,11 @@ class Light extends Api
             $dataList['dateTo'] = $date_to;
             $dataList['search'] = $search;
 
-            $usr_uid = $this->getUserId();
-            $cases = new \ProcessMaker\BusinessModel\Cases();
-            $response = $cases->getCaseNotes($app_uid, $usr_uid, $dataList);
-            $result   = $this->parserDataNotes($response['data']);
-            return $result;
+            $appNotes = new \AppNotes();
+            $response = $appNotes->getNotesList( $app_uid, '', $start, $limit );
+            $response  = $this->parserDataNotes($response['array']['notes']);
+
+            return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -899,11 +899,17 @@ class Light extends Api
     public function parserDataNotes ($data)
     {
         $structure = array(
-            'app_uid'          => 'caseId',
-            'usr_uid'          => 'userId',
+            'APP_UID'          => 'caseId',
             'notes' => array(
-                'note_date'    => 'date',
-                'note_content' => 'content'
+                'NOTE_DATE'    => 'date',
+                'NOTE_CONTENT' => 'content'
+            ),
+            'user' => array(
+                'USR_UID'       => 'userId',
+                'USR_USERNAME'  => 'name',
+                'USR_FIRSTNAME' => 'firstName',
+                'USR_LASTNAME'  => 'lastName',
+                'USR_EMAIL'     => 'email'
             )
         );
 
@@ -1116,5 +1122,23 @@ class Light extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
         return $return;
+    }
+
+    /**
+     * Get configuration ProcessMaker
+     *
+     * @return array
+     *
+     * @url GET /config
+     */
+    public function getConfiguration()
+    {
+        try {
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $response = $oMobile->getConfiguration();
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
     }
 }

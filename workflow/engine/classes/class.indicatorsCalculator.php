@@ -70,9 +70,9 @@ abstract class IndicatorDataSourcesEnum extends BasicEnum {
 
 class indicatorsCalculator
 {
-	private $userReportingMetadata = array("tableName" => "USR_REPORTING", "keyField" => "USR_UID");
+	private $userReportingMetadata = array("tableName" => "USR_REPORTING", "keyField" => "PRO_UID");
 	private $processReportingMetadata = array("tableName" => "PRO_REPORTING", "keyField" => "PRO_UID");
-	private $userGroupReportingMetadata = array("tableName" => "USR_REPORTING", "keyField" => "USR_UID");
+	private $userGroupReportingMetadata = array("tableName" => "USR_REPORTING", "keyField" => "PRO_UID");
 	private $processCategoryReportingMetadata = array("tableName" => "PRO_REPORTING", "keyField" => "PRO_UID");
 
 	private $peiCostFormula = "SUM(TOTAL_CASES_OUT * CONFIGURED_TASK_TIME - TOTAL_TIME_BY_TASK * USER_HOUR_COST)";
@@ -750,6 +750,7 @@ class indicatorsCalculator
 	}
 
 
+	
 	/* For debug only:
 	 * public function interpolateQuery($query, $params) {
 		$keys = array();

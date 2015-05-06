@@ -1237,7 +1237,7 @@ if(validate!=''){switch(aRequiredFields[i].type){case'suggest':break;case'text':
 break;}}}}
 invalid_fields=validateGridForms(invalid_fields);if(invalid_fields.length>0||fielEmailInvalid.length>0){for(j=0;j<invalid_fields.length;j++){sMessage+=(j>0)?', ':'';sMessage+=invalid_fields[j];}
 var emailInvalidMessage="";for(j=0;j<fielEmailInvalid.length;j++){emailInvalidMessage+=(j>0)?', ':'';emailInvalidMessage+=fielEmailInvalid[j];}
-var systemMessaggeInvalid="";if(invalid_fields.length>0){systemMessaggeInvalid+="\n \n"+G_STRINGS.ID_REQUIRED_FIELDS+": \n \n [ "+sMessage+" ]";}
+var systemMessaggeInvalid="";if(invalid_fields.length>0){systemMessaggeInvalid+="\n \n"+G_STRINGS.ID_REQUIRED_FIELDS_GRID;}
 if(fielEmailInvalid.length>0){systemMessaggeInvalid+="\n \n"+G_STRINGS.ID_VALIDATED_FIELDS+": \n \n [ "+emailInvalidMessage+" ]";}
 alert(systemMessaggeInvalid);swSubmitValidateForm=1;return false;}
 else{var arrayForm=document.getElementsByTagName("form");var inputAux;var id="";var i1=0;var i2=0;for(i1=0;i1<=arrayForm.length-1;i1++){var frm=arrayForm[i1];for(i2=0;i2<=frm.elements.length-1;i2++){var elem=frm.elements[i2];if(elem.type=="checkbox"&&elem.disabled&&elem.checked){id=elem.id+"_";if(!document.getElementById(id)){inputAux=document.createElement("input");inputAux.type="hidden";inputAux.id=id;inputAux.name=elem.name;inputAux.value=elem.value;frm.appendChild(inputAux);}}}
