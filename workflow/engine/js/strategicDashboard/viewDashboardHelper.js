@@ -15,6 +15,16 @@ ViewDashboardHelper.prototype.stringIfNull = function (val){
 	return val;
 };
 
+ViewDashboardHelper.prototype.zeroIfNull = function (val) {
+	var retval = 0;
+	if(val === null || val === undefined || val === "") {
+		retval = 0;
+	} else {
+		retval = val;
+	}
+	return retval;
+};
+
 ViewDashboardHelper.prototype.labelIfEmpty = function (val){
 	if(val === null || val == undefined || val == ""){
 		val = "(No Name)";

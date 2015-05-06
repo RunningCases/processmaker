@@ -503,7 +503,7 @@ Ext.onReady( function() {
         enableTabScroll : true,
         //anchor          : '98%',
         width           : '100%',
-        height          : 260,
+        height          : 160,
         defaults        : {
             autoScroll  :true
         },
@@ -733,7 +733,7 @@ var addTab = function (flag) {
         width       : "100%",
         items   : [
             new Ext.Panel({
-                height      : 230,
+                height      : 130,
                 width       : "100%",
                 border      : true,
                 bodyStyle   : 'padding:10px',
@@ -1156,12 +1156,12 @@ var saveAllIndicators = function (DAS_UID) {
 
             data[field] = value.trim();
         }
-        saveDashboardIndicator(data);
+        saveDashboardIndicator(data, fieldsTab[0].id);
     }
     window.location = 'dashboardList';
 };
 
-var saveDashboardIndicator = function (options) {
+var saveDashboardIndicator = function (options, id) {
     var data = {};
     data["DAS_UID"] = options['DAS_UID'];
     data["DAS_IND_TYPE"] = options['DAS_IND_TYPE'];
@@ -1184,7 +1184,7 @@ var saveDashboardIndicator = function (options) {
             },
             data: JSON.stringify(data),
             success: function (response) {
-                var jsonResp = Ext.util.JSON.decode(response.responseText);
+                Ext.getCmp(id).setValue(response);
             },
             failure: function (response) {
                 var jsonResp = Ext.util.JSON.decode(response.responseText);

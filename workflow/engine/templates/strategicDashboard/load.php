@@ -31,21 +31,41 @@
         var oClientWinSize = getClientWindowSize();
 
         var autoResizeScreen = function () {
+            var dashboardFrame;
+            var containerList1, containerList2;
 
-            dashboardFrame    = document.getElementById('dashboardFrame');
-            if (dashboardFrame) {
-                height = getClientWindowSize().height-90;
-                if (typeof dashboardFrame.style != 'undefined') {
-                    dashboardFrame.style.height = height;
-                }
-                if (typeof dashboardFrame.contentWindow.document != 'undefined') {
-                    dashboardFrame = dashboardFrame.contentWindow.document.getElementById('dashboardFrame');
-                    if (dashboardFrame && typeof dashboardFrame.style != 'undefined') {
-                        dashboardFrame.style.height = height-5;
-                    }
+            dashboardFrame = document.getElementById('dashboardFrame');
+
+            containerList1 = document.getElementById("pm_header");
+            if (document.getElementById("mainMenuBG") &&
+                document.getElementById("mainMenuBG").parentNode &&
+                document.getElementById("mainMenuBG").parentNode.parentNode &&
+                document.getElementById("mainMenuBG").parentNode.parentNode.parentNode &&
+                document.getElementById("mainMenuBG").parentNode.parentNode.parentNode.parentNode
+            ){
+                containerList2 = document.getElementById("mainMenuBG").parentNode.parentNode.parentNode.parentNode;
+            }
+            if (containerList1 === containerList2) {
+                height = oClientWinSize.height - containerList1.clientHeight;
+                dashboardFrame.style.height = height;
+                if (dashboardFrame.height ) {
+                    dashboardFrame.height = height;
                 }
             } else {
-                setTimeout('autoResizeScreen()', 2000);
+                if (dashboardFrame) {
+                    height = getClientWindowSize().height-90;
+                    if (typeof dashboardFrame.style != 'undefined') {
+                        dashboardFrame.style.height = height;
+                    }
+                    if (typeof dashboardFrame.contentWindow.document != 'undefined') {
+                        dashboardFrame = dashboardFrame.contentWindow.document.getElementById('dashboardFrame');
+                        if (dashboardFrame && typeof dashboardFrame.style != 'undefined') {
+                            dashboardFrame.style.height = height-5;
+                        }
+                    }
+                } else {
+                    setTimeout('autoResizeScreen()', 2000);
+                }
             }
         }
     </script>
