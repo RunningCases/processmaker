@@ -81,8 +81,8 @@ Ext.onReady( function() {
                 xtype       : 'textfield',
                 anchor      : '85%',
                 maxLength   : 250,
-                maskRe      : /([a-zA-Z0-9_'\s]+)$/,
-                regex       : /([a-zA-Z0-9_'\s]+)$/,
+                maskRe      : /^([a-zA-Z0-9_'\s]+)$/i,
+                regex       : /^([a-zA-Z0-9_'\s]+)$/i,
                 regexText   : _('ID_INVALID_VALUE', _('ID_DASHBOARD_TITLE')),
                 allowBlank  : false
             },
@@ -752,8 +752,8 @@ var addTab = function (flag) {
                                 id          : 'IND_TITLE_'+ indexTab,
                                 xtype       : 'textfield',
                                 anchor      : '85%',
-                                maskRe      : /([a-zA-Z0-9_'\s]+)$/,
-                                regex       : /([a-zA-Z0-9_'\s]+)$/,
+                                maskRe      : /^([a-zA-Z0-9_'\s]+)$/,
+                                regex       : /^([a-zA-Z0-9_'\s]+)$/,
                                 regexText   : _('ID_INVALID_VALUE', _('ID_INDICATOR_TITLE')),
                                 maxLength   : 250,
                                 allowBlank  : false
@@ -1040,8 +1040,12 @@ var validateNameDashboard = function () {
 var saveDashboard = function () {
     var title = Ext.getCmp('DAS_TITLE').getValue();
     var data = {};
-    if (title == '') {
+    if (title == '' ) {
         PMExt.warning(_('ID_DASHBOARD'), _('ID_DASHBOARD_TITLE') + ' '+ _('ID_IS_REQUIRED'));
+        Ext.getCmp('DAS_TITLE').focus(true,10);
+        return false;
+    } else if (!Ext.getCmp('DAS_TITLE').isValid()) {
+        PMExt.warning(_('ID_DASHBOARD'), _('ID_INVALID_VALUE', _('ID_DASHBOARD_TITLE')));
         Ext.getCmp('DAS_TITLE').focus(true,10);
         return false;
     }
@@ -1109,6 +1113,10 @@ var saveAllIndicators = function (DAS_UID) {
 
         if (fieldsTab[1].getValue().trim() == '') {
             PMExt.warning(_('ID_DASHBOARD'), _('ID_INDICATOR_TITLE_REQUIRED', tabPanel.getItem(tabActivate[tab]).title));
+            fieldsTab[1].focus(true,10);
+            return false;
+        } else if (!fieldsTab[1].isValid()) {
+            PMExt.warning(_('ID_DASHBOARD'), _('ID_INVALID_VALUE', _('ID_INDICATOR_TITLE')));
             fieldsTab[1].focus(true,10);
             return false;
         } else if (fieldsTab[2].getValue().trim() == '') {
@@ -1279,6 +1287,11 @@ var loadIndicators = function (DAS_UID) {
     });
 };
 
+function converter(str) {
+    str = str.replace(/&#39;/g, "'");
+    return str;
+}
+
 var loadInfoDashboard = function (DAS_UID) {
     Ext.Ajax.request({
         url : urlProxy + 'dashboard/' + DAS_UID,
@@ -1289,7 +1302,7 @@ var loadInfoDashboard = function (DAS_UID) {
         },
         success: function (response) {
             var jsonResp = Ext.util.JSON.decode(response.responseText);
-            Ext.getCmp('DAS_TITLE').setValue(jsonResp['DAS_TITLE']);
+            Ext.getCmp('DAS_TITLE').setValue(converter(jsonResp['DAS_TITLE']));
             Ext.getCmp('DAS_DESCRIPTION').setValue(jsonResp['DAS_DESCRIPTION']);
         },
         failure: function (response) {
