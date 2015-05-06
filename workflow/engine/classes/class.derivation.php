@@ -751,7 +751,16 @@ class Derivation
             //if (isset($nextDel['TAS_DEF_PROC_CODE']))
             //$appFields['APP_PROC_CODE'] = $nextDel['TAS_DEF_PROC_CODE'];
             /*----------------------------------********---------------------------------*/
-            if ($nextDel['TAS_UID'] != '-1') {
+            if ($nextDel['TAS_UID'] == '-2') {
+                $oRow = ApplicationPeer::retrieveByPK($appFields['APP_UID']);
+                $aFields = $oRow->toArray( BasePeer::TYPE_FIELDNAME );
+                $users = new Users();
+                if ($aFields['APP_STATUS'] == 'DRAFT') {
+                    $users->refreshTotal($appFields['CURRENT_USER_UID'], 'remove', 'draft');
+                } else {
+                    $users->refreshTotal($appFields['CURRENT_USER_UID'], 'remove', 'inbox');
+                }
+            } elseif ($nextDel['TAS_UID'] != '-1') {
                 $taskNex = TaskPeer::retrieveByPK($nextDel['TAS_UID']);
                 $aTask = $taskNex->toArray( BasePeer::TYPE_FIELDNAME );
                 $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
