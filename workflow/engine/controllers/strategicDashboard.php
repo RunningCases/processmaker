@@ -215,8 +215,8 @@ class StrategicDashboard extends Controller
             $translation['ID_NO_INEFFICIENT_USER_GROUPS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USER_GROUPS');
             $translation['ID_NO_INEFFICIENT_USERS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USERS');
             $translation['ID_DISPLAY_EMPTY'] = G::LoadTranslation('ID_DISPLAY_EMPTY');
-            $translation['ID_EMPTY'] = G::LoadTranslation('ID_EMPTY');
-            $translation['ID_INBOX'] = G::LoadTranslation('ID_INBOX');
+			//text for inbox empty in status indicator
+            $translation['ID_INBOX_EMPTY'] = G::LoadTranslation('ID_INBOX_EMPTY');
 
             $this->setVar('translation', $translation);
             $this->render();
@@ -266,9 +266,7 @@ class StrategicDashboard extends Controller
             $translation['ID_NO_INEFFICIENT_USER_GROUPS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USER_GROUPS');
             $translation['ID_NO_INEFFICIENT_USERS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USERS');
             $translation['ID_DISPLAY_EMPTY'] = G::LoadTranslation('ID_DISPLAY_EMPTY');
-            $translation['ID_EMPTY'] = G::LoadTranslation('ID_EMPTY');
-            $translation['ID_INBOX'] = G::LoadTranslation('ID_INBOX');
-
+            $translation['ID_INBOX_EMPTY'] = G::LoadTranslation('ID_INBOX_EMPTY');
 
             $this->setVar('translation', $translation);
             $this->render();
