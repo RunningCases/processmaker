@@ -1009,7 +1009,6 @@ class adminProxy extends HttpProxyController
     public function uploadImage()
     {
         //!dataSystem
-        
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
         $_SERVER["REQUEST_URI"] = $filter->xssFilterHard($_SERVER["REQUEST_URI"]);
@@ -1090,7 +1089,13 @@ class adminProxy extends HttpProxyController
         $uploaded = $filter->validateInput($uploaded,'int');
         $files_img_type = $filter->xssFilterHard($files_img_type);
         $failed = $filter->validateInput($failed,'int');
-        echo '{success: true, failed: ' . $failed . ', uploaded: ' . $uploaded . ', type: "' . $files_img_type . '"}';
+        $resp = array(
+            'success'   => true,
+            'failed'    => $failed,
+            'uploaded'  => $uploaded,
+            'type'      => $files_img_type
+        );
+        echo G::json_encode($resp);
         exit();
     }
 

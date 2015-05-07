@@ -321,8 +321,8 @@ class Installer extends Controller
             G::verifyPath( $aux['dirname'], true );
             if (is_dir( $aux['dirname'] )) {
                 if (! file_exists( $_REQUEST['pathLogFile'] )) {
-                    @file_put_contents( $pathLogFile, '' );
-                    @chmod($pathShared, 0770);
+                    @file_put_contents( $_REQUEST['pathLogFile'], '' );
+                    @chmod($_REQUEST['pathShared'], 0770);
                 }
             }
         }

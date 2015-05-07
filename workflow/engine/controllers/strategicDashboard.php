@@ -21,11 +21,6 @@ class StrategicDashboard extends Controller
     {
         global $RBAC;
 
-        if ($RBAC->userCanAccess('PM_SETUP') != 1) {
-            G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels');
-            G::header( 'location: login/login' );
-            exit(0);
-        }
         $licensedFeatures = & PMLicensedFeatures::getSingleton();
         if (!$licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjBsZEJ6dnpJa3dTeWVLVT0=')) {
             G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels' );
@@ -215,8 +210,8 @@ class StrategicDashboard extends Controller
             $translation['ID_NO_INEFFICIENT_USER_GROUPS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USER_GROUPS');
             $translation['ID_NO_INEFFICIENT_USERS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USERS');
             $translation['ID_DISPLAY_EMPTY'] = G::LoadTranslation('ID_DISPLAY_EMPTY');
-            $translation['ID_EMPTY'] = G::LoadTranslation('ID_EMPTY');
-            $translation['ID_INBOX'] = G::LoadTranslation('ID_INBOX');
+			//text for inbox empty in status indicator
+            $translation['ID_INBOX_EMPTY'] = G::LoadTranslation('ID_INBOX_EMPTY');
 
             $this->setVar('translation', $translation);
             $this->render();
@@ -266,9 +261,7 @@ class StrategicDashboard extends Controller
             $translation['ID_NO_INEFFICIENT_USER_GROUPS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USER_GROUPS');
             $translation['ID_NO_INEFFICIENT_USERS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USERS');
             $translation['ID_DISPLAY_EMPTY'] = G::LoadTranslation('ID_DISPLAY_EMPTY');
-            $translation['ID_EMPTY'] = G::LoadTranslation('ID_EMPTY');
-            $translation['ID_INBOX'] = G::LoadTranslation('ID_INBOX');
-
+            $translation['ID_INBOX_EMPTY'] = G::LoadTranslation('ID_INBOX_EMPTY');
 
             $this->setVar('translation', $translation);
             $this->render();
