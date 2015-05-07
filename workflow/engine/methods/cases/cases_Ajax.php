@@ -464,7 +464,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         $APP_UID = $filter->xssFilterHard($_POST['APP_UID']);
         $DEL_INDEX = $filter->xssFilterHard($_POST['DEL_INDEX']);
 
-        $_GET['APP_UID'] = $APP_UID
+        $_GET['APP_UID'] = $APP_UID;
         $_GET['DEL_INDEX'] = $DEL_INDEX;
         $G_PUBLISH = new Publisher();
 

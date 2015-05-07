@@ -522,11 +522,12 @@ Ext.onReady(function () {
                 fieldLabel : _('ID_COST_BY_HOUR'),
                 xtype      : 'numberfield',
                 allowNegative: false,
+                emptyText  : '0.00',
                 decimalSeparator : '.',
                 maskRe     : /^[0-9]/i,
                 regex      : /^[0-9]/i,
                 regexText  : _('ID_INVALID_VALUE', _('ID_COST_BY_HOUR')),
-                maxLength  : 13,
+                maxLength  : 10,
                 width      : 80
             },
             {
@@ -610,7 +611,6 @@ Ext.onReady(function () {
               if (Ext.getCmp('USR_CNF_PASS').getValue() != '') {
                 userExecuteEvent(document.getElementById('USR_CNF_PASS'), 'blur');
               }
-
             }
           }
         },
@@ -1174,6 +1174,11 @@ function saveUser()
         Ext.Msg.alert( _('ID_ERROR'), Ext.getCmp('usernameReview').html);
         return false;
       }
+    }
+    if (!Ext.getCmp('USR_COST_BY_HOUR').isValid()) {
+        PMExt.warning(_('ID_ERROR'), _('ID_INVALID_VALUE_EXPECTING_POSITIVE_INTEGER', _('ID_COST_BY_HOUR')));
+        Ext.getCmp('USR_COST_BY_HOUR').focus(true,10);
+        return false;
     }
 
     if (USR_UID == '00000000000000000000000000000001') {

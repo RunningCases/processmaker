@@ -192,7 +192,7 @@ ViewDashboardPresenter.prototype.setStatusButtonWidthsAndDisplayValues = functio
 	});
 
 	if (atRisk.valueToShow == 0 && overdue.valueToShow == 0 && onTime.valueToShow == 0) {
-		onTime.valueToShow = G_STRING['ID_INBOX']  + ' ' + G_STRING['ID_EMPTY'];
+		onTime.valueToShow = G_STRING['ID_INBOX_EMPTY'];
 		onTime.width = 100;
 	}
 
@@ -310,18 +310,18 @@ ViewDashboardPresenter.prototype.statusViewModel = function(indicatorId, data) {
 	$.each(data.dataList, function(index, originalObject) {
 
 		originalObject.taskTitle = that.helper.labelIfEmpty(originalObject.taskTitle);
-		var title = originalObject.taskTitle.substring(0,10);
+		//var title = originalObject.taskTitle.substring(0,10);
 
 		var newObject1 = {
-			datalabel : title,
+			datalabel : originalObject.taskTitle,
 			value : originalObject.percentageTotalOverdue
 		};
 		var newObject2 = {
-			datalabel : title,
+			datalabel : originalObject.taskTitle,
 			value : originalObject.percentageTotalAtRisk
 		};
 		var newObject3 = {
-			datalabel : title,
+			datalabel : originalObject.taskTitle,
 			value : originalObject.percentageTotalOnTime
 		};
 
@@ -337,6 +337,11 @@ ViewDashboardPresenter.prototype.statusViewModel = function(indicatorId, data) {
 		//we add the indicator id for reference
 		originalObject.indicatorId = indicatorId;
 	});
+
+
+	that.makeShortLabel(graph1Data, 10);
+	that.makeShortLabel(graph2Data, 10);
+	that.makeShortLabel(graph3Data, 10);
 
 	var retval = data;
 	retval.graph1Data = this.orderGraphData(graph1Data, "down").splice(0,7)
@@ -517,10 +522,15 @@ ViewDashboardPresenter.prototype.adaptGraphData = function(listData) {
 
 ViewDashboardPresenter.prototype.makeShortLabel = function(listData, labelLength) { 
 	$.each(listData, function(index, item) {
+		var longLabel = (item.datalabel == null) 
+						? "" 
+						: item.datalabel.substring(0, 50);
+
 		var shortLabel = (item.datalabel == null) 
-									? "" 
-									: item.datalabel.substring(0,labelLength);
+						? "" 
+						: item.datalabel.substring(0, labelLength);
+
 		item.datalabel = shortLabel;
-		item.datalabel = shortLabel;
+		item.longlabel = longLabel;
 	});
 }
