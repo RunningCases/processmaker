@@ -452,6 +452,15 @@ Wrote: /usr/src/redhat/RPMS/i386/PEAR::Net_Socket-1.0-1.i386.rpm
 
     function doRunTests($command, $options, $params)
     {
+        if (!class_exists('G')) {
+            $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+            $docuroot = explode( '/', $realdocuroot );
+            array_pop( $docuroot );
+            $pathhome = implode( '/', $docuroot ) . '/';  
+            array_pop( $docuroot );
+            $pathTrunk = implode( '/', $docuroot ) . '/';  
+            require_once($pathTrunk.'gulliver/system/class.g.php');
+        }
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
         
@@ -479,16 +488,6 @@ Wrote: /usr/src/redhat/RPMS/i386/PEAR::Net_Socket-1.0-1.i386.rpm
         $cmd = $php.' -C -d include_path='.$cwd.$ps.$ip.' -f '.$run_tests.' -- '.$plist;
         
         $cmd  = $filter->validateInput($cmd);
-        
-        if (!class_exists('G')) {
-            $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
-            $docuroot = explode( '/', $realdocuroot );
-            array_pop( $docuroot );
-            $pathhome = implode( '/', $docuroot ) . '/';  
-            array_pop( $docuroot );
-            $pathTrunk = implode( '/', $docuroot ) . '/';  
-            require_once($pathTrunk.'gulliver/system/class.g.php');
-        }
         
         system($cmd);
         return true;
