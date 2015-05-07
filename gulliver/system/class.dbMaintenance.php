@@ -419,6 +419,15 @@ class DataBaseMaintenance
         }
 
         /* execute multi query */
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+                
+        $arrayQuerys = explode(';',$query);
+        foreach($arrayQuerys as $v) {
+            $newQuery[] = $filter->preventSqlInjection($v);        
+        }
+        $query = implode(';',$newQuery);
+        
         if ($mysqli->multi_query( $query )) {
             do {
                 /* store first result set */
@@ -450,7 +459,7 @@ class DataBaseMaintenance
             }
         }
             
-        $sQuery = "LOCK TABLES " . implode( " READ, ", $aTables ) . " READ; ";
+        $sQuery = 'LOCK TABLES ' . implode( ' READ, ', $aTables ) . ' READ; ';
         
         if (@mysql_query( $filter->preventSqlInjection($sQuery) )) {
             echo "    [OK]\n";
@@ -622,6 +631,15 @@ class DataBaseMaintenance
                 }
 
                     /* execute multi query */
+                G::LoadSystem('inputfilter');
+                $filter = new InputFilter();    
+                
+                $arrayQuerys = explode(';',$query);
+                foreach($arrayQuerys as $v) {
+                    $newQuery[] = $filter->preventSqlInjection($v);        
+                }
+                $query = implode(';',$newQuery);    
+                
                 if ($mysqli->multi_query( $query )) {
                     do {
                         /* store first result set */

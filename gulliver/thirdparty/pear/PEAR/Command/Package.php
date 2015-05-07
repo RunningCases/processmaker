@@ -452,6 +452,9 @@ Wrote: /usr/src/redhat/RPMS/i386/PEAR::Net_Socket-1.0-1.i386.rpm
 
     function doRunTests($command, $options, $params)
     {
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        
         $cwd = getcwd();
         $php = PHP_BINDIR . '/php' . (OS_WINDOWS ? '.exe' : '');
         putenv("TEST_PHP_EXECUTABLE=$php");
@@ -465,7 +468,17 @@ Wrote: /usr/src/redhat/RPMS/i386/PEAR::Net_Socket-1.0-1.i386.rpm
             }
         }
         $plist = implode(" ", $params);
+        
+        $php  = $filter->validateInput($php);
+        $cwd  = $filter->validateInput($cwd);
+        $ps  = $filter->validateInput($ps);
+        $ip  = $filter->validateInput($ip);
+        $run_tests  = $filter->validateInput($run_tests);
+        $plist  = $filter->validateInput($plist);
+        
         $cmd = $php.' -C -d include_path='.$cwd.$ps.$ip.' -f '.$run_tests.' -- '.$plist;
+        
+        $cmd  = $filter->validateInput($cmd);
         
         if (!class_exists('G')) {
             $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
@@ -476,10 +489,6 @@ Wrote: /usr/src/redhat/RPMS/i386/PEAR::Net_Socket-1.0-1.i386.rpm
             $pathTrunk = implode( '/', $docuroot ) . '/';  
             require_once($pathTrunk.'gulliver/system/class.g.php');
         }
-        
-        G::LoadSystem('inputfilter');
-        $filter = new InputFilter();
-        $cmd  = $filter->validateInput($cmd);
         
         system($cmd);
         return true;
