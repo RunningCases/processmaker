@@ -88,12 +88,12 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 
 		//rounding
 		newObject.comparative =  Math.round(newObject.comparative*100)/100;
-		newObject.comparative = ((newObject.comparative > 0)? "+": "") + newObject.comparative;
+		newObject.comparative = ((newObject.comparative > 0) ? "+": "") + newObject.comparative;
 
 		newObject.percentComparative = (newObject.percentComparative != '--')
 										? '(' + newObject.percentComparative + '%)'
 										: "";
-		newObject.percentComparative = (newObject.comparative == 0)
+		newObject.percentComparative = (newObject.comparative == 0 && newObject.percentComparative !=  '')
 										? "(0%)"
 										: newObject.percentComparative;
 
