@@ -255,7 +255,7 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 		var newObject = that.helper.merge(originalObject, {}, map);
 		graphData.push(newObject);
 		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
-		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost * 10) / 10;
 		originalObject.indicatorId = data.id;
 		originalObject.json = JSON.stringify(originalObject);
 	});
@@ -266,7 +266,7 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 	this.makeShortLabel(graphData, 10);
 	retval.dataToDraw = this.adaptGraphData(graphData);
 
-	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
+	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost * 10) / 10;
 	retval.efficiencyIndexToShow = that.roundedIndicatorValue(retval.efficiencyIndex);
 	return retval;
 };
@@ -284,7 +284,7 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
 		graphData.push(newObject);
-		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost * 10)/10;
 		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
 		originalObject.indicatorId = data.id;
 		originalObject.json = JSON.stringify(originalObject);
@@ -295,7 +295,7 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 	this.makeShortLabel(graphData, 10);
 	retval.dataToDraw = this.adaptGraphData(graphData);
 
-	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost);
+	retval.inefficiencyCostToShow = Math.round(retval.inefficiencyCost * 10) / 10;
 	retval.efficiencyIndexToShow = that.roundedIndicatorValue(retval.efficiencyIndex);
 	return retval;
 };
@@ -418,7 +418,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelPei = function(modelD
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
-		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost * 10) / 10;
 		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
 		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
 		originalObject.rankToShow = originalObject.rank + "/" + modelData.length;
@@ -445,7 +445,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelUei = function(modelD
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
-		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost);
+		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost * 10) / 10;
 		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
 		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
 		originalObject.rankToShow = originalObject.rank + "/" + modelData.length;
