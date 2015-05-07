@@ -170,7 +170,9 @@
 	</script>
 
 	<script type="text/template" class="specialIndicatorDetail">
-		<div  class="process-div well hideme  detail-button-selector" data-gs-no-resize="true"
+		<div  class="process-div well hideme  detail-button-selector" 
+			data-gs-no-resize="true"
+			style="cursor:pointer;"
 			  id="detailData-<%- detailData.uid %>"
 			  data-indicator-id="<%- detailData.indicatorId %>"
 			  data-detail-id="<%- detailData.uid %>"
@@ -179,23 +181,29 @@
 			  data-detail-cost="<%- detailData.inefficiencyCost%>"
 			  data-detail-name="<%- detailData.name %>"
             >
-			<div class="col-lg-12 vcenter-task">
-				<a href="#" class="process-button">
-					<div class="col-xs-5 text-left title-process">
-						<div  class="small grey detail-title-selector"> <%- detailData.name %></div>
-					</div>
-					<div class="col-xs-3 text-center ">
-						<div class="blue"><%- detailData.efficiencyIndexToShow%></div>
-						<div class="small grey detail-efficiency-selector ellipsis"></div>
-					</div>
-					<div class="col-xs-3 text-center ">
-						<div class="red detail-cost-number-selector">{$unitCost}<%- detailData.inefficiencyCostToShow %></div>
-						<div class="small grey detail-cost-selector ellipsis"></div>
-					</div>
-					<div class="col-xs-1 text-right arrow"><i class="fa fa-chevron-right fa-fw"></i></div>
-				</a>
+			<div class="panel-heading greenbg">
+				<div class="col-xs-11 text-center detail-title-selector">
+					<div class="ellipsis"><%- detailData.name %> </div>
+				 </div>
+				<div class="col-xs-1 text-center detail-title-selector">
+					<i class="fa fa-chevron-right fa-fw"></i> 
+				 </div>
+				<div class="clearfix"></div>
 			</div>
-			<div class="clearfix"></div>
+			<div class="text-center huge">
+				<div class="col-xs-12 vcenter-task">
+					<div class="col-xs-6 ">
+						<div class="blue small"><%- detailData.efficiencyIndexToShow%></div>
+						<div class="smallB grey detail-efficiency-selector ellipsis"></div>
+					</div>
+					<div class="col-xs-6 ">
+						<div class="small detail-cost-number-selector">{$unitCost}&nbsp;<%- detailData.inefficiencyCostToShow%></div>
+						<div class="smallB grey detail-cost-selector ellipsis"></div>
+					</div>
+				</div>
+				<div class="clearfix"></div>
+			</div>
+
 		</div>
 	</script>
 
@@ -219,7 +227,7 @@
 						<div class="smallB grey detail-efficiency-selector ellipsis"></div>
 					</div>
 					<div class="col-xs-6 ">
-						<div class="small detail-cost-number-selector">{$unitCost}<%- detailData.inefficiencyCostToShow%></div>
+						<div class="small detail-cost-number-selector">{$unitCost}&nbsp;<%- detailData.inefficiencyCostToShow%></div>
 						<div class="smallB grey detail-cost-selector ellipsis"></div>
 					</div>
 				</div>
@@ -247,7 +255,7 @@
 						<div class="smallB grey detail-efficiency-selector ellipsis"></div>
 					</div>
 					<div class="col-xs-6 ">
-						<div class="small detail-cost-number-selector">{$unitCost}<%- detailData.inefficiencyCostToShow%></div>
+						<div class="small detail-cost-number-selector">{$unitCost}&nbsp;<%- detailData.inefficiencyCostToShow%></div>
 						<div class="smallB grey detail-cost-selector ellipsis"></div>
 					</div>
 				</div>
