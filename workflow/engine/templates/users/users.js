@@ -1176,7 +1176,7 @@ function saveUser()
       }
     }
     if (!Ext.getCmp('USR_COST_BY_HOUR').isValid()) {
-        PMExt.warning(_('ID_ERROR'), _('ID_INVALID_VALUE_EXPECTING_POSITIVE_INTEGER', _('ID_COST_BY_HOUR')));
+        PMExt.warning(_('ID_ERROR'), _('ID_INVALID_VALUE_EXPECTING_POSITIVE_DECIMAL', _('ID_COST_BY_HOUR')));
         Ext.getCmp('USR_COST_BY_HOUR').focus(true,10);
         return false;
     }

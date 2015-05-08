@@ -387,6 +387,7 @@ def getJsIncludeFiles
         "gulliver/js/codemirror/addon/hint/javascript-hint.js",
         "gulliver/js/codemirror/addon/hint/sql-hint.js",
         "gulliver/js/codemirror/addon/hint/php-hint.js",
+        "gulliver/js/codemirror/addon/hint/html-hint.js",
         "gulliver/js/codemirror/mode/javascript/javascript.js",
         "gulliver/js/codemirror/addon/edit/matchbrackets.js",
         "gulliver/js/codemirror/mode/htmlmixed/htmlmixed.js",
