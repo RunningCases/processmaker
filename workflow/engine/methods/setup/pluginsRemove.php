@@ -41,15 +41,16 @@ switch ($RBAC->userCanAccess('PM_SETUP_ADVANCE'))
 G::LoadClass( "plugin" );
 G::LoadSystem('inputfilter');
 $filter = new InputFilter();
-$pluginName = $_REQUEST["pluginUid"];
+$pluginName = $_REQUEST['pluginUid'];
+$pluginName = $filter->xssFilterHard($pluginName);
 
-if (file_exists( PATH_PLUGINS . $pluginName . ".php" )) {
+if (file_exists( PATH_PLUGINS . $pluginName . '.php' )) {
     $pluginRegistry = &PMPluginRegistry::getSingleton();
 
     $pluginRegistry->uninstallPlugin( $pluginName );
-
-    $pluginRegistry->unSerializeInstance( file_get_contents( PATH_DATA_SITE . "plugin.singleton" ) );
+    $path = $filter->validateInput(PATH_DATA_SITE . 'plugin.singleton', 'path');
+    $pluginRegistry->unSerializeInstance( file_get_contents( $path ) );
 }
-G::auditLog("RemovePlugin","Plugin Name: ".$pluginName);
-echo $pluginName . " " . nl2br( $filter->xssFilterHard(G::LoadTranslation( "ID_MSG_REMOVE_PLUGIN_SUCCESS" )) );
+G::auditLog('RemovePlugin','Plugin Name: '.$pluginName);
+echo $pluginName . ' ' . nl2br( $filter->xssFilterHard(G::LoadTranslation( 'ID_MSG_REMOVE_PLUGIN_SUCCESS' )) );
 

@@ -1,6 +1,6 @@
 var storeCountry;
 var storeRegion;
-var storeLocation; 
+var storeLocation;
 var storeReplacedBy;
 var storeCalendar;
 var storeRole;
@@ -389,9 +389,9 @@ Ext.onReady(function () {
     hiddenName    : 'USR_ROLE',
     id            : 'USR_ROLE',
     readOnly      : readMode,
-    store         : storeRole,    
+    store         : storeRole,
     valueField    : 'ROL_UID',
-    displayField  : 'ROL_CODE',    
+    displayField  : 'ROL_CODE',
     emptyText     : TRANSLATIONS.ID_SELECT,
     width         : 260,
     selectOnFocus : true,
@@ -414,7 +414,7 @@ Ext.onReady(function () {
             'change': function(field, newVal, oldVal){
                 var fname = newVal.replace(/^\s+/,'').replace(/\s+$/,'');
                 field.setValue(fname.trim());
-              } 
+              }
           }
         },
         {
@@ -427,7 +427,7 @@ Ext.onReady(function () {
             'change': function(field, newVal, oldVal){
                 var lname = newVal.replace(/^\s+/,'').replace(/\s+$/,'');
                 field.setValue(lname.trim());
-              } 
+              }
           }
         },
         {
@@ -522,11 +522,12 @@ Ext.onReady(function () {
                 fieldLabel : _('ID_COST_BY_HOUR'),
                 xtype      : 'numberfield',
                 allowNegative: false,
+                emptyText  : '0.00',
                 decimalSeparator : '.',
                 maskRe     : /^[0-9]/i,
                 regex      : /^[0-9]/i,
                 regexText  : _('ID_INVALID_VALUE', _('ID_COST_BY_HOUR')),
-                maxLength  : 13,
+                maxLength  : 10,
                 width      : 80
             },
             {
@@ -610,7 +611,6 @@ Ext.onReady(function () {
               if (Ext.getCmp('USR_CNF_PASS').getValue() != '') {
                 userExecuteEvent(document.getElementById('USR_CNF_PASS'), 'blur');
               }
-
             }
           }
         },
@@ -657,7 +657,7 @@ Ext.onReady(function () {
 
       ]
     });
-    
+
     var accountOptions = new Ext.form.FieldSet({
         title: _('ID_ACCOUNT_OPTIONS'),
         items: [{
@@ -670,7 +670,7 @@ Ext.onReady(function () {
             uncheckedValue: 0
         }]
     });
-    
+
   storeDefaultMainMenuOption = new Ext.data.Store({
       proxy: new Ext.data.HttpProxy({
           url: "usersAjax",
@@ -925,7 +925,7 @@ Ext.onReady(function () {
         fieldLabel : _('ID_ROLE'),
         xtype      : 'label',
         width      : 260
-      },
+      }
     ]
   });
     /*----------------------------------********---------------------------------*/
@@ -1175,6 +1175,11 @@ function saveUser()
         return false;
       }
     }
+    if (!Ext.getCmp('USR_COST_BY_HOUR').isValid()) {
+        PMExt.warning(_('ID_ERROR'), _('ID_INVALID_VALUE_EXPECTING_POSITIVE_INTEGER', _('ID_COST_BY_HOUR')));
+        Ext.getCmp('USR_COST_BY_HOUR').focus(true,10);
+        return false;
+    }
 
     if (USR_UID == '00000000000000000000000000000001') {
         if (Ext.getCmp('USR_ROLE').getValue() != PROCESSMAKER_ADMIN) {
@@ -1312,7 +1317,7 @@ function loadData()
 
     comboRole.store.on("load", function (store) {
         comboRole.setValue(store.getAt(1).get("ROL_UID"));
-    });    
+    });
     comboRole.store.load();
 
     comboDefaultMainMenuOption.store.on("load", function (store) {

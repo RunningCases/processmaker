@@ -353,6 +353,10 @@ class Bpmn extends Handler
         $data["ACT_UID"] = (array_key_exists("ACT_UID", $data))? $data["ACT_UID"] : Common::generateUID();
         $data["PRO_UID"] = $processUid;
 
+        if (isset($data["ACT_LOOP_TYPE"]) && $data["ACT_LOOP_TYPE"] == "NONE") {
+            $data["ACT_LOOP_TYPE"] = "EMPTY";
+        }
+
         try {
             self::log("Add Activity with data: ", $data);
 
@@ -400,6 +404,10 @@ class Bpmn extends Handler
     public function updateActivity($actUid, $data)
     {
         try {
+            if (isset($data["ACT_LOOP_TYPE"]) && $data["ACT_LOOP_TYPE"] == "NONE") {
+                $data["ACT_LOOP_TYPE"] = "EMPTY";
+            }
+
             self::log("Update Activity: $actUid, with data: ", $data);
 
             $activity = ActivityPeer::retrieveByPk($actUid);
@@ -1348,13 +1356,15 @@ class Bpmn extends Handler
             $oCriteria->add( \BpmnFlowPeer::FLO_POSITION, $iPosition, '>' );
             $oDataset = \BpmnFlowPeer::doSelectRS( $oCriteria );
             $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-            $oDataset->next();
-            $aRow = $oDataset->getRow();
-            $oCriteria2 = new Criteria('workflow');
-            $oCriteria2->add( \BpmnFlowPeer::FLO_POSITION, $aRow['FLO_POSITION'] - 1);
-            BasePeer::doUpdate($oCriteria, $oCriteria2, $con);
-            $oDataset->next();
-
+            while ($oDataset->next()) {
+                $aRow = $oDataset->getRow();
+                $newPosition = ((int)$aRow['FLO_POSITION'])-1;
+                $oCriteriaTemp = new Criteria( 'workflow' );
+                $oCriteriaTemp->add( \BpmnFlowPeer::FLO_UID, $aRow['FLO_UID'] );
+                $oCriteria2 = new Criteria('workflow');
+                $oCriteria2->add(\BpmnFlowPeer::FLO_POSITION, $newPosition);
+                BasePeer::doUpdate($oCriteriaTemp, $oCriteria2, $con);
+            }
         } catch (Exception $oException) {
             throw $oException;
         }

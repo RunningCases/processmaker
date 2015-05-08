@@ -2653,6 +2653,7 @@ class G
             G::LoadSystem('inputfilter');
             $filter = new InputFilter();
             $file = $filter->validateInput($file, "path");
+            $path = $filter->validateInput($path, "path");
 
             move_uploaded_file( $file, $path . "/" . $nameToSave );
             @chmod( $path . "/" . $nameToSave, $permission );
@@ -2717,6 +2718,12 @@ class G
         $image = $inputFn( $path );
         imagecopyresampled( $image_p, $image, 0, 0, 0, 0, $resWidth, $resHeight, $width, $height );
         $outputFn( $image_p, $saveTo );
+        
+        if(!is_null($saveTo)) {
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
+            $saveTo = $filter->validateInput($saveTo, "path");
+        }
 
         @chmod( $saveTo, 0666 );
     }
@@ -3133,10 +3140,10 @@ class G
      */
     public function evalJScript ($c)
     {
-        G::LoadSystem('inputfilter');
+        /*G::LoadSystem('inputfilter');
         $filter = new InputFilter();
-        $c = $filter->xssFilterHard($c);
-        print ("<script language=\"javascript\">{$c}</script>") ;
+        $c = $filter->xssFilterHard($c);*/
+        print ('<script language="javascript">'.$c.'</script>') ;
     }
 
     /**

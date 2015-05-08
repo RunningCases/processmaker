@@ -52,6 +52,7 @@ class DashboardIndicator extends BaseDashboardIndicator
             $rs = DashboardIndicatorPeer::doSelectRS( $criteria );
             $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
             $dashboardIndicator = array();
+
             while ($rs->next()) {
                 $row = $rs->getRow();
 
@@ -65,14 +66,18 @@ class DashboardIndicator extends BaseDashboardIndicator
 						$oldValue = current(reset($calculator->peiHistoric($uid, $compareDate, $compareDate, \ReportingPeriodicityEnum::NONE)));
 						$row['DAS_IND_VARIATION'] = $value - $oldValue;
 						$row['DAS_IND_OLD_VALUE'] = $oldValue;
-						$row['DAS_IND_PERCENT_VARIATION'] = round(($value - $oldValue) * 100 / (($oldValue == 0) ? 1 : $oldValue), 1);
+						$row['DAS_IND_PERCENT_VARIATION'] =  $oldValue != 0
+															? round(($value - $oldValue) * 100 / $oldValue)
+															: "--";
 						break;
 					case '1030':
 						$value = current(reset($calculator->ueiHistoric(null, $measureDate, $measureDate, \ReportingPeriodicityEnum::NONE)));
 						$oldValue = current(reset($calculator->ueiHistoric($uid, $compareDate, $compareDate, \ReportingPeriodicityEnum::NONE)));
 						$row['DAS_IND_VARIATION'] = $value - $oldValue;
 						$row['DAS_IND_OLD_VALUE'] = $oldValue;
-						$row['DAS_IND_PERCENT_VARIATION'] = round(($value - $oldValue) * 100 / (($oldValue == 0) ? 1 : $oldValue), 1);
+						$row['DAS_IND_PERCENT_VARIATION'] =  $oldValue != 0
+															? round(($value - $oldValue) * 100 / $oldValue)
+															: "--";
 						break;
                     case '1050':
                         $value = $calculator->statusIndicatorGeneral($userUid);

@@ -70,16 +70,16 @@ abstract class IndicatorDataSourcesEnum extends BasicEnum {
 
 class indicatorsCalculator
 {
-	private $userReportingMetadata = array("tableName" => "USR_REPORTING", "keyField" => "USR_UID");
+	private $userReportingMetadata = array("tableName" => "USR_REPORTING", "keyField" => "PRO_UID");
 	private $processReportingMetadata = array("tableName" => "PRO_REPORTING", "keyField" => "PRO_UID");
-	private $userGroupReportingMetadata = array("tableName" => "USR_REPORTING", "keyField" => "USR_UID");
+	private $userGroupReportingMetadata = array("tableName" => "USR_REPORTING", "keyField" => "PRO_UID");
 	private $processCategoryReportingMetadata = array("tableName" => "PRO_REPORTING", "keyField" => "PRO_UID");
 
-	private $peiCostFormula = "SUM(TOTAL_CASES_OUT * CONFIGURED_TASK_TIME - TOTAL_TIME_BY_TASK * USER_HOUR_COST)";
+	private $peiCostFormula = " SUM(case when TOTAL_TIME_BY_TASK >0 then (TOTAL_CASES_OUT * CONFIGURED_TASK_TIME - TOTAL_TIME_BY_TASK) * USER_HOUR_COST else 0 end)";
 	private $peiFormula = "SUM(TOTAL_CASES_OUT*CONFIGURED_TASK_TIME) / SUM(SDV_TIME * TOTAL_CASES_OUT + TOTAL_TIME_BY_TASK)";
 
-	private $ueiCostFormula = "SUM(TOTAL_CASES_OUT * CONFIGURED_TASK_TIME - TOTAL_TIME_BY_TASK * USER_HOUR_COST)";
-	private $ueiFormula = "SUM(TOTAL_CASES_OUT * CONFIGURED_TASK_TIME) / SUM(TOTAL_TIME_BY_TASK * USER_HOUR_COST)";
+	private $ueiCostFormula = " SUM(case when TOTAL_TIME_BY_TASK >0 then (TOTAL_CASES_OUT * CONFIGURED_TASK_TIME - TOTAL_TIME_BY_TASK) * USER_HOUR_COST else 0 end)";
+	private $ueiFormula = "SUM(TOTAL_CASES_OUT * CONFIGURED_TASK_TIME) / SUM(TOTAL_TIME_BY_TASK)";
 
 	public function getSkewOfDataDistribution($table, $field) {
 		/*$sqlString = "SET @median = (SELECT x.$field from $table x, $table y
@@ -288,7 +288,6 @@ class indicatorsCalculator
 							order by $this->ueiFormula DESC
 						) i
 						join  (SELECT @curRow := 0) order_table"; 
-
 		$retval = $this->pdoExecutor($sqlString, $params);
 		//$returnValue = $this->propelExecutor($sqlString);
 		return $retval;
@@ -513,9 +512,9 @@ class indicatorsCalculator
         $params[':usrUid'] = $usrUid;
 
         $sqlString = "SELECT
-            COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) <  0 ) , 0 ) AS OVERDUE,
-            COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) >  0 ) , 0 ) AS ONTIME,
-            COALESCE( SUM( DATEDIFF( DEL_RISK_DATE , NOW( ) ) < 0 ) , 0 ) AS ATRISK
+            COALESCE( SUM( TIMEDIFF( DEL_DUE_DATE , NOW( ) ) <  0 ) , 0 ) AS OVERDUE,
+            COALESCE( SUM( TIMEDIFF( DEL_RISK_DATE , NOW( ) ) >  0 ) , 0 ) AS ONTIME,
+            COALESCE( SUM( TIMEDIFF( DEL_RISK_DATE , NOW( ) ) < 0 && TIMEDIFF( DEL_DUE_DATE , NOW( ) ) >  0) , 0 ) AS ATRISK
             FROM  LIST_INBOX
             WHERE  USR_UID =  :usrUid
             AND APP_STATUS = 'TO_DO'
@@ -534,9 +533,9 @@ class indicatorsCalculator
             APP_TAS_TITLE AS taskTitle,
             APP_PRO_TITLE AS proTitle,
 
-            COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) <  0 ) , 0 ) AS overdue,
-            COALESCE( SUM( DATEDIFF( DEL_DUE_DATE , NOW( ) ) >  0 ) , 0 ) AS onTime,
-            COALESCE( SUM( DATEDIFF( DEL_RISK_DATE , NOW( ) ) < 0 ) , 0 ) AS atRisk
+            COALESCE( SUM( TIMEDIFF( DEL_DUE_DATE , NOW( ) ) <  0 ) , 0 ) AS overdue,
+            COALESCE( SUM( TIMEDIFF( DEL_RISK_DATE , NOW( ) ) >  0 ) , 0 ) AS onTime,
+            COALESCE( SUM( TIMEDIFF( DEL_RISK_DATE , NOW( ) ) < 0 && TIMEDIFF( DEL_DUE_DATE , NOW( ) ) >  0) , 0 ) AS atRisk
             FROM  LIST_INBOX
             WHERE  USR_UID =  :usrUid
             AND APP_STATUS = 'TO_DO'
@@ -561,8 +560,8 @@ class indicatorsCalculator
 
         if (is_array($result) && isset($result[0])) {
             $response['overdue'] = $result[0]['OVERDUE'];
-            $response['atRisk'] = $result[0]['ONTIME'];
-            $response['onTime'] = $result[0]['ATRISK'];
+            $response['atRisk'] = $result[0]['ATRISK'];
+            $response['onTime'] = $result[0]['ONTIME'];
 
             $total = $response['overdue'] + $response['atRisk'] + $response['onTime'];
             if ($total != 0) {
@@ -578,20 +577,20 @@ class indicatorsCalculator
             $result[$key]['overdue'] = $value['overdue'];
             $result[$key]['atRisk'] = $value['atRisk'];
             $result[$key]['onTime'] = $value['onTime'];
-			$result[$key]['percentageOverdue'] = 0;
-			$result[$key]['percentageAtRisk']  = 0;
-			$result[$key]['percentageOnTime']  = 0;
-			$result[$key]['percentageTotalOverdue'] = 0;
-			$result[$key]['percentageTotalAtRisk']  = 0;
-			$result[$key]['percentageTotalOnTime']  = 0;
+            $result[$key]['percentageOverdue'] = 0;
+            $result[$key]['percentageAtRisk']  = 0;
+            $result[$key]['percentageOnTime']  = 0;
+            $result[$key]['percentageTotalOverdue'] = 0;
+            $result[$key]['percentageTotalAtRisk']  = 0;
+            $result[$key]['percentageTotalOnTime']  = 0;
             $total = $value['overdue'] + $value['onTime'] + $value['atRisk'];
             if ($total != 0) {
                 $result[$key]['percentageOverdue'] = ($value['overdue']*100)/$total;
                 $result[$key]['percentageAtRisk']  = ($value['atRisk']*100)/$total;
                 $result[$key]['percentageOnTime']  = ($value['onTime']*100)/$total;
-				$result[$key]['percentageTotalOverdue'] = $response['overdue'] != 0 ? ($value['overdue']*100)/$response['overdue']: 0;
-				$result[$key]['percentageTotalAtRisk']  = $response['atRisk'] != 0 ? ($value['atRisk']*100)/$response['atRisk'] : 0;
-				$result[$key]['percentageTotalOnTime']  = $response['onTime'] != 0 ? ($value['onTime']*100)/$response['onTime']: 0;
+                $result[$key]['percentageTotalOverdue'] = $response['overdue'] != 0 ? ($value['overdue']*100)/$response['overdue']: 0;
+                $result[$key]['percentageTotalAtRisk']  = $response['atRisk'] != 0 ? ($value['atRisk']*100)/$response['atRisk'] : 0;
+                $result[$key]['percentageTotalOnTime']  = $response['onTime'] != 0 ? ($value['onTime']*100)/$response['onTime']: 0;
             }
         }
         $response['dataList'] = $result;
@@ -653,7 +652,7 @@ class indicatorsCalculator
 		$db = ";dbname=".$workSpace->dbName;
 		$user = $workSpace->dbUser;
 		$pass = $workSpace->dbPass;
-		$connString = "mysql:$host$port$db;";
+		$connString = "mysql:$host$port$db;charset=utf8;";
 
 		$dbh = new PDO($connString, $user, $pass);
 		return $dbh;
@@ -750,6 +749,7 @@ class indicatorsCalculator
 	}
 
 
+	
 	/* For debug only:
 	 * public function interpolateQuery($query, $params) {
 		$keys = array();

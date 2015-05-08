@@ -1009,7 +1009,6 @@ class adminProxy extends HttpProxyController
     public function uploadImage()
     {
         //!dataSystem
-        
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
         $_SERVER["REQUEST_URI"] = $filter->xssFilterHard($_SERVER["REQUEST_URI"]);
@@ -1076,7 +1075,8 @@ class adminProxy extends HttpProxyController
                     } else {
                         $failed = "3";
                     }
-                    unlink ($dir . '/tmp' . $fileName);
+                    $path = $filter->xssFilterHard($dir . '/tmp' . $fileName, 'path');
+                    unlink ($path);
                 } catch (Exception $e) {
                     $failed = "3";
                 }
@@ -1088,7 +1088,14 @@ class adminProxy extends HttpProxyController
         }
         $uploaded = $filter->validateInput($uploaded,'int');
         $files_img_type = $filter->xssFilterHard($files_img_type);
-        echo '{success: true, failed: ' . $failed . ', uploaded: ' . $uploaded . ', type: "' . $files_img_type . '"}';
+        $failed = $filter->validateInput($failed,'int');
+        $resp = array(
+            'success'   => true,
+            'failed'    => $failed,
+            'uploaded'  => $uploaded,
+            'type'      => $files_img_type
+        );
+        echo G::json_encode($resp);
         exit();
     }
 
@@ -1236,6 +1243,11 @@ class adminProxy extends HttpProxyController
     public function showLogo($imagen)
     {
         $info = @getimagesize($imagen);
+        
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $imagen = $filter->validateInput($imagen, "path");
+            
         $fp   = fopen($imagen, "rb");
         if ($info && $fp) {
             header("Content-type: {$info['mime']}");
@@ -1295,6 +1307,11 @@ class adminProxy extends HttpProxyController
             }
             $newDir .= PATH_SEP.$base64Id;
             $dir    .= PATH_SEP.$base64Id;
+            
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
+            $dir = $filter->validateInput($dir, "path");
+        
             copy($dir,$newDir);
             self::showLogo($newDir);
             die;

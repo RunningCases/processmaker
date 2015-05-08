@@ -254,13 +254,13 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         switch ($_POST['TAS_ASSIGN_TYPE']) {
             // switch verify $_POST['TAS_ASSIGN_TYPE']
             case 'BALANCED':
-                $_POST['USR_UID'] = $filter->xssFilterHard($_POST['USR_UID']);
+                $USR_UID = $filter->xssFilterHard($_POST['USR_UID']);
                 G::LoadClass( 'user' );
                 $oUser = new User( new DBConnection() );
-                $oUser->load( $_POST['USR_UID'] );
+                $oUser->load( $USR_UID );
                 $oUser->Fields['USR_FIRSTNAME'] = $filter->xssFilterHard($oUser->Fields['USR_FIRSTNAME']);
                 $oUser->Fields['USR_LASTNAME'] = $filter->xssFilterHard($oUser->Fields['USR_LASTNAME']);
-                echo $oUser->Fields['USR_FIRSTNAME'] . ' ' . $oUser->Fields['USR_LASTNAME'] . '<input type="hidden" name="form[TASKS][1][USR_UID]" id="form[TASKS][1][USR_UID]" value="' . $_POST['USR_UID'] . '">';
+                echo $oUser->Fields['USR_FIRSTNAME'] . ' ' . $oUser->Fields['USR_LASTNAME'] . '<input type="hidden" name="form[TASKS][1][USR_UID]" id="form[TASKS][1][USR_UID]" value="'.$USR_UID.'">';
                 break;
             case 'MANUAL':
                 $sAux = '<select name="form[TASKS][1][USR_UID]" id="form[TASKS][1][USR_UID]">';
@@ -311,15 +311,15 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
                 echo $sAux;
                 break;
             case 'EVALUATE':
-                $_POST['TAS_ASSIGN_VARIABLE'] = $filter->xssFilterHard($_POST['TAS_ASSIGN_VARIABLE']);
-                $_SESSION['APPLICATION'] = $filter->xssFilterHard($_SESSION['APPLICATION']);
+                $TAS_ASSIGN_VARIABLE = $filter->xssFilterHard($_POST['TAS_ASSIGN_VARIABLE']);
+                $APPLICATION = $filter->xssFilterHard($_SESSION['APPLICATION']);
                 G::LoadClass( 'application' );
                 $oApplication = new Application( new DBConnection() );
-                $oApplication->load( $_SESSION['APPLICATION'] );
+                $oApplication->load( $APPLICATION );
                 $sUser = '';
-                if ($_POST['TAS_ASSIGN_VARIABLE'] != '') {
-                    if (isset( $oApplication->Fields['APP_DATA'][str_replace( '@@', '', $_POST['TAS_ASSIGN_VARIABLE'] )] )) {
-                        $sUser = $oApplication->Fields['APP_DATA'][str_replace( '@@', '', $_POST['TAS_ASSIGN_VARIABLE'] )];
+                if ($TAS_ASSIGN_VARIABLE != '') {
+                    if (isset( $oApplication->Fields['APP_DATA'][str_replace( '@@', '', $TAS_ASSIGN_VARIABLE )] )) {
+                        $sUser = $oApplication->Fields['APP_DATA'][str_replace( '@@', '', $TAS_ASSIGN_VARIABLE )];
                     }
                 }
                 if ($sUser != '') {
@@ -329,7 +329,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
                     echo $oUser->Fields['USR_FIRSTNAME'] . ' ' . $oUser->Fields['USR_LASTNAME'] . '<input type="hidden" name="form[TASKS][1][USR_UID]" id="form[TASKS][1][USR_UID]" value="' . $sUser . '">';
                 } else {
                     $ID_EMPTY = $filter->xssFilterHard(G::LoadTranslation( 'ID_EMPTY' ));
-                    echo '<strong>Error: </strong>' . $_POST['TAS_ASSIGN_VARIABLE'] . ' ' . $ID_EMPTY;
+                    echo '<strong>Error: </strong>' . $TAS_ASSIGN_VARIABLE . ' ' . $ID_EMPTY;
                     echo '<input type="hidden" name="_ERROR_" id="_ERROR_" value="">';
                 }
                 break;
@@ -461,14 +461,15 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         $cases->reassignCase( $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED'], $_POST['USR_UID'], $_POST['THETYPE'] );
         break;
     case 'toRevisePanel':
-        $_POST['APP_UID'] = $filter->xssFilterHard($_POST['APP_UID']);
-        $_POST['DEL_INDEX'] = $filter->xssFilterHard($_POST['DEL_INDEX']);
+        $APP_UID = $filter->xssFilterHard($_POST['APP_UID']);
+        $DEL_INDEX = $filter->xssFilterHard($_POST['DEL_INDEX']);
 
-        $_GET['APP_UID'] = $_POST['APP_UID'];
-        $_GET['DEL_INDEX'] = $_POST['DEL_INDEX'];
+        $_GET['APP_UID'] = $APP_UID;
+        $_GET['DEL_INDEX'] = $DEL_INDEX;
         $G_PUBLISH = new Publisher();
 
-        echo "<iframe scrolling='no' style='border:none;height=300px;width:240px;'" . " src='casesToRevisePanelExtJs?APP_UID={$_GET['APP_UID']}&DEL_INDEX={$_GET['DEL_INDEX']}'></iframe>";
+        
+        echo "<iframe scrolling='no' style='border:none;height=300px;width:240px;'" . " src='casesToRevisePanelExtJs?APP_UID=$APP_UID&DEL_INDEX=$DEL_INDEX'></iframe>";
         //  $G_PUBLISH->AddContent( 'smarty', 'cases/cases_toRevise' );
         //  $G_PUBLISH->AddContent('smarty', 'cases/cases_toReviseIn', '', '', array());
         G::RenderPage( 'publish', 'raw' );
@@ -1025,4 +1026,3 @@ function getCasesTypeIds ()
     $aTypes = Array ('to_do','draft','cancelled','sent','paused','completed','selfservice','to_revise','to_reassign');
     return $aTypesID;
 }
-

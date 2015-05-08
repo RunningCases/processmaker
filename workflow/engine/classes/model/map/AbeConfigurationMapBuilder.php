@@ -89,6 +89,7 @@ class AbeConfigurationMapBuilder
 
         $tMap->addColumn('ABE_UPDATE_DATE', 'AbeUpdateDate', 'int', CreoleTypes::TIMESTAMP, false, null);
 
+        $tMap->addColumn('ABE_SUBJECT_FIELD', 'AbeSubjectField', 'string', CreoleTypes::VARCHAR, true, 100);
     } // doBuild()
 
 } // AbeConfigurationMapBuilder

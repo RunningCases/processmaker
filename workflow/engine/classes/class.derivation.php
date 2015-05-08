@@ -751,7 +751,16 @@ class Derivation
             //if (isset($nextDel['TAS_DEF_PROC_CODE']))
             //$appFields['APP_PROC_CODE'] = $nextDel['TAS_DEF_PROC_CODE'];
             /*----------------------------------********---------------------------------*/
-            if ($nextDel['TAS_UID'] != '-1') {
+            if ($nextDel['TAS_UID'] == '-2') {
+                $oRow = ApplicationPeer::retrieveByPK($appFields['APP_UID']);
+                $aFields = $oRow->toArray( BasePeer::TYPE_FIELDNAME );
+                $users = new Users();
+                if ($aFields['APP_STATUS'] == 'DRAFT') {
+                    $users->refreshTotal($appFields['CURRENT_USER_UID'], 'remove', 'draft');
+                } else {
+                    $users->refreshTotal($appFields['CURRENT_USER_UID'], 'remove', 'inbox');
+                }
+            } elseif ($nextDel['TAS_UID'] != '-1') {
                 $taskNex = TaskPeer::retrieveByPK($nextDel['TAS_UID']);
                 $aTask = $taskNex->toArray( BasePeer::TYPE_FIELDNAME );
                 $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
@@ -1013,6 +1022,9 @@ class Derivation
                     $sTargetField = str_replace( '$', '', $sTargetField );
                     $sTargetField = str_replace( '=', '', $sTargetField );
                     $aNewFields[$sTargetField] = isset( $appFields['APP_DATA'][$sOriginField] ) ? $appFields['APP_DATA'][$sOriginField] : '';
+                    if(isset($aParentCase['APP_DATA'][$sTargetField.'_label'])){
+                        $aNewFields[$sTargetField.'_label'] = isset( $appFields['APP_DATA'][$sOriginField.'_label'] ) ? $appFields['APP_DATA'][$sOriginField.'_label'] : '';
+                    }
                 }
                 $aParentCase['APP_DATA'] = array_merge( $aParentCase['APP_DATA'], $aNewFields );
                 $oCase->updateCase( $aSA['APP_PARENT'], $aParentCase );

@@ -746,11 +746,31 @@ Ext.onReady( function() {
                     anchor:'90%'
                  },
                     {
-                      id         : 'dynaformCalendarName' ,
-                      xtype      : 'textfield' ,
+                      id         : 'dynaformCalendarName' ,                      
                       width      : 200 ,
-                      fieldLabel : _('ID_NAME') ,
-                      name       : 'name' 
+                      fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _('ID_NAME')) +'"> * </span>' + _('ID_NAME') ,
+                      xtype      : 'textfield' ,
+                      name       : 'name' ,
+                      msgTarget: 'side',
+                      enableKeyEvents: true,
+                      listeners: {
+                        focus : function(textfield){
+                          var element = document.getElementById('dynaformCalendarName');
+                          element.setAttribute('maxlength','100');
+                          element.onpaste = function (e){
+                                var textValue = undefined;
+                                if(window.clipboardData && window.clipboardData.getData) {
+                                  textValue = window.clipboardData.getData('Text');
+                                }else if(e.clipboardData && e.clipboardData.getData) {
+                                  textValue = e.clipboardData.getData('text/plain');
+                                }
+                                if(textValue.length>99){
+                                    Ext.MessageBox.alert(_('ID_WARNING'), _("ID_PPP_MAXIMUM_LENGTH")+":100", function(){ return true;});
+                                } 
+                                return true; 
+                          }
+                        }
+                      }
                     },
                     {
                       id         : 'dynaformCalendarDescription' ,

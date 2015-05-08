@@ -670,10 +670,18 @@ class Bootstrap
      */
     public static function LoadClass($strClass)
     {
+        Bootstrap::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        
+        $path = PATH_GULLIVER . 'class.' . $strClass . '.php';
+        $path = $filter->validateInput($path, "path");
+        
         $classfile = Bootstrap::ExpandPath("classes") . 'class.' . $strClass . '.php';
+        $classfile = $filter->validateInput($classfile, "path");
+        
         if (!file_exists($classfile)) {
-            if (file_exists(PATH_GULLIVER . 'class.' . $strClass . '.php')) {
-                return require_once (PATH_GULLIVER . 'class.' . $strClass . '.php');
+            if (file_exists($path)) {
+                return require_once ($path);
             } else {
                 return false;
             }

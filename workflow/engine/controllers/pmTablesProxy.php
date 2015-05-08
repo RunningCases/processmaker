@@ -671,11 +671,11 @@ class pmTablesProxy extends HttpProxyController
         $filter = new InputFilter();
         $countRow = 250;
         $tmpfilename = $_FILES['form']['tmp_name']['CSV_FILE'];
-        $tmpfilename = $filter->xssFilterHard($tmpfilename, 'path');
+        //$tmpfilename = $filter->xssFilterHard($tmpfilename, 'path');
         if (preg_match( '/[\x00-\x08\x0b-\x0c\x0e\x1f]/', file_get_contents( $tmpfilename ) ) === 0) {
             $filename = $_FILES['form']['name']['CSV_FILE'];
-            $filename = $filter->xssFilterHard($filename, 'path');
-            if ($oFile = fopen( $tmpfilename, 'r' )) {
+            //$filename = $filter->xssFilterHard($filename, 'path');
+            if ($oFile = fopen( $filter->xssFilterHard($tmpfilename, 'path'), 'r' )) {
                 require_once 'classes/model/AdditionalTables.php';
                 $oAdditionalTables = new AdditionalTables();
                 $aAdditionalTables = $oAdditionalTables->load( $_POST['form']['ADD_TAB_UID'], true );
@@ -771,11 +771,11 @@ class pmTablesProxy extends HttpProxyController
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
         $tmpfilename = $_FILES['form']['tmp_name']['CSV_FILE'];
-        $tmpfilename = $filter->xssFilterHard($tmpfilename, 'path');
+        //$tmpfilename = $filter->xssFilterHard($tmpfilename, 'path');
         if (preg_match( '/[\x00-\x08\x0b-\x0c\x0e\x1f]/', file_get_contents( $tmpfilename ) ) === 0) {
             $filename = $_FILES['form']['name']['CSV_FILE'];
             $filename = $filter->xssFilterHard($filename, 'path');
-            if ($oFile = fopen( $tmpfilename, 'r' )) {
+            if ($oFile = fopen( $filter->xssFilterHard($tmpfilename, 'path'), 'r' )) {
                 require_once 'classes/model/AdditionalTables.php';
                 $oAdditionalTables = new AdditionalTables();
                 $aAdditionalTables = $oAdditionalTables->load( $_POST['form']['ADD_TAB_UID'], true );

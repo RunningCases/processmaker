@@ -141,13 +141,41 @@ WidgetBuilder.prototype.buildSpecialIndicatorSecondView = function (secondViewDa
 	return $retval;
 };
 
-WidgetBuilder.prototype.buildSpecialIndicatorSecondViewDetail = function (oneItemDetail) {
+WidgetBuilder.prototype.buildSpecialIndicatorSecondViewDetailPei = function (oneItemDetail) {
 	if (oneItemDetail == null){throw new Error("oneItemDetail is null ");}
 	if (!typeof(oneItemDetail) === 'object'){throw new Error( "detailData is not and object ->" + oneItemDetail);}
 	if (!oneItemDetail.hasOwnProperty("name")){throw new Error("buildSpecialIndicatorFirstViewDetail -> detailData has not the name param. Has it the correct Type? ->" + oneItemDetail);}
 
 	_.templateSettings.variable = "detailData";
-	var template = _.template ($("script.specialIndicatorSencondViewDetail").html());
+	var template = _.template ($("script.specialIndicatorSecondViewDetailPei").html());
+	var $retval =  $(template(oneItemDetail));
+	$retval.find(".detail-efficiency-selector").text(G_STRING.ID_EFFICIENCY_INDEX);
+	$retval.find(".detail-cost-selector").text(G_STRING.ID_INEFFICIENCY_COST);
+	this.setColorForInefficiency($retval.find(".detail-cost-number-selector"), oneItemDetail);
+	return $retval;
+}
+
+WidgetBuilder.prototype.buildSpecialIndicatorSecondViewDetailUei = function (oneItemDetail) {
+	if (oneItemDetail == null){throw new Error("oneItemDetail is null ");}
+	if (!typeof(oneItemDetail) === 'object'){throw new Error( "detailData is not and object ->" + oneItemDetail);}
+	if (!oneItemDetail.hasOwnProperty("name")){throw new Error("buildSpecialIndicatorFirstViewDetail -> detailData has not the name param. Has it the correct Type? ->" + oneItemDetail);}
+
+	_.templateSettings.variable = "detailData";
+	var template = _.template ($("script.specialIndicatorSecondViewDetailUei").html());
+	var $retval =  $(template(oneItemDetail));
+	$retval.find(".detail-efficiency-selector").text(G_STRING.ID_EFFICIENCY_INDEX);
+	$retval.find(".detail-cost-selector").text(G_STRING.ID_INEFFICIENCY_COST);
+	this.setColorForInefficiency($retval.find(".detail-cost-number-selector"), oneItemDetail);
+	return $retval;
+}
+
+WidgetBuilder.prototype.buildSpecialIndicatorSecondViewDetaiUei = function (oneItemDetail) {
+	if (oneItemDetail == null){throw new Error("oneItemDetail is null ");}
+	if (!typeof(oneItemDetail) === 'object'){throw new Error( "detailData is not and object ->" + oneItemDetail);}
+	if (!oneItemDetail.hasOwnProperty("name")){throw new Error("buildSpecialIndicatorFirstViewDetail -> detailData has not the name param. Has it the correct Type? ->" + oneItemDetail);}
+
+	_.templateSettings.variable = "detailData";
+	var template = _.template ($("script.specialIndicatorSencondViewDetailUei").html());
 	var $retval =  $(template(oneItemDetail));
 	$retval.find(".detail-efficiency-selector").text(G_STRING.ID_EFFICIENCY_INDEX);
 	$retval.find(".detail-cost-selector").text(G_STRING.ID_INEFFICIENCY_COST);
@@ -161,6 +189,18 @@ WidgetBuilder.prototype.getIndicatorLoadedById = function (searchedIndicatorId) 
 		var indicator = window.loadedIndicators[key];
 		if (indicator.id == searchedIndicatorId) {
 			retval = indicator;		
+		}
+	}
+	if (retval == null) { throw new Error(searchedIndicatorId + " was not found in the loaded indicators.");}
+	return retval;
+}
+
+WidgetBuilder.prototype.getDashboardLoadedById = function (searchedDashboardId) {
+	var retval = null;
+	for (key in window.loadedDashboards) {
+		var dashboard = window.loadedDashboards[key];
+		if (dashboard.id == searchedDashboardId) {
+			retval = dashboard;		
 		}
 	}
 	if (retval == null) { throw new Error(searchedIndicatorId + " was not found in the loaded indicators.");}
@@ -195,6 +235,7 @@ model = new ViewDashboardModel(token, urlProxy, ws[3]);
 presenter = new ViewDashboardPresenter(model);
 
 window.loadedIndicators = []; //updated in das-title-selector.click->fillIndicatorWidgets, ready->fillIndicatorWidgets
+window.loadedDashboards = [];
 window.currentEntityData = null;
 window.currentIndicator = null;//updated in ind-button-selector.click ->loadIndicator, ready->loadIndicator
 window.currentDashboardId = null;
@@ -325,20 +366,18 @@ $(document).ready(function() {
 		presenter.getDashboardIndicators(dashboardId, defaultInitDate(), defaultEndDate())
 				.done(function(indicatorsVM) {
 					fillIndicatorWidgets(indicatorsVM);
-					//TODO use real data
 					loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
+					setActiveDashboard();
 				});
 	});
 
 	$('#indicatorsGridStack').on('click','.ind-button-selector', function() {
 		var indicatorId = $(this).data('indicator-id');
-		//TODO use real data
 		loadIndicator(indicatorId, defaultInitDate(), defaultEndDate());
 	});
 
 	$('body').on('click','.bread-back-selector', function() {
 		var indicatorId = window.currentIndicator.id;
-		//TODO use real data
 		loadIndicator(indicatorId, defaultInitDate(), defaultEndDate());
 		return false;
 	});
@@ -352,7 +391,6 @@ $(document).ready(function() {
                             "inefficiencyCost":$(this).data('detail-cost'),
                             "name":$(this).data('detail-name')
 		};
-		//TODO PASS REAL VALUES
 		presenter.getSpecialIndicatorSecondLevel(detailId, window.currentIndicator.type, defaultInitDate(), defaultEndDate())
 			.done(function (viewModel) {
 				fillSpecialIndicatorSecondView(viewModel);
@@ -366,7 +404,31 @@ var hideScrollIfAllDivsAreVisible = function(){
 			$('#scrollImg').hide();
 	}
 	else {
+			$('#scrollImg').css('visibility', 'visible');
 			$('#scrollImg').show();
+	}
+}
+
+var hideTitleAndSortDiv = function(){
+	if (window.currentIndicator == null) {
+		$('#relatedLabel').hide();
+	} 
+	switch (window.currentIndicator.type) {
+		case "1010":
+		case "1030":
+			if($('.detail-button-selector').length == 0) {
+				$('#relatedLabel').hide();
+				//$('#relatedLabel').find('h3').text(G_STRING['ID_NO_DATA_TO_DISPLAY']);
+			}
+			else {
+				$('#relatedLabel').css('visibility', 'visible');
+				$('#relatedLabel').show();
+			}
+
+			break;
+		default:
+			$('#relatedLabel').hide();
+			break;
 	}
 }
 
@@ -374,7 +436,27 @@ var selectedOrderOfDetailList = function () {
 	return ($('#sortListButton').hasClass('fa-chevron-up') ? "up" : "down");
 }
 
+var selectDefaultMonthAndYear = function () {
+	var compareDate = new Date();
+	compareDate.setDate(1);
+	compareDate.setMonth(compareDate.getMonth() - 1);
+	var compareMonth = compareDate.getMonth() + 1;
+	var compareYear = compareDate.getFullYear();
+	$('#month').val(compareMonth);
+	$('#year').val(compareYear);
+}
+
+var setActiveDashboard = function () {
+	var builder = new WidgetBuilder();
+	var dashboard = builder.getDashboardLoadedById(window.currentDashboardId);
+	if (dashboard == null) {
+		return;
+	}
+	$('#titleH4').text(dashboard.title);
+}
+
 var initialDraw = function () {
+	selectDefaultMonthAndYear();
 	presenter.getUserDashboards(pageUserId)
 		.then(function(dashboardsVM) {
 				fillDashboardsList(dashboardsVM);
@@ -384,6 +466,7 @@ var initialDraw = function () {
 						.done(function(indicatorsVM) {
 							fillIndicatorWidgets(indicatorsVM);
 							loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
+							setActiveDashboard();
 						});
 			});
 }
@@ -406,6 +489,8 @@ var loadIndicator = function (indicatorId, initDate, endDate) {
 						fillGeneralIndicatorFirstView(viewModel);
 						break;
 				}
+				hideScrollIfAllDivsAreVisible();
+				hideTitleAndSortDiv();
 			});
 }
 
@@ -454,6 +539,7 @@ var fillDashboardsList = function (presenterData) {
 	}
 	_.templateSettings.variable = "dashboard";
 	var template = _.template ($("script.dashboardButtonTemplate").html())
+	window.loadedDashboards = presenterData;
 	for (key in presenterData) {
 		var dashboard = presenterData[key];
 		$('#dashboardsList').append(template(dashboard));
@@ -476,10 +562,6 @@ var fillIndicatorWidgets = function (presenterData) {
 	$.each(presenterData, function(key, indicator) {
 		var $widget = widgetBuilder.getIndicatorWidget(indicator);
 		grid.add_widget($widget, indicator.toDrawX, indicator.toDrawY, indicator.toDrawWidth, indicator.toDrawHeight, true);
-		//TODO will exist animation?
-		/*if (indicator.category == "normal") {
-			animateProgress(indicator, $widget);
-		}*/
 		var $title = $widget.find('.ind-title-selector');
 		if (indicator.favorite == "1") {
 			$title.addClass("panel-active");
@@ -501,7 +583,8 @@ var fillStatusIndicatorFirstView = function (presenterData) {
 			containerId:'graph1',
 			width:300,
 			height:300,
-			stretch:true
+			stretch:true,
+			noDataText: G_STRING.ID_DISPLAY_EMPTY
 		},
 		graph: {
 
@@ -526,7 +609,6 @@ var fillStatusIndicatorFirstView = function (presenterData) {
 
 	var indicatorPrincipalData = widgetBuilder.getIndicatorLoadedById(presenterData.id)
 	setIndicatorActiveMarker();
-	$('#relatedLabel').hide();
 }
 
 var fillStatusIndicatorFirstViewDetail = function(presenterData) {
@@ -550,7 +632,6 @@ var fillStatusIndicatorFirstViewDetail = function(presenterData) {
 }
 
 var fillSpecialIndicatorFirstView = function(presenterData) {
-	$('#relatedLabel').show();
 	var widgetBuilder = new WidgetBuilder();
 	var panel = $('#indicatorsDataGridStack').data('gridstack');
 	panel.remove_all();
@@ -563,7 +644,8 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
             containerId:'specialIndicatorGraph',
             width:300,
             height:300,
-            stretch:true
+            stretch:true,
+			noDataText: G_STRING.ID_NO_INEFFICIENT_PROCESSES
         },
         graph: {
             allowDrillDown:false,
@@ -582,19 +664,21 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
 			containerId:'specialIndicatorGraph',
 			width:500,
 			height:300,
-			stretch:true
+			stretch:true,
+			noDataText: G_STRING.ID_NO_INEFFICIENT_USER_GROUPS
 		},
 		graph: {
 			allowDrillDown:false,
 			allowTransition:true,
-			axisX:{ showAxis: true, label:  G_STRING.ID_GROUPS},
-			axisY:{ showAxis: true, label: G_STRING.ID_COSTS},
+			axisX:{ showAxis: true, label: G_STRING['ID_GROUPS']},
+			axisY:{ showAxis: true, label: G_STRING['ID_COSTS']},
 			gridLinesX:false,
 			gridLinesY:true,
 			showTip: true,
 			allowZoom: false,
 			useShadows: true,
-			paddingTop: 50
+			paddingTop: 50,
+			colorPalette: ['#5486bf','#bf8d54','#acb30c','#7a0c0c','#bc0000','#906090','#007efb','#62284a','#0c7a7a','#74a9a9']
 		}
     };
 
@@ -669,9 +753,10 @@ var fillSpecialIndicatorSecondView = function(presenterData) {
 			gridLinesX: true,
 			gridLinesY: true,
 			area: {visible: false, css:"area"},
-			axisX:{ showAxis: true, label: G_STRING.ID_USER },
-			axisY:{ showAxis: true, label: G_STRING.ID_COSTS },
-			showErrorBars: true
+			axisX:{ showAxis: true, label: G_STRING['ID_USER'] },
+			axisY:{ showAxis: true, label: G_STRING['ID_COSTS'] },
+			showErrorBars: true,
+			colorPalette: ['#5486bf','#bf8d54','#acb30c','#7a0c0c','#bc0000','#906090','#007efb','#62284a','#0c7a7a','#74a9a9']
 
 		}
 	};
@@ -679,12 +764,14 @@ var fillSpecialIndicatorSecondView = function(presenterData) {
 	var indicatorPrincipalData = widgetBuilder.getIndicatorLoadedById(window.currentEntityData.indicatorId);
 
 	if (window.currentIndicator.type == "1010") {
-		detailParams.graph.axisX.label = G_STRING.ID_TASK;
+		detailParams.graph.axisX.label = G_STRING['ID_TASK'] ;
+		detailParams.canvas.noDataText = G_STRING['ID_NO_INEFFICIENT_TASKS'] ;
 		var graph = new BarChart(presenterData.dataToDraw, detailParams, null, null);
 		graph.drawChart();
 	}
 
 	if (window.currentIndicator.type == "1030") {
+		detailParams.canvas.noDataText = G_STRING['ID_NO_INEFFICIENT_USERS'] ;
 		var graph = new BarChart(presenterData.dataToDraw, detailParams, null, null);
 		graph.drawChart();
 	}
@@ -704,7 +791,14 @@ var fillSpecialIndicatorSecondViewDetail = function (list) {
 	window.currentDetailFunction = fillSpecialIndicatorSecondViewDetail;
 
 	$.each(list, function(index, dataItem) {
-		var $widget = widgetBuilder.buildSpecialIndicatorSecondViewDetail(dataItem);
+		if (window.currentIndicator.type == "1010") {
+			var $widget = widgetBuilder.buildSpecialIndicatorSecondViewDetailPei(dataItem);
+		}
+
+		if (window.currentIndicator.type == "1030") {
+			var $widget = widgetBuilder.buildSpecialIndicatorSecondViewDetailUei(dataItem);
+		}
+
 		var x = (index % 2 == 0) ? 6 : 0;
 		//the first 2 elements are not hidden
 		if (index < 2) {
@@ -788,7 +882,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 			allowDrillDown:false,
 			allowTransition:true,
 			axisX:{ showAxis: true, label: G_STRING.ID_YEAR },
-			axisY:{ showAxis: true, label: G_STRING.ID_COSTS},
+			axisY:{ showAxis: true, label: G_STRING.ID_TIME_HOURS },
 			gridLinesX:false,
 			gridLinesY:true,
 			showTip: true,
@@ -810,7 +904,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 			allowDrillDown:false,
 			allowTransition:true,
 			axisX:{ showAxis: true, label: G_STRING.ID_YEAR },
-			axisY:{ showAxis: true, label: G_STRING.ID_COSTS },
+			axisY:{ showAxis: true, label: G_STRING.ID_TIME_HOURS  },
 			gridLinesX:false,
 			gridLinesY:true,
 			showTip: true,

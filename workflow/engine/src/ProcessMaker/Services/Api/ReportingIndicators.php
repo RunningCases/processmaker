@@ -88,8 +88,8 @@ class ReportingIndicators extends Api
             $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
 			$response = $indicatorsObj->getPeiCompleteData
 							($indicator_uid,
-                            new \DateTime($measure_date),
                             new \DateTime($compare_date),
+                            new \DateTime($measure_date),
                             $language);
             return $response;
         } catch (\Exception $e) {
@@ -113,8 +113,8 @@ class ReportingIndicators extends Api
             $indicatorsObj = new \ProcessMaker\BusinessModel\ReportingIndicators();
 			$response = $indicatorsObj->getUeiCompleteData
 							($indicator_uid,
-                            new \DateTime($measure_date),
                             new \DateTime($compare_date),
+                            new \DateTime($measure_date),
                             $language);
             return $response;
         } catch (\Exception $e) {
@@ -133,6 +133,7 @@ class ReportingIndicators extends Api
      *
      * @url GET /group-employee-data
      */
+
     public function doGetGroupEmployeesData($group_uid, $init_date, $end_date, $language)
     {
         try {
