@@ -251,7 +251,7 @@ Ext.onReady(function(){
             txtSearchUser,
             txtPassword ,
             txtIdentifier,
-            txtoAddFilter,
+            txtoAddFilter
             ]
     });
 
