@@ -123,7 +123,16 @@ $oDbConnections->loadAdditionalConnections();
 $G_PUBLISH = new Publisher();
 if ($_GET['DYN_UID'] != '') {
     $_SESSION['CURRENT_DYN_UID'] = $_GET['DYN_UID'];
-    $G_PUBLISH->AddContent( 'dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['DYN_UID'], '', $Fields['APP_DATA'], 'cases_SaveDataSupervisor?UID=' . $_GET['DYN_UID'] );
+    G::LoadClass('pmDynaform');
+    $FieldsPmDynaform = $Fields;
+    $FieldsPmDynaform["PRO_UID"] = $_SESSION['PROCESS'];
+    $FieldsPmDynaform["CURRENT_DYNAFORM"] = $_GET['DYN_UID'];
+    $a = new pmDynaform($FieldsPmDynaform);
+    if ($a->isResponsive()) {
+        $a->printView();
+    }else{
+        $G_PUBLISH->AddContent( 'dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['DYN_UID'], '', $Fields['APP_DATA'], 'cases_SaveDataSupervisor?UID=' . $_GET['DYN_UID'] );
+    }
 }
 
 G::RenderPage( 'publish', 'blank' );
