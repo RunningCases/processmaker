@@ -590,7 +590,7 @@ var fillStatusIndicatorFirstView = function (presenterData) {
 
 			allowDrillDown:true,
 			allowTransition:true,
-			showTip: false,
+			showTip: true,
 			allowZoom: false,
 			showLabels: true
 		}
@@ -650,7 +650,7 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
         graph: {
             allowDrillDown:false,
             allowTransition:true,
-            showTip: false,
+            showTip: true,
             allowZoom: false,
             gapWidth:0.3,
             useShadows: true,
@@ -674,7 +674,7 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
 			axisY:{ showAxis: true, label: G_STRING['ID_COSTS']},
 			gridLinesX:false,
 			gridLinesY:true,
-			showTip: false,
+			showTip: true,
 			allowZoom: false,
 			useShadows: true,
 			paddingTop: 50,
@@ -747,7 +747,7 @@ var fillSpecialIndicatorSecondView = function(presenterData) {
 		graph: {
 			allowTransition: false,
 			allowDrillDown: true,
-			showTip: false,
+			showTip: true,
 			allowZoom: false,
 			useShadows: false,
 			gridLinesX: true,
@@ -837,7 +837,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 		graph: {
 			allowTransition: false,
 			allowDrillDown: true,
-			showTip: false,
+			showTip: true,
 			allowZoom: false,
 			useShadows: false,
 			gridLinesX: true,
@@ -859,7 +859,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 		graph: {
 			allowTransition: false,
 			allowDrillDown: true,
-			showTip: false,
+			showTip: true,
 			allowZoom: false,
 			useShadows: false,
 			gridLinesX: true,
@@ -885,7 +885,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 			axisY:{ showAxis: true, label: G_STRING.ID_TIME_HOURS },
 			gridLinesX:false,
 			gridLinesY:true,
-			showTip: false,
+			showTip: true,
 			allowZoom: false,
 			useShadows: true,
 			paddingTop: 50,
@@ -907,7 +907,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 			axisY:{ showAxis: true, label: G_STRING.ID_TIME_HOURS  },
 			gridLinesX:false,
 			gridLinesY:true,
-			showTip: false,
+			showTip: true,
 			allowZoom: false,
 			useShadows: true,
 			paddingTop: 50,
