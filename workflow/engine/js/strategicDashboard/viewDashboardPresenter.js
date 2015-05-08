@@ -255,6 +255,7 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 		var newObject = that.helper.merge(originalObject, {}, map);
 		graphData.push(newObject);
 		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
+		//rounded to 1 decimal
 		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost * 10) / 10;
 		originalObject.indicatorId = data.id;
 		originalObject.json = JSON.stringify(originalObject);
