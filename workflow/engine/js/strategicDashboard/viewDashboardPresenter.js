@@ -22,6 +22,7 @@ ViewDashboardPresenter.prototype.userDashboardsViewModel = function(data) {
 	//if null data is returned we default to an empty array
 	if (data == null) { data = []; }
 	var returnList = [];
+	var hasFavorite = false;
 	$.each(data, function(index, originalObject) {
 		var map = {
 			"DAS_TITLE" : "title",
@@ -29,8 +30,17 @@ ViewDashboardPresenter.prototype.userDashboardsViewModel = function(data) {
 			"DAS_FAVORITE" : "isFavorite"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
+		if (newObject.isFavorite == 1) {
+			hasFavorite = true;
+		}
 		returnList.push(newObject);
 	});
+
+	//if no favorite is selected, the first one is selected.
+	if (!hasFavorite && returnList.length > 0 ) {
+		returnList[0].isFavorite = 1;
+	}
+
 	return returnList;
 };
 
