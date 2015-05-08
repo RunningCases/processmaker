@@ -52,6 +52,21 @@ function array_sort ($array, $on, $order = SORT_ASC, $query = '')
             }
         }
     }
+
+    if(count($new_array) != 0){
+        foreach ($new_array as $key => $value) {
+            $arrayKey[$key] = $value['userUid'];
+        }
+        $arrayKey = array_unique($arrayKey);
+        $keys = array_keys($arrayKey);
+        foreach ($new_array as $key => $value){
+            if(!in_array($key, $keys)){
+                unset($new_array[$key]);
+            }
+        }
+        $new_array = array_values($new_array);
+    }
+    
     return $new_array;
 }
 //  $APP_UIDS          = explode(',', $_POST['APP_UID']);

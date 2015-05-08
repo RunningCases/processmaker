@@ -6793,6 +6793,21 @@ class Cases
                 }
             }
         }
+
+        if(count($rows) != 0){
+            foreach ($rows as $key => $value) {
+                $arrayKey[$key] = $value['USR_UID'];
+            }
+            $arrayKey = array_unique($arrayKey);
+            $keys = array_keys($arrayKey);
+            foreach ($rows as $key => $value){
+                if(!in_array($key, $keys)){
+                    unset($rows[$key]);
+                }
+            }
+            $rows = array_values($rows);
+        }
+
         return $rows;
     }
 
