@@ -2832,7 +2832,7 @@ SELECT 'LABEL','ID_SELFSERVICE','en','Self Service','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_PROCESSES','en','Processes','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_ENTER_SEARCH_TERM','en','Enter search term','2014-01-15' 
+SELECT 'LABEL','ID_ENTER_SEARCH_TERM','en','Search...','2015-05-08' 
   UNION ALL
 SELECT 'LABEL','ID_DETAILS','en','Details','2014-01-15' 
   UNION ALL
@@ -6436,7 +6436,7 @@ SELECT 'LABEL','ID_ON_TIME','en','On Time','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_AT_RISK','en','At Risk','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_OVERDUE','en','Overdue','2014-01-15' 
+SELECT 'LABEL','ID_OVERDUE','en','Task Status','2015-05-06' 
   UNION ALL
 SELECT 'LABEL','ID_SUCCESS_RECORD','en','Success Records:','2014-01-15' 
   UNION ALL
@@ -7574,7 +7574,7 @@ SELECT 'LABEL','ID_GRID_PAGE_DISPLAYING_DASHBOARD_MESSAGE','en','Displaying Dash
   UNION ALL
 SELECT 'LABEL','ID_GRID_PAGE_NO_DASHBOARD_MESSAGE','en','No Dashboards to display','2015-03-09' 
   UNION ALL
-SELECT 'LABEL','ID_CONFIRM_DELETE_DASHBOARD','en','Do you want to delete selected Dashboard?','2015-03-09' 
+SELECT 'LABEL','ID_CONFIRM_DELETE_DASHBOARD','en','Are you sure you want to delete the selected Dashboard?','2015-05-06' 
   UNION ALL
 SELECT 'LABEL','ID_DASHBOARD_SUCCESS_DELETE','en','Dashboard has been deleted correctly.','2015-03-09' 
   UNION ALL
@@ -7582,7 +7582,7 @@ SELECT 'LABEL','ID_GRID_PAGE_DISPLAYING_0WNER_MESSAGE','en','Displaying Owners {
   UNION ALL
 SELECT 'LABEL','ID_GRID_PAGE_NO_OWNER_MESSAGE','en','No Owners to display','2015-03-09' 
   UNION ALL
-SELECT 'LABEL','ID_OWNER_TYPE','en','Type owner','2015-03-09' 
+SELECT 'LABEL','ID_OWNER_TYPE','en','Owner type','2015-05-08' 
   UNION ALL
 SELECT 'LABEL','ID_OWNER_INFORMATION','en','Owner Information','2015-03-09' 
   UNION ALL
@@ -7618,7 +7618,7 @@ SELECT 'LABEL','ID_EMPLYEE_EFFICIENCIE','en','Employee Efficience Index','2015-0
   UNION ALL
 SELECT 'LABEL','ID_USER_INEFFICIENCE','en','Inefficience Cost By User','2015-03-09' 
   UNION ALL
-SELECT 'LABEL','ID_OVER_DUE','en','Status','2015-04-01' 
+SELECT 'LABEL','ID_OVER_DUE','en','Inbox Status','2015-05-06' 
   UNION ALL
 SELECT 'LABEL','ID_NEW_CASES','en','% New Cases','2015-04-06' 
   UNION ALL
@@ -7692,7 +7692,7 @@ SELECT 'LABEL','ID_NUMBER_CASES','en','Number cases','2015-03-30'
   UNION ALL
 SELECT 'LABEL','ID_EFFICIENCY_INDEX','en','Efficiency Index','2015-03-30' 
   UNION ALL
-SELECT 'LABEL','ID_INEFFICIENCY_COST','en','Inefficiency Cost','2015-03-30' 
+SELECT 'LABEL','ID_INEFFICIENCY_COST','en','Costs or Savings','2015-05-06' 
   UNION ALL
 SELECT 'LABEL','ID_EFFICIENCY_COST','en','Efficiency cost','2015-03-30' 
   UNION ALL
@@ -7751,6 +7751,18 @@ SELECT 'LABEL','ID_NO_INEFFICIENT_USER_GROUPS','en','No Inefficient User Groups'
 SELECT 'LABEL','ID_NO_INEFFICIENT_USERS','en','No Inefficient Users','2015-04-29' 
   UNION ALL
 SELECT 'LABEL','ID_REQUIRED_FIELDS_GRID','en','The marked fields in the form are required and/or have errors in their format. Please verify the fields before continuing.','2015-05-04' 
+  UNION ALL
+SELECT 'LABEL','ID_INBOX_EMPTY','en','Your Inbox is empty...','2015-05-06' 
+  UNION ALL
+SELECT 'LABEL','ID_KPI','en','Key Performance Indicators','2015-05-07' 
+  UNION ALL
+SELECT 'LABEL','ID_INVALID_VALUE_EXPECTING_POSITIVE_DECIMAL','en','Invalid value for "{0}". Please enter a positive decimal value.','2015-05-08' 
+  UNION ALL
+SELECT 'LABEL','ID_CONFIRM_DELETE_DASHBOARD_OWNER','en','Are you sure you want to delete this user?','2015-05-08' 
+  UNION ALL
+SELECT 'LABEL','ID_CASE_CODE','en','Case Code','2015-05-08' 
+  UNION ALL
+SELECT 'LABEL','ID_PIN','en','Pin','2015-05-08' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 
