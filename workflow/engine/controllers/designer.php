@@ -27,6 +27,11 @@ class Designer extends Controller
         $appUid = isset($httpData->app_uid) ? $httpData->app_uid : '';
         $proReadOnly = isset($httpData->prj_readonly) ? $httpData->prj_readonly : 'false';
         $client = $this->getClientCredentials();
+
+        if (isset($httpData->tracker_designer) && $httpData->tracker_designer == 1) {
+            $client["tracker_designer"] = 1;
+        }
+
         $authCode = $this->getAuthorizationCode($client);
         $debug = false; //System::isDebugMode();
 
@@ -129,7 +134,7 @@ class Designer extends Controller
 
         $oauthServer = new \ProcessMaker\Services\OAuth2\Server();
 
-        if (!isset($_SESSION["USER_LOGGED"])) {
+        if (isset($client["tracker_designer"]) && $client["tracker_designer"] == 1) {
             $_SESSION["USER_LOGGED"] = "00000000000000000000000000000001";
         }
 
@@ -143,6 +148,10 @@ class Designer extends Controller
 
         $response = $oauthServer->postAuthorize($authorize, $userId, true);
         $code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=')+5, 40);
+
+        if (isset($client["tracker_designer"]) && $client["tracker_designer"] == 1) {
+            unset($_SESSION["USER_LOGGED"]);
+        }
 
         return $code;
     }
