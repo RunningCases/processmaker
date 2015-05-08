@@ -41,26 +41,27 @@ class Dashboard {
         $resp = array();
         $dashboards = $this->getDashboardsUidByUser($usr_uid);
         $existFavorite = false;
+		$cont = 0;
         foreach($dashboards as $i=>$x) {
             //$resp[$i] = $this->getDashboard($x['DAS_UID']);
             $dashboardUser = $this->getDashboard($x['DAS_UID']);
             if ($dashboardUser['DAS_STATUS'] == 0) {
                 continue;
             }
-            $resp[$i] = $dashboardUser;
+            $resp[$cont] = $dashboardUser;
             $Dashboard = new \ProcessMaker\BusinessModel\Dashboard();
             $dashConfig = $Dashboard->getConfig($usr_uid);
-            $resp[$i]['DAS_FAVORITE'] = 0;
+            $resp[$cont]['DAS_FAVORITE'] = 0;
             foreach ($dashConfig as $dashId=>$dashData) {
                 if($dashId == $x['DAS_UID'] ) {
-                    $resp[$i]['DAS_FAVORITE'] = $dashData['dashFavorite'];
+                    $resp[$cont]['DAS_FAVORITE'] = $dashData['dashFavorite'];
                     if ($dashData['dashFavorite']==1) {
                         $existFavorite = true;
                     }
                 }
             }
+			$cont++;
         }
-
         //if no favorite is set, the default favorite is the first one
         if ($existFavorite == false && $resp != null &&  sizeof($resp)>0) {
             $resp[0]['DAS_FAVORITE'] = 1;
