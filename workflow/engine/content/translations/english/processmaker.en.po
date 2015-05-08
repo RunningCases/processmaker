@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 3.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-05-04 12:02:00\n"
+"PO-Revision-Date: 2015-05-08 12:24:12\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -4294,8 +4294,8 @@ msgstr "Processes"
 # TRANSLATION
 # LABEL/ID_ENTER_SEARCH_TERM
 #: LABEL/ID_ENTER_SEARCH_TERM
-msgid "Enter search term"
-msgstr "Enter search term"
+msgid "Search..."
+msgstr "Search..."
 
 # TRANSLATION
 # LABEL/ID_DETAILS
@@ -14968,8 +14968,8 @@ msgstr "At Risk"
 # TRANSLATION
 # LABEL/ID_OVERDUE
 #: LABEL/ID_OVERDUE
-msgid "Overdue"
-msgstr "Overdue"
+msgid "Task Status"
+msgstr "Task Status"
 
 # TRANSLATION
 # LABEL/ID_SUCCESS_RECORD
@@ -18340,8 +18340,8 @@ msgstr "No Dashboards to display"
 # TRANSLATION
 # LABEL/ID_CONFIRM_DELETE_DASHBOARD
 #: LABEL/ID_CONFIRM_DELETE_DASHBOARD
-msgid "Do you want to delete selected Dashboard?"
-msgstr "Do you want to delete selected Dashboard?"
+msgid "Are you sure you want to delete the selected Dashboard?"
+msgstr "Are you sure you want to delete the selected Dashboard?"
 
 # TRANSLATION
 # LABEL/ID_DASHBOARD_SUCCESS_DELETE
@@ -18364,8 +18364,8 @@ msgstr "No Owners to display"
 # TRANSLATION
 # LABEL/ID_OWNER_TYPE
 #: LABEL/ID_OWNER_TYPE
-msgid "Type owner"
-msgstr "Type owner"
+msgid "Owner type"
+msgstr "Owner type"
 
 # TRANSLATION
 # LABEL/ID_OWNER_INFORMATION
@@ -18472,8 +18472,8 @@ msgstr "Inefficience Cost By User"
 # TRANSLATION
 # LABEL/ID_OVER_DUE
 #: LABEL/ID_OVER_DUE
-msgid "[LABEL/ID_OVER_DUE] Status"
-msgstr "Status"
+msgid "Inbox Status"
+msgstr "Inbox Status"
 
 # TRANSLATION
 # LABEL/ID_NEW_CASES
@@ -18694,8 +18694,8 @@ msgstr "Efficiency Index"
 # TRANSLATION
 # LABEL/ID_INEFFICIENCY_COST
 #: LABEL/ID_INEFFICIENCY_COST
-msgid "Inefficiency Cost"
-msgstr "Inefficiency Cost"
+msgid "Costs or Savings"
+msgstr "Costs or Savings"
 
 # TRANSLATION
 # LABEL/ID_EFFICIENCY_COST
@@ -18864,6 +18864,42 @@ msgstr "No Inefficient Users"
 #: LABEL/ID_REQUIRED_FIELDS_GRID
 msgid "The marked fields in the form are required and/or have errors in their format. Please verify the fields before continuing."
 msgstr "The marked fields in the form are required and/or have errors in their format. Please verify the fields before continuing."
+
+# TRANSLATION
+# LABEL/ID_INBOX_EMPTY
+#: LABEL/ID_INBOX_EMPTY
+msgid "Your Inbox is empty..."
+msgstr "Your Inbox is empty..."
+
+# TRANSLATION
+# LABEL/ID_KPI
+#: LABEL/ID_KPI
+msgid "Key Performance Indicators"
+msgstr "Key Performance Indicators"
+
+# TRANSLATION
+# LABEL/ID_INVALID_VALUE_EXPECTING_POSITIVE_DECIMAL
+#: LABEL/ID_INVALID_VALUE_EXPECTING_POSITIVE_DECIMAL
+msgid "Invalid value for \"{0}\". Please enter a positive decimal value."
+msgstr "Invalid value for \"{0}\". Please enter a positive decimal value."
+
+# TRANSLATION
+# LABEL/ID_CONFIRM_DELETE_DASHBOARD_OWNER
+#: LABEL/ID_CONFIRM_DELETE_DASHBOARD_OWNER
+msgid "Are you sure you want to delete this user?"
+msgstr "Are you sure you want to delete this user?"
+
+# TRANSLATION
+# LABEL/ID_CASE_CODE
+#: LABEL/ID_CASE_CODE
+msgid "Case Code"
+msgstr "Case Code"
+
+# TRANSLATION
+# LABEL/ID_PIN
+#: LABEL/ID_PIN
+msgid "Pin"
+msgstr "Pin"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
@@ -35810,13 +35846,13 @@ msgstr "CASE TRACKER"
 # tracker/login.xml?CASE
 # tracker/login.xml
 #: Text - CASE
-msgid "Case Code"
+msgid "[tracker/login.xml?CASE] Case Code"
 msgstr "Case Code"
 
 # tracker/login.xml?PIN
 # tracker/login.xml
 #: password - PIN
-msgid "Pin"
+msgid "[tracker/login.xml?PIN] Pin"
 msgstr "Pin"
 
 # tracker/login.xml?BSUBMIT
