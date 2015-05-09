@@ -1608,12 +1608,12 @@ class workspaceTools
             $final = $stop - $start;
             CLI::logging("<*>   Verify took $final seconds.\n");
 
-            $start = microtime(true);
+            /*$start = microtime(true);
             CLI::logging("> Updating cache view...\n");
             $workspace->upgradeCacheView(true, false, $lang);
             $stop = microtime(true);
             $final = $stop - $start;
-            CLI::logging("<*>   Updating cache view Process took $final seconds.\n");
+            CLI::logging("<*>   Updating cache view Process took $final seconds.\n");*/
 
             mysql_close($link);
         }
