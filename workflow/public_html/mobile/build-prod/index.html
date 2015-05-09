@@ -418,7 +418,7 @@
 		  	</label>
 		<%}%>
 		<div <%if(group === 'form'){ %> class="pmdynaform-file-control col-md-<%=colSpanControl%> col-lg-<%=colSpanControl%> pmdynaform-field-control" <%}%> >
-			<div class="pmdynaform-file-container col-xs-8 col-sm-12 col-md-12 col-lg-12">
+			<div class="pmdynaform-file-container col-xs-12 col-sm-12 col-md-12 col-lg-12">
 				<button type="button" class="<%=namespace%>-control-<%=type%> form-control"
 					<% if(disabled === true){%>disabled<%}%>
 					<% if(mode === "view"){%>style="display:none;"<%}%>
@@ -593,7 +593,25 @@
 				<%}%>
 				<%for(var k=0; k<fullOptions.length; k+=1){%>
 					<span><%=fullOptions[k]%></span>
-				<%}%>	
+				<%}%>
+				<input type="hidden" value="<%= data['label']%>"
+					<% if  ( group === "grid") { %>
+						id = "form<%=id%>"
+						name ="form<%=name%>"
+					<%} else{%>
+						id = "form[<%=id%>]"
+						name ="form[<%=name%>]"
+					<%}%>
+				>
+				<input type="hidden" value="<%= data['label']%>"
+					<% if  ( group === "grid") { %>
+						id = "form<%=id%>_label"
+						name ="form<%=name%>_label"
+					<%} else{%>
+						id = "form[<%=id%>_label]"
+						name ="form[<%=name%>_label]"
+					<%}%>
+				>
 			</div>
 			<% if (group === "form") { %>
 				<%if (hint !== "" && hint !== null){%>
@@ -617,6 +635,14 @@
 				class="<%=namespace%>-control-<%=type%> form-control" 
 				type="hidden"
 				value= "<%= value%>">
+			<input type="hidden" value="<%= data['value']%>"
+				<% if  ( group === "grid") { %>
+					id = "form<%=id%>_label"
+					name ="form<%=name%>_label"
+				<%} else{%>
+					id = "form[<%=id%>_label]"
+					name ="form[<%=name%>_label]"
+				<%}%>
 		</div>
 </script>
 
