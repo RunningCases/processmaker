@@ -56,7 +56,7 @@ class pmLicenseManager
         $this->licensedfeatures = array();
         $this->licensedfeaturesList = array();
         if (in_array($this->result, $validStatus)) {
-            $this->serial="3ptta7Xko2prrptrZnSd356aqmPXvMrayNPFj6CLdaR1pWtrW6qPw9jV0OHjxrDGu8LVxtmSm9nP5kR23HRpdZWccpeui+bKkK�DoqCt2Kqgpq6Vg37s";
+            $this->serial="3ptta7Xko2prrptrZnSd356aqmPXvMrayNPFj6CLdaR1pWtrW6qPw9jV0OHjxrDGu8LVxtmSm9nP5kR23HRpdZWccpeui+bKkK°DoqCt2Kqgpq6Vg37s";
             $info['FIRST_NAME']       = $results['DATA']['FIRST_NAME'];
             $info['LAST_NAME']        = $results['DATA']['LAST_NAME'];
             $info['DOMAIN_WORKSPACE'] = $results['DATA']['DOMAIN_WORKSPACE'];
