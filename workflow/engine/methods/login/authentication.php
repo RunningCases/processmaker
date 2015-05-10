@@ -320,7 +320,11 @@ try {
         }
         $aFields['DESCRIPTION'] .= '<br />' . G::LoadTranslation('ID_PLEASE_CHANGE_PASSWORD_POLICY') . '<br /><br /></span>';
         $G_PUBLISH = new Publisher;
-        $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/changePassword', '', $aFields, 'changePassword');
+        if(SYS_SKIN == 'neoclassic'){
+            $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/changePasswordpm3', '', $aFields, 'changePassword');
+        }else{
+            $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/changePassword', '', $aFields, 'changePassword');
+        }
         G::RenderPage('publish');
         die;
     }
