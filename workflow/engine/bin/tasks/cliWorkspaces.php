@@ -579,6 +579,7 @@ function run_workspace_restore($args, $opts) {
             return;
         }
         workspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang);
+        run_cacheview_upgrade($workspace, '');
     }
   }
 }
