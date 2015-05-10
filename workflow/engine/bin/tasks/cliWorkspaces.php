@@ -275,7 +275,7 @@ function run_cacheview_upgrade($args, $opts) {
       echo "Upgrading cache view for " . pakeColor::colorize($workspace->name, "INFO") . "\n";
       $workspace->upgradeCacheView(true, false, $lang);
     } catch (Exception $e) {
-      echo "Errors upgrading translation of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n";
+      echo "Errors upgrading cache view of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n";
     }
   }
 }
@@ -579,7 +579,6 @@ function run_workspace_restore($args, $opts) {
             return;
         }
         workspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang);
-        run_cacheview_upgrade($workspace, '');
     }
   }
 }
