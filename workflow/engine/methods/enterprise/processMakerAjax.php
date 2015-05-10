@@ -121,8 +121,9 @@ switch ($option) {
             ///////
             $licenseManager = &pmLicenseManager::getSingleton();
             $server = isset($licenseManager->server) ? $licenseManager->server : '';
+            $workspace = (isset($licenseManager->workspace)) ? $licenseManager->workspace : 'pmLicenseSrv';
 
-            $url = "http://$server/syspmLicenseSrv/en/green/services/rest";
+            $url = "http://$server/sys".$workspace."/en/green/services/rest";
 
             if (EnterpriseUtils::checkConnectivity($url) == false) {
                 throw (new Exception("Server '$server' not available."));
@@ -296,8 +297,9 @@ switch ($option) {
             ///////
             $licenseManager = &pmLicenseManager::getSingleton();
             $server = (isset($licenseManager->server)) ? $licenseManager->server : '';
+            $workspace = (isset($licenseManager->workspace)) ? $licenseManager->workspace : 'pmLicenseSrv';
 
-            $url = "http://$server/syspmLicenseSrv/en/green/services/rest";
+            $url = "http://$server/sys".$workspace."/en/green/services/rest";
 
             if (EnterpriseUtils::checkConnectivity($url) == false) {
                 throw (new Exception("Server '$server' not available."));
@@ -338,7 +340,7 @@ switch ($option) {
 
             $results = file_get_contents($url, false, $context);
             $results = G::json_decode($results);
-            $results = $results[0];
+            $results = isset($results[0]) ? $results[0] :array();
 
             $pmVersion = EnterpriseUtils::pmVersion(PM_VERSION);
             $versions = array();
