@@ -239,7 +239,7 @@ Ext.onReady(function() {
         viewConfig: {
           forceFit:true
         },
-        title : _('ID_STRATEGIC_DASHBOARD'),
+        title : _('ID_KPI'),
         store: store,
         cm: cmodel,
         sm: smodel,

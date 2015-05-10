@@ -195,6 +195,18 @@ WidgetBuilder.prototype.getIndicatorLoadedById = function (searchedIndicatorId) 
 	return retval;
 }
 
+WidgetBuilder.prototype.getDashboardLoadedById = function (searchedDashboardId) {
+	var retval = null;
+	for (key in window.loadedDashboards) {
+		var dashboard = window.loadedDashboards[key];
+		if (dashboard.id == searchedDashboardId) {
+			retval = dashboard;		
+		}
+	}
+	if (retval == null) { throw new Error(searchedIndicatorId + " was not found in the loaded indicators.");}
+	return retval;
+}
+
 WidgetBuilder.prototype.buildGeneralIndicatorFirstView = function (indicatorData) {
 	_.templateSettings.variable = "indicator";
 	var template = _.template ($("script.generalIndicatorMainPanel").html());
@@ -223,6 +235,7 @@ model = new ViewDashboardModel(token, urlProxy, ws[3]);
 presenter = new ViewDashboardPresenter(model);
 
 window.loadedIndicators = []; //updated in das-title-selector.click->fillIndicatorWidgets, ready->fillIndicatorWidgets
+window.loadedDashboards = [];
 window.currentEntityData = null;
 window.currentIndicator = null;//updated in ind-button-selector.click ->loadIndicator, ready->loadIndicator
 window.currentDashboardId = null;
@@ -354,6 +367,7 @@ $(document).ready(function() {
 				.done(function(indicatorsVM) {
 					fillIndicatorWidgets(indicatorsVM);
 					loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
+					setActiveDashboard();
 				});
 	});
 
@@ -424,11 +438,21 @@ var selectedOrderOfDetailList = function () {
 
 var selectDefaultMonthAndYear = function () {
 	var compareDate = new Date();
+	compareDate.setDate(1);
 	compareDate.setMonth(compareDate.getMonth() - 1);
 	var compareMonth = compareDate.getMonth() + 1;
-	var compareYear = compareDate.getYear();
+	var compareYear = compareDate.getFullYear();
 	$('#month').val(compareMonth);
 	$('#year').val(compareYear);
+}
+
+var setActiveDashboard = function () {
+	var builder = new WidgetBuilder();
+	var dashboard = builder.getDashboardLoadedById(window.currentDashboardId);
+	if (dashboard == null) {
+		return;
+	}
+	$('#titleH4').text(dashboard.title);
 }
 
 var initialDraw = function () {
@@ -442,6 +466,7 @@ var initialDraw = function () {
 						.done(function(indicatorsVM) {
 							fillIndicatorWidgets(indicatorsVM);
 							loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
+							setActiveDashboard();
 						});
 			});
 }
@@ -464,9 +489,9 @@ var loadIndicator = function (indicatorId, initDate, endDate) {
 						fillGeneralIndicatorFirstView(viewModel);
 						break;
 				}
+				hideScrollIfAllDivsAreVisible();
+				hideTitleAndSortDiv();
 			});
-	hideScrollIfAllDivsAreVisible();
-	hideTitleAndSortDiv();
 }
 
 var setIndicatorActiveMarker = function () {
@@ -510,10 +535,13 @@ var defaultEndDate = function () {
 
 var fillDashboardsList = function (presenterData) {
 	if (presenterData == null || presenterData.length == 0) {
-		$('#dashboardsList').append(G_STRING['ID_NO_DATA_TO_DISPLAY']);
+		$('#dashboardMessage').text(G_STRING['ID_GRID_PAGE_NO_DASHBOARD_MESSAGE']);
+		$('#titleH4').text(G_STRING['ID_GRID_PAGE_NO_DASHBOARD_MESSAGE']);
+		$('#compareIndicators').hide();
 	}
 	_.templateSettings.variable = "dashboard";
 	var template = _.template ($("script.dashboardButtonTemplate").html())
+	window.loadedDashboards = presenterData;
 	for (key in presenterData) {
 		var dashboard = presenterData[key];
 		$('#dashboardsList').append(template(dashboard));
@@ -564,7 +592,7 @@ var fillStatusIndicatorFirstView = function (presenterData) {
 
 			allowDrillDown:true,
 			allowTransition:true,
-			showTip: false,
+			showTip: true,
 			allowZoom: false,
 			showLabels: true
 		}
@@ -651,7 +679,8 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
 			showTip: true,
 			allowZoom: false,
 			useShadows: true,
-			paddingTop: 50
+			paddingTop: 50,
+			colorPalette: ['#5486bf','#bf8d54','#acb30c','#7a0c0c','#bc0000','#906090','#007efb','#62284a','#0c7a7a','#74a9a9']
 		}
     };
 
@@ -728,7 +757,8 @@ var fillSpecialIndicatorSecondView = function(presenterData) {
 			area: {visible: false, css:"area"},
 			axisX:{ showAxis: true, label: G_STRING['ID_USER'] },
 			axisY:{ showAxis: true, label: G_STRING['ID_COSTS'] },
-			showErrorBars: true
+			showErrorBars: true,
+			colorPalette: ['#5486bf','#bf8d54','#acb30c','#7a0c0c','#bc0000','#906090','#007efb','#62284a','#0c7a7a','#74a9a9']
 
 		}
 	};

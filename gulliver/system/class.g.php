@@ -2718,6 +2718,12 @@ class G
         $image = $inputFn( $path );
         imagecopyresampled( $image_p, $image, 0, 0, 0, 0, $resWidth, $resHeight, $width, $height );
         $outputFn( $image_p, $saveTo );
+        
+        if(!is_null($saveTo)) {
+            G::LoadSystem('inputfilter');
+            $filter = new InputFilter();
+            $saveTo = $filter->validateInput($saveTo, "path");
+        }
 
         @chmod( $saveTo, 0666 );
     }
@@ -3134,10 +3140,10 @@ class G
      */
     public function evalJScript ($c)
     {
-        G::LoadSystem('inputfilter');
+        /*G::LoadSystem('inputfilter');
         $filter = new InputFilter();
-        $c = $filter->xssFilterHard($c);
-        print ("<script language=\"javascript\">{$c}</script>") ;
+        $c = $filter->xssFilterHard($c);*/
+        print ('<script language="javascript">'.$c.'</script>') ;
     }
 
     /**

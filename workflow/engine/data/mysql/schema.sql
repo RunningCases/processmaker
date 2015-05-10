@@ -2644,6 +2644,7 @@ CREATE TABLE `ABE_CONFIGURATION`
 	`ABE_CASE_NOTE_IN_RESPONSE` INTEGER default 0,
 	`ABE_CREATE_DATE` DATETIME  NOT NULL,
 	`ABE_UPDATE_DATE` DATETIME,
+	`ABE_SUBJECT_FIELD` VARCHAR(100) default '' NOT NULL,
 	PRIMARY KEY (`ABE_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='The plugin table for actionsByEmail';
 #-----------------------------------------------------------------------------

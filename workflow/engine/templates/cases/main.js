@@ -1,7 +1,8 @@
 var PANEL_EAST_OPEN = false;
 var currentSelectedTreeMenuItem = null;
 var centerPanel;
-var menuTree;
+var menuTree, setFlag;
+var flagRefresh = true;
 
 var debugVarTpl = new Ext.Template('<span style="font-size:11">{value}</span>');
 debugVarTpl.compile();
@@ -612,12 +613,17 @@ function updateCasesTree() {
 
 }
 
+setFlag = function (val) {
+  flagRefresh = val;
+}
+
 function timer()
 {
+    if (flagRefresh) {
+      updateCasesTree();
+      updateCasesView();
+    }
     //FORMATS.casesListRefreshTime is in seconds
-    updateCasesTree();
-    updateCasesView();
-
     setTimeout("timer()", parseInt(FORMATS.casesListRefreshTime) * 1000);
 }
 
