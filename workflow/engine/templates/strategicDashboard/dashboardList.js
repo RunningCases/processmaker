@@ -311,7 +311,7 @@ newDashboard = function() {
 //Edit Dashboard  Action
 editDashboard = function() {
     var rowSelected = infoGrid.getSelectionModel().getSelected();
-    if (rowSelected){
+    if (rowSelected && rowSelected.data.DAS_STATUS == 1 ){
         location.href = 'formEditDashboard?DAS_UID=' + rowSelected.data.DAS_UID;
     }
 };
