@@ -22,8 +22,9 @@ if ($aux['extension'] != 'dat') {
         $licenseManager = new pmLicenseManager();
         preg_match("/^license_(.*).dat$/", $licenseManager->file, $matches);
         $realId = urlencode($matches[1]);
+        $workspace = (isset($licenseManager->workspace)) ? $licenseManager->workspace : 'pmLicenseSrv';
 
-        $addonLocation = "http://{$licenseManager->server}/syspmLicenseSrv/en/green/services/addonsStore?action=getInfo&licId=$realId";
+        $addonLocation = "http://{$licenseManager->server}/sys".$workspace."/en/green/services/addonsStore?action=getInfo&licId=$realId";
 
         ///////
         $cnn = Propel::getConnection("workflow");
