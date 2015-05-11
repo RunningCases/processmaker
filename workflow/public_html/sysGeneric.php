@@ -961,7 +961,7 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
                 }
             }
 
-            if ($bRedirect) {
+            if ($bRedirect && !isset($_GET["tracker_designer"])) {
                 if (substr( SYS_SKIN, 0, 2 ) == 'ux' && SYS_SKIN != 'uxs') { // verify if the current skin is a 'ux' variant
                     $loginUrl = 'main/login';
                 } else if (strpos( $_SERVER['REQUEST_URI'], '/home' ) !== false) { //verify is it is using the uxs skin for simplified interface

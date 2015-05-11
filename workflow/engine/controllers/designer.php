@@ -27,6 +27,11 @@ class Designer extends Controller
         $appUid = isset($httpData->app_uid) ? $httpData->app_uid : '';
         $proReadOnly = isset($httpData->prj_readonly) ? $httpData->prj_readonly : 'false';
         $client = $this->getClientCredentials();
+
+        if (isset($httpData->tracker_designer) && $httpData->tracker_designer == 1) {
+            $client["tracker_designer"] = 1;
+        }
+
         $authCode = $this->getAuthorizationCode($client);
         $debug = false; //System::isDebugMode();
 
@@ -55,16 +60,19 @@ class Designer extends Controller
         $clientToken["client_secret"] = $client['CLIENT_SECRET'];
 
         $consolidated = 0;
+        $enterprise = 0;
         /*----------------------------------********---------------------------------*/
         $licensedFeatures = & PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
             $consolidated = 1;
         }
+        $enterprise = 1;
         /*----------------------------------********---------------------------------*/
 
         $this->setVar('prj_uid', $proUid);
         $this->setVar('app_uid', $appUid);
         $this->setVar('consolidated', $consolidated);
+        $this->setVar('enterprise', $enterprise);
         $this->setVar('prj_readonly', $proReadOnly);
         $this->setVar('credentials', base64_encode(json_encode($clientToken)));
         $this->setVar('isDebugMode', $debug);
@@ -128,6 +136,11 @@ class Designer extends Controller
         \ProcessMaker\Services\OAuth2\Server::setPmClientId($client['CLIENT_ID']);
 
         $oauthServer = new \ProcessMaker\Services\OAuth2\Server();
+
+        if (isset($client["tracker_designer"]) && $client["tracker_designer"] == 1) {
+            $_SESSION["USER_LOGGED"] = "00000000000000000000000000000001";
+        }
+
         $userId = $_SESSION['USER_LOGGED'];
         $authorize = true;
         $_GET = array_merge($_GET, array(
@@ -138,6 +151,10 @@ class Designer extends Controller
 
         $response = $oauthServer->postAuthorize($authorize, $userId, true);
         $code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=')+5, 40);
+
+        if (isset($client["tracker_designer"]) && $client["tracker_designer"] == 1) {
+            unset($_SESSION["USER_LOGGED"]);
+        }
 
         return $code;
     }
@@ -151,4 +168,3 @@ class Designer extends Controller
         return array('dsn' => $dsn, 'username' => DB_USER, 'password' => DB_PASS);
     }
 }
-

@@ -1608,6 +1608,8 @@ class workspaceTools
             $final = $stop - $start;
             CLI::logging("<*>   Verify took $final seconds.\n");
 
+            $workspace->checkMafeRequirements($workspaceName, $lang);
+
             $start = microtime(true);
             CLI::logging("> Updating cache view...\n");
             $workspace->upgradeCacheView(true, false, $lang);
@@ -1695,6 +1697,13 @@ class workspaceTools
         $this->initPropel(true);
         $pmRestClient = OauthClientsPeer::retrieveByPK('x-pm-local-client');
         if (empty($pmRestClient)) {
+            if (!is_file(PATH_DATA . 'sites/' . $workspace . '/' . '.server_info')) {
+                $_CSERVER = $_SERVER;
+                unset($_CSERVER['REQUEST_TIME']);
+                unset($_CSERVER['REMOTE_PORT']);
+                $cput = serialize($_CSERVER);
+                file_put_contents(PATH_DATA . 'sites/' . $workspace . '/' . '.server_info', $cput);
+            }
             if (is_file(PATH_DATA . 'sites/' . $workspace . '/' . '.server_info')) {
                 $SERVER_INFO = file_get_contents(PATH_DATA . 'sites/' . $workspace . '/'.'.server_info');
                 $SERVER_INFO = unserialize($SERVER_INFO);
