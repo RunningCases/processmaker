@@ -535,7 +535,9 @@ var defaultEndDate = function () {
 
 var fillDashboardsList = function (presenterData) {
 	if (presenterData == null || presenterData.length == 0) {
-		$('#dashboardsList').append(G_STRING['ID_NO_DATA_TO_DISPLAY']);
+		$('#dashboardMessage').text(G_STRING['ID_GRID_PAGE_NO_DASHBOARD_MESSAGE']);
+		$('#titleH4').text(G_STRING['ID_GRID_PAGE_NO_DASHBOARD_MESSAGE']);
+		$('#compareIndicators').hide();
 	}
 	_.templateSettings.variable = "dashboard";
 	var template = _.template ($("script.dashboardButtonTemplate").html())
