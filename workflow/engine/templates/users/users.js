@@ -1175,11 +1175,13 @@ function saveUser()
         return false;
       }
     }
+    /*----------------------------------********---------------------------------*/
     if (!Ext.getCmp('USR_COST_BY_HOUR').isValid()) {
-        PMExt.warning(_('ID_ERROR'), _('ID_INVALID_VALUE_EXPECTING_POSITIVE_INTEGER', _('ID_COST_BY_HOUR')));
+        PMExt.warning(_('ID_ERROR'), _('ID_INVALID_VALUE_EXPECTING_POSITIVE_DECIMAL', _('ID_COST_BY_HOUR')));
         Ext.getCmp('USR_COST_BY_HOUR').focus(true,10);
         return false;
     }
+    /*----------------------------------********---------------------------------*/
 
     if (USR_UID == '00000000000000000000000000000001') {
         if (Ext.getCmp('USR_ROLE').getValue() != PROCESSMAKER_ADMIN) {

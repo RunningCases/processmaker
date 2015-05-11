@@ -83,6 +83,7 @@ class Bpmn extends Handler
         "lane" => array("BOU_ELEMENT_TYPE", "BOU_SIZE_IDENTICAL", "BOU_UID")
     );
 
+    private $arrayElementOriginChecked = array();
 
     public function __construct($data = null)
     {
@@ -1378,6 +1379,13 @@ class Bpmn extends Handler
         $index
     ) {
         try {
+            if (isset($this->arrayElementOriginChecked[$elementOriginUid]) && $this->arrayElementOriginChecked[$elementOriginUid] == $elementOriginType) {
+                //Return
+                return array();
+            }
+
+            $this->arrayElementOriginChecked[$elementOriginUid] = $elementOriginType;
+
             if ($elementOriginType == $elementDestType && $elementOriginUid == $elementDestUid) {
                 $arrayEvent = array();
                 $arrayEvent[$index] = array($elementDestUid, $elementDestType);
@@ -1403,7 +1411,7 @@ class Bpmn extends Handler
                         $index + 1
                     );
 
-                    if (count($arrayEvent) > 0) {
+                    if (!empty($arrayEvent)) {
                         $arrayEvent[$index] = array($elementOriginUid, $elementOriginType);
 
                         //Return
@@ -1430,6 +1438,8 @@ class Bpmn extends Handler
         try {
             $arrayEventType   = array("END", "INTERMEDIATE");
             $arrayEventMarker = array("MESSAGETHROW");
+
+            $this->arrayElementOriginChecked = array();
 
             $arrayEventAux = $this->getElementsBetweenElementOriginAndElementDest(
                 $elementOriginUid,

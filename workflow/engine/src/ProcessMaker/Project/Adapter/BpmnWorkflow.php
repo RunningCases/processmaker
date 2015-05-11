@@ -1038,9 +1038,9 @@ class BpmnWorkflow extends Project\Bpmn
         }
     }
 
-    public function remove()
+    public function remove($force = false)
     {
-        parent::remove();
+        parent::remove($force);
         $this->wp->remove();
     }
 
