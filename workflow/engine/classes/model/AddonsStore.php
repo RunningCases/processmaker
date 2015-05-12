@@ -100,13 +100,12 @@ class AddonsStore extends BaseAddonsStore
             }
 
             $sw = 1;
-            $addonInLicense = in_array($addon->getAddonId(), $licenseManager->features);
-
-            if ($sw == 1 && $addon->getAddonId() != "enterprise" && !$addonInLicense) {
-                $sw = 0;
-            }
-
             if ($type == 'plugin') {
+                $addonInLicense = in_array($addon->getAddonId(), $licenseManager->features);
+
+                if ($sw == 1 && $addon->getAddonId() != "enterprise" && !$addonInLicense) {
+                    $sw = 0;
+                }
                 if ($sw == 1 && $addon->isInstalled()) {
                     if ($addon->isEnabled()) {
                         $status = "installed";
@@ -126,7 +125,8 @@ class AddonsStore extends BaseAddonsStore
             } else {
                 $status = "available";
                 $enabled = false;
-                if (!$addonInLicense && in_array($addon->getAddonName(), $licenseManager->licensedfeatures) == 1) {
+                $addonInLicense = in_array($addon->getAddonId(), $licenseManager->licensedfeatures);
+                if (in_array($addon->getAddonName(), $licenseManager->licensedfeatures) == 1) {
                     $status = "installed";
                     $enabled = true;
                 }
