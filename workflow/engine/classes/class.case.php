@@ -949,6 +949,10 @@ class Cases
     public function updateCase($sAppUid, $Fields = array())
     {
         try {
+            $oApplication = new Application;
+            if (!$oApplication->exists($sAppUid)) {
+                return false;
+            }
             $aApplicationFields = $Fields['APP_DATA'];
             $Fields['APP_UID'] = $sAppUid;
             $Fields['APP_UPDATE_DATE'] = 'now';
@@ -6898,7 +6902,7 @@ class Cases
             unset($aFields['APP_STATUS']);
             unset($aFields['APP_PROC_STATUS']);
             unset($aFields['APP_PROC_CODE']);
-            unset($aFields['APP_PIN']);
+            unset($aFields['APP_PIN']);                        
             $this->updateCase($aFields['APP_UID'], $aFields);
             return true;
         }
