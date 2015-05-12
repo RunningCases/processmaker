@@ -2820,7 +2820,9 @@ function PMFAddCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendM
 function PMFAddAttachmentToArray($arrayData, $index, $value, $suffix = " Copy({i})")
 {
     if (isset($suffix) && $suffix == "") {
-        $suffix = " Copy ({i})";
+        $suffix = " Copy({i}
+
+        )";
     }
 
     $newIndex = $index;
