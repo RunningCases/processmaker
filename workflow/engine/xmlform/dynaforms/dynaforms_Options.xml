@@ -13,6 +13,7 @@
   <dynaformsFlatEditor type="private" defaultValue="../dynaforms/dynaforms_FlatEditor"/>
   <dynaformsDelete type="private" defaultValue="../dynaforms/dynaforms_Delete"/>
   <js type="javascript" replaceTags="1"><![CDATA[
+  document.getElementById("form[PAGED_TABLE_FAST_SEARCH]").placeholder = "@G::LoadTranslation(ID_EMPTY_SEARCH)";
   function dynaformAdd(){
     popupWindow("@G::LoadTranslation(ID_NEW_DYNAFORM)", "@G::encryptlink(@#dynaformsChoseType)?PRO_UID=@%PRO_UID" , 500, 225);
 	//popupWindow('@G::LoadTranslation(ID_NEW_DYNAFORM)', '@G::encryptlink(@#dynaformsNewPlugin)?PRO_UID=@%PRO_UID' , 500, 350);
