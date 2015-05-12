@@ -41,6 +41,7 @@ img.img-responsive {
     margin-bottom: 20px;
     margin-left: 50px;
     margin-right: 50px;
+    -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
 }
 
 .login .panel-default > .panel-heading {

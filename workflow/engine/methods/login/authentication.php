@@ -249,12 +249,12 @@ try {
     unset($_CSERVER['REQUEST_TIME']);
     unset($_CSERVER['REMOTE_PORT']);
     $cput = serialize($_CSERVER);
-    if (!is_file(PATH_DATA_SITE . PATH_SEP . '.server_info')) {
-        file_put_contents(PATH_DATA_SITE . PATH_SEP . '.server_info', $cput);
+    if (!is_file(PATH_DATA_SITE . '.server_info')) {
+        file_put_contents(PATH_DATA_SITE . '.server_info', $cput);
     } else {
-        $c = file_get_contents(PATH_DATA_SITE . PATH_SEP . '.server_info');
+        $c = file_get_contents(PATH_DATA_SITE . '.server_info');
         if (G::encryptOld($c) != G::encryptOld($cput)) {
-            file_put_contents(PATH_DATA_SITE . PATH_SEP . '.server_info', $cput);
+            file_put_contents(PATH_DATA_SITE . '.server_info', $cput);
         }
     }
 
