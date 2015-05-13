@@ -35,9 +35,10 @@ class Dashboard extends BaseDashboard
         try {
 
             if (!isset($data['DAS_UID'])) {
+
+                $dashboard = new Dashboard();
                 $data['DAS_UID'] = G::generateUniqueID();
                 $data['DAS_CREATE_DATE'] = date('Y-m-d H:i:s');
-                $dashboard = new Dashboard();
                 $msg = 'Create ';
             } else {
                 $msg = 'Update ';
@@ -46,8 +47,11 @@ class Dashboard extends BaseDashboard
 
             G::LoadSystem('inputfilter');
             $filter = new InputFilter();
+            if (isset($data['DAS_TITLE'])) {
+                $data['DAS_TITLE'] = $filter ->validateInput($data['DAS_TITLE'], "string");
+            }
+
             $data['DAS_UPDATE_DATE'] = date('Y-m-d H:i:s');
-            $data['DAS_TITLE'] = $filter ->validateInput($data['DAS_TITLE'], "string");
             $dashboard->fromArray($data, BasePeer::TYPE_FIELDNAME);
             if ($dashboard->validate()) {
                 $connection->begin();
