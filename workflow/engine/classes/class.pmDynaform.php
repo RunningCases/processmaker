@@ -35,10 +35,10 @@ class pmDynaform
 
     public function getDynaformTitle($idDynaform)
     {
-         $d = new Dynaform();
-         $d->setDynUid($idDynaform);
-         $titleDynaform = $d->getDynTitle();
-         return $titleDynaform;
+        $d = new Dynaform();
+        $d->setDynUid($idDynaform);
+        $titleDynaform = $d->getDynTitle();
+        return $titleDynaform;
     }
 
     public function getDynaform()
@@ -122,7 +122,7 @@ class pmDynaform
                     }
                 }
                 //query & options
-                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "suggest" || $value === "checkbox" || $value === "radio" || $value === "datetime")) {
+                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "suggest" || $value === "checkbox" || $value === "radio" || $value === "datetime" || $value === "hidden")) {
                     if (!isset($json->data)) {
                         $json->data = array(
                             "value" => "",
@@ -162,7 +162,7 @@ class pmDynaform
                                 array_push($json->options, $option);
                             }
                         } catch (Exception $e) {
-
+                            
                         }
                     }
                     if (isset($json->options[0])) {
@@ -176,7 +176,7 @@ class pmDynaform
                     }
                 }
                 //data
-                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "suggest" || $value === "dropdown" || $value === "checkbox" || $value === "radio" || $value === "datetime")) {
+                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "suggest" || $value === "dropdown" || $value === "checkbox" || $value === "radio" || $value === "datetime" || $value === "hidden")) {
                     $json->data = array(
                         "value" => isset($this->fields["APP_DATA"][$json->name]) ? $this->fields["APP_DATA"][$json->name] : (is_array($json->data) ? $json->data["value"] : $json->data->value),
                         "label" => isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : (is_array($json->data) ? $json->data["label"] : $json->data->label)
@@ -219,7 +219,7 @@ class pmDynaform
                             $cells = array();
                             foreach ($json->columns as $column) {
                                 //data
-                                if ($column->type === "text" || $column->type === "textarea" || $column->type === "dropdown" || $column->type === "datetime" || $column->type === "checkbox" || $column->type === "file" || $column->type === "link") {
+                                if ($column->type === "text" || $column->type === "textarea" || $column->type === "dropdown" || $column->type === "datetime" || $column->type === "checkbox" || $column->type === "file" || $column->type === "link" || $value === "hidden") {
                                     array_push($cells, array(
                                         "value" => isset($row[$column->name]) ? $row[$column->name] : "",
                                         "label" => isset($row[$column->name . "_label"]) ? $row[$column->name . "_label"] : (isset($row[$column->name]) ? $row[$column->name] : "")

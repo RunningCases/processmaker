@@ -328,20 +328,22 @@ class CaseScheduler extends BaseCaseScheduler
         $oCriteria->addOr( CaseSchedulerPeer::SCH_END_DATE, $dCurrentDate, Criteria::GREATER_EQUAL );
         $oDataset = CaseSchedulerPeer::doSelectRS( $oCriteria );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-        $oDataset->next();
+
         $sValue = '';
         $sActualTime = '';
         $sDaysPerformTask = '';
         $sWeeks = '';
         $sStartDay = '';
         $sMonths = '';
-        while ($aRow = $oDataset->getRow()) {
+
+        while ($oDataset->next()) {
+            $aRow = $oDataset->getRow();
+
             if ($cron == 1) {
                 $arrayCron = unserialize( trim( @file_get_contents( PATH_DATA . "cron" ) ) );
                 $arrayCron["processcTimeStart"] = time();
                 @file_put_contents( PATH_DATA . "cron", serialize( $arrayCron ) );
             }
-
 
             $sSchedulerUid = $aRow['SCH_UID'];
             $sOption = $aRow['SCH_OPTION'];
@@ -379,10 +381,20 @@ class CaseScheduler extends BaseCaseScheduler
             $sActualDataTime = strtotime( $aRow['SCH_TIME_NEXT_RUN'] );
             $sActualSysTime = strtotime( $nTime );
 
-            // note added consider the posibility to encapsulate some in functionality in a class method or some funtions
-            if ($sActualDataHour < $dActualSysHour) {
-                $_PORT = (SERVER_PORT != '80') ? ':' . SERVER_PORT : '';
-                $defaultEndpoint = 'http://' . SERVER_NAME . $_PORT . '/sys' . SYS_SYS . '/' . SYS_LANG . '/classic/services/wsdl2';
+            if ($sActualDataHour == $dActualSysHour && $sActualDataMinutes <= $dActualSysMinutes) {
+            //if ($sActualDataHour == $dActualSysHour && $sActualDataMinutes == $dActualSysMinutes) {
+                $port = "";
+
+                if (isset($_SERVER["SERVER_PORT"])) {
+                    $port = ($_SERVER["SERVER_PORT"] . "" != "80")? ":" . $_SERVER["SERVER_PORT"] : "";
+                } else {
+                    if (defined("SERVER_PORT")) {
+                        $port = (SERVER_PORT . "" != "80")? ":" . SERVER_PORT : "";
+                    }
+                }
+
+                $defaultEndpoint = "http://" . SERVER_NAME . $port . "/sys" . SYS_SYS . "/" . SYS_LANG . "/classic/services/wsdl2";
+
                 println( " - Connecting webservice: $defaultEndpoint" );
                 $user = $aRow["SCH_DEL_USER_NAME"];
                 $pass = $aRow["SCH_DEL_USER_PASS"];
@@ -404,7 +416,6 @@ class CaseScheduler extends BaseCaseScheduler
                     $paramsLog = array ('PRO_UID' => $processId,'TAS_UID' => $taskId,'SCH_UID' => $sSchedulerUid,'USR_NAME' => $user,'RESULT' => '','EXEC_DATE' => date( 'Y-m-d' ),'EXEC_HOUR' => date( 'H:i:s' ),'WS_CREATE_CASE_STATUS' => '','WS_ROUTE_CASE_STATUS' => ''
                     );
 
-                    $sw_transfer_control_plugin = false; //This SW will be true only if a plugin is allowed to continue the action
                     //If this Job was was registered to be performed by a plugin
                     if ((isset( $aRow['CASE_SH_PLUGIN_UID'] )) && ($aRow['CASE_SH_PLUGIN_UID'] != "")) {
                         //Check if the plugin is active
@@ -423,11 +434,9 @@ class CaseScheduler extends BaseCaseScheduler
                             $activePluginsForCaseScheduler = $oPluginRegistry->getCaseSchedulerPlugins();
                             foreach ($activePluginsForCaseScheduler as $key => $caseSchedulerPlugin) {
                                 if ((isset( $caseSchedulerPlugin->sNamespace )) && ($caseSchedulerPlugin->sNamespace == $pluginParts[0]) && (isset( $caseSchedulerPlugin->sActionId )) && ($caseSchedulerPlugin->sActionId == $pluginParts[1])) {
-                                    $sw_transfer_control_plugin = true;
                                     $caseSchedulerSelected = $caseSchedulerPlugin;
                                 }
                             }
-
                         }
                     }
 
@@ -446,7 +455,6 @@ class CaseScheduler extends BaseCaseScheduler
                         $paramsLogResult = $paramsLogResultFromPlugin['paramsLogResult'];
                         $paramsRouteLogResult = $paramsLogResultFromPlugin['paramsRouteLogResult'];
                     } else {
-
                         eprint( " - Creating the new case............." );
 
                         $paramsAux = $params;
@@ -472,9 +480,9 @@ class CaseScheduler extends BaseCaseScheduler
                             $paramsLog['WS_CREATE_CASE_STATUS'] = "Case " . $caseNumber . " " . strip_tags( $result->message );
                             $paramsLogResult = 'SUCCESS';
                             $params = array ('sessionId' => $sessionId,'caseId' => $caseId,'delIndex' => "1");
-                            eprint( " - Routing the case #$caseNumber.............." );
                             try {
                                 $result = $client->__SoapCall( 'RouteCase', array ($params) );
+                                eprint(" - Routing the case #$caseNumber..............");
                                 if ($result->status_code == 0) {
                                     $paramsLog['WS_ROUTE_CASE_STATUS'] = strip_tags( $result->message );
                                     $retMsg = explode( "Debug", $paramsLog['WS_ROUTE_CASE_STATUS'] );
@@ -494,141 +502,12 @@ class CaseScheduler extends BaseCaseScheduler
                             }
                         } else {
                             $paramsLog['WS_CREATE_CASE_STATUS'] = strip_tags( $result->message );
+                            eprintln( "FAILED->{$paramsLog ['WS_CREATE_CASE_STATUS']}", 'red' );
                             $paramsLogResult = 'FAILED';
-
                         }
                     }
                 } else {
-                    eprintln( $result->message, 'red' );
-                    // invalid user or  bad password
-                }
-                if ($paramsLogResult == 'SUCCESS' && $paramsRouteLogResult == 'SUCCESS') {
-                    $paramsLog['RESULT'] = 'SUCCESS';
-                } else {
-                    $paramsLog['RESULT'] = 'FAILED';
-                }
-
-                $newCaseLog->saveLogParameters( $paramsLog );
-                $newCaseLog->save();
-
-                if ($sOption != '4' && $sOption != '5') {
-                    $nSchLastRunTime = $sActualTime;
-
-                    $dEstimatedDate = $this->updateNextRun( $sOption, $sValue, $sActualTime, $sDaysPerformTask, $sWeeks, $sStartDay, $sMonths );
-
-                    if ($aRow['SCH_END_DATE'] != '') {
-                        if (date( "Y-m-d", strtotime( $dEstimatedDate ) ) > date( "Y-m-d", strtotime( $aRow['SCH_END_DATE'] ) )) {
-                            $Fields = $this->Load( $sSchedulerUid );
-                            $Fields['SCH_LAST_STATE'] = $aRow['SCH_STATE'];
-                            $Fields['SCH_STATE'] = 'PROCESSED';
-                            $this->Update( $Fields );
-                        }
-                    }
-
-                    $nSchTimeNextRun = $dEstimatedDate;
-                    $this->updateDate( $sSchedulerUid, $nSchTimeNextRun, $nSchLastRunTime );
-                } elseif ($sOption != '5') {
-                    $Fields = $this->Load( $sSchedulerUid );
-                    $Fields['SCH_LAST_STATE'] = $aRow['SCH_STATE'];
-                    $Fields['SCH_LAST_RUN_TIME'] = $Fields['SCH_TIME_NEXT_RUN'];
-                    $Fields['SCH_STATE'] = 'PROCESSED';
-                    $this->Update( $Fields );
-                } else {
-                    $nSchLastRunTime = $sActualTime;
-                    $Fields = $this->Load( $sSchedulerUid );
-                    $Fields['SCH_LAST_RUN_TIME'] = $Fields['SCH_TIME_NEXT_RUN'];
-
-                    //$nSchTimeNextRun = strtotime( $Fields['SCH_TIME_NEXT_RUN'] );
-                    $nSchTimeNextRun = $nTime;
-                    $nextRun = $Fields['SCH_REPEAT_EVERY'] * 60 * 60;
-                    $nSchTimeNextRun += $nextRun;
-                    $nSchTimeNextRun = date( "Y-m-d H:i", $nSchTimeNextRun );
-
-                    $this->updateDate( $sSchedulerUid, $nSchTimeNextRun, $nSchLastRunTime );
-                }
-            } elseif ($sActualDataHour == $dActualSysHour && $sActualDataMinutes <= $dActualSysMinutes) {
-                $_PORT = '';
-                if ( isset($_SERVER['SERVER_PORT']) ) {
-                    $_PORT = ($_SERVER['SERVER_PORT'] != '80') ? ':' . $_SERVER['SERVER_PORT'] : '';
-                } elseif ( defined('SERVER_PORT') ) {
-                    $_PORT = (SERVER_PORT != '80') ? ':' . SERVER_PORT : '';
-                }
-                //$defaultEndpoint = 'http://' . $_SERVER ['SERVER_NAME'] . ':' . $_PORT . '/sys' . SYS_SYS .'/'.SYS_LANG.'/classic/green/services/wsdl2';
-                $defaultEndpoint = 'http://' . SERVER_NAME . $_PORT . '/sys' . SYS_SYS . '/' . SYS_LANG . '/classic/services/wsdl2';
-                println( " - Connecting webservice: $defaultEndpoint" );
-                $user = $aRow["SCH_DEL_USER_NAME"];
-                $pass = $aRow["SCH_DEL_USER_PASS"];
-                $processId = $aRow["PRO_UID"];
-                $taskId = $aRow["TAS_UID"];
-                $client = new SoapClient( $defaultEndpoint );
-                $params = array ('userid' => $user,'password' => Bootstrap::getPasswordHashType() . ':' . $pass);
-                $result = $client->__SoapCall( 'login', array ($params) );
-                eprint( " - Logging as user $user............." );
-                if ($result->status_code == 0) {
-                    eprintln( "OK+", 'green' );
-                    $sessionId = $result->message;
-                    $newCaseLog = new LogCasesScheduler();
-                    $newRouteLog = new LogCasesScheduler();
-                    $variables = Array ();
-                    $params = array ('sessionId' => $sessionId,'processId' => $processId,'taskId' => $taskId,'variables' => $variables
-                    );
-
-                    $paramsLog = array ('PRO_UID' => $processId,'TAS_UID' => $taskId,'SCH_UID' => $sSchedulerUid,'USR_NAME' => $user,'RESULT' => '','EXEC_DATE' => date( 'Y-m-d' ),'EXEC_HOUR' => date( 'H:i:s' ),'WS_CREATE_CASE_STATUS' => '','WS_ROUTE_CASE_STATUS' => ''
-                    );
-
-                    $paramsAux = $params;
-                    $paramsAux["executeTriggers"] = 1;
-
-                    $oPluginRegistry = &PMPluginRegistry::getSingleton();
-                    if ($oPluginRegistry->existsTrigger ( PM_SCHEDULER_CREATE_CASE_BEFORE )) {
-                        $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_BEFORE, $paramsAux);
-                    }
-
-                    $result = $client->__SoapCall("NewCase", array($paramsAux));
-
-                    if ($oPluginRegistry->existsTrigger ( PM_SCHEDULER_CREATE_CASE_AFTER )) {
-                        $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_AFTER, $result);
-                    }
-
-                    eprint( " - Creating the new case............." );
-                    if ($result->status_code == 0) {
-                        eprintln( "OK+ CASE #{$result->caseNumber} was created!", 'green' );
-                        $caseId = $result->caseId;
-                        $caseNumber = $result->caseNumber;
-                        $log[] = $caseNumber . ' was created!, ProcessID: ' . $aRow['PRO_UID'];
-                        $paramsLog['WS_CREATE_CASE_STATUS'] = "Case " . $caseNumber . " " . strip_tags( $result->message );
-                        $paramsLogResult = 'SUCCESS';
-
-                        $params = array ('sessionId' => $sessionId,'caseId' => $caseId,'delIndex' => "1"
-                        );
-                        try {
-                            $result = $client->__SoapCall( 'RouteCase', array ($params
-                            ) );
-                            eprint( " - Routing the case #$caseNumber.............." );
-                            if ($result->status_code == 0) {
-                                $paramsLog['WS_ROUTE_CASE_STATUS'] = strip_tags( $result->message );
-                                $retMsg = explode( "Debug", $paramsLog['WS_ROUTE_CASE_STATUS'] );
-                                $retMsg = $retMsg[0];
-                                eprintln( "OK+ $retMsg", 'green' );
-                                $paramsRouteLogResult = 'SUCCESS';
-                            } else {
-                                eprintln( "FAILED-> {$paramsLog ['WS_ROUTE_CASE_STATUS']}", 'red' );
-                                $paramsLog['WS_ROUTE_CASE_STATUS'] = strip_tags( $result->message );
-                                $paramsRouteLogResult = 'FAILED';
-                            }
-                        } catch (Exception $oError) {
-                            setExecutionResultMessage('    WITH ERRORS', 'error');
-                            $paramsLog['WS_ROUTE_CASE_STATUS'] = strip_tags( $oError->getMessage());
-                            eprintln("  '-".strip_tags($oError->getMessage()), 'red');
-                            $paramsRouteLogResult = 'FAILED';
-                        }
-                    } else {
-                        $paramsLog['WS_CREATE_CASE_STATUS'] = strip_tags( $result->message );
-                        eprintln( "FAILED->{$paramsLog ['WS_CREATE_CASE_STATUS']}", 'red' );
-                        $paramsLogResult = 'FAILED';
-                    }
-                } else {
-                    // invalid user or  bad password
+                    //Invalid user or bad password
                     eprintln( $result->message, 'red' );
                 }
                 if ($paramsLogResult == 'SUCCESS' && $paramsRouteLogResult == 'SUCCESS') {
@@ -674,7 +553,6 @@ class CaseScheduler extends BaseCaseScheduler
                     $this->updateDate( $sSchedulerUid, $nSchTimeNextRun, $nSchLastRunTime );
                 }
             }
-            $oDataset->next();
         }
     }
 

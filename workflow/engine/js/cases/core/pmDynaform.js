@@ -28,41 +28,42 @@ $(window).load(function () {
             workspace: workspace
         },
         token: credentials,
-        submitRest: false
-    });
-    var dyn_content_history = document.createElement("input");
-    dyn_content_history.type = "hidden";
-    dyn_content_history.name = "form[DYN_CONTENT_HISTORY]";
-    dyn_content_history.value = JSON.stringify(jsondata);
-    var dynaformname = document.createElement("input");
-    dynaformname.type = "hidden";
-    dynaformname.name = "__DynaformName__";
-    dynaformname.value = __DynaformName__;
-    var appuid = document.createElement("input");
-    appuid.type = "hidden";
-    appuid.name = "APP_UID";
-    appuid.value = app_uid;
-    var arrayRequired = document.createElement("input");
-    arrayRequired.type = "hidden";
-    arrayRequired.name = "DynaformRequiredFields";
-    arrayRequired.value = fieldsRequired;
-    var form = document.getElementsByTagName("form")[0];
-    form.action = filePost ? filePost : "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
-    form.method = "post";
-    //form.enctype = "multipart/form-data";
-    form.setAttribute("encType","multipart/form-data");
-    form.appendChild(dyn_content_history);
-    form.appendChild(dynaformname);
-    form.appendChild(appuid);
-    form.appendChild(arrayRequired);
-    var dyn_forward = document.getElementById("dyn_forward");
-    dyn_forward.onclick = function () {
-        if (window.project.getForms()[0].isValid()) {
-            form.submit();
+        submitRest: false,
+        onLoad: function () {
+            var dyn_content_history = document.createElement("input");
+            dyn_content_history.type = "hidden";
+            dyn_content_history.name = "form[DYN_CONTENT_HISTORY]";
+            dyn_content_history.value = JSON.stringify(jsondata);
+            var dynaformname = document.createElement("input");
+            dynaformname.type = "hidden";
+            dynaformname.name = "__DynaformName__";
+            dynaformname.value = __DynaformName__;
+            var appuid = document.createElement("input");
+            appuid.type = "hidden";
+            appuid.name = "APP_UID";
+            appuid.value = app_uid;
+            var arrayRequired = document.createElement("input");
+            arrayRequired.type = "hidden";
+            arrayRequired.name = "DynaformRequiredFields";
+            arrayRequired.value = fieldsRequired;
+            var form = document.getElementsByTagName("form")[0];
+            form.action = filePost ? filePost : "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
+            form.method = "post";
+            form.setAttribute("encType", "multipart/form-data");
+            form.appendChild(dyn_content_history);
+            form.appendChild(dynaformname);
+            form.appendChild(appuid);
+            form.appendChild(arrayRequired);
+            var dyn_forward = document.getElementById("dyn_forward");
+            dyn_forward.onclick = function () {
+                if (window.project.getForms()[0].isValid()) {
+                    form.submit();
+                }
+                return false;
+            };
+            if (triggerDebug === true) {
+                showdebug();
+            }
         }
-        return false;
-    };
-    if (triggerDebug === true) {
-        showdebug();
-    }
+    });
 });
