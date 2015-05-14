@@ -319,7 +319,10 @@ CloseWindow = function(){
 SaveNewCategory = function(){
   catName = newForm.getForm().findField('category').getValue();
   catName = catName.trim();
-  if (catName == '') return;
+  if (catName == '') { 
+    Ext.Msg.alert(_('ID_WARNING'), _("ID_FIELD_REQUIRED", _("ID_CATEGORY_NAME")));
+    return;
+  }
   viewport.getEl().mask(_('ID_PROCESSING'));
   Ext.Ajax.request({
     url: 'processCategory_Ajax',
