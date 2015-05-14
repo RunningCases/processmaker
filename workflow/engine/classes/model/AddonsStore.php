@@ -41,7 +41,7 @@ class AddonsStore extends BaseAddonsStore
             $criteria = new Criteria(AddonsStorePeer::DATABASE_NAME);
             $criteria->addSelectColumn("*");
             $criteria->add(AddonsStorePeer::STORE_TYPE, "license", Criteria::EQUAL);
-            //$criteria->add(AddonsStorePeer::STORE_ID, $licenseManager->id, Criteria::NOT_EQUAL);
+            $criteria->add(AddonsStorePeer::STORE_ID, $licenseManager->id, Criteria::NOT_EQUAL);
 
             foreach (AddonsStorePeer::doSelect($criteria) as $store) {
                 $store->clear();

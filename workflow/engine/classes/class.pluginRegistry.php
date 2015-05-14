@@ -429,8 +429,8 @@ class PMPluginRegistry
         $plugins = array ();
         $namePlugin = array ();
         foreach ($files as $f) {
-            //if (preg_match("/^([\w\.]*).ini$/", $f["filename"], $matches)) {
-            if (preg_match( "/^(.*pluginConfig)\.ini$/", $f["filename"], $matches )) {
+            if (preg_match("/^([\w\.]*).ini$/", $f["filename"], $matches)) {
+            //if (preg_match( "/^(.*pluginConfig)\.ini$/", $f["filename"], $matches )) {
                 $plugins[] = $matches[1];
             }
             if (preg_match( "/^.*($pluginName)\.php$/", $f["filename"], $matches )) {
@@ -485,7 +485,6 @@ class PMPluginRegistry
         */
 
         $res = $tar->extract( PATH_PLUGINS );
-
         if (! file_exists( PATH_PLUGINS . $pluginFile )) {
             throw (new Exception( "File \"$pluginFile\" doesn't exist" ));
         }
