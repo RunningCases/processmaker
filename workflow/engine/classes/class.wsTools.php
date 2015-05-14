@@ -1610,12 +1610,14 @@ class workspaceTools
 
             $workspace->checkMafeRequirements($workspaceName, $lang);
 
+            /*----------------------------------********---------------------------------*/
             $start = microtime(true);
-            CLI::logging("> Updating cache view...\n");
-            $workspace->upgradeCacheView(true, false, $lang);
+            CLI::logging("> Updating List tables...\n");
+            $workspace->migrateList($workspace->name);
             $stop = microtime(true);
             $final = $stop - $start;
-            CLI::logging("<*>   Updating cache view Process took $final seconds.\n");
+            CLI::logging("<*>   Updating List Process took $final seconds.\n");
+            /*----------------------------------********---------------------------------*/
 
             mysql_close($link);
         }
