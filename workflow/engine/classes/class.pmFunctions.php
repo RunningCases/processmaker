@@ -2865,7 +2865,7 @@ function PMFRemoveMask ($field, $separator = '.', $currency = '')
     $field = str_replace($thousandSeparator, "", $field);
     $field = str_replace($decimalSeparator, ".", $field);
     $field = str_replace($currency, "", $field);
-    if(strpos($decimalSeparator, $field)){
+    if(strpos($decimalSeparator, $field) !== false){
         $field = (float)(trim($field));
     }
     return $field;
