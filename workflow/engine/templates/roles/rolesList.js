@@ -535,6 +535,7 @@ EditRole = function(){
       editForm.getForm().findField('name').setValue(rowSelected.data.ROL_NAME);
       editForm.getForm().findField('status').setValue(rowSelected.data.ROL_STATUS);
       w = new Ext.Window({
+        closeAction: "hide",
         autoHeight: true,
         id: 'w',
         modal: true,
