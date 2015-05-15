@@ -428,17 +428,19 @@ function getDynaformsVars ($sProcessUID, $typeVars = 'all', $bIncMulSelFields = 
             $oData->next();
             while ($aRowd = $oData->getRow()) {
                 $dynaform = G::json_decode($aRowd['DYN_CONTENT'],true);
-                $items = $dynaform['items'][0]['items'];
-                foreach($items as $key => $val){
-                    if($val[0]['type'] == 'grid'){
-                        if(sizeof($val[0]['columns'])) {
-                            $columns = $val[0]['columns'];
-                            foreach($columns as $column) {
-                                array_push($aFields, array(
-                                    "sName" => $column['name'],
-                                    "sType" => $column['dataType'],
-                                    "sLabel" => $column['name'] . " [" . $column['dataType']. "]"
-                                ));
+                if(is_array($dynaform) && sizeof($dynaform)) {
+                    $items = $dynaform['items'][0]['items'];
+                    foreach($items as $key => $val){
+                        if($val[0]['type'] == 'grid'){
+                            if(sizeof($val[0]['columns'])) {
+                                $columns = $val[0]['columns'];
+                                foreach($columns as $column) {
+                                    array_push($aFields, array(
+                                        "sName" => $column['name'],
+                                        "sType" => $column['dataType'],
+                                        "sLabel" => $column['name'] . " [" . $column['dataType']. "]"
+                                    ));
+                                }
                             }
                         }
                     }

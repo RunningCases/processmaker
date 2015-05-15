@@ -66,7 +66,18 @@ $html .= '<select name="type_variables" id="type_variables">';
 $html .= '<option value="all">'.$filter->xssFilterHard(G::LoadTranslation( 'ID_TINY_ALL_VARIABLES' )).'</option>';
 $html .= '<option value="system">'.$filter->xssFilterHard(G::LoadTranslation( 'ID_TINY_SYSTEM_VARIABLES' )).'</option>';
 $html .= '<option value="process">'.$filter->xssFilterHard(G::LoadTranslation( 'ID_TINY_PROCESS_VARIABLES' )).'</option>';
-$html .= '<option value="grid">'.$filter->xssFilterHard(G::LoadTranslation( 'ID_TINY_GRID_VARIABLES' )).'</option>';
+
+$oCriteria = new Criteria('workflow');
+$oCriteria->addSelectColumn(BpmnProjectPeer::PRJ_UID);
+$oCriteria->add(BpmnProjectPeer::PRJ_UID, $_REQUEST['sProcess']);
+$oDataset = ProcessPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
+$oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+$oDataset->next();
+$row = $oDataset->getRow();
+if (isset($row["PRJ_UID"])) {
+    $html .= '<option value="grid">'.$filter->xssFilterHard(G::LoadTranslation( 'ID_TINY_GRID_VARIABLES' )).'</option>';
+}
+
 $html .= '</select> &nbsp;&nbsp;&nbsp;&nbsp;';
 $html .= '</td>';
 
