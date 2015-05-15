@@ -160,15 +160,14 @@ if ($flagExecuteBeforeTriggers) {
     if (! isset( $_SESSION['_NO_EXECUTE_TRIGGERS_'] )) {
         //Execute before triggers - Start
         $Fields['APP_DATA'] = $oCase->ExecuteTriggers( $_SESSION['TASK'], $_GET['TYPE'], $_GET['UID'], 'BEFORE', $Fields['APP_DATA'] );
-        $Fields['DEL_INDEX'] = $_SESSION['INDEX'];
-        $Fields['TAS_UID'] = $_SESSION['TASK'];
         //Execute before triggers - End
     } else {
         unset( $_SESSION['_NO_EXECUTE_TRIGGERS_'] );
-        $Fields['DEL_INDEX'] = $_SESSION['INDEX'];
-        $Fields['TAS_UID'] = $_SESSION['TASK'];
     }
 }
+
+$Fields["DEL_INDEX"] = $_SESSION["INDEX"];
+$Fields["TAS_UID"] = $_SESSION["TASK"];
 
 if (isset( $_GET['breakpoint'] )) {
     $_POST['NextStep'] = $_SESSION['TRIGGER_DEBUG']['BREAKPAGE'];
@@ -518,7 +517,7 @@ try {
                             $util = new Java( "com.processmaker.util.pmutils" );
                             $util->setInputPath( $javaInput );
                             $util->setOutputPath( $javaOutput );
-                            
+
                             G::LoadSystem('inputfilter');
                             $filter = new InputFilter();
 
@@ -553,17 +552,17 @@ try {
                             $util = new Java( "com.processmaker.util.pmutils" );
                             $util->setInputPath( $javaInput );
                             $util->setOutputPath( $javaOutput );
-                            
+
                             G::LoadSystem('inputfilter');
                             $filter = new InputFilter();
-                            
+
                             $locationFrom = PATH_DYNAFORM . $aOD['PRO_UID'] . PATH_SEP . $aOD['OUT_DOC_UID'] . '.pdf';
                             $locationFrom = $filter->validateInput($locationFrom, "path");
                             copy( $locationFrom, $javaInput . $aOD['OUT_DOC_UID'] . '.pdf' );
 
                             $outputFile = $javaOutput . $sFilename . '.pdf';
                             print $util->writeVarsToAcroFields( $aOD['OUT_DOC_UID'] . '.pdf', $xmlData );
-                            
+
                             $locationFrom = $javaOutput . $aOD['OUT_DOC_UID'] . '.pdf';
                             $locationFrom = $filter->validateInput($locationFrom, "path");
                             copy( $locationFrom, $pathOutput . $sFilename . '.pdf' );

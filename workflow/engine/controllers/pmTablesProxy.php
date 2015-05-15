@@ -1642,13 +1642,16 @@ class pmTablesProxy extends HttpProxyController
                 $index = 0;
                 while ($oDataset->next()) {
                     $row = $oDataset->getRow();
-                    array_push($fields, array(
+                    $fieldType = isset($row["VAR_FIELD_TYPE"]) ? $row["VAR_FIELD_TYPE"]: '';
+                    if(! in_array( $fieldType, $excludeFieldsList )){
+                       array_push($fields, array(
                         "FIELD_UID" => $row["VAR_NAME"] . "-" . $row["VAR_FIELD_TYPE"],
                         "FIELD_NAME" => $row["VAR_NAME"],
                         "FIELD_VALIDATE" => "any",
                         "_index" => $index ++,
                         "_isset" => true
                     ));
+                    }
                 }
             }
 

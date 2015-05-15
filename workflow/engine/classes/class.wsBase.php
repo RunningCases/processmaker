@@ -1187,7 +1187,7 @@ class wsBase
 
             $mktimeDueDate = 0;
 
-            if (! empty( $dueDate )) {
+            if (! empty( $dueDate ) && $dueDate != 'null' && $dueDate) {
                 if (! preg_match( "/^(\d{4})-(\d{2})-(\d{2})$/", $dueDate, $arrayMatch )) {
                     $result = new wsCreateUserResponse( - 1, G::loadTranslation( "ID_INVALID_DATA" ) . " $dueDate", null );
 
@@ -1199,7 +1199,7 @@ class wsBase
                 $mktimeDueDate = mktime( 0, 0, 0, date( "m" ), date( "d" ), date( "Y" ) + 1 );
             }
 
-            if (! empty( $status )) {
+            if (! empty( $status ) && $status != 'null' && $status) {
                 if ($status != "ACTIVE" && $status != "INACTIVE" && $status != "VACATION") {
                     $result = new wsCreateUserResponse( - 1, G::loadTranslation( "ID_INVALID_DATA" ) . " $status", null );
 

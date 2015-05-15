@@ -227,7 +227,7 @@ class MessageEventDefinition
             $flagCheckData = (isset($arrayData["MSGT_UID"]) && $arrayData["MSGT_UID"] . "" != "")? true : $flagCheckData;
             $flagCheckData = (isset($arrayData["MSGED_VARIABLES"]))? true : $flagCheckData;
 
-            if ($flagCheckData && $arrayFinalData["MSGT_UID"] . "" != "") {
+            if (isset($arrayFinalData["MSGT_UID"]) && $arrayFinalData["MSGT_UID"] . "" != "" && $flagCheckData) {
                 $arrayMessageTypeVariable = array();
 
                 $arrayMessageTypeData = $messageType->getMessageType($arrayFinalData["MSGT_UID"], true);
@@ -632,3 +632,4 @@ class MessageEventDefinition
         }
     }
 }
+

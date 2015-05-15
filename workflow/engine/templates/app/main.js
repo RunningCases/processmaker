@@ -213,13 +213,18 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
           growMin: 40,
           growMax: 80,
           maxLengthText : 500,
-          allowBlank :true,
+          allowBlank :false,
           selectOnFocus :true,
           enableKeyEvents: true,
           listeners : {
             scope : this,
             keyup : updateTextCtr,
-            keydown: updateTextCtr
+            keydown: updateTextCtr,
+            'change': function(field, newVal, oldVal){
+                var textAreaValue = newVal.replace(/^\s+/,'').replace(/\s+$/,'');
+                field.setValue(textAreaValue.trim());
+                Ext.getCmp('caseNoteText').focus(false, 200);
+            }
           }
         })
       ],

@@ -57,13 +57,27 @@ try {
         die();
     }
     /*----------------------------------********---------------------------------*/
-    if (file_exists( PATH_DYNAFORM . $applicationFields['PRO_UID'] . PATH_SEP . $_REQUEST['DYN_UID'] . '.xml' )) {
-        $applicationFields['APP_DATA']['__DYNAFORM_OPTIONS']['PREVIOUS_STEP_LABEL'] = '';
-        $applicationFields['APP_DATA']['__DYNAFORM_OPTIONS']['PREVIOUS_STEP'] = '#';
-        $applicationFields['APP_DATA']['__DYNAFORM_OPTIONS']['NEXT_STEP_LABEL'] = '';
-        $applicationFields['APP_DATA']['__DYNAFORM_OPTIONS']['NEXT_ACTION'] = '#';
-        $applicationFields['APP_DATA']['__DYNAFORM_OPTIONS']['DYNUIDPRINT'] = $_REQUEST['DYN_UID'];
+    $applicationFields['APP_DATA']['__DYNAFORM_OPTIONS']['PREVIOUS_STEP_LABEL'] = '';
+    $applicationFields['APP_DATA']['__DYNAFORM_OPTIONS']['PREVIOUS_STEP'] = '#';
+    $applicationFields['APP_DATA']['__DYNAFORM_OPTIONS']['NEXT_STEP_LABEL'] = '';
+    $applicationFields['APP_DATA']['__DYNAFORM_OPTIONS']['NEXT_ACTION'] = '#';
+    $applicationFields['APP_DATA']['__DYNAFORM_OPTIONS']['DYNUIDPRINT'] = $_REQUEST['DYN_UID'];
 
+    $criteria = new Criteria();
+    $criteria->addSelectColumn(DynaformPeer::DYN_CONTENT);
+    $criteria->add(DynaformPeer::DYN_UID, $_REQUEST['DYN_UID']);
+    $criteria->add(DynaformPeer::DYN_VERSION, 2);
+    $result = DynaformPeer::doSelectRS($criteria);
+    $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+    if ($result->next()) {
+        G::LoadClass('pmDynaform');
+        G::LoadClass('pmDynaform');
+        $FieldsPmDynaform = $applicationFields;
+        $FieldsPmDynaform["CURRENT_DYNAFORM"] = $_REQUEST['DYN_UID'];
+        $a = new pmDynaform($FieldsPmDynaform);
+        $a->printView();
+    }
+    if (file_exists( PATH_DYNAFORM . $applicationFields['PRO_UID'] . PATH_SEP . $_REQUEST['DYN_UID'] . '.xml' )) {
         G::LoadClass( 'dbConnections' );
         $_SESSION['PROCESS'] = $applicationFields['PRO_UID'];
         $dbConnections = new dbConnections( $_SESSION['PROCESS'] );

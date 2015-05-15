@@ -472,7 +472,8 @@ Ext.onReady(function() {
       method: "POST"
     }),
     baseParams: {
-        "action": "addonsList"
+        "action": "addonsList",
+        "force" : true
     },
 
     //url: "addonsStoreAction?action=addonsList",
