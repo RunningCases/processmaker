@@ -66,6 +66,7 @@ $html .= '<select name="type_variables" id="type_variables">';
 $html .= '<option value="all">'.$filter->xssFilterHard(G::LoadTranslation( 'ID_TINY_ALL_VARIABLES' )).'</option>';
 $html .= '<option value="system">'.$filter->xssFilterHard(G::LoadTranslation( 'ID_TINY_SYSTEM_VARIABLES' )).'</option>';
 $html .= '<option value="process">'.$filter->xssFilterHard(G::LoadTranslation( 'ID_TINY_PROCESS_VARIABLES' )).'</option>';
+$html .= '<option value="grid">'.$filter->xssFilterHard(G::LoadTranslation( 'ID_TINY_GRID_VARIABLES' )).'</option>';
 $html .= '</select> &nbsp;&nbsp;&nbsp;&nbsp;';
 $html .= '</td>';
 

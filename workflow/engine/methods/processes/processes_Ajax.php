@@ -806,15 +806,21 @@ try {
             G::LoadClass('xmlfield_InputPM');
             $proUid = isset($_REQUEST['process']) ? $_REQUEST['process'] : '';
             $queryText = isset($_REQUEST['queryText']) ? $_REQUEST['queryText'] : '';
-            if ($_REQUEST['type'] == 'system') {
-                $isSystem = true;
-            } else {
-                $isSystem = false;
+            switch($_REQUEST['type']) {
+                case 'system';
+                    $typeVars = $_REQUEST['type'];
+                break;
+                case 'process';
+                    $typeVars = $_REQUEST['type'];
+                break;
+                case 'grid';
+                    $typeVars = $_REQUEST['type'];
+                break;     
             }
             if ($_REQUEST['type'] == 'all') {
                 $aFields = getDynaformsVars($proUid);
             } else {
-                $aFields = getDynaformsVars($proUid, $isSystem, isset($_REQUEST['bIncMulSelFields']) ? $_REQUEST['bIncMulSelFields'] : 1);
+                $aFields = getDynaformsVars($proUid, $typeVars, isset($_REQUEST['bIncMulSelFields']) ? $_REQUEST['bIncMulSelFields'] : 1);
             }
             $aVariables = array();
 
