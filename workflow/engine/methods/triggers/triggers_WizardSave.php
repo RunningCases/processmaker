@@ -63,7 +63,7 @@ foreach ($aInfoFunction as $k => $v) {
         }
         if ($aDataTriggers[$sOptionTrigger] != '') {
 
-            if ((strstr($aDataTriggers[$sOptionTrigger], "@@"))) {
+            if ((strstr($aDataTriggers[$sOptionTrigger], "@@")) || ($aDataTriggers['PMFUNTION_NAME'] == 'evaluateFunction' && $k == 0 && strstr($aDataTriggers[$sOptionTrigger], "@="))) {
                 $option = trim($aDataTriggers[$sOptionTrigger]);
             } else {
 
@@ -81,7 +81,7 @@ foreach ($aInfoFunction as $k => $v) {
                         $option = floatval($aDataTriggers[$sOptionTrigger]);
                         break;
                     default:
-                        $option = (is_numeric($aDataTriggers[$sOptionTrigger]) || is_bool($aDataTriggers[$sOptionTrigger]) ) ? trim($aDataTriggers[$sOptionTrigger]) : (strstr($aDataTriggers[$sOptionTrigger], "'.array.'")) ? trim($aDataTriggers[$sOptionTrigger]) : "'" . trim($aDataTriggers[$sOptionTrigger]) . "'";
+                        $option = (is_numeric($aDataTriggers[$sOptionTrigger]) || is_bool($aDataTriggers[$sOptionTrigger]) ) ? trim($aDataTriggers[$sOptionTrigger]) : (strstr($aDataTriggers[$sOptionTrigger], "'.array.'")) ? trim($aDataTriggers[$sOptionTrigger]) : '"' . trim($aDataTriggers[$sOptionTrigger]) . '"';
                         break;
                 }
             }

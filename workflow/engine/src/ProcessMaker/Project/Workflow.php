@@ -106,11 +106,11 @@ class Workflow extends Handler
         $process->update($data);
     }
 
-    public function remove()
+    public function remove($flagRemoveCases = true)
     {
         try {
             self::log("Remove Process with uid: {$this->proUid}");
-            $this->deleteProcess($this->proUid);
+            $this->deleteProcess($this->proUid, $flagRemoveCases);
             self::log("Remove Process Success!");
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
@@ -559,7 +559,7 @@ class Workflow extends Handler
         }
     }
 
-    public function deleteProcess($sProcessUID)
+    public function deleteProcess($sProcessUID, $flagRemoveCases = true)
     {
         try {
             //G::LoadClass('case');
@@ -580,17 +580,24 @@ class Workflow extends Handler
             $oReportTable = new \ReportTables();
             $oCaseTracker = new \CaseTracker();
             $oCaseTrackerObject = new \CaseTrackerObject();
-            //Delete the applications of process
-            $oCriteria = new \Criteria('workflow');
-            $oCriteria->add(\ApplicationPeer::PRO_UID, $sProcessUID);
-            $oDataset = \ApplicationPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            $oCase = new \Cases();
 
-            while ($aRow = $oDataset->getRow()) {
-                $oCase->removeCase($aRow['APP_UID']);
-                $oDataset->next();
+            //Delete the applications of process
+            if ($flagRemoveCases) {
+                $case = new \Cases();
+
+                $criteria = new \Criteria("workflow");
+
+                $criteria->addSelectColumn(\ApplicationPeer::APP_UID);
+                $criteria->add(\ApplicationPeer::PRO_UID, $sProcessUID, \Criteria::EQUAL);
+
+                $rsCriteria = \ApplicationPeer::doSelectRS($criteria);
+                $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+                while ($rsCriteria->next()) {
+                    $row = $rsCriteria->getRow();
+
+                    $result = $case->removeCase($row["APP_UID"]);
+                }
             }
 
             //Delete the tasks of process
