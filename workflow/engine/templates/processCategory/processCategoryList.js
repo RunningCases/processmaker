@@ -428,7 +428,8 @@ EditCategory = function(){
       title: _('ID_EDIT_CATEGORY'),
       items: [editForm],
       id: 'w',
-      modal: true
+      modal: true,
+      closeAction: "hide"
     });
     w.show();
   }
