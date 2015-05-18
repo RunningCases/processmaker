@@ -969,6 +969,18 @@ class Processes
             }
         }
 
+        if (isset($oData->taskExtraProperties)) {
+            foreach ($oData->taskExtraProperties as $key => $value) {
+                $record = $value;
+
+                if (isset($map[$record["OBJ_UID"]])) {
+                    $newUid = $map[$record["OBJ_UID"]];
+
+                    $oData->taskExtraProperties[$key]["OBJ_UID"] = $newUid;
+                }
+            }
+        }
+
         if (isset($oData->webEntry)) {
             foreach ($oData->webEntry as $key => $value) {
                 $record = $value;
