@@ -6740,7 +6740,7 @@ class Cases
             $rows[] = $rs->getRow();
         }
 
-        if ($PRO_UID != null) {
+        if ($PRO_UID != null) {            
             //Add supervisor
             // Users
             $oCriteria = new Criteria('workflow');
@@ -6760,8 +6760,10 @@ class Cases
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $flagSupervisors = false;
 
-            if ($oDataset->next()) {
-                $rows[] = $oDataset->getRow();
+            if ($oDataset->next()) {         
+                if (!in_array($USR_UID,$row)) {
+                        $rows[] = $oDataset->getRow();
+                }       
                 $flagSupervisors = true;
             }
 
@@ -6789,10 +6791,13 @@ class Cases
                 $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
                 if ($oDataset->next()) {
-                    $rows[] = $oDataset->getRow();
+                    if (!in_array($USR_UID,$row)) {
+                        $rows[] = $oDataset->getRow();
+                    }
                 }
             }
         }
+
         return $rows;
     }
 
