@@ -100,7 +100,7 @@ Ext.onReady(function(){
     ctCls:'pm_search_text_field',
     allowBlank: true,
     width: 150,
-    emptyText: _('ID_ENTER_SEARCH_TERM'),//'enter search term',
+    emptyText: _('ID_EMPTY_SEARCH'),//'enter search term',
     listeners: {
       specialkey: function(f,e){
         if (e.getKey() == e.ENTER) {
@@ -319,7 +319,10 @@ CloseWindow = function(){
 SaveNewCategory = function(){
   catName = newForm.getForm().findField('category').getValue();
   catName = catName.trim();
-  if (catName == '') return;
+  if (catName == '') { 
+    Ext.Msg.alert(_('ID_WARNING'), _("ID_FIELD_REQUIRED", _("ID_CATEGORY_NAME")));
+    return;
+  }
   viewport.getEl().mask(_('ID_PROCESSING'));
   Ext.Ajax.request({
     url: 'processCategory_Ajax',

@@ -932,7 +932,7 @@ emailServer.application = {
         var txtSearch = new Ext.form.TextField({
             id: "txtSearch",
 
-            emptyText: _("ID_ENTER_SEARCH_TERM"),
+            emptyText: _("ID_EMPTY_SEARCH"),
             width: 150,
             allowBlank: true,
 
