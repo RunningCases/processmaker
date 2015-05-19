@@ -43,6 +43,13 @@ if ($access != 1) {
 
 $uids = explode(',', $_POST['PRO_UIDS']);
 try {
+
+    //Add Audit Log
+    $oProcess = new Process();
+    $process=$oProcess->load($_POST['PRO_UIDS']);
+    $nameProcess=$process['PRO_TITLE'];
+    G::auditLog("DeleteProcess", $nameProcess. ' ('.$_POST['PRO_UIDS'].')' .' Deleted');
+
     foreach ($uids as $uid) {
         //$oProcessMap->deleteProcess($uid);
         ProcessMaker\Project\Workflow::removeIfExists($uid);
@@ -52,8 +59,7 @@ try {
     $resp = new StdClass();
     $resp->status = 0;
     $resp->msg = 'All process was deleted successfully';
-    //Add Audit Log
-    G::auditLog("DeleteProcess", "Process UID : " . $_POST['PRO_UIDS']);
+    
     echo G::json_encode($resp);
 
 } catch (Exception $e) {

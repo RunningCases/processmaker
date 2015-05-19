@@ -254,10 +254,7 @@ if ($action == "uploadFileNewProcess") {
         //if file is a .pm  file continues normally the importing
         if ($processFileType == "pm") {
             $oData = $oProcess->getProcessData( $path . $filename );
-        }
-
-        //Add Audit Log
-        G::auditLog("ImportProcess", " PM -> Process UID : " . $oData->process['PRO_UID']);
+        }    
         
         $importer->throwExceptionIfExistsReservedWordsSql($oData);
 
@@ -306,6 +303,13 @@ if ($action == "uploadFileNewProcess") {
         //!data ouput
         $result->sNewProUid = $sProUid;
         $result->proFileName = $Fields['PRO_FILENAME'];
+
+        //Add Audit Log
+        $ogetProcess = new Process();
+        $getprocess=$ogetProcess->load($oData->process['PRO_UID']);
+        print_r($getprocess);
+        $nameProcess=$getprocess['PRO_TITLE'];
+        G::auditLog("ImportProcess", 'PM File Imported '.$nameProcess. ' ('.$oData->process['PRO_UID'].')');
 
     } catch (Exception $e) {
         $result->response = $e->getMessage();

@@ -59,13 +59,18 @@ class WorkflowBpmn extends Project\Workflow
             }
 
             $this->bp = new Project\Bpmn();
-            //Add Audit Log
-            \G::auditLog("ImportProcess", " BPMN -> Process UID : " . $this->getUid());
             $this->bp->create($bpData);
 
             // At this time we will add a default diagram and process
             $this->bp->addDiagram();
             $this->bp->addProcess();
+
+            //Add Audit Log
+            $ogetProcess = new \Process();
+            $getprocess=$ogetProcess->load($this->getUid());
+            $nameProcess=$getprocess['PRO_TITLE'];
+            \G::auditLog("ImportProcess", 'BPMN Imported '.$nameProcess. ' ('.$this->getUid().')');
+
         } catch (\Exception $e) {
             $prjUid = $this->getUid();
             $this->remove();
