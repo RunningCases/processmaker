@@ -315,6 +315,10 @@ class Installer extends Controller
                 $info->success = false;
             }
         }
+        
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $pathShared = $filter->validateInput($_REQUEST['pathShared'], 'path');
 
         if ($info->pathShared->result) {
             $aux = pathinfo( $_REQUEST['pathLogFile'] );
@@ -322,7 +326,7 @@ class Installer extends Controller
             if (is_dir( $aux['dirname'] )) {
                 if (! file_exists( $_REQUEST['pathLogFile'] )) {
                     @file_put_contents( $_REQUEST['pathLogFile'], '' );
-                    @chmod($_REQUEST['pathShared'], 0770);
+                    @chmod($pathShared , 0770);
                 }
             }
         }
@@ -388,7 +392,11 @@ class Installer extends Controller
                 return $false;
             }
         }
-
+        
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $logFile = $filter->validateInput($logFile, 'path');
+        
         $fpt = fopen( $logFile, 'a' );
         fwrite( $fpt, sprintf( "%s %s\n", date( 'Y:m:d H:i:s' ), trim( $text ) ) );
         fclose( $fpt );
