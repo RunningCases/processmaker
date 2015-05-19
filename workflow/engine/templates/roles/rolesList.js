@@ -535,11 +535,12 @@ EditRole = function(){
       editForm.getForm().findField('name').setValue(rowSelected.data.ROL_NAME);
       editForm.getForm().findField('status').setValue(rowSelected.data.ROL_STATUS);
       w = new Ext.Window({
+        closeAction: "hide",
         autoHeight: true,
         id: 'w',
         modal: true,
         width: 420,
-        title: _('ID_EDIT_ROLE_TITLE'),
+        title: _("ID_EDIT_ROLE_TITLE"),
         items: [editForm]
       });
       w.show();
