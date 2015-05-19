@@ -225,8 +225,7 @@ if ($action == "uploadFileNewProcess") {
         //1 -exist process
         $result->ExistGroupsInDatabase = ""; //"" -Default
         //0 -Dont exist process
-        //1 -exist process
-        G::auditLog("ImportProcess", " PM -> Process UID : ");
+        //1 -exist process        
         $optionGroupExistInDatabase = isset( $_REQUEST["optionGroupExistInDatabase"] ) ? $_REQUEST["optionGroupExistInDatabase"] : null;
 
         //!Upload file
@@ -257,6 +256,9 @@ if ($action == "uploadFileNewProcess") {
             $oData = $oProcess->getProcessData( $path . $filename );
         }
 
+        //Add Audit Log
+        G::auditLog("ImportProcess", " PM -> Process UID : " . $oData->process['PRO_UID']);
+        
         $importer->throwExceptionIfExistsReservedWordsSql($oData);
 
         //!Upload file
@@ -304,6 +306,7 @@ if ($action == "uploadFileNewProcess") {
         //!data ouput
         $result->sNewProUid = $sProUid;
         $result->proFileName = $Fields['PRO_FILENAME'];
+
     } catch (Exception $e) {
         $result->response = $e->getMessage();
         $result->catchMessage = $e->getMessage();

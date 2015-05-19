@@ -75,7 +75,7 @@ class BpmnWorkflow extends Project\Bpmn
             }
 
             $this->wp = new Project\Workflow();
-            //Add AudiLog Import Process
+            //Add Audit Log
             \G::auditLog("ImportProcess", " PMX -> Process UID : " . $this->getUid());
             $this->wp->create($wpData);
 

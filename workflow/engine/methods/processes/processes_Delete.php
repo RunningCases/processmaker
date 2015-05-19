@@ -52,6 +52,7 @@ try {
     $resp = new StdClass();
     $resp->status = 0;
     $resp->msg = 'All process was deleted successfully';
+    //Add Audit Log
     G::auditLog("DeleteProcess", "Process UID : " . $_POST['PRO_UIDS']);
     echo G::json_encode($resp);
 

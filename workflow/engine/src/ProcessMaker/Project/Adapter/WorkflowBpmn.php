@@ -59,7 +59,7 @@ class WorkflowBpmn extends Project\Workflow
             }
 
             $this->bp = new Project\Bpmn();
-            //Add AudiLog Import Process
+            //Add Audit Log
             \G::auditLog("ImportProcess", " BPMN -> Process UID : " . $this->getUid());
             $this->bp->create($bpData);
 
