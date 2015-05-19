@@ -1,28 +1,42 @@
 <?php
 class Configuration extends BaseConfiguration
 {
-    public function create($aData)
+    public function create(array $arrayData)
     {
-        $con = Propel::getConnection(ConfigurationPeer::DATABASE_NAME);
+        $cnn = Propel::getConnection(ConfigurationPeer::DATABASE_NAME);
+
         try {
-            $con->begin();
-            $this->setCfgUid($aData['CFG_UID']);
-            $this->setObjUid($aData['OBJ_UID']);
-            $this->setCfgValue(isset($aData['CFG_VALUE'])?$aData['CFG_VALUE']:'');
-            $this->setProUid($aData['PRO_UID']);
-            $this->setUsrUid($aData['USR_UID']);
-            $this->setAppUid($aData['APP_UID']);
-            if ($this->validate()) {
-                $result=$this->save();
-                $con->commit();
+            $configuration = new Configuration();
+
+            $configuration->setCfgUid($arrayData["CFG_UID"]);
+            $configuration->setObjUid($arrayData["OBJ_UID"]);
+            $configuration->setCfgValue((isset($arrayData["CFG_VALUE"]))? $arrayData["CFG_VALUE"] : "");
+            $configuration->setProUid($arrayData["PRO_UID"]);
+            $configuration->setUsrUid($arrayData["USR_UID"]);
+            $configuration->setAppUid($arrayData["APP_UID"]);
+
+            if ($configuration->validate()) {
+                $cnn->begin();
+
+                $result = $configuration->save();
+
+                $cnn->commit();
+
+                //Return
                 return $result;
             } else {
-                $con->rollback();
-                throw(new Exception("Failed Validation in class ".get_class($this)."."));
+                $msg = "";
+
+                foreach ($configuration->getValidationFailures() as $validationFailure) {
+                    $msg = $msg . (($msg != "")? "\n" : "") . $validationFailure->getMessage();
+                }
+
+                throw new Exception(G::LoadTranslation("ID_RECORD_CANNOT_BE_CREATED") . (($msg != "")? "\n" . $msg : ""));
             }
         } catch (Exception $e) {
-            $con->rollback();
-            throw($e);
+            $cnn->rollback();
+
+            throw $e;
         }
     }
 
