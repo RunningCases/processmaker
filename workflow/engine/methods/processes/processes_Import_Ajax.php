@@ -226,6 +226,7 @@ if ($action == "uploadFileNewProcess") {
         $result->ExistGroupsInDatabase = ""; //"" -Default
         //0 -Dont exist process
         //1 -exist process
+        G::auditLog("ImportProcess", " PM -> Process UID : ");
         $optionGroupExistInDatabase = isset( $_REQUEST["optionGroupExistInDatabase"] ) ? $_REQUEST["optionGroupExistInDatabase"] : null;
 
         //!Upload file

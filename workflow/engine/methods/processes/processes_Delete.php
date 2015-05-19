@@ -42,7 +42,6 @@ if ($access != 1) {
 //$oProcessMap = new ProcessMap();
 
 $uids = explode(',', $_POST['PRO_UIDS']);
-
 try {
     foreach ($uids as $uid) {
         //$oProcessMap->deleteProcess($uid);
@@ -53,7 +52,7 @@ try {
     $resp = new StdClass();
     $resp->status = 0;
     $resp->msg = 'All process was deleted successfully';
-
+    G::auditLog("DeleteProcess", "Process UID : " . $_POST['PRO_UIDS']);
     echo G::json_encode($resp);
 
 } catch (Exception $e) {
