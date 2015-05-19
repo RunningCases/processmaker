@@ -463,10 +463,17 @@ class G
      * @return void
      */
     public static function LoadSystem ($strClass)
-    {   require_once (PATH_GULLIVER . 'class.inputfilter.php');
-        $filter = new InputFilter();
+    {   
         $path  = PATH_GULLIVER . 'class.' . $strClass . '.php';
-        $path  = $filter->validateInput($path, 'path');
+        if(file_exists(PATH_GULLIVER . 'class.inputfilter.php')) {  
+            require_once (PATH_GULLIVER . 'class.inputfilter.php');
+            $filter = new InputFilter();
+            $path  = $filter->validateInput($path, 'path');
+        } else {
+            if(!file_exists($path)) {
+                $path = '';
+            }
+        }
         require_once ($path);
     }
 
@@ -2656,6 +2663,7 @@ class G
             $path = $filter->validateInput($path, "path");
 
             move_uploaded_file( $file, $path . "/" . $nameToSave );
+            $nameToSave = $filter->validateInput($nameToSave, "path");
             @chmod( $path . "/" . $nameToSave, $permission );
             umask( $oldumask );
 

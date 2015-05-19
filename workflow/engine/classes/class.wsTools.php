@@ -1610,12 +1610,14 @@ class workspaceTools
 
             $workspace->checkMafeRequirements($workspaceName, $lang);
 
+            /*----------------------------------********---------------------------------*/
             $start = microtime(true);
-            CLI::logging("> Updating cache view...\n");
-            $workspace->upgradeCacheView(true, false, $lang);
+            CLI::logging("> Updating List tables...\n");
+            $workspace->migrateList($workspace->name);
             $stop = microtime(true);
             $final = $stop - $start;
-            CLI::logging("<*>   Updating cache view Process took $final seconds.\n");
+            CLI::logging("<*>   Updating List Process took $final seconds.\n");
+            /*----------------------------------********---------------------------------*/
 
             mysql_close($link);
         }
@@ -1881,6 +1883,7 @@ class workspaceTools
         }
         $this->initPropel(true);
         $appCache = new AppCacheView();
+        $users    = new Users();
         G::LoadClass("case");
         $case = new Cases();
       
@@ -1921,12 +1924,28 @@ class workspaceTools
         $rsCriteria = AppCacheViewPeer::doSelectRS($inbCriteria);
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
+        $criteriaUser = new Criteria();
+        $criteriaUser->addSelectColumn( UsersPeer::USR_UID );
+        $criteriaUser->addSelectColumn( UsersPeer::USR_FIRSTNAME );
+        $criteriaUser->addSelectColumn( UsersPeer::USR_LASTNAME );
+        $criteriaUser->addSelectColumn( UsersPeer::USR_USERNAME );
         //Insert new data LIST_INBOX
         while ($rsCriteria->next()) {
             $row = $rsCriteria->getRow();
             $isSelfService = ($row['USR_UID'] == '') ? true : false;
             if($row["DEL_THREAD_STATUS"] == 'OPEN'){
+                //Update information about the previous_user
                 $row["DEL_PREVIOUS_USR_UID"] = $row["PREVIOUS_USR_UID"];
+                $criteriaUser->add( UsersPeer::USR_UID, $row["PREVIOUS_USR_UID"] );
+                $datasetU = UsersPeer::doSelectRS($criteriaUser);
+                $datasetU->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                $datasetU->next();
+                $arrayUsers = $datasetU->getRow();
+                $row["DEL_PREVIOUS_USR_USERNAME"] = $arrayUsers["USR_USERNAME"];
+                $row["DEL_PREVIOUS_USR_FIRSTNAME"]= $arrayUsers["USR_FIRSTNAME"];
+                $row["DEL_PREVIOUS_USR_LASTNAME"] = $arrayUsers["USR_LASTNAME"];
+                //Update the due date
+                $row["DEL_DUE_DATE"]         = $row["DEL_TASK_DUE_DATE"];
                 $listInbox = new ListInbox();
                 $listInbox->remove($row["APP_UID"],$row["DEL_INDEX"]);
                 $listInbox->setDeleted(false);
