@@ -1005,9 +1005,7 @@ class CaseScheduler
                 case "UPD":
                     $arrayDataAux = $caseScheduler->load($caseSchedulerUid);
 
-                    if ($arrayData["SCH_END_DATE"] != "") {
-                        $arrayCaseSchedulerData["SCH_END_DATE"] = $arrayData["SCH_END_DATE"];
-                    }
+                    $arrayCaseSchedulerData["SCH_END_DATE"] = $arrayData["SCH_END_DATE"];
 
                     //If the start date has changed then recalculate the next run time
                     $recalculateDate = ($arrayData["SCH_START_DATE"] == $arrayData["PREV_SCH_START_DATE"])? false : true;
