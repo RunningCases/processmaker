@@ -42,15 +42,15 @@ if ($access != 1) {
 //$oProcessMap = new ProcessMap();
 
 $uids = explode(',', $_POST['PRO_UIDS']);
-try {
+try {   
 
-    //Add Audit Log
-    $oProcess = new Process();
-    $process=$oProcess->load($_POST['PRO_UIDS']);
-    $nameProcess=$process['PRO_TITLE'];
-    G::auditLog("DeleteProcess", $nameProcess. ' ('.$_POST['PRO_UIDS'].')' .' Deleted');
+    foreach ($uids as $uid) {        
+        //Add Audit Log
+        $oProcess = new Process();
+        $process=$oProcess->load($uid);
+        $nameProcess=$process['PRO_TITLE'];
+        G::auditLog("DeleteProcess", $nameProcess. ' ('.$uid.')' .' Deleted');
 
-    foreach ($uids as $uid) {
         //$oProcessMap->deleteProcess($uid);
         ProcessMaker\Project\Workflow::removeIfExists($uid);
         ProcessMaker\Project\Bpmn::removeIfExists($uid);
