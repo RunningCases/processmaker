@@ -193,6 +193,9 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
         $RBAC = \RBAC::getSingleton();
         $RBAC->initRBAC();
         $uid = $RBAC->VerifyLogin($username , $password);
+        if($uid < 0){
+           return false;
+        }
         if($uid != ''){
            return true;
         }
