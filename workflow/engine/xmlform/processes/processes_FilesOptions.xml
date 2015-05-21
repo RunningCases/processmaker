@@ -59,7 +59,7 @@ var showPromptLogin = function(lastAction, pro_uid, fileName, fc64) {
         width:'75%',
         marginTop:3,
         backgroundColor:'white',
-        border:'1px solid #919B9C',
+        border:'1px solid #919B9C'
     });
     label.appendChild(theUser);
     label.innerHTML = (_('ID_USERNAME')) + ': ';
