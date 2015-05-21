@@ -190,8 +190,11 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
     /* OAuth2_Storage_UserCredentialsInterface */
     public function checkUserCredentials($username, $password)
     {
-        if ($user = $this->getUser($username)) {
-            return $this->checkPassword($user, $password);
+        $RBAC = \RBAC::getSingleton();
+        $RBAC->initRBAC();
+        $uid = $RBAC->VerifyLogin($username , $password);
+        if($uid != ''){
+           return true;
         }
         return false;
     }
