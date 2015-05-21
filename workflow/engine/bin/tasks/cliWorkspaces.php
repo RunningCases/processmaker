@@ -75,6 +75,7 @@ CLI::taskOpt("multiple", "Restore from multiple compresed enumerated files.", "m
 CLI::taskOpt("workspace", "Select which workspace to restore if multiple workspaces are present in the archive.",
              "w:", "workspace=");
 CLI::taskOpt("lang", "You must specify language on which rebuild of the case cache list builder will be done; if you don't specify this, it will use 'en' by default", "l:","lang=");
+CLI::taskOpt("port", "You must specify mysql port.", "p:");
 CLI::taskRun("run_workspace_restore");
 
 CLI::taskName('cacheview-repair');
@@ -551,6 +552,7 @@ function run_workspace_restore($args, $opts) {
   }
   $info = array_key_exists("info", $opts);
   $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
+  $port = array_key_exists("port", $opts) ? $opts['port'] : '';
   if ($info) {
     workspaceTools::getBackupInfo($filename);
   } else {
@@ -578,7 +580,7 @@ function run_workspace_restore($args, $opts) {
             CLI::error("Please, you should use -m parameter to restore them.\n");
             return;
         }
-        workspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang);
+        workspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang, $port );
     }
   }
 }

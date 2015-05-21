@@ -1434,7 +1434,7 @@ class workspaceTools
      * @param string $newWorkspaceName if defined, supplies the name for the
      * workspace to restore to
      */
-    static public function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en')
+    static public function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en', $port = '')
     {
         G::LoadThirdParty('pear/Archive', 'Tar');
         $backup = new Archive_Tar($filename);
@@ -1553,6 +1553,9 @@ class workspaceTools
                 CLI::logging(CLI::error("Could not get the shared folder permissions, not changing workspace permissions") . "\n");
             }
             list ($dbHost, $dbUser, $dbPass) = @explode(SYSTEM_HASH, G::decrypt(HASH_INSTALLATION, SYSTEM_HASH));
+            if($port != ''){
+               $dbHost = $dbHost.$port;
+            }
             $aParameters = array('dbHost'=>$dbHost,'dbUser'=>$dbUser,'dbPass'=>$dbPass);
             CLI::logging("> Connecting to system database in '$dbHost'\n");
             $link = mysql_connect($dbHost, $dbUser, $dbPass);
@@ -2011,6 +2014,7 @@ class workspaceTools
               $data = $row;
               $data["DEL_INDEX"] = $row["APP_DEL_INDEX"];
               $listPaused = new ListPaused();
+              $listPaused ->remove($row["APP_UID"],$row["APP_DEL_INDEX"],$data);
               $listPaused->setDeleted(false);
               $listPaused->create($data);
         }
