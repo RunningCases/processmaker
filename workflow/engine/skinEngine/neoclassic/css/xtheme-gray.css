@@ -431,6 +431,7 @@ textarea.x-form-inner-invalid {
 }
 .x-fieldset {
   border-color: #CCCCCC;
+  margin-top: -5px;
 }
 .x-fieldset legend {
   font: bold 11px "Open Sans", Tahoma, sans-serif, MiscFixed;
@@ -1465,6 +1466,7 @@ a.x-menu-item {
 }
 .x-panel-body .x-panel-body {
   border: #dddddd 1px solid;
+  overflow: hidden !important;
 }
 .x-panel-bbar .x-toolbar,
 .x-panel-tbar .x-toolbar {
