@@ -5353,8 +5353,8 @@ class G
         $sflagAudit = $oServerConf->getAuditLogProperty( 'AL_OPTION', $workspace );
         $ipClient = G::getIpAddress();
 
-        $licensedFeatures = PMLicensedFeatures::getSingleton();
         /*----------------------------------********---------------------------------*/
+        $licensedFeatures = PMLicensedFeatures::getSingleton();        
         if ($sflagAudit && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
             $username = isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '' ? $_SESSION['USER_LOGGED'] : 'Unknow User';
             $fullname = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : '-';
