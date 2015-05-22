@@ -74,7 +74,9 @@ $oDataset = ProcessPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflo
 $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 $oDataset->next();
 $row = $oDataset->getRow();
+$isBpmn = false;
 if (isset($row["PRJ_UID"])) {
+    $isBpmn = true;
     $html .= '<option value="grid">'.$filter->xssFilterHard(G::LoadTranslation( 'ID_TINY_GRID_VARIABLES' )).'</option>';
 }
 
@@ -116,7 +118,14 @@ if (isset($_REQUEST['displayOption'])){
 $html .= '<select name="_Var_Form_" id="_Var_Form_" size="8"  style="width:100%;' . (! isset( $_POST['sNoShowLeyend'] ) ? 'height:170;' : '') . '" '.$displayOption.'>';
 
 foreach ($aFields as $aField) {
-    $html .= '<option value="' . $_REQUEST['sSymbol'] . $aField['sName'] . '">' . $_REQUEST['sSymbol'] . $aField['sName'] . ' (' . $aField['sType'] . ')</option>';
+    $value = $_REQUEST['sSymbol'] . $aField['sName'];
+    if ($isBpmn) {
+        if(strtolower($aField['sType']) == 'grid') {
+            $gridValue = 'gridt<table border=1 cellspacing=0> <tr> <th>Header_1</th> </tr> <!--@>'.$aField['sName'].'--> <tr> <td>column_name1</td> </tr><!--@<'.$aField['sName'].'--> </table>';
+            $value = htmlentities($gridValue);
+        } 
+    }
+    $html .= '<option value="' . $value . '">' . $_REQUEST['sSymbol'] . $aField['sName'] . ' (' . $aField['sType'] . ')</option>';
 }
 
 $aRows[0] = Array ('fieldname' => 'char','variable' => 'char','type' => 'type','label' => 'char');
@@ -125,6 +134,13 @@ foreach ($aFields as $aField) {
     );
 }
 $html .= '</select>';
+
+if ($isBpmn) {
+    $valueBpmn = 1;
+} else {
+    $valueBpmn = 0;
+}
+$html .= '<input type="hidden" id="isBpmn" value="'.$valueBpmn.'">';
 
 $html .= '</td>';
 $html .= '</tr>';

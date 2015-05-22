@@ -414,7 +414,7 @@ function getDynaformsVars ($sProcessUID, $typeVars = 'all', $bIncMulSelFields = 
                 array_push($aFields, array(
                     "sName" => $row["VAR_NAME"],
                     "sType" => $row["VAR_FIELD_TYPE"],
-                    "sLabel" => $row["VAR_NAME"] . " [" . $row["VAR_FIELD_TYPE"] . "]"
+                    "sLabel" => $row["VAR_FIELD_TYPE"]
                 ));
             }
         } 
@@ -437,8 +437,8 @@ function getDynaformsVars ($sProcessUID, $typeVars = 'all', $bIncMulSelFields = 
                                 foreach($columns as $column) {
                                     array_push($aFields, array(
                                         "sName" => $column['name'],
-                                        "sType" => $column['dataType'],
-                                        "sLabel" => $column['name'] . " [" . $column['dataType']. "]"
+                                        "sType" => $column['type'],
+                                        "sLabel" => $column['type']
                                     ));
                                 }
                             }
