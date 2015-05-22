@@ -11,6 +11,7 @@ class ActionsByEmail
 
     public function saveConfiguration($params)
     {
+        /*----------------------------------********---------------------------------*/
         if (\PMLicensedFeatures
                 ::getSingleton()
                 ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
@@ -31,10 +32,12 @@ class ActionsByEmail
                     break;
             }
         }
+        /*----------------------------------********---------------------------------*/
     }
 
     public function loadConfiguration($params)
     {
+        /*----------------------------------********---------------------------------*/
         if ($params['type'] != 'activity' 
             || !\PMLicensedFeatures
                 ::getSingleton()
@@ -42,6 +45,7 @@ class ActionsByEmail
         {
             return false;
         }
+        /*----------------------------------********---------------------------------*/
         require_once 'classes/model/AbeConfiguration.php';
 
         $criteria = new \Criteria();
