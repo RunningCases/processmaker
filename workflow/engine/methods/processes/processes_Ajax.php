@@ -38,7 +38,7 @@ try {
       break;
       } */
     //$oJSON = new Services_JSON();
-    
+
     G::LoadSystem('inputfilter');
     $filter = new InputFilter();
     $_GET = $filter->xssFilterHard($_GET);
@@ -307,7 +307,7 @@ try {
             G::auditLog('DeleteLines','Delete all lines in process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'addText':
-            $sOutput = $oProcessMap->addText($oData->uid, $oData->label, $oData->position->x, $oData->position->y);
+            $sOutput = $oProcessMap->addText($oData->uid, html_entity_decode(html_entity_decode($oData->label)), $oData->position->x, $oData->position->y);
             $sOutputAux = G::json_decode($sOutput);
             $sOutputAux = (array)$sOutputAux;
             G::auditLog('AddText','Add new text ('.$sOutputAux['uid'].') in process "'.$resultProcess['PRO_TITLE'].'"');
