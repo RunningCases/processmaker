@@ -111,7 +111,7 @@ class Project extends Api
 
         $outputDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
         $version = \ProcessMaker\Util\Common::getLastVersion($outputDir . $exporter->getProjectName() . "-*.pmx") + 1;
-        $outputFilename = $outputDir . sprintf("%s-%s.%s", $exporter->getProjectName(), $version, "pmx");
+        $outputFilename = $outputDir . sprintf("%s-%s.%s", str_replace(" ", "_", $exporter->getProjectName()), $version, "pmx");
 
         $exporter->setMetadata("export_version", $version);
         $exporter->saveExport($outputFilename);
