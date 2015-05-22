@@ -77,6 +77,12 @@ class BpmnWorkflow extends Project\Bpmn
             $this->wp = new Project\Workflow();
             $this->wp->create($wpData);
 
+            //Add Audit Log
+            $ogetProcess = new \Process();
+            $getprocess=$ogetProcess->load($this->getUid());
+            $nameProcess=$getprocess['PRO_TITLE'];
+            \G::auditLog("ImportProcess", 'PMX File Imported '.$nameProcess. ' ('.$this->getUid().')');
+
         } catch (\Exception $e) {
             $prjUid = $this->getUid();
             //$this->remove();
