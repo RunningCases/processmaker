@@ -1303,6 +1303,8 @@ class workspaceTools
                 mysql_select_db($database);
                 $script = file_get_contents($filename);
 
+                //Replace TYPE by ENGINE
+                $script = preg_replace('/\)TYPE\=|\)\sTYPE\=/', ')ENGINE=', $script);
                 $lines = explode("\n", $script);
                 $previous = null;
                 $insert = false;
