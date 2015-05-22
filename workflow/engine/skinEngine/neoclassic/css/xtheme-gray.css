@@ -362,9 +362,13 @@ textarea.x-form-field {
   border-bottom: 1px solid #dddddd;
   color: #333;
 }
+
+.x-form-check-wrap {
+    overflow: hidden !important;
+}
+
 .x-editor .x-form-check-wrap {
   background-color: #fff;
-  overflow:hidden !important;
 }
 .x-form-field-wrap .x-form-trigger {
   background-image: url(/skins/neoclassic/images/ext/gray/form/trigger.gif);
