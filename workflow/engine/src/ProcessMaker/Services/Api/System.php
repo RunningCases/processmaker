@@ -52,7 +52,7 @@ class System extends Api
         }
     }
 
-    /**t
+    /**
      * @return array
      *
      * @author Gustavo Cruz <gustavo.cruz@colosa.com>
