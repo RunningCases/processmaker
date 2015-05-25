@@ -77,6 +77,12 @@ class BpmnWorkflow extends Project\Bpmn
             $this->wp = new Project\Workflow();
             $this->wp->create($wpData);
 
+            //Add Audit Log
+            $ogetProcess = new \Process();
+            $getprocess=$ogetProcess->load($this->getUid());
+            $nameProcess=$getprocess['PRO_TITLE'];
+            \G::auditLog("ImportProcess", 'PMX File Imported '.$nameProcess. ' ('.$this->getUid().')');
+
         } catch (\Exception $e) {
             $prjUid = $this->getUid();
             //$this->remove();
@@ -1038,10 +1044,10 @@ class BpmnWorkflow extends Project\Bpmn
         }
     }
 
-    public function remove($force = false)
+    public function remove($flagForceRemoveProject = false, $flagRemoveCases = true)
     {
-        parent::remove($force);
-        $this->wp->remove();
+        parent::remove($flagForceRemoveProject);
+        $this->wp->remove($flagRemoveCases);
     }
 
     public static function createFromStruct(array $projectData, $generateUid = true)

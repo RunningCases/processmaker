@@ -2097,7 +2097,7 @@ function PMFAssignUserToGroup ($userId, $groupId)
  * @label PMF Create User
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFCreateUser.28.29
  *
- * @param string(32) | $userId | User ID | The username for the new user.
+ * @param string(32) | $userId | User Name | The username for the new user.
  * @param string(32) | $password | Password of the new user | The password of the new user, which can be up to 32 characters long.
  * @param string(32) | $firstname | Firstname of the new user | The first name of the user, which can be up to 50 characters long.
  * @param string(32) | $lastname | Lastname of the new user | The last name of the user, which can be up to 50 characters long.
@@ -2820,7 +2820,7 @@ function PMFAddCaseNote($caseUid, $processUid, $taskUid, $userUid, $note, $sendM
 function PMFAddAttachmentToArray($arrayData, $index, $value, $suffix = " Copy({i})")
 {
     if (isset($suffix) && $suffix == "") {
-        $suffix = " Copy ({i})";
+        $suffix = " Copy({i})";
     }
 
     $newIndex = $index;
@@ -2865,8 +2865,9 @@ function PMFRemoveMask ($field, $separator = '.', $currency = '')
     $field = str_replace($thousandSeparator, "", $field);
     $field = str_replace($decimalSeparator, ".", $field);
     $field = str_replace($currency, "", $field);
-    $field = floatval(trim($field));
-
+    if(strpos($decimalSeparator, $field) !== false){
+        $field = (float)(trim($field));
+    }
     return $field;
 }
 
@@ -2881,17 +2882,17 @@ function PMFRemoveMask ($field, $separator = '.', $currency = '')
  * @return int | $result | Result of send variables | Returns 1 if the variables were sent successfully to the case; otherwise, returns 0 if an error occurred.
  *
  */
- 
+
 function PMFSaveCurrentData ()
 {
     global $oPMScript;
     $result = 0;
-    
+
     if (isset($_SESSION['APPLICATION']) && isset($oPMScript->aFields)) {
         G::LoadClass( 'wsBase' );
         $ws = new wsBase();
         $result = $ws->sendVariables( $_SESSION['APPLICATION'], $oPMScript->aFields );
     }
-    
+
     return $result;
 }

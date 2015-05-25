@@ -259,8 +259,7 @@ abstract class Importer
     public function removeProject()
     {
         $project = \ProcessMaker\Project\Adapter\BpmnWorkflow::load($this->metadata["uid"]);
-        $force = true;
-        $project->remove($force);
+        $project->remove(true, false);
     }
 
     /**

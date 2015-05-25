@@ -100,7 +100,7 @@ Ext.onReady(function(){
     ctCls:'pm_search_text_field',
     allowBlank: true,
     width: 150,
-    emptyText: _('ID_ENTER_SEARCH_TERM'),//'enter search term',
+    emptyText: _('ID_EMPTY_SEARCH'),//'enter search term',
     listeners: {
       specialkey: function(f,e){
         if (e.getKey() == e.ENTER) {
@@ -118,19 +118,6 @@ Ext.onReady(function(){
     text: 'X',
     ctCls:"pm_search_x_button_des",
     handler: GridByDefault
-  });
-
-  newForm = new Ext.FormPanel({
-    url: 'processCategory_Ajax?action=saveNewCategory',
-    frame: true,
-    items:[
-           {xtype: 'textfield', fieldLabel: _('ID_CATEGORY_NAME'), name: 'category', width: 250, maxLength :100, allowBlank: false}
-           ],
-           buttons: [
-                     {text: _('ID_SAVE'), handler: SaveNewCategory},
-                     {text: _('ID_CANCEL'), handler: CloseWindow}
-
-                     ]
   });
 
   editForm = new Ext.FormPanel({
@@ -297,6 +284,18 @@ DoNothing = function(){};
 
 //Open New Category Form
 NewCategoryWindow = function(){
+  newForm = new Ext.FormPanel({
+    url: 'processCategory_Ajax?action=saveNewCategory',
+    frame: true,
+    items: [
+           {xtype: 'textfield', fieldLabel: _('ID_CATEGORY_NAME'), name: 'category', width: 250, maxLength :100, allowBlank: false}
+    ],
+    buttons: [
+           {text: _('ID_SAVE'), handler: SaveNewCategory},
+           {text: _('ID_CANCEL'), handler: CloseWindow}
+    ]
+  });
+  
   newForm.getForm().reset();
   newForm.getForm().items.items[0].focus('',500);
   w = new Ext.Window({
@@ -319,7 +318,10 @@ CloseWindow = function(){
 SaveNewCategory = function(){
   catName = newForm.getForm().findField('category').getValue();
   catName = catName.trim();
-  if (catName == '') return;
+  if (catName == '') { 
+    Ext.Msg.alert(_('ID_WARNING'), _("ID_FIELD_REQUIRED", _("ID_CATEGORY_NAME")));
+    return;
+  }
   viewport.getEl().mask(_('ID_PROCESSING'));
   Ext.Ajax.request({
     url: 'processCategory_Ajax',
@@ -425,7 +427,8 @@ EditCategory = function(){
       title: _('ID_EDIT_CATEGORY'),
       items: [editForm],
       id: 'w',
-      modal: true
+      modal: true,
+      closeAction: "hide"
     });
     w.show();
   }
