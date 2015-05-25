@@ -781,7 +781,75 @@ class workspaceTools
         $this->upgradeSchema( $systemSchema );
         $this->upgradeSchema( $systemSchemaRbac, false, true, $onedb ); // perform Upgrade to Rbac
         $this->upgradeData();
+
+        //There records in table "EMAIL_SERVER"
+        $criteria = new Criteria("workflow");
+
+        $criteria->addSelectColumn(EmailServerPeer::MESS_UID);
+        $criteria->setOffset(0);
+        $criteria->setLimit(1);
+
+        $rsCriteria = EmailServerPeer::doSelectRS($criteria);
+
+        if (!$rsCriteria->next()) {
+            //Insert the first record
+            $arrayData = array();
+
+            $emailSever = new  \ProcessMaker\BusinessModel\EmailServer();
+            $emailConfiguration = System::getEmailConfiguration();
+
+            if (count($emailConfiguration) > 0) {
+                $arrayData["MESS_ENGINE"] = $emailConfiguration["MESS_ENGINE"];
+
+                switch ($emailConfiguration["MESS_ENGINE"]) {
+                    case "PHPMAILER":
+                        $arrayData["MESS_SERVER"]              = $emailConfiguration["MESS_SERVER"];
+                        $arrayData["MESS_PORT"]                = (int)($emailConfiguration["MESS_PORT"]);
+                        $arrayData["MESS_RAUTH"]               = (is_numeric($emailConfiguration["MESS_RAUTH"]))? (int)($emailConfiguration["MESS_RAUTH"]) : (($emailConfiguration["MESS_RAUTH"] . "" == "true")? 1 : 0);
+                        $arrayData["MESS_ACCOUNT"]             = $emailConfiguration["MESS_ACCOUNT"];
+                        $arrayData["MESS_PASSWORD"]            = $emailConfiguration["MESS_PASSWORD"];
+                        $arrayData["MESS_FROM_MAIL"]           = (isset($emailConfiguration["MESS_FROM_MAIL"]))? $emailConfiguration["MESS_FROM_MAIL"] : "";
+                        $arrayData["MESS_FROM_NAME"]           = (isset($emailConfiguration["MESS_FROM_NAME"]))? $emailConfiguration["MESS_FROM_NAME"] : "";
+                        $arrayData["SMTPSECURE"]               = $emailConfiguration["SMTPSecure"];
+                        $arrayData["MESS_TRY_SEND_INMEDIATLY"] = (isset($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"]) && ($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"] . "" == "true" || $emailConfiguration["MESS_TRY_SEND_INMEDIATLY"] . "" == "1"))? 1 : 0;
+                        $arrayData["MAIL_TO"]                  = $emailConfiguration["MAIL_TO"];
+                        $arrayData["MESS_DEFAULT"]             = (isset($emailConfiguration["MESS_ENABLED"]) && $emailConfiguration["MESS_ENABLED"] . "" == "1")? 1 : 0;
+                        break;
+                    case "MAIL":
+                        $arrayData["MESS_SERVER"]              = "";
+                        $arrayData["MESS_FROM_MAIL"]           = (isset($emailConfiguration["MESS_FROM_MAIL"]))? $emailConfiguration["MESS_FROM_MAIL"] : "";
+                        $arrayData["MESS_FROM_NAME"]           = (isset($emailConfiguration["MESS_FROM_NAME"]))? $emailConfiguration["MESS_FROM_NAME"] : "";
+                        $arrayData["MESS_TRY_SEND_INMEDIATLY"] = (isset($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"]) && ($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"] . "" == "true" || $emailConfiguration["MESS_TRY_SEND_INMEDIATLY"] . "" == "1"))? 1 : 0;
+                        $arrayData["MESS_ACCOUNT"]             = "";
+                        $arrayData["MESS_PASSWORD"]            = "";
+                        $arrayData["MAIL_TO"]                  = (isset($emailConfiguration["MAIL_TO"]))? $emailConfiguration["MAIL_TO"] : "";
+                        $arrayData["MESS_DEFAULT"]             = (isset($emailConfiguration["MESS_ENABLED"]) && $emailConfiguration["MESS_ENABLED"] . "" == "1")? 1 : 0;
+                        break;
+                }
+
+                $arrayData = $emailSever->create($arrayData);
+            } else {
+                /*----------------------------------********---------------------------------*/
+                if (true) {
+                   //
+                } else {
+                /*----------------------------------********---------------------------------*/
+                   $arrayData["MESS_ENGINE"]   = "MAIL";
+                   $arrayData["MESS_SERVER"]   = "";
+                   $arrayData["MESS_ACCOUNT"]  = "";
+                   $arrayData["MESS_PASSWORD"] = "";
+                   $arrayData["MAIL_TO"]       = "";
+                   $arrayData["MESS_DEFAULT"]  = 1;
+
+                   $arrayData = $emailSever->create2($arrayData);
+                /*----------------------------------********---------------------------------*/
+                }
+                /*----------------------------------********---------------------------------*/
+            }
+        }
+
         p11835::execute();
+
         return true;
     }
 
@@ -1303,6 +1371,8 @@ class workspaceTools
                 mysql_select_db($database);
                 $script = file_get_contents($filename);
 
+                //Replace TYPE by ENGINE
+                $script = preg_replace('/\)TYPE\=|\)\sTYPE\=/', ')ENGINE=', $script);
                 $lines = explode("\n", $script);
                 $previous = null;
                 $insert = false;
@@ -1434,7 +1504,7 @@ class workspaceTools
      * @param string $newWorkspaceName if defined, supplies the name for the
      * workspace to restore to
      */
-    static public function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en')
+    static public function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en', $port = '')
     {
         G::LoadThirdParty('pear/Archive', 'Tar');
         $backup = new Archive_Tar($filename);
@@ -1553,6 +1623,9 @@ class workspaceTools
                 CLI::logging(CLI::error("Could not get the shared folder permissions, not changing workspace permissions") . "\n");
             }
             list ($dbHost, $dbUser, $dbPass) = @explode(SYSTEM_HASH, G::decrypt(HASH_INSTALLATION, SYSTEM_HASH));
+            if($port != ''){
+               $dbHost = $dbHost.$port;
+            }
             $aParameters = array('dbHost'=>$dbHost,'dbUser'=>$dbUser,'dbPass'=>$dbPass);
             CLI::logging("> Connecting to system database in '$dbHost'\n");
             $link = mysql_connect($dbHost, $dbUser, $dbPass);
@@ -1886,7 +1959,7 @@ class workspaceTools
         $users    = new Users();
         G::LoadClass("case");
         $case = new Cases();
-      
+
         //Select data CANCELLED
         $canCriteria = $appCache->getSelAllColumns();
         $canCriteria->add(AppCacheViewPeer::APP_STATUS, "CANCELLED", CRITERIA::EQUAL);
@@ -1902,7 +1975,7 @@ class workspaceTools
               $listCanceled->create($row);
         }
         CLI::logging("> Completed table LIST_CANCELED\n");
-        
+
         //Select data COMPLETED
         $comCriteria = $appCache->getSelAllColumns();
         $comCriteria->add(AppCacheViewPeer::APP_STATUS, "COMPLETED", CRITERIA::EQUAL);
@@ -1918,7 +1991,7 @@ class workspaceTools
               $listCompleted->create($row);
         }
         CLI::logging("> Completed table LIST_COMPLETED\n");
-        
+
         //Select data TO_DO OR DRAFT
         $inbCriteria = $appCache->getSelAllColumns();
         $rsCriteria = AppCacheViewPeer::doSelectRS($inbCriteria);
@@ -1967,14 +2040,14 @@ class workspaceTools
                 $listParticipatedLast = new ListParticipatedLast();
                 $listParticipatedLast->refresh($row);
             }
-              
+
         }
 
         CLI::logging("> Completed table LIST_INBOX\n");
         //With this List is populated the LIST_PARTICIPATED_HISTORY and LIST_PARTICIPATED_LAST
         CLI::logging("> Completed table LIST_PARTICIPATED_HISTORY\n");
         CLI::logging("> Completed table LIST_PARTICIPATED_LAST\n");
-        
+
         //Select data TO_DO OR DRAFT CASES CREATED BY AN USER
         $myiCriteria = $appCache->getSelAllColumns();
         $myiCriteria->add(AppCacheViewPeer::DEL_INDEX, "1", CRITERIA::EQUAL);
@@ -1982,14 +2055,14 @@ class workspaceTools
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         //Insert new data LIST_MY_INBOX
         while ($rsCriteria->next()) {
-              $row = $rsCriteria->getRow();             
+              $row = $rsCriteria->getRow();
               $listMyInbox = new ListMyInbox();
               $listMyInbox ->remove($row["APP_UID"],$row["USR_UID"]);
               $listMyInbox->setDeleted(false);
               $listMyInbox->create($row);
         }
         CLI::logging("> Completed table LIST_MY_INBOX\n");
-        
+
         //Select data PAUSED
         $delaycriteria = new Criteria("workflow");
         $delaycriteria->addSelectColumn(AppDelayPeer::APP_UID);
@@ -2011,11 +2084,12 @@ class workspaceTools
               $data = $row;
               $data["DEL_INDEX"] = $row["APP_DEL_INDEX"];
               $listPaused = new ListPaused();
+              $listPaused ->remove($row["APP_UID"],$row["APP_DEL_INDEX"],$data);
               $listPaused->setDeleted(false);
               $listPaused->create($data);
         }
         CLI::logging("> Completed table LIST_PAUSED\n");
-        
+
         //Select and Insert LIST_UNASSIGNED
         $unaCriteria = $appCache->getSelAllColumns();
         $unaCriteria->add(AppCacheViewPeer::USR_UID, "", CRITERIA::EQUAL);
@@ -2024,12 +2098,12 @@ class workspaceTools
         $del = new ListUnassignedPeer();
         $del->doDeleteAll();
         $del = new ListUnassignedGroupPeer();
-        $del->doDeleteAll(); 
+        $del->doDeleteAll();
         while ($rsCriteria->next()) {
             $row = $rsCriteria->getRow();
             $listUnassigned = new ListUnassigned();
-            $unaUid = $listUnassigned->generateData($row["APP_UID"],$row["PREVIOUS_USR_UID"]); 
-        }        
+            $unaUid = $listUnassigned->generateData($row["APP_UID"],$row["PREVIOUS_USR_UID"]);
+        }
         CLI::logging("> Completed table LIST_UNASSIGNED\n");
         CLI::logging("> Completed table LIST_UNASSIGNED_GROUP\n");
 
@@ -2070,7 +2144,7 @@ class workspaceTools
     }
 
     /**
-     * This function checks if List tables are going to migrated 
+     * This function checks if List tables are going to migrated
      *
      * return boolean value
      */
@@ -2109,6 +2183,6 @@ class workspaceTools
            default:
                 return true;
        }
-    } 
+    }
 }
 

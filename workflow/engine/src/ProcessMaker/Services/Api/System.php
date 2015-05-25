@@ -64,6 +64,7 @@ class System extends Api
     {
         try {
             $enabledFeatures = array();
+            /*----------------------------------********---------------------------------*/
             $keys = array ('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=');
             foreach ($keys as $key) {
                 if (\PMLicensedFeatures
@@ -72,6 +73,7 @@ class System extends Api
                     $enabledFeatures[] = $key;
                 }
             }
+            /*----------------------------------********---------------------------------*/
             return $enabledFeatures;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
