@@ -115,7 +115,7 @@ class Project extends Api
         $outputFilename = $outputDir . sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx");
 
         $exporter->setMetadata("export_version", $version);
-        $outputFilename = $exporter->saveExport($outputFilename);
+        $outputFilename = $outputDir . $exporter->saveExport($outputFilename);
 
         $httpStream = new \ProcessMaker\Util\IO\HttpStream();
         $fileExtension = pathinfo($outputFilename, PATHINFO_EXTENSION);
