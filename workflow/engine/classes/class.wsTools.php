@@ -1357,8 +1357,15 @@ class workspaceTools
         }
 
         if ( !$flag && !is_null($flagFunction) ) {
+            $aHost = explode(':',$parameters['dbHost']);
+            $dbHost = $aHost[0];
+            $dbPort = '3306';
+            if(isset($aHost[1])){
+              $dbPort = $aHost[1];
+            }
             $command = 'mysql'
-            . ' --host=' . $parameters['dbHost']
+            . ' --host=' . $dbHost
+            . ' --port=' . $dbPort
             . ' --user=' . $parameters['dbUser']
             . ' --password=' . str_replace('"', '\"', str_replace("'", "\'", quotemeta($parameters['dbPass'])))//no change! supports the type passwords: .\+*?[^]($)'"\"'
             . ' --database=' . mysql_real_escape_string($database)
