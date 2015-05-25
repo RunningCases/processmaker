@@ -969,18 +969,6 @@ class Processes
             }
         }
 
-        if (isset($oData->taskExtraProperties)) {
-            foreach ($oData->taskExtraProperties as $key => $value) {
-                $record = $value;
-
-                if (isset($map[$record["OBJ_UID"]])) {
-                    $newUid = $map[$record["OBJ_UID"]];
-
-                    $oData->taskExtraProperties[$key]["OBJ_UID"] = $newUid;
-                }
-            }
-        }
-
         if (isset($oData->webEntry)) {
             foreach ($oData->webEntry as $key => $value) {
                 $record = $value;
@@ -3642,8 +3630,12 @@ class Processes
         //Calculating the maximum length of file name
         $pathLength = strlen( PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP );
         $length = strlen( $proTitle ) + $pathLength;
-        if ($length >= 250) {
-            $proTitle = myTruncate( $proTitle, 250 - $pathLength, '_', '' );
+        $limit = 200;
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $limit = 150;
+        }
+        if ($length >= $limit) {
+            $proTitle = $this->truncateName($proTitle);
         }
         $index = '';
 
@@ -3751,24 +3743,8 @@ class Processes
             }
         }
 
-        //For public files
+        // for public files
         $PUBLIC_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'public' . PATH_SEP . $data->process['PRO_UID'];
-
-        //Get WebEntry file names
-        $arrayWebEntryFile = array();
-
-        if (is_dir($PUBLIC_ROOT_PATH)) {
-            if ($dirh = opendir($PUBLIC_ROOT_PATH)) {
-                while (($file = readdir($dirh)) !== false) {
-                    if (preg_match("/^(.+)Post\.php$/", $file, $arrayMatch)) {
-                        $arrayWebEntryFile[] = $arrayMatch[1] . ".php";
-                        $arrayWebEntryFile[] = $arrayMatch[1] . "Post.php";
-                    }
-                }
-
-                closedir($dirh);
-            }
-        }
 
         //if this process have any mailfile
         if (is_dir( $PUBLIC_ROOT_PATH )) {
@@ -3777,10 +3753,6 @@ class Processes
             foreach ($file_list as $filename) {
                 // verify if this filename is a valid file, because it could be . or .. on *nix systems
                 if ($filename != '.' && $filename != '..') {
-                    if (in_array($filename, $arrayWebEntryFile)) {
-                        continue;
-                    }
-
                     if (@is_readable( $PUBLIC_ROOT_PATH . PATH_SEP . $filename )) {
                         $sFileName = $PUBLIC_ROOT_PATH . PATH_SEP . $filename;
                         if (file_exists( $sFileName )) {
@@ -4126,6 +4098,7 @@ class Processes
         $fsData = intval( fread( $fp, 9 ) ); //reading the size of $oData
         $contents = fread( $fp, $fsData ); //reading string $oData
 
+
         $path = PATH_DYNAFORM . $oData->process['PRO_UID'] . PATH_SEP;
         if (! is_dir( $path )) {
             G::verifyPath( $path, true );
@@ -4211,28 +4184,6 @@ class Processes
         }
 
         if (trim( $sIdentifier ) == 'PUBLIC') {
-            //Get WebEntry file names
-            $arrayWebEntryFile = array();
-
-            $fh = fopen($pmFilename, "rb");
-            $contents = fread($fh, intval(fread($fh, 9))); //Reading string $oData
-
-            while (!feof($fh)) {
-                $fsFileName = intval(fread($fh, 9)); //Reading the size of $filename
-
-                if ($fsFileName > 0) {
-                    $sFileName = fread($fh, $fsFileName); //Reading filename string
-
-                    if (preg_match("/^(.+)Post\.php$/", $sFileName, $arrayMatch)) {
-                        $arrayWebEntryFile[] = $arrayMatch[1] . ".php";
-                        $arrayWebEntryFile[] = $arrayMatch[1] . "Post.php";
-                    }
-                }
-            }
-
-            fclose($fh);
-
-            //Public files
             $sIdentifier = 1;
             while (! feof( $fp ) && is_numeric( $sIdentifier )) {
                 $sIdentifier = fread( $fp, 9 ); //reading the size of $filename
@@ -4245,11 +4196,6 @@ class Processes
                     if ($fsContent > 0) {
                         $fileContent = fread( $fp, $fsContent ); //reading string $XmlContent
                         $newFileName = $pathPublic . $sFileName;
-
-                        if (in_array($sFileName, $arrayWebEntryFile)) {
-                            continue;
-                        }
-
                         $bytesSaved = @file_put_contents( $newFileName, $fileContent );
                         if ($bytesSaved != $fsContent) {
                             throw (new Exception( 'Error writing Public file in directory : ' . $pathPublic ));
@@ -4262,6 +4208,7 @@ class Processes
         fclose( $fp );
 
         return true;
+
     }
 
     /**
@@ -5160,6 +5107,18 @@ class Processes
         } catch (Exception $e) {
             throw $e;
         }
+    }
+    
+    public function truncateName($proTitle)
+    {
+        $proTitle = str_replace(".","_",$proTitle);
+        $limit = 200;
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $limit = 150;
+        }
+        $excess = strlen($proTitle) - $limit;
+        $proTitle = substr($proTitle,0,strlen($proTitle)-$excess);
+        return $proTitle;
     }
 }
 //end class processes
