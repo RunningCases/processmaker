@@ -558,7 +558,14 @@ function newProcess(params)
         width: 260,
         maskRe: /^(?!^(PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\...*)(\..+)?$)[^\x00-\x1f\\?*\";|/]+$/i,
         allowBlank: false,
-        vtype: "textWithoutTags"
+        vtype: "textWithoutTags",
+        listeners: {
+            'focus' : function(value){
+                document.getElementById("PRO_TITLE").onpaste = function() {
+                    return false;
+                };
+            }
+        }
       },  {
         id: 'PRO_DESCRIPTION',
         fieldLabel: _('ID_DESCRIPTION'),
