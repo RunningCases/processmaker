@@ -100,6 +100,7 @@ padding-bottom:2px;
   -moz-box-sizing: border-box !important;
   box-sizing: border-box !important;
 }
+
 #insert {background:url(img/buttons.png) 0 -52px}
 #cancel {background:url(img/buttons.png) 0 0; float:right}
 
