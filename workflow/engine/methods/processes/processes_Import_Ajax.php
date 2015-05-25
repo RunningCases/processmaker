@@ -225,7 +225,7 @@ if ($action == "uploadFileNewProcess") {
         //1 -exist process
         $result->ExistGroupsInDatabase = ""; //"" -Default
         //0 -Dont exist process
-        //1 -exist process
+        //1 -exist process        
         $optionGroupExistInDatabase = isset( $_REQUEST["optionGroupExistInDatabase"] ) ? $_REQUEST["optionGroupExistInDatabase"] : null;
 
         //!Upload file
@@ -254,8 +254,8 @@ if ($action == "uploadFileNewProcess") {
         //if file is a .pm  file continues normally the importing
         if ($processFileType == "pm") {
             $oData = $oProcess->getProcessData( $path . $filename );
-        }
-
+        }    
+        
         $importer->throwExceptionIfExistsReservedWordsSql($oData);
 
         //!Upload file
@@ -303,6 +303,13 @@ if ($action == "uploadFileNewProcess") {
         //!data ouput
         $result->sNewProUid = $sProUid;
         $result->proFileName = $Fields['PRO_FILENAME'];
+
+        //Add Audit Log
+        $ogetProcess = new Process();
+        $getprocess=$ogetProcess->load($oData->process['PRO_UID']);
+        $nameProcess=$getprocess['PRO_TITLE'];
+        G::auditLog("ImportProcess", 'PM File Imported '.$nameProcess. ' ('.$oData->process['PRO_UID'].')');
+
     } catch (Exception $e) {
         $result->response = $e->getMessage();
         $result->catchMessage = $e->getMessage();

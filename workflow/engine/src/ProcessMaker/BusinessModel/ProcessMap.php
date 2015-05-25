@@ -100,7 +100,7 @@ class ProcessMap
             $tmpData[2] = $laneset['bou_y'];
             $tmpData[3] = $laneset['bou_width'];
             $tmpData[4] = $laneset['bou_height'];
-            $tmpData[5] = $laneset['dat_type'];
+            //$tmpData[5] = $laneset['dat_type'];
             $tmpData[6] = $laneset['lns_name'];
             $tmpData[7] = "";
             $tmpData[8] = $laneset['lns_uid'];
@@ -399,7 +399,7 @@ class ProcessMap
                         $tt = explode('_', $figure[7]);
                         $this->print_text($img, $figure[6], 10, 90, $black, $font, $X1, $Y1, $X2, $Y2, $figure[0], $tt[0]);
                     } else {
-                        $this->print_text($img, $figure[6], 10, 90, $black, $font, $X1, $Y1, $X2, $Y2, $figure[0], $figure[5]);
+                        $this->print_text($img, $figure[6], 10, 90, $black, $font, $X1, $Y1, $X2, $Y2, $figure[0]);
                     }
                     break;
                 case 'bpmnLane':

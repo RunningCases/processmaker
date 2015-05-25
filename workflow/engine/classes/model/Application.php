@@ -56,6 +56,11 @@ class Application extends BaseApplication
      */
     public function getAppTitle()
     {
+        $oApplication = new Application;
+        if (!$oApplication->exists($this->getAppUid())) {
+            return false;
+        }
+            
         if ($this->getAppUid() == '') {
             throw (new Exception( "Error in getAppTitle, the APP_UID can't be blank"));
         }
@@ -311,7 +316,9 @@ class Application extends BaseApplication
 
         try {
             $oApplication = ApplicationPeer::retrieveByPk( $AppUid );
-
+            if (!$oApplication) {
+                return false;
+            }
             if (is_object($oApplication) && get_class ($oApplication) == 'Application' ) {
                 $aFields = $oApplication->toArray(BasePeer::TYPE_FIELDNAME);
                 $this->fromArray($aFields, BasePeer::TYPE_FIELDNAME);

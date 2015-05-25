@@ -949,6 +949,10 @@ class Cases
     public function updateCase($sAppUid, $Fields = array())
     {
         try {
+            $oApplication = new Application;
+            if (!$oApplication->exists($sAppUid)) {
+                return false;
+            }
             $aApplicationFields = $Fields['APP_DATA'];
             $Fields['APP_UID'] = $sAppUid;
             $Fields['APP_UPDATE_DATE'] = 'now';
@@ -6740,7 +6744,7 @@ class Cases
             $rows[] = $rs->getRow();
         }
 
-        if ($PRO_UID != null) {
+        if ($PRO_UID != null) {            
             //Add supervisor
             // Users
             $oCriteria = new Criteria('workflow');
@@ -6760,8 +6764,10 @@ class Cases
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $flagSupervisors = false;
 
-            if ($oDataset->next()) {
-                $rows[] = $oDataset->getRow();
+            if ($oDataset->next()) {         
+                if (!in_array($USR_UID,$row)) {
+                        $rows[] = $oDataset->getRow();
+                }       
                 $flagSupervisors = true;
             }
 
@@ -6789,10 +6795,13 @@ class Cases
                 $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
                 if ($oDataset->next()) {
-                    $rows[] = $oDataset->getRow();
+                    if (!in_array($USR_UID,$row)) {
+                        $rows[] = $oDataset->getRow();
+                    }
                 }
             }
         }
+
         return $rows;
     }
 
@@ -6898,7 +6907,7 @@ class Cases
             unset($aFields['APP_STATUS']);
             unset($aFields['APP_PROC_STATUS']);
             unset($aFields['APP_PROC_CODE']);
-            unset($aFields['APP_PIN']);
+            unset($aFields['APP_PIN']);                        
             $this->updateCase($aFields['APP_UID'], $aFields);
             return true;
         }

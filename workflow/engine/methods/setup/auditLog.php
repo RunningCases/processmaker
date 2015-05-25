@@ -150,7 +150,9 @@ $arrayAction = array(
     "AssignUserTask"             => G::LoadTranslation("ID_ASSIGN_USER_TASK"),
     "AssignGroupTask"            => G::LoadTranslation("ID_ASSIGN_GROUP_TASK"),
     "DeleteUserTask"             => G::LoadTranslation("ID_DELETE_USER_TASK"),
-    "DeleteGroupTask"            => G::LoadTranslation("ID_DELETE_GROUP_TASK")
+    "DeleteGroupTask"            => G::LoadTranslation("ID_DELETE_GROUP_TASK"),
+    "ImportProcess"              => G::LoadTranslation("ID_IMPORT_PROCESS"),
+    "DeleteProcess"              => G::LoadTranslation("ID_DELETE_PROCESS")
 );
 
 asort($arrayAction);
