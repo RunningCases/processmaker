@@ -915,12 +915,11 @@ class pmTablesProxy extends HttpProxyController
      */
     public function import ($httpData)
     {
+        $fromAdmin = false;
         if (isset( $_POST["form"]["TYPE_TABLE"] ) && ! empty( $_POST["form"]["TYPE_TABLE"] )) {
             if($_POST["form"]["TYPE_TABLE"] == 'admin') {
                 $fromAdmin = true;
-            } else {
-                $fromAdmin = false;
-            }
+            } 
         }
         
         require_once 'classes/model/AdditionalTables.php';
