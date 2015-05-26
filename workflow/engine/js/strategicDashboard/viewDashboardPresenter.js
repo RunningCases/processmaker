@@ -70,7 +70,6 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 			"DAS_IND_PERCENT_VARIATION" : "percentComparative",
 			"DAS_IND_DIRECTION" : "direction",
 			"DAS_IND_VALUE" : "value",
-			"DAS_IND_OLD_VALUE" : "oldValue",
 			"DAS_IND_X" : "x",
 			"DAS_IND_Y" : "y",
 			"DAS_IND_WIDTH" : "width",
@@ -109,6 +108,10 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 										: newObject.percentComparative;
 
 		newObject.value = that.roundedIndicatorValue(newObject.value);
+
+		//we don't use the database values to avoid rounding differences
+		newObject.oldValue = newObject.value - newObject.comparative 
+
 		newObject.favorite = 0;
 
 		that.setStatusButtonWidthsAndDisplayValues(newObject);
