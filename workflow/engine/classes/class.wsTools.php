@@ -1359,18 +1359,25 @@ class workspaceTools
         if ( !$flag && !is_null($flagFunction) ) {
             $aHost = explode(':',$parameters['dbHost']);
             $dbHost = $aHost[0];
-            $dbPort = '3306';
             if(isset($aHost[1])){
-              $dbPort = $aHost[1];
+                $dbPort = $aHost[1];
+                $command = 'mysql'
+                . ' --host=' . $dbHost
+                . ' --port=' . $dbPort
+                . ' --user=' . $parameters['dbUser']
+                . ' --password=' . str_replace('"', '\"', str_replace("'", "\'", quotemeta($parameters['dbPass'])))//no change! supports the type passwords: .\+*?[^]($)'"\"'
+                . ' --database=' . mysql_real_escape_string($database)
+                . ' --default_character_set utf8'
+                . ' --execute="SOURCE '.$filename.'"';
+            }else{
+                $command = 'mysql'
+                . ' --host=' . $dbHost
+                . ' --user=' . $parameters['dbUser']
+                . ' --password=' . str_replace('"', '\"', str_replace("'", "\'", quotemeta($parameters['dbPass'])))//no change! supports the type passwords: .\+*?[^]($)'"\"'
+                . ' --database=' . mysql_real_escape_string($database)
+                . ' --default_character_set utf8'
+                . ' --execute="SOURCE '.$filename.'"';
             }
-            $command = 'mysql'
-            . ' --host=' . $dbHost
-            . ' --port=' . $dbPort
-            . ' --user=' . $parameters['dbUser']
-            . ' --password=' . str_replace('"', '\"', str_replace("'", "\'", quotemeta($parameters['dbPass'])))//no change! supports the type passwords: .\+*?[^]($)'"\"'
-            . ' --database=' . mysql_real_escape_string($database)
-            . ' --default_character_set utf8'
-            . ' --execute="SOURCE '.$filename.'"';
             shell_exec($command);
         } else {
             //If the safe mode of the server is actived
@@ -1631,7 +1638,7 @@ class workspaceTools
             }
             list ($dbHost, $dbUser, $dbPass) = @explode(SYSTEM_HASH, G::decrypt(HASH_INSTALLATION, SYSTEM_HASH));
             if($port != ''){
-               $dbHost = $dbHost.$port;
+               $dbHost = $dbHost.$port; //127.0.0.1:3306
             }
             $aParameters = array('dbHost'=>$dbHost,'dbUser'=>$dbUser,'dbPass'=>$dbPass);
             CLI::logging("> Connecting to system database in '$dbHost'\n");
