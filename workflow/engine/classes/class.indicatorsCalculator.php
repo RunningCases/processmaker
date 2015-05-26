@@ -550,6 +550,14 @@ class indicatorsCalculator
         $response = array();
         $result = $this->statusIndicatorGeneral($usrUid);
 
+        $list = new \ListInbox();
+        $filters = array();
+        $filters['sort'] = "LIST_INBOX.APP_UPDATE_DATE";
+        $filters['dir'] = "ASC";
+        $filters['action'] = "to_do";
+        $filters['paged'] = 0;
+        $response['data'] = $list->loadList($usrUid, $filters);
+
         $response['overdue'] = 0;
         $response['atRisk'] = 0;
         $response['onTime'] = 0;
