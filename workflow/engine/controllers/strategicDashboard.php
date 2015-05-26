@@ -197,6 +197,7 @@ class StrategicDashboard extends Controller
             $translation['ID_TIME_HOURS'] = G::LoadTranslation( 'ID_TIME_HOURS');
             $translation['ID_GROUPS'] = G::LoadTranslation( 'ID_GROUPS');
             $translation['ID_COSTS'] = G::LoadTranslation( 'ID_COSTS');
+            $translation['ID_PROCESS'] = G::LoadTranslation( 'ID_PROCESS');
             $translation['ID_TASK'] = G::LoadTranslation( 'ID_TASK');
             $translation['ID_USER'] = G::LoadTranslation( 'ID_USER');
             $translation['ID_YEAR'] = G::LoadTranslation( 'ID_YEAR');
