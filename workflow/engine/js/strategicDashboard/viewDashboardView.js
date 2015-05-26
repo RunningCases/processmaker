@@ -442,8 +442,15 @@ var selectDefaultMonthAndYear = function () {
 	compareDate.setMonth(compareDate.getMonth() - 1);
 	var compareMonth = compareDate.getMonth() + 1;
 	var compareYear = compareDate.getFullYear();
-	$('#month').val(compareMonth);
-	$('#year').val(compareYear);
+	$('#monthInit').val(compareMonth);
+	$('#yearInit').val(compareYear);
+	
+
+    var today = new Date();
+    var todayMonth = today.getMonth();
+    var todayYear = today.getFullYear();
+	$('#month').val(todayMonth + 1);
+	$('#year').val(todayYear);
 }
 
 var setActiveDashboard = function () {
@@ -522,15 +529,18 @@ var defaultInitDate = function() {
     var date = new Date();
     var dateMonth = date.getMonth();
     var dateYear = date.getFullYear();
-	var initDate = $('#year').val() + '-' + $('#month').val() + '-' + '01';
-	return initDate;
+	var retval = $('#yearInit').val() + '-' + $('#monthInit').val() + '-' + '01';
+	return retval;
 }
 
 var defaultEndDate = function () {
-    var date = new Date();
+    /*var date = new Date();
     var dateMonth = date.getMonth();
     var dateYear = date.getFullYear();
-	return dateYear + "-" + (dateMonth + 1) + "-30";
+	return dateYear + "-" + (dateMonth + 1) + "-30";*/
+
+	var retval = $('#year').val() + '-' + $('#month').val() + '-' + '01';
+	return retval;
 }
 
 var fillDashboardsList = function (presenterData) {
