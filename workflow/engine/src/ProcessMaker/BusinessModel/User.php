@@ -335,7 +335,7 @@ class User
         try {
             //Get Calendar
             $calendar = new \Calendar();
-            $calendarInfo = $calendar->getCalendarFor( $record["USR_UID"], $record["USR_UID"], $record["USR_UID"] );
+            $calendarInfo = $calendar->getCalendarFor( $record["USR_UID"], "", "" );
             $aFields["USR_CALENDAR_UID"] = ($calendarInfo["CALENDAR_APPLIED"] != "DEFAULT") ? $calendarInfo["CALENDAR_UID"] : ""; 
             $aFields["USR_CALENDAR"] = ($aFields["USR_CALENDAR_UID"] != "") ? $calendar->calendarName( $aFields["USR_CALENDAR_UID"] ) : $aFields["USR_CALENDAR_UID"];
 
