@@ -953,6 +953,10 @@ class pmTablesProxy extends HttpProxyController
             if(!$fromConfirm) {
                 G::uploadFile( $tempName, $PUBLIC_ROOT_PATH, $filename );
             }
+            
+            if ($fromConfirm == 'clear') {
+                $fromConfirm = true;
+            }
 
             $fileContent = file_get_contents( $PUBLIC_ROOT_PATH . $filename );
 
@@ -1000,36 +1004,45 @@ class pmTablesProxy extends HttpProxyController
                             $tableData->PRO_UID = isset( $contentSchema["PRO_UID"] ) ? $contentSchema["PRO_UID"] : "";
                         }
                         
-                        if($fromAdmin) { /*from admin tab*/
+                        $isPmTable = false; /*is a report table*/
+                        if($contentSchema["PRO_UID"] == "" ) {
+                            $isPmTable = true;
+                        }
+                        if (isset( $_POST["form"]["PRO_UID_HELP"] ) && !empty($_POST["form"]["PRO_UID_HELP"])) {
+                            $currentPRO_UID = $_POST["form"]["PRO_UID_HELP"];
+                        } else {
+                            $currentPRO_UID = (isset( $_SESSION['PROCESS']  ) && !empty( $_SESSION['PROCESS']  )) ? $_SESSION['PROCESS']  : '';
+                        }
+
+                        if($fromAdmin) { /* from admin tab */
                             if ($tableExists !== false && !$fromConfirm) {
                                 $validationType = 1;
                                 throw new Exception( G::loadTranslation( 'ID_OVERWRITE_PMTABLE' ) );    
                             } 
-                            if(!in_array($tableData->PRO_UID, $proUids)) {
+                            if(!in_array($tableData->PRO_UID, $proUids) && !$isPmTable) {
                                 $validationType = 2;
                                 throw new Exception( G::loadTranslation( 'ID_NO_RELATED_PROCESS' ) );
                             }
-                        } else { /*from designer tab*/
+                        } else { /* from designer tab */
                             if ($tableExists !== false && !$fromConfirm) {
                                 $validationType = 1;
                                 throw new Exception( G::loadTranslation( 'ID_OVERWRITE_PMTABLE' ) );    
-                            } 
-                            if (isset( $_SESSION['PROCESS'] ) && !empty( $_SESSION['PROCESS'] )) {
-                                if($_SESSION['PROCESS'] != $tableData->PRO_UID) {
-                                    if(!in_array($tableData->PRO_UID, $proUids)) {
-                                        $validationType = 2;
-                                        if($fromConfirm == $validationType) {
-                                            throw new Exception( G::loadTranslation( 'ID_OVERWRITE_RELATED_PROCESS' ) );
-                                        } else {
-                                            $tableData->PRO_UID = $_SESSION['PROCESS'];
-                                        }
+                            }
+                            if($currentPRO_UID != $tableData->PRO_UID) {
+                                if(!in_array($tableData->PRO_UID, $proUids)) {
+                                    $validationType = 2;
+                                    if(($fromConfirm == $validationType || !$fromConfirm) && !$isPmTable) {
+                                        throw new Exception( G::loadTranslation( 'ID_OVERWRITE_RELATED_PROCESS' ) );
                                     } else {
-                                        $validationType = 3;
-                                        throw new Exception( G::loadTranslation( 'ID_ALREADY_RELATED_TABLE ' ) );
+                                        $tableData->PRO_UID = $currentPRO_UID;
                                     }
+                                } else {
+                                    $validationType = 3;
+                                    throw new Exception( G::loadTranslation( 'ID_ALREADY_RELATED_TABLE ' ) );
                                 }
                             }
                         }
+                       
                         if ($overWrite) {
                             if ($tableExists !== false) {
                                 $additionalTable->deleteAll( $tableExists['ADD_TAB_UID'] );
