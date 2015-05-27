@@ -6,19 +6,17 @@ class Configuration extends BaseConfiguration
         $cnn = Propel::getConnection(ConfigurationPeer::DATABASE_NAME);
 
         try {
-            $configuration = new Configuration();
+            $this->setCfgUid($arrayData["CFG_UID"]);
+            $this->setObjUid($arrayData["OBJ_UID"]);
+            $this->setCfgValue((isset($arrayData["CFG_VALUE"]))? $arrayData["CFG_VALUE"] : "");
+            $this->setProUid($arrayData["PRO_UID"]);
+            $this->setUsrUid($arrayData["USR_UID"]);
+            $this->setAppUid($arrayData["APP_UID"]);
 
-            $configuration->setCfgUid($arrayData["CFG_UID"]);
-            $configuration->setObjUid($arrayData["OBJ_UID"]);
-            $configuration->setCfgValue((isset($arrayData["CFG_VALUE"]))? $arrayData["CFG_VALUE"] : "");
-            $configuration->setProUid($arrayData["PRO_UID"]);
-            $configuration->setUsrUid($arrayData["USR_UID"]);
-            $configuration->setAppUid($arrayData["APP_UID"]);
-
-            if ($configuration->validate()) {
+            if ($this->validate()) {
                 $cnn->begin();
 
-                $result = $configuration->save();
+                $result = $this->save();
 
                 $cnn->commit();
 
@@ -27,7 +25,7 @@ class Configuration extends BaseConfiguration
             } else {
                 $msg = "";
 
-                foreach ($configuration->getValidationFailures() as $validationFailure) {
+                foreach ($this->getValidationFailures() as $validationFailure) {
                     $msg = $msg . (($msg != "")? "\n" : "") . $validationFailure->getMessage();
                 }
 
