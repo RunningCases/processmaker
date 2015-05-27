@@ -21,7 +21,7 @@ class Variable
 
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
-            $this->existsName($processUid, $arrayData["VAR_NAME"]);
+            $this->existsName($processUid, $arrayData["VAR_NAME"], "");
 
             $this->throwExceptionFieldDefinition($arrayData);
 
@@ -142,7 +142,8 @@ class Variable
                 if ($variable->validate()) {
                     $cnn->begin();
                     if (isset($arrayData["VAR_NAME"])) {
-                        $this->existsName($processUid, $arrayData["VAR_NAME"]);
+                        $this->existsName($processUid, $arrayData["VAR_NAME"], $variableUid);
+
                         $variable->setVarName($arrayData["VAR_NAME"]);
                     }
                     if (isset($arrayData["VAR_FIELD_TYPE"])) {
@@ -428,18 +429,30 @@ class Variable
      * @param string $variableName       Name
      *
      */
-    public function existsName($processUid, $variableName)
+    public function existsName($processUid, $variableName, $variableUidToExclude = "")
     {
         try {
             $criteria = new \Criteria("workflow");
+
             $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_UID);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NAME);
+
+            if ($variableUidToExclude != "") {
+                $criteria->add(\ProcessVariablesPeer::VAR_UID, $variableUidToExclude, \Criteria::NOT_EQUAL);
+            }
+
             $criteria->add(\ProcessVariablesPeer::VAR_NAME, $variableName, \Criteria::EQUAL);
             $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid, \Criteria::EQUAL);
             $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
+
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $rsCriteria->next();
-            if ($rsCriteria->getRow()) {
-                throw new \Exception(\G::LoadTranslation("DYNAFIELD_ALREADY_EXIST"));
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                if ($variableName == $row["VAR_NAME"]) {
+                    throw new \Exception(\G::LoadTranslation("DYNAFIELD_ALREADY_EXIST"));
+                }
             }
         } catch (\Exception $e) {
             throw $e;
@@ -517,7 +530,7 @@ class Variable
             $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $arrayVariable["field_id"]);
             $variableDbConnectionUid = $field !== null ? $field->dbConnection : "";
             $variableSql = $field !== null ? $field->sql : "";
-            
+
             //Get data
             $_SESSION["PROCESS"] = $processUid;
 
