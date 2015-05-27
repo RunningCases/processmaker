@@ -968,7 +968,7 @@ class Processes
                 }
             }
         }
-        
+
         if (isset($oData->taskExtraProperties)) {
             foreach ($oData->taskExtraProperties as $key => $value) {
                 $record = $value;
@@ -3757,7 +3757,7 @@ class Processes
 
         // for public files
         $PUBLIC_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'public' . PATH_SEP . $data->process['PRO_UID'];
-        
+
         //Get WebEntry file names
         $arrayWebEntryFile = array();
 
@@ -4250,7 +4250,7 @@ class Processes
                     if ($fsContent > 0) {
                         $fileContent = fread( $fp, $fsContent ); //reading string $XmlContent
                         $newFileName = $pathPublic . $sFileName;
-                        
+
                         if (in_array($sFileName, $arrayWebEntryFile)) {
                             continue;
                         }
@@ -4280,8 +4280,9 @@ class Processes
     public function createTaskExtraPropertiesRows ($aTaskExtraProperties)
     {
         if (count($aTaskExtraProperties) > 0) {
-            $oConfig = new Configuration();
             foreach ($aTaskExtraProperties as $key => $row) {
+                $oConfig = new Configuration();
+
                 if ($oConfig->exists( $row['CFG_UID'], $row['OBJ_UID'], $row['PRO_UID'], $row['USR_UID'], $row['APP_UID']) ) {
                     $oConfig->remove( $row['CFG_UID'], $row['OBJ_UID'], $row['PRO_UID'], $row['USR_UID'], $row['APP_UID'] );
                     $oConfig->setDeleted(false);
@@ -5167,7 +5168,7 @@ class Processes
             throw $e;
         }
     }
-    
+
     public function truncateName($proTitle)
     {
         $proTitle = str_replace(".","_",$proTitle);
