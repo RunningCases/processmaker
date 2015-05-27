@@ -805,7 +805,6 @@ class Derivation
             unset( $aSP );
         } //end foreach
 
-
         /* Start Block : UPDATES APPLICATION */
 
         //Set THE APP_STATUS
@@ -836,6 +835,15 @@ class Derivation
             //Start Block : UPDATES APPLICATION
             $this->case->updateCase( $currentDelegation["APP_UID"], $appFields );
             //End Block : UPDATES APPLICATION
+            
+            if($currentDelegation['ROU_TYPE'] == 'PARALLEL-BY-EVALUATION'){
+                $con = Propel::getConnection('workflow');
+                $c1 = new Criteria('workflow');
+                $c1->add(ListInboxPeer::APP_UID, $currentDelegation["APP_UID"]);
+                $c2 = new Criteria('workflow');
+                $c2->add(ListInboxPeer::DEL_INIT_DATE, null);
+                BasePeer::doUpdate($c1, $c2, $con);    
+            }
         }
     }
 
