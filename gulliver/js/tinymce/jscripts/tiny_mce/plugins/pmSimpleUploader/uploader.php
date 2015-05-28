@@ -70,7 +70,7 @@ function displayUploadForm()
             File:&nbsp;
             <input type=\"file\" id=\"File1\" name=\"upload_file\" />&nbsp;(*.html, *.htm)
             <br/><br/>
-            <input type=\"submit\" name=\"Upload File\" value=\"Upload File\" />
+            <input type=\"submit\" name=\"Upload File\" value=\"Upload File\" style=\"border: 1px solid #1ba385; float: right; margin-top: 30px; margin-right: -4px; font-size: 10px; display: inline-block; text-decoration: none; padding: 8px 24px; -moz-border-radius: 2px; -ms-border-radius: 2px; -o-border-radius: 2px; background-color: #1fbc99; color: white;\" />
         </form>
     </div>
 
