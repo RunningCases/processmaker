@@ -1539,7 +1539,7 @@ Ext.onReady(function(){
 	                  TabPanel.setActiveTab(tabId);
 	                }
 	                else {
-	                  if(name == "processMap" && isBrowserIE()){
+	                  if(name == "processMap" && isBrowserIE() && _PROJECT_TYPE === 'bpmn'){
 	                      var windContainer = window.open(uri,"winContainer");
 	                  } else {
 	                      TabPanel.add({
