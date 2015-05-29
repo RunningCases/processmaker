@@ -90,6 +90,11 @@ class Light
         return $response;
     }
 
+    /**
+     * Get status trigger case
+     * @param $triggers
+     * @return array
+     */
     public function statusTriggers($triggers)
     {
         $return = array("before" => false, "after"=> false);
@@ -1061,6 +1066,8 @@ class Light
         $sysConf = \System::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
         $offset = timezone_offset_get( new \DateTimeZone( $sysConf['time_zone'] ), new \DateTime() );
         $response['timeZone'] = sprintf( "GMT%s%02d:%02d", ( $offset >= 0 ) ? '+' : '-', abs( $offset / 3600 ), abs( ($offset % 3600) / 60 ) );
+        $fields = \System::getSysInfo();
+        $response['version'] = $fields['PM_VERSION'];
         return $response;
     }
 

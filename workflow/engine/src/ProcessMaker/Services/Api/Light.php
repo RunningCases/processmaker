@@ -832,7 +832,7 @@ class Light extends Api
     /**
      * @url POST /case/:app_uid/claim
      *
-     * @param $app_uid
+     * @param $app_uid {@min 1}{@max 32}
      * @return mixed
      */
     public function claimCaseUser($app_uid)
