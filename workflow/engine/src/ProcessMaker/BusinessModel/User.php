@@ -333,6 +333,18 @@ class User
     public function getUserDataFromRecord(array $record)
     {
         try {
+            //Get Calendar
+            $calendar = new \Calendar();
+            $calendarInfo = $calendar->getCalendarFor( $record["USR_UID"], "", "" );
+            $aFields["USR_CALENDAR_UID"] = ($calendarInfo["CALENDAR_APPLIED"] != "DEFAULT") ? $calendarInfo["CALENDAR_UID"] : ""; 
+            $aFields["USR_CALENDAR"] = ($aFields["USR_CALENDAR_UID"] != "") ? $calendar->calendarName( $aFields["USR_CALENDAR_UID"] ) : $aFields["USR_CALENDAR_UID"];
+
+            //Get photo 
+            $pathPhotoUser = PATH_IMAGES_ENVIRONMENT_USERS . $record["USR_UID"] . ".gif";
+            if (! file_exists( $pathPhotoUser )) {
+                $pathPhotoUser = PATH_HOME . "public_html" . PATH_SEP . "images" . PATH_SEP . "user.gif";
+            }
+
             return array(
                 $this->getFieldNameByFormatFieldName("USR_UID")                => $record["USR_UID"],
                 $this->getFieldNameByFormatFieldName("USR_USERNAME")           => $record["USR_USERNAME"],
@@ -359,6 +371,8 @@ class User
                 $this->getFieldNameByFormatFieldName("USR_ROLE")               => $record["USR_ROLE"],
                 $this->getFieldNameByFormatFieldName("USR_REPORTS_TO")         => $record["USR_REPORTS_TO"],
                 $this->getFieldNameByFormatFieldName("USR_REPLACED_BY")        => $record["USR_REPLACED_BY"],
+                $this->getFieldNameByFormatFieldName("USR_CALENDAR_UID")       => $aFields["USR_CALENDAR_UID"],
+                $this->getFieldNameByFormatFieldName("USR_CALENDAR_NAME")           => $aFields["USR_CALENDAR"],
                 $this->getFieldNameByFormatFieldName("USR_UX")                 => $record["USR_UX"],
                 /*----------------------------------********---------------------------------*/
                 $this->getFieldNameByFormatFieldName("USR_COST_BY_HOUR")       => $record["USR_COST_BY_HOUR"],
@@ -370,7 +384,8 @@ class User
                 $this->getFieldNameByFormatFieldName("USR_TOTAL_PARTICIPATED") => $record["USR_TOTAL_PARTICIPATED"],
                 $this->getFieldNameByFormatFieldName("USR_TOTAL_PAUSED")       => $record["USR_TOTAL_PAUSED"],
                 $this->getFieldNameByFormatFieldName("USR_TOTAL_COMPLETED")    => $record["USR_TOTAL_COMPLETED"],
-                $this->getFieldNameByFormatFieldName("USR_TOTAL_UNASSIGNED")   => $record["USR_TOTAL_UNASSIGNED"]
+                $this->getFieldNameByFormatFieldName("USR_TOTAL_UNASSIGNED")   => $record["USR_TOTAL_UNASSIGNED"],
+                $this->getFieldNameByFormatFieldName("USR_PHOTO_PATH")   => $pathPhotoUser
             );
         } catch (\Exception $e) {
             throw $e;

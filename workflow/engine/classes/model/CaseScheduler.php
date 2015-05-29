@@ -311,248 +311,284 @@ class CaseScheduler extends BaseCaseScheduler
 
     public function caseSchedulerCron ($date, &$log = array(), $cron = 0)
     {
-        G::LoadClass( 'dates' );
-        require_once ('classes/model/LogCasesScheduler.php');
-        $oDates = new dates();
-        $nTime = strtotime( $date );
-        $dCurrentDate = date( 'Y-m-d', $nTime ) . ' 00:00:00';
-        $dNextDay = date( 'Y-m-d', strtotime( "$dCurrentDate" ) ) . ' 23:59:59';
-        $oCriteria = $this->getAllCriteria();
-        $oCriteria->addAnd( CaseSchedulerPeer::SCH_STATE, 'INACTIVE', Criteria::NOT_EQUAL );
-        $oCriteria->addAnd( CaseSchedulerPeer::SCH_STATE, 'PROCESSED', Criteria::NOT_EQUAL );
-        $oCriteria->add( $oCriteria->getNewCriterion(CaseSchedulerPeer::SCH_TIME_NEXT_RUN, $dCurrentDate, Criteria::GREATER_EQUAL )->
-                        addAnd( $oCriteria->getNewCriterion(  CaseSchedulerPeer::SCH_TIME_NEXT_RUN, $dNextDay, Criteria::LESS_EQUAL ) )->
-                        addOr( $oCriteria->getNewCriterion( CaseSchedulerPeer::SCH_OPTION, '5', Criteria::GREATER_EQUAL ) )
-                        );
-        $oCriteria->add( CaseSchedulerPeer::SCH_END_DATE, null, Criteria::EQUAL );
-        $oCriteria->addOr( CaseSchedulerPeer::SCH_END_DATE, $dCurrentDate, Criteria::GREATER_EQUAL );
-        $oDataset = CaseSchedulerPeer::doSelectRS( $oCriteria );
-        $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+        try {
+            require_once("classes" . PATH_SEP . "model" . PATH_SEP . "LogCasesScheduler.php");
 
-        $sValue = '';
-        $sActualTime = '';
-        $sDaysPerformTask = '';
-        $sWeeks = '';
-        $sStartDay = '';
-        $sMonths = '';
+            //Set variables
+            $port = "";
 
-        while ($oDataset->next()) {
-            $aRow = $oDataset->getRow();
-
-            if ($cron == 1) {
-                $arrayCron = unserialize( trim( @file_get_contents( PATH_DATA . "cron" ) ) );
-                $arrayCron["processcTimeStart"] = time();
-                @file_put_contents( PATH_DATA . "cron", serialize( $arrayCron ) );
+            if (isset($_SERVER["SERVER_PORT"])) {
+                $port = ($_SERVER["SERVER_PORT"] . "" != "80")? ":" . $_SERVER["SERVER_PORT"] : "";
+            } else {
+                if (defined("SERVER_PORT")) {
+                    $port = (SERVER_PORT . "" != "80")? ":" . SERVER_PORT : "";
+                }
             }
 
-            $sSchedulerUid = $aRow['SCH_UID'];
-            $sOption = $aRow['SCH_OPTION'];
-            switch ($sOption) {
-                case '1':
-                    $sDaysPerformTask = $aRow['SCH_DAYS_PERFORM_TASK'];
-                    $aDaysPerformTask = explode( '|', $sDaysPerformTask );
-                    $sValue = $aDaysPerformTask[0];
-                    if ($sValue != 1) {
-                        $sDaysPerformTask = $aDaysPerformTask[1];
-                    }
-                    break;
-                case '2':
-                    $sDaysPerformTask = $aRow['SCH_EVERY_DAYS'];
-                    $sWeeks = $aRow['SCH_WEEK_DAYS'];
-                    break;
-                case '3':
-                    $sStartDay = $aRow['SCH_START_DAY'];
-                    $sMonths = $aRow['SCH_MONTHS'];
-                    $aStartDay = explode( '|', $sStartDay );
-                    $sValue = $aStartDay[0];
-                    break;
-                case '4':
-                    $aRow['SCH_STATE'] = 'PROCESSED';
-                    break;
-                case '5':
-                    break;
-            }
+            $wsdl = "http://" . SERVER_NAME . $port . "/sys" . SYS_SYS . "/" . SYS_LANG . "/classic/services/wsdl2";
 
-            $sActualTime = $aRow['SCH_TIME_NEXT_RUN'];
-            $sActualDataHour    = (int)(date("H", strtotime($aRow["SCH_TIME_NEXT_RUN"])));
-            $sActualDataMinutes = (int)(date("i", strtotime($aRow["SCH_TIME_NEXT_RUN"])));
-            $dActualSysHour     = (int)(date("H", $nTime));
-            $dActualSysMinutes  = (int)(date("i", $nTime));
-            $sActualDataTime = strtotime( $aRow['SCH_TIME_NEXT_RUN'] );
-            $sActualSysTime = strtotime( $nTime );
+            $timeDate = strtotime($date);
 
-            if ($sActualDataHour == $dActualSysHour && $sActualDataMinutes <= $dActualSysMinutes) {
-            //if ($sActualDataHour == $dActualSysHour && $sActualDataMinutes == $dActualSysMinutes) {
-                $port = "";
+            $dateHour    = (int)(date("H", $timeDate));
+            $dateMinutes = (int)(date("i", $timeDate));
 
-                if (isset($_SERVER["SERVER_PORT"])) {
-                    $port = ($_SERVER["SERVER_PORT"] . "" != "80")? ":" . $_SERVER["SERVER_PORT"] : "";
-                } else {
-                    if (defined("SERVER_PORT")) {
-                        $port = (SERVER_PORT . "" != "80")? ":" . SERVER_PORT : "";
-                    }
+            $dateCurrentIni = date("Y-m-d", $timeDate) . " 00:00:00";
+            $dateCurrentEnd = date("Y-m-d", $timeDate) . " 23:59:59";
+
+            //Query
+            $criteria = $this->getAllCriteria();
+
+            $criteria->add(
+                $criteria->getNewCriterion(CaseSchedulerPeer::SCH_STATE, "INACTIVE", Criteria::NOT_EQUAL)->addAnd(
+                $criteria->getNewCriterion(CaseSchedulerPeer::SCH_STATE, "PROCESSED", Criteria::NOT_EQUAL))
+            );
+            $criteria->add(
+                $criteria->getNewCriterion(CaseSchedulerPeer::SCH_TIME_NEXT_RUN, $dateCurrentIni, Criteria::GREATER_EQUAL)->addAnd(
+                $criteria->getNewCriterion(CaseSchedulerPeer::SCH_TIME_NEXT_RUN, $dateCurrentEnd, Criteria::LESS_EQUAL))->addOr(
+                $criteria->getNewCriterion(CaseSchedulerPeer::SCH_OPTION, 5, Criteria::GREATER_EQUAL))->addOr(
+
+                $criteria->getNewCriterion(CaseSchedulerPeer::SCH_TIME_NEXT_RUN, $dateCurrentIni, Criteria::LESS_THAN))
+            );
+            $criteria->add(
+                $criteria->getNewCriterion(CaseSchedulerPeer::SCH_END_DATE, null, Criteria::EQUAL)->addOr(
+                $criteria->getNewCriterion(CaseSchedulerPeer::SCH_END_DATE, $dateCurrentIni, Criteria::GREATER_EQUAL))
+            );
+
+            $rsCriteria = CaseSchedulerPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                if ($cron == 1) {
+                    $arrayCron = unserialize(trim(@file_get_contents(PATH_DATA . "cron")));
+                    $arrayCron["processcTimeStart"] = time();
+                    @file_put_contents(PATH_DATA . "cron", serialize($arrayCron));
                 }
 
-                $defaultEndpoint = "http://" . SERVER_NAME . $port . "/sys" . SYS_SYS . "/" . SYS_LANG . "/classic/services/wsdl2";
+                $caseSchedulerUid    = $row["SCH_UID"];
+                $caseSchedulerOption = (int)($row["SCH_OPTION"]);
+                $caseSchedulerTimeNextRun = $row["SCH_TIME_NEXT_RUN"];
 
-                println( " - Connecting webservice: $defaultEndpoint" );
-                $user = $aRow["SCH_DEL_USER_NAME"];
-                $pass = $aRow["SCH_DEL_USER_PASS"];
-                $processId = $aRow["PRO_UID"];
-                $taskId = $aRow["TAS_UID"];
-                $client = new SoapClient( $defaultEndpoint );
-                $params = array ('userid' => $user,'password' => Bootstrap::getPasswordHashType() . ':' . $pass);
-                $result = $client->__SoapCall( 'login', array ($params) );
-                eprint( " - Logging as user $user............." );
-                if ($result->status_code == 0) {
-                    eprintln( "OK+", 'green' );
-                    $sessionId = $result->message;
-                    $newCaseLog = new LogCasesScheduler();
-                    $newRouteLog = new LogCasesScheduler();
-                    $variables = Array ();
-                    $params = array ('sessionId' => $sessionId,'processId' => $processId,'taskId' => $taskId,'variables' => $variables
+                //Create the new case
+                $flagNewCase = false;
+                $caseSchedulerTimeNextRunNew = "";
+
+                if (strtotime($caseSchedulerTimeNextRun) < strtotime($dateCurrentIni)) {
+                    //Generate new date for old SCH_TIME_NEXT_RUN
+                    $flagNewCase = true; //Create the old case
+                    $caseSchedulerTimeNextRunNew = $this->getTimeNextRunByDate($row, $date, false);
+                } else {
+                    $caseSchedulerTimeNextRunHour    = (int)(date("H", strtotime($row["SCH_TIME_NEXT_RUN"])));
+                    $caseSchedulerTimeNextRunMinutes = (int)(date("i", strtotime($row["SCH_TIME_NEXT_RUN"])));
+
+                    $flagNewCase = ($caseSchedulerTimeNextRunHour == $dateHour && $caseSchedulerTimeNextRunMinutes <= $dateMinutes) || $caseSchedulerTimeNextRunHour < $dateHour;
+                }
+
+                if ($flagNewCase) {
+                    println("  - Connecting webservice: $wsdl");
+
+                    $user = $row["SCH_DEL_USER_NAME"];
+                    $pass = $row["SCH_DEL_USER_PASS"];
+                    $processId = $row["PRO_UID"];
+                    $taskId = $row["TAS_UID"];
+
+                    $client = new SoapClient($wsdl);
+                    $result = $client->__SoapCall("login",
+                        array(
+                            array("userid" => $user, "password" => Bootstrap::getPasswordHashType() . ":" . $pass)
+                        )
                     );
 
-                    $paramsLog = array ('PRO_UID' => $processId,'TAS_UID' => $taskId,'SCH_UID' => $sSchedulerUid,'USR_NAME' => $user,'RESULT' => '','EXEC_DATE' => date( 'Y-m-d' ),'EXEC_HOUR' => date( 'H:i:s' ),'WS_CREATE_CASE_STATUS' => '','WS_ROUTE_CASE_STATUS' => ''
+                    eprintln("  - Logging as user \"$user\"...");
+
+                    $paramsLog = array(
+                        "PRO_UID"   => $processId,
+                        "TAS_UID"   => $taskId,
+                        "SCH_UID"   => $caseSchedulerUid,
+                        "USR_NAME"  => $user,
+                        "RESULT"    => "",
+                        "EXEC_DATE" => date("Y-m-d"),
+                        "EXEC_HOUR" => date("H:i:s"),
+                        "WS_CREATE_CASE_STATUS" => "",
+                        "WS_ROUTE_CASE_STATUS"  => ""
                     );
 
-                    //If this Job was was registered to be performed by a plugin
-                    if ((isset( $aRow['CASE_SH_PLUGIN_UID'] )) && ($aRow['CASE_SH_PLUGIN_UID'] != "")) {
-                        //Check if the plugin is active
-                        $pluginParts = explode( "--", $aRow['CASE_SH_PLUGIN_UID'] );
-                        if (count( $pluginParts ) == 2) {
-                            //***************** Plugins **************************
-                            G::LoadClass( 'plugin' );
-                            //here we are loading all plugins registered
-                            //the singleton has a list of enabled plugins
-                            $sSerializedFile = PATH_DATA_SITE . 'plugin.singleton';
-                            $oPluginRegistry = & PMPluginRegistry::getSingleton();
-                            if (file_exists( $sSerializedFile )) {
-                                $oPluginRegistry->unSerializeInstance( file_get_contents( $sSerializedFile ) );
-                            }
-                            $oPluginRegistry = & PMPluginRegistry::getSingleton();
-                            $activePluginsForCaseScheduler = $oPluginRegistry->getCaseSchedulerPlugins();
-                            foreach ($activePluginsForCaseScheduler as $key => $caseSchedulerPlugin) {
-                                if ((isset( $caseSchedulerPlugin->sNamespace )) && ($caseSchedulerPlugin->sNamespace == $pluginParts[0]) && (isset( $caseSchedulerPlugin->sActionId )) && ($caseSchedulerPlugin->sActionId == $pluginParts[1])) {
-                                    $caseSchedulerSelected = $caseSchedulerPlugin;
+                    if ($result->status_code == 0) {
+                        eprintln("    OK", "green");
+
+                        $sessionId = $result->message;
+
+                        $params = array("sessionId" => $sessionId, "processId" => $processId, "taskId" => $taskId, "variables" => array());
+
+                        //If this Job was was registered to be performed by a plugin
+                        if (isset($row["CASE_SH_PLUGIN_UID"]) && $row["CASE_SH_PLUGIN_UID"] != "") {
+                            //Check if the plugin is active
+                            $pluginParts = explode("--", $row["CASE_SH_PLUGIN_UID"]);
+
+                            if (count($pluginParts) == 2) {
+                                //Plugins
+                                G::LoadClass("plugin");
+
+                                //Here we are loading all plugins registered
+                                //The singleton has a list of enabled plugins
+                                $sSerializedFile = PATH_DATA_SITE . "plugin.singleton";
+                                $oPluginRegistry = &PMPluginRegistry::getSingleton();
+
+                                if (file_exists($sSerializedFile)) {
+                                    $oPluginRegistry->unSerializeInstance(file_get_contents($sSerializedFile));
+                                }
+
+                                $oPluginRegistry = &PMPluginRegistry::getSingleton();
+                                $activePluginsForCaseScheduler = $oPluginRegistry->getCaseSchedulerPlugins();
+
+                                foreach ($activePluginsForCaseScheduler as $key => $caseSchedulerPlugin) {
+                                    if (isset($caseSchedulerPlugin->sNamespace) && $caseSchedulerPlugin->sNamespace == $pluginParts[0] && isset($caseSchedulerPlugin->sActionId) && $caseSchedulerPlugin->sActionId == $pluginParts[1]) {
+                                        $caseSchedulerSelected = $caseSchedulerPlugin;
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    //If there is a trigger that is registered to do this then transfer control
-                    if ((isset( $caseSchedulerSelected )) && (is_object( $caseSchedulerSelected ))) {
-                        eprintln( " - Transfering control to a Plugin: " . $caseSchedulerSelected->sNamespace . "/" . $caseSchedulerSelected->sActionId, 'green' );
-                        $oData['OBJ_SOAP'] = $client;
-                        $oData['SCH_UID'] = $aRow['SCH_UID'];
-                        $oData['params'] = $params;
-                        $oData['sessionId'] = $sessionId;
-                        $oData['userId'] = $user;
-                        $paramsLogResultFromPlugin = $oPluginRegistry->executeMethod( $caseSchedulerSelected->sNamespace, $caseSchedulerSelected->sActionExecute, $oData );
-                        $paramsLog['WS_CREATE_CASE_STATUS'] = $paramsLogResultFromPlugin['WS_CREATE_CASE_STATUS'];
-                        $paramsLog['WS_ROUTE_CASE_STATUS'] = $paramsLogResultFromPlugin['WS_ROUTE_CASE_STATUS'];
+                        //If there is a trigger that is registered to do this then transfer control
+                        if (isset($caseSchedulerSelected) && is_object($caseSchedulerSelected)) {
+                            eprintln("  - Transfering control to a Plugin: " . $caseSchedulerSelected->sNamespace . "/" . $caseSchedulerSelected->sActionId, "green");
 
-                        $paramsLogResult = $paramsLogResultFromPlugin['paramsLogResult'];
-                        $paramsRouteLogResult = $paramsLogResultFromPlugin['paramsRouteLogResult'];
-                    } else {
-                        eprint( " - Creating the new case............." );
+                            $oData = array();
+                            $oData["OBJ_SOAP"] = $client;
+                            $oData["SCH_UID"] = $row["SCH_UID"];
+                            $oData["params"] = $params;
+                            $oData["sessionId"] = $sessionId;
+                            $oData["userId"] = $user;
 
-                        $paramsAux = $params;
-                        $paramsAux["executeTriggers"] = 1;
+                            $paramsLogResultFromPlugin = $oPluginRegistry->executeMethod($caseSchedulerSelected->sNamespace, $caseSchedulerSelected->sActionExecute, $oData);
+                            $paramsLog["WS_CREATE_CASE_STATUS"] = $paramsLogResultFromPlugin["WS_CREATE_CASE_STATUS"];
+                            $paramsLog["WS_ROUTE_CASE_STATUS"] = $paramsLogResultFromPlugin["WS_ROUTE_CASE_STATUS"];
 
-                        $oPluginRegistry = &PMPluginRegistry::getSingleton();
-                        if ($oPluginRegistry->existsTrigger ( PM_SCHEDULER_CREATE_CASE_BEFORE )) {
-                            $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_BEFORE, $paramsAux);
-                        }
-
-                        $result = $client->__SoapCall("NewCase", array($paramsAux));
-
-                        if ($oPluginRegistry->existsTrigger ( PM_SCHEDULER_CREATE_CASE_AFTER )) {
-                            $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_AFTER, $result);
-                        }
-
-                        if ($result->status_code == 0) {
-                            eprintln( "OK+ CASE #{$result->caseNumber} was created!", 'green' );
-
-                            $caseId = $result->caseId;
-                            $caseNumber = $result->caseNumber;
-                            $log[] = $caseNumber . ' was created!, ProcessID: ' . $aRow['PRO_UID'];
-                            $paramsLog['WS_CREATE_CASE_STATUS'] = "Case " . $caseNumber . " " . strip_tags( $result->message );
-                            $paramsLogResult = 'SUCCESS';
-                            $params = array ('sessionId' => $sessionId,'caseId' => $caseId,'delIndex' => "1");
-                            try {
-                                $result = $client->__SoapCall( 'RouteCase', array ($params) );
-                                eprint(" - Routing the case #$caseNumber..............");
-                                if ($result->status_code == 0) {
-                                    $paramsLog['WS_ROUTE_CASE_STATUS'] = strip_tags( $result->message );
-                                    $retMsg = explode( "Debug", $paramsLog['WS_ROUTE_CASE_STATUS'] );
-                                    $retMsg = $retMsg[0];
-                                    eprintln( "OK+ $retMsg", 'green' );
-                                    $paramsRouteLogResult = 'SUCCESS';
-                                } else {
-                                    $paramsLog['WS_ROUTE_CASE_STATUS'] = strip_tags( $result->message );
-                                    eprintln( "FAILED-> {$paramsLog ['WS_ROUTE_CASE_STATUS']}", 'red' );
-                                    $paramsRouteLogResult = 'FAILED';
-                                }
-                            } catch (Exception $oError) {
-                                setExecutionResultMessage('    WITH ERRORS', 'error');
-                                $paramsLog['WS_ROUTE_CASE_STATUS'] = strip_tags( $oError->getMessage());
-                                eprintln("  '-".strip_tags($oError->getMessage()), 'red');
-                                $paramsRouteLogResult = 'FAILED';
-                            }
+                            $paramsLogResult = $paramsLogResultFromPlugin["paramsLogResult"];
+                            $paramsRouteLogResult = $paramsLogResultFromPlugin["paramsRouteLogResult"];
                         } else {
-                            $paramsLog['WS_CREATE_CASE_STATUS'] = strip_tags( $result->message );
-                            eprintln( "FAILED->{$paramsLog ['WS_CREATE_CASE_STATUS']}", 'red' );
-                            $paramsLogResult = 'FAILED';
+                            eprintln("  - Creating the new case...");
+
+                            $paramsAux = $params;
+                            $paramsAux["executeTriggers"] = 1;
+
+                            $oPluginRegistry = &PMPluginRegistry::getSingleton();
+
+                            if ($oPluginRegistry->existsTrigger(PM_SCHEDULER_CREATE_CASE_BEFORE)) {
+                                $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_BEFORE, $paramsAux);
+                            }
+
+                            $result = $client->__SoapCall("NewCase", array($paramsAux));
+
+                            if ($oPluginRegistry->existsTrigger (PM_SCHEDULER_CREATE_CASE_AFTER)) {
+                                $oPluginRegistry->executeTriggers(PM_SCHEDULER_CREATE_CASE_AFTER, $result);
+                            }
+
+                            if ($result->status_code == 0) {
+                                eprintln("    OK case #" . $result->caseNumber . " was created!", "green");
+
+                                $caseId = $result->caseId;
+                                $caseNumber = $result->caseNumber;
+                                $log[] = $caseNumber . " was created!, ProcessID: " . $row["PRO_UID"];
+                                $paramsLog["WS_CREATE_CASE_STATUS"] = "Case " . $caseNumber . " " . strip_tags($result->message);
+                                $paramsLogResult = "SUCCESS";
+                                $params = array("sessionId" => $sessionId, "caseId" => $caseId, "delIndex" => "1");
+
+                                try {
+                                    eprintln("  - Routing the case #$caseNumber...");
+
+                                    $result = $client->__SoapCall("RouteCase", array($params));
+
+                                    if ($result->status_code == 0) {
+                                        $paramsLog["WS_ROUTE_CASE_STATUS"] = strip_tags($result->message);
+                                        $retMsg = explode("Debug", $paramsLog["WS_ROUTE_CASE_STATUS"]);
+                                        $retMsg = $retMsg[0];
+                                        $paramsRouteLogResult = "SUCCESS";
+
+                                        eprintln("    OK $retMsg", "green");
+                                    } else {
+                                        $paramsLog["WS_ROUTE_CASE_STATUS"] = strip_tags($result->message);
+                                        $paramsRouteLogResult = "FAILED";
+
+                                        eprintln("    Failed: " . $paramsLog["WS_ROUTE_CASE_STATUS"], "red");
+                                    }
+                                } catch (Exception $e) {
+                                    //setExecutionResultMessage("WITH ERRORS", "error");
+                                    $paramsLog["WS_ROUTE_CASE_STATUS"] = strip_tags($e->getMessage());
+                                    $paramsRouteLogResult = "FAILED";
+
+                                    eprintln("    Failed: " . strip_tags($e->getMessage()), "red");
+                                }
+                            } else {
+                                $paramsLog["WS_CREATE_CASE_STATUS"] = strip_tags($result->message);
+                                $paramsLogResult = "FAILED";
+
+                                eprintln("    Failed: " . $paramsLog["WS_CREATE_CASE_STATUS"], "red");
+                            }
                         }
+                    } else {
+                        //Invalid user or bad password
+                        eprintln("    " . $result->message, "red");
                     }
-                } else {
-                    //Invalid user or bad password
-                    eprintln( $result->message, 'red' );
-                }
-                if ($paramsLogResult == 'SUCCESS' && $paramsRouteLogResult == 'SUCCESS') {
-                    $paramsLog['RESULT'] = 'SUCCESS';
-                } else {
-                    $paramsLog['RESULT'] = 'FAILED';
-                }
 
-                $newCaseLog->saveLogParameters( $paramsLog );
-                $newCaseLog->save();
-
-                if ($sOption != '4' && $sOption != '5') {
-                    $nSchLastRunTime = $sActualTime;
-                    $dEstimatedDate = $this->updateNextRun( $sOption, $sValue, $sActualTime, $sDaysPerformTask, $sWeeks, $sStartDay, $sMonths );
-
-                    if ($aRow['SCH_END_DATE'] != '') {
-                        if (date( "Y-m-d", strtotime( $dEstimatedDate ) ) > date( "Y-m-d", strtotime( $aRow['SCH_END_DATE'] ) )) {
-                            $Fields = $this->Load( $sSchedulerUid );
-                            $Fields['SCH_LAST_STATE'] = $aRow['SCH_STATE'];
-                            $Fields['SCH_STATE'] = 'PROCESSED';
-                            $this->Update( $Fields );
-                        }
+                    if ($paramsLogResult == "SUCCESS" && $paramsRouteLogResult == "SUCCESS") {
+                        $paramsLog["RESULT"] = "SUCCESS";
+                    } else {
+                        $paramsLog["RESULT"] = "FAILED";
                     }
-                    $nSchTimeNextRun = $dEstimatedDate;
-                    $this->updateDate( $sSchedulerUid, $nSchTimeNextRun, $nSchLastRunTime );
-                } elseif ($sOption != '5') {
-                    $Fields = $this->Load( $sSchedulerUid );
-                    $Fields['SCH_LAST_STATE'] = $aRow['SCH_STATE'];
-                    $Fields['SCH_LAST_RUN_TIME'] = $Fields['SCH_TIME_NEXT_RUN'];
-                    $Fields['SCH_STATE'] = 'PROCESSED';
-                    $this->Update( $Fields );
-                } else {
-                    $nSchLastRunTime = $sActualTime;
-                    $Fields = $this->Load( $sSchedulerUid );
-                    $Fields['SCH_LAST_RUN_TIME'] = $Fields['SCH_TIME_NEXT_RUN'];
 
-                    //$nSchTimeNextRun = strtotime( $Fields['SCH_TIME_NEXT_RUN'] );
-                    $nSchTimeNextRun = $nTime;
-                    $nextRun = $Fields['SCH_REPEAT_EVERY'] * 60 * 60;
-                    $nSchTimeNextRun += $nextRun;
-                    $nSchTimeNextRun = date( "Y-m-d H:i", $nSchTimeNextRun );
+                    $newCaseLog = new LogCasesScheduler();
+                    $newCaseLog->saveLogParameters($paramsLog);
+                    $newCaseLog->save();
 
-                    $this->updateDate( $sSchedulerUid, $nSchTimeNextRun, $nSchLastRunTime );
+                    //Update the SCH_TIME_NEXT_RUN field
+                    switch ($caseSchedulerOption) {
+                        case 1:
+                        case 2:
+                        case 3:
+                            //Daily
+                            //Weekly
+                            //Monthly
+                            if ($caseSchedulerTimeNextRunNew == "") {
+                                list($value, $daysPerformTask, $weeks, $startDay, $months) = $this->getVariablesFromRecord($row);
+
+                                $caseSchedulerTimeNextRunNew = $this->updateNextRun($caseSchedulerOption, $value, $caseSchedulerTimeNextRun, $daysPerformTask, $weeks, $startDay, $months);
+                            }
+
+                            if ($row["SCH_END_DATE"] . "" != "" && strtotime($row["SCH_END_DATE"]) < strtotime($caseSchedulerTimeNextRunNew)) {
+                                $result = $this->update(array(
+                                    "SCH_UID"           => $caseSchedulerUid,
+                                    "SCH_LAST_STATE"    => $row["SCH_STATE"],
+                                    "SCH_LAST_RUN_TIME" => $caseSchedulerTimeNextRun,
+                                    "SCH_STATE"         => "PROCESSED"
+                                ));
+                            } else {
+                                $this->updateDate($caseSchedulerUid, $caseSchedulerTimeNextRunNew, $caseSchedulerTimeNextRun);
+                            }
+                            break;
+                        case 4:
+                            //One time only
+                            $result = $this->update(array(
+                                "SCH_UID"           => $caseSchedulerUid,
+                                "SCH_LAST_STATE"    => $row["SCH_STATE"],
+                                "SCH_LAST_RUN_TIME" => $caseSchedulerTimeNextRun,
+                                "SCH_STATE"         => "PROCESSED"
+                            ));
+                            break;
+                        case 5:
+                            //Every
+                            if ($caseSchedulerTimeNextRunNew == "") {
+                                $caseSchedulerTimeNextRunNew = date("Y-m-d H:i:s", $timeDate + (((int)($row["SCH_REPEAT_EVERY"])) * 60 * 60));
+                            }
+
+                            $this->updateDate($caseSchedulerUid, $caseSchedulerTimeNextRunNew, $caseSchedulerTimeNextRun);
+                            break;
+                    }
                 }
             }
+        } catch (Exception $e) {
+            throw $e;
         }
     }
 
@@ -564,7 +600,7 @@ class CaseScheduler extends BaseCaseScheduler
         $this->Update( $Fields );
     }
 
-    public function updateNextRun($sOption, $sValue = "", $sActualTime = "", $sDaysPerformTask = "", $sWeeks = "", $sStartDay = "", $sMonths = "", $currentDate = "", $flagNextRun = true)
+    public function updateNextRun($sOption, $sValue = "", $sActualTime = "", $sDaysPerformTask = "", $sWeeks = "", $sStartDay = "", $sMonths = "", $currentDate = "", $flagOptionWeeklyNextRun = true)
     {
         $nActualDate = $currentDate . " " . $sActualTime;
         $dEstimatedDate = '';
@@ -600,21 +636,39 @@ class CaseScheduler extends BaseCaseScheduler
 
                     $arrayWeekdays = explode("|", $sWeeks);
                     $firstDay = (int)($arrayWeekdays[0]);
+                    $lastDay  = (int)($arrayWeekdays[count($arrayWeekdays) - 1]);
 
-                    $flagFound = $nDayOfTheWeek < $firstDay || in_array($nDayOfTheWeek, $arrayWeekdays);
+                    $flagFound1 = $nDayOfTheWeek < $firstDay || in_array($nDayOfTheWeek, $arrayWeekdays);
+                    $flagFound2 = ($flagFound1)? false : ($firstDay <= $nDayOfTheWeek && $nDayOfTheWeek <= $lastDay);
 
-                    if ($flagFound) {
+                    if ($flagFound1 || $flagFound2) {
                         $typeStatement = "this";
-                        $indexDay = (in_array($nDayOfTheWeek, $arrayWeekdays))? $nDayOfTheWeek : $firstDay;
 
-                        if ($flagNextRun) {
-                            $index = array_search($nDayOfTheWeek, $arrayWeekdays);
+                        if ($flagFound1) {
+                            $indexDay = (in_array($nDayOfTheWeek, $arrayWeekdays))? $nDayOfTheWeek : $firstDay;
 
-                            if ($index !== false && isset($arrayWeekdays[$index + 1])) {
-                                $indexDay = $arrayWeekdays[$index + 1];
-                            } else {
-                                $typeStatement = "next";
-                                $indexDay = $firstDay;
+                            if ($flagOptionWeeklyNextRun) {
+                                $index = array_search($nDayOfTheWeek, $arrayWeekdays);
+
+                                if ($index !== false && isset($arrayWeekdays[$index + 1])) {
+                                    $indexDay = $arrayWeekdays[$index + 1];
+                                } else {
+                                    $typeStatement = "next";
+                                    $indexDay = $firstDay;
+                                }
+                            }
+                        }
+
+                        if ($flagFound2) {
+                            $indexDay = $firstDay;
+
+                            foreach ($arrayWeekdays as $value) {
+                                $day = (int)($value);
+
+                                if ($day > $nDayOfTheWeek) {
+                                    $indexDay = $day;
+                                    break;
+                                }
                             }
                         }
 
@@ -713,6 +767,163 @@ class CaseScheduler extends BaseCaseScheduler
             return (is_object( $oObj ) && get_class( $oObj ) == 'CaseScheduler');
         } catch (Exception $oError) {
             throw ($oError);
+        }
+    }
+
+    /**
+     * Get variables from a CaseScheduler record
+     *
+     * @param array $record Record
+     *
+     * return array Return an array with variables
+     */
+    public function getVariablesFromRecord(array $record)
+    {
+        try {
+            $value = "";
+            $daysPerformTask = "";
+            $weeks = "";
+            $startDay = "";
+            $months = "";
+
+            switch ((int)($record["SCH_OPTION"])) {
+                case 1:
+                    //Daily
+                    $daysPerformTask = $record["SCH_DAYS_PERFORM_TASK"];
+                    $arrayDaysPerformTask = explode("|", $daysPerformTask);
+                    $value = $arrayDaysPerformTask[0];
+
+                    if ($value != 1) {
+                        $daysPerformTask = $arrayDaysPerformTask[1];
+                    }
+                    break;
+                case 2:
+                    //Weekly
+                    $daysPerformTask = $record["SCH_EVERY_DAYS"];
+                    $weeks = $record["SCH_WEEK_DAYS"];
+                    break;
+                case 3:
+                    //Monthly
+                    $startDay = $record["SCH_START_DAY"];
+                    $months = $record["SCH_MONTHS"];
+                    $arrayStartDay = explode("|", $startDay);
+                    $value = $arrayStartDay[0];
+                    break;
+                case 4:
+                    //One time only
+                    break;
+                case 5:
+                    //Every
+                    break;
+            }
+
+            //Return
+            return array($value, $daysPerformTask, $weeks, $startDay, $months);
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get the Time Next Run by Date
+     *
+     * @param array  $arrayCaseSchedulerData CaseScheduler Data
+     * @param string $date                   Date
+     * @param bool   $flagUpdateTimeNextRun  Flag
+     *
+     * return string Return the Time Next Run
+     */
+    public function getTimeNextRunByDate(array $arrayCaseSchedulerData, $date, $flagUpdateTimeNextRun = true)
+    {
+        try {
+            $arrayNextDate = array();
+
+            //Get date
+            $caseSchedulerOption      = (int)($arrayCaseSchedulerData["SCH_OPTION"]);
+            $caseSchedulerTimeNextRun = $arrayCaseSchedulerData["SCH_TIME_NEXT_RUN"];
+
+            list($value, $daysPerformTask, $weeks, $startDay, $months) = $this->getVariablesFromRecord($arrayCaseSchedulerData);
+
+            $timeDate = strtotime($date); //Current time
+            $timeCaseSchedulerTimeNextRun = strtotime($caseSchedulerTimeNextRun);
+
+            $flagTimeNextRun = false;
+            $flagUpdate = false;
+
+            if ($caseSchedulerOption != 1) {
+                //Others
+                $flagTimeNextRun = true;
+            } else {
+                //Daily
+                $arrayDate = array(
+                    date("Y-m-d", strtotime($arrayCaseSchedulerData["SCH_START_DATE"])) . " " . date("H:i:s", $timeCaseSchedulerTimeNextRun),
+                    date("Y-m-d", $timeDate) . " " . date("H:i:s", $timeCaseSchedulerTimeNextRun)
+                );
+
+                $flagTimeNextRun = true;
+
+                foreach ($arrayDate as $d) {
+                    $caseSchedulerTimeNextRun2 = $d;
+                    $timeCaseSchedulerTimeNextRun2 = strtotime($caseSchedulerTimeNextRun2);
+
+                    if ($timeDate < $timeCaseSchedulerTimeNextRun2) {
+                        $caseSchedulerTimeNextRun = $caseSchedulerTimeNextRun2;
+
+                        $flagTimeNextRun = false;
+                        $flagUpdate = true;
+                        break;
+                    }
+                }
+            }
+
+            if ($flagTimeNextRun) {
+                switch ($caseSchedulerOption) {
+                    case 1:
+                    case 2:
+                    case 3:
+                        //Daily
+                        //Weekly
+                        //Monthly
+                        $caseSchedulerTimeNextRun = date("Y-m-d", $timeDate) . " " . date("H:i:s", $timeCaseSchedulerTimeNextRun);
+                        $caseSchedulerTimeNextRun = $this->updateNextRun($caseSchedulerOption, $value, $caseSchedulerTimeNextRun, $daysPerformTask, $weeks, $startDay, $months, "", false);
+
+                        $timeCaseSchedulerTimeNextRun = strtotime($caseSchedulerTimeNextRun);
+
+                        if ($timeCaseSchedulerTimeNextRun < $timeDate) {
+                            $caseSchedulerTimeNextRun = $this->updateNextRun($caseSchedulerOption, $value, $caseSchedulerTimeNextRun, $daysPerformTask, $weeks, $startDay, $months);
+                        }
+                        break;
+                    case 4:
+                        //One time only
+                        $caseSchedulerTimeNextRun = date("Y-m-d", $timeDate) . " " . date("H:i:s", $timeCaseSchedulerTimeNextRun);
+
+                        $timeCaseSchedulerTimeNextRun = strtotime($caseSchedulerTimeNextRun);
+
+                        if ($timeCaseSchedulerTimeNextRun < $timeDate) {
+                            $caseSchedulerTimeNextRun = $this->updateNextRun("1", "1", $caseSchedulerTimeNextRun, $daysPerformTask, $weeks, $startDay, $months);
+                        }
+                        break;
+                    case 5:
+                        //Every
+                        $caseSchedulerTimeNextRun = date("Y-m-d H:i:s", $timeDate + (((int)($arrayCaseSchedulerData["SCH_REPEAT_EVERY"])) * 60 * 60));
+                        break;
+                }
+
+                $flagUpdate = true;
+            }
+
+            //Update the SCH_TIME_NEXT_RUN field
+            if ($flagUpdateTimeNextRun && $flagUpdate) {
+                $result = $this->update(array(
+                    "SCH_UID"           => $arrayCaseSchedulerData["SCH_UID"],
+                    "SCH_TIME_NEXT_RUN" => strtotime($caseSchedulerTimeNextRun)
+                ));
+            }
+
+            //Return
+            return $caseSchedulerTimeNextRun;
+        } catch (Exception $e) {
+            throw $e;
         }
     }
 }
