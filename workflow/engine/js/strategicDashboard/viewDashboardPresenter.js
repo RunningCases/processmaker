@@ -108,10 +108,6 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 										: newObject.percentComparative;
 
 		newObject.value = that.roundedIndicatorValue(newObject.value);
-
-		//we don't use the database values to avoid rounding differences
-		newObject.oldValue = newObject.value - newObject.comparative 
-
 		newObject.favorite = 0;
 
 		that.setStatusButtonWidthsAndDisplayValues(newObject);
