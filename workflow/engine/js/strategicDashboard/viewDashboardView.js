@@ -88,23 +88,15 @@ WidgetBuilder.prototype.buildSpecialIndicatorFirstViewDetail = function (oneItem
 	//detailData =  {indicatorId, uid, name, averateTime...}
 	if (oneItemDetail == null){throw new Error("oneItemDetail is null ");}
 	if (!typeof(oneItemDetail) === 'object'){throw new Error( "detailData is not and object ->" + oneItemDetail);}
-	if (window.currentIndicator.type != '1050' && !oneItemDetail.hasOwnProperty("name")){throw new Error("buildSpecialIndicatorFirstViewDetail -> detailData has not the name param. Has it the correct Type? ->" + oneItemDetail);}
+	if (!oneItemDetail.hasOwnProperty("name")){throw new Error("buildSpecialIndicatorFirstViewDetail -> detailData has not the name param. Has it the correct Type? ->" + oneItemDetail);}
 
-    _.templateSettings.variable = "detailData";
-    var template = _.template ($("script.specialIndicatorDetail").html());
-    if (window.currentIndicator.type == '1050') {
-        template = _.template ($("script.statusInboxDetail").html());
-    }
-    var $retval =  $(template(oneItemDetail));
-    $retval.find(".detail-efficiency-selector").text(G_STRING.ID_EFFICIENCY_INDEX);
-    $retval.find(".detail-cost-selector").text(G_STRING.ID_INEFFICIENCY_COST);
-
-    if (window.currentIndicator.type == '1050') {
-        $retval.find(".detail-pro-title").text(G_STRING.ID_PROCESS);
-        $retval.find(".detail-tas-title").text(G_STRING.ID_TASK);
-    }
-    this.setColorForInefficiency($retval.find(".detail-cost-number-selector"), oneItemDetail);
-    return $retval;
+	_.templateSettings.variable = "detailData";
+	var template = _.template ($("script.specialIndicatorDetail").html());
+	var $retval =  $(template(oneItemDetail));
+	$retval.find(".detail-efficiency-selector").text(G_STRING.ID_EFFICIENCY_INDEX);
+	$retval.find(".detail-cost-selector").text(G_STRING.ID_INEFFICIENCY_COST);
+	this.setColorForInefficiency($retval.find(".detail-cost-number-selector"), oneItemDetail);
+	return $retval;
 }
 
 WidgetBuilder.prototype.buildStatusIndicatorFirstView = function (indicatorData) {
@@ -382,7 +374,6 @@ $(document).ready(function() {
 	$('#indicatorsGridStack').on('click','.ind-button-selector', function() {
 		var indicatorId = $(this).data('indicator-id');
 		loadIndicator(indicatorId, defaultInitDate(), defaultEndDate());
-
 	});
 
 	$('body').on('click','.bread-back-selector', function() {
@@ -628,8 +619,7 @@ var fillStatusIndicatorFirstView = function (presenterData) {
 	var graph3 = new PieChart(presenterData.graph3Data, graphParams3, null, null);
 	graph3.drawChart();
 
-	var indicatorPrincipalData = widgetBuilder.getIndicatorLoadedById(presenterData.id);
-    this.fillSpecialIndicatorFirstViewDetail(presenter.orderDataList(presenterData.data, selectedOrderOfDetailList()));
+	var indicatorPrincipalData = widgetBuilder.getIndicatorLoadedById(presenterData.id)
 	setIndicatorActiveMarker();
 }
 
@@ -704,7 +694,7 @@ var fillSpecialIndicatorFirstView = function(presenterData) {
 		}
     };
 
-	var indicatorPrincipalData = widgetBuilder.getIndicatorLoadedById(presenterData.id);
+	var indicatorPrincipalData = widgetBuilder.getIndicatorLoadedById(presenterData.id)
 
 	if (indicatorPrincipalData.type == "1010") {
 		var graph = new Pie3DChart(presenterData.dataToDraw, peiParams, null, null);
@@ -731,7 +721,7 @@ var fillSpecialIndicatorFirstViewDetail = function (list) {
 	var gridDetail = $('#relatedDetailGridStack').data('gridstack');
 	gridDetail.remove_all();
 	
-	window.currentDetailList = list;
+	window.currentDetailList = list;	
 	window.currentDetailFunction = fillSpecialIndicatorFirstViewDetail;
 
 	$.each(list, function(index, dataItem) {
@@ -743,20 +733,13 @@ var fillSpecialIndicatorFirstViewDetail = function (list) {
 		}
 		gridDetail.add_widget($widget, x, 15, 6, 2, true);
 	});
-    var label = '';
-    switch (window.currentIndicator.type) {
-        case '1010':
-            label = G_STRING['ID_RELATED_PROCESS'];
-            break;
-        case '1030':
-            label = G_STRING['ID_RELATED_GROUPS'];
-            break;
-        case '1050':
-            label = G_STRING['ID_RELATED_TASKS'];
-            break;
-    }
-    $('#relatedLabel').find('h3').text(label);
-    hideScrollIfAllDivsAreVisible();
+	if (window.currentIndicator.type == "1010") {
+		$('#relatedLabel').find('h3').text(G_STRING['ID_RELATED_PROCESS']);
+	}
+	if (window.currentIndicator.type == "1030") {
+		$('#relatedLabel').find('h3').text(G_STRING['ID_RELATED_GROUPS']);
+	}
+	hideScrollIfAllDivsAreVisible();
 }
 
 var fillSpecialIndicatorSecondView = function(presenterData) {
@@ -971,7 +954,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 	setIndicatorActiveMarker();
 }
 
-/*var animateProgress = function (indicatorItem, widget){
+var animateProgress = function (indicatorItem, widget){
       var getRequestAnimationFrame = function () {
         return window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||   
@@ -1015,7 +998,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 		  
 	  }
 	fpAnimationFrame(animacion); 
-};*/
+};
 
 /*var dashboardButtonTemplate = ' <div class="btn-group pull-left"> \ 
 								<button id="favorite" type="button" class="btn btn-success"><i class="fa fa-star fa-1x"></i></button> \
