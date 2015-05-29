@@ -367,34 +367,6 @@
 
 							<div id="compareIndicators" class="row pull-left">
 								<div class="span4 pull-left">
-									<select id="yearInit" class="form-control pull-right ">
-									{literal}
-									<script>
-										now = new Date();
-										anio = now.getFullYear();
-										for(a=anio;a>=anio-10;a--){
-										document.write('<option value="'+a+'">'+a+'</option>');
-										}
-									</script>
-									{/literal}
-									</select>
-
-									<select id="monthInit" class="form-control pull-right ">
-									  <option value="1">{translate label="ID_MONTH_ABB_1"}</option>
-									  <option value="2">{translate label="ID_MONTH_ABB_2"}</option>
-									  <option value="3">{translate label="ID_MONTH_ABB_3"}</option>
-									  <option value="4">{translate label="ID_MONTH_ABB_4"}</option>
-									  <option value="5">{translate label="ID_MONTH_ABB_5"}</option>
-									  <option value="6">{translate label="ID_MONTH_ABB_6"}</option>
-									  <option value="7">{translate label="ID_MONTH_ABB_7"}</option>
-									  <option value="8">{translate label="ID_MONTH_ABB_8"}</option>
-									  <option value="9">{translate label="ID_MONTH_ABB_9"}</option>
-									  <option value="10">{translate label="ID_MONTH_ABB_10"}</option>
-									  <option value="11">{translate label="ID_MONTH_ABB_11"}</option>
-									  <option value="12">{translate label="ID_MONTH_ABB_12"}</option>
-									</select>
-								</div>
-								<div class="span4 pull-left">
 									<h5 class="pull-left">{translate label="ID_DASH_COMPARE_MONTH"}:</h5>
 								</div>
 
