@@ -70,7 +70,6 @@ ViewDashboardPresenter.prototype.dashboardIndicatorsViewModel = function(data) {
 			"DAS_IND_PERCENT_VARIATION" : "percentComparative",
 			"DAS_IND_DIRECTION" : "direction",
 			"DAS_IND_VALUE" : "value",
-			"DAS_IND_OLD_VALUE" : "oldValue",
 			"DAS_IND_X" : "x",
 			"DAS_IND_Y" : "y",
 			"DAS_IND_WIDTH" : "width",
