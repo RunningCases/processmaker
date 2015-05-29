@@ -1025,6 +1025,7 @@ class pmTablesProxy extends HttpProxyController
                             }
                         } else { /* from designer tab */
                             if($isPmTable){
+                                $validationType = '';
                                 throw new Exception( G::loadTranslation( 'ID_NO_REPORT_TABLE' ) );    
                             }
                             if ($tableExists !== false && !$fromConfirm) {
