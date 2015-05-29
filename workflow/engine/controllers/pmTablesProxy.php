@@ -1024,6 +1024,9 @@ class pmTablesProxy extends HttpProxyController
                                 throw new Exception( G::loadTranslation( 'ID_NO_RELATED_PROCESS' ) );
                             }
                         } else { /* from designer tab */
+                            if($isPmTable){
+                                throw new Exception( G::loadTranslation( 'ID_NO_REPORT_TABLE' ) );    
+                            }
                             if ($tableExists !== false && !$fromConfirm) {
                                 $validationType = 1;
                                 throw new Exception( G::loadTranslation( 'ID_OVERWRITE_PMTABLE' ) );    
