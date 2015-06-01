@@ -922,33 +922,37 @@ class wsBase
             }
 
             /*----------------------------------********---------------------------------*/
-            if (PMLicensedFeatures::getSingleton()->verifyfeature("zIKRGpDM3pjcHFsWGplNDN0dTl5bGN3UTNiOWdQU0E5Q05QTksrU1ladWQ0VT0=")) {
+            if (!empty($config)) {
                 $arrayConfigAux = array();
 
                 if (is_array($config)) {
-                    $arrayConfigAux = $config;
+                    if (PMLicensedFeatures::getSingleton()->verifyfeature("nKaNTNuT1MzK0RsMEtXTnYzR09ucHF2WGNuS0hRdDBBak42WXJhNVVOOG1INEVoaU1EaTllbjBBeEJNeG9wRVJ6NmxQelhyVTBvdThzPQ==")) {
+                        $arrayConfigAux = $config;
+                    }
                 } else {
-                    $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
+                    if (PMLicensedFeatures::getSingleton()->verifyfeature("zIKRGpDM3pjcHFsWGplNDN0dTl5bGN3UTNiOWdQU0E5Q05QTksrU1ladWQ0VT0=")) {
+                        $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
 
-                    $criteria = $emailServer->getEmailServerCriteria();
+                        $criteria = $emailServer->getEmailServerCriteria();
 
-                    $criteria->add(EmailServerPeer::MESS_UID, $config, Criteria::EQUAL);
+                        $criteria->add(EmailServerPeer::MESS_UID, $config, Criteria::EQUAL);
 
-                    $rsCriteria = EmailServerPeer::doSelectRS($criteria);
-                    $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                        $rsCriteria = EmailServerPeer::doSelectRS($criteria);
+                        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-                    if ($rsCriteria->next()) {
-                        $row = $rsCriteria->getRow();
+                        if ($rsCriteria->next()) {
+                            $row = $rsCriteria->getRow();
 
-                        $arrayConfigAux = $row;
-                        $arrayConfigAux["SMTPSecure"] = $row["SMTPSECURE"];
+                            $arrayConfigAux = $row;
+                            $arrayConfigAux["SMTPSecure"] = $row["SMTPSECURE"];
+                        }
                     }
                 }
 
                 $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : System::getEmailConfiguration();
             } else {
             /*----------------------------------********---------------------------------*/
-                $aSetup = (is_array($config) && !empty($config))? $config : System::getEmailConfiguration();
+                $aSetup = System::getEmailConfiguration();
             /*----------------------------------********---------------------------------*/
             }
             /*----------------------------------********---------------------------------*/
