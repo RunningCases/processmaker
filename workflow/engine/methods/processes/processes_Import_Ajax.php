@@ -26,7 +26,9 @@ use \ProcessMaker\Importer\XmlImporter;
 
 ini_set("max_execution_time", 0);
 
-if (isset($_FILES["PROCESS_FILENAME"]) &&
+/*----------------------------------********---------------------------------*/
+if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=") &&
+    isset($_FILES["PROCESS_FILENAME"]) &&
     pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION) == "pm" &&
     $_FILES["PROCESS_FILENAME"]["error"] == 0
 ) {
@@ -39,12 +41,13 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
         $data = unserialize($content);
         fclose($fh);
 
-        if (is_object($data) && isset($data->triggers) && is_array($data->triggers) && count($data->triggers) > 0) {
-            /*----------------------------------********---------------------------------*/
+        if (is_object($data) && isset($data->triggers) && is_array($data->triggers) && !empty($data->triggers)) {
             G::LoadClass("codeScanner");
 
             $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
+
             $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
+
             $strFoundDisabledCode = "";
 
             foreach ($data->triggers as $value) {
@@ -52,7 +55,7 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
 
                 $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $arrayTriggerData["TRI_WEBBOT"]);
 
-                if (count($arrayFoundDisabledCode) > 0) {
+                if (!empty($arrayFoundDisabledCode)) {
                     $strCodeAndLine = "";
 
                     foreach ($arrayFoundDisabledCode["source"] as $key2 => $value2) {
@@ -71,7 +74,6 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
                 echo G::json_encode($response);
                 exit(0);
             }
-            /*----------------------------------********---------------------------------*/
         }
     } catch (Exception $e) {
         $response["status"]       = "ERROR";
@@ -82,6 +84,7 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
         exit(0);
     }
 }
+/*----------------------------------********---------------------------------*/
 
 if (isset($_FILES["PROCESS_FILENAME"]) &&
     pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION) == "pmx"
@@ -225,7 +228,7 @@ if ($action == "uploadFileNewProcess") {
         //1 -exist process
         $result->ExistGroupsInDatabase = ""; //"" -Default
         //0 -Dont exist process
-        //1 -exist process        
+        //1 -exist process
         $optionGroupExistInDatabase = isset( $_REQUEST["optionGroupExistInDatabase"] ) ? $_REQUEST["optionGroupExistInDatabase"] : null;
 
         //!Upload file
@@ -254,8 +257,8 @@ if ($action == "uploadFileNewProcess") {
         //if file is a .pm  file continues normally the importing
         if ($processFileType == "pm") {
             $oData = $oProcess->getProcessData( $path . $filename );
-        }    
-        
+        }
+
         $importer->throwExceptionIfExistsReservedWordsSql($oData);
 
         //!Upload file

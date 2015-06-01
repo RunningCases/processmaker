@@ -66,7 +66,7 @@ class Designer extends Controller
         if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
             $consolidated = 1;
         }
-        $enterprise = 1;
+        $enterprise = ($licensedFeatures->verifyfeature("Jb0N3dSZHVhZ1JNOEFZaElqdm15Y050Wmh5S0FEVEI0ckQ="))? 1 : 0;
         /*----------------------------------********---------------------------------*/
 
         $this->setVar('prj_uid', $proUid);
