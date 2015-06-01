@@ -61,12 +61,18 @@ class Designer extends Controller
 
         $consolidated = 0;
         $enterprise = 0;
+        $distribution = 0;
+
         /*----------------------------------********---------------------------------*/
         $licensedFeatures = & PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
             $consolidated = 1;
         }
-        $enterprise = ($licensedFeatures->verifyfeature("Jb0N3dSZHVhZ1JNOEFZaElqdm15Y050Wmh5S0FEVEI0ckQ="))? 1 : 0;
+        $enterprise = 1;
+
+        if ($licensedFeatures->verifyfeature("Jb0N3dSZHVhZ1JNOEFZaElqdm15Y050Wmh5S0FEVEI0ckQ=")) {
+            $distribution = 1;
+        }
         /*----------------------------------********---------------------------------*/
 
         $this->setVar('prj_uid', $proUid);
@@ -76,7 +82,7 @@ class Designer extends Controller
         $this->setVar('prj_readonly', $proReadOnly);
         $this->setVar('credentials', base64_encode(json_encode($clientToken)));
         $this->setVar('isDebugMode', $debug);
-        $this->setVar('distribution', file_exists(PATH_METHODS . "login/licenseUpdate.php"));
+        $this->setVar("distribution", $distribution);
 
         if ($debug) {
             if (! file_exists(PATH_HTML . "lib-dev/pmUI/build.cache")) {
