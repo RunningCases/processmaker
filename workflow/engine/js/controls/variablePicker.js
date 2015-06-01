@@ -4,6 +4,7 @@ var setVariablePickerJS = function(){
         if(this.value.substring(0,5) == 'gridt') {
             try {
                 updateEditorContent(this.value.substring(5));
+                closePluginPopup();
             } catch(err) {
                 closePluginPopup();
             }
@@ -21,6 +22,7 @@ var setVariablePickerJS = function(){
           if(element.value.substring(0,5) == 'gridt') { 
             try {
                 updateEditorContent(element.value.substring(5));
+                closePluginPopup();
             } catch(err) {
                 closePluginPopup();
             }

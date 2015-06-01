@@ -1357,6 +1357,10 @@ class workspaceTools
         }
 
         if ( !$flag && !is_null($flagFunction) ) {
+            //Replace TYPE by ENGINE
+            $script = file_get_contents($filename);
+            $script = preg_replace('/\)TYPE\=|\)\sTYPE\=/', ')ENGINE=', $script);
+            file_put_contents($filename,$script);
             $aHost = explode(':',$parameters['dbHost']);
             $dbHost = $aHost[0];
             if(isset($aHost[1])){
