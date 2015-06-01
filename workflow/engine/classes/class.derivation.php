@@ -805,7 +805,6 @@ class Derivation
             unset( $aSP );
         } //end foreach
 
-
         /* Start Block : UPDATES APPLICATION */
 
         //Set THE APP_STATUS
