@@ -836,10 +836,16 @@ class calendar extends CalendarDefinition
     	if ((is_null($finDate)) || ($finDate == '')) {
     		$finDate = date('Y-m-d H:i:s');
     	}
+
+    	if ( (strtotime($finDate)) <= (strtotime($iniDate)) ) {
+			return 0.00;
+		}
     
     	$secondDuration = 0.00;
+		$timeIniDate = strtotime($iniDate);
+		$timeFinDate = strtotime($finDate);
     
-    	if ( (strtotime($iniDate)) < (strtotime($finDate)) ) {
+        /*if ( (strtotime($iniDate)) < (strtotime($finDate)) ) {
     		$timeIniDate = strtotime($iniDate);
     		$timeFinDate = strtotime($finDate);
     	} elseif ( (strtotime($finDate)) < (strtotime($iniDate)) ) {
@@ -850,7 +856,7 @@ class calendar extends CalendarDefinition
     		$finDate = $auxDate;
     	} else {
     		return $secondDuration;
-    	}
+        }*/
     
     	$finDate = $this->dashGetIniDate($finDate, $calendarData);
     	$newDate = $iniDate;
