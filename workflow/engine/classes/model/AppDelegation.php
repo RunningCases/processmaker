@@ -419,7 +419,7 @@ class AppDelegation extends BaseAppDelegation
         return ($date1 - $date2) / 3600;
     }
 
-	/*--------------------------------- CODE BY DANTE LOAYZA ---------------------------*/
+	/*--------------------------------- DURATION CALCULATION ---------------------------*/
 	//usually this function is called when routing in the flow, since cron =0
 	public function calculateDuration($cron = 0) 
 	{
@@ -440,7 +440,7 @@ class AppDelegation extends BaseAppDelegation
 
 			$oAppDel->setDelStarted($calculatedValues['isStarted']);
 			$oAppDel->setDelFinished($calculatedValues['isFinished']);
-			$oAppDel->setDelDelayDuration($calculatedValues['isDelayed']);
+			$oAppDel->setDelDelayed($calculatedValues['isDelayed']);
 			$oAppDel->setDelQueueDuration($calculatedValues['queueTime']);
 			$oAppDel->setDelDelayDuration($calculatedValues['delayTime']);
 			$oAppDel->setDelDuration($calculatedValues['durationTime']);
@@ -472,7 +472,7 @@ class AppDelegation extends BaseAppDelegation
         }
         //TODO 8 daily/hours must be extracted from calendar
         $taskTime = ($rowValues['cTaskDurationUnit'] == 'DAYS') 
-                    ? $rowValues['fTaskDuration'] * 8 /24   
+                    ? $rowValues['fTaskDuration'] * 8 / 24
                     : $rowValues['fTaskDuration'] / 24;
         /*echo $this->calculateDelayTime($calendar, $calData, $rowValues)  * 100;
         echo "<br><br>";
@@ -642,223 +642,6 @@ class AppDelegation extends BaseAppDelegation
 	}
 	/*----------------------------------------------------------------------------------*/
 	
-
-    public function mycalculateDuration ($cron = 0)
-    {
-        try {
-            if ($cron == 1) {
-                $arrayCron = unserialize( trim( @file_get_contents( PATH_DATA . "cron" ) ) );
-                $arrayCron["processcTimeStart"] = time();
-                @file_put_contents( PATH_DATA . "cron", serialize( $arrayCron ) );
-            }
-
-            //patch  rows with initdate = null and finish_date
-            $c = new Criteria();
-            $c->clearSelectColumns();
-            $c->addSelectColumn( AppDelegationPeer::APP_UID );
-            $c->addSelectColumn( AppDelegationPeer::DEL_INDEX );
-            $c->addSelectColumn( AppDelegationPeer::DEL_DELEGATE_DATE );
-            $c->addSelectColumn( AppDelegationPeer::DEL_FINISH_DATE );
-            $c->add( AppDelegationPeer::DEL_INIT_DATE, null, Criteria::ISNULL );
-            $c->add( AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNOTNULL );
-            //$c->add(AppDelegationPeer::DEL_INDEX, 1);
-
-
-            $rs = AppDelegationPeer::doSelectRS( $c );
-            $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-            $rs->next();
-            $row = $rs->getRow();
-
-            while (is_array( $row )) {
-                $oAppDel = AppDelegationPeer::retrieveByPk( $row['APP_UID'], $row['DEL_INDEX'] );
-                if (isset( $row['DEL_FINISH_DATE'] )) {
-                    $oAppDel->setDelInitDate( $row['DEL_FINISH_DATE'] );
-                } else {
-                    $oAppDel->setDelInitDate( $row['DEL_INIT_DATE'] );
-                }
-                $oAppDel->save();
-
-                $rs->next();
-                $row = $rs->getRow();
-            }
-            //walk in all rows with DEL_STARTED = 0 or DEL_FINISHED = 0
-
-
-            $c = new Criteria( 'workflow' );
-            $c->clearSelectColumns();
-            $c->addSelectColumn( AppDelegationPeer::APP_UID );
-            $c->addSelectColumn( AppDelegationPeer::DEL_INDEX );
-            $c->addSelectColumn( AppDelegationPeer::USR_UID);
-            $c->addSelectColumn( AppDelegationPeer::PRO_UID);
-            $c->addSelectColumn( AppDelegationPeer::TAS_UID);
-            $c->addSelectColumn( AppDelegationPeer::DEL_DELEGATE_DATE );
-            $c->addSelectColumn( AppDelegationPeer::DEL_INIT_DATE );
-            $c->addSelectColumn( AppDelegationPeer::DEL_TASK_DUE_DATE );
-            $c->addSelectColumn( AppDelegationPeer::DEL_FINISH_DATE );
-            $c->addSelectColumn( AppDelegationPeer::DEL_DURATION );
-            $c->addSelectColumn( AppDelegationPeer::DEL_QUEUE_DURATION );
-            $c->addSelectColumn( AppDelegationPeer::DEL_DELAY_DURATION );
-            $c->addSelectColumn( AppDelegationPeer::DEL_STARTED );
-            $c->addSelectColumn( AppDelegationPeer::DEL_FINISHED );
-            $c->addSelectColumn( AppDelegationPeer::DEL_DELAYED );
-            $c->addSelectColumn( TaskPeer::TAS_DURATION );
-            $c->addSelectColumn( TaskPeer::TAS_TIMEUNIT );
-            $c->addSelectColumn( TaskPeer::TAS_TYPE_DAY );
-
-            $c->addJoin( AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN );
-            //$c->add(AppDelegationPeer::DEL_INIT_DATE, NULL, Criteria::ISNULL);
-            //$c->add(AppDelegationPeer::APP_UID, '7694483844a37bfeb0931b1063501289');
-            //$c->add(AppDelegationPeer::DEL_STARTED, 0);
-
-
-            $cton1 = $c->getNewCriterion( AppDelegationPeer::DEL_STARTED, 0 );
-            $cton2 = $c->getNewCriterion( AppDelegationPeer::DEL_FINISHED, 0 );
-            $cton1->addOR( $cton2 );
-            $c->add( $cton1 );
-
-            $rs = AppDelegationPeer::doSelectRS( $c );
-            $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-            $rs->next();
-            $row = $rs->getRow();
-            $i = 0;
-            //print "<table colspacing='2' border='1'>";
-            //print "<tr><td>iDelegateDate </td><td>iInitDate </td><td>iDueDate </td><td>iFinishDate </td><td>isStarted </td><td>isFinished </td><td>isDelayed </td><td>queueDuration </td><td>delDuration </td><td>delayDuration</td></tr>";
-
-            $calendar = new calendar();
-
-            $now = strtotime( 'now' );
-            while (is_array( $row )) {
-                $fTaskDuration = $row['TAS_DURATION'];
-                $fTaskDurationUnit = $row['TAS_TIMEUNIT'];
-                $iDelegateDate = strtotime( $row['DEL_DELEGATE_DATE'] );
-                $iInitDate = strtotime( $row['DEL_INIT_DATE'] );
-                $iDueDate = strtotime( $row['DEL_TASK_DUE_DATE'] );
-                $iFinishDate = strtotime( $row['DEL_FINISH_DATE'] );
-                $isStarted = intval( $row['DEL_STARTED'] );
-                $isFinished = intval( $row['DEL_FINISHED'] );
-                $isDelayed = intval( $row['DEL_DELAYED'] );
-                $queueDuration = $this->getDiffDate( $iInitDate, $iDelegateDate );
-                $delDuration = 0;
-                $delayDuration = 0;
-                $overduePercentage = 0.0;
-                //get the object,
-                $oAppDel = AppDelegationPeer::retrieveByPk( $row['APP_UID'], $row['DEL_INDEX'] );
-
-				//getting the calendar
-				$calendar->getCalendar($row['USR_UID'], $row['PRO_UID'], $row['TAS_UID']);
-				$calData = $calendar->getCalendarData();
-				
-                //if the task is not started
-                if ($isStarted == 0) {
-                    if ($row['DEL_INIT_DATE'] != null && $row['DEL_INIT_DATE'] != '') {
-                        $oAppDel->setDelStarted( 1 );
-                        $queueDuration = $this->getDiffDate( $iInitDate, $iDelegateDate );
-                        $oAppDel->setDelQueueDuration( $queueDuration );
-                    } else {
-                        //the task was not started
-                        $queueDuration = $this->getDiffDate( $now, $iDelegateDate );
-                        $oAppDel->setDelQueueDuration( $queueDuration );
-
-                        //we are putting negative number if the task is not delayed, and positive number for the time the task is delayed
-                        //$delayDuration = $this->getDiffDate( $now, $iDueDate );
-                        $delayDuration = $calendar->dashCalculateDurationWithCalendar( $row['DEL_TASK_DUE_DATE'], date("Y-m-d H:i:s"), $calData );
-                        $delayDuration = $delayDuration / (24 * 60 * 60); //Days
-                        $oAppDel->setDelDelayDuration( $delayDuration );
-                        if ($fTaskDuration != 0) {
-                            $overduePercentage = $delayDuration / $fTaskDuration;
-                            $oAppDel->setAppOverduePercentage( $overduePercentage );
-                            if ($iDueDate < $now) {
-                                $oAppDel->setDelDelayed( 1 );
-                            }
-                        }
-                    }
-                }
-
-                //if the task was not finished
-                if ($isFinished == 0) {
-                    if ($row['DEL_FINISH_DATE'] != null && $row['DEL_FINISH_DATE'] != '') {
-						echo "\n ****** Procesnado CON finish date ", $row['APP_UID'];
-                        $oAppDel->setAppOverduePercentage( $overduePercentage );
-                        $oAppDel->setDelFinished( 1 );
-
-                        //$delDuration = $this->getDiffDate( $iFinishDate, $iInitDate );
-                        $delDuration = $calendar->dashCalculateDurationWithCalendar($row['DEL_INIT_DATE'], $row['DEL_FINISH_DATE'], $calData );//by jen
-						echo "\nfechas", $row['DEL_INIT_DATE'], "--", $row['DEL_FINISH_DATE'], "--",  "-----", $delDuration;
-						echo "\n",  "-- delduration --", $delDuration;
-                        $delDuration = $delDuration / (24 * 60 * 60); //Saving the delDuration in days. The calculateDurationSLA func returns mins.
-						echo "\n",  "-- despues delduration --", $delDuration;
-                        $oAppDel->setDelDuration( $delDuration );
-                        //calculate due date if correspond
-                        $dueDate = strtotime($iDueDate);
-                        $finishDate = strtotime($iFinishDate);
-						echo "\nLas fechas: idueDate=", $iDueDate, " dueDate=",$dueDate," | ifinishDate=", $iFinishDate, "finishDate=", $finishDate;
-                        if ($dueDate < $finishDate) {
-							echo "\n\tpor dueDate < finishDate";
-                            $oAppDel->setDelDelayed( 1 );
-                            //$delayDuration = $this->getDiffDate( $iFinishDate, $iDueDate );
-                            $delayDuration = $calendar->dashCalculateDurationWithCalendar( $row['DEL_TASK_DUE_DATE'], $row['DEL_FINISH_DATE'], $calData );
-                            $delayDuration = $delayDuration / (24 * 60 * 60); //Days
-                        } else {
-							echo "\n\tpor dueDate NO < finishDate";
-                            $oAppDel->setDelDelayed( 0 );
-                            $delayDuration = 0;
-                        }
-                        $oAppDel->setDelDelayDuration( $delayDuration );
-                    } else {
-						echo "\n********Procesnado SIN finish date", $row['APP_UID'];
-                        //the task was not completed
-                        if ($row['DEL_INIT_DATE'] != null && $row['DEL_INIT_DATE'] != '') {
-                        	//$delDuration = $this->getDiffDate( $now, $iInitDate );
-                            $delDuration = $calendar->dashCalculateDurationWithCalendar($row['DEL_INIT_DATE'], date("Y-m-d H:i:s"), $calData );//by jen
-                            $delDuration = $delDuration / (24 * 60 * 60); //Saving the delDuration in days. The calculateDurationSLA func returns mins.
-                        } else {
-                            //$delDuration = $this->getDiffDate( $now, $iDelegateDate );
-                            $delDuration = $calendar->dashCalculateDurationWithCalendar($row['DEL_DELEGATE_DATE'], date("Y-m-d H:i:s"), $calData ); //byJen
-                            $delDuration = $delDuration / (24 * 60 * 60); //Saving the delDuration in days. The calculateDurationSLA func returns mins.
-                        }
-                        $oAppDel->setDelDuration( $delDuration );
-
-                        //we are putting negative number if the task is not delayed, and positive number for the time the task is delayed
-                        //$delayDuration = $this->getDiffDate( $now, $iDueDate );
-                        $delayDuration = 0;
-                        if($now > $iDueDate){
-                        	$delayDuration = $calendar->dashCalculateDurationWithCalendar( $row['DEL_TASK_DUE_DATE'], date("Y-m-d H:i:s"), $calData );
-                        	$delayDuration = $delayDuration / (24 * 60 * 60);
-                        }
-                         //Days
-                        $oAppDel->setDelDelayDuration( $delayDuration );
-                        if ($fTaskDuration != 0) {
-                            $overduePercentage = $delayDuration / $fTaskDuration;
-                            $oAppDel->setAppOverduePercentage( $overduePercentage );
-                            if ($iDueDate < $now) {
-                                $oAppDel->setDelDelayed( 1 );
-                            }
-                        }
-                    }
-
-                }
-
-                $queueDuration = $this->getDiffDate( $iInitDate, $iDelegateDate );
-                $delDuration = 0;
-                $delayDuration = 0;
-                $overduePercentage = 0.0;
-                //get the object,
-                $oAppDel = AppDelegationPeer::retrieveByPk( $row['APP_UID'], $row['DEL_INDEX'] );
-                //and finally save the record
-                $RES = $oAppDel->save();
-                $rs->next();
-                $row = $rs->getRow();
-            }
-
-            if ($cron == 1) {
-                $arrayCron = unserialize( trim( @file_get_contents( PATH_DATA . "cron" ) ) );
-                $arrayCron["processcTimeStart"] = time();
-                @file_put_contents( PATH_DATA . "cron", serialize( $arrayCron ) );
-            }
-        } catch (Exception $oError) {
-            error_log( $oError->getMessage() );
-        }
-    }
 
 
     public function getLastDeleration ($APP_UID)
