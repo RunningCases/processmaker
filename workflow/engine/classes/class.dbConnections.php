@@ -154,7 +154,7 @@ class dbConnections
         $result = DbSourcePeer::doSelectRS( $c );
         $result->next();
         $row = $result->getRow();
-        
+
         while ($row = $result->getRow()) {
             if ((trim( $pProUid ) == trim( $row[1] )) && ($row[2] == 'mysql')) {
                 $connections[] = Array ('DBS_UID' => $row[0],'DBS_NAME' => '[' . $row[3] . '] ' . $row[2] . ': ' . $row[4]
@@ -335,7 +335,12 @@ class dbConnections
                 );
                 break;
             case 'oracle':
-                $encodes = Array ();
+                $encodes = array (
+                    array ("UTF8",      "UTF8 - Unicode 3.0 UTF-8 Universal character set CESU-8 compliant"),
+                    array ("UTFE",      "UTFE - EBCDIC form of Unicode 3.0 UTF-8 Universal character set"),
+                    array ("AL16UTF16", "AL16UTF16 - Unicode 3.1 UTF-16 Universal character set"),
+                    array ("AL32UTF8",  "AL32UTF8 - Unicode 3.1 UTF-8 Universal character set")
+                );
                 break;
         }
 

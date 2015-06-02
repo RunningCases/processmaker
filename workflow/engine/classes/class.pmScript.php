@@ -493,7 +493,7 @@ class PMScript
         $sScript .= substr( $this->sScript, $iAux );
         if(preg_match('/\b(or|and|xor)\b/i' , $sScript)) {
             $sScript = "( ".$sScript." )";
-        } 
+        }
         $sScript = '$bResult = ' . $sScript . ';';
         // checks if the syntax is valid or if the variables in that condition has been previously defined
         if ($this->validSyntax( $sScript ) && $variableIsDefined) {
@@ -695,7 +695,7 @@ function getEngineDataBaseName ($connection)
  * @param type $sql
  * @param type $connection
  */
-function executeQueryOci ($sql, $connection, $aParameter = array())
+function executeQueryOci ($sql, $connection, $aParameter = array(), $dbsEncode = "")
 {
     $aDNS = $connection->getDSN();
 
@@ -710,12 +710,12 @@ function executeQueryOci ($sql, $connection, $aParameter = array())
 
         if ($flagTns == 0) {
             // if not default port
-            $conn = oci_connect($sUsername, $sPassword, $sHostspec . ":" . $sPort . "/" . $sDatabse);
+            $conn = oci_connect($sUsername, $sPassword, $sHostspec . ":" . $sPort . "/" . $sDatabse, $dbsEncode);
         } else {
-            $conn = oci_connect($sUsername, $sPassword, $sHostspec);
+            $conn = oci_connect($sUsername, $sPassword, $sHostspec, $dbsEncode);
         }
     } else {
-        $conn = oci_connect( $sUsername, $sPassword, $sHostspec . "/" . $sDatabse );
+        $conn = oci_connect( $sUsername, $sPassword, $sHostspec . "/" . $sDatabse, $dbsEncode);
     }
 
     if (! $conn) {
@@ -786,4 +786,3 @@ function executeQueryOci ($sql, $connection, $aParameter = array())
             break;
     }
 }
-
