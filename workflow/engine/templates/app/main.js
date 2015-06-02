@@ -33,13 +33,15 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
   var startRecord=0;
   var loadSize=10;
 
+  startRecord=startRecord+loadSize;
+
   storeNotes = new Ext.data.JsonStore({
     url: "../appProxy/getNotesList?appUid=" + appUid + "&delIndex=" + delIndex + "&pro=" + proUid + "&tas=" + taskUid,
     root: 'notes',
     totalProperty: 'totalCount',
     fields: ['USR_USERNAME','USR_FIRSTNAME','USR_LASTNAME','USR_FULL_NAME','NOTE_DATE','NOTE_CONTENT', 'USR_UID', 'user'],
     baseParams:{
-      start:startRecord,
+      start:0,
       limit:startRecord+loadSize
     },
     listeners:{

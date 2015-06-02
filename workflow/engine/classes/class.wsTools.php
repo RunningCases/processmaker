@@ -1357,13 +1357,31 @@ class workspaceTools
         }
 
         if ( !$flag && !is_null($flagFunction) ) {
-            $command = 'mysql'
-            . ' --host=' . $parameters['dbHost']
-            . ' --user=' . $parameters['dbUser']
-            . ' --password=' . str_replace('"', '\"', str_replace("'", "\'", quotemeta($parameters['dbPass'])))//no change! supports the type passwords: .\+*?[^]($)'"\"'
-            . ' --database=' . mysql_real_escape_string($database)
-            . ' --default_character_set utf8'
-            . ' --execute="SOURCE '.$filename.'"';
+            //Replace TYPE by ENGINE
+            $script = file_get_contents($filename);
+            $script = preg_replace('/\)TYPE\=|\)\sTYPE\=/', ')ENGINE=', $script);
+            file_put_contents($filename,$script);
+            $aHost = explode(':',$parameters['dbHost']);
+            $dbHost = $aHost[0];
+            if(isset($aHost[1])){
+                $dbPort = $aHost[1];
+                $command = 'mysql'
+                . ' --host=' . $dbHost
+                . ' --port=' . $dbPort
+                . ' --user=' . $parameters['dbUser']
+                . ' --password=' . str_replace('"', '\"', str_replace("'", "\'", quotemeta($parameters['dbPass'])))//no change! supports the type passwords: .\+*?[^]($)'"\"'
+                . ' --database=' . mysql_real_escape_string($database)
+                . ' --default_character_set utf8'
+                . ' --execute="SOURCE '.$filename.'"';
+            }else{
+                $command = 'mysql'
+                . ' --host=' . $dbHost
+                . ' --user=' . $parameters['dbUser']
+                . ' --password=' . str_replace('"', '\"', str_replace("'", "\'", quotemeta($parameters['dbPass'])))//no change! supports the type passwords: .\+*?[^]($)'"\"'
+                . ' --database=' . mysql_real_escape_string($database)
+                . ' --default_character_set utf8'
+                . ' --execute="SOURCE '.$filename.'"';
+            }
             shell_exec($command);
         } else {
             //If the safe mode of the server is actived
@@ -1371,6 +1389,8 @@ class workspaceTools
                 mysql_select_db($database);
                 $script = file_get_contents($filename);
 
+                //Replace TYPE by ENGINE
+                $script = preg_replace('/\)TYPE\=|\)\sTYPE\=/', ')ENGINE=', $script);
                 $lines = explode("\n", $script);
                 $previous = null;
                 $insert = false;
@@ -1502,7 +1522,7 @@ class workspaceTools
      * @param string $newWorkspaceName if defined, supplies the name for the
      * workspace to restore to
      */
-    static public function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en')
+    static public function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en', $port = '')
     {
         G::LoadThirdParty('pear/Archive', 'Tar');
         $backup = new Archive_Tar($filename);
@@ -1621,6 +1641,9 @@ class workspaceTools
                 CLI::logging(CLI::error("Could not get the shared folder permissions, not changing workspace permissions") . "\n");
             }
             list ($dbHost, $dbUser, $dbPass) = @explode(SYSTEM_HASH, G::decrypt(HASH_INSTALLATION, SYSTEM_HASH));
+            if($port != ''){
+               $dbHost = $dbHost.$port; //127.0.0.1:3306
+            }
             $aParameters = array('dbHost'=>$dbHost,'dbUser'=>$dbUser,'dbPass'=>$dbPass);
             CLI::logging("> Connecting to system database in '$dbHost'\n");
             $link = mysql_connect($dbHost, $dbUser, $dbPass);
@@ -2079,6 +2102,7 @@ class workspaceTools
               $data = $row;
               $data["DEL_INDEX"] = $row["APP_DEL_INDEX"];
               $listPaused = new ListPaused();
+              $listPaused ->remove($row["APP_UID"],$row["APP_DEL_INDEX"],$data);
               $listPaused->setDeleted(false);
               $listPaused->create($data);
         }

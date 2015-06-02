@@ -3642,8 +3642,12 @@ class Processes
         //Calculating the maximum length of file name
         $pathLength = strlen( PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP );
         $length = strlen( $proTitle ) + $pathLength;
-        if ($length >= 250) {
-            $proTitle = myTruncate( $proTitle, 250 - $pathLength, '_', '' );
+        $limit = 200;
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $limit = 150;
+        }
+        if ($length >= $limit) {
+            $proTitle = $this->truncateName($proTitle);
         }
         $index = '';
 
@@ -3751,7 +3755,7 @@ class Processes
             }
         }
 
-        //For public files
+        // for public files
         $PUBLIC_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'public' . PATH_SEP . $data->process['PRO_UID'];
 
         //Get WebEntry file names
@@ -4126,6 +4130,7 @@ class Processes
         $fsData = intval( fread( $fp, 9 ) ); //reading the size of $oData
         $contents = fread( $fp, $fsData ); //reading string $oData
 
+
         $path = PATH_DYNAFORM . $oData->process['PRO_UID'] . PATH_SEP;
         if (! is_dir( $path )) {
             G::verifyPath( $path, true );
@@ -4262,6 +4267,7 @@ class Processes
         fclose( $fp );
 
         return true;
+
     }
 
     /**
@@ -4274,8 +4280,9 @@ class Processes
     public function createTaskExtraPropertiesRows ($aTaskExtraProperties)
     {
         if (count($aTaskExtraProperties) > 0) {
-            $oConfig = new Configuration();
             foreach ($aTaskExtraProperties as $key => $row) {
+                $oConfig = new Configuration();
+
                 if ($oConfig->exists( $row['CFG_UID'], $row['OBJ_UID'], $row['PRO_UID'], $row['USR_UID'], $row['APP_UID']) ) {
                     $oConfig->remove( $row['CFG_UID'], $row['OBJ_UID'], $row['PRO_UID'], $row['USR_UID'], $row['APP_UID'] );
                     $oConfig->setDeleted(false);
@@ -5160,6 +5167,18 @@ class Processes
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    public function truncateName($proTitle)
+    {
+        $proTitle = str_replace(".","_",$proTitle);
+        $limit = 200;
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $limit = 150;
+        }
+        $excess = strlen($proTitle) - $limit;
+        $proTitle = substr($proTitle,0,strlen($proTitle)-$excess);
+        return $proTitle;
     }
 }
 //end class processes

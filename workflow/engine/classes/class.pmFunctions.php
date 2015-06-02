@@ -242,6 +242,7 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
 {
     $con = Propel::getConnection( $DBConnectionUID );
     $con->begin();
+
     try {
         $statement = trim( $SqlStatement );
         $statement = str_replace( '(', '', $statement );
@@ -278,7 +279,13 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
                     break;
             }
         } else {
-            $result = executeQueryOci( $SqlStatement, $con, $aParameter );
+            $dataEncode = $con->getDSN();
+
+            if (isset($dataEncode["encoding"]) && $dataEncode["encoding"] != "") {
+                $result = executeQueryOci($SqlStatement, $con, $aParameter, $dataEncode["encoding"]);
+            } else {
+                $result = executeQueryOci($SqlStatement, $con, $aParameter);
+            }
         }
 
         return $result;
