@@ -396,7 +396,12 @@ $(document).ready(function() {
 				fillSpecialIndicatorSecondView(viewModel);
 			});
 	});
-	initialDraw();
+
+    $('[data-toggle="tooltip"]').tooltip({
+        animated: 'fade',
+        placement: 'bottom'
+    });
+    initialDraw();
 });
 
 var hideScrollIfAllDivsAreVisible = function(){
