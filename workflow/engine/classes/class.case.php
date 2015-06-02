@@ -1078,6 +1078,7 @@ class Cases
               $Fields['DEL_INDEX'] = 1;
             }
             $inbox = new ListInbox();
+            unset($Fields['DEL_INIT_DATE']);
             $inbox->update(array_merge($Fields, $arrayNewCaseTitleAndDescription));
             /*----------------------------------********---------------------------------*/
 
