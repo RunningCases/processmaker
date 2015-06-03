@@ -419,13 +419,12 @@ class AppDelegation extends BaseAppDelegation
         return ($date1 - $date2) / 3600;
     }
 
-	/*--------------------------------- DURATION CALCULATION ---------------------------*/
-	//usually this function is called when routing in the flow, since cron =0
+	//usually this function is called when routing in the flow, so by default cron =0
 	public function calculateDuration($cron = 0) 
 	{
-		$this->writeFileIfCronCalled($cron);
-		$this->patchDataWithValues();
-		$rs = $this->recordSetToProcessDurations();
+		$this->writeFileIfCalledFromCronForCalculateDuration($cron);
+		$this->patchDataWithValuesForCalculateDuration();
+		$rs = $this->recordSetForCalculateDuration();
 		$rs->next();
 		$row = $rs->getRow();
 		$i = 0;
@@ -436,7 +435,7 @@ class AppDelegation extends BaseAppDelegation
             $calendar = new calendar();
             $calendar->getCalendar($row['USR_UID'], $row['PRO_UID'], $row['TAS_UID']);
             $calData = $calendar->getCalendarData();
-            $calculatedValues = $this->getCalculatedValues ($row, $calendar, $calData, $now);
+            $calculatedValues = $this->getValuesToStoreForCalculateDuration($row, $calendar, $calData, $now);
 
 			$oAppDel->setDelStarted($calculatedValues['isStarted']);
 			$oAppDel->setDelFinished($calculatedValues['isFinished']);
@@ -451,9 +450,9 @@ class AppDelegation extends BaseAppDelegation
 		}
 	}
 
-	public function getCalculatedValues($row, $calendar, $calData, $nowDate) 
+	public function getValuesToStoreForCalculateDuration($row, $calendar, $calData, $nowDate) 
 	{
-        $rowValues = $this->createRowDataForCalculateDuration($row, $nowDate);
+        $rowValues = $this->completeRowDataForCalculateDuration($row, $nowDate);
 		return Array(
             'isStarted'    => $this->createDateFromString($row['DEL_INIT_DATE']) != null ? 1 : 0,
             'isFinished'   => $this->createDateFromString($row['DEL_FINISH_DATE']) != null ? 1: 0,
@@ -474,9 +473,6 @@ class AppDelegation extends BaseAppDelegation
         $taskTime = ($rowValues['cTaskDurationUnit'] == 'DAYS') 
                     ? $rowValues['fTaskDuration'] * 8 / 24
                     : $rowValues['fTaskDuration'] / 24;
-        /*echo $this->calculateDelayTime($calendar, $calData, $rowValues)  * 100;
-        echo "<br><br>";
-        echo $taskTime;*/
 
         return $this->calculateDelayTime($calendar, $calData, $rowValues)  * 100/ $taskTime;
 	}
@@ -486,12 +482,6 @@ class AppDelegation extends BaseAppDelegation
 	{
 		$initDateForCalc = $this->selectDate ($rowValues['dInitDate'], $rowValues['dDelegateDate'], 'max'); 
 		$endDateForCalc = $this->selectDate ($rowValues['dFinishDate'], $rowValues['dNow'], 'min'); 
-
-        /*echo '<br><br>DURATION<BR>';
-        print_r($initDateForCalc);
-        echo '<br>*********<br>';
-        print_r($endDateForCalc);
-        echo '<br><br>';*/
 		return $calendar->dashCalculateDurationWithCalendar(
 							$initDateForCalc->format('Y-m-d H:i:s'), 
 							$endDateForCalc->format('Y-m-d H:i:s'), 
@@ -503,12 +493,6 @@ class AppDelegation extends BaseAppDelegation
 	{
 		$initDateForCalc = $rowValues['dDelegateDate']; 
 		$endDateForCalc = $this->selectDate ($rowValues['dInitDate'], $rowValues['dNow'], 'min'); 
-        /*echo '<br><br>QUEUE<BR>';
-        print_r($initDateForCalc);
-        echo '<br>*********<br>';
-        print_r($endDateForCalc);
-        echo '<br><br>';*/
-
 		return $calendar->dashCalculateDurationWithCalendar(
 							$initDateForCalc->format('Y-m-d H:i:s'), 
 							$endDateForCalc->format('Y-m-d H:i:s'), 
@@ -520,20 +504,16 @@ class AppDelegation extends BaseAppDelegation
 	{
 		$initDateForCalc = $this->selectDate($rowValues['dDueDate'], $rowValues['dDelegateDate'], 'max'); 
 		$endDateForCalc = $this->selectDate ($rowValues['dFinishDate'], $rowValues['dNow'], 'min'); 
-
-        /*echo '<br><br>DELAY<BR>';
-        print_r($initDateForCalc);
-        echo '<br>*********<br>';
-        print_r($endDateForCalc);
-        echo '<br><br>';*/
-
 		return $calendar->dashCalculateDurationWithCalendar(
 							$initDateForCalc->format('Y-m-d H:i:s'), 
 							$endDateForCalc->format('Y-m-d H:i:s'), 
 							$calData)/(24*60*60);  
 	}
 
-	private function createRowDataForCalculateDuration($row, $nowDate) 
+    //to avoid aplying many times the same conversions and functions the row data
+    //is used to create dates as DateTime objects and other fields are stracted also, 
+    //so the array returned will work as a "context" object for the rest of the functions.
+	private function completeRowDataForCalculateDuration($row, $nowDate) 
 	{
 		return Array(
 			'dDelegateDate'       => $this->createDateFromString ($row['DEL_DELEGATE_DATE']),
@@ -548,7 +528,9 @@ class AppDelegation extends BaseAppDelegation
 	}
 
 	//by default min function returns de null value if one of the params is null
-	//so we need to implement one function that returns the min value or the not null value
+    //to avoid that behaviour this function was created so the function returns the first
+    //not null date or if both are not null the mix/max date
+    //NOTE date1 and date2 are DateTime objects.
 	private function selectDate($date1, $date2, $compareFunction)
 	{
 		if ($date1 == null)	
@@ -560,13 +542,14 @@ class AppDelegation extends BaseAppDelegation
 		return $compareFunction($date1, $date2);
 	}
 
+    //Creates a DateTime object from a string. If the string is null or empty a null object is returned
 	private function createDateFromString($stringDate) {
 		if ($stringDate == null || $stringDate == '')
 			return null;
 		return new DateTime($stringDate);
 	}
 
-	private function recordSetToProcessDurations()
+	private function recordSetForCalculateDuration()
 	{
 		//walk in all rows with DEL_STARTED = 0 or DEL_FINISHED = 0
 		$c = new Criteria( 'workflow' );
@@ -599,7 +582,7 @@ class AppDelegation extends BaseAppDelegation
 		$rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
 		return $rs;
 	}
-	private function writeFileIfCronCalled($cron) 
+    private function writeFileIfCalledFromCronForCalculateDuration($cron) 
 	{
 		if ($cron == 1) {
 			$arrayCron = unserialize( trim( @file_get_contents( PATH_DATA . "cron" ) ) );
@@ -608,7 +591,7 @@ class AppDelegation extends BaseAppDelegation
 		}
 	}
 
-	private function patchDataWithValues() 
+	private function patchDataWithValuesForCalculateDuration() 
 	{
 		//patch  rows with initdate = null and finish_date
 		$c = new Criteria();
@@ -640,8 +623,7 @@ class AppDelegation extends BaseAppDelegation
 			$row = $rs->getRow();
 		}
 	}
-	/*----------------------------------------------------------------------------------*/
-	
+    
 
 
     public function getLastDeleration ($APP_UID)

@@ -830,6 +830,7 @@ class calendar extends CalendarDefinition
     	return $newDate;
     }
     
+
     //Calculate the duration betwen two dates with a calendar
     public function dashCalculateDurationWithCalendar ($iniDate, $finDate = null, $calendarData = array())
     {
@@ -844,19 +845,6 @@ class calendar extends CalendarDefinition
     	$secondDuration = 0.00;
 		$timeIniDate = strtotime($iniDate);
 		$timeFinDate = strtotime($finDate);
-    
-        /*if ( (strtotime($iniDate)) < (strtotime($finDate)) ) {
-    		$timeIniDate = strtotime($iniDate);
-    		$timeFinDate = strtotime($finDate);
-    	} elseif ( (strtotime($finDate)) < (strtotime($iniDate)) ) {
-    		$timeIniDate = strtotime($finDate);
-    		$timeFinDate = strtotime($iniDate);
-    		$auxDate = $iniDate;
-    		$iniDate = $finDate;
-    		$finDate = $auxDate;
-    	} else {
-    		return $secondDuration;
-        }*/
     
     	$finDate = $this->dashGetIniDate($finDate, $calendarData);
     	$newDate = $iniDate;
@@ -879,6 +867,7 @@ class calendar extends CalendarDefinition
     	}
     	return $secondDuration;
     }
+
     
     public function dashGetIniDate ($iniDate, $calendarData = array())
     {
