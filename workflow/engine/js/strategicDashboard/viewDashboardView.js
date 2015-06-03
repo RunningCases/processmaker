@@ -27,18 +27,18 @@ WidgetBuilder.prototype.buildSpecialIndicatorButton = function (indicator) {
 	
 	if(indicator.comparative < 0){
 		$retval.find(".ind-container-selector").removeClass("panel-green").addClass("panel-red");
-		$retval.find(".ind-symbol-selector").removeClass("fa-chevron-up").addClass("fa-chevron-down");
+		$retval.find(".ind-symbol-selector").removeClass("fa-arrow-up").addClass("fa-arrow-down");
 	}
 
 	if(indicator.comparative > 0){
 		$retval.find(".ind-container-selector").removeClass("panel-red").addClass("panel-green");
-		$retval.find(".ind-symbol-selector").removeClass("fa-chevron-down").addClass("fa-chevron-up");
+		$retval.find(".ind-symbol-selector").removeClass("fa-arrow-down").addClass("fa-arrow-up");
 	}
 
 	if(indicator.comparative == 0){
-		$retval.find(".ind-symbol-selector").removeClass("fa-chevron-up");
-		$retval.find(".ind-symbol-selector").removeClass("fa-chevron-down");
-		$retval.find(".ind-symbol-selector").addClass("fa-circle-o");
+		$retval.find(".ind-symbol-selector").removeClass("fa-arrow-up");
+		$retval.find(".ind-symbol-selector").removeClass("fa-arrow-down");
+		$retval.find(".ind-symbol-selector").addClass("fa-arrows-h");
 		$retval.find(".ind-container-selector").removeClass("panel-red").addClass("panel-green");
 	}
 	return $retval;
@@ -249,13 +249,13 @@ $(document).ready(function() {
 
 	$('#sortListButton').click(function() {
 		var btn = $(this);
-		if (btn.hasClass('fa-chevron-up')) {
-			btn.removeClass('fa-chevron-up');
-			btn.addClass('fa-chevron-down');
+		if (btn.hasClass('fa-arrow-up')) {
+			btn.removeClass('fa-arrow-up');
+			btn.addClass('fa-arrow-down');
 		}
 		else {
-			btn.removeClass('fa-chevron-down');
-			btn.addClass('fa-chevron-up');
+			btn.removeClass('fa-arrow-down');
+			btn.addClass('fa-arrow-up');
 		}
 
 		window.currentDetailFunction (presenter.orderDataList (
@@ -438,7 +438,7 @@ var hideTitleAndSortDiv = function(){
 }
 
 var selectedOrderOfDetailList = function () {
-	return ($('#sortListButton').hasClass('fa-chevron-up') ? "up" : "down");
+	return ($('#sortListButton').hasClass('fa-arrow-up') ? "up" : "down");
 }
 
 var selectDefaultMonthAndYear = function () {
