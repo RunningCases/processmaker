@@ -324,6 +324,14 @@ function database_upgrade($command, $args) {
   $workspaces = get_workspaces_from_args($args);
   $checkOnly = (strcmp($command, "check") == 0);
   foreach ($workspaces as $workspace) {
+    if (!defined("SYS_SYS")) {
+        define("SYS_SYS", $workspace->name);
+    }
+
+    if (!defined("PATH_DATA_SITE")) {
+        define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
+    }
+
     if ($checkOnly)
       print_r("Checking database in ".pakeColor::colorize($workspace->name, "INFO")."\n");
     else

@@ -148,7 +148,7 @@ class PMLicensedFeatures
                 "version" => ""
             ),
             7 => array(
-                "description"    => "-",
+                "description"    => "Enables the code scanner feature.",
                 "enabled"        => false,
                 "id"             => "codeScanner",
                 "latest_version" => "",
@@ -165,7 +165,7 @@ class PMLicensedFeatures
                 "version"        => ""
             ),
             8 => array(
-                "description"    => "-",
+                "description"    => "Enables the multiple email configuration feature.",
                 "enabled"        => false,
                 "id"             => "multipleEmailServers",
                 "latest_version" => "",
@@ -182,7 +182,7 @@ class PMLicensedFeatures
                 "version"        => ""
             ),
             9 => array(
-                "description"    => "-",
+                "description"    => "Enables the mobile fields.",
                 "enabled"        => false,
                 "id"             => "mobileFields",
                 "latest_version" => "",
