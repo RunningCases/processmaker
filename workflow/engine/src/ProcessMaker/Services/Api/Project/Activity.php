@@ -258,7 +258,7 @@ class ActivityPropertiesStructure
     public $tas_selfservice_timeout;
 
     /**
-     * @var string {@from body} {@choice DAYS,,HOURS}
+     * @var string {@from body} {@choice DAYS,,HOURS,MINUTES}
      */
     public $tas_selfservice_time_unit;
 
