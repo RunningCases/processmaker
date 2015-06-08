@@ -1154,7 +1154,7 @@ Ext.onReady(function() {
         store: addonsStore,
         defaultType: "displayfield",
         padding: 5,
-        autoHeight : true,
+        height: 335,
         disabled: !licensed,
         columns: [
             expander,
@@ -1605,4 +1605,3 @@ Ext.onReady(function() {
     addonsFeaturesStore.load();
   }
 });
-
