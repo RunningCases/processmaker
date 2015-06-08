@@ -1390,7 +1390,6 @@ class workspaceTools
                 $script = file_get_contents($filename);
 
                 //Replace TYPE by ENGINE
-                $script = preg_replace('/\)TYPE\=|\)\sTYPE\=/', ')ENGINE=', $script);
                 $script  = preg_replace('/\)TYPE\=InnoDB|\)\sTYPE\=InnoDB/', ')ENGINE=InnoDB DEFAULT CHARSET=utf8', $script);
                 $lines = explode("\n", $script);
                 $previous = null;
