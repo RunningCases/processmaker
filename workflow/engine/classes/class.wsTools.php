@@ -1359,7 +1359,7 @@ class workspaceTools
         if ( !$flag && !is_null($flagFunction) ) {
             //Replace TYPE by ENGINE
             $script = file_get_contents($filename);
-            $script = preg_replace('/\)TYPE\=|\)\sTYPE\=/', ')ENGINE=', $script);
+            $script  = preg_replace('/\)TYPE\=InnoDB|\)\sTYPE\=InnoDB/', ')ENGINE=InnoDB DEFAULT CHARSET=utf8', $script);
             file_put_contents($filename,$script);
             $aHost = explode(':',$parameters['dbHost']);
             $dbHost = $aHost[0];
@@ -1391,6 +1391,7 @@ class workspaceTools
 
                 //Replace TYPE by ENGINE
                 $script = preg_replace('/\)TYPE\=|\)\sTYPE\=/', ')ENGINE=', $script);
+                $script  = preg_replace('/\)TYPE\=InnoDB|\)\sTYPE\=InnoDB/', ')ENGINE=InnoDB DEFAULT CHARSET=utf8', $script);
                 $lines = explode("\n", $script);
                 $previous = null;
                 $insert = false;
