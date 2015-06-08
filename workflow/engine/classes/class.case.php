@@ -3373,25 +3373,29 @@ class Cases
 
             /*----------------------------------********---------------------------------*/
             $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
+
             $strFoundDisabledCode = "";
             /*----------------------------------********---------------------------------*/
 
             foreach ($aTriggers as $aTrigger) {
-                //Check disabled code
                 /*----------------------------------********---------------------------------*/
-                $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $aTrigger["TRI_WEBBOT"]);
+                if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
+                    //Check disabled code
+                    $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $aTrigger["TRI_WEBBOT"]);
 
-                if (count($arrayFoundDisabledCode) > 0) {
-                    $strCodeAndLine = "";
+                    if (!empty($arrayFoundDisabledCode)) {
+                        $strCodeAndLine = "";
 
-                    foreach ($arrayFoundDisabledCode["source"] as $key => $value) {
-                        $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE", array($key, implode(", ", $value)));
+                        foreach ($arrayFoundDisabledCode["source"] as $key => $value) {
+                            $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE", array($key, implode(", ", $value)));
+                        }
+
+                        $strFoundDisabledCode .= "<br />- " . $aTrigger["TRI_TITLE"] . ": " . $strCodeAndLine;
+                        continue;
                     }
-
-                    $strFoundDisabledCode .= "<br />- " . $aTrigger["TRI_TITLE"] . ": " . $strCodeAndLine;
-                    continue;
                 }
                 /*----------------------------------********---------------------------------*/
+
                 //Execute
                 $bExecute = true;
 
@@ -6745,7 +6749,7 @@ class Cases
             $rows[] = $rs->getRow();
         }
 
-        if ($PRO_UID != null) {            
+        if ($PRO_UID != null) {
             //Add supervisor
             // Users
             $oCriteria = new Criteria('workflow');
@@ -6765,10 +6769,10 @@ class Cases
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $flagSupervisors = false;
 
-            if ($oDataset->next()) {         
+            if ($oDataset->next()) {
                 if (!in_array($USR_UID,$row)) {
                         $rows[] = $oDataset->getRow();
-                }       
+                }
                 $flagSupervisors = true;
             }
 
@@ -6908,7 +6912,7 @@ class Cases
             unset($aFields['APP_STATUS']);
             unset($aFields['APP_PROC_STATUS']);
             unset($aFields['APP_PROC_CODE']);
-            unset($aFields['APP_PIN']);                        
+            unset($aFields['APP_PIN']);
             $this->updateCase($aFields['APP_UID'], $aFields);
             return true;
         }

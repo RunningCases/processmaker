@@ -146,6 +146,57 @@ class PMLicensedFeatures
                 "type" => "features",
                 "url" => "",
                 "version" => ""
+            ),
+            7 => array(
+                "description"    => "Enables the code scanner feature.",
+                "enabled"        => false,
+                "id"             => "codeScanner",
+                "latest_version" => "",
+                "log"            => null,
+                "name"           => "codeScanner",
+                "nick"           => "codeScanner",
+                "progress"       => 0,
+                "publisher"      => "Colosa",
+                "release_type"   => "localRegistry",
+                "status"         => "ready",
+                "store"          => "00000000000000000000000000010007",
+                "type"           => "features",
+                "url"            => "",
+                "version"        => ""
+            ),
+            8 => array(
+                "description"    => "Enables the multiple email configuration feature.",
+                "enabled"        => false,
+                "id"             => "multipleEmailServers",
+                "latest_version" => "",
+                "log"            => null,
+                "name"           => "multipleEmailServers",
+                "nick"           => "multipleEmailServers",
+                "progress"       => 0,
+                "publisher"      => "Colosa",
+                "release_type"   => "localRegistry",
+                "status"         => "ready",
+                "store"          => "00000000000000000000000000010009",
+                "type"           => "features",
+                "url"            => "",
+                "version"        => ""
+            ),
+            9 => array(
+                "description"    => "Enables the mobile fields.",
+                "enabled"        => false,
+                "id"             => "mobileFields",
+                "latest_version" => "",
+                "log"            => null,
+                "name"           => "mobileFields",
+                "nick"           => "mobileFields",
+                "progress"       => 0,
+                "publisher"      => "Colosa",
+                "release_type"   => "localRegistry",
+                "status"         => "ready",
+                "store"          => "00000000000000000000000000010008",
+                "type"           => "features",
+                "url"            => "",
+                "version"        => ""
             )
         );
 
@@ -208,7 +259,7 @@ class PMLicensedFeatures
         $this->featuresDetails[$value[0]]->enabled = $enable;
         return $enable;
     }
-    
+
     public function addNewFeatures ($data)
     {
         $newFeaturesList = $this->newFeatures;
@@ -225,14 +276,14 @@ class PMLicensedFeatures
         $rs->next();
         $row = $rs->getRow();
         $ids = array();
-        if(sizeof($row)) {  
+        if(sizeof($row)) {
             while (is_array($row)) {
                 $ids[] = $row[0];
                 $rs->next();
                 $row = $rs->getRow();
-            } 
+            }
             $toUpdate = array_diff($newFeaturesIds,$ids);
-            
+
             if(sizeof($toUpdate)){
                 $newFeaturesListAux = array();
                 foreach($toUpdate as $index => $v) {
@@ -241,10 +292,10 @@ class PMLicensedFeatures
                 unset($newFeaturesList);
                 $newFeaturesList = array_values($newFeaturesListAux);
             } else {
-                return $data;    
+                return $data;
             }
         }
-        
+
         $i = 0;
         foreach($newFeaturesList as $k => $newFeature){
             $newData[] = array (
@@ -331,8 +382,8 @@ class PMLicensedFeatures
                         ),
                     'action' => 1,
                     );
-               
-            $i++;       
+
+            $i++;
         }
         return array_merge($data, $newData);
     }
