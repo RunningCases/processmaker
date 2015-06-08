@@ -67,9 +67,7 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
     echo $flag;
 } else {
     G::LoadClass("processMap");
-    /*----------------------------------********---------------------------------*/
-    G::LoadClass("codeScanner");
-    /*----------------------------------********---------------------------------*/
+
     $response = array();
 
     try {
@@ -82,15 +80,20 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
             $value = $_POST;
         }
 
-        if (isset($value["TRI_WEBBOT"])) {
-            /*----------------------------------********---------------------------------*/
+        /*----------------------------------********---------------------------------*/
+        if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=") &&
+            isset($value["TRI_WEBBOT"])
+        ) {
             //Check disabled code
+            G::LoadClass("codeScanner");
+
             $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
+
             $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
 
             $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $value["TRI_WEBBOT"]);
 
-            if (count($arrayFoundDisabledCode) > 0) {
+            if (!empty($arrayFoundDisabledCode)) {
                 $strCodeAndLine = "";
 
                 foreach ($arrayFoundDisabledCode["source"] as $key => $value) {
@@ -99,8 +102,9 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
 
                 throw new Exception(G::LoadTranslation("ID_DISABLED_CODE_TRIGGER", array($strCodeAndLine)));
             }
-            /*----------------------------------********---------------------------------*/
         }
+        /*----------------------------------********---------------------------------*/
+
         $swCreate = true;
         if ($value['TRI_UID'] != '') {
             $oTrigger->load( $value['TRI_UID'] );
@@ -108,7 +112,7 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
             $oTrigger->create( $value );
             $value['TRI_UID'] = $oTrigger->getTriUid();
             $swCreate = false;
-        }       
+        }
         $oTrigger->update( $value );
         if($swCreate){
             //Add Audit Log
