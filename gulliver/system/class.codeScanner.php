@@ -80,7 +80,7 @@ class CodeScanner
     public function existsDisabledCode()
     {
         try {
-            return count($this->arrayDisabledCode) > 0;
+            return !empty($this->arrayDisabledCode);
         } catch (Exception $e) {
             throw $e;
         }
@@ -174,7 +174,7 @@ class CodeScanner
 
                     $arrayAux = $this->checkDisabledCodeInSource($source);
 
-                    if (count($arrayAux) > 0) {
+                    if (!empty($arrayAux)) {
                         $arrayFoundCode["source"] = $arrayAux;
                     }
                     break;
@@ -202,7 +202,7 @@ class CodeScanner
 
                             $arrayAux = $this->checkDisabledCodeInSource($source);
 
-                            if (count($arrayAux) > 0) {
+                            if (!empty($arrayAux)) {
                                 $arrayFoundCode[$path] = $arrayAux;
                             }
                         }

@@ -27,7 +27,7 @@ abstract class Importer
     const IMPORT_STAT_INVALID_SOURCE_FILE = 102;   //Error, Invalid file type or the file have corrupt data.
     const IMPORT_STAT_GROUP_ALREADY_EXISTS = 105;  //Error, Group already exists.
 
-    public abstract function load();
+    public abstract function load($filename = null);
 
     /**
      * Verify if exists reserved words SQL
