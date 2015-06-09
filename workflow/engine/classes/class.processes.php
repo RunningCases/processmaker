@@ -5085,10 +5085,15 @@ class Processes
 
             $arrayDisabledCode = array();
 
+            /*----------------------------------********---------------------------------*/
+            if (!PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
+                //Return
+                return $arrayDisabledCode;
+            }
+
             //Set variables
-            /*----------------------------------********---------------------------------*/
             $cs = new CodeScanner("DISABLED_CODE");
-            /*----------------------------------********---------------------------------*/
+
             $delimiter = DBAdapter::getStringDelimiter();
 
             //Processes
@@ -5144,7 +5149,7 @@ class Processes
                     //Check disabled code
                     $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $triggerWebbot);
 
-                    if (count($arrayFoundDisabledCode) > 0) {
+                    if (!empty($arrayFoundDisabledCode)) {
                         if (!isset($arrayDisabledCode[$processUid])) {
                             $arrayDisabledCode[$processUid] = array(
                                 "processUid"   => $processUid,
@@ -5161,6 +5166,7 @@ class Processes
                     }
                 }
             }
+            /*----------------------------------********---------------------------------*/
 
             //Return
             return $arrayDisabledCode;
