@@ -5005,9 +5005,9 @@
             <parameter name="Create_options" value="" />
             <parameter name="Comment" value="Dashboard definitions to user."/>
         </vendor>
-        <column name="DAS_UID"      type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
-        <column name="OWNER_UID"    type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
-        <column name="OWNER_TYPE"   type="VARCHAR" size="15" required="true" default=""/>
+        <column name="DAS_UID"     type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="OWNER_UID"   type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="OWNER_TYPE"  type="VARCHAR" size="15" required="true" default=""/>
         <foreign-key name="fk_dashboard_indicator_dashboard_das_ind" foreignTable="DASHBOARD">
             <reference local="DAS_UID" foreign="DAS_UID"/>
         </foreign-key>
