@@ -806,7 +806,9 @@ class calendar extends CalendarDefinition
     	if ( G::toUpper($formatDuration) == 'DAYS' ) {
     		$duration = $duration*$calendarData['HOURS_FOR_DAY'];
     	}
-    
+      if ( G::toUpper($formatDuration) == 'MINUTES' ) {
+          $duration = $duration/60;
+      }
     	$hoursDuration = (float)$duration;
     	$newDate = $iniDate;
     
@@ -830,7 +832,6 @@ class calendar extends CalendarDefinition
     	return $newDate;
     }
     
-
     //Calculate the duration betwen two dates with a calendar
     public function dashCalculateDurationWithCalendar ($iniDate, $finDate = null, $calendarData = array())
     {
