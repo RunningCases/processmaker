@@ -268,6 +268,11 @@ class ActivityPropertiesStructure
     public $tas_selfservice_trigger_uid;
 
     /**
+     * @var string {@from body} {@choice EVERY_TIME,ONCE}
+     */
+    public $tas_selfservice_execution;
+
+    /**
      * @var string {@from body} {@choice TRUE,FALSE}
      */
     public $tas_transfer_fly;
