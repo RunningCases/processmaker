@@ -325,7 +325,7 @@ class Task
                 if (!isset($arrayProperty["TAS_DURATION"])) {
                     throw (new \Exception("Invalid value specified for 'tas_duration'"));
                 }
-                $valuesTimeUnit = array('DAYS','HOURS');
+                $valuesTimeUnit = array('DAYS','HOURS','MINUTES');
                 if ((!isset($arrayProperty["TAS_TIMEUNIT"])) ||
                     (!in_array($arrayProperty["TAS_TIMEUNIT"], $valuesTimeUnit))) {
                     throw (new \Exception("Invalid value specified for 'tas_timeunit'"));
