@@ -52,25 +52,27 @@ if ($handle = opendir( PATH_PLUGINS )) {
 
                 if (is_file(PATH_PLUGINS . $pluginName . ".php") && is_dir(PATH_PLUGINS . $pluginName)) {
                     /*----------------------------------********---------------------------------*/
-                    //Check disabled code
-                    G::LoadClass("codeScanner");
-                    /*----------------------------------********---------------------------------*/
+                    if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
+                        //Check disabled code
+                        G::LoadClass("codeScanner");
 
-                    $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
-                    /*----------------------------------********---------------------------------*/
-                    $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
-                    
-                    $arrayFoundDisabledCode = array_merge($cs->checkDisabledCode("FILE", PATH_PLUGINS . $pluginName . ".php"), $cs->checkDisabledCode("PATH", PATH_PLUGINS . $pluginName));
+                        $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
 
-                    if (count($arrayFoundDisabledCode) > 0) {
-                        $response = array();
-                        $response["status"]  = "DISABLED-CODE";
-                        $response["message"] = G::LoadTranslation("ID_DISABLED_CODE_PLUGIN");
+                        $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
 
-                        echo G::json_encode($response);
-                        exit(0);
+                        $arrayFoundDisabledCode = array_merge($cs->checkDisabledCode("FILE", PATH_PLUGINS . $pluginName . ".php"), $cs->checkDisabledCode("PATH", PATH_PLUGINS . $pluginName));
+
+                        if (!empty($arrayFoundDisabledCode)) {
+                            $response = array();
+                            $response["status"]  = "DISABLED-CODE";
+                            $response["message"] = G::LoadTranslation("ID_DISABLED_CODE_PLUGIN");
+
+                            echo G::json_encode($response);
+                            exit(0);
+                        }
                     }
                     /*----------------------------------********---------------------------------*/
+
                     //print "change to ENABLED";
                     require_once($path);
                     $details = $oPluginRegistry->getPluginDetails($pluginFile);

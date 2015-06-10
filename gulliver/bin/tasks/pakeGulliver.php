@@ -2736,7 +2736,7 @@ function run_check_plugin_disabled_code($task, $args)
 
                         $arrayFoundDisabledCode = array_merge($cs->checkDisabledCode("FILE", PATH_PLUGINS . $pluginName . ".php"), $cs->checkDisabledCode("PATH", PATH_PLUGINS . $pluginName));
 
-                        if (count($arrayFoundDisabledCode) > 0) {
+                        if (!empty($arrayFoundDisabledCode)) {
                             $strFoundDisabledCode .= (($strFoundDisabledCode != "")? "\n\n" : "") . "> " . $pluginName;
 
                             foreach ($arrayFoundDisabledCode as $key2 => $value2) {
