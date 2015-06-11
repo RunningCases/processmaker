@@ -376,6 +376,18 @@ $(document).ready(function() {
 		loadIndicator(indicatorId, defaultInitDate(), defaultEndDate());
 	});
 
+    $('#indicatorsGridStack').on('click','.status-indicator-low', function() {
+        locationCases('OVERDUE');
+    });
+
+    $('#indicatorsGridStack').on('click','.status-indicator-medium', function() {
+        locationCases('AT_RISK');
+    });
+
+    $('#indicatorsGridStack').on('click','.status-indicator-high', function() {
+        locationCases('ON_TIME');
+    });
+
 	$('body').on('click','.bread-back-selector', function() {
 		var indicatorId = window.currentIndicator.id;
 		loadIndicator(indicatorId, defaultInitDate(), defaultEndDate());
@@ -999,6 +1011,28 @@ var animateProgress = function (indicatorItem, widget){
 		  
 	  }
 	fpAnimationFrame(animacion); 
+};
+
+var createCookie = function (name, value, time) {
+    if (time) {
+        var date = new Date();
+        date.setTime(date.getTime()+(time*24*60*60*1000));
+        var expires = "; expires="+date.toUTCString();
+    } else {
+        var expires = "";
+    }
+    document.cookie = name+"="+value+expires+"; path=/sys"+workspace;
+};
+
+var locationCases = function (type) {
+    createCookie("dashboardListInbox", type, 1);
+
+    var currentLocation = location.href;
+    var position = currentLocation.lastIndexOf('/', currentLocation.lastIndexOf('/') - 1);
+    currentLocation = currentLocation.substring(0, position+1);
+    currentLocation = currentLocation + 'cases/main';
+
+    parent.location.href = currentLocation;
 };
 
 /*var dashboardButtonTemplate = ' <div class="btn-group pull-left"> \ 
