@@ -35,17 +35,8 @@ $G_ID_SUB_MENU_SELECTED = 'AUTH_SOURCES';
 
 $G_PUBLISH = new Publisher();
 $fields = $RBAC->getAuthSource( $_GET['sUID'] );
-if (file_exists( PATH_PLUGINS . $fields['AUTH_SOURCE_PROVIDER'] . PATH_SEP . $fields['AUTH_SOURCE_PROVIDER'] . 'Edit.xml' )) {
-    $pluginEnabled = 0;
-    
-    if (file_exists(PATH_PLUGINS . $fields["AUTH_SOURCE_PROVIDER"] . ".php")) {
-        $pluginRegistry = &PMPluginRegistry::getSingleton();
-        $pluginDetail = $pluginRegistry->getPluginDetails($fields["AUTH_SOURCE_PROVIDER"] . ".php");
-    
-        if ($pluginDetail && $pluginDetail->enabled) {
-            $pluginEnabled = 1;
-        }
-    }
+if (file_exists( PATH_XMLFORM . 'ldapAdvanced/' . $fields['AUTH_SOURCE_PROVIDER'] . 'Edit.xml' )) {
+    $pluginEnabled = 1;
 
     if ($pluginEnabled == 0) {
        $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', array ('MESSAGE' => G::LoadTranslation( 'ID_AUTH_SOURCE_MISSING' ) ) );
@@ -61,12 +52,12 @@ if (file_exists( PATH_PLUGINS . $fields['AUTH_SOURCE_PROVIDER'] . PATH_SEP . $fi
         $oHeadPublisher->assign("FORMATS", $c->getFormats());
         $oHeadPublisher->assign("CONFIG", $Config);
 
-        if (file_exists(PATH_PLUGINS . $fields["AUTH_SOURCE_PROVIDER"] . PATH_SEP . $fields["AUTH_SOURCE_PROVIDER"] . 'Flag')) {
+        if (file_exists(PATH_XMLFORM . 'ldapAdvanced/' . $fields['AUTH_SOURCE_PROVIDER'] . 'Flag')) {
             $oHeadPublisher = & headPublisher::getSingleton ();
 
             $oHeadPublisher->assign("Fields", $fields);
-            $oHeadPublisher->addExtJsScript (PATH_PLUGINS . $fields["AUTH_SOURCE_PROVIDER"] . PATH_SEP . 'js' . PATH_SEP . 'library', false, true );
-            $oHeadPublisher->addExtJsScript (PATH_PLUGINS . $fields["AUTH_SOURCE_PROVIDER"] . PATH_SEP . 'js' . PATH_SEP . 'ldapAdvancedSearch', false, true );
+            $oHeadPublisher->addExtJsScript (PATH_TPL. 'ldapAdvanced/library', false, true );
+            $oHeadPublisher->addExtJsScript (PATH_TPL. 'ldapAdvanced/ldapAdvancedSearch', false, true );
             G::RenderPage ('publish', 'extJs');
             die();
         }

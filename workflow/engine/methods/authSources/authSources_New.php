@@ -57,7 +57,7 @@ if (file_exists( PATH_XMLFORM . 'ldapAdvanced/' . $fields['AUTH_SOURCE_PROVIDER'
             $oHeadPublisher = & headPublisher::getSingleton ();
             
             $oHeadPublisher->assign("Fields", $fields);
-            $oHeadPublisher->addExtJsScript (PATH_TPL. 'ldapAdvanced/library.js', false, true );
+            $oHeadPublisher->addExtJsScript (PATH_TPL. 'ldapAdvanced/library', false, true );
             $oHeadPublisher->addExtJsScript (PATH_TPL. 'ldapAdvanced/ldapAdvancedForm', false, true );
             $oHeadPublisher->addExtJsScript (PATH_TPL. 'ldapAdvanced/ldapAdvancedList', false, true );
             G::RenderPage ('publish', 'extJs');
