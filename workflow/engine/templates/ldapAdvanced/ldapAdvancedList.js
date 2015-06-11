@@ -26,11 +26,11 @@ Ext.onReady(function() {
     var ldapGridProxy = new Ext.data.HttpProxy({
         method: 'POST',
         api: {
-            read    : '../controllers/ldapAdvancedProxy.php?functionAccion=ldapGrid&tipo=read',
-            create  : '../controllers/ldapAdvancedProxy.php?functionAccion=ldapGrid&tipo=create',
-            save    : '../controllers/ldapAdvancedProxy.php?functionAccion=ldapGrid&tipo=save',
-            destroy : '../controllers/ldapAdvancedProxy.php?functionAccion=ldapGrid&tipo=destroy',
-            update  : '../controllers/ldapAdvancedProxy.php?functionAccion=ldapGrid&tipo=update'
+            read    : 'ldapAdvancedProxy.php?functionAccion=ldapGrid&tipo=read',
+            create  : 'ldapAdvancedProxy.php?functionAccion=ldapGrid&tipo=create',
+            save    : 'ldapAdvancedProxy.php?functionAccion=ldapGrid&tipo=save',
+            destroy : 'ldapAdvancedProxy.php?functionAccion=ldapGrid&tipo=destroy',
+            update  : 'ldapAdvancedProxy.php?functionAccion=ldapGrid&tipo=update'
         }
     });
 
@@ -291,7 +291,7 @@ Ext.onReady(function() {
     };
 
     var ldapForm = new Ext.FormPanel({
-        url : '../controllers/ldapAdvancedProxy.php?functionAccion=ldapSave',
+        url : 'ldapAdvancedProxy.php?functionAccion=ldapSave',
         frame : true,
         title : "Authentication Source Information",
         border : false,
@@ -338,7 +338,7 @@ Ext.onReady(function() {
                 {
                     if (typeof(Fields.AUTH_SOURCE_UID) != "undefined" && typeof(Fields.AUTH_SOURCE_BASE_DN) != "undefined" && ldapFormBaseDN.getValue() != Fields.AUTH_SOURCE_BASE_DN) {
                         Ext.Ajax.request({
-                            url: "../controllers/ldapAdvancedProxy.php",
+                            url: "ldapAdvancedProxy.php",
                             method: "POST",
                             params: {
                                 functionAccion: "ldapVerifyIfExistsRecordsInDb",
@@ -387,7 +387,7 @@ Ext.onReady(function() {
                     loadMaskAux.show();
 
                     Ext.Ajax.request({
-                        url: "../controllers/ldapAdvancedProxy.php",
+                        url: "ldapAdvancedProxy.php",
                         method: "POST",
                         params: {
                             functionAccion: "ldapTestConnection",

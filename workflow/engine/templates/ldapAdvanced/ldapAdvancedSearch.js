@@ -89,7 +89,7 @@ Ext.onReady(function() {
     var storeGridSearch = new Ext.data.JsonStore({
         proxy: new Ext.data.HttpProxy({
             method: 'POST',
-            url: '../controllers/ldapAdvancedProxy.php',
+            url: 'ldapAdvancedProxy.php',
             timeout: 240000
         }),
         autoDestroy: true,
@@ -177,7 +177,7 @@ Ext.onReady(function() {
                                         'functionAccion': 'importUsers',
                                         'AUTH_SOURCE_UID': Fields.AUTH_SOURCE_UID
                                     },
-                                    url : '../controllers/ldapAdvancedProxy.php',
+                                    url : 'ldapAdvancedProxy.php',
                                     success: function (returnData) {
                                         var resp = Ext.decode(returnData.responseText);
                                         Ext.MessageBox.hide();
