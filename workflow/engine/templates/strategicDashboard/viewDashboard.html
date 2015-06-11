@@ -39,7 +39,9 @@
     <script type="text/javascript" src="/jscore/strategicDashboard/viewDashboardPresenter.js"></script>
     <script type="text/javascript" src="/jscore/strategicDashboard/viewDashboardView.js"></script>
 
-
+    <script type="text/javascript" src="/jscore/strategicDashboard/timeSeriesModel.js"></script>
+    <script type="text/javascript" src="/jscore/strategicDashboard/timeSeriesPresenter.js"></script>
+    <script type="text/javascript" src="/jscore/strategicDashboard/timeSeriesView.js"></script>
 
 	<script type="text/template" class="specialIndicatorButtonTemplate">
 		<div class="col-lg-3 col-md-6 dashPro ind-button-selector"
@@ -369,43 +371,24 @@
                         <div class="pull-right dashboard-right container-fluid">
 
 							<div id="compareIndicators" class="row pull-left">
+								
 								<div class="span4 pull-left">
-									<h5 class="pull-left" data-toggle="popover" title="Popover title" data-content="And here's some amazing content. It's very engaging. Right?">{translate label="ID_DASH_COMPARE_MONTH"}:</h5>
-								</div>
-
-								<div class="span4 pull-left">
-									<select id="year" class="form-control pull-right ">
-									{literal}
-									<script>
-										now = new Date();
-										anio = now.getFullYear();
-										for(a=anio;a>=anio-10;a--){
-										document.write('<option value="'+a+'">'+a+'</option>');
-										}
-									</script>
-									{/literal}
-									</select>
-
-									<select id="month" class="form-control pull-right ">
-									  <option value="1">{translate label="ID_MONTH_ABB_1"}</option>
-									  <option value="2">{translate label="ID_MONTH_ABB_2"}</option>
-									  <option value="3">{translate label="ID_MONTH_ABB_3"}</option>
-									  <option value="4">{translate label="ID_MONTH_ABB_4"}</option>
-									  <option value="5">{translate label="ID_MONTH_ABB_5"}</option>
-									  <option value="6">{translate label="ID_MONTH_ABB_6"}</option>
-									  <option value="7">{translate label="ID_MONTH_ABB_7"}</option>
-									  <option value="8">{translate label="ID_MONTH_ABB_8"}</option>
-									  <option value="9">{translate label="ID_MONTH_ABB_9"}</option>
-									  <option value="10">{translate label="ID_MONTH_ABB_10"}</option>
-									  <option value="11">{translate label="ID_MONTH_ABB_11"}</option>
-									  <option value="12">{translate label="ID_MONTH_ABB_12"}</option>
-									</select>
+										**Graph:
+										<select id="indicatorList"></select>
+										***Periodicty:
+										<select id="periodicityList" style="width:auto;"></select>
+										***From:
+										<select id="initPeriodList"></select>
+										<select id="initYearList"></select>
+										***To:
+										<select id="endPeriodList"></select>
+										<select id="endYearList"></select>
+										<input type="button" id="compareButton" value="**Compare"/>
 								</div>
 
 								<div class="span4 pull-left">
 									<button type="button" class="btn btn-compare btn-success pull-right btn-date">{translate label="ID_DASH_COMPARE"}</button>
 								</div>
-
 							</div>
                         </div>
                         <div class="clearfix"></div>
@@ -426,7 +409,7 @@
                 <!-- /.col-lg-12 -->
             </div>
           <!-- Indicators -->
-          <div class="row">
+          <div class="row" id="indicatorsView">
               <div class="indicators">
                 <div id="indicatorsGridStack" class="grid-stack" data-gs-width="12" data-gs-animate="no" >
                   <!--Here are added dynamically the Indicators-->
@@ -454,6 +437,7 @@
                    </div>
               </div>
             </div>
+			<div class="row" id="compareGraph"></div>
     </div>
   </div>
 

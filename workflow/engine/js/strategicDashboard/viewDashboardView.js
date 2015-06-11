@@ -401,7 +401,12 @@ $(document).ready(function() {
         animated: 'fade',
         placement: 'bottom'
     });
-    initialDraw();
+
+	tsPresenter.initializePresenter()
+			.done(function (data){
+				bindTimeSeriesLists(tsPresenter);
+				initialDraw();
+			});
 });
 
 var hideScrollIfAllDivsAreVisible = function(){
@@ -447,8 +452,8 @@ var selectDefaultMonthAndYear = function () {
 	compareDate.setMonth(compareDate.getMonth() - 1);
 	var compareMonth = compareDate.getMonth() + 1;
 	var compareYear = compareDate.getFullYear();
-	$('#month').val(compareMonth);
-	$('#year').val(compareYear);
+	$('#endPeriodList').val(compareMonth);
+	$('#endYearList').val(compareYear);
 }
 
 var setActiveDashboard = function () {
@@ -527,15 +532,17 @@ var defaultInitDate = function() {
     var date = new Date();
     var dateMonth = date.getMonth();
     var dateYear = date.getFullYear();
-	var initDate = $('#year').val() + '-' + $('#month').val() + '-' + '01';
+	var initDate = $('#initYearList').val() + '-' + $('#initPeriodList').val() + '-' + '01';
 	return initDate;
 }
 
 var defaultEndDate = function () {
+	//TODO use the timeSeries function that finds the last day in the period
     var date = new Date();
     var dateMonth = date.getMonth();
     var dateYear = date.getFullYear();
-	return dateYear + "-" + (dateMonth + 1) + "-30";
+	var initDate = $('#endYearList').val() + '-' + $('#endPeriodList').val() + '-' + '30';
+	return initDate;
 }
 
 var fillDashboardsList = function (presenterData) {
@@ -557,7 +564,6 @@ var fillDashboardsList = function (presenterData) {
 				.addClass('selected');
 		}
 	}
-	
 };
 
 var fillIndicatorWidgets = function (presenterData) {

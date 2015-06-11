@@ -68,6 +68,12 @@ abstract class IndicatorDataSourcesEnum extends BasicEnum {
 	const USER_GROUP = 300;
 }
 
+abstract class ReportingIndicatorTypeEnum extends BasicEnum {
+	const PEI = 1010;
+	const UEI = 1030;
+	const INBOX_STATUS = 1050;
+}
+
 class indicatorsCalculator
 {
 	private $userReportingMetadata = array("tableName" => "USR_REPORTING", "keyField" => "PRO_UID");
@@ -114,7 +120,7 @@ class indicatorsCalculator
 		$qryParams = Array();
 		$sqlString = $this->indicatorsParamsQueryBuilder(IndicatorDataSourcesEnum::USER
 			, $processId, $periodicity, $initDate, $endDate
-			, $this->peiFormula, $qryParams);
+			, $this->peiFormula." As VALUE", $qryParams);
 
 		//$returnValue = $this->propelExecutor($sqlString);
 
@@ -301,7 +307,7 @@ class indicatorsCalculator
 		$qryParams = Array();
 		$sqlString = $this->indicatorsParamsQueryBuilder(IndicatorDataSourcesEnum::USER
 			, $employeeId, $periodicity, $initDate, $endDate
-			, $this->ueiFormula, $qryParams);
+			, $this->ueiFormula." as VALUE", $qryParams);
 
 		$retval = $this->pdoExecutor($sqlString, $qryParams);
 		//$returnValue = $this->propelExecutor($sqlString);
@@ -374,6 +380,7 @@ class indicatorsCalculator
 		return $retval;
 	}
 
+	//TODO: delte this function that is used nowhere
 	public function generalIndicatorData($indicatorId, $initDate, $endDate, $periodicity) {
 		if (!is_a($initDate, 'DateTime')) throw new InvalidArgumentException ('initDate parameter must be a DateTime object.', 0);
 		if (!is_a($endDate, 'DateTime')) throw new InvalidArgumentException ('endDate parameter must be a DateTime object.', 0);
@@ -664,35 +671,6 @@ class indicatorsCalculator
 		$result = $statement->fetchAll(PDO::FETCH_ASSOC);
 		return $result;
 	}
-
-	/*private function indicatorsBasicQueryBuilder($reportingTable, $filterId, $periodicity, $initDate, $endDate, $fields ) {
-		if (!is_a($initDate, 'DateTime')) throw new InvalidArgumentException ('initDate parameter must be a DateTime object.', 0);
-		if (!is_a($endDate, 'DateTime')) throw new InvalidArgumentException ('endDate parameter must be a DateTime object.', 0);
-
-		$tableMetadata = $this->metadataForTable($reportingTable);
-		$periodicitySelectFields = $this->periodicityFieldsForSelect($periodicity);
-		$periodicityGroup = $this->periodicityFieldsForGrouping($periodicity);
-		$initYear = $initDate->format("Y");
-		$initMonth = $initDate->format("m");
-		$endYear = $endDate->format("Y");
-		$endMonth = $endDate->format("m");
-
-		$filterCondition = "";
-		if ($filterId != null && $filterId > 0) {
-			$filterCondition = " AND ".$tableMetadata["keyField"]." = '$filterId'";
-		}
-
-		$sqlString = "SELECT $periodicitySelectFields $fields
-						FROM  ".$tableMetadata["tableName"].
-					" WHERE
-						IF (`YEAR` = $initYear, `MONTH`, `YEAR`) >= IF (`YEAR` = $initYear, $initMonth, $initYear)
-						AND
-						IF(`YEAR` = $endYear, `MONTH`, `YEAR`) <= IF (`YEAR` = $endYear, $endMonth, $endYear)"
-			. $filterCondition
-			. $periodicityGroup;
-		return $sqlString;
-	}*/
-
 
 	private function indicatorsParamsQueryBuilder($reportingTable, $filterId, $periodicity, $initDate, $endDate, $fields, &$params) {
 		if (!is_a($initDate, 'DateTime')) throw new InvalidArgumentException ('initDate parameter must be a DateTime object.', 0);

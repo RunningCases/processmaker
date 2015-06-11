@@ -1,9 +1,22 @@
-
-
 var ViewDashboardHelper = function () {
 };
 
-ViewDashboardHelper.prototype.userDashboards = function(userId, callBack) {
+ViewDashboardHelper.prototype.ReportingPeriodicityEnum = {
+		NONE : 0,
+		MONTH : 100,
+		QUARTER : 200,
+		SEMESTER : 300,
+		YEAR : 400
+}
+
+ViewDashboardHelper.prototype.ReportingIndicatorEnum = {
+		PEI : 1010,
+		EEI : 1030,
+		INBOX_STATUS : 1050
+}
+
+ViewDashboardHelper.prototype.date2MysqlString = function (val){
+	return val.getFullYear() + '-' + (val.getMonth() + 1) + '-' + val.getDay() ;
 };
 
 ViewDashboardHelper.prototype.stringIfNull = function (val){
@@ -42,6 +55,19 @@ ViewDashboardHelper.prototype.assert = function (condition, message) {
         }
         throw message; // Fallback
     }
+}
+
+ViewDashboardHelper.prototype.fillSelectWithOptions = function ($select, options, selectedValue) {
+	$select.empty(); // remove old options
+	$.each(options, function(index, option) {
+	  $select.append($("<option></option>")
+					 .attr("value", option.value).text(option.label));
+	});
+	$select.val(selectedValue);
+}
+
+ViewDashboardHelper.prototype.setVisibility = function ($element, isVisible) {
+	$element.css('visibility', (isVisible ? 'visible' : 'hidden'));
 }
 
 ViewDashboardHelper.prototype.truncateString = function (string, len) {
