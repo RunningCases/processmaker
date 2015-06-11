@@ -409,16 +409,14 @@ $(document).ready(function() {
 			});
 	});
 
-    $('[data-toggle="tooltip"]').tooltip({
-        animated: 'fade',
-        placement: 'bottom'
-    });
+
 
 	tsPresenter.initializePresenter()
 			.done(function (data){
 				bindTimeSeriesLists(tsPresenter);
 				initialDraw();
 			});
+
 });
 
 var hideScrollIfAllDivsAreVisible = function(){
@@ -514,7 +512,11 @@ var loadIndicator = function (indicatorId, initDate, endDate) {
 				hideScrollIfAllDivsAreVisible();
 				hideTitleAndSortDiv();
 			});
-}
+    $('[data-toggle="tooltip"]').tooltip({
+        animated: 'fade',
+        placement: 'bottom'
+    });
+};
 
 var setIndicatorActiveMarker = function () {
 	$('.panel-footer').each (function () {
@@ -1034,6 +1036,8 @@ var locationCases = function (type) {
 
     parent.location.href = currentLocation;
 };
+
+
 
 /*var dashboardButtonTemplate = ' <div class="btn-group pull-left"> \ 
 								<button id="favorite" type="button" class="btn btn-success"><i class="fa fa-star fa-1x"></i></button> \
