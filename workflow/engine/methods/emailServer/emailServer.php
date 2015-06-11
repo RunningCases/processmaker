@@ -18,5 +18,9 @@ $headPublisher->addContent("emailServer/emailServer"); //Adding a HTML file
 $headPublisher->addExtJsScript("emailServer/emailServer", false); //Adding a JavaScript file
 $headPublisher->assign("CONFIG", $arrayConfig);
 
+/*----------------------------------********---------------------------------*/
+$headPublisher->assign("EMAILSERVER_LICENSED", (PMLicensedFeatures::getSingleton()->verifyfeature("zIKRGpDM3pjcHFsWGplNDN0dTl5bGN3UTNiOWdQU0E5Q05QTksrU1ladWQ0VT0="))? 1 : 0);
+/*----------------------------------********---------------------------------*/
+
 G::RenderPage("publish", "extJs");
 

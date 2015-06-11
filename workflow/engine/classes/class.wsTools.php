@@ -795,10 +795,11 @@ class workspaceTools
             //Insert the first record
             $arrayData = array();
 
-            $emailSever = new  \ProcessMaker\BusinessModel\EmailServer();
+            $emailSever = new \ProcessMaker\BusinessModel\EmailServer();
+
             $emailConfiguration = System::getEmailConfiguration();
 
-            if (count($emailConfiguration) > 0) {
+            if (!empty($emailConfiguration)) {
                 $arrayData["MESS_ENGINE"] = $emailConfiguration["MESS_ENGINE"];
 
                 switch ($emailConfiguration["MESS_ENGINE"]) {
@@ -830,18 +831,16 @@ class workspaceTools
                 $arrayData = $emailSever->create($arrayData);
             } else {
                 /*----------------------------------********---------------------------------*/
-                if (true) {
-                   //
-                } else {
+                if (!PMLicensedFeatures::getSingleton()->verifyfeature("zIKRGpDM3pjcHFsWGplNDN0dTl5bGN3UTNiOWdQU0E5Q05QTksrU1ladWQ0VT0=")) {
                 /*----------------------------------********---------------------------------*/
-                   $arrayData["MESS_ENGINE"]   = "MAIL";
-                   $arrayData["MESS_SERVER"]   = "";
-                   $arrayData["MESS_ACCOUNT"]  = "";
-                   $arrayData["MESS_PASSWORD"] = "";
-                   $arrayData["MAIL_TO"]       = "";
-                   $arrayData["MESS_DEFAULT"]  = 1;
+                    $arrayData["MESS_ENGINE"]   = "MAIL";
+                    $arrayData["MESS_SERVER"]   = "";
+                    $arrayData["MESS_ACCOUNT"]  = "";
+                    $arrayData["MESS_PASSWORD"] = "";
+                    $arrayData["MAIL_TO"]       = "";
+                    $arrayData["MESS_DEFAULT"]  = 1;
 
-                   $arrayData = $emailSever->create2($arrayData);
+                    $arrayData = $emailSever->create2($arrayData);
                 /*----------------------------------********---------------------------------*/
                 }
                 /*----------------------------------********---------------------------------*/
@@ -1357,6 +1356,10 @@ class workspaceTools
         }
 
         if ( !$flag && !is_null($flagFunction) ) {
+            //Replace TYPE by ENGINE
+            $script = file_get_contents($filename);
+            $script  = preg_replace('/\)TYPE\=InnoDB|\)\sTYPE\=InnoDB/', ')ENGINE=InnoDB DEFAULT CHARSET=utf8', $script);
+            file_put_contents($filename,$script);
             $aHost = explode(':',$parameters['dbHost']);
             $dbHost = $aHost[0];
             if(isset($aHost[1])){
@@ -1386,7 +1389,7 @@ class workspaceTools
                 $script = file_get_contents($filename);
 
                 //Replace TYPE by ENGINE
-                $script = preg_replace('/\)TYPE\=|\)\sTYPE\=/', ')ENGINE=', $script);
+                $script  = preg_replace('/\)TYPE\=InnoDB|\)\sTYPE\=InnoDB/', ')ENGINE=InnoDB DEFAULT CHARSET=utf8', $script);
                 $lines = explode("\n", $script);
                 $previous = null;
                 $insert = false;
@@ -2197,6 +2200,29 @@ class workspaceTools
            default:
                 return true;
        }
+    }
+
+    /**
+     * Verify feature
+     *
+     * @param string $featureName Feature name
+     *
+     * return bool Return true if is valid the feature, false otherwise
+     */
+    public function pmLicensedFeaturesVerifyFeature($featureName)
+    {
+        try {
+            $this->initPropel(true);
+
+            $flag = PMLicensedFeatures::getSingleton()->verifyfeature($featureName);
+
+            $this->close();
+
+            //Return
+            return $flag;
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }
 

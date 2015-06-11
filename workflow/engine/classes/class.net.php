@@ -206,7 +206,7 @@ class NET
      *
      * @return void
      */
-    public function tryConnectServer($pDbDriver, array $arrayServerData = array())
+    public function tryConnectServer($pDbDriver, array $arrayServerData = array(), $dbsEncode = "")
     {
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
@@ -224,8 +224,8 @@ class NET
             if ($arrayServerData["connectionType"] == "TNS" || $arrayServerData["DBS_TYPEORACLE"] == "TNS") {
                 $flagTns=1;
             }else{
-                $flagTns=0; 
-            }            
+                $flagTns=0;
+            }
         }else{
             $flagTns=0;
         }
@@ -291,9 +291,9 @@ class NET
                         if ($flagTns == 0) {
                             $this->db_port = ($this->db_port == "" || $this->db_port == 0)? "1521" : $this->db_port;
 
-                            $cnn = @oci_connect($this->db_user, $this->db_passwd, "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP) (HOST=$this->ip) (PORT=$this->db_port) )) (CONNECT_DATA=(SERVICE_NAME=$this->db_sourcename)))");
+                            $cnn = @oci_connect($this->db_user, $this->db_passwd, "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP) (HOST=$this->ip) (PORT=$this->db_port) )) (CONNECT_DATA=(SERVICE_NAME=$this->db_sourcename)))", $dbsEncode);
                         } else {
-                            $cnn = @oci_connect($this->db_user, $this->db_passwd, $arrayServerData["tns"]);
+                            $cnn = @oci_connect($this->db_user, $this->db_passwd, $arrayServerData["tns"], $dbsEncode);
                         }
 
                         if ($cnn) {
@@ -329,7 +329,7 @@ class NET
      *
      * @return void
      */
-    public function tryOpenDataBase($pDbDriver, array $arrayServerData = array())
+    public function tryOpenDataBase($pDbDriver, array $arrayServerData = array(), $dbsEncode = "")
     {
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
@@ -349,8 +349,8 @@ class NET
             if ($arrayServerData["connectionType"] == "TNS" || $arrayServerData["DBS_TYPEORACLE"] == "TNS") {
                 $flagTns=1;
             }else{
-                $flagTns=0; 
-            }            
+                $flagTns=0;
+            }
         }else{
             $flagTns=0;
         }
@@ -434,9 +434,9 @@ class NET
                     if ($flagTns == 0) {
                         $this->db_port = ($this->db_port == "" || $this->db_port == 0)? "1521" : $this->db_port;
 
-                        $cnn = @oci_connect($this->db_user, $this->db_passwd, "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP) (HOST=$this->ip) (PORT=$this->db_port) )) (CONNECT_DATA=(SERVICE_NAME=$this->db_sourcename)))");
+                        $cnn = @oci_connect($this->db_user, $this->db_passwd, "(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP) (HOST=$this->ip) (PORT=$this->db_port) )) (CONNECT_DATA=(SERVICE_NAME=$this->db_sourcename)))", $dbsEncode);
                     } else {
-                        $cnn = @oci_connect($this->db_user, $this->db_passwd, $arrayServerData["tns"]);
+                        $cnn = @oci_connect($this->db_user, $this->db_passwd, $arrayServerData["tns"], $dbsEncode);
                     }
 
                     if ($cnn) {
@@ -592,4 +592,3 @@ class Stat
         $this->status = false;
     }
 }
-
