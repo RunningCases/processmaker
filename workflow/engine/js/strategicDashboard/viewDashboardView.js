@@ -511,11 +511,11 @@ var loadIndicator = function (indicatorId, initDate, endDate) {
 				}
 				hideScrollIfAllDivsAreVisible();
 				hideTitleAndSortDiv();
+                $('[data-toggle="tooltip"]').tooltip({
+                    animated: 'fade',
+                    placement: 'bottom'
+                });
 			});
-    $('[data-toggle="tooltip"]').tooltip({
-        animated: 'fade',
-        placement: 'bottom'
-    });
 };
 
 var setIndicatorActiveMarker = function () {
