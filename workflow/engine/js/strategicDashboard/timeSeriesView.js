@@ -54,8 +54,9 @@ $(document).ready(function() {
 });
 
 
-var bindTimeSeriesLists = function (presenter, elementsToConserve = []) {
+var bindTimeSeriesLists = function (presenter, elementsToConserve) {
 	var conserveStates =[];
+    elementsToConserve =[];
 	$.each (elementsToConserve, function (i, elem){
 			conserveStates.push({id:elem, selValue: $('#' + elem).val()});
 			});

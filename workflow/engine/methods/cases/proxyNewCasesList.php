@@ -32,6 +32,9 @@ try {
 
     $filters['action']   = isset( $_REQUEST["action"] ) ? $_REQUEST["action"] : "";
     $listName            = isset( $_REQUEST["list"] ) ? $_REQUEST["list"] : "inbox";
+    /*----------------------------------********---------------------------------*/
+    $filters['filterStatus']   = isset( $_REQUEST["filterStatus"] ) ? $_REQUEST["filterStatus"] : "";
+    /*----------------------------------********---------------------------------*/
 
     // Select list
     switch ($listName) {
@@ -145,16 +148,19 @@ try {
     );
 
     $filtersData = array();
-    $filtersData['start']       = $filters['start'];
-    $filtersData['limit']       = $filters['limit'];
-    $filtersData['sort']        = G::toLower($filters['sort']);
-    $filtersData['dir']         = G::toLower($filters['dir']);
-    $filtersData['cat_uid']     = $filters['category'];
-    $filtersData['pro_uid']     = $filters['process'];
-    $filtersData['search']      = $filters['search'];
-    $filtersData['date_from']   = $filters['dateFrom'];
-    $filtersData['date_to']     = $filters['dateTo'];
-    $filtersData["action"]      = $filters["action"];
+    $filtersData['start']           = $filters['start'];
+    $filtersData['limit']           = $filters['limit'];
+    $filtersData['sort']            = G::toLower($filters['sort']);
+    $filtersData['dir']             = G::toLower($filters['dir']);
+    $filtersData['cat_uid']         = $filters['category'];
+    $filtersData['pro_uid']         = $filters['process'];
+    $filtersData['search']          = $filters['search'];
+    $filtersData['date_from']       = $filters['dateFrom'];
+    $filtersData['date_to']         = $filters['dateTo'];
+    $filtersData["action"]          = $filters["action"];
+    /*----------------------------------********---------------------------------*/
+    $filtersData["filterStatus"]    = $filters['filterStatus'];
+    /*----------------------------------********---------------------------------*/
 
     $response = array();
     $response['filters']        = $filtersData;

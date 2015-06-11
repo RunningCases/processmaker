@@ -174,6 +174,7 @@ class StrategicDashboard extends Controller
             $this->setView( 'strategicDashboard/viewDashboard' );
 
             $this->setVar('urlProxy', $this->urlProxy);
+            $this->setVar('SYS_SYS', SYS_SYS);
             $this->setVar('usrId', $this->usrId);
             $this->setVar('credentials', $this->clientToken);
             $this->setVar('unitCost', $this->usrUnitCost);
