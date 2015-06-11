@@ -2,7 +2,7 @@ var synchronizeDepartmentsLDAPADV = function() {
   iGrid = Ext.getCmp('infoGrid');
   rowSelected = iGrid.getSelectionModel().getSelected();
   if (rowSelected) {
-    location.href = '../ldapAdvanced/authSourcesSynchronize?authUid=' + rowSelected.data.AUTH_SOURCE_UID + '&tab=synchronizeDepartments';
+    location.href = 'authSourcesSynchronize?authUid=' + rowSelected.data.AUTH_SOURCE_UID + '&tab=synchronizeDepartments';
   }
 };
 
@@ -10,19 +10,19 @@ var synchronizeGroupsLDAPADV = function() {
   iGrid = Ext.getCmp('infoGrid');
   rowSelected = iGrid.getSelectionModel().getSelected();
   if (rowSelected) {
-    location.href = '../ldapAdvanced/authSourcesSynchronize?authUid=' + rowSelected.data.AUTH_SOURCE_UID + '&tab=synchronizeGroups';
+    location.href = 'authSourcesSynchronize?authUid=' + rowSelected.data.AUTH_SOURCE_UID + '&tab=synchronizeGroups';
   }
 };
 
 var synchronizeDepartmentsButtonLDAPADV = new Ext.Action({
-  text: 'Synchronize Departments',
+  text: 'Synchronize Departmentssss',
   iconCls: 'ICON_DEPARTAMENTS',
   disabled: true,
   handler: synchronizeDepartmentsLDAPADV
 });
 
 var synchronizeGroupsButtonLDAPADV = new Ext.Action({
-  text: 'Synchronize Groups',
+  text: 'Synchronize Groupssss',
   iconCls: 'ICON_GROUPS',
   disabled: true,
   handler: synchronizeGroupsLDAPADV
