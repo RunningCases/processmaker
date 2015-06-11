@@ -32,9 +32,7 @@ try {
 
     $filters['action']   = isset( $_REQUEST["action"] ) ? $_REQUEST["action"] : "";
     $listName            = isset( $_REQUEST["list"] ) ? $_REQUEST["list"] : "inbox";
-    /*----------------------------------********---------------------------------*/
     $filters['filterStatus']   = isset( $_REQUEST["filterStatus"] ) ? $_REQUEST["filterStatus"] : "";
-    /*----------------------------------********---------------------------------*/
 
     // Select list
     switch ($listName) {
@@ -158,9 +156,7 @@ try {
     $filtersData['date_from']       = $filters['dateFrom'];
     $filtersData['date_to']         = $filters['dateTo'];
     $filtersData["action"]          = $filters["action"];
-    /*----------------------------------********---------------------------------*/
     $filtersData["filterStatus"]    = $filters['filterStatus'];
-    /*----------------------------------********---------------------------------*/
 
     $response = array();
     $response['filters']        = $filtersData;

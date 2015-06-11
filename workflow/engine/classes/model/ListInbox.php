@@ -381,7 +381,6 @@ class ListInbox extends BaseListInbox
             $criteria->add( ListInboxPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL );
         }
 
-        /*----------------------------------********---------------------------------*/
         if ($filterStatus != '') {
             switch ($filterStatus) {
                 case 'ON_TIME':
@@ -396,7 +395,6 @@ class ListInbox extends BaseListInbox
                     break;
             }
         }
-        /*----------------------------------********---------------------------------*/
     }
 
     public function countTotal ($usr_uid, $filters = array())
@@ -436,7 +434,6 @@ class ListInbox extends BaseListInbox
         $criteria->addSelectColumn(ListInboxPeer::DEL_INIT_DATE);
         $criteria->addSelectColumn(ListInboxPeer::DEL_DUE_DATE);
         $criteria->addSelectColumn(ListInboxPeer::DEL_PRIORITY);
-
         $criteria->add( ListInboxPeer::USR_UID, $usr_uid, Criteria::EQUAL );
         self::loadFilters($criteria, $filters);
 
