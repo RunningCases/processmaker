@@ -7,7 +7,7 @@ use \Criteria;
 use \ReportTablePeer;
 use \ResultSet;
 use \AppCacheViewPeer;
-use \CaseConsolidatedPeer;
+use \CaseConsolidatedCorePeer;
 use \ContentPeer;
 
 /**
@@ -29,21 +29,21 @@ class Consolidated
     public function get ($tas_uid)
     {
         $criteria = new Criteria();
-        $criteria->addSelectColumn(CaseConsolidatedPeer::DYN_UID);
+        $criteria->addSelectColumn(CaseConsolidatedCorePeer::DYN_UID);
         $criteria->addSelectColumn(\ReportTablePeer::REP_TAB_NAME);
         $criteria->addSelectColumn(\ReportTablePeer::REP_TAB_UID);
         $criteria->addSelectColumn(ContentPeer::CON_VALUE);
-        $criteria->addSelectColumn(CaseConsolidatedPeer::CON_STATUS);
+        $criteria->addSelectColumn(CaseConsolidatedCorePeer::CON_STATUS);
 
-        $criteria->addJoin( CaseConsolidatedPeer::REP_TAB_UID, ReportTablePeer::REP_TAB_UID, Criteria::LEFT_JOIN );
-        $criteria->addJoin( CaseConsolidatedPeer::REP_TAB_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN );
+        $criteria->addJoin( CaseConsolidatedCorePeer::REP_TAB_UID, ReportTablePeer::REP_TAB_UID, Criteria::LEFT_JOIN );
+        $criteria->addJoin( CaseConsolidatedCorePeer::REP_TAB_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN );
         $criteria->add( ContentPeer::CON_CATEGORY, "REP_TAB_TITLE");
         $criteria->add( ContentPeer::CON_LANG, SYS_LANG);
 
-        $criteria->add( CaseConsolidatedPeer::TAS_UID, $tas_uid, Criteria::EQUAL );
-        $criteria->add( CaseConsolidatedPeer::CON_STATUS, 'ACTIVE', Criteria::EQUAL );
+        $criteria->add( CaseConsolidatedCorePeer::TAS_UID, $tas_uid, Criteria::EQUAL );
+        $criteria->add( CaseConsolidatedCorePeer::CON_STATUS, 'ACTIVE', Criteria::EQUAL );
 
-        $dataset = CaseConsolidatedPeer::doSelectRS($criteria);
+        $dataset = CaseConsolidatedCorePeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         if ($dataset->next()) {
             $response = $dataset->getRow();
