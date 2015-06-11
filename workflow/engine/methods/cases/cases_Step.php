@@ -904,12 +904,16 @@ try {
                         if ($aFields['TASK'][$sKey]['NEXT_TASK']['TAS_TIMEUNIT'] == 'HOURS') {
                             $hoursSelected = "selected = 'selected'";
                         } else {
+                            if ($aFields['TASK'][$sKey]['NEXT_TASK']['TAS_TIMEUNIT'] == 'MINUTES') {
+                               $minSelected = "selected = 'selected'";
+                            }
                             $daysSelected = "selected = 'selected'";
                         }
 
                         $sAux = '<select name=' . $hiddenName . '[NEXT_TASK][TAS_TIMEUNIT] id= ' . $hiddenName . '[NEXT_TASK][TAS_TIMEUNIT] >';
                         $sAux .= "<option " . $hoursSelected . " value='HOURS'>Hours</option> ";
                         $sAux .= "<option " . $daysSelected . " value='DAYS'>Days</option> ";
+                        $sAux .= "<option " . $minSelected . " value='MINUTES'>Minutes</option> ";
                         $sAux .= '</select>';
                         $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_TIMEUNIT'] = $sAux;
 
