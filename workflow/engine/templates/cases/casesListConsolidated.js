@@ -1328,18 +1328,16 @@ function ajaxDerivationRequest(appUid, delIndex, maxLenght, appNumber){
           buttons: Ext.MessageBox.OK,
 
           fn: function (btn, text, opt) {
-              if (btn == "ok") {
-                  if (maxLenght == storeConsolidated.getCount()) {
-                     window.location.reload();
-                  }               
-                  if (fullResponseText.charAt(0) != "<") {
-                     parent.document.getElementById("batchRoutingCasesNumRec").innerHTML = parseInt(dataResponse.casesNumRec);
-                  }               
-                  storeConsolidated.reload();
-              }else{ 
-                 //Click in X
-              }
-            
+            //if (btn == "ok") {}
+            if (maxLenght == storeConsolidated.getCount()) {
+              window.location.reload();
+            }
+
+            if (fullResponseText.charAt(0) != "<") {
+                parent.document.getElementById("batchRoutingCasesNumRec").innerHTML = parseInt(dataResponse.casesNumRec);
+            }
+
+            storeConsolidated.reload();
           }
         });
       }
