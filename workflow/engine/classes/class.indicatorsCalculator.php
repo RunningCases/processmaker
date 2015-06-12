@@ -726,9 +726,15 @@ class indicatorsCalculator
 		return $returnVal;
 	}
 
-    public function suggestedTimeForTask () {
-        //to_do
-        return array('average' => 50, 'sdv' => 70);
+    public function suggestedTimeForTask ($taskId) {
+		$qryParams = Array();
+		$qryParams[':taskId'] = $taskId;
+		$sqlString = "select 
+				ROUND(AVG(TOTAL_TIME_BY_TASK/TOTAL_CASES_OUT), 2) as average,
+				 ROUND(STDDEV(TOTAL_TIME_BY_TASK/TOTAL_CASES_OUT), 2) as sdv
+				from USR_REPORTING  where TAS_UID = :taskId";
+		$retval = $this->pdoExecutor($sqlString, $qryParams);
+		return $retval[0];
     }
 
 

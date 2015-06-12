@@ -474,7 +474,7 @@ class Task extends BaseTask
                 /*----------------------------------********---------------------------------*/
                 G::LoadClass("indicatorsCalculator");
                 $indicator = new indicatorsCalculator();
-                $data = $indicator->suggestedTimeForTask();
+                $data = $indicator->suggestedTimeForTask($TasUid);
                 $aFields["TAS_AVERAGE"] = $data['average'];
                 $aFields["TAS_SDV"]     = $data['sdv'];
                 /*----------------------------------********---------------------------------*/
