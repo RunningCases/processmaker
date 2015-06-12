@@ -471,6 +471,14 @@ class Task extends BaseTask
                 $aFields["TAS_DEF_MESSAGE"] = $this->getTasDefMessage();
                 $aFields["TAS_DEF_SUBJECT_MESSAGE"] = $this->getTasDefSubjectMessage();
 
+                /*----------------------------------********---------------------------------*/
+                G::LoadClass("indicatorsCalculator");
+                $indicator = new indicatorsCalculator();
+                $data = $indicator->suggestedTimeForTask();
+                $aFields["TAS_AVERAGE"] = $data['average'];
+                $aFields["TAS_SDV"]     = $data['sdv'];
+                /*----------------------------------********---------------------------------*/
+
                 ///////
                 return $aFields;
             } else {

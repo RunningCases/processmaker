@@ -726,6 +726,11 @@ class indicatorsCalculator
 		return $returnVal;
 	}
 
+    public function suggestedTimeForTask () {
+        //to_do
+        return array('average' => 50, 'sdv' => 70);
+    }
+
 
 	
 	/* For debug only:
