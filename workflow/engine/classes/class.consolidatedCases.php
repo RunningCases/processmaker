@@ -21,6 +21,9 @@ class ConsolidatedCases
                 if (!(is_object($oCaseConsolidated)) || get_class($oCaseConsolidated) != 'CaseConsolidated') {
                     $oCaseConsolidated = new CaseConsolidatedCore();
                     $oCaseConsolidated->setTasUid($sTasUid);
+                    $oCaseConsolidated->delete();
+                    $oCaseConsolidated = new CaseConsolidatedCore();
+                    $oCaseConsolidated->setTasUid($sTasUid);
                     $oCaseConsolidated->setConStatus('INACTIVE');
                     $oCaseConsolidated->save();
                 }
