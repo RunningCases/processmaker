@@ -32,16 +32,7 @@ G::LoadTranslation('ID_NEW_CASE'), '');
 /*----------------------------------********---------------------------------*/
 $licensedFeatures = & PMLicensedFeatures::getSingleton();
 if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
-    //If plugin is active doesnot show the menu in Cases
-    $pluginRegistry = & PMPluginRegistry::getSingleton ();
-    $pluginDetail = $pluginRegistry->getPluginDetails("pmConsolidatedCL.php");
-    $pluginEnabled = 0;
-    if ($pluginDetail && $pluginDetail->enabled) {
-        $pluginEnabled = 1;
-    }
-    if($pluginEnabled == 0){
-        $G_TMP_MENU->AddIdRawOption('CONSOLIDATED_CASES', 'casesConsolidatedListExtJs?action=consolidated', 'Batch Routing', '');
-    }
+    $G_TMP_MENU->AddIdRawOption('CONSOLIDATED_CASES', 'casesConsolidatedListExtJs?action=consolidated', 'Batch Routing', '');
 }
 /*----------------------------------********---------------------------------*/
 
@@ -109,4 +100,3 @@ if (count($dashBoardPages)>0) {
         }
     }
 }
-
