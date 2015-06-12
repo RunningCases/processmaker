@@ -374,21 +374,20 @@
 							<div id="compareIndicators" class="row pull-left">
 								
 								<div class="span4 pull-left">
-										**Graph:
-										<select id="indicatorList"></select>
-										***Periodicty:
-										<select id="periodicityList" style="width:auto;"></select>
-										***From:
-										<select id="initPeriodList"></select>
-										<select id="initYearList"></select>
-										***To:
-										<select id="endPeriodList"></select>
-										<select id="endYearList"></select>
-										<input type="button" id="compareButton" value="**Compare"/>
+									<span id="indicatorLabel"></span>
+									<select id="indicatorList"></select>
+									<span id="periodicityLabel"></span>
+									<select id="periodicityList" style="width:auto;"></select>
+									<span id="initPeriodLabel"></span>
+									<select id="initPeriodList"></select>
+									<select id="initYearList"></select>
+									<span id="endPeriodLabel"></span>
+									<select id="endPeriodList"></select>
+									<select id="endYearList"></select>
 								</div>
 
 								<div class="span4 pull-left">
-									<button type="button" class="btn btn-compare btn-success pull-right btn-date">{translate label="ID_DASH_COMPARE"}</button>
+									<button type="button" id="compareButton" class="btn btn-compare btn-success pull-right btn-date">{translate label="ID_DASH_COMPARE"}</button>
 								</div>
 							</div>
                         </div>
@@ -438,7 +437,21 @@
                    </div>
               </div>
             </div>
-			<div class="row" id="compareGraph"></div>
+
+			<div class="process-div" id="compareDiv">
+				<div class="row">
+					<div class="col-lg-12 col-md-12">
+						<div class="panel-heading">
+							<ol id="comparisonBreadcrumb" class="breadcrumb">
+							</ol>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div id="compareGraph" style="padding:0 50px 0 50px;">
+					</div>
+				</div>
+			</div>
     </div>
   </div>
 

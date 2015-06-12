@@ -4,26 +4,37 @@ var TimeSeriesPresenter = function (model) {
     this.model = model;
 };
 
-TimeSeriesPresenter.prototype.initializePresenter = function () {
+TimeSeriesPresenter.prototype.initializePresenter = function (dashboardId) {
 	var that = this;
 	var requestFinished = $.Deferred();
-	$.when (this.fillIndicatorList())
+	$.when (this.fillIndicatorList(dashboardId))
 		.done(function () {
-			that.periodicityState = {selValue: that.model.periodicityList()[0], list: that.model.periodicityList()}
+			that.periodicityState = {selValue: that.model.periodicityList()[0], 
+										list: that.model.periodicityList(),
+										label: that.model.label('ID_PERIODICITY') + ": "
+									};
 
 			that.initPeriodState = {selValue:that.model.monthList()[0].value, 
 									list:that.model.monthList(),
-									visible:true };
+									visible:true,
+									label: that.model.label('ID_FROM') + ": "
+									};
 
 			that.initYearState = {selValue : that.model.yearList() [0].value,
-									list : that.model.yearList()};
+									list : that.model.yearList(),
+									label: that.model.label('ID_YEAR') + ": "
+									};
 
 			that.endPeriodState = {selValue : that.model.defaultEndDate().getMonth() + 1, 
 									list : that.model.monthList(),
-									visible:true };
+									visible:true,
+									label: that.model.label('ID_TO') + ": "
+									};
 
 			that.endYearState = { selValue : that.model.yearList() [0].value,
-								list : that.model.yearList()};
+									list : that.model.yearList(),
+									label: that.model.label('ID_YEAR') + ": "
+								};
 
 			that.initDate = that.model.defaultInitDate();
 			that.endDate = that.model.defaultEndDate();
@@ -33,17 +44,23 @@ TimeSeriesPresenter.prototype.initializePresenter = function () {
 	return requestFinished.promise();
 };
 
-TimeSeriesPresenter.prototype.fillIndicatorList = function () {
+TimeSeriesPresenter.prototype.fillIndicatorList = function (dashboardId) {
 	var requestFinished = $.Deferred();
 	var that = this;
 	var dummyDate = this.helper.date2MysqlString(new Date());
-	that.indicatorList(that.model.dashboardId, dummyDate, dummyDate)
+	that.indicatorList(dashboardId, dummyDate, dummyDate)
 		.done(function(modelData){
 			if (modelData== null || modelData.length == 0) {
-				that.indicatorState = {selValue: null, list: []}
+				that.indicatorState = {selValue: null, 
+										list: [],
+										label: that.model.label('ID_INDICATOR') + ": "
+				};
 			}
 			else {
-				that.indicatorState = {selValue: modelData[0].value, list: modelData}
+				that.indicatorState = {selValue: modelData[0].value, 
+										list: modelData,
+										label: that.model.label('ID_INDICATOR') + ": "
+										};
 			}
 			requestFinished.resolve(that.indicatorState);
 	});
@@ -74,7 +91,7 @@ TimeSeriesPresenter.prototype.changePeriodicity = function (periodicity) {
 
 	switch (periodicity * 1) {
 		case this.helper.ReportingPeriodicityEnum.MONTH:
-			this.changePeriodicityToQuarter(this.model.monthList());
+			this.changePeriodicityToMonth(this.model.monthList());
 			break;
 		case this.helper.ReportingPeriodicityEnum.QUARTER:
 			this.changePeriodicityToQuarter(this.model.quarterList());
@@ -166,19 +183,15 @@ TimeSeriesPresenter.prototype.periodInitDate = function (periodicity, period, ye
 	var retval = null;
 	switch (periodicity * 1) {
 		case this.helper.ReportingPeriodicityEnum.MONTH:
-			//retval = '01-' + period + '-' + year; 
 			retval = new Date(year, period - 1, 1);
 			break;
 		case this.helper.ReportingPeriodicityEnum.QUARTER:
-			//retval = '01-' + (3*(period-1) + 1) + '-' + year; 
 			retval = new Date(year, 3 * (period-1), 1);
 			break;
 		case this.helper.ReportingPeriodicityEnum.SEMESTER:
-			//retval = '01-' + (6*(period-1) + 1) + '-' + year; 
 			retval = new Date(year, 6 * (period-1), 1);
 			break;
 		case this.helper.ReportingPeriodicityEnum.YEAR:
-			//retval = '01-01-' + year; 
 			retval = new Date(year, 0, 1);
 			break;
 	}
@@ -189,7 +202,6 @@ TimeSeriesPresenter.prototype.periodInitDate = function (periodicity, period, ye
 }
 
 TimeSeriesPresenter.prototype.periodEndDate = function (periodicity, period, year) {
-
 	var retval = null;
 	switch (periodicity * 1) {
 		case this.helper.ReportingPeriodicityEnum.MONTH:

@@ -178,42 +178,8 @@ class StrategicDashboard extends Controller
             $this->setVar('usrId', $this->usrId);
             $this->setVar('credentials', $this->clientToken);
             $this->setVar('unitCost', $this->usrUnitCost);
-
-            $translation = array();
-            $translation['ID_MANAGERS_DASHBOARDS'] = G::LoadTranslation( 'ID_MANAGERS_DASHBOARDS');
-            $translation['ID_PRO_EFFICIENCY_INDEX'] = G::LoadTranslation( 'ID_PRO_EFFICIENCY_INDEX');
-            $translation['ID_EFFICIENCY_USER'] = G::LoadTranslation( 'ID_EFFICIENCY_USER');
-            $translation['ID_COMPLETED_CASES'] = G::LoadTranslation( 'ID_COMPLETED_CASES');
-            $translation['ID_WELL_DONE'] = G::LoadTranslation( 'ID_WELL_DONE');
-            $translation['ID_NUMBER_CASES'] = G::LoadTranslation( 'ID_NUMBER_CASES');
-            $translation['ID_EFFICIENCY_INDEX'] = G::LoadTranslation( 'ID_EFFICIENCY_INDEX');
-            $translation['ID_INEFFICIENCY_COST'] = G::LoadTranslation( 'ID_INEFFICIENCY_COST');
-            $translation['ID_EFFICIENCY_COST'] = G::LoadTranslation( 'ID_EFFICIENCY_COST');
-            $translation['ID_RELATED_PROCESS'] = G::LoadTranslation( 'ID_RELATED_PROCESS');
-            $translation['ID_RELATED_GROUPS'] = G::LoadTranslation( 'ID_RELATED_GROUPS');
-            $translation['ID_RELATED_TASKS'] = G::LoadTranslation( 'ID_RELATED_TASKS');
-            $translation['ID_RELATED_USERS'] = G::LoadTranslation( 'ID_RELATED_USERS');
-            $translation['ID_GRID_PAGE_NO_DASHBOARD_MESSAGE'] = G::LoadTranslation( 'ID_GRID_PAGE_NO_DASHBOARD_MESSAGE');
-            $translation['ID_PROCESS_TASKS'] = G::LoadTranslation( 'ID_PROCESS_TASKS');
-            $translation['ID_TIME_HOURS'] = G::LoadTranslation( 'ID_TIME_HOURS');
-            $translation['ID_GROUPS'] = G::LoadTranslation( 'ID_GROUPS');
-            $translation['ID_COSTS'] = G::LoadTranslation( 'ID_COSTS');
-            $translation['ID_TASK'] = G::LoadTranslation( 'ID_TASK');
-            $translation['ID_USER'] = G::LoadTranslation( 'ID_USER');
-            $translation['ID_YEAR'] = G::LoadTranslation( 'ID_YEAR');
-            $translation['ID_USERS'] = G::LoadTranslation( 'ID_USERS');
-            $translation['ID_USERS'] = G::LoadTranslation( 'ID_USERS');
-            $translation['ID_OVERDUE'] = G::LoadTranslation( 'ID_OVERDUE');
-            $translation['ID_AT_RISK'] = G::LoadTranslation( 'ID_AT_RISK');
-            $translation['ID_ON_TIME'] = G::LoadTranslation( 'ID_ON_TIME');
-            $translation['ID_NO_INEFFICIENT_PROCESSES'] = G::LoadTranslation('ID_NO_INEFFICIENT_PROCESSES');
-            $translation['ID_NO_INEFFICIENT_TASKS'] = G::LoadTranslation('ID_NO_INEFFICIENT_TASKS');
-            $translation['ID_NO_INEFFICIENT_USER_GROUPS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USER_GROUPS');
-            $translation['ID_NO_INEFFICIENT_USERS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USERS');
-            $translation['ID_DISPLAY_EMPTY'] = G::LoadTranslation('ID_DISPLAY_EMPTY');
-			//text for inbox empty in status indicator
-            $translation['ID_INBOX_EMPTY'] = G::LoadTranslation('ID_INBOX_EMPTY');
-
+			
+			$translation = $this->getTranslations();
             $this->setVar('translation', $translation);
             $this->render();
         } catch (Exception $error) {
@@ -231,39 +197,7 @@ class StrategicDashboard extends Controller
             $this->setVar('credentials', $this->clientToken);
             $this->setVar('unitCost', $this->usrUnitCost);
 
-            $translation = array();
-            $translation['ID_MANAGERS_DASHBOARDS'] = G::LoadTranslation( 'ID_MANAGERS_DASHBOARDS');
-            $translation['ID_PRO_EFFICIENCY_INDEX'] = G::LoadTranslation( 'ID_PRO_EFFICIENCY_INDEX');
-            $translation['ID_EFFICIENCY_USER'] = G::LoadTranslation( 'ID_EFFICIENCY_USER');
-            $translation['ID_COMPLETED_CASES'] = G::LoadTranslation( 'ID_COMPLETED_CASES');
-            $translation['ID_WELL_DONE'] = G::LoadTranslation( 'ID_WELL_DONE');
-            $translation['ID_NUMBER_CASES'] = G::LoadTranslation( 'ID_NUMBER_CASES');
-            $translation['ID_EFFICIENCY_INDEX'] = G::LoadTranslation( 'ID_EFFICIENCY_INDEX');
-            $translation['ID_INEFFICIENCY_COST'] = G::LoadTranslation( 'ID_INEFFICIENCY_COST');
-            $translation['ID_EFFICIENCY_COST'] = G::LoadTranslation( 'ID_EFFICIENCY_COST');
-            $translation['ID_RELATED_PROCESS'] = G::LoadTranslation( 'ID_RELATED_PROCESS');
-            $translation['ID_RELATED_GROUPS'] = G::LoadTranslation( 'ID_RELATED_GROUPS');
-            $translation['ID_RELATED_TASKS'] = G::LoadTranslation( 'ID_RELATED_TASKS');
-            $translation['ID_RELATED_USERS'] = G::LoadTranslation( 'ID_RELATED_USERS');
-            $translation['ID_GRID_PAGE_NO_DASHBOARD_MESSAGE'] = G::LoadTranslation( 'ID_GRID_PAGE_NO_DASHBOARD_MESSAGE');
-            $translation['ID_PROCESS_TASKS'] = G::LoadTranslation( 'ID_PROCESS_TASKS');
-            $translation['ID_TIME_HOURS'] = G::LoadTranslation( 'ID_TIME_HOURS');
-            $translation['ID_GROUPS'] = G::LoadTranslation( 'ID_GROUPS');
-            $translation['ID_COSTS'] = G::LoadTranslation( 'ID_COSTS');
-            $translation['ID_TASK'] = G::LoadTranslation( 'ID_TASK');
-            $translation['ID_USER'] = G::LoadTranslation( 'ID_USER');
-            $translation['ID_YEAR'] = G::LoadTranslation( 'ID_YEAR');
-            $translation['ID_USERS'] = G::LoadTranslation( 'ID_USERS');
-            $translation['ID_OVERDUE'] = G::LoadTranslation( 'ID_OVERDUE');
-            $translation['ID_AT_RISK'] = G::LoadTranslation( 'ID_AT_RISK');
-            $translation['ID_ON_TIME'] = G::LoadTranslation( 'ID_ON_TIME');
-            $translation['ID_NO_INEFFICIENT_PROCESSES'] = G::LoadTranslation('ID_NO_INEFFICIENT_PROCESSES');
-            $translation['ID_NO_INEFFICIENT_TASKS'] = G::LoadTranslation('ID_NO_INEFFICIENT_TASKS');
-            $translation['ID_NO_INEFFICIENT_USER_GROUPS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USER_GROUPS');
-            $translation['ID_NO_INEFFICIENT_USERS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USERS');
-            $translation['ID_DISPLAY_EMPTY'] = G::LoadTranslation('ID_DISPLAY_EMPTY');
-            $translation['ID_INBOX_EMPTY'] = G::LoadTranslation('ID_INBOX_EMPTY');
-
+			$translation = $this->getTranslations();
             $this->setVar('translation', $translation);
             $this->render();
         } catch (Exception $error) {
@@ -272,4 +206,60 @@ class StrategicDashboard extends Controller
             die();
         }
     }
+
+	private function getTranslations() {
+		$translation = array();
+		$translation['ID_MANAGERS_DASHBOARDS'] = G::LoadTranslation( 'ID_MANAGERS_DASHBOARDS');
+		$translation['ID_PRO_EFFICIENCY_INDEX'] = G::LoadTranslation( 'ID_PRO_EFFICIENCY_INDEX');
+		$translation['ID_EFFICIENCY_USER'] = G::LoadTranslation( 'ID_EFFICIENCY_USER');
+		$translation['ID_COMPLETED_CASES'] = G::LoadTranslation( 'ID_COMPLETED_CASES');
+		$translation['ID_WELL_DONE'] = G::LoadTranslation( 'ID_WELL_DONE');
+		$translation['ID_NUMBER_CASES'] = G::LoadTranslation( 'ID_NUMBER_CASES');
+		$translation['ID_EFFICIENCY_INDEX'] = G::LoadTranslation( 'ID_EFFICIENCY_INDEX');
+		$translation['ID_INEFFICIENCY_COST'] = G::LoadTranslation( 'ID_INEFFICIENCY_COST');
+		$translation['ID_EFFICIENCY_COST'] = G::LoadTranslation( 'ID_EFFICIENCY_COST');
+		$translation['ID_RELATED_PROCESS'] = G::LoadTranslation( 'ID_RELATED_PROCESS');
+		$translation['ID_RELATED_GROUPS'] = G::LoadTranslation( 'ID_RELATED_GROUPS');
+		$translation['ID_RELATED_TASKS'] = G::LoadTranslation( 'ID_RELATED_TASKS');
+		$translation['ID_RELATED_USERS'] = G::LoadTranslation( 'ID_RELATED_USERS');
+		$translation['ID_GRID_PAGE_NO_DASHBOARD_MESSAGE'] = G::LoadTranslation( 'ID_GRID_PAGE_NO_DASHBOARD_MESSAGE');
+		$translation['ID_PROCESS_TASKS'] = G::LoadTranslation( 'ID_PROCESS_TASKS');
+		$translation['ID_TIME_HOURS'] = G::LoadTranslation( 'ID_TIME_HOURS');
+		$translation['ID_GROUPS'] = G::LoadTranslation( 'ID_GROUPS');
+		$translation['ID_COSTS'] = G::LoadTranslation( 'ID_COSTS');
+		$translation['ID_TASK'] = G::LoadTranslation( 'ID_TASK');
+		$translation['ID_USER'] = G::LoadTranslation( 'ID_USER');
+		$translation['ID_YEAR'] = G::LoadTranslation( 'ID_YEAR');
+		$translation['ID_USERS'] = G::LoadTranslation( 'ID_USERS');
+		$translation['ID_USERS'] = G::LoadTranslation( 'ID_USERS');
+		$translation['ID_OVERDUE'] = G::LoadTranslation( 'ID_OVERDUE');
+		$translation['ID_AT_RISK'] = G::LoadTranslation( 'ID_AT_RISK');
+		$translation['ID_ON_TIME'] = G::LoadTranslation( 'ID_ON_TIME');
+		$translation['ID_NO_INEFFICIENT_PROCESSES'] = G::LoadTranslation('ID_NO_INEFFICIENT_PROCESSES');
+		$translation['ID_NO_INEFFICIENT_TASKS'] = G::LoadTranslation('ID_NO_INEFFICIENT_TASKS');
+		$translation['ID_NO_INEFFICIENT_USER_GROUPS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USER_GROUPS');
+		$translation['ID_NO_INEFFICIENT_USERS'] = G::LoadTranslation('ID_NO_INEFFICIENT_USERS');
+		$translation['ID_DISPLAY_EMPTY'] = G::LoadTranslation('ID_DISPLAY_EMPTY');
+		$translation['ID_INBOX_EMPTY'] = G::LoadTranslation('ID_INBOX_EMPTY');
+		$translation['ID_INDICATOR'] = G::LoadTranslation('ID_INDICATOR');
+		$translation['ID_PERIODICITY'] = G::LoadTranslation('ID_PERIODICITY');
+		$translation['ID_MONTH'] = G::LoadTranslation('ID_MONTH');
+		$translation['ID_QUARTER'] = G::LoadTranslation('ID_QUARTER');
+		$translation['ID_SEMESTER'] = G::LoadTranslation('ID_SEMESTER');
+		$translation['ID_TO'] = G::LoadTranslation('ID_TO');
+		$translation['ID_FROM'] = G::LoadTranslation('ID_FROM');
+		$translation['ID_MONTH_ABB_1'] = G::LoadTranslation('ID_MONTH_ABB_1');
+		$translation['ID_MONTH_ABB_2'] = G::LoadTranslation('ID_MONTH_ABB_2');
+		$translation['ID_MONTH_ABB_3'] = G::LoadTranslation('ID_MONTH_ABB_3');
+		$translation['ID_MONTH_ABB_4'] = G::LoadTranslation('ID_MONTH_ABB_4');
+		$translation['ID_MONTH_ABB_5'] = G::LoadTranslation('ID_MONTH_ABB_5');
+		$translation['ID_MONTH_ABB_6'] = G::LoadTranslation('ID_MONTH_ABB_6');
+		$translation['ID_MONTH_ABB_7'] = G::LoadTranslation('ID_MONTH_ABB_7');
+		$translation['ID_MONTH_ABB_8'] = G::LoadTranslation('ID_MONTH_ABB_8');
+		$translation['ID_MONTH_ABB_9'] = G::LoadTranslation('ID_MONTH_ABB_9');
+		$translation['ID_MONTH_ABB_10'] = G::LoadTranslation('ID_MONTH_ABB_10');
+		$translation['ID_MONTH_ABB_11'] = G::LoadTranslation('ID_MONTH_ABB_11');
+		$translation['ID_MONTH_ABB_12'] = G::LoadTranslation('ID_MONTH_ABB_12');
+		return $translation;
+	}
 }

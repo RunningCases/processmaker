@@ -1,4 +1,4 @@
-var TimeSeriesModel = function (oauthToken, server, workspace, userId, dashboardId) {
+var TimeSeriesModel = function (oauthToken, server, workspace, userId, strings) {
     this.server = server;
     this.workspace = workspace;
     this.baseUrl = "/api/1.0/" + workspace + "/";
@@ -7,45 +7,44 @@ var TimeSeriesModel = function (oauthToken, server, workspace, userId, dashboard
 	this.cache = {};
 	this.forceRemote=false; //if true, the next call will go to the remote server
 	this.userId = userId;
-	this.dashboardId = dashboardId;
+	this.strings = strings;
 
 };
 
+TimeSeriesModel.prototype.label = function(id) {
+    return this.strings[id];
+};
 
 TimeSeriesModel.prototype.indicatorList = function(dashboardId,initDate, endDate) {
 	var dummyDate = ''
-    return this.getJson('dashboard/' + dashboardId + '/indicator?dateIni=' + initDate + '&dateFin=' + endDate);
+    return this.helper.getJson('dashboard/' + dashboardId + '/indicator?dateIni=' + initDate + '&dateFin=' + endDate, this.baseUrl, this.oauthToken);
 };
-
-
-/*TimeSeriesModel.prototype.indicatorList = function() {
-	var requestFinished = $.Deferred();
-	var json = [ {"label":"PEI", "value":"1111"}, 
-				 {"label":"EEI", "value":"2222"}
-				];
-	requestFinished.resolve(json);
-	return requestFinished.promise();
-};*/
 
 TimeSeriesModel.prototype.periodicityList = function() {
 	var that = this;
-	var json = [{label:"Monthly", value:that.helper.ReportingPeriodicityEnum.MONTH},
-					{label:"Quaterly", value:that.helper.ReportingPeriodicityEnum.QUARTER},
-					{label:"Semester", value:that.helper.ReportingPeriodicityEnum.SEMESTER},
-					{label:"Yearly", value:that.helper.ReportingPeriodicityEnum.YEAR}
+	var json = [{label:that.label('ID_MONTH'), value:that.helper.ReportingPeriodicityEnum.MONTH},
+					{label:that.label('ID_QUARTER'), value:that.helper.ReportingPeriodicityEnum.QUARTER},
+					{label:that.label('ID_SEMESTER'), value:that.helper.ReportingPeriodicityEnum.SEMESTER},
+					{label:that.label('ID_YEAR'), value:that.helper.ReportingPeriodicityEnum.YEAR}
 				 ];
 	return json;
 };
 
 TimeSeriesModel.prototype.monthList = function() {
-	var json = [{label:"Jan", value:"1"}, 
-								{label:"Feb", value:"2"}, 
-								{label:"Mar", value:"3"}, 
-								{label:"Apr", value:"4"},
-								{label:"May", value:"5"},
-								{label:"Jun", value:"6"},
-								{label:"Jul", value:"7"}
-								 ];
+	var that = this;
+	var json = [{label:that.label("ID_MONTH_ABB_1"), value:"1"}, 
+				{label:that.label("ID_MONTH_ABB_2"), value:"2"}, 
+				{label:that.label("ID_MONTH_ABB_3"), value:"3"}, 
+				{label:that.label("ID_MONTH_ABB_4"), value:"4"},
+				{label:that.label("ID_MONTH_ABB_5"), value:"5"},
+				{label:that.label("ID_MONTH_ABB_6"), value:"6"},
+				{label:that.label("ID_MONTH_ABB_7"), value:"7"},
+				{label:that.label("ID_MONTH_ABB_8"), value:"8"},
+				{label:that.label("ID_MONTH_ABB_9"), value:"9"},
+				{label:that.label("ID_MONTH_ABB_10"), value:"10"},
+				{label:that.label("ID_MONTH_ABB_11"), value:"11"},
+				{label:that.label("ID_MONTH_ABB_12"), value:"12"}
+				 ];
 	return json;
 };
 
@@ -63,7 +62,12 @@ TimeSeriesModel.prototype.semesterList = function() {
 };
 
 TimeSeriesModel.prototype.yearList = function() {
-	var json = [{label:"2015", value:"2015"}, {label:"2014", value:"2014"}];
+	var currentYear = this.defaultEndDate().getFullYear();
+	var json = [];
+
+	for (var i = currentYear; i > currentYear - 10; i--) {
+		json.push ({label:i, value : i});
+	}
 	return json;
 };
 
@@ -82,32 +86,8 @@ TimeSeriesModel.prototype.historicData = function(indicatorId, periodicity, init
 				"&end_date=" + this.helper.date2MysqlString(endDate) + 
 				"&periodicity=" + periodicity + 
 				"&language=en";
-    return this.getJson(endPoint);
-
+    return this.helper.getJson(endPoint, this.baseUrl, this.oauthToken);
 };
-
-TimeSeriesModel.prototype.getJson = function (endPoint) {
-    var that = this;
-    var callUrl = this.baseUrl + endPoint
-	var requestFinished = $.Deferred();
-
-	return $.ajax({
-		url: callUrl,
-		type: 'GET',
-		datatype: 'json',
-		success: function (data) {
-			that.forceRemote = false;
-			requestFinished.resolve(data);
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-							throw new Error(callUrl + ' --  ' + errorThrown);
-						},
-		beforeSend: function (xhr) {
-						xhr.setRequestHeader('Authorization', 'Bearer ' + that.oauthToken);
-						//xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-					}
-	});
-}
 
 
 

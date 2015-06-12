@@ -1,12 +1,12 @@
 
 helper = new ViewDashboardHelper();
 var ws = urlProxy.split('/');
-var dashboardId = '3290922985542460a19e7c1021519011';
-tsModel = new TimeSeriesModel(token, urlProxy, ws[3], pageUserId, dashboardId);
+tsModel = new TimeSeriesModel(token, urlProxy, ws[3], pageUserId, G_STRING);
 tsPresenter = new TimeSeriesPresenter(tsModel);
 
 $(document).ready(function() {
-
+	$('#indicatorsView').show();
+	$('#compareDiv').hide();
 
 	$('#periodicityList').change(function(){
 		var id = $(this).val();
@@ -15,6 +15,10 @@ $(document).ready(function() {
 	});
 
 	$('#compareButton').click(function(){
+		$('#comparisonBreadcrumb').find('li').remove()
+		$('#comparisonBreadcrumb')
+					.append ('<li><a class="bread-back-selector2" href="#"><i class="fa fa-chevron-left fa-fw"></i>Return to Indicator View</a>');
+			
 		tsPresenter.historicData(
 			$('#indicatorList').val(),
 			$('#periodicityList').val(),
@@ -46,20 +50,30 @@ $(document).ready(function() {
 							}
 					};
 
+				$('#indicatorsView').hide();
+				$('#compareDiv').show();
 				var graph1 = new LineChart(data, graphParams1, null, null);
 				graph1.drawChart();
-				$('#indicatorsView').hide();
 			});
+	});
+
+	$('body').on('click','.bread-back-selector2', function() {
+		$('#indicatorsView').show();
+		$('#compareDiv').hide();
 	});
 });
 
 
 var bindTimeSeriesLists = function (presenter, elementsToConserve) {
 	var conserveStates =[];
-    elementsToConserve =[];
+
+	if (elementsToConserve === null || elementsToConserve === undefined) {
+		elementsToConserve =[];
+	}
+
 	$.each (elementsToConserve, function (i, elem){
 			conserveStates.push({id:elem, selValue: $('#' + elem).val()});
-			});
+	});
 	helper.fillSelectWithOptions ($('#indicatorList'), presenter.indicatorState.list, presenter.indicatorState.selValue);
 	helper.fillSelectWithOptions ($('#periodicityList'), presenter.periodicityState.list, presenter.periodicityState.selValue);
 	helper.fillSelectWithOptions ($('#initPeriodList'), presenter.initPeriodState.list, presenter.initPeriodState.selValue);
@@ -67,9 +81,15 @@ var bindTimeSeriesLists = function (presenter, elementsToConserve) {
 	helper.fillSelectWithOptions ($('#endPeriodList'), presenter.endPeriodState.list, presenter.endPeriodState.selValue);
 	helper.fillSelectWithOptions ($('#endYearList'), presenter.endYearState.list, presenter.endYearState.selValue);
 
+	$('#indicatorLabel').text(presenter.indicatorState.label);
+	$('#periodicityLabel').text(presenter.periodicityState.label);
+	$('#initPeriodLabel').text(presenter.initPeriodState.label);
+	$('#endPeriodLabel').text(presenter.endPeriodState.label);
+
+
 	$.each (conserveStates, function (i, item){
 			$('#' + item.id).val(item.selValue);
-			});
+	});
 
 	helper.setVisibility ($('#initPeriodList'), presenter.initPeriodState.visible);
 	helper.setVisibility ($('#endPeriodList'), presenter.endPeriodState.visible);
