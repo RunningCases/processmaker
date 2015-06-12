@@ -967,7 +967,7 @@ function executeCaseSelfService()
             $dueDate = $calendar->calculateDate(
                 $appcacheDelDelegateDate,
                 $taskSelfServiceTime,
-                $taskSelfServiceTimeUnit //HOURS|DAYS
+                $taskSelfServiceTimeUnit //HOURS|DAYS|MINUTES
                 //1
             );
 
