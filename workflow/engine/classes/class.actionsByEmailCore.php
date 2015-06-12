@@ -1,7 +1,7 @@
 <?php
 
 
-class actionsByEmailClass extends PMPlugin
+class actionsByEmailCoreClass extends PMPlugin
 {
     public function __construct()
     {
