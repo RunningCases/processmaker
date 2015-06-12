@@ -165,6 +165,10 @@ class Task
                 array(
                     "TAS_TRANSFER_FLY" => $arrayDataAux["TAS_TRANSFER_FLY"],
                     "TAS_DURATION"     => $arrayDataAux["TAS_DURATION"],
+                    /*----------------------------------********---------------------------------*/
+                    "TAS_AVERAGE"      => $arrayDataAux["TAS_AVERAGE"],
+                    "TAS_SDV"          => $arrayDataAux["TAS_SDV"],
+                    /*----------------------------------********---------------------------------*/
                     "TAS_TIMEUNIT"     => $arrayDataAux["TAS_TIMEUNIT"],
                     "TAS_TYPE_DAY"     => $arrayDataAux["TAS_TYPE_DAY"],
                     "TAS_CALENDAR"     => $arrayDataAux["TAS_CALENDAR"]
