@@ -324,6 +324,14 @@ function database_upgrade($command, $args) {
   $workspaces = get_workspaces_from_args($args);
   $checkOnly = (strcmp($command, "check") == 0);
   foreach ($workspaces as $workspace) {
+    if (!defined("SYS_SYS")) {
+        define("SYS_SYS", $workspace->name);
+    }
+
+    if (!defined("PATH_DATA_SITE")) {
+        define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
+    }
+
     if ($checkOnly)
       print_r("Checking database in ".pakeColor::colorize($workspace->name, "INFO")."\n");
     else
@@ -595,12 +603,24 @@ function run_check_workspace_disabled_code($args, $opts)
         foreach ($arrayWorkspace as $value) {
             $workspace = $value;
 
+            if (!defined("SYS_SYS")) {
+                define("SYS_SYS", $workspace->name);
+            }
+
+            if (!defined("PATH_DATA_SITE")) {
+                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
+            }
+
+            if (!$workspace->pmLicensedFeaturesVerifyFeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
+                throw new Exception("Error: This command cannot be used because your license does not include it.");
+            }
+
             echo "> Workspace: " . $workspace->name . "\n";
 
             try {
                 $arrayFoundDisabledCode = $workspace->getDisabledCode();
 
-                if (count($arrayFoundDisabledCode) > 0) {
+                if (!empty($arrayFoundDisabledCode)) {
                     $strFoundDisabledCode = "";
 
                     foreach ($arrayFoundDisabledCode as $value2) {
@@ -630,6 +650,8 @@ function run_check_workspace_disabled_code($args, $opts)
             } catch (Exception $e) {
                 echo "Errors to check disabled code: " . CLI::error($e->getMessage()) . "\n\n";
             }
+
+            $workspace->close();
         }
 
         echo "Done!\n";

@@ -40,19 +40,18 @@ emailServer.application = {
 
             /*----------------------------------********---------------------------------*/
             if (Ext.getCmp("chkEmailServerDefault").checked) {
-            /*----------------------------------********---------------------------------*/    
+            /*----------------------------------********---------------------------------*/
                 var emailDefault = 1;
-            /*----------------------------------********---------------------------------*/    
+            /*----------------------------------********---------------------------------*/
             } else {
                 var emailDefault = 0;
             }
             /*----------------------------------********---------------------------------*/
 
             switch (option) {
-
                 case "INS":
                     var typeEmailEngine = Ext.getCmp("cboEmailEngine").getValue();
-                        
+
 
                     if (typeEmailEngine == "PHPMAILER") {
                         var rdoGrpOption = Ext.getCmp("rdoGrpSmtpSecure").getValue();
@@ -301,7 +300,7 @@ emailServer.application = {
                         emailServerSetMailTo(Ext.getCmp("chkSendTestMail").checked);
 
                         Ext.getCmp("txtMailTo").setValue(record.get("MAIL_TO"));
-                        
+
                         /*----------------------------------********---------------------------------*/
                         if (parseInt(record.get("MESS_DEFAULT")) == 1) {
                         /*----------------------------------********---------------------------------*/
@@ -311,7 +310,7 @@ emailServer.application = {
                             Ext.getCmp("chkEmailServerDefault").setValue(false);
                         }
                         /*----------------------------------********---------------------------------*/
-                        
+
                         winData.setTitle(_("ID_EMAIL_SERVER_EDIT"));
                         winData.setDisabled(false);
                         winData.show();
@@ -610,7 +609,7 @@ emailServer.application = {
             }
         });
 
-        
+
         var txtAccountFrom = new Ext.form.TextField({
             id: "txtAccountFrom",
             name: "txtAccountFrom",
@@ -619,7 +618,7 @@ emailServer.application = {
 
             vtype: "emailUrlValidation"
         });
-        
+
         var txtPassword = new Ext.form.TextField({
             id: "txtPassword",
             name: "txtPassword",
@@ -682,14 +681,14 @@ emailServer.application = {
 
             hidden: true
         });
-        
+
         var chkEmailServerDefault = new Ext.form.Checkbox({
             id: "chkEmailServerDefault",
             name: "chkEmailServerDefault",
 
             boxLabel: _("ID_EMAIL_SERVER_THIS_CONFIGURATION_IS_DEFAULT")
         });
-        
+
         var btnTest = new Ext.Action({
             id: "btnTest",
             text: _("ID_TEST"),
@@ -1049,10 +1048,14 @@ emailServer.application = {
         var arrayAux1 = [];
 
         /*----------------------------------********---------------------------------*/
-        arrayAux1.push(btnNew);
-        arrayAux1.push("-");
+        if (EMAILSERVER_LICENSED) {
+            arrayAux1.push(btnNew);
+            arrayAux1.push("-");
+        }
         /*----------------------------------********---------------------------------*/
+
         arrayAux1.push(btnEdit);
+
         /*----------------------------------********---------------------------------*/
         arrayAux1.push(btnDelete);
         arrayAux1.push("->");
@@ -1102,6 +1105,7 @@ emailServer.application = {
         var arrayAux2 = [];
 
         arrayAux2.push(btnEdit);
+
         /*----------------------------------********---------------------------------*/
         arrayAux2.push(btnDelete);
         /*----------------------------------********---------------------------------*/
