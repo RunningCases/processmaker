@@ -1,10 +1,10 @@
 <?php
 
   // include base peer class
-  require_once 'classes/model/om/BaseCaseConsolidatedPeer.php';
+  require_once 'classes/model/om/BaseCaseConsolidatedCorePeer.php';
 
   // include object class
-  include_once 'classes/model/CaseConsolidated.php';
+  include_once 'classes/model/CaseConsolidatedCore.php';
 
 
 /**
@@ -18,6 +18,6 @@
  *
  * @package    classes.model
  */
-class CaseConsolidatedPeer extends BaseCaseConsolidatedPeer {
+class CaseConsolidatedCorePeer extends BaseCaseConsolidatedCorePeer {
 
 } // CaseConsolidatedPeer
