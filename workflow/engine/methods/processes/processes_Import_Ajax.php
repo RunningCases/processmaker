@@ -26,33 +26,58 @@ use \ProcessMaker\Importer\XmlImporter;
 
 ini_set("max_execution_time", 0);
 
-if (isset($_FILES["PROCESS_FILENAME"]) &&
-    pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION) == "pm" &&
-    $_FILES["PROCESS_FILENAME"]["error"] == 0
+/*----------------------------------********---------------------------------*/
+if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=") &&
+    isset($_FILES["PROCESS_FILENAME"]) &&
+    $_FILES["PROCESS_FILENAME"]["error"] == 0 &&
+    preg_match("/^(?:pm|pmx)$/", pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION))
 ) {
     //Check disabled code
     $response = array();
 
     try {
-        $fh = fopen($_FILES["PROCESS_FILENAME"]["tmp_name"], "rb");
-        $content = fread($fh, (int)(fread($fh, 9)));
-        $data = unserialize($content);
-        fclose($fh);
+        $arrayTrigger = array();
+        $projectTitle = "";
 
-        if (is_object($data) && isset($data->triggers) && is_array($data->triggers) && count($data->triggers) > 0) {
-            /*----------------------------------********---------------------------------*/
+        switch (pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION)) {
+            case "pm":
+                $fh = fopen($_FILES["PROCESS_FILENAME"]["tmp_name"], "rb");
+                $content = fread($fh, (int)(fread($fh, 9)));
+                $data = unserialize($content);
+                fclose($fh);
+
+                if (is_object($data) && isset($data->triggers) && is_array($data->triggers) && !empty($data->triggers)) {
+                    $arrayTrigger = $data->triggers;
+                    $projectTitle = $data->process["PRO_TITLE"];
+                }
+                break;
+            case "pmx":
+                $importer = new XmlImporter();
+
+                $data = $importer->load($_FILES["PROCESS_FILENAME"]["tmp_name"]);
+
+                if (isset($data["tables"]["workflow"]["triggers"]) && is_array($data["tables"]["workflow"]["triggers"]) && !empty($data["tables"]["workflow"]["triggers"])) {
+                    $arrayTrigger = $data["tables"]["workflow"]["triggers"];
+                    $projectTitle = $data["tables"]["bpmn"]["project"][0]["prj_name"];
+                }
+                break;
+        }
+
+        if (!empty($arrayTrigger)) {
             G::LoadClass("codeScanner");
 
             $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
+
             $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
+
             $strFoundDisabledCode = "";
 
-            foreach ($data->triggers as $value) {
+            foreach ($arrayTrigger as $value) {
                 $arrayTriggerData = $value;
 
                 $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $arrayTriggerData["TRI_WEBBOT"]);
 
-                if (count($arrayFoundDisabledCode) > 0) {
+                if (!empty($arrayFoundDisabledCode)) {
                     $strCodeAndLine = "";
 
                     foreach ($arrayFoundDisabledCode["source"] as $key2 => $value2) {
@@ -66,12 +91,11 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
             if ($strFoundDisabledCode != "") {
                 $response["status"]  = "DISABLED-CODE";
                 $response["success"] = true;
-                $response["message"] = G::LoadTranslation("ID_DISABLED_CODE_PROCESS", array($data->process["PRO_TITLE"], "\n" . $strFoundDisabledCode));
+                $response["message"] = G::LoadTranslation("ID_DISABLED_CODE_PROCESS", array($projectTitle, "\n" . $strFoundDisabledCode));
 
                 echo G::json_encode($response);
                 exit(0);
             }
-            /*----------------------------------********---------------------------------*/
         }
     } catch (Exception $e) {
         $response["status"]       = "ERROR";
@@ -82,6 +106,7 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
         exit(0);
     }
 }
+/*----------------------------------********---------------------------------*/
 
 if (isset($_FILES["PROCESS_FILENAME"]) &&
     pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION) == "pmx"
@@ -303,6 +328,13 @@ if ($action == "uploadFileNewProcess") {
         //!data ouput
         $result->sNewProUid = $sProUid;
         $result->proFileName = $Fields['PRO_FILENAME'];
+
+        //Add Audit Log
+        $ogetProcess = new Process();
+        $getprocess=$ogetProcess->load($oData->process['PRO_UID']);
+        $nameProcess=$getprocess['PRO_TITLE'];
+        G::auditLog("ImportProcess", 'PM File Imported '.$nameProcess. ' ('.$oData->process['PRO_UID'].')');
+
     } catch (Exception $e) {
         $result->response = $e->getMessage();
         $result->catchMessage = $e->getMessage();
@@ -434,5 +466,5 @@ if ($action == "uploadFileNewProcessExist") {
 }
 
 echo G::json_encode( $result );
-exit();
+exit(0);
 

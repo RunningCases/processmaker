@@ -429,6 +429,8 @@ CREATE TABLE `PROCESS`
 	`PRO_DEBUG` INTEGER default 0 NOT NULL,
 	`PRO_DYNAFORMS` MEDIUMTEXT,
 	`PRO_DERIVATION_SCREEN_TPL` VARCHAR(128) default '',
+    `PRO_COST` DECIMAL(7,2) default 0,
+    `PRO_UNIT_COST` VARCHAR(50) default '',
 	PRIMARY KEY (`PRO_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Store process Information';
 #-----------------------------------------------------------------------------
@@ -2713,6 +2715,8 @@ CREATE TABLE `USR_REPORTING`
     `CONFIGURED_TASK_TIME`  DECIMAL(7,2) default 0,
     `TOTAL_CASES_OVERDUE`   DECIMAL(7,2) default 0,
     `TOTAL_CASES_ON_TIME`   DECIMAL(7,2) default 0,
+    `PRO_COST` DECIMAL(7,2) default 0,
+    `PRO_UNIT_COST` VARCHAR(50) default '',
     PRIMARY KEY (`USR_UID`, `TAS_UID`,`MONTH`,`YEAR`),
     KEY `indexReporting`(`USR_UID`, `TAS_UID`, `PRO_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Data calculated users by task';
@@ -2737,6 +2741,8 @@ CREATE TABLE `PRO_REPORTING`
     `TOTAL_CASES_OPEN`          DECIMAL(7,2) default 0,
     `TOTAL_CASES_OVERDUE`       DECIMAL(7,2) default 0,
     `TOTAL_CASES_ON_TIME`       DECIMAL(7,2) default 0,
+    `PRO_COST` DECIMAL(7,2) default 0,
+    `PRO_UNIT_COST` VARCHAR(50) default '',
     PRIMARY KEY (`PRO_UID`,`MONTH`,`YEAR`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Data calculated by process';
 #-----------------------------------------------------------------------------

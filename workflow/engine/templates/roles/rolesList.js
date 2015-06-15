@@ -114,7 +114,7 @@ Ext.onReady(function(){
     ctCls:'pm_search_text_field',
     allowBlank: true,
     width: 150,
-    emptyText: _('ID_ENTER_SEARCH_TERM'),//'enter search term',
+    emptyText: _('ID_EMPTY_SEARCH'),//'enter search term',
     listeners: {
       specialkey: function(f,e){
         if (e.getKey() == e.ENTER) {
@@ -535,11 +535,12 @@ EditRole = function(){
       editForm.getForm().findField('name').setValue(rowSelected.data.ROL_NAME);
       editForm.getForm().findField('status').setValue(rowSelected.data.ROL_STATUS);
       w = new Ext.Window({
+        closeAction: "hide",
         autoHeight: true,
         id: 'w',
         modal: true,
         width: 420,
-        title: _('ID_EDIT_ROLE_TITLE'),
+        title: _("ID_EDIT_ROLE_TITLE"),
         items: [editForm]
       });
       w.show();

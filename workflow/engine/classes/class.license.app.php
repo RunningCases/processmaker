@@ -420,9 +420,11 @@ class license_application extends padl
             $DATA = $this->_unwrap_license($dat_str);
             if (is_array($DATA)) {
                 # missing / incorrect id therefore it has been tampered with
-                if ($DATA['ID'] != G::encryptOld($this->ID1)) {
+                /*
+                 *Disable to accept licenses from other workspaces
+                 *if ($DATA['ID'] != G::encryptOld($this->ID1)) {
                     $DATA['RESULT'] = 'CORRUPT';
-                }
+                }*/
                 if ($this->USE_TIME) {
                     # the license is being used before it's official start
                     if ($DATA['DATE']['START'] > time() + $this->START_DIF) {

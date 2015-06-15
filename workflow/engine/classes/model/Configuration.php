@@ -1,28 +1,40 @@
 <?php
 class Configuration extends BaseConfiguration
 {
-    public function create($aData)
+    public function create(array $arrayData)
     {
-        $con = Propel::getConnection(ConfigurationPeer::DATABASE_NAME);
+        $cnn = Propel::getConnection(ConfigurationPeer::DATABASE_NAME);
+
         try {
-            $con->begin();
-            $this->setCfgUid($aData['CFG_UID']);
-            $this->setObjUid($aData['OBJ_UID']);
-            $this->setCfgValue(isset($aData['CFG_VALUE'])?$aData['CFG_VALUE']:'');
-            $this->setProUid($aData['PRO_UID']);
-            $this->setUsrUid($aData['USR_UID']);
-            $this->setAppUid($aData['APP_UID']);
+            $this->setCfgUid($arrayData["CFG_UID"]);
+            $this->setObjUid($arrayData["OBJ_UID"]);
+            $this->setCfgValue((isset($arrayData["CFG_VALUE"]))? $arrayData["CFG_VALUE"] : "");
+            $this->setProUid($arrayData["PRO_UID"]);
+            $this->setUsrUid($arrayData["USR_UID"]);
+            $this->setAppUid($arrayData["APP_UID"]);
+
             if ($this->validate()) {
-                $result=$this->save();
-                $con->commit();
+                $cnn->begin();
+
+                $result = $this->save();
+
+                $cnn->commit();
+
+                //Return
                 return $result;
             } else {
-                $con->rollback();
-                throw(new Exception("Failed Validation in class ".get_class($this)."."));
+                $msg = "";
+
+                foreach ($this->getValidationFailures() as $validationFailure) {
+                    $msg = $msg . (($msg != "")? "\n" : "") . $validationFailure->getMessage();
+                }
+
+                throw new Exception(G::LoadTranslation("ID_RECORD_CANNOT_BE_CREATED") . (($msg != "")? "\n" . $msg : ""));
             }
         } catch (Exception $e) {
-            $con->rollback();
-            throw($e);
+            $cnn->rollback();
+
+            throw $e;
         }
     }
 

@@ -181,6 +181,31 @@ class Trigger
             }
         }
 
+        /*----------------------------------********---------------------------------*/
+        if (\PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=") &&
+            isset($dataTrigger["TRI_WEBBOT"])
+        ) {
+            //Check disabled code
+            \G::LoadClass("codeScanner");
+
+            $arraySystemConfiguration = \System::getSystemConfiguration(PATH_CONFIG . "env.ini");
+
+            $cs = new \CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
+
+            $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $dataTrigger["TRI_WEBBOT"]);
+
+            if (!empty($arrayFoundDisabledCode)) {
+                $strCodeAndLine = "";
+
+                foreach ($arrayFoundDisabledCode["source"] as $key => $value) {
+                    $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . \G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE", array($key, implode(", ", $value)));
+                }
+
+                throw new \Exception(\G::LoadTranslation("ID_DISABLED_CODE_TRIGGER", array($strCodeAndLine)));
+            }
+        }
+        /*----------------------------------********---------------------------------*/
+
         $dataTrigger['PRO_UID'] = $sProcessUID;
         $oTrigger = new \Triggers();
         if ($create) {

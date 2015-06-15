@@ -602,11 +602,12 @@ class Propel {
 
         foreach (self::$connectionMap as $cnn) {
             if (get_class($cnn) != "DBArrayConnection") {
-                if (gettype($cnn->getResource()) == "resource" && $cnn->isConnected() && $cnn->lastQuery != $lastQuery) {
-                    $cnn->close();
+                if(isset($cnn->lastQuery)){
+                    if (gettype($cnn->getResource()) == "resource" && $cnn->isConnected() && $cnn->lastQuery != $lastQuery) {
+                        $cnn->close();
+                    }
+                    $lastQuery = $cnn->lastQuery;
                 }
-
-                $lastQuery = $cnn->lastQuery;
             }
         }
     }

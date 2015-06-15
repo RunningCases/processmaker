@@ -75,6 +75,7 @@ CLI::taskOpt("multiple", "Restore from multiple compresed enumerated files.", "m
 CLI::taskOpt("workspace", "Select which workspace to restore if multiple workspaces are present in the archive.",
              "w:", "workspace=");
 CLI::taskOpt("lang", "You must specify language on which rebuild of the case cache list builder will be done; if you don't specify this, it will use 'en' by default", "l:","lang=");
+CLI::taskOpt("port", "You must specify mysql port.", "p:");
 CLI::taskRun("run_workspace_restore");
 
 CLI::taskName('cacheview-repair');
@@ -323,10 +324,19 @@ function database_upgrade($command, $args) {
   $workspaces = get_workspaces_from_args($args);
   $checkOnly = (strcmp($command, "check") == 0);
   foreach ($workspaces as $workspace) {
+    if (!defined("SYS_SYS")) {
+        define("SYS_SYS", $workspace->name);
+    }
+
+    if (!defined("PATH_DATA_SITE")) {
+        define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
+    }
+
     if ($checkOnly)
       print_r("Checking database in ".pakeColor::colorize($workspace->name, "INFO")."\n");
     else
       print_r("Upgrading database in ".pakeColor::colorize($workspace->name, "INFO")."\n");
+
     try {
       $changes = $workspace->upgradeDatabase($checkOnly);
       if ($changes != false) {
@@ -346,51 +356,6 @@ function database_upgrade($command, $args) {
       echo "> Error: ".CLI::error($e->getMessage()) . "\n";
     }
   }
-
-    //There records in table "EMAIL_SERVER"
-    $criteria = new Criteria("workflow");
-
-    $criteria->addSelectColumn(EmailServerPeer::MESS_UID);
-    $criteria->setOffset(0);
-    $criteria->setLimit(1);
-
-    $rsCriteria = EmailServerPeer::doSelectRS($criteria);
-
-    if (!$rsCriteria->next()) {
-        //Insert the first record
-        $emailSever = new \ProcessMaker\BusinessModel\EmailServer();
-
-        $emailConfiguration = System::getEmailConfiguration();
-
-        if (count($emailConfiguration) > 0) {
-            $arrayData = array();
-
-            $arrayData["MESS_ENGINE"]              = $emailConfiguration["MESS_ENGINE"];
-            $arrayData["MESS_SERVER"]              = $emailConfiguration["MESS_SERVER"];
-            $arrayData["MESS_PORT"]                = (int)($emailConfiguration["MESS_PORT"]);
-            $arrayData["MESS_RAUTH"]               = (int)($emailConfiguration["MESS_RAUTH"]);
-            $arrayData["MESS_ACCOUNT"]             = $emailConfiguration["MESS_ACCOUNT"];
-            $arrayData["MESS_PASSWORD"]            = $emailConfiguration["MESS_PASSWORD"];
-            $arrayData["MESS_FROM_MAIL"]           = isset($emailConfiguration["MESS_FROM_MAIL"]) ? $emailConfiguration["MESS_FROM_MAIL"] : "";
-            $arrayData["MESS_FROM_NAME"]           = isset($emailConfiguration["MESS_FROM_NAME"]) ? $emailConfiguration["MESS_FROM_NAME"] : "";
-            $arrayData["SMTPSECURE"]               = $emailConfiguration["SMTPSecure"];
-            $arrayData["MESS_TRY_SEND_INMEDIATLY"] = (int)($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"]);
-            $arrayData["MAIL_TO"]                  = $emailConfiguration["MAIL_TO"];
-            $arrayData["MESS_DEFAULT"]             = (isset($emailConfiguration["MESS_ENABLED"]) && $emailConfiguration["MESS_ENABLED"] . "" == "1")? 1 : 0;
-
-            $arrayData = $emailSever->create($arrayData);
-        } else {
-            /*----------------------------------********---------------------------------*/
-            if (true) {
-                //
-            } else {
-            /*----------------------------------********---------------------------------*/
-                $arrayData = $emailSever->create2(array("MESS_ENGINE" => "MAIL"));
-            /*----------------------------------********---------------------------------*/
-            }
-            /*----------------------------------********---------------------------------*/
-        }
-    }
 }
 
 function delete_app_from_table($con, $tableName, $appUid, $col="APP_UID") {
@@ -551,6 +516,7 @@ function run_workspace_restore($args, $opts) {
   }
   $info = array_key_exists("info", $opts);
   $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
+  $port = array_key_exists("port", $opts) ? $opts['port'] : '';
   if ($info) {
     workspaceTools::getBackupInfo($filename);
   } else {
@@ -578,7 +544,7 @@ function run_workspace_restore($args, $opts) {
             CLI::error("Please, you should use -m parameter to restore them.\n");
             return;
         }
-        workspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang);
+        workspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang, $port );
     }
   }
 }
@@ -637,12 +603,24 @@ function run_check_workspace_disabled_code($args, $opts)
         foreach ($arrayWorkspace as $value) {
             $workspace = $value;
 
+            if (!defined("SYS_SYS")) {
+                define("SYS_SYS", $workspace->name);
+            }
+
+            if (!defined("PATH_DATA_SITE")) {
+                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
+            }
+
+            if (!$workspace->pmLicensedFeaturesVerifyFeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
+                throw new Exception("Error: This command cannot be used because your license does not include it.");
+            }
+
             echo "> Workspace: " . $workspace->name . "\n";
 
             try {
                 $arrayFoundDisabledCode = $workspace->getDisabledCode();
 
-                if (count($arrayFoundDisabledCode) > 0) {
+                if (!empty($arrayFoundDisabledCode)) {
                     $strFoundDisabledCode = "";
 
                     foreach ($arrayFoundDisabledCode as $value2) {
@@ -672,6 +650,8 @@ function run_check_workspace_disabled_code($args, $opts)
             } catch (Exception $e) {
                 echo "Errors to check disabled code: " . CLI::error($e->getMessage()) . "\n\n";
             }
+
+            $workspace->close();
         }
 
         echo "Done!\n";
@@ -680,7 +660,7 @@ function run_check_workspace_disabled_code($args, $opts)
     }
 }
 
-function migrate_new_cases_lists($command, $args) { 
+function migrate_new_cases_lists($command, $args) {
   $workspaces = get_workspaces_from_args($args);
   $checkOnly = (strcmp($command, "migrate") == 0);
   foreach ($workspaces as $workspace) {
@@ -701,11 +681,11 @@ function migrate_new_cases_lists($command, $args) {
       $changes = $workspace->listFirstExecution('check');
       if ($workspace->onedb && $changes != true) {
         $workspace->migrateList($workspace->name);
-      }      
+      }
       if ($changes) {
         if ($checkOnly) {
           echo "-> List tables are done\n";
-        } 
+        }
       } else {
         echo "> List tables are done\n";
       }

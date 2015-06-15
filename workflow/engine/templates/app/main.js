@@ -33,13 +33,15 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
   var startRecord=0;
   var loadSize=10;
 
+  startRecord=startRecord+loadSize;
+
   storeNotes = new Ext.data.JsonStore({
     url: "../appProxy/getNotesList?appUid=" + appUid + "&delIndex=" + delIndex + "&pro=" + proUid + "&tas=" + taskUid,
     root: 'notes',
     totalProperty: 'totalCount',
     fields: ['USR_USERNAME','USR_FIRSTNAME','USR_LASTNAME','USR_FULL_NAME','NOTE_DATE','NOTE_CONTENT', 'USR_UID', 'user'],
     baseParams:{
-      start:startRecord,
+      start:0,
       limit:startRecord+loadSize
     },
     listeners:{
@@ -115,7 +117,7 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
                       '<td class="x-cnotes-label"><img border="0" src="../users/users_ViewPhotoGrid?pUID={USR_UID}" width="40" height="40"/></td>' +
                       '<td class="x-cnotes-name">'+
                         '<p class="user-from">{user}</p>'+
-                        '<p style="width: 260px; overflow-x:auto; height: 40px;", class="x-editable x-message">{NOTE_CONTENT}</p> '+
+                        '<p style="width: 370px; overflow-x:auto; height: 80px;", class="x-editable x-message">{NOTE_CONTENT}</p> '+
                         '<p class="x-editable"><small>'+_('ID_POSTED_AT')+'<i> {NOTE_DATE}</i></small></p>'+
                       '</td>' +
                     '</tr>' +
@@ -173,13 +175,13 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
   caseNotesWindow = new Ext.Window({
     title: _('ID_CASES_NOTES'), //Title of the Window
     id: 'caseNotesWindowPanel', //ID of the Window Panel
-    width: 380, //Width of the Window
+    width: 480, //Width of the Window
     resizable: true, //Resize of the Window, if false - it cannot be resized
     closable: true, //Hide close button of the Window
     modal: modalSw, //When modal:true it make the window modal and mask everything behind it when displayed
     //iconCls: 'ICON_CASES_NOTES',
     autoCreate: true,
-    height:400,
+    height:450,
     shadow:true,
     minWidth:380,
     minHeight:200,
@@ -207,19 +209,24 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
           xtype : 'textarea',
           id : 'caseNoteText',
           name : 'caseNoteText',
-          width : 330,
+          width : 440,
           grow : true,
-          height : 40,
-          growMin: 40,
+          height : 100,
+          growMin: 100,
           growMax: 80,
-          maxLengthText : 500,
-          allowBlank :true,
+          maxLengthText : 1500,
+          allowBlank :false,
           selectOnFocus :true,
           enableKeyEvents: true,
           listeners : {
             scope : this,
             keyup : updateTextCtr,
-            keydown: updateTextCtr
+            keydown: updateTextCtr,
+            'change': function(field, newVal, oldVal){
+                var textAreaValue = newVal.replace(/^\s+/,'').replace(/\s+$/,'');
+                field.setValue(textAreaValue.trim());
+                Ext.getCmp('caseNoteText').focus(false, 200);
+            }
           }
         })
       ],
@@ -233,7 +240,7 @@ function openCaseNotesWindow(appUid1, delIndex, modalSw, appTitle, proUid, taskU
             boxLabel: _("ID_CASE_NOTES_LABEL_SEND")
         },
         '->',
-        '<span id="countChar">500</span>',
+        '<span id="countChar">1500</span>',
         ' ',
         {
           id: 'sendBtn',
@@ -301,10 +308,10 @@ function updateTextCtr(body, event) {
   ctr = document.getElementById('countChar').innerHTML;
 
   text = Ext.getCmp('caseNoteText').getValue();
-  maxLength = 500;
+  maxLength = 1500;
 
   if (text.length > maxLength) {
-    Ext.getCmp('caseNoteText').setValue(Ext.getCmp('caseNoteText').getValue().substr(0,500));
+    Ext.getCmp('caseNoteText').setValue(Ext.getCmp('caseNoteText').getValue().substr(0,1500));
   }
   else {
     document.getElementById('countChar').innerHTML = maxLength - text.length;
@@ -342,7 +349,7 @@ function newNoteHandler()
     document.getElementById('countChar').style.display = 'block';
     Ext.getCmp('caseNoteText').focus();
     Ext.getCmp('caseNoteText').reset();
-    document.getElementById('countChar').innerHTML = '500';
+    document.getElementById('countChar').innerHTML = '1500';
     caseNotesWindow.doLayout();
   }
 

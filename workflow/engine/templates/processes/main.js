@@ -360,7 +360,7 @@ Ext.onReady(function(){
         ctCls:'pm_search_text_field',
         allowBlank: true,
         width: 150,
-        emptyText: _('ID_ENTER_SEARCH_TERM'),//'enter search term',
+        emptyText: _('ID_EMPTY_SEARCH'),//'enter search term',
         listeners: {
           specialkey: function(f,e){
             if (e.getKey() == e.ENTER) {
@@ -558,7 +558,14 @@ function newProcess(params)
         width: 260,
         maskRe: /^(?!^(PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\...*)(\..+)?$)[^\x00-\x1f\\?*\";|/]+$/i,
         allowBlank: false,
-        vtype: "textWithoutTags"
+        vtype: "textWithoutTags",
+        listeners: {
+            'focus' : function(value){
+                document.getElementById("PRO_TITLE").onpaste = function() {
+                    return false;
+                };
+            }
+        }
       },  {
         id: 'PRO_DESCRIPTION',
         fieldLabel: _('ID_DESCRIPTION'),

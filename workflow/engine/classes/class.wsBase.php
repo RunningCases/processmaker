@@ -914,28 +914,42 @@ class wsBase
         $aAttachment = null,
         $showMessage = true,
         $delIndex = 0,
-    	$config = array()
+        $config = array()
     ) {
         try {
             if (!class_exists('System')) {
                 G::LoadClass('system');
             }
-            $licensedFeatures = & PMLicensedFeatures::getSingleton();
+
             /*----------------------------------********---------------------------------*/
-            if (!empty($config) && $licensedFeatures->verifyfeature('nKaNTNuT1MzK0RsMEtXTnYzR09ucHF2WGNuS0hRdDBBak42WXJhNVVOOG1INEVoaU1EaTllbjBBeEJNeG9wRVJ6NmxQelhyVTBvdThzPQ==')) {
-                if(!is_array($config)){
-                    $emailServer = new EmailServer();
-                    $criteria = $emailServer->getSelAllColumns();
-                    $criteria->add(EmailServerPeer::MESS_UID, $config, CRITERIA::EQUAL);
-                    $criteria = EmailServerPeer::doSelectRS($criteria);
-                    $criteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                    while ($criteria->next()) {
-                      $row = $criteria->getRow();
-                      $config = $row;
-                      $config['SMTPSecure'] = $row['SMTPSECURE'];
+            if (!empty($config)) {
+                $arrayConfigAux = array();
+
+                if (is_array($config)) {
+                    if (PMLicensedFeatures::getSingleton()->verifyfeature("nKaNTNuT1MzK0RsMEtXTnYzR09ucHF2WGNuS0hRdDBBak42WXJhNVVOOG1INEVoaU1EaTllbjBBeEJNeG9wRVJ6NmxQelhyVTBvdThzPQ==")) {
+                        $arrayConfigAux = $config;
+                    }
+                } else {
+                    if (PMLicensedFeatures::getSingleton()->verifyfeature("zIKRGpDM3pjcHFsWGplNDN0dTl5bGN3UTNiOWdQU0E5Q05QTksrU1ladWQ0VT0=")) {
+                        $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
+
+                        $criteria = $emailServer->getEmailServerCriteria();
+
+                        $criteria->add(EmailServerPeer::MESS_UID, $config, Criteria::EQUAL);
+
+                        $rsCriteria = EmailServerPeer::doSelectRS($criteria);
+                        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+                        if ($rsCriteria->next()) {
+                            $row = $rsCriteria->getRow();
+
+                            $arrayConfigAux = $row;
+                            $arrayConfigAux["SMTPSecure"] = $row["SMTPSECURE"];
+                        }
                     }
                 }
-                $aSetup = $config;
+
+                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : System::getEmailConfiguration();
             } else {
             /*----------------------------------********---------------------------------*/
                 $aSetup = System::getEmailConfiguration();
@@ -1187,7 +1201,7 @@ class wsBase
 
             $mktimeDueDate = 0;
 
-            if (! empty( $dueDate )) {
+            if (! empty( $dueDate ) && $dueDate != 'null' && $dueDate) {
                 if (! preg_match( "/^(\d{4})-(\d{2})-(\d{2})$/", $dueDate, $arrayMatch )) {
                     $result = new wsCreateUserResponse( - 1, G::loadTranslation( "ID_INVALID_DATA" ) . " $dueDate", null );
 
@@ -1199,7 +1213,7 @@ class wsBase
                 $mktimeDueDate = mktime( 0, 0, 0, date( "m" ), date( "d" ), date( "Y" ) + 1 );
             }
 
-            if (! empty( $status )) {
+            if (! empty( $status ) && $status != 'null' && $status) {
                 if ($status != "ACTIVE" && $status != "INACTIVE" && $status != "VACATION") {
                     $result = new wsCreateUserResponse( - 1, G::loadTranslation( "ID_INVALID_DATA" ) . " $status", null );
 

@@ -860,6 +860,8 @@
     <column name="PRO_DEBUG" type="INTEGER" required="true" default="0"/>
     <column name="PRO_DYNAFORMS" type="LONGVARCHAR" required="false"/>
     <column name="PRO_DERIVATION_SCREEN_TPL" type="VARCHAR" size="128" default="" required="false"/>
+    <column name="PRO_COST" type="DECIMAL" size="7,2" required="false" default="0"/>
+    <column name="PRO_UNIT_COST" type="VARCHAR" size="50" required="false" default=""/>
     <validator column="PRO_TIMEUNIT">
       <rule name="validValues" value="WEEKS|MONTHS|DAYS|HOURS|MINUTES" message="Please select a valid Time Unit."/>
     </validator>
@@ -4863,6 +4865,8 @@
         <column name="CONFIGURED_TASK_TIME" type="DECIMAL"  size="7,2"  default="0" />
         <column name="TOTAL_CASES_OVERDUE"  type="DECIMAL"  size="7,2"  default="0" />
         <column name="TOTAL_CASES_ON_TIME"  type="DECIMAL"  size="7,2"  default="0" />
+        <column name="PRO_COST"             type="DECIMAL"  size="7,2"  required="false" default="0"/>
+        <column name="PRO_UNIT_COST"        type="VARCHAR"  size="50"   required="false" default=""/>
         <index name="indexReporting">
             <index-column name="USR_UID"/>
             <index-column name="TAS_UID"/>
@@ -4910,6 +4914,8 @@
         <column name="TOTAL_CASES_OPEN"         type="DECIMAL"  size="7,2"  default="0" />
         <column name="TOTAL_CASES_OVERDUE"      type="DECIMAL"  size="7,2"  default="0" />
         <column name="TOTAL_CASES_ON_TIME"      type="DECIMAL"  size="7,2"  default="0" />
+        <column name="PRO_COST"                 type="DECIMAL"  size="7,2"  required="false" default="0"/>
+        <column name="PRO_UNIT_COST"            type="VARCHAR"  size="50"   required="false" default=""/>
     </table>
 
     <table name="DASHBOARD">
@@ -4999,9 +5005,9 @@
             <parameter name="Create_options" value="" />
             <parameter name="Comment" value="Dashboard definitions to user."/>
         </vendor>
-        <column name="DAS_UID"      type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
-        <column name="OWNER_UID"    type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
-        <column name="OWNER_TYPE"   type="VARCHAR" size="15" required="true" default=""/>
+        <column name="DAS_UID"     type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="OWNER_UID"   type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="OWNER_TYPE"  type="VARCHAR" size="15" required="true" default=""/>
         <foreign-key name="fk_dashboard_indicator_dashboard_das_ind" foreignTable="DASHBOARD">
             <reference local="DAS_UID" foreign="DAS_UID"/>
         </foreign-key>

@@ -165,6 +165,10 @@ class Task
                 array(
                     "TAS_TRANSFER_FLY" => $arrayDataAux["TAS_TRANSFER_FLY"],
                     "TAS_DURATION"     => $arrayDataAux["TAS_DURATION"],
+                    /*----------------------------------********---------------------------------*/
+                    "TAS_AVERAGE"      => $arrayDataAux["TAS_AVERAGE"],
+                    "TAS_SDV"          => $arrayDataAux["TAS_SDV"],
+                    /*----------------------------------********---------------------------------*/
                     "TAS_TIMEUNIT"     => $arrayDataAux["TAS_TIMEUNIT"],
                     "TAS_TYPE_DAY"     => $arrayDataAux["TAS_TYPE_DAY"],
                     "TAS_CALENDAR"     => $arrayDataAux["TAS_CALENDAR"]
@@ -325,7 +329,7 @@ class Task
                 if (!isset($arrayProperty["TAS_DURATION"])) {
                     throw (new \Exception("Invalid value specified for 'tas_duration'"));
                 }
-                $valuesTimeUnit = array('DAYS','HOURS');
+                $valuesTimeUnit = array('DAYS','HOURS','MINUTES');
                 if ((!isset($arrayProperty["TAS_TIMEUNIT"])) ||
                     (!in_array($arrayProperty["TAS_TIMEUNIT"], $valuesTimeUnit))) {
                     throw (new \Exception("Invalid value specified for 'tas_timeunit'"));

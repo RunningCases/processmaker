@@ -949,6 +949,10 @@ class Cases
     public function updateCase($sAppUid, $Fields = array())
     {
         try {
+            $oApplication = new Application;
+            if (!$oApplication->exists($sAppUid)) {
+                return false;
+            }
             $aApplicationFields = $Fields['APP_DATA'];
             $Fields['APP_UID'] = $sAppUid;
             $Fields['APP_UPDATE_DATE'] = 'now';
@@ -1074,6 +1078,7 @@ class Cases
               $Fields['DEL_INDEX'] = 1;
             }
             $inbox = new ListInbox();
+            unset($Fields['DEL_INIT_DATE']);
             $inbox->update(array_merge($Fields, $arrayNewCaseTitleAndDescription));
             /*----------------------------------********---------------------------------*/
 
@@ -3368,25 +3373,29 @@ class Cases
 
             /*----------------------------------********---------------------------------*/
             $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
+
             $strFoundDisabledCode = "";
             /*----------------------------------********---------------------------------*/
 
             foreach ($aTriggers as $aTrigger) {
-                //Check disabled code
                 /*----------------------------------********---------------------------------*/
-                $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $aTrigger["TRI_WEBBOT"]);
+                if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
+                    //Check disabled code
+                    $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $aTrigger["TRI_WEBBOT"]);
 
-                if (count($arrayFoundDisabledCode) > 0) {
-                    $strCodeAndLine = "";
+                    if (!empty($arrayFoundDisabledCode)) {
+                        $strCodeAndLine = "";
 
-                    foreach ($arrayFoundDisabledCode["source"] as $key => $value) {
-                        $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE", array($key, implode(", ", $value)));
+                        foreach ($arrayFoundDisabledCode["source"] as $key => $value) {
+                            $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . G::LoadTranslation("ID_DISABLED_CODE_CODE_AND_LINE", array($key, implode(", ", $value)));
+                        }
+
+                        $strFoundDisabledCode .= "<br />- " . $aTrigger["TRI_TITLE"] . ": " . $strCodeAndLine;
+                        continue;
                     }
-
-                    $strFoundDisabledCode .= "<br />- " . $aTrigger["TRI_TITLE"] . ": " . $strCodeAndLine;
-                    continue;
                 }
                 /*----------------------------------********---------------------------------*/
+
                 //Execute
                 $bExecute = true;
 
@@ -6761,7 +6770,9 @@ class Cases
             $flagSupervisors = false;
 
             if ($oDataset->next()) {
-                $rows[] = $oDataset->getRow();
+                if (!in_array($USR_UID,$row)) {
+                        $rows[] = $oDataset->getRow();
+                }
                 $flagSupervisors = true;
             }
 
@@ -6789,10 +6800,13 @@ class Cases
                 $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
                 if ($oDataset->next()) {
-                    $rows[] = $oDataset->getRow();
+                    if (!in_array($USR_UID,$row)) {
+                        $rows[] = $oDataset->getRow();
+                    }
                 }
             }
         }
+
         return $rows;
     }
 
