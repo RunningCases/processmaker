@@ -1,7 +1,7 @@
 <?php
 
 
-class actionsByEmailClass extends PMPlugin
+class actionsByEmailCoreClass extends PMPlugin
 {
     public function __construct()
     {
@@ -25,32 +25,44 @@ class actionsByEmailClass extends PMPlugin
     {
         try {
             // Validations
-            if (!is_object($data)) {
-                throw new Exception('The parameter $data is null.');
-            }
+            try {
+                if (!is_object($data)) {
+                    throw new Exception('The parameter $data is null.');
+                }
+                if (!isset($data->TAS_UID)) {
+                    throw new Exception('The parameter $data->TAS_UID is null.');
+                }
 
-            if (!isset($data->TAS_UID)) {
-                throw new Exception('The parameter $data->TAS_UID is null.');
-            }
+                if (!isset($data->APP_UID)) {
+                    throw new Exception('The parameter $data->APP_UID is null.');
+                }
 
-            if (!isset($data->APP_UID)) {
-                throw new Exception('The parameter $data->APP_UID is null.');
-            }
+                if (!isset($data->DEL_INDEX)) {
+                    throw new Exception('The parameter $data->DEL_INDEX is null.');
+                }
 
-            if (!isset($data->DEL_INDEX)) {
-                throw new Exception('The parameter $data->DEL_INDEX is null.');
-            }
+                if (!isset($data->USR_UID)) {
+                    throw new Exception('The parameter $data->USR_UID is null.');
+                }
 
-            if ($data->TAS_UID == '') {
-                throw new Exception('The parameter $data->TAS_UID is empty.');
-            }
+                if ($data->TAS_UID == '') {
+                    throw new Exception('The parameter $data->TAS_UID is empty.');
+                }
 
-            if ($data->APP_UID == '') {
-                throw new Exception('The parameter $data->APP_UID is empty.');
-            }
+                if ($data->APP_UID == '') {
+                    throw new Exception('The parameter $data->APP_UID is empty.');
+                }
 
-            if ($data->DEL_INDEX == '') {
-                throw new Exception('The parameter $data->DEL_INDEX is empty.');
+                if ($data->DEL_INDEX == '') {
+                    throw new Exception('The parameter $data->DEL_INDEX is empty.');
+                }
+
+                if ($data->USR_UID == '') {
+                    throw new Exception('The parameter $data->USR_UID is empty.');
+                }
+            } catch(Exception $e) {
+                echo $e->getMessage().' Please contact to your system administrator.';
+                die;
             }
 
             G::LoadClass('pmFunctions');

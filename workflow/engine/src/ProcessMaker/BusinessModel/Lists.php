@@ -226,12 +226,12 @@ class Lists {
         $licensedFeatures = & \PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
             $criteria = new Criteria();
-            $criteria->add(\CaseConsolidatedPeer::CON_STATUS, 'ACTIVE');
-            $criteria->addJoin(\CaseConsolidatedPeer::TAS_UID, \AppCacheViewPeer::TAS_UID, Criteria::LEFT_JOIN);
+            $criteria->add(\CaseConsolidatedCorePeer::CON_STATUS, 'ACTIVE');
+            $criteria->addJoin(\CaseConsolidatedCorePeer::TAS_UID, \AppCacheViewPeer::TAS_UID, Criteria::LEFT_JOIN);
             $criteria->add(\AppCacheViewPeer::USR_UID, $userId);
             $criteria->add(\AppCacheViewPeer::DEL_THREAD_STATUS, 'OPEN');
             $criteria->add(\AppCacheViewPeer::APP_STATUS, 'TO_DO');
-            $total = \CaseConsolidatedPeer::doCount( $criteria );
+            $total = \CaseConsolidatedCorePeer::doCount( $criteria );
             $response[] = array('count' => $total,            'item' => 'CONSOLIDATED_CASES');
         }
         /*----------------------------------********---------------------------------*/

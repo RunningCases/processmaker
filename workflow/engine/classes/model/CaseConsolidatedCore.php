@@ -1,6 +1,6 @@
 <?php
 
-require_once 'classes/model/om/BaseCaseConsolidated.php';
+require_once 'classes/model/om/BaseCaseConsolidatedCore.php';
 
 
 /**
@@ -14,6 +14,6 @@ require_once 'classes/model/om/BaseCaseConsolidated.php';
  *
  * @package    classes.model
  */
-class CaseConsolidated extends BaseCaseConsolidated {
+class CaseConsolidatedCore extends BaseCaseConsolidatedCore {
 
 } // CaseConsolidated

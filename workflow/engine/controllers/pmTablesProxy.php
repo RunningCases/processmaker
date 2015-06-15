@@ -1713,6 +1713,8 @@ class pmTablesProxy extends HttpProxyController
                 $oCriteria->addSelectColumn(ProcessVariablesPeer::VAR_UID);
                 $oCriteria->addSelectColumn(ProcessVariablesPeer::VAR_NAME);
                 $oCriteria->addSelectColumn(ProcessVariablesPeer::VAR_FIELD_TYPE);
+                $oCriteria->addSelectColumn(ProcessVariablesPeer::VAR_SQL);
+                $oCriteria->addSelectColumn(ProcessVariablesPeer::VAR_ACCEPTED_VALUES);
                 $oCriteria->add(ProcessVariablesPeer::PRJ_UID, $row["PRJ_UID"]);
                 $oDataset = ProcessVariablesPeer::doSelectRS($oCriteria);
                 $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -1720,14 +1722,18 @@ class pmTablesProxy extends HttpProxyController
                 while ($oDataset->next()) {
                     $row = $oDataset->getRow();
                     $fieldType = isset($row["VAR_FIELD_TYPE"]) ? $row["VAR_FIELD_TYPE"]: '';
+                    $varSql = isset($row["VAR_SQL"]) ? $row["VAR_SQL"] : '';                    
+                    $varProcessVariable = isset($row["VAR_ACCEPTED_VALUES"]) ? $row["VAR_ACCEPTED_VALUES"] : '[]';
                     if(! in_array( $fieldType, $excludeFieldsList )){
-                       array_push($fields, array(
-                        "FIELD_UID" => $row["VAR_NAME"] . "-" . $row["VAR_FIELD_TYPE"],
-                        "FIELD_NAME" => $row["VAR_NAME"],
-                        "FIELD_VALIDATE" => "any",
-                        "_index" => $index ++,
-                        "_isset" => true
-                    ));
+                        if(strlen($varSql) == 0 && $varProcessVariable == '[]'){
+                            array_push($fields, array(
+                                "FIELD_UID" => $row["VAR_NAME"] . "-" . $row["VAR_FIELD_TYPE"],
+                                "FIELD_NAME" => $row["VAR_NAME"],
+                                "FIELD_VALIDATE" => "any",
+                                "_index" => $index ++,
+                                "_isset" => true
+                            ));
+                        }                       
                     }
                 }
             }
