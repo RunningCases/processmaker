@@ -706,6 +706,279 @@ function renderSummary (val, p, r) {
    return summaryIcon;
  };
 
+function generateGridClassic(proUid, tasUid, dynUid){
+
+   var pager = 20; //pageSize
+   var pagei = 0; //start
+   Ext.Ajax.request({
+     url: '../pmConsolidatedCL/proxyGenerateGrid',
+     success: function(response) {
+       //Obtenemos el column model y los reader fields de proxyGenerateGrid
+       var dataResponse = Ext.util.JSON.decode(response.responseText);
+       var viewConfigObject;
+       var textArea = dataResponse.hasTextArea;
+
+       if (textArea == false) {
+         viewConfigObject = { //forceFit: true
+         };
+       } else {
+         viewConfigObject = {
+          //forceFit:true,
+          enableRowBody:true,
+          showPreview:true,
+          getRowClass : function(record, rowIndex, p, store){
+            if (this.showPreview) {
+              p.body = '<p><br /></p>';
+              return 'x-grid3-row-expanded';
+            }
+            return 'x-grid3-row-collapsed';
+          }
+        };
+      }
+
+      storeConsolidated = new Ext.data.Store({
+        id: "storeConsolidatedGrid",
+        remoteSort: true,
+        //definimos un proxy como un objeto de la clase HttpProxy
+        proxy: new Ext.data.HttpProxy({
+          url: "../pmConsolidatedCL/proxyConsolidated",
+          api: {
+            read: "../pmConsolidatedCL/proxyConsolidated",
+            //update: "../pmConsolidatedCL/proxySaveConsolidated"
+            update: "../pmConsolidatedCL/consolidatedUpdateAjax"
+          }
+        }),
+
+        //el data reader obtiene los reader fields de la consulta en ajax
+        reader: new Ext.data.JsonReader({
+          fields: dataResponse.readerFields,
+          totalProperty: "totalCount",
+          //successProperty: "success",
+          idProperty: "APP_UID",
+          root: "data",
+          messageProperty: "message"
+        }),
+
+        //el data writer es un objeto generico pero q permitira a futuro el escribir los datos al servidor mediante el proxy
+        writer: new Ext.data.JsonWriter({
+          encode: true,
+          writeAllFields: false
+        }), //<-- plug a DataWriter into the store just as you would a Reader
+        autoSave: true, //<-- false would delay executing create, update, destroy requests until specifically told to do so with some [save] buton.
+
+        //el ordenamiento para los campos posiblemente este tenga q ser el tercer dato obtenido del proxy dado q los listados son muy cambiantes de tarea en tarea
+        //sortInfo:{
+        //  field: 'APP_CACHE_VIEW.APP_NUMBER',
+        //  direction: "DESC"
+        //}
+
+        //,
+        listeners: { //
+          beforeload:function (store, options) { //
+            grdNumRows = 0; //
+          }, //
+
+          load:function (store, records, options) { //
+            grdNumRows = store.getCount(); //
+
+            consolidatedGrid.setDisabled(false);
+          } //
+        } //
+      });
+
+       var xColumns = dataResponse.columnModel;
+       xColumns.unshift(smodel);
+
+
+       var cm = new Ext.grid.ColumnModel(xColumns);
+       cm.config[2].renderer = renderTitle; //Case Number
+       cm.config[3].renderer = renderTitle; //Case Title
+       cm.config[4].renderer = renderSummary;//Case Summary
+
+       //generacion del grid basados en los atributos definidos con anterioridad
+       storeConsolidated.setBaseParam("limit", pager);
+       storeConsolidated.setBaseParam("start", pagei);
+       storeConsolidated.setBaseParam('tasUid', tasUid);
+       storeConsolidated.setBaseParam('dynUid', dynUid);
+       storeConsolidated.setBaseParam('proUid', proUid);
+       storeConsolidated.setBaseParam('dropList', Ext.util.JSON.encode(dataResponse.dropList));
+       storeConsolidated.load();
+
+       consolidatedGrid = new Ext.grid.EditorGridPanel({
+         id: gridId,
+         region: "center",
+
+         store: storeConsolidated,
+         cm: cm,
+         sm: smodel,
+         //autoHeight: true,
+
+         //height: pnlMain.getSize().height - pnlMain.getFrameHeight(), //
+         width: pnlMain.getSize().width, //
+         height: browserHeight - 35, //
+
+         layout: 'fit',
+         //plugins: filters,
+         viewConfig: viewConfigObject,
+
+         listeners: {
+           beforeedit: function (e) {
+             var selRow = Ext.getCmp(gridId).getSelectionModel().getSelected();
+
+             var swDropdown = 0;
+             for (var i = 0; i <= dataResponse.dropList.length - 1 && swDropdown == 0; i++) {
+               if (dataResponse.dropList[i] == e.field) {
+                 swDropdown = 1;
+               }
+             }
+
+             var swYesNo = 0;
+             for (var i = 0; i <= dataResponse.comboBoxYesNoList.length - 1 && swYesNo == 0; i++) {
+               if (dataResponse.comboBoxYesNoList[i] == e.field) {
+                 swYesNo = 1;
+               }
+             }
+
+             if (swDropdown == 1 && swYesNo == 0) {
+               storeAux = Ext.StoreMgr.get("store" + e.field + "_" + proUid);
+               storeAux.setBaseParam("appUid", selRow.data["APP_UID"]);
+               storeAux.setBaseParam("dynUid", dynUid);
+               storeAux.setBaseParam("proUid", proUid);
+               storeAux.setBaseParam("fieldName", e.field);
+               //currentFieldEdited = e.field;
+               storeAux.load();
+             }
+           },
+
+           afteredit: function (e) {
+             //var store = consolidatedGrid.getStore();
+
+             if (Ext.getCmp("chk_allColumn").checked) {
+               Ext.Msg.show({
+                 title: "",
+                 msg: "The modification will be applied to all rows in your selection.",
+                 buttons: Ext.Msg.YESNO,
+                 fn: function (btn) {
+                   if (btn == "yes") {
+                     //storeConsolidated.each(function (record) {
+                     //  record.set(e.field, e.value);
+                     //});
+
+                     consolidatedGrid.setDisabled(true);
+
+                     var dataUpdate = "";
+                     var strValue = "";
+                     var sw = 0;
+
+                     if (e.value instanceof Date) {
+                         var mAux = e.value.getMonth() + 1;
+                         var dAux = e.value.getDate();
+                         var hAux = e.value.getHours();
+                         var iAux = e.value.getMinutes();
+                         var sAux = e.value.getSeconds();
+
+                         strValue = e.value.getFullYear() + "-" + ((mAux <= 9)? "0" : "") + mAux + "-" + ((dAux <= 9)? "0" : "") + dAux;
+                         strValue = strValue + " " + ((hAux <= 9)? "0" + ((hAux == 0)? "0" : hAux) : hAux) + ":" + ((iAux <= 9)? "0" + ((iAux == 0)? "0" : iAux) : iAux) + ":" + ((sAux <= 9)? "0" + ((sAux == 0)? "0" : sAux) : sAux);
+                     } else {
+                         strValue = strReplace("\"", "\\\"", e.value + "");
+                     }
+
+                     storeConsolidated.each(function (record) {
+                       dataUpdate = dataUpdate + ((sw == 1)? "(sep1 /)": "") + record.data["APP_UID"] + "(sep2 /)" + e.field + "(sep2 /)" + strValue;
+                       sw = 1;
+                     });
+
+                     ///////
+                     Ext.Ajax.request({
+                       url: "consolidatedUpdateAjax",
+                       method: "POST",
+                       params: {
+                         "option":      "ALL",
+                         "dynaformUid": dynUid,
+                         "dataUpdate":  dataUpdate
+                       },
+
+                       success: function (response, opts) {
+                         var dataResponse = eval("(" + response.responseText + ")"); //json
+
+                         if (dataResponse.status && dataResponse.status == "OK") {
+                           if (typeof(storeConsolidated.lastOptions.params) != "undefined") {
+                             pagei = storeConsolidated.lastOptions.params.start;
+                           }
+
+                           storeConsolidated.setBaseParam("start", pagei);
+                           storeConsolidated.load();
+                         } else {
+                           //
+                         }
+                       }
+                     });
+                   }
+                 },
+                 //animEl: "elId",
+                 icon: Ext.MessageBox.QUESTION
+               });
+             }
+           },
+
+           mouseover: function (e, cell) {
+            var rowIndex = consolidatedGrid.getView().findRowIndex(cell);
+            if (!(rowIndex === false)) {
+              var record = consolidatedGrid.store.getAt(rowIndex);
+              var msg = record.get('APP_TITLE');
+              Ext.QuickTips.register({
+                text: msg,
+                target: e.target
+              });
+            } else {
+              Ext.QuickTips.unregister(e.target);
+            }
+          },
+
+          mouseout: function (e, cell) {
+            Ext.QuickTips.unregister(e.target);
+          }
+         },
+
+        //tbar: tb,
+
+        tbar: new Ext.Toolbar({
+          height: 33,
+          items: toolbarconsolidated
+        }),
+
+        bbar: new Ext.PagingToolbar({
+          pageSize: pager,
+          store: storeConsolidated,
+          displayInfo: true,
+          displayMsg: _("ID_DISPLAY_ITEMS"),
+          emptyMsg: _("ID_DISPLAY_EMPTY")
+        })
+       });
+
+      //remocion de todos los elementos del panel principal donde se carga el grid
+      //Ext.ComponentMgr.get("myId").body.update("");
+      //pnlMain.removeAll(false);
+      pnlMain.removeAll();
+      //adicion del grid definido con anterioridad
+      pnlMain.add(consolidatedGrid);
+      //recarga de los elementos del grid, para su visualizacion.
+      pnlMain.doLayout();
+    },
+
+    //en caso de fallo ejecutar la siguiente funcion.
+    failure: function(){
+      alert("Failure...");
+    },
+    // parametros que son enviados en la peticion al servidor.
+    params: {
+      xaction: 'read',
+      tasUid: tasUid,
+      dynUid: dynUid,
+      proUid: proUid
+    }
+  });
+}
 
 function generateGrid(proUid, tasUid, dynUid)
 {  

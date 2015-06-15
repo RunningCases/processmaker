@@ -188,8 +188,8 @@ class AppDelegation extends BaseAppDelegation
             if (PMLicensedFeatures
                 ::getSingleton()
                 ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
-                G::LoadClass('actionsByEmail');
-                $actionsByEmail = new actionsByEmailClass();
+                G::LoadClass('actionsByEmailCore');
+                $actionsByEmail = new actionsByEmailCoreClass();
                 $actionsByEmail->sendActionsByEmail($data);
             }
             /*----------------------------------********---------------------------------*/

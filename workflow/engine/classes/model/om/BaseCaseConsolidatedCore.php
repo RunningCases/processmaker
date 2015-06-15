@@ -7,7 +7,7 @@ require_once 'propel/om/Persistent.php';
 
 include_once 'propel/util/Criteria.php';
 
-include_once 'classes/model/CaseConsolidatedPeer.php';
+include_once 'classes/model/CaseConsolidatedCorePeer.php';
 
 /**
  * Base class that represents a row from the 'CASE_CONSOLIDATED' table.
@@ -16,7 +16,7 @@ include_once 'classes/model/CaseConsolidatedPeer.php';
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseCaseConsolidated extends BaseObject implements Persistent
+abstract class BaseCaseConsolidatedCore extends BaseObject implements Persistent
 {
 
     /**
@@ -126,7 +126,7 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
 
         if ($this->tas_uid !== $v || $v === '') {
             $this->tas_uid = $v;
-            $this->modifiedColumns[] = CaseConsolidatedPeer::TAS_UID;
+            $this->modifiedColumns[] = CaseConsolidatedCorePeer::TAS_UID;
         }
 
     } // setTasUid()
@@ -148,7 +148,7 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
 
         if ($this->dyn_uid !== $v || $v === '') {
             $this->dyn_uid = $v;
-            $this->modifiedColumns[] = CaseConsolidatedPeer::DYN_UID;
+            $this->modifiedColumns[] = CaseConsolidatedCorePeer::DYN_UID;
         }
 
     } // setDynUid()
@@ -170,7 +170,7 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
 
         if ($this->rep_tab_uid !== $v || $v === '') {
             $this->rep_tab_uid = $v;
-            $this->modifiedColumns[] = CaseConsolidatedPeer::REP_TAB_UID;
+            $this->modifiedColumns[] = CaseConsolidatedCorePeer::REP_TAB_UID;
         }
 
     } // setRepTabUid()
@@ -192,7 +192,7 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
 
         if ($this->con_status !== $v || $v === 'ACTIVE') {
             $this->con_status = $v;
-            $this->modifiedColumns[] = CaseConsolidatedPeer::CON_STATUS;
+            $this->modifiedColumns[] = CaseConsolidatedCorePeer::CON_STATUS;
         }
 
     } // setConStatus()
@@ -227,7 +227,7 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 4; // 4 = CaseConsolidatedPeer::NUM_COLUMNS - CaseConsolidatedPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 4; // 4 = CaseConsolidatedCorePeer::NUM_COLUMNS - CaseConsolidatedCorePeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating CaseConsolidated object", $e);
@@ -250,12 +250,12 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(CaseConsolidatedPeer::DATABASE_NAME);
+            $con = Propel::getConnection(CaseConsolidatedCorePeer::DATABASE_NAME);
         }
 
         try {
             $con->begin();
-            CaseConsolidatedPeer::doDelete($this, $con);
+            CaseConsolidatedCorePeer::doDelete($this, $con);
             $this->setDeleted(true);
             $con->commit();
         } catch (PropelException $e) {
@@ -281,7 +281,7 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
         }
 
         if ($con === null) {
-            $con = Propel::getConnection(CaseConsolidatedPeer::DATABASE_NAME);
+            $con = Propel::getConnection(CaseConsolidatedCorePeer::DATABASE_NAME);
         }
 
         try {
@@ -316,14 +316,14 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
             // If this object has been modified, then save it to the database.
             if ($this->isModified()) {
                 if ($this->isNew()) {
-                    $pk = CaseConsolidatedPeer::doInsert($this, $con);
+                    $pk = CaseConsolidatedCorePeer::doInsert($this, $con);
                     $affectedRows += 1; // we are assuming that there is only 1 row per doInsert() which
                                          // should always be true here (even though technically
                                          // BasePeer::doInsert() can insert multiple rows).
 
                     $this->setNew(false);
                 } else {
-                    $affectedRows += CaseConsolidatedPeer::doUpdate($this, $con);
+                    $affectedRows += CaseConsolidatedCorePeer::doUpdate($this, $con);
                 }
                 $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
             }
@@ -394,7 +394,7 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
             $failureMap = array();
 
 
-            if (($retval = CaseConsolidatedPeer::doValidate($this, $columns)) !== true) {
+            if (($retval = CaseConsolidatedCorePeer::doValidate($this, $columns)) !== true) {
                 $failureMap = array_merge($failureMap, $retval);
             }
 
@@ -417,7 +417,7 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
      */
     public function getByName($name, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = CaseConsolidatedPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = CaseConsolidatedCorePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->getByPosition($pos);
     }
 
@@ -461,7 +461,7 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
      */
     public function toArray($keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = CaseConsolidatedPeer::getFieldNames($keyType);
+        $keys = CaseConsolidatedCorePeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getTasUid(),
             $keys[1] => $this->getDynUid(),
@@ -483,7 +483,7 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
      */
     public function setByName($name, $value, $type = BasePeer::TYPE_PHPNAME)
     {
-        $pos = CaseConsolidatedPeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
+        $pos = CaseConsolidatedCorePeer::translateFieldName($name, $type, BasePeer::TYPE_NUM);
         return $this->setByPosition($pos, $value);
     }
 
@@ -531,7 +531,7 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
      */
     public function fromArray($arr, $keyType = BasePeer::TYPE_PHPNAME)
     {
-        $keys = CaseConsolidatedPeer::getFieldNames($keyType);
+        $keys = CaseConsolidatedCorePeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setTasUid($arr[$keys[0]]);
@@ -558,22 +558,22 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
      */
     public function buildCriteria()
     {
-        $criteria = new Criteria(CaseConsolidatedPeer::DATABASE_NAME);
+        $criteria = new Criteria(CaseConsolidatedCorePeer::DATABASE_NAME);
 
-        if ($this->isColumnModified(CaseConsolidatedPeer::TAS_UID)) {
-            $criteria->add(CaseConsolidatedPeer::TAS_UID, $this->tas_uid);
+        if ($this->isColumnModified(CaseConsolidatedCorePeer::TAS_UID)) {
+            $criteria->add(CaseConsolidatedCorePeer::TAS_UID, $this->tas_uid);
         }
 
-        if ($this->isColumnModified(CaseConsolidatedPeer::DYN_UID)) {
-            $criteria->add(CaseConsolidatedPeer::DYN_UID, $this->dyn_uid);
+        if ($this->isColumnModified(CaseConsolidatedCorePeer::DYN_UID)) {
+            $criteria->add(CaseConsolidatedCorePeer::DYN_UID, $this->dyn_uid);
         }
 
-        if ($this->isColumnModified(CaseConsolidatedPeer::REP_TAB_UID)) {
-            $criteria->add(CaseConsolidatedPeer::REP_TAB_UID, $this->rep_tab_uid);
+        if ($this->isColumnModified(CaseConsolidatedCorePeer::REP_TAB_UID)) {
+            $criteria->add(CaseConsolidatedCorePeer::REP_TAB_UID, $this->rep_tab_uid);
         }
 
-        if ($this->isColumnModified(CaseConsolidatedPeer::CON_STATUS)) {
-            $criteria->add(CaseConsolidatedPeer::CON_STATUS, $this->con_status);
+        if ($this->isColumnModified(CaseConsolidatedCorePeer::CON_STATUS)) {
+            $criteria->add(CaseConsolidatedCorePeer::CON_STATUS, $this->con_status);
         }
 
 
@@ -590,9 +590,9 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
      */
     public function buildPkeyCriteria()
     {
-        $criteria = new Criteria(CaseConsolidatedPeer::DATABASE_NAME);
+        $criteria = new Criteria(CaseConsolidatedCorePeer::DATABASE_NAME);
 
-        $criteria->add(CaseConsolidatedPeer::TAS_UID, $this->tas_uid);
+        $criteria->add(CaseConsolidatedCorePeer::TAS_UID, $this->tas_uid);
 
         return $criteria;
     }
@@ -671,12 +671,12 @@ abstract class BaseCaseConsolidated extends BaseObject implements Persistent
      * same instance for all member of this class. The method could therefore
      * be static, but this would prevent one from overriding the behavior.
      *
-     * @return     CaseConsolidatedPeer
+     * @return     CaseConsolidatedCorePeer
      */
     public function getPeer()
     {
         if (self::$peer === null) {
-            self::$peer = new CaseConsolidatedPeer();
+            self::$peer = new CaseConsolidatedCorePeer();
         }
         return self::$peer;
     }
