@@ -462,8 +462,11 @@ class Light extends Api
 
             $response = $process->getDynaForms($prj_uid);
             $result   = $this->parserDataDynaForm($response);
+            \G::LoadClass("pmDynaform");
+            $pmDynaForm = new \pmDynaform();
             foreach ($result as $k => $form) {
                 $result[$k]['formContent'] = (isset($form['formContent']) && $form['formContent'] != null)?json_decode($form['formContent']):"";
+                $pmDynaForm->jsonr($result[$k]['formContent']);
                 $result[$k]['index']       = $k;
             }
         } catch (\Exception $e) {
@@ -491,12 +494,15 @@ class Light extends Api
             $dynaForm->setFormatFieldNameInUppercase(false);
             $oMobile = new \ProcessMaker\BusinessModel\Light();
             $step = new \ProcessMaker\Services\Api\Project\Activity\Step();
+            \G::LoadClass("pmDynaform");
+            $pmDynaForm = new \pmDynaform();
             $response = array();
             for ($i = 0; $i < count($activitySteps); $i++) {
                 if ($activitySteps[$i]['step_type_obj'] == "DYNAFORM") {
                     $dataForm = $dynaForm->getDynaForm($activitySteps[$i]['step_uid_obj']);
                     $result   = $this->parserDataDynaForm($dataForm);
                     $result['formContent'] = (isset($result['formContent']) && $result['formContent'] != null)?json_decode($result['formContent']):"";
+                    $pmDynaForm->jsonr($result['formContent']);
                     $result['index']       = $i;
                     $result['stepId']      = $activitySteps[$i]["step_uid"];
                     $trigger = $oMobile->statusTriggers($step->doGetActivityStepTriggers($activitySteps[$i]["step_uid"], $act_uid, $prj_uid));
@@ -559,6 +565,9 @@ class Light extends Api
             $response = $dynaForm->getDynaForm($dyn_uid);
             $result   = $this->parserDataDynaForm($response);
             $result['formContent'] = (isset($result['formContent']) && $result['formContent'] != null)?json_decode($result['formContent']):"";
+            \G::LoadClass("pmDynaform");
+            $pmDynaForm = new \pmDynaform();
+            $pmDynaForm->jsonr($result['formContent']);
             return $result;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -574,11 +583,14 @@ class Light extends Api
         try {
             $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
             $dynaForm->setFormatFieldNameInUppercase(false);
+            \G::LoadClass("pmDynaform");
+            $pmDynaForm = new \pmDynaform();
             $return = array();
             foreach ($request_data['formId'] as $dyn_uid) {
                 $response = $dynaForm->getDynaForm($dyn_uid);
                 $result   = $this->parserDataDynaForm($response);
                 $result['formContent'] = (isset($result['formContent']) && $result['formContent'] != null)?json_decode($result['formContent']):"";
+                $pmDynaForm->jsonr($result['formContent']);
                 $return[] = $result;
             }
         } catch (\Exception $e) {

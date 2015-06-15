@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * Dev: Ronald Quenta
- * E-mail: ronald.otn@gmail.com
- * Date: 8/05/15
- * Time: 17:10
- */
 
 namespace ProcessMaker\Services\Api\Light;
 
