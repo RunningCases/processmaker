@@ -15,14 +15,14 @@ var synchronizeGroupsLDAPADV = function() {
 };
 
 var synchronizeDepartmentsButtonLDAPADV = new Ext.Action({
-  text: 'Synchronize Departmentssss',
+  text: 'Synchronize Departments',
   iconCls: 'ICON_DEPARTAMENTS',
   disabled: true,
   handler: synchronizeDepartmentsLDAPADV
 });
 
 var synchronizeGroupsButtonLDAPADV = new Ext.Action({
-  text: 'Synchronize Groupssss',
+  text: 'Synchronize Groups',
   iconCls: 'ICON_GROUPS',
   disabled: true,
   handler: synchronizeGroupsLDAPADV

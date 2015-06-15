@@ -34,13 +34,11 @@ $G_ID_MENU_SELECTED = 'USERS';
 $G_ID_SUB_MENU_SELECTED = 'AUTH_SOURCES';
 
 $aAuthSourceTypes = array (array ('sType' => 'char','sLabel' => 'char'));
-error_log(PATH_RBAC . 'plugins' . PATH_SEP);
 $oDirectory = dir( PATH_RBAC . 'plugins' . PATH_SEP );
 while ($sObject = $oDirectory->read()) {
     if (($sObject != '.') && ($sObject != '..') && ($sObject != '.svn') && ($sObject != 'ldap')) {
         if (is_file( PATH_RBAC . 'plugins' . PATH_SEP . $sObject )) {
             $sType = trim( str_replace( 'class.', '', str_replace( '.php', '', $sObject ) ) );
-            error_log($sType);
             $aAuthSourceTypes[] = array ('sType' => $sType,'sLabel' => $sType );
         }
     }

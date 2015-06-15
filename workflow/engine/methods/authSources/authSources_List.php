@@ -33,7 +33,6 @@ G::LoadClass( 'configuration' );
 $c = new Configurations();
 $configPage = $c->getConfiguration( 'authSourcesList', 'pageSize', '', $_SESSION['USER_LOGGED'] );
 $Config['pageSize'] = isset( $configPage['pageSize'] ) ? $configPage['pageSize'] : 20;
-G::pr($Config);
 $G_MAIN_MENU = 'processmaker';
 $G_SUB_MENU = 'users';
 $G_ID_MENU_SELECTED = 'USERS';
@@ -43,7 +42,7 @@ $G_PUBLISH = new Publisher();
 
 $oHeadPublisher = & headPublisher::getSingleton();
 $oHeadPublisher->addExtJsScript( 'authSources/authSourcesList', false ); //adding a javascript file .js
-$oHeadPublisher->addExtJsScript (PATH_TPL. 'ldapAdvanced/authSourcesList', false ); //adding a javascript file .js
+$oHeadPublisher->addExtJsScript( 'authSources/authSourcesListSyn', false ); //adding a javascript file .js
 $oHeadPublisher->addContent( 'authSources/authSourcesList' ); //adding a html file  .html.
 $oHeadPublisher->assign( 'FORMATS', $c->getFormats() );
 $oHeadPublisher->assign( 'CONFIG', $Config );
