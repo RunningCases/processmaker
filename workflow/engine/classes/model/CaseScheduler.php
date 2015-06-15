@@ -44,6 +44,11 @@ class CaseScheduler extends BaseCaseScheduler
     {
         $con = Propel::getConnection( CaseSchedulerPeer::DATABASE_NAME );
         try {
+            if (isset($aData["SCH_OPTION"]) && (int)($aData["SCH_OPTION"]) == 4) {
+                //One time only
+                $aData["SCH_END_DATE"] = null;
+            }
+
             $this->fromArray( $aData, BasePeer::TYPE_FIELDNAME );
             if ($this->validate()) {
                 $result = $this->save();
@@ -88,6 +93,11 @@ class CaseScheduler extends BaseCaseScheduler
     {
         $con = Propel::getConnection( CaseSchedulerPeer::DATABASE_NAME );
         try {
+            if (isset($fields["SCH_OPTION"]) && (int)($fields["SCH_OPTION"]) == 4) {
+                //One time only
+                $fields["SCH_END_DATE"] = null;
+            }
+
             $con->begin();
             $this->load( $fields['SCH_UID'] );
             $this->fromArray( $fields, BasePeer::TYPE_FIELDNAME );
@@ -329,8 +339,8 @@ class CaseScheduler extends BaseCaseScheduler
 
             $timeDate = strtotime($date);
 
-            $dateHour    = (int)(date("H", $timeDate));
-            $dateMinutes = (int)(date("i", $timeDate));
+            $dateHour    = date("H", $timeDate);
+            $dateMinutes = date("i", $timeDate);
 
             $dateCurrentIni = date("Y-m-d", $timeDate) . " 00:00:00";
             $dateCurrentEnd = date("Y-m-d", $timeDate) . " 23:59:59";
@@ -379,10 +389,14 @@ class CaseScheduler extends BaseCaseScheduler
                     $flagNewCase = true; //Create the old case
                     $caseSchedulerTimeNextRunNew = $this->getTimeNextRunByDate($row, $date, false);
                 } else {
-                    $caseSchedulerTimeNextRunHour    = (int)(date("H", strtotime($row["SCH_TIME_NEXT_RUN"])));
-                    $caseSchedulerTimeNextRunMinutes = (int)(date("i", strtotime($row["SCH_TIME_NEXT_RUN"])));
+                    $caseSchedulerTimeNextRunHour    = date("H", strtotime($row["SCH_TIME_NEXT_RUN"]));
+                    $caseSchedulerTimeNextRunMinutes = date("i", strtotime($row["SCH_TIME_NEXT_RUN"]));
 
-                    $flagNewCase = ($caseSchedulerTimeNextRunHour == $dateHour && $caseSchedulerTimeNextRunMinutes <= $dateMinutes) || $caseSchedulerTimeNextRunHour < $dateHour;
+                    if ((int)($dateHour . $dateMinutes) <= (int)($caseSchedulerTimeNextRunHour . $caseSchedulerTimeNextRunMinutes)) {
+                        $flagNewCase = $caseSchedulerTimeNextRunHour == $dateHour && $caseSchedulerTimeNextRunMinutes == $dateMinutes;
+                    } else {
+                        $flagNewCase = true; //Create the old case
+                    }
                 }
 
                 if ($flagNewCase) {
@@ -579,7 +593,7 @@ class CaseScheduler extends BaseCaseScheduler
                         case 5:
                             //Every
                             if ($caseSchedulerTimeNextRunNew == "") {
-                                $caseSchedulerTimeNextRunNew = date("Y-m-d H:i:s", $timeDate + (((int)($row["SCH_REPEAT_EVERY"])) * 60 * 60));
+                                $caseSchedulerTimeNextRunNew = date("Y-m-d H:i:s", $timeDate + round(floatval($row["SCH_REPEAT_EVERY"]) * 60 * 60));
                             }
 
                             $this->updateDate($caseSchedulerUid, $caseSchedulerTimeNextRunNew, $caseSchedulerTimeNextRun);
@@ -842,7 +856,7 @@ class CaseScheduler extends BaseCaseScheduler
                         break;
                     case 5:
                         //Every
-                        $caseSchedulerTimeNextRun = date("Y-m-d H:i:s", $timeDate + (((int)($arrayCaseSchedulerData["SCH_REPEAT_EVERY"])) * 60 * 60));
+                        $caseSchedulerTimeNextRun = date("Y-m-d H:i:s", $timeDate + round(floatval($arrayCaseSchedulerData["SCH_REPEAT_EVERY"]) * 60 * 60));
                         break;
                 }
 

@@ -1018,7 +1018,7 @@ class CaseScheduler
 
             switch ($caseSchedulerOption) {
                 case 4:
-                    $arrayCaseSchedulerData["SCH_END_DATE"] = $arrayCaseSchedulerData["SCH_START_TIME"];
+                    //$arrayCaseSchedulerData["SCH_END_DATE"] = $arrayCaseSchedulerData["SCH_START_TIME"];
                     break;
                 case 5:
                     switch ($option) {
