@@ -70,22 +70,6 @@ foreach ($aResult as $field) {
     $array[] = $arrayTmp;
 }
 
-//var_dump($array);
-/*
-if ($appUid == "5662082864d4c536a5d2a73024245754") {
-  $array[] = array("value"=>"BO", "text"=>"Bolivia");
-  $array[] = array("value"=>"US", "text"=>"USA");
-  $array[] = array("value"=>"AR", "text"=>"Argentina");
-}
-else {
-  $array[] = array("value"=>"EC", "text" => "Ecuador");
-  $array[] = array("value"=>"RU", "text" => "Rusia");
-  $array[] = array("value"=>"DE", "text" => "Alemania");
-}
-*/
-
 $response["records"] = $array;
 
 echo G::json_encode($response);
-// echo "[" . json_encode($response) . "]";
-
