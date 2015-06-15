@@ -136,10 +136,13 @@ class dbConnections
     /**
      * getConnectionsProUid
      *
-     * @param string $pType
+     * Parameter $only list of items displayed, everything else is ignored.
+     * 
+     * @param string $pProUid
+     * @param string $only
      * @return Array $connections
      */
-    public function getConnectionsProUid ($pProUid)
+    public function getConnectionsProUid ($pProUid, $only = array())
     {
         $connections = Array ();
         $c = new Criteria();
@@ -155,8 +158,9 @@ class dbConnections
         $result->next();
         $row = $result->getRow();
 
+        $sw = count($only) > 0;
         while ($row = $result->getRow()) {
-            if ((trim( $pProUid ) == trim( $row[1] )) && ($row[2] == 'mysql')) {
+            if ((trim( $pProUid ) == trim( $row[1] )) && ( $sw ? in_array($row[2], $only) : true )) {
                 $connections[] = Array ('DBS_UID' => $row[0],'DBS_NAME' => '[' . $row[3] . '] ' . $row[2] . ': ' . $row[4]
                 );
             }
