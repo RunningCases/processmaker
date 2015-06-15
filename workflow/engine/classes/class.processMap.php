@@ -1545,7 +1545,7 @@ class processMap
             }
 
             if ($iForm == 8) {
-                $oCaseConsolidated = CaseConsolidatedPeer::retrieveByPK($_SESSION["cDhTajE2T2lxSkhqMzZUTXVacWYyNcKwV3A4eWYybDdyb1p3"]["TAS_UID"]);
+                $oCaseConsolidated = CaseConsolidatedCorePeer::retrieveByPK($_SESSION["cDhTajE2T2lxSkhqMzZUTXVacWYyNcKwV3A4eWYybDdyb1p3"]["TAS_UID"]);
                 if ((is_object($oCaseConsolidated)) && get_class($oCaseConsolidated) == "CaseConsolidated") {
                     require_once ("classes/model/ReportTable.php");
 
