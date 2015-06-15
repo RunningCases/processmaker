@@ -2,8 +2,8 @@
 
 require_once 'propel/util/BasePeer.php';
 // The object class -- needed for instanceof checks in this class.
-// actual class may be a subclass -- as returned by CaseConsolidatedPeer::getOMClass()
-include_once 'classes/model/CaseConsolidated.php';
+// actual class may be a subclass -- as returned by CaseConsolidatedCorePeer::getOMClass()
+include_once 'classes/model/CaseConsolidatedCore.php';
 
 /**
  * Base static class for performing query and update operations on the 'CASE_CONSOLIDATED' table.
@@ -12,7 +12,7 @@ include_once 'classes/model/CaseConsolidated.php';
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseCaseConsolidatedPeer
+abstract class BaseCaseConsolidatedCorePeer
 {
 
     /** the default database name for this class */
@@ -22,7 +22,7 @@ abstract class BaseCaseConsolidatedPeer
     const TABLE_NAME = 'CASE_CONSOLIDATED';
 
     /** A class that can be returned by this peer. */
-    const CLASS_DEFAULT = 'classes.model.CaseConsolidated';
+    const CLASS_DEFAULT = 'classes.model.CaseConsolidatedCore';
 
     /** The total number of columns. */
     const NUM_COLUMNS = 4;
@@ -55,7 +55,7 @@ abstract class BaseCaseConsolidatedPeer
      */
     private static $fieldNames = array (
         BasePeer::TYPE_PHPNAME => array ('TasUid', 'DynUid', 'RepTabUid', 'ConStatus', ),
-        BasePeer::TYPE_COLNAME => array (CaseConsolidatedPeer::TAS_UID, CaseConsolidatedPeer::DYN_UID, CaseConsolidatedPeer::REP_TAB_UID, CaseConsolidatedPeer::CON_STATUS, ),
+        BasePeer::TYPE_COLNAME => array (CaseConsolidatedCorePeer::TAS_UID, CaseConsolidatedCorePeer::DYN_UID, CaseConsolidatedCorePeer::REP_TAB_UID, CaseConsolidatedCorePeer::CON_STATUS, ),
         BasePeer::TYPE_FIELDNAME => array ('TAS_UID', 'DYN_UID', 'REP_TAB_UID', 'CON_STATUS', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
@@ -68,7 +68,7 @@ abstract class BaseCaseConsolidatedPeer
      */
     private static $fieldKeys = array (
         BasePeer::TYPE_PHPNAME => array ('TasUid' => 0, 'DynUid' => 1, 'RepTabUid' => 2, 'ConStatus' => 3, ),
-        BasePeer::TYPE_COLNAME => array (CaseConsolidatedPeer::TAS_UID => 0, CaseConsolidatedPeer::DYN_UID => 1, CaseConsolidatedPeer::REP_TAB_UID => 2, CaseConsolidatedPeer::CON_STATUS => 3, ),
+        BasePeer::TYPE_COLNAME => array (CaseConsolidatedCorePeer::TAS_UID => 0, CaseConsolidatedCorePeer::DYN_UID => 1, CaseConsolidatedCorePeer::REP_TAB_UID => 2, CaseConsolidatedCorePeer::CON_STATUS => 3, ),
         BasePeer::TYPE_FIELDNAME => array ('TAS_UID' => 0, 'DYN_UID' => 1, 'REP_TAB_UID' => 2, 'CON_STATUS' => 3, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
     );
@@ -80,8 +80,8 @@ abstract class BaseCaseConsolidatedPeer
      */
     public static function getMapBuilder()
     {
-        include_once 'classes/model/map/CaseConsolidatedMapBuilder.php';
-        return BasePeer::getMapBuilder('classes.model.map.CaseConsolidatedMapBuilder');
+        include_once 'classes/model/map/CaseConsolidatedCoreMapBuilder.php';
+        return BasePeer::getMapBuilder('classes.model.map.CaseConsolidatedCoreMapBuilder');
     }
     /**
      * Gets a map (hash) of PHP names to DB column names.
@@ -94,7 +94,7 @@ abstract class BaseCaseConsolidatedPeer
     public static function getPhpNameMap()
     {
         if (self::$phpNameMap === null) {
-            $map = CaseConsolidatedPeer::getTableMap();
+            $map = CaseConsolidatedCorePeer::getTableMap();
             $columns = $map->getColumns();
             $nameMap = array();
             foreach ($columns as $column) {
@@ -149,12 +149,12 @@ abstract class BaseCaseConsolidatedPeer
      *      $c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. CaseConsolidatedPeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. CaseConsolidatedCorePeer::COLUMN_NAME).
      * @return     string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(CaseConsolidatedPeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(CaseConsolidatedCorePeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -171,13 +171,13 @@ abstract class BaseCaseConsolidatedPeer
     public static function addSelectColumns(Criteria $criteria)
     {
 
-        $criteria->addSelectColumn(CaseConsolidatedPeer::TAS_UID);
+        $criteria->addSelectColumn(CaseConsolidatedCorePeer::TAS_UID);
 
-        $criteria->addSelectColumn(CaseConsolidatedPeer::DYN_UID);
+        $criteria->addSelectColumn(CaseConsolidatedCorePeer::DYN_UID);
 
-        $criteria->addSelectColumn(CaseConsolidatedPeer::REP_TAB_UID);
+        $criteria->addSelectColumn(CaseConsolidatedCorePeer::REP_TAB_UID);
 
-        $criteria->addSelectColumn(CaseConsolidatedPeer::CON_STATUS);
+        $criteria->addSelectColumn(CaseConsolidatedCorePeer::CON_STATUS);
 
     }
 
@@ -200,9 +200,9 @@ abstract class BaseCaseConsolidatedPeer
         // clear out anything that might confuse the ORDER BY clause
         $criteria->clearSelectColumns()->clearOrderByColumns();
         if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->addSelectColumn(CaseConsolidatedPeer::COUNT_DISTINCT);
+            $criteria->addSelectColumn(CaseConsolidatedCorePeer::COUNT_DISTINCT);
         } else {
-            $criteria->addSelectColumn(CaseConsolidatedPeer::COUNT);
+            $criteria->addSelectColumn(CaseConsolidatedCorePeer::COUNT);
         }
 
         // just in case we're grouping: add those columns to the select statement
@@ -210,7 +210,7 @@ abstract class BaseCaseConsolidatedPeer
             $criteria->addSelectColumn($column);
         }
 
-        $rs = CaseConsolidatedPeer::doSelectRS($criteria, $con);
+        $rs = CaseConsolidatedCorePeer::doSelectRS($criteria, $con);
         if ($rs->next()) {
             return $rs->getInt(1);
         } else {
@@ -231,7 +231,7 @@ abstract class BaseCaseConsolidatedPeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = CaseConsolidatedPeer::doSelect($critcopy, $con);
+        $objects = CaseConsolidatedCorePeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -248,7 +248,7 @@ abstract class BaseCaseConsolidatedPeer
      */
     public static function doSelect(Criteria $criteria, $con = null)
     {
-        return CaseConsolidatedPeer::populateObjects(CaseConsolidatedPeer::doSelectRS($criteria, $con));
+        return CaseConsolidatedCorePeer::populateObjects(CaseConsolidatedCorePeer::doSelectRS($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect()
@@ -272,7 +272,7 @@ abstract class BaseCaseConsolidatedPeer
 
         if (!$criteria->getSelectColumns()) {
             $criteria = clone $criteria;
-            CaseConsolidatedPeer::addSelectColumns($criteria);
+            CaseConsolidatedCorePeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
@@ -294,7 +294,7 @@ abstract class BaseCaseConsolidatedPeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = CaseConsolidatedPeer::getOMClass();
+        $cls = CaseConsolidatedCorePeer::getOMClass();
         $cls = Propel::import($cls);
         // populate the object(s)
         while ($rs->next()) {
@@ -329,7 +329,7 @@ abstract class BaseCaseConsolidatedPeer
      */
     public static function getOMClass()
     {
-        return CaseConsolidatedPeer::CLASS_DEFAULT;
+        return CaseConsolidatedCorePeer::CLASS_DEFAULT;
     }
 
     /**
@@ -391,8 +391,8 @@ abstract class BaseCaseConsolidatedPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(CaseConsolidatedPeer::TAS_UID);
-            $selectCriteria->add(CaseConsolidatedPeer::TAS_UID, $criteria->remove(CaseConsolidatedPeer::TAS_UID), $comparison);
+            $comparison = $criteria->getComparison(CaseConsolidatedCorePeer::TAS_UID);
+            $selectCriteria->add(CaseConsolidatedCorePeer::TAS_UID, $criteria->remove(CaseConsolidatedCorePeer::TAS_UID), $comparison);
 
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
@@ -420,7 +420,7 @@ abstract class BaseCaseConsolidatedPeer
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->begin();
-            $affectedRows += BasePeer::doDeleteAll(CaseConsolidatedPeer::TABLE_NAME, $con);
+            $affectedRows += BasePeer::doDeleteAll(CaseConsolidatedCorePeer::TABLE_NAME, $con);
             $con->commit();
             return $affectedRows;
         } catch (PropelException $e) {
@@ -444,7 +444,7 @@ abstract class BaseCaseConsolidatedPeer
     public static function doDelete($values, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(CaseConsolidatedPeer::DATABASE_NAME);
+            $con = Propel::getConnection(CaseConsolidatedCorePeer::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
@@ -455,7 +455,7 @@ abstract class BaseCaseConsolidatedPeer
         } else {
             // it must be the primary key
             $criteria = new Criteria(self::DATABASE_NAME);
-            $criteria->add(CaseConsolidatedPeer::TAS_UID, (array) $values, Criteria::IN);
+            $criteria->add(CaseConsolidatedCorePeer::TAS_UID, (array) $values, Criteria::IN);
         }
 
         // Set the correct dbName
@@ -494,8 +494,8 @@ abstract class BaseCaseConsolidatedPeer
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(CaseConsolidatedPeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(CaseConsolidatedPeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(CaseConsolidatedCorePeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(CaseConsolidatedCorePeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -511,7 +511,7 @@ abstract class BaseCaseConsolidatedPeer
 
         }
 
-        return BasePeer::doValidate(CaseConsolidatedPeer::DATABASE_NAME, CaseConsolidatedPeer::TABLE_NAME, $columns);
+        return BasePeer::doValidate(CaseConsolidatedCorePeer::DATABASE_NAME, CaseConsolidatedCorePeer::TABLE_NAME, $columns);
     }
 
     /**
@@ -527,12 +527,12 @@ abstract class BaseCaseConsolidatedPeer
             $con = Propel::getConnection(self::DATABASE_NAME);
         }
 
-        $criteria = new Criteria(CaseConsolidatedPeer::DATABASE_NAME);
+        $criteria = new Criteria(CaseConsolidatedCorePeer::DATABASE_NAME);
 
-        $criteria->add(CaseConsolidatedPeer::TAS_UID, $pk);
+        $criteria->add(CaseConsolidatedCorePeer::TAS_UID, $pk);
 
 
-        $v = CaseConsolidatedPeer::doSelect($criteria, $con);
+        $v = CaseConsolidatedCorePeer::doSelect($criteria, $con);
 
         return !empty($v) > 0 ? $v[0] : null;
     }
@@ -556,8 +556,8 @@ abstract class BaseCaseConsolidatedPeer
             $objs = array();
         } else {
             $criteria = new Criteria();
-            $criteria->add(CaseConsolidatedPeer::TAS_UID, $pks, Criteria::IN);
-            $objs = CaseConsolidatedPeer::doSelect($criteria, $con);
+            $criteria->add(CaseConsolidatedCorePeer::TAS_UID, $pks, Criteria::IN);
+            $objs = CaseConsolidatedCorePeer::doSelect($criteria, $con);
         }
         return $objs;
     }
@@ -569,14 +569,14 @@ if (Propel::isInit()) {
     // the MapBuilder classes register themselves with Propel during initialization
     // so we need to load them here.
     try {
-        BaseCaseConsolidatedPeer::getMapBuilder();
+        BaseCaseConsolidatedCorePeer::getMapBuilder();
     } catch (Exception $e) {
         Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
     }
 } else {
     // even if Propel is not yet initialized, the map builder class can be registered
     // now and then it will be loaded when Propel initializes.
-    require_once 'classes/model/map/CaseConsolidatedMapBuilder.php';
-    Propel::registerMapBuilder('classes.model.map.CaseConsolidatedMapBuilder');
+    require_once 'classes/model/map/CaseConsolidatedCoreMapBuilder.php';
+    Propel::registerMapBuilder('classes.model.map.CaseConsolidatedCoreMapBuilder');
 }
 

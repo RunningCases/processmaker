@@ -16,13 +16,13 @@ include_once 'creole/CreoleTypes.php';
  *
  * @package    workflow.classes.model.map
  */
-class CaseConsolidatedMapBuilder
+class CaseConsolidatedCoreMapBuilder
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'classes.model.map.CaseConsolidatedMapBuilder';
+    const CLASS_NAME = 'classes.model.map.CaseConsolidatedCoreMapBuilder';
 
     /**
      * The database map.
@@ -75,4 +75,4 @@ class CaseConsolidatedMapBuilder
 
     } // doBuild()
 
-} // CaseConsolidatedMapBuilder
+} // CaseConsolidatedCoreMapBuilder
