@@ -70,7 +70,7 @@ class Consolidated
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
     */
-    public function postDerivate ($app_uid, $app_number, $del_index, $usr_uid)
+    public function postDerivate ($app_uid, $app_number, $del_index, $usr_uid, $fieldName='', $fieldValue='')
     {
         G::LoadClass("library");
         G::LoadClass("wsBase");
@@ -82,6 +82,19 @@ class Consolidated
         if (!isset($Fields["DEL_INIT_DATE"])) {
             $oCase->setDelInitDate($app_uid, $del_index);
             $aFields = $oCase->loadCase($app_uid, $del_index);
+            //Update data grid
+            $aData = $aFields['APP_DATA'];
+            foreach ($aData as $k => $dataField) {
+               if(is_array($dataField)){
+                   $pos = count($dataField);
+                   if(isset($aData[$k][$pos][$fieldName])){
+                      $aData[$k][$pos][$fieldName] = $fieldValue;
+                   }
+               }
+            }
+            $aFields['APP_DATA'] = $aData;
+            $oCase->updateCase($app_uid, $aFields);
+            //End update
         }
 
         $res = $ws->derivateCase($usr_uid, $app_uid, $del_index, true);
