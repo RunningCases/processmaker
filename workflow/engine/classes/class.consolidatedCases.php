@@ -16,10 +16,13 @@ class ConsolidatedCases
 
         if ($sRepTabUid != '') {
             if (!$status) {
-                $oCaseConsolidated = new CaseConsolidated();
-                $oCaseConsolidated = CaseConsolidatedPeer::retrieveByPK($sTasUid);
+                $oCaseConsolidated = new CaseConsolidatedCore();
+                $oCaseConsolidated = CaseConsolidatedCorePeer::retrieveByPK($sTasUid);
                 if (!(is_object($oCaseConsolidated)) || get_class($oCaseConsolidated) != 'CaseConsolidated') {
-                    $oCaseConsolidated = new CaseConsolidated();
+                    $oCaseConsolidated = new CaseConsolidatedCore();
+                    $oCaseConsolidated->setTasUid($sTasUid);
+                    $oCaseConsolidated->delete();
+                    $oCaseConsolidated = new CaseConsolidatedCore();
                     $oCaseConsolidated->setTasUid($sTasUid);
                     $oCaseConsolidated->setConStatus('INACTIVE');
                     $oCaseConsolidated->save();
@@ -168,9 +171,9 @@ class ConsolidatedCases
         $oReportTables->populateTable($_POST['form']['REP_TAB_NAME'], $_POST['form']['REP_TAB_CONNECTION'], $_POST['form']['REP_TAB_TYPE'], $aFields, $_POST['form']['PRO_UID'], '');
         $sRepTabUid = $_POST['form']['REP_TAB_UID'];
 
-        $oCaseConsolidated = CaseConsolidatedPeer::retrieveByPK($sTasUid);
+        $oCaseConsolidated = CaseConsolidatedCorePeer::retrieveByPK($sTasUid);
         if (!(is_object($oCaseConsolidated)) || get_class($oCaseConsolidated) != 'CaseConsolidated') {
-            $oCaseConsolidated = new CaseConsolidated();
+            $oCaseConsolidated = new CaseConsolidatedCore();
             $oCaseConsolidated->setTasUid($sTasUid);
         }
 

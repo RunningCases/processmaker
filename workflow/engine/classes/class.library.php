@@ -10,12 +10,12 @@ class Library
         $criteria = new Criteria("workflow");
 
         //SELECT
-        $criteria->addSelectColumn(CaseConsolidatedPeer::CON_STATUS);
+        $criteria->addSelectColumn(CaseConsolidatedCorePeer::CON_STATUS);
         //FROM
         //WHERE
-        $criteria->add(CaseConsolidatedPeer::CON_STATUS, "ACTIVE");
+        $criteria->add(CaseConsolidatedCorePeer::CON_STATUS, "ACTIVE");
 
-        $activeNumRec = CaseConsolidatedPeer::doCount($criteria);
+        $activeNumRec = CaseConsolidatedCorePeer::doCount($criteria);
 
         //Number of records
         $numRec = 0;
