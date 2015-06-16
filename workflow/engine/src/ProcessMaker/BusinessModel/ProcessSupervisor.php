@@ -413,6 +413,7 @@ class ProcessSupervisor
             while ($aRow = $oDataset->getRow()) {
                 $arrayProcessSupervisorsObject[] = array('dyn_uid' => $aRow['DYN_UID'],
                                  'dyn_title' => $aRow['DYN_TITLE'],
+                                 'obj_uid' => $aRow['DYN_UID'],
                                  'obj_type' => "DYNAFORM");
                 $oDataset->next();
             }
@@ -448,6 +449,7 @@ class ProcessSupervisor
             while ($aRow = $oDataset->getRow()) {
                 $arrayProcessSupervisorsObject[] = array('inp_doc_uid' => $aRow['INP_DOC_UID'],
                                  'inp_doc_title' => $aRow['INP_DOC_TITLE'],
+                                 'obj_uid' => $aRow['INP_DOC_UID'],
                                  'obj_type'=>"INPUT-DOCUMENT");
                 $oDataset->next();
             }
