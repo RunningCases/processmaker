@@ -2755,11 +2755,12 @@
     <column name="SCH_EVERY_DAYS" type="TINYINT" required="false" default="0"/>
     <column name="SCH_WEEK_DAYS" type="CHAR" size="14" required="true" default="0|0|0|0|0|0|0"/>
     <column name="SCH_START_DAY" type="CHAR" size="6" required="true" default="" />
-    <column name="SCH_MONTHS" type="CHAR" size="24" required="true" default="0|0|0|0|0|0|0|0|0|0|0|0"/>
+    <column name="SCH_MONTHS" type="CHAR" size="27" required="true" default="0|0|0|0|0|0|0|0|0|0|0|0" />
     <column name="SCH_END_DATE" type="TIMESTAMP" required="false"/>
     <column name="SCH_REPEAT_EVERY" type="VARCHAR" size="15" required="true" default="" />
     <column name="SCH_REPEAT_UNTIL" type="VARCHAR" size="15" required="true" default="" />
     <column name="SCH_REPEAT_STOP_IF_RUNNING" type="TINYINT" required="false" default="0"/>
+    <column name="SCH_EXECUTION_DATE" type="TIMESTAMP" required="false" />
     <column name="CASE_SH_PLUGIN_UID" type="VARCHAR" size="100" required="false"/>
   </table>
   <table name="CALENDAR_DEFINITION">
