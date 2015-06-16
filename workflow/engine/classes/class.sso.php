@@ -22,10 +22,10 @@ G::LoadClass ('pmFunctions');
     }
 
     function ssocVerifyUser(){
-        $res = false;
         $RBAC = RBAC::getSingleton();
-        $RBAC->initRBAC();		
-        $server = $_SERVER['SERVER_SOFTWARE'];		
+        $RBAC->initRBAC();
+        $res = false;
+        $server = $_SERVER['SERVER_SOFTWARE'];
         $webserver = explode("/", $server);
         if(isset($_SERVER['REMOTE_USER']) && $_SERVER['REMOTE_USER'] !=''){
             // IIS Verification
@@ -49,7 +49,7 @@ G::LoadClass ('pmFunctions');
                 $fakepswd = G::generate_password();
                 $res = $RBAC->checkAutomaticRegister($user, $fakepswd);
                 if ($res === -1) {
-                	return false; // No successful auto register, skipping the auto register and back to normal login form
+                    return false; // No successful auto register, skipping the auto register and back to normal login form
                 }
                 $RBAC->verifyUser($user);
             }
@@ -58,12 +58,14 @@ G::LoadClass ('pmFunctions');
                 G::SendTemporalMessage($errLabel, "warning");
                 return false;
             }
-            $sSQL = "SELECT USR_UID FROM USERS WHERE USR_USERNAME = '$user' ";
-            $aResSQL = executeQuery($sSQL);			
-            if(sizeof($aResSQL)){
-                $nUserId = $aResSQL[1]['USR_UID'];		
+            $users = new Users();
+            $criteria = $users->loadByUsername($user);
+            $dataset = SubApplicationPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            if ($dataset->next()) {
+                $dataUser = $dataset->getRow();
                 $RBAC->singleSignOn = true;
-                $RBAC->userObj->fields['USR_UID'] = $nUserId;
+                $RBAC->userObj->fields['USR_UID'] = $dataUser['USR_UID'];
                 $RBAC->userObj->fields['USR_USERNAME'] = $user;
                 $res = true;
             }
