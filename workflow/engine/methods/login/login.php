@@ -103,6 +103,22 @@ if (isset ($_SESSION['USER_LOGGED'])) {
     // Execute SSO trigger
     $pluginRegistry =& PMPluginRegistry::getSingleton();
     if (defined('PM_SINGLE_SIGN_ON')) {
+        //Check in SSO class
+        G::LoadClass("sso");
+        $oSso = new ssoClass();
+        $res = $oSso->ssocVerifyUser();
+        if($res){
+            // Start new session
+            @session_destroy();
+            session_start();
+            session_regenerate_id();
+
+            // Authenticate
+            require_once 'authentication.php';
+
+            die();
+        }
+        //Check in SSO class
         if ($pluginRegistry->existsTrigger(PM_SINGLE_SIGN_ON)) {
             if ($pluginRegistry->executeTriggers(PM_SINGLE_SIGN_ON, null)) {
                 // Start new session
