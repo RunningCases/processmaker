@@ -36,10 +36,13 @@ $G_ID_SUB_MENU_SELECTED = 'AUTH_SOURCES';
 $G_PUBLISH = new Publisher();
 $fields = $RBAC->getAuthSource( $_GET['sUID'] );
 if (file_exists( PATH_XMLFORM . 'ldapAdvanced/' . $fields['AUTH_SOURCE_PROVIDER'] . 'Edit.xml' )) {
-    $pluginEnabled = 1;
-
+    $pluginEnabled = 0;
+    $licensedFeatures = & PMLicensedFeatures::getSingleton();
+    if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
+      $pluginEnabled = 1;
+    }
     if ($pluginEnabled == 0) {
-       $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', array ('MESSAGE' => G::LoadTranslation( 'ID_AUTH_SOURCE_MISSING' ) ) );
+       $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', array ('MESSAGE' => G::LoadTranslation( 'ID_AUTH_SOURCE_FEATURE_MISSING' ) ) );
        G::RenderPage( 'publish', 'blank' );
     } else {
         G::LoadClass('configuration');

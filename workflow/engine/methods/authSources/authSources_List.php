@@ -39,10 +39,13 @@ $G_ID_MENU_SELECTED = 'USERS';
 $G_ID_SUB_MENU_SELECTED = 'AUTH_SOURCES';
 
 $G_PUBLISH = new Publisher();
+$licensedFeatures = & PMLicensedFeatures::getSingleton();
 
 $oHeadPublisher = & headPublisher::getSingleton();
 $oHeadPublisher->addExtJsScript( 'authSources/authSourcesList', false ); //adding a javascript file .js
-$oHeadPublisher->addExtJsScript( 'authSources/authSourcesListSyn', false ); //adding a javascript file .js
+if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
+    $oHeadPublisher->addExtJsScript( 'authSources/authSourcesListSyn', false ); //adding a javascript file .js
+}
 $oHeadPublisher->addContent( 'authSources/authSourcesList' ); //adding a html file  .html.
 $oHeadPublisher->assign( 'FORMATS', $c->getFormats() );
 $oHeadPublisher->assign( 'CONFIG', $Config );
