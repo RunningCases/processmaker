@@ -116,7 +116,7 @@ class pmTablesProxy extends HttpProxyController
         G::LoadClass( 'dbConnections' );
         $proUid = $_POST['PRO_UID'];
         $dbConn = new DbConnections();
-        $dbConnections = $dbConn->getConnectionsProUid( $proUid );
+        $dbConnections = $dbConn->getConnectionsProUid( $proUid, array('mysql') );
         
         $workSpace = new workspaceTools(SYS_SYS);
         $workspaceDB = $workSpace->getDBInfo();
