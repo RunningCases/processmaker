@@ -195,9 +195,11 @@ class AppDelegation extends BaseAppDelegation
                 $resultAbe->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                 if ($resultAbe->next()) {
                     $dataAbe = $resultAbe->getRow();
-                    G::LoadClass('actionsByEmailCore');
-                    $actionsByEmail = new actionsByEmailCoreClass();
-                    $actionsByEmail->sendActionsByEmail($data);
+                    if($dataAbe['ABE_TYPE']!=''){
+                        G::LoadClass('actionsByEmailCore');
+                        $actionsByEmail = new actionsByEmailCoreClass();
+                        $actionsByEmail->sendActionsByEmail($data);
+                    }
                 }
             }
             /*----------------------------------********---------------------------------*/
