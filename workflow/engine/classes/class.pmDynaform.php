@@ -152,7 +152,7 @@ class pmDynaform
                         $cnn = Propel::getConnection($json->dbConnection);
                         $stmt = $cnn->createStatement();
                         try {
-                            $rs = $stmt->executeQuery($json->sql, \ResultSet::FETCHMODE_NUM);
+                            $rs = $stmt->executeQuery(G::replaceDataField($json->sql, array()), \ResultSet::FETCHMODE_NUM);
                             while ($rs->next()) {
                                 $row = $rs->getRow();
                                 $option = array(
