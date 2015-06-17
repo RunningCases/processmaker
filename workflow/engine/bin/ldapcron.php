@@ -11,39 +11,13 @@ try {
 
     if (!$flagPathToCron) {
         //Path to CRON by __FILE__
-        $arrayAux = explode(PATH_SEP, str_replace("engine" . PATH_SEP . "plugins" . PATH_SEP . "ldapAdvanced" . PATH_SEP . "bin", "", dirname(__FILE__)));
+        $arrayAux = explode(PATH_SEP, str_replace("engine" . PATH_SEP . "bin", "", dirname(__FILE__)));
 
         array_pop($arrayAux);
 
         if (count($arrayAux) > 0 && $arrayAux[count($arrayAux) - 1] == "workflow") {
             $arrayPathToCron = $arrayAux;
             $flagPathToCron = true;
-        }
-    }
-
-    if (!$flagPathToCron) {
-        //Path to CRON by symlink
-        if ($osIsLinux) {
-            exec("pwd", $arrayOutput);
-
-            if (count($arrayOutput) > 0) {
-                $arrayPathAux = array(
-                    "engine" . PATH_SEP . "plugins",
-                    "engine" . PATH_SEP . "plugins" . PATH_SEP . "ldapAdvanced" . PATH_SEP . "bin"
-                );
-
-                foreach ($arrayPathAux as $value) {
-                    $arrayAux = explode(PATH_SEP, str_replace($value, "", trim($arrayOutput[0])));
-
-                    array_pop($arrayAux);
-
-                    if (count($arrayAux) > 0 && $arrayAux[count($arrayAux) - 1] == "workflow") {
-                        $arrayPathToCron = $arrayAux;
-                        $flagPathToCron = true;
-                        break;
-                    }
-                }
-            }
         }
     }
 
@@ -136,7 +110,7 @@ try {
         file_put_contents(PATH_DATA . "ldapcron", serialize($arrayCron));
 
         try {
-            $ldapCronSinglePath = PATH_PLUGINS . "ldapAdvanced" . PATH_SEP . "bin" . PATH_SEP . "ldapcron_single.php";
+            $ldapCronSinglePath = PATH_HOME . "engine" . PATH_SEP . "bin" . PATH_SEP . "ldapcron_single.php";
 
             $workspace = "";
 

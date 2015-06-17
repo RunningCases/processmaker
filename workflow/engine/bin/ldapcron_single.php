@@ -465,8 +465,8 @@ try {
         eprintln("Processing workspace: " . $workflow, "green");
 
         try {
-            require_once(PATH_PLUGINS . "ldapAdvanced" . PATH_SEP . "class.ldapAdvanced.php");
-            require_once(PATH_PLUGINS . "ldapAdvanced" . PATH_SEP . "services" . PATH_SEP . "ldapadvanced.php");
+            require_once(PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.ldapAdvanced.php");
+            require_once(PATH_HOME . "engine" . PATH_SEP . "services" . PATH_SEP . "ldapadvanced.php");
 
             $obj = new ldapadvancedClassCron();
 
