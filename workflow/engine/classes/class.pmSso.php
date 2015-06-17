@@ -1,11 +1,11 @@
 <?php
 /**
- * class.pmsso.php
+ * class.pmSso.php
  *  
  */
 G::LoadClass ('pmFunctions');
  
-  class pmssoClass extends PMPlugin {
+  class pmSsoClass extends PMPlugin {
     function __construct() {
     }
 
