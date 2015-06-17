@@ -1,6 +1,6 @@
 <?php
 /**
- * class.sso.php
+ * class.pmsso.php
  *  
  */
 G::LoadClass ('pmFunctions');
