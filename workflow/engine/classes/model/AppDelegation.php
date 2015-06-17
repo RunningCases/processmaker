@@ -191,7 +191,6 @@ class AppDelegation extends BaseAppDelegation
                 $criteriaAbe = new Criteria();
                 $criteriaAbe->add(AbeConfigurationPeer::PRO_UID, $sProUid);
                 $criteriaAbe->add(AbeConfigurationPeer::TAS_UID, $sTasUid);
-                error_log($sTasUid);
                 $resultAbe = AbeConfigurationPeer::doSelectRS($criteriaAbe);
                 $resultAbe->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                 if ($resultAbe->next()) {
