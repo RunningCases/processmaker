@@ -466,7 +466,7 @@ try {
 
         try {
             require_once(PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.ldapAdvanced.php");
-            require_once(PATH_HOME . "engine" . PATH_SEP . "services" . PATH_SEP . "ldapadvanced.php");
+            require_once(PATH_HOME . "engine" . PATH_SEP . "methods" . PATH_SEP . "services" . PATH_SEP . "ldapadvanced.php");
 
             $obj = new ldapadvancedClassCron();
 
