@@ -5,7 +5,7 @@
  */
 G::LoadClass ('pmFunctions');
  
-  class ssoClass extends PMPlugin {
+  class pmssoClass extends PMPlugin {
     function __construct() {
     }
 
