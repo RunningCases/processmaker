@@ -43,7 +43,7 @@ $licensedFeatures = & PMLicensedFeatures::getSingleton();
 
 $oHeadPublisher = & headPublisher::getSingleton();
 $oHeadPublisher->addExtJsScript( 'authSources/authSourcesList', false ); //adding a javascript file .js
-if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
+if ($licensedFeatures->verifyfeature('sywN09PSzh1MVdOajZBdnhMbFhCSnpNT1lLTEFwVklmOTE=')) {
     $oHeadPublisher->addExtJsScript( 'authSources/authSourcesListSyn', false ); //adding a javascript file .js
 }
 $oHeadPublisher->addContent( 'authSources/authSourcesList' ); //adding a html file  .html.

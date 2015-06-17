@@ -38,7 +38,7 @@ $fields = $RBAC->getAuthSource( $_GET['sUID'] );
 if (file_exists( PATH_XMLFORM . 'ldapAdvanced/' . $fields['AUTH_SOURCE_PROVIDER'] . 'Edit.xml' )) {
     $pluginEnabled = 0;
     $licensedFeatures = & PMLicensedFeatures::getSingleton();
-    if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
+    if ($licensedFeatures->verifyfeature('sywN09PSzh1MVdOajZBdnhMbFhCSnpNT1lLTEFwVklmOTE=')) {
       $pluginEnabled = 1;
     }
     if ($pluginEnabled == 0) {
