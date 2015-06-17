@@ -867,7 +867,7 @@ class ProcessSupervisor
             $oStepSupervisor->create(array('PRO_UID' => $sProcessUID,
                                            'STEP_TYPE_OBJ' => "DYNAFORM",
                                            'STEP_UID_OBJ' => $sDynUID,
-                                           'STEP_POSITION' => $oStepSupervisor->getNextPosition($sProcessUID, "DYNAFORM")));
+                                           'STEP_POSITION' => $oStepSupervisor->getNextPositionAll($sProcessUID)));
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_UID);
@@ -953,7 +953,7 @@ class ProcessSupervisor
             $oStepSupervisor->create(array('PRO_UID' => $sProcessUID,
                                            'STEP_TYPE_OBJ' => "INPUT_DOCUMENT",
                                            'STEP_UID_OBJ' => $sInputDocumentUID,
-                                           'STEP_POSITION' => $oStepSupervisor->getNextPosition($sProcessUID, "INPUT_DOCUMENT")));
+                                           'STEP_POSITION' => $oStepSupervisor->getNextPositionAll($sProcessUID)));
             $sDelimiter = \DBAdapter::getStringDelimiter();
             $oCriteria = new \Criteria('workflow');
             $oCriteria->addSelectColumn(\StepSupervisorPeer::STEP_UID);
@@ -1077,7 +1077,7 @@ class ProcessSupervisor
         $actualPosition = $oCriteria->getStepPosition();
         $tempPosition = (isset($sPudPosition)) ? $sPudPosition : $actualPosition;
         if (isset($tempPosition) && ($tempPosition != $actualPosition)) {
-            $this->moveDynaforms($sProcessUID, $sPudUID, $tempPosition);
+            $this->moveDyanformsInputDocuments($sProcessUID, $sPudUID, $tempPosition);
         }
         //Return
         unset($sPudPosition);
@@ -1089,6 +1089,8 @@ class ProcessSupervisor
                          'dyn_uid' => $oCriteria->getStepUidObj());
         return $oCriteria;
     }
+
+
 
     /**
      * Assign a InputDocument supervisor of a process
@@ -1104,7 +1106,7 @@ class ProcessSupervisor
         $actualPosition = $oCriteria->getStepPosition();
         $tempPosition = (isset($sPuiPosition)) ? $sPuiPosition : $actualPosition;
         if (isset($tempPosition) && ($tempPosition != $actualPosition)) {
-            $this->moveInputDocuments($sProcessUID, $sPuiUID, $tempPosition);
+            $this->moveDyanformsInputDocuments($sProcessUID, $sPuiUID, $tempPosition);
         }
         //Return
         unset($sPuiPosition);
@@ -1115,6 +1117,71 @@ class ProcessSupervisor
                          'pui_position' => $oCriteria->getStepPosition(),
                          'inp_doc_uid' => $oCriteria->getStepUidObj());
         return $oCriteria;
+    }
+
+    /**
+     * Validate Process Uid
+     * @var string $pro_uid. Uid for Process
+     * @var string $pu_uid. Uid for Step
+     * @var string $pu_pos. Position for Step
+     *
+     * @return void
+     */
+    public function moveDyanformsInputDocuments($pro_uid, $pu_uid, $pu_pos)
+    {
+        $aSteps = $this->getProcessSupervisorDynaformsInputsDocuments($pro_uid);
+        $step_pos = $pu_pos;
+        $step_uid = $pu_uid;
+        foreach ($aSteps as $dataStep) {
+            if($dataStep['obj_type'] == 'DYNAFORM'){
+                if ($dataStep['pud_uid'] == $step_uid) {
+                    $prStepPos = (int)$dataStep['pud_position'];
+                }
+            }else{
+                if ($dataStep['pui_uid'] == $step_uid) {
+                    $prStepPos = (int)$dataStep['pui_position'];
+                }
+            }            
+        }
+        $seStepPos = $step_pos;
+        //Principal Step is up
+        if ($prStepPos == $seStepPos) {
+            return true;
+        } elseif ($prStepPos < $seStepPos) {
+            $modPos = 'UP';
+            $newPos = $seStepPos;
+            $iniPos = $prStepPos+1;
+            $finPos = $seStepPos;
+        } else {
+            $modPos = 'DOWN';
+            $newPos = $seStepPos;
+            $iniPos = $seStepPos;
+            $finPos = $prStepPos-1;
+        }
+        $range = range($iniPos, $finPos);
+        foreach ($aSteps as $dataStep) {
+            if($dataStep['obj_type'] == 'DYNAFORM'){
+                if ((in_array($dataStep['pud_position'], $range)) && ($dataStep['pud_uid'] != $step_uid)) {
+                    $stepChangeIds[] = $dataStep['pud_uid'];
+                    $stepChangePos[] = $dataStep['pud_position'];
+                }
+            }else{
+                if ((in_array($dataStep['pui_position'], $range)) && ($dataStep['pui_uid'] != $step_uid)) {
+                    $stepChangeIds[] = $dataStep['pui_uid'];
+                    $stepChangePos[] = $dataStep['pui_position'];
+                }
+            }            
+        }
+        foreach ($stepChangeIds as $key => $value) {
+            if ($modPos == 'UP') {
+                $tempPos = ((int)$stepChangePos[$key])-1;
+                $this ->changePosStep($value, $tempPos);
+            } else {
+                $tempPos = ((int)$stepChangePos[$key])+1;
+                $this ->changePosStep($value, $tempPos);
+            }
+        }
+        $this ->changePosStep($value, $tempPos);
     }
 
     /**
