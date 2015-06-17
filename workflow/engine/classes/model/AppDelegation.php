@@ -188,9 +188,17 @@ class AppDelegation extends BaseAppDelegation
             if (PMLicensedFeatures
                 ::getSingleton()
                 ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
-                G::LoadClass('actionsByEmailCore');
-                $actionsByEmail = new actionsByEmailCoreClass();
-                $actionsByEmail->sendActionsByEmail($data);
+                $criteriaAbe = new Criteria();
+                $criteriaAbe->add(AbeConfigurationPeer::PRO_UID, $sProUid);
+                $criteriaAbe->add(AbeConfigurationPeer::TAS_UID, $sTasUid);
+                $resultAbe = AbeConfigurationPeer::doSelectRS($criteriaAbe);
+                $resultAbe->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                if ($resultAbe->next()) {
+                    $dataAbe = $resultAbe->getRow();
+                    G::LoadClass('actionsByEmailCore');
+                    $actionsByEmail = new actionsByEmailCoreClass();
+                    $actionsByEmail->sendActionsByEmail($data);
+                }
             }
             /*----------------------------------********---------------------------------*/
         }
