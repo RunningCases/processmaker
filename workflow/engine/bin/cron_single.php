@@ -91,7 +91,7 @@ if (!defined('PATH_HOME')) {
     $e_all  = $config['debug']        ? $e_all                 : $e_all & ~E_NOTICE;
 
     G::LoadSystem('inputfilter');
-    $filter = new InputFilter();  
+    $filter = new InputFilter();
     $config['debug'] = $filter->validateInput($config['debug']);
     $config['memory_limit'] = $filter->validateInput($config['memory_limit']);
     $config['wsdl_cache'] = $filter->validateInput($config['wsdl_cache'],'int');
@@ -508,7 +508,9 @@ if (!defined('SYS_SYS')) {
         }
     }
 
-    unlink(PATH_CORE . 'config/_databases_.php');
+    if (file_exists(PATH_CORE . "config" . PATH_SEP . "_databases_.php")) {
+        unlink(PATH_CORE . "config" . PATH_SEP . "_databases_.php");
+    }
 } else {
     processWorkspace();
 }
