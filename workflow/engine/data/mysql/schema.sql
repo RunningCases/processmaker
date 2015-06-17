@@ -1331,11 +1331,12 @@ CREATE TABLE `CASE_SCHEDULER`
 	`SCH_EVERY_DAYS` TINYINT default 0,
 	`SCH_WEEK_DAYS` CHAR(14) default '0|0|0|0|0|0|0' NOT NULL,
 	`SCH_START_DAY` CHAR(6) default '' NOT NULL,
-	`SCH_MONTHS` CHAR(24) default '0|0|0|0|0|0|0|0|0|0|0|0' NOT NULL,
+ `SCH_MONTHS` CHAR(27) default '0|0|0|0|0|0|0|0|0|0|0|0' NOT NULL,
 	`SCH_END_DATE` DATETIME,
 	`SCH_REPEAT_EVERY` VARCHAR(15) default '' NOT NULL,
 	`SCH_REPEAT_UNTIL` VARCHAR(15) default '' NOT NULL,
 	`SCH_REPEAT_STOP_IF_RUNNING` TINYINT default 0,
+ `SCH_EXECUTION_DATE` DATETIME,
 	`CASE_SH_PLUGIN_UID` VARCHAR(100),
 	PRIMARY KEY (`SCH_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Conditions store to show or hide dynaform fields..';
@@ -2829,3 +2830,4 @@ CREATE TABLE `CATALOG`
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Definitions catalog.';
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
+
