@@ -2757,11 +2757,12 @@
     <column name="SCH_EVERY_DAYS" type="TINYINT" required="false" default="0"/>
     <column name="SCH_WEEK_DAYS" type="CHAR" size="14" required="true" default="0|0|0|0|0|0|0"/>
     <column name="SCH_START_DAY" type="CHAR" size="6" required="true" default="" />
-    <column name="SCH_MONTHS" type="CHAR" size="24" required="true" default="0|0|0|0|0|0|0|0|0|0|0|0"/>
+    <column name="SCH_MONTHS" type="CHAR" size="27" required="true" default="0|0|0|0|0|0|0|0|0|0|0|0" />
     <column name="SCH_END_DATE" type="TIMESTAMP" required="false"/>
     <column name="SCH_REPEAT_EVERY" type="VARCHAR" size="15" required="true" default="" />
     <column name="SCH_REPEAT_UNTIL" type="VARCHAR" size="15" required="true" default="" />
     <column name="SCH_REPEAT_STOP_IF_RUNNING" type="TINYINT" required="false" default="0"/>
+    <column name="SCH_EXECUTION_DATE" type="TIMESTAMP" required="false" />
     <column name="CASE_SH_PLUGIN_UID" type="VARCHAR" size="100" required="false"/>
   </table>
   <table name="CALENDAR_DEFINITION">
@@ -3066,7 +3067,7 @@
   </table>
 
   <table name="SESSION_STORAGE">
-  	<vendor type="mysql">
+    <vendor type="mysql">
         <parameter name="Name" value="SESSION_STORAGE"/>
         <parameter name="Engine" value="InnoDB"/>
         <parameter name="Version" value="10"/>
@@ -3596,7 +3597,7 @@
   </table>
 
   <table name="BPMN_FLOW">
-  	<vendor type="mysql">
+    <vendor type="mysql">
       <parameter name="Name" value="BPMN_FLOW"/>
       <parameter name="Engine" value="InnoDB"/>
       <parameter name="Version" value="10"/>
@@ -3645,7 +3646,7 @@
   </table>
 
   <table name="BPMN_GATEWAY">
-  	<vendor type="mysql">
+    <vendor type="mysql">
       <parameter name="Name" value="BPMN_GATEWAY"/>
       <parameter name="Engine" value="InnoDB"/>
       <parameter name="Version" value="10"/>
@@ -3723,7 +3724,7 @@
   </table>
 
   <table name="BPMN_LANE">
-  	<vendor type="mysql">
+    <vendor type="mysql">
       <parameter name="Name" value="BPMN_LANE"/>
       <parameter name="Engine" value="InnoDB"/>
       <parameter name="Version" value="10"/>
@@ -3818,7 +3819,7 @@
   </table>
 
   <table name="BPMN_DOCUMENTATION">
-  	<vendor type="mysql">
+    <vendor type="mysql">
       <parameter name="Name" value="BPMN_DOCUMENTATION"/>
       <parameter name="Engine" value="InnoDB"/>
       <parameter name="Version" value="10"/>
@@ -5005,9 +5006,9 @@
             <parameter name="Create_options" value="" />
             <parameter name="Comment" value="Dashboard definitions to user."/>
         </vendor>
-        <column name="DAS_UID"     type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
-        <column name="OWNER_UID"   type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
-        <column name="OWNER_TYPE"  type="VARCHAR" size="15" required="true" default=""/>
+        <column name="DAS_UID"      type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="OWNER_UID"    type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="OWNER_TYPE"   type="VARCHAR" size="15" required="true" default=""/>
         <foreign-key name="fk_dashboard_indicator_dashboard_das_ind" foreignTable="DASHBOARD">
             <reference local="DAS_UID" foreign="DAS_UID"/>
         </foreign-key>
@@ -5054,4 +5055,3 @@
         </index>
     </table>
 </database>
-
