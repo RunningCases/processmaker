@@ -5,16 +5,14 @@ var ViewDashboardModel = function (oauthToken, server, workspace) {
     //this.baseUrl =  "http://127.0.0.1:8080/api/1.0/workflow/";
     this.oauthToken = oauthToken;
 	this.helper = new ViewDashboardHelper();
-	this.cache = [];
-	this.forceRemote=false; //if true, the next call will go to the remote server
 };
 
 ViewDashboardModel.prototype.userDashboards = function(userId) {
-    return this.getJson('dashboard/ownerData/' + userId);
+    return this.helper.getJson('dashboard/ownerData/' + userId, this.baseUrl, this.oauthToken);
 };
 
 ViewDashboardModel.prototype.dashboardIndicators = function(dashboardId, initDate, endDate) {
-    return this.getJson('dashboard/' + dashboardId + '/indicator?dateIni=' + initDate + '&dateFin=' + endDate);
+    return this.helper.getJson('dashboard/' + dashboardId + '/indicator?dateIni=' + initDate + '&dateFin=' + endDate, this.baseUrl, this.oauthToken);
 };
 
 ViewDashboardModel.prototype.peiData = function(indicatorId, compareDate, measureDate) {
@@ -23,12 +21,12 @@ ViewDashboardModel.prototype.peiData = function(indicatorId, compareDate, measur
 				"&compare_date=" + compareDate +
 				"&measure_date=" + measureDate + 
 				"&language=en";
-    return this.getJson(endPoint);
+    return this.helper.getJson(endPoint, this.baseUrl, this.oauthToken);
 }
 
 ViewDashboardModel.prototype.statusData = function() {
     var endPoint = "ReportingIndicators/status-indicator";
-    return this.getJson(endPoint);
+    return this.helper.getJson(endPoint, this.baseUrl, this.oauthToken);
 }
 
 ViewDashboardModel.prototype.peiDetailData = function(process, initDate, endDate) {
@@ -37,7 +35,7 @@ ViewDashboardModel.prototype.peiDetailData = function(process, initDate, endDate
 				"&init_date=" + initDate + 
 				"&end_date=" + endDate +
 				"&language=en";
-    return this.getJson(endPoint);
+    return this.helper.getJson(endPoint, this.baseUrl, this.oauthToken);
 }
 
 ViewDashboardModel.prototype.ueiData = function(indicatorId, compareDate, measureDate ) {
@@ -46,7 +44,7 @@ ViewDashboardModel.prototype.ueiData = function(indicatorId, compareDate, measur
 				"&compare_date=" + compareDate +
 				"&measure_date=" + measureDate + 
 				"&language=en";
-    return this.getJson(endPoint);
+    return this.helper.getJson(endPoint, this.baseUrl, this.oauthToken);
 }
 
 ViewDashboardModel.prototype.ueiDetailData = function(groupId, initDate, endDate) {
@@ -55,7 +53,7 @@ ViewDashboardModel.prototype.ueiDetailData = function(groupId, initDate, endDate
 				"&init_date=" + initDate + 
 				"&end_date=" + endDate +
 				"&language=en";
-    return this.getJson(endPoint);
+    return this.helper.getJson(endPoint, this.baseUrl, this.oauthToken);
 }
 
 ViewDashboardModel.prototype.generalIndicatorData = function(indicatorId, initDate, endDate) {
@@ -65,11 +63,12 @@ ViewDashboardModel.prototype.generalIndicatorData = function(indicatorId, initDa
 				"&init_date=" + initDate + 
 				"&end_date=" + endDate +
 				"&language=en";
-    return this.getJson(endPoint);
+    return this.helper.getJson(endPoint, this.baseUrl, this.oauthToken);
 }
 
 ViewDashboardModel.prototype.getPositionIndicator = function(callBack) {
-    this.getJson('dashboard/config').done(function (r) {
+	var that = this;
+    this.helper.getJson('dashboard/config', that.baseUrl, that.oauthToken).done(function (r) {
         var graphData = [];
         $.each(r, function(index, originalObject) {
             var map = {
@@ -91,103 +90,11 @@ ViewDashboardModel.prototype.setPositionIndicator = function(data) {
     this.getPositionIndicator( 
         function(response){
             if (response.length != 0) {
-                that.putJson('dashboard/config', data);
+                that.helper.putJson('dashboard/config', data, that.baseUrl, that.oauthToken);
             } else {
-                that.postJson('dashboard/config', data);
+                that.helper.postJson('dashboard/config', data, that.baseUrl, that.oauthToken);
             }
         }
     );
 };
 
-ViewDashboardModel.prototype.getJson = function (endPoint) {
-    var that = this;
-    var callUrl = this.baseUrl + endPoint
-	var requestFinished = $.Deferred();
-	var itemInCache = that.getCacheItem(endPoint);
-
-	if (itemInCache != null && !this.forceRemote) {
-		that.forceRemote = false;
-		requestFinished.resolve(itemInCache);
-		return requestFinished.promise();
-	}
-	else {
-		return $.ajax({
-			url: callUrl,
-			type: 'GET',
-			datatype: 'json',
-			success: function (data) {
-				that.forceRemote = false;
-				requestFinished.resolve(data);
-				that.putInCache(endPoint, data);
-			//	return requestFinished.promise();
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-								throw new Error(callUrl + ' --  ' + errorThrown);
-							},
-			beforeSend: function (xhr) {
-							xhr.setRequestHeader('Authorization', 'Bearer ' + that.oauthToken);
-							//xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-						}
-		});
-	}
-}
-
-ViewDashboardModel.prototype.postJson = function (endPoint, data) {
-    var that = this;
-    return $.ajax({
-        url : this.baseUrl + endPoint,
-        type : 'POST',
-        datatype : 'json',
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify(data),
-        error: function(jqXHR, textStatus, errorThrown) {
-			throw new Error(errorThrown);
-        },
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Authorization', 'Bearer ' + that.oauthToken);
-            xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-        }       
-    }).fail(function () {
-		throw new Error('Fail server');
-    });
-};
-
-ViewDashboardModel.prototype.putJson = function (endPoint, data) {
-    var that = this;
-    return $.ajax({
-        url : this.baseUrl + endPoint,
-        type : 'PUT',
-        datatype : 'json',
-        contentType: "application/json; charset=utf-8",
-        data: JSON.stringify(data),
-        error: function(jqXHR, textStatus, errorThrown) {
-			throw new Error(errorThrown);
-        },
-        beforeSend: function (xhr) {
-            xhr.setRequestHeader('Authorization', 'Bearer ' + that.oauthToken);
-            //xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
-        }       
-    }).fail(function () {
-		throw new Error('Fail server');
-    });
-};
-
-ViewDashboardModel.prototype.getCacheItem = function (endPoint) {
-	var retval = null;
-	$.each(this.cache, function(index, objectItem) {
-		if (objectItem.key == endPoint) {
-			retval = objectItem.value;
-		}
-	});
-	return retval;
-}
-
-ViewDashboardModel.prototype.putInCache = function (endPoint, data) {
-	var cacheItem = this.getCacheItem(endPoint);
-	if (cacheItem == null) {
-		this.cache.push ({ key: endPoint, value:data });
-	}
-	else {
-		cacheItem.value = data;
-	}
-}
