@@ -860,9 +860,6 @@
     <column name="PRO_DEBUG" type="INTEGER" required="true" default="0"/>
     <column name="PRO_DYNAFORMS" type="LONGVARCHAR" required="false"/>
     <column name="PRO_DERIVATION_SCREEN_TPL" type="VARCHAR" size="128" default="" required="false"/>
-    <column name="OWN_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
-    <column name="PRO_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
-	
     <validator column="PRO_TIMEUNIT">
       <rule name="validValues" value="WEEKS|MONTHS|DAYS|HOURS|MINUTES" message="Please select a valid Time Unit."/>
     </validator>
