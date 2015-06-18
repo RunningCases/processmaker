@@ -255,7 +255,7 @@ class Consolidated
                     $tableUid  = $item["REP_TAB_UID"];
                     $tableName = $row["REP_TAB_NAME"];
                 } else {
-                    throw (new Exception("Not found the report table"));
+                    throw new \Exception("Not found the report table");
                 }
             }
 
