@@ -429,6 +429,8 @@ CREATE TABLE `PROCESS`
 	`PRO_DEBUG` INTEGER default 0 NOT NULL,
 	`PRO_DYNAFORMS` MEDIUMTEXT,
 	`PRO_DERIVATION_SCREEN_TPL` VARCHAR(128) default '',
+    `PRO_COST` DECIMAL(7,2) default 0,
+    `PRO_UNIT_COST` VARCHAR(50) default '',
 	PRIMARY KEY (`PRO_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Store process Information';
 #-----------------------------------------------------------------------------
@@ -1329,11 +1331,12 @@ CREATE TABLE `CASE_SCHEDULER`
 	`SCH_EVERY_DAYS` TINYINT default 0,
 	`SCH_WEEK_DAYS` CHAR(14) default '0|0|0|0|0|0|0' NOT NULL,
 	`SCH_START_DAY` CHAR(6) default '' NOT NULL,
-	`SCH_MONTHS` CHAR(24) default '0|0|0|0|0|0|0|0|0|0|0|0' NOT NULL,
+ `SCH_MONTHS` CHAR(27) default '0|0|0|0|0|0|0|0|0|0|0|0' NOT NULL,
 	`SCH_END_DATE` DATETIME,
 	`SCH_REPEAT_EVERY` VARCHAR(15) default '' NOT NULL,
 	`SCH_REPEAT_UNTIL` VARCHAR(15) default '' NOT NULL,
 	`SCH_REPEAT_STOP_IF_RUNNING` TINYINT default 0,
+ `SCH_EXECUTION_DATE` DATETIME,
 	`CASE_SH_PLUGIN_UID` VARCHAR(100),
 	PRIMARY KEY (`SCH_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Conditions store to show or hide dynaform fields..';
@@ -2713,6 +2716,8 @@ CREATE TABLE `USR_REPORTING`
     `CONFIGURED_TASK_TIME`  DECIMAL(7,2) default 0,
     `TOTAL_CASES_OVERDUE`   DECIMAL(7,2) default 0,
     `TOTAL_CASES_ON_TIME`   DECIMAL(7,2) default 0,
+    `PRO_COST` DECIMAL(7,2) default 0,
+    `PRO_UNIT_COST` VARCHAR(50) default '',
     PRIMARY KEY (`USR_UID`, `TAS_UID`,`MONTH`,`YEAR`),
     KEY `indexReporting`(`USR_UID`, `TAS_UID`, `PRO_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Data calculated users by task';
@@ -2737,6 +2742,8 @@ CREATE TABLE `PRO_REPORTING`
     `TOTAL_CASES_OPEN`          DECIMAL(7,2) default 0,
     `TOTAL_CASES_OVERDUE`       DECIMAL(7,2) default 0,
     `TOTAL_CASES_ON_TIME`       DECIMAL(7,2) default 0,
+    `PRO_COST` DECIMAL(7,2) default 0,
+    `PRO_UNIT_COST` VARCHAR(50) default '',
     PRIMARY KEY (`PRO_UID`,`MONTH`,`YEAR`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Data calculated by process';
 #-----------------------------------------------------------------------------
@@ -2823,3 +2830,4 @@ CREATE TABLE `CATALOG`
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Definitions catalog.';
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
+

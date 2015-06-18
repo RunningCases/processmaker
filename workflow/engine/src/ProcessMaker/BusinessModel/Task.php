@@ -155,7 +155,8 @@ class Task
                     "TAS_SELFSERVICE_TIMEOUT" => $arrayDataAux["TAS_SELFSERVICE_TIMEOUT"],
                     "TAS_SELFSERVICE_TIME"    => $arrayDataAux["TAS_SELFSERVICE_TIME"],
                     "TAS_SELFSERVICE_TIME_UNIT"   => $arrayDataAux["TAS_SELFSERVICE_TIME_UNIT"],
-                    "TAS_SELFSERVICE_TRIGGER_UID" => $arrayDataAux["TAS_SELFSERVICE_TRIGGER_UID"]
+                    "TAS_SELFSERVICE_TRIGGER_UID" => $arrayDataAux["TAS_SELFSERVICE_TRIGGER_UID"],
+                    "TAS_SELFSERVICE_EXECUTION"   => $arrayDataAux["TAS_SELFSERVICE_EXECUTION"]
                 ),
                 $keyCase
             );
@@ -165,6 +166,10 @@ class Task
                 array(
                     "TAS_TRANSFER_FLY" => $arrayDataAux["TAS_TRANSFER_FLY"],
                     "TAS_DURATION"     => $arrayDataAux["TAS_DURATION"],
+                    /*----------------------------------********---------------------------------*/
+                    "TAS_AVERAGE"      => $arrayDataAux["TAS_AVERAGE"],
+                    "TAS_SDV"          => $arrayDataAux["TAS_SDV"],
+                    /*----------------------------------********---------------------------------*/
                     "TAS_TIMEUNIT"     => $arrayDataAux["TAS_TIMEUNIT"],
                     "TAS_TYPE_DAY"     => $arrayDataAux["TAS_TYPE_DAY"],
                     "TAS_CALENDAR"     => $arrayDataAux["TAS_CALENDAR"]
@@ -277,6 +282,7 @@ class Task
                     $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME");
                     $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME_UNIT");
                     $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TRIGGER_UID");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_EXECUTION");
                     break;
                 case 'EVALUATE':
                     if (empty($arrayProperty["TAS_ASSIGN_VARIABLE"])) {
@@ -287,6 +293,7 @@ class Task
                     $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME");
                     $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME_UNIT");
                     $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TRIGGER_UID");
+                    $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_EXECUTION");
                     break;
                 case 'SELF_SERVICE':
                 case 'SELF_SERVICE_EVALUATE':
@@ -312,10 +319,14 @@ class Task
                         if (empty($arrayProperty["TAS_SELFSERVICE_TRIGGER_UID"])) {
                             throw (new \Exception("Invalid value specified for 'tas_selfservice_trigger_uid'"));
                         }
+                        if (empty($arrayProperty["TAS_SELFSERVICE_EXECUTION"])) {
+                            throw (new \Exception("Invalid value specified for 'tas_selfservice_execution'"));
+                        }
                     } else {
                         $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME");
                         $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME_UNIT");
                         $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TRIGGER_UID");
+                        $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_EXECUTION");
                     }
                     break;
             }
