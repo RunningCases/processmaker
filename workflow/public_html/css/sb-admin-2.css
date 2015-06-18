@@ -585,8 +585,8 @@ table.dataTable thead .sorting:after {
     margin-bottom: 45px;
 }
 
-.panel-green:hover, .panel-red:hover, .panel-high:hover, .panel-low:hover{
-    box-shadow:0px 3px 2px #dfdfdf;
+.panel-green:hover, .panel-red:hover, .panel-high:hover, .panel-low, .panel-status:hover{
+	box-shadow:0px 3px 2px #dfdfdf;
 }
 
 .small{
