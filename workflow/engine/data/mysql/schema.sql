@@ -2825,3 +2825,22 @@ CREATE TABLE `CATALOG`
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
 
+#-----------------------------------------------------------------------------
+#-- EMAIL_EVENT
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `EMAIL_EVENT`;
+
+
+CREATE TABLE `EMAIL_EVENT`
+(
+	`EMAIL_EVENT_UID` VARCHAR(32)  NOT NULL,
+	`PRO_UID` VARCHAR(32) default '' NOT NULL,
+	`ACT_UID` VARCHAR(32)  NOT NULL,
+	`EMAIL_EVENT_FROM` VARCHAR(100) default '' NOT NULL,
+	`EMAIL_EVENT_TO` MEDIUMTEXT  NOT NULL,
+	`EMAIL_EVENT_SUBJECT` VARCHAR(150) default '' NOT NULL,
+	`EMAIL_EVENT_BODY` MEDIUMTEXT  NOT NULL,
+	PRIMARY KEY (`EMAIL_EVENT_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8'; 
+
