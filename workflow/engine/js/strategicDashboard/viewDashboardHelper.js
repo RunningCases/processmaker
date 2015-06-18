@@ -1,9 +1,24 @@
-
-
 var ViewDashboardHelper = function () {
+	this.cache = [];
+	this.forceRemote=false; //if true, the next call will go to the remote server
 };
 
-ViewDashboardHelper.prototype.userDashboards = function(userId, callBack) {
+ViewDashboardHelper.prototype.ReportingPeriodicityEnum = {
+		NONE : 0,
+		MONTH : 100,
+		QUARTER : 200,
+		SEMESTER : 300,
+		YEAR : 400
+}
+
+ViewDashboardHelper.prototype.ReportingIndicatorEnum = {
+		PEI : 1010,
+		EEI : 1030,
+		INBOX_STATUS : 1050
+}
+
+ViewDashboardHelper.prototype.date2MysqlString = function (val){
+	return val.getFullYear() + '-' + (val.getMonth() + 1) + '-' + val.getDay() ;
 };
 
 ViewDashboardHelper.prototype.stringIfNull = function (val){
@@ -42,6 +57,19 @@ ViewDashboardHelper.prototype.assert = function (condition, message) {
         }
         throw message; // Fallback
     }
+}
+
+ViewDashboardHelper.prototype.fillSelectWithOptions = function ($select, options, selectedValue) {
+	$select.empty(); // remove old options
+	$.each(options, function(index, option) {
+	  $select.append($("<option></option>")
+					 .attr("value", option.value).text(option.label));
+	});
+	$select.val(selectedValue);
+}
+
+ViewDashboardHelper.prototype.setVisibility = function ($element, isVisible) {
+	$element.css('visibility', (isVisible ? 'visible' : 'hidden'));
 }
 
 ViewDashboardHelper.prototype.truncateString = function (string, len) {
@@ -200,4 +228,97 @@ ViewDashboardHelper.prototype.merge = function (objFrom, objTo, propMap) {
   return objTo;
 }; 
 
+
+ViewDashboardHelper.prototype.getJson = function (endPoint, baseUrl, oauthToken) {
+    var that = this;
+    var callUrl = baseUrl + endPoint
+	var requestFinished = $.Deferred();
+	var itemInCache = that.getCacheItem(endPoint);
+
+	if (itemInCache != null && !this.forceRemote) {
+		that.forceRemote = false;
+		requestFinished.resolve(itemInCache);
+		return requestFinished.promise();
+	}
+	else {
+		return $.ajax({
+			url: callUrl,
+			type: 'GET',
+			datatype: 'json',
+			success: function (data) {
+				that.forceRemote = false;
+				requestFinished.resolve(data);
+				that.putInCache(endPoint, data);
+			//	return requestFinished.promise();
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+								throw new Error(callUrl + ' --  ' + errorThrown);
+							},
+			beforeSend: function (xhr) {
+							xhr.setRequestHeader('Authorization', 'Bearer ' + oauthToken);
+							//xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+						}
+		});
+	}
+}
+
+ViewDashboardHelper.prototype.postJson = function (endPoint, data, baseUrl, oauthToken) {
+    var that = this;
+    return $.ajax({
+        url : baseUrl + endPoint,
+        type : 'POST',
+        datatype : 'json',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(data),
+        error: function(jqXHR, textStatus, errorThrown) {
+			throw new Error(errorThrown);
+        },
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', 'Bearer ' + oauthToken);
+            xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+        }       
+    }).fail(function () {
+		throw new Error('Fail server');
+    });
+};
+
+ViewDashboardHelper.prototype.putJson = function (endPoint, data, baseUrl, oauthToken) {
+    var that = this;
+    return $.ajax({
+        url : baseUrl + endPoint,
+        type : 'PUT',
+        datatype : 'json',
+        contentType: "application/json; charset=utf-8",
+        data: JSON.stringify(data),
+        error: function(jqXHR, textStatus, errorThrown) {
+			throw new Error(errorThrown);
+        },
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', 'Bearer ' + oauthToken);
+            //xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+        }       
+    }).fail(function () {
+		throw new Error('Fail server');
+    });
+};
+
+ViewDashboardHelper.prototype.getCacheItem = function (endPoint) {
+	var retval = null;
+	$.each(this.cache, function(index, objectItem) {
+		if (objectItem.key == endPoint) {
+			retval = objectItem.value;
+		}
+	});
+	return retval;
+}
+
+ViewDashboardHelper.prototype.putInCache = function (endPoint, data) {
+	var cacheItem = this.getCacheItem(endPoint);
+	if (cacheItem == null) {
+		this.cache.push ({ key: endPoint, value:data });
+	}
+	else {
+		cacheItem.value = data;
+	}
+}
 
