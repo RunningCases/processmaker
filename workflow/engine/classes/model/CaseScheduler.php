@@ -355,7 +355,7 @@ class CaseScheduler extends BaseCaseScheduler
             $criteria->add(
                 $criteria->getNewCriterion(CaseSchedulerPeer::SCH_TIME_NEXT_RUN, $dateCurrentIni, Criteria::GREATER_EQUAL)->addAnd(
                 $criteria->getNewCriterion(CaseSchedulerPeer::SCH_TIME_NEXT_RUN, $dateCurrentEnd, Criteria::LESS_EQUAL))->addOr(
-                $criteria->getNewCriterion(CaseSchedulerPeer::SCH_OPTION, 5, Criteria::GREATER_EQUAL))->addOr(
+                //$criteria->getNewCriterion(CaseSchedulerPeer::SCH_OPTION, 5, Criteria::GREATER_EQUAL))->addOr(
 
                 $criteria->getNewCriterion(CaseSchedulerPeer::SCH_TIME_NEXT_RUN, $dateCurrentIni, Criteria::LESS_THAN))
             );
@@ -400,6 +400,7 @@ class CaseScheduler extends BaseCaseScheduler
                 }
 
                 if ($flagNewCase) {
+                    println("  CASE SCHEDULER: " . $row["SCH_NAME"]);
                     println("  - Connecting webservice: $wsdl");
 
                     $user = $row["SCH_DEL_USER_NAME"];
@@ -427,6 +428,9 @@ class CaseScheduler extends BaseCaseScheduler
                         "WS_CREATE_CASE_STATUS" => "",
                         "WS_ROUTE_CASE_STATUS"  => ""
                     );
+
+                    $paramsLogResult = "FAILED";
+                    $paramsRouteLogResult = "FAILED";
 
                     if ($result->status_code == 0) {
                         eprintln("    OK", "green");

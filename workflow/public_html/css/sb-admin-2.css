@@ -354,10 +354,10 @@ table.dataTable thead .sorting:after {
     color: #606368;
 }
 
-.panel-green a:hover {
+/*.panel-green a:hover {
     color: #1fbc99;
     text-decoration: none;
-}
+}*/
 
 .panel-red {
     border-color: #ddd;
@@ -543,6 +543,10 @@ table.dataTable thead .sorting:after {
 .form-control{
     width: 100px;
     margin: 11px 17px 0 0;
+}
+
+.dashboard-right {
+    margin: 5px;
 }
 
 .dashboard-right h5{
@@ -806,4 +810,16 @@ table.dataTable thead .sorting:after {
 
 .bottom{
 	margin-bottom: 30px;
+}
+
+.tooltip > .tooltip-inner {
+    line-height: 1;
+    text-align: center;
+    color: #fff;
+    width: 150px;
+    padding: 15px;
+    font-size: 12px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 8px;
+    pointer-events: none;
 }
