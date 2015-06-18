@@ -44,6 +44,11 @@ class CaseScheduler extends BaseCaseScheduler
     {
         $con = Propel::getConnection( CaseSchedulerPeer::DATABASE_NAME );
         try {
+            if (isset($aData["SCH_OPTION"]) && (int)($aData["SCH_OPTION"]) == 4) {
+                //One time only
+                $aData["SCH_END_DATE"] = null;
+            }
+
             $this->fromArray( $aData, BasePeer::TYPE_FIELDNAME );
             if ($this->validate()) {
                 $result = $this->save();
@@ -88,6 +93,11 @@ class CaseScheduler extends BaseCaseScheduler
     {
         $con = Propel::getConnection( CaseSchedulerPeer::DATABASE_NAME );
         try {
+            if (isset($fields["SCH_OPTION"]) && (int)($fields["SCH_OPTION"]) == 4) {
+                //One time only
+                $fields["SCH_END_DATE"] = null;
+            }
+
             $con->begin();
             $this->load( $fields['SCH_UID'] );
             $this->fromArray( $fields, BasePeer::TYPE_FIELDNAME );
@@ -329,8 +339,8 @@ class CaseScheduler extends BaseCaseScheduler
 
             $timeDate = strtotime($date);
 
-            $dateHour    = (int)(date("H", $timeDate));
-            $dateMinutes = (int)(date("i", $timeDate));
+            $dateHour    = date("H", $timeDate);
+            $dateMinutes = date("i", $timeDate);
 
             $dateCurrentIni = date("Y-m-d", $timeDate) . " 00:00:00";
             $dateCurrentEnd = date("Y-m-d", $timeDate) . " 23:59:59";
@@ -345,7 +355,7 @@ class CaseScheduler extends BaseCaseScheduler
             $criteria->add(
                 $criteria->getNewCriterion(CaseSchedulerPeer::SCH_TIME_NEXT_RUN, $dateCurrentIni, Criteria::GREATER_EQUAL)->addAnd(
                 $criteria->getNewCriterion(CaseSchedulerPeer::SCH_TIME_NEXT_RUN, $dateCurrentEnd, Criteria::LESS_EQUAL))->addOr(
-                $criteria->getNewCriterion(CaseSchedulerPeer::SCH_OPTION, 5, Criteria::GREATER_EQUAL))->addOr(
+                //$criteria->getNewCriterion(CaseSchedulerPeer::SCH_OPTION, 5, Criteria::GREATER_EQUAL))->addOr(
 
                 $criteria->getNewCriterion(CaseSchedulerPeer::SCH_TIME_NEXT_RUN, $dateCurrentIni, Criteria::LESS_THAN))
             );
@@ -379,13 +389,18 @@ class CaseScheduler extends BaseCaseScheduler
                     $flagNewCase = true; //Create the old case
                     $caseSchedulerTimeNextRunNew = $this->getTimeNextRunByDate($row, $date, false);
                 } else {
-                    $caseSchedulerTimeNextRunHour    = (int)(date("H", strtotime($row["SCH_TIME_NEXT_RUN"])));
-                    $caseSchedulerTimeNextRunMinutes = (int)(date("i", strtotime($row["SCH_TIME_NEXT_RUN"])));
+                    $caseSchedulerTimeNextRunHour    = date("H", strtotime($row["SCH_TIME_NEXT_RUN"]));
+                    $caseSchedulerTimeNextRunMinutes = date("i", strtotime($row["SCH_TIME_NEXT_RUN"]));
 
-                    $flagNewCase = ($caseSchedulerTimeNextRunHour == $dateHour && $caseSchedulerTimeNextRunMinutes <= $dateMinutes) || $caseSchedulerTimeNextRunHour < $dateHour;
+                    if ((int)($dateHour . $dateMinutes) <= (int)($caseSchedulerTimeNextRunHour . $caseSchedulerTimeNextRunMinutes)) {
+                        $flagNewCase = $caseSchedulerTimeNextRunHour == $dateHour && $caseSchedulerTimeNextRunMinutes == $dateMinutes;
+                    } else {
+                        $flagNewCase = true; //Create the old case
+                    }
                 }
 
                 if ($flagNewCase) {
+                    println("  CASE SCHEDULER: " . $row["SCH_NAME"]);
                     println("  - Connecting webservice: $wsdl");
 
                     $user = $row["SCH_DEL_USER_NAME"];
@@ -413,6 +428,9 @@ class CaseScheduler extends BaseCaseScheduler
                         "WS_CREATE_CASE_STATUS" => "",
                         "WS_ROUTE_CASE_STATUS"  => ""
                     );
+
+                    $paramsLogResult = "FAILED";
+                    $paramsRouteLogResult = "FAILED";
 
                     if ($result->status_code == 0) {
                         eprintln("    OK", "green");
@@ -579,7 +597,7 @@ class CaseScheduler extends BaseCaseScheduler
                         case 5:
                             //Every
                             if ($caseSchedulerTimeNextRunNew == "") {
-                                $caseSchedulerTimeNextRunNew = date("Y-m-d H:i:s", $timeDate + (((int)($row["SCH_REPEAT_EVERY"])) * 60 * 60));
+                                $caseSchedulerTimeNextRunNew = date("Y-m-d H:i:s", $timeDate + round(floatval($row["SCH_REPEAT_EVERY"]) * 60 * 60));
                             }
 
                             $this->updateDate($caseSchedulerUid, $caseSchedulerTimeNextRunNew, $caseSchedulerTimeNextRun);
@@ -600,164 +618,111 @@ class CaseScheduler extends BaseCaseScheduler
         $this->Update( $Fields );
     }
 
-    public function updateNextRun($sOption, $sValue = "", $sActualTime = "", $sDaysPerformTask = "", $sWeeks = "", $sStartDay = "", $sMonths = "", $currentDate = "", $flagOptionWeeklyNextRun = true)
+    public function updateNextRun($option, $optionMonth = "", $date = "", $daysPerformTask = "", $weeks = "", $startDay = "", $months = "", $currentDate = "", $flagNoTodayForNextRun = true)
     {
-        $nActualDate = $currentDate . " " . $sActualTime;
-        $dEstimatedDate = '';
-        $sWeeks = trim($sWeeks, " |");
+        try {
+            $dateNextRun = "";
 
-        switch ($sOption) {
-            case '1':
-                switch ($sValue) {
-                    case '1':
-                        $dEstimatedDate = date( 'Y-m-d  H:i:s', strtotime( "$nActualDate  +1 day" ) );
-                        break;
-                    case '2':
-                        $nDayOfTheWeek = date( 'w', strtotime( $sActualTime ) );
-                        $nDayOfTheWeek = ($nDayOfTheWeek == 0) ? 7 : $nDayOfTheWeek;
+            $currentDate = trim($currentDate . " " . $date); //$date and $currentDate are the same
+            $weeks  = trim($weeks, " |");
+            $months = trim($months, " |");
 
-                        if ($nDayOfTheWeek >= 5) {
-                            $dEstimatedDate = date( 'Y-m-d  H:i:s', strtotime( "$nActualDate  +3 day" ) );
-                        } else {
-                            $dEstimatedDate = date( 'Y-m-d  H:i:s', strtotime( "$nActualDate  +1 day" ) );
-                        }
-                        break;
-                    case '3':
-                        $dEstimatedDate = date( 'Y-m-d  H:i:s', strtotime( "$nActualDate + " . $sDaysPerformTask . " day" ) );
-                        break;
-                }
-                break;
-            case '2':
-                if ($sWeeks != "") {
-                    $aDaysWeek = array ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday');
+            $arrayMonthsShort = array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+            $arrayWeekdays    = array("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday");
 
-                    $nDayOfTheWeek = (int)(date("w", strtotime($sActualTime)));
-                    $nDayOfTheWeek = ($nDayOfTheWeek == 0)? 7 : $nDayOfTheWeek;
+            switch ((int)($option)) {
+                case 1:
+                    //Daily
+                    $dateNextRun = date("Y-m-d H:i:s", strtotime(($flagNoTodayForNextRun)? "$currentDate +1 day" : $currentDate));
+                    break;
+                case 2:
+                    //Weekly
+                    if ($weeks != "") {
+                        $weekday = (int)(date("w", strtotime($date)));
+                        $weekday = ($weekday == 0)? 7 : $weekday;
 
-                    $arrayWeekdays = explode("|", $sWeeks);
-                    $firstDay = (int)($arrayWeekdays[0]);
-                    $lastDay  = (int)($arrayWeekdays[count($arrayWeekdays) - 1]);
+                        $arrayWeekdaysData = explode("|", $weeks);
 
-                    $flagFound1 = $nDayOfTheWeek < $firstDay || in_array($nDayOfTheWeek, $arrayWeekdays);
-                    $flagFound2 = ($flagFound1)? false : ($firstDay <= $nDayOfTheWeek && $nDayOfTheWeek <= $lastDay);
+                        $firstWeekday = (int)($arrayWeekdaysData[0]);
 
-                    if ($flagFound1 || $flagFound2) {
+                        $nextWeekday   = $firstWeekday;
                         $typeStatement = "this";
+                        $flag = false;
 
-                        if ($flagFound1) {
-                            $indexDay = (in_array($nDayOfTheWeek, $arrayWeekdays))? $nDayOfTheWeek : $firstDay;
+                        foreach ($arrayWeekdaysData as $value) {
+                            $d = (int)($value);
 
-                            if ($flagOptionWeeklyNextRun) {
-                                $index = array_search($nDayOfTheWeek, $arrayWeekdays);
-
-                                if ($index !== false && isset($arrayWeekdays[$index + 1])) {
-                                    $indexDay = $arrayWeekdays[$index + 1];
-                                } else {
-                                    $typeStatement = "next";
-                                    $indexDay = $firstDay;
-                                }
+                            if ((!$flagNoTodayForNextRun && $d >= $weekday) || ($flagNoTodayForNextRun && $d > $weekday)) {
+                                $nextWeekday = $d;
+                                $flag = true;
+                                break;
                             }
                         }
 
-                        if ($flagFound2) {
-                            $indexDay = $firstDay;
+                        if (!$flag) {
+                            $typeStatement = "next";
+                        }
 
-                            foreach ($arrayWeekdays as $value) {
-                                $day = (int)($value);
+                        $dateNextRun = date("Y-m-d", strtotime($currentDate . " " . $typeStatement . " " . $arrayWeekdays[$nextWeekday - 1])) . " " . date("H:i:s", strtotime($date));
+                    }
+                    break;
+                case 3:
+                    //Monthly
+                    if ($months != "") {
+                        $year  = (int)(date("Y", strtotime($date)));
+                        $month = (int)(date("m", strtotime($date)));
 
-                                if ($day > $nDayOfTheWeek) {
-                                    $indexDay = $day;
-                                    break;
-                                }
+                        $arrayStartDay   = explode("|", $startDay);
+                        $arrayMonthsData = explode("|", $months);
+
+                        $firstMonth = (int)($arrayMonthsData[0]);
+
+                        $nextMonth = $firstMonth;
+                        $flag = false;
+
+                        foreach ($arrayMonthsData as $value) {
+                            $m = (int)($value);
+
+                            if ((!$flagNoTodayForNextRun && $m >= $month) || ($flagNoTodayForNextRun && $m > $month)) {
+                                $nextMonth = $m;
+                                $flag = true;
+                                break;
                             }
                         }
 
-                        $indexDay--;
+                        if (!$flag) {
+                            $year++;
+                        }
 
-                        $dEstimatedDate = date("Y-m-d", strtotime($nActualDate . " " . $typeStatement . " " . $aDaysWeek[$indexDay])) . " " . date("H:i:s", strtotime($sActualTime));
-                    } else {
-                        $nEveryDays = $sDaysPerformTask;
+                        switch ((int)($optionMonth)) {
+                            case 1:
+                                $day = (int)($arrayStartDay[1]);
 
-                        $typeStatement = ($firstDay >= $nDayOfTheWeek || $nEveryDays == 1)? "next" : "last";
-                        $indexDay = $firstDay - 1;
+                                $dateNextRun = date("Y-m-d", strtotime("$year-$nextMonth-$day")) . " " . date("H:i:s", strtotime($date));
+                                break;
+                            case 2:
+                                $arrayFormat = array(
+                                    1 => "+0 week %s %s %d", //First
+                                    2 => "+1 week %s %s %d", //Second
+                                    3 => "+2 week %s %s %d", //Third
+                                    4 => "+3 week %s %s %d", //Fourth
+                                    5 => "last %s of %s %d"  //Last
+                                );
 
-                        if ($nEveryDays == 1) {
-                            $dEstimatedDate = date("Y-m-d", strtotime($nActualDate . " " . $typeStatement . " " . $aDaysWeek[$indexDay])) . " " . date("H:i:s", strtotime($sActualTime));
-                        } else {
-                            $nEveryDays = 1;
-                            $nDataTmp = date( 'Y-m-d', strtotime( "$nActualDate + " . $nEveryDays . " Week" ) );
-                            $dEstimatedDate = date("Y-m-d", strtotime($nDataTmp . " " . $typeStatement . " " . $aDaysWeek[$indexDay])) . " " . date("H:i:s", strtotime($sActualTime));
+                                $day = (int)($arrayStartDay[2]);
+
+                                $dateNextRun = date("Y-m-d", strtotime(sprintf($arrayFormat[(int)($arrayStartDay[1])], $arrayWeekdays[$day - 1], $arrayMonthsShort[$nextMonth - 1], $year))) . " " . date("H:i:s", strtotime($date));
+                                break;
                         }
                     }
-                }
-                break;
-            case '3':
-                if (strlen( $sMonths ) > 0) {
-                    // Must have at least one selected month
-                    //  Calculamos para la siguiente ejecucion, acorde a lo seleccionado
-                    $aStartDay = explode( '|', $sStartDay );
-                    $nYear = date( "Y", strtotime( $sActualTime ) );
-                    $nCurrentMonth = date( "m", strtotime( $sActualTime ) );
-                    $nCurrentDay = date( "d", strtotime( $sActualTime ) );
-                    $aMonths = explode( '|', $sMonths );
+                    break;
+            }
 
-                    $nSW = 0;
-                    $nNextMonth = 0;
-                    foreach ($aMonths as $value) {
-                        if ($value > $nCurrentMonth) {
-                            $nNextMonth = $value - 1;
-                            $nSW = 1;
-                            break;
-                        }
-                    }
-
-                    if ($nSW == 1) {
-                        $nExecNextMonth = $nNextMonth;
-                    } else {
-                        $nExecNextMonth = $aMonths[0] - 1;
-                        $nYear ++;
-                    }
-
-                    switch ($sValue) {
-                        case '1':
-                            $nExecNextMonth ++;
-                            $nCurrentDay = $aStartDay[1];
-                            $dEstimatedDate = date( 'Y-m-d', strtotime( "$nYear-$nExecNextMonth-$nCurrentDay" ) ) . ' ' . date( 'H:i:s', strtotime( $sActualTime ) );
-                            break;
-                        case '2':
-                            $aMontsShort = array ('Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec');
-                            $aWeeksShort = array ('Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday');
-                            $sNumDayWeek = $aStartDay[1];
-                            $sDayWeek = ($aStartDay[2] == 7 ? 0 : $aStartDay[2]);
-                            switch ($sNumDayWeek) {
-                                case '1':
-                                    $sDaysWeekOpt = "+0";
-                                    break;
-                                case '2':
-                                    $sDaysWeekOpt = "+1";
-                                    break;
-                                case '3':
-                                    $sDaysWeekOpt = "+2";
-                                    break;
-                                case '4':
-                                    $sDaysWeekOpt = "+3";
-                                    break;
-                                case '5':
-                                    $sDaysWeekOpt = "-1";
-                                    $nExecNextMonth ++;
-                                    if ($nExecNextMonth >= 12) {
-                                        $nExecNextMonth = 0;
-                                        $nYear ++;
-                                    }
-                                    break;
-                            }
-                            $dEstimatedDate = date( 'Y-m-d', strtotime( $sDaysWeekOpt . ' week ' . $aWeeksShort[$sDayWeek - 1] . ' ' . $aMontsShort[$nExecNextMonth] . ' ' . $nYear ) ) . ' ' . date( 'H:i:s', strtotime( $sActualTime ) );
-                            break;
-                    }
-                }
-                break;
+            //Return
+            return $dateNextRun;
+        } catch (Exception $e) {
+            throw $e;
         }
-        return $dEstimatedDate;
     }
 
     public function Exists ($sUid)
@@ -836,44 +801,34 @@ class CaseScheduler extends BaseCaseScheduler
     public function getTimeNextRunByDate(array $arrayCaseSchedulerData, $date, $flagUpdateTimeNextRun = true)
     {
         try {
-            $arrayNextDate = array();
-
-            //Get date
             $caseSchedulerOption      = (int)($arrayCaseSchedulerData["SCH_OPTION"]);
             $caseSchedulerTimeNextRun = $arrayCaseSchedulerData["SCH_TIME_NEXT_RUN"];
+            $caseSchedulerStartTime   = date("H:i:s", strtotime($arrayCaseSchedulerData["SCH_START_TIME"]));
 
             list($value, $daysPerformTask, $weeks, $startDay, $months) = $this->getVariablesFromRecord($arrayCaseSchedulerData);
 
             $timeDate = strtotime($date); //Current time
-            $timeCaseSchedulerTimeNextRun = strtotime($caseSchedulerTimeNextRun);
 
-            $flagTimeNextRun = false;
+            $flagTimeNextRun = true;
             $flagUpdate = false;
 
-            if ($caseSchedulerOption != 1) {
-                //Others
-                $flagTimeNextRun = true;
-            } else {
-                //Daily
-                $arrayDate = array(
-                    date("Y-m-d", strtotime($arrayCaseSchedulerData["SCH_START_DATE"])) . " " . date("H:i:s", $timeCaseSchedulerTimeNextRun),
-                    date("Y-m-d", $timeDate) . " " . date("H:i:s", $timeCaseSchedulerTimeNextRun)
-                );
+            switch ($caseSchedulerOption) {
+                case 1:
+                case 2:
+                case 3:
+                    //Daily
+                    //Weekly
+                    //Monthly
+                    $caseSchedulerTimeNextRun = date("Y-m-d", strtotime($arrayCaseSchedulerData["SCH_START_DATE"])) . " " . $caseSchedulerStartTime;
+                    $caseSchedulerTimeNextRun = $this->updateNextRun($caseSchedulerOption, $value, $caseSchedulerTimeNextRun, $daysPerformTask, $weeks, $startDay, $months, "", false);
 
-                $flagTimeNextRun = true;
+                    $timeCaseSchedulerTimeNextRun = strtotime($caseSchedulerTimeNextRun);
 
-                foreach ($arrayDate as $d) {
-                    $caseSchedulerTimeNextRun2 = $d;
-                    $timeCaseSchedulerTimeNextRun2 = strtotime($caseSchedulerTimeNextRun2);
-
-                    if ($timeDate < $timeCaseSchedulerTimeNextRun2) {
-                        $caseSchedulerTimeNextRun = $caseSchedulerTimeNextRun2;
-
+                    if ($timeCaseSchedulerTimeNextRun > $timeDate) {
                         $flagTimeNextRun = false;
                         $flagUpdate = true;
-                        break;
                     }
-                }
+                    break;
             }
 
             if ($flagTimeNextRun) {
@@ -884,7 +839,7 @@ class CaseScheduler extends BaseCaseScheduler
                         //Daily
                         //Weekly
                         //Monthly
-                        $caseSchedulerTimeNextRun = date("Y-m-d", $timeDate) . " " . date("H:i:s", $timeCaseSchedulerTimeNextRun);
+                        $caseSchedulerTimeNextRun = date("Y-m-d", $timeDate) . " " . $caseSchedulerStartTime;
                         $caseSchedulerTimeNextRun = $this->updateNextRun($caseSchedulerOption, $value, $caseSchedulerTimeNextRun, $daysPerformTask, $weeks, $startDay, $months, "", false);
 
                         $timeCaseSchedulerTimeNextRun = strtotime($caseSchedulerTimeNextRun);
@@ -895,7 +850,7 @@ class CaseScheduler extends BaseCaseScheduler
                         break;
                     case 4:
                         //One time only
-                        $caseSchedulerTimeNextRun = date("Y-m-d", $timeDate) . " " . date("H:i:s", $timeCaseSchedulerTimeNextRun);
+                        $caseSchedulerTimeNextRun = date("Y-m-d", $timeDate) . " " . $caseSchedulerStartTime;
 
                         $timeCaseSchedulerTimeNextRun = strtotime($caseSchedulerTimeNextRun);
 
@@ -905,7 +860,7 @@ class CaseScheduler extends BaseCaseScheduler
                         break;
                     case 5:
                         //Every
-                        $caseSchedulerTimeNextRun = date("Y-m-d H:i:s", $timeDate + (((int)($arrayCaseSchedulerData["SCH_REPEAT_EVERY"])) * 60 * 60));
+                        $caseSchedulerTimeNextRun = date("Y-m-d H:i:s", $timeDate + round(floatval($arrayCaseSchedulerData["SCH_REPEAT_EVERY"]) * 60 * 60));
                         break;
                 }
 
