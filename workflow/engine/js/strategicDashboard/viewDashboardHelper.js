@@ -70,6 +70,7 @@ ViewDashboardHelper.prototype.fillSelectWithOptions = function ($select, options
 
 ViewDashboardHelper.prototype.setVisibility = function ($element, isVisible) {
 	$element.css('visibility', (isVisible ? 'visible' : 'hidden'));
+	$element.css('display', (isVisible ? 'inline' : 'none'));
 }
 
 ViewDashboardHelper.prototype.truncateString = function (string, len) {
