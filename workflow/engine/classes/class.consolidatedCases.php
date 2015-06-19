@@ -21,9 +21,6 @@ class ConsolidatedCases
                 if (!(is_object($oCaseConsolidated)) || get_class($oCaseConsolidated) != 'CaseConsolidatedCore') {
                     $oCaseConsolidated = new CaseConsolidatedCore();
                     $oCaseConsolidated->setTasUid($sTasUid);
-                    $oCaseConsolidated->delete();
-                    $oCaseConsolidated = new CaseConsolidatedCore();
-                    $oCaseConsolidated->setTasUid($sTasUid);
                     $oCaseConsolidated->setConStatus('INACTIVE');
                     $oCaseConsolidated->save();
                 }
@@ -172,16 +169,11 @@ class ConsolidatedCases
         $sRepTabUid = $_POST['form']['REP_TAB_UID'];
 
         $oCaseConsolidated = CaseConsolidatedCorePeer::retrieveByPK($sTasUid);
-        $oCaseConsolidated = new CaseConsolidatedCore();
-        $oCaseConsolidated->setTasUid($sTasUid);
-        $oCaseConsolidated->setTasUid($sTasUid);
         if (!(is_object($oCaseConsolidated)) || get_class($oCaseConsolidated) != 'CaseConsolidatedCore') {
             $oCaseConsolidated = new CaseConsolidatedCore();
             $oCaseConsolidated->setTasUid($sTasUid);
         }
 
-        $oCaseConsolidated = new CaseConsolidatedCore();
-        $oCaseConsolidated->setTasUid($sTasUid);
         $oCaseConsolidated->setConStatus('ACTIVE');
         $oCaseConsolidated->setDynUid($sDynUid);
         $oCaseConsolidated->setRepTabUid($sRepTabUid);

@@ -1341,7 +1341,7 @@ function ajaxDerivationRequest(appUid, delIndex, maxLenght, appNumber,fieldGridG
               window.location.reload();
             }
 
-            if (fullResponseText.charAt(0) != "<") {
+            if (fullResponseText.charAt(0) != "<" && parent.document.getElementById("batchRoutingCasesNumRec") != null) {
                 parent.document.getElementById("batchRoutingCasesNumRec").innerHTML = parseInt(dataResponse.casesNumRec);
             }
 

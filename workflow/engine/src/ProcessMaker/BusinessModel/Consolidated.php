@@ -65,6 +65,8 @@ class Consolidated
      * @param string $app_number, Task Uid
      * @param string $del_index, Task Uid
      * @param string $usr_uid, Task Uid
+     * @param string $fieldName, Field Name
+     * @param string $fieldValue, Field Value
      * @return string
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -75,7 +77,6 @@ class Consolidated
         G::LoadClass("library");
         G::LoadClass("wsBase");
         G::LoadClass("case");
-
         $ws = new \wsBase();
         $oCase = new \Cases();
 
