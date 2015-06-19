@@ -103,6 +103,7 @@ if (isset ($_SESSION['USER_LOGGED'])) {
     // Execute SSO trigger
     $pluginRegistry =& PMPluginRegistry::getSingleton();
     if (defined('PM_SINGLE_SIGN_ON')) {
+        /*----------------------------------********---------------------------------*/
         $licensedFeatures = & PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('x4TTzlISnp2K2tnSTJoMC8rTDRMTjlhMCtZeXV0QnNCLzU=')) {
             //Check in SSO class
@@ -120,6 +121,7 @@ if (isset ($_SESSION['USER_LOGGED'])) {
             }
             //Check in SSO class
         }
+        /*----------------------------------********---------------------------------*/
         if ($pluginRegistry->existsTrigger(PM_SINGLE_SIGN_ON)) {
             if ($pluginRegistry->executeTriggers(PM_SINGLE_SIGN_ON, null)) {
                 // Start new session
