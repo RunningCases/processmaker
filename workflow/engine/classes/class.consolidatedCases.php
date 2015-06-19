@@ -23,6 +23,8 @@ class ConsolidatedCases
                     $oCaseConsolidated->setTasUid($sTasUid);
                     $oCaseConsolidated->setConStatus('INACTIVE');
                     $oCaseConsolidated->save();
+                }else{
+                    $oCaseConsolidated->delete();
                 }
                 return 1;
             }
@@ -172,6 +174,16 @@ class ConsolidatedCases
         if (!(is_object($oCaseConsolidated)) || get_class($oCaseConsolidated) != 'CaseConsolidatedCore') {
             $oCaseConsolidated = new CaseConsolidatedCore();
             $oCaseConsolidated->setTasUid($sTasUid);
+        }
+
+        $criteria = new Criteria();
+        $criteria->addSelectColumn(CaseConsolidatedCorePeer::TAS_UID);
+        $criteria->add(CaseConsolidatedCorePeer::TAS_UID, $sTasUid);
+        $rsCriteria = CaseConsolidatedCorePeer::doSelectRS($criteria);
+        if ($rsCriteria->next()) {
+            $row = $rsCriteria->getRow();
+            $oCaseConsolidated->delete();
+            $oCaseConsolidated = CaseConsolidatedCorePeer::retrieveByPK($sTasUid);
         }
 
         $oCaseConsolidated->setConStatus('ACTIVE');
