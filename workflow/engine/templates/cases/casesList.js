@@ -1058,6 +1058,9 @@ Ext.onReady ( function() {
     });
 
     /*----------------------------------********---------------------------------*/
+    if (typeof filterStatus == 'undefined') {
+        filterStatus = [];
+    }
     var comboFilterStatus = new Ext.form.ComboBox({
         width           : 180,
         boxMaxWidth     : 200,
@@ -1071,6 +1074,7 @@ Ext.onReady ( function() {
         mode            : 'local',
         autocomplete    : true,
         triggerAction   : 'all',
+        hidden          : filterStatus.length == 0 ? true : false,
         store         : new Ext.data.ArrayStore({
             fields : ['UID','NAME'],
             data   : filterStatus
@@ -1705,8 +1709,11 @@ Ext.onReady ( function() {
         '-',
         btnAll,
         '->', // begin using the right-justified button container
-        _('ID_OVERDUE'),
-        comboFilterStatus,
+        filterStatus.length != 0 ?[
+            _('ID_OVERDUE'),
+            comboFilterStatus
+        ] : [
+        ],
         _("ID_CATEGORY"),
         comboCategory,
         "-",
