@@ -467,7 +467,7 @@ var setActiveDashboard = function () {
 	if (dashboard == null) {
 		return;
 	}
-	$('#titleH4').text(dashboard.title);
+	$('#titleH4').html(dashboard.title);
 }
 
 var initialDraw = function () {
@@ -476,9 +476,6 @@ var initialDraw = function () {
 		.then(function(dashboardsVM) {
 				fillDashboardsList(dashboardsVM);
 				if (window.currentDashboardId == null) {return;}
-
-				console.log(tsPresenter);
-				console.log(window.currentDashboardId);
 				tsPresenter.initializePresenter(window.currentDashboardId)
 					.done(function (data){
 						bindTimeSeriesLists(tsPresenter);
@@ -564,7 +561,7 @@ var defaultEndDate = function () {
 var fillDashboardsList = function (presenterData) {
 	if (presenterData == null || presenterData.length == 0) {
 		$('#dashboardMessage').text(G_STRING['ID_GRID_PAGE_NO_DASHBOARD_MESSAGE']);
-		$('#titleH4').text(G_STRING['ID_GRID_PAGE_NO_DASHBOARD_MESSAGE']);
+		$('#titleH4').html(G_STRING['ID_GRID_PAGE_NO_DASHBOARD_MESSAGE']);
 		$('#compareIndicators').hide();
 	}
 	_.templateSettings.variable = "dashboard";
