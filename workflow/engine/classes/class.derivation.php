@@ -907,6 +907,20 @@ class Derivation
             //Create the new case in the sub-process
             // set the initial date to null the time its created
             $aNewCase = $this->case->startCase( $aSP['TAS_UID'], $aSP['USR_UID'], true, $appFields);
+
+            //Create record in table APP_ASSIGN_SELF_SERVICE_VALUE
+            $taskSub  = new Task();
+            $arrayNextTaskData = $taskSub->load($aSP["TAS_UID"]);
+            if ($arrayNextTaskData["TAS_ASSIGN_TYPE"] == "SELF_SERVICE" && trim($arrayNextTaskData["TAS_GROUP_VARIABLE"]) != "") {
+                $nextTaskGroupVariable = trim($arrayNextTaskData["TAS_GROUP_VARIABLE"], " @#");
+
+                if (isset($appFields["APP_DATA"][$nextTaskGroupVariable]) && trim($appFields["APP_DATA"][$nextTaskGroupVariable]) != "") {
+
+                    $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+
+                    $appAssignSelfServiceValue->create($aNewCase['APPLICATION'], $aNewCase['INDEX'], array("PRO_UID" => $aNewCase['PROCESS'], "TAS_UID" => $aSP["TAS_UID"], "GRP_UID" => trim($appFields["APP_DATA"][$nextTaskGroupVariable])));
+                }
+            }
             //Copy case variables to sub-process case
             $aFields = unserialize( $aSP['SP_VARIABLES_OUT'] );
             $aNewFields = array ();
