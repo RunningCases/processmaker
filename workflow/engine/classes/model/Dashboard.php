@@ -77,7 +77,7 @@ class Dashboard extends BaseDashboard
         }
     }
 
-    public function remove($dasUid)
+    public function remove($dasUid, $userLogged = '')
     {
         $connection = Propel::getConnection(DashboardPeer::DATABASE_NAME);
         try {
@@ -92,8 +92,8 @@ class Dashboard extends BaseDashboard
             $criteria->add(DashboardIndicatorPeer::DAS_UID, $dasUid);
             DashboardIndicatorPeer::doDelete($criteria);
 
-            if ((!isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] == '') && isset($data['USR_UID']) &&  $data['USR_UID'] != '') {
-                $this->setUser($data['USR_UID']);
+            if ((!isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] == '') && $userLogged != '') {
+                $this->setUser($userLogged);
             }
 
             $dashboard = DashboardPeer::retrieveByPK($dasUid);
