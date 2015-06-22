@@ -294,15 +294,16 @@ class Dashboard {
      * Delete Dashboard
      *
      * @param string $das_uid  Unique id
+     * @param string $usr_uid
      *
      * return void
      * 
      * @author Marco Antonio Nina <marco.antonio.nina@colosa.com>
      */
-    public function deletedashboard($das_uid)
+    public function deletedashboard($das_uid, $usr_uid)
     {
         $dashboard = new \Dashboard();
-        $response = $dashboard->remove($das_uid);
+        $response = $dashboard->remove($das_uid, $usr_uid);
         return $response;
     }
 

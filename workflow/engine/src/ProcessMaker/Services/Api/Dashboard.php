@@ -282,7 +282,7 @@ class Dashboard extends Api
         try {
             $dashboard = new \ProcessMaker\BusinessModel\Dashboard();
             $request_data['USR_UID'] = $this->getUserId();
-            $response = $dashboard->deletedashboard($das_uid);
+            $response = $dashboard->deletedashboard($das_uid, $this->getUserId());
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
