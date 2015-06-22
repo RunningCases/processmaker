@@ -326,16 +326,17 @@ class Dashboard {
      * Delete Dashboard owner
      *
      * @param string $das_uid  
-     * @param string $owner_uid  
+     * @param string $owner_uid
+     * * @param string $usr_uid
      *
      * return void
      * 
      * @author Marco Antonio Nina <marco.antonio.nina@colosa.com>
      */
-    public function deleteDashboardOwner($das_uid, $owner_uid)
+    public function deleteDashboardOwner($das_uid, $owner_uid, $usr_uid)
     {
         $dashboard = new \DashboardDasInd();
-        $response = $dashboard->remove($das_uid, $owner_uid);
+        $response = $dashboard->remove($das_uid, $owner_uid, $usr_uid);
         return $response;
     }
 
@@ -359,15 +360,16 @@ class Dashboard {
      * Delete Indicator
      *
      * @param string $das_ind_uid  Unique id
+     * @param string $usr_uid
      *
      * return void
      * 
      * @author Marco Antonio Nina <marco.antonio.nina@colosa.com>
      */
-    public function delete($das_ind_uid)
+    public function delete($das_ind_uid, $usr_uid)
     {
         $dashboard = new \DashboardIndicator();
-        $response = $dashboard->remove($das_ind_uid);
+        $response = $dashboard->remove($das_ind_uid, $usr_uid);
         return $response;
     }
     
