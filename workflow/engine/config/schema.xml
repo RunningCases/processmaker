@@ -4852,22 +4852,23 @@
             <parameter name="Create_options" value="" />
             <parameter name="Comment" value="Data calculated users by task"/>
         </vendor>
-        <column name="USR_UID"              type="VARCHAR"  size="32" required="true" primaryKey="true" />
-        <column name="TAS_UID"              type="VARCHAR"  size="32" required="true" primaryKey="true" />
-        <column name="PRO_UID"              type="VARCHAR"  size="32" required="true" />
-        <column name="MONTH"                type="INTEGER"  required="true" default="0" primaryKey="true" />
-        <column name="YEAR"                 type="INTEGER"  required="true" default="0" primaryKey="true" />
-        <column name="TOTAL_TIME_BY_TASK"   type="DECIMAL"  size="7,2"  default="0" />
-        <column name="TOTAL_CASES_IN"       type="DECIMAL"  size="7,2"  default="0" />
-        <column name="TOTAL_CASES_OUT"      type="DECIMAL"  size="7,2"  default="0" />
-        <column name="USER_HOUR_COST"       type="DECIMAL"  size="7,2"  default="0" />
-        <column name="AVG_TIME"             type="DECIMAL"  size="7,2"  default="0" />
-        <column name="SDV_TIME"             type="DECIMAL"  size="7,2"  default="0" />
-        <column name="CONFIGURED_TASK_TIME" type="DECIMAL"  size="7,2"  default="0" />
-        <column name="TOTAL_CASES_OVERDUE"  type="DECIMAL"  size="7,2"  default="0" />
-        <column name="TOTAL_CASES_ON_TIME"  type="DECIMAL"  size="7,2"  default="0" />
-        <column name="PRO_COST"             type="DECIMAL"  size="7,2"  required="false" default="0"/>
-        <column name="PRO_UNIT_COST"        type="VARCHAR"  size="50"   required="false" default=""/>
+        <column name="USR_UID"                type="VARCHAR"  size="32" required="true" primaryKey="true" />
+        <column name="TAS_UID"                type="VARCHAR"  size="32" required="true" primaryKey="true" />
+        <column name="PRO_UID"                type="VARCHAR"  size="32" required="true" />
+        <column name="MONTH"                  type="INTEGER"  required="true" default="0" primaryKey="true" />
+        <column name="YEAR"                   type="INTEGER"  required="true" default="0" primaryKey="true" />
+        <column name="TOTAL_QUEUE_TIME_BY_TASK" type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_TIME_BY_TASK"     type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_IN"         type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_OUT"        type="DECIMAL"  size="7,2"  default="0" />
+        <column name="USER_HOUR_COST"         type="DECIMAL"  size="7,2"  default="0" />
+        <column name="AVG_TIME"               type="DECIMAL"  size="7,2"  default="0" />
+        <column name="SDV_TIME"               type="DECIMAL"  size="7,2"  default="0" />
+        <column name="CONFIGURED_TASK_TIME"   type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_OVERDUE"    type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_ON_TIME"    type="DECIMAL"  size="7,2"  default="0" />
+        <column name="PRO_COST"               type="DECIMAL"  size="7,2"  required="false" default="0"/>
+        <column name="PRO_UNIT_COST"          type="VARCHAR"  size="50"   required="false" default=""/>
         <index name="indexReporting">
             <index-column name="USR_UID"/>
             <index-column name="TAS_UID"/>

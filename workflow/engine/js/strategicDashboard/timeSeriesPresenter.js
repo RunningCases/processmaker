@@ -113,6 +113,7 @@ TimeSeriesPresenter.prototype.changePeriodicityToMonth = function (monthList) {
 	this.endPeriodState.list = monthList;
 	this.initPeriodState.visible = true;
 	this.endPeriodState.visible = true;
+	this.endPeriodState.selValue = this.periodEquivalentFromDate (this.helper.ReportingPeriodicityEnum.MONTH, new Date());
 }
 
 TimeSeriesPresenter.prototype.changePeriodicityToQuarter = function (quarterList) {
@@ -120,6 +121,7 @@ TimeSeriesPresenter.prototype.changePeriodicityToQuarter = function (quarterList
 	this.endPeriodState.list = quarterList;
 	this.initPeriodState.visible = true;
 	this.endPeriodState.visible = true;
+	this.endPeriodState.selValue = this.periodEquivalentFromDate (this.helper.ReportingPeriodicityEnum.QUARTER, new Date());
 }
 
 TimeSeriesPresenter.prototype.changePeriodicityToSemester = function (semesterList) {
@@ -127,6 +129,7 @@ TimeSeriesPresenter.prototype.changePeriodicityToSemester = function (semesterLi
 	this.endPeriodState.list = semesterList;
 	this.initPeriodState.visible = true;
 	this.endPeriodState.visible = true;
+	this.endPeriodState.selValue = this.periodEquivalentFromDate (this.helper.ReportingPeriodicityEnum.SEMESTER, new Date());
 }
 
 TimeSeriesPresenter.prototype.changePeriodicityToYear = function (yearList) {
@@ -134,6 +137,7 @@ TimeSeriesPresenter.prototype.changePeriodicityToYear = function (yearList) {
 	this.endPeriodState.list = [];
 	this.initPeriodState.visible = false;
 	this.endPeriodState.visible = false;
+	this.endPeriodState.selValue = this.periodEquivalentFromDate (this.helper.ReportingPeriodicityEnum.YEAR, new Date());
 }
 
 TimeSeriesPresenter.prototype.historicData = function (indicator, periodicity, initPeriod, 
@@ -145,7 +149,7 @@ TimeSeriesPresenter.prototype.historicData = function (indicator, periodicity, i
 	this.model.historicData(indicator, periodicity, initDate, endDate).done(function (data) {
 		var graphData = [];
 		$.each(data, function(index, originalObject) {
-			var newObject = {datalabel: that.periodValue(periodicity, originalObject) + '/' + originalObject['YEAR'],
+			var newObject = {datalabel: that.periodColumnName(periodicity, originalObject) + '/' + originalObject['YEAR'],
 							 value: originalObject.VALUE
 							}
 			graphData.push(newObject);
@@ -157,7 +161,7 @@ TimeSeriesPresenter.prototype.historicData = function (indicator, periodicity, i
 }
 
 
-TimeSeriesPresenter.prototype.periodValue = function (periodicity, object) {
+TimeSeriesPresenter.prototype.periodColumnName = function (periodicity, object) {
 	var retval = "";
 	switch (periodicity*1) {
 		case this.helper.ReportingPeriodicityEnum.MONTH:
@@ -174,6 +178,48 @@ TimeSeriesPresenter.prototype.periodValue = function (periodicity, object) {
 			break;
 	}
 	if (retval == "") {
+		throw new Error("The periodicity " + periodicity + " is not supported.");
+	}
+	return retval;
+}
+
+TimeSeriesPresenter.prototype.periodEquivalentFromDate = function (periodicity, date) {
+	var retval = null;
+	var year = date.getFullYear();
+
+	switch (periodicity * 1) {
+		case this.helper.ReportingPeriodicityEnum.MONTH:
+			for (var i = 1; i < 12; i++) {
+				var periodInitDate = this.periodInitDate (periodicity, i, year);
+				var periodEndDate = this.periodEndDate (periodicity, i, year);
+				if (periodInitDate <= date && periodEndDate >= date) {
+					retval = i;
+				}
+			}
+			break;
+		case this.helper.ReportingPeriodicityEnum.QUARTER:
+			for (var i = 1; i < 4; i++) {
+				var periodInitDate = this.periodInitDate (periodicity, i, year);
+				var periodEndDate = this.periodEndDate (periodicity, i, year);
+				if (periodInitDate <= date && periodEndDate >= date) {
+					retval = i;
+				}
+			}
+			break;
+		case this.helper.ReportingPeriodicityEnum.SEMESTER:
+			for (var i = 1; i < 2; i++) {
+				var periodInitDate = this.periodInitDate (periodicity, i, year);
+				var periodEndDate = this.periodEndDate (periodicity, i, year);
+				if (periodInitDate <= date && periodEndDate >= date) {
+					retval = i;
+				}
+			}
+			break;
+		case this.helper.ReportingPeriodicityEnum.YEAR:
+			retval = year
+			break;
+	}
+	if (retval == null) {
 		throw new Error("The periodicity " + periodicity + " is not supported.");
 	}
 	return retval;
