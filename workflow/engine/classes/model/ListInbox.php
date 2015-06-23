@@ -306,7 +306,9 @@ class ListInbox extends BaseListInbox
                 }
             }
         } else {
-            $users->refreshTotal($data['USR_UID'], 'add', 'inbox');
+            if($data['USR_UID'] !=''){
+                $users->refreshTotal($data['USR_UID'], 'add', 'inbox');
+            }
             if ($dataPreviusApplication['APP_STATUS'] == 'DRAFT') {
                 $users->refreshTotal($dataPreviusApplication['CURRENT_USER_UID'], 'remove', 'draft');
             } else {
