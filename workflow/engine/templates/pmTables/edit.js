@@ -188,7 +188,7 @@ Ext.onReady(function(){
             listeners:{
               change: function(f,e){  
                 this.setValue(this.getValue().replace(/^\s+/,'').replace(/\s+$/,''));
-                var valueInputField= /^[0-9a-zA-Z\_]+$/.test(this.getValue()) ? true : false; 
+                var valueInputField= /^[0-9a-zA-Z\_|-]+$/.test(this.getValue()) ? true : false; 
                 if (valueInputField) {
                   this.setValue(this.getValue().replace(/\s/g,'').toUpperCase());
                 }else{
@@ -198,7 +198,7 @@ Ext.onReady(function(){
               }
             },
             validator: function(v) {
-              return valueInputField= /^[0-9a-zA-Z\_]+$/.test(v)?true:false;
+              return valueInputField= /^[0-9a-zA-Z\_|-]+$/.test(v)?true:false;
             }
           }
       }, {
@@ -212,7 +212,7 @@ Ext.onReady(function(){
             listeners:{
               change: function(f,e){  
                 this.setValue(this.getValue().replace(/^\s+/,'').replace(/\s+$/,''));
-                var valueInputField= /^[0-9a-zA-Z\_]+$/.test(this.getValue()) ? true : false; 
+                var valueInputField= /^[0-9a-zA-Z\_|-]+$/.test(this.getValue()) ? true : false; 
                 if (!valueInputField) {
                   //Ext.Msg.alert(_('ID_WARNING'), _('ID_FIELD_LABEL'));
                   this.setValue('');
@@ -220,7 +220,7 @@ Ext.onReady(function(){
               }
             },
             validator: function(v) {
-              return valueInputField= /^[0-9a-zA-Z\_]+$/.test(v)?true:_('ID_ROLE_NAME_NOT_EMPTY');
+              return valueInputField= /^[0-9a-zA-Z\_|-]+$/.test(v)?true:_('ID_ROLE_NAME_NOT_EMPTY');
             }
           }
       }, {
