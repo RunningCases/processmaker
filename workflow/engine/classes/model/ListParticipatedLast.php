@@ -36,6 +36,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $data['APP_STATUS']  = $aRow['APP_STATUS'];
 
         if ($data['USR_UID'] != 'SELF_SERVICES') {
+           if($data['USR_UID'] != ''){
             $criteria = new Criteria();
             $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
             $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
@@ -51,6 +52,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
 
             $users = new Users();
             $users->refreshTotal($data['USR_UID'], 'add', 'participated');
+            }
         }
 
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
