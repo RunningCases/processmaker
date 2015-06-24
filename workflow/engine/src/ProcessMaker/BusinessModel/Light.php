@@ -109,7 +109,7 @@ class Light
         }
         return $return;
     }
-    
+
     /**
      * Get counters each type of list
      * @param $userId
@@ -326,6 +326,88 @@ class Light
         }
         return 1;
 
+    }
+
+    /**
+     * Return Informaction User for derivate
+     * assignment Users
+     *
+     * return array Return an array with Task Case
+     */
+    public function GetPrepareInformation($usr_uid, $app_uid, $del_index = null)
+    {
+        try {
+            $oDerivation = new \Derivation();
+            $aData = array();
+            $aData['APP_UID'] = $app_uid;
+            $aData['DEL_INDEX'] = $del_index;
+            $aData['USER_UID'] = $usr_uid;
+            $derive = $oDerivation->prepareInformation( $aData );
+            $response = array();
+            foreach ($derive as $sKey => &$aValues) {
+                $sPriority = ''; //set priority value
+                if ($derive[$sKey]['NEXT_TASK']['TAS_PRIORITY_VARIABLE'] != '') {
+                    //TO DO: review this type of assignment
+                    if (isset( $aData['APP_DATA'][str_replace( '@@', '', $derive[$sKey]['NEXT_TASK']['TAS_PRIORITY_VARIABLE'] )] )) {
+                        $sPriority = $aData['APP_DATA'][str_replace( '@@', '', $derive[$sKey]['NEXT_TASK']['TAS_PRIORITY_VARIABLE'] )];
+                    }
+                } //set priority value
+
+                switch ($aValues['NEXT_TASK']['TAS_ASSIGN_TYPE']) {
+                    case 'EVALUATE':
+                    case 'REPORT_TO':
+                    case 'BALANCED':
+                    case 'SELF_SERVICE':
+                        $taskAss['taskUid'] = $aValues['NEXT_TASK']['TAS_UID'];
+                        $taskAss['taskAssignType'] = $aValues['NEXT_TASK']['TAS_ASSIGN_TYPE'];
+                        $taskAss['taskDefProcCode'] = $aValues['NEXT_TASK']['TAS_DEF_PROC_CODE'];
+                        $taskAss['delPriority'] = isset($aValues['NEXT_TASK']['DEL_PRIORITY'])?$aValues['NEXT_TASK']['DEL_PRIORITY']:"";
+                        $taskAss['taskParent'] = $aValues['NEXT_TASK']['TAS_PARENT'];
+                        $users = array();
+                        $users['userId'] = $derive[$sKey]['NEXT_TASK']['USER_ASSIGNED']['USR_UID'];
+                        $users['userFullName'] = $derive[$sKey]['NEXT_TASK']['USER_ASSIGNED']['USR_FULLNAME'];
+                        $taskAss['users'] = $users;
+                        $response[] = $taskAss;
+                        break;
+                    case 'MANUAL':
+                        $manual['taskId'] = $aValues['NEXT_TASK']['TAS_UID'];
+                        $manual['taskAssignType'] = $aValues['NEXT_TASK']['TAS_ASSIGN_TYPE'];
+                        $manual['taskDefProcCode'] = $aValues['NEXT_TASK']['TAS_DEF_PROC_CODE'];
+                        $manual['delPriority'] = isset($aValues['NEXT_TASK']['DEL_PRIORITY'])?$aValues['NEXT_TASK']['DEL_PRIORITY']:"";
+                        $manual['taskParent'] = $aValues['NEXT_TASK']['TAS_PARENT'];
+                        $Aux = array ();
+                        foreach ($aValues['NEXT_TASK']['USER_ASSIGNED'] as $aUser) {
+                            $Aux[$aUser['USR_UID']] = $aUser['USR_FULLNAME'];
+                        }
+                        asort( $Aux );
+                        $users = array();
+                        foreach ($Aux as $id => $fullname) {
+                            $user['userId'] = $id;
+                            $user['userFullName'] = $fullname;
+                            $users[] = $user;
+                        }
+                        $manual['users'] = $users;
+                        $response[] = $manual;
+                        break;
+                    case '': //when this task is the Finish process
+                    case 'nobody':
+                        $userFields = $oDerivation->getUsersFullNameFromArray( $derive[$sKey]['USER_UID'] );
+                        $taskAss['routeFinishFlag'] = true;
+                        $user['userId'] = $derive[$sKey]['USER_UID'];
+                        $user['userFullName'] = $userFields['USR_FULLNAME'];
+                        $taskAss['users'] = $user;
+                        $response[] = $taskAss;
+                        break;
+                }
+            }
+
+            if (empty( $response )) {
+                throw (new Exception( G::LoadTranslation( 'ID_NO_DERIVATION_RULE' ) ));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+        return $response;
     }
 
     /**

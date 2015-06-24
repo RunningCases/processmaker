@@ -643,19 +643,13 @@ class Light extends Api
     public function doGetPrepareInformation($app_uid, $del_index = null)
     {
         try {
-            $oDerivation = new \Derivation();
-            $aData = array();
-            $aData['APP_UID'] = $app_uid;
-            $aData['DEL_INDEX'] = $del_index;
-            $aData['USER_UID'] = $this->getUserId();
-            $derive = $oDerivation->prepareInformation( $aData );
-            if (empty( $derive )) {
-                throw (new Exception( G::LoadTranslation( 'ID_NO_DERIVATION_RULE' ) ));
-            }
+            $usr_uid = $this->getUserId();
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $response = $oMobile->getPrepareInformation($usr_uid, $app_uid, $del_index);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
-        return $derive;
+        return $response;
     }
 
     /**
