@@ -79,7 +79,7 @@
 			 data-indicator-type="<%- indicator.type %>"
 			 data-gs-min-width="3" data-gs-min-height="2" data-gs-max-height="2"
             data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_INBOX_STATUS"}>
-			<div class="ind-container-selector panel grid-stack-item-content" style="min-width:200px;">
+			<div class="ind-container-selector panel grid-stack-item-content panel-status" style="min-width:200px;">
 				<a data-toggle="collapse" href="#efficiencyindex" aria-expanded="false" aria-controls="efficiencyindex">
 					<div class="panel-heading status-indicator-low"
 						 style=" width:<%- indicator.percentageOverdueWidth %>%;
@@ -373,15 +373,15 @@
 
 							<div id="compareIndicators" class="row pull-left">
 								
-								<div class="span4 pull-left">
+								<div class="span4 pull-left" style="margin:15px; ">
 									<span id="indicatorLabel"></span>
 									<select id="indicatorList"></select>
-									<span id="periodicityLabel"></span>
+									<span id="periodicityLabel" style="margin-left:15px;"></span>
 									<select id="periodicityList" style="width:auto;"></select>
-									<span id="initPeriodLabel"></span>
+									<span id="initPeriodLabel" style="margin-left:15px;"></span>
 									<select id="initPeriodList"></select>
 									<select id="initYearList"></select>
-									<span id="endPeriodLabel"></span>
+									<span id="endPeriodLabel" style="margin-left:15px;"></span>
 									<select id="endPeriodList"></select>
 									<select id="endYearList"></select>
 								</div>
