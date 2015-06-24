@@ -305,9 +305,9 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
  * @label order Grid
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#orderGrid.28.29
  *
- * @param array | $dataM | User ID | A grid, which is a numbered array containing associative arrays with field names and their values, it has to be set like this "@=".
+ * @param array | $dataM | Grid Name | A grid, which is a numbered array containing associative arrays with field names and their values, it has to be set like this "@=".
  * @param string(32) | $field | Name of field | The name of the field by which the grid will be sorted.
- * @param string(32) | $ord = "ASC"| Optional parameter | Optional parameter. The order which can either be 'ASC' (ascending) or 'DESC' (descending). If not included, 'ASC' will be used by default.
+ * @param string(32) | $ord = "ASC"| Optional parameter (Criteria) | Optional parameter. The order which can either be 'ASC' (ascending) or 'DESC' (descending). If not included, 'ASC' will be used by default.
  * @return array | $dataM | Grid Sorted | Grid sorted
  *
  */
