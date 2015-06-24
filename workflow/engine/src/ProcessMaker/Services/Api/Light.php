@@ -505,6 +505,7 @@ class Light extends Api
                     $pmDynaForm->jsonr($result['formContent']);
                     $result['index']       = $i;
                     $result['stepId']      = $activitySteps[$i]["step_uid"];
+                    $result['stepMode']   = $activitySteps[$i]['step_mode'];
                     $trigger = $oMobile->statusTriggers($step->doGetActivityStepTriggers($activitySteps[$i]["step_uid"], $act_uid, $prj_uid));
                     $result["triggers"]    = $trigger;
                     $response[] = $result;
@@ -631,17 +632,45 @@ class Light extends Api
     }
 
     /**
+     * Return Informaction User for derivate
+     * assignment Users
+     *
+     * @url GET /case/:app_uid/:del_index/assignment
+     *
+     * @param string $app_uid {@min 32}{@max 32}
+     * @param string $del_index
+     */
+    public function doGetPrepareInformation($app_uid, $del_index = null)
+    {
+        try {
+            $oDerivation = new \Derivation();
+            $aData = array();
+            $aData['APP_UID'] = $app_uid;
+            $aData['DEL_INDEX'] = $del_index;
+            $aData['USER_UID'] = $this->getUserId();
+            $derive = $oDerivation->prepareInformation( $aData );
+            if (empty( $derive )) {
+                throw (new Exception( G::LoadTranslation( 'ID_NO_DERIVATION_RULE' ) ));
+            }
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $derive;
+    }
+
+    /**
      * Route Case
      * @url PUT /cases/:app_uid/route-case
      *
      * @param string $app_uid {@min 32}{@max 32}
      * @param string $del_index {@from body}
+     * @param array $tasks {@from body}
      */
-    public function doPutRouteCase($app_uid, $del_index = null)
+    public function doPutRouteCase($app_uid, $del_index = null, $tasks = array())
     {
         try {
             $oMobile  = new \ProcessMaker\BusinessModel\Light();
-            $response = $oMobile->updateRouteCase($app_uid, $this->getUserId(), $del_index);
+            $response = $oMobile->updateRouteCase($app_uid, $this->getUserId(), $del_index, $tasks);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

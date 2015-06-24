@@ -72,6 +72,7 @@ class Light
                             $newForm[$c]['title'] = $form['obj_title'];
                             $newForm[$c]['description'] = $form['obj_description'];
                             $newForm[$c]['stepId']      = $form["step_uid"];
+                            $newForm[$c]['stepMode']    = $form['step_mode'];
                             $trigger = $this->statusTriggers($step->doGetActivityStepTriggers($form["step_uid"], $tempTreeChild['taskId'], $tempTreeChild['processId']));
                             $newForm[$c]["triggers"]    = $trigger;
                             $c++;
@@ -333,11 +334,12 @@ class Light
      * @param string $applicationUid Unique id of Case
      * @param string $userUid Unique id of User
      * @param string $delIndex
+     * @param array $tasks
      * @param string $bExecuteTriggersBeforeAssignment
      *
      * return array Return an array with Task Case
      */
-    public function updateRouteCase($applicationUid, $userUid, $delIndex)
+    public function updateRouteCase($applicationUid, $userUid, $delIndex, $tasks)
     {
         try {
             if (!$delIndex) {
@@ -345,7 +347,7 @@ class Light
             }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
-            $fields = $ws->derivateCase($userUid, $applicationUid, $delIndex, $bExecuteTriggersBeforeAssignment = false);
+            $fields = $ws->derivateCase($userUid, $applicationUid, $delIndex, $bExecuteTriggersBeforeAssignment = false, $tasks);
             $array = json_decode(json_encode($fields), true);
             if ($array ["status_code"] != 0) {
                 throw (new \Exception($array ["message"]));
@@ -1080,7 +1082,9 @@ class Light
             } else {
                 $LANG_NAME = $locale['LANGUAGE'];
             }
-            $languagesList[$LANG_ID] = $LANG_NAME;
+            $languages["L10n"] = $LANG_ID;
+            $languages["label"] = $LANG_NAME;
+            $languagesList[] = $languages;
         }
         $response['listLanguage'] = $languagesList;
         return $response;
