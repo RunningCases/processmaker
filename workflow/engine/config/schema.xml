@@ -1255,7 +1255,7 @@
     <column name="TAS_SELFSERVICE_EXECUTION" type="VARCHAR" size="15" default="EVERY_TIME"/>
 
     <validator column="TAS_TYPE">
-        <rule name="validValues" value="NORMAL|ADHOC|SUBPROCESS|HIDDEN|GATEWAYTOGATEWAY|WEBENTRYEVENT|END-MESSAGE-EVENT|START-MESSAGE-EVENT|INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT" message="Please enter a valid value for TAS_TYPE"/>
+        <rule name="validValues" value="NORMAL|ADHOC|SUBPROCESS|HIDDEN|GATEWAYTOGATEWAY|WEBENTRYEVENT|END-MESSAGE-EVENT|START-MESSAGE-EVENT|INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT|SCRIPT-TASK" message="Please enter a valid value for TAS_TYPE"/>
     </validator>
     <validator column="TAS_TIMEUNIT">
       <rule name="validValues" value="MINUTES|HOURS|DAYS|WEEKS|MONTHS" message="Please select a valid value for TAS_TIMEUNIT."/>
@@ -5054,5 +5054,28 @@
                 <parameter name="Comment" value=""/>
             </vendor>
         </index>
+    </table>
+
+    <table name="SCRIPT_TASK">
+        <vendor type="mysql">
+            <parameter name="Name" value="SCRIPT_TASK" />
+            <parameter name="Engine" value="InnoDB" />
+            <parameter name="Version" value="10" />
+            <parameter name="Row_format" value="Dynamic" />
+            <parameter name="Data_free" value="0" />
+            <parameter name="Auto_increment" value="" />
+            <parameter name="Check_time" value="" />
+            <parameter name="Collation" value="utf8_general_ci" />
+            <parameter name="Checksum" value="" />
+            <parameter name="Create_options" value="" />
+        </vendor>
+        <column name="SCRTAS_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default="" />
+        <column name="PRJ_UID" type="VARCHAR" size="32" required="true" default="" />
+        <column name="ACT_UID" type="VARCHAR" size="32" required="true" default="" />
+        <column name="SCRTAS_OBJ_TYPE" type="VARCHAR" size="10" required="true" default="TRIGGER" />
+        <column name="SCRTAS_OBJ_UID" type="VARCHAR" size="32" required="true" default="" />
+        <validator column="SCRTAS_OBJ_TYPE">
+            <rule name="validValues" value="TRIGGER" message="Please set a valid value for TMREVN_DEF_STATUS" />
+        </validator>
     </table>
 </database>

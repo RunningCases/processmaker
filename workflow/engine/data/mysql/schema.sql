@@ -2832,3 +2832,18 @@ CREATE TABLE `CATALOG`
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
 
+#-----------------------------------------------------------------------------
+#-- TABLE: SCRIPT_TASK
+#-----------------------------------------------------------------------------
+DROP TABLE IF EXISTS SCRIPT_TASK;
+CREATE TABLE SCRIPT_TASK
+(
+  SCRTAS_UID      VARCHAR(32) NOT NULL,
+  PRJ_UID         VARCHAR(32) NOT NULL,
+  ACT_UID         VARCHAR(32) NOT NULL,
+  SCRTAS_OBJ_TYPE VARCHAR(10) default 'TRIGGER' NOT NULL,
+  SCRTAS_OBJ_UID  VARCHAR(32) NOT NULL,
+
+  PRIMARY KEY (SCRTAS_UID)
+)ENGINE=InnoDB DEFAULT CHARSET='utf8';
+

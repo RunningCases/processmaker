@@ -198,8 +198,14 @@ class BpmnWorkflow extends Project\Bpmn
 
     public function updateActivity($actUid, $data)
     {
+        //Update Activity
+        $activityBefore = \BpmnActivityPeer::retrieveByPK($actUid);
+
         parent::updateActivity($actUid, $data);
 
+        $activityCurrent = \BpmnActivityPeer::retrieveByPK($actUid);
+
+        //Update Task
         $taskData = array();
 
         if (array_key_exists("ACT_NAME", $data)) {
@@ -212,14 +218,38 @@ class BpmnWorkflow extends Project\Bpmn
             $taskData["TAS_POSY"] = $data["BOU_Y"];
         }
 
+        if ($activityBefore->getActTaskType() != "SCRIPTTASK" && $activityCurrent->getActTaskType() == "SCRIPTTASK") {
+            $taskData["TAS_TYPE"] = "SCRIPT-TASK";
+        }
+
+        if ($activityBefore->getActTaskType() == "SCRIPTTASK" && $activityCurrent->getActTaskType() != "SCRIPTTASK") {
+            $taskData["TAS_TYPE"] = "NORMAL";
+
+            $scriptTask = new \ProcessMaker\BusinessModel\ScriptTask();
+
+            $scriptTask->deleteWhere(array(
+                \ScriptTaskPeer::PRJ_UID => $activityCurrent->getPrjUid(),
+                \ScriptTaskPeer::ACT_UID => $activityCurrent->getActUid()
+            ));
+        }
+
         $this->wp->updateTask($actUid, $taskData);
     }
 
     public function removeActivity($actUid)
     {
+        $activity = \BpmnActivityPeer::retrieveByPK($actUid);
+
         parent::removeActivity($actUid);
         $this->wp->removeTask($actUid);
 
+        //Delete Script-Task
+        $scriptTask = new \ProcessMaker\BusinessModel\ScriptTask();
+
+        $scriptTask->deleteWhere(array(
+            \ScriptTaskPeer::PRJ_UID => $activity->getPrjUid(),
+            \ScriptTaskPeer::ACT_UID => $activity->getActUid()
+        ));
     }
 
     public function removeElementTaskRelation($elementUid, $elementType)
@@ -1245,6 +1275,7 @@ class BpmnWorkflow extends Project\Bpmn
      * @param $projectData
      * @return array
      */
+
     public static function updateFromStruct($prjUid, $projectData, $generateUid = true, $forceInsert = false)
     {
         $diagram = isset($projectData["diagrams"]) && isset($projectData["diagrams"][0]) ? $projectData["diagrams"][0] : array();
@@ -1869,4 +1900,3 @@ class BpmnWorkflow extends Project\Bpmn
         }
     }
 }
-
