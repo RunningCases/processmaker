@@ -860,6 +860,8 @@
     <column name="PRO_DEBUG" type="INTEGER" required="true" default="0"/>
     <column name="PRO_DYNAFORMS" type="LONGVARCHAR" required="false"/>
     <column name="PRO_DERIVATION_SCREEN_TPL" type="VARCHAR" size="128" default="" required="false"/>
+    <column name="PRO_COST" type="DECIMAL" size="7,2" required="false" default="0"/>
+    <column name="PRO_UNIT_COST" type="VARCHAR" size="50" required="false" default=""/>
     <validator column="PRO_TIMEUNIT">
       <rule name="validValues" value="WEEKS|MONTHS|DAYS|HOURS|MINUTES" message="Please select a valid Time Unit."/>
     </validator>
@@ -3065,7 +3067,7 @@
   </table>
 
   <table name="SESSION_STORAGE">
-  	<vendor type="mysql">
+    <vendor type="mysql">
         <parameter name="Name" value="SESSION_STORAGE"/>
         <parameter name="Engine" value="InnoDB"/>
         <parameter name="Version" value="10"/>
@@ -3595,7 +3597,7 @@
   </table>
 
   <table name="BPMN_FLOW">
-  	<vendor type="mysql">
+    <vendor type="mysql">
       <parameter name="Name" value="BPMN_FLOW"/>
       <parameter name="Engine" value="InnoDB"/>
       <parameter name="Version" value="10"/>
@@ -3644,7 +3646,7 @@
   </table>
 
   <table name="BPMN_GATEWAY">
-  	<vendor type="mysql">
+    <vendor type="mysql">
       <parameter name="Name" value="BPMN_GATEWAY"/>
       <parameter name="Engine" value="InnoDB"/>
       <parameter name="Version" value="10"/>
@@ -3722,7 +3724,7 @@
   </table>
 
   <table name="BPMN_LANE">
-  	<vendor type="mysql">
+    <vendor type="mysql">
       <parameter name="Name" value="BPMN_LANE"/>
       <parameter name="Engine" value="InnoDB"/>
       <parameter name="Version" value="10"/>
@@ -3817,7 +3819,7 @@
   </table>
 
   <table name="BPMN_DOCUMENTATION">
-  	<vendor type="mysql">
+    <vendor type="mysql">
       <parameter name="Name" value="BPMN_DOCUMENTATION"/>
       <parameter name="Engine" value="InnoDB"/>
       <parameter name="Version" value="10"/>
@@ -4850,20 +4852,23 @@
             <parameter name="Create_options" value="" />
             <parameter name="Comment" value="Data calculated users by task"/>
         </vendor>
-        <column name="USR_UID"              type="VARCHAR"  size="32" required="true" primaryKey="true" />
-        <column name="TAS_UID"              type="VARCHAR"  size="32" required="true" primaryKey="true" />
-        <column name="PRO_UID"              type="VARCHAR"  size="32" required="true" />
-        <column name="MONTH"                type="INTEGER"  required="true" default="0" primaryKey="true" />
-        <column name="YEAR"                 type="INTEGER"  required="true" default="0" primaryKey="true" />
-        <column name="TOTAL_TIME_BY_TASK"   type="DECIMAL"  size="7,2"  default="0" />
-        <column name="TOTAL_CASES_IN"       type="DECIMAL"  size="7,2"  default="0" />
-        <column name="TOTAL_CASES_OUT"      type="DECIMAL"  size="7,2"  default="0" />
-        <column name="USER_HOUR_COST"       type="DECIMAL"  size="7,2"  default="0" />
-        <column name="AVG_TIME"             type="DECIMAL"  size="7,2"  default="0" />
-        <column name="SDV_TIME"             type="DECIMAL"  size="7,2"  default="0" />
-        <column name="CONFIGURED_TASK_TIME" type="DECIMAL"  size="7,2"  default="0" />
-        <column name="TOTAL_CASES_OVERDUE"  type="DECIMAL"  size="7,2"  default="0" />
-        <column name="TOTAL_CASES_ON_TIME"  type="DECIMAL"  size="7,2"  default="0" />
+        <column name="USR_UID"                type="VARCHAR"  size="32" required="true" primaryKey="true" />
+        <column name="TAS_UID"                type="VARCHAR"  size="32" required="true" primaryKey="true" />
+        <column name="PRO_UID"                type="VARCHAR"  size="32" required="true" />
+        <column name="MONTH"                  type="INTEGER"  required="true" default="0" primaryKey="true" />
+        <column name="YEAR"                   type="INTEGER"  required="true" default="0" primaryKey="true" />
+        <column name="TOTAL_QUEUE_TIME_BY_TASK" type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_TIME_BY_TASK"     type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_IN"         type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_OUT"        type="DECIMAL"  size="7,2"  default="0" />
+        <column name="USER_HOUR_COST"         type="DECIMAL"  size="7,2"  default="0" />
+        <column name="AVG_TIME"               type="DECIMAL"  size="7,2"  default="0" />
+        <column name="SDV_TIME"               type="DECIMAL"  size="7,2"  default="0" />
+        <column name="CONFIGURED_TASK_TIME"   type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_OVERDUE"    type="DECIMAL"  size="7,2"  default="0" />
+        <column name="TOTAL_CASES_ON_TIME"    type="DECIMAL"  size="7,2"  default="0" />
+        <column name="PRO_COST"               type="DECIMAL"  size="7,2"  required="false" default="0"/>
+        <column name="PRO_UNIT_COST"          type="VARCHAR"  size="50"   required="false" default=""/>
         <index name="indexReporting">
             <index-column name="USR_UID"/>
             <index-column name="TAS_UID"/>
@@ -4911,6 +4916,8 @@
         <column name="TOTAL_CASES_OPEN"         type="DECIMAL"  size="7,2"  default="0" />
         <column name="TOTAL_CASES_OVERDUE"      type="DECIMAL"  size="7,2"  default="0" />
         <column name="TOTAL_CASES_ON_TIME"      type="DECIMAL"  size="7,2"  default="0" />
+        <column name="PRO_COST"                 type="DECIMAL"  size="7,2"  required="false" default="0"/>
+        <column name="PRO_UNIT_COST"            type="VARCHAR"  size="50"   required="false" default=""/>
     </table>
 
     <table name="DASHBOARD">
@@ -5049,4 +5056,3 @@
         </index>
     </table>
 </database>
-

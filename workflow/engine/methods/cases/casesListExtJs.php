@@ -4,6 +4,10 @@ unset($_SESSION['APPLICATION']);
 //get the action from GET or POST, default is todo
 $action = isset( $_GET['action'] ) ? $_GET['action'] : (isset( $_POST['action'] ) ? $_POST['action'] : 'todo');
 
+/*----------------------------------********---------------------------------*/
+$filterAction = isset( $_GET['filterAction'] ) ? $_GET['filterAction'] : (isset( $_POST['filterAction'] ) ? $_POST['filterAction'] : '');
+/*----------------------------------********---------------------------------*/
+
 //fix a previous inconsistency
 $urlProxy = 'proxyCasesList';
 if ($action == 'selfservice') {
@@ -143,7 +147,7 @@ if ($action == "todo" || $action == "draft" || $action == "sent" || $action == "
             $solrConf['solr_instance']
         );
         if ($applicationSolrIndex->isSolrEnabled()) {
-          $solrEnabled = 1;
+            $solrEnabled = 1;
         }
     }
 }
@@ -178,6 +182,28 @@ $oHeadPublisher->assign( 'userValues', $users ); //Sending the listing of users
 $oHeadPublisher->assign( 'allUsersValues', $allUsers ); //Sending the listing of all users
 $oHeadPublisher->assign( 'solrEnabled', $solrEnabled ); //Sending the status of solar
 $oHeadPublisher->assign( 'enableEnterprise', $enableEnterprise ); //sending the page size
+
+
+/*----------------------------------********---------------------------------*/
+$licensedFeatures = & PMLicensedFeatures::getSingleton();
+if ($licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjBsZEJ6dnpJa3dTeWVLVT0=') ) {
+    $filterStatus[] = array('', G::LoadTranslation('ID_ALL_STATUS'));
+    $filterStatus[] = array('ON_TIME', G::LoadTranslation('ID_ON_TIME'));
+    $filterStatus[] = array('AT_RISK', G::LoadTranslation('ID_AT_RISK'));
+    $filterStatus[] = array('OVERDUE', G::LoadTranslation('ID_TASK_OVERDUE'));
+
+    $oHeadPublisher->assign('filterStatus', $filterStatus);
+
+    if (isset($_COOKIE['dashboardListInbox'])) {
+        $oHeadPublisher->assign('valueFilterStatus', $_COOKIE['dashboardListInbox']);
+        if (PHP_VERSION < 5.2) {
+            setcookie("dashboardListInbox", '', time() + (24 * 60 * 60), "/sys" . SYS_SYS, "; HttpOnly");
+        } else {
+            setcookie("dashboardListInbox", '', time() + (24 * 60 * 60), "/sys" . SYS_SYS, null, false, true);
+        }
+    }
+}
+/*----------------------------------********---------------------------------*/
 
 //menu permissions
 /*$c = new Criteria('workflow');

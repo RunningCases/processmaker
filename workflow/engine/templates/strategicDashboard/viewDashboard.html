@@ -24,6 +24,7 @@
     <script type="text/javascript" src="/js/pmchart/pmCharts.js"></script>
     <script type="text/javascript" >
         var urlProxy = '{$urlProxy}';
+        var workspace = '{$SYS_SYS}';
         var pageUserId = '{$usrId}';
         var token = '{$credentials.access_token}';
         var moneyUnit = '{$unitCost}';
@@ -39,7 +40,9 @@
     <script type="text/javascript" src="/jscore/strategicDashboard/viewDashboardPresenter.js"></script>
     <script type="text/javascript" src="/jscore/strategicDashboard/viewDashboardView.js"></script>
 
-
+    <script type="text/javascript" src="/jscore/strategicDashboard/timeSeriesModel.js"></script>
+    <script type="text/javascript" src="/jscore/strategicDashboard/timeSeriesPresenter.js"></script>
+    <script type="text/javascript" src="/jscore/strategicDashboard/timeSeriesView.js"></script>
 
 	<script type="text/template" class="specialIndicatorButtonTemplate">
 		<div class="col-lg-3 col-md-6 dashPro ind-button-selector"
@@ -51,11 +54,11 @@
 				<a data-toggle="collapse" href="#efficiencyindex" aria-expanded="false" aria-controls="efficiencyindex">
 					<div class="panel-heading" >
 						<div class="row">
-							<div class="col-xs-3">
+							<div class="col-xs-3" data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_IND_VALUE"}>
 								<div class="huge ind-value-selector"><%- indicator.value %></div>
 							</div>
-							<div class="col-xs-9 text-right"><i class="ind-symbol-selector fa fa-chevron-up fa-3x"></i>
-								<div class="small ind-comparative-selector">
+							<div class="col-xs-9 text-right"><i class="ind-symbol-selector fa fa-arrow-up fa-3x" data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_SYMBOL_SELECTOR"}></i>
+								<div class="small ind-comparative-selector" data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_IND_COMPARE"}>
 									<%- indicator.comparative %> <%- indicator.percentComparative %>
 								</div>
 							</div>
@@ -74,8 +77,9 @@
 			 id="indicatorButton-<%- indicator.id %>"
 			 data-indicator-id="<%- indicator.id %>"
 			 data-indicator-type="<%- indicator.type %>"
-			 data-gs-min-width="3" data-gs-min-height="2" data-gs-max-height="2">
-			<div class="ind-container-selector panel grid-stack-item-content" style="min-width:200px;">
+			 data-gs-min-width="3" data-gs-min-height="2" data-gs-max-height="2"
+            data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_INBOX_STATUS"}>
+			<div class="ind-container-selector panel grid-stack-item-content panel-status" style="min-width:200px;">
 				<a data-toggle="collapse" href="#efficiencyindex" aria-expanded="false" aria-controls="efficiencyindex">
 					<div class="panel-heading status-indicator-low"
 						 style=" width:<%- indicator.percentageOverdueWidth %>%;
@@ -148,17 +152,17 @@
 			data-gs-no-resize="true"
 			style="clear:both;position:relative;height:auto;">
 
-            <div class="panel-heading bluebg sind-title-selector"">
+            <div class="panel-heading bluebg sind-title-selector">
                 <ol class="breadcrumb">
                 </ol>
             </div>
 
 			<div class="text-center huge">
 				<div class="col-xs-3 vcenter">
-					<div class="blue"><%- indicator.efficiencyIndexToShow %></div>
+					<div class="blue"  data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_IND_EFFICIENCY"}><%- indicator.efficiencyIndexToShow %></div>
 					<div class="small grey sind-index-selector ellipsis"></div>
 				</div>
-				<div class="col-xs-3 vcenter" style="margin-right:40px">
+				<div class="col-xs-3 vcenter" style="margin-right:40px" data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_IND_COST"}>
 					<div class="red sind-cost-number-selector">{$unitCost} <%- indicator.inefficiencyCostToShow %></div>
 					<div class="small grey sind-cost-selector ellipsis"></div>
 				</div>
@@ -192,11 +196,11 @@
 			</div>
 			<div class="text-center huge">
 				<div class="col-xs-12 vcenter-task">
-					<div class="col-xs-6 ">
+					<div class="col-xs-6 " data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_IND_EFFICIENCY"}>
 						<div class="blue small"><%- detailData.efficiencyIndexToShow%></div>
 						<div class="smallB grey detail-efficiency-selector ellipsis"></div>
 					</div>
-					<div class="col-xs-6 ">
+					<div class="col-xs-6" data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_IND_COST"}>
 						<div class="small detail-cost-number-selector">{$unitCost}&nbsp;<%- detailData.inefficiencyCostToShow%></div>
 						<div class="smallB grey detail-cost-selector ellipsis"></div>
 					</div>
@@ -358,51 +362,33 @@
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                       <div class="panel-body">
+                          <div  class="span4 pull-left">
                         <a class="btn btn-primary dashboard-button" data-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
                         <i class="fa fa-bar-chart fa-2x"></i>
                         <i class="fa fa-chevron-down fa-1x"></i>
                         </a>
+                          </div>
                         <h4 id="titleH4" class="header-dashboard"></h4>
                         <div class="pull-right dashboard-right container-fluid">
 
 							<div id="compareIndicators" class="row pull-left">
-								<div class="span4 pull-left">
-									<h5 class="pull-left">{translate label="ID_DASH_COMPARE_MONTH"}:</h5>
+								
+								<div class="span4 pull-left" style="margin:15px; ">
+									<span id="indicatorLabel"></span>
+									<select id="indicatorList"></select>
+									<span id="periodicityLabel" style="margin-left:15px;"></span>
+									<select id="periodicityList" style="width:auto;"></select>
+									<span id="initPeriodLabel" style="margin-left:15px;"></span>
+									<select id="initPeriodList"></select>
+									<select id="initYearList"></select>
+									<span id="endPeriodLabel" style="margin-left:15px;"></span>
+									<select id="endPeriodList"></select>
+									<select id="endYearList"></select>
 								</div>
 
 								<div class="span4 pull-left">
-									<select id="year" class="form-control pull-right ">
-									{literal}
-									<script>
-										now = new Date();
-										anio = now.getFullYear();
-										for(a=anio;a>=anio-10;a--){
-										document.write('<option value="'+a+'">'+a+'</option>');
-										}
-									</script>
-									{/literal}
-									</select>
-
-									<select id="month" class="form-control pull-right ">
-									  <option value="1">{translate label="ID_MONTH_ABB_1"}</option>
-									  <option value="2">{translate label="ID_MONTH_ABB_2"}</option>
-									  <option value="3">{translate label="ID_MONTH_ABB_3"}</option>
-									  <option value="4">{translate label="ID_MONTH_ABB_4"}</option>
-									  <option value="5">{translate label="ID_MONTH_ABB_5"}</option>
-									  <option value="6">{translate label="ID_MONTH_ABB_6"}</option>
-									  <option value="7">{translate label="ID_MONTH_ABB_7"}</option>
-									  <option value="8">{translate label="ID_MONTH_ABB_8"}</option>
-									  <option value="9">{translate label="ID_MONTH_ABB_9"}</option>
-									  <option value="10">{translate label="ID_MONTH_ABB_10"}</option>
-									  <option value="11">{translate label="ID_MONTH_ABB_11"}</option>
-									  <option value="12">{translate label="ID_MONTH_ABB_12"}</option>
-									</select>
+									<button type="button" id="compareButton" class="btn btn-compare btn-success pull-right btn-date">{translate label="ID_DASH_COMPARE"}</button>
 								</div>
-
-								<div class="span4 pull-left">
-									<button type="button" class="btn btn-compare btn-success pull-right btn-date">{translate label="ID_DASH_COMPARE"}</button>
-								</div>
-
 							</div>
                         </div>
                         <div class="clearfix"></div>
@@ -423,7 +409,7 @@
                 <!-- /.col-lg-12 -->
             </div>
           <!-- Indicators -->
-          <div class="row">
+          <div class="row" id="indicatorsView">
               <div class="indicators">
                 <div id="indicatorsGridStack" class="grid-stack" data-gs-width="12" data-gs-animate="no" >
                   <!--Here are added dynamically the Indicators-->
@@ -441,7 +427,7 @@
 						<center><h3></h3></center>
 					</div>
 					<div id="sortby">
-						{translate label="ID_SORT_BY"} {translate label="ID_COSTS"} : &nbsp; <a id="sortListButton" class="fa fa-chevron-up fa-1x" style="color:#000;" href="#"></a>
+						{translate label="ID_SORT_BY"} {translate label="ID_COSTS"} : &nbsp; <a id="sortListButton" class="fa fa-arrow-up fa-1x" style="color:#000;" href="#"></a>
 					</div>
 			  </div>
 
@@ -451,6 +437,21 @@
                    </div>
               </div>
             </div>
+
+			<div class="process-div" id="compareDiv">
+				<div class="row">
+					<div class="col-lg-12 col-md-12">
+						<div class="panel-heading">
+							<ol id="comparisonBreadcrumb" class="breadcrumb">
+							</ol>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div id="compareGraph" style="padding:0 50px 0 50px;">
+					</div>
+				</div>
+			</div>
     </div>
   </div>
 

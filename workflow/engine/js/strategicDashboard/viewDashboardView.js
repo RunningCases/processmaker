@@ -27,18 +27,18 @@ WidgetBuilder.prototype.buildSpecialIndicatorButton = function (indicator) {
 	
 	if(indicator.comparative < 0){
 		$retval.find(".ind-container-selector").removeClass("panel-green").addClass("panel-red");
-		$retval.find(".ind-symbol-selector").removeClass("fa-chevron-up").addClass("fa-chevron-down");
+		$retval.find(".ind-symbol-selector").removeClass("fa-arrow-up").addClass("fa-arrow-down");
 	}
 
 	if(indicator.comparative > 0){
 		$retval.find(".ind-container-selector").removeClass("panel-red").addClass("panel-green");
-		$retval.find(".ind-symbol-selector").removeClass("fa-chevron-down").addClass("fa-chevron-up");
+		$retval.find(".ind-symbol-selector").removeClass("fa-arrow-down").addClass("fa-arrow-up");
 	}
 
 	if(indicator.comparative == 0){
-		$retval.find(".ind-symbol-selector").removeClass("fa-chevron-up");
-		$retval.find(".ind-symbol-selector").removeClass("fa-chevron-down");
-		$retval.find(".ind-symbol-selector").addClass("fa-circle-o");
+		$retval.find(".ind-symbol-selector").removeClass("fa-arrow-up");
+		$retval.find(".ind-symbol-selector").removeClass("fa-arrow-down");
+		$retval.find(".ind-symbol-selector").addClass("fa-arrows-h");
 		$retval.find(".ind-container-selector").removeClass("panel-red").addClass("panel-green");
 	}
 	return $retval;
@@ -249,13 +249,13 @@ $(document).ready(function() {
 
 	$('#sortListButton').click(function() {
 		var btn = $(this);
-		if (btn.hasClass('fa-chevron-up')) {
-			btn.removeClass('fa-chevron-up');
-			btn.addClass('fa-chevron-down');
+		if (btn.hasClass('fa-arrow-up')) {
+			btn.removeClass('fa-arrow-up');
+			btn.addClass('fa-arrow-down');
 		}
 		else {
-			btn.removeClass('fa-chevron-down');
-			btn.addClass('fa-chevron-up');
+			btn.removeClass('fa-arrow-down');
+			btn.addClass('fa-arrow-up');
 		}
 
 		window.currentDetailFunction (presenter.orderDataList (
@@ -352,13 +352,13 @@ $(document).ready(function() {
 
 
 	/*-------------------------------clicks----------------------------*/
-	$('body').on('click','.btn-compare', function() {
+	/*$('body').on('click','.btn-compare', function() {
 		presenter.getDashboardIndicators(window.currentDashboardId, defaultInitDate(), defaultEndDate())
 				.done(function(indicatorsVM) {
 					fillIndicatorWidgets(indicatorsVM);
 					loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
 				});
-	});
+	});*/
 
 	$('#dashboardsList').on('click','.das-title-selector', function() {
 		var dashboardId = $(this).parent().data('dashboard-id');
@@ -375,6 +375,18 @@ $(document).ready(function() {
 		var indicatorId = $(this).data('indicator-id');
 		loadIndicator(indicatorId, defaultInitDate(), defaultEndDate());
 	});
+
+    $('#indicatorsGridStack').on('click','.status-indicator-low', function() {
+        locationCases('OVERDUE');
+    });
+
+    $('#indicatorsGridStack').on('click','.status-indicator-medium', function() {
+        locationCases('AT_RISK');
+    });
+
+    $('#indicatorsGridStack').on('click','.status-indicator-high', function() {
+        locationCases('ON_TIME');
+    });
 
 	$('body').on('click','.bread-back-selector', function() {
 		var indicatorId = window.currentIndicator.id;
@@ -396,7 +408,10 @@ $(document).ready(function() {
 				fillSpecialIndicatorSecondView(viewModel);
 			});
 	});
+
 	initialDraw();
+
+
 });
 
 var hideScrollIfAllDivsAreVisible = function(){
@@ -433,7 +448,7 @@ var hideTitleAndSortDiv = function(){
 }
 
 var selectedOrderOfDetailList = function () {
-	return ($('#sortListButton').hasClass('fa-chevron-up') ? "up" : "down");
+	return ($('#sortListButton').hasClass('fa-arrow-up') ? "up" : "down");
 }
 
 var selectDefaultMonthAndYear = function () {
@@ -442,8 +457,8 @@ var selectDefaultMonthAndYear = function () {
 	compareDate.setMonth(compareDate.getMonth() - 1);
 	var compareMonth = compareDate.getMonth() + 1;
 	var compareYear = compareDate.getFullYear();
-	$('#month').val(compareMonth);
-	$('#year').val(compareYear);
+	$('#endPeriodList').val(compareMonth);
+	$('#endYearList').val(compareYear);
 }
 
 var setActiveDashboard = function () {
@@ -461,13 +476,20 @@ var initialDraw = function () {
 		.then(function(dashboardsVM) {
 				fillDashboardsList(dashboardsVM);
 				if (window.currentDashboardId == null) {return;}
-				/**** window initialization  with favorite dashboard*****/
-				presenter.getDashboardIndicators(window.currentDashboardId, defaultInitDate(), defaultEndDate())
-						.done(function(indicatorsVM) {
-							fillIndicatorWidgets(indicatorsVM);
-							loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
-							setActiveDashboard();
-						});
+
+				console.log(tsPresenter);
+				console.log(window.currentDashboardId);
+				tsPresenter.initializePresenter(window.currentDashboardId)
+					.done(function (data){
+						bindTimeSeriesLists(tsPresenter);
+						/**** window initialization  with favorite dashboard*****/
+						presenter.getDashboardIndicators(window.currentDashboardId, defaultInitDate(), defaultEndDate())
+								.done(function(indicatorsVM) {
+									fillIndicatorWidgets(indicatorsVM);
+									loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
+									setActiveDashboard();
+								});
+					});
 			});
 }
 
@@ -483,7 +505,7 @@ var loadIndicator = function (indicatorId, initDate, endDate) {
 						fillSpecialIndicatorFirstView(viewModel);
 						break;
 					case "1050":
-						fillStatusIndicatorFirstView(viewModel);
+						//fillStatusIndicatorFirstView(viewModel);
 						break;
 					default:
 						fillGeneralIndicatorFirstView(viewModel);
@@ -491,8 +513,12 @@ var loadIndicator = function (indicatorId, initDate, endDate) {
 				}
 				hideScrollIfAllDivsAreVisible();
 				hideTitleAndSortDiv();
+                $('[data-toggle="tooltip"]').tooltip({
+                    animated: 'fade',
+                    placement: 'bottom'
+                });
 			});
-}
+};
 
 var setIndicatorActiveMarker = function () {
 	$('.panel-footer').each (function () {
@@ -522,15 +548,17 @@ var defaultInitDate = function() {
     var date = new Date();
     var dateMonth = date.getMonth();
     var dateYear = date.getFullYear();
-	var initDate = $('#year').val() + '-' + $('#month').val() + '-' + '01';
+	var initDate = $('#initYearList').val() + '-' + $('#initPeriodList').val() + '-' + '01';
 	return initDate;
 }
 
 var defaultEndDate = function () {
+	//TODO use the timeSeries function that finds the last day in the period
     var date = new Date();
     var dateMonth = date.getMonth();
     var dateYear = date.getFullYear();
-	return dateYear + "-" + (dateMonth + 1) + "-30";
+	var initDate = $('#endYearList').val() + '-' + $('#endPeriodList').val() + '-' + '30';
+	return initDate;
 }
 
 var fillDashboardsList = function (presenterData) {
@@ -552,7 +580,6 @@ var fillDashboardsList = function (presenterData) {
 				.addClass('selected');
 		}
 	}
-	
 };
 
 var fillIndicatorWidgets = function (presenterData) {
@@ -989,6 +1016,30 @@ var animateProgress = function (indicatorItem, widget){
 	  }
 	fpAnimationFrame(animacion); 
 };
+
+var createCookie = function (name, value, time) {
+    if (time) {
+        var date = new Date();
+        date.setTime(date.getTime()+(time*24*60*60*1000));
+        var expires = "; expires="+date.toUTCString();
+    } else {
+        var expires = "";
+    }
+    document.cookie = name+"="+value+expires+"; path=/sys"+workspace;
+};
+
+var locationCases = function (type) {
+    createCookie("dashboardListInbox", type, 1);
+
+    var currentLocation = location.href;
+    var position = currentLocation.lastIndexOf('/', currentLocation.lastIndexOf('/') - 1);
+    currentLocation = currentLocation.substring(0, position+1);
+    currentLocation = currentLocation + 'cases/main';
+
+    parent.location.href = currentLocation;
+};
+
+
 
 /*var dashboardButtonTemplate = ' <div class="btn-group pull-left"> \ 
 								<button id="favorite" type="button" class="btn btn-success"><i class="fa fa-star fa-1x"></i></button> \
