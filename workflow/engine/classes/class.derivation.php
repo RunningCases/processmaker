@@ -112,7 +112,7 @@ class Derivation
                     $arrayTaskData["NEXT_TASK"]["TAS_PARENT"] = "";
                 }
 
-                $arrayTaskData["NEXT_TASK"]["USER_ASSIGNED"] = (!in_array($arrayTaskData["NEXT_TASK"]["TAS_TYPE"], array("GATEWAYTOGATEWAY", "END-MESSAGE-EVENT")))? $this->getNextAssignedUser($arrayTaskData) : array("USR_UID" => "");
+                $arrayTaskData["NEXT_TASK"]["USER_ASSIGNED"] = (!in_array($arrayTaskData["NEXT_TASK"]["TAS_TYPE"], array("GATEWAYTOGATEWAY", "END-MESSAGE-EVENT", "SCRIPT-TASK")))? $this->getNextAssignedUser($arrayTaskData) : array("USR_UID" => "", "USR_FULLNAME" => "");
             }
 
             //Return
@@ -575,7 +575,7 @@ class Derivation
      * @param   array   $nextDelegations
      * @return  void
      */
-    function derivate ($currentDelegation = array(), $nextDelegations = array())
+    function derivate ($currentDelegation = array(), $nextDelegations = array(), $removeList = true)
     {
         //define this...
         if (! defined( 'TASK_FINISH_PROCESS' )) {
@@ -587,13 +587,16 @@ class Derivation
 
         $this->case = new cases();
 
-        //first, we close the current derivation, then we'll try to derivate to each defined route
+        //Get data for this DEL_INDEX current
         $appFields = $this->case->loadCase( $currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX'] );
+
+        //We close the current derivation, then we'll try to derivate to each defined route
         $this->case->CloseCurrentDelegation( $currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX'] );
 
         //Count how many tasks should be derivated.
         //$countNextTask = count($nextDelegations);
-        $removeList = true;
+        //$removeList = true;
+
         foreach ($nextDelegations as $nextDel) {
             //BpmnEvent - END-MESSAGE-EVENT - Check and get unique id
             if (preg_match("/^(.{32})\/(\-1)$/", $nextDel["TAS_UID"], $arrayMatch)) {
@@ -706,30 +709,69 @@ class Derivation
                     } //end switch
 
                     if ($canDerivate) {
-                        $aSP = isset( $aSP ) ? $aSP : null;
-                        $iNewDelIndex = $this->doDerivation( $currentDelegation, $nextDel, $appFields, $aSP );
-
                         //Throw Message-Events
                         $case = new \ProcessMaker\BusinessModel\Cases();
 
-                        $case->throwMessageEventBetweenElementOriginAndElementDest(
-                            $currentDelegation["TAS_UID"],
-                            $nextDel["TAS_UID"],
-                            $appFields
-                        );
+                        $case->throwMessageEventBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields);
+
+                        //Derivate
+                        $aSP = isset( $aSP ) ? $aSP : null;
+
+                        $taskNextDel = \TaskPeer::retrieveByPK($nextDel["TAS_UID"]);
+
+                        if (!is_null($taskNextDel) && $taskNextDel->getTasType() == "SCRIPT-TASK") {
+                           if (!isset($nextDel["USR_UID"])) {
+                               $nextDel["USR_UID"] = "";
+                           }
+                        }
+
+                        $iNewDelIndex = $this->doDerivation( $currentDelegation, $nextDel, $appFields, $aSP );
+
+                        //Execute Script-Task
+                        $scriptTask = new \ProcessMaker\BusinessModel\ScriptTask();
+
+                        $appFields = $scriptTask->execScriptByActivityUid($nextDel["TAS_UID"], $appFields);
 
                         //Create record in table APP_ASSIGN_SELF_SERVICE_VALUE
                         $task = new Task();
                         $arrayNextTaskData = $task->load($nextDel["TAS_UID"]);
 
-                        if ($arrayNextTaskData["TAS_ASSIGN_TYPE"] == "SELF_SERVICE" && trim($arrayNextTaskData["TAS_GROUP_VARIABLE"]) != "") {
-                            $nextTaskGroupVariable = trim($arrayNextTaskData["TAS_GROUP_VARIABLE"], " @#");
+                        if (!in_array($arrayNextTaskData["TAS_TYPE"], array("SCRIPT-TASK"))) {
+                            if ($arrayNextTaskData["TAS_ASSIGN_TYPE"] == "SELF_SERVICE" && trim($arrayNextTaskData["TAS_GROUP_VARIABLE"]) != "") {
+                                $nextTaskGroupVariable = trim($arrayNextTaskData["TAS_GROUP_VARIABLE"], " @#");
 
-                            if (isset($appFields["APP_DATA"][$nextTaskGroupVariable]) && trim($appFields["APP_DATA"][$nextTaskGroupVariable]) != "") {
-                                $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+                                if (isset($appFields["APP_DATA"][$nextTaskGroupVariable]) && trim($appFields["APP_DATA"][$nextTaskGroupVariable]) != "") {
+                                    $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
 
-                                $appAssignSelfServiceValue->create($appFields["APP_UID"], $iNewDelIndex, array("PRO_UID" => $appFields["PRO_UID"], "TAS_UID" => $nextDel["TAS_UID"], "GRP_UID" => trim($appFields["APP_DATA"][$nextTaskGroupVariable])));
+                                    $appAssignSelfServiceValue->create($appFields["APP_UID"], $iNewDelIndex, array("PRO_UID" => $appFields["PRO_UID"], "TAS_UID" => $nextDel["TAS_UID"], "GRP_UID" => trim($appFields["APP_DATA"][$nextTaskGroupVariable])));
+                                }
                             }
+                        }
+
+                        //Check if $nextDel["TAS_UID"] is Script-Task
+                        if (!is_null($taskNextDel) && $taskNextDel->getTasType() == "SCRIPT-TASK") {
+                            $this->case->CloseCurrentDelegation($currentDelegation["APP_UID"], $iNewDelIndex);
+
+                            //Get for $nextDel["TAS_UID"] your next Task
+                            $taskNextDelNextDelegations = $this->prepareInformation(array(
+                                "USER_UID"  => $_SESSION["USER_LOGGED"],
+                                "APP_UID"   => $_SESSION["APPLICATION"],
+                                "DEL_INDEX" => $iNewDelIndex
+                            ));
+
+                            //New next delegation
+                            $newNextDelegation = array();
+
+                            $newNextDelegation[1] = array(
+                                "TAS_UID"           => $taskNextDelNextDelegations[1]["NEXT_TASK"]["TAS_UID"],
+                                "USR_UID"           => $taskNextDelNextDelegations[1]["NEXT_TASK"]["USER_ASSIGNED"]["USR_UID"],
+                                "TAS_ASSIGN_TYPE"   => $taskNextDelNextDelegations[1]["NEXT_TASK"]["TAS_ASSIGN_TYPE"],
+                                "TAS_DEF_PROC_CODE" => "",
+                                "DEL_PRIORITY"      => "",
+                                "TAS_PARENT"        => ""
+                            );
+
+                            $this->derivate($currentDelegation, $newNextDelegation, $removeList);
                         }
                     } else {
                         //when the task doesnt generate a new AppDelegation
@@ -763,7 +805,9 @@ class Derivation
             } elseif ($nextDel['TAS_UID'] != '-1') {
                 $taskNex = TaskPeer::retrieveByPK($nextDel['TAS_UID']);
                 $aTask = $taskNex->toArray( BasePeer::TYPE_FIELDNAME );
-                $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
+
+                $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT", "SCRIPT-TASK");
+
                 if (!in_array($aTask['TAS_TYPE'], $arrayTaskTypeToExclude)) {
                     if (!empty($iNewDelIndex) && empty($aSP)) {
                         $oAppDel = AppDelegationPeer::retrieveByPK( $appFields['APP_UID'], $iNewDelIndex );
@@ -777,7 +821,6 @@ class Derivation
                         $aFields['REMOVED_LIST'] = $removeList;
                         $inbox = new ListInbox();
                         $inbox->newRow($aFields, $appFields['CURRENT_USER_UID'], false, array(), ($nextDel['TAS_ASSIGN_TYPE'] == 'SELF_SERVICE' ? true : false));
-                        $removeList = false;
                     } else {
                         if (empty($aSP)) {
                             $oRow = ApplicationPeer::retrieveByPK($appFields['APP_UID']);
@@ -791,18 +834,24 @@ class Derivation
                         }
                     }
                 } else {
-                    $oRow = ApplicationPeer::retrieveByPK($appFields['APP_UID']);
-                    $aFields = $oRow->toArray( BasePeer::TYPE_FIELDNAME );
-                    $users = new Users();
-                    if ($aFields['APP_STATUS'] == 'DRAFT') {
-                        $users->refreshTotal($appFields['CURRENT_USER_UID'], 'remove', 'draft');
-                    } else {
-                        $users->refreshTotal($appFields['CURRENT_USER_UID'], 'remove', 'inbox');
+                    if (!in_array($aTask['TAS_TYPE'], array("SCRIPT-TASK"))) {
+                        $oRow = ApplicationPeer::retrieveByPK($appFields["APP_UID"]);
+                        $aFields = $oRow->toArray( BasePeer::TYPE_FIELDNAME );
+
+                        $users = new Users();
+
+                        if ($aFields["APP_STATUS"] == "DRAFT") {
+                            $users->refreshTotal($appFields["CURRENT_USER_UID"], "remove", "draft");
+                        } else {
+                            $users->refreshTotal($appFields["CURRENT_USER_UID"], "remove", "inbox");
+                        }
                     }
                 }
             }
             /*----------------------------------********---------------------------------*/
             unset( $aSP );
+
+            $removeList = false;
         } //end foreach
 
         /* Start Block : UPDATES APPLICATION */
@@ -1043,14 +1092,14 @@ class Derivation
                 $oCase->updateCase( $aSA['APP_PARENT'], $aParentCase );
                 /*----------------------------------********---------------------------------*/
                 $inbox = new ListInbox();
-                $inbox->update($aParentCase);                
+                $inbox->update($aParentCase);
                 /*----------------------------------********---------------------------------*/
-                
+
                 //Update table SUB_APPLICATION
                 $oSubApplication = new SubApplication();
                 $oSubApplication->update( array ('APP_UID' => $sApplicationUID,'APP_PARENT' => $aSA['APP_PARENT'],'DEL_INDEX_PARENT' => $aSA['DEL_INDEX_PARENT'],'DEL_THREAD_PARENT' => $aSA['DEL_THREAD_PARENT'],'SA_STATUS' => 'FINISHED','SA_VALUES_IN' => serialize( $aNewFields ),'SA_FINISH_DATE' => date( 'Y-m-d H:i:s' )
                 ) );
-                
+
                 //Derive the parent case
                 $aDeriveTasks = $this->prepareInformation( array ('USER_UID' => - 1,'APP_UID' => $aSA['APP_PARENT'],'DEL_INDEX' => $aSA['DEL_INDEX_PARENT']
                 ) );
