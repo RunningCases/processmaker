@@ -34,16 +34,16 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
     protected $email_event_uid;
 
     /**
-     * The value for the pro_uid field.
+     * The value for the prj_uid field.
      * @var        string
      */
-    protected $pro_uid = '';
+    protected $prj_uid = '';
 
     /**
-     * The value for the act_uid field.
+     * The value for the evn_uid field.
      * @var        string
      */
-    protected $act_uid;
+    protected $evn_uid;
 
     /**
      * The value for the email_event_from field.
@@ -95,25 +95,25 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [pro_uid] column value.
+     * Get the [prj_uid] column value.
      * 
      * @return     string
      */
-    public function getProUid()
+    public function getPrjUid()
     {
 
-        return $this->pro_uid;
+        return $this->prj_uid;
     }
 
     /**
-     * Get the [act_uid] column value.
+     * Get the [evn_uid] column value.
      * 
      * @return     string
      */
-    public function getActUid()
+    public function getEvnUid()
     {
 
-        return $this->act_uid;
+        return $this->evn_uid;
     }
 
     /**
@@ -183,12 +183,12 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
     } // setEmailEventUid()
 
     /**
-     * Set the value of [pro_uid] column.
+     * Set the value of [prj_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setProUid($v)
+    public function setPrjUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -197,20 +197,20 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->pro_uid !== $v || $v === '') {
-            $this->pro_uid = $v;
-            $this->modifiedColumns[] = EmailEventPeer::PRO_UID;
+        if ($this->prj_uid !== $v || $v === '') {
+            $this->prj_uid = $v;
+            $this->modifiedColumns[] = EmailEventPeer::PRJ_UID;
         }
 
-    } // setProUid()
+    } // setPrjUid()
 
     /**
-     * Set the value of [act_uid] column.
+     * Set the value of [evn_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setActUid($v)
+    public function setEvnUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -219,12 +219,12 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->act_uid !== $v) {
-            $this->act_uid = $v;
-            $this->modifiedColumns[] = EmailEventPeer::ACT_UID;
+        if ($this->evn_uid !== $v) {
+            $this->evn_uid = $v;
+            $this->modifiedColumns[] = EmailEventPeer::EVN_UID;
         }
 
-    } // setActUid()
+    } // setEvnUid()
 
     /**
      * Set the value of [email_event_from] column.
@@ -333,9 +333,9 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
 
             $this->email_event_uid = $rs->getString($startcol + 0);
 
-            $this->pro_uid = $rs->getString($startcol + 1);
+            $this->prj_uid = $rs->getString($startcol + 1);
 
-            $this->act_uid = $rs->getString($startcol + 2);
+            $this->evn_uid = $rs->getString($startcol + 2);
 
             $this->email_event_from = $rs->getString($startcol + 3);
 
@@ -558,10 +558,10 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
                 return $this->getEmailEventUid();
                 break;
             case 1:
-                return $this->getProUid();
+                return $this->getPrjUid();
                 break;
             case 2:
-                return $this->getActUid();
+                return $this->getEvnUid();
                 break;
             case 3:
                 return $this->getEmailEventFrom();
@@ -596,8 +596,8 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
         $keys = EmailEventPeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getEmailEventUid(),
-            $keys[1] => $this->getProUid(),
-            $keys[2] => $this->getActUid(),
+            $keys[1] => $this->getPrjUid(),
+            $keys[2] => $this->getEvnUid(),
             $keys[3] => $this->getEmailEventFrom(),
             $keys[4] => $this->getEmailEventTo(),
             $keys[5] => $this->getEmailEventSubject(),
@@ -637,10 +637,10 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
                 $this->setEmailEventUid($value);
                 break;
             case 1:
-                $this->setProUid($value);
+                $this->setPrjUid($value);
                 break;
             case 2:
-                $this->setActUid($value);
+                $this->setEvnUid($value);
                 break;
             case 3:
                 $this->setEmailEventFrom($value);
@@ -682,11 +682,11 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[1], $arr)) {
-            $this->setProUid($arr[$keys[1]]);
+            $this->setPrjUid($arr[$keys[1]]);
         }
 
         if (array_key_exists($keys[2], $arr)) {
-            $this->setActUid($arr[$keys[2]]);
+            $this->setEvnUid($arr[$keys[2]]);
         }
 
         if (array_key_exists($keys[3], $arr)) {
@@ -720,12 +720,12 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
             $criteria->add(EmailEventPeer::EMAIL_EVENT_UID, $this->email_event_uid);
         }
 
-        if ($this->isColumnModified(EmailEventPeer::PRO_UID)) {
-            $criteria->add(EmailEventPeer::PRO_UID, $this->pro_uid);
+        if ($this->isColumnModified(EmailEventPeer::PRJ_UID)) {
+            $criteria->add(EmailEventPeer::PRJ_UID, $this->prj_uid);
         }
 
-        if ($this->isColumnModified(EmailEventPeer::ACT_UID)) {
-            $criteria->add(EmailEventPeer::ACT_UID, $this->act_uid);
+        if ($this->isColumnModified(EmailEventPeer::EVN_UID)) {
+            $criteria->add(EmailEventPeer::EVN_UID, $this->evn_uid);
         }
 
         if ($this->isColumnModified(EmailEventPeer::EMAIL_EVENT_FROM)) {
@@ -798,9 +798,9 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
     public function copyInto($copyObj, $deepCopy = false)
     {
 
-        $copyObj->setProUid($this->pro_uid);
+        $copyObj->setPrjUid($this->prj_uid);
 
-        $copyObj->setActUid($this->act_uid);
+        $copyObj->setEvnUid($this->evn_uid);
 
         $copyObj->setEmailEventFrom($this->email_event_from);
 

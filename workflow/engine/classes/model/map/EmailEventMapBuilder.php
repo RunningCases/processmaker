@@ -67,9 +67,9 @@ class EmailEventMapBuilder
 
         $tMap->addPrimaryKey('EMAIL_EVENT_UID', 'EmailEventUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
-        $tMap->addColumn('PRO_UID', 'ProUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addColumn('PRJ_UID', 'PrjUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
-        $tMap->addColumn('ACT_UID', 'ActUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addColumn('EVN_UID', 'EvnUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addColumn('EMAIL_EVENT_FROM', 'EmailEventFrom', 'string', CreoleTypes::VARCHAR, true, 100);
 

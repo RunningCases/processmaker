@@ -48,10 +48,10 @@ class EmailEvent extends Api
      * @param string $prj_uid {@min 1} {@max 32}
      * @param string $act_uid {@min 1} {@max 32}
      */
-    public function doGetEmailEvent($prj_uid, $act_uid )
+    public function doGetEmailEvent($prj_uid, $act_uid)
     {
         try {
-            $response = $this->EmailEvent->getEmailEventData($act_uid);
+            $response = $this->EmailEvent->getEmailEventData($prj_uid, $act_uid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -98,7 +98,22 @@ class EmailEvent extends Api
     public function doDeleteEmailEvent($prj_uid, $email_event_uid)
     {
         try {
-            $this->EmailEvent->delete($email_event_uid);
+            $this->EmailEvent->delete($prj_uid, $email_event_uid);
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+    
+    /**
+     * @url DELETE /:prj_uid/email-event/by-event/:act_uid
+     *
+     * @param string $prj_uid   {@min 32}{@max 32}
+     * @param string $act_uid {@min 32}{@max 32}
+     */
+    public function doDeleteEmailEventByEvent ($prj_uid, $act_uid)
+    {
+        try {
+            $this->EmailEvent->deleteByEvent($prj_uid, $act_uid);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }

@@ -34,11 +34,11 @@ abstract class BaseEmailEventPeer
     /** the column name for the EMAIL_EVENT_UID field */
     const EMAIL_EVENT_UID = 'EMAIL_EVENT.EMAIL_EVENT_UID';
 
-    /** the column name for the PRO_UID field */
-    const PRO_UID = 'EMAIL_EVENT.PRO_UID';
+    /** the column name for the PRJ_UID field */
+    const PRJ_UID = 'EMAIL_EVENT.PRJ_UID';
 
-    /** the column name for the ACT_UID field */
-    const ACT_UID = 'EMAIL_EVENT.ACT_UID';
+    /** the column name for the EVN_UID field */
+    const EVN_UID = 'EMAIL_EVENT.EVN_UID';
 
     /** the column name for the EMAIL_EVENT_FROM field */
     const EMAIL_EVENT_FROM = 'EMAIL_EVENT.EMAIL_EVENT_FROM';
@@ -63,9 +63,9 @@ abstract class BaseEmailEventPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('EmailEventUid', 'ProUid', 'ActUid', 'EmailEventFrom', 'EmailEventTo', 'EmailEventSubject', 'EmailEventBody', ),
-        BasePeer::TYPE_COLNAME => array (EmailEventPeer::EMAIL_EVENT_UID, EmailEventPeer::PRO_UID, EmailEventPeer::ACT_UID, EmailEventPeer::EMAIL_EVENT_FROM, EmailEventPeer::EMAIL_EVENT_TO, EmailEventPeer::EMAIL_EVENT_SUBJECT, EmailEventPeer::EMAIL_EVENT_BODY, ),
-        BasePeer::TYPE_FIELDNAME => array ('EMAIL_EVENT_UID', 'PRO_UID', 'ACT_UID', 'EMAIL_EVENT_FROM', 'EMAIL_EVENT_TO', 'EMAIL_EVENT_SUBJECT', 'EMAIL_EVENT_BODY', ),
+        BasePeer::TYPE_PHPNAME => array ('EmailEventUid', 'PrjUid', 'EvnUid', 'EmailEventFrom', 'EmailEventTo', 'EmailEventSubject', 'EmailEventBody', ),
+        BasePeer::TYPE_COLNAME => array (EmailEventPeer::EMAIL_EVENT_UID, EmailEventPeer::PRJ_UID, EmailEventPeer::EVN_UID, EmailEventPeer::EMAIL_EVENT_FROM, EmailEventPeer::EMAIL_EVENT_TO, EmailEventPeer::EMAIL_EVENT_SUBJECT, EmailEventPeer::EMAIL_EVENT_BODY, ),
+        BasePeer::TYPE_FIELDNAME => array ('EMAIL_EVENT_UID', 'PRJ_UID', 'EVN_UID', 'EMAIL_EVENT_FROM', 'EMAIL_EVENT_TO', 'EMAIL_EVENT_SUBJECT', 'EMAIL_EVENT_BODY', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
@@ -76,9 +76,9 @@ abstract class BaseEmailEventPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('EmailEventUid' => 0, 'ProUid' => 1, 'ActUid' => 2, 'EmailEventFrom' => 3, 'EmailEventTo' => 4, 'EmailEventSubject' => 5, 'EmailEventBody' => 6, ),
-        BasePeer::TYPE_COLNAME => array (EmailEventPeer::EMAIL_EVENT_UID => 0, EmailEventPeer::PRO_UID => 1, EmailEventPeer::ACT_UID => 2, EmailEventPeer::EMAIL_EVENT_FROM => 3, EmailEventPeer::EMAIL_EVENT_TO => 4, EmailEventPeer::EMAIL_EVENT_SUBJECT => 5, EmailEventPeer::EMAIL_EVENT_BODY => 6, ),
-        BasePeer::TYPE_FIELDNAME => array ('EMAIL_EVENT_UID' => 0, 'PRO_UID' => 1, 'ACT_UID' => 2, 'EMAIL_EVENT_FROM' => 3, 'EMAIL_EVENT_TO' => 4, 'EMAIL_EVENT_SUBJECT' => 5, 'EMAIL_EVENT_BODY' => 6, ),
+        BasePeer::TYPE_PHPNAME => array ('EmailEventUid' => 0, 'PrjUid' => 1, 'EvnUid' => 2, 'EmailEventFrom' => 3, 'EmailEventTo' => 4, 'EmailEventSubject' => 5, 'EmailEventBody' => 6, ),
+        BasePeer::TYPE_COLNAME => array (EmailEventPeer::EMAIL_EVENT_UID => 0, EmailEventPeer::PRJ_UID => 1, EmailEventPeer::EVN_UID => 2, EmailEventPeer::EMAIL_EVENT_FROM => 3, EmailEventPeer::EMAIL_EVENT_TO => 4, EmailEventPeer::EMAIL_EVENT_SUBJECT => 5, EmailEventPeer::EMAIL_EVENT_BODY => 6, ),
+        BasePeer::TYPE_FIELDNAME => array ('EMAIL_EVENT_UID' => 0, 'PRJ_UID' => 1, 'EVN_UID' => 2, 'EMAIL_EVENT_FROM' => 3, 'EMAIL_EVENT_TO' => 4, 'EMAIL_EVENT_SUBJECT' => 5, 'EMAIL_EVENT_BODY' => 6, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
@@ -182,9 +182,9 @@ abstract class BaseEmailEventPeer
 
         $criteria->addSelectColumn(EmailEventPeer::EMAIL_EVENT_UID);
 
-        $criteria->addSelectColumn(EmailEventPeer::PRO_UID);
+        $criteria->addSelectColumn(EmailEventPeer::PRJ_UID);
 
-        $criteria->addSelectColumn(EmailEventPeer::ACT_UID);
+        $criteria->addSelectColumn(EmailEventPeer::EVN_UID);
 
         $criteria->addSelectColumn(EmailEventPeer::EMAIL_EVENT_FROM);
 

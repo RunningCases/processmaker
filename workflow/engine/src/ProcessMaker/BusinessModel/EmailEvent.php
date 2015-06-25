@@ -6,7 +6,7 @@ class EmailEvent
     /*private $arrayFieldDefinition = array(
         "EMAIL_EVENT_UID"         => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "emailEventUid"),
         "PRJ_UID"           => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "projectUid"),
-        "ACT_UID"           => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(), "fieldNameAux" => "eventUid"),
+        "EVN_UID"           => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(), "fieldNameAux" => "eventUid"),
         "EMAIL_EVENT_FROM"          => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "messageTypeUid"),
         "EMAIL_EVENT_TO"     => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "EmailEventUserUid"),
         "EMAIL_EVENT_SUBJECT"   => array("type" => "array",  "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "EmailEventVariables"),
@@ -45,15 +45,43 @@ class EmailEvent
     
     /**
      * Get the Email-Event data
-     * @var string $act_uid. uid for activity  
+     * @var string $evn_uid. uid for activity  
+     * @var string $pro_uid. uid for process  
      * return array
      */
-    public function getEmailEventData($act_uid)
+    public function getEmailEventData($pro_uid, $evn_uid)
     {
         try {
             //Get data
             $criteria = $this->getEmailEventCriteria();
-            $criteria->add(\EmailEventPeer::ACT_UID, $act_uid, \Criteria::EQUAL);
+            $criteria->add(\EmailEventPeer::EVN_UID, $evn_uid, \Criteria::EQUAL);
+            $criteria->add(\EmailEventPeer::PRJ_UID, $pro_uid, \Criteria::EQUAL);
+            $rsCriteria = \EmailEventPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            $row = $rsCriteria->getRow();
+            if(is_array($row)) {
+                $row = array_change_key_case($row, CASE_LOWER);
+            }
+            return $row;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+    
+    /**
+     * Get the Email-Event data
+     * @var string $emailEventUid. uid for email event
+     * @var string $pro_uid. uid for process  
+     * return array
+     */
+    public function getEmailEventDataByUid($pro_uid, $emailEventUid)
+    {
+        try {
+            //Get data
+            $criteria = $this->getEmailEventCriteria();
+            $criteria->add(\EmailEventPeer::EMAIL_EVENT_UID, $emailEventUid, \Criteria::EQUAL);
+            $criteria->add(\EmailEventPeer::PRJ_UID, $pro_uid, \Criteria::EQUAL);
             $rsCriteria = \EmailEventPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $rsCriteria->next();
@@ -95,12 +123,13 @@ class EmailEvent
 
             try {
                 $emailEvent = new \EmailEvent();
+                
                 $emailEvent->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
                 
                 $emailEventUid = \ProcessMaker\Util\Common::generateUID();
 
                 $emailEvent->setEmailEventUid($emailEventUid);
-                $emailEvent->setProUid($prj_uid);
+                $emailEvent->setPrjUid($prj_uid);
 
                 $db->begin();
                 $result = $emailEvent->save();
@@ -175,16 +204,47 @@ class EmailEvent
      *
      * return void
      */
-    public function delete($emailEventUid)
+    public function delete($pro_uid, $emailEventUid, $passValidation = true)
     {
         try {
             //Verify data
-            $this->verifyIfEmailEventExists($emailEventUid);
-
-            //Delete
+            if($passValidation) {
+                $this->verifyIfEmailEventExists($emailEventUid);
+            
+                //Delete file
+                $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
+                $arrayData = $this->getEmailEventDataByUid($pro_uid, $emailEventUid); 
+                if(sizeof($arrayData)) {
+                    $prfUid = $arrayData['email_event_body'];
+                    $filesManager->deleteProcessFilesManager('',$prfUid);
+                }
+            }
+            //Delete Email event
             $criteria = new \Criteria("workflow");
             $criteria->add(\EmailEventPeer::EMAIL_EVENT_UID, $emailEventUid, \Criteria::EQUAL);
             $result = \EmailEventPeer::doDelete($criteria);
+            
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+    
+    /**
+     * Delete Email-Event by event uid
+     *
+     * @param string $emailEventUid Unique id of Email-Event
+     *
+     * return void
+     */
+    public function deleteByEvent($prj_uid, $evn_uid)
+    {
+        try {
+            //Verify data
+            if (!$this->existsEvent($prj_uid, $evn_uid)) {
+                throw new \Exception(\G::LoadTranslation("ID_EMAIL_EVENT_DEFINITION_DOES_NOT_EXIST"));
+            }
+            $arrayData = $this->existsEvent($prj_uid, $evn_uid);
+            $this->delete($prj_uid, $arrayData[0]);
             
         } catch (\Exception $e) {
             throw $e;
@@ -249,8 +309,8 @@ class EmailEvent
             $criteria = new \Criteria("workflow");
 
             $criteria->addSelectColumn(\EmailEventPeer::EMAIL_EVENT_UID);
-            $criteria->addSelectColumn(\EmailEventPeer::PRO_UID);
-            $criteria->addSelectColumn(\EmailEventPeer::ACT_UID);
+            $criteria->addSelectColumn(\EmailEventPeer::PRJ_UID);
+            $criteria->addSelectColumn(\EmailEventPeer::EVN_UID);
             $criteria->addSelectColumn(\EmailEventPeer::EMAIL_EVENT_FROM);
             $criteria->addSelectColumn(\EmailEventPeer::EMAIL_EVENT_TO);
             $criteria->addSelectColumn(\EmailEventPeer::EMAIL_EVENT_SUBJECT);
@@ -268,6 +328,171 @@ class EmailEvent
             throw new \Exception(\G::LoadTranslation("ID_EMAIL_EVENT_DEFINITION_DOES_NOT_EXIST", array("Email Event Uid", $emailEventUid)));
         }
     }
+    
+    /**
+     * Verify if exists the Event of a Message-Event-Definition
+     *
+     * @param string $projectUid                         Unique id of Project
+     * @param string $eventUid                           Unique id of Event
+     *
+     * return bool Return true if exists the Event of a Message-Event-Definition, false otherwise
+     */
+    public function existsEvent($projectUid, $eventUid)
+    {
+        try {
+            $criteria = $this->getEmailEventCriteria();
+            $criteria->add(\EmailEventPeer::PRJ_UID, $projectUid, \Criteria::EQUAL);
+            $criteria->add(\EmailEventPeer::EVN_UID, $eventUid, \Criteria::EQUAL);
+            $rsCriteria = \EmailEventPeer::doSelectRS($criteria);
+            $rsCriteria->next();
+            $row = $rsCriteria->getRow();
+            if(is_array($row)) {
+                $row = array_change_key_case($row, CASE_LOWER);
+            }
+            return (sizeof($row))? $row : false;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+    
+    /**
+     * Email-event for the Case
+     *
+     * @param string $elementOriginUid     Unique id of Element Origin (unique id of Task)
+     * @param string $elementDestUid       Unique id of Element Dest   (unique id of Task)
+     * @param array  $arrayApplicationData Case data
+     *
+     * return void
+     */
+    public function emailEventBetweenElementOriginAndElementDest($elementOriginUid, $elementDestUid, array $arrayApplicationData)
+    {
+        try {
+            //Verify if the Project is BPMN
+            $bpmn = new \ProcessMaker\Project\Bpmn();
+            if (!$bpmn->exists($arrayApplicationData["PRO_UID"])) {
+                return;
+            }
 
+            //Element origin and dest
+            $elementTaskRelation = new \ProcessMaker\BusinessModel\ElementTaskRelation();
+
+            $arrayElement = array(
+                "elementOrigin" => array("uid" => $elementOriginUid, "type" => "bpmnActivity"),
+                "elementDest"   => array("uid" => $elementDestUid,   "type" => "bpmnActivity")
+            );
+            
+            foreach ($arrayElement as $key => $value) {
+                $arrayElementTaskRelationData = $elementTaskRelation->getElementTaskRelationWhere(
+                    array(
+                        \ElementTaskRelationPeer::PRJ_UID      => $arrayApplicationData["PRO_UID"],
+                        \ElementTaskRelationPeer::ELEMENT_TYPE => "bpmnEvent",
+                        \ElementTaskRelationPeer::TAS_UID      => $arrayElement[$key]["uid"]
+                    ),
+                    true
+                );
+
+                if (!is_null($arrayElementTaskRelationData)) {
+                    $arrayElement[$key]["uid"]  = $arrayElementTaskRelationData["ELEMENT_UID"];
+                    $arrayElement[$key]["type"] = "bpmnEvent";
+                }
+            }
+
+            $elementOriginUid  = $arrayElement["elementOrigin"]["uid"];
+            $elementOriginType = $arrayElement["elementOrigin"]["type"];
+            $elementDestUid    = $arrayElement["elementDest"]["uid"];
+            $elementDestType   = $arrayElement["elementDest"]["type"];
+
+            //Get Message-Events of throw type
+            $arrayEvent = $bpmn->getEmailEventTypeBetweenElementOriginAndElementDest(
+                $elementOriginUid,
+                $elementOriginType,
+                $elementDestUid,
+                $elementDestType
+            );
+
+            //Email-event
+            foreach ($arrayEvent as $value) {
+                $result = $this->sendEmail($arrayApplicationData["APP_UID"], $arrayApplicationData["PRO_UID"], $value[0], $arrayApplicationData);
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+    
+    /**
+     * Email-event do function
+     *
+     * @param string $appUID               Unique id of application
+     * @param string $prj_uid              Unique id of Project
+     * @param string $eventUid             Unique id of event
+     * @param array  $arrayApplicationData Case data
+     *
+     * return void
+     */
+    public function sendEmail($appUID, $prj_uid, $eventUid, $arrayApplicationData) 
+    {
+        if (!$this->existsEvent($prj_uid, $eventUid)) {
+            throw new \Exception(\G::LoadTranslation("ID_EMAIL_EVENT_DEFINITION_DOES_NOT_EXIST"));
+        }
+        $arrayData = $this->existsEvent($prj_uid, $eventUid);
+        
+        if(sizeof($arrayData)) {
+             $prfUid = $arrayData[6];
+             $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
+             $contentFile = $filesManager->getProcessFileManager($prj_uid, $prfUid);
+             \PMFSendMessage($appUID, $arrayData[3], $arrayData[4], '', '', $arrayData[5], $contentFile['prf_filename'], array());
+        }
+        \G::pr($arrayData);echo "template: ".$contentFile['prf_filename'];
+    }
+    
+    /**
+     * Update process file Uid
+     *
+     * @param string $oldUid                         Unique id of old process file
+     * @param string $newUid                         Unique id of new process file
+     * @param string $projectUid                     Unique id of Project
+     *
+     * return bool Return array if exists, false otherwise
+     */
+    public function updatePrfUid($oldUid, $newUid, $projectUid) {
+        try {
+            $newValues = array();
+            $rowData = $this->verifyIfEmailEventExistsByPrfUid($oldUid, $projectUid);    
+            if(is_array($rowData)) {
+                $newValues['EMAIL_EVENT_BODY'] = $newUid;
+                $this->update($rowData['EMAIL_EVENT_UID'], $newValues);
+                
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        } 
+    }
+    
+    /**
+     * Verify if exists the Email Event of
+     *
+     * @param string $oldUid                         Unique id of old process file
+     * @param string $projectUid                     Unique id of Project
+     *
+     * return bool Return array if exists, false otherwise
+     */
+    public function verifyIfEmailEventExistsByPrfUid($oldUid, $projectUid)
+    {
+        try {
+            $criteria = $this->getEmailEventCriteria();
+            $criteria->add(\EmailEventPeer::PRJ_UID, $projectUid, \Criteria::EQUAL);
+            $criteria->add(\EmailEventPeer::EMAIL_EVENT_BODY, $oldUid, \Criteria::EQUAL);
+            $rsCriteria = \EmailEventPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            $row = $rsCriteria->getRow();
+            if(is_array($row)) {
+                $row = array_change_key_case($row, CASE_UPPER);
+            }
+            return (sizeof($row))? $row : false;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
 
