@@ -2830,7 +2830,6 @@ CREATE TABLE `CATALOG`
     KEY `indexType`( `CAT_TYPE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Definitions catalog.';
 
-
 #-----------------------------------------------------------------------------
 #-- TABLE: SCRIPT_TASK
 #-----------------------------------------------------------------------------

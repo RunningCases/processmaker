@@ -2008,6 +2008,19 @@ class Processes
                 $oData->process[$key] = $map[$oData->process[$key]];
             }
         }
+
+        //Script-Task
+        if (isset($oData->scriptTask)) {
+            foreach ($oData->scriptTask as $key => $value) {
+                $record = $value;
+
+                if (isset($map[$record["SCRTAS_OBJ_UID"]])) {
+                    $newUid = $map[$record["SCRTAS_OBJ_UID"]];
+
+                    $oData->scriptTask[$key]["SCRTAS_OBJ_UID"] = $newUid;
+                }
+            }
+        }
     }
 
     /**
@@ -3222,6 +3235,34 @@ class Processes
         }
     }
 
+    public function getScriptTasks($processUid)
+    {
+        try {
+            $arrayScriptTask = array();
+
+            $scriptTask = new \ProcessMaker\BusinessModel\ScriptTask();
+
+            //Get data
+            $criteria = $scriptTask->getScriptTaskCriteria();
+
+            $criteria->add(\ScriptTaskPeer::PRJ_UID, $processUid, \Criteria::EQUAL);
+
+            $rsCriteria = \ScriptTaskPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayScriptTask[] = $row;
+            }
+
+            //Return
+            return $arrayScriptTask;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
     /**
      * Get Task User Rows from an array of data
      *
@@ -3531,6 +3572,29 @@ class Processes
     }
 
     /**
+     * Create Script-Task records
+     *
+     * @param string $processUid Unique id of Process
+     * @param array  $arrayData  Data
+     *
+     * return void
+     */
+    public function createScriptTask($processUid, array $arrayData)
+    {
+        try {
+            $scriptTask = new \ProcessMaker\BusinessModel\ScriptTask();
+
+            foreach ($arrayData as $value) {
+                $record = $value;
+
+                $result = $scriptTask->create($processUid, $record);
+            }
+        } catch (Exception $e) {
+            //throw $e;
+        }
+    }
+
+    /**
      * Cleanup Report Tables References from an array of data
      *
      * @param array $aReportTables
@@ -3721,7 +3785,7 @@ class Processes
         $oData->messageEventDefinition = $this->getMessageEventDefinitions($sProUid);
         $oData->scriptTask = $this->getScriptTasks($sProUid);
         $oData->emailEvent = $this->getEmailEvent($sProUid);
-        $oData->filesManager = $this->getFilesManager($sProUid);
+        $oData->filesManager = $this->getFilesManager($sProUid); 
         $oData->groupwfs = $this->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
         $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
 
@@ -4826,7 +4890,6 @@ class Processes
         $this->createFilesManager($arrayProcessData["PRO_UID"], (isset($oData->filesManager))? $oData->filesManager : array());
     }
 
-
     /**
      * this function creates a new Process, defined in the object $oData
      *
@@ -5393,4 +5456,3 @@ class ObjectCellection
         }
     }
 }
-
