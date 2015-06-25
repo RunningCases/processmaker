@@ -158,17 +158,15 @@ try {
                 if (($sObject != '.') && ($sObject != '..') && ($sObject != '.svn') && ($sObject != 'ldap')) {
                     if (is_file( PATH_RBAC . 'plugins' . PATH_SEP . $sObject )) {
                         $sType = trim(str_replace(array("class.", ".php"), "", $sObject));
-
-                        $statusPlugin = $pluginRegistry->getStatusPlugin($sType);
                         $flagAdd = false;
 
-                        if (preg_match("/^(?:enabled|disabled)$/", $statusPlugin)) {
-                            if ($statusPlugin == "enabled") {
-                                $flagAdd = true;
-                            }
-                        } else {
+                        /*----------------------------------********---------------------------------*/
+                        if (PMLicensedFeatures
+                            ::getSingleton()
+                            ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
                             $flagAdd = true;
                         }
+                       /*----------------------------------********---------------------------------*/
 
                         if ($flagAdd) {
                             $arr[] = array("sType" => $sType, "sLabel" => $sType);
