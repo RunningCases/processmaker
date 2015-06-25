@@ -2864,4 +2864,3 @@ CREATE TABLE `EMAIL_EVENT`
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
-

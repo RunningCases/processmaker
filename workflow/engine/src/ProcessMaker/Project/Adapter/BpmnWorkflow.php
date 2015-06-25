@@ -28,7 +28,8 @@ class BpmnWorkflow extends Project\Bpmn
         "end-message-event"                => array("type" => "END-MESSAGE-EVENT",                "prefix" => "eme-"),
         "start-message-event"              => array("type" => "START-MESSAGE-EVENT",              "prefix" => "sme-"),
         "intermediate-throw-message-event" => array("type" => "INTERMEDIATE-THROW-MESSAGE-EVENT", "prefix" => "itme-"),
-        "intermediate-catch-message-event" => array("type" => "INTERMEDIATE-CATCH-MESSAGE-EVENT", "prefix" => "icme-")
+        "intermediate-catch-message-event" => array("type" => "INTERMEDIATE-CATCH-MESSAGE-EVENT", "prefix" => "icme-"),
+        "end-email-event"                  => array("type" => "END-EMAIL-EVENT",                  "prefix" => "eee-")
     );
 
     private $arrayElementTaskRelation = array();
@@ -582,6 +583,20 @@ class BpmnWorkflow extends Project\Bpmn
                     $messageEventDefinition->delete($arrayMessageEventDefinitionData["MSGED_UID"]);
                 }
             }
+            
+            //Email-Event - Delete
+            $arrayEventType   = array("END", "INTERMEDIATE");
+            $arrayEventMarker = array("EMAIL");
+
+            if (in_array($bpmnEvent->getEvnType(), $arrayEventType) && in_array($bpmnEvent->getEvnMarker(), $arrayEventMarker)) {
+                $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
+
+                if ($emailEvent->existsEvent($bpmnEvent->getPrjUid(), $bpmnEvent->getEvnUid())) {
+                    $arrayEmailEventData = $emailEvent->getEmailEventData($bpmnEvent->getPrjUid(), $bpmnEvent->getEvnUid());
+                    $arrayEmailEventData = array_change_key_case($arrayEmailEventData, CASE_UPPER);
+                    $emailEvent->delete($bpmnEvent->getPrjUid(), $arrayEmailEventData["EMAIL_EVENT_UID"], true);
+                }
+            }
 
             //Element-Task-Relation - Delete
             $this->removeElementTaskRelation($bpmnEvent->getEvnUid(), "bpmnEvent");
@@ -850,6 +865,16 @@ class BpmnWorkflow extends Project\Bpmn
                                             $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);
                                             $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
                                             break;
+                                        case "EMAIL":
+                                            $taskUid = $this->createTaskByElement(
+                                                $event->getEvnUid(),
+                                                "bpmnEvent",
+                                                "end-email-event"
+                                            );
+
+                                            $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);
+                                            $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
+                                            break;    
                                         default:
                                             //EMPTY //and others types
                                             $result = $this->wp->addRoute($activityUid, -1, $routeType, $routeCondition, $routeDefault);
@@ -941,6 +966,16 @@ class BpmnWorkflow extends Project\Bpmn
                                                 $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);
                                                 $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
                                                 break;
+                                            case "EMAIL":
+                                                $taskUid = $this->createTaskByElement(
+                                                    $event->getEvnUid(),
+                                                    "bpmnEvent",
+                                                    "end-email-event"
+                                                );
+
+                                                $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);
+                                                $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
+                                                break;
                                             default:
                                                 //EMPTY //and others types
                                                 $result = $this->wp->addRoute($activityUid, -1, $routeType, $routeCondition, $routeDefault);
@@ -1025,6 +1060,16 @@ class BpmnWorkflow extends Project\Bpmn
                                             $result = $this->wp->addRoute($activity["ACT_UID"], $taskUid, "SEQUENTIAL");
                                             $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
                                             break;
+                                        case "EMAIL":
+                                            $taskUid = $this->createTaskByElement(
+                                                $event->getEvnUid(),
+                                                "bpmnEvent",
+                                                "end-email-event"
+                                            );
+
+                                            $result = $this->wp->addRoute($activity["ACT_UID"], $taskUid, "SEQUENTIAL");
+                                            $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
+                                            break;    
                                         default:
                                             //EMPTY //This it's already implemented
                                             //and others types
