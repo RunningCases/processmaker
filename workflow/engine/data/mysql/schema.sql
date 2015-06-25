@@ -2845,6 +2845,23 @@ CREATE TABLE SCRIPT_TASK
   PRIMARY KEY (SCRTAS_UID)
 )ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
+#-----------------------------------------------------------------------------
+#-- EMAIL_EVENT
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `EMAIL_EVENT`;
+CREATE TABLE `EMAIL_EVENT`
+(
+	`EMAIL_EVENT_UID` VARCHAR(32)  NOT NULL,
+	`PRJ_UID` VARCHAR(32) default '' NOT NULL,
+	`EVN_UID` VARCHAR(32)  NOT NULL,
+	`EMAIL_EVENT_FROM` VARCHAR(100) default '' NOT NULL,
+	`EMAIL_EVENT_TO` MEDIUMTEXT  NOT NULL,
+	`EMAIL_EVENT_SUBJECT` VARCHAR(150) default '' NOT NULL,
+	`PRF_UID` VARCHAR(32) default '' NOT NULL,
+	PRIMARY KEY (`EMAIL_EVENT_UID`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8'; 
+
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
 

@@ -847,6 +847,18 @@ class Processes
                 $oData->messageType[$key]["PRJ_UID"] = $sNewProUid;
             }
         }
+        
+        if (isset($oData->emailEvent)) {
+            foreach ($oData->emailEvent as $key => $value) {
+                $oData->emailEvent[$key]["PRJ_UID"] = $sNewProUid;
+            }
+        }
+        
+        if (isset($oData->filesManager)) {
+            foreach ($oData->filesManager as $key => $value) {
+                $oData->filesManager[$key]["PRO_UID"] = $sNewProUid;
+            }
+        }
 
         return true;
     }
@@ -2389,7 +2401,7 @@ class Processes
             throw $e;
         }
     }
-
+    
     /**
      * Renew the GUID's for all the Uids for all the elements
      *
@@ -3168,6 +3180,60 @@ class Processes
             throw $e;
         }
     }
+    
+    public function getEmailEvent($processUid)
+    {
+        try {
+            $arrayEmailEvent = array();
+
+            $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
+            $criteria = $emailEvent->getEmailEventCriteria();
+
+            //Get data
+            $criteria->add(EmailEventPeer::PRJ_UID, $processUid, Criteria::EQUAL);
+            $rsCriteria = EmailEventPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            while ($aRow = $rsCriteria->getRow()) {
+                $arrayEmailEvent[] = $aRow;
+                $rsCriteria->next();
+            }
+            //Return
+            return $arrayEmailEvent;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+    
+    public function getFilesManager($processUid)
+    {
+        try {
+            $arrayFilesManager = array();
+            //Get data
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_UID);
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRO_UID);
+            $criteria->addSelectColumn(\ProcessFilesPeer::USR_UID);
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_UPDATE_USR_UID);
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_PATH);
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_TYPE);
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_EDITABLE);
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_CREATE_DATE);
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_UPDATE_DATE);                       
+            $criteria->add(ProcessFilesPeer::PRO_UID, $processUid, Criteria::EQUAL);
+            $rsCriteria = ProcessFilesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            while ($aRow = $rsCriteria->getRow()) {
+                $arrayFilesManager[] = $aRow;
+                $rsCriteria->next();
+            }
+            //Return
+            return $arrayFilesManager;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 
     public function getScriptTasks($processUid)
     {
@@ -3462,6 +3528,48 @@ class Processes
             throw $e;
         }
     }
+    
+    /**
+     * Create Email-event records
+     *
+     * @param string $processUid Unique id of Process
+     * @param array  $arrayData  Data
+     *
+     * return void
+     */
+    public function createEmailEvent($processUid, array $arrayData)
+    {
+        try {
+            $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
+
+            foreach ($arrayData as $value) {
+                $emailEventData = $emailEvent->save($processUid, $value);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+    
+    /**
+     * Create Files Manager records
+     *
+     * @param string $processUid Unique id of Process
+     * @param array  $arrayData  Data
+     *
+     * return void
+     */
+    public function createFilesManager($processUid, array $arrayData)
+    {
+        try {
+            $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
+
+            foreach ($arrayData as $value) {
+                $filesManager->addProcessFilesManagerInDb($value);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 
     /**
      * Create Script-Task records
@@ -3676,6 +3784,8 @@ class Processes
         $oData->messageTypeVariable = $this->getMessageTypeVariables($sProUid);
         $oData->messageEventDefinition = $this->getMessageEventDefinitions($sProUid);
         $oData->scriptTask = $this->getScriptTasks($sProUid);
+        $oData->emailEvent = $this->getEmailEvent($sProUid);
+        $oData->filesManager = $this->getFilesManager($sProUid); 
         $oData->groupwfs = $this->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
         $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
 
@@ -4776,6 +4886,8 @@ class Processes
         $this->createMessageTypeVariable((isset($oData->messageTypeVariable))? $oData->messageTypeVariable : array());
         $this->createMessageEventDefinition($arrayProcessData["PRO_UID"], (isset($oData->messageEventDefinition))? $oData->messageEventDefinition : array());
         $this->createScriptTask($arrayProcessData["PRO_UID"], (isset($oData->scriptTask))? $oData->scriptTask : array());
+        $this->createEmailEvent($arrayProcessData["PRO_UID"], (isset($oData->emailEvent))? $oData->emailEvent : array());
+        $this->createFilesManager($arrayProcessData["PRO_UID"], (isset($oData->filesManager))? $oData->filesManager : array());
     }
 
     /**

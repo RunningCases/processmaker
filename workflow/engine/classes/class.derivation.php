@@ -112,7 +112,7 @@ class Derivation
                     $arrayTaskData["NEXT_TASK"]["TAS_PARENT"] = "";
                 }
 
-                $arrayTaskData["NEXT_TASK"]["USER_ASSIGNED"] = (!in_array($arrayTaskData["NEXT_TASK"]["TAS_TYPE"], array("GATEWAYTOGATEWAY", "END-MESSAGE-EVENT", "SCRIPT-TASK")))? $this->getNextAssignedUser($arrayTaskData) : array("USR_UID" => "", "USR_FULLNAME" => "");
+                $arrayTaskData["NEXT_TASK"]["USER_ASSIGNED"] = (!in_array($arrayTaskData["NEXT_TASK"]["TAS_TYPE"], array("GATEWAYTOGATEWAY", "END-MESSAGE-EVENT", "SCRIPT-TASK", "END-EMAIL-EVENT")))? $this->getNextAssignedUser($arrayTaskData) : array("USR_UID" => "", "USR_FULLNAME" => "");
             }
 
             //Return
@@ -219,7 +219,7 @@ class Derivation
                 $arrayNextTask[++$i] = $this->prepareInformationTask($arrayNextTaskDefault);
             }
 
-            //Check Task GATEWAYTOGATEWAY or END-MESSAGE-EVENT
+            //Check Task GATEWAYTOGATEWAY or END-MESSAGE-EVENT or  END-EMAIL-EVENT
             $arrayNextTaskBackup = $arrayNextTask;
             $arrayNextTask = array();
             $i = 0;
@@ -228,7 +228,7 @@ class Derivation
                 $arrayNextTaskData = $value;
 
                 if ($arrayNextTaskData["NEXT_TASK"]["TAS_UID"] != "-1" &&
-                    in_array($arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"], array("GATEWAYTOGATEWAY", "END-MESSAGE-EVENT"))
+                    in_array($arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"], array("GATEWAYTOGATEWAY", "END-MESSAGE-EVENT", "END-EMAIL-EVENT"))
                 ) {
                     $arrayAux = $this->prepareInformation($arrayData, $arrayNextTaskData["NEXT_TASK"]["TAS_UID"]);
 
@@ -236,8 +236,8 @@ class Derivation
                         $arrayNextTask[++$i] = $value2;
                     }
                 } else {
-                    if ($arrayNextTaskData["TAS_TYPE"] == "END-MESSAGE-EVENT" &&
-                        $arrayNextTaskData["NEXT_TASK"]["TAS_UID"] == "-1"
+                    if (in_array($arrayNextTaskData["TAS_TYPE"], array("END-MESSAGE-EVENT", "END-EMAIL-EVENT")) &&
+                        $arrayNextTaskData["NEXT_TASK"]["TAS_UID"] == "-1" 
                     ) {
                         $arrayNextTaskData["NEXT_TASK"]["TAS_UID"] = $arrayNextTaskData["TAS_UID"] . "/" . $arrayNextTaskData["NEXT_TASK"]["TAS_UID"];
                     }
@@ -599,6 +599,7 @@ class Derivation
 
         foreach ($nextDelegations as $nextDel) {
             //BpmnEvent - END-MESSAGE-EVENT - Check and get unique id
+            //BpmnEvent - END-EMAIL-EVENT - Check and get unique id
             if (preg_match("/^(.{32})\/(\-1)$/", $nextDel["TAS_UID"], $arrayMatch)) {
                 $nextDel["TAS_UID"] = $arrayMatch[2];
                 $nextDel["TAS_UID_DUMMY"] = $arrayMatch[1];
@@ -643,15 +644,31 @@ class Derivation
                     $this->case->closeAllThreads( $currentDelegation['APP_UID'] );
                     //I think we need to change the APP_STATUS to completed,
 
-                    //Throw Message-Events - BpmnEvent - END-MESSAGE-EVENT
+                    //BpmnEvent - END-MESSAGE-EVENT and END-EMAIL-EVENT
                     if (isset($nextDel["TAS_UID_DUMMY"])) {
-                        $case = new \ProcessMaker\BusinessModel\Cases();
-
-                        $case->throwMessageEventBetweenElementOriginAndElementDest(
-                            $currentDelegation["TAS_UID"],
-                            $nextDel["TAS_UID_DUMMY"],
-                            $appFields
-                        );
+                        $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
+                        switch ($taskDummy->getTasType()) {
+                            case "END-MESSAGE-EVENT":
+                                //Throw Message-Events - BpmnEvent - END-MESSAGE-EVENT
+                                $case = new \ProcessMaker\BusinessModel\Cases();
+        
+                                $case->throwMessageEventBetweenElementOriginAndElementDest(
+                                    $currentDelegation["TAS_UID"],
+                                    $nextDel["TAS_UID_DUMMY"],
+                                    $appFields
+                                );
+                                break;
+                            case "END-EMAIL-EVENT":
+                                //Email Event
+                                $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
+        
+                                $emailEvent->emailEventBetweenElementOriginAndElementDest(
+                                    $currentDelegation["TAS_UID"],
+                                    $nextDel["TAS_UID_DUMMY"],
+                                    $appFields
+                                );
+                                break;
+                        }
                     }
                     break;
                 case TASK_FINISH_TASK:
@@ -713,7 +730,16 @@ class Derivation
                         $case = new \ProcessMaker\BusinessModel\Cases();
 
                         $case->throwMessageEventBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields);
+			
+			            //Email Event
+                        $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
 
+                        $emailEvent->emailEventBetweenElementOriginAndElementDest(
+                            $currentDelegation["TAS_UID"],
+                            $nextDel["TAS_UID"],
+                            $appFields
+                        );
+				
                         //Derivate
                         $aSP = isset( $aSP ) ? $aSP : null;
 
