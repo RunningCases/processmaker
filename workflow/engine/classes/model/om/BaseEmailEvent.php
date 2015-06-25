@@ -64,10 +64,10 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
     protected $email_event_subject = '';
 
     /**
-     * The value for the email_event_body field.
+     * The value for the prf_uid field.
      * @var        string
      */
-    protected $email_event_body;
+    protected $prf_uid = '';
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -150,14 +150,14 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [email_event_body] column value.
+     * Get the [prf_uid] column value.
      * 
      * @return     string
      */
-    public function getEmailEventBody()
+    public function getPrfUid()
     {
 
-        return $this->email_event_body;
+        return $this->prf_uid;
     }
 
     /**
@@ -293,12 +293,12 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
     } // setEmailEventSubject()
 
     /**
-     * Set the value of [email_event_body] column.
+     * Set the value of [prf_uid] column.
      * 
      * @param      string $v new value
      * @return     void
      */
-    public function setEmailEventBody($v)
+    public function setPrfUid($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -307,12 +307,12 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->email_event_body !== $v) {
-            $this->email_event_body = $v;
-            $this->modifiedColumns[] = EmailEventPeer::EMAIL_EVENT_BODY;
+        if ($this->prf_uid !== $v || $v === '') {
+            $this->prf_uid = $v;
+            $this->modifiedColumns[] = EmailEventPeer::PRF_UID;
         }
 
-    } // setEmailEventBody()
+    } // setPrfUid()
 
     /**
      * Hydrates (populates) the object variables with values from the database resultset.
@@ -343,7 +343,7 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
 
             $this->email_event_subject = $rs->getString($startcol + 5);
 
-            $this->email_event_body = $rs->getString($startcol + 6);
+            $this->prf_uid = $rs->getString($startcol + 6);
 
             $this->resetModified();
 
@@ -573,7 +573,7 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
                 return $this->getEmailEventSubject();
                 break;
             case 6:
-                return $this->getEmailEventBody();
+                return $this->getPrfUid();
                 break;
             default:
                 return null;
@@ -601,7 +601,7 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
             $keys[3] => $this->getEmailEventFrom(),
             $keys[4] => $this->getEmailEventTo(),
             $keys[5] => $this->getEmailEventSubject(),
-            $keys[6] => $this->getEmailEventBody(),
+            $keys[6] => $this->getPrfUid(),
         );
         return $result;
     }
@@ -652,7 +652,7 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
                 $this->setEmailEventSubject($value);
                 break;
             case 6:
-                $this->setEmailEventBody($value);
+                $this->setPrfUid($value);
                 break;
         } // switch()
     }
@@ -702,7 +702,7 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[6], $arr)) {
-            $this->setEmailEventBody($arr[$keys[6]]);
+            $this->setPrfUid($arr[$keys[6]]);
         }
 
     }
@@ -740,8 +740,8 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
             $criteria->add(EmailEventPeer::EMAIL_EVENT_SUBJECT, $this->email_event_subject);
         }
 
-        if ($this->isColumnModified(EmailEventPeer::EMAIL_EVENT_BODY)) {
-            $criteria->add(EmailEventPeer::EMAIL_EVENT_BODY, $this->email_event_body);
+        if ($this->isColumnModified(EmailEventPeer::PRF_UID)) {
+            $criteria->add(EmailEventPeer::PRF_UID, $this->prf_uid);
         }
 
 
@@ -808,7 +808,7 @@ abstract class BaseEmailEvent extends BaseObject implements Persistent
 
         $copyObj->setEmailEventSubject($this->email_event_subject);
 
-        $copyObj->setEmailEventBody($this->email_event_body);
+        $copyObj->setPrfUid($this->prf_uid);
 
 
         $copyObj->setNew(true);

@@ -3719,6 +3719,7 @@ class Processes
         $oData->messageType = $this->getMessageTypes($sProUid);
         $oData->messageTypeVariable = $this->getMessageTypeVariables($sProUid);
         $oData->messageEventDefinition = $this->getMessageEventDefinitions($sProUid);
+        $oData->scriptTask = $this->getScriptTasks($sProUid);
         $oData->emailEvent = $this->getEmailEvent($sProUid);
         $oData->filesManager = $this->getFilesManager($sProUid);
         $oData->groupwfs = $this->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
@@ -4820,6 +4821,7 @@ class Processes
         $this->createMessageType((isset($oData->messageType))? $oData->messageType : array());
         $this->createMessageTypeVariable((isset($oData->messageTypeVariable))? $oData->messageTypeVariable : array());
         $this->createMessageEventDefinition($arrayProcessData["PRO_UID"], (isset($oData->messageEventDefinition))? $oData->messageEventDefinition : array());
+        $this->createScriptTask($arrayProcessData["PRO_UID"], (isset($oData->scriptTask))? $oData->scriptTask : array());
         $this->createEmailEvent($arrayProcessData["PRO_UID"], (isset($oData->emailEvent))? $oData->emailEvent : array());
         $this->createFilesManager($arrayProcessData["PRO_UID"], (isset($oData->filesManager))? $oData->filesManager : array());
     }

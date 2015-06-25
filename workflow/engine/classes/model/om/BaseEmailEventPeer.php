@@ -49,8 +49,8 @@ abstract class BaseEmailEventPeer
     /** the column name for the EMAIL_EVENT_SUBJECT field */
     const EMAIL_EVENT_SUBJECT = 'EMAIL_EVENT.EMAIL_EVENT_SUBJECT';
 
-    /** the column name for the EMAIL_EVENT_BODY field */
-    const EMAIL_EVENT_BODY = 'EMAIL_EVENT.EMAIL_EVENT_BODY';
+    /** the column name for the PRF_UID field */
+    const PRF_UID = 'EMAIL_EVENT.PRF_UID';
 
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
@@ -63,9 +63,9 @@ abstract class BaseEmailEventPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('EmailEventUid', 'PrjUid', 'EvnUid', 'EmailEventFrom', 'EmailEventTo', 'EmailEventSubject', 'EmailEventBody', ),
-        BasePeer::TYPE_COLNAME => array (EmailEventPeer::EMAIL_EVENT_UID, EmailEventPeer::PRJ_UID, EmailEventPeer::EVN_UID, EmailEventPeer::EMAIL_EVENT_FROM, EmailEventPeer::EMAIL_EVENT_TO, EmailEventPeer::EMAIL_EVENT_SUBJECT, EmailEventPeer::EMAIL_EVENT_BODY, ),
-        BasePeer::TYPE_FIELDNAME => array ('EMAIL_EVENT_UID', 'PRJ_UID', 'EVN_UID', 'EMAIL_EVENT_FROM', 'EMAIL_EVENT_TO', 'EMAIL_EVENT_SUBJECT', 'EMAIL_EVENT_BODY', ),
+        BasePeer::TYPE_PHPNAME => array ('EmailEventUid', 'PrjUid', 'EvnUid', 'EmailEventFrom', 'EmailEventTo', 'EmailEventSubject', 'PrfUid', ),
+        BasePeer::TYPE_COLNAME => array (EmailEventPeer::EMAIL_EVENT_UID, EmailEventPeer::PRJ_UID, EmailEventPeer::EVN_UID, EmailEventPeer::EMAIL_EVENT_FROM, EmailEventPeer::EMAIL_EVENT_TO, EmailEventPeer::EMAIL_EVENT_SUBJECT, EmailEventPeer::PRF_UID, ),
+        BasePeer::TYPE_FIELDNAME => array ('EMAIL_EVENT_UID', 'PRJ_UID', 'EVN_UID', 'EMAIL_EVENT_FROM', 'EMAIL_EVENT_TO', 'EMAIL_EVENT_SUBJECT', 'PRF_UID', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
@@ -76,9 +76,9 @@ abstract class BaseEmailEventPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('EmailEventUid' => 0, 'PrjUid' => 1, 'EvnUid' => 2, 'EmailEventFrom' => 3, 'EmailEventTo' => 4, 'EmailEventSubject' => 5, 'EmailEventBody' => 6, ),
-        BasePeer::TYPE_COLNAME => array (EmailEventPeer::EMAIL_EVENT_UID => 0, EmailEventPeer::PRJ_UID => 1, EmailEventPeer::EVN_UID => 2, EmailEventPeer::EMAIL_EVENT_FROM => 3, EmailEventPeer::EMAIL_EVENT_TO => 4, EmailEventPeer::EMAIL_EVENT_SUBJECT => 5, EmailEventPeer::EMAIL_EVENT_BODY => 6, ),
-        BasePeer::TYPE_FIELDNAME => array ('EMAIL_EVENT_UID' => 0, 'PRJ_UID' => 1, 'EVN_UID' => 2, 'EMAIL_EVENT_FROM' => 3, 'EMAIL_EVENT_TO' => 4, 'EMAIL_EVENT_SUBJECT' => 5, 'EMAIL_EVENT_BODY' => 6, ),
+        BasePeer::TYPE_PHPNAME => array ('EmailEventUid' => 0, 'PrjUid' => 1, 'EvnUid' => 2, 'EmailEventFrom' => 3, 'EmailEventTo' => 4, 'EmailEventSubject' => 5, 'PrfUid' => 6, ),
+        BasePeer::TYPE_COLNAME => array (EmailEventPeer::EMAIL_EVENT_UID => 0, EmailEventPeer::PRJ_UID => 1, EmailEventPeer::EVN_UID => 2, EmailEventPeer::EMAIL_EVENT_FROM => 3, EmailEventPeer::EMAIL_EVENT_TO => 4, EmailEventPeer::EMAIL_EVENT_SUBJECT => 5, EmailEventPeer::PRF_UID => 6, ),
+        BasePeer::TYPE_FIELDNAME => array ('EMAIL_EVENT_UID' => 0, 'PRJ_UID' => 1, 'EVN_UID' => 2, 'EMAIL_EVENT_FROM' => 3, 'EMAIL_EVENT_TO' => 4, 'EMAIL_EVENT_SUBJECT' => 5, 'PRF_UID' => 6, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
@@ -192,7 +192,7 @@ abstract class BaseEmailEventPeer
 
         $criteria->addSelectColumn(EmailEventPeer::EMAIL_EVENT_SUBJECT);
 
-        $criteria->addSelectColumn(EmailEventPeer::EMAIL_EVENT_BODY);
+        $criteria->addSelectColumn(EmailEventPeer::PRF_UID);
 
     }
 

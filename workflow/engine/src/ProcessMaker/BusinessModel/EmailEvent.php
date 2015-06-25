@@ -10,7 +10,7 @@ class EmailEvent
         "EMAIL_EVENT_FROM"          => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "messageTypeUid"),
         "EMAIL_EVENT_TO"     => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "EmailEventUserUid"),
         "EMAIL_EVENT_SUBJECT"   => array("type" => "array",  "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "EmailEventVariables"),
-        "EMAIL_EVENT_BODY" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "EmailEventCorrelation")
+        "PRF_UID" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(), "fieldNameAux" => "EmailEventCorrelation")
     );
     */
     
@@ -214,8 +214,9 @@ class EmailEvent
                 //Delete file
                 $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
                 $arrayData = $this->getEmailEventDataByUid($pro_uid, $emailEventUid); 
+                $arrayData = array_change_key_case($arrayData, CASE_UPPER);
                 if(sizeof($arrayData)) {
-                    $prfUid = $arrayData['email_event_body'];
+                    $prfUid = $arrayData['PRF_UID'];
                     $filesManager->deleteProcessFilesManager('',$prfUid);
                 }
             }
@@ -314,7 +315,7 @@ class EmailEvent
             $criteria->addSelectColumn(\EmailEventPeer::EMAIL_EVENT_FROM);
             $criteria->addSelectColumn(\EmailEventPeer::EMAIL_EVENT_TO);
             $criteria->addSelectColumn(\EmailEventPeer::EMAIL_EVENT_SUBJECT);
-            $criteria->addSelectColumn(\EmailEventPeer::EMAIL_EVENT_BODY);
+            $criteria->addSelectColumn(\EmailEventPeer::PRF_UID);
 
             return $criteria;
         } catch (\Exception $e) {
@@ -442,7 +443,6 @@ class EmailEvent
              $contentFile = $filesManager->getProcessFileManager($prj_uid, $prfUid);
              \PMFSendMessage($appUID, $arrayData[3], $arrayData[4], '', '', $arrayData[5], $contentFile['prf_filename'], array());
         }
-        \G::pr($arrayData);echo "template: ".$contentFile['prf_filename'];
     }
     
     /**
@@ -459,7 +459,7 @@ class EmailEvent
             $newValues = array();
             $rowData = $this->verifyIfEmailEventExistsByPrfUid($oldUid, $projectUid);    
             if(is_array($rowData)) {
-                $newValues['EMAIL_EVENT_BODY'] = $newUid;
+                $newValues['PRF_UID'] = $newUid;
                 $this->update($rowData['EMAIL_EVENT_UID'], $newValues);
                 
             }
@@ -481,7 +481,7 @@ class EmailEvent
         try {
             $criteria = $this->getEmailEventCriteria();
             $criteria->add(\EmailEventPeer::PRJ_UID, $projectUid, \Criteria::EQUAL);
-            $criteria->add(\EmailEventPeer::EMAIL_EVENT_BODY, $oldUid, \Criteria::EQUAL);
+            $criteria->add(\EmailEventPeer::PRF_UID, $oldUid, \Criteria::EQUAL);
             $rsCriteria = \EmailEventPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $rsCriteria->next();
