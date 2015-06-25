@@ -2829,8 +2829,6 @@ CREATE TABLE `CATALOG`
     PRIMARY KEY (`CAT_UID`, `CAT_TYPE`),
     KEY `indexType`( `CAT_TYPE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Definitions catalog.';
-# This restores the fkey checks, after having unset them earlier
-SET FOREIGN_KEY_CHECKS = 1;
 
 #-----------------------------------------------------------------------------
 #-- TABLE: SCRIPT_TASK
@@ -2846,4 +2844,7 @@ CREATE TABLE SCRIPT_TASK
 
   PRIMARY KEY (SCRTAS_UID)
 )ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+# This restores the fkey checks, after having unset them earlier
+SET FOREIGN_KEY_CHECKS = 1;
 
