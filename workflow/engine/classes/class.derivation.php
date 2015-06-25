@@ -112,7 +112,7 @@ class Derivation
                     $arrayTaskData["NEXT_TASK"]["TAS_PARENT"] = "";
                 }
 
-                $arrayTaskData["NEXT_TASK"]["USER_ASSIGNED"] = (!in_array($arrayTaskData["NEXT_TASK"]["TAS_TYPE"], array("GATEWAYTOGATEWAY", "END-MESSAGE-EVENT", "SCRIPT-TASK", "END-EMAIL-EVENT")))? $this->getNextAssignedUser($arrayTaskData) : array("USR_UID" => "", "USR_FULLNAME" => ""); 
+                $arrayTaskData["NEXT_TASK"]["USER_ASSIGNED"] = (!in_array($arrayTaskData["NEXT_TASK"]["TAS_TYPE"], array("GATEWAYTOGATEWAY", "END-MESSAGE-EVENT", "SCRIPT-TASK", "END-EMAIL-EVENT")))? $this->getNextAssignedUser($arrayTaskData) : array("USR_UID" => "", "USR_FULLNAME" => "");
             }
 
             //Return
@@ -728,15 +728,10 @@ class Derivation
                     if ($canDerivate) {
                         //Throw Message-Events
                         $case = new \ProcessMaker\BusinessModel\Cases();
-<<<<<<< HEAD
 
-                        $case->throwMessageEventBetweenElementOriginAndElementDest(
-                            $currentDelegation["TAS_UID"],
-                            $nextDel["TAS_UID"],
-                            $appFields
-                        );
-                        
-                        //Email Event
+                        $case->throwMessageEventBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields);
+			
+			            //Email Event
                         $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
 
                         $emailEvent->emailEventBetweenElementOriginAndElementDest(
@@ -744,14 +739,7 @@ class Derivation
                             $nextDel["TAS_UID"],
                             $appFields
                         );
-                        
-                        //Derivation
-                        $aSP = isset( $aSP ) ? $aSP : null;
-                        $iNewDelIndex = $this->doDerivation( $currentDelegation, $nextDel, $appFields, $aSP );
-=======
-
-                        $case->throwMessageEventBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields);
-
+				
                         //Derivate
                         $aSP = isset( $aSP ) ? $aSP : null;
 
@@ -769,7 +757,6 @@ class Derivation
                         $scriptTask = new \ProcessMaker\BusinessModel\ScriptTask();
 
                         $appFields = $scriptTask->execScriptByActivityUid($nextDel["TAS_UID"], $appFields);
->>>>>>> master
 
                         //Create record in table APP_ASSIGN_SELF_SERVICE_VALUE
                         $task = new Task();
@@ -1303,4 +1290,3 @@ class Derivation
         }
     }
 }
-
