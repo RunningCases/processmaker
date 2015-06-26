@@ -855,6 +855,32 @@ class Workflow extends Handler
 
                 $messageEventDefinition->delete($row["MSGED_UID"]);
             }
+            
+            //Delete Email-Event
+            $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\EmailEventPeer::EMAIL_EVENT_UID);
+            $criteria->add(\EmailEventPeer::PRJ_UID, $sProcessUID, \Criteria::EQUAL);
+            $rsCriteria = \EmailEventPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+                $emailEvent->delete($sProcessUID,$row["EMAIL_EVENT_UID"],false);
+            }
+            
+            //Delete files Manager
+            $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_UID);
+            $criteria->add(\ProcessFilesPeer::PRO_UID, $sProcessUID, \Criteria::EQUAL);
+            $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+                $filesManager->deleteProcessFilesManager($sProcessUID, $row["PRF_UID"]);
+            }
 
             //Delete Script-Task
             $scriptTask = new \ProcessMaker\BusinessModel\ScriptTask();
@@ -1253,6 +1279,22 @@ class Workflow extends Handler
 
                         if ($arrayItem["old_uid"] == $messageEventDefinitionEventUid) {
                             $arrayWorkflowData["messageEventDefinition"][$key]["EVN_UID"] = $arrayItem["new_uid"];
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            //Update EMAIL_EVENT.EVN_UID
+            if (isset($arrayWorkflowData["emailEvent"])) {
+                foreach ($arrayWorkflowData["emailEvent"] as $key => $value) {
+                    $emailEventEventUid = $arrayWorkflowData["emailEvent"][$key]["EVN_UID"];
+
+                    foreach ($arrayUid as $value2) {
+                        $arrayItem = $value2;
+
+                        if ($arrayItem["old_uid"] == $emailEventEventUid) {
+                            $arrayWorkflowData["emailEvent"][$key]["EVN_UID"] = $arrayItem["new_uid"];
                             break;
                         }
                     }
