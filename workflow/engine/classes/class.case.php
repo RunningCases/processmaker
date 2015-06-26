@@ -249,7 +249,7 @@ class Cases
         $rows[] = array('uid' => 'char', 'value' => 'char');
         $tasks = array();
 
-        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
+        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT", "SCRIPT-TASK");
 
         $c = new Criteria();
         $c->clearSelectColumns();
@@ -7014,4 +7014,3 @@ class Cases
         return $unserializedData;
     }
 }
-

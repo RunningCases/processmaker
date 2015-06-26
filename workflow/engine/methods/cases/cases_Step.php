@@ -761,7 +761,6 @@ try {
 
 
                 $sTask = $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_UID'];
-
                 //TAS_UID has a hidden field to store the TAS_UID
                 $hiddenName = "form[TASKS][" . $sKey . "][TAS_UID]";
                 $hiddenField = '<input type="hidden" name="' . $hiddenName . '" id="' . $hiddenName . '" value="' . $aValues['NEXT_TASK']['TAS_UID'] . '">';
@@ -889,6 +888,15 @@ try {
                         $aFields['PROCESS']['ROU_FINISH_FLAG'] = true;
                         break;
                 }
+
+                $optionTaskType = (isset($aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TYPE"]))? $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TYPE"] : "";
+
+                switch ($optionTaskType) {
+                    case "SCRIPT-TASK":
+                        $aFields["TASK"][$sKey]["NEXT_TASK"]["USR_UID"] = G::LoadTranslation("ID_ROUTE_TO_TASK_SCRIPT_TASK");;
+                        break;
+                }
+
                 $hiddenName = 'form[TASKS][' . $sKey . ']';
 
                 /* Allow user defined Timing Control
@@ -1099,4 +1107,3 @@ if ($_SESSION['TRIGGER_DEBUG']['ISSET']) {
       showdebug();
     }' );
 }
-
