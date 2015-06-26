@@ -856,6 +856,23 @@ class Workflow extends Handler
                 $messageEventDefinition->delete($row["MSGED_UID"]);
             }
 
+            //Delete Script-Task
+            $scriptTask = new \ProcessMaker\BusinessModel\ScriptTask();
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\ScriptTaskPeer::SCRTAS_UID);
+            $criteria->add(\ScriptTaskPeer::PRJ_UID, $sProcessUID, \Criteria::EQUAL);
+
+            $rsCriteria = \ScriptTaskPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $scriptTask->delete($row["SCRTAS_UID"]);
+            }
+
             //Delete the process
             try {
                 $oProcess->remove($sProcessUID);
@@ -1242,6 +1259,22 @@ class Workflow extends Handler
                 }
             }
 
+            //Update SCRIPT_TASK.ACT_UID
+            if (isset($arrayWorkflowData["scriptTask"])) {
+                foreach ($arrayWorkflowData["scriptTask"] as $key => $value) {
+                    $scriptTaskActivityUid = $arrayWorkflowData["scriptTask"][$key]["ACT_UID"];
+
+                    foreach ($arrayUid as $value2) {
+                        $arrayItem = $value2;
+
+                        if ($arrayItem["old_uid"] == $scriptTaskActivityUid) {
+                            $arrayWorkflowData["scriptTask"][$key]["ACT_UID"] = $arrayItem["new_uid"];
+                            break;
+                        }
+                    }
+                }
+            }
+
             //Workflow tables
             $workflowData = (object)($arrayWorkflowData);
 
@@ -1294,4 +1327,3 @@ class Workflow extends Handler
         }
     }
 }
-

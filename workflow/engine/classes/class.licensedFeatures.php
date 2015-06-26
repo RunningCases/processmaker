@@ -197,6 +197,40 @@ class PMLicensedFeatures
                 "type"           => "features",
                 "url"            => "",
                 "version"        => ""
+            ),
+            10 => array(
+                "description"    => "This plugin will synchronize ProcessMaker with an LDAP or Active Directory server for user authentication.",
+                "enabled"        => false,
+                "id"             => "ldapAdvanced",
+                "latest_version" => "",
+                "log"            => null,
+                "name"           => "ldapAdvanced",
+                "nick"           => "ldapAdvanced",
+                "progress"       => 0,
+                "publisher"      => "Colosa",
+                "release_type"   => "localRegistry",
+                "status"         => "ready",
+                "store"          => "00000000000000000000000000010010",
+                "type"           => "features",
+                "url"            => "",
+                "version"        => ""
+            ),
+            11 => array(
+                "description"    => "SSO with an LDAP provider.",
+                "enabled"        => false,
+                "id"             => "windowsSSO",
+                "latest_version" => "",
+                "log"            => null,
+                "name"           => "windowsSSO",
+                "nick"           => "windowsSSO",
+                "progress"       => 0,
+                "publisher"      => "Colosa",
+                "release_type"   => "localRegistry",
+                "status"         => "ready",
+                "store"          => "00000000000000000000000000010011",
+                "type"           => "features",
+                "url"            => "",
+                "version"        => ""
             )
         );
 
