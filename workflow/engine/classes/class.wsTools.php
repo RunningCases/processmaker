@@ -1564,9 +1564,11 @@ class workspaceTools
         $version = explode('-', $version);
         $versionPresent = ( isset($version[0])) ? $version[0] : '';
         CLI::logging(CLI::warning("
-            Note.- If you try to execute a restore from a generated backup on a recent version of Processmaker
-            than version you are using currently to restore it, it may be occur errors on the restore process,
-            it shouldn't be restaured generated backups on later versions than version when the restore is executed") . "\n");
+            Warning: A workspace from a newer version of ProcessMaker can NOT be restored in an older version of 
+            ProcessMaker. For example, restoring from v.3.0 to v.2.5 will not work. However, it may be possible 
+            to restore a workspace from an older version to an newer version of ProcessMaker, although error 
+            messages may be displayed during the restore process. Make sure to run the \"processmaker cacheview-repair\" 
+            and \"processmaker migrate-new-cases-lists\" commands after restoring a workspace.") . "\n");
 
         foreach ($metaFiles as $metaFile) {
             $metadata = G::json_decode(file_get_contents($metaFile));
