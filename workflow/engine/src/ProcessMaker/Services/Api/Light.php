@@ -121,6 +121,7 @@ class Light extends Api
             'app_number'        => 'caseNumber',
             'app_update_date'   => 'date',
             'del_task_due_date' => 'dueDate',
+            'del_index'         => 'delIndex',
             //'' => 'status'
             'user' => array(
                 'usrcr_usr_uid'       => 'userId',
@@ -194,6 +195,7 @@ class Light extends Api
             'app_number'        => 'caseNumber',
             'app_update_date'   => 'date',
             'del_task_due_date' => 'dueDate',
+            'del_index'         => 'delIndex',
             'currentUser' => array(
                 'usrcr_usr_uid'       => 'userId',
                 'usrcr_usr_firstname' => 'firstName',
@@ -266,6 +268,7 @@ class Light extends Api
             'app_number'        => 'caseNumber',
             'app_update_date'   => 'date',
             'del_task_due_date' => 'dueDate',
+            'del_index'         => 'delIndex',
             'currentUser' => array(
                 'usrcr_usr_uid'       => 'userId',
                 'usrcr_usr_firstname' => 'firstName',
@@ -338,6 +341,7 @@ class Light extends Api
             'app_number'        => 'caseNumber',
             'app_update_date'   => 'date',
             'del_task_due_date' => 'dueDate',
+            'del_index'         => 'delIndex',
             'currentUser' => array(
                 'usrcr_usr_uid'       => 'userId',
                 'usrcr_usr_firstname' => 'firstName',

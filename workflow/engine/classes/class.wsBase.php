@@ -2351,7 +2351,7 @@ class wsBase
             }
 
             $oDerivation = new Derivation();
-            if (count($tasks) > 0) {
+            if (!empty($tasks)) {
                 $nextDelegations = $tasks;
             } else {
                 $derive = $oDerivation->prepareInformation($aData);
