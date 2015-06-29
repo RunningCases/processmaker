@@ -1,5 +1,3 @@
-
-
 var ViewDashboardPresenter = function (model) {
 	this.helper = new ViewDashboardHelper();
 	this.helper.assert(model != null, "A model must be passed for the presenter work.")
@@ -40,7 +38,6 @@ ViewDashboardPresenter.prototype.userDashboardsViewModel = function(data) {
 	if (!hasFavorite && returnList.length > 0 ) {
 		returnList[0].isFavorite = 1;
 	}
-
 	return returnList;
 };
 
@@ -263,6 +260,8 @@ ViewDashboardPresenter.prototype.peiViewModel = function(data) {
 			"inefficiencyCost" : "value"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
+        //the values do not come with a minus and moneny symbol, so we add them
+        newObject.valuePrefix = that.model.moneySymbol + " -";
 		graphData.push(newObject);
 		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
 		//rounded to 1 decimal
@@ -294,6 +293,7 @@ ViewDashboardPresenter.prototype.ueiViewModel = function(data) {
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
+        newObject.valuePrefix = that.model.moneySymbol + " -";
 		graphData.push(newObject);
 		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost * 10)/10;
 		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
@@ -429,6 +429,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelPei = function(modelD
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
+        newObject.valuePrefix = that.model.moneySymbol + " -";
 		originalObject.inefficiencyCostToShow =  Math.round(originalObject.inefficiencyCost * 10) / 10;
 		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
 		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
@@ -456,6 +457,7 @@ ViewDashboardPresenter.prototype.returnIndicatorSecondLevelUei = function(modelD
 			"deviationTime" : "dispersion"
 		};
 		var newObject = that.helper.merge(originalObject, {}, map);
+        newObject.valuePrefix = that.model.moneySymbol + " -";
 		originalObject.inefficiencyCostToShow = Math.round(originalObject.inefficiencyCost * 10) / 10;
 		originalObject.efficiencyIndexToShow = that.roundedIndicatorValue(originalObject.efficiencyIndex);
 		originalObject.deviationTimeToShow = Math.round(originalObject.deviationTime);
