@@ -71,6 +71,9 @@ class DashboardDasInd extends BaseDashboardDasInd
                 $result = $dashboardDasInd->save();
                 $connection->commit();
 
+                if ((!isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] == '') && isset($data['USR_UID']) &&  $data['USR_UID'] != '') {
+                    $this->setUser($data['USR_UID']);
+                }
                 G::auditLog("Create", "Dashboard Owner: ". $data['OWNER_UID']."  Dashboard ID: (".$dashboardDasInd->getDasUid().") ");
                 return $dashboardDasInd;
             } else {
@@ -87,7 +90,7 @@ class DashboardDasInd extends BaseDashboardDasInd
         }
     }
 
-    public function remove($dasUid, $owner)
+    public function remove($dasUid, $owner, $userLogged='')
     {
         $connection = Propel::getConnection(DashboardDasIndPeer::DATABASE_NAME);
         try {
@@ -97,7 +100,10 @@ class DashboardDasInd extends BaseDashboardDasInd
                 $result = $dashboardDasInd->delete();
                 $connection->commit();
 
-                G::auditLog("DeletedashboardIndicator", "Dashboard ID: ". $dasUid ." Dashboard owner ID: (".$owner.") ");
+                if ((!isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] == '') && $userLogged != '') {
+                    $this->setUser($userLogged);
+                }
+                G::auditLog("Delete", "Dashboard ID: ". $dasUid ." Dashboard owner ID: (".$owner.") ");
                 return $result;
             } else {
                 throw new Exception('Error trying to delete: The row "' .  $dasUid. '" does not exist.');
@@ -142,6 +148,13 @@ class DashboardDasInd extends BaseDashboardDasInd
         } catch (Exception $error) {
             throw $error;
         }
+    }
+
+    public function setUser($usrId) {
+        $user = new Users ();
+        $user = $user->loadDetails($usrId);
+        $_SESSION['USER_LOGGED'] = $user['USR_UID'];
+        $_SESSION['USR_FULLNAME'] = $user['USR_FULLNAME'];
     }
 }
 
