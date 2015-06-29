@@ -54,11 +54,11 @@
 				<a data-toggle="collapse" href="#efficiencyindex" aria-expanded="false" aria-controls="efficiencyindex">
 					<div class="panel-heading" >
 						<div class="row">
-							<div class="col-xs-3" data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_IND_VALUE"}>
+							<div class="col-xs-3" data-toggle="tooltip" data-original-title="{translate label='ID_DASH_HELP_IND_VALUE'}">
 								<div class="huge ind-value-selector"><%- indicator.value %></div>
 							</div>
-							<div class="col-xs-9 text-right"><i class="ind-symbol-selector fa fa-arrow-up fa-3x" data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_SYMBOL_SELECTOR"}></i>
-								<div class="small ind-comparative-selector" data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_IND_COMPARE"}>
+							<div class="col-xs-9 text-right"><i class="ind-symbol-selector fa fa-arrow-up fa-3x" data-toggle="tooltip" data-original-title="{translate label='ID_DASH_HELP_SYMBOL_SELECTOR'}"></i>
+								<div class="small ind-comparative-selector" data-toggle="tooltip" data-original-title="{translate label='ID_DASH_HELP_IND_COMPARE'}">
 									<%- indicator.comparative %> <%- indicator.percentComparative %>
 								</div>
 							</div>
@@ -78,7 +78,7 @@
 			 data-indicator-id="<%- indicator.id %>"
 			 data-indicator-type="<%- indicator.type %>"
 			 data-gs-min-width="3" data-gs-min-height="2" data-gs-max-height="2"
-            data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_INBOX_STATUS"}>
+            data-toggle="tooltip" data-original-title="{translate label='ID_DASH_HELP_INBOX_STATUS'}">
 			<div class="ind-container-selector panel grid-stack-item-content panel-status" style="min-width:200px;">
 				<a data-toggle="collapse" href="#efficiencyindex" aria-expanded="false" aria-controls="efficiencyindex">
 					<div class="panel-heading status-indicator-low"
@@ -159,10 +159,10 @@
 
 			<div class="text-center huge">
 				<div class="col-xs-3 vcenter">
-					<div class="blue"  data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_IND_EFFICIENCY"}><%- indicator.efficiencyIndexToShow %></div>
+					<div class="blue"  data-toggle="tooltip" data-original-title="{translate label='ID_DASH_HELP_IND_EFFICIENCY'}"><%- indicator.efficiencyIndexToShow %></div>
 					<div class="small grey sind-index-selector ellipsis"></div>
 				</div>
-				<div class="col-xs-3 vcenter" style="margin-right:40px" data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_IND_COST"}>
+				<div class="col-xs-3 vcenter" style="margin-right:40px" data-toggle="tooltip" data-original-title="{translate label='ID_DASH_HELP_IND_COST'}">
 					<div class="red sind-cost-number-selector">{$unitCost} <%- indicator.inefficiencyCostToShow %></div>
 					<div class="small grey sind-cost-selector ellipsis"></div>
 				</div>
@@ -196,11 +196,11 @@
 			</div>
 			<div class="text-center huge">
 				<div class="col-xs-12 vcenter-task">
-					<div class="col-xs-6 " data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_IND_EFFICIENCY"}>
+					<div class="col-xs-6 " data-toggle="tooltip" data-original-title="{translate label='ID_DASH_HELP_IND_EFFICIENCY'}">
 						<div class="blue small"><%- detailData.efficiencyIndexToShow%></div>
 						<div class="smallB grey detail-efficiency-selector ellipsis"></div>
 					</div>
-					<div class="col-xs-6" data-toggle="tooltip" data-original-title={translate label="ID_DASH_HELP_IND_COST"}>
+					<div class="col-xs-6" data-toggle="tooltip" data-original-title="{translate label='ID_DASH_HELP_IND_COST'}">
 						<div class="small detail-cost-number-selector">{$unitCost}&nbsp;<%- detailData.inefficiencyCostToShow%></div>
 						<div class="smallB grey detail-cost-selector ellipsis"></div>
 					</div>
