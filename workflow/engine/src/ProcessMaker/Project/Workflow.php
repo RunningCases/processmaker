@@ -855,6 +855,49 @@ class Workflow extends Handler
 
                 $messageEventDefinition->delete($row["MSGED_UID"]);
             }
+            
+            //Delete Email-Event
+            $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\EmailEventPeer::EMAIL_EVENT_UID);
+            $criteria->add(\EmailEventPeer::PRJ_UID, $sProcessUID, \Criteria::EQUAL);
+            $rsCriteria = \EmailEventPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+                $emailEvent->delete($sProcessUID,$row["EMAIL_EVENT_UID"],false);
+            }
+            
+            //Delete files Manager
+            $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_UID);
+            $criteria->add(\ProcessFilesPeer::PRO_UID, $sProcessUID, \Criteria::EQUAL);
+            $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+                $filesManager->deleteProcessFilesManager($sProcessUID, $row["PRF_UID"]);
+            }
+
+            //Delete Script-Task
+            $scriptTask = new \ProcessMaker\BusinessModel\ScriptTask();
+
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\ScriptTaskPeer::SCRTAS_UID);
+            $criteria->add(\ScriptTaskPeer::PRJ_UID, $sProcessUID, \Criteria::EQUAL);
+
+            $rsCriteria = \ScriptTaskPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $scriptTask->delete($row["SCRTAS_UID"]);
+            }
 
             //Delete the process
             try {
@@ -1241,6 +1284,38 @@ class Workflow extends Handler
                     }
                 }
             }
+            
+            //Update EMAIL_EVENT.EVN_UID
+            if (isset($arrayWorkflowData["emailEvent"])) {
+                foreach ($arrayWorkflowData["emailEvent"] as $key => $value) {
+                    $emailEventEventUid = $arrayWorkflowData["emailEvent"][$key]["EVN_UID"];
+
+                    foreach ($arrayUid as $value2) {
+                        $arrayItem = $value2;
+
+                        if ($arrayItem["old_uid"] == $emailEventEventUid) {
+                            $arrayWorkflowData["emailEvent"][$key]["EVN_UID"] = $arrayItem["new_uid"];
+                            break;
+                        }
+                    }
+                }
+            }
+
+            //Update SCRIPT_TASK.ACT_UID
+            if (isset($arrayWorkflowData["scriptTask"])) {
+                foreach ($arrayWorkflowData["scriptTask"] as $key => $value) {
+                    $scriptTaskActivityUid = $arrayWorkflowData["scriptTask"][$key]["ACT_UID"];
+
+                    foreach ($arrayUid as $value2) {
+                        $arrayItem = $value2;
+
+                        if ($arrayItem["old_uid"] == $scriptTaskActivityUid) {
+                            $arrayWorkflowData["scriptTask"][$key]["ACT_UID"] = $arrayItem["new_uid"];
+                            break;
+                        }
+                    }
+                }
+            }
 
             //Workflow tables
             $workflowData = (object)($arrayWorkflowData);
@@ -1294,4 +1369,3 @@ class Workflow extends Handler
         }
     }
 }
-

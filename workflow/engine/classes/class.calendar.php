@@ -839,6 +839,7 @@ class calendar extends CalendarDefinition
     		$finDate = date('Y-m-d H:i:s');
     	}
     
+
         if ((strtotime($finDate)) <= (strtotime($iniDate))) {
             return 0.00;
         }
@@ -847,6 +848,10 @@ class calendar extends CalendarDefinition
     
     	$finDate = $this->dashGetIniDate($finDate, $calendarData);
     	$newDate = $iniDate;
+
+		$timeIniDate = strtotime($iniDate);
+		$timeFinDate = strtotime($finDate);
+
     	while ($timeIniDate < $timeFinDate) {
     		$newDate = $this->dashGetIniDate($newDate, $calendarData);
     

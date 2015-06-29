@@ -159,6 +159,9 @@ class DashboardIndicator extends BaseDashboardIndicator
                 $result = $dashboardIndicator->save();
                 $connection->commit();
 
+                if ((!isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] == '') && isset($data['USR_UID']) &&  $data['USR_UID'] != '') {
+                    $this->setUser($data['USR_UID']);
+                }
                 G::auditLog($msg, "Dashboard Indicator Name: ".$dashboardIndicator->getDasIndTitle()." Dashboard indicator ID: (".$dashboardIndicator->getDasIndUid() .") ");
                 return $dashboardIndicator->getDasIndUid();
             } else {
@@ -175,7 +178,7 @@ class DashboardIndicator extends BaseDashboardIndicator
         }
     }
 
-    public function remove($dasIndUid)
+    public function remove($dasIndUid, $userLogged ='')
     {
         $connection = Propel::getConnection(DashboardIndicatorPeer::DATABASE_NAME);
         try {
@@ -186,7 +189,10 @@ class DashboardIndicator extends BaseDashboardIndicator
                 $result = $dashboardIndicator->delete();
                 $connection->commit();
 
-                G::auditLog("DeletedashboardIndicator", "Dashboard Indicator Name: ". $dashboardIndicatorData['DAS_IND_TITLE']." Dashboard Instance ID: (".$dasIndUid.") ");
+                if ((!isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] == '') && $userLogged != '') {
+                    $this->setUser($userLogged);
+                }
+                G::auditLog("Delete", "Dashboard Indicator Name: ". $dashboardIndicatorData['DAS_IND_TITLE']." Dashboard Instance ID: (".$dasIndUid.") ");
                 return $result;
             } else {
                 throw new Exception('Error trying to delete: The row "' .  $dasIndUid. '" does not exist.');
@@ -195,6 +201,13 @@ class DashboardIndicator extends BaseDashboardIndicator
             $connection->rollback();
             throw $error;
         }
+    }
+
+    public function setUser($usrId) {
+        $user = new Users ();
+        $user = $user->loadDetails($usrId);
+        $_SESSION['USER_LOGGED'] = $user['USR_UID'];
+        $_SESSION['USR_FULLNAME'] = $user['USR_FULLNAME'];
     }
 }
 
