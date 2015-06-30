@@ -2833,7 +2833,9 @@ CREATE TABLE `CATALOG`
 #-----------------------------------------------------------------------------
 #-- TABLE: SCRIPT_TASK
 #-----------------------------------------------------------------------------
+
 DROP TABLE IF EXISTS SCRIPT_TASK;
+
 CREATE TABLE SCRIPT_TASK
 (
   SCRTAS_UID      VARCHAR(32) NOT NULL,
@@ -2843,6 +2845,32 @@ CREATE TABLE SCRIPT_TASK
   SCRTAS_OBJ_UID  VARCHAR(32) NOT NULL,
 
   PRIMARY KEY (SCRTAS_UID)
+)ENGINE=InnoDB DEFAULT CHARSET='utf8';
+
+#-----------------------------------------------------------------------------
+#-- TIMER_EVENT
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS TIMER_EVENT;
+
+CREATE TABLE TIMER_EVENT
+(
+    TMREVN_UID                 VARCHAR(32) NOT NULL,
+    PRJ_UID                    VARCHAR(32) NOT NULL,
+    EVN_UID                    VARCHAR(32) NOT NULL,
+    TMREVN_OPTION              VARCHAR(50) default 'DAILY' NOT NULL,
+    TMREVN_START_DATE          DATE,
+    TMREVN_END_DATE            DATE,
+    TMREVN_DAY                 VARCHAR(2) default '' NOT NULL,
+    TMREVN_HOUR                VARCHAR(2) default '' NOT NULL,
+    TMREVN_MINUTE              VARCHAR(2) default '' NOT NULL,
+    TMREVN_CONFIGURATION_DATA  MEDIUMTEXT default '' NOT NULL,
+    TMREVN_NEXT_RUN_DATE       DATETIME,
+    TMREVN_LAST_RUN_DATE       DATETIME,
+    TMREVN_LAST_EXECUTION_DATE DATETIME,
+    TMREVN_STATUS              VARCHAR(25) default 'ACTIVE' NOT NULL,
+
+    PRIMARY KEY (TMREVN_UID)
 )ENGINE=InnoDB DEFAULT CHARSET='utf8';
 
 #-----------------------------------------------------------------------------
@@ -2860,7 +2888,8 @@ CREATE TABLE `EMAIL_EVENT`
 	`EMAIL_EVENT_SUBJECT` VARCHAR(150) default '' NOT NULL,
 	`PRF_UID` VARCHAR(32) default '' NOT NULL,
 	PRIMARY KEY (`EMAIL_EVENT_UID`)
-)ENGINE=InnoDB  DEFAULT CHARSET='utf8'; 
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
+

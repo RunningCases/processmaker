@@ -75,7 +75,7 @@ class ScriptTaskMapBuilder
 
         $tMap->addColumn('SCRTAS_OBJ_UID', 'ScrtasObjUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
-        $tMap->addValidator('SCRTAS_OBJ_TYPE', 'validValues', 'propel.validator.ValidValuesValidator', 'TRIGGER', 'Please set a valid value for TMREVN_DEF_STATUS');
+        $tMap->addValidator('SCRTAS_OBJ_TYPE', 'validValues', 'propel.validator.ValidValuesValidator', 'TRIGGER', 'Please set a valid value for SCRTAS_OBJ_TYPE');
 
     } // doBuild()
 

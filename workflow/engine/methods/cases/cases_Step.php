@@ -760,7 +760,7 @@ try {
                 } //set priority value
 
 
-                $sTask = $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_UID'];
+                //$sTask = $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_UID'];
                 //TAS_UID has a hidden field to store the TAS_UID
                 $hiddenName = "form[TASKS][" . $sKey . "][TAS_UID]";
                 $hiddenField = '<input type="hidden" name="' . $hiddenName . '" id="' . $hiddenName . '" value="' . $aValues['NEXT_TASK']['TAS_UID'] . '">';
@@ -893,7 +893,10 @@ try {
 
                 switch ($optionTaskType) {
                     case "SCRIPT-TASK":
-                        $aFields["TASK"][$sKey]["NEXT_TASK"]["USR_UID"] = G::LoadTranslation("ID_ROUTE_TO_TASK_SCRIPT_TASK");;
+                        $aFields["TASK"][$sKey]["NEXT_TASK"]["USR_UID"] = G::LoadTranslation("ID_ROUTE_TO_TASK_SCRIPT_TASK");
+                        break;
+                    case "INTERMEDIATE-CATCH-TIMER-EVENT":
+                        $aFields["TASK"][$sKey]["NEXT_TASK"]["USR_UID"] = G::LoadTranslation("ID_ROUTE_TO_TASK_INTERMEDIATE_CATCH_TIMER_EVENT");
                         break;
                 }
 
@@ -967,6 +970,7 @@ try {
                     $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_PARENT'] = '<input type="hidden" name="' . $hiddenName . '[TAS_PARENT]"        id="' . $hiddenName . '[TAS_PARENT]"        value="' . $aValues['NEXT_TASK']['TAS_PARENT'] . '">';
                 }
             }
+
             $aFields['PROCESSING_MESSAGE'] = G::loadTranslation( 'ID_PROCESSING' );
 
             /**
@@ -1107,3 +1111,4 @@ if ($_SESSION['TRIGGER_DEBUG']['ISSET']) {
       showdebug();
     }' );
 }
+
