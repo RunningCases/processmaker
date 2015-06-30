@@ -857,7 +857,7 @@ class Language extends BaseLanguage
         $k = 0;
         $j = 0;
         while ($j !== false) {
-            $j = strpos($file, $sep . ".translate()", $k);
+            $j = strpos($file, $sep . ".translate(", $k);
             if ($j !== false) {
                 $k = $j + 1;
                 $label = "";
