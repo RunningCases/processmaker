@@ -192,6 +192,13 @@ class BpmnWorkflow extends Project\Bpmn
             }
         }
 
+        $activityCurrent = \BpmnActivityPeer::retrieveByPK($actUid);
+
+        if ($activityCurrent->getActType() == "TASK" && $activityCurrent->getActTaskType() == "SCRIPTTASK") {
+            $taskData["TAS_TYPE"] = "SCRIPT-TASK";
+            $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
+        }
+
         $this->wp->addTask($taskData);
 
         return $actUid;
@@ -221,10 +228,12 @@ class BpmnWorkflow extends Project\Bpmn
 
         if ($activityBefore->getActTaskType() != "SCRIPTTASK" && $activityCurrent->getActTaskType() == "SCRIPTTASK") {
             $taskData["TAS_TYPE"] = "SCRIPT-TASK";
+            $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
         }
 
         if ($activityBefore->getActTaskType() == "SCRIPTTASK" && $activityCurrent->getActTaskType() != "SCRIPTTASK") {
             $taskData["TAS_TYPE"] = "NORMAL";
+            $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
 
             $scriptTask = new \ProcessMaker\BusinessModel\ScriptTask();
 
@@ -583,7 +592,7 @@ class BpmnWorkflow extends Project\Bpmn
                     $messageEventDefinition->delete($arrayMessageEventDefinitionData["MSGED_UID"]);
                 }
             }
-            
+
             //Email-Event - Delete
             $arrayEventType   = array("END", "INTERMEDIATE");
             $arrayEventMarker = array("EMAIL");
@@ -874,7 +883,7 @@ class BpmnWorkflow extends Project\Bpmn
 
                                             $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);
                                             $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
-                                            break;    
+                                            break;
                                         default:
                                             //EMPTY //and others types
                                             $result = $this->wp->addRoute($activityUid, -1, $routeType, $routeCondition, $routeDefault);
@@ -1069,7 +1078,7 @@ class BpmnWorkflow extends Project\Bpmn
 
                                             $result = $this->wp->addRoute($activity["ACT_UID"], $taskUid, "SEQUENTIAL");
                                             $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
-                                            break;    
+                                            break;
                                         default:
                                             //EMPTY //This it's already implemented
                                             //and others types

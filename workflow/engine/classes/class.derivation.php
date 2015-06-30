@@ -745,18 +745,12 @@ class Derivation
 
                         $taskNextDel = \TaskPeer::retrieveByPK($nextDel["TAS_UID"]);
 
-                        if (!is_null($taskNextDel) && $taskNextDel->getTasType() == "SCRIPT-TASK") {
-                           if (!isset($nextDel["USR_UID"])) {
-                               $nextDel["USR_UID"] = "";
-                           }
-                        }
-
                         $iNewDelIndex = $this->doDerivation( $currentDelegation, $nextDel, $appFields, $aSP );
 
                         //Execute Script-Task
                         $scriptTask = new \ProcessMaker\BusinessModel\ScriptTask();
 
-                        $appFields = $scriptTask->execScriptByActivityUid($nextDel["TAS_UID"], $appFields);
+                        $appFields["APP_DATA"] = $scriptTask->execScriptByActivityUid($nextDel["TAS_UID"], $appFields);
 
                         //Create record in table APP_ASSIGN_SELF_SERVICE_VALUE
                         $task = new Task();

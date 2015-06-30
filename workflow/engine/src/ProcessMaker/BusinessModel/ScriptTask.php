@@ -602,18 +602,23 @@ class ScriptTask
 
                     if (!is_null($trigger)) {
                         $pmScript = new \PMScript();
-                        $pmScript->setFields($arrayApplicationData);
+                        $pmScript->setFields($arrayApplicationData["APP_DATA"]);
                         $pmScript->setScript($trigger->getTriWebbot());
 
                         $result = $pmScript->execute();
 
-                        $arrayApplicationData = $pmScript->aFields;
+                        $arrayApplicationData["APP_DATA"] = $pmScript->aFields;
+
+                        $case = new \Cases();
+
+                        $result = $case->updateCase($arrayApplicationData["APP_UID"], $arrayApplicationData);
+
                     }
                 }
             }
 
             //Return
-            return $arrayApplicationData;
+            return $arrayApplicationData["APP_DATA"];
         } catch (\Exception $e) {
             throw $e;
         }
