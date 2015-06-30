@@ -859,18 +859,37 @@ class Workflow extends Handler
             //Delete Script-Task
             $scriptTask = new \ProcessMaker\BusinessModel\ScriptTask();
 
+            $scriptTask->deleteWhere(array(\ScriptTaskPeer::PRJ_UID => array($sProcessUID, \Criteria::EQUAL)));
+
+            //Delete Timer-Event
+            $timerEvent = new \ProcessMaker\BusinessModel\TimerEvent();
+
+            $timerEvent->deleteWhere(array(\TimerEventPeer::PRJ_UID => array($sProcessUID, \Criteria::EQUAL)));
+
+            //Delete Email-Event
+            $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
             $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\ScriptTaskPeer::SCRTAS_UID);
-            $criteria->add(\ScriptTaskPeer::PRJ_UID, $sProcessUID, \Criteria::EQUAL);
-
-            $rsCriteria = \ScriptTaskPeer::doSelectRS($criteria);
+            $criteria->addSelectColumn(\EmailEventPeer::EMAIL_EVENT_UID);
+            $criteria->add(\EmailEventPeer::PRJ_UID, $sProcessUID, \Criteria::EQUAL);
+            $rsCriteria = \EmailEventPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
+                $emailEvent->delete($sProcessUID,$row["EMAIL_EVENT_UID"],false);
+            }
 
-                $scriptTask->delete($row["SCRTAS_UID"]);
+            //Delete files Manager
+            $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_UID);
+            $criteria->add(\ProcessFilesPeer::PRO_UID, $sProcessUID, \Criteria::EQUAL);
+            $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+                $filesManager->deleteProcessFilesManager($sProcessUID, $row["PRF_UID"]);
             }
 
             //Delete the process
@@ -1212,64 +1231,33 @@ class Workflow extends Handler
             $processUidOld = $arrayUid[0]["old_uid"];
             $processUid = $arrayUid[0]["new_uid"];
 
-            //Update TASK.TAS_UID
-            foreach ($arrayWorkflowData["tasks"] as $key => $value) {
-                $taskUid = $arrayWorkflowData["tasks"][$key]["TAS_UID"];
+            //Update Table.Field
+            $arrayUpdateTableField = array(
+                "tasks"                  => array("fieldname" => "TAS_UID", "oldFieldname" => "TAS_UID_OLD"), //Update TASK.TAS_UID
+                "webEntryEvent"          => array("fieldname" => "EVN_UID", "oldFieldname" => "EVN_UID_OLD"), //Update WEB_ENTRY_EVENT.EVN_UID
+                "messageEventDefinition" => array("fieldname" => "EVN_UID", "oldFieldname" => "EVN_UID_OLD"), //Update MESSAGE_EVENT_DEFINITION.EVN_UID
+                "scriptTask"             => array("fieldname" => "ACT_UID", "oldFieldname" => "ACT_UID_OLD"), //Update SCRIPT_TASK.ACT_UID
+                "timerEvent"             => array("fieldname" => "EVN_UID", "oldFieldname" => "EVN_UID_OLD"), //Update TIMER_EVENT.EVN_UID
+                "emailEvent"             => array("fieldname" => "EVN_UID", "oldFieldname" => "EVN_UID_OLD")  //Update EMAIL_EVENT.EVN_UID
+            );
 
-                foreach ($arrayUid as $value2) {
-                    $arrayItem = $value2;
+            foreach ($arrayUpdateTableField as $key => $value) {
+                $table = $key;
+                $fieldname = $value["fieldname"];
+                $oldFieldname = $value["oldFieldname"];
 
-                    if ($arrayItem["old_uid"] == $taskUid) {
-                        $arrayWorkflowData["tasks"][$key]["TAS_UID_OLD"] = $taskUid;
-                        $arrayWorkflowData["tasks"][$key]["TAS_UID"] = $arrayItem["new_uid"];
-                        break;
-                    }
-                }
-            }
+                if (isset($arrayWorkflowData[$table])) {
+                    foreach ($arrayWorkflowData[$table] as $key2 => $value2) {
+                        $uid = $arrayWorkflowData[$table][$key2][$fieldname];
 
-            //Update WEB_ENTRY_EVENT.EVN_UID
-            if (isset($arrayWorkflowData["webEntryEvent"])) {
-                foreach ($arrayWorkflowData["webEntryEvent"] as $key => $value) {
-                    $webEntryEventEventUid = $arrayWorkflowData["webEntryEvent"][$key]["EVN_UID"];
+                        foreach ($arrayUid as $value3) {
+                            $arrayItem = $value3;
 
-                    foreach ($arrayUid as $value2) {
-                        $arrayItem = $value2;
-
-                        if ($arrayItem["old_uid"] == $webEntryEventEventUid) {
-                            $arrayWorkflowData["webEntryEvent"][$key]["EVN_UID"] = $arrayItem["new_uid"];
-                            break;
-                        }
-                    }
-                }
-            }
-
-            //Update MESSAGE_EVENT_DEFINITION.EVN_UID
-            if (isset($arrayWorkflowData["messageEventDefinition"])) {
-                foreach ($arrayWorkflowData["messageEventDefinition"] as $key => $value) {
-                    $messageEventDefinitionEventUid = $arrayWorkflowData["messageEventDefinition"][$key]["EVN_UID"];
-
-                    foreach ($arrayUid as $value2) {
-                        $arrayItem = $value2;
-
-                        if ($arrayItem["old_uid"] == $messageEventDefinitionEventUid) {
-                            $arrayWorkflowData["messageEventDefinition"][$key]["EVN_UID"] = $arrayItem["new_uid"];
-                            break;
-                        }
-                    }
-                }
-            }
-
-            //Update SCRIPT_TASK.ACT_UID
-            if (isset($arrayWorkflowData["scriptTask"])) {
-                foreach ($arrayWorkflowData["scriptTask"] as $key => $value) {
-                    $scriptTaskActivityUid = $arrayWorkflowData["scriptTask"][$key]["ACT_UID"];
-
-                    foreach ($arrayUid as $value2) {
-                        $arrayItem = $value2;
-
-                        if ($arrayItem["old_uid"] == $scriptTaskActivityUid) {
-                            $arrayWorkflowData["scriptTask"][$key]["ACT_UID"] = $arrayItem["new_uid"];
-                            break;
+                            if ($arrayItem["old_uid"] == $uid) {
+                                $arrayWorkflowData[$table][$key2][$fieldname]    = $arrayItem["new_uid"];
+                                $arrayWorkflowData[$table][$key2][$oldFieldname] = $uid;
+                                break;
+                            }
                         }
                     }
                 }
@@ -1327,3 +1315,4 @@ class Workflow extends Handler
         }
     }
 }
+

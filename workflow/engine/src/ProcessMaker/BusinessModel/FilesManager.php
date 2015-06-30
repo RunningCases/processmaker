@@ -242,6 +242,41 @@ class FilesManager
             throw $e;
         }
     }
+    
+    public function addProcessFilesManagerInDb($aData)
+    {
+        try {
+            $oProcessFiles = new \ProcessFiles();
+            $aData = array_change_key_case($aData, CASE_UPPER);
+            $oProcessFiles->fromArray($aData, \BasePeer::TYPE_FIELDNAME);
+            
+            if($this->existsProcessFile($aData['PRF_UID'])) {
+                $sPkProcessFiles = \G::generateUniqueID();
+                $oProcessFiles->setPrfUid($sPkProcessFiles);
+                
+                $sDirectory = PATH_DATA_MAILTEMPLATES . $aData['PRO_UID'] . PATH_SEP . basename($aData['PRF_PATH']);
+                $oProcessFiles->setPrfPath($sDirectory);
+                    
+                $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
+                $emailEvent->updatePrfUid($aData['PRF_UID'], $sPkProcessFiles, $aData['PRO_UID']);
+            }
+            
+            $result = $oProcessFiles->save();
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+    
+    public function existsProcessFile($prfUid)
+    {
+        try {
+            $obj = \ProcessFilesPeer::retrieveByPK($prfUid);
+
+            return (!is_null($obj))? true : false;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 
     /**
      * Return the Process Files Manager
@@ -306,9 +341,16 @@ class FilesManager
     public function getFileManagerUid($path)
     {
         try {
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    $path = str_replace("/", DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR, $path);
+            }
+            $path = explode(DIRECTORY_SEPARATOR,$path);
+            $baseName = $path[count($path)-2].DIRECTORY_SEPARATOR.$path[count($path)-1];
+            $baseName2 = $path[count($path)-2]."/".$path[count($path)-1];
             $criteria = new \Criteria("workflow");
             $criteria->addSelectColumn(\ProcessFilesPeer::PRF_UID);
-            $criteria->add(\ProcessFilesPeer::PRF_PATH, $path, \Criteria::EQUAL);
+            $criteria->add(\ProcessFilesPeer::PRF_PATH, "%" . $baseName . "%", \Criteria::LIKE);
+            $criteria->add(\ProcessFilesPeer::PRF_PATH, "%" . $baseName2 . "%", \Criteria::LIKE);
             $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $rsCriteria->next();
@@ -371,6 +413,9 @@ class FilesManager
             $oProcessFiles->setPrfUpdateUsrUid($userUID);
             $oProcessFiles->setPrfUpdateDate($sDate);
             $oProcessFiles->save();
+
+            $path = PATH_DATA_MAILTEMPLATES.$sProcessUID.DIRECTORY_SEPARATOR.$sFile;
+
             $fp = fopen($path, 'w');
             $content = stripslashes($aData['prf_content']);
             $content = str_replace("@amp@", "&", $content);
@@ -417,8 +462,11 @@ class FilesManager
             if ($path == '') {
                 throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('prf_uid')));
             }
-
-            if (file_exists($path)) {
+            
+            $sFile = end(explode("/",$path));
+            $path = PATH_DATA_MAILTEMPLATES.$sProcessUID.DIRECTORY_SEPARATOR.$sFile;
+            
+            if (file_exists($path) && !is_dir($path)) {
                 unlink($path);
             }
 

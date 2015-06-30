@@ -121,6 +121,7 @@ class Light extends Api
             'app_number'        => 'caseNumber',
             'app_update_date'   => 'date',
             'del_task_due_date' => 'dueDate',
+            'del_index'         => 'delIndex',
             //'' => 'status'
             'user' => array(
                 'usrcr_usr_uid'       => 'userId',
@@ -194,6 +195,7 @@ class Light extends Api
             'app_number'        => 'caseNumber',
             'app_update_date'   => 'date',
             'del_task_due_date' => 'dueDate',
+            'del_index'         => 'delIndex',
             'currentUser' => array(
                 'usrcr_usr_uid'       => 'userId',
                 'usrcr_usr_firstname' => 'firstName',
@@ -266,6 +268,7 @@ class Light extends Api
             'app_number'        => 'caseNumber',
             'app_update_date'   => 'date',
             'del_task_due_date' => 'dueDate',
+            'del_index'         => 'delIndex',
             'currentUser' => array(
                 'usrcr_usr_uid'       => 'userId',
                 'usrcr_usr_firstname' => 'firstName',
@@ -338,6 +341,7 @@ class Light extends Api
             'app_number'        => 'caseNumber',
             'app_update_date'   => 'date',
             'del_task_due_date' => 'dueDate',
+            'del_index'         => 'delIndex',
             'currentUser' => array(
                 'usrcr_usr_uid'       => 'userId',
                 'usrcr_usr_firstname' => 'firstName',
@@ -505,6 +509,7 @@ class Light extends Api
                     $pmDynaForm->jsonr($result['formContent']);
                     $result['index']       = $i;
                     $result['stepId']      = $activitySteps[$i]["step_uid"];
+                    $result['stepMode']   = $activitySteps[$i]['step_mode'];
                     $trigger = $oMobile->statusTriggers($step->doGetActivityStepTriggers($activitySteps[$i]["step_uid"], $act_uid, $prj_uid));
                     $result["triggers"]    = $trigger;
                     $response[] = $result;
@@ -631,17 +636,39 @@ class Light extends Api
     }
 
     /**
+     * Return Informaction User for derivate
+     * assignment Users
+     *
+     * @url GET /case/:app_uid/:del_index/assignment
+     *
+     * @param string $app_uid {@min 32}{@max 32}
+     * @param string $del_index
+     */
+    public function doGetPrepareInformation($app_uid, $del_index = null)
+    {
+        try {
+            $usr_uid = $this->getUserId();
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $response = $oMobile->getPrepareInformation($usr_uid, $app_uid, $del_index);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $response;
+    }
+
+    /**
      * Route Case
      * @url PUT /cases/:app_uid/route-case
      *
      * @param string $app_uid {@min 32}{@max 32}
      * @param string $del_index {@from body}
+     * @param array $tasks {@from body}
      */
-    public function doPutRouteCase($app_uid, $del_index = null)
+    public function doPutRouteCase($app_uid, $del_index = null, $tasks = array())
     {
         try {
             $oMobile  = new \ProcessMaker\BusinessModel\Light();
-            $response = $oMobile->updateRouteCase($app_uid, $this->getUserId(), $del_index);
+            $response = $oMobile->updateRouteCase($app_uid, $this->getUserId(), $del_index, $tasks);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

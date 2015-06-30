@@ -28,7 +28,10 @@ class BpmnWorkflow extends Project\Bpmn
         "end-message-event"                => array("type" => "END-MESSAGE-EVENT",                "prefix" => "eme-"),
         "start-message-event"              => array("type" => "START-MESSAGE-EVENT",              "prefix" => "sme-"),
         "intermediate-throw-message-event" => array("type" => "INTERMEDIATE-THROW-MESSAGE-EVENT", "prefix" => "itme-"),
-        "intermediate-catch-message-event" => array("type" => "INTERMEDIATE-CATCH-MESSAGE-EVENT", "prefix" => "icme-")
+        "intermediate-catch-message-event" => array("type" => "INTERMEDIATE-CATCH-MESSAGE-EVENT", "prefix" => "icme-"),
+        "start-timer-event"                => array("type" => "START-TIMER-EVENT",                "prefix" => "ste-"),
+        "intermediate-catch-timer-event"   => array("type" => "INTERMEDIATE-CATCH-TIMER-EVENT",   "prefix" => "icte-"),
+        "end-email-event"                  => array("type" => "END-EMAIL-EVENT",                  "prefix" => "eee-")
     );
 
     private $arrayElementTaskRelation = array();
@@ -191,6 +194,13 @@ class BpmnWorkflow extends Project\Bpmn
             }
         }
 
+        $activityCurrent = \BpmnActivityPeer::retrieveByPK($actUid);
+
+        if ($activityCurrent->getActType() == "TASK" && $activityCurrent->getActTaskType() == "SCRIPTTASK") {
+            $taskData["TAS_TYPE"] = "SCRIPT-TASK";
+            $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
+        }
+
         $this->wp->addTask($taskData);
 
         return $actUid;
@@ -220,10 +230,12 @@ class BpmnWorkflow extends Project\Bpmn
 
         if ($activityBefore->getActTaskType() != "SCRIPTTASK" && $activityCurrent->getActTaskType() == "SCRIPTTASK") {
             $taskData["TAS_TYPE"] = "SCRIPT-TASK";
+            $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
         }
 
         if ($activityBefore->getActTaskType() == "SCRIPTTASK" && $activityCurrent->getActTaskType() != "SCRIPTTASK") {
             $taskData["TAS_TYPE"] = "NORMAL";
+            $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
 
             $scriptTask = new \ProcessMaker\BusinessModel\ScriptTask();
 
@@ -313,7 +325,7 @@ class BpmnWorkflow extends Project\Bpmn
                             $this->wp->setStartTask($data["FLO_ELEMENT_DEST"]);
                         }
 
-                        $this->updateEventStartObjects($data["FLO_ELEMENT_ORIGIN"], $data["FLO_ELEMENT_DEST"]);
+                        //$this->updateEventStartObjects($data["FLO_ELEMENT_ORIGIN"], $data["FLO_ELEMENT_DEST"]);
 
                         //WebEntry-Event - Update
                         $this->updateWebEntryEventByEvent($data["FLO_ELEMENT_ORIGIN"], array("ACT_UID" => $data["FLO_ELEMENT_DEST"]));
@@ -363,7 +375,7 @@ class BpmnWorkflow extends Project\Bpmn
                 //Setting as start Task
                 $this->wp->setStartTask($flowCurrent->getFloElementDest());
 
-                $this->updateEventStartObjects($flowCurrent->getFloElementOrigin(), $flowCurrent->getFloElementDest());
+                //$this->updateEventStartObjects($flowCurrent->getFloElementOrigin(), $flowCurrent->getFloElementDest());
 
                 //WebEntry-Event - Update
                 $this->updateWebEntryEventByEvent($flowCurrent->getFloElementOrigin(), array("ACT_UID" => $flowCurrent->getFloElementDest()));
@@ -461,7 +473,7 @@ class BpmnWorkflow extends Project\Bpmn
                 }
             }
 
-            $this->updateEventStartObjects($flow->getFloElementOrigin(), "");
+            //$this->updateEventStartObjects($flow->getFloElementOrigin(), "");
 
             //WebEntry-Event - Update
             if (is_null($bpmnFlow)) {
@@ -549,15 +561,6 @@ class BpmnWorkflow extends Project\Bpmn
     public function removeEventDefinition(\BpmnEvent $bpmnEvent)
     {
         try {
-            //Case-Scheduler - Delete
-            if ($bpmnEvent->getEvnType() == "START" && $bpmnEvent->getEvnMarker() == "TIMER") {
-                $caseScheduler = new \CaseScheduler();
-
-                if ($caseScheduler->Exists($bpmnEvent->getEvnUid())) {
-                    $this->wp->removeCaseScheduler($bpmnEvent->getEvnUid());
-                }
-            }
-
             //WebEntry-Event - Delete
             if ($bpmnEvent->getEvnType() == "START" && $bpmnEvent->getEvnMarker() == "EMPTY") {
                 $webEntryEvent = new \ProcessMaker\BusinessModel\WebEntryEvent();
@@ -583,6 +586,33 @@ class BpmnWorkflow extends Project\Bpmn
                 }
             }
 
+            //Timer-Event - Delete
+            $arrayEventType   = array("START", "INTERMEDIATE");
+            $arrayEventMarker = array("TIMER");
+
+            if (in_array($bpmnEvent->getEvnType(), $arrayEventType) && in_array($bpmnEvent->getEvnMarker(), $arrayEventMarker)) {
+                $timerEvent = new \ProcessMaker\BusinessModel\TimerEvent();
+
+                $timerEvent->deleteWhere(array(
+                    \TimerEventPeer::PRJ_UID => array($bpmnEvent->getPrjUid(), \Criteria::EQUAL),
+                    \TimerEventPeer::EVN_UID => array($bpmnEvent->getEvnUid(), \Criteria::EQUAL)
+                ));
+            }
+
+            //Email-Event - Delete
+            $arrayEventType   = array("END", "INTERMEDIATE");
+            $arrayEventMarker = array("EMAIL");
+
+            if (in_array($bpmnEvent->getEvnType(), $arrayEventType) && in_array($bpmnEvent->getEvnMarker(), $arrayEventMarker)) {
+                $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
+
+                if ($emailEvent->existsEvent($bpmnEvent->getPrjUid(), $bpmnEvent->getEvnUid())) {
+                    $arrayEmailEventData = $emailEvent->getEmailEventData($bpmnEvent->getPrjUid(), $bpmnEvent->getEvnUid());
+                    $arrayEmailEventData = array_change_key_case($arrayEmailEventData, CASE_UPPER);
+                    $emailEvent->delete($bpmnEvent->getPrjUid(), $arrayEmailEventData["EMAIL_EVENT_UID"], true);
+                }
+            }
+
             //Element-Task-Relation - Delete
             $this->removeElementTaskRelation($bpmnEvent->getEvnUid(), "bpmnEvent");
         } catch (\Exception $e) {
@@ -599,15 +629,15 @@ class BpmnWorkflow extends Project\Bpmn
         $eventUid = parent::addEvent($data);
         $event = \BpmnEventPeer::retrieveByPK($eventUid);
 
-        // create case scheduler
-        if ($event && $event->getEvnMarker() == "TIMER" && $event->getEvnType() == "START") {
-            $this->wp->addCaseScheduler($eventUid);
-        }
-
-        // create web entry
-        if ($event && $event->getEvnMarker() == "MESSAGE" && $event->getEvnType() == "START") {
-            $this->wp->addWebEntry($eventUid);
-        }
+        //// create case scheduler
+        //if ($event && $event->getEvnMarker() == "TIMER" && $event->getEvnType() == "START") {
+        //    $this->wp->addCaseScheduler($eventUid);
+        //}
+        //
+        //// create web entry
+        //if ($event && $event->getEvnMarker() == "MESSAGE" && $event->getEvnType() == "START") {
+        //    $this->wp->addWebEntry($eventUid);
+        //}
 
         return $eventUid;
     }
@@ -644,6 +674,7 @@ class BpmnWorkflow extends Project\Bpmn
         }
     }
 
+    /*
     public function updateEventStartObjects($eventUid, $taskUid)
     {
         $event = \BpmnEventPeer::retrieveByPK($eventUid);
@@ -662,6 +693,7 @@ class BpmnWorkflow extends Project\Bpmn
         //    $this->wp->updateWebEntry($eventUid, array("TAS_UID" => $taskUid));
         //}
     }
+    */
 
     public function createTaskByElement($elementUid, $elementType, $key)
     {
@@ -850,6 +882,16 @@ class BpmnWorkflow extends Project\Bpmn
                                             $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);
                                             $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
                                             break;
+                                        case "EMAIL":
+                                            $taskUid = $this->createTaskByElement(
+                                                $event->getEvnUid(),
+                                                "bpmnEvent",
+                                                "end-email-event"
+                                            );
+
+                                            $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);
+                                            $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
+                                            break;
                                         default:
                                             //EMPTY //and others types
                                             $result = $this->wp->addRoute($activityUid, -1, $routeType, $routeCondition, $routeDefault);
@@ -883,12 +925,19 @@ class BpmnWorkflow extends Project\Bpmn
             $arrayEventData = \BpmnEvent::findOneBy(\BpmnEventPeer::EVN_UID, $eventUid)->toArray();
 
             if (!is_null($arrayEventData)) {
-                //Event - INTERMEDIATE-CATCH-MESSAGE-EVENT
-                if ($arrayEventData["EVN_TYPE"] == "INTERMEDIATE" && $arrayEventData["EVN_MARKER"] == "MESSAGECATCH") {
+                $arrayEventType   = array("INTERMEDIATE");
+                $arrayEventMarker = array("MESSAGECATCH", "TIMER");
+
+                if (in_array($arrayEventData["EVN_TYPE"], $arrayEventType) && in_array($arrayEventData["EVN_MARKER"], $arrayEventMarker)) {
+                    $arrayKey = array(
+                        "MESSAGECATCH" => "intermediate-catch-message-event",
+                        "TIMER"        => "intermediate-catch-timer-event"
+                    );
+
                     $taskUid = $this->createTaskByElement(
                         $eventUid,
                         "bpmnEvent",
-                        "intermediate-catch-message-event"
+                        $arrayKey[$arrayEventData["EVN_MARKER"]]
                     );
 
                     $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);
@@ -936,6 +985,16 @@ class BpmnWorkflow extends Project\Bpmn
                                                     $event->getEvnUid(),
                                                     "bpmnEvent",
                                                     "end-message-event"
+                                                );
+
+                                                $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);
+                                                $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
+                                                break;
+                                            case "EMAIL":
+                                                $taskUid = $this->createTaskByElement(
+                                                    $event->getEvnUid(),
+                                                    "bpmnEvent",
+                                                    "end-email-event"
                                                 );
 
                                                 $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);
@@ -1025,6 +1084,16 @@ class BpmnWorkflow extends Project\Bpmn
                                             $result = $this->wp->addRoute($activity["ACT_UID"], $taskUid, "SEQUENTIAL");
                                             $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
                                             break;
+                                        case "EMAIL":
+                                            $taskUid = $this->createTaskByElement(
+                                                $event->getEvnUid(),
+                                                "bpmnEvent",
+                                                "end-email-event"
+                                            );
+
+                                            $result = $this->wp->addRoute($activity["ACT_UID"], $taskUid, "SEQUENTIAL");
+                                            $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
+                                            break;
                                         default:
                                             //EMPTY //This it's already implemented
                                             //and others types
@@ -1061,15 +1130,26 @@ class BpmnWorkflow extends Project\Bpmn
 
                             $this->mapBpmnEventToWorkflowRoutes($taskUid, $event["EVN_UID"]);
                             break;
+                        case "TIMER":
+                            $taskUid = $this->createTaskByElement(
+                                $event["EVN_UID"],
+                                "bpmnEvent",
+                                "start-timer-event"
+                            );
+
+                            $this->wp->setStartTask($taskUid);
+
+                            $this->mapBpmnEventToWorkflowRoutes($taskUid, $event["EVN_UID"]);
+                            break;
                         case "EMPTY":
                             $this->updateEventActivityDefinition(\BpmnEventPeer::retrieveByPK($event["EVN_UID"]), true);
                             break;
                     }
                     break;
-                case "END":
-                    break;
-                case "INTERMEDIATE":
-                    break;
+                //case "END":
+                //    break;
+                //case "INTERMEDIATE":
+                //    break;
             }
         }
     }
@@ -1275,7 +1355,6 @@ class BpmnWorkflow extends Project\Bpmn
      * @param $projectData
      * @return array
      */
-
     public static function updateFromStruct($prjUid, $projectData, $generateUid = true, $forceInsert = false)
     {
         $diagram = isset($projectData["diagrams"]) && isset($projectData["diagrams"][0]) ? $projectData["diagrams"][0] : array();
@@ -1900,3 +1979,4 @@ class BpmnWorkflow extends Project\Bpmn
         }
     }
 }
+

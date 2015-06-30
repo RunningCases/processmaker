@@ -5,7 +5,7 @@ include_once 'creole/CreoleTypes.php';
 
 
 /**
- * This class adds structure of 'SCRIPT_TASK' table to 'workflow' DatabaseMap object.
+ * This class adds structure of 'EMAIL_EVENT' table to 'workflow' DatabaseMap object.
  *
  *
  *
@@ -16,13 +16,13 @@ include_once 'creole/CreoleTypes.php';
  *
  * @package    workflow.classes.model.map
  */
-class ScriptTaskMapBuilder
+class EmailEventMapBuilder
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'classes.model.map.ScriptTaskMapBuilder';
+    const CLASS_NAME = 'classes.model.map.EmailEventMapBuilder';
 
     /**
      * The database map.
@@ -60,23 +60,25 @@ class ScriptTaskMapBuilder
     {
         $this->dbMap = Propel::getDatabaseMap('workflow');
 
-        $tMap = $this->dbMap->addTable('SCRIPT_TASK');
-        $tMap->setPhpName('ScriptTask');
+        $tMap = $this->dbMap->addTable('EMAIL_EVENT');
+        $tMap->setPhpName('EmailEvent');
 
         $tMap->setUseIdGenerator(false);
 
-        $tMap->addPrimaryKey('SCRTAS_UID', 'ScrtasUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addPrimaryKey('EMAIL_EVENT_UID', 'EmailEventUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addColumn('PRJ_UID', 'PrjUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
-        $tMap->addColumn('ACT_UID', 'ActUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addColumn('EVN_UID', 'EvnUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
-        $tMap->addColumn('SCRTAS_OBJ_TYPE', 'ScrtasObjType', 'string', CreoleTypes::VARCHAR, true, 10);
+        $tMap->addColumn('EMAIL_EVENT_FROM', 'EmailEventFrom', 'string', CreoleTypes::VARCHAR, true, 100);
 
-        $tMap->addColumn('SCRTAS_OBJ_UID', 'ScrtasObjUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addColumn('EMAIL_EVENT_TO', 'EmailEventTo', 'string', CreoleTypes::LONGVARCHAR, true, null);
 
-        $tMap->addValidator('SCRTAS_OBJ_TYPE', 'validValues', 'propel.validator.ValidValuesValidator', 'TRIGGER', 'Please set a valid value for SCRTAS_OBJ_TYPE');
+        $tMap->addColumn('EMAIL_EVENT_SUBJECT', 'EmailEventSubject', 'string', CreoleTypes::VARCHAR, false, 150);
+
+        $tMap->addColumn('PRF_UID', 'PrfUid', 'string', CreoleTypes::VARCHAR, false, 32);
 
     } // doBuild()
 
-} // ScriptTaskMapBuilder
+} // EmailEventMapBuilder

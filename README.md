@@ -5,10 +5,8 @@
 README
 ======
 
-ProcessMaker "Michelangelo"
+ProcessMaker "Michelangelo" v3.0
 ----------------
-
-***(It is under development yet, please wait for the final release, that is comming soon)***
 
 
 Overview
@@ -25,11 +23,8 @@ License
 -------
 
 ProcessMaker - Automate your Workflow
-Copyright (C) 2002 - 2013 Colosa Inc.
+Copyright (C) 2002 - 2015 ProcessMaker Inc.
 
-Licensed under the terms of the GNU Affero General Public License version 3:
-http://www.affero.org/oagpl.html
 
 For further information visit:
 http://www.processmaker.com/
-
