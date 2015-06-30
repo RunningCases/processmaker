@@ -161,7 +161,6 @@ TimeSeriesPresenter.prototype.historicData = function (indicator, periodicity, i
 			var periodRunFrom = (y == initYear) ? initPeriod : 1;
 			var periodRunTo = (y == endYear) ? endPeriod : that.periodsInAYear(periodicity);
 			for (var p = periodRunFrom; p <= periodRunTo; p++) {
-				console.log(y + "---" + p);
 				var results = $.grep(graphData, 
 							function(obj) { 
 								return (obj.year == y && obj.period == p);
