@@ -608,7 +608,7 @@ class ScriptTask
                         $result = $pmScript->execute();
 
                         if (isset($pmScript->aFields["__ERROR__"]))  {
-                            G::log("Case Uid: " . $arrayApplicationData["APP_UID"] . ", Error: " . $pmScript->aFields["__ERROR__"], PATH_DATA . "log/ScriptTask.log");
+                            \G::log("Case Uid: " . $arrayApplicationData["APP_UID"] . ", Error: " . $pmScript->aFields["__ERROR__"], PATH_DATA . "log/ScriptTask.log");
                         }
 
                         $arrayApplicationData["APP_DATA"] = $pmScript->aFields;
