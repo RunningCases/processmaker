@@ -72,6 +72,7 @@ class Light
                             $newForm[$c]['title'] = $form['obj_title'];
                             $newForm[$c]['description'] = $form['obj_description'];
                             $newForm[$c]['stepId']      = $form["step_uid"];
+                            $newForm[$c]['stepMode']    = $form['step_mode'];
                             $trigger = $this->statusTriggers($step->doGetActivityStepTriggers($form["step_uid"], $tempTreeChild['taskId'], $tempTreeChild['processId']));
                             $newForm[$c]["triggers"]    = $trigger;
                             $c++;
@@ -108,7 +109,7 @@ class Light
         }
         return $return;
     }
-    
+
     /**
      * Get counters each type of list
      * @param $userId
@@ -328,16 +329,101 @@ class Light
     }
 
     /**
+     * Return Informaction User for derivate
+     * assignment Users
+     *
+     * return array Return an array with Task Case
+     */
+    public function GetPrepareInformation($usr_uid, $app_uid, $del_index = null)
+    {
+        try {
+            $oDerivation = new \Derivation();
+            $aData = array();
+            $aData['APP_UID'] = $app_uid;
+            $aData['DEL_INDEX'] = $del_index;
+            $aData['USER_UID'] = $usr_uid;
+            $derive = $oDerivation->prepareInformation( $aData );
+            $response = array();
+            foreach ($derive as $sKey => &$aValues) {
+                $sPriority = ''; //set priority value
+                if ($derive[$sKey]['NEXT_TASK']['TAS_PRIORITY_VARIABLE'] != '') {
+                    //TO DO: review this type of assignment
+                    if (isset( $aData['APP_DATA'][str_replace( '@@', '', $derive[$sKey]['NEXT_TASK']['TAS_PRIORITY_VARIABLE'] )] )) {
+                        $sPriority = $aData['APP_DATA'][str_replace( '@@', '', $derive[$sKey]['NEXT_TASK']['TAS_PRIORITY_VARIABLE'] )];
+                    }
+                } //set priority value
+
+                switch ($aValues['NEXT_TASK']['TAS_ASSIGN_TYPE']) {
+                    case 'EVALUATE':
+                    case 'REPORT_TO':
+                    case 'BALANCED':
+                    case 'SELF_SERVICE':
+                        $taskAss['taskId'] = $aValues['NEXT_TASK']['TAS_UID'];
+                        $taskAss['taskName'] = $aValues['NEXT_TASK']['TAS_TITLE'];
+                        $taskAss['taskAssignType'] = $aValues['NEXT_TASK']['TAS_ASSIGN_TYPE'];
+                        $taskAss['taskDefProcCode'] = $aValues['NEXT_TASK']['TAS_DEF_PROC_CODE'];
+                        $taskAss['delPriority'] = isset($aValues['NEXT_TASK']['DEL_PRIORITY'])?$aValues['NEXT_TASK']['DEL_PRIORITY']:"";
+                        $taskAss['taskParent'] = $aValues['NEXT_TASK']['TAS_PARENT'];
+                        $users = array();
+                        $users['userId'] = $derive[$sKey]['NEXT_TASK']['USER_ASSIGNED']['USR_UID'];
+                        $users['userFullName'] = $derive[$sKey]['NEXT_TASK']['USER_ASSIGNED']['USR_FULLNAME'];
+                        $taskAss['users'] = $users;
+                        $response[] = $taskAss;
+                        break;
+                    case 'MANUAL':
+                        $manual['taskId'] = $aValues['NEXT_TASK']['TAS_UID'];
+                        $manual['taskName'] = $aValues['NEXT_TASK']['TAS_TITLE'];
+                        $manual['taskAssignType'] = $aValues['NEXT_TASK']['TAS_ASSIGN_TYPE'];
+                        $manual['taskDefProcCode'] = $aValues['NEXT_TASK']['TAS_DEF_PROC_CODE'];
+                        $manual['delPriority'] = isset($aValues['NEXT_TASK']['DEL_PRIORITY'])?$aValues['NEXT_TASK']['DEL_PRIORITY']:"";
+                        $manual['taskParent'] = $aValues['NEXT_TASK']['TAS_PARENT'];
+                        $Aux = array ();
+                        foreach ($aValues['NEXT_TASK']['USER_ASSIGNED'] as $aUser) {
+                            $Aux[$aUser['USR_UID']] = $aUser['USR_FULLNAME'];
+                        }
+                        asort( $Aux );
+                        $users = array();
+                        foreach ($Aux as $id => $fullname) {
+                            $user['userId'] = $id;
+                            $user['userFullName'] = $fullname;
+                            $users[] = $user;
+                        }
+                        $manual['users'] = $users;
+                        $response[] = $manual;
+                        break;
+                    case '': //when this task is the Finish process
+                    case 'nobody':
+                        $userFields = $oDerivation->getUsersFullNameFromArray( $derive[$sKey]['USER_UID'] );
+                        $taskAss['routeFinishFlag'] = true;
+                        $user['userId'] = $derive[$sKey]['USER_UID'];
+                        $user['userFullName'] = $userFields['USR_FULLNAME'];
+                        $taskAss['users'] = $user;
+                        $response[] = $taskAss;
+                        break;
+                }
+            }
+
+            if (empty( $response )) {
+                throw (new Exception( G::LoadTranslation( 'ID_NO_DERIVATION_RULE' ) ));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+        return $response;
+    }
+
+    /**
      * Route Case
      *
      * @param string $applicationUid Unique id of Case
      * @param string $userUid Unique id of User
      * @param string $delIndex
+     * @param array $tasks
      * @param string $bExecuteTriggersBeforeAssignment
      *
      * return array Return an array with Task Case
      */
-    public function updateRouteCase($applicationUid, $userUid, $delIndex)
+    public function updateRouteCase($applicationUid, $userUid, $delIndex, $tasks)
     {
         try {
             if (!$delIndex) {
@@ -345,7 +431,7 @@ class Light
             }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
-            $fields = $ws->derivateCase($userUid, $applicationUid, $delIndex, $bExecuteTriggersBeforeAssignment = false);
+            $fields = $ws->derivateCase($userUid, $applicationUid, $delIndex, $bExecuteTriggersBeforeAssignment = false, $tasks);
             $array = json_decode(json_encode($fields), true);
             if ($array ["status_code"] != 0) {
                 throw (new \Exception($array ["message"]));
@@ -1080,7 +1166,9 @@ class Light
             } else {
                 $LANG_NAME = $locale['LANGUAGE'];
             }
-            $languagesList[$LANG_ID] = $LANG_NAME;
+            $languages["L10n"] = $LANG_ID;
+            $languages["label"] = $LANG_NAME;
+            $languagesList[] = $languages;
         }
         $response['listLanguage'] = $languagesList;
         return $response;

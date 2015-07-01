@@ -341,11 +341,16 @@ class FilesManager
     public function getFileManagerUid($path)
     {
         try {
-            $path = explode("/",$path);
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    $path = str_replace("/", DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR, $path);
+            }
+            $path = explode(DIRECTORY_SEPARATOR,$path);
             $baseName = $path[count($path)-2].DIRECTORY_SEPARATOR.$path[count($path)-1];
+            $baseName2 = $path[count($path)-2]."/".$path[count($path)-1];
             $criteria = new \Criteria("workflow");
             $criteria->addSelectColumn(\ProcessFilesPeer::PRF_UID);
             $criteria->add(\ProcessFilesPeer::PRF_PATH, "%" . $baseName . "%", \Criteria::LIKE);
+            $criteria->add(\ProcessFilesPeer::PRF_PATH, "%" . $baseName2 . "%", \Criteria::LIKE);
             $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $rsCriteria->next();
