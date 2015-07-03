@@ -1251,6 +1251,8 @@ importProcess = function()
                                                   Ext.MessageBox.show({
                                                       title: _("ID_ERROR"),
                                                       msg: "<div style=\"overflow: auto; width: 500px; height: 150px;\">" + stringReplace("\\x0A", "<br />", resp_.message) + "</div>", //\n 10
+                                                      width: 570,
+                                                      height: 250,
                                                       icon: Ext.MessageBox.ERROR,
                                                       buttons: Ext.MessageBox.OK
                                                   });
