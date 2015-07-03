@@ -594,7 +594,11 @@ class Cases
                             $aFields['CURRENT_USER'][]= $oCurUser->getUsrFirstname() . ' ' . $oCurUser->getUsrLastname();
                             $aFields['TAS_UID'].= $value['TAS_UID'].'-';
                         }
-                       $aFields['CURRENT_USER'] = implode(" - ", array_values($aFields['CURRENT_USER']));
+                        $aFields['CURRENT_USER'] = implode(" - ", array_values($aFields['CURRENT_USER']));
+                        $tasksArray = array_filter(explode("-",$aFields['TAS_UID']));
+                        if(count($tasksArray) == 1) {
+                            $aFields['TAS_UID'] = $tasksArray[0];
+                        }
                     } else {
                         $oCurUser->load($aAppDel['USR_UID']);
                         $aFields['CURRENT_USER'] = $oCurUser->getUsrFirstname() . ' ' . $oCurUser->getUsrLastname();
