@@ -150,17 +150,36 @@ class CLI
             $tasks = join( "\n", $tasks );
             echo $tasks . "\n\n";
         } else {
-            $valid_args = array ();
-            foreach (self::$tasks[$taskName]['args'] as $arg => $data) {
-                $arg = strtoupper( $arg );
-                if ($data['multiple']) {
-                    $arg = "$arg...";
-                }
-                if ($data['optional']) {
-                    $arg = "[$arg]";
-                }
-                $valid_args[] = $arg;
+            $options = array();
+            $tasks = array();
+            ksort( self::$tasks );
+            foreach (self::$tasks as $name => $data) {
+                $description = explode( "\n", $data['description'] );
+                $options[] = "$name";
             }
+            if (!in_array($taskName, $options)) {
+                echo "\nThe task does not exist \n";
+                echo "Use one of the following tasks:\n";
+                $tasks = array ();
+                ksort( self::$tasks );
+                foreach (self::$tasks as $name => $data) {
+                    $description = explode( "\n", $data['description'] );
+                    $tasks[] = "  $name";
+                }
+                $tasks = join( "\n", $tasks );
+                echo $tasks . "\n\n";
+            } else{
+                $valid_args = array ();
+                foreach (self::$tasks[$taskName]['args'] as $arg => $data) {
+                    $arg = strtoupper( $arg );
+                    if ($data['multiple']) {
+                        $arg = "$arg...";
+                    }
+                    if ($data['optional']) {
+                        $arg = "[$arg]";
+                    }
+                    $valid_args[] = $arg;
+                }
             $valid_args = join( " ", $valid_args );
             $description = explode( "\n", self::$tasks[$taskName]['description'] );
             $taskDescription = trim( array_shift( $description ) );
@@ -194,6 +213,7 @@ $valid_options
 EOT;
             }
             echo $message . "\n";
+        }
         }
     }
 
