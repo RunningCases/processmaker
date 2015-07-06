@@ -505,47 +505,52 @@ function run_workspace_backup($args, $opts) {
 }
 
 function run_workspace_restore($args, $opts) {
-  $filename = $args[0];
+  if (sizeof($args) > 0) {
 
-  G::verifyPath(PATH_DATA . 'upgrade', true);
+    $filename = $args[0];
 
-  if (strpos($filename, "/") === false && strpos($filename, '\\') === false) {
-    $filename = PATH_DATA . "backups/$filename";
-    if (!file_exists($filename) && substr_compare($filename, ".tar", -4, 4, true) != 0)
-      $filename .= ".tar";
-  }
-  $info = array_key_exists("info", $opts);
-  $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
-  $port = array_key_exists("port", $opts) ? $opts['port'] : '';
-  if ($info) {
-    workspaceTools::getBackupInfo($filename);
+    G::verifyPath(PATH_DATA . 'upgrade', true);
+
+    if (strpos($filename, "/") === false && strpos($filename, '\\') === false) {
+      $filename = PATH_DATA . "backups/$filename";
+      if (!file_exists($filename) && substr_compare($filename, ".tar", -4, 4, true) != 0)
+        $filename .= ".tar";
+    }
+    $info = array_key_exists("info", $opts);
+    $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
+    $port = array_key_exists("port", $opts) ? $opts['port'] : '';
+    if ($info) {
+      workspaceTools::getBackupInfo($filename);
+    } else {
+      CLI::logging("Restoring from $filename\n");
+      $workspace = array_key_exists("workspace", $opts) ? $opts['workspace'] : NULL;
+      $overwrite = array_key_exists("overwrite", $opts);
+      $multiple = array_key_exists("multiple", $opts);
+      $dstWorkspace = isset($args[1]) ? $args[1] : null;
+      if(!empty($multiple)){
+          if(!Bootstrap::isLinuxOs()){
+              CLI::error("This is not a Linux enviroment, cannot use this multiple [-m] feature.\n");
+              return;
+          }
+          multipleFilesBackup::letsRestore ($filename,$workspace,$dstWorkspace,$overwrite);
+      }
+      else{
+          $anotherExtention = ".*"; //if there are files with and extra extention: e.g. <file>.tar.number
+          $multiplefiles = glob($filename . $anotherExtention);// example: //shared/workflow_data/backups/myWorkspace.tar.*
+          if(count($multiplefiles) > 0)
+          {
+              CLI::error("Processmaker found these files: .\n");
+              foreach($multiplefiles as $index => $value){
+                  CLI::logging($value . "\n");
+              }
+              CLI::error("Please, you should use -m parameter to restore them.\n");
+              return;
+          }
+          workspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang, $port );
+      }
+    }
   } else {
-    CLI::logging("Restoring from $filename\n");
-    $workspace = array_key_exists("workspace", $opts) ? $opts['workspace'] : NULL;
-    $overwrite = array_key_exists("overwrite", $opts);
-    $multiple = array_key_exists("multiple", $opts);
-    $dstWorkspace = isset($args[1]) ? $args[1] : null;
-    if(!empty($multiple)){
-        if(!Bootstrap::isLinuxOs()){
-            CLI::error("This is not a Linux enviroment, cannot use this multiple [-m] feature.\n");
-            return;
-        }
-        multipleFilesBackup::letsRestore ($filename,$workspace,$dstWorkspace,$overwrite);
-    }
-    else{
-        $anotherExtention = ".*"; //if there are files with and extra extention: e.g. <file>.tar.number
-        $multiplefiles = glob($filename . $anotherExtention);// example: //shared/workflow_data/backups/myWorkspace.tar.*
-        if(count($multiplefiles) > 0)
-        {
-            CLI::error("Processmaker found these files: .\n");
-            foreach($multiplefiles as $index => $value){
-                CLI::logging($value . "\n");
-            }
-            CLI::error("Please, you should use -m parameter to restore them.\n");
-            return;
-        }
-        workspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang, $port );
-    }
+        throw new Exception("No workspace specified for restore");
   }
 }
 
