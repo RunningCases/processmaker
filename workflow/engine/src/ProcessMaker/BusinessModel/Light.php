@@ -367,7 +367,7 @@ class Light
                         $users = array();
                         $users['userId'] = $derive[$sKey]['NEXT_TASK']['USER_ASSIGNED']['USR_UID'];
                         $users['userFullName'] = $derive[$sKey]['NEXT_TASK']['USER_ASSIGNED']['USR_FULLNAME'];
-                        $taskAss['users'] = $users;
+                        $taskAss['users'][] = $users;
                         $response[] = $taskAss;
                         break;
                     case 'MANUAL':
@@ -397,7 +397,7 @@ class Light
                         $taskAss['routeFinishFlag'] = true;
                         $user['userId'] = $derive[$sKey]['USER_UID'];
                         $user['userFullName'] = $userFields['USR_FULLNAME'];
-                        $taskAss['users'] = $user;
+                        $taskAss['users'][] = $user;
                         $response[] = $taskAss;
                         break;
                 }
