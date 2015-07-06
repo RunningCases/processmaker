@@ -465,7 +465,7 @@
     <column name="DYN_CONTENT" type="LONGVARCHAR"/>
     <column name="DYN_LABEL" type="LONGVARCHAR"/>
     <column name="DYN_VERSION" type="INTEGER" required="true"/>
-    <column name="DYN_UPDATE" type="DATE" required="false"/>
+    <column name="DYN_UPDATE_DATE" type="DATE" required="false"/>
     <validator column="DYN_TYPE">
       <rule name="validValues" value="xmlform|grid" message="Please select a valid dynaform type."/>
     </validator>

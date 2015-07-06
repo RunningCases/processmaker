@@ -70,10 +70,10 @@ abstract class BaseDynaform extends BaseObject implements Persistent
     protected $dyn_version;
 
     /**
-     * The value for the dyn_update field.
+     * The value for the dyn_update_date field.
      * @var        int
      */
-    protected $dyn_update;
+    protected $dyn_update_date;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -167,27 +167,27 @@ abstract class BaseDynaform extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [optionally formatted] [dyn_update] column value.
+     * Get the [optionally formatted] [dyn_update_date] column value.
      * 
      * @param      string $format The date/time format string (either date()-style or strftime()-style).
      *                          If format is NULL, then the integer unix timestamp will be returned.
      * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
      * @throws     PropelException - if unable to convert the date/time to timestamp.
      */
-    public function getDynUpdate($format = 'Y-m-d')
+    public function getDynUpdateDate($format = 'Y-m-d')
     {
 
-        if ($this->dyn_update === null || $this->dyn_update === '') {
+        if ($this->dyn_update_date === null || $this->dyn_update_date === '') {
             return null;
-        } elseif (!is_int($this->dyn_update)) {
+        } elseif (!is_int($this->dyn_update_date)) {
             // a non-timestamp value was set externally, so we convert it
-            $ts = strtotime($this->dyn_update);
+            $ts = strtotime($this->dyn_update_date);
             if ($ts === -1 || $ts === false) {
-                throw new PropelException("Unable to parse value of [dyn_update] as date/time value: " .
-                    var_export($this->dyn_update, true));
+                throw new PropelException("Unable to parse value of [dyn_update_date] as date/time value: " .
+                    var_export($this->dyn_update_date, true));
             }
         } else {
-            $ts = $this->dyn_update;
+            $ts = $this->dyn_update_date;
         }
         if ($format === null) {
             return $ts;
@@ -353,12 +353,12 @@ abstract class BaseDynaform extends BaseObject implements Persistent
     } // setDynVersion()
 
     /**
-     * Set the value of [dyn_update] column.
+     * Set the value of [dyn_update_date] column.
      * 
      * @param      int $v new value
      * @return     void
      */
-    public function setDynUpdate($v)
+    public function setDynUpdateDate($v)
     {
 
         if ($v !== null && !is_int($v)) {
@@ -368,18 +368,18 @@ abstract class BaseDynaform extends BaseObject implements Persistent
                 $ts = null;
             }
             if ($ts === -1 || $ts === false) {
-                throw new PropelException("Unable to parse date/time value for [dyn_update] from input: " .
+                throw new PropelException("Unable to parse date/time value for [dyn_update_date] from input: " .
                     var_export($v, true));
             }
         } else {
             $ts = $v;
         }
-        if ($this->dyn_update !== $ts) {
-            $this->dyn_update = $ts;
-            $this->modifiedColumns[] = DynaformPeer::DYN_UPDATE;
+        if ($this->dyn_update_date !== $ts) {
+            $this->dyn_update_date = $ts;
+            $this->modifiedColumns[] = DynaformPeer::DYN_UPDATE_DATE;
         }
 
-    } // setDynUpdate()
+    } // setDynUpdateDate()
 
     /**
      * Hydrates (populates) the object variables with values from the database resultset.
@@ -412,7 +412,7 @@ abstract class BaseDynaform extends BaseObject implements Persistent
 
             $this->dyn_version = $rs->getInt($startcol + 6);
 
-            $this->dyn_update = $rs->getDate($startcol + 7, null);
+            $this->dyn_update_date = $rs->getDate($startcol + 7, null);
 
             $this->resetModified();
 
@@ -645,7 +645,7 @@ abstract class BaseDynaform extends BaseObject implements Persistent
                 return $this->getDynVersion();
                 break;
             case 7:
-                return $this->getDynUpdate();
+                return $this->getDynUpdateDate();
                 break;
             default:
                 return null;
@@ -674,7 +674,7 @@ abstract class BaseDynaform extends BaseObject implements Persistent
             $keys[4] => $this->getDynContent(),
             $keys[5] => $this->getDynLabel(),
             $keys[6] => $this->getDynVersion(),
-            $keys[7] => $this->getDynUpdate(),
+            $keys[7] => $this->getDynUpdateDate(),
         );
         return $result;
     }
@@ -728,7 +728,7 @@ abstract class BaseDynaform extends BaseObject implements Persistent
                 $this->setDynVersion($value);
                 break;
             case 7:
-                $this->setDynUpdate($value);
+                $this->setDynUpdateDate($value);
                 break;
         } // switch()
     }
@@ -782,7 +782,7 @@ abstract class BaseDynaform extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[7], $arr)) {
-            $this->setDynUpdate($arr[$keys[7]]);
+            $this->setDynUpdateDate($arr[$keys[7]]);
         }
 
     }
@@ -824,8 +824,8 @@ abstract class BaseDynaform extends BaseObject implements Persistent
             $criteria->add(DynaformPeer::DYN_VERSION, $this->dyn_version);
         }
 
-        if ($this->isColumnModified(DynaformPeer::DYN_UPDATE)) {
-            $criteria->add(DynaformPeer::DYN_UPDATE, $this->dyn_update);
+        if ($this->isColumnModified(DynaformPeer::DYN_UPDATE_DATE)) {
+            $criteria->add(DynaformPeer::DYN_UPDATE_DATE, $this->dyn_update_date);
         }
 
 
@@ -894,7 +894,7 @@ abstract class BaseDynaform extends BaseObject implements Persistent
 
         $copyObj->setDynVersion($this->dyn_version);
 
-        $copyObj->setDynUpdate($this->dyn_update);
+        $copyObj->setDynUpdateDate($this->dyn_update_date);
 
 
         $copyObj->setNew(true);

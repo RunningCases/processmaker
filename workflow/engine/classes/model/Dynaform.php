@@ -169,7 +169,7 @@ class Dynaform extends BaseDynaform
             $this->setProUid( $aData['PRO_UID'] );
             $this->setDynType( isset( $aData['DYN_TYPE'] ) ? $aData['DYN_TYPE'] : 'xmlform' );
             $this->setDynFilename( $aData['PRO_UID'] . PATH_SEP . $dynUid );
-            $this->setDynUpdate( date("Y-m-d H:i:s"));
+            $this->setDynUpdateDate( date("Y-m-d H:i:s"));
 
             if (isset($aData["DYN_CONTENT"])) {
                 $this->setDynContent($aData["DYN_CONTENT"]);
@@ -570,7 +570,7 @@ class Dynaform extends BaseDynaform
             $oPro = DynaformPeer::retrieveByPK( $aData['DYN_UID'] );
             if (is_object( $oPro ) && get_class( $oPro ) == 'Dynaform') {
                 $oPro->fromArray( $aData, BasePeer::TYPE_FIELDNAME );
-                $this->setDynUpdate(date("Y-m-d H:i:s"));
+                $oPro->setDynUpdateDate(date("Y-m-d H:i:s"));
                 if ($oPro->validate()) {
                     if (isset( $aData['DYN_TITLE'] )) {
                         $oPro->setDynTitle( $aData['DYN_TITLE'] );
