@@ -18,7 +18,6 @@ $(document).ready(function() {
 		$('#comparisonBreadcrumb').find('li').remove()
 		$('#comparisonBreadcrumb')
 					.append ('<li><a class="bread-back-selector2" href="#"><i class="fa fa-chevron-left fa-fw"></i>Return to Indicator View</a>');
-			
 		tsPresenter.historicData(
 			$('#indicatorList').val(),
 			$('#periodicityList').val(),
@@ -49,8 +48,8 @@ $(document).ready(function() {
 								showErrorBars: false
 							}
 					};
-
 				$('#indicatorsView').hide();
+				$('#scrollImg').hide();
 				$('#compareDiv').show();
 				var graph1 = new LineChart(data, graphParams1, null, null);
 				graph1.drawChart();
@@ -59,6 +58,7 @@ $(document).ready(function() {
 
 	$('body').on('click','.bread-back-selector2', function() {
 		$('#indicatorsView').show();
+		$('#scrollImg').show();
 		$('#compareDiv').hide();
 	});
 });

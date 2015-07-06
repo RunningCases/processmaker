@@ -350,16 +350,6 @@ $(document).ready(function() {
 		model.setPositionIndicator(dashboard);  
 	});
 
-
-	/*-------------------------------clicks----------------------------*/
-	/*$('body').on('click','.btn-compare', function() {
-		presenter.getDashboardIndicators(window.currentDashboardId, defaultInitDate(), defaultEndDate())
-				.done(function(indicatorsVM) {
-					fillIndicatorWidgets(indicatorsVM);
-					loadIndicator(getFavoriteIndicator().id, defaultInitDate(), defaultEndDate());
-				});
-	});*/
-
 	$('#dashboardsList').on('click','.das-title-selector', function() {
 		var dashboardId = $(this).parent().data('dashboard-id');
 		window.currentDashboardId  = dashboardId;
@@ -491,6 +481,9 @@ var initialDraw = function () {
 }
 
 var loadIndicator = function (indicatorId, initDate, endDate) {
+	$('#indicatorsView').show();
+	$('#scrollImg').show();
+	$('#compareDiv').hide();
 	if (indicatorId == null || indicatorId === undefined) {return;}
     var builder = new WidgetBuilder();
     window.currentIndicator = builder.getIndicatorLoadedById(indicatorId);
@@ -569,6 +562,7 @@ var fillDashboardsList = function (presenterData) {
 	window.loadedDashboards = presenterData;
 	for (key in presenterData) {
 		var dashboard = presenterData[key];
+		dashboard.title = dashboard.title.replace('&#39;', "'");
 		$('#dashboardsList').append(template(dashboard));
 		if (dashboard.isFavorite == 1) {
 			window.currentDashboardId = dashboard.id;
