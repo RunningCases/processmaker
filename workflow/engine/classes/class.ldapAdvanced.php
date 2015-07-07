@@ -33,6 +33,7 @@ if (!class_exists("RBAC")) {
     require_once PATH_TRUNK . "gulliver/system/class.rbac.php";
 }
 
+/*
 class ldapAdvancedClass
 {
     public function __construct()
@@ -62,6 +63,7 @@ if (!class_exists("ldapAdvancedPlugin")) {
 if (class_exists("ldapAdvanced")) {
     return;
 }
+*/
 
 class ldapAdvanced
 {
