@@ -2028,16 +2028,21 @@ class Cases
     {
         if ($sTasUid != '') {
             try {
-                $this->Task = new Task;
-                $Fields = $this->Task->Load($sTasUid);
+                $task = TaskPeer::retrieveByPK($sTasUid);
+
+                if (is_null($task)) {
+                    throw new Exception(G::LoadTranslation("ID_TASK_NOT_EXIST", array("TAS_UID", $sTasUid)));
+                }
 
                 //To allow Self Service as the first task
-                if (($Fields['TAS_ASSIGN_TYPE'] != 'SELF_SERVICE') && ($sUsrUid == '')) {
+                $arrayTaskTypeToExclude = array("START-TIMER-EVENT");
+
+                if (!is_null($task) && !in_array($task->getTasType(), $arrayTaskTypeToExclude) && $task->getTasAssignType() != "SELF_SERVICE" && $sUsrUid == "") {
                     throw (new Exception('You tried to start a new case without send the USER UID!'));
                 }
 
                 //Process
-                $sProUid = $this->Task->getProUid();
+                $sProUid = $task->getProUid();
                 $this->Process = new Process;
                 $proFields = $this->Process->Load($sProUid);
 

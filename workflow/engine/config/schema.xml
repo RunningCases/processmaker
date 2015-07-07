@@ -5098,9 +5098,9 @@
         <column name="TMREVN_OPTION"              type="VARCHAR" size="50" required="true" default="DAILY" />
         <column name="TMREVN_START_DATE"          type="DATE" required="false" />
         <column name="TMREVN_END_DATE"            type="DATE" required="false" />
-        <column name="TMREVN_DAY"                 type="VARCHAR" size="2" required="true" default="" />
-        <column name="TMREVN_HOUR"                type="VARCHAR" size="2" required="true" default="" />
-        <column name="TMREVN_MINUTE"              type="VARCHAR" size="2" required="true" default="" />
+        <column name="TMREVN_DAY"                 type="VARCHAR" size="5" required="true" default="" />
+        <column name="TMREVN_HOUR"                type="VARCHAR" size="5" required="true" default="" />
+        <column name="TMREVN_MINUTE"              type="VARCHAR" size="5" required="true" default="" />
         <column name="TMREVN_CONFIGURATION_DATA"  type="LONGVARCHAR" required="true" default="" />
         <column name="TMREVN_NEXT_RUN_DATE"       type="TIMESTAMP" required="false" />
         <column name="TMREVN_LAST_RUN_DATE"       type="TIMESTAMP" required="false" />
