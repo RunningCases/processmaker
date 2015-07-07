@@ -33,38 +33,6 @@ if (!class_exists("RBAC")) {
     require_once PATH_TRUNK . "gulliver/system/class.rbac.php";
 }
 
-/*
-class ldapAdvancedClass
-{
-    public function __construct()
-    {
-        set_include_path(PATH_PLUGINS . "ldapAdvanced" . PATH_SEPARATOR . get_include_path());
-    }
-
-    public function getFieldsForPageSetup()
-    {
-        return array();
-    }
-
-    public function updateFieldsForPageSetup($data)
-    {
-        return array();
-    }
-
-    public function setup()
-    {
-    }
-}
-
-if (!class_exists("ldapAdvancedPlugin")) {
-    require_once PATH_PLUGINS . "ldapAdvanced.php";
-}
-
-if (class_exists("ldapAdvanced")) {
-    return;
-}
-*/
-
 class ldapAdvanced
 {
     /**
