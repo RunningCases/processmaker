@@ -333,7 +333,7 @@ ViewDashboardPresenter.prototype.statusViewModel = function(indicatorId, data) {
 		};
 		var newObject3 = {
 			datalabel : originalObject.taskTitle,
-			value : originalObject.percentageTotalOnTime
+			value : 100 - (originalObject.percentageTotalOverdue + originalObject.percentageTotalAtRisk)
 		};
 
 		if (newObject1.value > 0) {
