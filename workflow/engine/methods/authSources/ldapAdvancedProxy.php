@@ -1,4 +1,5 @@
 <?php
+G::LoadClass("ldapAdvanced");
 
 $function = $_REQUEST['functionAccion'];
 
