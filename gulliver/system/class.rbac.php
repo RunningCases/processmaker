@@ -145,6 +145,12 @@ class RBAC
                 }
             }
         }
+        if (!in_array('ldapAdvanced', $this->aRbacPlugins)) {
+            G::LoadClass('ldapAdvanced');
+            if (class_exists('ldapAdvanced')) {
+                $this->aRbacPlugins[] = 'ldapAdvanced';
+            }
+        }
     }
 
     /**
