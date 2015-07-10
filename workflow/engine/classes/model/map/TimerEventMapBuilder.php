@@ -77,11 +77,11 @@ class TimerEventMapBuilder
 
         $tMap->addColumn('TMREVN_END_DATE', 'TmrevnEndDate', 'int', CreoleTypes::DATE, false, null);
 
-        $tMap->addColumn('TMREVN_DAY', 'TmrevnDay', 'string', CreoleTypes::VARCHAR, true, 2);
+        $tMap->addColumn('TMREVN_DAY', 'TmrevnDay', 'string', CreoleTypes::VARCHAR, true, 5);
 
-        $tMap->addColumn('TMREVN_HOUR', 'TmrevnHour', 'string', CreoleTypes::VARCHAR, true, 2);
+        $tMap->addColumn('TMREVN_HOUR', 'TmrevnHour', 'string', CreoleTypes::VARCHAR, true, 5);
 
-        $tMap->addColumn('TMREVN_MINUTE', 'TmrevnMinute', 'string', CreoleTypes::VARCHAR, true, 2);
+        $tMap->addColumn('TMREVN_MINUTE', 'TmrevnMinute', 'string', CreoleTypes::VARCHAR, true, 5);
 
         $tMap->addColumn('TMREVN_CONFIGURATION_DATA', 'TmrevnConfigurationData', 'string', CreoleTypes::LONGVARCHAR, true, null);
 

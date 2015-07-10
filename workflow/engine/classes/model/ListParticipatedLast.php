@@ -113,6 +113,10 @@ class ListParticipatedLast extends BaseListParticipatedLast
     {
         $data['APP_STATUS'] = (empty($data['APP_STATUS'])) ? 'TO_DO' : $data['APP_STATUS'];
         if (!$isSelfService) {
+            if ($data["USR_UID"] == "") {
+                return;
+            }
+
             $criteria = new Criteria();
             $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
             $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);

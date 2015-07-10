@@ -1985,7 +1985,11 @@ class wsBase
                 }
             }
 
-            if ($founded == '') {
+            $task = TaskPeer::retrieveByPK($taskId);
+
+            $arrayTaskTypeToExclude = array("START-TIMER-EVENT");
+
+            if (!is_null($task) && !in_array($task->getTasType(), $arrayTaskTypeToExclude) && $founded == "") {
                 $result = new wsResponse( 14, G::loadTranslation( 'ID_TASK_INVALID_USER_NOT_ASSIGNED_TASK' ) );
 
                 $g->sessionVarRestore();
@@ -2227,6 +2231,7 @@ class wsBase
                 }
             }
 
+            $aData = array();
             $aData['APP_UID'] = $caseId;
             $aData['DEL_INDEX'] = $delIndex;
             $aData['USER_UID'] = $userId;
@@ -2482,14 +2487,20 @@ class wsBase
                 }
             }
 
-            $oUser = new Users();
-            $aUser = $oUser->load( $userId );
+            $sFromName = "";
 
-            if (trim( $aUser['USR_EMAIL'] ) == '') {
-                $aUser['USR_EMAIL'] = 'info@' . $_SERVER['HTTP_HOST'];
+            if ($userId != "") {
+                $user = new Users();
+
+                $arrayUserData = $user->load($userId);
+
+                if (trim($arrayUserData["USR_EMAIL"]) == "") {
+                    $arrayUserData["USR_EMAIL"] = "info@" . $_SERVER["HTTP_HOST"];
+                }
+
+                $sFromName = "\"" . $arrayUserData["USR_FIRSTNAME"] . " " . $arrayUserData["USR_LASTNAME"] . "\" <" . $arrayUserData["USR_EMAIL"] . ">";
             }
 
-            $sFromName = '"' . $aUser['USR_FIRSTNAME'] . ' ' . $aUser['USR_LASTNAME'] . '" <' . $aUser['USR_EMAIL'] . '>';
             $oCase->sendNotifications( $appdel['TAS_UID'], $nextDelegations, $appFields['APP_DATA'], $caseId, $delIndex, $sFromName );
 
             //Save data - Start

@@ -439,20 +439,21 @@ class Derivation
      */
     function getNextAssignedUser ($tasInfo)
     {
-        $oUser = new Users();
+        //$oUser = new Users();
         $nextAssignedTask = $tasInfo['NEXT_TASK'];
         $lastAssigned = $tasInfo['NEXT_TASK']['TAS_LAST_ASSIGNED'];
         $sTasUid = $tasInfo['NEXT_TASK']['TAS_UID'];
-        // to do: we can increase the LOCATION by COUNTRY, STATE and LOCATION
-        /* Verify if the next Task is set with the option "TAS_ASSIGN_LOCATION == TRUE" */
-        $assignLocation = '';
-        if ($tasInfo['NEXT_TASK']['TAS_ASSIGN_LOCATION'] == 'TRUE') {
-            $oUser->load( $tasInfo['USER_UID'] );
-            krumo( $oUser->getUsrLocation() );
-            //to do: assign for location
-            //$assignLocation = " AND USR_LOCATION = " . $oUser->Fields['USR_LOCATION'];
-        }
-        /* End - Verify if the next Task is set with the option "TAS_ASSIGN_LOCATION == TRUE" */
+
+        //// to do: we can increase the LOCATION by COUNTRY, STATE and LOCATION
+        ///* Verify if the next Task is set with the option "TAS_ASSIGN_LOCATION == TRUE" */
+        //$assignLocation = '';
+        //if ($tasInfo['NEXT_TASK']['TAS_ASSIGN_LOCATION'] == 'TRUE') {
+        //    $oUser->load( $tasInfo['USER_UID'] );
+        //    krumo( $oUser->getUsrLocation() );
+        //    //to do: assign for location
+        //    //$assignLocation = " AND USR_LOCATION = " . $oUser->Fields['USR_LOCATION'];
+        //}
+        ///* End - Verify if the next Task is set with the option "TAS_ASSIGN_LOCATION == TRUE" */
 
         $uidUser = '';
         switch ($nextAssignedTask['TAS_ASSIGN_TYPE']) {
@@ -507,7 +508,7 @@ class Derivation
                 $userFields['USR_EMAIL'] = '';
 
                 //get the report_to user & its full info
-                $useruid = $this->checkReplacedByUser( $this->getDenpendentUser( $tasInfo['USER_UID'] ) );
+                $useruid = ($tasInfo["USER_UID"] != "")? $this->checkReplacedByUser($this->getDenpendentUser($tasInfo["USER_UID"])) : "";
 
                 if (isset( $useruid ) && $useruid != '') {
                     $userFields = $this->getUsersFullNameFromArray( $useruid );
