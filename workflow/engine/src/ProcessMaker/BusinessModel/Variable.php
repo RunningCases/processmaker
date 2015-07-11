@@ -75,7 +75,12 @@ class Variable
                         $variable->setVarDefault($arrayData["VAR_DEFAULT"]);
                     }
                     if (isset($arrayData["VAR_ACCEPTED_VALUES"])) {
-                        $encodeAcceptedValues = json_encode($arrayData["VAR_ACCEPTED_VALUES"]);
+                        $VAR_ACCEPTED_VALUES = $arrayData["VAR_ACCEPTED_VALUES"];
+                        foreach($VAR_ACCEPTED_VALUES as $key => $val) {
+                            $VAR_ACCEPTED_VALUES[$key]["label"] = htmlentities($val["label"]);
+                            $VAR_ACCEPTED_VALUES[$key]["value"] = htmlentities($val["value"]);
+                        }
+                        $encodeAcceptedValues = html_entity_decode(json_encode($VAR_ACCEPTED_VALUES));
                         $variable->setVarAcceptedValues($encodeAcceptedValues);
                     }
                     $variable->save();
@@ -168,7 +173,12 @@ class Variable
                         $variable->setVarDefault($arrayData["VAR_DEFAULT"]);
                     }
                     if (isset($arrayData["VAR_ACCEPTED_VALUES"])) {
-                        $encodeAcceptedValues = json_encode($arrayData["VAR_ACCEPTED_VALUES"]);
+                        $VAR_ACCEPTED_VALUES = $arrayData["VAR_ACCEPTED_VALUES"];
+                        foreach($VAR_ACCEPTED_VALUES as $key => $val) {
+                            $VAR_ACCEPTED_VALUES[$key]["label"] = htmlentities($val["label"]);
+                            $VAR_ACCEPTED_VALUES[$key]["value"] = htmlentities($val["value"]);
+                        }
+                        $encodeAcceptedValues = html_entity_decode(json_encode($VAR_ACCEPTED_VALUES));
                         $variable->setVarAcceptedValues($encodeAcceptedValues);
                     }
                     $variable->save();
