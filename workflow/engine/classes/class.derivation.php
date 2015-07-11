@@ -576,7 +576,7 @@ class Derivation
      * @param   array   $nextDelegations
      * @return  void
      */
-    function derivate ($currentDelegation = array(), $nextDelegations = array(), $removeList = true)
+    function derivate($currentDelegation = array(), $nextDelegations = array(), $removeList = true)
     {
         //define this...
         if (! defined( 'TASK_FINISH_PROCESS' )) {
@@ -704,20 +704,10 @@ class Derivation
                             }
                             break;
                         default:
-                            if ($currentDelegation['ROU_TYPE'] == 'SEC-JOIN') {
-                                $siblingThreads = $this->case->getOpenSiblingThreads( $nextDel['TAS_UID'], $currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX'], $currentDelegation['TAS_UID'], $currentDelegation['ROU_TYPE'] );
-                                $canDerivate = count( $siblingThreads ) == 0;
-                            } elseif ($currentDelegation['ROU_TYPE'] == 'DISCRIMINATOR') {
-                                //First get the total threads of Next Task where route type='Discriminator'
-                                $siblingThreads = $this->case->getOpenSiblingThreads( $nextDel['TAS_UID'], $currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX'], $currentDelegation['TAS_UID'], $currentDelegation['ROU_TYPE'] );
-                                $siblingThreadsCount = count( $siblingThreads );
-                                $discriminateThread = $currentDelegation['ROU_CONDITION'];
-                                //$checkThread = count($totalThreads) - $cond;
-                                if ($discriminateThread == $siblingThreadsCount) {
-                                    $canDerivate = true;
-                                } else {
-                                    $canDerivate = false;
-                                }
+                            if ($currentDelegation["ROU_TYPE"] == "SEC-JOIN") {
+                                $siblingThreads = $this->case->getOpenSiblingThreads($nextDel["TAS_UID"], $currentDelegation["APP_UID"], $currentDelegation["DEL_INDEX"], $currentDelegation["TAS_UID"]);
+
+                                $canDerivate = empty($siblingThreads);
                             } else {
                                 $canDerivate = true;
                             }
