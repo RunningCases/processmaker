@@ -813,7 +813,7 @@ class workspaceTools
                         $arrayData["MESS_FROM_NAME"]           = (isset($emailConfiguration["MESS_FROM_NAME"]))? $emailConfiguration["MESS_FROM_NAME"] : "";
                         $arrayData["SMTPSECURE"]               = $emailConfiguration["SMTPSecure"];
                         $arrayData["MESS_TRY_SEND_INMEDIATLY"] = (isset($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"]) && ($emailConfiguration["MESS_TRY_SEND_INMEDIATLY"] . "" == "true" || $emailConfiguration["MESS_TRY_SEND_INMEDIATLY"] . "" == "1"))? 1 : 0;
-                        $arrayData["MAIL_TO"]                  = $emailConfiguration["MAIL_TO"];
+                        $arrayData["MAIL_TO"]                  = isset($emailConfiguration["MAIL_TO"]) ? $emailConfiguration["MAIL_TO"] : '';
                         $arrayData["MESS_DEFAULT"]             = (isset($emailConfiguration["MESS_ENABLED"]) && $emailConfiguration["MESS_ENABLED"] . "" == "1")? 1 : 0;
                         break;
                     case "MAIL":
