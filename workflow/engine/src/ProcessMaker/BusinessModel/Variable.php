@@ -77,10 +77,10 @@ class Variable
                     if (isset($arrayData["VAR_ACCEPTED_VALUES"])) {
                         $VAR_ACCEPTED_VALUES = $arrayData["VAR_ACCEPTED_VALUES"];
                         foreach($VAR_ACCEPTED_VALUES as $key => $val) {
-                            $VAR_ACCEPTED_VALUES[$key]["label"] = htmlentities($val["label"]);
-                            $VAR_ACCEPTED_VALUES[$key]["value"] = htmlentities($val["value"]);
+                            $VAR_ACCEPTED_VALUES[$key]["label"] = htmlentities($val["label"], ENT_IGNORE, 'UTF-8');
+                            $VAR_ACCEPTED_VALUES[$key]["value"] = htmlentities($val["value"], ENT_IGNORE, 'UTF-8');
                         }
-                        $encodeAcceptedValues = html_entity_decode(json_encode($VAR_ACCEPTED_VALUES));
+                        $encodeAcceptedValues = html_entity_decode(json_encode($VAR_ACCEPTED_VALUES), ENT_IGNORE, 'UTF-8');
                         $variable->setVarAcceptedValues($encodeAcceptedValues);
                     }
                     $variable->save();
@@ -175,10 +175,10 @@ class Variable
                     if (isset($arrayData["VAR_ACCEPTED_VALUES"])) {
                         $VAR_ACCEPTED_VALUES = $arrayData["VAR_ACCEPTED_VALUES"];
                         foreach($VAR_ACCEPTED_VALUES as $key => $val) {
-                            $VAR_ACCEPTED_VALUES[$key]["label"] = htmlentities($val["label"]);
-                            $VAR_ACCEPTED_VALUES[$key]["value"] = htmlentities($val["value"]);
+                            $VAR_ACCEPTED_VALUES[$key]["label"] = htmlentities($val["label"], ENT_IGNORE,'UTF-8');
+                            $VAR_ACCEPTED_VALUES[$key]["value"] = htmlentities($val["value"], ENT_IGNORE,'UTF-8');
                         }
-                        $encodeAcceptedValues = html_entity_decode(json_encode($VAR_ACCEPTED_VALUES));
+                        $encodeAcceptedValues = html_entity_decode(json_encode($VAR_ACCEPTED_VALUES), ENT_IGNORE, 'UTF-8');
                         $variable->setVarAcceptedValues($encodeAcceptedValues);
                     }
                     $variable->save();
