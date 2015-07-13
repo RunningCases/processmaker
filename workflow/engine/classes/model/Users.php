@@ -261,7 +261,7 @@ class Users extends BaseUsers
             //Calendar
             $calendar = new Calendar();
             $calendarInfo = $calendar->getCalendarFor( $userUid, $userUid, $userUid );
-            $aFields["USR_CALENDAR"] = ($calendarInfo["CALENDAR_APPLIED"] != "DEFAULT") ? $calendarInfo["CALENDAR_UID"] : "";                        
+            $aFields["USR_CALENDAR"] = ($calendarInfo["CALENDAR_APPLIED"] != "DEFAULT") ? $calendarInfo["CALENDAR_UID"] : "";
 
             //Photo
             $pathPhoto = PATH_IMAGES_ENVIRONMENT_USERS . $userUid . ".gif";
@@ -290,12 +290,12 @@ class Users extends BaseUsers
             if(strlen($arrayData["replacedby"] != 0)){
                 $oUser = UsersPeer::retrieveByPK( $arrayData["replacedby"] );
                 $arrayData["replacedbyfullname"] = $oUser->getUsrFirstname() . ' ' . $oUser->getUsrLastname();
-            } 
+            }
             $arrayData["duedate"] = $aFields["USR_DUE_DATE"];
             $arrayData["calendar"] = $aFields["USR_CALENDAR"];
             if(strlen($aFields["USR_CALENDAR"] != 0)){
-                $arrayData["calendarname"] = $calendar->calendarName( $aFields["USR_CALENDAR"] );                
-            }            
+                $arrayData["calendarname"] = $calendar->calendarName( $aFields["USR_CALENDAR"] );
+            }
             $arrayData["status"] = $aFields["USR_STATUS"];
             $arrayData["department"] = $aFields["DEP_UID"];
             if (strlen($arrayData["department"]) != 0) {
@@ -399,6 +399,10 @@ class Users extends BaseUsers
 
     public function refreshTotal ($userId, $type = 'add', $list = "inbox", $total = 1)
     {
+        if ($userId == "") {
+            return;
+        }
+
         $nameList = self::getNameTotal($list);
         $criteria = new Criteria();
         $criteria->addSelectColumn( $nameList );
