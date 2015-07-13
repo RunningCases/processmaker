@@ -1191,6 +1191,12 @@ class TimerEvent
             $criteria->addSelectColumn(\ElementTaskRelationPeer::TAS_UID);
 
             $arrayCondition = array();
+            $arrayCondition[] = array(\TimerEventPeer::PRJ_UID, \ProcessPeer::PRO_UID, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::INNER_JOIN);
+
+            $criteria->add(\ProcessPeer::PRO_STATUS, "ACTIVE", \Criteria::EQUAL);
+
+            $arrayCondition = array();
             $arrayCondition[] = array(\TimerEventPeer::PRJ_UID, \ElementTaskRelationPeer::PRJ_UID, \Criteria::EQUAL);
             $arrayCondition[] = array(\TimerEventPeer::EVN_UID, \ElementTaskRelationPeer::ELEMENT_UID, \Criteria::EQUAL);
             $criteria->addJoinMC($arrayCondition, \Criteria::INNER_JOIN);
@@ -1257,6 +1263,8 @@ class TimerEvent
                     if ((int)($hour . $minute) <= (int)($hourCase . $minuteCase)) {
                         $flagCase = $hourCase == $hour && $minuteCase == $minute;
                     } else {
+                        $timerEventNextRunDateNew = $this->getNextRunDateByDataAndDatetime($arrayTimerEventData, $datetime); //Generate new date for old TMREVN_NEXT_RUN_DATE
+
                         $flagCase = true; //Create the old case
                     }
                 }
@@ -1360,6 +1368,12 @@ class TimerEvent
             $criteriaMain->addSelectColumn(\AppDelegationPeer::DEL_INDEX);
             $criteriaMain->addSelectColumn(\AppDelegationPeer::DEL_DELEGATE_DATE);
             $criteriaMain->addSelectColumn(\BpmnEventPeer::EVN_NAME);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\AppDelegationPeer::PRO_UID, \ProcessPeer::PRO_UID, \Criteria::EQUAL);
+            $criteriaMain->addJoinMC($arrayCondition, \Criteria::INNER_JOIN);
+
+            $criteriaMain->add(\ProcessPeer::PRO_STATUS, "ACTIVE", \Criteria::EQUAL);
 
             $arrayCondition = array();
             $arrayCondition[] = array(\AppDelegationPeer::APP_UID, \ApplicationPeer::APP_UID, \Criteria::EQUAL);
