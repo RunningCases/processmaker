@@ -174,7 +174,7 @@ abstract class BaseDynaform extends BaseObject implements Persistent
      * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
      * @throws     PropelException - if unable to convert the date/time to timestamp.
      */
-    public function getDynUpdateDate($format = 'Y-m-d')
+    public function getDynUpdateDate($format = 'Y-m-d H:i:s')
     {
 
         if ($this->dyn_update_date === null || $this->dyn_update_date === '') {
@@ -412,7 +412,7 @@ abstract class BaseDynaform extends BaseObject implements Persistent
 
             $this->dyn_version = $rs->getInt($startcol + 6);
 
-            $this->dyn_update_date = $rs->getDate($startcol + 7, null);
+            $this->dyn_update_date = $rs->getTimestamp($startcol + 7, null);
 
             $this->resetModified();
 
