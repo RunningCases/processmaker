@@ -212,6 +212,7 @@ CREATE TABLE `DYNAFORM`
 	`DYN_CONTENT` MEDIUMTEXT,
 	`DYN_LABEL` MEDIUMTEXT,
 	`DYN_VERSION` INTEGER  NOT NULL,
+	`DYN_UPDATE_DATE` DATETIME  default '' NOT NULL,
 	PRIMARY KEY (`DYN_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Forms required';
 #-----------------------------------------------------------------------------

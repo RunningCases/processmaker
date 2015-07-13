@@ -465,7 +465,7 @@
     <column name="DYN_CONTENT" type="LONGVARCHAR"/>
     <column name="DYN_LABEL" type="LONGVARCHAR"/>
     <column name="DYN_VERSION" type="INTEGER" required="true"/>
-    <column name="DYN_UPDATE_DATE" type="DATE" required="false"/>
+    <column name="DYN_UPDATE_DATE" type="TIMESTAMP" required="false"/>
     <validator column="DYN_TYPE">
       <rule name="validValues" value="xmlform|grid" message="Please select a valid dynaform type."/>
     </validator>
@@ -4386,7 +4386,7 @@
         <column name="MESS_FROM_NAME" type="VARCHAR" size="256" default="" />
         <column name="SMTPSECURE" type="VARCHAR" size="3" required="true" default="No" />
         <column name="MESS_TRY_SEND_INMEDIATLY" type="INTEGER" required="true" default="0" />
-        <column name="MAIL_TO" type="VARCHAR" size="256" required="true" default="" />
+        <column name="MAIL_TO" type="VARCHAR" size="256" required="false" default="" />
         <column name="MESS_DEFAULT" type="INTEGER" required="true" default="0" />
     </table>
 
