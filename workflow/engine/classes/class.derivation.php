@@ -439,20 +439,21 @@ class Derivation
      */
     function getNextAssignedUser ($tasInfo)
     {
-        $oUser = new Users();
+        //$oUser = new Users();
         $nextAssignedTask = $tasInfo['NEXT_TASK'];
         $lastAssigned = $tasInfo['NEXT_TASK']['TAS_LAST_ASSIGNED'];
         $sTasUid = $tasInfo['NEXT_TASK']['TAS_UID'];
-        // to do: we can increase the LOCATION by COUNTRY, STATE and LOCATION
-        /* Verify if the next Task is set with the option "TAS_ASSIGN_LOCATION == TRUE" */
-        $assignLocation = '';
-        if ($tasInfo['NEXT_TASK']['TAS_ASSIGN_LOCATION'] == 'TRUE') {
-            $oUser->load( $tasInfo['USER_UID'] );
-            krumo( $oUser->getUsrLocation() );
-            //to do: assign for location
-            //$assignLocation = " AND USR_LOCATION = " . $oUser->Fields['USR_LOCATION'];
-        }
-        /* End - Verify if the next Task is set with the option "TAS_ASSIGN_LOCATION == TRUE" */
+
+        //// to do: we can increase the LOCATION by COUNTRY, STATE and LOCATION
+        ///* Verify if the next Task is set with the option "TAS_ASSIGN_LOCATION == TRUE" */
+        //$assignLocation = '';
+        //if ($tasInfo['NEXT_TASK']['TAS_ASSIGN_LOCATION'] == 'TRUE') {
+        //    $oUser->load( $tasInfo['USER_UID'] );
+        //    krumo( $oUser->getUsrLocation() );
+        //    //to do: assign for location
+        //    //$assignLocation = " AND USR_LOCATION = " . $oUser->Fields['USR_LOCATION'];
+        //}
+        ///* End - Verify if the next Task is set with the option "TAS_ASSIGN_LOCATION == TRUE" */
 
         $uidUser = '';
         switch ($nextAssignedTask['TAS_ASSIGN_TYPE']) {
@@ -507,7 +508,7 @@ class Derivation
                 $userFields['USR_EMAIL'] = '';
 
                 //get the report_to user & its full info
-                $useruid = $this->checkReplacedByUser( $this->getDenpendentUser( $tasInfo['USER_UID'] ) );
+                $useruid = ($tasInfo["USER_UID"] != "")? $this->checkReplacedByUser($this->getDenpendentUser($tasInfo["USER_UID"])) : "";
 
                 if (isset( $useruid ) && $useruid != '') {
                     $userFields = $this->getUsersFullNameFromArray( $useruid );
@@ -575,7 +576,7 @@ class Derivation
      * @param   array   $nextDelegations
      * @return  void
      */
-    function derivate ($currentDelegation = array(), $nextDelegations = array(), $removeList = true)
+    function derivate($currentDelegation = array(), $nextDelegations = array(), $removeList = true)
     {
         //define this...
         if (! defined( 'TASK_FINISH_PROCESS' )) {
@@ -703,20 +704,10 @@ class Derivation
                             }
                             break;
                         default:
-                            if ($currentDelegation['ROU_TYPE'] == 'SEC-JOIN') {
-                                $siblingThreads = $this->case->getOpenSiblingThreads( $nextDel['TAS_UID'], $currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX'], $currentDelegation['TAS_UID'], $currentDelegation['ROU_TYPE'] );
-                                $canDerivate = count( $siblingThreads ) == 0;
-                            } elseif ($currentDelegation['ROU_TYPE'] == 'DISCRIMINATOR') {
-                                //First get the total threads of Next Task where route type='Discriminator'
-                                $siblingThreads = $this->case->getOpenSiblingThreads( $nextDel['TAS_UID'], $currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX'], $currentDelegation['TAS_UID'], $currentDelegation['ROU_TYPE'] );
-                                $siblingThreadsCount = count( $siblingThreads );
-                                $discriminateThread = $currentDelegation['ROU_CONDITION'];
-                                //$checkThread = count($totalThreads) - $cond;
-                                if ($discriminateThread == $siblingThreadsCount) {
-                                    $canDerivate = true;
-                                } else {
-                                    $canDerivate = false;
-                                }
+                            if ($currentDelegation["ROU_TYPE"] == "SEC-JOIN") {
+                                $siblingThreads = $this->case->getOpenSiblingThreads($nextDel["TAS_UID"], $currentDelegation["APP_UID"], $currentDelegation["DEL_INDEX"], $currentDelegation["TAS_UID"]);
+
+                                $canDerivate = empty($siblingThreads);
                             } else {
                                 $canDerivate = true;
                             }

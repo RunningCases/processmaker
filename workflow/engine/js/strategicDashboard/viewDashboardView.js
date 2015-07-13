@@ -505,7 +505,7 @@ var loadIndicator = function (indicatorId, initDate, endDate) {
 				hideTitleAndSortDiv();
                 $('[data-toggle="tooltip"]').tooltip({
                     animated: 'fade',
-                    placement: 'bottom'
+                    placement: 'top'
                 });
 			});
 };
@@ -538,17 +538,16 @@ var defaultInitDate = function() {
     var date = new Date();
     var dateMonth = date.getMonth();
     var dateYear = date.getFullYear();
-	var initDate = $('#initYearList').val() + '-' + $('#initPeriodList').val() + '-' + '01';
-	return initDate;
+	var initDate = new Date(dateYear, dateMonth, 1);
+	initDate.setMonth(initDate.getMonth() - 1);
+	var retval = $('#initYearList').val() + '-' + (initDate.getMonth() + 1)  + '-' + '01';
+	return retval;
 }
 
 var defaultEndDate = function () {
-	//TODO use the timeSeries function that finds the last day in the period
-    var date = new Date();
-    var dateMonth = date.getMonth();
-    var dateYear = date.getFullYear();
-	var initDate = $('#endYearList').val() + '-' + $('#endPeriodList').val() + '-' + '30';
-	return initDate;
+	var endDate = helper.periodEndDate ($('#periodicityList').val() , $('#endPeriodList').val() , $('#endYearList').val());
+	var retval = $('#endYearList').val() + '-' + $('#endPeriodList').val() + '-' + endDate.getDate();
+	return retval;
 }
 
 var fillDashboardsList = function (presenterData) {
@@ -562,7 +561,7 @@ var fillDashboardsList = function (presenterData) {
 	window.loadedDashboards = presenterData;
 	for (key in presenterData) {
 		var dashboard = presenterData[key];
-		dashboard.title = dashboard.title.replace('&#39;', "'");
+		dashboard.title = helper.unescape(dashboard.title);
 		$('#dashboardsList').append(template(dashboard));
 		if (dashboard.isFavorite == 1) {
 			window.currentDashboardId = dashboard.id;
@@ -796,6 +795,11 @@ var fillSpecialIndicatorSecondView = function(presenterData) {
 		graph.drawChart();
 	}
 	this.fillSpecialIndicatorSecondViewDetail(presenter.orderDataList(presenterData.entityData, selectedOrderOfDetailList()));
+	  $('[data-toggle="tooltip"]').tooltip({
+                    animated: 'fade',
+                    placement: 'top'
+                });
+
 }
 
 var fillSpecialIndicatorSecondViewDetail = function (list) {

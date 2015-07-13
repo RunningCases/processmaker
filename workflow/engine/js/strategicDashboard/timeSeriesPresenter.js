@@ -71,13 +71,16 @@ TimeSeriesPresenter.prototype.indicatorList = function (dashboardId) {
 	var that = this;
 	var requestFinished = $.Deferred();
 	var dummyDate = this.helper.date2MysqlString(new Date());
+	var indicatorsAllowed = [1010, 1030];
 	this.model.indicatorList(dashboardId, dummyDate, dummyDate).done(function (data) {
 		var newArray = [];
 		$.each(data, function(index, originalObject) {
-			var newObject = {label: originalObject.DAS_IND_TITLE,
-							 value: originalObject.DAS_IND_UID
-							}
-			newArray.push(newObject);
+			if (indicatorsAllowed.indexOf(originalObject.DAS_IND_TYPE*1) >= 0) {
+				var newObject = {label: originalObject.DAS_IND_TITLE,
+								 value: originalObject.DAS_IND_UID
+								}
+				newArray.push(newObject);
+			}
 		});
 
 		requestFinished.resolve(newArray);
@@ -144,8 +147,8 @@ TimeSeriesPresenter.prototype.historicData = function (indicator, periodicity, i
 								initYear, endPeriod, endYear) {
 	var that = this;
 	var requestFinished = $.Deferred();
-	var initDate = this.periodInitDate(periodicity, initPeriod, initYear);
-	var endDate = this.periodEndDate(periodicity, endPeriod, endYear);
+	var initDate = this.helper.periodInitDate(periodicity, initPeriod, initYear);
+	var endDate = this.helper.periodEndDate(periodicity, endPeriod, endYear);
 	this.model.historicData(indicator, periodicity, initDate, endDate).done(function (data) {
 		var graphData = [];
 		$.each(data, function(index, originalObject) {
@@ -235,8 +238,8 @@ TimeSeriesPresenter.prototype.periodEquivalentFromDate = function (periodicity, 
 	switch (periodicity * 1) {
 		case this.helper.ReportingPeriodicityEnum.MONTH:
 			for (var i = 1; i < 12; i++) {
-				var periodInitDate = this.periodInitDate (periodicity, i, year);
-				var periodEndDate = this.periodEndDate (periodicity, i, year);
+				var periodInitDate = this.helper.periodInitDate (periodicity, i, year);
+				var periodEndDate = this.helper.periodEndDate (periodicity, i, year);
 				if (periodInitDate <= date && periodEndDate >= date) {
 					retval = i;
 				}
@@ -244,8 +247,8 @@ TimeSeriesPresenter.prototype.periodEquivalentFromDate = function (periodicity, 
 			break;
 		case this.helper.ReportingPeriodicityEnum.QUARTER:
 			for (var i = 1; i < 4; i++) {
-				var periodInitDate = this.periodInitDate (periodicity, i, year);
-				var periodEndDate = this.periodEndDate (periodicity, i, year);
+				var periodInitDate = this.helper.periodInitDate (periodicity, i, year);
+				var periodEndDate = this.helper.periodEndDate (periodicity, i, year);
 				if (periodInitDate <= date && periodEndDate >= date) {
 					retval = i;
 				}
@@ -253,8 +256,8 @@ TimeSeriesPresenter.prototype.periodEquivalentFromDate = function (periodicity, 
 			break;
 		case this.helper.ReportingPeriodicityEnum.SEMESTER:
 			for (var i = 1; i < 2; i++) {
-				var periodInitDate = this.periodInitDate (periodicity, i, year);
-				var periodEndDate = this.periodEndDate (periodicity, i, year);
+				var periodInitDate = this.helper.periodInitDate (periodicity, i, year);
+				var periodEndDate = this.helper.periodEndDate (periodicity, i, year);
 				if (periodInitDate <= date && periodEndDate >= date) {
 					retval = i;
 				}
@@ -269,50 +272,4 @@ TimeSeriesPresenter.prototype.periodEquivalentFromDate = function (periodicity, 
 	}
 	return retval;
 }
-
-TimeSeriesPresenter.prototype.periodInitDate = function (periodicity, period, year) {
-	var retval = null;
-	switch (periodicity * 1) {
-		case this.helper.ReportingPeriodicityEnum.MONTH:
-			retval = new Date(year, period - 1, 1);
-			break;
-		case this.helper.ReportingPeriodicityEnum.QUARTER:
-			retval = new Date(year, 3 * (period-1), 1);
-			break;
-		case this.helper.ReportingPeriodicityEnum.SEMESTER:
-			retval = new Date(year, 6 * (period-1), 1);
-			break;
-		case this.helper.ReportingPeriodicityEnum.YEAR:
-			retval = new Date(year, 0, 1);
-			break;
-	}
-	if (retval == null) {
-		throw new Error("The periodicity " + periodicity + " is not supported.");
-	}
-	return retval;
-}
-
-TimeSeriesPresenter.prototype.periodEndDate = function (periodicity, period, year) {
-	var retval = null;
-	switch (periodicity * 1) {
-		case this.helper.ReportingPeriodicityEnum.MONTH:
-			retval = new Date(year, period, 0, 23,59,59);
-			break;
-		case this.helper.ReportingPeriodicityEnum.QUARTER:
-			retval = new Date(year, 3 * (period), 0, 23, 59, 59);
-			break;
-		case this.helper.ReportingPeriodicityEnum.SEMESTER:
-			retval = new Date(year, 6 * (period), 0, 23, 59, 59);
-			break;
-		case this.helper.ReportingPeriodicityEnum.YEAR:
-			retval = new Date(year, 11, 31, 23, 59, 59);
-			break;
-	}
-	if (retval == null) {
-		throw new Error("The periodicity " + periodicity + " is not supported.");
-	}
-	return retval;
-
-}
-
 

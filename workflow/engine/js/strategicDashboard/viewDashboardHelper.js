@@ -323,3 +323,61 @@ ViewDashboardHelper.prototype.putInCache = function (endPoint, data) {
 	}
 }
 
+
+
+ViewDashboardHelper.prototype.periodInitDate = function (periodicity, period, year) {
+	var retval = null;
+	switch (periodicity * 1) {
+		case this.ReportingPeriodicityEnum.MONTH:
+			retval = new Date(year, period - 1, 1);
+			break;
+		case this.ReportingPeriodicityEnum.QUARTER:
+			retval = new Date(year, 3 * (period-1), 1);
+			break;
+		case this.ReportingPeriodicityEnum.SEMESTER:
+			retval = new Date(year, 6 * (period-1), 1);
+			break;
+		case this.ReportingPeriodicityEnum.YEAR:
+			retval = new Date(year, 0, 1);
+			break;
+	}
+	if (retval == null) {
+		throw new Error("The periodicity " + periodicity + " is not supported.");
+	}
+	return retval;
+}
+
+ViewDashboardHelper.prototype.periodEndDate = function (periodicity, period, year) {
+	var retval = null;
+	switch (periodicity * 1) {
+		case this.ReportingPeriodicityEnum.MONTH:
+			retval = new Date(year, period, 0, 23,59,59);
+			break;
+		case this.ReportingPeriodicityEnum.QUARTER:
+			retval = new Date(year, 3 * (period), 0, 23, 59, 59);
+			break;
+		case this.ReportingPeriodicityEnum.SEMESTER:
+			retval = new Date(year, 6 * (period), 0, 23, 59, 59);
+			break;
+		case this.ReportingPeriodicityEnum.YEAR:
+			retval = new Date(year, 11, 31, 23, 59, 59);
+			break;
+	}
+	if (retval == null) {
+		throw new Error("The periodicity " + periodicity + " is not supported.");
+	}
+	return retval;
+
+}
+
+
+
+ViewDashboardHelper.prototype.unescape = function (string) {
+    var temp = document.createElement("div");
+    temp.innerHTML = string;
+    var result = temp.childNodes[0].nodeValue;
+    temp.removeChild(temp.firstChild);
+    return result;
+}
+
+
