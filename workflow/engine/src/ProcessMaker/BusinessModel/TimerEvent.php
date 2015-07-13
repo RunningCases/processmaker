@@ -104,7 +104,7 @@ class TimerEvent
         try {
             $arrayData = array();
 
-            if (preg_match("/^([1-9]\d{3})\-(0[1-9]|1[0-2])\-([0][1-9]|[12][0-9]|3[01])(?:\s([0-1]\d|2[0-3])\:([0-5]\d)\:([0-5]\d))?$/", $datetime, $arrayMatch)) {
+            if (preg_match("/^([1-9]\d{3})\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[01])(?:\s([0-1]\d|2[0-3])\:([0-5]\d)\:([0-5]\d))?$/", $datetime, $arrayMatch)) {
                 $arrayData[] = $arrayMatch[1]; //Year
                 $arrayData[] = $arrayMatch[2]; //Month
                 $arrayData[] = $arrayMatch[3]; //Day
@@ -498,9 +498,9 @@ class TimerEvent
 
             $arrayFieldDefinition = array();
             $arrayValidateData = array(
-                "TMREVN_DAY"    => array("/^(?:[0][1-9]|[12][0-9]|3[01])$/", $this->arrayFieldNameForException["timerEventDay"]),
-                "TMREVN_HOUR"   => array("/^(?:[0-1]\d|2[0-3])$/",           $this->arrayFieldNameForException["timerEventHour"]),
-                "TMREVN_MINUTE" => array("/^(?:[0-5]\d)$/",                  $this->arrayFieldNameForException["timerEventMinute"])
+                "TMREVN_DAY"    => array("/^(?:0[1-9]|[12][0-9]|3[01])$/", $this->arrayFieldNameForException["timerEventDay"]),
+                "TMREVN_HOUR"   => array("/^(?:[0-1]\d|2[0-3])$/",         $this->arrayFieldNameForException["timerEventHour"]),
+                "TMREVN_MINUTE" => array("/^(?:[0-5]\d)$/",                $this->arrayFieldNameForException["timerEventMinute"])
             );
 
             switch ($arrayFinalData["TMREVN_OPTION"]) {
@@ -536,8 +536,8 @@ class TimerEvent
                         "TMREVN_MINUTE" => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "timerEventMinute")
                     );
 
-                    $arrayValidateData["TMREVN_HOUR"][0]   = "/^(?:0|[1-9]\d*)$/";
-                    $arrayValidateData["TMREVN_MINUTE"][0] = "/^(?:0|[1-9]\d*)$/";
+                    $arrayValidateData["TMREVN_HOUR"][0]   = "/^(?:0?\d|[1-9]\d*)$/";
+                    $arrayValidateData["TMREVN_MINUTE"][0] = "/^(?:0?\d|[1-9]\d*)$/";
                     break;
                 case "ONE-DATE-TIME":
                     $arrayFieldDefinition = array(
@@ -548,9 +548,9 @@ class TimerEvent
                     //TMREVN_DAY
                     //TMREVN_HOUR
                     //TMREVN_MINUTE
-                    $arrayValidateData["TMREVN_DAY"][0]    = "/^(?:0|[1-9]\d*)$/";
-                    $arrayValidateData["TMREVN_HOUR"][0]   = "/^(?:0|[1-9]\d*)$/";
-                    $arrayValidateData["TMREVN_MINUTE"][0] = "/^(?:0|[1-9]\d*)$/";
+                    $arrayValidateData["TMREVN_DAY"][0]    = "/^(?:0?\d|[1-9]\d*)$/";
+                    $arrayValidateData["TMREVN_HOUR"][0]   = "/^(?:0?\d|[1-9]\d*)$/";
+                    $arrayValidateData["TMREVN_MINUTE"][0] = "/^(?:0?\d|[1-9]\d*)$/";
                     break;
                 case "WAIT-UNTIL-SPECIFIED-DATE-TIME":
                     $arrayFieldDefinition = array(
