@@ -1366,6 +1366,7 @@ class BpmnWorkflow extends Project\Bpmn
         $diagram["participants"] = isset($diagram["participants"])? $diagram["participants"]: array();
         $diagram["laneset"] = isset($diagram["laneset"])? $diagram["laneset"]: array();
         $diagram["lanes"] = isset($diagram["lanes"])? $diagram["lanes"]: array();
+
         $result = array();
 
         $projectData['prj_uid'] = $prjUid;
@@ -1595,8 +1596,8 @@ class BpmnWorkflow extends Project\Bpmn
          * Diagram's Gateways Handling
          */
         $arrayGatewayUid = array();
-        $arrayUidGatewayParallel = array();
-        $flagGatewayParallel = false;
+        $arrayGatewayParallelUid = array();
+        $arrayGatewayUidToCheckConverging = array(); //PARALLEL, INCLUSIVE
 
         $whiteList = array();
 
@@ -1641,9 +1642,14 @@ class BpmnWorkflow extends Project\Bpmn
             if ($flagAddOrUpdate) {
                 $arrayGatewayData = $bwp->getGateway($gatewayData["GAT_UID"]);
 
-                if ($arrayGatewayData["GAT_TYPE"] == "PARALLEL") {
-                    $arrayUidGatewayParallel[] = $gatewayData["GAT_UID"];
-                    $flagGatewayParallel = true;
+                switch ($arrayGatewayData["GAT_TYPE"]) {
+                    case self::BPMN_GATEWAY_PARALLEL:
+                        $arrayGatewayParallelUid[] = $gatewayData["GAT_UID"];
+                        $arrayGatewayUidToCheckConverging[] = $gatewayData["GAT_UID"];
+                        break;
+                    case self::BPMN_GATEWAY_INCLUSIVE:
+                        $arrayGatewayUidToCheckConverging[] = $gatewayData["GAT_UID"];
+                        break;
                 }
             }
 
@@ -1867,7 +1873,7 @@ class BpmnWorkflow extends Project\Bpmn
             }
 
             //Update condition
-            if ($flagGatewayParallel && $flowData["FLO_ELEMENT_ORIGIN_TYPE"] == "bpmnGateway" && in_array($flowData["FLO_ELEMENT_ORIGIN"], $arrayUidGatewayParallel)) {
+            if ($flowData["FLO_ELEMENT_ORIGIN_TYPE"] == "bpmnGateway" && in_array($flowData["FLO_ELEMENT_ORIGIN"], $arrayGatewayParallelUid)) {
                 $flowData["FLO_CONDITION"] = "";
             }
 
@@ -1900,11 +1906,29 @@ class BpmnWorkflow extends Project\Bpmn
             }
         }
 
+        //Update BPMN_GATEWAY.GAT_DIRECTION
+        foreach ($arrayGatewayUidToCheckConverging as $value) {
+            $arrayGatewayData = $bwp->getGateway($value);
+
+            if (!is_null($arrayGatewayData)) {
+                $arrayFlow = \BpmnFlow::findAllBy(array(
+                    \BpmnFlowPeer::FLO_TYPE              => array("MESSAGE", \Criteria::NOT_EQUAL),
+                    \BpmnFlowPeer::FLO_ELEMENT_DEST      => $arrayGatewayData["GAT_UID"],
+                    \BpmnFlowPeer::FLO_ELEMENT_DEST_TYPE => "bpmnGateway"
+                ));
+
+                if (count($arrayFlow) > 1) {
+                    $bwp->updateGateway($arrayGatewayData["GAT_UID"], array("GAT_DIRECTION" => "CONVERGING"));
+                }
+            }
+        }
+
         //Update BPMN_GATEWAY.GAT_DEFAULT_FLOW
         foreach ($arrayGatewayGatDefaultFlow as $key => $value) {
             $bwp->updateGateway($key, array("GAT_DEFAULT_FLOW" => $value));
         }
 
+        //Map Bpmn-Flows to Workflow-Routes
         $bwp->mapBpmnFlowsToWorkflowRoutes();
 
         //Return

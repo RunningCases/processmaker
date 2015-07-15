@@ -921,6 +921,7 @@ class DynaForm
             $criteria->addSelectColumn(\DynaformPeer::DYN_TYPE);
             $criteria->addSelectColumn(\DynaformPeer::DYN_CONTENT);
             $criteria->addSelectColumn(\DynaformPeer::DYN_VERSION);
+            $criteria->addSelectColumn(\DynaformPeer::DYN_UPDATE_DATE);
 
             $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
             $criteria->addAlias("CD", \ContentPeer::TABLE_NAME);
@@ -973,7 +974,8 @@ class DynaForm
                 $this->getFieldNameByFormatFieldName("DYN_DESCRIPTION") => $record["DYN_DESCRIPTION"] . "",
                 $this->getFieldNameByFormatFieldName("DYN_TYPE")        => $record["DYN_TYPE"] . "",
                 $this->getFieldNameByFormatFieldName("DYN_CONTENT")     => $record["DYN_CONTENT"] . "",
-                $this->getFieldNameByFormatFieldName("DYN_VERSION")     => (int)($record["DYN_VERSION"])
+                $this->getFieldNameByFormatFieldName("DYN_VERSION")     => (int)($record["DYN_VERSION"]),
+                $this->getFieldNameByFormatFieldName("DYN_UPDATE_DATE")     => $record["DYN_UPDATE_DATE"]
             );
         } catch (\Exception $e) {
             throw $e;

@@ -104,13 +104,13 @@ class TimerEvent
         try {
             $arrayData = array();
 
-            if (preg_match("/^(\d{4})\-(\d{2})\-(\d{2})(?:\s(\d{2})\:(\d{2})\:(\d{2}))?$/", $datetime, $arrayMatch)) {
+            if (preg_match("/^([1-9]\d{3})\-(0[1-9]|1[0-2])\-(0[1-9]|[12][0-9]|3[01])(?:\s([0-1]\d|2[0-3])\:([0-5]\d)\:([0-5]\d))?$/", $datetime, $arrayMatch)) {
                 $arrayData[] = $arrayMatch[1]; //Year
                 $arrayData[] = $arrayMatch[2]; //Month
                 $arrayData[] = $arrayMatch[3]; //Day
                 $arrayData[] = (isset($arrayMatch[4]))? $arrayMatch[4] : "00"; //Hour
-                $arrayData[] = (isset($arrayMatch[4]))? $arrayMatch[5] : "00"; //Minute
-                $arrayData[] = (isset($arrayMatch[4]))? $arrayMatch[6] : "00"; //Second
+                $arrayData[] = (isset($arrayMatch[5]))? $arrayMatch[5] : "00"; //Minute
+                $arrayData[] = (isset($arrayMatch[6]))? $arrayMatch[6] : "00"; //Second
             }
 
             //Return
@@ -161,14 +161,14 @@ class TimerEvent
                         $weekday = (int)(date("w", strtotime($datetime)));
                         $weekday = ($weekday == 0)? 7 : $weekday;
 
-                        $firstWeekday = (int)($arrayWeekdaysData[0]);
+                        $firstWeekday = $arrayWeekdaysData[0];
 
                         $nextWeekday   = $firstWeekday;
                         $typeStatement = "this";
                         $flag = false;
 
                         foreach ($arrayWeekdaysData as $value) {
-                            $d = (int)($value);
+                            $d = $value;
 
                             if (($flagIncludeDatetime && $d >= $weekday) || (!$flagIncludeDatetime && $d > $weekday)) {
                                 $nextWeekday = $d;
@@ -198,13 +198,13 @@ class TimerEvent
                     if (!empty($arrayMonthsData)) {
                         sort($arrayMonthsData);
 
-                        $firstMonth = (int)($arrayMonthsData[0]);
+                        $firstMonth = $arrayMonthsData[0];
 
                         $nextMonth = $firstMonth;
                         $flag = false;
 
                         foreach ($arrayMonthsData as $value) {
-                            $m = (int)($value);
+                            $m = $value;
 
                             if (($flagIncludeDatetime && $m >= $month) || (!$flagIncludeDatetime && $m > $month)) {
                                 $nextMonth = $m;
@@ -252,7 +252,7 @@ class TimerEvent
             }
 
             //Return
-            return $nextRunDate;
+            return date("Y-m-d H:i:s", strtotime($nextRunDate));
         } catch (\Exception $e) {
             throw $e;
         }
@@ -313,6 +313,28 @@ class TimerEvent
 
             //Return
             return $nextRunDate;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Unset fields
+     *
+     * @param array $arrayData Data with the fields
+     *
+     * return array Return data with the fields
+     */
+    public function unsetFields(array $arrayData)
+    {
+        try {
+            unset($arrayData["TMREVN_UID"]);
+            unset($arrayData["PRJ_UID"]);
+            unset($arrayData["TMREVN_LAST_RUN_DATE"]);
+            unset($arrayData["TMREVN_LAST_EXECUTION_DATE"]);
+
+            //Return
+            return $arrayData;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -475,6 +497,11 @@ class TimerEvent
             }
 
             $arrayFieldDefinition = array();
+            $arrayValidateData = array(
+                "TMREVN_DAY"    => array("/^(?:0[1-9]|[12][0-9]|3[01])$/", $this->arrayFieldNameForException["timerEventDay"]),
+                "TMREVN_HOUR"   => array("/^(?:[0-1]\d|2[0-3])$/",         $this->arrayFieldNameForException["timerEventHour"]),
+                "TMREVN_MINUTE" => array("/^(?:[0-5]\d)$/",                $this->arrayFieldNameForException["timerEventMinute"])
+            );
 
             switch ($arrayFinalData["TMREVN_OPTION"]) {
                 case "HOURLY":
@@ -508,6 +535,9 @@ class TimerEvent
                         "TMREVN_HOUR"   => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "timerEventHour"),
                         "TMREVN_MINUTE" => array("type" => "string", "required" => true, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "timerEventMinute")
                     );
+
+                    $arrayValidateData["TMREVN_HOUR"][0]   = "/^(?:0?\d|[1-9]\d*)$/";
+                    $arrayValidateData["TMREVN_MINUTE"][0] = "/^(?:0?\d|[1-9]\d*)$/";
                     break;
                 case "ONE-DATE-TIME":
                     $arrayFieldDefinition = array(
@@ -518,6 +548,9 @@ class TimerEvent
                     //TMREVN_DAY
                     //TMREVN_HOUR
                     //TMREVN_MINUTE
+                    $arrayValidateData["TMREVN_DAY"][0]    = "/^(?:0?\d|[1-9]\d*)$/";
+                    $arrayValidateData["TMREVN_HOUR"][0]   = "/^(?:0?\d|[1-9]\d*)$/";
+                    $arrayValidateData["TMREVN_MINUTE"][0] = "/^(?:0?\d|[1-9]\d*)$/";
                     break;
                 case "WAIT-UNTIL-SPECIFIED-DATE-TIME":
                     $arrayFieldDefinition = array(
@@ -529,12 +562,6 @@ class TimerEvent
             if (!empty($arrayFieldDefinition)) {
                 $process->throwExceptionIfDataNotMetFieldDefinition($arrayFinalData, $arrayFieldDefinition, $this->arrayFieldNameForException, $flagInsert);
             }
-
-            $arrayValidateData = array(
-                "TMREVN_DAY"    => array("/^(?:[0-2]\d|3[01])$/",  $this->arrayFieldNameForException["timerEventDay"]),
-                "TMREVN_HOUR"   => array("/^(?:[0-1]\d|2[0-3])$/", $this->arrayFieldNameForException["timerEventHour"]),
-                "TMREVN_MINUTE" => array("/^(?:[0-5]\d)$/",        $this->arrayFieldNameForException["timerEventMinute"])
-            );
 
             foreach ($arrayValidateData as $key => $value) {
                 if (isset($arrayData[$key]) && !preg_match($value[0], $arrayData[$key])) {
@@ -567,11 +594,6 @@ class TimerEvent
             //Set data
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
-            unset($arrayData["TMREVN_UID"]);
-            unset($arrayData["PRJ_UID"]);
-            unset($arrayData["TMREVN_LAST_RUN_DATE"]);
-            unset($arrayData["TMREVN_LAST_EXECUTION_DATE"]);
-
             //Verify data
             $process->throwExceptionIfNotExistsProcess($projectUid, $this->arrayFieldNameForException["projectUid"]);
 
@@ -579,6 +601,8 @@ class TimerEvent
 
             //Create
             $cnn = \Propel::getConnection("workflow");
+
+            $arrayData = $this->unsetFields($arrayData);
 
             try {
                 $timerEvent = new \TimerEvent();
@@ -692,7 +716,7 @@ class TimerEvent
      * @param string $timerEventUid Unique id of Timer-Event
      * @param array  $arrayData     Data
      *
-     * return array Return data of the Timer-Event updated
+     * return int Return the number of rows affected by this update
      */
     public function update($timerEventUid, array $arrayData)
     {
@@ -706,12 +730,6 @@ class TimerEvent
 
             //Set data
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
-            $arrayDataBackup = $arrayData;
-
-            unset($arrayData["TMREVN_UID"]);
-            unset($arrayData["PRJ_UID"]);
-            unset($arrayData["TMREVN_LAST_RUN_DATE"]);
-            unset($arrayData["TMREVN_LAST_EXECUTION_DATE"]);
 
             //Set variables
             $arrayTimerEventData = $this->getTimerEvent($timerEventUid, true);
@@ -725,6 +743,8 @@ class TimerEvent
 
             //Update
             $cnn = \Propel::getConnection("workflow");
+
+            $arrayData = $this->unsetFields($arrayData);
 
             try {
                 $timerEvent = \TimerEventPeer::retrieveByPK($timerEventUid);
@@ -807,13 +827,53 @@ class TimerEvent
                     $cnn->commit();
 
                     //Return
-                    $arrayData = $arrayDataBackup;
+                    return $result;
+                } else {
+                    $msg = "";
 
-                    if (!$this->formatFieldNameInUppercase) {
-                        $arrayData = array_change_key_case($arrayData, CASE_LOWER);
+                    foreach ($timerEvent->getValidationFailures() as $validationFailure) {
+                        $msg = $msg . (($msg != "")? "\n" : "") . $validationFailure->getMessage();
                     }
 
-                    return $arrayData;
+                    throw new \Exception(\G::LoadTranslation("ID_REGISTRY_CANNOT_BE_UPDATED") . (($msg != "")? "\n" . $msg : ""));
+                }
+            } catch (\Exception $e) {
+                $cnn->rollback();
+
+                throw $e;
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Single update Timer-Event
+     *
+     * @param string $timerEventUid Unique id of Timer-Event
+     * @param array  $arrayData     Data
+     *
+     * return int Return integer
+     */
+    public function singleUpdate($timerEventUid, array $arrayData)
+    {
+        try {
+            $cnn = \Propel::getConnection("workflow");
+
+            try {
+                $timerEvent = \TimerEventPeer::retrieveByPK($timerEventUid);
+
+                $timerEvent->fromArray($arrayData, \BasePeer::TYPE_FIELDNAME);
+
+                if ($timerEvent->validate()) {
+                    $cnn->begin();
+
+                    $result = $timerEvent->save();
+
+                    $cnn->commit();
+
+                    //Return
+                    return $result;
                 } else {
                     $msg = "";
 
@@ -931,9 +991,9 @@ class TimerEvent
                 $this->getFieldNameByFormatFieldName("TMREVN_OPTION")              => $record["TMREVN_OPTION"],
                 $this->getFieldNameByFormatFieldName("TMREVN_START_DATE")          => $record["TMREVN_START_DATE"] . "",
                 $this->getFieldNameByFormatFieldName("TMREVN_END_DATE")            => $record["TMREVN_END_DATE"] . "",
-                $this->getFieldNameByFormatFieldName("TMREVN_DAY")                 => $record["TMREVN_DAY"] . "",
-                $this->getFieldNameByFormatFieldName("TMREVN_HOUR")                => $record["TMREVN_HOUR"] . "",
-                $this->getFieldNameByFormatFieldName("TMREVN_MINUTE")              => $record["TMREVN_MINUTE"] . "",
+                $this->getFieldNameByFormatFieldName("TMREVN_DAY")                 => $record["TMREVN_DAY"],
+                $this->getFieldNameByFormatFieldName("TMREVN_HOUR")                => $record["TMREVN_HOUR"],
+                $this->getFieldNameByFormatFieldName("TMREVN_MINUTE")              => $record["TMREVN_MINUTE"],
                 $this->getFieldNameByFormatFieldName("TMREVN_CONFIGURATION_DATA")  => $record["TMREVN_CONFIGURATION_DATA"],
                 $this->getFieldNameByFormatFieldName("TMREVN_NEXT_RUN_DATE")       => $record["TMREVN_NEXT_RUN_DATE"] . "",
                 $this->getFieldNameByFormatFieldName("TMREVN_LAST_RUN_DATE")       => $record["TMREVN_LAST_RUN_DATE"] . "",
@@ -1065,6 +1125,444 @@ class TimerEvent
 
             //Return
             return (!$flagGetRecord)? $this->getTimerEventDataFromRecord($row) : $row;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Log
+     *
+     * @param string $action Action
+     * @param string $value  Value
+     *
+     * return void
+     */
+    private function log($action, $value = "")
+    {
+        try {
+            $workspace = (defined("SYS_SYS"))? SYS_SYS : "Wokspace Undefined";
+            $ipClient = \G::getIpAddress();
+
+            $username = "timereventcron";
+            $fullname = "timereventcron";
+
+            \G::log("|". $workspace ."|". $ipClient ."|". $username . "|" . $fullname ."|" . $action . "|" . $value, PATH_DATA, "timerevent.log");
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Start/Continue case by Timer-Event
+     *
+     * @param string $datetime Datetime (yyyy-mm-dd hh:ii:ss)
+     * @param bool   $frontEnd Flag to represent the terminal front-end
+     *
+     * return void
+     */
+    public function startContinueCaseByTimerEvent($datetime, $frontEnd = false)
+    {
+        try {
+            \G::LoadClass("wsBase");
+
+            //Set variables
+            $ws = new \wsBase();
+            $case = new \Cases();
+            $common = new \ProcessMaker\Util\Common();
+
+            $common->setFrontEnd($frontEnd);
+
+            list($year, $month, $day, $hour, $minute) = $this->getYearMonthDayHourMinuteSecondByDatetime($datetime);
+
+            $date    = "$year-$month-$day";
+            $dateIni = "$year-$month-$day 00:00:00";
+            $dateEnd = "$year-$month-$day 23:59:59";
+
+            //Start Timer-Event (start new case) ///////////////////////////////////////////////////////////////////////
+            $common->frontEndShow("START");
+
+            $this->log("START-NEW-CASES", "Date \"$datetime\": Start new cases");
+
+            //Query
+            $criteria = $this->getTimerEventCriteria();
+
+            $criteria->addSelectColumn(\BpmnEventPeer::EVN_NAME);
+            $criteria->addSelectColumn(\ElementTaskRelationPeer::TAS_UID);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\TimerEventPeer::PRJ_UID, \ProcessPeer::PRO_UID, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::INNER_JOIN);
+
+            $criteria->add(\ProcessPeer::PRO_STATUS, "ACTIVE", \Criteria::EQUAL);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\TimerEventPeer::PRJ_UID, \ElementTaskRelationPeer::PRJ_UID, \Criteria::EQUAL);
+            $arrayCondition[] = array(\TimerEventPeer::EVN_UID, \ElementTaskRelationPeer::ELEMENT_UID, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::INNER_JOIN);
+
+            $criteria->add(\ElementTaskRelationPeer::ELEMENT_TYPE, "bpmnEvent", \Criteria::EQUAL);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\ElementTaskRelationPeer::PRJ_UID, \TaskPeer::PRO_UID, \Criteria::EQUAL);
+            $arrayCondition[] = array(\ElementTaskRelationPeer::TAS_UID, \TaskPeer::TAS_UID, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::INNER_JOIN);
+
+            $criteria->add(\TaskPeer::TAS_TYPE, "START-TIMER-EVENT", \Criteria::EQUAL);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\TimerEventPeer::PRJ_UID, \BpmnEventPeer::PRJ_UID, \Criteria::EQUAL);
+            $arrayCondition[] = array(\TimerEventPeer::EVN_UID, \BpmnEventPeer::EVN_UID, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::INNER_JOIN);
+
+            $criteria->add(\BpmnEventPeer::EVN_TYPE, "START", \Criteria::EQUAL);
+            $criteria->add(\BpmnEventPeer::EVN_MARKER, "TIMER", \Criteria::EQUAL);
+
+            $criteria->add(\TimerEventPeer::TMREVN_OPTION, array("HOURLY", "DAILY", "MONTHLY", "EVERY", "ONE-DATE-TIME"), \Criteria::IN);
+            $criteria->add(\TimerEventPeer::TMREVN_STATUS, "ACTIVE", \Criteria::EQUAL);
+
+            $criteria->add(
+                $criteria->getNewCriterion(\TimerEventPeer::TMREVN_NEXT_RUN_DATE, $dateIni, \Criteria::GREATER_EQUAL)->addAnd(
+                $criteria->getNewCriterion(\TimerEventPeer::TMREVN_NEXT_RUN_DATE, $dateEnd, \Criteria::LESS_EQUAL))->addOr(
+                $criteria->getNewCriterion(\TimerEventPeer::TMREVN_NEXT_RUN_DATE, $dateIni, \Criteria::LESS_THAN))
+            );
+
+            $criteria->add(
+                $criteria->getNewCriterion(\TimerEventPeer::TMREVN_END_DATE, $date, \Criteria::GREATER_EQUAL)->addOr(
+                $criteria->getNewCriterion(\TimerEventPeer::TMREVN_END_DATE, null, \Criteria::EQUAL))
+            );
+
+            $rsCriteria = \TimerEventPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            $flagRecord = false;
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+                $row["TMREVN_CONFIGURATION_DATA"] = unserialize($row["TMREVN_CONFIGURATION_DATA"]);
+
+                //Set variables
+                $arrayTimerEventData = $row;
+
+                $bpmnEventName = $row["EVN_NAME"];
+                $taskUid       = $row["TAS_UID"];
+
+                //Create the new case
+                $timerEventNextRunDate = $arrayTimerEventData["TMREVN_NEXT_RUN_DATE"];
+                $timerEventNextRunDateNew = "";
+
+                $flagCase = false;
+
+                if (strtotime($timerEventNextRunDate) < strtotime($dateIni)) {
+                    $timerEventNextRunDateNew = $this->getNextRunDateByDataAndDatetime($arrayTimerEventData, $datetime); //Generate new date for old TMREVN_NEXT_RUN_DATE
+
+                    $flagCase = true; //Create the old case
+                } else {
+                    list( , , , $hourCase, $minuteCase) = $this->getYearMonthDayHourMinuteSecondByDatetime($timerEventNextRunDate);
+
+                    if ((int)($hour . $minute) <= (int)($hourCase . $minuteCase)) {
+                        $flagCase = $hourCase == $hour && $minuteCase == $minute;
+                    } else {
+                        $timerEventNextRunDateNew = $this->getNextRunDateByDataAndDatetime($arrayTimerEventData, $datetime); //Generate new date for old TMREVN_NEXT_RUN_DATE
+
+                        $flagCase = true; //Create the old case
+                    }
+                }
+
+                if ($flagCase) {
+                    if ($flagRecord) {
+                        $common->frontEndShow("TEXT", "");
+                    }
+
+                    if ($bpmnEventName != "") {
+                        $common->frontEndShow("TEXT", "> Name Timer-Event: $bpmnEventName");
+                    }
+
+                    $common->frontEndShow("TEXT", "> Creating the new case...");
+
+                    //Start new case
+                    $result = $ws->newCase($arrayTimerEventData["PRJ_UID"], "", $taskUid, array());
+
+                    $arrayResult = json_decode(json_encode($result), true);
+
+                    if ($arrayResult["status_code"] == 0) {
+                        $applicationUid    = $arrayResult["caseId"];
+                        $applicationNumber = $arrayResult["caseNumber"];
+
+                        $common->frontEndShow("TEXT", "    - OK case #$applicationNumber was created");
+                        $common->frontEndShow("TEXT", "> Routing the case #$applicationNumber...");
+
+                        $this->log("CREATED-NEW-CASE", "Case #$applicationNumber created, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+
+                        //Derivate new case
+                        $result = $ws->derivateCase("", $applicationUid, 1);
+
+                        $arrayResult = json_decode(json_encode($result), true);
+
+                        if ($arrayResult["status_code"] == 0) {
+                            $common->frontEndShow("TEXT", "    - OK");
+
+                            $this->log("ROUTED-NEW-CASE", "Case #$applicationNumber routed, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                        } else {
+                            $common->frontEndShow("TEXT", "    - Failed: " . $arrayResult["message"]);
+
+                            $this->log("ROUTED-NEW-CASE", "Failed: " . $arrayResult["message"] . ", Case: #$applicationNumber, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                        }
+                    } else {
+                        $common->frontEndShow("TEXT", "    - Failed: " . $arrayResult["message"]);
+
+                        $this->log("CREATED-NEW-CASE", "Failed: " . $arrayResult["message"] . ", PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                    }
+
+                    //Update Timer-Event
+                    $arrayData = array();
+
+                    switch ($arrayTimerEventData["TMREVN_OPTION"]) {
+                        case "HOURLY":
+                        case "DAILY":
+                        case "MONTHLY":
+                        case "EVERY":
+                            if ($timerEventNextRunDateNew == "") {
+                                $timerEventNextRunDateNew = $this->getNextRunDateByDataAndDatetime($arrayTimerEventData, $timerEventNextRunDate, false);
+                            }
+
+                            if ($arrayTimerEventData["TMREVN_OPTION"] != "EVERY" &&
+                                $arrayTimerEventData["TMREVN_END_DATE"] . "" != "" && strtotime($timerEventNextRunDateNew) > strtotime($arrayTimerEventData["TMREVN_END_DATE"] . " 23:59:59")
+                            ) {
+                                $arrayData["TMREVN_STATUS"] = "PROCESSED";
+                            } else {
+                                $arrayData["TMREVN_NEXT_RUN_DATE"] = $timerEventNextRunDateNew;
+                            }
+                            break;
+                        case "ONE-DATE-TIME":
+                            $arrayData["TMREVN_STATUS"] = "PROCESSED";
+                            break;
+                    }
+
+                    $arrayData["TMREVN_LAST_RUN_DATE"] = $timerEventNextRunDate;
+                    $arrayData["TMREVN_LAST_EXECUTION_DATE"] = date("Y-m-d H:i:s");
+
+                    $result = $this->singleUpdate($arrayTimerEventData["TMREVN_UID"], $arrayData);
+
+                    $flagRecord = true;
+                }
+            }
+
+            if (!$flagRecord) {
+                $common->frontEndShow("TEXT", "Not exists any record to start a new case, on date \"$datetime\"");
+
+                $this->log("NO-RECORDS", "Not exists any record to start a new case");
+            }
+
+            $common->frontEndShow("END");
+
+            $this->log("END-NEW-CASES", "Date \"$datetime\": End new cases");
+
+            //Intermediate Catch Timer-Event (continue the case) ///////////////////////////////////////////////////////
+            $this->log("START-CONTINUE-CASES", "Date \"$datetime\": Start continue the cases");
+
+            //Query
+            $criteriaMain = $this->getTimerEventCriteria();
+
+            $criteriaMain->addSelectColumn(\AppDelegationPeer::APP_UID);
+            $criteriaMain->addSelectColumn(\AppDelegationPeer::DEL_INDEX);
+            $criteriaMain->addSelectColumn(\AppDelegationPeer::DEL_DELEGATE_DATE);
+            $criteriaMain->addSelectColumn(\BpmnEventPeer::EVN_NAME);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\AppDelegationPeer::PRO_UID, \ProcessPeer::PRO_UID, \Criteria::EQUAL);
+            $criteriaMain->addJoinMC($arrayCondition, \Criteria::INNER_JOIN);
+
+            $criteriaMain->add(\ProcessPeer::PRO_STATUS, "ACTIVE", \Criteria::EQUAL);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\AppDelegationPeer::APP_UID, \ApplicationPeer::APP_UID, \Criteria::EQUAL);
+            $criteriaMain->addJoinMC($arrayCondition, \Criteria::INNER_JOIN);
+
+            $criteriaMain->add(\ApplicationPeer::APP_STATUS, "DRAFT", \Criteria::NOT_EQUAL);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\AppDelegationPeer::PRO_UID, \TaskPeer::PRO_UID, \Criteria::EQUAL);
+            $arrayCondition[] = array(\AppDelegationPeer::TAS_UID, \TaskPeer::TAS_UID, \Criteria::EQUAL);
+            $criteriaMain->addJoinMC($arrayCondition, \Criteria::INNER_JOIN);
+
+            $criteriaMain->add(\TaskPeer::TAS_TYPE, "INTERMEDIATE-CATCH-TIMER-EVENT", \Criteria::EQUAL);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\TaskPeer::PRO_UID, \ElementTaskRelationPeer::PRJ_UID, \Criteria::EQUAL);
+            $arrayCondition[] = array(\TaskPeer::TAS_UID, \ElementTaskRelationPeer::TAS_UID, \Criteria::EQUAL);
+            $criteriaMain->addJoinMC($arrayCondition, \Criteria::INNER_JOIN);
+
+            $criteriaMain->add(\ElementTaskRelationPeer::ELEMENT_TYPE, "bpmnEvent", \Criteria::EQUAL);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\ElementTaskRelationPeer::PRJ_UID, \TimerEventPeer::PRJ_UID, \Criteria::EQUAL);
+            $arrayCondition[] = array(\ElementTaskRelationPeer::ELEMENT_UID, \TimerEventPeer::EVN_UID, \Criteria::EQUAL);
+            $criteriaMain->addJoinMC($arrayCondition, \Criteria::INNER_JOIN);
+
+            $arrayCondition = array();
+            $arrayCondition[] = array(\TimerEventPeer::PRJ_UID, \BpmnEventPeer::PRJ_UID, \Criteria::EQUAL);
+            $arrayCondition[] = array(\TimerEventPeer::EVN_UID, \BpmnEventPeer::EVN_UID, \Criteria::EQUAL);
+            $criteriaMain->addJoinMC($arrayCondition, \Criteria::INNER_JOIN);
+
+            $criteriaMain->add(\BpmnEventPeer::EVN_TYPE, "INTERMEDIATE", \Criteria::EQUAL);
+            $criteriaMain->add(\BpmnEventPeer::EVN_MARKER, "TIMER", \Criteria::EQUAL);
+
+            $criteriaMain->add(\TimerEventPeer::TMREVN_OPTION, array("WAIT-FOR", "WAIT-UNTIL-SPECIFIED-DATE-TIME"), \Criteria::IN);
+            $criteriaMain->add(\TimerEventPeer::TMREVN_STATUS, "ACTIVE", \Criteria::EQUAL);
+
+            $criteriaMain->add(\AppDelegationPeer::DEL_THREAD_STATUS, "OPEN", \Criteria::EQUAL);
+            $criteriaMain->add(\AppDelegationPeer::DEL_FINISH_DATE, null, \Criteria::ISNULL);
+
+            //Number records total
+            $criteriaCount = clone $criteriaMain;
+
+            $criteriaCount->clearSelectColumns();
+            $criteriaCount->addSelectColumn("COUNT(" . \AppDelegationPeer::APP_UID . ") AS NUM_REC");
+
+            $rsCriteriaCount = \AppDelegationPeer::doSelectRS($criteriaCount);
+            $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            $result = $rsCriteriaCount->next();
+            $row = $rsCriteriaCount->getRow();
+
+            $numRecTotal = $row["NUM_REC"];
+
+            //Query
+            $total = $numRecTotal;
+            $counter = 0;
+
+            $start = 0;
+            $limit = 1000;
+
+            $flagRecord = false;
+
+            do {
+                $flagNextRecord = false;
+
+                $criteria = clone $criteriaMain;
+
+                $criteria->setOffset($start);
+                $criteria->setLimit($limit);
+
+                $rsCriteria = \AppDelegationPeer::doSelectRS($criteria);
+                $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+                while ($rsCriteria->next()) {
+                    if ($counter + 1 > $total) {
+                        $flagNextRecord = false;
+                        break;
+                    }
+
+                    $row = $rsCriteria->getRow();
+                    $row["TMREVN_CONFIGURATION_DATA"] = unserialize($row["TMREVN_CONFIGURATION_DATA"]);
+
+                    //Set variables
+                    $arrayTimerEventData  = $row;
+                    $arrayApplicationData = $case->loadCase($row["APP_UID"]);
+
+                    $applicationUid    = $row["APP_UID"];
+                    $applicationNumber = $arrayApplicationData["APP_NUMBER"];
+                    $delIndex          = $row["DEL_INDEX"];
+                    $delDelegateDate   = $row["DEL_DELEGATE_DATE"];
+                    $bpmnEventName     = $row["EVN_NAME"];
+
+                    //Continue the case
+                    $continueCaseDate = $delDelegateDate;
+
+                    switch ($arrayTimerEventData["TMREVN_OPTION"]) {
+                        case "WAIT-FOR":
+                            if ($arrayTimerEventData["TMREVN_DAY"] . "" != "") {
+                                $continueCaseDate = date("Y-m-d H:i:s", strtotime("$continueCaseDate +" . ((int)($arrayTimerEventData["TMREVN_DAY"])) . " days"));
+                            }
+
+                            if ($arrayTimerEventData["TMREVN_HOUR"] . "" != "") {
+                                $continueCaseDate = date("Y-m-d H:i:s", strtotime("$continueCaseDate +" . ((int)($arrayTimerEventData["TMREVN_HOUR"])) . " hours"));
+                            }
+
+                            if ($arrayTimerEventData["TMREVN_MINUTE"] . "" != "") {
+                                $continueCaseDate = date("Y-m-d H:i:s", strtotime("$continueCaseDate +" . ((int)($arrayTimerEventData["TMREVN_MINUTE"])) . " minutes"));
+                            }
+                            break;
+                        case "WAIT-UNTIL-SPECIFIED-DATE-TIME":
+                            $continueCaseDate = \G::replaceDataField($arrayTimerEventData["TMREVN_CONFIGURATION_DATA"], $arrayApplicationData["APP_DATA"]);
+                            break;
+                    }
+
+                    $arrayContinueCaseDateData = $this->getYearMonthDayHourMinuteSecondByDatetime($continueCaseDate);
+
+                    if (!empty($arrayContinueCaseDateData)) {
+                        $flagCase = false;
+
+                        if (strtotime($continueCaseDate) < strtotime($dateIni)) {
+                            $flagCase = true; //Continue the old case
+                        } else {
+                            $yearCase   = $arrayContinueCaseDateData[0];
+                            $monthCase  = $arrayContinueCaseDateData[1];
+                            $dayCase    = $arrayContinueCaseDateData[2];
+                            $hourCase   = $arrayContinueCaseDateData[3];
+                            $minuteCase = $arrayContinueCaseDateData[4];
+
+                            if ("$yearCase-$monthCase-$dayCase" == "$year-$month-$day") {
+                                if ((int)($hour . $minute) <= (int)($hourCase . $minuteCase)) {
+                                    $flagCase = $hourCase == $hour && $minuteCase == $minute;
+                                } else {
+                                    $flagCase = true; //Continue the old case
+                                }
+                            }
+                        }
+
+                        if ($flagCase) {
+                            if ($flagRecord) {
+                                $common->frontEndShow("TEXT", "");
+                            }
+
+                            if ($bpmnEventName != "") {
+                                $common->frontEndShow("TEXT", "> Name Timer-Event: $bpmnEventName");
+                            }
+
+                            $common->frontEndShow("TEXT", "> Continue the case #$applicationNumber");
+                            $common->frontEndShow("TEXT", "> Routing the case #$applicationNumber...");
+
+                            //Continue the case
+                            //Derivate case
+                            $result = $ws->derivateCase("", $applicationUid, $delIndex);
+
+                            $arrayResult = json_decode(json_encode($result), true);
+
+                            if ($arrayResult["status_code"] == 0) {
+                                $common->frontEndShow("TEXT", "    - OK");
+
+                                $this->log("CONTINUED-CASE", "Case #$applicationNumber continued, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                            } else {
+                                $common->frontEndShow("TEXT", "    - Failed: " . $arrayResult["message"]);
+
+                                $this->log("CONTINUED-CASE", "Failed: " . $arrayResult["message"] . ", Case: #$applicationNumber, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                            }
+
+                            $flagRecord = true;
+                        }
+                    } else {
+                        $this->log("INVALID-CONTINUE-DATE", "Continue date: $continueCaseDate, Case: #$applicationNumber, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                    }
+
+                    $counter++;
+
+                    $flagNextRecord = true;
+                }
+
+                $start = $start + $limit;
+            } while ($flagNextRecord);
+
+            if (!$flagRecord) {
+                $common->frontEndShow("TEXT", "Not exists any record to continue a case, on date \"$datetime\"");
+
+                $this->log("NO-RECORDS", "Not exists any record to continue a case");
+            }
+
+            $common->frontEndShow("END");
+
+            $this->log("END-CONTINUE-CASES", "Date \"$datetime\": End continue the cases");
         } catch (\Exception $e) {
             throw $e;
         }

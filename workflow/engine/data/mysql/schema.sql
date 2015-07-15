@@ -212,6 +212,7 @@ CREATE TABLE `DYNAFORM`
 	`DYN_CONTENT` MEDIUMTEXT,
 	`DYN_LABEL` MEDIUMTEXT,
 	`DYN_VERSION` INTEGER  NOT NULL,
+	`DYN_UPDATE_DATE` DATETIME NOT NULL,
 	PRIMARY KEY (`DYN_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Forms required';
 #-----------------------------------------------------------------------------
@@ -2861,9 +2862,9 @@ CREATE TABLE TIMER_EVENT
     TMREVN_OPTION              VARCHAR(50) default 'DAILY' NOT NULL,
     TMREVN_START_DATE          DATE,
     TMREVN_END_DATE            DATE,
-    TMREVN_DAY                 VARCHAR(2) default '' NOT NULL,
-    TMREVN_HOUR                VARCHAR(2) default '' NOT NULL,
-    TMREVN_MINUTE              VARCHAR(2) default '' NOT NULL,
+    TMREVN_DAY                 VARCHAR(5) default '' NOT NULL,
+    TMREVN_HOUR                VARCHAR(5) default '' NOT NULL,
+    TMREVN_MINUTE              VARCHAR(5) default '' NOT NULL,
     TMREVN_CONFIGURATION_DATA  MEDIUMTEXT default '' NOT NULL,
     TMREVN_NEXT_RUN_DATE       DATETIME,
     TMREVN_LAST_RUN_DATE       DATETIME,
