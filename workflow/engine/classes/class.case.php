@@ -1353,42 +1353,48 @@ class Cases
         }
     }
 
-    /*
+    /**
      * This function returns the threads open in a task
      * get an array with all sibling threads open from next task
      *
-     * @name getOpenSiblingThreads,
-     * @param string $sNextTask
-     * @param string $sAppUid
-     * @param string $iDelIndex
-     * @param string $sCurrentTask
-     * @return $aThreads
+     * @param string $nextTaskUid
+     * @param string $applicationUid
+     * @param string $delIndex
+     * @param string $currentTaskUid
+     *
+     * return array Return $arrayThread
      */
-
-    public function getOpenSiblingThreads($sNextTask, $sAppUid, $iDelIndex, $sCurrentTask)
+    public function getOpenSiblingThreads($nextTaskUid, $applicationUid, $delIndex, $currentTaskUid)
     {
         try {
             //Get all tasks that are previous to my NextTask, we want to know if there are pending task for my nexttask
             //we need to filter only seq joins going to my next task
             //and we are removing the current task from the search
-            $aThreads = array();
-            $oCriteria = new Criteria('workflow');
-            $oCriteria->add(RoutePeer::ROU_NEXT_TASK, $sNextTask);
-            $oCriteria->add(RoutePeer::TAS_UID, $sCurrentTask, Criteria::NOT_EQUAL);
-            $oCriteria->add(RoutePeer::ROU_TYPE, 'SEC-JOIN');
-            $oDataset = RoutePeer::doSelectRs($oCriteria);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $aPrevious = $this->searchOpenPreviousTasks($aRow['TAS_UID'], $sAppUid);
-                if (is_array($aPrevious) && count($aPrevious) > 0) {
-                    $aThreads[] = array_merge($aPrevious, $aThreads);
+            $arrayThread = array();
+
+            $criteria = new Criteria("workflow");
+
+            $criteria->add(RoutePeer::TAS_UID, $currentTaskUid, Criteria::NOT_EQUAL);
+            $criteria->add(RoutePeer::ROU_NEXT_TASK, $nextTaskUid, Criteria::EQUAL);
+            $criteria->add(RoutePeer::ROU_TYPE, "SEC-JOIN", Criteria::EQUAL);
+
+            $rsCriteria = RoutePeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayPrevious = $this->searchOpenPreviousTasks($row["TAS_UID"], $applicationUid);
+
+                if (is_array($arrayPrevious) && !empty($arrayPrevious)) {
+                    $arrayThread = array_merge($arrayThread, $arrayPrevious);
                 }
-                $oDataset->next();
             }
-            return $aThreads;
-        } catch (exception $e) {
-            throw ($e);
+
+            //Return
+            return $arrayThread;
+        } catch (Exception $e) {
+            throw $e;
         }
     }
 
@@ -1426,11 +1432,12 @@ class Cases
         $oCriteria->add(RoutePeer::ROU_NEXT_TASK, $taskUid);
         $oDataset = RoutePeer::doSelectRs($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $oDataset->next();
-        $aRow = $oDataset->getRow();
 
-        while (is_array($aRow)) {
+        while ($oDataset->next()) {
+            $aRow = $oDataset->getRow();
+
             $delegations = $this->getReviewedTasks($aRow['TAS_UID'], $sAppUid);
+
             if ($delegations !== false) {
                 if (count($delegations['open']) > 0) {
                     //there is an open delegation, so we need to return the delegation row
@@ -1439,7 +1446,7 @@ class Cases
                     if ($aRow['ROU_TYPE'] == 'PARALLEL-BY-EVALUATION') {
                         $aTaskReviewed = array();
                     } else {
-                        $aTaskReviewed = array_merge($aTaskReviewed, $delegations['closed']);
+                        //$aTaskReviewed = array_merge($aTaskReviewed, $delegations['closed']);
                     }
                 }
             } else {
@@ -1453,8 +1460,6 @@ class Cases
                     }
                 }
             }
-            $oDataset->next();
-            $aRow = $oDataset->getRow();
         }
         return $aTaskReviewed;
     }
@@ -2028,16 +2033,21 @@ class Cases
     {
         if ($sTasUid != '') {
             try {
-                $this->Task = new Task;
-                $Fields = $this->Task->Load($sTasUid);
+                $task = TaskPeer::retrieveByPK($sTasUid);
+
+                if (is_null($task)) {
+                    throw new Exception(G::LoadTranslation("ID_TASK_NOT_EXIST", array("TAS_UID", $sTasUid)));
+                }
 
                 //To allow Self Service as the first task
-                if (($Fields['TAS_ASSIGN_TYPE'] != 'SELF_SERVICE') && ($sUsrUid == '')) {
+                $arrayTaskTypeToExclude = array("START-TIMER-EVENT");
+
+                if (!is_null($task) && !in_array($task->getTasType(), $arrayTaskTypeToExclude) && $task->getTasAssignType() != "SELF_SERVICE" && $sUsrUid == "") {
                     throw (new Exception('You tried to start a new case without send the USER UID!'));
                 }
 
                 //Process
-                $sProUid = $this->Task->getProUid();
+                $sProUid = $task->getProUid();
                 $this->Process = new Process;
                 $proFields = $this->Process->Load($sProUid);
 

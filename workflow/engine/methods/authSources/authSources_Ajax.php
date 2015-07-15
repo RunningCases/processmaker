@@ -158,22 +158,20 @@ try {
                 if (($sObject != '.') && ($sObject != '..') && ($sObject != '.svn') && ($sObject != 'ldap')) {
                     if (is_file( PATH_RBAC . 'plugins' . PATH_SEP . $sObject )) {
                         $sType = trim(str_replace(array("class.", ".php"), "", $sObject));
-                        $flagAdd = false;
 
-                        /*----------------------------------********---------------------------------*/
-                        if (PMLicensedFeatures
-                            ::getSingleton()
-                            ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
-                            $flagAdd = true;
-                        }
-                       /*----------------------------------********---------------------------------*/
-
-                        if ($flagAdd) {
+                        if ($sType != "ldapAdvanced") {
                             $arr[] = array("sType" => $sType, "sLabel" => $sType);
                         }
                     }
                 }
             }
+
+            /*----------------------------------********---------------------------------*/
+            if (PMLicensedFeatures::getSingleton()->verifyfeature("sywN09PSzh1MVdOajZBdnhMbFhCSnpNT1lLTEFwVklmOTE=")) {
+                $arr[] = array("sType" => "ldapAdvanced", "sLabel" => "ldapAdvanced");
+            }
+            /*----------------------------------********---------------------------------*/
+
             echo '{sources: ' . G::json_encode( $arr ) . '}';
             break;
         case 'loadauthSourceData':
