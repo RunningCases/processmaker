@@ -182,7 +182,7 @@ class CLI
                     $valid_args[] = $arg;
                 }
 
-            $nameHotfixFile = ($taskName == "hotfix-install")? "HOTFIX-FILE" : ""; //lsl
+            $nameHotfixFile = ($taskName == "hotfix-install")? "HOTFIX-FILE" : "";
 
             $valid_args = join( " ", $valid_args );
             $description = explode( "\n", self::$tasks[$taskName]['description'] );
