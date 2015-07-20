@@ -16,6 +16,7 @@ class pmDynaform
     public $credentials = null;
     public $lang = null;
     public $langs = null;
+    private $dependent = null; //todo
 
     public function __construct($fields = array())
     {
@@ -184,6 +185,21 @@ class pmDynaform
                     if ($json->data["label"] === "") {
                         $json->data["label"] = $json->data["value"];
                     }
+                    //synchronize data label
+                    $withoutOptions = true;
+                    foreach ($json->options as $io) {
+                        if ($json->data["value"] === $io["value"]) {
+                            if ($json->data["label"] != $io["label"]) {
+                                $this->dependent = $json->variable; //todo
+                                $json->data["label"] = $io["label"];
+                                $withoutOptions = false;
+                            }
+                        }
+                    }
+                    if ($withoutOptions) {
+                        $json->data["label"] = $json->data["value"];//todo
+                    }
+                    //end synchronize data label
                 }
                 if ($key === "type" && ($value === "checkbox")) {
                     $json->data = array(
@@ -253,6 +269,27 @@ class pmDynaform
         }
     }
 
+    public function jsond(&$json)
+    {
+        foreach ($json as $key => &$value) {
+            $sw1 = is_array($value);
+            $sw2 = is_object($value);
+            if ($sw1 || $sw2) {
+                $this->jsond($value);
+            }
+            if (!$sw1 && !$sw2) {
+                if (isset($json->dbConnection) && $json->dbConnection !== "" && $json->dbConnection !== "none" && isset($json->sql) && $json->sql != "") {
+                    $prefix = array("@@", "@#", "@%", "@?", "@$", "@=");
+                    foreach ($prefix as $val) {
+                        if (strpos($json->sql, $val . $this->dependent) !== false) {
+                            $json->data = array("value" => "", "label" => "");
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     public function isResponsive()
     {
         return $this->record != null && $this->record["DYN_VERSION"] == 2 ? true : false;
@@ -273,6 +310,7 @@ class pmDynaform
         }
 
         $this->jsonr($json);
+        $this->jsond($json); //todo
 
         $javascript = "
             <script type=\"text/javascript\">
@@ -329,6 +367,7 @@ class pmDynaform
         ob_clean();
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
+        $this->jsond($json); //todo
         $javascrip = "" .
                 "<script type='text/javascript'>\n" .
                 "var jsondata = " . G::json_encode($json) . ";\n" .
@@ -374,6 +413,7 @@ class pmDynaform
         ob_clean();
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
+        $this->jsond($json); //todo
         if (!isset($this->fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["PREVIOUS_STEP"])) {
             $this->fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["PREVIOUS_STEP"] = "";
         }
@@ -421,6 +461,7 @@ class pmDynaform
         ob_clean();
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
+        $this->jsond($json); //todo
         $javascrip = "" .
                 "<script type='text/javascript'>\n" .
                 "var jsondata = " . G::json_encode($json) . ";\n" .
@@ -456,6 +497,7 @@ class pmDynaform
         $this->record = $record;
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
+        $this->jsond($json); //todo
         $javascrip = "" .
                 "<script type='text/javascript'>\n" .
                 "var jsondata = " . G::json_encode($json) . ";\n" .
@@ -487,6 +529,7 @@ class pmDynaform
     {
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
+        $this->jsond($json); //todo
         $javascrip = "" .
                 "<script type='text/javascript'>" .
                 "var jsonData = " . G::json_encode($json) . ";" .
@@ -505,6 +548,7 @@ class pmDynaform
         $this->record = $record;
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
+        $this->jsond($json); //todo
         $javascrip = "" .
                 "<script type='text/javascript'>\n" .
                 "var jsondata = " . G::json_encode($json) . ";\n" .
