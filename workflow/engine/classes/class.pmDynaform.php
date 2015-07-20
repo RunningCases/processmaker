@@ -69,7 +69,11 @@ class pmDynaform
     public function getCredentials()
     {
         if (!isset($_SESSION['USER_LOGGED'])) {
-            return;
+            if (!preg_match("/^.*\/" . SYS_SKIN . "\/tracker\/.*$/", $_SERVER["REQUEST_URI"])) {
+                return;
+            }
+
+            $_SESSION["USER_LOGGED"] = "00000000000000000000000000000001";
         }
         if ($this->credentials != null) {
             return $this->credentials;
@@ -163,7 +167,7 @@ class pmDynaform
                                 array_push($json->options, $option);
                             }
                         } catch (Exception $e) {
-                            
+
                         }
                     }
                     if (isset($json->options[0])) {
