@@ -581,6 +581,26 @@ class Workflow extends Handler
             $oCaseTracker = new \CaseTracker();
             $oCaseTrackerObject = new \CaseTrackerObject();
 
+            //Update PROCESS_FILES_CHECKED
+            $configuration = \ConfigurationPeer::retrieveByPK("PROCESS_FILES_CHECKED", "", "", "", "");
+
+            if (!is_null($configuration)) {
+                $arrayProjectUid = unserialize($configuration->getCfgValue());
+
+                unset($arrayProjectUid[$sProcessUID]);
+
+                $conf = new \Configuration();
+
+                $result = $conf->update(array(
+                    "CFG_UID"   => "PROCESS_FILES_CHECKED",
+                    "OBJ_UID"   => "",
+                    "CFG_VALUE" => serialize($arrayProjectUid),
+                    "PRO_UID"   => "",
+                    "USR_UID"   => "",
+                    "APP_UID"   => ""
+                ));
+            }
+
             //Delete the applications of process
             if ($flagRemoveCases) {
                 $case = new \Cases();
