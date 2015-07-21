@@ -29,7 +29,7 @@ class PMLicensedFeatures
     private $features = array ();
     private $newFeatures = array(
             0 => array(
-                "description" => "Enables de Actions By Email feature.",
+                "description" => "Actions By Email allows users to enter information and route cases via email.",
                 "enabled" => false,
                 "id" => "actionsByEmail",
                 "latest_version" => "",
@@ -46,7 +46,7 @@ class PMLicensedFeatures
                 "version" => ""
             ),
             1 => array(
-                "description" => "Enables de Batch Routing feature.",
+                "description" => "Batch Routing allows a user to route multiple cases at a time onto the next task in the process. ",
                 "enabled" => false,
                 "id" => "pmConsolidatedCL",
                 "latest_version" => "",
@@ -97,7 +97,7 @@ class PMLicensedFeatures
                 "version" => ""
             ),
             4 => array(
-                "description" => "Registers every admin action in a log. The actions in administration settings options are registered in the log.",
+                "description" => "Registers every administrator action in a log. Any change in the settings under the Admin menu is registered in the log.",
                 "enabled" => false,
                 "id" => "auditLog",
                 "latest_version" => "",
@@ -131,7 +131,7 @@ class PMLicensedFeatures
                 "version" => ""
             ),
             6 => array(
-                "description" => "This functionality enables the flexibility to send mails from different email servers or configurations.",
+                "description" => "This features allows ProcessMaker to send out notifications using different email accounts and email servers.",
                 "enabled" => false,
                 "id" => "sendEmailFromDifferentEmailServers",
                 "latest_version" => "",
@@ -423,4 +423,3 @@ class PMLicensedFeatures
     }
     /*----------------------------------********---------------------------------*/
 }
-
