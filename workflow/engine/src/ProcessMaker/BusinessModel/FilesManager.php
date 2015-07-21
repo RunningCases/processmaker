@@ -194,7 +194,7 @@ class FilesManager
                 $directory = $sMainDirectory. PATH_SEP . $sSubDirectory . $aData['prf_filename'];
                 throw new \Exception(\G::LoadTranslation("ID_EXISTS_FILE", array($directory)));
             }
-            
+
             if (!file_exists($sCheckDirectory)) {
                 $sPkProcessFiles = \G::generateUniqueID();
                 $oProcessFiles = new \ProcessFiles();
@@ -242,31 +242,31 @@ class FilesManager
             throw $e;
         }
     }
-    
+
     public function addProcessFilesManagerInDb($aData)
     {
         try {
             $oProcessFiles = new \ProcessFiles();
             $aData = array_change_key_case($aData, CASE_UPPER);
             $oProcessFiles->fromArray($aData, \BasePeer::TYPE_FIELDNAME);
-            
+
             if($this->existsProcessFile($aData['PRF_UID'])) {
                 $sPkProcessFiles = \G::generateUniqueID();
                 $oProcessFiles->setPrfUid($sPkProcessFiles);
-                
+
                 $sDirectory = PATH_DATA_MAILTEMPLATES . $aData['PRO_UID'] . PATH_SEP . basename($aData['PRF_PATH']);
                 $oProcessFiles->setPrfPath($sDirectory);
-                    
+
                 $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
                 $emailEvent->updatePrfUid($aData['PRF_UID'], $sPkProcessFiles, $aData['PRO_UID']);
             }
-            
+
             $result = $oProcessFiles->save();
         } catch (Exception $e) {
             throw $e;
         }
     }
-    
+
     public function existsProcessFile($prfUid)
     {
         try {
@@ -462,10 +462,10 @@ class FilesManager
             if ($path == '') {
                 throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('prf_uid')));
             }
-            
+
             $sFile = end(explode("/",$path));
             $path = PATH_DATA_MAILTEMPLATES.$sProcessUID.DIRECTORY_SEPARATOR.$sFile;
-            
+
             if (file_exists($path) && !is_dir($path)) {
                 unlink($path);
             }
@@ -601,4 +601,115 @@ class FilesManager
             throw $e;
         }
     }
+
+    /**
+     * Process-Files upgrade
+     *
+     * @param string $projectUid Unique id of Project
+     *
+     * return void
+     */
+    public function processFilesUpgrade($projectUid = "")
+    {
+        try {
+            //Set variables
+            $conf = new \Configuration();
+
+            //Create/Get PROCESS_FILES_CHECKED
+            $arrayProjectUid = array();
+
+            $configuration = \ConfigurationPeer::retrieveByPK("PROCESS_FILES_CHECKED", "", "", "", "");
+
+            if (is_null($configuration)) {
+                $result = $conf->create(array(
+                    "CFG_UID"   => "PROCESS_FILES_CHECKED",
+                    "OBJ_UID"   => "",
+                    "CFG_VALUE" => serialize($arrayProjectUid),
+                    "PRO_UID"   => "",
+                    "USR_UID"   => "",
+                    "APP_UID"   => ""
+                ));
+            } else {
+                $arrayProjectUid = unserialize($configuration->getCfgValue());
+            }
+
+            //Set variables
+            $arrayPath = array("templates" => PATH_DATA_MAILTEMPLATES, "public" => PATH_DATA_PUBLIC);
+            $flagProjectUid = false;
+
+            //Query
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\BpmnProjectPeer::PRJ_UID);
+
+            if ($projectUid != "") {
+                $criteria->add(
+                    $criteria->getNewCriterion(\BpmnProjectPeer::PRJ_UID, $arrayProjectUid, \Criteria::NOT_IN)->addAnd(
+                    $criteria->getNewCriterion(\BpmnProjectPeer::PRJ_UID, $projectUid, \Criteria::EQUAL))
+                );
+            } else {
+                $criteria->add(\BpmnProjectPeer::PRJ_UID, $arrayProjectUid, \Criteria::NOT_IN);
+            }
+
+            $rsCriteria = \BpmnProjectPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                foreach ($arrayPath as $key => $value) {
+                    $path = $key;
+                    $dir  = $value . $row["PRJ_UID"];
+
+                    if (is_dir($dir)) {
+                        if ($dirh = opendir($dir)) {
+                            while (($file = readdir($dirh)) !== false) {
+                                if ($file != "" && $file != "." && $file != "..") {
+                                    $f = $dir . PATH_SEP . $file;
+
+                                    if (is_file($f)) {
+                                        $arrayProcessFilesData = $this->getFileManagerUid($f);
+
+                                        if (is_null($arrayProcessFilesData["PRF_UID"])) {
+                                            rename($dir . PATH_SEP . $file, $dir . PATH_SEP . $file . ".tmp");
+
+                                            $arrayData = array(
+                                                "prf_path"     => $path,
+                                                "prf_filename" => $file,
+                                                "prf_content"  => ""
+                                            );
+
+                                            $arrayData = $this->addProcessFilesManager($row["PRJ_UID"], "00000000000000000000000000000001", $arrayData);
+
+                                            rename($dir . PATH_SEP . $file . ".tmp", $dir . PATH_SEP . $file);
+                                        }
+                                    }
+                                }
+                            }
+
+                            closedir($dirh);
+                        }
+                    }
+                }
+
+                $arrayProjectUid[$row["PRJ_UID"]] = $row["PRJ_UID"];
+                $flagProjectUid = true;
+            }
+
+            //Update PROCESS_FILES_CHECKED
+            if ($flagProjectUid) {
+                $result = $conf->update(array(
+                    "CFG_UID"   => "PROCESS_FILES_CHECKED",
+                    "OBJ_UID"   => "",
+                    "CFG_VALUE" => serialize($arrayProjectUid),
+                    "PRO_UID"   => "",
+                    "USR_UID"   => "",
+                    "APP_UID"   => ""
+                ));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
+
