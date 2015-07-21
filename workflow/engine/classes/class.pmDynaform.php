@@ -78,8 +78,6 @@ class pmDynaform
             $_SESSION["USER_LOGGED"] = "00000000000000000000000000000001";
             $flagTrackerUser = true;
         }
-
-
         if ($this->credentials != null) {
             return $this->credentials;
         }
