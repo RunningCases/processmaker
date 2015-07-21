@@ -402,6 +402,11 @@ abstract class Importer
 
         $workflow->update($arrayWorkflowTables["process"]);
 
+        //Process-Files upgrade
+        $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
+
+        $filesManager->processFilesUpgrade($projectUid);
+
         //Return
         return $projectUid;
     }
@@ -559,7 +564,7 @@ abstract class Importer
             throw $e;
         }
     }
-    
+
     public function saveAs($prj_uid, $prj_name, $prj_description, $prj_category)
     {
         try {
@@ -594,3 +599,4 @@ abstract class Importer
         }
     }
 }
+
