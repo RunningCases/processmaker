@@ -358,6 +358,7 @@ class Light
                     case 'REPORT_TO':
                     case 'BALANCED':
                     case 'SELF_SERVICE':
+                        $taskAss = array();
                         $taskAss['taskId'] = $aValues['NEXT_TASK']['TAS_UID'];
                         $taskAss['taskName'] = $aValues['NEXT_TASK']['TAS_TITLE'];
                         $taskAss['taskAssignType'] = $aValues['NEXT_TASK']['TAS_ASSIGN_TYPE'];
@@ -371,6 +372,7 @@ class Light
                         $response[] = $taskAss;
                         break;
                     case 'MANUAL':
+                        $manual = array();
                         $manual['taskId'] = $aValues['NEXT_TASK']['TAS_UID'];
                         $manual['taskName'] = $aValues['NEXT_TASK']['TAS_TITLE'];
                         $manual['taskAssignType'] = $aValues['NEXT_TASK']['TAS_ASSIGN_TYPE'];
