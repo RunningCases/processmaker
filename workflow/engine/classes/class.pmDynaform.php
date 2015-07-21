@@ -68,13 +68,18 @@ class pmDynaform
 
     public function getCredentials()
     {
+        $flagTrackerUser = false;
+
         if (!isset($_SESSION['USER_LOGGED'])) {
             if (!preg_match("/^.*\/" . SYS_SKIN . "\/tracker\/.*$/", $_SERVER["REQUEST_URI"])) {
                 return;
             }
 
             $_SESSION["USER_LOGGED"] = "00000000000000000000000000000001";
+            $flagTrackerUser = true;
         }
+
+
         if ($this->credentials != null) {
             return $this->credentials;
         }
@@ -88,6 +93,11 @@ class pmDynaform
             "clientId" => $a["client_id"],
             "clientSecret" => $a["client_secret"]
         );
+
+        if ($flagTrackerUser) {
+            unset($_SESSION["USER_LOGGED"]);
+        }
+
         return $this->credentials;
     }
 
