@@ -1003,7 +1003,7 @@ class Task
                     }
                 }
             } else {
-                $limit = 1000;
+                $limit = count($aUsers)+1;
             }
             $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
