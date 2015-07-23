@@ -219,7 +219,6 @@ ViewDashboardPresenter.prototype.setStatusButtonWidthsAndDisplayValues = functio
 			break;
 	}
 
-
 	var widthToDivide = 100 - barsLessThanMin.length * minPercent;
 	var normalsSum = 0;
 	$.each (barsNormal, function() {
