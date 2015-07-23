@@ -870,7 +870,7 @@ class Task
                     }
                 }
             } else {
-                $limit = 1000;
+                $limit = count($aUsers)+1;
             }
             $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
@@ -1003,7 +1003,7 @@ class Task
                     }
                 }
             } else {
-                $limit = 1000;
+                $limit = count($aUsers)+1;
             }
             $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
@@ -1371,7 +1371,7 @@ class Task
                     }
                 }
             } else {
-                $limit = 1000;
+                $limit = count($aUsers)+1;
             }
             $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
@@ -1504,7 +1504,7 @@ class Task
                     }
                 }
             } else {
-                $limit = 1000;
+                $limit = count($aUsers)+1;
             }
             $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
@@ -1924,7 +1924,7 @@ class Task
                     }
                 }
             } else {
-                $limit = 1000;
+                $limit = count($aUsersGroups)+1;
             }
             $aUsersGroups = $this->arrayPagination($aUsersGroups, $start, $limit);
             return $aUsersGroups;
@@ -2042,7 +2042,7 @@ class Task
                     }
                 }
             } else {
-                $limit = 1000;
+                $limit = count($aUsersGroups)+1;
             }
             $aUsersGroups = $this->arrayPagination($aUsersGroups, $start, $limit);
             return $aUsersGroups;
