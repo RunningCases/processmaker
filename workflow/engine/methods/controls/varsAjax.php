@@ -86,14 +86,17 @@ $html .= '</td>';
 
 $html .= '<td width="25%">';
 $html .= '<select name="prefix" id="prefix">';
-
-$html .= '<option value="ID_TO_STRING">@@</option>';
-$html .= '<option value="ID_TO_FLOAT">@#</option>';
-$html .= '<option value="ID_TO_INTEGER">@%</option>';
-$html .= '<option value="ID_TO_URL">@?</option>';
-$html .= '<option value="ID_SQL_ESCAPE">@$</option>';
-$html .= '<option value="ID_REPLACE_WITHOUT_CHANGES">@=</option>';
-
+if ($isBpmn) {
+    $html .= '<option value="ID_TO_STRING">@@</option>';
+    $html .= '<option value="ID_TO_FLOAT">@#</option>';
+    $html .= '<option value="ID_TO_INTEGER">@%</option>';
+    $html .= '<option value="ID_TO_URL">@?</option>';
+    $html .= '<option value="ID_SQL_ESCAPE">@$</option>';
+    $html .= '<option value="ID_REPLACE_WITHOUT_CHANGES">@=</option>';
+} else {
+    $html .= '<option value="ID_TO_STRING">@@</option>';
+    $html .= '<option value="ID_TO_FLOAT">@#</option>';
+}
 $html .= '</select> &nbsp;&nbsp;&nbsp;&nbsp;';
 $html .= '</td>';
 
