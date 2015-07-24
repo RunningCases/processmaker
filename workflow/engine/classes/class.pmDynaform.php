@@ -177,7 +177,7 @@ class pmDynaform
                                 array_push($json->optionsSql, $option);
                             }
                         } catch (Exception $e) {
-                            
+
                         }
                     }
                     if (isset($json->options[0])) {
