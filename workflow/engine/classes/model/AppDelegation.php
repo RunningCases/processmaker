@@ -235,10 +235,11 @@ class AppDelegation extends BaseAppDelegation
     /* Load the Application Delegation row specified in [app_id] column value.
      *
      * @param string $AppUid the uid of the application
+     * @param string $index the index of the delegation
      * @return array $Fields the fields
      */
 
-    public function LoadParallel ($AppUid)
+    public function LoadParallel ($AppUid, $index = "")
     {
         $aCases = array();
 
@@ -255,6 +256,9 @@ class AppDelegation extends BaseAppDelegation
 
         $c->add( AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN' );
         $c->add( AppDelegationPeer::APP_UID, $AppUid );
+        if(!empty($index)) {
+            $c->add( AppDelegationPeer::DEL_INDEX, $index );
+        }
         $c->addDescendingOrderByColumn( AppDelegationPeer::DEL_INDEX );
         $rs = AppDelegationPeer::doSelectRS( $c );
         $row= $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );

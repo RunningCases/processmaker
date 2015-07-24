@@ -129,8 +129,8 @@ $G_PUBLISH = new Publisher();
 $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume.xml', '', $Fields, '' );
 if($Fields['APP_STATUS'] != 'COMPLETED'){
   $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume_Current_Task_Title.xml', '', $Fields, '' );
-  $objDel = new AppDelegation(); 
-  $parallel = $objDel->LoadParallel ($Fields['APP_UID']);
+  $objDel = new AppDelegation();
+  $parallel = $objDel->LoadParallel ($Fields['APP_UID'],$_GET['DEL_INDEX']);
   $FieldsPar = $Fields;
   if(empty($parallel)){
     $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume_Current_Task.xml', '', $Fields, '' );
