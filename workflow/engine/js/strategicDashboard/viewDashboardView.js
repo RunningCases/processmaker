@@ -869,6 +869,7 @@ var fillGeneralIndicatorFirstView = function (presenterData) {
 			area: {visible: false, css:"area"},
 			axisX:{ showAxis: true, label: G_STRING.ID_PROCESS_TASKS },
 			axisY:{ showAxis: true, label: G_STRING.ID_TIME_HOURS },
+			marker:{ratio:5, css: "line-chart-point"},
 			showErrorBars: false
 		}
 	};

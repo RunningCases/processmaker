@@ -17,7 +17,7 @@ $(document).ready(function() {
 	$('#compareButton').click(function(){
 		$('#comparisonBreadcrumb').find('li').remove()
 		$('#comparisonBreadcrumb')
-					.append ('<li><a class="bread-back-selector2" href="#"><i class="fa fa-chevron-left fa-fw"></i>Return to Indicator View</a>');
+					.append ('<li><a class="bread-back-selector2" href="#"><i class="fa fa-chevron-left fa-fw"></i>Return to the Indicator\'s View</a>');
 		tsPresenter.historicData(
 			$('#indicatorList').val(),
 			$('#periodicityList').val(),
@@ -62,7 +62,6 @@ $(document).ready(function() {
 		$('#compareDiv').hide();
 	});
 });
-
 
 var bindTimeSeriesLists = function (presenter, elementsToConserve) {
 	var conserveStates =[];
