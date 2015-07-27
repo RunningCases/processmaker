@@ -57,7 +57,7 @@ class pmDynaform
         $a->addSelectColumn(DynaformPeer::PRO_UID);
         $a->addSelectColumn(DynaformPeer::DYN_UID);
         $a->add(DynaformPeer::DYN_UID, $this->fields["CURRENT_DYNAFORM"], Criteria::EQUAL);
-        $ds = ProcessPeer::doSelectRS($a);
+        $ds = DynaformPeer::doSelectRS($a);
         $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $ds->next();
         $row = $ds->getRow();
@@ -177,7 +177,7 @@ class pmDynaform
                                 array_push($json->optionsSql, $option);
                             }
                         } catch (Exception $e) {
-
+                            
                         }
                     }
                     if (isset($json->options[0])) {
@@ -198,6 +198,25 @@ class pmDynaform
                     );
                     if ($json->data["label"] === "") {
                         $json->data["label"] = $json->data["value"];
+                    }
+                    //synchronize var_label
+                    if (isset($this->fields["APP_DATA"]["__VAR_CHANGED__"]) &&
+                            in_array($json->name, explode(",", $this->fields["APP_DATA"]["__VAR_CHANGED__"]))) {
+                        $json->data["label"] = $json->data["value"];
+                        foreach ($json->options as $io) {
+                            if ($json->data["value"] === $io->value) {
+                                $json->data["label"] = $io->label;
+                            }
+                        }
+                        foreach ($json->optionsSql as $io) {
+                            if ($json->data["value"] === $io["value"]) {
+                                $json->data["label"] = $io["label"];
+                            }
+                        }
+                        $_SESSION["TRIGGER_DEBUG"]["DATA"][] = Array(
+                            "key" => $json->name . "_label",
+                            "value" => $json->data["label"]
+                        );
                     }
                 }
                 if ($key === "type" && ($value === "checkbox")) {
