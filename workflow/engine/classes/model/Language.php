@@ -296,7 +296,7 @@ class Language extends BaseLanguage
         //get labels MichelangeloFE
         try {
             $oTranslation = new Translation();
-            $MichelangeloFE = PATH_HOME . "../vendor/colosa/MichelangeloFE/src";
+            $MichelangeloFE = PATH_HOME . "../workflow/public_html/lib/js";
             if ($_GET['LOCALE'] === "en" & file_exists($MichelangeloFE)) {
                 $labels = $this->readLabelsDirectory($MichelangeloFE, true);
                 foreach ($labels as $label) {
