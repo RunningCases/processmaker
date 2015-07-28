@@ -446,7 +446,7 @@ class workspaceTools
      */
     private function getDatabase($rbac = false)
     {
-        if (isset($this->db) && $this->db->isConnected() &&  $rbac == false) {
+        if (isset($this->db) && $this->db->isConnected() && ($rbac == false && $this->db->getDatabaseName() == $this->dbName)) {
             return $this->db;
         }
 
