@@ -778,7 +778,6 @@ class Derivation
                         //when the task doesnt generate a new AppDelegation
                         $iAppThreadIndex = $appFields['DEL_THREAD'];
                         switch ($currentDelegation['ROU_TYPE']) {
-                            case 'DISCRIMINATOR':
                             case 'SEC-JOIN':
                                 $this->case->closeAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex );
                                 break;
@@ -786,6 +785,7 @@ class Derivation
                                 if ($currentDelegation['TAS_ASSIGN_TYPE'] == 'STATIC_MI' || $currentDelegation['TAS_ASSIGN_TYPE'] == 'CANCEL_MI') {
                                     $this->case->closeAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex );
                                 }
+                                break;
                         } //switch
                     }
             }
@@ -936,21 +936,11 @@ class Derivation
                 $this->case->closeAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex );
                 $iNewThreadIndex = $this->case->newAppThread( $currentDelegation['APP_UID'], $iNewDelIndex, $iAppThreadIndex );
                 $this->case->updateAppDelegation( $currentDelegation['APP_UID'], $iNewDelIndex, $iNewThreadIndex );
-                //print " this->case->updateAppDelegation ( " . $currentDelegation['APP_UID'] .", " . $iNewDelIndex ." , " .  $iNewThreadIndex . " )<br>";
                 break;
-            case 'DISCRIMINATOR':
-                if ($currentDelegation['ROU_OPTIONAL'] == 'TRUE') {
-                    $this->case->discriminateCases( $currentDelegation );
-                } //No Break, executing Default Condition
             default:
-                switch ($currentDelegation['TAS_ASSIGN_TYPE']) {
-                    case 'CANCEL_MI':
-                        $this->case->discriminateCases( $currentDelegation );
-                } //No Break, executing updateAppThread
                 $this->case->updateAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex, $iNewDelIndex );
-
+                break;
         } //en switch
-
 
         //if there are subprocess to create
         if (isset( $aSP )) {
@@ -960,35 +950,15 @@ class Derivation
 
             $taskNextDel = TaskPeer::retrieveByPK($aSP["TAS_UID"]); //Sub-Process
 
-            //Create record in table APP_ASSIGN_SELF_SERVICE_VALUE
-            if ($taskNextDel->getTasAssignType() == "SELF_SERVICE" && trim($taskNextDel->getTasGroupVariable()) != "") {
-                $nextTaskGroupVariable = trim($taskNextDel->getTasGroupVariable(), " @#");
-
-                if (isset($appFields["APP_DATA"][$nextTaskGroupVariable]) && trim($appFields["APP_DATA"][$nextTaskGroupVariable]) != "") {
-                    $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
-
-                    $appAssignSelfServiceValue->create($aNewCase["APPLICATION"], $aNewCase["INDEX"], array("PRO_UID" => $aNewCase["PROCESS"], "TAS_UID" => $aSP["TAS_UID"], "GRP_UID" => trim($appFields["APP_DATA"][$nextTaskGroupVariable])));
-                }
-            }
-
             //Copy case variables to sub-process case
             $aFields = unserialize( $aSP['SP_VARIABLES_OUT'] );
             $aNewFields = array ();
             $aOldFields = $this->case->loadCase( $aNewCase['APPLICATION'] );
 
             foreach ($aFields as $sOriginField => $sTargetField) {
-                $sOriginField = str_replace( '@', '', $sOriginField );
-                $sOriginField = str_replace( '#', '', $sOriginField );
-                $sOriginField = str_replace( '%', '', $sOriginField );
-                $sOriginField = str_replace( '?', '', $sOriginField );
-                $sOriginField = str_replace( '$', '', $sOriginField );
-                $sOriginField = str_replace( '=', '', $sOriginField );
-                $sTargetField = str_replace( '@', '', $sTargetField );
-                $sTargetField = str_replace( '#', '', $sTargetField );
-                $sTargetField = str_replace( '%', '', $sTargetField );
-                $sTargetField = str_replace( '?', '', $sTargetField );
-                $sTargetField = str_replace( '$', '', $sTargetField );
-                $sTargetField = str_replace( '=', '', $sTargetField );
+                $sOriginField = trim($sOriginField, " @#%?$=");
+                $sTargetField = trim($sTargetField, " @#%?$=");
+
                 $aNewFields[$sTargetField] = isset( $appFields['APP_DATA'][$sOriginField] ) ? $appFields['APP_DATA'][$sOriginField] : '';
             }
 
@@ -996,6 +966,7 @@ class Derivation
             $aOldFields['APP_STATUS'] = 'TO_DO';
 
             $this->case->updateCase( $aNewCase['APPLICATION'], $aOldFields );
+
             //Create a registry in SUB_APPLICATION table
             $aSubApplication = array ('APP_UID' => $aNewCase['APPLICATION'],'APP_PARENT' => $currentDelegation['APP_UID'],'DEL_INDEX_PARENT' => $iNewDelIndex,'DEL_THREAD_PARENT' => $iAppThreadIndex,'SA_STATUS' => 'ACTIVE','SA_VALUES_OUT' => serialize( $aNewFields ),'SA_INIT_DATE' => date( 'Y-m-d H:i:s' )
             );
@@ -1014,11 +985,20 @@ class Derivation
             // the following line of code was commented because it is related to the 6878 bug
             //$AppDelegation->setDelInitDate("+1 second");
 
-
             $AppDelegation->save();
+
+            //Create record in table APP_ASSIGN_SELF_SERVICE_VALUE
+            if ($taskNextDel->getTasAssignType() == "SELF_SERVICE" && trim($taskNextDel->getTasGroupVariable()) != "") {
+                $nextTaskGroupVariable = trim($taskNextDel->getTasGroupVariable(), " @#");
+
+                if (isset($aOldFields["APP_DATA"][$nextTaskGroupVariable]) && trim($aOldFields["APP_DATA"][$nextTaskGroupVariable]) != "") {
+                    $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+
+                    $appAssignSelfServiceValue->create($aNewCase["APPLICATION"], $aNewCase["INDEX"], array("PRO_UID" => $aNewCase["PROCESS"], "TAS_UID" => $aSP["TAS_UID"], "GRP_UID" => trim($aOldFields["APP_DATA"][$nextTaskGroupVariable])));
+                }
+            }
+
             //If not is SYNCHRONOUS derivate one more time
-
-
             if ($aSP['SP_SYNCHRONOUS'] == 0) {
                 $this->case->setDelInitDate( $currentDelegation['APP_UID'], $iNewDelIndex );
                 $aDeriveTasks = $this->prepareInformation( array ('USER_UID' => -1,'APP_UID' => $currentDelegation['APP_UID'],'DEL_INDEX' => $iNewDelIndex
