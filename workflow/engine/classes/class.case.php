@@ -6649,19 +6649,6 @@ class Cases
         }
     }
 
-    public function discriminateCases($aData)
-    {
-        $siblingThreadData = $this->GetAllOpenDelegation($aData);
-        foreach ($siblingThreadData as $thread => $threadData) {
-            $this->closeAppThread($aData['APP_UID'], $threadData['DEL_INDEX']); //Close Sibling AppThreads
-            $this->CloseCurrentDelegation($aData['APP_UID'], $threadData['DEL_INDEX']); //Close Sibling AppDelegations
-            //update searchindex
-            if ($this->appSolr != null) {
-                $this->appSolr->updateApplicationSearchIndex($aData['APP_UID']);
-            }
-        }
-    }
-
     /*
      * We're getting all threads in a task
      *
