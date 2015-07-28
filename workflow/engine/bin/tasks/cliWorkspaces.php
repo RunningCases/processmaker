@@ -37,13 +37,12 @@ CLI::taskRun("run_info");
 
 CLI::taskName('workspace-backup');
 CLI::taskDescription(<<<EOT
-  Backup the specified workspace to an archive.
+  Backup the specified workspace to a file.
 
-  BACKUP-FILE is the backup filename. If it contains slashes, it will be
-  treated as a path and filename, either absolute or relative. Otherwise, it
-  will be treated as a filename inside the 'shared/backups' directory.
-  If no BACKUP-FILE is specified, it will use the workspace name as the
-  filename.
+  BACKUP-FILE is the backup filename which will be created. If it contains
+  slashes, it will be treated as a path and filename, either absolute or relative.
+  Otherwise, it will be treated as a filename inside the "shared/backups" directory.
+  If no BACKUP-FILE is specified, it will use the workspace name as the filename.
 
   A backup archive will contain all information about the specified workspace
   so that it can be restored later. The archive includes a database dump and
@@ -52,12 +51,12 @@ EOT
 );
 CLI::taskArg('workspace', false);
 CLI::taskArg('backup-file', true);
-CLI::taskOpt("filesize", "Set the max size of the compressed splitted files, by default the max is 1000 Mb.", "s:","filesize=");
+CLI::taskOpt("filesize", "Split the backup file in multiple files which are compressed. The maximum size of these files is set to MAX-SIZE in megabytes. If MAX-SIZE is not set, then it is 1000 megabytes by default. It may be necessary to use this option if using a 32 bit Linux/UNIX system which limits its maximum file size to 2GB. This option does not work on Windows systems.", "sMAX-SIZE","filesize=MAX-SIZE");
 CLI::taskRun("run_workspace_backup");
 
 CLI::taskName('workspace-restore');
 CLI::taskDescription(<<<EOT
-  Restore a workspace from a backup.
+  Restore a workspace from a backup file
 
   BACKUP-FILE is the backup filename. If it contains slashes, it will be
   treated as a path and filename, either absolute or relative. Otherwise, it
@@ -70,12 +69,13 @@ EOT
 CLI::taskArg('backup-file', false);
 CLI::taskArg('workspace', true);
 CLI::taskOpt("overwrite", "If a workspace already exists, overwrite it.", "o", "overwrite");
-CLI::taskOpt("info", "Only shows information about a backup archive.", "i");
-CLI::taskOpt("multiple", "Restore from multiple compresed enumerated files.", "m");
-CLI::taskOpt("workspace", "Select which workspace to restore if multiple workspaces are present in the archive.",
-             "w:", "workspace=");
-CLI::taskOpt("lang", "You must specify language on which rebuild of the case cache list builder will be done; if you don't specify this, it will use 'en' by default", "l:","lang=");
-CLI::taskOpt("port", "You must specify mysql port.", "p:");
+CLI::taskOpt("info", "Show information about backup file, but do not restore any workspaces.", "i");
+CLI::taskOpt("multiple", "Restore from multiple compressed backup files which are numbered.", "m");
+CLI::taskOpt("workspace", "Specify which workspace to restore if multiple workspaces are present in the backup file.
+        Ex: -wworkflow.",
+             "wWORKSPACE", "workspace=WORKSPACE");
+CLI::taskOpt("lang", "Specify the language which will be used to rebuild the case cache list. If this option isn't included, then 'en' (English) will be used by default.", "lLANG","lang=LANG");
+CLI::taskOpt("port", "Specify the port number used by MySQL. If not specified, then the port 3306 will be used by default.", "pPORT");
 CLI::taskRun("run_workspace_restore");
 
 CLI::taskName('cacheview-repair');
@@ -93,21 +93,21 @@ CLI::taskDescription(<<<EOT
 EOT
 );
 CLI::taskArg('workspace', true, true);
-CLI::taskOpt("lang", "You must specify language on which rebuild of the case cache list builder will be done; if you don't specify this, it will use 'en' by default", "l:","lang=");
+CLI::taskOpt("lang", "Specify the language to rebuild the case cache list. If not specified, then 'en' (English) will be used by default.\n        Ex: -lfr (French) Ex: --lang=zh-CN (Mainland Chinese)", "lLANG", "lang=LANG");
 CLI::taskRun("run_cacheview_upgrade");
 
 CLI::taskName('database-upgrade');
 CLI::taskDescription(<<<EOT
   Upgrade or repair the database schema to match the latest version
 
-  Specify the workspaces whose database schema should be upgraded or repaired.
+  Specify the workspaces whose database schema should be upgraded or repaired.
   If no workspace is specified, then the database schema will be upgraded or
   repaired on all available workspaces.
 
-  This command will read the system schema and attempt to modify the workspaces
-  tables to match this new schema. Use this command to fix corrupted database
+  This command will read the system schema and attempt to modify the workspaces
+  tables to match this new schema. Use this command to fix corrupted database
   schemas or after ProcessMaker has been upgraded, so the database schemas will
-  changed to match the new ProcessMaker code.
+  be changed to match the new ProcessMaker code.
 EOT
 );
 CLI::taskArg('workspace', true, true);
@@ -117,12 +117,13 @@ CLI::taskName('plugins-database-upgrade');
 CLI::taskDescription(<<<EOT
   Upgrade or repair the database schema for plugins to match the latest version
 
-  Specify the workspaces whose database schema should be upgraded or repaired
+  Specify the workspaces whose database schema should be upgraded or repaired
   for plugins. If no workspace is specified, then the database schema will be
   upgraded or repaired on all available workspaces.
 
-  The same as database-upgrade but works with schemas provided by plugins.
-  This is useful if there are installed plugins that include database schemas.
+  This is the same as database-upgrade but it works with schemas provided
+  by plugins. This is useful if plugins are installed that include
+  database schemas.
 EOT
 );
 CLI::taskArg('workspace', true, true);
@@ -130,17 +131,17 @@ CLI::taskRun("run_plugins_database_upgrade");
 
 CLI::taskName('workspace-upgrade');
 CLI::taskDescription(<<<EOT
-  Upgrade the workspace(s) specified.
+  Upgrade the specified workspace(s).
 
   If no workspace is specified, the command will be run in all workspaces. More
   than one workspace can be specified.
 
-  This command is a shortcut to execute all upgrade commands for workspaces.
+  This command is a shortcut to execute all the upgrade commands for workspaces.
   Upgrading a workspace will make it correspond to the current version of
   ProcessMaker.
 
   Use this command to upgrade workspaces individually, otherwise use the
-  upgrade command to upgrade the entire system.
+  'processmaker upgrade' command to upgrade the entire system.
 EOT
 );
 CLI::taskArg('workspace-name', true, true);
@@ -154,7 +155,7 @@ CLI::taskDescription(<<<EOT
   than one workspace can be specified.
 
   This command will go through each language installed in ProcessMaker and
-  update this workspace translations to match the current version of
+  update the translations for the workspace(s) to match the current version of
   ProcessMaker.
 EOT
 );
@@ -169,16 +170,17 @@ CLI::taskDescription(<<<EOT
 EOT
 );
 //CLI::taskArg('workspace', true);
-CLI::taskOpt("workspace", "Select which workspace to migrate the cases folders, if multiple workspaces are present in the server.",
-             "w:", "workspace=");
+CLI::taskOpt("workspace", "Select the workspace whose case folders will be migrated, if multiple workspaces are present in the server.\n        Ex: -wworkflow.        Ex: --workspace=workflow",
+             "wWORKSPACE", "workspace=WORKSPACE");
 CLI::taskRun("runStructureDirectories");
 
 CLI::taskName("database-generate-self-service-by-value");
 CLI::taskDescription(<<<EOT
   Generate or upgrade the table "self-service by value".
 
-  This command populate the table "self-service by value", this for the cases when
-  a task it's defined with "Self Service Value Based Assignment" in "Assignment Rules".
+  This command populates the table "self-service by value" for cases whose
+  task is defined with "Self Service Value Based Assignment" in "Assignment
+  Rules".
 
   If no workspace is specified, the command will be run in all workspaces. More
   than one workspace can be specified.
@@ -192,10 +194,10 @@ CLI::taskName("check-workspace-disabled-code");
 CLI::taskDescription(<<<EOT
   Check disabled code for the specified workspace(s).
 
-  This command is for check disabled code for the specified workspace(s).
+  This command checks the disabled code in the specified workspace(s).
 
-  If no workspace is specified, the command will be run in all workspaces. More
-  than one workspace can be specified.
+  If no workspace is specified, the command will be run in all workspaces.
+  More than one workspace can be specified.
 EOT
 );
 CLI::taskArg("workspace-name", true, true);

@@ -31,23 +31,24 @@ G::LoadSystem("dbMaintenance");
 G::LoadClass("cli");
 
 CLI::taskName('upgrade');
-CLI::taskDescription("Upgrade workspaces.\n\n This command should be run after ProcessMaker files are upgraded so that all workspaces are upgraded to the current version.");
+CLI::taskDescription("Upgrade workspaces.\n\n This command should be run after upgrading ProcessMaker to a new version so that all workspaces are also upgraded to the\n  new version.");
 
-CLI::taskOpt("buildACV", "If the option is enabled, performs the Build Cache View.", "ACV", "buildACV");
+CLI::taskOpt("buildACV", "If this option is enabled, the Cache View is built.", "ACV", "buildACV");
 CLI::taskRun("run_upgrade");
 /*----------------------------------********---------------------------------*/
 CLI::taskName('unify-database');
 CLI::taskDescription(<<<EOT
-    Unify Rbac, Reports and Workflow databases schemas to match the latest version
+    Unify RBAC, Reports and Workflow database schemas to match the latest version
 
-    Specify the workspaces whose databases schemas should be unifyied.
-    If no workspace is specified, then the database schema will be upgraded or
-    repaired on all available workspaces.
+    Specify the workspaces whose databases schemas should be unified.
+  If no workspace is specified, then the database schema will be upgraded or
+  repaired on all available workspaces.
 
-    This command will read the system schema and attempt to modify the workspaces
-    tables to match this new schema. Use this command to unify databases
-    schemas or before ProcessMaker has been upgraded, so the database schemas will
-    changed to match the new ProcessMaker code.
+  This command will read the system schema and attempt to modify the workspaces'
+  tables to match this new schema. In version 2.8 and later, it will merge the 3
+  databases used in previous versions of ProcessMaker into one database. This
+  command may be used after upgrading from ProcessMaker 2.5 to a later version
+  of ProcessMaker.
 EOT
 );
 /*----------------------------------********---------------------------------*/

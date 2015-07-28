@@ -131,16 +131,17 @@ class CLI
     {
         global $argv;
         $scriptName = $argv[0];
-        if (is_array( $args )) {
+        if (is_array($args) && count($args) > 0 ) {
             $taskName = $args[0];
         } else {
             $taskName = $args;
         }
 
         if (! $taskName) {
-            echo "usage: $scriptName <task> [options] [args]\n";
-            echo "Type '$scriptName help <task-name>' for help on a specific task\n";
-            echo "\nAvailable tasks:\n";
+            echo "usage: processmaker <task> [options] [args]\n";
+            echo "       If using Linux/UNIX, prepend './' to specify the directory: " . $scriptName . " <task> [options] [args]\n";
+            echo "Type   'processmaker help <task>' for help on a specific task.";
+            echo "\n\nAvailable tasks:\n";
             $tasks = array ();
             ksort( self::$tasks );
             foreach (self::$tasks as $name => $data) {
@@ -180,13 +181,16 @@ class CLI
                     }
                     $valid_args[] = $arg;
                 }
+
+            $nameHotfixFile = ($taskName == "hotfix-install")? "HOTFIX-FILE" : "";
+
             $valid_args = join( " ", $valid_args );
             $description = explode( "\n", self::$tasks[$taskName]['description'] );
             $taskDescription = trim( array_shift( $description ) );
             $description = trim( implode( "\n", $description ) );
             $message = <<< EOT
 $taskName: {$taskDescription}
-Usage: $scriptName $taskName $valid_args
+Usage: processmaker $taskName $nameHotfixFile $valid_args
 
   $description
 

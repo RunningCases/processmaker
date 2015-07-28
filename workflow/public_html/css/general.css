@@ -62,19 +62,58 @@
 
 .pie-label {font-size:10px;}
 
-.axis-label {font-size:10px;}
-
 .errorBar, .errorBarLowerMark, .errorBarUpperMark{
 	stroke: blue;
 	stroke-width: 1;
 }
 
 .x-ticks-label {
-	font-size:9px;
+	font-size:10px;
+	font-weight:normal;
+	stroke: #000;
+	fill: #000;
+	-webkit-filter: drop-shadow( 0px 0px 0px #000 );
+	filter: drop-shadow( 0px 0px 0px #000); /* Same syntax as box-shadow */
+
 }
+
 .y-ticks-label {
-	font-size:9px;
+	font-size:10px;
+	font-weight:normal;
+	stroke: #000;
+	fill: #000;
 }
+
+.axis-label {
+	font-size:12px;
+	font-weight:bold;
+}
+
+.line1 { 
+	stroke: #A4B78A;
+	stroke-width: 3;
+	fill: none;
+
+}
+
+.line2 { 
+	stroke: #eee;
+	stroke-width: 2;
+	fill: none;
+}
+
+.line-chart-point {
+	stroke:#006E2E;
+	fill: #006E2E;
+	opacity:0.8;
+	-webkit-filter: drop-shadow( -2px -2px 2px #000 );
+	filter: drop-shadow( -2px -2px 2px #000); /* Same syntax as box-shadow */
+}
+.chart-background {
+   background:#fff; 
+	
+} 
+
 
 .das-title-selector {
 	width:160px;
@@ -641,12 +680,6 @@ img#topright    { top:0;    right:0; }
   opacity: 0.9;
   }
 
-  path.line1 { 
-    stroke: steelblue;
-    stroke-width: 1;
-    fill: none;
-    shape-rendering: auto;
-  }
 
   .axis path,
   .axis line {
@@ -688,18 +721,18 @@ img#topright    { top:0;    right:0; }
 
 .tick {
    stroke:blue;
-   stroke-opacity: 0.3;
-   font-size:12px;
+   /*stroke-opacity: 0.3;*/
+   font-size:10px;
    font-family:arial;
-   /*font-weight:normal;*/
+   font-weight:normal;
    /*text-shadow:1px 1px 1px #000;*/
 }
 .tick :Hover{
-   stroke:red;
-   stroke-opacity: 0.3;
-   font-size:12px;
+   stroke:#aaa;
+   /*stroke-opacity: 0.3;*/
+   font-size:10px;
    font-family:arial;
-   /*font-weight:normal;*/
+   font-weight:normal;
 }
 
 
@@ -730,17 +763,6 @@ text.shadow {
   opacity: 0.9;
 }
 
-.line1 { 
-    stroke: steelblue;
-    stroke-width: 2;
-    fill: none;
-}
-
-.line2 { 
-    stroke: #eee;
-    stroke-width: 2;
-    fill: none;
-}
 
 .axis path,
 .axis line {
