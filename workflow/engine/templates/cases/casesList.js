@@ -1697,7 +1697,7 @@ Ext.onReady ( function() {
     var toolbarTodo = [
         optionMenuOpen,
         {
-            xtype: 'tbsplit',
+            xtype: 'tbbutton',
             text: _('ID_ACTIONS'),
             menu: menuItems
         },
@@ -1783,7 +1783,7 @@ Ext.onReady ( function() {
     var toolbarDraft = [
         optionMenuOpen,
         {
-            xtype: 'tbsplit',
+            xtype: 'tbbutton',
             text: _('ID_ACTIONS'),
             menu: menuItems
         },
