@@ -151,6 +151,76 @@ class Light extends Api
     }
 
     /**
+     * Get list Case Draft
+     *
+     * @copyright Colosa - Bolivia
+     *
+     * @url GET /draft
+     */
+    public function doGetCasesListDraft(
+        $start = 0,
+        $limit = 10,
+        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $dir = 'DESC',
+        $cat_uid = '',
+        $pro_uid = '',
+        $search = ''
+    ) {
+        try {
+            $dataList['userId'] = $this->getUserId();
+            $dataList['action'] = 'draft';
+            $dataList['paged']  = true;
+
+            $dataList['start'] = $start;
+            $dataList['limit'] = $limit;
+            $dataList['sort'] = $sort;
+            $dataList['dir'] = $dir;
+            $dataList['category'] = $cat_uid;
+            $dataList['process'] = $pro_uid;
+            $dataList['search'] = $search;
+
+            $oCases   = new \ProcessMaker\BusinessModel\Cases();
+            $response = $oCases->getList($dataList);
+            $result   = $this->parserDataDraft($response['data']);
+            return $result;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    public function parserDataDraft ($data)
+    {
+        $structure = array(
+            //'app_uid' => 'mongoId',
+            'app_uid'           => 'caseId',
+            'app_title'         => 'caseTitle',
+            'app_number'        => 'caseNumber',
+            'app_update_date'   => 'date',
+            'del_task_due_date' => 'dueDate',
+            'del_index'         => 'delIndex',
+            //'' => 'status'
+            'user' => array(
+                'usrcr_usr_uid'       => 'userId',
+                'usrcr_usr_firstname' => 'firstName',
+                'usrcr_usr_lastname'  => 'lastName',
+                'usrcr_usr_username'  => 'fullName',
+            ),
+            'process' => array(
+                'pro_uid'       => 'processId',
+                'app_pro_title' => 'name'
+            ),
+            'task' => array(
+                'tas_uid'       => 'taskId',
+                'app_tas_title' => 'name'
+            ),
+            'inp_doc_uid' => 'documentUid' //Esta opcion es temporal
+        );
+
+        $response = $this->replaceFields($data, $structure);
+        return $response;
+    }
+
+    /**
      * Get list Cases Participated
      *
      * @copyright Colosa - Bolivia
@@ -405,6 +475,29 @@ class Light extends Api
 
         }
         return $response;
+    }
+
+    /**
+     * Delete case
+     *
+     * @copyright Colosa - Bolivia
+     *
+     * @url DELETE /case/:app_uid/delete
+     *
+     * @param string $app_uid {@min 32}{@max 32}
+     */
+    public function doDeleteCases($app_uid)
+    {
+        try {
+            $oCase = new \Cases();
+            $oCase->removeCase( $app_uid );
+            $result = array (
+                "message" => \G::LoadTranslation( "ID_COMMAND_EXECUTED_SUCCESSFULLY" )
+            );
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $result;
     }
 
     /**

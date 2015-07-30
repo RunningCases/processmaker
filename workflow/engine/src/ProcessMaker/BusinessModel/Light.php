@@ -367,7 +367,7 @@ class Light
                         $taskAss['taskParent'] = $aValues['NEXT_TASK']['TAS_PARENT'];
                         $users = array();
                         $users['userId'] = $derive[$sKey]['NEXT_TASK']['USER_ASSIGNED']['USR_UID'];
-                        $users['userFullName'] = $derive[$sKey]['NEXT_TASK']['USER_ASSIGNED']['USR_FULLNAME'];
+                        $users['userFullName'] = strip_tags($derive[$sKey]['NEXT_TASK']['USER_ASSIGNED']['USR_FULLNAME']);
                         $taskAss['users'][]    = $users;
                         $response[] = $taskAss;
                         break;
@@ -434,6 +434,7 @@ class Light
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
             $fields = $ws->derivateCase($userUid, $applicationUid, $delIndex, $bExecuteTriggersBeforeAssignment = false, $tasks);
+            $fields['message'] = trim(strip_tags($fields['message']));
             $array = json_decode(json_encode($fields), true);
             if ($array ["status_code"] != 0) {
                 throw (new \Exception($array ["message"]));
