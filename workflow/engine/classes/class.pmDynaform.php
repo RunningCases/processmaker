@@ -265,6 +265,13 @@ class pmDynaform
                         $json->rows = count($rows);
                         $json->data = $rows;
                     }
+                    //todo compatibility 'columnWidth'
+                    foreach ($json->columns as $column) {
+                        if (!isset($column->columnWidth)) {
+                            $json->layout = "static";
+                            $column->columnWidth = "";
+                        }
+                    }
                 }
                 //languages
                 if ($this->lang === null && $key === "language" && isset($json->language)) {
@@ -517,13 +524,14 @@ class pmDynaform
         exit();
     }
 
-    public function printPmDynaform()
+    public function printPmDynaform($js = "")
     {
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
         $javascrip = "" .
                 "<script type='text/javascript'>" .
                 "var jsonData = " . G::json_encode($json) . ";" .
+                $js .
                 "</script>";
 
         $file = file_get_contents(PATH_HOME . 'public_html/lib/pmdynaform/build/pmdynaform.html');
