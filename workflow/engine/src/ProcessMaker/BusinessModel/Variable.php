@@ -75,12 +75,7 @@ class Variable
                         $variable->setVarDefault($arrayData["VAR_DEFAULT"]);
                     }
                     if (isset($arrayData["VAR_ACCEPTED_VALUES"])) {
-                        $VAR_ACCEPTED_VALUES = $arrayData["VAR_ACCEPTED_VALUES"];
-                        foreach($VAR_ACCEPTED_VALUES as $key => $val) {
-                            $VAR_ACCEPTED_VALUES[$key]["label"] = htmlentities($val["label"], ENT_IGNORE, 'UTF-8');
-                            $VAR_ACCEPTED_VALUES[$key]["value"] = htmlentities($val["value"], ENT_IGNORE, 'UTF-8');
-                        }
-                        $encodeAcceptedValues = html_entity_decode(json_encode($VAR_ACCEPTED_VALUES), ENT_IGNORE, 'UTF-8');
+                        $encodeAcceptedValues = \G::json_encode($arrayData["VAR_ACCEPTED_VALUES"]);
                         $variable->setVarAcceptedValues($encodeAcceptedValues);
                     }
                     $variable->save();
@@ -173,12 +168,7 @@ class Variable
                         $variable->setVarDefault($arrayData["VAR_DEFAULT"]);
                     }
                     if (isset($arrayData["VAR_ACCEPTED_VALUES"])) {
-                        $VAR_ACCEPTED_VALUES = $arrayData["VAR_ACCEPTED_VALUES"];
-                        foreach($VAR_ACCEPTED_VALUES as $key => $val) {
-                            $VAR_ACCEPTED_VALUES[$key]["label"] = htmlentities($val["label"], ENT_IGNORE,'UTF-8');
-                            $VAR_ACCEPTED_VALUES[$key]["value"] = htmlentities($val["value"], ENT_IGNORE,'UTF-8');
-                        }
-                        $encodeAcceptedValues = html_entity_decode(json_encode($VAR_ACCEPTED_VALUES), ENT_IGNORE, 'UTF-8');
+                        $encodeAcceptedValues = \G::json_encode($arrayData["VAR_ACCEPTED_VALUES"]);
                         $variable->setVarAcceptedValues($encodeAcceptedValues);
                     }
                     $variable->save();
@@ -299,6 +289,14 @@ class Variable
             $arrayVariables = array();
 
             while ($aRow = $rsCriteria->getRow()) {
+                
+                $VAR_ACCEPTED_VALUES = \G::json_decode($aRow['VAR_ACCEPTED_VALUES'], true);
+                if(sizeof($VAR_ACCEPTED_VALUES)) {
+                    $encodeAcceptedValues = preg_replace("/\\\\u([a-f0-9]{4})/e", "iconv('UCS-4LE','UTF-8',pack('V', hexdec('U$1')))", \G::json_encode($VAR_ACCEPTED_VALUES));
+                } else {
+                    $encodeAcceptedValues = $aRow['VAR_ACCEPTED_VALUES'];
+                }
+                
                 $arrayVariables = array('var_uid' => $aRow['VAR_UID'],
                     'prj_uid' => $aRow['PRJ_UID'],
                     'var_name' => $aRow['VAR_NAME'],
@@ -310,7 +308,7 @@ class Variable
                     'var_sql' => $aRow['VAR_SQL'],
                     'var_null' => (int)$aRow['VAR_NULL'],
                     'var_default' => $aRow['VAR_DEFAULT'],
-                    'var_accepted_values' => $aRow['VAR_ACCEPTED_VALUES']);
+                    'var_accepted_values' => $encodeAcceptedValues);
                 $rsCriteria->next();
             }
             //Return
@@ -365,6 +363,14 @@ class Variable
             $arrayVariables = array();
 
             while ($aRow = $rsCriteria->getRow()) {
+                
+                $VAR_ACCEPTED_VALUES = \G::json_decode($aRow['VAR_ACCEPTED_VALUES'], true);
+                if(sizeof($VAR_ACCEPTED_VALUES)) {
+                    $encodeAcceptedValues = preg_replace("/\\\\u([a-f0-9]{4})/e", "iconv('UCS-4LE','UTF-8',pack('V', hexdec('U$1')))", \G::json_encode($VAR_ACCEPTED_VALUES));
+                } else {
+                    $encodeAcceptedValues = $aRow['VAR_ACCEPTED_VALUES'];
+                }
+                
                 $arrayVariables[] = array('var_uid' => $aRow['VAR_UID'],
                     'prj_uid' => $aRow['PRJ_UID'],
                     'var_name' => $aRow['VAR_NAME'],
@@ -376,7 +382,7 @@ class Variable
                     'var_sql' => $aRow['VAR_SQL'],
                     'var_null' => (int)$aRow['VAR_NULL'],
                     'var_default' => $aRow['VAR_DEFAULT'],
-                    'var_accepted_values' => $aRow['VAR_ACCEPTED_VALUES']);
+                    'var_accepted_values' => $encodeAcceptedValues);
                 $rsCriteria->next();
             }
             //Return
@@ -609,7 +615,7 @@ class Variable
 
                 $row = $rsCriteria->getRow();
 
-                $contentDecode = json_decode($row["DYN_CONTENT"], true);
+                $contentDecode = \G::json_decode($row["DYN_CONTENT"], true);
                 $content = $contentDecode['items'][0]['items'];
                 if (is_array($content)) {
                     foreach ($content as $key => $value) {
