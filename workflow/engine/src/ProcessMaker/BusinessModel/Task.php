@@ -870,7 +870,7 @@ class Task
                     }
                 }
             } else {
-                $limit = count($aUsers)+1;
+                 $limit = count($aUsers)+1;
             }
             $aUsers = $this->arrayPagination($aUsers, $start, $limit);
             return $aUsers;
