@@ -16,7 +16,7 @@ class pmDynaform
     public $credentials = null;
     public $lang = null;
     public $langs = null;
-    private $dependent = null; //todo
+    public $onPropertyRead = "";
 
     public function __construct($fields = array())
     {
@@ -108,6 +108,11 @@ class pmDynaform
                 $this->jsonr($value);
             }
             if (!$sw1 && !$sw2) {
+                //read event
+                $fn = $this->onPropertyRead;
+                if (function_exists($fn)) {
+                    $fn($json, $key, $value);
+                }
                 //set properties from trigger
                 $prefixs = array("@@", "@#", "@%", "@?", "@$", "@=");
                 if (is_string($value) && in_array(substr($value, 0, 2), $prefixs)) {
