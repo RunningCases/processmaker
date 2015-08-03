@@ -1683,7 +1683,7 @@
     <column name="DBS_SERVER" type="VARCHAR" size="100" required="true" default="0"/>
     <column name="DBS_DATABASE_NAME" type="VARCHAR" size="100" required="true" default="0"/>
     <column name="DBS_USERNAME" type="VARCHAR" size="32" required="true" default="0"/>
-    <column name="DBS_PASSWORD" type="VARCHAR" size="256" default=""/>
+    <column name="DBS_PASSWORD" type="VARCHAR" size="256"  default=""/>
     <column name="DBS_PORT" type="INTEGER" default="0"/>
     <column name="DBS_ENCODE" type="VARCHAR" size="32" default=""/>
     <column name="DBS_CONNECTION_TYPE" type="VARCHAR" size="32" default="NORMAL"/>
