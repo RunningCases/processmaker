@@ -341,10 +341,10 @@ class Light
 
             $triggers = $oCase->loadTriggers( $tas_uid, 'ASSIGN_TASK', '-1', 'BEFORE');
             if (isset($triggers)){
-                $appFields = $oCase->loadCase( $app_uid );
-                $Fields = $oCase->ExecuteTriggers( $tas_uid, 'ASSIGN_TASK', '-1', 'BEFORE', $appFields );
-                $appFields['APP_DATA'] = array_merge( $appFields['APP_DATA'], $Fields );
-                $oCase->updateCase( $app_uid, $appFields );
+                $cases = new \ProcessMaker\BusinessModel\Cases();
+                foreach($triggers as $trigger){
+                    $cases->putExecuteTriggerCase($app_uid, $trigger['TRI_UID'], $usr_uid);
+                }
             }
             $oDerivation = new \Derivation();
             $aData = array();
