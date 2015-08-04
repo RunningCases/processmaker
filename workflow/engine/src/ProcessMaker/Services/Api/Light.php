@@ -556,7 +556,7 @@ class Light extends Api
             $process = new \ProcessMaker\BusinessModel\Process();
             $process->setFormatFieldNameInUppercase(false);
             $process->setArrayFieldNameForException(array("processUid" => "prj_uid"));
-
+            $_SESSION['PROCESS'] = $prj_uid;
             $response = $process->getDynaForms($prj_uid);
             $result   = $this->parserDataDynaForm($response);
             \G::LoadClass("pmDynaform");
@@ -652,16 +652,17 @@ class Light extends Api
     }
 
     /**
-     * @url GET /project/dynaform/:dyn_uid
+     * @url GET /project/:prj_uid/dynaform/:dyn_uid
      *
      * @param string $dyn_uid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
      */
-    public function doGetDynaForm($dyn_uid)
+    public function doGetDynaForm($prj_uid, $dyn_uid)
     {
         try {
             $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
             $dynaForm->setFormatFieldNameInUppercase(false);
-
+            $_SESSION['PROCESS'] = $prj_uid;
             $response = $dynaForm->getDynaForm($dyn_uid);
             $result   = $this->parserDataDynaForm($response);
             $result['formContent'] = (isset($result['formContent']) && $result['formContent'] != null)?json_decode($result['formContent']):"";
@@ -675,16 +676,19 @@ class Light extends Api
     }
 
     /**
-     * @url POST /project/dynaforms
+     * @url POST /project/:prj_uid/dynaforms
+     *
+     * @param string $prj_uid {@min 32}{@max 32}
      *
      */
-    public function doGetDynaFormsId($request_data)
+    public function doGetDynaFormsId($prj_uid, $request_data)
     {
         try {
             $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
             $dynaForm->setFormatFieldNameInUppercase(false);
             \G::LoadClass("pmDynaform");
             $pmDynaForm = new \pmDynaform();
+            $_SESSION['PROCESS'] = $prj_uid;
             $return = array();
             foreach ($request_data['formId'] as $dyn_uid) {
                 $response = $dynaForm->getDynaForm($dyn_uid);
