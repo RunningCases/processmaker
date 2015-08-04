@@ -586,7 +586,7 @@ class Light extends Api
             $task->setArrayParamException(array("taskUid" => "act_uid", "stepUid" => "step_uid"));
 
             $activitySteps = $task->getSteps($act_uid);
-
+            $_SESSION['PROCESS'] = $prj_uid;
             $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
             $dynaForm->setFormatFieldNameInUppercase(false);
             $oMobile = new \ProcessMaker\BusinessModel\Light();
@@ -644,9 +644,11 @@ class Light extends Api
                     $cases->putExecuteTriggerCase($cas_uid, $trigger['tri_uid'], $userUid);
                 }
             }
+            $response = array('status' => 'ok');
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
+        return $response;
     }
 
     /**
@@ -732,17 +734,18 @@ class Light extends Api
      * Return Informaction User for derivate
      * assignment Users
      *
-     * @url GET /case/:app_uid/:del_index/assignment
+     * @url GET /task/:tas_uid/case/:app_uid/:del_index/assignment
      *
+     * @param string $tas_uid {@min 32}{@max 32}
      * @param string $app_uid {@min 32}{@max 32}
      * @param string $del_index
      */
-    public function doGetPrepareInformation($app_uid, $del_index = null)
+    public function doGetPrepareInformation($tas_uid, $app_uid, $del_index = null)
     {
         try {
             $usr_uid = $this->getUserId();
             $oMobile = new \ProcessMaker\BusinessModel\Light();
-            $response = $oMobile->getPrepareInformation($usr_uid, $app_uid, $del_index);
+            $response = $oMobile->getPrepareInformation($usr_uid, $tas_uid, $app_uid, $del_index);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

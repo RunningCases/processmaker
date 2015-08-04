@@ -334,9 +334,18 @@ class Light
      *
      * return array Return an array with Task Case
      */
-    public function GetPrepareInformation($usr_uid, $app_uid, $del_index = null)
+    public function GetPrepareInformation($usr_uid, $tas_uid, $app_uid, $del_index = null)
     {
         try {
+            $oCase = new \Cases();
+
+            $triggers = $oCase->loadTriggers( $tas_uid, 'ASSIGN_TASK', '-1', 'BEFORE');
+            if (isset($triggers)){
+                $cases = new \ProcessMaker\BusinessModel\Cases();
+                foreach($triggers as $trigger){
+                    $cases->putExecuteTriggerCase($app_uid, $trigger['TRI_UID'], $usr_uid);
+                }
+            }
             $oDerivation = new \Derivation();
             $aData = array();
             $aData['APP_UID'] = $app_uid;
