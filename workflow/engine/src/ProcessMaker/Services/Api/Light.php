@@ -586,7 +586,7 @@ class Light extends Api
             $task->setArrayParamException(array("taskUid" => "act_uid", "stepUid" => "step_uid"));
 
             $activitySteps = $task->getSteps($act_uid);
-
+            $_SESSION['PROCESS'] = $prj_uid;
             $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
             $dynaForm->setFormatFieldNameInUppercase(false);
             $oMobile = new \ProcessMaker\BusinessModel\Light();
@@ -644,9 +644,11 @@ class Light extends Api
                     $cases->putExecuteTriggerCase($cas_uid, $trigger['tri_uid'], $userUid);
                 }
             }
+            $response = array('status' => 'ok');
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
+        return $response;
     }
 
     /**
