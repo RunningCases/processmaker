@@ -334,9 +334,18 @@ class Light
      *
      * return array Return an array with Task Case
      */
-    public function GetPrepareInformation($usr_uid, $app_uid, $del_index = null)
+    public function GetPrepareInformation($usr_uid, $tas_uid, $app_uid, $del_index = null)
     {
         try {
+            $oCase = new \Cases();
+
+            $triggers = $oCase->loadTriggers( $tas_uid, 'ASSIGN_TASK', '-1', 'BEFORE');
+            if (isset($triggers)){
+                $appFields = $oCase->loadCase( $app_uid );
+                $Fields = $oCase->ExecuteTriggers( $tas_uid, 'ASSIGN_TASK', '-1', 'BEFORE', $appFields );
+                $appFields['APP_DATA'] = array_merge( $appFields['APP_DATA'], $Fields );
+                $oCase->updateCase( $app_uid, $appFields );
+            }
             $oDerivation = new \Derivation();
             $aData = array();
             $aData['APP_UID'] = $app_uid;
