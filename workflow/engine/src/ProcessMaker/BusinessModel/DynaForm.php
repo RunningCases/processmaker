@@ -967,6 +967,8 @@ class DynaForm
             if ($record["DYN_VERSION"] == 0) {
                 $record["DYN_VERSION"] = 1;
             }
+            
+            $record["DYN_CONTENT"] = preg_replace("/\\\\u([a-f0-9]{4})/e", "iconv('UCS-4LE','UTF-8',pack('V', hexdec('U$1')))", $record["DYN_CONTENT"]);
 
             return array(
                 $this->getFieldNameByFormatFieldName("DYN_UID")         => $record["DYN_UID"],

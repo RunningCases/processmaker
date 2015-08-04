@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 3.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-07-13 11:22:19\n"
+"PO-Revision-Date: 2015-07-31 09:21:56\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -24115,6 +24115,108 @@ msgstr "Error, There are problems updating the element"
 msgid "Error, There are problems removing the element"
 msgstr "Error, There are problems removing the element"
 
+# TRANSLATION
+# LABEL/ID_PMGMAIL_SETTINGS
+#: LABEL/ID_PMGMAIL_SETTINGS
+msgid "Settings for Processmaker Gmail"
+msgstr "Settings for Processmaker Gmail"
+
+# TRANSLATION
+# LABEL/ID_ENABLE_PMGMAIL
+#: LABEL/ID_ENABLE_PMGMAIL
+msgid "Enable PM Gmail"
+msgstr "Enable PM Gmail"
+
+# TRANSLATION
+# LABEL/ID_PMG_EMAIL
+#: LABEL/ID_PMG_EMAIL
+msgid "Service Account Email"
+msgstr "Service Account Email"
+
+# TRANSLATION
+# LABEL/ID_PMG_FILE
+#: LABEL/ID_PMG_FILE
+msgid "Sevice Accout Certificate"
+msgstr "Sevice Accout Certificate"
+
+# TRANSLATION
+# LABEL/ID_PMG_TYPE_ACCEPT
+#: LABEL/ID_PMG_TYPE_ACCEPT
+msgid "Only accepts files in format P12"
+msgstr "Only accepts files in format P12"
+
+# TRANSLATION
+# LABEL/ID_PMG_SELECT_FILE
+#: LABEL/ID_PMG_SELECT_FILE
+msgid "Please select a P12 file  to upload"
+msgstr "Please select a P12 file  to upload"
+
+# TRANSLATION
+# LABEL/ID_PMGMAIL
+#: LABEL/ID_PMGMAIL
+msgid "PM Gmail"
+msgstr "PM Gmail"
+
+# TRANSLATION
+# LABEL/ID_MAFE_14230d11143a03f4330c6433d5032a9d
+#: LABEL/ID_MAFE_14230d11143a03f4330c6433d5032a9d
+msgid "Prev"
+msgstr "Prev"
+
+# TRANSLATION
+# LABEL/ID_MAFE_f4bb39e6340915be908d4b0121d6a05a
+#: LABEL/ID_MAFE_f4bb39e6340915be908d4b0121d6a05a
+msgid "Gateways"
+msgstr "Gateways"
+
+# TRANSLATION
+# LABEL/ID_MAFE_30c40215e6d00c574ca23451003db9b9
+#: LABEL/ID_MAFE_30c40215e6d00c574ca23451003db9b9
+msgid "[LABEL/ID_MAFE_30c40215e6d00c574ca23451003db9b9] checkgroup"
+msgstr "checkgroup"
+
+# TRANSLATION
+# LABEL/ID_MAFE_fa53b9f14bee0d47d744863b871b4677
+#: LABEL/ID_MAFE_fa53b9f14bee0d47d744863b871b4677
+msgid "Intermediate Timer Event"
+msgstr "Intermediate Timer Event"
+
+# TRANSLATION
+# LABEL/ID_MAFE_fde97430909127ec42c120ad523ef1a5
+#: LABEL/ID_MAFE_fde97430909127ec42c120ad523ef1a5
+msgid "Type your name here"
+msgstr "Type your name here"
+
+# TRANSLATION
+# LABEL/ID_MAFE_81a7427163958378a4181ae66e8e2b0c
+#: LABEL/ID_MAFE_81a7427163958378a4181ae66e8e2b0c
+msgid "Save as"
+msgstr "Save as"
+
+# TRANSLATION
+# LABEL/ID_MAFE_3adbdb3ac060038aa0e6e6c138ef9873
+#: LABEL/ID_MAFE_3adbdb3ac060038aa0e6e6c138ef9873
+msgid "[LABEL/ID_MAFE_3adbdb3ac060038aa0e6e6c138ef9873] Category"
+msgstr "Category"
+
+# TRANSLATION
+# LABEL/ID_MAFE_c53385d51221bcb27c5f37de31043c24
+#: LABEL/ID_MAFE_c53385d51221bcb27c5f37de31043c24
+msgid "[LABEL/ID_MAFE_c53385d51221bcb27c5f37de31043c24] No Category"
+msgstr "No Category"
+
+# TRANSLATION
+# LABEL/ID_MAFE_ebb035d359e317060c652f54a18cfb1b
+#: LABEL/ID_MAFE_ebb035d359e317060c652f54a18cfb1b
+msgid "[LABEL/ID_MAFE_ebb035d359e317060c652f54a18cfb1b] Copy of"
+msgstr "Copy of"
+
+# TRANSLATION
+# LABEL/ID_MAFE_8159f4674357caa499b4047608bfa2a9
+#: LABEL/ID_MAFE_8159f4674357caa499b4047608bfa2a9
+msgid "Supported Controls: array."
+msgstr "Supported Controls: array."
+
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
 #: text - ADD_TAB_NAME
@@ -31868,7 +31970,7 @@ msgstr "Save"
 # dynaforms/fields_Toolbar.xml?saveasDyna
 # dynaforms/fields_Toolbar.xml
 #: toolButton - saveasDyna
-msgid "Save as"
+msgid "[dynaforms/fields_Toolbar.xml?saveasDyna] Save as"
 msgstr "Save as"
 
 # dynaforms/fields_Toolbar.xml?text
