@@ -1057,10 +1057,11 @@ Ext.onReady ( function() {
         iconCls: 'no-icon'
     });
 
-    /*----------------------------------********---------------------------------*/
     if (typeof filterStatus == 'undefined') {
         filterStatus = [];
     }
+
+    /*----------------------------------********---------------------------------*/
     var comboFilterStatus = new Ext.form.ComboBox({
         width           : 180,
         boxMaxWidth     : 200,
