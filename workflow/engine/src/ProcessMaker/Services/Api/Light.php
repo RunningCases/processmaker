@@ -637,7 +637,11 @@ class Light extends Api
             $step = new \ProcessMaker\BusinessModel\Step();
             $step->setFormatFieldNameInUppercase(false);
             $step->setArrayParamException(array("stepUid" => "step_uid", "taskUid" => "act_uid", "processUid" => "prj_uid"));
-
+            $oMobile  = new \ProcessMaker\BusinessModel\Light();
+            $response = $oMobile->getUserData($userUid);
+            $_SESSION["PROCESS"] = $prj_uid;
+            $_SESSION["TASK"] = $act_uid;
+            $_SESSION["USR_USERNAME"] = $response['firstName'];
             $cases = new \ProcessMaker\BusinessModel\Cases();
             foreach($triggers as $trigger){
                 if (strtolower($trigger['st_type']) == $type) {
