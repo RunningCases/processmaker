@@ -1244,7 +1244,7 @@ class workspaceTools
      * @param string $hostname the hostname the user will be connecting from
      * @param string $database the database to grant permissions
      */
-    private function createDBUser($username, $password, $hostname, $database)
+    public function createDBUser($username, $password, $hostname, $database)
     {
         mysql_select_db("mysql");
         $hostname = array_shift(explode(":", $hostname));
@@ -1282,7 +1282,7 @@ class workspaceTools
      * @param string $filename the script filename
      * @param string $database the database to execute this script into
      */
-    private function executeSQLScript($database, $filename, $parameters)
+    public function executeSQLScript($database, $filename, $parameters)
     {
         mysql_query("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($database));
 
