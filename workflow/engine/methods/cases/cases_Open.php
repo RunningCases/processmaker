@@ -174,10 +174,7 @@ try {
                 $oStep = new Step;
                 $oStep = $oStep->loadByProcessTaskPosition($_SESSION['PROCESS'], $_SESSION['TASK'], 1);
                 if($oStep) {
-                    $sessionFields = array("APPLICATION"=>$_SESSION['APPLICATION'],
-                                           "PROCESS"=>$_SESSION['PROCESS'],
-                                           "INDEX"=>$_SESSION['INDEX']);
-                    $aFields['APP_DATA'] = array_merge( $aFields['APP_DATA'], $sessionFields );
+                    $aFields['APP_DATA'] = array_merge( $aFields['APP_DATA'], G::getSystemConstants() );
                     $triggerFields["APP_DATA"] = $oCase->ExecuteTriggers( $_SESSION['TASK'], $oStep->getStepTypeObj(), $oStep->getStepUidObj(), 'BEFORE', $aFields['APP_DATA'] );
                     $oCase->updateCase( $_SESSION['APPLICATION'], $triggerFields );
                     $_SESSION['beforeTriggersExecuted'] = true;
