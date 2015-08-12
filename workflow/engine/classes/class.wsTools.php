@@ -63,18 +63,16 @@ class workspaceTools
     public function upgrade($first = false, $buildCacheView = false, $workSpace = SYS_SYS, $onedb = false, $lang = 'en')
     {
         $start = microtime(true);
-        CLI::logging("> Verify enterprise old...\n");
-        $this->verifyFilesOldEnterprise($workSpace);
-        $stop = microtime(true);
-        $final = $stop - $start;
-        CLI::logging("<*>   Verify took $final seconds.\n");
-
-        $start = microtime(true);
         CLI::logging("> Updating database...\n");
         $this->upgradeDatabase($onedb);
         $stop = microtime(true);
-        $final = $stop - $start;
-        CLI::logging("<*>   Database Upgrade Process took $final seconds.\n");
+        CLI::logging("<*>   Database Upgrade Process took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Verify enterprise old...\n");
+        $this->verifyFilesOldEnterprise($workSpace);
+        $stop = microtime(true);
+        CLI::logging("<*>   Verify took " . ($stop - $start) . " seconds.\n");
 
         $start = microtime(true);
         CLI::logging("> Updating translations...\n");
@@ -91,7 +89,7 @@ class workspaceTools
         CLI::logging("<*>   Updating Content Process took $final seconds.\n");
 
         $start = microtime(true);
-        CLI::logging("> check Mafe Requirements...\n");
+        CLI::logging("> Check Mafe Requirements...\n");
         $this->checkMafeRequirements($workSpace, $lang);
         $stop = microtime(true);
         $final = $stop - $start;
@@ -491,14 +489,39 @@ class workspaceTools
     }
 
     /**
+     * Upgrade triggers of tables (Database)
+     *
+     * @param bool   $flagRecreate Recreate
+     * @param string $language     Language
+     *
+     * return void
+     */
+    private function upgradeTriggersOfTables($flagRecreate, $language)
+    {
+        try {
+            $appCacheView = new AppCacheView();
+            $appCacheView->setPathToAppCacheFiles(PATH_METHODS . "setup" . PATH_SEP . "setupSchemas" . PATH_SEP);
+
+            $result = $appCacheView->triggerAppDelegationInsert($language, $flagRecreate);
+            $result = $appCacheView->triggerAppDelegationUpdate($language, $flagRecreate);
+            $result = $appCacheView->triggerApplicationUpdate($language, $flagRecreate);
+            $result = $appCacheView->triggerApplicationDelete($language, $flagRecreate);
+            $result = $appCacheView->triggerSubApplicationInsert($language, $flagRecreate);
+            $result = $appCacheView->triggerContentUpdate($language, $flagRecreate);
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Upgrade the AppCacheView table to the latest system version.
      *
      * This recreates the table and populates with data.
      *
-     * @param bool $checkOnly only check if the upgrade is needed if true
+     * @param bool $flagRecreate only check if the upgrade is needed if true
      * @param string $lang not currently used
      */
-    public function upgradeCacheView($fill = true, $checkOnly = false, $lang = "en")
+    public function upgradeCacheView($fill = true, $flagRecreate = false, $lang = "en")
     {
         $this->initPropel(true);
 
@@ -532,7 +555,7 @@ class workspaceTools
 
         CLI::logging("-> Update DEL_LAST_INDEX field in APP_DELEGATION table \n");
         //Update APP_DELEGATION.DEL_LAST_INDEX data
-        $res = $appCache->updateAppDelegationDelLastIndex($lang, $checkOnly);
+        $res = $appCache->updateAppDelegationDelLastIndex($lang, $flagRecreate);
 
         CLI::logging("-> Verifying roles permissions in RBAC \n");
         //Update table RBAC permissions
@@ -549,14 +572,9 @@ class workspaceTools
         }
 
         CLI::logging("-> Creating triggers\n");
+
         //now check if we have the triggers installed
-        $triggers = array();
-        $triggers[] = $appCache->triggerAppDelegationInsert($lang, $checkOnly);
-        $triggers[] = $appCache->triggerAppDelegationUpdate($lang, $checkOnly);
-        $triggers[] = $appCache->triggerApplicationUpdate($lang, $checkOnly);
-        $triggers[] = $appCache->triggerApplicationDelete($lang, $checkOnly);
-        $triggers[] = $appCache->triggerSubApplicationInsert($lang, $checkOnly);
-        $triggers[] = $appCache->triggerContentUpdate($lang, $checkOnly);
+        $this->upgradeTriggersOfTables($flagRecreate, $lang);
 
         if ($fill) {
             CLI::logging("-> Rebuild Cache View with language $lang...\n");
@@ -1303,11 +1321,15 @@ class workspaceTools
             $flagFunction = shell_exec('mysql --version');
         }
 
+        $arrayRegExpEngineSearch  = array("/\)\s*TYPE\s*=\s*(InnoDB)/i",       "/\)\s*TYPE\s*=\s*(MyISAM)/i");
+        $arrayRegExpEngineReplace = array(") ENGINE=\\1 DEFAULT CHARSET=utf8", ") ENGINE=\\1");
+
         if ( !$flag && !is_null($flagFunction) ) {
             //Replace TYPE by ENGINE
-            $script = file_get_contents($filename);
-            $script  = preg_replace('/\)TYPE\=InnoDB|\)\sTYPE\=InnoDB/', ')ENGINE=InnoDB DEFAULT CHARSET=utf8', $script);
+            $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
+
             file_put_contents($filename,$script);
+
             $aHost = explode(':',$parameters['dbHost']);
             $dbHost = $aHost[0];
             if(isset($aHost[1])){
@@ -1334,10 +1356,10 @@ class workspaceTools
             //If the safe mode of the server is actived
             try {
                 mysql_select_db($database);
-                $script = file_get_contents($filename);
 
                 //Replace TYPE by ENGINE
-                $script  = preg_replace('/\)TYPE\=InnoDB|\)\sTYPE\=InnoDB/', ')ENGINE=InnoDB DEFAULT CHARSET=utf8', $script);
+                $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
+
                 $lines = explode("\n", $script);
                 $previous = null;
                 $insert = false;
@@ -1436,15 +1458,13 @@ class workspaceTools
 
     static public function dirPerms($filename, $owner, $group, $perms)
     {
-        G::LoadSystem('inputfilter');
-        $filter = new InputFilter();
-        $filename = $filter->xssFilterHard($filename, 'path');
         $chown = @chown($filename, $owner);
         $chgrp = @chgrp($filename, $group);
         $chmod = @chmod($filename, $perms);
+
         if ($chgrp === false || $chmod === false || $chown === false) {
             if (strtoupper( substr( PHP_OS, 0, 3 ) ) === 'WIN') {
-                exec( 'icacls ' . $filename . ' /grant Administrador:(D,WDAC) /T', $res );
+                exec("icacls \"" . $filename . "\" /grant Administrador:(D,WDAC) /T", $res);
             } else {
                 CLI::logging(CLI::error("Failed to set permissions for $filename") . "\n");
             }
@@ -1509,14 +1529,13 @@ class workspaceTools
         }
 
         $version = System::getVersion();
-        $version = explode('-', $version);
-        $versionPresent = ( isset($version[0])) ? $version[0] : '';
+        $pmVersion = (preg_match("/^([\d\.]+).*$/", $version, $arrayMatch))? $arrayMatch[1] : ""; //Otherwise: Branch master
+
         CLI::logging(CLI::warning("
             Warning: A workspace from a newer version of ProcessMaker can NOT be restored in an older version of
             ProcessMaker. For example, restoring from v.3.0 to v.2.5 will not work. However, it may be possible
             to restore a workspace from an older version to an newer version of ProcessMaker, although error
-            messages may be displayed during the restore process. Make sure to run the \"processmaker cacheview-repair\"
-            and \"processmaker migrate-new-cases-lists\" commands after restoring a workspace.") . "\n");
+            messages may be displayed during the restore process.") . "\n");
 
         foreach ($metaFiles as $metaFile) {
             $metadata = G::json_decode(file_get_contents($metaFile));
@@ -1549,7 +1568,6 @@ class workspaceTools
             $workspace = new workspaceTools($workspaceName);
 
             if ($workspace->workspaceExists()) {
-
                 if ($overwrite) {
                     if ($workspace->dbInfo['DB_NAME'] == $workspace->dbInfo['DB_RBAC_NAME']) {
                         $newDatabases = 1;
@@ -1584,6 +1602,7 @@ class workspaceTools
 
             CLI::logging("> Changing file permissions\n");
             $shared_stat = stat(PATH_DATA);
+
             if ($shared_stat !== false) {
                 workspaceTools::dirPerms($workspace->path, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
             } else {
@@ -1594,10 +1613,24 @@ class workspaceTools
                $dbHost = $dbHost.$port; //127.0.0.1:3306
             }
             $aParameters = array('dbHost'=>$dbHost,'dbUser'=>$dbUser,'dbPass'=>$dbPass);
+
+            //Restore
+            if (!defined("SYS_SYS")) {
+                define("SYS_SYS", $workspaceName);
+            }
+
+            if (!defined("PATH_DATA_SITE")) {
+                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
+            }
+
+            $pmVersionWorkspaceToRestore = (preg_match("/^([\d\.]+).*$/", $metadata->PM_VERSION, $arrayMatch))? $arrayMatch[1] : "";
+
             CLI::logging("> Connecting to system database in '$dbHost'\n");
             $link = mysql_connect($dbHost, $dbUser, $dbPass);
             @mysql_query("SET NAMES 'utf8';");
             @mysql_query("SET FOREIGN_KEY_CHECKS=0;");
+            @mysql_query("SET GLOBAL log_bin_trust_routine_creators = 1;");
+
             if (!$link) {
                 throw new Exception('Could not connect to system database: ' . mysql_error());
             }
@@ -1622,41 +1655,52 @@ class workspaceTools
                 }
             }
 
-            $version = explode('-', $metadata->PM_VERSION);
-            $versionOld = ( isset($version[0])) ? $version[0] : '';
-            CLI::logging(CLI::info("$versionOld < $versionPresent") . "\n");
+            //CLI::logging(CLI::info("$pmVersionWorkspaceToRestore < $pmVersion") . "\n");
+
+            if (version_compare($pmVersionWorkspaceToRestore . "", $pmVersion . "", "<") || $pmVersion == "") {
+                $start = microtime(true);
+                CLI::logging("> Updating database...\n");
+                $workspace->upgradeDatabase($onedb);
+                $stop = microtime(true);
+                CLI::logging("<*>   Database Upgrade Process took " . ($stop - $start) . " seconds.\n");
+            }
 
             $start = microtime(true);
             CLI::logging("> Verify files enterprise old...\n");
             $workspace->verifyFilesOldEnterprise($workspaceName);
             $stop = microtime(true);
-            $final = $stop - $start;
-            CLI::logging("<*>   Verify took $final seconds.\n");
+            CLI::logging("<*>   Verify took " . ($stop - $start) . " seconds.\n");
 
-            if ( $versionOld < $versionPresent || strpos($versionPresent, "Branch")) {
-                $start = microtime(true);
-                CLI::logging("> Updating database...\n");
-                $workspace->upgradeDatabase($onedb);
-                $stop = microtime(true);
-                $final = $stop - $start;
-                CLI::logging("<*>   Database Upgrade Process took $final seconds.\n");
-            }
             $start = microtime(true);
             CLI::logging("> Verify License Enterprise...\n");
             $workspace->verifyLicenseEnterprise($workspaceName);
             $stop = microtime(true);
-            $final = $stop - $start;
-            CLI::logging("<*>   Verify took $final seconds.\n");
+            CLI::logging("<*>   Verify took " . ($stop - $start) . " seconds.\n");
 
+            $start = microtime(true);
+            CLI::logging("> Check Mafe Requirements...\n");
             $workspace->checkMafeRequirements($workspaceName, $lang);
+            $stop = microtime(true);
+            CLI::logging("<*>   Check Mafe Requirements Process took " . ($stop - $start) . " seconds.\n");
+
+            if (version_compare($pmVersionWorkspaceToRestore . "", $pmVersion . "", "<") || $pmVersion == "") {
+                $start = microtime(true);
+                CLI::logging("> Updating cache view...\n");
+                $workspace->upgradeCacheView(true, true, $lang);
+                $stop = microtime(true);
+                CLI::logging("<*>   Updating cache view Process took " . ($stop - $start) . " seconds.\n");
+            } else {
+                $workspace->upgradeTriggersOfTables(true, $lang);
+            }
 
             /*----------------------------------********---------------------------------*/
-            $start = microtime(true);
-            CLI::logging("> Updating List tables...\n");
-            $workspace->migrateList($workspace->name);
-            $stop = microtime(true);
-            $final = $stop - $start;
-            CLI::logging("<*>   Updating List Process took $final seconds.\n");
+            if (version_compare($pmVersionWorkspaceToRestore . "", "2.9", "<") || $pmVersion == "") {
+                $start = microtime(true);
+                CLI::logging("> Updating List tables...\n");
+                $workspace->migrateList($workspace->name);
+                $stop = microtime(true);
+                CLI::logging("<*>   Updating List Process took " . ($stop - $start) . " seconds.\n");
+            }
             /*----------------------------------********---------------------------------*/
 
             mysql_close($link);
@@ -1914,17 +1958,50 @@ class workspaceTools
     /**
      * Migrate all cases to New list
      *
+     * @param string $workSpace    Workspace
+     * @param bool   $flagReinsert Flag that specifies the re-insertion
+     *
      * return all LIST TABLES with data
      */
-    public function migrateList ($workSpace)
+    public function migrateList($workSpace, $flagReinsert = false)
     {
-        if ($this->listFirstExecution('check')) {
+        $this->initPropel(true);
+
+        G::LoadClass("case");
+
+        if (!$flagReinsert && $this->listFirstExecution("check")) {
             return 1;
         }
-        $this->initPropel(true);
+
+        if ($flagReinsert) {
+            //Delete all records
+            $arrayTable = array("ListInbox", "ListMyInbox", "ListCanceled", "ListParticipatedLast", "ListParticipatedHistory", "ListPaused", "ListCompleted", "ListUnassigned", "ListUnassignedGroup");
+
+            foreach ($arrayTable as $value) {
+                $tableName = $value . "Peer";
+
+                $list = new $tableName();
+                $list->doDeleteAll();
+            }
+
+            //Update //User
+            $criteriaSet = new Criteria("workflow");
+            $criteriaSet->add(UsersPeer::USR_TOTAL_INBOX, 0);
+            $criteriaSet->add(UsersPeer::USR_TOTAL_DRAFT, 0);
+            $criteriaSet->add(UsersPeer::USR_TOTAL_CANCELLED, 0);
+            $criteriaSet->add(UsersPeer::USR_TOTAL_PARTICIPATED, 0);
+            $criteriaSet->add(UsersPeer::USR_TOTAL_PAUSED, 0);
+            $criteriaSet->add(UsersPeer::USR_TOTAL_COMPLETED, 0);
+            $criteriaSet->add(UsersPeer::USR_TOTAL_UNASSIGNED, 0);
+
+            $criteriaWhere = new Criteria("workflow");
+            $criteriaWhere->add(UsersPeer::USR_UID, null, Criteria::ISNOTNULL);
+
+            BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
+        }
+
         $appCache = new AppCacheView();
         $users    = new Users();
-        G::LoadClass("case");
         $case = new Cases();
 
         //Select data CANCELLED
@@ -2106,7 +2183,12 @@ class workspaceTools
             );
             $users->update($newData);
         }
-        $this->listFirstExecution('insert');
+
+        if (!$flagReinsert) {
+            $this->listFirstExecution("insert");
+        }
+
+        //Return
         return true;
     }
 

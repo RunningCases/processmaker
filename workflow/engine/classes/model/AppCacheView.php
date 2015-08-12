@@ -1417,7 +1417,7 @@ class AppCacheView extends BaseAppCacheView
         }
 
         if (!$found) {
-            $filenameSql = $this->pathToAppCacheFiles . '/triggerAppDelegationUpdate.sql';
+            $filenameSql = $this->pathToAppCacheFiles . "triggerAppDelegationUpdate.sql";
 
             if (!file_exists($filenameSql)) {
                 throw (new Exception("file triggerAppDelegationUpdate.sql does not exist "));
@@ -1462,7 +1462,7 @@ class AppCacheView extends BaseAppCacheView
         }
 
         if (!$found) {
-            $filenameSql = $this->pathToAppCacheFiles . '/triggerApplicationUpdate.sql';
+            $filenameSql = $this->pathToAppCacheFiles . "triggerApplicationUpdate.sql";
 
             if (!file_exists($filenameSql)) {
                 throw (new Exception("file triggerApplicationUpdate.sql doesn't exist "));
@@ -1507,7 +1507,7 @@ class AppCacheView extends BaseAppCacheView
         }
 
         if (!$found) {
-            $filenameSql = $this->pathToAppCacheFiles . '/triggerApplicationDelete.sql';
+            $filenameSql = $this->pathToAppCacheFiles . "triggerApplicationDelete.sql";
 
             if (!file_exists($filenameSql)) {
                 throw (new Exception("file triggerApplicationDelete.sql doesn't exist"));
@@ -1545,7 +1545,7 @@ class AppCacheView extends BaseAppCacheView
         }
 
         if (!$found) {
-            $filenameSql = $this->pathToAppCacheFiles . PATH_SEP . "triggerContentUpdate.sql";
+            $filenameSql = $this->pathToAppCacheFiles . "triggerContentUpdate.sql";
 
             if (!file_exists($filenameSql)) {
                 throw (new Exception("file triggerContentUpdate.sql doesn't exist"));
@@ -1621,7 +1621,7 @@ class AppCacheView extends BaseAppCacheView
         $triggers = array();
 
         foreach ($triggerFiles as $triggerFile) {
-            $trigger = file_get_contents("{$this->pathToAppCacheFiles}/$triggerFile");
+            $trigger = file_get_contents($this->pathToAppCacheFiles . $triggerFile);
 
             if ($trigger === false) {
                 throw new Exception("Could not read trigger contents in $triggerFile");
