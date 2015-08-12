@@ -669,13 +669,10 @@ function run_check_workspace_disabled_code($args, $opts)
 
 function migrate_new_cases_lists($command, $args) {
   $workspaces = get_workspaces_from_args($args);
-  $checkOnly = (strcmp($command, "migrate") == 0);
+
   foreach ($workspaces as $workspace) {
-    if ($checkOnly){
-      print_r("Checking database in ".pakeColor::colorize($workspace->name, "INFO")."\n");
-    } else {
-      print_r("Upgrading database in ".pakeColor::colorize($workspace->name, "INFO")."\n");
-    }
+    print_r("Upgrading database in " . pakeColor::colorize($workspace->name, "INFO") . "\n");
+
     try {
       $ws = $workspace->name;
       $sContent = file_get_contents (PATH_DB . $ws . PATH_SEP . 'db.php');
@@ -684,21 +681,16 @@ function migrate_new_cases_lists($command, $args) {
       } else {
         $workspace->onedb = true;
       }
-      //check if is the tables List are empty
-      $changes = $workspace->listFirstExecution('check');
-      if ($workspace->onedb && $changes != true) {
-        $workspace->migrateList($workspace->name);
-      }
-      if ($changes) {
-        if ($checkOnly) {
-          echo "-> List tables are done\n";
+
+        if ($workspace->onedb) {
+            $workspace->migrateList($workspace->name, true);
         }
-      } else {
+
         echo "> List tables are done\n";
-      }
     } catch (Exception $e) {
       echo "> Error: ".CLI::error($e->getMessage()) . "\n";
     }
   }
 }
 /*----------------------------------********---------------------------------*/
+
