@@ -85,7 +85,7 @@ class Light extends Api
     public function doGetCasesListToDo(
         $start = 0,
         $limit = 10,
-        $sort = 'APP_CACHE_VIEW.APP_NUMBER',
+        $sort = 'APP_UPDATE_DATE',
         $dir = 'DESC',
         $cat_uid = '',
         $pro_uid = '',
