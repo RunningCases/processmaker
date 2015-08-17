@@ -54,33 +54,41 @@ class Light
             $task = new \ProcessMaker\BusinessModel\Task();
             $task->setFormatFieldNameInUppercase(false);
             $task->setArrayParamException(array("taskUid" => "act_uid", "stepUid" => "step_uid"));
+
+            $webEntryEvent = new \ProcessMaker\BusinessModel\WebEntryEvent();
+            $webEntryEvent->setFormatFieldNameInUppercase(false);
+            $webEntryEvent->setArrayFieldNameForException(array("processUid" => "prj_uid"));
+
             $step = new \ProcessMaker\Services\Api\Project\Activity\Step();
             $response = array();
             foreach ($processList as $key => $processInfo) {
                 $tempTreeChildren = array ();
                 foreach ($processList[$key] as $keyChild => $processInfoChild) {
-                    $tempTreeChild['text']      = htmlentities($keyChild, ENT_QUOTES, 'UTF-8'); //ellipsis ( $keyChild, 50 );
-                    $tempTreeChild['processId'] = $processInfoChild['pro_uid'];
-                    $tempTreeChild['taskId']    = $processInfoChild['uid'];
-                    $forms = $task->getSteps($processInfoChild['uid']);
-                    $newForm = array();
-                    $c = 0;
-                    foreach ($forms as $k => $form) {
-                        if ($form['step_type_obj'] == "DYNAFORM") {
-                            $newForm[$c]['formId'] = $form['step_uid_obj'];
-                            $newForm[$c]['index'] = $c+1;
-                            $newForm[$c]['title'] = $form['obj_title'];
-                            $newForm[$c]['description'] = $form['obj_description'];
-                            $newForm[$c]['stepId']      = $form["step_uid"];
-                            $newForm[$c]['stepMode']    = $form['step_mode'];
-                            $trigger = $this->statusTriggers($step->doGetActivityStepTriggers($form["step_uid"], $tempTreeChild['taskId'], $tempTreeChild['processId']));
-                            $newForm[$c]["triggers"]    = $trigger;
-                            $c++;
+                    $webEntryEventStart = $webEntryEvent->getWebEntryEvents($processInfoChild['pro_uid']);
+                    if(empty($webEntryEventStart)){
+                        $tempTreeChild['text']      = htmlentities($keyChild, ENT_QUOTES, 'UTF-8'); //ellipsis ( $keyChild, 50 );
+                        $tempTreeChild['processId'] = $processInfoChild['pro_uid'];
+                        $tempTreeChild['taskId']    = $processInfoChild['uid'];
+                        $forms = $task->getSteps($processInfoChild['uid']);
+                        $newForm = array();
+                        $c = 0;
+                        foreach ($forms as $k => $form) {
+                            if ($form['step_type_obj'] == "DYNAFORM") {
+                                $newForm[$c]['formId'] = $form['step_uid_obj'];
+                                $newForm[$c]['index'] = $c+1;
+                                $newForm[$c]['title'] = $form['obj_title'];
+                                $newForm[$c]['description'] = $form['obj_description'];
+                                $newForm[$c]['stepId']      = $form["step_uid"];
+                                $newForm[$c]['stepMode']    = $form['step_mode'];
+                                $trigger = $this->statusTriggers($step->doGetActivityStepTriggers($form["step_uid"], $tempTreeChild['taskId'], $tempTreeChild['processId']));
+                                $newForm[$c]["triggers"]    = $trigger;
+                                $c++;
+                            }
                         }
-                    }
-                    $tempTreeChild['forms'] = $newForm;
-                    if (isset( $proData[$processInfoChild['pro_uid']] )) {
-                        $tempTreeChildren[] = $tempTreeChild;
+                        $tempTreeChild['forms'] = $newForm;
+                        if (isset( $proData[$processInfoChild['pro_uid']] )) {
+                            $tempTreeChildren[] = $tempTreeChild;
+                        }
                     }
                 }
                 $response = array_merge($response, $tempTreeChildren);
