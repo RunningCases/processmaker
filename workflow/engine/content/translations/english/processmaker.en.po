@@ -24262,8 +24262,8 @@ msgstr "New BPMN Project"
 # TRANSLATION
 # LABEL/ID_ROUTE_TO_TASK_SCRIPT_TASK
 #: LABEL/ID_ROUTE_TO_TASK_SCRIPT_TASK
-msgid "The following case is a \"Script-Task\""
-msgstr "The following case is a \"Script-Task\""
+msgid "The following task will execute a script automatically and then it will continue with the workflow"
+msgstr "The following task will execute a script automatically and then it will continue with the workflow"
 
 # TRANSLATION
 # LABEL/ID_MAFE_0d82790b0612935992bd564a17ce37d6
