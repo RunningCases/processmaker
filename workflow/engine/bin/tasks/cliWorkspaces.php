@@ -240,6 +240,14 @@ function run_workspace_upgrade($args, $opts) {
   $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
   foreach ($workspaces as $workspace) {
     try {
+      if (!defined("SYS_SYS")) {
+          define("SYS_SYS", $workspace->name);
+      }
+
+      if (!defined("PATH_DATA_SITE")) {
+          define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
+      }
+
       $workspace->upgrade($first, false, $workspace->name, $lang);
       $first = false;
     } catch (Exception $e) {
