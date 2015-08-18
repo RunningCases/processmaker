@@ -9572,7 +9572,7 @@ SELECT 'LABEL','ID_NEW_PROJECT','en','New Project','2015-08-18'
   UNION ALL
 SELECT 'LABEL','ID_NEW_BPMN_PROJECT','en','New BPMN Project','2015-08-18' 
   UNION ALL
-SELECT 'LABEL','ID_ROUTE_TO_TASK_SCRIPT_TASK','en','The following case is a "Script-Task"','2015-08-18' 
+SELECT 'LABEL','ID_ROUTE_TO_TASK_SCRIPT_TASK','en','The following task will execute a script automatically and then it will continue with the workflow','2015-08-18' 
   UNION ALL
 SELECT 'LABEL','ID_MAFE_0d82790b0612935992bd564a17ce37d6','en','Quit','2015-08-18' 
   UNION ALL
