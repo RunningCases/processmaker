@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 3.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-08-04 12:28:10\n"
+"PO-Revision-Date: 2015-08-18 12:18:18\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -24222,6 +24222,144 @@ msgstr "Supported Controls: array."
 #: LABEL/ID_MAFE_68be06f16b9b17f3741cd3846a2d9190
 msgid "Display :"
 msgstr "Display :"
+
+# TRANSLATION
+# LABEL/ID_CASE_NOT_PAUSED
+#: LABEL/ID_CASE_NOT_PAUSED
+msgid "Case with \"{0}\" not paused."
+msgstr "Case with \"{0}\" not paused."
+
+# TRANSLATION
+# LABEL/ID_CASE_USER_INVALID_PAUSED_CASE
+#: LABEL/ID_CASE_USER_INVALID_PAUSED_CASE
+msgid "The user with \"{0}\" is invalid to pause the case."
+msgstr "The user with \"{0}\" is invalid to pause the case."
+
+# TRANSLATION
+# LABEL/ID_CASE_USER_INVALID_UNPAUSE_CASE
+#: LABEL/ID_CASE_USER_INVALID_UNPAUSE_CASE
+msgid "The user with \"{0}\" is invalid to Unpause the Case."
+msgstr "The user with \"{0}\" is invalid to Unpause the Case."
+
+# TRANSLATION
+# LABEL/ID_UNSAVED_CHANGES_QUESTION
+#: LABEL/ID_UNSAVED_CHANGES_QUESTION
+msgid "You are about to close a window and there may be some unsaved changes. Are you sure to continue?"
+msgstr "You are about to close a window and there may be some unsaved changes. Are you sure to continue?"
+
+# TRANSLATION
+# LABEL/ID_NEW_PROJECT
+#: LABEL/ID_NEW_PROJECT
+msgid "New Project"
+msgstr "New Project"
+
+# TRANSLATION
+# LABEL/ID_NEW_BPMN_PROJECT
+#: LABEL/ID_NEW_BPMN_PROJECT
+msgid "New BPMN Project"
+msgstr "New BPMN Project"
+
+# TRANSLATION
+# LABEL/ID_ROUTE_TO_TASK_SCRIPT_TASK
+#: LABEL/ID_ROUTE_TO_TASK_SCRIPT_TASK
+msgid "The following case is a \"Script-Task\""
+msgstr "The following case is a \"Script-Task\""
+
+# TRANSLATION
+# LABEL/ID_MAFE_0d82790b0612935992bd564a17ce37d6
+#: LABEL/ID_MAFE_0d82790b0612935992bd564a17ce37d6
+msgid "Quit"
+msgstr "Quit"
+
+# TRANSLATION
+# LABEL/ID_MAFE_16f49c0f891dce505db0ffe478aff96f
+#: LABEL/ID_MAFE_16f49c0f891dce505db0ffe478aff96f
+msgid "Next &#8594;"
+msgstr "Next &#8594;"
+
+# TRANSLATION
+# LABEL/ID_MAFE_064626e308f7d6587778df2924ea847c
+#: LABEL/ID_MAFE_064626e308f7d6587778df2924ea847c
+msgid "&#8592; Back"
+msgstr "&#8592; Back"
+
+# TRANSLATION
+# LABEL/ID_MAFE_f92965e2c8a7afb3c1b9a5c09a263636
+#: LABEL/ID_MAFE_f92965e2c8a7afb3c1b9a5c09a263636
+msgid "[LABEL/ID_MAFE_f92965e2c8a7afb3c1b9a5c09a263636] Done"
+msgstr "Done"
+
+# TRANSLATION
+# LABEL/ID_MAFE_4184f3327703ed13b197de132142cec0
+#: LABEL/ID_MAFE_4184f3327703ed13b197de132142cec0
+msgid "The designer bar displays the process name and is used to control the process view (zoom, full screen view), the export, undo/redo and the save button."
+msgstr "The designer bar displays the process name and is used to control the process view (zoom, full screen view), the export, undo/redo and the save button."
+
+# TRANSLATION
+# LABEL/ID_MAFE_980e81ea83f33ba4852ff484c14d541b
+#: LABEL/ID_MAFE_980e81ea83f33ba4852ff484c14d541b
+msgid "Drag and Drop the process elements that you want include in the process design."
+msgstr "Drag and Drop the process elements that you want include in the process design."
+
+# TRANSLATION
+# LABEL/ID_MAFE_02129aca17f1a65b686f3525b1b99ec8
+#: LABEL/ID_MAFE_02129aca17f1a65b686f3525b1b99ec8
+msgid "Start Event: The process begins with a start event."
+msgstr "Start Event: The process begins with a start event."
+
+# TRANSLATION
+# LABEL/ID_MAFE_bca2c894b970c9326aa69ae6cac3dee4
+#: LABEL/ID_MAFE_bca2c894b970c9326aa69ae6cac3dee4
+msgid "Intermediate Event: Used to define an event that could happen in the middle of the process."
+msgstr "Intermediate Event: Used to define an event that could happen in the middle of the process."
+
+# TRANSLATION
+# LABEL/ID_MAFE_22403d2766eb4e45a3d9dd9bab8b710a
+#: LABEL/ID_MAFE_22403d2766eb4e45a3d9dd9bab8b710a
+msgid "Pool & Lanes: Separate Multiple processes into different pools."
+msgstr "Pool & Lanes: Separate Multiple processes into different pools."
+
+# TRANSLATION
+# LABEL/ID_MAFE_728055b9c636bd86e1848c06f82be906
+#: LABEL/ID_MAFE_728055b9c636bd86e1848c06f82be906
+msgid "The process objects are used to add execution features to the current process design."
+msgstr "The process objects are used to add execution features to the current process design."
+
+# TRANSLATION
+# LABEL/ID_MAFE_e693021f9ae34a3833f0036c52837cfd
+#: LABEL/ID_MAFE_e693021f9ae34a3833f0036c52837cfd
+msgid "<br/>Variables: Define the process data."
+msgstr "<br/>Variables: Define the process data."
+
+# TRANSLATION
+# LABEL/ID_MAFE_7964c7a971166b4525713e1885ca4cc3
+#: LABEL/ID_MAFE_7964c7a971166b4525713e1885ca4cc3
+msgid "<br/>Dynaforms: Create dynamic forms."
+msgstr "<br/>Dynaforms: Create dynamic forms."
+
+# TRANSLATION
+# LABEL/ID_MAFE_bb3c8227885fe5d13241a9f7e5f06397
+#: LABEL/ID_MAFE_bb3c8227885fe5d13241a9f7e5f06397
+msgid "<br/>Output documents: Generate documents with process data."
+msgstr "<br/>Output documents: Generate documents with process data."
+
+# TRANSLATION
+# LABEL/ID_MAFE_4c021e6782546f701d2c9a15f3be1013
+#: LABEL/ID_MAFE_4c021e6782546f701d2c9a15f3be1013
+msgid "<br/>DB connections: Connect to external databases."
+msgstr "<br/>DB connections: Connect to external databases."
+
+# TRANSLATION
+# LABEL/ID_MAFE_4346c97778f456ed8a4eed32cff645f0
+#: LABEL/ID_MAFE_4346c97778f456ed8a4eed32cff645f0
+msgid "Select an element in the designer to display the quick toolbar with the list of the most used options available for that element."
+msgstr "Select an element in the designer to display the quick toolbar with the list of the most used options available for that element."
+
+# TRANSLATION
+# LABEL/ID_MAFE_63401535ae5b2457b9c4471637ba8308
+#: LABEL/ID_MAFE_63401535ae5b2457b9c4471637ba8308
+msgid "In the design area you can drop the process elements and order or arrange them to design your process."
+msgstr "In the design area you can drop the process elements and order or arrange them to design your process."
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml

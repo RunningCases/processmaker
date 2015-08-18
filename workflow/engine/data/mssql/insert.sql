@@ -9557,6 +9557,54 @@ SELECT 'LABEL','ID_MAFE_c53385d51221bcb27c5f37de31043c24','en','No Category','20
 SELECT 'LABEL','ID_MAFE_ebb035d359e317060c652f54a18cfb1b','en','Copy of','2015-08-04' 
   UNION ALL
 SELECT 'LABEL','ID_MAFE_8159f4674357caa499b4047608bfa2a9','en','Supported Controls: array.','2015-08-04' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_68be06f16b9b17f3741cd3846a2d9190','en','Display :','2015-08-04' 
+  UNION ALL
+SELECT 'LABEL','ID_CASE_NOT_PAUSED','en','Case with "{0}" not paused.','2015-08-14' 
+  UNION ALL
+SELECT 'LABEL','ID_CASE_USER_INVALID_PAUSED_CASE','en','The user with "{0}" is invalid to pause the case.','2015-08-14' 
+  UNION ALL
+SELECT 'LABEL','ID_CASE_USER_INVALID_UNPAUSE_CASE','en','The user with "{0}" is invalid to Unpause the Case.','2015-08-14' 
+  UNION ALL
+SELECT 'LABEL','ID_UNSAVED_CHANGES_QUESTION','en','You are about to close a window and there may be some unsaved changes. Are you sure to continue?','2015-08-17' 
+  UNION ALL
+SELECT 'LABEL','ID_NEW_PROJECT','en','New Project','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_NEW_BPMN_PROJECT','en','New BPMN Project','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_ROUTE_TO_TASK_SCRIPT_TASK','en','The following case is a "Script-Task"','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_0d82790b0612935992bd564a17ce37d6','en','Quit','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_16f49c0f891dce505db0ffe478aff96f','en','Next &#8594;','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_064626e308f7d6587778df2924ea847c','en','&#8592; Back','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_f92965e2c8a7afb3c1b9a5c09a263636','en','Done','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_4184f3327703ed13b197de132142cec0','en','The designer bar displays the process name and is used to control the process view (zoom, full screen view), the export, undo/redo and the save button.','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_980e81ea83f33ba4852ff484c14d541b','en','Drag and Drop the process elements that you want include in the process design.','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_02129aca17f1a65b686f3525b1b99ec8','en','Start Event: The process begins with a start event.','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_bca2c894b970c9326aa69ae6cac3dee4','en','Intermediate Event: Used to define an event that could happen in the middle of the process.','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_22403d2766eb4e45a3d9dd9bab8b710a','en','Pool & Lanes: Separate Multiple processes into different pools.','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_728055b9c636bd86e1848c06f82be906','en','The process objects are used to add execution features to the current process design.','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_e693021f9ae34a3833f0036c52837cfd','en','<br/>Variables: Define the process data.','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_7964c7a971166b4525713e1885ca4cc3','en','<br/>Dynaforms: Create dynamic forms.','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_bb3c8227885fe5d13241a9f7e5f06397','en','<br/>Output documents: Generate documents with process data.','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_4c021e6782546f701d2c9a15f3be1013','en','<br/>DB connections: Connect to external databases.','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_4346c97778f456ed8a4eed32cff645f0','en','Select an element in the designer to display the quick toolbar with the list of the most used options available for that element.','2015-08-18' 
+  UNION ALL
+SELECT 'LABEL','ID_MAFE_63401535ae5b2457b9c4471637ba8308','en','In the design area you can drop the process elements and order or arrange them to design your process.','2015-08-18' 
  ;
 
 INSERT INTO ISO_LOCATION ([IC_UID],[IL_UID],[IL_NAME],[IL_NORMAL_NAME],[IS_UID]) 
