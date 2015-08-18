@@ -16,7 +16,7 @@ class pmDynaform
     public $credentials = null;
     public $lang = null;
     public $langs = null;
-    public $onPropertyRead = "";
+    public $onPropertyRead = "onPropertyReadFormInstance";
 
     public function __construct($fields = array())
     {
@@ -272,7 +272,7 @@ class pmDynaform
                     }
                     //todo compatibility 'columnWidth'
                     foreach ($json->columns as $column) {
-                        if (!isset($column->columnWidth)) {
+                        if (!isset($column->columnWidth) && $column->type !== "hidden") {
                             $json->layout = "static";
                             $column->columnWidth = "";
                         }
