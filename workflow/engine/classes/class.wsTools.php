@@ -796,20 +796,14 @@ class workspaceTools
 
                 $arrayData = $emailSever->create($arrayData);
             } else {
-                /*----------------------------------********---------------------------------*/
-                if (!PMLicensedFeatures::getSingleton()->verifyfeature("zIKRGpDM3pjcHFsWGplNDN0dTl5bGN3UTNiOWdQU0E5Q05QTksrU1ladWQ0VT0=")) {
-                /*----------------------------------********---------------------------------*/
-                    $arrayData["MESS_ENGINE"]   = "MAIL";
-                    $arrayData["MESS_SERVER"]   = "";
-                    $arrayData["MESS_ACCOUNT"]  = "";
-                    $arrayData["MESS_PASSWORD"] = "";
-                    $arrayData["MAIL_TO"]       = "";
-                    $arrayData["MESS_DEFAULT"]  = 1;
+                $arrayData["MESS_ENGINE"]   = "MAIL";
+                $arrayData["MESS_SERVER"]   = "";
+                $arrayData["MESS_ACCOUNT"]  = "";
+                $arrayData["MESS_PASSWORD"] = "";
+                $arrayData["MAIL_TO"]       = "";
+                $arrayData["MESS_DEFAULT"]  = 1;
 
-                    $arrayData = $emailSever->create2($arrayData);
-                /*----------------------------------********---------------------------------*/
-                }
-                /*----------------------------------********---------------------------------*/
+                $arrayData = $emailSever->create2($arrayData);
             }
         }
 
@@ -2283,4 +2277,3 @@ class workspaceTools
         }
     }
 }
-

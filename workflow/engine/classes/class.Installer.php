@@ -234,16 +234,8 @@ class Installer
             $this->setPartner();
             $this->setAdmin();
 
-            /*----------------------------------********---------------------------------*/
-            if (true) {
-                //
-            } else {
-            /*----------------------------------********---------------------------------*/
-                $querySql = ("INSERT INTO EMAIL_SERVER(MESS_ENGINE) VALUES('MAIL')");
-                $this->run_query($querySql);
-            /*----------------------------------********---------------------------------*/
-            }
-            /*----------------------------------********---------------------------------*/
+            $querySql = ("INSERT INTO EMAIL_SERVER(MESS_ENGINE) VALUES('MAIL')");
+            $this->run_query($querySql);
         }
         return $test;
     }
