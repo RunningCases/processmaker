@@ -676,8 +676,6 @@ class Light extends Api
      * @param int $cas_index
      * @param int $step_pos
      *
-     * @copyright Colosa - Bolivia
-     *
      * @url GET /process/:pro_uid/case/:app_uid/:cas_index/step/:step_pos
      */
     public function doGetNextStep($pro_uid, $app_uid, $cas_index, $step_pos)
@@ -1283,20 +1281,26 @@ class Light extends Api
     }
 
     /**
-     * @url GET /project/:prj_uid/case/:app_uid
+     * Get in base64 the image process (processmap)
+     *
+     * @url GET /process/:pro_uid/case
      *
      * @param string $prj_uid {@min 32}{@max 32}
+     * @param string $app_uid {@min 32}{@max 32}{@from path}
      */
-    public function doGetProcessMapImage($prj_uid, $app_uid)
+    public function doGetProcessMapImage($pro_uid, $app_uid = null)
     {
         $return = array();
         try {
             $oPMap = new \ProcessMaker\BusinessModel\ProcessMap();
-            $schema = Adapter\BpmnWorkflow::getStruct($prj_uid);
+            $schema = Adapter\BpmnWorkflow::getStruct($pro_uid);
 
-            $case = new \ProcessMaker\BusinessModel\Cases();
-            $case->setFormatFieldNameInUppercase(false);
-            $schemaStatus = $case->getTasks($app_uid);
+            $schemaStatus = array();
+            if (!is_null($app_uid)) {
+                $case = new \ProcessMaker\BusinessModel\Cases();
+                $case->setFormatFieldNameInUppercase(false);
+                $schemaStatus = $case->getTasks($app_uid);
+            }
 
             $file = $oPMap->get_image($schema, $schemaStatus);
             ob_start();
