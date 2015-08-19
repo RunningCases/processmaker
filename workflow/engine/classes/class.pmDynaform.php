@@ -196,7 +196,7 @@ class pmDynaform
                     }
                 }
                 //data
-                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "suggest" || $value === "dropdown" || $value === "checkbox" || $value === "radio" || $value === "datetime" || $value === "hidden")) {
+                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "suggest" || $value === "dropdown" || $value === "radio" || $value === "datetime" || $value === "hidden")) {
                     $json->data = array(
                         "value" => isset($this->fields["APP_DATA"][$json->name]) ? $this->fields["APP_DATA"][$json->name] : (is_array($json->data) ? $json->data["value"] : $json->data->value),
                         "label" => isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : (is_array($json->data) ? $json->data["label"] : $json->data->label)
@@ -229,6 +229,15 @@ class pmDynaform
                         "value" => isset($this->fields["APP_DATA"][$json->name]) ? $this->fields["APP_DATA"][$json->name] : array(),
                         "label" => isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : "[]"
                     );
+                    //synchronize var_label
+                    if (isset($this->fields["APP_DATA"]["__VAR_CHANGED__"]) &&
+                            in_array($json->name, explode(",", $this->fields["APP_DATA"]["__VAR_CHANGED__"]))) {
+                        $json->data["label"] = G::json_encode($json->data["value"]);
+                        $_SESSION["TRIGGER_DEBUG"]["DATA"][] = Array(
+                            "key" => $json->name . "_label",
+                            "value" => $json->data["label"]
+                        );
+                    }
                 }
                 if ($key === "type" && ($value === "file") && isset($this->fields["APP_DATA"]["APPLICATION"])) {
                     $oCriteria = new Criteria("workflow");
