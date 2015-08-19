@@ -612,9 +612,10 @@ class Light extends Api
                     $result   = $this->parserDataDynaForm($dataForm);
                     $result['formContent'] = (isset($result['formContent']) && $result['formContent'] != null)?json_decode($result['formContent']):"";
                     $pmDynaForm->jsonr($result['formContent']);
-                    $result['index']       = $i;
-                    $result['stepId']      = $activitySteps[$i]["step_uid"];
-                    $result['stepMode']   = $activitySteps[$i]['step_mode'];
+                    $result['index']        = $i;
+                    $result['stepId']       = $activitySteps[$i]["step_uid"];
+                    $result['stepMode']     = $activitySteps[$i]['step_mode'];
+                    $result['stepPosition'] = $activitySteps[$i]['step_position'];
                     $trigger = $oMobile->statusTriggers($step->doGetActivityStepTriggers($activitySteps[$i]["step_uid"], $act_uid, $prj_uid));
                     $result["triggers"]    = $trigger;
                     $response[] = $result;
@@ -661,6 +662,34 @@ class Light extends Api
                 }
             }
             $response = array('status' => 'ok');
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+        return $response;
+    }
+
+    /**
+     * Get next step
+     *
+     * @param string $pro_uid  {@min 1}{@max 32}
+     * @param string $app_uid  {@min 1}{@max 32}
+     * @param int $cas_index
+     * @param int $step_pos
+     *
+     * @url GET /process/:pro_uid/case/:app_uid/:cas_index/step/:step_pos
+     */
+    public function doGetNextStep($pro_uid, $app_uid, $cas_index, $step_pos)
+    {
+        try {
+            $oCase = new \Cases();
+            $userUid = $this->getUserId();
+            $_SESSION["APPLICATION"]  = $app_uid;
+            $_SESSION["PROCESS"]      = $pro_uid;
+            //$_SESSION["TASK"]         = "";
+            $_SESSION["INDEX"]        = $cas_index;
+            $_SESSION["USER_LOGGED"]  = $userUid;
+            //$_SESSION["USR_USERNAME"] = "";
+            $response = $oCase->getNextStep($pro_uid, $app_uid, $cas_index, $step_pos );
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -1252,20 +1281,26 @@ class Light extends Api
     }
 
     /**
-     * @url GET /project/:prj_uid/case/:app_uid
+     * Get in base64 the image process (processmap)
+     *
+     * @url GET /process/:pro_uid/case
      *
      * @param string $prj_uid {@min 32}{@max 32}
+     * @param string $app_uid {@min 32}{@max 32}{@from path}
      */
-    public function doGetProcessMapImage($prj_uid, $app_uid)
+    public function doGetProcessMapImage($pro_uid, $app_uid = null)
     {
         $return = array();
         try {
             $oPMap = new \ProcessMaker\BusinessModel\ProcessMap();
-            $schema = Adapter\BpmnWorkflow::getStruct($prj_uid);
+            $schema = Adapter\BpmnWorkflow::getStruct($pro_uid);
 
-            $case = new \ProcessMaker\BusinessModel\Cases();
-            $case->setFormatFieldNameInUppercase(false);
-            $schemaStatus = $case->getTasks($app_uid);
+            $schemaStatus = array();
+            if (!is_null($app_uid)) {
+                $case = new \ProcessMaker\BusinessModel\Cases();
+                $case->setFormatFieldNameInUppercase(false);
+                $schemaStatus = $case->getTasks($app_uid);
+            }
 
             $file = $oPMap->get_image($schema, $schemaStatus);
             ob_start();
