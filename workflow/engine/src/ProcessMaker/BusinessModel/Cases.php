@@ -773,17 +773,45 @@ class Cases
         Validator::appUid($app_uid, '$app_uid');
         Validator::usrUid($usr_uid, '$usr_uid');
 
+        if ($del_index === false) {
+            $del_index = \AppDelegation::getCurrentIndex($app_uid);
+        }
+
+        Validator::isInteger($del_index, '$del_index');
+
         $case = new \Cases();
         $fields = $case->loadCase($app_uid);
         if ($fields['APP_STATUS'] == 'CANCELLED') {
             throw (new \Exception(\G::LoadTranslation("ID_CASE_IS_CANCELED", array($app_uid))));
         }
 
-        if ($del_index === false) {
-            $del_index = \AppDelegation::getCurrentIndex($app_uid);
+        $oDelay = new \AppDelay();
+
+        if ($oDelay->isPaused($app_uid, $del_index)) {
+            throw (new \Exception(\G::LoadTranslation("ID_CASE_PAUSED", array($app_uid))));
         }
 
-        Validator::isInteger($del_index, '$del_index');
+        $appCacheView = new \AppCacheView();
+
+        $arrayProcess = $appCacheView->getProUidSupervisor($usr_uid);
+
+        $criteria = new \Criteria("workflow");
+
+        $criteria->addSelectColumn(\AppDelegationPeer::APP_UID);
+        $criteria->add(\AppDelegationPeer::APP_UID, $app_uid, \Criteria::EQUAL);
+        $criteria->add(\AppDelegationPeer::DEL_INDEX, $del_index, \Criteria::EQUAL);
+        $criteria->add(
+            $criteria->getNewCriterion(\AppDelegationPeer::USR_UID, $usr_uid, \Criteria::EQUAL)->addOr(
+            $criteria->getNewCriterion(\AppDelegationPeer::PRO_UID, $arrayProcess, \Criteria::IN))
+        );
+        $criteria->add(\AppDelegationPeer::DEL_THREAD_STATUS, "OPEN", \Criteria::EQUAL);
+        $criteria->add(\AppDelegationPeer::DEL_FINISH_DATE, null, \Criteria::ISNULL);
+
+        $rsCriteria = \AppDelegationPeer::doSelectRS($criteria);
+
+        if (!$rsCriteria->next()) {
+            throw (new \Exception(\G::LoadTranslation("ID_CASE_USER_INVALID_PAUSED_CASE", array($usr_uid))));
+        }
 
         if ($unpaused_date != null) {
             Validator::isDate($unpaused_date, 'Y-m-d', '$unpaused_date');
@@ -820,6 +848,25 @@ class Cases
 
         if (!$oDelay->isPaused($app_uid, $del_index)) {
             throw (new \Exception(\G::LoadTranslation("ID_CASE_NOT_PAUSED", array($app_uid))));
+        }
+
+        $appCacheView = new \AppCacheView();
+
+        $arrayProcess = $appCacheView->getProUidSupervisor($usr_uid);
+
+        $criteria = new \Criteria("workflow");
+        $criteria->addSelectColumn(\AppDelegationPeer::APP_UID);
+        $criteria->add(\AppDelegationPeer::APP_UID, $app_uid, \Criteria::EQUAL);
+        $criteria->add(\AppDelegationPeer::DEL_INDEX, $del_index, \Criteria::EQUAL);
+        $criteria->add(
+            $criteria->getNewCriterion(\AppDelegationPeer::USR_UID, $usr_uid, \Criteria::EQUAL)->addOr(
+            $criteria->getNewCriterion(\AppDelegationPeer::PRO_UID, $arrayProcess, \Criteria::IN))
+        );
+
+        $rsCriteria = \AppDelegationPeer::doSelectRS($criteria);
+
+        if (!$rsCriteria->next()) {
+            throw (new \Exception(\G::LoadTranslation("ID_CASE_USER_INVALID_UNPAUSE_CASE", array($usr_uid))));
         }
 
         $case = new \Cases();
