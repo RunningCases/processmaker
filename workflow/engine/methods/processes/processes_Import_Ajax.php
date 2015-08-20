@@ -235,6 +235,7 @@ if ($action == "uploadFileNewProcess") {
                 throw new Exception( G::LoadTranslation( "ID_FILE_UPLOAD_INCORRECT_EXTENSION" ) );
             }
         }
+
         if ($processFileType != "pm") {
             throw new Exception( G::LoadTranslation( "ID_ERROR_UPLOAD_FILE_CONTACT_ADMINISTRATOR" ) );
         }
@@ -330,11 +331,13 @@ if ($action == "uploadFileNewProcess") {
         $result->proFileName = $Fields['PRO_FILENAME'];
 
         //Add Audit Log
-        $ogetProcess = new Process();
-        $getprocess=$ogetProcess->load($oData->process['PRO_UID']);
-        $nameProcess=$getprocess['PRO_TITLE'];
-        G::auditLog("ImportProcess", 'PM File Imported '.$nameProcess. ' ('.$oData->process['PRO_UID'].')');
+        $process = new Process();
 
+        if ($process->processExists($sProUid)) {
+            $arrayProcessData = $process->load($oData->process["PRO_UID"]);
+
+            G::auditLog("ImportProcess", "PM File Imported " . $arrayProcessData["PRO_TITLE"] . " (" . $arrayProcessData["PRO_UID"] . ")");
+        }
     } catch (Exception $e) {
         $result->response = $e->getMessage();
         $result->catchMessage = $e->getMessage();
