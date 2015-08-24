@@ -480,7 +480,7 @@ class Consolidated
                 if (!empty($value[0]->options)) {
                     $temp->storeData = '[';
                     foreach ($value[0]->options as $valueOption) {
-                        $temp->storeData .= '["' . $valueOption->value . '", "' . $valueOption->label . '"],';
+                        @$temp->storeData .= '["' . $valueOption->value . '", "' . $valueOption->label . '"],';
                     }
                     $temp->storeData = substr($temp->storeData,0,-1);
                     $temp->storeData .= ']';
