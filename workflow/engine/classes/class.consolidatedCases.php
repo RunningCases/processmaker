@@ -88,7 +88,7 @@ class ConsolidatedCases
         $json = G::json_decode($dataDyna["DYN_CONTENT"]);
         $fieldsDyna = $json->items[0]->items;
         foreach ($fieldsDyna as $value) {
-            $_POST['form']['FIELDS'][] = $value[0]->name . '-' . $value[0]->type;
+            $_POST['form']['FIELDS'][] = ($value[0]->type !== 'panel') ? $value[0]->name . '-' . $value[0]->type : $value[0]->id . '-' . $value[0]->type;
         }
 
         $aFieldsClases = array();
@@ -185,6 +185,11 @@ class ConsolidatedCases
             $oCaseConsolidated->delete();
             $oCaseConsolidated = CaseConsolidatedCorePeer::retrieveByPK($sTasUid);
         }
+
+        if (!(is_object($oCaseConsolidated)) || get_class($oCaseConsolidated) != 'CaseConsolidatedCore') {
+            $oCaseConsolidated = new CaseConsolidatedCore();
+            $oCaseConsolidated->setTasUid($sTasUid);
+         }
 
         $oCaseConsolidated->setConStatus('ACTIVE');
         $oCaseConsolidated->setDynUid($sDynUid);

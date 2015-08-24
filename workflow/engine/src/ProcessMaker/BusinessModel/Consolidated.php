@@ -394,7 +394,9 @@ class Consolidated
             foreach ($aTaskConsolidated as $key => $val) {
                 foreach ($val as $iKey => $iVal) {
                     if (self::checkValidDate($iVal)) {
-                        $val[$iKey] = str_replace("-", "/", $val[$iKey]);
+                        $iKeyView = str_replace("-", "/", $val[$iKey]);
+                        $iKeyView = str_replace("T", " ", $iKeyView);
+                        $val[$iKey] = $iKeyView;
                     }
                 }
                 $response["data"][] = $val;
@@ -465,7 +467,7 @@ class Consolidated
             $xmlfrm = new \stdclass();
             $xmlfrm->fields = array();
             foreach ($fieldsDyna as $key => $value) {
-                if ($value[0]->type == 'title' || $value[0]->type == 'submit') {
+                if ($value[0]->type == 'title' || $value[0]->type == 'submit' || $value[0]->type == 'panel' || $value[0]->type == 'image' || $value[0]->type == 'button' || $value[0]->type == 'grid' || $value[0]->type == 'checkgroup' || $value[0]->type == 'radiogroup' || $value[0]->type == 'radio' || $value[0]->type == 'hidden' || $value[0]->type == 'link' || $value[0]->type == 'file' || $value[0]->type == 'subform') {
                     continue;
                 }
                 $temp = new \stdclass();
@@ -478,7 +480,7 @@ class Consolidated
                 if (!empty($value[0]->options)) {
                     $temp->storeData = '[';
                     foreach ($value[0]->options as $valueOption) {
-                        $temp->storeData .= '["' . $valueOption['value'] . '", "' . $valueOption['label'] . '"],';
+                        $temp->storeData .= '["' . $valueOption->value . '", "' . $valueOption->label . '"],';
                     }
                     $temp->storeData = substr($temp->storeData,0,-1);
                     $temp->storeData .= ']';
@@ -528,12 +530,12 @@ class Consolidated
             $required = (isset($field->required))? $field->required : null;
             $validate = (isset($field->validate))? strtolower($field->validate) : null;
 
-            $fieldReadOnly = ($readOnly . "" == "1")? "readOnly: true," : null;
+            $fieldReadOnly = ($readOnly . "" == "1" || $field->readOnly == 'view')? "readOnly: true," : null;
             $fieldRequired = ($required . "" == "1")? "allowBlank: false," : null;
             $fieldValidate = ($validate == "alpha" || $validate == "alphanum" || $validate == "email" || $validate == "int" || $validate == "real")? "vtype: \"$validate\"," : null;
 
             $fieldLabel = (($fieldRequired != null)? "<span style='color: red;'>&#42;</span> ": null) . $field->label;
-            $fieldDisabled = ($field->mode != "edit")? "true" : "false";
+            $fieldDisabled = ($field->mode == "view")? "true" : "false";
 
             switch ($field->type) {
                 case "dropdown":
@@ -633,7 +635,7 @@ class Consolidated
                                      return Ext.isDate(value)? value.dateFormat('{$dateFormat}') : value;
                                    } *";
 
-                    if ($field->mode != "edit") {
+                    if ($field->mode == "view") {
                         $editor = null;
                     }
 
@@ -734,6 +736,33 @@ class Consolidated
                     $caseReaderFields[] = array("name" => $field->name);
 
                     $hasTextArea = true;
+                    break;
+                    case "datetime":
+                    $align = "center";
+                    $size = 100;
+
+                    if (isset($field->size)) {
+                        $size = $field->size * 10;
+                    }
+
+                    $width = $size;
+
+                    $editor = "* new Ext.form.DateField({
+                                     format: \"$dateFormat\",
+
+                                     $fieldReadOnly
+                                     $fieldRequired
+                                     $fieldValidate
+                                     cls: \"\"
+                                 }) *";
+
+                    //$renderer = "* formatDate *";
+                    $renderer = "* function (value){
+                                     return Ext.isDate(value)? value.dateFormat('{$dateFormat}') : value;
+                                   } *";
+
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseReaderFields[] = array("name" => $field->name, "type" => "date");
                     break;
                 case "link":
                     $align = 'center';
