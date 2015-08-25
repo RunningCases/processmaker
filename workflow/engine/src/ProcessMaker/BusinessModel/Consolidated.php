@@ -467,32 +467,34 @@ class Consolidated
             $xmlfrm = new \stdclass();
             $xmlfrm->fields = array();
             foreach ($fieldsDyna as $key => $value) {
-                if ($value[0]->type == 'title' || $value[0]->type == 'submit' || $value[0]->type == 'panel' || $value[0]->type == 'image' || $value[0]->type == 'button' || $value[0]->type == 'grid' || $value[0]->type == 'checkgroup' || $value[0]->type == 'radiogroup' || $value[0]->type == 'radio' || $value[0]->type == 'hidden' || $value[0]->type == 'link' || $value[0]->type == 'file' || $value[0]->type == 'subform' || $value[0]->type == 'label') {
-                    continue;
-                }
-                $temp = new \stdclass();
-                $temp->type = $value[0]->type;
-                $temp->label = $value[0]->label;
-                $temp->name = $value[0]->name;
-                $temp->required = (isset($value[0]->required)) ? $value[0]->required : 0;
-                $temp->mode = (isset($value[0]->mode)) ? $value[0]->mode : 'edit';
-
-                if (!empty($value[0]->options)) {
-                    $temp->storeData = '[';
-                    foreach ($value[0]->options as $valueOption) {
-                        if(isset($valueOption->value)){
-                            $temp->storeData .= '["' . $valueOption->value . '", "' . $valueOption->label . '"],';
-                        }else{
-                            $temp->storeData .= '["' . $valueOption['value'] . '", "' . $valueOption['label'] . '"],';   
-                        }
+                foreach ($value as $val) {
+                    if ($val->type == 'title' || $val->type == 'submit' || $val->type == 'panel' || $val->type == 'image' || $val->type == 'button' || $val->type == 'grid' || $val->type == 'checkgroup' || $val->type == 'radiogroup' || $val->type == 'radio' || $val->type == 'hidden' || $val->type == 'link' || $val->type == 'file' || $val->type == 'subform' || $val->type == 'label') {
+                        continue;
                     }
-                    $temp->storeData = substr($temp->storeData,0,-1);
-                    $temp->storeData .= ']';
-                }
+                    $temp = new \stdclass();
+                    $temp->type = $val->type;
+                    $temp->label = $val->label;
+                    $temp->name = $val->name;
+                    $temp->required = (isset($val->required)) ? $val->required : 0;
+                    $temp->mode = (isset($val->mode)) ? $val->mode : 'edit';
 
-                $temp->readOnly = ($temp->mode == 'view') ? "1" : "0";
-                $temp->colWidth = 200;
-                $xmlfrm->fields[] = $temp;
+                    if (!empty($val->options)) {
+                        $temp->storeData = '[';
+                        foreach ($val->options as $valueOption) {
+                            if(isset($valueOption->value)){
+                                $temp->storeData .= '["' . $valueOption->value . '", "' . $valueOption->label . '"],';
+                            }else{
+                                $temp->storeData .= '["' . $valueOption['value'] . '", "' . $valueOption['label'] . '"],';   
+                            }
+                        }
+                        $temp->storeData = substr($temp->storeData,0,-1);
+                        $temp->storeData .= ']';
+                    }
+
+                    $temp->readOnly = ($temp->mode == 'view') ? "1" : "0";
+                    $temp->colWidth = 200;
+                    $xmlfrm->fields[] = $temp;
+                    }
             }
         } else {
             $filename = $pro_uid . PATH_SEP . $dyn_uid . ".xml";
