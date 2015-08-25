@@ -14,7 +14,7 @@ class pmDynaform
     public $fields = null;
     public $record = null;
     public $credentials = null;
-    public $lang = null;
+    public $lang = SYS_LANG;
     public $langs = null;
     public $onPropertyRead = "onPropertyReadFormInstance";
 
