@@ -468,7 +468,13 @@ class FilesManager
 
             if (file_exists($path) && !is_dir($path)) {
                 unlink($path);
-            }
+            } else {
+              $path = PATH_DATA_PUBLIC.$sProcessUID.DIRECTORY_SEPARATOR.$sFile;
+
+              if (file_exists($path) && !is_dir($path)) {
+                  unlink($path);
+              }
+            } 
 
             $rs = \ProcessFilesPeer::doDelete($criteria);
         } catch (Exception $e) {
