@@ -467,7 +467,7 @@ class Consolidated
             $xmlfrm = new \stdclass();
             $xmlfrm->fields = array();
             foreach ($fieldsDyna as $key => $value) {
-                if ($value[0]->type == 'title' || $value[0]->type == 'submit' || $value[0]->type == 'panel' || $value[0]->type == 'image' || $value[0]->type == 'button' || $value[0]->type == 'grid' || $value[0]->type == 'checkgroup' || $value[0]->type == 'radiogroup' || $value[0]->type == 'radio' || $value[0]->type == 'hidden' || $value[0]->type == 'link' || $value[0]->type == 'file' || $value[0]->type == 'subform') {
+                if ($value[0]->type == 'title' || $value[0]->type == 'submit' || $value[0]->type == 'panel' || $value[0]->type == 'image' || $value[0]->type == 'button' || $value[0]->type == 'grid' || $value[0]->type == 'checkgroup' || $value[0]->type == 'radiogroup' || $value[0]->type == 'radio' || $value[0]->type == 'hidden' || $value[0]->type == 'link' || $value[0]->type == 'file' || $value[0]->type == 'subform' || $value[0]->type == 'label') {
                     continue;
                 }
                 $temp = new \stdclass();
@@ -480,7 +480,11 @@ class Consolidated
                 if (!empty($value[0]->options)) {
                     $temp->storeData = '[';
                     foreach ($value[0]->options as $valueOption) {
-                        @$temp->storeData .= '["' . $valueOption->value . '", "' . $valueOption->label . '"],';
+                        if(isset($valueOption->value)){
+                            $temp->storeData .= '["' . $valueOption->value . '", "' . $valueOption->label . '"],';
+                        }else{
+                            $temp->storeData .= '["' . $valueOption['value'] . '", "' . $valueOption['label'] . '"],';   
+                        }
                     }
                     $temp->storeData = substr($temp->storeData,0,-1);
                     $temp->storeData .= ']';
@@ -737,7 +741,7 @@ class Consolidated
 
                     $hasTextArea = true;
                     break;
-                    case "datetime":
+                case "datetime":
                     $align = "center";
                     $size = 100;
 
