@@ -328,9 +328,10 @@ class Derivation
     /* get all users, from any task, if the task have Groups, the function expand the group
      *
      * @param   string  $sTasUid  the task uidUser
+     * @param   bool    $flagIncludeAdHocUsers
      * @return  Array   $users an array with userID order by USR_UID
      */
-    function getAllUsersFromAnyTask ($sTasUid)
+    function getAllUsersFromAnyTask($sTasUid, $flagIncludeAdHocUsers = false)
     {
         $users = array ();
         $c = new Criteria( 'workflow' );
@@ -338,7 +339,16 @@ class Derivation
         $c->addSelectColumn( TaskUserPeer::USR_UID );
         $c->addSelectColumn( TaskUserPeer::TU_RELATION );
         $c->add( TaskUserPeer::TAS_UID, $sTasUid );
-        $c->add( TaskUserPeer::TU_TYPE, 1 );
+
+        if ($flagIncludeAdHocUsers) {
+            $c->add(
+                $c->getNewCriterion(TaskUserPeer::TU_TYPE, 1, Criteria::EQUAL)->addOr(
+                $c->getNewCriterion(TaskUserPeer::TU_TYPE, 2, Criteria::EQUAL))
+            );
+        } else {
+            $c->add(TaskUserPeer::TU_TYPE, 1);
+        }
+
         $rs = TaskUserPeer::DoSelectRs( $c );
         $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
         $rs->next();
@@ -1245,4 +1255,3 @@ class Derivation
         }
     }
 }
-
