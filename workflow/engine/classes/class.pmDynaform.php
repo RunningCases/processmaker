@@ -304,6 +304,10 @@ class pmDynaform
                         }
                     }
                 }
+                //EDIT,VIEW
+                if (isset($this->fields["STEP_MODE"]) && $this->fields["STEP_MODE"] === "VIEW" && isset($json->mode)) {
+                    $json->mode = "view";
+                }
             }
         }
     }
