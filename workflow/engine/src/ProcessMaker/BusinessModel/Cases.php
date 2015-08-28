@@ -755,6 +755,7 @@ class Cases
         $arrayProcess = $appCacheView->getProUidSupervisor($usr_uid);
 
         $criteria = new \Criteria("workflow");
+        
         $criteria->addSelectColumn(\AppDelegationPeer::APP_UID);
         $criteria->add(\AppDelegationPeer::APP_UID, $app_uid, \Criteria::EQUAL);
         $criteria->add(\AppDelegationPeer::DEL_INDEX, $del_index, \Criteria::EQUAL);
@@ -2410,4 +2411,3 @@ class Cases
         }
     }
 }
-
