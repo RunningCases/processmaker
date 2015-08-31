@@ -836,7 +836,7 @@ class Installer extends Controller
                 ) ) ) . "'
                            )" );
 
-                $this->mysqlQuery("INSERT INTO EMAIL_SERVER(MESS_ENGINE) VALUES('MAIL')");
+                $this->mysqlQuery("INSERT INTO EMAIL_SERVER(MESS_UID, MESS_ENGINE) VALUES('" . \ProcessMaker\Util\Common::generateUID() . "', 'MAIL')");
             }
 
             // Change admin user
@@ -1143,7 +1143,7 @@ class Installer extends Controller
                 ) ) ) . "'
                            )" );
 
-                $this->mssqlQuery("INSERT INTO EMAIL_SERVER(MESS_ENGINE) VALUES('MAIL')");
+                $this->mssqlQuery("INSERT INTO EMAIL_SERVER(MESS_UID, MESS_ENGINE) VALUES('" . \ProcessMaker\Util\Common::generateUID() . "','MAIL')");
             }
 
             //change admin user

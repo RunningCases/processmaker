@@ -234,7 +234,8 @@ class Installer
             $this->setPartner();
             $this->setAdmin();
 
-            $querySql = ("INSERT INTO EMAIL_SERVER(MESS_ENGINE) VALUES('MAIL')");
+            $querySql = "INSERT INTO EMAIL_SERVER(MESS_UID, MESS_ENGINE) VALUES('" . \ProcessMaker\Util\Common::generateUID() . "', 'MAIL')";
+
             $this->run_query($querySql);
         }
         return $test;
