@@ -749,6 +749,26 @@ class Cases
         if ($fields['APP_STATUS'] == 'CANCELLED') {
             throw (new \Exception(\G::LoadTranslation("ID_CASE_ALREADY_CANCELED", array($app_uid))));
         }
+
+        $appCacheView = new \AppCacheView();
+
+        $arrayProcess = $appCacheView->getProUidSupervisor($usr_uid);
+
+        $criteria = new \Criteria("workflow");
+        
+        $criteria->addSelectColumn(\AppDelegationPeer::APP_UID);
+        $criteria->add(\AppDelegationPeer::APP_UID, $app_uid, \Criteria::EQUAL);
+        $criteria->add(\AppDelegationPeer::DEL_INDEX, $del_index, \Criteria::EQUAL);
+        $criteria->add(
+            $criteria->getNewCriterion(\AppDelegationPeer::USR_UID, $usr_uid, \Criteria::EQUAL)->addOr(
+            $criteria->getNewCriterion(\AppDelegationPeer::PRO_UID, $arrayProcess, \Criteria::IN))
+        );
+        $rsCriteria = \AppDelegationPeer::doSelectRS($criteria);
+
+        if (!$rsCriteria->next()) {
+            throw (new \Exception(\G::LoadTranslation("ID_CASE_USER_INVALID_CANCEL_CASE", array($usr_uid))));
+        }
+
         $case->cancelCase( $app_uid, $del_index, $usr_uid );
     }
 
@@ -2391,4 +2411,3 @@ class Cases
         }
     }
 }
-
