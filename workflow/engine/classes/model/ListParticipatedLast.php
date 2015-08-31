@@ -54,6 +54,10 @@ class ListParticipatedLast extends BaseListParticipatedLast
             $users->refreshTotal($data['USR_UID'], 'add', 'participated');
             }
         }
+        
+        if($this->primaryKeysExists($data)) {
+            return;
+        }
 
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
@@ -323,6 +327,23 @@ class ListParticipatedLast extends BaseListParticipatedLast
         }
 
         return $data;
+    }
+    
+    public function primaryKeysExists($data) {
+        $criteria = new Criteria("workflow");
+        $criteria->add(ListParticipatedLastPeer::APP_UID, $data['APP_UID']);
+        $criteria->add(ListParticipatedLastPeer::USR_UID, $data['USR_UID']);
+        $criteria->add(ListParticipatedLastPeer::DEL_INDEX, $data['DEL_INDEX']);    
+        $dataset = UsersPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        if(is_array($aRow)) {
+            if(sizeof($aRow)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
 
