@@ -1522,15 +1522,34 @@ class Cases
      *
      * @access public
      * @param string $app_uid, Uid for case
+     * @param string $usr_uid, Uid for user
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function getCaseVariables($app_uid)
+    public function getCaseVariables($app_uid, $usr_uid)
     {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
+        Validator::isString($usr_uid, '$usr_uid');
+        Validator::usrUid($usr_uid, '$usr_uid');
+
+        $appCacheView = new \AppCacheView();
+        $isProcessSupervisor = $appCacheView->getProUidSupervisor($usr_uid);
+        $criteria = new \Criteria("workflow");
+        $criteria->addSelectColumn(\AppDelegationPeer::APP_UID);
+        $criteria->add(\AppDelegationPeer::APP_UID, $app_uid, \Criteria::EQUAL);
+        $criteria->add(\AppDelegationPeer::USR_UID, $usr_uid, \Criteria::EQUAL);
+        $criteria->add(
+            $criteria->getNewCriterion(\AppDelegationPeer::USR_UID, $usr_uid, \Criteria::EQUAL)->addOr(
+            $criteria->getNewCriterion(\AppDelegationPeer::PRO_UID, $isProcessSupervisor, \Criteria::IN))
+        );
+        $rsCriteria = \AppDelegationPeer::doSelectRS($criteria);
+
+        if (!$rsCriteria->next()) {
+            throw (new \Exception(\G::LoadTranslation("ID_NO_PERMISSION_NO_PARTICIPATED", array($usr_uid))));
+        }
 
         $case = new \Cases();
         $fields = $case->loadCase($app_uid);
@@ -1544,15 +1563,34 @@ class Cases
      * @param string $app_uid, Uid for case
      * @param array $app_data, Data for case variables
      * @param string $dyn_uid, Uid for dynaform
+     * @param string $usr_uid, Uid for user
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function setCaseVariables($app_uid, $app_data, $dyn_uid = null)
+    public function setCaseVariables($app_uid, $app_data, $dyn_uid = null, $usr_uid)
     {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
         Validator::isArray($app_data, '$app_data');
+        Validator::isString($usr_uid, '$usr_uid');
+        Validator::usrUid($usr_uid, '$usr_uid');
+
+        $appCacheView = new \AppCacheView();
+        $isProcessSupervisor = $appCacheView->getProUidSupervisor($usr_uid);
+        $criteria = new \Criteria("workflow");
+        $criteria->addSelectColumn(\AppDelegationPeer::APP_UID);
+        $criteria->add(\AppDelegationPeer::APP_UID, $app_uid, \Criteria::EQUAL);
+        $criteria->add(\AppDelegationPeer::USR_UID, $usr_uid, \Criteria::EQUAL);
+        $criteria->add(
+            $criteria->getNewCriterion(\AppDelegationPeer::USR_UID, $usr_uid, \Criteria::EQUAL)->addOr(
+            $criteria->getNewCriterion(\AppDelegationPeer::PRO_UID, $isProcessSupervisor, \Criteria::IN))
+        );
+        $rsCriteria = \AppDelegationPeer::doSelectRS($criteria);
+
+        if (!$rsCriteria->next()) {
+            throw (new \Exception(\G::LoadTranslation("ID_NO_PERMISSION_NO_PARTICIPATED", array($usr_uid))));
+        }
 
         $case = new \Cases();
         $fields = $case->loadCase($app_uid);
