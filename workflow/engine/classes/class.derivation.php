@@ -751,10 +751,15 @@ class Derivation
                             if ($taskNextDel->getTasAssignType() == "SELF_SERVICE" && trim($taskNextDel->getTasGroupVariable()) != "") {
                                 $nextTaskGroupVariable = trim($taskNextDel->getTasGroupVariable(), " @#");
 
-                                if (isset($appFields["APP_DATA"][$nextTaskGroupVariable]) && trim($appFields["APP_DATA"][$nextTaskGroupVariable]) != "") {
-                                    $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+                                if (isset($appFields["APP_DATA"][$nextTaskGroupVariable])) {
+                                    $dataVariable = $appFields["APP_DATA"][$nextTaskGroupVariable];
+                                    $dataVariable = (is_array($dataVariable))? $dataVariable : trim($dataVariable);
 
-                                    $appAssignSelfServiceValue->create($appFields["APP_UID"], $iNewDelIndex, array("PRO_UID" => $appFields["PRO_UID"], "TAS_UID" => $nextDel["TAS_UID"], "GRP_UID" => trim($appFields["APP_DATA"][$nextTaskGroupVariable])));
+                                    if (!empty($dataVariable)) {
+                                        $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+
+                                        $appAssignSelfServiceValue->create($appFields["APP_UID"], $iNewDelIndex, array("PRO_UID" => $appFields["PRO_UID"], "TAS_UID" => $nextDel["TAS_UID"], "GRP_UID" => serialize($dataVariable)));
+                                    }
                                 }
                             }
                         }
@@ -1001,10 +1006,15 @@ class Derivation
             if ($taskNextDel->getTasAssignType() == "SELF_SERVICE" && trim($taskNextDel->getTasGroupVariable()) != "") {
                 $nextTaskGroupVariable = trim($taskNextDel->getTasGroupVariable(), " @#");
 
-                if (isset($aOldFields["APP_DATA"][$nextTaskGroupVariable]) && trim($aOldFields["APP_DATA"][$nextTaskGroupVariable]) != "") {
-                    $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+                if (isset($aOldFields["APP_DATA"][$nextTaskGroupVariable])) {
+                    $dataVariable = $aOldFields["APP_DATA"][$nextTaskGroupVariable];
+                    $dataVariable = (is_array($dataVariable))? $dataVariable : trim($dataVariable);
 
-                    $appAssignSelfServiceValue->create($aNewCase["APPLICATION"], $aNewCase["INDEX"], array("PRO_UID" => $aNewCase["PROCESS"], "TAS_UID" => $aSP["TAS_UID"], "GRP_UID" => trim($aOldFields["APP_DATA"][$nextTaskGroupVariable])));
+                    if (!empty($dataVariable)) {
+                        $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
+
+                        $appAssignSelfServiceValue->create($aNewCase["APPLICATION"], $aNewCase["INDEX"], array("PRO_UID" => $aNewCase["PROCESS"], "TAS_UID" => $aSP["TAS_UID"], "GRP_UID" => serialize($dataVariable)));
+                    }
                 }
             }
 
@@ -1255,3 +1265,4 @@ class Derivation
         }
     }
 }
+

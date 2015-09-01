@@ -493,15 +493,27 @@ class Cases
         }
 
         if ($APP_UID != '') {
-            $groupsInstance = new Groups();
-            $groups = $groupsInstance->getActiveGroupsForAnUser($USR_UID);
             $taskInstance = new Task();
+
             $taskData = $taskInstance->Load($TAS_UID);
             $tasGroupVariable = str_replace(array('@', '#'), '', $taskData['TAS_GROUP_VARIABLE']);
             $caseData = $this->LoadCase($APP_UID);
+
             if (isset($caseData['APP_DATA'][$tasGroupVariable])) {
-                if (trim($caseData['APP_DATA'][$tasGroupVariable]) != '') {
-                    if (in_array(trim($caseData['APP_DATA'][$tasGroupVariable]), $groups)) {
+                $dataVariable = $caseData["APP_DATA"][$tasGroupVariable];
+
+                if (is_array($dataVariable)) {
+                    //UIDs of Users
+                    if (!empty($dataVariable) && in_array($USR_UID, $dataVariable)) {
+                        return true;
+                    }
+                } else {
+                    //UID of Group
+                    $dataVariable = trim($dataVariable);
+
+                    $group = new Groups();
+
+                    if (!empty($dataVariable) && in_array($dataVariable, $group->getActiveGroupsForAnUser($USR_UID))) {
                         return true;
                     }
                 }
