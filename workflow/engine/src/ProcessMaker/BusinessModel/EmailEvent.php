@@ -26,6 +26,8 @@ class EmailEvent
             $criteria->clearSelectColumns();
             $criteria->addSelectColumn(\UsersPeer::USR_UID);
             $criteria->addSelectColumn(\UsersPeer::USR_EMAIL);
+            $criteria->addAsColumn('UID', 'USR_UID');
+            $criteria->addAsColumn('EMAIL', 'USR_EMAIL');
             $criteria->add(\UsersPeer::USR_STATUS, "ACTIVE");
             $result = \UsersPeer::doSelectRS($criteria);
             $result->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
@@ -33,6 +35,41 @@ class EmailEvent
             $accountsArray = array();
             while ($aRow = $result->getRow()) {
                 if (($aRow['USR_EMAIL'] != null) || ($aRow['USR_EMAIL'] != "")) {
+                    $accountsArray[] = array_change_key_case($aRow, CASE_LOWER);
+                } 
+                $result->next();
+            }
+            return $accountsArray;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+    
+    /**
+     * Get the email server accounts of the current workspace
+     *     
+     * return array
+     */
+    public function getEmailEventServerAccounts()
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+            $criteria->clearSelectColumns();
+            $criteria->addSelectColumn(\EmailServerPeer::MESS_UID);
+            $criteria->addSelectColumn(\EmailServerPeer::MESS_FROM_MAIL);
+            $criteria->addSelectColumn(\EmailServerPeer::MESS_ACCOUNT);
+            $criteria->addAsColumn('UID', 'MESS_UID');
+            $result = \EmailServerPeer::doSelectRS($criteria);
+            $result->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $result->next();
+            $accountsArray = array();
+            while ($aRow = $result->getRow()) {
+                if ($aRow['MESS_UID'] != null) {
+                    if($aRow['MESS_FROM_MAIL'] == "") {
+                        $aRow['EMAIL'] = $aRow['MESS_ACCOUNT'];  
+                    } else {
+                        $aRow['EMAIL'] = $aRow['MESS_FROM_MAIL']; 
+                    }
                     $accountsArray[] = array_change_key_case($aRow, CASE_LOWER);
                 } 
                 $result->next();
