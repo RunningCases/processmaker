@@ -871,6 +871,23 @@ class Consolidated
                     $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
+                case "checkbox":
+                    $align = "center";
+                    $size = 100;
+
+                    if (isset($field->size)) {
+                        $size = $field->size * 10;
+                    }
+
+                    $width = $size;
+                    $dropList[] = $field->name;
+                    $comboBoxYesNoList[] = $field->name;
+
+                    $editor="* new Ext.form.Checkbox({ $fieldReadOnly $fieldRequired $fieldValidate cls: \"\"}) *";
+
+                   $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseReaderFields[] = array("name" => $field->name);
+                    break;
                 case "text":
                 default:
                     $align = "left";
