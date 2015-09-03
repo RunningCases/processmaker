@@ -1592,6 +1592,9 @@ class Cases
             throw (new \Exception(\G::LoadTranslation("ID_NO_PERMISSION_NO_PARTICIPATED", array($usr_uid))));
         }
 
+        $_SESSION['APPLICATION'] = $app_uid;
+        $_SESSION['USER_LOGGED'] = $usr_uid;
+        
         $case = new \Cases();
         $fields = $case->loadCase($app_uid);
         $_POST['form'] = $app_data;
