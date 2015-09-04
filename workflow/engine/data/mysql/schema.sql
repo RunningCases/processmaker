@@ -2217,7 +2217,7 @@ CREATE TABLE `APP_ASSIGN_SELF_SERVICE_VALUE`
 	`DEL_INDEX` INTEGER default 0 NOT NULL,
 	`PRO_UID` VARCHAR(32)  NOT NULL,
 	`TAS_UID` VARCHAR(32)  NOT NULL,
-	`GRP_UID` VARCHAR(32) default '' NOT NULL
+ `GRP_UID` MEDIUMTEXT default '' NOT NULL
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- LIST_INBOX

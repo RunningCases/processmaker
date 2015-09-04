@@ -3927,8 +3927,9 @@
         <column name="DEL_INDEX" type="INTEGER" required="true" default="0" />
         <column name="PRO_UID"   type="VARCHAR" size="32" required="true" />
         <column name="TAS_UID"   type="VARCHAR" size="32" required="true" />
-        <column name="GRP_UID"   type="VARCHAR" size="32" required="true" default="" />
+        <column name="GRP_UID"   type="LONGVARCHAR" required="true" default="" />
     </table>
+
     <table name="LIST_INBOX">
         <vendor type="mysql">
             <parameter name="Name" value="LIST_INBOX"/>
