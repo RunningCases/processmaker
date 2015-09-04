@@ -140,7 +140,7 @@ class pmDynaform
                     }
                 }
                 //query & options
-                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "suggest" || $value === "checkbox" || $value === "radio" || $value === "datetime" || $value === "hidden")) {
+                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "dropdown" || $value === "suggest" || $value === "checkbox" || $value === "checkgroup" || $value === "radio" || $value === "datetime" || $value === "hidden")) {
                     if (!isset($json->data)) {
                         $json->data = array(
                             "value" => "",
@@ -224,7 +224,7 @@ class pmDynaform
                         );
                     }
                 }
-                if ($key === "type" && ($value === "checkbox")) {
+                if ($key === "type" && ($value === "checkbox" || $value === "checkgroup")) {
                     $json->data = array(
                         "value" => isset($this->fields["APP_DATA"][$json->name]) ? $this->fields["APP_DATA"][$json->name] : array(),
                         "label" => isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : "[]"
