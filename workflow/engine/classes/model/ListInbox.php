@@ -204,6 +204,11 @@ class ListInbox extends BaseListInbox
         if (isset($data['DEL_TASK_DUE_DATE'])) {
             $data['DEL_DUE_DATE'] = $data['DEL_TASK_DUE_DATE'];
         }
+        
+        if(!isset($data['DEL_DUE_DATE'])) {
+            $filters = array("APP_UID" => $data["APP_UID"], "DEL_INDEX" => $data['DEL_INDEX']);
+            $data['DEL_DUE_DATE'] = $this->getAppDelegationInfo($filters,'DEL_TASK_DUE_DATE');
+        }
 
         $criteria = new Criteria();
         $criteria->addSelectColumn( ApplicationPeer::APP_NUMBER );
@@ -501,6 +506,20 @@ class ListInbox extends BaseListInbox
             }
         }
         return $priority != "" ? $priority : 3;
+    }
+    
+    public function getAppDelegationInfo($filters, $fieldName)
+    {
+        $criteria = new Criteria();
+        eval('$criteria->addSelectColumn( AppDelegationPeer::'.$fieldName.');');
+        foreach($filters as $k => $v) {
+           eval('$criteria->add( AppDelegationPeer::'.$k.',$v, Criteria::EQUAL);');
+        }
+        $dataset = AppDelegationPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        return isset($aRow[$fieldName]) ? $aRow[$fieldName] : NULL;  
     }
 }
 
