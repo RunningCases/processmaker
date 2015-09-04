@@ -85,6 +85,12 @@ class Cases
             Validator::usrUid($dataList["userId"], "userId");
         }
 
+        $user = new \ProcessMaker\BusinessModel\User();
+
+        if (!$user->checkPermission($dataList["userId"], "PM_ALLCASES")) {
+            throw new \Exception(\G::LoadTranslation("ID_CASE_USER_NOT_HAVE_PERMISSION", array($dataList["userId"])));
+        }
+
         G::LoadClass("applications");
         $solrEnabled = false;
         $userUid = $dataList["userId"];
@@ -755,7 +761,7 @@ class Cases
         $arrayProcess = $appCacheView->getProUidSupervisor($usr_uid);
 
         $criteria = new \Criteria("workflow");
-        
+
         $criteria->addSelectColumn(\AppDelegationPeer::APP_UID);
         $criteria->add(\AppDelegationPeer::APP_UID, $app_uid, \Criteria::EQUAL);
         $criteria->add(\AppDelegationPeer::DEL_INDEX, $del_index, \Criteria::EQUAL);
