@@ -120,6 +120,9 @@ class ListInbox extends BaseListInbox
             $users = new Users();
             $users->refreshTotal($data['USR_UID'], 'add', 'participated');
         }
+        
+        $data['DEL_PRIORITY'] = $this->getTaskPriority($data['TAS_UID'], $data['PRO_UID'], $data["APP_UID"]);
+        
         $con = Propel::getConnection( ListInboxPeer::DATABASE_NAME );
         try {
             $con->begin();
@@ -247,6 +250,9 @@ class ListInbox extends BaseListInbox
         $dataset->next();
         $aRow = $dataset->getRow();
         $data['APP_TAS_TITLE'] = $aRow['CON_VALUE'];
+        
+        
+        $data['DEL_PRIORITY'] = $this->getTaskPriority($data['TAS_UID'], $data['PRO_UID'], $data["APP_UID"]);
 
 
         $data['APP_PREVIOUS_USER'] = '';
@@ -473,6 +479,28 @@ class ListInbox extends BaseListInbox
             $data[] = $aRow;
         }
         return $data;
+    }
+    
+    public function getTaskPriority($taskUid, $proUid, $appUid)
+    {
+        $criteria = new Criteria();
+        $criteria->addSelectColumn(TaskPeer::TAS_PRIORITY_VARIABLE);
+        $criteria->add( TaskPeer::TAS_UID, $taskUid, Criteria::EQUAL );
+        $criteria->add( TaskPeer::PRO_UID, $proUid, Criteria::EQUAL );
+        $dataset = TaskPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        $priority = $aRow['TAS_PRIORITY_VARIABLE'];
+        if(strlen($priority)>2){
+            $oCase = new Cases();
+            $aData = $oCase->loadCase( $appUid );
+            $priorityLabel = substr($priority, 2,strlen($priority));
+            if (isset( $aData['APP_DATA'][$priorityLabel] )) {
+                $priority = $aData['APP_DATA'][$priorityLabel];
+            }
+        }
+        return $priority != "" ? $priority : 3;
     }
 }
 
