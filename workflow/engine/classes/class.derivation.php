@@ -140,6 +140,8 @@ class Derivation
             $this->case = new Cases();
             $task = new Task();
 
+            $arrayApplicationData = $this->case->loadCase($arrayData["APP_UID"]);
+
             $arrayNextTask = array();
             $arrayNextTaskDefault = array();
             $i = 0;
@@ -176,7 +178,9 @@ class Derivation
             }
 
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
             $flagDefault = false;
+
             while ($rsCriteria->next()) {
                 $arrayRouteData = G::array_merges($rsCriteria->getRow(), $arrayData);
 
@@ -186,40 +190,47 @@ class Derivation
                     continue;
                 }
 
-                $flagContinue = true;
+                $flagAddDelegation = true;
 
                 //Evaluate the condition if there are conditions defined
-                if (isset($arrayRouteData["ROU_CONDITION"]) && trim($arrayRouteData["ROU_CONDITION"]) != "" && ($arrayRouteData["ROU_TYPE"] != "SELECT" || $arrayRouteData["ROU_TYPE"] == "PARALLEL-BY-EVALUATION")) {
+                if (trim($arrayRouteData["ROU_CONDITION"]) != "" && $arrayRouteData["ROU_TYPE"] != "SELECT") {
                     G::LoadClass("pmScript");
-
-                    $arrayApplicationData = $this->case->loadCase($arrayData["APP_UID"]);
 
                     $pmScript = new PMScript();
                     $pmScript->setFields($arrayApplicationData["APP_DATA"]);
                     $pmScript->setScript($arrayRouteData["ROU_CONDITION"]);
-                    $flagContinue = $pmScript->evaluate();
+                    $flagAddDelegation = $pmScript->evaluate();
                 }
 
-                if (isset($arrayRouteData["ROU_CONDITION"]) && trim($arrayRouteData["ROU_CONDITION"]) == "" && $arrayRouteData["ROU_NEXT_TASK"] != "-1") {
+                if (trim($arrayRouteData["ROU_CONDITION"]) == "" && $arrayRouteData["ROU_NEXT_TASK"] != "-1") {
                     $arrayTaskData = $task->load($arrayRouteData["ROU_NEXT_TASK"]);
 
                     if ($arrayTaskData["TAS_TYPE"] == "GATEWAYTOGATEWAY") {
-                        $flagContinue = false;
+                        $flagAddDelegation = false;
                     }
                 }
-                if ($arrayRouteData["ROU_TYPE"] == "EVALUATE" && count($arrayNextTask) > 0) {
-                    $flagContinue = false;
+
+                if ($arrayRouteData["ROU_TYPE"] == "EVALUATE" && !empty($arrayNextTask)) {
+                    $flagAddDelegation = false;
                 }
 
-                if ($flagContinue) {
+                if ($flagAddDelegation &&
+                    preg_match("/^(?:EVALUATE|PARALLEL-BY-EVALUATION)$/", $arrayRouteData["ROU_TYPE"]) &&
+                    trim($arrayRouteData["ROU_CONDITION"]) == ""
+                ) {
+                    $flagAddDelegation = false;
+                }
+
+                if ($flagAddDelegation) {
                     $arrayNextTask[++$i] = $this->prepareInformationTask($arrayRouteData);
                 }
             }
-            if (count($arrayNextTask) == 0 && count($arrayNextTaskDefault) > 0) {
+
+            if (empty($arrayNextTask) && !empty($arrayNextTaskDefault)) {
                 $arrayNextTask[++$i] = $this->prepareInformationTask($arrayNextTaskDefault);
             }
 
-            //Check Task GATEWAYTOGATEWAY or END-MESSAGE-EVENT or  END-EMAIL-EVENT
+            //Check Task GATEWAYTOGATEWAY, END-MESSAGE-EVENT, END-EMAIL-EVENT
             $arrayNextTaskBackup = $arrayNextTask;
             $arrayNextTask = array();
             $i = 0;
@@ -227,8 +238,10 @@ class Derivation
             foreach ($arrayNextTaskBackup as $value) {
                 $arrayNextTaskData = $value;
 
+                $regexpTaskTypeToInclude = "GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT";
+
                 if ($arrayNextTaskData["NEXT_TASK"]["TAS_UID"] != "-1" &&
-                    in_array($arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"], array("GATEWAYTOGATEWAY", "END-MESSAGE-EVENT", "END-EMAIL-EVENT"))
+                    preg_match("/^(?:" . $regexpTaskTypeToInclude . ")$/", $arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"])
                 ) {
                     $arrayAux = $this->prepareInformation($arrayData, $arrayNextTaskData["NEXT_TASK"]["TAS_UID"]);
 
@@ -236,8 +249,10 @@ class Derivation
                         $arrayNextTask[++$i] = $value2;
                     }
                 } else {
-                    if (in_array($arrayNextTaskData["TAS_TYPE"], array("END-MESSAGE-EVENT", "END-EMAIL-EVENT")) &&
-                        $arrayNextTaskData["NEXT_TASK"]["TAS_UID"] == "-1"
+                    $regexpTaskTypeToInclude = "END-MESSAGE-EVENT|END-EMAIL-EVENT";
+
+                    if ($arrayNextTaskData["NEXT_TASK"]["TAS_UID"] == "-1" &&
+                        preg_match("/^(?:" . $regexpTaskTypeToInclude . ")$/", $arrayNextTaskData["TAS_TYPE"])
                     ) {
                         $arrayNextTaskData["NEXT_TASK"]["TAS_UID"] = $arrayNextTaskData["TAS_UID"] . "/" . $arrayNextTaskData["NEXT_TASK"]["TAS_UID"];
                     }
@@ -247,7 +262,7 @@ class Derivation
             }
 
             //1. There is no rule
-            if (count($arrayNextTask) == 0) {
+            if (empty($arrayNextTask)) {
               $oProcess = new Process();
               $oProcessFieds = $oProcess->Load( $_SESSION['PROCESS'] );
               if(isset($oProcessFieds['PRO_BPMN']) && $oProcessFieds['PRO_BPMN'] == 1){
