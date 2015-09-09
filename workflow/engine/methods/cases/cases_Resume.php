@@ -140,8 +140,10 @@ if($Fields['APP_STATUS'] != 'COMPLETED'){
       $aTask = $objTask->load( $row['TAS_UID'] );
       $FieldsPar['TAS_TITLE'] = $aTask['TAS_TITLE'];
       $FieldsPar['USR_UID'] = $row['USR_UID'];
-      $aUser = $objUser->loadDetails ($row['USR_UID']);
-      $FieldsPar['CURRENT_USER'] = $aUser['USR_FULLNAME']; 
+      if(isset($row['USR_UID']) && !empty($row['USR_UID'])) {
+        $aUser = $objUser->loadDetails ($row['USR_UID']);
+        $FieldsPar['CURRENT_USER'] = $aUser['USR_FULLNAME'];   
+      }
       $FieldsPar['DEL_DELEGATE_DATE'] = $row['DEL_DELEGATE_DATE'];
       $FieldsPar['DEL_INIT_DATE']     = $row['DEL_INIT_DATE'];
       $FieldsPar['DEL_TASK_DUE_DATE'] = $row['DEL_TASK_DUE_DATE'];
