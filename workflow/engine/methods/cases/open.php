@@ -101,5 +101,13 @@ $oHeadPublisher->assign( '_APP_UID', $_GET['APP_UID']);
 $oHeadPublisher->assign( '_ENV_CURRENT_DATE', $conf->getSystemDate( date( 'Y-m-d' ) ) );
 $oHeadPublisher->assign( '_ENV_CURRENT_DATE_NO_FORMAT', date( 'Y-m-d-h-i-A' ) );
 $oHeadPublisher->assign( 'idfirstform', is_null( $oStep ) ? '' : $oStep->getStepUidObj() );
+$oHeadPublisher->assign( 'appStatus', $case['APP_STATUS'] );
+
+if(!isset($_SESSION['APPLICATION']) || !isset($_SESSION['TASK']) || !isset($_SESSION['INDEX'])) {
+    $_SESSION['APPLICATION'] = $case['APP_UID'];
+    $_SESSION['TASK'] = $case['TAS_UID'];
+    $_SESSION['INDEX'] = $case['DEL_INDEX'];
+} 
+
 G::RenderPage( 'publish', 'extJs' );
 

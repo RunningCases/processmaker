@@ -458,6 +458,9 @@ Ext.onReady(function(){
   Ext.getCmp('actionMenu').hide();
 
   hideCaseNavigatorPanel();
+  if(typeof appStatus !== "undefined") {
+      showCaseNavigatorPanel(appStatus);
+  }
 
   // Actions methods
 
