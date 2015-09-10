@@ -121,7 +121,9 @@ class ListInbox extends BaseListInbox
             $users->refreshTotal($data['USR_UID'], 'add', 'participated');
         }
         
-        $data['DEL_PRIORITY'] = $this->getTaskPriority($data['TAS_UID'], $data['PRO_UID'], $data["APP_UID"]);
+        if((array_key_exists('TAS_UID', $data) && isset($data['TAS_UID'])) && (array_key_exists('TAS_UID', $data) && isset($data['PRO_UID'])) && isset($data['APP_UID'])) {
+            $data['DEL_PRIORITY'] = $this->getTaskPriority($data['TAS_UID'], $data['PRO_UID'], $data["APP_UID"]);
+        }
         
         $con = Propel::getConnection( ListInboxPeer::DATABASE_NAME );
         try {
