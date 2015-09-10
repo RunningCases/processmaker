@@ -473,12 +473,43 @@ class EmailEvent
             throw new \Exception(\G::LoadTranslation("ID_EMAIL_EVENT_DEFINITION_DOES_NOT_EXIST"));
         }
         $arrayData = $this->existsEvent($prj_uid, $eventUid);
-        
         if(sizeof($arrayData)) {
-             $prfUid = $arrayData[6];
-             $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
-             $contentFile = $filesManager->getProcessFileManager($prj_uid, $prfUid);
-             \PMFSendMessage($appUID, $arrayData[3], $arrayData[4], '', '', $arrayData[5], $contentFile['prf_filename'], array());
+            $emailGroupTo = array();
+            $emailTo = "";
+            $prfUid = $arrayData[6];
+            $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
+            $contentFile = $filesManager->getProcessFileManager($prj_uid, $prfUid);
+            if(strpos($arrayData[4],",")) {
+                $emailsArray = explode(",",$arrayData[4]);
+                foreach($emailsArray as $email) {
+                    if(substr($email,0,1) == "@") {
+                        $email = substr($email, 2,strlen($email));
+                        if(isset($arrayApplicationData['APP_DATA'])) {
+                            if(is_array($arrayApplicationData['APP_DATA']) && isset( $arrayApplicationData['APP_DATA'][$email])) {
+                                $emailGroupTo[] = $arrayApplicationData['APP_DATA'][$email];
+                            }   
+                        } 
+                    } else {
+                        $emailGroupTo[] = $email;
+                    }
+                }
+                $emailTo = implode(",",array_unique(array_filter($emailGroupTo)));
+            } else {
+                $email = $arrayData[4];
+                if(substr($email,0,1) == "@") {
+                    $email = substr($email, 2,strlen($email));
+                    if(isset($arrayApplicationData['APP_DATA'])) {
+                        if(is_array($arrayApplicationData['APP_DATA']) && isset( $arrayApplicationData['APP_DATA'][$email])) {
+                            $emailTo = $arrayApplicationData['APP_DATA'][$email];
+                        }  
+                    }  
+                } else {
+                    $emailTo = $email;
+                }   
+            }
+            if(!empty($emailTo)) {
+                \PMFSendMessage($appUID, $arrayData[3], $emailTo, '', '', $arrayData[5], $contentFile['prf_filename'], array());
+            }
         }
     }
     
