@@ -1319,6 +1319,7 @@ class Light extends Api
      *
      * @return array
      *
+     * @access public
      * @url GET /config
      */
     public function getConfiguration()
