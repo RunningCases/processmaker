@@ -70,7 +70,7 @@ $_SESSION['TASK'] = $aFields['TAS_UID'];
 $_SESSION['STEP_POSITION'] = 0;
 
 /* Redirect to next step */
-$aNextStep = $oCase->getNextSupervisorStep( $_SESSION['PROCESS'], 0 );
+$aNextStep = $oCase->getNextSupervisorStep( $_SESSION['PROCESS'], 1);
 if($aNextStep['UID'] != ''){
     $sPage = "cases_StepToRevise?type=DYNAFORM&PRO_UID=" . $aFields['PRO_UID'] . "&DYN_UID=" . $aNextStep['UID'] . "&APP_UID=$sAppUid&DEL_INDEX=$iDelIndex&position=1"; //$aNextStep['PAGE'];
     G::header( 'location: ' . $sPage );
