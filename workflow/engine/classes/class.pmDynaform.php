@@ -182,7 +182,7 @@ class pmDynaform
                                 array_push($json->optionsSql, $option);
                             }
                         } catch (Exception $e) {
-                            
+
                         }
                     }
                     if (isset($json->options[0])) {
@@ -473,6 +473,55 @@ class pmDynaform
         $file = str_replace("{javascript}", $javascrip, $file);
         echo $file;
         exit();
+    }
+
+    public function printEditSupervisor()
+    {
+        ob_clean();
+
+        $json = G::json_decode($this->record["DYN_CONTENT"]);
+        $this->jsonr($json);
+
+        $msg = "";
+
+        if (isset($_SESSION["G_MESSAGE_TYPE"]) && isset($_SESSION["G_MESSAGE"])) {
+            $msg = "<div style=\"margin: 1.2em; border: 1px solid #3C763D; padding: 0.5em; background: #B2D3B3;\"><strong>" . G::LoadTranslation("ID_INFO") . "</strong>: " . $_SESSION["G_MESSAGE"] . "</div>";
+
+            unset($_SESSION["G_MESSAGE_TYPE"]);
+            unset($_SESSION["G_MESSAGE"]);
+        }
+
+        $javascrip = "
+        <script type=\"text/javascript\">
+            var jsondata = " . G::json_encode($json) . ";
+            var pm_run_outside_main_app = null;
+            var dyn_uid = \"" . $this->fields["CURRENT_DYNAFORM"] . "\";
+            var __DynaformName__ = \"" . $this->fields["PRO_UID"] . "_" . $this->fields["CURRENT_DYNAFORM"] . "\";
+            var app_uid = \"" . $this->fields["APP_UID"] . "\";
+            var prj_uid = \"" . $this->fields["PRO_UID"] . "\";
+            var step_mode = null;
+            var workspace = \"" . SYS_SYS . "\";
+            var credentials = " . G::json_encode($this->credentials) . ";
+            var filePost = \"cases_SaveDataSupervisor?UID=" .  $this->fields["CURRENT_DYNAFORM"] . "\";
+            var fieldsRequired = null;
+            var triggerDebug   = null;
+        </script>
+
+        <script type=\"text/javascript\" src=\"/jscore/cases/core/pmDynaform.js\"></script>
+
+        <div>
+            $msg
+            <div style=\"display: none;\">
+                <a id=\"dyn_forward\" href=\"javascript:;\"></a>
+            </div>
+        </div>
+        ";
+
+        $file = file_get_contents(PATH_HOME . "public_html" . PATH_SEP . "lib" . PATH_SEP . "pmdynaform" . PATH_SEP . "build" . PATH_SEP . "pmdynaform.html");
+        $file = str_replace("{javascript}", $javascrip, $file);
+
+        echo $file;
+        exit(0);
     }
 
     public function printWebEntry($filename)
@@ -967,3 +1016,4 @@ class pmDynaform
     }
 
 }
+
