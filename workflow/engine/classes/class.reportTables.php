@@ -585,7 +585,7 @@ class ReportTables
 
                                     if(!isset($aFields[$aField['sFieldName']])){
                                        foreach($aFields as $row){
-                                         if(is_array($row)){
+                                         if(is_array($row) && isset($row[count($row)])){
                                            $aFields = $row[count($row)];
                                          }
                                        }
@@ -600,7 +600,12 @@ class ReportTables
                                             if (! isset( $aFields[$aField['sFieldName']] )) {
                                                 $aFields[$aField['sFieldName']] = '';
                                             }
-                                            $sQuery .= "'" . (isset( $aFields[$aField['sFieldName']] ) ? @mysql_real_escape_string( $aFields[$aField['sFieldName']] ) : '') . "',";
+                                            
+                                            if(is_array($aFields[$aField['sFieldName']])){
+                                                $sQuery .= "'" . (isset( $aFields[$aField['sFieldName']] ) ? $aFields[$aField['sFieldName']][0] : '') . "',";
+                                            }else{
+                                                $sQuery .= "'" . (isset( $aFields[$aField['sFieldName']] ) ? @mysql_real_escape_string( $aFields[$aField['sFieldName']] ) : '') . "',";
+                                            }
                                             break;
                                         case 'date':
                                             $mysqlDate = (isset( $aFields[$aField['sFieldName']] ) ? $aFields[$aField['sFieldName']] : '');
