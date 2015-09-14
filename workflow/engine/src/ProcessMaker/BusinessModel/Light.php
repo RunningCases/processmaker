@@ -370,6 +370,17 @@ class Light
                     }
                 } //set priority value
 
+                $taskType = (isset($aValues["NEXT_TASK"]["TAS_TYPE"]))? $aValues["NEXT_TASK"]["TAS_TYPE"] : false;
+                $taskMessage = "";
+                switch ($taskType) {
+                    case "SCRIPT-TASK":
+                        $taskMessage = G::LoadTranslation("ID_ROUTE_TO_TASK_SCRIPT_TASK");
+                        break;
+                    case "INTERMEDIATE-CATCH-TIMER-EVENT":
+                        $taskMessage = G::LoadTranslation("ID_ROUTE_TO_TASK_INTERMEDIATE_CATCH_TIMER_EVENT");
+                        break;
+                }
+
                 switch ($aValues['NEXT_TASK']['TAS_ASSIGN_TYPE']) {
                     case 'EVALUATE':
                     case 'REPORT_TO':
@@ -382,6 +393,7 @@ class Light
                         $taskAss['taskDefProcCode'] = $aValues['NEXT_TASK']['TAS_DEF_PROC_CODE'];
                         $taskAss['delPriority'] = isset($aValues['NEXT_TASK']['DEL_PRIORITY'])?$aValues['NEXT_TASK']['DEL_PRIORITY']:"";
                         $taskAss['taskParent'] = $aValues['NEXT_TASK']['TAS_PARENT'];
+                        $taskAss['taskMessage'] = $taskType?$taskMessage:"";
                         $users = array();
                         $users['userId'] = $derive[$sKey]['NEXT_TASK']['USER_ASSIGNED']['USR_UID'];
                         $users['userFullName'] = strip_tags($derive[$sKey]['NEXT_TASK']['USER_ASSIGNED']['USR_FULLNAME']);
@@ -396,6 +408,7 @@ class Light
                         $manual['taskDefProcCode'] = $aValues['NEXT_TASK']['TAS_DEF_PROC_CODE'];
                         $manual['delPriority'] = isset($aValues['NEXT_TASK']['DEL_PRIORITY'])?$aValues['NEXT_TASK']['DEL_PRIORITY']:"";
                         $manual['taskParent'] = $aValues['NEXT_TASK']['TAS_PARENT'];
+                        $manual['taskMessage'] = $taskType?$taskMessage:"";
                         $Aux = array ();
                         foreach ($aValues['NEXT_TASK']['USER_ASSIGNED'] as $aUser) {
                             $Aux[$aUser['USR_UID']] = $aUser['USR_FULLNAME'];
