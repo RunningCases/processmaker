@@ -59,7 +59,7 @@ class Activity extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
-    
+
 
     /**
      * @param string $pro_uid {@min 32} {@max 32}
@@ -98,7 +98,7 @@ class Activity extends Api
         }
     }
 
-    
+
     /**
      * @param string $prj_uid {@min 32} {@max 32}
      * @param string $act_uid {@min 32} {@max 32}
@@ -233,7 +233,7 @@ class ActivityPropertiesStructure
     public $tas_start;
 
     /**
-     * @var string {@from body} {@choice BALANCED,MANUAL,EVALUATE,REPORT_TO,SELF_SERVICE,SELF_SERVICE_EVALUATE}
+     * @var string {@from body} {@choice BALANCED,MANUAL,EVALUATE,REPORT_TO,SELF_SERVICE,SELF_SERVICE_EVALUATE,MULTIPLE_INSTANCE,MULTIPLE_INSTANCE_VALUE_BASED}
      */
     public $tas_assign_type;
 
