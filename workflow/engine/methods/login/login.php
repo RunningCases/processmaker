@@ -210,12 +210,12 @@ G::LoadClass('configuration');
 $oConf = new Configurations();
 $oConf->loadConfig($obj, 'ENVIRONMENT_SETTINGS', '');
 
-$myUrl = explode("/", $_SERVER["REQUEST_URI"]);
-
-if (isset($myUrl) && $myUrl != "") {
-    $aFields["USER_LANG"] = $myUrl[2];
+if (isset($oConf->aConfig["login_defaultLanguage"]) && $oConf->aConfig["login_defaultLanguage"] != "") {
+    $aFields["USER_LANG"] = $oConf->aConfig["login_defaultLanguage"];
 } else {
-    $aFields["USER_LANG"] = isset($oConf->aConfig["login_defaultLanguage"])? $oConf->aConfig["login_defaultLanguage"] : SYS_LANG;
+    $myUrl = explode("/", $_SERVER["REQUEST_URI"]);
+
+    $aFields["USER_LANG"] = (isset($myUrl[2]) && trim($myUrl[2]) != "")? trim($myUrl[2]) : SYS_LANG;
 }
 
 $G_PUBLISH = new Publisher();
