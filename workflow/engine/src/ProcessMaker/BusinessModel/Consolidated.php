@@ -463,7 +463,6 @@ class Consolidated
             $json = G::json_decode($dataTask["DYN_CONTENT"]);
             $pmDyna->jsonr($json);
             $fieldsDyna = $json->items[0]->items;
-
             $xmlfrm = new \stdclass();
             $xmlfrm->fields = array();
             foreach ($fieldsDyna as $key => $value) {
@@ -478,9 +477,17 @@ class Consolidated
                     $temp->required = (isset($val->required)) ? $val->required : 0;
                     $temp->mode = (isset($val->mode)) ? $val->mode : 'edit';
 
-                    if (!empty($val->options)) {
+                    if (!empty($val->options) || !empty($val->optionsSql)) {
                         $temp->storeData = '[';
                         foreach ($val->options as $valueOption) {
+                            if(isset($valueOption->value)){
+                                $temp->storeData .= '["' . $valueOption->value . '", "' . $valueOption->label . '"],';
+                            }else{
+                                $temp->storeData .= '["' . $valueOption['value'] . '", "' . $valueOption['label'] . '"],';   
+                            }
+                        }
+
+                        foreach ($val->optionsSql as $valueOption) {
                             if(isset($valueOption->value)){
                                 $temp->storeData .= '["' . $valueOption->value . '", "' . $valueOption->label . '"],';
                             }else{
