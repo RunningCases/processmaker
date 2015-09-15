@@ -140,7 +140,7 @@ Ext.onReady(function() {
             hideable:false
         },{
             id: 'ATTRIBUTE_LDAP',
-            header: "LDAP Field",
+            header: _("ID_LDAP_FIELD"),
             dataIndex: 'ATTRIBUTE_LDAP',
             width: 10,
             sortable: true,
@@ -148,7 +148,7 @@ Ext.onReady(function() {
         },
         {
             id: 'ATTRIBUTE_USER',
-            header: "User Field",
+            header: _("ID_USER_FIELD"),
             dataIndex: 'ATTRIBUTE_USER',
             width: 10,
             sortable: true,
@@ -158,6 +158,7 @@ Ext.onReady(function() {
 
     var ldapGridEditor = new Ext.ux.grid.RowEditor({
         saveText: _('ID_SAVE'),
+        cancelText: _('ID_CANCEL'),
         listeners: {
           canceledit: function(grid,obj){
             //
@@ -238,7 +239,7 @@ Ext.onReady(function() {
                 var chk = new Ext.form.Checkbox({
                     id: "AUTH_SOURCE_SHOWGRID-checkbox",
                     name: "AUTH_SOURCE_SHOWGRID-checkbox",
-                    boxLabel: "Match attributes to sync",
+                    boxLabel: _("ID_MATCH_ATTRIBUTES_TO_SYNC"),
                     renderTo: "containerChkAttribute",
 
                     listeners: {
@@ -277,7 +278,7 @@ Ext.onReady(function() {
 
         ldapForm.getForm().submit({
             method: "POST",
-            waitTitle: "Connecting...",
+            waitTitle: _('ID_CONNECTING'),
             waitMsg: _("ID_SAVING"),
             success: function (form, action)
             {
@@ -293,7 +294,7 @@ Ext.onReady(function() {
     var ldapForm = new Ext.FormPanel({
         url : 'ldapAdvancedProxy.php?functionAccion=ldapSave',
         frame : true,
-        title : "Authentication Source Information",
+        title : _("ID_AUTHENTICATION_SOURCE_INFORMATION"),
         border : false,
         autoScroll: true,
         monitorValid : true,
@@ -325,7 +326,7 @@ Ext.onReady(function() {
                     {
                         columnWidth: 1,
                         bodyStyle: "border: 0px;",
-                        html: "Minimum data required to run the \"Test Connection\": \"Server Address, " + _("ID_PORT") + ", " + _("ID_ENABLED_TLS") + ", " + _("ID_ANONYMOUS") + ", " + _("ID_USERNAME") + ", " + _("ID_PASSWORD") + "\""
+                        html: _("ID_MINIMUM_DATA_REQUIRED_TO_RUN_THE")
                     }
                 ]
             }
@@ -379,11 +380,11 @@ Ext.onReady(function() {
                 }
             },
             {
-                text: "Test connection",
+                text: _('ID_TEST_CONNECTION'),
                 formBind: true,
                 handler: function ()
                 {
-                    var loadMaskAux = new Ext.LoadMask(Ext.getBody(), {msg: "Testing connection..."});
+                    var loadMaskAux = new Ext.LoadMask(Ext.getBody(), {msg: _('ID_TESTING_CONNECTION')});
                     loadMaskAux.show();
 
                     Ext.Ajax.request({
@@ -406,8 +407,8 @@ Ext.onReady(function() {
 
                             if (dataResponse.status) {
                                 Ext.MessageBox.show({
-                                    title: "Test connection",
-                                    msg: (dataResponse.status == "OK")? "Successfully connected" : dataResponse.message,
+                                    title: _('ID_TEST_CONNECTION'),
+                                    msg: (dataResponse.status == "OK")? _('ID_SUCCESSFULLY_CONNECTED') : dataResponse.message,
 
                                     icon: (dataResponse.status == "OK")? "ext-mb-ok" : Ext.MessageBox.ERROR,
                                     buttons: {ok: _("ID_ACCEPT")}

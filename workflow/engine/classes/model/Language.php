@@ -129,6 +129,21 @@ class Language extends BaseLanguage
     public function import ($sLanguageFile, $updateXml = true, $updateDB = true, $generateMafe = true)
     {
         try {
+            
+            //get labels MichelangeloFE
+            try {
+                $oTranslation = new Translation();
+                $MichelangeloFE = PATH_HOME . "../workflow/public_html/lib/js";
+                if (file_exists($MichelangeloFE)) {
+                    $labels = $this->readLabelsDirectory($MichelangeloFE, true);
+                    foreach ($labels as $label) {
+                        $oTranslation->addTranslation('LABEL', 'ID_MAFE_' . G::encryptOld($label), 'en', $label);
+                    }
+                }
+            } catch (Exception $e) {
+                error_log($e->getMessage());
+            }
+
             G::LoadSystem( 'i18n_po' );
             $POFile = new i18n_PO( $sLanguageFile );
             $POFile->readInit();
@@ -297,7 +312,7 @@ class Language extends BaseLanguage
         try {
             $oTranslation = new Translation();
             $MichelangeloFE = PATH_HOME . "../workflow/public_html/lib/js";
-            if ($_GET['LOCALE'] === "en" & file_exists($MichelangeloFE)) {
+            if (file_exists($MichelangeloFE)) {
                 $labels = $this->readLabelsDirectory($MichelangeloFE, true);
                 foreach ($labels as $label) {
                     $oTranslation->addTranslation('LABEL', 'ID_MAFE_' . G::encryptOld($label), 'en', $label);
