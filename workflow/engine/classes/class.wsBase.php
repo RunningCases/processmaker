@@ -2688,6 +2688,10 @@ class wsBase
                 $oPMScript->setScript( $row['TRI_WEBBOT'] );
                 $oPMScript->execute();
 
+                if (isset($oPMScript->aFields["__ERROR__"]) && trim($oPMScript->aFields["__ERROR__"]) != "" && $oPMScript->aFields["__ERROR__"] != "none") {
+                    throw new Exception($oPMScript->aFields["__ERROR__"]);
+                }
+
                 //Save data - Start
                 $appFields['APP_DATA'] = $oPMScript->aFields;
                 unset($appFields['APP_STATUS']);

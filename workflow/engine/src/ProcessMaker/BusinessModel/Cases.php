@@ -932,7 +932,11 @@ class Cases
         }
 
         $case = new \wsBase();
-        $case->executeTrigger( $usr_uid, $app_uid, $tri_uid, $del_index );
+        $result = $case->executeTrigger($usr_uid, $app_uid, $tri_uid, $del_index);
+
+        if ($result->status_code != 0) {
+            throw new \Exception($result->message);
+        }
     }
 
     /**
@@ -1600,7 +1604,7 @@ class Cases
 
         $_SESSION['APPLICATION'] = $app_uid;
         $_SESSION['USER_LOGGED'] = $usr_uid;
-        
+
         $case = new \Cases();
         $fields = $case->loadCase($app_uid);
         $_POST['form'] = $app_data;
