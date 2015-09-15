@@ -47,9 +47,11 @@ if ($RBAC->userCanAccess('PM_DASHBOARD') == 1) {
 }
 
 /*----------------------------------********---------------------------------*/
-$licensedFeatures = & PMLicensedFeatures::getSingleton();
-if ($licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjBsZEJ6dnpJa3dTeWVLVT0=') ) {
-    $G_TMP_MENU->AddIdRawOption('DASHBOARD+', 'strategicDashboard/main', G::LoadTranslation('ID_STRATEGIC_DASHBOARD'), '', '', '', 'x-pm-dashboard');
+if ($RBAC->userCanAccess('PM_DASHBOARD') == 1) {
+    $licensedFeatures = & PMLicensedFeatures::getSingleton();
+    if ($licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjBsZEJ6dnpJa3dTeWVLVT0=') ) {
+        $G_TMP_MENU->AddIdRawOption('DASHBOARD+', 'strategicDashboard/main', G::LoadTranslation('ID_STRATEGIC_DASHBOARD'), '', '', '', 'x-pm-dashboard');
+    }
 }
 /*----------------------------------********---------------------------------*/
 
