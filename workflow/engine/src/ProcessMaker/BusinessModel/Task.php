@@ -1710,6 +1710,10 @@ class Task
                                              'TU_TYPE' => $iType,
                                              'TU_RELATION' => 2));
                 }
+
+                $task = new \Task();
+
+                $result = $task->update(array("TAS_UID" => $sTaskUID, "TAS_TYPE" => "ADHOC"));
             }
         } catch ( \Exception $e ) {
             throw $e;
@@ -1746,6 +1750,14 @@ class Task
             $oTaskUser = \TaskUserPeer::retrieveByPK($sTaskUID, $sAssigneeUID, $iType, $iRelation);
             if (! is_null( $oTaskUser )) {
                 \TaskUserPeer::doDelete($oCriteria);
+
+                $arrayTaskAdhocAssignees = $this->getTaskAdhocAssignees($sProcessUID, $sTaskUID, "", null, null, "");
+
+                if (empty($arrayTaskAdhocAssignees)) {
+                    $task = new \Task();
+
+                    $result = $task->update(array("TAS_UID" => $sTaskUID, "TAS_TYPE" => "NORMAL"));
+                }
             } else {
                 throw new \Exception(\G::LoadTranslation("ID_ROW_DOES_NOT_EXIST"));
             }
