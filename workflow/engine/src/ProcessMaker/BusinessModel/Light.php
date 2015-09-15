@@ -79,7 +79,9 @@ class Light
                                 $newForm[$c]['title'] = $form['obj_title'];
                                 $newForm[$c]['description'] = $form['obj_description'];
                                 $newForm[$c]['stepId']      = $form["step_uid"];
+                                $newForm[$c]['stepUidObj']  = $form["step_uid_obj"];
                                 $newForm[$c]['stepMode']    = $form['step_mode'];
+                                $newForm[$c]['stepPosition'] = $form['step_position'];
                                 $trigger = $this->statusTriggers($step->doGetActivityStepTriggers($form["step_uid"], $tempTreeChild['taskId'], $tempTreeChild['processId']));
                                 $newForm[$c]["triggers"]    = $trigger;
                                 $c++;
@@ -334,6 +336,48 @@ class Light
         }
         return 1;
 
+    }
+
+    /**
+     * Execute Trigger case
+     *
+     */
+    public function doExecuteTriggerCase($usr_uid, $prj_uid, $act_uid, $cas_uid, $step_uid, $type)
+    {
+        $userData = $this->getUserData($usr_uid);
+        $c = new \Criteria();
+        $c->clearSelectColumns();
+        $c->addSelectColumn(\StepPeer::STEP_UID);
+        $c->addSelectColumn(\StepPeer::STEP_UID_OBJ);
+        $c->add(\StepPeer::TAS_UID, $act_uid);
+        $c->add(\StepPeer::STEP_TYPE_OBJ, 'DYNAFORM');
+        $c->add(\StepPeer::STEP_UID, $step_uid);
+        $rs = \StepPeer::doSelectRS($c);
+        $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $rs->next();
+        $row = $rs->getRow();
+        $step_uid_obj = $row['STEP_UID_OBJ'];
+
+        $oCase = new \Cases();
+        $Fields = $oCase->loadCase( $cas_uid );
+        $_SESSION["APPLICATION"] = $cas_uid;
+        $_SESSION["PROCESS"] = $prj_uid;
+        $_SESSION["TASK"] = $act_uid;
+        $_SESSION["USER_LOGGED"] = $usr_uid;
+        $_SESSION["USR_USERNAME"] = $userData['firstName'];
+        $_SESSION["INDEX"] = $Fields["DEL_INDEX"] = \AppDelegation::getCurrentIndex($cas_uid);
+        $Fields['APP_DATA'] = array_merge( $Fields['APP_DATA'], G::getSystemConstants() );
+        $triggers = $oCase->loadTriggers( $act_uid, 'DYNAFORM', $step_uid_obj, strtoupper($type) );
+        if($triggers){
+            $Fields['APP_DATA'] = $oCase->ExecuteTriggers( $act_uid, 'DYNAFORM', $step_uid_obj, strtoupper($type), $Fields['APP_DATA'] );
+        }
+        $Fields['TAS_UID'] = $act_uid;
+        $Fields['CURRENT_DYNAFORM'] = $step_uid_obj;
+        $Fields['USER_UID'] = $usr_uid;
+        $Fields['PRO_UID'] = $prj_uid;
+        $oCase->updateCase( $cas_uid, $Fields );
+        $response = array('status' => 'ok');
+        return $response;
     }
 
     /**
