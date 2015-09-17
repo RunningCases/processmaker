@@ -135,7 +135,7 @@ class Language extends BaseLanguage
                 $oTranslation = new Translation();
                 $MichelangeloFE = PATH_HOME . "../workflow/public_html/lib/js";
                 if (file_exists($MichelangeloFE)) {
-                    $labels = $this->readLabelsDirectory($MichelangeloFE, true);
+                    $labels = self::readLabelsDirectory($MichelangeloFE, true);
                     foreach ($labels as $label) {
                         $oTranslation->addTranslation('LABEL', 'ID_MAFE_' . G::encryptOld($label), 'en', $label);
                     }
@@ -313,7 +313,7 @@ class Language extends BaseLanguage
             $oTranslation = new Translation();
             $MichelangeloFE = PATH_HOME . "../workflow/public_html/lib/js";
             if (file_exists($MichelangeloFE)) {
-                $labels = $this->readLabelsDirectory($MichelangeloFE, true);
+                $labels = self::readLabelsDirectory($MichelangeloFE, true);
                 foreach ($labels as $label) {
                     $oTranslation->addTranslation('LABEL', 'ID_MAFE_' . G::encryptOld($label), 'en', $label);
                 }
@@ -839,23 +839,23 @@ class Language extends BaseLanguage
         }
     }
     
-    public function readLabelsDirectory($path, $unique = false)
+    public static function readLabelsDirectory($path, $unique = false)
     {
         $labels = array();
         $items = opendir($path);
         while (false !== ($item = readdir($items))) {
             $a = $path . "/" . $item;
             if ($item !== "." && $item !== ".." && is_dir($a)) {
-                $labels = array_merge($labels, $this->readLabelsDirectory($a, false));
+                $labels = array_merge($labels, self::readLabelsDirectory($a, false));
             }
             if (is_file($a)) {
                 $info = pathinfo($a);
                 if ($info["extension"] === "js" || $info["extension"] === "JS") {
                     $file = file_get_contents($a);
                     //search string 'xx\'xx\'xx'.translate()
-                    $labels = array_merge($labels, $this->readLabelsFile($file, "'"));
+                    $labels = array_merge($labels, self::readLabelsFile($file, "'"));
                     //search string "xx\"xx\"xx".translate()
-                    $labels = array_merge($labels, $this->readLabelsFile($file, "\""));
+                    $labels = array_merge($labels, self::readLabelsFile($file, "\""));
                 }
             }
         }
@@ -866,7 +866,7 @@ class Language extends BaseLanguage
         return $labels;
     }
 
-    public function readLabelsFile($file, $sep)
+    public static function readLabelsFile($file, $sep)
     {
         $labels = array();
         $k = 0;
