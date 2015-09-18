@@ -30,7 +30,7 @@ Ext.onReady(function() {
             {
                 xtype: 'button',
                 iconCls: 'button_menu_ext ss_sprite ss_magnifier',
-                text: 'Search',
+                text: _('ID_SEARCH'),
                 width : 40,
                 handler: function(){
                     storeGridSearch.load({ params: {sKeyword: searchUsersText.getValue()} });
@@ -47,7 +47,7 @@ Ext.onReady(function() {
         labelAlign: 'left',
         align: 'center',
         labelStyle: 'font-weight:bold; padding: 3px 3px 3px 15px;',
-        title: "<div><div style=\"float: left;\">" + "Search for user" + "</div><div id=\"divBack\" style=\"float: right;\"></div><div style=\"clear: both; height: 0; line-height:0; font-size: 0;\"></div></div>",
+        title: "<div><div style=\"float: left;\">" + _('ID_SEARCH_FOR_USER') + "</div><div id=\"divBack\" style=\"float: right;\"></div><div style=\"clear: both; height: 0; line-height:0; font-size: 0;\"></div></div>",
         items: [
             new Ext.FormPanel({
                 labelWidth : 120,
@@ -129,7 +129,7 @@ Ext.onReady(function() {
     var tbarSearch = [
         {
             id: 'BUTTON_IMPORT',
-            text: 'Import',
+            text: _('ID_IMPORT'),
             iconCls: 'button_menu_ext ss_sprite ss_group_go ',
             disabled: true,
             handler: function () {
@@ -163,8 +163,8 @@ Ext.onReady(function() {
                         Ext.MessageBox.confirm('Confirm', 'Are you sure you want to import the selected users?', function (val) {
                             if (val == 'yes') {
                                 Ext.MessageBox.show({
-                                    msg: 'Importing Users...',
-                                    progressText: 'Saving...',
+                                    msg: _('ID_IMPORTING_USERS'),
+                                    progressText: _('ID_SAVING'),
                                     width:300,
                                     wait:true,
                                     waitConfig: {interval:200},
@@ -183,8 +183,8 @@ Ext.onReady(function() {
                                         Ext.MessageBox.hide();
                                         if (resp.success) {
                                             Ext.MessageBox.show({
-                                                title: 'Import Users',
-                                                msg: 'Imported Successfully',
+                                                title: _('ID_IMPORT_USERS'),
+                                                msg: _('ID_IMPORTED_SUCCESSFULLY'),
                                                 buttons: Ext.MessageBox.OK,
                                                 animEl: 'mb9',
                                                 icon: Ext.MessageBox.INFO
@@ -193,16 +193,16 @@ Ext.onReady(function() {
                                         }
                                     },
                                     failure: function () {
-                                        Ext.MessageBox.alert('ERROR', 'Error in server');
+                                        Ext.MessageBox.alert('ERROR', _('ID_ERROR_IN_SERVER'));
                                     }
                                 });
                             }
                         });
                     } else {
-                        PMExt.notify('WARNING', 'You do not select any user to import');
+                        PMExt.notify('WARNING', _('ID_YOU_DO_NOT_SELECT_ANY_USER_TO_IMPORT'));
                     }
                 } else {
-                    PMExt.notify('WARNING', 'You do not select any user to import');
+                    PMExt.notify('WARNING', _('ID_YOU_DO_NOT_SELECT_ANY_USER_TO_IMPORT'));
                 }
             }
         }
@@ -251,8 +251,8 @@ Ext.onReady(function() {
         pageSize: pageSize,
         store: storeGridSearch,
         displayInfo: true,
-        displayMsg: "LDAP Users" + " {0} - {1} " + "of" + " {2}",
-        emptyMsg: "There are no LDAP Users"
+        displayMsg: _('ID_LDAP_USERS') + " {0} - {1} " + "of" + " {2}",
+        emptyMsg: _('ID_THERE_ARE_NO_LDAP_USERS')
     });
 
     var selectModelList = new Ext.grid.CheckboxSelectionModel({
@@ -282,11 +282,11 @@ Ext.onReady(function() {
             },
             columns: [
                 selectModelList,
-                {header: 'Username',  width: 15, dataIndex: 'sUsername', sortable: true},
-                {header: 'First Name',  width: 15, dataIndex: 'sFirstname', sortable: true},
-                {header: 'Last Name',  width: 15, dataIndex: 'sLastname', sortable: true},
-                {header: 'Email',  width: 15, dataIndex: 'sEmail', sortable: true},
-                {header: 'Distinguished Name', width: 35, dataIndex: 'sDN'},
+                {header: _('ID_USER_ID'),  width: 15, dataIndex: 'sUsername', sortable: true},
+                {header: _('ID_FIRST_NAME'),  width: 15, dataIndex: 'sFirstname', sortable: true},
+                {header: _('ID_LAST_NAME'),  width: 15, dataIndex: 'sLastname', sortable: true},
+                {header: _('ID_EMAIL'),  width: 15, dataIndex: 'sEmail', sortable: true},
+                {header: _('ID_DISTINGUISHED_NAME'), width: 35, dataIndex: 'sDN'},
                 {dataIndex: "STATUS", header: _("ID_STATUS"), width: 10, css: "background: #D4D4D4; font-weight: bold;", align: "center", renderer: renderStatus}
             ]
         }),
@@ -304,7 +304,7 @@ Ext.onReady(function() {
 
         viewConfig: {
             forceFit:true,
-            emptyText: '<div align="center"><b> ' + ' There are no LDAP Users ' + ' </b></div>'
+            emptyText: '<div align="center"><b> ' + _('ID_THERE_ARE_NO_LDAP_USERS') + ' </b></div>'
         }
     });
 

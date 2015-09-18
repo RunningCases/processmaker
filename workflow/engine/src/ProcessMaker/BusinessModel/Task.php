@@ -239,6 +239,7 @@ class Task
 
             $task = new \Task();
             $aTaskInfo = $task->load($arrayProperty["TAS_UID"]);
+            $bpmnActivity = \BpmnActivityPeer::retrieveByPK($act_uid);
 
             $arrayResult = array();
             if ($arrayProperty["TAS_SELFSERVICE_TIMEOUT"] == "1") {
@@ -270,6 +271,17 @@ class Task
                 } else {
                     $arrayProperty["TAS_ASSIGN_TYPE"] = $derivateType["TAS_ASSIGN_TYPE"];
                 }
+            }
+
+            $flagTaskIsMultipleInstance = $bpmnActivity->getActType() == "TASK" && preg_match("/^(?:EMPTY|USERTASK|MANUALTASK)$/", $bpmnActivity->getActTaskType()) && $bpmnActivity->getActLoopType() == "PARALLEL";
+            $flagTaskAssignTypeIsMultipleInstance = preg_match("/^(?:MULTIPLE_INSTANCE|MULTIPLE_INSTANCE_VALUE_BASED)$/", $arrayProperty["TAS_ASSIGN_TYPE"]);
+
+            if ($flagTaskIsMultipleInstance && !$flagTaskAssignTypeIsMultipleInstance) {
+                throw new \Exception(\G::LoadTranslation("ID_ACTIVITY_INVALID_ASSIGNMENT_METHOD_FOR_MULTIPLE_INSTANCE_ACTIVITY", array(strtolower("ACT_UID"), $act_uid)));
+            }
+
+            if (!$flagTaskIsMultipleInstance && $flagTaskAssignTypeIsMultipleInstance) {
+                throw new \Exception(\G::LoadTranslation("ID_ACTIVITY_INVALID_ASSIGNMENT_METHOD_FOR_ACTIVITY", array(strtolower("ACT_UID"), $act_uid)));
             }
 
             switch ($arrayProperty["TAS_ASSIGN_TYPE"]) {
@@ -327,6 +339,11 @@ class Task
                         $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TIME_UNIT");
                         $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_TRIGGER_UID");
                         $this->unsetVar($arrayProperty, "TAS_SELFSERVICE_EXECUTION");
+                    }
+                    break;
+                case "MULTIPLE_INSTANCE_VALUE_BASED":
+                    if (trim($arrayProperty["TAS_ASSIGN_VARIABLE"]) == "") {
+                        throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_CAN_NOT_BE_EMPTY", array(strtolower("TAS_ASSIGN_VARIABLE"))));
                     }
                     break;
             }
@@ -1693,6 +1710,10 @@ class Task
                                              'TU_TYPE' => $iType,
                                              'TU_RELATION' => 2));
                 }
+
+                $task = new \Task();
+
+                $result = $task->update(array("TAS_UID" => $sTaskUID, "TAS_TYPE" => "ADHOC"));
             }
         } catch ( \Exception $e ) {
             throw $e;
@@ -1729,6 +1750,14 @@ class Task
             $oTaskUser = \TaskUserPeer::retrieveByPK($sTaskUID, $sAssigneeUID, $iType, $iRelation);
             if (! is_null( $oTaskUser )) {
                 \TaskUserPeer::doDelete($oCriteria);
+
+                $arrayTaskAdhocAssignees = $this->getTaskAdhocAssignees($sProcessUID, $sTaskUID, "", null, null, "");
+
+                if (empty($arrayTaskAdhocAssignees)) {
+                    $task = new \Task();
+
+                    $result = $task->update(array("TAS_UID" => $sTaskUID, "TAS_TYPE" => "NORMAL"));
+                }
             } else {
                 throw new \Exception(\G::LoadTranslation("ID_ROW_DOES_NOT_EXIST"));
             }

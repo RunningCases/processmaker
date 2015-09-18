@@ -178,38 +178,19 @@ Ext.onReady(function(){
     items:[_('ID_PAGE_SIZE')+':',comboPageSize]
   })  */
 
-  var mnuNewBpmnProject = {
-      text: "New BPMN Project",
-      iconCls: "silk-add",
-      icon: "",
-      handler: function ()
-      {
-          newProcess({type:"bpmnProject"});
-      }
-  };
-
-  var mnuNewProject = {
-      text: "New Project",
-      iconCls: "silk-add",
-      icon: "",
-      handler: function ()
-      {
-          newProcess({type: "classicProject"});
-      }
-  };
-
-  var arrayMenuNew = [];
-
-  if (typeof(arrayMenuNewOption["bpmn"]) != "undefined") {
-      arrayMenuNew.push(mnuNewBpmnProject);
-      typeMnuNew = "bpmnProject";
+  for(var k=0;k<arrayMenuNew.length;k++) {
+    var handlerMenu = arrayMenuNew[k].handler;
+    arrayMenuNew[k].handler = new Function(handlerMenu)
   }
-
-  if (typeof(arrayMenuNewOption["pm"]) != "undefined") {
-      arrayMenuNew.push(mnuNewProject);
-      typeMnuNew = "classicProject";
+  for(var j=0;j<contexMenu.length;j++) {
+    var handlerMenu = contexMenu[j].handler;
+    contexMenu[j].handler = new Function(handlerMenu)
   }
-
+  
+  if(jsFromPlugin) {  
+    injectScriptElement(jsFromPlugin);
+  }
+  
   if(typeof(arrayMenuNewOption["bpmn"]) != "undefined" && typeof(arrayMenuNewOption["pm"]) != "undefined"){
     newTypeProcess = {
                         xtype: 'tbsplit',
@@ -460,41 +441,7 @@ Ext.onReady(function(){
 
   var messageContextMenu = new Ext.menu.Menu({
     id: 'messageContextMenu',
-    items: [{
-        text: _('ID_EDIT'),
-        iconCls: 'button_menu_ext ss_sprite  ss_pencil',
-        handler: editProcess
-      }, {
-        id: 'activator2',
-        text: '',
-        icon: '',
-        handler: activeDeactive
-      }, {
-        id: 'debug',
-        text: '',
-        handler: enableDisableDebug
-      }, {
-        text: _('ID_DELETE'),
-        iconCls: "button_menu_ext ss_sprite ss_cross",
-        handler: deleteProcess
-      }, {
-        text: _("ID_EXPORT"),
-        icon: "/images/export.png",
-        handler: function () {
-          exportProcess();
-        }
-      },
-      {
-          id: "mnuGenerateBpmn",
-          text: _("ID_GENERATE_BPMN_PROJECT"),
-          iconCls: "button_menu_ext ss_sprite ss_page_white_go",
-          hidden: true,
-          handler: function ()
-          {
-              generateBpmn();
-          }
-      }
-    ]
+    items: contexMenu
   });
 
   var viewport = new Ext.Viewport({
@@ -512,7 +459,10 @@ function newProcess(params)
   params = typeof params == 'undefined' ? {type:'classicProject'} : params;
 
   // TODO this variable have hardcoded labels, it must be changed on the future
-  var formTitle = params.type == "classicProject" ? "New Project" : "New BPMN Project"
+  var formTitle = params.title;
+  if(typeof formTitle === "undefined") {
+    formTitle = params.type == "classicProject" ? _('ID_NEW_PROJECT') : _('ID_NEW_BPMN_PROJECT');
+  }
 
     //  window.location = 'processes_New';
   var ProcessCategories = new Ext.form.ComboBox({
@@ -647,6 +597,10 @@ function doSearch(){
 
 editProcess = function(typeParam)
 {
+  if(jsFromPlugin) {  
+      pluginFunctions.onRowdblclick();
+  }
+  
   var rowSelected = processesGrid.getSelectionModel().getSelected();
   if (!rowSelected) {
       Ext.Msg.show({
@@ -1537,4 +1491,12 @@ function openWindowIfIE(pathDesigner) {
         return;
     }
     location.href = pathDesigner;
+}
+
+function injectScriptElement(url, onLoad, onError, scope) {
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+    return script;
 }

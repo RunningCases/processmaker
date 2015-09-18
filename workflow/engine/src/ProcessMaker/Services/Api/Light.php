@@ -614,6 +614,7 @@ class Light extends Api
                     $pmDynaForm->jsonr($result['formContent']);
                     $result['index']        = $i;
                     $result['stepId']       = $activitySteps[$i]["step_uid"];
+                    $result['stepUidObj']   = $activitySteps[$i]["step_uid_obj"];
                     $result['stepMode']     = $activitySteps[$i]['step_mode'];
                     $result['stepPosition'] = $activitySteps[$i]['step_position'];
                     $trigger = $oMobile->statusTriggers($step->doGetActivityStepTriggers($activitySteps[$i]["step_uid"], $act_uid, $prj_uid));
@@ -644,24 +645,8 @@ class Light extends Api
     {
         try {
             $userUid = $this->getUserId();
-            $step = new \ProcessMaker\Services\Api\Project\Activity\Step();
-            $triggers= $step->doGetActivityStepTriggers($step_uid, $act_uid, $prj_uid);
-
-            $step = new \ProcessMaker\BusinessModel\Step();
-            $step->setFormatFieldNameInUppercase(false);
-            $step->setArrayParamException(array("stepUid" => "step_uid", "taskUid" => "act_uid", "processUid" => "prj_uid"));
             $oMobile  = new \ProcessMaker\BusinessModel\Light();
-            $response = $oMobile->getUserData($userUid);
-            $_SESSION["PROCESS"] = $prj_uid;
-            $_SESSION["TASK"] = $act_uid;
-            $_SESSION["USR_USERNAME"] = $response['firstName'];
-            $cases = new \ProcessMaker\BusinessModel\Cases();
-            foreach($triggers as $trigger){
-                if (strtolower($trigger['st_type']) == $type) {
-                    $cases->putExecuteTriggerCase($cas_uid, $trigger['tri_uid'], $userUid);
-                }
-            }
-            $response = array('status' => 'ok');
+            $response = $oMobile->doExecuteTriggerCase($userUid, $prj_uid, $act_uid, $cas_uid, $step_uid, $type);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -1319,6 +1304,7 @@ class Light extends Api
      *
      * @return array
      *
+     * @access public
      * @url GET /config
      */
     public function getConfiguration()
