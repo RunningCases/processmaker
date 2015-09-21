@@ -405,9 +405,6 @@ class WebApplication
 
     public function loadEnvironment($workspace = "")
     {
-        $lang = "en";
-
-        define("SYS_LANG", $lang);
         define("PATH_SEP", DIRECTORY_SEPARATOR);
 
         define("PATH_TRUNK",    $this->rootDir . PATH_SEP);

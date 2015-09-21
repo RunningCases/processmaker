@@ -285,6 +285,8 @@ class Server implements iAuthenticate
             $request = \OAuth2\Request::createFromGlobals();
         }
 
+        $this->storage->loadPostEnvironment($request);
+
         $response = $this->server->handleTokenRequest($request); //Set/Get token //PmPdo->setAccessToken()
 
         $token = $response->getParameters();
@@ -332,6 +334,7 @@ class Server implements iAuthenticate
     public function __isAllowed()
     {
         $request = \OAuth2\Request::createFromGlobals();
+        $this->storage->loadPostEnvironment($request);
         $allowed = $this->server->verifyResourceRequest($request);
         $token = $this->server->getAccessTokenData($request);
         self::$userId = $token['user_id'];
