@@ -295,5 +295,15 @@ class PmPdo implements \OAuth2\Storage\AuthorizationCodeInterface,
 
         return array_merge($a, array_change_key_case($a, $case));
     }
+
+    public function loadPostEnvironment($request = null)
+    {
+        if (!defined('SYS_LANG')) {
+            $acceptLanguage =$request->headers('ACCEPT_LANGUAGE');
+            $lang = (!is_null($acceptLanguage) && strlen($acceptLanguage)<=2)?$acceptLanguage:'en';
+            define("SYS_LANG", $lang);
+        }
+        return true;
+    }
 }
 
