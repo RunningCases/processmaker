@@ -69,6 +69,8 @@ class InputDocument
             $oCaseRest->getAllUploadedDocumentsCriteria( $sProcessUID, $sApplicationUID, $sTaskUID, $sUserUID );
             $result = array ();
             global $_DBArray;
+            $flagInputDocument = false;
+
             foreach ($_DBArray['inputDocuments'] as $key => $row) {
                 if (isset( $row['DOC_VERSION'] )) {
                     $docrow = array ();
@@ -81,15 +83,26 @@ class InputDocument
                     $docrow['app_doc_type'] = $row['TYPE'];
                     $docrow['app_doc_index'] = $row['APP_DOC_INDEX'];
                     $docrow['app_doc_link'] = 'cases/' . $row['DOWNLOAD_LINK'];
-                    if ($docrow['app_doc_uid'] == $inputDocumentUid) {
-                        $oAppDocument = \AppDocumentPeer::retrieveByPK( $inputDocumentUid, $row['DOC_VERSION'] );
-                        if (is_null( $oAppDocument )) {
-                            throw new \Exception(\G::LoadTranslation("ID_CASES_INPUT_DOES_NOT_EXIST", array($inputDocumentUid)));
+
+                    if ($docrow["app_doc_uid"] == $inputDocumentUid) {
+                        $flagInputDocument = true;
+
+                        $appDocument = \AppDocumentPeer::retrieveByPK($inputDocumentUid, $row["DOC_VERSION"]);
+
+                        if (is_null($appDocument)) {
+                            $flagInputDocument = false;
                         }
+
                         $result = $docrow;
+                        break;
                     }
                 }
             }
+
+            if (!$flagInputDocument) {
+                throw new \Exception(\G::LoadTranslation("ID_CASES_INPUT_DOES_NOT_EXIST", array($inputDocumentUid)));
+            }
+
             $oResponse = json_decode(json_encode($result), false);
             return $oResponse;
         } catch (\Exception $e) {
