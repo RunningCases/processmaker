@@ -172,37 +172,48 @@ class AppDelegation extends BaseAppDelegation
 
         // Hook for the trigger PM_CREATE_NEW_DELEGATION
         if (defined( 'PM_CREATE_NEW_DELEGATION' )) {
+            
+            $bpmn = new \ProcessMaker\Project\Bpmn();
+            $flagActionsByEmail = true;
+
             $data = new stdclass();
             $data->TAS_UID = $sTasUid;
             $data->APP_UID = $sAppUid;
             $data->DEL_INDEX = $delIndex;
             $data->USR_UID = $sUsrUid;
             $data->PREVIOUS_USR_UID = $delPreviusUsrUid;
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
-            $oPluginRegistry->executeTriggers(PM_CREATE_NEW_DELEGATION, $data);
 
-            /*----------------------------------********---------------------------------*/
-            // this section evaluates the actions by email trigger execution please
-            // modify this section carefully, the if evaluation checks if the license has been
-            // activated in order to send the mail according to the configuration table
-            if (PMLicensedFeatures
-                ::getSingleton()
-                ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
-                $criteriaAbe = new Criteria();
-                $criteriaAbe->add(AbeConfigurationPeer::PRO_UID, $sProUid);
-                $criteriaAbe->add(AbeConfigurationPeer::TAS_UID, $sTasUid);
-                $resultAbe = AbeConfigurationPeer::doSelectRS($criteriaAbe);
-                $resultAbe->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                if ($resultAbe->next()) {
-                    $dataAbe = $resultAbe->getRow();
-                    if($dataAbe['ABE_TYPE']!=''){
-                        G::LoadClass('actionsByEmailCore');
-                        $actionsByEmail = new actionsByEmailCoreClass();
-                        $actionsByEmail->sendActionsByEmail($data);
+            if ($bpmn->exists($sProUid)) {
+                /*----------------------------------********---------------------------------*/
+                // this section evaluates the actions by email trigger execution please
+                // modify this section carefully, the if evaluation checks if the license has been
+                // activated in order to send the mail according to the configuration table
+                if (PMLicensedFeatures
+                    ::getSingleton()
+                    ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
+                    $criteriaAbe = new Criteria();
+                    $criteriaAbe->add(AbeConfigurationPeer::PRO_UID, $sProUid);
+                    $criteriaAbe->add(AbeConfigurationPeer::TAS_UID, $sTasUid);
+                    $resultAbe = AbeConfigurationPeer::doSelectRS($criteriaAbe);
+                    $resultAbe->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    if ($resultAbe->next()) {
+                        $dataAbe = $resultAbe->getRow();
+                        if($dataAbe['ABE_TYPE']!=''){
+                            $flagActionsByEmail = false;
+                            G::LoadClass('actionsByEmailCore');
+                            $actionsByEmail = new actionsByEmailCoreClass();
+                            $actionsByEmail->sendActionsByEmail($data);
+                        }
                     }
                 }
+                /*----------------------------------********---------------------------------*/
+
             }
-            /*----------------------------------********---------------------------------*/
+
+            if ($flagActionsByEmail) {                
+                $oPluginRegistry = &PMPluginRegistry::getSingleton();
+                $oPluginRegistry->executeTriggers(PM_CREATE_NEW_DELEGATION, $data);
+            } 
         }
 
         return $delIndex;
