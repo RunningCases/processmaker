@@ -238,7 +238,6 @@ try {
         $heartBeatNWIDate = time();
     }
     if (time() >= $heartBeatNWIDate) {
-        $oServerConf->setWsInfo(SYS_SYS, $oServerConf->getWorkspaceInfo(SYS_SYS));
         $oServerConf->setHeartbeatProperty('HB_NEXT_GWI_DATE', strtotime('+1 day'), 'HEART_BEAT_CONF');
     }
 
