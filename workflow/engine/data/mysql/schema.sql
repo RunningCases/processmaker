@@ -2651,6 +2651,7 @@ CREATE TABLE `ABE_CONFIGURATION`
 	`ABE_CREATE_DATE` DATETIME  NOT NULL,
 	`ABE_UPDATE_DATE` DATETIME,
 	`ABE_SUBJECT_FIELD` VARCHAR(100) default '' NOT NULL,
+	`ABE_MAILSERVER_OR_MAILCURRENT` INTEGER default 0 NOT NULL,
 	PRIMARY KEY (`ABE_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='The plugin table for actionsByEmail';
 #-----------------------------------------------------------------------------

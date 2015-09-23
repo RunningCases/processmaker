@@ -317,6 +317,11 @@ class PMPluginRegistry
                     if (method_exists( $detail, "disable" )) {
                         $detail->disable();
                     }
+                    //flag Only Plugin actionsByEmail
+                    if($detail->sNamespace == 'actionsByEmail'){
+                      $plugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );
+                      $plugin->disable();
+                    } 
                 }
 
                 $sw = true;
