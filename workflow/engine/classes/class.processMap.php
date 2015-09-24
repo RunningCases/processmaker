@@ -3331,7 +3331,7 @@ class processMap
     public function assignSupervisorStep($sProcessUID, $sObjType, $sObjUID)
     {
         $oStepSupervisor = new StepSupervisor();
-        $oStepSupervisor->create(array('PRO_UID' => $sProcessUID, 'STEP_TYPE_OBJ' => $sObjType, 'STEP_UID_OBJ' => $sObjUID, 'STEP_POSITION' => $oStepSupervisor->getNextPosition($sProcessUID, $sObjType)));
+        $oStepSupervisor->create(array('PRO_UID' => $sProcessUID, 'STEP_TYPE_OBJ' => $sObjType, 'STEP_UID_OBJ' => $sObjUID, 'STEP_POSITION' => $oStepSupervisor->getNextPositionAll($sProcessUID, $sObjType)));
     }
 
     /**
