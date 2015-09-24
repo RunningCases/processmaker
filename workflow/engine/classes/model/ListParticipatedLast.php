@@ -203,6 +203,8 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $category = isset($filters['category']) ? $filters['category'] : "";
         $dateFrom = isset($filters['dateFrom']) ? $filters['dateFrom'] : "";
         $dateTo = isset($filters['dateTo']) ? $filters['dateTo'] : "";
+        $newestthan     = isset($filters['newestthan'] ) ? $filters['newestthan'] : '';
+        $oldestthan     = isset($filters['oldestthan'] ) ? $filters['oldestthan'] : '';
 
         if ($filter != '') {
             switch ($filter) {
@@ -257,6 +259,14 @@ class ListParticipatedLast extends BaseListParticipatedLast
             $dateTo = $dateTo . " 23:59:59";
 
             $criteria->add( ListParticipatedLastPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL );
+        }
+
+        if ($newestthan != '') {
+            $criteria->add( $criteria->getNewCriterion( ListParticipatedLastPeer::DEL_DELEGATE_DATE, $newestthan, Criteria::GREATER_THAN ));
+        }
+
+        if ($oldestthan != '') {
+            $criteria->add( $criteria->getNewCriterion( ListParticipatedLastPeer::DEL_DELEGATE_DATE, $oldestthan, Criteria::LESS_THAN ));
         }
     }
 
