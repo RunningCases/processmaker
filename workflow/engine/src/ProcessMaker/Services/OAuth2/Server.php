@@ -285,8 +285,6 @@ class Server implements iAuthenticate
             $request = \OAuth2\Request::createFromGlobals();
         }
 
-        $this->storage->loadPostEnvironment($request);
-
         $response = $this->server->handleTokenRequest($request); //Set/Get token //PmPdo->setAccessToken()
 
         $token = $response->getParameters();
@@ -334,7 +332,6 @@ class Server implements iAuthenticate
     public function __isAllowed()
     {
         $request = \OAuth2\Request::createFromGlobals();
-        $this->storage->loadPostEnvironment($request);
         $allowed = $this->server->verifyResourceRequest($request);
         $token = $this->server->getAccessTokenData($request);
         self::$userId = $token['user_id'];
@@ -393,6 +390,30 @@ class Server implements iAuthenticate
     public function __getWWWAuthenticateString()
     {
         return "";
+    }
+
+    public static function loadPostEnvironment($request = null)
+    {
+        $acceptLanguage = 'en';
+        if ($request == null) {
+            $request = \OAuth2\Request::createFromGlobals();
+            $acceptLanguage = $request->headers('ACCEPT_LANGUAGE');
+        }
+
+        if (!defined('SYS_LANG')) {
+            $Translations = new \Translation;
+            $translationsTable = $Translations->getTranslationEnvironments();
+            $inLang = false;
+            foreach ($translationsTable as $locale) {
+                if ($locale['LOCALE'] == $acceptLanguage){
+                    $inLang = true;
+                    break;
+                }
+            }
+            $lang = $inLang?$acceptLanguage:'en';
+            define("SYS_LANG", $lang);
+        }
+
     }
 }
 
