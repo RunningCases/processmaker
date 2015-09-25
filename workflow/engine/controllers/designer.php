@@ -125,6 +125,8 @@ class Designer extends Controller
             $translation = new Translation();
             $translation->generateFileTranslationMafe();
         }
+        
+        $this->setVar('sys_skin', SYS_SKIN);
 
         $this->setView('designer/index');
         $this->render();

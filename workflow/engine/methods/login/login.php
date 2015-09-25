@@ -171,7 +171,9 @@ if (!class_exists('pmLicenseManager')) {
 $licenseManager =& pmLicenseManager::getSingleton();
 if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
     $G_PUBLISH = new Publisher();
-    if(SYS_SKIN == 'neoclassic'){
+    $version = explode('.', trim(file_get_contents(PATH_GULLIVER . 'VERSION')));
+    $version = isset($version[0]) ? intval($version[0]) : 0;
+    if ($version >= 3) {
         $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/licenseExpiredpm3', '', array(), 'licenseUpdate');
     }else{
         $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/licenseExpired', '', array(), 'licenseUpdate');
@@ -219,7 +221,9 @@ if (isset($oConf->aConfig["login_defaultLanguage"]) && $oConf->aConfig["login_de
 }
 
 $G_PUBLISH = new Publisher();
-if(SYS_SKIN == 'neoclassic'){
+$version = explode('.', trim(file_get_contents(PATH_GULLIVER . 'VERSION')));
+$version = isset($version[0]) ? intval($version[0]) : 0;
+if ($version >= 3) {
     $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/loginpm3', '', $aFields, SYS_URI . 'login/authentication.php');
 }else{
     $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/login', '', $aFields, SYS_URI . 'login/authentication.php');

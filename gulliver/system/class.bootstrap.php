@@ -1149,8 +1149,14 @@ class Bootstrap
         //Read Configuration File
         $xmlConfiguration = file_get_contents($configurationFile);
         $xmlConfigurationObj = Bootstrap::xmlParser($xmlConfiguration);
-
+        
+        if (!isset($xmlConfigurationObj->result['skinConfiguration']['__CONTENT__']['cssFiles']['__CONTENT__'][$skinVariant]['__CONTENT__'])) {
+            $xmlConfigurationObj->result['skinConfiguration']['__CONTENT__']['cssFiles']['__CONTENT__'][$skinVariant]['__CONTENT__'] = array('cssFile' => array());
+        }
         $skinFilesArray = $xmlConfigurationObj->result['skinConfiguration']['__CONTENT__']['cssFiles']['__CONTENT__'][$skinVariant]['__CONTENT__']['cssFile'];
+        if (isset($skinFilesArray['__ATTRIBUTES__'])) {
+            $skinFilesArray = array($skinFilesArray);
+        }
         foreach ($skinFilesArray as $keyFile => $cssFileInfo) {
             $enabledBrowsers = explode(",", $cssFileInfo['__ATTRIBUTES__']['enabledBrowsers']);
             $disabledBrowsers = explode(",", $cssFileInfo['__ATTRIBUTES__']['disabledBrowsers']);
