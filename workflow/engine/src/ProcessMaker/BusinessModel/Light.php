@@ -271,10 +271,22 @@ class Light
     {
         try {
             $oCase = new \Cases();
+            $oUser    = new \Users();
 
             $this->lookinginforContentProcess( $proUid );
 
             $aData = $oCase->startCase( $taskUid, $userId );
+
+            $aUserLog = $oUser->loadDetailed($userId);
+            $_SESSION['APPLICATION'] = $aData['APPLICATION'];
+            $_SESSION['INDEX'] = $aData['INDEX'];
+            $_SESSION['PROCESS'] = $aData['PROCESS'];
+            $_SESSION['TASK'] = $taskUid;
+            $_SESSION["USER_LOGGED"] = $userId;
+            $_SESSION["USR_USERNAME"] = $aUserLog['USR_USERNAME'];
+
+            $aFields = $oCase->loadCase( $aData['APPLICATION'], $aData['INDEX'] );
+            $oCase->updateCase( $aData['APPLICATION'], $aFields );
 
             $response = array();
             $response['caseId'] = $aData['APPLICATION'];
