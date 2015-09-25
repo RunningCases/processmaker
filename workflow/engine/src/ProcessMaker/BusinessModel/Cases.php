@@ -1586,6 +1586,16 @@ class Cases
         Validator::isString($usr_uid, '$usr_uid');
         Validator::usrUid($usr_uid, '$usr_uid');
 
+        $arrayResult = $this->getStatusInfo($app_uid);
+
+        if ($arrayResult["APP_STATUS"] == "CANCELLED") {
+            throw new \Exception(\G::LoadTranslation("ID_CASE_CANCELLED", array($app_uid)));
+        }
+
+        if ($arrayResult["APP_STATUS"] == "COMPLETED") {
+            throw new \Exception(\G::LoadTranslation("ID_CASE_IS_COMPLETED", array($app_uid)));
+        }
+
         $appCacheView = new \AppCacheView();
         $isProcessSupervisor = $appCacheView->getProUidSupervisor($usr_uid);
         $criteria = new \Criteria("workflow");
