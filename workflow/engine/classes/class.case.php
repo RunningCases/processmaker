@@ -2377,7 +2377,6 @@ class Cases
 
     public function getNextSupervisorStep($sProcessUID, $iPosition, $sType = 'DYNAFORM')
     {
-        $iPosition += 1;
         $oCriteria = new Criteria();
         $oCriteria->add(StepSupervisorPeer::PRO_UID, $sProcessUID);
         $oCriteria->add(StepSupervisorPeer::STEP_TYPE_OBJ, $sType);
@@ -2390,7 +2389,7 @@ class Cases
             $oCriteria = new Criteria();
             $oCriteria->add(StepSupervisorPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(StepSupervisorPeer::STEP_TYPE_OBJ, $sType);
-            $oCriteria->add(StepSupervisorPeer::STEP_POSITION, 1);
+            $oCriteria->add(StepSupervisorPeer::STEP_POSITION, ($iPosition+1));
             $oDataset = StepSupervisorPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
