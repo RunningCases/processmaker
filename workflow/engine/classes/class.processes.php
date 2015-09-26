@@ -859,6 +859,12 @@ class Processes
                 $oData->filesManager[$key]["PRO_UID"] = $sNewProUid;
             }
         }
+        
+        if (isset($oData->abeConfiguration)) {
+            foreach ($oData->abeConfiguration as $key => $value) {
+                $oData->abeConfiguration[$key]["PRO_UID"] = $sNewProUid;
+            }
+        }
 
         return true;
     }
@@ -1016,6 +1022,16 @@ class Processes
                 }
             }
         }
+        
+        if (isset( $oData->abeConfiguration ) && is_array( $oData->abeConfiguration )) {
+            foreach ($oData->abeConfiguration as $key => $value) {
+                $record = $value;
+                if (isset($map[$record["TAS_UID"]])) {
+                    $newUid = $map[$record["TAS_UID"]];
+                    $oData->abeConfiguration[$key]["TAS_UID"] = $newUid;
+                }
+            }
+        }
     }
 
     /**
@@ -1120,6 +1136,16 @@ class Processes
                     $newUid = $map[$record["DYN_UID"]];
 
                     $oData->webEntryEvent[$key]["DYN_UID"] = $newUid;
+                }
+            }
+        }
+        
+        if (isset( $oData->abeConfiguration ) && is_array( $oData->abeConfiguration )) {
+            foreach ($oData->abeConfiguration as $key => $value) {
+                $record = $value;
+                if (isset($map[$record["DYN_UID"]])) {
+                    $newUid = $map[$record["DYN_UID"]];
+                    $oData->abeConfiguration[$key]["DYN_UID"] = $newUid;
                 }
             }
         }
@@ -3260,6 +3286,40 @@ class Processes
             throw $e;
         }
     }
+    
+    public function getActionsByEmail($processUid)
+    {
+        try {
+            $arrayActionsByEmail = array();
+            //Get data
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_UID);
+            $criteria->addSelectColumn(\AbeConfigurationPeer::PRO_UID);
+            $criteria->addSelectColumn(\AbeConfigurationPeer::TAS_UID);
+            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_TYPE);
+            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_TEMPLATE);
+            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_DYN_TYPE);
+            $criteria->addSelectColumn(\AbeConfigurationPeer::DYN_UID);
+            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_EMAIL_FIELD);
+            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_ACTION_FIELD);
+            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_CASE_NOTE_IN_RESPONSE);
+            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_CREATE_DATE);
+            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_UPDATE_DATE);
+            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_SUBJECT_FIELD);
+            $criteria->add(AbeConfigurationPeer::PRO_UID, $processUid, Criteria::EQUAL);
+            $rsCriteria = AbeConfigurationPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            while ($aRow = $rsCriteria->getRow()) {
+                $arrayActionsByEmail[] = $aRow;
+                $rsCriteria->next();
+            }
+            //Return
+            return $arrayActionsByEmail;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 
     public function getFilesManager($processUid)
     {
@@ -3623,6 +3683,28 @@ class Processes
             throw $e;
         }
     }
+    
+    /**
+     * Create Actions by email records
+     *
+     * @param string $processUid Unique id of Process
+     * @param array  $arrayData  Data
+     *
+     * return void
+     */
+    public function createActionsByEmail($processUid, array $arrayData)
+    {
+        try {
+            require_once 'classes/model/AbeConfiguration.php';
+            $abeConfigurationInstance = new AbeConfiguration();
+            foreach ($arrayData as $value) {
+                $value['ABE_UID'] = "";
+                $abeConfigurationInstance->createOrUpdate($value);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 
     /**
      * Create Files Manager records
@@ -3838,6 +3920,7 @@ class Processes
         $oData->timerEvent = $this->getTimerEvents($sProUid);
         $oData->emailEvent = $this->getEmailEvent($sProUid);
         $oData->filesManager = $this->getFilesManager($sProUid);
+        $oData->abeConfiguration = $this->getActionsByEmail($sProUid);
         $oData->groupwfs = $this->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
         $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
 
@@ -4940,6 +5023,7 @@ class Processes
         $this->createScriptTask($arrayProcessData["PRO_UID"], (isset($oData->scriptTask))? $oData->scriptTask : array());
         $this->createTimerEvent($arrayProcessData["PRO_UID"], (isset($oData->timerEvent))? $oData->timerEvent : array());
         $this->createEmailEvent($arrayProcessData["PRO_UID"], (isset($oData->emailEvent))? $oData->emailEvent : array());
+        $this->createActionsByEmail($arrayProcessData["PRO_UID"], (isset($oData->abeConfiguration))? $oData->abeConfiguration : array());
         $this->createFilesManager($arrayProcessData["PRO_UID"], (isset($oData->filesManager))? $oData->filesManager : array());
     }
 
