@@ -1244,6 +1244,16 @@ class Light
         $fields = \System::getSysInfo();
         $response['version'] = $fields['PM_VERSION'];
 
+        $conf = new \Configurations();
+        $confEnvironment = $conf->getFormats();
+
+        $response['environment'] = array();
+        if (is_array($confEnvironment)){
+            $response['environment']['format'] = isset($confEnvironment['format'])?$confEnvironment['format']:'';
+            $response['environment']['dateFormat'] = isset($confEnvironment['dateFormat'])?$confEnvironment['dateFormat']:'';
+            $response['environment']['casesListDateFormat'] = isset($confEnvironment['casesListDateFormat'])?$confEnvironment['casesListDateFormat']:'';
+        }
+
         $Translations = new \Translation;
         $translationsTable = $Translations->getTranslationEnvironments();
         $languagesList = array ();
