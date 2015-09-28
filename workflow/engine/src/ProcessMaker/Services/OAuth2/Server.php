@@ -392,14 +392,9 @@ class Server implements iAuthenticate
         return "";
     }
 
-    public static function loadPostEnvironment($request = null)
+    public static function loadPostEnvironment()
     {
-        $acceptLanguage = 'en';
-        if ($request == null) {
-            $request = \OAuth2\Request::createFromGlobals();
-            $acceptLanguage = $request->headers('ACCEPT_LANGUAGE');
-        }
-
+        $acceptLanguage = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
         if (!defined('SYS_LANG')) {
             $Translations = new \Translation;
             $translationsTable = $Translations->getTranslationEnvironments();
