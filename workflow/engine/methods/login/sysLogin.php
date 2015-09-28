@@ -155,26 +155,20 @@ if (!defined('WS_IN_LOGIN')) {
     define('WS_IN_LOGIN', 'serverconf');
 }
 $fileLogin = 'login/sysLogin';
+$version = explode('.', trim(file_get_contents(PATH_GULLIVER . 'VERSION')));
+$version = isset($version[0]) ? intval($version[0]) : 0;
 switch (WS_IN_LOGIN) {
     case 'serverconf':
         //Get Server Configuration
         $oServerConf = & serverConf::getSingleton ();
         if ($oServerConf->getProperty ('LOGIN_NO_WS')) {
-            if(SYS_SKIN == 'neoclassic'){
-                $fileLogin = 'login/sysLoginNoWSpm3';
-            }else{
-                $fileLogin = 'login/sysLoginNoWS';
-            }            
+            $fileLogin = $version >= 3 ? 'login/sysLoginNoWSpm3' : 'login/sysLoginNoWS';
         } else {
             $fileLogin = 'login/sysLogin';
         }
         break;
     case 'no':
-        if(SYS_SKIN == 'neoclassic'){
-            $fileLogin = 'login/sysLoginNoWSpm3';
-        }else{
-            $fileLogin = 'login/sysLoginNoWS';
-        }
+        $fileLogin = $version >= 3 ? 'login/sysLoginNoWSpm3' : 'login/sysLoginNoWS';
         break;
     case 'yes':
         $fileLogin = 'login/sysLogin';
@@ -183,6 +177,6 @@ switch (WS_IN_LOGIN) {
         $fileLogin = 'login/sysLogin';
         break;
 }
-
+error_log($fileLogin);
 $G_PUBLISH->AddContent ('xmlform', 'xmlform', $fileLogin, '', $aField, 'sysLogin');
 G::RenderPage ("publish");
