@@ -498,9 +498,10 @@ class Task extends BaseTask
 
         try {
             $con->begin();
-            $this->load($fields["TAS_UID"]);
+            $oldValues = $this->load($fields["TAS_UID"]);
             $this->fromArray($fields, BasePeer::TYPE_FIELDNAME);
-
+            $this->validateAssignType($fields,$oldValues);
+            
             if ($this->validate()) {
                 $taskDefTitlePrevious = null;
 
@@ -787,5 +788,29 @@ class Task extends BaseTask
 
         return $event_uid;
     }
+    
+    public function validateAssignType($newValues,$oldValues)
+    {
+        if(isset($newValues['TAS_ASSIGN_TYPE']) && isset($oldValues['TAS_ASSIGN_TYPE'])) {
+            $newAssigType = $newValues['TAS_ASSIGN_TYPE'];
+            $oldAssigType = $oldValues['TAS_ASSIGN_TYPE'];
+            if($newAssigType == 'SELF_SERVICE'){
+                $newAssigType = isset($newValues['TAS_GROUP_VARIABLE'])?(empty($newValues['TAS_GROUP_VARIABLE'])?'SELF_SERVICE':'SELF_SERVICE_VALUE_BASED'):'SELF_SERVICE';
+            }
+            if($oldAssigType == 'SELF_SERVICE'){
+                $oldAssigType = isset($oldValues['TAS_GROUP_VARIABLE'])?(empty($oldValues['TAS_GROUP_VARIABLE'])?'SELF_SERVICE':'SELF_SERVICE_VALUE_BASED'):'SELF_SERVICE';
+            }
+            if(($oldAssigType == 'SELF_SERVICE' && $newAssigType != 'SELF_SERVICE') || ($oldAssigType == 'SELF_SERVICE_VALUE_BASED' && $newAssigType != 'SELF_SERVICE_VALUE_BASED')) {    
+                $oCriteria = new Criteria();
+                $oCriteria->add(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN");
+                $oCriteria->add(AppDelegationPeer::TAS_UID, $newValues['TAS_UID']);
+                $oApplication = AppDelegationPeer::doSelectOne($oCriteria);
+                if(!empty($oApplication)) {
+                    throw (new Exception(G::LoadTranslation('ID_CURRENT_ASSING_TYPE_WITH_CASES')));        
+                }
+            }
+        }
+    }
 }
 
+            

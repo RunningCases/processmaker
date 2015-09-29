@@ -378,6 +378,7 @@ class WebApplication
         }
 
         Services\OAuth2\Server::setWorkspace(SYS_SYS);
+        Services\OAuth2\Server::loadPostEnvironment();
         $this->rest->addAPIClass('\ProcessMaker\\Services\\OAuth2\\Server', 'oauth2');
 
         return $uri;

@@ -238,7 +238,6 @@ try {
         $heartBeatNWIDate = time();
     }
     if (time() >= $heartBeatNWIDate) {
-        $oServerConf->setWsInfo(SYS_SYS, $oServerConf->getWorkspaceInfo(SYS_SYS));
         $oServerConf->setHeartbeatProperty('HB_NEXT_GWI_DATE', strtotime('+1 day'), 'HEART_BEAT_CONF');
     }
 
@@ -320,7 +319,9 @@ try {
         }
         $aFields['DESCRIPTION'] .= '<br />' . G::LoadTranslation('ID_PLEASE_CHANGE_PASSWORD_POLICY') . '<br /><br /></span>';
         $G_PUBLISH = new Publisher;
-        if(SYS_SKIN == 'neoclassic'){
+        $version = explode('.', trim(file_get_contents(PATH_GULLIVER . 'VERSION')));
+        $version = isset($version[0]) ? intval($version[0]) : 0;
+        if ($version >= 3) {
             $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/changePasswordpm3', '', $aFields, 'changePassword');
         }else{
             $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/changePassword', '', $aFields, 'changePassword');

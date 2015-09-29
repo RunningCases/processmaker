@@ -1189,7 +1189,7 @@ Ext.onReady ( function() {
             scope: this,
             'select': function() {
                 filterStatus = comboStatus.value;
-                storeCases.setBaseParam( 'status', filterStatus);
+                storeCases.setBaseParam( 'filterStatus', filterStatus);
                 storeCases.setBaseParam( 'start', 0);
                 storeCases.setBaseParam( 'limit', pageSize);
                 //storeCases.load();
