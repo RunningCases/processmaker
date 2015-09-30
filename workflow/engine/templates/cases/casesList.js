@@ -292,7 +292,7 @@ function pauseCase(date){
                     buttonAlign: 'center',
 
                     buttons: [{
-                        text: 'Ok',
+                        text: _('ID_OK'),
                         handler: function(){
                             if (Ext.getCmp('noteReason').getValue() != '') {
                                 var noteReasonTxt = _('ID_CASE_PAUSE_LABEL_NOTE') + ' ' + Ext.getCmp('noteReason').getValue();
@@ -333,7 +333,7 @@ function pauseCase(date){
                             });
                         }
                     },{
-                        text: 'Cancel', //COCHATRA
+                        text: _('ID_CANCEL'), //COCHATRA
                         handler: function(){
                             msgPause.close();
                         }
