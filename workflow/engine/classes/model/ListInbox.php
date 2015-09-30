@@ -358,6 +358,8 @@ class ListInbox extends BaseListInbox
         $dateFrom       = isset($filters['dateFrom']) ? $filters['dateFrom'] : "";
         $dateTo         = isset($filters['dateTo']) ? $filters['dateTo'] : "";
         $filterStatus   = isset($filters['filterStatus']) ? $filters['filterStatus'] : "";
+        $newestthan     = isset($filters['newestthan'] ) ? $filters['newestthan'] : '';
+        $oldestthan     = isset($filters['oldestthan'] ) ? $filters['oldestthan'] : '';
 
         if ($filter != '') {
             switch ($filter) {
@@ -412,6 +414,14 @@ class ListInbox extends BaseListInbox
             $dateTo = $dateTo . " 23:59:59";
 
             $criteria->add( ListInboxPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL );
+        }
+
+        if ($newestthan != '') {
+            $criteria->add( $criteria->getNewCriterion( ListInboxPeer::DEL_DELEGATE_DATE, $newestthan, Criteria::GREATER_THAN ));
+        }
+
+        if ($oldestthan != '') {
+            $criteria->add( $criteria->getNewCriterion( ListInboxPeer::DEL_DELEGATE_DATE, $oldestthan, Criteria::LESS_THAN ));
         }
 
         if ($filterStatus != '') {
