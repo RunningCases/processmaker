@@ -3190,19 +3190,15 @@ class Cases
      */
     public function ThrowUnpauseDaemon($today, $cron = 0)
     {
-        $today = ($today == date('Y-m-d')) ? date('Y-m-d') : $today;
         $c = new Criteria('workflow');
         $c->clearSelectColumns();
         $c->add(
-                $c->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, null, Criteria::ISNULL)->
-                        addOr($c->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, 0)
-                        )
+            $c->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, 0, Criteria::EQUAL)->addOr(
+            $c->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, null, Criteria::ISNULL))
         );
         $c->add(
-                $c->getNewCriterion(
-                                AppDelayPeer::APP_DISABLE_ACTION_DATE, $today . ' 23:59:59', Criteria::LESS_EQUAL)->
-                        addAnd($c->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_DATE, null, Criteria::ISNOTNULL)
-                        )
+            $c->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_DATE, (count(explode(" ", $today)) > 1)? $today : $today . " 23:59:59", Criteria::LESS_EQUAL)->addAnd(
+            $c->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_DATE, null, Criteria::ISNOTNULL))
         );
         $d = AppDelayPeer::doSelectRS($c);
         $d->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -4083,10 +4079,10 @@ class Cases
         $oCriteria->add(AppDelayPeer::APP_DEL_INDEX, $iDelegation);
         $oCriteria->add(AppDelayPeer::APP_TYPE, 'PAUSE');
         $oCriteria->add(
-                $oCriteria->getNewCriterion(
-                                AppDelayPeer::APP_DISABLE_ACTION_USER, null, Criteria::ISNULL)->
-                        addOr($oCriteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, 0))
+            $oCriteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, 0, Criteria::EQUAL)->addOr(
+            $oCriteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, null, Criteria::ISNULL))
         );
+
         $oDataset = AppDelayPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
