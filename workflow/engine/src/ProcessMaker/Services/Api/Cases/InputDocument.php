@@ -21,7 +21,14 @@ class InputDocument extends Api
         try {
             $userUid = $this->getUserId();
             $inputDocument = new \ProcessMaker\BusinessModel\Cases\InputDocument();
+
             $response = $inputDocument->getCasesInputDocuments($app_uid, $userUid);
+
+            if (empty($response)) {
+                $response = $inputDocument->getCasesInputDocumentsBySupervisor($app_uid, $userUid);
+            }
+
+            //Return
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
