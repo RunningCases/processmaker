@@ -858,6 +858,7 @@ class Ajax
         $Fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["NEXT_STEP"] = "#";
         $Fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["NEXT_ACTION"] = "return false;";
         G::LoadClass('pmDynaform');
+        $FieldsPmDynaform = $Fields;
         $FieldsPmDynaform["PRO_UID"] = $_SESSION['PROCESS'];
         $FieldsPmDynaform["CURRENT_DYNAFORM"] = $_REQUEST['DYN_UID'];
         $a = new pmDynaform($FieldsPmDynaform);

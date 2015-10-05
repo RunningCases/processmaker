@@ -23,13 +23,10 @@ class pmDynaform
         $this->fields = $fields;
         $this->getDynaform();
         $this->getCredentials();
-        if (isset($this->fields["APP_UID"])) {
-            //current
-            $cases = new \ProcessMaker\BusinessModel\Cases();
-        } else {
-            //history
+        if (!isset($this->fields["APP_UID"])) {
             $this->fields["APP_UID"] = null;
-            if (isset($this->fields["APP_DATA"]["DYN_CONTENT_HISTORY"]))
+        }
+        if (isset($this->fields["APP_DATA"]["DYN_CONTENT_HISTORY"])) {
                 $this->record["DYN_CONTENT"] = $this->fields["APP_DATA"]["DYN_CONTENT_HISTORY"];
         }
     }
