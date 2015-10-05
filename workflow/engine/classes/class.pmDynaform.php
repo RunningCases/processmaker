@@ -453,7 +453,7 @@ class pmDynaform
                 var filePost = \"\";
                 var fieldsRequired = null;
                 var triggerDebug = false;
-
+                var sysLang = \"" . SYS_LANG . "\";
                 $(window).load(function ()
                 {
                     var data = jsondata;
@@ -508,6 +508,7 @@ class pmDynaform
                 "var filePost = null;\n" .
                 "var fieldsRequired = null;\n" .
                 "var triggerDebug = null;\n" .
+                "var sysLang = '" . SYS_LANG . "';\n" .
                 "$(window).load(function () {\n" .
                 "    var data = jsondata;\n" .
                 "    data.items[0].mode = 'disabled';\n" .
@@ -562,6 +563,7 @@ class pmDynaform
                 "var filePost = null;\n" .
                 "var fieldsRequired = null;\n" .
                 "var triggerDebug = " . ($this->fields["TRIGGER_DEBUG"] === 1 ? "true" : "false") . ";\n" .
+                "var sysLang = '" . SYS_LANG . "';\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/cases_Step.js'></script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
@@ -613,6 +615,7 @@ class pmDynaform
             var filePost = \"cases_SaveDataSupervisor?UID=" . $this->fields["CURRENT_DYNAFORM"] . "\";
             var fieldsRequired = null;
             var triggerDebug   = null;
+            var sysLang = \"" . SYS_LANG . "\";
         </script>
 
         <script type=\"text/javascript\" src=\"/jscore/cases/core/pmDynaform.js\"></script>
@@ -651,6 +654,7 @@ class pmDynaform
                 "var filePost = '" . $filename . "';\n" .
                 "var fieldsRequired = " . G::json_encode(array()) . ";\n" .
                 "var triggerDebug = null;\n" .
+                "var sysLang = '" . SYS_LANG . "';\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
                 "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
@@ -687,6 +691,7 @@ class pmDynaform
                 "var filePost = '" . $filename . "';\n" .
                 "var fieldsRequired = " . G::json_encode(array()) . ";\n" .
                 "var triggerDebug = null;\n" .
+                "var sysLang = '" . SYS_LANG . "';\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
                 "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
@@ -707,6 +712,7 @@ class pmDynaform
         $this->jsonr($json);
         $javascrip = "" .
                 "<script type='text/javascript'>" .
+                "var sysLang = '" . SYS_LANG . "';\n" .
                 "var jsonData = " . G::json_encode($json) . ";" .
                 $js .
                 "</script>";
@@ -737,6 +743,7 @@ class pmDynaform
                 "var credentials = " . G::json_encode($this->credentials) . ";\n" .
                 "var fieldsRequired = " . G::json_encode(array()) . ";\n" .
                 "var triggerDebug = null;\n" .
+                "var sysLang = '" . SYS_LANG . "';\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
                 "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
