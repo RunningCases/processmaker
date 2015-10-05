@@ -45,22 +45,28 @@ class Authentication
                 $oUsers = new \Users();
                 $userExist = $oUsers->loadByUserEmailInArray($request_data['mail']);
 
-                if($userExist['USR_STATUS'] == "ACTIVE"){
-                    //User Active! lets create the token and register it in the DB for this user
-                    $oauthServer = new \ProcessMaker\Services\OAuth2\Server;
-                    $server = $oauthServer->getServer();
-                    $config = array(
-                        'allow_implicit' => $server->getConfig('allow_implicit'),
-                        'access_lifetime' => $server->getConfig('access_lifetime')
-                    );
-                    $storage = $server->getStorages();
-                    $accessToken = new \OAuth2\ResponseType\AccessToken($storage['access_token'],$storage['refresh_token'],$config);
-                    $responseToken = $accessToken->createAccessToken($request_data['clientid'], $userExist['USR_UID'],$request_data['scope']);
-                }else {
-                    throw (new \Exception(\G::LoadTranslation( 'ID_ACTIVE_USERS' )));
+                if(!$userExist){
+                    throw (new \Exception(\G::LoadTranslation( 'ID_USER_NOT_FOUND')));
                 }
+                if(count($userExist) > 1){
+                    throw (new \Exception(\G::LoadTranslation( 'ID_EMAIL_MORE_USER')));
+                }
+                if($userExist['0']['USR_STATUS'] != "ACTIVE"){
+                    throw (new \Exception(\G::LoadTranslation('ID_USER_NOT_ACTIVE')));
+                }
+                $userExist = $userExist['0'];
+                $oauthServer = new \ProcessMaker\Services\OAuth2\Server;
+                $server = $oauthServer->getServer();
+                $config = array(
+                    'allow_implicit' => $server->getConfig('allow_implicit'),
+                    'access_lifetime' => $server->getConfig('access_lifetime')
+                );
+                $storage = $server->getStorages();
+                $accessToken = new \OAuth2\ResponseType\AccessToken($storage['access_token'],$storage['refresh_token'],$config);
+                $responseToken = $accessToken->createAccessToken($request_data['clientid'], $userExist['USR_UID'],$request_data['scope']);
+
             } else {
-                throw (new \Exception(\G::LoadTranslation( 'ID_EMAIL_ENTER_VALID' )));
+                throw (new \Exception(\G::LoadTranslation( 'ID_EMAIL_NOT_CORRESPONDS_TOKEN' )));
             }
         }else {
             throw (new \Exception(\G::LoadTranslation( 'ID_PMGMAIL_VALID' )));
