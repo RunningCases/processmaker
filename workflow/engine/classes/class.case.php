@@ -971,6 +971,11 @@ class Cases
     public function updateCase($sAppUid, $Fields = array())
     {
         try {
+            $dynContentHistory = "";
+            if (isset($Fields["APP_DATA"]) && isset($Fields["APP_DATA"]["DYN_CONTENT_HISTORY"])) {
+                $dynContentHistory = $Fields["APP_DATA"]["DYN_CONTENT_HISTORY"];
+                unset($Fields["APP_DATA"]["DYN_CONTENT_HISTORY"]);
+            }
             $oApplication = new Application;
             if (!$oApplication->exists($sAppUid)) {
                 return false;
@@ -1011,6 +1016,7 @@ class Cases
                     $Fields['APP_STATUS'] = (isset($Fields['APP_STATUS'])) ? $Fields['APP_STATUS'] : $FieldsBefore['APP_STATUS'];
                     $appHistory = new AppHistory();
                     $aFieldsHistory = $Fields;
+                    $FieldsDifference['DYN_CONTENT_HISTORY'] = $dynContentHistory;
                     $aFieldsHistory['APP_DATA'] = serialize($FieldsDifference);
                     $appHistory->insertHistory($aFieldsHistory);
                 }
