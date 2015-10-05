@@ -2503,6 +2503,17 @@ class wsBase
 
             $oCase->sendNotifications( $appdel['TAS_UID'], $nextDelegations, $appFields['APP_DATA'], $caseId, $delIndex, $sFromName );
 
+            // Send notifications Mobile - Start
+            try {
+                $oLight = new \ProcessMaker\BusinessModel\Light();
+                $nextIndex = $oLight->getInformationDerivatedCase($appFields['APP_UID'], $delIndex);
+                $notificationMobile = new \ProcessMaker\BusinessModel\Light\NotificationDevice();
+                $notificationMobile->routeCaseNotification($userId, $_SESSION["PROCESS"], $appdel['TAS_UID'], $appFields, $nextDelegations, $nextIndex);
+            } catch (Exception $e) {
+                \G::log(G::loadTranslation( 'ID_NOTIFICATION_ERROR' ) . '|' . $e->getMessage() , PATH_DATA, "mobile.log");
+            }
+            // Send notifications Mobile - End
+
             //Save data - Start
             //$appFields = $oCase->loadCase($caseId);
             //$oCase->updateCase($caseId, $appFields);
