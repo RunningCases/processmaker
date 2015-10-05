@@ -2122,6 +2122,7 @@ CREATE TABLE `PROCESS_VARIABLES`
 	`VAR_NULL` TINYINT(32) default 0,
 	`VAR_DEFAULT` VARCHAR(32) default '',
 	`VAR_ACCEPTED_VALUES` MEDIUMTEXT,
+        `INP_DOC_UID` VARCHAR(32) default '',
 	PRIMARY KEY (`VAR_UID`)
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------

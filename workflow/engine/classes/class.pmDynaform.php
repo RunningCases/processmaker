@@ -27,7 +27,7 @@ class pmDynaform
             $this->fields["APP_UID"] = null;
         }
         if (isset($this->fields["APP_DATA"]["DYN_CONTENT_HISTORY"])) {
-                $this->record["DYN_CONTENT"] = $this->fields["APP_DATA"]["DYN_CONTENT_HISTORY"];
+            $this->record["DYN_CONTENT"] = $this->fields["APP_DATA"]["DYN_CONTENT_HISTORY"];
         }
     }
 
@@ -313,6 +313,19 @@ class pmDynaform
                     $json->data = new stdClass();
                     $json->data->value = $links;
                     $json->data->label = isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : "[]";
+                }
+                if ($key === "type" && ($value === "file")) {
+                    //todo
+                    $oCriteria = new Criteria("workflow");
+                    $oCriteria->addSelectColumn(ProcessVariablesPeer::INP_DOC_UID);
+                    $oCriteria->add(ProcessVariablesPeer::VAR_NAME, $json->variable);
+                    $rs = ProcessVariablesPeer::doSelectRS($oCriteria);
+                    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    if (isset($row["INP_DOC_UID"])) {
+                        $json->inputDocuments = array($row["INP_DOC_UID"]);
+                    }
                 }
                 //synchronize var_label
                 if ($key === "type" && ($value === "dropdown" || $value === "suggest")) {
@@ -799,6 +812,64 @@ class pmDynaform
                         $json->sql = $newVariable["VAR_SQL"];
                     if (isset($json->options) && G::json_encode($json->options) === $oldVariable["VAR_ACCEPTED_VALUES"]) {
                         $json->options = G::json_decode($newVariable["VAR_ACCEPTED_VALUES"]);
+                    }
+                }
+            }
+        }
+    }
+
+    public function synchronizeInputDocument($processUid, $inputDocument)
+    {
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(DynaformPeer::DYN_UID);
+        $criteria->addSelectColumn(DynaformPeer::DYN_CONTENT);
+        $criteria->add(DynaformPeer::PRO_UID, $processUid, Criteria::EQUAL);
+        $rsCriteria = DynaformPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        while ($rsCriteria->next()) {
+            $aRow = $rsCriteria->getRow();
+            $json = G::json_decode($aRow['DYN_CONTENT']);
+            $this->jsonsid($json, $inputDocument);
+            $json2 = G::json_encode($json);
+            //update dynaform
+            if ($json2 !== $aRow['DYN_CONTENT']) {
+                $con = Propel::getConnection(DynaformPeer::DATABASE_NAME);
+                $con->begin();
+                $oPro = DynaformPeer::retrieveByPk($aRow["DYN_UID"]);
+                $oPro->setDynContent($json2);
+                $oPro->save();
+                $con->commit();
+            }
+        }
+    }
+
+    private function jsonsid(&$json, $inputDocument)
+    {
+        foreach ($json as $key => $value) {
+            $sw1 = is_array($value);
+            $sw2 = is_object($value);
+            if ($sw1 || $sw2) {
+                $this->jsonsid($value, $inputDocument);
+            }
+            if (!$sw1 && !$sw2) {
+                if ($key === "type" && $json->type === "file" && $json->variable !== "") {
+                    $a = new Criteria("workflow");
+                    $a->addSelectColumn(ProcessVariablesPeer::INP_DOC_UID);
+                    $a->add(ProcessVariablesPeer::VAR_NAME, $json->variable, Criteria::EQUAL);
+                    $ds = DynaformPeer::doSelectRS($a);
+                    $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $ds->next();
+                    $row = $ds->getRow();
+                    if (isset($row) && $row["INP_DOC_UID"] === $inputDocument["INP_DOC_UID"]) {
+                        if (isset($json->size)) {
+                            $json->size = $inputDocument["INP_DOC_MAX_FILESIZE"];
+                        }
+                        if (isset($json->sizeUnity)) {
+                            $json->sizeUnity = $inputDocument["INP_DOC_MAX_FILESIZE_UNIT"];
+                        }
+                        if (isset($json->extensions)) {
+                            $json->extensions = $inputDocument["INP_DOC_TYPE_FILE"];
+                        }
                     }
                 }
             }
