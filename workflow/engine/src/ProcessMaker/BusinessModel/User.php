@@ -4,7 +4,6 @@ use \G;
 
 class User
 {
-    //--- ---
     private $arrayFieldDefinition = array(
         "USR_UID"              => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),                                               "fieldNameAux" => "usrUid"),
         "USR_FIRSTNAME"        => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                                               "fieldNameAux" => "usrFirstname"),
@@ -29,7 +28,6 @@ class User
         "USR_BIRTHDAY"         => array("type" => "date",   "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrBirthday"),
         "USR_FAX"              => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrFax"),
         "USR_CELLULAR"         => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrCellular"),
-
         /*----------------------------------********---------------------------------*/
         "USR_COST_BY_HOUR"     => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrCostByHour"),
         "USR_UNIT_COST"        => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                                               "fieldNameAux" => "usrUnitCost"),
@@ -348,7 +346,7 @@ class User
             return array(
                 $this->getFieldNameByFormatFieldName("USR_UID")                => $record["USR_UID"],
                 $this->getFieldNameByFormatFieldName("USR_USERNAME")           => $record["USR_USERNAME"],
-                $this->getFieldNameByFormatFieldName("USR_PASSWORD")           => $record["USR_PASSWORD"],
+                //$this->getFieldNameByFormatFieldName("USR_PASSWORD")           => $record["USR_PASSWORD"],
                 $this->getFieldNameByFormatFieldName("USR_FIRSTNAME")          => $record["USR_FIRSTNAME"],
                 $this->getFieldNameByFormatFieldName("USR_LASTNAME")           => $record["USR_LASTNAME"],
                 $this->getFieldNameByFormatFieldName("USR_EMAIL")              => $record["USR_EMAIL"],
@@ -759,7 +757,6 @@ class User
             throw $e;
         }
     }
-    //--- /---
 
     /**
      * Create User Uid
@@ -777,7 +774,7 @@ class User
             if ($pluginRegistry->existsTrigger(PM_BEFORE_CREATE_USER)) {
                 try {
                     $pluginRegistry->executeTriggers(PM_BEFORE_CREATE_USER, null);
-                } catch(Exception $error) {
+                } catch (Exception $error) {
                     throw new Exception($error->getMessage());
                 }
             }
@@ -1031,51 +1028,130 @@ class User
     /**
      * Get all Users
      *
-     * @param string $filter
-     * @param int    $start
-     * @param int    $limit
+     * @param array  $arrayFilterData Data of the filters
+     * @param string $sortField       Field name to sort
+     * @param string $sortDir         Direction of sorting (ASC, DESC)
+     * @param int    $start           Start
+     * @param int    $limit           Limit
      *
      * return array Return an array with all Users
      */
-    public function getUsers($filter, $start, $limit)
+    public function getUsers($arrayFilterData = null, $sortField = null, $sortDir = null, $start = null, $limit = null)
     {
         try {
-            $aUserInfo = array();
-            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
+            $arrayUser = array();
 
-            $oCriteria = $this->getUserCriteria();
+            $numRecTotal = 0;
 
-            if ($filter != '') {
-                $oCriteria->add( $oCriteria->getNewCriterion( \UsersPeer::USR_USERNAME, "%$filter%", \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_FIRSTNAME, "%$filter%", \Criteria::LIKE ) )->addOr( $oCriteria->getNewCriterion( \UsersPeer::USR_LASTNAME, "%$filter%", \Criteria::LIKE ) ) );
+            //Verify data
+            $process = new \ProcessMaker\BusinessModel\Process();
+
+            $process->throwExceptionIfDataNotMetPagerVarDefinition(array("start" => $start, "limit" => $limit), array("start" => "start", "limit" => "limit"));
+
+            //Set variables
+            $filterName = "filter";
+
+            if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"])) {
+                $arrayAux = array(
+                    ""      => "filter",
+                    "LEFT"  => "lfilter",
+                    "RIGHT" => "rfilter"
+                );
+
+                $filterName = $arrayAux[(isset($arrayFilterData["filterOption"]))? $arrayFilterData["filterOption"] : ""];
             }
-            if ($start) {
-                if ($start < 0) {
-                    throw new \Exception(\G::LoadTranslation("ID_INVALID_START"));
+
+            //Get data
+            if (!is_null($limit) && $limit . "" == "0") {
+                //Return
+                return array(
+                    "total"     => $numRecTotal,
+                    "start"     => (int)((!is_null($start))? $start : 0),
+                    "limit"     => (int)((!is_null($limit))? $limit : 0),
+                    $filterName => (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"]))? $arrayFilterData["filter"] : "",
+                    "data"      => $arrayUser
+                );
+            }
+
+            //Query
+            $criteria = $this->getUserCriteria();
+
+            if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"]) && trim($arrayFilterData["filter"]) != "") {
+                $arraySearch = array(
+                    ""      => "%" . $arrayFilterData["filter"] . "%",
+                    "LEFT"  => $arrayFilterData["filter"] . "%",
+                    "RIGHT" => "%" . $arrayFilterData["filter"]
+                );
+
+                $search = $arraySearch[(isset($arrayFilterData["filterOption"]))? $arrayFilterData["filterOption"] : ""];
+
+                $criteria->add(
+                    $criteria->getNewCriterion(\UsersPeer::USR_USERNAME,  $search, \Criteria::LIKE)->addOr(
+                    $criteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME, $search, \Criteria::LIKE))->addOr(
+                    $criteria->getNewCriterion(\UsersPeer::USR_LASTNAME,  $search, \Criteria::LIKE))
+                );
+            }
+
+            $criteria->add(\UsersPeer::USR_STATUS, "ACTIVE", \Criteria::EQUAL);
+
+            //Number records total
+            $criteriaCount = clone $criteria;
+
+            $criteriaCount->clearSelectColumns();
+            $criteriaCount->addSelectColumn("COUNT(" . \UsersPeer::USR_UID . ") AS NUM_REC");
+
+            $rsCriteriaCount = \UsersPeer::doSelectRS($criteriaCount);
+            $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            $result = $rsCriteriaCount->next();
+            $row = $rsCriteriaCount->getRow();
+
+            $numRecTotal = (int)($row["NUM_REC"]);
+
+            //Query
+            if (!is_null($sortField) && trim($sortField) != "") {
+                $sortField = strtoupper($sortField);
+
+                if (in_array(\UsersPeer::TABLE_NAME . "." . $sortField, $criteria->getSelectColumns())) {
+                    $sortField = \UsersPeer::TABLE_NAME . "." . $sortField;
                 } else {
-                    $oCriteria->setOffset($start);
+                    $sortField = \UsersPeer::USR_FIRSTNAME;
                 }
+            } else {
+                $sortField = \UsersPeer::USR_FIRSTNAME;
             }
-            if ($limit != '') {
-                if ($limit < 0) {
-                    throw new \Exception(\G::LoadTranslation("ID_INVALID_LIMIT"));
-                } else {
-                    if ($limit == 0) {
-                        return $aUserInfo;
-                    } else {
-                        $oCriteria->setLimit($limit);
-                    }
-                }
+
+            if (!is_null($sortDir) && trim($sortDir) != "" && strtoupper($sortDir) == "DESC") {
+                $criteria->addDescendingOrderByColumn($sortField);
+            } else {
+                $criteria->addAscendingOrderByColumn($sortField);
             }
-            $oCriteria->add(\UsersPeer::USR_STATUS, "ACTIVE", \Criteria::EQUAL);
-            $oDataset = \UsersPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            while ($oDataset->next()) {
-                $aRow1 = $oDataset->getRow();
-                $aRow1 = array_change_key_case($aRow1, CASE_LOWER);
-                $aUserInfo[] = $aRow1;
+
+            if (!is_null($start)) {
+                $criteria->setOffset((int)($start));
             }
+
+            if (!is_null($limit)) {
+                $criteria->setLimit((int)($limit));
+            }
+
+            $rsCriteria = \UsersPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayUser[] = $this->getUserDataFromRecord($row);
+            }
+
             //Return
-            return $aUserInfo;
+            return array(
+                "total"     => $numRecTotal,
+                "start"     => (int)((!is_null($start))? $start : 0),
+                "limit"     => (int)((!is_null($limit))? $limit : 0),
+                $filterName => (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"]))? $arrayFilterData["filter"] : "",
+                "data"      => $arrayUser
+            );
         } catch (\Exception $e) {
             throw $e;
         }
@@ -1146,3 +1222,4 @@ class User
         }
     }
 }
+
