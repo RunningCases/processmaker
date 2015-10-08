@@ -108,6 +108,6 @@ if(!isset($_SESSION['APPLICATION']) || !isset($_SESSION['TASK']) || !isset($_SES
     $_SESSION['TASK'] = $case['TAS_UID'];
     $_SESSION['INDEX'] = $case['DEL_INDEX'];
 } 
-
+$_SESSION['TASK'] = $_GET['action'] == "unassigned" ? -1 : $_SESSION['TASK'];
 G::RenderPage( 'publish', 'extJs' );
 
