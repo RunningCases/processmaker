@@ -209,7 +209,7 @@ class Ajax
                 break;
         }
 
-        if ($_SESSION['TASK'] != '-1') {
+        if ($_SESSION["TASK"] != "" && $_SESSION["TASK"] != "-1") {
             $oTask = new Task();
             $aTask = $oTask->load($_SESSION['TASK']);
             if ($aTask['TAS_TYPE'] == 'ADHOC') {
