@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker 3.0\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-10-05 16:49:26\n"
+"PO-Revision-Date: 2015-10-08 18:22:42\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -26394,6 +26394,18 @@ msgstr "Supported Controls: file."
 #: LABEL/ID_MAFE_e8308c9bdecef89676a80116e65d9210
 msgid "- Select an input document -"
 msgstr "- Select an input document -"
+
+# TRANSLATION
+# LABEL/CANT_CREATE_FOLDER_A_FOLDER_WITH_SAME_NAME_ALREADY_EXIST
+#: LABEL/CANT_CREATE_FOLDER_A_FOLDER_WITH_SAME_NAME_ALREADY_EXIST
+msgid "Can't create folder <br/> A folder with same name already exist.<br/>"
+msgstr "Can't create folder <br/> A folder with same name already exist.<br/>"
+
+# TRANSLATION
+# LABEL/CANT_CREATE_FOLDER_A
+#: LABEL/CANT_CREATE_FOLDER_A
+msgid "Can't create folder A"
+msgstr "Can't create folder A"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
