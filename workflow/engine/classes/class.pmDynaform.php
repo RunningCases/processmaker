@@ -554,7 +554,21 @@ class pmDynaform
         if (!isset($this->fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["PREVIOUS_STEP"])) {
             $this->fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["PREVIOUS_STEP"] = "";
         }
-        $title = "<table width='100%' align='center'>\n" .
+        $msg = "";
+        if (isset($_SESSION['G_MESSAGE_TYPE']) && isset($_SESSION['G_MESSAGE'])) {
+            $color = "green";
+            if ($_SESSION['G_MESSAGE_TYPE'] === "ERROR")
+                $color = "red";
+            if ($_SESSION['G_MESSAGE_TYPE'] === "WARNING")
+                $color = "#C3C380";
+            if ($_SESSION['G_MESSAGE_TYPE'] === "INFO")
+                $color = "green";
+            $msg = "<div style='background-color:" . $color . ";color: white;padding: 1px 2px 1px 5px;' class='userGroupTitle'>" . $_SESSION['G_MESSAGE_TYPE'] . ": " . $_SESSION['G_MESSAGE'] . "</div>";
+            unset($_SESSION['G_MESSAGE_TYPE']);            
+            unset($_SESSION['G_MESSAGE']);
+        }
+        $title = $msg .
+                "<table width='100%' align='center'>\n" .
                 "    <tr class='userGroupTitle'>\n" .
                 "        <td width='100%' align='center'>" . G::LoadTranslation('ID_CASE') . " #: " . $this->fields["APP_NUMBER"] . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . G::LoadTranslation('ID_TITLE') . ": " . $this->fields["APP_TITLE"] . "</td>\n" .
                 "    </tr>\n" .
