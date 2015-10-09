@@ -13,6 +13,7 @@ class pmDynaform
     public static $instance = null;
     public $fields = null;
     public $record = null;
+    public $records = null;
     public $credentials = null;
     public $lang = SYS_LANG;
     public $langs = null;
@@ -22,6 +23,7 @@ class pmDynaform
     {
         $this->fields = $fields;
         $this->getDynaform();
+        $this->getDynaforms();
         $this->getCredentials();
         if (!isset($this->fields["APP_UID"])) {
             $this->fields["APP_UID"] = null;
@@ -61,6 +63,32 @@ class pmDynaform
         $this->record = isset($row) ? $row : null;
         $this->langs = ($this->record["DYN_LABEL"] !== "" && $this->record["DYN_LABEL"] !== null) ? G::json_decode($this->record["DYN_LABEL"]) : null;
         return $this->record;
+    }
+
+    public function getDynaforms()
+    {
+        if ($this->record === null) {
+            return;
+        }
+        if ($this->records != null) {
+            return $this->records;
+        }
+        $a = new Criteria("workflow");
+        $a->addSelectColumn(DynaformPeer::DYN_UPDATE_DATE);
+        $a->addSelectColumn(DynaformPeer::DYN_VERSION);
+        $a->addSelectColumn(DynaformPeer::DYN_LABEL);
+        $a->addSelectColumn(DynaformPeer::DYN_CONTENT);
+        $a->addSelectColumn(DynaformPeer::PRO_UID);
+        $a->addSelectColumn(DynaformPeer::DYN_UID);
+        $a->add(DynaformPeer::PRO_UID, $this->record["PRO_UID"], Criteria::EQUAL);
+        $a->add(DynaformPeer::DYN_UID, $this->record["DYN_UID"], Criteria::ALT_NOT_EQUAL);
+        $ds = DynaformPeer::doSelectRS($a);
+        $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $this->records = array();
+        while ($ds->next()) {
+            array_push($this->records, $ds->getRow());
+        }
+        return $this->records;
     }
 
     public function getCredentials()
@@ -423,6 +451,18 @@ class pmDynaform
                 //EDIT,VIEW
                 if (isset($this->fields["STEP_MODE"]) && $this->fields["STEP_MODE"] === "VIEW" && isset($json->mode)) {
                     $json->mode = "view";
+                }
+                if ($key === "type" && ($value === "form")) {
+                    foreach ($this->records as $ri) {
+                        if ($json->id === $ri["DYN_UID"] && !isset($json->jsonUpdate)) {
+                            $jsonUpdate = json_decode($ri["DYN_CONTENT"]);
+                            $jsonUpdate = $jsonUpdate->items[0];
+                            $jsonUpdate->colSpan = $json->colSpan;
+                            $jsonUpdate->jsonUpdate = true;
+                            $json = $jsonUpdate;
+                            $this->jsonr($json);
+                        }
+                    }
                 }
             }
         }
