@@ -2952,5 +2952,28 @@ class Bootstrap
     {
         return md5($string);
     }
+
+    /**
+     * Set Language
+     */
+    public static function setLanguage()
+    {
+        $acceptLanguage = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+        if (!defined('SYS_LANG')) {
+            $Translations = new \Translation;
+            $translationsTable = $Translations->getTranslationEnvironments();
+            $inLang = false;
+            foreach ($translationsTable as $locale) {
+                if ($locale['LOCALE'] == $acceptLanguage){
+                    $inLang = true;
+                    break;
+                }
+            }
+            $lang = $inLang?$acceptLanguage:'en';
+            define("SYS_LANG", $lang);
+        }
+
+    }
+
 }
 
