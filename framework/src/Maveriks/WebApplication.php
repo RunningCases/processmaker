@@ -378,7 +378,6 @@ class WebApplication
         }
 
         Services\OAuth2\Server::setWorkspace(SYS_SYS);
-        Services\OAuth2\Server::loadPostEnvironment();
         $this->rest->addAPIClass('\ProcessMaker\\Services\\OAuth2\\Server', 'oauth2');
 
         return $uri;
@@ -494,6 +493,8 @@ class WebApplication
         define("PATH_CUSTOM_SKINS", PATH_DATA . "skins" . PATH_SEP );
         define("PATH_TEMPORAL", PATH_C . "dynEditor/");
         define("PATH_DB", PATH_DATA . "sites" . PATH_SEP);
+
+        \Bootstrap::setLanguage();
 
         \Bootstrap::LoadTranslationObject((defined("SYS_LANG"))? SYS_LANG : "en");
 
