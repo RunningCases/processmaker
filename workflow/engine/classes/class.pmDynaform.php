@@ -452,7 +452,7 @@ class pmDynaform
                 if (isset($this->fields["STEP_MODE"]) && $this->fields["STEP_MODE"] === "VIEW" && isset($json->mode)) {
                     $json->mode = "view";
                 }
-                if ($key === "type" && ($value === "form")) {
+                if ($key === "type" && ($value === "form") && $this->records != null) {
                     foreach ($this->records as $ri) {
                         if ($json->id === $ri["DYN_UID"] && !isset($json->jsonUpdate)) {
                             $jsonUpdate = json_decode($ri["DYN_CONTENT"]);
