@@ -13,6 +13,7 @@ class pmDynaform
     public static $instance = null;
     public $fields = null;
     public $record = null;
+    public $records = null;
     public $credentials = null;
     public $lang = SYS_LANG;
     public $langs = null;
@@ -22,6 +23,7 @@ class pmDynaform
     {
         $this->fields = $fields;
         $this->getDynaform();
+        $this->getDynaforms();
         $this->getCredentials();
         if (!isset($this->fields["APP_UID"])) {
             $this->fields["APP_UID"] = null;
@@ -61,6 +63,32 @@ class pmDynaform
         $this->record = isset($row) ? $row : null;
         $this->langs = ($this->record["DYN_LABEL"] !== "" && $this->record["DYN_LABEL"] !== null) ? G::json_decode($this->record["DYN_LABEL"]) : null;
         return $this->record;
+    }
+
+    public function getDynaforms()
+    {
+        if ($this->record === null) {
+            return;
+        }
+        if ($this->records != null) {
+            return $this->records;
+        }
+        $a = new Criteria("workflow");
+        $a->addSelectColumn(DynaformPeer::DYN_UPDATE_DATE);
+        $a->addSelectColumn(DynaformPeer::DYN_VERSION);
+        $a->addSelectColumn(DynaformPeer::DYN_LABEL);
+        $a->addSelectColumn(DynaformPeer::DYN_CONTENT);
+        $a->addSelectColumn(DynaformPeer::PRO_UID);
+        $a->addSelectColumn(DynaformPeer::DYN_UID);
+        $a->add(DynaformPeer::PRO_UID, $this->record["PRO_UID"], Criteria::EQUAL);
+        $a->add(DynaformPeer::DYN_UID, $this->record["DYN_UID"], Criteria::ALT_NOT_EQUAL);
+        $ds = DynaformPeer::doSelectRS($a);
+        $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $this->records = array();
+        while ($ds->next()) {
+            array_push($this->records, $ds->getRow());
+        }
+        return $this->records;
     }
 
     public function getCredentials()
@@ -424,6 +452,18 @@ class pmDynaform
                 if (isset($this->fields["STEP_MODE"]) && $this->fields["STEP_MODE"] === "VIEW" && isset($json->mode)) {
                     $json->mode = "view";
                 }
+                if ($key === "type" && ($value === "form")) {
+                    foreach ($this->records as $ri) {
+                        if ($json->id === $ri["DYN_UID"] && !isset($json->jsonUpdate)) {
+                            $jsonUpdate = json_decode($ri["DYN_CONTENT"]);
+                            $jsonUpdate = $jsonUpdate->items[0];
+                            $jsonUpdate->colSpan = $json->colSpan;
+                            $jsonUpdate->jsonUpdate = true;
+                            $json = $jsonUpdate;
+                            $this->jsonr($json);
+                        }
+                    }
+                }
             }
         }
     }
@@ -554,7 +594,21 @@ class pmDynaform
         if (!isset($this->fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["PREVIOUS_STEP"])) {
             $this->fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["PREVIOUS_STEP"] = "";
         }
-        $title = "<table width='100%' align='center'>\n" .
+        $msg = "";
+        if (isset($_SESSION['G_MESSAGE_TYPE']) && isset($_SESSION['G_MESSAGE'])) {
+            $color = "green";
+            if ($_SESSION['G_MESSAGE_TYPE'] === "ERROR")
+                $color = "red";
+            if ($_SESSION['G_MESSAGE_TYPE'] === "WARNING")
+                $color = "#C3C380";
+            if ($_SESSION['G_MESSAGE_TYPE'] === "INFO")
+                $color = "green";
+            $msg = "<div style='background-color:" . $color . ";color: white;padding: 1px 2px 1px 5px;' class='userGroupTitle'>" . $_SESSION['G_MESSAGE_TYPE'] . ": " . $_SESSION['G_MESSAGE'] . "</div>";
+            unset($_SESSION['G_MESSAGE_TYPE']);            
+            unset($_SESSION['G_MESSAGE']);
+        }
+        $title = $msg .
+                "<table width='100%' align='center'>\n" .
                 "    <tr class='userGroupTitle'>\n" .
                 "        <td width='100%' align='center'>" . G::LoadTranslation('ID_CASE') . " #: " . $this->fields["APP_NUMBER"] . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . G::LoadTranslation('ID_TITLE') . ": " . $this->fields["APP_TITLE"] . "</td>\n" .
                 "    </tr>\n" .

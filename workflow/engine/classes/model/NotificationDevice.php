@@ -44,6 +44,34 @@ class NotificationDevice extends BaseNotificationDevice {
         return $result;
     }
 
+    public function createOrUpdate(array $arrayData)
+    {
+        $cnn = Propel::getConnection(NotificationDevicePeer::DATABASE_NAME);
+        try {
+            if (!isset($arrayData['DEV_UID'])) {
+                $arrayData['DEV_UID'] = G::generateUniqueID();
+                $arrayData['DEV_CREATE'] = date('Y-m-d H:i:s');
+                $arrayData['DEV_UPDATE'] = date('Y-m-d H:i:s');
+                $mNotification = new NotificationDevice();
+            } else {
+                $arrayData['DEV_UPDATE'] = date('Y-m-d H:i:s');
+                $mNotification = NotificationDevicePeer::retrieveByPK($arrayData['DEV_UID'],$arrayData['USR_UID']);
+            }
+            $mNotification->fromArray($arrayData, BasePeer::TYPE_FIELDNAME);
+            if ($mNotification->validate()) {
+                $cnn->begin();
+                $result = $mNotification->save();
+                $cnn->commit();
+            } else {
+                throw new Exception(G::LoadTranslation("ID_RECORD_CANNOT_BE_CREATED"));
+            }
+        } catch (Exception $e) {
+            $cnn->rollback();
+            throw $e;
+        }
+        return isset($arrayData['DEV_UID']) ? $arrayData['DEV_UID'] : 0;
+    }
+
     public function update(array $arrayData)
     {
 

@@ -33,12 +33,25 @@ class NotificationDevice
                 G::auditLog("Create", "Device Save: Device ID (".$oNoti->getDevUid().") ");
             }
         } else {
-            $response["devUid"] = $devices[0]['DEV_UID'];
-            $response["message"] = G:: LoadTranslation("ID_RECORD_EXISTS_IN_TABLE",array($devices[0]['DEV_UID'], "NOTIFICATION_DEVICE"));
-            //throw new \Exception(G::LoadTranslation("ID_RECORD_CANNOT_BE_CREATED"));
+            if($oNoti->remove($devices[0]['DEV_UID'],$devices[0]['USR_UID'])){
+                $arrayData['USR_UID'] = $use_uid;
+                $arrayData['DEV_REG_ID'] = $devices[0]['DEV_REG_ID'];
+                $arrayData['SYS_LANG'] = $devices[0]['SYS_LANG'];
+                $arrayData['DEV_TYPE'] = $devices[0]['DEV_TYPE'];
+                $arrayData['DEV_STATUS'] = 'active';
+
+                if($devUid = $oNoti->createOrUpdate($arrayData)){
+                    $response["devUid"] = $devUid;
+                    $response["message"] = G:: LoadTranslation("ID_RECORD_SAVED_SUCCESFULLY");
+                    G::auditLog("Create", "Device Save: Device ID (".$oNoti->getDevUid().") ");
+                } else {
+                    throw new \Exception(G::LoadTranslation("ID_RECORD_CANNOT_BE_CREATED"));
+                }
+            } else {
+                throw new \Exception(G::LoadTranslation("ID_RECORD_DOES_NOT_EXIST"));
+            }
         }
         return $response;
-
     }
 
     /**
@@ -69,7 +82,7 @@ class NotificationDevice
         $response = array();
         if($oNoti->update($arrayData)){
             $response["message"] = G:: LoadTranslation("ID_RECORD_SAVED_SUCCESFULLY");
-            G::auditLog("Create", "Device Save: Device ID (".$oNoti->getDevUid().") ");
+            G::auditLog("Update", "Device Save: Device ID (".$oNoti->getDevUid().") ");
         }
         return $response;
 

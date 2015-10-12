@@ -52,6 +52,7 @@ try {
             $tar = new Archive_Tar( $path . $filename );
             $sFileName = substr( $filename, 0, strrpos( $filename, '.' ) );
             $sClassName = substr( $filename, 0, strpos( $filename, '-' ) );
+            $sClassName = !empty($sClassName) ? $sClassName : $sFileName;
 
             $files = $tar->listContent();
             $licenseName = '';
@@ -125,6 +126,7 @@ try {
             $tar = new Archive_Tar( $path . $filename );
             $sFileName = substr( $filename, 0, strrpos( $filename, '.' ) );
             $sClassName = substr( $filename, 0, strpos( $filename, '-' ) );
+            $sClassName = !empty($sClassName) ? $sClassName : $sFileName;
 
             $files = $tar->listContent();
             $licenseName = '';
@@ -199,6 +201,7 @@ try {
     $tar = new Archive_Tar( $path . $filename );
     $sFileName = substr( $filename, 0, strrpos( $filename, '.' ) );
     $sClassName = substr( $filename, 0, strpos( $filename, '-' ) );
+    $sClassName = !empty($sClassName) ? $sClassName : $sFileName;
 
     $aFiles = $tar->listContent();
     $bMainFile = false;
