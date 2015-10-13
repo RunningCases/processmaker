@@ -375,7 +375,9 @@ class pmDynaform
                     if (isset($this->fields["APP_DATA"]["__VAR_CHANGED__"]) && in_array($json->name, explode(",", $this->fields["APP_DATA"]["__VAR_CHANGED__"]))) {
                         $dataValue = array();
                         $dataLabel = array();
-                        $dv = $this->fields["APP_DATA"][$json->name];
+                        $dv = array();
+                        if (isset($this->fields["APP_DATA"][$json->name]))
+                            $dv = $this->fields["APP_DATA"][$json->name];
                         foreach ($dv as $idv) {
                             foreach ($json->optionsSql as $os) {
                                 if ($os->value === $idv) {
@@ -604,7 +606,7 @@ class pmDynaform
             if ($_SESSION['G_MESSAGE_TYPE'] === "INFO")
                 $color = "green";
             $msg = "<div style='background-color:" . $color . ";color: white;padding: 1px 2px 1px 5px;' class='userGroupTitle'>" . $_SESSION['G_MESSAGE_TYPE'] . ": " . $_SESSION['G_MESSAGE'] . "</div>";
-            unset($_SESSION['G_MESSAGE_TYPE']);            
+            unset($_SESSION['G_MESSAGE_TYPE']);
             unset($_SESSION['G_MESSAGE']);
         }
         $title = $msg .
