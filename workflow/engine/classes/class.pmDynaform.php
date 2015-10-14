@@ -251,7 +251,9 @@ class pmDynaform
                     }
                     if (isset($this->fields["APP_DATA"][$json->name])) {
                         $json->data->value = $this->fields["APP_DATA"][$json->name];
-                        $json->data->label = $this->fields["APP_DATA"][$json->name . "_label"];
+                        if (isset($this->fields["APP_DATA"][$json->name . "_label"])) {
+                            $json->data->label = $this->fields["APP_DATA"][$json->name . "_label"];
+                        }
                     }
                 }
                 if ($key === "type" && ($value === "radio")) {
