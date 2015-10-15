@@ -81,7 +81,7 @@ class pmDynaform
         $a->addSelectColumn(DynaformPeer::PRO_UID);
         $a->addSelectColumn(DynaformPeer::DYN_UID);
         $a->add(DynaformPeer::PRO_UID, $this->record["PRO_UID"], Criteria::EQUAL);
-        $a->add(DynaformPeer::DYN_UID, $this->record["DYN_UID"], Criteria::ALT_NOT_EQUAL);
+        $a->add(DynaformPeer::DYN_UID, $this->record["DYN_UID"], Criteria::NOT_EQUAL);
         $ds = DynaformPeer::doSelectRS($a);
         $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $this->records = array();
@@ -251,7 +251,9 @@ class pmDynaform
                     }
                     if (isset($this->fields["APP_DATA"][$json->name])) {
                         $json->data->value = $this->fields["APP_DATA"][$json->name];
-                        $json->data->label = $this->fields["APP_DATA"][$json->name . "_label"];
+                        if (isset($this->fields["APP_DATA"][$json->name . "_label"])) {
+                            $json->data->label = $this->fields["APP_DATA"][$json->name . "_label"];
+                        }
                     }
                 }
                 if ($key === "type" && ($value === "radio")) {
@@ -375,7 +377,9 @@ class pmDynaform
                     if (isset($this->fields["APP_DATA"]["__VAR_CHANGED__"]) && in_array($json->name, explode(",", $this->fields["APP_DATA"]["__VAR_CHANGED__"]))) {
                         $dataValue = array();
                         $dataLabel = array();
-                        $dv = $this->fields["APP_DATA"][$json->name];
+                        $dv = array();
+                        if (isset($this->fields["APP_DATA"][$json->name]))
+                            $dv = $this->fields["APP_DATA"][$json->name];
                         foreach ($dv as $idv) {
                             foreach ($json->optionsSql as $os) {
                                 if ($os->value === $idv) {
@@ -452,7 +456,7 @@ class pmDynaform
                 if (isset($this->fields["STEP_MODE"]) && $this->fields["STEP_MODE"] === "VIEW" && isset($json->mode)) {
                     $json->mode = "view";
                 }
-                if ($key === "type" && ($value === "form")) {
+                if ($key === "type" && ($value === "form") && $this->records != null) {
                     foreach ($this->records as $ri) {
                         if ($json->id === $ri["DYN_UID"] && !isset($json->jsonUpdate)) {
                             $jsonUpdate = json_decode($ri["DYN_CONTENT"]);
@@ -604,7 +608,7 @@ class pmDynaform
             if ($_SESSION['G_MESSAGE_TYPE'] === "INFO")
                 $color = "green";
             $msg = "<div style='background-color:" . $color . ";color: white;padding: 1px 2px 1px 5px;' class='userGroupTitle'>" . $_SESSION['G_MESSAGE_TYPE'] . ": " . $_SESSION['G_MESSAGE'] . "</div>";
-            unset($_SESSION['G_MESSAGE_TYPE']);            
+            unset($_SESSION['G_MESSAGE_TYPE']);
             unset($_SESSION['G_MESSAGE']);
         }
         $title = $msg .

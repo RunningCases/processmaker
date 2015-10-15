@@ -2958,7 +2958,7 @@ class Bootstrap
      */
     public static function setLanguage()
     {
-        $acceptLanguage = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+        $acceptLanguage = isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])?$_SERVER['HTTP_ACCEPT_LANGUAGE']:'en';
         if (!defined('SYS_LANG')) {
             $Translations = new \Translation;
             $translationsTable = $Translations->getTranslationEnvironments();
