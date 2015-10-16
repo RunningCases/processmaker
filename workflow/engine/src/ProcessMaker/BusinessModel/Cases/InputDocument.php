@@ -32,7 +32,9 @@ class InputDocument
             $flagSupervisor = 0;
 
             $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
-            $arraySupervisor = $supervisor->getProcessSupervisors($application->getProUid());
+            $processSupervisor= $supervisor->getProcessSupervisors($application->getProUid(), "ASSIGNED");
+
+            $arraySupervisor = $processSupervisor["data"];
 
             foreach ($arraySupervisor as $value) {
                 if($value["usr_uid"] == $userUid) {
