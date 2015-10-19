@@ -1059,12 +1059,14 @@ class Task
                     $result = $rsCriteria2->next();
                     $row2 = $rsCriteria2->getRow();
 
+                    $row["GRP_TITLE"] = $row["GRP_TITLE"] . " (" . $row2["NUM_MEM"] . " " . \G::LoadTranslation(((int)($row2["NUM_MEM"]) == 1)? "ID_USER" : "ID_USERS") . ")";
+
                     $arrayAssignee[] = $this->getTaskAssigneeDataFromRecord(
                         array(
                             $row["GRP_UID"],
-                            $row["GRP_TITLE"] . " (" . $row2["NUM_MEM"] . " " . \G::LoadTranslation(((int)($row2["NUM_MEM"]) == 1)? "ID_USER" : "ID_USERS") . ")",
+                            $row["GRP_TITLE"],
                             "",
-                            "",
+                            $row["GRP_TITLE"],
                             "group"
                         ),
                         $taskUserType
