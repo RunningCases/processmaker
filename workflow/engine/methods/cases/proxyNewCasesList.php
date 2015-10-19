@@ -112,6 +112,19 @@ try {
         {
             try {
                 if (isset($record["DEL_PREVIOUS_USR_UID"])) {
+                    if ($record["DEL_PREVIOUS_USR_UID"] == "") {
+                        $appDelegation = AppDelegationPeer::retrieveByPK($record["APP_UID"], $record["DEL_INDEX"]);
+                        $appDelegationPrevious = AppDelegationPeer::retrieveByPK($record["APP_UID"], $appDelegation->getDelPrevious());
+
+                        $taskPrevious = TaskPeer::retrieveByPK($appDelegationPrevious->getTasUid());
+
+                        switch ($taskPrevious->getTasType()) {
+                            case "SCRIPT-TASK":
+                                $record["DEL_PREVIOUS_USR_UID"] = $taskPrevious->getTasType();
+                                break;
+                        }
+                    }
+
                     $record["PREVIOUS_USR_UID"]       = $record["DEL_PREVIOUS_USR_UID"];
                     $record["PREVIOUS_USR_USERNAME"]  = $record["DEL_PREVIOUS_USR_USERNAME"];
                     $record["PREVIOUS_USR_FIRSTNAME"] = $record["DEL_PREVIOUS_USR_FIRSTNAME"];
