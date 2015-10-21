@@ -582,9 +582,15 @@ Ext.onReady ( function() {
 
     previous_full_name = function(v, x, s) {
         if (s.data.PREVIOUS_USR_UID) {
-            return _FNF(s.data.PREVIOUS_USR_USERNAME, s.data.PREVIOUS_USR_FIRSTNAME, s.data.PREVIOUS_USR_LASTNAME);
-        }
-        else {
+            switch (s.data.PREVIOUS_USR_UID) {
+                case "SCRIPT-TASK":
+                    return _("ID_SCRIPT_TASK");
+                    break;
+                default:
+                    return _FNF(s.data.PREVIOUS_USR_USERNAME, s.data.PREVIOUS_USR_FIRSTNAME, s.data.PREVIOUS_USR_LASTNAME);
+                    break;
+            }
+        } else {
             return '';
         }
     };

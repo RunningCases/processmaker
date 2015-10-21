@@ -54,7 +54,7 @@ class Derivation
      *
      * @param array $arrayTaskData Task data (derivation)
      *
-     * return array Return array
+     * @return array Return array
      */
     private function prepareInformationTask(array $arrayTaskData)
     {
@@ -130,7 +130,7 @@ class Derivation
      * @param array  $arrayData Data
      * @param string $taskUid   Unique id of Task
      *
-     * return array Return array
+     * @return array Return array
      */
     public function prepareInformation(array $arrayData, $taskUid = "")
     {
@@ -641,7 +641,7 @@ class Derivation
      * @param mixed $aSp
      * @param bool  $removeList
      *
-     * return void
+     * @return void
      */
     private function derivateUpdateCounters(array $arrayCurrentDelegationData, array $arrayNextDelegationData, $taskNextDelegation, array $arrayApplicationData, $delIndexNew, $aSp, $removeList)
     {
@@ -690,9 +690,7 @@ class Derivation
                             }
                         }
                     } else {
-                        $regexpTaskTypeToExclude = "SCRIPT-TASK";
-
-                        if (!preg_match("/^(?:" . $regexpTaskTypeToExclude . ")$/", $taskNextDelegation->getTasType()) && $removeList) {
+                        if ($removeList) {
                             $application = ApplicationPeer::retrieveByPK($arrayApplicationData["APP_UID"]);
 
                             if ($application->getAppStatus() == "DRAFT") {
@@ -710,13 +708,15 @@ class Derivation
         /*----------------------------------********---------------------------------*/
     }
 
-    /* derivate
+    /** Derivate
      *
-     * @param   array   $currentDelegation
-     * @param   array   $nextDelegations
-     * @return  void
+     * @param array $currentDelegation
+     * @param array $nextDelegations
+     * @param bool  $removeList
+     *
+     * @return void
      */
-    function derivate($currentDelegation = array(), $nextDelegations = array(), $removeList = true)
+    function derivate(array $currentDelegation, array $nextDelegations, $removeList = true)
     {
         //define this...
         if (! defined( 'TASK_FINISH_PROCESS' )) {
@@ -750,9 +750,7 @@ class Derivation
         $currentDelegation["TAS_MI_COMPLETE_VARIABLE"] = $task->getTasMiCompleteVariable();
         $currentDelegation["TAS_MI_INSTANCE_VARIABLE"] = $task->getTasMiInstanceVariable();
 
-        //Count how many tasks should be derivated.
-        //$countNextTask = count($nextDelegations);
-        //$removeList = true;
+        $arrayNextDerivation = array();
 
         foreach ($nextDelegations as $nextDel) {
             //BpmnEvent - END-MESSAGE-EVENT, END-EMAIL-EVENT
@@ -951,28 +949,41 @@ class Derivation
 
                         //Check if $taskNextDel is Script-Task
                         if (!is_null($taskNextDel) && $taskNextDel->getTasType() == "SCRIPT-TASK") {
-                            $this->case->CloseCurrentDelegation($currentDelegation["APP_UID"], $iNewDelIndex);
-
                             //Get for $nextDel["TAS_UID"] your next Task
-                            $taskNextDelNextDelegations = $this->prepareInformation(array(
+                            $currentDelegationAux = array_merge($currentDelegation, array("DEL_INDEX" => $iNewDelIndex, "TAS_UID" => $nextDel["TAS_UID"]));
+                            $nextDelegationsAux   = array();
+
+                            $taskNextDelNextDelRouType = "";
+                            $i = 0;
+
+                            $arrayTaskNextDelNextDelegations = $this->prepareInformation(array(
                                 "USER_UID"  => $_SESSION["USER_LOGGED"],
-                                "APP_UID"   => $_SESSION["APPLICATION"],
+                                "APP_UID"   => $currentDelegation["APP_UID"],
                                 "DEL_INDEX" => $iNewDelIndex
                             ));
 
-                            //New next delegation
-                            $newNextDelegation = array();
+                            foreach ($arrayTaskNextDelNextDelegations as $key2 => $value2) {
+                                $arrayTaskNextDelNextDel = $value2;
 
-                            $newNextDelegation[1] = array(
-                                "TAS_UID"           => $taskNextDelNextDelegations[1]["NEXT_TASK"]["TAS_UID"],
-                                "USR_UID"           => $taskNextDelNextDelegations[1]["NEXT_TASK"]["USER_ASSIGNED"]["USR_UID"],
-                                "TAS_ASSIGN_TYPE"   => $taskNextDelNextDelegations[1]["NEXT_TASK"]["TAS_ASSIGN_TYPE"],
-                                "TAS_DEF_PROC_CODE" => "",
-                                "DEL_PRIORITY"      => "",
-                                "TAS_PARENT"        => ""
-                            );
+                                if (!isset($arrayTaskNextDelNextDel["NEXT_TASK"]["USER_ASSIGNED"]["USR_UID"])) {
+                                    throw new Exception(G::LoadTranslation("ID_NO_USERS"));
+                                }
 
-                            $this->derivate($currentDelegation, $newNextDelegation, $removeList);
+                                $taskNextDelNextDelRouType = $arrayTaskNextDelNextDel["ROU_TYPE"];
+
+                                $nextDelegationsAux[++$i] = array(
+                                    "TAS_UID"           => $arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_UID"],
+                                    "USR_UID"           => $arrayTaskNextDelNextDel["NEXT_TASK"]["USER_ASSIGNED"]["USR_UID"],
+                                    "TAS_ASSIGN_TYPE"   => $arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_ASSIGN_TYPE"],
+                                    "TAS_DEF_PROC_CODE" => $arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_DEF_PROC_CODE"],
+                                    "DEL_PRIORITY"      => "",
+                                    "TAS_PARENT"        => $arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_PARENT"]
+                                );
+                            }
+
+                            $currentDelegationAux["ROU_TYPE"] = $taskNextDelNextDelRouType;
+
+                            $arrayNextDerivation[] = array("currentDelegation" => $currentDelegationAux, "nextDelegations" => $nextDelegationsAux);
                         }
                     } else {
                         //when the task doesnt generate a new AppDelegation
@@ -1034,6 +1045,13 @@ class Derivation
             //Start Block : UPDATES APPLICATION
             $this->case->updateCase( $currentDelegation["APP_UID"], $appFields );
             //End Block : UPDATES APPLICATION
+        }
+
+        //Start the next derivations (Script-Task)
+        if (!empty($arrayNextDerivation)) {
+            foreach ($arrayNextDerivation as $value) {
+                $this->derivate($value["currentDelegation"], $value["nextDelegations"]);
+            }
         }
     }
 
