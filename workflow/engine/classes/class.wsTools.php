@@ -2128,6 +2128,8 @@ class workspaceTools
         }
         CLI::logging("> Completed table LIST_PAUSED\n");
 
+        /*
+        //Currently this list is not being used, it must be redesigned. Currently the APP_CACHE_VIEW is still used.
         //Select and Insert LIST_UNASSIGNED
         $unaCriteria = $appCache->getSelAllColumns();
         $unaCriteria->add(AppCacheViewPeer::USR_UID, "", CRITERIA::EQUAL);
@@ -2144,6 +2146,7 @@ class workspaceTools
         }
         CLI::logging("> Completed table LIST_UNASSIGNED\n");
         CLI::logging("> Completed table LIST_UNASSIGNED_GROUP\n");
+        */
 
         // ADD LISTS COUNTS
         $aTypes = array(
