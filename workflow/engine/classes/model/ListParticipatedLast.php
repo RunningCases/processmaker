@@ -336,7 +336,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $aPriorities = array ('1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH');
         while ($dataset->next()) {
             $aRow = (is_null($callbackRecord))? $dataset->getRow() : $callbackRecord($dataset->getRow());
-
+            $aRow['DEL_PRIORITY'] = (isset($aRow['DEL_PRIORITY']) && is_numeric($aRow['DEL_PRIORITY']) && $aRow['DEL_PRIORITY'] <= 5 && $aRow['DEL_PRIORITY'] > 0 ) ? $aRow['DEL_PRIORITY'] : 3;
             $aRow['DEL_PRIORITY'] = G::LoadTranslation( "ID_PRIORITY_{$aPriorities[$aRow['DEL_PRIORITY']]}" );
             $data[] = $aRow;
         }
