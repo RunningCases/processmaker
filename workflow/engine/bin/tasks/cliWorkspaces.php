@@ -682,17 +682,7 @@ function migrate_new_cases_lists($command, $args) {
     print_r("Upgrading database in " . pakeColor::colorize($workspace->name, "INFO") . "\n");
 
     try {
-      $ws = $workspace->name;
-      $sContent = file_get_contents (PATH_DB . $ws . PATH_SEP . 'db.php');
-      if (strpos($sContent, 'rb_')) {
-        $workspace->onedb = false;
-      } else {
-        $workspace->onedb = true;
-      }
-
-        if ($workspace->onedb) {
-            $workspace->migrateList($workspace->name, true);
-        }
+        $workspace->migrateList($workspace->name, true);
 
         echo "> List tables are done\n";
     } catch (Exception $e) {
