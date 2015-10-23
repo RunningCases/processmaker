@@ -207,7 +207,7 @@ class Derivation
                 if (trim($arrayRouteData["ROU_CONDITION"]) == "" && $arrayRouteData["ROU_NEXT_TASK"] != "-1") {
                     $arrayTaskData = $task->load($arrayRouteData["ROU_NEXT_TASK"]);
 
-                    if ($arrayTaskData["TAS_TYPE"] == "GATEWAYTOGATEWAY") {
+                    if ($arrayRouteData["ROU_TYPE"] != "SEC-JOIN" && $arrayTaskData["TAS_TYPE"] == "GATEWAYTOGATEWAY") {
                         $flagAddDelegation = false;
                     }
                 }
@@ -728,6 +728,9 @@ class Derivation
 
         $this->case = new cases();
 
+        $messageApplication = new \ProcessMaker\BusinessModel\MessageApplication();
+        $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
+
         //Get data for this DEL_INDEX current
         $appFields = $this->case->loadCase( $currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX'] );
 
@@ -751,6 +754,7 @@ class Derivation
         $currentDelegation["TAS_MI_INSTANCE_VARIABLE"] = $task->getTasMiInstanceVariable();
 
         $arrayNextDerivation = array();
+        $flagFirstIteration = true;
 
         foreach ($nextDelegations as $nextDel) {
             //BpmnEvent - END-MESSAGE-EVENT, END-EMAIL-EVENT
@@ -814,15 +818,11 @@ class Derivation
                         switch ($taskDummy->getTasType()) {
                             case "END-MESSAGE-EVENT":
                                 //Throw Message-Events - BpmnEvent - END-MESSAGE-EVENT
-                                $case = new \ProcessMaker\BusinessModel\Cases();
-
-                                $case->throwMessageEventBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID_DUMMY"], $appFields);
+                                $messageApplication->throwMessageEventBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
                                 break;
                             case "END-EMAIL-EVENT":
-                                //Email Event
-                                $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
-
-                                $emailEvent->emailEventBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID_DUMMY"], $appFields);
+                                //Throw Email-Events - BpmnEvent - END-EMAIL-EVENT
+                                $emailEvent->emailEventBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
                                 break;
                         }
                     }
@@ -882,14 +882,10 @@ class Derivation
 
                     if ($canDerivate) {
                         //Throw Message-Events
-                        $case = new \ProcessMaker\BusinessModel\Cases();
-
-                        $case->throwMessageEventBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields);
+                        $messageApplication->throwMessageEventBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true);
 
                         //Throw Email-Events
-                        $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
-
-                        $emailEvent->emailEventBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields);
+                        $emailEvent->emailEventBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true);
 
                         //Derivate
                         $aSP = (isset($aSP))? $aSP : null;
@@ -994,6 +990,13 @@ class Derivation
 
                         switch ($routeType) {
                             case 'SEC-JOIN':
+                                //Throw Message-Events
+                                $messageApplication->throwMessageEventBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, false);
+
+                                //Throw Email-Events
+                                $emailEvent->emailEventBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, false);
+
+                                //Close thread
                                 $this->case->closeAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex );
                                 break;
                             default:
@@ -1011,6 +1014,7 @@ class Derivation
             }
 
             $removeList = false;
+            $flagFirstIteration = false;
 
             unset($aSP);
         }

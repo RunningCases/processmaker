@@ -92,7 +92,7 @@ try {
     $e_all = ($config["debug"])?        $e_all                 : $e_all & ~E_NOTICE;
 
     G::LoadSystem('inputfilter');
-    $filter = new InputFilter();  
+    $filter = new InputFilter();
     $config['debug'] = $filter->validateInput($config['debug']);
     $config['wsdl_cache'] = $filter->validateInput($config['wsdl_cache'],'int');
     $config['time_zone'] = $filter->validateInput($config['time_zone']);
@@ -222,9 +222,9 @@ try {
         eprintln("Processing workspace: " . $workflow, "green");
 
         try {
-            $case = new \ProcessMaker\BusinessModel\Cases();
+            $messageApplication = new \ProcessMaker\BusinessModel\MessageApplication();
 
-            $case->catchMessageEvent(true);
+            $messageApplication->catchMessageEvent(true);
         } catch (Exception $e) {
             echo $e->getMessage() . "\n";
 
