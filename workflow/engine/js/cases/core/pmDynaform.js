@@ -26,9 +26,41 @@ $(window).load(function () {
 
         }
     }
+    function loadAjaxParams () {
+        var url;
+        var action;
+        var method;
+
+        if (filePost) {
+            url = location.protocol + '//' + location.host;
+            //In case the form is in review
+            if (filePost.indexOf('Supervisor') >= 0){
+                action = 'cases_SaveDataSupervisor?UID=' + dyn_uid;
+                url += '/sys' + workspace + '/en/neoclassic/cases/' + action;
+            } else if(filePost.indexOf('Email') >= 0){ //In case the form is sent as Email response
+                action = filePost;
+                url += '/sys' + workspace + '/en/neoclassic/services/' + action;
+            } else { //In case the form is in web entry
+                action = prj_uid + '/' + filePost;
+                url += '/sys' + workspace + '/en/neoclassic/' + action;
+            }
+            method = 'POST';
+        } else if (app_uid){ //In case the form is in running cases
+            url = location.protocol + '//' + location.host;
+            action = "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
+            url += '/sys' + workspace + '/en/neoclassic/cases/' + action;
+            method = 'POST';
+        }
+        return {
+            url: url,
+            action: action,
+            method: method
+        };
+    }
     var data = jsondata;
     window.project = new PMDynaform.core.Project({
         data: data,
+        formAjax: loadAjaxParams(),
         keys: {
             server: location.host,
             projectId: prj_uid,
