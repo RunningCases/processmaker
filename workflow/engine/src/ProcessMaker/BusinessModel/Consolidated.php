@@ -477,23 +477,29 @@ class Consolidated
                     $temp->required = (isset($val->required)) ? $val->required : 0;
                     $temp->mode = (isset($val->mode)) ? $val->mode : 'edit';
 
-                    if (!empty($val->options) || !empty($val->optionsSql)) {
+                    if ((isset($val->options) && !empty($val->options)) || (isset($val->optionsSql) && !empty($val->optionsSql))) {
                         $temp->storeData = '[';
-                        foreach ($val->options as $valueOption) {
-                            if(isset($valueOption->value)){
-                                $temp->storeData .= '["' . $valueOption->value . '", "' . $valueOption->label . '"],';
-                            }else{
-                                $temp->storeData .= '["' . $valueOption['value'] . '", "' . $valueOption['label'] . '"],';   
+
+                        if (isset($val->options) && !empty($val->options)) {
+                            foreach ($val->options as $valueOption) {
+                                if(isset($valueOption->value)){
+                                    $temp->storeData .= '["' . $valueOption->value . '", "' . $valueOption->label . '"],';
+                                }else{
+                                    $temp->storeData .= '["' . $valueOption['value'] . '", "' . $valueOption['label'] . '"],';   
+                                }
                             }
                         }
 
-                        foreach ($val->optionsSql as $valueOption) {
-                            if(isset($valueOption->value)){
-                                $temp->storeData .= '["' . $valueOption->value . '", "' . $valueOption->label . '"],';
-                            }else{
-                                $temp->storeData .= '["' . $valueOption['value'] . '", "' . $valueOption['label'] . '"],';   
+                        if (isset($val->optionsSql) && !empty($val->optionsSql)) {
+                            foreach ($val->optionsSql as $valueOption) {
+                                if(isset($valueOption->value)){
+                                    $temp->storeData .= '["' . $valueOption->value . '", "' . $valueOption->label . '"],';
+                                }else{
+                                    $temp->storeData .= '["' . $valueOption['value'] . '", "' . $valueOption['label'] . '"],';   
+                                }
                             }
                         }
+
                         $temp->storeData = substr($temp->storeData,0,-1);
                         $temp->storeData .= ']';
                     }
