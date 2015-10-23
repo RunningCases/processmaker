@@ -709,12 +709,12 @@ class Variable
             if (preg_match("/^SELECT\s(.+)\sFROM.+$/", $variableSql, $matches)) {
                 $arrayFields = explode (",", $matches[1]);
 
-                if (!count($arrayFields) > 2) {
+                if (!isset($arrayFields[1])) {
                     throw new \Exception(\G::LoadTranslation("ID_INVALID_QUERY"));
                 }
 
                 $selectFieldMain = $arrayFields[1];
-						      }
+            }
 
             $filter = "";
             $filterOption = "";
