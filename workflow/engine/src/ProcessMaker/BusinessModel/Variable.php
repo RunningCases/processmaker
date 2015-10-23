@@ -296,14 +296,14 @@ class Variable
             $arrayVariables = array();
 
             while ($aRow = $rsCriteria->getRow()) {
-                
+
                 $VAR_ACCEPTED_VALUES = \G::json_decode($aRow['VAR_ACCEPTED_VALUES'], true);
                 if(sizeof($VAR_ACCEPTED_VALUES)) {
                     $encodeAcceptedValues = preg_replace("/\\\\u([a-f0-9]{4})/e", "iconv('UCS-4LE','UTF-8',pack('V', hexdec('U$1')))", \G::json_encode($VAR_ACCEPTED_VALUES));
                 } else {
                     $encodeAcceptedValues = $aRow['VAR_ACCEPTED_VALUES'];
                 }
-                
+
                 $arrayVariables = array('var_uid' => $aRow['VAR_UID'],
                     'prj_uid' => $aRow['PRJ_UID'],
                     'var_name' => $aRow['VAR_NAME'],
@@ -372,14 +372,14 @@ class Variable
             $arrayVariables = array();
 
             while ($aRow = $rsCriteria->getRow()) {
-                
+
                 $VAR_ACCEPTED_VALUES = \G::json_decode($aRow['VAR_ACCEPTED_VALUES'], true);
                 if(sizeof($VAR_ACCEPTED_VALUES)) {
                     $encodeAcceptedValues = preg_replace("/\\\\u([a-f0-9]{4})/e", "iconv('UCS-4LE','UTF-8',pack('V', hexdec('U$1')))", \G::json_encode($VAR_ACCEPTED_VALUES));
                 } else {
                     $encodeAcceptedValues = $aRow['VAR_ACCEPTED_VALUES'];
                 }
-                
+
                 $arrayVariables[] = array('var_uid' => $aRow['VAR_UID'],
                     'prj_uid' => $aRow['PRJ_UID'],
                     'var_name' => $aRow['VAR_NAME'],
@@ -674,9 +674,10 @@ class Variable
             //Set data
             $variableDbConnectionUid = "";
             $variableSql = "";
+
+            $sqlCondition = "";
+            $sqlOrderBy = "";
             $sqlLimit = "";
-            $variableSqlLimit = "";
-            $sqlConditionLike = "";
 
             $criteria = new \Criteria("workflow");
 
@@ -703,33 +704,91 @@ class Variable
             //Get data
             $_SESSION["PROCESS"] = $processUid;
 
-            foreach ($arrayVariable as $keyRequest => $valueRequest) {
-                $keyRequest = strtoupper($keyRequest);
+            $selectFieldMain = "";
 
-                if ($keyRequest == 'LIMIT') {
-                    if (strpos($variableSql, 'LIMIT')) {
-                        $variableSqlLimit = explode("LIMIT", $variableSql);
-                        $sqlLimit = " LIMIT " . $variableSqlLimit[1];
-                        $variableSql = $variableSqlLimit[0];
-                    } else {
-                        $sqlLimit = " LIMIT ". 0 . ", " . $valueRequest;
-                    }
+            if (preg_match("/^SELECT\s(.+)\sFROM.+$/", $variableSql, $matches)) {
+                $arrayFields = explode (",", $matches[1]);
+
+                if (!count($arrayFields) > 2) {
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_QUERY"));
+                }
+
+                $selectFieldMain = $arrayFields[1];
+						      }
+
+            $filter = "";
+            $filterOption = "";
+
+            if (array_key_exists("filter", $arrayVariable) && $arrayVariable["filter"] != "") {
+                $filter = $arrayVariable["filter"];
+                $filterOption = "filter";
+            } else {
+                if (array_key_exists("lfilter", $arrayVariable) && $arrayVariable["lfilter"] != "") {
+                    $filter = $arrayVariable["lfilter"];
+                    $filterOption = "lfilter";
                 } else {
-                    if (strpos($variableSql, 'WHERE')) {
-                        $sqlConditionLike = " AND " . $keyRequest . " LIKE '%" . $valueRequest . "%'";
-                    } else {
-                        $sqlConditionLike = " WHERE " . $keyRequest . " LIKE '%" . $valueRequest . "%'";
+                    if (array_key_exists("rfilter", $arrayVariable) && $arrayVariable["rfilter"] != "") {
+                        $filter = $arrayVariable["rfilter"];
+                        $filterOption = "rfilter";
                     }
                 }
             }
 
-            $sqlQuery = $variableSql . $sqlConditionLike . $sqlLimit;
+            unset($arrayVariable["lfilter"]);
+            unset($arrayVariable["rfilter"]);
+            unset($arrayVariable["filter"]);
+
+            if ($filter != "" && $filterOption != "") {
+                $arrayVariable["filter"] = $filter;
+            }
+
+            foreach ($arrayVariable as $keyRequest => $valueRequest) {
+                switch ($keyRequest) {
+                    case "filter":
+                        $arraySearch = array(
+                            "filter"  => "%" . $valueRequest . "%",
+                            "lfilter" => $valueRequest . "%",
+                            "rfilter" => "%" . $valueRequest
+                        );
+
+                        $search = $arraySearch[$filterOption];
+
+                        if (strpos($variableSql, "WHERE")) {
+                            $sqlCondition = " AND " . $selectFieldMain . " LIKE '" . $search . "'";
+                        } else {
+                            $sqlCondition = " WHERE " . $selectFieldMain . " LIKE '" . $search . "'";
+                        }
+                        break;
+                    case "order_by":
+                        $sqlOrderBy = " ORDER BY " . $selectFieldMain . " " . $valueRequest;
+                        break;
+                    case "limit":
+                        if (strpos($variableSql, "LIMIT")) {
+                            $variableSqlLimit = explode("LIMIT", $variableSql);
+                            $sqlLimit = " LIMIT " . $variableSqlLimit[1];
+                            $variableSql = $variableSqlLimit[0];
+                        } else {
+                            $sqlLimit = " LIMIT ". 0 . ", " . $valueRequest;
+                        }
+                        break;
+                    default:
+                        if (strpos($variableSql, 'WHERE')) {
+                            $sqlCondition = " AND " . $keyRequest . " LIKE '%" . $valueRequest . "%'";
+                        } else {
+                            $sqlCondition = " WHERE " . $keyRequest . " LIKE '%" . $valueRequest . "%'";
+                        }
+                        break;
+                }
+            }
+
+            $sqlQuery = $variableSql . $sqlCondition . $sqlOrderBy . $sqlLimit;
+
+            $sqlQuery = G::replaceDataField($sqlQuery, $arrayVariable);
 
             $cnn = \Propel::getConnection(($variableDbConnectionUid . "" != "")? $variableDbConnectionUid : "workflow");
             $stmt = $cnn->createStatement();
-            $replaceFields = G::replaceDataField($sqlQuery, $arrayVariable);
 
-            $rs = $stmt->executeQuery($replaceFields, \ResultSet::FETCHMODE_NUM);
+            $rs = $stmt->executeQuery($sqlQuery, \ResultSet::FETCHMODE_NUM);
 
             while ($rs->next()) {
                 $row = $rs->getRow();
