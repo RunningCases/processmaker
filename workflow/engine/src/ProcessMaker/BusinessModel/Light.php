@@ -1244,6 +1244,12 @@ class Light
         $fields = \System::getSysInfo();
         $response['version'] = $fields['PM_VERSION'];
 
+        $buildType = 'Community';
+        /*----------------------------------********---------------------------------*/
+        $buildType = 'Enterprise';
+        /*----------------------------------********---------------------------------*/
+        $response['buildType'] = $buildType;
+
         $conf = new \Configurations();
         $confEnvironment = $conf->getFormats();
 
