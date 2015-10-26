@@ -165,7 +165,7 @@ class pmDynaform
                     }
                 }
                 //options & query
-                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "hidden" || $value === "dropdown" || $value === "checkgroup" || $value === "radio" || $value === "suggest" )) {
+                if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "hidden" || $value === "dropdown" || $value === "checkgroup" || $value === "radio" || $value === "suggest")) {
                     if (!isset($json->dbConnection))
                         $json->dbConnection = "none";
                     if (!isset($json->sql))
@@ -175,7 +175,8 @@ class pmDynaform
                         $cnn = Propel::getConnection($json->dbConnection);
                         $stmt = $cnn->createStatement();
                         try {
-                            $rs = $stmt->executeQuery(G::replaceDataField($json->sql, array()), \ResultSet::FETCHMODE_NUM);
+                            $sql = G::replaceDataField($json->sql, $this->getValuesDependentFields($json));
+                            $rs = $stmt->executeQuery($sql, \ResultSet::FETCHMODE_NUM);
                             while ($rs->next()) {
                                 $row = $rs->getRow();
                                 $option = new stdClass();
@@ -205,6 +206,7 @@ class pmDynaform
                         $json->data->value = $this->fields["APP_DATA"][$json->name];
                         $json->data->label = $this->fields["APP_DATA"][$json->name];
                     }
+                    $json->optionsSql = array();
                 }
                 if ($key === "type" && ($value === "dropdown")) {
                     $json->data = new stdClass();
@@ -226,6 +228,8 @@ class pmDynaform
                     }
                     if (isset($this->fields["APP_DATA"][$json->name])) {
                         $json->data->value = $this->fields["APP_DATA"][$json->name];
+                    }
+                    if (isset($this->fields["APP_DATA"][$json->name . "_label"])) {
                         $json->data->label = $this->fields["APP_DATA"][$json->name . "_label"];
                     }
                 }
@@ -251,10 +255,11 @@ class pmDynaform
                     }
                     if (isset($this->fields["APP_DATA"][$json->name])) {
                         $json->data->value = $this->fields["APP_DATA"][$json->name];
-                        if (isset($this->fields["APP_DATA"][$json->name . "_label"])) {
-                            $json->data->label = $this->fields["APP_DATA"][$json->name . "_label"];
-                        }
                     }
+                    if (isset($this->fields["APP_DATA"][$json->name . "_label"])) {
+                        $json->data->label = $this->fields["APP_DATA"][$json->name . "_label"];
+                    }
+                    $json->optionsSql = array();
                 }
                 if ($key === "type" && ($value === "radio")) {
                     $json->data = new stdClass();
@@ -276,6 +281,8 @@ class pmDynaform
                     }
                     if (isset($this->fields["APP_DATA"][$json->name])) {
                         $json->data->value = $this->fields["APP_DATA"][$json->name];
+                    }
+                    if (isset($this->fields["APP_DATA"][$json->name . "_label"])) {
                         $json->data->label = $this->fields["APP_DATA"][$json->name . "_label"];
                     }
                 }
@@ -315,6 +322,8 @@ class pmDynaform
                     }
                     if (isset($this->fields["APP_DATA"][$json->name])) {
                         $json->data->value = $this->fields["APP_DATA"][$json->name];
+                    }
+                    if (isset($this->fields["APP_DATA"][$json->name . "_label"])) {
                         $json->data->label = $this->fields["APP_DATA"][$json->name . "_label"];
                     }
                 }
@@ -324,6 +333,8 @@ class pmDynaform
                     $json->data->label = "";
                     if (isset($this->fields["APP_DATA"][$json->name])) {
                         $json->data->value = $this->fields["APP_DATA"][$json->name];
+                    }
+                    if (isset($this->fields["APP_DATA"][$json->name . "_label"])) {
                         $json->data->label = $this->fields["APP_DATA"][$json->name . "_label"];
                     }
                 }
@@ -344,7 +355,7 @@ class pmDynaform
                     $json->data->value = $links;
                     $json->data->label = isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : "[]";
                 }
-                if ($key === "type" && ($value === "file")) {
+                if ($key === "type" && ($value === "file") && isset($json->variable)) {
                     //todo
                     $oCriteria = new Criteria("workflow");
                     $oCriteria->addSelectColumn(ProcessVariablesPeer::INP_DOC_UID);
@@ -470,6 +481,42 @@ class pmDynaform
                 }
             }
         }
+    }
+
+    private function getValuesDependentFields($json)
+    {
+        $data = array();
+        if (isset($json->dbConnection) && isset($json->sql)) {
+            $salida = array();
+            preg_match_all('/\@(?:([\@\%\#\=\!Qq])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*?)*)\))/', $json->sql, $salida, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
+            $variables = isset($salida[2]) ? $salida[2] : array();
+            foreach ($variables as $key => $value) {
+                $jsonSearch = $this->jsonsf(G::json_decode($this->record["DYN_CONTENT"]), $value[0], $json->variable === "" ? "id" : "variable");
+                $a = $this->getValuesDependentFields($jsonSearch);
+                foreach ($a as $i => $v) {
+                    $data[$i] = $v;
+                }
+            }
+            if ($json->dbConnection !== "" && $json->dbConnection !== "none" && $json->sql !== "") {
+                $cnn = Propel::getConnection($json->dbConnection);
+                $stmt = $cnn->createStatement();
+                try {
+                    $a = G::replaceDataField($json->sql, $data);
+                    $rs = $stmt->executeQuery($a, \ResultSet::FETCHMODE_NUM);
+                    $rs->next();
+                    $row = $rs->getRow();
+                    if (isset($row[0]) && $json->type !== "suggest") {
+                        $data[$json->variable === "" ? $json->id : $json->variable] = $row[0];
+                    }
+                } catch (Exception $e) {
+                    
+                }
+            }
+        }
+        if (isset($json->defaultValue) && $json->defaultValue !== "") {
+            $data[$json->variable === "" ? $json->id : $json->variable] = $json->defaultValue;
+        }
+        return $data;
     }
 
     public function isResponsive()
@@ -984,18 +1031,18 @@ class pmDynaform
         return $this->jsonsf($json, $field_id);
     }
 
-    private function jsonsf(&$json, $id)
+    private function jsonsf(&$json, $id, $for = "id")
     {
         foreach ($json as $key => $value) {
             $sw1 = is_array($value);
             $sw2 = is_object($value);
             if ($sw1 || $sw2) {
-                $val = $this->jsonsf($value, $id);
+                $val = $this->jsonsf($value, $id, $for);
                 if ($val !== null)
                     return $val;
             }
             if (!$sw1 && !$sw2) {
-                if ($key === "id" && $id === $value) {
+                if ($key === $for && $id === $value) {
                     return $json;
                 }
             }

@@ -672,130 +672,58 @@ class Variable
             $process->throwExceptionIfNotExistsProcess($processUid, strtolower("PRJ_UID"));
 
             //Set data
-            $variableDbConnectionUid = "";
-            $variableSql = "";
-
-            $sqlCondition = "";
-            $sqlOrderBy = "";
-            $sqlLimit = "";
-
-            $criteria = new \Criteria("workflow");
-
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DBCONNECTION);
-            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_SQL);
-            $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid, \Criteria::EQUAL);
-            $criteria->add(\ProcessVariablesPeer::VAR_NAME, $variableName, \Criteria::EQUAL);
-
-            $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
-
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            if ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
-
-                $variableDbConnectionUid = $row["VAR_DBCONNECTION"];
-                $variableSql = $row["VAR_SQL"];
-            } else {
-                throw new \Exception(\G::LoadTranslation("ID_PROCESS_VARIABLE_DOES_NOT_EXIST", array(strtolower("VAR_NAME"), $variableName)));
-            }
-
-            //Verify data
-            $this->throwExceptionIfSomeRequiredVariableSqlIsMissingInVariables($variableName, $variableSql, $arrayVariable);
+            \G::LoadClass('pmDynaform');
+            $pmDynaform = new \pmDynaform();
+            $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $variableName);
+            $variableDbConnectionUid = $field !== null ? $field->dbConnection : "";
+            $variableSql = $field !== null ? $field->sql : "";
 
             //Get data
             $_SESSION["PROCESS"] = $processUid;
 
-            $selectFieldMain = "";
-
-            if (preg_match("/^SELECT\s(.+)\sFROM.+$/", $variableSql, $matches)) {
-                $arrayFields = explode (",", $matches[1]);
-
-                if (!isset($arrayFields[1])) {
-                    throw new \Exception(\G::LoadTranslation("ID_INVALID_QUERY"));
-                }
-
-                $selectFieldMain = $arrayFields[1];
-            }
-
-            $filter = "";
-            $filterOption = "";
-
-            if (array_key_exists("filter", $arrayVariable) && $arrayVariable["filter"] != "") {
-                $filter = $arrayVariable["filter"];
-                $filterOption = "filter";
-            } else {
-                if (array_key_exists("lfilter", $arrayVariable) && $arrayVariable["lfilter"] != "") {
-                    $filter = $arrayVariable["lfilter"];
-                    $filterOption = "lfilter";
-                } else {
-                    if (array_key_exists("rfilter", $arrayVariable) && $arrayVariable["rfilter"] != "") {
-                        $filter = $arrayVariable["rfilter"];
-                        $filterOption = "rfilter";
-                    }
-                }
-            }
-
-            unset($arrayVariable["lfilter"]);
-            unset($arrayVariable["rfilter"]);
-            unset($arrayVariable["filter"]);
-
-            if ($filter != "" && $filterOption != "") {
-                $arrayVariable["filter"] = $filter;
-            }
-
-            foreach ($arrayVariable as $keyRequest => $valueRequest) {
-                switch ($keyRequest) {
-                    case "filter":
-                        $arraySearch = array(
-                            "filter"  => "%" . $valueRequest . "%",
-                            "lfilter" => $valueRequest . "%",
-                            "rfilter" => "%" . $valueRequest
-                        );
-
-                        $search = $arraySearch[$filterOption];
-
-                        if (strpos($variableSql, "WHERE")) {
-                            $sqlCondition = " AND " . $selectFieldMain . " LIKE '" . $search . "'";
-                        } else {
-                            $sqlCondition = " WHERE " . $selectFieldMain . " LIKE '" . $search . "'";
-                        }
-                        break;
-                    case "order_by":
-                        $sqlOrderBy = " ORDER BY " . $selectFieldMain . " " . $valueRequest;
-                        break;
-                    case "limit":
-                        if (strpos($variableSql, "LIMIT")) {
-                            $variableSqlLimit = explode("LIMIT", $variableSql);
-                            $sqlLimit = " LIMIT " . $variableSqlLimit[1];
-                            $variableSql = $variableSqlLimit[0];
-                        } else {
-                            $sqlLimit = " LIMIT ". 0 . ", " . $valueRequest;
-                        }
-                        break;
-                    default:
-                        if (strpos($variableSql, 'WHERE')) {
-                            $sqlCondition = " AND " . $keyRequest . " LIKE '%" . $valueRequest . "%'";
-                        } else {
-                            $sqlCondition = " WHERE " . $keyRequest . " LIKE '%" . $valueRequest . "%'";
-                        }
-                        break;
-                }
-            }
-
-            $sqlQuery = $variableSql . $sqlCondition . $sqlOrderBy . $sqlLimit;
-
-            $sqlQuery = G::replaceDataField($sqlQuery, $arrayVariable);
-
-            $cnn = \Propel::getConnection(($variableDbConnectionUid . "" != "")? $variableDbConnectionUid : "workflow");
+            $cnn = \Propel::getConnection(($variableDbConnectionUid . "" != "") ? $variableDbConnectionUid : "workflow");
             $stmt = $cnn->createStatement();
 
-            $rs = $stmt->executeQuery($sqlQuery, \ResultSet::FETCHMODE_NUM);
+            $replaceFields = G::replaceDataField($variableSql, $arrayVariable);
+
+            $a = strtolower($replaceFields);
+            $a = str_replace("\n", " ", $a);
+            $a = str_replace("\t", " ", $a);
+            $ai = strpos($a, "select ");
+            $aj = strpos($a, " from ");
+            $sw = strpos($a, " order ");
+            $b = substr($replaceFields, $ai + 6, $aj - ($ai + 6));
+            $b = explode(",", $b);
+            $b = isset($b[1]) ? $b[1] : $b[0];
+            $c = strtolower($b);
+            $ci = strpos($c, " as ");
+            $c = $ci > 0 ? substr($b, $ci + 4) : $b;
+
+            $filter = "";
+            if (isset($arrayVariable["filter"]))
+                $filter = "WHERE " . $c . " LIKE '%" . $arrayVariable["filter"] . "%'";
+            $order = " ORDER BY " . $c . " ASC";
+            if (isset($arrayVariable["order"]))
+                $order = " ORDER BY " . $c . " " . $arrayVariable["order"];
+            if ($sw)
+                $order = "";
+            $start = 0;
+            if (isset($arrayVariable["start"]))
+                $start = $arrayVariable["start"];
+            $limit = "";
+            if (isset($arrayVariable["limit"]))
+                $limit = "LIMIT " . $start . "," . $arrayVariable["limit"];
+
+            $replaceFields = "SELECT * FROM (" . $replaceFields . ") AS TEMP " . $filter . $order . " " . $limit;
+
+            $rs = $stmt->executeQuery($replaceFields, \ResultSet::FETCHMODE_NUM);
 
             while ($rs->next()) {
                 $row = $rs->getRow();
 
                 $arrayRecord[] = array(
                     strtolower("VALUE") => $row[0],
-                    strtolower("TEXT")  => $row[1]
+                    strtolower("TEXT") => isset($row[1]) ? $row[1] : $row[0]
                 );
             }
 
@@ -805,4 +733,5 @@ class Variable
             throw $e;
         }
     }
+
 }
