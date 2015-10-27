@@ -691,30 +691,44 @@ class Variable
             $a = str_replace("\t", " ", $a);
             $ai = strpos($a, "select ");
             $aj = strpos($a, " from ");
-            $sw = strpos($a, " order ");
+            $sw = strrpos($a, " order ");
+            $sw2 = strrpos($a, " where ");
+
             $b = substr($replaceFields, $ai + 6, $aj - ($ai + 6));
             $b = explode(",", $b);
             $b = isset($b[1]) ? $b[1] : $b[0];
+
             $c = strtolower($b);
             $ci = strpos($c, " as ");
             $c = $ci > 0 ? substr($b, $ci + 4) : $b;
 
             $filter = "";
-            if (isset($arrayVariable["filter"]))
-                $filter = "WHERE " . $c . " LIKE '%" . $arrayVariable["filter"] . "%'";
-            $order = " ORDER BY " . $c . " ASC";
-            if (isset($arrayVariable["order"]))
-                $order = " ORDER BY " . $c . " " . $arrayVariable["order"];
-            if ($sw)
-                $order = "";
-            $start = 0;
-            if (isset($arrayVariable["start"]))
-                $start = $arrayVariable["start"];
-            $limit = "";
-            if (isset($arrayVariable["limit"]))
-                $limit = "LIMIT " . $start . "," . $arrayVariable["limit"];
+            if (isset($arrayVariable["filter"])) {
+                if ($sw2 !== false && $sw2 < $aj) {
+                    $sw2 = false;
+                }
+                $filter = ($sw2 === false ? " WHERE " : " AND ") . $c . " LIKE '%" . $arrayVariable["filter"] . "%'";
+            }
 
-            $replaceFields = "SELECT * FROM (" . $replaceFields . ") AS TEMP " . $filter . $order . " " . $limit;
+            $order = " ORDER BY " . $c . " ASC";
+            if (isset($arrayVariable["order"])) {
+                $order = " ORDER BY " . $c . " " . $arrayVariable["order"];
+            }
+            if ($sw) {
+                $order = substr($replaceFields, $sw);
+                $replaceFields = substr($replaceFields, 0, $sw);
+            }
+
+            $start = 0;
+            if (isset($arrayVariable["start"])) {
+                $start = $arrayVariable["start"];
+            }
+            $limit = "";
+            if (isset($arrayVariable["limit"])) {
+                $limit = " LIMIT " . $start . "," . $arrayVariable["limit"];
+            }
+
+            $replaceFields = $replaceFields . $filter . $order . $limit;
 
             $rs = $stmt->executeQuery($replaceFields, \ResultSet::FETCHMODE_NUM);
 
