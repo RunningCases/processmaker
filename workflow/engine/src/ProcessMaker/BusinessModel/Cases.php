@@ -94,12 +94,6 @@ class Cases
             Validator::usrUid($dataList["userId"], "userId");
         }
 
-        $user = new \ProcessMaker\BusinessModel\User();
-
-        if (!$user->checkPermission($dataList["userId"], "PM_ALLCASES")) {
-            throw new \Exception(\G::LoadTranslation("ID_CASE_USER_NOT_HAVE_PERMISSION", array($dataList["userId"])));
-        }
-
         G::LoadClass("applications");
         $solrEnabled = false;
         $userUid = $dataList["userId"];
@@ -120,6 +114,12 @@ class Cases
         $dateFrom = (!empty( $dataList["dateFrom"] )) ? substr( $dataList["dateFrom"], 0, 10 ) : "";
         $dateTo = (!empty( $dataList["dateTo"] )) ? substr( $dataList["dateTo"], 0, 10 ) : "";
         $first = isset( $dataList["first"] ) ? true :false;
+
+        $u = new \ProcessMaker\BusinessModel\User();
+
+        if ($action == "search" && !$u->checkPermission($dataList["userId"], "PM_ALLCASES")) {
+            throw new \Exception(\G::LoadTranslation("ID_CASE_USER_NOT_HAVE_PERMISSION", array($dataList["userId"])));
+        }
 
         $valuesCorrect = array('todo', 'draft', 'paused', 'sent', 'selfservice', 'unassigned', 'search');
         if (!in_array($action, $valuesCorrect)) {
@@ -2289,4 +2289,3 @@ class Cases
         }
     }
 }
-
