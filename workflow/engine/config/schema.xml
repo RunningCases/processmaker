@@ -5190,6 +5190,15 @@
     <column name="DEV_TYPE"         type="VARCHAR" size="50"  required="true"  default=""/>
     <column name="DEV_CREATE"       type="TIMESTAMP"          required="true"  />
     <column name="DEV_UPDATE"       type="TIMESTAMP"          required="true"  />
+    <index name="indexUserNotification">
+      <index-column name="USR_UID"/>
+      <vendor type="mysql">
+        <parameter name="Table" value="NOTIFICATION_DEVICE"/>
+        <parameter name="Non_unique" value="1"/>
+        <parameter name="Key_name" value="indexUserNotification"/>
+        <parameter name="Seq_in_index" value="1"/>
+      </vendor>
+    </index>
   </table>
 </database>
 

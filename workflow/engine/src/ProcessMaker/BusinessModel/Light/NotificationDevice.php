@@ -208,10 +208,7 @@ class NotificationDevice
                     $oNoti = new \NotificationDevice();
                     $devices = array();
                     if (is_array($userIds)){
-                        foreach ($userIds as $id) {
-                            $deviceUser = $oNoti->loadByUsersId($id);
-                            $devices = array_merge($devices, $deviceUser);
-                        }
+                        $devices = $oNoti->loadUsersArrayId($userIds);
                     } else {
                         $devices = $oNoti->loadByUsersId($userIds);
                         $lists   = new \ProcessMaker\BusinessModel\Lists();
