@@ -2913,7 +2913,8 @@ CREATE TABLE `NOTIFICATION_DEVICE`
 	`DEV_TYPE`          VARCHAR(50)  default '',
 	`DEV_CREATE`        DATETIME  NOT NULL,
 	`DEV_UPDATE`        DATETIME  NOT NULL,
-	PRIMARY KEY (`DEV_UID`, `USR_UID`)
+	PRIMARY KEY (`DEV_UID`, `USR_UID`),
+	KEY `indexUserNotification`(`USR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Definitions Notification device.';
 # This restores the fkey checks, after having unset them earlier
 # SET FOREIGN_KEY_CHECKS = 1;

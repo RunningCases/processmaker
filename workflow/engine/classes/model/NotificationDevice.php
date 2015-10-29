@@ -134,6 +134,26 @@ class NotificationDevice extends BaseNotificationDevice {
         return $device;
     }
 
+    public function loadUsersArrayId ($arrayUserId)
+    {
+        try {
+            $criteria = new Criteria();
+            $criteria->clearSelectColumns();
+            $criteria->add(NotificationDevicePeer::USR_UID, $arrayUserId, Criteria::IN);
+
+            $rs = NotificationDevicePeer::doSelectRS($criteria);
+            $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $device = array();
+            while ($rs->next()) {
+                $row = $rs->getRow();
+                $device[] = $row;
+            }
+        } catch (Exception $error) {
+            throw $error;
+        }
+        return $device;
+    }
+
     public function getAll ()
     {
         $oCriteria = new Criteria( 'workflow' );
