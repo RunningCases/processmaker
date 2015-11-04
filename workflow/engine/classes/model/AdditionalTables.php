@@ -751,7 +751,7 @@ class AdditionalTables extends BaseAdditionalTables
                 } else {
                     // grids
                     foreach ($caseData[$dKey] as $dIndex => $dRow) {
-                        if (!is_array($dRow)) {
+                        if (is_array($dRow)) {
                             foreach ($dRow as $k => $v) {
                                 if (trim($v) === '') {
                                     $caseData[$dKey][$dIndex][$k] = null;
