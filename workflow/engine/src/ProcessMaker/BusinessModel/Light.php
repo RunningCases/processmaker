@@ -66,7 +66,7 @@ class Light
                 foreach ($processList[$key] as $keyChild => $processInfoChild) {
                     $webEntryEventStart = $webEntryEvent->getWebEntryEvents($processInfoChild['pro_uid']);
                     if(empty($webEntryEventStart)){
-                        $tempTreeChild['text']      = htmlentities($keyChild, ENT_QUOTES, 'UTF-8'); //ellipsis ( $keyChild, 50 );
+                        $tempTreeChild['text']      = $keyChild; //ellipsis ( $keyChild, 50 );
                         $tempTreeChild['processId'] = $processInfoChild['pro_uid'];
                         $tempTreeChild['taskId']    = $processInfoChild['uid'];
                         $forms = $task->getSteps($processInfoChild['uid']);
