@@ -2288,4 +2288,134 @@ class Cases
             throw $e;
         }
     }
+
+    /**
+     * Get process list for start case
+     *
+     * @param string $usrUid id of user
+     * @param string $typeView type of view
+     *
+     * return array Return an array with process list that the user can start.
+     */
+    public function getCasesListStarCase($usrUid, $typeView)
+    {
+        try {
+            Validator::usrUid($usrUid, '$usr_uid');
+
+            $case = new \Cases();
+            $response = $case->getProcessListStartCase($usrUid, $typeView);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Get process list bookmark for start case
+     *
+     * @param string $usrUid id of user
+     * @param string $typeView type of view
+     *
+     * return array Return an array with process list that the user can start.
+     */
+    public function getCasesListBookmarkStarCase($usrUid, $typeView)
+    {
+        try {
+            Validator::usrUid($usrUid, '$usr_uid');
+
+            $user = new \Users();
+            $fields = $user->load($usrUid);
+            $bookmark = empty($fields['USR_BOOKMARK_START_CASES']) ? array() : unserialize($fields['USR_BOOKMARK_START_CASES']);
+
+            //Getting group id and adding the user id
+            $group = new \Groups();
+            $groups = $group->getActiveGroupsForAnUser($usrUid);
+            $groups[] = $usrUid;
+
+            $c = new \Criteria();
+            $c->clearSelectColumns();
+            $c->addSelectColumn(\TaskPeer::TAS_UID);
+            $c->addSelectColumn(\TaskPeer::PRO_UID);
+            $c->addJoin(\TaskPeer::PRO_UID, \ProcessPeer::PRO_UID, \Criteria::LEFT_JOIN);
+            $c->addJoin(\TaskPeer::TAS_UID, \TaskUserPeer::TAS_UID, \Criteria::LEFT_JOIN);
+            $c->add(\ProcessPeer::PRO_STATUS, 'ACTIVE');
+            $c->add(\TaskPeer::TAS_START, 'TRUE');
+            $c->add(\TaskUserPeer::USR_UID, $groups, \Criteria::IN);
+            $c->add(\TaskPeer::TAS_UID, $bookmark, \Criteria::IN);
+
+            $c->addAsColumn('TAS_TITLE', 'C1.CON_VALUE');
+            $c->addAlias("C1", 'CONTENT');
+            $tasTitleConds = array();
+            $tasTitleConds[] = array(\TaskPeer::TAS_UID, 'C1.CON_ID');
+            $tasTitleConds[] = array(
+                'C1.CON_CATEGORY',
+                \DBAdapter::getStringDelimiter() . 'TAS_TITLE' . \DBAdapter::getStringDelimiter()
+            );
+            $tasTitleConds[] = array(
+                'C1.CON_LANG',
+                \DBAdapter::getStringDelimiter() . SYS_LANG . \DBAdapter::getStringDelimiter()
+            );
+            $c->addJoinMC( $tasTitleConds, \Criteria::LEFT_JOIN );
+
+            $c->addAsColumn('PRO_TITLE', 'C2.CON_VALUE');
+            $c->addAlias("C2", 'CONTENT');
+            $proTitleConds = array();
+            $proTitleConds[] = array(\ProcessPeer::PRO_UID, 'C2.CON_ID');
+            $proTitleConds[] = array(
+                'C2.CON_CATEGORY',
+                \DBAdapter::getStringDelimiter() . 'PRO_TITLE' . \DBAdapter::getStringDelimiter()
+            );
+            $proTitleConds[] = array(
+                'C2.CON_LANG',
+                \DBAdapter::getStringDelimiter() . SYS_LANG . \DBAdapter::getStringDelimiter()
+            );
+            $c->addJoinMC( $proTitleConds, \Criteria::LEFT_JOIN );
+
+            if ($typeView == 'category') {
+                $c->addAsColumn('PRO_CATEGORY', 'PCS.PRO_CATEGORY');
+                $c->addAsColumn('CATEGORY_NAME', 'PCSCAT.CATEGORY_NAME');
+                $c->addAlias('PCS', 'PROCESS');
+                $c->addAlias('PCSCAT', 'PROCESS_CATEGORY');
+                $aConditions = array();
+                $aConditions[] = array(\TaskPeer::PRO_UID, 'PCS.PRO_UID');
+                $c->addJoinMC( $aConditions, \Criteria::LEFT_JOIN );
+                $aConditions = array();
+                $aConditions[] = array('PCS.PRO_CATEGORY', 'PCSCAT.CATEGORY_UID');
+                $c->addJoinMC( $aConditions, \Criteria::LEFT_JOIN );
+            }
+
+            $rs = \TaskPeer::doSelectRS($c);
+
+            $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $processList = array();
+            while ($rs->next()) {
+                $row = $rs->getRow();
+                if ($typeView == 'category') {
+                    $processList[] = array(
+                        'tas_uid' => $row['TAS_UID'],
+                        'pro_title' => $row['PRO_TITLE'] . '(' . $row['TAS_TITLE'] . ')',
+                        'pro_uid' => $row['PRO_UID'],
+                        'pro_category' => $row['PRO_CATEGORY'],
+                        'category_name' => $row['CATEGORY_NAME']
+                    );
+                } else {
+                    $processList[] = array(
+                        'tas_uid' => $row['TAS_UID'],
+                        'pro_title' => $row['PRO_TITLE'] . '(' . $row['TAS_TITLE'] . ')',
+                        'pro_uid' => $row['PRO_UID']
+                    );
+                }
+
+            }
+            if (count($processList) == 0) {
+                $processList['success'] = 'failure';
+                $processList['message'] = G::LoadTranslation('ID_USER_PROCESS_NOT_START');
+            }
+
+            return $processList;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
 }

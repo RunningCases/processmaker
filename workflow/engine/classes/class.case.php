@@ -7033,5 +7033,51 @@ class Cases
 
         return $unserializedData;
     }
+
+    /**
+     * This function returns the list of cases (and  their categories) that a user can start.
+     * Used by : End Point workflow/engine/src/ProcessMaker/Services/Api/Cases.php  -> doGetCasesListStarCase
+     * Observation: This function and the doGetCasesListStarCase end point implements a similar functionality
+     * of the mobile light/process/start-case  endpoint. It was decided (Sep 3 2015) the it was necessary to have
+     * a ProcessMaker endpoint for this functionality and in the future al the mobile end points will be deprecated
+     * and just the ProcessMaker endpoints will exist.
+     *
+     * @param $usrUid
+     * @param $typeView
+     * @return array
+     */
+    public function getProcessListStartCase($usrUid, $typeView)
+    {
+        $usrUid = empty($usrUid) ? $_SESSION['USER_LOGGED'] : $usrUid;
+
+        $canStart = $this->canStartCase($usrUid);
+        if ($canStart) {
+            $processList = array();
+            $list = $this->getStartCasesPerType($usrUid, $typeView);
+            foreach ($list as $index => $row) {
+                if (!empty($row['pro_uid'])) {
+                    if ($typeView == 'category') {
+                        $processList[] = array(
+                            'tas_uid' => $row['uid'],
+                            'pro_title' => $row['value'],
+                            'pro_uid' => $row['pro_uid'],
+                            'pro_category' => $row['cat'],
+                            'category_name' => $row['catname']
+                        );
+                    } else {
+                        $processList[] = array(
+                            'tas_uid' => $row['uid'],
+                            'pro_title' => $row['value'],
+                            'pro_uid' => $row['pro_uid']
+                        );
+                    }
+                }
+            }
+        } else {
+            $processList['success'] = 'failure';
+            $processList['message'] = G::LoadTranslation('ID_USER_PROCESS_NOT_START');
+        }
+        return $processList;
+    }
 }
 

@@ -1194,6 +1194,31 @@ class User
     }
 
     /**
+     * change Bookmarks of an user
+     *
+     * @access public
+     * @param $userUID
+     * @param $tasUid
+     * @param $type
+     * @return void
+     */
+    public function updateBookmark($userUID, $tasUid, $type)
+    {
+        $this->userObj = new \Users();
+        $fields = $this->userObj->load($userUID);
+        $bookmark = empty($fields['USR_BOOKMARK_START_CASES']) ? array() : unserialize($fields['USR_BOOKMARK_START_CASES']);
+        $position = array_search($tasUid, $bookmark);
+
+        if ($type === 'INSERT' and $position === false) {
+            $bookmark[] = $tasUid;
+        } elseif ($type === 'DELETE' and $position !== false) {
+            unset($bookmark[$position]);
+        }
+        $fields['USR_BOOKMARK_START_CASES'] = serialize($bookmark);
+        $this->userObj->update($fields);
+    }
+
+    /**
      * Check permission
      *
      * @param string $userUid        Unique uid of User

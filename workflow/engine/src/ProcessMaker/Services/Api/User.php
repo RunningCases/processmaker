@@ -137,5 +137,41 @@ class User extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
+
+    /**
+     * Save Bookmark start case
+     * @url POST /bookmark/:tas_uid
+     *
+     * @param string $tas_uid {@min 32}{@max 32}
+     *
+     */
+    public function doPostBookmarkStartCase($tas_uid)
+    {
+        try {
+            $userLoggedUid = $this->getUserId();
+            $user = new \ProcessMaker\BusinessModel\User();
+            $user->updateBookmark($userLoggedUid, $tas_uid, 'INSERT');
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Delete Bookmark start case
+     * @url DELETE /bookmark/:tas_uid
+     *
+     * @param string $tas_uid {@min 32}{@max 32}
+     *
+     */
+    public function doDeleteBookmarkStartCase($tas_uid)
+    {
+        try {
+            $userLoggedUid = $this->getUserId();
+            $user = new \ProcessMaker\BusinessModel\User();
+            $user->updateBookmark($userLoggedUid, $tas_uid, 'DELETE');
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
 }
 
