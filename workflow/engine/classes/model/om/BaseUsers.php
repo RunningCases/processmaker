@@ -238,6 +238,12 @@ abstract class BaseUsers extends BaseObject implements Persistent
     protected $usr_unit_cost = '';
 
     /**
+     * The value for the usr_bookmark_start_cases field.
+     * @var        string
+     */
+    protected $usr_bookmark_start_cases;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -718,6 +724,17 @@ abstract class BaseUsers extends BaseObject implements Persistent
     {
 
         return $this->usr_unit_cost;
+    }
+
+    /**
+     * Get the [usr_bookmark_start_cases] column value.
+     * 
+     * @return     string
+     */
+    public function getUsrBookmarkStartCases()
+    {
+
+        return $this->usr_bookmark_start_cases;
     }
 
     /**
@@ -1513,6 +1530,28 @@ abstract class BaseUsers extends BaseObject implements Persistent
     } // setUsrUnitCost()
 
     /**
+     * Set the value of [usr_bookmark_start_cases] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setUsrBookmarkStartCases($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->usr_bookmark_start_cases !== $v) {
+            $this->usr_bookmark_start_cases = $v;
+            $this->modifiedColumns[] = UsersPeer::USR_BOOKMARK_START_CASES;
+        }
+
+    } // setUsrBookmarkStartCases()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -1599,12 +1638,14 @@ abstract class BaseUsers extends BaseObject implements Persistent
 
             $this->usr_unit_cost = $rs->getString($startcol + 34);
 
+            $this->usr_bookmark_start_cases = $rs->getString($startcol + 35);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 35; // 35 = UsersPeer::NUM_COLUMNS - UsersPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 36; // 36 = UsersPeer::NUM_COLUMNS - UsersPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Users object", $e);
@@ -1913,6 +1954,9 @@ abstract class BaseUsers extends BaseObject implements Persistent
             case 34:
                 return $this->getUsrUnitCost();
                 break;
+            case 35:
+                return $this->getUsrBookmarkStartCases();
+                break;
             default:
                 return null;
                 break;
@@ -1968,6 +2012,7 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $keys[32] => $this->getUsrTotalUnassigned(),
             $keys[33] => $this->getUsrCostByHour(),
             $keys[34] => $this->getUsrUnitCost(),
+            $keys[35] => $this->getUsrBookmarkStartCases(),
         );
         return $result;
     }
@@ -2103,6 +2148,9 @@ abstract class BaseUsers extends BaseObject implements Persistent
                 break;
             case 34:
                 $this->setUsrUnitCost($value);
+                break;
+            case 35:
+                $this->setUsrBookmarkStartCases($value);
                 break;
         } // switch()
     }
@@ -2267,6 +2315,10 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $this->setUsrUnitCost($arr[$keys[34]]);
         }
 
+        if (array_key_exists($keys[35], $arr)) {
+            $this->setUsrBookmarkStartCases($arr[$keys[35]]);
+        }
+
     }
 
     /**
@@ -2418,6 +2470,10 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $criteria->add(UsersPeer::USR_UNIT_COST, $this->usr_unit_cost);
         }
 
+        if ($this->isColumnModified(UsersPeer::USR_BOOKMARK_START_CASES)) {
+            $criteria->add(UsersPeer::USR_BOOKMARK_START_CASES, $this->usr_bookmark_start_cases);
+        }
+
 
         return $criteria;
     }
@@ -2539,6 +2595,8 @@ abstract class BaseUsers extends BaseObject implements Persistent
         $copyObj->setUsrCostByHour($this->usr_cost_by_hour);
 
         $copyObj->setUsrUnitCost($this->usr_unit_cost);
+
+        $copyObj->setUsrBookmarkStartCases($this->usr_bookmark_start_cases);
 
 
         $copyObj->setNew(true);
