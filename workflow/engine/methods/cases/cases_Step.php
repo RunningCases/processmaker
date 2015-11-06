@@ -160,11 +160,8 @@ if ($flagExecuteBeforeTriggers) {
 
     if (! isset( $_SESSION['_NO_EXECUTE_TRIGGERS_'] )) {
         //Execute before triggers - Start
-        if (!isset($_SESSION['beforeTriggersExecuted']) || $_GET['POSITION'] > 1) {
-            $oStep = $oStep->loadByProcessTaskPosition( $_SESSION['PROCESS'], $_SESSION['TASK'], $_GET['POSITION'] );
-            if($oStep) {
-                $Fields['APP_DATA'] = $oCase->ExecuteTriggers( $_SESSION['TASK'], $oStep->getStepTypeObj(), $oStep->getStepUidObj(), 'BEFORE', $Fields['APP_DATA'] );
-            }
+        if (!isset($_SESSION['beforeTriggersExecuted']) || $triggers) {
+            $Fields['APP_DATA'] = $oCase->ExecuteTriggers( $_SESSION['TASK'], $_GET['TYPE'], $_GET['UID'], 'BEFORE', $Fields['APP_DATA'] );
         } else {
             unset($_SESSION['beforeTriggersExecuted']);
         }
