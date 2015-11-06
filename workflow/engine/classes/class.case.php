@@ -1993,10 +1993,16 @@ class Cases
                     throw (new PropelException('The row cannot be created!', new PropelException($msg)));
                 }
                 $taskNext = TaskPeer::retrieveByPK($appDel->getTasUid());
-                if($taskNext->getTasType() == 'NORMAL' && $oApplication->getAppStatus() == "DRAFT"){
-                    $sUserUid = $appDel->getUsrUid();
-                    $users = new Users();
-                    $users->refreshTotal($sUserUid, "remove", "draft");
+                if($taskNext->getTasType() == 'NORMAL'){
+                    if($oApplication->getAppStatus() == "DRAFT"){
+                      $sUserUid = $appDel->getUsrUid();
+                      $users = new Users();
+                      $users->refreshTotal($sUserUid, "remove", "draft");
+                    }else{
+                      $sUserUid = $appDel->getUsrUid();
+                      $users = new Users();
+                      $users->refreshTotal($sUserUid, "remove", "inbox");
+                    }
                 }
             }
             /*----------------------------------********---------------------------------*/

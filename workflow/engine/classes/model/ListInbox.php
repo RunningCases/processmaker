@@ -324,12 +324,12 @@ class ListInbox extends BaseListInbox
                         $criteria->add( SubApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
                         $dataset = SubApplicationPeer::doSelectRS($criteria);
                         if ($dataset->next()) {
-                            $users->refreshTotal($delPreviusUsrUid, 'remove', 'inbox');
+                            //$users->refreshTotal($delPreviusUsrUid, 'remove', 'inbox');
                         } else {
                             //$users->refreshTotal($delPreviusUsrUid, 'remove', 'draft');
                         }
                     } else {
-                        $users->refreshTotal($delPreviusUsrUid, 'remove', 'inbox');
+                        //$users->refreshTotal($delPreviusUsrUid, 'remove', 'inbox');
                     }
                 }
                 if (!$isSelfService) {
@@ -343,7 +343,7 @@ class ListInbox extends BaseListInbox
             if ($dataPreviusApplication['APP_STATUS'] == 'DRAFT') {
                 //$users->refreshTotal($dataPreviusApplication['CURRENT_USER_UID'], 'remove', 'draft');
             } else {
-                $users->refreshTotal($dataPreviusApplication['CURRENT_USER_UID'], 'remove', 'inbox');
+                //$users->refreshTotal($dataPreviusApplication['CURRENT_USER_UID'], 'remove', 'inbox');
             }
         }
         self::create($data, $isSelfService);

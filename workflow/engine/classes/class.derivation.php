@@ -655,7 +655,7 @@ class Derivation
                 if ($application->getAppStatus() == "DRAFT") {
                     //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "draft");
                 } else {
-                    $user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "inbox");
+                    //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "inbox");
                 }
             } else {
                 if ($arrayNextDelegationData["TAS_UID"] != "-1") {
@@ -685,7 +685,7 @@ class Derivation
                                 if ($application->getAppStatus() == "DRAFT") {
                                     //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "draft");
                                 } else {
-                                    $user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "inbox");
+                                    //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "inbox");
                                 }
                             }
                         }
@@ -696,7 +696,7 @@ class Derivation
                             if ($application->getAppStatus() == "DRAFT") {
                                 //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "draft");
                             } else {
-                                $user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "inbox");
+                                //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "inbox");
                             }
                         }
                     }
