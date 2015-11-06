@@ -127,7 +127,7 @@ class ListCompleted extends BaseListCompleted
             if ($dataset->next()) {
                 $users->refreshTotal($data['USR_UID'], 'remove', 'inbox');
             } else {
-                $users->refreshTotal($data['USR_UID'], 'remove', 'draft');
+                //$users->refreshTotal($data['USR_UID'], 'remove', 'draft');
             }
         }
 

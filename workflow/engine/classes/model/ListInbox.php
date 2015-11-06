@@ -326,7 +326,7 @@ class ListInbox extends BaseListInbox
                         if ($dataset->next()) {
                             $users->refreshTotal($delPreviusUsrUid, 'remove', 'inbox');
                         } else {
-                            $users->refreshTotal($delPreviusUsrUid, 'remove', 'draft');
+                            //$users->refreshTotal($delPreviusUsrUid, 'remove', 'draft');
                         }
                     } else {
                         $users->refreshTotal($delPreviusUsrUid, 'remove', 'inbox');
@@ -341,7 +341,8 @@ class ListInbox extends BaseListInbox
                 $users->refreshTotal($data['USR_UID'], 'add', 'inbox');
             }
             if ($dataPreviusApplication['APP_STATUS'] == 'DRAFT') {
-                $users->refreshTotal($dataPreviusApplication['CURRENT_USER_UID'], 'remove', 'draft');
+                //$users->refreshTotal($dataPreviusApplication['CURRENT_USER_UID'], 'remove', 'draft');
+
             } else {
                 $users->refreshTotal($dataPreviusApplication['CURRENT_USER_UID'], 'remove', 'inbox');
             }
