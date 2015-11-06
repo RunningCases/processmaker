@@ -653,9 +653,9 @@ class Derivation
                 $application = ApplicationPeer::retrieveByPK($arrayApplicationData["APP_UID"]);
 
                 if ($application->getAppStatus() == "DRAFT") {
-                    $user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "draft");
+                    //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "draft");
                 } else {
-                    $user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "inbox");
+                    //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "inbox");
                 }
             } else {
                 if ($arrayNextDelegationData["TAS_UID"] != "-1") {
@@ -683,9 +683,9 @@ class Derivation
                                 $application = ApplicationPeer::retrieveByPK($arrayApplicationData["APP_UID"]);
 
                                 if ($application->getAppStatus() == "DRAFT") {
-                                    $user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "draft");
+                                    //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "draft");
                                 } else {
-                                    $user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "inbox");
+                                    //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "inbox");
                                 }
                             }
                         }
@@ -694,9 +694,9 @@ class Derivation
                             $application = ApplicationPeer::retrieveByPK($arrayApplicationData["APP_UID"]);
 
                             if ($application->getAppStatus() == "DRAFT") {
-                                $user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "draft");
+                                //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "draft");
                             } else {
-                                $user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "inbox");
+                                //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "inbox");
                             }
                         }
                     }

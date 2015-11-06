@@ -1973,6 +1973,7 @@ class Cases
     public function CloseCurrentDelegation($sAppUid, $iDelIndex)
     {
         try {
+            $oApplication = ApplicationPeer::retrieveByPk($sAppUid);
             $c = new Criteria();
             $c->add(AppDelegationPeer::APP_UID, $sAppUid);
             $c->add(AppDelegationPeer::DEL_INDEX, $iDelIndex);
@@ -1990,6 +1991,18 @@ class Cases
                         $msg .= $objValidationFailure->getMessage() . "<br/>";
                     }
                     throw (new PropelException('The row cannot be created!', new PropelException($msg)));
+                }
+                $taskNext = TaskPeer::retrieveByPK($appDel->getTasUid());
+                if($taskNext->getTasType() == 'NORMAL'){
+                    if($oApplication->getAppStatus() == "DRAFT"){
+                      $sUserUid = $appDel->getUsrUid();
+                      $users = new Users();
+                      $users->refreshTotal($sUserUid, "remove", "draft");
+                    }else{
+                      $sUserUid = $appDel->getUsrUid();
+                      $users = new Users();
+                      $users->refreshTotal($sUserUid, "remove", "inbox");
+                    }
                 }
             }
             /*----------------------------------********---------------------------------*/
