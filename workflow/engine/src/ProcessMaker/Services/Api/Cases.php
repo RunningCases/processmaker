@@ -4,7 +4,6 @@ namespace ProcessMaker\Services\Api;
 use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
 
-
 /**
  * Cases Api Controller
  *
@@ -1045,5 +1044,52 @@ class Cases extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
-}
 
+    /**
+     * Get process list for start case
+     *
+     * @url GET /start-cases
+     *
+     * @param string $type_view {@from path}
+     * @return array
+     *
+     */
+    public function doGetCasesListStarCase(
+        $type_view = ''
+    ) {
+        try {
+            $usr_uid = $this->getUserId();
+            $case = new \ProcessMaker\BusinessModel\Cases();
+
+            $response = $case->getCasesListStarCase($usr_uid, $type_view);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Get process list bookmark for start case
+     *
+     * @url GET /bookmark-start-cases
+     *
+     * @param string $type_view {@from path}
+     * @return array
+     *
+     */
+    public function doGetCasesListBookmarkStarCase(
+        $type_view = ''
+    ) {
+        try {
+            $usr_uid = $this->getUserId();
+            $case = new \ProcessMaker\BusinessModel\Cases();
+
+            $response = $case->getCasesListBookmarkStarCase($usr_uid, $type_view);
+
+            return $response;
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+}
