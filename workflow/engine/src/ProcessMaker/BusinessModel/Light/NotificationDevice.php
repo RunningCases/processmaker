@@ -150,30 +150,12 @@ class NotificationDevice
     public function routeCaseNotification($currentUserId, $processId, $currentTaskId, $appFields, $aTasks, $nextIndex)
     {
         try {
-            $oUser = new \Users();
-            $aUser = $oUser->load( $currentUserId );
-
             $response = array();
-            $task = new \Tasks();
-            $group = new \Groups();
             foreach ($aTasks as $aTask) {
                 $arrayTaskUser = array();
                 switch ($aTask["TAS_ASSIGN_TYPE"]) {
                     case "SELF_SERVICE":
-                        if (isset($aTask["TAS_UID"]) && !empty($aTask["TAS_UID"])) {
-                            $arrayAux1 = $task->getGroupsOfTask($aTask["TAS_UID"], 1);
-                            foreach ($arrayAux1 as $arrayGroup) {
-                                $arrayAux2 = $group->getUsersOfGroup($arrayGroup["GRP_UID"]);
-                                foreach ($arrayAux2 as $arrayUser) {
-                                    $arrayTaskUser[] = $arrayUser["USR_UID"];
-                                }
-                            }
-                            $arrayAux1 = $task->getUsersOfTask($aTask["TAS_UID"], 1);
-
-                            foreach ($arrayAux1 as $arrayUser) {
-                                $arrayTaskUser[] = $arrayUser["USR_UID"];
-                            }
-                        }
+                        $arrayTaskUser = $this->getTaskUserSelfService($aTask["TAS_UID"], $appFields);
                         break;
                     default:
                         if (isset($aTask["USR_UID"]) && !empty($aTask["USR_UID"])) {
@@ -182,8 +164,6 @@ class NotificationDevice
                         break;
                 }
 
-//                $oTask = new \Task();
-//                $currentTask = $oTask->load($aTask['TAS_UID']);
                 $delIndex = null;
                 foreach ($nextIndex as $nIndex) {
                     if($aTask['TAS_UID'] == $nIndex['TAS_UID']){
@@ -248,6 +228,45 @@ class NotificationDevice
             throw new \Exception(\Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
         return $response;
+    }
+
+    public function getTaskUserSelfService($tas_uid, $appFields)
+    {
+        $oTask = new \Tasks();
+        $oGroup = new \Groups();
+        $taskNextDel = \TaskPeer::retrieveByPK($tas_uid);
+        $arrayTaskUser = array();
+
+        if ($taskNextDel->getTasAssignType() == "SELF_SERVICE" && trim($taskNextDel->getTasGroupVariable()) != "") {
+            // Self Service Value Based Assignment
+            $nextTaskGroupVariable = trim($taskNextDel->getTasGroupVariable(), " @#");
+            if (isset($appFields["APP_DATA"][$nextTaskGroupVariable])) {
+                $dataGroupVariable = $appFields["APP_DATA"][$nextTaskGroupVariable];
+                $dataGroupVariable = (is_array($dataGroupVariable))? $dataGroupVariable : trim($dataGroupVariable);
+                if (!empty($dataGroupVariable) && is_array($dataGroupVariable)){
+                    $arrayTaskUser[] = $dataGroupVariable;
+                } elseif(!empty($dataGroupVariable)) {
+                    $arrayUsersOfGroup = $oGroup->getUsersOfGroup($dataGroupVariable);
+                    foreach ($arrayUsersOfGroup as $arrayUser) {
+                        $arrayTaskUser[] = $arrayUser["USR_UID"];
+                    }
+                }
+            }
+        } else { // Self Service
+            $arrayGroupsOfTask = $oTask->getGroupsOfTask($tas_uid, 1);
+            foreach ($arrayGroupsOfTask as $arrayGroup) {
+                $arrayUsersOfGroup = $oGroup->getUsersOfGroup($arrayGroup["GRP_UID"]);
+                foreach ($arrayUsersOfGroup as $arrayUser) {
+                    $arrayTaskUser[] = $arrayUser["USR_UID"];
+                }
+            }
+            $arrayUsersOfTask = $oTask->getUsersOfTask($tas_uid, 1);
+            foreach ($arrayUsersOfTask as $arrayUser) {
+                $arrayTaskUser[] = $arrayUser["USR_UID"];
+            }
+        }
+
+        return $arrayTaskUser;
     }
 
 }
