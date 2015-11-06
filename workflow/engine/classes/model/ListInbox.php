@@ -342,7 +342,6 @@ class ListInbox extends BaseListInbox
             }
             if ($dataPreviusApplication['APP_STATUS'] == 'DRAFT') {
                 //$users->refreshTotal($dataPreviusApplication['CURRENT_USER_UID'], 'remove', 'draft');
-
             } else {
                 $users->refreshTotal($dataPreviusApplication['CURRENT_USER_UID'], 'remove', 'inbox');
             }

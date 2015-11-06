@@ -1404,6 +1404,7 @@ class Cases
 
             $rsCriteria = RoutePeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
 
