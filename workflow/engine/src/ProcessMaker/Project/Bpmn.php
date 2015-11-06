@@ -1375,29 +1375,36 @@ class Bpmn extends Handler
         $elementOriginUid,
         $elementOriginType,
         $elementDestUid,
-        $elementDestType
+        $elementDestType,
+        $index
     ) {
         try {
             if (isset($this->arrayElementOriginChecked[$elementOriginUid]) && $this->arrayElementOriginChecked[$elementOriginUid] == $elementOriginType) {
                 //Return
-                return array();
+                return [];
             }
 
             $this->arrayElementOriginChecked[$elementOriginUid] = $elementOriginType;
 
-            if ($elementOriginType == $elementDestType && $elementOriginUid == $elementDestUid) {
-                $arrayEvent = array();
-                array_unshift($arrayEvent, array($elementDestUid, $elementDestType));
+            if ($index > 0 && $elementOriginType == $elementDestType) {
+                if ($elementOriginUid == $elementDestUid) {
+                    $arrayEvent = [];
+
+                    array_unshift($arrayEvent, [$elementDestUid, $elementDestType]);
+
+                    //Return
+                    return $arrayEvent;
+                }
 
                 //Return
-                return $arrayEvent;
+                return [];
             } else {
                 //Flows
-                $arrayFlow = \BpmnFlow::findAllBy(array(
-                    \BpmnFlowPeer::FLO_TYPE                => array("MESSAGE", \Criteria::NOT_EQUAL),
+                $arrayFlow = \BpmnFlow::findAllBy([
+                    \BpmnFlowPeer::FLO_TYPE                => ["MESSAGE", \Criteria::NOT_EQUAL],
                     \BpmnFlowPeer::FLO_ELEMENT_ORIGIN      => $elementOriginUid,
                     \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => $elementOriginType
-                ));
+                ]);
 
                 foreach ($arrayFlow as $value) {
                     $arrayFlowData = $value->toArray();
@@ -1406,11 +1413,12 @@ class Bpmn extends Handler
                         $arrayFlowData["FLO_ELEMENT_DEST"],
                         $arrayFlowData["FLO_ELEMENT_DEST_TYPE"],
                         $elementDestUid,
-                        $elementDestType
+                        $elementDestType,
+                        $index + 1
                     );
 
                     if (!empty($arrayEvent)) {
-                        array_unshift($arrayEvent, array($elementOriginUid, $elementOriginType));
+                        array_unshift($arrayEvent, [$elementOriginUid, $elementOriginType]);
 
                         //Return
                         return $arrayEvent;
@@ -1418,7 +1426,7 @@ class Bpmn extends Handler
                 }
 
                 //Return
-                return array();
+                return [];
             }
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
@@ -1434,10 +1442,10 @@ class Bpmn extends Handler
         $elementDestType
     ) {
         try {
-            $this->arrayElementOriginChecked = array();
+            $this->arrayElementOriginChecked = [];
 
             //Return
-            return call_user_func_array(array($this, "__getElementsBetweenElementOriginAndElementDest"), func_get_args());
+            return call_user_func_array([$this, "__getElementsBetweenElementOriginAndElementDest"], array_merge(func_get_args(), [0]));
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
 
