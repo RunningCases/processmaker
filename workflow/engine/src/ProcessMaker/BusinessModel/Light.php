@@ -457,6 +457,8 @@ class Light
                         $response[] = $taskAss;
                         break;
                     case 'MANUAL':
+                    case "MULTIPLE_INSTANCE":
+                    case "MULTIPLE_INSTANCE_VALUE_BASED":
                         $manual = array();
                         $manual['taskId'] = $aValues['NEXT_TASK']['TAS_UID'];
                         $manual['taskName'] = $aValues['NEXT_TASK']['TAS_TITLE'];
@@ -492,7 +494,7 @@ class Light
             }
 
             if (empty( $response )) {
-                throw (new Exception( G::LoadTranslation( 'ID_NO_DERIVATION_RULE' ) ));
+                throw new \Exception(G::LoadTranslation("ID_NO_DERIVATION_RULE"));
             }
         } catch (\Exception $e) {
             throw $e;
