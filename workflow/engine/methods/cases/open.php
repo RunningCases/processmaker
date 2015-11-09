@@ -28,6 +28,12 @@
  * @date Jan 3th, 2010
  */
 
+$tBarGmail = false;
+if(isset( $_GET['gmail']) && $_GET['gmail'] == 1){
+    $_SESSION['gmail'] = 1;
+    $tBarGmail = true;
+}
+
 if (! isset( $_GET['APP_UID'] ) || ! isset( $_GET['DEL_INDEX'] )) {
     if (isset( $_GET['APP_NUMBER'] )) {
         G::LoadClass( 'case' );
@@ -102,6 +108,7 @@ $oHeadPublisher->assign( '_ENV_CURRENT_DATE', $conf->getSystemDate( date( 'Y-m-d
 $oHeadPublisher->assign( '_ENV_CURRENT_DATE_NO_FORMAT', date( 'Y-m-d-h-i-A' ) );
 $oHeadPublisher->assign( 'idfirstform', is_null( $oStep ) ? '' : $oStep->getStepUidObj() );
 $oHeadPublisher->assign( 'appStatus', $case['APP_STATUS'] );
+$oHeadPublisher->assign( 'tbarGmail', $tBarGmail);
 
 if(!isset($_SESSION['APPLICATION']) || !isset($_SESSION['TASK']) || !isset($_SESSION['INDEX'])) {
     $_SESSION['APPLICATION'] = $case['APP_UID'];
