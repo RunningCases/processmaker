@@ -649,6 +649,130 @@ try {
                     $oCase->updateCase( $_SESSION['APPLICATION'], $Fields );
                     //Save data - End
 
+                    /*----------------------------------********---------------------------------*/
+                    $licensedFeatures = &PMLicensedFeatures::getSingleton();
+                    if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+                        G::LoadClass( "pmDrive" );
+                        $pmDrive = new PMDrive();
+                        if ($pmDrive->getStatusService()) {
+                            $app = new Application();
+                            $user = new Users();
+                            $dataUser = $user->load($_SESSION['USER_LOGGED']);
+                            $pmDrive->setDriveUser($dataUser['USR_EMAIL']);
+
+                            $applicationUid = $_SESSION['APPLICATION'];
+                            $appData = $app->Load($applicationUid);
+                            if ($appData['APP_DRIVE_FOLDER_UID'] == null) {
+                                $process = new Process();
+                                $process->setProUid($appData['PRO_UID']);
+
+                                $result = $pmDrive->createFolder($process->getProTitle() . ' - ' . G::LoadTranslation("ID_CASE") . ' #' . $appData['APP_NUMBER'],
+                                    $pmDrive->getFolderIdPMDrive($_SESSION['USER_LOGGED']));
+                                $appData['APP_DRIVE_FOLDER_UID'] = $result->id;
+                                $app->update($appData);
+                            }
+
+                            $fileIdDriveDoc = '';
+                            $fileIdDrivePdf = '';
+                            switch ($aOD['OUT_DOC_GENERATE']) {
+                                case "BOTH":
+                                    $result = $pmDrive->uploadFile('application/pdf', $pathOutput . $sFilename . '.pdf',
+                                        $sFilenameOriginal . '.pdf', $appData['APP_DRIVE_FOLDER_UID']);
+                                    $oAppDocument->setDriveDownload('OUTPUT_PDF', $result->webContentLink);
+                                    $fileIdDrivePdf = $result->id;
+                                    $result = $pmDrive->uploadFile('application/doc', $pathOutput . $sFilename . '.doc',
+                                        $sFilenameOriginal . '.doc', $appData['APP_DRIVE_FOLDER_UID']);
+                                    $oAppDocument->setDriveDownload('OUTPUT_DOC', $result->webContentLink);
+                                    $fileIdDriveDoc = $result->id;
+                                    break;
+                                case "PDF":
+                                    $result = $pmDrive->uploadFile('application/pdf', $pathOutput . $sFilename . '.pdf',
+                                        $sFilenameOriginal . '.pdf', $appData['APP_DRIVE_FOLDER_UID']);
+                                    $oAppDocument->setDriveDownload('OUTPUT_PDF', $result->webContentLink);
+                                    $fileIdDrivePdf = $result->id;
+                                    break;
+                                case "DOC":
+                                    $result = $pmDrive->uploadFile('application/doc', $pathOutput . $sFilename . '.doc',
+                                        $sFilenameOriginal . '.doc', $appData['APP_DRIVE_FOLDER_UID']);
+                                    $oAppDocument->setDriveDownload('OUTPUT_DOC', $result->webContentLink);
+                                    $fileIdDriveDoc = $result->id;
+                                    break;
+                            }
+                            $aFields['DOC_VERSION'] = $oAppDocument->getDocVersion();// $docVersion;
+                            $aFields['APP_DOC_UID'] = $oAppDocument->getAppDocUid();//$appDocUid;
+                            $appDocUid = $aFields['APP_DOC_UID'];
+
+                            $oAppDocument->update($aFields);
+                            //$option = 'pmDrive';
+
+
+                            //add permissions
+                            $criteria = new Criteria('workflow');
+                            $criteria->addSelectColumn(ApplicationPeer::PRO_UID);
+                            $criteria->addSelectColumn(TaskUserPeer::TAS_UID);
+                            $criteria->addSelectColumn(TaskUserPeer::USR_UID);
+                            $criteria->addSelectColumn(TaskUserPeer::TU_RELATION);
+
+                            $criteria->add(ApplicationPeer::APP_UID, $applicationUid);
+                            $criteria->addJoin(ApplicationPeer::PRO_UID, TaskPeer::PRO_UID, Criteria::LEFT_JOIN);
+                            $criteria->addJoin(TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN);
+
+
+                            $dataset = ApplicationPeer::doSelectRs($criteria);
+                            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+                            $userPermission = array();
+                            $case = new Cases();
+
+                            while ($dataset->next()) {
+                                $row = $dataset->getRow();
+                                if ($row['TU_RELATION'] == 1) {
+                                    //users
+                                    $dataUser = $user->load($row['USR_UID']);
+                                    if (array_search($dataUser['USR_EMAIL'], $userPermission) == null) {
+                                        $objectPermissions = $case->getAllObjects($row['PRO_UID'], $applicationUid,
+                                            $row['TAS_UID'], $row['USR_UID']);
+                                        if (array_search($appDocUid, $objectPermissions['OUTPUT_DOCUMENTS']) != null) {
+                                            $userPermission[] = $dataUser['USR_EMAIL'];
+                                        }
+                                    }
+                                } else {
+                                    //Groups
+                                    $criteria = new Criteria('workflow');
+                                    $criteria->addSelectColumn(UsersPeer::USR_EMAIL);
+                                    $criteria->addSelectColumn(UsersPeer::USR_UID);
+                                    $criteria->add(GroupUserPeer::GRP_UID, $row['USR_UID']);
+                                    $criteria->addJoin(GroupUserPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
+
+                                    $oDataset = AppDelegationPeer::doSelectRs($criteria);
+                                    $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                                    while ($oDataset->next()) {
+                                        $aRow = $oDataset->getRow();
+                                        if (array_search($aRow['USR_EMAIL'], $userPermission) == null) {
+                                            $objectPermissions = $case->getAllObjects($row['PRO_UID'], $applicationUid,
+                                                $row['TAS_UID'], $aRow['USR_UID']);
+                                            if (array_search($appDocUid,
+                                                    $objectPermissions['OUTPUT_DOCUMENTS']) != null
+                                            ) {
+                                                $userPermission[] = $aRow['USR_EMAIL'];
+                                            }
+                                        }
+
+                                    }
+                                }
+
+                            }
+                            $userPermission = array_unique($userPermission);
+
+                            foreach ($userPermission as $key => $val) {
+                                $pmDrive->setPermission($appData['APP_DRIVE_FOLDER_UID'], $val, 'user', 'writer');
+                                $pmDrive->setPermission($fileIdDrivePdf, $val);
+                                $pmDrive->setPermission($fileIdDriveDoc, $val);
+                            }
+                        }
+                    }
+                    /*----------------------------------********---------------------------------*/
+
                     //Plugin Hook PM_UPLOAD_DOCUMENT for upload document
                     $oPluginRegistry = & PMPluginRegistry::getSingleton();
                     if ($oPluginRegistry->existsTrigger( PM_UPLOAD_DOCUMENT ) && class_exists( 'uploadDocumentData' )) {
@@ -763,6 +887,29 @@ try {
                             }
                         }
                     }
+
+                    /*----------------------------------********---------------------------------*/
+                    $licensedFeatures = &PMLicensedFeatures::getSingleton();
+                    $enablePMGmail = false;
+                    if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+                        G::LoadClass( "pmDrive" );
+                        $pmDrive = new PMDrive();
+                        if ($pmDrive->getStatusService()) {
+                            //change donwload link - drive
+                            $driveDownload = @unserialize($aFields['APP_DOC_DRIVE_DOWNLOAD']);
+                            if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('OUTPUT_DOC',
+                                    $driveDownload)
+                            ) {
+                                $aFields['FILE1'] = $driveDownload['OUTPUT_DOC'];
+                            }
+                            if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('OUTPUT_PDF',
+                                    $driveDownload)
+                            ) {
+                                $aFields['FILE2'] = $driveDownload['OUTPUT_PDF'];
+                            }
+                        }
+                    }
+                    /*----------------------------------********---------------------------------*/
 
                     if (($aGields['OUT_DOC_GENERATE'] == 'BOTH') || ($aGields['OUT_DOC_GENERATE'] == '')) {
                         $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_ViewOutputDocument1', '', G::array_merges( $aOD, $aFields ), '' );
