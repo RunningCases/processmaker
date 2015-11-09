@@ -27,10 +27,61 @@ if (!isset($_SESSION['USER_LOGGED'])) {
     die( '<script type="text/javascript">
                     try
                       {
-                        prnt = parent.parent;
-                        top.location = top.location;
+    					var olink = parent.uri;
+    					var flag = 0;
+			    		if(olink == undefined){
+			    			olink = window.frameElement.src;
+    						flag = 1;
+						}
+    					if(olink.search("gmail") == -1){
+	                        prnt = parent.parent;
+	                        top.location = top.location;
+    					} else {
+    						var data = olink.split("?");
+    						var odata = data[1].split("&");
+
+    						var	appUid = odata[0].split("=");
+    						var delIndex = odata[1].split("=");
+    						var action = odata[2].split("=");
+
+    						var dataToSend = {
+                    			"action": "credentials",
+                    			"operation": "refreshPmSession",
+                    			"type": "processCall",
+                    			"funParams": [
+    								appUid[1],
+    								delIndex[1],
+    								action[1],
+    								0
+    							],
+                    			"expectReturn": false
+                			};
+    						if (flag == 0){
+    							parent.parent.postMessage(JSON.stringify(dataToSend), "https://mail.google.com");
+    						}else {
+    							//top.location = 
+    							var x = window.postMessage(JSON.stringify(dataToSend), "https://mail.google.com");
+					    		
+    							if(x == undefined){
+    								//Here the code to access the extension from the gadget
+    								dataToSend = {
+                    					"action": "credentials",
+                    					"operation": "refreshPmSession",
+                    					"type": "processCall",
+		                    			"funParams": [
+		    								appUid[1],
+		    								delIndex[1],
+		    								action[1],
+		    								1
+		    							],
+		                    			"expectReturn": false
+                					};
+    								parent.postMessage(JSON.stringify(dataToSend), "*");
+					    		}
+							}
+    					}
                       }
-                    catch (err)
+                      catch (err)
                       {
                         parent.location = parent.location;
                       }
