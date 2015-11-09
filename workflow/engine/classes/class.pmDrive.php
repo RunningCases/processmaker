@@ -6,6 +6,7 @@
  * @package workflow.engine.class
  *
  */
+G::LoadClass( "pmGoogleApi" );
 class PMDrive extends PMGoogleApi
 {
     private $folderIdPMDrive = '';

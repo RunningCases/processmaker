@@ -39,6 +39,7 @@
     <column name="APP_PIN" type="VARCHAR" size="32" required="true" default=""/>
     <column name="APP_DURATION" type="DOUBLE" default="0"/>
     <column name="APP_DELAY_DURATION" type="DOUBLE" default="0"/>
+    <column name="APP_DRIVE_FOLDER_UID" type="VARCHAR" size="32" default="" required="false"/>
     <validator column="APP_STATUS">
       <rule name="validValues" value="DRAFT|TO_DO|PAUSED|COMPLETED|CANCELLED" message="Please select a valid status." />
     </validator>
@@ -180,6 +181,16 @@
     <column name="APP_DOC_STATUS" type="VARCHAR" size="32" required="true" default="ACTIVE"/>
     <column name="APP_DOC_STATUS_DATE" type="TIMESTAMP"/>
     <column name="APP_DOC_FIELDNAME" type="VARCHAR" size="150" />
+    <column name="APP_DOC_DRIVE_DOWNLOAD" type="LONGVARCHAR" required="false">
+        <vendor type="mysql">
+            <parameter name="Field" value="APP_DOC_DRIVE_DOWNLOAD"/>
+            <parameter name="Type" value="MEDIUMTEXT"/>
+            <parameter name="Null" value="YES"/>
+            <parameter name="Key" value=""/>
+            <parameter name="Default" value=""/>
+            <parameter name="Extra" value=""/>
+        </vendor>
+    </column>
     <validator column="APP_DOC_UID">
       <rule name="maxLength" value="32" message="Application Document UID can be no larger than ${value} in size"/>
       <rule name="required" message="Application Document UID is required."/>
@@ -1485,6 +1496,7 @@
     <column name="USR_TOTAL_UNASSIGNED" type="INTEGER" default="0"/>
     <column name="USR_COST_BY_HOUR" type="DECIMAL" size="7,2" required="false" default="0"/>
     <column name="USR_UNIT_COST" type="VARCHAR" size="50" required="false" default=""/>
+    <column name="USR_PMDRIVE_FOLDER_UID" type="VARCHAR" size="32" default="" required="false"/>
     <column name="USR_BOOKMARK_START_CASES" type="LONGVARCHAR" required="false">
         <vendor type="mysql">
             <parameter name="Field" value="USR_BOOKMARK_START_CASES"/>
