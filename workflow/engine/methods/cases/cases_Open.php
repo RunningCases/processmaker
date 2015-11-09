@@ -22,6 +22,10 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
+if(isset( $_GET['gmail']) && $_GET['gmail'] == 1){
+	$_SESSION['gmail'] = 1;
+}
+
 /* Permissions */
 if ($RBAC->userCanAccess( 'PM_CASES' ) != 1) {
     switch ($RBAC->userCanAccess( 'PM_CASES' )) {
