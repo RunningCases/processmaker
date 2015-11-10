@@ -923,6 +923,9 @@ class Process extends BaseProcess
         $webBotTrigger = '';
 
         switch ($action) {
+            case 'OPEN':
+                $var = ProcessPeer::PRO_TRI_OPEN;
+                break;
             case 'DELETED':
                 $var = ProcessPeer::PRO_TRI_DELETED;
                 break;
