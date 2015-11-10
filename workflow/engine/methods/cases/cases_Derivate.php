@@ -203,6 +203,24 @@ try {
             unset( $_SESSION['TRIGGER_DEBUG'] );
         }
     }
+    
+    //close tab only if IE11
+    $ieVersion = null;
+    if(preg_match("/^.*\(.*MSIE (\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch) || preg_match("/^.*\(.*rv.(\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch)){
+        $ieVersion = intval($arrayMatch[1]);
+    }
+    if($ieVersion == 11 && !isset($_SESSION['__OUTLOOK_CONNECTOR__'])) {
+        $script = "<script type='text/javascript'>
+                       try {
+                           if(top.opener) {
+                               top.opener.location.reload();
+                               top.close();
+                           } 
+                       } catch(e) {
+                       } 
+                   </script>";
+        die($script);
+    }
 
     G::header( "location: $loc" );
 } catch (Exception $e) {
