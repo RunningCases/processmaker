@@ -485,6 +485,9 @@ class pmDynaform
 
     private function getValuesDependentFields($json)
     {
+        if (!isset($this->record["DYN_CONTENT"])) {
+            return array();
+        }
         $data = array();
         if (isset($json->dbConnection) && isset($json->sql)) {
             $salida = array();
