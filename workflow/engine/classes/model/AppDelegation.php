@@ -264,6 +264,7 @@ class AppDelegation extends BaseAppDelegation
         $c->addSelectColumn( AppDelegationPeer::DEL_INIT_DATE );
         $c->addSelectColumn( AppDelegationPeer::DEL_TASK_DUE_DATE );
         $c->addSelectColumn( AppDelegationPeer::DEL_FINISH_DATE );
+        $c->addSelectColumn( AppDelegationPeer::DEL_PREVIOUS );
 
         $c->add( AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN' );
         $c->add( AppDelegationPeer::APP_UID, $AppUid );
@@ -287,6 +288,7 @@ class AppDelegation extends BaseAppDelegation
             $case['DEL_INIT_DATE']     = $row['DEL_INIT_DATE'];
             $case['DEL_TASK_DUE_DATE'] = $row['DEL_TASK_DUE_DATE'];
             $case['DEL_FINISH_DATE']   = $row['DEL_FINISH_DATE'];
+            $case['DEL_PREVIOUS']      = $row['DEL_PREVIOUS'];
             $aCases[] = $case;
             $rs->next();
             $row = $rs->getRow();

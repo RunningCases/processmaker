@@ -92,6 +92,8 @@ class labelsGmail
             //The Subject to search the email
             $subject = "[PM] " .$proName. " Case: ". $appNumber;
 
+            require_once PATH_TRUNK . 'vendor' . PATH_SEP . 'google' . PATH_SEP . 'apiclient' . PATH_SEP . 'src' . PATH_SEP . 'Google' . PATH_SEP . 'autoload.php';
+            require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.pmGoogleApi.php");
             $pmGoogle = new PMGoogleApi();
 
             $pmGoogle->setUser($mail);
