@@ -537,6 +537,12 @@ class pmDynaform
                 }
             }
         }
+        if (isset($json->options) && isset($json->options[0])) {
+            $data[$json->variable === "" ? $json->id : $json->variable] = $json->options[0]->value;
+        }
+        if (isset($json->placeholder) && $json->placeholder !== "") {
+            $data[$json->variable === "" ? $json->id : $json->variable] = $json->placeholder;
+        }
         if (isset($json->defaultValue) && $json->defaultValue !== "") {
             $data[$json->variable === "" ? $json->id : $json->variable] = $json->defaultValue;
         }
