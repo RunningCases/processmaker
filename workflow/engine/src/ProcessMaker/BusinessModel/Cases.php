@@ -1042,6 +1042,15 @@ class Cases
             //$oPluginRegistry      = & PMPluginRegistry::getSingleton();
             $listing = $oPluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST, $folderData);
         }
+        /*----------------------------------********---------------------------------*/
+        $licensedFeatures = &\PMLicensedFeatures::getSingleton();
+        $enablePMGmail = false;
+        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+            G::LoadClass( "pmDrive" );
+            $pmDrive = new \PMDrive();
+            $enablePMGmail = $pmDrive->getStatusService();
+        }
+        /*----------------------------------********---------------------------------*/
         $aObjectPermissions = $cases->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
         if (!is_array($aObjectPermissions)) {
             $aObjectPermissions = array(
@@ -1147,7 +1156,7 @@ class Cases
                 $aFields['ID_DELETE'] = \G::LoadTranslation('ID_DELETE');
             }
             $aFields['DOWNLOAD_LABEL'] = \G::LoadTranslation('ID_DOWNLOAD');
-            $aFields['DOWNLOAD_LINK'] = "cases_ShowDocument?a=" . $aRow['APP_DOC_UID'] . "&v=" . $aRow['DOC_VERSION'];
+            $aFields['DOWNLOAD_LINK'] = "cases/cases_ShowDocument?a=" . $aRow['APP_DOC_UID'] . "&v=" . $aRow['DOC_VERSION'];
             $aFields['DOC_VERSION'] = $aRow['DOC_VERSION'];
             if (is_array($listing)) {
                 foreach ($listing as $folderitem) {
@@ -1158,6 +1167,15 @@ class Cases
                     }
                 }
             }
+            /*----------------------------------********---------------------------------*/
+            //change donwload link - drive
+            $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
+            if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('INPUT',
+                    $driveDownload) && $enablePMGmail
+            ) {
+                $aFields['DOWNLOAD_LINK'] = $driveDownload['INPUT'];
+            }
+            /*----------------------------------********---------------------------------*/
             if ($lastVersion == $aRow['DOC_VERSION']) {
                 //Show only last version
                 $aInputDocuments[] = $aFields;
@@ -1228,7 +1246,16 @@ class Cases
                 $aFields['ID_DELETE'] = G::LoadTranslation('ID_DELETE');
             }
             $aFields['DOWNLOAD_LABEL'] = G::LoadTranslation('ID_DOWNLOAD');
-            $aFields['DOWNLOAD_LINK'] = "cases_ShowDocument?a=" . $aRow['APP_DOC_UID'];
+            $aFields['DOWNLOAD_LINK'] = "cases/cases_ShowDocument?a=" . $aRow['APP_DOC_UID'];
+            /*----------------------------------********---------------------------------*/
+            //change donwload link - drive
+            $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
+            if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('ATTACHED',
+                    $driveDownload) && $enablePMGmail
+            ) {
+                $aFields['DOWNLOAD_LINK'] = $driveDownload['ATTACHED'];
+            }
+            /*----------------------------------********---------------------------------*/
             if ($lastVersion == $aRow['DOC_VERSION']) {
                 //Show only last version
                 $aInputDocuments[] = $aFields;
@@ -1292,6 +1319,15 @@ class Cases
                     }
                 }
             }
+            /*----------------------------------********---------------------------------*/
+            //change donwload link - drive
+            $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
+            if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('INPUT',
+                    $driveDownload) && $enablePMGmail
+            ) {
+                $aFields['DOWNLOAD_LINK'] = $driveDownload['INPUT'];
+            }
+            /*----------------------------------********---------------------------------*/
             if ($lastVersion == $aRow['DOC_VERSION']) {
                 //Show only last version
                 $aInputDocuments[] = $aFields;
@@ -1335,6 +1371,15 @@ class Cases
             //$oPluginRegistry = & PMPluginRegistry::getSingleton();
             $listing = $oPluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST, $folderData);
         }
+        /*----------------------------------********---------------------------------*/
+        $licensedFeatures = &\PMLicensedFeatures::getSingleton();
+        $enablePMGmail = false;
+        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+            G::LoadClass( "pmDrive" );
+            $pmDrive = new \PMDrive();
+            $enablePMGmail = $pmDrive->getStatusService();
+        }
+        /*----------------------------------********---------------------------------*/
         $aObjectPermissions = $cases->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
         if (!is_array($aObjectPermissions)) {
             $aObjectPermissions = array('DYNAFORMS' => array(-1),'INPUT_DOCUMENTS' => array(-1),'OUTPUT_DOCUMENTS' => array(-1));
@@ -1417,7 +1462,7 @@ class Cases
                     case "PDF":
                         $fileDoc = 'javascript:alert("NO DOC")';
                         $fileDocLabel = " ";
-                        $filePdf = 'cases_ShowOutputDocument?a=' .
+                        $filePdf = 'cases/cases_ShowOutputDocument?a=' .
                             $aRow['APP_DOC_UID'] . '&v=' . $aRow['DOC_VERSION'] . '&ext=pdf&random=' . rand();
                         $filePdfLabel = ".pdf";
                         if (is_array($listing)) {
@@ -1431,7 +1476,7 @@ class Cases
                         }
                         break;
                     case "DOC":
-                        $fileDoc = 'cases_ShowOutputDocument?a=' .
+                        $fileDoc = 'cases/cases_ShowOutputDocument?a=' .
                             $aRow['APP_DOC_UID'] . '&v=' . $aRow['DOC_VERSION'] . '&ext=doc&random=' . rand();
                         $fileDocLabel = ".doc";
                         $filePdf = 'javascript:alert("NO PDF")';
@@ -1447,7 +1492,7 @@ class Cases
                         }
                         break;
                     case "BOTH":
-                        $fileDoc = 'cases_ShowOutputDocument?a=' .
+                        $fileDoc = 'cases/cases_ShowOutputDocument?a=' .
                             $aRow['APP_DOC_UID'] . '&v=' . $aRow['DOC_VERSION'] . '&ext=doc&random=' . rand();
                         $fileDocLabel = ".doc";
                         if (is_array($listing)) {
@@ -1459,7 +1504,7 @@ class Cases
                                 }
                             }
                         }
-                        $filePdf = 'cases_ShowOutputDocument?a=' .
+                        $filePdf = 'cases/cases_ShowOutputDocument?a=' .
                             $aRow['APP_DOC_UID'] . '&v=' . $aRow['DOC_VERSION'] . '&ext=pdf&random=' . rand();
                         $filePdfLabel = ".pdf";
 
@@ -1480,6 +1525,20 @@ class Cases
                 } catch (\Exception $oException) {
                     $sUser = '(USER DELETED)';
                 }
+                /*----------------------------------********---------------------------------*/
+                //change donwload link - drive
+                $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
+                if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('OUTPUT_DOC',
+                        $driveDownload) && $enablePMGmail
+                ) {
+                    $fileDoc = $driveDownload['OUTPUT_DOC'];
+                }
+                if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('OUTPUT_PDF',
+                        $driveDownload) && $enablePMGmail
+                ) {
+                    $filePdf = $driveDownload['OUTPUT_PDF'];
+                }
+                /*----------------------------------********---------------------------------*/
                 //if both documents were generated, we choose the pdf one, only if doc was
                 //generate then choose the doc file.
                 $firstDocLink = $filePdf;
