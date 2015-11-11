@@ -216,11 +216,7 @@ if ($flagExecuteBeforeTriggers) {
 
     if (! isset( $_SESSION['_NO_EXECUTE_TRIGGERS_'] )) {
         //Execute before triggers - Start
-        if (!isset($_SESSION['beforeTriggersExecuted']) || $triggers) {
-            $Fields['APP_DATA'] = $oCase->ExecuteTriggers( $_SESSION['TASK'], $_GET['TYPE'], $_GET['UID'], 'BEFORE', $Fields['APP_DATA'] );
-        } else {
-            unset($_SESSION['beforeTriggersExecuted']);
-        }
+        $Fields['APP_DATA'] = $oCase->ExecuteTriggers( $_SESSION['TASK'], $_GET['TYPE'], $_GET['UID'], 'BEFORE', $Fields['APP_DATA'] );
         //Execute before triggers - End
     } else {
         unset( $_SESSION['_NO_EXECUTE_TRIGGERS_'] );
