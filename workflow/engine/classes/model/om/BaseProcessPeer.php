@@ -670,9 +670,6 @@ abstract class BaseProcessPeer
         if ($obj->isNew() || $obj->isColumnModified(ProcessPeer::PRO_STATUS))
             $columns[ProcessPeer::PRO_STATUS] = $obj->getProStatus();
 
-        if ($obj->isNew() || $obj->isColumnModified(ProcessPeer::PRO_TYPE))
-            $columns[ProcessPeer::PRO_TYPE] = $obj->getProType();
-
         if ($obj->isNew() || $obj->isColumnModified(ProcessPeer::PRO_ASSIGNMENT))
             $columns[ProcessPeer::PRO_ASSIGNMENT] = $obj->getProAssignment();
 

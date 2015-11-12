@@ -16,7 +16,7 @@ class Process
         "PRO_TIMEUNIT"              => array("type" => "string",   "required" => false, "empty" => false, "defaultValues" => array("DAYS"),               "fieldNameAux" => "processTimeunit"),
         "PRO_STATUS"                => array("type" => "string",   "required" => true,  "empty" => false, "defaultValues" => array("ACTIVE", "INACTIVE"), "fieldNameAux" => "processStatus"),
         "PRO_TYPE_DAY"              => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),                     "fieldNameAux" => "processTypeDay"),
-        "PRO_TYPE"                  => array("type" => "string",   "required" => false, "empty" => false, "defaultValues" => array("NORMAL"),             "fieldNameAux" => "processType"),
+        "PRO_TYPE"                  => array("type" => "string",   "required" => false, "empty" => false, "defaultValues" => array(), "fieldNameAux" => "processType"),
         "PRO_ASSIGNMENT"            => array("type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1), "fieldNameAux" => "processAssignment"),
         "PRO_SHOW_MAP"              => array("type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1), "fieldNameAux" => "processShowMap"),
         "PRO_SHOW_MESSAGE"          => array("type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1), "fieldNameAux" => "processShowMessage"),

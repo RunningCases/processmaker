@@ -173,13 +173,13 @@ class Process extends BaseProcess
             $this->setProTimeunit( 'DAYS' );
             $this->setProStatus( 'ACTIVE' );
             $this->setProTypeDay( '' );
-            $this->setProType( 'NORMAL' );
+            $this->setProType((isset($aData["PRO_TYPE"]))? $aData["PRO_TYPE"]: "NORMAL");
             $this->setProAssignment( 'FALSE' );
             $this->setProShowMap( '' );
             $this->setProShowMessage( '' );
             $this->setProShowDelegate( '' );
             $this->setProShowDynaform( '' );
-            $this->setProCategory( $aData['PRO_CATEGORY'] );
+            $this->setProCategory((isset($aData["PRO_CATEGORY"]))? $aData["PRO_CATEGORY"]: "");
             $this->setProSubCategory( '' );
             $this->setProIndustry( '' );
             $this->setProCreateDate( date("Y-m-d H:i:s") );
