@@ -2903,3 +2903,62 @@ function PMFSaveCurrentData ()
 
     return $result;
 }
+
+
+/**
+ * @method
+ * This function determines if the domain of the passed email addres  is hosted in
+ * a gmail server.
+ * This function test just the domain, so there isn't any validation related to the
+ * email address existence or validity.
+ * @param string | $emailAddress | emailAddress that will be examined to determine if it is hosted in Gmail
+ * @return boolean | $result | true if the emailAddress domain is hosted in gmail, false otherwise
+ * */
+function isEmailAddressHostedInGmail($emailAddress) {
+	if (strpos($emailAddress,'@') == false) {
+		throw new Exception ('the passed email address is not valid');
+	}
+
+	$retval = FALSE;
+	//the accepted domains to accept and address as a gmail account are:
+	$gmailDomainsRegExp = "/gmail\.com|googlemail\.com/";
+	
+	if (preg_match($gmailDomainsRegExp, $emailAddress) == 1) {
+		$retval = TRUE;
+	}
+	else
+	{
+		$domainName = preg_split('/@/', $emailAddress)[1];
+
+		foreach(getNamedServerMXRecord($domainName) as $emailServer) {
+			if (preg_match($gmailDomainsRegExp, $emailServer) == 1) {
+				$retval = TRUE;
+			}
+		}
+	}
+	return $retval;
+}
+
+
+/**
+ * @method
+ * Returns an array with the Mail Exchanger info of a Named Domain
+ * a gmail server.
+ * This function test just the domain, so there isn't any validation related to the
+ * email address existence or validity.
+ * @param string | $domainName | Domain Name e.g. processmaker.com
+ * @return array | $result | array 
+ * */
+function getNamedServerMXRecord($domainName) {
+
+	//in some windows distributions getmxxr does not exist, so if this happens, a wrapper function
+	//is created.
+	if (!function_exists('getmxrr')) {
+		function getmxrr($hostname, &$mxhosts, &$mxweight=false) {
+			return win_getmxrr($hostname, $mxhosts, $mxweight);
+		}
+	}
+	$mailExchangerHosts = array();
+	getmxrr($domainName, $mailExchangerHosts);
+	return $mailExchangerHosts;
+}
