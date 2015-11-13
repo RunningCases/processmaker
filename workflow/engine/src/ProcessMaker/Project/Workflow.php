@@ -1298,6 +1298,25 @@ class Workflow extends Handler
 
             $arrayWorkflowData = (array)($workflowData);
 
+            foreach ($arrayWorkflowData["dynaforms"] as $key => $value) {
+                if ($arrayWorkflowData["dynaforms"][$key]["DYN_CONTENT"] != "") {
+                    $dynaFormContent = $arrayWorkflowData["dynaforms"][$key]["DYN_CONTENT"];
+
+                    foreach ($arrayWorkflowData["uid"] as $value2) {
+                        $arrayAux = $value2;
+
+                        foreach ($arrayAux as $key3 => $value3) {
+                            $uidOld = $key3;
+                            $uid = $value3;
+
+                            $dynaFormContent = str_replace($uidOld, $uid, $dynaFormContent);
+                        }
+                    }
+
+                    $arrayWorkflowData["dynaforms"][$key]["DYN_CONTENT"] = $dynaFormContent;
+                }
+            }
+
             //Workflow files
             foreach ($arrayWorkflowFile as $key => $value) {
                 $arrayFile = $value;

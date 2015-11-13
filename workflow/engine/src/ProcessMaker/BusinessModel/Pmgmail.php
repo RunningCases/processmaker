@@ -105,13 +105,33 @@ class Pmgmail {
      */
     public function getDraftApp($app_uid, $index=1)
     {
-        $response = \AppCacheViewQuery::create()
-            ->filterByAppUid($app_uid)
-            ->filterByDelIndex($index)
-            ->find()
-            ->toArray(null, false, \BasePeer::TYPE_FIELDNAME);
+    	$c = new \Criteria( 'workflow' );
 
-        return $response;
+    	$c->clearSelectColumns();
+    	$c->addSelectColumn( \AppCacheViewPeer::APP_NUMBER );
+    	$c->addSelectColumn( \AppCacheViewPeer::APP_STATUS );
+    	$c->addSelectColumn( \AppCacheViewPeer::DEL_INDEX );
+    	$c->addSelectColumn( \AppCacheViewPeer::APP_DEL_PREVIOUS_USER );
+    	$c->addSelectColumn( \AppCacheViewPeer::DEL_DELEGATE_DATE );
+    	$c->addSelectColumn( \AppCacheViewPeer::USR_UID );
+    	$c->addSelectColumn( \AppCacheViewPeer::PRO_UID );
+    	$c->addSelectColumn( \AppCacheViewPeer::APP_PRO_TITLE );
+    	$c->addSelectColumn( \AppCacheViewPeer::APP_TAS_TITLE );
+    	$c->addSelectColumn( \AppCacheViewPeer::DEL_THREAD_STATUS );
+    	$c->addSelectColumn( \AppCacheViewPeer::TAS_UID );
+    	$c->addSelectColumn( \AppCacheViewPeer::DEL_LAST_INDEX );
+
+    	$c->add( \AppCacheViewPeer::APP_UID, $app_uid );
+    	$c->add( \AppCacheViewPeer::DEL_INDEX, $index );
+
+    	$rs = \AppCacheViewPeer::doSelectRS( $c );
+    	$rs->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+
+    	$rows = Array ();
+    	while ($rs->next()) {
+    		$rows[] = $rs->getRow();
+    	}
+    	return $rows;
     }
 
     /**

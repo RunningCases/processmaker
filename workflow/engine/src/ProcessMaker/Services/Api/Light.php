@@ -751,11 +751,11 @@ class Light extends Api
             $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
             $dynaForm->setFormatFieldNameInUppercase(false);
             \G::LoadClass("pmDynaform");
-            $pmDynaForm = new \pmDynaform();
             $_SESSION['PROCESS'] = $prj_uid;
             $return = array();
             foreach ($request_data['formId'] as $dyn_uid) {
                 $response = $dynaForm->getDynaForm($dyn_uid);
+                $pmDynaForm = new \pmDynaform(array("CURRENT_DYNAFORM" => $dyn_uid));
                 $result   = $this->parserDataDynaForm($response);
                 $result['formContent'] = (isset($result['formContent']) && $result['formContent'] != null)?json_decode($result['formContent']):"";
                 $pmDynaForm->jsonr($result['formContent']);

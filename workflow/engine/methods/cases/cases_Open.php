@@ -175,14 +175,7 @@ try {
                 unset( $_SESSION['bNoShowSteps'] );
                 
                 /* Execute Before Triggers for first Task*/
-                $oStep = new Step;
-                $oStep = $oStep->loadByProcessTaskPosition($_SESSION['PROCESS'], $_SESSION['TASK'], 1);
-                if($oStep) {
-                    $aFields['APP_DATA'] = array_merge( $aFields['APP_DATA'], G::getSystemConstants() );
-                    $triggerFields["APP_DATA"] = $oCase->ExecuteTriggers( $_SESSION['TASK'], $oStep->getStepTypeObj(), $oStep->getStepUidObj(), 'BEFORE', $aFields['APP_DATA'] );
-                    $oCase->updateCase( $_SESSION['APPLICATION'], $triggerFields );
-                    $_SESSION['beforeTriggersExecuted'] = true;
-                }
+                $oCase->getExecuteTriggerProcess($sAppUid, 'OPEN');
                 /*end Execute Before Triggers for first Task*/
                 
                 $aNextStep = $oCase->getNextStep( $_SESSION['PROCESS'], $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['STEP_POSITION'] );
