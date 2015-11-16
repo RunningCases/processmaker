@@ -16,6 +16,7 @@ $gCurl = curl_init( 'https://' . $server . '/api/1.0/' . $pmws . '/gmailIntegrat
 curl_setopt( $gCurl, CURLOPT_HTTPHEADER, array( 'Authorization: Bearer ' . $pmtoken ) );
 curl_setopt( $gCurl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt( $gCurl, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt( $gCurl, CURLOPT_SSL_VERIFYHOST, false);
 curl_setopt( $gCurl, CURLOPT_CONNECTTIMEOUT, 0);
 
 $gCurl_response = curl_exec( $gCurl );
@@ -33,6 +34,7 @@ $curl = curl_init( 'https://' . $server . '/api/1.0/' . $pmws . '/gmailIntegrati
 curl_setopt( $curl, CURLOPT_HTTPHEADER, array( 'Authorization: Bearer ' . $pmtoken ) );
 curl_setopt( $curl, CURLOPT_RETURNTRANSFER, true);
 curl_setopt( $curl, CURLOPT_SSL_VERIFYPEER,false);
+curl_setopt( $curl, CURLOPT_SSL_VERIFYHOST, false);
 curl_setopt( $curl, CURLOPT_CONNECTTIMEOUT, 0);
 
 $curl_response = curl_exec( $curl );
@@ -54,6 +56,7 @@ if( !isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] != $decodedResp
 	$optArray = array(
 	    CURLOPT_URL => $url,
 	    CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_SSL_VERIFYHOST, false,
 		CURLOPT_SSL_VERIFYPEER => false
 	);
 	// apply those options
@@ -107,6 +110,7 @@ if ($action == "draft"){
 	curl_setopt( $curlApp, CURLOPT_CUSTOMREQUEST, "POST");
 	curl_setopt( $curlApp, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt( $curlApp, CURLOPT_SSL_VERIFYPEER,false);
+    curl_setopt( $curlApp, CURLOPT_SSL_VERIFYHOST, false);
 	curl_setopt( $curlApp, CURLOPT_CONNECTTIMEOUT, 0);
 
 	$curl_response_app = curl_exec( $curlApp );

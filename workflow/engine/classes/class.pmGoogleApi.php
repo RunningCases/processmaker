@@ -16,6 +16,12 @@ class PMGoogleApi
     private $domain;
     private $user;
 
+    private $typeAuthentication;
+    private $clientId;
+    private $clientSecret;
+    private $redirectUrl = 'http://localhost/index.html';
+    private $accountJson;
+
     public function __construct()
     {
         $licensedFeatures = &PMLicensedFeatures::getSingleton();
@@ -114,6 +120,81 @@ class PMGoogleApi
         return $this->domain;
     }
 
+    public function setTypeAuthentication($type)
+    {
+        $conf = $this->getConfigGmail();
+
+        $conf->aConfig['typeAuthentication'] = $type;
+        $conf->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
+
+        $this->typeAuthentication = $type;
+    }
+
+    public function getTypeAuthentication()
+    {
+        return $this->typeAuthentication;
+    }
+
+    public function setAccountJson($accountJson)
+    {
+        $conf = $this->getConfigGmail();
+
+        $conf->aConfig['accountJson'] = $accountJson;
+        $conf->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
+
+        $this->accountJson = $accountJson;
+    }
+
+    public function getAccountJson()
+    {
+        return $this->accountJson;
+    }
+
+    public function setClientId($clientId)
+    {
+        $conf = $this->getConfigGmail();
+
+        $conf->aConfig['clientId'] = $clientId;
+        $conf->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
+
+        $this->clientId = $clientId;
+    }
+
+    public function getClientId()
+    {
+        return $this->clientId;
+    }
+
+    public function setClientSecret($clientSecret)
+    {
+        $conf = $this->getConfigGmail();
+
+        $conf->aConfig['clientSecret'] = $clientSecret;
+        $conf->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
+
+        $this->clientSecret = $clientSecret;
+    }
+
+    public function getClientSecret()
+    {
+        return $this->clientSecret;
+    }
+
+    public function setRedirectUrl($redirectUrl)
+    {
+        $conf = $this->getConfigGmail();
+
+        $conf->aConfig['redirectUrl'] = $redirectUrl;
+        $conf->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
+
+        $this->redirectUrl = $redirectUrl;
+    }
+
+    public function getRedirectUrl()
+    {
+        return $this->redirectUrl;
+    }
+
     /**
      * load configuration gmail service account
      *
@@ -122,11 +203,25 @@ class PMGoogleApi
     {
         $conf = $this->getConfigGmail();
 
-        $serviceAccountP12 = empty($conf->aConfig['serviceAccountP12']) ? '' : $conf->aConfig['serviceAccountP12'];
-        $serviceAccountEmail = empty($conf->aConfig['serviceAccountEmail']) ? '' : $conf->aConfig['serviceAccountEmail'];
-        $statusService = empty($conf->aConfig['statusService']) ? '' : $conf->aConfig['statusService'];
+        $typeAuthentication     = empty($conf->aConfig['typeAuthentication']) ? ''  : $conf->aConfig['typeAuthentication'];
+        $clientId               = empty($conf->aConfig['clientId']) ? ''            : $conf->aConfig['clientId'];
+        $clientSecret           = empty($conf->aConfig['clientSecret']) ? ''        : $conf->aConfig['clientSecret'];
+        $redirectUrl            = empty($conf->aConfig['redirectUrl']) ? 'http://localhost/index.html'   : $conf->aConfig['redirectUrl'];
+
+        $accountJson            = empty($conf->aConfig['accountJson']) ? ''   : $conf->aConfig['accountJson'];
+        $serviceAccountP12      = empty($conf->aConfig['serviceAccountP12']) ? ''   : $conf->aConfig['serviceAccountP12'];
+        $serviceAccountEmail    = empty($conf->aConfig['serviceAccountEmail']) ? '' : $conf->aConfig['serviceAccountEmail'];
+        $statusService          = empty($conf->aConfig['statusService']) ? ''       : $conf->aConfig['statusService'];
 
         $this->scope = array();
+
+        $this->setRedirectUrl($accountJson);
+        $this->setTypeAuthentication($typeAuthentication);
+        //$this->setClientId($clientId);
+        //$this->setClientSecret($clientSecret);
+        $this->setAccountJson($accountJson);
+        $this->setRedirectUrl($redirectUrl);
+
         $this->setServiceAccountEmail($serviceAccountEmail);
         $this->setServiceAccountP12($serviceAccountP12);
         $this->setStatusService($statusService);
@@ -139,18 +234,39 @@ class PMGoogleApi
      */
     public function serviceClient()
     {
-        $key = file_get_contents(PATH_DATA_SITE . $this->serviceAccountP12);
+        $client = null;
+        if ($this->getTypeAuthentication == 'webApplication') {
+            $key = file_get_contents(PATH_DATA_SITE . $this->accountJson);
 
-        $assertionCredentials = new Google_Auth_AssertionCredentials(
-            $this->serviceAccountEmail,
-            $this->scope,
-            $key
-        );
-        $assertionCredentials->sub = $this->user;
+            $client = new Google_Client();
+            $client->setAuthConfig($key);
+            $client->setRedirectUri($this->redirectUrl);
 
-        $client = new Google_Client();
-        $client->setApplicationName("PMDrive");
-        $client->setAssertionCredentials($assertionCredentials);
+            if (!empty($_SESSION['google_token'])) {
+                $client->setAccessToken($_SESSION['google_token']);
+                if ($client->isAccessTokenExpired()) {
+                    unset($_SESSION['google_token']);
+                }
+            } else {
+                $authUrl = $client->createAuthUrl();
+                print_r($authUrl);
+            }
+        } else if ($this->getTypeAuthentication == 'serviceAccount') {
+            $key = file_get_contents(PATH_DATA_SITE . $this->serviceAccountP12);
+
+            $assertionCredentials = new Google_Auth_AssertionCredentials(
+                $this->serviceAccountEmail,
+                $this->scope,
+                $key
+            );
+            $assertionCredentials->sub = $this->user;
+
+            $client = new Google_Client();
+            $client->setApplicationName("PMDrive");
+            $client->setAssertionCredentials($assertionCredentials);
+        } else {
+            throw new Exception(G::LoadTranslation('ID_SERVER_COMMUNICATION_ERROR'));
+        }
 
         return $client;
     }

@@ -43,11 +43,17 @@ Ext.onReady(function(){
                                     if (btn == "yes") {
                                         Ext.getCmp('email_service_account').disable();
                                         Ext.getCmp('file_p12').disable();
+                                        Ext.getCmp('typeAuthentication').disable();
+                                        Ext.getCmp('file_json').disable();
+                                        Ext.getCmp('fileJson').disable();
                                         Ext.getCmp('listUsers').hide();
                                         testButton.disable();
                                         saveButton.disable();
                                         saveSettings();
                                     } else {
+                                        Ext.getCmp('typeAuthentication').enable();
+                                        Ext.getCmp('file_json').enable();
+                                        Ext.getCmp('fileJson').enable();
                                         Ext.getCmp('status_pmgmail').enable();
                                         Ext.getCmp('email_service_account').enable();
                                         Ext.getCmp('file_p12').enable();
@@ -56,6 +62,62 @@ Ext.onReady(function(){
                                     }
                                 }
                             );
+                        }
+                    }
+                }
+            },
+            {
+                xtype   : 'combo',
+                id      : 'typeAuthentication',
+                name    : 'typeAuthentication',
+                xtype   : 'combo',
+                fieldLabel  : _('GMAIL_TYPE_AUTH'),
+                //typeAhead     : false,
+                hiddenName: 'typeAuth',
+                mode          : 'local',
+                triggerAction : 'all',
+                forceSelection: true,
+                store: new Ext.data.SimpleStore({
+                    fields: ['value','type'],
+                    data: [['webApplication','Web Application'],['serviceAccount', 'Service Account']],
+                    autoLoad: true
+                }),
+                submitValue : true,
+                value: typeAuthentication,
+                valueField: 'value',
+                displayField: 'type',
+                width: 250,
+                editable: false,
+                listeners:{
+                    afterRender: function () {
+                        Ext.getCmp('email_service_account').hide();
+                        Ext.getCmp('file_p12').hide();
+                        Ext.getCmp('labelFileP12').hide();
+                        Ext.getCmp('file_json').hide();
+                        Ext.getCmp('fileJson').hide();
+                        if (typeAuthentication == 'webApplication' ) {
+                            Ext.getCmp('file_json').show();
+                            Ext.getCmp('fileJson').show();
+                        } else if (typeAuthentication == 'serviceAccount' ) {
+                            Ext.getCmp('email_service_account').show();
+                            Ext.getCmp('file_p12').show();
+                            Ext.getCmp('labelFileP12').show();
+                        }
+                    },
+                    select: function(combo){
+                        var value = combo.getValue();
+                        if (value == 'webApplication' ) {
+                            Ext.getCmp('email_service_account').hide();
+                            Ext.getCmp('file_p12').hide();
+                            Ext.getCmp('labelFileP12').hide();
+                            Ext.getCmp('file_json').show();
+                            Ext.getCmp('fileJson').show();
+                        } else {
+                            Ext.getCmp('email_service_account').show();
+                            Ext.getCmp('file_p12').show();
+                            Ext.getCmp('labelFileP12').show();
+                            Ext.getCmp('file_json').hide();
+                            Ext.getCmp('fileJson').hide();
                         }
                     }
                 }
@@ -110,9 +172,47 @@ Ext.onReady(function(){
             },
             {
                 xtype       : 'label',
+                id          : 'labelFileP12',
+                name        : 'labelFileP12',
                 labelAlign  : 'right',
                 fieldLabel  : '',
                 text        : fileP12,
+                width       : 400,
+                style       : "padding-left:180px;"
+            },
+            {
+                xtype       : 'fileuploadfield',
+                id          : 'file_json',
+                emptyText   : _('ID_PMG_SELECT_FILE_JSON'),
+                fieldLabel  : _('ID_PMG_FILE_JSON'),
+                name        : 'file_json',
+                buttonText  : '',
+                width       : 400,
+                disabled    : !enablePMGmail,
+                buttonCfg   : {
+                    iconCls : 'upload-icon'
+                },
+                listeners:{
+                    change  : function(){
+                        changeSettings();
+                    },
+                    afterrender:function(cmp){
+                        changeSettings();
+                        cmp.fileInput.set({
+                            accept:'*/json'
+                        });
+                    }
+                },
+                regex       : /(.)+((\.json)(\w)?)$/i,
+                regexText   : _('ID_PMG_TYPE_ACCEPT')
+            },
+            {
+                xtype       : 'label',
+                id          : 'fileJson',
+                name        : 'fileJson',
+                labelAlign  : 'right',
+                fieldLabel  : '',
+                text        : fileJson,
                 width       : 400,
                 style       : "padding-left:180px;"
             }
