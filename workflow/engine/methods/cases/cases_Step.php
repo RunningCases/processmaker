@@ -764,6 +764,7 @@ try {
                 $hiddenName = "form[TASKS][" . $sKey . "][TAS_UID]";
                 $hiddenField = '<input type="hidden" name="' . $hiddenName . '" id="' . $hiddenName . '" value="' . $aValues['NEXT_TASK']['TAS_UID'] . '">';
                 $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_HIDDEN_FIELD'] = $hiddenField;
+
                 //print "<hr>".$aValues['NEXT_TASK']['TAS_ASSIGN_TYPE']."<hr>";
                 switch ($aValues['NEXT_TASK']['TAS_ASSIGN_TYPE']) {
                     case 'EVALUATE':
@@ -979,6 +980,10 @@ try {
                     }
                     $aFields['TASK'][$sKey]['NEXT_TASK']['DEL_PRIORITY'] = '<input type="hidden" name="' . $hiddenName . '[DEL_PRIORITY]"      id="' . $hiddenName . '[DEL_PRIORITY]"      value="' . $sPriority . '">';
                     $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_PARENT'] = '<input type="hidden" name="' . $hiddenName . '[TAS_PARENT]"        id="' . $hiddenName . '[TAS_PARENT]"        value="' . $aValues['NEXT_TASK']['TAS_PARENT'] . '">';
+                    if(isset($aValues['NEXT_TASK']['ROU_PREVIOUS_TASK']) && isset($aValues['NEXT_TASK']['ROU_PREVIOUS_TYPE'])){
+                        $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_PREVIOUS_TASK'] = '<input type="hidden" name="' . $hiddenName . '[ROU_PREVIOUS_TASK]"        id="' . $hiddenName . '[ROU_PREVIOUS_TASK]"        value="' . $aValues['NEXT_TASK']['ROU_PREVIOUS_TASK'] . '">';
+                        $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_PREVIOUS_TYPE'] = '<input type="hidden" name="' . $hiddenName . '[ROU_PREVIOUS_TYPE]"        id="' . $hiddenName . '[ROU_PREVIOUS_TYPE]"        value="' . $aValues['NEXT_TASK']['ROU_PREVIOUS_TYPE'] . '">';
+                    }
                 }
             }
 
