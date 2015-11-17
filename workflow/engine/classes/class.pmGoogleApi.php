@@ -181,10 +181,10 @@ class PMGoogleApi
     {
         $client = null;
         if ($this->typeAuthentication == 'webApplication') {
-            $key = file_get_contents(PATH_DATA_SITE . $this->accountJson);
+            $credential = file_get_contents(PATH_DATA_SITE . $this->accountJson);
 
             $client = new Google_Client();
-            $client->setAuthConfig($key);
+            $client->setAuthConfig($credential);
             $client->addScope($this->scope);
 
             if (!empty($_SESSION['google_token'])) {
@@ -244,10 +244,10 @@ class PMGoogleApi
         );
 
         if ($credentials->typeAuth == 'webApplication') {
-            $key = file_get_contents($credentials->pathFileJson);
+            $credential = file_get_contents($credentials->pathFileJson);
 
             $client = new Google_Client();
-            $client->setAuthConfig($key);
+            $client->setAuthConfig($credential);
             $client->addScope($scope);
 
             if (!empty($_SESSION['google_token'])) {
@@ -257,8 +257,6 @@ class PMGoogleApi
                 }
             } else if (!empty($_SESSION['CODE_GMAIL'])) {
                 $token = $client->authenticate($_SESSION['CODE_GMAIL']);
-                //$client->setAccessToken($token);
-                // store in the session also
                 $_SESSION['google_token'] = $client->getAccessToken();
             } else {
                 $authUrl = $client->createAuthUrl();

@@ -72,7 +72,6 @@ Ext.onReady(function(){
                 name    : 'typeAuthentication',
                 xtype   : 'combo',
                 fieldLabel  : _('GMAIL_TYPE_AUTH'),
-                //typeAhead     : false,
                 hiddenName: 'typeAuth',
                 mode          : 'local',
                 triggerAction : 'all',
