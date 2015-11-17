@@ -135,6 +135,7 @@ class Variable
                 $dbConnection = \DbSourcePeer::retrieveByPK($variable->getVarDbconnection(), $variable->getPrjUid());
 
                 $oldVariable = array(
+                    "VAR_UID" => $variable->getVarUid(),
                     "VAR_NAME" => $variable->getVarName(),
                     "VAR_FIELD_TYPE" => $variable->getVarFieldType(),
                     "VAR_DBCONNECTION" => $variable->getVarDbconnection(),
@@ -182,6 +183,7 @@ class Variable
                     //update dynaforms
                     $dbConnection = \DbSourcePeer::retrieveByPK($variable->getVarDbconnection(), $variable->getPrjUid());
                     $newVariable = array(
+                        "VAR_UID" => $variable->getVarUid(),
                         "VAR_NAME" => $variable->getVarName(),
                         "VAR_FIELD_TYPE" => $variable->getVarFieldType(),
                         "VAR_DBCONNECTION" => $variable->getVarDbconnection(),
