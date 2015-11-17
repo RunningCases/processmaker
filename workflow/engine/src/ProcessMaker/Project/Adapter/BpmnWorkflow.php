@@ -77,6 +77,14 @@ class BpmnWorkflow extends Project\Bpmn
                 $wpData["PRO_CREATE_USER"] = $data["PRJ_AUTHOR"];
             }
 
+            if (array_key_exists("PRJ_TYPE", $data)) {
+                $wpData["PRO_TYPE"] = $data["PRJ_TYPE"];
+            }
+
+            if (array_key_exists("PRJ_CATEGORY", $data)) {
+                $wpData["PRO_CATEGORY"] = $data["PRJ_CATEGORY"];
+            }
+
             $this->wp = new Project\Workflow();
             $this->wp->create($wpData);
 
@@ -1207,6 +1215,14 @@ class BpmnWorkflow extends Project\Bpmn
 
         $data["PRJ_UID"] = $projectData["prj_uid"];
         $data["PRJ_AUTHOR"] = $projectData["prj_author"];
+
+        if (isset($projectData["prj_type"])) {
+            $data["PRJ_TYPE"] = $projectData["prj_type"];
+        }
+
+        if (isset($projectData["prj_category"])) {
+            $data["PRJ_CATEGORY"] = $projectData["prj_category"];
+        }
 
         $bwp->create($data);
 

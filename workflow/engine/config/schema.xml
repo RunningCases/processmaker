@@ -846,7 +846,7 @@
     <column name="PRO_TIMEUNIT" type="VARCHAR" size="20" required="true" null="yes" default="DAYS"/>
     <column name="PRO_STATUS" type="VARCHAR" size="20" required="true" default="ACTIVE"/>
     <column name="PRO_TYPE_DAY" type="CHAR" size="1" required="true" default="0"/>
-    <column name="PRO_TYPE" type="VARCHAR" size="20" required="true" default="NORMAL"/>
+    <column name="PRO_TYPE" type="VARCHAR" size="256" required="true" default="NORMAL"/>
     <column name="PRO_ASSIGNMENT" type="VARCHAR" size="20" required="true" default="FALSE"/>
     <column name="PRO_SHOW_MAP" type="TINYINT" required="true" default="1"/>
     <column name="PRO_SHOW_MESSAGE" type="TINYINT" required="true" default="1"/>
@@ -880,9 +880,6 @@
     </validator>
     <validator column="PRO_STATUS">
       <rule name="validValues" value="ACTIVE|INACTIVE|DISABLED" message="Please select a valid Process Status."/>
-    </validator>
-    <validator column="PRO_TYPE">
-      <rule name="validValues" value="NORMAL" message="Please select a valid Process Type."/>
     </validator>
     <validator column="PRO_ASSIGNMENT">
       <rule name="validValues" value="TRUE|FALSE" message="Please select a valid Process Assignment"/>
@@ -5224,4 +5221,3 @@
     </index>
   </table>
 </database>
-

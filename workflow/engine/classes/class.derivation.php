@@ -182,6 +182,8 @@ class Derivation
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
             $flagDefault = false;
+            $aSecJoin = array();
+            $count = 0;
 
             while ($rsCriteria->next()) {
                 $arrayRouteData = G::array_merges($rsCriteria->getRow(), $arrayData);
@@ -206,9 +208,14 @@ class Derivation
 
                 if (trim($arrayRouteData["ROU_CONDITION"]) == "" && $arrayRouteData["ROU_NEXT_TASK"] != "-1") {
                     $arrayTaskData = $task->load($arrayRouteData["ROU_NEXT_TASK"]);
-
                     if ($arrayRouteData["ROU_TYPE"] != "SEC-JOIN" && $arrayTaskData["TAS_TYPE"] == "GATEWAYTOGATEWAY") {
-                        $flagAddDelegation = false;
+                        $flagAddDelegation = true;
+                    }
+
+                    if($arrayRouteData["ROU_TYPE"] == "SEC-JOIN"){
+                       $aSecJoin[$count]["ROU_PREVIOUS_TASK"] = $arrayRouteData["ROU_NEXT_TASK"];
+                       $aSecJoin[$count]["ROU_PREVIOUS_TYPE"] = "SEC-JOIN";
+                       $count++;
                     }
                 }
 
@@ -236,7 +243,6 @@ class Derivation
             $arrayNextTaskBackup = $arrayNextTask;
             $arrayNextTask = array();
             $i = 0;
-
             foreach ($arrayNextTaskBackup as $value) {
                 $arrayNextTaskData = $value;
 
@@ -249,6 +255,10 @@ class Derivation
 
                     foreach ($arrayAux as $value2) {
                         $arrayNextTask[++$i] = $value2;
+                        foreach($aSecJoin as $rsj){
+                          $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TASK"] = $rsj["ROU_PREVIOUS_TASK"];
+                          $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TYPE"] = "SEC-JOIN";
+                        }
                     }
                 } else {
                     $regexpTaskTypeToInclude = "END-MESSAGE-EVENT|END-EMAIL-EVENT";
@@ -260,6 +270,10 @@ class Derivation
                     }
 
                     $arrayNextTask[++$i] = $arrayNextTaskData;
+                    foreach($aSecJoin as $rsj){
+                        $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TASK"] = $rsj["ROU_PREVIOUS_TASK"];
+                        $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TYPE"] = "SEC-JOIN";
+                    }
                 }
             }
 
@@ -905,7 +919,7 @@ class Derivation
                     if (isset($nextDel["TAS_UID_DUMMY"])) {
                         $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
 
-                        if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getEvnType())) {
+                        if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())) {
                             //Throw Events
                             $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
                         }
@@ -954,11 +968,17 @@ class Derivation
                                 case "SEC-JOIN":
                                     $arrayOpenThread = ($flagTaskIsMultipleInstance && $flagTaskAssignTypeIsMultipleInstance)? $this->case->searchOpenPreviousTasks($currentDelegation["TAS_UID"], $currentDelegation["APP_UID"]) : array();
                                     $arrayOpenThread = array_merge($arrayOpenThread, $this->case->getOpenSiblingThreads($nextDel["TAS_UID"], $currentDelegation["APP_UID"], $currentDelegation["DEL_INDEX"], $currentDelegation["TAS_UID"]));
-
                                     $canDerivate = empty($arrayOpenThread);
                                     break;
                                 default:
                                     $canDerivate = true;
+                                    //Check if the previous is a SEC-JOIN and check threads
+                                    if(isset($nextDel["ROU_PREVIOUS_TYPE"])){
+                                        if($nextDel["ROU_PREVIOUS_TYPE"] == "SEC-JOIN"){
+                                            $arrayOpenThread = $this->case->searchOpenPreviousTasks($nextDel["ROU_PREVIOUS_TASK"], $currentDelegation["APP_UID"]);
+                                            $canDerivate = empty($arrayOpenThread);
+                                        }
+                                    }
                                     break;
                             }
                             break;
@@ -1054,7 +1074,9 @@ class Derivation
                                     "TAS_ASSIGN_TYPE"   => $arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_ASSIGN_TYPE"],
                                     "TAS_DEF_PROC_CODE" => $arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_DEF_PROC_CODE"],
                                     "DEL_PRIORITY"      => "",
-                                    "TAS_PARENT"        => $arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_PARENT"]
+                                    "TAS_PARENT"        => $arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_PARENT"],
+                                    "ROU_PREVIOUS_TYPE" => $arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TYPE"],
+                                    "ROU_PREVIOUS_TASK" => $arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TASK"]
                                 );
                             }
 

@@ -275,6 +275,7 @@ class SkinEngine
     	//Get the IE version
     	if(preg_match("/^.*\(.*MSIE (\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch) || preg_match("/^.*\(.*rv.(\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch)){
     		$ie = intval($arrayMatch[1]);
+    		$ieVersion = $ie;
     	}
 
         $swTrident = (preg_match("/^.*Trident.*$/", $_SERVER["HTTP_USER_AGENT"]))? 1 : 0; //Trident only in IE8+
@@ -293,6 +294,12 @@ class SkinEngine
 
             $doctype = null;
             $meta    = "<meta http-equiv=\"X-UA-Compatible\" content=\"IE=$ie\" />";
+
+            if (SYS_COLLECTION == 'cases') {
+                if($ieVersion == 11) {
+                    $meta = "<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />";
+                }
+            }
         }
     }
 
