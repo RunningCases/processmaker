@@ -968,17 +968,14 @@ class pmTablesProxy extends HttpProxyController
             $fsData = intval( fread( $fp, 9 ) ); //reading the metadata
             $sType = fread( $fp, $fsData );
 
-            $pmTables = $this->getList('');
-            $proUids = Array();
-            if($pmTables['count']) {
-                $pmTables = $pmTables['rows'];
-                foreach($pmTables as $val) {
-                    if($val['PRO_UID'] != '') {
-                        $proUids[] = $val['PRO_UID'];   
-                    }
-                }
+            //Ask for all Process
+            $processMap = new processMap();
+            $aProcess = json_decode ($processMap->getAllProcesses());
+            foreach($aProcess as $key => $val){
+               if ($val->value != ''){
+                 $proUids[] = $val->value;
+               }
             }
-
             // first create the tables structures
 
             while (! feof( $fp )) {
@@ -998,27 +995,33 @@ class pmTablesProxy extends HttpProxyController
                         $tableNameMap[$contentSchema['ADD_TAB_NAME']] = $contentSchema['ADD_TAB_NAME'];
                         
                         $tableData = new stdClass();
-                        if (isset( $_POST["form"]["PRO_UID"] ) && ! empty( $_POST["form"]["PRO_UID"] )) {
+
+                        if(isset( $contentSchema["PRO_UID"] )){
+                            $tableData->PRO_UID = $contentSchema["PRO_UID"];
+                        }else{
                             $tableData->PRO_UID = $_POST["form"]["PRO_UID"];
-                        } else {
-                            $tableData->PRO_UID = isset( $contentSchema["PRO_UID"] ) ? $contentSchema["PRO_UID"] : "";
                         }
-                        
                         $isPmTable = false; /*is a report table*/
                         if($contentSchema["PRO_UID"] == "" ) {
                             $isPmTable = true;
                         }
+                        $currentPRO_UID = '';
                         if (isset( $_POST["form"]["PRO_UID_HELP"] ) && !empty($_POST["form"]["PRO_UID_HELP"])) {
                             $currentPRO_UID = $_POST["form"]["PRO_UID_HELP"];
                         } else {
-                            $currentPRO_UID = (isset( $_SESSION['PROCESS']  ) && !empty( $_SESSION['PROCESS']  )) ? $_SESSION['PROCESS']  : '';
+                            if(isset( $_POST["form"]["PRO_UID"]) && !empty( $_POST["form"]["PRO_UID"])){
+                                $currentPRO_UID = $_POST["form"]["PRO_UID"];
+                                $_SESSION['PROCESS'] = $currentPRO_UID;
+                            } else{
+                                $currentPRO_UID = $_SESSION['PROCESS'];
+                            }
                         }
 
                         if($fromAdmin) { /* from admin tab */
-                            if ($tableExists !== false && !$fromConfirm) {
+                            if ($tableExists !== false && !$fromConfirm && !$overWrite) {
                                 $validationType = 1;
-                                throw new Exception( G::loadTranslation( 'ID_OVERWRITE_PMTABLE' ) );    
-                            } 
+                                throw new Exception( G::loadTranslation( 'ID_OVERWRITE_PMTABLE' ) );
+                            }
                             if(!in_array($tableData->PRO_UID, $proUids) && !$isPmTable) {
                                 $validationType = 2;
                                 throw new Exception( G::loadTranslation( 'ID_NO_RELATED_PROCESS' ) );
@@ -1028,7 +1031,7 @@ class pmTablesProxy extends HttpProxyController
                                 $validationType = '';
                                 throw new Exception( G::loadTranslation( 'ID_NO_REPORT_TABLE' ) );    
                             }
-                            if ($tableExists !== false && !$fromConfirm) {
+                            if ($tableExists !== false && !$fromConfirm && !$overWrite) {
                                 $validationType = 1;
                                 throw new Exception( G::loadTranslation( 'ID_OVERWRITE_PMTABLE' ) );    
                             }
