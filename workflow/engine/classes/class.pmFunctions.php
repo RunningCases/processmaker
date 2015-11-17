@@ -2925,9 +2925,7 @@ function isEmailAddressHostedInGmail($emailAddress) {
 	
 	if (preg_match($gmailDomainsRegExp, $emailAddress) == 1) {
 		$retval = TRUE;
-	}
-	else
-	{
+	} else {
 		$domainName = preg_split('/@/', $emailAddress)[1];
 
 		foreach(getNamedServerMXRecord($domainName) as $emailServer) {
@@ -2958,6 +2956,7 @@ function getNamedServerMXRecord($domainName) {
 			return win_getmxrr($hostname, $mxhosts, $mxweight);
 		}
 	}
+
 	$mailExchangerHosts = array();
 	getmxrr($domainName, $mailExchangerHosts);
 	return $mailExchangerHosts;
