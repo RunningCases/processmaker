@@ -84,6 +84,12 @@ class Designer extends Controller
         $this->setVar('isDebugMode', $debug);
         $this->setVar("distribution", $distribution);
 
+        /*----------------------------------********---------------------------------*/
+        $this->setVar("SYS_SYS", SYS_SYS);
+        $this->setVar("SYS_LANG", SYS_LANG);
+        $this->setVar("SYS_SKIN", SYS_SKIN);
+        /*----------------------------------********---------------------------------*/
+
         if ($debug) {
             if (! file_exists(PATH_HTML . "lib-dev/pmUI/build.cache")) {
                 throw new RuntimeException("Development JS Files were are not generated!.\nPlease execute: \$>rake pmBuildDebug in pmUI project");
