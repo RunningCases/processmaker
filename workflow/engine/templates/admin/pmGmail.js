@@ -105,6 +105,7 @@ Ext.onReady(function(){
                         }
                     },
                     select: function(combo){
+                        saveButton.disable();
                         var value = combo.getValue();
                         if (value == 'webApplication' ) {
                             Ext.getCmp('email_service_account').hide();
