@@ -22,55 +22,33 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 if (!isset($_SESSION['USER_LOGGED'])) {
-    G::SendTemporalMessage( 'ID_LOGIN_AGAIN', 'warning', 'labels' );
-    die( '<script type="text/javascript">
-              var olink = parent.uri;
-              var flag = 0;
-              if(olink == undefined){
-			      olink = window.frameElement.src;
-			      flag = 1;
-			  }
-    		  if(olink.search("gmail") == -1){
-	              parent.location = "../cases/casesStartPage?action=startCase";
-    		  } else {
-    			  var data = olink.split("?");
-    			  var odata = data[1].split("&");
-
-    			  var appUid = odata[0].split("=");
-    		   	  var delIndex = odata[1].split("=");
-    			  var action = odata[2].split("=");
-
-    			  var dataToSend = {
-                  		"action": "credentials",
-                  		"operation": "refreshPmSession",
-                  		"type": "processCall",
-                  		"funParams": [
-    						appUid[1],
-    						delIndex[1],
-    						action[1],
-    						0
-    					],
-                    	"expectReturn": false
-                  };
-                  if (flag == 0){
-                  	parent.parent.postMessage(JSON.stringify(dataToSend), "https://mail.google.com");
-                  } else {
-                  	dataToSend = {
-                    	"action": "credentials",
-                    	"operation": "refreshPmSession",
-                    	"type": "processCall",
-		                "funParams": [
-		    				appUid[1],
-		    				delIndex[1],
-		    				action[1],
-		    				1
-		    			],
-		                "expectReturn": false
-                	};
-    				parent.postMessage(JSON.stringify(dataToSend), "*");
-                  }
-    			}
-          </script>');
+	G::SendTemporalMessage( 'ID_LOGIN_AGAIN', 'warning', 'labels' );
+	die( '<script type="text/javascript">
+			var olink = document.location.href;
+			olink = ( olink.search("gmail") == -1 ) ? parent.document.location.href : olink;
+			if(olink.search("gmail") == -1){
+				parent.location = "../cases/casesStartPage?action=startCase";
+			} else {
+				var data = olink.split("?");
+				var odata = data[1].split("&");
+				var appUid = odata[0].split("=");
+	
+				var dataToSend = {
+					"action": "credentials",
+					"operation": "refreshPmSession",
+					"type": "processCall",
+					"funParams": [
+					appUid[1],
+					""
+					],
+					"expectReturn": false
+				};
+				var x = parent.postMessage(JSON.stringify(dataToSend), "*");
+				if (x == undefined){
+					x = parent.parent.postMessage(JSON.stringify(dataToSend), "*");
+				}
+			}
+			</script>');
 }
 /* Permissions */
 switch ($RBAC->userCanAccess( 'PM_CASES' )) {

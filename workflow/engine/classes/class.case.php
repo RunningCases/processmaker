@@ -2257,27 +2257,48 @@ class Cases
                                     $sAction = '';
                                     break;
                             }
-                            $aNextStep = array(
-                                'TYPE' => $oStep->getStepTypeObj(),
-                                'UID' => $oStep->getStepUidObj(),
-                                'POSITION' => $oStep->getStepPosition(),
-                                'PAGE' => 'cases_Step?TYPE=' . $oStep->getStepTypeObj() . '&UID=' .
-                                $oStep->getStepUidObj() . '&POSITION=' . $oStep->getStepPosition() .
-                                '&ACTION=' . $sAction
-                            );
-                            $iPosition = $iLastStep;
+                            if($_SESSION['gmail'] || ($_GET['gmail'] && $_GET['gmail'] == 1)){
+                            	$aNextStep = array(
+                            			'TYPE' => $oStep->getStepTypeObj(),
+                            			'UID' => $oStep->getStepUidObj(),
+                            			'POSITION' => $oStep->getStepPosition(),
+                            			'PAGE' => 'cases_Step?TYPE=' . $oStep->getStepTypeObj() . '&UID=' .
+                            			$oStep->getStepUidObj() . '&POSITION=' . $oStep->getStepPosition() .
+                            			'&ACTION=' . $sAction .
+                            			'&gmail=1'
+                            	);
+                            } else{
+	                            $aNextStep = array(
+	                                'TYPE' => $oStep->getStepTypeObj(),
+	                                'UID' => $oStep->getStepUidObj(),
+	                                'POSITION' => $oStep->getStepPosition(),
+	                                'PAGE' => 'cases_Step?TYPE=' . $oStep->getStepTypeObj() . '&UID=' .
+	                                $oStep->getStepUidObj() . '&POSITION=' . $oStep->getStepPosition() .
+	                                '&ACTION=' . $sAction
+	                            );
+	                            $iPosition = $iLastStep;
+                            }
                         }
                     }
                     $iPosition += 1;
                 }
             }
             if (!$aNextStep) {
-                $aNextStep = array(
-                    'TYPE' => 'DERIVATION',
-                    'UID' => -1,
-                    'POSITION' => ($iLastStep + 1),
-                    'PAGE' => 'cases_Step?TYPE=ASSIGN_TASK&UID=-1&POSITION=10000&ACTION=ASSIGN'
-                );
+            	if($_SESSION['gmail'] || ($_GET['gmail'] && $_GET['gmail'] == 1)){
+	                $aNextStep = array(
+	                    'TYPE' => 'DERIVATION',
+	                    'UID' => -1,
+	                    'POSITION' => ($iLastStep + 1),
+	                    'PAGE' => 'cases_Step?TYPE=ASSIGN_TASK&UID=-1&POSITION=10000&ACTION=ASSIGN&gmail=1'
+	                );
+            	}else {
+            		$aNextStep = array(
+            				'TYPE' => 'DERIVATION',
+            				'UID' => -1,
+            				'POSITION' => ($iLastStep + 1),
+            				'PAGE' => 'cases_Step?TYPE=ASSIGN_TASK&UID=-1&POSITION=10000&ACTION=ASSIGN'
+            		);
+            	}
             }
             return $aNextStep;
         } catch (exception $e) {
