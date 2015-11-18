@@ -1713,7 +1713,23 @@ class pmTablesProxy extends HttpProxyController
             $row = $oDataset->getRow();
             if (isset($row["PRJ_UID"])) {
                 $sProcessUID = $row["PRJ_UID"];
-                $dynaformNotAllowedVariables = $this->getDynaformVariables($sProcessUID,$excludeFieldsList,false);
+
+                $arrayDataTypeToExclude = array("array", "grid");
+                $arrayTypeToExclude = array("title", "subtitle", "link", "file", "button", "reset", "submit", "listbox", "grid", "array", "javascript", "location", "scannerCode");
+
+                $arrayControlSupported = array();
+
+                $dynaformAllControl = $this->getDynaformVariables($sProcessUID, $arrayTypeToExclude, true, "DATA");
+
+                foreach ($dynaformAllControl as $value) {
+                    $arrayControl = array_change_key_case($value, CASE_UPPER);
+
+                    if (!in_array($arrayControl["DATATYPE"], $arrayDataTypeToExclude) && !in_array($arrayControl["TYPE"], $arrayTypeToExclude)) {
+                        $arrayControlSupported[$arrayControl["VAR_UID"]] = $arrayControl["TYPE"];
+                    }
+                }
+
+                $dynaformNotAllowedVariables = $this->getDynaformVariables($sProcessUID,$arrayTypeToExclude,false);
                 $oCriteria = new Criteria('workflow');
                 $oCriteria->addSelectColumn(ProcessVariablesPeer::VAR_UID);
                 $oCriteria->addSelectColumn(ProcessVariablesPeer::VAR_NAME);
@@ -1724,7 +1740,7 @@ class pmTablesProxy extends HttpProxyController
                 $index = 0;
                 while ($oDataset->next()) {
                     $row = $oDataset->getRow();
-                    if(!in_array($row["VAR_NAME"], $dynaformNotAllowedVariables) && !in_array($row["VAR_FIELD_TYPE"], $excludeFieldsList)) {
+                    if(!in_array($row["VAR_NAME"], $dynaformNotAllowedVariables) && !in_array($row["VAR_FIELD_TYPE"], $arrayTypeToExclude) && !in_array($row["VAR_NAME"], $fieldsNames)) {
                         array_push($fields, array(
                             "FIELD_UID" => $row["VAR_NAME"] . "-" . $row["VAR_FIELD_TYPE"],
                             "FIELD_NAME" => $row["VAR_NAME"],
@@ -1733,6 +1749,20 @@ class pmTablesProxy extends HttpProxyController
                             "_isset" => true
                         ));
                     } 
+
+                    array_push($fieldsNames, $row["VAR_NAME"]);
+
+                    if (isset($arrayControlSupported[$row["VAR_UID"]]) && !in_array($row["VAR_NAME"] . "_label", $fieldsNames)) {
+                        array_push($fields, array(
+                            "FIELD_UID" => $row["VAR_NAME"] . "_label-" . $arrayControlSupported[$row["VAR_UID"]],
+                            "FIELD_NAME" => $row["VAR_NAME"] . "_label",
+                            "FIELD_VALIDATE" => "any",
+                            "_index" => $index++,
+                            "_isset" => true
+                        ));
+
+                        array_push($fieldsNames, $row["VAR_NAME"] . "_label");
+                    }
                 }
             }
 
@@ -1877,7 +1907,7 @@ class pmTablesProxy extends HttpProxyController
      *
      * @param $sProcessUID
      */
-    public function getDynaformVariables($sProcessUID,$excludeFieldsList,$allowed = true)
+    public function getDynaformVariables($sProcessUID, $excludeFieldsList, $allowed = true, $option = "VARIABLE")
     {
         $dynaformVariables = array();
         $oC = new Criteria( 'workflow' );
@@ -1894,18 +1924,32 @@ class pmTablesProxy extends HttpProxyController
                     foreach($val as $column) {
                         if($allowed) {
                             if(isset($column['type']) && !in_array( $column['type'], $excludeFieldsList )){
-                                if(array_key_exists('variable',$column)) {
-                                    if($column['variable'] != "") {
-                                        $dynaformVariables[] = $column['variable'];
-                                    }
+                                switch ($option) {
+                                    case "VARIABLE":
+                                        if (array_key_exists("variable", $column)) {
+                                            if($column["variable"] != "") {
+                                                $dynaformVariables[] = $column["variable"];
+                                            }
+                                        }
+                                        break;
+                                    case "DATA":
+                                        $dynaformVariables[] = $column;
+                                        break;
                                 }
                             }
                         } else {
                             if(isset($column['type']) && in_array( $column['type'], $excludeFieldsList )){
-                                if(array_key_exists('variable',$column)) {
-                                    if($column['variable'] != "") {
-                                        $dynaformVariables[] = $column['variable']; 
-                                    }
+                                switch ($option) {
+                                    case "VARIABLE":
+                                        if (array_key_exists("variable", $column)) {
+                                            if($column["variable"] != "") {
+                                                $dynaformVariables[] = $column["variable"];
+                                            }
+                                        }
+                                        break;
+                                    case "DATA":
+                                        $dynaformVariables[] = $column;
+                                        break;
                                 }
                             }
                         }
@@ -1914,7 +1958,12 @@ class pmTablesProxy extends HttpProxyController
             }
             $oData->next();
         }
-        return array_unique($dynaformVariables);    
+
+        if ($option == "VARIABLE") {
+            return array_unique($dynaformVariables);
+        } else {
+            return $dynaformVariables;
+        }
     }
 }
 
