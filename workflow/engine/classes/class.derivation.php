@@ -274,6 +274,24 @@ class Derivation
                         $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TASK"] = $rsj["ROU_PREVIOUS_TASK"];
                         $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TYPE"] = "SEC-JOIN";
                     }
+                    //Start-Timer with Script-task
+                    $criteriaE = new Criteria("workflow");
+                    $criteriaE->addSelectColumn(ElementTaskRelationPeer::ELEMENT_UID);
+                    $criteriaE->addJoin(BpmnEventPeer::EVN_UID, ElementTaskRelationPeer::ELEMENT_UID, Criteria::LEFT_JOIN);
+                    $criteriaE->add(ElementTaskRelationPeer::TAS_UID, $arrayNextTaskData["TAS_UID"], Criteria::EQUAL);
+                    $criteriaE->add(BpmnEventPeer::EVN_TYPE, 'START', Criteria::EQUAL);
+                    $criteriaE->add(BpmnEventPeer::EVN_MARKER, 'TIMER', Criteria::EQUAL);
+                    $rsCriteriaE = AppDelegationPeer::doSelectRS($criteriaE);
+                    $rsCriteriaE->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    while ($rsCriteriaE->next()) {
+                        if($arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"] == "SCRIPT-TASK"){
+                            if(isset($arrayNextTaskData["NEXT_TASK"]["USER_ASSIGNED"]["USR_UID"]) && $arrayNextTaskData["NEXT_TASK"]["USER_ASSIGNED"]["USR_UID"] == ""){
+                                $useruid = "00000000000000000000000000000001";
+                                $userFields = $this->getUsersFullNameFromArray( $useruid );
+                                $arrayNextTask[$i]["NEXT_TASK"]["USER_ASSIGNED"] = $userFields;
+                            }
+                        }
+                    }
                 }
             }
 
@@ -1066,8 +1084,14 @@ class Derivation
                                     throw new Exception(G::LoadTranslation("ID_NO_USERS"));
                                 }
 
+                                $rouPreType = "";
+                                $rouPreTask = "";
                                 $taskNextDelNextDelRouType = $arrayTaskNextDelNextDel["ROU_TYPE"];
 
+                                if(isset($arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TYPE"]) && isset($arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TASK"])){
+                                   $rouPreType = $arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TYPE"];
+                                   $rouPreTask = $arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TASK"];
+                                }
                                 $nextDelegationsAux[++$i] = array(
                                     "TAS_UID"           => $arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_UID"],
                                     "USR_UID"           => $arrayTaskNextDelNextDel["NEXT_TASK"]["USER_ASSIGNED"]["USR_UID"],
@@ -1075,8 +1099,8 @@ class Derivation
                                     "TAS_DEF_PROC_CODE" => $arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_DEF_PROC_CODE"],
                                     "DEL_PRIORITY"      => "",
                                     "TAS_PARENT"        => $arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_PARENT"],
-                                    "ROU_PREVIOUS_TYPE" => $arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TYPE"],
-                                    "ROU_PREVIOUS_TASK" => $arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TASK"]
+                                    "ROU_PREVIOUS_TYPE" => $rouPreType,
+                                    "ROU_PREVIOUS_TASK" => $rouPreTask
                                 );
                             }
 
