@@ -241,16 +241,6 @@ class BpmnWorkflow extends Project\Bpmn
             $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
         }
 
-        if ($activityBefore->getActTaskType() == "SCRIPTTASK" && $activityCurrent->getActTaskType() == "SCRIPTTASK") {
-            $taskData["TAS_TYPE"] = "SCRIPT-TASK";
-            $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
-        }
-
-        if ($activityBefore->getActTaskType() == "EMPTY" && $activityCurrent->getActTaskType() == "EMPTY") {
-            $taskData["TAS_TYPE"] = "NORMAL";
-            $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
-        }
-
         if ($activityBefore->getActTaskType() == "SCRIPTTASK" && $activityCurrent->getActTaskType() != "SCRIPTTASK") {
             $taskData["TAS_TYPE"] = "NORMAL";
             $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
