@@ -1,80 +1,50 @@
 <?php
+if (!isset($_SESSION['USER_LOGGED'])) {
+	G::SendTemporalMessage( 'ID_LOGIN_AGAIN', 'warning', 'labels' );
+	die( '<script type="text/javascript">
+				try
+				{
+				var olink = document.location.href;
+				if(olink.search("gmail") == -1){
+					prnt = parent.parent;
+					top.location = top.location;
+				} else {
+					var data = olink.split("?");
+					var odata = data[1].split("&");
+					var appUid = odata[1].split("=");
+					var proUid = odata[0].split("=");
+		
+					var dataToSend = {
+						"action": "credentials",
+						"operation": "refreshPmSession",
+						"type": "processCall",
+						"funParams": [
+						appUid[1],
+						proUid[1]
+						],
+					};
+					var x = parent.postMessage(JSON.stringify(dataToSend), "*");
+					if (x == undefined){
+						x = parent.parent.postMessage(JSON.stringify(dataToSend), "*");
+					}
+				}
+			}catch (err)
+			{
+				parent.location = parent.location;
+			}
+		</script>');
+}
+
 require_once 'classes/model/AppDelegation.php';
 $delegation = new AppDelegation();
 if( $delegation->alreadyRouted($_SESSION['APPLICATION'],$_SESSION['INDEX']) ) {
-    if($_SESSION['gmail'] == 1){
-	$mUrl = '../cases/cases_Open?APP_UID='.$_SESSION['APPLICATION'].'&DEL_INDEX='.$_SESSION['INDEX'].'&action=sent';
-	header( 'location:' . $mUrl );
-        die();
-    }
-    G::header('location: ../cases/casesListExtJs');
-    die();
-}
-
-if (!isset($_SESSION['USER_LOGGED'])) {
-      G::SendTemporalMessage( 'ID_LOGIN_AGAIN', 'warning', 'labels' );
-      die( '<script type="text/javascript">
-      		try
-      		{
-	      		var olink = parent.uri;
-	      		var flag = 0;
-	      		if(olink == undefined){
-		      		olink = window.frameElement.src;
-		      		flag = 1;
-      			}
-      			if(olink.search("gmail") == -1){
-		      		prnt = parent.parent;
-		      		top.location = top.location;
-      			} else {
-		      		var data = olink.split("?");
-		      		var odata = data[1].split("&");
-		      
-		      		var	appUid = odata[0].split("=");
-		      		var delIndex = odata[1].split("=");
-		      		var action = odata[2].split("=");
-		      
-		      		var dataToSend = {
-			      		"action": "credentials",
-			      		"operation": "refreshPmSession",
-			      		"type": "processCall",
-			      		"funParams": [
-				      		appUid[1],
-				      		delIndex[1],
-				      		action[1],
-				      		0
-			      		],
-			      		"expectReturn": false
-		      		};
-		      		if (flag == 0){
-		      			parent.parent.postMessage(JSON.stringify(dataToSend), "https://mail.google.com");
-		      		}else {
-				      		//top.location =
-				      		var x = window.postMessage(JSON.stringify(dataToSend), "https://mail.google.com");
-				      		 
-				      		if(x == undefined){
-					      		//Here the code to access the extension from the gadget
-					      		dataToSend = {
-						      		"action": "credentials",
-						      		"operation": "refreshPmSession",
-						      		"type": "processCall",
-						      		"funParams": [
-							      		appUid[1],
-							      		delIndex[1],
-							      		action[1],
-							      		1
-						      		],
-						      		"expectReturn": false
-					      		};
-					      		parent.postMessage(JSON.stringify(dataToSend), "*");
-				      }
-		      		}
-      			}
-     		}
-      		catch (err)
-      		{
-      			parent.location = parent.location;
-      		}
-      		</script>');
+	if($_SESSION['gmail'] == 1){
+		$mUrl = '../cases/cases_Open?APP_UID='.$_SESSION['APPLICATION'].'&DEL_INDEX='.$_SESSION['INDEX'].'&action=sent';
+		header( 'location:' . $mUrl );
+		die();
+	}
+	G::header('location: ../cases/casesListExtJs');
+	die();
 }
 /**
  * cases_Step.php
@@ -111,6 +81,11 @@ switch ($RBAC->userCanAccess( 'PM_CASES' )) {
         G::header( 'location: ../login/login' );
         die();
         break;
+}
+
+if($_GET['gmail'] && $_GET['gmail'] == 1){
+	$_SESSION['gmail'] = 1;
+	print_r('setea sesion gmail');
 }
 
 if ((int) $_SESSION['INDEX'] < 1) {
@@ -339,7 +314,11 @@ try {
             if ($a->isResponsive()) {
                 $a->printEdit();
             } else {
-                $G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['UID'], '', $Fields['APP_DATA'], 'cases_SaveData?UID=' . $_GET['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'], '', (strtolower($oStep->getStepMode()) != 'edit' ? strtolower($oStep->getStepMode()) : ''));
+            	if($_GET['gmail'] && $_GET['gmail'] == 1){
+            		$G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['UID'], '', $Fields['APP_DATA'], 'cases_SaveData?UID=' . $_GET['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'] . '&gmail=1', '', (strtolower($oStep->getStepMode()) != 'edit' ? strtolower($oStep->getStepMode()) : ''));
+            	}else{
+            		$G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['UID'], '', $Fields['APP_DATA'], 'cases_SaveData?UID=' . $_GET['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'], '', (strtolower($oStep->getStepMode()) != 'edit' ? strtolower($oStep->getStepMode()) : ''));
+            	}
             }
             break;
         case 'INPUT_DOCUMENT':

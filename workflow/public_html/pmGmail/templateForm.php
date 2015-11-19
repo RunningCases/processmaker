@@ -74,33 +74,30 @@
 <body>
 <?php
 session_start();
-if (!defined('SYS_SYS')) {
-	define('SYS_SYS', 'jenws');
-}
 ?>
 <div class="pmui-tabpanel-tabs_container" style="display: block; height: 40px;">
     <ul class="pmui-tabpanel-tabs" style="display:block; float:left;">
         <li class="pmui pmui-tabitem pmui-active" style="left: 0px; top: 0px; width: auto; height: auto; position: relative; z-index: auto; display: inline-block;">
             <i class="pmui-tab-icon"> </i>
-            <a class="pmui-tab-ref"  href="#PMCases" linkPM="<?php   echo $_SESSION['server'] .  $_SESSION['PMCase'] ?>" PMServer="<?php   echo $_SESSION['server'] ?>">
+            <a class="pmui-tab-ref"  href="#PMCases" linkPM="<?php   echo $_SESSION['server'] .  '../../../pmGmail/lostSession.php?form=1' ?>" PMServer="<?php   echo $_SESSION['server'] ?>">
                 Form
             </a>
         </li>
         <li class="pmui pmui-tabitem" style="left: 0px; top: 0px; width: auto; height: auto; position: relative; z-index: auto; display: inline-block;">
             <i class="pmui-tab-icon"> </i>
-            <a class="pmui-tab-ref"  href="#PMProcessmap" linkPM="<?php   echo $_SESSION['server'] .  $_SESSION['PMProcessmap'] ?>" PMServer="<?php   echo $_SESSION['server'] ?>">
+            <a class="pmui-tab-ref"  href="#PMProcessmap" linkPM="<?php   echo $_SESSION['server'] .  '../../../pmGmail/lostSession.php?processmap=1'  ?>" PMServer="<?php   echo $_SESSION['server'] ?>">
                 Processmap
             </a>
         </li>
         <li class="pmui pmui-tabitem" style="left: 0px; top: 0px; width: auto; height: auto; position: relative; z-index: auto; display: inline-block;">
             <i class="pmui-tab-icon"> </i>
-            <a class="pmui-tab-ref"  href="#PMUploadedDocuments" linkPM="<?php   echo $_SESSION['server'] .  $_SESSION['PMUploadedDocuments'] ?>" PMServer="<?php   echo $_SESSION['server'] ?>">
+            <a class="pmui-tab-ref"  href="#PMUploadedDocuments" linkPM="<?php   echo $_SESSION['server'] .  '../../../pmGmail/lostSession.php?uploaded=1' ?>" PMServer="<?php   echo $_SESSION['server'] ?>">
                 Uploaded
             </a>
         </li>
         <li class="pmui pmui-tabitem" style="left: 0px; top: 0px; width: auto; height: auto; position: relative; z-index: auto; display: inline-block;">
             <i class="pmui-tab-icon"> </i>
-            <a class="pmui-tab-ref"  href="#PMGeneratedDocuments" linkPM="<?php   echo $_SESSION['server'] .  $_SESSION['PMGeneratedDocuments'] ?>" PMServer="<?php   echo $_SESSION['server'] ?>">
+            <a class="pmui-tab-ref"  href="#PMGeneratedDocuments" linkPM="<?php   echo $_SESSION['server'] .  '../../../pmGmail/lostSession.php?generated=1' ?>" PMServer="<?php   echo $_SESSION['server'] ?>">
                 Generated
             </a>
         </li>

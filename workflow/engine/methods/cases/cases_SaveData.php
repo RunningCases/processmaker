@@ -27,58 +27,30 @@ if (!isset($_SESSION['USER_LOGGED'])) {
     die( '<script type="text/javascript">
                     try
                       {
-    					var olink = parent.uri;
-    					var flag = 0;
-			    		if(olink == undefined){
-			    			olink = window.frameElement.src;
-    						flag = 1;
-						}
-    					if(olink.search("gmail") == -1){
-	                        prnt = parent.parent;
-	                        top.location = top.location;
-    					} else {
+    					var olink = document.location.href;
+    					if(olink.search("gmail") != -1){
     						var data = olink.split("?");
-    						var odata = data[1].split("&");
-
-    						var	appUid = odata[0].split("=");
-    						var delIndex = odata[1].split("=");
-    						var action = odata[2].split("=");
+                            var odata = data[1].split("&");
+                            var appUid = odata[1].split("=");
+    						var proUid = odata[0].split("=");
 
     						var dataToSend = {
                     			"action": "credentials",
                     			"operation": "refreshPmSession",
                     			"type": "processCall",
-                    			"funParams": [
-    								appUid[1],
-    								delIndex[1],
-    								action[1],
-    								0
-    							],
+    							"funParams": [
+                                               appUid[1],
+                                               proUid[1]
+                                ],
                     			"expectReturn": false
                 			};
-    						if (flag == 0){
-    							parent.parent.postMessage(JSON.stringify(dataToSend), "https://mail.google.com");
-    						}else {
-    							//top.location = 
-    							var x = window.postMessage(JSON.stringify(dataToSend), "https://mail.google.com");
-					    		
-    							if(x == undefined){
-    								//Here the code to access the extension from the gadget
-    								dataToSend = {
-                    					"action": "credentials",
-                    					"operation": "refreshPmSession",
-                    					"type": "processCall",
-		                    			"funParams": [
-		    								appUid[1],
-		    								delIndex[1],
-		    								action[1],
-		    								1
-		    							],
-		                    			"expectReturn": false
-                					};
-    								parent.postMessage(JSON.stringify(dataToSend), "*");
-					    		}
-							}
+    						var x = parent.postMessage(JSON.stringify(dataToSend), "*");
+    						if (x == undefined){
+    							x = parent.parent.postMessage(JSON.stringify(dataToSend), "*");
+    						}
+						}else{
+    						prnt = parent.parent;
+	                        top.location = top.location;
     					}
                       }
                       catch (err)
@@ -87,6 +59,7 @@ if (!isset($_SESSION['USER_LOGGED'])) {
                       }
                     </script>');
 }
+
 try {
     if ($_GET['APP_UID'] !== $_SESSION['APPLICATION']) {
         throw new Exception( G::LoadTranslation( 'ID_INVALID_APPLICATION_ID_MSG', array ('<a href=\'' . $_SERVER['HTTP_REFERER'] . '\'>{1}</a>',G::LoadTranslation( 'ID_REOPEN' ) ) ) );
