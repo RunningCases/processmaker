@@ -44,7 +44,10 @@ try {
 
     ws_open();
     if ($swpmdynaform) {
-        $result = ws_newCase("{processUid}", "{taskUid}", convertFormToWSObjects($pmdynaform));
+        $obj = new stdClass();
+        $obj->name = "__POST_VARIABLES__";
+        $obj->value = G::json_encode($pmdynaform);
+        $result = ws_newCase("{processUid}", "{taskUid}", array($obj));
     } else {
       $result = ws_newCase("{processUid}", "{taskUid}", convertFormToWSObjects($_POST["form"]));
     }
