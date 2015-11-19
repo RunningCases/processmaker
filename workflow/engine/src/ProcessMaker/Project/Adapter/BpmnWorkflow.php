@@ -253,6 +253,13 @@ class BpmnWorkflow extends Project\Bpmn
             ));
         }
 
+        if($activityCurrent->getActLoopType() == "PARALLEL"){
+           $task = \TaskPeer::retrieveByPK($actUid);
+           if($task->getTasAssignType() == "BALANCED"){
+               $taskData["TAS_ASSIGN_TYPE"] = "MULTIPLE_INSTANCE";
+           }
+        }
+
         $this->wp->updateTask($actUid, $taskData);
     }
 
