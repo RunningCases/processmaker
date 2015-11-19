@@ -928,6 +928,25 @@ class pmDynaform
                         $json->options = G::json_decode($newVariable["VAR_ACCEPTED_VALUES"]);
                     }
                 }
+                //update variable
+                if ($key === "var_name" && $json->var_uid === $oldVariable["VAR_UID"]) {
+                    $json->var_name = $newVariable["VAR_NAME"];
+                }
+                if ($key === "var_field_type" && $json->var_uid === $oldVariable["VAR_UID"]) {
+                    $json->var_field_type = $newVariable["VAR_FIELD_TYPE"];
+                }
+                if ($key === "var_dbconnection" && $json->var_uid === $oldVariable["VAR_UID"]) {
+                    $json->var_dbconnection = $newVariable["VAR_DBCONNECTION"];
+                }
+                if ($key === "var_dbconnection_label" && $json->var_uid === $oldVariable["VAR_UID"]) {
+                    $json->var_dbconnection_label = $newVariable["VAR_DBCONNECTION_LABEL"];
+                }
+                if ($key === "var_sql" && $json->var_uid === $oldVariable["VAR_UID"]) {
+                    $json->var_sql = $newVariable["VAR_SQL"];
+                }
+                if ($key === "var_accepted_values" && $json->var_uid === $oldVariable["VAR_UID"]) {
+                    $json->var_accepted_values = G::json_decode($newVariable["VAR_ACCEPTED_VALUES"]);
+                }
             }
         }
     }
