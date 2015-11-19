@@ -102,6 +102,7 @@ class PMPluginRegistry
     private $_aDashboardPages = array ();
     private $_aCronFiles = array ();
     private $_arrayDesignerMenu = array();
+    private $_aMenuOptionsToReplace = array ();
 
     /**
      * Registry a plugin javascript to include with js core at same runtime
@@ -403,7 +404,11 @@ class PMPluginRegistry
                 unset($this->_arrayDesignerMenu[$key]);
             }
         }
-
+        
+        if(sizeof( $this->_aMenuOptionsToReplace )){
+            unset( $this->_aMenuOptionsToReplace );
+        }
+        
         //unregistering javascripts from this plugin
         $this->unregisterJavascripts( $sNamespace );
         //unregistering rest services from this plugin
@@ -1657,6 +1662,44 @@ class PMPluginRegistry
             return $this->_arrayDesignerMenu;
         } catch (Exception $e) {
             throw $e;
+        }
+    }
+    
+    /**
+     * Replace new options to menu
+     *
+     * @param unknown_type $namespace
+     *
+     * @param array $from
+     * 
+     * @param array $options
+     *
+     * @return void
+     */
+    public function registerMenuOptionsToReplace ($namespace, $from, $options)
+    {
+        if(isset($from["section"]) && isset($from["menuId"])) {
+            $section = $from["section"];
+            $oMenuFromPlugin = $this->_aMenuOptionsToReplace;
+            if(array_key_exists($section,$oMenuFromPlugin)) {
+                unset($this->_aMenuOptionsToReplace[$from["section"]]);
+            }
+            $this->_aMenuOptionsToReplace[$from["section"]][$from["menuId"]][] = $options;
+        }
+    }
+    
+    /**
+     * Return all menu Options from a specific section
+     *
+     * @return array
+     */
+    public function getMenuOptionsToReplace($strMenuName)
+    {
+        $oMenuFromPlugin = $this->_aMenuOptionsToReplace;
+        if(sizeof($oMenuFromPlugin)) {
+            if(array_key_exists($strMenuName,$oMenuFromPlugin)) {
+                return $oMenuFromPlugin[$strMenuName];
+            }    
         }
     }
 }
