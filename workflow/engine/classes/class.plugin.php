@@ -396,6 +396,25 @@ class PMPlugin
             throw $e;
         }
     }
+    
+    /**
+     * Changes the menu properties from the given processmaker section and menu id
+     *
+     * @param array $from
+     *
+     * @param array $options
+     *
+     * @return void
+     */
+    public function registerMenuOptionsToReplace($from = array(), $options = array())
+    {
+        try {
+            $oPluginRegistry =& PMPluginRegistry::getSingleton();
+            $oPluginRegistry->registerMenuOptionsToReplace($this->sNamespace, $from, $options);
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 }
 
 class menuDetail
@@ -735,4 +754,3 @@ class cronFile
         $this->cronFile  = $cronFile;
     }
 }
-
