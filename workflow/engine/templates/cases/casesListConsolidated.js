@@ -457,6 +457,7 @@ Ext.onReady(function () {
   });
 
   smodel = new Ext.grid.CheckboxSelectionModel({
+    checkOnly:true,
     listeners:{
       selectionchange: function(sm){
         var count_rows = sm.getCount();
@@ -542,36 +543,23 @@ Ext.onReady(function () {
     }
   });
 
-  function enableDisableMenuOption(){
-    var rl = Ext.getCmp(gridId).store.getModifiedRecords();
-    //alert ('-'+rl+'-');
-    var rows = consolidatedGrid.getSelectionModel().getSelections();
-    if (rl.toString()!='') {
-      //alert(rl);
-      optionMenuOpen.setDisabled(true);
-      optionMenuPause.setDisabled(true);
-      buttonProcess.setDisabled(true);
-      return;
-    }
-    switch(action){
-      case 'consolidated':
-        if (rows.length == 0) {
-          optionMenuOpen.setDisabled(true);
-          optionMenuPause.setDisabled(true);
-          buttonProcess.setDisabled(true);
-        } else if( rows.length == 1 ) {
-          optionMenuOpen.setDisabled(false);
-          optionMenuPause.setDisabled(false);
-          buttonProcess.setDisabled(false);
-        } else {
-          optionMenuOpen.setDisabled(true);
-          optionMenuPause.setDisabled(true);
-          buttonProcess.setDisabled(false);
+    function enableDisableMenuOption() {
+        var rl = Ext.getCmp(gridId).store.getModifiedRecords();
+        var rows = consolidatedGrid.getSelectionModel().getSelections();
+        optionMenuOpen.setDisabled(true);
+        optionMenuPause.setDisabled(true);
+        buttonProcess.setDisabled(true);
+        if (action === "consolidated" && rows.length === 1) {
+            optionMenuOpen.setDisabled(false);
+            optionMenuPause.setDisabled(false);
+            buttonProcess.setDisabled(false);
         }
-        break;
+        if (action === "consolidated" && rows.length > 1) {
+            optionMenuOpen.setDisabled(true);
+            optionMenuPause.setDisabled(true);
+            buttonProcess.setDisabled(false);
+        }
     }
-
-  }
 
   toolbarconsolidated = [
   {
