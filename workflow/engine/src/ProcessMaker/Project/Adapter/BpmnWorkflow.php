@@ -262,7 +262,7 @@ class BpmnWorkflow extends Project\Bpmn
 
         if($activityCurrent->getActLoopType() == "EMPTY"){
            $task = \TaskPeer::retrieveByPK($actUid);
-           if($task->getTasAssignType() == "MULTIPLE_INSTANCE_VALUE_BASED"){
+           if($task->getTasAssignType() == "MULTIPLE_INSTANCE_VALUE_BASED" || $task->getTasAssignType() == "MULTIPLE_INSTANCE"){
                $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
            }
         }
