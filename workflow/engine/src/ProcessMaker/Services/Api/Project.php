@@ -5,6 +5,8 @@ use Luracast\Restler\RestException;
 use ProcessMaker\Services\Api;
 use \ProcessMaker\Project\Adapter;
 use \ProcessMaker\Util;
+use \ProcessMaker\Util\DateTime;
+use \ProcessMaker\BusinessModel\Validator;
 
 /**
  * Class Project
@@ -16,6 +18,14 @@ use \ProcessMaker\Util;
  */
 class Project extends Api
 {
+    private $arrayFieldIso8601 = [
+        "prj_create_date",
+        "prj_update_date",
+        "pro_update_date",
+        "pro_create_date",
+        "dyn_update_date"
+    ];
+
     /**
      * @url GET
      */
@@ -28,7 +38,7 @@ class Project extends Api
 
             $projects = Adapter\BpmnWorkflow::getList($start, $limit, $filter, CASE_LOWER);
 
-            return $projects;
+            return DateTime::convertUtcToIso8601($projects, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -42,7 +52,9 @@ class Project extends Api
     public function doGetProject($prj_uid)
     {
         try {
-            return Adapter\BpmnWorkflow::getStruct($prj_uid);
+            $project = Adapter\BpmnWorkflow::getStruct($prj_uid);
+
+            return DateTime::convertUtcToIso8601($project, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -66,7 +78,8 @@ class Project extends Api
             if (!isset($request_data['prj_author'])) {
                 $request_data['prj_author'] = $this->getUserId();
             }
-            return Adapter\BpmnWorkflow::createFromStruct($request_data);
+            Validator::throwExceptionIfDataNotMetIso8601Format($request_data, $this->arrayFieldIso8601);
+            return Adapter\BpmnWorkflow::createFromStruct(DateTime::convertDataToUtc($request_data, $this->arrayFieldIso8601));
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -80,7 +93,8 @@ class Project extends Api
     public function doPutProject($prj_uid, $request_data)
     {
         try {
-            return Adapter\BpmnWorkflow::updateFromStruct($prj_uid, $request_data);
+            Validator::throwExceptionIfDataNotMetIso8601Format($request_data, $this->arrayFieldIso8601);
+            return Adapter\BpmnWorkflow::updateFromStruct($prj_uid, DateTime::convertDataToUtc($request_data, $this->arrayFieldIso8601));
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -108,7 +122,7 @@ class Project extends Api
     public function export($prj_uid)
     {
         $exporter = new \ProcessMaker\Exporter\XmlExporter($prj_uid);
-        $getProjectName = $exporter->truncateName($exporter->getProjectName(),false);
+        $getProjectName = $exporter->truncateName($exporter->getProjectName(), false);
 
         $outputDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
         $version = \ProcessMaker\Util\Common::getLastVersion($outputDir . $getProjectName . "-*.pmx") + 1;
@@ -183,7 +197,8 @@ class Project extends Api
 
             $response = $process->getProcess($prj_uid);
 
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
+
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -198,11 +213,12 @@ class Project extends Api
     public function doPutProcess($prj_uid, $request_data)
     {
         try {
+            Validator::throwExceptionIfDataNotMetIso8601Format($request_data, $this->arrayFieldIso8601);
             $process = new \ProcessMaker\BusinessModel\Process();
             $process->setFormatFieldNameInUppercase(false);
             $process->setArrayFieldNameForException(array("processUid" => "prj_uid"));
 
-            $arrayData = $process->update($prj_uid, $request_data);
+            $arrayData = $process->update($prj_uid, DateTime::convertDataToUtc($request_data, $this->arrayFieldIso8601));
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -260,7 +276,7 @@ class Project extends Api
 
             $response = $process->getDynaForms($prj_uid);
 
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

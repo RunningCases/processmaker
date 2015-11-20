@@ -3,6 +3,8 @@ namespace ProcessMaker\Services\Api;
 
 use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
+use \ProcessMaker\Util\DateTime;
+use \ProcessMaker\BusinessModel\Validator;
 
 /**
  * Cases Api Controller
@@ -14,6 +16,19 @@ use \Luracast\Restler\RestException;
  */
 class Cases extends Api
 {
+    private $arrayFieldIso8601 = [
+        "del_init_date",
+        "del_finish_date",
+        "del_task_due_date",
+        "del_risk_date",
+        "del_delegate_date",
+        "app_create_date",
+        "app_update_date",
+        "app_finish_date",
+        "del_delegate_date",
+        "note_date"
+    ];
+
     /**
      * Get list Cases To Do
      *
@@ -54,7 +69,8 @@ class Cases extends Api
             $dataList['search'] = $search;
             $oCases = new \ProcessMaker\BusinessModel\Cases();
             $response = $oCases->getList($dataList);
-            return $response;
+
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -100,7 +116,7 @@ class Cases extends Api
             $dataList['search'] = $search;
             $oCases = new \ProcessMaker\BusinessModel\Cases();
             $response = $oCases->getList($dataList);
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -146,7 +162,7 @@ class Cases extends Api
             $dataList['search'] = $search;
             $oCases = new \ProcessMaker\BusinessModel\Cases();
             $response = $oCases->getList($dataList);
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -192,7 +208,7 @@ class Cases extends Api
             $dataList['search'] = $search;
             $oCases = new \ProcessMaker\BusinessModel\Cases();
             $response = $oCases->getList($dataList);
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -238,7 +254,7 @@ class Cases extends Api
             $dataList['search'] = $search;
             $oCases = new \ProcessMaker\BusinessModel\Cases();
             $response = $oCases->getList($dataList);
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -284,7 +300,7 @@ class Cases extends Api
             $dataList['search'] = $search;
             $oCases = new \ProcessMaker\BusinessModel\Cases();
             $response = $oCases->getList($dataList);
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -330,7 +346,7 @@ class Cases extends Api
             $dataList['search'] = $search;
             $oCases = new \ProcessMaker\BusinessModel\Cases();
             $response = $oCases->getList($dataList);
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -376,7 +392,7 @@ class Cases extends Api
             $dataList['search'] = $search;
             $oCases = new \ProcessMaker\BusinessModel\Cases();
             $response = $oCases->getList($dataList);
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -422,7 +438,7 @@ class Cases extends Api
             $dataList['search'] = $search;
             $oCases = new \ProcessMaker\BusinessModel\Cases();
             $response = $oCases->getList($dataList);
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -468,7 +484,7 @@ class Cases extends Api
             $dataList['search'] = $search;
             $oCases = new \ProcessMaker\BusinessModel\Cases();
             $response = $oCases->getList($dataList);
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -526,7 +542,7 @@ class Cases extends Api
             $dataList['search'] = $search;
             $oCases = new \ProcessMaker\BusinessModel\Cases();
             $response = $oCases->getList($dataList);
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -584,7 +600,7 @@ class Cases extends Api
             $dataList['search'] = $search;
             $oCases = new \ProcessMaker\BusinessModel\Cases();
             $response = $oCases->getList($dataList);
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -601,7 +617,9 @@ class Cases extends Api
             $case = new \ProcessMaker\BusinessModel\Cases();
             $case->setFormatFieldNameInUppercase(false);
 
-            return $case->getCaseInfo($app_uid, $this->getUserId());
+            $caseInfo = $case->getCaseInfo($app_uid, $this->getUserId());
+            $caseInfo = DateTime::convertUtcToIso8601($caseInfo, $this->arrayFieldIso8601);
+            return $caseInfo;
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -622,7 +640,7 @@ class Cases extends Api
 
             $response = $arrayData;
 
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -905,7 +923,7 @@ class Cases extends Api
             $usr_uid = $this->getUserId();
             $cases = new \ProcessMaker\BusinessModel\Cases();
             $response = $cases->getCaseNotes($app_uid, $usr_uid, $dataList);
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -953,7 +971,7 @@ class Cases extends Api
             $usr_uid = $this->getUserId();
             $cases = new \ProcessMaker\BusinessModel\Cases();
             $response = $cases->getCaseNotes($app_uid, $usr_uid, $dataList);
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -996,7 +1014,7 @@ class Cases extends Api
 
             $response = $case->getTasks($app_uid);
 
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
