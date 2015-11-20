@@ -402,10 +402,16 @@ class Light
     {
         try {
             $oCase = new \Cases();
+            $Fields = $oCase->loadCase( $app_uid );
+            $_SESSION["APPLICATION"]  = $app_uid;
+            $_SESSION["PROCESS"]      = $Fields['PRO_UID'];
+            $_SESSION["TASK"]         = $tas_uid;
+            $_SESSION["INDEX"]        = $del_index;
+            $_SESSION["USER_LOGGED"]  = $usr_uid;
+            $_SESSION["USR_USERNAME"] = isset($Fields['APP_DATA']['USR_USERNAME'])?$Fields['APP_DATA']['USR_USERNAME']:'';
 
             $triggers = $oCase->loadTriggers( $tas_uid, 'ASSIGN_TASK', '-1', 'BEFORE');
             if (isset($triggers)){
-                $Fields = $oCase->loadCase( $app_uid );
                 $Fields['APP_DATA'] = array_merge( $Fields['APP_DATA'], G::getSystemConstants() );
                 $Fields['APP_DATA'] = $oCase->ExecuteTriggers( $tas_uid, 'DYNAFORM', '-1', 'BEFORE', $Fields['APP_DATA'] );
                 $oCase->updateCase( $app_uid, $Fields );
