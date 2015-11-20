@@ -38,7 +38,7 @@ if (!isset($_SESSION['USER_LOGGED'])) {
 require_once 'classes/model/AppDelegation.php';
 $delegation = new AppDelegation();
 if( $delegation->alreadyRouted($_SESSION['APPLICATION'],$_SESSION['INDEX']) ) {
-	if($_SESSION['gmail'] == 1){
+	if(array_key_exists('gmail',$_SESSION) && $_SESSION['gmail'] == 1){
 		$mUrl = '../cases/cases_Open?APP_UID='.$_SESSION['APPLICATION'].'&DEL_INDEX='.$_SESSION['INDEX'].'&action=sent';
 		header( 'location:' . $mUrl );
 		die();
@@ -83,7 +83,7 @@ switch ($RBAC->userCanAccess( 'PM_CASES' )) {
         break;
 }
 
-if($_GET['gmail'] && $_GET['gmail'] == 1){
+if(array_key_exists('gmail',$_GET) && $_GET['gmail'] == 1){
 	$_SESSION['gmail'] = 1;
 }
 
@@ -313,7 +313,7 @@ try {
             if ($a->isResponsive()) {
                 $a->printEdit();
             } else {
-            	if($_GET['gmail'] && $_GET['gmail'] == 1){
+            	if(array_key_exists('gmail',$_GET) && $_GET['gmail'] == 1){
             		$G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['UID'], '', $Fields['APP_DATA'], 'cases_SaveData?UID=' . $_GET['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'] . '&gmail=1', '', (strtolower($oStep->getStepMode()) != 'edit' ? strtolower($oStep->getStepMode()) : ''));
             	}else{
             		$G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['UID'], '', $Fields['APP_DATA'], 'cases_SaveData?UID=' . $_GET['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'], '', (strtolower($oStep->getStepMode()) != 'edit' ? strtolower($oStep->getStepMode()) : ''));

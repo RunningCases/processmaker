@@ -2257,7 +2257,7 @@ class Cases
                                     $sAction = '';
                                     break;
                             }
-                            if($_SESSION['gmail'] || ($_GET['gmail'] && $_GET['gmail'] == 1)){
+                            if(array_key_exists('gmail',$_SESSION) || (array_key_exists('gmail',$_GET) && $_GET['gmail'] == 1)){
                             	$aNextStep = array(
                             			'TYPE' => $oStep->getStepTypeObj(),
                             			'UID' => $oStep->getStepUidObj(),
@@ -2284,7 +2284,7 @@ class Cases
                 }
             }
             if (!$aNextStep) {
-            	if($_SESSION['gmail'] || ($_GET['gmail'] && $_GET['gmail'] == 1)){
+            	if(array_key_exists('gmail',$_SESSION) || (array_key_exists('gmail',$_GET) && $_GET['gmail'] == 1)){
 	                $aNextStep = array(
 	                    'TYPE' => 'DERIVATION',
 	                    'UID' => -1,
