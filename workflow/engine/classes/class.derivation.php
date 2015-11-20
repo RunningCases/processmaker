@@ -605,6 +605,9 @@ class Derivation
                 break;
             case "MULTIPLE_INSTANCE":
                 $userFields = $this->getUsersFullNameFromArray($this->getAllUsersFromAnyTask($nextAssignedTask["TAS_UID"]));
+                if(empty($userFields)){
+                    throw (new Exception( G::LoadTranslation( 'ID_NO_USERS' ) ));
+                }
                 break;
             case "MULTIPLE_INSTANCE_VALUE_BASED":
                 $arrayApplicationData = $this->case->loadCase($tasInfo["APP_UID"]);
