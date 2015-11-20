@@ -85,7 +85,6 @@ switch ($RBAC->userCanAccess( 'PM_CASES' )) {
 
 if($_GET['gmail'] && $_GET['gmail'] == 1){
 	$_SESSION['gmail'] = 1;
-	print_r('setea sesion gmail');
 }
 
 if ((int) $_SESSION['INDEX'] < 1) {

@@ -180,6 +180,7 @@ class labelsGmail
      */
     public function deletePMGmailLabels($mail)
     {
+    	require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.pmGoogleApi.php");
     	$pmGoogle = new PMGoogleApi();
     
     	$pmGoogle->setUser($mail);

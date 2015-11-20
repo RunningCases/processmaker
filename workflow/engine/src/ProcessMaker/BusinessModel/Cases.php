@@ -2443,7 +2443,7 @@ class Cases
                 $aConditions[] = array('PCS.PRO_CATEGORY', 'PCSCAT.CATEGORY_UID');
                 $c->addJoinMC( $aConditions, \Criteria::LEFT_JOIN );
             }
-
+            $c->setDistinct();
             $rs = \TaskPeer::doSelectRS($c);
 
             $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
