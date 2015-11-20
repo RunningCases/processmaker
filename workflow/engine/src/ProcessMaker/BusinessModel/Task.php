@@ -1932,17 +1932,17 @@ class Task
     {
         $data = array_change_key_case($data, CASE_LOWER);
         $sTaskUID = $data['act_uid'];
-        $response = new stdclass();
-        $oCriteria = new Criteria();
-        $oCriteria->add(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN");
-        $oCriteria->add(AppDelegationPeer::TAS_UID, $sTaskUID);
-        $oCriteria->add(AppDelegationPeer::USR_UID, "");
-        $oApplication = AppDelegationPeer::doSelectOne($oCriteria);
+        $response = new \stdclass();
+        $oCriteria = new \Criteria();
+        $oCriteria->add(\AppDelegationPeer::DEL_THREAD_STATUS, "OPEN");
+        $oCriteria->add(\AppDelegationPeer::TAS_UID, $sTaskUID);
+        $oCriteria->add(\AppDelegationPeer::USR_UID, "");
+        $oApplication = \AppDelegationPeer::doSelectOne($oCriteria);
+        $response->result = true;
         if(!empty($oApplication)) {
             $response->result = false;
             $response->message = G::LoadTranslation('ID_CURRENT_ASSING_TYPE_WITH_CASES');
         }
-        $response->result = true;
         return $response;
     }
 }
