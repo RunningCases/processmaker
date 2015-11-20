@@ -260,6 +260,13 @@ class BpmnWorkflow extends Project\Bpmn
            }
         }
 
+        if($activityCurrent->getActLoopType() == "EMPTY"){
+           $task = \TaskPeer::retrieveByPK($actUid);
+           if($task->getTasAssignType() == "MULTIPLE_INSTANCE_VALUE_BASED"){
+               $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
+           }
+        }
+
         $this->wp->updateTask($actUid, $taskData);
     }
 
