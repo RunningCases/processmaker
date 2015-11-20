@@ -756,6 +756,87 @@ class Derivation
     }
 
     /**
+     * Throw Events for the Case
+     *
+     * @param string $currentTask     Task uid
+     *
+     * @return void
+    */
+    private function throwAllRouteInFlow($currentTask,$appFields){
+        $criFlow = new Criteria("workflow");
+        $criFlow->addSelectColumn(BpmnFlowPeer::FLO_ELEMENT_ORIGIN);
+        $criFlow->addSelectColumn(BpmnFlowPeer::FLO_ELEMENT_DEST);
+        $criFlow->add(BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $currentTask, Criteria::EQUAL);
+        $rsCriFlow = RoutePeer::doSelectRS($criFlow);
+        $rsCriFlow->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        if($rsCriFlow->next()){
+            $continue = true;
+            $row = $rsCriFlow->getRow();
+        }
+        while ($continue) {
+              $origin  = $row["FLO_ELEMENT_ORIGIN"];
+              $destiny = $row["FLO_ELEMENT_DEST"];
+              $this->throwEventsElemntOriginToElementDest($destiny, $appFields);
+              $currentDestiny = $destiny;
+              $continue = false;
+              if($rsCriFlow->next()){
+                 $continue = true;
+                 $row = $rsCriFlow->getRow();
+              }else{
+                  //Search the next
+                  $criFlow = new Criteria("workflow");
+                  $criFlow->addSelectColumn(BpmnFlowPeer::FLO_ELEMENT_ORIGIN);
+                  $criFlow->addSelectColumn(BpmnFlowPeer::FLO_ELEMENT_DEST);
+                  $criFlow->add(BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $currentDestiny, Criteria::EQUAL);
+                  $rsCriFlow = RoutePeer::doSelectRS($criFlow);
+                  $rsCriFlow->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                  $continue = false;
+                  if($rsCriFlow->next()){
+                     $continue = true;
+                     $row = $rsCriFlow->getRow();
+                  }
+              }
+        }
+    }
+
+    /**
+     * Throw Events for the Case
+     *
+     * @param string $eventUid           Unique id of Event
+     * @param array  $appFields          Case data
+     *
+     * @return void
+    */
+    private function throwEventsElemntOriginToElementDest($eventUid, $appFields){
+        try {
+            //Verify if the Project is BPMN
+            $bpmn = new \ProcessMaker\Project\Bpmn();
+
+            if (!$bpmn->exists($appFields["PRO_UID"])) {
+                return;
+            }
+            //Throw Events
+            $messageApplication = new \ProcessMaker\BusinessModel\MessageApplication();
+            $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
+
+            $event = \BpmnEventPeer::retrieveByPK($eventUid);
+            if (!is_null($event)) {
+                if (preg_match("/^(?:END|INTERMEDIATE)$/", $event->getEvnType()) && $event->getEvnMarker() == "MESSAGETHROW") {
+                    //Message-Application throw
+                    $result = $messageApplication->create($appFields["APP_UID"], $appFields["PRO_UID"], $value[0], $appFields);
+                }
+
+                if (preg_match("/^(?:END|INTERMEDIATE)$/", $event->getEvnType()) && $event->getEvnMarker() == "EMAIL") {
+                    //Email-Event throw
+                    $result = $emailEvent->sendEmail($appFields["APP_UID"], $appFields["PRO_UID"], $eventUid, $appFields);
+                }
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Update counters
      *
      * @param array $arrayCurrentDelegationData
@@ -934,14 +1015,7 @@ class Derivation
                     //I think we need to change the APP_STATUS to completed,
 
                     //BpmnEvent
-                    if (isset($nextDel["TAS_UID_DUMMY"])) {
-                        $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
-
-                        if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())) {
-                            //Throw Events
-                            $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
-                        }
-                    }
+                    $this->throwAllRouteInFlow($currentDelegation["TAS_UID"],$appFields);
                     break;
                 case TASK_FINISH_TASK:
                     $iAppThreadIndex = $appFields['DEL_THREAD'];
