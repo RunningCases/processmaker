@@ -255,7 +255,7 @@ class BpmnWorkflow extends Project\Bpmn
 
         if($activityCurrent->getActLoopType() == "PARALLEL"){
            $task = \TaskPeer::retrieveByPK($actUid);
-           if($task->getTasAssignType() == "BALANCED"){
+           if($task->getTasAssignType() == "BALANCED" || $task->getTasAssignType() == "MANUAL" || $task->getTasAssignType() == "EVALUATE" || $task->getTasAssignType() == "REPORT_TO" || $task->getTasAssignType() == "SELF_SERVICE"){
                $taskData["TAS_ASSIGN_TYPE"] = "MULTIPLE_INSTANCE";
            }
         }
