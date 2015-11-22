@@ -605,9 +605,6 @@ class Derivation
                 break;
             case "MULTIPLE_INSTANCE":
                 $userFields = $this->getUsersFullNameFromArray($this->getAllUsersFromAnyTask($nextAssignedTask["TAS_UID"]));
-                if(empty($userFields)){
-                    throw (new Exception( G::LoadTranslation( 'ID_NO_USERS' ) ));
-                }
                 break;
             case "MULTIPLE_INSTANCE_VALUE_BASED":
                 $arrayApplicationData = $this->case->loadCase($tasInfo["APP_UID"]);
@@ -676,7 +673,7 @@ class Derivation
      *
      * @return void
      */
-    private function throwEventsBetweenElementOriginAndElementDest($elementOriginUid, $elementDestUid, array $arrayApplicationData, $flagEventExecuteBeforeGateway = true, $flagEventExecuteAfterGateway = true)
+    private function throwEventsBetweenElementOriginAndElementDest($elementOriginUid, $elementDestUid, array $arrayApplicationData, $flagEventExecuteBeforeGateway = true, $flagEventExecuteAfterGateway = true, $rouCondition="")
     {
         try {
             //Verify if the Project is BPMN
@@ -693,7 +690,7 @@ class Derivation
                 "elementOrigin" => ["uid" => $elementOriginUid, "type" => "bpmnActivity"],
                 "elementDest"   => ["uid" => $elementDestUid,   "type" => "bpmnActivity"]
             ];
-
+ 
             foreach ($arrayElement as $key => $value) {
                 $arrayElementTaskRelationData = $elementTaskRelation->getElementTaskRelationWhere(
                     [
@@ -729,6 +726,10 @@ class Derivation
                 $elementDestType
             );
 
+            if($elementDestUid == "-1"){
+               $arrayElement = $this->throwElementToEnd($elementOriginUid, $rouCondition);
+            }
+
             foreach ($arrayElement as $value) {
                 switch ($value[1]) {
                     case "bpmnEvent":
@@ -753,6 +754,48 @@ class Derivation
                         break;
                 }
             }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Throw all events to End Process
+     *
+     * @param string $currentTask     Task uid
+     *
+     * @return void
+    */
+    private function throwElementToEnd($currentTask, $routeCondition){
+        try{
+            $bpmnFlow = new BpmnFlow();
+            $rsCriFlow = $bpmnFlow->getElementOriginToElementDest($currentTask);
+            $arrayElement = array();
+            $count = 0;
+            $continue = false;
+            if($rsCriFlow->next()){
+                $continue = true;
+                $row = $rsCriFlow->getRow();
+            }
+            while ($continue) {
+                $array[0] = $row["FLO_ELEMENT_DEST"];
+                $array[1] = $row["FLO_ELEMENT_DEST_TYPE"];
+                $arrayElement[$count++] = $array;
+                $continue = false;
+                if($rsCriFlow->next()){
+                   $continue = true;
+                   $row = $rsCriFlow->getRow();
+                }else{
+                    $rsCriFlow = $bpmnFlow->getElementOriginToElementDest($row["FLO_ELEMENT_DEST"],$routeCondition);
+                    $routeCondition = '';
+                    $continue = false;
+                    if($rsCriFlow->next()){
+                        $continue = true;
+                        $row = $rsCriFlow->getRow();
+                    }
+                }
+            }
+            return $arrayElement;
         } catch (Exception $e) {
             throw $e;
         }
@@ -800,6 +843,7 @@ class Derivation
                   }
               }
         }
+        return $currentDestiny;
     }
 
     /**
@@ -1018,7 +1062,7 @@ class Derivation
                     //I think we need to change the APP_STATUS to completed,
 
                     //BpmnEvent
-                    $this->throwAllRouteInFlow($currentDelegation["TAS_UID"],$appFields);
+                    $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true, $nextDel['ROU_CONDITION']);
                     break;
                 case TASK_FINISH_TASK:
                     $iAppThreadIndex = $appFields['DEL_THREAD'];
