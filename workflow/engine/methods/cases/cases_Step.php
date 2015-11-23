@@ -1165,6 +1165,9 @@ try {
                         $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_PREVIOUS_TASK'] = '<input type="hidden" name="' . $hiddenName . '[ROU_PREVIOUS_TASK]"        id="' . $hiddenName . '[ROU_PREVIOUS_TASK]"        value="' . $aValues['NEXT_TASK']['ROU_PREVIOUS_TASK'] . '">';
                         $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_PREVIOUS_TYPE'] = '<input type="hidden" name="' . $hiddenName . '[ROU_PREVIOUS_TYPE]"        id="' . $hiddenName . '[ROU_PREVIOUS_TYPE]"        value="' . $aValues['NEXT_TASK']['ROU_PREVIOUS_TYPE'] . '">';
                     }
+                    if(isset($aValues['ROU_CONDITION'])){
+                        $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_CONDITION'] = '<input type="hidden" name="' . $hiddenName . '[ROU_CONDITION]"        id="' . $hiddenName . '[ROU_CONDITION]"        value="' . $aValues['ROU_CONDITION'] . '">';
+                    }
                 }
             }
 

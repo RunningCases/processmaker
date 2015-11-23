@@ -599,10 +599,16 @@ class ReportTables
                                         case 'text':
                                             if (! isset( $aFields[$aField['sFieldName']] )) {
                                                 $aFields[$aField['sFieldName']] = '';
-                                            }                                            
+                                            }
+                                            if (! isset( $aFields[$aField['sFieldName'] . '_label'] )) {
+                                                $aFields[$aField['sFieldName'] . '_label'] = '';
+                                            }                                         
                                             if(is_array($aFields[$aField['sFieldName']])){
                                                 $sQuery .= "'" . (isset( $aFields[$aField['sFieldName']] ) ? $aFields[$aField['sFieldName']][0] : '') . "',";
                                             }else{
+                                                if (!isset($aFields[$aField['sFieldName'] . '_label'])) {
+                                                   $aFields[$aField['sFieldName'].'_label'] = '';
+                                                }
                                                 if($aFields[$aField['sFieldName']] == $aFields[$aField['sFieldName'].'_label']){
                                                     $sQuery .= "'" . (isset( $aFields[$aField['sFieldName']] ) ? @mysql_real_escape_string( $aFields[$aField['sFieldName']] ) : '') . "',";
                                                 }else{

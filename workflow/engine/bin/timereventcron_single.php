@@ -125,6 +125,7 @@ try {
 
     G::LoadClass("processes");
     G::LoadClass("derivation");
+    G::LoadClass("spool");
     G::LoadClass("dates"); //Load Criteria
 
     //Workflow

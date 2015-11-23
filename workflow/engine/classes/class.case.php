@@ -2104,6 +2104,44 @@ class Cases
                 $AppThread = new AppThread;
                 $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex, 0);
 
+                G::LoadClass('derivation');
+                $oDerivation = new Derivation();
+
+                //Multiple Instance
+                $aUserFields = array();
+                $taskAssignType = $task->getTasAssignType();
+                $nextTaskAssignVariable = $task->getTasAssignVariable();
+                if($taskAssignType == "MULTIPLE_INSTANCE" || $taskAssignType == "MULTIPLE_INSTANCE_VALUE_BASED"){
+                    switch ($taskAssignType) {
+                       case 'MULTIPLE_INSTANCE':
+                            $userFields = $oDerivation->getUsersFullNameFromArray($oDerivation->getAllUsersFromAnyTask($sTasUid));
+                            break;
+                       default:
+                            throw (new Exception( 'Invalid Task Assignment method' ));
+                            break;
+                    }
+                    $userFields = $oDerivation->getUsersFullNameFromArray($oDerivation->getAllUsersFromAnyTask($sTasUid));
+                    $count = 0;
+                    foreach($userFields as $rowUser){
+                        if($rowUser["USR_UID"] != $sUsrUid){
+                           //appDelegation
+                           $AppDelegation = new AppDelegation;
+                           $iAppThreadIndex ++; // Start Thread
+                           $iAppDelPrio = 3; // Priority
+                           $iDelIndex1 = $AppDelegation->createAppDelegation(
+                                   $sProUid, $sAppUid, $sTasUid, $rowUser["USR_UID"], $iAppThreadIndex, $iAppDelPrio, $isSubprocess
+                           );
+                           //appThread
+                           $AppThread = new AppThread;
+                           $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex1, 0);
+                           //Save Information
+                           $aUserFields[$count] = $rowUser;
+                           $aUserFields[$count]["DEL_INDEX"] = $iDelIndex1;
+                           $count++;
+                        }
+                    }
+                }
+
                 //DONE: Al ya existir un delegation, se puede "calcular" el caseTitle.
                 $Fields = $Application->toArray(BasePeer::TYPE_FIELDNAME);
                 $aApplicationFields = $Fields['APP_DATA'];
@@ -2116,8 +2154,6 @@ class Cases
                 $Application->update($Fields);
 
                 //Update the task last assigned (for web entry and web services)
-                G::LoadClass('derivation');
-                $oDerivation = new Derivation();
                 $oDerivation->setTasLastAssigned($sTasUid, $sUsrUid);
 
                 // Execute Events
@@ -2141,6 +2177,14 @@ class Cases
                 }
                 $inbox = new ListInbox();
                 $inbox->newRow($Fields, $sUsrUid, $isSubprocess, $dataPreviusApplication);
+
+                //Multiple Instance
+                foreach($aUserFields as $rowUser){
+                  $Fields["USR_UID"] = $rowUser["USR_UID"];
+                  $Fields["DEL_INDEX"] = $rowUser["DEL_INDEX"];
+                  $inbox = new ListInbox();
+                  $inbox->newRow($Fields, $sUsrUid, $isSubprocess, $dataPreviusApplication);
+                }
                 /*----------------------------------********---------------------------------*/
             } catch (exception $e) {
                 throw ($e);

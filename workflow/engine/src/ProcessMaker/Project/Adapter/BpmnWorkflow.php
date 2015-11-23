@@ -241,16 +241,6 @@ class BpmnWorkflow extends Project\Bpmn
             $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
         }
 
-        if ($activityBefore->getActTaskType() == "SCRIPTTASK" && $activityCurrent->getActTaskType() == "SCRIPTTASK") {
-            $taskData["TAS_TYPE"] = "SCRIPT-TASK";
-            $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
-        }
-
-        if ($activityBefore->getActTaskType() == "EMPTY" && $activityCurrent->getActTaskType() == "EMPTY") {
-            $taskData["TAS_TYPE"] = "NORMAL";
-            $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
-        }
-
         if ($activityBefore->getActTaskType() == "SCRIPTTASK" && $activityCurrent->getActTaskType() != "SCRIPTTASK") {
             $taskData["TAS_TYPE"] = "NORMAL";
             $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
@@ -261,6 +251,20 @@ class BpmnWorkflow extends Project\Bpmn
                 \ScriptTaskPeer::PRJ_UID => $activityCurrent->getPrjUid(),
                 \ScriptTaskPeer::ACT_UID => $activityCurrent->getActUid()
             ));
+        }
+
+        if($activityCurrent->getActLoopType() == "PARALLEL"){
+           $task = \TaskPeer::retrieveByPK($actUid);
+           if($task->getTasAssignType() == "BALANCED" || $task->getTasAssignType() == "MANUAL" || $task->getTasAssignType() == "EVALUATE" || $task->getTasAssignType() == "REPORT_TO" || $task->getTasAssignType() == "SELF_SERVICE"){
+               $taskData["TAS_ASSIGN_TYPE"] = "MULTIPLE_INSTANCE";
+           }
+        }
+
+        if($activityCurrent->getActLoopType() == "EMPTY"){
+           $task = \TaskPeer::retrieveByPK($actUid);
+           if($task->getTasAssignType() == "MULTIPLE_INSTANCE_VALUE_BASED" || $task->getTasAssignType() == "MULTIPLE_INSTANCE"){
+               $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
+           }
         }
 
         $this->wp->updateTask($actUid, $taskData);

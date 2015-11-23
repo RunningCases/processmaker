@@ -135,6 +135,7 @@ class Variable
                 $dbConnection = \DbSourcePeer::retrieveByPK($variable->getVarDbconnection(), $variable->getPrjUid());
 
                 $oldVariable = array(
+                    "VAR_UID" => $variable->getVarUid(),
                     "VAR_NAME" => $variable->getVarName(),
                     "VAR_FIELD_TYPE" => $variable->getVarFieldType(),
                     "VAR_DBCONNECTION" => $variable->getVarDbconnection(),
@@ -182,6 +183,7 @@ class Variable
                     //update dynaforms
                     $dbConnection = \DbSourcePeer::retrieveByPK($variable->getVarDbconnection(), $variable->getPrjUid());
                     $newVariable = array(
+                        "VAR_UID" => $variable->getVarUid(),
                         "VAR_NAME" => $variable->getVarName(),
                         "VAR_FIELD_TYPE" => $variable->getVarFieldType(),
                         "VAR_DBCONNECTION" => $variable->getVarDbconnection(),
@@ -685,50 +687,21 @@ class Variable
             $stmt = $cnn->createStatement();
 
             $replaceFields = G::replaceDataField($variableSql, $arrayVariable);
-
-            $a = strtolower($replaceFields);
-            $a = str_replace("\n", " ", $a);
-            $a = str_replace("\t", " ", $a);
-            $ai = strpos($a, "select ");
-            $aj = strpos($a, " from ");
-            $sw = strrpos($a, " order ");
-            $sw2 = strrpos($a, " where ");
-
-            $b = substr($replaceFields, $ai + 6, $aj - ($ai + 6));
-            $b = explode(",", $b);
-            $b = isset($b[1]) ? $b[1] : $b[0];
-
-            $c = strtolower($b);
-            $ci = strpos($c, " as ");
-            $c = $ci > 0 ? substr($b, $ci + 4) : $b;
-
+            
             $filter = "";
             if (isset($arrayVariable["filter"])) {
-                if ($sw2 !== false && $sw2 < $aj) {
-                    $sw2 = false;
-                }
-                $filter = ($sw2 === false ? " WHERE " : " AND ") . $c . " LIKE '%" . $arrayVariable["filter"] . "%'";
+                $filter = $arrayVariable["filter"];
             }
-
-            $order = " ORDER BY " . $c . " ASC";
-            if (isset($arrayVariable["order"])) {
-                $order = " ORDER BY " . $c . " " . $arrayVariable["order"];
-            }
-            if ($sw) {
-                $order = substr($replaceFields, $sw);
-                $replaceFields = substr($replaceFields, 0, $sw);
-            }
-
             $start = 0;
             if (isset($arrayVariable["start"])) {
                 $start = $arrayVariable["start"];
             }
             $limit = "";
             if (isset($arrayVariable["limit"])) {
-                $limit = " LIMIT " . $start . "," . $arrayVariable["limit"];
+                $limit = $arrayVariable["limit"];
             }
-
-            $replaceFields = $replaceFields . $filter . $order . $limit;
+            $parser = new \PHPSQLParser($replaceFields);
+            $replaceFields = $this->queryModified($parser->parsed, $filter, "*searchtype*", $start, $limit);
 
             $rs = $stmt->executeQuery($replaceFields, \ResultSet::FETCHMODE_NUM);
 
@@ -745,6 +718,158 @@ class Variable
             return $arrayRecord;
         } catch (\Exception $e) {
             throw $e;
+        }
+    }
+    
+    public function queryModified($sqlParsed, $inputSel = "", $searchType, $start, $limit)
+    {
+        if (!empty($sqlParsed['SELECT'])) {
+            $sqlSelectOptions = (isset($sqlParsed["OPTIONS"]) && count($sqlParsed["OPTIONS"]) > 0) ? implode(" ", $sqlParsed["OPTIONS"]) : null;
+
+            $sqlSelect = "SELECT $sqlSelectOptions ";
+            $aSelect = $sqlParsed["SELECT"];
+
+            $sFieldSel = (count($aSelect) > 1 ) ? $aSelect[1]['base_expr'] : $aSelect[0]['base_expr'];
+            foreach ($aSelect as $key => $value) {
+                if ($key != 0)
+                    $sqlSelect .= ", ";
+                $sAlias = str_replace("`", "", $aSelect[$key]['alias']);
+                $sBaseExpr = $aSelect[$key]['base_expr'];
+                switch ($aSelect[$key]['expr_type']) {
+                    case 'colref' : if ($sAlias === $sBaseExpr)
+                            $sqlSelect .= $sAlias;
+                        else
+                            $sqlSelect .= $sBaseExpr . ' AS ' . $sAlias;
+                        break;
+                    case 'expression' : if ($sAlias === $sBaseExpr)
+                            $sqlSelect .= $sBaseExpr;
+                        else
+                            $sqlSelect .= $sBaseExpr . ' AS ' . $sAlias;
+                        break;
+                    case 'subquery' : if (strpos($sAlias, $sBaseExpr, 0) != 0)
+                            $sqlSelect .= $sAlias;
+                        else
+                            $sqlSelect .= $sBaseExpr . " AS " . $sAlias;
+                        break;
+                    case 'operator' : $sqlSelect .= $sBaseExpr;
+                        break;
+                    default : $sqlSelect .= $sBaseExpr;
+                        break;
+                }
+            }
+
+            $sqlFrom = " FROM ";
+            if (!empty($sqlParsed['FROM'])) {
+                $aFrom = $sqlParsed['FROM'];
+                if (count($aFrom) > 0) {
+                    foreach ($aFrom as $key => $value) {
+                        if ($key == 0) {
+                            $sqlFrom .= $aFrom[$key]['table'] . (($aFrom[$key]['table'] == $aFrom[$key]['alias']) ? "" : " " . $aFrom[$key]['alias']);
+                        } else {
+                            $sqlFrom .= " " . (($aFrom[$key]['join_type'] == 'JOIN') ? "INNER" : $aFrom[$key]['join_type']) . " JOIN " . $aFrom[$key]['table']
+                                    . (($aFrom[$key]['table'] == $aFrom[$key]['alias']) ? "" : " " . $aFrom[$key]['alias']) . " " . $aFrom[$key]['ref_type'] . " " . $aFrom[$key]['ref_clause'];
+                        }
+                    }
+                }
+            }
+
+            $sqlConditionLike = "LIKE '%" . $inputSel . "%'";
+
+            switch ($searchType) {
+                case "searchtype*":
+                    $sqlConditionLike = "LIKE '" . $inputSel . "%'";
+                    break;
+                case "*searchtype":
+                    $sqlConditionLike = "LIKE '%" . $inputSel . "'";
+                    break;
+            }
+
+            if (!empty($sqlParsed['WHERE'])) {
+                $sqlWhere = " WHERE ";
+                $aWhere = $sqlParsed['WHERE'];
+                foreach ($aWhere as $key => $value) {
+                    $sqlWhere .= $value['base_expr'] . " ";
+                }
+                $sqlWhere .= " AND " . $sFieldSel . " " . $sqlConditionLike;
+            } else {
+                $sqlWhere = " WHERE " . $sFieldSel . " " . $sqlConditionLike;
+            }
+
+            $sqlGroupBy = "";
+            if (!empty($sqlParsed['GROUP'])) {
+                $sqlGroupBy = "GROUP BY ";
+                $aGroup = $sqlParsed['GROUP'];
+                foreach ($aGroup as $key => $value) {
+                    if ($key != 0)
+                        $sqlGroupBy .= ", ";
+                    if ($value['direction'] == 'ASC')
+                        $sqlGroupBy .= $value['base_expr'];
+                    else
+                        $sqlGroupBy .= $value['base_expr'] . " " . $value['direction'];
+                }
+            }
+
+            $sqlHaving = "";
+            if (!empty($sqlParsed['HAVING'])) {
+                $sqlHaving = "HAVING ";
+                $aHaving = $sqlParsed['HAVING'];
+                foreach ($aHaving as $key => $value) {
+                    $sqlHaving .= $value['base_expr'] . " ";
+                }
+            }
+
+            $sqlOrderBy = "";
+            if (!empty($sqlParsed['ORDER'])) {
+                $sqlOrderBy = "ORDER BY ";
+                $aOrder = $sqlParsed['ORDER'];
+                foreach ($aOrder as $key => $value) {
+                    if ($key != 0)
+                        $sqlOrderBy .= ", ";
+                    if ($value['direction'] == 'ASC')
+                        $sqlOrderBy .= $value['base_expr'];
+                    else
+                        $sqlOrderBy .= $value['base_expr'] . " " . $value['direction'];
+                }
+            } else {
+                $sqlOrderBy = " ORDER BY " . $sFieldSel;
+            }
+            
+            $sqlLimit = "";
+            if ($start >= 0) {
+                $sqlLimit = " LIMIT " . $start;
+            }
+            if ($limit !== "") {
+                $sqlLimit = " LIMIT " . $start . "," . $limit;
+            }
+            if (!empty($sqlParsed['LIMIT'])) {
+                $sqlLimit = " LIMIT " . $sqlParsed['LIMIT']['start'] . ", " . $sqlParsed['LIMIT']['end'];
+            }
+
+            return $sqlSelect . $sqlFrom . $sqlWhere . $sqlGroupBy . $sqlHaving . $sqlOrderBy . $sqlLimit;
+        }
+        if (!empty($sqlParsed['CALL'])) {
+            $sCall = "CALL ";
+            $aCall = $sqlParsed['CALL'];
+            foreach ($aCall as $key => $value) {
+                $sCall .= $value . " ";
+            }
+            return $sCall;
+        }
+        if (!empty($sqlParsed['EXECUTE'])) {
+            $sCall = "EXECUTE ";
+            $aCall = $sqlParsed['EXECUTE'];
+            foreach ($aCall as $key => $value) {
+                $sCall .= $value . " ";
+            }
+            return $sCall;
+        }
+        if (!empty($sqlParsed[''])) {
+            $sCall = "";
+            $aCall = $sqlParsed[''];
+            foreach ($aCall as $key => $value) {
+                $sCall .= $value . " ";
+            }
+            return $sCall;
         }
     }
 

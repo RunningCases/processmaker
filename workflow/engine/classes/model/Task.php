@@ -804,6 +804,7 @@ class Task extends BaseTask
                 $oCriteria = new Criteria();
                 $oCriteria->add(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN");
                 $oCriteria->add(AppDelegationPeer::TAS_UID, $newValues['TAS_UID']);
+                $oCriteria->add(AppDelegationPeer::USR_UID, "");
                 $oApplication = AppDelegationPeer::doSelectOne($oCriteria);
                 if(!empty($oApplication)) {
                     throw (new Exception(G::LoadTranslation('ID_CURRENT_ASSING_TYPE_WITH_CASES')));        
