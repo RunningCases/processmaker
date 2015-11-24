@@ -729,7 +729,7 @@ class Derivation
                 $elementDestType
             );
 
-            if($elementDestUid == "-1"){
+            if($elementDestUid == "-1" || count($arrayElement) == 0){
                $arrayElement = $this->throwElementToEnd($elementOriginUid, $rouCondition);
             }
 
@@ -1063,9 +1063,18 @@ class Derivation
                     $this->case->closeAllDelegations( $currentDelegation['APP_UID'] );
                     $this->case->closeAllThreads( $currentDelegation['APP_UID'] );
                     //I think we need to change the APP_STATUS to completed,
-
-                    //BpmnEvent
-                    $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true, $nextDel['ROU_CONDITION']);
+                    if (isset($nextDel["TAS_UID_DUMMY"]) ) {
+                        $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
+                        if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())) {
+                            //Throw Events
+                            $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);  
+                        } else {
+                            $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true, $nextDel['ROU_CONDITION']);
+                        }
+                    } else {
+                        //BpmnEvent
+                        $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true, $nextDel['ROU_CONDITION']);
+                    }
                     break;
                 case TASK_FINISH_TASK:
                     $iAppThreadIndex = $appFields['DEL_THREAD'];
