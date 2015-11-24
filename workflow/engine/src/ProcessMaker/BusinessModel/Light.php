@@ -1214,7 +1214,6 @@ class Light
         $result = new \stdclass();
 
         try {
-            //$unpauseDate = $request_data['unpauseDate'] . ' '. $request_data['unpauseTime'];
             $oCase = new \Cases();
             $iDelIndex = $oCase->getCurrentDelegation( $app_uid, $usr_uid );
             // Save the note pause reason
