@@ -33,7 +33,12 @@ foreach ($appDelPrev as $app){
 require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.labelsGmail.php");
 $oLabels = new labelsGmail();
 $oResponse = $oLabels->setLabels($caseId, $actualIndex, $actualLastIndex, false);
-if( $_SESSION['gmail'] === 1 ){
+
+$enablePMGmail = false;
+G::LoadClass( "pmDrive" );
+$pmDrive = new PMDrive();
+$enablePMGmail = $pmDrive->getStatusService();
+if( $_SESSION['gmail'] === 1 && !empty($enablePMGmail) && $enablePMGmail==1 ){
 	//$_SESSION['gmail'] = 0;
 	$mUrl = '/sys'. $_SESSION['WORKSPACE'] .'/en/neoclassic/cases/cases_Open?APP_UID='.$caseId.'&DEL_INDEX='.$actualIndex.'&action=sent';
 } else{
