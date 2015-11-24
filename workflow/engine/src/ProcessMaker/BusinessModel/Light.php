@@ -1214,7 +1214,7 @@ class Light
         $result = new \stdclass();
 
         try {
-            $unpauseDate = $request_data['unpauseDate'] . ' '. $request_data['unpauseTime'];
+            //$unpauseDate = $request_data['unpauseDate'] . ' '. $request_data['unpauseTime'];
             $oCase = new \Cases();
             $iDelIndex = $oCase->getCurrentDelegation( $app_uid, $usr_uid );
             // Save the note pause reason
@@ -1226,11 +1226,11 @@ class Light
             }
             // End save
 
-            $oCase->pauseCase($app_uid, $iDelIndex, $usr_uid, $unpauseDate);
+            $oCase->pauseCase($app_uid, $iDelIndex, $usr_uid, $request_data['unpauseDate']);
             $app = new \Application();
             $caseData = $app->load($app_uid);
             $data['APP_NUMBER'] = $caseData['APP_NUMBER'];
-            $data['UNPAUSE_DATE'] = $unpauseDate;
+            $data['UNPAUSE_DATE'] = $request_data['unpauseDate'];
 
             $result->success = true;
             $result->msg = G::LoadTranslation('ID_CASE_PAUSED_SUCCESSFULLY', SYS_LANG, $data);
