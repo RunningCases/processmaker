@@ -1204,8 +1204,15 @@ class Derivation
                             foreach ($arrayTaskNextDelNextDelegations as $key2 => $value2) {
                                 $arrayTaskNextDelNextDel = $value2;
 
-                                if (!isset($arrayTaskNextDelNextDel["NEXT_TASK"]["USER_ASSIGNED"]["USR_UID"])) {
-                                    throw new Exception(G::LoadTranslation("ID_NO_USERS"));
+                                if($arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_ASSIGN_TYPE"] == 'MULTIPLE_INSTANCE'){
+                                    $aUserAssigned = true;
+                                    if(!isset($arrayTaskNextDelNextDel["NEXT_TASK"]["USER_ASSIGNED"]["0"]["USR_UID"])){
+                                        throw new Exception(G::LoadTranslation("ID_NO_USERS"));
+                                    }
+                                } else {
+                                    if (!isset($arrayTaskNextDelNextDel["NEXT_TASK"]["USER_ASSIGNED"]["USR_UID"])) {
+                                        throw new Exception(G::LoadTranslation("ID_NO_USERS"));
+                                    }
                                 }
 
                                 $rouPreType = "";
