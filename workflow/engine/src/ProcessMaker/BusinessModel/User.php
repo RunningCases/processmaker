@@ -596,8 +596,12 @@ class User
 
                 $rbac->initRBAC();
 
-                if (isset($arrayData["USR_NEW_PASS"])) {
-                    $arrayData["USR_PASSWORD"] = \Bootstrap::hashPassword($arrayData["USR_NEW_PASS"]);
+                if (isset($arrayData['USR_PASSWORD'])) {
+                    $arrayData['USR_PASSWORD'] = \Bootstrap::hashPassword($arrayData['USR_PASSWORD']);
+                } else {
+                    if (isset($arrayData['USR_NEW_PASS'])) {
+                        $arrayData['USR_PASSWORD'] = \Bootstrap::hashPassword($arrayData['USR_NEW_PASS']);
+                    }
                 }
 
                 $arrayData["USR_UID"]              = $userUid;
