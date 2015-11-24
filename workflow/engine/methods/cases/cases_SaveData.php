@@ -426,7 +426,7 @@ try {
                                     $oDataset = AppDelegationPeer::doSelectRs($criteria);
                                     $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                                     while ($dataset->next()) {
-                                        $aRow = $oDataset->fetch();
+                                        $aRow = $oDataset->getRow();
                                         if (array_search($aRow['USR_EMAIL'], $userPermission) == null) {
                                             $userPermission[] = $aRow['USR_EMAIL'];
                                         }
