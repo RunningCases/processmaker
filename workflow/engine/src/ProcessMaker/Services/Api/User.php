@@ -151,6 +151,7 @@ class User extends Api
             $userLoggedUid = $this->getUserId();
             $user = new \ProcessMaker\BusinessModel\User();
             $user->updateBookmark($userLoggedUid, $tas_uid, 'INSERT');
+            return array('bookmarkedTaskId'=>$tas_uid);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -169,6 +170,7 @@ class User extends Api
             $userLoggedUid = $this->getUserId();
             $user = new \ProcessMaker\BusinessModel\User();
             $user->updateBookmark($userLoggedUid, $tas_uid, 'DELETE');
+            return array('unbookmarkedTaskId'=>$tas_uid);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
