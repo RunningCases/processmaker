@@ -187,7 +187,12 @@ try {
         $loc = $aNextStep['PAGE'];
     }
     //Triggers After
-    if (isset( $_SESSION['TRIGGER_DEBUG']['ISSET'] )) {
+    $ieVersion = null;
+    if(preg_match("/^.*\(.*MSIE (\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch) || preg_match("/^.*\(.*rv.(\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch)){
+        $ieVersion = intval($arrayMatch[1]);
+    }
+    
+    if (isset( $_SESSION['TRIGGER_DEBUG']['ISSET'] ) && $ieVersion != 11) {
         if ($_SESSION['TRIGGER_DEBUG']['ISSET'] == 1) {
             $oTemplatePower = new TemplatePower( PATH_TPL . 'cases/cases_Step.html' );
             $oTemplatePower->prepare();
@@ -205,10 +210,7 @@ try {
     }
     
     //close tab only if IE11
-    $ieVersion = null;
-    if(preg_match("/^.*\(.*MSIE (\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch) || preg_match("/^.*\(.*rv.(\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch)){
-        $ieVersion = intval($arrayMatch[1]);
-    }
+    
     if($ieVersion == 11 && !isset($_SESSION['__OUTLOOK_CONNECTOR__'])) {
         $script = "<script type='text/javascript'>
                        try {
