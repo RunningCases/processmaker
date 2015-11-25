@@ -729,7 +729,7 @@ class Derivation
                 $elementDestType
             );
 
-            if($elementDestUid == "-1"){
+            if($elementDestUid == "-1" || count($arrayElement) == 0){
                $arrayElement = $this->throwElementToEnd($elementOriginUid, $rouCondition);
             }
 
@@ -1063,9 +1063,18 @@ class Derivation
                     $this->case->closeAllDelegations( $currentDelegation['APP_UID'] );
                     $this->case->closeAllThreads( $currentDelegation['APP_UID'] );
                     //I think we need to change the APP_STATUS to completed,
-
-                    //BpmnEvent
-                    $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true, $nextDel['ROU_CONDITION']);
+                    if (isset($nextDel["TAS_UID_DUMMY"]) ) {
+                        $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
+                        if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())) {
+                            //Throw Events
+                            $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);  
+                        } else {
+                            $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true, $nextDel['ROU_CONDITION']);
+                        }
+                    } else {
+                        //BpmnEvent
+                        $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true, $nextDel['ROU_CONDITION']);
+                    }
                     break;
                 case TASK_FINISH_TASK:
                     $iAppThreadIndex = $appFields['DEL_THREAD'];
@@ -1204,8 +1213,15 @@ class Derivation
                             foreach ($arrayTaskNextDelNextDelegations as $key2 => $value2) {
                                 $arrayTaskNextDelNextDel = $value2;
 
-                                if (!isset($arrayTaskNextDelNextDel["NEXT_TASK"]["USER_ASSIGNED"]["USR_UID"])) {
-                                    throw new Exception(G::LoadTranslation("ID_NO_USERS"));
+                                if($arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_ASSIGN_TYPE"] == 'MULTIPLE_INSTANCE'){
+                                    $aUserAssigned = true;
+                                    if(!isset($arrayTaskNextDelNextDel["NEXT_TASK"]["USER_ASSIGNED"]["0"]["USR_UID"])){
+                                        throw new Exception(G::LoadTranslation("ID_NO_USERS"));
+                                    }
+                                } else {
+                                    if (!isset($arrayTaskNextDelNextDel["NEXT_TASK"]["USER_ASSIGNED"]["USR_UID"])) {
+                                        throw new Exception(G::LoadTranslation("ID_NO_USERS"));
+                                    }
                                 }
 
                                 $rouPreType = "";

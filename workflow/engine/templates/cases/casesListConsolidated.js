@@ -229,6 +229,7 @@ var htmlMessage;
 //var rowLabels = [];
 
 var smodel;
+var newCaseNewTab;
 
 function openCase(){
   var rowModel = consolidatedGrid.getSelectionModel().getSelected();
@@ -236,15 +237,16 @@ function openCase(){
     var appUid    = rowModel.data.APP_UID;
     var delIndex  = rowModel.data.DEL_INDEX;
     var caseTitle = (rowModel.data.APP_TITLE) ? rowModel.data.APP_TITLE : rowModel.data.APP_UID;
-
-    Ext.Msg.show({
-      msg: _("ID_OPEN_CASE") + " " + caseTitle,
-      width:300,
-      wait:true,
-      waitConfig: {
-        interval:200
-      }
-    });
+    if(ieVersion != 11) {
+      Ext.Msg.show({
+        msg: _("ID_OPEN_CASE") + " " + caseTitle,
+        width:300,
+        wait:true,
+        waitConfig: {
+          interval:200
+        }
+      });
+    }
     params = '';
     switch(action){
       case 'consolidated':
@@ -255,15 +257,24 @@ function openCase(){
         break;
     }
     params += '&action=' + 'todo';
-    redirect(requestFile + '?' + params);
-
+    
+    if(ieVersion == 11) {
+      if(newCaseNewTab) {
+        newCaseNewTab.close();
+      }
+        newCaseNewTab = window.open(requestFile + '?' + params);       
+    } else {
+      redirect(requestFile + '?' + params);
+    }
   } else {
       msgBox(_("ID_INFORMATION"), _("ID_SELECT_ONE_AT_LEAST"));
   }
 }
 
 function jumpToCase(appNumber){
-  Ext.MessageBox.show({ msg: _('ID_PROCESSING'), wait:true,waitConfig: {interval:200} });
+  if(ieVersion != 11) {  
+    Ext.MessageBox.show({ msg: _('ID_PROCESSING'), wait:true,waitConfig: {interval:200} });
+  }
   Ext.Ajax.request({
     url: 'cases_Ajax',
     success: function(response) {
@@ -272,7 +283,14 @@ function jumpToCase(appNumber){
         params = 'APP_NUMBER=' + appNumber;
         params += '&action=jump';
         requestFile = '../cases/open';
-        redirect(requestFile + '?' + params);
+        if(ieVersion == 11) {
+          if(newCaseNewTab) {
+            newCaseNewTab.close();
+          }
+            newCaseNewTab = window.open(requestFile + '?' + params);       
+        } else {
+          redirect(requestFile + '?' + params);
+        }
       } else {
         Ext.MessageBox.hide();
         var message = new Array();
@@ -1342,3 +1360,8 @@ function linkRenderer(value)
     return "<a href=\"" + value + "\" onclick=\"window.open('" + value + "', '_blank'); return false;\">" + value + "</a>";
 }
 
+Ext.EventManager.on(window, 'beforeunload', function () {
+  if(newCaseNewTab) {
+    newCaseNewTab.close();
+  }
+});

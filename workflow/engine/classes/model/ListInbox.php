@@ -230,6 +230,10 @@ class ListInbox extends BaseListInbox
             $data['DEL_DUE_DATE'] = $this->getAppDelegationInfo($filters,'DEL_TASK_DUE_DATE');
         }
 
+        if(isset($data['APP_INIT_DATE'])){
+            $data['DEL_INIT_DATE'] = $data['APP_INIT_DATE'];
+        }
+
         $criteria = new Criteria();
         $criteria->addSelectColumn( ApplicationPeer::APP_NUMBER );
         $criteria->addSelectColumn( ApplicationPeer::APP_UPDATE_DATE );
@@ -345,6 +349,20 @@ class ListInbox extends BaseListInbox
             } else {
                 //$users->refreshTotal($dataPreviusApplication['CURRENT_USER_UID'], 'remove', 'inbox');
             }
+        }
+        if ($data['USR_UID'] != '') {
+            $criteria = new Criteria();
+            $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
+            $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+            $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
+            $criteria->add( UsersPeer::USR_UID, $data['USR_UID'], Criteria::EQUAL );
+            $dataset = UsersPeer::doSelectRS($criteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $dataset->next();
+            $aRow = $dataset->getRow();
+            $data['DEL_CURRENT_USR_USERNAME']  = $aRow['USR_USERNAME'];
+            $data['DEL_CURRENT_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
+            $data['DEL_CURRENT_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
         }
         self::create($data, $isSelfService);
     }
