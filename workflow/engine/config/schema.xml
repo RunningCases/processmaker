@@ -4683,6 +4683,12 @@
         <parameter name="Extra" value=""/>
       </vendor>
     </column>
+    <column name="ABE_CUSTOM_GRID" type="LONGVARCHAR" required="false">
+      <vendor type="mysql">
+        <parameter name="Field" value="ABE_CUSTOM_GRID"/>
+        <parameter name="Default" value=""/>
+      </vendor>
+    </column>
   </table>
 
   <table name="ABE_REQUESTS">
