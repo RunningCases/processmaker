@@ -1392,7 +1392,7 @@
       <rule name="required" message="Language is required."/>
     </validator>
     <validator column="TRN_VALUE">
-      <rule name="maxLength" value="200" message="Value can be no larger than ${value} in size"/>
+      <rule name="maxLength" value="1500" message="Value can be no larger than ${value} in size"/>
       <rule name="required" message="Value is required."/>
     </validator>
   </table>
