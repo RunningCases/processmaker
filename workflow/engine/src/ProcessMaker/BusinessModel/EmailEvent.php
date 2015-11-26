@@ -444,7 +444,16 @@ class EmailEvent
                 }
             }
             if(!empty($emailTo)) {
-                \PMFSendMessage($appUID, $arrayData[3], $emailTo, '', '', $arrayData[5], $contentFile['prf_filename'], array());
+                $subject = $arrayData[5];
+                if(substr($subject,0,1) == "@") {
+                    $subject = substr($subject, 2,strlen($subject));
+                    if(isset($arrayApplicationData['APP_DATA'])) {
+                        if(is_array($arrayApplicationData['APP_DATA']) && isset( $arrayApplicationData['APP_DATA'][$subject])) {
+                            $subject = $arrayApplicationData['APP_DATA'][$subject];
+                        }
+                    }
+                }
+                \PMFSendMessage($appUID, $arrayData[3], $emailTo, '', '', $subject, $contentFile['prf_filename'], array());
             }
         }
     }
