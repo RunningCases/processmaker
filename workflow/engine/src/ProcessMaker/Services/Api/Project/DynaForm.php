@@ -3,6 +3,7 @@ namespace ProcessMaker\Services\Api\Project;
 
 use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
+use \ProcessMaker\Util\DateTime;
 
 /**
  * Project\DynaForm Api Controller
@@ -11,6 +12,10 @@ use \Luracast\Restler\RestException;
  */
 class DynaForm extends Api
 {
+    private $arrayFieldIso8601 = [
+        "dyn_update_date"
+    ];
+
     /**
      * @url GET /:prj_uid/dynaform/:dyn_uid
      *
@@ -25,7 +30,7 @@ class DynaForm extends Api
 
             $response = $dynaForm->getDynaForm($dyn_uid);
 
-            return $response;
+            return DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
