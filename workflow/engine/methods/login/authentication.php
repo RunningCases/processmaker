@@ -224,7 +224,25 @@ try {
 
     if (isset($frm['USER_LANG'])) {
         if ($frm['USER_LANG'] != '') {
-            $lang = $frm['USER_LANG'];
+            if($frm['USER_LANG'] == "default"){
+                //Check the USR_DEFAULT_LANG
+                require_once 'classes/model/Users.php';
+                $user = new Users();
+                $rsUser = $user->userLanguaje($_SESSION['USER_LOGGED']);
+                $rsUser->next();
+                $rowUser = $rsUser->getRow();
+                if( isset($rowUser["USR_DEFAULT_LANG"]) &&  $rowUser["USR_DEFAULT_LANG"]!=''){
+                    $lang = $rowUser["USR_DEFAULT_LANG"];
+                } else {
+                    $oConf = new Configurations();
+                    $oConf->loadConfig($obj, 'ENVIRONMENT_SETTINGS', '');
+                    if (isset($oConf->aConfig["login_defaultLanguage"]) && $oConf->aConfig["login_defaultLanguage"] != "") {
+                        $lang = $oConf->aConfig["login_defaultLanguage"];
+                    }
+                }
+            } else {
+                $lang = $frm['USER_LANG'];
+            }
         }
     } else {
         if (defined("SYS_LANG") && SYS_LANG != "") {

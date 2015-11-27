@@ -1494,6 +1494,7 @@
         </vendor>
     </column>
     <column name="USR_TIME_ZONE" type="VARCHAR" size="100" default="" />
+    <column name="USR_DEFAULT_LANG" type="VARCHAR" size="10" default=""/>
     <validator column="USR_STATUS">
       <rule name="validValues" value="ACTIVE|INACTIVE|VACATION|CLOSED" message="Please select a valid type."/>
       <rule name="required" message="Type is required."/>

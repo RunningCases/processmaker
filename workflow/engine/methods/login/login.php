@@ -191,6 +191,7 @@ $translationsTable = $Translations->getTranslationEnvironments();
 
 $availableLangArray = array ();
 $availableLangArray [] = array ('LANG_ID' => 'char', 'LANG_NAME' => 'char' );
+$availableLangArray []  = array ('LANG_ID' => 'default', 'LANG_NAME' => G::LoadTranslation("ID_DEFAULT_LANGUAGE") );
 foreach ($translationsTable as $locale) {
     $row['LANG_ID'] = $locale['LOCALE'];
 
@@ -214,6 +215,7 @@ $oConf->loadConfig($obj, 'ENVIRONMENT_SETTINGS', '');
 
 if (isset($oConf->aConfig["login_defaultLanguage"]) && $oConf->aConfig["login_defaultLanguage"] != "") {
     $aFields["USER_LANG"] = $oConf->aConfig["login_defaultLanguage"];
+    $aFields["USER_LANG"] = "default";
 } else {
     $myUrl = explode("/", $_SERVER["REQUEST_URI"]);
 

@@ -121,6 +121,7 @@ $translationsTable = $Translations->getTranslationEnvironments();
 
 $availableLangArray = array ();
 $availableLangArray [] = array ('LANG_ID' => 'char', 'LANG_NAME' => 'char');
+$availableLangArray []  = array ('LANG_ID' => 'default', 'LANG_NAME' => G::LoadTranslation("ID_DEFAULT_LANGUAGE") );
 
 foreach ($translationsTable as $locale) {
     $aFields['LANG_ID'] = $locale['LOCALE'];
@@ -149,6 +150,7 @@ $_SESSION ['_DBArray'] = $_DBArray;
 
 $aField ['LOGIN_VERIFY_MSG'] = G::loadTranslation ('LOGIN_VERIFY_MSG');
 $aField['USER_LANG'] = SYS_LANG;
+$aField['USER_LANG'] = "default";
 
 $G_PUBLISH = new Publisher ();
 if (!defined('WS_IN_LOGIN')) {

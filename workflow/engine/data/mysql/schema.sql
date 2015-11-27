@@ -718,6 +718,7 @@ CREATE TABLE `USERS`
     `USR_UNIT_COST` VARCHAR(50) default '',
     `USR_BOOKMARK_START_CASES` MEDIUMTEXT,
     `USR_TIME_ZONE` VARCHAR(100) default '',
+    `USR_DEFAULT_LANG` VARCHAR(10) default '',
 	PRIMARY KEY (`USR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Users';
 #-----------------------------------------------------------------------------
