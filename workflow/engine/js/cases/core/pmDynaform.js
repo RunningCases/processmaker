@@ -26,6 +26,7 @@ $(window).load(function () {
 
         }
     }
+    var sesi = document.location.href;
     function loadAjaxParams () {
         var url;
         var action;
@@ -46,8 +47,13 @@ $(window).load(function () {
             }
             method = 'POST';
         } else if (app_uid){ //In case the form is in running cases
+        	if(sesi.search("gmail") != -1){
+        		action = "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid + "&gmail=1";
+        	}else{
+        		action = "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
+        	}
             url = location.protocol + '//' + location.host;
-            action = "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
+            
             url += '/sys' + workspace + '/en/neoclassic/cases/' + action;
             method = 'POST';
         }
@@ -86,7 +92,11 @@ $(window).load(function () {
             arrayRequired.name = "DynaformRequiredFields";
             arrayRequired.value = fieldsRequired;
             var form = document.getElementsByTagName("form")[0];
-            form.action = filePost ? filePost : "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
+            if(sesi.search("gmail") != -1){
+            	form.action = filePost ? filePost : "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid + "&gmail=1";
+            } else {
+            	form.action = filePost ? filePost : "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
+            }
             form.method = "post";
             form.setAttribute("encType", "multipart/form-data");
             form.appendChild(dyn_content_history);

@@ -238,6 +238,12 @@ abstract class BaseUsers extends BaseObject implements Persistent
     protected $usr_unit_cost = '';
 
     /**
+     * The value for the usr_pmdrive_folder_uid field.
+     * @var        string
+     */
+    protected $usr_pmdrive_folder_uid = '';
+
+    /**
      * The value for the usr_bookmark_start_cases field.
      * @var        string
      */
@@ -736,6 +742,17 @@ abstract class BaseUsers extends BaseObject implements Persistent
     {
 
         return $this->usr_unit_cost;
+    }
+
+    /**
+     * Get the [usr_pmdrive_folder_uid] column value.
+     * 
+     * @return     string
+     */
+    public function getUsrPmdriveFolderUid()
+    {
+
+        return $this->usr_pmdrive_folder_uid;
     }
 
     /**
@@ -1564,6 +1581,28 @@ abstract class BaseUsers extends BaseObject implements Persistent
     } // setUsrUnitCost()
 
     /**
+     * Set the value of [usr_pmdrive_folder_uid] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setUsrPmdriveFolderUid($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->usr_pmdrive_folder_uid !== $v || $v === '') {
+            $this->usr_pmdrive_folder_uid = $v;
+            $this->modifiedColumns[] = UsersPeer::USR_PMDRIVE_FOLDER_UID;
+        }
+
+    } // setUsrPmdriveFolderUid()
+
+    /**
      * Set the value of [usr_bookmark_start_cases] column.
      * 
      * @param      string $v new value
@@ -1716,7 +1755,9 @@ abstract class BaseUsers extends BaseObject implements Persistent
 
             $this->usr_unit_cost = $rs->getString($startcol + 34);
 
-            $this->usr_bookmark_start_cases = $rs->getString($startcol + 35);
+            $this->usr_pmdrive_folder_uid = $rs->getString($startcol + 35);
+
+            $this->usr_bookmark_start_cases = $rs->getString($startcol + 36);
 
             $this->usr_time_zone = $rs->getString($startcol + 36);
 
@@ -1727,7 +1768,11 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
+<<<<<<< HEAD
             return $startcol + 38; // 38 = UsersPeer::NUM_COLUMNS - UsersPeer::NUM_LAZY_LOAD_COLUMNS).
+=======
+            return $startcol + 37; // 37 = UsersPeer::NUM_COLUMNS - UsersPeer::NUM_LAZY_LOAD_COLUMNS).
+>>>>>>> upstream/3.0.1.6-Gmail
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Users object", $e);
@@ -2037,6 +2082,9 @@ abstract class BaseUsers extends BaseObject implements Persistent
                 return $this->getUsrUnitCost();
                 break;
             case 35:
+                return $this->getUsrPmdriveFolderUid();
+                break;
+            case 36:
                 return $this->getUsrBookmarkStartCases();
                 break;
             case 36:
@@ -2240,6 +2288,9 @@ abstract class BaseUsers extends BaseObject implements Persistent
                 $this->setUsrUnitCost($value);
                 break;
             case 35:
+                $this->setUsrPmdriveFolderUid($value);
+                break;
+            case 36:
                 $this->setUsrBookmarkStartCases($value);
                 break;
             case 36:
@@ -2412,7 +2463,11 @@ abstract class BaseUsers extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[35], $arr)) {
-            $this->setUsrBookmarkStartCases($arr[$keys[35]]);
+            $this->setUsrPmdriveFolderUid($arr[$keys[35]]);
+        }
+
+        if (array_key_exists($keys[36], $arr)) {
+            $this->setUsrBookmarkStartCases($arr[$keys[36]]);
         }
 
         if (array_key_exists($keys[36], $arr)) {
@@ -2574,6 +2629,10 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $criteria->add(UsersPeer::USR_UNIT_COST, $this->usr_unit_cost);
         }
 
+        if ($this->isColumnModified(UsersPeer::USR_PMDRIVE_FOLDER_UID)) {
+            $criteria->add(UsersPeer::USR_PMDRIVE_FOLDER_UID, $this->usr_pmdrive_folder_uid);
+        }
+
         if ($this->isColumnModified(UsersPeer::USR_BOOKMARK_START_CASES)) {
             $criteria->add(UsersPeer::USR_BOOKMARK_START_CASES, $this->usr_bookmark_start_cases);
         }
@@ -2707,6 +2766,8 @@ abstract class BaseUsers extends BaseObject implements Persistent
         $copyObj->setUsrCostByHour($this->usr_cost_by_hour);
 
         $copyObj->setUsrUnitCost($this->usr_unit_cost);
+
+        $copyObj->setUsrPmdriveFolderUid($this->usr_pmdrive_folder_uid);
 
         $copyObj->setUsrBookmarkStartCases($this->usr_bookmark_start_cases);
 

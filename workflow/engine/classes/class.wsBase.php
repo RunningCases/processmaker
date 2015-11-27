@@ -914,7 +914,8 @@ class wsBase
         $aAttachment = null,
         $showMessage = true,
         $delIndex = 0,
-        $config = array()
+        $config = array(),
+    	$gmail = 0
     ) {
         try {
             if (!class_exists('System')) {
@@ -969,8 +970,11 @@ class wsBase
             $oCase = new Cases();
 
             $oldFields = $oCase->loadCase( $caseId );
-
-            $pathEmail = PATH_DATA_SITE . 'mailTemplates' . PATH_SEP . $oldFields['PRO_UID'] . PATH_SEP;
+            if($gmail == 1){
+            	$pathEmail = PATH_DATA_SITE . 'mailTemplates' . PATH_SEP;
+            }else {
+            	$pathEmail = PATH_DATA_SITE . 'mailTemplates' . PATH_SEP . $oldFields['PRO_UID'] . PATH_SEP;
+            }
             $fileTemplate = $pathEmail . $sTemplate;
             G::mk_dir( $pathEmail, 0777, true );
 

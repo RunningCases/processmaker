@@ -339,9 +339,23 @@ class pmDynaform
                     }
                 }
                 if ($key === "type" && ($value === "file") && isset($this->fields["APP_DATA"]["APPLICATION"])) {
+                    /*----------------------------------********---------------------------------*/
+                    $licensedFeatures = &PMLicensedFeatures::getSingleton();
+                    $enablePMGmail = false;
+                    if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+                        G::LoadClass( "pmDrive" );
+                        $pmDrive = new PMDrive();
+                        $enablePMGmail = $pmDrive->getStatusService();
+                    }
+                    /*----------------------------------********---------------------------------*/
                     $oCriteria = new Criteria("workflow");
                     $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
                     $oCriteria->addSelectColumn(AppDocumentPeer::DOC_VERSION);
+                    /*----------------------------------********---------------------------------*/
+                    if ($enablePMGmail) {
+                        $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_DRIVE_DOWNLOAD);
+                    }
+                    /*----------------------------------********---------------------------------*/
                     $oCriteria->add(AppDocumentPeer::APP_UID, $this->fields["APP_DATA"]["APPLICATION"]);
                     $oCriteria->add(AppDocumentPeer::APP_DOC_FIELDNAME, $json->name);
                     $rs = AppDocumentPeer::doSelectRS($oCriteria);
@@ -349,7 +363,17 @@ class pmDynaform
                     $links = array();
                     while ($rs->next()) {
                         $row = $rs->getRow();
-                        array_push($links, "../cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"]);
+                        $linkDownload = "../cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"];
+                        /*----------------------------------********---------------------------------*/
+                        //change donwload link - drive
+                        $driveDownload = @unserialize($row['APP_DOC_DRIVE_DOWNLOAD']);
+                        if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('ATTACHED',
+                                $driveDownload) && $enablePMGmail
+                        ) {
+                            $linkDownload = $driveDownload['ATTACHED'];
+                        }
+                        /*----------------------------------********---------------------------------*/
+                        array_push($links, $linkDownload);
                     }
                     $json->data = new stdClass();
                     $json->data->value = $links;
