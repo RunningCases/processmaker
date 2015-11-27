@@ -244,6 +244,12 @@ abstract class BaseUsers extends BaseObject implements Persistent
     protected $usr_bookmark_start_cases;
 
     /**
+     * The value for the usr_time_zone field.
+     * @var        string
+     */
+    protected $usr_time_zone = '';
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -735,6 +741,17 @@ abstract class BaseUsers extends BaseObject implements Persistent
     {
 
         return $this->usr_bookmark_start_cases;
+    }
+
+    /**
+     * Get the [usr_time_zone] column value.
+     * 
+     * @return     string
+     */
+    public function getUsrTimeZone()
+    {
+
+        return $this->usr_time_zone;
     }
 
     /**
@@ -1552,6 +1569,28 @@ abstract class BaseUsers extends BaseObject implements Persistent
     } // setUsrBookmarkStartCases()
 
     /**
+     * Set the value of [usr_time_zone] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setUsrTimeZone($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->usr_time_zone !== $v || $v === '') {
+            $this->usr_time_zone = $v;
+            $this->modifiedColumns[] = UsersPeer::USR_TIME_ZONE;
+        }
+
+    } // setUsrTimeZone()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -1640,12 +1679,14 @@ abstract class BaseUsers extends BaseObject implements Persistent
 
             $this->usr_bookmark_start_cases = $rs->getString($startcol + 35);
 
+            $this->usr_time_zone = $rs->getString($startcol + 36);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 36; // 36 = UsersPeer::NUM_COLUMNS - UsersPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 37; // 37 = UsersPeer::NUM_COLUMNS - UsersPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Users object", $e);
@@ -1957,6 +1998,9 @@ abstract class BaseUsers extends BaseObject implements Persistent
             case 35:
                 return $this->getUsrBookmarkStartCases();
                 break;
+            case 36:
+                return $this->getUsrTimeZone();
+                break;
             default:
                 return null;
                 break;
@@ -2013,6 +2057,7 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $keys[33] => $this->getUsrCostByHour(),
             $keys[34] => $this->getUsrUnitCost(),
             $keys[35] => $this->getUsrBookmarkStartCases(),
+            $keys[36] => $this->getUsrTimeZone(),
         );
         return $result;
     }
@@ -2151,6 +2196,9 @@ abstract class BaseUsers extends BaseObject implements Persistent
                 break;
             case 35:
                 $this->setUsrBookmarkStartCases($value);
+                break;
+            case 36:
+                $this->setUsrTimeZone($value);
                 break;
         } // switch()
     }
@@ -2319,6 +2367,10 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $this->setUsrBookmarkStartCases($arr[$keys[35]]);
         }
 
+        if (array_key_exists($keys[36], $arr)) {
+            $this->setUsrTimeZone($arr[$keys[36]]);
+        }
+
     }
 
     /**
@@ -2474,6 +2526,10 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $criteria->add(UsersPeer::USR_BOOKMARK_START_CASES, $this->usr_bookmark_start_cases);
         }
 
+        if ($this->isColumnModified(UsersPeer::USR_TIME_ZONE)) {
+            $criteria->add(UsersPeer::USR_TIME_ZONE, $this->usr_time_zone);
+        }
+
 
         return $criteria;
     }
@@ -2597,6 +2653,8 @@ abstract class BaseUsers extends BaseObject implements Persistent
         $copyObj->setUsrUnitCost($this->usr_unit_cost);
 
         $copyObj->setUsrBookmarkStartCases($this->usr_bookmark_start_cases);
+
+        $copyObj->setUsrTimeZone($this->usr_time_zone);
 
 
         $copyObj->setNew(true);

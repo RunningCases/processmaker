@@ -11,6 +11,11 @@ use \Luracast\Restler\RestException;
  */
 class User extends Api
 {
+    private $arrayFieldIso8601 = [
+        'usr_create_date',
+        'usr_update_date'
+    ];
+
     /**
      * Constructor of the class
      *
@@ -47,7 +52,7 @@ class User extends Api
 
             $response = $user->getUsers($arrayFilterData, null, null, $start, $limit);
 
-            return $response["data"];
+            return \ProcessMaker\Util\DateTime::convertUtcToIso8601($response['data'], $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -65,7 +70,8 @@ class User extends Api
             $user->setFormatFieldNameInUppercase(false);
 
             $response = $user->getUser($usr_uid);
-            return $response;
+
+            return \ProcessMaker\Util\DateTime::convertUtcToIso8601($response, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

@@ -315,7 +315,7 @@ class Installer extends Controller
                 $info->success = false;
             }
         }
-        
+
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
         $pathShared = $filter->validateInput($_REQUEST['pathShared'], 'path');
@@ -392,11 +392,11 @@ class Installer extends Controller
                 return $false;
             }
         }
-        
+
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
         $logFile = $filter->validateInput($logFile, 'path');
-        
+
         $fpt = fopen( $logFile, 'a' );
         fwrite( $fpt, sprintf( "%s %s\n", date( 'Y:m:d H:i:s' ), trim( $text ) ) );
         fclose( $fpt );
@@ -744,7 +744,7 @@ class Installer extends Controller
             // Generate the db.php file and folders
             $pathSharedSites = $pathShared;
             $path_site = $pathShared . "/sites/" . $workspace . "/";
-            $db_file = $path_site . "db.php";
+
             @mkdir( $path_site, 0777, true );
             @mkdir( $path_site . "files/", 0777, true );
             @mkdir( $path_site . "mailTemplates/", 0777, true );
@@ -752,6 +752,7 @@ class Installer extends Controller
             @mkdir( $path_site . "reports/", 0777, true );
             @mkdir( $path_site . "xmlForms", 0777, true );
 
+            $db_file = $path_site . 'db.php';
             $dbText = "<?php\n";
             $dbText .= sprintf( "// Processmaker configuration\n" );
             $dbText .= sprintf( "  define ('DB_ADAPTER',     '%s' );\n", 'mysql' );
@@ -779,7 +780,14 @@ class Installer extends Controller
             $this->installLog( G::LoadTranslation('ID_CREATING', SYS_LANG, Array($db_file) ));
             file_put_contents( $db_file, $dbText );
 
-            // Generate the databases.php file
+            //Generate the env.ini file
+            $envIniFile = $path_site . 'env.ini';
+            $content = 'system_utc_time_zone = 1' . "\n";
+
+            $this->installLog(G::LoadTranslation('ID_CREATING', SYS_LANG, [$envIniFile]));
+            file_put_contents($envIniFile, $content);
+
+            //Generate the databases.php file
             $databases_file = $path_site . 'databases.php';
             $dbData = sprintf( "\$dbAdapter    = '%s';\n", 'mysql' );
             $dbData .= sprintf( "\$dbHost       = '%s';\n", $db_host );
@@ -805,12 +813,12 @@ class Installer extends Controller
 
             $this->mysqlFileQuery( PATH_RBAC_HOME . 'engine/data/mysql/schema.sql' );
             $this->mysqlFileQuery( PATH_RBAC_HOME . 'engine/data/mysql/insert.sql' );
-            
+
             $query = sprintf( "USE %s;", $wf_workpace );
             $this->mysqlQuery( $query );
             $this->mysqlFileQuery( PATH_HOME . 'engine/data/mysql/schema.sql' );
             $this->mysqlFileQuery( PATH_HOME . 'engine/data/mysql/insert.sql' );
-            
+
 
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
                 $this->setPartner();
@@ -1297,7 +1305,7 @@ class Installer extends Controller
         }
 
         $db_host = ($db_port != '' && $db_port != 1433) ? $db_hostname . ':' . $db_port : $db_hostname;
-       
+
         $link = @mysql_connect( $db_host, $db_username, $db_password );
         if (! $link) {
             $info->message .= G::LoadTranslation('ID_MYSQL_CREDENTIALS_WRONG');
@@ -1305,7 +1313,7 @@ class Installer extends Controller
         }
         $db_username = $filter->validateInput($db_username, 'nosql');
         $db_hostname = $filter->validateInput($db_hostname, 'nosql');
-        $query = "SELECT * FROM `information_schema`.`USER_PRIVILEGES` where (GRANTEE = \"'%s'@'%s'\" OR GRANTEE = \"'%s'@'%%'\") ";   
+        $query = "SELECT * FROM `information_schema`.`USER_PRIVILEGES` where (GRANTEE = \"'%s'@'%s'\" OR GRANTEE = \"'%s'@'%%'\") ";
         $query = $filter->preventSqlInjection($query, array($db_username, $db_hostname, $db_username));
         $res = @mysql_query( $query, $link );
         $row = @mysql_fetch_array( $res );
@@ -1350,7 +1358,7 @@ class Installer extends Controller
         }
 
         $db_host = ($db_port != '' && $db_port != 1433) ? $db_hostname . ':' . $db_port : $db_hostname;
-            
+
         $link = @mssql_connect( $db_host, $db_username, $db_password );
         if (! $link) {
             $info->message .= G::LoadTranslation('ID_MYSQL_CREDENTIALS_WRONG');
@@ -1665,7 +1673,7 @@ class Installer extends Controller
                 $wf = $filter->validateInput($wf);
 
                 $db_host = ($db_port != '' && $db_port != 3306) ? $db_hostname . ':' . $db_port : $db_hostname;
-            
+
                 $link = @mysql_connect( $db_host, $db_username, $db_password );
                 @mysql_select_db($wf, $link);
                 $res = mysql_query( "SELECT STORE_ID FROM ADDONS_MANAGER WHERE ADDON_NAME = '" . $namePlugin . "'", $link );

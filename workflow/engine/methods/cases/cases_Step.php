@@ -181,7 +181,7 @@ $ieVersion = null;
 if(preg_match("/^.*\(.*MSIE (\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch) || preg_match("/^.*\(.*rv.(\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch)){
     $ieVersion = intval($arrayMatch[1]);
 }
- 
+
 if (isset( $_GET['breakpoint'] ) && $ieVersion != 11) {
 
     $G_PUBLISH->AddContent( 'view', 'cases/showDebugFrameLoader' );
@@ -284,11 +284,11 @@ try {
             $FieldsPmDynaform["STEP_MODE"] = $oStep->getStepMode();
             $FieldsPmDynaform["PRO_SHOW_MESSAGE"] = $noShowTitle;
             $FieldsPmDynaform["TRIGGER_DEBUG"] = $_SESSION['TRIGGER_DEBUG']['ISSET'];
-            $a = new pmDynaform($FieldsPmDynaform);
+            $a = new pmDynaform(\ProcessMaker\Util\DateTime::convertUtcToTimeZone($FieldsPmDynaform));
             if ($a->isResponsive()) {
                 $a->printEdit();
             } else {
-                $G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['UID'], '', $Fields['APP_DATA'], 'cases_SaveData?UID=' . $_GET['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'], '', (strtolower($oStep->getStepMode()) != 'edit' ? strtolower($oStep->getStepMode()) : ''));
+                $G_PUBLISH->AddContent('dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['UID'], '', \ProcessMaker\Util\DateTime::convertUtcToTimeZone($Fields['APP_DATA']), 'cases_SaveData?UID=' . $_GET['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'], '', ((strtolower($oStep->getStepMode()) != 'edit')? strtolower($oStep->getStepMode()) : ''));
             }
             break;
         case 'INPUT_DOCUMENT':

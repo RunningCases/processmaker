@@ -137,6 +137,8 @@ class UsersMapBuilder
 
         $tMap->addColumn('USR_BOOKMARK_START_CASES', 'UsrBookmarkStartCases', 'string', CreoleTypes::LONGVARCHAR, false, null);
 
+        $tMap->addColumn('USR_TIME_ZONE', 'UsrTimeZone', 'string', CreoleTypes::VARCHAR, false, 100);
+
         $tMap->addValidator('USR_STATUS', 'validValues', 'propel.validator.ValidValuesValidator', 'ACTIVE|INACTIVE|VACATION|CLOSED', 'Please select a valid type.');
 
         $tMap->addValidator('USR_STATUS', 'required', 'propel.validator.RequiredValidator', '', 'Type is required.');

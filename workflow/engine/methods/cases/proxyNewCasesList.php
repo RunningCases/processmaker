@@ -184,7 +184,7 @@ try {
 
     $response = $filter->xssFilterHard($response);
 
-    $response["data"] = $result;
+    $response['data'] = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($result);
 
     echo G::json_encode($response);
 } catch (Exception $e) {

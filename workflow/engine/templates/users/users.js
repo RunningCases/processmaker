@@ -14,6 +14,7 @@ var comboLocation;
 var comboReplacedBy;
 var comboCalendar;
 var comboRole;
+var cboTimeZone;
 
 var comboDefaultMainMenuOption;
 var comboDefaultCasesMenuOption;
@@ -401,6 +402,29 @@ Ext.onReady(function () {
     mode          : 'local'
   });
 
+    cboTimeZone = new Ext.form.ComboBox({
+        id: "cboTimeZone",
+        name: "USR_TIME_ZONE",
+
+        valueField: "id",
+        displayField: "value",
+        value: SYSTEM_TIME_ZONE,
+        store: new Ext.data.ArrayStore({
+            idIndex: 0,
+            fields: ["id", "value"],
+            data: TIME_ZONE_DATA
+        }),
+
+        fieldLabel: _("ID_TIME_ZONE"),
+
+        triggerAction: "all",
+        mode: "local",
+        editable: false,
+        width: 260,
+
+        hidden: !(__SYSTEM_UTC_TIME_ZONE__ == 1)
+    });
+
     var informationFields = new Ext.form.FieldSet({
       title : _('ID_PERSONAL_INFORMATION'),
       items : [
@@ -510,7 +534,8 @@ Ext.onReady(function () {
         dateField,
         comboCalendar,
         comboStatus,
-        comboRole
+        comboRole,
+        cboTimeZone
       ]
   });
     /*----------------------------------********---------------------------------*/
@@ -925,7 +950,15 @@ Ext.onReady(function () {
         fieldLabel : _('ID_ROLE'),
         xtype      : 'label',
         width      : 260
-      }
+      },
+      {
+          id: "USR_TIME_ZONE2",
+          fieldLabel: _("ID_TIME_ZONE"),
+          xtype: "label",
+          width: 260,
+
+          hidden: !(__SYSTEM_UTC_TIME_ZONE__ == 1)
+       }
     ]
   });
     /*----------------------------------********---------------------------------*/
@@ -1384,6 +1417,7 @@ function loadUserData()
                 Ext.getCmp("USR_DUE_DATE2").setText(data.user.USR_DUE_DATE);
                 Ext.getCmp("USR_STATUS2").setText(_('ID_' + data.user.USR_STATUS));
                 Ext.getCmp("USR_ROLE2").setText(data.user.USR_ROLE_NAME);
+                Ext.getCmp("USR_TIME_ZONE2").setText((data.user.USR_TIME_ZONE != "")? data.user.USR_TIME_ZONE : SYSTEM_TIME_ZONE);
                 /*----------------------------------********---------------------------------*/
                 Ext.getCmp("USR_COST_BY_HOUR2").setText(data.user.USR_COST_BY_HOUR);
                 Ext.getCmp("USR_UNIT_COST2").setText(data.user.USR_UNIT_COST);
@@ -1425,6 +1459,8 @@ function loadUserData()
             comboRole.store.on("load", function (store) {
                 comboRole.setValue(data.user.USR_ROLE);
             });
+
+            cboTimeZone.setValue((data.user.USR_TIME_ZONE != "")? data.user.USR_TIME_ZONE : SYSTEM_TIME_ZONE);
 
             if (infoMode) {
                 comboDefaultMainMenuOption.store.on("load", function (store) {

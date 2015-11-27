@@ -209,7 +209,7 @@ class Installer
             }
 
             $path_site = $this->options['path_data'] . "/sites/" . $this->options['name'] . "/";
-            $db_file = $path_site . "db.php";
+
             @mkdir($path_site, 0777, true);
             @mkdir($path_site . "files/", 0777, true);
             @mkdir($path_site . "mailTemplates/", 0777, true);
@@ -217,6 +217,8 @@ class Installer
             @mkdir($path_site . "reports/", 0777, true);
             @mkdir($path_site . "xmlForms", 0777, true);
 
+            //Generate the db.php file
+            $db_file = $path_site . 'db.php';
             $db_text = "<?php\n" . "// Processmaker configuration\n" . "define ('DB_ADAPTER', 'mysql' );\n" . "define ('DB_HOST', '" . $this->options['database']['hostname'] . ":" . $myPort . "' );\n" . "define ('DB_NAME', '" . $wf . "' );\n" . "define ('DB_USER', '" . (($this->cc_status == 1) ? $wf : $this->options['database']['username']) . "' );\n" . "define ('DB_PASS', '" . (($this->cc_status == 1) ? $this->options['password'] : $this->options['database']['password']) . "' );\n" . "define ('DB_RBAC_HOST', '" . $this->options['database']['hostname'] . ":" . $myPort . "' );\n" . "define ('DB_RBAC_NAME', '" . $rb . "' );\n" . "define ('DB_RBAC_USER', '" . (($this->cc_status == 1) ? $rb : $this->options['database']['username']) . "' );\n" . "define ('DB_RBAC_PASS', '" . (($this->cc_status == 1) ? $this->options['password'] : $this->options['database']['password']) . "' );\n" . "define ('DB_REPORT_HOST', '" . $this->options['database']['hostname'] . ":" . $myPort . "' );\n" . "define ('DB_REPORT_NAME', '" . $rp . "' );\n" . "define ('DB_REPORT_USER', '" . (($this->cc_status == 1) ? $rp : $this->options['database']['username']) . "' );\n" . "define ('DB_REPORT_PASS', '" . (($this->cc_status == 1) ? $this->options['password'] : $this->options['database']['password']) . "' );\n";
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
                 $db_text .= "define ('PARTNER_FLAG', " . ((defined('PARTNER_FLAG') && PARTNER_FLAG != '') ? PARTNER_FLAG : ((isset($_REQUEST['PARTNER_FLAG'])) ? $_REQUEST['PARTNER_FLAG']:'false')) . ");\n";
@@ -225,12 +227,24 @@ class Installer
                 }
             }
             $db_text .="?>";
+
             $fp = @fopen($db_file, "w");
             $this->log("Create: " . $db_file . "  => " . ((!$fp) ? $fp : "OK") . "\n", $fp === false);
             $ff = @fputs($fp, $db_text, strlen($db_text));
             $this->log("Write: " . $db_file . "  => " . ((!$ff) ? $ff : "OK") . "\n", $ff === false);
-
             fclose($fp);
+
+            //Generate the env.ini file
+            $envIniFile = $path_site . 'env.ini';
+            $content = 'system_utc_time_zone = 1' . "\n";
+
+            $fp = @fopen($envIniFile, 'w');
+            $this->log('Create: ' . $envIniFile . '  => ' . ((!$fp)? $fp : 'OK') . "\n", $fp === false);
+            $ff = @fputs($fp, $content, strlen($content));
+            $this->log('Write: ' . $envIniFile . '  => ' . ((!$ff)? $ff : 'OK') . "\n", $ff === false);
+            fclose($fp);
+
+            //Set data
             $this->setPartner();
             $this->setAdmin();
 

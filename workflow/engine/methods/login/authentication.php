@@ -180,6 +180,22 @@ try {
         $_SESSION['USR_USERNAME'] = $usr;
     }
 
+    //Set User Time Zone
+    $user = UsersPeer::retrieveByPK($_SESSION['USER_LOGGED']);
+
+    if (!is_null($user)) {
+        $userTimeZone = $user->getUsrTimeZone();
+
+        if (trim($userTimeZone) == '') {
+            $arraySystemConfiguration = System::getSystemConfiguration('', '', SYS_SYS);
+
+            $userTimeZone = $arraySystemConfiguration['time_zone'];
+        }
+
+        $_SESSION['USR_TIME_ZONE'] = $userTimeZone;
+    }
+
+    //Set data
     $aUser = $RBAC->userObj->load($_SESSION['USER_LOGGED']);
     $RBAC->loadUserRolePermission($RBAC->sSystem, $_SESSION['USER_LOGGED']);
     //$rol = $RBAC->rolesObj->load($RBAC->aUserInfo['PROCESSMAKER']['ROLE']['ROL_UID']);
