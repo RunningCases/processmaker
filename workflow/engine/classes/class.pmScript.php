@@ -206,6 +206,7 @@ class PMScript
         set_error_handler( 'handleErrors' );
         $_SESSION['_CODE_'] = $sCode;
         eval( $sScript );
+        $this->evaluateVariable();
         unset( $_SESSION['_CODE_'] );
         ob_end_flush();
     }
@@ -506,6 +507,67 @@ class PMScript
             $this->bError = true;
         }
         return $bResult;
+    }
+    
+    Public function evaluateVariable ()
+    {
+        $process = new Process();
+        if(!$process->isBpmnProcess($_SESSION['PROCESS'])) {
+            return;
+        }
+        require_once PATH_CORE.'controllers/pmTablesProxy.php';
+        $pmTablesProxy = new pmTablesProxy();
+        $variableModule = new ProcessMaker\BusinessModel\Variable();
+        $searchTypes = array ('checkgroup','dropdown','suggest');
+        $processVariables = $pmTablesProxy->getDynaformVariables($_SESSION['PROCESS'],$searchTypes,false);
+        $variables = $this->affected_fields;
+        $variables = array_unique($variables);
+        $newFields = array();
+        $arrayValues = array();
+        $arrayLabels = array();
+        if(is_array($variables) && is_array($processVariables)) {
+            foreach($variables as $var) {
+                if(strpos($var, '_label') === false) {
+                    if(in_array($var,$processVariables)) {
+                        if(isset($this->aFields[$var]) && is_array($this->aFields[$var][1]) ) {
+                            $varLabel = $var.'_label';   
+                            $arrayValue = $this->aFields[$var];
+                            if(is_array($arrayValue) && sizeof($arrayValue)) {
+                                foreach($arrayValue as $val) {
+                                    if(is_array($val)){
+                                        $val = array_values($val);
+                                        $arrayValues[] = $val[0];
+                                        $arrayLabels[] = $val[1];
+                                    }
+                                }
+                                if(sizeof($arrayLabels)) {
+                                    $varInfo = $variableModule->getVariableTypeByName($_SESSION['PROCESS'],$var);
+                                    if(is_array($varInfo) && sizeof($varInfo)) {
+                                        $varType = $varInfo['VAR_FIELD_TYPE'];
+                                        switch($varType) {
+                                            case 'array':
+                                                $arrayLabels = '["'.implode('","',$arrayLabels).'"]'; 
+                                                $newFields[$var] = $arrayValues;
+                                                $newFields[$varLabel] = $arrayLabels;
+                                            break;
+                                            case 'string':
+                                                $newFields[$var] = $arrayValues[0];
+                                                $newFields[$varLabel] = $arrayLabels[0];
+                                            break;
+                                        }
+                                        $this->affected_fields[] = $varLabel; 
+                                        $this->aFields = array_merge($this->aFields,$newFields);
+                                        unset($newFields);
+                                        unset($arrayValues);
+                                        unset($arrayLabels);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }            
+        }
     }
 }
 

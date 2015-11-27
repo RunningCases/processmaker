@@ -872,5 +872,26 @@ class Variable
             return $sCall;
         }
     }
+    
+    public function getVariableTypeByName($processUid, $variableName)
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_UID);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NAME);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_FIELD_TYPE);
+            $criteria->add(\ProcessVariablesPeer::VAR_NAME, $variableName);
+            $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid);
+            $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            if ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+                return sizeof($row) ? $row : false;
+            }
+            return false;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 
 }
