@@ -412,7 +412,7 @@ try {
                                 if ($row['TU_RELATION'] == 1) {
                                     //users
                                     $dataUser = $user->load($row['USR_UID']);
-                                    if (array_search($dataUser['USR_EMAIL'], $userPermission) == null) {
+                                    if (array_search($dataUser['USR_EMAIL'], $userPermission) === false) {
                                         $userPermission[] = $dataUser['USR_EMAIL'];
                                     }
                                 } else {
@@ -427,7 +427,7 @@ try {
                                     $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                                     while ($dataset->next()) {
                                         $aRow = $oDataset->getRow();
-                                        if (array_search($aRow['USR_EMAIL'], $userPermission) == null) {
+                                        if (array_search($aRow['USR_EMAIL'], $userPermission) === false) {
                                             $userPermission[] = $aRow['USR_EMAIL'];
                                         }
 
