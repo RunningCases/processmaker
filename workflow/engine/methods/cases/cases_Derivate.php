@@ -22,10 +22,33 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 if (!isset($_SESSION['USER_LOGGED'])) {
-    G::SendTemporalMessage( 'ID_LOGIN_AGAIN', 'warning', 'labels' );
-    die( '<script type="text/javascript">
-              parent.location = "../cases/casesStartPage?action=startCase";
-          </script>');
+	G::SendTemporalMessage( 'ID_LOGIN_AGAIN', 'warning', 'labels' );
+	die( '<script type="text/javascript">
+			var olink = document.location.href;
+			olink = ( olink.search("gmail") == -1 ) ? parent.document.location.href : olink;
+			if(olink.search("gmail") == -1){
+				parent.location = "../cases/casesStartPage?action=startCase";
+			} else {
+				var data = olink.split("?");
+				var odata = data[1].split("&");
+				var appUid = odata[0].split("=");
+	
+				var dataToSend = {
+					"action": "credentials",
+					"operation": "refreshPmSession",
+					"type": "processCall",
+					"funParams": [
+					appUid[1],
+					""
+					],
+					"expectReturn": false
+				};
+				var x = parent.postMessage(JSON.stringify(dataToSend), "*");
+				if (x == undefined){
+					x = parent.parent.postMessage(JSON.stringify(dataToSend), "*");
+				}
+			}
+			</script>');
 }
 /* Permissions */
 switch ($RBAC->userCanAccess( 'PM_CASES' )) {
@@ -176,6 +199,8 @@ try {
     if (isset( $_SESSION['user_experience'] )) {
         $aNextStep['PAGE'] = 'casesListExtJsRedirector?ux=' . $_SESSION['user_experience'];
         $debuggerAvailable = false;
+    } else if( isset( $_SESSION['gmail'] )  ){
+    	$aNextStep['PAGE'] = 'casesListExtJsRedirector?gmail='.$_SESSION['gmail'];
     } else {
         $aNextStep['PAGE'] = 'casesListExtJsRedirector';
     }
