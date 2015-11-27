@@ -1915,7 +1915,7 @@ function msgBox(msg, type, callbackAccept, callbackCancel){
 
 	switch(type){
 		case 'alert':
-    
+
         if (leimnud.browser.isIE) {
             new leimnud.module.app.alert().make({
                 label: msg,
@@ -1937,7 +1937,7 @@ function msgBox(msg, type, callbackAccept, callbackCancel){
                 }
               }.extend(this)
             });
-        }		    
+        }
 			break;
 		case 'info':
 			new leimnud.module.app.info().make({
@@ -2256,3 +2256,12 @@ function inputDocumentVerifySize(inpDocMaxFileSize, file)
         return 1;
     }
 }
+
+function getBrowserTimeZoneOffset()
+{
+    var d = new Date();
+    var tzOffset = d.getTimezoneOffset();
+
+    return ((tzOffset > 0)? "-" : "") + (tzOffset * 60);
+}
+
