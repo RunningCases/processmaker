@@ -224,6 +224,7 @@ try {
 
     if (isset($frm['USER_LANG'])) {
         if ($frm['USER_LANG'] != '') {
+            $lang = $frm['USER_LANG'];
             if($frm['USER_LANG'] == "default"){
                 //Check the USR_DEFAULT_LANG
                 require_once 'classes/model/Users.php';
