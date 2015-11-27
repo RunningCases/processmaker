@@ -705,10 +705,10 @@ try {
                                 if ($row['TU_RELATION'] == 1) {
                                     //users
                                     $dataUser = $user->load($row['USR_UID']);
-                                    if (array_search($dataUser['USR_EMAIL'], $userPermission) == null) {
+                                    if (array_search($dataUser['USR_EMAIL'], $userPermission) === false) {
                                         $objectPermissions = $case->getAllObjects($row['PRO_UID'], $applicationUid,
                                             $row['TAS_UID'], $row['USR_UID']);
-                                        if (array_search($appDocUid, $objectPermissions['OUTPUT_DOCUMENTS']) != null) {
+                                        if (array_search($appDocUid, $objectPermissions['OUTPUT_DOCUMENTS']) !== false) {
                                             $userPermission[] = $dataUser['USR_EMAIL'];
                                         }
                                     }
@@ -724,11 +724,11 @@ try {
                                     $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                                     while ($oDataset->next()) {
                                         $aRow = $oDataset->getRow();
-                                        if (array_search($aRow['USR_EMAIL'], $userPermission) == null) {
+                                        if (array_search($aRow['USR_EMAIL'], $userPermission) === false) {
                                             $objectPermissions = $case->getAllObjects($row['PRO_UID'], $applicationUid,
                                                 $row['TAS_UID'], $aRow['USR_UID']);
                                             if (array_search($appDocUid,
-                                                    $objectPermissions['OUTPUT_DOCUMENTS']) != null
+                                                    $objectPermissions['OUTPUT_DOCUMENTS']) !== false
                                             ) {
                                                 $userPermission[] = $aRow['USR_EMAIL'];
                                             }

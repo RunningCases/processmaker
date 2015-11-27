@@ -360,7 +360,7 @@ var testSettings = function ()
         url : '../pmGmail/testConfigPmGmail',
         waitMsg : _('ID_TEST_CONNECTION'),
         waitTitle : "&nbsp;",
-        timeout : 36000,
+        timeout : 60000,
         success : function(obj, resp) {
             Ext.getCmp('testPMGmail').show();
             Ext.getCmp('listUsers').show();
@@ -392,7 +392,7 @@ var saveSettings = function ()
         url : '../pmGmail/saveConfigPmGmail',
         waitMsg : _('ID_SAVING_PROCESS'),
         waitTitle : "&nbsp;",
-        timeout : 36000,
+        timeout : 60000,
         success : function(obj, resp) {
             var response = Ext.decode(resp.response.responseText);
             parent.PMExt.notify(_('ID_INFO'),_('ID_SAVED_SUCCESSFULLY'));

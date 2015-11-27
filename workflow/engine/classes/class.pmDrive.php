@@ -7,6 +7,7 @@
  *
  */
 G::LoadClass( "pmGoogleApi" );
+
 class PMDrive extends PMGoogleApi
 {
     private $folderIdPMDrive = '';
@@ -102,18 +103,18 @@ class PMDrive extends PMGoogleApi
         $service = $this->serviceDrive();
 
         try {
+            $rows = array();
             $parameters['q'] = "'" . $fileId . "' in parents and trashed = false";
             $parents = $service->files->listFiles($parameters);
 
-            $rows = array();
             foreach ($parents->getItems() as $parent) {
-                //echo 'File Id: ' . $parent->getId() . '<br>';
                 $rows = $parent;
             }
-            return $rows;
+
         } catch (Exception $e) {
-            return G::LoadTranslation("ID_MSG_AJAX_FAILURE") . $e->getMessage();
+            error_log( G::LoadTranslation("ID_MSG_AJAX_FAILURE") . $e->getMessage());
         }
+        return $rows;
     }
 
     /**
@@ -141,10 +142,11 @@ class PMDrive extends PMGoogleApi
 
         try {
             $createdFolder = $service->files->insert($file);
-            return $createdFolder;
         } catch (Exception $e) {
-            return "An error occurred: " . $e->getMessage();
+            $createdFolder = null;
+            error_log ( "An error occurred: " . $e->getMessage());
         }
+        return $createdFolder;
     }
 
     /**
@@ -157,7 +159,6 @@ class PMDrive extends PMGoogleApi
      */
     public function uploadFile($mime, $src, $name, $parentId = null)
     {
-        //$this->validateFolderPMDrive();
         $this->setScope('https://www.googleapis.com/auth/drive.file');
 
         $service = $this->serviceDrive();
@@ -185,10 +186,10 @@ class PMDrive extends PMGoogleApi
                 )
             );
 
-            return $createdFile;
         } catch (Exception $e) {
-            return "An error occurred: " . $e->getMessage();
+            error_log( "An error occurred: " . $e->getMessage());
         }
+        return $createdFile;
     }
 
     /**
@@ -199,7 +200,6 @@ class PMDrive extends PMGoogleApi
      */
     public function downloadFile($fileId)
     {
-        //$this->validateFolderPMDrive();
         $this->setScope('https://www.googleapis.com/auth/drive');
         $this->setScope('https://www.googleapis.com/auth/drive.appdata');
         $this->setScope('https://www.googleapis.com/auth/drive.apps.readonly');
@@ -211,24 +211,24 @@ class PMDrive extends PMGoogleApi
 
         try {
             $file = $service->files->get($fileId);
+            $response = null;
 
             $downloadUrl = $file->getDownloadUrl();
             if ($downloadUrl) {
                 $request = new Google_Http_Request($downloadUrl, 'GET', null, null);
                 $httpRequest = $service->getClient()->getAuth()->authenticatedRequest($request);
                 if ($httpRequest->getResponseHttpCode() == 200) {
-                    return $httpRequest->getResponseBody();
+                    $response =  $httpRequest->getResponseBody();
                 } else {
-                    // An error occurred.
-                    return null;
+                    error_log( "An error occurred. ");
                 }
             } else {
-                // The file doesn't have any content stored on Drive.
-                return null;
+                error_log( "The file doesn't have any content stored on Drive.");
             }
         } catch (Exception $e) {
-            print "An error occurred: " . $e->getMessage();
+            error_log( "An error occurred: " . $e->getMessage());
         }
+        return $response;
     }
 
     /**
@@ -261,10 +261,9 @@ class PMDrive extends PMGoogleApi
                 )
             );
 
-            return $permission;
         } catch (Exception $e) {
             error_log('permission error: ' . $e->getMessage());
-            return "An error occurred: " . $e->getMessage();
         }
+        return $permission;
     }
 }

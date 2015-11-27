@@ -181,7 +181,12 @@ class PMGoogleApi
     {
         $client = null;
         if ($this->typeAuthentication == 'webApplication') {
-            $credential = file_get_contents(PATH_DATA_SITE . $this->accountJson);
+            if (file_exists(PATH_DATA_SITE . $this->accountJson)) {
+                $credential = file_get_contents(PATH_DATA_SITE . $this->accountJson);
+            } else {
+                throw new Exception(G::LoadTranslation('ID_GOOGLE_FILE_JSON_ERROR'));
+            }
+
 
             $client = new Google_Client();
             $client->setAuthConfig($credential);
@@ -206,7 +211,12 @@ class PMGoogleApi
                 die;
             }
         } else if ($this->typeAuthentication == 'serviceAccount') {
-            $key = file_get_contents(PATH_DATA_SITE . $this->serviceAccountP12);
+
+            if (file_exists(PATH_DATA_SITE . $this->serviceAccountP12)) {
+                $key = file_get_contents(PATH_DATA_SITE . $this->serviceAccountP12);
+            } else {
+                throw new Exception(G::LoadTranslation('ID_GOOGLE_FILE_P12_ERROR'));
+            }
 
             $assertionCredentials = new Google_Auth_AssertionCredentials(
                 $this->serviceAccountEmail,
@@ -244,7 +254,12 @@ class PMGoogleApi
         );
 
         if ($credentials->typeAuth == 'webApplication') {
-            $credential = file_get_contents($credentials->pathFileJson);
+
+            if (file_exists($credentials->pathFileJson)) {
+                $credential = file_get_contents($credentials->pathFileJson);
+            } else {
+                throw new Exception(G::LoadTranslation('ID_GOOGLE_FILE_JSON_ERROR'));
+            }
 
             $client = new Google_Client();
             $client->setAuthConfig($credential);
@@ -267,7 +282,12 @@ class PMGoogleApi
                 die;
             }
         } else {
-            $key = file_get_contents($credentials->pathServiceAccountP12);
+
+            if (file_exists($credentials->pathServiceAccountP12)) {
+                $key = file_get_contents($credentials->pathServiceAccountP12);
+            } else {
+                throw new Exception(G::LoadTranslation('ID_GOOGLE_FILE_P12_ERROR'));
+            }
             $assertionCredentials = new Google_Auth_AssertionCredentials(
                 $credentials->emailServiceAccount,
                 $scope,
