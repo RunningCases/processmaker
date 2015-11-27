@@ -291,9 +291,19 @@ class Task
 
             $flagTaskIsMultipleInstance = $bpmnActivity->getActType() == "TASK" && preg_match("/^(?:EMPTY|USERTASK|MANUALTASK)$/", $bpmnActivity->getActTaskType()) && $bpmnActivity->getActLoopType() == "PARALLEL";
             $flagTaskAssignTypeIsMultipleInstance = preg_match("/^(?:MULTIPLE_INSTANCE|MULTIPLE_INSTANCE_VALUE_BASED)$/", $arrayProperty["TAS_ASSIGN_TYPE"]);
+            
+            if ($flagTaskIsMultipleInstance && !$flagTaskAssignTypeIsMultipleInstance) {
+                $arrayProperty["TAS_ASSIGN_TYPE"] = "MULTIPLE_INSTANCE";
+                $flagTaskAssignTypeIsMultipleInstance = true;
+            }
 
             if ($flagTaskIsMultipleInstance && !$flagTaskAssignTypeIsMultipleInstance) {
                 throw new \Exception(\G::LoadTranslation("ID_ACTIVITY_INVALID_ASSIGNMENT_METHOD_FOR_MULTIPLE_INSTANCE_ACTIVITY", array(strtolower("ACT_UID"), $act_uid)));
+            }
+            
+            if (!$flagTaskIsMultipleInstance && $flagTaskAssignTypeIsMultipleInstance) {
+                $arrayProperty["TAS_ASSIGN_TYPE"] = "BALANCED";
+                $flagTaskAssignTypeIsMultipleInstance = false;
             }
 
             if (!$flagTaskIsMultipleInstance && $flagTaskAssignTypeIsMultipleInstance) {
