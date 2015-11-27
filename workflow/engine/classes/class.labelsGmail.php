@@ -169,7 +169,7 @@ class labelsGmail
     	try {
     		$service->users_labels->delete($user, $labelId);
     	} catch (Exception $e) {
-    		print 'An error occurred: ' . $e->getMessage();
+    		error_log('An error deleting gmail labels occurred: '.$e->getMessage());
     	}
     }
     

@@ -2320,8 +2320,8 @@ class Cases
 	                                $oStep->getStepUidObj() . '&POSITION=' . $oStep->getStepPosition() .
 	                                '&ACTION=' . $sAction
 	                            );
-	                            $iPosition = $iLastStep;
                             }
+                            $iPosition = $iLastStep;
                         }
                     }
                     $iPosition += 1;
