@@ -4,6 +4,7 @@ var storeLocation;
 var storeReplacedBy;
 var storeCalendar;
 var storeRole;
+var storeLanguage;
 
 var storeDefaultMainMenuOption;
 var storeDefaultCasesMenuOption;
@@ -15,6 +16,7 @@ var comboReplacedBy;
 var comboCalendar;
 var comboRole;
 var cboTimeZone;
+var comboLanguage;
 
 var comboDefaultMainMenuOption;
 var comboDefaultCasesMenuOption;
@@ -425,6 +427,39 @@ Ext.onReady(function () {
         hidden: !(__SYSTEM_UTC_TIME_ZONE__ == 1)
     });
 
+  storeLanguage = new Ext.data.Store({
+      proxy: new Ext.data.HttpProxy({
+          url: "usersAjax",
+          method: "POST"
+      }),
+
+      baseParams: {"action" : "languagesList"},
+
+      reader: new Ext.data.JsonReader({
+          fields: [
+              {name: "LAN_ID"},
+              {name: "LAN_NAME"}
+          ]
+      })
+  });
+
+  comboLanguage = new Ext.form.ComboBox({
+    fieldLabel    : _('ID_DEFAULT_LANGUAGE'),
+    hiddenName    : 'USR_DEFAULT_LANG',
+    id            : 'USR_DEFAULT_LANG',
+    readOnly      : readMode,
+    store         : storeLanguage,
+    valueField    : 'LAN_ID',
+    displayField  : 'LAN_NAME',
+    emptyText     : TRANSLATIONS.ID_SELECT,
+    width         : 260,
+    selectOnFocus : true,
+    editable      : false,
+    allowBlank    : false,
+    triggerAction : 'all',
+    mode          : 'local'
+  });
+
     var informationFields = new Ext.form.FieldSet({
       title : _('ID_PERSONAL_INFORMATION'),
       items : [
@@ -535,7 +570,8 @@ Ext.onReady(function () {
         comboCalendar,
         comboStatus,
         comboRole,
-        cboTimeZone
+        cboTimeZone,
+        comboLanguage
       ]
   });
     /*----------------------------------********---------------------------------*/
@@ -958,7 +994,13 @@ Ext.onReady(function () {
           width: 260,
 
           hidden: !(__SYSTEM_UTC_TIME_ZONE__ == 1)
-       }
+      },
+      {
+        id         : 'USR_DEFAULT_LANG2',
+        fieldLabel : _('ID_DEFAULT_LANGUAGE'),
+        xtype      : 'label',
+        width      : 260
+      }
     ]
   });
     /*----------------------------------********---------------------------------*/
@@ -1355,6 +1397,11 @@ function loadData()
     });
     comboRole.store.load();
 
+    comboLanguage.store.on("load", function (store) {
+        comboLanguage.setValue(store.getAt(1).get("LAN_ID"));
+    });
+    comboLanguage.store.load();
+
     comboDefaultMainMenuOption.store.on("load", function (store) {
         comboDefaultMainMenuOption.setValue(store.getAt(0).get("id"));
     });
@@ -1418,6 +1465,7 @@ function loadUserData()
                 Ext.getCmp("USR_STATUS2").setText(_('ID_' + data.user.USR_STATUS));
                 Ext.getCmp("USR_ROLE2").setText(data.user.USR_ROLE_NAME);
                 Ext.getCmp("USR_TIME_ZONE2").setText((data.user.USR_TIME_ZONE != "")? data.user.USR_TIME_ZONE : SYSTEM_TIME_ZONE);
+                Ext.getCmp("USR_DEFAULT_LANG2").setText(data.user.USR_DEFAULT_LANG_NAME);
                 /*----------------------------------********---------------------------------*/
                 Ext.getCmp("USR_COST_BY_HOUR2").setText(data.user.USR_COST_BY_HOUR);
                 Ext.getCmp("USR_UNIT_COST2").setText(data.user.USR_UNIT_COST);
@@ -1461,6 +1509,10 @@ function loadUserData()
             });
 
             cboTimeZone.setValue((data.user.USR_TIME_ZONE != "")? data.user.USR_TIME_ZONE : SYSTEM_TIME_ZONE);
+
+            comboLanguage.store.on("load", function (store) {
+                comboLanguage.setValue(data.user.USR_DEFAULT_LANG);
+            });
 
             if (infoMode) {
                 comboDefaultMainMenuOption.store.on("load", function (store) {
@@ -1508,6 +1560,8 @@ function loadUserData()
             storeCalendar.load();
 
             storeRole.load();
+
+            storeLanguage.load();
 
             storeDefaultMainMenuOption.load();
 
