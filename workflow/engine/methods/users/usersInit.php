@@ -23,8 +23,11 @@ $mul = substr( $UPLOAD_MAX_SIZE, - 1 );
 $mul = ($mul == 'M' ? 1048576 : ($mul == 'K' ? 1024 : ($mul == 'G' ? 1073741824 : 1)));
 $uploadMaxSize = (int) $UPLOAD_MAX_SIZE * $mul;
 
-if ($postMaxSize < $uploadMaxSize)
+if ($postMaxSize < $uploadMaxSize) {
     $uploadMaxSize = $postMaxSize;
+}
+
+$arraySystemConfiguration = System::getSystemConfiguration('', '', SYS_SYS);
 
 $oHeadPublisher = & headPublisher::getSingleton();
 $oHeadPublisher->addExtJsScript( 'users/users', true ); //adding a javascript file .js
@@ -35,5 +38,8 @@ $oHeadPublisher->assign( 'EDITPROFILE', 1);
 $oHeadPublisher->assign( 'canEdit', $canEdit );
 $oHeadPublisher->assign( 'MAX_FILES_SIZE', ' (' . $UPLOAD_MAX_SIZE . ') ' );
 $oHeadPublisher->assign( 'MODE', '' );
-G::RenderPage( 'publish', 'extJs' );
+$oHeadPublisher->assign('SYSTEM_TIME_ZONE', $arraySystemConfiguration['time_zone']);
+$oHeadPublisher->assign('TIME_ZONE_DATA', array_map(function ($value) { return [$value, $value]; }, DateTimeZone::listIdentifiers()));
+$oHeadPublisher->assign('__SYSTEM_UTC_TIME_ZONE__', (isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__'])? 1 : 0);
 
+G::RenderPage( 'publish', 'extJs' );

@@ -103,6 +103,8 @@ try {
             $category
         );
 
+        $data['data'] = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($data['data']);
+
         $result = G::json_encode($data);
     } else {
         G::LoadClass("applications");
@@ -125,6 +127,8 @@ try {
             (strpos($sort, ".") !== false)? $sort : "APP_CACHE_VIEW." . $sort,
             $category
         );
+
+        $data['data'] = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($data['data']);
 
         $result = G::json_encode($data);
     }

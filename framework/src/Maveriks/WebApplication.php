@@ -343,7 +343,7 @@ class WebApplication
             }
         }
 
-        // 
+        //
         // Register API Plugins classes
         $isPluginRequest = strpos($uri, '/plugin-') !== false ? true : false;
 
@@ -355,7 +355,7 @@ class WebApplication
             $pluginName = $tmp[1];
             $uri = str_replace('plugin-'.$pluginName, strtolower($pluginName), $uri);
         }
-        
+
         // hook to get rest api classes from plugins
         if (class_exists('PMPluginRegistry') && file_exists(PATH_DATA_SITE . 'plugin.singleton')) {
             $pluginRegistry = \PMPluginRegistry::loadSingleton(PATH_DATA_SITE . 'plugin.singleton');
@@ -367,12 +367,12 @@ class WebApplication
 
                     $loader = \Maveriks\Util\ClassLoader::getInstance();
                     $loader->add($pluginSourceDir);
-                    
+
                     foreach ($plugin as $class) {
                         if (class_exists($class['namespace'])) {
                             $this->rest->addAPIClass($class['namespace'], strtolower($pluginName));
-                        }             
-                    }                    
+                        }
+                    }
                 }
             }
         }
@@ -447,25 +447,9 @@ class WebApplication
 
         \Bootstrap::registerSystemClasses();
 
+        $arraySystemConfiguration = \System::getSystemConfiguration();
 
-        $config = \System::getSystemConfiguration();
-
-        // Do not change any of these settings directly, use env.ini instead
-        ini_set( "display_errors", $config["display_errors"]);
-        ini_set( "error_reporting", $config["error_reporting"]);
-        ini_set( "short_open_tag", "On" ); // ??
-        ini_set( "default_charset", "UTF-8" ); // ??
-        ini_set( "memory_limit", $config["memory_limit"] );
-        ini_set( "soap.wsdl_cache_enabled", $config["wsdl_cache"] );
-        ini_set( "date.timezone", $config["time_zone"] );
-
-        define("DEBUG_SQL_LOG", $config["debug_sql"]);
-        define("DEBUG_TIME_LOG", $config["debug_time"]);
-        define("DEBUG_CALENDAR_LOG", $config["debug_calendar"]);
-        define("MEMCACHED_ENABLED",  $config["memcached"]);
-        define("MEMCACHED_SERVER",   $config["memcached_server"]);
-        define("TIME_ZONE", $config["time_zone"]);
-        define("SYS_SKIN", $config["default_skin"]);
+        ini_set('date.timezone', $arraySystemConfiguration['time_zone']); //Set Time Zone
 
         // set include path
         set_include_path(
@@ -510,6 +494,27 @@ class WebApplication
 
             exit(0);
         }
+
+        $arraySystemConfiguration = \System::getSystemConfiguration('', '', SYS_SYS);
+
+        $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int)($arraySystemConfiguration['system_utc_time_zone']) == 1;
+
+        //Do not change any of these settings directly, use env.ini instead
+        ini_set('display_errors', $arraySystemConfiguration['display_errors']);
+        ini_set('error_reporting', $arraySystemConfiguration['error_reporting']);
+        ini_set('short_open_tag', 'On'); //??
+        ini_set('default_charset', 'UTF-8'); //??
+        ini_set('memory_limit', $arraySystemConfiguration['memory_limit']);
+        ini_set('soap.wsdl_cache_enabled', $arraySystemConfiguration['wsdl_cache']);
+        ini_set('date.timezone', (isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__'])? 'UTC' : $arraySystemConfiguration['time_zone']); //Set Time Zone
+
+        define('DEBUG_SQL_LOG', $arraySystemConfiguration['debug_sql']);
+        define('DEBUG_TIME_LOG', $arraySystemConfiguration['debug_time']);
+        define('DEBUG_CALENDAR_LOG', $arraySystemConfiguration['debug_calendar']);
+        define('MEMCACHED_ENABLED',  $arraySystemConfiguration['memcached']);
+        define('MEMCACHED_SERVER',   $arraySystemConfiguration['memcached_server']);
+        define('TIME_ZONE', ini_get('date.timezone'));
+        define('SYS_SKIN', $arraySystemConfiguration['default_skin']);
 
         require_once (PATH_DB . SYS_SYS . "/db.php");
 

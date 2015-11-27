@@ -717,6 +717,7 @@ CREATE TABLE `USERS`
     `USR_COST_BY_HOUR` DECIMAL(7,2) default 0,
     `USR_UNIT_COST` VARCHAR(50) default '',
     `USR_BOOKMARK_START_CASES` MEDIUMTEXT,
+    `USR_TIME_ZONE` VARCHAR(100) default '',
 	PRIMARY KEY (`USR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Users';
 #-----------------------------------------------------------------------------

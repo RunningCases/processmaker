@@ -303,6 +303,12 @@ if ((preg_match("/msie/i", $_SERVER ['HTTP_USER_AGENT']) != 1 ||
 }
 session_start();
 
+$_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int)($config['system_utc_time_zone']) == 1;
+
+$_GET = \ProcessMaker\Util\DateTime::convertDataToUtc($_GET);
+$_POST = \ProcessMaker\Util\DateTime::convertDataToUtc($_POST);
+$_REQUEST = \ProcessMaker\Util\DateTime::convertDataToUtc($_REQUEST);
+
 //$e_all = defined( 'E_DEPRECATED' ) ? E_ALL & ~ E_DEPRECATED : E_ALL;
 //$e_all = defined( 'E_STRICT' ) ? $e_all & ~ E_STRICT : $e_all;
 //$e_all = $config['debug'] ? $e_all : $e_all & ~ E_NOTICE;
@@ -323,7 +329,7 @@ ini_set( 'short_open_tag', 'On' );
 ini_set( 'default_charset', "UTF-8" );
 ini_set( 'memory_limit', $config['memory_limit'] );
 ini_set( 'soap.wsdl_cache_enabled', $config['wsdl_cache'] );
-ini_set( 'date.timezone', $config['time_zone'] );
+ini_set('date.timezone', (isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__'])? 'UTC' : $config['time_zone']); //Set Time Zone
 
 define( 'DEBUG_SQL_LOG', $config['debug_sql'] );
 define( 'DEBUG_SQL', $config['debug'] );
@@ -331,7 +337,7 @@ define( 'DEBUG_TIME_LOG', $config['debug_time'] );
 define( 'DEBUG_CALENDAR_LOG', $config['debug_calendar'] );
 define( 'MEMCACHED_ENABLED', $config['memcached'] );
 define( 'MEMCACHED_SERVER', $config['memcached_server'] );
-define( 'TIME_ZONE', $config['time_zone'] );
+define('TIME_ZONE', ini_get('date.timezone'));
 
 define ('WS_IN_LOGIN', isset($config['WS_IN_LOGIN']) ? $config['WS_IN_LOGIN'] : 'serverconf');
 

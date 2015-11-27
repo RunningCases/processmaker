@@ -2471,7 +2471,6 @@ class ldapAdvanced
      */
     public function convertDateADtoPM($dateAD)
     {
-        //date_default_timezone_set('America/New_York');
         $unixTimestamp = ($dateAD / 10000000) - 11644560000;
         $datePM  = date('Y-m-d', mktime(0, 0, 0, date('m'), '01', date('Y') + 2));//(date('Y') + 10)."-12-01";
         if ($unixTimestamp >0) {
