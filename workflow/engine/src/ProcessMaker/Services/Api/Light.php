@@ -20,8 +20,6 @@ class Light extends Api
 
     private $arrayFieldIso8601 = [
         // request lists
-        'dateFrom',
-        'dateTo',
         'newestthan',
         'oldestthan',
         //return lists
@@ -382,8 +380,6 @@ class Light extends Api
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
             $dataList['dateTo']   = $date_to;
-            Validator::throwExceptionIfDataNotMetIso8601Format($dataList, $this->arrayFieldIso8601);
-            $dataList = DateTime::convertDataToUtc($dataList, $this->arrayFieldIso8601);
             $lists = new \ProcessMaker\BusinessModel\Lists();
             $response = $lists->getList('paused', $dataList);
             $result = $this->parserDataParticipated($response['data']);
@@ -1117,8 +1113,6 @@ class Light extends Api
             $dataList['dateFrom'] = $date_from;
             $dataList['dateTo'] = $date_to;
             $dataList['search'] = $search;
-            Validator::throwExceptionIfDataNotMetIso8601Format($dataList, $this->arrayFieldIso8601);
-            $dataList = DateTime::convertDataToUtc($dataList, $this->arrayFieldIso8601);
 
             $appNotes = new \AppNotes();
             $response = $appNotes->getNotesList( $app_uid, '', $start, $limit );
