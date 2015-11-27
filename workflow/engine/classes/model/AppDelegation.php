@@ -198,7 +198,7 @@ class AppDelegation extends BaseAppDelegation
                     $resultAbe->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                     if ($resultAbe->next()) {
                         $dataAbe = $resultAbe->getRow();
-                        if($dataAbe['ABE_TYPE']!=''){
+                        if($dataAbe['ABE_TYPE']!='' && $data->USR_UID!=''){
                             $flagActionsByEmail = false;
                             G::LoadClass('actionsByEmailCore');
                             $actionsByEmail = new actionsByEmailCoreClass();
