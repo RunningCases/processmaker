@@ -701,8 +701,8 @@ class Variable
                 $limit = $arrayVariable["limit"];
             }
             $parser = new \PHPSQLParser($replaceFields);
+            $filter = str_replace("'", "''", $filter);
             $replaceFields = $this->queryModified($parser->parsed, $filter, "*searchtype*", $start, $limit);
-
             $rs = $stmt->executeQuery($replaceFields, \ResultSet::FETCHMODE_NUM);
 
             while ($rs->next()) {
