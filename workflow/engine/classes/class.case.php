@@ -4401,8 +4401,6 @@ class Cases
         $oCriteria->add(ListParticipatedLastPeer::USR_UID, $sUserUID);
         $oCriteria->add(ListParticipatedLastPeer::DEL_INDEX, $iDelegation);
         ListParticipatedLastPeer::doDelete($oCriteria);
-        $users = new Users();
-        $users->refreshTotal($sUserUID, 'remove', 'participated');
 
         $aFieldsDel = array_merge($aData, $aFieldsDel);
         $aFieldsDel['USR_UID'] = $newUserUID;
@@ -4419,13 +4417,6 @@ class Cases
         $criteriaSet->add(ListInboxPeer::DEL_INDEX, $aData['DEL_INDEX']);
         BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
 
-        $users = new Users();
-        if ($aFields['APP_STATUS'] == 'DRAFT') {
-            $users->refreshTotal($sUserUID, 'remove', 'draft');
-        } else if ($iDelegation == 2) {
-            $users->refreshTotal($sUserUID, 'add', 'draft');
-            $users->refreshTotal($sUserUID, 'remove', 'inbox');
-        }
         /*----------------------------------********---------------------------------*/
         $this->getExecuteTriggerProcess($sApplicationUID, 'REASSIGNED');
         return true;
