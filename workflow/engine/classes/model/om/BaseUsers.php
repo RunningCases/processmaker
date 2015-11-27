@@ -256,10 +256,10 @@ abstract class BaseUsers extends BaseObject implements Persistent
     protected $usr_time_zone = '';
 
     /**
-     * The value for the usr_default_lang  field.
+     * The value for the usr_default_lang field.
      * @var        string
      */
-    protected $usr_default_lang  = '';
+    protected $usr_default_lang = '';
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -779,7 +779,7 @@ abstract class BaseUsers extends BaseObject implements Persistent
 
     /**
      * Get the [usr_default_lang] column value.
-     *
+     * 
      * @return     string
      */
     public function getUsrDefaultLang()
@@ -1648,7 +1648,7 @@ abstract class BaseUsers extends BaseObject implements Persistent
 
     /**
      * Set the value of [usr_default_lang] column.
-     *
+     * 
      * @param      string $v new value
      * @return     void
      */
@@ -1759,20 +1759,16 @@ abstract class BaseUsers extends BaseObject implements Persistent
 
             $this->usr_bookmark_start_cases = $rs->getString($startcol + 36);
 
-            $this->usr_time_zone = $rs->getString($startcol + 36);
+            $this->usr_time_zone = $rs->getString($startcol + 37);
 
-            $this->usr_default_lang = $rs->getString($startcol + 37);
+            $this->usr_default_lang = $rs->getString($startcol + 38);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-<<<<<<< HEAD
-            return $startcol + 38; // 38 = UsersPeer::NUM_COLUMNS - UsersPeer::NUM_LAZY_LOAD_COLUMNS).
-=======
-            return $startcol + 37; // 37 = UsersPeer::NUM_COLUMNS - UsersPeer::NUM_LAZY_LOAD_COLUMNS).
->>>>>>> upstream/3.0.1.6-Gmail
+            return $startcol + 39; // 39 = UsersPeer::NUM_COLUMNS - UsersPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Users object", $e);
@@ -2087,10 +2083,10 @@ abstract class BaseUsers extends BaseObject implements Persistent
             case 36:
                 return $this->getUsrBookmarkStartCases();
                 break;
-            case 36:
+            case 37:
                 return $this->getUsrTimeZone();
                 break;
-            case 37:
+            case 38:
                 return $this->getUsrDefaultLang();
                 break;
             default:
@@ -2148,9 +2144,10 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $keys[32] => $this->getUsrTotalUnassigned(),
             $keys[33] => $this->getUsrCostByHour(),
             $keys[34] => $this->getUsrUnitCost(),
-            $keys[35] => $this->getUsrBookmarkStartCases(),
-            $keys[36] => $this->getUsrTimeZone(),
-            $keys[37] => $this->getUsrDefaultLang(),
+            $keys[35] => $this->getUsrPmdriveFolderUid(),
+            $keys[36] => $this->getUsrBookmarkStartCases(),
+            $keys[37] => $this->getUsrTimeZone(),
+            $keys[38] => $this->getUsrDefaultLang(),
         );
         return $result;
     }
@@ -2293,10 +2290,10 @@ abstract class BaseUsers extends BaseObject implements Persistent
             case 36:
                 $this->setUsrBookmarkStartCases($value);
                 break;
-            case 36:
+            case 37:
                 $this->setUsrTimeZone($value);
                 break;
-            case 37:
+            case 38:
                 $this->setUsrDefaultLang($value);
                 break;
         } // switch()
@@ -2470,12 +2467,12 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $this->setUsrBookmarkStartCases($arr[$keys[36]]);
         }
 
-        if (array_key_exists($keys[36], $arr)) {
-            $this->setUsrTimeZone($arr[$keys[36]]);
+        if (array_key_exists($keys[37], $arr)) {
+            $this->setUsrTimeZone($arr[$keys[37]]);
         }
 
-        if (array_key_exists($keys[37], $arr)) {
-            $this->setUsrDefaultLang($arr[$keys[37]]);
+        if (array_key_exists($keys[38], $arr)) {
+            $this->setUsrDefaultLang($arr[$keys[38]]);
         }
 
     }
