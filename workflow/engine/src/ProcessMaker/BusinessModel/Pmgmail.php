@@ -17,10 +17,16 @@ class Pmgmail {
      */
     public function getUserByEmail($usr_gmail)
     {
+    	//getting the user data
         require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
         $oUsers = new \Users();
-
-        $response = $oUsers->loadByUserEmailInArray($usr_gmail);
+        $response['user'] = $oUsers->loadByUserEmailInArray($usr_gmail);
+		
+        //getting the skin
+        require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.system.php");
+        $sysConf = new \System();
+        $responseSysConfig = $sysConf->getSystemConfiguration( PATH_CONFIG . 'env.ini' );
+        $response['enviroment'] = $responseSysConfig['default_skin'];
 
         return $response;
     }

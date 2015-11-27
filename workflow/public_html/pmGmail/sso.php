@@ -11,6 +11,11 @@ $action = $_GET['action'];
 $proUid = $_GET['proUid'];
 $server = isset($_GET['server']) ? $_GET['server'] : '';
 
+//We do need the server to continue.
+if( !isset($_GET['server']) || $server == "" ){
+	throw new \Exception(Bootstrap::LoadTranslation( 'ID_GMAIL_NEED_SERVER' ));
+}
+
 //First check if the feature is enabled in the license.
 $gCurl = curl_init( 'https://' . $server . '/api/1.0/' . $pmws . '/gmailIntegration/verifyGmailfeature/' );
 curl_setopt( $gCurl, CURLOPT_HTTPHEADER, array( 'Authorization: Bearer ' . $pmtoken ) );
@@ -39,13 +44,19 @@ $curl_response = curl_exec( $curl );
 curl_close($curl);
 $decodedResp = json_decode($curl_response);
 
-if(count($decodedResp) > 1){
+//getting the enviroment
+$enviroment = $decodedResp->enviroment;
+
+if(count($decodedResp->user) > 1){
 	echo Bootstrap::LoadTranslation( 'ID_EMAIL_MORE_THAN_ONE_USER' );
+	die;
+} else if(count($decodedResp->user) < 1){
+	echo Bootstrap::LoadTranslation( 'ID_USER_NOT_FOUND' );
 	die;
 }
 
 //validationg if there is an actual PM session
-if( !isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] != $decodedResp['0']->USR_UID){
+if( !isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] != $decodedResp->user['0']->USR_UID){
 	$url = 'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token='.$gmailToken;
 
 	// init curl object
@@ -66,28 +77,28 @@ if( !isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] != $decodedResp
 	//First validate if this user (mail) corresponds to a PM user
 	if(isset($response->email) && ($gmail == $response->email)){
 	    //If the email corresponds I get the username and with the gmail user_id the session is created.
-	    if($decodedResp['0']->USR_STATUS == "ACTIVE"){
+	    if($decodedResp->user['0']->USR_STATUS == "ACTIVE"){
 		    //User Active! lets create the Session
 	    	@session_destroy();
 	    	session_start();
 	    	session_regenerate_id();
 	    	
 			if (PHP_VERSION < 5.2) {
-		        setcookie("workspaceSkin", "neoclasic", time() + (24 * 60 * 60), "/sys" . "neoclasic", "; HttpOnly");
+		        setcookie("workspaceSkin", $enviroment, time() + (24 * 60 * 60), "/sys" . $enviroment, "; HttpOnly");
 		    } else {
-		        setcookie("workspaceSkin", "neoclasic", time() + (24 * 60 * 60), "/sys" . "neoclasic", null, false, true);
+		        setcookie("workspaceSkin", $enviroment, time() + (24 * 60 * 60), "/sys" . $enviroment, null, false, true);
 		    }
 
 			$_SESSION = array();
 			$_SESSION['__EE_INSTALLATION__'] = 2;
 			$_SESSION['__EE_SW_PMLICENSEMANAGER__'] = 1;
 			$_SESSION['phpLastFileFound'] = '';
-			$_SESSION['USERNAME_PREVIOUS1'] = 'admin';
-			$_SESSION['USERNAME_PREVIOUS2'] = 'admin';
+			$_SESSION['USERNAME_PREVIOUS1'] = $decodedResp->user['0']->USR_USERNAME;
+			$_SESSION['USERNAME_PREVIOUS2'] = $decodedResp->user['0']->USR_USERNAME;
 			$_SESSION['WORKSPACE'] = $pmws;
-			$_SESSION['USER_LOGGED'] = $decodedResp['0']->USR_UID;
-			$_SESSION['USR_USERNAME'] = $decodedResp['0']->USR_USERNAME;
-			$_SESSION['USR_FULLNAME'] = $decodedResp['0']->USR_FIRSTNAME. ' ' .$decodedResp['0']->USR_LASTNAME;
+			$_SESSION['USER_LOGGED'] = $decodedResp->user['0']->USR_UID;
+			$_SESSION['USR_USERNAME'] = $decodedResp->user['0']->USR_USERNAME;
+			$_SESSION['USR_FULLNAME'] = $decodedResp->user['0']->USR_FIRSTNAME. ' ' .$decodedResp->user['0']->USR_LASTNAME;
 			$_SESSION['__sw__'] = 1;
 			//session created
 		} else {
@@ -112,12 +123,12 @@ if ($action == "draft"){
 	$curl_response_app = curl_exec( $curlApp );
 	curl_close( $curlApp );
 
-	$mainUrl = '/sys'. $pmws .'/en/neoclassic/cases/open?APP_UID='.$appUid.'&DEL_INDEX='.$delIndex.'&action='.$action.'&gmail=1';
+	$mainUrl = '/sys'. $pmws .'/en/'. $enviroment .'/cases/open?APP_UID='.$appUid.'&DEL_INDEX='.$delIndex.'&action='.$action.'&gmail=1';
 	header( 'location:' . $mainUrl );
 	die;
 }
 
-$_SESSION['server'] = 'https://' . $server . '/sys'. $pmws .'/en/neoclassic/';
+$_SESSION['server'] = 'https://' . $server . '/sys'. $pmws .'/en/'.$enviroment.'/';
 $_SESSION['PMCase'] = 'cases/cases_Open?APP_UID='.$appUid.'&DEL_INDEX='.$delIndex.'&action='.$action.'&gmail=1';
 $_SESSION['PMProcessmap'] = 'designer?prj_uid=' . $proUid . '&prj_readonly=true&app_uid=' . $appUid;
 $_SESSION['PMUploadedDocuments'] = 'cases/ajaxListener?action=uploadedDocuments';
