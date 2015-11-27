@@ -552,3 +552,11 @@ function stringReplace(strSearch, strReplace, str)
     return str.replace(expression, strReplace);
 }
 
+function getBrowserTimeZoneOffset()
+{
+    var d = new Date();
+    var tzOffset = d.getTimezoneOffset();
+
+    return ((tzOffset > 0)? "-" : "") + (tzOffset * 60);
+}
+

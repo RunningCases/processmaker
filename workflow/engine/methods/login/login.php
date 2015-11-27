@@ -139,6 +139,16 @@ if (isset ($_SESSION['USER_LOGGED'])) {
 }
 //end log
 
+$timeZoneFailed = false;
+
+if (isset($_SESSION['__TIME_ZONE_FAILED__']) && $_SESSION['__TIME_ZONE_FAILED__']) {
+    $timeZoneFailed  = true;
+    $userUsername    = $_SESSION['USR_USERNAME'];
+    $userPassword    = $_SESSION['USR_PASSWORD'];
+    $userTimeZone    = $_SESSION['USR_TIME_ZONE'];
+    $browserTimeZone = $_SESSION['BROWSER_TIME_ZONE'];
+}
+
 //start new session
 @session_destroy();
 session_start();
@@ -182,6 +192,21 @@ if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc1
     die();
 }
 /*----------------------------------********---------------------------------*/
+
+if ($timeZoneFailed) {
+    $arrayData = [
+        'USR_USERNAME'  => $userUsername,
+        'USR_PASSWORD'  => $userPassword,
+        'USR_TIME_ZONE' => $userTimeZone,
+        'BROWSER_TIME_ZONE' => $browserTimeZone
+    ];
+
+    $G_PUBLISH = new Publisher();
+    $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login' . PATH_SEP . 'TimeZoneAlert', '', $arrayData, SYS_URI . 'login/authentication.php');
+
+    G::RenderPage('publish');
+    exit(0);
+}
 
 //translation
 //$Translations = G::getModel("Translation");
