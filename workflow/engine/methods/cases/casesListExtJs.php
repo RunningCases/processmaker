@@ -466,7 +466,7 @@ function getAdditionalFields($action, $confCasesList = array())
         foreach ($confCasesList["second"]["data"] as $index1 => $value1) {
             $arrayField = $value1;
 
-            if ($arrayField["fieldType"] != "key") {
+            if ($arrayField["fieldType"] != "key" && $arrayField["name"] != "USR_UID" && $arrayField["name"] != "PREVIOUS_USR_UID") {
                 $arrayAux = array();
 
                 foreach ($arrayField as $index2 => $value2) {
