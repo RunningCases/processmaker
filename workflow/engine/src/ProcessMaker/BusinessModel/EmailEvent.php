@@ -254,7 +254,7 @@ class EmailEvent
                 $arrayData = array_change_key_case($arrayData, CASE_UPPER);
                 if(sizeof($arrayData)) {
                     $prfUid = $arrayData['PRF_UID'];
-                    $filesManager->deleteProcessFilesManager('',$prfUid);
+                    $filesManager->deleteProcessFilesManager($pro_uid,$prfUid);
                 }
             }
             //Delete Email event
