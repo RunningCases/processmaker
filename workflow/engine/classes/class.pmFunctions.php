@@ -2911,30 +2911,31 @@ function PMFSaveCurrentData ()
  * a gmail server.
  * This function test just the domain, so there isn't any validation related to the
  * email address existence or validity.
- * @param string | $emailAddress | emailAddress that will be examined to determine if it is hosted in Gmail
+ * @param string | $email | emailAddress that will be examined to determine if it is hosted in Gmail
  * @return boolean | $result | true if the emailAddress domain is hosted in gmail, false otherwise
  * */
-function isEmailAddressHostedInGmail($emailAddress) {
-	if (strpos($emailAddress,'@') == false) {
-		throw new Exception ('the passed email address is not valid');
+function isEmailAddressHostedInGmail($email) {
+    $g = new G();
+    if ($g->emailAddress($email) === false) {
+		throw new Exception ('the passed email address is not valid.');
 	}
 
-	$retval = FALSE;
-	//the accepted domains to accept and address as a gmail account are:
+	$result = FALSE;
+	//the accepted domains for a gemail server are:
 	$gmailDomainsRegExp = "/gmail\.com|googlemail\.com/";
 	
-	if (preg_match($gmailDomainsRegExp, $emailAddress) == 1) {
-		$retval = TRUE;
+	if (preg_match($gmailDomainsRegExp, $email) == 1) {
+		$result = TRUE;
 	} else {
-		$domainName = preg_split('/@/', $emailAddress)[1];
+		$domainName = preg_split('/@/', $email)[1];
 
 		foreach(getNamedServerMXRecord($domainName) as $emailServer) {
 			if (preg_match($gmailDomainsRegExp, $emailServer) == 1) {
-				$retval = TRUE;
+				$result = TRUE;
 			}
 		}
 	}
-	return $retval;
+	return $result;
 }
 
 
