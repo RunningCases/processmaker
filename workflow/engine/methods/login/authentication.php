@@ -251,6 +251,7 @@ try {
         die;
     }
 
+    //Set default Languaje
     if (isset($frm['USER_LANG'])) {
         if ($frm['USER_LANG'] != '') {
             $lang = $frm['USER_LANG'];
@@ -264,10 +265,17 @@ try {
                 if( isset($rowUser["USR_DEFAULT_LANG"]) &&  $rowUser["USR_DEFAULT_LANG"]!=''){
                     $lang = $rowUser["USR_DEFAULT_LANG"];
                 } else {
+                    //Check the login_defaultLanguage
                     $oConf = new Configurations();
                     $oConf->loadConfig($obj, 'ENVIRONMENT_SETTINGS', '');
                     if (isset($oConf->aConfig["login_defaultLanguage"]) && $oConf->aConfig["login_defaultLanguage"] != "") {
                         $lang = $oConf->aConfig["login_defaultLanguage"];
+                    }else{
+                        if(SYS_LANG != ''){
+                            $lang = SYS_LANG;
+                        }else{
+                            $lang = 'en';
+                        }
                     }
                 }
             } else {
