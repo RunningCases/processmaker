@@ -445,14 +445,7 @@ class EmailEvent
             }
             if(!empty($emailTo)) {
                 $subject = $arrayData[5];
-                if(substr($subject,0,1) == "@") {
-                    $subject = substr($subject, 2,strlen($subject));
-                    if(isset($arrayApplicationData['APP_DATA'])) {
-                        if(is_array($arrayApplicationData['APP_DATA']) && isset( $arrayApplicationData['APP_DATA'][$subject])) {
-                            $subject = $arrayApplicationData['APP_DATA'][$subject];
-                        }
-                    }
-                }
+                $subject = \G::replaceDataField($arrayData[5], $arrayApplicationData['APP_DATA']);
                 \PMFSendMessage($appUID, $arrayData[3], $emailTo, '', '', $subject, $contentFile['prf_filename'], array());
             }
         }
