@@ -179,6 +179,6 @@ switch (WS_IN_LOGIN) {
         $fileLogin = 'login/sysLogin';
         break;
 }
-error_log($fileLogin);
+
 $G_PUBLISH->AddContent ('xmlform', 'xmlform', $fileLogin, '', $aField, 'sysLogin');
 G::RenderPage ("publish");
