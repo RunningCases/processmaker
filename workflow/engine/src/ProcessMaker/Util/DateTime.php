@@ -38,7 +38,7 @@ class DateTime
     {
         try {
             foreach (\DateTimeZone::listIdentifiers() as $value) {
-                $timeZoneOffset = self::getTimeZoneOffsetByTimeZoneId($value);
+                $timeZoneOffset = $this->getTimeZoneOffsetByTimeZoneId($value);
 
                 if ($timeZoneOffset !== false && $timeZoneOffset == $offset) {
                     //Return
@@ -75,7 +75,7 @@ class DateTime
             $offset = (($sign == '+')? '' : '-') . (($h * 60 * 60) + ($m * 60)); //Convert UTC Offset to seconds
 
             //Return
-            return self::getTimeZoneIdByTimeZoneOffset((int)($offset));
+            return $this->getTimeZoneIdByTimeZoneOffset((int)($offset));
         } catch (\Exception $e) {
             throw $e;
         }
@@ -119,7 +119,7 @@ class DateTime
             $fromTimeZone = 'UTC';
 
             if (preg_match('/^.+([\+\-]\d{2}:\d{2})$/', $dateIso8601, $arrayMatch)) {
-                $fromTimeZone = self::getTimeZoneIdByUtcOffset($arrayMatch[1]);
+                $fromTimeZone = $this->getTimeZoneIdByUtcOffset($arrayMatch[1]);
             }
 
             $dt = \DateTime::createFromFormat(self::ISO8601, $dateIso8601, new \DateTimeZone($fromTimeZone)); //From ISO-8601
@@ -158,12 +158,12 @@ class DateTime
                 case 'string':
                     if (is_string($data) && preg_match($regexpDatetime, $data)) {
                         if ($fromTimeZone != $toTimeZone) {
-                            $data = self::convertTimeZone($data, $fromTimeZone, $toTimeZone, $format);
+                            $data = $this->convertTimeZone($data, $fromTimeZone, $toTimeZone, $format);
                         }
                     }
 
                     if (is_string($data) && preg_match($regexpIso8601, $data)) {
-                        $data = self::convertIso8601ToTimeZone($data, $toTimeZone, $format);
+                        $data = $this->convertIso8601ToTimeZone($data, $toTimeZone, $format);
                     }
                     break;
                 case 'array':
@@ -177,12 +177,12 @@ class DateTime
                                 if ($arrayData['regexpKey'] == '' || preg_match($arrayData['regexpKey'], $key)) {
                                     if (is_string($value) && preg_match($arrayData['regexpDatetime'], $value)) {
                                         if ($arrayData['fromTimeZone'] != $arrayData['toTimeZone']) {
-                                            $value = self::convertTimeZone($value, $arrayData['fromTimeZone'], $arrayData['toTimeZone'], $arrayData['format']);
+                                            $value = $this->convertTimeZone($value, $arrayData['fromTimeZone'], $arrayData['toTimeZone'], $arrayData['format']);
                                         }
                                     }
 
                                     if (is_string($value) && preg_match($arrayData['regexpIso8601'], $value)) {
-                                        $value = self::convertIso8601ToTimeZone($value, $arrayData['toTimeZone'], $arrayData['format']);
+                                        $value = $this->convertIso8601ToTimeZone($value, $arrayData['toTimeZone'], $arrayData['format']);
                                     }
                                 }
                             } catch (\Exception $e) {
@@ -194,7 +194,7 @@ class DateTime
                     break;
                 case 'object':
                     $data = json_decode(json_encode($data), true);
-                    $data = self::convertDataToTimeZone($data, $fromTimeZone, $toTimeZone, $arrayKey, $format);
+                    $data = $this->convertDataToTimeZone($data, $fromTimeZone, $toTimeZone, $arrayKey, $format);
                     $data = json_decode(json_encode($data));
                     break;
             }
@@ -230,7 +230,7 @@ class DateTime
                 case 'string':
                     if (is_string($data) && preg_match($regexpDatetime, $data)) {
                         if ($fromTimeZone != $toTimeZone) {
-                            $data = self::convertTimeZone($data, $fromTimeZone, $toTimeZone);
+                            $data = $this->convertTimeZone($data, $fromTimeZone, $toTimeZone);
                         }
 
                         $dt = \DateTime::createFromFormat('Y-m-d H:i:s', $data, new \DateTimeZone($toTimeZone));
@@ -250,7 +250,7 @@ class DateTime
                                     is_string($value) && preg_match($arrayData['regexpDatetime'], $value)
                                 ) {
                                     if ($arrayData['fromTimeZone'] != $arrayData['toTimeZone']) {
-                                        $value = self::convertTimeZone($value, $arrayData['fromTimeZone'], $arrayData['toTimeZone']);
+                                        $value = $this->convertTimeZone($value, $arrayData['fromTimeZone'], $arrayData['toTimeZone']);
                                     }
 
                                     $dt = \DateTime::createFromFormat('Y-m-d H:i:s', $value, new \DateTimeZone($arrayData['toTimeZone']));
@@ -266,7 +266,7 @@ class DateTime
                     break;
                 case 'object':
                     $data = json_decode(json_encode($data), true);
-                    $data = self::convertDataToIso8601($data, $fromTimeZone, $toTimeZone, $arrayKey);
+                    $data = $this->convertDataToIso8601($data, $fromTimeZone, $toTimeZone, $arrayKey);
                     $data = json_decode(json_encode($data));
                     break;
             }
@@ -299,7 +299,7 @@ class DateTime
             $toTimeZone   = 'UTC';
 
             //Return
-            return self::convertDataToTimeZone($data, $fromTimeZone, $toTimeZone, $arrayKey, $format);
+            return (new \ProcessMaker\Util\DateTime())->convertDataToTimeZone($data, $fromTimeZone, $toTimeZone, $arrayKey, $format);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -326,7 +326,7 @@ class DateTime
             $toTimeZone   = \ProcessMaker\BusinessModel\User::getUserLoggedTimeZone();
 
             //Return
-            return self::convertDataToTimeZone($data, $fromTimeZone, $toTimeZone, $arrayKey, $format);
+            return (new \ProcessMaker\Util\DateTime())->convertDataToTimeZone($data, $fromTimeZone, $toTimeZone, $arrayKey, $format);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -352,7 +352,7 @@ class DateTime
             $toTimeZone   = \ProcessMaker\BusinessModel\User::getUserLoggedTimeZone();
 
             //Return
-            return self::convertDataToIso8601($data, $fromTimeZone, $toTimeZone, $arrayKey);
+            return (new \ProcessMaker\Util\DateTime())->convertDataToIso8601($data, $fromTimeZone, $toTimeZone, $arrayKey);
         } catch (\Exception $e) {
             throw $e;
         }
