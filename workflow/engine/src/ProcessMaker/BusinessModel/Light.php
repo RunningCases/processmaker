@@ -1245,9 +1245,11 @@ class Light
      */
     public function getConfiguration()
     {
-        $sysConf = \System::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
+        $sysConf = \System::getSystemConfiguration('', '', SYS_SYS);
         $offset = timezone_offset_get( new \DateTimeZone( $sysConf['time_zone'] ), new \DateTime() );
         $response['timeZone'] = sprintf( "GMT%s%02d:%02d", ( $offset >= 0 ) ? '+' : '-', abs( $offset / 3600 ), abs( ($offset % 3600) / 60 ) );
+        $response['multiTimeZone'] = (isset($sysConf['system_utc_time_zone']) && $sysConf['system_utc_time_zone'])
+            ?true:false;
         $fields = \System::getSysInfo();
         $response['version'] = $fields['PM_VERSION'];
 
