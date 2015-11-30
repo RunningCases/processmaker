@@ -103,6 +103,7 @@ class PMPluginRegistry
     private $_aCronFiles = array ();
     private $_arrayDesignerMenu = array();
     private $_aMenuOptionsToReplace = array ();
+    private $_aImportProcessCallbackFile = array ();
 
     /**
      * Registry a plugin javascript to include with js core at same runtime
@@ -407,6 +408,10 @@ class PMPluginRegistry
         
         if(sizeof( $this->_aMenuOptionsToReplace )){
             unset( $this->_aMenuOptionsToReplace );
+        }
+        
+        if(sizeof( $this->_aImportProcessCallbackFile )){
+            unset( $this->_aImportProcessCallbackFile );
         }
         
         //unregistering javascripts from this plugin
@@ -1701,6 +1706,44 @@ class PMPluginRegistry
                 return $oMenuFromPlugin[$strMenuName];
             }    
         }
+    }
+    
+    /**
+     * Register a callBackFile in the singleton
+     *
+     * @param unknown_type $namespace
+     *
+     * @param string $callBackFile
+     *
+     * @return void
+     */
+    public function registerImportProcessCallback ($namespace, $callBackFile)
+    {
+        try {
+            $found = false;
+            foreach ($this->_aImportProcessCallbackFile as $row => $detail) {
+                if ($callBackFile == $detail->callBackFile && $namespace == $detail->namespace) {
+                    $detail->callBackFile = $callBackFile;
+                    $found = true;
+                }
+            }
+            if (!$found) {
+                $callBackFile = new importCallBack( $namespace, $callBackFile );
+                $this->_aImportProcessCallbackFile[] = $callBackFile;
+            }    
+        } catch(Excepton $e) {
+            throw $e;
+        }
+    }
+    
+    /**
+     * Return all callBackFiles registered
+     *
+     * @return array
+     */
+    public function getImportProcessCallback()
+    {
+        return $this->_aImportProcessCallbackFile;
     }
 }
 

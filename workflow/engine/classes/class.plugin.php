@@ -415,6 +415,23 @@ class PMPlugin
             throw $e;
         }
     }
+    
+    /**
+     * callBack File after import process
+     *
+     * @param string $callBackFile
+     *
+     * @return void
+     */
+    public function registerImportProcessCallback($callBackFile = '')
+    {
+        try {
+            $oPluginRegistry =& PMPluginRegistry::getSingleton();
+            $oPluginRegistry->registerImportProcessCallback($this->sNamespace, $callBackFile);
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 }
 
 class menuDetail
@@ -752,5 +769,23 @@ class cronFile
     {
         $this->namespace = $namespace;
         $this->cronFile  = $cronFile;
+    }
+}
+
+class importCallBack
+{
+    public $namespace;
+    public $callBackFile;
+
+    /**
+     * This function is the constructor of the cronFile class
+     * param string $namespace
+     * param string $callBackFile
+     * @return void
+     */
+    public function __construct($namespace, $callBackFile)
+    {
+        $this->namespace = $namespace;
+        $this->callBackFile  = $callBackFile;
     }
 }
