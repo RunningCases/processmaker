@@ -1025,7 +1025,8 @@ importProcessExistGroup = function()
                     var sNewProUid       = resp_.sNewProUid;
 
                     if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                        openWindowIfIE("../designer?prj_uid=" + sNewProUid);
+                        var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
+                        openWindowIfIE(goTo + sNewProUid);
                     } else {
                         window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                     }
@@ -1169,7 +1170,8 @@ importProcessExistProcess = function()
 
                     if (resp_.ExistGroupsInDatabase == 0) {
                         if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                            openWindowIfIE("../designer?prj_uid=" + sNewProUid);
+                            var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
+                            openWindowIfIE(goTo + sNewProUid);
                         } else {
                             window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                         }
@@ -1312,7 +1314,8 @@ importProcess = function()
                                                       var sNewProUid = resp_.sNewProUid;
 
                                                       if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                                                          openWindowIfIE("../designer?prj_uid=" + sNewProUid);
+                                                          var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
+                                                          openWindowIfIE(goTo + sNewProUid);
                                                       } else {
                                                           window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                                                       }
@@ -1456,7 +1459,8 @@ importProcessBpmnSubmit = function () {
                 }
                 Ext.getCmp('importProcessWindow').close();
                 if (typeof(importProcessGlobal.processFileType) != "undefined" && importProcessGlobal.processFileType == "bpmn") {
-                    openWindowIfIE("../designer?prj_uid=" + resp_.prj_uid);
+                    var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
+                    openWindowIfIE(goTo + resp_.prj_uid);
                 } else {
                     window.location.href = "processes_Map?PRO_UID=" + resp_.prj_uid;
                 }
