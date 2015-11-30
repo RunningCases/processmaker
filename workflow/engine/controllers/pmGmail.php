@@ -28,13 +28,13 @@ class pmGmail extends Controller
                 $message .= ', ' . G::LoadTranslation('ID_PMG_EMAIL') . ': ' . $httpData->email_service_account;
             }
             if (!empty($_FILES)) {
-                if ($_FILES['file_p12']['error'] != 1) {
+                if (!empty($_FILES['file_p12']) && $_FILES['file_p12']['error'] != 1) {
                     if ($_FILES['file_p12']['tmp_name'] != '') {
                         G::uploadFile($_FILES['file_p12']['tmp_name'], PATH_DATA_SITE, $_FILES['file_p12']['name']);
                         $pmGoogle->setServiceAccountP12($_FILES['file_p12']['name']);
                         $message .= ', ' . G::LoadTranslation('ID_PMG_FILE') . ': ' . $_FILES['file_p12']['name'];
                     }
-                } if ($_FILES['file_json']['error'] != 1) {
+                } else if (!empty($_FILES['file_json']) && $_FILES['file_json']['error'] != 1) {
                     if ($_FILES['file_json']['tmp_name'] != '') {
                         G::uploadFile($_FILES['file_json']['tmp_name'], PATH_DATA_SITE, $_FILES['file_json']['name']);
                         $pmGoogle->setAccountJson($_FILES['file_json']['name']);
@@ -99,7 +99,6 @@ class pmGmail extends Controller
 
         $result->typeAuth = empty($httpData->typeAuth) ? $pmGoogle->getTypeAuthentication() : $httpData->typeAuth;
         if ($result->typeAuth == 'webApplication') {
-            $result->redirectUrl = $pmGoogle->getRedirectUrl();
             $result->pathFileJson = empty($_FILES['file_json']['tmp_name']) ? PATH_DATA_SITE . $pmGoogle->getAccountJson() : $_FILES['file_json']['tmp_name'];
         } else {
             $result->emailServiceAccount = empty($httpData->email_service_account) ? $pmGoogle->getServiceAccountEmail() : $httpData->email_service_account;
