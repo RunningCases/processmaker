@@ -22,15 +22,23 @@
         {
             "type": "git",
             "url": "git@bitbucket.org:colosa/pmui.git"
+        },
+        {
+            "type": "composer",
+            "url": "http://composer-public.colosa.net/"
+        },
+        {
+            "type": "composer",
+            "url": "http://composer.colosa.net/"
         }
     ],
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "luracast/restler": "3.0.0",
+        "luracast/restler": "3.0.0-RC4",
         "bshaffer/oauth2-server-php": "v1.0",
-        "components/jquery": "1.10.2",
-        "components/underscore": "1.5.2",
+        "jquery/jquery": "1.10.2",
+        "underscore/underscore": "1.5.2",
         "colosa/pmUI": "3.0.1.7-dev",
         "colosa/MichelangeloFE": "3.0.1.7-dev",
         "colosa/pmdynaform": "3.0.1.7-dev",
