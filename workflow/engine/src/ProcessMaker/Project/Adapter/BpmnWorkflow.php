@@ -1024,7 +1024,7 @@ class BpmnWorkflow extends Project\Bpmn
                                                 break;
                                             default:
                                                 //EMPTY //and others types
-                                                $result = $this->wp->addRoute($activityUid, -1, $routeType, $routeCondition, $routeDefault);
+                                                $result = $this->wp->addRoute($activityUid, -1, $routeType, $routeCondition, $routeDefault, $eventUid);
                                                 break;
                                         }
                                         break;

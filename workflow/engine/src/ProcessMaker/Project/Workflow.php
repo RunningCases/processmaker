@@ -364,7 +364,7 @@ class Workflow extends Handler
      * @return string
      * @throws \Exception
      */
-    public function addRoute($fromTasUid, $toTasUid, $type, $condition = "", $default = 0)
+    public function addRoute($fromTasUid, $toTasUid, $type, $condition = "", $default = 0, $eventUidOrigin = "")
     {
         try {
             $validTypes = array("SEQUENTIAL", "SELECT", "EVALUATE", "PARALLEL", "PARALLEL-BY-EVALUATION", "SEC-JOIN", "DISCRIMINATOR");
@@ -384,13 +384,21 @@ class Workflow extends Handler
                 //$oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
             //}
 
-            $route = \Route::findOneBy(array(
-                \RoutePeer::TAS_UID => $fromTasUid,
-                \RoutePeer::ROU_NEXT_TASK => $toTasUid
-            ));
+            if($toTasUid == "-1"){
+                $route = \Route::findOneBy(array(
+                    \RoutePeer::TAS_UID => $fromTasUid,
+                    \RoutePeer::ROU_NEXT_TASK => $toTasUid,
+                    \RoutePeer::ROU_ELEMENT_ORIGIN => $eventUidOrigin
+                ));
+            } else {
+                $route = \Route::findOneBy(array(
+                    \RoutePeer::TAS_UID => $fromTasUid,
+                    \RoutePeer::ROU_NEXT_TASK => $toTasUid
+                ));
+            }
 
             if (is_null($route)) {
-                $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $condition, $default);
+                $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $condition, $default, $eventUidOrigin);
             } else {
                 $result = $this->updateRoute($route->getRouUid(), array(
                     "TAS_UID" => $fromTasUid,
@@ -504,7 +512,7 @@ class Workflow extends Handler
         }
     }
 
-    private function saveNewPattern($sProcessUID = "", $sTaskUID = "", $sNextTask = "", $sType = "", $condition = "", $default = 0)
+    private function saveNewPattern($sProcessUID = "", $sTaskUID = "", $sNextTask = "", $sType = "", $condition = "", $default = 0, $elementUidOrigin = "")
     {
         try {
             self::log("Add Route from task: $sTaskUID -> to task: $sNextTask ($sType)");
@@ -527,6 +535,7 @@ class Workflow extends Handler
             $aFields["ROU_CASE"] = (int)($aRow["ROUTE_NUMBER"]) + 1;
             $aFields["ROU_TYPE"] = $sType;
             $aFields["ROU_DEFAULT"] = $default;
+            $aFields["ROU_ELEMENT_ORIGIN"] = $elementUidOrigin;
 
             if(! empty($condition)) {
                 $aFields['ROU_CONDITION'] = $condition;
