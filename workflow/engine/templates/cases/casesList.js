@@ -581,7 +581,7 @@ Ext.onReady ( function() {
 
     //Render Full Name
     full_name = function(v, x, s) {
-        if (s.data.USR_UID) {
+        if (s.data.USR_UID && s.data.USR_USERNAME) {
             return _FNF(s.data.USR_USERNAME, s.data.USR_FIRSTNAME, s.data.USR_LASTNAME);
         }
         else {
