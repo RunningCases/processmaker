@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: ProcessMaker (Branch 3.0.1.6)\n"
+"Project-Id-Version: ProcessMaker (Branch 3.0.1.7)\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-11-23 10:57:48\n"
+"PO-Revision-Date: 2015-12-01 11:54:16\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -24130,8 +24130,8 @@ msgstr "Service Account Email"
 # TRANSLATION
 # LABEL/ID_PMG_FILE
 #: LABEL/ID_PMG_FILE
-msgid "Sevice Accout Certificate"
-msgstr "Sevice Accout Certificate"
+msgid "Service Accout Certificate"
+msgstr "Service Accout Certificate"
 
 # TRANSLATION
 # LABEL/ID_PMG_TYPE_ACCEPT
@@ -26604,6 +26604,96 @@ msgstr "Empty."
 #: LABEL/ID_MAFE_c793116b0fc9df6d8761028f4adbe90e
 msgid "Execute a trigger when a case is opened"
 msgstr "Execute a trigger when a case is opened"
+
+# TRANSLATION
+# LABEL/ID_GMAIL_NEED_SERVER
+#: LABEL/ID_GMAIL_NEED_SERVER
+msgid "The ProcessMaker address must be passed, it can't be empty"
+msgstr "The ProcessMaker address must be passed, it can't be empty"
+
+# TRANSLATION
+# LABEL/ID_TIME_ZONE_LOGIN_TITLE
+#: LABEL/ID_TIME_ZONE_LOGIN_TITLE
+msgid "Time zone configuration"
+msgstr "Time zone configuration"
+
+# TRANSLATION
+# LABEL/ID_TIME_ZONE_LOGIN_DESCRIPTION1
+#: LABEL/ID_TIME_ZONE_LOGIN_DESCRIPTION1
+msgid "Your local machine time zone does not match your current profile settings."
+msgstr "Your local machine time zone does not match your current profile settings."
+
+# TRANSLATION
+# LABEL/ID_TIME_ZONE_LOGIN_DESCRIPTION2
+#: LABEL/ID_TIME_ZONE_LOGIN_DESCRIPTION2
+msgid "Your time zone profile settings will be updated in accordance to your current location."
+msgstr "Your time zone profile settings will be updated in accordance to your current location."
+
+# TRANSLATION
+# LABEL/ID_TIME_ZONE_LOGIN_DESCRIPTION3
+#: LABEL/ID_TIME_ZONE_LOGIN_DESCRIPTION3
+msgid "This operation will help you avoid date storage issues."
+msgstr "This operation will help you avoid date storage issues."
+
+# TRANSLATION
+# LABEL/ID_TIME_ZONE_LOGIN_DESCRIPTION_DETAILS
+#: LABEL/ID_TIME_ZONE_LOGIN_DESCRIPTION_DETAILS
+msgid "Your current profile time zone: {0}, is going to be updated to: {1}."
+msgstr "Your current profile time zone: {0}, is going to be updated to: {1}."
+
+# TRANSLATION
+# LABEL/ID_MAFE_bebfb2a099450ef06ded421e59c888b2
+#: LABEL/ID_MAFE_bebfb2a099450ef06ded421e59c888b2
+msgid "Format (CSS)"
+msgstr "Format (CSS)"
+
+# TRANSLATION
+# LABEL/ID_MAFE_cabf52523fbbddadbde30994e36845d0
+#: LABEL/ID_MAFE_cabf52523fbbddadbde30994e36845d0
+msgid "Store Result In"
+msgstr "Store Result In"
+
+# TRANSLATION
+# LABEL/ID_MAFE_21037a59373ae01e31ee20ec61555333
+#: LABEL/ID_MAFE_21037a59373ae01e31ee20ec61555333
+msgid "Store result in variable @@myResult"
+msgstr "Store result in variable @@myResult"
+
+# TRANSLATION
+# LABEL/ID_MAFE_b1fcd78a4983c63c73972229b16cb7a6
+#: LABEL/ID_MAFE_b1fcd78a4983c63c73972229b16cb7a6
+msgid "print dynaform"
+msgstr "print dynaform"
+
+# TRANSLATION
+# LABEL/ID_MAFE_4ed131033015697f970660a0cb48ff1e
+#: LABEL/ID_MAFE_4ed131033015697f970660a0cb48ff1e
+msgid "Create variable"
+msgstr "Create variable"
+
+# TRANSLATION
+# LABEL/ID_MAFE_dc45332742bde79337287a115c6422a4
+#: LABEL/ID_MAFE_dc45332742bde79337287a115c6422a4
+msgid "Select variable"
+msgstr "Select variable"
+
+# TRANSLATION
+# LABEL/ID_MAFE_7a21a691b5d03d92a29b79bbeecf706e
+#: LABEL/ID_MAFE_7a21a691b5d03d92a29b79bbeecf706e
+msgid "Custom actions"
+msgstr "Custom actions"
+
+# TRANSLATION
+# LABEL/ID_MAFE_5b37be2f6e6fc0bc307e3146980709ea
+#: LABEL/ID_MAFE_5b37be2f6e6fc0bc307e3146980709ea
+msgid "Please enter only CSS code"
+msgstr "Please enter only CSS code"
+
+# TRANSLATION
+# LABEL/ID_MAFE_bf8252265e26d92c011456899a2d522e
+#: LABEL/ID_MAFE_bf8252265e26d92c011456899a2d522e
+msgid "At least one option must be filled."
+msgstr "At least one option must be filled."
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
@@ -35926,6 +36016,12 @@ msgstr "Test connection"
 #: button - btnCancel
 msgid "[ldapAdvanced/ldapAdvancedEdit.xml?btnCancel] Cancel"
 msgstr "Cancel"
+
+# login/TimeZoneAlert.xml?BTNOK
+# login/TimeZoneAlert.xml
+#: submit - BTNOK
+msgid "[login/TimeZoneAlert.xml?BTNOK] "
+msgstr ""
 
 # login/changePassword.xml?THETITLE
 # login/changePassword.xml
