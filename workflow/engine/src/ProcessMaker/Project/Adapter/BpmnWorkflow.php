@@ -717,10 +717,25 @@ class BpmnWorkflow extends Project\Bpmn
     }
     */
 
-    public function createTaskByElement($elementUid, $elementType, $key)
+    public function createTaskByElement($elementUid, $elementType, $key, $elementUidDest="")
     {
         try {
-            if (isset($this->arrayElementTaskRelation[$elementUid])) {
+            $flagElementTaskRelation = false;
+            if($elementUidDest != ""){
+               if( isset($this->arrayElementTaskRelation[$elementUid][$elementUidDest]) ){
+                   $flagElementTaskRelation = true;
+               }else{
+                  $flagElementTaskRelation = false;
+               }
+            }else{
+                if (isset($this->arrayElementTaskRelation[$elementUid])) {
+                    $taskUid = $this->arrayElementTaskRelation[$elementUid];
+                    $flagElementTaskRelation = true;
+                }else{
+                    $flagElementTaskRelation = false;
+                }
+            }
+            if ($flagElementTaskRelation) {
                 $taskUid = $this->arrayElementTaskRelation[$elementUid];
             } else {
                 $taskPosX = 0;
@@ -776,17 +791,37 @@ class BpmnWorkflow extends Project\Bpmn
                 //Element-Task-Relation - Create
                 $elementTaskRelation = new \ProcessMaker\BusinessModel\ElementTaskRelation();
 
-                $arrayResult = $elementTaskRelation->create(
-                    $this->wp->getUid(),
-                    array(
-                        "ELEMENT_UID"  => $elementUid,
-                        "ELEMENT_TYPE" => $elementType,
-                        "TAS_UID"      => $taskUid
-                    )
-                );
+                if($elementUidDest == ""){
+                    $arrayResult = $elementTaskRelation->create(
+                        $this->wp->getUid(),
+                        array(
+                            "ELEMENT_UID"  => $elementUid,
+                            "ELEMENT_TYPE" => $elementType,
+                            "TAS_UID"      => $taskUid
+                        )
+                    );
+                }else{
+                    $createGaToGa = $elementTaskRelation->existsGatewayToGateway($elementUid, $elementUidDest);
+                    if(!$createGaToGa){
+                        $arrayResult = $elementTaskRelation->create(
+                            $this->wp->getUid(),
+                            array(
+                                "ELEMENT_UID"      => $elementUid,
+                                "ELEMENT_TYPE"     => $elementType,
+                                "TAS_UID"          => $taskUid,
+                                "ELEMENT_UID_DEST" => $elementUidDest
+                            )
+                        );
+                   }
+                }
 
-                //Array - Add element
-                $this->arrayElementTaskRelation[$elementUid] = $taskUid;
+                if($elementUidDest != ""){
+                    $aElement[$elementUid][$elementUidDest] = $elementUidDest;
+                    $this->arrayElementTaskRelation = $aElement;
+                }else {
+                    //Array - Add element
+                    $this->arrayElementTaskRelation[$elementUid] = $taskUid;
+                }
             }
 
             //Return
@@ -875,7 +910,8 @@ class BpmnWorkflow extends Project\Bpmn
                         $taskUid = $this->createTaskByElement(
                             $gatewayUid,
                             "bpmnGateway",
-                            "gateway-to-gateway"
+                            "gateway-to-gateway",
+                            $arrayFlowData["FLO_ELEMENT_DEST"]
                         );
 
                         $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);

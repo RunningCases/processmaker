@@ -2635,6 +2635,7 @@ CREATE TABLE `ELEMENT_TASK_RELATION`
 	`ELEMENT_UID` VARCHAR(32)  NOT NULL,
 	`ELEMENT_TYPE` VARCHAR(50) default '' NOT NULL,
 	`TAS_UID` VARCHAR(32)  NOT NULL,
+	`ELEMENT_UID_DEST` VARCHAR(32) default '' NOT NULL,
 	PRIMARY KEY (`ETR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
