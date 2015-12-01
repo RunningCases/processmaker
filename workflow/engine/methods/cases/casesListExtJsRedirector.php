@@ -2,9 +2,12 @@
 if (typeof window.parent != 'undefined') {
 <?php
 $enablePMGmail = false;
-require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.pmDrive.php");
-$pmDrive = new PMDrive();
-$enablePMGmail = $pmDrive->getStatusService();
+$licensedFeatures = &PMLicensedFeatures::getSingleton();
+if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+    G::LoadClass( "pmDrive" );
+    $pmDrive = new PMDrive();
+    $enablePMGmail = $pmDrive->getStatusService();
+}
 if (isset( $_GET['ux'] )) {
     switch ($_GET['ux']) {
         case 'SIMPLIFIED':
