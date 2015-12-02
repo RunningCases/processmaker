@@ -4547,6 +4547,7 @@
         <column name="ELEMENT_UID"  type="VARCHAR" size="32" required="true" />
         <column name="ELEMENT_TYPE" type="VARCHAR" size="50" required="true" default=""/>
         <column name="TAS_UID"      type="VARCHAR" size="32" required="true" />
+        <column name="ELEMENT_UID_DEST"  type="VARCHAR" size="32" required="false" default=""/>
     </table>
     <table name="ABE_CONFIGURATION">
     <vendor type="mysql">
