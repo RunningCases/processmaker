@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "447e7a9d17b32f1ad7817f2b84c340f1",
-    "content-hash": "9e2e641c66a5ac387943ca6ff7eac163",
+    "hash": "825573bc1314750cc28719fdefa10188",
+    "content-hash": "5676f6b643350586ab660d49aa2020be",
     "packages": [
         {
             "name": "bshaffer/oauth2-server-php",
@@ -145,17 +145,6 @@
             "time": "2015-10-16 22:11:08"
         },
         {
-            "name": "jquery/jquery",
-            "version": "1.10.2",
-            "dist": {
-                "type": "zip",
-                "url": "http://composer-public.colosa.net/dist/jquery-jquery-1.10.2.zip",
-                "reference": null,
-                "shasum": "ed2612cbb721866964ae96e5bde21bdeec9d6acb"
-            },
-            "type": "library"
-        },
-        {
             "name": "luracast/restler",
             "version": "3.0.0-RC4",
             "source": {
@@ -228,17 +217,6 @@
                 "server"
             ],
             "time": "2014-04-13 05:38:15"
-        },
-        {
-            "name": "underscore/underscore",
-            "version": "1.5.2",
-            "dist": {
-                "type": "zip",
-                "url": "http://composer-public.colosa.net/dist/underscore-underscore-1.5.2.zip",
-                "reference": null,
-                "shasum": "91ad52ea27d721678896d95803e2aaacec9293f2"
-            },
-            "type": "library"
         }
     ],
     "packages-dev": [
