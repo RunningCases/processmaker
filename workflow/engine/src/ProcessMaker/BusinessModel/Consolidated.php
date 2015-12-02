@@ -458,8 +458,8 @@ class Consolidated
         $dataTask = $oDyna->load($dyn_uid);
         if ($dataTask['DYN_VERSION'] > 0) {
             G::LoadClass("pmDynaform");
-            $pmDyna = new \pmDynaform(array('APP_DATA' => array()));
-            $pmDyna->fields["CURRENT_DYNAFORM"] = $dyn_uid;
+            $_SESSION['PROCESS'] = $pro_uid;
+            $pmDyna = new \pmDynaform(array('APP_DATA' => array(), "CURRENT_DYNAFORM" => $dyn_uid));
             $json = G::json_decode($dataTask["DYN_CONTENT"]);
             $pmDyna->jsonr($json);
             $fieldsDyna = $json->items[0]->items;
