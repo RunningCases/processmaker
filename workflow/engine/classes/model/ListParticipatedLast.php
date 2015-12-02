@@ -36,24 +36,30 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $data['APP_STATUS']  = $aRow['APP_STATUS'];
 
         if ($data['USR_UID'] != 'SELF_SERVICES') {
-           if($data['USR_UID'] != ''){
-            $criteria = new Criteria();
-            $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
-            $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
-            $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
-            $criteria->add( UsersPeer::USR_UID, $data['USR_UID'], Criteria::EQUAL );
-            $dataset = UsersPeer::doSelectRS($criteria);
-            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $dataset->next();
-            $aRow = $dataset->getRow();
-            $data['DEL_CURRENT_USR_USERNAME']  = $aRow['USR_USERNAME'];
-            $data['DEL_CURRENT_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
-            $data['DEL_CURRENT_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
-
-            $users = new Users();
-            $users->refreshTotal($data['USR_UID'], 'add', 'participated');
+            if($data['USR_UID'] != '') {
+                $criteria = new Criteria();
+                $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
+                $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+                $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
+                $criteria->add( UsersPeer::USR_UID, $data['USR_UID'], Criteria::EQUAL );
+                $dataset = UsersPeer::doSelectRS($criteria);
+                $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                $dataset->next();
+                $aRow = $dataset->getRow();
+                $data['DEL_CURRENT_USR_USERNAME']  = $aRow['USR_USERNAME'];
+                $data['DEL_CURRENT_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
+                $data['DEL_CURRENT_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
             }
+        } else {
+            $data['USR_UID'] = $_SESSION['USER_LOGGED'];
+        	$row = $this->getRowFromList($data);
+        	if(is_array($row) && sizeof($row)) {
+    		    $this->remove($row['APP_UID'], $row['USR_UID'], $row['DEL_INDEX'], true);			
+        	}
         }
+        
+        $users = new Users();
+        $users->refreshTotal($data['USR_UID'], 'add', 'participated');
         
         if($this->primaryKeysExists($data)) {
             return;
@@ -153,7 +159,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
      * @throws type
      *
      */
-    public function remove ($app_uid, $usr_uid, $del_index)
+    public function remove ($app_uid, $usr_uid, $del_index, $force = false)
     {
         try {
             $flagDelete = false;
@@ -164,8 +170,10 @@ class ListParticipatedLast extends BaseListParticipatedLast
                 $criteria->add(ListParticipatedLastPeer::APP_UID, $app_uid);
                 $criteria->add(ListParticipatedLastPeer::USR_UID, $usr_uid);
                 $criteria->add(ListParticipatedLastPeer::DEL_INDEX, $del_index);
-
-                $result = ListParticipatedLastPeer::doDelete($criteria);
+                
+                if(!$this->isTheOne($app_uid, $usr_uid) || $force) {
+                    $result = ListParticipatedLastPeer::doDelete($criteria);
+                }
 
                 $flagDelete = true;
             } else {
@@ -178,9 +186,9 @@ class ListParticipatedLast extends BaseListParticipatedLast
 
                 if ($rsCriteria->next()) {
                     $criteria2 = clone $criteria;
-
-                    $result = ListParticipatedLastPeer::doDelete($criteria2);
-
+                    if(!$this->isTheOne($app_uid, $usr_uid) || $force) { 
+                        $result = ListParticipatedLastPeer::doDelete($criteria2);
+                    }
                     $flagDelete = true;
                 }
             }
@@ -358,6 +366,33 @@ class ListParticipatedLast extends BaseListParticipatedLast
                 return true;
             }
         }
+        return false;
+    }
+    
+    public function getRowFromList($data) {
+        $criteria = new Criteria("workflow");
+        $criteria->add(ListParticipatedLastPeer::APP_UID, $data['APP_UID']);
+        $criteria->add(ListParticipatedLastPeer::USR_UID, $data['USR_UID']);
+        $dataset = ListParticipatedLastPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        if(is_array($aRow)) {
+            if(sizeof($aRow)) {
+                return $aRow;
+            }
+        }
+        return false;
+    }
+    
+    public function isTheOne($app_uid, $usr_uid) {
+    	$criteria = new Criteria("workflow");
+        $criteria->add(ListParticipatedLastPeer::APP_UID, $app_uid);
+        $criteria->add(ListParticipatedLastPeer::USR_UID, $usr_uid);
+        $rsCriteria = ListParticipatedLastPeer::doCount($criteria);
+        if ($rsCriteria == 1) {
+        	return true;
+        } 
         return false;
     }
 }
