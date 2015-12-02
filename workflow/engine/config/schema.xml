@@ -1048,6 +1048,7 @@
     <column name="ROU_FROM_PORT" type="INTEGER" required="true" default="2"/>
     <column name="ROU_EVN_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="GAT_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="ROU_ELEMENT_ORIGIN" type="VARCHAR" size="32" required="false" default=""/>
     <validator column="ROU_UID">
       <rule name="maxLength" value="32" message="Route UID can be no larger than ${value} in size"/>
       <rule name="required" message="Route UID is required."/>

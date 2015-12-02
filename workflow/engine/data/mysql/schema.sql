@@ -512,6 +512,7 @@ CREATE TABLE `ROUTE`
 	`ROU_FROM_PORT` INTEGER default 2 NOT NULL,
 	`ROU_EVN_UID` VARCHAR(32) default '' NOT NULL,
 	`GAT_UID` VARCHAR(32) default '' NOT NULL,
+	`ROU_ELEMENT_ORIGIN` VARCHAR(32) default '' NOT NULL,
 	PRIMARY KEY (`ROU_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Differents flows for a flow in business process';
 #-----------------------------------------------------------------------------
