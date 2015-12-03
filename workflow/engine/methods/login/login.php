@@ -194,10 +194,25 @@ if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc1
 /*----------------------------------********---------------------------------*/
 
 if ($timeZoneFailed) {
+    $dateTime = new \ProcessMaker\Util\DateTime();
+
+    $userTimeZoneOffset = $dateTime->getTimeZoneOffsetByTimeZoneId($userTimeZone);
+    $browserTimeZoneOffset = $dateTime->getTimeZoneOffsetByTimeZoneId($browserTimeZone);
+
+    $userUtcOffset = $dateTime->getUtcOffsetByTimeZoneOffset($userTimeZoneOffset);
+    $browserUtcOffset = $dateTime->getUtcOffsetByTimeZoneOffset($browserTimeZoneOffset);
+
+    $arrayTimeZoneId = $dateTime->getTimeZoneIdByTimeZoneOffset($browserTimeZoneOffset);
+
+    array_unshift($arrayTimeZoneId, 'false');
+    array_walk($arrayTimeZoneId, function (&$value, $key, $parameter) { $value = ['TZ_UID' => $value, 'TZ_NAME' => '(UTC' . $parameter . ') ' . $value]; }, $browserUtcOffset);
+
+    $_SESSION['_DBArray'] = ['TIME_ZONE' => $arrayTimeZoneId];
+
     $arrayData = [
         'USR_USERNAME'  => $userUsername,
         'USR_PASSWORD'  => $userPassword,
-        'USR_TIME_ZONE' => $userTimeZone,
+        'USR_TIME_ZONE' => '(UTC' . $userUtcOffset . ') ' . $userTimeZone,
         'BROWSER_TIME_ZONE' => $browserTimeZone
     ];
 
