@@ -13,6 +13,13 @@ $uploadMaxSize = (int) $UPLOAD_MAX_SIZE * $mul;
 if ($postMaxSize < $uploadMaxSize) {
     $uploadMaxSize = $postMaxSize;
 }
+$languageManagement = 0;
+/*----------------------------------********---------------------------------*/
+$licensedFeatures = & PMLicensedFeatures::getSingleton();
+if ($licensedFeatures->verifyfeature('w2LL3o4NFNiaDRXcFFCYVpJS3Jsall5dmh0ZWtBTkdKR3ROS0VzWGdoLzNQYz0=')) {
+    $languageManagement = 1;
+}
+/*----------------------------------********---------------------------------*/
 
 $arraySystemConfiguration = System::getSystemConfiguration('', '', SYS_SYS);
 
@@ -24,6 +31,7 @@ $oHeadPublisher->assign( 'MAX_FILES_SIZE', ' (' . $UPLOAD_MAX_SIZE . ') ' );
 $oHeadPublisher->assign('SYSTEM_TIME_ZONE', $arraySystemConfiguration['time_zone']);
 $oHeadPublisher->assign('TIME_ZONE_DATA', array_map(function ($value) { return [$value, $value]; }, DateTimeZone::listIdentifiers()));
 $oHeadPublisher->assign('__SYSTEM_UTC_TIME_ZONE__', (isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__'])? 1 : 0);
+$oHeadPublisher->assign('LANGUAGE_MANAGEMENT', $languageManagement);
 
 G::RenderPage( 'publish', 'extJs' );
 
