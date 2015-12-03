@@ -196,4 +196,22 @@ class NotificationDevice extends BaseNotificationDevice {
         return (( get_class ($oRow) == 'NotificationDevice' )&&(!is_null($oRow)));
     }
 
+    public function isExistNextNotification($app_uid, $del_index)
+    {
+        $oCriteria = new Criteria('workflow');
+        $oCriteria->addSelectColumn(AppDelegationPeer::APP_UID);
+        $oCriteria->add(AppDelegationPeer::APP_UID, $app_uid);
+        $oCriteria->add(AppDelegationPeer::DEL_PREVIOUS, $del_index);
+        $oCriteria->add(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL);
+        $oCriteria->setLimit(1);
+        //execute the query
+        $oDataset = AppDelegationPeer::doSelectRS($oCriteria);
+        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        if ($oDataset->next()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 } // NotificationDevice
