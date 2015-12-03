@@ -7,9 +7,7 @@
 
     {$form.USR_USERNAME}
     {$form.USR_PASSWORD}
-
     {$form.USR_TIME_ZONE}
-    {$form.BROWSER_TIME_ZONE}
 
     <fieldset>
         <label class="panel-login">
@@ -20,6 +18,8 @@
                 <br />
                 <br />
                 <span id="details">{php}echo G::LoadTranslation("ID_TIME_ZONE_LOGIN_DESCRIPTION_DETAILS");{/php}</span>
+                <br />
+                {$form.BROWSER_TIME_ZONE}
             </div>
         </label>
     </fieldset>

@@ -212,7 +212,7 @@ try {
             $_SESSION['USR_USERNAME'] = $usr;
             $_SESSION['USR_PASSWORD'] = $pwd;
 
-            $_SESSION['BROWSER_TIME_ZONE'] = $dateTime->getTimeZoneIdByTimeZoneOffset((int)($_POST['form']['BROWSER_TIME_ZONE_OFFSET']));
+            $_SESSION['BROWSER_TIME_ZONE'] = $dateTime->getTimeZoneIdByTimeZoneOffset((int)($_POST['form']['BROWSER_TIME_ZONE_OFFSET']), false);
 
             if (strpos($_SERVER['HTTP_REFERER'], 'home/login') !== false) {
                 $d = serialize(['u' => $usr, 'p' => $pwd, 'm' => '', 'timeZoneFailed' => 1, 'userTimeZone' => $_SESSION['USR_TIME_ZONE'], 'browserTimeZone' => $_SESSION['BROWSER_TIME_ZONE']]);

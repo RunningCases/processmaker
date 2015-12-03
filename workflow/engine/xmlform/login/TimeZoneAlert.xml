@@ -6,7 +6,14 @@
     <USR_PASSWORD type="hidden" />
 
     <USR_TIME_ZONE type="hidden" />
-    <BROWSER_TIME_ZONE type="hidden" />
+
+    <BROWSER_TIME_ZONE type="dropdown" sqlconnection="dbarray">
+        <![CDATA[
+        SELECT TZ_UID, TZ_NAME
+        FROM   TIME_ZONE
+        ]]>
+        <en></en>
+    </BROWSER_TIME_ZONE>
 
     <BTNOK type="submit">
         <en></en>
@@ -20,7 +27,8 @@
 
             var strHtml = document.getElementById("details").innerHTML;
             strHtml = stringReplace("\\{0\\}", document.getElementById("form[USR_TIME_ZONE]").value, strHtml);
-            strHtml = stringReplace("\\{1\\}", document.getElementById("form[BROWSER_TIME_ZONE]").value, strHtml);
+            strHtml = stringReplace("\\{1\\}.", "", strHtml);
+            strHtml = stringReplace("\\{1\\}", "", strHtml);
 
             document.getElementById("details").innerHTML = strHtml;
 

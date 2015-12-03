@@ -30,24 +30,33 @@ class DateTime
     /**
      * Get Time Zone ID by Time Zone Offset
      *
-     * @param int $offset Time Zone Offset
+     * @param int  $offset         Time Zone Offset
+     * @param bool $flagAllResults Flag which sets include all the results
      *
-     * @return string Return the Time Zone ID; UTC ID otherwise
+     * @return mixed Return the Time Zone ID; UTC ID otherwise
      */
-    public function getTimeZoneIdByTimeZoneOffset($offset)
+    public function getTimeZoneIdByTimeZoneOffset($offset, $flagAllResults = true)
     {
         try {
+            $timeZoneId = ($flagAllResults)? [] : '';
+
             foreach (\DateTimeZone::listIdentifiers() as $value) {
                 $timeZoneOffset = $this->getTimeZoneOffsetByTimeZoneId($value);
 
                 if ($timeZoneOffset !== false && $timeZoneOffset == $offset) {
-                    //Return
-                    return $value;
+                    if ($flagAllResults) {
+                        $timeZoneId[] = $value;
+                    } else {
+                        $timeZoneId = $value;
+                        break;
+                    }
                 }
             }
 
+            $timeZoneId = (!empty($timeZoneId))? $timeZoneId : (($flagAllResults)? ['UTC'] : 'UTC');
+
             //Return
-            return 'UTC';
+            return $timeZoneId;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -75,7 +84,31 @@ class DateTime
             $offset = (($sign == '+')? '' : '-') . (($h * 60 * 60) + ($m * 60)); //Convert UTC Offset to seconds
 
             //Return
-            return $this->getTimeZoneIdByTimeZoneOffset((int)($offset));
+            return $this->getTimeZoneIdByTimeZoneOffset((int)($offset), false);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get UTC Offset by Time Zone Offset
+     *
+     * @param int $offset Time Zone Offset
+     *
+     * @return string Return the UTC Offset
+     */
+    public function getUtcOffsetByTimeZoneOffset($offset)
+    {
+        try {
+            $sign = ($offset >= 0)? '+' : '-';
+
+            $offset = abs($offset) / 60; //Convert seconds to minutes
+
+            $h = floor($offset / 60);
+            $m = $offset - ($h * 60);
+
+            //Return
+            return $sign . sprintf('%02d:%02d', $h, $m);
         } catch (\Exception $e) {
             throw $e;
         }
