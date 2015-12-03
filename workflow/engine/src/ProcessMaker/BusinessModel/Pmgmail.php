@@ -2,6 +2,8 @@
 namespace ProcessMaker\BusinessModel;
 
 use \G;
+use Symfony\Component\Config\Definition\Exception\Exception;
+
 /**
  * @copyright Colosa - Bolivia
  */
@@ -32,44 +34,151 @@ class Pmgmail {
     }
 
     /**
-     * Get Application data by appUid
+     * Get Application data by appUid. Searches just in list_inbox, list_paused, list_unassigned
+     * because those are the only places from which an email to update user gmail trays will
+     * be sent.
+     * the reason to seach in thos 3 tables is because We prefer to make 3 queries in
+     * 3 tables with few rows than using app_cache_view that has
+     * a lot more.
      *
-     * @param string $app_uid Unique id of the app
+     * @param string $appUid Unique id of the app
      * @param string $index
      *
-     * return row app_cache_view
+     * return row in list_inbox, list_paused or list_unassigned, if nothing is
+     * found a null value is returned
      *
      */
-    public function getDraftApp($app_uid, $index=1)
+    public function getAppData($appUid, $index=1)
     {
-    	$c = new \Criteria( 'workflow' );
+        if (empty($appUid)) {
+           throw new Exception('Null or undefined appUids are not accepted.');
+        }
 
-    	$c->clearSelectColumns();
-    	$c->addSelectColumn( \AppCacheViewPeer::APP_NUMBER );
-    	$c->addSelectColumn( \AppCacheViewPeer::APP_STATUS );
-    	$c->addSelectColumn( \AppCacheViewPeer::DEL_INDEX );
-    	$c->addSelectColumn( \AppCacheViewPeer::APP_DEL_PREVIOUS_USER );
-    	$c->addSelectColumn( \AppCacheViewPeer::DEL_DELEGATE_DATE );
-    	$c->addSelectColumn( \AppCacheViewPeer::USR_UID );
-    	$c->addSelectColumn( \AppCacheViewPeer::PRO_UID );
-    	$c->addSelectColumn( \AppCacheViewPeer::APP_PRO_TITLE );
-    	$c->addSelectColumn( \AppCacheViewPeer::APP_TAS_TITLE );
-    	$c->addSelectColumn( \AppCacheViewPeer::DEL_THREAD_STATUS );
-    	$c->addSelectColumn( \AppCacheViewPeer::TAS_UID );
-    	$c->addSelectColumn( \AppCacheViewPeer::DEL_LAST_INDEX );
+        //the current version of Propel does not support union  queries, so
+        //3 queries are sent. The first time that a row that conforms to the
+        //seach criteria is found, the function terminates and returns this row.
 
-    	$c->add( \AppCacheViewPeer::APP_UID, $app_uid );
-    	$c->add( \AppCacheViewPeer::DEL_INDEX, $index );
+        $rowInbox = $this->getAppDataFromListInbox($appUid, $index);
+        if (count($rowInbox) > 0) {
+            return $rowInbox;
+        }
 
-    	$rs = \AppCacheViewPeer::doSelectRS( $c );
-    	$rs->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+        $rowUnassigned = $this->getAppDataFromListUnassigned($appUid, $index);
+        if (count($rowUnassigned) > 0) {
+            return $rowUnassigned;
+        }
 
-    	$rows = Array ();
-    	while ($rs->next()) {
-    		$rows[] = $rs->getRow();
-    	}
-    	return $rows;
+        $rowPaused = $this->getAppDataFromListPaused($appUid, $index);
+        if (count($rowPaused) > 0) {
+            return $rowPaused;
+        }
+
+        return null;
     }
+
+    /**
+     * Get Application data in a del index searchin in the list_inbox table
+     *
+     * @param string $appUid Unique id of the app
+     * @param string $index
+     *
+     * return row
+     *
+     */
+    private function getAppDataFromListInbox($appUid, $index) {
+        $c = new \Criteria( 'workflow' );
+        $c->clearSelectColumns();
+        $c->addSelectColumn( \ListInboxPeer::APP_NUMBER );
+        $c->addSelectColumn( \ListInboxPeer::APP_STATUS );
+        $c->addSelectColumn( \ListInboxPeer::DEL_INDEX );
+        $c->addSelectColumn( \ListInboxPeer::DEL_DELEGATE_DATE );
+        $c->addSelectColumn( \ListInboxPeer::USR_UID );
+        $c->addSelectColumn( \ListInboxPeer::PRO_UID );
+        $c->addSelectColumn( \ListInboxPeer::APP_PRO_TITLE );
+        $c->addSelectColumn( \ListInboxPeer::APP_TAS_TITLE );
+        $c->addSelectColumn( \ListInboxPeer::TAS_UID );
+        $c->add( \ListInboxPeer::APP_UID, $appUid );
+        $c->add( \ListInboxPeer::DEL_INDEX, $index );
+
+        $rs = \ListInboxPeer::doSelectRS( $c );
+        $rs->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+        return $this->resultSetToArray($rs);
+    }
+
+
+    /**
+     * Get Application data in a del index searchin in the list_inbox table
+     *
+     * @param string $appUid Unique id of the app
+     * @param string $index
+     *
+     * return row
+     *
+     */
+    private function getAppDataFromListPaused($appUid, $index) {
+        $c = new \Criteria( 'workflow' );
+        $c->clearSelectColumns();
+        $c->addSelectColumn( \ListPausedPeer::APP_NUMBER );
+        $c->addSelectColumn("'PAUSED' APP_STATUS");
+        $c->addSelectColumn( \ListPausedPeer::DEL_INDEX );
+        $c->addSelectColumn( \ListPausedPeer::DEL_DELEGATE_DATE );
+        $c->addSelectColumn( \ListPausedPeer::USR_UID );
+        $c->addSelectColumn( \ListPausedPeer::PRO_UID );
+        $c->addSelectColumn( \ListPausedPeer::APP_PRO_TITLE );
+        $c->addSelectColumn( \ListPausedPeer::APP_TAS_TITLE );
+        $c->addSelectColumn( \ListPausedPeer::TAS_UID );
+        $c->add( \ListPausedPeer::APP_UID, $appUid );
+        $c->add( \ListPausedPeer::DEL_INDEX, $index );
+
+        $rs = \ListPausedPeer::doSelectRS( $c );
+        $rs->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+        return $this->resultSetToArray($rs);
+    }
+    /**
+     * Get Application data in a del index searchin in the list_inbox table
+     *
+     * @param string $appUid Unique id of the app
+     * @param string $index
+     *
+     * return row
+     *
+     */
+    private function getAppDataFromListUnassigned($appUid, $index) {
+        $c = new \Criteria( 'workflow' );
+        $c->clearSelectColumns();
+        $c->addSelectColumn( \ListUnassignedPeer::APP_NUMBER );
+        $c->addSelectColumn("'UNASSIGNED' APP_STATUS");
+        $c->addSelectColumn( \ListUnassignedPeer::DEL_INDEX );
+        $c->addSelectColumn( \ListUnassignedPeer::DEL_DELEGATE_DATE );
+        $c->addSelectColumn("'' USR_UID");
+        $c->addSelectColumn( \ListUnassignedPeer::PRO_UID );
+        $c->addSelectColumn( \ListUnassignedPeer::APP_PRO_TITLE );
+        $c->addSelectColumn( \ListUnassignedPeer::APP_TAS_TITLE );
+        $c->addSelectColumn( \ListUnassignedPeer::TAS_UID );
+        $c->add( \ListUnassignedPeer::APP_UID, $appUid );
+        $c->add( \ListUnassignedPeer::DEL_INDEX, $index );
+
+        $rs = \ListUnassignedPeer::doSelectRS( $c );
+        $rs->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+        return $this->resultSetToArray($rs);
+    }
+
+    /**
+     * Returns an array create from a resultset
+     *
+     * @param string $rs result set from which the array will be created
+     *
+     * return row array
+     *
+     */
+    private function resultSetToArray($rs) {
+        $rows = Array ();
+        while ($rs->next()) {
+            $rows[] = $rs->getRow();
+        }
+        return $rows;
+    }
+
 
     /**
      * Send email using appUid and mail
@@ -103,21 +212,18 @@ class Pmgmail {
                 $dataFormToShowString .= " " . $field . " " . $value;
             }
         }
-        $appData = $this->getDraftApp($app_uid, $index);
+        $appData = $this->getAppData($app_uid, $index);
 
         foreach ($appData as $application){
             $appNumber = $application['APP_NUMBER'];
             $appStatus = $application['APP_STATUS'];
             $index = $application['DEL_INDEX'];
-            $prvUsr = $application['APP_DEL_PREVIOUS_USER'];
             $delegateDate = $application['DEL_DELEGATE_DATE'];
             $nextUsr = $application['USR_UID'];
             $proUid = $application['PRO_UID'];
             $proName = $application['APP_PRO_TITLE'];
             $tasName = $application['APP_TAS_TITLE'];
-            $threadStatus = $application['DEL_THREAD_STATUS'];
             $tasUid = $application['TAS_UID'];
-            $lastIndex = $application['DEL_LAST_INDEX'];
 
             if($appStatus == "DRAFT"){
                 $labelID = "PMDRFT";
@@ -161,7 +267,6 @@ class Pmgmail {
                 fwrite($file, '-**- Task Name: @#taskName<br/>');
                 fwrite($file, '-**- Index: @#index<br/>');
                 fwrite($file, '-**- Action: @#action<br/>');
-                fwrite($file, '-**- Previous User: @#prevUser<br/>');
                 fwrite($file, '-**- Delegate Date: @#delDate<br/>');
                 fwrite($file, '-**- Process Id: @#proUid<br/>');
                 fwrite($file, '-**- Type: @#type<br/>');
@@ -179,7 +284,6 @@ class Pmgmail {
                 'taskName' => $tasName,
                 'index' => $index,
                 'action' => $appStatus,
-                'prevUser' => $prvUsr,
                 'delDate' => $delegateDate,
                 'proUid' => $proUid,
                 'type' => $labelID,
