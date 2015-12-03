@@ -5392,7 +5392,21 @@ class Cases
                 $fileTemplate = $pathEmail . $conf["TAS_DEF_MESSAGE_TEMPLATE"];
 
                 if (!file_exists($fileTemplate)) {
-                    throw (new Exception("Template file \"$fileTemplate\" does not exist."));
+                    $tempale = PATH_CORE."templates".PATH_SEP."mails".PATH_SEP."alert_message.html";
+                    $copied = @copy($tempale,$fileTemplate);
+                    if($copied) {
+                        $dataTemplate = array("prf_filename"=>$conf["TAS_DEF_MESSAGE_TEMPLATE"],
+                                              "prf_path"=>$fileTemplate,
+                                              "pro_uid"=>$aTaskInfo["PRO_UID"],
+                                              "usr_uid"=>"00000000000000000000000000000001",
+                                              "prf_uid"=>G::generateUniqueID(),
+                                              "prf_type"=>"file",
+                                              "prf_create_date"=>date("Y-m-d H:i:s"));
+                        $filesManager = new ProcessMaker\BusinessModel\FilesManager();
+                        $filesManager->addProcessFilesManagerInDb($dataTemplate);
+                    } else {
+                        throw (new Exception("Template file \"$fileTemplate\" does not exist."));
+                    }
                 }
 
                 $sBody = G::replaceDataGridField(file_get_contents($fileTemplate), $aFields, false);
