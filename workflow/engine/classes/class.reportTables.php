@@ -553,6 +553,15 @@ class ReportTables
     public function updateTables ($sProcessUid, $sApplicationUid, $iApplicationNumber, $aFields)
     {
         try {
+            $c = new Criteria('workflow');
+            $c->addSelectColumn(BpmnProjectPeer::PRJ_UID);
+            $c->add(BpmnProjectPeer::PRJ_UID, $sProcessUid, Criteria::EQUAL);
+            $ds = ProcessPeer::doSelectRS($c);
+            $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $ds->next();
+            $row = $ds->getRow();
+            $isBpmn = isset($row['PRJ_UID']);
+
             if (!class_exists('ReportTablePeer')) {
 			  require_once 'classes/model/ReportTablePeer.php';
 			}
@@ -583,7 +592,7 @@ class ReportTables
                                 foreach ($aTableFields as $aField) {
                                     $sQuery .= '`' . $aField['sFieldName'] . '` = ';
 
-                                    if(!isset($aFields[$aField['sFieldName']])){
+                                    if(!$isBpmn && !isset($aFields[$aField['sFieldName']])){
                                        foreach($aFields as $row){
                                          if(is_array($row) && isset($row[count($row)])){
                                            $aFields = $row[count($row)];
