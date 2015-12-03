@@ -877,6 +877,8 @@ class AppCacheView extends BaseAppCacheView
             }
 
             foreach ($this->confCasesList["second"]["data"] as $fieldData) {
+                $fieldData['name'] = ($fieldData['name'] == 'APP_STATUS_LABEL')? 'APP_STATUS' : $fieldData['name'];
+
                 if (in_array($fieldData["name"], $defaultFields)) {
                     switch ($fieldData["fieldType"]) {
                         case "case field":
