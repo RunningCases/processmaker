@@ -44,6 +44,10 @@ $curl_response = curl_exec( $curl );
 curl_close($curl);
 $decodedResp = json_decode($curl_response);
 
+if(!is_object($decodedResp) || property_exists($decodedResp,'error')) {
+	die($decodedResp->error->message);
+}
+
 //getting the enviroment
 $enviroment = $decodedResp->enviroment;
 
