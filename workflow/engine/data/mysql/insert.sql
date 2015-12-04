@@ -61343,4 +61343,7 @@ INSERT INTO ADDONS_MANAGER (ADDON_DESCRIPTION,ADDON_ID,ADDON_NAME,ADDON_NICK,ADD
 ('Enables the multiple email configuration feature.','multipleEmailServers','multipleEmailServers','multipleEmailServers','Colosa','localRegistry','ready','00000000000000000000000000010009','features','','','0'),
 ('Enables the mobile fields.','mobileFields','mobileFields','mobileFields','Colosa','localRegistry','ready','00000000000000000000000000010008','features','','','0'),
 ('This plugin will synchronize ProcessMaker with an LDAP or Active Directory server for user authentication.','ldapAdvanced','ldapAdvanced','ldapAdvanced','Colosa','localRegistry','ready','00000000000000000000000000010010','features','','','0'),
-('SSO with an LDAP provider.','windowsSSO','windowsSSO','windowsSSO','Colosa','localRegistry','ready','00000000000000000000000000010011','features','','','0');
+('SSO with an LDAP provider.','windowsSSO','windowsSSO','windowsSSO','Colosa','localRegistry','ready','00000000000000000000000000010011','features','','','0'),
+('Integration with Gmail','pmGmail','pmGmail','pmGmail','Colosa','localRegistry','ready','00000000000000000000000000010012','features','','','0'),
+('User-based Language Management.','userBasedLanguage','userBasedLanguage','userBasedLanguage','Colosa','localRegistry','ready','00000000000000000000000000010013','features','','','0'),
+('User-based Time Zone Management.','userBasedTimeZone','userBasedTimeZone','userBasedTimeZone','Colosa','localRegistry','ready','00000000000000000000000000010014','features','','','0');
