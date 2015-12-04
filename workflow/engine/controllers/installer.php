@@ -1240,6 +1240,10 @@ class Installer extends Controller
             $db_hostname = $filter->validateInput($_REQUEST['db_hostname']);
             $db_username = $filter->validateInput($_REQUEST['db_username']);
             $db_password = $filter->validateInput($_REQUEST['db_password']);
+            $db_port     = $filter->validateInput($_REQUEST['db_port']);
+            if($db_port != "3306"){
+                $db_hostname = $db_hostname.":".$db_port;
+            }
             $link = @mysql_connect( $db_hostname, $db_username, $db_password );
             $wfDatabase = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
             $query = "show databases like '%s' ";
