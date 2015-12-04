@@ -131,10 +131,31 @@ class Designer extends Controller
             $translation = new Translation();
             $translation->generateFileTranslationMafe();
         }
-        
+
         $this->setVar('sys_skin', SYS_SKIN);
 
-        $this->setView('designer/index');
+        //Verify user
+        $criteria = new Criteria('workflow');
+
+        $criteria->addSelectColumn(OauthAccessTokensPeer::ACCESS_TOKEN);
+        $criteria->addSelectColumn(OauthAccessTokensPeer::USER_ID);
+        $criteria->add(OauthAccessTokensPeer::ACCESS_TOKEN, $clientToken['access_token'], Criteria::EQUAL);
+        $rsCriteria = OauthAccessTokensPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+        if ($rsCriteria->next()) {
+            $row = $rsCriteria->getRow();
+
+            $user = new \ProcessMaker\BusinessModel\User();
+
+            if ($user->checkPermission($row['USER_ID'], 'PM_FACTORY')) {
+                $this->setView('designer/index');
+            } else {
+                $this->setVar('accessDenied', G::LoadTranslation('ID_ACCESS_DENIED'));
+                $this->setView('designer/accessDenied');
+            }
+        }
+
         $this->render();
     }
 
