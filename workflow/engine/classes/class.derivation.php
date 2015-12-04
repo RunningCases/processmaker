@@ -1063,6 +1063,9 @@ class Derivation
                     $this->case->closeAllDelegations( $currentDelegation['APP_UID'] );
                     $this->case->closeAllThreads( $currentDelegation['APP_UID'] );
                     //I think we need to change the APP_STATUS to completed,
+                    if (!isset($nextDel['ROU_CONDITION'])) {
+                        $nextDel['ROU_CONDITION'] = '';
+                    }
                     if (isset($nextDel["TAS_UID_DUMMY"]) ) {
                         $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
                         if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())) {
