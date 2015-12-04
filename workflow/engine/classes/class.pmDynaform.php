@@ -878,11 +878,12 @@ class pmDynaform
         $this->record = $record;
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
+        $currentDynaform = (isset($this->fields['CURRENT_DYNAFORM']) && $this->fields['CURRENT_DYNAFORM'] != '')? $this->fields['CURRENT_DYNAFORM'] : '';
         $javascrip = "" .
                 "<script type='text/javascript'>\n" .
                 "var jsondata = " . G::json_encode($json) . ";\n" .
                 "var pm_run_outside_main_app = null;\n" .
-                "var dyn_uid = '" . $this->fields["CURRENT_DYNAFORM"] . "';\n" .
+                "var dyn_uid = '" . $currentDynaform . "';\n" .
                 "var __DynaformName__ = null;\n" .
                 "var app_uid = null;\n" .
                 "var prj_uid = '" . $this->record["PRO_UID"] . "';\n" .
