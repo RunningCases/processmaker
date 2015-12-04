@@ -181,11 +181,15 @@ try {
         $_SESSION['USR_USERNAME'] = $usr;
     }
 
-    //Update User Time Zone
-    if (isset($_POST['form']['BROWSER_TIME_ZONE'])) {
-        $user = new Users();
-        $user->update(['USR_UID' => $_SESSION['USER_LOGGED'], 'USR_TIME_ZONE' => $_POST['form']['BROWSER_TIME_ZONE']]);
+    /*----------------------------------********---------------------------------*/
+    if (PMLicensedFeatures::getSingleton()->verifyfeature('oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=')) {
+        //Update User Time Zone
+        if (isset($_POST['form']['BROWSER_TIME_ZONE'])) {
+            $user = new Users();
+            $user->update(['USR_UID' => $_SESSION['USER_LOGGED'], 'USR_TIME_ZONE' => $_POST['form']['BROWSER_TIME_ZONE']]);
+        }
     }
+    /*----------------------------------********---------------------------------*/
 
     //Set User Time Zone
     $user = UsersPeer::retrieveByPK($_SESSION['USER_LOGGED']);
@@ -202,27 +206,31 @@ try {
         $_SESSION['USR_TIME_ZONE'] = $userTimeZone;
     }
 
-    if (isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__']) {
-        $dateTime = new \ProcessMaker\Util\DateTime();
+    /*----------------------------------********---------------------------------*/
+    if (PMLicensedFeatures::getSingleton()->verifyfeature('oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=')) {
+        if (isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__']) {
+            $dateTime = new \ProcessMaker\Util\DateTime();
 
-        $timeZoneOffset = $dateTime->getTimeZoneOffsetByTimeZoneId($_SESSION['USR_TIME_ZONE']);
+            $timeZoneOffset = $dateTime->getTimeZoneOffsetByTimeZoneId($_SESSION['USR_TIME_ZONE']);
 
-        if ($timeZoneOffset === false || $timeZoneOffset != (int)($_POST['form']['BROWSER_TIME_ZONE_OFFSET'])) {
-            $_SESSION['__TIME_ZONE_FAILED__'] = true;
-            $_SESSION['USR_USERNAME'] = $usr;
-            $_SESSION['USR_PASSWORD'] = $pwd;
+            if ($timeZoneOffset === false || $timeZoneOffset != (int)($_POST['form']['BROWSER_TIME_ZONE_OFFSET'])) {
+                $_SESSION['__TIME_ZONE_FAILED__'] = true;
+                $_SESSION['USR_USERNAME'] = $usr;
+                $_SESSION['USR_PASSWORD'] = $pwd;
 
-            $_SESSION['BROWSER_TIME_ZONE'] = $dateTime->getTimeZoneIdByTimeZoneOffset((int)($_POST['form']['BROWSER_TIME_ZONE_OFFSET']), false);
+                $_SESSION['BROWSER_TIME_ZONE'] = $dateTime->getTimeZoneIdByTimeZoneOffset((int)($_POST['form']['BROWSER_TIME_ZONE_OFFSET']), false);
 
-            if (strpos($_SERVER['HTTP_REFERER'], 'home/login') !== false) {
-                $d = serialize(['u' => $usr, 'p' => $pwd, 'm' => '', 'timeZoneFailed' => 1, 'userTimeZone' => $_SESSION['USR_TIME_ZONE'], 'browserTimeZone' => $_SESSION['BROWSER_TIME_ZONE']]);
-                $urlLogin = $urlLogin . '?d=' . base64_encode($d);
+                if (strpos($_SERVER['HTTP_REFERER'], 'home/login') !== false) {
+                    $d = serialize(['u' => $usr, 'p' => $pwd, 'm' => '', 'timeZoneFailed' => 1, 'userTimeZone' => $_SESSION['USR_TIME_ZONE'], 'browserTimeZone' => $_SESSION['BROWSER_TIME_ZONE']]);
+                    $urlLogin = $urlLogin . '?d=' . base64_encode($d);
+                }
+
+                G::header('Location: ' . $urlLogin);
+                exit(0);
             }
-
-            G::header('Location: ' . $urlLogin);
-            exit(0);
         }
     }
+    /*----------------------------------********---------------------------------*/
 
     //Set data
     $aUser = $RBAC->userObj->load($_SESSION['USER_LOGGED']);
