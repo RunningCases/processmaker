@@ -1743,6 +1743,9 @@ function PMFGenerateOutputDocument ($outputID, $sApplication = null, $index = nu
     $aProperties['media'] = $aOD['OUT_DOC_MEDIA'];
     $aProperties['margins'] = array ('left' => $aOD['OUT_DOC_LEFT_MARGIN'],'right' => $aOD['OUT_DOC_RIGHT_MARGIN'],'top' => $aOD['OUT_DOC_TOP_MARGIN'],'bottom' => $aOD['OUT_DOC_BOTTOM_MARGIN']
     );
+    if ($aOD['OUT_DOC_PDF_SECURITY_ENABLED'] == '1') {
+        $aProperties['pdfSecurity'] = array('openPassword' => $aOD['OUT_DOC_PDF_SECURITY_OPEN_PASSWORD'], 'ownerPassword' => $aOD['OUT_DOC_PDF_SECURITY_OWNER_PASSWORD'], 'permissions' => $aOD['OUT_DOC_PDF_SECURITY_PERMISSIONS']);
+    }
     if (isset($aOD['OUT_DOC_REPORT_GENERATOR'])) {
         $aProperties['report_generator'] = $aOD['OUT_DOC_REPORT_GENERATOR'];
     }

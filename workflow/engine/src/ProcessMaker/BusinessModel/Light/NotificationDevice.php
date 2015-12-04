@@ -147,7 +147,8 @@ class NotificationDevice
      * @author Ronald Quenta <ronald.quenta@processmaker.com>
      *
      */
-    public function routeCaseNotification($currentUserId, $processId, $currentTaskId, $appFields, $aTasks, $nextIndex)
+    public function routeCaseNotification($currentUserId, $processId, $currentTaskId, $appFields, $aTasks,
+                                          $nextIndex, $currentDelIndex)
     {
         try {
             $response = array();
@@ -166,7 +167,7 @@ class NotificationDevice
 
                 $delIndex = null;
                 foreach ($nextIndex as $nIndex) {
-                    if($aTask['TAS_UID'] == $nIndex['TAS_UID']){
+                    if ($aTask['TAS_UID'] == $nIndex['TAS_UID']) {
                         $delIndex = $nIndex['DEL_INDEX'];
                         break;
                     }
@@ -184,10 +185,9 @@ class NotificationDevice
                 );
 
                 if ($userIds) {
-
                     $oNoti = new \NotificationDevice();
                     $devices = array();
-                    if (is_array($userIds)){
+                    if (is_array($userIds)) {
                         $devices = $oNoti->loadUsersArrayId($userIds);
                     } else {
                         $devices = $oNoti->loadByUsersId($userIds);
@@ -210,13 +210,15 @@ class NotificationDevice
                                 break;
                         }
                     }
-                    if (count($devicesAppleIds) > 0) {
+                    $isExistNextNotifications = $oNoti->isExistNextNotification($appFields['APP_UID'],
+                        $currentDelIndex);
+                    if (count($devicesAppleIds) > 0 && $isExistNextNotifications) {
                         $oNotification = new PushMessageIOS();
                         $oNotification->setSettingNotification();
                         $oNotification->setDevices($devicesAppleIds);
                         $response['apple'] = $oNotification->send($message, $data);
                     }
-                    if (count($devicesAndroidIds) > 0) {
+                    if (count($devicesAndroidIds) > 0 && $isExistNextNotifications) {
                         $oNotification = new PushMessageAndroid();
                         $oNotification->setSettingNotification();
                         $oNotification->setDevices($devicesAndroidIds);

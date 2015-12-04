@@ -194,10 +194,25 @@ if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc1
 /*----------------------------------********---------------------------------*/
 
 if ($timeZoneFailed) {
+    $dateTime = new \ProcessMaker\Util\DateTime();
+
+    $userTimeZoneOffset = $dateTime->getTimeZoneOffsetByTimeZoneId($userTimeZone);
+    $browserTimeZoneOffset = $dateTime->getTimeZoneOffsetByTimeZoneId($browserTimeZone);
+
+    $userUtcOffset = $dateTime->getUtcOffsetByTimeZoneOffset($userTimeZoneOffset);
+    $browserUtcOffset = $dateTime->getUtcOffsetByTimeZoneOffset($browserTimeZoneOffset);
+
+    $arrayTimeZoneId = $dateTime->getTimeZoneIdByTimeZoneOffset($browserTimeZoneOffset);
+
+    array_unshift($arrayTimeZoneId, 'false');
+    array_walk($arrayTimeZoneId, function (&$value, $key, $parameter) { $value = ['TZ_UID' => $value, 'TZ_NAME' => '(UTC' . $parameter . ') ' . $value]; }, $browserUtcOffset);
+
+    $_SESSION['_DBArray'] = ['TIME_ZONE' => $arrayTimeZoneId];
+
     $arrayData = [
         'USR_USERNAME'  => $userUsername,
         'USR_PASSWORD'  => $userPassword,
-        'USR_TIME_ZONE' => $userTimeZone,
+        'USR_TIME_ZONE' => '(UTC' . $userUtcOffset . ') ' . $userTimeZone,
         'BROWSER_TIME_ZONE' => $browserTimeZone
     ];
 
@@ -216,7 +231,12 @@ $translationsTable = $Translations->getTranslationEnvironments();
 
 $availableLangArray = array ();
 $availableLangArray [] = array ('LANG_ID' => 'char', 'LANG_NAME' => 'char' );
-$availableLangArray []  = array ('LANG_ID' => 'default', 'LANG_NAME' => G::LoadTranslation("ID_DEFAULT_LANGUAGE") );
+/*----------------------------------********---------------------------------*/
+$licensedFeatures = & PMLicensedFeatures::getSingleton();
+if ($licensedFeatures->verifyfeature('w2LL3o4NFNiaDRXcFFCYVpJS3Jsall5dmh0ZWtBTkdKR3ROS0VzWGdoLzNQYz0=')) {
+    $availableLangArray []  = array ('LANG_ID' => 'default', 'LANG_NAME' => G::LoadTranslation("ID_DEFAULT_LANGUAGE") );
+}
+/*----------------------------------********---------------------------------*/
 foreach ($translationsTable as $locale) {
     $row['LANG_ID'] = $locale['LOCALE'];
 
@@ -240,7 +260,12 @@ $oConf->loadConfig($obj, 'ENVIRONMENT_SETTINGS', '');
 
 if (isset($oConf->aConfig["login_defaultLanguage"]) && $oConf->aConfig["login_defaultLanguage"] != "") {
     $aFields["USER_LANG"] = $oConf->aConfig["login_defaultLanguage"];
-    $aFields["USER_LANG"] = "default";
+    /*----------------------------------********---------------------------------*/
+    $licensedFeatures = & PMLicensedFeatures::getSingleton();
+    if ($licensedFeatures->verifyfeature('w2LL3o4NFNiaDRXcFFCYVpJS3Jsall5dmh0ZWtBTkdKR3ROS0VzWGdoLzNQYz0=')) {
+        $aFields["USER_LANG"] = "default";
+    }
+    /*----------------------------------********---------------------------------*/
 } else {
     $myUrl = explode("/", $_SERVER["REQUEST_URI"]);
 
