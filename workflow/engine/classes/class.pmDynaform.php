@@ -377,7 +377,7 @@ class pmDynaform
                     }
                     $json->data = new stdClass();
                     $json->data->value = $links;
-                    $json->data->label = isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : "[]";
+                    $json->data->label = isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : (isset($this->fields["APP_DATA"][$json->name]) ? $this->fields["APP_DATA"][$json->name] : "[]");
                 }
                 if ($key === "type" && ($value === "file") && isset($json->variable)) {
                     //todo
