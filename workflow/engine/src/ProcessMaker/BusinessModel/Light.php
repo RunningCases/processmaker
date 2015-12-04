@@ -490,6 +490,7 @@ class Light
                     case '': //when this task is the Finish process
                     case 'nobody':
                         $userFields = $oDerivation->getUsersFullNameFromArray( $derive[$sKey]['USER_UID'] );
+                        $taskAss = array();
                         $taskAss['routeFinishFlag'] = true;
                         $user['userId'] = $derive[$sKey]['USER_UID'];
                         $user['userFullName'] = $userFields['USR_FULLNAME'];
