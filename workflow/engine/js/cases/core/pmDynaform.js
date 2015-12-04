@@ -66,6 +66,18 @@ $(window).load(function () {
     var data = jsondata;
     window.project = new PMDynaform.core.Project({
         data: data,
+        onBeforePrintHandler : function () {
+            var nodeClone = $(".pmdynaform-container").clone();
+            nodeClone.addClass("printing-form");
+            $("body").children().hide();
+            $("body").append(nodeClone );
+        },
+        onAfterPrintHandler : function () {
+            var nodeClone;
+            nodeClone = $(".printing-form");
+            nodeClone.remove();
+            $("body").children().show();
+        },
         formAjax: loadAjaxParams(),
         keys: {
             server: location.host,
