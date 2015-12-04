@@ -24,6 +24,7 @@ class pmDynaform
         $this->fields = $fields;
         $this->getDynaform();
         $this->getDynaforms();
+        $this->synchronizeSubDynaform();
         $this->getCredentials();
         if (!isset($this->fields["APP_UID"])) {
             $this->fields["APP_UID"] = null;
@@ -292,7 +293,16 @@ class pmDynaform
                     $json->data->label = "";
                     if (isset($this->fields["APP_DATA"][$json->name])) {
                         $json->data->value = $this->fields["APP_DATA"][$json->name];
-                        $json->data->label = $this->fields["APP_DATA"][$json->name];
+                        foreach ($json->options as $os) {
+                            if (($json->data->value === true || $json->data->value === 1 || $json->data->value === "1") &&
+                                    ($os->value === true || $os->value === 1 || $os->value === "1")) {
+                                $json->data->label = $os->label;
+                            }
+                            if (($json->data->value === false || $json->data->value === 0 || $json->data->value === "0") &&
+                                    ($os->value === false || $os->value === 0 || $os->value === "0")) {
+                                $json->data->label = $os->label;
+                            }
+                        }
                     }
                 }
                 if ($key === "type" && ($value === "checkgroup")) {
@@ -494,7 +504,7 @@ class pmDynaform
                 if ($key === "type" && ($value === "form") && $this->records != null) {
                     foreach ($this->records as $ri) {
                         if ($json->id === $ri["DYN_UID"] && !isset($json->jsonUpdate)) {
-                            $jsonUpdate = json_decode($ri["DYN_CONTENT"]);
+                            $jsonUpdate = G::json_decode($ri["DYN_CONTENT"]);
                             $jsonUpdate = $jsonUpdate->items[0];
                             $jsonUpdate->colSpan = $json->colSpan;
                             $jsonUpdate->jsonUpdate = true;
@@ -544,7 +554,7 @@ class pmDynaform
             $data[$json->variable === "" ? $json->id : $json->variable] = $json->options[0]->value;
         }
         if (isset($json->placeholder) && $json->placeholder !== "") {
-            $data[$json->variable === "" ? $json->id : $json->variable] = $json->placeholder;
+            $data[$json->variable === "" ? $json->id : $json->variable] = "";
         }
         if (isset($json->defaultValue) && $json->defaultValue !== "") {
             $data[$json->variable === "" ? $json->id : $json->variable] = $json->defaultValue;
@@ -901,6 +911,41 @@ class pmDynaform
         $file = str_replace("{javascript}", $javascrip, $file);
         $file = str_replace("{sys_skin}", SYS_SKIN, $file);
         return $file;
+    }
+
+    public function synchronizeSubDynaform()
+    {
+        if (!isset($this->record["DYN_CONTENT"])) {
+            return;
+        }
+        $json = G::json_decode($this->record["DYN_CONTENT"]);
+        foreach ($this->records as $ri) {
+            $jsonSearch = $this->jsonsf($json, $ri["DYN_UID"], "id");
+            if ($jsonSearch === null) {
+                continue;
+            }
+            $jsonUpdate = G::json_decode($ri["DYN_CONTENT"]);
+            $jsonUpdate = $jsonUpdate->items[0];
+            $jsonUpdate->colSpan = $jsonSearch->colSpan;
+            $this->jsonReplace($json, $ri["DYN_UID"], "id", $jsonUpdate);
+        }
+        $this->record["DYN_CONTENT"] = G::json_encode($json);
+    }
+
+    private function jsonReplace(&$json, $id, $for = "id", $update)
+    {
+        foreach ($json as $key => &$value) {
+            $sw1 = is_array($value);
+            $sw2 = is_object($value);
+            if ($sw1 || $sw2) {
+                $this->jsonReplace($value, $id, $for, $update);
+            }
+            if (!$sw1 && !$sw2) {
+                if ($key === $for && $id === $value) {
+                    $json = $update;
+                }
+            }
+        }
     }
 
     public function synchronizeVariable($processUid, $newVariable, $oldVariable)
