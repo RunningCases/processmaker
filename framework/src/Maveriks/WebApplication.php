@@ -444,7 +444,6 @@ class WebApplication
         define("PATH_CONTROLLERS", PATH_CORE . "controllers" . PATH_SEP);
         define("PATH_SERVICES_REST", PATH_CORE . "services" . PATH_SEP . "rest" . PATH_SEP);
 
-
         \Bootstrap::registerSystemClasses();
 
         $arraySystemConfiguration = \System::getSystemConfiguration();
@@ -497,8 +496,6 @@ class WebApplication
 
         $arraySystemConfiguration = \System::getSystemConfiguration('', '', SYS_SYS);
 
-        $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int)($arraySystemConfiguration['system_utc_time_zone']) == 1;
-
         //Do not change any of these settings directly, use env.ini instead
         ini_set('display_errors', $arraySystemConfiguration['display_errors']);
         ini_set('error_reporting', $arraySystemConfiguration['error_reporting']);
@@ -506,14 +503,12 @@ class WebApplication
         ini_set('default_charset', 'UTF-8'); //??
         ini_set('memory_limit', $arraySystemConfiguration['memory_limit']);
         ini_set('soap.wsdl_cache_enabled', $arraySystemConfiguration['wsdl_cache']);
-        ini_set('date.timezone', (isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__'])? 'UTC' : $arraySystemConfiguration['time_zone']); //Set Time Zone
 
         define('DEBUG_SQL_LOG', $arraySystemConfiguration['debug_sql']);
         define('DEBUG_TIME_LOG', $arraySystemConfiguration['debug_time']);
         define('DEBUG_CALENDAR_LOG', $arraySystemConfiguration['debug_calendar']);
         define('MEMCACHED_ENABLED',  $arraySystemConfiguration['memcached']);
         define('MEMCACHED_SERVER',   $arraySystemConfiguration['memcached_server']);
-        define('TIME_ZONE', ini_get('date.timezone'));
         define('SYS_SKIN', $arraySystemConfiguration['default_skin']);
 
         require_once (PATH_DB . SYS_SYS . "/db.php");
@@ -573,6 +568,18 @@ class WebApplication
 
         \Propel::init(PATH_CONFIG . "databases.php");
 
+        //Set Time Zone
+        /*----------------------------------********---------------------------------*/
+        if (\PMLicensedFeatures::getSingleton()->verifyfeature('oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=')) {
+            $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int)($arraySystemConfiguration['system_utc_time_zone']) == 1;
+        }
+        /*----------------------------------********---------------------------------*/
+
+        ini_set('date.timezone', (isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__'])? 'UTC' : $arraySystemConfiguration['time_zone']); //Set Time Zone
+
+        define('TIME_ZONE', ini_get('date.timezone'));
+
+        //Return
         return true;
     }
 
