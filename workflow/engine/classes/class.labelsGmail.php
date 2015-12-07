@@ -69,7 +69,109 @@ class labelsGmail
         return $messages;
     }
 
-    function setLabels($caseId, $index, $actualLastIndex, $unassigned=false){
+   public function setLabelsToPauseCase ($caseId, $index) {
+       require_once PATH_TRUNK . 'vendor' . PATH_SEP . 'google' . PATH_SEP . 'apiclient' . PATH_SEP . 'src' . PATH_SEP . 'Google' . PATH_SEP . 'autoload.php';
+       require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.pmGoogleApi.php");
+
+       $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
+       $appData = $Pmgmail->getDraftApp($caseId, $index);
+
+       foreach ($appData as $application){
+           $appNumber = $application['APP_NUMBER'];
+           $index = $application['DEL_INDEX'];
+           $threadUsr = $application['USR_UID'];
+           $proName = $application['APP_PRO_TITLE'];
+           $threadStatus = $application['DEL_THREAD_STATUS'];
+           $appStatus = $application['APP_STATUS'];
+       }
+
+       //Getting the privious User email
+       $oUsers = new \Users();
+       $usrData = $oUsers->loadDetails($threadUsr);
+       $mail = $usrData['USR_EMAIL'];
+
+       //The Subject to search the email
+       $subject = "[PM] " .$proName. " Case: ". $appNumber;
+
+       $pmGoogle = new PMGoogleApi();
+       $pmGoogle->setUser($mail);
+       $pmGoogle->setScope('https://www.googleapis.com/auth/gmail.modify');
+       $client = $pmGoogle->serviceClient();
+       $service = new Google_Service_Gmail($client);
+       $labelsIds = $this->getLabelsIds($service);
+
+       if($appStatus == 'DRAFT'){
+           $labelsToRemove = $labelsIds['Draft'];
+           $labelsToSearch = "*-draft";
+           $labelsToAdd = $labelsIds['Paused'];
+       }
+
+       if($appStatus == 'TO_DO'){
+           $labelsToRemove = $labelsIds['Inbox'];
+           $labelsToSearch = "*-inbox";
+           $labelsToAdd = $labelsIds['Paused'];
+       }
+
+       $q = "subject:('".preg_quote($subject, '-')."') label:('".$labelsToSearch."')";
+       $messageList = $this->listMessages($service, $mail, $q, $labelsToRemove);
+       foreach ($messageList as $message) {
+           $messageId = $message->getId();
+           $modifyResult = $this->modifyMessage($service, $mail, $messageId, array($labelsToAdd), array($labelsToRemove));
+       }
+   }
+
+    function setLabelsTounpauseCase ($caseId, $index) {
+        require_once PATH_TRUNK . 'vendor' . PATH_SEP . 'google' . PATH_SEP . 'apiclient' . PATH_SEP . 'src' . PATH_SEP . 'Google' . PATH_SEP . 'autoload.php';
+        require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.pmGoogleApi.php");
+
+        $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
+        $appData = $Pmgmail->getDraftApp($caseId, $index);
+
+        foreach ($appData as $application){
+            $appNumber = $application['APP_NUMBER'];
+            $index = $application['DEL_INDEX'];
+            $threadUsr = $application['USR_UID'];
+            $proName = $application['APP_PRO_TITLE'];
+            $threadStatus = $application['DEL_THREAD_STATUS'];
+            $appStatus = $application['APP_STATUS'];
+        }
+
+        //Getting the privious User email
+        $oUsers = new \Users();
+        $usrData = $oUsers->loadDetails($threadUsr);
+        $mail = $usrData['USR_EMAIL'];
+
+        //The Subject to search the email
+        $subject = "[PM] " .$proName. " Case: ". $appNumber;
+
+        $pmGoogle = new PMGoogleApi();
+        $pmGoogle->setUser($mail);
+        $pmGoogle->setScope('https://www.googleapis.com/auth/gmail.modify');
+        $client = $pmGoogle->serviceClient();
+        $service = new Google_Service_Gmail($client);
+        $labelsIds = $this->getLabelsIds($service);
+
+        if($appStatus == 'DRAFT'){
+            $labelsToRemove = $labelsIds['Paused'];
+            $labelsToSearch = "*-paused";
+            $labelsToAdd = $labelsIds['Draft'];
+        }
+
+        if($appStatus == 'TO_DO'){
+            $labelsToRemove = $labelsIds['Paused'];
+            $labelsToSearch = "*-paused";
+            $labelsToAdd = $labelsIds['Inbox'];
+        }
+
+        $q = "subject:('".preg_quote($subject, '-')."') label:('".$labelsToSearch."')";
+        $messageList = $this->listMessages($service, $mail, $q, $labelsToRemove);
+        foreach ($messageList as $message) {
+            $messageId = $message->getId();
+            $modifyResult = $this->modifyMessage($service, $mail, $messageId, array($labelsToAdd), array($labelsToRemove));
+        }
+    }
+
+   public function setLabels($caseId, $index, $actualLastIndex, $unassigned=false){
         //First getting the actual thread data
         $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
         $appData = $Pmgmail->getDraftApp($caseId, $index);
@@ -80,9 +182,10 @@ class labelsGmail
             $threadUsr = $application['USR_UID'];
             $proName = $application['APP_PRO_TITLE'];
             $threadStatus = $application['DEL_THREAD_STATUS'];
+            $appStatus = $application['APP_STATUS'];
         }
 
-        if($threadStatus == 'CLOSED' || $unassigned == true){
+        if($threadStatus == 'CLOSED' || $unassigned == true) {
             //Getting the privious User email
             $oUsers = new \Users();
 
@@ -102,44 +205,20 @@ class labelsGmail
             $client = $pmGoogle->serviceClient();
 
             $service = new Google_Service_Gmail($client);
-
-            //getting all the label's ids of the user's mail
-            $listlabels = $this->listLabels($service);
-
-            foreach ($listlabels as $label) {
-                $labId =  $label->getId();
-                $labName = $label->getName();
-                switch($labName){
-                    case "* Inbox":
-                        $idLabInbox = $labId;
-                        break;
-                    case "* Participated":
-                        $idLabParticipated = $labId;
-                        break;
-                    case "* Unassigned":
-                        $idLabUnassigned = $labId;
-                        break;
-                    case "* Draft":
-                        $idLabDraft = $labId;
-                        break;
-                    case "* Paused":
-                        $idLabPaused = $labId;
-                        break;
-                }
-            }
+            $labelsIds = $this->getLabelsIds($service);
 
             if($actualLastIndex == 0){
-                $labelsToRemove = $idLabDraft;
+                $labelsToRemove = $labelsIds['Draft'];
                 $labelsToSearch = "*-draft";
-                $labelsToAdd = $idLabParticipated;
+                $labelsToAdd = $labelsIds['Participated'];
             } else if ( ($actualLastIndex == -1) && ($unassigned == true) ){ //Unassigned
-                $labelsToRemove = $idLabUnassigned;
+                $labelsToRemove = $labelsIds['Unassigned'];
                 $labelsToSearch = "*-unassigned";
-                $labelsToAdd = $idLabInbox;
+                $labelsToAdd = $labelsIds['Inbox'];
             } else if($actualLastIndex >= 1) {
-                $labelsToRemove = $idLabInbox;
+                $labelsToRemove = $labelsIds['Inbox'];
                 $labelsToSearch = "*-inbox";
-                $labelsToAdd = $idLabParticipated;
+                $labelsToAdd = $labelsIds['Participated'];
             }
 
             //Searching the email in the user's mail
@@ -207,5 +286,32 @@ class labelsGmail
     	return $count . ' labels successfully deleted.';
     }
 
+
+    private function getLabelsIds($service) {
+        $result = array();
+        $listlabels = $this->listLabels($service);
+        foreach ($listlabels as $label) {
+            $labId =  $label->getId();
+            $labName = $label->getName();
+            switch($labName){
+                case "* Inbox":
+                    $result['Inbox'] = $labId;
+                    break;
+                case "* Participated":
+                    $result['Participated'] = $labId;
+                    break;
+                case "* Unassigned":
+                    $result['Unassigned'] = $labId;
+                    break;
+                case "* Draft":
+                    $result['Draft'] = $labId;
+                    break;
+                case "* Paused":
+                    $result['Paused'] = $labId;
+                    break;
+            }
+        }
+        return $result;
+    }
 }
 

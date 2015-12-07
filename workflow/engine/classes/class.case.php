@@ -4214,6 +4214,11 @@ class Cases
         $oListPaused = new ListPaused();
         $oListPaused->create($data);
         /*----------------------------------********---------------------------------*/
+
+        /*----------------------------------********---------------------------------*/
+        $pmGmail = new \ProcessMaker\BusinessModel\Pmgmail();
+        $pmGmail->modifyMailToPauseCase($aData['APP_UID'], $aData['APP_DEL_INDEX']);
+        /*----------------------------------********---------------------------------*/
     }
 
     /*
@@ -4309,6 +4314,11 @@ class Cases
         $aData = array_merge($aFieldsDel, $aData);
         $oListPaused = new ListPaused();
         $oListPaused->remove($sApplicationUID, $iDelegation, $aData);
+        /*----------------------------------********---------------------------------*/
+
+        /*----------------------------------********---------------------------------*/
+        $pmGmail = new \ProcessMaker\BusinessModel\Pmgmail();
+        $pmGmail->modifyMailToUnpauseCase($aData['APP_UID'], $aData['DEL_INDEX']);
         /*----------------------------------********---------------------------------*/
     }
 
@@ -7328,5 +7338,6 @@ class Cases
         }
         return $processList;
     }
+
 }
 
