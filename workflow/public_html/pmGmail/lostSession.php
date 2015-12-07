@@ -4,7 +4,6 @@ if (!isset($_SESSION['USER_LOGGED'])) {
 	die( '<script type="text/javascript">
 		try
 		{
-			alert("lostSession");
 				var dataToSend = {
 					"action": "credentials",
 					"operation": "refreshPmSession",
