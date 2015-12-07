@@ -38,7 +38,7 @@ $enablePMGmail = false;
 G::LoadClass( "pmDrive" );
 $pmDrive = new PMDrive();
 $enablePMGmail = $pmDrive->getStatusService();
-if( $_SESSION['gmail'] === 1 && !empty($enablePMGmail) && $enablePMGmail==1 ){
+if(key_exists('gmail', $_SESSION) && $_SESSION['gmail'] === 1 && !empty($enablePMGmail) && $enablePMGmail==1 ){
 	//$_SESSION['gmail'] = 0;
 	$mUrl = '/sys'. $_SESSION['WORKSPACE'] .'/en/neoclassic/cases/cases_Open?APP_UID='.$caseId.'&DEL_INDEX='.$actualIndex.'&action=sent';
 } else{
