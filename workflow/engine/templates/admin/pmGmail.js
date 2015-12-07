@@ -91,6 +91,7 @@ Ext.onReady(function(){
                         if (checked) {
                             Ext.getCmp('typeAuthentication').enable();
                             Ext.getCmp('typeAuthentication').show();
+                            Ext.getCmp('typeAuthentication').clearValue();
                         } else {
                             Ext.MessageBox.confirm(
                                 _('ID_CONFIRM'),
