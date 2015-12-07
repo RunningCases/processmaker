@@ -564,6 +564,32 @@ class PMScript
                                 }
                             }
                         }
+                        if (isset($this->aFields[$var]) && is_string($this->aFields[$var])) {
+                            $varInfo = $variableModule->getVariableTypeByName($_SESSION['PROCESS'], $var);
+                            $options = G::json_decode($varInfo["VAR_ACCEPTED_VALUES"]);
+                            $no = count($options);
+                            for ($io = 0; $io < $no; $io++) {
+                                if ($options[$io]->value === $this->aFields[$var]) {
+                                    $this->aFields[$var . "_label"] = $options[$io]->label;
+                                }
+                            }
+                            if ($varInfo["VAR_DBCONNECTION"] !== "" && $varInfo["VAR_DBCONNECTION"] !== "none" && $varInfo["VAR_SQL"] !== "") {
+                                try {
+                                    $cnn = Propel::getConnection($varInfo["VAR_DBCONNECTION"]);
+                                    $stmt = $cnn->createStatement();
+                                    $sql = G::replaceDataField($varInfo["VAR_SQL"], $this->aFields);
+                                    $rs = $stmt->executeQuery($sql, \ResultSet::FETCHMODE_NUM);
+                                    while ($rs->next()) {
+                                        $row = $rs->getRow();
+                                        if ($row[0] === $this->aFields[$var]) {
+                                            $this->aFields[$var . "_label"] = isset($row[1]) ? $row[1] : $row[0];
+                                        }
+                                    }
+                                } catch (Exception $e) {
+                                    
+                                }
+                            }
+                        }
                     }
                 }
             }            
