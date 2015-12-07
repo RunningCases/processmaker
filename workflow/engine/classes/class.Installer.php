@@ -235,17 +235,15 @@ class Installer
             fclose($fp);
 
             /*----------------------------------********---------------------------------*/
-            //if (PMLicensedFeatures::getSingleton()->verifyfeature('oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=')) {
-                //Generate the env.ini file
-                $envIniFile = $path_site . 'env.ini';
-                $content = 'system_utc_time_zone = 1' . "\n";
+            //Generate the env.ini file
+            $envIniFile = $path_site . 'env.ini';
+            $content = 'system_utc_time_zone = 1' . "\n";
 
-                $fp = @fopen($envIniFile, 'w');
-                $this->log('Create: ' . $envIniFile . '  => ' . ((!$fp)? $fp : 'OK') . "\n", $fp === false);
-                $ff = @fputs($fp, $content, strlen($content));
-                $this->log('Write: ' . $envIniFile . '  => ' . ((!$ff)? $ff : 'OK') . "\n", $ff === false);
-                fclose($fp);
-            //}
+            $fp = @fopen($envIniFile, 'w');
+            $this->log('Create: ' . $envIniFile . '  => ' . ((!$fp)? $fp : 'OK') . "\n", $fp === false);
+            $ff = @fputs($fp, $content, strlen($content));
+            $this->log('Write: ' . $envIniFile . '  => ' . ((!$ff)? $ff : 'OK') . "\n", $ff === false);
+            fclose($fp);
             /*----------------------------------********---------------------------------*/
 
             //Set data
