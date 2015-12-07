@@ -46,7 +46,7 @@ class GmailIntegration extends Api
     {
         try {
             $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
-            $response = $Pmgmail->getAppData($app_uid);
+            $response = $Pmgmail->getDraftApp($app_uid);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));

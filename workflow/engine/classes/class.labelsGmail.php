@@ -72,7 +72,7 @@ class labelsGmail
     function setLabels($caseId, $index, $actualLastIndex, $unassigned=false){
         //First getting the actual thread data
         $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
-        $appData = $Pmgmail->getAppData($caseId, $index);
+        $appData = $Pmgmail->getDraftApp($caseId, $index);
 
         foreach ($appData as $application){
             $appNumber = $application['APP_NUMBER'];
