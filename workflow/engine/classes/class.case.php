@@ -4332,7 +4332,10 @@ class Cases
         $oCriteria = new Criteria('workflow');
         $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
         $oCriteria->add(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL);
-        if (AppDelegationPeer::doCount($oCriteria) == 1) {
+        $resAppDel = AppDelegationPeer::doCount($oCriteria);
+
+        $this->CloseCurrentDelegation($sApplicationUID, $iIndex);
+        if ($resAppDel == 1) {
             $aFields['APP_STATUS'] = 'CANCELLED';
             $oApplication->update($aFields);
 
@@ -4343,7 +4346,6 @@ class Cases
             $oReportTables->updateTables($aFields['PRO_UID'], $aFields['APP_UID'], $aFields['APP_NUMBER'], $aFields['APP_DATA']);
             $addtionalTables->updateReportTables($aFields['PRO_UID'], $aFields['APP_UID'], $aFields['APP_NUMBER'], $aFields['APP_DATA'], $aFields['APP_STATUS']);
         }
-        $this->CloseCurrentDelegation($sApplicationUID, $iIndex);
         $oAppDel = new AppDelegation();
         $oAppDel->Load($sApplicationUID, $iIndex);
         $aAppDel = $oAppDel->toArray(BasePeer::TYPE_FIELDNAME);
