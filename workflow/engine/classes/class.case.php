@@ -5493,6 +5493,29 @@ class Cases
                             $sCc = $cc;
                         }
                         break;
+                    case "MULTIPLE_INSTANCE":
+                        $to = null;
+                        $cc = null;
+                        $sw = 1;
+                        $oDerivation = new Derivation();
+                        $userFields = $oDerivation->getUsersFullNameFromArray($oDerivation->getAllUsersFromAnyTask($aTask["TAS_UID"]));
+                        if(isset($userFields)){
+                           foreach($userFields as $row){
+                                $toAux = (
+                                        (($row["USR_FIRSTNAME"] != "") || ($row["USR_LASTNAME"] != "")) ?
+                                                $row["USR_FIRSTNAME"] . " " . $row["USR_LASTNAME"] . " " : ""
+                                        ) . "<" . $row["USR_EMAIL"] . ">";
+                                if ($sw == 1) {
+                                    $to = $toAux;
+                                    $sw = 0;
+                                } else {
+                                    $cc = $cc . (($cc != null) ? "," : null) . $toAux;
+                                }
+                           }
+                           $sTo = $to;
+                           $sCc = $cc;
+                        }
+                        break;
                     default:
                         if (isset($aTask["USR_UID"]) && !empty($aTask["USR_UID"])) {
                             $aUser = $oUser->load($aTask["USR_UID"]);
