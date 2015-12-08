@@ -173,7 +173,6 @@ $oHeadPublisher->assign( 'readerFields', $readerFields ); //sending the fields t
 $oHeadPublisher->assign( 'reassignColumns', $reassignColumns ); //sending the columns to display in grid
 $oHeadPublisher->assign( 'action', $action ); //sending the action to make
 $oHeadPublisher->assign( 'urlProxy', $urlProxy ); //sending the urlProxy to make
-$oHeadPublisher->assign( 'caseListBuilder', $caseListBuilder ); //sending the caseListBuilder
 $oHeadPublisher->assign( 'PMDateFormat', $dateFormat ); //sending the fields to get from proxy
 $oHeadPublisher->assign( 'statusValues', $status ); //Sending the listing of status
 $oHeadPublisher->assign( 'processValues', $processes ); //Sending the listing of processes
