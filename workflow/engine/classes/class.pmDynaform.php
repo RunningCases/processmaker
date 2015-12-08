@@ -360,17 +360,21 @@ class pmDynaform
                     /*----------------------------------********---------------------------------*/
                     $oCriteria = new Criteria("workflow");
                     $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
-                    $oCriteria->addSelectColumn(AppDocumentPeer::DOC_VERSION);
+                    $oCriteria->addSelectColumn(AppDocumentPeer::DOC_VERSION);        
+                    $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
                     /*----------------------------------********---------------------------------*/
                     if ($enablePMGmail) {
                         $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_DRIVE_DOWNLOAD);
                     }
-                    /*----------------------------------********---------------------------------*/
+                    /*----------------------------------********---------------------------------*/      
+                    $oCriteria->addJoin(AppDocumentPeer::APP_DOC_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN); 
                     $oCriteria->add(AppDocumentPeer::APP_UID, $this->fields["APP_DATA"]["APPLICATION"]);
                     $oCriteria->add(AppDocumentPeer::APP_DOC_FIELDNAME, $json->name);
+                    $oCriteria->add(ContentPeer::CON_CATEGORY, 'APP_DOC_FILENAME');
                     $rs = AppDocumentPeer::doSelectRS($oCriteria);
                     $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                     $links = array();
+                    $labelsFromDb = array();
                     while ($rs->next()) {
                         $row = $rs->getRow();
                         $linkDownload = "../cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"];
@@ -384,10 +388,16 @@ class pmDynaform
                         }
                         /*----------------------------------********---------------------------------*/
                         array_push($links, $linkDownload);
+                        array_push($labelsFromDb, $row["CON_VALUE"]);
                     }
                     $json->data = new stdClass();
-                    $json->data->value = $links;
-                    $json->data->label = isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : (isset($this->fields["APP_DATA"][$json->name]) ? $this->fields["APP_DATA"][$json->name] : "[]");
+                    $json->data->value = $links;    
+
+                    if(sizeof($labelsFromDb)) {
+                        $json->data->label = G::json_encode($labelsFromDb);
+                    } else {
+                        $json->data->label = isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : (isset($this->fields["APP_DATA"][$json->name]) ? $this->fields["APP_DATA"][$json->name] : "[]");
+                    }
                 }
                 if ($key === "type" && ($value === "file") && isset($json->variable)) {
                     //todo
