@@ -170,26 +170,24 @@ class ListParticipatedLast extends BaseListParticipatedLast
                 $criteria->add(ListParticipatedLastPeer::APP_UID, $app_uid);
                 $criteria->add(ListParticipatedLastPeer::USR_UID, $usr_uid);
                 $criteria->add(ListParticipatedLastPeer::DEL_INDEX, $del_index);
-                
+
                 if(!$this->isTheOne($app_uid, $usr_uid) || $force) {
                     $result = ListParticipatedLastPeer::doDelete($criteria);
+                    $flagDelete = true;
                 }
-
-                $flagDelete = true;
             } else {
                 $criteria = new Criteria("workflow");
 
                 $criteria->add(ListParticipatedLastPeer::APP_UID, $app_uid);
                 $criteria->add(ListParticipatedLastPeer::USR_UID, $usr_uid);
-
                 $rsCriteria = ListParticipatedLastPeer::doSelectRS($criteria);
 
                 if ($rsCriteria->next()) {
                     $criteria2 = clone $criteria;
-                    if(!$this->isTheOne($app_uid, $usr_uid) || $force) { 
+                    if(!$this->isTheOne($app_uid, $usr_uid) || $force) {
                         $result = ListParticipatedLastPeer::doDelete($criteria2);
+                        $flagDelete = true;
                     }
-                    $flagDelete = true;
                 }
             }
 
