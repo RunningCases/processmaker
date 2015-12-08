@@ -660,8 +660,9 @@ class Bpmn extends Handler
                 $arrayEventType = array("START", "END", "INTERMEDIATE");
 
                 $arrayAux = array(
-                    array("eventUid" => $bpmnFlow["FLO_ELEMENT_ORIGIN"], "eventMarker" => "MESSAGETHROW"),
-                    array("eventUid" => $bpmnFlow["FLO_ELEMENT_DEST"],   "eventMarker" => "MESSAGECATCH")
+                    array("eventUid" => $bpmnFlow["FLO_ELEMENT_ORIGIN"], "eventMarker" => array("MESSAGETHROW",
+                        "EMAIL")),
+                    array("eventUid" => $bpmnFlow["FLO_ELEMENT_DEST"],   "eventMarker" => array("MESSAGECATCH"))
                 );
 
                 foreach ($arrayAux as $value) {
@@ -670,7 +671,7 @@ class Bpmn extends Handler
                     $criteria->addSelectColumn(\BpmnEventPeer::EVN_UID);
                     $criteria->add(\BpmnEventPeer::EVN_UID, $value["eventUid"], \Criteria::EQUAL);
                     $criteria->add(\BpmnEventPeer::EVN_TYPE, $arrayEventType, \Criteria::IN);
-                    $criteria->add(\BpmnEventPeer::EVN_MARKER, $value["eventMarker"], \Criteria::EQUAL);
+                    $criteria->add(\BpmnEventPeer::EVN_MARKER, $value["eventMarker"], \Criteria::IN);
 
                     $rsCriteria = \BpmnEventPeer::doSelectRS($criteria);
 
