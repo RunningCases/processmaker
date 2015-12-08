@@ -206,14 +206,14 @@ if ($timeZoneFailed) {
     $arrayTimeZoneId = $dateTime->getTimeZoneIdByTimeZoneOffset($browserTimeZoneOffset);
 
     array_unshift($arrayTimeZoneId, 'false');
-    array_walk($arrayTimeZoneId, function (&$value, $key, $parameter) { $value = ['TZ_UID' => $value, 'TZ_NAME' => '(UTC' . $parameter . ') ' . $value]; }, $browserUtcOffset);
+    array_walk($arrayTimeZoneId, function (&$value, $key, $parameter) { $value = ['TZ_UID' => $value, 'TZ_NAME' => '(UTC ' . $parameter . ') ' . $value]; }, $browserUtcOffset);
 
     $_SESSION['_DBArray'] = ['TIME_ZONE' => $arrayTimeZoneId];
 
     $arrayData = [
         'USR_USERNAME'  => $userUsername,
         'USR_PASSWORD'  => $userPassword,
-        'USR_TIME_ZONE' => '(UTC' . $userUtcOffset . ') ' . $userTimeZone,
+        'USR_TIME_ZONE' => '(UTC ' . $userUtcOffset . ') ' . $userTimeZone,
         'BROWSER_TIME_ZONE' => $browserTimeZone
     ];
 

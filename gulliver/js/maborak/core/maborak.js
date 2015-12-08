@@ -807,7 +807,7 @@ return len;};var stripNonNumeric=function(str){str+='';var rgx=/^\d|\.|-$/;var o
 return out;};function inputDocumentVerifySize(inpDocMaxFileSize,file)
 {try{return(file.files[0].size<=inpDocMaxFileSize)?1:0;}catch(e){return 1;}}
 function getBrowserTimeZoneOffset()
-{var d=new Date();var tzOffset=d.getTimezoneOffset();return((tzOffset>0)?"-":"")+(tzOffset*60);}
+{return-1*((new Date()).getTimezoneOffset()*60);}
 var TimeToFade=1000.0;function fade(eid,inOut){inOut=(typeof(inOut)!='undefined')?true:false;var element=document.getElementById(eid);if(element==null)
 return;if(element.FadeState==null)
 {if(element.style.opacity==null||element.style.opacity==''||element.style.opacity=='1')

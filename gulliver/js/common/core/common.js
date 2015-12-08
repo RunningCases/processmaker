@@ -2259,9 +2259,6 @@ function inputDocumentVerifySize(inpDocMaxFileSize, file)
 
 function getBrowserTimeZoneOffset()
 {
-    var d = new Date();
-    var tzOffset = d.getTimezoneOffset();
-
-    return ((tzOffset > 0)? "-" : "") + (tzOffset * 60);
+    return -1 * ((new Date()).getTimezoneOffset() * 60);
 }
 
