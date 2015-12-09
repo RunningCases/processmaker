@@ -789,7 +789,7 @@ class Derivation
                    $continue = true;
                    $row = $rsCriFlow->getRow();
                 }else{
-                    $rsCriFlow = $bpmnFlow->getElementOriginToElementDest($row["FLO_ELEMENT_DEST"],$routeCondition);
+                    $rsCriFlow = $bpmnFlow->getElementOriginToElementDest($row["FLO_ELEMENT_DEST"],$routeCondition,"bpmnEvent");
                     $routeCondition = '';
                     $continue = false;
                     if($rsCriFlow->next()){
