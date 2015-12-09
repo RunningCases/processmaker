@@ -24,7 +24,7 @@ class ListInbox extends BaseListInbox
      *
      */
     public function create($data, $isSelfService = false)
-    { 
+    {
         $con = Propel::getConnection( ListInboxPeer::DATABASE_NAME );
         try {
             if(isset($data['APP_TITLE'])) {

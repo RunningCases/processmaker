@@ -4492,6 +4492,7 @@ class Cases
         $iIndex = $oAppDelegation->createAppDelegation(
                 $aFieldsDel['PRO_UID'], $aFieldsDel['APP_UID'], $aFieldsDel['TAS_UID'], $aFieldsDel['USR_UID'], $aFieldsDel['DEL_THREAD']
         );
+        $newDelIndex = $iIndex;
         $aData = array();
         $aData['APP_UID'] = $aFieldsDel['APP_UID'];
         $aData['DEL_INDEX'] = $iIndex;
@@ -4532,14 +4533,12 @@ class Cases
         }
 
         /*----------------------------------********---------------------------------*/
-        $oCriteria = new Criteria('workflow');
-        $oCriteria->add(ListParticipatedLastPeer::APP_UID, $aData['APP_UID']);
-        $oCriteria->add(ListParticipatedLastPeer::USR_UID, $sUserUID);
-        $oCriteria->add(ListParticipatedLastPeer::DEL_INDEX, $iDelegation);
-        ListParticipatedLastPeer::doDelete($oCriteria);
+        $participated = new ListParticipatedLast();
+        $participated->remove($aData['APP_UID'], $newUserUID, $iDelegation);
 
         $aFieldsDel = array_merge($aData, $aFieldsDel);
         $aFieldsDel['USR_UID'] = $newUserUID;
+        $aFieldsDel['DEL_INDEX'] = $newDelIndex;
         $inbox = new ListInbox();
         $inbox->newRow($aFieldsDel, $sUserUID);
 
