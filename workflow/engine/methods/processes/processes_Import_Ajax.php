@@ -117,7 +117,12 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
     $importer->setSourceFromGlobals("PROCESS_FILENAME");
 
     try {
-        $prjUid = $importer->import();
+        $prjUid = $importer->import(); 
+
+        G::LoadClass( 'Process' );
+        $oProcess = new Process();
+        $processData = $oProcess->load( $prjUid );
+        $proType = $processData["PRO_TYPE"]; 
 
         $result = array(
             "success" => true,
@@ -125,7 +130,8 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
             "ExistProcessInDatabase" => 0,
             "ExistGroupsInDatabase" => 0,
             "sNewProUid" => $prjUid,
-            "project_type" => "bpmn"
+            "project_type" => "bpmn", 
+            "project_type_aux" => $proType
         );
     } catch (Exception $e) {
         $result = array(
@@ -181,6 +187,11 @@ if (isset($_POST["PRO_FILENAME"]) &&
 
     try {
         $prjUid = $importer->import($option, $optionGroup);
+        
+        G::LoadClass( 'Process' );
+        $oProcess = new Process();
+        $processData = $oProcess->load( $prjUid );
+        $proType = $processData["PRO_TYPE"];    
 
         $result = array(
             "success" => true,
@@ -188,7 +199,8 @@ if (isset($_POST["PRO_FILENAME"]) &&
             "ExistProcessInDatabase" => 0,
             "ExistGroupsInDatabase" => 0,
             "sNewProUid" => $prjUid,
-            "project_type" => "bpmn"
+            "project_type" => "bpmn", 
+            "project_type_aux" => $proType
         );
     } catch (Exception $e) {
         $result = array(

@@ -1169,7 +1169,10 @@ importProcessExistProcess = function()
                     var sNewProUid = resp_.sNewProUid;
 
                     if (resp_.ExistGroupsInDatabase == 0) {
-                        if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
+                        if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {      
+                            if (typeof(resp_.project_type_aux) != "undefined" && resp_.project_type_aux == "NORMAL") {  
+                                importProcessCallbackFile = false;
+                            }
                             var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
                             openWindowIfIE(goTo + sNewProUid);
                         } else {
@@ -1313,7 +1316,10 @@ importProcess = function()
                                                   if (resp_.ExistGroupsInDatabase == "0") {
                                                       var sNewProUid = resp_.sNewProUid;
 
-                                                      if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
+                                                      if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") { 
+                                                          if (typeof(resp_.project_type_aux) != "undefined" && resp_.project_type_aux == "NORMAL") {  
+                                                              importProcessCallbackFile = false;
+                                                          }      
                                                           var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
                                                           openWindowIfIE(goTo + sNewProUid);
                                                       } else {
