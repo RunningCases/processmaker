@@ -1194,10 +1194,17 @@ class DynaForm
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
                 $d = @unserialize($row["HISTORY_DATA"]);
+                $jsonData = "";
+                if (isset($d["DYN_CONTENT_HISTORY"])) {
+                    $decode = base64_decode($d["DYN_CONTENT_HISTORY"], true);
+                    if ($decode !== false) {
+                        $jsonData = $decode;
+                    }
+                }
                 $data[] = array(
                     "history_date" => $row["HISTORY_DATE"],
                     "dyn_uid" => $row["DYN_UID"],
-                    "dyn_content_history" => isset($d["DYN_CONTENT_HISTORY"]) ? $d["DYN_CONTENT_HISTORY"] : ""
+                    "dyn_content_history" => $jsonData
                 );
             }
             return $data;

@@ -30,7 +30,10 @@ class pmDynaform
             $this->fields["APP_UID"] = null;
         }
         if (isset($this->fields["APP_DATA"]["DYN_CONTENT_HISTORY"])) {
-            $this->record["DYN_CONTENT"] = $this->fields["APP_DATA"]["DYN_CONTENT_HISTORY"];
+            $decode = base64_decode($this->fields["APP_DATA"]["DYN_CONTENT_HISTORY"], true);
+            if ($decode !== false) {
+                $this->record["DYN_CONTENT"] = $decode;
+            }
         }
     }
 
