@@ -11,7 +11,7 @@ class labelsGmail
                 $labels = array_merge($labels, $labelsResponse->getLabels());
             }
         } catch (Exception $e) {
-            print 'An error occurred: ' . $e->getMessage();
+            print G::LoadTranslation("ID_PMGMAIL_GENERAL_ERROR") . $e->getMessage();
         }
         return $labels;
     }
@@ -33,7 +33,7 @@ class labelsGmail
         try {
             $message = $service->users_messages->modify($userId, $messageId, $mods);
         } catch (Exception $e) {
-            print 'An error occurred: ' . $e->getMessage();
+            print G::LoadTranslation("ID_PMGMAIL_GENERAL_ERROR") . $e->getMessage();
         }
     }
 
@@ -62,7 +62,7 @@ class labelsGmail
                     $messages = array_merge($messages, $messagesResponse->getMessages());
                 }
             } catch (Exception $e) {
-                print 'An error occurred: ' . $e->getMessage();
+                print G::LoadTranslation("ID_PMGMAIL_GENERAL_ERROR") . $e->getMessage();
             }
         } while ($pageToken);
 
@@ -248,7 +248,7 @@ class labelsGmail
     	try {
     		$service->users_labels->delete($user, $labelId);
     	} catch (Exception $e) {
-    		error_log('An error deleting gmail labels occurred: '.$e->getMessage());
+    		error_log(G::LoadTranslation("ID_PMGMAIL_GENERAL_ERROR") . $e->getMessage());
     	}
     }
     

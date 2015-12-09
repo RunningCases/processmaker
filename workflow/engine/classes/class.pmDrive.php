@@ -144,7 +144,7 @@ class PMDrive extends PMGoogleApi
             $createdFolder = $service->files->insert($file);
         } catch (Exception $e) {
             $createdFolder = null;
-            error_log ( "An error occurred: " . $e->getMessage());
+            error_log ( G::LoadTranslation("ID_MSG_AJAX_FAILURE") . $e->getMessage());
         }
         return $createdFolder;
     }
@@ -187,7 +187,7 @@ class PMDrive extends PMGoogleApi
             );
 
         } catch (Exception $e) {
-            error_log( "An error occurred: " . $e->getMessage());
+            error_log( G::LoadTranslation("ID_MSG_AJAX_FAILURE") . $e->getMessage());
         }
         return $createdFile;
     }
@@ -220,13 +220,13 @@ class PMDrive extends PMGoogleApi
                 if ($httpRequest->getResponseHttpCode() == 200) {
                     $response =  $httpRequest->getResponseBody();
                 } else {
-                    error_log( "An error occurred. ");
+                    error_log(G::LoadTranslation("ID_MSG_AJAX_FAILURE"));
                 }
             } else {
-                error_log( "The file doesn't have any content stored on Drive.");
+                error_log(G::LoadTranslation("ID_PMDRIVE_NO_CONTENT_IN_FILE"));
             }
         } catch (Exception $e) {
-            error_log( "An error occurred: " . $e->getMessage());
+            error_log( G::LoadTranslation("ID_MSG_AJAX_FAILURE") . $e->getMessage());
         }
         return $response;
     }
@@ -262,7 +262,7 @@ class PMDrive extends PMGoogleApi
             );
 
         } catch (Exception $e) {
-            error_log('permission error: ' . $e->getMessage());
+            error_log(G::LoadTranslation("ID_MSG_AJAX_FAILURE") . $e->getMessage());
         }
         return $permission;
     }
