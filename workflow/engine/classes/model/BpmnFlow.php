@@ -117,7 +117,7 @@ class BpmnFlow extends BaseBpmnFlow
         return $flow;
     }
     
-    public static function getElementOriginToElementDest($floOrigin, $floCondition = ''){
+    public static function getElementOriginToElementDest($floOrigin, $floCondition = '', $floDestType = ''){
         $criFlow = new Criteria("workflow");
         $criFlow->addSelectColumn(BpmnFlowPeer::FLO_ELEMENT_ORIGIN);
         $criFlow->addSelectColumn(BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE);
@@ -127,6 +127,9 @@ class BpmnFlow extends BaseBpmnFlow
         $criFlow->add(BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $floOrigin, Criteria::EQUAL);
         if($floCondition != ''){
             $criFlow->add(BpmnFlowPeer::FLO_CONDITION, $floCondition, Criteria::EQUAL);
+        }
+        if($floDestType != ''){
+            $criFlow->add(BpmnFlowPeer::FLO_ELEMENT_DEST_TYPE, $floDestType, Criteria::EQUAL);
         }
         $rsCriFlow = RoutePeer::doSelectRS($criFlow);
         $rsCriFlow->setFetchmode(ResultSet::FETCHMODE_ASSOC);
