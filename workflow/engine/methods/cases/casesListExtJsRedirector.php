@@ -18,7 +18,7 @@ if (isset( $_GET['ux'] )) {
         default:
             $url = 'casesListExtJs';
     }
-} else if( isset( $_GET['gmail']) && !empty($enablePMGmail) && $enablePMGmail==1 ){
+} else if( key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && !empty($enablePMGmail) && $enablePMGmail==1 ){
     $url = 'derivatedGmail';
 } else {
     $url = 'casesListExtJs';
