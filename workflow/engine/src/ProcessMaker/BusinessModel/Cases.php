@@ -2469,7 +2469,7 @@ class Cases
             }
             if (count($processList) == 0) {
                 $processList['success'] = 'failure';
-                $processList['message'] = G::LoadTranslation('ID_USER_PROCESS_NOT_START');
+                $processList['message'] = G::LoadTranslation('ID_NOT_HAVE_BOOKMARKED_PROCESSES');
             }
 
             return $processList;
