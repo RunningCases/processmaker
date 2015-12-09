@@ -974,6 +974,8 @@ class Derivation
      */
     function derivate(array $currentDelegation, array $nextDelegations, $removeList = true)
     {
+        $arrayDerivationResult = [];
+
         //define this...
         if (! defined( 'TASK_FINISH_PROCESS' )) {
             define( 'TASK_FINISH_PROCESS', - 1 );
@@ -1081,7 +1083,7 @@ class Derivation
                         $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
                         if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())) {
                             //Throw Events
-                            $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);  
+                            $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
                         } else {
                             $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true, $nextDel['ROU_CONDITION']);
                         }
@@ -1177,10 +1179,14 @@ class Derivation
 
                                     $flagUpdateCounters = false;
                                     $removeList = false;
+
+                                    $arrayDerivationResult[] = ['DEL_INDEX' => $iNewDelIndex, 'TAS_UID' => $nextDelAux['TAS_UID'], 'USR_UID' => (isset($nextDelAux['USR_UID']))? $nextDelAux['USR_UID'] : ''];
                                 }
                                 break;
                             default:
                                 $iNewDelIndex = $this->doDerivation($currentDelegation, $nextDel, $appFields, $aSP);
+
+                                $arrayDerivationResult[] = ['DEL_INDEX' => $iNewDelIndex, 'TAS_UID' => $nextDel['TAS_UID'], 'USR_UID' => (isset($nextDel['USR_UID']))? $nextDel['USR_UID'] : ''];
                                 break;
                         }
 
@@ -1335,6 +1341,9 @@ class Derivation
                 $this->derivate($value["currentDelegation"], $value["nextDelegations"]);
             }
         }
+
+        //Return
+        return $arrayDerivationResult;
     }
 
     function doDerivation ($currentDelegation, $nextDel, $appFields, $aSP = null)
