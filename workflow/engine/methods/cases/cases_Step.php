@@ -5,24 +5,27 @@ if (!isset($_SESSION['USER_LOGGED'])) {
 				try
 				{
 				var olink = document.location.href;
-				if(olink.search("gmail") == -1){
+				olink = ( olink.search("gmail") == -1 ) ? parent.document.location.href : olink;
+
+				if(olink.search("gmail") == -1 ){
 					prnt = parent.parent;
 					top.location = top.location;
 				} else {
 					var data = olink.split("?");
 					var odata = data[1].split("&");
-					var appUid = odata[1].split("=");
-					var proUid = odata[0].split("=");
-		
+					var appUid = odata[0].split("=");
+
 					var dataToSend = {
 						"action": "credentials",
 						"operation": "refreshPmSession",
 						"type": "processCall",
 						"funParams": [
 						appUid[1],
-						proUid[1]
+						""
 						],
+						"expectReturn": false
 					};
+
 					var x = parent.postMessage(JSON.stringify(dataToSend), "*");
 					if (x == undefined){
 						x = parent.parent.postMessage(JSON.stringify(dataToSend), "*");
