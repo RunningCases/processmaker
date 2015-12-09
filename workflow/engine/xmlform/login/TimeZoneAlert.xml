@@ -4,6 +4,7 @@
 
     <USR_USERNAME type="hidden" />
     <USR_PASSWORD type="hidden" />
+    <USER_LANG type="hidden" />
 
     <USR_TIME_ZONE type="hidden" />
 

@@ -181,6 +181,45 @@ try {
         $_SESSION['USR_USERNAME'] = $usr;
     }
 
+    //Set default Languaje
+    if (isset($frm['USER_LANG'])) {
+        if ($frm['USER_LANG'] != '') {
+            $lang = $frm['USER_LANG'];
+            if($frm['USER_LANG'] == "default"){
+                //Check the USR_DEFAULT_LANG
+                require_once 'classes/model/Users.php';
+                $user = new Users();
+                $rsUser = $user->userLanguaje($_SESSION['USER_LOGGED']);
+                $rsUser->next();
+                $rowUser = $rsUser->getRow();
+                if( isset($rowUser["USR_DEFAULT_LANG"]) &&  $rowUser["USR_DEFAULT_LANG"]!=''){
+                    $lang = $rowUser["USR_DEFAULT_LANG"];
+                } else {
+                    //Check the login_defaultLanguage
+                    $oConf = new Configurations();
+                    $oConf->loadConfig($obj, 'ENVIRONMENT_SETTINGS', '');
+                    if (isset($oConf->aConfig["login_defaultLanguage"]) && $oConf->aConfig["login_defaultLanguage"] != "") {
+                        $lang = $oConf->aConfig["login_defaultLanguage"];
+                    }else{
+                        if(SYS_LANG != ''){
+                            $lang = SYS_LANG;
+                        }else{
+                            $lang = 'en';
+                        }
+                    }
+                }
+            } else {
+                $lang = $frm['USER_LANG'];
+            }
+        }
+    } else {
+        if (defined("SYS_LANG") && SYS_LANG != "") {
+            $lang = SYS_LANG;
+        } else {
+            $lang = 'en';
+        }
+    }
+
     /*----------------------------------********---------------------------------*/
     if (PMLicensedFeatures::getSingleton()->verifyfeature('oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=')) {
         //Update User Time Zone
@@ -220,8 +259,10 @@ try {
 
                 $_SESSION['BROWSER_TIME_ZONE'] = $dateTime->getTimeZoneIdByTimeZoneOffset((int)($_POST['form']['BROWSER_TIME_ZONE_OFFSET']), false);
 
+                $_SESSION['USER_LANG'] = $lang;
+
                 if (strpos($_SERVER['HTTP_REFERER'], 'home/login') !== false) {
-                    $d = serialize(['u' => $usr, 'p' => $pwd, 'm' => '', 'timeZoneFailed' => 1, 'userTimeZone' => $_SESSION['USR_TIME_ZONE'], 'browserTimeZone' => $_SESSION['BROWSER_TIME_ZONE']]);
+                    $d = serialize(['u' => $usr, 'p' => $pwd, 'm' => '', 'timeZoneFailed' => 1, 'userTimeZone' => $_SESSION['USR_TIME_ZONE'], 'browserTimeZone' => $_SESSION['BROWSER_TIME_ZONE'],'USER_LANG' => $lang]);
                     $urlLogin = $urlLogin . '?d=' . base64_encode($d);
                 }
 
@@ -257,45 +298,6 @@ try {
         }
         G::header  ("location: login.html");
         die;
-    }
-
-    //Set default Languaje
-    if (isset($frm['USER_LANG'])) {
-        if ($frm['USER_LANG'] != '') {
-            $lang = $frm['USER_LANG'];
-            if($frm['USER_LANG'] == "default"){
-                //Check the USR_DEFAULT_LANG
-                require_once 'classes/model/Users.php';
-                $user = new Users();
-                $rsUser = $user->userLanguaje($_SESSION['USER_LOGGED']);
-                $rsUser->next();
-                $rowUser = $rsUser->getRow();
-                if( isset($rowUser["USR_DEFAULT_LANG"]) &&  $rowUser["USR_DEFAULT_LANG"]!=''){
-                    $lang = $rowUser["USR_DEFAULT_LANG"];
-                } else {
-                    //Check the login_defaultLanguage
-                    $oConf = new Configurations();
-                    $oConf->loadConfig($obj, 'ENVIRONMENT_SETTINGS', '');
-                    if (isset($oConf->aConfig["login_defaultLanguage"]) && $oConf->aConfig["login_defaultLanguage"] != "") {
-                        $lang = $oConf->aConfig["login_defaultLanguage"];
-                    }else{
-                        if(SYS_LANG != ''){
-                            $lang = SYS_LANG;
-                        }else{
-                            $lang = 'en';
-                        }
-                    }
-                }
-            } else {
-                $lang = $frm['USER_LANG'];
-            }
-        }
-    } else {
-        if (defined("SYS_LANG") && SYS_LANG != "") {
-            $lang = SYS_LANG;
-        } else {
-            $lang = 'en';
-        }
     }
 
     /**log in table Login**/
