@@ -289,10 +289,31 @@ class pmDynaform
                 }
                 if ($key === "type" && ($value === "checkbox")) {
                     $json->data = new stdClass();
-                    $json->data->value = "";
+                    $json->data->value = "0";
                     $json->data->label = "";
+                    foreach ($json->options as $os) {
+                        if ($os->value === false || $os->value === 0 || $os->value === "0") {
+                            $json->data->label = $os->label;
+                        }
+                    }
+                    if ($json->defaultValue !== "") {
+                        $json->data->value = $json->defaultValue;
+                        foreach ($json->options as $os) {
+                            if (($json->data->value === "true" || $json->data->value === "1") &&
+                                    ($os->value === true || $os->value === 1 || $os->value === "1")) {
+                                $json->data->label = $os->label;
+                            }
+                            if (($json->data->value === "false" || $json->data->value === "0") &&
+                                    ($os->value === false || $os->value === 0 || $os->value === "0")) {
+                                $json->data->label = $os->label;
+                            }
+                        }
+                    }
                     if (isset($this->fields["APP_DATA"][$json->name])) {
                         $json->data->value = $this->fields["APP_DATA"][$json->name];
+                        if (is_array($json->data->value) && isset($json->data->value[0])) {
+                            $json->data->value = $json->data->value[0];
+                        }
                         foreach ($json->options as $os) {
                             if (($json->data->value === true || $json->data->value === 1 || $json->data->value === "1") &&
                                     ($os->value === true || $os->value === 1 || $os->value === "1")) {
@@ -353,21 +374,21 @@ class pmDynaform
                     $licensedFeatures = &PMLicensedFeatures::getSingleton();
                     $enablePMGmail = false;
                     if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-                        G::LoadClass( "pmDrive" );
+                        G::LoadClass("pmDrive");
                         $pmDrive = new PMDrive();
                         $enablePMGmail = $pmDrive->getStatusService();
                     }
                     /*----------------------------------********---------------------------------*/
                     $oCriteria = new Criteria("workflow");
                     $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
-                    $oCriteria->addSelectColumn(AppDocumentPeer::DOC_VERSION);        
+                    $oCriteria->addSelectColumn(AppDocumentPeer::DOC_VERSION);
                     $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
                     /*----------------------------------********---------------------------------*/
                     if ($enablePMGmail) {
                         $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_DRIVE_DOWNLOAD);
                     }
                     /*----------------------------------********---------------------------------*/      
-                    $oCriteria->addJoin(AppDocumentPeer::APP_DOC_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN); 
+                    $oCriteria->addJoin(AppDocumentPeer::APP_DOC_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN);
                     $oCriteria->add(AppDocumentPeer::APP_UID, $this->fields["APP_DATA"]["APPLICATION"]);
                     $oCriteria->add(AppDocumentPeer::APP_DOC_FIELDNAME, $json->name);
                     $oCriteria->add(ContentPeer::CON_CATEGORY, 'APP_DOC_FILENAME');
@@ -381,8 +402,7 @@ class pmDynaform
                         /*----------------------------------********---------------------------------*/
                         //change donwload link - drive
                         $driveDownload = @unserialize($row['APP_DOC_DRIVE_DOWNLOAD']);
-                        if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('ATTACHED',
-                                $driveDownload) && $enablePMGmail
+                        if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('ATTACHED', $driveDownload) && $enablePMGmail
                         ) {
                             $linkDownload = $driveDownload['ATTACHED'];
                         }
@@ -391,9 +411,9 @@ class pmDynaform
                         array_push($labelsFromDb, $row["CON_VALUE"]);
                     }
                     $json->data = new stdClass();
-                    $json->data->value = $links;    
+                    $json->data->value = $links;
 
-                    if(sizeof($labelsFromDb)) {
+                    if (sizeof($labelsFromDb)) {
                         $json->data->label = G::json_encode($labelsFromDb);
                     } else {
                         $json->data->label = isset($this->fields["APP_DATA"][$json->name . "_label"]) ? $this->fields["APP_DATA"][$json->name . "_label"] : (isset($this->fields["APP_DATA"][$json->name]) ? $this->fields["APP_DATA"][$json->name] : "[]");
@@ -898,7 +918,7 @@ class pmDynaform
         $this->record = $record;
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
-        $currentDynaform = (isset($this->fields['CURRENT_DYNAFORM']) && $this->fields['CURRENT_DYNAFORM'] != '')? $this->fields['CURRENT_DYNAFORM'] : '';
+        $currentDynaform = (isset($this->fields['CURRENT_DYNAFORM']) && $this->fields['CURRENT_DYNAFORM'] != '') ? $this->fields['CURRENT_DYNAFORM'] : '';
         $javascrip = "" .
                 "<script type='text/javascript'>\n" .
                 "var jsondata = " . G::json_encode($json) . ";\n" .
