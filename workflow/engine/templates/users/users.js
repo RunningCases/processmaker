@@ -448,7 +448,7 @@ Ext.onReady(function () {
     fieldLabel    : _('ID_DEFAULT_LANGUAGE'),
     hiddenName    : 'USR_DEFAULT_LANG',
     id            : 'USR_DEFAULT_LANG',
-    readOnly      : readMode,
+    readOnly      : false,
     store         : storeLanguage,
     valueField    : 'LAN_ID',
     displayField  : 'LAN_NAME',
