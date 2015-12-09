@@ -134,7 +134,7 @@ function openCase(){
             if(casesNewTab) {
                 casesNewTab.close();
             }
-            casesNewTab = window.open(requestFile + '?' + params); 
+            casesNewTab = window.open(requestFile + '?' + params);
         } else {
             redirect(requestFile + '?' + params);
         }
@@ -748,21 +748,12 @@ Ext.onReady ( function() {
         });
     }
 
-
     // Create HttpProxy instance, all CRUD requests will be directed to single proxy url.
-    if (caseListBuilder) {
-        var proxyCasesList = new Ext.data.HttpProxy({
-            api: {
-                read : urlProxy
-            }
-        });
-    } else {
-        var proxyCasesList = new Ext.data.HttpProxy({
-            api: {
-                read : urlProxy
-            }
-        });
-    }
+    var proxyCasesList = new Ext.data.HttpProxy({
+        api: {
+            read : urlProxy
+        }
+    });
 
     // Typical JsonReader with additional meta-data params for defining the core attributes of your json-response
     // the readerFields is defined in PHP server side
@@ -2486,4 +2477,4 @@ Ext.EventManager.on(window, 'beforeunload', function () {
   if(casesNewTab) {
     casesNewTab.close();
   }
-}); 
+});

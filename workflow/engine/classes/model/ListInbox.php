@@ -24,9 +24,14 @@ class ListInbox extends BaseListInbox
      *
      */
     public function create($data, $isSelfService = false)
-    {
+    { 
         $con = Propel::getConnection( ListInboxPeer::DATABASE_NAME );
         try {
+            if(isset($data['APP_TITLE'])) {
+                $oCase = new Cases();
+                $aData = $oCase->loadCase( $data["APP_UID"] );
+                $data['APP_TITLE'] = G::replaceDataField($data['APP_TITLE'], $aData['APP_DATA']);
+            }
             $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
             if ($this->validate()) {
                 $result = $this->save();
@@ -97,6 +102,11 @@ class ListInbox extends BaseListInbox
      */
     public function update($data, $isSelfService = false)
     {
+        if(isset($data['APP_TITLE'])) {
+            $oCase = new Cases();
+            $aData = $oCase->loadCase( $data["APP_UID"] );
+            $data['APP_TITLE'] = G::replaceDataField($data['APP_TITLE'], $aData['APP_DATA']);
+        }
         if ($isSelfService) {
             $users = new Users();
             $users->refreshTotal($data['USR_UID'], 'add', 'inbox');

@@ -780,12 +780,14 @@ class Installer extends Controller
             $this->installLog( G::LoadTranslation('ID_CREATING', SYS_LANG, Array($db_file) ));
             file_put_contents( $db_file, $dbText );
 
+            /*----------------------------------********---------------------------------*/
             //Generate the env.ini file
             $envIniFile = $path_site . 'env.ini';
             $content = 'system_utc_time_zone = 1' . "\n";
 
             $this->installLog(G::LoadTranslation('ID_CREATING', SYS_LANG, [$envIniFile]));
             file_put_contents($envIniFile, $content);
+            /*----------------------------------********---------------------------------*/
 
             //Generate the databases.php file
             $databases_file = $path_site . 'databases.php';
@@ -1240,6 +1242,10 @@ class Installer extends Controller
             $db_hostname = $filter->validateInput($_REQUEST['db_hostname']);
             $db_username = $filter->validateInput($_REQUEST['db_username']);
             $db_password = $filter->validateInput($_REQUEST['db_password']);
+            $db_port     = $filter->validateInput($_REQUEST['db_port']);
+            if($db_port != "3306"){
+                $db_hostname = $db_hostname.":".$db_port;
+            }
             $link = @mysql_connect( $db_hostname, $db_username, $db_password );
             $wfDatabase = $filter->validateInput($_REQUEST['wfDatabase'], 'nosql');
             $query = "show databases like '%s' ";

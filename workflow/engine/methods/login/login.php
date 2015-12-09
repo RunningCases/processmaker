@@ -139,6 +139,7 @@ if (isset ($_SESSION['USER_LOGGED'])) {
 }
 //end log
 
+/*----------------------------------********---------------------------------*/
 $timeZoneFailed = false;
 
 if (isset($_SESSION['__TIME_ZONE_FAILED__']) && $_SESSION['__TIME_ZONE_FAILED__']) {
@@ -148,6 +149,7 @@ if (isset($_SESSION['__TIME_ZONE_FAILED__']) && $_SESSION['__TIME_ZONE_FAILED__'
     $userTimeZone    = $_SESSION['USR_TIME_ZONE'];
     $browserTimeZone = $_SESSION['BROWSER_TIME_ZONE'];
 }
+/*----------------------------------********---------------------------------*/
 
 //start new session
 @session_destroy();
@@ -191,7 +193,6 @@ if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc1
     G::RenderPage('publish');
     die();
 }
-/*----------------------------------********---------------------------------*/
 
 if ($timeZoneFailed) {
     $dateTime = new \ProcessMaker\Util\DateTime();
@@ -205,14 +206,14 @@ if ($timeZoneFailed) {
     $arrayTimeZoneId = $dateTime->getTimeZoneIdByTimeZoneOffset($browserTimeZoneOffset);
 
     array_unshift($arrayTimeZoneId, 'false');
-    array_walk($arrayTimeZoneId, function (&$value, $key, $parameter) { $value = ['TZ_UID' => $value, 'TZ_NAME' => '(UTC' . $parameter . ') ' . $value]; }, $browserUtcOffset);
+    array_walk($arrayTimeZoneId, function (&$value, $key, $parameter) { $value = ['TZ_UID' => $value, 'TZ_NAME' => '(UTC ' . $parameter . ') ' . $value]; }, $browserUtcOffset);
 
     $_SESSION['_DBArray'] = ['TIME_ZONE' => $arrayTimeZoneId];
 
     $arrayData = [
         'USR_USERNAME'  => $userUsername,
         'USR_PASSWORD'  => $userPassword,
-        'USR_TIME_ZONE' => '(UTC' . $userUtcOffset . ') ' . $userTimeZone,
+        'USR_TIME_ZONE' => '(UTC ' . $userUtcOffset . ') ' . $userTimeZone,
         'BROWSER_TIME_ZONE' => $browserTimeZone
     ];
 
@@ -222,6 +223,7 @@ if ($timeZoneFailed) {
     G::RenderPage('publish');
     exit(0);
 }
+/*----------------------------------********---------------------------------*/
 
 //translation
 //$Translations = G::getModel("Translation");

@@ -69,8 +69,10 @@ class EmailEvent
                         $aRow['EMAIL'] = $aRow['MESS_ACCOUNT'];
                     } else {
                         $aRow['EMAIL'] = $aRow['MESS_FROM_MAIL'];
+                    } 
+                    if($aRow['EMAIL'] != "") {
+                        $accountsArray[] = array_change_key_case($aRow, CASE_LOWER);    
                     }
-                    $accountsArray[] = array_change_key_case($aRow, CASE_LOWER);
                 }
                 $result->next();
             }

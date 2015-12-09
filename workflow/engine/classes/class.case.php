@@ -2003,6 +2003,13 @@ class Cases
                       $users = new Users();
                       $users->refreshTotal($sUserUid, "remove", "inbox");
                     }
+                }else{
+                   //When start a case with SCRIPT-TASK WEBENTRYEVENT and the status is DRAFT
+                   if($oApplication->getAppStatus() == "DRAFT"){
+                      $sUserUid = $appDel->getUsrUid();
+                      $users = new Users();
+                      $users->refreshTotal($sUserUid, "remove", "draft");
+                    }
                 }
             }
             /*----------------------------------********---------------------------------*/
@@ -4342,7 +4349,10 @@ class Cases
         $oCriteria = new Criteria('workflow');
         $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
         $oCriteria->add(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL);
-        if (AppDelegationPeer::doCount($oCriteria) == 1) {
+        $resAppDel = AppDelegationPeer::doCount($oCriteria);
+
+        $this->CloseCurrentDelegation($sApplicationUID, $iIndex);
+        if ($resAppDel == 1) {
             $aFields['APP_STATUS'] = 'CANCELLED';
             $oApplication->update($aFields);
 
@@ -4353,7 +4363,6 @@ class Cases
             $oReportTables->updateTables($aFields['PRO_UID'], $aFields['APP_UID'], $aFields['APP_NUMBER'], $aFields['APP_DATA']);
             $addtionalTables->updateReportTables($aFields['PRO_UID'], $aFields['APP_UID'], $aFields['APP_NUMBER'], $aFields['APP_DATA'], $aFields['APP_STATUS']);
         }
-        $this->CloseCurrentDelegation($sApplicationUID, $iIndex);
         $oAppDel = new AppDelegation();
         $oAppDel->Load($sApplicationUID, $iIndex);
         $aAppDel = $oAppDel->toArray(BasePeer::TYPE_FIELDNAME);
@@ -5501,6 +5510,29 @@ class Cases
 
                             $sTo = $to;
                             $sCc = $cc;
+                        }
+                        break;
+                    case "MULTIPLE_INSTANCE":
+                        $to = null;
+                        $cc = null;
+                        $sw = 1;
+                        $oDerivation = new Derivation();
+                        $userFields = $oDerivation->getUsersFullNameFromArray($oDerivation->getAllUsersFromAnyTask($aTask["TAS_UID"]));
+                        if(isset($userFields)){
+                           foreach($userFields as $row){
+                                $toAux = (
+                                        (($row["USR_FIRSTNAME"] != "") || ($row["USR_LASTNAME"] != "")) ?
+                                                $row["USR_FIRSTNAME"] . " " . $row["USR_LASTNAME"] . " " : ""
+                                        ) . "<" . $row["USR_EMAIL"] . ">";
+                                if ($sw == 1) {
+                                    $to = $toAux;
+                                    $sw = 0;
+                                } else {
+                                    $cc = $cc . (($cc != null) ? "," : null) . $toAux;
+                                }
+                           }
+                           $sTo = $to;
+                           $sCc = $cc;
                         }
                         break;
                     default:

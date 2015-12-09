@@ -1027,8 +1027,19 @@ class Derivation
                     $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
                     $oDataset->next();
                     $aSP = $oDataset->getRow();
-                    $aSP['USR_UID'] = $nextDel['USR_UID'];
                     $oTask = new Task();
+                    $aTaskNext = $oTask->load( $nextDel['TAS_UID'] );
+                    //When is MULTIPLE_INSTANCE catch the first user
+                    if($aTaskNext["TAS_ASSIGN_TYPE"] == "MULTIPLE_INSTANCE"){
+                        $spUserUid = $this->getAllUsersFromAnyTask($nextDel["TAS_UID"]);
+                        foreach($spUserUid as $row){
+                            $firstUserUid = $row;
+                            continue;
+                        }
+                        $aSP['USR_UID'] = $firstUserUid;
+                    }else{
+                        $aSP['USR_UID'] = $nextDel['USR_UID'];
+                    }
                     $aTask = $oTask->load( $nextDel['TAS_PARENT'] );
                     $nextDel = array ('TAS_UID' => $aTask['TAS_UID'],'USR_UID' => $aSP['USR_UID'],'TAS_ASSIGN_TYPE' => $aTask['TAS_ASSIGN_TYPE'],'TAS_DEF_PROC_CODE' => $aTask['TAS_DEF_PROC_CODE'],'DEL_PRIORITY' => 3,'TAS_PARENT' => ''
                     );

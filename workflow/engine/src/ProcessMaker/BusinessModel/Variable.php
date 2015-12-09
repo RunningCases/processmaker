@@ -880,6 +880,9 @@ class Variable
             $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_UID);
             $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_NAME);
             $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_FIELD_TYPE);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_DBCONNECTION);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_SQL);
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_ACCEPTED_VALUES);
             $criteria->add(\ProcessVariablesPeer::VAR_NAME, $variableName);
             $criteria->add(\ProcessVariablesPeer::PRJ_UID, $processUid);
             $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);

@@ -27,7 +27,7 @@ try {
 
     $filters['start']    = isset( $_REQUEST["start"] ) ? $_REQUEST["start"] : "0";
     $filters['limit']    = isset( $_REQUEST["limit"] ) ? $_REQUEST["limit"] : "25";
-    $filters['sort']     = isset( $_REQUEST["sort"] ) ? $_REQUEST["sort"] : "";
+    $filters['sort']     = (isset($_REQUEST['sort']))? (($_REQUEST['sort'] == 'APP_STATUS_LABEL')? 'APP_STATUS' : $_REQUEST['sort']) : '';
     $filters['dir']      = isset( $_REQUEST["dir"] ) ? $_REQUEST["dir"] : "DESC";
 
     $filters['action']   = isset( $_REQUEST["action"] ) ? $_REQUEST["action"] : "";
