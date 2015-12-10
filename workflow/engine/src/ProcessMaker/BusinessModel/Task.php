@@ -1949,8 +1949,6 @@ class Task
         $oCriteria->add(\AppDelegationPeer::TAS_UID, $sTaskUID);
         if($caseType == 'unassigned') {   
             $oCriteria->add(\AppDelegationPeer::USR_UID, "", \Criteria::EQUAL);
-        } else {
-            $oCriteria->add(\AppDelegationPeer::USR_UID, "", \Criteria::NOT_EQUAL);
         }
         $oApplication = \AppDelegationPeer::doSelectOne($oCriteria);
         $response->result = true;
