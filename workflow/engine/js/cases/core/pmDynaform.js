@@ -7,15 +7,6 @@ function ajax_post(action, form, method, callback, asynchronous) {
 function dynaFormChanged(frm) {
     return false;
 }
-function clearData(data) {
-    for (var i in data) {
-        if (data[i] instanceof Array || data[i] instanceof Object)
-            data[i] = clearData(data[i]);
-        if (i === "optionsSql")
-            data[i] = [];
-    }
-    return data;
-}
 $(window).load(function () {
     if (pm_run_outside_main_app === 'true') {
         if (parent.showCaseNavigatorPanel) {
@@ -87,10 +78,6 @@ $(window).load(function () {
         token: credentials,
         submitRest: false,
         onLoad: function () {
-            var dyn_content_history = document.createElement("input");
-            dyn_content_history.type = "hidden";
-            dyn_content_history.name = "form[DYN_CONTENT_HISTORY]";
-            dyn_content_history.value = JSON.stringify(clearData(jsondata));
             var dynaformname = document.createElement("input");
             dynaformname.type = "hidden";
             dynaformname.name = "__DynaformName__";
@@ -111,7 +98,6 @@ $(window).load(function () {
             }
             form.method = "post";
             form.setAttribute("encType", "multipart/form-data");
-            form.appendChild(dyn_content_history);
             form.appendChild(dynaformname);
             form.appendChild(appuid);
             form.appendChild(arrayRequired);

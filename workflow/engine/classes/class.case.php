@@ -971,11 +971,6 @@ class Cases
     public function updateCase($sAppUid, $Fields = array())
     {
         try {
-            $dynContentHistory = "";
-            if (isset($Fields["APP_DATA"]) && isset($Fields["APP_DATA"]["DYN_CONTENT_HISTORY"])) {
-                $dynContentHistory = $Fields["APP_DATA"]["DYN_CONTENT_HISTORY"];
-                unset($Fields["APP_DATA"]["DYN_CONTENT_HISTORY"]);
-            }
             $oApplication = new Application;
             if (!$oApplication->exists($sAppUid)) {
                 return false;
@@ -1012,11 +1007,13 @@ class Cases
                     }
                 }
                 if ((is_array($FieldsDifference)) && (count($FieldsDifference) > 0)) {
+                    $oCurrentDynaform = new Dynaform();
+                    $currentDynaform = $oCurrentDynaform->Load($Fields['CURRENT_DYNAFORM']);
                     //There are changes
                     $Fields['APP_STATUS'] = (isset($Fields['APP_STATUS'])) ? $Fields['APP_STATUS'] : $FieldsBefore['APP_STATUS'];
                     $appHistory = new AppHistory();
                     $aFieldsHistory = $Fields;
-                    $FieldsDifference['DYN_CONTENT_HISTORY'] = $dynContentHistory;
+                    $FieldsDifference['DYN_CONTENT_HISTORY'] = base64_encode($currentDynaform["DYN_CONTENT"]);
                     $aFieldsHistory['APP_DATA'] = serialize($FieldsDifference);
                     $appHistory->insertHistory($aFieldsHistory);
                 }
