@@ -5470,6 +5470,16 @@ class Cases
                     $arrayData2 = $arrayData;
                 }
 
+                if (isset($aTask['USR_UID']) && !empty($aTask['USR_UID'])) {
+                    $user = new \ProcessMaker\BusinessModel\User();
+
+                    $arrayUserData = $user->getUser($aTask['USR_UID'], true);
+
+                    $arrayData2 = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($arrayData2, (trim($arrayUserData['USR_TIME_ZONE']) != '')? trim($arrayUserData['USR_TIME_ZONE']) : \ProcessMaker\Util\System::getTimeZone());
+                } else {
+                    $arrayData2 = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($arrayData2);
+                }
+
                 $sBody2 = G::replaceDataGridField($sBody, $arrayData2, false);
 
                 switch ($aTask["TAS_ASSIGN_TYPE"]) {

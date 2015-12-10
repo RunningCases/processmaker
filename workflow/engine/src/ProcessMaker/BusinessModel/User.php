@@ -393,15 +393,7 @@ class User
             $arrayResult[$this->getFieldNameByFormatFieldName('USR_PHOTO_PATH')]         = $pathPhotoUser;
 
             if (isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__']) {
-                $userTimeZone = $record['USR_TIME_ZONE'];
-
-                if (trim($userTimeZone) == '') {
-                    $arraySystemConfiguration = \System::getSystemConfiguration('', '', SYS_SYS);
-
-                    $userTimeZone = $arraySystemConfiguration['time_zone'];
-                }
-
-                $arrayResult[$this->getFieldNameByFormatFieldName('USR_TIME_ZONE')] = $userTimeZone;
+                $arrayResult[$this->getFieldNameByFormatFieldName('USR_TIME_ZONE')] = (trim($record['USR_TIME_ZONE']) != '')? trim($record['USR_TIME_ZONE']) : \ProcessMaker\Util\System::getTimeZone();
             }
 
             //Return
@@ -774,7 +766,7 @@ class User
             $rsCriteria = \UsersPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
-            $rsCriteria->next();
+            $result = $rsCriteria->next();
 
             $row = $rsCriteria->getRow();
 
