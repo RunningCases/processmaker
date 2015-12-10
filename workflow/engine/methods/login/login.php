@@ -148,6 +148,11 @@ if (isset($_SESSION['__TIME_ZONE_FAILED__']) && $_SESSION['__TIME_ZONE_FAILED__'
     $userPassword    = $_SESSION['USR_PASSWORD'];
     $userTimeZone    = $_SESSION['USR_TIME_ZONE'];
     $browserTimeZone = $_SESSION['BROWSER_TIME_ZONE'];
+    if(isset($_SESSION['USER_LANG'])){
+       $lang = $_SESSION['USER_LANG'];
+    }else{
+       $lang = SYS_LANG;
+    }
 }
 /*----------------------------------********---------------------------------*/
 
@@ -214,7 +219,8 @@ if ($timeZoneFailed) {
         'USR_USERNAME'  => $userUsername,
         'USR_PASSWORD'  => $userPassword,
         'USR_TIME_ZONE' => '(UTC ' . $userUtcOffset . ') ' . $userTimeZone,
-        'BROWSER_TIME_ZONE' => $browserTimeZone
+        'BROWSER_TIME_ZONE' => $browserTimeZone,
+        'USER_LANG' => $lang
     ];
 
     $G_PUBLISH = new Publisher();
