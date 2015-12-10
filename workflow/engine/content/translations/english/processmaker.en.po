@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker (Branch 3.0.1.7)\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2015-12-01 11:54:16\n"
+"PO-Revision-Date: 2015-12-10 16:08:31\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -24130,8 +24130,8 @@ msgstr "Service Account Email"
 # TRANSLATION
 # LABEL/ID_PMG_FILE
 #: LABEL/ID_PMG_FILE
-msgid "Service Accout Certificate"
-msgstr "Service Accout Certificate"
+msgid "Service Account Certificate"
+msgstr "Service Account Certificate"
 
 # TRANSLATION
 # LABEL/ID_PMG_TYPE_ACCEPT
@@ -26410,8 +26410,8 @@ msgstr "Can't create folder A"
 # TRANSLATION
 # LABEL/ID_CURRENT_ASSING_TYPE_WITH_CASES
 #: LABEL/ID_CURRENT_ASSING_TYPE_WITH_CASES
-msgid "The current assignment rule has cases"
-msgstr "The current assignment rule has cases"
+msgid "The current activity has cases and cannot be deleted"
+msgstr "The current activity has cases and cannot be deleted"
 
 # TRANSLATION
 # LABEL/ID_TEST_EMAIL_SERVER
@@ -26694,6 +26694,66 @@ msgstr "Please enter only CSS code"
 #: LABEL/ID_MAFE_bf8252265e26d92c011456899a2d522e
 msgid "At least one option must be filled."
 msgstr "At least one option must be filled."
+
+# TRANSLATION
+# LABEL/ID_ACCESS_DENIED
+#: LABEL/ID_ACCESS_DENIED
+msgid "Access Denied!"
+msgstr "Access Denied!"
+
+# TRANSLATION
+# LABEL/ID_LOGIN_TITLE
+#: LABEL/ID_LOGIN_TITLE
+msgid "[LABEL/ID_LOGIN_TITLE] Please enter your credentials below"
+msgstr "Please enter your credentials below"
+
+# TRANSLATION
+# LABEL/ID_LICENCE_LOGIN_TITLE
+#: LABEL/ID_LICENCE_LOGIN_TITLE
+msgid "License"
+msgstr "License"
+
+# TRANSLATION
+# LABEL/ID_PMDRIVE_NO_CONTENT_IN_FILE
+#: LABEL/ID_PMDRIVE_NO_CONTENT_IN_FILE
+msgid "The file doesn't have any content stored on Drive."
+msgstr "The file doesn't have any content stored on Drive."
+
+# TRANSLATION
+# LABEL/ID_PMGMAIL_GENERAL_ERROR
+#: LABEL/ID_PMGMAIL_GENERAL_ERROR
+msgid "An error in processing Gmail requests occurred"
+msgstr "An error in processing Gmail requests occurred"
+
+# TRANSLATION
+# LABEL/ID_NOT_HAVE_BOOKMARKED_PROCESSES
+#: LABEL/ID_NOT_HAVE_BOOKMARKED_PROCESSES
+msgid "You don't have bookmarked processes"
+msgstr "You don't have bookmarked processes"
+
+# TRANSLATION
+# LABEL/ID_MAFE_4bb78cf31aa7936d4031f8de1481d308
+#: LABEL/ID_MAFE_4bb78cf31aa7936d4031f8de1481d308
+msgid "The label is empty"
+msgstr "The label is empty"
+
+# TRANSLATION
+# LABEL/ID_MAFE_0862528079a06dc37cf808953afca073
+#: LABEL/ID_MAFE_0862528079a06dc37cf808953afca073
+msgid "Input Document:"
+msgstr "Input Document:"
+
+# TRANSLATION
+# LABEL/ID_MAFE_e0c9b0646bf818123171ad13d15b48e0
+#: LABEL/ID_MAFE_e0c9b0646bf818123171ad13d15b48e0
+msgid "There are problems removing task"
+msgstr "There are problems removing task"
+
+# TRANSLATION
+# LABEL/ID_MAFE_0778b522479c97b0c98fb221e86f8054
+#: LABEL/ID_MAFE_0778b522479c97b0c98fb221e86f8054
+msgid "Invalid operation, please delete elements individually"
+msgstr "Invalid operation, please delete elements individually"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
@@ -36016,6 +36076,12 @@ msgstr "Test connection"
 #: button - btnCancel
 msgid "[ldapAdvanced/ldapAdvancedEdit.xml?btnCancel] Cancel"
 msgstr "Cancel"
+
+# login/TimeZoneAlert.xml?BROWSER_TIME_ZONE
+# login/TimeZoneAlert.xml
+#: dropdown - BROWSER_TIME_ZONE
+msgid "[login/TimeZoneAlert.xml?BROWSER_TIME_ZONE] "
+msgstr ""
 
 # login/TimeZoneAlert.xml?BTNOK
 # login/TimeZoneAlert.xml
