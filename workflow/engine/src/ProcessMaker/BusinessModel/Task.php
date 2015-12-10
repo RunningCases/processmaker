@@ -1941,12 +1941,17 @@ class Task
     public function getValidateSelfService($data)
     {
         $data = array_change_key_case($data, CASE_LOWER);
-        $sTaskUID = $data['act_uid'];
+        $sTaskUID = $data['act_uid']; 
+        $caseType = isset($data['case_type']) ? ($data['case_type'] == 'assigned' ? $data['case_type'] : 'unassigned') : 'unassigned';
         $response = new \stdclass();
         $oCriteria = new \Criteria();
         $oCriteria->add(\AppDelegationPeer::DEL_THREAD_STATUS, "OPEN");
         $oCriteria->add(\AppDelegationPeer::TAS_UID, $sTaskUID);
-        $oCriteria->add(\AppDelegationPeer::USR_UID, "");
+        if($caseType == 'unassigned') {   
+            $oCriteria->add(\AppDelegationPeer::USR_UID, "", Criteria::EQUAL);
+        } else {
+            $oCriteria->add(\AppDelegationPeer::USR_UID, "", Criteria::NOT_EQUAL);
+        }
         $oApplication = \AppDelegationPeer::doSelectOne($oCriteria);
         $response->result = true;
         if(!empty($oApplication)) {
