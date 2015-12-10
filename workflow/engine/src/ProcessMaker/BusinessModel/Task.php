@@ -1948,9 +1948,9 @@ class Task
         $oCriteria->add(\AppDelegationPeer::DEL_THREAD_STATUS, "OPEN");
         $oCriteria->add(\AppDelegationPeer::TAS_UID, $sTaskUID);
         if($caseType == 'unassigned') {   
-            $oCriteria->add(\AppDelegationPeer::USR_UID, "", Criteria::EQUAL);
+            $oCriteria->add(\AppDelegationPeer::USR_UID, "", \Criteria::EQUAL);
         } else {
-            $oCriteria->add(\AppDelegationPeer::USR_UID, "", Criteria::NOT_EQUAL);
+            $oCriteria->add(\AppDelegationPeer::USR_UID, "", \Criteria::NOT_EQUAL);
         }
         $oApplication = \AppDelegationPeer::doSelectOne($oCriteria);
         $response->result = true;
