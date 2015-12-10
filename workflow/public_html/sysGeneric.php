@@ -353,7 +353,7 @@ $skinPathUpdate = G::skinGetPathToSrcByVirtualUri("update", $config);
 // defining Virtual URLs
 $virtualURITable = array ();
 $virtualURITable['/plugin/(*)'] = 'plugin';
-$virtualURITable['/(sys*)/(*.js)'] = 'jsMethod';
+$virtualURITable['/(sys\w{0,})/(\w{0,}.js)'] = 'jsMethod';
 $virtualURITable['/js/(*)'] = PATH_GULLIVER_HOME . 'js/';
 $virtualURITable['/jscore/(*)'] = PATH_CORE . 'js/';
 
