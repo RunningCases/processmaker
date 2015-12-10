@@ -44,6 +44,10 @@ $curl_response = curl_exec( $curl );
 curl_close($curl);
 $decodedResp = json_decode($curl_response);
 
+if(!is_object($decodedResp) || property_exists($decodedResp,'error')) {
+	die($decodedResp->error->message);
+}
+
 //getting the enviroment
 $enviroment = $decodedResp->enviroment;
 
@@ -125,6 +129,8 @@ if ($action == "draft"){
 
 	$mainUrl = '/sys'. $pmws .'/en/'. $enviroment .'/cases/open?APP_UID='.$appUid.'&DEL_INDEX='.$delIndex.'&action='.$action.'&gmail=1';
 	header( 'location:' . $mainUrl );
+	$_SESSION['APPLICATION'] =$appUid ;
+	$_SESSION['INDEX'] = $delIndex;
 	die;
 }
 

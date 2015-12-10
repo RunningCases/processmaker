@@ -261,6 +261,19 @@ class Pmgmail {
     	return $response;
     }
 
+    public function modifyMailToPauseCase($appUid, $appDelIndex)
+    {
+        require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.labelsGmail.php");
+        $oLabels = new \labelsGmail();
+        $oResponse = $oLabels->setLabelsToPauseCase($appUid, $appDelIndex);
+    }
+
+    public function modifyMailToUnpauseCase($appUid, $appDelIndex)
+    {
+        require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.labelsGmail.php");
+        $oLabels = new \labelsGmail();
+        $oResponse = $oLabels->setLabelsToUnpauseCase($appUid, $appDelIndex);
+    }
 }
 
 

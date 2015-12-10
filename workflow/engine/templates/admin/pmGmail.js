@@ -1,6 +1,8 @@
 var saveButton;
 var testButton;
 var storeUsers;
+var disableAll;
+var changeType;
 Ext.onReady(function(){
     Ext.QuickTips.init();
 
@@ -16,6 +18,62 @@ Ext.onReady(function(){
         handler : saveSettings
     });
 
+    disableAll = function () {
+        Ext.getCmp('typeAuthentication').disable();
+        Ext.getCmp('email_service_account').disable();
+        Ext.getCmp('file_p12').disable();
+        Ext.getCmp('labelFileP12').disable();
+        Ext.getCmp('file_json').disable();
+        Ext.getCmp('fileJson').disable();
+        testButton.disable();
+        saveButton.disable();
+
+        Ext.getCmp('typeAuthentication').hide();
+        Ext.getCmp('email_service_account').hide();
+        Ext.getCmp('file_p12').hide();
+        Ext.getCmp('labelFileP12').hide();
+
+        Ext.getCmp('file_json').hide();
+        Ext.getCmp('fileJson').hide();
+
+        Ext.getCmp('listUsers').hide();
+        Ext.getCmp('testPMGmail').hide();
+    };
+
+    var enableTypeP12 = function () {
+        Ext.getCmp('typeAuthentication').enable();
+        Ext.getCmp('email_service_account').enable();
+        Ext.getCmp('file_p12').enable();
+        Ext.getCmp('labelFileP12').enable();
+
+        Ext.getCmp('typeAuthentication').show();
+        Ext.getCmp('email_service_account').show();
+        Ext.getCmp('file_p12').show();
+        Ext.getCmp('labelFileP12').show();
+
+        testButton.enable();
+    };
+
+    var enableTypeJson = function () {
+        Ext.getCmp('typeAuthentication').enable();
+        Ext.getCmp('file_json').enable();
+        Ext.getCmp('fileJson').enable();
+
+        Ext.getCmp('typeAuthentication').show();
+        Ext.getCmp('file_json').show();
+        Ext.getCmp('fileJson').show();
+        testButton.enable();
+    };
+
+    changeType = function () {
+        var type = Ext.getCmp('typeAuthentication').getValue();
+        if (type == 'webApplication') {
+            enableTypeJson();
+        } else {
+            enableTypeP12();
+        }
+    };
+
     var configurationPMGmail = new Ext.form.FieldSet({
         title: _('ID_PMGMAIL_SETTINGS'),
         items: [
@@ -29,34 +87,20 @@ Ext.onReady(function(){
                 uncheckedValue: 0,
                 listeners   : {
                     check : function(that, checked) {
-                        changeSettings();
+                        disableAll();
                         if (checked) {
-                            Ext.getCmp('email_service_account').enable();
-                            Ext.getCmp('status_pmgmail').enable();
-                            Ext.getCmp('file_p12').enable();
+                            Ext.getCmp('typeAuthentication').enable();
+                            Ext.getCmp('typeAuthentication').show();
+                            Ext.getCmp('typeAuthentication').clearValue();
                         } else {
-
                             Ext.MessageBox.confirm(
                                 _('ID_CONFIRM'),
                                 _('ID_PMGMAIL_DISABLE'),
                                 function (btn, text) {
                                     if (btn == "yes") {
-                                        Ext.getCmp('email_service_account').disable();
-                                        Ext.getCmp('file_p12').disable();
-                                        Ext.getCmp('typeAuthentication').disable();
-                                        Ext.getCmp('file_json').disable();
-                                        Ext.getCmp('fileJson').disable();
-                                        Ext.getCmp('listUsers').hide();
-                                        testButton.disable();
-                                        saveButton.disable();
                                         saveSettings();
                                     } else {
-                                        Ext.getCmp('typeAuthentication').enable();
-                                        Ext.getCmp('file_json').enable();
-                                        Ext.getCmp('fileJson').enable();
-                                        Ext.getCmp('status_pmgmail').enable();
-                                        Ext.getCmp('email_service_account').enable();
-                                        Ext.getCmp('file_p12').enable();
+                                        changeType();
                                         Ext.getCmp('status_pmgmail').setValue(1);
                                         return false;
                                     }
@@ -89,36 +133,14 @@ Ext.onReady(function(){
                 editable: false,
                 listeners:{
                     afterRender: function () {
-                        Ext.getCmp('email_service_account').hide();
-                        Ext.getCmp('file_p12').hide();
-                        Ext.getCmp('labelFileP12').hide();
-                        Ext.getCmp('file_json').hide();
-                        Ext.getCmp('fileJson').hide();
-                        if (typeAuthentication == 'webApplication' ) {
-                            Ext.getCmp('file_json').show();
-                            Ext.getCmp('fileJson').show();
-                        } else if (typeAuthentication == 'serviceAccount' ) {
-                            Ext.getCmp('email_service_account').show();
-                            Ext.getCmp('file_p12').show();
-                            Ext.getCmp('labelFileP12').show();
+                        disableAll();
+                        if (Ext.getCmp('status_pmgmail').checked) {
+                            changeType();
                         }
                     },
                     select: function(combo){
-                        saveButton.disable();
-                        var value = combo.getValue();
-                        if (value == 'webApplication' ) {
-                            Ext.getCmp('email_service_account').hide();
-                            Ext.getCmp('file_p12').hide();
-                            Ext.getCmp('labelFileP12').hide();
-                            Ext.getCmp('file_json').show();
-                            Ext.getCmp('fileJson').show();
-                        } else {
-                            Ext.getCmp('email_service_account').show();
-                            Ext.getCmp('file_p12').show();
-                            Ext.getCmp('labelFileP12').show();
-                            Ext.getCmp('file_json').hide();
-                            Ext.getCmp('fileJson').hide();
-                        }
+                        disableAll();
+                        changeType();
                     }
                 }
             },
@@ -341,6 +363,9 @@ Ext.onReady(function(){
 
     Ext.getCmp('status_pmgmail').checked = enablePMGmail;
     Ext.getCmp('status_pmgmail').setValue(enablePMGmail);
+    if (enablePMGmail){
+        changeType();
+    }
 });
 
 var testSettings = function ()
@@ -406,10 +431,8 @@ var saveSettings = function ()
 
 var changeSettings = function()
 {
-    Ext.getCmp('testPMGmail').hide();
-    Ext.getCmp('listUsers').hide();
+    disableAll();
     if (Ext.getCmp('status_pmgmail').checked) {
-        testButton.enable();
+        changeType();
     }
-    saveButton.disable();
 };

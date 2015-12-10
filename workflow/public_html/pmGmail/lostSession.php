@@ -4,7 +4,6 @@ if (!isset($_SESSION['USER_LOGGED'])) {
 	die( '<script type="text/javascript">
 		try
 		{
-			alert("lostSession");
 				var dataToSend = {
 					"action": "credentials",
 					"operation": "refreshPmSession",
@@ -22,12 +21,12 @@ if (!isset($_SESSION['USER_LOGGED'])) {
 		}
 	</script>');
 }
-if($_GET['form']){
+if(key_exists('form', $_GET) && $_GET['form']){
 	header( 'location:' . $_SESSION['server'] . $_SESSION['PMCase'] );
-}else if($_GET['processmap']){
+}else if(key_exists('processmap', $_GET) && $_GET['processmap']){
 	header( 'location:' . $_SESSION['server'] . $_SESSION['PMProcessmap'] );
-}else if($_GET['uploaded']){
+}else if(key_exists('uploaded', $_GET) && $_GET['uploaded']){
 	header( 'location:' . $_SESSION['server'] . $_SESSION['PMUploadedDocuments'] );
-} else if($_GET['generated']){
+} else if(key_exists('generated', $_GET) && $_GET['generated']){
 	header( 'location:' . $_SESSION['server'] . $_SESSION['PMGeneratedDocuments'] );
 }

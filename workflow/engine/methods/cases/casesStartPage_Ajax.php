@@ -261,6 +261,23 @@ function startCase ()
 
         $_SESSION['CASES_REFRESH'] = true;
 
+        /*----------------------------------********---------------------------------*/
+        //sending the email for gmail integration if the option es available
+        $licensedFeatures = &PMLicensedFeatures::getSingleton();
+        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+
+	        $enablePMGmail = false;
+	        G::LoadClass( "pmDrive" );
+	        $pmDrive = new PMDrive();
+	        $enablePMGmail = $pmDrive->getStatusService();
+	        if(!empty($enablePMGmail) && $enablePMGmail==1){
+	        	require_once 'src/ProcessMaker/BusinessModel/Pmgmail.php';
+	        	$Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
+	        	$response = $Pmgmail->sendEmail($aData['APPLICATION'], "", $aData['INDEX']);
+	        }
+        }
+        /*----------------------------------********---------------------------------*/
+
         $oCase = new Cases();
         $aNextStep = $oCase->getNextStep( $_SESSION['PROCESS'], $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['STEP_POSITION'] );
 
