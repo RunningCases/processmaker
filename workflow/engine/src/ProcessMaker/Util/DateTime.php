@@ -341,13 +341,14 @@ class DateTime
     /**
      * Convert UTC to Time Zone
      *
-     * @param mixed  $data     Data
-     * @param array  $arrayKey Keys that convert to Time Zone
-     * @param string $format   Format to return data
+     * @param mixed  $data       Data
+     * @param string $toTimeZone Time Zone to convert
+     * @param array  $arrayKey   Keys that convert to Time Zone
+     * @param string $format     Format to return data
      *
      * @return mixed Return data
      */
-    public static function convertUtcToTimeZone($data, array $arrayKey = [], $format = 'Y-m-d H:i:s')
+    public static function convertUtcToTimeZone($data, $toTimeZone = null, array $arrayKey = [], $format = 'Y-m-d H:i:s')
     {
         try {
             if (!(isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__'])) {
@@ -356,7 +357,7 @@ class DateTime
             }
 
             $fromTimeZone = 'UTC';
-            $toTimeZone   = \ProcessMaker\BusinessModel\User::getUserLoggedTimeZone();
+            $toTimeZone   = (!is_null($toTimeZone))? $toTimeZone : \ProcessMaker\BusinessModel\User::getUserLoggedTimeZone();
 
             //Return
             return (new \ProcessMaker\Util\DateTime())->convertDataToTimeZone($data, $fromTimeZone, $toTimeZone, $arrayKey, $format);
