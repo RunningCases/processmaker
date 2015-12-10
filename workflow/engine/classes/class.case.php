@@ -5336,20 +5336,20 @@ class Cases
      * This function sends notifications in a task
      *
      * @name sendNotifications
-     * @param string $sCurrentTask
-     * @param array $aTasks
-     * @param array $aFields
-     * @param string $sApplicationUID
-     * @param string $iDelegation
-     * @param string $sFrom
+     * @param string $taskUid
+     * @param array $arrayTask
+     * @param array $arrayData
+     * @param string $applicationUid
+     * @param string $delIndex
+     * @param string $from
      * @return void
      */
 
-    public function sendNotifications($sCurrentTask, $aTasks, $aFields, $sApplicationUID, $iDelegation, $sFrom = "")
+    public function sendNotifications($taskUid, $arrayTask, $arrayData, $applicationUid, $delIndex, $from = '')
     {
         try {
-            $applicationData = $this->loadCase($sApplicationUID);
-            $aFields["APP_NUMBER"] = $applicationData["APP_NUMBER"];
+            $arrayApplicationData = $this->loadCase($applicationUid);
+            $arrayData['APP_NUMBER'] = $arrayApplicationData['APP_NUMBER'];
 
             if (!class_exists('System')) {
                 G::LoadClass('system');
@@ -5364,16 +5364,16 @@ class Cases
 
             //Send derivation notification - Start
             $oTask = new Task();
-            $aTaskInfo = $oTask->load($sCurrentTask);
+            $aTaskInfo = $oTask->load($taskUid);
 
             if ($aTaskInfo['TAS_SEND_LAST_EMAIL'] != 'TRUE') {
                 return false;
             }
 
-            $sFrom = G::buildFrom($aConfiguration, $sFrom);
+            $from = G::buildFrom($aConfiguration, $from);
 
             if (isset($aTaskInfo['TAS_DEF_SUBJECT_MESSAGE']) && $aTaskInfo['TAS_DEF_SUBJECT_MESSAGE'] != '') {
-                $sSubject = G::replaceDataField($aTaskInfo['TAS_DEF_SUBJECT_MESSAGE'], $aFields);
+                $sSubject = G::replaceDataField($aTaskInfo['TAS_DEF_SUBJECT_MESSAGE'], $arrayData);
             } else {
                 $sSubject = G::LoadTranslation('ID_MESSAGE_SUBJECT_DERIVATION');
             }
@@ -5417,9 +5417,9 @@ class Cases
                     }
                 }
 
-                $sBody = G::replaceDataGridField(file_get_contents($fileTemplate), $aFields, false);
+                $sBody = file_get_contents($fileTemplate);
             } else {
-                $sBody = nl2br(G::replaceDataGridField($aTaskInfo["TAS_DEF_MESSAGE"], $aFields, false));
+                $sBody = nl2br($aTaskInfo['TAS_DEF_MESSAGE']);
             }
 
             G::LoadClass("tasks");
@@ -5430,9 +5430,24 @@ class Cases
             $group = new Groups();
             $oUser = new Users();
 
-            foreach ($aTasks as $aTask) {
+            foreach ($arrayTask as $aTask) {
                 $sTo = null;
                 $sCc = null;
+
+                if (isset($aTask['DEL_INDEX'])) {
+                    $arrayData2 = $arrayData;
+
+                    $appDelegation = AppDelegationPeer::retrieveByPK($applicationUid, $aTask['DEL_INDEX']);
+
+                    if (!is_null($appDelegation)) {
+                        $arrayData2['TAS_TITLE'] = Content::load('TAS_TITLE', '', $appDelegation->getTasUid(), SYS_LANG);
+                        $arrayData2['DEL_TASK_DUE_DATE'] = $appDelegation->getDelTaskDueDate();
+                    }
+                } else {
+                    $arrayData2 = $arrayData;
+                }
+
+                $sBody2 = G::replaceDataGridField($sBody, $arrayData2, false);
 
                 switch ($aTask["TAS_ASSIGN_TYPE"]) {
                     case "SELF_SERVICE":
@@ -5444,7 +5459,7 @@ class Cases
                                 @copy(PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation('ID_UNASSIGNED_MESSAGE'), $fileTemplate);
                             }
 
-                            $sBody = G::replaceDataField(file_get_contents($fileTemplate), $aFields);
+                            $sBody2 = G::replaceDataField(file_get_contents($fileTemplate), $arrayData2);
                         }
 
                         if (isset($aTask["TAS_UID"]) && !empty($aTask["TAS_UID"])) {
@@ -5542,13 +5557,13 @@ class Cases
                     $oSpool->setConfig($aConfiguration);
                     $oSpool->create(array(
                         "msg_uid" => "",
-                        "app_uid" => $sApplicationUID,
-                        "del_index" => $iDelegation,
+                        'app_uid' => $applicationUid,
+                        'del_index' => $delIndex,
                         "app_msg_type" => "DERIVATION",
                         "app_msg_subject" => $sSubject,
-                        "app_msg_from" => $sFrom,
+                        'app_msg_from' => $from,
                         "app_msg_to" => $sTo,
-                        "app_msg_body" => $sBody,
+                        'app_msg_body' => $sBody2,
                         "app_msg_cc" => $sCc,
                         "app_msg_bcc" => "",
                         "app_msg_attach" => "",
