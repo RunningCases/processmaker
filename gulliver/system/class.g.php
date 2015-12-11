@@ -4910,10 +4910,14 @@ class G
             $list = glob( rtrim( $path, DIRECTORY_SEPARATOR ) . DIRECTORY_SEPARATOR . '*' );
 
             $sw = true;
-            foreach ($list as $f) {
-                if (! G::is_writable_r( $f, $noWritableFiles )) {
-                    $sw = false;
+            if(is_array($list)){
+                foreach ($list as $f) {
+                    if (! G::is_writable_r( $f, $noWritableFiles )) {
+                        $sw = false;
+                    }
                 }
+            } else {
+                $sw = false;
             }
 
             return $sw;
