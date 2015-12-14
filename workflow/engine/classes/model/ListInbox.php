@@ -72,7 +72,7 @@ class ListInbox extends BaseListInbox
                 $listParticipatedLast = new ListParticipatedLast();
                 $listParticipatedLast->refresh($data);
             } else {
-                $data['USR_UID'] = $data['DEL_PREVIOUS_USR_UID'];
+                $data['USR_UID_CURRENT'] = $data['DEL_PREVIOUS_USR_UID']; 
                 $data['DEL_CURRENT_USR_LASTNAME'] = '';
                 $data['DEL_CURRENT_USR_USERNAME'] = '';
                 $data['DEL_CURRENT_USR_FIRSTNAME'] = '';

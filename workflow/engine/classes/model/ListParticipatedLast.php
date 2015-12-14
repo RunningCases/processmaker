@@ -54,7 +54,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
                 $users->refreshTotal($data['USR_UID'], 'add', 'participated');
             }
         } else {
-            $getData['USR_UID'] = $_SESSION['USER_LOGGED']; 
+            $getData['USR_UID'] = $data['USR_UID_CURRENT']; 
             $getData['APP_UID'] = $data['APP_UID'];
             $row = $this->getRowFromList($getData);
             if(is_array($row) && sizeof($row)) {
