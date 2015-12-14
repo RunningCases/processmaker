@@ -276,7 +276,7 @@ class labelsGmail
     				$label->getName() == '* Unassigned' ||
     				$label->getName() == '* Draft' ||
     				$label->getName() == '* Inbox' ||
-    				$label->getName() == '--- ProcessMaker ---' ||
+    				$label->getName() == '*-- ProcessMaker --*' ||
     				$label->getName() == '* Paused'
     		) {
     			$oresp = $this->deleteLabel($service, 'me', $label->getId());
