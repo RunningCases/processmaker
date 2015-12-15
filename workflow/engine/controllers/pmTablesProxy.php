@@ -447,6 +447,16 @@ class pmTablesProxy extends HttpProxyController
                 } else {
                     $at->deleteAll( $row->id );
                     $count ++;
+                } 
+
+                $oCriteria = new Criteria('workflow');
+                $oCriteria->add(CaseConsolidatedCorePeer::REP_TAB_UID, $row->id);
+                $oResult = CaseConsolidatedCorePeer::doSelectOne($oCriteria);
+                if(!empty($oResult)) { 
+                    $sTasUid = $oResult->getTasUid();
+                    $oCaseConsolidated = new CaseConsolidatedCore();
+                    $oCaseConsolidated = CaseConsolidatedCorePeer::retrieveByPK($sTasUid); 
+                    $oCaseConsolidated->delete();   
                 }
             } catch (Exception $e) {
                 $tableName = isset( $table['ADD_TAB_NAME'] ) ? $table['ADD_TAB_NAME'] : $row->id;
