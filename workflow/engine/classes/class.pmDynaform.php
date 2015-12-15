@@ -604,13 +604,17 @@ class pmDynaform
     {
         ob_clean();
 
+        $this->fields["STEP_MODE"] = "VIEW";
         $json = G::json_decode($this->record["DYN_CONTENT"]);
 
         foreach ($json->items[0]->items as $key => $value) {
-            switch ($json->items[0]->items[$key][0]->type) {
-                case "submit":
-                    unset($json->items[0]->items[$key]);
-                    break;
+            $n = count($json->items[0]->items[$key]);
+            for ($i = 0; $i < $n; $i++) {
+                if (isset($json->items[0]->items[$key][$i]->type) && $json->items[0]->items[$key][$i]->type === "submit") {
+                    $cols = new stdClass();
+                    $cols->colSpan = $json->items[0]->items[$key][$i]->colSpan;
+                    $json->items[0]->items[$key][$i] = $cols;
+                }
             }
         }
 
@@ -634,7 +638,6 @@ class pmDynaform
                 $(window).load(function ()
                 {
                     var data = jsondata;
-                    data.items[0].mode = \"disabled\";
 
                     window.project = new PMDynaform.core.Project({
                         data: data,
