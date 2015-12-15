@@ -83,12 +83,9 @@ class Designer extends Controller
         $this->setVar('credentials', base64_encode(json_encode($clientToken)));
         $this->setVar('isDebugMode', $debug);
         $this->setVar("distribution", $distribution);
-
-        /*----------------------------------********---------------------------------*/
         $this->setVar("SYS_SYS", SYS_SYS);
         $this->setVar("SYS_LANG", SYS_LANG);
         $this->setVar("SYS_SKIN", SYS_SKIN);
-        /*----------------------------------********---------------------------------*/
 
         if ($debug) {
             if (! file_exists(PATH_HTML . "lib-dev/pmUI/build.cache")) {
