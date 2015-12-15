@@ -146,17 +146,13 @@ class Dashboard extends Api
                 $dateTimezone = new \DateTime("now", new \DateTimeZone('UTC'));
                 $dateIni = $dateTimezone->format('Y-m-d H:i:s');
             } else {
-                $dateTimezone = new \DateTime($dateIni, new \DateTimeZone('UTC'));
-                $dateTimezone = DateTime::convertDataToUtc($dateTimezone);
-                $dateIni = $dateTimezone->format('Y-m-d H:i:s');
+                $dateIni = $this->normalizedTimeZone($dateIni);
             }
             if ($dateFin == "") {
                 $dateTimezone = new \DateTime("now", new \DateTimeZone('UTC'));
                 $dateFin = $dateTimezone->format('Y-m-d H:i:s');
             } else {
-                $dateTimezone = new \DateTime($dateFin, new \DateTimeZone('UTC'));
-                $dateTimezone = DateTime::convertDataToUtc($dateTimezone);
-                $dateFin = $dateTimezone->format('Y-m-d H:i:s');
+                $dateFin = $this->normalizedTimeZone($dateFin);
             }
 
             $usrUid = $this->getUserId();
@@ -479,6 +475,20 @@ class Dashboard extends Api
     		throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
     	}
     }
-    
+
+    public function normalizedTimeZone($date)
+    {
+        $result = $date;
+        $dateTimezone = new \DateTime($date, new \DateTimeZone('UTC'));
+        $dateTimezone = DateTime::convertDataToUtc($dateTimezone);
+
+        if (!(isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__'])) {
+            $result = $dateTimezone->format('Y-m-d H:i:s');
+        }
+        else {
+            $result = (new \DateTime($dateTimezone->date))->format('Y-m-d H:i:s');
+        }
+        return $result;
+    }
 }
 
