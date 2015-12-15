@@ -54,7 +54,13 @@ class ReportingIndicators extends Api
             $date = new \DateTime("now", new \DateTimeZone('UTC'));
         } else {
             $dateTimezone = new \DateTime($date, new \DateTimeZone('UTC'));
-            $date = DateTime::convertDataToUtc($dateTimezone);
+            $toUtcTime = DateTime::convertDataToUtc($dateTimezone);
+            if (!(isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__'])) {
+                $date = $toUtcTime;
+            }
+            else {
+                $date = (new \DateTime($toUtcTime->date));
+            }
         }
 
         return $date;
