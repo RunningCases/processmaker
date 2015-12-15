@@ -1734,8 +1734,10 @@ class pmTablesProxy extends HttpProxyController
                 foreach ($dynaformAllControl as $value) {
                     $arrayControl = array_change_key_case($value, CASE_UPPER);
 
-                    if (!in_array($arrayControl["DATATYPE"], $arrayDataTypeToExclude) && !in_array($arrayControl["TYPE"], $arrayTypeToExclude)) {
-                        $arrayControlSupported[$arrayControl["VAR_UID"]] = $arrayControl["TYPE"];
+                    if(isset($arrayControl["DATATYPE"]) && isset($arrayControl["TYPE"])){
+                        if (!in_array($arrayControl["DATATYPE"], $arrayDataTypeToExclude) && !in_array($arrayControl["TYPE"], $arrayTypeToExclude)) {
+                            $arrayControlSupported[$arrayControl["VAR_UID"]] = $arrayControl["TYPE"];
+                        }
                     }
                 }
 
