@@ -1997,19 +1997,25 @@ class Cases
                 if($taskNext->getTasType() == 'NORMAL'){
                     if($oApplication->getAppStatus() == "DRAFT"){
                       $sUserUid = $appDel->getUsrUid();
+                      /*----------------------------------********---------------------------------*/
                       $users = new Users();
                       $users->refreshTotal($sUserUid, "remove", "draft");
+                      /*----------------------------------********---------------------------------*/
                     }else{
                       $sUserUid = $appDel->getUsrUid();
+                      /*----------------------------------********---------------------------------*/
                       $users = new Users();
                       $users->refreshTotal($sUserUid, "remove", "inbox");
+                      /*----------------------------------********---------------------------------*/
                     }
                 }else{
                    //When start a case with SCRIPT-TASK WEBENTRYEVENT and the status is DRAFT
                    if($oApplication->getAppStatus() == "DRAFT"){
                       $sUserUid = $appDel->getUsrUid();
+                      /*----------------------------------********---------------------------------*/
                       $users = new Users();
                       $users->refreshTotal($sUserUid, "remove", "draft");
+                      /*----------------------------------********---------------------------------*/
                     }
                 }
             }
