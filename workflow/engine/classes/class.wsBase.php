@@ -2391,7 +2391,11 @@ class wsBase
 
                     if (isset($val['NEXT_TASK']['USER_ASSIGNED'])) {
                         $usrasgdUid = $val['NEXT_TASK']['USER_ASSIGNED']['USR_UID'];
-                        $usrasgdUserName = '(' . $val['NEXT_TASK']['USER_ASSIGNED']['USR_USERNAME'] . ')';
+                        if(isset($val['NEXT_TASK']['USER_ASSIGNED']['USR_USERNAME'])){
+                          $usrasgdUserName = '(' . $val['NEXT_TASK']['USER_ASSIGNED']['USR_USERNAME'] . ')';
+                        }else{
+                          $usrasgdUserName = '';
+                        }
                     }
 
                     $nodeNext['TAS_UID'] = $val['NEXT_TASK']['TAS_UID'];

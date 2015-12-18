@@ -84,6 +84,7 @@ try {
     G::LoadSystem('dvEditor');
     G::LoadSystem('table');
     G::LoadSystem('pagedTable');
+    G::LoadSystem('httpProxyController');
     G::LoadClass('system');
 
     require_once('propel/Propel.php');
@@ -150,6 +151,7 @@ try {
     G::LoadClass('processes');
     G::LoadClass('derivation');
     G::LoadClass('dates'); //Load Criteria
+    G::LoadClass('spool');
 
     //Set variables
     /*----------------------------------********---------------------------------*/
