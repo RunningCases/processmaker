@@ -1,6 +1,7 @@
 <script>
 if (typeof window.parent != 'undefined') {
 <?php
+/*----------------------------------********---------------------------------*/
 $enablePMGmail = false;
 $licensedFeatures = &PMLicensedFeatures::getSingleton();
 if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
@@ -8,6 +9,7 @@ if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
     $pmDrive = new PMDrive();
     $enablePMGmail = $pmDrive->getStatusService();
 }
+/*----------------------------------********---------------------------------*/
 if (isset( $_GET['ux'] )) {
     switch ($_GET['ux']) {
         case 'SIMPLIFIED':
@@ -28,11 +30,15 @@ if (isset( $_GET['ux'] )) {
 }
 echo "  window.parent.location.href = '$url';";
 if (isset( $_GET['ux'] )) {
+    /*----------------------------------********---------------------------------*/
     if(PMLicensedFeatures::getSingleton()->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09') && !empty($enablePMGmail) && $enablePMGmail==1){
 	echo '} else { window.parent.location.href = \'derivatedGmail\'; }';
     } else {
+    /*----------------------------------********---------------------------------*/
         echo '} else { window.parent.location.href = \'casesListExtJs\'; }';
-    }   
+    /*----------------------------------********---------------------------------*/
+    }
+    /*----------------------------------********---------------------------------*/
 }
 ?>
 }
