@@ -3140,6 +3140,14 @@ class wsBase
                 return $result;
             }
 
+            $oApplication = new Application();
+            $aFields = $oApplication->load($caseUid);
+            if($aFields['APP_STATUS'] == 'DRAFT'){
+                $result = new wsResponse( 100, G::LoadTranslation( "ID_CASE_IN_STATUS" ). " DRAFT" );
+                $g->sessionVarRestore();
+                return $result;
+            }
+
             $case = new Cases();
             $case->cancelCase( $caseUid, $delIndex, $userUid );
 
