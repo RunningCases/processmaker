@@ -1033,5 +1033,20 @@ class Process extends BaseProcess
         return 1;
       }
     }
+
+    public function getAllConfiguredCurrencies()
+    {
+        $oCriteria = new Criteria( 'workflow' );
+        $oCriteria->addSelectColumn( ProcessPeer::PRO_UNIT_COST);
+        $oCriteria->setDistinct();
+        $oDataSet = ProcessPeer::doSelectRS( $oCriteria, Propel::getDbConnection('workflow_ro') );
+        $oDataSet->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+        $aProc = Array ();
+        while ($oDataSet->next()) {
+            $row = $oDataSet->getRow();
+            $aProc[$row['PRO_UNIT_COST']] = $row['PRO_UNIT_COST'];
+        }
+        return $aProc;
+    }
 }
 
