@@ -1017,14 +1017,17 @@ class wsBase
             );
 
             $oSpool->create( $messageArray );
-            $oSpool->sendMail();
+            if ($gmail != 1){
+	            $oSpool->sendMail();
 
-            if ($oSpool->status == 'sent') {
-                $result = new wsResponse( 0, G::loadTranslation( 'ID_MESSAGE_SENT' ) . ": " . $sTo );
+	            if ($oSpool->status == 'sent') {
+	                $result = new wsResponse( 0, G::loadTranslation( 'ID_MESSAGE_SENT' ) . ": " . $sTo );
+	            } else {
+	                $result = new wsResponse( 29, $oSpool->status . ' ' . $oSpool->error . print_r( $aSetup, 1 ) );
+	            }
             } else {
-                $result = new wsResponse( 29, $oSpool->status . ' ' . $oSpool->error . print_r( $aSetup, 1 ) );
+            	$result = "";
             }
-
             return $result;
         } catch (Exception $e) {
             return new wsResponse( 100, $e->getMessage() );
