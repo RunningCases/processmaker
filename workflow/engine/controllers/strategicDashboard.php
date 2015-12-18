@@ -30,11 +30,7 @@ class StrategicDashboard extends Controller
         $this->usrId = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
         $user = new Users();
         $user = $user->load($RBAC->aUserInfo['USER_INFO']['USR_UID']);
-        $this->usrUnitCost = '$';
-        if (isset($user['USR_UNIT_COST'])) {
-            $this->usrUnitCost = $user['USR_UNIT_COST'];
-        }
-
+        $this->usrUnitCost = $this->currencySymbolToShow($user);
         $this->urlProxy = '/api/1.0/' . SYS_SYS . '/';
         //change
         $clientId = 'x-pm-local-client';
@@ -65,6 +61,28 @@ class StrategicDashboard extends Controller
         $this->clientToken = $response->getParameters();
         $this->clientToken["client_id"] = $client['CLIENT_ID'];
         $this->clientToken["client_secret"] = $client['CLIENT_SECRET'];
+    }
+
+    private function currencySymbolToShow($user)
+    {
+        $result = '$';
+        if (isset($user['USR_UNIT_COST']) && !empty($user['USR_UNIT_COST'])) {
+            $result = $user['USR_UNIT_COST'];
+        }
+        else {
+            $processModel = new Process();
+            $processList = $processModel->getAllConfiguredCurrencies();
+            $defaultProcessCurrency = '';
+            foreach ($processList as $key => $value) {
+                if (!empty($value)) {
+                    $defaultProcessCurrency = $value;
+                }
+            }
+            if (!empty($defaultProcessCurrency)) {
+                $result = $defaultProcessCurrency;
+            }
+        }
+        return $result;
     }
 
     private function getClientCredentials($clientId)
