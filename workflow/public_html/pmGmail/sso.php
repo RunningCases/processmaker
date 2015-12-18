@@ -124,8 +124,6 @@ if ($action == "draft"){
 	curl_setopt( $curlApp, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt( $curlApp, CURLOPT_SSL_VERIFYPEER,false);
 	curl_setopt( $curlApp, CURLOPT_CONNECTTIMEOUT, 0);
-	curl_setopt( $curlApp, CURLOPT_FRESH_CONNECT, true);
-	curl_setopt( $curlApp, CURLOPT_TIMEOUT_MS, 1);
 
 	$curl_response_app = curl_exec( $curlApp );
 	curl_close( $curlApp );
