@@ -2930,3 +2930,23 @@ CREATE TABLE `NOTIFICATION_DEVICE`
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Definitions Notification device.';
 # This restores the fkey checks, after having unset them earlier
 # SET FOREIGN_KEY_CHECKS = 1;
+
+
+
+#-----------------------------------------------------------------------------
+#-- GMAIL_RELABELING
+#-----------------------------------------------------------------------------
+
+CREATE TABLE `GMAIL_RELABELING` (
+	`APP_UID` 				      VARCHAR(32) NOT NULL DEFAULT '',
+	`DEL_INDEX` 			      INT(11) 		NOT NULL DEFAULT '0',
+	`CURRENT_LAST_INDEX`    INT(11) 		NOT NULL DEFAULT '0',
+	`UNASSIGNED`            INT(11)   	NOT NULL DEFAULT '0',
+	`STATUS`  							VARCHAR(32) NOT NULL DEFAULT 'pending',
+	`MSG_ERROR`  						TEXT NULL,
+	PRIMARY KEY (`APP_UID`, `DEL_INDEX`),
+	KEY `indexStatus` (`STATUS`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Task to synchronize Gmail Labels';
+# This restores the fkey checks, after having unset them earlier
+# SET FOREIGN_KEY_CHECKS = 1;
+

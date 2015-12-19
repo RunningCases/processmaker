@@ -12,6 +12,7 @@ class labelsGmail
             }
         } catch (Exception $e) {
             print G::LoadTranslation("ID_PMGMAIL_GENERAL_ERROR") . $e->getMessage();
+            throw ($e);
         }
         return $labels;
     }
@@ -34,6 +35,7 @@ class labelsGmail
             $message = $service->users_messages->modify($userId, $messageId, $mods);
         } catch (Exception $e) {
             print G::LoadTranslation("ID_PMGMAIL_GENERAL_ERROR") . $e->getMessage();
+            throw ($e);
         }
     }
 
@@ -63,6 +65,7 @@ class labelsGmail
                 }
             } catch (Exception $e) {
                 print G::LoadTranslation("ID_PMGMAIL_GENERAL_ERROR") . $e->getMessage();
+                throw ($e);
             }
         } while ($pageToken);
 
@@ -286,30 +289,67 @@ class labelsGmail
     	return $count . ' labels successfully deleted.';
     }
 
+    public function addRelabelingToQueue($caseId, $index, $actualLastIndex, $unassigned=false)
+    {
+        $labelingQueue = new GmailRelabeling();
+        $labelingQueue->setAppUid($caseId);
+        $labelingQueue->setDelIndex($index);
+        $labelingQueue->setCurrentLastIndex($actualLastIndex);
+        $labelingQueue->setUnassigned(($unassigned === true) ? 1 : 0);
+        $labelingQueue->setStatus('pending');
+        $labelingQueue->save();
+    }
+
+    public function processPendingRelabelingInQueue()
+    {
+        $c = new \Criteria( 'workflow' );
+        $c->add( \GmailRelabelingPeer::STATUS, 'pending' );
+        $list = \GmailRelabelingPeer::doSelect($c);
+        foreach($list as $task) {
+            try {
+                $oResponse = $this->setLabels($task->getAppUid(),
+                    $task->getDelIndex(),
+                    $task->getCurrentLastIndex(),
+                    ($task->getUnassigned() === 1) ? true : false
+                );
+                $task->setStatus('completed');
+            }
+            catch(exception $e){
+                $task->setMsgError($e->getMessage());
+                $task->setStatus('pending');
+            }
+            $task->save();
+        }
+    }
 
     private function getLabelsIds($service) {
         $result = array();
-        $listlabels = $this->listLabels($service);
-        foreach ($listlabels as $label) {
-            $labId =  $label->getId();
-            $labName = $label->getName();
-            switch($labName){
-                case "* Inbox":
-                    $result['Inbox'] = $labId;
-                    break;
-                case "* Participated":
-                    $result['Participated'] = $labId;
-                    break;
-                case "* Unassigned":
-                    $result['Unassigned'] = $labId;
-                    break;
-                case "* Draft":
-                    $result['Draft'] = $labId;
-                    break;
-                case "* Paused":
-                    $result['Paused'] = $labId;
-                    break;
+        try {
+            $listlabels = $this->listLabels($service);
+            foreach ($listlabels as $label) {
+                $labId =  $label->getId();
+                $labName = $label->getName();
+                switch($labName){
+                    case "* Inbox":
+                        $result['Inbox'] = $labId;
+                        break;
+                    case "* Participated":
+                        $result['Participated'] = $labId;
+                        break;
+                    case "* Unassigned":
+                        $result['Unassigned'] = $labId;
+                        break;
+                    case "* Draft":
+                        $result['Draft'] = $labId;
+                        break;
+                    case "* Paused":
+                        $result['Paused'] = $labId;
+                        break;
+                }
             }
+        }
+        catch(Exception $e) {
+            throw $e;
         }
         return $result;
     }

@@ -340,6 +340,7 @@ function processWorkspace()
         fillReportByUser();
         fillReportByProcess();
         synchronizeDrive();
+        synchronizeGmailLabels();
         /*----------------------------------********---------------------------------*/
     } catch (Exception $oError) {
         saveLog("main", "error", "Error processing workspace : " . $oError->getMessage() . "\n");
@@ -982,5 +983,26 @@ function synchronizeDrive ()
     }
 }
 
-/*----------------------------------********---------------------------------*/
+function synchronizeGmailLabels()
+{
+    try
+    {
+        global $argvx;
 
+        if (strpos($argvx, "synchronize-gmail-labels") === false) {
+            return false;
+        }
+
+        setExecutionMessage("Synchronize labels in Gmail");
+        G::LoadClass('labelsGmail');
+        $labGmail = new labelsGmail();
+        $labGmail->processPendingRelabelingInQueue();
+        setExecutionResultMessage("DONE");
+
+    } catch (Exception $e) {
+        setExecutionResultMessage("WITH ERRORS", "error");
+        eprintln("  '-" . $e->getMessage(), "red");
+        saveLog("synchronizeGmailLabels", "error", "Error when synchronizing Gmail labels: " . $e->getMessage());
+    }
+}
+/*----------------------------------********---------------------------------*/
