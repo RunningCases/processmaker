@@ -94,12 +94,13 @@ class PMDrive extends PMGoogleApi
      */
     public function listFolder($fileId)
     {
-        $this->setScope('https://www.googleapis.com/auth/drive');
-        $this->setScope('https://www.googleapis.com/auth/drive.file');
-        $this->setScope('https://www.googleapis.com/auth/drive.readonly');
-        $this->setScope('https://www.googleapis.com/auth/drive.metadata.readonly');
-        $this->setScope('https://www.googleapis.com/auth/drive.appdata');
-        $this->setScope('https://www.googleapis.com/auth/drive.metadata');
+        $this->setScope(static::DRIVE);
+        $this->setScope(static::DRIVE_FILE);
+        $this->setScope(static::DRIVE_READONLY);
+        $this->setScope(static::DRIVE_METADATA);
+        $this->setScope(static::DRIVE_METADATA_READONLY);
+        $this->setScope(static::DRIVE_APPDATA);
+        
         $service = $this->serviceDrive();
 
         try {
@@ -126,7 +127,7 @@ class PMDrive extends PMGoogleApi
      */
     public function createFolder($name, $parentId = null)
     {
-        $this->setScope('https://www.googleapis.com/auth/drive.file');
+        $this->setScope(static::DRIVE_FILE);
 
         $service = $this->serviceDrive();
 
@@ -159,7 +160,7 @@ class PMDrive extends PMGoogleApi
      */
     public function uploadFile($mime, $src, $name, $parentId = null)
     {
-        $this->setScope('https://www.googleapis.com/auth/drive.file');
+        $this->setScope(static::DRIVE_FILE);
 
         $service = $this->serviceDrive();
 
@@ -200,13 +201,13 @@ class PMDrive extends PMGoogleApi
      */
     public function downloadFile($fileId)
     {
-        $this->setScope('https://www.googleapis.com/auth/drive');
-        $this->setScope('https://www.googleapis.com/auth/drive.appdata');
-        $this->setScope('https://www.googleapis.com/auth/drive.apps.readonly');
-        $this->setScope('https://www.googleapis.com/auth/drive.file');
-        $this->setScope('https://www.googleapis.com/auth/drive.metadata');
-        $this->setScope('https://www.googleapis.com/auth/drive.metadata.readonly');
-        $this->setScope('https://www.googleapis.com/auth/drive.readonly');
+        $this->setScope(static::DRIVE);
+        $this->setScope(static::DRIVE_APPDATA);
+        $this->setScope(static::DRIVE_APPS_READONLY);
+        $this->setScope(static::DRIVE_FILE);
+        $this->setScope(static::DRIVE_METADATA);
+        $this->setScope(static::DRIVE_METADATA_READONLY);
+        $this->setScope(static::DRIVE_READONLY);
         $service = $this->serviceDrive();
         $response = null;
 
@@ -241,8 +242,8 @@ class PMDrive extends PMGoogleApi
      */
     public function setPermission($fileId, $value, $type = 'user', $role = 'reader', $sendNotification = false)
     {
-        $this->setScope('https://www.googleapis.com/auth/drive');
-        $this->setScope('https://www.googleapis.com/auth/drive.file');
+        $this->setScope(static::DRIVE);
+        $this->setScope(static::DRIVE_FILE);
 
         $service = $this->serviceDrive();
 

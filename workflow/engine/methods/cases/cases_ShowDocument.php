@@ -107,6 +107,7 @@ if (! $sw_file_exists) {
         $res['message'] = $oAppDocument->Fields['APP_DOC_FILENAME'];
         print G::json_encode( $res );
     } else {
+        $nameFile = $oAppDocument->Fields['APP_DOC_FILENAME'];
         $licensedFeatures = &PMLicensedFeatures::getSingleton();
         $downloadStatus = false;
         if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
@@ -116,14 +117,20 @@ if (! $sw_file_exists) {
                 $fieldDrive = $oAppDocument->getAppDocDriveDownload();
                 $drive->loadUser($_SESSION['USER_LOGGED']);
                 $uidDrive = $drive->changeUrlDrive($oAppDocument->Fields, $oAppDocument->getAppDocType());
-                $result = $drive->download($uidDrive);
-                //verify download
-                file_put_contents($oAppDocument->Fields['APP_DOC_FILENAME'], $result);
-                $downloadStatus = true;
+                $fileContent = $drive->download($uidDrive);
+                if ($fileContent !== null) {
+                    $downloadStatus = true;
+                    header('Content-Description: File Transfer');
+                    header('Content-Disposition: attachment; filename='.$nameFile);
+                    header('Content-Transfer-Encoding: binary');
+                    header('Set-Cookie: fileLoading=true');
+                    echo $fileContent;
+                    exit();
+                }
             }
         }
         if (!$downloadStatus) {
-            G::streamFile( $realPath, $bDownload, $oAppDocument->Fields['APP_DOC_FILENAME'] ); //download
+            G::streamFile( $realPath, $bDownload, $nameFile ); //download
         }
 
 
