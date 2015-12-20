@@ -72,56 +72,56 @@ class labelsGmail
         return $messages;
     }
 
-   public function setLabelsToPauseCase ($caseId, $index) {
-       require_once PATH_TRUNK . 'vendor' . PATH_SEP . 'google' . PATH_SEP . 'apiclient' . PATH_SEP . 'src' . PATH_SEP . 'Google' . PATH_SEP . 'autoload.php';
-       require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.pmGoogleApi.php");
+    public function setLabelsToPauseCase ($caseId, $index) {
+        require_once PATH_TRUNK . 'vendor' . PATH_SEP . 'google' . PATH_SEP . 'apiclient' . PATH_SEP . 'src' . PATH_SEP . 'Google' . PATH_SEP . 'autoload.php';
+        require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.pmGoogleApi.php");
 
-       $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
-       $appData = $Pmgmail->getDraftApp($caseId, $index);
+        $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
+        $appData = $Pmgmail->getDraftApp($caseId, $index);
 
-       foreach ($appData as $application){
-           $appNumber = $application['APP_NUMBER'];
-           $index = $application['DEL_INDEX'];
-           $threadUsr = $application['USR_UID'];
-           $proName = $application['APP_PRO_TITLE'];
-           $threadStatus = $application['DEL_THREAD_STATUS'];
-           $appStatus = $application['APP_STATUS'];
-       }
+        foreach ($appData as $application){
+            $appNumber = $application['APP_NUMBER'];
+            $index = $application['DEL_INDEX'];
+            $threadUsr = $application['USR_UID'];
+            $proName = $application['APP_PRO_TITLE'];
+            $threadStatus = $application['DEL_THREAD_STATUS'];
+            $appStatus = $application['APP_STATUS'];
+        }
 
-       //Getting the privious User email
-       $oUsers = new \Users();
-       $usrData = $oUsers->loadDetails($threadUsr);
-       $mail = $usrData['USR_EMAIL'];
+        //Getting the privious User email
+        $oUsers = new \Users();
+        $usrData = $oUsers->loadDetails($threadUsr);
+        $mail = $usrData['USR_EMAIL'];
 
-       //The Subject to search the email
-       $subject = "[PM] " .$proName. " Case: ". $appNumber;
+        //The Subject to search the email
+        $subject = "[PM] " .$proName. " Case: ". $appNumber;
 
-       $pmGoogle = new PMGoogleApi();
-       $pmGoogle->setUser($mail);
-       $pmGoogle->setScope('https://www.googleapis.com/auth/gmail.modify');
-       $client = $pmGoogle->serviceClient();
-       $service = new Google_Service_Gmail($client);
-       $labelsIds = $this->getLabelsIds($service);
+        $pmGoogle = new PMGoogleApi();
+        $pmGoogle->setUser($mail);
+        $pmGoogle->setScope('https://www.googleapis.com/auth/gmail.modify');
+        $client = $pmGoogle->serviceClient();
+        $service = new Google_Service_Gmail($client);
+        $labelsIds = $this->getLabelsIds($service);
 
-       if($appStatus == 'DRAFT'){
-           $labelsToRemove = $labelsIds['Draft'];
-           $labelsToSearch = "*-draft";
-           $labelsToAdd = $labelsIds['Paused'];
-       }
+        if($appStatus == 'DRAFT'){
+            $labelsToRemove = $labelsIds['Draft'];
+            $labelsToSearch = "*-draft";
+            $labelsToAdd = $labelsIds['Paused'];
+        }
 
-       if($appStatus == 'TO_DO'){
-           $labelsToRemove = $labelsIds['Inbox'];
-           $labelsToSearch = "*-inbox";
-           $labelsToAdd = $labelsIds['Paused'];
-       }
+        if($appStatus == 'TO_DO'){
+            $labelsToRemove = $labelsIds['Inbox'];
+            $labelsToSearch = "*-inbox";
+            $labelsToAdd = $labelsIds['Paused'];
+        }
 
-       $q = "subject:('".preg_quote($subject, '-')."') label:('".$labelsToSearch."')";
-       $messageList = $this->listMessages($service, $mail, $q, $labelsToRemove);
-       foreach ($messageList as $message) {
-           $messageId = $message->getId();
-           $modifyResult = $this->modifyMessage($service, $mail, $messageId, array($labelsToAdd), array($labelsToRemove));
-       }
-   }
+        $q = "subject:('".preg_quote($subject, '-')."') label:('".$labelsToSearch."')";
+        $messageList = $this->listMessages($service, $mail, $q, $labelsToRemove);
+        foreach ($messageList as $message) {
+            $messageId = $message->getId();
+            $modifyResult = $this->modifyMessage($service, $mail, $messageId, array($labelsToAdd), array($labelsToRemove));
+        }
+    }
 
     function setLabelsTounpauseCase ($caseId, $index) {
         require_once PATH_TRUNK . 'vendor' . PATH_SEP . 'google' . PATH_SEP . 'apiclient' . PATH_SEP . 'src' . PATH_SEP . 'Google' . PATH_SEP . 'autoload.php';
@@ -174,7 +174,7 @@ class labelsGmail
         }
     }
 
-   public function setLabels($caseId, $index, $actualLastIndex, $unassigned=false){
+    public function setLabels($caseId, $index, $actualLastIndex, $unassigned=false){
         //First getting the actual thread data
         $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
         $appData = $Pmgmail->getDraftApp($caseId, $index);
@@ -186,6 +186,7 @@ class labelsGmail
             $proName = $application['APP_PRO_TITLE'];
             $threadStatus = $application['DEL_THREAD_STATUS'];
             $appStatus = $application['APP_STATUS'];
+            $tasUid = $application['TAS_UID'];
         }
 
         if($threadStatus == 'CLOSED' || $unassigned == true) {
@@ -226,7 +227,6 @@ class labelsGmail
 
             //Searching the email in the user's mail
             $q = "subject:('".preg_quote($subject, '-')."') label:('".$labelsToSearch."')";
-
             $messageList = $this->listMessages($service, $mail, $q, $labelsToRemove);
 
             foreach ($messageList as $message) {
@@ -235,9 +235,58 @@ class labelsGmail
                 $modifyResult = $this->modifyMessage($service, $mail, $messageId, array($labelsToAdd), array($labelsToRemove));
 
             }
+
+            //in is unassigned we must remove the label to the orher users
+            if ($labelsToRemove === $labelsIds['Unassigned']) {
+                require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskUser.php");
+                $oTaskUsers = new \TaskUser();
+                $taskUsers = $oTaskUsers->getAllUsersTask($tasUid);
+                foreach ($taskUsers as $user){
+                    $usrData = $oUsers->loadDetails($user['USR_UID']);
+                    $nextMail = $usrData['USR_EMAIL'];
+                    //this operation is just for the users that didn't make the case claim
+                    if ($nextMail !== $mail) {
+                        $this->changeLabelsOfUnassigned($appData[0], $nextMail);
+                    }
+                }
+            }
         }
     }
-    
+
+    function changeLabelsOfUnassigned($application, $mail)
+    {
+        $appNumber = $application['APP_NUMBER'];
+        $index = $application['DEL_INDEX'];
+        $threadUsr = $application['USR_UID'];
+        $proName = $application['APP_PRO_TITLE'];
+        $threadStatus = $application['DEL_THREAD_STATUS'];
+        $appStatus = $application['APP_STATUS'];
+        $tasUid = $application['TAS_UID'];
+
+        //The Subject to search the email
+        $subject = "[PM] " .$proName. " Case: ". $appNumber;
+        $pmGoogle = new PMGoogleApi();
+        $pmGoogle->setUser($mail);
+        $pmGoogle->setScope('https://www.googleapis.com/auth/gmail.modify');
+        $client = $pmGoogle->serviceClient();
+        $service = new Google_Service_Gmail($client);
+        $labelsIds = $this->getLabelsIds($service);
+        $labelsToRemove = $labelsIds['Unassigned'];
+        $labelsToSearch = "*-unassigned";
+        $labelsToAdd = $labelsIds['Participated'];
+
+        //Searching the email in the user's mail
+        $q = "subject:('".preg_quote($subject, '-')."') label:('".$labelsToSearch."')";
+        $messageList = $this->listMessages($service, $mail, $q, $labelsToRemove);
+
+        foreach ($messageList as $message) {
+            $messageId = $message->getId();
+            $modifyResult = $this->modifyMessage($service, $mail, $messageId, array($labelsToAdd), array($labelsToRemove));
+
+        }
+    }
+
+
     /**
      * Delete Label with given ID.
      *
@@ -248,13 +297,13 @@ class labelsGmail
      */
     public function deleteLabel($service, $user, $labelId)
     {
-    	try {
-    		$service->users_labels->delete($user, $labelId);
-    	} catch (Exception $e) {
-    		error_log(G::LoadTranslation("ID_PMGMAIL_GENERAL_ERROR") . $e->getMessage());
-    	}
+        try {
+            $service->users_labels->delete($user, $labelId);
+        } catch (Exception $e) {
+            error_log(G::LoadTranslation("ID_PMGMAIL_GENERAL_ERROR") . $e->getMessage());
+        }
     }
-    
+
     /**
      * Delete PMGmail integration labels getting the list of labels in an email account.
      * @param string $mail User mail adress.
@@ -262,31 +311,31 @@ class labelsGmail
      */
     public function deletePMGmailLabels($mail)
     {
-    	require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.pmGoogleApi.php");
-    	$pmGoogle = new PMGoogleApi();
-    
-    	$pmGoogle->setUser($mail);
-    
-    	$pmGoogle->setScope('https://www.googleapis.com/auth/gmail.modify');
-    	$client = $pmGoogle->serviceClient();
-    
-    	$service = new Google_Service_Gmail($client);
-    	$count = 0;
-    	$listlabels = $this->listLabels($service);
-    	foreach ($listlabels as $label) {
-    		if ($label->getName() == '* Inbox' ||
-    				$label->getName() == '* Participated' ||
-    				$label->getName() == '* Unassigned' ||
-    				$label->getName() == '* Draft' ||
-    				$label->getName() == '* Inbox' ||
-    				$label->getName() == '*-- ProcessMaker --*' ||
-    				$label->getName() == '* Paused'
-    		) {
-    			$oresp = $this->deleteLabel($service, 'me', $label->getId());
-    			$count++;
-    		}
-    	}
-    	return $count . ' labels successfully deleted.';
+        require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.pmGoogleApi.php");
+        $pmGoogle = new PMGoogleApi();
+
+        $pmGoogle->setUser($mail);
+
+        $pmGoogle->setScope('https://www.googleapis.com/auth/gmail.modify');
+        $client = $pmGoogle->serviceClient();
+
+        $service = new Google_Service_Gmail($client);
+        $count = 0;
+        $listlabels = $this->listLabels($service);
+        foreach ($listlabels as $label) {
+            if ($label->getName() == '* Inbox' ||
+                $label->getName() == '* Participated' ||
+                $label->getName() == '* Unassigned' ||
+                $label->getName() == '* Draft' ||
+                $label->getName() == '* Inbox' ||
+                $label->getName() == '*-- ProcessMaker --*' ||
+                $label->getName() == '* Paused'
+            ) {
+                $oresp = $this->deleteLabel($service, 'me', $label->getId());
+                $count++;
+            }
+        }
+        return $count . ' labels successfully deleted.';
     }
 
     public function addRelabelingToQueue($caseId, $index, $actualLastIndex, $unassigned=false)
@@ -355,4 +404,3 @@ class labelsGmail
         return $result;
     }
 }
-
