@@ -25,11 +25,14 @@ abstract class BaseGmailRelabelingPeer
     const CLASS_DEFAULT = 'classes.model.GmailRelabeling';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 7;
+    const NUM_COLUMNS = 8;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
+
+    /** the column name for the LABELING_UID field */
+    const LABELING_UID = 'GMAIL_RELABELING.LABELING_UID';
 
     /** the column name for the CREATE_DATE field */
     const CREATE_DATE = 'GMAIL_RELABELING.CREATE_DATE';
@@ -63,10 +66,10 @@ abstract class BaseGmailRelabelingPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('CreateDate', 'AppUid', 'DelIndex', 'CurrentLastIndex', 'Unassigned', 'Status', 'MsgError', ),
-        BasePeer::TYPE_COLNAME => array (GmailRelabelingPeer::CREATE_DATE, GmailRelabelingPeer::APP_UID, GmailRelabelingPeer::DEL_INDEX, GmailRelabelingPeer::CURRENT_LAST_INDEX, GmailRelabelingPeer::UNASSIGNED, GmailRelabelingPeer::STATUS, GmailRelabelingPeer::MSG_ERROR, ),
-        BasePeer::TYPE_FIELDNAME => array ('CREATE_DATE', 'APP_UID', 'DEL_INDEX', 'CURRENT_LAST_INDEX', 'UNASSIGNED', 'STATUS', 'MSG_ERROR', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+        BasePeer::TYPE_PHPNAME => array ('LabelingUid', 'CreateDate', 'AppUid', 'DelIndex', 'CurrentLastIndex', 'Unassigned', 'Status', 'MsgError', ),
+        BasePeer::TYPE_COLNAME => array (GmailRelabelingPeer::LABELING_UID, GmailRelabelingPeer::CREATE_DATE, GmailRelabelingPeer::APP_UID, GmailRelabelingPeer::DEL_INDEX, GmailRelabelingPeer::CURRENT_LAST_INDEX, GmailRelabelingPeer::UNASSIGNED, GmailRelabelingPeer::STATUS, GmailRelabelingPeer::MSG_ERROR, ),
+        BasePeer::TYPE_FIELDNAME => array ('LABELING_UID', 'CREATE_DATE', 'APP_UID', 'DEL_INDEX', 'CURRENT_LAST_INDEX', 'UNASSIGNED', 'STATUS', 'MSG_ERROR', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -76,10 +79,10 @@ abstract class BaseGmailRelabelingPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('CreateDate' => 0, 'AppUid' => 1, 'DelIndex' => 2, 'CurrentLastIndex' => 3, 'Unassigned' => 4, 'Status' => 5, 'MsgError' => 6, ),
-        BasePeer::TYPE_COLNAME => array (GmailRelabelingPeer::CREATE_DATE => 0, GmailRelabelingPeer::APP_UID => 1, GmailRelabelingPeer::DEL_INDEX => 2, GmailRelabelingPeer::CURRENT_LAST_INDEX => 3, GmailRelabelingPeer::UNASSIGNED => 4, GmailRelabelingPeer::STATUS => 5, GmailRelabelingPeer::MSG_ERROR => 6, ),
-        BasePeer::TYPE_FIELDNAME => array ('CREATE_DATE' => 0, 'APP_UID' => 1, 'DEL_INDEX' => 2, 'CURRENT_LAST_INDEX' => 3, 'UNASSIGNED' => 4, 'STATUS' => 5, 'MSG_ERROR' => 6, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+        BasePeer::TYPE_PHPNAME => array ('LabelingUid' => 0, 'CreateDate' => 1, 'AppUid' => 2, 'DelIndex' => 3, 'CurrentLastIndex' => 4, 'Unassigned' => 5, 'Status' => 6, 'MsgError' => 7, ),
+        BasePeer::TYPE_COLNAME => array (GmailRelabelingPeer::LABELING_UID => 0, GmailRelabelingPeer::CREATE_DATE => 1, GmailRelabelingPeer::APP_UID => 2, GmailRelabelingPeer::DEL_INDEX => 3, GmailRelabelingPeer::CURRENT_LAST_INDEX => 4, GmailRelabelingPeer::UNASSIGNED => 5, GmailRelabelingPeer::STATUS => 6, GmailRelabelingPeer::MSG_ERROR => 7, ),
+        BasePeer::TYPE_FIELDNAME => array ('LABELING_UID' => 0, 'CREATE_DATE' => 1, 'APP_UID' => 2, 'DEL_INDEX' => 3, 'CURRENT_LAST_INDEX' => 4, 'UNASSIGNED' => 5, 'STATUS' => 6, 'MSG_ERROR' => 7, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
     );
 
     /**
@@ -180,6 +183,8 @@ abstract class BaseGmailRelabelingPeer
     public static function addSelectColumns(Criteria $criteria)
     {
 
+        $criteria->addSelectColumn(GmailRelabelingPeer::LABELING_UID);
+
         $criteria->addSelectColumn(GmailRelabelingPeer::CREATE_DATE);
 
         $criteria->addSelectColumn(GmailRelabelingPeer::APP_UID);
@@ -196,8 +201,8 @@ abstract class BaseGmailRelabelingPeer
 
     }
 
-    const COUNT = 'COUNT(*)';
-    const COUNT_DISTINCT = 'COUNT(DISTINCT *)';
+    const COUNT = 'COUNT(GMAIL_RELABELING.LABELING_UID)';
+    const COUNT_DISTINCT = 'COUNT(DISTINCT GMAIL_RELABELING.LABELING_UID)';
 
     /**
      * Returns the number of rows matching criteria.
@@ -406,6 +411,9 @@ abstract class BaseGmailRelabelingPeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
+            $comparison = $criteria->getComparison(GmailRelabelingPeer::LABELING_UID);
+            $selectCriteria->add(GmailRelabelingPeer::LABELING_UID, $criteria->remove(GmailRelabelingPeer::LABELING_UID), $comparison);
+
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
@@ -463,22 +471,11 @@ abstract class BaseGmailRelabelingPeer
             $criteria = clone $values; // rename for clarity
         } elseif ($values instanceof GmailRelabeling) {
 
-            $criteria = $values->buildCriteria();
+            $criteria = $values->buildPkeyCriteria();
         } else {
             // it must be the primary key
             $criteria = new Criteria(self::DATABASE_NAME);
-            // primary key is composite; we therefore, expect
-            // the primary key passed to be an array of pkey
-            // values
-            if (count($values) == count($values, COUNT_RECURSIVE)) {
-                // array is not multi-dimensional
-                $values = array($values);
-            }
-            $vals = array();
-            foreach ($values as $value) {
-
-            }
-
+            $criteria->add(GmailRelabelingPeer::LABELING_UID, (array) $values, Criteria::IN);
         }
 
         // Set the correct dbName
@@ -535,6 +532,54 @@ abstract class BaseGmailRelabelingPeer
         }
 
         return BasePeer::doValidate(GmailRelabelingPeer::DATABASE_NAME, GmailRelabelingPeer::TABLE_NAME, $columns);
+    }
+
+    /**
+     * Retrieve a single object by pkey.
+     *
+     * @param      mixed $pk the primary key.
+     * @param      Connection $con the connection to use
+     * @return     GmailRelabeling
+     */
+    public static function retrieveByPK($pk, $con = null)
+    {
+        if ($con === null) {
+            $con = Propel::getConnection(self::DATABASE_NAME);
+        }
+
+        $criteria = new Criteria(GmailRelabelingPeer::DATABASE_NAME);
+
+        $criteria->add(GmailRelabelingPeer::LABELING_UID, $pk);
+
+
+        $v = GmailRelabelingPeer::doSelect($criteria, $con);
+
+        return !empty($v) > 0 ? $v[0] : null;
+    }
+
+    /**
+     * Retrieve multiple objects by pkey.
+     *
+     * @param      array $pks List of primary keys
+     * @param      Connection $con the connection to use
+     * @throws     PropelException Any exceptions caught during processing will be
+     *       rethrown wrapped into a PropelException.
+     */
+    public static function retrieveByPKs($pks, $con = null)
+    {
+        if ($con === null) {
+            $con = Propel::getConnection(self::DATABASE_NAME);
+        }
+
+        $objs = null;
+        if (empty($pks)) {
+            $objs = array();
+        } else {
+            $criteria = new Criteria();
+            $criteria->add(GmailRelabelingPeer::LABELING_UID, $pks, Criteria::IN);
+            $objs = GmailRelabelingPeer::doSelect($criteria, $con);
+        }
+        return $objs;
     }
 }
 
