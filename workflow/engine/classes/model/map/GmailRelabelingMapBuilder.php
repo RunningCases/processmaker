@@ -65,9 +65,11 @@ class GmailRelabelingMapBuilder
 
         $tMap->setUseIdGenerator(false);
 
-        $tMap->addPrimaryKey('APP_UID', 'AppUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addColumn('CREATE_DATE', 'CreateDate', 'int', CreoleTypes::TIMESTAMP, false, null);
 
-        $tMap->addPrimaryKey('DEL_INDEX', 'DelIndex', 'int', CreoleTypes::INTEGER, true, null);
+        $tMap->addColumn('APP_UID', 'AppUid', 'string', CreoleTypes::VARCHAR, true, 32);
+
+        $tMap->addColumn('DEL_INDEX', 'DelIndex', 'int', CreoleTypes::INTEGER, true, null);
 
         $tMap->addColumn('CURRENT_LAST_INDEX', 'CurrentLastIndex', 'int', CreoleTypes::INTEGER, true, null);
 

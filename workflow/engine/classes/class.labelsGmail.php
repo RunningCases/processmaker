@@ -292,6 +292,7 @@ class labelsGmail
     public function addRelabelingToQueue($caseId, $index, $actualLastIndex, $unassigned=false)
     {
         $labelingQueue = new GmailRelabeling();
+        $labelingQueue->setCreateDate(date('Y-m-d H:i:s'));
         $labelingQueue->setAppUid($caseId);
         $labelingQueue->setDelIndex($index);
         $labelingQueue->setCurrentLastIndex($actualLastIndex);
