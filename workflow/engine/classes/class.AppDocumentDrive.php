@@ -325,6 +325,10 @@ class AppDocumentDrive
      */
     public function synchronizeDrive ($log)
     {
+        if (!$this->statusDrive) {
+            error_log("It has not enabled Feature Gmail");
+            return;
+        }
         $criteria = new Criteria( 'workflow' );
         $criteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
         $criteria->addSelectColumn(AppDocumentPeer::DOC_VERSION);
@@ -425,7 +429,6 @@ class AppDocumentDrive
 
                                 if ($sw_file_exists_doc) {
                                     $nameDoc = explode('/', $realPathDoc);
-                                    $mime = finfo_file($info, $realPathDoc);
                                     $result = $this->upload($fields, 'OUTPUT_DOC', 'application/msword', $realPathDoc, array_pop($nameDoc));
                                 }
                                 if ($sw_file_exists_pdf) {

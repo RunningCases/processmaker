@@ -967,10 +967,15 @@ function synchronizeDrive ()
             return false;
         }
 
-        setExecutionMessage("Synchronize documents to drive");
         G::LoadClass('AppDocumentDrive');
         $drive = new AppDocumentDrive();
-        $drive->synchronizeDrive(true);
+        if($drive->getStatusDrive()) {
+            setExecutionMessage("Synchronize documents to drive");
+            $drive->synchronizeDrive(true);
+        } else {
+            setExecutionMessage("It has not enabled Feature Gmail");
+        }
+
         setExecutionResultMessage("DONE");
 
     } catch (Exception $e) {
