@@ -339,6 +339,7 @@ function processWorkspace()
         /*----------------------------------********---------------------------------*/
         fillReportByUser();
         fillReportByProcess();
+        synchronizeDrive();
         /*----------------------------------********---------------------------------*/
     } catch (Exception $oError) {
         saveLog("main", "error", "Error processing workspace : " . $oError->getMessage() . "\n");
@@ -957,5 +958,29 @@ function fillReportByProcess ()
 		saveLog("fillReportByProcess", "error", "Error in fill report by process: " . $e->getMessage());
 	}
 }
+
+function synchronizeDrive ()
+{
+    try
+    {
+        global $argvx;
+
+        if (strpos($argvx, "synchronize-documents-drive") === false) {
+            return false;
+        }
+
+        setExecutionMessage("Synchronize documents to drive");
+        G::LoadClass('AppDocumentDrive');
+        $drive = new AppDocumentDrive();
+        $drive->synchronizeDrive(true);
+        setExecutionResultMessage("DONE");
+
+    } catch (Exception $e) {
+        setExecutionResultMessage("WITH ERRORS", "error");
+        eprintln("  '-" . $e->getMessage(), "red");
+        saveLog("synchronizeDocumentsDrive", "error", "Error in synchronize documents to drive: " . $e->getMessage());
+    }
+}
+
 /*----------------------------------********---------------------------------*/
 

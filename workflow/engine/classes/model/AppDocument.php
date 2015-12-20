@@ -66,6 +66,8 @@ class AppDocument extends BaseAppDocument
 
     /*----------------------------------********---------------------------------*/
     protected $driveDownload = array();
+    protected $syncWithDrive = '';
+    protected $syncPermissions = '';
     /*----------------------------------********---------------------------------*/
 
     /*
@@ -220,6 +222,7 @@ class AppDocument extends BaseAppDocument
 
             /*----------------------------------********---------------------------------*/
             $aData['APP_DOC_DRIVE_DOWNLOAD'] = serialize($this->driveDownload);
+            //$aData['SYNC_PERMISSIONS'] = $this->syncPermissions;
             /*----------------------------------********---------------------------------*/
             $oAppDocument->fromArray( $aData, BasePeer::TYPE_FIELDNAME );
             $oAppDocument->setDocVersion( $docVersion );
@@ -267,6 +270,7 @@ class AppDocument extends BaseAppDocument
         $oConnection = Propel::getConnection( AppDocumentPeer::DATABASE_NAME );
         try {
             $oAppDocument = AppDocumentPeer::retrieveByPK( $aData['APP_DOC_UID'], $aData['DOC_VERSION'] );
+
             if (! is_null( $oAppDocument )) {
                 /*----------------------------------********---------------------------------*/
                 $driveDownload = @unserialize($oAppDocument->getAppDocDriveDownload());
@@ -275,6 +279,10 @@ class AppDocument extends BaseAppDocument
                 } else {
                     $aData['APP_DOC_DRIVE_DOWNLOAD'] = serialize($this->driveDownload);
                 }
+                //$aData['SYNC_PERMISSIONS'] = $this->syncPermissions;
+                //$aData['SYNC_WITH_DRIVE'] = $this->syncWithDrive;
+                //$oAppDocument->setSyncWithDrive($aData['SYNC_WITH_DRIVE']);
+                //$oAppDocument->sync_with_drive = $aData['SYNC_WITH_DRIVE'];
                 /*----------------------------------********---------------------------------*/
                 $oAppDocument->fromArray( $aData, BasePeer::TYPE_FIELDNAME );
                 if ($oAppDocument->validate()) {
@@ -508,6 +516,29 @@ class AppDocument extends BaseAppDocument
         }
         return $url;
     }
+    /*public function setSyncWithDrive ($key)
+    {
+        $data = array('SYNCHRONIZED', 'UNSYNCHRONIZED', 'NO_EXIST_FILE_PM');
+        if (array_search($key, $data) === false) {
+            $key = 'UNSYNCHRONIZED';
+        }
+        $this->syncWithDrive = $key;
+    }*/
+
+    /*public function getSyncWithDrive ()
+    {
+        return $this->syncWithDrive;
+    }*/
+
+    /*public function setSyncPermissions ($email)
+    {
+        $this->syncPermissions = empty($this->syncPermissions) ? $email : ','.$email;
+    }
+
+    public function getSyncPermissions ()
+    {
+        return !empty($this->syncPermissions) ? explode(',', $this->syncPermissions) : '';
+    }*/
 
     /*----------------------------------********---------------------------------*/
 

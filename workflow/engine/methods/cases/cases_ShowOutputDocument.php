@@ -109,7 +109,28 @@ if (! $sw_file_exists) {
         $res['message'] = $info['basename'] . $ver . '.' . $ext;
         print G::json_encode( $res );
     } else {
-        G::streamFile( $realPath, $download, $info['basename'] . $ver . '.' . $ext );
+        $licensedFeatures = &PMLicensedFeatures::getSingleton();
+        $downloadStatus = false;
+        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+            G::LoadClass( "AppDocumentDrive" );
+            $drive = new AppDocumentDrive();
+            if ($drive->getStatusDrive()) {
+                $fieldDrive = $oAppDocument->getAppDocDriveDownload();
+                $drive->loadUser($_SESSION['USER_LOGGED']);
+                $type = $ext == 'doc' ? 'OUTPUT_DOC' : 'OUTPUT_PDF';
+                $uidDrive = $drive->changeUrlDrive($oAppDocument->Fields, $type);
+                $result = $drive->download($uidDrive);
+                //verify download file
+                file_put_contents($info['basename'] . $ver . '.' . $ext , $result);
+                $downloadStatus = true;
+            }
+        }
+        if (!$downloadStatus) {
+            G::streamFile( $realPath, $download, $info['basename'] . $ver . '.' . $ext ); //download
+        }
+
+        //die($realPath);
+        //G::streamFile( $realPath, $download, $info['basename'] . $ver . '.' . $ext );
     }
 }
 //G::streamFile ( $realPath, true);

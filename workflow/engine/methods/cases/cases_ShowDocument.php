@@ -107,7 +107,27 @@ if (! $sw_file_exists) {
         $res['message'] = $oAppDocument->Fields['APP_DOC_FILENAME'];
         print G::json_encode( $res );
     } else {
-        G::streamFile( $realPath, $bDownload, $oAppDocument->Fields['APP_DOC_FILENAME'] ); //download
+        $licensedFeatures = &PMLicensedFeatures::getSingleton();
+        $downloadStatus = false;
+        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+            G::LoadClass( "AppDocumentDrive" );
+            $drive = new AppDocumentDrive();
+            if ($drive->getStatusDrive()) {
+                $fieldDrive = $oAppDocument->getAppDocDriveDownload();
+                $drive->loadUser($_SESSION['USER_LOGGED']);
+                $uidDrive = $drive->changeUrlDrive($oAppDocument->Fields, $oAppDocument->getAppDocType());
+                $result = $drive->download($uidDrive);
+                //verify download
+                file_put_contents($oAppDocument->Fields['APP_DOC_FILENAME'], $result);
+                $downloadStatus = true;
+            }
+        }
+        if (!$downloadStatus) {
+            G::streamFile( $realPath, $bDownload, $oAppDocument->Fields['APP_DOC_FILENAME'] ); //download
+        }
+
+
+
     }
 }
 
