@@ -9,6 +9,15 @@ require_once PATH_TRUNK . 'vendor' . PATH_SEP . 'google' . PATH_SEP . 'apiclient
 
 class PMGoogleApi
 {
+    const DRIVE = 'https://www.googleapis.com/auth/drive';
+    const DRIVE_FILE = 'https://www.googleapis.com/auth/drive.file';
+    const DRIVE_APPS_READONLY = 'https://www.googleapis.com/auth/drive.apps.readonly';
+    const DRIVE_READONLY = 'https://www.googleapis.com/auth/drive.readonly';
+    const DRIVE_METADATA = 'https://www.googleapis.com/auth/drive.metadata';
+    const DRIVE_METADATA_READONLY = 'https://www.googleapis.com/auth/drive.metadata.readonly';
+    const DRIVE_APPDATA = 'https://www.googleapis.com/auth/drive.appdata';
+    const DRIVE_PHOTOS_READONLY = 'https://www.googleapis.com/auth/drive.photos.readonly';
+
     private $scope = array();
     private $serviceAccountEmail;
     private $serviceAccountP12;
@@ -244,13 +253,13 @@ class PMGoogleApi
     {
 
         $scope = array(
-            'https://www.googleapis.com/auth/drive',
-            'https://www.googleapis.com/auth/drive.file',
-            'https://www.googleapis.com/auth/drive.readonly',
-            'https://www.googleapis.com/auth/drive.metadata.readonly',
-            'https://www.googleapis.com/auth/drive.appdata',
-            'https://www.googleapis.com/auth/drive.metadata',
-            'https://www.googleapis.com/auth/drive.photos.readonly'
+            static::DRIVE,
+            static::DRIVE_FILE,
+            static::DRIVE_READONLY,
+            static::DRIVE_METADATA,
+            static::DRIVE_METADATA_READONLY,
+            static::DRIVE_APPDATA,
+            static::DRIVE_PHOTOS_READONLY
         );
 
         if ($credentials->typeAuth == 'webApplication') {
