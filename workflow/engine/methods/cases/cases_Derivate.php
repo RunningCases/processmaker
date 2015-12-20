@@ -191,7 +191,6 @@ try {
         if ($drive->getStatusDrive()) {
             $drive->addUserDrive($aUser['USR_EMAIL']);
             $drive ->addUsersDocumentDrive($appFields['APP_UID'], $_POST['form']['TASKS'], $appFields['APP_DATA']);
-            $drive->synchronizeDrive(false);
         }
     }
     // Set users drive - End

@@ -121,6 +121,7 @@ if (! $sw_file_exists) {
                 $uidDrive = $drive->changeUrlDrive($oAppDocument->Fields, $type);
                 $result = $drive->download($uidDrive);
                 //verify download file
+                file_put_contents($info['basename'] . $ver . '.' . $ext , $result);
                 $downloadStatus = true;
             }
         }
