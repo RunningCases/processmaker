@@ -411,7 +411,6 @@ class AppDocumentDrive
                 $emails = !empty($emails) ? explode('|', $emails) : array();
                 $result = null;
                 foreach ($emails as $index => $email) {
-                    $result = null;
                     if (!empty($email)) {
                         if ($index == 0 && $fields['SYNC_WITH_DRIVE'] == 'UNSYNCHRONIZED') {
                             if ($log) {
@@ -461,7 +460,6 @@ class AppDocumentDrive
                 $fields['SYNC_WITH_DRIVE'] = 'NO_EXIST_FILE_PM';
                 if ($log) {
                     eprintln('File no exists:' . $name , 'red');
-                    //eprintln($realPath , 'red');
                 }
             }
             $appDoc->update($fields);
