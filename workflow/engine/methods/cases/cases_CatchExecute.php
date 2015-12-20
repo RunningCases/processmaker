@@ -71,8 +71,7 @@ if ($aDelegation['USR_UID'] == "") {
     if(array_key_exists('gmail',$_SESSION) && $_SESSION['gmail'] == 1){
     	require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.labelsGmail.php");
         $labGmail = new labelsGmail();
-        $oResponse = $labGmail->setLabels($sAppUid, $iDelIndex, -1, true);
-
+        $labGmail->addRelabelingToQueue($sAppUid, $iDelIndex, -1, true);
         die( '<script type="text/javascript">
         parent.document.getElementById("iframePM").setAttribute("src", "'.$_SESSION["server"].'cases/cases_Open?APP_UID=' . $_SESSION["APPLICATION"] . '&DEL_INDEX=' . $_SESSION["INDEX"] . '&action=unassigned");
         </script>' );

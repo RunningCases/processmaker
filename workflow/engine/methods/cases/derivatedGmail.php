@@ -32,7 +32,7 @@ foreach ($appDelPrev as $app){
 
 require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.labelsGmail.php");
 $oLabels = new labelsGmail();
-$oResponse = $oLabels->setLabels($caseId, $actualIndex, $actualLastIndex, false);
+$oLabels->addRelabelingToQueue($caseId, $actualIndex, $actualLastIndex, false);
 
 G::LoadClass( "AppDocumentDrive" );
 $drive = new AppDocumentDrive();
