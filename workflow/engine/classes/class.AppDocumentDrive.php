@@ -409,7 +409,9 @@ class AppDocumentDrive
 
                 $emails = $appDoc->getSyncPermissions();
                 $emails = !empty($emails) ? explode('|', $emails) : array();
+                $result = null;
                 foreach ($emails as $index => $email) {
+                    $result = null;
                     if (!empty($email)) {
                         if ($index == 0 && $fields['SYNC_WITH_DRIVE'] == 'UNSYNCHRONIZED') {
                             if ($log) {
@@ -451,8 +453,10 @@ class AppDocumentDrive
 
                     }
                 }
-                $fields['SYNC_WITH_DRIVE'] = 'SYNCHRONIZED';
-                $fields['SYNC_PERMISSIONS'] = null;
+                if ($result != null) {
+                    $fields['SYNC_WITH_DRIVE'] = 'SYNCHRONIZED';
+                    $fields['SYNC_PERMISSIONS'] = null;
+                }
             } else {
                 $fields['SYNC_WITH_DRIVE'] = 'NO_EXIST_FILE_PM';
                 if ($log) {
