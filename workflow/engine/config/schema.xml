@@ -5261,7 +5261,8 @@
           <parameter name="Create_options" value="" />
           <parameter name="Comment" value="Task for label relabaling"/>
         </vendor>
-        <column name="CREATE_DATE" type="TIMESTAMP" required="false"/>
+        <column name="LABELING_UID" type="INTEGER" required="true" autoIncrement="true" primaryKey="true"/>
+        <column name="CREATE_DATE" type="TIMESTAMP" required="true"/>
         <column name="APP_UID" type="VARCHAR" size="32" required="true"  default=""/>
         <column name="DEL_INDEX" type="INTEGER" required="true"   default="0"/>
         <column name="CURRENT_LAST_INDEX" type="INTEGER" required="true"  default="0"/>

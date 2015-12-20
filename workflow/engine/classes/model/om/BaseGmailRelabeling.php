@@ -28,6 +28,12 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
     protected static $peer;
 
     /**
+     * The value for the labeling_uid field.
+     * @var        int
+     */
+    protected $labeling_uid;
+
+    /**
      * The value for the create_date field.
      * @var        int
      */
@@ -82,6 +88,17 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
      * @var        boolean
      */
     protected $alreadyInValidation = false;
+
+    /**
+     * Get the [labeling_uid] column value.
+     * 
+     * @return     int
+     */
+    public function getLabelingUid()
+    {
+
+        return $this->labeling_uid;
+    }
 
     /**
      * Get the [optionally formatted] [create_date] column value.
@@ -180,6 +197,28 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
 
         return $this->msg_error;
     }
+
+    /**
+     * Set the value of [labeling_uid] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setLabelingUid($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->labeling_uid !== $v) {
+            $this->labeling_uid = $v;
+            $this->modifiedColumns[] = GmailRelabelingPeer::LABELING_UID;
+        }
+
+    } // setLabelingUid()
 
     /**
      * Set the value of [create_date] column.
@@ -359,26 +398,28 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
     {
         try {
 
-            $this->create_date = $rs->getTimestamp($startcol + 0, null);
+            $this->labeling_uid = $rs->getInt($startcol + 0);
 
-            $this->app_uid = $rs->getString($startcol + 1);
+            $this->create_date = $rs->getTimestamp($startcol + 1, null);
 
-            $this->del_index = $rs->getInt($startcol + 2);
+            $this->app_uid = $rs->getString($startcol + 2);
 
-            $this->current_last_index = $rs->getInt($startcol + 3);
+            $this->del_index = $rs->getInt($startcol + 3);
 
-            $this->unassigned = $rs->getInt($startcol + 4);
+            $this->current_last_index = $rs->getInt($startcol + 4);
 
-            $this->status = $rs->getString($startcol + 5);
+            $this->unassigned = $rs->getInt($startcol + 5);
 
-            $this->msg_error = $rs->getString($startcol + 6);
+            $this->status = $rs->getString($startcol + 6);
+
+            $this->msg_error = $rs->getString($startcol + 7);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 7; // 7 = GmailRelabelingPeer::NUM_COLUMNS - GmailRelabelingPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 8; // 8 = GmailRelabelingPeer::NUM_COLUMNS - GmailRelabelingPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating GmailRelabeling object", $e);
@@ -583,24 +624,27 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                return $this->getCreateDate();
+                return $this->getLabelingUid();
                 break;
             case 1:
-                return $this->getAppUid();
+                return $this->getCreateDate();
                 break;
             case 2:
-                return $this->getDelIndex();
+                return $this->getAppUid();
                 break;
             case 3:
-                return $this->getCurrentLastIndex();
+                return $this->getDelIndex();
                 break;
             case 4:
-                return $this->getUnassigned();
+                return $this->getCurrentLastIndex();
                 break;
             case 5:
-                return $this->getStatus();
+                return $this->getUnassigned();
                 break;
             case 6:
+                return $this->getStatus();
+                break;
+            case 7:
                 return $this->getMsgError();
                 break;
             default:
@@ -623,13 +667,14 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
     {
         $keys = GmailRelabelingPeer::getFieldNames($keyType);
         $result = array(
-            $keys[0] => $this->getCreateDate(),
-            $keys[1] => $this->getAppUid(),
-            $keys[2] => $this->getDelIndex(),
-            $keys[3] => $this->getCurrentLastIndex(),
-            $keys[4] => $this->getUnassigned(),
-            $keys[5] => $this->getStatus(),
-            $keys[6] => $this->getMsgError(),
+            $keys[0] => $this->getLabelingUid(),
+            $keys[1] => $this->getCreateDate(),
+            $keys[2] => $this->getAppUid(),
+            $keys[3] => $this->getDelIndex(),
+            $keys[4] => $this->getCurrentLastIndex(),
+            $keys[5] => $this->getUnassigned(),
+            $keys[6] => $this->getStatus(),
+            $keys[7] => $this->getMsgError(),
         );
         return $result;
     }
@@ -662,24 +707,27 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
     {
         switch($pos) {
             case 0:
-                $this->setCreateDate($value);
+                $this->setLabelingUid($value);
                 break;
             case 1:
-                $this->setAppUid($value);
+                $this->setCreateDate($value);
                 break;
             case 2:
-                $this->setDelIndex($value);
+                $this->setAppUid($value);
                 break;
             case 3:
-                $this->setCurrentLastIndex($value);
+                $this->setDelIndex($value);
                 break;
             case 4:
-                $this->setUnassigned($value);
+                $this->setCurrentLastIndex($value);
                 break;
             case 5:
-                $this->setStatus($value);
+                $this->setUnassigned($value);
                 break;
             case 6:
+                $this->setStatus($value);
+                break;
+            case 7:
                 $this->setMsgError($value);
                 break;
         } // switch()
@@ -706,31 +754,35 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
         $keys = GmailRelabelingPeer::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
-            $this->setCreateDate($arr[$keys[0]]);
+            $this->setLabelingUid($arr[$keys[0]]);
         }
 
         if (array_key_exists($keys[1], $arr)) {
-            $this->setAppUid($arr[$keys[1]]);
+            $this->setCreateDate($arr[$keys[1]]);
         }
 
         if (array_key_exists($keys[2], $arr)) {
-            $this->setDelIndex($arr[$keys[2]]);
+            $this->setAppUid($arr[$keys[2]]);
         }
 
         if (array_key_exists($keys[3], $arr)) {
-            $this->setCurrentLastIndex($arr[$keys[3]]);
+            $this->setDelIndex($arr[$keys[3]]);
         }
 
         if (array_key_exists($keys[4], $arr)) {
-            $this->setUnassigned($arr[$keys[4]]);
+            $this->setCurrentLastIndex($arr[$keys[4]]);
         }
 
         if (array_key_exists($keys[5], $arr)) {
-            $this->setStatus($arr[$keys[5]]);
+            $this->setUnassigned($arr[$keys[5]]);
         }
 
         if (array_key_exists($keys[6], $arr)) {
-            $this->setMsgError($arr[$keys[6]]);
+            $this->setStatus($arr[$keys[6]]);
+        }
+
+        if (array_key_exists($keys[7], $arr)) {
+            $this->setMsgError($arr[$keys[7]]);
         }
 
     }
@@ -743,6 +795,10 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
     public function buildCriteria()
     {
         $criteria = new Criteria(GmailRelabelingPeer::DATABASE_NAME);
+
+        if ($this->isColumnModified(GmailRelabelingPeer::LABELING_UID)) {
+            $criteria->add(GmailRelabelingPeer::LABELING_UID, $this->labeling_uid);
+        }
 
         if ($this->isColumnModified(GmailRelabelingPeer::CREATE_DATE)) {
             $criteria->add(GmailRelabelingPeer::CREATE_DATE, $this->create_date);
@@ -788,33 +844,30 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
     {
         $criteria = new Criteria(GmailRelabelingPeer::DATABASE_NAME);
 
+        $criteria->add(GmailRelabelingPeer::LABELING_UID, $this->labeling_uid);
 
         return $criteria;
     }
 
     /**
-     * Returns NULL since this table doesn't have a primary key.
-     * This method exists only for BC and is deprecated!
-     * @return     null
+     * Returns the primary key for this object (row).
+     * @return     int
      */
     public function getPrimaryKey()
     {
-        return null;
+        return $this->getLabelingUid();
     }
 
     /**
-     * Dummy primary key setter.
+     * Generic method to set the primary key (labeling_uid column).
      *
-     * This function only exists to preserve backwards compatibility.  It is no longer
-     * needed or required by the Persistent interface.  It will be removed in next BC-breaking
-     * release of Propel.
-     *
-     * @deprecated
+     * @param      int $key Primary key.
+     * @return     void
      */
-     public function setPrimaryKey($pk)
-     {
-         // do nothing, because this object doesn't have any primary keys
-     }
+    public function setPrimaryKey($key)
+    {
+        $this->setLabelingUid($key);
+    }
 
     /**
      * Sets contents of passed object to values from current object.
@@ -845,6 +898,8 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
 
 
         $copyObj->setNew(true);
+
+        $copyObj->setLabelingUid(NULL); // this is a pkey column, so set to default value
 
     }
 
