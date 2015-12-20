@@ -164,7 +164,7 @@ class PMDrive extends PMGoogleApi
         $service = $this->serviceDrive();
 
         $file = new Google_Service_Drive_DriveFile();
-        $file->setMimeType("*/*");
+        $file->setMimeType($mime);
         $file->setTitle($name);
 
         // Set the parent folder.
@@ -208,17 +208,16 @@ class PMDrive extends PMGoogleApi
         $this->setScope('https://www.googleapis.com/auth/drive.metadata.readonly');
         $this->setScope('https://www.googleapis.com/auth/drive.readonly');
         $service = $this->serviceDrive();
+        $response = null;
 
         try {
             $file = $service->files->get($fileId);
-            $response = null;
-
             $downloadUrl = $file->getDownloadUrl();
             if ($downloadUrl) {
                 $request = new Google_Http_Request($downloadUrl, 'GET', null, null);
                 $httpRequest = $service->getClient()->getAuth()->authenticatedRequest($request);
                 if ($httpRequest->getResponseHttpCode() == 200) {
-                    $response =  $httpRequest->getResponseBody();
+                    $response = $httpRequest->getResponseBody();
                 } else {
                     error_log(G::LoadTranslation("ID_MSG_AJAX_FAILURE"));
                 }

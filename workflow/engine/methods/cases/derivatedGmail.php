@@ -34,11 +34,9 @@ require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.la
 $oLabels = new labelsGmail();
 $oResponse = $oLabels->setLabels($caseId, $actualIndex, $actualLastIndex, false);
 
-$enablePMGmail = false;
-G::LoadClass( "pmDrive" );
-$pmDrive = new PMDrive();
-$enablePMGmail = $pmDrive->getStatusService();
-if(key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && !empty($enablePMGmail) && $enablePMGmail==1 ){
+G::LoadClass( "AppDocumentDrive" );
+$drive = new AppDocumentDrive();
+if(array_key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $drive->getStatusDrive() ){
 	$_SESSION['gmail'] = 0;
 	unset($_SESSION['gmail']); //cleaning session
 	$mUrl = '/sys'. $_SESSION['WORKSPACE'] .'/en/neoclassic/cases/cases_Open?APP_UID='.$caseId.'&DEL_INDEX='.$actualIndex.'&action=sent';

@@ -183,6 +183,19 @@ try {
     }
     // Send notifications Mobile - End
 
+    // Set users drive - start
+    $licensedFeatures = &PMLicensedFeatures::getSingleton();
+    if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+        G::LoadClass( "AppDocumentDrive" );
+        $drive = new AppDocumentDrive();
+        if ($drive->getStatusDrive()) {
+            $drive->addUserDrive($aUser['USR_EMAIL']);
+            $drive ->addUsersDocumentDrive($appFields['APP_UID'], $_POST['form']['TASKS'], $appFields['APP_DATA']);
+            $drive->synchronizeDrive(false);
+        }
+    }
+    // Set users drive - End
+
     // Events - Start
     $oEvent = new Event();
 
@@ -214,7 +227,7 @@ try {
         $aNextStep['PAGE'] = 'casesListExtJsRedirector?ux=' . $_SESSION['user_experience'];
         $debuggerAvailable = false;
     } else if( isset( $_SESSION['gmail'] )  ){
-    	$aNextStep['PAGE'] = 'casesListExtJsRedirector?gmail='.$_SESSION['gmail'];
+        $aNextStep['PAGE'] = 'casesListExtJsRedirector?gmail='.$_SESSION['gmail'];
     } else {
         $aNextStep['PAGE'] = 'casesListExtJsRedirector';
     }

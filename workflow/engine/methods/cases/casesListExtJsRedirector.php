@@ -2,12 +2,12 @@
 if (typeof window.parent != 'undefined') {
 <?php
 /*----------------------------------********---------------------------------*/
-$enablePMGmail = false;
+$statusPMGmail = false;
 $licensedFeatures = &PMLicensedFeatures::getSingleton();
 if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-    G::LoadClass( "pmDrive" );
-    $pmDrive = new PMDrive();
-    $enablePMGmail = $pmDrive->getStatusService();
+    G::LoadClass( "AppDocumentDrive" );
+    $drive = new AppDocumentDrive();
+    $statusPMGmail = $drive->getStatusDrive();
 }
 /*----------------------------------********---------------------------------*/
 if (isset( $_GET['ux'] )) {
@@ -20,7 +20,7 @@ if (isset( $_GET['ux'] )) {
         default:
             $url = 'casesListExtJs';
     }
-} else if( key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && !empty($enablePMGmail) && $enablePMGmail==1 ){
+} else if( key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $statusPMGmail ){
     $url = 'derivatedGmail';
 } else {
     $url = 'casesListExtJs';
@@ -31,8 +31,8 @@ if (isset( $_GET['ux'] )) {
 echo "  window.parent.location.href = '$url';";
 if (isset( $_GET['ux'] )) {
     /*----------------------------------********---------------------------------*/
-    if(PMLicensedFeatures::getSingleton()->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09') && !empty($enablePMGmail) && $enablePMGmail==1){
-	echo '} else { window.parent.location.href = \'derivatedGmail\'; }';
+    if(PMLicensedFeatures::getSingleton()->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09') && $statusPMGmail){
+        echo '} else { window.parent.location.href = \'derivatedGmail\'; }';
     } else {
     /*----------------------------------********---------------------------------*/
         echo '} else { window.parent.location.href = \'casesListExtJs\'; }';
