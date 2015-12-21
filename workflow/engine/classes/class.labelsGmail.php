@@ -342,6 +342,7 @@ class labelsGmail
     {
         $labelingQueue = new GmailRelabeling();
         $labelingQueue->setCreateDate(date('Y-m-d H:i:s'));
+        $labelingQueue->setLabelingUid(G::generateUniqueID());
         $labelingQueue->setAppUid($caseId);
         $labelingQueue->setDelIndex($index);
         $labelingQueue->setCurrentLastIndex($actualLastIndex);
@@ -354,7 +355,7 @@ class labelsGmail
     {
         $c = new \Criteria( 'workflow' );
         $c->add( \GmailRelabelingPeer::STATUS, 'pending' );
-        $c->addAscendingOrderByColumn('LABELING_UID');
+        $c->addAscendingOrderByColumn('CREATE_DATE');
         $list = \GmailRelabelingPeer::doSelect($c);
         foreach($list as $task) {
             try {
