@@ -19,7 +19,6 @@ Ext.onReady(function(){
     });
 
     disableAll = function () {
-        Ext.getCmp('typeAuthentication').disable();
         Ext.getCmp('email_service_account').disable();
         Ext.getCmp('file_p12').disable();
         Ext.getCmp('labelFileP12').disable();
@@ -41,12 +40,10 @@ Ext.onReady(function(){
     };
 
     var enableTypeP12 = function () {
-        Ext.getCmp('typeAuthentication').enable();
         Ext.getCmp('email_service_account').enable();
         Ext.getCmp('file_p12').enable();
         Ext.getCmp('labelFileP12').enable();
 
-        Ext.getCmp('typeAuthentication').show();
         Ext.getCmp('email_service_account').show();
         Ext.getCmp('file_p12').show();
         Ext.getCmp('labelFileP12').show();
@@ -55,23 +52,16 @@ Ext.onReady(function(){
     };
 
     var enableTypeJson = function () {
-        Ext.getCmp('typeAuthentication').enable();
         Ext.getCmp('file_json').enable();
         Ext.getCmp('fileJson').enable();
 
-        Ext.getCmp('typeAuthentication').show();
         Ext.getCmp('file_json').show();
         Ext.getCmp('fileJson').show();
         testButton.enable();
     };
 
     changeType = function () {
-        var type = Ext.getCmp('typeAuthentication').getValue();
-        if (type == 'webApplication') {
-            enableTypeJson();
-        } else {
-            enableTypeP12();
-        }
+        enableTypeP12();
     };
 
     var configurationPMGmail = new Ext.form.FieldSet({
@@ -89,9 +79,7 @@ Ext.onReady(function(){
                     check : function(that, checked) {
                         disableAll();
                         if (checked) {
-                            Ext.getCmp('typeAuthentication').enable();
-                            Ext.getCmp('typeAuthentication').show();
-                            Ext.getCmp('typeAuthentication').clearValue();
+                            enableTypeP12();
                         } else {
                             Ext.MessageBox.confirm(
                                 _('ID_CONFIRM'),
@@ -122,11 +110,12 @@ Ext.onReady(function(){
                 forceSelection: true,
                 store: new Ext.data.SimpleStore({
                     fields: ['value','type'],
-                    data: [['webApplication','Web Application'],['serviceAccount', 'Service Account']],
+                    data: [['webApplication', 'ID_WEB_APPLICATION'],['serviceAccount', 'ID_SERVICE_ACCOUNT']],
                     autoLoad: true
                 }),
                 submitValue : true,
                 value: typeAuthentication,
+                hidden: true,
                 valueField: 'value',
                 displayField: 'type',
                 width: 250,
