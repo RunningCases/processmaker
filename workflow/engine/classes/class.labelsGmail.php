@@ -354,6 +354,7 @@ class labelsGmail
     {
         $c = new \Criteria( 'workflow' );
         $c->add( \GmailRelabelingPeer::STATUS, 'pending' );
+        $c->addAscendingOrderByColumn('LABELING_UID');
         $list = \GmailRelabelingPeer::doSelect($c);
         foreach($list as $task) {
             try {
