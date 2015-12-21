@@ -521,7 +521,7 @@ class Derivation
         $flagTaskNextAssignTypeIsMultipleInstance = false;
 
         if (!is_null($taskNext) && !is_null($bpmnActivityNext)) {
-            $flagTaskNextIsMultipleInstance = $bpmnActivityNext->getActType() == "TASK" && preg_match("/^(?:EMPTY|USERTASK|MANUALTASK)$/", $bpmnActivityNext->getActTaskType()) && $bpmnActivityNext->getActLoopType() == "PARALLEL";
+            $flagTaskNextIsMultipleInstance = $bpmnActivityNext->getActType() == "TASK" && preg_match("/^(?:EMPTY|SENDTASK|RECEIVETASK|USERTASK|SERVICETASK|MANUALTASK|BUSINESSRULE)$/", $bpmnActivityNext->getActTaskType()) && $bpmnActivityNext->getActLoopType() == "PARALLEL";
             $flagTaskNextAssignTypeIsMultipleInstance = preg_match("/^(?:MULTIPLE_INSTANCE|MULTIPLE_INSTANCE_VALUE_BASED)$/", $taskNext->getTasAssignType());
         }
 
