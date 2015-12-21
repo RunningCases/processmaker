@@ -332,13 +332,11 @@ class AppDocumentDrive
         $criteria = new Criteria( 'workflow' );
         $criteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
         $criteria->addSelectColumn(AppDocumentPeer::DOC_VERSION);
-        $criteria->add( AppDocumentPeer::SYNC_WITH_DRIVE, 'UNSYNCHRONIZED' );
-        //Verify other permissions
-        /*$criteria->add(
+        $criteria->add(
             $criteria->getNewCriterion( AppDocumentPeer::SYNC_WITH_DRIVE, 'UNSYNCHRONIZED', Criteria::EQUAL )->
-            addOr($criteria->getNewCriterion( AppDocumentPeer::SYNC_WITH_DRIVE, 'NO_EXIST_FILE_PM', Criteria::NOT_EQUAL )->
-            addAnd($criteria->getNewCriterion( AppDocumentPeer::SYNC_PERMISSIONS, null, Criteria::NOT_EQUAL )))
-        );*/
+            addOr($criteria->getNewCriterion( AppDocumentPeer::SYNC_PERMISSIONS, null, Criteria::NOT_EQUAL ))
+        );
+
         $criteria->addAscendingOrderByColumn( 'APP_DOC_CREATE_DATE' );
         $criteria->addAscendingOrderByColumn( 'APP_UID' );
         $rs = AppDocumentPeer::doSelectRS( $criteria );
@@ -410,48 +408,46 @@ class AppDocumentDrive
             if ($sw_file_exists) {
 
                 $this->loadApplication($appDoc->getAppUid());
+                $this->loadUser($fields['USR_UID']);
 
                 $emails = $appDoc->getSyncPermissions();
                 $emails = !empty($emails) ? explode('|', $emails) : array();
                 $result = null;
                 foreach ($emails as $index => $email) {
                     if (!empty($email)) {
+
                         if ($index == 0 && $fields['SYNC_WITH_DRIVE'] == 'UNSYNCHRONIZED') {
                             if ($log) {
                                 eprintln('upload file:' .  $name , 'green');
                             }
                             $this->drive->setDriveUser($email);
-                            $this->loadUser($fields['USR_UID']);
                             $info = finfo_open(FILEINFO_MIME_TYPE);
-
+                            $mime = finfo_file($info, $realPath);
+                            $type = $appDoc->getAppDocType();
 
                             if ($appDoc->getAppDocType() == 'OUTPUT') {
 
                                 if ($sw_file_exists_doc) {
-                                    $nameDoc = explode('/', $realPathDoc);
-                                    $result = $this->upload($fields, 'OUTPUT_DOC', 'application/msword', $realPathDoc, array_pop($nameDoc));
+                                    $realPath = $realPathDoc;
+                                    $name = array_pop(explode('/', $realPathDoc));
+                                    $mime = 'application/msword';
+                                    $type = 'OUTPUT_DOC';
                                 }
                                 if ($sw_file_exists_pdf) {
-                                    $namePdf = explode('/', $realPathPdf);
+                                    $realPath = $realPathPdf;
+                                    $name = array_pop(explode('/', $realPathPdf));
                                     $mime = finfo_file($info, $realPathPdf);
-                                    $result = $this->upload($fields, 'OUTPUT_PDF', $mime, $realPathPdf, array_pop($namePdf));
+                                    $type = 'OUTPUT_PDF';
                                 }
-                            } else {
-                                $mime = finfo_file($info, $realPath);
-                                $result = $this->upload($fields, $appDoc->getAppDocType(), $mime, $realPath, $name);
                             }
-
-                            if ($log) {
-                                eprintln('Set Permission:' .  $email , 'green');
-                            }
-
-                            $this->drive->setPermission($this->app->getAppDriveFolderUid(), $email, 'user', 'writer');
+                            $result = $this->upload($fields, $type, $mime, $realPath, $name);
                         } else {
-                            if ($log) {
-                                eprintln('Set Permission:' .  $email , 'green');
-                            }
-                            $this->drive->setPermission($this->app->getAppDriveFolderUid(), $email, 'user', 'writer');
+                            $this->drive->setDriveUser($this->user->getUsrEmail());
                         }
+                        if ($log) {
+                            eprintln('Set Permission:' .  $email , 'green');
+                        }
+                        $this->drive->setPermission($this->app->getAppDriveFolderUid(), $email, 'user', 'writer');
 
                     }
                 }
