@@ -352,6 +352,7 @@ Ext.onReady(function(){
 
     Ext.getCmp('status_pmgmail').checked = enablePMGmail;
     Ext.getCmp('status_pmgmail').setValue(enablePMGmail);
+    Ext.getCmp('typeAuthentication').setValue('serviceAccount');
     if (enablePMGmail){
         changeType();
     }

@@ -246,6 +246,7 @@ class PMDrive extends PMGoogleApi
         $this->setScope(static::DRIVE_FILE);
 
         $service = $this->serviceDrive();
+        $permission = null;
 
         $newPermission = new Google_Service_Drive_Permission();
         $newPermission->setValue($value);
