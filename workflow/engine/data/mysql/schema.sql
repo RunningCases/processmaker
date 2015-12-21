@@ -2936,17 +2936,18 @@ CREATE TABLE `NOTIFICATION_DEVICE`
 #-----------------------------------------------------------------------------
 #-- GMAIL_RELABELING
 #-----------------------------------------------------------------------------
+DROP TABLE IF EXISTS `GMAIL_RELABELING`;
 
 CREATE TABLE `GMAIL_RELABELING` (
-	`LABELING_ID` INTEGER  NOT NULL AUTO_INCREMENT,
-	`CREATE_DATE`	  	      DATETIME NOT NULL DEFAULT '',
+	`LABELING_UID` 				  VARCHAR(32)  NOT NULL,
+	`CREATE_DATE`	  	      DATETIME NOT NULL,
 	`APP_UID` 				      VARCHAR(32) NOT NULL DEFAULT '',
 	`DEL_INDEX` 			      INT(11) 		NOT NULL DEFAULT '0',
 	`CURRENT_LAST_INDEX`    INT(11) 		NOT NULL DEFAULT '0',
 	`UNASSIGNED`            INT(11)   	NOT NULL DEFAULT '0',
 	`STATUS`  							VARCHAR(32) NOT NULL DEFAULT 'pending',
 	`MSG_ERROR`  						TEXT NULL,
-	PRIMARY KEY (`LABELING_ID`),
+	PRIMARY KEY (`LABELING_UID`),
 	KEY `indexStatus` (`STATUS`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Task to synchronize Gmail Labels';
 # This restores the fkey checks, after having unset them earlier

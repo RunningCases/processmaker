@@ -29,7 +29,7 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
 
     /**
      * The value for the labeling_uid field.
-     * @var        int
+     * @var        string
      */
     protected $labeling_uid;
 
@@ -92,7 +92,7 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
     /**
      * Get the [labeling_uid] column value.
      * 
-     * @return     int
+     * @return     string
      */
     public function getLabelingUid()
     {
@@ -201,16 +201,16 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
     /**
      * Set the value of [labeling_uid] column.
      * 
-     * @param      int $v new value
+     * @param      string $v new value
      * @return     void
      */
     public function setLabelingUid($v)
     {
 
-        // Since the native PHP type for this column is integer,
-        // we will cast the input value to an int (if it is not).
-        if ($v !== null && !is_int($v) && is_numeric($v)) {
-            $v = (int) $v;
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
         }
 
         if ($this->labeling_uid !== $v) {
@@ -398,7 +398,7 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
     {
         try {
 
-            $this->labeling_uid = $rs->getInt($startcol + 0);
+            $this->labeling_uid = $rs->getString($startcol + 0);
 
             $this->create_date = $rs->getTimestamp($startcol + 1, null);
 
@@ -851,7 +851,7 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
 
     /**
      * Returns the primary key for this object (row).
-     * @return     int
+     * @return     string
      */
     public function getPrimaryKey()
     {
@@ -861,7 +861,7 @@ abstract class BaseGmailRelabeling extends BaseObject implements Persistent
     /**
      * Generic method to set the primary key (labeling_uid column).
      *
-     * @param      int $key Primary key.
+     * @param      string $key Primary key.
      * @return     void
      */
     public function setPrimaryKey($key)
