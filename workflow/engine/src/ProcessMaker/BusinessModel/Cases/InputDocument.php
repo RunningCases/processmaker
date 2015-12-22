@@ -284,16 +284,6 @@ class InputDocument
             $rsCriteria = \AppDocumentPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
-            /*----------------------------------********---------------------------------*/
-            $licensedFeatures = &\PMLicensedFeatures::getSingleton();
-            $enablePMGmail = false;
-            if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-                \G::LoadClass( "pmDrive" );
-                $pmDrive = new \PMDrive();
-                $enablePMGmail = $pmDrive->getStatusService();
-            }
-            /*----------------------------------********---------------------------------*/
-
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
 
@@ -304,19 +294,6 @@ class InputDocument
                 $row["APP_DOC_FILENAME"] = $arrayAppDocument["APP_DOC_FILENAME"];
                 $row["APP_DOC_CREATE_USER"] = $configuraction->usersNameFormatBySetParameters($confEnvSetting["format"], $arrayUserData["USR_USERNAME"], $arrayUserData["USR_FIRSTNAME"], $arrayUserData["USR_LASTNAME"]);
                 $row["APP_DOC_LINK"] = "cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"];
-                /*----------------------------------********---------------------------------*/
-                //change donwload link - drive
-                $driveDownload = @unserialize($arrayAppDocument['APP_DOC_DRIVE_DOWNLOAD']);
-                if ($driveDownload !== false && is_array($driveDownload) && $enablePMGmail
-                ) {
-                    if (array_key_exists('INPUT', $driveDownload)) {
-                        $row['APP_DOC_LINK'] = $driveDownload['INPUT'];
-                    } else if (array_key_exists('ATTACHED', $driveDownload)) {
-                        $row['APP_DOC_LINK'] = $driveDownload['ATTACHED'];
-                    }
-
-                }
-                /*----------------------------------********---------------------------------*/
 
                 $arrayInputDocument[] = $this->getAppDocumentDataFromRecord($row);
             }
@@ -371,15 +348,6 @@ class InputDocument
             $rsCriteria = \AppDocumentPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
-            /*----------------------------------********---------------------------------*/
-            $licensedFeatures = &\PMLicensedFeatures::getSingleton();
-            $enablePMGmail = false;
-            if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-                \G::LoadClass( "pmDrive" );
-                $pmDrive = new \PMDrive();
-                $enablePMGmail = $pmDrive->getStatusService();
-            }
-            /*----------------------------------********---------------------------------*/
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
 
@@ -391,19 +359,6 @@ class InputDocument
                 $row["APP_DOC_FILENAME"] = $arrayAppDocument["APP_DOC_FILENAME"];
                 $row["APP_DOC_CREATE_USER"] = $configuraction->usersNameFormatBySetParameters($confEnvSetting["format"], $arrayUserData["USR_USERNAME"], $arrayUserData["USR_FIRSTNAME"], $arrayUserData["USR_LASTNAME"]);
                 $row["APP_DOC_LINK"] = "cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"];
-                /*----------------------------------********---------------------------------*/
-                //change donwload link - drive
-                $driveDownload = @unserialize($arrayAppDocument['APP_DOC_DRIVE_DOWNLOAD']);
-                if ($driveDownload !== false && is_array($driveDownload) && $enablePMGmail
-                ) {
-                    if (array_key_exists('INPUT', $driveDownload)) {
-                        $row['APP_DOC_LINK'] = $driveDownload['INPUT'];
-                    } else if (array_key_exists('ATTACHED', $driveDownload)) {
-                        $row['APP_DOC_LINK'] = $driveDownload['ATTACHED'];
-                    }
-
-                }
-                /*----------------------------------********---------------------------------*/
 
                 $arrayInputDocument[] = $this->getAppDocumentDataFromRecord($row);
             }

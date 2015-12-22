@@ -1044,11 +1044,11 @@ class Cases
         }
         /*----------------------------------********---------------------------------*/
         $licensedFeatures = &\PMLicensedFeatures::getSingleton();
-        $enablePMGmail = false;
+        $statusPMGmail = false;
         if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "pmDrive" );
-            $pmDrive = new \PMDrive();
-            $enablePMGmail = $pmDrive->getStatusService();
+            G::LoadClass( "AppDocumentDrive" );
+            $drive = new AppDocumentDrive();
+            $statusPMGmail = $drive->getStatusDrive();
         }
         /*----------------------------------********---------------------------------*/
         $aObjectPermissions = $cases->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
@@ -1169,11 +1169,8 @@ class Cases
             }
             /*----------------------------------********---------------------------------*/
             //change donwload link - drive
-            $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
-            if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('INPUT',
-                    $driveDownload) && $enablePMGmail
-            ) {
-                $aFields['DOWNLOAD_LINK'] = $driveDownload['INPUT'];
+            if ($statusPMGmail) {
+                $aFields['DOWNLOAD_LINK'] = $drive->changeUrlDrive($aRow, 'INPUT');
             }
             /*----------------------------------********---------------------------------*/
             if ($lastVersion == $aRow['DOC_VERSION']) {
@@ -1249,11 +1246,8 @@ class Cases
             $aFields['DOWNLOAD_LINK'] = "cases/cases_ShowDocument?a=" . $aRow['APP_DOC_UID'];
             /*----------------------------------********---------------------------------*/
             //change donwload link - drive
-            $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
-            if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('ATTACHED',
-                    $driveDownload) && $enablePMGmail
-            ) {
-                $aFields['DOWNLOAD_LINK'] = $driveDownload['ATTACHED'];
+            if ($statusPMGmail) {
+                $aFields['DOWNLOAD_LINK'] = $drive->changeUrlDrive($aRow, 'INPUT');
             }
             /*----------------------------------********---------------------------------*/
             if ($lastVersion == $aRow['DOC_VERSION']) {
@@ -1321,11 +1315,8 @@ class Cases
             }
             /*----------------------------------********---------------------------------*/
             //change donwload link - drive
-            $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
-            if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('INPUT',
-                    $driveDownload) && $enablePMGmail
-            ) {
-                $aFields['DOWNLOAD_LINK'] = $driveDownload['INPUT'];
+            if ($statusPMGmail) {
+                $aFields['DOWNLOAD_LINK'] = $drive->changeUrlDrive($aRow, 'INPUT');
             }
             /*----------------------------------********---------------------------------*/
             if ($lastVersion == $aRow['DOC_VERSION']) {
@@ -1373,11 +1364,11 @@ class Cases
         }
         /*----------------------------------********---------------------------------*/
         $licensedFeatures = &\PMLicensedFeatures::getSingleton();
-        $enablePMGmail = false;
+        $statusPMGmail = false;
         if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "pmDrive" );
-            $pmDrive = new \PMDrive();
-            $enablePMGmail = $pmDrive->getStatusService();
+            G::LoadClass( "AppDocumentDrive" );
+            $drive = new AppDocumentDrive();
+            $statusPMGmail = $drive->getStatusDrive();
         }
         /*----------------------------------********---------------------------------*/
         $aObjectPermissions = $cases->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
@@ -1527,16 +1518,9 @@ class Cases
                 }
                 /*----------------------------------********---------------------------------*/
                 //change donwload link - drive
-                $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
-                if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('OUTPUT_DOC',
-                        $driveDownload) && $enablePMGmail
-                ) {
-                    $fileDoc = $driveDownload['OUTPUT_DOC'];
-                }
-                if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('OUTPUT_PDF',
-                        $driveDownload) && $enablePMGmail
-                ) {
-                    $filePdf = $driveDownload['OUTPUT_PDF'];
+                if ($statusPMGmail) {
+                    $fileDoc = $drive->changeUrlDrive($aRow, 'OUTPUT_DOC');
+                    $filePdf = $drive->changeUrlDrive($aRow, 'OUTPUT_PDF');
                 }
                 /*----------------------------------********---------------------------------*/
                 //if both documents were generated, we choose the pdf one, only if doc was

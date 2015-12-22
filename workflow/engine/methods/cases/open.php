@@ -61,18 +61,17 @@ $oHeadPublisher = & headPublisher::getSingleton();
 
 $urlToRedirectAfterPause = 'casesListExtJs';
 
-        /*----------------------------------********---------------------------------*/
+/*----------------------------------********---------------------------------*/
 $licensedFeatures = &PMLicensedFeatures::getSingleton();
 if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-    G::LoadClass( "pmDrive" );
-    $pmDrive = new PMDrive();
-    $enablePMGmail = $pmDrive->getStatusService();
-    if (key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && !empty($enablePMGmail) && $enablePMGmail == 1) {
+    G::LoadClass( "AppDocumentDrive" );
+    $drive = new AppDocumentDrive();
+    if (array_key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $drive->getStatusDrive()) {
         $_SESSION['gmail'] = 0;
         $urlToRedirectAfterPause = '/sys'. $_SESSION['WORKSPACE'] .'/en/neoclassic/cases/cases_Open?APP_UID='.$_SESSION['APPLICATION'].'&DEL_INDEX='.$_SESSION['INDEX'].'&action=sent';
     }
 }
-        /*----------------------------------********---------------------------------*/
+/*----------------------------------********---------------------------------*/
 
 
 $oHeadPublisher->assign( 'urlToRedirectAfterPause', $urlToRedirectAfterPause );

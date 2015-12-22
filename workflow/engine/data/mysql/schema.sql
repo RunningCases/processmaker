@@ -98,6 +98,8 @@ CREATE TABLE `APP_DOCUMENT`
 	`APP_DOC_STATUS_DATE` DATETIME,
 	`APP_DOC_FIELDNAME` VARCHAR(150),
   `APP_DOC_DRIVE_DOWNLOAD` MEDIUMTEXT,
+  `SYNC_WITH_DRIVE` VARCHAR(32) default 'UNSYNCHRONIZED' NOT NULL,
+  `SYNC_PERMISSIONS` MEDIUMTEXT,
 	PRIMARY KEY (`APP_DOC_UID`,`DOC_VERSION`),
 	KEY `indexAppDocument`(`FOLDER_UID`, `APP_DOC_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Documents in an Application';
@@ -2928,3 +2930,26 @@ CREATE TABLE `NOTIFICATION_DEVICE`
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Definitions Notification device.';
 # This restores the fkey checks, after having unset them earlier
 # SET FOREIGN_KEY_CHECKS = 1;
+
+
+
+#-----------------------------------------------------------------------------
+#-- GMAIL_RELABELING
+#-----------------------------------------------------------------------------
+DROP TABLE IF EXISTS `GMAIL_RELABELING`;
+
+CREATE TABLE `GMAIL_RELABELING` (
+	`LABELING_UID` 				  VARCHAR(32)  NOT NULL,
+	`CREATE_DATE`	  	      DATETIME NOT NULL,
+	`APP_UID` 				      VARCHAR(32) NOT NULL DEFAULT '',
+	`DEL_INDEX` 			      INT(11) 		NOT NULL DEFAULT '0',
+	`CURRENT_LAST_INDEX`    INT(11) 		NOT NULL DEFAULT '0',
+	`UNASSIGNED`            INT(11)   	NOT NULL DEFAULT '0',
+	`STATUS`  							VARCHAR(32) NOT NULL DEFAULT 'pending',
+	`MSG_ERROR`  						TEXT NULL,
+	PRIMARY KEY (`LABELING_UID`),
+	KEY `indexStatus` (`STATUS`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Task to synchronize Gmail Labels';
+# This restores the fkey checks, after having unset them earlier
+# SET FOREIGN_KEY_CHECKS = 1;
+
