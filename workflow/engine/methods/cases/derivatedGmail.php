@@ -39,7 +39,7 @@ $drive = new AppDocumentDrive();
 if(array_key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $drive->getStatusDrive() ){
 	$_SESSION['gmail'] = 0;
 	unset($_SESSION['gmail']); //cleaning session
-	$mUrl = '/sys'. $_SESSION['WORKSPACE'] .'/en/neoclassic/cases/cases_Open?APP_UID='.$caseId.'&DEL_INDEX='.$actualIndex.'&action=sent';
+	$mUrl = '/sys'. $_SESSION['WORKSPACE'] .'/en/'.$_SESSION['currentSkin'].'/cases/cases_Open?APP_UID='.$caseId.'&DEL_INDEX='.$actualIndex.'&action=sent';
 } else{
 	$mUrl = 'casesListExtJs';
 }
