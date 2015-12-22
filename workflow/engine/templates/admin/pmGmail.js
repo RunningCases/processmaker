@@ -178,7 +178,7 @@ Ext.onReady(function(){
                         });
                     }
                 },
-                regex       : /(.)+((\.p12)(\w)?)$/i,
+                regex       : /(.)+((\.json)(\w)?)$/i,
                 regexText   : _('ID_PMG_TYPE_ACCEPT')
             },
             {
