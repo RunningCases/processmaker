@@ -157,6 +157,14 @@ Ext.onReady(function(){
               tb.add(menu);
           }
         }
+        
+        var olink = document.location.href;
+        if(olink.search("gmail") != -1){
+      	  Ext.getCmp('stepsMenu').hide();
+      	  Ext.getCmp('informationMenu').hide();
+      	  Ext.getCmp('actionMenu').hide();
+      	  Ext.getCmp('caseNotes').hide();
+        }
 
         if (Ext.getCmp('stepsMenu').disabled === true) {
           Ext.getCmp('stepsMenu').hide();
