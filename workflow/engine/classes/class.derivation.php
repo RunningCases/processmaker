@@ -521,7 +521,7 @@ class Derivation
         $flagTaskNextAssignTypeIsMultipleInstance = false;
 
         if (!is_null($taskNext) && !is_null($bpmnActivityNext)) {
-            $flagTaskNextIsMultipleInstance = $bpmnActivityNext->getActType() == "TASK" && preg_match("/^(?:EMPTY|USERTASK|MANUALTASK)$/", $bpmnActivityNext->getActTaskType()) && $bpmnActivityNext->getActLoopType() == "PARALLEL";
+            $flagTaskNextIsMultipleInstance = $bpmnActivityNext->getActType() == "TASK" && preg_match("/^(?:EMPTY|SENDTASK|RECEIVETASK|USERTASK|SERVICETASK|MANUALTASK|BUSINESSRULE)$/", $bpmnActivityNext->getActTaskType()) && $bpmnActivityNext->getActLoopType() == "PARALLEL";
             $flagTaskNextAssignTypeIsMultipleInstance = preg_match("/^(?:MULTIPLE_INSTANCE|MULTIPLE_INSTANCE_VALUE_BASED)$/", $taskNext->getTasAssignType());
         }
 
@@ -1557,7 +1557,9 @@ class Derivation
                                 $aDeriveTask['NEXT_TASK']['USER_ASSIGNED'] = $selectedUser;
                                 $myLabels = array ($aDeriveTask['NEXT_TASK']['TAS_TITLE'],$aParentCase['APP_NUMBER'],$selectedUser['USR_USERNAME'],$selectedUser['USR_FIRSTNAME'],$selectedUser['USR_LASTNAME']
                                 );
-                                G::SendTemporalMessage( 'ID_TASK_WAS_ASSIGNED_TO_USER', 'warning', 'labels', 10, null, $myLabels );
+                                if($aDeriveTask['NEXT_TASK']['TAS_ASSIGN_TYPE'] == "MANUAL"){
+                                    G::SendTemporalMessage( 'ID_TASK_WAS_ASSIGNED_TO_USER', 'warning', 'labels', 10, null, $myLabels );
+                                }
 
                             }
                             $nextDelegations2[] = array ('TAS_UID' => $aDeriveTask['NEXT_TASK']['TAS_UID'],'USR_UID' => $aDeriveTask['NEXT_TASK']['USER_ASSIGNED']['USR_UID'],'TAS_ASSIGN_TYPE' => $aDeriveTask['NEXT_TASK']['TAS_ASSIGN_TYPE'],'TAS_DEF_PROC_CODE' => $aDeriveTask['NEXT_TASK']['TAS_DEF_PROC_CODE'],'DEL_PRIORITY' => 3,'TAS_PARENT' => $aDeriveTask['NEXT_TASK']['TAS_PARENT']

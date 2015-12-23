@@ -2393,7 +2393,10 @@ class wsBase
                     $usrasgdUserName = null;
 
                     if (isset($val['NEXT_TASK']['USER_ASSIGNED'])) {
-                        $usrasgdUid = $val['NEXT_TASK']['USER_ASSIGNED']['USR_UID'];
+                        $usrasgdUid = '';
+                        if(isset($val['NEXT_TASK']['USER_ASSIGNED']['USR_UID'])){
+                            $usrasgdUid = $val['NEXT_TASK']['USER_ASSIGNED']['USR_UID'];
+                        }
                         if(isset($val['NEXT_TASK']['USER_ASSIGNED']['USR_USERNAME'])){
                           $usrasgdUserName = '(' . $val['NEXT_TASK']['USER_ASSIGNED']['USR_USERNAME'] . ')';
                         }else{
@@ -3140,6 +3143,14 @@ class wsBase
 
                 $g->sessionVarRestore();
 
+                return $result;
+            }
+
+            $oApplication = new Application();
+            $aFields = $oApplication->load($caseUid);
+            if($aFields['APP_STATUS'] == 'DRAFT'){
+                $result = new wsResponse( 100, G::LoadTranslation( "ID_CASE_IN_STATUS" ). " DRAFT" );
+                $g->sessionVarRestore();
                 return $result;
             }
 

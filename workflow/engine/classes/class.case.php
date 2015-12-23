@@ -4071,7 +4071,6 @@ class Cases
 
     public function pauseCase($sApplicationUID, $iDelegation, $sUserUID, $sUnpauseDate = null)
     {
-        $this->CloseCurrentDelegation($sApplicationUID, $iDelegation);
         $oApplication = new Application();
         $aFields = $oApplication->Load($sApplicationUID);
         //get the appthread row id ( APP_THREAD_INDEX' )
@@ -4089,6 +4088,7 @@ class Cases
             throw new Exception(G::LoadTranslation("ID_CASE_STOPPED_TRIGGER"));
         }
 
+        $this->CloseCurrentDelegation($sApplicationUID, $iDelegation);
         //now create a row in APP_DELAY with type PAUSE
         $aData['PRO_UID'] = $aFields['PRO_UID'];
         $aData['APP_UID'] = $sApplicationUID;
