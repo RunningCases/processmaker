@@ -227,11 +227,13 @@ class PMGoogleApi
                 throw new Exception(G::LoadTranslation('ID_GOOGLE_FILE_P12_ERROR'));
             }
 
+            $data = json_decode($key);
             $assertionCredentials = new Google_Auth_AssertionCredentials(
                 $this->serviceAccountEmail,
                 $this->scope,
-                $key
+                $data->private_key
             );
+
             $assertionCredentials->sub = $this->user;
 
             $client = new Google_Client();
