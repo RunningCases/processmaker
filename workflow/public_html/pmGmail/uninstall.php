@@ -17,12 +17,10 @@
         <meta name="DC.title" content="ProcessMaker Inc.">
         <meta name="subject" content="Open Source Workflow, Business Process Management (BPM) Soft-ware.">
         <meta name="author" content="ProcessMaker Inc.">
-        <meta name="copyright" content="ProcessMaker Inc.">        <link type="text/css" rel="stylesheet" href="index_files/css_xE-rWrJf-fncB6ztZfd2huxqgxu4WO-qwma6Xer30m4.css" media="all">
+        <meta name="copyright" content="ProcessMaker Inc.">
         <link type="text/css" rel="stylesheet" href="../css/general.css" media="all">
         <link type="text/css" rel="stylesheet" href="../css/sb-admin-2.css" media="all">
         <link rel="shortcut icon" href="http://www.processmaker.com/favicon.ico" type="image/vnd.microsoft.icon">
-        <link rel="alternate" type="application/rss+xml" title="ProcessMaker RSS" href="http://www.processmaker.com/rss.xml">
-        <script src="index_files/jsbox.js" class="lazyload" charset="utf-8"></script><script src="index_files/jsglobal.js" class="lazyload" charset="utf-8"></script><script src="index_files/jstrack.js" class="lazyload" charset="utf-8"></script><link type="text/css" rel="stylesheet" href="index_files/style_002.css" class="lazyload" charset="utf-8"><style type="text/css">.lz_chat_mail { color: #000000 !important; }.lz_chat_link { color: #000000 !important; }.lz_chat_file { color: #000000 !important; }.lz_chat_human { color: #000000 !important; }</style><link type="text/css" rel="stylesheet" href="index_files/style.css" class="lazyload" charset="utf-8"><script src="index_files/jsextern.js" class="lazyload" charset="utf-8"></script><style type="text/css">.fancybox-margin{margin-right:16px;}</style></head>
         <script>
             document.onreadystatechange = function () {
               var state = document.readyState
@@ -36,7 +34,7 @@
             }
     </script>
     <body class="html front not-logged-in no-sidebars page-node" id="page-top" data-spy="scroll" data-target=".navbar-custom" style="background-color:white;">
-    <div id="main-content" class="container" style="display:none;">
+    <div id="main-content" class="container">
         <div class="row">
             <div class="col-lg-12" style="margin: 0 auto;">
                 <div style="margin: 0 auto; width:600px;padding:25px;">
