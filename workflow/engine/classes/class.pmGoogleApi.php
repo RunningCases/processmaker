@@ -188,8 +188,8 @@ class PMGoogleApi
         $serviceAccountEmail = empty($this->configuration->aConfig['serviceAccountEmail']) ? '' : $this->configuration->aConfig['serviceAccountEmail'];
         $statusService = empty($this->configuration->aConfig['statusService']) ? '' : $this->configuration->aConfig['statusService'];
 
-        $serviceGmailStatus = empty($this->configuration->aConfig['serviceGmailStatus']) ? '' : $this->configuration->aConfig['serviceGmailStatus'];
-        $serviceDriveStatus = empty($this->configuration->aConfig['serviceDriveStatus']) ? '' : $this->configuration->aConfig['serviceDriveStatus'];
+        $serviceGmailStatus = empty($this->configuration->aConfig['serviceGmailStatus']) ? false : $this->configuration->aConfig['serviceGmailStatus'];
+        $serviceDriveStatus = empty($this->configuration->aConfig['serviceDriveStatus']) ? false : $this->configuration->aConfig['serviceDriveStatus'];
 
         $this->scope = array();
 
