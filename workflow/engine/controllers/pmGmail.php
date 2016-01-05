@@ -16,33 +16,26 @@ class pmGmail extends Controller
         $result = new StdClass();
         $result->success = true;
 
-        if (!empty($httpData->status_pmgmail)) {
-            $httpData->status_pmgmail = $httpData->status_pmgmail == 1 ? true : false;
-            //$httpData->seriveGmailStatus = $httpData->seriveGmailStatus == 1 ? true : false;
-            //$httpData->seriveDriveStatus = $httpData->seriveDriveStatus == 1 ? true : false;
-            $pmGoogle->setStatusService($httpData->status_pmgmail);
-            //$pmGoogle->setServiceGmailStatus($httpData->seriveGmailStatus);
-            //$pmGoogle->setServiceDriveStatus($httpData->seriveDriveStatus);
-            $message = G::LoadTranslation('ID_ENABLE_PMGMAIL') . ': ' . ($httpData->status_pmgmail ? G::LoadTranslation('ID_ENABLE') : G::LoadTranslation('ID_DISABLE'));
+        if (!(empty($httpData->serviceGmailStatus) || empty($httpData->serviceGmailStatus))) {
+            $httpData->serviceGmailStatus = !empty($httpData->serviceGmailStatus) ? $httpData->serviceGmailStatus == 1 ? true : false : false;
+            $httpData->serviceDriveStatus = !empty($httpData->serviceDriveStatus) ? $httpData->serviceDriveStatus == 1 ? true : false : false;
 
-            $pmGoogle->setTypeAuthentication($httpData->typeAuth);
+            $pmGoogle->setServiceGmailStatus($httpData->serviceGmailStatus);
+            $pmGoogle->setServiceDriveStatus($httpData->serviceDriveStatus);
 
-            if (!empty($httpData->email_service_account)) {
-                $pmGoogle->setServiceAccountEmail($httpData->email_service_account);
-                $message .= ', ' . G::LoadTranslation('ID_PMG_EMAIL') . ': ' . $httpData->email_service_account;
+            $message = G::LoadTranslation('ID_ENABLE_PMGMAIL') . ': ' . ($httpData->serviceGmailStatus ? G::LoadTranslation('ID_ENABLE') : G::LoadTranslation('ID_DISABLE'));
+            $message .= G::LoadTranslation('ID_ENABLE_PMDRIVE') . ': ' . ($httpData->serviceDriveStatus ? G::LoadTranslation('ID_ENABLE') : G::LoadTranslation('ID_DISABLE'));
+
+            if (!empty($httpData->emailServiceAccount)) {
+                $pmGoogle->setServiceAccountEmail($httpData->emailServiceAccount);
+                $message .= ', ' . G::LoadTranslation('ID_PMG_EMAIL') . ': ' . $httpData->emailServiceAccount;
             }
             if (!empty($_FILES)) {
-                if (!empty($_FILES['file_p12']) && $_FILES['file_p12']['error'] != 1) {
-                    if ($_FILES['file_p12']['tmp_name'] != '') {
-                        G::uploadFile($_FILES['file_p12']['tmp_name'], PATH_DATA_SITE, $_FILES['file_p12']['name']);
-                        $pmGoogle->setServiceAccountP12($_FILES['file_p12']['name']);
-                        $message .= ', ' . G::LoadTranslation('ID_PMG_FILE') . ': ' . $_FILES['file_p12']['name'];
-                    }
-                } else if (!empty($_FILES['file_json']) && $_FILES['file_json']['error'] != 1) {
-                    if ($_FILES['file_json']['tmp_name'] != '') {
-                        G::uploadFile($_FILES['file_json']['tmp_name'], PATH_DATA_SITE, $_FILES['file_json']['name']);
-                        $pmGoogle->setAccountJson($_FILES['file_json']['name']);
-                        $message .= ', ' . G::LoadTranslation('ID_PMG_FILE') . ': ' . $_FILES['file_json']['name'];
+                if (!empty($_FILES['googleCertificate']) && $_FILES['googleCertificate']['error'] != 1) {
+                    if ($_FILES['googleCertificate']['tmp_name'] != '') {
+                        G::uploadFile($_FILES['googleCertificate']['tmp_name'], PATH_DATA_SITE, $_FILES['googleCertificate']['name']);
+                        $pmGoogle->setServiceAccountCertificate($_FILES['googleCertificate']['name']);
+                        $message .= ', ' . G::LoadTranslation('ID_PMG_FILE') . ': ' . $_FILES['googleCertificate']['name'];
                     }
                 } else {
                     $result->success = false;
@@ -68,20 +61,17 @@ class pmGmail extends Controller
                 $this->setJSVar('__PMGMAIL_ERROR__', $_SESSION['__PMGMAIL_ERROR__']);
                 unset($_SESSION['__PMGMAIL_ERROR__']);
             }
-            G::LoadClass( "pmGoogleApi" );
+            G::LoadClass("pmGoogleApi");
             $pmGoogle = new PMGoogleApi();
             $accountEmail = $pmGoogle->getServiceAccountEmail();
-            $fileP12 = $pmGoogle->getServiceAccountP12();
-            $fileJson = $pmGoogle->getAccountJson();
-            $fileJson = $fileJson == null ? '' : $fileJson;
-            $type = $pmGoogle->getTypeAuthentication();
-            $enablePMGmail = $pmGoogle->getStatusService();
+            $googleCertificate = $pmGoogle->getServiceAccountCertificate();
+            $statusGmail = $pmGoogle->getServiceGmailStatus();
+            $statusDrive = $pmGoogle->getServiceDriveStatus();
 
             $this->setJSVar('accountEmail', $accountEmail);
-            $this->setJSVar('fileP12', $fileP12);
-            $this->setJSVar('enablePMGmail', $enablePMGmail);
-            $this->setJSVar('fileJson', $fileJson);
-            $this->setJSVar('typeAuthentication', $type);
+            $this->setJSVar('googleCertificate', $googleCertificate);
+            $this->setJSVar('statusGmail', $statusGmail);
+            $this->setJSVar('statusDrive', $statusDrive);
 
 
             G::RenderPage('publish', 'extJs');
@@ -101,13 +91,8 @@ class pmGmail extends Controller
 
         $result = new stdClass();
 
-        $result->typeAuth = empty($httpData->typeAuth) ? $pmGoogle->getTypeAuthentication() : $httpData->typeAuth;
-        if ($result->typeAuth == 'webApplication') {
-            $result->pathFileJson = empty($_FILES['file_json']['tmp_name']) ? PATH_DATA_SITE . $pmGoogle->getAccountJson() : $_FILES['file_json']['tmp_name'];
-        } else {
-            $result->emailServiceAccount = empty($httpData->email_service_account) ? $pmGoogle->getServiceAccountEmail() : $httpData->email_service_account;
-            $result->pathServiceAccountP12 = empty($_FILES['file_p12']['tmp_name']) ? PATH_DATA_SITE . $pmGoogle->getserviceAccountP12() : $_FILES['file_p12']['tmp_name'];
-        }
+        $result->emailServiceAccount = empty($httpData->emailServiceAccount) ? $pmGoogle->getServiceAccountEmail() : $httpData->emailServiceAccount;
+        $result->pathServiceAccountCertificate = empty($_FILES['googleCertificate']['tmp_name']) ? PATH_DATA_SITE . $pmGoogle->getServiceAccountCertificate() : $_FILES['googleCertificate']['tmp_name'];
 
         print(G::json_encode($pmGoogle->testService($result)));
     }

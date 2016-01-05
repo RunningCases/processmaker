@@ -30,7 +30,7 @@ class AppDocumentDrive
     public function __construct()
     {
         $this->drive = new PMDrive();
-        $status = $this->drive->getStatusService();
+        $status = $this->drive->getServiceDriveStatus();
         $status = !empty($status) ? ($status == 1 ? true : false): false;
         $this->usersDrive = '';
         $this->setStatusDrive($status);
