@@ -969,16 +969,19 @@ function synchronizeDrive ()
         if (strpos($argvx, "synchronize-documents-drive") === false) {
             return false;
         }
-
-        G::LoadClass('AppDocumentDrive');
-        $drive = new AppDocumentDrive();
-        if($drive->getStatusDrive()) {
-            setExecutionMessage("Synchronize documents to drive");
-            $drive->synchronizeDrive(true);
+        $licensedFeatures = &PMLicensedFeatures::getSingleton();
+        if (!$licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
+	        G::LoadClass('AppDocumentDrive');
+	        $drive = new AppDocumentDrive();
+	        if($drive->getStatusDrive()) {
+	            setExecutionMessage("Synchronize documents to Drive");
+	            $drive->synchronizeDrive(true);
+	        } else {
+	            setExecutionMessage("It has not enabled Feature Drive");
+	        }
         } else {
-            setExecutionMessage("It has not enabled Feature Gmail");
+        	setExecutionMessage("The Drive license is not enabled");
         }
-
         setExecutionResultMessage("DONE");
 
     } catch (Exception $e) {
@@ -997,11 +1000,21 @@ function synchronizeGmailLabels()
         if (strpos($argvx, "synchronize-gmail-labels") === false) {
             return false;
         }
-
-        setExecutionMessage("Synchronize labels in Gmail");
-        G::LoadClass('labelsGmail');
-        $labGmail = new labelsGmail();
-        $labGmail->processPendingRelabelingInQueue();
+        $licensedFeatures = &PMLicensedFeatures::getSingleton();
+        if (!$licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
+        	G::LoadClass( "PMGoogleApi" );
+	        $pmGoogle = new PMGoogleApi();
+        	if($pmGoogle->getServiceGmailStatus()) {
+		        setExecutionMessage("Synchronize labels in Gmail");
+		        G::LoadClass('labelsGmail');
+		        $labGmail = new labelsGmail();
+		        $labGmail->processPendingRelabelingInQueue();
+		    } else {
+		        setExecutionMessage("It has not enabled Feature Gmail");
+		    }
+		} else {
+        	setExecutionMessage("The Gmail license is not enabled");
+        }
         setExecutionResultMessage("DONE");
 
     } catch (Exception $e) {

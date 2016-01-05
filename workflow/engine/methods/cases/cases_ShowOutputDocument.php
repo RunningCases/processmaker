@@ -112,7 +112,7 @@ if (! $sw_file_exists) {
         $nameFile = $info['basename'] . $ver . '.' . $ext;
         $licensedFeatures = &PMLicensedFeatures::getSingleton();
         $downloadStatus = false;
-        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+        if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
             G::LoadClass( "AppDocumentDrive" );
             $drive = new AppDocumentDrive();
             if ($drive->getStatusDrive()) {
