@@ -34,9 +34,9 @@ require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.la
 $oLabels = new labelsGmail();
 $oLabels->addRelabelingToQueue($caseId, $actualIndex, $actualLastIndex, false);
 
-G::LoadClass( "AppDocumentDrive" );
-$drive = new AppDocumentDrive();
-if(array_key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $drive->getStatusDrive() ){
+G::LoadClass( "PMGoogleApi" );
+$pmGoogle = new PMGoogleApi();
+if(array_key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $pmGoogle->getServiceGmailStatus() ){
 	$_SESSION['gmail'] = 0;
 	unset($_SESSION['gmail']); //cleaning session
 	$mUrl = '/sys'. $_SESSION['WORKSPACE'] .'/en/'.$_SESSION['currentSkin'].'/cases/cases_Open?APP_UID='.$caseId.'&DEL_INDEX='.$actualIndex.'&action=sent';

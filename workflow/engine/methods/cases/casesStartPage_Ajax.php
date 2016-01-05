@@ -262,13 +262,13 @@ function startCase ()
         $_SESSION['CASES_REFRESH'] = true;
 
         /*----------------------------------********---------------------------------*/
-        //sending the email for gmail integration if the option es available
+        //sending the email for gmail integration if the option is available
         $licensedFeatures = &PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "AppDocumentDrive" );
-            $drive = new AppDocumentDrive();
+            G::LoadClass( "PMGoogleApi" );
+            $pmGoogle = new PMGoogleApi();
 
-            if($drive->getStatusDrive()){
+            if($pmGoogle->getServiceGmailStatus()){
                 require_once 'src/ProcessMaker/BusinessModel/Pmgmail.php';
                 $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
                 $response = $Pmgmail->sendEmail($aData['APPLICATION'], "", $aData['INDEX']);
