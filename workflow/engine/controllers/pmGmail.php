@@ -18,7 +18,11 @@ class pmGmail extends Controller
 
         if (!empty($httpData->status_pmgmail)) {
             $httpData->status_pmgmail = $httpData->status_pmgmail == 1 ? true : false;
+            //$httpData->seriveGmailStatus = $httpData->seriveGmailStatus == 1 ? true : false;
+            //$httpData->seriveDriveStatus = $httpData->seriveDriveStatus == 1 ? true : false;
             $pmGoogle->setStatusService($httpData->status_pmgmail);
+            //$pmGoogle->setServiceGmailStatus($httpData->seriveGmailStatus);
+            //$pmGoogle->setServiceDriveStatus($httpData->seriveDriveStatus);
             $message = G::LoadTranslation('ID_ENABLE_PMGMAIL') . ': ' . ($httpData->status_pmgmail ? G::LoadTranslation('ID_ENABLE') : G::LoadTranslation('ID_DISABLE'));
 
             $pmGoogle->setTypeAuthentication($httpData->typeAuth);
