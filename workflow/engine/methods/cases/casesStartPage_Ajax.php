@@ -265,7 +265,7 @@ function startCase ()
         //sending the email for gmail integration if the option is available
         $licensedFeatures = &PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "PMGoogleApi" );
+            G::LoadClass( "pmGoogleApi" );
             $pmGoogle = new PMGoogleApi();
 
             if($pmGoogle->getServiceGmailStatus()){

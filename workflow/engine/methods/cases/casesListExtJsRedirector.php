@@ -5,7 +5,7 @@ if (typeof window.parent != 'undefined') {
 $statusPMGmail = false;
 $licensedFeatures = &PMLicensedFeatures::getSingleton();
 if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-    G::LoadClass( "PMGoogleApi" );
+    G::LoadClass( "pmGoogleApi" );
     $pmGoogle = new PMGoogleApi();
     $statusPMGmail = $pmGoogle->getServiceGmailStatus();
 }
