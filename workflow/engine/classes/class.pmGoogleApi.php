@@ -28,6 +28,10 @@ class PMGoogleApi
     private $typeAuthentication;
     private $accountJson;
 
+    private $serviceGmailStatus = false;
+    private $serviceDriveStatus = false;
+    private $configuration;
+
     public function __construct()
     {
         $licensedFeatures = &PMLicensedFeatures::getSingleton();
@@ -61,10 +65,8 @@ class PMGoogleApi
 
     public function setStatusService($status)
     {
-        $conf = $this->getConfigGmail();
-
-        $conf->aConfig['statusService'] = $status;
-        $conf->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
+        $this->configuration->aConfig['statusService'] = $status;
+        $this->configuration->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
 
         $this->statusService = $status;
     }
@@ -76,17 +78,14 @@ class PMGoogleApi
 
     public function getConfigGmail()
     {
-        $conf = new Configurations();
-        $conf->loadConfig($gmail, 'GOOGLE_API_SETTINGS', '');
-        return $conf;
+        $this->configuration = new Configurations();
+        $this->configuration->loadConfig($gmail, 'GOOGLE_API_SETTINGS', '');
     }
 
     public function setServiceAccountEmail($serviceAccountEmail)
     {
-        $conf = $this->getConfigGmail();
-
-        $conf->aConfig['serviceAccountEmail'] = $serviceAccountEmail;
-        $conf->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
+        $this->configuration->aConfig['serviceAccountEmail'] = $serviceAccountEmail;
+        $this->configuration->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
 
         $this->serviceAccountEmail = $serviceAccountEmail;
     }
@@ -98,10 +97,8 @@ class PMGoogleApi
 
     public function setServiceAccountP12($serviceAccountP12)
     {
-        $conf = $this->getConfigGmail();
-
-        $conf->aConfig['serviceAccountP12'] = $serviceAccountP12;
-        $conf->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
+        $this->configuration->aConfig['serviceAccountP12'] = $serviceAccountP12;
+        $this->configuration->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
 
         $this->serviceAccountP12 = $serviceAccountP12;
     }
@@ -113,10 +110,8 @@ class PMGoogleApi
 
     public function setDomain($domain)
     {
-        $conf = $this->getConfigGmail();
-
-        $conf->aConfig['domain'] = $domain;
-        $conf->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
+        $this->configuration->aConfig['domain'] = $domain;
+        $this->configuration->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
 
         $this->domain = $domain;
     }
@@ -128,10 +123,8 @@ class PMGoogleApi
 
     public function setTypeAuthentication($type)
     {
-        $conf = $this->getConfigGmail();
-
-        $conf->aConfig['typeAuthentication'] = $type;
-        $conf->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
+        $this->configuration->aConfig['typeAuthentication'] = $type;
+        $this->configuration->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
 
         $this->typeAuthentication = $type;
     }
@@ -143,10 +136,8 @@ class PMGoogleApi
 
     public function setAccountJson($accountJson)
     {
-        $conf = $this->getConfigGmail();
-
-        $conf->aConfig['accountJson'] = $accountJson;
-        $conf->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
+        $this->configuration->aConfig['accountJson'] = $accountJson;
+        $this->configuration->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
 
         $this->accountJson = $accountJson;
     }
@@ -156,29 +147,59 @@ class PMGoogleApi
         return $this->accountJson;
     }
 
+    public function setServiceGmailStatus($status)
+    {
+        $this->configuration->aConfig['serviceGmailStatus'] = $status;
+        $this->configuration->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
+
+        $this->serviceGmailStatus = $status;
+    }
+
+    public function getServiceGmailStatus()
+    {
+        return $this->serviceGmailStatus;
+    }
+
+    public function setServiceDriveStatus($status)
+    {
+        $this->configuration->aConfig['serviceDriveStatus'] = $status;
+        $this->configuration->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
+
+        $this->serviceDriveStatus = $status;
+    }
+
+    public function getServiceDriveStatus()
+    {
+        return $this->serviceDriveStatus;
+    }
+
     /**
      * load configuration gmail service account
      *
      */
     public function loadSettings()
     {
-        $conf = $this->getConfigGmail();
+        $this->getConfigGmail();
 
-        $typeAuthentication     = empty($conf->aConfig['typeAuthentication']) ? ''  : $conf->aConfig['typeAuthentication'];
-        $accountJson            = empty($conf->aConfig['accountJson']) ? ''   : $conf->aConfig['accountJson'];
+        $typeAuthentication = empty($this->configuration->aConfig['typeAuthentication']) ? '' : $this->configuration->aConfig['typeAuthentication'];
+        $accountJson = empty($this->configuration->aConfig['accountJson']) ? '' : $this->configuration->aConfig['accountJson'];
 
-        $serviceAccountP12      = empty($conf->aConfig['serviceAccountP12']) ? ''   : $conf->aConfig['serviceAccountP12'];
-        $serviceAccountEmail    = empty($conf->aConfig['serviceAccountEmail']) ? '' : $conf->aConfig['serviceAccountEmail'];
-        $statusService          = empty($conf->aConfig['statusService']) ? ''       : $conf->aConfig['statusService'];
+        $serviceAccountP12 = empty($this->configuration->aConfig['serviceAccountP12']) ? '' : $this->configuration->aConfig['serviceAccountP12'];
+        $serviceAccountEmail = empty($this->configuration->aConfig['serviceAccountEmail']) ? '' : $this->configuration->aConfig['serviceAccountEmail'];
+        $statusService = empty($this->configuration->aConfig['statusService']) ? '' : $this->configuration->aConfig['statusService'];
+
+        $serviceGmailStatus = empty($this->configuration->aConfig['serviceGmailStatus']) ? '' : $this->configuration->aConfig['serviceGmailStatus'];
+        $serviceDriveStatus = empty($this->configuration->aConfig['serviceDriveStatus']) ? '' : $this->configuration->aConfig['serviceDriveStatus'];
 
         $this->scope = array();
 
-        $this->setTypeAuthentication($typeAuthentication);
-        $this->setAccountJson($accountJson);
-
-        $this->setServiceAccountEmail($serviceAccountEmail);
-        $this->setServiceAccountP12($serviceAccountP12);
-        $this->setStatusService($statusService);
+        $this->typeAuthentication = $typeAuthentication;
+        $this->accountJson = $accountJson;
+        $this->serviceAccountEmail = $serviceAccountEmail;
+        $this->serviceAccountP12 = $serviceAccountP12;
+        $this->statusService = $statusService;
+        $this->serviceGmailStatus = $serviceGmailStatus;
+        $this->serviceDriveStatus = $serviceDriveStatus;
     }
 
     /**
