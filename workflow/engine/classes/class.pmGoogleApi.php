@@ -20,7 +20,7 @@ class PMGoogleApi
 
     private $scope = array();
     private $serviceAccountEmail;
-    private $serviceAccountP12;
+    private $serviceAccountCertificate;
     private $statusService;
     private $domain;
     private $user;
@@ -35,7 +35,7 @@ class PMGoogleApi
     public function __construct()
     {
         $licensedFeatures = &PMLicensedFeatures::getSingleton();
-        if (!$licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+        if (!($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09') || $licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M='))) {
             G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels');
             G::header('location: ../login/login');
             die;
@@ -95,17 +95,17 @@ class PMGoogleApi
         return $this->serviceAccountEmail;
     }
 
-    public function setServiceAccountP12($serviceAccountP12)
+    public function setServiceAccountCertificate ($serviceAccountCertificate)
     {
-        $this->configuration->aConfig['serviceAccountP12'] = $serviceAccountP12;
+        $this->configuration->aConfig['serviceAccountCertificate'] = $serviceAccountCertificate;
         $this->configuration->saveConfig('GOOGLE_API_SETTINGS', '', '', '');
 
-        $this->serviceAccountP12 = $serviceAccountP12;
+        $this->serviceAccountCertificate = $serviceAccountCertificate;
     }
 
-    public function getServiceAccountP12()
+    public function getServiceAccountCertificate()
     {
-        return $this->serviceAccountP12;
+        return $this->serviceAccountCertificate;
     }
 
     public function setDomain($domain)
@@ -184,7 +184,7 @@ class PMGoogleApi
         $typeAuthentication = empty($this->configuration->aConfig['typeAuthentication']) ? '' : $this->configuration->aConfig['typeAuthentication'];
         $accountJson = empty($this->configuration->aConfig['accountJson']) ? '' : $this->configuration->aConfig['accountJson'];
 
-        $serviceAccountP12 = empty($this->configuration->aConfig['serviceAccountP12']) ? '' : $this->configuration->aConfig['serviceAccountP12'];
+        $serviceAccountCertificate = empty($this->configuration->aConfig['serviceAccountCertificate']) ? '' : $this->configuration->aConfig['serviceAccountCertificate'];
         $serviceAccountEmail = empty($this->configuration->aConfig['serviceAccountEmail']) ? '' : $this->configuration->aConfig['serviceAccountEmail'];
         $statusService = empty($this->configuration->aConfig['statusService']) ? '' : $this->configuration->aConfig['statusService'];
 
@@ -196,7 +196,7 @@ class PMGoogleApi
         $this->typeAuthentication = $typeAuthentication;
         $this->accountJson = $accountJson;
         $this->serviceAccountEmail = $serviceAccountEmail;
-        $this->serviceAccountP12 = $serviceAccountP12;
+        $this->serviceAccountCertificate = $serviceAccountCertificate;
         $this->statusService = $statusService;
         $this->serviceGmailStatus = $serviceGmailStatus;
         $this->serviceDriveStatus = $serviceDriveStatus;
@@ -210,59 +210,25 @@ class PMGoogleApi
     public function serviceClient()
     {
         $client = null;
-        if ($this->typeAuthentication == 'webApplication') {
-            if (file_exists(PATH_DATA_SITE . $this->accountJson)) {
-                $credential = file_get_contents(PATH_DATA_SITE . $this->accountJson);
-            } else {
-                throw new Exception(G::LoadTranslation('ID_GOOGLE_FILE_JSON_ERROR'));
-            }
-
-
-            $client = new Google_Client();
-            $client->setAuthConfig($credential);
-            $client->addScope($this->scope);
-
-            if (!empty($_SESSION['google_token'])) {
-                $client->setAccessToken($_SESSION['google_token']);
-                if ($client->isAccessTokenExpired()) {
-                    $client->getRefreshToken();
-                    unset($_SESSION['google_token']);
-                    $_SESSION['google_token'] = $client->getAccessToken();
-                }
-            } else if (!empty($_SESSION['CODE_GMAIL'])) {
-                $token = $client->authenticate($_SESSION['CODE_GMAIL']);
-                $_SESSION['google_token'] = $client->getAccessToken();
-            } else {
-                $authUrl = $client->createAuthUrl();
-                echo '<script type="text/javascript">
-                    var opciones = "width=450,height=480,scrollbars=NO, locatin=NO,toolbar=NO, status=NO, menumbar=NO, top=10%, left=25%";
-                    window.open("' . $authUrl . '","Gmail", opciones);
-                    </script>';
-                die;
-            }
-        } else if ($this->typeAuthentication == 'serviceAccount') {
-
-            if (file_exists(PATH_DATA_SITE . $this->serviceAccountP12)) {
-                $key = file_get_contents(PATH_DATA_SITE . $this->serviceAccountP12);
-            } else {
-                throw new Exception(G::LoadTranslation('ID_GOOGLE_FILE_P12_ERROR'));
-            }
-
-            $data = json_decode($key);
-            $assertionCredentials = new Google_Auth_AssertionCredentials(
-                $this->serviceAccountEmail,
-                $this->scope,
-                $data->private_key
-            );
-
-            $assertionCredentials->sub = $this->user;
-
-            $client = new Google_Client();
-            $client->setApplicationName("PMDrive");
-            $client->setAssertionCredentials($assertionCredentials);
+        if (file_exists(PATH_DATA_SITE . $this->serviceAccountCertificate)) {
+            $key = file_get_contents(PATH_DATA_SITE . $this->serviceAccountCertificate);
         } else {
-            throw new Exception(G::LoadTranslation('ID_SERVER_COMMUNICATION_ERROR'));
+            throw new Exception(G::LoadTranslation('ID_GOOGLE_CERTIFICATE_ERROR'));
         }
+
+        $data = json_decode($key);
+        $assertionCredentials = new Google_Auth_AssertionCredentials(
+            $this->serviceAccountEmail,
+            $this->scope,
+            $data->private_key
+        );
+
+        $assertionCredentials->sub = $this->user;
+
+        $client = new Google_Client();
+        $client->setApplicationName("PMDrive");
+        $client->setAssertionCredentials($assertionCredentials);
+
 
         return $client;
     }
@@ -270,7 +236,9 @@ class PMGoogleApi
     /**
      * New service client - Authentication google Api
      *
-     * @return Google_Service_Client $service API service instance.
+     * @param $credentials
+     * @throws \Exception
+     * @return \StdClass response.
      */
     public function testService($credentials)
     {
@@ -285,55 +253,22 @@ class PMGoogleApi
             static::DRIVE_PHOTOS_READONLY
         );
 
-        if ($credentials->typeAuth == 'webApplication') {
-
-            if (file_exists($credentials->pathFileJson)) {
-                $credential = file_get_contents($credentials->pathFileJson);
-            } else {
-                throw new Exception(G::LoadTranslation('ID_GOOGLE_FILE_JSON_ERROR'));
-            }
-
-            $client = new Google_Client();
-            $client->setAuthConfig($credential);
-            $client->addScope($scope);
-
-            if (!empty($_SESSION['google_token'])) {
-                $client->setAccessToken($_SESSION['google_token']);
-                if ($client->isAccessTokenExpired()) {
-                    unset($_SESSION['google_token']);
-                }
-            } else if (!empty($_SESSION['CODE_GMAIL'])) {
-                $token = $client->authenticate($_SESSION['CODE_GMAIL']);
-                $_SESSION['google_token'] = $client->getAccessToken();
-            } else {
-                $authUrl = $client->createAuthUrl();
-                echo '<script type="text/javascript">
-                    var opciones = "width=450,height=480,scrollbars=NO, locatin=NO,toolbar=NO, status=NO, menumbar=NO, top=10%, left=25%";
-                    window.open("' . $authUrl . '","Gmail", opciones);
-                    </script>';
-                die;
-            }
+        if (file_exists($credentials->pathServiceAccountCertificate)) {
+            $key = file_get_contents($credentials->pathServiceAccountCertificate);
         } else {
-
-            if (file_exists($credentials->pathServiceAccountP12)) {
-                $key = file_get_contents($credentials->pathServiceAccountP12);
-            } else {
-                throw new Exception(G::LoadTranslation('ID_GOOGLE_FILE_P12_ERROR'));
-            }
-            $data = json_decode($key);
-            $assertionCredentials = new Google_Auth_AssertionCredentials(
-                $credentials->emailServiceAccount,
-                $scope,
-                $data->private_key
-            );
-            $assertionCredentials->sub = $this->user;
-
-            $client = new Google_Client();
-            $client->setApplicationName("PMDrive");
-            $client->setAssertionCredentials($assertionCredentials);
+            throw new Exception(G::LoadTranslation('ID_GOOGLE_CERTIFICATE_ERROR'));
         }
+        $data = json_decode($key);
+        $assertionCredentials = new Google_Auth_AssertionCredentials(
+            $credentials->emailServiceAccount,
+            $scope,
+            $data->private_key
+        );
+        $assertionCredentials->sub = $this->user;
 
-
+        $client = new Google_Client();
+        $client->setApplicationName("PMDrive");
+        $client->setAssertionCredentials($assertionCredentials);
 
         $service = new Google_Service_Drive($client);
 
