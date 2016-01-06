@@ -64,7 +64,7 @@ $urlToRedirectAfterPause = 'casesListExtJs';
 /*----------------------------------********---------------------------------*/
 $licensedFeatures = &PMLicensedFeatures::getSingleton();
 if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-    G::LoadClass( "PMGoogleApi" );
+    G::LoadClass( "pmGoogleApi" );
     $pmGoogle = new PMGoogleApi();
     if (array_key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $pmGoogle->getServiceGmailStatus()) {
         $_SESSION['gmail'] = 0;
