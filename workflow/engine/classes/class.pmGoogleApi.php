@@ -17,6 +17,7 @@ class PMGoogleApi
     const DRIVE_METADATA_READONLY = 'https://www.googleapis.com/auth/drive.metadata.readonly';
     const DRIVE_APPDATA = 'https://www.googleapis.com/auth/drive.appdata';
     const DRIVE_PHOTOS_READONLY = 'https://www.googleapis.com/auth/drive.photos.readonly';
+    const GMAIL_MODIFY = 'https://www.googleapis.com/auth/gmail.modify';
 
     private $scope = array();
     private $serviceAccountEmail;
