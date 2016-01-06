@@ -45,7 +45,8 @@ class pmGmail extends Controller
                 }
             }
         } else {
-            $pmGoogle->setStatusService(false);
+            $pmGoogle->setServiceGmailStatus(false);
+            $pmGoogle->setServiceDriveStatus(false);
             $message = G::LoadTranslation('ID_ENABLE_PMGMAIL') . ': ' . G::LoadTranslation('ID_DISABLE');
         }
         G::auditLog("Update Settings Gmail", $message);
@@ -67,11 +68,23 @@ class pmGmail extends Controller
             $googleCertificate = $pmGoogle->getServiceAccountCertificate();
             $statusGmail = $pmGoogle->getServiceGmailStatus();
             $statusDrive = $pmGoogle->getServiceDriveStatus();
+            $disableGmail = true;
+            $disableDrive = true;
+
+            $licensedFeatures = &PMLicensedFeatures::getSingleton();
+            if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+                $disableGmail = false;
+            }
+            if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
+                $disableDrive = false;
+            }
 
             $this->setJSVar('accountEmail', $accountEmail);
             $this->setJSVar('googleCertificate', $googleCertificate);
             $this->setJSVar('statusGmail', $statusGmail);
             $this->setJSVar('statusDrive', $statusDrive);
+            $this->setJSVar('disableGmail', $disableGmail);
+            $this->setJSVar('disableDrive', $disableDrive);
 
 
             G::RenderPage('publish', 'extJs');
