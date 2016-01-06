@@ -56,6 +56,7 @@ Ext.onReady(function() {
                 value: 0,
                 inputValue: 1,
                 uncheckedValue: 0,
+                disabled: disableGmail,
                 listeners   : {
                     check : function(that, checked) {
                         disableAll();
@@ -96,6 +97,7 @@ Ext.onReady(function() {
                 value: 0,
                 inputValue: 1,
                 uncheckedValue: 0,
+                disabled: disableDrive,
                 listeners   : {
                     check : function(that, checked) {
                         disableAll();
