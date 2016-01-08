@@ -1042,15 +1042,6 @@ class Cases
             //$oPluginRegistry      = & PMPluginRegistry::getSingleton();
             $listing = $oPluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST, $folderData);
         }
-        /*----------------------------------********---------------------------------*/
-        $licensedFeatures = &\PMLicensedFeatures::getSingleton();
-        $statusPMGmail = false;
-        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "AppDocumentDrive" );
-            $drive = new AppDocumentDrive();
-            $statusPMGmail = $drive->getStatusDrive();
-        }
-        /*----------------------------------********---------------------------------*/
         $aObjectPermissions = $cases->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
         if (!is_array($aObjectPermissions)) {
             $aObjectPermissions = array(
@@ -1167,12 +1158,6 @@ class Cases
                     }
                 }
             }
-            /*----------------------------------********---------------------------------*/
-            //change donwload link - drive
-            if ($statusPMGmail) {
-                $aFields['DOWNLOAD_LINK'] = $drive->changeUrlDrive($aRow, 'INPUT');
-            }
-            /*----------------------------------********---------------------------------*/
             if ($lastVersion == $aRow['DOC_VERSION']) {
                 //Show only last version
                 $aInputDocuments[] = $aFields;
@@ -1244,12 +1229,7 @@ class Cases
             }
             $aFields['DOWNLOAD_LABEL'] = G::LoadTranslation('ID_DOWNLOAD');
             $aFields['DOWNLOAD_LINK'] = "cases/cases_ShowDocument?a=" . $aRow['APP_DOC_UID'];
-            /*----------------------------------********---------------------------------*/
-            //change donwload link - drive
-            if ($statusPMGmail) {
-                $aFields['DOWNLOAD_LINK'] = $drive->changeUrlDrive($aRow, 'INPUT');
-            }
-            /*----------------------------------********---------------------------------*/
+
             if ($lastVersion == $aRow['DOC_VERSION']) {
                 //Show only last version
                 $aInputDocuments[] = $aFields;
@@ -1313,12 +1293,7 @@ class Cases
                     }
                 }
             }
-            /*----------------------------------********---------------------------------*/
-            //change donwload link - drive
-            if ($statusPMGmail) {
-                $aFields['DOWNLOAD_LINK'] = $drive->changeUrlDrive($aRow, 'INPUT');
-            }
-            /*----------------------------------********---------------------------------*/
+
             if ($lastVersion == $aRow['DOC_VERSION']) {
                 //Show only last version
                 $aInputDocuments[] = $aFields;
@@ -1362,15 +1337,6 @@ class Cases
             //$oPluginRegistry = & PMPluginRegistry::getSingleton();
             $listing = $oPluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST, $folderData);
         }
-        /*----------------------------------********---------------------------------*/
-        $licensedFeatures = &\PMLicensedFeatures::getSingleton();
-        $statusPMGmail = false;
-        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "AppDocumentDrive" );
-            $drive = new AppDocumentDrive();
-            $statusPMGmail = $drive->getStatusDrive();
-        }
-        /*----------------------------------********---------------------------------*/
         $aObjectPermissions = $cases->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
         if (!is_array($aObjectPermissions)) {
             $aObjectPermissions = array('DYNAFORMS' => array(-1),'INPUT_DOCUMENTS' => array(-1),'OUTPUT_DOCUMENTS' => array(-1));
@@ -1516,13 +1482,6 @@ class Cases
                 } catch (\Exception $oException) {
                     $sUser = '(USER DELETED)';
                 }
-                /*----------------------------------********---------------------------------*/
-                //change donwload link - drive
-                if ($statusPMGmail) {
-                    $fileDoc = $drive->changeUrlDrive($aRow, 'OUTPUT_DOC');
-                    $filePdf = $drive->changeUrlDrive($aRow, 'OUTPUT_PDF');
-                }
-                /*----------------------------------********---------------------------------*/
                 //if both documents were generated, we choose the pdf one, only if doc was
                 //generate then choose the doc file.
                 $firstDocLink = $filePdf;
