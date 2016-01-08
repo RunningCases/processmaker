@@ -962,25 +962,24 @@ function fillReportByProcess ()
 
 function synchronizeDrive ()
 {
-    try
-    {
+    try {
         global $argvx;
 
         if (strpos($argvx, "synchronize-documents-drive") === false) {
             return false;
         }
         $licensedFeatures = &PMLicensedFeatures::getSingleton();
-        if (!$licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
-	        G::LoadClass('AppDocumentDrive');
-	        $drive = new AppDocumentDrive();
-	        if($drive->getStatusDrive()) {
-	            setExecutionMessage("Synchronize documents to Drive");
-	            $drive->synchronizeDrive(true);
-	        } else {
-	            setExecutionMessage("It has not enabled Feature Drive");
-	        }
+        if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
+            G::LoadClass('AppDocumentDrive');
+            $drive = new AppDocumentDrive();
+            if ($drive->getStatusDrive()) {
+                setExecutionMessage("Synchronize documents to Drive");
+                $drive->synchronizeDrive(true);
+            } else {
+                setExecutionMessage("It has not enabled Feature Drive");
+            }
         } else {
-        	setExecutionMessage("The Drive license is not enabled");
+            setExecutionMessage("The Drive license is not enabled");
         }
         setExecutionResultMessage("DONE");
 
@@ -993,27 +992,26 @@ function synchronizeDrive ()
 
 function synchronizeGmailLabels()
 {
-    try
-    {
+    try {
         global $argvx;
 
         if (strpos($argvx, "synchronize-gmail-labels") === false) {
             return false;
         }
         $licensedFeatures = &PMLicensedFeatures::getSingleton();
-        if (!$licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
-        	G::LoadClass( "pmGoogleApi" );
-	        $pmGoogle = new PMGoogleApi();
-        	if($pmGoogle->getServiceGmailStatus()) {
-		        setExecutionMessage("Synchronize labels in Gmail");
-		        G::LoadClass('labelsGmail');
-		        $labGmail = new labelsGmail();
-		        $labGmail->processPendingRelabelingInQueue();
-		    } else {
-		        setExecutionMessage("It has not enabled Feature Gmail");
-		    }
-		} else {
-        	setExecutionMessage("The Gmail license is not enabled");
+        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+            G::LoadClass("pmGoogleApi");
+            $pmGoogle = new PMGoogleApi();
+            if ($pmGoogle->getServiceGmailStatus()) {
+                setExecutionMessage("Synchronize labels in Gmail");
+                G::LoadClass('labelsGmail');
+                $labGmail = new labelsGmail();
+                $labGmail->processPendingRelabelingInQueue();
+            } else {
+                setExecutionMessage("It has not enabled Feature Gmail");
+            }
+        } else {
+            setExecutionMessage("The Gmail license is not enabled");
         }
         setExecutionResultMessage("DONE");
 
