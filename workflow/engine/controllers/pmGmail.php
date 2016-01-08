@@ -16,9 +16,11 @@ class pmGmail extends Controller
         $result = new StdClass();
         $result->success = true;
 
-        if (!(empty($httpData->serviceGmailStatus) || empty($httpData->serviceGmailStatus))) {
-            $httpData->serviceGmailStatus = !empty($httpData->serviceGmailStatus) ? $httpData->serviceGmailStatus == 1 ? true : false : false;
-            $httpData->serviceDriveStatus = !empty($httpData->serviceDriveStatus) ? $httpData->serviceDriveStatus == 1 ? true : false : false;
+        $httpData->serviceGmailStatus = !empty($httpData->serviceGmailStatus) ? $httpData->serviceGmailStatus == 1 ? true : false : false;
+        $httpData->serviceDriveStatus = !empty($httpData->serviceDriveStatus) ? $httpData->serviceDriveStatus == 1 ? true : false : false;
+
+        if ($httpData->serviceGmailStatus || $httpData->serviceDriveStatus) {
+
 
             $pmGoogle->setServiceGmailStatus($httpData->serviceGmailStatus);
             $pmGoogle->setServiceDriveStatus($httpData->serviceDriveStatus);
