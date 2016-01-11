@@ -518,14 +518,33 @@ class Ajax
             print G::json_encode( $response );
             die();
         }
-        G::LoadClass( 'tasks' );
-        $task = new Task();
-        $tasks = $task->load($_SESSION['TASK']);
-        $case = new Cases();
-        $result = new stdclass();
-        $result->data = $case->getUsersToReassign($_SESSION['TASK'], $_SESSION['USER_LOGGED'], $tasks['PRO_UID']);
 
-        print G::json_encode($result);
+        $taskUid  = $_SESSION['TASK'];
+        $search   = $_POST['search'];
+        $pageSize = $_POST['pageSize'];
+
+        $sortField = (isset($_POST['sort']))?  $_POST['sort'] : '';
+        $sortDir   = (isset($_POST['dir']))?   $_POST['dir'] : '';
+        $start     = (isset($_POST['start']))? $_POST['start'] : 0;
+        $limit     = (isset($_POST['limit']))? $_POST['limit'] : $pageSize;
+
+        $response = [];
+
+        try {
+            $case = new \ProcessMaker\BusinessModel\Cases();
+
+            $result = $case->getUsersToReassign($_SESSION['USER_LOGGED'], $taskUid, ['filter' => $search], $sortField, $sortDir, $start, $limit);
+
+            $response['status'] = 'OK';
+            $response['success'] = true;
+            $response['resultTotal'] = $result['total'];
+            $response['resultRoot'] = $result['data'];
+        } catch (Exception $e) {
+            $response['status'] = 'ERROR';
+            $response['message'] = $e->getMessage();
+        }
+
+        echo G::json_encode($response);
     }
 
     public function reassignCase()
