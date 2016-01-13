@@ -1010,6 +1010,7 @@ class PMPluginRegistry
      */
     public function executeTriggers ($triggerId, $oData)
     {
+        G::LoadThirdParty( "pear", "PEAR" );
         foreach ($this->_aTriggers as $row => $detail) {
             if ($triggerId == $detail->sTriggerId) {
                 //review all folders registered for this namespace
