@@ -2477,4 +2477,196 @@ class Cases
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
+
+    /**
+     * Get Users to reassign
+     *
+     * @param string $userUid         Unique id of User (User logged)
+     * @param string $taskUid         Unique id of Task
+     * @param array  $arrayFilterData Data of the filters
+     * @param string $sortField       Field name to sort
+     * @param string $sortDir         Direction of sorting (ASC, DESC)
+     * @param int    $start           Start
+     * @param int    $limit           Limit
+     *
+     * @return array Return Users to reassign
+     */
+    public function getUsersToReassign($userUid, $taskUid, $arrayFilterData = null, $sortField = null, $sortDir = null, $start = null, $limit = null)
+    {
+        try {
+            $arrayUser = [];
+
+            $numRecTotal = 0;
+
+            //Set variables
+            $task = \TaskPeer::retrieveByPK($taskUid);
+
+            $processUid = $task->getProUid();
+
+            $user  = new \ProcessMaker\BusinessModel\User();
+            $task  = new \Tasks();
+            $group = new \Groups();
+
+            //Set variables
+            $filterName = 'filter';
+
+            if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData['filter'])) {
+                $arrayAux = [
+                    ''      => 'filter',
+                    'LEFT'  => 'lfilter',
+                    'RIGHT' => 'rfilter'
+                ];
+
+                $filterName = $arrayAux[(isset($arrayFilterData['filterOption']))? $arrayFilterData['filterOption'] : ''];
+            }
+
+            //Get data
+            if (!is_null($limit) && $limit . '' == '0') {
+                //Return
+                return [
+                    'total'     => $numRecTotal,
+                    'start'     => (int)((!is_null($start))? $start : 0),
+                    'limit'     => (int)((!is_null($limit))? $limit : 0),
+                    $filterName => (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData['filter']))? $arrayFilterData['filter'] : '',
+                    'data'      => $arrayUser
+                ];
+            }
+
+            //Set variables
+            $processSupervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
+
+            $arrayResult = $processSupervisor->getProcessSupervisors($processUid, 'ASSIGNED', null, null, null, 'group');
+
+            $arrayGroupUid = array_merge(
+                array_map(function ($value) { return $value['GRP_UID']; }, $task->getGroupsOfTask($taskUid, 1)), //Groups
+                array_map(function ($value) { return $value['GRP_UID']; }, $task->getGroupsOfTask($taskUid, 2)), //AdHoc Groups
+                array_map(function ($value) { return $value['grp_uid']; }, $arrayResult['data'])                 //ProcessSupervisor Groups
+            );
+
+            $sqlTaskUser = '
+            SELECT ' . \TaskUserPeer::USR_UID . '
+            FROM   ' . \TaskUserPeer::TABLE_NAME . '
+            WHERE  ' . \TaskUserPeer::TAS_UID . ' = \'%s\' AND
+                   ' . \TaskUserPeer::TU_TYPE . ' IN (1, 2) AND
+                   ' . \TaskUserPeer::TU_RELATION . ' = 1
+            ';
+
+            $sqlGroupUser = '
+            SELECT ' . \GroupUserPeer::USR_UID . '
+            FROM   ' . \GroupUserPeer::TABLE_NAME . '
+            WHERE  ' . \GroupUserPeer::GRP_UID . ' IN (%s)
+            ';
+
+            $sqlProcessSupervisor = '
+            SELECT ' . \ProcessUserPeer::USR_UID . '
+            FROM   ' . \ProcessUserPeer::TABLE_NAME . '
+            WHERE  ' . \ProcessUserPeer::PRO_UID . ' = \'%s\' AND
+                   ' . \ProcessUserPeer::PU_TYPE . ' = \'%s\'
+            ';
+
+            $sqlUserToReassign = '(' . sprintf($sqlTaskUser, $taskUid) . ')';
+
+            if (!empty($arrayGroupUid)) {
+                $sqlUserToReassign .= ' UNION (' . sprintf($sqlGroupUser, '\'' . implode('\', \'', $arrayGroupUid) . '\'') . ')';
+            }
+
+            $sqlUserToReassign .= ' UNION (' . sprintf($sqlProcessSupervisor, $processUid, 'SUPERVISOR') . ')';
+
+            //Query
+            $criteria = new \Criteria('workflow');
+
+            $criteria->addSelectColumn(\UsersPeer::USR_UID);
+            $criteria->addSelectColumn(\UsersPeer::USR_USERNAME);
+            $criteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
+            $criteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
+
+            $criteria->addAlias('USER_TO_REASSIGN', '(' . $sqlUserToReassign . ')');
+
+            $criteria->addJoin(\UsersPeer::USR_UID, 'USER_TO_REASSIGN.USR_UID', \Criteria::INNER_JOIN);
+
+            if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData['filter']) && trim($arrayFilterData['filter']) != '') {
+                $arraySearch = [
+                    ''      => '%' . $arrayFilterData['filter'] . '%',
+                    'LEFT'  => $arrayFilterData['filter'] . '%',
+                    'RIGHT' => '%' . $arrayFilterData['filter']
+                ];
+
+                $search = $arraySearch[(isset($arrayFilterData['filterOption']))? $arrayFilterData['filterOption'] : ''];
+
+                $criteria->add(
+                    $criteria->getNewCriterion(\UsersPeer::USR_USERNAME,  $search, \Criteria::LIKE)->addOr(
+                    $criteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME, $search, \Criteria::LIKE))->addOr(
+                    $criteria->getNewCriterion(\UsersPeer::USR_LASTNAME,  $search, \Criteria::LIKE))
+                );
+            }
+
+            $criteria->add(\UsersPeer::USR_STATUS, 'ACTIVE', \Criteria::EQUAL);
+
+            if (!$user->checkPermission($userUid, 'PM_SUPERVISOR')) {
+                $criteria->add(\UsersPeer::USR_UID, $userUid, \Criteria::NOT_EQUAL);
+            }
+
+            //Number records total
+            $criteriaCount = clone $criteria;
+
+            $criteriaCount->clearSelectColumns();
+            $criteriaCount->addSelectColumn('COUNT(' . \UsersPeer::USR_UID . ') AS NUM_REC');
+
+            $rsCriteriaCount = \UsersPeer::doSelectRS($criteriaCount);
+            $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            $result = $rsCriteriaCount->next();
+            $row = $rsCriteriaCount->getRow();
+
+            $numRecTotal = (int)($row['NUM_REC']);
+
+            //Query
+            if (!is_null($sortField) && trim($sortField) != '') {
+                $sortField = strtoupper($sortField);
+
+                if (in_array(\UsersPeer::TABLE_NAME . '.' . $sortField, $criteria->getSelectColumns())) {
+                    $sortField = \UsersPeer::TABLE_NAME . '.' . $sortField;
+                } else {
+                    $sortField = \UsersPeer::USR_FIRSTNAME;
+                }
+            } else {
+                $sortField = \UsersPeer::USR_FIRSTNAME;
+            }
+
+            if (!is_null($sortDir) && trim($sortDir) != '' && strtoupper($sortDir) == 'DESC') {
+                $criteria->addDescendingOrderByColumn($sortField);
+            } else {
+                $criteria->addAscendingOrderByColumn($sortField);
+            }
+
+            if (!is_null($start)) {
+                $criteria->setOffset((int)($start));
+            }
+
+            if (!is_null($limit)) {
+                $criteria->setLimit((int)($limit));
+            }
+
+            $rsCriteria = \UsersPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+
+                $arrayUser[] = $row;
+            }
+
+            //Return
+            return [
+                'total'     => $numRecTotal,
+                'start'     => (int)((!is_null($start))? $start : 0),
+                'limit'     => (int)((!is_null($limit))? $limit : 0),
+                $filterName => (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData['filter']))? $arrayFilterData['filter'] : '',
+                'data'      => $arrayUser
+            ];
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
+
