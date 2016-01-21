@@ -176,9 +176,9 @@ class pmDynaform
                         $json->sql = "";
                     $json->optionsSql = array();
                     if ($json->dbConnection !== "" && $json->dbConnection !== "none" && $json->sql !== "") {
-                        $cnn = Propel::getConnection($json->dbConnection);
-                        $stmt = $cnn->createStatement();
                         try {
+                            $cnn = Propel::getConnection($json->dbConnection);
+                            $stmt = $cnn->createStatement();
                             $sql = G::replaceDataField($json->sql, $this->getValuesDependentFields($json));
                             $rs = $stmt->executeQuery($sql, \ResultSet::FETCHMODE_NUM);
                             while ($rs->next()) {
