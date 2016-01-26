@@ -540,6 +540,7 @@ class pmDynaform
                             $jsonUpdate = G::json_decode($ri["DYN_CONTENT"]);
                             $jsonUpdate = $jsonUpdate->items[0];
                             $jsonUpdate->colSpan = $json->colSpan;
+                            $jsonUpdate->mode = $json->mode;
                             $jsonUpdate->jsonUpdate = true;
                             $json = $jsonUpdate;
                             $this->jsonr($json);
@@ -963,6 +964,7 @@ class pmDynaform
             $jsonUpdate = G::json_decode($ri["DYN_CONTENT"]);
             $jsonUpdate = $jsonUpdate->items[0];
             $jsonUpdate->colSpan = $jsonSearch->colSpan;
+            $jsonUpdate->mode = $jsonSearch->mode;
             $this->jsonReplace($json, $ri["DYN_UID"], "id", $jsonUpdate);
         }
         $this->record["DYN_CONTENT"] = G::json_encode($json);
