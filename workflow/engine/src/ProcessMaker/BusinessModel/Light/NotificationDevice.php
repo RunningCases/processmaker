@@ -152,11 +152,13 @@ class NotificationDevice
     {
         try {
             $response = array();
+            $typeList = 'todo';
             foreach ($aTasks as $aTask) {
                 $arrayTaskUser = array();
                 switch ($aTask["TAS_ASSIGN_TYPE"]) {
                     case "SELF_SERVICE":
                         $arrayTaskUser = $this->getTaskUserSelfService($aTask["TAS_UID"], $appFields);
+                        $typeList = 'unassigned';
                         break;
                     default:
                         if (isset($aTask["USR_UID"]) && !empty($aTask["USR_UID"])) {
@@ -181,7 +183,7 @@ class NotificationDevice
                     'caseId' => $appFields['APP_UID'],
                     'caseTitle' => $appFields['APP_TITLE'],
                     'delIndex' => $delIndex,
-                    'typeList' => 'todo'
+                    'typeList' => $typeList
                 );
 
                 if ($userIds) {
