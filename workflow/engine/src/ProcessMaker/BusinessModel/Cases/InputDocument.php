@@ -4,6 +4,26 @@ namespace ProcessMaker\BusinessModel\Cases;
 class InputDocument
 {
     /**
+     * Verify exists app_doc_uid in table APP_DOCUMENT
+     *
+     * @param string $applicationUid
+     *
+     * return void Throw exception
+     */
+    private function throwExceptionIfNotExistsAppDocument($appDocumentUid)
+    {
+        try {
+            $appDocument = \AppDocumentPeer::retrieveByPK($appDocumentUid, 1);
+
+            if (is_null($appDocument)) {
+                throw new \Exception(\G::LoadTranslation("ID_CASES_INPUT_DOES_NOT_EXIST", array($appDocumentUid)));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Check if the user has permissions
      *
      * @param string $applicationUid   Unique id of Case
@@ -46,6 +66,9 @@ class InputDocument
             if ($flagInbox == 0 && $flagSupervisor == 0) {
                 throw new \Exception(\G::LoadTranslation("ID_USER_NOT_HAVE_PERMISSION_DELETE_INPUT_DOCUMENT", array($userUid)));
             }
+
+            //verfiry exists $appDocumentUid
+            $this->throwExceptionIfNotExistsAppDocument($appDocumentUid);
 
             //Verify data permission
             $flagPermission = 0;
