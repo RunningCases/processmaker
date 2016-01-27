@@ -157,3 +157,12 @@ if ($RBAC->userCanAccess("PM_SETUP") == 1) {
     /*----------------------------------********---------------------------------*/
     $G_TMP_MENU->AddIdRawOption("CASES_LIST_SETUP", "../cases/casesListSetup", G::LoadTranslation("ID_CUSTOM_CASES_LISTS"), "", "", "settings");
 }
+
+/*----------------------------------********---------------------------------*/
+$oPluginRegistry = &PMPluginRegistry::getSingleton();
+$oObject = $oPluginRegistry->getPlugin("actionsByEmail");
+if (!(get_class($oObject) === "actionsByEmailPlugin") &&
+        $licensedFeatures->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
+    $G_TMP_MENU->AddIdRawOption('PM_ACTIONS_BY_EMAIL_LOGS', '../actionsByEmail/ActionByEmail.php', G::LoadTranslation("ID_ACTIONS_BY_EMAIL_LOG"), '', '', 'logs');
+}
+/*----------------------------------********---------------------------------*/

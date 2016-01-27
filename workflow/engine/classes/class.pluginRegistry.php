@@ -1117,8 +1117,9 @@ class PMPluginRegistry
      */
     public function &getPlugin ($sNamespace)
     {
+        $oPlugin = null;
         if (array_key_exists( $sNamespace, $this->_aPlugins )) {
-            return $this->_aPlugins[$sNamespace];
+            $oPlugin = $this->_aPlugins[$sNamespace];
         }
         /*
         $aDetails = KTUtil::arrayGet($this->_aPluginDetails, $sNamespace);
@@ -1134,6 +1135,7 @@ class PMPluginRegistry
         $this->_aPlugins[$sNamespace] =& $oPlugin;
         return $oPlugin;
         */
+        return $oPlugin;
     }
 
     /**
