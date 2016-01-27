@@ -39,9 +39,25 @@ class Light extends Api
     {
         try {
             $userId   = $this->getUserId();
-            $lists    = new \ProcessMaker\BusinessModel\Lists();
-            $response = $lists->getCounters($userId);
-            $result   = $this->parserCountersCases($response);
+
+            /*----------------------------------********---------------------------------*/
+            if (true) {
+                //In enterprise version this block of code should always be executed
+                //In community version this block of code is deleted and is executed the other
+                $list = new \ProcessMaker\BusinessModel\Lists();
+                $arrayListCounter = $list->getCounters($userId);
+            } else {
+            /*----------------------------------********---------------------------------*/
+                $case = new \ProcessMaker\BusinessModel\Cases();
+                $arrayListCounter = $case->getListCounters(
+                    $userId,
+                    ['to_do', 'draft', 'sent', 'selfservice', 'paused', 'completed', 'cancelled']
+                );
+            /*----------------------------------********---------------------------------*/
+            }
+            /*----------------------------------********---------------------------------*/
+
+            $result = $this->parserCountersCases($arrayListCounter);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -58,12 +74,23 @@ class Light extends Api
             "CASES_PAUSED" => "paused",
             "CASES_COMPLETED" => "completed",
             "CASES_SELFSERVICE" => "unassigned",
+            'to_do' => 'toDo',
+            'draft' => 'draft',
+            'cancelled' => 'cancelled',
+            'sent' => 'participated',
+            'paused' => 'paused',
+            'completed' => 'completed',
+            'selfservice' => 'unassigned'
         );
         $response = array();
-        foreach ($data as $counterList) {
+        foreach ($data as $key => $counterList) {
             if(isset($structure[$counterList['item']])){
                 $name = $structure[$counterList['item']];
                 $response[$name] = $counterList['count'];
+            } else {
+                if (isset($structure[$key])) {
+                    $response[$structure[$key]] = $counterList;
+                }
             }
         }
         return $response;
@@ -105,7 +132,6 @@ class Light extends Api
         $filter = '',
         $date_from = '',
         $date_to = '',
-        $action = '',
         $newestthan = '',
         $oldestthan =''
     ) {
@@ -123,14 +149,26 @@ class Light extends Api
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
             $dataList['dateTo']   = $date_to;
-            $dataList['action']   = $action;
             $dataList['newestthan']  = $newestthan;
             $dataList['oldestthan']  = $oldestthan;
 
             Validator::throwExceptionIfDataNotMetIso8601Format($dataList, $this->arrayFieldIso8601);
             $dataList = DateTime::convertDataToUtc($dataList, $this->arrayFieldIso8601);
-            $lists = new \ProcessMaker\BusinessModel\Lists();
-            $response = $lists->getList('inbox', $dataList);
+
+            /*----------------------------------********---------------------------------*/
+            if (true) {
+                //In enterprise version this block of code should always be executed
+                //In community version this block of code is deleted and is executed the other
+                $list = new \ProcessMaker\BusinessModel\Lists();
+                $response = $list->getList('inbox', $dataList);
+            } else {
+            /*----------------------------------********---------------------------------*/
+                $case = new \ProcessMaker\BusinessModel\Cases();
+                $response = $case->getList($dataList);
+            /*----------------------------------********---------------------------------*/
+            }
+            /*----------------------------------********---------------------------------*/
+
             if ($newestthan != '') {
                 $response['data'] = array_reverse($response['data']);
             }
@@ -209,8 +247,21 @@ class Light extends Api
 
             Validator::throwExceptionIfDataNotMetIso8601Format($dataList, $this->arrayFieldIso8601);
             $dataList = DateTime::convertDataToUtc($dataList, $this->arrayFieldIso8601);
-            $oCases   = new \ProcessMaker\BusinessModel\Lists();
-            $response = $oCases->getList('inbox', $dataList);
+
+            /*----------------------------------********---------------------------------*/
+            if (true) {
+                //In enterprise version this block of code should always be executed
+                //In community version this block of code is deleted and is executed the other
+                $list = new \ProcessMaker\BusinessModel\Lists();
+                $response = $list->getList('inbox', $dataList);
+            } else {
+            /*----------------------------------********---------------------------------*/
+                $case = new \ProcessMaker\BusinessModel\Cases();
+                $response = $case->getList($dataList);
+            /*----------------------------------********---------------------------------*/
+            }
+            /*----------------------------------********---------------------------------*/
+
             if ($newestthan != '') {
                 $response['data'] = array_reverse($response['data']);
             }
@@ -279,6 +330,7 @@ class Light extends Api
     ) {
         try {
             $dataList['userId'] = $this->getUserId();
+            $dataList['action'] = 'sent';
             $dataList['paged']  = $paged;
             $dataList['count']  = $count;
 
@@ -298,8 +350,21 @@ class Light extends Api
 
             Validator::throwExceptionIfDataNotMetIso8601Format($dataList, $this->arrayFieldIso8601);
             $dataList = DateTime::convertDataToUtc($dataList, $this->arrayFieldIso8601);
-            $oCases = new \ProcessMaker\BusinessModel\Lists();
-            $response = $oCases->getList('participated_last', $dataList);
+
+            /*----------------------------------********---------------------------------*/
+            if (true) {
+                //In enterprise version this block of code should always be executed
+                //In community version this block of code is deleted and is executed the other
+                $list = new \ProcessMaker\BusinessModel\Lists();
+                $response = $list->getList('participated_last', $dataList);
+            } else {
+            /*----------------------------------********---------------------------------*/
+                $case = new \ProcessMaker\BusinessModel\Cases();
+                $response = $case->getList($dataList);
+            /*----------------------------------********---------------------------------*/
+            }
+            /*----------------------------------********---------------------------------*/
+
             if ($newestthan != '') {
                 $response['data'] = array_reverse($response['data']);
             }
@@ -380,8 +445,21 @@ class Light extends Api
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
             $dataList['dateTo']   = $date_to;
-            $lists = new \ProcessMaker\BusinessModel\Lists();
-            $response = $lists->getList('paused', $dataList);
+
+            /*----------------------------------********---------------------------------*/
+            if (true) {
+                //In enterprise version this block of code should always be executed
+                //In community version this block of code is deleted and is executed the other
+                $list = new \ProcessMaker\BusinessModel\Lists();
+                $response = $list->getList('paused', $dataList);
+            } else {
+            /*----------------------------------********---------------------------------*/
+                $case = new \ProcessMaker\BusinessModel\Cases();
+                $response = $case->getList($dataList);
+            /*----------------------------------********---------------------------------*/
+            }
+            /*----------------------------------********---------------------------------*/
+
             $result = $this->parserDataParticipated($response['data']);
             return DateTime::convertUtcToIso8601($result, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
@@ -511,13 +589,25 @@ class Light extends Api
             if (is_array($d)) {
                 $newData = array();
                 foreach ($d as $field => $value) {
-                    if (array_key_exists($field, $structure)) {
-                        $newName           = $structure[$field];
+                    if (
+                        preg_match(
+                            '/\|(' . $field . ')\|/i',
+                            '|' . implode('|', array_keys($structure)) . '|',
+                            $arrayMatch
+                        )
+                    ) {
+                        $newName = $structure[$arrayMatch[1]];
                         $newData[$newName] = is_null($value) ? "":$value;
                     } else {
                         foreach ($structure as $name => $str) {
-                            if (is_array($str) && array_key_exists($field, $str)) {
-                                $newName                  = $str[$field];
+                            if (is_array($str) &&
+                                preg_match(
+                                    '/\|(' . $field . ')\|/i',
+                                    '|' . implode('|', array_keys($str)) . '|',
+                                    $arrayMatch
+                                )
+                            ) {
+                                $newName = $str[$arrayMatch[1]];
                                 $newData[$name][$newName] = is_null($value) ? "":$value;
                             }
                         }
@@ -526,13 +616,25 @@ class Light extends Api
                 if (count($newData) > 0)
                     $response[] = $newData;
             } else {
-                if (array_key_exists($field, $structure)) {
-                    $newName           = $structure[$field];
+                if (
+                    preg_match(
+                        '/\|(' . $field . ')\|/i',
+                        '|' . implode('|', array_keys($structure)) . '|',
+                        $arrayMatch
+                    )
+                ) {
+                    $newName = $structure[$arrayMatch[1]];
                     $response[$newName] = is_null($d) ? "":$d;
                 } else {
                     foreach ($structure as $name => $str) {
-                        if (is_array($str) && array_key_exists($field, $str)) {
-                            $newName                  = $str[$field];
+                        if (is_array($str) &&
+                            preg_match(
+                                '/\|(' . $field . ')\|/i',
+                                '|' . implode('|', array_keys($str)) .'|',
+                                $arrayMatch
+                            )
+                        ) {
+                            $newName = $str[$arrayMatch[1]];
                             $response[$name][$newName] = is_null($d) ? "":$d;
                         }
                     }
