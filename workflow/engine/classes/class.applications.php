@@ -474,7 +474,7 @@ class Applications
             $sort = "";
 
             //Current delegation (*)
-            if (($action == "sent" || $action == "search" || $action == "simple_search" || $action == "to_revise" || $action == "to_reassign") && ($status != "TO_DO")) {
+            if ($action == 'sent' || $action == 'simple_search' || $action == 'to_reassign') {
                 switch ($sortBk) {
                     case "APP_CACHE_VIEW.APP_CURRENT_USER":
                         $sort = "USRCR_" . $conf->userNameFormatGetFirstFieldByUsersTable();
@@ -578,8 +578,8 @@ class Applications
              $maxDataset->close();
               }*/
 
-            //Current delegation (*) || $action == "search" || $action == "to_revise"
-            if (($action == "sent" || $action == "simple_search" || $action == "to_reassign") && ($status != "TO_DO")) {
+            //Current delegation (*)
+            if ($action == 'sent' || $action == 'simple_search' || $action == 'to_reassign') {
                 //Current task
                 $aRow["APP_TAS_TITLE"] = $aRow["APPDELCR_APP_TAS_TITLE"];
 
