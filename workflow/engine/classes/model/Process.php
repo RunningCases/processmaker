@@ -340,6 +340,8 @@ class Process extends BaseProcess
 
     public function getAll ()
     {
+        $bpmn = new \ProcessMaker\Project\Bpmn();
+
         $oCriteria = new Criteria( 'workflow' );
 
         $oCriteria->addSelectColumn( ProcessPeer::PRO_UID );
@@ -359,7 +361,9 @@ class Process extends BaseProcess
         $processes = Array ();
         $uids = array ();
         while ($oDataset->next()) {
-            $processes[] = $oDataset->getRow();
+            $row = $oDataset->getRow();
+            $row['PRO_PROCESS_TYPE'] = ($bpmn->exists($row['PRO_UID']))? 'BPMN' : 'CLASSIC';
+            $processes[] = $row;
             $uids[] = $processes[sizeof( $processes ) - 1]['PRO_UID'];
         }
         //process details will have the info about the processes
