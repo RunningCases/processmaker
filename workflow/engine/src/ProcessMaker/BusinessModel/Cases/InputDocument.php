@@ -406,13 +406,16 @@ class InputDocument
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
 
-                $arrayUserData = $user->load($row["USR_UID"]);
-
+                $sUser = '***';
+                if ($row["USR_UID"] !== '-1') {
+                    $arrayUserData = $user->load($row["USR_UID"]);
+                    $sUser = $configuraction->usersNameFormatBySetParameters($confEnvSetting["format"], $arrayUserData["USR_USERNAME"], $arrayUserData["USR_FIRSTNAME"], $arrayUserData["USR_LASTNAME"]);
+                }
                 $arrayAppDocument = $appDocument->load($row["APP_DOC_UID"], $row["DOC_VERSION"]);
 
 
                 $row["APP_DOC_FILENAME"] = $arrayAppDocument["APP_DOC_FILENAME"];
-                $row["APP_DOC_CREATE_USER"] = $configuraction->usersNameFormatBySetParameters($confEnvSetting["format"], $arrayUserData["USR_USERNAME"], $arrayUserData["USR_FIRSTNAME"], $arrayUserData["USR_LASTNAME"]);
+                $row["APP_DOC_CREATE_USER"] = $sUser;
                 $row["APP_DOC_LINK"] = "cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"];
                 /*----------------------------------********---------------------------------*/
                 //change donwload link - drive
