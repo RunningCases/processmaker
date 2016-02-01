@@ -76,6 +76,50 @@ class Cases
     }
 
     /**
+     * Get list counters
+     *
+     * @param string $userUid   Unique id of User
+     * @param array  $arrayType Type lists
+     *
+     * @return array Return the list counters
+     */
+    public function getListCounters($userUid, array $arrayType)
+    {
+        try {
+            $solrEnabled = false;
+            $solrConf = \System::solrEnv();
+
+            if ($solrConf !== false) {
+                $ApplicationSolrIndex = new \AppSolr(
+                    $solrConf['solr_enabled'],
+                    $solrConf['solr_host'],
+                    $solrConf['solr_instance']
+                );
+
+                if ($ApplicationSolrIndex->isSolrEnabled() && $solrConf['solr_enabled'] == true) {
+                    $solrEnabled = true;
+                }
+            }
+
+            $appCacheView = new \AppCacheView();
+
+            if ($solrEnabled) {
+                $arrayListCounter = array_merge(
+                    $ApplicationSolrIndex->getCasesCount($userUid),
+                    $appCacheView->getAllCounters(['completed', 'cancelled'], $userUid)
+                );
+            } else {
+                $arrayListCounter = $appCacheView->getAllCounters($arrayType, $userUid);
+            }
+
+            //Return
+            return $arrayListCounter;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Get list for Cases
      *
      * @access public
