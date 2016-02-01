@@ -1126,12 +1126,15 @@ class Cases
             $aAux = $oAppDocument->load($aRow['APP_DOC_UID'], $aRow['DOC_VERSION']);
             $lastVersion = $oAppDocument->getLastAppDocVersion($aRow['APP_DOC_UID'], $sApplicationUID);
 
-            try {
-                $aAux1 = $oUser->load($aAux['USR_UID']);
+            if ($aAux['USR_UID'] !== "-1") {
+                try {
+                    $aAux1 = $oUser->load($aAux['USR_UID']);
 
-                $sUser = $conf->usersNameFormatBySetParameters($confEnvSetting["format"], $aAux1["USR_USERNAME"], $aAux1["USR_FIRSTNAME"], $aAux1["USR_LASTNAME"]);
-            } catch (Exception $oException) {
-                //$sUser = '(USER DELETED)';
+                    $sUser = $conf->usersNameFormatBySetParameters($confEnvSetting["format"], $aAux1["USR_USERNAME"], $aAux1["USR_FIRSTNAME"], $aAux1["USR_LASTNAME"]);
+                } catch (Exception $oException) {
+                    $sUser = '***';
+                }
+            } else {
                 $sUser = '***';
             }
             $aFields = array(
