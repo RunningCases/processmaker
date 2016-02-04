@@ -594,7 +594,8 @@ class Light extends Api
                             '/\|(' . $field . ')\|/i',
                             '|' . implode('|', array_keys($structure)) . '|',
                             $arrayMatch
-                        )
+                        ) &&
+                        !is_array($structure[$arrayMatch[1]])
                     ) {
                         $newName = $structure[$arrayMatch[1]];
                         $newData[$newName] = is_null($value) ? "":$value;
@@ -605,7 +606,8 @@ class Light extends Api
                                     '/\|(' . $field . ')\|/i',
                                     '|' . implode('|', array_keys($str)) . '|',
                                     $arrayMatch
-                                )
+                                ) &&
+                                !is_array($str[$arrayMatch[1]])
                             ) {
                                 $newName = $str[$arrayMatch[1]];
                                 $newData[$name][$newName] = is_null($value) ? "":$value;
@@ -621,7 +623,8 @@ class Light extends Api
                         '/\|(' . $field . ')\|/i',
                         '|' . implode('|', array_keys($structure)) . '|',
                         $arrayMatch
-                    )
+                    ) &&
+                    !is_array($structure[$arrayMatch[1]])
                 ) {
                     $newName = $structure[$arrayMatch[1]];
                     $response[$newName] = is_null($d) ? "":$d;
@@ -632,7 +635,8 @@ class Light extends Api
                                 '/\|(' . $field . ')\|/i',
                                 '|' . implode('|', array_keys($str)) .'|',
                                 $arrayMatch
-                            )
+                            ) &&
+                            !is_array($str[$arrayMatch[1]])
                         ) {
                             $newName = $str[$arrayMatch[1]];
                             $response[$name][$newName] = is_null($d) ? "":$d;
