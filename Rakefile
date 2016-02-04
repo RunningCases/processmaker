@@ -36,7 +36,6 @@ task :build => [:required] do
         puts "Seems it is not a ProcessMaker installation"
         exit(1)
     end
-
     if mode == "production"
         targetDir = publicDir + "/lib"
         pmUIFontsDir = targetDir + "/fonts"
@@ -55,9 +54,10 @@ task :build => [:required] do
     pmdynaformDir = targetDir + "/pmdynaform"
 
     prepareDirs([targetDir, pmUIDir, mafeDir, pmdynaformDir, jsTargetDir, cssTargetDir, cssImagesTargetDir, imgTargetDir, pmUIFontsDir])
-    
+
     buildPmUi(Dir.pwd + "/vendor/colosa/pmUI", targetDir, mode)
     buildPmdynaform(Dir.pwd + "/vendor/colosa/pmDynaform", targetDir, mode)
+    buildPmdynaformZip(Dir.pwd + "/vendor/colosa/pmDynaform", publicDir)
     buildMafe(Dir.pwd + "/vendor/colosa/MichelangeloFE", targetDir, mode)
 
 
@@ -67,7 +67,7 @@ task :build => [:required] do
     pmdynaformHash = getHash(Dir.pwd + "/vendor/colosa/pmDynaform")
 
     hashVendors = pmuiHash+"-"+mafeHash
-    ## Building minified JS Files 
+    ## Building minified JS Files
     puts "Building file: " + "/js/mafe-#{hashVendors}.js".cyan
     mafeCompresedFile = targetDir + "/js/mafe-#{hashVendors}.js"
     mafeCompresedContent = ""
@@ -168,18 +168,18 @@ end
 
 def buildPmdynaform(homeDir, targetDir, mode)
   puts "\nBuilding PmDynaform library".green.bold
-  
+
   # Defining target directories
   pmdynaformDir = targetDir + "/pmdynaform"
-  
+
   executeInto(homeDir, [ "default"])
-  
+
   require 'fileutils'
   Dir.mkdir("#{pmdynaformDir}/build")
   FileUtils.cp_r(Dir["#{homeDir}/build/*"],"#{pmdynaformDir}/build")
   Dir.mkdir("#{pmdynaformDir}/libs")
   FileUtils.cp_r(Dir["#{homeDir}/libs/*"],"#{pmdynaformDir}/libs")
-  
+
   template = ""
   config = File.read "#{homeDir}/config/templates.json"
   json = JSON.parse config
@@ -191,14 +191,14 @@ def buildPmdynaform(homeDir, targetDir, mode)
     end
     template += s
   end
-  
+
   htmlTemplates=["pmdynaform.html"]
   htmlTemplates.each do |htmlTemplate|
-    
+
     FileUtils.cp("#{Dir.pwd}/workflow/engine/templates/cases/#{htmlTemplate}", "#{pmdynaformDir}/build/#{htmlTemplate}")
-    
+
     target = "#{pmdynaformDir}/build/#{htmlTemplate}"
-    html = File.read target 
+    html = File.read target
     while html['###TEMPLATES##'] do
       html['###TEMPLATES###'] = template
     end
@@ -206,8 +206,15 @@ def buildPmdynaform(homeDir, targetDir, mode)
       file.write html
     end
   end
-  
+
   puts "\nPmDynaform Build Finished!".magenta
+end
+
+def buildPmdynaformZip(homeDir, targetDir)
+  puts "\nBuilding Compress Zip library".green.bold
+  executeInto(homeDir, [ "mobile"])
+  copyFiles({homeDir + "/build-prod-zip/build-prod.zip" => targetDir + "/build-prod.zip"})
+  puts "\nPmDynaform Zip Build Finished!".magenta
 end
 
 def buildMafe(homeDir, targetDir, mode)
