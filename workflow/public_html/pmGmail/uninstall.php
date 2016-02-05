@@ -39,7 +39,7 @@
             <div class="col-lg-12" style="margin: 0 auto;">
                 <div style="margin: 0 auto; width:600px;padding:25px;">
                         <div style="margin: 0 auto; text-align:center;margin-top:40px;">
-                            <img src = "../images/logo-processmake-google.png">
+                            <img src = "../images/logo-processmaker-google.png">
                         </div>
                         <h2 style="margin: 0 auto; text-align:center; margin-top:40px;">ProcessMaker Google Integration</h2>
                         <p style="margin: 0 auto; text-align:center; margin-top:10px;">
