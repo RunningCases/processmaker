@@ -231,6 +231,9 @@ class Variable
 
             $this->throwExceptionIfNotExistsVariable($variableUid);
 
+            //Verify variable
+            $this->throwExceptionIfVariableIsAssociatedAditionalTable($variableUid);
+
             $variable = $this->getVariable($processUid, $variableUid);
             \G::LoadClass('pmDynaform');
             $pmDynaform = new \pmDynaform();
@@ -602,6 +605,40 @@ class Variable
 
             if (is_null($obj)) {
                 throw new \Exception('var_uid: '.$variableUid. ' '.\G::LoadTranslation("ID_DOES_NOT_EXIST"));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Check if the variable is associated to Report Table
+     *
+     * @param string $variableUid Unique id of variable
+     *
+     * @return void Throw exception
+     */
+    public function throwExceptionIfVariableIsAssociatedAditionalTable($variableUid)
+    {
+        try {
+            $criteria = new \Criteria('workflow');
+
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_UID);
+
+            $criteria->addJoin(\ProcessVariablesPeer::PRJ_UID, \AdditionalTablesPeer::PRO_UID, \Criteria::INNER_JOIN);
+
+            $arrayCondition = [];
+            $arrayCondition[] = array(\AdditionalTablesPeer::ADD_TAB_UID, \FieldsPeer::ADD_TAB_UID, \Criteria::EQUAL);
+            $arrayCondition[] = array(\ProcessVariablesPeer::VAR_NAME, \FieldsPeer::FLD_NAME, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::INNER_JOIN);
+
+            $criteria->add(\ProcessVariablesPeer::VAR_UID, $variableUid, \Criteria::EQUAL);
+
+            $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                throw new \Exception(\G::LoadTranslation('ID_VARIABLE_ASSOCIATED_WITH_REPORT_TABLE', array($variableUid)));
             }
         } catch (\Exception $e) {
             throw $e;
