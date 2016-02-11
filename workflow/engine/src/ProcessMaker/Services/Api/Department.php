@@ -114,20 +114,19 @@ class Department extends Api
     }
 
     /**
-     * @url PUT /:dep_uid/unassign-user/:usr_uid
+     * @url DELETE /:dep_uid/unassign-user/:usr_uid
      *
      * @param string $dep_uid {@min 1}{@max 32}
      * @param string $usr_uid {@min 1}{@max 32}
      *
-     * @return array
+     * @status 200
      *
      */
-    public function doPutUnassignUser($dep_uid, $usr_uid)
+    public function doDeleteUnassignUser($dep_uid, $usr_uid)
     {
         try {
             $oDepartment = new \ProcessMaker\BusinessModel\Department();
-            $response = $oDepartment->unassignUser($dep_uid, $usr_uid);
-            return $response;
+            $oDepartment->unassignUser($dep_uid, $usr_uid);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
