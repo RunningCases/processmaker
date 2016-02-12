@@ -51,6 +51,27 @@ class Department
     }
 
     /**
+     * Verify if the User is not in a Department
+     *
+     * @param string $departmentUid
+     * @param string $userUid
+     *
+     * return void Throw exception user not exists
+     */
+    private function throwExceptionUserNotExistsInDepartment($departmentUid, $userUid)
+    {
+        try {
+            $user = \UsersPeer::retrieveByPK($userUid);
+
+            if (is_null($user) || $user->getDepUid() != $departmentUid) {
+                throw new \Exception(\G::LoadTranslation('ID_USER_NOT_EXIST_DEPARTMENT', [$userUid]));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Verify if exists the title of a Department
      *
      * @param string $departmentTitle       Title
@@ -252,6 +273,8 @@ class Department
     {
         $dep_uid = Validator::depUid($dep_uid);
         $usr_uid = Validator::usrUid($usr_uid);
+
+        $this->throwExceptionUserNotExistsInDepartment($dep_uid, $usr_uid);
 
         $dep = new \Department();
         $dep->load( $dep_uid );
