@@ -519,7 +519,11 @@ class Ajax
             die();
         }
 
-        $taskUid  = $_SESSION['TASK'];
+        if(isset($_SESSION['TASK']) && $_SESSION['TASK'] != '-1'){
+            $taskUid  = $_SESSION['TASK'];
+        } else {
+            $taskUid  = $_SESSION['CURRENT_TASK'];
+        }
         $search   = $_POST['search'];
         $pageSize = $_POST['pageSize'];
 
