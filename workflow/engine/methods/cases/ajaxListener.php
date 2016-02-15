@@ -363,6 +363,8 @@ class Ajax
         }
         $taskData = $task->getDelegatedTaskData($_SESSION['TASK'], $_SESSION['APPLICATION'], $_SESSION['INDEX']);
 
+        $taskData = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($taskData);
+
         print (G::json_encode($taskData));
     }
 
