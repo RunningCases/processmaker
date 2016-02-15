@@ -2907,6 +2907,31 @@ function PMFSaveCurrentData ()
     return $result;
 }
 
+/**
+ * @method 
+ * Return an array of associative arrays which contain the unique task ID and title.
+ * @name PMFTasksListByProcessId
+ * @label PMF Tasks List By Process Id
+ * @param string | $processId | ID Process | To get the current process id, use the system variable @@PROCESS
+ * @return array | $result | Array result | Array of associative arrays which contain the unique task ID and title
+ */
+function PMFTasksListByProcessId($processId)
+{
+    $result = array();
+    $criteria = new Criteria("workflow");
+    $criteria->addSelectColumn(TaskPeer::TAS_UID);
+    $criteria->addSelectColumn(ContentPeer::CON_VALUE);
+    $criteria->addSelectColumn(ContentPeer::CON_LANG);
+    $criteria->addJoin(TaskPeer::TAS_UID, ContentPeer::CON_ID, Criteria::INNER_JOIN);
+    $criteria->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE', Criteria::EQUAL);
+    $criteria->add(TaskPeer::PRO_UID, $processId, Criteria::EQUAL);
+    $ds = TaskPeer::doSelectRS($criteria);
+    $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+    while ($ds->next()) {
+        $result[] = $ds->getRow();
+    }
+    return $result;
+}
 
 /**
  * @method
