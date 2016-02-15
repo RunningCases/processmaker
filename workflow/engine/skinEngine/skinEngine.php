@@ -434,11 +434,6 @@ class SkinEngine
         G::LoadClass( "configuration" );
         $conf = new Configurations();
         $conf->getFormats();
-        if (defined('SYS_SYS')) {
-            $smarty->assign('udate', $conf->getSystemDate(date('Y-m-d H:i:s')));
-        } else {
-            $smarty->assign('udate', G::getformatedDate(date('Y-m-d'), 'M d, yyyy', SYS_LANG));
-        }
         $name = $conf->userNameFormat(isset($_SESSION['USR_USERNAME']) ? $_SESSION['USR_USERNAME']: '', isset($_SESSION['USR_FULLNAME']) ? htmlentities($_SESSION['USR_FULLNAME'] , ENT_QUOTES, 'UTF-8'): '', isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : '');
         $smarty->assign('user',$name);
       }
@@ -758,11 +753,6 @@ class SkinEngine
         G::LoadClass( "configuration" );
         $conf = new Configurations();
         $conf->getFormats();
-        if ( defined('SYS_SYS')) {
-            $smarty->assign('udate', $conf->getSystemDate(\ProcessMaker\Util\DateTime::convertUtcToTimeZone(date('Y-m-d H:i:s'))));
-        } else {
-            $smarty->assign('udate', G::getformatedDate(\ProcessMaker\Util\DateTime::convertUtcToTimeZone(date('Y-m-d H:i:s')), 'M d, yyyy', SYS_LANG));
-        }
         $name = $conf->userNameFormat(isset($_SESSION['USR_USERNAME']) ? $_SESSION['USR_USERNAME']: '', isset($_SESSION['USR_FULLNAME']) ? htmlentities($_SESSION['USR_FULLNAME'] , ENT_QUOTES, 'UTF-8'): '', isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : '');
         $smarty->assign('user',$name);
       }
