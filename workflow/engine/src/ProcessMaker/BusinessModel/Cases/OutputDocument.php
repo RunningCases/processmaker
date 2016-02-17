@@ -4,6 +4,26 @@ namespace ProcessMaker\BusinessModel\Cases;
 class OutputDocument
 {
     /**
+     * Verify exists app_doc_uid in table APP_DOCUMENT when is output
+     *
+     * @param string $applicationUid
+     *
+     * return void Throw exception output not exists
+     */
+    private function throwExceptionIfNotExistsAppDocument($appDocumentUid)
+    {
+        try {
+            $appDocument = \AppDocumentPeer::retrieveByPK($appDocumentUid, 1);
+
+            if (is_null($appDocument)) {
+                throw new \Exception(\G::LoadTranslation("ID_CASES_OUTPUT_DOES_NOT_EXIST", array($appDocumentUid)));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Check if the user has permissions
      *
      * @param string $applicationUid Unique id of Case
@@ -25,6 +45,9 @@ class OutputDocument
             if (empty($arrayResult) || !preg_match("/^(?:TO_DO|DRAFT)$/", $arrayResult["APP_STATUS"])) {
                 $flagInbox = 0;
             }
+
+            //Verfiry exists $appDocumentUid
+            $this->throwExceptionIfNotExistsAppDocument($appDocumentUid);
 
             //Verify data permission
             $flagPermission = 0;

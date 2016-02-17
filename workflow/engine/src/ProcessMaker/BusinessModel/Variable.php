@@ -231,6 +231,9 @@ class Variable
 
             $this->throwExceptionIfNotExistsVariable($variableUid);
 
+            //Verify variable
+            $this->throwExceptionIfVariableIsAssociatedAditionalTable($variableUid);
+
             $variable = $this->getVariable($processUid, $variableUid);
             \G::LoadClass('pmDynaform');
             $pmDynaform = new \pmDynaform();
@@ -556,13 +559,16 @@ class Variable
             \G::LoadClass('pmDynaform');
             $pmDynaform = new \pmDynaform();
             $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $arrayVariable["field_id"]);
-            $variableDbConnectionUid = $field !== null ? $field->dbConnection : "";
+            $dbConnection = "workflow";
+            if ($field !== null && !empty($field->dbConnection)) {
+                $dbConnection = $field->dbConnection;
+            }
             $variableSql = $field !== null ? $field->sql : "";
 
             //Get data
             $_SESSION["PROCESS"] = $processUid;
 
-            $cnn = \Propel::getConnection(($variableDbConnectionUid . "" != "")? $variableDbConnectionUid : "workflow");
+            $cnn = \Propel::getConnection($dbConnection);
             $stmt = $cnn->createStatement();
 
             $replaceFields = G::replaceDataField($variableSql, $arrayVariable);
@@ -599,6 +605,40 @@ class Variable
 
             if (is_null($obj)) {
                 throw new \Exception('var_uid: '.$variableUid. ' '.\G::LoadTranslation("ID_DOES_NOT_EXIST"));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Check if the variable is associated to Report Table
+     *
+     * @param string $variableUid Unique id of variable
+     *
+     * @return void Throw exception
+     */
+    public function throwExceptionIfVariableIsAssociatedAditionalTable($variableUid)
+    {
+        try {
+            $criteria = new \Criteria('workflow');
+
+            $criteria->addSelectColumn(\ProcessVariablesPeer::VAR_UID);
+
+            $criteria->addJoin(\ProcessVariablesPeer::PRJ_UID, \AdditionalTablesPeer::PRO_UID, \Criteria::INNER_JOIN);
+
+            $arrayCondition = [];
+            $arrayCondition[] = array(\AdditionalTablesPeer::ADD_TAB_UID, \FieldsPeer::ADD_TAB_UID, \Criteria::EQUAL);
+            $arrayCondition[] = array(\ProcessVariablesPeer::VAR_NAME, \FieldsPeer::FLD_NAME, \Criteria::EQUAL);
+            $criteria->addJoinMC($arrayCondition, \Criteria::INNER_JOIN);
+
+            $criteria->add(\ProcessVariablesPeer::VAR_UID, $variableUid, \Criteria::EQUAL);
+
+            $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                throw new \Exception(\G::LoadTranslation('ID_VARIABLE_ASSOCIATED_WITH_REPORT_TABLE', array($variableUid)));
             }
         } catch (\Exception $e) {
             throw $e;
@@ -677,13 +717,16 @@ class Variable
             \G::LoadClass('pmDynaform');
             $pmDynaform = new \pmDynaform();
             $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $variableName);
-            $variableDbConnectionUid = $field !== null ? $field->dbConnection : "";
+            $dbConnection = "workflow";
+            if ($field !== null && !empty($field->dbConnection)) {
+                $dbConnection = $field->dbConnection;
+            }
             $variableSql = $field !== null ? $field->sql : "";
 
             //Get data
             $_SESSION["PROCESS"] = $processUid;
 
-            $cnn = \Propel::getConnection(($variableDbConnectionUid . "" != "") ? $variableDbConnectionUid : "workflow");
+            $cnn = \Propel::getConnection($dbConnection);
             $stmt = $cnn->createStatement();
 
             $replaceFields = G::replaceDataField($variableSql, $arrayVariable);
@@ -702,7 +745,7 @@ class Variable
             }
             $parser = new \PHPSQLParser($replaceFields);
             $filter = str_replace("'", "''", $filter);
-            $replaceFields = $this->queryModified($parser->parsed, $filter, "*searchtype*", $start, $limit);
+            $replaceFields = $this->queryModified($parser->parsed, $filter, "*searchtype*", $start, $limit, $dbConnection);
             $rs = $stmt->executeQuery($replaceFields, \ResultSet::FETCHMODE_NUM);
 
             while ($rs->next()) {
@@ -721,7 +764,7 @@ class Variable
         }
     }
     
-    public function queryModified($sqlParsed, $inputSel = "", $searchType, $start, $limit)
+    public function queryModified($sqlParsed, $inputSel = "", $searchType = "*searchtype*", $start = 0, $limit = "", $dbConnection = "workflow")
     {
         if (!empty($sqlParsed['SELECT'])) {
             $sqlSelectOptions = (isset($sqlParsed["OPTIONS"]) && count($sqlParsed["OPTIONS"]) > 0) ? implode(" ", $sqlParsed["OPTIONS"]) : null;
@@ -844,6 +887,26 @@ class Variable
             if (!empty($sqlParsed['LIMIT'])) {
                 $sqlLimit = " LIMIT " . $sqlParsed['LIMIT']['start'] . ", " . $sqlParsed['LIMIT']['end'];
             }
+            
+            //get database provider
+            $a = new \Criteria("workflow");
+            $a->addSelectColumn(\DbSourcePeer::DBS_TYPE);
+            $a->add(\DbSourcePeer::DBS_UID, $dbConnection, \Criteria::EQUAL);
+            $ds = \DbSourcePeer::doSelectRS($a);
+            $ds->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $ds->next();
+            $row = $ds->getRow();
+            if (isset($row["DBS_TYPE"])) {
+                if ($row["DBS_TYPE"] === "pgsql") {
+                    $sqlLimit = $this->limitPgsql($start, $limit);
+                }
+                if ($row["DBS_TYPE"] === "mssql") {
+                    return $this->limitMssqlOracle($sqlSelect, $sqlFrom, $sqlWhere, $sqlGroupBy, $sqlHaving, $sqlOrderBy, $start, $limit, true);
+                }
+                if ($row["DBS_TYPE"] === "oracle") {
+                    return $this->limitMssqlOracle($sqlSelect, $sqlFrom, $sqlWhere, $sqlGroupBy, $sqlHaving, $sqlOrderBy, $start, $limit, false);
+                }
+            }
 
             return $sqlSelect . $sqlFrom . $sqlWhere . $sqlGroupBy . $sqlHaving . $sqlOrderBy . $sqlLimit;
         }
@@ -873,6 +936,36 @@ class Variable
         }
     }
     
+    public function limitPgsql($start = 0, $limit = "")
+    {
+        $sqlLimit = "";
+        if ($start >= 0) {
+            $sqlLimit = " OFFSET " . $start;
+        }
+        if ($limit !== "") {
+            $sqlLimit = $sqlLimit . " LIMIT " . $limit;
+        }
+        return $sqlLimit;
+    }
+
+    public function limitMssqlOracle($sqlSelect = "", $sqlFrom = "", $sqlWhere = "", $sqlGroupBy = "", $sqlHaving = "", $sqlOrderBy = "", $start = 0, $limit = "", $isMssql = true)
+    {
+        $sqlLimit = "";
+        if ($start >= 0) {
+            $sqlLimit = "WHERE rn >= " . $start;
+        }
+        if ($start >= 0 && $limit != "") {
+            $sqlLimit = "WHERE rn BETWEEN " . $start . " AND " . $limit;
+        }
+        $sql = ""
+                . "SELECT * FROM ("
+                . "    " . $sqlSelect . ", ROW_NUMBER() OVER( " . $sqlOrderBy . " desc )-1 " . ($isMssql ? " AS " : "") . " rn "
+                . "    " . $sqlFrom . $sqlWhere . $sqlGroupBy . $sqlHaving
+                . ")" . ($isMssql ? " AS A " : "")
+                . $sqlLimit;
+        return $sql;
+    }
+
     public function getVariableTypeByName($processUid, $variableName)
     {
         try {

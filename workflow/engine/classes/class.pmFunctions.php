@@ -2907,6 +2907,59 @@ function PMFSaveCurrentData ()
     return $result;
 }
 
+/**
+ * @method 
+ * Return an array of associative arrays which contain the unique task ID and title.
+ * @name PMFTasksListByProcessId
+ * @label PMF Tasks List By Process Id
+ * @param string | $processId | ID Process | To get the current process id, use the system variable @@PROCESS
+ * @return array | $result | Array result | Array of associative arrays which contain the unique task ID and title
+ */
+function PMFTasksListByProcessId($processId)
+{
+    $result = array();
+    $criteria = new Criteria("workflow");
+    $criteria->addSelectColumn(TaskPeer::TAS_UID);
+    $criteria->addSelectColumn(ContentPeer::CON_VALUE);
+    $criteria->addSelectColumn(ContentPeer::CON_LANG);
+    $criteria->addJoin(TaskPeer::TAS_UID, ContentPeer::CON_ID, Criteria::INNER_JOIN);
+    $criteria->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE', Criteria::EQUAL);
+    $criteria->add(TaskPeer::PRO_UID, $processId, Criteria::EQUAL);
+    $ds = TaskPeer::doSelectRS($criteria);
+    $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+    while ($ds->next()) {
+        $result[] = $ds->getRow();
+    }
+    return $result;
+}
+
+/**
+ * @method 
+ * The requested text in the specified language | If not found returns false
+ * @name PMFGeti18nText
+ * @label PMF Get i18n Text
+ * @param string | $id | ID Text | Is the identifier of text, that must be the same to the column: "CON_ID" of the CONTENT table
+ * @param string | $category | Category  | Is the category of the text, that must be the same to the column: "CON_CATEGORY" of the CONTENT table
+ * @param string | $lang | Language | Is the language of the text, that must be the same to the column: "CON_LANG" of the CONTENT table
+ * @return string | $text | Translated text | the translated text of a string in Content
+ */
+function PMFGeti18nText($id, $category, $lang = "en")
+{
+    $text = false;
+    $criteria = new Criteria("workflow");
+    $criteria->addSelectColumn(ContentPeer::CON_VALUE);
+    $criteria->add(ContentPeer::CON_ID, $id, Criteria::EQUAL);
+    $criteria->add(ContentPeer::CON_CATEGORY, $category, Criteria::EQUAL);
+    $criteria->add(ContentPeer::CON_LANG, $lang, Criteria::EQUAL);
+    $ds = ContentPeer::doSelectRS($criteria);
+    $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+    $ds->next();
+    $row = $ds->getRow();
+    if (isset($row["CON_VALUE"])) {
+        $text = $row["CON_VALUE"];
+    }
+    return $text;
+}
 
 /**
  * @method

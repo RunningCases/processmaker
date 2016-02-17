@@ -60,7 +60,7 @@ class Application extends BaseApplication
         if (!$oApplication->exists($this->getAppUid())) {
             return false;
         }
-            
+
         if ($this->getAppUid() == '') {
             throw (new Exception( "Error in getAppTitle, the APP_UID can't be blank"));
         }
@@ -373,7 +373,6 @@ class Application extends BaseApplication
             $this->setAppUpdateDate('now');
 
             $pin = G::generateCode(4, 'ALPHANUMERIC');
-            $this->setAppData(serialize(array('PIN' => $pin)));
             $this->setAppPin(G::encryptOld($pin));
 
             $c = new Criteria();
@@ -385,6 +384,8 @@ class Application extends BaseApplication
             $maxNumber = $oSequences->getSequeceNumber("APP_NUMBER");
 
             $this->setAppNumber($maxNumber);
+            $this->setAppData(serialize(['APP_NUMBER' => $maxNumber, 'PIN' => $pin]));
+
             $oSequences->changeSequence('APP_NUMBER', $maxNumber);
             $oSequences->unlockSequenceTable();
 
@@ -591,7 +592,7 @@ class Application extends BaseApplication
     		}
 
     		$calendar = new calendar();
-    
+
     		$c = new Criteria( 'workflow' );
     		$c->clearSelectColumns();
     		$c->addSelectColumn( ApplicationPeer::APP_UID );
@@ -616,7 +617,7 @@ class Application extends BaseApplication
     		$rs->next();
     		$row = $rs->getRow();
     		$i = 0;
-    
+
     		$now = strtotime( 'now' );
     		while (is_array( $row )) {
     			$appNumber = $row['APP_NUMBER'];
@@ -634,7 +635,7 @@ class Application extends BaseApplication
 
     			//get the object,
     			$oApp = ApplicationPeer::retrieveByPk( $row['APP_UID'] );
-    
+
     			//getting the calendar
     			$calendar->getCalendar(null, $proUid);
     			$calData = $calendar->getCalendarData();
@@ -648,8 +649,8 @@ class Application extends BaseApplication
     			if($appFinishDate == null){//When the process didnt finish yet.
     				//Duration
     				$appDuration = $calendar->dashCalculateDurationWithCalendar($appInitDate, date("Y-m-d H:i:s"), $calData );
-    				
-    				
+
+
     				$appDuration = $appDuration / (24 * 60 * 60); //Saving the proDuration in days. The calculateDurationWithCalendar func returns segs.
     				$oApp->setAppDuration( $appDuration );
 
@@ -662,7 +663,7 @@ class Application extends BaseApplication
     				$appDuration = $calendar->dashCalculateDurationWithCalendar($appInitDate, $appFinishDate, $calData );
     				$appDuration = $appDuration / (24 * 60 * 60); //Saving the proDuration in days. The calculateDurationWithCalendar func returns mins.
     				$oApp->setAppDuration( $appDuration );
-    				
+
     				//Delay Duration
     				$delayDuration = $calendar->dashCalculateDurationWithCalendar( $proDueDate, $appFinishDate, $calData );
     				$delayDuration = $delayDuration / (24 * 60 * 60); //Days
@@ -674,7 +675,7 @@ class Application extends BaseApplication
     			$rs->next();
     			$row = $rs->getRow();
     		}
-    
+
     		if ($cron == 1) {
     			$arrayCron = unserialize( trim( @file_get_contents( PATH_DATA . "cron" ) ) );
     			$arrayCron["processcTimeStart"] = time();
@@ -683,7 +684,7 @@ class Application extends BaseApplication
     	} catch (Exception $oError) {
     		error_log( $oError->getMessage() );
     	}
-    } 
+    }
     /*----------------------------------********---------------------------------*/
 }
 

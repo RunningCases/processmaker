@@ -4,6 +4,26 @@ namespace ProcessMaker\BusinessModel\Cases;
 class InputDocument
 {
     /**
+     * Verify exists app_doc_uid in table APP_DOCUMENT
+     *
+     * @param string $applicationUid
+     *
+     * return void Throw exception
+     */
+    private function throwExceptionIfNotExistsAppDocument($appDocumentUid)
+    {
+        try {
+            $appDocument = \AppDocumentPeer::retrieveByPK($appDocumentUid, 1);
+
+            if (is_null($appDocument)) {
+                throw new \Exception(\G::LoadTranslation("ID_CASES_INPUT_DOES_NOT_EXIST", array($appDocumentUid)));
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Check if the user has permissions
      *
      * @param string $applicationUid   Unique id of Case
@@ -46,6 +66,9 @@ class InputDocument
             if ($flagInbox == 0 && $flagSupervisor == 0) {
                 throw new \Exception(\G::LoadTranslation("ID_USER_NOT_HAVE_PERMISSION_DELETE_INPUT_DOCUMENT", array($userUid)));
             }
+
+            //verfiry exists $appDocumentUid
+            $this->throwExceptionIfNotExistsAppDocument($appDocumentUid);
 
             //Verify data permission
             $flagPermission = 0;
@@ -351,13 +374,16 @@ class InputDocument
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
 
-                $arrayUserData = $user->load($row["USR_UID"]);
-
+                $sUser = '***';
+                if ($row["USR_UID"] !== '-1') {
+                    $arrayUserData = $user->load($row["USR_UID"]);
+                    $sUser = $configuraction->usersNameFormatBySetParameters($confEnvSetting["format"], $arrayUserData["USR_USERNAME"], $arrayUserData["USR_FIRSTNAME"], $arrayUserData["USR_LASTNAME"]);
+                }
                 $arrayAppDocument = $appDocument->load($row["APP_DOC_UID"], $row["DOC_VERSION"]);
 
 
                 $row["APP_DOC_FILENAME"] = $arrayAppDocument["APP_DOC_FILENAME"];
-                $row["APP_DOC_CREATE_USER"] = $configuraction->usersNameFormatBySetParameters($confEnvSetting["format"], $arrayUserData["USR_USERNAME"], $arrayUserData["USR_FIRSTNAME"], $arrayUserData["USR_LASTNAME"]);
+                $row["APP_DOC_CREATE_USER"] = $sUser;
                 $row["APP_DOC_LINK"] = "cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"];
 
                 $arrayInputDocument[] = $this->getAppDocumentDataFromRecord($row);

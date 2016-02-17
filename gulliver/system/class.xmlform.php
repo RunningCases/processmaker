@@ -1583,8 +1583,8 @@ class XmlForm_Field_Suggest extends XmlForm_Field_SimpleText //by neyek
                 if (strlen( trim( $formVariableValue ) ) > 0) {
                     $value = $formVariableValue;
                 }
-                $name = "'" . $this->name . "'";
-                $str = '<input type="text" ' . $storeEntry . ' class="module_app_input___gray" size="' . $this->size . '" id="form' . $rowId . '[' . $this->name . '_label]" name="form' . $rowId . '[' . $this->name . '_label]" value="' . $this->htmlentities( $value, ENT_COMPAT, 'utf-8' ) . '" onblur="idSet(' . $name . ');" ';
+
+                $str = '<input type="text" ' . $storeEntry . ' class="module_app_input___gray" size="' . $this->size . '" id="form' . $rowId . '[' . $this->name . '_label]" name="form' . $rowId . '[' . $this->name . '_label]" value="' . $this->htmlentities($value, ENT_COMPAT, 'utf-8') . '" onblur="idSet(\'' . $this->name . '\');" ';
                 $str .= $this->NSDependentFields( true ) . ' ';
                 $str .= $this->NSRequiredValue() . ' ';
                 $str .= $this->NSGridLabel() . ' ';
@@ -1709,9 +1709,16 @@ class XmlForm_Field_Suggest extends XmlForm_Field_SimpleText //by neyek
                 return $str;
             }
         } else {
-            $str = '<span id="form' . $rowId . '[' . $this->name . ']" name="form' . $rowId . '[' . $this->name . ']" ' . $this->NSGridType() . ' >';
-            $str .= $this->htmlentities( $formVariableValue, ENT_COMPAT, 'utf-8' );
-            $str .= '</span>';
+            $str = $this->htmlentities($formVariableValue, ENT_COMPAT, 'utf-8');
+            $str .= '<input type="hidden" id="form' . $rowId . '[' . $this->name . '_label]" name="form' . $rowId . '[' . $this->name . '_label]" value="' . $this->htmlentities($formVariableValue, ENT_COMPAT, 'utf-8') . '" ';
+            $str .= $this->NSDependentFields(true) . ' ';
+            $str .= $this->NSRequiredValue() . ' ';
+            $str .= $this->NSGridLabel() . ' ';
+            $str .= '/>';
+            $str .= '<input type="hidden" id="form' . $rowId . '[' . $this->name . ']" name="form' . $rowId . '[' . $this->name . ']" value="' . $this->htmlentities($formVariableKeyValue, ENT_COMPAT, 'utf-8') . '" ';
+            $str .= $this->NSGridType() . ' ';
+            $str .= '/>';
+
             return $str;
         }
     }
