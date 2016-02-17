@@ -744,6 +744,7 @@ class workspaceTools
         p11835::isApplicable();
         $systemSchema = System::getSystemSchema($this->dbAdapter);
         $systemSchemaRbac = System::getSystemSchemaRbac($this->dbAdapter);// get the Rbac Schema
+        $this->registerSystemTables(array_merge($systemSchema,$systemSchemaRbac));
         $this->upgradeSchema( $systemSchema );
         $this->upgradeSchema( $systemSchemaRbac, false, true, $onedb ); // perform Upgrade to Rbac
         $this->upgradeData();
@@ -2277,6 +2278,24 @@ class workspaceTools
             $filesManager->processFilesUpgrade();
         } catch (Exception $e) {
             throw $e;
+        }
+    }
+    /**
+     * Register system tables in a file
+     *
+     * return void
+     */
+    public static function registerSystemTables($aSquema){
+        //Register all tables
+        $sListTables = '';
+        foreach ($aSquema as $key => $value) {
+            $sListTables .= $key .'|';
+        }
+
+        $sysTablesIniFile= PATH_CONFIG . 'system-tables.ini';
+        $contents = file_put_contents( $sysTablesIniFile, sprintf( "%s '%s'\n", "tables = ", $sListTables ) );
+        if ($contents === null) {
+            throw (new Exception( G::LoadTranslation('ID_FILE_NOT_WRITEABLE', SYS_LANG, array($sysTablesIniFile) ) ));
         }
     }
 }
