@@ -3013,6 +3013,70 @@ function PMFGeti18nText($id, $category, $lang = "en")
 
 /**
  * @method
+ * Function to return an array of objects containing the properties of the fields 
+ * in a specified DynaForm. 
+ * It also inserts the "value" and "value_label" as properties in the fields' objects, 
+ * if the case is specified.
+ * @name PMFDynaFormFields
+ * @label PMF DynaForm Fields
+ * @param string | $dynUid | Dynaform ID | Id of the dynaform
+ * @param string | $appUid | Case ID | Id of the case
+ * @param int | $delIndex | Delegation index | Delegation index for case
+ * @return array | $fields | List of fields | Return a list of fields
+ */
+function PMFDynaFormFields($dynUid, $appUid = false, $delIndex = 0)
+{
+    G::LoadClass("pmDynaform");
+    $fields = array();
+    $data = array();
+
+    if ($appUid !== false) {
+        if ($delIndex < 0) {
+            throw new Exception(G::LoadTranslation('ID_INVALID_DELEGATION_INDEX_FOR_CASE') . "'" . $appUid . "'.");
+        }
+        $cases = new Cases();
+        $data = $cases->loadCase($appUid, $delIndex);
+    } else {
+        global $oPMScript;
+        if (isset($oPMScript->aFields) && is_array($oPMScript->aFields)) {
+            $data['APP_DATA'] = $oPMScript->aFields;
+        }
+    }
+    $data["CURRENT_DYNAFORM"] = $dynUid;
+
+    $dynaform = new pmDynaform($data);
+    $dynaform->onPropertyRead = function(&$json, $key, $value) {
+        if (isset($json->data) && !isset($json->value)) {
+            $json->value = $json->data->value;
+            $json->value_label = $json->data->label;
+        }
+    };
+
+    if ($dynaform->isResponsive()) {
+        $json = G::json_decode($dynaform->record["DYN_CONTENT"]);
+        $dynaform->jsonr($json);
+
+        $rows = $json->items[0]->items;
+        foreach ($rows as $items) {
+            foreach ($items as $item) {
+                $fields[] = $item;
+            }
+        }
+    } else {
+        $oldDynaform = new Dynaform();
+        $aFields = $oldDynaform->getDynaformFields($dynUid);
+        foreach ($aFields as $value) {
+            if (isset($data["APP_DATA"]) && isset($data["APP_DATA"][$value->name])) {
+                $value->value = $data["APP_DATA"][$value->name];
+            }
+            $fields[] = $value;
+        }
+    }
+    return $fields;
+}
+
+/**
+ * @method
  * This function determines if the domain of the passed email addres  is hosted in
  * a gmail server.
  * This function test just the domain, so there isn't any validation related to the
