@@ -44,7 +44,7 @@ Ext.apply(Ext.form.VTypes, {
 });
 
 Ext.onReady(function(){
-  Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+  setExtStateManagerSetProvider('gridProcessMain');
   Ext.QuickTips.init();
 
   store = new Ext.data.GroupingStore( {
