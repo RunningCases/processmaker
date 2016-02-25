@@ -2934,6 +2934,56 @@ function PMFTasksListByProcessId($processId)
 }
 
 /**
+ *
+ * @method
+ *
+ * Get the Unique id of Process by name
+ *
+ * @name PMFGetProcessUidByName
+ * @label PMF Get the Unique id of Process by name
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFGetProcessUidByName.28.29
+ *
+ * @param  string | $processName = '' | Name of Process | Name of Process
+ * @return string(32) | $processUid | Unique id of Process | Returns the Unique id of Process, FALSE otherwise
+ *
+ */
+function PMFGetProcessUidByName($processName = '')
+{
+    try {
+        $processUid = '';
+        
+        if ($processName == '') {
+            //Return
+            return (isset($_SESSION['PROCESS']))? $_SESSION['PROCESS'] : false;
+        }
+        
+        $criteria = new Criteria('workflow');
+        
+        $criteria->addSelectColumn(ProcessPeer::PRO_UID);
+        
+        $criteria->addJoin(ContentPeer::CON_ID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
+        $criteria->add(ContentPeer::CON_VALUE, $processName, Criteria::EQUAL);
+        $criteria->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE', Criteria::EQUAL);
+        
+        $rsCriteria = ContentPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        
+        if ($rsCriteria->next()) {
+            $row = $rsCriteria->getRow();
+            $processUid = $row['PRO_UID'];
+        } else {
+            //Return
+            return false;
+        }
+        
+        //Return
+        return $processUid;
+    } catch (Exception $e) {
+        throw $e;
+    }
+}
+
+/**
  * @method 
  * The requested text in the specified language | If not found returns false
  * @name PMFGeti18nText
@@ -2959,6 +3009,70 @@ function PMFGeti18nText($id, $category, $lang = "en")
         $text = $row["CON_VALUE"];
     }
     return $text;
+}
+
+/**
+ * @method
+ * Function to return an array of objects containing the properties of the fields 
+ * in a specified DynaForm. 
+ * It also inserts the "value" and "value_label" as properties in the fields' objects, 
+ * if the case is specified.
+ * @name PMFDynaFormFields
+ * @label PMF DynaForm Fields
+ * @param string | $dynUid | Dynaform ID | Id of the dynaform
+ * @param string | $appUid | Case ID | Id of the case
+ * @param int | $delIndex | Delegation index | Delegation index for case
+ * @return array | $fields | List of fields | Return a list of fields
+ */
+function PMFDynaFormFields($dynUid, $appUid = false, $delIndex = 0)
+{
+    G::LoadClass("pmDynaform");
+    $fields = array();
+    $data = array();
+
+    if ($appUid !== false) {
+        if ($delIndex < 0) {
+            throw new Exception(G::LoadTranslation('ID_INVALID_DELEGATION_INDEX_FOR_CASE') . "'" . $appUid . "'.");
+        }
+        $cases = new Cases();
+        $data = $cases->loadCase($appUid, $delIndex);
+    } else {
+        global $oPMScript;
+        if (isset($oPMScript->aFields) && is_array($oPMScript->aFields)) {
+            $data['APP_DATA'] = $oPMScript->aFields;
+        }
+    }
+    $data["CURRENT_DYNAFORM"] = $dynUid;
+
+    $dynaform = new pmDynaform($data);
+    $dynaform->onPropertyRead = function(&$json, $key, $value) {
+        if (isset($json->data) && !isset($json->value)) {
+            $json->value = $json->data->value;
+            $json->value_label = $json->data->label;
+        }
+    };
+
+    if ($dynaform->isResponsive()) {
+        $json = G::json_decode($dynaform->record["DYN_CONTENT"]);
+        $dynaform->jsonr($json);
+
+        $rows = $json->items[0]->items;
+        foreach ($rows as $items) {
+            foreach ($items as $item) {
+                $fields[] = $item;
+            }
+        }
+    } else {
+        $oldDynaform = new Dynaform();
+        $aFields = $oldDynaform->getDynaformFields($dynUid);
+        foreach ($aFields as $value) {
+            if (isset($data["APP_DATA"]) && isset($data["APP_DATA"][$value->name])) {
+                $value->value = $data["APP_DATA"][$value->name];
+            }
+            $fields[] = $value;
+        }
+    }
+    return $fields;
 }
 
 /**

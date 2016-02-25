@@ -139,7 +139,7 @@ class pmDynaform
             if (!$sw1 && !$sw2) {
                 //read event
                 $fn = $this->onPropertyRead;
-                if (function_exists($fn)) {
+                if (is_callable($fn) || function_exists($fn)) {
                     $fn($json, $key, $value);
                 }
                 //set properties from trigger
