@@ -3132,3 +3132,36 @@ function getNamedServerMXRecord($domainName) {
 	getmxrr($domainName, $mailExchangerHosts);
 	return $mailExchangerHosts;
 }
+
+/**
+ * @method
+ * Return the task title of the specified task uid | If not found returns false
+ * @name PMFGetTaskName
+ * @label PMF Get Task Title Text
+ * @param string | $taskUid | ID Task | Is the identifier of task, that must be the same to the column: "TAS_UID" of the TASK table
+ * @param string | $lang | Language | Is the language of the text, that must be the same to the column: "CON_LANG" of the CONTENT table
+ * @return string | $text | Translated text | the translated text of a string in Content
+ */
+function PMFGetTaskName($taskUid, $lang = SYS_LANG) {
+    if (empty($taskUid)) {
+        return false;
+    }
+    return PMFGeti18nText($taskUid, 'TAS_TITLE', $lang);
+}
+
+/**
+ * @method
+ * Return the group title of the specified group uid | If not found returns false
+ * @name PMFGetGroupName
+ * @label PMF Get Group Title Text
+ * @param string | $grpUid | ID Group | Is the identifier of group, that must be the same to the column: "GPR_UID" of the GROUPWF table
+ * @param string | $lang | Language | Is the language of the text, that must be the same to the column: "CON_LANG" of the CONTENT table
+ * @return string | $text | Translated text | the translated text of a string in Content
+ */
+function PMFGetGroupName($grpUid, $lang = SYS_LANG) {
+    if (empty($grpUid)) {
+        return false;
+    }
+    return PMFGeti18nText($grpUid, 'GRP_TITLE', $lang);
+}
+
