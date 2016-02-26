@@ -32,7 +32,7 @@
         "colosa/pmUI": "3.0.1.7-dev",
         "colosa/MichelangeloFE": "3.0.1.7-dev",
         "colosa/pmdynaform": "3.0.1.7-dev",
-        "google/apiclient": "1.1.*"
+        "google/apiclient": "1.1.6"
     },
     "require-dev": {
         "guzzle/guzzle": "~3.1.1",
