@@ -78,6 +78,7 @@ $oHeadPublisher->assign("arrayFlagImportFileExtension", $arrayFlagImportFileExte
 $oHeadPublisher->assign("arrayFlagMenuNewOption", $arrayFlagMenuNewOption);
 $oHeadPublisher->assign("arrayMenuNewOptionPlugin", $arrayMenuNewOptionPlugin);
 $oHeadPublisher->assign("arrayContextMenuOptionPlugin", $arrayContextMenuOptionPlugin);
+$oHeadPublisher->assign('extJsViewState', $oHeadPublisher->getExtJsViewState());
 
 $oPluginRegistry = & PMPluginRegistry::getSingleton();
 $callBackFile = $oPluginRegistry->getImportProcessCallback();
