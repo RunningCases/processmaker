@@ -12,6 +12,7 @@ abstract class Importer
     protected $filename = "";
     protected $saveDir = "";
     protected $metadata = array();
+    public static $affectedGroups = array();
 
     const IMPORT_OPTION_OVERWRITE = "project.import.override";
     const IMPORT_OPTION_DISABLE_AND_CREATE_NEW = "project.import.disable_and_create_new";
@@ -109,6 +110,7 @@ abstract class Importer
                 $arrayAux = $processes->checkExistingGroups($this->importData["tables"]["workflow"]["groupwfs"]);
 
                 if (is_array($arrayAux) && count($arrayAux) > 0) {
+                    self::$affectedGroups = $arrayAux;
                     throw new \Exception(
                         \G::LoadTranslation(
                             "ID_IMPORTER_GROUP_ALREADY_EXISTS_SET_ACTION_TO_CONTINUE",
