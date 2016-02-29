@@ -280,6 +280,9 @@ class XmlForm_Field
                 $rs = $con->executeQuery( $query, ResultSet::FETCHMODE_NUM );
             } catch (Exception $e) {
                 //dismiss error because dbarray shouldnt be defined in some contexts.
+                $workspace = defined("SYS_SYS")? SYS_SYS : "Wokspace Undefined";
+                G::log($workspace . " | ip: | " . G::getIpAddress() . " | type error: | " . $e->getMessage() . " | query: " . $query, PATH_DATA, "queriesWithErrors.log");
+
                 return $result;
             }
         } else {
@@ -289,6 +292,9 @@ class XmlForm_Field
                 $rs = $stmt->executeQuery( $query, ResultSet::FETCHMODE_NUM );
             } catch (Exception $e) {
                 //dismiss error because dbarray shouldnt be defined in some contexts.
+                $workspace = defined("SYS_SYS")? SYS_SYS : "Wokspace Undefined";
+                G::log($workspace . " | ip: | " . G::getIpAddress() . " | type error: | " . $e->getMessage() . " | query: " . $query, PATH_DATA, "queriesWithErrors.log");
+
                 return $result;
             }
         }
