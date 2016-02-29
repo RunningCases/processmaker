@@ -29,10 +29,10 @@
     "require": {
         "luracast/restler": "3.0.0-RC4",
         "bshaffer/oauth2-server-php": "v1.0",
-        "colosa/pmUI": "3.0.1.7-dev",
-        "colosa/MichelangeloFE": "3.0.1.7-dev",
-        "colosa/pmdynaform": "3.0.1.7-dev",
-        "google/apiclient": "1.1.*"
+        "colosa/pmUI": "3.0.1.8",
+        "colosa/MichelangeloFE": "3.0.1.8",
+        "colosa/pmdynaform": "3.0.1.8",
+        "google/apiclient": "1.1.6"
     },
     "require-dev": {
         "guzzle/guzzle": "~3.1.1",
