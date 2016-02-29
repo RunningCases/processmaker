@@ -692,7 +692,7 @@ class pmTablesProxy extends HttpProxyController
                 $sErrorMessages = '';
                 $i = 1;
                 $conData = 0;
-                $insert = 'INSERT INTO ' . $aAdditionalTables['ADD_TAB_NAME'] . ' (';
+                $insert = 'REPLACE INTO ' . $aAdditionalTables['ADD_TAB_NAME'] . ' (';
                 $query = '';
                 $swHead = false;
                 while (($aAux = fgetcsv( $oFile, 4096, $_POST['form']['CSV_DELIMITER'] )) !== false) {

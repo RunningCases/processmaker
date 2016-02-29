@@ -264,8 +264,11 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
                     $rs = $con->executeUpdate( $SqlStatement );
                     $result = $con->getUpdateCount();
                     $con->commit();
-                    //$result = $lastId->getId();
-                    // $result = 1;
+                    break;
+                case preg_match( "/^REPLACE\s/i", $statement ):
+                    $rs = $con->executeUpdate( $SqlStatement );
+                    $result = $con->getUpdateCount();
+                    $con->commit();
                     break;
                 case preg_match( "/^UPDATE\s/i", $statement ):
                     $rs = $con->executeUpdate( $SqlStatement );
