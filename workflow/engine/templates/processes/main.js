@@ -7,6 +7,7 @@ var store;
 var comboCategory;
 var winDesigner;
 var newTypeProcess;
+var affectedGroups;
 
 
 /**
@@ -918,6 +919,15 @@ function generateBpmn()
 
 importProcessExistGroup = function()
 {
+  var arrayGroups = affectedGroups.split(", ");
+  var shortGroupList = "";
+  var limitToShow = 4;
+  if(arrayGroups.length > limitToShow) {
+      shortGroupList = arrayGroups.slice(0, limitToShow).join(", ");
+      shortGroupList = shortGroupList + ", ..., <a style='text-decoration: underline; cursor: pointer' id='affectedGroupsId' onclick='affectedGroupsList()'>"+ _('ID_SEE_FULL_LIST') +"</a>";
+  } else {
+      shortGroupList = affectedGroups;
+  }
 
   var processFileTypeTitle = (processFileType == "pm") ? "" : " " + processFileType;
 
@@ -932,7 +942,7 @@ importProcessExistGroup = function()
     title       : _('ID_IMPORT_PROCESS') + processFileTypeTitle,
     header      : false,
     width       : 460,
-    height      : 230,
+    height      : 270,
     modal       : true,
     autoScroll  : false,
     maximizable : false,
@@ -970,7 +980,15 @@ importProcessExistGroup = function()
                 boxLabel   : _('ID_PROCESS_GROUP_RENAME'),
                 name       : "optionGroupExistInDatabase",
                 inputValue : '1',
-                tabIndex   : 1
+                tabIndex   : 1,
+                checked    : "checked",
+                listeners: {
+                  check: function (ctl, val) {
+                    if(val) {
+                        Ext.getCmp("affectedGroups").hide();
+                    }
+                  }
+                }
               }
             ]
           }, {
@@ -981,7 +999,27 @@ importProcessExistGroup = function()
                 tabIndex   : 2,
                 name       : "optionGroupExistInDatabase",
                 inputValue : '2',
-                checked    : "checked"
+                listeners: {
+                  check: function (ctl, val) {
+                    if(val) {
+                        Ext.getCmp("affectedGroups").show();
+                    }
+                  }
+                }
+              }
+            ]
+          }, {
+            items:[
+              {
+                  xtype : 'box',
+                  id: 'affectedGroups',
+                  name: 'affectedGroups',
+                  autoEl : {
+                      tag  : 'div',
+                      html : '<div style="margin-top: 5px">'+_('ID_AFFECTED_GROUPS')+': '+shortGroupList+'</div>'
+                  },
+                  hidden:true
+
               }
             ]
           }, {
@@ -1057,6 +1095,42 @@ importProcessExistGroup = function()
   });
   w.show();
 };
+
+affectedGroupsList = function()
+{
+    var arrayGroups = affectedGroups.split(", ");
+    var tableGroups = "<table width='100%' border='0' cellpadding='5'>"
+    for(var i = 0; i < arrayGroups.length; i++) {
+        tableGroups += "<tr><td>"+arrayGroups[i]+"</td></tr>";
+    }
+    tableGroups += "</table>";
+
+    var w = new Ext.Window({
+        id          : 'affectedGroupsListWindow',
+        title       : _('ID_AFFECTED_GROUPS') + ' ('+arrayGroups.length+')',
+        header      : false,
+        width       : 260,
+        height      : 300,
+        modal       : true,
+        autoScroll  : true,
+        maximizable : false,
+        resizable   : false,
+        items : [
+            {
+                xtype : 'box',
+                id: 'affectedGroupsList',
+                name: 'affectedGroupsList',
+                autoEl : {
+                    tag  : 'div',
+                    html : '<div>'+tableGroups+'</div>'
+                },
+                hidden:false
+
+            }
+        ]
+    });
+    w.show();
+}
 
 importProcessExistProcess = function()
 {
@@ -1180,6 +1254,7 @@ importProcessExistProcess = function()
                         }
                     }
                     else {
+                      affectedGroups = resp_.affectedGroups;
                       importProcessGlobal.proFileName       = resp_.proFileName;
                       importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
                       importProcessGlobal.sNewProUid        = resp_.sNewProUid;
@@ -1326,6 +1401,7 @@ importProcess = function()
                                                           window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                                                       }
                                                   } else {
+                                                      affectedGroups = resp_.affectedGroups;
                                                       importProcessGlobal.sNewProUid        = resp_.sNewProUid;
                                                       importProcessGlobal.proFileName       = resp_.proFileName;
                                                       importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
