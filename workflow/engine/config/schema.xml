@@ -365,6 +365,16 @@
       <rule name="maxLength" value="5" message="Language can be no larger than ${value} in size"/>
       <rule name="required" message="Language is required."/>
     </validator>
+    <index name="indexUidLang">
+      <index-column name="CON_ID"/>
+      <index-column name="CON_LANG"/>
+    </index>
+    <index name="indexCatParUidLang">
+      <index-column name="CON_CATEGORY"/>
+      <index-column name="CON_PARENT"/>
+      <index-column name="CON_ID"/>
+      <index-column name="CON_LANG"/>
+    </index>
     <index name="indexUid">
       <index-column name="CON_ID"/>
       <index-column name="CON_CATEGORY"/>
