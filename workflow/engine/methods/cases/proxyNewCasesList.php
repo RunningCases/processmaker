@@ -153,6 +153,10 @@ try {
                     $record["APP_UPDATE_DATE"] = $record["DEL_DELEGATE_DATE"];
                 }
 
+                if (isset($record['DEL_CURRENT_TAS_TITLE'])) {
+                    $record['APP_TAS_TITLE'] = $record['DEL_CURRENT_TAS_TITLE'];
+                }
+
                 if (isset($record["APP_STATUS"])) {
                     $record["APP_STATUS_LABEL"] = G::LoadTranslation("ID_" . $record["APP_STATUS"]);
                 }
