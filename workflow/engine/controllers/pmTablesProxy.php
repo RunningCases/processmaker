@@ -692,7 +692,7 @@ class pmTablesProxy extends HttpProxyController
                 $sErrorMessages = '';
                 $i = 1;
                 $conData = 0;
-                $insert = 'INSERT INTO ' . $aAdditionalTables['ADD_TAB_NAME'] . ' (';
+                $insert = 'REPLACE INTO ' . $aAdditionalTables['ADD_TAB_NAME'] . ' (';
                 $query = '';
                 $swHead = false;
                 while (($aAux = fgetcsv( $oFile, 4096, $_POST['form']['CSV_DELIMITER'] )) !== false) {
@@ -720,7 +720,7 @@ class pmTablesProxy extends HttpProxyController
                             $j = 0;
                             foreach ($aAdditionalTables['FIELDS'] as $aField) {
                                 $conData++;
-                                $temp = isset($aAux[$j]) ? '"'.addslashes($aAux[$j]).'"' : '""';
+                                $temp = isset($aAux[$j]) ? '"'.addslashes(stripslashes($aAux[$j])).'"' : '""';
                                 if ($temp == '') {
                                     switch ($aField['FLD_TYPE']) {
                                         case 'DATE':
@@ -889,7 +889,7 @@ class pmTablesProxy extends HttpProxyController
                 $SDATA = "";
                 $cnt = count( $cols );
                 foreach ($cols as $key => $val) {
-                    $SDATA .= $val;
+                    $SDATA .= addslashes($val);
                     if (-- $cnt > 0) {
                         $SDATA .= $sDelimiter;
                     }

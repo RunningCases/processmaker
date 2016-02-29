@@ -325,12 +325,12 @@ class Process
     public function throwExceptionIfDataNotMetPagerVarDefinition($arrayData, $arrayFieldNameForException)
     {
         try {
-            foreach ($arrayData as $key => $value) {
-                $nameForException = (isset($arrayFieldNameForException[$key]))? $arrayFieldNameForException[$key] : $key;
+            $result = \ProcessMaker\BusinessModel\Validator::validatePagerDataByPagerDefinition(
+                $arrayData, $arrayFieldNameForException
+            );
 
-                if (!is_null($value) && ($value . "" == "" || !preg_match("/^(?:\+|\-)?(?:0|[1-9]\d*)$/", $value . "") || (int)($value) < 0)) {
-                    throw new \Exception(\G::LoadTranslation('ID_INVALID_VALUE_EXPECTING_POSITIVE_INTEGER', [$nameForException]));
-                }
+            if ($result !== true) {
+                throw new \Exception($result);
             }
         } catch (\Exception $e) {
             throw $e;

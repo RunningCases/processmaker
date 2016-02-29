@@ -178,6 +178,8 @@ CREATE TABLE `CONTENT`
 	`CON_LANG` VARCHAR(10) default '' NOT NULL,
 	`CON_VALUE` MEDIUMTEXT  NOT NULL,
 	PRIMARY KEY (`CON_CATEGORY`,`CON_PARENT`,`CON_ID`,`CON_LANG`),
+    KEY `indexUidLang`(`CON_ID`, `CON_LANG`),
+    KEY `indexCatParUidLang`(`CON_CATEGORY`, `CON_PARENT`, `CON_ID`, `CON_LANG`),
 	KEY `indexUid`(`CON_ID`, `CON_CATEGORY`, `CON_LANG`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
@@ -1193,6 +1195,7 @@ CREATE TABLE `APP_CACHE_VIEW`
 	`APP_UPDATE_DATE` DATETIME  NOT NULL,
 	`APP_OVERDUE_PERCENTAGE` DOUBLE  NOT NULL,
 	PRIMARY KEY (`APP_UID`,`DEL_INDEX`),
+	KEY `indexProUid`(`PRO_UID`),
 	KEY `indexAppNumber`(`APP_NUMBER`),
 	KEY `protitle`(`APP_PRO_TITLE`),
 	KEY `appupdatedate`(`APP_UPDATE_DATE`),

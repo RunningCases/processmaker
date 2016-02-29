@@ -46,6 +46,21 @@ class Cases
     }
 
     /**
+     * Throw the exception "The Case doesn't exist"
+     *
+     * @param string $applicationUid        Unique id of Case
+     * @param string $fieldNameForException Field name for the exception
+     *
+     * @return void
+     */
+    private function throwExceptionCaseDoesNotExist($applicationUid, $fieldNameForException)
+    {
+        throw new \Exception(\G::LoadTranslation(
+            'ID_CASE_DOES_NOT_EXIST2', [$fieldNameForException, $applicationUid]
+        ));
+    }
+
+    /**
      * Verify if does not exist the Case in table APPLICATION
      *
      * @param string $applicationUid        Unique id of Case
@@ -68,8 +83,86 @@ class Cases
             }
 
             if ($flag) {
-                throw new \Exception(\G::LoadTranslation("ID_CASE_DOES_NOT_EXIST2", array($fieldNameForException, $applicationUid)));
+                $this->throwExceptionCaseDoesNotExist($applicationUid, $fieldNameForException);
             }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get Application record
+     *
+     * @param string $applicationUid                Unique id of Case
+     * @param array  $arrayVariableNameForException Variable name for exception
+     * @param bool   $throwException Flag to throw the exception if the main parameters are invalid or do not exist
+     *                               (TRUE: throw the exception; FALSE: returns FALSE)
+     *
+     * @return array Returns an array with Application record, ThrowTheException/FALSE otherwise
+     */
+    public function getApplicationRecordByPk(
+        $applicationUid,
+        array $arrayVariableNameForException,
+        $throwException = true
+    ) {
+        try {
+            $obj = \ApplicationPeer::retrieveByPK($applicationUid);
+
+            if (is_null($obj)) {
+                if ($throwException) {
+                    $this->throwExceptionCaseDoesNotExist(
+                        $applicationUid, $arrayVariableNameForException['$applicationUid']
+                    );
+                } else {
+                    return false;
+                }
+            }
+
+            //Return
+            return $obj->toArray(\BasePeer::TYPE_FIELDNAME);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Get AppDelegation record
+     *
+     * @param string $applicationUid                Unique id of Case
+     * @param int    $delIndex                      Delegation index
+     * @param array  $arrayVariableNameForException Variable name for exception
+     * @param bool   $throwException Flag to throw the exception if the main parameters are invalid or do not exist
+     *                               (TRUE: throw the exception; FALSE: returns FALSE)
+     *
+     * @return array Returns an array with AppDelegation record, ThrowTheException/FALSE otherwise
+     */
+    public function getAppDelegationRecordByPk(
+        $applicationUid,
+        $delIndex,
+        array $arrayVariableNameForException,
+        $throwException = true
+    ) {
+        try {
+            $obj = \AppDelegationPeer::retrieveByPK($applicationUid, $delIndex);
+
+            if (is_null($obj)) {
+                if ($throwException) {
+                    throw new \Exception(\G::LoadTranslation(
+                        'ID_CASE_DEL_INDEX_DOES_NOT_EXIST',
+                        [
+                            $arrayVariableNameForException['$applicationUid'],
+                            $applicationUid,
+                            $arrayVariableNameForException['$delIndex'],
+                            $delIndex
+                        ]
+                    ));
+                } else {
+                    return false;
+                }
+            }
+
+            //Return
+            return $obj->toArray(\BasePeer::TYPE_FIELDNAME);
         } catch (\Exception $e) {
             throw $e;
         }

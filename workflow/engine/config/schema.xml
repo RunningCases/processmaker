@@ -381,6 +381,16 @@
       <rule name="maxLength" value="5" message="Language can be no larger than ${value} in size"/>
       <rule name="required" message="Language is required."/>
     </validator>
+    <index name="indexUidLang">
+      <index-column name="CON_ID"/>
+      <index-column name="CON_LANG"/>
+    </index>
+    <index name="indexCatParUidLang">
+      <index-column name="CON_CATEGORY"/>
+      <index-column name="CON_PARENT"/>
+      <index-column name="CON_ID"/>
+      <index-column name="CON_LANG"/>
+    </index>
     <index name="indexUid">
       <index-column name="CON_ID"/>
       <index-column name="CON_CATEGORY"/>
@@ -2503,6 +2513,15 @@
     <column name="APP_FINISH_DATE" type="TIMESTAMP" required="false"/>
     <column name="APP_UPDATE_DATE" type="TIMESTAMP" required="true"/>
     <column name="APP_OVERDUE_PERCENTAGE" type="DOUBLE" required="true"/>
+    <index name="indexProUid">
+      <index-column name="PRO_UID"/>
+      <vendor type="mysql">
+          <parameter name="Table" value="APP_CACHE_VIEW"/>
+          <parameter name="Non_unique" value="1"/>
+          <parameter name="Key_name" value="indexProUid"/>
+          <parameter name="Seq_in_index" value="1"/>
+      </vendor>
+    </index>
     <index name="indexAppNumber">
       <index-column name="APP_NUMBER"/>
       <vendor type="mysql">
