@@ -2916,9 +2916,10 @@ function PMFSaveCurrentData ()
  * @name PMFTasksListByProcessId
  * @label PMF Tasks List By Process Id
  * @param string | $processId | ID Process | To get the current process id, use the system variable @@PROCESS
+ * @param string | $lang | Language | Is the language of the text, that must be the same to the column: "CON_LANG" of the CONTENT table
  * @return array | $result | Array result | Array of associative arrays which contain the unique task ID and title
  */
-function PMFTasksListByProcessId($processId)
+function PMFTasksListByProcessId($processId, $lang = 'en')
 {
     $result = array();
     $criteria = new Criteria("workflow");
@@ -2927,6 +2928,7 @@ function PMFTasksListByProcessId($processId)
     $criteria->addSelectColumn(ContentPeer::CON_LANG);
     $criteria->addJoin(TaskPeer::TAS_UID, ContentPeer::CON_ID, Criteria::INNER_JOIN);
     $criteria->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE', Criteria::EQUAL);
+    $criteria->add(ContentPeer::CON_LANG, $lang, Criteria::EQUAL);
     $criteria->add(TaskPeer::PRO_UID, $processId, Criteria::EQUAL);
     $ds = TaskPeer::doSelectRS($criteria);
     $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
