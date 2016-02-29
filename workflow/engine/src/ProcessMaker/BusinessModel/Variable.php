@@ -730,7 +730,7 @@ class Variable
             $stmt = $cnn->createStatement();
 
             $replaceFields = G::replaceDataField($variableSql, $arrayVariable);
-            
+
             $filter = "";
             if (isset($arrayVariable["filter"])) {
                 $filter = $arrayVariable["filter"];
@@ -763,7 +763,7 @@ class Variable
             throw $e;
         }
     }
-    
+
     public function queryModified($sqlParsed, $inputSel = "", $searchType = "*searchtype*", $start = 0, $limit = "", $dbConnection = "workflow")
     {
         if (!empty($sqlParsed['SELECT'])) {
@@ -876,7 +876,7 @@ class Variable
             } else {
                 $sqlOrderBy = " ORDER BY " . $sFieldSel;
             }
-            
+
             $sqlLimit = "";
             if ($start >= 0) {
                 $sqlLimit = " LIMIT " . $start;
@@ -887,7 +887,7 @@ class Variable
             if (!empty($sqlParsed['LIMIT'])) {
                 $sqlLimit = " LIMIT " . $sqlParsed['LIMIT']['start'] . ", " . $sqlParsed['LIMIT']['end'];
             }
-            
+
             //get database provider
             $a = new \Criteria("workflow");
             $a->addSelectColumn(\DbSourcePeer::DBS_TYPE);
@@ -935,7 +935,7 @@ class Variable
             return $sCall;
         }
     }
-    
+
     public function limitPgsql($start = 0, $limit = "")
     {
         $sqlLimit = "";
@@ -990,4 +990,49 @@ class Variable
         }
     }
 
+    /**
+     * Get Variable record by name
+     *
+     * @param string $projectUid                    Unique id of Project
+     * @param string $variableName                  Variable name
+     * @param array  $arrayVariableNameForException Variable name for exception
+     * @param bool   $throwException Flag to throw the exception if the main parameters are invalid or do not exist
+     *                               (TRUE: throw the exception; FALSE: returns FALSE)
+     *
+     * @return array Returns an array with Variable record, ThrowTheException/FALSE otherwise
+     */
+    public function getVariableRecordByName(
+        $projectUid,
+        $variableName,
+        array $arrayVariableNameForException,
+        $throwException = true
+    ) {
+        try {
+            $criteria = new \Criteria('workflow');
+
+            $criteria->add(\ProcessVariablesPeer::PRJ_UID, $projectUid, \Criteria::EQUAL);
+            $criteria->add(\ProcessVariablesPeer::VAR_NAME, $variableName, \Criteria::EQUAL);
+
+            $rsCriteria = \ProcessVariablesPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                $arrayVariableData = $rsCriteria->getRow();
+            } else {
+                if ($throwException) {
+                    throw new \Exception(
+                        $arrayVariableNameForException['$variableName'] . ': ' . $variableName. ' ' .
+                        \G::LoadTranslation('ID_DOES_NOT_EXIST')
+                    );
+                } else {
+                    return false;
+                }
+            }
+
+            //Return
+            return $arrayVariableData;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
