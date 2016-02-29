@@ -22,7 +22,7 @@ class AppDocumentDrive
     private $user;
 
     private $statusDrive;
-    private $usersDrive = '';
+    private $usersEmail = '';
 
     /**
      * InputDocumentDrive constructor.
@@ -32,7 +32,7 @@ class AppDocumentDrive
         $this->drive = new PMDrive();
         $status = $this->drive->getServiceDriveStatus();
         $status = !empty($status) ? ($status == 1 ? true : false): false;
-        $this->usersDrive = '';
+        $this->usersEmail = '';
         $this->setStatusDrive($status);
     }
 
@@ -140,101 +140,50 @@ class AppDocumentDrive
         }
     }
 
-    public function addUserDrive ($email)
+    public function addUserEmail ($email)
     {
         if (empty($email)) {
             return;
         }
-        if ($this->usersDrive == '') {
-            $this->usersDrive = $email;
+        if ($this->usersEmail == '') {
+            $this->usersEmail = $email;
         } else {
-            $emails = explode('|', $this->usersDrive);
+            $emails = explode('|', $this->usersEmail);
             if (array_search($email, $emails) === false) {
-                $this->usersDrive .= '|' . $email;
+                $this->usersEmail .= '|' . $email;
             }
         }
     }
     /**
-     * @param AppDocument $appDoc
-     * @param array $arrayTask
-     * @param $arrayData
+     * Get email of task users to app_uid
+     * @param $appUid id application
      *
      * @throws \Exception
      */
-    public function getEmailUsersTask($arrayTask, $arrayData)
+    public function getEmailUsersTask($appUid)
     {
         try {
-            G::LoadClass("tasks");
-            G::LoadClass("groups");
-            G::LoadClass("spool");
+            $criteria = new Criteria('workflow');
+            $criteria->add(AppDelegationPeer::APP_UID, $appUid);
+            $criteria->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
 
-            $task = new Tasks();
+            $rsAppDelegation = AppDelegationPeer::doSelectRS($criteria);
+            $rsAppDelegation->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
             $group = new Groups();
-            $oUser = new Users();
+            $user = new Users();
+            $data = [];
+            while ($rsAppDelegation->next()) {
+                $row = $rsAppDelegation->getRow();
+                if ($user->userExists($row['USR_UID'])) {
+                    $data = [];
+                    $data[] = $user->load($row['USR_UID']);
+                } else {
+                    $data = $group->getUsersOfGroup($row['USR_UID']);
+                }
 
-            foreach ($arrayTask as $aTask) {
-                switch ($aTask["TAS_ASSIGN_TYPE"]) {
-                    case "SELF_SERVICE":
-                        if (isset($aTask["TAS_UID"]) && !empty($aTask["TAS_UID"])) {
-                            $usersTask = array();
-
-                            $groupsTask = $task->getGroupsOfTask($aTask["TAS_UID"], 1);
-
-                            foreach ($groupsTask as $arrayGroup) {
-                                $usersGroup = $group->getUsersOfGroup($arrayGroup["GRP_UID"]);
-
-                                foreach ($usersGroup as $userGroup) {
-                                    $usersTask[] = $userGroup["USR_UID"];
-                                }
-                            }
-
-                            $groupsTask = $task->getUsersOfTask($aTask["TAS_UID"], 1);
-
-                            foreach ($groupsTask as $userGroup) {
-                                $usersTask[] = $userGroup["USR_UID"];
-                            }
-
-                            $criteria = new Criteria("workflow");
-
-                            $criteria->addSelectColumn(UsersPeer::USR_UID);
-                            $criteria->addSelectColumn(UsersPeer::USR_EMAIL);
-                            $criteria->add(UsersPeer::USR_UID, $usersTask, Criteria::IN);
-                            $rsCriteria = UsersPeer::doSelectRs($criteria);
-                            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-                            while ($rsCriteria->next()) {
-                                $row = $rsCriteria->getRow();
-                                $this->addUserDrive($row['USR_EMAIL']);
-                            }
-                        }
-                        break;
-                    case "MULTIPLE_INSTANCE":
-                        $oDerivation = new Derivation();
-                        $userFields = $oDerivation->getUsersFullNameFromArray($oDerivation->getAllUsersFromAnyTask($aTask["TAS_UID"]));
-                        if(isset($userFields)){
-                            foreach($userFields as $row){
-                                $this->addUserDrive($row['USR_EMAIL']);
-                            }
-                        }
-                        break;
-                    case "MULTIPLE_INSTANCE_VALUE_BASED":
-                        $taskNext = $task->load($aTask["TAS_UID"]);
-                        if(isset($taskNext["TAS_ASSIGN_VARIABLE"]) && !empty($taskNext["TAS_ASSIGN_VARIABLE"])){
-                            $nextTaskAssignVariable = trim($taskNext["TAS_ASSIGN_VARIABLE"], " @#");
-                            $arrayUsers = $arrayData[$nextTaskAssignVariable];
-                            $oDerivation = new Derivation();
-                            $userFields = $oDerivation->getUsersFullNameFromArray($arrayUsers);
-                            foreach ($userFields as $row) {
-                                $this->addUserDrive($row['USR_EMAIL']);
-                            }
-                        }
-                        break;
-                    default:
-                        if (isset($aTask["USR_UID"]) && !empty($aTask["USR_UID"])) {
-                            $aUser = $oUser->load($aTask["USR_UID"]);
-                            $this->addUserDrive($aUser["USR_EMAIL"]);
-                        }
-                        break;
+                foreach ($data as $dataUser) {
+                    $this->addUserEmail($dataUser["USR_EMAIL"]);
                 }
             }
         } catch (Exception $exception) {
@@ -306,8 +255,8 @@ class AppDocumentDrive
             if ($this->getStatusDrive()) {
                 $driveDownload = @unserialize($data['APP_DOC_DRIVE_DOWNLOAD']);
                 $urlDrive = $driveDownload !== false
-                    && is_array($driveDownload)
-                    && array_key_exists($typeDoc, $driveDownload) ?
+                && is_array($driveDownload)
+                && array_key_exists($typeDoc, $driveDownload) ?
                     $driveDownload[$typeDoc] : $urlDrive;
             }
 
@@ -465,9 +414,9 @@ class AppDocumentDrive
         }
     }
 
-    public function addUsersDocumentDrive ($appUid, $arrayTask, $arrayData )
+    public function addUsersDocumentDrive ($appUid)
     {
-        $this->getEmailUsersTask($arrayTask, $arrayData);
+        $this->getEmailUsersTask($appUid);
 
         $criteria = new Criteria( 'workflow' );
         $criteria->add( AppDocumentPeer::APP_UID, $appUid );
@@ -478,7 +427,14 @@ class AppDocumentDrive
         $appDoc = new AppDocument();
         while ($rs->next()) {
             $row = $rs->getRow();
-            $row['SYNC_PERMISSIONS'] = $this->usersDrive;
+            if (empty($row['SYNC_PERMISSIONS'])) {
+                $row['SYNC_PERMISSIONS'] =  $this->usersEmail;
+            } else {
+                $emails = explode('|', $row['SYNC_PERMISSIONS']);
+                foreach ($emails as $email) {
+                    $this->addUserEmail($email);
+                }
+            }
             $appDoc->update($row);
         }
     }
