@@ -199,7 +199,6 @@ class Bootstrap
         //self::registerClass("GroupUser", PATH_CLASSES . "class.groupUser.php");  -> this have conflicts with model/GroupUser.php
         self::registerClass("Groups", PATH_CLASSES . "class.groups.php");
         self::registerClass("JavaBridgePM", PATH_CLASSES . "class.javaBridgePM.php");
-        self::registerClass("Jrml", PATH_CLASSES . "class.jrml.php");
         self::registerClass("PMmemcached", PATH_CLASSES . "class.memcached.php");
         self::registerClass("multipleFilesBackup", PATH_CLASSES . "class.multipleFilesBackup.php");
         self::registerClass("NET", PATH_CLASSES . "class.net.php");
