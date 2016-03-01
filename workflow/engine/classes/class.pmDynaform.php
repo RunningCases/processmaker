@@ -437,6 +437,9 @@ class pmDynaform
                         $dv = array();
                         if (isset($this->fields["APP_DATA"][$json->name]))
                             $dv = $this->fields["APP_DATA"][$json->name];
+                        if (!is_array($dv)) {
+                            $dv = explode(",", $dv);
+                        }
                         foreach ($dv as $idv) {
                             foreach ($json->optionsSql as $os) {
                                 if ($os->value === $idv) {
