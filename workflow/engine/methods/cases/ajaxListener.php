@@ -200,7 +200,7 @@ class Ajax
                 } else {
                     $options[] = Array('text' => G::LoadTranslation('ID_UNPAUSE'), 'fn' => 'unpauseCase');
                 }
-                if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) {
+                if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1 || $RBAC->userCanAccess('PM_SUPERVISOR') == 1) {
                     $options[] = Array('text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign');
                 }
                 break;
