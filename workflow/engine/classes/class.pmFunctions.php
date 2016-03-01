@@ -28,7 +28,7 @@
 //
 // License: LGPL, see LICENSE
 ////////////////////////////////////////////////////
-
+use ProcessMaker\Util\ElementTranslation;
 
 if (! class_exists( 'PMScript' )) {
     G::LoadClass( 'pmScript' );
@@ -3112,3 +3112,61 @@ function PMFGetGroupName($grpUid, $lang = SYS_LANG) {
     return PMFGeti18nText($grpUid, 'GRP_TITLE', $lang);
 }
 
+/**
+ * @method
+ * The identifier of the element found using the text.
+ * @name PMFGetUidFromText
+ * @label PMF Get Uid From Text
+ * @param string | $text | Text
+ * @param string | $category | Category
+ * @param string | $proUid | ProcessUid
+ * @param string | $lang | Languaje
+ * @return array
+ */
+function PMFGetUidFromText($text, $category, $proUid = null, $lang = SYS_LANG)
+{
+    $obj = new ElementTranslation();
+    $uids = $obj->getUidFromTextI18n($text, $category, $proUid, $lang);
+    return $uids;
+}
+
+/**
+ * @method
+ * Get UID of a Dynaform
+ * @name PMFGetDynaformUID
+ * @label PMF Get Dynafrom UID
+ * @param string | $dynaformName | Name Dynaform | Is the name of a Dynaform
+ * @param string | $proUid = null | Process ID | The process identifier to search the dynaform name. If not specified the current process is used.
+ * @return  array | $result | array
+ */
+function PMFGetDynaformUID($dynaformName, $proUid = null)
+{
+    return PMFGetUidFromText($dynaformName, 'DYN_TITLE', $proUid);
+}
+
+/**
+ * @method
+ * Get UID of a Group
+ * @name PMFGetGroupUID
+ * @label PMF Get Group UID
+ * @param string | $groupName | Name Group | Is the name of a Group
+ * @return  array | $result | array
+ */
+function PMFGetGroupUID($groupName)
+{
+    return PMFGetUidFromText($groupName, 'GRP_TITLE');
+}
+
+/**
+ * @method
+ * Get UID of a Task
+ * @name PMFGetTaskUID
+ * @label PMF Get Task UID
+ * @param string | $taskName | Name Task | Is the name of a Task
+ * @param string | $proUid  = null| Process ID | The process identifier to search the dynaform name. If not specified the current process is used.
+ * @return  array | $result | array
+ */
+function PMFGetTaskUID($taskName, $proUid = null)
+{
+    return PMFGetUidFromText($taskName, 'TAS_TITLE', $proUid);
+}
