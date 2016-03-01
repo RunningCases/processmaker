@@ -1289,9 +1289,107 @@ importProcessExistProcess = function()
   w.show();
 };
 
-//importProcess = function(){
-//  window.location = 'processes_Import';
-//}
+changeOrKeepUids = function()
+{
+    var processFileType      = importProcessGlobal.processFileType;
+    var proFileName          = importProcessGlobal.proFileName;
+    var w = new Ext.Window({
+        id          : 'changeOrKeepUidsWindow',
+        title       : _('ID_IMPORT_PROCESS'),
+        header      : false,
+        width       : 460,
+        height      : 230,
+        autoHeight  : true,
+        modal       : true,
+        autoScroll  : false,
+        maximizable : false,
+        resizable   : false,
+        items : [
+            new Ext.form.FormPanel({
+                title      : _('ID_LAN_UPLOAD_TITLE'),
+                header     : false,
+                id         : 'formUploader',
+                fileUpload : false,
+                width      : 440,
+                frame      : true,
+                autoHeight : true,
+                bodyStyle  : 'padding: 10px 10px 0 10px;',
+                labelWidth : 50,
+                defaults : {
+                    anchor     : '90%',
+                    allowBlank : false,
+                    msgTarget  : 'side'
+                },
+                items : [
+                    {
+                        xtype   : 'box',
+                        autoEl : {
+                            tag  : 'div',
+                            html : '<div ><img src="/images/ext/default/window/icon-warning.gif" style="display:inline;float:left;margin-top:20px; margin-right:20px;" /><div style="float:left;display:inline;width:300px;margin-left:5px;"></div><div style="width:300px;" >&nbsp</div></div>'
+                        }
+                    },
+                    {
+                        items: [
+                            {
+                                id: "newUids",
+                                xtype: "radio",
+                                name:  "IMPORT_OPTION",
+                                inputValue: "new",
+                                boxLabel:   _("ID_CREATE_NEW_PROCESS_UID"),
+                                tabIndex:   3
+                            }
+                        ]
+                    },
+                    {
+                        items: [
+                            {
+                                id: "keepUids",
+                                xtype: "radio",
+                                name:  "IMPORT_OPTION",
+                                inputValue: "keep",
+                                boxLabel:   _("ID_KEEP_PROCESS_UID"),
+                                tabIndex:   1,
+                                checked:    "checked"
+                            }
+                        ]
+                    }, {
+                        xtype : 'hidden',
+                        name  : 'PRO_FILENAME',
+                        value : proFileName
+                    }, {
+                        name  : 'processFileType',
+                        xtype : 'hidden',
+                        value : processFileType
+                    }, {
+                        xtype  : 'spacer',
+                        height : 10
+                    }
+                ],
+                buttons:[
+                    {
+                        text    : _('ID_SAVE'),
+                        handler : function() {
+                            var opt1 = Ext.getCmp('newUids').getValue();
+                            var opt2 = Ext.getCmp('keepUids').getValue();
+                            if(opt1) {
+                                Ext.getCmp('generateUid').setValue('generate');
+                            } else {
+                                Ext.getCmp('generateUid').setValue('keep');
+                            }
+                            Ext.getCmp('buttonUpload').el.dom.click();
+                        }
+                    }, {
+                        text : _('ID_CANCEL'),
+                        handler : function(){
+                            w.close();
+                        }
+                    }
+                ]
+            })
+        ]
+    });
+    w.show();
+};
 
 importProcess = function()
 {
@@ -1347,9 +1445,15 @@ importProcess = function()
               buttonCfg : {
                 iconCls : 'upload-icon'
               }
+            }, {
+              id: 'generateUid',
+              name: 'generateUid',
+              xtype: 'hidden',
+              value: ''
             }
           ],
           buttons : [{
+              id: 'buttonUpload',
               text    : _('ID_UPLOAD'),
               handler : function(){
                   var arrayMatch = [];
@@ -1388,6 +1492,13 @@ importProcess = function()
 
                                           if (resp_.catchMessage == "") {
                                               if (resp_.ExistProcessInDatabase == "0") {
+                                                  if(resp_.notExistProcessInDatabase == "1") {
+                                                      importProcessGlobal.sNewProUid        = resp_.sNewProUid;
+                                                      importProcessGlobal.proFileName       = resp_.proFileName;
+                                                      importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
+                                                      changeOrKeepUids();
+                                                      return;
+                                                  }
                                                   if (resp_.ExistGroupsInDatabase == "0") {
                                                       var sNewProUid = resp_.sNewProUid;
 
@@ -1413,6 +1524,9 @@ importProcess = function()
                                               }
                                           } else {
                                               w.close();
+                                              if (Ext.getCmp('changeOrKeepUidsWindow')) {
+                                                  Ext.getCmp('changeOrKeepUidsWindow').close();
+                                              }
 
                                               Ext.MessageBox.show({
                                                   title  : "",
@@ -1655,6 +1769,8 @@ function openWindowIfIE(pathDesigner) {
             Ext.getCmp('importProcessExistProcessWindow').close();
         if (Ext.getCmp('windowBpmnOptionWindow'))
             Ext.getCmp('windowBpmnOptionWindow').close();
+        if (Ext.getCmp('changeOrKeepUidsWindow'))
+            Ext.getCmp('changeOrKeepUidsWindow').close();
         processesGrid.store.reload();
         if (winDesigner && winDesigner.closed === false) {
             if (winDesigner.window.PMDesigner.project.isDirty()) {
