@@ -17,6 +17,7 @@ class pmDynaform
     public $credentials = null;
     public $lang = SYS_LANG;
     public $langs = null;
+    public $displayMode = null;
     public $onPropertyRead = "onPropertyReadFormInstance";
 
     public function __construct($fields = array())
@@ -534,6 +535,9 @@ class pmDynaform
                 if (isset($this->fields["STEP_MODE"]) && $this->fields["STEP_MODE"] === "VIEW" && isset($json->mode)) {
                     $json->mode = "view";
                 }
+                if ($this->displayMode !== null && isset($json->mode)) {
+                    $json->mode = $this->displayMode;
+                }
                 if ($key === "type" && ($value === "form") && $this->records != null) {
                     foreach ($this->records as $ri) {
                         if ($json->id === $ri["DYN_UID"] && !isset($json->jsonUpdate)) {
@@ -673,6 +677,7 @@ class pmDynaform
     public function printView()
     {
         ob_clean();
+        $this->displayMode = "disabled";
         $json = G::json_decode($this->record["DYN_CONTENT"]);
         $this->jsonr($json);
         $javascrip = "" .
@@ -692,7 +697,6 @@ class pmDynaform
                 "var sysLang = '" . SYS_LANG . "';\n" .
                 "$(window).load(function () {\n" .
                 "    var data = jsondata;\n" .
-                "    data.items[0].mode = 'disabled';\n" .
                 "    window.project = new PMDynaform.core.Project({\n" .
                 "        data: data,\n" .
                 "        keys: {\n" .
@@ -702,6 +706,10 @@ class pmDynaform
                 "        },\n" .
                 "        token: credentials,\n" .
                 "        submitRest: false\n" .
+                "    });\n" .
+                "    $(document).find('form').find('button').on('click', function (e) {\n". 
+                "        e.preventDefault();\n" .
+                "        return false;\n". 
                 "    });\n" .
                 "    $(document).find('form').submit(function (e) {\n" .
                 "        e.preventDefault();\n" .
