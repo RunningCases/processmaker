@@ -73,8 +73,8 @@ if ($RBAC->userCanAccess('PM_SETUP') == 1) {
     if ($licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjBsZEJ6dnpJa3dTeWVLVT0=')) {
         $G_TMP_MENU->AddIdRawOption('STRATEGIC_DASHBOARD', '../strategicDashboard/dashboardList', ucfirst(G::LoadTranslation('ID_STRATEGIC_DASHBOARD')), '', '', 'settings');
     }
-    if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-        $G_TMP_MENU->AddIdRawOption('PMGMAIL', '../pmGmail/formPMGmail', ucfirst(G::LoadTranslation('ID_PMGMAIL')), '', '', 'settings');
+    if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09') || $licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
+        $G_TMP_MENU->AddIdRawOption('PMGMAIL', '../pmGmail/formPMGmail', ucfirst(G::LoadTranslation('ID_GOOGLEINTEGRATION')), '', '', 'settings');
     }
 
     /*----------------------------------********---------------------------------*/

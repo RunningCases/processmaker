@@ -3640,15 +3640,6 @@ class Cases
                 'APP_DOC_FILENAME' => 'char',
                 'APP_DOC_INDEX' => 'integer'
             );
-            /*----------------------------------********---------------------------------*/
-            $licensedFeatures = &PMLicensedFeatures::getSingleton();
-            $enablePMGmail = false;
-            if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-                G::LoadClass( "pmDrive" );
-                $pmDrive = new PMDrive();
-                $enablePMGmail = $pmDrive->getStatusService();
-            }
-            /*----------------------------------********---------------------------------*/
 
             while ($aRow = $oDataset->getRow()) {
                 $aAux = $oAppDocument->load($aRow['APP_DOC_UID'], $aRow['DOC_VERSION']);
@@ -3709,15 +3700,6 @@ class Cases
                     }
                 }
                 $aFields['COMMENT'] = $aFields['APP_DOC_COMMENT'];
-                /*----------------------------------********---------------------------------*/
-                //change donwload link - drive
-                $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
-                if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('INPUT',
-                        $driveDownload) && $enablePMGmail
-                ) {
-                    $aFields['DOWNLOAD_LINK'] = $driveDownload['INPUT'];
-                }
-                /*----------------------------------********---------------------------------*/
                 if (($aRow['DOC_VERSION'] == $lastVersion) || ($sAppDocuUID != "")) {
                     $aInputDocuments[] = $aFields;
                 }
@@ -3942,93 +3924,6 @@ class Cases
         $strPathName = PATH_DOCUMENT . G::getPathFromUID($applicationUid) . PATH_SEP;
         $strFileName = $appDocUid . "_" . $docVersion . "." . $extension;
 
-        /*----------------------------------********---------------------------------*/
-        $licensedFeatures = &PMLicensedFeatures::getSingleton();
-        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "pmDrive" );
-            $pmDrive = new PMDrive();
-            if ($pmDrive->getStatusService()) {
-                $app = new Application();
-                $user = new Users();
-                $dataUser = $user->load($userUid);
-                $pmDrive->setDriveUser($dataUser['USR_EMAIL']);
-
-                $appData = $app->Load($applicationUid);
-                if ($appData['APP_DRIVE_FOLDER_UID'] == null) {
-                    $process = new Process();
-                    $process->setProUid($appData['PRO_UID']);
-
-                    $result = $pmDrive->createFolder($process->getProTitle() . ' - ' . G::LoadTranslation("ID_CASE") . ' #' . $appData['APP_NUMBER'],
-                        $pmDrive->getFolderIdPMDrive($userUid));
-                    $appData['APP_DRIVE_FOLDER_UID'] = $result->id;
-                    $app->update($appData);
-                }
-
-                $result = $pmDrive->uploadFile('application/' . $extension, $fileTmpName, $file,
-                    $appData['APP_DRIVE_FOLDER_UID']);
-                $appDocument->setDriveDownload('INPUT', $result->webContentLink);
-                $fileIdDrive = $result->id;
-                $arrayField['DOC_VERSION'] = $docVersion;
-                $arrayField['APP_DOC_UID'] = $appDocUid;
-
-                $appDocument->update($arrayField);
-
-                //add permissions
-                $criteria = new Criteria('workflow');
-                $criteria->addSelectColumn(ApplicationPeer::PRO_UID);
-                $criteria->addSelectColumn(TaskUserPeer::TAS_UID);
-                $criteria->addSelectColumn(TaskUserPeer::USR_UID);
-                $criteria->addSelectColumn(TaskUserPeer::TU_RELATION);
-
-                $criteria->add(ApplicationPeer::APP_UID, $applicationUid);
-                $criteria->addJoin(ApplicationPeer::PRO_UID, TaskPeer::PRO_UID, Criteria::LEFT_JOIN);
-                $criteria->addJoin(TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN);
-
-                $dataset = ApplicationPeer::doSelectRS($criteria);
-                $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-                $userPermission = array();
-
-                while ($dataset->next()) {
-                    $row = $dataset->getRow();
-                    if ($row['TU_RELATION'] == 1) {
-                        //users
-                        $dataUser = $user->load($row['USR_UID']);
-                        if (array_search($dataUser['USR_EMAIL'], $userPermission) === false) {
-                            $objectPermissions = $this->getAllObjects($row['PRO_UID'], $applicationUid, $row['TAS_UID'],
-                                $row['USR_UID']);
-                            $userPermission[] = $dataUser['USR_EMAIL'];
-                        }
-                    } else {
-                        //Groups
-                        $criteria = new Criteria('workflow');
-                        $criteria->addSelectColumn(UsersPeer::USR_EMAIL);
-                        $criteria->addSelectColumn(UsersPeer::USR_UID);
-                        $criteria->add(GroupUserPeer::GRP_UID, $row['USR_UID']);
-                        $criteria->addJoin(GroupUserPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
-
-                        $oDataset = AppDelegationPeer::doSelectRS($criteria);
-                        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                        while ($oDataset->next()) {
-                            $aRow = $oDataset->getRow();
-                            if (array_search($aRow['USR_EMAIL'], $userPermission) === false) {
-                                $objectPermissions = $this->getAllObjects($row['PRO_UID'], $applicationUid,
-                                    $row['TAS_UID'], $aRow['USR_UID']);
-                                $userPermission[] = $aRow['USR_EMAIL'];
-                            }
-                        }
-                    }
-                }
-                $userPermission = array_unique($userPermission);
-
-                foreach ($userPermission as $key => $val) {
-                    $pmDrive->setPermission($appData['APP_DRIVE_FOLDER_UID'], $val, 'user', 'writer');
-                    $pmDrive->setPermission($fileIdDrive, $val);
-                }
-            }
-        }
-        /*----------------------------------********---------------------------------*/
-
         switch ($option) {
             case "xmlform":
                 G::uploadFile($fileTmpName, $strPathName, $strFileName);
@@ -4228,19 +4123,6 @@ class Cases
         $oListPaused = new ListPaused();
         $oListPaused->create($data);
         /*----------------------------------********---------------------------------*/
-
-        /*----------------------------------********---------------------------------*/
-        $licensedFeatures = &PMLicensedFeatures::getSingleton();
-        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "pmDrive" );
-            $pmDrive = new PMDrive();
-            $enablePMGmail = $pmDrive->getStatusService();
-            if (!empty($enablePMGmail) && $enablePMGmail == 1) {
-                $pmGmail = new \ProcessMaker\BusinessModel\Pmgmail();
-                $pmGmail->modifyMailToPauseCase($aData['APP_UID'], $aData['APP_DEL_INDEX']);
-            }
-        }
-        /*----------------------------------********---------------------------------*/
     }
 
     /*
@@ -4336,19 +4218,6 @@ class Cases
         $aData = array_merge($aFieldsDel, $aData);
         $oListPaused = new ListPaused();
         $oListPaused->remove($sApplicationUID, $iDelegation, $aData);
-        /*----------------------------------********---------------------------------*/
-
-        /*----------------------------------********---------------------------------*/
-        $licensedFeatures = &PMLicensedFeatures::getSingleton();
-        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "pmDrive" );
-            $pmDrive = new PMDrive();
-            $enablePMGmail = $pmDrive->getStatusService();
-            if (!empty($enablePMGmail) && $enablePMGmail == 1) {
-                $pmGmail = new \ProcessMaker\BusinessModel\Pmgmail();
-                $pmGmail->modifyMailToUnpauseCase($aData['APP_UID'], $aData['DEL_INDEX']);
-            }
-        }
         /*----------------------------------********---------------------------------*/
     }
 
@@ -4729,15 +4598,6 @@ class Cases
             'APP_DOC_FILENAME' => 'char', 'APP_DOC_INDEX' => 'integer'
         );
         $oUser = new Users();
-        /*----------------------------------********---------------------------------*/
-        $licensedFeatures = &PMLicensedFeatures::getSingleton();
-        $enablePMGmail = false;
-        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "pmDrive" );
-            $pmDrive = new PMDrive();
-            $enablePMGmail = $pmDrive->getStatusService();
-        }
-        /*----------------------------------********---------------------------------*/
         while ($aRow = $oDataset->getRow()) {
             $oCriteria2 = new Criteria('workflow');
             $oCriteria2->add(AppDelegationPeer::APP_UID, $sApplicationUID);
@@ -4798,15 +4658,6 @@ class Cases
                     }
                 }
             }
-            /*----------------------------------********---------------------------------*/
-            //change donwload link - drive
-            $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
-            if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('INPUT',
-                    $driveDownload) && $enablePMGmail
-            ) {
-                $aFields['DOWNLOAD_LINK'] = $driveDownload['INPUT'];
-            }
-            /*----------------------------------********---------------------------------*/
             if ($lastVersion == $aRow['DOC_VERSION']) {
                 //Show only last version
                 $aInputDocuments[] = $aFields;
@@ -4884,15 +4735,6 @@ class Cases
 
             $aFields['DOWNLOAD_LABEL'] = G::LoadTranslation('ID_DOWNLOAD');
             $aFields['DOWNLOAD_LINK'] = "cases_ShowDocument?a=" . $aRow['APP_DOC_UID'];
-            /*----------------------------------********---------------------------------*/
-            //change donwload link - drive
-            $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
-            if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('ATTACHED',
-                    $driveDownload) && $enablePMGmail
-            ) {
-                $aFields['DOWNLOAD_LINK'] = $driveDownload['ATTACHED'];
-            }
-            /*----------------------------------********---------------------------------*/
             if ($lastVersion == $aRow['DOC_VERSION']) {
                 //Show only last version
                 $aInputDocuments[] = $aFields;
@@ -4960,15 +4802,6 @@ class Cases
                     }
                 }
             }
-            /*----------------------------------********---------------------------------*/
-            //change donwload link - drive
-            $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
-            if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('INPUT',
-                    $driveDownload) && $enablePMGmail
-            ) {
-                $aFields['DOWNLOAD_LINK'] = $driveDownload['INPUT'];
-            }
-            /*----------------------------------********---------------------------------*/
             if ($lastVersion == $aRow['DOC_VERSION']) {
                 //Show only last version
                 $aInputDocuments[] = $aFields;
@@ -5076,15 +4909,6 @@ class Cases
             'APP_DOC_INDEX' => 'integer'
         );
         $oUser = new Users();
-        /*----------------------------------********---------------------------------*/
-        $licensedFeatures = &PMLicensedFeatures::getSingleton();
-        $enablePMGmail = false;
-        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "pmDrive" );
-            $pmDrive = new PMDrive();
-            $enablePMGmail = $pmDrive->getStatusService();
-        }
-        /*----------------------------------********---------------------------------*/
         while ($aRow = $oDataset->getRow()) {
             $oCriteria2 = new Criteria('workflow');
             $oCriteria2->add(AppDelegationPeer::APP_UID, $sApplicationUID);
@@ -5187,21 +5011,6 @@ class Cases
                     $firstDocLink = $fileDoc;
                     $firstDocLabel = $fileDocLabel;
                 }
-
-                /*----------------------------------********---------------------------------*/
-                //change donwload link - drive
-                $driveDownload = @unserialize($aAux['APP_DOC_DRIVE_DOWNLOAD']);
-                if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('OUTPUT_DOC',
-                        $driveDownload) && $enablePMGmail
-                ) {
-                    $fileDoc = $driveDownload['OUTPUT_DOC'];
-                }
-                if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('OUTPUT_PDF',
-                        $driveDownload) && $enablePMGmail
-                ) {
-                    $filePdf = $driveDownload['OUTPUT_PDF'];
-                }
-                /*----------------------------------********---------------------------------*/
 
                 $aFields = array(
                     'APP_DOC_UID' => $aAux['APP_DOC_UID'],

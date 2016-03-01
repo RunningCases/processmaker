@@ -107,7 +107,34 @@ if (! $sw_file_exists) {
         $res['message'] = $oAppDocument->Fields['APP_DOC_FILENAME'];
         print G::json_encode( $res );
     } else {
-        G::streamFile( $realPath, $bDownload, $oAppDocument->Fields['APP_DOC_FILENAME'] ); //download
+        $nameFile = $oAppDocument->Fields['APP_DOC_FILENAME'];
+        $licensedFeatures = &PMLicensedFeatures::getSingleton();
+        $downloadStatus = false;
+        if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
+            G::LoadClass( "AppDocumentDrive" );
+            $drive = new AppDocumentDrive();
+            if ($drive->getStatusDrive()) {
+                $fieldDrive = $oAppDocument->getAppDocDriveDownload();
+                $drive->loadUser($_SESSION['USER_LOGGED']);
+                $uidDrive = $drive->changeUrlDrive($oAppDocument->Fields, $oAppDocument->getAppDocType());
+                $fileContent = $drive->download($uidDrive);
+                if ($fileContent !== null) {
+                    $downloadStatus = true;
+                    header('Content-Description: File Transfer');
+                    header('Content-Disposition: attachment; filename='.$nameFile);
+                    header('Content-Transfer-Encoding: binary');
+                    header('Set-Cookie: fileLoading=true');
+                    echo $fileContent;
+                    exit();
+                }
+            }
+        }
+        if (!$downloadStatus) {
+            G::streamFile( $realPath, $bDownload, $nameFile ); //download
+        }
+
+
+
     }
 }
 

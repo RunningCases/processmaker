@@ -94,12 +94,13 @@ class PMDrive extends PMGoogleApi
      */
     public function listFolder($fileId)
     {
-        $this->setScope('https://www.googleapis.com/auth/drive');
-        $this->setScope('https://www.googleapis.com/auth/drive.file');
-        $this->setScope('https://www.googleapis.com/auth/drive.readonly');
-        $this->setScope('https://www.googleapis.com/auth/drive.metadata.readonly');
-        $this->setScope('https://www.googleapis.com/auth/drive.appdata');
-        $this->setScope('https://www.googleapis.com/auth/drive.metadata');
+        $this->setScope(static::DRIVE);
+        $this->setScope(static::DRIVE_FILE);
+        $this->setScope(static::DRIVE_READONLY);
+        $this->setScope(static::DRIVE_METADATA);
+        $this->setScope(static::DRIVE_METADATA_READONLY);
+        $this->setScope(static::DRIVE_APPDATA);
+        
         $service = $this->serviceDrive();
 
         try {
@@ -126,7 +127,7 @@ class PMDrive extends PMGoogleApi
      */
     public function createFolder($name, $parentId = null)
     {
-        $this->setScope('https://www.googleapis.com/auth/drive.file');
+        $this->setScope(static::DRIVE_FILE);
 
         $service = $this->serviceDrive();
 
@@ -159,12 +160,12 @@ class PMDrive extends PMGoogleApi
      */
     public function uploadFile($mime, $src, $name, $parentId = null)
     {
-        $this->setScope('https://www.googleapis.com/auth/drive.file');
+        $this->setScope(static::DRIVE_FILE);
 
         $service = $this->serviceDrive();
 
         $file = new Google_Service_Drive_DriveFile();
-        $file->setMimeType("*/*");
+        $file->setMimeType($mime);
         $file->setTitle($name);
 
         // Set the parent folder.
@@ -200,25 +201,24 @@ class PMDrive extends PMGoogleApi
      */
     public function downloadFile($fileId)
     {
-        $this->setScope('https://www.googleapis.com/auth/drive');
-        $this->setScope('https://www.googleapis.com/auth/drive.appdata');
-        $this->setScope('https://www.googleapis.com/auth/drive.apps.readonly');
-        $this->setScope('https://www.googleapis.com/auth/drive.file');
-        $this->setScope('https://www.googleapis.com/auth/drive.metadata');
-        $this->setScope('https://www.googleapis.com/auth/drive.metadata.readonly');
-        $this->setScope('https://www.googleapis.com/auth/drive.readonly');
+        $this->setScope(static::DRIVE);
+        $this->setScope(static::DRIVE_APPDATA);
+        $this->setScope(static::DRIVE_APPS_READONLY);
+        $this->setScope(static::DRIVE_FILE);
+        $this->setScope(static::DRIVE_METADATA);
+        $this->setScope(static::DRIVE_METADATA_READONLY);
+        $this->setScope(static::DRIVE_READONLY);
         $service = $this->serviceDrive();
+        $response = null;
 
         try {
             $file = $service->files->get($fileId);
-            $response = null;
-
             $downloadUrl = $file->getDownloadUrl();
             if ($downloadUrl) {
                 $request = new Google_Http_Request($downloadUrl, 'GET', null, null);
                 $httpRequest = $service->getClient()->getAuth()->authenticatedRequest($request);
                 if ($httpRequest->getResponseHttpCode() == 200) {
-                    $response =  $httpRequest->getResponseBody();
+                    $response = $httpRequest->getResponseBody();
                 } else {
                     error_log(G::LoadTranslation("ID_MSG_AJAX_FAILURE"));
                 }
@@ -242,10 +242,11 @@ class PMDrive extends PMGoogleApi
      */
     public function setPermission($fileId, $value, $type = 'user', $role = 'reader', $sendNotification = false)
     {
-        $this->setScope('https://www.googleapis.com/auth/drive');
-        $this->setScope('https://www.googleapis.com/auth/drive.file');
+        $this->setScope(static::DRIVE);
+        $this->setScope(static::DRIVE_FILE);
 
         $service = $this->serviceDrive();
+        $permission = null;
 
         $newPermission = new Google_Service_Drive_Permission();
         $newPermission->setValue($value);

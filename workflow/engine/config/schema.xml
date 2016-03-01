@@ -191,6 +191,18 @@
             <parameter name="Extra" value=""/>
         </vendor>
     </column>
+    <column name="SYNC_WITH_DRIVE" type="VARCHAR" size="32" required="true" default="UNSYNCHRONIZED"/>
+    <column name="SYNC_PERMISSIONS" type="LONGVARCHAR" required="false">
+        <vendor type="mysql">
+            <parameter name="Field" value="SYNC_PERMISSIONS"/>
+            <parameter name="Type" value="MEDIUMTEXT"/>
+            <parameter name="Null" value="YES"/>
+            <parameter name="Key" value=""/>
+            <parameter name="Default" value=""/>
+            <parameter name="Extra" value=""/>
+        </vendor>
+    </column>
+
     <validator column="APP_DOC_UID">
       <rule name="maxLength" value="32" message="Application Document UID can be no larger than ${value} in size"/>
       <rule name="required" message="Application Document UID is required."/>
@@ -221,6 +233,10 @@
     <validator column="APP_DOC_STATUS">
       <rule name="validValues" value="ACTIVE|DELETED" message="Please select a valid document status (ACTIVE|DELETED)."/>
       <rule name="required" message="Application Document Status is required."/>
+    </validator>
+    <validator column="SYNC_WITH_DRIVE">
+        <rule name="validValues" value="SYNCHRONIZED|UNSYNCHRONIZED|NO_EXIST_FILE_PM" message="Please select a valid type."/>
+        <rule name="required" message="Type is required."/>
     </validator>
 
     <index name="indexAppDocument">
@@ -5250,4 +5266,31 @@
       </vendor>
     </index>
   </table>
+
+    <table name="GMAIL_RELABELING">
+        <vendor type="mysql">
+        <parameter name="Name" value="GMAIL_RELABELING"/>
+          <parameter name="Engine" value="InnoDB" />
+          <parameter name="Version" value="10" />
+          <parameter name="Row_format" value="Dynamic" />
+          <parameter name="Data_free" value="0" />
+          <parameter name="Auto_increment" value="" />
+          <parameter name="Check_time" value="" />
+          <parameter name="Collation" value="utf8_general_ci" />
+          <parameter name="Checksum" value="" />
+          <parameter name="Create_options" value="" />
+          <parameter name="Comment" value="Task for label relabaling"/>
+        </vendor>
+        <column name="LABELING_UID" type="VARCHAR" size="32" required="true"  primaryKey="true"/>
+        <column name="CREATE_DATE" type="TIMESTAMP" required="true"/>
+        <column name="APP_UID" type="VARCHAR" size="32" required="true"  default=""/>
+        <column name="DEL_INDEX" type="INTEGER" required="true"   default="0"/>
+        <column name="CURRENT_LAST_INDEX" type="INTEGER" required="true"  default="0"/>
+        <column name="UNASSIGNED" type="INTEGER" required="true"  default="0"/>
+        <column name="STATUS" type="VARCHAR" size="32" required="true"  default="pending"/>
+        <column name="MSG_ERROR" type="LONGVARCHAR"/>
+        <index name="indexStatus">
+            <index-column name="STATUS"/>
+        </index>
+    </table>
 </database>

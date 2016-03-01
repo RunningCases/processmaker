@@ -188,11 +188,14 @@ class Pmgmail {
 
             $subject = "[PM] " .$proName. " (" . $index . ") Case: ". $appNumber;
 
+            //getting the default email server
+            $defaultEmail = $this->emailAccount();
+
             require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.wsBase.php");
             $ws = new \wsBase();
             $resultMail = $ws->sendMessage(
                 $app_uid,
-                'inbox.pm@processmaker.com', //From,
+                $defaultEmail, //From,
                 $mail,//To,
                 '',
                 '',

@@ -23,7 +23,8 @@ class Authentication
         // define options
         $optArray = array(
             CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => false
         );
         // apply those options
         curl_setopt_array($ch, $optArray);
@@ -33,7 +34,7 @@ class Authentication
         // Check if any error occurred
         if(curl_errno($ch))
         {
-            throw (new \Exception(\G::LoadTranslation( 'ID_TO_URL' )));
+            throw (new \Exception(curl_error($ch)));
         }
         $info = curl_getinfo($ch);
         curl_close($ch);
