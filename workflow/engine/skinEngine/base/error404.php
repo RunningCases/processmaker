@@ -84,8 +84,8 @@ if (isset($_GET["url"]) && $_GET["url"] != "") {
                 <!-- Page links -->
                 <ul id="textInfo">
                     <li>You might try retyping the URL and trying again.</li>
-                    <li>Or we could take you back to the <a href="<?php echo $urlHome; ?>">home page.</a></li>
-                    <li>Or you could start again from the <a href="<?php echo $urlLogin; ?>">login page.</a></li>
+                    <li>Or we could take you back to the <a href="<?php echo htmlspecialchars($urlHome); ?>">home page.</a></li>
+                    <li>Or you could start again from the <a href="<?php echo htmlspecialchars($urlLogin); ?>">login page.</a></li>
                 </ul>
                 <!-- End page links -->
             </div>
