@@ -1537,6 +1537,7 @@ class pmTablesProxy extends HttpProxyController
         $application->field_size = 32;
         $application->field_dyn = '';
         $application->field_key = 1;
+        $application->field_index = 1;
         $application->field_null = 0;
         $application->field_filter = false;
         $application->field_autoincrement = false;
