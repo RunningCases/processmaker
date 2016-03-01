@@ -421,27 +421,27 @@ Ext.onReady(function () {
   });
 
   var buttonProcess = new Ext.Action({
-    text: "Derivate",
+    text: _("ID_DERIVATED"),
     //iconCls: 'ICON_CASES_PAUSED',
     handler : function (){
-      Ext.Msg.confirm('Confirm Routing', 'Route cases per batch?',
+      Ext.Msg.confirm(_("ID_CONFIRM_ROUTING"), _("ID_ROUTE_BATCH_ROUTING"),
         function(btn, text){
-          if (btn=='yes'){
-              htmlMessage = "";
-              var selectedRow = Ext.getCmp(gridId).getSelectionModel().getSelections();
-              var maxLenght = selectedRow.length;
-              for (var i in selectedRow) {
-                rowGrid = selectedRow[i].data
-                for (fieldGrid in rowGrid){
-                  if(fieldGrid != 'APP_UID' && fieldGrid != 'APP_NUMBER' && fieldGrid != 'APP_TITLE' && fieldGrid != 'DEL_INDEX' ){
-                       fieldGridGral = fieldGrid;
-                       fieldGridGralVal = rowGrid[fieldGrid];
-                  }
-                }
-                if (selectedRow[i].data) {
-                    ajaxDerivationRequest(selectedRow[i].data["APP_UID"], selectedRow[i].data["DEL_INDEX"], maxLenght, selectedRow[i].data["APP_NUMBER"],fieldGridGral, fieldGridGralVal);
+          if (btn == 'yes') {
+            htmlMessage = "";
+            var selectedRow = Ext.getCmp(gridId).getSelectionModel().getSelections();
+            var maxLenght = selectedRow.length;
+            for (var i in selectedRow) {
+              rowGrid = selectedRow[i].data
+              for (fieldGrid in rowGrid) {
+                if (fieldGrid != 'APP_UID' && fieldGrid != 'APP_NUMBER' && fieldGrid != 'APP_TITLE' && fieldGrid != 'DEL_INDEX') {
+                  fieldGridGral = fieldGrid;
+                  fieldGridGralVal = rowGrid[fieldGrid];
                 }
               }
+              if (selectedRow[i].data) {
+                ajaxDerivationRequest(selectedRow[i].data["APP_UID"], selectedRow[i].data["DEL_INDEX"], maxLenght, selectedRow[i].data["APP_NUMBER"], fieldGridGral, fieldGridGralVal);
+              }
+            }
           }
          }
       );
@@ -1321,7 +1321,7 @@ function ajaxDerivationRequest(appUid, delIndex, maxLenght, appNumber, fieldGrid
 
       if (index == maxLenght) {
         Ext.MessageBox.show({
-          title: "Derivation Result",
+          title: _("ID_DERIVATION_RESULT"),
           msg: htmlMessage,
 
           fn: function (btn, text, opt) {
