@@ -183,18 +183,6 @@ try {
     }
     // Send notifications Mobile - End
 
-    // Set users drive - start
-    $licensedFeatures = &PMLicensedFeatures::getSingleton();
-    if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
-        G::LoadClass( "AppDocumentDrive" );
-        $drive = new AppDocumentDrive();
-        if ($drive->getStatusDrive()) {
-            $drive->addUserDrive($aUser['USR_EMAIL']);
-            $drive ->addUsersDocumentDrive($appFields['APP_UID'], $_POST['form']['TASKS'], $appFields['APP_DATA']);
-        }
-    }
-    // Set users drive - End
-
     // Events - Start
     $oEvent = new Event();
 
@@ -220,6 +208,21 @@ try {
         }
     }
     //Events - End
+
+    /*----------------------------------********---------------------------------*/
+    // Set users drive - start
+    $licensedFeatures = &PMLicensedFeatures::getSingleton();
+    if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
+        G::LoadClass("AppDocumentDrive");
+        $drive = new AppDocumentDrive();
+        if ($drive->getStatusDrive()) {
+            //add users email next task
+            $drive->addUsersDocumentDrive($appFields['APP_UID']);
+        }
+    }
+    // Set users drive - End
+    /*----------------------------------********---------------------------------*/
+
     $debuggerAvailable = true;
 
     if (isset( $_SESSION['user_experience'] )) {
