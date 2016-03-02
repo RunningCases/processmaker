@@ -1126,23 +1126,16 @@ class Cases
      * @return Fields
      */
 
-    public function removeCase($sAppUid)
+    public function removeCase($sAppUid, $deleteDelegation = true)
     {
         try {
             $this->getExecuteTriggerProcess($sAppUid, 'DELETED');
 
-            $oAppDelegation = new AppDelegation();
             $oAppDocument = new AppDocument();
 
-            //Delete the delegations of a application
-            $oCriteria2 = new Criteria('workflow');
-            $oCriteria2->add(AppDelegationPeer::APP_UID, $sAppUid);
-            $oDataset2 = AppDelegationPeer::doSelectRS($oCriteria2);
-            $oDataset2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $oDataset2->next();
-            while ($aRow2 = $oDataset2->getRow()) {
-                $oAppDelegation->remove($sAppUid, $aRow2['DEL_INDEX']);
-                $oDataset2->next();
+            if($deleteDelegation) {
+                //Delete the delegations of a application
+                $this->deleteDelegation($sAppUid);
             }
             //Delete the documents assigned to a application
             $oCriteria2 = new Criteria('workflow');
@@ -1237,6 +1230,9 @@ class Cases
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(ListParticipatedLastPeer::APP_UID, $sAppUid);
             ListParticipatedLastPeer::doDelete($oCriteria);
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListPausedPeer::APP_UID, $sAppUid);
+            ListPausedPeer::doDelete($oCriteria);
             /*----------------------------------********---------------------------------*/
             return $result;
         } catch (exception $e) {
@@ -7251,6 +7247,20 @@ class Cases
             $processList['message'] = G::LoadTranslation('ID_USER_PROCESS_NOT_START');
         }
         return $processList;
+    }
+
+    public function deleteDelegation($sAppUid)
+    {
+        $oAppDelegation = new AppDelegation();
+        $oCriteria2 = new Criteria('workflow');
+        $oCriteria2->add(AppDelegationPeer::APP_UID, $sAppUid);
+        $oDataset2 = AppDelegationPeer::doSelectRS($oCriteria2);
+        $oDataset2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $oDataset2->next();
+        while ($aRow2 = $oDataset2->getRow()) {
+            $oAppDelegation->remove($sAppUid, $aRow2['DEL_INDEX']);
+            $oDataset2->next();
+        }
     }
 
 }

@@ -80,6 +80,13 @@ $oHeadPublisher->assign("arrayMenuNewOptionPlugin", $arrayMenuNewOptionPlugin);
 $oHeadPublisher->assign("arrayContextMenuOptionPlugin", $arrayContextMenuOptionPlugin);
 $oHeadPublisher->assign('extJsViewState', $oHeadPublisher->getExtJsViewState());
 
+$deleteCasesFlag = false;
+global $RBAC;
+if($RBAC->userCanAccess('DELETE_PROCESS_CASES') === 1) {
+    $deleteCasesFlag = true;
+}
+$oHeadPublisher->assign('deleteCasesFlag', $deleteCasesFlag);
+
 $oPluginRegistry = & PMPluginRegistry::getSingleton();
 $callBackFile = $oPluginRegistry->getImportProcessCallback();
 $file = false; 

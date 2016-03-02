@@ -361,6 +361,12 @@ Ext.onReady(function(){
           importProcess();
         }
       },{
+        id: 'deleteCasesId',
+        text: _('ID_DELETE_CASES'),
+        iconCls: "button_menu_ext ss_sprite ss_cross",
+        handler: deleteCases,
+        hidden: true
+      },{
         xtype: 'tbfill'
       },{
         xtype: 'tbseparator'
@@ -428,6 +434,10 @@ Ext.onReady(function(){
       }
     }
   });
+
+  if(deleteCasesFlag) {
+      Ext.getCmp("deleteCasesId").show();
+  }
 
   processesGrid.store.load({params: {"function": "languagesList", "start": 0, "limit": 25}});
   processesGrid.addListener('rowcontextmenu', onMessageContextMenu,this);
@@ -822,6 +832,76 @@ deleteProcess = function(){
       buttons: Ext.MessageBox.OK
     });
   }
+}
+
+var deleteCases = function(){
+    var rows = processesGrid.getSelectionModel().getSelections(),
+        totalCases = 0,
+        ids = Array(),
+        PRO_UIDS,
+        i;
+    if( rows.length > 0 ) {
+        for(i=0; i<rows.length; i++){
+            var numCases = rows[i].get('CASES_COUNT');
+            if(numCases != 0) {
+                totalCases = totalCases + parseInt(numCases);
+            }
+        }
+
+        for(i=0; i<rows.length; i++) {
+            ids[i] = rows[i].get('PRO_UID');
+        }
+
+        PRO_UIDS = ids.join(',');
+
+        Ext.Msg.confirm(
+            _('ID_CONFIRM'),
+            _('ID_DELETE_PROCESS_CASES')+' '+totalCases+' '+_('CASES'),
+            function(btn, text){
+                if ( btn == 'yes' ){
+                    Ext.MessageBox.show({ msg: _('ID_DELETING_ELEMENTS'), wait:true,waitConfig: {interval:200} });
+                    Ext.Ajax.request({
+                        timeout: 300000,
+                        url: 'processes_DeleteCases',
+                        success: function(response) {
+                            Ext.MessageBox.hide();
+                            processesGrid.store.reload();
+                            result = Ext.util.JSON.decode(response.responseText);
+
+                            if(result){
+                                if(!result.status){
+                                    Ext.MessageBox.show({
+                                        title: _('ID_ERROR'),
+                                        msg: result.msg,
+                                        buttons: Ext.MessageBox.OK,
+                                        icon: Ext.MessageBox.ERROR
+                                    });
+                                }
+                            } else {
+                                Ext.MessageBox.show({
+                                    title: _('ID_ERROR'),
+                                    msg: response.responseText,
+                                    buttons: Ext.MessageBox.OK,
+                                    icon: Ext.MessageBox.ERROR
+                                });
+                            }
+                        },
+                        params: {PRO_UIDS:PRO_UIDS}
+                    });
+                }
+            }
+        );
+    } else {
+        Ext.Msg.show({
+            title: _("ID_INFORMATION"),
+            msg: _('ID_NO_SELECTION_WARNING'),
+            buttons: Ext.Msg.INFO,
+            fn: function(){},
+            animEl: 'elId',
+            icon: Ext.MessageBox.INFO,
+            buttons: Ext.MessageBox.OK
+        });
+    }
 }
 
 function exportProcess() {
