@@ -67,7 +67,7 @@ class Ajax
                 $result->msg = $res['message'];
             } else {
                 $result->success = true;
-                $result->msg = 'Label ' . $id . ' saved Successfully!';
+                $result->msg = 'Label ' . htmlspecialchars($id) . ' saved Successfully!';
             }
         } catch (Exception $e) {
             $result->success = false;
