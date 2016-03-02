@@ -11,6 +11,8 @@ if ($RBAC->userCanAccess( 'PM_EDITPERSONALINFO' ) == 1) { //he has permitions fo
 } else { //he has not permitions for edit his profile, so just view mode will be displayed
     $canEdit = true;
 }
+$canEditCalendar = $RBAC->userCanAccess('PM_EDITPERSONALINFO') == 1 &&
+        $RBAC->userCanAccess('PM_EDITPERSONALINFO_CALENDAR') == 1;
 
 //calculating the max upload file size;
 $POST_MAX_SIZE = ini_get( 'post_max_size' );
@@ -43,6 +45,7 @@ $oHeadPublisher->assign( 'USR_UID', $aFields['USR_UID'] );
 $oHeadPublisher->assign( 'infoMode', true );
 $oHeadPublisher->assign( 'EDITPROFILE', 1);
 $oHeadPublisher->assign( 'canEdit', $canEdit );
+$oHeadPublisher->assign('canEditCalendar', $canEditCalendar);
 $oHeadPublisher->assign( 'MAX_FILES_SIZE', ' (' . $UPLOAD_MAX_SIZE . ') ' );
 $oHeadPublisher->assign( 'MODE', '' );
 $oHeadPublisher->assign('SYSTEM_TIME_ZONE', $arraySystemConfiguration['time_zone']);
