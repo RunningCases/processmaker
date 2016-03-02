@@ -75,8 +75,8 @@ class Designer extends Controller
         }
         /*----------------------------------********---------------------------------*/
 
-        $this->setVar('prj_uid', $proUid);
-        $this->setVar('app_uid', $appUid);
+        $this->setVar('prj_uid', htmlspecialchars($proUid));
+        $this->setVar('app_uid', htmlspecialchars($appUid));
         $this->setVar('consolidated', $consolidated);
         $this->setVar('enterprise', $enterprise);
         $this->setVar('prj_readonly', $proReadOnly);

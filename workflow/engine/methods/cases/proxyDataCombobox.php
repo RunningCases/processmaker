@@ -10,7 +10,7 @@ $proUid    = isset($_POST["proUid"])? $_POST["proUid"] : "";
 $fieldName = isset($_POST["fieldName"])? $_POST["fieldName"] : "";
 
 $filename = $proUid . PATH_SEP . $dynUid . ".xml";
-
+var_dump($filename);
 $G_FORM = new xmlform();
 $G_FORM->home = PATH_DYNAFORM;
 $G_FORM->parseFile($filename, SYS_LANG, true);
