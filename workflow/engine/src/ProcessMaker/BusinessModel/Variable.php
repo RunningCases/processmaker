@@ -717,44 +717,85 @@ class Variable
             \G::LoadClass('pmDynaform');
             $pmDynaform = new \pmDynaform();
             $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $variableName);
-            $dbConnection = "workflow";
-            if ($field !== null && !empty($field->dbConnection)) {
-                $dbConnection = $field->dbConnection;
-            }
-            $variableSql = $field !== null ? $field->sql : "";
 
             //Get data
-            $_SESSION["PROCESS"] = $processUid;
+            $filter = str_replace('\'', '\'\'', (isset($arrayVariable['filter']))? $arrayVariable['filter'] : '');
+            $start  = (isset($arrayVariable['start']))? $arrayVariable['start'] : 0;
+            $limit  = (isset($arrayVariable['limit']))? $arrayVariable['limit'] : '';
 
-            $cnn = \Propel::getConnection($dbConnection);
-            $stmt = $cnn->createStatement();
+            switch (($field !== null && isset($field->datasource))? $field->datasource : 'database') {
+                case 'dataVariable':
+                    if (!isset($arrayVariable['app_uid'])) {
+                        return [];
+                    }
 
-            $replaceFields = G::replaceDataField($variableSql, $arrayVariable);
+                    $applicationUid = $arrayVariable['app_uid'];
 
-            $filter = "";
-            if (isset($arrayVariable["filter"])) {
-                $filter = $arrayVariable["filter"];
-            }
-            $start = 0;
-            if (isset($arrayVariable["start"])) {
-                $start = $arrayVariable["start"];
-            }
-            $limit = "";
-            if (isset($arrayVariable["limit"])) {
-                $limit = $arrayVariable["limit"];
-            }
-            $parser = new \PHPSQLParser($replaceFields);
-            $filter = str_replace("'", "''", $filter);
-            $replaceFields = $this->queryModified($parser->parsed, $filter, "*searchtype*", $start, $limit, $dbConnection);
-            $rs = $stmt->executeQuery($replaceFields, \ResultSet::FETCHMODE_NUM);
+                    $case = new \ProcessMaker\BusinessModel\Cases();
 
-            while ($rs->next()) {
-                $row = $rs->getRow();
+                    $arrayApplicationData = $case->getApplicationRecordByPk(
+                        $applicationUid, ['$applicationUid' => 'app_uid']
+                    );
 
-                $arrayRecord[] = array(
-                    strtolower("VALUE") => $row[0],
-                    strtolower("TEXT") => isset($row[1]) ? $row[1] : $row[0]
-                );
+                    $case = new \Cases();
+
+                    $arrayApplicationData['APP_DATA'] = $case->unserializeData($arrayApplicationData['APP_DATA']);
+
+                    $dataVariable = (preg_match('/^\s*@.(.+)\s*$/', $field->dataVariable, $arrayMatch))?
+                        $arrayMatch[1] : $field->dataVariable;
+
+                    if (isset($arrayApplicationData['APP_DATA'][$dataVariable]) &&
+                        is_array($arrayApplicationData['APP_DATA'][$dataVariable]) &&
+                        !empty($arrayApplicationData['APP_DATA'][$dataVariable])
+                    ) {
+                        foreach ($arrayApplicationData['APP_DATA'][$dataVariable] as $row) {
+                            $value = $row[0];
+                            $text  = (isset($row[1]))? $row[1] : $row[0];
+
+                            if ($filter !== '') {
+                                if (preg_match('/^.*' . $filter . '.*$/i', $text)) {
+                                    $arrayRecord[] = [strtolower('VALUE') => $value, strtolower('TEXT')  => $text];
+                                }
+                            } else {
+                                $arrayRecord[] = [strtolower('VALUE') => $value, strtolower('TEXT')  => $text];
+                            }
+                        }
+
+                        $arrayRecord = array_slice(
+                            $arrayRecord,
+                            (int)($start),
+                            ($limit !== '')? (int)($limit) : null
+                        );
+                    }
+                    break;
+                default:
+                    //database
+                    $dbConnection = ($field !== null && !empty($field->dbConnection))? $field->dbConnection : 'workflow';
+                    $variableSql  = ($field !== null)? $field->sql : '';
+
+                    $_SESSION['PROCESS'] = $processUid;
+
+                    $cnn = \Propel::getConnection($dbConnection);
+                    $stmt = $cnn->createStatement();
+
+                    $replaceFields = \G::replaceDataField($variableSql, $arrayVariable);
+
+                    $parser = new \PHPSQLParser($replaceFields);
+
+                    $replaceFields = $this->queryModified(
+                        $parser->parsed, $filter, '*searchtype*', $start, $limit, $dbConnection
+                    );
+                    $rs = $stmt->executeQuery($replaceFields, \ResultSet::FETCHMODE_NUM);
+
+                    while ($rs->next()) {
+                        $row = $rs->getRow();
+
+                        $value = $row[0];
+                        $text  = (isset($row[1]))? $row[1] : $row[0];
+
+                        $arrayRecord[] = [strtolower('VALUE') => $value, strtolower('TEXT')  => $text];
+                    }
+                    break;
             }
 
             //Return

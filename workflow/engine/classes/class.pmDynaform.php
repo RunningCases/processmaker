@@ -176,22 +176,47 @@ class pmDynaform
                     if (!isset($json->sql))
                         $json->sql = "";
                     $json->optionsSql = array();
-                    if ($json->dbConnection !== "" && $json->dbConnection !== "none" && $json->sql !== "") {
-                        try {
-                            $cnn = Propel::getConnection($json->dbConnection);
-                            $stmt = $cnn->createStatement();
-                            $sql = G::replaceDataField($json->sql, $this->getValuesDependentFields($json));
-                            $rs = $stmt->executeQuery($sql, \ResultSet::FETCHMODE_NUM);
-                            while ($rs->next()) {
-                                $row = $rs->getRow();
-                                $option = new stdClass();
-                                $option->value = $row[0];
-                                $option->label = isset($row[1]) ? $row[1] : $row[0];
-                                array_push($json->optionsSql, $option);
+
+                    switch ((isset($json->datasource))? $json->datasource : 'database') {
+                        case 'dataVariable':
+                            $dataVariable = (preg_match('/^\s*@.(.+)\s*$/', $json->dataVariable, $arrayMatch))?
+                                $arrayMatch[1] : $json->dataVariable;
+
+                            if (isset($this->fields['APP_DATA'][$dataVariable]) &&
+                                is_array($this->fields['APP_DATA'][$dataVariable]) &&
+                                !empty($this->fields['APP_DATA'][$dataVariable])
+                            ) {
+                                foreach ($this->fields['APP_DATA'][$dataVariable] as $row) {
+                                    $option = new stdClass();
+                                    $option->value = $row[0];
+                                    $option->label = (isset($row[1]))? $row[1] : $row[0];
+
+                                    $json->optionsSql[] = $option;
+                                }
                             }
-                        } catch (Exception $e) {
-                            
-                        }
+                            break;
+                        default:
+                            //database
+                            if ($json->dbConnection !== '' && $json->dbConnection !== 'none' && $json->sql !== '') {
+                                try {
+                                    $cnn = Propel::getConnection($json->dbConnection);
+                                    $stmt = $cnn->createStatement();
+                                    $sql = G::replaceDataField($json->sql, $this->getValuesDependentFields($json));
+                                    $rs = $stmt->executeQuery($sql, ResultSet::FETCHMODE_NUM);
+
+                                    while ($rs->next()) {
+                                        $row = $rs->getRow();
+
+                                        $option = new stdClass();
+                                        $option->value = $row[0];
+                                        $option->label = (isset($row[1]))? $row[1] : $row[0];
+
+                                        $json->optionsSql[] = $option;
+                                    }
+                                } catch (Exception $e) {
+                                }
+                            }
+                            break;
                     }
                 }
                 //data
@@ -565,7 +590,7 @@ class pmDynaform
                         $data[$json->variable === "" ? $json->id : $json->variable] = $row[0];
                     }
                 } catch (Exception $e) {
-                    
+
                 }
             }
         }
@@ -688,9 +713,9 @@ class pmDynaform
                 "        token: credentials,\n" .
                 "        submitRest: false\n" .
                 "    });\n" .
-                "    $(document).find('form').find('button').on('click', function (e) {\n". 
+                "    $(document).find('form').find('button').on('click', function (e) {\n".
                 "        e.preventDefault();\n" .
-                "        return false;\n". 
+                "        return false;\n".
                 "    });\n" .
                 "    $(document).find('form').submit(function (e) {\n" .
                 "        e.preventDefault();\n" .
