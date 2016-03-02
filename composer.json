@@ -32,7 +32,8 @@
         "colosa/pmUI": "3.0.1.8-dev",
         "colosa/MichelangeloFE": "3.0.1.8-dev",
         "colosa/pmdynaform": "3.0.1.8-dev",
-        "google/apiclient": "1.1.6"
+        "google/apiclient": "1.1.6",
+        "dapphp/securimage": "^3.6"
     },
     "require-dev": {
         "guzzle/guzzle": "~3.1.1",
