@@ -9,23 +9,42 @@ $urlLogin = $http . "://" . $host . "/sys/en/neoclassic/login/login";
 $urlHome =  $urlLogin;
 
 if (isset($_GET["url"]) && $_GET["url"] != "") {
+
     $url = urldecode($_GET["url"]);
     $url = explode("/", $url);
 
     $sysSys = "";
     $sysLang = "";
     $sysSkin = "";
-
+    
     if (isset($url[1]) && preg_match("/^sys(.+)$/", $url[1], $match)) {
         $sysSys = $match[1];
+
+        // Check if sys path exists
+        $checkDir = PATH_DATA."sites/".$sysSys;
+        if(!is_dir($checkDir)) { 
+            $sysSys = '';
+        }
     }
 
+    
     if (isset($url[2])) {
         $sysLang = $url[2];
+        
+        if($sysLang != 'en') { 
+            var_dump($sysLang);
+        }
     }
 
     if (isset($url[3])) {
         $sysSkin = $url[3];
+        
+        // Check if sys path exists
+        $checkDir = PATH_SKIN_ENGINE.$sysSkin;
+        if(!is_dir($checkDir)) { 
+            $sysSkin = '';
+        }
+
     }
 
     if ($sysSys != "" && $sysLang != "" && $sysSkin != "") {
