@@ -30,10 +30,6 @@ if (isset($_GET["url"]) && $_GET["url"] != "") {
     
     if (isset($url[2])) {
         $sysLang = $url[2];
-        
-        if($sysLang != 'en') { 
-            var_dump($sysLang);
-        }
     }
 
     if (isset($url[3])) {
@@ -44,7 +40,6 @@ if (isset($_GET["url"]) && $_GET["url"] != "") {
         if(!is_dir($checkDir)) { 
             $sysSkin = '';
         }
-
     }
 
     if ($sysSys != "" && $sysLang != "" && $sysSkin != "") {

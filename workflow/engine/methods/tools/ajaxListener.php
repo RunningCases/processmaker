@@ -71,7 +71,7 @@ class Ajax
             }
         } catch (Exception $e) {
             $result->success = false;
-            $result->msg = $e->getMessage();
+            $result->msg = htmlspecialchars($e->getMessage());
         }
         print G::json_encode($result);
     }
@@ -93,7 +93,7 @@ class Ajax
             $result->msg = 'Deleted Successfully!';
         } catch (Exception $e) {
             $result->success = false;
-            $result->msg = $e->getMessage();
+            $result->msg = htmlspecialchars($e->getMessage());
         }
         print G::json_encode($result);
     }
@@ -106,7 +106,7 @@ class Ajax
             $result['success'] = true;
         } catch (Exception $e) {
             $result->success = false;
-            $result->msg = $e->getMessage();
+            $result->msg = htmlspecialchars($e->getMessage());
         }
         print G::json_encode($result);
     }
