@@ -3213,3 +3213,20 @@ function PMFGetTaskUID($taskName, $proUid = null)
 {
     return PMFGetUidFromText($taskName, 'TAS_TITLE', $proUid);
 }
+
+/**
+ * @method
+ * Get Group Users
+ * @name PMFGetGroupUsers
+ * @label PMF Group Users
+ * @param string | $GroupUID | Is UID of Group
+ * @return  array | $result | array
+ */
+function PMFGetGroupUsers($GroupUID)
+{
+    G::LoadClass('groups');
+    $groups = new Groups();
+    $usersGroup = $groups->getUsersOfGroup($GroupUID, 'ALL');
+    return $usersGroup;
+
+}
