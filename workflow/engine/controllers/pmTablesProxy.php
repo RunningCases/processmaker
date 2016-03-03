@@ -885,10 +885,22 @@ class pmTablesProxy extends HttpProxyController
             $filename = $PUBLIC_ROOT_PATH . $filenameOnly;
             $fp = fopen( $filename, "wb" );
 
+            $swColumns = true;
             foreach ($rows as $keyCol => $cols) {
                 $SDATA = "";
-                $cnt = count( $cols );
+                $header = "";
+                $cnt = $cntC = count( $cols );
                 foreach ($cols as $key => $val) {
+                    if($swColumns){
+                        $header .= $key;
+                        if (-- $cntC > 0) {
+                           $header .= $sDelimiter;
+                        } else {
+                            $header .= "\n";
+                            $bytesSaved += fwrite( $fp, $header );
+                            $swColumns = false;
+                        }
+                    }
                     $SDATA .= addslashes($val);
                     if (-- $cnt > 0) {
                         $SDATA .= $sDelimiter;
