@@ -1964,7 +1964,6 @@ class workspaceTools
 
             foreach ($arrayTable as $value) {
                 $tableName = $value . "Peer";
-
                 $list = new $tableName();
                 $list->doDeleteAll();
             }
@@ -1985,114 +1984,403 @@ class workspaceTools
             BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
         }
 
-        $appCache = new AppCacheView();
-        $users = new Users();
-        $case = new Cases();
+        $this->regenerateListCompleted();
+        $this->regenerateListCanceled();
+        $this->regenerateListMyInbox();
+        $this->regenerateListInbox();
+        $this->regenerateListParticipatedHistory();
+        $this->regenerateListParticipatedLast();
+        $this->regenerateListPaused();
+        // ADD LISTS COUNTS
+        $this->migrateCounters();
 
-        //Select data CANCELLED
-        $canCriteria = $appCache->getSelAllColumns();
-        $canCriteria->add(AppCacheViewPeer::APP_STATUS, "CANCELLED", CRITERIA::EQUAL);
-        $canCriteria->add(AppCacheViewPeer::DEL_LAST_INDEX, "1", CRITERIA::EQUAL);
-        $rsCriteria = AppCacheViewPeer::doSelectRS($canCriteria);
-        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        //Insert data LIST_CANCELED
-        while ($rsCriteria->next()) {
-              $row = $rsCriteria->getRow();
-              $listCanceled = new ListCanceled();
-              $listCanceled->remove($row["APP_UID"]);
-              $listCanceled->setDeleted(false);
-              $listCanceled->create($row);
+        if (!$flagReinsert) {
+            $this->listFirstExecution("insert");
         }
+
+        //Return
+        return true;
+    }
+
+    public function regenerateListCanceled()
+    {
+        $this->initPropel(true);
+        $query = 'INSERT INTO '.$this->dbName.'.LIST_CANCELED
+                    (APP_UID,
+                    USR_UID,
+                    TAS_UID,
+                    PRO_UID,
+                    APP_NUMBER,
+                    APP_TITLE,
+                    APP_PRO_TITLE,
+                    APP_TAS_TITLE,
+                    APP_CANCELED_DATE,
+                    DEL_INDEX,
+                    DEL_PREVIOUS_USR_UID,
+                    DEL_CURRENT_USR_USERNAME,
+                    DEL_CURRENT_USR_FIRSTNAME,
+                    DEL_CURRENT_USR_LASTNAME,
+                    DEL_DELEGATE_DATE,
+                    DEL_INIT_DATE,
+                    DEL_DUE_DATE,
+                    DEL_PRIORITY)
+                    SELECT
+                        ACV.APP_UID,
+                        ACV.USR_UID,
+                        ACV.TAS_UID,
+                        ACV.PRO_UID,
+                        ACV.APP_NUMBER,
+                        C_APP.CON_VALUE AS APP_TITLE,
+                        C_PRO.CON_VALUE AS APP_PRO_TITLE,
+                        C_TAS.CON_VALUE AS APP_TAS_TITLE,
+                        NOW() AS APP_CANCELED_DATE,
+                        ACV.DEL_INDEX,
+                        PREV_AD.USR_UID AS DEL_PREVIOUS_USR_UID,
+                        USR.USR_USERNAME AS DEL_CURRENT_USR_USERNAME,
+                        USR.USR_FIRSTNAME AS DEL_CURRENT_USR_FIRSTNAME,
+                        USR.USR_LASTNAME AS DEL_CURRENT_USR_LASTNAME,
+                        AD.DEL_DELEGATE_DATE AS DEL_DELEGATE_DATE,
+                        AD.DEL_INIT_DATE AS DEL_INIT_DATE,
+                        AD.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
+                        ACV.DEL_PRIORITY
+                    FROM
+                        ('.$this->dbName.'.APP_CACHE_VIEW ACV
+                        LEFT JOIN '.$this->dbName.'.CONTENT C_APP ON ACV.APP_UID = C_APP.CON_ID
+                            AND C_APP.CON_CATEGORY = \'APP_TITLE\'
+                        LEFT JOIN '.$this->dbName.'.CONTENT C_PRO ON ACV.PRO_UID = C_PRO.CON_ID
+                            AND C_PRO.CON_CATEGORY = \'PRO_TITLE\'
+                        LEFT JOIN '.$this->dbName.'.CONTENT C_TAS ON ACV.TAS_UID = C_TAS.CON_ID
+                            AND C_TAS.CON_CATEGORY = \'TAS_TITLE\')
+                            LEFT JOIN
+                        ('.$this->dbName.'.APP_DELEGATION AD
+                        INNER JOIN '.$this->dbName.'.APP_DELEGATION PREV_AD ON AD.APP_UID = PREV_AD.APP_UID
+                            AND AD.DEL_PREVIOUS = PREV_AD.DEL_INDEX) ON ACV.APP_UID = AD.APP_UID
+                            AND ACV.DEL_INDEX = AD.DEL_INDEX
+                            LEFT JOIN
+                        '.$this->dbName.'.USERS USR ON ACV.USR_UID = USR.USR_UID
+                    WHERE
+                        ACV.APP_STATUS = \'CANCELLED\'
+                            AND ACV.DEL_LAST_INDEX = 1';
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($query);
         CLI::logging("> Completed table LIST_CANCELED\n");
+    }
 
-        //Select data COMPLETED
-        $comCriteria = $appCache->getSelAllColumns();
-        $comCriteria->add(AppCacheViewPeer::APP_STATUS, "COMPLETED", CRITERIA::EQUAL);
-        $comCriteria->add(AppCacheViewPeer::DEL_LAST_INDEX, "1", CRITERIA::EQUAL);
-        $rsCriteria = AppCacheViewPeer::doSelectRS($comCriteria);
-        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        //Insert new data LIST_COMPLETED
-        while ($rsCriteria->next()) {
-              $row = $rsCriteria->getRow();
-              $listCompleted = new ListCompleted();
-              $listCompleted->remove($row["APP_UID"]);
-              $listCompleted->setDeleted(false);
-              $listCompleted->create($row);
-        }
+    public function regenerateListCompleted(){
+        $this->initPropel(true);
+        $query = 'INSERT INTO '.$this->dbName.'.LIST_COMPLETED
+                    (APP_UID,
+                    USR_UID,
+                    TAS_UID,
+                    PRO_UID,
+                    APP_NUMBER,
+                    APP_TITLE,
+                    APP_PRO_TITLE,
+                    APP_TAS_TITLE,
+                    APP_CREATE_DATE,
+                    APP_FINISH_DATE,
+                    DEL_INDEX,
+                    DEL_PREVIOUS_USR_UID,
+                    DEL_CURRENT_USR_USERNAME,
+                    DEL_CURRENT_USR_FIRSTNAME,
+                    DEL_CURRENT_USR_LASTNAME)
+
+                    SELECT
+                        ACV.APP_UID,
+                        ACV.USR_UID,
+                        ACV.TAS_UID,
+                        ACV.PRO_UID,
+                        ACV.APP_NUMBER,
+                        C_APP.CON_VALUE AS APP_TITLE,
+                        C_PRO.CON_VALUE AS APP_PRO_TITLE,
+                        C_TAS.CON_VALUE AS APP_TAS_TITLE,
+                        ACV.APP_CREATE_DATE,
+                        ACV.APP_FINISH_DATE,
+                        ACV.DEL_INDEX,
+                        PREV_AD.USR_UID AS DEL_PREVIOUS_USR_UID,
+                        USR.USR_USERNAME AS DEL_CURRENT_USR_USERNAME,
+                        USR.USR_FIRSTNAME AS DEL_CURRENT_USR_FIRSTNAME,
+                        USR.USR_LASTNAME AS DEL_CURRENT_USR_LASTNAME
+                    FROM
+                        ('.$this->dbName.'.APP_CACHE_VIEW ACV
+                        LEFT JOIN '.$this->dbName.'.CONTENT C_APP ON ACV.APP_UID = C_APP.CON_ID
+                            AND C_APP.CON_CATEGORY = \'APP_TITLE\'
+                        LEFT JOIN '.$this->dbName.'.CONTENT C_PRO ON ACV.PRO_UID = C_PRO.CON_ID
+                            AND C_PRO.CON_CATEGORY = \'PRO_TITLE\'
+                        LEFT JOIN '.$this->dbName.'.CONTENT C_TAS ON ACV.TAS_UID = C_TAS.CON_ID
+                            AND C_TAS.CON_CATEGORY = \'TAS_TITLE\')
+                            LEFT JOIN
+                        ('.$this->dbName.'.APP_DELEGATION AD
+                        INNER JOIN '.$this->dbName.'.APP_DELEGATION PREV_AD ON AD.APP_UID = PREV_AD.APP_UID
+                            AND AD.DEL_PREVIOUS = PREV_AD.DEL_INDEX) ON ACV.APP_UID = AD.APP_UID
+                            AND ACV.DEL_INDEX = AD.DEL_INDEX
+                            LEFT JOIN
+                        '.$this->dbName.'.USERS USR ON ACV.USR_UID = USR.USR_UID
+                    WHERE
+                        ACV.APP_STATUS = \'COMPLETED\'
+                            AND ACV.DEL_LAST_INDEX = 1';
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($query);
         CLI::logging("> Completed table LIST_COMPLETED\n");
+    }
 
-        //Select data TO_DO OR DRAFT
-        $inbCriteria = $appCache->getSelAllColumns();
-        $rsCriteria = AppCacheViewPeer::doSelectRS($inbCriteria);
-        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+    public function regenerateListMyInbox(){
+        $this->initPropel(true);
+        $query = 'INSERT INTO '.$this->dbName.'.LIST_MY_INBOX
+                    (APP_UID,
+                    USR_UID,
+                    TAS_UID,
+                    PRO_UID,
+                    APP_NUMBER,
+                    APP_TITLE,
+                    APP_PRO_TITLE,
+                    APP_TAS_TITLE,
+                    APP_CREATE_DATE,
+                    APP_UPDATE_DATE,
+                    APP_FINISH_DATE,
+                    APP_STATUS,
+                    DEL_INDEX,
+                    DEL_PREVIOUS_USR_UID,
+                    DEL_PREVIOUS_USR_USERNAME,
+                    DEL_PREVIOUS_USR_FIRSTNAME,
+                    DEL_PREVIOUS_USR_LASTNAME,
+                    DEL_CURRENT_USR_UID,
+                    DEL_CURRENT_USR_USERNAME,
+                    DEL_CURRENT_USR_FIRSTNAME,
+                    DEL_CURRENT_USR_LASTNAME,
+                    DEL_DELEGATE_DATE,
+                    DEL_INIT_DATE,
+                    DEL_DUE_DATE,
+                    DEL_PRIORITY)
 
-        $criteriaUser = new Criteria();
-        $criteriaUser->addSelectColumn( UsersPeer::USR_UID );
-        $criteriaUser->addSelectColumn( UsersPeer::USR_FIRSTNAME );
-        $criteriaUser->addSelectColumn( UsersPeer::USR_LASTNAME );
-        $criteriaUser->addSelectColumn( UsersPeer::USR_USERNAME );
-        //Insert new data LIST_INBOX
-        while ($rsCriteria->next()) {
-            $row = $rsCriteria->getRow();
-            $isSelfService = ($row['USR_UID'] == '') ? true : false;
-            if($row["DEL_THREAD_STATUS"] == 'OPEN'){
-                //Update information about the previous_user
-                $row["DEL_PREVIOUS_USR_UID"] = $row["PREVIOUS_USR_UID"];
-                $criteriaUser->add(UsersPeer::USR_UID, $row["PREVIOUS_USR_UID"]);
-                $datasetU = UsersPeer::doSelectRS($criteriaUser);
-                $datasetU->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                $datasetU->next();
-                $arrayUsers = $datasetU->getRow();
-                $row["DEL_PREVIOUS_USR_USERNAME"] = $arrayUsers["USR_USERNAME"];
-                $row["DEL_PREVIOUS_USR_FIRSTNAME"] = $arrayUsers["USR_FIRSTNAME"];
-                $row["DEL_PREVIOUS_USR_LASTNAME"] = $arrayUsers["USR_LASTNAME"];
-                //Update the due date
-                $row["DEL_DUE_DATE"] = $row["DEL_TASK_DUE_DATE"];
-                $listInbox = new ListInbox();
-                $listInbox->remove($row["APP_UID"], $row["DEL_INDEX"]);
-                $listInbox->setDeleted(false);
-                $listInbox->create($row, $isSelfService);
-            } else {
-                // create participated List when the thread is CLOSED
-                $listParticipatedHistory = new ListParticipatedHistory();
-                $listParticipatedHistory->remove($row['APP_UID'], $row['DEL_INDEX']);
-                $listParticipatedHistory = new ListParticipatedHistory();
-                $listParticipatedHistory->create($row);
+                    SELECT
+                        ACV.APP_UID,
+                        ACV.USR_UID,
+                        ACV.TAS_UID,
+                        ACV.PRO_UID,
+                        ACV.APP_NUMBER,
+                        ACV.APP_TITLE,
+                        ACV.APP_PRO_TITLE,
+                        ACV.APP_TAS_TITLE,
+                        ACV.APP_CREATE_DATE,
+                        ACV.APP_UPDATE_DATE,
+                        ACV.APP_FINISH_DATE,
+                        ACV.APP_STATUS,
+                        ACV.DEL_INDEX,
+                        ACV.PREVIOUS_USR_UID AS DEL_PREVIOUS_USR_UID,
+                        PRE_USR.USR_USERNAME AS DEL_PREVIOUS_USR_USERNAME,
+                        PRE_USR.USR_FIRSTNAME AS DEL_PREVIOUS_USR_FIRSTNAME,
+                        PRE_USR.USR_LASTNAME AS DEL_PREVIOUS_USR_LASTNAME,
+                        ACV.USR_UID AS DEL_CURRENT_USR_UID,
+                        CUR_USR.USR_USERNAME AS DEL_CURRENT_USR_USERNAME,
+                        CUR_USR.USR_FIRSTNAME AS DEL_CURRENT_USR_FIRSTNAME,
+                        CUR_USR.USR_LASTNAME AS DEL_CURRENT_USR_LASTNAME,
+                        ACV.DEL_DELEGATE_DATE AS DEL_DELEGATE_DATE,
+                        ACV.DEL_INIT_DATE AS DEL_INIT_DATE,
+                        ACV.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
+                        ACV.DEL_PRIORITY
+                    FROM
+                        '.$this->dbName.'.APP_CACHE_VIEW ACV
+                            LEFT JOIN
+                        '.$this->dbName.'.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID
+                            LEFT JOIN
+                        '.$this->dbName.'.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID
+                    WHERE ACV.DEL_INDEX=1';
 
-                $oCriteria = new Criteria('workflow');
-                $oCriteria->add(ListParticipatedLastPeer::APP_UID, $row['APP_UID']);
-                $oCriteria->add(ListParticipatedLastPeer::USR_UID, $row['USR_UID']);
-                ListParticipatedLastPeer::doDelete($oCriteria);
-
-                $listParticipatedLast = new ListParticipatedLast();
-                $listParticipatedLast->create($row);
-                $listParticipatedLast = new ListParticipatedLast();
-                $listParticipatedLast->refresh($row);
-            }
-
-        }
-
-        CLI::logging("> Completed table LIST_INBOX\n");
-        //With this List is populated the LIST_PARTICIPATED_HISTORY and LIST_PARTICIPATED_LAST
-        CLI::logging("> Completed table LIST_PARTICIPATED_HISTORY\n");
-        CLI::logging("> Completed table LIST_PARTICIPATED_LAST\n");
-
-        //Select data TO_DO OR DRAFT CASES CREATED BY AN USER
-        $myiCriteria = $appCache->getSelAllColumns();
-        $myiCriteria->add(AppCacheViewPeer::DEL_INDEX, "1", CRITERIA::EQUAL);
-        $rsCriteria = AppCacheViewPeer::doSelectRS($myiCriteria);
-        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        //Insert new data LIST_MY_INBOX
-        while ($rsCriteria->next()) {
-              $row = $rsCriteria->getRow();
-              $listMyInbox = new ListMyInbox();
-              $listMyInbox ->remove($row["APP_UID"],$row["USR_UID"]);
-              $listMyInbox->setDeleted(false);
-              $listMyInbox->create($row);
-        }
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($query);
         CLI::logging("> Completed table LIST_MY_INBOX\n");
+    }
 
-        //Select data PAUSED
+    public function regenerateListInbox(){
+        $this->initPropel(true);
+        $query = 'INSERT INTO '.$this->dbName.'.LIST_INBOX
+                    (APP_UID,
+                    DEL_INDEX,
+                    USR_UID,
+                    TAS_UID,
+                    PRO_UID,
+                    APP_NUMBER,
+                    APP_STATUS,
+                    APP_TITLE,
+                    APP_PRO_TITLE,
+                    APP_TAS_TITLE,
+                    APP_UPDATE_DATE,
+                    DEL_PREVIOUS_USR_UID,
+                    DEL_PREVIOUS_USR_USERNAME,
+                    DEL_PREVIOUS_USR_FIRSTNAME,
+                    DEL_PREVIOUS_USR_LASTNAME,
+                    DEL_DELEGATE_DATE,
+                    DEL_INIT_DATE,
+                    DEL_DUE_DATE,
+                    DEL_RISK_DATE,
+                    DEL_PRIORITY)
+
+                    SELECT
+                        ACV.APP_UID,
+                        ACV.DEL_INDEX,
+                        ACV.USR_UID,
+                        ACV.TAS_UID,
+                        ACV.PRO_UID,
+                        ACV.APP_NUMBER,
+                        ACV.APP_STATUS,
+                        ACV.APP_TITLE,
+                        ACV.APP_PRO_TITLE,
+                        ACV.APP_TAS_TITLE,
+                        ACV.APP_UPDATE_DATE,
+                        ACV.PREVIOUS_USR_UID AS DEL_PREVIOUS_USR_UID,
+                        USR.USR_USERNAME AS DEL_PREVIOUS_USR_USERNAME,
+                        USR.USR_FIRSTNAME AS DEL_PREVIOUS_USR_FIRSTNAME,
+                        USR.USR_LASTNAME AS DEL_PREVIOUS_USR_LASTNAME,
+                        ACV.DEL_DELEGATE_DATE AS DEL_DELEGATE_DATE,
+                        ACV.DEL_INIT_DATE AS DEL_INIT_DATE,
+                        ACV.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
+                        ACV.DEL_RISK_DATE AS DEL_RISK_DATE,
+                        ACV.DEL_PRIORITY
+                    FROM
+                        '.$this->dbName.'.APP_CACHE_VIEW ACV
+                            LEFT JOIN
+                        '.$this->dbName.'.USERS USR ON ACV.PREVIOUS_USR_UID = USR.USR_UID
+                    WHERE
+                        ACV.DEL_THREAD_STATUS = \'OPEN\'';
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($query);
+        CLI::logging("> Completed table LIST_INBOX\n");
+    }
+
+    public function regenerateListParticipatedHistory(){
+        $this->initPropel(true);
+        $query = 'INSERT INTO '.$this->dbName.'.LIST_PARTICIPATED_HISTORY
+                    (APP_UID,
+                    DEL_INDEX,
+                    USR_UID,
+                    TAS_UID,
+                    PRO_UID,
+                    APP_NUMBER,
+                    APP_TITLE,
+                    APP_PRO_TITLE,
+                    APP_TAS_TITLE,
+                    DEL_PREVIOUS_USR_UID,
+                    DEL_PREVIOUS_USR_USERNAME,
+                    DEL_PREVIOUS_USR_FIRSTNAME,
+                    DEL_PREVIOUS_USR_LASTNAME,
+                    DEL_CURRENT_USR_USERNAME,
+                    DEL_CURRENT_USR_FIRSTNAME,
+                    DEL_CURRENT_USR_LASTNAME,
+                    DEL_DELEGATE_DATE,
+                    DEL_INIT_DATE,
+                    DEL_DUE_DATE,
+                    DEL_PRIORITY)
+
+                    SELECT
+                        ACV.APP_UID,
+                        ACV.DEL_INDEX,
+                        ACV.USR_UID,
+                        ACV.TAS_UID,
+                        ACV.PRO_UID,
+                        ACV.APP_NUMBER,
+                        ACV.APP_TITLE,
+                        ACV.APP_PRO_TITLE,
+                        ACV.APP_TAS_TITLE,
+                        ACV.PREVIOUS_USR_UID AS DEL_PREVIOUS_USR_UID,
+                        PRE_USR.USR_USERNAME AS DEL_PREVIOUS_USR_USERNAME,
+                        PRE_USR.USR_FIRSTNAME AS DEL_PREVIOUS_USR_FIRSTNAME,
+                        PRE_USR.USR_LASTNAME AS DEL_PREVIOUS_USR_LASTNAME,
+                        CUR_USR.USR_USERNAME AS DEL_CURRENT_USR_USERNAME,
+                        CUR_USR.USR_FIRSTNAME AS DEL_CURRENT_USR_FIRSTNAME,
+                        CUR_USR.USR_LASTNAME AS DEL_CURRENT_USR_LASTNAME,
+                        ACV.DEL_DELEGATE_DATE AS DEL_DELEGATE_DATE,
+                        ACV.DEL_INIT_DATE AS DEL_INIT_DATE,
+                        ACV.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
+                        ACV.DEL_PRIORITY
+                    FROM
+                        '.$this->dbName.'.APP_CACHE_VIEW ACV
+                            LEFT JOIN
+                        '.$this->dbName.'.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID
+                            LEFT JOIN
+                        '.$this->dbName.'.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID';
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($query);
+        CLI::logging("> Completed table LIST_PARTICIPATED_HISTORY\n");
+    }
+
+    public function regenerateListParticipatedLast(){
+        $this->initPropel(true);
+        $query = 'INSERT INTO '.$this->dbName.'.LIST_PARTICIPATED_LAST
+                    (
+                    APP_UID,
+                    USR_UID,
+                    DEL_INDEX,
+                    TAS_UID,
+                    PRO_UID,
+                    APP_NUMBER,
+                    APP_TITLE,
+                    APP_PRO_TITLE,
+                    APP_TAS_TITLE,
+                    APP_STATUS,
+                    DEL_PREVIOUS_USR_UID,
+                    DEL_PREVIOUS_USR_USERNAME,
+                    DEL_PREVIOUS_USR_FIRSTNAME,
+                    DEL_PREVIOUS_USR_LASTNAME,
+                    DEL_CURRENT_USR_USERNAME,
+                    DEL_CURRENT_USR_FIRSTNAME,
+                    DEL_CURRENT_USR_LASTNAME,
+                    DEL_DELEGATE_DATE,
+                    DEL_INIT_DATE,
+                    DEL_DUE_DATE,
+                    DEL_PRIORITY,
+                    DEL_THREAD_STATUS)
+
+                    SELECT
+                        ACV.APP_UID,
+                        ACV.USR_UID,
+                        ACV.DEL_INDEX,
+                        ACV.TAS_UID,
+                        ACV.PRO_UID,
+                        ACV.APP_NUMBER,
+                        ACV.APP_TITLE,
+                        ACV.APP_PRO_TITLE,
+                        ACV.APP_TAS_TITLE,
+                        ACV.APP_STATUS,
+                        ACV.PREVIOUS_USR_UID AS DEL_PREVIOUS_USR_UID,
+                        PRE_USR.USR_USERNAME AS DEL_PREVIOUS_USR_USERNAME,
+                        PRE_USR.USR_FIRSTNAME AS DEL_PREVIOUS_USR_FIRSTNAME,
+                        PRE_USR.USR_LASTNAME AS DEL_PREVIOUS_USR_LASTNAME,
+                        CUR_USR.USR_USERNAME AS DEL_CURRENT_USR_USERNAME,
+                        CUR_USR.USR_FIRSTNAME AS DEL_CURRENT_USR_FIRSTNAME,
+                        CUR_USR.USR_LASTNAME AS DEL_CURRENT_USR_LASTNAME,
+                        ACV.DEL_DELEGATE_DATE AS DEL_DELEGATE_DATE,
+                        ACV.DEL_INIT_DATE AS DEL_INIT_DATE,
+                        ACV.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
+                        ACV.DEL_PRIORITY,
+                        ACV.DEL_THREAD_STATUS
+                    FROM
+                        '.$this->dbName.'.APP_CACHE_VIEW ACV
+                            LEFT JOIN
+                        '.$this->dbName.'.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID
+                            LEFT JOIN
+                        '.$this->dbName.'.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID
+                            INNER JOIN
+                        (SELECT
+                            ACV.APP_UID, ACV.USR_UID, MAX(DEL_INDEX) DEL_INDEX
+                        FROM
+                            '.$this->dbName.'.APP_CACHE_VIEW ACV
+                        GROUP BY ACV.APP_UID , ACV.USR_UID) LAST_ACV ON LAST_ACV.APP_UID = ACV.APP_UID
+                            AND LAST_ACV.USR_UID = ACV.USR_UID
+                            AND LAST_ACV.DEL_INDEX = ACV.DEL_INDEX
+		';
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($query);
+        CLI::logging("> Completed table LIST_PARTICIPATED_LAST\n");
+    }
+
+    public function regenerateListPaused(){
         $delaycriteria = new Criteria("workflow");
         $delaycriteria->addSelectColumn(AppDelayPeer::APP_UID);
         $delaycriteria->addSelectColumn(AppDelayPeer::PRO_UID);
@@ -2107,39 +2395,21 @@ class workspaceTools
         $delaycriteria->add(AppDelayPeer::APP_TYPE, "PAUSE", CRITERIA::EQUAL);
         $rsCriteria = AppDelayPeer::doSelectRS($delaycriteria);
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        //Insert new data LIST_PAUSED
-        while ($rsCriteria->next()) {
-              $row = $rsCriteria->getRow();
-              $data = $row;
-              $data["DEL_INDEX"] = $row["APP_DEL_INDEX"];
-              $listPaused = new ListPaused();
-              $listPaused ->remove($row["APP_UID"],$row["APP_DEL_INDEX"],$data);
-              $listPaused->setDeleted(false);
-              $listPaused->create($data);
-        }
-        CLI::logging("> Completed table LIST_PAUSED\n");
 
-        /*
-        //Currently this list is not being used, it must be redesigned. Currently the APP_CACHE_VIEW is still used.
-        //Select and Insert LIST_UNASSIGNED
-        $unaCriteria = $appCache->getSelAllColumns();
-        $unaCriteria->add(AppCacheViewPeer::USR_UID, "", CRITERIA::EQUAL);
-        $rsCriteria = AppCacheViewPeer::doSelectRS($unaCriteria);
-        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $del = new ListUnassignedPeer();
-        $del->doDeleteAll();
-        $del = new ListUnassignedGroupPeer();
-        $del->doDeleteAll();
         while ($rsCriteria->next()) {
             $row = $rsCriteria->getRow();
-            $listUnassigned = new ListUnassigned();
-            $unaUid = $listUnassigned->generateData($row["APP_UID"],$row["PREVIOUS_USR_UID"]);
+            $data = $row;
+            $data["DEL_INDEX"] = $row["APP_DEL_INDEX"];
+            $listPaused = new ListPaused();
+            $listPaused ->remove($row["APP_UID"],$row["APP_DEL_INDEX"],$data);
+            $listPaused->setDeleted(false);
+            $listPaused->create($data);
         }
-        CLI::logging("> Completed table LIST_UNASSIGNED\n");
-        CLI::logging("> Completed table LIST_UNASSIGNED_GROUP\n");
-        */
+        CLI::logging("> Completed table LIST_PAUSED\n");
+    }
 
-        // ADD LISTS COUNTS
+    public function migrateCounters()
+    {
         $aTypes = array(
             'to_do',
             'draft',
@@ -2171,13 +2441,6 @@ class workspaceTools
             );
             $users->update($newData);
         }
-
-        if (!$flagReinsert) {
-            $this->listFirstExecution("insert");
-        }
-
-        //Return
-        return true;
     }
 
     /**
@@ -2320,4 +2583,430 @@ class workspaceTools
             $oAppSequence->updateSequenceNumber(0);
         }
     }
+
+    public function hasMissingUsers()
+    {
+        $this->initPropel(true);
+        file_put_contents(
+            PATH_DATA."/missing-users-".$this->name.".txt",
+            "Missing Processes List.\n"
+        );
+
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
+        $criteria->addSelectColumn(AppCacheViewPeer::USR_UID);
+        $criteria->addJoinMC(array(
+            array(AppCacheViewPeer::USR_UID, UsersPeer::USR_UID)),
+            Criteria::LEFT_JOIN
+        );
+        $criteria->add(UsersPeer::USR_UID, null, Criteria::ISNULL);
+        $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $counter = 0;
+        while ($rsCriteria->next()) {
+            $item = $rsCriteria->getRow();
+            $counter++;
+            file_put_contents(
+                PATH_DATA."/missing-users-".$this->name.".txt",
+                "APP_UID:[".$item['APP_UID']."] - DEL_INDEX[".$item['DEL_INDEX']."] have relation " .
+                "with invalid or non-existent user user with ".
+                "id [".$item['USR_UID']."]"
+            );
+        }
+        CLI::logging("> Number of user related inconsistencies for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
+        return ($counter > 0);
+    }
+
+    public function hasMissingTasks()
+    {
+        $this->initPropel(true);
+        file_put_contents(
+            PATH_DATA."/missing-tasks-".$this->name.".txt",
+            "Missing Processes List\n"
+        );
+
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
+        $criteria->addSelectColumn(AppCacheViewPeer::TAS_UID);
+        $criteria->addJoinMC(array(
+            array(AppCacheViewPeer::USR_UID, TaskPeer::TAS_UID)),
+            Criteria::LEFT_JOIN
+        );
+
+        $criteria->add(TaskPeer::TAS_UID, null, Criteria::ISNULL);
+        $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $counter = 0;
+        while ($rsCriteria->next()) {
+            $item = $rsCriteria->getRow();
+            file_put_contents(
+                PATH_DATA."/missing-tasks-".$this->name.".txt",
+                "APP_UID:[".$item['APP_UID']."] - DEL_INDEX[".$item['DEL_INDEX']."] have relation " .
+                "with invalid or non-existent task with ".
+                "id [".$item['TAS_UID']."]"
+            );
+        }
+
+        CLI::logging("> Number of task related inconsistencies for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
+        return ($counter > 0);
+    }
+
+    public function hasMissingProcesses()
+    {
+        $this->initPropel(true);
+        file_put_contents(
+            PATH_DATA."/missing-processes-".$this->name.".txt",
+            "Missing Processes List\n"
+        );
+
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
+        $criteria->addSelectColumn(AppCacheViewPeer::PRO_UID);
+        $criteria->addJoinMC(array(
+            array(AppCacheViewPeer::USR_UID, ProcessPeer::PRO_UID)),
+            Criteria::LEFT_JOIN
+        );
+
+        $criteria->add(ProcessPeer::PRO_UID, null, Criteria::ISNULL);
+        $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $counter = 0;
+        while ($rsCriteria->next()) {
+            $item = $rsCriteria->getRow();
+            file_put_contents(
+                PATH_DATA."/missing-processes-".$this->name.".txt",
+                "APP_UID:[".$item['APP_UID']."] - DEL_INDEX[".$item['DEL_INDEX']."] have relation " .
+                "with invalid or non-existent process with ".
+                "id [".$item['PRO_UID']."]"
+            );
+        }
+        CLI::logging("> Number of processes related data inconsistencies for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
+        return ($counter > 0);
+    }
+
+    public function hasMissingAppDelegations()
+    {
+        $this->initPropel(true);
+        file_put_contents(
+            PATH_DATA."/missing-app-delegation-".$this->name.".txt",
+            "Missing AppDelegation List.\n"
+        );
+
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
+        $criteria->addJoinMC(array(
+            array(AppCacheViewPeer::APP_UID, AppCacheViewPeer::DEL_INDEX),
+            array(AppDelegationPeer::APP_UID, AppDelegationPeer::DEL_INDEX)),
+            Criteria::LEFT_JOIN
+        );
+        $criteria->add(AppDelegationPeer::APP_UID, null, Criteria::ISNULL);
+        $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $counter = 0;
+        while ($rsCriteria->next()) {
+            $item = $rsCriteria->getRow();
+            $counter++;
+            file_put_contents(
+                PATH_DATA."/missing-app-delegation-".$this->name.".txt",
+                "APP_UID:[".$item['APP_UID']."] - DEL_INDEX[".$item['DEL_INDEX']."] have relation " .
+                "with invalid or non-existent process with ".
+                "id [".$item['PRO_UID']."]"
+            );
+        }
+        CLI::logging("> Number of delegations related data inconsistencies for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
+        return ($counter > 0);
+    }
+
+
+    public function verifyMissingCancelled()
+    {
+        $this->initPropel(true);
+        file_put_contents(
+            PATH_DATA."/post-missing-cancelled-".$this->name.".txt",
+            "Missing Cancelled List.\n"
+        );
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
+        $criteria->addJoinMC(array(
+            array(AppCacheViewPeer::APP_UID, ListCanceledPeer::APP_UID),
+            array(AppCacheViewPeer::DEL_INDEX, ListCanceledPeer::DEL_INDEX)),
+            Criteria::LEFT_JOIN
+        );
+
+        $criteria->add(AppCacheViewPeer::APP_STATUS, 'CANCELLED', Criteria::EQUAL);
+        $criteria->add(AppCacheViewPeer::DEL_LAST_INDEX, 1, Criteria::EQUAL);
+        $criteria->add(ListCanceledPeer::APP_UID, null, Criteria::ISNULL);
+
+        $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $counter = 0;
+        while ($rsCriteria->next()) {
+            $item = $rsCriteria->getRow();
+            $counter++;
+
+            file_put_contents(
+                PATH_DATA."/post-missing-cancelled-".$this->name.".txt",
+                "[".$item['APP_UID']."] has not been found"
+            );
+        }
+
+        CLI::logging("> Number of missing cancelled cases for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
+    }
+
+    public function verifyMissingCompleted()
+    {
+        $this->initPropel(true);
+        file_put_contents(
+            PATH_DATA."/post-missing-completed-".$this->name.".txt",
+            "Missing Completed List.\n"
+        );
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
+        $criteria->addJoinMC(array(
+            array(AppCacheViewPeer::APP_UID, ListCompletedPeer::APP_UID),
+            array(AppCacheViewPeer::DEL_INDEX, ListCompletedPeer::DEL_INDEX)),
+            Criteria::LEFT_JOIN
+        );
+
+        $criteria->add(AppCacheViewPeer::APP_STATUS, 'COMPLETED', Criteria::EQUAL);
+        $criteria->add(AppCacheViewPeer::DEL_LAST_INDEX, 1, Criteria::EQUAL);
+        $criteria->add(ListCompletedPeer::APP_UID, null, Criteria::ISNULL);
+
+        $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $counter = 0;
+        while ($rsCriteria->next()) {
+            $item = $rsCriteria->getRow();
+            $counter++;
+            file_put_contents(
+                PATH_DATA."/post-missing-completed-".$this->name.".txt",
+                "[".$item['APP_UID']."] has not been found"
+            );
+        }
+
+        CLI::logging("> Number of missing completed cases for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
+    }
+
+    public function verifyMissingInbox()
+    {
+        $this->initPropel(true);
+        file_put_contents(
+            PATH_DATA."/post-missing-inbox-".$this->name.".txt",
+            "Missing Inbox List.\n"
+        );
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
+        $criteria->addJoinMC(array(
+            array(AppCacheViewPeer::APP_UID, ListInboxPeer::APP_UID),
+            array(AppCacheViewPeer::DEL_INDEX, ListInboxPeer::DEL_INDEX)),
+            Criteria::LEFT_JOIN
+        );
+
+        $criteria->add(AppCacheViewPeer::DEL_THREAD_STATUS, 'OPEN', Criteria::EQUAL);
+        $criteria->add(ListInboxPeer::APP_UID, null, Criteria::ISNULL);
+
+        $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $counter = 0;
+        while ($rsCriteria->next()) {
+            $item = $rsCriteria->getRow();
+            $counter++;
+            file_put_contents(
+                PATH_DATA."/post-missing-inbox-".$this->name.".txt",
+                "[".$item['APP_UID']."] has not been found"
+            );
+
+        }
+
+        CLI::logging("> Number of missing inbox cases for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
+    }
+
+    public function verifyMissingParticipatedHistory()
+    {
+        $this->initPropel(true);
+        file_put_contents(
+            PATH_DATA."/post-missing-participated-history-".$this->name.".txt",
+            "Missing ParticipatedHistory List.\n"
+        );
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
+        $criteria->addJoinMC(array(
+            array(AppCacheViewPeer::APP_UID, ListParticipatedHistoryPeer::APP_UID),
+            array(AppCacheViewPeer::DEL_INDEX, ListParticipatedHistoryPeer::DEL_INDEX)
+            ),
+            Criteria::LEFT_JOIN
+        );
+
+        $criteria->add(AppCacheViewPeer::DEL_THREAD_STATUS, 'OPEN', Criteria::NOT_EQUAL);
+        $criteria->add(ListParticipatedHistoryPeer::APP_UID, null, Criteria::ISNULL);
+
+        $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $counter = 0;
+        while ($rsCriteria->next()) {
+            $item = $rsCriteria->getRow();
+            $counter++;
+            file_put_contents(
+                PATH_DATA."/post-missing-participated-history-".$this->name.".txt",
+                "[".$item['APP_UID']."] has not been found"
+            );
+        }
+
+        CLI::logging("> Number of missing participated history entries for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
+    }
+
+    public function verifyMissingParticipatedLast()
+    {
+        $this->initPropel(true);
+        file_put_contents(
+            PATH_DATA."/post-missing-participated-last-".$this->name.".txt",
+            "Missing ParticipatedLast List.\n"
+        );
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
+        $criteria->addJoinMC(array(
+            array(AppCacheViewPeer::APP_UID, ListParticipatedLastPeer::APP_UID),
+            array(AppCacheViewPeer::DEL_INDEX, ListParticipatedLastPeer::DEL_INDEX)
+        ),
+            Criteria::LEFT_JOIN
+        );
+
+        $criteria->add(AppCacheViewPeer::DEL_THREAD_STATUS, 'OPEN', Criteria::NOT_EQUAL);
+        $criteria->add(ListParticipatedLastPeer::APP_UID, null, Criteria::ISNULL);
+
+        $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $counter = 0;
+        while ($rsCriteria->next()) {
+            $item = $rsCriteria->getRow();
+            $counter++;
+            file_put_contents(
+                PATH_DATA."/post-missing-participated-last-".$this->name.".txt",
+                "[".$item['APP_UID']."] has not been found"
+            );
+        }
+
+        CLI::logging("> Number of missing participated last entries for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
+    }
+
+    public function verifyMissingMyInbox()
+    {
+        $this->initPropel(true);
+        file_put_contents(
+            PATH_DATA."/post-missing-my-inbox-".$this->name.".txt",
+            "Missing MyInbox List.\n"
+        );
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
+        $criteria->addJoinMC(array(
+            array(AppCacheViewPeer::APP_UID, ListMyInboxPeer::APP_UID),
+            array(AppCacheViewPeer::DEL_INDEX, ListMyInboxPeer::DEL_INDEX)
+        ),
+            Criteria::LEFT_JOIN
+        );
+
+        $criteria->add(AppCacheViewPeer::DEL_INDEX, 1, Criteria::EQUAL);
+        $criteria->add(ListMyInboxPeer::APP_UID, null, Criteria::ISNULL);
+
+        $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $counter = 0;
+        while ($rsCriteria->next()) {
+            $item = $rsCriteria->getRow();
+            $counter++;
+            file_put_contents(
+                PATH_DATA."/post-missing-my-inbox-".$this->name.".txt",
+                "[".$item['APP_UID']."] has not been found"
+            );
+        }
+
+        CLI::logging("> Number of missing my inbox entries for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
+    }
+
+    public function verifyMissingUnassigned()
+    {
+        $this->initPropel(true);
+        file_put_contents(
+            PATH_DATA."/post-missing-unassigned-".$this->name.".txt",
+            "Missing MissingUnassigned List.\n"
+        );
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(AppCacheViewPeer::APP_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_INDEX);
+        $criteria->addJoinMC(array(
+            array(AppCacheViewPeer::APP_UID, ListUnassignedPeer::APP_UID),
+            array(AppCacheViewPeer::DEL_INDEX, ListUnassignedPeer::DEL_INDEX)
+        ),
+            Criteria::LEFT_JOIN
+        );
+
+        $criteria->add(AppCacheViewPeer::USR_UID, '', Criteria::EQUAL);
+        $criteria->add(ListUnassignedPeer::APP_UID, null, Criteria::ISNULL);
+
+        $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $counter = 0;
+        while ($rsCriteria->next()) {
+            $item = $rsCriteria->getRow();
+            $counter++;
+            file_put_contents(
+                PATH_DATA."/post-missing-unassigned-".$this->name.".txt",
+                "[".$item['APP_UID']."] has not been found"
+            );
+        }
+        CLI::logging("> Number of unassigned cases for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
+    }
+
+    public function verifyListData($type)
+    {
+        switch($type) {
+            case 'LIST_CANCELLED':
+                $response = $this->verifyMissingCancelled();
+                break;
+            case 'LIST_COMPLETED':
+                $response = $this->verifyMissingCompleted();
+                break;
+            case 'LIST_INBOX':
+                $response = $this->verifyMissingInbox();
+                break;
+            case 'LIST_PARTICIPATED_HISTORY':
+                $response = $this->verifyMissingParticipatedHistory();
+                break;
+            case 'LIST_PARTICIPATED_LAST':
+                $response = $this->verifyMissingParticipatedLast();
+                break;
+            case 'LIST_MY_INBOX':
+                $response = $this->verifyMissingMyInbox();
+                break;
+            case 'LIST_PAUSED':
+                // The list implementation needs to be reestructured in order to
+                // properly validate the list consistency, currently we are maintaining the
+                // current LIST_PAUSED implementation.
+                $response = '';
+                break;
+            case 'LIST_UNASSIGNED':
+                $response = $this->verifyMissingUnassigned();
+                break;
+            case 'LIST_UNASSIGNED_GROUP':
+                // There is still no need to validate this list since is not being
+                // populated until the logic has been defined
+                $response = '';
+                break;
+            default:
+                $response = '';
+                break;
+        }
+        return $response;
+    }
+
 }

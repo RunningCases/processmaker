@@ -189,6 +189,46 @@ EOT
 CLI::taskArg("workspace-name", true, true);
 CLI::taskRun("run_database_generate_self_service_by_value");
 
+CLI::taskName('database-verify-consistency');
+CLI::taskDescription(<<<EOT
+  Verify the database data is consistent so any database-upgrade
+  operation cloud be executed flawlessly.
+
+  Specify the workspaces whose database schema should be verified.
+  The workspace parameter is mandatory.
+
+  This command will read the system schema and data in an attempt to verify the database
+  integrity. Use this command to check the database data consistency before any costly
+  database-upgrade operation is planned to be executed.
+EOT
+);
+CLI::taskArg('workspace', true, true);
+CLI::taskRun("run_database_verify_consistency");
+
+CLI::taskName('database-verify-migration-consistency');
+CLI::taskDescription(<<<EOT
+  Verify that the already migrated data is consistent there was not
+  data loss of any kind
+
+  Specify the workspaces whose database schema should be verified.
+  The workspace parameter is mandatory.
+
+  This command will read the Cancelled, Completed, Inbox, My Inbox, participated
+  unassigned data in an attempt to verify the database integrity. It's recommended
+  to run this script after the migrate cases job has been executed.
+EOT
+);
+CLI::taskArg('workspace', true, true);
+CLI::taskRun("run_database_verify_migration_consistency");
+
+CLI::taskName('migrate-counters');
+CLI::taskDescription(<<<EOT
+  Migrate and regenerate if required, the list counters for each user.
+EOT
+);
+CLI::taskArg('workspace', true, true);
+CLI::taskRun("run_migrate_counters");
+
 /*----------------------------------********---------------------------------*/
 CLI::taskName("check-workspace-disabled-code");
 CLI::taskDescription(<<<EOT
@@ -324,6 +364,11 @@ function run_database_check($args, $opts) {
 
 function run_migrate_new_cases_lists($args, $opts) {
   migrate_new_cases_lists("migrate", $args);
+
+}
+
+function run_migrate_counters($args, $opts) {
+  migrate_counters("migrate", $args);
 }
 
 function database_upgrade($command, $args) {
@@ -609,6 +654,62 @@ function run_database_generate_self_service_by_value($args, $opts)
         echo CLI::error($e->getMessage()) . "\n";
     }
 }
+
+function run_database_verify_consistency($args, $opts)
+{
+  verifyAppCacheConsistency($args);
+}
+
+function run_database_verify_migration_consistency($args, $opts)
+{
+  verifyMigratedDataConsistency($args);
+}
+
+function verifyAppCacheConsistency($args)
+{
+  $workspaces = get_workspaces_from_args($args);
+  foreach ($workspaces as $workspace) {
+    verifyWorkspaceConsistency($workspace);
+  }
+}
+
+function verifyWorkspaceConsistency($workspace)
+{
+  $isConsistent = true;
+  print_r("Verifying data in workspace " . pakeColor::colorize($workspace->name, "INFO") . "\n");
+  $inconsistentUsers = $workspace->hasMissingUsers();
+  $inconsistentTasks = $workspace->hasMissingTasks();
+  $inconsistentProcesses = $workspace->hasMissingProcesses();
+  $inconsistentDelegations = $workspace->hasMissingAppDelegations();
+
+  if ($inconsistentUsers || $inconsistentTasks || $inconsistentProcesses || $inconsistentDelegations) {
+    $isConsistent = false;
+  }
+  return $isConsistent;
+}
+
+function verifyMigratedDataConsistency($args)
+{
+  $workspaces = get_workspaces_from_args($args);
+  $inconsistentRecords = 0;
+  foreach ($workspaces as $workspace) {
+    print_r("Verifying data in workspace " . pakeColor::colorize($workspace->name, "INFO") . "\n");
+    $lists = array(
+        'LIST_CANCELLED',
+        'LIST_COMPLETED',
+        'LIST_INBOX',
+        'LIST_PARTICIPATED_HISTORY',
+        'LIST_PARTICIPATED_LAST',
+        'LIST_MY_INBOX',
+        'LIST_UNASSIGNED',
+    );
+    foreach ($lists as $list) {
+      $inconsistentRecords += $workspace->verifyListData($list);
+    }
+  }
+  return $inconsistentRecords;
+}
+
 /*----------------------------------********---------------------------------*/
 function run_check_workspace_disabled_code($args, $opts)
 {
@@ -685,6 +786,22 @@ function migrate_new_cases_lists($command, $args) {
         $workspace->migrateList($workspace->name, true);
 
         echo "> List tables are done\n";
+    } catch (Exception $e) {
+      echo "> Error: ".CLI::error($e->getMessage()) . "\n";
+    }
+  }
+}
+
+function migrate_counters($command, $args) {
+  $workspaces = get_workspaces_from_args($args);
+
+  foreach ($workspaces as $workspace) {
+    print_r("Regenerating counters in: " . pakeColor::colorize($workspace->name, "INFO") . "\n");
+
+    try {
+        $workspace->migrateCounters($workspace->name, true);
+
+        echo "> Counters are done\n";
     } catch (Exception $e) {
       echo "> Error: ".CLI::error($e->getMessage()) . "\n";
     }
