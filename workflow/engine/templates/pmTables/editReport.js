@@ -728,7 +728,8 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
       storeId: "types",
       autoDestroy: true,
 
-      fields: ["REP_TAB_TYPE", "type"]
+      fields: ["REP_TAB_TYPE", "type"],
+      data : [['NORMAL',_("ID_GLOBAL")],['GRID',_("ID_GRID")]]
   });
 
   comboReport = new Ext.form.ComboBox({
@@ -760,6 +761,7 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
       }
     }
   });
+
 
   dbConnectionsStore = new Ext.data.Store({
     //autoLoad: true,
@@ -882,7 +884,7 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
     }
   });
 
-  comboReport.setReadOnly(isBpmn);
+  comboReport.setDisabled(isBpmn);
 
   processStore = new Ext.data.Store( {
     autoLoad: true,
@@ -938,6 +940,7 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
     }
   });
 
+  var rptPosArray = 0;
   processComboBox = new Ext.form.ComboBox({
     id: 'PROCESS',
     fieldLabel : _("ID_CASESLIST_APP_PRO_TITLE"),
@@ -964,9 +967,11 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
               (dataStore[i].data.PRO_PROCESS_TYPE == "BPMN")? arrayBpmnTypeData : arrayClassicTypeData, false
           );
 
-          var dataStoreAux = types.getRange(0);
+          var dataStoreAux = types.getRange(rptPosArray);
 
           comboReport.setValue(dataStoreAux[0].data.REP_TAB_TYPE);
+          comboReport.setDisabled(dataStore[i].data.PRO_PROCESS_TYPE === "BPMN");
+
           comboGridsList.setVisible(false);
 
               comboDbConnections.getStore().reload({params:{PRO_UID : Ext.getCmp('PROCESS').getValue()}});
