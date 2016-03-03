@@ -883,11 +883,11 @@ class RBAC
      * @access public
      *
      * @param string $ROL_UID
-     * @return $this->rolesObj->getRolePermissionsByRoleUid
+     * @return $this->rolesObj->getRolePermissionsByPerUid
      */
-    public function getRolePermissionsByRoleUid ($ROL_UID)
+    public function getRolePermissionsByPerUid ($ROL_UID)
     {
-        return $this->rolesObj->getRolePermissionsByRoleUid( $ROL_UID );
+        return $this->rolesObj->getRolePermissionsByPerUid( $ROL_UID );
     }
 
     /**
@@ -1308,7 +1308,7 @@ class RBAC
             $o->setPermissionName($item['PER_NAME']);
 
             //Assigning new permissions
-            $rolesWithPermissionSetup = $this->getRolePermissionsByRoleUid(self::SETUPERMISSIONUID);
+            $rolesWithPermissionSetup = $this->getRolePermissionsByPerUid(self::SETUPERMISSIONUID);
             $rolesWithPermissionSetup->next();
             while ($aRow = $rolesWithPermissionSetup->getRow()) {
                 $userRolePermission = $this->getRolePermissions($aRow['ROL_UID']);
