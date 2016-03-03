@@ -122,6 +122,7 @@ switch($req){
             $criteria->setLimit($limit);
             $criteria->setOffset($start);
         }
+        
         $result = AppEventPeer::doSelectRS($criteria);
         $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $data = Array();
