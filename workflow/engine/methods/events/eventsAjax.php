@@ -129,7 +129,7 @@ switch($req){
                 $criteria->addDescendingOrderByColumn($sort);
             }
         } else {
-            $oCriteria->addDescendingOrderByColumn(AppEventPeer::APP_EVN_ACTION_DATE);
+            $criteria->addDescendingOrderByColumn(AppEventPeer::APP_EVN_ACTION_DATE);
         }
         if ($limit != '') {
             $criteria->setLimit($limit);
