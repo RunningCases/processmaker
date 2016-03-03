@@ -242,8 +242,51 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
 {
     $con = Propel::getConnection( $DBConnectionUID );
     $con->begin();
-
+    G::loadClass('system');
+    $blackList = System::getQueryBlackList();
+    $aListQueries = explode('|', $blackList['queries']);
+    $aListAllTables = explode('|', $blackList['tables'].$blackList['pmtables']);
+    $parseSqlStm = new PHPSQLParser($SqlStatement);
     try {
+        //Parsing queries and check the blacklist
+        foreach ($parseSqlStm as $key => $value) {
+            if($key === 'parsed'){
+                $aParseSqlStm = $value;
+                continue;
+            }
+        }
+        $nameOfTable = '';
+        $arrayOfTables = array();
+        foreach ($aParseSqlStm as $key => $value) {
+            if(in_array($key, $aListQueries)){
+                if(isset($value['table'])){
+                    $nameOfTable = $value['table'];
+                } else {
+                    foreach ($value as $valueTab) {
+                        if(is_array($valueTab)){
+                            $arrayOfTables = $valueTab;
+                        } else {
+                            $nameOfTable = $valueTab;
+                        }
+                    }
+                }
+                if(isset($nameOfTable)){
+                    if(in_array($nameOfTable,$aListAllTables)){
+                        G::SendTemporalMessage( 'ID_NOT_EXECUTE_QUERY', 'error', 'labels' );
+                        throw new SQLException(G::loadTranslation('ID_NOT_EXECUTE_QUERY'));
+                    }
+                }
+                if (!empty($arrayOfTables)) {
+                    foreach ($arrayOfTables as $row) {
+                        if(in_array($row, $aListAllTables)){
+                            G::SendTemporalMessage( 'ID_NOT_EXECUTE_QUERY', 'error', 'labels' );
+                            throw new SQLException(G::loadTranslation('ID_NOT_EXECUTE_QUERY'));
+                        }
+                    }
+                }
+            }
+        }
+
         $statement = trim( $SqlStatement );
         $statement = str_replace( '(', '', $statement );
 
