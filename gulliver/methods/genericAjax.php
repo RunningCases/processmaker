@@ -211,7 +211,6 @@ if( isset($request) ){
         $err = $e->getMessage();
         //$err = eregi_replace("[\n|\r|\n\r]", ' ', $err);
         $err = preg_replace("[\n|\r|\n\r]", " ", $err); //Made compatible to PHP 5.3
-        echo $con->lastQuery;
         echo "{status: 0, message: \"" . $err . "\"}";
       }
       break;
