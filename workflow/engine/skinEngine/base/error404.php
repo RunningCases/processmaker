@@ -34,7 +34,11 @@ if (isset($_GET["url"]) && $_GET["url"] != "") {
         // Check if sys path exists
         $checkDir = PATH_SKIN_ENGINE.$sysSkin;
         if(!is_dir($checkDir)) { 
-            $sysSkin = '';
+            // Try this again
+            $checkDir = PATH_CUSTOM_SKINS.$sysSkin;
+            if(!is_dir($checkDir)) { 
+                $sysSkin = '';
+            }
         }
     }
 
