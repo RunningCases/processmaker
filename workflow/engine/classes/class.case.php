@@ -1446,7 +1446,12 @@ class Cases
                 //there is an open delegation, so we need to return the delegation row
                 return $delegations['open'];
             } else {
-                return array(); //returning empty array
+                if(count($delegations['paused']) > 0){
+                    //there is an paused delegation, so we need to return the delegation row
+                    return $delegations['paused'];
+                }else{
+                    return array(); //returning empty array
+                }
             }
         }
         // if not we check previous tasks
@@ -1493,13 +1498,12 @@ class Cases
      * Get reviewed tasks (delegations started)
      * @param string $taskUid
      * @param string $sAppUid
-     * @author erik amaru ortiz <erik@colosa.com>
      * @return array within the open & closed tasks
      *         false -> when has not any delegation started for that task
      */
     public function getReviewedTasks($taskUid, $sAppUid)
     {
-        $openTasks = $closedTasks = array();
+        $openTasks = $closedTasks = $pausedTasks = array();
 
         // get all delegations fro this task
         $oCriteria2 = new Criteria('workflow');
@@ -1515,14 +1519,52 @@ class Cases
             if ($row['DEL_THREAD_STATUS'] == 'OPEN') {
                 $openTasks[] = $row;
             } else {
+                //If exist paused cases
                 $closedTasks[] = $row;
+                $aIndex[] = $row['DEL_INDEX'];
+                $pausedTasks = $this->getReviewedTasksPaused($sAppUid,$aIndex);
             }
         }
 
-        if (count($openTasks) == 0 && count($closedTasks) == 0) {
+        if (count($openTasks) === 0 && count($closedTasks) === 0 && count($pausedTasks) === 0) {
             return false; // return false because there is not any delegation for this task.
         } else {
-            return array('open' => $openTasks, 'closed' => $closedTasks);
+            return array('open' => $openTasks, 'closed' => $closedTasks, 'paused' => $pausedTasks);
+        }
+    }
+
+    /**
+     * Get reviewed tasks is Paused (delegations started)
+     * @param string $sAppUid
+     * @param array $aDelIndex
+     * @return array within the paused tasks
+     *         false -> when has not any delegation started for that task
+     */
+    public function getReviewedTasksPaused($sAppUid,$aDelIndex)
+    {
+        $oCriteria = new Criteria('workflow');
+        $oCriteria->add(AppDelayPeer::APP_UID, $sAppUid);
+        $oCriteria->add(AppDelayPeer::APP_DEL_INDEX, $aDelIndex, Criteria::IN);
+        $oCriteria->add(AppDelayPeer::APP_TYPE, 'PAUSE');
+        $oCriteria->add(
+            $oCriteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, 0, Criteria::EQUAL)->addOr(
+            $oCriteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, null, Criteria::ISNULL))
+        );
+
+        $oDataset = AppDelayPeer::doSelectRS($oCriteria);
+        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+        $pausedTask = array();
+        // loop and separate open & closed delegations in theirs respective arrays
+        while ($oDataset->next()) {
+            $row = $oDataset->getRow();
+            $pausedTask[] = $row;
+        }
+
+        if (count($pausedTask) == 0) {
+            return false; // return false because there is not any delegation for this task.
+        } else {
+            return array('pause' => $pausedTask);
         }
     }
 
