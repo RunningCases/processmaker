@@ -754,8 +754,10 @@ class headPublisher
         $sjson = $oServerConf->getProperty($keyState);
         if ($sjson !== "") {
             $json = G::json_decode($sjson);
-            foreach ($json as $key => $value) {
-                $views[$key] = $value;
+            if ((is_array($json) || is_object($json)) && sizeof($json)){
+                foreach ($json as $key => $value) {
+                    $views[$key] = $value;
+                }
             }
         }
         $httpCookies = explode("; ", $_SERVER['HTTP_COOKIE']);
