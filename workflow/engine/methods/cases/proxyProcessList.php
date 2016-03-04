@@ -44,6 +44,16 @@ try {
     if (isset( $start )) {
         $Criteria->setOffset( $start );
     }
+    
+
+    // The $sort field is arbitrary
+    // This can result in ORDER BY 
+    // SQL injection 
+    
+    // This ensures that ORDER BY will ONLY 
+    // use a known good sort field.
+    // There is a matching list on the javascript side at
+    // workflow/engine/templates/processes/main.js
 
     $allowedSortField = array( 
         "PRO_TITLE",
