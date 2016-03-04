@@ -1156,6 +1156,9 @@ function editUser()
 
     frmSumary.hide();
     frmDetails.show();
+    if (window.canEditCalendar === true) {
+        comboCalendar.setReadOnly(false);
+    }
 }
 
 function validateUserName() {
