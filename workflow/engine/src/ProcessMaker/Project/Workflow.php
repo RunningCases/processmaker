@@ -69,9 +69,9 @@ class Workflow extends Handler
             
             // Check to make sure that there aren't any html sneaking into process titles.
 
-            $testTitle = strip_tags($data['PRO_TITLE']);
+            $testTitle = htmlspecialchars($data['PRO_TITLE']);
             
-            if($testTitle !== $data['PRO_TITLE']) { 
+            if($testTitle != $data['PRO_TITLE']) { 
                 $data['PRO_TITLE'] = $testTitle;    
             }
 
