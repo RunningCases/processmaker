@@ -66,6 +66,15 @@ class Workflow extends Handler
         $data['PRO_CATEGORY'] = array_key_exists('PRO_CATEGORY', $data) ? $data['PRO_CATEGORY'] : "";
 
         try {
+            
+            // Check to make sure that there aren't any html sneaking into process titles.
+
+            $testTitle = htmlspecialchars($data['PRO_TITLE']);
+            
+            if($testTitle != $data['PRO_TITLE']) { 
+                $data['PRO_TITLE'] = $testTitle;    
+            }
+
             self::log("Create Process with data:", $data);
 
             //validate if process with specified name already exists
