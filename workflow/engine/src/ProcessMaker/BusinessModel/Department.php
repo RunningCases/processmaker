@@ -92,6 +92,41 @@ class Department
     }
 
     /**
+     * Get Department record
+     *
+     * @param string $departmentUid                 Unique id of Department
+     * @param array  $arrayVariableNameForException Variable name for exception
+     * @param bool   $throwException Flag to throw the exception if the main parameters are invalid or do not exist
+     *                               (TRUE: throw the exception; FALSE: returns FALSE)
+     *
+     * @return array Returns an array with Department record, ThrowTheException/FALSE otherwise
+     */
+    public function getDepartmentRecordByPk(
+        $departmentUid,
+        array $arrayVariableNameForException,
+        $throwException = true
+    ) {
+        try {
+            $obj = \DepartmentPeer::retrieveByPK($departmentUid);
+
+            if (is_null($obj)) {
+                if ($throwException) {
+                    throw new \Exception(\G::LoadTranslation(
+                        'ID_DEPARTMENT_NOT_EXIST', [$arrayVariableNameForException['$departmentUid'], $departmentUid]
+                    ));
+                } else {
+                    return false;
+                }
+            }
+
+            //Return
+            return $obj->toArray(\BasePeer::TYPE_FIELDNAME);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Get list for Departments
      *
      * @access public
@@ -187,7 +222,7 @@ class Department
         $oCriteria->setOffset( $start );
 
         if ($search != '') {
-            $oCriteria->add( $oCriteria->getNewCriterion( UsersPeer::USR_USERNAME, '%' . $search . '%', \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( UsersPeer::USR_FIRSTNAME, '%' . $search . '%', \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( UsersPeer::USR_LASTNAME, '%' . $search . '%', \Criteria::LIKE ) ) ) );    
+            $oCriteria->add( $oCriteria->getNewCriterion( UsersPeer::USR_USERNAME, '%' . $search . '%', \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( UsersPeer::USR_FIRSTNAME, '%' . $search . '%', \Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( UsersPeer::USR_LASTNAME, '%' . $search . '%', \Criteria::LIKE ) ) ) );
         }
 
         $oDataset = UsersPeer::doSelectRS( $oCriteria );
