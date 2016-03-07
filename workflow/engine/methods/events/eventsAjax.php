@@ -109,6 +109,19 @@ switch($req){
 
         $criteria = new Criteria();
         $criteria = $oAppEvent->getAppEventsCriteria($proUid, $evenStatus, $evenType);
+        
+        $allowedSortField = array( 
+            'PRO_TITLE',
+            'TAS_TITLE',
+            'APP_TITLE',
+            'APP_EVN_ACTION_DATE',
+            'APP_EVN_LAST_EXECUTION_DATE',
+        );
+
+        if (!in_array($sort, $allowedSortField)) {
+            $sort = "";
+        }
+
         if ($sort != '') {
             if ($dir == 'ASC') {
                 $criteria->addAscendingOrderByColumn($sort);
@@ -116,7 +129,7 @@ switch($req){
                 $criteria->addDescendingOrderByColumn($sort);
             }
         } else {
-            $oCriteria->addDescendingOrderByColumn(AppEventPeer::APP_EVN_ACTION_DATE);
+            $criteria->addDescendingOrderByColumn(AppEventPeer::APP_EVN_ACTION_DATE);
         }
         if ($limit != '') {
             $criteria->setLimit($limit);
