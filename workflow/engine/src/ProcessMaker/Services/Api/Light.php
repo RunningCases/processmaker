@@ -285,11 +285,11 @@ class Light extends Api
             'user' => array(
                 'USR_UID'       => 'userId'
             ),
-            'prevUser' => array(
-                'PREVIOUS_USR_UID'       => 'userId',
-                'PREVIOUS_USR_FIRSTNAME' => 'firstName',
-                'PREVIOUS_USR_LASTNAME'  => 'lastName',
-                'PREVIOUS_USR_USERNAME'  => 'fullName',
+            'currentUser' => array(
+                'USR_UID'       => 'userId',
+                'USR_FIRSTNAME' => 'firstName',
+                'USR_LASTNAME'  => 'lastName',
+                'USR_USERNAME'  => 'fullName',
             ),
             'process' => array(
                 'PRO_UID'       => 'processId',
