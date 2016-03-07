@@ -132,12 +132,7 @@ if(!isset($_SESSION['APPLICATION']) || !isset($_SESSION['TASK']) || !isset($_SES
     $_SESSION['APPLICATION'] = $case['APP_UID'];
     $_SESSION['TASK'] = $case['TAS_UID'];
     $_SESSION['INDEX'] = $case['DEL_INDEX'];
-} 
-$_SESSION['TASK'] = ($_GET['action'] == "unassigned" || $_GET['action'] == "sent" ) ? -1 : $_SESSION['TASK'];
-if($_GET['action'] == "todo" || $_GET['action'] == "draft") {
-    if (isset($_SESSION['bNoShowSteps'])) {
-        unset($_SESSION['bNoShowSteps']);
-    }
 }
+$_SESSION['actionCaseOptions'] = (isset($_REQUEST['action'])) ? $_REQUEST['action'] : '';
 G::RenderPage( 'publish', 'extJs' );
 
