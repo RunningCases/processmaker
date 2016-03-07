@@ -288,9 +288,10 @@ if ($RBAC->userCanAccess('PM_SETUP') == 1) {
 }
 
 /*----------------------------------********---------------------------------*/
-$oPluginRegistry = &PMPluginRegistry::getSingleton();
-$oObject = $oPluginRegistry->getPlugin("actionsByEmail");
-if (!(get_class($oObject) === "actionsByEmailPlugin") &&
+$pluginRegistry = &PMPluginRegistry::getSingleton(); //lsl
+$status = $pluginRegistry->getStatusPlugin('actionsByEmail');
+
+if ((string)($status) !== 'enabled' &&
     $licensedFeatures->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=') &&
     $RBAC->userCanAccess('PM_SETUP_LOGS') == 1
 ) {
