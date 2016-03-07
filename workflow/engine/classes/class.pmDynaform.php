@@ -177,19 +177,19 @@ class pmDynaform
                         $json->sql = "";
                     $json->optionsSql = array();
 
-                    switch ((isset($json->datasource))? $json->datasource : 'database') {
+                    switch ((isset($json->datasource)) ? $json->datasource : 'database') {
                         case 'dataVariable':
-                            $dataVariable = (preg_match('/^\s*@.(.+)\s*$/', $json->dataVariable, $arrayMatch))?
-                                $arrayMatch[1] : $json->dataVariable;
+                            $dataVariable = (preg_match('/^\s*@.(.+)\s*$/', $json->dataVariable, $arrayMatch)) ?
+                                    $arrayMatch[1] : $json->dataVariable;
 
                             if (isset($this->fields['APP_DATA'][$dataVariable]) &&
-                                is_array($this->fields['APP_DATA'][$dataVariable]) &&
-                                !empty($this->fields['APP_DATA'][$dataVariable])
+                                    is_array($this->fields['APP_DATA'][$dataVariable]) &&
+                                    !empty($this->fields['APP_DATA'][$dataVariable])
                             ) {
                                 foreach ($this->fields['APP_DATA'][$dataVariable] as $row) {
                                     $option = new stdClass();
                                     $option->value = $row[0];
-                                    $option->label = (isset($row[1]))? $row[1] : $row[0];
+                                    $option->label = (isset($row[1])) ? $row[1] : $row[0];
 
                                     $json->optionsSql[] = $option;
                                 }
@@ -202,18 +202,16 @@ class pmDynaform
                                     $cnn = Propel::getConnection($json->dbConnection);
                                     $stmt = $cnn->createStatement();
                                     $sql = G::replaceDataField($json->sql, $this->getValuesDependentFields($json));
-                                    $rs = $stmt->executeQuery($sql, ResultSet::FETCHMODE_NUM);
-
+                                    $rs = $stmt->executeQuery($sql, \ResultSet::FETCHMODE_NUM);
                                     while ($rs->next()) {
                                         $row = $rs->getRow();
-
                                         $option = new stdClass();
                                         $option->value = $row[0];
-                                        $option->label = (isset($row[1]))? $row[1] : $row[0];
-
+                                        $option->label = isset($row[1]) ? $row[1] : $row[0];
                                         $json->optionsSql[] = $option;
                                     }
                                 } catch (Exception $e) {
+                                    
                                 }
                             }
                             break;
@@ -590,7 +588,7 @@ class pmDynaform
                         $data[$json->variable === "" ? $json->id : $json->variable] = $row[0];
                     }
                 } catch (Exception $e) {
-
+                    
                 }
             }
         }
@@ -713,9 +711,9 @@ class pmDynaform
                 "        token: credentials,\n" .
                 "        submitRest: false\n" .
                 "    });\n" .
-                "    $(document).find('form').find('button').on('click', function (e) {\n".
+                "    $(document).find('form').find('button').on('click', function (e) {\n" .
                 "        e.preventDefault();\n" .
-                "        return false;\n".
+                "        return false;\n" .
                 "    });\n" .
                 "    $(document).find('form').submit(function (e) {\n" .
                 "        e.preventDefault();\n" .
@@ -1387,6 +1385,80 @@ class pmDynaform
         $oPro->setDynLabel(G::json_encode($dyn_labels));
         $oPro->save();
         $con->commit();
+    }
+
+    /**
+     * Remove the posted values that are not in the definition of Dynaform.
+     * @param array $post
+     * @return array
+     */
+    public function validatePost($post = array())
+    {
+        $aux = $post;
+        $json = G::json_decode($this->record["DYN_CONTENT"]);
+        $modeForm = $json->items[0]->mode;
+        foreach ($aux as $key => $value) {
+            if (substr($key, -6, 6) === "_label") {
+                continue;
+            }
+            $modeField = null;
+            $protectedValue = null;
+            $field = $this->jsonsf($json, $key, "variable");
+            if ($field !== null) {
+                if (isset($field->mode)) {
+                    $modeField = $field->mode;
+                }
+                if ($modeField === "parent") {
+                    $modeField = $modeForm;
+                }
+                if (isset($field->protectedValue)) {
+                    $protectedValue = $field->protectedValue;
+                }
+            }
+            //insert for strict validation: || $modeField === "view" || $this->fields["STEP_MODE"] === "VIEW"
+            if ($field === null || $protectedValue === true) {
+                if (isset($post[$key])) {
+                    unset($post[$key]);
+                }
+                if (isset($post[$key . "_label"])) {
+                    unset($post[$key . "_label"]);
+                }
+            }
+            //columns
+            if (is_array($value)) {
+                foreach ($value as $keyRow => $valueRow) {
+                    foreach ($valueRow as $keyCell => $valueCell) {
+                        if (substr($keyCell, -6, 6) === "_label") {
+                            continue;
+                        }
+                        $modeField = null;
+                        $protectedValue = null;
+                        $field = $this->jsonsf($json, $keyCell, "id");
+                        if ($field !== null) {
+                            if (isset($field->mode)) {
+                                $modeField = $field->mode;
+                            }
+                            if ($modeField === "parent") {
+                                $modeField = $modeForm;
+                            }
+                            if (isset($field->protectedValue)) {
+                                $protectedValue = $field->protectedValue;
+                            }
+                        }
+                        //insert for strict validation: || $modeField === "view" || $this->fields["STEP_MODE"] === "VIEW"
+                        if ($field === null || $protectedValue === true) {
+                            if (isset($post[$key][$keyRow][$keyCell])) {
+                                unset($post[$key][$keyRow][$keyCell]);
+                            }
+                            if (isset($post[$key][$keyRow][$keyCell . "_label"])) {
+                                unset($post[$key][$keyRow][$keyCell . "_label"]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $post;
     }
 
     private function clientToken()
