@@ -247,32 +247,27 @@ Ext.onReady(function(){
     chkSelModel = new Ext.grid.CheckboxSelectionModel({
       listeners:{
         selectionchange: function(sm){
-          if (sm.last !== false) {
-            var count_rows = sm.getCount();
-            //var isReport = sm.getSelected().get('PRO_UID') != '';
-
-            currentSelectedRow = sm.last;
-            switch(count_rows){
-              case 0:
-                editButton.disable();
-                deleteButton.disable();
-                exportButton.disable();
-                dataButton.disable();
-                break;
-              case 1:
-                editButton.enable();
-                deleteButton.enable();
-                exportButton.enable();
-                dataButton.enable();
-                break;
-              default:
-                editButton.disable();
-                deleteButton.enable();
-                exportButton.enable();
-                dataButton.disable();
-                break;
-            }
-
+          var count_rows = sm.getCount();
+          currentSelectedRow = sm.last;
+          switch(count_rows){
+            case 0:
+              editButton.disable();
+              deleteButton.disable();
+              exportButton.disable();
+              dataButton.disable();
+              break;
+            case 1:
+              editButton.enable();
+              deleteButton.enable();
+              exportButton.enable();
+              dataButton.enable();
+              break;
+            default:
+              editButton.disable();
+              deleteButton.enable();
+              exportButton.enable();
+              dataButton.disable();
+              break;
           }
         }
       }
