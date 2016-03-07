@@ -1052,5 +1052,70 @@ class Process extends BaseProcess
         }
         return $aProc;
     }
+
+    public function deleteProcessCases($proUid)
+    {
+        try {
+            /*get cases by process uid*/
+            $oCase = new Cases();
+            $oCriteria = new Criteria( 'workflow' );
+            $oCriteria->addSelectColumn( ApplicationPeer::APP_UID);
+            $oCriteria->add( ApplicationPeer::PRO_UID, $proUid );
+            $oDataset = ApplicationPeer::doSelectRS( $oCriteria, Propel::getDbConnection('workflow_ro') );
+            $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+            while ($oDataset->next()) {
+                $row = $oDataset->getRow();
+                $oCase->removeCase($row['APP_UID'], false);
+            }
+        } catch(Exception $e) {
+            throw ($e);
+        }
+    }
+
+    public function refreshUserAllCountersByProcessesGroupUid($proUidArray)
+    {
+        $aTypes = array(
+            'to_do',
+            'draft',
+            'cancelled',
+            'sent',
+            'paused',
+            'completed',
+            'selfservice'
+        );
+        $usersArray = array();
+        $users = new Users();
+        $oCase = new Cases();
+        $oCriteria = new Criteria();
+        $oCriteria->addSelectColumn( AppDelegationPeer::APP_UID );
+        $oCriteria->addSelectColumn( AppDelegationPeer::USR_UID );
+        $oCriteria->setDistinct();
+        $oCriteria->add( AppDelegationPeer::PRO_UID, $proUidArray, Criteria::IN );
+        $oRuleSet = AppDelegationPeer::doSelectRS( $oCriteria );
+        $oRuleSet->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+        while($oRuleSet->next()) {
+            $row = $oRuleSet->getRow();
+            if(isset($row['USR_UID'])) {
+                $usersArray[$row['USR_UID']] = $row['USR_UID'];
+            }
+            $oCase->deleteDelegation($row['APP_UID']);
+        }
+
+        foreach($usersArray as $value) {
+            $oAppCache = new AppCacheView();
+            $aCount = $oAppCache->getAllCounters( $aTypes, $value );
+            $newData = array(
+                'USR_UID'                   => $value,
+                'USR_TOTAL_INBOX'           => $aCount['to_do'],
+                'USR_TOTAL_DRAFT'           => $aCount['draft'],
+                'USR_TOTAL_CANCELLED'       => $aCount['cancelled'],
+                'USR_TOTAL_PARTICIPATED'    => $aCount['sent'],
+                'USR_TOTAL_PAUSED'          => $aCount['paused'],
+                'USR_TOTAL_COMPLETED'       => $aCount['completed'],
+                'USR_TOTAL_UNASSIGNED'      => $aCount['selfservice']
+            );
+            $users->update($newData);
+        }
+    }
 }
 
