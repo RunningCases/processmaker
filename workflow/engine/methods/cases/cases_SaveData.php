@@ -90,12 +90,8 @@ try {
     $Fields = $oCase->loadCase( $_SESSION["APPLICATION"] );
 
     if ($swpmdynaform) {
-        $oStep = new Step();
-        $oStep = $oStep->loadByProcessTaskPosition($_SESSION['PROCESS'], $_SESSION['TASK'], $_SESSION['STEP_POSITION']);
-
         $dataFields = $Fields["APP_DATA"];
         $dataFields["CURRENT_DYNAFORM"] = $_GET['UID'];
-        $dataFields["STEP_MODE"] = $oStep->getStepMode();
 
         G::LoadClass('pmDynaform');
         $oPmDynaform = new pmDynaform($dataFields);
