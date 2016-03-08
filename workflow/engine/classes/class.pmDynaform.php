@@ -36,6 +36,17 @@ class pmDynaform
                 $this->record["DYN_CONTENT"] = $decode;
             }
         }
+
+        //todo: compatibility checkbox
+        $json = G::json_decode($this->record["DYN_CONTENT"]);
+        $fields = $this->jsonsf2($json, "checkbox", "type");
+        foreach ($fields as $field) {
+            if (isset($field->dataType) && $field->dataType === "string") {
+                $field->type = "checkgroup";
+            }
+            $this->jsonReplace($json, $field->id, "id", $field);
+        }
+        $this->record["DYN_CONTENT"] = G::json_encode($json);
     }
 
     public function getDynaformTitle($idDynaform)
@@ -1196,6 +1207,35 @@ class pmDynaform
             }
         }
         return null;
+    }
+
+    /**
+     * You obtain an array of elements according to search criteria.
+     * 
+     * @param object $json
+     * @param string $id
+     * @param string $for
+     * @return array
+     */
+    private function jsonsf2(&$json, $id, $for = "id")
+    {
+        $result = array();
+        foreach ($json as $key => $value) {
+            $sw1 = is_array($value);
+            $sw2 = is_object($value);
+            if ($sw1 || $sw2) {
+                $fields = $this->jsonsf2($value, $id, $for);
+                foreach ($fields as $field) {
+                    $result[] = $field;
+                }
+            }
+            if (!$sw1 && !$sw2) {
+                if ($key === $for && $id === $value) {
+                    $result[] = $json;
+                }
+            }
+        }
+        return $result;
     }
 
     public function downloadLanguage($dyn_uid, $lang)
