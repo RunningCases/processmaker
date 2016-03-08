@@ -2954,7 +2954,7 @@ function PMFSaveCurrentData ()
 }
 
 /**
- * @method 
+ * @method
  * Return an array of associative arrays which contain the unique task ID and title.
  * @name PMFTasksListByProcessId
  * @label PMF Tasks List By Process Id
@@ -2999,23 +2999,23 @@ function PMFGetProcessUidByName($processName = '')
 {
     try {
         $processUid = '';
-        
+
         if ($processName == '') {
             //Return
             return (isset($_SESSION['PROCESS']))? $_SESSION['PROCESS'] : false;
         }
-        
+
         $criteria = new Criteria('workflow');
-        
+
         $criteria->addSelectColumn(ProcessPeer::PRO_UID);
-        
+
         $criteria->addJoin(ContentPeer::CON_ID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $criteria->add(ContentPeer::CON_VALUE, $processName, Criteria::EQUAL);
         $criteria->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE', Criteria::EQUAL);
-        
+
         $rsCriteria = ContentPeer::doSelectRS($criteria);
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        
+
         if ($rsCriteria->next()) {
             $row = $rsCriteria->getRow();
             $processUid = $row['PRO_UID'];
@@ -3023,7 +3023,7 @@ function PMFGetProcessUidByName($processName = '')
             //Return
             return false;
         }
-        
+
         //Return
         return $processUid;
     } catch (Exception $e) {
@@ -3032,7 +3032,7 @@ function PMFGetProcessUidByName($processName = '')
 }
 
 /**
- * @method 
+ * @method
  * The requested text in the specified language | If not found returns false
  * @name PMFGeti18nText
  * @label PMF Get i18n Text
@@ -3061,9 +3061,9 @@ function PMFGeti18nText($id, $category, $lang = "en")
 
 /**
  * @method
- * Function to return an array of objects containing the properties of the fields 
- * in a specified DynaForm. 
- * It also inserts the "value" and "value_label" as properties in the fields' objects, 
+ * Function to return an array of objects containing the properties of the fields
+ * in a specified DynaForm.
+ * It also inserts the "value" and "value_label" as properties in the fields' objects,
  * if the case is specified.
  * @name PMFDynaFormFields
  * @label PMF DynaForm Fields
@@ -3230,3 +3230,91 @@ function PMFGetGroupUsers($GroupUID)
     return $usersGroup;
 
 }
+
+/**
+ * @method
+ *
+ * Get next derivation info
+ *
+ * @name PMFGetNextDerivationInfo
+ * @label PMF Get next derivation info
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFGetNextDerivationInfo.28.29
+ *
+ * @param string(32) | $caseUid | ID of the case | The unique ID of the case
+ * @param int | $delIndex | Delegation index of the case | The delegation index of the current task in the case
+ *
+ * @return array | $arrayNextDerivationInfo | Next derivation info | Returns the next derivation info, FALSE otherwise
+ */
+function PMFGetNextDerivationInfo($caseUid, $delIndex)
+{
+    try {
+        $arrayNextDerivationInfo = [];
+
+        //Verify data and Set variables
+        $case = new \ProcessMaker\BusinessModel\Cases();
+
+        $arrayAppDelegationData = $case->getAppDelegationRecordByPk(
+            $caseUid,
+            $delIndex,
+            ['$applicationUid' => '$caseUid', '$delIndex' => '$delIndex'],
+            false
+        );
+
+        if ($arrayAppDelegationData === false) {
+            return false;
+        }
+
+        //Set variables
+        $processUid = $arrayAppDelegationData['PRO_UID'];
+        $userUid = $arrayAppDelegationData['USR_UID'];
+
+        //Get next derivation
+        $derivation = new Derivation();
+
+        $arrayData = $derivation->prepareInformation([
+            'APP_UID'   => $caseUid,
+            'DEL_INDEX' => $delIndex,
+            'USER_UID'  => $userUid //User logged
+        ]);
+
+        $task = new \ProcessMaker\BusinessModel\Task();
+
+        foreach ($arrayData as $value) {
+            $arrayInfo = $value;
+
+            $nextTaskUid = $arrayInfo['NEXT_TASK']['TAS_UID'];
+
+            $arrayUserUid = [];
+            $arrayGroupUid = [];
+
+            if ($nextTaskUid != '-1') {
+                $arrayResult = $task->getTaskAssignees($processUid, $nextTaskUid, 'ASSIGNEE', 1);
+
+                foreach ($arrayResult['data'] as $value2) {
+                    $arrayAssigneeData = $value2;
+
+                    switch ($arrayAssigneeData['aas_type']) {
+                        case 'user':
+                            $arrayUserUid[] = $arrayAssigneeData['aas_uid'];
+                            break;
+                        case 'group':
+                            $arrayGroupUid[] = $arrayAssigneeData['aas_uid'];
+                            break;
+                    }
+                }
+            }
+
+            $arrayNextDerivationInfo[] = [
+                'taskUid' => $nextTaskUid,
+                'users'   => $arrayUserUid,
+                'groups'  => $arrayGroupUid,
+            ];
+        }
+
+        //Return
+        return $arrayNextDerivationInfo;
+    } catch (Exception $e) {
+        throw $e;
+    }
+}
+

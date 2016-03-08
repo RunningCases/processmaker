@@ -297,13 +297,11 @@ class Derivation
 
             //1. There is no rule
             if (empty($arrayNextTask)) {
-              $oProcess = new Process();
-              $oProcessFieds = $oProcess->Load( $_SESSION['PROCESS'] );
-              if(isset($oProcessFieds['PRO_BPMN']) && $oProcessFieds['PRO_BPMN'] == 1){
-                throw new Exception(G::LoadTranslation("ID_NO_DERIVATION_BPMN_RULE"));
-              }else{
-                throw new Exception(G::LoadTranslation("ID_NO_DERIVATION_RULE"));
-              }
+                $bpmn = new \ProcessMaker\Project\Bpmn();
+
+                throw new Exception(G::LoadTranslation(
+                    'ID_NO_DERIVATION_' . (($bpmn->exists($arrayApplicationData['PRO_UID']))? 'BPMN_RULE' : 'RULE')
+                ));
             }
 
             //Return
