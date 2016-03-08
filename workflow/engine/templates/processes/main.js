@@ -280,6 +280,15 @@ Ext.onReady(function(){
       },
       columns: [
         expander,
+        
+        // There is a list of allowed columns to sort: 
+        // workflow/engine/methods/cases/proxyProcessList.php
+        // This is to prevent ORDER BY injection attacks
+
+        // It is identical to this list.
+        // If you need to add a new column that is sortable, please
+        // make sure it is added there or sorting will not work.
+
         {id:'PRO_UID', dataIndex: 'PRO_UID', hidden:true, hideable:false},
         {header: "", dataIndex: 'PRO_STATUS', width: 50, hidden:true, hideable:false},
         {header: _('ID_PRO_DESCRIPTION'), dataIndex: 'PRO_DESCRIPTION',hidden:true, hideable:false},
