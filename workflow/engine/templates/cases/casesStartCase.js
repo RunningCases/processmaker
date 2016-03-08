@@ -461,7 +461,7 @@ function openCaseA(n){
         taskId : n.attributes.tas_uid
       },
       success : function(response) {
-
+        var nameTab;
         try {
           var res = Ext.util.JSON.decode(response.responseText);
           if (res.openCase) {
@@ -469,7 +469,8 @@ function openCaseA(n){
               if(newCaseNewTab) {
                 newCaseNewTab.close();
               }
-                newCaseNewTab = window.open(res.openCase.PAGE);       
+              nameTab = PM.Sessions.getCookie('PM-TabPrimary') + '_openCase';
+              newCaseNewTab = window.open(res.openCase.PAGE, nameTab);
             } else {
               window.location = res.openCase.PAGE;
             }

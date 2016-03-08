@@ -330,6 +330,8 @@ class headPublisher
         $head = "";
         $head = $head . "  <script type=\"text/javascript\" src=\"" . G::browserCacheFilesUrl("/js/ext/ext-base.js") . "\"></script>\n";
         $head = $head . "  <script type=\"text/javascript\" src=\"" . G::browserCacheFilesUrl("/js/ext/ext-all.js") . "\"></script>\n";
+        $head = $head . "  <script type=\"text/javascript\" src=\"" . G::browserCacheFilesUrl("/jscore/src/PM.js") . "\"></script>\n";
+        $head = $head . "  <script type=\"text/javascript\" src=\"" . G::browserCacheFilesUrl("/jscore/src/Sessions.js") . "\"></script>\n";
 
         if (SYS_LANG != 'en') {
             $tempLang = str_replace('-', '_', SYS_LANG);
