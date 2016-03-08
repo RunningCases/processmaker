@@ -329,6 +329,38 @@ class User
     }
 
     /**
+     * Get User record
+     *
+     * @param string $userUid                       Unique id of User
+     * @param array  $arrayVariableNameForException Variable name for exception
+     * @param bool   $throwException Flag to throw the exception if the main parameters are invalid or do not exist
+     *                               (TRUE: throw the exception; FALSE: returns FALSE)
+     *
+     * @return array Returns an array with User record, ThrowTheException/FALSE otherwise
+     */
+    public function getUserRecordByPk($userUid, array $arrayVariableNameForException, $throwException = true)
+    {
+        try {
+            $obj = \UsersPeer::retrieveByPK($userUid);
+
+            if (is_null($obj)) {
+                if ($throwException) {
+                    throw new \Exception(\G::LoadTranslation(
+                        'ID_USER_DOES_NOT_EXIST', [$arrayVariableNameForException['$userUid'], $userUid]
+                    ));
+                } else {
+                    return false;
+                }
+            }
+
+            //Return
+            return $obj->toArray(\BasePeer::TYPE_FIELDNAME);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Get data of a from a record
      *
      * @param array $record Record
@@ -1288,5 +1320,68 @@ class User
             throw $e;
         }
     }
-}
 
+    /**
+     * Get the User's Manager
+     *
+     * @param string $userUid        Unique id of User
+     * @param bool   $throwException Flag to throw the exception if the main parameters are invalid or do not exist
+     *                               (TRUE: throw the exception; FALSE: returns FALSE)
+     *
+     * @return string Returns an string with Unique id of User (Manager), ThrowTheException/FALSE otherwise
+     */
+    public function getUsersManager($userUid, $throwException = true)
+    {
+        try {
+            //Verify data and Set variables
+            $arrayUserData = $this->getUserRecordByPk($userUid, ['$userUid' => '$userUid'], $throwException);
+
+            if ($arrayUserData === false) {
+                return false;
+            }
+
+            //Set variables
+            $department = new \ProcessMaker\BusinessModel\Department();
+
+            //Get Manager
+            if ((string)($arrayUserData['USR_REPORTS_TO']) == '' ||
+                (string)($arrayUserData['USR_REPORTS_TO']) == $userUid
+            ) {
+                if ((string)($arrayUserData['DEP_UID']) != '') {
+                    $departmentUid = $arrayUserData['DEP_UID'];
+
+                    do {
+                        $flagd = false;
+
+                        $arrayDepartmentData = $department->getDepartmentRecordByPk(
+                            $departmentUid, ['$departmentUid' => '$departmentUid'], $throwException
+                        );
+
+                        if ($arrayDepartmentData === false) {
+                            return false;
+                        }
+
+                        if ((string)($arrayDepartmentData['DEP_MANAGER']) == '' ||
+                            (string)($arrayDepartmentData['DEP_MANAGER']) == $userUid
+                        ) {
+                            if ((string)($arrayDepartmentData['DEP_PARENT']) != '') {
+                                $departmentUid = $arrayDepartmentData['DEP_PARENT'];
+                                $flagd = true;
+                            } else {
+                                return false;
+                            }
+                        } else {
+                            return $arrayDepartmentData['DEP_MANAGER'];
+                        }
+                    } while ($flagd);
+                } else {
+                    return false;
+                }
+            } else {
+                return $arrayUserData['USR_REPORTS_TO'];
+            }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+}

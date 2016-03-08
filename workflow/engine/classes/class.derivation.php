@@ -636,15 +636,12 @@ class Derivation
      */
     function getDenpendentUser ($USR_UID)
     {
-        //Here the uid to next user
-        $oC = new Criteria();
-        $oC->addSelectColumn( UsersPeer::USR_REPORTS_TO );
-        $oC->add( UsersPeer::USR_UID, $USR_UID );
-        $oDataset = UsersPeer::doSelectRS( $oC );
-        $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-        $oDataset->next();
-        $aRow = $oDataset->getRow();
-        return $aRow['USR_REPORTS_TO'] != '' ? $aRow['USR_REPORTS_TO'] : $USR_UID;
+        $user = new \ProcessMaker\BusinessModel\User();
+
+        $manager = $user->getUsersManager($USR_UID);
+
+        //Return
+        return ($manager !== false)? $manager : $USR_UID;
     }
 
     /* setTasLastAssigned
