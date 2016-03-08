@@ -38,12 +38,12 @@ if (! isset( $_GET['APP_UID'] ) || ! isset( $_GET['DEL_INDEX'] )) {
     if (isset( $_GET['APP_NUMBER'] )) {
         G::LoadClass( 'case' );
         $oCase = new Cases();
-        $appUid = $oCase->getApplicationUIDByNumber( $_GET['APP_NUMBER'] );
-        $delIndex = $oCase->getCurrentDelegation( $_GET['APP_UID'], $_SESSION['USER_LOGGED'] );
-        if (is_null( $_GET['APP_UID'] )) {
+        $appUid = $oCase->getApplicationUIDByNumber( htmlspecialchars($_GET['APP_NUMBER']) );
+        $delIndex = $oCase->getCurrentDelegation( $appUid, $_SESSION['USER_LOGGED'] );
+        if (is_null( $appUid )) {
             throw new Exception( G::LoadTranslation( 'ID_CASE_DOES_NOT_EXISTS' ) );
         }
-        if (is_null( $_GET['DEL_INDEX'] )) {
+        if (is_null( $delIndex )) {
             throw new Exception( G::LoadTranslation( 'ID_CASE_IS_CURRENTLY_WITH_ANOTHER_USER' ) );
         }
     } else {
@@ -89,7 +89,6 @@ foreach ($_GET as $k => $v) {
     $uri .= ($uri == '') ? "$k=$v" : "&$k=$v";
 }
 
-//$case = $oCase->loadCase( $appUid, $delIndex );
 if( isset($_GET['action']) && ($_GET['action'] == 'jump') ) {
     $case = $oCase->loadCase( $appUid, $delIndex, $_GET['action']);
 } else {
