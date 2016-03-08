@@ -250,6 +250,8 @@ class Cases
         $type = "extjs";
         $dateFrom = (!empty( $dataList["dateFrom"] )) ? substr( $dataList["dateFrom"], 0, 10 ) : "";
         $dateTo = (!empty( $dataList["dateTo"] )) ? substr( $dataList["dateTo"], 0, 10 ) : "";
+        $newerThan = (!empty($dataList['newerThan']))? $dataList['newerThan'] : '';
+        $oldestThan = (!empty($dataList['oldestthan']))? $dataList['oldestthan'] : '';
         $first = isset( $dataList["first"] ) ? true :false;
 
         $u = new \ProcessMaker\BusinessModel\User();
@@ -291,7 +293,7 @@ class Cases
         }
         $dir = G::toUpper($dir);
         if (!($dir == 'DESC' || $dir == 'ASC')) {
-            $dir = 'DESC';
+            $dir = 'ASC';
         }
         if ($process != '') {
             Validator::proUid($process, '$pro_uid');
@@ -383,7 +385,9 @@ class Cases
                 (strpos($sort, ".") !== false)? $sort : "APP_CACHE_VIEW." . $sort,
                 $category,
                 true,
-                $paged
+                $paged,
+                $newerThan,
+                $oldestThan
             );
         }
         if (!empty($result['data'])) {
