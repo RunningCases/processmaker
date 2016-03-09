@@ -58,58 +58,76 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
     protected $year = 0;
 
     /**
+     * The value for the total_queue_time_by_task field.
+     * @var        double
+     */
+    protected $total_queue_time_by_task = 0;
+
+    /**
      * The value for the total_time_by_task field.
      * @var        double
      */
-    protected $total_time_by_task;
+    protected $total_time_by_task = 0;
 
     /**
      * The value for the total_cases_in field.
      * @var        double
      */
-    protected $total_cases_in;
+    protected $total_cases_in = 0;
 
     /**
      * The value for the total_cases_out field.
      * @var        double
      */
-    protected $total_cases_out;
+    protected $total_cases_out = 0;
 
     /**
      * The value for the user_hour_cost field.
      * @var        double
      */
-    protected $user_hour_cost;
+    protected $user_hour_cost = 0;
 
     /**
      * The value for the avg_time field.
      * @var        double
      */
-    protected $avg_time;
+    protected $avg_time = 0;
 
     /**
      * The value for the sdv_time field.
      * @var        double
      */
-    protected $sdv_time;
+    protected $sdv_time = 0;
 
     /**
      * The value for the configured_task_time field.
      * @var        double
      */
-    protected $configured_task_time;
+    protected $configured_task_time = 0;
 
     /**
      * The value for the total_cases_overdue field.
      * @var        double
      */
-    protected $total_cases_overdue;
+    protected $total_cases_overdue = 0;
 
     /**
      * The value for the total_cases_on_time field.
      * @var        double
      */
-    protected $total_cases_on_time;
+    protected $total_cases_on_time = 0;
+
+    /**
+     * The value for the pro_cost field.
+     * @var        double
+     */
+    protected $pro_cost = 0;
+
+    /**
+     * The value for the pro_unit_cost field.
+     * @var        string
+     */
+    protected $pro_unit_cost = '';
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -178,6 +196,17 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
     {
 
         return $this->year;
+    }
+
+    /**
+     * Get the [total_queue_time_by_task] column value.
+     * 
+     * @return     double
+     */
+    public function getTotalQueueTimeByTask()
+    {
+
+        return $this->total_queue_time_by_task;
     }
 
     /**
@@ -277,6 +306,28 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
     {
 
         return $this->total_cases_on_time;
+    }
+
+    /**
+     * Get the [pro_cost] column value.
+     * 
+     * @return     double
+     */
+    public function getProCost()
+    {
+
+        return $this->pro_cost;
+    }
+
+    /**
+     * Get the [pro_unit_cost] column value.
+     * 
+     * @return     string
+     */
+    public function getProUnitCost()
+    {
+
+        return $this->pro_unit_cost;
     }
 
     /**
@@ -390,6 +441,22 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
     } // setYear()
 
     /**
+     * Set the value of [total_queue_time_by_task] column.
+     * 
+     * @param      double $v new value
+     * @return     void
+     */
+    public function setTotalQueueTimeByTask($v)
+    {
+
+        if ($this->total_queue_time_by_task !== $v || $v === 0) {
+            $this->total_queue_time_by_task = $v;
+            $this->modifiedColumns[] = UsrReportingPeer::TOTAL_QUEUE_TIME_BY_TASK;
+        }
+
+    } // setTotalQueueTimeByTask()
+
+    /**
      * Set the value of [total_time_by_task] column.
      * 
      * @param      double $v new value
@@ -398,7 +465,7 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
     public function setTotalTimeByTask($v)
     {
 
-        if ($this->total_time_by_task !== $v) {
+        if ($this->total_time_by_task !== $v || $v === 0) {
             $this->total_time_by_task = $v;
             $this->modifiedColumns[] = UsrReportingPeer::TOTAL_TIME_BY_TASK;
         }
@@ -414,7 +481,7 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
     public function setTotalCasesIn($v)
     {
 
-        if ($this->total_cases_in !== $v) {
+        if ($this->total_cases_in !== $v || $v === 0) {
             $this->total_cases_in = $v;
             $this->modifiedColumns[] = UsrReportingPeer::TOTAL_CASES_IN;
         }
@@ -430,7 +497,7 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
     public function setTotalCasesOut($v)
     {
 
-        if ($this->total_cases_out !== $v) {
+        if ($this->total_cases_out !== $v || $v === 0) {
             $this->total_cases_out = $v;
             $this->modifiedColumns[] = UsrReportingPeer::TOTAL_CASES_OUT;
         }
@@ -446,7 +513,7 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
     public function setUserHourCost($v)
     {
 
-        if ($this->user_hour_cost !== $v) {
+        if ($this->user_hour_cost !== $v || $v === 0) {
             $this->user_hour_cost = $v;
             $this->modifiedColumns[] = UsrReportingPeer::USER_HOUR_COST;
         }
@@ -462,7 +529,7 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
     public function setAvgTime($v)
     {
 
-        if ($this->avg_time !== $v) {
+        if ($this->avg_time !== $v || $v === 0) {
             $this->avg_time = $v;
             $this->modifiedColumns[] = UsrReportingPeer::AVG_TIME;
         }
@@ -478,7 +545,7 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
     public function setSdvTime($v)
     {
 
-        if ($this->sdv_time !== $v) {
+        if ($this->sdv_time !== $v || $v === 0) {
             $this->sdv_time = $v;
             $this->modifiedColumns[] = UsrReportingPeer::SDV_TIME;
         }
@@ -494,7 +561,7 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
     public function setConfiguredTaskTime($v)
     {
 
-        if ($this->configured_task_time !== $v) {
+        if ($this->configured_task_time !== $v || $v === 0) {
             $this->configured_task_time = $v;
             $this->modifiedColumns[] = UsrReportingPeer::CONFIGURED_TASK_TIME;
         }
@@ -510,7 +577,7 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
     public function setTotalCasesOverdue($v)
     {
 
-        if ($this->total_cases_overdue !== $v) {
+        if ($this->total_cases_overdue !== $v || $v === 0) {
             $this->total_cases_overdue = $v;
             $this->modifiedColumns[] = UsrReportingPeer::TOTAL_CASES_OVERDUE;
         }
@@ -526,12 +593,50 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
     public function setTotalCasesOnTime($v)
     {
 
-        if ($this->total_cases_on_time !== $v) {
+        if ($this->total_cases_on_time !== $v || $v === 0) {
             $this->total_cases_on_time = $v;
             $this->modifiedColumns[] = UsrReportingPeer::TOTAL_CASES_ON_TIME;
         }
 
     } // setTotalCasesOnTime()
+
+    /**
+     * Set the value of [pro_cost] column.
+     * 
+     * @param      double $v new value
+     * @return     void
+     */
+    public function setProCost($v)
+    {
+
+        if ($this->pro_cost !== $v || $v === 0) {
+            $this->pro_cost = $v;
+            $this->modifiedColumns[] = UsrReportingPeer::PRO_COST;
+        }
+
+    } // setProCost()
+
+    /**
+     * Set the value of [pro_unit_cost] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setProUnitCost($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->pro_unit_cost !== $v || $v === '') {
+            $this->pro_unit_cost = $v;
+            $this->modifiedColumns[] = UsrReportingPeer::PRO_UNIT_COST;
+        }
+
+    } // setProUnitCost()
 
     /**
      * Hydrates (populates) the object variables with values from the database resultset.
@@ -560,30 +665,36 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
 
             $this->year = $rs->getInt($startcol + 4);
 
-            $this->total_time_by_task = $rs->getFloat($startcol + 5);
+            $this->total_queue_time_by_task = $rs->getFloat($startcol + 5);
 
-            $this->total_cases_in = $rs->getFloat($startcol + 6);
+            $this->total_time_by_task = $rs->getFloat($startcol + 6);
 
-            $this->total_cases_out = $rs->getFloat($startcol + 7);
+            $this->total_cases_in = $rs->getFloat($startcol + 7);
 
-            $this->user_hour_cost = $rs->getFloat($startcol + 8);
+            $this->total_cases_out = $rs->getFloat($startcol + 8);
 
-            $this->avg_time = $rs->getFloat($startcol + 9);
+            $this->user_hour_cost = $rs->getFloat($startcol + 9);
 
-            $this->sdv_time = $rs->getFloat($startcol + 10);
+            $this->avg_time = $rs->getFloat($startcol + 10);
 
-            $this->configured_task_time = $rs->getFloat($startcol + 11);
+            $this->sdv_time = $rs->getFloat($startcol + 11);
 
-            $this->total_cases_overdue = $rs->getFloat($startcol + 12);
+            $this->configured_task_time = $rs->getFloat($startcol + 12);
 
-            $this->total_cases_on_time = $rs->getFloat($startcol + 13);
+            $this->total_cases_overdue = $rs->getFloat($startcol + 13);
+
+            $this->total_cases_on_time = $rs->getFloat($startcol + 14);
+
+            $this->pro_cost = $rs->getFloat($startcol + 15);
+
+            $this->pro_unit_cost = $rs->getString($startcol + 16);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 14; // 14 = UsrReportingPeer::NUM_COLUMNS - UsrReportingPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 17; // 17 = UsrReportingPeer::NUM_COLUMNS - UsrReportingPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating UsrReporting object", $e);
@@ -803,31 +914,40 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
                 return $this->getYear();
                 break;
             case 5:
-                return $this->getTotalTimeByTask();
+                return $this->getTotalQueueTimeByTask();
                 break;
             case 6:
-                return $this->getTotalCasesIn();
+                return $this->getTotalTimeByTask();
                 break;
             case 7:
-                return $this->getTotalCasesOut();
+                return $this->getTotalCasesIn();
                 break;
             case 8:
-                return $this->getUserHourCost();
+                return $this->getTotalCasesOut();
                 break;
             case 9:
-                return $this->getAvgTime();
+                return $this->getUserHourCost();
                 break;
             case 10:
-                return $this->getSdvTime();
+                return $this->getAvgTime();
                 break;
             case 11:
-                return $this->getConfiguredTaskTime();
+                return $this->getSdvTime();
                 break;
             case 12:
-                return $this->getTotalCasesOverdue();
+                return $this->getConfiguredTaskTime();
                 break;
             case 13:
+                return $this->getTotalCasesOverdue();
+                break;
+            case 14:
                 return $this->getTotalCasesOnTime();
+                break;
+            case 15:
+                return $this->getProCost();
+                break;
+            case 16:
+                return $this->getProUnitCost();
                 break;
             default:
                 return null;
@@ -854,15 +974,18 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
             $keys[2] => $this->getProUid(),
             $keys[3] => $this->getMonth(),
             $keys[4] => $this->getYear(),
-            $keys[5] => $this->getTotalTimeByTask(),
-            $keys[6] => $this->getTotalCasesIn(),
-            $keys[7] => $this->getTotalCasesOut(),
-            $keys[8] => $this->getUserHourCost(),
-            $keys[9] => $this->getAvgTime(),
-            $keys[10] => $this->getSdvTime(),
-            $keys[11] => $this->getConfiguredTaskTime(),
-            $keys[12] => $this->getTotalCasesOverdue(),
-            $keys[13] => $this->getTotalCasesOnTime(),
+            $keys[5] => $this->getTotalQueueTimeByTask(),
+            $keys[6] => $this->getTotalTimeByTask(),
+            $keys[7] => $this->getTotalCasesIn(),
+            $keys[8] => $this->getTotalCasesOut(),
+            $keys[9] => $this->getUserHourCost(),
+            $keys[10] => $this->getAvgTime(),
+            $keys[11] => $this->getSdvTime(),
+            $keys[12] => $this->getConfiguredTaskTime(),
+            $keys[13] => $this->getTotalCasesOverdue(),
+            $keys[14] => $this->getTotalCasesOnTime(),
+            $keys[15] => $this->getProCost(),
+            $keys[16] => $this->getProUnitCost(),
         );
         return $result;
     }
@@ -910,31 +1033,40 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
                 $this->setYear($value);
                 break;
             case 5:
-                $this->setTotalTimeByTask($value);
+                $this->setTotalQueueTimeByTask($value);
                 break;
             case 6:
-                $this->setTotalCasesIn($value);
+                $this->setTotalTimeByTask($value);
                 break;
             case 7:
-                $this->setTotalCasesOut($value);
+                $this->setTotalCasesIn($value);
                 break;
             case 8:
-                $this->setUserHourCost($value);
+                $this->setTotalCasesOut($value);
                 break;
             case 9:
-                $this->setAvgTime($value);
+                $this->setUserHourCost($value);
                 break;
             case 10:
-                $this->setSdvTime($value);
+                $this->setAvgTime($value);
                 break;
             case 11:
-                $this->setConfiguredTaskTime($value);
+                $this->setSdvTime($value);
                 break;
             case 12:
-                $this->setTotalCasesOverdue($value);
+                $this->setConfiguredTaskTime($value);
                 break;
             case 13:
+                $this->setTotalCasesOverdue($value);
+                break;
+            case 14:
                 $this->setTotalCasesOnTime($value);
+                break;
+            case 15:
+                $this->setProCost($value);
+                break;
+            case 16:
+                $this->setProUnitCost($value);
                 break;
         } // switch()
     }
@@ -980,39 +1112,51 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[5], $arr)) {
-            $this->setTotalTimeByTask($arr[$keys[5]]);
+            $this->setTotalQueueTimeByTask($arr[$keys[5]]);
         }
 
         if (array_key_exists($keys[6], $arr)) {
-            $this->setTotalCasesIn($arr[$keys[6]]);
+            $this->setTotalTimeByTask($arr[$keys[6]]);
         }
 
         if (array_key_exists($keys[7], $arr)) {
-            $this->setTotalCasesOut($arr[$keys[7]]);
+            $this->setTotalCasesIn($arr[$keys[7]]);
         }
 
         if (array_key_exists($keys[8], $arr)) {
-            $this->setUserHourCost($arr[$keys[8]]);
+            $this->setTotalCasesOut($arr[$keys[8]]);
         }
 
         if (array_key_exists($keys[9], $arr)) {
-            $this->setAvgTime($arr[$keys[9]]);
+            $this->setUserHourCost($arr[$keys[9]]);
         }
 
         if (array_key_exists($keys[10], $arr)) {
-            $this->setSdvTime($arr[$keys[10]]);
+            $this->setAvgTime($arr[$keys[10]]);
         }
 
         if (array_key_exists($keys[11], $arr)) {
-            $this->setConfiguredTaskTime($arr[$keys[11]]);
+            $this->setSdvTime($arr[$keys[11]]);
         }
 
         if (array_key_exists($keys[12], $arr)) {
-            $this->setTotalCasesOverdue($arr[$keys[12]]);
+            $this->setConfiguredTaskTime($arr[$keys[12]]);
         }
 
         if (array_key_exists($keys[13], $arr)) {
-            $this->setTotalCasesOnTime($arr[$keys[13]]);
+            $this->setTotalCasesOverdue($arr[$keys[13]]);
+        }
+
+        if (array_key_exists($keys[14], $arr)) {
+            $this->setTotalCasesOnTime($arr[$keys[14]]);
+        }
+
+        if (array_key_exists($keys[15], $arr)) {
+            $this->setProCost($arr[$keys[15]]);
+        }
+
+        if (array_key_exists($keys[16], $arr)) {
+            $this->setProUnitCost($arr[$keys[16]]);
         }
 
     }
@@ -1044,6 +1188,10 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
 
         if ($this->isColumnModified(UsrReportingPeer::YEAR)) {
             $criteria->add(UsrReportingPeer::YEAR, $this->year);
+        }
+
+        if ($this->isColumnModified(UsrReportingPeer::TOTAL_QUEUE_TIME_BY_TASK)) {
+            $criteria->add(UsrReportingPeer::TOTAL_QUEUE_TIME_BY_TASK, $this->total_queue_time_by_task);
         }
 
         if ($this->isColumnModified(UsrReportingPeer::TOTAL_TIME_BY_TASK)) {
@@ -1080,6 +1228,14 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
 
         if ($this->isColumnModified(UsrReportingPeer::TOTAL_CASES_ON_TIME)) {
             $criteria->add(UsrReportingPeer::TOTAL_CASES_ON_TIME, $this->total_cases_on_time);
+        }
+
+        if ($this->isColumnModified(UsrReportingPeer::PRO_COST)) {
+            $criteria->add(UsrReportingPeer::PRO_COST, $this->pro_cost);
+        }
+
+        if ($this->isColumnModified(UsrReportingPeer::PRO_UNIT_COST)) {
+            $criteria->add(UsrReportingPeer::PRO_UNIT_COST, $this->pro_unit_cost);
         }
 
 
@@ -1160,6 +1316,8 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
 
         $copyObj->setProUid($this->pro_uid);
 
+        $copyObj->setTotalQueueTimeByTask($this->total_queue_time_by_task);
+
         $copyObj->setTotalTimeByTask($this->total_time_by_task);
 
         $copyObj->setTotalCasesIn($this->total_cases_in);
@@ -1177,6 +1335,10 @@ abstract class BaseUsrReporting extends BaseObject implements Persistent
         $copyObj->setTotalCasesOverdue($this->total_cases_overdue);
 
         $copyObj->setTotalCasesOnTime($this->total_cases_on_time);
+
+        $copyObj->setProCost($this->pro_cost);
+
+        $copyObj->setProUnitCost($this->pro_unit_cost);
 
 
         $copyObj->setNew(true);

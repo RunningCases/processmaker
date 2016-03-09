@@ -25,7 +25,7 @@ abstract class BaseProReportingPeer
     const CLASS_DEFAULT = 'classes.model.ProReporting';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 12;
+    const NUM_COLUMNS = 14;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -67,6 +67,12 @@ abstract class BaseProReportingPeer
     /** the column name for the TOTAL_CASES_ON_TIME field */
     const TOTAL_CASES_ON_TIME = 'PRO_REPORTING.TOTAL_CASES_ON_TIME';
 
+    /** the column name for the PRO_COST field */
+    const PRO_COST = 'PRO_REPORTING.PRO_COST';
+
+    /** the column name for the PRO_UNIT_COST field */
+    const PRO_UNIT_COST = 'PRO_REPORTING.PRO_UNIT_COST';
+
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
 
@@ -78,10 +84,10 @@ abstract class BaseProReportingPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('ProUid', 'Month', 'Year', 'AvgTime', 'SdvTime', 'TotalCasesIn', 'TotalCasesOut', 'ConfiguredProcessTime', 'ConfiguredProcessCost', 'TotalCasesOpen', 'TotalCasesOverdue', 'TotalCasesOnTime', ),
-        BasePeer::TYPE_COLNAME => array (ProReportingPeer::PRO_UID, ProReportingPeer::MONTH, ProReportingPeer::YEAR, ProReportingPeer::AVG_TIME, ProReportingPeer::SDV_TIME, ProReportingPeer::TOTAL_CASES_IN, ProReportingPeer::TOTAL_CASES_OUT, ProReportingPeer::CONFIGURED_PROCESS_TIME, ProReportingPeer::CONFIGURED_PROCESS_COST, ProReportingPeer::TOTAL_CASES_OPEN, ProReportingPeer::TOTAL_CASES_OVERDUE, ProReportingPeer::TOTAL_CASES_ON_TIME, ),
-        BasePeer::TYPE_FIELDNAME => array ('PRO_UID', 'MONTH', 'YEAR', 'AVG_TIME', 'SDV_TIME', 'TOTAL_CASES_IN', 'TOTAL_CASES_OUT', 'CONFIGURED_PROCESS_TIME', 'CONFIGURED_PROCESS_COST', 'TOTAL_CASES_OPEN', 'TOTAL_CASES_OVERDUE', 'TOTAL_CASES_ON_TIME', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+        BasePeer::TYPE_PHPNAME => array ('ProUid', 'Month', 'Year', 'AvgTime', 'SdvTime', 'TotalCasesIn', 'TotalCasesOut', 'ConfiguredProcessTime', 'ConfiguredProcessCost', 'TotalCasesOpen', 'TotalCasesOverdue', 'TotalCasesOnTime', 'ProCost', 'ProUnitCost', ),
+        BasePeer::TYPE_COLNAME => array (ProReportingPeer::PRO_UID, ProReportingPeer::MONTH, ProReportingPeer::YEAR, ProReportingPeer::AVG_TIME, ProReportingPeer::SDV_TIME, ProReportingPeer::TOTAL_CASES_IN, ProReportingPeer::TOTAL_CASES_OUT, ProReportingPeer::CONFIGURED_PROCESS_TIME, ProReportingPeer::CONFIGURED_PROCESS_COST, ProReportingPeer::TOTAL_CASES_OPEN, ProReportingPeer::TOTAL_CASES_OVERDUE, ProReportingPeer::TOTAL_CASES_ON_TIME, ProReportingPeer::PRO_COST, ProReportingPeer::PRO_UNIT_COST, ),
+        BasePeer::TYPE_FIELDNAME => array ('PRO_UID', 'MONTH', 'YEAR', 'AVG_TIME', 'SDV_TIME', 'TOTAL_CASES_IN', 'TOTAL_CASES_OUT', 'CONFIGURED_PROCESS_TIME', 'CONFIGURED_PROCESS_COST', 'TOTAL_CASES_OPEN', 'TOTAL_CASES_OVERDUE', 'TOTAL_CASES_ON_TIME', 'PRO_COST', 'PRO_UNIT_COST', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
     );
 
     /**
@@ -91,10 +97,10 @@ abstract class BaseProReportingPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('ProUid' => 0, 'Month' => 1, 'Year' => 2, 'AvgTime' => 3, 'SdvTime' => 4, 'TotalCasesIn' => 5, 'TotalCasesOut' => 6, 'ConfiguredProcessTime' => 7, 'ConfiguredProcessCost' => 8, 'TotalCasesOpen' => 9, 'TotalCasesOverdue' => 10, 'TotalCasesOnTime' => 11, ),
-        BasePeer::TYPE_COLNAME => array (ProReportingPeer::PRO_UID => 0, ProReportingPeer::MONTH => 1, ProReportingPeer::YEAR => 2, ProReportingPeer::AVG_TIME => 3, ProReportingPeer::SDV_TIME => 4, ProReportingPeer::TOTAL_CASES_IN => 5, ProReportingPeer::TOTAL_CASES_OUT => 6, ProReportingPeer::CONFIGURED_PROCESS_TIME => 7, ProReportingPeer::CONFIGURED_PROCESS_COST => 8, ProReportingPeer::TOTAL_CASES_OPEN => 9, ProReportingPeer::TOTAL_CASES_OVERDUE => 10, ProReportingPeer::TOTAL_CASES_ON_TIME => 11, ),
-        BasePeer::TYPE_FIELDNAME => array ('PRO_UID' => 0, 'MONTH' => 1, 'YEAR' => 2, 'AVG_TIME' => 3, 'SDV_TIME' => 4, 'TOTAL_CASES_IN' => 5, 'TOTAL_CASES_OUT' => 6, 'CONFIGURED_PROCESS_TIME' => 7, 'CONFIGURED_PROCESS_COST' => 8, 'TOTAL_CASES_OPEN' => 9, 'TOTAL_CASES_OVERDUE' => 10, 'TOTAL_CASES_ON_TIME' => 11, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
+        BasePeer::TYPE_PHPNAME => array ('ProUid' => 0, 'Month' => 1, 'Year' => 2, 'AvgTime' => 3, 'SdvTime' => 4, 'TotalCasesIn' => 5, 'TotalCasesOut' => 6, 'ConfiguredProcessTime' => 7, 'ConfiguredProcessCost' => 8, 'TotalCasesOpen' => 9, 'TotalCasesOverdue' => 10, 'TotalCasesOnTime' => 11, 'ProCost' => 12, 'ProUnitCost' => 13, ),
+        BasePeer::TYPE_COLNAME => array (ProReportingPeer::PRO_UID => 0, ProReportingPeer::MONTH => 1, ProReportingPeer::YEAR => 2, ProReportingPeer::AVG_TIME => 3, ProReportingPeer::SDV_TIME => 4, ProReportingPeer::TOTAL_CASES_IN => 5, ProReportingPeer::TOTAL_CASES_OUT => 6, ProReportingPeer::CONFIGURED_PROCESS_TIME => 7, ProReportingPeer::CONFIGURED_PROCESS_COST => 8, ProReportingPeer::TOTAL_CASES_OPEN => 9, ProReportingPeer::TOTAL_CASES_OVERDUE => 10, ProReportingPeer::TOTAL_CASES_ON_TIME => 11, ProReportingPeer::PRO_COST => 12, ProReportingPeer::PRO_UNIT_COST => 13, ),
+        BasePeer::TYPE_FIELDNAME => array ('PRO_UID' => 0, 'MONTH' => 1, 'YEAR' => 2, 'AVG_TIME' => 3, 'SDV_TIME' => 4, 'TOTAL_CASES_IN' => 5, 'TOTAL_CASES_OUT' => 6, 'CONFIGURED_PROCESS_TIME' => 7, 'CONFIGURED_PROCESS_COST' => 8, 'TOTAL_CASES_OPEN' => 9, 'TOTAL_CASES_OVERDUE' => 10, 'TOTAL_CASES_ON_TIME' => 11, 'PRO_COST' => 12, 'PRO_UNIT_COST' => 13, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
     );
 
     /**
@@ -218,6 +224,10 @@ abstract class BaseProReportingPeer
         $criteria->addSelectColumn(ProReportingPeer::TOTAL_CASES_OVERDUE);
 
         $criteria->addSelectColumn(ProReportingPeer::TOTAL_CASES_ON_TIME);
+
+        $criteria->addSelectColumn(ProReportingPeer::PRO_COST);
+
+        $criteria->addSelectColumn(ProReportingPeer::PRO_UNIT_COST);
 
     }
 
