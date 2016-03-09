@@ -1110,4 +1110,42 @@ class Cases extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
+
+
+    /**
+     * Mark a task process as a bookmark
+     * @url POST /bookmark/:tas_uid
+     *
+     * @param string $tas_uid {@min 32}{@max 32}
+     *
+     */
+    public function doPostBookmarkStartCase($tas_uid)
+    {
+        try {
+            $userLoggedUid = $this->getUserId();
+            $user = new \ProcessMaker\BusinessModel\User();
+            $user->updateBookmark($userLoggedUid, $tas_uid, 'INSERT');
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * Remove a task process from bookmarks
+     * @url DELETE /bookmark/:tas_uid
+     *
+     * @param string $tas_uid {@min 32}{@max 32}
+     *
+     */
+    public function doDeleteBookmarkStartCase($tas_uid)
+    {
+        try {
+            $userLoggedUid = $this->getUserId();
+            $user = new \ProcessMaker\BusinessModel\User();
+            $user->updateBookmark($userLoggedUid, $tas_uid, 'DELETE');
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
 }

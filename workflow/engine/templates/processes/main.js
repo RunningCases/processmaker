@@ -7,6 +7,7 @@ var store;
 var comboCategory;
 var winDesigner;
 var newTypeProcess;
+var affectedGroups;
 
 
 /**
@@ -44,7 +45,7 @@ Ext.apply(Ext.form.VTypes, {
 });
 
 Ext.onReady(function(){
-  Ext.state.Manager.setProvider(new Ext.state.CookieProvider());
+  setExtStateManagerSetProvider('gridProcessMain');
   Ext.QuickTips.init();
 
   store = new Ext.data.GroupingStore( {
@@ -279,6 +280,15 @@ Ext.onReady(function(){
       },
       columns: [
         expander,
+        
+        // There is a list of allowed columns to sort: 
+        // workflow/engine/methods/cases/proxyProcessList.php
+        // This is to prevent ORDER BY injection attacks
+
+        // It is identical to this list.
+        // If you need to add a new column that is sortable, please
+        // make sure it is added there or sorting will not work.
+
         {id:'PRO_UID', dataIndex: 'PRO_UID', hidden:true, hideable:false},
         {header: "", dataIndex: 'PRO_STATUS', width: 50, hidden:true, hideable:false},
         {header: _('ID_PRO_DESCRIPTION'), dataIndex: 'PRO_DESCRIPTION',hidden:true, hideable:false},
@@ -360,6 +370,12 @@ Ext.onReady(function(){
           importProcess();
         }
       },{
+        id: 'deleteCasesId',
+        text: _('ID_DELETE_CASES'),
+        iconCls: "button_menu_ext ss_sprite ss_cross",
+        handler: deleteCases,
+        hidden: true
+      },{
         xtype: 'tbfill'
       },{
         xtype: 'tbseparator'
@@ -427,6 +443,10 @@ Ext.onReady(function(){
       }
     }
   });
+
+  if(deleteCasesFlag) {
+      Ext.getCmp("deleteCasesId").show();
+  }
 
   processesGrid.store.load({params: {"function": "languagesList", "start": 0, "limit": 25}});
   processesGrid.addListener('rowcontextmenu', onMessageContextMenu,this);
@@ -823,6 +843,76 @@ deleteProcess = function(){
   }
 }
 
+var deleteCases = function(){
+    var rows = processesGrid.getSelectionModel().getSelections(),
+        totalCases = 0,
+        ids = Array(),
+        PRO_UIDS,
+        i;
+    if( rows.length > 0 ) {
+        for(i=0; i<rows.length; i++){
+            var numCases = rows[i].get('CASES_COUNT');
+            if(numCases != 0) {
+                totalCases = totalCases + parseInt(numCases);
+            }
+        }
+
+        for(i=0; i<rows.length; i++) {
+            ids[i] = rows[i].get('PRO_UID');
+        }
+
+        PRO_UIDS = ids.join(',');
+
+        Ext.Msg.confirm(
+            _('ID_CONFIRM'),
+            _('ID_DELETE_PROCESS_CASES')+' '+totalCases+' '+_('CASES'),
+            function(btn, text){
+                if ( btn == 'yes' ){
+                    Ext.MessageBox.show({ msg: _('ID_DELETING_ELEMENTS'), wait:true,waitConfig: {interval:200} });
+                    Ext.Ajax.request({
+                        timeout: 300000,
+                        url: 'processes_DeleteCases',
+                        success: function(response) {
+                            Ext.MessageBox.hide();
+                            processesGrid.store.reload();
+                            result = Ext.util.JSON.decode(response.responseText);
+
+                            if(result){
+                                if(!result.status){
+                                    Ext.MessageBox.show({
+                                        title: _('ID_ERROR'),
+                                        msg: result.msg,
+                                        buttons: Ext.MessageBox.OK,
+                                        icon: Ext.MessageBox.ERROR
+                                    });
+                                }
+                            } else {
+                                Ext.MessageBox.show({
+                                    title: _('ID_ERROR'),
+                                    msg: response.responseText,
+                                    buttons: Ext.MessageBox.OK,
+                                    icon: Ext.MessageBox.ERROR
+                                });
+                            }
+                        },
+                        params: {PRO_UIDS:PRO_UIDS}
+                    });
+                }
+            }
+        );
+    } else {
+        Ext.Msg.show({
+            title: _("ID_INFORMATION"),
+            msg: _('ID_NO_SELECTION_WARNING'),
+            buttons: Ext.Msg.INFO,
+            fn: function(){},
+            animEl: 'elId',
+            icon: Ext.MessageBox.INFO,
+            buttons: Ext.MessageBox.OK
+        });
+    }
+}
+
 function exportProcess() {
   var record = processesGrid.getSelectionModel().getSelections();
 
@@ -918,6 +1008,15 @@ function generateBpmn()
 
 importProcessExistGroup = function()
 {
+  var arrayGroups = affectedGroups.split(", ");
+  var shortGroupList = "";
+  var limitToShow = 4;
+  if(arrayGroups.length > limitToShow) {
+      shortGroupList = arrayGroups.slice(0, limitToShow).join(", ");
+      shortGroupList = shortGroupList + ", ..., <a style='text-decoration: underline; cursor: pointer' id='affectedGroupsId' onclick='affectedGroupsList()'>"+ _('ID_SEE_FULL_LIST') +"</a>";
+  } else {
+      shortGroupList = affectedGroups;
+  }
 
   var processFileTypeTitle = (processFileType == "pm") ? "" : " " + processFileType;
 
@@ -932,7 +1031,7 @@ importProcessExistGroup = function()
     title       : _('ID_IMPORT_PROCESS') + processFileTypeTitle,
     header      : false,
     width       : 460,
-    height      : 230,
+    height      : 270,
     modal       : true,
     autoScroll  : false,
     maximizable : false,
@@ -970,7 +1069,15 @@ importProcessExistGroup = function()
                 boxLabel   : _('ID_PROCESS_GROUP_RENAME'),
                 name       : "optionGroupExistInDatabase",
                 inputValue : '1',
-                tabIndex   : 1
+                tabIndex   : 1,
+                checked    : "checked",
+                listeners: {
+                  check: function (ctl, val) {
+                    if(val) {
+                        Ext.getCmp("affectedGroups").hide();
+                    }
+                  }
+                }
               }
             ]
           }, {
@@ -981,7 +1088,27 @@ importProcessExistGroup = function()
                 tabIndex   : 2,
                 name       : "optionGroupExistInDatabase",
                 inputValue : '2',
-                checked    : "checked"
+                listeners: {
+                  check: function (ctl, val) {
+                    if(val) {
+                        Ext.getCmp("affectedGroups").show();
+                    }
+                  }
+                }
+              }
+            ]
+          }, {
+            items:[
+              {
+                  xtype : 'box',
+                  id: 'affectedGroups',
+                  name: 'affectedGroups',
+                  autoEl : {
+                      tag  : 'div',
+                      html : '<div style="margin-top: 5px">'+_('ID_AFFECTED_GROUPS')+': '+shortGroupList+'</div>'
+                  },
+                  hidden:true
+
               }
             ]
           }, {
@@ -1057,6 +1184,42 @@ importProcessExistGroup = function()
   });
   w.show();
 };
+
+affectedGroupsList = function()
+{
+    var arrayGroups = affectedGroups.split(", ");
+    var tableGroups = "<table width='100%' border='0' cellpadding='5'>"
+    for(var i = 0; i < arrayGroups.length; i++) {
+        tableGroups += "<tr><td>"+arrayGroups[i]+"</td></tr>";
+    }
+    tableGroups += "</table>";
+
+    var w = new Ext.Window({
+        id          : 'affectedGroupsListWindow',
+        title       : _('ID_AFFECTED_GROUPS') + ' ('+arrayGroups.length+')',
+        header      : false,
+        width       : 260,
+        height      : 300,
+        modal       : true,
+        autoScroll  : true,
+        maximizable : false,
+        resizable   : false,
+        items : [
+            {
+                xtype : 'box',
+                id: 'affectedGroupsList',
+                name: 'affectedGroupsList',
+                autoEl : {
+                    tag  : 'div',
+                    html : '<div>'+tableGroups+'</div>'
+                },
+                hidden:false
+
+            }
+        ]
+    });
+    w.show();
+}
 
 importProcessExistProcess = function()
 {
@@ -1180,6 +1343,7 @@ importProcessExistProcess = function()
                         }
                     }
                     else {
+                      affectedGroups = resp_.affectedGroups;
                       importProcessGlobal.proFileName       = resp_.proFileName;
                       importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
                       importProcessGlobal.sNewProUid        = resp_.sNewProUid;
@@ -1214,9 +1378,107 @@ importProcessExistProcess = function()
   w.show();
 };
 
-//importProcess = function(){
-//  window.location = 'processes_Import';
-//}
+changeOrKeepUids = function()
+{
+    var processFileType      = importProcessGlobal.processFileType;
+    var proFileName          = importProcessGlobal.proFileName;
+    var w = new Ext.Window({
+        id          : 'changeOrKeepUidsWindow',
+        title       : _('ID_IMPORT_PROCESS'),
+        header      : false,
+        width       : 460,
+        height      : 230,
+        autoHeight  : true,
+        modal       : true,
+        autoScroll  : false,
+        maximizable : false,
+        resizable   : false,
+        items : [
+            new Ext.form.FormPanel({
+                title      : _('ID_LAN_UPLOAD_TITLE'),
+                header     : false,
+                id         : 'formUploader',
+                fileUpload : false,
+                width      : 440,
+                frame      : true,
+                autoHeight : true,
+                bodyStyle  : 'padding: 10px 10px 0 10px;',
+                labelWidth : 50,
+                defaults : {
+                    anchor     : '90%',
+                    allowBlank : false,
+                    msgTarget  : 'side'
+                },
+                items : [
+                    {
+                        xtype   : 'box',
+                        autoEl : {
+                            tag  : 'div',
+                            html : '<div ><img src="/images/ext/default/window/icon-warning.gif" style="display:inline;float:left;margin-top:20px; margin-right:20px;" /><div style="float:left;display:inline;width:300px;margin-left:5px;"></div><div style="width:300px;" >&nbsp</div></div>'
+                        }
+                    },
+                    {
+                        items: [
+                            {
+                                id: "newUids",
+                                xtype: "radio",
+                                name:  "IMPORT_OPTION",
+                                inputValue: "new",
+                                boxLabel:   _("ID_CREATE_NEW_PROCESS_UID"),
+                                tabIndex:   3
+                            }
+                        ]
+                    },
+                    {
+                        items: [
+                            {
+                                id: "keepUids",
+                                xtype: "radio",
+                                name:  "IMPORT_OPTION",
+                                inputValue: "keep",
+                                boxLabel:   _("ID_KEEP_PROCESS_UID"),
+                                tabIndex:   1,
+                                checked:    "checked"
+                            }
+                        ]
+                    }, {
+                        xtype : 'hidden',
+                        name  : 'PRO_FILENAME',
+                        value : proFileName
+                    }, {
+                        name  : 'processFileType',
+                        xtype : 'hidden',
+                        value : processFileType
+                    }, {
+                        xtype  : 'spacer',
+                        height : 10
+                    }
+                ],
+                buttons:[
+                    {
+                        text    : _('ID_SAVE'),
+                        handler : function() {
+                            var opt1 = Ext.getCmp('newUids').getValue();
+                            var opt2 = Ext.getCmp('keepUids').getValue();
+                            if(opt1) {
+                                Ext.getCmp('generateUid').setValue('generate');
+                            } else {
+                                Ext.getCmp('generateUid').setValue('keep');
+                            }
+                            Ext.getCmp('buttonUpload').el.dom.click();
+                        }
+                    }, {
+                        text : _('ID_CANCEL'),
+                        handler : function(){
+                            w.close();
+                        }
+                    }
+                ]
+            })
+        ]
+    });
+    w.show();
+};
 
 importProcess = function()
 {
@@ -1272,9 +1534,15 @@ importProcess = function()
               buttonCfg : {
                 iconCls : 'upload-icon'
               }
+            }, {
+              id: 'generateUid',
+              name: 'generateUid',
+              xtype: 'hidden',
+              value: ''
             }
           ],
           buttons : [{
+              id: 'buttonUpload',
               text    : _('ID_UPLOAD'),
               handler : function(){
                   var arrayMatch = [];
@@ -1313,6 +1581,13 @@ importProcess = function()
 
                                           if (resp_.catchMessage == "") {
                                               if (resp_.ExistProcessInDatabase == "0") {
+                                                  if(resp_.notExistProcessInDatabase == "1") {
+                                                      importProcessGlobal.sNewProUid        = resp_.sNewProUid;
+                                                      importProcessGlobal.proFileName       = resp_.proFileName;
+                                                      importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
+                                                      changeOrKeepUids();
+                                                      return;
+                                                  }
                                                   if (resp_.ExistGroupsInDatabase == "0") {
                                                       var sNewProUid = resp_.sNewProUid;
 
@@ -1326,6 +1601,7 @@ importProcess = function()
                                                           window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                                                       }
                                                   } else {
+                                                      affectedGroups = resp_.affectedGroups;
                                                       importProcessGlobal.sNewProUid        = resp_.sNewProUid;
                                                       importProcessGlobal.proFileName       = resp_.proFileName;
                                                       importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
@@ -1337,6 +1613,9 @@ importProcess = function()
                                               }
                                           } else {
                                               w.close();
+                                              if (Ext.getCmp('changeOrKeepUidsWindow')) {
+                                                  Ext.getCmp('changeOrKeepUidsWindow').close();
+                                              }
 
                                               Ext.MessageBox.show({
                                                   title  : "",
@@ -1579,6 +1858,8 @@ function openWindowIfIE(pathDesigner) {
             Ext.getCmp('importProcessExistProcessWindow').close();
         if (Ext.getCmp('windowBpmnOptionWindow'))
             Ext.getCmp('windowBpmnOptionWindow').close();
+        if (Ext.getCmp('changeOrKeepUidsWindow'))
+            Ext.getCmp('changeOrKeepUidsWindow').close();
         processesGrid.store.reload();
         if (winDesigner && winDesigner.closed === false) {
             if (winDesigner.window.PMDesigner.project.isDirty()) {

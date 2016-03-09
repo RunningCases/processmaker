@@ -65,7 +65,8 @@ class System extends Api
         try {
             $enabledFeatures = array();
             /*----------------------------------********---------------------------------*/
-            $keys = array ('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=');
+            $keys = array ('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=',
+                'oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=');
             foreach ($keys as $key) {
                 if (\PMLicensedFeatures
                     ::getSingleton()

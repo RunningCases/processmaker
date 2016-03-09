@@ -212,15 +212,14 @@ Ext.onReady(function(){
             listeners:{
               change: function(f,e){  
                 this.setValue(this.getValue().replace(/^\s+/,'').replace(/\s+$/,''));
-                var valueInputField= /^[0-9a-zA-Z\_|-]+$/.test(this.getValue()) ? true : false; 
+                var valueInputField= /^[0-9a-zA-Z \|-]+$/.test(this.getValue()) ? true : false;
                 if (!valueInputField) {
-                  //Ext.Msg.alert(_('ID_WARNING'), _('ID_FIELD_LABEL'));
                   this.setValue('');
                 }
               }
             },
             validator: function(v) {
-              return valueInputField= /^[0-9a-zA-Z\_|-]+$/.test(v)?true:_('ID_ROLE_NAME_NOT_EMPTY');
+              return valueInputField= /^[0-9a-zA-Z \|-]+$/.test(v)?true:_('ID_THE') + ' ' +_('ID_FIELD_LABEL') + ' ' + _('ID_FIELD_NOT_EMPTY_OR_SPECIAL_CHAR');
             }
           }
       }, {

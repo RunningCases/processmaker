@@ -1017,14 +1017,17 @@ class wsBase
             );
 
             $oSpool->create( $messageArray );
-            $oSpool->sendMail();
+            if ($gmail != 1){
+	            $oSpool->sendMail();
 
-            if ($oSpool->status == 'sent') {
-                $result = new wsResponse( 0, G::loadTranslation( 'ID_MESSAGE_SENT' ) . ": " . $sTo );
+	            if ($oSpool->status == 'sent') {
+	                $result = new wsResponse( 0, G::loadTranslation( 'ID_MESSAGE_SENT' ) . ": " . $sTo );
+	            } else {
+	                $result = new wsResponse( 29, $oSpool->status . ' ' . $oSpool->error . print_r( $aSetup, 1 ) );
+	            }
             } else {
-                $result = new wsResponse( 29, $oSpool->status . ' ' . $oSpool->error . print_r( $aSetup, 1 ) );
+            	$result = "";
             }
-
             return $result;
         } catch (Exception $e) {
             return new wsResponse( 100, $e->getMessage() );
@@ -2664,9 +2667,10 @@ class wsBase
             $oCriteria = new Criteria( 'workflow' );
             $oCriteria->addSelectColumn( AppDelayPeer::APP_UID );
             $oCriteria->addSelectColumn( AppDelayPeer::APP_DEL_INDEX );
+            $oCriteria->addSelectColumn( AppDelayPeer::APP_TYPE );
             $oCriteria->addSelectColumn( AppDelayPeer::APP_DISABLE_ACTION_USER );
             $oCriteria->addSelectColumn( AppDelayPeer::APP_DISABLE_ACTION_DATE );
-            $oCriteria->add( AppDelayPeer::APP_TYPE, '' );
+            $oCriteria->add( AppDelayPeer::APP_UID, $caseId );
             $oCriteria->add( $oCriteria->getNewCriterion( AppDelayPeer::APP_TYPE, 'PAUSE' )->addOr( $oCriteria->getNewCriterion( AppDelayPeer::APP_TYPE, 'CANCEL' ) ) );
             $oCriteria->addAscendingOrderByColumn( AppDelayPeer::APP_ENABLE_ACTION_DATE );
             $oDataset = AppDelayPeer::doSelectRS( $oCriteria );
@@ -2675,7 +2679,7 @@ class wsBase
             $aRow = $oDataset->getRow();
 
             if (is_array( $aRow )) {
-                if ($aRow['APP_DISABLE_ACTION_USER'] != 0 && $aRow['APP_DISABLE_ACTION_DATE'] != '') {
+                if ($aRow['APP_DISABLE_ACTION_USER'] == 0 || is_null($aRow['APP_DISABLE_ACTION_DATE'])) {
                     $result = new wsResponse( 19, G::loadTranslation( 'ID_CASE_IN_STATUS' ) . " " . $aRow['APP_TYPE'] );
 
                     $g->sessionVarRestore();

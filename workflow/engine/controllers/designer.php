@@ -75,8 +75,8 @@ class Designer extends Controller
         }
         /*----------------------------------********---------------------------------*/
 
-        $this->setVar('prj_uid', $proUid);
-        $this->setVar('app_uid', $appUid);
+        $this->setVar('prj_uid', htmlspecialchars($proUid));
+        $this->setVar('app_uid', htmlspecialchars($appUid));
         $this->setVar('consolidated', $consolidated);
         $this->setVar('enterprise', $enterprise);
         $this->setVar('prj_readonly', $proReadOnly);
@@ -145,7 +145,7 @@ class Designer extends Controller
 
             $user = new \ProcessMaker\BusinessModel\User();
 
-            if ($user->checkPermission($row['USER_ID'], 'PM_FACTORY')) {
+            if ($user->checkPermission($row['USER_ID'], 'PM_FACTORY') || $proReadOnly == 'true') {
                 $this->setView('designer/index');
             } else {
                 $this->setVar('accessDenied', G::LoadTranslation('ID_ACCESS_DENIED'));

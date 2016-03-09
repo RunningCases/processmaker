@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once (dirname(__FILE__) . '/../../../gulliver/system/class.bootstrap.php');
 
 $gmailToken = $_GET['gmailToken'];

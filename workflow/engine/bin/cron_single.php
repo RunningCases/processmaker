@@ -339,6 +339,8 @@ function processWorkspace()
         /*----------------------------------********---------------------------------*/
         fillReportByUser();
         fillReportByProcess();
+        synchronizeDrive();
+        synchronizeGmailLabels();
         /*----------------------------------********---------------------------------*/
     } catch (Exception $oError) {
         saveLog("main", "error", "Error processing workspace : " . $oError->getMessage() . "\n");
@@ -957,5 +959,66 @@ function fillReportByProcess ()
 		saveLog("fillReportByProcess", "error", "Error in fill report by process: " . $e->getMessage());
 	}
 }
-/*----------------------------------********---------------------------------*/
 
+function synchronizeDrive ()
+{
+    try {
+        global $argvx;
+
+        if (strpos($argvx, "synchronize-documents-drive") === false) {
+            return false;
+        }
+        $licensedFeatures = &PMLicensedFeatures::getSingleton();
+        if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
+            G::LoadClass('AppDocumentDrive');
+            $drive = new AppDocumentDrive();
+            if ($drive->getStatusDrive()) {
+                setExecutionMessage("Synchronize documents to Drive");
+                $drive->synchronizeDrive(true);
+            } else {
+                setExecutionMessage("It has not enabled Feature Drive");
+            }
+        } else {
+            setExecutionMessage("The Drive license is not enabled");
+        }
+        setExecutionResultMessage("DONE");
+
+    } catch (Exception $e) {
+        setExecutionResultMessage("WITH ERRORS", "error");
+        eprintln("  '-" . $e->getMessage(), "red");
+        saveLog("synchronizeDocumentsDrive", "error", "Error in synchronize documents to drive: " . $e->getMessage());
+    }
+}
+
+function synchronizeGmailLabels()
+{
+    try {
+        global $argvx;
+
+        if (strpos($argvx, "synchronize-gmail-labels") === false) {
+            return false;
+        }
+        $licensedFeatures = &PMLicensedFeatures::getSingleton();
+        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+            G::LoadClass("pmGoogleApi");
+            $pmGoogle = new PMGoogleApi();
+            if ($pmGoogle->getServiceGmailStatus()) {
+                setExecutionMessage("Synchronize labels in Gmail");
+                G::LoadClass('labelsGmail');
+                $labGmail = new labelsGmail();
+                $labGmail->processPendingRelabelingInQueue();
+            } else {
+                setExecutionMessage("It has not enabled Feature Gmail");
+            }
+        } else {
+            setExecutionMessage("The Gmail license is not enabled");
+        }
+        setExecutionResultMessage("DONE");
+
+    } catch (Exception $e) {
+        setExecutionResultMessage("WITH ERRORS", "error");
+        eprintln("  '-" . $e->getMessage(), "red");
+        saveLog("synchronizeGmailLabels", "error", "Error when synchronizing Gmail labels: " . $e->getMessage());
+    }
+}
+/*----------------------------------********---------------------------------*/

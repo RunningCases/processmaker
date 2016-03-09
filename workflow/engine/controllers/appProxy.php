@@ -304,6 +304,8 @@ class AppProxy extends HttpProxyController
         $data[] = array ('label' => $labelsCurrentTaskProperties['DEL_TASK_DUE_DATE'],'value' => $applicationFields['DEL_TASK_DUE_DATE'],'section' => $labelTitleCurrentTasks['TITLE2']);
         $data[] = array ('label' => $labelsCurrentTaskProperties['DEL_FINISH_DATE'],'value' => $applicationFields['DEL_FINISH_DATE'],'section' => $labelTitleCurrentTasks['TITLE2']);
         //$data[] = array('label'=>$labelsCurrentTaskProperties['DYN_UID'] ,           'value' => $processData['PRO_DYNAFORMS']['PROCESS'];, 'section'=>$labelsCurrentTaskProperties['DYN_UID']);
+        
+        $data = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($data);
         return $data;
     }
 }

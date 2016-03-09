@@ -143,6 +143,7 @@ class AddonsManager extends BaseAddonsManager
             //$oPluginRegistry->enablePlugin($oDetails->sNamespace);
             //require_once (PATH_PLUGINS . $this->getAddonName() . ".php"); //ok
             $oPluginRegistry->enablePlugin($this->getAddonName());
+            $oPluginRegistry->setupPlugins(); //get and setup enabled plugins
         } else {
             //$oDetails = $oPluginRegistry->getPluginDetails($this->getAddonName());
             //$oPluginRegistry->disablePlugin($oDetails->sNamespace);
@@ -455,4 +456,3 @@ class AddonsManager extends BaseAddonsManager
         return true;
     }
 }
-

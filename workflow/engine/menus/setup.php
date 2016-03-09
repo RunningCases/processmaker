@@ -27,101 +27,221 @@ global $RBAC;
 $partnerFlag = (defined('PARTNER_FLAG')) ? PARTNER_FLAG : false;
 
 /*----------------------------------********---------------------------------*/
-$oServerConf = & serverConf::getSingleton();
-$sAudit = $oServerConf->getAuditLogProperty( 'AL_OPTION', SYS_SYS );
-$licensedFeatures = & PMLicensedFeatures::getSingleton();
+$oServerConf = &serverConf::getSingleton();
+$sAudit = $oServerConf->getAuditLogProperty('AL_OPTION', SYS_SYS);
+$licensedFeatures = &PMLicensedFeatures::getSingleton();
 /*----------------------------------********---------------------------------*/
-
-if ($RBAC->userCanAccess('PM_SETUP') == 1 ) {
-    //settings options
-    // $G_TMP_MENU->AddIdRawOption('LOGO', 'uplogo', G::LoadTranslation('ID_LOGO'), 'icon-pmlogo.png', '', 'settings');
-    $G_TMP_MENU->AddIdRawOption('LOGO', '../admin/pmLogo', G::LoadTranslation('ID_LOGO'), 'icon-pmlogo.png','', 'settings');
-    $G_TMP_MENU->AddIdRawOption("EMAIL_SERVER", "../emailServer/emailServer", G::LoadTranslation("ID_EMAIL_SERVER_TITLE"), "icon-email-settings1.png", "", "settings");
-    $G_TMP_MENU->AddIdRawOption('CALENDAR', 'calendarList', G::LoadTranslation('ID_CALENDAR'), 'icon-calendar.png', '', 'settings' );
-    //if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') == 1)
-    //  $G_TMP_MENU->AddIdRawOption('CASES_LIST_SETUP', '../cases/casesListSetup', G::LoadTranslation('ID_CASES_LIST_SETUP'), "",'', 'settings');
-    $G_TMP_MENU->AddIdRawOption('PROCESS_CATEGORY', '../processCategory/processCategoryList', G::LoadTranslation('ID_PROCESS_CATEGORY'), "rules.png",'', 'settings');
+if ($RBAC->userCanAccess('PM_SETUP') === 1) {
+    $pmSetupPermission = true;
+    if ($RBAC->userCanAccess('PM_SETUP_LOGO') === 1) {
+        $G_TMP_MENU->AddIdRawOption(
+            'LOGO', '../admin/pmLogo',
+            G::LoadTranslation('ID_LOGO'),
+            'icon-pmlogo.png', '','settings'
+        );
+    }
+    if ($RBAC->userCanAccess('PM_SETUP_EMAIL') === 1) {
+        $G_TMP_MENU->AddIdRawOption(
+            "EMAIL_SERVER", "../emailServer/emailServer",
+            G::LoadTranslation("ID_EMAIL_SERVER_TITLE"),
+            "icon-email-settings1.png", "", "settings"
+        );
+    }
+    if ($RBAC->userCanAccess('PM_SETUP_CALENDAR') === 1) {
+        $G_TMP_MENU->AddIdRawOption(
+            'CALENDAR', 'calendarList',
+            G::LoadTranslation('ID_CALENDAR'),
+            'icon-calendar.png', '', 'settings'
+        );
+    }
+    if ($RBAC->userCanAccess('PM_SETUP_PROCESS_CATEGORIES') === 1) {
+        $G_TMP_MENU->AddIdRawOption(
+            'PROCESS_CATEGORY', '../processCategory/processCategoryList',
+            G::LoadTranslation('ID_PROCESS_CATEGORY'),
+            "rules.png", '', 'settings'
+        );
+    }
 }
 
-if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') == 1) {
-    $G_TMP_MENU->AddIdRawOption('LANGUAGES', 'languages',   G::LoadTranslation('ID_LANGUAGES'), 'icon-language.png', '', 'settings');
+if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') === 1) {
+    if ($RBAC->userCanAccess('PM_SETUP_LANGUAGE') === 1) {
+        $G_TMP_MENU->AddIdRawOption(
+            'LANGUAGES', 'languages',
+            G::LoadTranslation('ID_LANGUAGES'),
+            'icon-language.png','', 'settings'
+        );
+    }
 }
 
-if ($RBAC->userCanAccess('PM_SETUP') == 1 ) {
-    $G_TMP_MENU->AddIdRawOption('SKINS', 'skinsList', G::LoadTranslation('ID_SKINS'), 'icon-skins.png', '', 'settings');
+if ($RBAC->userCanAccess('PM_SETUP') === 1) {
+    if ($RBAC->userCanAccess('PM_SETUP_SKIN') === 1) {
+        $G_TMP_MENU->AddIdRawOption(
+            'SKINS', 'skinsList',
+            G::LoadTranslation('ID_SKINS'),
+            'icon-skins.png', '', 'settings'
+        );
+    }
     if (!$partnerFlag) {
-        $G_TMP_MENU->AddIdRawOption('HEARTBEAT', 'processHeartBeatConfig', G::LoadTranslation('ID_HEARTBEAT_CONFIG'), "heartBeat.jpg",'', 'settings');
+        if ($RBAC->userCanAccess('PM_SETUP_HEART_BEAT') === 1) {
+            $G_TMP_MENU->AddIdRawOption(
+                'HEARTBEAT', 'processHeartBeatConfig',
+                G::LoadTranslation('ID_HEARTBEAT_CONFIG'),
+                "heartBeat.jpg", '', 'settings'
+            );
+        }
     }
-
-    $G_TMP_MENU->AddIdRawOption('ENVIRONMENT_SETTINGS', 'environmentSettings', G::LoadTranslation('ID_ENVIRONMENT_SETTINGS'), "",'', 'settings');
+    if ($RBAC->userCanAccess('PM_SETUP_ENVIRONMENT') === 1) {
+        $G_TMP_MENU->AddIdRawOption(
+            'ENVIRONMENT_SETTINGS', 'environmentSettings',
+            G::LoadTranslation('ID_ENVIRONMENT_SETTINGS'),
+            "", '', 'settings'
+        );
+    }
 }
 
-if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') == 1) {
-    $G_TMP_MENU->AddIdRawOption('APPCACHEVIEW_SETUP', '../setup/appCacheViewConf', G::LoadTranslation('ID_APPCACHE_SETUP'), "",'', 'settings');
+if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') === 1) {
+    $G_TMP_MENU->AddIdRawOption(
+        'APPCACHEVIEW_SETUP', '../setup/appCacheViewConf',
+        G::LoadTranslation('ID_APPCACHE_SETUP'),
+        "", '', 'settings'
+    );
 }
 
-if ($RBAC->userCanAccess('PM_SETUP') == 1) {
-    $G_TMP_MENU->AddIdRawOption('CLEAR_CACHE', 'clearCompiled', G::LoadTranslation('ID_CLEAR_CACHE'), 'icon-rebuild-clean.png', "", 'settings' );
-    //$G_TMP_MENU->AddIdRawOption('ADDITIONAL_TABLES', '../additionalTables/additionalTablesList', G::LoadTranslation('ID_ADDITIONAL_TABLES'), 'icon-tables.png','', 'settings');
-    //$G_TMP_MENU->AddIdRawOption('REPORT_TABLES', '../reportTables/main', 'Report Tables', 'icon-tables.png','', 'settings');
-
-    $G_TMP_MENU->AddIdRawOption('PM_TABLES', '../pmTables', G::LoadTranslation('ID_ADDITIONAL_TABLES'), 'icon-tables.png','', 'settings');
-    $G_TMP_MENU->AddIdRawOption('LOGIN', 'loginSettings', G::LoadTranslation('LOGIN'), "",'', 'settings');
-    $G_TMP_MENU->AddIdRawOption('DASHBOARD', '../dashboard/dashletsList', ucfirst(G::LoadTranslation('ID_DASHBOARD')), '', '', 'settings');
-    /*----------------------------------********---------------------------------*/
-
-    if ($licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjBsZEJ6dnpJa3dTeWVLVT0=')) {
-        $G_TMP_MENU->AddIdRawOption('STRATEGIC_DASHBOARD', '../strategicDashboard/dashboardList', ucfirst(G::LoadTranslation('ID_STRATEGIC_DASHBOARD')), '', '', 'settings');
+if ($RBAC->userCanAccess('PM_SETUP') === 1) {
+    if ($RBAC->userCanAccess('PM_SETUP_CLEAR_CACHE') === 1) {
+        $G_TMP_MENU->AddIdRawOption(
+            'CLEAR_CACHE', 'clearCompiled',
+            G::LoadTranslation('ID_CLEAR_CACHE'),
+            'icon-rebuild-clean.png', "", 'settings'
+        );
     }
-    if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-        $G_TMP_MENU->AddIdRawOption('PMGMAIL', '../pmGmail/formPMGmail', ucfirst(G::LoadTranslation('ID_PMGMAIL')), '', '', 'settings');
+    if ($RBAC->userCanAccess('PM_SETUP_PM_TABLES') === 1) {
+        $G_TMP_MENU->AddIdRawOption(
+            'PM_TABLES', '../pmTables',
+            G::LoadTranslation('ID_ADDITIONAL_TABLES'),
+            'icon-tables.png', '', 'settings'
+        );
     }
-
-    /*----------------------------------********---------------------------------*/
-
+    if ($RBAC->userCanAccess('PM_SETUP_LOGIN') === 1) {
+        $G_TMP_MENU->AddIdRawOption(
+            'LOGIN', 'loginSettings',
+            G::LoadTranslation('LOGIN'),
+            "", '', 'settings'
+        );
+    }
+    if ($RBAC->userCanAccess('PM_SETUP_DASHBOARDS') === 1) {
+        $G_TMP_MENU->AddIdRawOption(
+            'DASHBOARD', '../dashboard/dashletsList',
+            ucfirst(G::LoadTranslation('ID_DASHBOARD')),
+            '', '', 'settings'
+        );
+        /*----------------------------------********---------------------------------*/
+        if ($licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjBsZEJ6dnpJa3dTeWVLVT0=')) {
+            $G_TMP_MENU->AddIdRawOption(
+                'STRATEGIC_DASHBOARD', '../strategicDashboard/dashboardList',
+                ucfirst(G::LoadTranslation('ID_STRATEGIC_DASHBOARD')),
+                '', '', 'settings'
+            );
+        }
+        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
+            $G_TMP_MENU->AddIdRawOption(
+                'PMGMAIL', '../pmGmail/formPMGmail',
+                ucfirst(G::LoadTranslation('ID_PMGMAIL')),
+                '', '', 'settings'
+            );
+        }
+        /*----------------------------------********---------------------------------*/
+    }
 }
 //tools options
-if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') == 1 ) {
+if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') === 1) {
     if (!$partnerFlag) {
-        $G_TMP_MENU->AddIdRawOption('PLUGINS',   'pluginsMain', G::LoadTranslation('ID_PLUGINS_MANAGER'), 'icon-plugins.png', '', 'plugins');
+        if ($RBAC->userCanAccess('PM_SETUP_PLUGINS') === 1) {
+            $G_TMP_MENU->AddIdRawOption(
+                'PLUGINS', 'pluginsMain',
+                G::LoadTranslation('ID_PLUGINS_MANAGER'),
+                'icon-plugins.png', '', 'plugins'
+            );
+        }
     }
 }
 
 //users options
-if ($RBAC->userCanAccess('PM_USERS') == 1) {
-    $G_TMP_MENU->AddIdRawOption('USERS', '../users/users_List', G::LoadTranslation('ID_USERS_LIST'), 'icon-webservices.png', '', 'users');
-
+if ($RBAC->userCanAccess('PM_USERS') === 1) {
+    $G_TMP_MENU->AddIdRawOption('USERS', '../users/users_List', G::LoadTranslation('ID_USERS_LIST'),
+        'icon-webservices.png', '', 'users');
     $G_TMP_MENU->AddIdRawOption('GROUPS', '../groups/groups', G::LoadTranslation('ID_GROUPS'), '', '', 'users');
-    $G_TMP_MENU->AddIdRawOption('DEPARTAMENTS', '../departments/departments', G::LoadTranslation('ID_DEPARTMENTS_USERS'), '', '', 'users');
-    $G_TMP_MENU->AddIdRawOption('ROLES', '../roles/roles_List', G::LoadTranslation('ID_ROLES'), '', '', 'users');
+    $G_TMP_MENU->AddIdRawOption(
+        'DEPARTAMENTS', '../departments/departments',
+        G::LoadTranslation('ID_DEPARTMENTS_USERS'),
+        '', '', 'users'
+    );
+    $G_TMP_MENU->AddIdRawOption('ROLES', '../roles/roles_List',
+        G::LoadTranslation('ID_ROLES'),
+        '', '', 'users'
+    );
 }
 
-if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') == 1 && $RBAC->userCanAccess('PM_USERS') == 1) {
-    $G_TMP_MENU->AddIdRawOption('AUTHSOURCES', '../authSources/authSources_List', G::LoadTranslation('ID_AUTH_SOURCES'), '', '', 'users');
+if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') === 1 && $RBAC->userCanAccess('PM_USERS') === 1 && $RBAC->userCanAccess
+    ('PM_SETUP_USERS_AUTHENTICATION_SOURCES') === 1) {
+    $G_TMP_MENU->AddIdRawOption(
+        'AUTHSOURCES', '../authSources/authSources_List',
+        G::LoadTranslation('ID_AUTH_SOURCES'),
+        '', '', 'users'
+    );
     $G_TMP_MENU->AddIdRawOption('UX', '../admin/uxList', G::LoadTranslation('ID_USER_EXPERIENCE'), '', '', 'users');
     $G_TMP_MENU->AddIdRawOption('SYSTEM', '../admin/system', G::LoadTranslation('ID_SYSTEM'), '', '', 'settings');
-    $G_TMP_MENU->AddIdRawOption('INFORMATION', '../setup/systemInfo?option=processInfo', G::LoadTranslation('ID_SYSTEM_INFO'), '', '', 'settings');
+    $G_TMP_MENU->AddIdRawOption(
+        'INFORMATION', '../setup/systemInfo?option=processInfo',
+        G::LoadTranslation('ID_SYSTEM_INFO'),
+        '', '', 'settings'
+    );
 }
 
-if ($RBAC->userCanAccess('PM_SETUP') == 1) {
+if ($RBAC->userCanAccess('PM_SETUP') === 1 && $RBAC->userCanAccess('PM_SETUP_LOGS') === 1) {
     $G_TMP_MENU->AddIdRawOption('EVENT', '../events/eventList', G::LoadTranslation('ID_EVENTS'), '', '', 'logs');
-    $G_TMP_MENU->AddIdRawOption('LOG_CASE_SCHEDULER', '../cases/cases_Scheduler_Log', G::LoadTranslation('ID_CASE_SCHEDULER'), "icon-logs-list.png",'', 'logs');
-    $G_TMP_MENU->AddIdRawOption("CRON", "../setup/cron", G::LoadTranslation("ID_CRON_ACTIONS"), null, null, "logs");
-    $G_TMP_MENU->AddIdRawOption('EMAILS', '../mails/emailList', ucfirst (strtolower ( G::LoadTranslation('ID_EMAILS'))), '', '', 'logs');
+    $G_TMP_MENU->AddIdRawOption(
+        'LOG_CASE_SCHEDULER', '../cases/cases_Scheduler_Log',
+        G::LoadTranslation('ID_CASE_SCHEDULER'),
+        "icon-logs-list.png", '', 'logs'
+    );
+    $G_TMP_MENU->AddIdRawOption("CRON", "../setup/cron", G::LoadTranslation("ID_CRON_ACTIONS"), null, null, 'logs');
+    $G_TMP_MENU->AddIdRawOption(
+        'EMAILS', '../mails/emailList',
+        ucfirst(strtolower(G::LoadTranslation('ID_EMAILS'))),
+        '', '', 'logs'
+    );
     /*----------------------------------********---------------------------------*/
-    if (isset($sAudit) && $sAudit != false && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
-        $G_TMP_MENU->AddIdRawOption('AUDIT_LOG', '../setup/auditLog', ucfirst (G::LoadTranslation('ID_AUDITLOG_DISPLAY')), '', '', 'logs');
+    if (isset($sAudit) && $sAudit !== false && $licensedFeatures->verifyfeature
+        ('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')
+    ) {
+        $G_TMP_MENU->AddIdRawOption(
+            'AUDIT_LOG', '../setup/auditLog',
+            ucfirst(G::LoadTranslation('ID_AUDITLOG_DISPLAY')),
+            '', '', 'logs'
+        );
     }
     /*----------------------------------********---------------------------------*/
 }
 
-if ($RBAC->userCanAccess("PM_SETUP") == 1) {
-    $G_TMP_MENU->AddIdRawOption("PM_REQUIREMENTS", "../setup/systemInfo", G::LoadTranslation("ID_PROCESSMAKER_REQUIREMENTS_CHECK"), "", "", "settings");
-    $G_TMP_MENU->AddIdRawOption("PHP_INFO", "../setup/systemInfo?option=php", G::LoadTranslation("ID_PHP_INFO"), "", "", "settings");
-    //$G_TMP_MENU->AddIdRawOption("PHP_MAINTENANCE", "../admin/maintenance", 'Maintenance', "", "", "settings");
+if ($RBAC->userCanAccess('PM_SETUP') === 1) {
+    $G_TMP_MENU->AddIdRawOption(
+        'PM_REQUIREMENTS', '../setup/systemInfo',
+        G::LoadTranslation('ID_PROCESSMAKER_REQUIREMENTS_CHECK'),
+        '', '', 'settings'
+    );
+    $G_TMP_MENU->AddIdRawOption(
+        'PHP_INFO', '../setup/systemInfo?option=php',
+        G::LoadTranslation('ID_PHP_INFO'),
+        '','', 'settings'
+    );
     /*----------------------------------********---------------------------------*/
     if ($licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
-        $G_TMP_MENU->AddIdRawOption("AUDIT_LOG", "auditLogConfig", G::LoadTranslation("ID_AUDITLOG_DISPLAY"), "", "", "settings");
+        $G_TMP_MENU->AddIdRawOption(
+            "AUDIT_LOG", "auditLogConfig",
+            G::LoadTranslation("ID_AUDITLOG_DISPLAY"),
+            "", "","settings"
+        );
     }
     /*----------------------------------********---------------------------------*/
 }
@@ -151,9 +271,35 @@ if ($licenseStatusInfo["message"] != "") {
     $licStatusMsg = "&nbsp;<font color=\"red\">(" . $licenseStatusInfo["message"] . ")</font>";
 }
 /*----------------------------------********---------------------------------*/
-if ($RBAC->userCanAccess("PM_SETUP") == 1) {
+if ($RBAC->userCanAccess('PM_SETUP') == 1) {
     /*----------------------------------********---------------------------------*/
-    $G_TMP_MENU->AddIdRawOption("PMENTERPRISE", "../enterprise/addonsStore", G::LoadTranslation('ID_MENU_NAME') . $licStatusMsg, "", "", "plugins");
+    if ($RBAC->userCanAccess('PM_SETUP_CASES_LIST_CACHE_BUILDER') == 1) {
+        $G_TMP_MENU->AddIdRawOption(
+            'PMENTERPRISE', '../enterprise/addonsStore',
+            G::LoadTranslation('ID_MENU_NAME') .$licStatusMsg,
+            '', '', 'plugins'
+        );
+        $G_TMP_MENU->AddIdRawOption(
+            'CASES_LIST_SETUP', '../cases/casesListSetup',
+            G::LoadTranslation('ID_CUSTOM_CASES_LISTS'),
+            '', '', 'settings');
+    }
     /*----------------------------------********---------------------------------*/
-    $G_TMP_MENU->AddIdRawOption("CASES_LIST_SETUP", "../cases/casesListSetup", G::LoadTranslation("ID_CUSTOM_CASES_LISTS"), "", "", "settings");
 }
+
+/*----------------------------------********---------------------------------*/
+$pluginRegistry = &PMPluginRegistry::getSingleton(); //lsl
+$status = $pluginRegistry->getStatusPlugin('actionsByEmail');
+
+if ((string)($status) !== 'enabled' &&
+    $licensedFeatures->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=') &&
+    $RBAC->userCanAccess('PM_SETUP_LOGS') == 1
+) {
+    $G_TMP_MENU->AddIdRawOption(
+        'PM_ACTIONS_BY_EMAIL_LOGS',
+        '../actionsByEmail/ActionByEmail.php',
+        G::LoadTranslation("ID_ACTIONS_BY_EMAIL_LOG"),
+        '', '', 'logs'
+    );
+}
+/*----------------------------------********---------------------------------*/

@@ -482,6 +482,13 @@ class ListInbox extends BaseListInbox
         return (int)$total;
     }
 
+    /**
+     * @param $usr_uid
+     * @param array $filters
+     * @param null $callbackRecord
+     * @return array
+     * @throws PropelException
+     */
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
         $criteria = new Criteria();
@@ -505,6 +512,11 @@ class ListInbox extends BaseListInbox
         $criteria->addSelectColumn(ListInboxPeer::DEL_INIT_DATE);
         $criteria->addSelectColumn(ListInboxPeer::DEL_DUE_DATE);
         $criteria->addSelectColumn(ListInboxPeer::DEL_PRIORITY);
+        $criteria->addSelectColumn(UsersPeer::USR_UID);
+        $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+        $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
+        $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
+        $criteria->addJoin( ListInboxPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN );
         $criteria->add( ListInboxPeer::USR_UID, $usr_uid, Criteria::EQUAL );
         self::loadFilters($criteria, $filters);
 

@@ -12,6 +12,7 @@ abstract class Importer
     protected $filename = "";
     protected $saveDir = "";
     protected $metadata = array();
+    public static $affectedGroups = array();
 
     const IMPORT_OPTION_OVERWRITE = "project.import.override";
     const IMPORT_OPTION_DISABLE_AND_CREATE_NEW = "project.import.disable_and_create_new";
@@ -26,6 +27,7 @@ abstract class Importer
     const IMPORT_STAT_TARGET_ALREADY_EXISTS = 101; //Error, Target Project already exists.
     const IMPORT_STAT_INVALID_SOURCE_FILE = 102;   //Error, Invalid file type or the file have corrupt data.
     const IMPORT_STAT_GROUP_ALREADY_EXISTS = 105;  //Error, Group already exists.
+    const IMPORTED_PROJECT_DOES_NOT_EXISTS = 106;
 
     public abstract function load($filename = null);
 
@@ -69,7 +71,7 @@ abstract class Importer
         }
     }
 
-    public function import($option = self::IMPORT_OPTION_CREATE_NEW, $optionGroup = self::GROUP_IMPORT_OPTION_CREATE_NEW)
+    public function import($option = self::IMPORT_OPTION_CREATE_NEW, $optionGroup = self::GROUP_IMPORT_OPTION_CREATE_NEW, $generateUidFromJs = null)
     {
         $this->prepare();
 
@@ -92,6 +94,15 @@ abstract class Importer
                         ),
                         self::IMPORT_STAT_TARGET_ALREADY_EXISTS
                     );
+                } else {
+                    if(is_null($generateUidFromJs)) {
+                        throw new \Exception(
+                            \G::LoadTranslation(
+                                "ID_IMPORTER_PROJECT_DOES_NOT_EXISTS_SET_ACTION_TO_CONTINUE"
+                            ),
+                            self::IMPORTED_PROJECT_DOES_NOT_EXISTS
+                        );
+                    }
                 }
                 break;
             case self::IMPORT_OPTION_OVERWRITE:
@@ -109,6 +120,7 @@ abstract class Importer
                 $arrayAux = $processes->checkExistingGroups($this->importData["tables"]["workflow"]["groupwfs"]);
 
                 if (is_array($arrayAux) && count($arrayAux) > 0) {
+                    self::$affectedGroups = $arrayAux;
                     throw new \Exception(
                         \G::LoadTranslation(
                             "ID_IMPORTER_GROUP_ALREADY_EXISTS_SET_ACTION_TO_CONTINUE",
@@ -139,6 +151,11 @@ abstract class Importer
 
         //Import
         $name = $this->importData["tables"]["bpmn"]["project"][0]["prj_name"];
+
+
+        if (\Process::existsByProTitle($name) && !is_null($generateUidFromJs)) {
+            $name = $name . ' ' . date('Y-m-d H:i:s');
+        }
 
         switch ($option) {
             case self::IMPORT_OPTION_CREATE_NEW:
@@ -179,6 +196,9 @@ abstract class Importer
         $this->importData["tables"]["workflow"]["process"] = $this->importData["tables"]["workflow"]["process"][0];
 
         //Import
+        if(!empty($generateUidFromJs)) {
+            $generateUid = $generateUidFromJs;
+        }
         $result = $this->doImport($generateUid);
 
         //Return

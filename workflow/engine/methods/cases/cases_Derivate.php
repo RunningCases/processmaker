@@ -208,13 +208,28 @@ try {
         }
     }
     //Events - End
+
+    /*----------------------------------********---------------------------------*/
+    // Set users drive - start
+    $licensedFeatures = &PMLicensedFeatures::getSingleton();
+    if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
+        G::LoadClass("AppDocumentDrive");
+        $drive = new AppDocumentDrive();
+        if ($drive->getStatusDrive()) {
+            //add users email next task
+            $drive->addUsersDocumentDrive($appFields['APP_UID']);
+        }
+    }
+    // Set users drive - End
+    /*----------------------------------********---------------------------------*/
+
     $debuggerAvailable = true;
 
     if (isset( $_SESSION['user_experience'] )) {
         $aNextStep['PAGE'] = 'casesListExtJsRedirector?ux=' . $_SESSION['user_experience'];
         $debuggerAvailable = false;
     } else if( isset( $_SESSION['gmail'] )  ){
-    	$aNextStep['PAGE'] = 'casesListExtJsRedirector?gmail='.$_SESSION['gmail'];
+        $aNextStep['PAGE'] = 'casesListExtJsRedirector?gmail='.$_SESSION['gmail'];
     } else {
         $aNextStep['PAGE'] = 'casesListExtJsRedirector';
     }

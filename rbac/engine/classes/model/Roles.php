@@ -545,6 +545,22 @@ class Roles extends BaseRoles {
         G::auditLog("DeleteUserToRole", "Delete user ".$user['USR_USERNAME']." (".$USR_UID.") to Role ".$rol['ROL_NAME']." (".$ROL_UID.") ");
     }
 
+    function getRolePermissionsByPerUid($roleUid){
+        try {
+            $criteria = new Criteria();
+            $criteria->addSelectColumn(RolesPermissionsPeer::ROL_UID);
+            $criteria->addSelectColumn(RolesPermissionsPeer::PER_UID);
+            $criteria->add(RolesPermissionsPeer::PER_UID, $roleUid);
+
+            $oDataset = RolesPeer::doSelectRS($criteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            return $oDataset;
+
+        } catch( exception $e ) {
+            throw $e;
+        }
+    }
     function getRolePermissions($ROL_UID, $filter='', $status=null) {
         try {
             $criteria = new Criteria();

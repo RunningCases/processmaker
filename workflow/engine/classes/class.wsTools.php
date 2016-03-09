@@ -185,13 +185,13 @@ class workspaceTools
         $key = isset($matches['key']) ? $matches['key'] : $matches[2];
         $value = isset($matches['value']) ? $matches['value'] : $matches[3];
 
-        if($this->onedb){
-        	$dbInfo = $this->getDBInfo();
+        if ($this->onedb) {
+            $dbInfo = $this->getDBInfo();
             $dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'wf_', 'DB_RBAC_USER' => 'wf_', 'DB_REPORT_NAME' => 'wf_', 'DB_REPORT_USER' => 'wf_');
-        	if (array_search($key, array('DB_PASS', 'DB_RBAC_PASS', 'DB_REPORT_PASS'))) {
-        		$value = $dbInfo['DB_PASS'];
-        	}
-        } else{
+            if (array_search($key, array('DB_PASS', 'DB_RBAC_PASS', 'DB_REPORT_PASS'))) {
+                $value = $dbInfo['DB_PASS'];
+            }
+        } else {
             $dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'rb_', 'DB_RBAC_USER' => 'rb_', 'DB_REPORT_NAME' => 'rp_', 'DB_REPORT_USER' => 'rp_');
         }
 
@@ -203,16 +203,16 @@ class workspaceTools
                 /* Change the database name to the new workspace, following the standard
                  * of prefix (either wf_, rp_, rb_) and the workspace name.
                  */
-                if($this->unify){
-            		$nameDb = explode("_", $value);
-            		if(!isset($nameDb[1])){
-            			$dbName = $value;
-            		} else {
-            			$dbName = $dbPrefix[$key] . $nameDb[1];
-            		}
-            	}else {
-            		$dbName = $dbPrefix[$key] . $this->name;
-            	}
+                if ($this->unify) {
+                    $nameDb = explode("_", $value);
+                    if (!isset($nameDb[1])) {
+                        $dbName = $value;
+                    } else {
+                        $dbName = $dbPrefix[$key] . $nameDb[1];
+                    }
+                } else {
+                    $dbName = $dbPrefix[$key] . $this->name;
+                }
             } else {
                 $dbName = $value;
             }
@@ -301,10 +301,10 @@ class workspaceTools
         $rpDetails = $this->getDBCredentials("rp");
 
         $config = array('datasources' => array('workflow' => array('connection' => $wfDetails["dsn"], 'adapter' => $wfDetails["adapter"]
-                ), 'rbac' => array('connection' => $rbDetails["dsn"], 'adapter' => $rbDetails["adapter"]
-                ), 'rp' => array('connection' => $rpDetails["dsn"], 'adapter' => $rpDetails["adapter"]
-                )
-            )
+        ), 'rbac' => array('connection' => $rbDetails["dsn"], 'adapter' => $rbDetails["adapter"]
+        ), 'rp' => array('connection' => $rpDetails["dsn"], 'adapter' => $rpDetails["adapter"]
+        )
+        )
         );
 
         if ($root) {
@@ -327,8 +327,8 @@ class workspaceTools
 
         $this->initPropel = true;
 
-        require_once ("propel/Propel.php");
-        require_once ("creole/Creole.php");
+        require_once("propel/Propel.php");
+        require_once("creole/Creole.php");
 
         Propel::initConfiguration($config);
     }
@@ -397,10 +397,10 @@ class workspaceTools
         }
 
         G::LoadSystem('database_' . strtolower($this->dbAdapter));
-        if ($rbac == true){
+        if ($rbac == true) {
             $this->db = new database($this->dbAdapter, $this->dbRbacHost, $this->dbRbacUser, $this->dbRbacPass, $this->dbRbacName);
         } else {
-        	$this->db = new database($this->dbAdapter, $this->dbHost, $this->dbUser, $this->dbPass, $this->dbName);
+            $this->db = new database($this->dbAdapter, $this->dbHost, $this->dbUser, $this->dbPass, $this->dbName);
         }
         if (!$this->db->isConnected()) {
             $this->db->logQuery('No available connection to database!');
@@ -437,7 +437,7 @@ class workspaceTools
      */
     public function getSchema($rbac = false)
     {
-    	$oDataBase = $this->getDatabase($rbac);
+        $oDataBase = $this->getDatabase($rbac);
 
         $aOldSchema = array();
 
@@ -491,8 +491,8 @@ class workspaceTools
     /**
      * Upgrade triggers of tables (Database)
      *
-     * @param bool   $flagRecreate Recreate
-     * @param string $language     Language
+     * @param bool $flagRecreate Recreate
+     * @param string $language Language
      *
      * return void
      */
@@ -557,19 +557,7 @@ class workspaceTools
         //Update APP_DELEGATION.DEL_LAST_INDEX data
         $res = $appCache->updateAppDelegationDelLastIndex($lang, $flagRecreate);
 
-        CLI::logging("-> Verifying roles permissions in RBAC \n");
-        //Update table RBAC permissions
-        Bootstrap::LoadSystem( 'rbac' );
-        $RBAC = & RBAC::getSingleton();
-        $RBAC->initRBAC();
-        $result = $RBAC->verifyPermissions();
-        if (count($result) > 1) {
-            foreach ($result as $item) {
-                CLI::logging("    $item... \n");
-            }
-        } else {
-            CLI::logging("    All roles permissions already updated \n");
-        }
+
 
         CLI::logging("-> Creating triggers\n");
 
@@ -595,25 +583,25 @@ class workspaceTools
 
         //close connection
         if (substr(PHP_OS, 0, 3) != 'WIN') {
-            $connection = Propel::getConnection( 'workflow' );
+            $connection = Propel::getConnection('workflow');
 
             $sql_sleep = "SELECT * FROM information_schema.processlist WHERE command = 'Sleep' and user = SUBSTRING_INDEX(USER(),'@',1) and db = DATABASE() ORDER BY id;";
             $stmt_sleep = $connection->createStatement();
-            $rs_sleep = $stmt_sleep->executeQuery( $sql_sleep, ResultSet::FETCHMODE_ASSOC );
+            $rs_sleep = $stmt_sleep->executeQuery($sql_sleep, ResultSet::FETCHMODE_ASSOC);
 
             while ($rs_sleep->next()) {
                 $row_sleep = $rs_sleep->getRow();
-                $oStatement_sleep = $connection->prepareStatement( "kill ". $row_sleep['ID'] );
+                $oStatement_sleep = $connection->prepareStatement("kill " . $row_sleep['ID']);
                 $oStatement_sleep->executeQuery();
             }
 
             $sql_query = "SELECT * FROM information_schema.processlist WHERE user = SUBSTRING_INDEX(USER(),'@',1) and db = DATABASE() and time > 0 ORDER BY id;";
             $stmt_query = $connection->createStatement();
-            $rs_query = $stmt_query->executeQuery( $sql_query, ResultSet::FETCHMODE_ASSOC );
+            $rs_query = $stmt_query->executeQuery($sql_query, ResultSet::FETCHMODE_ASSOC);
 
             while ($rs_query->next()) {
                 $row_query = $rs_query->getRow();
-                $oStatement_query = $connection->prepareStatement( "kill ". $row_query['ID'] );
+                $oStatement_query = $connection->prepareStatement("kill " . $row_query['ID']);
                 $oStatement_query->executeQuery();
             }
         }
@@ -623,9 +611,9 @@ class workspaceTools
      * fix the 32K issue, by migrating /files directory structure to an uid tree structure based.
      * @param $workspace got the site(s) the manager wants to upgrade
      */
-    public function upgradeCasesDirectoryStructure ($workspace)
+    public function upgradeCasesDirectoryStructure($workspace)
     {
-        define('PATH_DOCUMENT',  PATH_DATA . 'sites/' . $workspace . '/' . 'files/');
+        define('PATH_DOCUMENT', PATH_DATA . 'sites/' . $workspace . '/' . 'files/');
         $doclevel = explode('/', PATH_DOCUMENT);
         $length = sizeof(PATH_DOCUMENT);
         $filesDir = $doclevel[$length - 1];
@@ -640,7 +628,7 @@ class workspaceTools
         $directory = glob(PATH_DOCUMENT . "*", GLOB_ONLYDIR);
         $dirslength = sizeof($directory);
 
-        if (! @chdir(PATH_DOCUMENT)) {
+        if (!@chdir(PATH_DOCUMENT)) {
             CLI::logging(CLI::error("Cannot use Document directory. The upgrade must be done as root.\n"));
             return;
         }
@@ -704,13 +692,13 @@ class workspaceTools
         G::LoadClass("configuration");
         $conf = new Configurations();
         if (!$conf->exists("ENVIRONMENT_SETTINGS")) {
-            $conf->aConfig = array ("format" => '@userName (@firstName @lastName)',
-                                "dateFormat" => 'd/m/Y',
-                                "startCaseHideProcessInf" => false,
-                                "casesListDateFormat" => 'Y-m-d H:i:s',
-                                "casesListRowNumber" => 25,
-                                "casesListRefreshTime" => 120 );
-            $conf->saveConfig( 'ENVIRONMENT_SETTINGS', '' );
+            $conf->aConfig = array("format" => '@userName (@firstName @lastName)',
+                "dateFormat" => 'd/m/Y',
+                "startCaseHideProcessInf" => false,
+                "casesListDateFormat" => 'Y-m-d H:i:s',
+                "casesListRowNumber" => 25,
+                "casesListRefreshTime" => 120);
+            $conf->saveConfig('ENVIRONMENT_SETTINGS', '');
         }
         $conf->setDirectoryStructureVer(2);
         CLI::logging(CLI::info("Version Directory Structure is 2 now.\n"));
@@ -736,17 +724,19 @@ class workspaceTools
      * @param bool $checkOnly only check if the upgrade is needed if true
      * @return array bool upgradeSchema for more information
      */
-    public function upgradeDatabase ($onedb = false, $checkOnly = false)
+    public function upgradeDatabase($onedb = false, $checkOnly = false)
     {
         G::LoadClass("patch");
-        $this->initPropel( true );
+        $this->initPropel(true);
         p11835::$dbAdapter = $this->dbAdapter;
         p11835::isApplicable();
         $systemSchema = System::getSystemSchema($this->dbAdapter);
         $systemSchemaRbac = System::getSystemSchemaRbac($this->dbAdapter);// get the Rbac Schema
-        $this->upgradeSchema( $systemSchema );
-        $this->upgradeSchema( $systemSchemaRbac, false, true, $onedb ); // perform Upgrade to Rbac
+        $this->registerSystemTables(array_merge($systemSchema,$systemSchemaRbac));
+        $this->upgradeSchema($systemSchema);
+        $this->upgradeSchema($systemSchemaRbac, false, true, $onedb); // perform Upgrade to Rbac
         $this->upgradeData();
+        $this->checkRbacPermissions();//check or add new permissions
 
         //There records in table "EMAIL_SERVER"
         $criteria = new Criteria("workflow");
@@ -1301,7 +1291,7 @@ class workspaceTools
         //check function shell_exec
         $disabled_functions = ini_get('disable_functions');
         $flag = false;
-        if ($disabled_functions!='') {
+        if ($disabled_functions != '') {
             $arr = explode(',', $disabled_functions);
             sort($arr);
             if (in_array("shell_exec", $arr)) {
@@ -1311,39 +1301,39 @@ class workspaceTools
 
         // Check if mysql exist on server
         $flagFunction = null;
-        if ( !$flag ) {
+        if (!$flag) {
             $flagFunction = shell_exec('mysql --version');
         }
 
-        $arrayRegExpEngineSearch  = array("/\)\s*TYPE\s*=\s*(InnoDB)/i",       "/\)\s*TYPE\s*=\s*(MyISAM)/i");
+        $arrayRegExpEngineSearch = array("/\)\s*TYPE\s*=\s*(InnoDB)/i", "/\)\s*TYPE\s*=\s*(MyISAM)/i");
         $arrayRegExpEngineReplace = array(") ENGINE=\\1 DEFAULT CHARSET=utf8", ") ENGINE=\\1");
 
-        if ( !$flag && !is_null($flagFunction) ) {
+        if (!$flag && !is_null($flagFunction)) {
             //Replace TYPE by ENGINE
             $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
 
-            file_put_contents($filename,$script);
+            file_put_contents($filename, $script);
 
-            $aHost = explode(':',$parameters['dbHost']);
+            $aHost = explode(':', $parameters['dbHost']);
             $dbHost = $aHost[0];
-            if(isset($aHost[1])){
+            if (isset($aHost[1])) {
                 $dbPort = $aHost[1];
                 $command = 'mysql'
-                . ' --host=' . $dbHost
-                . ' --port=' . $dbPort
-                . ' --user=' . $parameters['dbUser']
-                . ' --password=' . str_replace('"', '\"', str_replace("'", "\'", quotemeta($parameters['dbPass'])))//no change! supports the type passwords: .\+*?[^]($)'"\"'
-                . ' --database=' . mysql_real_escape_string($database)
-                . ' --default_character_set utf8'
-                . ' --execute="SOURCE '.$filename.'"';
-            }else{
+                    . ' --host=' . $dbHost
+                    . ' --port=' . $dbPort
+                    . ' --user=' . $parameters['dbUser']
+                    . ' --password=' . str_replace('"', '\"', str_replace("'", "\'", quotemeta($parameters['dbPass'])))//no change! supports the type passwords: .\+*?[^]($)'"\"'
+                    . ' --database=' . mysql_real_escape_string($database)
+                    . ' --default_character_set utf8'
+                    . ' --execute="SOURCE ' . $filename . '"';
+            } else {
                 $command = 'mysql'
-                . ' --host=' . $dbHost
-                . ' --user=' . $parameters['dbUser']
-                . ' --password=' . str_replace('"', '\"', str_replace("'", "\'", quotemeta($parameters['dbPass'])))//no change! supports the type passwords: .\+*?[^]($)'"\"'
-                . ' --database=' . mysql_real_escape_string($database)
-                . ' --default_character_set utf8'
-                . ' --execute="SOURCE '.$filename.'"';
+                    . ' --host=' . $dbHost
+                    . ' --user=' . $parameters['dbUser']
+                    . ' --password=' . str_replace('"', '\"', str_replace("'", "\'", quotemeta($parameters['dbPass'])))//no change! supports the type passwords: .\+*?[^]($)'"\"'
+                    . ' --database=' . mysql_real_escape_string($database)
+                    . ' --default_character_set utf8'
+                    . ' --execute="SOURCE ' . $filename . '"';
             }
             shell_exec($command);
         } else {
@@ -1430,7 +1420,7 @@ class workspaceTools
         $metafiles = array();
         foreach ($backup->listContent() as $backupFile) {
             $filename = $backupFile["filename"];
-            if (strpos($filename, "/") === false && substr_compare($filename, ".meta", - 5, 5, true) === 0) {
+            if (strpos($filename, "/") === false && substr_compare($filename, ".meta", -5, 5, true) === 0) {
                 if (!$backup->extractList(array($filename), $tempDirectory)) {
                     throw new Exception("Could not extract backup");
                 }
@@ -1444,7 +1434,7 @@ class workspaceTools
             $data = file_get_contents($metafile);
             $workspaceData = G::json_decode($data);
             CLI::logging("\n");
-            workspaceTools::printInfo((array) $workspaceData);
+            workspaceTools::printInfo((array)$workspaceData);
         }
 
         G::rm_dir($tempDirectory);
@@ -1457,7 +1447,7 @@ class workspaceTools
         $chmod = @chmod($filename, $perms);
 
         if ($chgrp === false || $chmod === false || $chown === false) {
-            if (strtoupper( substr( PHP_OS, 0, 3 ) ) === 'WIN') {
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                 exec("icacls \"" . $filename . "\" /grant Administrador:(D,WDAC) /T", $res);
             } else {
                 CLI::logging(CLI::error("Failed to set permissions for $filename") . "\n");
@@ -1523,7 +1513,7 @@ class workspaceTools
         }
 
         $version = System::getVersion();
-        $pmVersion = (preg_match("/^([\d\.]+).*$/", $version, $arrayMatch))? $arrayMatch[1] : ""; //Otherwise: Branch master
+        $pmVersion = (preg_match("/^([\d\.]+).*$/", $version, $arrayMatch)) ? $arrayMatch[1] : ""; //Otherwise: Branch master
 
         CLI::logging(CLI::warning("
             Warning: A workspace from a newer version of ProcessMaker can NOT be restored in an older version of
@@ -1603,10 +1593,10 @@ class workspaceTools
                 CLI::logging(CLI::error("Could not get the shared folder permissions, not changing workspace permissions") . "\n");
             }
             list ($dbHost, $dbUser, $dbPass) = @explode(SYSTEM_HASH, G::decrypt(HASH_INSTALLATION, SYSTEM_HASH));
-            if($port != ''){
-               $dbHost = $dbHost.$port; //127.0.0.1:3306
+            if ($port != '') {
+                $dbHost = $dbHost . $port; //127.0.0.1:3306
             }
-            $aParameters = array('dbHost'=>$dbHost,'dbUser'=>$dbUser,'dbPass'=>$dbPass);
+            $aParameters = array('dbHost' => $dbHost, 'dbUser' => $dbUser, 'dbPass' => $dbPass);
 
             //Restore
             if (!defined("SYS_SYS")) {
@@ -1617,7 +1607,7 @@ class workspaceTools
                 define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
             }
 
-            $pmVersionWorkspaceToRestore = (preg_match("/^([\d\.]+).*$/", $metadata->PM_VERSION, $arrayMatch))? $arrayMatch[1] : "";
+            $pmVersionWorkspaceToRestore = (preg_match("/^([\d\.]+).*$/", $metadata->PM_VERSION, $arrayMatch)) ? $arrayMatch[1] : "";
 
             CLI::logging("> Connecting to system database in '$dbHost'\n");
             $link = mysql_connect($dbHost, $dbUser, $dbPass);
@@ -1637,13 +1627,13 @@ class workspaceTools
                     $dbName = $newDBNames[$db->name];
 
                     if (mysql_select_db($dbName, $link)) {
-                        if(!$overwrite) {
+                        if (!$overwrite) {
                             throw new Exception("Destination Database already exist (use -o to overwrite)");
                         }
                     }
 
                     CLI::logging("+> Restoring database {$db->name} to $dbName\n");
-                    $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql",$aParameters);
+                    $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql", $aParameters);
                     $workspace->createDBUser($dbName, $db->pass, "localhost", $dbName);
                     $workspace->createDBUser($dbName, $db->pass, "%", $dbName);
                 }
@@ -1715,9 +1705,9 @@ class workspaceTools
 
         $arrayPathInfo = pathinfo($file);
 
-        $f = ($arrayPathInfo["dirname"] == ".")? $dirHotfix . PATH_SEP . $file : $file;
+        $f = ($arrayPathInfo["dirname"] == ".") ? $dirHotfix . PATH_SEP . $file : $file;
 
-        $swv  = 1;
+        $swv = 1;
         $msgv = "";
 
         if (!file_exists($dirHotfix)) {
@@ -1725,13 +1715,13 @@ class workspaceTools
         }
 
         if (!file_exists($f)) {
-            $swv  = 0;
-            $msgv = $msgv . (($msgv != "")? "\n": null) . "- The file \"$f\" does not exist";
+            $swv = 0;
+            $msgv = $msgv . (($msgv != "") ? "\n" : null) . "- The file \"$f\" does not exist";
         }
 
         if ($arrayPathInfo["extension"] != "tar") {
-            $swv  = 0;
-            $msgv = $msgv . (($msgv != "")? "\n": null) . "- The file extension \"$file\" is not \"tar\"";
+            $swv = 0;
+            $msgv = $msgv . (($msgv != "") ? "\n" : null) . "- The file extension \"$file\" is not \"tar\"";
         }
 
         if ($swv == 1) {
@@ -1995,7 +1985,7 @@ class workspaceTools
         }
 
         $appCache = new AppCacheView();
-        $users    = new Users();
+        $users = new Users();
         $case = new Cases();
 
         //Select data CANCELLED
@@ -2047,18 +2037,18 @@ class workspaceTools
             if($row["DEL_THREAD_STATUS"] == 'OPEN'){
                 //Update information about the previous_user
                 $row["DEL_PREVIOUS_USR_UID"] = $row["PREVIOUS_USR_UID"];
-                $criteriaUser->add( UsersPeer::USR_UID, $row["PREVIOUS_USR_UID"] );
+                $criteriaUser->add(UsersPeer::USR_UID, $row["PREVIOUS_USR_UID"]);
                 $datasetU = UsersPeer::doSelectRS($criteriaUser);
                 $datasetU->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                 $datasetU->next();
                 $arrayUsers = $datasetU->getRow();
                 $row["DEL_PREVIOUS_USR_USERNAME"] = $arrayUsers["USR_USERNAME"];
-                $row["DEL_PREVIOUS_USR_FIRSTNAME"]= $arrayUsers["USR_FIRSTNAME"];
+                $row["DEL_PREVIOUS_USR_FIRSTNAME"] = $arrayUsers["USR_FIRSTNAME"];
                 $row["DEL_PREVIOUS_USR_LASTNAME"] = $arrayUsers["USR_LASTNAME"];
                 //Update the due date
-                $row["DEL_DUE_DATE"]         = $row["DEL_TASK_DUE_DATE"];
+                $row["DEL_DUE_DATE"] = $row["DEL_TASK_DUE_DATE"];
                 $listInbox = new ListInbox();
-                $listInbox->remove($row["APP_UID"],$row["DEL_INDEX"]);
+                $listInbox->remove($row["APP_UID"], $row["DEL_INDEX"]);
                 $listInbox->setDeleted(false);
                 $listInbox->create($row, $isSelfService);
             } else {
@@ -2277,6 +2267,44 @@ class workspaceTools
             $filesManager->processFilesUpgrade();
         } catch (Exception $e) {
             throw $e;
+        }
+    }
+
+    /**
+     * Register system tables in a file
+     *
+     * return void
+     */
+    public static function registerSystemTables($aSquema){
+        //Register all tables
+        $sListTables = '';
+        foreach ($aSquema as $key => $value) {
+            $sListTables .= $key .'|';
+        }
+
+        $sysTablesIniFile= PATH_CONFIG . 'system-tables.ini';
+        $contents = file_put_contents( $sysTablesIniFile, sprintf( "%s '%s'\n", "tables = ", $sListTables ) );
+        if ($contents === null) {
+            throw (new Exception( G::LoadTranslation('ID_FILE_NOT_WRITEABLE', SYS_LANG, array($sysTablesIniFile) ) ));
+        }
+    }
+
+    /**
+     *return void
+     */
+    public function checkRbacPermissions(){
+        CLI::logging("-> Verifying roles permissions in RBAC \n");
+        //Update table RBAC permissions
+        Bootstrap::LoadSystem('rbac');
+        $RBAC = &RBAC::getSingleton();
+        $RBAC->initRBAC();
+        $result = $RBAC->verifyPermissions();
+        if (count($result) > 1) {
+            foreach ($result as $item) {
+                CLI::logging("    $item... \n");
+            }
+        } else {
+            CLI::logging("    All roles permissions already updated \n");
         }
     }
 }

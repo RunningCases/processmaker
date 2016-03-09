@@ -222,6 +222,7 @@ $oHeadPublisher->addExtJsScript( 'app/main', true );
 $oHeadPublisher->addExtJsScript( 'cases/casesList', false ); //adding a javascript file .js
 $oHeadPublisher->addContent( 'cases/casesListExtJs' ); //adding a html file  .html.
 $oHeadPublisher->assign( 'FORMATS', $c->getFormats() );
+$oHeadPublisher->assign('extJsViewState', $oHeadPublisher->getExtJsViewState());
 $ieVersion = null;
 if(preg_match("/^.*\(.*MSIE (\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch) || preg_match("/^.*\(.*rv.(\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch)){
  $ieVersion = intval($arrayMatch[1]);

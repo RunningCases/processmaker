@@ -338,12 +338,8 @@ class Cases
         $c->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         $c->add(TaskPeer::TAS_UID, $tasks, Criteria::IN);
 
-        if ($typeView == 'category') {
-            $c->addDescendingOrderByColumn('PRO_CATEGORY');
-        } else {
-            $c->addAscendingOrderByColumn('PRO_TITLE');
-            $c->addAscendingOrderByColumn('TAS_TITLE');
-        }
+        $c->addAscendingOrderByColumn('PRO_TITLE');
+        $c->addAscendingOrderByColumn('TAS_TITLE');
 
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -378,7 +374,13 @@ class Cases
             $rs->next();
             $row = $rs->getRow();
         }
-        return $rows;
+
+        $rowsToReturn = $rows;
+        if ($typeView === 'category') {
+            $rowsToReturn = $this->orderStartCasesByCategoryAndName($rows);
+        }
+
+        return $rowsToReturn;
     }
 
     /*
@@ -1126,23 +1128,16 @@ class Cases
      * @return Fields
      */
 
-    public function removeCase($sAppUid)
+    public function removeCase($sAppUid, $deleteDelegation = true)
     {
         try {
             $this->getExecuteTriggerProcess($sAppUid, 'DELETED');
 
-            $oAppDelegation = new AppDelegation();
             $oAppDocument = new AppDocument();
 
-            //Delete the delegations of a application
-            $oCriteria2 = new Criteria('workflow');
-            $oCriteria2->add(AppDelegationPeer::APP_UID, $sAppUid);
-            $oDataset2 = AppDelegationPeer::doSelectRS($oCriteria2);
-            $oDataset2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $oDataset2->next();
-            while ($aRow2 = $oDataset2->getRow()) {
-                $oAppDelegation->remove($sAppUid, $aRow2['DEL_INDEX']);
-                $oDataset2->next();
+            if($deleteDelegation) {
+                //Delete the delegations of a application
+                $this->deleteDelegation($sAppUid);
             }
             //Delete the documents assigned to a application
             $oCriteria2 = new Criteria('workflow');
@@ -1237,6 +1232,9 @@ class Cases
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(ListParticipatedLastPeer::APP_UID, $sAppUid);
             ListParticipatedLastPeer::doDelete($oCriteria);
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListPausedPeer::APP_UID, $sAppUid);
+            ListPausedPeer::doDelete($oCriteria);
             /*----------------------------------********---------------------------------*/
             return $result;
         } catch (exception $e) {
@@ -1446,7 +1444,12 @@ class Cases
                 //there is an open delegation, so we need to return the delegation row
                 return $delegations['open'];
             } else {
-                return array(); //returning empty array
+                if(count($delegations['paused']) > 0){
+                    //there is an paused delegation, so we need to return the delegation row
+                    return $delegations['paused'];
+                }else{
+                    return array(); //returning empty array
+                }
             }
         }
         // if not we check previous tasks
@@ -1493,13 +1496,12 @@ class Cases
      * Get reviewed tasks (delegations started)
      * @param string $taskUid
      * @param string $sAppUid
-     * @author erik amaru ortiz <erik@colosa.com>
      * @return array within the open & closed tasks
      *         false -> when has not any delegation started for that task
      */
     public function getReviewedTasks($taskUid, $sAppUid)
     {
-        $openTasks = $closedTasks = array();
+        $openTasks = $closedTasks = $pausedTasks = array();
 
         // get all delegations fro this task
         $oCriteria2 = new Criteria('workflow');
@@ -1515,14 +1517,52 @@ class Cases
             if ($row['DEL_THREAD_STATUS'] == 'OPEN') {
                 $openTasks[] = $row;
             } else {
+                //If exist paused cases
                 $closedTasks[] = $row;
+                $aIndex[] = $row['DEL_INDEX'];
+                $pausedTasks = $this->getReviewedTasksPaused($sAppUid,$aIndex);
             }
         }
 
-        if (count($openTasks) == 0 && count($closedTasks) == 0) {
+        if (count($openTasks) === 0 && count($closedTasks) === 0 && count($pausedTasks) === 0) {
             return false; // return false because there is not any delegation for this task.
         } else {
-            return array('open' => $openTasks, 'closed' => $closedTasks);
+            return array('open' => $openTasks, 'closed' => $closedTasks, 'paused' => $pausedTasks);
+        }
+    }
+
+    /**
+     * Get reviewed tasks is Paused (delegations started)
+     * @param string $sAppUid
+     * @param array $aDelIndex
+     * @return array within the paused tasks
+     *         false -> when has not any delegation started for that task
+     */
+    public function getReviewedTasksPaused($sAppUid,$aDelIndex)
+    {
+        $oCriteria = new Criteria('workflow');
+        $oCriteria->add(AppDelayPeer::APP_UID, $sAppUid);
+        $oCriteria->add(AppDelayPeer::APP_DEL_INDEX, $aDelIndex, Criteria::IN);
+        $oCriteria->add(AppDelayPeer::APP_TYPE, 'PAUSE');
+        $oCriteria->add(
+            $oCriteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, 0, Criteria::EQUAL)->addOr(
+            $oCriteria->getNewCriterion(AppDelayPeer::APP_DISABLE_ACTION_USER, null, Criteria::ISNULL))
+        );
+
+        $oDataset = AppDelayPeer::doSelectRS($oCriteria);
+        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+        $pausedTask = array();
+        // loop and separate open & closed delegations in theirs respective arrays
+        while ($oDataset->next()) {
+            $row = $oDataset->getRow();
+            $pausedTask[] = $row;
+        }
+
+        if (count($pausedTask) == 0) {
+            return false; // return false because there is not any delegation for this task.
+        } else {
+            return array('pause' => $pausedTask);
         }
     }
 
@@ -3640,15 +3680,6 @@ class Cases
                 'APP_DOC_FILENAME' => 'char',
                 'APP_DOC_INDEX' => 'integer'
             );
-            /*----------------------------------********---------------------------------*/
-            $licensedFeatures = &PMLicensedFeatures::getSingleton();
-            $enablePMGmail = false;
-            if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-                G::LoadClass( "pmDrive" );
-                $pmDrive = new PMDrive();
-                $enablePMGmail = $pmDrive->getStatusService();
-            }
-            /*----------------------------------********---------------------------------*/
 
             while ($aRow = $oDataset->getRow()) {
                 $aAux = $oAppDocument->load($aRow['APP_DOC_UID'], $aRow['DOC_VERSION']);
@@ -3709,15 +3740,6 @@ class Cases
                     }
                 }
                 $aFields['COMMENT'] = $aFields['APP_DOC_COMMENT'];
-                /*----------------------------------********---------------------------------*/
-                //change donwload link - drive
-                $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
-                if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('INPUT',
-                        $driveDownload) && $enablePMGmail
-                ) {
-                    $aFields['DOWNLOAD_LINK'] = $driveDownload['INPUT'];
-                }
-                /*----------------------------------********---------------------------------*/
                 if (($aRow['DOC_VERSION'] == $lastVersion) || ($sAppDocuUID != "")) {
                     $aInputDocuments[] = $aFields;
                 }
@@ -3942,93 +3964,6 @@ class Cases
         $strPathName = PATH_DOCUMENT . G::getPathFromUID($applicationUid) . PATH_SEP;
         $strFileName = $appDocUid . "_" . $docVersion . "." . $extension;
 
-        /*----------------------------------********---------------------------------*/
-        $licensedFeatures = &PMLicensedFeatures::getSingleton();
-        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "pmDrive" );
-            $pmDrive = new PMDrive();
-            if ($pmDrive->getStatusService()) {
-                $app = new Application();
-                $user = new Users();
-                $dataUser = $user->load($userUid);
-                $pmDrive->setDriveUser($dataUser['USR_EMAIL']);
-
-                $appData = $app->Load($applicationUid);
-                if ($appData['APP_DRIVE_FOLDER_UID'] == null) {
-                    $process = new Process();
-                    $process->setProUid($appData['PRO_UID']);
-
-                    $result = $pmDrive->createFolder($process->getProTitle() . ' - ' . G::LoadTranslation("ID_CASE") . ' #' . $appData['APP_NUMBER'],
-                        $pmDrive->getFolderIdPMDrive($userUid));
-                    $appData['APP_DRIVE_FOLDER_UID'] = $result->id;
-                    $app->update($appData);
-                }
-
-                $result = $pmDrive->uploadFile('application/' . $extension, $fileTmpName, $file,
-                    $appData['APP_DRIVE_FOLDER_UID']);
-                $appDocument->setDriveDownload('INPUT', $result->webContentLink);
-                $fileIdDrive = $result->id;
-                $arrayField['DOC_VERSION'] = $docVersion;
-                $arrayField['APP_DOC_UID'] = $appDocUid;
-
-                $appDocument->update($arrayField);
-
-                //add permissions
-                $criteria = new Criteria('workflow');
-                $criteria->addSelectColumn(ApplicationPeer::PRO_UID);
-                $criteria->addSelectColumn(TaskUserPeer::TAS_UID);
-                $criteria->addSelectColumn(TaskUserPeer::USR_UID);
-                $criteria->addSelectColumn(TaskUserPeer::TU_RELATION);
-
-                $criteria->add(ApplicationPeer::APP_UID, $applicationUid);
-                $criteria->addJoin(ApplicationPeer::PRO_UID, TaskPeer::PRO_UID, Criteria::LEFT_JOIN);
-                $criteria->addJoin(TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN);
-
-                $dataset = ApplicationPeer::doSelectRS($criteria);
-                $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-                $userPermission = array();
-
-                while ($dataset->next()) {
-                    $row = $dataset->getRow();
-                    if ($row['TU_RELATION'] == 1) {
-                        //users
-                        $dataUser = $user->load($row['USR_UID']);
-                        if (array_search($dataUser['USR_EMAIL'], $userPermission) === false) {
-                            $objectPermissions = $this->getAllObjects($row['PRO_UID'], $applicationUid, $row['TAS_UID'],
-                                $row['USR_UID']);
-                            $userPermission[] = $dataUser['USR_EMAIL'];
-                        }
-                    } else {
-                        //Groups
-                        $criteria = new Criteria('workflow');
-                        $criteria->addSelectColumn(UsersPeer::USR_EMAIL);
-                        $criteria->addSelectColumn(UsersPeer::USR_UID);
-                        $criteria->add(GroupUserPeer::GRP_UID, $row['USR_UID']);
-                        $criteria->addJoin(GroupUserPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
-
-                        $oDataset = AppDelegationPeer::doSelectRS($criteria);
-                        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                        while ($oDataset->next()) {
-                            $aRow = $oDataset->getRow();
-                            if (array_search($aRow['USR_EMAIL'], $userPermission) === false) {
-                                $objectPermissions = $this->getAllObjects($row['PRO_UID'], $applicationUid,
-                                    $row['TAS_UID'], $aRow['USR_UID']);
-                                $userPermission[] = $aRow['USR_EMAIL'];
-                            }
-                        }
-                    }
-                }
-                $userPermission = array_unique($userPermission);
-
-                foreach ($userPermission as $key => $val) {
-                    $pmDrive->setPermission($appData['APP_DRIVE_FOLDER_UID'], $val, 'user', 'writer');
-                    $pmDrive->setPermission($fileIdDrive, $val);
-                }
-            }
-        }
-        /*----------------------------------********---------------------------------*/
-
         switch ($option) {
             case "xmlform":
                 G::uploadFile($fileTmpName, $strPathName, $strFileName);
@@ -4228,19 +4163,6 @@ class Cases
         $oListPaused = new ListPaused();
         $oListPaused->create($data);
         /*----------------------------------********---------------------------------*/
-
-        /*----------------------------------********---------------------------------*/
-        $licensedFeatures = &PMLicensedFeatures::getSingleton();
-        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "pmDrive" );
-            $pmDrive = new PMDrive();
-            $enablePMGmail = $pmDrive->getStatusService();
-            if (!empty($enablePMGmail) && $enablePMGmail == 1) {
-                $pmGmail = new \ProcessMaker\BusinessModel\Pmgmail();
-                $pmGmail->modifyMailToPauseCase($aData['APP_UID'], $aData['APP_DEL_INDEX']);
-            }
-        }
-        /*----------------------------------********---------------------------------*/
     }
 
     /*
@@ -4336,19 +4258,6 @@ class Cases
         $aData = array_merge($aFieldsDel, $aData);
         $oListPaused = new ListPaused();
         $oListPaused->remove($sApplicationUID, $iDelegation, $aData);
-        /*----------------------------------********---------------------------------*/
-
-        /*----------------------------------********---------------------------------*/
-        $licensedFeatures = &PMLicensedFeatures::getSingleton();
-        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "pmDrive" );
-            $pmDrive = new PMDrive();
-            $enablePMGmail = $pmDrive->getStatusService();
-            if (!empty($enablePMGmail) && $enablePMGmail == 1) {
-                $pmGmail = new \ProcessMaker\BusinessModel\Pmgmail();
-                $pmGmail->modifyMailToUnpauseCase($aData['APP_UID'], $aData['DEL_INDEX']);
-            }
-        }
         /*----------------------------------********---------------------------------*/
     }
 
@@ -4729,15 +4638,6 @@ class Cases
             'APP_DOC_FILENAME' => 'char', 'APP_DOC_INDEX' => 'integer'
         );
         $oUser = new Users();
-        /*----------------------------------********---------------------------------*/
-        $licensedFeatures = &PMLicensedFeatures::getSingleton();
-        $enablePMGmail = false;
-        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "pmDrive" );
-            $pmDrive = new PMDrive();
-            $enablePMGmail = $pmDrive->getStatusService();
-        }
-        /*----------------------------------********---------------------------------*/
         while ($aRow = $oDataset->getRow()) {
             $oCriteria2 = new Criteria('workflow');
             $oCriteria2->add(AppDelegationPeer::APP_UID, $sApplicationUID);
@@ -4798,15 +4698,6 @@ class Cases
                     }
                 }
             }
-            /*----------------------------------********---------------------------------*/
-            //change donwload link - drive
-            $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
-            if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('INPUT',
-                    $driveDownload) && $enablePMGmail
-            ) {
-                $aFields['DOWNLOAD_LINK'] = $driveDownload['INPUT'];
-            }
-            /*----------------------------------********---------------------------------*/
             if ($lastVersion == $aRow['DOC_VERSION']) {
                 //Show only last version
                 $aInputDocuments[] = $aFields;
@@ -4884,15 +4775,6 @@ class Cases
 
             $aFields['DOWNLOAD_LABEL'] = G::LoadTranslation('ID_DOWNLOAD');
             $aFields['DOWNLOAD_LINK'] = "cases_ShowDocument?a=" . $aRow['APP_DOC_UID'];
-            /*----------------------------------********---------------------------------*/
-            //change donwload link - drive
-            $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
-            if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('ATTACHED',
-                    $driveDownload) && $enablePMGmail
-            ) {
-                $aFields['DOWNLOAD_LINK'] = $driveDownload['ATTACHED'];
-            }
-            /*----------------------------------********---------------------------------*/
             if ($lastVersion == $aRow['DOC_VERSION']) {
                 //Show only last version
                 $aInputDocuments[] = $aFields;
@@ -4960,15 +4842,6 @@ class Cases
                     }
                 }
             }
-            /*----------------------------------********---------------------------------*/
-            //change donwload link - drive
-            $driveDownload = @unserialize($aRow['APP_DOC_DRIVE_DOWNLOAD']);
-            if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('INPUT',
-                    $driveDownload) && $enablePMGmail
-            ) {
-                $aFields['DOWNLOAD_LINK'] = $driveDownload['INPUT'];
-            }
-            /*----------------------------------********---------------------------------*/
             if ($lastVersion == $aRow['DOC_VERSION']) {
                 //Show only last version
                 $aInputDocuments[] = $aFields;
@@ -5076,15 +4949,6 @@ class Cases
             'APP_DOC_INDEX' => 'integer'
         );
         $oUser = new Users();
-        /*----------------------------------********---------------------------------*/
-        $licensedFeatures = &PMLicensedFeatures::getSingleton();
-        $enablePMGmail = false;
-        if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass( "pmDrive" );
-            $pmDrive = new PMDrive();
-            $enablePMGmail = $pmDrive->getStatusService();
-        }
-        /*----------------------------------********---------------------------------*/
         while ($aRow = $oDataset->getRow()) {
             $oCriteria2 = new Criteria('workflow');
             $oCriteria2->add(AppDelegationPeer::APP_UID, $sApplicationUID);
@@ -5187,21 +5051,6 @@ class Cases
                     $firstDocLink = $fileDoc;
                     $firstDocLabel = $fileDocLabel;
                 }
-
-                /*----------------------------------********---------------------------------*/
-                //change donwload link - drive
-                $driveDownload = @unserialize($aAux['APP_DOC_DRIVE_DOWNLOAD']);
-                if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('OUTPUT_DOC',
-                        $driveDownload) && $enablePMGmail
-                ) {
-                    $fileDoc = $driveDownload['OUTPUT_DOC'];
-                }
-                if ($driveDownload !== false && is_array($driveDownload) && array_key_exists('OUTPUT_PDF',
-                        $driveDownload) && $enablePMGmail
-                ) {
-                    $filePdf = $driveDownload['OUTPUT_PDF'];
-                }
-                /*----------------------------------********---------------------------------*/
 
                 $aFields = array(
                     'APP_DOC_UID' => $aAux['APP_DOC_UID'],
@@ -7444,5 +7293,49 @@ class Cases
         return $processList;
     }
 
+    public function deleteDelegation($sAppUid)
+    {
+        $oAppDelegation = new AppDelegation();
+        $oCriteria2 = new Criteria('workflow');
+        $oCriteria2->add(AppDelegationPeer::APP_UID, $sAppUid);
+        $oDataset2 = AppDelegationPeer::doSelectRS($oCriteria2);
+        $oDataset2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $oDataset2->next();
+        while ($aRow2 = $oDataset2->getRow()) {
+            $oAppDelegation->remove($sAppUid, $aRow2['DEL_INDEX']);
+            $oDataset2->next();
+        }
+    }
+
+    private function orderStartCasesByCategoryAndName ($rows) {
+        //now we order in category, proces_name order:
+        $comparatorSequence = array(
+            function($a, $b) {
+                $retval = 0;
+                if(array_key_exists('catname', $a) && array_key_exists('catname', $b)) {
+                    $retval =  strcmp($a['catname'], $b['catname']);
+                }
+                return $retval;
+            }
+        , function($a, $b) {
+                $retval = 0;
+                if(array_key_exists('value', $a) && array_key_exists('value', $b)) {
+                    $retval =  strcmp($a['value'], $b['value']);
+                }
+                return $retval;
+            }
+        );
+
+        usort($rows, function($a, $b) use ($comparatorSequence) {
+            foreach ($comparatorSequence as $cmpFn) {
+                $diff = call_user_func($cmpFn, $a, $b);
+                if ($diff !== 0) {
+                    return $diff;
+                }
+            }
+            return 0;
+        });
+        return $rows;
+    }
 }
 

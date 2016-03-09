@@ -38,17 +38,20 @@ if (! isset( $_GET['APP_UID'] ) || ! isset( $_GET['DEL_INDEX'] )) {
     if (isset( $_GET['APP_NUMBER'] )) {
         G::LoadClass( 'case' );
         $oCase = new Cases();
-        $_GET['APP_UID'] = $oCase->getApplicationUIDByNumber( $_GET['APP_NUMBER'] );
-        $_GET['DEL_INDEX'] = $oCase->getCurrentDelegation( $_GET['APP_UID'], $_SESSION['USER_LOGGED'] );
-        if (is_null( $_GET['APP_UID'] )) {
+        $appUid = $oCase->getApplicationUIDByNumber( htmlspecialchars($_GET['APP_NUMBER']) );
+        $delIndex = $oCase->getCurrentDelegation( $appUid, $_SESSION['USER_LOGGED'] );
+        if (is_null( $appUid )) {
             throw new Exception( G::LoadTranslation( 'ID_CASE_DOES_NOT_EXISTS' ) );
         }
-        if (is_null( $_GET['DEL_INDEX'] )) {
+        if (is_null( $delIndex )) {
             throw new Exception( G::LoadTranslation( 'ID_CASE_IS_CURRENTLY_WITH_ANOTHER_USER' ) );
         }
     } else {
         throw new Exception( "Application ID or Delegation Index is missing!. The System can't open the case." );
     }
+} else { 
+    $appUid = htmlspecialchars($_GET['APP_UID']);
+    $delIndex = htmlspecialchars($_GET['DEL_INDEX']);
 }
 
 require_once ("classes/model/Step.php");
@@ -61,18 +64,17 @@ $oHeadPublisher = & headPublisher::getSingleton();
 
 $urlToRedirectAfterPause = 'casesListExtJs';
 
-        /*----------------------------------********---------------------------------*/
+/*----------------------------------********---------------------------------*/
 $licensedFeatures = &PMLicensedFeatures::getSingleton();
 if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-    G::LoadClass( "pmDrive" );
-    $pmDrive = new PMDrive();
-    $enablePMGmail = $pmDrive->getStatusService();
-    if (key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && !empty($enablePMGmail) && $enablePMGmail == 1) {
+    G::LoadClass( "pmGoogleApi" );
+    $pmGoogle = new PMGoogleApi();
+    if (array_key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $pmGoogle->getServiceGmailStatus()) {
         $_SESSION['gmail'] = 0;
         $urlToRedirectAfterPause = '/sys'. $_SESSION['WORKSPACE'] .'/en/neoclassic/cases/cases_Open?APP_UID='.$_SESSION['APPLICATION'].'&DEL_INDEX='.$_SESSION['INDEX'].'&action=sent';
     }
 }
-        /*----------------------------------********---------------------------------*/
+/*----------------------------------********---------------------------------*/
 
 
 $oHeadPublisher->assign( 'urlToRedirectAfterPause', $urlToRedirectAfterPause );
@@ -86,19 +88,16 @@ foreach ($_GET as $k => $v) {
     $uri .= ($uri == '') ? "$k=$v" : "&$k=$v";
 }
 
-//$case = $oCase->loadCase( $_GET['APP_UID'], $_GET['DEL_INDEX'] );
 if( isset($_GET['action']) && ($_GET['action'] == 'jump') ) {
-    $case = $oCase->loadCase( $_GET['APP_UID'], $_GET['DEL_INDEX'], $_GET['action']);
+    $case = $oCase->loadCase( $appUid, $delIndex, $_GET['action']);
 } else {
-    $case = $oCase->loadCase( $_GET['APP_UID'], $_GET['DEL_INDEX'] );
+    $case = $oCase->loadCase( $appUid, $delIndex );
 }
 
 if (! isset( $_GET['to_revise'] )) {
     $script = 'cases_Open?';
 } else {
     $script = 'cases_OpenToRevise?';
-    $delIndex = $_GET['DEL_INDEX'];
-    $appUid = $_GET['APP_UID'];
     $oHeadPublisher->assign( 'treeToReviseTitle', G::loadtranslation( 'ID_STEP_LIST' ) );
     $casesPanelUrl = 'casesToReviseTreeContent?APP_UID=' . $appUid . '&DEL_INDEX=' . $delIndex;
     $oHeadPublisher->assign( 'casesPanelUrl', $casesPanelUrl ); //translations
@@ -122,7 +121,7 @@ $oHeadPublisher->assign( 'uri', $script . $uri );
 $oHeadPublisher->assign( '_APP_NUM', '#: ' . $case['APP_NUMBER'] );
 $oHeadPublisher->assign( '_PROJECT_TYPE', in_array($case['PRO_UID'], $bpmnProjects) ? 'bpmn' : 'classic' );
 $oHeadPublisher->assign( '_PRO_UID', $case['PRO_UID']);
-$oHeadPublisher->assign( '_APP_UID', $_GET['APP_UID']);
+$oHeadPublisher->assign( '_APP_UID', $appUid);
 $oHeadPublisher->assign( '_ENV_CURRENT_DATE', $conf->getSystemDate( date( 'Y-m-d' ) ) );
 $oHeadPublisher->assign( '_ENV_CURRENT_DATE_NO_FORMAT', date( 'Y-m-d-h-i-A' ) );
 $oHeadPublisher->assign( 'idfirstform', is_null( $oStep ) ? '' : $oStep->getStepUidObj() );
@@ -133,12 +132,7 @@ if(!isset($_SESSION['APPLICATION']) || !isset($_SESSION['TASK']) || !isset($_SES
     $_SESSION['APPLICATION'] = $case['APP_UID'];
     $_SESSION['TASK'] = $case['TAS_UID'];
     $_SESSION['INDEX'] = $case['DEL_INDEX'];
-} 
-$_SESSION['TASK'] = ($_GET['action'] == "unassigned" || $_GET['action'] == "sent" ) ? -1 : $_SESSION['TASK'];
-if($_GET['action'] == "todo" || $_GET['action'] == "draft") {
-    if (isset($_SESSION['bNoShowSteps'])) {
-        unset($_SESSION['bNoShowSteps']);
-    }
 }
+$_SESSION['actionCaseOptions'] = (isset($_REQUEST['action'])) ? $_REQUEST['action'] : '';
 G::RenderPage( 'publish', 'extJs' );
 

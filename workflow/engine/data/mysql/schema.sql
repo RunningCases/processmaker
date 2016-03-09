@@ -96,7 +96,9 @@ CREATE TABLE `APP_DOCUMENT`
 	`APP_DOC_STATUS` VARCHAR(32) default 'ACTIVE' NOT NULL,
 	`APP_DOC_STATUS_DATE` DATETIME,
 	`APP_DOC_FIELDNAME` VARCHAR(150),
-	`APP_DOC_DRIVE_DOWNLOAD` MEDIUMTEXT,
+  `APP_DOC_DRIVE_DOWNLOAD` MEDIUMTEXT,
+  `SYNC_WITH_DRIVE` VARCHAR(32) default 'UNSYNCHRONIZED' NOT NULL,
+  `SYNC_PERMISSIONS` MEDIUMTEXT,
 	PRIMARY KEY (`APP_DOC_UID`,`DOC_VERSION`),
 	KEY `indexAppDocument`(`FOLDER_UID`, `APP_DOC_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Documents in an Application';
@@ -175,6 +177,8 @@ CREATE TABLE `CONTENT`
 	`CON_LANG` VARCHAR(10) default '' NOT NULL,
 	`CON_VALUE` MEDIUMTEXT  NOT NULL,
 	PRIMARY KEY (`CON_CATEGORY`,`CON_PARENT`,`CON_ID`,`CON_LANG`),
+    KEY `indexUidLang`(`CON_ID`, `CON_LANG`),
+    KEY `indexCatParUidLang`(`CON_CATEGORY`, `CON_PARENT`, `CON_ID`, `CON_LANG`),
 	KEY `indexUid`(`CON_ID`, `CON_CATEGORY`, `CON_LANG`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
@@ -1190,6 +1194,7 @@ CREATE TABLE `APP_CACHE_VIEW`
 	`APP_UPDATE_DATE` DATETIME  NOT NULL,
 	`APP_OVERDUE_PERCENTAGE` DOUBLE  NOT NULL,
 	PRIMARY KEY (`APP_UID`,`DEL_INDEX`),
+	KEY `indexProUid`(`PRO_UID`),
 	KEY `indexAppNumber`(`APP_NUMBER`),
 	KEY `protitle`(`APP_PRO_TITLE`),
 	KEY `appupdatedate`(`APP_UPDATE_DATE`),
@@ -2258,6 +2263,7 @@ CREATE TABLE `LIST_INBOX`
 	`DEL_RISK_DATE` DATETIME,
 	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
 	PRIMARY KEY (`APP_UID`,`DEL_INDEX`),
+	KEY `indexUser`(`USR_UID`),
 	KEY `indexInboxUser`(`USR_UID`, `DEL_DELEGATE_DATE`),
 	KEY `indexInboxUserStatusUpdateDate`(`USR_UID`, `APP_STATUS`, `APP_UPDATE_DATE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Inbox list';
@@ -2319,6 +2325,7 @@ CREATE TABLE `LIST_PARTICIPATED_LAST`
 	`DEL_CURRENT_USR_USERNAME` VARCHAR(100) default '',
 	`DEL_CURRENT_USR_FIRSTNAME` VARCHAR(50) default '',
 	`DEL_CURRENT_USR_LASTNAME` VARCHAR(50) default '',
+       `DEL_CURRENT_TAS_TITLE` VARCHAR(255) default '' NOT NULL,)
 	`DEL_DELEGATE_DATE` DATETIME  NOT NULL,
 	`DEL_INIT_DATE` DATETIME,
 	`DEL_DUE_DATE` DATETIME,
@@ -2919,4 +2926,28 @@ CREATE TABLE `NOTIFICATION_DEVICE`
 	KEY `indexUserNotification`(`USR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Definitions Notification device.';
 # This restores the fkey checks, after having unset them earlier
+# SET FOREIGN_KEY_CHECKS = 1;
+
+
+
+#-----------------------------------------------------------------------------
+#-- GMAIL_RELABELING
+#-----------------------------------------------------------------------------
+DROP TABLE IF EXISTS `GMAIL_RELABELING`;
+
+CREATE TABLE `GMAIL_RELABELING` (
+	`LABELING_UID` 				  VARCHAR(32)  NOT NULL,
+	`CREATE_DATE`	  	      DATETIME NOT NULL,
+	`APP_UID` 				      VARCHAR(32) NOT NULL DEFAULT '',
+	`DEL_INDEX` 			      INT(11) 		NOT NULL DEFAULT '0',
+	`CURRENT_LAST_INDEX`    INT(11) 		NOT NULL DEFAULT '0',
+	`UNASSIGNED`            INT(11)   	NOT NULL DEFAULT '0',
+	`STATUS`  							VARCHAR(32) NOT NULL DEFAULT 'pending',
+	`MSG_ERROR`  						TEXT NULL,
+	PRIMARY KEY (`LABELING_UID`),
+	KEY `indexStatus` (`STATUS`)
+)ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Task to synchronize Gmail Labels';
+
+# This restores the fkey checks, after having unset them earlier
+
 SET FOREIGN_KEY_CHECKS = 1;

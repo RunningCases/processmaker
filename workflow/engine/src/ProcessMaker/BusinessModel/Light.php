@@ -22,6 +22,18 @@ class Light
     {
         $response = null;
         try {
+            // getting bpmn projects
+            $c = new Criteria('workflow');
+            $c->addSelectColumn(\BpmnProjectPeer::PRJ_UID);
+            $ds = \ProcessPeer::doSelectRS($c, \Propel::getDbConnection('workflow_ro'));
+            $ds->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $bpmnProjects = array();
+
+            while ($ds->next()) {
+                $row = $ds->getRow();
+                $bpmnProjects[] = $row['PRJ_UID'];
+            }
+            
             $oProcess = new \Process();
             $oCase    = new \Cases();
 
@@ -65,7 +77,7 @@ class Light
                 $tempTreeChildren = array ();
                 foreach ($processList[$key] as $keyChild => $processInfoChild) {
                     $webEntryEventStart = $webEntryEvent->getWebEntryEvents($processInfoChild['pro_uid']);
-                    if(empty($webEntryEventStart)){
+                    if (empty($webEntryEventStart) && in_array($processInfoChild['pro_uid'], $bpmnProjects)) {
                         $tempTreeChild['text']      = $keyChild; //ellipsis ( $keyChild, 50 );
                         $tempTreeChild['processId'] = $processInfoChild['pro_uid'];
                         $tempTreeChild['taskId']    = $processInfoChild['uid'];

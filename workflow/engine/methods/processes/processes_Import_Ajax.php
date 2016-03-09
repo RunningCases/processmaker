@@ -117,7 +117,17 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
     $importer->setSourceFromGlobals("PROCESS_FILENAME");
 
     try {
-        $prjUid = $importer->import(); 
+        $opt1 = XmlImporter::IMPORT_OPTION_CREATE_NEW;
+        $opt2 = XmlImporter::GROUP_IMPORT_OPTION_CREATE_NEW;
+        if($_POST['generateUid'] === 'generate') {
+            $generateUid = true;
+            $prjUid = $importer->import($opt1,$opt2,$generateUid);
+        } elseif($_POST['generateUid'] === 'keep') {
+            $generateUid = false;
+            $prjUid = $importer->import($opt1,$opt2,$generateUid);
+        } else {
+            $prjUid = $importer->import();
+        }
 
         G::LoadClass( 'Process' );
         $oProcess = new Process();
@@ -126,19 +136,37 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
 
         $result = array(
             "success" => true,
-            "catchMessage" => "",
+            "catchMessage" => '',
             "ExistProcessInDatabase" => 0,
             "ExistGroupsInDatabase" => 0,
+            "notExistProcessInDatabase" => 0,
+            "affectedGroups" => '',
             "sNewProUid" => $prjUid,
-            "project_type" => "bpmn", 
+            "project_type" => 'bpmn',
             "project_type_aux" => $proType
         );
     } catch (Exception $e) {
+        $groupsExists = ($e->getCode() == XmlImporter::IMPORT_STAT_GROUP_ALREADY_EXISTS)? 1 : 0;
+        if($groupsExists === 1) {
+            $arrayGroups = XmlImporter::$affectedGroups;
+            if(sizeof($arrayGroups)) {
+                foreach ($arrayGroups as $group) {
+                    $affectedGroups[] = $group["GRP_TITLE"];
+                }
+                $affectedGroups = implode(', ', $affectedGroups);
+            }
+        }
         $result = array(
             "success" => true,
-            "catchMessage" => (in_array($e->getCode(), array(XmlImporter::IMPORT_STAT_TARGET_ALREADY_EXISTS, XmlImporter::IMPORT_STAT_GROUP_ALREADY_EXISTS)))? "" : $e->getMessage(),
+            "catchMessage" => (in_array($e->getCode(), array(
+                XmlImporter::IMPORT_STAT_TARGET_ALREADY_EXISTS,
+                XmlImporter::IMPORT_STAT_GROUP_ALREADY_EXISTS,
+                XmlImporter::IMPORTED_PROJECT_DOES_NOT_EXISTS
+            )))? "" : $e->getMessage(),
             "ExistProcessInDatabase" => ($e->getCode() == XmlImporter::IMPORT_STAT_TARGET_ALREADY_EXISTS)? 1 : 0,
-            "ExistGroupsInDatabase"  => ($e->getCode() == XmlImporter::IMPORT_STAT_GROUP_ALREADY_EXISTS)? 1 : 0,
+            "ExistGroupsInDatabase"  => $groupsExists,
+            "notExistProcessInDatabase" => ($e->getCode() == XmlImporter::IMPORTED_PROJECT_DOES_NOT_EXISTS) ? 1 : 0,
+            "affectedGroups"  => !empty($affectedGroups)? $affectedGroups : '',
             "sNewProUid" => "",
             "project_type" => "bpmn",
 
@@ -195,19 +223,31 @@ if (isset($_POST["PRO_FILENAME"]) &&
 
         $result = array(
             "success" => true,
-            "catchMessage" => "",
+            "catchMessage" => '',
             "ExistProcessInDatabase" => 0,
             "ExistGroupsInDatabase" => 0,
+            "ExistGroupsInDatabase" => '',
             "sNewProUid" => $prjUid,
-            "project_type" => "bpmn", 
+            "project_type" => 'bpmn',
             "project_type_aux" => $proType
         );
     } catch (Exception $e) {
+        $groupsExists = ($e->getCode() == XmlImporter::IMPORT_STAT_GROUP_ALREADY_EXISTS)? 1 : 0;
+        if($groupsExists === 1) {
+            $arrayGroups = XmlImporter::$affectedGroups;
+            if(sizeof($arrayGroups)) {
+                foreach($arrayGroups as $group){
+                    $affectedGroups[] = $group["GRP_TITLE"];
+                }
+                $affectedGroups = implode(', ', $affectedGroups);
+            }
+        }
         $result = array(
             "success" => true,
             "catchMessage" => (in_array($e->getCode(), array(XmlImporter::IMPORT_STAT_TARGET_ALREADY_EXISTS, XmlImporter::IMPORT_STAT_GROUP_ALREADY_EXISTS)))? "" : $e->getMessage(),
             "ExistProcessInDatabase" => ($e->getCode() == XmlImporter::IMPORT_STAT_TARGET_ALREADY_EXISTS)? 1 : 0,
-            "ExistGroupsInDatabase"  => ($e->getCode() == XmlImporter::IMPORT_STAT_GROUP_ALREADY_EXISTS)? 1 : 0,
+            "ExistGroupsInDatabase"  => $groupsExists,
+            "affectedGroups"  => !empty($affectedGroups)? $affectedGroups : '',
             "sNewProUid" => "",
             "project_type" => "bpmn",
 
@@ -341,6 +381,17 @@ if ($action == "uploadFileNewProcess") {
         //!data ouput
         $result->sNewProUid = $sProUid;
         $result->proFileName = $Fields['PRO_FILENAME'];
+        $result->affectedGroups = '';
+        if($result->ExistGroupsInDatabase === 1) {
+            $arrayGroups = XmlImporter::$affectedGroups;
+            if(sizeof($arrayGroups)) {
+                foreach ($arrayGroups as $group) {
+                    $affectedGroups[] = $group["GRP_TITLE"];
+                }
+                $affectedGroups = implode(', ', $affectedGroups);
+            }
+        }
+        $result->affectedGroups = $affectedGroups;
 
         //Add Audit Log
         $process = new Process();
@@ -473,6 +524,18 @@ if ($action == "uploadFileNewProcessExist") {
         $result->success = true;
         $result->ExistGroupsInDatabase = $result->ExistGroupsInDatabase;
         $result->groupBeforeAccion = $action;
+        $result->affectedGroups = '';
+        if($result->ExistGroupsInDatabase === 1) {
+            $arrayGroups = XmlImporter::$affectedGroups;
+            if(sizeof($arrayGroups)) {
+                foreach ($arrayGroups as $group) {
+                    $affectedGroups[] = $group["GRP_TITLE"];
+                }
+                $affectedGroups = implode(', ', $affectedGroups);
+            }
+        }
+        $result->affectedGroups = $affectedGroups;
+
         //!data ouput
     } catch (Exception $e) {
         $result->response = $e->getMessage();

@@ -32,7 +32,8 @@ G::LoadTranslation('ID_NEW_CASE'), '');
 /*----------------------------------********---------------------------------*/
 $licensedFeatures = & PMLicensedFeatures::getSingleton();
 if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
-    $G_TMP_MENU->AddIdRawOption('CONSOLIDATED_CASES', 'casesConsolidatedListExtJs?action=consolidated', 'Batch Routing', '');
+    $G_TMP_MENU->AddIdRawOption('CONSOLIDATED_CASES', 'casesConsolidatedListExtJs?action=consolidated',
+        G::LoadTranslation('ID_BATCH_ROUTING'), '');
 }
 /*----------------------------------********---------------------------------*/
 
