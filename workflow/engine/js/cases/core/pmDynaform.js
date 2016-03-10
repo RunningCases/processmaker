@@ -78,39 +78,46 @@ $(window).load(function () {
         token: credentials,
         submitRest: false,
         onLoad: function () {
-            var dynaformname = document.createElement("input");
+            var dynaformname = document.createElement("input"),
+                appuid,
+                arrayRequired,
+                form,
+                dyn_forward;
             dynaformname.type = "hidden";
             dynaformname.name = "__DynaformName__";
             dynaformname.value = __DynaformName__;
-            var appuid = document.createElement("input");
+            appuid = document.createElement("input");
             appuid.type = "hidden";
             appuid.name = "APP_UID";
             appuid.value = app_uid;
-            var arrayRequired = document.createElement("input");
+            arrayRequired = document.createElement("input");
             arrayRequired.type = "hidden";
             arrayRequired.name = "DynaformRequiredFields";
             arrayRequired.value = fieldsRequired;
-            var form = document.getElementsByTagName("form")[0];
-            if(sesi.search("gmail") != -1){
-            	form.action = filePost ? filePost : "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid + "&gmail=1";
-            } else {
-            	form.action = filePost ? filePost : "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
-            }
-            form.method = "post";
-            form.setAttribute("encType", "multipart/form-data");
-            form.appendChild(dynaformname);
-            form.appendChild(appuid);
-            form.appendChild(arrayRequired);
-            var dyn_forward = document.getElementById("dyn_forward");
-            dyn_forward.onclick = function () {
-                if (window.project.getForms()[0].isValid()) {
-                    form.submit();
+            form = document.getElementsByTagName("form")[0];
+            if (form) {
+                if(sesi.search("gmail") != -1){
+                    form.action = filePost ? filePost : "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid + "&gmail=1";
+                } else {
+                    form.action = filePost ? filePost : "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
                 }
-                return false;
-            };
-            if (triggerDebug === true) {
-                showdebug();
+                form.method = "post";
+                form.setAttribute("encType", "multipart/form-data");
+                form.appendChild(dynaformname);
+                form.appendChild(appuid);
+                form.appendChild(arrayRequired);
+                dyn_forward = document.getElementById("dyn_forward");
+                dyn_forward.onclick = function () {
+                    if (window.project.getForms()[0].isValid()) {
+                        form.submit();
+                    }
+                    return false;
+                };
+                if (triggerDebug === true) {
+                    showdebug();
+                }
             }
+
         }
     });
 });
