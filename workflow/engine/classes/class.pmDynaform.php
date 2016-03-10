@@ -38,15 +38,18 @@ class pmDynaform
         }
 
         //todo: compatibility checkbox
-        $json = G::json_decode($this->record["DYN_CONTENT"]);
-        $fields = $this->jsonsf2($json, "checkbox", "type");
-        foreach ($fields as $field) {
-            if (isset($field->dataType) && $field->dataType === "string") {
-                $field->type = "checkgroup";
+        if ($this->record !== null && isset($this->record["DYN_CONTENT"]) && $this->record["DYN_CONTENT"] !== "") {
+            $json = G::json_decode($this->record["DYN_CONTENT"]);
+            $fields = $this->jsonsf2($json, "checkbox", "type");
+            foreach ($fields as $field) {
+                if (isset($field->dataType) && $field->dataType === "string") {
+                    $field->type = "checkgroup";
+                    $field->dataType = "array";
+                }
+                $this->jsonReplace($json, $field->id, "id", $field);
             }
-            $this->jsonReplace($json, $field->id, "id", $field);
+            $this->record["DYN_CONTENT"] = G::json_encode($json);
         }
-        $this->record["DYN_CONTENT"] = G::json_encode($json);
     }
 
     public function getDynaformTitle($idDynaform)
