@@ -42,11 +42,12 @@ class Lists {
         $filters["start"]    = isset( $dataList["start"] ) ? $dataList["start"] : "0";
         $filters["limit"]    = isset( $dataList["limit"] ) ? $dataList["limit"] : "25";
         $filters["sort"]     = isset( $dataList["sort"] ) ? $dataList["sort"] : "";
-        $filters["dir"]      = isset( $dataList["dir"] ) ? $dataList["dir"] : "DESC";
+        $filters["dir"]      = isset( $dataList["dir"] ) ? $dataList["dir"] : "ASC";
 
         $filters["action"]   = isset( $dataList["action"] ) ? $dataList["action"] : "";
 
-        $filters['newestthan'] = isset( $dataList['newestthan'] ) ? $dataList['newestthan'] : '';
+        $filters['newestthan'] = isset( $dataList['newerThan'] ) ? $dataList['newerThan'] : '';
+
         $filters['oldestthan'] = isset( $dataList['oldestthan'] ) ? $dataList['oldestthan'] : '';
 
         // Select list
