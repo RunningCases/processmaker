@@ -229,7 +229,7 @@ class G
      * @param string $key
      * @return string
      */
-    public function encrypt ($string, $key)
+    public static function encrypt ($string, $key)
     {
         //print $string;
         //    if ( defined ( 'ENABLE_ENCRYPT' ) && ENABLE_ENCRYPT == 'yes' ) {
@@ -3368,7 +3368,7 @@ class G
       *
       * @author Erik A.O. <erik@colosa.com>
      */
-    public function json_decode($Json, $assoc = false)
+    public static function json_decode($Json, $assoc = false)
     {
         if (function_exists('json_decode')) {
             return json_decode($Json, $assoc);
@@ -5034,7 +5034,7 @@ class G
         $rest->handle();
     }
 
-    public function reservedWordsSql ()
+    public static function reservedWordsSql ()
     {
         //Reserved words SQL
         $reservedWordsSql = array ("ACCESSIBLE","ACTION","ADD","ALL","ALTER","ANALYZE","AND","ANY","AS","ASC","ASENSITIVE","AUTHORIZATION","BACKUP","BEFORE","BEGIN","BETWEEN","BIGINT","BINARY","BIT","BLOB","BOTH","BREAK","BROWSE","BULK","BY","CALL","CASCADE","CASE","CHANGE","CHAR","CHARACTER","CHECK","CHECKPOINT","CLOSE","CLUSTERED","COALESCE","COLLATE","COLUMN","COMMIT","COMPUTE","CONDITION","CONSTRAINT","CONTAINS","CONTAINSTABLE","CONTINUE","CONVERT","CREATE","CROSS","CURRENT","CURRENT_DATE","CURRENT_TIME","CURRENT_TIMESTAMP","CURRENT_USER","CURSOR","DATABASE","DATABASES","DATE","DAY_HOUR","DAY_MICROSECOND","DAY_MINUTE","DAY_SECOND","DBCC","DEALLOCATE","DEC","DECIMAL","DECLARE","DEFAULT","DELAYED","DELETE","DENY","DESC","DESCRIBE","DETERMINISTIC","DISK","DISTINCT","DISTINCTROW",

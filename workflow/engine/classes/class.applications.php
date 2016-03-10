@@ -18,7 +18,9 @@ class Applications
         $sort = "APP_CACHE_VIEW.APP_NUMBER",
         $category = null,
         $configuration = true,
-        $paged = true
+        $paged = true,
+        $newerThan = '',
+        $oldestThan = ''
     ) {
         $callback = isset($callback)? $callback : "stcCallback1001";
         $dir = isset($dir)? $dir : "DESC";
@@ -301,7 +303,7 @@ class Applications
                 }
 
                 $Criteria->add( $Criteria->getNewCriterion( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL )->addAnd( $Criteria->getNewCriterion( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL ) ) );
-                $CriteriaCount->add( $CriteriaCount->getNewCriterion( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL )->addAnd( $Criteria->getNewCriterion( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL ) ) );
+                $CriteriaCount->add( $CriteriaCount->getNewCriterion( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL )->addAnd( $CriteriaCount->getNewCriterion( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL ) ) );
             } else {
                 $dateFrom = $dateFrom . " 00:00:00";
 
@@ -313,6 +315,27 @@ class Applications
 
             $Criteria->add( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL );
             $CriteriaCount->add( AppCacheViewPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL );
+        }
+
+        if ($newerThan != '') {
+            if ($oldestThan != '') {
+                $Criteria->add(
+                    $Criteria->getNewCriterion(AppCacheViewPeer::DEL_DELEGATE_DATE, $newerThan, Criteria::GREATER_THAN)->addAnd(
+                    $Criteria->getNewCriterion(AppCacheViewPeer::DEL_DELEGATE_DATE, $oldestThan, Criteria::LESS_THAN))
+                );
+                $CriteriaCount->add(
+                    $CriteriaCount->getNewCriterion(AppCacheViewPeer::DEL_DELEGATE_DATE, $newerThan, Criteria::GREATER_THAN)->addAnd(
+                    $CriteriaCount->getNewCriterion(AppCacheViewPeer::DEL_DELEGATE_DATE, $oldestThan, Criteria::LESS_THAN))
+                );
+            } else {
+                $Criteria->add(AppCacheViewPeer::DEL_DELEGATE_DATE, $newerThan, Criteria::GREATER_THAN);
+                $CriteriaCount->add( AppCacheViewPeer::DEL_DELEGATE_DATE, $newerThan, Criteria::GREATER_THAN);
+            }
+        } else {
+            if ($oldestThan != '') {
+                $Criteria->add(AppCacheViewPeer::DEL_DELEGATE_DATE, $oldestThan, Criteria::LESS_THAN);
+                $CriteriaCount->add(AppCacheViewPeer::DEL_DELEGATE_DATE, $oldestThan, Criteria::LESS_THAN);
+            }
         }
 
         //add the filter

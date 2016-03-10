@@ -311,7 +311,7 @@ class AdditionalTables extends BaseAdditionalTables
         $pmTable->remove();
     }
 
-    public function getPHPName($sName)
+    public static function getPHPName($sName)
     {
         $sName = trim($sName);
         $aAux = explode('_', $sName);

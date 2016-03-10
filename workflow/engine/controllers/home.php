@@ -410,28 +410,39 @@ class Home extends Controller
                 $category
             );
         } else {
-            G::LoadClass( 'applications' );
+            $dataList['userId']   = $user;
+            $dataList['start']    = $start;
+            $dataList['limit']    = $limit;
+            $dataList['filter']   = $filter;
+            $dataList['search']   = $search;
+            $dataList['process']  = $process;
+            $dataList['status']   = $status;
+            $dataList['dateFrom'] = $dateFrom;
+            $dataList['dateTo']   = $dateTo;
+            $dataList['callback'] = $callback;
+            $dataList['dir']      = $dir;
+            $dataList['sort']     = $sort;
+            $dataList['category'] = $category;
+            /*----------------------------------********---------------------------------*/
+            if (true) {
+                //In enterprise version this block of code should always be executed
+                //In community version this block of code is deleted and is executed the other
+                $list = new \ProcessMaker\BusinessModel\Lists();
+                $cases = $list->getList('inbox', $dataList);
+            } else {
+            /*----------------------------------********---------------------------------*/
+                $case = new \ProcessMaker\BusinessModel\Cases();
+                $cases = $case->getList($dataList);
+                foreach ($cases['data'] as &$value) {
+                    $value = array_change_key_case($value, CASE_UPPER);
+                }
+                if(!isset($cases['totalCount'])){
+                    $cases['totalCount'] = $cases['total'];
+                }
+            /*----------------------------------********---------------------------------*/
+            }
+            /*----------------------------------********---------------------------------*/
 
-            $apps = new Applications();
-
-            $cases = $apps->getAll(
-                $user,
-                $start,
-                $limit,
-                $type,
-                $filter,
-                $search,
-                $process,
-                $status,
-                '',
-                $dateFrom,
-                $dateTo,
-                $callback,
-                $dir,
-                $sort,
-                $category,
-                false
-            );
         }
 
         // formating & complitting apps data with 'Notes'

@@ -4030,6 +4030,15 @@
         <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_RISK_DATE" type="TIMESTAMP" required="false" />
         <column name="DEL_PRIORITY" type="VARCHAR" size="32" required="true" default="3"/>
+        <index name="indexUser">
+          <index-column name="USR_UID"/>
+          <vendor type="mysql">
+            <parameter name="Table" value="LIST_INBOX"/>
+            <parameter name="Non_unique" value="1"/>
+            <parameter name="Key_name" value="indexUser"/>
+            <parameter name="Seq_in_index" value="1"/>
+          </vendor>
+        </index>
         <index name="indexInboxUser">
             <index-column name="USR_UID"/>
             <index-column name="DEL_DELEGATE_DATE"/>

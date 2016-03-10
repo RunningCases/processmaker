@@ -37,11 +37,11 @@ switch ($function) {
     case "changeLabel":
         $query = $ses->execute( "select * from $table where TRN_CATEGORY='$cat' and TRN_ID='$node' and TRN_LANG='$lang'", false );
         if ($query->count() === 0) {
-            echo ("Not found $cat:$node:$lang in table '$table'");
+            echo ("Not found ".htmlspecialchars("$cat:$node:$lang")." in table '".htmlspecialchars($table)."'");
             return;
         }
         if ($query->count() > 1) {
-            echo ("The $cat:$node:$lang in table '$table' is not unique");
+            echo ("The $".htmlspecialchars("$cat:$node:$lang")." in table '".htmlspecialchars($table)."' is not unique");
             return;
         }
         $res = $query->read();
@@ -55,11 +55,11 @@ switch ($function) {
                 $update = $ses->execute( "update $table set TRN_VALUE='$langLabel' where TRN_CATEGORY='$cat' and TRN_ID='$node' and TRN_LANG='$lang'", false );
                 $query = $ses->execute( "select * from $table where TRN_CATEGORY='$cat' and TRN_ID='$node' and TRN_LANG='$lang'", false );
                 if ($query->count() === 0) {
-                    echo ("Not found $cat:$node:$lang in table '$table'");
+                    echo ("Not found ".htmlspecialchars("$cat:$node:$lang")." in table '".htmlspecialchars($table)."'");
                     return;
                 }
                 if ($query->count() > 1) {
-                    echo ("The $cat:$node:$lang in table '$table' is not unique");
+                    echo ("The ".htmlspecialchars("$cat:$node:$lang")." in table '".htmlspecialchars($table)."' is not unique");
                     return;
                 }
                 $res = $query->read();

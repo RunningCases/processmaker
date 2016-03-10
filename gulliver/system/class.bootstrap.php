@@ -463,12 +463,12 @@ class Bootstrap
         $file = $filter->xssFilterHard($file);
         $downloadFileName = $filter->xssFilterHard($downloadFileName);
 
-        $fileNameIni = $file;
-
         $browserCacheFilesUid = G::browserCacheFilesGetUid();
 
         if ($browserCacheFilesUid != null) {
-            $file = str_replace(".$browserCacheFilesUid", null, $file);
+            $fileNameIni = $file = str_replace(".$browserCacheFilesUid", null, $file);
+        } else {
+            $fileNameIni = $file;
         }
 
         $folderarray = explode('/', $file);

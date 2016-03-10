@@ -20,7 +20,7 @@ class Light extends Api
 
     private $arrayFieldIso8601 = [
         // request lists
-        'newestthan',
+        'newerThan',
         'oldestthan',
         //return lists
         'date',
@@ -132,7 +132,7 @@ class Light extends Api
         $filter = '',
         $date_from = '',
         $date_to = '',
-        $newestthan = '',
+        $newerThan = '',
         $oldestthan =''
     ) {
         try {
@@ -142,15 +142,15 @@ class Light extends Api
             $dataList['start'] = $start;
             $dataList['limit'] = $limit;
             $dataList['sort']  = $sort;
-            $dataList['dir']   = ($newestthan != '') ? 'ASC':$dir;
+            $dataList['dir']   = $dir;
             $dataList['category'] = $cat_uid;
             $dataList['process']  = $pro_uid;
             $dataList['search']   = $search;
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
             $dataList['dateTo']   = $date_to;
-            $dataList['newestthan']  = $newestthan;
-            $dataList['oldestthan']  = $oldestthan;
+            $dataList['newerThan'] = $newerThan;
+            $dataList['oldestthan'] = $oldestthan;
 
             Validator::throwExceptionIfDataNotMetIso8601Format($dataList, $this->arrayFieldIso8601);
             $dataList = DateTime::convertDataToUtc($dataList, $this->arrayFieldIso8601);
@@ -169,7 +169,7 @@ class Light extends Api
             }
             /*----------------------------------********---------------------------------*/
 
-            if ($newestthan != '') {
+            if ($newerThan != '') {
                 $response['data'] = array_reverse($response['data']);
             }
             $result   = $this->parserDataTodo($response['data']);
@@ -227,7 +227,7 @@ class Light extends Api
         $cat_uid = '',
         $pro_uid = '',
         $search = '',
-        $newestthan = '',
+        $newerThan = '',
         $oldestthan =''
     ) {
         try {
@@ -238,12 +238,12 @@ class Light extends Api
             $dataList['start'] = $start;
             $dataList['limit'] = $limit;
             $dataList['sort'] = $sort;
-            $dataList['dir'] = ($newestthan != '') ? 'ASC':$dir;
+            $dataList['dir'] = $dir;
             $dataList['category'] = $cat_uid;
             $dataList['process'] = $pro_uid;
             $dataList['search'] = $search;
-            $dataList['newestthan']  = $newestthan;
-            $dataList['oldestthan']  = $oldestthan;
+            $dataList['newerThan'] = $newerThan;
+            $dataList['oldestthan'] = $oldestthan;
 
             Validator::throwExceptionIfDataNotMetIso8601Format($dataList, $this->arrayFieldIso8601);
             $dataList = DateTime::convertDataToUtc($dataList, $this->arrayFieldIso8601);
@@ -262,7 +262,7 @@ class Light extends Api
             }
             /*----------------------------------********---------------------------------*/
 
-            if ($newestthan != '') {
+            if ($newerThan != '') {
                 $response['data'] = array_reverse($response['data']);
             }
             $result   = $this->parserDataDraft($response['data']);
@@ -285,11 +285,11 @@ class Light extends Api
             'user' => array(
                 'USR_UID'       => 'userId'
             ),
-            'prevUser' => array(
-                'PREVIOUS_USR_UID'       => 'userId',
-                'PREVIOUS_USR_FIRSTNAME' => 'firstName',
-                'PREVIOUS_USR_LASTNAME'  => 'lastName',
-                'PREVIOUS_USR_USERNAME'  => 'fullName',
+            'currentUser' => array(
+                'USR_UID'       => 'userId',
+                'USR_FIRSTNAME' => 'firstName',
+                'USR_LASTNAME'  => 'lastName',
+                'USR_USERNAME'  => 'fullName',
             ),
             'process' => array(
                 'PRO_UID'       => 'processId',
@@ -325,7 +325,7 @@ class Light extends Api
         $filter = '',
         $date_from = '',
         $date_to = '',
-        $newestthan = '',
+        $newerThan = '',
         $oldestthan =''
     ) {
         try {
@@ -337,7 +337,7 @@ class Light extends Api
             $dataList['start'] = $start;
             $dataList['limit'] = $limit;
             $dataList['sort']  = $sort;
-            $dataList['dir']   = ($newestthan != '') ? 'ASC':$dir;
+            $dataList['dir']   = $dir;
 
             $dataList['category'] = $category;
             $dataList['process']  = $process;
@@ -345,7 +345,7 @@ class Light extends Api
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
             $dataList['dateTo']   = $date_to;
-            $dataList['newestthan']  = $newestthan;
+            $dataList['newerThan'] = $newerThan;
             $dataList['oldestthan']  = $oldestthan;
 
             Validator::throwExceptionIfDataNotMetIso8601Format($dataList, $this->arrayFieldIso8601);
@@ -365,7 +365,7 @@ class Light extends Api
             }
             /*----------------------------------********---------------------------------*/
 
-            if ($newestthan != '') {
+            if ($newerThan != '') {
                 $response['data'] = array_reverse($response['data']);
             }
             $result = $this->parserDataParticipated($response['data']);
@@ -428,7 +428,9 @@ class Light extends Api
         $search = '',
         $filter = '',
         $date_from = '',
-        $date_to = ''
+        $date_to = '',
+        $newerThan = '',
+        $oldestthan = ''
     ) {
         try {
             $dataList['userId'] = $this->getUserId();
@@ -445,6 +447,8 @@ class Light extends Api
             $dataList['filter']   = $filter;
             $dataList['dateFrom'] = $date_from;
             $dataList['dateTo']   = $date_to;
+            $dataList['newerThan']  = $newerThan;
+            $dataList['oldestthan'] = $oldestthan;
 
             /*----------------------------------********---------------------------------*/
             if (true) {
@@ -518,7 +522,7 @@ class Light extends Api
         $cat_uid = '',
         $pro_uid = '',
         $search = '',
-        $newestthan = '',
+        $newerThan = '',
         $oldestthan =''
     ) {
         try {
@@ -529,11 +533,11 @@ class Light extends Api
             $dataList['start']    = $start;
             $dataList['limit']    = $limit;
             $dataList['sort']     = $sort;
-            $dataList['dir']      = ($newestthan != '') ? 'ASC':$dir;
+            $dataList['dir']      = $dir;
             $dataList['category'] = $cat_uid;
             $dataList['process']  = $pro_uid;
             $dataList['search']   = $search;
-            $dataList['newestthan']  = $newestthan;
+            $dataList['newerThan'] = $newerThan;
             $dataList['oldestthan']  = $oldestthan;
             Validator::throwExceptionIfDataNotMetIso8601Format($dataList, $this->arrayFieldIso8601);
             $dataList = DateTime::convertDataToUtc($dataList, $this->arrayFieldIso8601);

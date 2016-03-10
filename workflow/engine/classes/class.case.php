@@ -338,12 +338,8 @@ class Cases
         $c->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         $c->add(TaskPeer::TAS_UID, $tasks, Criteria::IN);
 
-        if ($typeView == 'category') {
-            $c->addDescendingOrderByColumn('PRO_CATEGORY');
-        } else {
-            $c->addAscendingOrderByColumn('PRO_TITLE');
-            $c->addAscendingOrderByColumn('TAS_TITLE');
-        }
+        $c->addAscendingOrderByColumn('PRO_TITLE');
+        $c->addAscendingOrderByColumn('TAS_TITLE');
 
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -378,7 +374,13 @@ class Cases
             $rs->next();
             $row = $rs->getRow();
         }
-        return $rows;
+
+        $rowsToReturn = $rows;
+        if ($typeView === 'category') {
+            $rowsToReturn = $this->orderStartCasesByCategoryAndName($rows);
+        }
+
+        return $rowsToReturn;
     }
 
     /*
@@ -7320,5 +7322,35 @@ class Cases
         }
     }
 
+    private function orderStartCasesByCategoryAndName ($rows) {
+        //now we order in category, proces_name order:
+        $comparatorSequence = array(
+            function($a, $b) {
+                $retval = 0;
+                if(array_key_exists('catname', $a) && array_key_exists('catname', $b)) {
+                    $retval =  strcmp($a['catname'], $b['catname']);
+                }
+                return $retval;
+            }
+        , function($a, $b) {
+                $retval = 0;
+                if(array_key_exists('value', $a) && array_key_exists('value', $b)) {
+                    $retval =  strcmp($a['value'], $b['value']);
+                }
+                return $retval;
+            }
+        );
+
+        usort($rows, function($a, $b) use ($comparatorSequence) {
+            foreach ($comparatorSequence as $cmpFn) {
+                $diff = call_user_func($cmpFn, $a, $b);
+                if ($diff !== 0) {
+                    return $diff;
+                }
+            }
+            return 0;
+        });
+        return $rows;
+    }
 }
 
