@@ -199,7 +199,7 @@ if( isset($request) ){
         $field = mysql_real_escape_string($_GET['fld']);
         $field = str_replace("`", "", $field);
         
-        $query = "INSERT INTO {$_GET['table']} ({$_GET['pk']}, {$_GET['fld']}) VALUES (?, ?)"; // '$gKey', '{$_GET['value']}')";
+        $query = "INSERT INTO $tableName ($primaryKeyField, $field) VALUES (?, ?)"; // '$gKey', '{$_GET['value']}')";
 
         $rs = $con->prepareStatement($query);
         $rs->set(1, $gKey);
