@@ -80,9 +80,9 @@ class Pmgmail {
      * return uid
      *
      */
-    public function sendEmail($app_uid, $mail, $index)
+    public function sendEmail($app_uid, $mailToAddresses, $index, $arrayTask = null, $arrayData = null)
     {
-        require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Application.php");
+    	$mailCcAddresses = "";
         $oApplication = new \Application();
         $formData = $oApplication->Load($app_uid);
 
@@ -99,7 +99,8 @@ class Pmgmail {
                 ($field != 'USER_LOGGED') &&
                 ($field != 'USR_USERNAME') &&
                 ($field != 'DYN_CONTENT_HISTORY') &&
-                ($field != 'PIN') ){
+                ($field != 'PIN') && 
+            	(!is_array($value))){
                 $dataFormToShowString .= " " . $field . " " . $value;
             }
         }
@@ -125,28 +126,48 @@ class Pmgmail {
                 $labelID = "PMIBX";
             }
 
-            if($mail == ""){
-                require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Users.php");
-                $oUsers = new \Users();
+            if((string)$mailToAddresses === ""){
+            	if($arrayTask){
+	            	$oCases = new \Cases();
 
-                if($nextUsr == ""){
-                    //Unassigned:
-                    $mail = "";
+	            	foreach ($arrayTask as $aTask) {
+	            		if(!isset($aTask["USR_UID"])){
+	            			$aTask["USR_UID"] = "";
+	            		}
+	            		$respTo = $oCases->getTo($aTask["TAS_ASSIGN_TYPE"], $aTask["TAS_UID"], $aTask["USR_UID"], $arrayData);
+	            		$mailToAddresses = $respTo['to'];
+	            		$mailCcAddresses = $respTo['cc'];
+	            		
+	            		if($aTask["TAS_ASSIGN_TYPE"] === "SELF_SERVICE"){
+	            			$labelID = "PMUASS";
+		            		if ((string)$mailToAddresses === ""){ // Self Service Value Based
+		            			$criteria = new \Criteria("workflow");
+		            			$criteria->addSelectColumn(\AppAssignSelfServiceValuePeer::GRP_UID);
+		            			$criteria->add(\AppAssignSelfServiceValuePeer::APP_UID, $app_uid);
+		            			
+		            			$rsCriteria = \AppAssignSelfServiceValuePeer::doSelectRs($criteria);
+		            			$rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+		            			
+		            			while ($rsCriteria->next()) {
+		            				$row = $rsCriteria->getRow();
+		            			}
+		            			$taskUsers = unserialize($row['GRP_UID']);
 
-                    require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "TaskUser.php");
-                    $oTaskUsers = new \TaskUser();
+		            			foreach ($taskUsers as $user) {
+		            				$oUsers = new \Users();
+		            				$usrData = $oUsers->loadDetails($user);
+		            				$nextMail = $usrData['USR_EMAIL'];
+		            				$mailToAddresses .= ($mailToAddresses == '') ? $nextMail : ',' . $nextMail;
+		            			}
+		            		}
+	            		}
+	            	}
+            	}else {
+            		$oUsers = new \Users();
 
-                    $taskUsers = $oTaskUsers->getAllUsersTask($tasUid);
-                    foreach ($taskUsers as $user){
-                        $usrData = $oUsers->loadDetails($user['USR_UID']);
-                        $nextMail = $usrData['USR_EMAIL'];
-                        $mail .= ($mail == '') ? $nextMail : ','. $nextMail;
-                    }
-                    $labelID = "PMUASS";
-                }else {
-                    $usrData = $oUsers->loadDetails($nextUsr);
-                    $mail = $usrData['USR_EMAIL'];
-                }
+            		$usrData = $oUsers->loadDetails($nextUsr);
+            		$mailToAddresses = $usrData['USR_EMAIL'];
+            	}
             }
 
             //first template
@@ -191,13 +212,13 @@ class Pmgmail {
             //getting the default email server
             $defaultEmail = $this->emailAccount();
 
-            require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.wsBase.php");
             $ws = new \wsBase();
+
             $resultMail = $ws->sendMessage(
                 $app_uid,
                 $defaultEmail, //From,
-                $mail,//To,
-                '',
+                $mailToAddresses,//$To,
+                $mailCcAddresses,//$Cc
                 '',
                 $subject,
                 'pmGmail.html',//template

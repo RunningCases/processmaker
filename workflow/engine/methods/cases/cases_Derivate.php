@@ -224,14 +224,24 @@ try {
     /*----------------------------------********---------------------------------*/
 
     $debuggerAvailable = true;
-
-    if (isset( $_SESSION['user_experience'] )) {
-        $aNextStep['PAGE'] = 'casesListExtJsRedirector?ux=' . $_SESSION['user_experience'];
+    
+    $flagGmail = false;
+    if($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')){
+    	G::LoadClass( "pmGoogleApi" );
+    	$pmGoogle = new PMGoogleApi();
+    	if($pmGoogle->getServiceGmailStatus()){
+    		$flagGmail = true;
+    	}
+    }
+    
+    $casesRedirector = 'casesListExtJsRedirector';
+    if (isset( $_SESSION['user_experience'] ) && $flagGmail === false ) {
+        $aNextStep['PAGE'] = $casesRedirector.'?ux=' . $_SESSION['user_experience'];
         $debuggerAvailable = false;
-    } else if( isset( $_SESSION['gmail'] )  ){
-        $aNextStep['PAGE'] = 'casesListExtJsRedirector?gmail='.$_SESSION['gmail'];
+    } else if( $flagGmail == true ){
+        $aNextStep['PAGE'] = $casesRedirector.'?gmail=1&tasks='.serialize($_POST['form']['TASKS']) . '&arrayData='.serialize($appFields['APP_DATA']);
     } else {
-        $aNextStep['PAGE'] = 'casesListExtJsRedirector';
+        $aNextStep['PAGE'] = $casesRedirector;
     }
 
     if (isset( $_SESSION['PMDEBUGGER'] ) && $_SESSION['PMDEBUGGER'] && $debuggerAvailable) {

@@ -26,7 +26,7 @@ if($appDelPrev == array()){
 $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
 foreach ($appDelPrev as $app){
     if( ($app['DEL_INDEX'] != $actualIndex) && ($app['DEL_PREVIOUS'] != $actualLastIndex) ){ //Sending the email to all threads of the case except the actual thread
-        $response = $Pmgmail->sendEmail($caseId, "", $app['DEL_INDEX']);
+        $response = $Pmgmail->sendEmail($caseId, "", $app['DEL_INDEX'], unserialize($_GET['tasks']), unserialize($_GET['arrayData']));
     }
 }
 
