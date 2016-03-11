@@ -214,6 +214,7 @@ def buildPmdynaformZip(homeDir, targetDir)
   puts "\nBuilding Compress Zip library".green.bold
   executeInto(homeDir, [ "mobile"])
   copyFiles({homeDir + "/build-prod-zip/build-prod.zip" => targetDir + "/build-prod.zip"})
+  File.chmod(0777, targetDir + "/build-prod.zip")
   puts "\nPmDynaform Zip Build Finished!".magenta
 end
 
