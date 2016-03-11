@@ -1197,9 +1197,6 @@ class RBAC
             return true;
         } else {
             switch ($access) {
-                case - 3:
-                    G::pr(G::LoadTranslation("ID_GRID_PAGE_NO_PERMISSIONS_MESSAGE"));
-                    break;
                 case - 2:
                     G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_SYSTEM', 'error', 'labels' );
                     G::header( 'location: ../login/login' );
