@@ -402,9 +402,17 @@ class ListInbox extends BaseListInbox
 
         if ($search != '') {
             $criteria->add(
-                $criteria->getNewCriterion( ListInboxPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE )->
-                addOr( $criteria->getNewCriterion( ListInboxPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE )->
-                addOr( $criteria->getNewCriterion( ListInboxPeer::APP_NUMBER, $search, Criteria::LIKE ) ) ) );
+                $criteria->getNewCriterion( ListInboxPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE )
+                ->addOr(
+                    $criteria->getNewCriterion( ListInboxPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE )
+                    ->addOr(
+                        $criteria->getNewCriterion( ListInboxPeer::APP_NUMBER, $search, Criteria::LIKE )
+                        ->addOr(
+                            $criteria->getNewCriterion( ListInboxPeer::APP_PRO_TITLE, '%' . $search . '%', Criteria::LIKE )
+                        )
+                    )
+                )
+            );
         }
 
         if ($process != '') {
