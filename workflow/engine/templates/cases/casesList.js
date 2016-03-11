@@ -80,7 +80,8 @@ function caseNotes(){
 }
 function openCase(){
 
-    var rowModel = grid.getSelectionModel().getSelected();
+    var rowModel = grid.getSelectionModel().getSelected(),
+        nameTab;
     if(rowModel){
         var appUid   = rowModel.data.APP_UID;
         var delIndex = rowModel.data.DEL_INDEX;
@@ -134,7 +135,8 @@ function openCase(){
             if(casesNewTab) {
                 casesNewTab.close();
             }
-            casesNewTab = window.open(requestFile + '?' + params);
+            nameTab = PM.Sessions.getCookie('PM-TabPrimary') + '_openCase';
+            casesNewTab = window.open(requestFile + '?' + params, nameTab);
         } else {
             redirect(requestFile + '?' + params);
         }
