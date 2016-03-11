@@ -30,8 +30,8 @@ if(curl_exec($gCurl) === false){
 } else {
 	$gCurl_response = curl_exec($gCurl);
 	curl_close($gCurl);
-	$gResp = json_decode($gCurl_response);
-	if ($gResp == false) {
+	$gResp = G::json_decode($gCurl_response);
+	if ($gResp === false) {
 		echo Bootstrap::LoadTranslation('ID_NO_LICENSE_FEATURE_ENABLED');
 		die;
 	}
@@ -47,7 +47,7 @@ curl_setopt( $curl, CURLOPT_CONNECTTIMEOUT, 0);
 
 $curl_response = curl_exec( $curl );
 curl_close($curl);
-$decodedResp = json_decode($curl_response);
+$decodedResp = G::json_decode($curl_response);
 
 if(!is_object($decodedResp) || property_exists($decodedResp,'error')) {
 	die($decodedResp->error->message);
@@ -81,7 +81,7 @@ if( !isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] != $decodedResp
 	curl_setopt_array($ch, $optArray);
 	// execute request and get response
 	$result = curl_exec($ch);
-	$response = (json_decode($result));
+	$response = (G::json_decode($result));
 	curl_close($ch);
 
 	//First validate if this user (mail) corresponds to a PM user

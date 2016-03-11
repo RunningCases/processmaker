@@ -311,7 +311,8 @@ class AppDocumentDrive
             $sw_file_exists_pdf = false;
             $sw_file_exists = false;
             $realPath = '';
-            if ($appDoc->getAppDocType() == 'OUTPUT') {
+            if ($appDoc->getAppDocType() === 'OUTPUT') {
+                //$name = substr($name, 1, -1);
                 $realPathDoc = PATH_DOCUMENT . $appUid . '/outdocs/' . $appDocUid . '_' . $docVersion . '.' . 'doc';
                 $realPathDoc1 = PATH_DOCUMENT . $appUid . '/outdocs/' . $name . '_' . $docVersion . '.' . 'doc';
                 $realPathDoc2 = PATH_DOCUMENT . $appUid . '/outdocs/' . $name . '.' . 'doc';
