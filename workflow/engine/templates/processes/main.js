@@ -1847,6 +1847,7 @@ Ext.EventManager.on(window, 'beforeunload', function () {
 
 
 function openWindowIfIE(pathDesigner) {
+    var nameTab;
     if ((navigator.userAgent.indexOf("MSIE") != -1) || (navigator.userAgent.indexOf("Trident") != -1)) {
         if (Ext.getCmp('newProjectWin'))
             Ext.getCmp('newProjectWin').close();
@@ -1861,14 +1862,15 @@ function openWindowIfIE(pathDesigner) {
         if (Ext.getCmp('changeOrKeepUidsWindow'))
             Ext.getCmp('changeOrKeepUidsWindow').close();
         processesGrid.store.reload();
+        nameTab = PM.Sessions.getCookie('PM-TabPrimary') + '_winDesigner';
         if (winDesigner && winDesigner.closed === false) {
             if (winDesigner.window.PMDesigner.project.isDirty()) {
                 Ext.Msg.alert(_('ID_REFRESH_LABEL'), _('ID_UNSAVED_TRIGGERS_WINDOW'));
             } else {
-                winDesigner = window.open(pathDesigner, 'winDesigner');
+                winDesigner = window.open(pathDesigner, nameTab);
             }
         } else {
-            winDesigner = window.open(pathDesigner, 'winDesigner');
+            winDesigner = window.open(pathDesigner, nameTab);
         }
         return;
     }

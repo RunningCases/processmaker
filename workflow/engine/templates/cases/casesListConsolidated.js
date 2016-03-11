@@ -262,7 +262,9 @@ function openCase(){
       if(newCaseNewTab) {
         newCaseNewTab.close();
       }
-        newCaseNewTab = window.open(requestFile + '?' + params);       
+
+      newCaseNewTab = window.open(requestFile + '?' + params);
+      newCaseNewTab.name = PM.Sessions.getCookie('PM-TabPrimary');
     } else {
       redirect(requestFile + '?' + params);
     }
@@ -278,7 +280,8 @@ function jumpToCase(appNumber){
   Ext.Ajax.request({
     url: 'cases_Ajax',
     success: function(response) {
-      var res = Ext.decode(response.responseText);
+      var res = Ext.decode(response.responseText),
+          nameTab;
       if (res.exists === true) {
         params = 'APP_NUMBER=' + appNumber;
         params += '&action=jump';
@@ -287,7 +290,8 @@ function jumpToCase(appNumber){
           if(newCaseNewTab) {
             newCaseNewTab.close();
           }
-            newCaseNewTab = window.open(requestFile + '?' + params);       
+          nameTab = PM.Sessions.getCookie('PM-TabPrimary') + '_openCase';
+            newCaseNewTab = window.open(requestFile + '?' + params, nameTab);
         } else {
           redirect(requestFile + '?' + params);
         }
