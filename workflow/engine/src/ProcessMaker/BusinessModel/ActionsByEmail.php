@@ -345,6 +345,12 @@ class ActionsByEmail
         return $response;
     }
 
+    /**
+     * Forward the Mail
+     * @param array $arrayData
+     *
+     * @return string $message
+     */
     public function forwardMail(array $arrayData)
     {
         if (!isset($arrayData['REQ_UID'])) {
@@ -371,7 +377,7 @@ class ActionsByEmail
         $criteria->addJoin(\AbeRequestsPeer::ABE_UID, \AbeConfigurationPeer::ABE_UID);
         $criteria->addJoin(\AppDelegationPeer::APP_UID, \AbeRequestsPeer::APP_UID);
         $criteria->addJoin(\AppDelegationPeer::DEL_INDEX, \AbeRequestsPeer::DEL_INDEX);
-        $resultRes = AbeRequestsPeer::doSelectRS($criteria);
+        $resultRes = \AbeRequestsPeer::doSelectRS($criteria);
         $resultRes->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
         $resultRes->next();
@@ -381,37 +387,20 @@ class ActionsByEmail
             if (is_null($dataRes['DEL_FINISH_DATE'])) {
                 \G::LoadClass('spool');
 
-                $configuration = new \Configuration();
-                $sDelimiter = \DBAdapter::getStringDelimiter();
-                $criteria = new \Criteria('workflow');
-                $criteria->add(\ConfigurationPeer::CFG_UID, 'Emails');
-                $criteria->add(\ConfigurationPeer::OBJ_UID, '');
-                $criteria->add(\ConfigurationPeer::PRO_UID, '');
-                $criteria->add(\ConfigurationPeer::USR_UID, '');
-                $criteria->add(\ConfigurationPeer::APP_UID, '');
+                $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
+                $criteria = $emailServer->getEmailServerCriteria();
+                $rsCriteria = \EmailServerPeer::doSelectRS($criteria);
+                $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                if ($rsCriteria->next()) {
+                    $row = $rsCriteria->getRow();
 
-                if (\ConfigurationPeer::doCount($criteria) == 0) {
-                    $configuration->create(array('CFG_UID' => 'Emails', 'OBJ_UID' => '', 'CFG_VALUE' => '', 'PRO_UID' => '', 'USR_UID' => '', 'APP_UID' => ''));
-                    $newConfiguration = array();
-                } else {
-                    $newConfiguration = $configuration->load('Emails', '', '', '', '');
-
-                    if ($newConfiguration['CFG_VALUE'] != '') {
-                        $newConfiguration = unserialize($newConfiguration['CFG_VALUE']);
-                    } else {
-                        $newConfiguration = array();
-                    }
+                    $arrayConfigAux = $row;
+                    $arrayConfigAux["SMTPSecure"] = $row["SMTPSECURE"];
                 }
+                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : \System::getEmailConfiguration();
 
                 $spool = new \spoolRun();
-                $spool->setConfig(array(
-                    'MESS_ENGINE' => $newConfiguration['MESS_ENGINE'],
-                    'MESS_SERVER' => $newConfiguration['MESS_SERVER'],
-                    'MESS_PORT' => $newConfiguration['MESS_PORT'],
-                    'MESS_ACCOUNT' => $newConfiguration['MESS_ACCOUNT'],
-                    'MESS_PASSWORD' => $newConfiguration['MESS_PASSWORD'],
-                    'SMTPAuth' => $newConfiguration['MESS_RAUTH']
-                ));
+                $spool->setConfig($aSetup);
 
                 $spool->create(array(
                     'msg_uid' => '',
@@ -419,7 +408,7 @@ class ActionsByEmail
                     'del_index' => $dataRes['DEL_INDEX'],
                     'app_msg_type' => 'TEST',
                     'app_msg_subject' => $dataRes['ABE_REQ_SUBJECT'],
-                    'app_msg_from' => $newConfiguration['MESS_ACCOUNT'],
+                    'app_msg_from' => $aSetup['MESS_ACCOUNT'],
                     'app_msg_to' => $dataRes['ABE_REQ_SENT_TO'],
                     'app_msg_body' => $dataRes['ABE_REQ_BODY'],
                     'app_msg_cc' => '',
@@ -432,10 +421,10 @@ class ActionsByEmail
                 if ($spool->sendMail()) {
                     $dataRes['ABE_REQ_STATUS'] = 'SENT';
 
-                    $message = G::LoadTranslation('ID_EMAIL_RESENT_TO') . ': '. $dataRes['ABE_REQ_SENT_TO'];
+                    $message = \G::LoadTranslation('ID_EMAIL_RESENT_TO') . ': '. $dataRes['ABE_REQ_SENT_TO'];
                 } else {
                     $dataRes['ABE_REQ_STATUS'] = 'ERROR';
-                    $message = G::LoadTranslation('ID_THERE_PROBLEM_SENDING_EMAIL') . ': '. $dataRes['ABE_REQ_SENT_TO'] . ', ' . G::LoadTranslation('ID_PLEASE_TRY_LATER');
+                    $message = \G::LoadTranslation('ID_THERE_PROBLEM_SENDING_EMAIL') . ': '. $dataRes['ABE_REQ_SENT_TO'] . ', ' . G::LoadTranslation('ID_PLEASE_TRY_LATER');
                 }
 
                 try {
@@ -455,6 +444,12 @@ class ActionsByEmail
         return $message;
     }
 
+    /**
+     * Get the decision from Actions By Email and check if is Bpmn Process
+     * @param array $arrayData
+     *
+     * @return string $message
+     */
     public function viewForm(array $arrayData)
     {
         //coment
@@ -479,51 +474,148 @@ class ActionsByEmail
         $criteria->add(\AbeRequestsPeer::ABE_REQ_UID, $arrayData['REQ_UID']);
         $criteria->addJoin(\AbeRequestsPeer::ABE_UID, \AbeConfigurationPeer::ABE_UID);
         $criteria->addJoin(\AbeResponsesPeer::ABE_REQ_UID, \AbeRequestsPeer::ABE_REQ_UID);
-        $resultRes = AbeRequestsPeer::doSelectRS($criteria);
+        $resultRes = \AbeRequestsPeer::doSelectRS($criteria);
         $resultRes->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
         $resultRes->next();
         $dataRes = Array();
         $message = \G::LoadTranslation('ID_USER_NOT_RESPONDED_REQUEST');
-
         if ($dataRes = $resultRes->getRow()) {
             $_SESSION['CURRENT_DYN_UID'] = trim($dataRes['DYN_UID']);
-            $dynaform = new \Form($dataRes['PRO_UID'] . PATH_SEP . trim($dataRes['DYN_UID']), PATH_DYNAFORM, SYS_LANG, false);
-            $dynaform->mode = 'view';
 
-            if ($dataRes['ABE_RES_DATA'] != '') {
-                $value = unserialize($dataRes['ABE_RES_DATA']);
+            $process = new \Process();
+            $isBpmn = $process->isBpmnProcess($dataRes['PRO_UID']);
+            if($isBpmn) {
+                $message = $this->viewFormBpmn($dataRes);
+            } else {
+                $message = $this->viewFormClassic($dataRes);
+            }
+        }
 
-                if (is_array($value)) {
-                    $dynaform->values = $value;
+        return $message;
+    }
 
-                    foreach ($dynaform->fields as $fieldName => $field) {
-                        if ($field->type == 'submit') {
-                            unset($dynaform->fields[$fieldName]);
+    /**
+     * Get the decision from Actions By Email by Classic dynaform
+     * @param array $dataRes
+     *
+     * @return string $message
+     */
+    public function viewFormClassic(array $dataRes)
+    {
+        $dynaform = new \Form($dataRes['PRO_UID'] . PATH_SEP . trim($dataRes['DYN_UID']), PATH_DYNAFORM, SYS_LANG, false);
+        $dynaform->mode = 'view';
+
+        if ($dataRes['ABE_RES_DATA'] != '') {
+            $value = unserialize($dataRes['ABE_RES_DATA']);
+
+            if (is_array($value)) {
+                $dynaform->values = $value;
+
+                foreach ($dynaform->fields as $fieldName => $field) {
+                    if ($field->type == 'submit') {
+                        unset($dynaform->fields[$fieldName]);
+                    }
+                }
+
+                $message = $dynaform->render(PATH_CORE . 'templates/xmlform.html', $scriptCode);
+            } else {
+                $response = $dynaform->render(PATH_CORE . 'templates/xmlform.html', $scriptCode);
+
+                $field = $dynaform->fields[$dataRes['ABE_ACTION_FIELD']];
+                $message = '<b>Type:   </b>' . $field->type . '<br>';
+
+                switch ($field->type) {
+                    case 'dropdown':
+                    case 'radiogroup':
+                        $message .=$field->label . ' - ';
+                        $message .= $field->options[$value];
+                        break;
+                    case 'yesno':
+                        $message .= '<b>' . $field->label . ' </b>- ';
+                        $message .= ($value == 1) ? 'Yes' : 'No';
+                        break;
+                    case 'checkbox':
+                        $message .= '<b>' . $field->label . '</b> - ';
+                        $message .= ($value == 'On') ? 'Check' : 'Uncheck';
+                        break;
+                }
+            }
+        }
+
+        //Return
+        return $message;
+    }
+
+    /**
+     * Get the decision from Actions By Email by BPMN dynaform
+     * @param array $arrayData
+     *
+     * @return string $message
+     */
+    public function viewFormBpmn(array $dataRes)
+    {
+        $_SESSION['CURRENT_DYN_UID']       = trim($dataRes['DYN_UID']);
+        $configuration['DYN_UID']          = trim($dataRes['DYN_UID']);
+        $configuration['CURRENT_DYNAFORM'] = trim($dataRes['DYN_UID']);
+        $configuration['PRO_UID']          = trim($dataRes['PRO_UID']);
+
+        $criteriaD = new \Criteria();
+        $criteriaD->addSelectColumn(\DynaformPeer::DYN_CONTENT);
+        $criteriaD->addSelectColumn(\DynaformPeer::PRO_UID);
+        $criteriaD->add(\DynaformPeer::DYN_UID, trim($dataRes['DYN_UID']));
+        $resultD = \DynaformPeer::doSelectRS($criteriaD);
+        $resultD->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $resultD->next();
+        $configuration = $resultD->getRow();
+
+        \G::LoadClass('pmDynaform');
+        $field = new \stdClass();
+        $obj = new \pmDynaform($configuration);
+
+        if ($dataRes['ABE_RES_DATA'] !== '') {
+            $value       = unserialize($dataRes['ABE_RES_DATA']);
+            $actionField = str_replace(array('@@','@#','@=','@%','@?','@$'), '', $dataRes['ABE_ACTION_FIELD']);
+            $variables   = \G::json_decode($configuration['DYN_CONTENT'], true);
+            if (is_array($value)) {
+                if(isset($variables['items'][0]['items'])) {
+                    $fields = $variables['items'][0]['items'];
+                }
+            } else {
+                if(isset($variables['items'][0]['items'])) {
+                    $fields = $variables['items'][0]['items'];
+                    foreach ($fields as $key => $row) {
+                        foreach($row as $var) {
+                            if(isset($var['variable'])) {
+                                if ($var['variable'] === $actionField) {
+                                    $field->label = isset($var['label']) ? $var['label'] : '';
+                                    $field->type  = isset($var['type']) ? $var['type'] : '';
+                                    $values = $var['options'];
+                                    foreach ($values as $val){
+                                        $field->options[$val['value']] = $val['value'];
+                                    }
+                                }
+                            }
                         }
                     }
-
-                    $message = $dynaform->render(PATH_CORE . 'templates/xmlform.html', $scriptCode);
-                } else {
-                    $response = $dynaform->render(PATH_CORE . 'templates/xmlform.html', $scriptCode);
-                    $field = $dynaform->fields[$dataRes['ABE_ACTION_FIELD']];
-                    $message = '<b>Type:   </b>' . $field->type . '<br>';
-
-                    switch ($field->type) {
-                        case 'dropdown':
-                        case 'radiogroup':
-                            $message .=$field->label . ' - ';
-                            $message .= $field->options[$value];
-                            break;
-                        case 'yesno':
-                            $message .= '<b>' . $field->label . ' </b>- ';
-                            $message .= ($value == 1) ? 'Yes' : 'No';
-                            break;
-                        case 'checkbox':
-                            $message .= '<b>' . $field->label . '</b> - ';
-                            $message .= ($value == 'On') ? 'Check' : 'Uncheck';
-                            break;
-                    }
+                }
+                $message = '';
+                switch ($field->type) {
+                    case 'dropdown':
+                    case 'radiogroup':
+                    case 'radio':
+                        $message .= $field->label . ': ';
+                        $message .= $field->options[$value];
+                        break;
+                    case 'yesno':
+                        $message .= $field->label . ': ';
+                        $message .= ($value == 1) ? 'Yes' : 'No';
+                        break;
+                    case 'checkgroup':
+                    case 'checkbox':
+                        $message .= $field->label . ': ';
+                        $message .= ($value == 'On') ? 'Check' : 'Uncheck';
+                        break;
                 }
             }
         }

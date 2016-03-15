@@ -15,35 +15,31 @@ if (!isset($_REQUEST['start'])) {
 //Initialize response object
 $response = new stdclass();
 $response->status = 'OK';
-
 //Main switch
 try {
     $actionsByEmail = new \ProcessMaker\BusinessModel\ActionsByEmail();
 
     switch ($_REQUEST['action']) {
         case 'editTemplate':
-            $actionsByEmail->editTemplate($_REQUEST);
-            die();
+            $response = $actionsByEmail->editTemplate($_REQUEST);
             break;
         case 'updateTemplate':
-            $actionsByEmail->updateTemplate($_REQUEST);
+            $response = $actionsByEmail->updateTemplate($_REQUEST);
             break;
         case 'loadFields':
-            $actionsByEmail->loadFields($_REQUEST);
+            $response = $actionsByEmail->loadFields($_REQUEST);
             break;
         case 'saveConfiguration':
-            $actionsByEmail->saveConfiguration2($_REQUEST);
+            $response = $actionsByEmail->saveConfiguration2($_REQUEST);
             break;
         case 'loadActionByEmail':
-            $actionsByEmail->loadActionByEmail($_REQUEST);
+            $response = $actionsByEmail->loadActionByEmail($_REQUEST);
             break;
         case 'forwardMail':
-            $actionsByEmail->forwardMail($_REQUEST);
-            die;
+            $response = $actionsByEmail->forwardMail($_REQUEST);
             break;
         case 'viewForm':
-            $actionsByEmail->viewForm($_REQUEST);
-            die;
+            $response = $actionsByEmail->viewForm($_REQUEST);
             break;
     }
 } catch (Exception $error) {
