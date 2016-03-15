@@ -31,7 +31,7 @@ abstract class BaseCatalog extends BaseObject implements Persistent
      * The value for the cat_uid field.
      * @var        string
      */
-    protected $cat_uid = '0';
+    protected $cat_uid = '';
 
     /**
      * The value for the cat_label_id field.
@@ -217,7 +217,7 @@ abstract class BaseCatalog extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->cat_uid !== $v || $v === '0') {
+        if ($this->cat_uid !== $v || $v === '') {
             $this->cat_uid = $v;
             $this->modifiedColumns[] = CatalogPeer::CAT_UID;
         }
@@ -879,7 +879,7 @@ abstract class BaseCatalog extends BaseObject implements Persistent
 
         $copyObj->setNew(true);
 
-        $copyObj->setCatUid('0'); // this is a pkey column, so set to default value
+        $copyObj->setCatUid(''); // this is a pkey column, so set to default value
 
         $copyObj->setCatType(''); // this is a pkey column, so set to default value
 

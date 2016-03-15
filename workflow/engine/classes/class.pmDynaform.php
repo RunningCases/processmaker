@@ -1437,70 +1437,43 @@ class pmDynaform
      */
     public function validatePost($post = array())
     {
-        $aux = $post;
-        $json = G::json_decode($this->record["DYN_CONTENT"]);
-        $modeForm = $json->items[0]->mode;
-        foreach ($aux as $key => $value) {
-            if (substr($key, -6, 6) === "_label") {
-                continue;
-            }
-            $modeField = null;
-            $protectedValue = null;
-            $field = $this->jsonsf($json, $key, "variable");
-            if ($field !== null) {
-                if (isset($field->mode)) {
-                    $modeField = $field->mode;
+        $result = array();
+        $previusFunction = $this->onPropertyRead;
+        $this->onPropertyRead = function($json, $key, $value) use (&$post) {
+            if ($key === "type" && isset($json->variable) && !empty($json->variable)) {
+                if (isset($json->protectedValue) && $json->protectedValue === true) {
+                    if (isset($post[$json->variable])) {
+                        unset($post[$json->variable]);
+                    }
+                    if (isset($post[$json->variable . "_label"])) {
+                        unset($post[$json->variable . "_label"]);
+                    }
                 }
-                if ($modeField === "parent") {
-                    $modeField = $modeForm;
-                }
-                if (isset($field->protectedValue)) {
-                    $protectedValue = $field->protectedValue;
-                }
-            }
-            //insert for strict validation: || $modeField === "view" || $this->fields["STEP_MODE"] === "VIEW"
-            if ($field === null || $protectedValue === true) {
-                if (isset($post[$key])) {
-                    unset($post[$key]);
-                }
-                if (isset($post[$key . "_label"])) {
-                    unset($post[$key . "_label"]);
-                }
-            }
-            //columns
-            if (is_array($value)) {
-                foreach ($value as $keyRow => $valueRow) {
-                    foreach ($valueRow as $keyCell => $valueCell) {
-                        if (substr($keyCell, -6, 6) === "_label") {
-                            continue;
-                        }
-                        $modeField = null;
-                        $protectedValue = null;
-                        $field = $this->jsonsf($json, $keyCell, "id");
-                        if ($field !== null) {
-                            if (isset($field->mode)) {
-                                $modeField = $field->mode;
-                            }
-                            if ($modeField === "parent") {
-                                $modeField = $modeForm;
-                            }
-                            if (isset($field->protectedValue)) {
-                                $protectedValue = $field->protectedValue;
-                            }
-                        }
-                        //insert for strict validation: || $modeField === "view" || $this->fields["STEP_MODE"] === "VIEW"
-                        if ($field === null || $protectedValue === true) {
-                            if (isset($post[$key][$keyRow][$keyCell])) {
-                                unset($post[$key][$keyRow][$keyCell]);
-                            }
-                            if (isset($post[$key][$keyRow][$keyCell . "_label"])) {
-                                unset($post[$key][$keyRow][$keyCell . "_label"]);
+                if ($json->type === "grid" && is_array($json->columns)) {
+                    foreach ($json->columns as $column) {
+                        if (isset($column->protectedValue) && $column->protectedValue === true) {
+                            $dataGrid = is_array($post[$json->variable]) ? $post[$json->variable] : array();
+                            foreach ($dataGrid as $keyRow => $row) {
+                                if (isset($post[$json->variable][$keyRow][$column->id])) {
+                                    unset($post[$json->variable][$keyRow][$column->id]);
+                                }
+                                if (isset($post[$json->variable][$keyRow][$column->id . "_label"])) {
+                                    unset($post[$json->variable][$keyRow][$column->id . "_label"]);
+                                }
                             }
                         }
                     }
                 }
+                //validator data
+                $validatorClass = ProcessMaker\BusinessModel\DynaForm\ValidatorFactory::createValidatorClass($json->type, $json);
+                if ($validatorClass !== null) {
+                    $validatorClass->validatePost($post);
+                }
             }
-        }
+        };
+        $json = G::json_decode($this->record["DYN_CONTENT"]);
+        $this->jsonr($json);
+        $this->onPropertyRead = $previusFunction;
         return $post;
     }
 

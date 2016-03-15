@@ -1147,6 +1147,7 @@ importProcessExistGroup = function()
                   url     : 'processes_Import_Ajax',
                   waitMsg : _('ID_UPLOADING_PROCESS_FILE'),
                   waitTitle : "&nbsp;",
+                  timeout: 3600,
                   success : function(o, resp) {
                     var resp_            = Ext.util.JSON.decode(resp.response.responseText);
                     var sNewProUid       = resp_.sNewProUid;
@@ -1327,6 +1328,7 @@ importProcessExistProcess = function()
                   url     : 'processes_Import_Ajax',
                   waitMsg : _('ID_UPLOADING_PROCESS_FILE'),
                   waitTitle : "&nbsp;",
+                  timeout: 3600,
                   success: function(o, resp) {
                     var resp_      = Ext.util.JSON.decode(resp.response.responseText);
                     var sNewProUid = resp_.sNewProUid;
@@ -1560,6 +1562,7 @@ importProcess = function()
                                       url      : "processes_Import_Ajax",
                                       waitMsg  : _("ID_UPLOADING_PROCESS_FILE"),
                                       waitTitle: "&nbsp;",
+                                      timeout: 3600,
                                       success: function(o, resp)
                                       {
                                           var resp_ = Ext.util.JSON.decode(resp.response.responseText);

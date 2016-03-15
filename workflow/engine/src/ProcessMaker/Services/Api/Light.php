@@ -222,8 +222,8 @@ class Light extends Api
     public function doGetCasesListDraft(
         $start = 0,
         $limit = 10,
-        $sort = 'DEL_DELEGATE_DATE',
-        $dir = 'DESC',
+        $sort  = 'DEL_DELEGATE_DATE',
+        $dir   = 'DESC',
         $cat_uid = '',
         $pro_uid = '',
         $search = '',

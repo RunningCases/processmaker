@@ -49,55 +49,67 @@ abstract class BaseProReporting extends BaseObject implements Persistent
      * The value for the avg_time field.
      * @var        double
      */
-    protected $avg_time;
+    protected $avg_time = 0;
 
     /**
      * The value for the sdv_time field.
      * @var        double
      */
-    protected $sdv_time;
+    protected $sdv_time = 0;
 
     /**
      * The value for the total_cases_in field.
      * @var        double
      */
-    protected $total_cases_in;
+    protected $total_cases_in = 0;
 
     /**
      * The value for the total_cases_out field.
      * @var        double
      */
-    protected $total_cases_out;
+    protected $total_cases_out = 0;
 
     /**
      * The value for the configured_process_time field.
      * @var        double
      */
-    protected $configured_process_time;
+    protected $configured_process_time = 0;
 
     /**
      * The value for the configured_process_cost field.
      * @var        double
      */
-    protected $configured_process_cost;
+    protected $configured_process_cost = 0;
 
     /**
      * The value for the total_cases_open field.
      * @var        double
      */
-    protected $total_cases_open;
+    protected $total_cases_open = 0;
 
     /**
      * The value for the total_cases_overdue field.
      * @var        double
      */
-    protected $total_cases_overdue;
+    protected $total_cases_overdue = 0;
 
     /**
      * The value for the total_cases_on_time field.
      * @var        double
      */
-    protected $total_cases_on_time;
+    protected $total_cases_on_time = 0;
+
+    /**
+     * The value for the pro_cost field.
+     * @var        double
+     */
+    protected $pro_cost = 0;
+
+    /**
+     * The value for the pro_unit_cost field.
+     * @var        string
+     */
+    protected $pro_unit_cost = '';
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -246,6 +258,28 @@ abstract class BaseProReporting extends BaseObject implements Persistent
     }
 
     /**
+     * Get the [pro_cost] column value.
+     * 
+     * @return     double
+     */
+    public function getProCost()
+    {
+
+        return $this->pro_cost;
+    }
+
+    /**
+     * Get the [pro_unit_cost] column value.
+     * 
+     * @return     string
+     */
+    public function getProUnitCost()
+    {
+
+        return $this->pro_unit_cost;
+    }
+
+    /**
      * Set the value of [pro_uid] column.
      * 
      * @param      string $v new value
@@ -320,7 +354,7 @@ abstract class BaseProReporting extends BaseObject implements Persistent
     public function setAvgTime($v)
     {
 
-        if ($this->avg_time !== $v) {
+        if ($this->avg_time !== $v || $v === 0) {
             $this->avg_time = $v;
             $this->modifiedColumns[] = ProReportingPeer::AVG_TIME;
         }
@@ -336,7 +370,7 @@ abstract class BaseProReporting extends BaseObject implements Persistent
     public function setSdvTime($v)
     {
 
-        if ($this->sdv_time !== $v) {
+        if ($this->sdv_time !== $v || $v === 0) {
             $this->sdv_time = $v;
             $this->modifiedColumns[] = ProReportingPeer::SDV_TIME;
         }
@@ -352,7 +386,7 @@ abstract class BaseProReporting extends BaseObject implements Persistent
     public function setTotalCasesIn($v)
     {
 
-        if ($this->total_cases_in !== $v) {
+        if ($this->total_cases_in !== $v || $v === 0) {
             $this->total_cases_in = $v;
             $this->modifiedColumns[] = ProReportingPeer::TOTAL_CASES_IN;
         }
@@ -368,7 +402,7 @@ abstract class BaseProReporting extends BaseObject implements Persistent
     public function setTotalCasesOut($v)
     {
 
-        if ($this->total_cases_out !== $v) {
+        if ($this->total_cases_out !== $v || $v === 0) {
             $this->total_cases_out = $v;
             $this->modifiedColumns[] = ProReportingPeer::TOTAL_CASES_OUT;
         }
@@ -384,7 +418,7 @@ abstract class BaseProReporting extends BaseObject implements Persistent
     public function setConfiguredProcessTime($v)
     {
 
-        if ($this->configured_process_time !== $v) {
+        if ($this->configured_process_time !== $v || $v === 0) {
             $this->configured_process_time = $v;
             $this->modifiedColumns[] = ProReportingPeer::CONFIGURED_PROCESS_TIME;
         }
@@ -400,7 +434,7 @@ abstract class BaseProReporting extends BaseObject implements Persistent
     public function setConfiguredProcessCost($v)
     {
 
-        if ($this->configured_process_cost !== $v) {
+        if ($this->configured_process_cost !== $v || $v === 0) {
             $this->configured_process_cost = $v;
             $this->modifiedColumns[] = ProReportingPeer::CONFIGURED_PROCESS_COST;
         }
@@ -416,7 +450,7 @@ abstract class BaseProReporting extends BaseObject implements Persistent
     public function setTotalCasesOpen($v)
     {
 
-        if ($this->total_cases_open !== $v) {
+        if ($this->total_cases_open !== $v || $v === 0) {
             $this->total_cases_open = $v;
             $this->modifiedColumns[] = ProReportingPeer::TOTAL_CASES_OPEN;
         }
@@ -432,7 +466,7 @@ abstract class BaseProReporting extends BaseObject implements Persistent
     public function setTotalCasesOverdue($v)
     {
 
-        if ($this->total_cases_overdue !== $v) {
+        if ($this->total_cases_overdue !== $v || $v === 0) {
             $this->total_cases_overdue = $v;
             $this->modifiedColumns[] = ProReportingPeer::TOTAL_CASES_OVERDUE;
         }
@@ -448,12 +482,50 @@ abstract class BaseProReporting extends BaseObject implements Persistent
     public function setTotalCasesOnTime($v)
     {
 
-        if ($this->total_cases_on_time !== $v) {
+        if ($this->total_cases_on_time !== $v || $v === 0) {
             $this->total_cases_on_time = $v;
             $this->modifiedColumns[] = ProReportingPeer::TOTAL_CASES_ON_TIME;
         }
 
     } // setTotalCasesOnTime()
+
+    /**
+     * Set the value of [pro_cost] column.
+     * 
+     * @param      double $v new value
+     * @return     void
+     */
+    public function setProCost($v)
+    {
+
+        if ($this->pro_cost !== $v || $v === 0) {
+            $this->pro_cost = $v;
+            $this->modifiedColumns[] = ProReportingPeer::PRO_COST;
+        }
+
+    } // setProCost()
+
+    /**
+     * Set the value of [pro_unit_cost] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setProUnitCost($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->pro_unit_cost !== $v || $v === '') {
+            $this->pro_unit_cost = $v;
+            $this->modifiedColumns[] = ProReportingPeer::PRO_UNIT_COST;
+        }
+
+    } // setProUnitCost()
 
     /**
      * Hydrates (populates) the object variables with values from the database resultset.
@@ -496,12 +568,16 @@ abstract class BaseProReporting extends BaseObject implements Persistent
 
             $this->total_cases_on_time = $rs->getFloat($startcol + 11);
 
+            $this->pro_cost = $rs->getFloat($startcol + 12);
+
+            $this->pro_unit_cost = $rs->getString($startcol + 13);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 12; // 12 = ProReportingPeer::NUM_COLUMNS - ProReportingPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 14; // 14 = ProReportingPeer::NUM_COLUMNS - ProReportingPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating ProReporting object", $e);
@@ -741,6 +817,12 @@ abstract class BaseProReporting extends BaseObject implements Persistent
             case 11:
                 return $this->getTotalCasesOnTime();
                 break;
+            case 12:
+                return $this->getProCost();
+                break;
+            case 13:
+                return $this->getProUnitCost();
+                break;
             default:
                 return null;
                 break;
@@ -773,6 +855,8 @@ abstract class BaseProReporting extends BaseObject implements Persistent
             $keys[9] => $this->getTotalCasesOpen(),
             $keys[10] => $this->getTotalCasesOverdue(),
             $keys[11] => $this->getTotalCasesOnTime(),
+            $keys[12] => $this->getProCost(),
+            $keys[13] => $this->getProUnitCost(),
         );
         return $result;
     }
@@ -839,6 +923,12 @@ abstract class BaseProReporting extends BaseObject implements Persistent
                 break;
             case 11:
                 $this->setTotalCasesOnTime($value);
+                break;
+            case 12:
+                $this->setProCost($value);
+                break;
+            case 13:
+                $this->setProUnitCost($value);
                 break;
         } // switch()
     }
@@ -911,6 +1001,14 @@ abstract class BaseProReporting extends BaseObject implements Persistent
             $this->setTotalCasesOnTime($arr[$keys[11]]);
         }
 
+        if (array_key_exists($keys[12], $arr)) {
+            $this->setProCost($arr[$keys[12]]);
+        }
+
+        if (array_key_exists($keys[13], $arr)) {
+            $this->setProUnitCost($arr[$keys[13]]);
+        }
+
     }
 
     /**
@@ -968,6 +1066,14 @@ abstract class BaseProReporting extends BaseObject implements Persistent
 
         if ($this->isColumnModified(ProReportingPeer::TOTAL_CASES_ON_TIME)) {
             $criteria->add(ProReportingPeer::TOTAL_CASES_ON_TIME, $this->total_cases_on_time);
+        }
+
+        if ($this->isColumnModified(ProReportingPeer::PRO_COST)) {
+            $criteria->add(ProReportingPeer::PRO_COST, $this->pro_cost);
+        }
+
+        if ($this->isColumnModified(ProReportingPeer::PRO_UNIT_COST)) {
+            $criteria->add(ProReportingPeer::PRO_UNIT_COST, $this->pro_unit_cost);
         }
 
 
@@ -1058,6 +1164,10 @@ abstract class BaseProReporting extends BaseObject implements Persistent
         $copyObj->setTotalCasesOverdue($this->total_cases_overdue);
 
         $copyObj->setTotalCasesOnTime($this->total_cases_on_time);
+
+        $copyObj->setProCost($this->pro_cost);
+
+        $copyObj->setProUnitCost($this->pro_unit_cost);
 
 
         $copyObj->setNew(true);

@@ -89,6 +89,10 @@ class ProReportingMapBuilder
 
         $tMap->addColumn('TOTAL_CASES_ON_TIME', 'TotalCasesOnTime', 'double', CreoleTypes::DECIMAL, false, 7,2);
 
+        $tMap->addColumn('PRO_COST', 'ProCost', 'double', CreoleTypes::DECIMAL, false, 7,2);
+
+        $tMap->addColumn('PRO_UNIT_COST', 'ProUnitCost', 'string', CreoleTypes::VARCHAR, false, 50);
+
     } // doBuild()
 
 } // ProReportingMapBuilder
