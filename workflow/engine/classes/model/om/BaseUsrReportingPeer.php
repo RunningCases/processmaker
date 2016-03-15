@@ -25,7 +25,7 @@ abstract class BaseUsrReportingPeer
     const CLASS_DEFAULT = 'classes.model.UsrReporting';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 14;
+    const NUM_COLUMNS = 17;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -45,6 +45,9 @@ abstract class BaseUsrReportingPeer
 
     /** the column name for the YEAR field */
     const YEAR = 'USR_REPORTING.YEAR';
+
+    /** the column name for the TOTAL_QUEUE_TIME_BY_TASK field */
+    const TOTAL_QUEUE_TIME_BY_TASK = 'USR_REPORTING.TOTAL_QUEUE_TIME_BY_TASK';
 
     /** the column name for the TOTAL_TIME_BY_TASK field */
     const TOTAL_TIME_BY_TASK = 'USR_REPORTING.TOTAL_TIME_BY_TASK';
@@ -73,6 +76,12 @@ abstract class BaseUsrReportingPeer
     /** the column name for the TOTAL_CASES_ON_TIME field */
     const TOTAL_CASES_ON_TIME = 'USR_REPORTING.TOTAL_CASES_ON_TIME';
 
+    /** the column name for the PRO_COST field */
+    const PRO_COST = 'USR_REPORTING.PRO_COST';
+
+    /** the column name for the PRO_UNIT_COST field */
+    const PRO_UNIT_COST = 'USR_REPORTING.PRO_UNIT_COST';
+
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
 
@@ -84,10 +93,10 @@ abstract class BaseUsrReportingPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('UsrUid', 'TasUid', 'ProUid', 'Month', 'Year', 'TotalTimeByTask', 'TotalCasesIn', 'TotalCasesOut', 'UserHourCost', 'AvgTime', 'SdvTime', 'ConfiguredTaskTime', 'TotalCasesOverdue', 'TotalCasesOnTime', ),
-        BasePeer::TYPE_COLNAME => array (UsrReportingPeer::USR_UID, UsrReportingPeer::TAS_UID, UsrReportingPeer::PRO_UID, UsrReportingPeer::MONTH, UsrReportingPeer::YEAR, UsrReportingPeer::TOTAL_TIME_BY_TASK, UsrReportingPeer::TOTAL_CASES_IN, UsrReportingPeer::TOTAL_CASES_OUT, UsrReportingPeer::USER_HOUR_COST, UsrReportingPeer::AVG_TIME, UsrReportingPeer::SDV_TIME, UsrReportingPeer::CONFIGURED_TASK_TIME, UsrReportingPeer::TOTAL_CASES_OVERDUE, UsrReportingPeer::TOTAL_CASES_ON_TIME, ),
-        BasePeer::TYPE_FIELDNAME => array ('USR_UID', 'TAS_UID', 'PRO_UID', 'MONTH', 'YEAR', 'TOTAL_TIME_BY_TASK', 'TOTAL_CASES_IN', 'TOTAL_CASES_OUT', 'USER_HOUR_COST', 'AVG_TIME', 'SDV_TIME', 'CONFIGURED_TASK_TIME', 'TOTAL_CASES_OVERDUE', 'TOTAL_CASES_ON_TIME', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+        BasePeer::TYPE_PHPNAME => array ('UsrUid', 'TasUid', 'ProUid', 'Month', 'Year', 'TotalQueueTimeByTask', 'TotalTimeByTask', 'TotalCasesIn', 'TotalCasesOut', 'UserHourCost', 'AvgTime', 'SdvTime', 'ConfiguredTaskTime', 'TotalCasesOverdue', 'TotalCasesOnTime', 'ProCost', 'ProUnitCost', ),
+        BasePeer::TYPE_COLNAME => array (UsrReportingPeer::USR_UID, UsrReportingPeer::TAS_UID, UsrReportingPeer::PRO_UID, UsrReportingPeer::MONTH, UsrReportingPeer::YEAR, UsrReportingPeer::TOTAL_QUEUE_TIME_BY_TASK, UsrReportingPeer::TOTAL_TIME_BY_TASK, UsrReportingPeer::TOTAL_CASES_IN, UsrReportingPeer::TOTAL_CASES_OUT, UsrReportingPeer::USER_HOUR_COST, UsrReportingPeer::AVG_TIME, UsrReportingPeer::SDV_TIME, UsrReportingPeer::CONFIGURED_TASK_TIME, UsrReportingPeer::TOTAL_CASES_OVERDUE, UsrReportingPeer::TOTAL_CASES_ON_TIME, UsrReportingPeer::PRO_COST, UsrReportingPeer::PRO_UNIT_COST, ),
+        BasePeer::TYPE_FIELDNAME => array ('USR_UID', 'TAS_UID', 'PRO_UID', 'MONTH', 'YEAR', 'TOTAL_QUEUE_TIME_BY_TASK', 'TOTAL_TIME_BY_TASK', 'TOTAL_CASES_IN', 'TOTAL_CASES_OUT', 'USER_HOUR_COST', 'AVG_TIME', 'SDV_TIME', 'CONFIGURED_TASK_TIME', 'TOTAL_CASES_OVERDUE', 'TOTAL_CASES_ON_TIME', 'PRO_COST', 'PRO_UNIT_COST', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
     );
 
     /**
@@ -97,10 +106,10 @@ abstract class BaseUsrReportingPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('UsrUid' => 0, 'TasUid' => 1, 'ProUid' => 2, 'Month' => 3, 'Year' => 4, 'TotalTimeByTask' => 5, 'TotalCasesIn' => 6, 'TotalCasesOut' => 7, 'UserHourCost' => 8, 'AvgTime' => 9, 'SdvTime' => 10, 'ConfiguredTaskTime' => 11, 'TotalCasesOverdue' => 12, 'TotalCasesOnTime' => 13, ),
-        BasePeer::TYPE_COLNAME => array (UsrReportingPeer::USR_UID => 0, UsrReportingPeer::TAS_UID => 1, UsrReportingPeer::PRO_UID => 2, UsrReportingPeer::MONTH => 3, UsrReportingPeer::YEAR => 4, UsrReportingPeer::TOTAL_TIME_BY_TASK => 5, UsrReportingPeer::TOTAL_CASES_IN => 6, UsrReportingPeer::TOTAL_CASES_OUT => 7, UsrReportingPeer::USER_HOUR_COST => 8, UsrReportingPeer::AVG_TIME => 9, UsrReportingPeer::SDV_TIME => 10, UsrReportingPeer::CONFIGURED_TASK_TIME => 11, UsrReportingPeer::TOTAL_CASES_OVERDUE => 12, UsrReportingPeer::TOTAL_CASES_ON_TIME => 13, ),
-        BasePeer::TYPE_FIELDNAME => array ('USR_UID' => 0, 'TAS_UID' => 1, 'PRO_UID' => 2, 'MONTH' => 3, 'YEAR' => 4, 'TOTAL_TIME_BY_TASK' => 5, 'TOTAL_CASES_IN' => 6, 'TOTAL_CASES_OUT' => 7, 'USER_HOUR_COST' => 8, 'AVG_TIME' => 9, 'SDV_TIME' => 10, 'CONFIGURED_TASK_TIME' => 11, 'TOTAL_CASES_OVERDUE' => 12, 'TOTAL_CASES_ON_TIME' => 13, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+        BasePeer::TYPE_PHPNAME => array ('UsrUid' => 0, 'TasUid' => 1, 'ProUid' => 2, 'Month' => 3, 'Year' => 4, 'TotalQueueTimeByTask' => 5, 'TotalTimeByTask' => 6, 'TotalCasesIn' => 7, 'TotalCasesOut' => 8, 'UserHourCost' => 9, 'AvgTime' => 10, 'SdvTime' => 11, 'ConfiguredTaskTime' => 12, 'TotalCasesOverdue' => 13, 'TotalCasesOnTime' => 14, 'ProCost' => 15, 'ProUnitCost' => 16, ),
+        BasePeer::TYPE_COLNAME => array (UsrReportingPeer::USR_UID => 0, UsrReportingPeer::TAS_UID => 1, UsrReportingPeer::PRO_UID => 2, UsrReportingPeer::MONTH => 3, UsrReportingPeer::YEAR => 4, UsrReportingPeer::TOTAL_QUEUE_TIME_BY_TASK => 5, UsrReportingPeer::TOTAL_TIME_BY_TASK => 6, UsrReportingPeer::TOTAL_CASES_IN => 7, UsrReportingPeer::TOTAL_CASES_OUT => 8, UsrReportingPeer::USER_HOUR_COST => 9, UsrReportingPeer::AVG_TIME => 10, UsrReportingPeer::SDV_TIME => 11, UsrReportingPeer::CONFIGURED_TASK_TIME => 12, UsrReportingPeer::TOTAL_CASES_OVERDUE => 13, UsrReportingPeer::TOTAL_CASES_ON_TIME => 14, UsrReportingPeer::PRO_COST => 15, UsrReportingPeer::PRO_UNIT_COST => 16, ),
+        BasePeer::TYPE_FIELDNAME => array ('USR_UID' => 0, 'TAS_UID' => 1, 'PRO_UID' => 2, 'MONTH' => 3, 'YEAR' => 4, 'TOTAL_QUEUE_TIME_BY_TASK' => 5, 'TOTAL_TIME_BY_TASK' => 6, 'TOTAL_CASES_IN' => 7, 'TOTAL_CASES_OUT' => 8, 'USER_HOUR_COST' => 9, 'AVG_TIME' => 10, 'SDV_TIME' => 11, 'CONFIGURED_TASK_TIME' => 12, 'TOTAL_CASES_OVERDUE' => 13, 'TOTAL_CASES_ON_TIME' => 14, 'PRO_COST' => 15, 'PRO_UNIT_COST' => 16, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
     );
 
     /**
@@ -211,6 +220,8 @@ abstract class BaseUsrReportingPeer
 
         $criteria->addSelectColumn(UsrReportingPeer::YEAR);
 
+        $criteria->addSelectColumn(UsrReportingPeer::TOTAL_QUEUE_TIME_BY_TASK);
+
         $criteria->addSelectColumn(UsrReportingPeer::TOTAL_TIME_BY_TASK);
 
         $criteria->addSelectColumn(UsrReportingPeer::TOTAL_CASES_IN);
@@ -228,6 +239,10 @@ abstract class BaseUsrReportingPeer
         $criteria->addSelectColumn(UsrReportingPeer::TOTAL_CASES_OVERDUE);
 
         $criteria->addSelectColumn(UsrReportingPeer::TOTAL_CASES_ON_TIME);
+
+        $criteria->addSelectColumn(UsrReportingPeer::PRO_COST);
+
+        $criteria->addSelectColumn(UsrReportingPeer::PRO_UNIT_COST);
 
     }
 

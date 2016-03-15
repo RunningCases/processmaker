@@ -55,7 +55,7 @@ abstract class BaseDashboardIndicator extends BaseObject implements Persistent
      * The value for the das_ind_goal field.
      * @var        double
      */
-    protected $das_ind_goal;
+    protected $das_ind_goal = 0;
 
     /**
      * The value for the das_ind_direction field.
@@ -427,7 +427,7 @@ abstract class BaseDashboardIndicator extends BaseObject implements Persistent
     public function setDasIndGoal($v)
     {
 
-        if ($this->das_ind_goal !== $v) {
+        if ($this->das_ind_goal !== $v || $v === 0) {
             $this->das_ind_goal = $v;
             $this->modifiedColumns[] = DashboardIndicatorPeer::DAS_IND_GOAL;
         }

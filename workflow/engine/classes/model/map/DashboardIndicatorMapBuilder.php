@@ -73,7 +73,7 @@ class DashboardIndicatorMapBuilder
 
         $tMap->addColumn('DAS_IND_TITLE', 'DasIndTitle', 'string', CreoleTypes::VARCHAR, true, 255);
 
-        $tMap->addColumn('DAS_IND_GOAL', 'DasIndGoal', 'double', CreoleTypes::DECIMAL, true, 7,2);
+        $tMap->addColumn('DAS_IND_GOAL', 'DasIndGoal', 'double', CreoleTypes::DECIMAL, false, 7,2);
 
         $tMap->addColumn('DAS_IND_DIRECTION', 'DasIndDirection', 'int', CreoleTypes::TINYINT, true, null);
 
