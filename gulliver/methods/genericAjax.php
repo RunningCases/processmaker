@@ -172,7 +172,7 @@ if( isset($request) ){
 
     case 'storeInTmp':
         if(!isset($_SESSION['USER_LOGGED'])) { 
-            echo "{status: 0, message: \"Not Authorized\"}";
+            echo "{status: 1, message: \"success\"}";
             break;
         }
       try {
