@@ -34,6 +34,9 @@ $G_ID_MENU_SELECTED = 'DASHBOARD+';
 
 $G_PUBLISH = new Publisher();
 $G_PUBLISH->AddContent( 'view', 'strategicDashboard/load' );
+$oHeadPublisher = & headPublisher::getSingleton();
+$oHeadPublisher->addScriptFile('/jscore/src/PM.js');
+$oHeadPublisher->addScriptFile('/jscore/src/Sessions.js');
 G::RenderPage( 'publish' );
 
 

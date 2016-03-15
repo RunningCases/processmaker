@@ -338,7 +338,7 @@ $flagForgotPassword = isset($oConf->aConfig['login_enableForgotPassword'])
                       ? $oConf->aConfig['login_enableForgotPassword']
                       : 'off';
 
-setcookie('PM-Warning', trim(G::LoadTranslation('ID_BLOCKER_MSG'),'*'), time() + (24 * 60 * 60), SYS_CURRENT_URI);
+setcookie('PM-Warning', trim(G::LoadTranslation('ID_BLOCKER_MSG'), '*'), time() + (24 * 60 * 60), SYS_URI);
 setcookie("PM-TabPrimary", uniqid(), time() + (24 * 60 * 60), '/');
 
 $oHeadPublisher->addScriptCode("var flagForgotPassword = '$flagForgotPassword';");
