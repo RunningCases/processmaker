@@ -82,14 +82,21 @@ class Pmgmail {
      */
     public function sendEmail($app_uid, $mailToAddresses, $index, $arrayTask = null, $arrayData = null)
     {
-    	$mailCcAddresses = "";
+        //getting the default email server
+        $defaultEmail = $this->emailAccount();
+
+        if ($defaultEmail === null) {
+            error_log(G::LoadTranslation('ID_EMAIL_ENGINE_IS_NOT_ENABLED'));
+            return false;
+        }
+        $mailCcAddresses = "";
         $oApplication = new \Application();
         $formData = $oApplication->Load($app_uid);
 
         $frmData = unserialize($formData['APP_DATA']);
         $dataFormToShowString = "";
-        foreach ($frmData as $field=>$value){
-            if( ($field != 'SYS_LANG') &&
+        foreach ($frmData as $field => $value) {
+            if (($field != 'SYS_LANG') &&
                 ($field != 'SYS_SKIN') &&
                 ($field != 'SYS_SYS') &&
                 ($field != 'APPLICATION') &&
@@ -99,14 +106,15 @@ class Pmgmail {
                 ($field != 'USER_LOGGED') &&
                 ($field != 'USR_USERNAME') &&
                 ($field != 'DYN_CONTENT_HISTORY') &&
-                ($field != 'PIN') && 
-            	(!is_array($value))){
+                ($field != 'PIN') &&
+                (!is_array($value))
+            ) {
                 $dataFormToShowString .= " " . $field . " " . $value;
             }
         }
         $appData = $this->getDraftApp($app_uid, $index);
 
-        foreach ($appData as $application){
+        foreach ($appData as $application) {
             $appNumber = $application['APP_NUMBER'];
             $appStatus = $application['APP_STATUS'];
             $index = $application['DEL_INDEX'];
@@ -120,59 +128,60 @@ class Pmgmail {
             $tasUid = $application['TAS_UID'];
             $lastIndex = $application['DEL_LAST_INDEX'];
 
-            if($appStatus == "DRAFT"){
+            if ($appStatus == "DRAFT") {
                 $labelID = "PMDRFT";
             } else {
                 $labelID = "PMIBX";
             }
 
-            if((string)$mailToAddresses === ""){
-            	if($arrayTask){
-	            	$oCases = new \Cases();
+            if ((string)$mailToAddresses === "") {
+                if ($arrayTask) {
+                    $oCases = new \Cases();
 
-	            	foreach ($arrayTask as $aTask) {
-	            		if(!isset($aTask["USR_UID"])){
-	            			$aTask["USR_UID"] = "";
-	            		}
-	            		$respTo = $oCases->getTo($aTask["TAS_ASSIGN_TYPE"], $aTask["TAS_UID"], $aTask["USR_UID"], $arrayData);
-	            		$mailToAddresses = $respTo['to'];
-	            		$mailCcAddresses = $respTo['cc'];
-	            		
-	            		if($aTask["TAS_ASSIGN_TYPE"] === "SELF_SERVICE"){
-	            			$labelID = "PMUASS";
-		            		if ((string)$mailToAddresses === ""){ // Self Service Value Based
-		            			$criteria = new \Criteria("workflow");
-		            			$criteria->addSelectColumn(\AppAssignSelfServiceValuePeer::GRP_UID);
-		            			$criteria->add(\AppAssignSelfServiceValuePeer::APP_UID, $app_uid);
-		            			
-		            			$rsCriteria = \AppAssignSelfServiceValuePeer::doSelectRs($criteria);
-		            			$rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-		            			
-		            			while ($rsCriteria->next()) {
-		            				$row = $rsCriteria->getRow();
-		            			}
-		            			$taskUsers = unserialize($row['GRP_UID']);
+                    foreach ($arrayTask as $aTask) {
+                        if (!isset($aTask["USR_UID"])) {
+                            $aTask["USR_UID"] = "";
+                        }
+                        $respTo = $oCases->getTo($aTask["TAS_ASSIGN_TYPE"], $aTask["TAS_UID"], $aTask["USR_UID"],
+                            $arrayData);
+                        $mailToAddresses = $respTo['to'];
+                        $mailCcAddresses = $respTo['cc'];
 
-		            			foreach ($taskUsers as $user) {
-		            				$oUsers = new \Users();
-		            				$usrData = $oUsers->loadDetails($user);
-		            				$nextMail = $usrData['USR_EMAIL'];
-		            				$mailToAddresses .= ($mailToAddresses == '') ? $nextMail : ',' . $nextMail;
-		            			}
-		            		}
-	            		}
-	            	}
-            	}else {
-            		$oUsers = new \Users();
+                        if ($aTask["TAS_ASSIGN_TYPE"] === "SELF_SERVICE") {
+                            $labelID = "PMUASS";
+                            if ((string)$mailToAddresses === "") { // Self Service Value Based
+                                $criteria = new \Criteria("workflow");
+                                $criteria->addSelectColumn(\AppAssignSelfServiceValuePeer::GRP_UID);
+                                $criteria->add(\AppAssignSelfServiceValuePeer::APP_UID, $app_uid);
 
-            		$usrData = $oUsers->loadDetails($nextUsr);
-            		$mailToAddresses = $usrData['USR_EMAIL'];
-            	}
+                                $rsCriteria = \AppAssignSelfServiceValuePeer::doSelectRs($criteria);
+                                $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+                                while ($rsCriteria->next()) {
+                                    $row = $rsCriteria->getRow();
+                                }
+                                $taskUsers = unserialize($row['GRP_UID']);
+
+                                foreach ($taskUsers as $user) {
+                                    $oUsers = new \Users();
+                                    $usrData = $oUsers->loadDetails($user);
+                                    $nextMail = $usrData['USR_EMAIL'];
+                                    $mailToAddresses .= ($mailToAddresses == '') ? $nextMail : ',' . $nextMail;
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    $oUsers = new \Users();
+
+                    $usrData = $oUsers->loadDetails($nextUsr);
+                    $mailToAddresses = $usrData['USR_EMAIL'];
+                }
             }
 
             //first template
             $pathTemplate = PATH_DATA_SITE . "mailTemplates" . PATH_SEP . "pmGmail.html";
-            if (!file_exists($pathTemplate)){
+            if (!file_exists($pathTemplate)) {
                 $file = @fopen($pathTemplate, "w");
                 fwrite($file, '<div>');
                 fwrite($file, '<span style="display: none !important;">');
@@ -194,7 +203,8 @@ class Pmgmail {
 
             $change = array('[', ']', '"');
             $fdata = str_replace($change, ' ', $dataFormToShowString);
-            $aFields = array('proName' => $proName,
+            $aFields = array(
+                'proName' => $proName,
                 'appNumber' => $appNumber,
                 'caseUid' => $app_uid,
                 'taskName' => $tasName,
@@ -207,10 +217,7 @@ class Pmgmail {
                 'oform' => $fdata
             );
 
-            $subject = "[PM] " .$proName. " (" . $index . ") Case: ". $appNumber;
-
-            //getting the default email server
-            $defaultEmail = $this->emailAccount();
+            $subject = "[PM] " . $proName . " (" . $index . ") Case: " . $appNumber;
 
             $ws = new \wsBase();
 
