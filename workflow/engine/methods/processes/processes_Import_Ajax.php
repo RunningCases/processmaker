@@ -25,6 +25,7 @@
 use \ProcessMaker\Importer\XmlImporter;
 
 ini_set("max_execution_time", 0);
+$affectedGroups = array();
 
 /*----------------------------------********---------------------------------*/
 if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=") &&

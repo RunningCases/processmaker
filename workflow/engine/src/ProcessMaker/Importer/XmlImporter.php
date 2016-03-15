@@ -30,7 +30,8 @@ class XmlImporter extends Importer
             throw new \Exception(\G::LoadTranslation("ID_INVALID_FILE"));
         }
 
-        $this->dom->load((is_null($filename))? $this->filename : $filename);
+        $loadFilename = (is_null($filename))? $this->filename : $filename;
+        $this->dom->loadXml(file_get_contents($loadFilename));
         $this->root = $this->dom->documentElement;
 
         // validate version
