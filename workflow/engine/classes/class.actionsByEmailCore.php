@@ -215,6 +215,7 @@ class actionsByEmailCoreClass extends PMPlugin
                                         $__ABE__ .= '<strong>' . $field->label . '</strong><br /><table align="left" border="0"><tr>';
                                         switch ($field->type) {
                                             case 'dropdown':
+                                            case 'radio':
                                             case 'radiogroup':
                                                 $index = 1;
                                                 $__ABE__.='<br /><td><table align="left" cellpadding="2"><tr>';
