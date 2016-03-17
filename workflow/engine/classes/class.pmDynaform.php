@@ -415,6 +415,7 @@ class pmDynaform
                     $oCriteria->add(AppDocumentPeer::APP_UID, $this->fields["APP_DATA"]["APPLICATION"]);
                     $oCriteria->add(AppDocumentPeer::APP_DOC_FIELDNAME, $json->name);
                     $oCriteria->add(ContentPeer::CON_CATEGORY, 'APP_DOC_FILENAME');
+                    $oCriteria->add(ContentPeer::CON_LANG, $this->lang);
                     $rs = AppDocumentPeer::doSelectRS($oCriteria);
                     $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                     $links = array();
