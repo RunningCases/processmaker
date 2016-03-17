@@ -1139,7 +1139,7 @@ class pmTablesProxy extends HttpProxyController
                                     $aErrors[$count]['IS_PMTABLE'] =  $isPmTable;
                                     $aErrors[$count]['PRO_UID'] =  $tableProUid;
                                 } else {
-                                    if ($tableExists) {
+                                    if ($tableExists !== false && !$overWrite) {
                                         $aErrors[$count]['NAME_TABLE'] = $contentSchema['ADD_TAB_NAME'];
                                         $aErrors[$count]['ERROR_TYPE'] = ERROR_RP_TABLES_OVERWRITE;
                                         $aErrors[$count]['ERROR_MESS'] = G::loadTranslation('ID_OVERWRITE_RPTABLE', array($contentSchema['ADD_TAB_NAME']));
