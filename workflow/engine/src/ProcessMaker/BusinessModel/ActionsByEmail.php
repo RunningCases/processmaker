@@ -533,11 +533,11 @@ class ActionsByEmail
                         break;
                     case 'yesno':
                         $message .= '<b>' . $field->label . ' </b>- ';
-                        $message .= ($value == 1) ? 'Yes' : 'No';
+                        $message .= ($value == 1) ? G::loadTranslation('ID_YES') : G::loadTranslation('ID_NO');
                         break;
                     case 'checkbox':
                         $message .= '<b>' . $field->label . '</b> - ';
-                        $message .= ($value == 'On') ? 'Check' : 'Uncheck';
+                        $message .= ($value == 'On') ? G::loadTranslation('ID_CHECK') : G::loadTranslation('ID_UNCHECK');
                         break;
                 }
             }
@@ -609,12 +609,12 @@ class ActionsByEmail
                         break;
                     case 'yesno':
                         $message .= $field->label . ': ';
-                        $message .= ($value == 1) ? 'Yes' : 'No';
+                        $message .= ($value == 1) ? G::loadTranslation('ID_YES') : G::loadTranslation('ID_NO');
                         break;
                     case 'checkgroup':
                     case 'checkbox':
                         $message .= $field->label . ': ';
-                        $message .= ($value == 'On') ? 'Check' : 'Uncheck';
+                        $message .= ($value == 'On') ? G::loadTranslation('ID_CHECK') : G::loadTranslation('ID_UNCHECK');
                         break;
                 }
             }
