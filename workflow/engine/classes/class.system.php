@@ -71,7 +71,8 @@ class System
         'safari_cookie_lifetime' => 1,
         'error_reporting' => "",
         'display_errors' => 'On',
-        'system_utc_time_zone' => 0
+        'system_utc_time_zone' => 0,
+        'server_hostname_requests_frontend' => ''
     );
 
     /**
@@ -1251,6 +1252,28 @@ class System
         }
 
         return self::$debug;
+    }
+
+    /**
+     * Get the complete name of the server host configured for requests Front-End (e.g. https://127.0.0.1:81)
+     *
+     * @param bool $flagHttp Add https/http string
+     *
+     * @return string Returns an string with the complete name of the server host configured for requests Front-End
+     */
+    public static function getHttpServerHostnameRequestsFrontEnd($flagHttp = true)
+    {
+        try {
+            $arraySystemConfiguration = self::getSystemConfiguration();
+
+            $serverHostname = $arraySystemConfiguration['server_hostname_requests_frontend'];
+            $serverHostname = ($serverHostname != '')? $serverHostname : $_SERVER['HTTP_HOST'];
+
+            //Return
+            return (($flagHttp)? ((G::is_https())? 'https://' : 'http://') : '') . $serverHostname;
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 }
 // end System class
