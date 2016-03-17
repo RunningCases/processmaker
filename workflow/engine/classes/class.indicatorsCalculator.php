@@ -653,7 +653,7 @@ class indicatorsCalculator
 		G::loadClass('wsTools');
 	    $currentWS = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
 		$workSpace = new workspaceTools($currentWS);
-		$arrayHost = split(":", $workSpace->dbHost);
+  	        $arrayHost = explode(':', $workSpace->dbHost);
 		$host = "host=".$arrayHost[0];
 		$port = count($arrayHost) > 1 ? ";port=".$arrayHost[1] : "";
 		$db = ";dbname=".$workSpace->dbName;
