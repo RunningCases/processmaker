@@ -5,6 +5,6 @@ namespace ProcessMaker\BusinessModel\Migrator;
 interface Exportable
 {
     public function beforeExport();
-    public function export();
+    public function export($prj_uid);
     public function afterExport();
 }

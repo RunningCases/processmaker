@@ -1,18 +1,14 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: gustav
- * Date: 3/18/16
- * Time: 10:14 AM
+ * ProcessMaker.
  */
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
-
 class GranularExporter
 {
-
     protected $factory;
+    protected $publisher;
     protected $data;
     /**
      * GranularExporter constructor.
@@ -20,6 +16,7 @@ class GranularExporter
     public function __construct()
     {
         $this->factory = new MigratorFactory();
+        $this->publisher = new PMXGenerator();
     }
 
     public function export($objectList)
@@ -29,11 +26,34 @@ class GranularExporter
             $migratorData = $migrator->export($data);
             $this->prepareData($migratorData);
         }
-        return $this->data;
+        return $this->publish();
+
     }
 
-    protected function prepareData($migratorData)
+    protected function beforeExport()
     {
-        $this->data = $this->data . $migratorData;
+        $data = array();
+        $data["version"] = "3.0";
+        $data["container"] = "ProcessMaker-Project";
+        $data["metadata"] = $this->getMetadata();
+        $data["metadata"]["workspace"] = defined("SYS_SYS") ? SYS_SYS : "Unknown";
+        $data["metadata"]["name"] = $this->getProjectName();
+        $data["metadata"]["uid"] = $this->getProjectUid();
+        $this->data = $data;
+    }
+
+    protected function addData($migratorData)
+    {
+
+
+
+        //$this->data = $data;
+    }
+
+    public function publish()
+    {
+        return $this->generator->generate(
+            $this->data
+        );
     }
 }
