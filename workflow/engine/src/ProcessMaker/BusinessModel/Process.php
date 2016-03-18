@@ -562,6 +562,12 @@ class Process
                 $this->throwExceptionIfNotExistsUser($arrayData["PRO_CREATE_USER"], $this->arrayFieldNameForException["processCreateUser"]);
             }
 
+            //Update name in table Bpmn_Project and Bpmn_Process
+            $oProject = new BpmnProject();
+            $oProject->update($processUid, array('PRJ_NAME'=>$arrayData['PRO_TITLE']));
+            $oProcess = new BpmnProcess();
+            //The relationship Bpmn_Project with Bpmn_Process is 1:n
+            $oProcess->updateAllProcessesByProject($processUid, array('PRO_NAME'=>$arrayData['PRO_TITLE']));
             //Update
             $process = new \Process();
 
