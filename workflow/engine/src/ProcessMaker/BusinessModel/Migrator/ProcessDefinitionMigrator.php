@@ -16,7 +16,7 @@ class ProcessDefinitionMigrator implements Importable, Exportable
     protected $bpmn;
 
     /**
-     * DynaformsMigrator constructor.
+     * ProcessDefinitionMigrator constructor.
      */
     public function __construct()
     {
@@ -32,8 +32,9 @@ class ProcessDefinitionMigrator implements Importable, Exportable
     {
         try {
             $this->bpmn->createFromStruct($data);
+            return $result;
         } catch (\Exception $e) {
-            Logger::log($e);
+            return $e->getMessage();
         }
     }
 

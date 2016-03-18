@@ -6,6 +6,7 @@
  */
 
 namespace ProcessMaker\BusinessModel\Migrator;
+
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 class DynaformsMigrator implements Importable, Exportable

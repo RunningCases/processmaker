@@ -15,7 +15,7 @@ class InputDocumentsMigrator implements Importable, Exportable
     protected $processes;
 
     /**
-     * DynaformsMigrator constructor.
+     * InputDocumentsMigrator constructor.
      */
     public function __construct()
     {
