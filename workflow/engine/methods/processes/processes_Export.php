@@ -29,6 +29,7 @@ try {
 	if(empty($_GET)){
 		$proUid = Bootstrap::json_decode( $_POST['data']);
 		$_GET["pro_uid"] = $proUid->pro_uid;
+        $_GET["objects"] = $proUid->objects;
 	}
     if (\BpmnProject::exists($_GET["pro_uid"])) {
         $exporter = new ProcessMaker\Exporter\XmlExporter($_GET["pro_uid"]);

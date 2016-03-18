@@ -8,7 +8,7 @@
 namespace ProcessMaker\BusinessModel\Migrator;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
-class DynaformsMigrator implements Importable
+class DynaformsMigrator implements Importable, Exportable
 {
     protected $processes;
 
@@ -37,6 +37,24 @@ class DynaformsMigrator implements Importable
     public function afterImport($data)
     {
         // TODO: Implement afterImport() method.
+    }
+
+    public function beforeExport()
+    {
+        // TODO: Implement beforeExport() method.
+    }
+
+    public function export($prj_uid)
+    {
+        $oProcess = new \Process();
+        $oData = new \StdClass();
+        $oData->dynaforms = $oProcess->getDynaformRows($prj_uid);
+        return $oData;
+    }
+
+    public function afterExport()
+    {
+        // TODO: Implement afterExport() method.
     }
 
 }

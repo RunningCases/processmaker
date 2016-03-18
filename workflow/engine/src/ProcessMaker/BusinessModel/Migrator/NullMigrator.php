@@ -16,7 +16,7 @@ class NullMigrator implements Importable, Exportable
         // TODO: Implement beforeExport() method.
     }
 
-    public function export()
+    public function export($prj_uid)
     {
         // TODO: Implement export() method.
     }

@@ -9,14 +9,12 @@
 namespace ProcessMaker\BusinessModel\Migrator;
 
 
-use Illuminate\Support\Facades\Input;
-
 class MigratorFactory
 {
     public function create($classname)
     {
         $class = new NullMigrator();
-        switch(strtoupper($classname)) {
+        switch (strtoupper($classname)) {
             case 'ASSIGNMENTRULES':
                 $class = new AssignmentRulesMigrator();
                 break;
