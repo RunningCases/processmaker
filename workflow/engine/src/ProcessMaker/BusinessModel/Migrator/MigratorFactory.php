@@ -56,7 +56,7 @@ class MigratorFactory
             case 'VARIABLES':
                 $class = new VariablesMigrator();
                 break;
-            return $class;
         }
+        return $class;
     }
 }
