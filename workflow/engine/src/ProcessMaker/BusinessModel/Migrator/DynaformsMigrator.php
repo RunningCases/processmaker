@@ -7,8 +7,6 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
-use Symfony\Component\Config\Definition\Exception\Exception;
-
 class DynaformsMigrator implements Importable, Exportable
 {
     protected $processes;
@@ -30,8 +28,8 @@ class DynaformsMigrator implements Importable, Exportable
     {
         try {
             $this->processes->createDynaformRows($data);
-        } catch (Exception $e) {
-            Logger::log($e);
+        } catch (\Exception $e) {
+            \Logger::log($e);
         }
     }
 

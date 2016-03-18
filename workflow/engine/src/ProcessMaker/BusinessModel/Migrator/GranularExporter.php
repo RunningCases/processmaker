@@ -4,12 +4,15 @@
  */
 
 namespace ProcessMaker\BusinessModel\Migrator;
-use \ProcessMaker\Exporter\XmlExporter;
+
+use ProcessMaker\Project;
 
 class GranularExporter
 {
+
     protected $factory;
     protected $publisher;
+    protected $generator;
     protected $data;
     protected $prjuid;
     /**
@@ -19,15 +22,17 @@ class GranularExporter
     {
         $this->prjuid = $prj_uid;
         $this->factory = new MigratorFactory();
-        $this->publisher = new PMXGenerator();
+        $this->generator = new PMXGenerator();
+        $this->publisher = new PMXPublisher();
     }
 
     public function export($objectList)
     {
-        foreach ($objectList as $key => $data) {
-            $migrator = $this->factory->create($key);
-            $migratorData = $migrator->export($data);
-            $this->prepareData($migratorData);
+        $this->beforeExport();
+        foreach ($objectList as $data) {
+            $migrator = $this->factory->create($data);
+            $migratorData = $migrator->export($this->prjuid);
+            $this->addData($migratorData);
         }
         return $this->publish();
 
@@ -35,20 +40,30 @@ class GranularExporter
 
     protected function beforeExport()
     {
-        $exporter = new XmlExporter($this->prjuid);
-        $getProjectName = $exporter->truncateName($exporter->getProjectName(), false);
+        $bpmnProject = Project\Bpmn::load($this->prjuid);
+        $projectData = $bpmnProject->getProject();
+        $getProjectName = $this->publisher->truncateName($projectData['PRJ_NAME'], false);
         $outputDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
         $version = \ProcessMaker\Util\Common::getLastVersion($outputDir . $getProjectName . "-*.pmx") + 1;
         $outputFilename = $outputDir . sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx");
-        $exporter->setMetadata("export_version", $version);
 
         $data = array();
+        $data["filename"] = $outputFilename;
         $data["version"] = "3.0";
         $data["container"] = "ProcessMaker-Project";
-        $data["metadata"] = $this->getMetadata();
+        $data["metadata"] = array(
+            "vendor_version" => \System::getVersion(),
+            "vendor_version_code" => "Michelangelo",
+            "export_timestamp" => date("U"),
+            "export_datetime" => date("Y-m-d\TH:i:sP"),
+            "export_server_addr" => isset($_SERVER["SERVER_ADDR"]) ? $_SERVER["SERVER_ADDR"].":".$_SERVER["SERVER_PORT"] : "Unknown",
+            "export_server_os" => PHP_OS ,
+            "export_server_php_version" => PHP_VERSION_ID,
+        );
         $data["metadata"]["workspace"] = defined("SYS_SYS") ? SYS_SYS : "Unknown";
-        $data["metadata"]["name"] = $this->getProjectName();
-        $data["metadata"]["uid"] = $this->getProjectUid();
+        $data["metadata"]["name"] = $projectData['PRJ_NAME'];
+        $data["metadata"]["uid"] = $projectData['PRJ_UID'];
+        $data["metadata"]["export_version"] = $version;
         $this->data = $data;
     }
 
@@ -59,8 +74,11 @@ class GranularExporter
 
     public function publish()
     {
-        return $this->generator->generate(
-            $this->data
+        return $this->publisher->publish(
+            $this->data['filename'],
+            $this->generator->generate(
+                $this->data
+            )
         );
     }
 }
