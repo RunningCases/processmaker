@@ -31,8 +31,7 @@ class ProcessDefinitionMigrator implements Importable, Exportable
     public function import($data)
     {
         try {
-            $this->bpmn->createFromStruct($data);
-            return $result;
+            return $this->bpmn->createFromStruct($data);;
         } catch (\Exception $e) {
             return $e->getMessage();
         }
@@ -103,6 +102,10 @@ class ProcessDefinitionMigrator implements Importable, Exportable
         $oData->groupwfs = $oProcess->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
         $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
 
+        $result = array(
+            '' => '',
+            '' => ''
+        );
         return $oData;
     }
 

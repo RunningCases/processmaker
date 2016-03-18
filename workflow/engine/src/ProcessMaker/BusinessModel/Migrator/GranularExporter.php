@@ -32,7 +32,7 @@ class GranularExporter
         foreach ($objectList as $data) {
             $migrator = $this->factory->create($data);
             $migratorData = $migrator->export($this->prjuid);
-            $this->addData($migratorData);
+            $this->mergeData($migratorData);
         }
         return $this->publish();
 
@@ -49,7 +49,7 @@ class GranularExporter
 
         $data = array();
         $data["filename"] = $outputFilename;
-        $data["version"] = "3.0";
+        $data["version"] = "3.1";
         $data["container"] = "ProcessMaker-Project";
         $data["metadata"] = array(
             "vendor_version" => \System::getVersion(),
@@ -67,9 +67,9 @@ class GranularExporter
         $this->data = $data;
     }
 
-    protected function addData($migratorData)
+    protected function mergeData($migratorData)
     {
-        //$this->data = $data;
+        $this->data(array_merge_recursive($this->data, $migratorData));
     }
 
     public function publish()
