@@ -2,13 +2,13 @@
  * @author: Erik A. Ortiz
  * Aug 20th, 2010
  */
-var processesGrid;
-var store;
-var comboCategory;
-var winDesigner;
-var newTypeProcess;
-var affectedGroups;
-
+var processesGrid,
+    store,
+    comboCategory,
+    winDesigner,
+    newTypeProcess,
+    affectedGroups,
+    processObjectsArray;
 
 /**
  * Global variables and variable initialization for import process.
@@ -358,7 +358,7 @@ Ext.onReady(function(){
         iconCls: "silk-add",
         icon: "/images/export.png",
         handler: function () {
-          exportProcess();
+          exportImportProcessObjects('export');
         }
       },{
         text: _('ID_IMPORT'),
@@ -517,7 +517,7 @@ Ext.onReady(function(){
           icon: "/images/export.png",
           handler: function ()
           {
-              exportProcess();
+              exportImportProcessObjects('export');
           }
       },
       {
@@ -917,6 +917,7 @@ function exportProcess() {
   var record = processesGrid.getSelectionModel().getSelections();
 
   if(record.length == 1) {
+    Ext.getCmp('exportProcessObjectsWindow').close();
     var myMask = new Ext.LoadMask(Ext.getBody(), {msg: _("ID_LOADING")});
     var proUid   = record[0].get("PRO_UID");
 
@@ -925,7 +926,10 @@ function exportProcess() {
     Ext.Ajax.request({
       url: "../processes/processes_Export",
       method: "GET",
-      params: {"pro_uid": proUid},
+      params: {
+          "pro_uid": proUid,
+          "objects": processObjectsArray
+      },
       success: function (response) {
         var result = JSON.parse(response.responseText);
         myMask.hide();
@@ -952,6 +956,159 @@ function exportProcess() {
   }
 }
 
+function exportImportProcessObjects(typeAction)
+{
+    var defaultTypeAction = 'export',
+        windowTitle = _('ID_EXPORT_PROCESS_OBJECTS'),
+        buttonLabel = _('ID_EXPORT'),
+        storeGrid,
+        storeActionField,
+        checkBoxSelMod,
+        gridProcessObjects,
+        colModel,
+        buttonLabel,
+        w,
+        i;
+
+    if(typeof typeAction !== undefined) {
+        if(typeAction == 'import') {
+            defaultTypeAction = typeAction;
+            windowTitle = _('ID_IMPORT_PROCESS_OBJECTS');
+            buttonLabel = _('ID_IMPORT');
+        }
+    }
+    storeGrid = new Ext.data.GroupingStore( {
+        remoteSort: true,
+        proxy : new Ext.data.HttpProxy({
+            url: 'processObjects'
+        }),
+        reader : new Ext.data.JsonReader( {
+            totalProperty: 'totalCount',
+            root: 'data',
+            fields : [
+                {name : 'OBJECT_ID'},
+                {name : 'OBJECT_NAME'},
+                {name : 'OBJECT_ACTION'}
+            ]
+        })
+    });
+    storeGrid.load();
+    storeActionField = new Ext.data.ArrayStore({
+        fields: ['value', 'text'],
+        data: [
+            [1, 'Add to Existing'],
+            [2, 'Replace All']
+        ]
+    });
+    checkBoxSelMod = new Ext.grid.CheckboxSelectionModel();
+    gridProcessObjects = new Ext.grid.EditorGridPanel( {
+        region: 'center',
+        layout: 'fit',
+        id: 'processesGrid',
+        height:365,
+        width:340,
+        title : '',
+        stateful : true,
+        stateId : 'gridProcessObjects',
+        enableColumnResize: true,
+        enableHdMenu: true,
+        frame:false,
+        selModel : checkBoxSelMod,
+        showHeaderCheckbox: true,
+        columnLines: true,
+        viewConfig: {
+            forceFit:true,
+            cls:"x-grid-empty",
+            emptyText: _('ID_NO_RECORDS_FOUND')
+        },
+        clicksToEdit: 1,
+        cm: new Ext.grid.ColumnModel({
+            defaults: {
+                sortable: true
+            },
+            columns: [
+                checkBoxSelMod,
+                {header: 'objectId', dataIndex: 'OBJECT_ID', hidden: true},
+                {header: 'Name', dataIndex: 'OBJECT_NAME', width: 5},
+                {header: 'Action', dataIndex: 'OBJECT_ACTION', width: 5,
+                    editor: new Ext.form.ComboBox({
+                        displayField: 'text',
+                        forceSelection: true,
+                        mode: 'local',
+                        typeAhead: false,
+                        store: storeActionField,
+                        triggerAction: 'all',
+                        valueField: 'value',
+                        lazyRender: true
+                    }),
+                    renderer: function(value) {
+                        var recordIndex = storeActionField.find('value', value);
+                        if (recordIndex === -1) {
+                            return 'Unknown value: ' + value;
+                        }
+                        return storeActionField.getAt(recordIndex).get('text');
+                    }
+                }
+            ]
+        }),
+        store: storeGrid,
+        listeners: {
+            render: function (grid) {
+                colModel = grid.getColumnModel();
+                if(defaultTypeAction === 'export') {
+                    colModel.setHidden(3, true);
+                } else { /*import*/
+                    colModel.setHidden(3, false);
+                    grid.store.on('load', function(store, records, options){
+                        for(i=0; i<grid.getStore().getTotalCount(); i++){
+                            grid.getSelectionModel().selectRow(i, true);
+                        }
+                    });
+                }
+            }
+        }
+    });
+    w = new Ext.Window({
+        id          : 'exportProcessObjectsWindow',
+        title       : windowTitle,
+        header      : false,
+        width       : 350,
+        height      : 430,
+        modal       : true,
+        overflowY   : 'scroll',
+        maximizable : false,
+        resizable   : false,
+        items : [
+            gridProcessObjects
+        ],
+        buttons : [
+            {
+                text    : buttonLabel,
+                handler : function() {
+                    var selectedObjects = gridProcessObjects.getSelectionModel().getSelections();
+                    if(defaultTypeAction === 'export') {
+                        if(selectedObjects.length > 0) {
+                            processObjectsArray = [];
+                            for (i = 0; i < selectedObjects.length; i++) {
+                                processObjectsArray.push(selectedObjects[i].get('OBJECT_ID'));
+                            }
+                            processObjectsArray = JSON.stringify(processObjectsArray);
+                            exportProcess();
+                        }
+                    } else { /*import*/
+
+                    }
+                }
+            }, {
+                text    : _('ID_CANCEL'),
+                handler : function(){
+                    w.close();
+                }
+            }
+        ]
+    });
+    w.show();
+}
 function generateBpmn()
 {
     var record = processesGrid.getSelectionModel().getSelections();
