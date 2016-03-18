@@ -9,7 +9,7 @@
 namespace ProcessMaker\BusinessModel\Migrator;
 
 
-class DBConnectionMigrator implements Importable
+class DBConnectionMigrator implements Importable, Exportable
 {
     public function beforeImport($data)
     {
@@ -24,6 +24,24 @@ class DBConnectionMigrator implements Importable
     public function afterImport($data)
     {
         // TODO: Implement afterImport() method.
+    }
+
+    public function beforeExport()
+    {
+        // TODO: Implement beforeExport() method.
+    }
+
+    public function export($prj_uid)
+    {
+        $oProcess = new \Process();
+        $oData = new \StdClass();
+        $oData->dbconnections = $oProcess->getDBConnectionsRows($prj_uid);
+        return $oData;
+    }
+
+    public function afterExport()
+    {
+        // TODO: Implement afterExport() method.
     }
 
 }

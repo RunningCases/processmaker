@@ -9,7 +9,7 @@
 namespace ProcessMaker\BusinessModel\Migrator;
 
 
-class SupervisorsObjectsMigrator implements Importable
+class SupervisorsObjectsMigrator implements Importable, Exportable
 {
     public function beforeImport($data)
     {
@@ -24,6 +24,21 @@ class SupervisorsObjectsMigrator implements Importable
     public function afterImport($data)
     {
         // TODO: Implement afterImport() method.
+    }
+
+    public function beforeExport()
+    {
+        // TODO: Implement beforeExport() method.
+    }
+
+    public function export($prj_uid)
+    {
+
+    }
+
+    public function afterExport()
+    {
+        // TODO: Implement afterExport() method.
     }
 
 }

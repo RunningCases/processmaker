@@ -9,7 +9,7 @@
 namespace ProcessMaker\BusinessModel\Migrator;
 
 
-class TriggersMigrator implements Importable
+class TriggersMigrator implements Importable, Exportable
 {
     public function beforeImport($data)
     {
@@ -24,6 +24,25 @@ class TriggersMigrator implements Importable
     public function afterImport($data)
     {
         // TODO: Implement afterImport() method.
+    }
+
+    public function beforeExport()
+    {
+        // TODO: Implement beforeExport() method.
+    }
+
+    public function export($prj_uid)
+    {
+        $process = new \Processes();
+        $oData = new \StdClass();
+        $oDataTasks = $process->getTaskRows($prj_uid);
+        $oData->steptriggers = $process->getStepTriggerRows($oDataTasks);
+        return $oData;
+    }
+
+    public function afterExport()
+    {
+        // TODO: Implement afterExport() method.
     }
 
 }

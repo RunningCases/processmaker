@@ -10,7 +10,7 @@ namespace ProcessMaker\BusinessModel\Migrator;
 
 use Symfony\Component\Config\Definition\Exception\Exception;
 
-class InputDocumentsMigrator implements Importable
+class InputDocumentsMigrator implements Importable, Exportable
 {
     protected $processes;
 
@@ -39,6 +39,24 @@ class InputDocumentsMigrator implements Importable
     public function afterImport($data)
     {
         // TODO: Implement afterImport() method.
+    }
+
+    public function beforeExport()
+    {
+        // TODO: Implement beforeExport() method.
+    }
+
+    public function export($prj_uid)
+    {
+        $oProcess = new \Process();
+        $oData = new \StdClass();
+        $oData->inputs = $oProcess->getInputRows($prj_uid);
+        return $oData;
+    }
+
+    public function afterExport()
+    {
+        // TODO: Implement afterExport() method.
     }
 
 }
