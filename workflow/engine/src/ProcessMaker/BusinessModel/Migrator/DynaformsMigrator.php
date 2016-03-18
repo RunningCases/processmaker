@@ -15,9 +15,9 @@ class DynaformsMigrator implements Importable
     /**
      * DynaformsMigrator constructor.
      */
-    public function __construct(Processes $processes)
+    public function __construct()
     {
-        $this->processes = $processes;
+        $this->processes = new \Processes();
     }
 
     public function beforeImport($data)

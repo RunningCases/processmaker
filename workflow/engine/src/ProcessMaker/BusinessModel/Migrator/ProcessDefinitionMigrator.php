@@ -8,9 +8,21 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
+use ProcessMaker\Project\Adapter;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 class ProcessDefinitionMigrator implements Importable
 {
+    protected $bpmn;
+
+    /**
+     * DynaformsMigrator constructor.
+     */
+    public function __construct()
+    {
+        $this->bpmn = new Adapter\BpmnWorkflow();
+    }
+
     public function beforeImport($data)
     {
         // TODO: Implement beforeImport() method.
@@ -18,7 +30,11 @@ class ProcessDefinitionMigrator implements Importable
 
     public function import($data)
     {
-        // TODO: Implement import() method.
+        try {
+            $this->bpmn->createFromStruct($data);
+        } catch (\Exception $e) {
+            Logger::log($e);
+        }
     }
 
     public function afterImport($data)
