@@ -8,9 +8,20 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 class TemplatesMigrator implements Importable
 {
+    protected $processes;
+
+    /**
+     * TemplatesMigrator constructor.
+     */
+    public function __construct()
+    {
+        $this->processes = new \Processes();
+    }
+
     public function beforeImport($data)
     {
         // TODO: Implement beforeImport() method.
@@ -18,6 +29,41 @@ class TemplatesMigrator implements Importable
 
     public function import($data)
     {
+        try {
+            foreach ($data as $target => $files) {
+                switch (strtoupper($target)) {
+                    case 'DYNAFORMS':
+                        $basePath = PATH_DYNAFORM;
+                        break;
+                    case 'PUBLIC':
+                        $basePath = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'public' . PATH_SEP;
+                        break;
+                    case 'TEMPLATES':
+                        $basePath = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'mailTemplates' . PATH_SEP;
+                        break;
+                    default:
+                        $basePath = '';
+                }
+
+                if (empty($basePath)) {
+                    continue;
+                }
+
+                foreach ($files as $file) {
+                    $filename = $basePath . ((isset($file["file_path"]))? $file["file_path"] : $file["filepath"]);
+                    $path = dirname($filename);
+
+                    if (!is_dir($path)) {
+                        Util\Common::mk_dir($path, 0775);
+                    }
+
+                    file_put_contents($filename, $file["file_content"]);
+                    chmod($filename, 0775);
+                }
+            }
+        } catch (\Exception $e) {
+           Logger::log($e);
+        }
 
     }
 
