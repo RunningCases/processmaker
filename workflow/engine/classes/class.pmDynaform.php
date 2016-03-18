@@ -115,7 +115,9 @@ class pmDynaform
         $flagTrackerUser = false;
 
         if (!isset($_SESSION['USER_LOGGED'])) {
-            if (!preg_match("/^.*\/" . SYS_SKIN . "\/tracker\/.*$/", $_SERVER["REQUEST_URI"])) {
+            if (!preg_match("/^.*\/" . SYS_SKIN . "\/tracker\/.*$/", $_SERVER["REQUEST_URI"]) &&
+                    !preg_match("/^.*\/" . SYS_SKIN . "\/[a-z0-9A-Z]+\/[a-z0-9A-Z]+\.php$/", $_SERVER["REQUEST_URI"])
+            ) {
                 return;
             }
 
@@ -1529,7 +1531,7 @@ class pmDynaform
             'scope' => implode(' ', $oauthServer->getScope())
         ));
 
-        $response = $oauthServer->postAuthorize($authorize, $userId, true);
+        $response = $oauthServer->postAuthorize($authorize, $userId, true, array('USER_LOGGED' => $_SESSION['USER_LOGGED']));
         $code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=') + 5, 40);
 
         return $code;
