@@ -7,7 +7,7 @@ class ExportObjects
      * @var array
      */
     protected $objectsList = array(
-        'Process Definition / Diagram',
+        'Process Definition',
         'Assignment Rules',
         'Variables',
         'Dynaforms',
@@ -26,7 +26,6 @@ class ExportObjects
     /**
      * @param string $pro_uid
      * @return mixed|string
-     * @throws Exception
      * @throws \Exception
      */
     public function objectList($pro_uid = '')
@@ -41,7 +40,30 @@ class ExportObjects
             $r->data = $grid;
 
             return \G::json_encode($r);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * @param $objects
+     * @return array
+     * @throws \Exception
+     */
+    public function mapObjectList($objects)
+    {
+        try {
+            $mapObjectList = array();
+            foreach ($this->objectsList as $key => $val) {
+                if(isset($objects[$key])){
+                    if(($key+1) === $objects[$key]){
+                        array_push($mapObjectList, strtoupper(str_replace(' ', '', $val)));
+                    }
+                }
+                $key++;
+            }
+            return $mapObjectList;
+        } catch (\Exception $e) {
             throw $e;
         }
     }
