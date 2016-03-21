@@ -520,6 +520,7 @@ class ListInbox extends BaseListInbox
         $criteria->addSelectColumn(ListInboxPeer::DEL_INIT_DATE);
         $criteria->addSelectColumn(ListInboxPeer::DEL_DUE_DATE);
         $criteria->addSelectColumn(ListInboxPeer::DEL_PRIORITY);
+        $criteria->addSelectColumn(ListInboxPeer::DEL_RISK_DATE);
         $criteria->addSelectColumn(UsersPeer::USR_UID);
         $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
         $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);

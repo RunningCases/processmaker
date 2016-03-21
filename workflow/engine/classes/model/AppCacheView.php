@@ -104,6 +104,7 @@ class AppCacheView extends BaseAppCacheView
 
         $criteria->addSelectColumn(AppCacheViewPeer::TAS_UID);
         $criteria->addSelectColumn(AppCacheViewPeer::PRO_UID);
+        $criteria->addSelectColumn(AppCacheViewPeer::DEL_RISK_DATE);
 
         $criteria->add(AppCacheViewPeer::APP_STATUS, "TO_DO", CRITERIA::EQUAL);
 
