@@ -1011,7 +1011,7 @@ function exportImportProcessObjects(typeAction)
         stateful : true,
         stateId : 'gridProcessObjects',
         enableColumnResize: true,
-        enableHdMenu: true,
+        enableHdMenu: false,
         frame:false,
         selModel : checkBoxSelMod,
         showHeaderCheckbox: true,
@@ -1024,7 +1024,7 @@ function exportImportProcessObjects(typeAction)
         clicksToEdit: 1,
         cm: new Ext.grid.ColumnModel({
             defaults: {
-                sortable: true
+                sortable: false
             },
             columns: [
                 checkBoxSelMod,
@@ -1044,7 +1044,7 @@ function exportImportProcessObjects(typeAction)
                     renderer: function(value) {
                         var recordIndex = storeActionField.find('value', value);
                         if (recordIndex === -1) {
-                            return 'Unknown value: ' + value;
+                            return _('ID_UNKNOWN') + value;
                         }
                         return storeActionField.getAt(recordIndex).get('text');
                     }
