@@ -145,7 +145,7 @@ class Project extends Api
     {
         $objects = \G::json_decode($objects);
         $granularExporter = new GranularExporter($prj_uid);
-        $outputFilename = $granularExporter->export($objects);
+        $outputFilename = $granularExporter->export($objects->objectList);
 
         $httpStream = new HttpStream();
         $fileExtension = pathinfo($outputFilename, PATHINFO_EXTENSION);
