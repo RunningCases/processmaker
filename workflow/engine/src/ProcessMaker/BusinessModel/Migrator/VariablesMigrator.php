@@ -37,7 +37,7 @@ class VariablesMigrator implements Importable, Exportable
         try {
             $this->processes->createProcessVariables($data);
         } catch (\Exception $e) {
-           Logger::log($e);
+            \Logger::log($e);
         }
     }
 
@@ -67,7 +67,7 @@ class VariablesMigrator implements Importable, Exportable
             $oData->processVariables = $this->processes->getProcessVariables($prj_uid);
 
             $result = array(
-                'workflow-definition' => (array)$oData->processVariables
+                'workflow-definition' => (array)$oData
             );
 
             return $result;

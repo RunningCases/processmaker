@@ -57,7 +57,7 @@ class OutputDocumentsMigrator implements Importable, Exportable
             $oData->outputs = $this->processes->getOutputRows($prj_uid);
 
             $result = array(
-                'workflow-definition' => (array)$oData->outputs
+                'workflow-definition' => (array)$oData
             );
 
             return $result;

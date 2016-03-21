@@ -86,13 +86,13 @@ class TemplatesMigrator implements Importable, Exportable
         try {
             $oData = new \StdClass();
             $arrayExcludeFile = array();
-            $oData->templates = $this->processes->getFilesManager($prj_uid, 'TEMPLATES');
+            $oData->filesManager = $this->processes->getFilesManager($prj_uid, 'TEMPLATES');
 
             $fileHandler = new FileHandler();
             $workflowFile = $fileHandler->getTemplatesOrPublicFiles($prj_uid, $arrayExcludeFile, 'TEMPLATES');
 
             $result = array(
-                'workflow-definition' => (array)$oData->templates,
+                'workflow-definition' => (array)$oData,
                 'workflow-files' => $workflowFile
             );
 

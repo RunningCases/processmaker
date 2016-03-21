@@ -75,7 +75,7 @@ class DynaformsMigrator implements Importable, Exportable
             }
 
             $result = array(
-                'workflow-definition' => (array)$oData->dynaforms,
+                'workflow-definition' => (array)$oData,
                 'workflow-files' => $workflowFile
             );
 

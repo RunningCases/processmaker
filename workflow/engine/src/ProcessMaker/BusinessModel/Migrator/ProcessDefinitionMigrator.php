@@ -79,11 +79,9 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             $oData->lanes = $this->processes->getLaneRows($prj_uid);
             $oData->gateways = $this->processes->getGatewayRows($prj_uid);
             $oData->steps = $this->processes->getStepRows($prj_uid);
-            $oData->taskusers = $this->processes->getTaskUserRows($oData->tasks);
             $oData->groupwfs = $this->processes->getGroupwfRows($oData->taskusers);
             $oData->steptriggers = $this->processes->getStepTriggerRows($oData->tasks);
             $oData->reportTablesVars = $this->processes->getReportTablesVarsRows($prj_uid);
-            $oData->objectPermissions = $this->processes->getObjectPermissionRows($prj_uid, $oData);
             $oData->subProcess = $this->processes->getSubProcessRow($prj_uid);
             $oData->caseTracker = $this->processes->getCaseTrackerRow($prj_uid);
             $oData->caseTrackerObject = $this->processes->getCaseTrackerObjectRow($prj_uid);
@@ -93,7 +91,6 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             $oData->caseScheduler = $this->processes->getCaseSchedulerRow($prj_uid);
             $oData->processCategory = $this->processes->getProcessCategoryRow($prj_uid);
             $oData->taskExtraProperties = $this->processes->getTaskExtraPropertiesRows($prj_uid);
-            $oData->processUser = $this->processes->getProcessUser($prj_uid);
             $oData->webEntry = $this->processes->getWebEntries($prj_uid);
             $oData->webEntryEvent = $this->processes->getWebEntryEvents($prj_uid);
             $oData->messageType = $this->processes->getMessageTypes($prj_uid);
@@ -102,7 +99,6 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             $oData->scriptTask = $this->processes->getScriptTasks($prj_uid);
             $oData->timerEvent = $this->processes->getTimerEvents($prj_uid);
             $oData->emailEvent = $this->processes->getEmailEvent($prj_uid);
-            //$oData->filesManager = $this->processes->getFilesManager($prj_uid);
             $oData->abeConfiguration = $this->processes->getActionsByEmail($prj_uid);
             $oData->groupwfs = $this->processes->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
             $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
