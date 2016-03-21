@@ -30,35 +30,28 @@ class TemplatesMigrator implements Importable, Exportable
     public function import($data)
     {
         try {
-            foreach ($data as $target => $files) {
-                switch (strtoupper($target)) {
-                    case 'DYNAFORMS':
-                        $basePath = PATH_DYNAFORM;
-                        break;
-                    case 'PUBLIC':
-                        $basePath = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'public' . PATH_SEP;
-                        break;
-                    case 'TEMPLATES':
-                        $basePath = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'mailTemplates' . PATH_SEP;
-                        break;
-                    default:
-                        $basePath = '';
+            //TABLE
+            $aTable = $data['TABLE'];
+            foreach ($aTable as $value) {
+                if($value['PRF_EDITABLE'] === 1){
+                    $this->processes->createFilesManager($value['PRO_UID'],array($value));
                 }
+            }
+            $aPath = $data['PATH'];
+            foreach ($aPath as $target => $files) {
+                $basePath = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'mailTemplates' . PATH_SEP;
+                if(strtoupper($target) === 'TEMPLATES'){
+                    foreach ($files as $file) {
+                        $filename = $basePath . ((isset($file["file_path"]))? $file["file_path"] : $file["filepath"]);
+                        $path = dirname($filename);
 
-                if (empty($basePath)) {
-                    continue;
-                }
+                        if (!is_dir($path)) {
+                            Util\Common::mk_dir($path, 0775);
+                        }
 
-                foreach ($files as $file) {
-                    $filename = $basePath . ((isset($file["file_path"]))? $file["file_path"] : $file["filepath"]);
-                    $path = dirname($filename);
-
-                    if (!is_dir($path)) {
-                        Util\Common::mk_dir($path, 0775);
+                        file_put_contents($filename, $file["file_content"]);
+                        chmod($filename, 0775);
                     }
-
-                    file_put_contents($filename, $file["file_content"]);
-                    chmod($filename, 0775);
                 }
             }
         } catch (\Exception $e) {

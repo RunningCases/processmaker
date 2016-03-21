@@ -33,7 +33,7 @@ class ProcessDefinitionMigrator implements Importable, Exportable
     public function import($data)
     {
         try {
-            return $this->bpmn->createFromStruct($data);;
+            $this->bpmn->createFromStruct($data, false);
         } catch (\Exception $e) {
             return $e->getMessage();
         }
