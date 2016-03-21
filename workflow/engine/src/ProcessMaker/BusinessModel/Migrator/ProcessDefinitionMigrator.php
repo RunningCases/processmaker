@@ -103,10 +103,10 @@ class ProcessDefinitionMigrator implements Importable, Exportable
         $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
 
         $result = array(
-            '' => '',
-            '' => ''
+            'bpmn-definition' => $bpmnStruct,
+            'workflow-definition' => (array)$oData
         );
-        return $oData;
+        return $result;
     }
 
     public function afterExport()
