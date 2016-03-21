@@ -12,6 +12,11 @@ abstract class Importer
     protected $filename = "";
     protected $saveDir = "";
     protected $metadata = array();
+    /**
+     * Title of the process before being updated/deleted.
+     * @var string
+     */
+    protected $currentProcessTitle = "";
     public static $affectedGroups = array();
 
     const IMPORT_OPTION_OVERWRITE = "project.import.override";
@@ -165,7 +170,7 @@ abstract class Importer
             case self::IMPORT_OPTION_OVERWRITE:
                 //Shouldn't generate new UID for all objects
                 $this->removeProject();
-
+                $name = $this->currentProcessTitle;
                 $generateUid = false;
                 break;
             case self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW:
@@ -278,6 +283,10 @@ abstract class Importer
 
     public function removeProject()
     {
+        /* @var $process \Process */
+        $process = new \Process();
+        $process->load($this->metadata["uid"]);
+        $this->currentProcessTitle = $process->getProTitle();
         $project = \ProcessMaker\Project\Adapter\BpmnWorkflow::load($this->metadata["uid"]);
         $project->remove(true, false);
     }
