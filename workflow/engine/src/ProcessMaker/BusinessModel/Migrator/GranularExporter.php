@@ -29,13 +29,14 @@ class GranularExporter
     public function export($objectList)
     {
         $this->beforeExport();
+        $exportObject = new ExportObjects();
+        $objectList = $exportObject->mapObjectList($objectList);
         foreach ($objectList as $data) {
             $migrator = $this->factory->create($data);
             $migratorData = $migrator->export($this->prjuid);
             $this->mergeData($migratorData);
         }
         return $this->publish();
-
     }
 
     protected function beforeExport()

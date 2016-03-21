@@ -49,21 +49,21 @@ class ProcessDefinitionMigrator implements Importable, Exportable
 
     public function export($prj_uid)
     {
-        $bpmnStruct["ACTIVITY"] = \BpmnActivity::getAll($this->$prj_uid);
-        $bpmnStruct["ARTIFACT"] = \BpmnArtifact::getAll($this->$prj_uid);
-        $bpmnStruct["BOUND"] = \BpmnBound::getAll($this->$prj_uid);
-        $bpmnStruct["DATA"] = \BpmnData::getAll($this->$prj_uid);
-        $bpmnStruct["DIAGRAM"] = \BpmnDiagram::getAll($this->$prj_uid);
+        $bpmnStruct["ACTIVITY"] = \BpmnActivity::getAll($prj_uid);
+        $bpmnStruct["ARTIFACT"] = \BpmnArtifact::getAll($prj_uid);
+        $bpmnStruct["BOUND"] = \BpmnBound::getAll($prj_uid);
+        $bpmnStruct["DATA"] = \BpmnData::getAll($prj_uid);
+        $bpmnStruct["DIAGRAM"] = \BpmnDiagram::getAll($prj_uid);
         $bpmnStruct["DOCUMENTATION"] = array();
-        $bpmnStruct["EVENT"] = \BpmnEvent::getAll($this->$prj_uid);
+        $bpmnStruct["EVENT"] = \BpmnEvent::getAll($prj_uid);
         $bpmnStruct["EXTENSION"] = array();
-        $bpmnStruct["FLOW"] = \BpmnFlow::getAll($this->$prj_uid, null, null, "", CASE_UPPER, false);
-        $bpmnStruct["GATEWAY"] = \BpmnGateway::getAll($this->$prj_uid);
-        $bpmnStruct["LANE"] = \BpmnLane::getAll($this->$prj_uid);
-        $bpmnStruct["LANESET"] = \BpmnLaneset::getAll($this->$prj_uid);
-        $bpmnStruct["PARTICIPANT"] = \BpmnParticipant::getAll($this->$prj_uid);
-        $bpmnStruct["PROCESS"] = \BpmnProcess::getAll($this->$prj_uid);
-        $bpmnStruct["PROJECT"] = array(\BpmnProjectPeer::retrieveByPK($this->$prj_uid)->toArray());
+        $bpmnStruct["FLOW"] = \BpmnFlow::getAll($prj_uid, null, null, "", CASE_UPPER, false);
+        $bpmnStruct["GATEWAY"] = \BpmnGateway::getAll($prj_uid);
+        $bpmnStruct["LANE"] = \BpmnLane::getAll($prj_uid);
+        $bpmnStruct["LANESET"] = \BpmnLaneset::getAll($prj_uid);
+        $bpmnStruct["PARTICIPANT"] = \BpmnParticipant::getAll($prj_uid);
+        $bpmnStruct["PROCESS"] = \BpmnProcess::getAll($prj_uid);
+        $bpmnStruct["PROJECT"] = array(\BpmnProjectPeer::retrieveByPK($prj_uid)->toArray());
 
         $oProcess = new \Processes();
         $oData = new \StdClass();
