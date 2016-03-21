@@ -1,7 +1,7 @@
 <?php
 namespace ProcessMaker\BusinessModel\Migrator;
 
-// Declare the interface 'iTemplate'
+// Declare the interface 'Exportable'
 interface Exportable
 {
     public function beforeExport();

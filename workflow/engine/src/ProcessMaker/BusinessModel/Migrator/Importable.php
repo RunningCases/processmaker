@@ -1,7 +1,7 @@
 <?php
 namespace ProcessMaker\BusinessModel\Migrator;
 
-// Declare the interface 'iTemplate'
+// Declare the interface 'Importable'
 interface Importable
 {
     public function beforeImport($data);

@@ -1,14 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: gustav
- * Date: 3/17/16
- * Time: 4:35 PM
- */
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
-use Symfony\Component\Config\Definition\Exception\Exception;
+/**
+ * Class VariablesMigrator
+ * @package ProcessMaker\BusinessModel\Migrator
+ */
 
 class VariablesMigrator implements Importable
 {
@@ -22,11 +19,19 @@ class VariablesMigrator implements Importable
         $this->processes = new \Processes();
     }
 
+    /**
+     * beforeImport hook
+     * @param $data
+     */
     public function beforeImport($data)
     {
         // TODO: Implement beforeImport() method.
     }
 
+    /**
+     * Imports the process variables
+     * @param $data
+     */
     public function import($data)
     {
         try {
@@ -36,9 +41,14 @@ class VariablesMigrator implements Importable
         }
     }
 
+    /**
+     * Hook to launch after the import process has just finished
+     * @param $data
+     */
     public function afterImport($data)
     {
         // TODO: Implement afterImport() method.
     }
+
 
 }

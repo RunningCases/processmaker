@@ -3321,7 +3321,7 @@ class Processes
         }
     }
 
-    public function getFilesManager($processUid)
+    public function getFilesManager($processUid, $template = 'all')
     {
         try {
             $arrayFilesManager = array();
@@ -3337,6 +3337,13 @@ class Processes
             $criteria->addSelectColumn(\ProcessFilesPeer::PRF_CREATE_DATE);
             $criteria->addSelectColumn(\ProcessFilesPeer::PRF_UPDATE_DATE);
             $criteria->add(ProcessFilesPeer::PRO_UID, $processUid, Criteria::EQUAL);
+            if ($template !== 'all') {
+                if ($template !== 'template') {
+                    $criteria->add(ProcessFilesPeer::PRF_EDITABLE, true, Criteria::EQUAL);
+                } else {
+                    $criteria->add(ProcessFilesPeer::PRF_EDITABLE, false, Criteria::EQUAL);
+                }
+            }
             $rsCriteria = ProcessFilesPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $rsCriteria->next();

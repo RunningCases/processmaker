@@ -48,7 +48,12 @@ class GranularExporter
         $version = \ProcessMaker\Util\Common::getLastVersion($outputDir . $getProjectName . "-*.pmx") + 1;
         $outputFilename = $outputDir . sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx");
 
-        $data = array();
+        $data = array(
+            'bpmn-definition' => [],
+            'workflow-definition' => [],
+            'workflow-files' => []
+        );
+
         $data["filename"] = $outputFilename;
         $data["version"] = "3.1";
         $data["container"] = "ProcessMaker-Project";
