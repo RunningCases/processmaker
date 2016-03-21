@@ -178,15 +178,10 @@ if( isset($request) ){
       try {
         $con = Propel::getConnection($_GET['cnn']);
         if($_GET['pkt'] == 'int'){
-          // I know this isn't perfect
-          // but this is the sanitization 
-          // that's used by Creole.
-
-          $primaryKeyField = mysql_real_escape_string($_GET['pk']);
-          $tableName = mysql_real_escape_string($_GET['table']);
-          $primaryKeyField = str_replace("`", "", $primaryKeyField);
-          $tableName = str_replace("`", "", $tableName);
-          $rs = $con->executeQuery("SELECT MAX(`$primaryKeyField`) as lastId FROM `$tableName`");
+            
+          $primaryKeyField = Propel::getDB($_GET['cnn'])->quoteIdentifier($_GET['pk']);
+          $tableName = Propel::getDB($_GET['cnn'])->quoteIdentifier($_GET['table']);
+          $rs = $con->executeQuery("SELECT MAX($primaryKeyField) as lastId FROM $tableName");
           $rs->next();
           $row = $rs->getRow();
           $gKey = (int)$row['lastId'] + 1;
