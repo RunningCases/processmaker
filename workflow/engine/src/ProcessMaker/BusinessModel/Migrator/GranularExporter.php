@@ -75,7 +75,7 @@ class GranularExporter
 
     protected function mergeData($migratorData)
     {
-        $this->data(array_merge_recursive($this->data, $migratorData));
+        $this->data = array_merge_recursive($this->data, $migratorData);
     }
 
     public function publish()

@@ -10,7 +10,7 @@ namespace ProcessMaker\BusinessModel\Migrator;
 
 use Symfony\Component\Config\Definition\Exception\Exception;
 
-class TemplatesMigrator implements Importable
+class TemplatesMigrator implements Importable, Exportable
 {
     protected $processes;
 
@@ -72,4 +72,39 @@ class TemplatesMigrator implements Importable
         // TODO: Implement afterImport() method.
     }
 
+    public function beforeExport()
+    {
+        // TODO: Implement beforeExport() method.
+    }
+
+    /**
+     * @param $prj_uid
+     * @return array
+     */
+    public function export($prj_uid)
+    {
+        try {
+            $oData = new \StdClass();
+            $arrayExcludeFile = array();
+            $oData->templates = $this->processes->getFilesManager($prj_uid, 'TEMPLATES');
+
+            $fileHandler = new FileHandler();
+            $workflowFile = $fileHandler->getTemplatesOrPublicFiles($prj_uid, $arrayExcludeFile, 'TEMPLATES');
+
+            $result = array(
+                'workflow-definition' => (array)$oData->templates,
+                'workflow-files' => $workflowFile
+            );
+
+            return $result;
+
+        } catch (\Exception $e) {
+            \Logger::log($e);
+        }
+    }
+
+    public function afterExport()
+    {
+        // TODO: Implement afterExport() method.
+    }
 }

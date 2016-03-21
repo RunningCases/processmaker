@@ -46,13 +46,26 @@ class TriggersMigrator implements Importable, Exportable
         // TODO: Implement beforeExport() method.
     }
 
+    /**
+     * @param $prj_uid
+     * @return array
+     */
     public function export($prj_uid)
     {
-        $process = new \Processes();
-        $oData = new \StdClass();
-        $oDataTasks = $process->getTaskRows($prj_uid);
-        $oData->steptriggers = $process->getStepTriggerRows($oDataTasks);
-        return $oData;
+        try {
+            $oData = new \StdClass();
+            $oDataTasks = $this->processes->getTaskRows($prj_uid);
+            $oData->steptriggers = $this->processes->getStepTriggerRows($oDataTasks);
+
+            $result = array(
+                'workflow-definition' => (array)$oData->steptriggers
+            );
+
+            return $result;
+
+        } catch (\Exception $e) {
+            \Logger::log($e);
+        }
     }
 
     public function afterExport()

@@ -7,7 +7,7 @@ namespace ProcessMaker\BusinessModel\Migrator;
  * @package ProcessMaker\BusinessModel\Migrator
  */
 
-class VariablesMigrator implements Importable
+class VariablesMigrator implements Importable, Exportable
 {
     protected $processes;
 
@@ -51,4 +51,34 @@ class VariablesMigrator implements Importable
     }
 
 
+    public function beforeExport()
+    {
+        // TODO: Implement beforeExport() method.
+    }
+
+    /**
+     * @param $prj_uid
+     * @return array
+     */
+    public function export($prj_uid)
+    {
+        try {
+            $oData = new \StdClass();
+            $oData->processVariables = $this->processes->getProcessVariables($prj_uid);
+
+            $result = array(
+                'workflow-definition' => (array)$oData->processVariables
+            );
+
+            return $result;
+
+        } catch (\Exception $e) {
+            \Logger::log($e);
+        }
+    }
+
+    public function afterExport()
+    {
+        // TODO: Implement afterExport() method.
+    }
 }

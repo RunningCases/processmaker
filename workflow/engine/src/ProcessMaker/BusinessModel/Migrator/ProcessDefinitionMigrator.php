@@ -14,6 +14,7 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 class ProcessDefinitionMigrator implements Importable, Exportable
 {
     protected $bpmn;
+    protected $processes;
 
     /**
      * ProcessDefinitionMigrator constructor.
@@ -21,6 +22,7 @@ class ProcessDefinitionMigrator implements Importable, Exportable
     public function __construct()
     {
         $this->bpmn = new Adapter\BpmnWorkflow();
+        $this->processes = new \Processes();
     }
 
     public function beforeImport($data)
@@ -47,66 +49,74 @@ class ProcessDefinitionMigrator implements Importable, Exportable
         // TODO: Implement beforeExport() method.
     }
 
+    /**
+     * @param $prj_uid
+     * @return array
+     */
     public function export($prj_uid)
     {
-        $bpmnStruct["ACTIVITY"] = \BpmnActivity::getAll($prj_uid);
-        $bpmnStruct["ARTIFACT"] = \BpmnArtifact::getAll($prj_uid);
-        $bpmnStruct["BOUND"] = \BpmnBound::getAll($prj_uid);
-        $bpmnStruct["DATA"] = \BpmnData::getAll($prj_uid);
-        $bpmnStruct["DIAGRAM"] = \BpmnDiagram::getAll($prj_uid);
-        $bpmnStruct["DOCUMENTATION"] = array();
-        $bpmnStruct["EVENT"] = \BpmnEvent::getAll($prj_uid);
-        $bpmnStruct["EXTENSION"] = array();
-        $bpmnStruct["FLOW"] = \BpmnFlow::getAll($prj_uid, null, null, "", CASE_UPPER, false);
-        $bpmnStruct["GATEWAY"] = \BpmnGateway::getAll($prj_uid);
-        $bpmnStruct["LANE"] = \BpmnLane::getAll($prj_uid);
-        $bpmnStruct["LANESET"] = \BpmnLaneset::getAll($prj_uid);
-        $bpmnStruct["PARTICIPANT"] = \BpmnParticipant::getAll($prj_uid);
-        $bpmnStruct["PROCESS"] = \BpmnProcess::getAll($prj_uid);
-        $bpmnStruct["PROJECT"] = array(\BpmnProjectPeer::retrieveByPK($prj_uid)->toArray());
+        try {
+            $bpmnStruct["ACTIVITY"] = \BpmnActivity::getAll($prj_uid);
+            $bpmnStruct["ARTIFACT"] = \BpmnArtifact::getAll($prj_uid);
+            $bpmnStruct["BOUND"] = \BpmnBound::getAll($prj_uid);
+            $bpmnStruct["DATA"] = \BpmnData::getAll($prj_uid);
+            $bpmnStruct["DIAGRAM"] = \BpmnDiagram::getAll($prj_uid);
+            $bpmnStruct["DOCUMENTATION"] = array();
+            $bpmnStruct["EVENT"] = \BpmnEvent::getAll($prj_uid);
+            $bpmnStruct["EXTENSION"] = array();
+            $bpmnStruct["FLOW"] = \BpmnFlow::getAll($prj_uid, null, null, "", CASE_UPPER, false);
+            $bpmnStruct["GATEWAY"] = \BpmnGateway::getAll($prj_uid);
+            $bpmnStruct["LANE"] = \BpmnLane::getAll($prj_uid);
+            $bpmnStruct["LANESET"] = \BpmnLaneset::getAll($prj_uid);
+            $bpmnStruct["PARTICIPANT"] = \BpmnParticipant::getAll($prj_uid);
+            $bpmnStruct["PROCESS"] = \BpmnProcess::getAll($prj_uid);
+            $bpmnStruct["PROJECT"] = array(\BpmnProjectPeer::retrieveByPK($prj_uid)->toArray());
 
-        $oProcess = new \Processes();
-        $oData = new \StdClass();
-        $oData->process = $oProcess->getProcessRow($prj_uid, false);
-        $oData->tasks = $oProcess->getTaskRows($prj_uid);
-        $oData->routes = $oProcess->getRouteRows($prj_uid);
-        $oData->lanes = $oProcess->getLaneRows($prj_uid);
-        $oData->gateways = $oProcess->getGatewayRows($prj_uid);
-        $oData->steps = $oProcess->getStepRows($prj_uid);
-        $oData->taskusers = $oProcess->getTaskUserRows($oData->tasks);
-        $oData->groupwfs = $oProcess->getGroupwfRows($oData->taskusers);
-        $oData->steptriggers = $oProcess->getStepTriggerRows($oData->tasks);
-        $oData->reportTablesVars = $oProcess->getReportTablesVarsRows($prj_uid);
-        $oData->objectPermissions = $oProcess->getObjectPermissionRows($prj_uid, $oData);
-        $oData->subProcess = $oProcess->getSubProcessRow($prj_uid);
-        $oData->caseTracker = $oProcess->getCaseTrackerRow($prj_uid);
-        $oData->caseTrackerObject = $oProcess->getCaseTrackerObjectRow($prj_uid);
-        $oData->stage = $oProcess->getStageRow($prj_uid);
-        $oData->fieldCondition = $oProcess->getFieldCondition($prj_uid);
-        $oData->event = $oProcess->getEventRow($prj_uid);
-        $oData->caseScheduler = $oProcess->getCaseSchedulerRow($prj_uid);
-        $oData->processCategory = $oProcess->getProcessCategoryRow($prj_uid);
-        $oData->taskExtraProperties = $oProcess->getTaskExtraPropertiesRows($prj_uid);
-        $oData->processUser = $oProcess->getProcessUser($prj_uid);
-        $oData->processVariables = $oProcess->getProcessVariables($prj_uid);
-        $oData->webEntry = $oProcess->getWebEntries($prj_uid);
-        $oData->webEntryEvent = $oProcess->getWebEntryEvents($prj_uid);
-        $oData->messageType = $oProcess->getMessageTypes($prj_uid);
-        $oData->messageTypeVariable = $oProcess->getMessageTypeVariables($prj_uid);
-        $oData->messageEventDefinition = $oProcess->getMessageEventDefinitions($prj_uid);
-        $oData->scriptTask = $oProcess->getScriptTasks($prj_uid);
-        $oData->timerEvent = $oProcess->getTimerEvents($prj_uid);
-        $oData->emailEvent = $oProcess->getEmailEvent($prj_uid);
-        $oData->filesManager = $oProcess->getFilesManager($prj_uid);
-        $oData->abeConfiguration = $oProcess->getActionsByEmail($prj_uid);
-        $oData->groupwfs = $oProcess->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
-        $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
+            $oData = new \StdClass();
+            $oData->process = $this->processes->getProcessRow($prj_uid, false);
+            $oData->tasks = $this->processes->getTaskRows($prj_uid);
+            $oData->routes = $this->processes->getRouteRows($prj_uid);
+            $oData->lanes = $this->processes->getLaneRows($prj_uid);
+            $oData->gateways = $this->processes->getGatewayRows($prj_uid);
+            $oData->steps = $this->processes->getStepRows($prj_uid);
+            $oData->taskusers = $this->processes->getTaskUserRows($oData->tasks);
+            $oData->groupwfs = $this->processes->getGroupwfRows($oData->taskusers);
+            $oData->steptriggers = $this->processes->getStepTriggerRows($oData->tasks);
+            $oData->reportTablesVars = $this->processes->getReportTablesVarsRows($prj_uid);
+            $oData->objectPermissions = $this->processes->getObjectPermissionRows($prj_uid, $oData);
+            $oData->subProcess = $this->processes->getSubProcessRow($prj_uid);
+            $oData->caseTracker = $this->processes->getCaseTrackerRow($prj_uid);
+            $oData->caseTrackerObject = $this->processes->getCaseTrackerObjectRow($prj_uid);
+            $oData->stage = $this->processes->getStageRow($prj_uid);
+            $oData->fieldCondition = $this->processes->getFieldCondition($prj_uid);
+            $oData->event = $this->processes->getEventRow($prj_uid);
+            $oData->caseScheduler = $this->processes->getCaseSchedulerRow($prj_uid);
+            $oData->processCategory = $this->processes->getProcessCategoryRow($prj_uid);
+            $oData->taskExtraProperties = $this->processes->getTaskExtraPropertiesRows($prj_uid);
+            $oData->processUser = $this->processes->getProcessUser($prj_uid);
+            $oData->webEntry = $this->processes->getWebEntries($prj_uid);
+            $oData->webEntryEvent = $this->processes->getWebEntryEvents($prj_uid);
+            $oData->messageType = $this->processes->getMessageTypes($prj_uid);
+            $oData->messageTypeVariable = $this->processes->getMessageTypeVariables($prj_uid);
+            $oData->messageEventDefinition = $this->processes->getMessageEventDefinitions($prj_uid);
+            $oData->scriptTask = $this->processes->getScriptTasks($prj_uid);
+            $oData->timerEvent = $this->processes->getTimerEvents($prj_uid);
+            $oData->emailEvent = $this->processes->getEmailEvent($prj_uid);
+            //$oData->filesManager = $this->processes->getFilesManager($prj_uid);
+            $oData->abeConfiguration = $this->processes->getActionsByEmail($prj_uid);
+            $oData->groupwfs = $this->processes->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
+            $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
 
-        $result = array(
-            'bpmn-definition' => $bpmnStruct,
-            'workflow-definition' => (array)$oData
-        );
-        return $result;
+            $result = array(
+                'bpmn-definition' => $bpmnStruct,
+                'workflow-definition' => (array)$oData
+            );
+            return $result;
+
+        } catch (\Exception $e) {
+            \Logger::log($e);
+        }
+
     }
 
     public function afterExport()
