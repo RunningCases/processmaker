@@ -175,15 +175,17 @@ class AppDocumentDrive
             $data = [];
             while ($rsAppDelegation->next()) {
                 $row = $rsAppDelegation->getRow();
-                if ($user->userExists($row['USR_UID'])) {
-                    $data = [];
-                    $data[] = $user->load($row['USR_UID']);
-                } else {
-                    $data = $group->getUsersOfGroup($row['USR_UID']);
-                }
+                if (!empty($row['USR_UID'])) {
+                    if ($user->userExists($row['USR_UID'])) {
+                        $data = [];
+                        $data[] = $user->load($row['USR_UID']);
+                    } else {
+                        $data = $group->getUsersOfGroup($row['USR_UID']);
+                    }
 
-                foreach ($data as $dataUser) {
-                    $this->addUserEmail($dataUser["USR_EMAIL"]);
+                    foreach ($data as $dataUser) {
+                        $this->addUserEmail($dataUser["USR_EMAIL"]);
+                    }
                 }
             }
         } catch (Exception $exception) {
