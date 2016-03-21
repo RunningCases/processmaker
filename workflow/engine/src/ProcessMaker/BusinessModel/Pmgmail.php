@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 namespace ProcessMaker\BusinessModel;
 
@@ -358,6 +359,3 @@ class Pmgmail {
         $oResponse = $oLabels->setLabelsToUnpauseCase($appUid, $appDelIndex);
     }
 }
-
-
-
