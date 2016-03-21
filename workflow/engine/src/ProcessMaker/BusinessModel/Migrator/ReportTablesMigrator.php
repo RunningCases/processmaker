@@ -10,6 +10,16 @@ namespace ProcessMaker\BusinessModel\Migrator;
 
 class ReportTablesMigrator implements Importable, Exportable
 {
+    protected $processes;
+
+    /**
+     * ReportTablesMigrator constructor.
+     */
+    public function __construct()
+    {
+        $this->processes = new \Processes();
+    }
+
     public function beforeImport($data)
     {
         // TODO: Implement beforeImport() method.
@@ -30,12 +40,25 @@ class ReportTablesMigrator implements Importable, Exportable
         // TODO: Implement beforeExport() method.
     }
 
+    /**
+     * @param $prj_uid
+     * @return array
+     */
     public function export($prj_uid)
     {
-        $oProcess = new \Processes();
-        $oData = new \StdClass();
-        $oData->reportTables = $oProcess->getReportTablesRows($prj_uid);
-        return $oData;
+        try {
+            $oData = new \StdClass();
+            $oData->reportTables = $this->processes->getReportTablesRows($prj_uid);
+
+            $result = array(
+                'workflow-definition' => (array)$oData->reportTables
+            );
+
+            return $result;
+
+        } catch (\Exception $e) {
+            \Logger::log($e);
+        }
     }
 
     public function afterExport()

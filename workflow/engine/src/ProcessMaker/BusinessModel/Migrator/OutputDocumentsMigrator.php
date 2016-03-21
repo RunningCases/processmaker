@@ -46,12 +46,25 @@ class OutputDocumentsMigrator implements Importable, Exportable
         // TODO: Implement beforeExport() method.
     }
 
+    /**
+     * @param $prj_uid
+     * @return array
+     */
     public function export($prj_uid)
     {
-        $oProcess = new \Process();
-        $oData = new \StdClass();
-        $oData->outputs = $oProcess->getOutputRows($prj_uid);
-        return $oData;
+        try {
+            $oData = new \StdClass();
+            $oData->outputs = $this->processes->getOutputRows($prj_uid);
+
+            $result = array(
+                'workflow-definition' => (array)$oData->outputs
+            );
+
+            return $result;
+
+        } catch (\Exception $e) {
+            \Logger::log($e);
+        }
     }
 
     public function afterExport()

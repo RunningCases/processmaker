@@ -54,13 +54,8 @@ class ExportObjects
     {
         try {
             $mapObjectList = array();
-            foreach ($this->objectsList as $key => $val) {
-                if(isset($objects[$key])){
-                    if(($key+1) === $objects[$key]){
-                        array_push($mapObjectList, strtoupper(str_replace(' ', '', $val)));
-                    }
-                }
-                $key++;
+            foreach ($objects as $objectId) {
+                array_push($mapObjectList, strtoupper(str_replace(' ', '', $this->objectsList[$objectId - 1])));
             }
             return $mapObjectList;
         } catch (\Exception $e) {

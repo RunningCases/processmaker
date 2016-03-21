@@ -11,6 +11,16 @@ namespace ProcessMaker\BusinessModel\Migrator;
 
 class SupervisorsMigrator implements Importable, Exportable
 {
+    protected $processes;
+
+    /**
+     * SupervisorsMigrator constructor.
+     */
+    public function __construct()
+    {
+        $this->processes = new \Processes();
+    }
+
     public function beforeImport($data)
     {
         // TODO: Implement beforeImport() method.
@@ -31,12 +41,25 @@ class SupervisorsMigrator implements Importable, Exportable
         // TODO: Implement beforeExport() method.
     }
 
+    /**
+     * @param $prj_uid
+     * @return array
+     */
     public function export($prj_uid)
     {
-        $oProcess = new \Processes();
-        $oData = new \StdClass();
-        $oData->stepSupervisor = $oProcess->getStepSupervisorRows($prj_uid);
-        return $oData;
+        try {
+            $oData = new \StdClass();
+            $oData->stepSupervisor = $this->processes->getStepSupervisorRows($prj_uid);
+
+            $result = array(
+                'workflow-definition' => (array)$oData->stepSupervisor
+            );
+
+            return $result;
+
+        } catch (\Exception $e) {
+            \Logger::log($e);
+        }
     }
 
     public function afterExport()

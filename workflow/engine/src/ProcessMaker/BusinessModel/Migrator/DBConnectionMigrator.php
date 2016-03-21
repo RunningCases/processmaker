@@ -46,12 +46,25 @@ class DBConnectionMigrator implements Importable, Exportable
         // TODO: Implement beforeExport() method.
     }
 
+    /**
+     * @param $prj_uid
+     * @return array
+     */
     public function export($prj_uid)
     {
-        $oProcess = new \Process();
-        $oData = new \StdClass();
-        $oData->dbconnections = $oProcess->getDBConnectionsRows($prj_uid);
-        return $oData;
+        try {
+            $oData = new \StdClass();
+            $oData->dbconnections = $this->processes->getDBConnectionsRows($prj_uid);
+
+            $result = array(
+                'workflow-definition' => (array)$oData->dbconnections
+            );
+
+            return $result;
+
+        } catch (\Exception $e) {
+            \Logger::log($e);
+        }
     }
 
     public function afterExport()
