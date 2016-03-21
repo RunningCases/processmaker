@@ -1,14 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: gustav
- * Date: 3/18/16
- * Time: 10:30 AM
- */
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
-use Symfony\Component\Config\Definition\Exception\Exception;
+/**
+ * The assignment rules migrator class.
+ * The container class that stores the import and export rules for assignment rules.
+ *
+ * Class AssignmentRulesMigrator
+ * @package ProcessMaker\BusinessModel\Migrator
+ */
 
 class AssignmentRulesMigrator implements Importable
 {
