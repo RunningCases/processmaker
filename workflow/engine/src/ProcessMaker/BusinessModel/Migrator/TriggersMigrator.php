@@ -58,7 +58,7 @@ class TriggersMigrator implements Importable, Exportable
             $oData->steptriggers = $this->processes->getStepTriggerRows($oDataTasks);
 
             $result = array(
-                'workflow-definition' => (array)$oData->steptriggers
+                'workflow-definition' => (array)$oData
             );
 
             return $result;

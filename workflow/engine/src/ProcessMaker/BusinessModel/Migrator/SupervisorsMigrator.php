@@ -49,10 +49,10 @@ class SupervisorsMigrator implements Importable, Exportable
     {
         try {
             $oData = new \StdClass();
-            $oData->stepSupervisor = $this->processes->getStepSupervisorRows($prj_uid);
+            $oData->processUser = $this->processes->getProcessUser($prj_uid);
 
             $result = array(
-                'workflow-definition' => (array)$oData->stepSupervisor
+                'workflow-definition' => (array)$oData
             );
 
             return $result;

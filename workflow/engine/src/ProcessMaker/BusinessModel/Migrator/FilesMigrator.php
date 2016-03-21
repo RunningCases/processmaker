@@ -52,14 +52,14 @@ class FilesMigrator implements Importable, Exportable
     {
         try {
             $oData = new \StdClass();
-            $oData->publicFiles = $this->processes->getFilesManager($prj_uid, 'PUBLIC');
+            $oData->filesManager = $this->processes->getFilesManager($prj_uid, 'PUBLIC');
 
             $fileHandler = new FileHandler();
             $arrayPublicFileToExclude = $fileHandler->getFilesToExclude($prj_uid);
             $workflowFile = $fileHandler->getTemplatesOrPublicFiles($prj_uid, $arrayPublicFileToExclude, 'PUBLIC');
 
             $result = array(
-                'workflow-definition' => (array)$oData->publicFiles,
+                'workflow-definition' => (array)$oData,
                 'workflow-files' => $workflowFile
             );
 

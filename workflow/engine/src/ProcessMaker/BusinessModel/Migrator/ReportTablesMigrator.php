@@ -51,7 +51,7 @@ class ReportTablesMigrator implements Importable, Exportable
             $oData->reportTables = $this->processes->getReportTablesRows($prj_uid);
 
             $result = array(
-                'workflow-definition' => (array)$oData->reportTables
+                'workflow-definition' => (array)$oData
             );
 
             return $result;

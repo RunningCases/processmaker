@@ -12,6 +12,14 @@ namespace ProcessMaker\BusinessModel\Migrator;
 
 class PMXGenerator
 {
+
+    /**
+     * @var \DOMElement
+     */
+    protected $rootNode;
+    /**
+     * @var \DOMDocument
+     */
     protected $domDocument;
 
     /**
@@ -32,8 +40,8 @@ class PMXGenerator
      */
     public function generate($data)
     {
-        $rootNode = $this->domDocument->createElement($data['container_name']);
-        $rootNode->setAttribute("version", $data['container_name']);
+        $rootNode = $this->domDocument->createElement($data['container']);
+        $rootNode->setAttribute("version", $data['container']);
         $this->domDocument->appendChild($rootNode);
 
         $metadata = $data["metadata"];
@@ -62,7 +70,7 @@ class PMXGenerator
                     $recordData = array_change_key_case($recordData, CASE_LOWER);
 
                     foreach ($recordData as $key => $value) {
-                        if(is_object($value)){
+                        if (is_object($value)) {
                             $value = serialize($value);
                         }
                         $columnNode = $this->domDocument->createElement($key);
@@ -103,5 +111,18 @@ class PMXGenerator
         }
         $rootNode->appendChild($workflowFilesNode);
         return $this->domDocument->saveXML($rootNode);
+    }
+
+    /**
+     * @param $value
+     * @return mixed
+     */
+    private function getTextNode($value)
+    {
+        if (empty($value) || preg_match('/^[\w\s\.\-]+$/', $value, $match)) {
+            return $this->domDocument->createTextNode($value);
+        } else {
+            return $this->domDocument->createCDATASection($value);
+        }
     }
 }

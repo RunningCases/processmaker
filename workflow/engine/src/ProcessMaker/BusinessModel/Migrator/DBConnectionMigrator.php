@@ -57,7 +57,7 @@ class DBConnectionMigrator implements Importable, Exportable
             $oData->dbconnections = $this->processes->getDBConnectionsRows($prj_uid);
 
             $result = array(
-                'workflow-definition' => (array)$oData->dbconnections
+                'workflow-definition' => (array)$oData
             );
 
             return $result;
