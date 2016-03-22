@@ -1798,7 +1798,18 @@ class Processes
      */
     public function updateProcessUser(array $arrayData)
     {
-
+        try {
+            $processUser = new ProcessUser();
+            foreach ($arrayData as $value) {
+                $record = $value;
+                if ($processUser->Exists($record["PU_UID"])) {
+                    $result = $processUser->update($record["PU_UID"]);
+                }
+                $result = $processUser->create($record);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     /**
@@ -2563,14 +2574,24 @@ class Processes
             }
             $oStepSupervisor->create( $row );
         }
-    } #@!Neyek
+    }
 
     /**
      * @param $aStepSupervisor
      */
     public function updateStepSupervisorRows ($aStepSupervisor)
     {
-
+        try {
+            foreach ($aStepSupervisor as $key => $row) {
+                $oStepSupervisor = new StepSupervisor();
+                if ($oStepSupervisor->Exists( $row['STEP_UID'] )) {
+                    $oStepSupervisor->update( $row['STEP_UID'] );
+                }
+                $oStepSupervisor->create( $row );
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
 
@@ -2674,11 +2695,39 @@ class Processes
     }
 
     /**
-     * @param $sProUid
-     * @param $oData
+     * @param $aPermission
      */
-    public function updateObjectPermissionRows ($sProUid, &$oData)
+    public function createObjectPermissionRows ($aPermission)
     {
+        try {
+            foreach ($aPermission as $key => $row) {
+                $oPermission = new ObjectPermission();
+                if ($oPermission->Exists( $row['OP_UID'] )) {
+                    $oPermission->remove( $row['OP_UID'] );
+                }
+                $oPermission->create( $row );
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * @param $aPermission
+     */
+    public function updateObjectPermissionRows ($aPermission)
+    {
+        try {
+            foreach ($aPermission as $key => $row) {
+                $oPermission = new ObjectPermission();
+                if ($oPermission->Exists( $row['OP_UID'] )) {
+                    $oPermission->update( $row['OP_UID'] );
+                }
+                $oPermission->create( $row );
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
 
     }
 
@@ -3498,7 +3547,28 @@ class Processes
      */
     public function updateDBConnectionsRows ($aConnections)
     {
+        try {
+            foreach ($aConnections as $sKey => $aRow) {
+                $oConnection = new DbSource();
+                if ($oConnection->Exists( $aRow['DBS_UID'], $aRow['PRO_UID'] )) {
+                    $oConnection->update( $aRow );
+                }
+                $oConnection->create( $aRow );
 
+                // Update information in the table of contents
+                $oContent = new Content();
+                $ConCategory = 'DBS_DESCRIPTION';
+                $ConParent = '';
+                $ConId = $aRow['DBS_UID'];
+                $ConLang = SYS_LANG;
+                if ($oContent->Exists( $ConCategory, $ConParent, $ConId, $ConLang )) {
+                    $oContent->removeContent( $ConCategory, $ConParent, $ConId );
+                }
+                $oContent->addContent( $ConCategory, $ConParent, $ConId, $ConLang, $aRow['DBS_DESCRIPTION'] );
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
 
