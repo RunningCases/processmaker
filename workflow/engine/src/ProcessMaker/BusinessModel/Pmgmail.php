@@ -177,15 +177,16 @@ class Pmgmail {
 	            			$aTaskInfo = $oTask->load($aTask["TAS_PARENT"]);
 
 	            			$oSubPro = new \SubApplication();
+	            			$subProAppUid = "";
 		            		if( ($aTaskInfo["TAS_TYPE"] === "SUBPROCESS") ){
-		            			$subProAppUid = $oSubPro->loadSubProUidByParent($app_uid, $index, $index+1);
+		            			$subProAppUid = $oSubPro->loadSubProUidByParent($app_uid, 1, $index-1);
 		            			$index = 1;
 		            		} else if($aTask['TAS_UID'] == -1 && $aTask['TAS_ASSIGN_TYPE'] == "nobody"){
 		            			$subProAppUid = $oSubPro->loadSubProUidBySon($app_uid, $index, $index+1);
 
 		            			$appDel = new \AppDelegation();
 		            			$actualThread = $appDel->Load($subProAppUid, $index+1);
-		            			$index = $actualThread['DEL_INDEX'];
+		            			$index = $actualThread['DEL_INDEX']+1;
 		            			
 		            			$aCriteria = new \Criteria("workflow");
 		            			$aCriteria->addSelectColumn(\RoutePeer::ROU_NEXT_TASK);

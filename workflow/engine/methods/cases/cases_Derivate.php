@@ -172,12 +172,21 @@ try {
     	G::LoadClass( "pmGoogleApi" );
     	$pmGoogle = new PMGoogleApi();
     	if($pmGoogle->getServiceGmailStatus()){
-    		$flagGmail = true;
+    		$appDel = new AppDelegation();
+    		$actualThread = $appDel->Load($_SESSION['APPLICATION'], $_SESSION['INDEX']);
+    		 
+    		$appDelPrev = $appDel->LoadParallel($_SESSION['APPLICATION']);
+    		$Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
+    		if($appDelPrev == array()){
+    			$Pmgmail->sendEmail($_SESSION['APPLICATION'], "", $_SESSION['INDEX'], $_POST['form']['TASKS'], $appFields['APP_DATA']);
+    		}
+
+    		foreach ($appDelPrev as $app){
+    			if( ($app['DEL_INDEX'] != $_SESSION['INDEX']) && ($app['DEL_PREVIOUS'] != $actualThread['DEL_PREVIOUS']) ){
+    				$Pmgmail->sendEmail($_SESSION['APPLICATION'], "", $app['DEL_INDEX'], $_POST['form']['TASKS'], $appFields['APP_DATA']);
+    			}
+    		}
     	}
-    }
-    if( $flagGmail === true ){
-	    $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
-	    $Pmgmail->sendEmail($_SESSION['APPLICATION'], "", $_SESSION['INDEX'], $_POST['form']['TASKS'], $appFields['APP_DATA']);
     }
     /*----------------------------------********---------------------------------*/
 
