@@ -1,6 +1,7 @@
 <?php
 session_start();
 require_once (dirname(__FILE__) . '/../../../gulliver/system/class.bootstrap.php');
+require_once (dirname(__FILE__) . '/../../../gulliver/system/class.g.php');
 
 $gmailToken = $_GET['gmailToken'];
 $gmail = $_GET['gmail'];
