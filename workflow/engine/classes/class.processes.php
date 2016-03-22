@@ -1827,7 +1827,7 @@ class Processes
                 $processVariables = new ProcessVariables();
                 $record = $value;
                 if ($processVariables->Exists($record["VAR_UID"])) {
-                    $processVariables->up($record);
+                    $processVariables->update($record);
                 } else {
                     $processVariables->create($record);
                 }
