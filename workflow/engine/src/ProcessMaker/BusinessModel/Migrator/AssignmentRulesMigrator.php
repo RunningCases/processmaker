@@ -32,7 +32,8 @@ class AssignmentRulesMigrator implements Importable, Exportable
         try {
             $this->processes->createTaskRows($data);
         } catch (\Exception $e) {
-           Logger::log($e);
+            \Logger::log($e->getMessage());
+            throw new ImportException($e->getMessage());
         }
     }
 
@@ -66,7 +67,8 @@ class AssignmentRulesMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e);
+            \Logger::log($e->getMessage());
+            throw new ExportException($e->getMessage());
         }
     }
 

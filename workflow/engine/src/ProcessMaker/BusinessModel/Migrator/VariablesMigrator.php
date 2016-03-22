@@ -37,7 +37,8 @@ class VariablesMigrator implements Importable, Exportable
         try {
             $this->processes->createProcessVariables($data);
         } catch (\Exception $e) {
-            \Logger::log($e);
+            \Logger::log($e->getMessage());
+            throw new ImportException($e->getMessage());
         }
     }
 
@@ -73,7 +74,8 @@ class VariablesMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e);
+            \Logger::log($e->getMessage());
+            throw new ExportException($e->getMessage());
         }
     }
 

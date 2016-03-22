@@ -29,7 +29,8 @@ class DynaformsMigrator implements Importable, Exportable
         try {
             $this->processes->createDynaformRows($data);
         } catch (\Exception $e) {
-            \Logger::log($e);
+            \Logger::log($e->getMessage());
+            throw new ImportException($e->getMessage());
         }
     }
 
@@ -59,7 +60,8 @@ class DynaformsMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e);
+            \Logger::log($e->getMessage());
+            throw new ExportException($e->getMessage());
         }
     }
 

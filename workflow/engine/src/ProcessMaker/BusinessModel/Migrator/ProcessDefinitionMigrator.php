@@ -110,7 +110,8 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e);
+            \Logger::log($e->getMessage());
+            throwException(new ExportException($e->getMessage()));
         }
 
     }

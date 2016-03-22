@@ -32,7 +32,8 @@ class TriggersMigrator implements Importable, Exportable
         try {
             $this->processes->createTriggerRows($data);
         } catch (\Exception $e) {
-           Logger::log($e);
+            \Logger::log($e->getMessage());
+            throwException(new ImportException($e->getMessage()));
         }
     }
 
@@ -64,7 +65,8 @@ class TriggersMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e);
+            \Logger::log($e->getMessage());
+            throw new ExportException($e->getMessage());
         }
     }
 

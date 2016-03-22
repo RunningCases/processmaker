@@ -32,7 +32,8 @@ class OutputDocumentsMigrator implements Importable, Exportable
         try {
             $this->processes->createOutputRows($data);
         } catch (\Exception $e) {
-           Logger::log($e);
+            \Logger::log($e->getMessage());
+            throw new ImportException($e->getMessage());
         }
     }
 
@@ -63,7 +64,8 @@ class OutputDocumentsMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e);
+            \Logger::log($e->getMessage());
+            throw new ExportException($e->getMessage());
         }
     }
 
