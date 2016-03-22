@@ -29,8 +29,9 @@ class VariablesMigrator implements Importable, Exportable
     }
 
     /**
-     * Imports the process variables
      * @param $data
+     * @param $replace
+     * @throws ImportException
      */
     public function import($data, $replace)
     {

@@ -27,22 +27,30 @@ class TemplatesMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
-    public function import($data)
+    /**
+     * @param $data
+     * @param $replace
+     * @throws ImportException
+     */
+    public function import($data, $replace)
     {
         try {
-            //TABLE
             $aTable = $data['TABLE'];
             foreach ($aTable as $value) {
-                if($value['PRF_EDITABLE'] === 1){
-                    $this->processes->createFilesManager($value['PRO_UID'],array($value));
+                if ($value['PRF_EDITABLE'] === 1) {
+                    if ($replace) {
+                        $this->processes->createFilesManager($value['PRO_UID'], array($value));
+                    } else {
+                        $this->processes->updateFilesManager($value['PRO_UID'], array($value));
+                    }
                 }
             }
             $aPath = $data['PATH'];
             foreach ($aPath as $target => $files) {
                 $basePath = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'mailTemplates' . PATH_SEP;
-                if(strtoupper($target) === 'TEMPLATES'){
+                if (strtoupper($target) === 'TEMPLATES') {
                     foreach ($files as $file) {
-                        $filename = $basePath . ((isset($file["file_path"]))? $file["file_path"] : $file["filepath"]);
+                        $filename = $basePath . ((isset($file["file_path"])) ? $file["file_path"] : $file["filepath"]);
                         $path = dirname($filename);
 
                         if (!is_dir($path)) {

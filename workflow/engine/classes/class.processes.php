@@ -3929,7 +3929,7 @@ class Processes
      * @param array $arrayData
      * @throws Exception
      */
-    public function updateFilesManager(array $arrayData)
+    public function updateFilesManager($processUid, array $arrayData)
     {
         try {
             $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
