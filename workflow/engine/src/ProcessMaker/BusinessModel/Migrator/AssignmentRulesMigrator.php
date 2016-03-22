@@ -27,7 +27,12 @@ class AssignmentRulesMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
-    public function import($data)
+    /**
+     * @param $data
+     * @param $replace
+     * @throws ImportException
+     */
+    public function import($data, $replace)
     {
         try {
             $this->processes->createTaskRows($data);

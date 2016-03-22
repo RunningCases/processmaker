@@ -26,9 +26,22 @@ class PermissionsMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
-    public function import($data)
+    /**
+     * @param $data
+     * @param $replace
+     */
+    public function import($data, $replace)
     {
-
+        try {
+            if ($replace) {
+                $this->processes->createObjectPermissionsRows($data);
+            } else {
+                $this->processes->updateObjectPermissionRows($data);
+            }
+        } catch (\Exception $e) {
+            \Logger::log($e->getMessage());
+            throwException(new ImportException($e->getMessage()));
+        }
     }
 
     public function afterImport($data)

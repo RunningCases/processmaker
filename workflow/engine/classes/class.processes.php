@@ -2599,6 +2599,7 @@ class Processes
 
     /**
      * @param $aStepSupervisor
+     * @throws Exception
      */
     public function updateStepSupervisorRows ($aStepSupervisor)
     {
@@ -2717,6 +2718,7 @@ class Processes
 
     /**
      * @param $aPermission
+     * @throws Exception
      */
     public function createObjectPermissionRows ($aPermission)
     {
@@ -2735,6 +2737,7 @@ class Processes
 
     /**
      * @param $aPermission
+     * @throws Exception
      */
     public function updateObjectPermissionRows ($aPermission)
     {
@@ -3925,7 +3928,7 @@ class Processes
      * @param array $arrayData
      * @throws Exception
      */
-    public function updateFilesManager(array $arrayData)
+    public function updateFilesManager($processUid, array $arrayData)
     {
         try {
             $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
