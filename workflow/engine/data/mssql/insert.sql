@@ -3622,7 +3622,7 @@ SELECT 'LABEL','ID_ASSIGNED_USERS','en','ASSIGNED USERS','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_MSG_CONFIRM_ASSIGN_ALL_USERS','en','Do you want to assign all available users to this role?','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_MSG_AJAX_FAILURE','en','Some error has occurred. Try again later.','2014-10-21' 
+SELECT 'LABEL','ID_MSG_AJAX_FAILURE','en','An error has occurred. Please contact your system administrator.','2014-10-21' 
   UNION ALL
 SELECT 'LABEL','ID_FINISH','en','Finish','2014-01-15' 
   UNION ALL

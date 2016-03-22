@@ -2528,7 +2528,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_AVAILABLE_USERS','en','AVAILABLE USERS','2014-01-15') ,
 ( 'LABEL','ID_ASSIGNED_USERS','en','ASSIGNED USERS','2014-01-15') ,
 ( 'LABEL','ID_MSG_CONFIRM_ASSIGN_ALL_USERS','en','Do you want to assign all available users to this role?','2014-01-15') ,
-( 'LABEL','ID_MSG_AJAX_FAILURE','en','Some error has occurred. Try again later.','2014-10-21') ,
+( 'LABEL','ID_MSG_AJAX_FAILURE','en','An error has occurred. Please contact your system administrator.','2014-10-21') ,
 ( 'LABEL','ID_FINISH','en','Finish','2014-01-15') ,
 ( 'LABEL','ID_USERS_SUCCESS_DELETE','en','User has been deleted correctly.','2014-01-15') ,
 ( 'LABEL','ID_ASSIGN_ALL_GROUPS','en','Assign All Groups','2014-01-15') ,
