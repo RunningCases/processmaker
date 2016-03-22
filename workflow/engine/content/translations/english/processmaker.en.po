@@ -6580,8 +6580,8 @@ msgstr "Do you want to assign all available users to this role?"
 # TRANSLATION
 # LABEL/ID_MSG_AJAX_FAILURE
 #: LABEL/ID_MSG_AJAX_FAILURE
-msgid "Some error has occurred. Try again later."
-msgstr "Some error has occurred. Try again later."
+msgid "An error has occurred. Please contact your system administrator."
+msgstr "An error has occurred. Please contact your system administrator."
 
 # TRANSLATION
 # LABEL/ID_FINISH
