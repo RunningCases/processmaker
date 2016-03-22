@@ -5314,8 +5314,6 @@ class Cases
             $oUser = new Users();
 
             foreach ($arrayTask as $aTask) {
-                $sTo = null;
-                $sCc = null;
 
                 if (isset($aTask['DEL_INDEX'])) {
                     $arrayData2 = $arrayData;
@@ -5350,7 +5348,7 @@ class Cases
                 	if ($swtplDefault == 1) {
                 		G::verifyPath($pathEmail, true); //Create if it does not exist
                 		$fileTemplate = $pathEmail . G::LoadTranslation('ID_UNASSIGNED_MESSAGE');
-                		 
+                		
                 		if ((!file_exists($fileTemplate)) && file_exists(PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation('ID_UNASSIGNED_MESSAGE'))) {
                 			@copy(PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation('ID_UNASSIGNED_MESSAGE'), $fileTemplate);
                 		}
@@ -5396,6 +5394,8 @@ class Cases
     
     public function getTo($taskType, $taskUid, $taskUsrUid, $arrayData)
     {
+    	$sTo = null;
+    	$sCc = null;
     	$arrayResp = array();
     	$task = new Tasks();
     	$group = new Groups();

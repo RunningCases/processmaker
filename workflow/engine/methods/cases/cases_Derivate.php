@@ -164,6 +164,23 @@ try {
     $oUser = new Users();
     $aUser = $oUser->load( $_SESSION['USER_LOGGED'] );
     $sFromName = $aUser['USR_FIRSTNAME'] . ' ' . $aUser['USR_LASTNAME'] . ($aUser['USR_EMAIL'] != '' ? ' <' . $aUser['USR_EMAIL'] . '>' : '');
+
+    $flagGmail = false;
+    /*----------------------------------********---------------------------------*/
+    $licensedFeatures = &PMLicensedFeatures::getSingleton();
+    if($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')){
+    	G::LoadClass( "pmGoogleApi" );
+    	$pmGoogle = new PMGoogleApi();
+    	if($pmGoogle->getServiceGmailStatus()){
+    		$flagGmail = true;
+    	}
+    }
+    if( $flagGmail === true ){
+	    $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
+	    $Pmgmail->sendEmail($_SESSION['APPLICATION'], "", $_SESSION['INDEX'], $_POST['form']['TASKS'], $appFields['APP_DATA']);
+    }
+    /*----------------------------------********---------------------------------*/
+
     try {
         $oCase->sendNotifications( $_SESSION['TASK'], $_POST['form']['TASKS'], $appFields['APP_DATA'], $_SESSION['APPLICATION'], $_SESSION['INDEX'], $sFromName );
     } catch (Exception $e) {
@@ -225,21 +242,12 @@ try {
 
     $debuggerAvailable = true;
     
-    $flagGmail = false;
-    if($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')){
-    	G::LoadClass( "pmGoogleApi" );
-    	$pmGoogle = new PMGoogleApi();
-    	if($pmGoogle->getServiceGmailStatus()){
-    		$flagGmail = true;
-    	}
-    }
-    
     $casesRedirector = 'casesListExtJsRedirector';
     if (isset( $_SESSION['user_experience'] ) && $flagGmail === false ) {
         $aNextStep['PAGE'] = $casesRedirector.'?ux=' . $_SESSION['user_experience'];
         $debuggerAvailable = false;
     } else if( $flagGmail == true ){
-        $aNextStep['PAGE'] = $casesRedirector.'?gmail=1&tasks='.serialize($_POST['form']['TASKS']) . '&arrayData='.serialize($appFields['APP_DATA']);
+        $aNextStep['PAGE'] = $casesRedirector.'?gmail=1';
     } else {
         $aNextStep['PAGE'] = $casesRedirector;
     }
