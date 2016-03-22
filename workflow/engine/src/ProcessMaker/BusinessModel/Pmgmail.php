@@ -115,6 +115,10 @@ class Pmgmail {
         }
         $appData = $this->getDraftApp($app_uid, $index);
 
+        if (!$appData){
+        	$appData = $this->getDraftApp($app_uid, $index-1);
+        }
+
         foreach ($appData as $application) {
             $appNumber = $application['APP_NUMBER'];
             $appStatus = $application['APP_STATUS'];
@@ -146,7 +150,7 @@ class Pmgmail {
 	            		$respTo = $oCases->getTo($aTask["TAS_ASSIGN_TYPE"], $aTask["TAS_UID"], $aTask["USR_UID"], $arrayData);
 	            		$mailToAddresses = $respTo['to'];
 	            		$mailCcAddresses = $respTo['cc'];
-	            		
+
 	            		if($aTask["TAS_ASSIGN_TYPE"] === "SELF_SERVICE"){
 	            			$labelID = "PMUASS";
 		            		if ((string)$mailToAddresses === ""){ // Self Service Value Based
@@ -179,8 +183,7 @@ class Pmgmail {
 	            			$oSubPro = new \SubApplication();
 	            			$subProAppUid = "";
 		            		if( ($aTaskInfo["TAS_TYPE"] === "SUBPROCESS") ){
-		            			$subProAppUid = $oSubPro->loadSubProUidByParent($app_uid, 1, $index-1);
-		            			$index = 1;
+		            			$subProAppUid = $oSubPro->loadSubProUidByParent($app_uid, $index, $index+1);
 		            		} else if($aTask['TAS_UID'] == -1 && $aTask['TAS_ASSIGN_TYPE'] == "nobody"){
 		            			$subProAppUid = $oSubPro->loadSubProUidBySon($app_uid, $index, $index+1);
 
