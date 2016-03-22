@@ -30,10 +30,14 @@ class ProcessDefinitionMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
-    public function import($data)
+    public function import($data, $replace)
     {
         try {
-            $this->bpmn->createFromStruct($data, false);
+            if ($replace) {
+                $this->bpmn->createFromStruct($data, false);
+            } else {
+                $this->bpmn->updateFromStruct($data['PRJ_UID'], $data, false);
+            }
         } catch (\Exception $e) {
             return $e->getMessage();
         }

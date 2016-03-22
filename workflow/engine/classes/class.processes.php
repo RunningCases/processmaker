@@ -1181,14 +1181,6 @@ class Processes
     }
 
     /**
-     * @param $row
-     */
-    public function updateProcessDefinitionRow ($row)
-    {
-
-    }
-
-    /**
      * Update a Process register in DB, if the process doesn't exist with the same
      * uid of the $row['PRO_UID'] parameter the function creates a new one based
      * on the $row parameter data.
@@ -1830,7 +1822,19 @@ class Processes
      */
     public function updateProcessVariables($arrayData)
     {
-
+        try {
+            foreach ($arrayData as $value) {
+                $processVariables = new ProcessVariables();
+                $record = $value;
+                if ($processVariables->Exists($record["VAR_UID"])) {
+                    $processVariables->update($record);
+                } else {
+                    $processVariables->create($record);
+                }
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
 
@@ -1885,7 +1889,15 @@ class Processes
      */
     public function updateInputRows ($aInput)
     {
-
+        foreach ($aInput as $key => $row) {
+            $oInput = new InputDocument();
+            if ($oInput->InputExists( $row['INP_DOC_UID'] )) {
+                $oInput->update( $row );
+            } else {
+                $oInput->create($row);
+            }
+        }
+        return;
     }
 
     /**
@@ -1993,7 +2005,16 @@ class Processes
      */
     public function updateOutputRows ($aOutput)
     {
-
+        foreach ($aOutput as $key => $row) {
+            $oOutput = new OutputDocument();
+            //unset ($row['TAS_UID']);
+            if (!$oOutput->OutputExists( $row['OUT_DOC_UID'] )) {
+                $oOutput->update( $row );
+            } else {
+                $oOutput->create( $row );
+            }
+        }
+        return;
     }
 
     /**
@@ -2733,7 +2754,17 @@ class Processes
      */
     public function updateDynaformRows ($aDynaform)
     {
+        foreach ($aDynaform as $key => $row) {
+            $oDynaform = new Dynaform();
+            //unset ($row['TAS_UID']);
+            if (!$oDynaform->exists( $row['DYN_UID'] )) {
+                $res = $oDynaform->update( $row );
+            } else {
+                $res = $oDynaform->create( $row );
+            }
 
+        }
+        return;
     }
 
     /**
