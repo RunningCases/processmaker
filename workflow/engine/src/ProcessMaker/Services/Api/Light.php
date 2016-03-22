@@ -25,7 +25,8 @@ class Light extends Api
         //return lists
         'date',
         'delegateDate',
-        'dueDate'
+        'dueDate',
+        'delRiskDate'
     ];
     /**
      * Get list counters
