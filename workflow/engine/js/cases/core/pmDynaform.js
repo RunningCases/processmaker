@@ -55,7 +55,7 @@ $(window).load(function () {
         };
     }
     var data = jsondata;
-    window.project = new PMDynaform.core.Project({
+    window.dynaform = new PMDynaform.core.Project({
         data: data,
         onBeforePrintHandler : function () {
             var nodeClone = $(".pmdynaform-container").clone();
