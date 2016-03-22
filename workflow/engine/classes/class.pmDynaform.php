@@ -115,7 +115,9 @@ class pmDynaform
         $flagTrackerUser = false;
 
         if (!isset($_SESSION['USER_LOGGED'])) {
-            if (!preg_match("/^.*\/" . SYS_SKIN . "\/tracker\/.*$/", $_SERVER["REQUEST_URI"])) {
+            if (!preg_match("/^.*\/" . SYS_SKIN . "\/tracker\/.*$/", $_SERVER["REQUEST_URI"]) &&
+                    !preg_match("/^.*\/" . SYS_SKIN . "\/[a-z0-9A-Z]+\/[a-z0-9A-Z]+\.php$/", $_SERVER["REQUEST_URI"])
+            ) {
                 return;
             }
 
@@ -415,6 +417,7 @@ class pmDynaform
                     $oCriteria->add(AppDocumentPeer::APP_UID, $this->fields["APP_DATA"]["APPLICATION"]);
                     $oCriteria->add(AppDocumentPeer::APP_DOC_FIELDNAME, $json->name);
                     $oCriteria->add(ContentPeer::CON_CATEGORY, 'APP_DOC_FILENAME');
+                    $oCriteria->add(ContentPeer::CON_LANG, $this->lang);
                     $rs = AppDocumentPeer::doSelectRS($oCriteria);
                     $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                     $links = array();
@@ -1529,7 +1532,7 @@ class pmDynaform
             'scope' => implode(' ', $oauthServer->getScope())
         ));
 
-        $response = $oauthServer->postAuthorize($authorize, $userId, true);
+        $response = $oauthServer->postAuthorize($authorize, $userId, true, array('USER_LOGGED' => $_SESSION['USER_LOGGED']));
         $code = substr($response->getHttpHeader('Location'), strpos($response->getHttpHeader('Location'), 'code=') + 5, 40);
 
         return $code;

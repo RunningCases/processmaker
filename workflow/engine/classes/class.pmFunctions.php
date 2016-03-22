@@ -245,7 +245,11 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
     G::loadClass('system');
     $blackList = System::getQueryBlackList();
     $aListQueries = explode('|', $blackList['queries']);
-    $aListAllTables = explode('|', $blackList['tables'].$blackList['pmtables']);
+    $aListAllTables = explode(
+        '|',
+        ((isset($blackList['tables']))? $blackList['tables'] : '') .
+        ((isset($blackList['pmtables']))? $blackList['pmtables'] : '')
+    );
     $parseSqlStm = new PHPSQLParser($SqlStatement);
     try {
         //Parsing queries and check the blacklist

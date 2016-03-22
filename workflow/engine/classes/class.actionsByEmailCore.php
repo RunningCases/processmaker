@@ -193,7 +193,7 @@ class actionsByEmailCoreClass extends PMPlugin
                                         if(isset($variables['items'][0]['items'])){
                                             $fields = $variables['items'][0]['items'];
                                             foreach ($fields as $key => $value) {
-                                                foreach($value as $var){ G::pr($var);
+                                                foreach($value as $var){
                                                     if(isset($var['variable'])){
                                                         if ($var['variable'] == $actionField) {
                                                              $field->label = $var['label'];

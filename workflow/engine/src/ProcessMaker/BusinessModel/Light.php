@@ -902,30 +902,29 @@ class Light
     public function postUidUploadFiles($userUid, $app_uid, $request_data)
     {
         $response = array();
-        if (count( $request_data ) > 0) {
+        if (is_array($request_data)) {
             foreach ($request_data as $k => $file) {
-                $indocUid = null;
-                $fieldName = null;
                 $oCase = new \Cases();
-                $DEL_INDEX = $oCase->getCurrentDelegation( $app_uid, $userUid );
-
-                $aFields = array (
-                    "APP_UID"             => $app_uid,
-                    "DEL_INDEX"           => $DEL_INDEX,
-                    "USR_UID"             => $userUid,
-                    "DOC_UID"             => - 1,
-                    "APP_DOC_TYPE"        => "ATTACHED",
-                    "APP_DOC_CREATE_DATE" => date( "Y-m-d H:i:s" ),
-                    "APP_DOC_COMMENT"     => "",
-                    "APP_DOC_TITLE"       => "",
-                    "APP_DOC_FILENAME"    => $file['name'],
-                    "APP_DOC_FIELDNAME"   => $fieldName
+                $delIndex = $oCase->getCurrentDelegation($app_uid, $userUid);
+                $docUid = !empty($file['docUid']) ? $file['docUid'] : -1;
+                $appDocType = !empty($file['appDocType']) ? $file['appDocType'] : "ATTACHED";
+                $fieldName = !empty($file['fieldName']) ? $file['fieldName'] : null;
+                $aFields = array(
+                    "APP_UID" => $app_uid,
+                    "DEL_INDEX" => $delIndex,
+                    "USR_UID" => $userUid,
+                    "DOC_UID" => $docUid,
+                    "APP_DOC_TYPE" => $appDocType,
+                    "APP_DOC_CREATE_DATE" => date("Y-m-d H:i:s"),
+                    "APP_DOC_COMMENT" => "",
+                    "APP_DOC_TITLE" => "",
+                    "APP_DOC_FILENAME" => $file['name'],
+                    "APP_DOC_FIELDNAME" => $fieldName
                 );
-
                 $oAppDocument = new \AppDocument();
-                $oAppDocument->create( $aFields );
+                $oAppDocument->create($aFields);
                 $response[$k]['docVersion'] = $iDocVersion = $oAppDocument->getDocVersion();
-                $response[$k]['appDocUid'] =   $sAppDocUid = $oAppDocument->getAppDocUid();
+                $response[$k]['appDocUid'] = $sAppDocUid = $oAppDocument->getAppDocUid();
             }
         }
         return $response;

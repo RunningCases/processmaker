@@ -198,8 +198,12 @@ Ext.onReady(function(){
               }
             },
             validator: function(v) {
-              return valueInputField= /^[0-9a-zA-Z\_|-]+$/.test(v)?true:false;
-            }
+                if (v != "") {
+                    return (/^[0-9a-zA-Z\_|-]+$/.test(v))? true : false;
+                } else {
+                    return true;
+                }
+            },
           }
       }, {
           id: 'field_label',
@@ -219,8 +223,12 @@ Ext.onReady(function(){
               }
             },
             validator: function(v) {
-              return valueInputField= /^[0-9a-zA-Z \|-]+$/.test(v)?true:_('ID_THE') + ' ' +_('ID_FIELD_LABEL') + ' ' + _('ID_FIELD_NOT_EMPTY_OR_SPECIAL_CHAR');
-            }
+                if (v != "") {
+                    return (/^[0-9a-zA-Z \|-]+$/.test(v))? true : _('ID_THE') + ' ' +_('ID_FIELD_LABEL') + ' ' + _('ID_FIELD_NOT_EMPTY_OR_SPECIAL_CHAR');
+                } else {
+                    return true;
+                }
+            },
           }
       }, {
           id: 'field_type',
@@ -416,7 +424,10 @@ Ext.onReady(function(){
     showTooltip: function (msg)
     {
         if (flagShowMessageError == 1) {
-            Ext.msgBoxSlider.msgTopCenter("error", _("ID_ERROR"), msg, 3);
+            if (msg != "" && msg != "<ul><li></li></ul>") {
+                Ext.msgBoxSlider.msgTopCenter("error", _("ID_ERROR"), msg, 3);
+            }
+
             flagShowMessageError = 0;
         }
     },
