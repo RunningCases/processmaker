@@ -27,10 +27,18 @@ class TriggersMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
-    public function import($data)
+    /**
+     * @param $data
+     * @param $replace
+     */
+    public function import($data, $replace)
     {
         try {
-            $this->processes->createTriggerRows($data);
+            if ($replace) {
+                $this->processes->createTriggerRows($data);
+            } else {
+                $this->processes->updateTriggerRows($data);
+            }
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());
             throwException(new ImportException($e->getMessage()));
