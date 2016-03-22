@@ -27,7 +27,7 @@ class TemplatesMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
-    public function import($data)
+    public function import($data, $replace)
     {
         try {
             //TABLE

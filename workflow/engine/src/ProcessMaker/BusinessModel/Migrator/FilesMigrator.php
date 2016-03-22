@@ -29,13 +29,18 @@ class FilesMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
-    public function import($data)
+    public function import($data, $replace)
     {
         try {
             $aTable = $data['TABLE'];
             foreach ($aTable as $value) {
+
                 if($value['PRF_EDITABLE'] !== 1){
-                    $this->processes->createFilesManager($value['PRO_UID'],array($value));
+                    if ($replace) {
+                        $this->processes->createFilesManager($value['PRO_UID'], array($value));
+                    } else {
+                        $this->processes->updateFilesManager(array($value));
+                    }
                 }
             }
             $aPath = $data['PATH'];

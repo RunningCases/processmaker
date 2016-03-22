@@ -25,10 +25,15 @@ class InputDocumentsMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
-    public function import($data)
+    public function import($data, $replace)
     {
         try {
-            $this->processes->createInputRows($data);
+            if ($replace) {
+                $this->processes->createInputRows($data);
+            } else {
+                $this->processes->updateInputRows($data);
+            }
+
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());
             throw new ImportException($e->getMessage());

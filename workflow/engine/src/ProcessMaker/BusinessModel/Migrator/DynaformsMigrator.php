@@ -24,10 +24,15 @@ class DynaformsMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
-    public function import($data)
+    public function import($data, $replace)
     {
         try {
-            $this->processes->createDynaformRows($data);
+            if ($replace) {
+                $this->processes->createDynaformRows($data);
+            } else {
+                $this->processes->updateDynaformRows($data);
+            }
+
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());
             throw new ImportException($e->getMessage());
