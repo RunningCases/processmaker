@@ -62,8 +62,8 @@ if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm
                     $projectTitle = $data["tables"]["bpmn"]["project"][0]["prj_name"];
                 }
                 if(isset($data['objects'])){
-                    $export = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
-                    $objectImport = $export->objectList($data['objects']);
+                    $objectImport = $data['objects'];
+                    $granularImport = 'YES';
                 }
                 break;
         }
@@ -148,7 +148,8 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
             "affectedGroups"            => '',
             "sNewProUid"                => $prjUid,
             "project_type"              => 'bpmn',
-            "ImportGranularOptions"     => '',
+            "isGranularImport"          => '',
+            "objectGranularImport"      => '',
             "project_type_aux"          => $proType
         );
     } catch (Exception $e) {
@@ -175,7 +176,8 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
             "affectedGroups"            => !empty($affectedGroups)? $affectedGroups : '',
             "sNewProUid"                => '',
             "project_type"              => 'bpmn',
-            "ImportGranularOptions"     => $objectImport,
+            "isGranularImport"          => $granularImport,
+            "objectGranularImport"      => $objectImport,
             "proFileName"               => $_FILES["PROCESS_FILENAME"]["name"],
             "groupBeforeAccion"         => 'uploadFileNewProcess',
             "importOption"              => 0
@@ -249,7 +251,8 @@ if (isset($_POST["PRO_FILENAME"]) &&
             "ExistGroupsInDatabase"  => '',
             "sNewProUid"             => $prjUid,
             "project_type"           => 'bpmn',
-            "ImportGranularOptions"  => '',
+            "isGranularImport"       => '',
+            "objectGranularImport"   => '',
             "project_type_aux"       => $proType
         );
     } catch (Exception $e) {
@@ -271,7 +274,8 @@ if (isset($_POST["PRO_FILENAME"]) &&
             "affectedGroups"         => !empty($affectedGroups)? $affectedGroups : '',
             "sNewProUid"             => '',
             "project_type"           => 'bpmn',
-            "ImportGranularOptions"  => $objectImport,
+            "isGranularImport"       => '',
+            "objectGranularImport"   => $objectImport,
             "proFileName"            => $_POST["PRO_FILENAME"],
             "groupBeforeAccion"      => "uploadFileNewProcess",
             "importOption"           => (isset($_POST["IMPORT_OPTION"]))? (int)($_POST["IMPORT_OPTION"]) : 0
