@@ -267,6 +267,30 @@ class FilesManager
         }
     }
 
+    /**
+     * @param $aData
+     * @throws Exception
+     */
+    public function updateProcessFilesManagerInDb($aData)
+    {
+        try {
+            //update database
+            if ($this->existsProcessFile($aData['prf_uid'])) {
+                $aData = array_change_key_case($aData, CASE_UPPER);
+                $oProcessFiles = \ProcessFilesPeer::retrieveByPK($aData['PRF_UID']);
+                $sDate = date('Y-m-d H:i:s');
+                $oProcessFiles->setPrfUpdateDate($sDate);
+                $oProcessFiles->setProUid($aData['PRO_UID']);
+                $oProcessFiles->setPrfPath($aData['PRF_PATH']);
+                $oProcessFiles->save();
+            } else {
+                $this->addProcessFilesManagerInDb($aData);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
     public function existsProcessFile($prfUid)
     {
         try {

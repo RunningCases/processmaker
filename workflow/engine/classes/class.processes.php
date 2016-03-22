@@ -2833,10 +2833,18 @@ class Processes
 
     /**
      * @param $aTrigger
+     * @throws Exception
      */
-    public function updateTriggerRows ($aTrigger)
+    public function updateTriggerRows($aTrigger)
     {
-
+        foreach ($aTrigger as $key => $row) {
+            $oTrigger = new Triggers();
+            if ($oTrigger->TriggerExists($row['TRI_UID'])) {
+                $oTrigger->update($row);
+            } else {
+                $oTrigger->create($row);
+            }
+        }
     }
 
     /**
@@ -3813,13 +3821,20 @@ class Processes
     }
 
     /**
-     * @param $processUid
      * @param array $arrayData
-     * for Templates and Public Files
+     * @throws Exception
      */
-    public function updateFilesManager($processUid, array $arrayData)
+    public function updateFilesManager(array $arrayData)
     {
+        try {
+            $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
 
+            foreach ($arrayData as $value) {
+                $filesManager->updateProcessFilesManagerInDb($value);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
     }
 
     /**
