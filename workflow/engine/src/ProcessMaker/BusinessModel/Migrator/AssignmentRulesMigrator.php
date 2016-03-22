@@ -58,10 +58,11 @@ class AssignmentRulesMigrator implements Importable, Exportable
             $oData->gateways = $this->processes->getGatewayRows($prj_uid);
             $oData->steps = $this->processes->getStepRows($prj_uid);
             $oData->triggers = $this->processes->getTriggerRows($prj_uid);
-            $oData->taskusers = $this->processes->getTaskUserRows($oData->tasks);
+            $assignmentData = new \StdClass();
+            $assignmentData->taskusers = $this->processes->getTaskUserRows($oData->tasks);
 
             $result = array(
-                'workflow-definition' => (array)$oData
+                'workflow-definition' => (array)$assignmentData
             );
 
             return $result;
