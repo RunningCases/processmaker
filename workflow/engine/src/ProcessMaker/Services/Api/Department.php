@@ -64,8 +64,12 @@ class Department extends Api
     {
         try {
             $oDepartment = new \ProcessMaker\BusinessModel\Department();
-            $response = $oDepartment->getAssignedUser($dep_uid);
-            return $response;
+
+            $response = $oDepartment->getUsers(
+                $dep_uid, 'ASSIGNED', null, null, null, null, null, false
+            );
+
+            return $response['data'];
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -82,12 +86,16 @@ class Department extends Api
      * @return array
      *
      */
-    public function doGetAvailableUser($dep_uid, $start = 0, $limit = 0, $search = '')
+    public function doGetAvailableUser($dep_uid, $start = null, $limit = null, $search = null)
     {
         try {
             $oDepartment = new \ProcessMaker\BusinessModel\Department();
-            $response = $oDepartment->getAvailableUser($dep_uid, $start, $limit, $search);
-            return $response;
+
+            $response = $oDepartment->getUsers(
+                $dep_uid, 'AVAILABLE', ['filter' => $search, 'filterOption' => ''], null, null, $start, $limit, false
+            );
+
+            return $response['data'];
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
