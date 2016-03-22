@@ -40,6 +40,10 @@ class SupervisorsObjectsMigrator implements Importable, Exportable
         // TODO: Implement beforeExport() method.
     }
 
+    /**
+     * @param $prj_uid
+     * @return array
+     */
     public function export($prj_uid)
     {
         try {

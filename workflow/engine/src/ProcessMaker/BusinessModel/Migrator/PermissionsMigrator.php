@@ -44,6 +44,7 @@ class PermissionsMigrator implements Importable, Exportable
     /**
      * @param $prj_uid
      * @return array
+     * @throws ExportException
      */
     public function export($prj_uid)
     {
@@ -55,9 +56,9 @@ class PermissionsMigrator implements Importable, Exportable
             $processData->lanes = $this->processes->getLaneRows($prj_uid);
             $processData->gateways = $this->processes->getGatewayRows($prj_uid);
             $processData->steps = $this->processes->getStepRows($prj_uid);
-            $processData->taskusers = $this->processes->getTaskUserRows($oData->tasks);
-            $processData->groupwfs = $this->processes->getGroupwfRows($oData->taskusers);
-            $processData->steptriggers = $this->processes->getStepTriggerRows($oData->tasks);
+            $processData->taskusers = $this->processes->getTaskUserRows($processData->tasks);
+            $processData->groupwfs = $this->processes->getGroupwfRows($processData->taskusers);
+            $processData->steptriggers = $this->processes->getStepTriggerRows($processData->tasks);
             $processData->reportTablesVars = $this->processes->getReportTablesVarsRows($prj_uid);
             $oData = new \StdClass();
             $oData->objectPermissions = $this->processes->getObjectPermissionRows($prj_uid, $processData);
