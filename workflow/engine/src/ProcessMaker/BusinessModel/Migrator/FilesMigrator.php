@@ -29,6 +29,11 @@ class FilesMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
+    /**
+     * @param $data
+     * @param $replace
+     * @throws ImportException
+     */
     public function import($data, $replace)
     {
         try {

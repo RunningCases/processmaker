@@ -2599,6 +2599,7 @@ class Processes
 
     /**
      * @param $aStepSupervisor
+     * @throws Exception
      */
     public function updateStepSupervisorRows ($aStepSupervisor)
     {
@@ -2717,6 +2718,7 @@ class Processes
 
     /**
      * @param $aPermission
+     * @throws Exception
      */
     public function createObjectPermissionRows ($aPermission)
     {
@@ -2735,6 +2737,7 @@ class Processes
 
     /**
      * @param $aPermission
+     * @throws Exception
      */
     public function updateObjectPermissionRows ($aPermission)
     {
