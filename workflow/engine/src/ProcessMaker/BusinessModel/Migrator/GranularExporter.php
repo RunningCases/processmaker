@@ -26,12 +26,17 @@ class GranularExporter
         $this->publisher = new PMXPublisher();
     }
 
+    /**
+     * @param $objectList
+     * @return array|string
+     * @throws \Exception
+     */
     public function export($objectList)
     {
         try {
-            $this->beforeExport();
             $exportObject = new ExportObjects();
             $objectList = $exportObject->mapObjectList($objectList);
+            $this->beforeExport($objectList);
             foreach ($objectList as $data) {
                 $migrator = $this->factory->create($data);
                 $migratorData = $migrator->export($this->prjuid);
@@ -44,11 +49,11 @@ class GranularExporter
                 'message' => $e->getMessage()
             );
         }
-
     }
 
     protected function beforeExport()
     {
+        $objectList = func_get_args()[0];
         $bpmnProject = Project\Bpmn::load($this->prjuid);
         $projectData = $bpmnProject->getProject();
         $getProjectName = $this->publisher->truncateName($projectData['PRJ_NAME'], false);
@@ -78,6 +83,7 @@ class GranularExporter
         $data["metadata"]["name"] = $projectData['PRJ_NAME'];
         $data["metadata"]["uid"] = $projectData['PRJ_UID'];
         $data["metadata"]["export_version"] = $version;
+        $data["metadata"]["export_objects"] = implode('|', $objectList);
         $this->data = $data;
     }
 
