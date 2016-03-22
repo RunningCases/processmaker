@@ -8,8 +8,6 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
-use Symfony\Component\Config\Definition\Exception\Exception;
-
 class DBConnectionMigrator implements Importable, Exportable
 {
     protected $processes;
@@ -32,7 +30,8 @@ class DBConnectionMigrator implements Importable, Exportable
         try {
             $this->processes->createDBConnectionsRows($data);
         } catch (\Exception $e) {
-           Logger::log($e);
+            \Logger::log($e->getMessage());
+            throw new ImportException($e->getMessage());
         }
     }
 
@@ -63,7 +62,8 @@ class DBConnectionMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e);
+            \Logger::log($e->getMessage());
+            throw new ExportException($e->getMessage());
         }
     }
 

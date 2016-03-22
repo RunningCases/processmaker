@@ -82,11 +82,18 @@ class GranularImporter
      */
     public function import($objectList)
     {
-        foreach ($objectList as $key => $data) {
-            $objClass = $this->factory->create($key);
-            if(is_object($objClass)) {
-                $migratorData = $objClass->import($data);
+        try {
+            foreach ($objectList as $key => $data) {
+                $objClass = $this->factory->create($key);
+                if(is_object($objClass)) {
+                    $migratorData = $objClass->import($data);
+                }
             }
+        } catch (ExportException $e) {
+            return array(
+                'success' => false,
+                'message' => $e->getMessage()
+            );
         }
     }
 }

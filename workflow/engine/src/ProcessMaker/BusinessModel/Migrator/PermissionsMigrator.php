@@ -48,18 +48,19 @@ class PermissionsMigrator implements Importable, Exportable
     public function export($prj_uid)
     {
         try {
+            $processData = new \StdClass();
+            $processData->process = $this->processes->getProcessRow($prj_uid, false);
+            $processData->tasks = $this->processes->getTaskRows($prj_uid);
+            $processData->routes = $this->processes->getRouteRows($prj_uid);
+            $processData->lanes = $this->processes->getLaneRows($prj_uid);
+            $processData->gateways = $this->processes->getGatewayRows($prj_uid);
+            $processData->steps = $this->processes->getStepRows($prj_uid);
+            $processData->taskusers = $this->processes->getTaskUserRows($oData->tasks);
+            $processData->groupwfs = $this->processes->getGroupwfRows($oData->taskusers);
+            $processData->steptriggers = $this->processes->getStepTriggerRows($oData->tasks);
+            $processData->reportTablesVars = $this->processes->getReportTablesVarsRows($prj_uid);
             $oData = new \StdClass();
-            $oData->process = $this->processes->getProcessRow($prj_uid, false);
-            $oData->tasks = $this->processes->getTaskRows($prj_uid);
-            $oData->routes = $this->processes->getRouteRows($prj_uid);
-            $oData->lanes = $this->processes->getLaneRows($prj_uid);
-            $oData->gateways = $this->processes->getGatewayRows($prj_uid);
-            $oData->steps = $this->processes->getStepRows($prj_uid);
-            $oData->taskusers = $this->processes->getTaskUserRows($oData->tasks);
-            $oData->groupwfs = $this->processes->getGroupwfRows($oData->taskusers);
-            $oData->steptriggers = $this->processes->getStepTriggerRows($oData->tasks);
-            $oData->reportTablesVars = $this->processes->getReportTablesVarsRows($prj_uid);
-            $oData->objectPermissions = $this->processes->getObjectPermissionRows($prj_uid, $oData);
+            $oData->objectPermissions = $this->processes->getObjectPermissionRows($prj_uid, $processData);
 
             $result = array(
                 'workflow-definition' => (array)$oData
@@ -68,7 +69,8 @@ class PermissionsMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e);
+            \Logger::log($e->getMessage());
+            throw new ExportException($e->getMessage());
         }
     }
 

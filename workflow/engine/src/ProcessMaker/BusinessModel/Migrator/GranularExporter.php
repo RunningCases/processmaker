@@ -28,15 +28,23 @@ class GranularExporter
 
     public function export($objectList)
     {
-        $this->beforeExport();
-        $exportObject = new ExportObjects();
-        $objectList = $exportObject->mapObjectList($objectList);
-        foreach ($objectList as $data) {
-            $migrator = $this->factory->create($data);
-            $migratorData = $migrator->export($this->prjuid);
-            $this->mergeData($migratorData);
+        try {
+            $this->beforeExport();
+            $exportObject = new ExportObjects();
+            $objectList = $exportObject->mapObjectList($objectList);
+            foreach ($objectList as $data) {
+                $migrator = $this->factory->create($data);
+                $migratorData = $migrator->export($this->prjuid);
+                $this->mergeData($migratorData);
+            }
+            return $this->publish();
+        } catch (ExportException $e) {
+            return array(
+                'success' => false,
+                'message' => $e->getMessage()
+            );
         }
-        return $this->publish();
+
     }
 
     protected function beforeExport()

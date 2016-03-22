@@ -56,7 +56,8 @@ class FilesMigrator implements Importable, Exportable
                 }
             }
         } catch (\Exception $e) {
-           Logger::log($e);
+            \Logger::log($e->getMessage());
+            throw new ImportException($e->getMessage());
         }
     }
 
@@ -88,7 +89,8 @@ class FilesMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e);
+            \Logger::log($e->getMessage());
+            throw new ExportException($e->getMessage());
         }
     }
 
