@@ -24,16 +24,17 @@ class ExportObjects
     );
 
     /**
-     * @param string $pro_uid
+     * @param string $objectsEnable
      * @return mixed|string
      * @throws \Exception
      */
-    public function objectList($pro_uid = '')
+    public function objectList($objectsEnable = '')
     {
         try {
+            $aObjectsEnable = explode('|', $objectsEnable);
             foreach ($this->objectsList as $key => $val) {
                 $key++;
-                $grid[] = array('OBJECT_ID' => $key, 'OBJECT_NAME' => $val, 'OBJECT_ACTION' => 0);
+                $grid[] = array('OBJECT_ID' => $key, 'OBJECT_NAME' => $val, 'OBJECT_ENABLE' => in_array(strtoupper(str_replace(' ', '',$val)), $aObjectsEnable) );
             }
 
             $r = new \stdclass();
