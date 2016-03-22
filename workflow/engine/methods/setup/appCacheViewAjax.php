@@ -296,7 +296,7 @@ switch ($request) {
         $passwd = $_POST['password'];
         $server = $_POST['host'];
         $code = $_POST['codeCaptcha'];
-        $aServer = split(":", $server);
+        $aServer = explode(':', $server);
         $serverName = $aServer[0];
         $port = (count($aServer) > 1) ? $aServer[1] : "none";
 

@@ -189,6 +189,7 @@ class Light extends Api
             'DEL_TASK_DUE_DATE' => 'dueDate',
             'DEL_INDEX'         => 'delIndex',
             'DEL_DELEGATE_DATE' => 'delegateDate',
+            'DEL_RISK_DATE' => 'delRiskDate',
             'user' => array(
                 'USR_UID'       => 'userId'
             ),
