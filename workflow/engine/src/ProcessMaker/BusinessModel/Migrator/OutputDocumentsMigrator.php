@@ -27,6 +27,10 @@ class OutputDocumentsMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
+    /**
+     * @param $data
+     * @param $replace
+     */
     public function import($data, $replace)
     {
         try {
@@ -35,10 +39,9 @@ class OutputDocumentsMigrator implements Importable, Exportable
             } else {
                 $this->processes->updateOutputRows($data);
             }
-
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());
-            throw new ImportException($e->getMessage());
+            throwException(new ImportException($e->getMessage()));
         }
     }
 

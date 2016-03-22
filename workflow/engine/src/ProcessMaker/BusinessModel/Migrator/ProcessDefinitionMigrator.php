@@ -81,7 +81,8 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             $oData->tasks = $this->processes->getTaskRows($prj_uid);
 
             $oDataTask = new \StdClass();
-            $oDataTask->taskusers = $this->processes->getTaskUserRows( $oData->tasks );
+            $oDataTask->taskusers = $this->getTaskUserRows($oData->tasks);
+
             $oData->routes = $this->processes->getRouteRows($prj_uid);
             $oData->lanes = $this->processes->getLaneRows($prj_uid);
             $oData->gateways = $this->processes->getGatewayRows($prj_uid);
