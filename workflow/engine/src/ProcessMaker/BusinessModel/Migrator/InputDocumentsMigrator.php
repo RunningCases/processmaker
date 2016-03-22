@@ -48,6 +48,7 @@ class InputDocumentsMigrator implements Importable, Exportable
     /**
      * @param $prj_uid
      * @return array
+     * @throws ExportException
      */
     public function export($prj_uid)
     {

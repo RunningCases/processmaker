@@ -1181,6 +1181,14 @@ class Processes
     }
 
     /**
+     * @param $row
+     */
+    public function updateProcessDefinitionRow ($row)
+    {
+
+    }
+
+    /**
      * Update a Process register in DB, if the process doesn't exist with the same
      * uid of the $row['PRO_UID'] parameter the function creates a new one based
      * on the $row parameter data.
@@ -1786,6 +1794,14 @@ class Processes
     }
 
     /**
+     * @param array $arrayData
+     */
+    public function updateProcessUser(array $arrayData)
+    {
+
+    }
+
+    /**
      * Create "Process Variables" records
      *
      * @param array $arrayData Data to create
@@ -1807,6 +1823,14 @@ class Processes
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * @param $arrayData
+     */
+    public function updateProcessVariables($arrayData)
+    {
+
     }
 
 
@@ -1854,6 +1878,14 @@ class Processes
             $res = $oInput->create( $row );
         }
         return;
+    }
+
+    /**
+     * @param $aInput
+     */
+    public function updateInputRows ($aInput)
+    {
+
     }
 
     /**
@@ -1954,6 +1986,14 @@ class Processes
             $res = $oOutput->create( $row );
         }
         return;
+    }
+
+    /**
+     * @param $aOutput
+     */
+    public function updateOutputRows ($aOutput)
+    {
+
     }
 
     /**
@@ -2525,6 +2565,14 @@ class Processes
         }
     } #@!Neyek
 
+    /**
+     * @param $aStepSupervisor
+     */
+    public function updateStepSupervisorRows ($aStepSupervisor)
+    {
+
+    }
+
 
     /**
      * change and Renew all Step GUID, because the process needs to have a new set of Steps
@@ -2624,7 +2672,15 @@ class Processes
             throw ($oError);
         }
     }
-    #@!neyek
+
+    /**
+     * @param $sProUid
+     * @param $oData
+     */
+    public function updateObjectPermissionRows ($sProUid, &$oData)
+    {
+
+    }
 
     /**
      * Get Object Permission Rows from a Process
@@ -2671,8 +2727,14 @@ class Processes
         }
         return;
     }
-    #@!neyek
 
+    /**
+     * @param $aDynaform
+     */
+    public function updateDynaformRows ($aDynaform)
+    {
+
+    }
 
     /**
      * Create Step Trigger Rows for a Process form an array
@@ -2767,6 +2829,14 @@ class Processes
             $res = $oTrigger->create( $row );
         }
         return;
+    }
+
+    /**
+     * @param $aTrigger
+     */
+    public function updateTriggerRows ($aTrigger)
+    {
+
     }
 
     /**
@@ -3423,6 +3493,14 @@ class Processes
         }
     } #@!neyek
 
+    /**
+     * @param $aConnections
+     */
+    public function updateDBConnectionsRows ($aConnections)
+    {
+
+    }
+
 
     /**
      * Create Report Tables from an array of data
@@ -3732,6 +3810,16 @@ class Processes
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * @param $processUid
+     * @param array $arrayData
+     * for Templates and Public Files
+     */
+    public function updateFilesManager($processUid, array $arrayData)
+    {
+
     }
 
     /**

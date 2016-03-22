@@ -71,6 +71,11 @@ class FilesMigrator implements Importable, Exportable
         // TODO: Implement beforeExport() method.
     }
 
+    /**
+     * @param $prj_uid
+     * @return array
+     * @throws ExportException
+     */
     public function export($prj_uid)
     {
         try {
