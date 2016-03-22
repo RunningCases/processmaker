@@ -2694,30 +2694,22 @@ class Cases
             }
 
             //Number records total
-            $criteriaCount = clone $criteria;
-
-            $criteriaCount->clearSelectColumns();
-            $criteriaCount->addSelectColumn('COUNT(' . \UsersPeer::USR_UID . ') AS NUM_REC');
-
-            $rsCriteriaCount = \UsersPeer::doSelectRS($criteriaCount);
-            $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            $result = $rsCriteriaCount->next();
-            $row = $rsCriteriaCount->getRow();
-
-            $numRecTotal = (int)($row['NUM_REC']);
+            $numRecTotal = \UsersPeer::doCount($criteria);
 
             //Query
+            $conf = new \Configurations();
+            $sortFieldDefault = \UsersPeer::TABLE_NAME . '.' . $conf->userNameFormatGetFirstFieldByUsersTable();
+
             if (!is_null($sortField) && trim($sortField) != '') {
                 $sortField = strtoupper($sortField);
 
                 if (in_array(\UsersPeer::TABLE_NAME . '.' . $sortField, $criteria->getSelectColumns())) {
                     $sortField = \UsersPeer::TABLE_NAME . '.' . $sortField;
                 } else {
-                    $sortField = \UsersPeer::USR_FIRSTNAME;
+                    $sortField = $sortFieldDefault;
                 }
             } else {
-                $sortField = \UsersPeer::USR_FIRSTNAME;
+                $sortField = $sortFieldDefault;
             }
 
             if (!is_null($sortDir) && trim($sortDir) != '' && strtoupper($sortDir) == 'DESC') {

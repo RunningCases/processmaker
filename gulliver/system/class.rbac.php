@@ -788,7 +788,7 @@ class RBAC
      */
     public function getRoleUsers ($ROL_UID, $filter = '')
     {
-        return $this->rolesObj->getRoleUsers( $ROL_UID, $filter );
+        throw new Exception(__METHOD__ . ': The method is deprecated');
     }
 
     /**
@@ -859,7 +859,7 @@ class RBAC
      */
     public function getAllUsers ($ROL_UID, $filter = '')
     {
-        return $this->rolesObj->getAllUsers( $ROL_UID, $filter );
+        throw new Exception(__METHOD__ . ': The method is deprecated');
     }
 
     /**
