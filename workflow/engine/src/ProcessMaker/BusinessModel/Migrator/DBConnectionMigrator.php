@@ -25,13 +25,21 @@ class DBConnectionMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
-    public function import($data)
+    /**
+     * @param $data
+     * @param $replace
+     */
+    public function import($data, $replace)
     {
         try {
-            $this->processes->createDBConnectionsRows($data);
+            if ($replace) {
+                $this->processes->createDBConnectionsRows($data);
+            } else {
+                $this->processes->updateDBConnectionsRows($data);
+            }
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());
-            throw new ImportException($e->getMessage());
+            throwException(new ImportException($e->getMessage()));
         }
     }
 

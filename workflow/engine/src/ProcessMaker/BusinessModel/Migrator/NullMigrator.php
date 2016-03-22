@@ -31,7 +31,7 @@ class NullMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
-    public function import($data)
+    public function import($data, $replace)
     {
         // TODO: Implement import() method.
     }

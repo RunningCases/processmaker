@@ -26,9 +26,22 @@ class SupervisorsMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
-    public function import($data)
+    /**
+     * @param $data
+     * @param $replace
+     */
+    public function import($data, $replace)
     {
-
+        try {
+            if ($replace) {
+                $this->processes->createProcessUser($data);
+            } else {
+                $this->processes->updateProcessUser($data);
+            }
+        } catch (\Exception $e) {
+            \Logger::log($e->getMessage());
+            throwException(new ImportException($e->getMessage()));
+        }
     }
 
     public function afterImport($data)

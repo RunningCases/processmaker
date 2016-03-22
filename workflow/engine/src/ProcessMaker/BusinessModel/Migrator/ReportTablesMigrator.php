@@ -25,9 +25,23 @@ class ReportTablesMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
-    public function import($data)
+    /**
+     * @param $data
+     * @param $replace
+     */
+    public function import($data, $replace)
     {
-
+        try {
+            $aReportTablesVars = array();
+            if ($replace) {
+                $this->processes->createReportTables($data, $aReportTablesVars);
+            } else {
+                $this->processes->updateReportTables($data, $aReportTablesVars);
+            }
+        } catch (\Exception $e) {
+            \Logger::log($e->getMessage());
+            throwException(new ImportException($e->getMessage()));
+        }
     }
 
     public function afterImport($data)
