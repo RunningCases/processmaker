@@ -5,6 +5,6 @@ namespace ProcessMaker\BusinessModel\Migrator;
 interface Importable
 {
     public function beforeImport($data);
-    public function import($data);
+    public function import($data, $replace);
     public function afterImport($data);
 }

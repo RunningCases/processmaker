@@ -32,10 +32,14 @@ class VariablesMigrator implements Importable, Exportable
      * Imports the process variables
      * @param $data
      */
-    public function import($data)
+    public function import($data, $replace)
     {
         try {
-            $this->processes->createProcessVariables($data);
+            if ($replace) {
+                $this->processes->createProcessVariables($data);
+            } else {
+                $this->processes->updateProcessVariables($data);
+            }
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());
             throw new ImportException($e->getMessage());
