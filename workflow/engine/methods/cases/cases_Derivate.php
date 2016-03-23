@@ -167,28 +167,28 @@ try {
 
     $flagGmail = false;
     /*----------------------------------********---------------------------------*/
-    $licensedFeatures = &PMLicensedFeatures::getSingleton();
-    if($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')){
-    	G::LoadClass( "pmGoogleApi" );
-    	$pmGoogle = new PMGoogleApi();
-    	if($pmGoogle->getServiceGmailStatus()){
-    		$flagGmail = true;
-
-    		$appDel = new AppDelegation();
-    		$actualThread = $appDel->Load($_SESSION['APPLICATION'], $_SESSION['INDEX']);
-
-    		$appDelPrev = $appDel->LoadParallel($_SESSION['APPLICATION']);
-    		$Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
-    		if(!$appDelPrev){
-    			$Pmgmail->sendEmail($_SESSION['APPLICATION'], "", $_SESSION['INDEX'], $_POST['form']['TASKS'], $appFields['APP_DATA']);
-    		}else{
-	    		foreach ($appDelPrev as $app){
-	    			if( ($app['DEL_INDEX'] != $_SESSION['INDEX']) && ($app['DEL_PREVIOUS'] != $actualThread['DEL_PREVIOUS']) ){
-	    				$Pmgmail->sendEmail($_SESSION['APPLICATION'], "", $app['DEL_INDEX'], $_POST['form']['TASKS'], $appFields['APP_DATA']);
-	    			}
-	    		}
-    		}
-    	}
+    $licensedFeatures = &PMLicensedFeatures::getSingleton ();
+    if ($licensedFeatures->verifyfeature ( '7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09' )) {
+        G::LoadClass ( "pmGoogleApi" );
+        $pmGoogle = new PMGoogleApi ();
+        if ($pmGoogle->getServiceGmailStatus ()) {
+            $flagGmail = true;
+            
+            $appDel = new AppDelegation ();
+            $actualThread = $appDel->Load ( $_SESSION ['APPLICATION'], $_SESSION ['INDEX'] );
+            
+            $appDelPrev = $appDel->LoadParallel ( $_SESSION ['APPLICATION'] );
+            $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail ();
+            if (! $appDelPrev) {
+                $Pmgmail->sendEmail ( $_SESSION ['APPLICATION'], "", $_SESSION ['INDEX'], $_POST ['form'] ['TASKS'], $appFields ['APP_DATA'] );
+            } else {
+                foreach ( $appDelPrev as $app ) {
+                    if (($app ['DEL_INDEX'] != $_SESSION ['INDEX']) && ($app ['DEL_PREVIOUS'] != $actualThread ['DEL_PREVIOUS'])) {
+                        $Pmgmail->sendEmail ( $_SESSION ['APPLICATION'], "", $app ['DEL_INDEX'], $_POST ['form'] ['TASKS'], $appFields ['APP_DATA'] );
+                    }
+                }
+            }
+        }
     }
     /*----------------------------------********---------------------------------*/
 
@@ -252,15 +252,15 @@ try {
     /*----------------------------------********---------------------------------*/
 
     $debuggerAvailable = true;
-    
+
     $casesRedirector = 'casesListExtJsRedirector';
-    if (isset( $_SESSION['user_experience'] ) && $flagGmail === false ) {
-        $aNextStep['PAGE'] = $casesRedirector.'?ux=' . $_SESSION['user_experience'];
+    if (isset ( $_SESSION ['user_experience'] ) && $flagGmail === false) {
+        $aNextStep ['PAGE'] = $casesRedirector . '?ux=' . $_SESSION ['user_experience'];
         $debuggerAvailable = false;
-    } else if( $flagGmail == true ){
-        $aNextStep['PAGE'] = $casesRedirector.'?gmail=1';
+    } else if ($flagGmail == true) {
+        $aNextStep ['PAGE'] = $casesRedirector . '?gmail=1';
     } else {
-        $aNextStep['PAGE'] = $casesRedirector;
+        $aNextStep ['PAGE'] = $casesRedirector;
     }
 
     if (isset( $_SESSION['PMDEBUGGER'] ) && $_SESSION['PMDEBUGGER'] && $debuggerAvailable) {

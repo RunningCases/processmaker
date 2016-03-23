@@ -115,10 +115,6 @@ class Pmgmail {
         }
         $appData = $this->getDraftApp($app_uid, $index);
 
-        if (!$appData){
-        	$appData = $this->getDraftApp($app_uid, $index-1);
-        }
-
         foreach ($appData as $application) {
             $appNumber = $application['APP_NUMBER'];
             $appStatus = $application['APP_STATUS'];
@@ -139,100 +135,53 @@ class Pmgmail {
                 $labelID = "PMIBX";
             }
 
-            if ((string)$mailToAddresses === "") {
-                 if ($arrayTask) {
-                     $oCases = new \Cases();
+            if (( string ) $mailToAddresses === "") {
+                if ($arrayTask) {
+                    $oCases = new \Cases ();
 
-	            	foreach ($arrayTask as $aTask) {
-	            		if(!isset($aTask["USR_UID"])){
-	            			$aTask["USR_UID"] = "";
-	            		}
-	            		$respTo = $oCases->getTo($aTask["TAS_ASSIGN_TYPE"], $aTask["TAS_UID"], $aTask["USR_UID"], $arrayData);
-	            		$mailToAddresses = $respTo['to'];
-	            		$mailCcAddresses = $respTo['cc'];
+                    foreach ( $arrayTask as $aTask ) {
+                        if (! isset ( $aTask ["USR_UID"] )) {
+                            $aTask ["USR_UID"] = "";
+                        }
+                        $respTo = $oCases->getTo ( $aTask ["TAS_ASSIGN_TYPE"], $aTask ["TAS_UID"], $aTask ["USR_UID"], $arrayData );
+                        $mailToAddresses = $respTo ['to'];
+                        $mailCcAddresses = $respTo ['cc'];
+                        
+                        if ($aTask ["TAS_ASSIGN_TYPE"] === "SELF_SERVICE") {
+                            $labelID = "PMUASS";
+                            if (( string ) $mailToAddresses === "") { // Self Service Value Based
+                                $criteria = new \Criteria ( "workflow" );
+                                $criteria->addSelectColumn ( \AppAssignSelfServiceValuePeer::GRP_UID );
+                                $criteria->add ( \AppAssignSelfServiceValuePeer::APP_UID, $app_uid );
 
-	            		if($aTask["TAS_ASSIGN_TYPE"] === "SELF_SERVICE"){
-	            			$labelID = "PMUASS";
-		            		if ((string)$mailToAddresses === ""){ // Self Service Value Based
-		            			$criteria = new \Criteria("workflow");
-		            			$criteria->addSelectColumn(\AppAssignSelfServiceValuePeer::GRP_UID);
-		            			$criteria->add(\AppAssignSelfServiceValuePeer::APP_UID, $app_uid);
-		            			
-		            			$rsCriteria = \AppAssignSelfServiceValuePeer::doSelectRs($criteria);
-		            			$rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-		            			
-		            			while ($rsCriteria->next()) {
-		            				$row = $rsCriteria->getRow();
-		            			}
-		            			$taskUsers = unserialize($row['GRP_UID']);
+                                $rsCriteria = \AppAssignSelfServiceValuePeer::doSelectRs ( $criteria );
+                                $rsCriteria->setFetchmode ( \ResultSet::FETCHMODE_ASSOC );
 
-		            			foreach ($taskUsers as $user) {
-		            				$oUsers = new \Users();
-		            				$usrData = $oUsers->loadDetails($user);
-		            				$nextMail = $usrData['USR_EMAIL'];
-		            				$mailToAddresses .= ($mailToAddresses == '') ? $nextMail : ',' . $nextMail;
-		            			}
-		            		}
-	            		} else {
-	            			if (!$aTask["TAS_PARENT"]){
-	            				$aTask["TAS_PARENT"] = $tasUid;
-	            			}
-	            			$oTask = new \Task();
-	            			$aTaskInfo = $oTask->load($aTask["TAS_PARENT"]);
+                                while ( $rsCriteria->next () ) {
+                                    $row = $rsCriteria->getRow ();
+                                }
+                                $taskUsers = unserialize ( $row ['GRP_UID'] );
+                                $oUsers = new \Users ();
+                                if ($taskUsers !== false){
+                                    foreach ( $taskUsers as $user ) {
+                                        $usrData = $oUsers->loadDetails ( $user );
+                                        $nextMail = $usrData ['USR_EMAIL'];
+                                        $mailToAddresses .= ($mailToAddresses == '') ? $nextMail : ',' . $nextMail;
+                                    }
+                                } else {
+                                    $usrData = $oUsers->loadDetails ( $user );
+                                    $mailToAddresses = $usrData ['USR_EMAIL'];
+                                }
+                                
+                            }
+                        }
+                    }
+                } else {
+                    $oUsers = new \Users ();
 
-	            			$oSubPro = new \SubApplication();
-	            			$subProAppUid = "";
-		            		if( ($aTaskInfo["TAS_TYPE"] === "SUBPROCESS") ){
-		            			$subProAppUid = $oSubPro->loadSubProUidByParent($app_uid, $index, $index+1);
-		            		} else if($aTask['TAS_UID'] == -1 && $aTask['TAS_ASSIGN_TYPE'] == "nobody"){
-		            			$subProAppUid = $oSubPro->loadSubProUidBySon($app_uid, $index, $index+1);
-
-		            			$appDel = new \AppDelegation();
-		            			$actualThread = $appDel->Load($subProAppUid, $index+1);
-		            			$index = $actualThread['DEL_INDEX']+1;
-		            			
-		            			$aCriteria = new \Criteria("workflow");
-		            			$aCriteria->addSelectColumn(\RoutePeer::ROU_NEXT_TASK);
-		            			$aCriteria->add(\RoutePeer::TAS_UID, $actualThread['TAS_UID']);
-
-		            			$roCriteria = \RoutePeer::doSelectRs($aCriteria);
-		            			$roCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-		            			while ($roCriteria->next()) {
-		            				$rowTas = $roCriteria->getRow();
-		            			}
-
-		            			$aTaskInfo = $oTask->load($rowTas['ROU_NEXT_TASK']);
-		            			$newTask = new \Tasks();
-		            			$aTaskUsers = $newTask->getUsersOfTask($rowTas['ROU_NEXT_TASK'],1);
-
-		            			foreach ($aTaskUsers as $user) {
-		            				$nextMail = $user['USR_EMAIL'];
-		            				$mailToAddresses .= ($mailToAddresses == '') ? $nextMail : ',' . $nextMail;
-		            			}
-		            		}
-
-			            	if($subProAppUid !== ""){
-			            		$subProData = $oApplication->Load($subProAppUid);
-			            		$oProcess = new \Processes();
-			            		$proInfo = $oProcess->getProcessRow($subProData['PRO_UID']);
-	
-			            		$appNumber = $subProData['APP_NUMBER'];
-			            		$app_uid = $subProAppUid;
-			            		$tasName = $aTaskInfo["TAS_TITLE"];
-			            		$appStatus = $subProData['APP_STATUS'];
-			            		$prvUsr = $nextUsr;
-			            		$delegateDate = $subProData['APP_CREATE_DATE'];
-			            		$proName = $proInfo['PRO_TITLE'];
-			            	}
-		            	}
-	            	}
-            	}else {
-            		$oUsers = new \Users();
-
-            		$usrData = $oUsers->loadDetails($nextUsr);
-            		$mailToAddresses = $usrData['USR_EMAIL'];
-            	}
+                    $usrData = $oUsers->loadDetails ( $nextUsr );
+                    $mailToAddresses = $usrData ['USR_EMAIL'];
+                }
             }
 
             //first template

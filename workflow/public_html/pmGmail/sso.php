@@ -26,16 +26,16 @@ curl_setopt( $gCurl, CURLOPT_SSL_VERIFYPEER, false);
 curl_setopt( $gCurl, CURLOPT_CONNECTTIMEOUT, 0);
 curl_setopt($gCurl, CURLOPT_SSL_VERIFYHOST, false);
 
-if(curl_exec($gCurl) === false){
-	echo 'Curl error: ' . curl_error($gCurl);
+if (curl_exec ( $gCurl ) === false) {
+    echo 'Curl error: ' . curl_error ( $gCurl );
 } else {
-	$gCurl_response = curl_exec($gCurl);
-	curl_close($gCurl);
-	$gResp = G::json_decode($gCurl_response);
-	if ($gResp === false) {
-		echo Bootstrap::LoadTranslation('ID_NO_LICENSE_FEATURE_ENABLED');
-		die;
-	}
+    $gCurl_response = curl_exec ( $gCurl );
+    curl_close ( $gCurl );
+    $gResp = G::json_decode ( $gCurl_response );
+    if ($gResp === false) {
+        echo Bootstrap::LoadTranslation ( 'ID_NO_LICENSE_FEATURE_ENABLED' );
+        die ();
+    }
 }
 set_time_limit(60);
 
@@ -73,10 +73,10 @@ if( !isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] != $decodedResp
 	$ch = curl_init();
 	// define options
 	$optArray = array(
-	    CURLOPT_URL => $url,
-	    CURLOPT_RETURNTRANSFER => true,
-		CURLOPT_SSL_VERIFYPEER => false,
-		CURLOPT_SSL_VERIFYHOST => false
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false
 	);
 	// apply those options
 	curl_setopt_array($ch, $optArray);
@@ -125,12 +125,14 @@ if( !isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] != $decodedResp
 if ($action == "draft"){
 	//sending the email
 	$curlApp = curl_init( 'https://' . $server . '/api/1.0/' . $pmws . '/gmailIntegration/sendEmail/' . $appUid . '/to/' . $gmail . '/index/' . $delIndex );
-	curl_setopt( $curlApp, CURLOPT_HTTPHEADER, array( 'Authorization: Bearer ' . $pmtoken ) );
-	curl_setopt( $curlApp, CURLOPT_CUSTOMREQUEST, "POST");
-	curl_setopt( $curlApp, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt( $curlApp, CURLOPT_SSL_VERIFYPEER, false);
-	curl_setopt( $curlApp, CURLOPT_SSL_VERIFYHOST, false);
-	curl_setopt( $curlApp, CURLOPT_CONNECTTIMEOUT, 0);
+    curl_setopt ( $curlApp, CURLOPT_HTTPHEADER, array (
+            'Authorization: Bearer ' . $pmtoken 
+    ) );
+    curl_setopt ( $curlApp, CURLOPT_CUSTOMREQUEST, "POST" );
+    curl_setopt ( $curlApp, CURLOPT_RETURNTRANSFER, true );
+    curl_setopt ( $curlApp, CURLOPT_SSL_VERIFYPEER, false );
+    curl_setopt ( $curlApp, CURLOPT_SSL_VERIFYHOST, false );
+    curl_setopt ( $curlApp, CURLOPT_CONNECTTIMEOUT, 0 );
 
 	$curl_response_app = curl_exec( $curlApp );
 	curl_close( $curlApp );
