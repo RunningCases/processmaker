@@ -1796,8 +1796,9 @@ class Processes
                 $record = $value;
                 if ($processUser->Exists($record["PU_UID"])) {
                     $result = $processUser->update($record["PU_UID"]);
+                } else {
+                    $result = $processUser->create($record);
                 }
-                $result = $processUser->create($record);
             }
         } catch (Exception $e) {
             throw $e;
@@ -2608,8 +2609,9 @@ class Processes
                 $oStepSupervisor = new StepSupervisor();
                 if ($oStepSupervisor->Exists( $row['STEP_UID'] )) {
                     $oStepSupervisor->update( $row['STEP_UID'] );
+                } else {
+                    $oStepSupervisor->create( $row );
                 }
-                $oStepSupervisor->create( $row );
             }
         } catch (Exception $e) {
             throw $e;
@@ -2746,8 +2748,9 @@ class Processes
                 $oPermission = new ObjectPermission();
                 if ($oPermission->Exists( $row['OP_UID'] )) {
                     $oPermission->update( $row['OP_UID'] );
+                } else {
+                    $oPermission->create($row);
                 }
-                $oPermission->create( $row );
             }
         } catch (Exception $e) {
             throw $e;
@@ -3594,8 +3597,9 @@ class Processes
                 $oConnection = new DbSource();
                 if ($oConnection->Exists( $aRow['DBS_UID'], $aRow['PRO_UID'] )) {
                     $oConnection->update( $aRow );
+                } else {
+                    $oConnection->create( $aRow );
                 }
-                $oConnection->create( $aRow );
 
                 // Update information in the table of contents
                 $oContent = new Content();

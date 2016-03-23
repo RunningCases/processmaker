@@ -35,7 +35,12 @@ class AssignmentRulesMigrator implements Importable, Exportable
     public function import($data, $replace)
     {
         try {
-            $this->processes->createTaskRows($data);
+            if ($replace) {
+                $this->processes->createTaskRows($data);
+            } else {
+                $this->processes->updateTaskRows($data);
+            }
+
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());
             throw new ImportException($e->getMessage());
