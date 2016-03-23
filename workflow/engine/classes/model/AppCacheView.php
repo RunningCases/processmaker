@@ -34,18 +34,18 @@ class AppCacheView extends BaseAppCacheView
     public $confCasesList;
     public $pathToAppCacheFiles;
 
-    public function getAllCounters($aTypes, $userUid, $processSummary = false)
+    public function getAllCounters($aTypes, $userUid, $flagPausedSupervisor = true)
     {
         $aResult = array();
 
         foreach ($aTypes as $type) {
-            $aResult[$type] = $this->getListCounters($type, $userUid, $processSummary);
+            $aResult[$type] = $this->getListCounters($type, $userUid, $flagPausedSupervisor);
         }
 
         return $aResult;
     }
 
-    public function getListCounters($type, $userUid, $processSummary)
+    public function getListCounters($type, $userUid, $flagPausedSupervisor = true)
     {
         $distinct = true;
 
@@ -65,7 +65,7 @@ class AppCacheView extends BaseAppCacheView
                 $distinct = false;
                 break;
             case 'paused':
-                $criteria = $this->getPausedCountCriteria($userUid);
+                $criteria = $this->getPausedCountCriteria($userUid, $flagPausedSupervisor);
                 break;
             case 'completed':
                 $criteria = $this->getCompletedCountCriteria($userUid);
@@ -520,9 +520,10 @@ class AppCacheView extends BaseAppCacheView
      * gets the PAUSED cases list criteria
      * param $userUid the current userUid
      * param $doCount if true this will return the criteria for count cases only
+     * @param bool $flagSupervisor Flag to include the records of the supervisor
      * @return Criteria object $Criteria
      */
-    public function getPaused($userUid, $doCount)
+    public function getPaused($userUid, $doCount, $flagSupervisor = true)
     {
         //adding configuration fields from the configuration options
         //and forming the criteria object
@@ -538,12 +539,17 @@ class AppCacheView extends BaseAppCacheView
         //$criteria->add(AppCacheViewPeer::USR_UID, $userUid);
 
         if (!empty($userUid)) {
-            $criteria->add(
-                $criteria->getNewCriterion(AppCacheViewPeer::USR_UID, $userUid)->addOr(
-                $criteria->getNewCriterion(AppCacheViewPeer::PRO_UID, $aProcesses, Criteria::IN))
-            );
+            $criterionAux = $criteria->getNewCriterion(AppCacheViewPeer::USR_UID, $userUid, Criteria::EQUAL);
+
+            if ($flagSupervisor && !empty($aProcesses)) {
+                $criterionAux = $criterionAux->addOr(
+                    $criteria->getNewCriterion(AppCacheViewPeer::PRO_UID, $aProcesses, Criteria::IN)
+                );
+            }
+
+            $criteria->add($criterionAux);
         } else {
-            if (count($aProcesses) > 0) {
+            if ($flagSupervisor && !empty($aProcesses)) {
                 $criteria->add(AppCacheViewPeer::PRO_UID, $aProcesses, Criteria::IN);
             }
         }
@@ -568,11 +574,12 @@ class AppCacheView extends BaseAppCacheView
     /**
      * gets the PAUSED cases list criteria for count
      * param $userUid the current userUid
+     * @param bool $flagSupervisor Flag to include the records of the supervisor
      * @return Criteria object $Criteria
      */
-    public function getPausedCountCriteria($userUid)
+    public function getPausedCountCriteria($userUid, $flagSupervisor = true)
     {
-        return $this->getPaused($userUid, true);
+        return $this->getPaused($userUid, true, $flagSupervisor);
     }
 
     /**
