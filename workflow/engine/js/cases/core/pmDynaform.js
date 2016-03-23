@@ -108,7 +108,14 @@ $(window).load(function () {
                 form.appendChild(arrayRequired);
                 dyn_forward = document.getElementById("dyn_forward");
                 dyn_forward.onclick = function () {
-                    if (window.project.getForms()[0].isValid()) {
+                    if (window.dynaform.getForms()[0].isValid()) {
+                        //Destroy modal previous
+                        if($('#modalProgressBar').length > 0){
+                            $('#modalProgressBar').remove();
+                        }
+                        //Show Modal for nex step
+                        var viewModalSubmit = new PMDynaform.view.ModalProgressBar();
+                        viewModalSubmit.render();
                         form.submit();
                     }
                     return false;
