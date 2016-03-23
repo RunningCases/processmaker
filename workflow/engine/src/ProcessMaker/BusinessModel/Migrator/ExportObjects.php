@@ -63,5 +63,28 @@ class ExportObjects
             throw $e;
         }
     }
+
+    /**
+     * @param $objects
+     * @return array
+     * @throws \Exception
+     */
+    public function getIdObjectList($objects)
+    {
+        try {
+            $idObjectList = array();
+            foreach ($this->objectsList as $key => $val) {
+                $key++;
+                foreach ($objects as $row) {
+                    if(strtoupper(str_replace(' ', '', $this->objectsList[$key - 1])) === $row){
+                        array_push($idObjectList, $key);
+                    }
+                }
+            }
+            return $idObjectList;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
 

@@ -131,13 +131,13 @@ class XmlImporter extends Importer
             }
         }
         //Get the ProcessObject
-        $this->objects = (isset($this->metadata['processObject'])) ? $this->metadata['processObject'] : '';
+        $this->objects = (isset($this->metadata['export_objects'])) ? $this->metadata['export_objects'] : '';
 
         return array(
             "tables"  => $tables,
             "files"   => array("workflow" => $wfFiles, "bpmn" => array()),
-            "version" => $this->version,
-            "objects" => $this->objects
+            "version" => $this->getVersion(),
+            "objects" => $this->getObjects()
         );
     }
 

@@ -27,6 +27,18 @@ use \ProcessMaker\Importer\XmlImporter;
 ini_set("max_execution_time", 0);
 $affectedGroups = array();
 
+if(preg_match("/^(?:pm|pmx)$/", pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION))){
+    $import = new XmlImporter();
+    $granularImport = false;
+    $objectImport = array();
+    $data = $import->load($_FILES["PROCESS_FILENAME"]["tmp_name"]);
+    if(!version_compare($data['version'], '3.0', '>')){
+        $objectImport = (isset($data['objects'])) ? explode('|', $data['objects']) : "";
+        $ids = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
+        $objectImport = $ids->getIdObjectList($objectImport);
+        $granularImport = true;
+    }
+}
 /*----------------------------------********---------------------------------*/
 if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=") &&
     isset($_FILES["PROCESS_FILENAME"]) &&
@@ -60,10 +72,6 @@ if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm
                 if (isset($data["tables"]["workflow"]["triggers"]) && is_array($data["tables"]["workflow"]["triggers"]) && !empty($data["tables"]["workflow"]["triggers"])) {
                     $arrayTrigger = $data["tables"]["workflow"]["triggers"];
                     $projectTitle = $data["tables"]["bpmn"]["project"][0]["prj_name"];
-                }
-                if(isset($data['objects'])){
-                    $objectImport = $data['objects'];
-                    $granularImport = 'YES';
                 }
                 break;
         }
@@ -124,20 +132,24 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
     try {
         $opt1 = XmlImporter::IMPORT_OPTION_CREATE_NEW;
         $opt2 = XmlImporter::GROUP_IMPORT_OPTION_CREATE_NEW;
-        if($_POST['generateUid'] === 'generate') {
-            $generateUid = true;
-            $prjUid = $importer->import($opt1,$opt2,$generateUid);
-        } elseif($_POST['generateUid'] === 'keep') {
-            $generateUid = false;
-            $prjUid = $importer->import($opt1,$opt2,$generateUid);
-        } else {
-            $prjUid = $importer->import();
+        $prjUid = '';
+        $proType = '';
+        if(isset($_POST['objectsToImport']) && sizeof(G::json_decode($_POST['objectsToImport']))){
+            $objectsToImport = G::json_decode($_POST['objectsToImport']);
+            if($_POST['generateUid'] === 'generate') {
+                $generateUid = true;
+                $prjUid = $importer->import($opt1,$opt2,$generateUid);
+            } elseif($_POST['generateUid'] === 'keep') {
+                $generateUid = false;
+                $prjUid = $importer->import($opt1,$opt2,$generateUid);
+            } else {
+                $prjUid = $importer->import($opt1,$opt2, null, $objectsToImport);
+            }
+            G::LoadClass( 'Process' );
+            $oProcess = new Process();
+            $processData = $oProcess->load( $prjUid );
+            $proType = $processData["PRO_TYPE"];
         }
-
-        G::LoadClass( 'Process' );
-        $oProcess = new Process();
-        $processData = $oProcess->load( $prjUid );
-        $proType = $processData["PRO_TYPE"]; 
 
         $result = array(
             "success"                   => true,
@@ -148,8 +160,8 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
             "affectedGroups"            => '',
             "sNewProUid"                => $prjUid,
             "project_type"              => 'bpmn',
-            "isGranularImport"          => '',
-            "objectGranularImport"      => '',
+            "isGranularImport"          => $granularImport,
+            "objectGranularImport"      => $objectImport,
             "project_type_aux"          => $proType
         );
     } catch (Exception $e) {
@@ -217,25 +229,11 @@ if (isset($_POST["PRO_FILENAME"]) &&
             break;
     }
 
-    //Check the Granular Import selected by User
-    $granularOptions = '';
-    $granularImport  = 'NO';
-    if(isset($_POST["granularOptions"])){
-        $granularImport  = 'YES';
-        $export = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
-        $granularOptions = $export->mapObjectList($_POST["granularOptions"]);
-
-    }
-
     $importer = new XmlImporter();
     $importer->setData("usr_uid", $_SESSION["USER_LOGGED"]);
     $importer->setSourceFile(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"]);
 
     try {
-        if(version_compare($importer->getVersion(), '3.0', '>')){
-            //To do
-        }
-
         $prjUid = $importer->import($option, $optionGroup, null, $granularImport,$granularOptions);
         
         G::LoadClass( 'Process' );
