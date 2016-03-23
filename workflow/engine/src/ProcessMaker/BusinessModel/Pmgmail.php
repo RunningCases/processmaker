@@ -167,9 +167,6 @@ class Pmgmail {
                                 if (is_array($targetIds)) {
                                     foreach ( $targetIds as $user ) {
                                         $usrData = $oUsers->loadDetails ( $user );
-                                        if ($usrData !== null) {
-                                            $isGroup = true;
-                                        }
                                         $nextMail = $usrData ['USR_EMAIL'];
                                         $mailToAddresses .= ($mailToAddresses == '') ? $nextMail : ',' . $nextMail;
                                     }
