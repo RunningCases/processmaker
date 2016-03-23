@@ -413,7 +413,7 @@ try {
     }
 
     $configS = System::getSystemConfiguration('', '', SYS_SYS);
-    $activeSession = array_key_exists('session_block', $configS) ? !(int)$configS['session_block']:true;
+    $activeSession = isset($configS['session_block']) ? !(int)$configS['session_block']:true;
     if ($activeSession){
         setcookie("PM-TabPrimary", 101010010, time() + (24 * 60 * 60), '/');
     }

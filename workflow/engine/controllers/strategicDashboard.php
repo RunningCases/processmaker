@@ -31,7 +31,7 @@ class StrategicDashboard extends Controller
         $user = new Users();
         $user = $user->load($RBAC->aUserInfo['USER_INFO']['USR_UID']);
         $this->usrUnitCost = $this->currencySymbolToShow($user);
-        $this->urlProxy = '/api/1.0/' . SYS_SYS . '/';
+        $this->urlProxy = System::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . SYS_SYS . '/';
         //change
         $clientId = 'x-pm-local-client';
         $client = $this->getClientCredentials($clientId);
@@ -144,7 +144,7 @@ class StrategicDashboard extends Controller
     public function formDashboard ($data)
     {
         try {
-            
+
             $this->includeExtJS( 'strategicDashboard/formDashboard', true, true );
             $this->setView( 'strategicDashboard/formDashboard' );
 
@@ -164,7 +164,7 @@ class StrategicDashboard extends Controller
     public function formEditDashboard ($data)
     {
         try {
-            
+
             $this->includeExtJS( 'strategicDashboard/formDashboard', true, true );
             $this->setView( 'strategicDashboard/formDashboard' );
 
@@ -196,7 +196,7 @@ class StrategicDashboard extends Controller
             $this->setVar('usrId', $this->usrId);
             $this->setVar('credentials', $this->clientToken);
             $this->setVar('unitCost', $this->usrUnitCost);
-			
+
 			$translation = $this->getTranslations();
             $this->setVar('translation', $translation);
             $this->render();

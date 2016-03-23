@@ -83,7 +83,7 @@ if ($oServerConf->isRtl( SYS_LANG )) {
 
 $urlProxy = 'casesMenuLoader?action=getAllCounters&r=';
 /*----------------------------------********---------------------------------*/
-$urlProxy = '/api/1.0/' . SYS_SYS . '/system/counters-lists?r=';
+$urlProxy = System::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . SYS_SYS . '/system/counters-lists?r=';
 $clientId = 'x-pm-local-client';
 $client = getClientCredentials($clientId);
 $authCode = getAuthorizationCode($client);

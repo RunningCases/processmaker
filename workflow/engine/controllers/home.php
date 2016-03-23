@@ -105,6 +105,9 @@ class Home extends Controller
 
         foreach ($processList as $key => $valueProcess) {
             foreach ($proData as $keyPro => $valuePro) {
+                if (!isset($valueProcess['pro_uid'])) {
+                    $valueProcess['pro_uid'] = '';
+                }
                 if ($valueProcess['pro_uid'] == $valuePro['PRO_UID']) {
                     $processesList[] = $valueProcess;
                 }

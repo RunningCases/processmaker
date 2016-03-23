@@ -2,40 +2,41 @@ PM.Sessions = (function () {
     var Sessions = function () {
         if (window.location.pathname.indexOf("login") === -1 &&
             window.location.pathname.indexOf("sysLogin") === -1 &&
-            this.getCookie('PM-TabPrimary') != 101010010) {
+            this.getCookie('PM-TabPrimary') !== '101010010') {
+            this.isClose = (this.getLabel('mainWindowClose') === "true");
+            if (this.isClose && parent.parent.parent.window.name === "") {
+                this.register();
+            }
             this.checkTab();
         }
     };
 
     Sessions.prototype.register = function () {
+        this.setLabel('mainWindowClose', false);
         window.name = this.getCookie('PM-TabPrimary');
     };
 
     Sessions.prototype.checkTab = function () {
         var ieVersion,
-            msg;
-        if (parent.parent.parent.window.name !== this.getCookie('PM-TabPrimary') && parent.parent.parent.window.name.indexOf(this.getCookie('PM-TabPrimary')) === -1 ) {
+            msg,
+            win;
+        if (window.name === this.getCookie('PM-TabPrimary')) {
+            this.setLabel('mainWindowClose', false);
+        }
+        if (parent.parent.parent.window.name !== this.getCookie('PM-TabPrimary') &&
+            parent.parent.parent.window.name.indexOf(this.getCookie('PM-TabPrimary')) === -1 ) {
             ieVersion = this.detectBrowser();
             msg = this.getLabel('ID_BLOCKER_MSG');
-
+            win = window.open('', '_self', '');
             if (ieVersion && ieVersion <= 11) {
-                window.open('', '_self', '');
-                window.document.execCommand('Stop');
-                if (confirm(msg)) {
-                    window.close();
-                }
-            } else if (ieVersion && ieVersion <= 12) {
-                window.open('', '_self', '');
-                window.document.execCommand('Stop');
-                if (confirm(msg)) {
-                    window.close();
-                }
+                win.document.execCommand('Stop');
+                win.open("/errors/block.php","_self");
+            } else if (ieVersion && ieVersion <= 13) {
+                win.document.execCommand('Stop');
+                win.open("/errors/block.php","_self");
             } else {
-                window.open('', '_self', '');
-                window.stop();
-                if (confirm(msg)) {
-                    window.close();
-                }
+                win.stop();
+                win.open("/errors/block.php","_self");
             }
         }
     };
@@ -105,14 +106,28 @@ PM.Sessions = (function () {
         this.createCookie(name,"",-1);
     };
 
-    Sessions.prototype.setLabel = function(nameLabel) {
-        localStorage.setItem(nameLabel, _(nameLabel));
+    Sessions.prototype.setLabel = function(nameLabel, labelValue) {
+        localStorage.setItem(nameLabel, labelValue);
     };
 
     Sessions.prototype.getLabel = function(nameLabel) {
         return localStorage.getItem(nameLabel);
     };
 
+    Sessions.prototype.addEventHandler = function (elem, eventType, handler) {
+        if (elem.addEventListener)
+            elem.addEventListener(eventType, handler, false);
+        else if (elem.attachEvent)
+            elem.attachEvent('on' + eventType, handler);
+    };
+
+    Sessions.prototype.isClose = false;
+
     return new Sessions();
 })();
 
+PM.Sessions.addEventHandler(window, "unload",function () {
+    if (window.name === PM.Sessions.getCookie('PM-TabPrimary')){
+        PM.Sessions.setLabel('mainWindowClose', true);
+    }
+});

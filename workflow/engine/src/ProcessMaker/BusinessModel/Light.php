@@ -1257,11 +1257,18 @@ class Light
      */
     public function getConfiguration()
     {
-        $sysConf = \System::getSystemConfiguration('', '', SYS_SYS);
+        $sysConf = \Bootstrap::getSystemConfiguration('','',SYS_SYS);
+        $multiTimeZone = false;
+        //Set Time Zone
+        /*----------------------------------********---------------------------------*/
+        if (\PMLicensedFeatures::getSingleton()->verifyfeature
+        ('oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=')) {
+            $multiTimeZone = (int)($sysConf['system_utc_time_zone']) == 1;
+        }
+        /*----------------------------------********---------------------------------*/
         $offset = timezone_offset_get( new \DateTimeZone( $sysConf['time_zone'] ), new \DateTime() );
         $response['timeZone'] = sprintf( "GMT%s%02d:%02d", ( $offset >= 0 ) ? '+' : '-', abs( $offset / 3600 ), abs( ($offset % 3600) / 60 ) );
-        $response['multiTimeZone'] = (isset($sysConf['system_utc_time_zone']) && $sysConf['system_utc_time_zone'])
-            ?true:false;
+        $response['multiTimeZone'] = $multiTimeZone;
         $fields = \System::getSysInfo();
         $response['version'] = $fields['PM_VERSION'];
 

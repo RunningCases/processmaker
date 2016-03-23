@@ -44,7 +44,7 @@ $(window).load(function () {
         		action = "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
         	}
             url = location.protocol + '//' + location.host;
-            
+
             url += '/sys' + workspace + '/en/neoclassic/cases/' + action;
             method = 'POST';
         }
@@ -55,7 +55,7 @@ $(window).load(function () {
         };
     }
     var data = jsondata;
-    window.project = new PMDynaform.core.Project({
+    window.dynaform = new PMDynaform.core.Project({
         data: data,
         onBeforePrintHandler : function () {
             var nodeClone = $(".pmdynaform-container").clone();
@@ -71,7 +71,7 @@ $(window).load(function () {
         },
         formAjax: loadAjaxParams(),
         keys: {
-            server: location.host,
+            server: httpServerHostname,
             projectId: prj_uid,
             workspace: workspace
         },
@@ -108,7 +108,15 @@ $(window).load(function () {
                 form.appendChild(arrayRequired);
                 dyn_forward = document.getElementById("dyn_forward");
                 dyn_forward.onclick = function () {
-                    if (window.project.getForms()[0].isValid()) {
+                    if (window.dynaform.getForms()[0].isValid()) {
+                        window.dynaform.getForms()[0].applySuccess();
+                        //Destroy modal previous
+                        if($('#modalProgressBar').length > 0){
+                            $('#modalProgressBar').remove();
+                        }
+                        //Show Modal for nex step
+                        var viewModalSubmit = new PMDynaform.view.ModalProgressBar();
+                        viewModalSubmit.render();
                         form.submit();
                     }
                     return false;
