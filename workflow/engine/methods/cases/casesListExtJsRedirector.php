@@ -2,6 +2,7 @@
 if (typeof window.parent != 'undefined') {
 <?php
 /*----------------------------------********---------------------------------*/
+$pathDerivateGmail = 'derivatedGmail';
 $statusPMGmail = false;
 $licensedFeatures = &PMLicensedFeatures::getSingleton();
 if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
@@ -20,8 +21,10 @@ if (isset( $_GET['ux'] )) {
         default:
             $url = 'casesListExtJs';
     }
-} else if( key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $statusPMGmail ){
-    $url = 'derivatedGmail';
+/*----------------------------------********---------------------------------*/
+} else if( $statusPMGmail ){
+    $url = $pathDerivateGmail;
+/*----------------------------------********---------------------------------*/
 } else {
     $url = 'casesListExtJs';
 }
@@ -32,7 +35,7 @@ echo "  window.parent.location.href = '$url';";
 if (isset( $_GET['ux'] )) {
     /*----------------------------------********---------------------------------*/
     if(PMLicensedFeatures::getSingleton()->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09') && $statusPMGmail){
-        echo '} else { window.parent.location.href = \'derivatedGmail\'; }';
+        echo '} else { window.parent.location.href = \''.$pathDerivateGmail.'\'; }';
     } else {
     /*----------------------------------********---------------------------------*/
         echo '} else { window.parent.location.href = \'casesListExtJs\'; }';

@@ -17,19 +17,6 @@ $appDel = new AppDelegation();
 $actualThread = $appDel->Load($caseId, $actualIndex);
 $actualLastIndex = $actualThread['DEL_PREVIOUS'];
 
-$appDelPrev = $appDel->LoadParallel($caseId);
-
-if($appDelPrev == array()){
-    $appDelPrev['0'] = $actualThread;
-}
-
-$Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
-foreach ($appDelPrev as $app){
-    if( ($app['DEL_INDEX'] != $actualIndex) && ($app['DEL_PREVIOUS'] != $actualLastIndex) ){ //Sending the email to all threads of the case except the actual thread
-        $response = $Pmgmail->sendEmail($caseId, "", $app['DEL_INDEX']);
-    }
-}
-
 require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.labelsGmail.php");
 $oLabels = new labelsGmail();
 $oLabels->addRelabelingToQueue($caseId, $actualIndex, $actualLastIndex, false);

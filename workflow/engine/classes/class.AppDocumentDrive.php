@@ -175,15 +175,17 @@ class AppDocumentDrive
             $data = [];
             while ($rsAppDelegation->next()) {
                 $row = $rsAppDelegation->getRow();
-                if ($user->userExists($row['USR_UID'])) {
-                    $data = [];
-                    $data[] = $user->load($row['USR_UID']);
-                } else {
-                    $data = $group->getUsersOfGroup($row['USR_UID']);
-                }
+                if (!empty($row['USR_UID'])) {
+                    if ($user->userExists($row['USR_UID'])) {
+                        $data = [];
+                        $data[] = $user->load($row['USR_UID']);
+                    } else {
+                        $data = $group->getUsersOfGroup($row['USR_UID']);
+                    }
 
-                foreach ($data as $dataUser) {
-                    $this->addUserEmail($dataUser["USR_EMAIL"]);
+                    foreach ($data as $dataUser) {
+                        $this->addUserEmail($dataUser["USR_EMAIL"]);
+                    }
                 }
             }
         } catch (Exception $exception) {
@@ -278,18 +280,18 @@ class AppDocumentDrive
             error_log("It has not enabled Feature Gmail");
             return;
         }
-        $criteria = new Criteria( 'workflow' );
+        $criteria = new Criteria('workflow');
         $criteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
         $criteria->addSelectColumn(AppDocumentPeer::DOC_VERSION);
         $criteria->add(
-            $criteria->getNewCriterion( AppDocumentPeer::SYNC_WITH_DRIVE, 'UNSYNCHRONIZED', Criteria::EQUAL )->
-            addOr($criteria->getNewCriterion( AppDocumentPeer::SYNC_PERMISSIONS, null, Criteria::NOT_EQUAL ))
+            $criteria->getNewCriterion(AppDocumentPeer::SYNC_WITH_DRIVE, 'UNSYNCHRONIZED', Criteria::EQUAL)->
+            addOr($criteria->getNewCriterion(AppDocumentPeer::SYNC_PERMISSIONS, null, Criteria::NOT_EQUAL))
         );
 
-        $criteria->addAscendingOrderByColumn( 'APP_DOC_CREATE_DATE' );
-        $criteria->addAscendingOrderByColumn( 'APP_UID' );
-        $rs = AppDocumentPeer::doSelectRS( $criteria );
-        $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+        $criteria->addAscendingOrderByColumn('APP_DOC_CREATE_DATE');
+        $criteria->addAscendingOrderByColumn('APP_UID');
+        $rs = AppDocumentPeer::doSelectRS($criteria);
+        $rs->setFetchMode(ResultSet::FETCHMODE_ASSOC);
 
         while ($rs->next()) {
             $row = $rs->getRow();
@@ -298,58 +300,57 @@ class AppDocumentDrive
 
             $appDocUid = $appDoc->getAppDocUid();
             $docVersion = $appDoc->getDocVersion();
-            $filename = pathinfo( $appDoc->getAppDocFilename() );
-            $name = !empty($filename['basename'])? $filename['basename'] : '';
-            $ext = !empty($filename['extension'])? $filename['extension'] : '';
+            $filename = pathinfo($appDoc->getAppDocFilename());
+            $name = !empty($filename['basename']) ? $filename['basename'] : '';
+            $ext = !empty($filename['extension']) ? $filename['extension'] : '';
             $appUid = G::getPathFromUID($appDoc->getAppUid());
-            $file = G::getPathFromFileUID($appDoc->getAppUid(), $appDocUid );
+            $file = G::getPathFromFileUID($appDoc->getAppUid(), $appDocUid);
 
 
             $sw_file_exists_doc = false;
             $sw_file_exists_pdf = false;
-            if ($appDoc->getAppDocType() == 'OUTPUT') {
-                //$name = substr($name, 1, -1);
+            $sw_file_exists = false;
+            $realPath = '';
+            if ($appDoc->getAppDocType() === 'OUTPUT') {
                 $realPathDoc = PATH_DOCUMENT . $appUid . '/outdocs/' . $appDocUid . '_' . $docVersion . '.' . 'doc';
                 $realPathDoc1 = PATH_DOCUMENT . $appUid . '/outdocs/' . $name . '_' . $docVersion . '.' . 'doc';
                 $realPathDoc2 = PATH_DOCUMENT . $appUid . '/outdocs/' . $name . '.' . 'doc';
 
-                $sw_file_exists = false;
-                if (file_exists( $realPathDoc )) {
+                if (file_exists($realPathDoc)) {
                     $sw_file_exists = true;
                     $sw_file_exists_doc = true;
-                } elseif (file_exists( $realPathDoc1 )) {
+                } elseif (file_exists($realPathDoc1)) {
                     $sw_file_exists = true;
                     $sw_file_exists_doc = true;
                     $realPathDoc = $realPathDoc1;
-                } elseif (file_exists( $realPathDoc2 )) {
+                } elseif (file_exists($realPathDoc2)) {
                     $sw_file_exists = true;
                     $sw_file_exists_doc = true;
                     $realPathDoc = $realPathDoc2;
                 }
 
                 $realPathPdf = PATH_DOCUMENT . $appUid . '/outdocs/' . $appDocUid . '_' . $docVersion . '.' . 'pdf';
-                $realPathPdf1 = PATH_DOCUMENT . $appUid . '/outdocs/' . $name . '_' .$docVersion . '.' . 'pdf';
+                $realPathPdf1 = PATH_DOCUMENT . $appUid . '/outdocs/' . $name . '_' . $docVersion . '.' . 'pdf';
                 $realPathPdf2 = PATH_DOCUMENT . $appUid . '/outdocs/' . $name . '.' . 'pdf';
 
-                if (file_exists( $realPathPdf )) {
+                if (file_exists($realPathPdf)) {
                     $sw_file_exists = true;
                     $sw_file_exists_pdf = true;
-                } elseif (file_exists( $realPathPdf1 )) {
+                } elseif (file_exists($realPathPdf1)) {
                     $sw_file_exists = true;
                     $sw_file_exists_pdf = true;
                     $realPathPdf = $realPathPdf1;
-                } elseif (file_exists( $realPathPdf2 )) {
+                } elseif (file_exists($realPathPdf2)) {
                     $sw_file_exists = true;
                     $sw_file_exists_pdf = true;
                     $realPathPdf = $realPathPdf2;
                 }
             } else {
-                $realPath = PATH_DOCUMENT .  $appUid . '/' . $file[0] . $file[1] . '_' . $docVersion . '.' . $ext;
+                $realPath = PATH_DOCUMENT . $appUid . '/' . $file[0] . $file[1] . '_' . $docVersion . '.' . $ext;
                 $realPath1 = PATH_DOCUMENT . $appUid . '/' . $file[0] . $file[1] . '.' . $ext;
-                $sw_file_exists = false;
-                if (file_exists( $realPath )) {
+                if (file_exists($realPath)) {
                     $sw_file_exists = true;
-                } elseif (file_exists( $realPath1 )) {
+                } elseif (file_exists($realPath1)) {
                     $sw_file_exists = true;
                     $realPath = $realPath1;
                 }
@@ -367,34 +368,33 @@ class AppDocumentDrive
 
                         if ($index == 0 && $fields['SYNC_WITH_DRIVE'] == 'UNSYNCHRONIZED') {
                             if ($log) {
-                                eprintln('upload file:' .  $name , 'green');
+                                eprintln('upload file:' . $name, 'green');
                             }
                             $this->drive->setDriveUser($email);
-                            $info = finfo_open(FILEINFO_MIME_TYPE);
-                            $mime = finfo_file($info, $realPath);
-                            $type = $appDoc->getAppDocType();
 
                             if ($appDoc->getAppDocType() == 'OUTPUT') {
 
                                 if ($sw_file_exists_doc) {
-                                    $realPath = $realPathDoc;
-                                    $name = array_pop(explode('/', $realPathDoc));
-                                    $mime = 'application/msword';
-                                    $type = 'OUTPUT_DOC';
+                                    $result = $this->upload($fields, 'OUTPUT_DOC', 'application/msword', $realPathDoc,
+                                        array_pop(explode('/', $realPathDoc)));
                                 }
                                 if ($sw_file_exists_pdf) {
-                                    $realPath = $realPathPdf;
-                                    $name = array_pop(explode('/', $realPathPdf));
-                                    $mime = finfo_file($info, $realPathPdf);
-                                    $type = 'OUTPUT_PDF';
+                                    $info = finfo_open(FILEINFO_MIME_TYPE);
+                                    $result = $this->upload($fields, 'OUTPUT_PDF', finfo_file($info, $realPathPdf),
+                                        $realPathPdf, array_pop(explode('/', $realPathPdf)));
                                 }
+                            } else {
+                                $info = finfo_open(FILEINFO_MIME_TYPE);
+                                $mime = finfo_file($info, $realPath);
+                                $type = $appDoc->getAppDocType();
+                                $result = $this->upload($fields, $type, $mime, $realPath, $name);
                             }
-                            $result = $this->upload($fields, $type, $mime, $realPath, $name);
+
                         } else {
                             $this->drive->setDriveUser($this->user->getUsrEmail());
                         }
                         if ($log) {
-                            eprintln('Set Permission:' .  $email , 'green');
+                            eprintln('Set Permission:' . $email, 'green');
                         }
                         $this->drive->setPermission($this->app->getAppDriveFolderUid(), $email, 'user', 'writer');
 
@@ -407,7 +407,7 @@ class AppDocumentDrive
             } else {
                 $fields['SYNC_WITH_DRIVE'] = 'NO_EXIST_FILE_PM';
                 if ($log) {
-                    eprintln('File no exists:' . $name , 'red');
+                    eprintln('File no exists:' . $name, 'red');
                 }
             }
             $appDoc->update($fields);

@@ -164,6 +164,34 @@ try {
     $oUser = new Users();
     $aUser = $oUser->load( $_SESSION['USER_LOGGED'] );
     $sFromName = $aUser['USR_FIRSTNAME'] . ' ' . $aUser['USR_LASTNAME'] . ($aUser['USR_EMAIL'] != '' ? ' <' . $aUser['USR_EMAIL'] . '>' : '');
+
+    $flagGmail = false;
+    /*----------------------------------********---------------------------------*/
+    $licensedFeatures = &PMLicensedFeatures::getSingleton ();
+    if ($licensedFeatures->verifyfeature ( '7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09' )) {
+        G::LoadClass ( "pmGoogleApi" );
+        $pmGoogle = new PMGoogleApi ();
+        if ($pmGoogle->getServiceGmailStatus ()) {
+            $flagGmail = true;
+            
+            $appDel = new AppDelegation ();
+            $actualThread = $appDel->Load ( $_SESSION ['APPLICATION'], $_SESSION ['INDEX'] );
+            
+            $appDelPrev = $appDel->LoadParallel ( $_SESSION ['APPLICATION'] );
+            $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail ();
+            if (! $appDelPrev) {
+                $Pmgmail->sendEmail ( $_SESSION ['APPLICATION'], "", $_SESSION ['INDEX'], $_POST ['form'] ['TASKS'], $appFields ['APP_DATA'] );
+            } else {
+                foreach ( $appDelPrev as $app ) {
+                    if (($app ['DEL_INDEX'] != $_SESSION ['INDEX']) && ($app ['DEL_PREVIOUS'] != $actualThread ['DEL_PREVIOUS'])) {
+                        $Pmgmail->sendEmail ( $_SESSION ['APPLICATION'], "", $app ['DEL_INDEX'], $_POST ['form'] ['TASKS'], $appFields ['APP_DATA'] );
+                    }
+                }
+            }
+        }
+    }
+    /*----------------------------------********---------------------------------*/
+
     try {
         $oCase->sendNotifications( $_SESSION['TASK'], $_POST['form']['TASKS'], $appFields['APP_DATA'], $_SESSION['APPLICATION'], $_SESSION['INDEX'], $sFromName );
     } catch (Exception $e) {
@@ -225,13 +253,14 @@ try {
 
     $debuggerAvailable = true;
 
-    if (isset( $_SESSION['user_experience'] )) {
-        $aNextStep['PAGE'] = 'casesListExtJsRedirector?ux=' . $_SESSION['user_experience'];
+    $casesRedirector = 'casesListExtJsRedirector';
+    if (isset ( $_SESSION ['user_experience'] ) && $flagGmail === false) {
+        $aNextStep ['PAGE'] = $casesRedirector . '?ux=' . $_SESSION ['user_experience'];
         $debuggerAvailable = false;
-    } else if( isset( $_SESSION['gmail'] )  ){
-        $aNextStep['PAGE'] = 'casesListExtJsRedirector?gmail='.$_SESSION['gmail'];
+    } else if ($flagGmail === true) {
+        $aNextStep ['PAGE'] = $casesRedirector . '?gmail=1';
     } else {
-        $aNextStep['PAGE'] = 'casesListExtJsRedirector';
+        $aNextStep ['PAGE'] = $casesRedirector;
     }
 
     if (isset( $_SESSION['PMDEBUGGER'] ) && $_SESSION['PMDEBUGGER'] && $debuggerAvailable) {

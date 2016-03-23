@@ -271,7 +271,7 @@ function startCase ()
             if($pmGoogle->getServiceGmailStatus()){
                 require_once 'src/ProcessMaker/BusinessModel/Pmgmail.php';
                 $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
-                $response = $Pmgmail->sendEmail($aData['APPLICATION'], "", $aData['INDEX']);
+                $response = $Pmgmail->sendEmail($aData['APPLICATION'], "", $aData['INDEX'], null, null);
             }
         }
         /*----------------------------------********---------------------------------*/

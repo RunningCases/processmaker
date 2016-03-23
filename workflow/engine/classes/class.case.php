@@ -5314,8 +5314,6 @@ class Cases
             $oUser = new Users();
 
             foreach ($arrayTask as $aTask) {
-                $sTo = null;
-                $sCc = null;
 
                 if (isset($aTask['DEL_INDEX'])) {
                     $arrayData2 = $arrayData;
@@ -5342,132 +5340,20 @@ class Cases
 
                 $sBody2 = G::replaceDataGridField($sBody, $arrayData2, false);
 
-                switch ($aTask["TAS_ASSIGN_TYPE"]) {
-                    case "SELF_SERVICE":
-                        if ($swtplDefault == 1) {
-                            G::verifyPath($pathEmail, true); //Create if it does not exist
-                            $fileTemplate = $pathEmail . G::LoadTranslation('ID_UNASSIGNED_MESSAGE');
+                $respTo = $this->getTo($aTask["TAS_ASSIGN_TYPE"], $aTask["TAS_UID"], $aTask["USR_UID"], $arrayData);
+                $sTo = $respTo['to'];
+                $sCc = $respTo['cc'];
 
-                            if ((!file_exists($fileTemplate)) && file_exists(PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation('ID_UNASSIGNED_MESSAGE'))) {
-                                @copy(PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation('ID_UNASSIGNED_MESSAGE'), $fileTemplate);
-                            }
+                if ($aTask ["TAS_ASSIGN_TYPE"] === "SELF_SERVICE") {
+                    if ($swtplDefault == 1) {
+                        G::verifyPath ( $pathEmail, true ); // Create if it does not exist
+                        $fileTemplate = $pathEmail . G::LoadTranslation ( 'ID_UNASSIGNED_MESSAGE' );
 
-                            $sBody2 = G::replaceDataField(file_get_contents($fileTemplate), $arrayData2);
+                        if ((! file_exists ( $fileTemplate )) && file_exists ( PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation ( 'ID_UNASSIGNED_MESSAGE' ) )) {
+                            @copy ( PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation ( 'ID_UNASSIGNED_MESSAGE' ), $fileTemplate );
                         }
-
-                        if (isset($aTask["TAS_UID"]) && !empty($aTask["TAS_UID"])) {
-                            $arrayTaskUser = array();
-
-                            $arrayAux1 = $task->getGroupsOfTask($aTask["TAS_UID"], 1);
-
-                            foreach ($arrayAux1 as $arrayGroup) {
-                                $arrayAux2 = $group->getUsersOfGroup($arrayGroup["GRP_UID"]);
-
-                                foreach ($arrayAux2 as $arrayUser) {
-                                    $arrayTaskUser[] = $arrayUser["USR_UID"];
-                                }
-                            }
-
-                            $arrayAux1 = $task->getUsersOfTask($aTask["TAS_UID"], 1);
-
-                            foreach ($arrayAux1 as $arrayUser) {
-                                $arrayTaskUser[] = $arrayUser["USR_UID"];
-                            }
-
-                            $criteria = new Criteria("workflow");
-
-                            $criteria->addSelectColumn(UsersPeer::USR_UID);
-                            $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
-                            $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
-                            $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
-                            $criteria->addSelectColumn(UsersPeer::USR_EMAIL);
-                            $criteria->add(UsersPeer::USR_UID, $arrayTaskUser, Criteria::IN);
-                            $rsCriteria = UsersPeer::doSelectRs($criteria);
-                            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-                            $to = null;
-                            $cc = null;
-                            $sw = 1;
-
-                            while ($rsCriteria->next()) {
-                                $row = $rsCriteria->getRow();
-
-                                $toAux = (
-                                        (($row["USR_FIRSTNAME"] != "") || ($row["USR_LASTNAME"] != "")) ?
-                                                $row["USR_FIRSTNAME"] . " " . $row["USR_LASTNAME"] . " " : ""
-                                        ) . "<" . $row["USR_EMAIL"] . ">";
-
-                                if ($sw == 1) {
-                                    $to = $toAux;
-                                    $sw = 0;
-                                } else {
-                                    $cc = $cc . (($cc != null) ? "," : null) . $toAux;
-                                }
-                            }
-
-                            $sTo = $to;
-                            $sCc = $cc;
-                        }
-                        break;
-                    case "MULTIPLE_INSTANCE":
-                        $to = null;
-                        $cc = null;
-                        $sw = 1;
-                        $oDerivation = new Derivation();
-                        $userFields = $oDerivation->getUsersFullNameFromArray($oDerivation->getAllUsersFromAnyTask($aTask["TAS_UID"]));
-                        if(isset($userFields)){
-                           foreach($userFields as $row){
-                                $toAux = (
-                                        (($row["USR_FIRSTNAME"] != "") || ($row["USR_LASTNAME"] != "")) ?
-                                                $row["USR_FIRSTNAME"] . " " . $row["USR_LASTNAME"] . " " : ""
-                                        ) . "<" . $row["USR_EMAIL"] . ">";
-                                if ($sw == 1) {
-                                    $to = $toAux;
-                                    $sw = 0;
-                                } else {
-                                    $cc = $cc . (($cc != null) ? "," : null) . $toAux;
-                                }
-                           }
-                           $sTo = $to;
-                           $sCc = $cc;
-                        }
-                        break;
-                    case "MULTIPLE_INSTANCE_VALUE_BASED":
-                        $aTaskNext = $oTask->load($aTask["TAS_UID"]);
-                        if(isset($aTaskNext["TAS_ASSIGN_VARIABLE"]) && !empty($aTaskNext["TAS_ASSIGN_VARIABLE"])){
-                            $to = null;
-                            $cc = null;
-                            $sw = 1;
-                            $nextTaskAssignVariable = trim($aTaskNext["TAS_ASSIGN_VARIABLE"], " @#");
-                            $arrayUsers = $arrayData[$nextTaskAssignVariable];
-                            $oDerivation = new Derivation();
-                            $userFields = $oDerivation->getUsersFullNameFromArray($arrayUsers);
-                            foreach ($userFields as $row) {
-                                $toAux = (
-                                        (($row["USR_FIRSTNAME"] != "") || ($row["USR_LASTNAME"] != "")) ?
-                                                $row["USR_FIRSTNAME"] . " " . $row["USR_LASTNAME"] . " " : ""
-                                        ) . "<" . $row["USR_EMAIL"] . ">";
-                                if ($sw == 1) {
-                                    $to = $toAux;
-                                    $sw = 0;
-                                } else {
-                                    $cc = $cc . (($cc != null) ? "," : null) . $toAux;
-                                }
-                            }
-                            $sTo = $to;
-                            $sCc = $cc;
-                        }
-                        break;
-                    default:
-                        if (isset($aTask["USR_UID"]) && !empty($aTask["USR_UID"])) {
-                            $aUser = $oUser->load($aTask["USR_UID"]);
-
-                            $sTo = (
-                                    (($aUser["USR_FIRSTNAME"] != "") || ($aUser["USR_LASTNAME"] != "")) ?
-                                            $aUser["USR_FIRSTNAME"] . " " . $aUser["USR_LASTNAME"] . " " : ""
-                                    ) . "<" . $aUser["USR_EMAIL"] . ">";
-                        }
-                        break;
+                        $sBody2 = G::replaceDataField ( file_get_contents ( $fileTemplate ), $arrayData2 );
+                    }
                 }
 
                 if ($sTo != null) {
@@ -5504,6 +5390,124 @@ class Cases
         } catch (Exception $oException) {
             throw $oException;
         }
+    }
+    
+    public function getTo($taskType, $taskUid, $taskUsrUid, $arrayData) 
+    {
+        $sTo = null;
+        $sCc = null;
+        $arrayResp = array ();
+        $task = new Tasks ();
+        $group = new Groups ();
+        $oUser = new Users ();
+        
+        switch ($taskType) {
+            case "SELF_SERVICE" :
+                if (isset ( $taskUid ) && ! empty ( $taskUid )) {
+                    $arrayTaskUser = array ();
+                    
+                    $arrayAux1 = $task->getGroupsOfTask ( $taskUid, 1 );
+                    
+                    foreach ( $arrayAux1 as $arrayGroup ) {
+                        $arrayAux2 = $group->getUsersOfGroup ( $arrayGroup ["GRP_UID"] );
+                        
+                        foreach ( $arrayAux2 as $arrayUser ) {
+                            $arrayTaskUser [] = $arrayUser ["USR_UID"];
+                        }
+                    }
+                    
+                    $arrayAux1 = $task->getUsersOfTask ( $taskUid, 1 );
+                    
+                    foreach ( $arrayAux1 as $arrayUser ) {
+                        $arrayTaskUser [] = $arrayUser ["USR_UID"];
+                    }
+                    
+                    $criteria = new Criteria ( "workflow" );
+                    
+                    $criteria->addSelectColumn ( UsersPeer::USR_UID );
+                    $criteria->addSelectColumn ( UsersPeer::USR_USERNAME );
+                    $criteria->addSelectColumn ( UsersPeer::USR_FIRSTNAME );
+                    $criteria->addSelectColumn ( UsersPeer::USR_LASTNAME );
+                    $criteria->addSelectColumn ( UsersPeer::USR_EMAIL );
+                    $criteria->add ( UsersPeer::USR_UID, $arrayTaskUser, Criteria::IN );
+                    $rsCriteria = UsersPeer::doSelectRs ( $criteria );
+                    $rsCriteria->setFetchmode ( ResultSet::FETCHMODE_ASSOC );
+                    
+                    $to = null;
+                    $cc = null;
+                    $sw = 1;
+                    
+                    while ( $rsCriteria->next () ) {
+                        $row = $rsCriteria->getRow ();
+                        
+                        $toAux = ((($row ["USR_FIRSTNAME"] != "") || ($row ["USR_LASTNAME"] != "")) ? $row ["USR_FIRSTNAME"] . " " . $row ["USR_LASTNAME"] . " " : "") . "<" . $row ["USR_EMAIL"] . ">";
+                        
+                        if ($sw == 1) {
+                            $to = $toAux;
+                            $sw = 0;
+                        } else {
+                            $cc = $cc . (($cc != null) ? "," : null) . $toAux;
+                        }
+                    }
+                    $arrayResp ['to'] = $to;
+                    $arrayResp ['cc'] = $cc;
+                }
+                break;
+            case "MULTIPLE_INSTANCE" :
+                $to = null;
+                $cc = null;
+                $sw = 1;
+                $oDerivation = new Derivation ();
+                $userFields = $oDerivation->getUsersFullNameFromArray ( $oDerivation->getAllUsersFromAnyTask ( $taskUid ) );
+                if (isset ( $userFields )) {
+                    foreach ( $userFields as $row ) {
+                        $toAux = ((($row ["USR_FIRSTNAME"] != "") || ($row ["USR_LASTNAME"] != "")) ? $row ["USR_FIRSTNAME"] . " " . $row ["USR_LASTNAME"] . " " : "") . "<" . $row ["USR_EMAIL"] . ">";
+                        if ($sw == 1) {
+                            $to = $toAux;
+                            $sw = 0;
+                        } else {
+                            $cc = $cc . (($cc != null) ? "," : null) . $toAux;
+                        }
+                    }
+                    $arrayResp ['to'] = $to;
+                    $arrayResp ['cc'] = $cc;
+                }
+                break;
+            case "MULTIPLE_INSTANCE_VALUE_BASED" :
+                $oTask = new Task ();
+                $aTaskNext = $oTask->load ( $taskUid );
+                if (isset ( $aTaskNext ["TAS_ASSIGN_VARIABLE"] ) && ! empty ( $aTaskNext ["TAS_ASSIGN_VARIABLE"] )) {
+                    $to = null;
+                    $cc = null;
+                    $sw = 1;
+                    $nextTaskAssignVariable = trim ( $aTaskNext ["TAS_ASSIGN_VARIABLE"], " @#" );
+                    $arrayUsers = $arrayData [$nextTaskAssignVariable];
+                    $oDerivation = new Derivation ();
+                    $userFields = $oDerivation->getUsersFullNameFromArray ( $arrayUsers );
+                    
+                    foreach ( $userFields as $row ) {
+                        $toAux = ((($row ["USR_FIRSTNAME"] != "") || ($row ["USR_LASTNAME"] != "")) ? $row ["USR_FIRSTNAME"] . " " . $row ["USR_LASTNAME"] . " " : "") . "<" . $row ["USR_EMAIL"] . ">";
+                        if ($sw == 1) {
+                            $to = $toAux;
+                            $sw = 0;
+                        } else {
+                            $cc = $cc . (($cc != null) ? "," : null) . $toAux;
+                        }
+                    }
+                    $arrayResp ['to'] = $to;
+                    $arrayResp ['cc'] = $cc;
+                }
+                break;
+            default :
+                if (isset ( $taskUsrUid ) && ! empty ( $taskUsrUid )) {
+                    $aUser = $oUser->load ( $taskUsrUid );
+                    $sTo = ((($aUser ["USR_FIRSTNAME"] != "") || ($aUser ["USR_LASTNAME"] != "")) ? $aUser ["USR_FIRSTNAME"] . " " . $aUser ["USR_LASTNAME"] . " " : "") . "<" . $aUser ["USR_EMAIL"] . ">";
+                }
+                $arrayResp ['to'] = $sTo;
+                $arrayResp ['cc'] = '';
+                break;
+        }
+        return $arrayResp;
     }
 
     /**
