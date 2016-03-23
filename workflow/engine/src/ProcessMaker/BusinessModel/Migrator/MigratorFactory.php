@@ -55,6 +55,9 @@ class MigratorFactory
             case 'VARIABLES':
                 $class = new VariablesMigrator();
                 break;
+            case 'PERMISSIONS':
+                $class = new PermissionsMigrator();
+                break;
         }
         return $class;
     }
