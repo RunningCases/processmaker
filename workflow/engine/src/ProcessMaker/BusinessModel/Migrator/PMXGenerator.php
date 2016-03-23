@@ -41,7 +41,7 @@ class PMXGenerator
     public function generate($data)
     {
         $rootNode = $this->domDocument->createElement($data['container']);
-        $rootNode->setAttribute("version", $data['container']);
+        $rootNode->setAttribute("version", $data['version']);
         $this->domDocument->appendChild($rootNode);
 
         $metadata = $data["metadata"];

@@ -21,6 +21,7 @@ class MigratorFactory
             case 'FILES':
                 $class = new FilesMigrator();
                 break;
+            case 'DBCONNECTION':
             case 'DBCONNECTIONS':
                 $class = new DBConnectionMigrator();
                 break;
