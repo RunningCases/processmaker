@@ -213,11 +213,10 @@ abstract class Importer
         }
 
         //Granular Import
-        //$granularOptions merge
-        if($objectsToImport){
+        if ($objectsToImport !== '') {
             $granularObj = new \ProcessMaker\BusinessModel\Migrator\GranularImporter();
             $objectList = $granularObj->loadObjectsListSelected($this->importData, $objectsToImport);
-            if(sizeof($objectList)>0){
+            if (sizeof($objectList) > 0) {
                 $granularObj->import($objectList);
             }
             return $this->importData['tables']['bpmn']["project"][0]["prj_uid"];
@@ -245,7 +244,7 @@ abstract class Importer
 
         $this->importData = $this->load();
 
-        $this->validateImportData();
+        //$this->validateImportData();
     }
 
     public function setData($key, $value)

@@ -27,12 +27,12 @@ use \ProcessMaker\Importer\XmlImporter;
 ini_set("max_execution_time", 0);
 $affectedGroups = array();
 
-if(preg_match("/^(?:pm|pmx)$/", pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION))){
+if (preg_match("/^(?:pm|pmx)$/", pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION))) {
     $import = new XmlImporter();
     $granularImport = false;
     $objectImport = array();
     $data = $import->load($_FILES["PROCESS_FILENAME"]["tmp_name"]);
-    if(!version_compare($data['version'], '3.0', '>')){
+    if (!version_compare($data['version'], '3.0', '>')) {
         $objectImport = (isset($data['objects'])) ? explode('|', $data['objects']) : "";
         $ids = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
         $objectImport = $ids->getIdObjectList($objectImport);
@@ -134,21 +134,25 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
         $opt2 = XmlImporter::GROUP_IMPORT_OPTION_CREATE_NEW;
         $prjUid = '';
         $proType = '';
-        if(isset($_POST['objectsToImport']) && sizeof(G::json_decode($_POST['objectsToImport']))){
+        $_POST['objectsToImport'] = '[{"id":4,"action":"merge"},{"id":7,"action":"replace"},{"id":9,
+        "action":"merge"}]';
+        if (isset($_POST['objectsToImport']) && sizeof(G::json_decode($_POST['objectsToImport']))) {
             $objectsToImport = G::json_decode($_POST['objectsToImport']);
-            if($_POST['generateUid'] === 'generate') {
+            if ($_POST['generateUid'] === 'generate') {
                 $generateUid = true;
-                $prjUid = $importer->import($opt1,$opt2,$generateUid);
-            } elseif($_POST['generateUid'] === 'keep') {
+                $prjUid = $importer->import($opt1, $opt2, $generateUid);
+            } elseif ($_POST['generateUid'] === 'keep') {
                 $generateUid = false;
-                $prjUid = $importer->import($opt1,$opt2,$generateUid);
+                $prjUid = $importer->import($opt1, $opt2, $generateUid);
             } else {
-                $prjUid = $importer->import($opt1,$opt2, null, $objectsToImport);
+                $prjUid = $importer->import($opt1, $opt2, null, $objectsToImport);
             }
-            G::LoadClass( 'Process' );
+            G::LoadClass('Process');
             $oProcess = new Process();
-            $processData = $oProcess->load( $prjUid );
+            $processData = $oProcess->load($prjUid);
             $proType = $processData["PRO_TYPE"];
+            $granularImport = false;
+            $objectImport = '';
         }
 
         $result = array(
@@ -188,8 +192,8 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
             "affectedGroups"            => !empty($affectedGroups)? $affectedGroups : '',
             "sNewProUid"                => '',
             "project_type"              => 'bpmn',
-            "isGranularImport"          => $granularImport,
-            "objectGranularImport"      => $objectImport,
+            "isGranularImport"          => false,
+            "objectGranularImport"      => '',
             "proFileName"               => $_FILES["PROCESS_FILENAME"]["name"],
             "groupBeforeAccion"         => 'uploadFileNewProcess',
             "importOption"              => 0
@@ -272,8 +276,8 @@ if (isset($_POST["PRO_FILENAME"]) &&
             "affectedGroups"         => !empty($affectedGroups)? $affectedGroups : '',
             "sNewProUid"             => '',
             "project_type"           => 'bpmn',
-            "isGranularImport"       => '',
-            "objectGranularImport"   => $objectImport,
+            "isGranularImport"       => false,
+            "objectGranularImport"   => '',
             "proFileName"            => $_POST["PRO_FILENAME"],
             "groupBeforeAccion"      => "uploadFileNewProcess",
             "importOption"           => (isset($_POST["IMPORT_OPTION"]))? (int)($_POST["IMPORT_OPTION"]) : 0

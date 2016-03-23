@@ -24,35 +24,69 @@ class GranularImporter
      */
     public function loadObjectsListSelected($data, $aGranular)
     {
+        $listObjectGranular = array();
+        $exportObjects = new ExportObjects();
+        //create structure
+        foreach ($aGranular as $key => $rowObject) {
+            array_push($listObjectGranular, array("name" => strtoupper($exportObjects->getObjectName
+            ($rowObject->id)), "data" => "", "value" => $rowObject->action));
+        }
+        //add data
+        foreach ($listObjectGranular as $key => $rowObject) {
+            $listObjectGranular[$key]['data'] = $this->addObjectData($listObjectGranular[$key]['name'], $data);
+        }
+        return $listObjectGranular;
+    }
+
+    /**
+     * @param $nameObject
+     * @param $data
+     * @return array
+     */
+    public function addObjectData($nameObject, $data)
+    {
         $objectList = array();
-        if (in_array('PROCESSDEFINITION', $aGranular)) {
-            $objectList['PROCESSDEFINITION'] = $this->structureBpmnData($data['tables']['bpmn']);
-        }
-        if (in_array('ASSIGNMENTRULES', $aGranular)) {
-            $objectList['ASSIGNMENTRULES'] = $data['tables']['workflow']['tasks'];
-        }
-        if (in_array('VARIABLES', $aGranular)) {
-            $objectList['VARIABLES'] = $data['tables']['workflow']['processVariables'];
-        }
-        if (in_array('DYNAFORMS', $aGranular)) {
-            $objectList['DYNAFORMS'] = $data['tables']['workflow']['dynaforms'];
-        }
-        if (in_array('INPUTDOCUMENTS', $aGranular)) {
-            $objectList['INPUTDOCUMENTS'] = $data['tables']['workflow']['inputs'];
-        }
-        if (in_array('OUTPUTDOCUMENTS', $aGranular)) {
-            $objectList['OUTPUTDOCUMENTS'] = $data['tables']['workflow']['outputs'];
-        }
-        if (in_array('TRIGGERS', $aGranular)) {
-            $objectList['TRIGGERS'] = $data['tables']['workflow']['triggers'];
-        }
-        if (in_array('TEMPLATES', $aGranular)) {
-            $objectList['TEMPLATES']['TABLE'] = $data['tables']['workflow']['filesManager'];
-            $objectList['TEMPLATES']['PATH'] = $data['files']['workflow'];
-        }
-        if (in_array('FILES', $aGranular)) {
-            $objectList['FILES']['TABLE'] = $data['tables']['workflow']['filesManager'];
-            $objectList['FILES']['PATH'] = $data['files']['workflow'];
+        switch ($nameObject) {
+            case 'PROCESSDEFINITION':
+                $objectList['PROCESSDEFINITION'] = isset($data['tables']['bpmn']) ? $this->structureBpmnData
+                ($data['tables']['bpmn']) : '';
+                break;
+            case 'ASSIGNMENTRULES':
+                $objectList['ASSIGNMENTRULES'] = isset($data['tables']['workflow']['tasks']) ?
+                    $data['tables']['workflow']['tasks'] : '';
+                break;
+            case 'VARIABLES':
+                $objectList['VARIABLES'] = isset($data['tables']['workflow']['processVariables']) ?
+                    $data['tables']['workflow']['processVariables'] : '';
+                break;
+            case 'DYNAFORMS':
+                $objectList['DYNAFORMS'] = isset($data['tables']['workflow']['dynaforms']) ?
+                    $data['tables']['workflow']['dynaforms'] : '';
+                break;
+            case 'INPUTDOCUMENTS':
+                $objectList['INPUTDOCUMENTS'] = isset($data['tables']['workflow']['inputs']) ?
+                    $data['tables']['workflow']['inputs'] : '';
+                break;
+            case 'OUTPUTDOCUMENTS':
+                $objectList['OUTPUTDOCUMENTS'] = isset($data['tables']['workflow']['outputs']) ?
+                    $data['tables']['workflow']['outputs'] : '';
+                break;
+            case 'TRIGGERS':
+                $objectList['TRIGGERS'] = isset($data['tables']['workflow']['triggers']) ?
+                    $data['tables']['workflow']['triggers'] : '';
+                break;
+            case 'TEMPLATES':
+                $objectList['TEMPLATES']['TABLE'] = isset($data['tables']['workflow']['filesManager']) ?
+                    $data['tables']['workflow']['filesManager'] : '';
+                $objectList['TEMPLATES']['PATH'] = isset($data['files']['workflow']) ? $data['files']['workflow'] : '';
+                break;
+            case 'FILES':
+                $objectList['FILES']['TABLE'] = isset($data['tables']['workflow']['filesManager']) ?
+                    $data['tables']['workflow']['filesManager'] : '';
+                $objectList['FILES']['PATH'] = isset($data['files']['workflow']) ? $data['files']['workflow'] : '';
+                break;
+            default:
+                break;
         }
         return $objectList;
     }
@@ -85,10 +119,12 @@ class GranularImporter
     public function import($objectList)
     {
         try {
-            foreach ($objectList as $key => $data) {
-                $objClass = $this->factory->create($key);
+            foreach ($objectList as $data) {
+                $objClass = $this->factory->create($data['name']);
                 if (is_object($objClass)) {
-                    $migratorData = $objClass->import($data);
+                    $dataImport = $data['data'][$data['name']];
+                    $replace = ($data['value'] == 'merge') ? true : false;
+                    $migratorData = $objClass->import($dataImport, $replace);
                 }
             }
         } catch (ExportException $e) {

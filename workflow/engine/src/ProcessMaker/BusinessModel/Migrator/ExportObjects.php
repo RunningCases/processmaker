@@ -52,6 +52,21 @@ class ExportObjects
     }
 
     /**
+     * @param $idObject
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getObjectName($idObject)
+    {
+        try {
+            return (str_replace(' ', '', $this->objectsList[$idObject - 1]));
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * @param $objects
      * @return array
      * @throws \Exception
