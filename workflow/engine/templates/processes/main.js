@@ -1066,17 +1066,16 @@ function exportImportProcessObjects(typeAction)
                 } else { /*import*/
                     colModel.setHidden(3, false);
                     grid.store.on('load', function(store, records, options){
-                        var gridStore = grid.getStore();
-                        gridStore.each(function(row, j){
+                        grid.getSelectionModel().selectAll();
+                        store.each(function(row, j){
                             if(inArray(row.get('OBJECT_ID'),importProcessGlobal.objectGranularImport)) {
                                 //grid.getSelectionModel().selectRow(j, true);
                             } else {
                                 /*disable row*/
-                                gridStore.remove(row);
-                               /* gridStore.rejectChanges(row);
+                                store.remove(row);
+                               /* store.rejectChanges(row);
                                 row.cancelEdit();*/
                             }
-                            grid.getSelectionModel().selectRow(j, true);
                         });
                     });
                 }
@@ -1101,6 +1100,15 @@ function exportImportProcessObjects(typeAction)
                 text    : buttonLabel,
                 handler : function() {
                     var selectedObjects = gridProcessObjects.getSelectionModel().getSelections();
+                    if(selectedObjects.length < 1) {
+                        Ext.Msg.show({
+                            title: _("ID_INFORMATION"),
+                            msg: _("ID_NO_SELECTION_WARNING"),
+                            icon: Ext.MessageBox.INFO,
+                            buttons: Ext.MessageBox.OK
+                        });
+                        return;
+                    }
                     processObjectsArray = [];
                     if(defaultTypeAction === 'export') {
                         if(selectedObjects.length > 0) {
@@ -1512,6 +1520,10 @@ importProcessExistProcess = function()
           name  : 'processFileType',
           xtype : 'hidden',
           value : processFileType
+          }, {
+            name  : 'objectsToImport',
+            xtype : 'hidden',
+            value : importProcessGlobal.objectsToImport
           }, {
             xtype  : 'spacer',
             height : 10
