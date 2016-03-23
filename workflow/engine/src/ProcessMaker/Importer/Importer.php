@@ -77,7 +77,7 @@ abstract class Importer
         }
     }
 
-    public function import($option = self::IMPORT_OPTION_CREATE_NEW, $optionGroup = self::GROUP_IMPORT_OPTION_CREATE_NEW, $generateUidFromJs = null, $granularImporter = 'NO', $granularOptions = '')
+    public function import($option = self::IMPORT_OPTION_CREATE_NEW, $optionGroup = self::GROUP_IMPORT_OPTION_CREATE_NEW, $generateUidFromJs = null, $objectsToImport = '')
     {
         $this->prepare();
 
@@ -170,10 +170,10 @@ abstract class Importer
                 break;
             case self::IMPORT_OPTION_OVERWRITE:
                 //Shouldn't generate new UID for all objects
-                if($granularImporter === 'NO'){
+                if($objectsToImport === ''){
                     $this->removeProject();
                 } else {
-                    if(in_array('PROCESSDEFINITION', $granularOptions)){
+                    if(in_array('PROCESSDEFINITION', $objectsToImport)){
                         $this->removeProject();
                     }
                 }
@@ -213,20 +213,14 @@ abstract class Importer
         }
 
         //Granular Import
-        switch ($granularImporter) {
-            case '':
-                throw new \Exception(\G::LoadTranslation("ID_GRANULAR"),self::IMPORTED_PROJECT_DOES_NOT_EXISTS);
-                break;
-            case 'YES':
-                if($granularOptions === 'YES'){
-                    $granularObj = new \ProcessMaker\BusinessModel\Migrator\GranularImporter();
-                    $objectList = $granularObj->loadObjectsListSelected($this->importData, $granularOptions);
-                    if(sizeof($objectList)>0){
-                        $granularObj->import($objectList);
-                    }
-                    return $this->importData['tables']['bpmn']["project"][0]["prj_uid"];
-                }
-                break;
+        //$granularOptions merge
+        if($objectsToImport){
+            $granularObj = new \ProcessMaker\BusinessModel\Migrator\GranularImporter();
+            $objectList = $granularObj->loadObjectsListSelected($this->importData, $objectsToImport);
+            if(sizeof($objectList)>0){
+                $granularObj->import($objectList);
+            }
+            return $this->importData['tables']['bpmn']["project"][0]["prj_uid"];
         }
 
         $result = $this->doImport($generateUid);
