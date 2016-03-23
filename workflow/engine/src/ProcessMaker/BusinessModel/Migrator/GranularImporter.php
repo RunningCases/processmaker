@@ -88,6 +88,27 @@ class GranularImporter
                     $data['tables']['workflow']['filesManager'] : '';
                 $objectList['FILES']['PATH'] = isset($data['files']['workflow']) ? $data['files']['workflow'] : '';
                 break;
+            case 'DBCONNECTION':
+            case 'DBCONNECTIONS':
+                $objectList['DBCONNECTION'] = isset($data['tables']['workflow']['dbconnections']) ?
+                    $data['tables']['workflow']['dbconnections'] : '';
+                break;
+            case 'PERMISSIONS':
+                $objectList['PERMISSIONS'] = isset($data['tables']['workflow']['objectPermissions']) ?
+                    $data['tables']['workflow']['objectPermissions'] : '';
+                break;
+            case 'SUPERVISORS':
+                $objectList['SUPERVISORS'] = isset($data['tables']['workflow']['processUser']) ?
+                    $data['tables']['workflow']['processUser'] : '';
+                break;
+            case 'SUPERVISORSOBJECTS':
+                $objectList['SUPERVISORSOBJECTS'] = isset($data['tables']['workflow']['stepSupervisor']) ?
+                    $data['tables']['workflow']['stepSupervisor'] : '';
+                break;
+            case 'REPORTTABLES':
+                $objectList['REPORTTABLES'] = isset($data['tables']['workflow']['reportTables']) ?
+                    $data['tables']['workflow']['reportTables'] : '';
+                break;
             default:
                 break;
         }
