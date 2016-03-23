@@ -133,7 +133,7 @@ while ($rsSql->next()) {
 }
 
 if (count($arrayTabItem) > 0) {
-    $urlProxy = '/api/1.0/' . SYS_SYS . '/consolidated/';
+    $urlProxy = System::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . SYS_SYS . '/consolidated/';
     $clientId = 'x-pm-local-client';
     $client = getClientCredentials($clientId);
     $authCode = getAuthorizationCode($client);
@@ -178,7 +178,7 @@ if (count($arrayTabItem) > 0) {
     $headPublisher->assign("FORMATS", $conf->getFormats());
     $headPublisher->assign("urlProxy", $urlProxy);
     $headPublisher->assign('credentials', $clientToken );
-    
+
     $ieVersion = null;
     if(preg_match("/^.*\(.*MSIE (\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch) || preg_match("/^.*\(.*rv.(\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch)){
         $ieVersion = intval($arrayMatch[1]);

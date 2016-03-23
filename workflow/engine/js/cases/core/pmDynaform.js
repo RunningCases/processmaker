@@ -44,7 +44,7 @@ $(window).load(function () {
         		action = "cases_SaveData?UID=" + dyn_uid + "&APP_UID=" + app_uid;
         	}
             url = location.protocol + '//' + location.host;
-            
+
             url += '/sys' + workspace + '/en/neoclassic/cases/' + action;
             method = 'POST';
         }
@@ -71,7 +71,7 @@ $(window).load(function () {
         },
         formAjax: loadAjaxParams(),
         keys: {
-            server: location.host,
+            server: httpServerHostname,
             projectId: prj_uid,
             workspace: workspace
         },
