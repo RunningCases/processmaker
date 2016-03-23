@@ -61,9 +61,64 @@ class GranularExporter
         $version = \ProcessMaker\Util\Common::getLastVersion($outputDir . $getProjectName . "-*.pmx") + 1;
         $outputFilename = $outputDir . sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx");
 
+        $bpnmDefinition = array(
+                        'ACTIVITY'      => [],
+                        'ARTIFACT'      => [],
+                        'BOUND'         => [],
+                        'DATA'          => [],
+                        'DIAGRAM'       => [],
+                        'DOCUMENTATION' => [],
+                        'EXTENSION'     => [],
+                        'FLOW'          => [],
+                        'GATEWAY'       => [],
+                        'LANE'          => [],
+                        'LANESET'       => [],
+                        'PARTICIPANT'   => [],
+                        'PROCESS'       => [],
+                        'PROJECT'       => array(\BpmnProjectPeer::retrieveByPK($this->prjuid)->toArray())
+        );
+        $workflowDefinition = array(
+                        'process'                => array(\Processes::getProcessRow($this->prjuid, false)),
+                        'tasks'                  => [],
+                        'routes'                 => [],
+                        'lanes'                  => [],
+                        'gateways'               => [],
+                        'inputs'                 => [],
+                        'outputs'                => [],
+                        'dynaforms'              => [],
+                        'steps'                  => [],
+                        'triggers'               => [],
+                        'taskusers'              => [],
+                        'groupwfs'               => [],
+                        'steptriggers'           => [],
+                        'dbconnections'          => [],
+                        'reportTables'           => [],
+                        'reportTablesVars'       => [],
+                        'stepSupervisor'         => [],
+                        'objectPermissions'      => [],
+                        'subProcess'             => [],
+                        'caseTracker'            => [],
+                        'caseTrackerObject'      => [],
+                        'stage'                  => [],
+                        'fieldCondition'         => [],
+                        'event'                  => [],
+                        'caseScheduler'          => [],
+                        'processCategory'        => [],
+                        'taskExtraProperties'    => [],
+                        'processUser'            => [],
+                        'processVariables'       => [],
+                        'webEntry'               => [],
+                        'webEntryEvent'          => [],
+                        'messageType'            => [],
+                        'messageTypeVariable'    => [],
+                        'messageEventDefinition' => [],
+                        'scriptTask'             => [],
+                        'timerEvent'             => [],
+                        'emailEvent'             => []
+        );
         $data = array(
-            'bpmn-definition' => [],
-            'workflow-definition' => [],
+            'bpmn-definition' => $bpnmDefinition,
+            'workflow-definition' => $workflowDefinition,
             'workflow-files' => []
         );
 
