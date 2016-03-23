@@ -27,7 +27,7 @@ use \ProcessMaker\Importer\XmlImporter;
 ini_set("max_execution_time", 0);
 $affectedGroups = array();
 
-if (preg_match("/^(?:pm|pmx)$/", pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION))) {
+if (isset($_FILES["PROCESS_FILENAME"]["name"]) && (preg_match("/^(?:pm|pmx)$/", pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION)))) {
     $import = new XmlImporter();
     $granularImport = false;
     $objectImport = array();
@@ -138,10 +138,10 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
             $objectsToImport = G::json_decode($_POST['objectsToImport']);
             if ($_POST['generateUid'] === 'generate') {
                 $generateUid = true;
-                $prjUid = $importer->import($opt1, $opt2, $generateUid);
+                $prjUid = $importer->import($opt1, $opt2, $generateUid, $objectsToImport);
             } elseif ($_POST['generateUid'] === 'keep') {
                 $generateUid = false;
-                $prjUid = $importer->import($opt1, $opt2, $generateUid);
+                $prjUid = $importer->import($opt1, $opt2, $generateUid, $objectsToImport);
             } else {
                 $prjUid = $importer->import($opt1, $opt2, null, $objectsToImport);
             }
