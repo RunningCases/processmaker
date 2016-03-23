@@ -20,7 +20,10 @@ class GranularImporter
     }
 
     /**
-     * Load Objects List Selected
+     * @param $data
+     * @param $aGranular
+     * @return array
+     * @throws \Exception
      */
     public function loadObjectsListSelected($data, $aGranular)
     {
