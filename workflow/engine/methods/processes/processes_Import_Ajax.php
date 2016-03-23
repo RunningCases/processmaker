@@ -32,7 +32,7 @@ if (preg_match("/^(?:pm|pmx)$/", pathinfo($_FILES["PROCESS_FILENAME"]["name"], P
     $granularImport = false;
     $objectImport = array();
     $data = $import->load($_FILES["PROCESS_FILENAME"]["tmp_name"]);
-    if (!version_compare($data['version'], '3.0', '>')) {
+    if (version_compare($data['version'], '3.0', '>')) {
         $objectImport = (isset($data['objects'])) ? explode('|', $data['objects']) : "";
         $ids = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
         $objectImport = $ids->getIdObjectList($objectImport);
@@ -134,8 +134,6 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
         $opt2 = XmlImporter::GROUP_IMPORT_OPTION_CREATE_NEW;
         $prjUid = '';
         $proType = '';
-        $_POST['objectsToImport'] = '[{"id":4,"action":"merge"},{"id":7,"action":"replace"},{"id":9,
-        "action":"merge"}]';
         if (isset($_POST['objectsToImport']) && sizeof(G::json_decode($_POST['objectsToImport']))) {
             $objectsToImport = G::json_decode($_POST['objectsToImport']);
             if ($_POST['generateUid'] === 'generate') {
