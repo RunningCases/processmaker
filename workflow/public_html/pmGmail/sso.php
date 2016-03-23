@@ -28,6 +28,8 @@ curl_setopt($gCurl, CURLOPT_SSL_VERIFYHOST, false);
 
 if (curl_exec ( $gCurl ) === false) {
     echo 'Curl error: ' . curl_error ( $gCurl );
+    error_log(Bootstrap::LoadTranslation('ID_SERVER_COMMUNICATION_ERROR'));
+    die ();
 } else {
     $gCurl_response = curl_exec ( $gCurl );
     curl_close ( $gCurl );
