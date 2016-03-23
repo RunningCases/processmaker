@@ -109,6 +109,7 @@ $(window).load(function () {
                 dyn_forward = document.getElementById("dyn_forward");
                 dyn_forward.onclick = function () {
                     if (window.dynaform.getForms()[0].isValid()) {
+                        window.dynaform.getForms()[0].applySuccess();
                         //Destroy modal previous
                         if($('#modalProgressBar').length > 0){
                             $('#modalProgressBar').remove();
