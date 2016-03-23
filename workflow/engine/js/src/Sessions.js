@@ -1,7 +1,12 @@
 PM.Sessions = (function () {
     var Sessions = function () {
+        if (this.getCookie('singleSignOn') === '1') {
+            this.register();
+            this.eraseCookie('singleSignOn');
+        }
         if (window.location.pathname.indexOf("login") === -1 &&
             window.location.pathname.indexOf("sysLogin") === -1 &&
+            window.location.pathname.indexOf("authentication") === -1 &&
             this.getCookie('PM-TabPrimary') !== '101010010') {
             this.isClose = (this.getLabel('mainWindowClose') === "true");
             if (this.isClose && parent.parent.parent.window.name === "") {

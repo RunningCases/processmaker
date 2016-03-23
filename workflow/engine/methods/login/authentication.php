@@ -34,6 +34,7 @@ try {
     }
 
     if (!$RBAC->singleSignOn) {
+        setcookie("singleSignOn", '0', time() + (24 * 60 * 60), '/');
         if (!isset($_POST['form']) ) {
             G::SendTemporalMessage ('ID_USER_HAVENT_RIGHTS_SYSTEM', 'error');
             G::header('Location: login');
@@ -175,6 +176,7 @@ try {
         $_SESSION['USER_LOGGED']  = $uid;
         $_SESSION['USR_USERNAME'] = $usr;
     } else {
+        setcookie("singleSignOn", '1', time() + (24 * 60 * 60), '/');
         $uid = $RBAC->userObj->fields['USR_UID'];
         $usr = $RBAC->userObj->fields['USR_USERNAME'];
         $_SESSION['USER_LOGGED']  = $uid;
