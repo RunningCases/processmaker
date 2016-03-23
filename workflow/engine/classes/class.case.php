@@ -5344,16 +5344,16 @@ class Cases
                 $sTo = $respTo['to'];
                 $sCc = $respTo['cc'];
 
-                if($aTask["TAS_ASSIGN_TYPE"] === "SELF_SERVICE"){
-                	if ($swtplDefault == 1) {
-                		G::verifyPath($pathEmail, true); //Create if it does not exist
-                		$fileTemplate = $pathEmail . G::LoadTranslation('ID_UNASSIGNED_MESSAGE');
-                		
-                		if ((!file_exists($fileTemplate)) && file_exists(PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation('ID_UNASSIGNED_MESSAGE'))) {
-                			@copy(PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation('ID_UNASSIGNED_MESSAGE'), $fileTemplate);
-                		}
-                		$sBody2 = G::replaceDataField(file_get_contents($fileTemplate), $arrayData2);
-                	}
+                if ($aTask ["TAS_ASSIGN_TYPE"] === "SELF_SERVICE") {
+                    if ($swtplDefault == 1) {
+                        G::verifyPath ( $pathEmail, true ); // Create if it does not exist
+                        $fileTemplate = $pathEmail . G::LoadTranslation ( 'ID_UNASSIGNED_MESSAGE' );
+
+                        if ((! file_exists ( $fileTemplate )) && file_exists ( PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation ( 'ID_UNASSIGNED_MESSAGE' ) )) {
+                            @copy ( PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation ( 'ID_UNASSIGNED_MESSAGE' ), $fileTemplate );
+                        }
+                        $sBody2 = G::replaceDataField ( file_get_contents ( $fileTemplate ), $arrayData2 );
+                    }
                 }
 
                 if ($sTo != null) {
