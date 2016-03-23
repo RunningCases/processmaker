@@ -82,6 +82,7 @@ class Pmgmail {
      */
     public function sendEmail($app_uid, $mailToAddresses, $index, $arrayTask = null, $arrayData = null)
     {
+        require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Application.php");
         //getting the default email server
         $defaultEmail = $this->emailAccount();
 
@@ -160,20 +161,28 @@ class Pmgmail {
                                 while ( $rsCriteria->next () ) {
                                     $row = $rsCriteria->getRow ();
                                 }
-                                $taskUsers = unserialize ( $row ['GRP_UID'] );
+                                $targetIds = unserialize ( $row ['GRP_UID'] );
                                 $oUsers = new \Users ();
-                                if ($taskUsers !== false){
-                                    foreach ( $taskUsers as $user ) {
+
+                                if (is_array($targetIds)) {
+                                    foreach ( $targetIds as $user ) {
                                         $usrData = $oUsers->loadDetails ( $user );
+                                        if ($usrData !== null) {
+                                            $isGroup = true;
+                                        }
                                         $nextMail = $usrData ['USR_EMAIL'];
                                         $mailToAddresses .= ($mailToAddresses == '') ? $nextMail : ',' . $nextMail;
                                     }
                                 } else {
-                                    $usrData = $oUsers->loadDetails ( $user );
-                                    $mailToAddresses = $usrData ['USR_EMAIL'];
+                                    $group = new \Groups();
+                                    $users = $group->getUsersOfGroup($targetIds);
+                                    foreach ($users as $user) {
+                                        $nextMail = $user['USR_EMAIL'];
+                                        $mailToAddresses .= ($mailToAddresses == '') ? $nextMail : ',' . $nextMail;
+                                    }
                                 }
-                                
                             }
+                            
                         }
                     }
                 } else {
