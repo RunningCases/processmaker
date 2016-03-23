@@ -67,18 +67,20 @@ class PMXGenerator
 
                 foreach ($elementData as $recordData) {
                     $recordNode = $this->domDocument->createElement("record");
-                    $recordData = array_change_key_case($recordData, CASE_LOWER);
+                    if(is_array($recordData)){
+                        $recordData = array_change_key_case($recordData, CASE_LOWER);
 
-                    foreach ($recordData as $key => $value) {
-                        if (is_object($value)) {
-                            $value = serialize($value);
+                        foreach ($recordData as $key => $value) {
+                            if (is_object($value)) {
+                                $value = serialize($value);
+                            }
+                            $columnNode = $this->domDocument->createElement($key);
+                            $columnNode->appendChild($this->getTextNode($value));
+                            $recordNode->appendChild($columnNode);
                         }
-                        $columnNode = $this->domDocument->createElement($key);
-                        $columnNode->appendChild($this->getTextNode($value));
-                        $recordNode->appendChild($columnNode);
-                    }
 
-                    $elementNode->appendChild($recordNode);
+                        $elementNode->appendChild($recordNode);
+                    }
                 }
 
                 $dataNode->appendChild($elementNode);
