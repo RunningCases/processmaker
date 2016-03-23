@@ -138,7 +138,8 @@ class GranularImporter
     }
 
     /**
-     * import
+     * @param $objectList
+     * @return array
      */
     public function import($objectList)
     {
@@ -155,6 +156,30 @@ class GranularImporter
             return array(
                 'success' => false,
                 'message' => $e->getMessage()
+            );
+        }
+    }
+
+    /**
+     * @param $objectList
+     * @param bool|false $generateUid
+     * @return array
+     */
+    public function validateImportData($objectList, $generateUid = false)
+    {
+        try {
+            if($generateUid == null){
+                foreach ($objectList as $rowObject) {
+                    if($rowObject['name'] === 'PROCESSDEFINITION' && $rowObject['value'] == "replace"){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (ExportException $e) {
+            return array(
+                    'success' => false,
+                    'message' => $e->getMessage()
             );
         }
     }
