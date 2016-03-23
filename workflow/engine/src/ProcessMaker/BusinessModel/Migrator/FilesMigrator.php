@@ -89,11 +89,11 @@ class FilesMigrator implements Importable, Exportable
     {
         try {
             $oData = new \StdClass();
-            $oData->filesManager = $this->processes->getFilesManager($prj_uid, 'PUBLIC');
+            $oData->filesManager = $this->processes->getFilesManager($prj_uid, 'public');
 
             $fileHandler = new FileHandler();
             $arrayPublicFileToExclude = $fileHandler->getFilesToExclude($prj_uid);
-            $workflowFile = $fileHandler->getTemplatesOrPublicFiles($prj_uid, $arrayPublicFileToExclude, 'PUBLIC');
+            $workflowFile = $fileHandler->getTemplatesOrPublicFiles($prj_uid, $arrayPublicFileToExclude, 'public');
 
             $result = array(
                 'workflow-definition' => (array)$oData,

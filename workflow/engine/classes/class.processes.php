@@ -3502,7 +3502,7 @@ class Processes
             $criteria->addSelectColumn(\ProcessFilesPeer::PRF_UPDATE_DATE);
             $criteria->add(ProcessFilesPeer::PRO_UID, $processUid, Criteria::EQUAL);
             if ($template !== 'all') {
-                if ($template !== 'template') {
+                if ($template === 'template') {
                     $criteria->add(ProcessFilesPeer::PRF_EDITABLE, true, Criteria::EQUAL);
                 } else {
                     $criteria->add(ProcessFilesPeer::PRF_EDITABLE, false, Criteria::EQUAL);

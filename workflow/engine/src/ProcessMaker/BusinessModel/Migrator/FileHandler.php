@@ -24,7 +24,7 @@ class FileHandler
             $criteria->add(\WebEntryPeer::WE_METHOD, "WS", \Criteria::EQUAL);
 
             $rsCriteria = \WebEntryPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
