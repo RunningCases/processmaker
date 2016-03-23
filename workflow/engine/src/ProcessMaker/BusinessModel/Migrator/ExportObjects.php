@@ -34,7 +34,12 @@ class ExportObjects
             $aObjectsEnable = explode('|', $objectsEnable);
             foreach ($this->objectsList as $key => $val) {
                 $key++;
-                $grid[] = array('OBJECT_ID' => $key, 'OBJECT_NAME' => $val, 'OBJECT_ENABLE' => in_array(strtoupper(str_replace(' ', '',$val)), $aObjectsEnable) );
+                $grid[] = array(
+                    'OBJECT_ID' => $key,
+                    'OBJECT_NAME' => $val,
+                    'OBJECT_ACTION' => 1,
+                    'OBJECT_ENABLE' => in_array(strtoupper(str_replace(' ', '',$val)), $aObjectsEnable)
+                );
             }
 
             $r = new \stdclass();

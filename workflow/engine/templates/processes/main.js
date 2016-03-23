@@ -19,6 +19,8 @@ importProcessGlobal.groupBeforeAccion="";
 importProcessGlobal.sNewProUid = "";
 importProcessGlobal.importOption = "";
 importProcessGlobal.processFileType = "";
+importProcessGlobal.isGranularImport = false;
+importProcessGlobal.objectGranularImport;
 
 new Ext.KeyMap(document, {
   key: Ext.EventObject.F5,
@@ -988,7 +990,8 @@ function exportImportProcessObjects(typeAction)
             fields : [
                 {name : 'OBJECT_ID'},
                 {name : 'OBJECT_NAME'},
-                {name : 'OBJECT_ACTION'}
+                {name : 'OBJECT_ACTION'},
+                {name : 'OBJECT_ENABLE'}
             ]
         })
     });
@@ -1016,6 +1019,7 @@ function exportImportProcessObjects(typeAction)
         selModel : checkBoxSelMod,
         showHeaderCheckbox: true,
         columnLines: true,
+        //disableSelection : true,
         viewConfig: {
             forceFit:true,
             cls:"x-grid-empty",
@@ -1048,7 +1052,8 @@ function exportImportProcessObjects(typeAction)
                         }
                         return storeActionField.getAt(recordIndex).get('text');
                     }
-                }
+                },
+                {header: 'Name', dataIndex: 'OBJECT_ENABLE', hidden: true},
             ]
         }),
         store: storeGrid,
@@ -1060,9 +1065,16 @@ function exportImportProcessObjects(typeAction)
                 } else { /*import*/
                     colModel.setHidden(3, false);
                     grid.store.on('load', function(store, records, options){
-                        for(i=0; i<grid.getStore().getTotalCount(); i++){
-                            grid.getSelectionModel().selectRow(i, true);
-                        }
+                        var gridStore = grid.getStore();
+                        gridStore.each(function(row, j){
+                            if(inArray(row.get('OBJECT_ID'),importProcessGlobal.objectGranularImport)) {
+                                grid.getSelectionModel().selectRow(j, true);
+                            } else {
+                                /*disable row*/
+                                //grid.getSelectionModel().deselectRow(j, true);
+                                return '';
+                            }
+                        });
                     });
                 }
             }
@@ -1086,9 +1098,9 @@ function exportImportProcessObjects(typeAction)
                 text    : buttonLabel,
                 handler : function() {
                     var selectedObjects = gridProcessObjects.getSelectionModel().getSelections();
+                    processObjectsArray = [];
                     if(defaultTypeAction === 'export') {
                         if(selectedObjects.length > 0) {
-                            processObjectsArray = [];
                             for (i = 0; i < selectedObjects.length; i++) {
                                 processObjectsArray.push(selectedObjects[i].get('OBJECT_ID'));
                             }
@@ -1096,7 +1108,20 @@ function exportImportProcessObjects(typeAction)
                             exportProcess();
                         }
                     } else { /*import*/
+                        if(selectedObjects.length > 0) {
+                            for (i = 0; i < selectedObjects.length; i++) {
+                                processObjectsArray.push(
+                                    {
+                                        id: selectedObjects[i].get('OBJECT_ID'),
+                                        action: selectedObjects[i].get('OBJECT_ACTION') === 1 ? 'merge' : 'replace'
+                                    }
+                                );
+                            }
+                            processObjectsArray = JSON.stringify(processObjectsArray);
+                        }
 
+                        Ext.getCmp('objectsToImport').setValue(processObjectsArray);
+                        Ext.getCmp('buttonUpload').el.dom.click();
                     }
                 }
             }, {
@@ -1109,6 +1134,15 @@ function exportImportProcessObjects(typeAction)
     });
     w.show();
 }
+
+function inArray(needle, haystack) {
+    var length = haystack.length;
+    for(var i = 0; i < length; i++) {
+        if(haystack[i] == needle) return true;
+    }
+    return false;
+}
+
 function generateBpmn()
 {
     var record = processesGrid.getSelectionModel().getSelections();
@@ -1698,6 +1732,11 @@ importProcess = function()
               name: 'generateUid',
               xtype: 'hidden',
               value: ''
+            }, {
+              id: 'objectsToImport',
+              name: 'objectsToImport',
+              xtype: 'hidden',
+              value: ''
             }
           ],
           buttons : [{
@@ -1723,68 +1762,72 @@ importProcess = function()
                                       success: function(o, resp)
                                       {
                                           var resp_ = Ext.util.JSON.decode(resp.response.responseText);
+                                          if(resp_.isGranularImport) {
+                                              importProcessGlobal.isGranularImport = resp_.isGranularImport;
+                                              importProcessGlobal.objectGranularImport = resp_.objectGranularImport;
+                                              exportImportProcessObjects('import');
+                                          } else {
+                                              if (resp_.status) {
+                                                  if (resp_.status == "DISABLED-CODE") {
+                                                      Ext.MessageBox.show({
+                                                          title: _("ID_ERROR"),
+                                                          msg: "<div style=\"overflow: auto; width: 500px; height: 150px;\">" + stringReplace("\\x0A", "<br />", resp_.message) + "</div>", //\n 10
+                                                          width: 570,
+                                                          height: 250,
+                                                          icon: Ext.MessageBox.ERROR,
+                                                          buttons: Ext.MessageBox.OK
+                                                      });
 
-                                          if (resp_.status) {
-                                              if (resp_.status == "DISABLED-CODE") {
-                                                  Ext.MessageBox.show({
-                                                      title: _("ID_ERROR"),
-                                                      msg: "<div style=\"overflow: auto; width: 500px; height: 150px;\">" + stringReplace("\\x0A", "<br />", resp_.message) + "</div>", //\n 10
-                                                      width: 570,
-                                                      height: 250,
-                                                      icon: Ext.MessageBox.ERROR,
-                                                      buttons: Ext.MessageBox.OK
-                                                  });
-
-                                                  return;
-                                              }
-                                          }
-
-                                          if (resp_.catchMessage == "") {
-                                              if (resp_.ExistProcessInDatabase == "0") {
-                                                  if(resp_.notExistProcessInDatabase == "1") {
-                                                      importProcessGlobal.sNewProUid        = resp_.sNewProUid;
-                                                      importProcessGlobal.proFileName       = resp_.proFileName;
-                                                      importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
-                                                      changeOrKeepUids();
                                                       return;
                                                   }
-                                                  if (resp_.ExistGroupsInDatabase == "0") {
-                                                      var sNewProUid = resp_.sNewProUid;
+                                              }
 
-                                                      if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") { 
-                                                          if (typeof(resp_.project_type_aux) != "undefined" && resp_.project_type_aux == "NORMAL") {  
-                                                              importProcessCallbackFile = false;
-                                                          }      
-                                                          var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
-                                                          openWindowIfIE(goTo + sNewProUid);
-                                                      } else {
-                                                          window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+                                              if (resp_.catchMessage == "") {
+                                                  if (resp_.ExistProcessInDatabase == "0") {
+                                                      if(resp_.notExistProcessInDatabase == "1") {
+                                                          importProcessGlobal.sNewProUid        = resp_.sNewProUid;
+                                                          importProcessGlobal.proFileName       = resp_.proFileName;
+                                                          importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
+                                                          changeOrKeepUids();
+                                                          return;
                                                       }
-                                                  } else {
-                                                      affectedGroups = resp_.affectedGroups;
-                                                      importProcessGlobal.sNewProUid        = resp_.sNewProUid;
-                                                      importProcessGlobal.proFileName       = resp_.proFileName;
-                                                      importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
-                                                      importProcessExistGroup();
+                                                      if (resp_.ExistGroupsInDatabase == "0") {
+                                                          var sNewProUid = resp_.sNewProUid;
+                                                          if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
+                                                              if (typeof(resp_.project_type_aux) != "undefined" && resp_.project_type_aux == "NORMAL") {
+                                                                  importProcessCallbackFile = false;
+                                                              }
+                                                              var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
+                                                              openWindowIfIE(goTo + sNewProUid);
+                                                          } else {
+                                                              window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+                                                          }
+                                                      } else {
+                                                          affectedGroups = resp_.affectedGroups;
+                                                          importProcessGlobal.sNewProUid        = resp_.sNewProUid;
+                                                          importProcessGlobal.proFileName       = resp_.proFileName;
+                                                          importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
+                                                          importProcessExistGroup();
+                                                      }
+                                                  } else if (resp_.ExistProcessInDatabase == "1") {
+                                                      importProcessGlobal.proFileName = resp_.proFileName;
+                                                      importProcessExistProcess();
                                                   }
-                                              } else if (resp_.ExistProcessInDatabase == "1") {
-                                                  importProcessGlobal.proFileName = resp_.proFileName;
-                                                  importProcessExistProcess();
-                                              }
-                                          } else {
-                                              w.close();
-                                              if (Ext.getCmp('changeOrKeepUidsWindow')) {
-                                                  Ext.getCmp('changeOrKeepUidsWindow').close();
-                                              }
+                                              } else {
+                                                  w.close();
+                                                  if (Ext.getCmp('changeOrKeepUidsWindow')) {
+                                                      Ext.getCmp('changeOrKeepUidsWindow').close();
+                                                  }
 
-                                              Ext.MessageBox.show({
-                                                  title  : "",
-                                                  msg    : resp_.catchMessage,
-                                                  buttons: Ext.MessageBox.OK,
-                                                  animEl : "mb9",
-                                                  fn     : function(){},
-                                                  icon   : Ext.MessageBox.ERROR
-                                              });
+                                                  Ext.MessageBox.show({
+                                                      title  : "",
+                                                      msg    : resp_.catchMessage,
+                                                      buttons: Ext.MessageBox.OK,
+                                                      animEl : "mb9",
+                                                      fn     : function(){},
+                                                      icon   : Ext.MessageBox.ERROR
+                                                  });
+                                              }
                                           }
                                       },
                                       failure : function(o, resp)
