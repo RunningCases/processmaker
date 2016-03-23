@@ -236,7 +236,8 @@ if (isset($_POST["PRO_FILENAME"]) &&
     $importer->setSourceFile(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"]);
 
     try {
-        $prjUid = $importer->import($option, $optionGroup, null, $granularImport,$granularOptions);
+        $objectsToImport = G::json_decode($_POST['objectsToImport']);
+        $prjUid = $importer->import($option, $optionGroup, null, $objectsToImport);
         
         G::LoadClass( 'Process' );
         $oProcess = new Process();
