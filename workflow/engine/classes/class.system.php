@@ -1257,11 +1257,9 @@ class System
     /**
      * Get the complete name of the server host configured for requests Front-End (e.g. https://127.0.0.1:81)
      *
-     * @param bool $flagHttp Add https/http string
-     *
      * @return string Returns an string with the complete name of the server host configured for requests Front-End
      */
-    public static function getHttpServerHostnameRequestsFrontEnd($flagHttp = true)
+    public static function getHttpServerHostnameRequestsFrontEnd()
     {
         try {
             $arraySystemConfiguration = self::getSystemConfiguration();
@@ -1270,7 +1268,7 @@ class System
             $serverHostname = ($serverHostname != '')? $serverHostname : $_SERVER['HTTP_HOST'];
 
             //Return
-            return (($flagHttp)? ((G::is_https())? 'https://' : 'http://') : '') . $serverHostname;
+            return ((G::is_https())? 'https://' : 'http://') . $serverHostname;
         } catch (Exception $e) {
             throw $e;
         }
