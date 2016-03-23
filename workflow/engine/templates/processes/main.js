@@ -21,6 +21,7 @@ importProcessGlobal.importOption = "";
 importProcessGlobal.processFileType = "";
 importProcessGlobal.isGranularImport = false;
 importProcessGlobal.objectGranularImport;
+importProcessGlobal.objectsToImport = [];
 
 new Ext.KeyMap(document, {
   key: Ext.EventObject.F5,
@@ -969,7 +970,7 @@ function exportImportProcessObjects(typeAction)
         gridProcessObjects,
         colModel,
         buttonLabel,
-        w,
+        granularWindow,
         i;
 
     if(typeof typeAction !== undefined) {
@@ -1019,7 +1020,7 @@ function exportImportProcessObjects(typeAction)
         selModel : checkBoxSelMod,
         showHeaderCheckbox: true,
         columnLines: true,
-        //disableSelection : true,
+        disableSelection : true,
         viewConfig: {
             forceFit:true,
             cls:"x-grid-empty",
@@ -1068,19 +1069,21 @@ function exportImportProcessObjects(typeAction)
                         var gridStore = grid.getStore();
                         gridStore.each(function(row, j){
                             if(inArray(row.get('OBJECT_ID'),importProcessGlobal.objectGranularImport)) {
-                                grid.getSelectionModel().selectRow(j, true);
+                                //grid.getSelectionModel().selectRow(j, true);
                             } else {
                                 /*disable row*/
-                                //grid.getSelectionModel().deselectRow(j, true);
-                                return '';
+                                gridStore.remove(row);
+                               /* gridStore.rejectChanges(row);
+                                row.cancelEdit();*/
                             }
+                            grid.getSelectionModel().selectRow(j, true);
                         });
                     });
                 }
             }
         }
     });
-    w = new Ext.Window({
+    granularWindow = new Ext.Window({
         id          : 'exportProcessObjectsWindow',
         title       : windowTitle,
         header      : false,
@@ -1119,20 +1122,21 @@ function exportImportProcessObjects(typeAction)
                             }
                             processObjectsArray = JSON.stringify(processObjectsArray);
                         }
-
+                        importProcessGlobal.objectsToImport = processObjectsArray;
                         Ext.getCmp('objectsToImport').setValue(processObjectsArray);
                         Ext.getCmp('buttonUpload').el.dom.click();
+                        granularWindow.close();
                     }
                 }
             }, {
                 text    : _('ID_CANCEL'),
                 handler : function(){
-                    w.close();
+                    granularWindow.close();
                 }
             }
         ]
     });
-    w.show();
+    granularWindow.show();
 }
 
 function inArray(needle, haystack) {
@@ -1322,6 +1326,10 @@ importProcessExistGroup = function()
             name  : 'processFileType',
             xtype : 'hidden',
             value : processFileType
+          }, {
+            name  : 'objectsToImport',
+            xtype : 'hidden',
+            value : importProcessGlobal.objectsToImport
           }, {
             xtype  : 'spacer',
             height : 10
@@ -1642,6 +1650,10 @@ changeOrKeepUids = function()
                         name  : 'processFileType',
                         xtype : 'hidden',
                         value : processFileType
+                    }, {
+                        name  : 'objectsToImport',
+                        xtype : 'hidden',
+                        value : importProcessGlobal.objectsToImport
                     }, {
                         xtype  : 'spacer',
                         height : 10
