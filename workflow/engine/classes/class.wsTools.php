@@ -2157,7 +2157,7 @@ class workspaceTools
         while($dataset->next()) {
             $aRow = $dataset->getRow();
             $oAppCache = new AppCacheView();
-            $aCount = $oAppCache->getAllCounters( $aTypes, $aRow['USR_UID'] );
+            $aCount = $oAppCache->getAllCounters($aTypes, $aRow['USR_UID'], false);
             $newData = array(
                 'USR_UID'                   => $aRow['USR_UID'],
                 'USR_TOTAL_INBOX'           => $aCount['to_do'],
