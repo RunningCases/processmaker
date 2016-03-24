@@ -90,7 +90,7 @@ Ext.onReady(function () {
                         }
                     ]}),
                 "bbar": new Ext.PagingToolbar({
-                    pageSize: 20,
+                    pageSize: 15,
                     store: store,
                     displayInfo: true,
                     displayMsg: '{0} - {1}',
