@@ -1833,7 +1833,7 @@ importProcess = function()
                                                           importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
                                                           importProcessExistGroup();
                                                       }
-                                                  } else if (resp_.ExistProcessInDatabase === "1") {
+                                                  } else {
                                                       importProcessGlobal.proFileName = resp_.proFileName;
                                                       importProcessExistProcess();
                                                   }
