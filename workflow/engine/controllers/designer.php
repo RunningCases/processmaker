@@ -149,8 +149,8 @@ class Designer extends Controller
             if ($user->checkPermission($row['USER_ID'], 'PM_FACTORY') || $proReadOnly == 'true') {
                 $this->setView('designer/index');
             } else {
-                $this->setVar('accessDenied', G::LoadTranslation('ID_ACCESS_DENIED'));
-                $this->setView('designer/accessDenied');
+                G::header('Location: /errors/error403.php');
+                die();
             }
         }
 
