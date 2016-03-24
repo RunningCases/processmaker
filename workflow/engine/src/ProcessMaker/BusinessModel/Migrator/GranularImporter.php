@@ -163,19 +163,20 @@ class GranularImporter
     /**
      * @param $objectList
      * @param bool|false $generateUid
-     * @return array
+     * @return array|bool
      */
     public function validateImportData($objectList, $generateUid = false)
     {
         try {
-            if($generateUid == null){
+            if($generateUid){
                 foreach ($objectList as $rowObject) {
                     if($rowObject['name'] === 'PROCESSDEFINITION' && $rowObject['value'] == "replace"){
                         return true;
                     }
                 }
+                return false;
             }
-            return false;
+            return true;
         } catch (ExportException $e) {
             return array(
                     'success' => false,
