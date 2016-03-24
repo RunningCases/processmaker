@@ -410,8 +410,6 @@ class Ajax
 
     public function changeLogHistory()
     {
-        error_log('AAAAA!!!!!');
-        //ACA VIENEN MIS CAMBIOS!!!
         global $G_PUBLISH;
         G::loadClass('configuration');
         $idHistory = sprintf(
