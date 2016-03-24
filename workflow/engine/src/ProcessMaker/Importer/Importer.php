@@ -216,12 +216,15 @@ abstract class Importer
         if ($objectsToImport !== '') {
             $granularObj = new \ProcessMaker\BusinessModel\Migrator\GranularImporter();
             $objectList = $granularObj->loadObjectsListSelected($this->importData, $objectsToImport);
-            $processGranulate = $granularObj->validateImportData($objectList, $generateUidFromJs);
+            $processGranulate = $granularObj->validateImportData($objectList, $generateUid);
             if (sizeof($objectList) > 0 && $processGranulate) {
                 $granularObj->import($objectList);
                 return $this->importData['tables']['bpmn']["project"][0]["prj_uid"];
             }else{
-                return new \Exception('ERROR MERGE/REPLACE ERROR');
+                throw new \Exception('Select definition of process and replace option',
+                        self::IMPORTED_PROJECT_DOES_NOT_EXISTS
+                );
+                return new \Exception();
             }
 
         }

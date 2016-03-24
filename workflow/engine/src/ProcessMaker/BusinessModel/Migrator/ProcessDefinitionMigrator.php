@@ -30,7 +30,7 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             if ($replace) {
                 $this->bpmn->createFromStruct($data, false);
             } else {
-                $this->bpmn->updateFromStruct($data['PRJ_UID'], $data, false);
+                $this->bpmn->updateFromStruct($data['prj_uid'], $data, false);
             }
         } catch (\Exception $e) {
             return $e->getMessage();
