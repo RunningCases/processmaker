@@ -93,7 +93,7 @@ Ext.onReady(function () {
                     pageSize: 20,
                     store: store,
                     displayInfo: true,
-                    displayMsg: '{0} - {1}',,
+                    displayMsg: '{0} - {1}',
                     emptyMsg: "",
                     items: []
                 })
