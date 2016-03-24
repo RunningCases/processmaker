@@ -173,8 +173,12 @@ abstract class Importer
                 if($objectsToImport === ''){
                     $this->removeProject();
                 } else {
-                    if(in_array('PROCESSDEFINITION', $objectsToImport)){
-                        $this->removeProject();
+                    $granularObj = new \ProcessMaker\BusinessModel\Migrator\GranularImporter();
+                    $objectList = $granularObj->loadObjectsListSelected($this->importData, $objectsToImport);
+                    foreach ($objectList as $rowObject) {
+                        if($rowObject['name'] === 'PROCESSDEFINITION'){
+                            $this->removeProject();
+                        }
                     }
                 }
                 $name = $this->currentProcessTitle;
