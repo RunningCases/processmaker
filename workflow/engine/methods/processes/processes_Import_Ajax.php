@@ -33,11 +33,26 @@ if (isset($_FILES["PROCESS_FILENAME"]["name"]) && (preg_match("/^(?:pm|pmx)$/", 
     $objectImport = array();
     $data = $import->load($_FILES["PROCESS_FILENAME"]["tmp_name"]);
 
-    if (version_compare($data['version'], '3.0', '>')) {
+    if (version_compare($data['version'], '3.0', '>') && isset($_POST['objectsToImport']) && $_POST['objectsToImport'] === '') {
         $objectImport = (isset($data['objects'])) ? explode('|', $data['objects']) : "";
         $ids = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
         $objectImport = $ids->getIdObjectList($objectImport);
         $granularImport = true;
+        $result = array(
+            "success"                   => true,
+            "catchMessage"              => '',
+            "ExistProcessInDatabase"    => 0,
+            "ExistGroupsInDatabase"     => 0,
+            "notExistProcessInDatabase" => 0,
+            "affectedGroups"            => '',
+            "sNewProUid"                => '',
+            "project_type"              => 'bpmn',
+            "isGranularImport"          => $granularImport,
+            "objectGranularImport"      => $objectImport,
+            "project_type_aux"          => ''
+        );
+        echo G::json_encode($result);
+        exit(0);
     }
 }
 /*----------------------------------********---------------------------------*/
@@ -145,7 +160,7 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
                 $generateUid = false;
                 $prjUid = $importer->import($opt1, $opt2, $generateUid, $objectsToImport);
         } else {
-                $prjUid = $importer->import($opt1, $opt2, null, $objectsToImport);
+                $prjUid = $importer->import();
         }
         G::LoadClass('Process');
         $oProcess = new Process();
