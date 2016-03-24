@@ -215,7 +215,7 @@ if (isset($_POST["PRO_FILENAME"]) &&
     $importer->setSourceFile(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"]);
 
     try {
-        $prjUid = $importer->import($option, $optionGroup);
+        $prjUid = $importer->import($option, $optionGroup, false);
         
         G::LoadClass( 'Process' );
         $oProcess = new Process();
