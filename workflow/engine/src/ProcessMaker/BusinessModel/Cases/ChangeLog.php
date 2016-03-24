@@ -44,8 +44,7 @@ class ChangeLog
      */
     private $permissions = [];
 
-    public function getChangeLog($appUid, $proUid, $tasUid, $start,
-                                 $limit)
+    public function getChangeLog($appUid, $proUid, $tasUid, $start, $limit)
     {
         $this->loadPermissions($appUid, $proUid, $tasUid);
         $result = $this->getResultSet($appUid);
@@ -57,8 +56,8 @@ class ChangeLog
     {
         $conn = Propel::getConnection('workflow');
         $sql = 'SELECT APP_HISTORY.*, USERS.USR_USERNAME FROM APP_HISTORY'
-            . ' LEFT JOIN USERS ON(APP_HISTORY.USR_UID=USERS.USR_UID)'
-            . ' WHERE APP_UID=? ORDER BY HISTORY_DATE ASC';
+            .' LEFT JOIN USERS ON(APP_HISTORY.USR_UID=USERS.USR_UID)'
+            .' WHERE APP_UID=? ORDER BY HISTORY_DATE ASC';
         $stmt = $conn->prepareStatement($sql);
         $stmt->set(1, $appUid);
         if (!$stmt->executeQuery()) {
@@ -77,9 +76,8 @@ class ChangeLog
                 continue;
             }
             if ($index < $start) {
-                $index += $this->updateData($data, $row,
-                                            $this->hasPermission($row['DYN_UID']),
-                                                                 false);
+                $index += $this->updateData(
+                    $data, $row, $this->hasPermission($row['DYN_UID']), false);
                 continue;
             }
             $a = $this->updateData($data, $row,
@@ -112,7 +110,8 @@ class ChangeLog
             if (array_search($key, $this->reserved) !== false) {
                 continue;
             }
-            if ($hasPermission && (!isset($this->values[$key]) || $this->values[$key] !== $value)) {
+            if ($hasPermission && (!isset($this->values[$key]) || $this->values[$key]
+                !== $value)) {
                 if ($addToTree) {
                     $node = new StdClass();
                     $node->field = $key;
