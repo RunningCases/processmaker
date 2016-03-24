@@ -64,9 +64,9 @@ Ext.onReady(function () {
                             sortable: false,
                             dataIndex: 'previousValue',
                             renderer: function (value, p, record) {
-                                return value +
-                                    ' <button disabled="disabled">'
-                                    + record.data.previousValueType + '</button>';
+                                return ' <button disabled="disabled" class="typeButton">'
+                                    + record.data.previousValueType
+                                    + '</button> ' + value;
                             }
                         },
                         {
@@ -75,9 +75,9 @@ Ext.onReady(function () {
                             sortable: false,
                             dataIndex: 'currentValue',
                             renderer: function (value, p, record) {
-                                return value +
-                                    ' <button disabled="disabled">'
-                                    + record.data.currentValueType + '</button>';
+                                return ' <button disabled="disabled" class="typeButton">'
+                                    + record.data.currentValueType
+                                    + '</button> ' + value;
                             }
                         },
                         {
@@ -88,15 +88,7 @@ Ext.onReady(function () {
                             hideable: true,
                             dataIndex: 'record'
                         }
-                    ]}),
-                "bbar": new Ext.PagingToolbar({
-                    pageSize: 15,
-                    store: store,
-                    displayInfo: true,
-                    displayMsg: '{0} - {1}',
-                    emptyMsg: "",
-                    items: []
-                })
+                    ]})
             })
 
         ]

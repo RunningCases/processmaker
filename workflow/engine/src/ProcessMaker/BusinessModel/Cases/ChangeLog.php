@@ -84,10 +84,6 @@ class ChangeLog
                                    $this->hasPermission($row['DYN_UID']), true);
             $limit-= $a;
             $index+= $a;
-            if ($limit < 0) {
-                $index+=1;
-                break;
-            }
         }
         return $index;
     }
