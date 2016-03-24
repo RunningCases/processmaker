@@ -32,7 +32,7 @@ Ext.onReady(function () {
                             groupField: 'record',
                             remoteSort: true,
                             proxy: new Ext.data.HttpProxy({
-                                url: '/sysworkflow/en/neoclassic/cases/ajaxListener?action=changeLogAjax&idHistory='+ID_HISTORY,
+                                url: 'ajaxListener?action=changeLogAjax&idHistory='+ID_HISTORY,
                                 reader: new Ext.data.JsonReader({
                                     fields: [
                                         {name: 'record'},

@@ -13,8 +13,6 @@ use Task;
 
 /**
  * Return the ChangeLog of a Dynaform
- * http://localhost:8083/sysworkflow/en/neoclassic/cases/casesHistoryDynaformPage_Ajax?actionAjax=showDynaformListHistory&PRO_UID=23134954556f0727c3fde11063016937&APP_UID=93748078756f16cd8e665b7099829333&TAS_UID=16304814956f0729495da25001454322&DYN_UID=12434578956f07308e54d44056464541
- * http://localhost:8083/sysworkflow/en/neoclassic/cases/ajaxListener?action=changeLogTab&idHistory=23134954556f0727c3fde11063016937_48789444056f0747d7e2e19034608525_16304814956f0729495da25001454322
  */
 class ChangeLog
 {
@@ -58,11 +56,13 @@ class ChangeLog
     private function getResultSet($appUid)
     {
         $conn = Propel::getConnection('workflow');
-        $stmt = $conn->createStatement();
-        $sql = 'SELECT APP_HISTORY.*, USERS.USR_USERNAME FROM APP_HISTORY LEFT JOIN USERS ON(APP_HISTORY.USR_UID=USERS.USR_UID)'
-            . ' WHERE APP_UID="'.$appUid.'" ORDER BY HISTORY_DATE ASC';
-        if (!$stmt->execute($sql)) {
-            throw Exception('Unable to read history');
+        $sql = 'SELECT APP_HISTORY.*, USERS.USR_USERNAME FROM APP_HISTORY'
+            . ' LEFT JOIN USERS ON(APP_HISTORY.USR_UID=USERS.USR_UID)'
+            . ' WHERE APP_UID=? ORDER BY HISTORY_DATE ASC';
+        $stmt = $conn->prepareStatement($sql);
+        $stmt->set(1, $appUid);
+        if (!$stmt->executeQuery()) {
+            throw Exception(G::LoadTranslation('ID_MSG_AJAX_FAILURE'));
         }
         return $stmt->getResultSet();
     }
@@ -86,7 +86,6 @@ class ChangeLog
                                    $this->hasPermission($row['DYN_UID']), true);
             $limit-= $a;
             $index+= $a;
-            error_log("+$a = $index / $limit");
             if ($limit < 0) {
                 $index+=1;
                 break;
@@ -125,7 +124,6 @@ class ChangeLog
                     $node->record = $this->getHistoryTitle($row);
                     $this->tree[] = $node;
                 }
-//                error_log($key);
                 $i++;
             }
             $this->values[$key] = $value;
