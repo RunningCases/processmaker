@@ -32,6 +32,7 @@ if (isset($_FILES["PROCESS_FILENAME"]["name"]) && (preg_match("/^(?:pm|pmx)$/", 
     $granularImport = false;
     $objectImport = array();
     $data = $import->load($_FILES["PROCESS_FILENAME"]["tmp_name"]);
+
     if (version_compare($data['version'], '3.0', '>')) {
         $objectImport = (isset($data['objects'])) ? explode('|', $data['objects']) : "";
         $ids = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
@@ -66,9 +67,7 @@ if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm
                 break;
             case "pmx":
                 $importer = new XmlImporter();
-
                 $data = $importer->load($_FILES["PROCESS_FILENAME"]["tmp_name"]);
-
                 if (isset($data["tables"]["workflow"]["triggers"]) && is_array($data["tables"]["workflow"]["triggers"]) && !empty($data["tables"]["workflow"]["triggers"])) {
                     $arrayTrigger = $data["tables"]["workflow"]["triggers"];
                     $projectTitle = $data["tables"]["bpmn"]["project"][0]["prj_name"];
@@ -134,24 +133,26 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
         $opt2 = XmlImporter::GROUP_IMPORT_OPTION_CREATE_NEW;
         $prjUid = '';
         $proType = '';
-        if (isset($_POST['objectsToImport']) && sizeof(G::json_decode($_POST['objectsToImport']))) {
+        $objectsToImport = '';
+        if (isset($_POST['objectsToImport']) && sizeof(G::json_decode($_POST['objectsToImport']))){
             $objectsToImport = G::json_decode($_POST['objectsToImport']);
-            if ($_POST['generateUid'] === 'generate') {
+        }
+
+        if ($_POST['generateUid'] === 'generate') {
                 $generateUid = true;
                 $prjUid = $importer->import($opt1, $opt2, $generateUid, $objectsToImport);
-            } elseif ($_POST['generateUid'] === 'keep') {
+        } elseif ($_POST['generateUid'] === 'keep') {
                 $generateUid = false;
                 $prjUid = $importer->import($opt1, $opt2, $generateUid, $objectsToImport);
-            } else {
+        } else {
                 $prjUid = $importer->import($opt1, $opt2, null, $objectsToImport);
-            }
-            G::LoadClass('Process');
-            $oProcess = new Process();
-            $processData = $oProcess->load($prjUid);
-            $proType = $processData["PRO_TYPE"];
-            $granularImport = false;
-            $objectImport = '';
         }
+        G::LoadClass('Process');
+        $oProcess = new Process();
+        $processData = $oProcess->load($prjUid);
+        $proType = $processData["PRO_TYPE"];
+        $granularImport = false;
+        $objectImport = '';
 
         $result = array(
             "success"                   => true,
@@ -236,7 +237,10 @@ if (isset($_POST["PRO_FILENAME"]) &&
     $importer->setSourceFile(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"]);
 
     try {
-        $objectsToImport = G::json_decode($_POST['objectsToImport']);
+        $objectsToImport = '';
+        if (isset($_POST['objectsToImport']) && sizeof(G::json_decode($_POST['objectsToImport']))){
+            $objectsToImport = G::json_decode($_POST['objectsToImport']);
+        }
         $prjUid = $importer->import($option, $optionGroup, null, $objectsToImport);
         
         G::LoadClass( 'Process' );
