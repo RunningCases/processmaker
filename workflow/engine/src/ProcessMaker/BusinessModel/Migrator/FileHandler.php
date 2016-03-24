@@ -1,9 +1,4 @@
 <?php
-/**
- *
- *
- *
- */
 
 namespace ProcessMaker\BusinessModel\Migrator;
 use ProcessMaker\Util;

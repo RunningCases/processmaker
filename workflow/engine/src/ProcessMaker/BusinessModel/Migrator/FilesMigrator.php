@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: gustav
- * Date: 3/17/16
- * Time: 4:21 PM
- */
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
@@ -60,7 +54,7 @@ class FilesMigrator implements Importable, Exportable
                         }
 
                         file_put_contents($filename, $file["file_content"]);
-                        chmod($filename, 0775);
+                        @chmod($filename, 0775);
                     }
                 }
             }

@@ -248,7 +248,6 @@ abstract class Importer
 
         $this->importData = $this->load();
 
-        //$this->validateImportData();
     }
 
     public function setData($key, $value)
