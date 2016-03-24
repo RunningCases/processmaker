@@ -780,6 +780,44 @@ Ext.onReady(function(){
      });
   }
 
+  Actions.changeLogHistory = function()
+  {
+	  Ext.Ajax.request({
+          url : 'ajaxListener' ,
+          params : {action : 'verifySession'},
+          success: function ( result, request ) {
+            var data = Ext.util.JSON.decode(result.responseText);
+            if( data.lostSession ) {
+             Ext.Msg.show({
+                    title: _('ID_ERROR'),
+                    msg: data.message,
+                    animEl: 'elId',
+                    icon: Ext.MessageBox.ERROR,
+                    buttons: Ext.MessageBox.OK,
+                    fn : function(btn) {
+                    try
+                                  {
+                                    prnt = parent.parent;
+                                    top.location = top.location;
+                                  }
+                                catch (err)
+                                  {
+                                    parent.location = parent.location;
+                                  }
+                    }
+                  });
+            } else {
+                Actions.tabFrame('changeLogHistory');
+            }
+			},
+			failure: function ( result, request) {
+			if (typeof(result.responseText) != 'undefined') {
+			    Ext.MessageBox.alert( _('ID_FAILED'), result.responseText);
+			}
+          }
+     });
+  }
+
   Actions.uploadedDocuments = function()
   {
 		Ext.Ajax.request({

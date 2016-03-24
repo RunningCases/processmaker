@@ -149,6 +149,7 @@ class Ajax
         $options[] = Array('text' => G::LoadTranslation('ID_CASE_HISTORY'), 'fn' => 'caseHistory');
         $options[] = Array('text' => G::LoadTranslation('ID_HISTORY_MESSAGE_CASE'), 'fn' => 'messageHistory');
         $options[] = Array('text' => G::LoadTranslation('ID_DYNAFORMS'), 'fn' => 'dynaformHistory');
+        $options[] = Array('text' => G::LoadTranslation('ID_DYNAFORM_HISTORY'), 'fn' => 'changeLogHistory');
         $options[] = Array('text' => G::LoadTranslation('ID_UPLOADED_DOCUMENTS'), 'fn' => 'uploadedDocuments');
         $options[] = Array('text' => G::LoadTranslation('ID_GENERATED_DOCUMENTS'), 'fn' => 'generatedDocuments');
 
@@ -404,6 +405,27 @@ class Ajax
         $oHeadPublisher->addExtJsScript('cases/caseHistoryDynaformPage', true); //adding a javascript file .js
         $oHeadPublisher->addContent('cases/caseHistoryDynaformPage'); //adding a html file  .html.
         $oHeadPublisher->assign('pageSize', $conf->getEnvSetting('casesListRowNumber'));
+        G::RenderPage('publish', 'extJs');
+    }
+
+    public function changeLogHistory()
+    {
+        error_log('AAAAA!!!!!');
+        //ACA VIENEN MIS CAMBIOS!!!
+        global $G_PUBLISH;
+        G::loadClass('configuration');
+        $idHistory = sprintf(
+            '%s_%s_%s',
+            $_SESSION['PROCESS'],
+            $_SESSION['APPLICATION'],
+            $_SESSION['TASK']
+        );
+
+        $oHeadPublisher = & headPublisher::getSingleton();
+        $conf = new Configurations();
+        $oHeadPublisher->addExtJsScript('cases/caseChangeLog', true); //adding a javascript file .js
+        $oHeadPublisher->addContent('cases/caseChangeLog'); //adding a html file  .html.
+        $oHeadPublisher->assign('ID_HISTORY', $idHistory);
         G::RenderPage('publish', 'extJs');
     }
 
@@ -685,6 +707,19 @@ class Ajax
         }
 
         print G::json_encode($result);
+    }
+
+    public function changeLogAjax()
+    {
+        $changeLog = new ProcessMaker\BusinessModel\Cases\ChangeLog();
+        $idHistory = $_REQUEST["idHistory"];
+        $idHistoryArray = explode("_", $idHistory);
+        $proUid = $idHistoryArray[0];
+        $appUid = $idHistoryArray[1];
+        $tasUid = $idHistoryArray[2];
+        $start = isset($_REQUEST['start']) ? (int) $_REQUEST['start']: 0;
+        $limit = isset($_REQUEST['limit']) ? (int) $_REQUEST['limit']: 15;
+        echo G::json_encode($changeLog->getChangeLog($appUid, $proUid, $tasUid, $start, $limit));
     }
 
     public function changeLogTab()
