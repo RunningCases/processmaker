@@ -48,6 +48,7 @@ Ext.apply(Ext.form.VTypes, {
 });
 
 Ext.onReady(function(){
+  var i;
   setExtStateManagerSetProvider('gridProcessMain');
   Ext.QuickTips.init();
 
@@ -213,7 +214,7 @@ Ext.onReady(function(){
       arrayMenuNewOption.push(mnuNewProject);
   }
 
-  for (var i = 0; i <= arrayMenuNewOptionPlugin.length - 1; i++) {
+  for (i = 0; i <= arrayMenuNewOptionPlugin.length - 1; i++) {
       try {
           if (typeof(arrayMenuNewOptionPlugin[i].handler) != "undefined") {
               eval("arrayMenuNewOptionPlugin[i].handler = " + arrayMenuNewOptionPlugin[i].handler + ";");
@@ -535,7 +536,7 @@ Ext.onReady(function(){
       }
   ];
 
-  for (var i = 0; i <= arrayContextMenuOptionPlugin.length - 1; i++) {
+  for (i = 0; i <= arrayContextMenuOptionPlugin.length - 1; i++) {
       try {
           if (typeof(arrayContextMenuOptionPlugin[i].handler) != "undefined") {
               eval("arrayContextMenuOptionPlugin[i].handler = " + arrayContextMenuOptionPlugin[i].handler + ";");
@@ -764,6 +765,7 @@ editNewProcess = function(){
 
 deleteProcess = function(){
   var rows = processesGrid.getSelectionModel().getSelections();
+  var i;
   if( rows.length > 0 ) {
     isValid = true;
     errLog = Array();
@@ -1000,8 +1002,8 @@ function exportImportProcessObjects(typeAction)
     storeActionField = new Ext.data.ArrayStore({
         fields: ['value', 'text'],
         data: [
-            [1, 'Add to Existing'],
-            [2, 'Replace All']
+            [1, _('ID_UPDATE')],
+            [2, _('ID_OVERWRITE')]
         ]
     });
     checkBoxSelMod = new Ext.grid.CheckboxSelectionModel();
@@ -1054,7 +1056,7 @@ function exportImportProcessObjects(typeAction)
                         return storeActionField.getAt(recordIndex).get('text');
                     }
                 },
-                {header: 'Name', dataIndex: 'OBJECT_ENABLE', hidden: true},
+                {header: 'Name', dataIndex: 'OBJECT_ENABLE', hidden: true}
             ]
         }),
         store: storeGrid,
@@ -1068,13 +1070,8 @@ function exportImportProcessObjects(typeAction)
                     grid.store.on('load', function(store, records, options){
                         grid.getSelectionModel().selectAll();
                         store.each(function(row, j){
-                            if(inArray(row.get('OBJECT_ID'),importProcessGlobal.objectGranularImport)) {
-                                //grid.getSelectionModel().selectRow(j, true);
-                            } else {
-                                /*disable row*/
+                            if(!inArray(row.get('OBJECT_ID'),importProcessGlobal.objectGranularImport)) {
                                 store.remove(row);
-                               /* store.rejectChanges(row);
-                                row.cancelEdit();*/
                             }
                         });
                     });
@@ -1100,6 +1097,7 @@ function exportImportProcessObjects(typeAction)
                 text    : buttonLabel,
                 handler : function() {
                     var selectedObjects = gridProcessObjects.getSelectionModel().getSelections();
+                    var i;
                     if(selectedObjects.length < 1) {
                         Ext.Msg.show({
                             title: _("ID_INFORMATION"),
@@ -1148,8 +1146,9 @@ function exportImportProcessObjects(typeAction)
 }
 
 function inArray(needle, haystack) {
+    var i;
     var length = haystack.length;
-    for(var i = 0; i < length; i++) {
+    for(i = 0; i < length; i++) {
         if(haystack[i] == needle) return true;
     }
     return false;
@@ -1395,9 +1394,10 @@ importProcessExistGroup = function()
 
 affectedGroupsList = function()
 {
+    var i;
     var arrayGroups = affectedGroups.split(", ");
     var tableGroups = "<table width='100%' border='0' cellpadding='5'>"
-    for(var i = 0; i < arrayGroups.length; i++) {
+    for(i = 0; i < arrayGroups.length; i++) {
         tableGroups += "<tr><td>"+arrayGroups[i]+"</td></tr>";
     }
     tableGroups += "</table>";
@@ -1833,7 +1833,7 @@ importProcess = function()
                                                           importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
                                                           importProcessExistGroup();
                                                       }
-                                                  } else if (resp_.ExistProcessInDatabase == "1") {
+                                                  } else if (resp_.ExistProcessInDatabase === "1") {
                                                       importProcessGlobal.proFileName = resp_.proFileName;
                                                       importProcessExistProcess();
                                                   }
@@ -1995,7 +1995,7 @@ importProcessBpmnSubmit = function () {
 
 function activeDeactive(){
   var rows = processesGrid.getSelectionModel().getSelections();
-
+  var i;
   if( rows.length > 0 ) {
     var ids = '';
     for(i=0; i<rows.length; i++) {
@@ -2033,7 +2033,7 @@ function activeDeactive(){
 function enableDisableDebug()
 {
   var rows = processesGrid.getSelectionModel().getSelections();
-
+    var i;
   if( rows.length > 0 ) {
     var ids = '';
     for(i=0; i<rows.length; i++)

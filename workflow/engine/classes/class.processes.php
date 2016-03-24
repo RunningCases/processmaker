@@ -1904,7 +1904,7 @@ class Processes
         foreach ($aInput as $key => $row) {
             $oInput = new InputDocument();
             if ($oInput->InputExists( $row['INP_DOC_UID'] )) {
-                $oInput->update( $row );
+                $oInput->update($row);
             } else {
                 $oInput->create($row);
             }
@@ -2019,7 +2019,6 @@ class Processes
     {
         foreach ($aOutput as $key => $row) {
             $oOutput = new OutputDocument();
-            //unset ($row['TAS_UID']);
             if (!$oOutput->OutputExists( $row['OUT_DOC_UID'] )) {
                 $oOutput->update( $row );
             } else {
@@ -2725,8 +2724,8 @@ class Processes
     public function createObjectPermissionRows ($aPermission)
     {
         try {
+            $oPermission = new ObjectPermission();
             foreach ($aPermission as $key => $row) {
-                $oPermission = new ObjectPermission();
                 if ($oPermission->Exists( $row['OP_UID'] )) {
                     $oPermission->remove( $row['OP_UID'] );
                 }
@@ -2744,8 +2743,8 @@ class Processes
     public function updateObjectPermissionRows ($aPermission)
     {
         try {
+            $oPermission = new ObjectPermission();
             foreach ($aPermission as $key => $row) {
-                $oPermission = new ObjectPermission();
                 if ($oPermission->Exists( $row['OP_UID'] )) {
                     $oPermission->update( $row['OP_UID'] );
                 } else {
@@ -2809,9 +2808,8 @@ class Processes
      */
     public function updateDynaformRows ($aDynaform)
     {
+        $oDynaform = new Dynaform();
         foreach ($aDynaform as $key => $row) {
-            $oDynaform = new Dynaform();
-            //unset ($row['TAS_UID']);
             if (!$oDynaform->exists( $row['DYN_UID'] )) {
                 $res = $oDynaform->update( $row );
             } else {
@@ -2923,8 +2921,8 @@ class Processes
      */
     public function updateTriggerRows($aTrigger)
     {
+        $oTrigger = new Triggers();
         foreach ($aTrigger as $key => $row) {
-            $oTrigger = new Triggers();
             if ($oTrigger->TriggerExists($row['TRI_UID'])) {
                 $oTrigger->update($row);
             } else {
@@ -3593,8 +3591,8 @@ class Processes
     public function updateDBConnectionsRows ($aConnections)
     {
         try {
+            $oConnection = new DbSource();
             foreach ($aConnections as $sKey => $aRow) {
-                $oConnection = new DbSource();
                 if ($oConnection->Exists( $aRow['DBS_UID'], $aRow['PRO_UID'] )) {
                     $oConnection->update( $aRow );
                 } else {
@@ -3658,7 +3656,7 @@ class Processes
             $oRep->create( $aRow );
         }
     }
-    #@!neyek
+    #@!neyekj
 
 
     /**

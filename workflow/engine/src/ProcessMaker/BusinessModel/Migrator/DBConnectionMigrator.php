@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: gustav
- * Date: 3/17/16
- * Time: 4:25 PM
- */
 
 namespace ProcessMaker\BusinessModel\Migrator;
 

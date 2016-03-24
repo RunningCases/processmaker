@@ -30,12 +30,12 @@ class ExportObjects
      */
     public function objectList($objectsEnable = '')
     {
+        $grid = [];
         try {
             $aObjectsEnable = explode('|', $objectsEnable);
             foreach ($this->objectsList as $key => $val) {
-                $key++;
                 $grid[] = array(
-                    'OBJECT_ID' => $key,
+                    'OBJECT_ID' => $key+1,
                     'OBJECT_NAME' => $val,
                     'OBJECT_ACTION' => 1,
                     'OBJECT_ENABLE' => in_array(strtoupper(str_replace(' ', '',$val)), $aObjectsEnable)

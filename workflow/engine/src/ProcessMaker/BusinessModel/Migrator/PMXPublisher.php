@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: gustav
- * Date: 3/18/16
- * Time: 3:13 PM
- */
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
@@ -23,7 +17,7 @@ class PMXPublisher
         $outputFile = $this->truncateName($filename);
 
         file_put_contents($outputFile, $data);
-        chmod($outputFile, 0755);
+        @chmod($outputFile, 0755);
 
         return basename($outputFile);
     }
