@@ -36,9 +36,13 @@ class AssignmentRulesMigrator implements Importable, Exportable
     {
         try {
             if ($replace) {
-                $this->processes->createTaskRows($data);
+                $this->processes->createTaskRows($data['tasks']);
+                $this->processes->addNewGroupRow($data['groupwfs']);
+                $this->processes->createTaskUserRows($data['taskusers']);
             } else {
-                $this->processes->addNewTaskRows($data);
+                $this->processes->addNewTaskRows($data['tasks']);
+                $this->processes->addNewGroupRow($data['groupwfs']);
+                $this->processes->addNewTaskUserRows($data['taskusers']);
             }
 
         } catch (\Exception $e) {
