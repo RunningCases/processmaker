@@ -68,10 +68,8 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             $bpmnStruct["LANESET"] = \BpmnLaneset::getAll($prj_uid);
             $bpmnStruct["PARTICIPANT"] = \BpmnParticipant::getAll($prj_uid);
             $bpmnStruct["PROCESS"] = \BpmnProcess::getAll($prj_uid);
-            $bpmnStruct["PROJECT"] = array(\BpmnProjectPeer::retrieveByPK($prj_uid)->toArray());
 
             $oData = new \StdClass();
-            $oData->process = $this->processes->getProcessRow($prj_uid, false);
             $oData->tasks = $this->processes->getTaskRows($prj_uid);
 
             $oDataTask = new \StdClass();
@@ -83,7 +81,6 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             $oData->steps = $this->processes->getStepRows($prj_uid);
             $oData->groupwfs = $this->processes->getGroupwfRows($oDataTask->taskusers);
             $oData->steptriggers = $this->processes->getStepTriggerRows($oData->tasks);
-            $oData->reportTablesVars = $this->processes->getReportTablesVarsRows($prj_uid);
             $oData->subProcess = $this->processes->getSubProcessRow($prj_uid);
             $oData->caseTracker = $this->processes->getCaseTrackerRow($prj_uid);
             $oData->caseTrackerObject = $this->processes->getCaseTrackerObjectRow($prj_uid);
