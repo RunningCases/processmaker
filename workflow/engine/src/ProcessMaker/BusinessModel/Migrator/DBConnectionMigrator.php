@@ -29,7 +29,7 @@ class DBConnectionMigrator implements Importable, Exportable
             if ($replace) {
                 $this->processes->createDBConnectionsRows($data);
             } else {
-                $this->processes->updateDBConnectionsRows($data);
+                $this->processes->addNewDBConnectionsRows($data);
             }
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());

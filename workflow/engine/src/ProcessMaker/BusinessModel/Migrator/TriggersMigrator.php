@@ -31,7 +31,7 @@ class TriggersMigrator implements Importable, Exportable
             if ($replace) {
                 $this->processes->createTriggerRows($data);
             } else {
-                $this->processes->updateTriggerRows($data);
+                $this->processes->addNewTriggerRows($data);
             }
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());

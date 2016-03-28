@@ -2,7 +2,8 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
-use Symfony\Component\Config\Definition\Exception\Exception;
+use ProcessMaker\BusinessModel\Util;
+
 
 class TemplatesMigrator implements Importable, Exportable
 {
@@ -51,7 +52,13 @@ class TemplatesMigrator implements Importable, Exportable
                             Util\Common::mk_dir($path, 0775);
                         }
 
-                        file_put_contents($filename, $file["file_content"]);
+                        if (file_exists($filename)) {
+                            if ($replace) {
+                                file_put_contents($filename, $file["file_content"]);
+                            }
+                        } else {
+                            file_put_contents($filename, $file["file_content"]);
+                        }
                         @chmod($filename, 0775);
                     }
                 }

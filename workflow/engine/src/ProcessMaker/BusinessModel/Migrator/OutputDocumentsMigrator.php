@@ -31,7 +31,7 @@ class OutputDocumentsMigrator implements Importable, Exportable
             if ($replace) {
                 $this->processes->createOutputRows($data);
             } else {
-                $this->processes->updateOutputRows($data);
+                $this->processes->addNewOutputRows($data);
             }
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());

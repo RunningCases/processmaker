@@ -38,7 +38,7 @@ class AssignmentRulesMigrator implements Importable, Exportable
             if ($replace) {
                 $this->processes->createTaskRows($data);
             } else {
-                $this->processes->updateTaskRows($data);
+                $this->processes->addNewTaskRows($data);
             }
 
         } catch (\Exception $e) {

@@ -2,8 +2,7 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
-use ProcessMaker\BusinessModel\Process;
-use Symfony\Component\Config\Definition\Exception\Exception;
+use ProcessMaker\BusinessModel\Util;
 use \ProcessMaker\BusinessModel\Migrator\FileHandler;
 
 class FilesMigrator implements Importable, Exportable
@@ -48,12 +47,18 @@ class FilesMigrator implements Importable, Exportable
                     foreach ($files as $file) {
                         $filename = $basePath . ((isset($file["file_path"])) ? $file["file_path"] : $file["filepath"]);
                         $path = dirname($filename);
-
                         if (!is_dir($path)) {
                             Util\Common::mk_dir($path, 0775);
                         }
+                        if (file_exists($filename)) {
+                            if ($replace) {
+                                file_put_contents($filename, $file["file_content"]);
+                            }
+                        } else {
+                            file_put_contents($filename, $file["file_content"]);
+                        }
 
-                        file_put_contents($filename, $file["file_content"]);
+
                         @chmod($filename, 0775);
                     }
                 }
