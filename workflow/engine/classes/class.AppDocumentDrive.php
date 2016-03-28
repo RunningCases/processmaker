@@ -414,9 +414,23 @@ class AppDocumentDrive
         }
     }
 
-    public function addUsersDocumentDrive ($appUid)
+    /**
+     * Add users to documents drive to give permissions
+     *
+     * @param      $appUid Id application
+     * @param      $emails array with emails which can be null
+     *
+     * @throws \Exception
+     */
+    public function addUsersDocumentDrive ($appUid, $emails=null)
     {
-        $this->getEmailUsersTask($appUid);
+        if (is_array($emails)) {
+            foreach ($emails as $index => $email) {
+                $this->addUserEmail($email);
+            }
+        } else {
+            $this->getEmailUsersTask($appUid);
+        }
 
         $criteria = new Criteria( 'workflow' );
         $criteria->add( AppDocumentPeer::APP_UID, $appUid );

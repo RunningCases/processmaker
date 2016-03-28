@@ -77,6 +77,17 @@ if ($aDelegation['USR_UID'] == "") {
             $labGmail->addRelabelingToQueue($sAppUid, $iDelIndex, -1, true);
         }
     }
+
+    if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
+        G::LoadClass("AppDocumentDrive");
+        $drive = new AppDocumentDrive();
+        if ($drive->getStatusDrive()) {
+            //add users email next task
+            $user = new Users();
+            $userInfo = $user->load($_SESSION['USER_LOGGED']);
+            $drive->addUsersDocumentDrive($sAppUid, array($userInfo['USR_EMAIL']));
+        }
+    }
     /*----------------------------------********---------------------------------*/
     //changing email labels if the claim comes from gmail
     if(array_key_exists('gmail',$_SESSION) && $_SESSION['gmail'] == 1){
