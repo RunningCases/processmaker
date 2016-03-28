@@ -30,7 +30,7 @@ class PermissionsMigrator implements Importable, Exportable
             if ($replace) {
                 $this->processes->createObjectPermissionsRows($data);
             } else {
-                $this->processes->updateObjectPermissionRows($data);
+                $this->processes->addNewObjectPermissionRows($data);
             }
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());

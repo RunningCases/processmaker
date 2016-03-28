@@ -2834,6 +2834,25 @@ class Processes
     }
 
     /**
+     * @param $aPermission
+     * @throws Exception
+     */
+    public function addNewObjectPermissionRows($aPermission)
+    {
+        try {
+            $oPermission = new ObjectPermission();
+            foreach ($aPermission as $key => $row) {
+                if (!$oPermission->Exists($row['OP_UID'])) {
+                    $oPermission->create($row);
+                }
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+
+    }
+
+    /**
      * Get Object Permission Rows from a Process
      *
      * @param string $sProUid
