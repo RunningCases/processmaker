@@ -3680,6 +3680,25 @@ class Processes
      * @param array $aTaskUser
      * @return array $aStepTrigger
      */
+    public function addNewTaskUserRows($aTaskUser)
+    {
+        if (is_array($aTaskUser)) {
+            foreach ($aTaskUser as $key => $row) {
+                $oTaskUser = new TaskUser();
+                if (!$oTaskUser->TaskUserExists($row['TAS_UID'], $row['USR_UID'], $row['TU_TYPE'], $row['TU_RELATION'])) {
+                    $res = $oTaskUser->create($row);
+                }
+            }
+        }
+        return;
+    }
+
+    /**
+     * Get Task User Rows from an array of data
+     *
+     * @param array $aTaskUser
+     * @return array $aStepTrigger
+     */
     public function createGroupRow($aGroupwf)
     {
         foreach ($aGroupwf as $key => $row) {
@@ -3688,6 +3707,22 @@ class Processes
                 $oGroupwf->remove($row['GRP_UID']);
             }
             $res = $oGroupwf->create($row);
+        }
+    }
+
+    /**
+     * Create User Rows from an array of data if does not exist
+     *
+     * @param array $aGroupwf
+     * @return array $res
+     */
+    public function addNewGroupRow($aGroupwf)
+    {
+        foreach ($aGroupwf as $key => $row) {
+            $oGroupwf = new Groupwf();
+            if (!$oGroupwf->GroupwfExists($row['GRP_UID'])) {
+                $res = $oGroupwf->create($row);
+            }
         }
     }
 
