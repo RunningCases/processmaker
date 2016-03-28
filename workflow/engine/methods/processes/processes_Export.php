@@ -33,9 +33,7 @@ try {
 	}
     if (\BpmnProject::exists($_GET["pro_uid"]) && isset($_GET['objects'])) {
         $_GET["objects"] = \G::json_decode($_GET['objects']);
-        $exportObjects = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
-        $getListObject = \G::json_decode($exportObjects->objectList());
-        if(sizeof($getListObject->data) === sizeof($_GET['objects'])){
+        if(sizeof($_GET['objects']) == 0 || '' == trim($_GET['objects']) ){
             $exporter = new ProcessMaker\Exporter\XmlExporter($_GET["pro_uid"]);
             $getProjectName = $exporter->truncateName($exporter->getProjectName(),false);
 

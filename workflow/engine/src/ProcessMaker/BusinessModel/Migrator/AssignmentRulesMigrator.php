@@ -66,8 +66,8 @@ class AssignmentRulesMigrator implements Importable, Exportable
     {
         try {
             $oAssignRules = new \StdClass();
-            $oAssignRules->tasks = $this->processes->getTaskRows($prj_uid);
-            $oAssignRules->taskusers = $this->processes->getTaskUserRows($oAssignRules->tasks);
+            $oAssignRulesTasks = $this->processes->getTaskRows($prj_uid);
+            $oAssignRules->taskusers = $this->processes->getTaskUserRows($oAssignRulesTasks);
 
             $result = array(
                 'workflow-definition' => (array)$oAssignRules

@@ -32,7 +32,7 @@ class FilesMigrator implements Importable, Exportable
         try {
             $aTable = $data['TABLE'];
             foreach ($aTable as $value) {
-                if ($value['PRF_EDITABLE'] !== 1) {
+                if ($value['PRF_EDITABLE'] === '0') {
                     if ($replace) {
                         $this->processes->createFilesManager($value['PRO_UID'], array($value));
                     } else {
@@ -92,7 +92,7 @@ class FilesMigrator implements Importable, Exportable
 
             $fileHandler = new FileHandler();
             $arrayPublicFileToExclude = $fileHandler->getFilesToExclude($prj_uid);
-            $workflowFile = $fileHandler->getTemplatesOrPublicFiles($prj_uid, $arrayPublicFileToExclude, 'public');
+            $workflowFile = $fileHandler->getTemplatesOrPublicFiles($prj_uid, $arrayPublicFileToExclude, 'PUBLIC');
 
             $result = array(
                 'workflow-definition' => (array)$oData,

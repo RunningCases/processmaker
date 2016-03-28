@@ -3132,6 +3132,50 @@ class Processes
     }
 
     /**
+     * @param $sProUid
+     * @return mixed
+     * @throws Exception
+     */
+    public function getReportTables($sProUid)
+    {
+        try {
+
+            $additionalTables = new AdditionalTables();
+            $getalldditionalTables = $additionalTables->getReportTables($sProUid);
+            return $getalldditionalTables;
+        } catch (Exception $oError) {
+            throw $oError;
+        }
+    }
+
+    /**
+     * @param $sProUid
+     * @return mixed
+     * @throws Exception
+     */
+    public function getReportTablesVar($sProUid)
+    {
+        try {
+            $fieldsReportTables = array();
+            $additionalTables = new AdditionalTables();
+            $getalldditionalTables = $additionalTables->getReportTables($sProUid);
+
+            foreach ($getalldditionalTables as $row) {
+                $additionalTables->setAddTabUid($row['ADD_TAB_UID']);
+                $fieldsAdditionalTables = $additionalTables->getFields();
+                foreach ($fieldsAdditionalTables as $rowField) {
+                    $rowField['ADD_TAB_UID'] = $row['ADD_TAB_UID'];
+                    array_push($fieldsReportTables, $rowField);
+                }
+            }
+
+            return $fieldsReportTables;
+        } catch (Exception $oError) {
+            throw $oError;
+        }
+    }
+
+    /**
      * Get Report Tables Vars Rows for a Process
      *
      * @param string $sProUid
@@ -4039,6 +4083,29 @@ class Processes
 
             foreach ($arrayData as $value) {
                 $filesManager->addProcessFilesManagerInDb($value);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Create if the new Files Managers does not exist
+     *
+     * @param string $processUid Unique id of Process
+     * @param array $arrayData Data
+     *
+     * return void
+     */
+    public function addNewFilesManager($processUid, array $arrayData)
+    {
+        try {
+            $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
+
+            foreach ($arrayData as $value) {
+                if(!$filesManager->existsProcessFile($value['PRF_UID'])){
+                    $filesManager->addProcessFilesManagerInDb($value);
+                }
             }
         } catch (Exception $e) {
             throw $e;

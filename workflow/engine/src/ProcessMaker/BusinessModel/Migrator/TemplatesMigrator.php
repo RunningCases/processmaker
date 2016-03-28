@@ -32,7 +32,7 @@ class TemplatesMigrator implements Importable, Exportable
         try {
             $aTable = $data['TABLE'];
             foreach ($aTable as $value) {
-                if ($value['PRF_EDITABLE'] === 1) {
+                if ($value['PRF_EDITABLE'] === '1') {
                     if ($replace) {
                         $this->processes->createFilesManager($value['PRO_UID'], array($value));
                     } else {
@@ -43,7 +43,7 @@ class TemplatesMigrator implements Importable, Exportable
             $aPath = $data['PATH'];
             foreach ($aPath as $target => $files) {
                 $basePath = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'mailTemplates' . PATH_SEP;
-                if (strtoupper($target) === 'TEMPLATES') {
+                if (strtoupper($target) === 'TEMPLATE') {
                     foreach ($files as $file) {
                         $filename = $basePath . ((isset($file["file_path"])) ? $file["file_path"] : $file["filepath"]);
                         $path = dirname($filename);
