@@ -33,12 +33,12 @@ try {
 	}
     if (\BpmnProject::exists($_GET["pro_uid"]) && isset($_GET['objects'])) {
         $_GET["objects"] = \G::json_decode($_GET['objects']);
-        if(sizeof($_GET['objects']) == 0 || '' == trim($_GET['objects']) ){
+        if (sizeof($_GET['objects']) == 0) {
             $exporter = new ProcessMaker\Exporter\XmlExporter($_GET["pro_uid"]);
-            $getProjectName = $exporter->truncateName($exporter->getProjectName(),false);
+            $getProjectName = $exporter->truncateName($exporter->getProjectName(), false);
 
             $version = ProcessMaker\Util\Common::getLastVersion($outputDir . $getProjectName . "-*.pmx") + 1;
-            $outputFilename = sprintf("%s-%s.%s", str_replace(" ","_",$getProjectName), $version, "pmx");
+            $outputFilename = sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx");
             $outputFilename = $exporter->saveExport($outputDir . $outputFilename);
         }else{
             $granularExporter = new \ProcessMaker\BusinessModel\Migrator\GranularExporter($_GET['pro_uid']);
