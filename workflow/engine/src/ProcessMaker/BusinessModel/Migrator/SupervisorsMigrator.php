@@ -28,9 +28,11 @@ class SupervisorsMigrator implements Importable, Exportable
     {
         try {
             if ($replace) {
-                $this->processes->createProcessUser($data);
+                $this->processes->createProcessUser($data['processUser']);
+                $this->processes->addNewGroupRow($data['groupwfs']);
             } else {
-                $this->processes->addNewProcessUser($data);
+                $this->processes->addNewProcessUser($data['processUser']);
+                $this->processes->addNewGroupRow($data['groupwfs']);
             }
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());
