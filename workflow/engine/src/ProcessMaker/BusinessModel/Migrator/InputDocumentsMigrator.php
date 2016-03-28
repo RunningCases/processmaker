@@ -29,7 +29,7 @@ class InputDocumentsMigrator implements Importable, Exportable
             if ($replace) {
                 $this->processes->createInputRows($data);
             } else {
-                $this->processes->updateInputRows($data);
+                $this->processes->addNewInputRows($data);
             }
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());

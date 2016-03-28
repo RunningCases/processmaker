@@ -30,7 +30,7 @@ class SupervisorsMigrator implements Importable, Exportable
             if ($replace) {
                 $this->processes->createProcessUser($data);
             } else {
-                $this->processes->updateProcessUser($data);
+                $this->processes->addNewProcessUser($data);
             }
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());

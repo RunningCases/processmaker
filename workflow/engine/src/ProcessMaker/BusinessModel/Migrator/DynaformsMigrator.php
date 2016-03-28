@@ -29,7 +29,7 @@ class DynaformsMigrator implements Importable, Exportable
             if ($replace) {
                 $this->processes->createDynaformRows($data);
             } else {
-                $this->processes->updateDynaformRows($data);
+                $this->processes->addNewDynaformRows($data);
             }
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());

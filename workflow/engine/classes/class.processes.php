@@ -1467,6 +1467,18 @@ class Processes
     }
 
     /**
+     * Add New Task Rows from a $aTasks array data and returns those in an array.
+     *
+     * @param $aTasks array
+     * @return array $oTask array
+     */
+    public function addNewTaskRows($aTasks)
+    {
+        $oTask = new Tasks();
+        return $oTask->addNewTaskRows($aTasks);
+    }
+
+    /**
      * Gets all Route rows from a Process and returns those in an array.
      *
      * @param $sProUid string for the process Uid
@@ -1806,6 +1818,24 @@ class Processes
     }
 
     /**
+     * @param array $arrayData
+     */
+    public function addNewProcessUser(array $arrayData)
+    {
+        try {
+            $processUser = new ProcessUser();
+            foreach ($arrayData as $value) {
+                $record = $value;
+                if (!$processUser->Exists($record["PU_UID"])) {
+                    $result = $processUser->create($record);
+                }
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Create "Process Variables" records
      *
      * @param array $arrayData Data to create
@@ -1841,6 +1871,24 @@ class Processes
                 if ($processVariables->Exists($record["VAR_UID"])) {
                     $processVariables->update($record);
                 } else {
+                    $processVariables->create($record);
+                }
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * @param $arrayData
+     */
+    public function addNewProcessVariables($arrayData)
+    {
+        try {
+            foreach ($arrayData as $value) {
+                $processVariables = new ProcessVariables();
+                $record = $value;
+                if (!$processVariables->Exists($record["VAR_UID"])) {
                     $processVariables->create($record);
                 }
             }
@@ -1906,6 +1954,20 @@ class Processes
             if ($oInput->InputExists($row['INP_DOC_UID'])) {
                 $oInput->update($row);
             } else {
+                $oInput->create($row);
+            }
+        }
+        return;
+    }
+
+    /**
+     * @param $aInput
+     */
+    public function addNewInputRows($aInput)
+    {
+        foreach ($aInput as $key => $row) {
+            $oInput = new InputDocument();
+            if (!$oInput->InputExists($row['INP_DOC_UID'])) {
                 $oInput->create($row);
             }
         }
@@ -2019,9 +2081,23 @@ class Processes
     {
         foreach ($aOutput as $key => $row) {
             $oOutput = new OutputDocument();
-            if (!$oOutput->OutputExists($row['OUT_DOC_UID'])) {
+            if ($oOutput->OutputExists($row['OUT_DOC_UID'])) {
                 $oOutput->update($row);
             } else {
+                $oOutput->create($row);
+            }
+        }
+        return;
+    }
+
+    /**
+     * @param $aOutput
+     */
+    public function addNewOutputRows($aOutput)
+    {
+        foreach ($aOutput as $key => $row) {
+            $oOutput = new OutputDocument();
+            if (!$oOutput->OutputExists($row['OUT_DOC_UID'])) {
                 $oOutput->create($row);
             }
         }
@@ -2932,6 +3008,20 @@ class Processes
     }
 
     /**
+     * @param $aTrigger
+     * @throws Exception
+     */
+    public function addNewTriggerRows($aTrigger)
+    {
+        $oTrigger = new Triggers();
+        foreach ($aTrigger as $key => $row) {
+            if (!$oTrigger->TriggerExists($row['TRI_UID'])) {
+                $oTrigger->create($row);
+            }
+        }
+    }
+
+    /**
      * Get Groupwf Rows for a Process form an array
      *
      * @param array $aGroups
@@ -3615,6 +3705,35 @@ class Processes
         }
     }
 
+    /**
+     * Add new Connection rows if the passed ones are not existent
+     * @param $aConnections
+     */
+    public function addNewDBConnectionsRows($aConnections)
+    {
+        try {
+            $oConnection = new DbSource();
+            foreach ($aConnections as $sKey => $aRow) {
+                if (!$oConnection->Exists($aRow['DBS_UID'], $aRow['PRO_UID'])) {
+                    $oConnection->create($aRow);
+                }
+
+                // Update information in the table of contents
+                $oContent = new Content();
+                $ConCategory = 'DBS_DESCRIPTION';
+                $ConParent = '';
+                $ConId = $aRow['DBS_UID'];
+                $ConLang = SYS_LANG;
+                if ($oContent->Exists($ConCategory, $ConParent, $ConId, $ConLang)) {
+                    $oContent->removeContent($ConCategory, $ConParent, $ConId);
+                }
+                $oContent->addContent($ConCategory, $ConParent, $ConId, $ConLang, $aRow['DBS_DESCRIPTION']);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
 
     /**
      * Create Report Tables from an array of data
@@ -3937,6 +4056,24 @@ class Processes
 
             foreach ($arrayData as $value) {
                 $filesManager->updateProcessFilesManagerInDb($value);
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * @param array $arrayData
+     * @throws Exception
+     */
+    public function addNewFilesManager($processUid, array $arrayData)
+    {
+        try {
+            $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
+            foreach ($arrayData as $value) {
+                if (!$filesManager->existsProcessFile($value['PRF_UID'])) {
+                    $filesManager->addProcessFilesManagerInDb($value);
+                }
             }
         } catch (Exception $e) {
             throw $e;
