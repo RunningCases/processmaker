@@ -55,8 +55,12 @@ class GranularImporter
                 ($data['tables']['bpmn']) : '';
                 break;
             case 'ASSIGNMENTRULES':
-                $objectList['ASSIGNMENTRULES'] = isset($data['tables']['workflow']['tasks']) ?
+                $objectList['ASSIGNMENTRULES']['tasks'] = isset($data['tables']['workflow']['tasks']) ?
                     $data['tables']['workflow']['tasks'] : '';
+                $objectList['ASSIGNMENTRULES']['taskusers'] = isset($data['tables']['workflow']['taskusers']) ?
+                    $data['tables']['workflow']['taskusers'] : '';
+                $objectList['ASSIGNMENTRULES']['groupwfs'] = isset($data['tables']['workflow']['groupwfs']) ?
+                    $data['tables']['workflow']['groupwfs'] : '';
                 break;
             case 'VARIABLES':
                 $objectList['VARIABLES'] = isset($data['tables']['workflow']['processVariables']) ?
@@ -98,16 +102,20 @@ class GranularImporter
                     $data['tables']['workflow']['objectPermissions'] : '';
                 break;
             case 'SUPERVISORS':
-                $objectList['SUPERVISORS'] = isset($data['tables']['workflow']['processUser']) ?
+                $objectList['SUPERVISORS']['processUser'] = isset($data['tables']['workflow']['processUser']) ?
                     $data['tables']['workflow']['processUser'] : '';
+                $objectList['SUPERVISORS']['groupwfs'] = isset($data['tables']['workflow']['groupwfs']) ?
+                    $data['tables']['workflow']['groupwfs'] : '';
                 break;
             case 'SUPERVISORSOBJECTS':
                 $objectList['SUPERVISORSOBJECTS'] = isset($data['tables']['workflow']['stepSupervisor']) ?
                     $data['tables']['workflow']['stepSupervisor'] : '';
                 break;
             case 'REPORTTABLES':
-                $objectList['REPORTTABLES'] = isset($data['tables']['workflow']['reportTables']) ?
+                $objectList['REPORTTABLES']['reportTables'] = isset($data['tables']['workflow']['reportTables']) ?
                     $data['tables']['workflow']['reportTables'] : '';
+                $objectList['REPORTTABLES']['reportTablesVars'] = isset($data['tables']['workflow']['reportTablesVars']) ?
+                    $data['tables']['workflow']['reportTablesVars'] : '';
                 break;
             default:
                 break;
