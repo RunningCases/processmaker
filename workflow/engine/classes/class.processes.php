@@ -4090,29 +4090,6 @@ class Processes
     }
 
     /**
-     * Create if the new Files Managers does not exist
-     *
-     * @param string $processUid Unique id of Process
-     * @param array $arrayData Data
-     *
-     * return void
-     */
-    public function addNewFilesManager($processUid, array $arrayData)
-    {
-        try {
-            $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
-
-            foreach ($arrayData as $value) {
-                if(!$filesManager->existsProcessFile($value['PRF_UID'])){
-                    $filesManager->addProcessFilesManagerInDb($value);
-                }
-            }
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
      * @param array $arrayData
      * @throws Exception
      */
