@@ -3042,6 +3042,50 @@ class Processes
     }
 
     /**
+     * @param $sProUid
+     * @return mixed
+     * @throws Exception
+     */
+    public function getReportTables($sProUid)
+    {
+        try {
+
+            $additionalTables = new AdditionalTables();
+            $getalldditionalTables = $additionalTables->getReportTables($sProUid);
+            return $getalldditionalTables;
+        } catch (Exception $oError) {
+            throw $oError;
+        }
+    }
+
+    /**
+     * @param $sProUid
+     * @return mixed
+     * @throws Exception
+     */
+    public function getReportTablesVar($sProUid)
+    {
+        try {
+            $fieldsReportTables = array();
+            $additionalTables = new AdditionalTables();
+            $getalldditionalTables = $additionalTables->getReportTables($sProUid);
+
+            foreach ($getalldditionalTables as $row) {
+                $additionalTables->setAddTabUid($row['ADD_TAB_UID']);
+                $fieldsAdditionalTables = $additionalTables->getFields();
+                foreach ($fieldsAdditionalTables as $rowField) {
+                    $rowField['ADD_TAB_UID'] = $row['ADD_TAB_UID'];
+                    array_push($fieldsReportTables, $rowField);
+                }
+            }
+
+            return $fieldsReportTables;
+        } catch (Exception $oError) {
+            throw $oError;
+        }
+    }
+
+    /**
      * Get Report Tables Vars Rows for a Process
      *
      * @param string $sProUid

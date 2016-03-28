@@ -148,7 +148,7 @@ class GranularImporter
                 $objClass = $this->factory->create($data['name']);
                 if (is_object($objClass)) {
                     $dataImport = $data['data'][$data['name']];
-                    $replace = ($data['value'] == 'merge') ? true : false;
+                    $replace = ($data['value'] == 'replace') ? true : false;
                     $migratorData = $objClass->import($dataImport, $replace);
                 }
             }
