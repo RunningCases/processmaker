@@ -356,14 +356,31 @@ Ext.onReady(function(){
       },{
         xtype: 'tbseparator'
       },{
+        xtype: "tbsplit",
         id: "export",
         disabled: true,
         text: _("ID_EXPORT"),
         iconCls: "silk-add",
         icon: "/images/export.png",
-        handler: function () {
-          exportImportProcessObjects('export');
-        }
+        menu: [
+          {
+            text: _("ID_NORMAL_EXPORT"),
+            iconCls: "silk-add",
+            icon: "",
+            handler: function ()
+            {
+              exportProcess();
+            }
+          },{
+            text: _("ID_GRANULAR_EXPORT"),
+            iconCls: "silk-add",
+            icon: "",
+            handler: function ()
+            {
+              exportImportProcessObjects('export');
+            }
+          }
+        ]
       },{
         text: _('ID_IMPORT'),
         iconCls: 'silk-add',
@@ -519,9 +536,27 @@ Ext.onReady(function(){
       {
           text: _("ID_EXPORT"),
           icon: "/images/export.png",
-          handler: function ()
-          {
-              exportImportProcessObjects('export');
+          menu: {
+              showSeparator: false,
+              items: [
+                  {
+                      text: _("ID_NORMAL_EXPORT"),
+                      iconCls: "silk-add",
+                      icon: "",
+                      handler: function ()
+                      {
+                          exportProcess();
+                      }
+                  },{
+                      text: _("ID_GRANULAR_EXPORT"),
+                      iconCls: "silk-add",
+                      icon: "",
+                      handler: function ()
+                      {
+                          exportImportProcessObjects('export');
+                      }
+                  }
+              ]
           }
       },
       {
@@ -922,7 +957,9 @@ function exportProcess() {
   var record = processesGrid.getSelectionModel().getSelections();
 
   if(record.length == 1) {
-    Ext.getCmp('exportProcessObjectsWindow').close();
+    if(Ext.getCmp('exportProcessObjectsWindow')) {
+        Ext.getCmp('exportProcessObjectsWindow').close();
+    }
     var myMask = new Ext.LoadMask(Ext.getBody(), {msg: _("ID_LOADING")});
     var proUid   = record[0].get("PRO_UID");
 
@@ -2088,6 +2125,8 @@ function openWindowIfIE(pathDesigner) {
             Ext.getCmp('windowBpmnOptionWindow').close();
         if (Ext.getCmp('changeOrKeepUidsWindow'))
             Ext.getCmp('changeOrKeepUidsWindow').close();
+        if (Ext.getCmp('exportProcessObjectsWindow'))
+            Ext.getCmp('exportProcessObjectsWindow').close();
         processesGrid.store.reload();
         nameTab = PM.Sessions.getCookie('PM-TabPrimary') + '_winDesigner';
         if (winDesigner && winDesigner.closed === false) {
