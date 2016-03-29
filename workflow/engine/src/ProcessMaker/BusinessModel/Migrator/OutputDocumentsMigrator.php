@@ -60,6 +60,7 @@ class OutputDocumentsMigrator implements Importable, Exportable
     {
         try {
             $oData = new \StdClass();
+            $oData->steps = $this->processes->getStepRowsByElement($prj_uid,'OUTPUT_DOCUMENT');
             $oData->outputs = $this->processes->getOutputRows($prj_uid);
 
             $result = array(

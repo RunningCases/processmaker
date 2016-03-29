@@ -108,8 +108,6 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             $oData->routes = $this->processes->getRouteRows($prj_uid);
             $oData->lanes = $this->processes->getLaneRows($prj_uid);
             $oData->gateways = $this->processes->getGatewayRows($prj_uid);
-            $oData->steps = $this->processes->getStepRows($prj_uid);
-            $oData->steptriggers = $this->processes->getStepTriggerRows($oData->tasks);
             $oData->subProcess = $this->processes->getSubProcessRow($prj_uid);
             $oData->caseTracker = $this->processes->getCaseTrackerRow($prj_uid);
             $oData->caseTrackerObject = $this->processes->getCaseTrackerObjectRow($prj_uid);

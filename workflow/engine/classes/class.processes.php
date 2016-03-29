@@ -2637,6 +2637,28 @@ class Processes
     }
 
     /**
+     * Get Step Rows from a Process
+     *
+     * @param $sProUid array.
+     * @return array $aStep.
+     */
+    public function getStepRowsByElement($sProUid, $element)
+    {
+        try {
+            $elementSteps = array();
+            $steps = $this->getStepRows($sProUid);
+            foreach ($steps as $step) {
+                if ($step['STEP_TYPE_OBJ'] === $element) {
+                    $elementSteps[] = $step;
+                }
+            }
+            return $elementSteps;
+        } catch (Exception $oError) {
+            throw ($oError);
+        }
+    }
+
+    /**
      * Create Step Rows from a Process
      *
      * @param $aStep array.
