@@ -27,11 +27,35 @@ class ProcessDefinitionMigrator implements Importable, Exportable
     public function import($data, $replace)
     {
         try {
-            if ($replace) {
-                $this->bpmn->createFromStruct($data, false);
-            } else {
-                $this->bpmn->updateFromStruct($data['prj_uid'], $data, false);
-            }
+            //Bpmn elements
+            $pjrUid =$this->bpmn->createFromStruct($data['bpmn'], false);
+            //Workflow elements
+            $this->processes->createTaskRows($data['workflow']['tasks']);
+            $this->processes->createTaskUserRows($data['workflow']['taskusers']);
+            $this->processes->createRouteRows($data['workflow']['routes']);
+            $this->processes->createLaneRows($data['workflow']['lanes']);
+            $this->processes->createGatewayRows($data['workflow']['gateways']);
+            $this->processes->createStepRows($data['workflow']['steps']);
+            $this->processes->createStepTriggerRows($data['workflow']['steptriggers']);
+            $this->processes->createSubProcessRows($data['workflow']['subProcess']);
+            $this->processes->createCaseTrackerRows($data['workflow']['caseTracker']);
+            $this->processes->createCaseTrackerObjectRows($data['workflow']['caseTrackerObject']);
+            $this->processes->createStageRows($data['workflow']['stage']);
+            $this->processes->createFieldCondition($data['workflow']['fieldCondition'], $data['workflow']['dynaforms']);
+            $this->processes->createEventRows($data['workflow']['event']);
+            $this->processes->createCaseSchedulerRows($data['workflow']['caseScheduler']);
+            $this->processes->createProcessCategoryRow($data['workflow']['processCategory']);
+            $this->processes->createTaskExtraPropertiesRows($data['workflow']['taskExtraProperties']);
+            $this->processes->createWebEntry($data['workflow']['process']['PRO_UID'], $data['workflow']['process']['PRO_CREATE_USER'], $data['workflow']['webEntry']);
+            $this->processes->createWebEntryEvent($data['workflow']['process']['PRO_UID'], $data['workflow']['process']['PRO_CREATE_USER'], $data['workflow']['webEntryEvent']);
+            $this->processes->createMessageType($data['workflow']['messageType']);
+            $this->processes->createMessageTypeVariable($data['workflow']['messageTypeVariable']);
+            $this->processes->createMessageEventDefinition($data['workflow']['process']['PRO_UID'],$data['workflow']['messageEventDefinition']);
+            $this->processes->createScriptTask($data['workflow']['process']['PRO_UID'], $data['workflow']['scriptTask']);
+            $this->processes->createTimerEvent($data['workflow']['process']['PRO_UID'], $data['workflow']['timerEvent']);
+            $this->processes->createEmailEvent($data['workflow']['process']['PRO_UID'], $data['workflow']['emailEvent']);
+            $this->processes->createActionsByEmail($data['workflow']['process']['PRO_UID'], $data['workflow']['abeConfiguration']);
+
         } catch (\Exception $e) {
             return $e->getMessage();
         }
