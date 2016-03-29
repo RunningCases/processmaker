@@ -1823,8 +1823,8 @@ class Processes
     public function addNewProcessUser(array $arrayData)
     {
         try {
-            $processUser = new ProcessUser();
             foreach ($arrayData as $value) {
+                $processUser = new ProcessUser();
                 $record = $value;
                 if (!$processUser->Exists($record["PU_UID"])) {
                     $result = $processUser->create($record);
@@ -2840,8 +2840,8 @@ class Processes
     public function addNewObjectPermissionRows($aPermission)
     {
         try {
-            $oPermission = new ObjectPermission();
             foreach ($aPermission as $key => $row) {
+                $oPermission = new ObjectPermission();
                 if (!$oPermission->Exists($row['OP_UID'])) {
                     $oPermission->create($row);
                 }
@@ -2905,12 +2905,27 @@ class Processes
     {
         $oDynaform = new Dynaform();
         foreach ($aDynaform as $key => $row) {
-            if (!$oDynaform->exists($row['DYN_UID'])) {
+            if ($oDynaform->exists($row['DYN_UID'])) {
                 $res = $oDynaform->update($row);
             } else {
                 $res = $oDynaform->create($row);
             }
 
+        }
+        return;
+    }
+
+    /**
+     * Add new Dynaforms rows if the passed ones are not existent
+     * @param $aDynaform
+     */
+    public function addNewDynaformRows($aDynaform)
+    {
+        foreach ($aDynaform as $key => $row) {
+            $oDynaform = new Dynaform();
+            if (!$oDynaform->exists($row['DYN_UID'])) {
+                $res = $oDynaform->create($row);
+            }
         }
         return;
     }
@@ -3032,8 +3047,8 @@ class Processes
      */
     public function addNewTriggerRows($aTrigger)
     {
-        $oTrigger = new Triggers();
         foreach ($aTrigger as $key => $row) {
+            $oTrigger = new Triggers();
             if (!$oTrigger->TriggerExists($row['TRI_UID'])) {
                 $oTrigger->create($row);
             }
@@ -3810,8 +3825,8 @@ class Processes
     public function addNewDBConnectionsRows($aConnections)
     {
         try {
-            $oConnection = new DbSource();
             foreach ($aConnections as $sKey => $aRow) {
+                $oConnection = new DbSource();
                 if (!$oConnection->Exists($aRow['DBS_UID'], $aRow['PRO_UID'])) {
                     $oConnection->create($aRow);
                 }
@@ -4167,8 +4182,8 @@ class Processes
     public function addNewFilesManager($processUid, array $arrayData)
     {
         try {
-            $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
             foreach ($arrayData as $value) {
+                $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
                 if (!$filesManager->existsProcessFile($value['PRF_UID'])) {
                     $filesManager->addProcessFilesManagerInDb($value);
                 }

@@ -5,6 +5,7 @@ namespace ProcessMaker\BusinessModel\Migrator;
 class DBConnectionMigrator implements Importable, Exportable
 {
     protected $processes;
+    protected $className;
 
     /**
      * DBConnectionMigrator constructor.
@@ -12,6 +13,7 @@ class DBConnectionMigrator implements Importable, Exportable
     public function __construct()
     {
         $this->processes = new \Processes();
+        $this->className = 'DB Connection';
     }
 
     public function beforeImport($data)
@@ -22,6 +24,7 @@ class DBConnectionMigrator implements Importable, Exportable
     /**
      * @param $data
      * @param $replace
+     * @throws ImportException
      */
     public function import($data, $replace)
     {
@@ -32,8 +35,9 @@ class DBConnectionMigrator implements Importable, Exportable
                 $this->processes->addNewDBConnectionsRows($data);
             }
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throwException(new ImportException($e->getMessage()));
+            $exception = new ImportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 
@@ -65,8 +69,9 @@ class DBConnectionMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throw new ExportException($e->getMessage());
+            $exception = new ExportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 

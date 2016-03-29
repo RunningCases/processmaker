@@ -5,6 +5,7 @@ namespace ProcessMaker\BusinessModel\Migrator;
 class DynaformsMigrator implements Importable, Exportable
 {
     protected $processes;
+    protected $className;
 
     /**
      * DynaformsMigrator constructor.
@@ -12,6 +13,7 @@ class DynaformsMigrator implements Importable, Exportable
     public function __construct()
     {
         $this->processes = new \Processes();
+        $this->className = 'Dynaforms';
     }
 
     public function beforeImport($data)
@@ -22,6 +24,7 @@ class DynaformsMigrator implements Importable, Exportable
     /**
      * @param $data
      * @param $replace
+     * @throws ImportException
      */
     public function import($data, $replace)
     {
@@ -32,8 +35,9 @@ class DynaformsMigrator implements Importable, Exportable
                 $this->processes->addNewDynaformRows($data);
             }
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throwException(new ImportException($e->getMessage()));
+            $exception = new ImportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 
@@ -64,8 +68,9 @@ class DynaformsMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throw new ExportException($e->getMessage());
+            $exception = new ExportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 

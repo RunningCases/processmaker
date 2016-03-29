@@ -5,6 +5,7 @@ namespace ProcessMaker\BusinessModel\Migrator;
 class ReportTablesMigrator implements Importable, Exportable
 {
     protected $processes;
+    protected $className;
 
     /**
      * ReportTablesMigrator constructor.
@@ -12,6 +13,7 @@ class ReportTablesMigrator implements Importable, Exportable
     public function __construct()
     {
         $this->processes = new \Processes();
+        $this->className = 'ReportTables';
     }
 
     public function beforeImport($data)
@@ -22,6 +24,7 @@ class ReportTablesMigrator implements Importable, Exportable
     /**
      * @param $data
      * @param $replace
+     * @throws ImportException
      */
     public function import($data, $replace)
     {
@@ -33,8 +36,9 @@ class ReportTablesMigrator implements Importable, Exportable
                 $this->processes->updateReportTables($data, $aReportTablesVars);
             }
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throwException(new ImportException($e->getMessage()));
+            $exception = new ImportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 
@@ -51,6 +55,7 @@ class ReportTablesMigrator implements Importable, Exportable
     /**
      * @param $prj_uid
      * @return array
+     * @throws ExportException
      */
     public function export($prj_uid)
     {
@@ -66,8 +71,9 @@ class ReportTablesMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throwException(new ExportException($e->getMessage()));
+            $exception = new ExportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 

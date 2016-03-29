@@ -7,6 +7,7 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 class TriggersMigrator implements Importable, Exportable
 {
     protected $processes;
+    protected $className;
 
     /**
      * TriggersMigrator constructor.
@@ -14,6 +15,7 @@ class TriggersMigrator implements Importable, Exportable
     public function __construct()
     {
         $this->processes = new \Processes();
+        $this->className = 'Triggers';
     }
 
     public function beforeImport($data)
@@ -24,6 +26,7 @@ class TriggersMigrator implements Importable, Exportable
     /**
      * @param $data
      * @param $replace
+     * @throws ImportException
      */
     public function import($data, $replace)
     {
@@ -34,8 +37,9 @@ class TriggersMigrator implements Importable, Exportable
                 $this->processes->addNewTriggerRows($data);
             }
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throwException(new ImportException($e->getMessage()));
+            $exception = new ImportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 
@@ -67,8 +71,9 @@ class TriggersMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throw new ExportException($e->getMessage());
+            $exception = new ExportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 

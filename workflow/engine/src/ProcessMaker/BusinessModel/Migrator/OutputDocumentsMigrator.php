@@ -2,11 +2,10 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
-use Symfony\Component\Config\Definition\Exception\Exception;
-
 class OutputDocumentsMigrator implements Importable, Exportable
 {
-     protected $processes;
+    protected $processes;
+    protected $className;
 
     /**
      * OutputDocumentsMigrator constructor.
@@ -14,6 +13,7 @@ class OutputDocumentsMigrator implements Importable, Exportable
     public function __construct()
     {
         $this->processes = new \Processes();
+        $this->className = 'OutputDocument';
     }
 
     public function beforeImport($data)
@@ -24,6 +24,7 @@ class OutputDocumentsMigrator implements Importable, Exportable
     /**
      * @param $data
      * @param $replace
+     * @throws ImportException
      */
     public function import($data, $replace)
     {
@@ -34,8 +35,9 @@ class OutputDocumentsMigrator implements Importable, Exportable
                 $this->processes->addNewOutputRows($data);
             }
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throwException(new ImportException($e->getMessage()));
+            $exception = new ImportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 
@@ -67,8 +69,9 @@ class OutputDocumentsMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throw new ExportException($e->getMessage());
+            $exception = new ExportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 

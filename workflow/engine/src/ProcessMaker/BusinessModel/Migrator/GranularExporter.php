@@ -155,19 +155,14 @@ class GranularExporter
     protected function verifyConsistenceData($migratorData)
     {
         //verifying data consistency group
-        switch (true) {
-            case !empty($migratorData['workflow-definition']['groupwfs']):
-                foreach ($this->data['workflow-definition']['groupwfs'] as $rowGroup) {
-                    foreach ($migratorData['workflow-definition']['groupwfs'] as $key => $row) {
-                        if ($rowGroup['GRP_UID'] == $row['GRP_UID']) {
-                            array_splice($migratorData['workflow-definition']['groupwfs'], $key);
-                        }
+        if (isset($migratorData['workflow-definition']['groupwfs'])) {
+            foreach ($this->data['workflow-definition']['groupwfs'] as $rowGroup) {
+                foreach ($migratorData['workflow-definition']['groupwfs'] as $key => $row) {
+                    if ($rowGroup['GRP_UID'] == $row['GRP_UID']) {
+                        array_splice($migratorData['workflow-definition']['groupwfs'], $key);
                     }
                 }
-                break;
-            default:
-                $migratorData = $migratorData;
-                break;
+            }
         }
         return $migratorData; 
     }

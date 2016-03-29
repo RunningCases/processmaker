@@ -13,6 +13,7 @@ namespace ProcessMaker\BusinessModel\Migrator;
 class AssignmentRulesMigrator implements Importable, Exportable
 {
     protected $processes;
+    protected $className;
 
     /**
      * AssignmentRulesMigrator constructor.
@@ -20,6 +21,7 @@ class AssignmentRulesMigrator implements Importable, Exportable
     public function __construct()
     {
         $this->processes = new \Processes();
+        $this->className = 'Assignment Rules';
     }
 
     public function beforeImport($data)
@@ -46,8 +48,9 @@ class AssignmentRulesMigrator implements Importable, Exportable
             }
 
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throw new ImportException($e->getMessage());
+            $exception = new ImportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 
@@ -83,8 +86,9 @@ class AssignmentRulesMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throw new ExportException($e->getMessage());
+            $exception = new ExportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 
