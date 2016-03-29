@@ -1,7 +1,6 @@
 
 helper = new ViewDashboardHelper();
-var ws = urlProxy.split('/');
-tsModel = new TimeSeriesModel(token, urlProxy, ws[3], pageUserId, G_STRING);
+tsModel = new TimeSeriesModel(token, urlProxy, workspace, pageUserId, G_STRING);
 tsPresenter = new TimeSeriesPresenter(tsModel);
 
 $(document).ready(function() {

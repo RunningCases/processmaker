@@ -1,8 +1,7 @@
 var ViewDashboardModel = function (oauthToken, server, workspace, moneySymbol) {
     this.server = server;
     this.workspace = workspace;
-    this.baseUrl =  "/api/1.0/" + workspace + "/";
-    //this.baseUrl =  "http://127.0.0.1:8080/api/1.0/workflow/";
+    this.baseUrl =  server;
     this.oauthToken = oauthToken;
 	this.helper = new ViewDashboardHelper();
     this.moneySymbol = moneySymbol;
