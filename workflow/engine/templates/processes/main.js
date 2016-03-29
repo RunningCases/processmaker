@@ -1039,8 +1039,8 @@ function exportImportProcessObjects(typeAction)
     storeActionField = new Ext.data.ArrayStore({
         fields: ['value', 'text'],
         data: [
-            [1, _('ID_UPDATE')],
-            [2, _('ID_OVERWRITE')]
+            [1, _('ID_ADD_TO_EXISTING')],
+            [2, _('ID_REPLACE_ALL')]
         ]
     });
     checkBoxSelMod = new Ext.grid.CheckboxSelectionModel();
@@ -1083,7 +1083,8 @@ function exportImportProcessObjects(typeAction)
                         store: storeActionField,
                         triggerAction: 'all',
                         valueField: 'value',
-                        lazyRender: true
+                        lazyRender: true,
+                        disabled: false
                     }),
                     renderer: function(value) {
                         var recordIndex = storeActionField.find('value', value);
@@ -1098,7 +1099,7 @@ function exportImportProcessObjects(typeAction)
         }),
         store: storeGrid,
         listeners: {
-            render: function (grid) {
+            render: function(grid) {
                 colModel = grid.getColumnModel();
                 if(defaultTypeAction === 'export') {
                     colModel.setHidden(3, true);
@@ -1110,8 +1111,17 @@ function exportImportProcessObjects(typeAction)
                             if(!inArray(row.get('OBJECT_ID'),importProcessGlobal.objectGranularImport)) {
                                 store.remove(row);
                             }
+                            if(row.get('OBJECT_ID') === 1) { /*process definition*/
+                                row.set("OBJECT_ACTION","2");
+                            }
                         });
                     });
+                }
+            },
+            beforeedit: function(editor, e, eOpts) {
+                var row = editor.record;
+                if(row.get('OBJECT_ID') === 1) { /*process definition*/
+                    return false;
                 }
             }
         }
@@ -1403,10 +1413,11 @@ importProcessExistGroup = function()
                     }
                   },
                   failure: function(o, resp) {
+                    var msg = resp.result.msg ? resp.result.msg : resp.response.responseText;
                     w.close();
                     Ext.MessageBox.show({
                       title   : _('ID_ERROR'),
-                      msg     : resp.result.msg,
+                      msg     : msg,
                       buttons : Ext.MessageBox.OK,
                       animEl  : 'mb9',
                       fn      : function(){},
@@ -1602,10 +1613,11 @@ importProcessExistProcess = function()
                     }
                   },
                   failure : function(o, resp) {
+                    var msg = resp.result.msg ? resp.result.msg : resp.response.responseText;
                     w.close();
                     Ext.MessageBox.show({
                       title   : _('ID_ERROR'),
-                      msg     : resp.result.msg,
+                      msg     : msg,
                       buttons : Ext.MessageBox.OK,
                       animEl  : 'mb9',
                       fn      : function(){},
@@ -1893,11 +1905,11 @@ importProcess = function()
                                       },
                                       failure : function(o, resp)
                                       {
+                                          var msg = resp.catchMessage ? resp.catchMessage : resp.response.responseText;
                                           w.close();
-
                                           Ext.MessageBox.show({
                                               title  : "",
-                                              msg    : resp.catchMessage,
+                                              msg    : msg,
                                               buttons: Ext.MessageBox.OK,
                                               animEl : "mb9",
                                               fn     : function(){},
@@ -2015,10 +2027,11 @@ importProcessBpmnSubmit = function () {
                 }
             },
             failure: function (o, resp) {
+                var msg = resp.catchMessage ? resp.catchMessage : resp.response.responseText;
                 Ext.getCmp('importProcessWindow').close();
                 Ext.MessageBox.show({
                     title: '',
-                    msg: resp.catchMessage,
+                    msg: msg,
                     buttons: Ext.MessageBox.OK,
                     animEl: 'mb9',
                     fn: function () {
