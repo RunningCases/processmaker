@@ -71,7 +71,7 @@ class PMXGenerator
                         $recordData = array_change_key_case($recordData, CASE_LOWER);
 
                         foreach ($recordData as $key => $value) {
-                            if (is_object($value)) {
+                            if (is_object($value) || is_array($value)) {
                                 $value = serialize($value);
                             }
                             $columnNode = $this->domDocument->createElement($key);

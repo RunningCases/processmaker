@@ -156,7 +156,7 @@ class GranularExporter
     {
         //verifying data consistency group
         switch (true) {
-            case $migratorData['workflow-definition']['groupwfs']:
+            case !empty($migratorData['workflow-definition']['groupwfs']):
                 foreach ($this->data['workflow-definition']['groupwfs'] as $rowGroup) {
                     foreach ($migratorData['workflow-definition']['groupwfs'] as $key => $row) {
                         if ($rowGroup['GRP_UID'] == $row['GRP_UID']) {
