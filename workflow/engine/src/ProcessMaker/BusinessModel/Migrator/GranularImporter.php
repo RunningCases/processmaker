@@ -51,8 +51,10 @@ class GranularImporter
         $objectList = array();
         switch ($nameObject) {
             case 'PROCESSDEFINITION':
-                $objectList['PROCESSDEFINITION'] = isset($data['tables']['bpmn']) ? $this->structureBpmnData
+                $objectList['PROCESSDEFINITION']['bpmn'] = isset($data['tables']['bpmn']) ? $this->structureBpmnData
                 ($data['tables']['bpmn']) : '';
+                $objectList['PROCESSDEFINITION']['workflow'] = isset($data['tables']['workflow']) ?
+                    $data['tables']['workflow'] : '';
                 break;
             case 'ASSIGNMENTRULES':
                 $objectList['ASSIGNMENTRULES']['tasks'] = isset($data['tables']['workflow']['tasks']) ?

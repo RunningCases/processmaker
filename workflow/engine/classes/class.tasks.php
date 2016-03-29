@@ -301,7 +301,7 @@ class Tasks
     /**
      * updates row tasks from an Route Array
      *
-     * @param string $aTasks
+     * @param string $aRoutes
      * @return array
      */
     public function updateRouteRows($aRoutes)
