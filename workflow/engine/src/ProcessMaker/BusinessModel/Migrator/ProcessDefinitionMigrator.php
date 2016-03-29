@@ -9,6 +9,7 @@ class ProcessDefinitionMigrator implements Importable, Exportable
 {
     protected $bpmn;
     protected $processes;
+    protected $className;
 
     /**
      * ProcessDefinitionMigrator constructor.
@@ -17,6 +18,7 @@ class ProcessDefinitionMigrator implements Importable, Exportable
     {
         $this->bpmn = new Adapter\BpmnWorkflow();
         $this->processes = new \Processes();
+        $this->className = 'ProcessDefinition';
     }
 
     public function beforeImport($data)
@@ -24,6 +26,11 @@ class ProcessDefinitionMigrator implements Importable, Exportable
         // TODO: Implement beforeImport() method.
     }
 
+    /**
+     * @param $data
+     * @param $replace
+     * @throws ImportException
+     */
     public function import($data, $replace)
     {
         try {
@@ -57,7 +64,9 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             $this->processes->createActionsByEmail($data['workflow']['process']['PRO_UID'], $data['workflow']['abeConfiguration']);
 
         } catch (\Exception $e) {
-            return $e->getMessage();
+            $exception = new ImportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 
@@ -74,6 +83,7 @@ class ProcessDefinitionMigrator implements Importable, Exportable
     /**
      * @param $prj_uid
      * @return array
+     * @throws ExportException
      */
     public function export($prj_uid)
     {
@@ -129,8 +139,9 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throwException(new ExportException($e->getMessage()));
+            $exception = new ExportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
 
     }
