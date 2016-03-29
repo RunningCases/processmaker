@@ -6,6 +6,7 @@ namespace ProcessMaker\BusinessModel\Migrator;
 class PermissionsMigrator implements Importable, Exportable
 {
     protected $processes;
+    protected $className;
 
     /**
      * PermissionsMigrator constructor.
@@ -13,6 +14,7 @@ class PermissionsMigrator implements Importable, Exportable
     public function __construct()
     {
         $this->processes = new \Processes();
+        $this->className = 'Permissions';
     }
 
     public function beforeImport($data)
@@ -23,6 +25,7 @@ class PermissionsMigrator implements Importable, Exportable
     /**
      * @param $data
      * @param $replace
+     * @throws ImportException
      */
     public function import($data, $replace)
     {
@@ -35,8 +38,9 @@ class PermissionsMigrator implements Importable, Exportable
                 $this->processes->addNewGroupRow($data['groupwfs']);
             }
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throwException(new ImportException($e->getMessage()));
+            $exception = new ImportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 
@@ -83,8 +87,9 @@ class PermissionsMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throw new ExportException($e->getMessage());
+            $exception = new ExportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 

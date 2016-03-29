@@ -151,7 +151,7 @@ class GranularImporter
 
     /**
      * @param $objectList
-     * @return array
+     * @throws \Exception
      */
     public function import($objectList)
     {
@@ -164,36 +164,33 @@ class GranularImporter
                     $migratorData = $objClass->import($dataImport, $replace);
                 }
             }
-        } catch (ExportException $e) {
-            return array(
-                'success' => false,
-                'message' => $e->getMessage()
-            );
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 
     /**
      * @param $objectList
-     * @param bool|false $generateUid
-     * @return array|bool
+     * @param bool $generateUid
+     * @return bool
+     * @throws \Exception
      */
     public function validateImportData($objectList, $generateUid = false)
     {
         try {
-            if($generateUid){
+            if ($generateUid) {
                 foreach ($objectList as $rowObject) {
-                    if($rowObject['name'] === 'PROCESSDEFINITION' && $rowObject['value'] == "replace"){
+                    if ($rowObject['name'] === 'PROCESSDEFINITION' && $rowObject['value'] == "replace") {
                         return true;
                     }
                 }
-                return false;
+                $exception = new ImportException();
+                $exception->setNameException('To create a new process needs PROCESSDEFINITION');
+                throw($exception);
             }
             return true;
-        } catch (ExportException $e) {
-            return array(
-                    'success' => false,
-                    'message' => $e->getMessage()
-            );
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 }

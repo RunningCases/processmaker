@@ -10,6 +10,7 @@ namespace ProcessMaker\BusinessModel\Migrator;
 class VariablesMigrator implements Importable, Exportable
 {
     protected $processes;
+    protected $className;
 
     /**
      * VariablesMigrator constructor.
@@ -17,6 +18,7 @@ class VariablesMigrator implements Importable, Exportable
     public function __construct()
     {
         $this->processes = new \Processes();
+        $this->className = 'Variables';
     }
 
     /**
@@ -42,8 +44,9 @@ class VariablesMigrator implements Importable, Exportable
                 $this->processes->updateProcessVariables($data);
             }
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throw new ImportException($e->getMessage());
+            $exception = new ImportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 
@@ -80,8 +83,9 @@ class VariablesMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throw new ExportException($e->getMessage());
+            $exception = new ExportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
     }
 

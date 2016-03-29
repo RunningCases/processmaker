@@ -8,6 +8,7 @@ use ProcessMaker\BusinessModel\Util;
 class TemplatesMigrator implements Importable, Exportable
 {
     protected $processes;
+    protected $className;
 
     /**
      * TemplatesMigrator constructor.
@@ -15,6 +16,7 @@ class TemplatesMigrator implements Importable, Exportable
     public function __construct()
     {
         $this->processes = new \Processes();
+        $this->className = 'Templates';
     }
 
     public function beforeImport($data)
@@ -64,8 +66,9 @@ class TemplatesMigrator implements Importable, Exportable
                 }
             }
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
-            throw new ImportException($e->getMessage());
+            $exception = new ImportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
         }
 
     }
@@ -103,7 +106,6 @@ class TemplatesMigrator implements Importable, Exportable
             return $result;
 
         } catch (\Exception $e) {
-            \Logger::log($e->getMessage());
             throw new ExportException($e->getMessage());
         }
     }
