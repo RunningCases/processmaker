@@ -129,7 +129,6 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             $oData->emailEvent = $this->processes->getEmailEvent($prj_uid);
             $oData->abeConfiguration = $this->processes->getActionsByEmail($prj_uid);
             $oData->processUser = $this->processes->getProcessUser($prj_uid);
-            $oData->groupwfs = $this->processes->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
             $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
 
             $result = array(
