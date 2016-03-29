@@ -2905,12 +2905,27 @@ class Processes
     {
         $oDynaform = new Dynaform();
         foreach ($aDynaform as $key => $row) {
-            if (!$oDynaform->exists($row['DYN_UID'])) {
+            if ($oDynaform->exists($row['DYN_UID'])) {
                 $res = $oDynaform->update($row);
             } else {
                 $res = $oDynaform->create($row);
             }
 
+        }
+        return;
+    }
+
+    /**
+     * Add new Dynaforms rows if the passed ones are not existent
+     * @param $aDynaform
+     */
+    public function addNewDynaformRows($aDynaform)
+    {
+        $oDynaform = new Dynaform();
+        foreach ($aDynaform as $key => $row) {
+            if (!$oDynaform->exists($row['DYN_UID'])) {
+                $res = $oDynaform->create($row);
+            }
         }
         return;
     }
