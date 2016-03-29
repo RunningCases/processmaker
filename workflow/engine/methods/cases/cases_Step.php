@@ -215,7 +215,7 @@ if(preg_match("/^.*\(.*MSIE (\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arra
     $ieVersion = intval($arrayMatch[1]);
 }
 
-if (isset( $_GET['breakpoint'] ) && $ieVersion != 11) {
+if (isset($_GET['breakpoint'])) {
 
     $G_PUBLISH->AddContent( 'view', 'cases/showDebugFrameLoader' );
     $G_PUBLISH->AddContent( 'view', 'cases/showDebugFrameBreaker' );
