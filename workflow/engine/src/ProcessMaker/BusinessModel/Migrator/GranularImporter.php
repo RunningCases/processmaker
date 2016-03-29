@@ -100,8 +100,10 @@ class GranularImporter
                     $data['tables']['workflow']['dbconnections'] : '';
                 break;
             case 'PERMISSIONS':
-                $objectList['PERMISSIONS'] = isset($data['tables']['workflow']['objectPermissions']) ?
+                $objectList['PERMISSIONS']['objectPermissions'] = isset($data['tables']['workflow']['objectPermissions']) ?
                     $data['tables']['workflow']['objectPermissions'] : '';
+                $objectList['PERMISSIONS']['groupwfs'] = isset($data['tables']['workflow']['groupwfs']) ?
+                    $data['tables']['workflow']['groupwfs'] : '';
                 break;
             case 'SUPERVISORS':
                 $objectList['SUPERVISORS']['processUser'] = isset($data['tables']['workflow']['processUser']) ?

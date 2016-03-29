@@ -28,9 +28,11 @@ class PermissionsMigrator implements Importable, Exportable
     {
         try {
             if ($replace) {
-                $this->processes->createObjectPermissionsRows($data);
+                $this->processes->createObjectPermissionsRows($data['objectPermissions']);
+                $this->processes->addNewGroupRow($data['groupwfs']);
             } else {
-                $this->processes->addNewObjectPermissionRows($data);
+                $this->processes->addNewObjectPermissionRows($data['objectPermissions']);
+                $this->processes->addNewGroupRow($data['groupwfs']);
             }
         } catch (\Exception $e) {
             \Logger::log($e->getMessage());
