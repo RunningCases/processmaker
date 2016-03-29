@@ -2921,8 +2921,8 @@ class Processes
      */
     public function addNewDynaformRows($aDynaform)
     {
-        $oDynaform = new Dynaform();
         foreach ($aDynaform as $key => $row) {
+            $oDynaform = new Dynaform();
             if (!$oDynaform->exists($row['DYN_UID'])) {
                 $res = $oDynaform->create($row);
             }
