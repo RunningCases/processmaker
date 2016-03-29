@@ -59,6 +59,9 @@ class SupervisorsMigrator implements Importable, Exportable
         try {
             $oData = new \StdClass();
             $oData->processUser = $this->processes->getProcessUser($prj_uid);
+            //groups - supervisor
+            $oData->groupwfs = $this->processes->getGroupwfRows($oData->processUser);
+            
 
             $result = array(
                 'workflow-definition' => (array)$oData

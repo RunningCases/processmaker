@@ -139,9 +139,37 @@ class GranularExporter
         $this->data = $data;
     }
 
+    /**
+     * @param $migratorData
+     */
     protected function mergeData($migratorData)
     {
+        $migratorData = $this->verifyConsistenceData($migratorData);
         $this->data = array_merge_recursive($this->data, $migratorData);
+    }
+
+    /**
+     * @param $migratorData
+     * @return mixed
+     */
+    protected function verifyConsistenceData($migratorData)
+    {
+        //verifying data consistency group
+        switch (true) {
+            case $migratorData['workflow-definition']['groupwfs']:
+                foreach ($this->data['workflow-definition']['groupwfs'] as $rowGroup) {
+                    foreach ($migratorData['workflow-definition']['groupwfs'] as $key => $row) {
+                        if ($rowGroup['GRP_UID'] == $row['GRP_UID']) {
+                            array_splice($migratorData['workflow-definition']['groupwfs'], $key);
+                        }
+                    }
+                }
+                break;
+            default:
+                $migratorData = $migratorData;
+                break;
+        }
+        return $migratorData; 
     }
 
     public function publish()

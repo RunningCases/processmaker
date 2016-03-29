@@ -69,8 +69,12 @@ class PermissionsMigrator implements Importable, Exportable
             $processData->groupwfs = $this->processes->getGroupwfRows($processData->taskusers);
             $processData->steptriggers = $this->processes->getStepTriggerRows($processData->tasks);
             $processData->reportTablesVars = $this->processes->getReportTablesVarsRows($prj_uid);
+
             $oData = new \StdClass();
             $oData->objectPermissions = $this->processes->getObjectPermissionRows($prj_uid, $processData);
+            //groups - permissions
+            $oData->groupwfs = $this->processes->getGroupwfRows($oData->objectPermissions);
+
 
             $result = array(
                 'workflow-definition' => (array)$oData
