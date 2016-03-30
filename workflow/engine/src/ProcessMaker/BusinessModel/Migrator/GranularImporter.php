@@ -20,6 +20,7 @@ class GranularImporter
     {
         $this->factory = new MigratorFactory();
         $this->bpmn = new Adapter\BpmnWorkflow();
+        $this->exportObjects = new ExportObjects();
     }
 
     /**
@@ -31,10 +32,10 @@ class GranularImporter
     public function loadObjectsListSelected($data, $aGranular)
     {
         $listObjectGranular = array();
-        $exportObjects = new ExportObjects();
+        $this->exportObjects = new ExportObjects();
         //create structure
         foreach ($aGranular as $key => $rowObject) {
-            array_push($listObjectGranular, array("name" => strtoupper($exportObjects->getObjectName
+            array_push($listObjectGranular, array("name" => strtoupper($this->exportObjects->getObjectName
             ($rowObject->id)), "data" => "", "value" => $rowObject->action));
         }
         //add data
@@ -181,10 +182,11 @@ class GranularImporter
     public function validateImportData($objectList, $generateUid = false)
     {
         try {
+
             if ($generateUid) {
-                if(count($objectList) !== 14){
+                if (count($objectList) !== count($this->exportObjects->getObjectsList())) {
                     $exception = new ImportException();
-                    $exception->setNameException('To create a new process needs PROCESSDEFINITION');
+                    $exception->setNameException(\G::LoadTranslation('ID_PROCESS_DEFINITION_NON_EXISTENT'));
                     throw($exception);
                 }
             }
