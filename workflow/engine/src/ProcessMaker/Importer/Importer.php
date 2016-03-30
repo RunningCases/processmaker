@@ -177,7 +177,8 @@ abstract class Importer
                     $objectList = $granularObj->loadObjectsListSelected($this->importData, $objectsToImport);
                     foreach($objectList as $rowObject) {
                         if($rowObject['name'] === 'PROCESSDEFINITION') {
-                            $this->removeProject();
+                            $onlyDiagram = true;
+                            $this->removeProject($onlyDiagram);
                         }
                     }
                 }
@@ -325,14 +326,14 @@ abstract class Importer
         $project->setDisabled();
     }
 
-    public function removeProject()
+    public function removeProject($onlyDiagram = false)
     {
         /* @var $process \Process */
         $process = new \Process();
         $process->load($this->metadata["uid"]);
         $this->currentProcessTitle = $process->getProTitle();
         $project = \ProcessMaker\Project\Adapter\BpmnWorkflow::load($this->metadata["uid"]);
-        $project->remove(true, false);
+        $project->remove(true, false, $onlyDiagram);
     }
 
     /**
