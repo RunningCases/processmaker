@@ -170,9 +170,6 @@ class Light extends Api
             }
             /*----------------------------------********---------------------------------*/
 
-            if ($newerThan != '') {
-                $response['data'] = array_reverse($response['data']);
-            }
             $result   = $this->parserDataTodo($response['data']);
             return DateTime::convertUtcToIso8601($result, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
@@ -264,9 +261,6 @@ class Light extends Api
             }
             /*----------------------------------********---------------------------------*/
 
-            if ($newerThan != '') {
-                $response['data'] = array_reverse($response['data']);
-            }
             $result   = $this->parserDataDraft($response['data']);
             return DateTime::convertUtcToIso8601($result, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
@@ -367,9 +361,6 @@ class Light extends Api
             }
             /*----------------------------------********---------------------------------*/
 
-            if ($newerThan != '') {
-                $response['data'] = array_reverse($response['data']);
-            }
             $result = $this->parserDataParticipated($response['data']);
             return DateTime::convertUtcToIso8601($result, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
