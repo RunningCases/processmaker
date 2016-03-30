@@ -2,7 +2,7 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
-use ProcessMaker\BusinessModel\Util;
+use ProcessMaker\Util;
 
 
 class TemplatesMigrator implements Importable, Exportable

@@ -2,7 +2,7 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
-use ProcessMaker\BusinessModel\Util;
+use ProcessMaker\Util;
 use \ProcessMaker\BusinessModel\Migrator\FileHandler;
 
 class FilesMigrator implements Importable, Exportable
