@@ -5114,12 +5114,12 @@ class Cases
      * @return object
      */
 
-    public function getallDynaformsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID)
+    public function getallDynaformsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex = 0)
     {
         //check OBJECT_PERMISSION table
         $this->verifyTable();
 
-        $aObjectPermissions = $this->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
+        $aObjectPermissions = $this->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex);
         if (!is_array($aObjectPermissions)) {
             $aObjectPermissions = array(
                 'DYNAFORMS' => array(-1),
@@ -5519,14 +5519,14 @@ class Cases
      * @param  Process ID, Application ID, Task ID and User ID
      * @return Array within all user permitions all objects' types
      */
-    public function getAllObjects($PRO_UID, $APP_UID, $TAS_UID = '', $USR_UID = '')
+    public function getAllObjects($PRO_UID, $APP_UID, $TAS_UID = '', $USR_UID = '', $delIndex = 0)
     {
         $ACTIONS = Array('VIEW', 'BLOCK', 'DELETE'); //TO COMPLETE
         $MAIN_OBJECTS = Array();
         $RESULT_OBJECTS = Array();
 
         foreach ($ACTIONS as $action) {
-            $MAIN_OBJECTS[$action] = $this->getAllObjectsFrom($PRO_UID, $APP_UID, $TAS_UID, $USR_UID, $action);
+            $MAIN_OBJECTS[$action] = $this->getAllObjectsFrom($PRO_UID, $APP_UID, $TAS_UID, $USR_UID, $action, $delIndex);
         }
         /* ADDITIONAL OPERATIONS */
         /*         * * BETWEN VIEW AND BLOCK** */
