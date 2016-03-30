@@ -362,16 +362,11 @@ Ext.onReady(function(){
         text: _("ID_EXPORT"),
         iconCls: "silk-add",
         icon: "/images/export.png",
+        handler: function () {
+          exportProcess();
+        },
         menu: [
           {
-            text: _("ID_NORMAL_EXPORT"),
-            iconCls: "silk-add",
-            icon: "",
-            handler: function ()
-            {
-              exportProcess();
-            }
-          },{
             text: _("ID_GRANULAR_EXPORT"),
             iconCls: "silk-add",
             icon: "",
