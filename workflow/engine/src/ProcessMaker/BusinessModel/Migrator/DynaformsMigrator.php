@@ -60,6 +60,7 @@ class DynaformsMigrator implements Importable, Exportable
     {
         try {
             $oData = new \StdClass();
+            $oData->steps = $this->processes->getStepRowsByElement($prj_uid,'DYNAFORM');
             $oData->dynaforms = $this->processes->getDynaformRows($prj_uid);
             $result = array(
                 'workflow-definition' => (array)$oData

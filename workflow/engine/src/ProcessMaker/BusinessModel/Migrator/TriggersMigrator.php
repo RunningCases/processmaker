@@ -62,6 +62,8 @@ class TriggersMigrator implements Importable, Exportable
     {
         try {
             $oData = new \StdClass();
+            $tasks = $this->processes->getTaskRows($prj_uid);
+            $oData->steptriggers = $this->processes->getStepTriggerRows($tasks);
             $oData->triggers = $this->processes->getTriggerRows($prj_uid);
 
             $result = array(
