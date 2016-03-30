@@ -175,8 +175,8 @@ abstract class Importer
                 } else {
                     $granularObj = new \ProcessMaker\BusinessModel\Migrator\GranularImporter();
                     $objectList = $granularObj->loadObjectsListSelected($this->importData, $objectsToImport);
-                    foreach ($objectList as $rowObject) {
-                        if($rowObject['name'] === 'PROCESSDEFINITION'){
+                    foreach($objectList as $rowObject) {
+                        if($rowObject['name'] === 'PROCESSDEFINITION') {
                             $this->removeProject();
                         }
                     }
