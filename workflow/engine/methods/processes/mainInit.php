@@ -82,7 +82,7 @@ $oHeadPublisher->assign('extJsViewState', $oHeadPublisher->getExtJsViewState());
 
 $deleteCasesFlag = false;
 global $RBAC;
-if($RBAC->userCanAccess('DELETE_PROCESS_CASES') === 1) {
+if($RBAC->userCanAccess('PM_DELETE_PROCESS_CASES') === 1) {
     $deleteCasesFlag = true;
 }
 $oHeadPublisher->assign('deleteCasesFlag', $deleteCasesFlag);
