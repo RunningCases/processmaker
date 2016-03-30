@@ -1414,7 +1414,7 @@ importProcessExistGroup = function()
                   },
                   failure: function(o, resp) {
                     var msg = resp.result ? resp.result.msg : resp.response.responseText;
-                      importProcessGlobal.objectsToImport = "";
+                    Ext.getCmp('objectsToImport').setValue("");
                     w.close();
                     Ext.MessageBox.show({
                       title   : _('ID_ERROR'),
@@ -1615,7 +1615,7 @@ importProcessExistProcess = function()
                   },
                   failure : function(o, resp) {
                     var msg = resp.result ? resp.result.msg : resp.response.responseText;
-                      importProcessGlobal.objectsToImport = "";
+                    Ext.getCmp('objectsToImport').setValue("");
                     w.close();
                     Ext.MessageBox.show({
                       title   : _('ID_ERROR'),
