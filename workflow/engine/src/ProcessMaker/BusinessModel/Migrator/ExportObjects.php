@@ -24,6 +24,22 @@ class ExportObjects
     );
 
     /**
+     * @return array
+     */
+    public function getObjectsList()
+    {
+        return $this->objectsList;
+    }
+
+    /**
+     * @param array $objectsList
+     */
+    public function setObjectsList($objectsList)
+    {
+        $this->objectsList = $objectsList;
+    }
+
+    /**
      * @param string $objectsEnable
      * @return mixed|string
      * @throws \Exception
