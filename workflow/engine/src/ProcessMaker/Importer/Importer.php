@@ -220,12 +220,29 @@ abstract class Importer
         try {
             if ($objectsToImport !== '') {
                 $granularObj = new \ProcessMaker\BusinessModel\Migrator\GranularImporter();
-                $objectList = $granularObj->loadObjectsListSelected($this->importData, $objectsToImport);
-                $processGranulate = $granularObj->validateImportData($objectList, $generateUid);
-                if (sizeof($objectList) > 0 && $processGranulate) {
-                    $granularObj->import($objectList);
-                    return $this->importData['tables']['bpmn']["project"][0]["prj_uid"];
+                $newObjectArray = $objectsToImport;
+                $projectUid = $this->importData['tables']['bpmn']["project"][0]["prj_uid"];
+                $processGranulate = $granularObj->validateImportData($objectsToImport, $generateUid);
+                if($generateUid){
+                    $result = $granularObj->regenerateAllUids($this->importData, $generateUid);
+                    $this->importData = $result['data'];
+                    $projectUid = $result['new_uid'];
+                    $newObjectArray = array();
+                    $count = 0;
+                    foreach ($objectsToImport as $key => $rowObject) {
+                        if($rowObject->id != '1'){
+                            $newObjectArray[++$count] = $rowObject;
+                        }
+                    }
                 }
+                if(sizeof($newObjectArray)){
+                    $objectList = $granularObj->loadObjectsListSelected($this->importData, $newObjectArray);
+                    if (sizeof($objectList) > 0 && $processGranulate) {
+                        $granularObj->import($objectList);
+                    }
+                }
+
+                return $projectUid;
             }
         } catch (\Exception $e) {
             throw  $e;

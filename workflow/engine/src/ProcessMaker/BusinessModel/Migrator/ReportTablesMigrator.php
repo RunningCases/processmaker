@@ -31,9 +31,9 @@ class ReportTablesMigrator implements Importable, Exportable
         try {
             $aReportTablesVars = array();
             if ($replace) {
-                $this->processes->createReportTables($data, $aReportTablesVars);
+                //Todo Create
             } else {
-                $this->processes->updateReportTables($data, $aReportTablesVars);
+                //Todo addOnlyNew
             }
         } catch (\Exception $e) {
             $exception = new ImportException($e->getMessage());
