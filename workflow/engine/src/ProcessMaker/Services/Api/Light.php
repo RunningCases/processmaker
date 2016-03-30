@@ -835,6 +835,13 @@ class Light extends Api
     {
         try {
             $oCase = new \Cases();
+
+            $oAppDelegate = new \AppDelegation();
+            $alreadyRouted = $oAppDelegate->alreadyRouted($app_uid, $cas_index);
+            if ($alreadyRouted) {
+                throw (new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_CASE_DELEGATION_ALREADY_CLOSED')));
+            }
+
             $userUid = $this->getUserId();
             $_SESSION["APPLICATION"]  = $app_uid;
             $_SESSION["PROCESS"]      = $pro_uid;
