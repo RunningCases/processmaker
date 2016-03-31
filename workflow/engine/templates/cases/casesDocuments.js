@@ -35,6 +35,7 @@ itemSelected = "";
 lastDir = "";
 var conn = new Ext.data.Connection();
 var showDirs = 'noFolders';
+var pageSize = 25;
 
 streamFilefromPM=function(fileStream) {
   Ext.Ajax.request({
@@ -106,7 +107,7 @@ function chDir( directory, loadGridOnly ) {
       datastore.load({
         params:{
           start: 0,
-          limit: 100,
+          limit: pageSize,
           dir: directory,
           node: directory,
           option:'gridDocuments',
@@ -788,7 +789,7 @@ var datastore = new Ext.data.Store({
     directory : "/",
     params : {
       start: 0,
-      limit: 100,
+      limit: pageSize,
       dir : this.directory,
       node : this.directory,
       option : "gridDocuments",
@@ -1158,7 +1159,7 @@ var gridtb = new Ext.Toolbar(
         datastore.clearFilter();
         Ext.getCmp("filterField").setValue("");
         datastore.setBaseParam( 'search', '');
-        datastore.load({params:{ start : 0 , limit : 100 }});
+        datastore.load({params:{ start : 0 , limit : pageSize }});
     }
   })
 
@@ -1166,12 +1167,12 @@ var gridtb = new Ext.Toolbar(
 function filterDataStore(btn, e) {
     var filterVal = Ext.getCmp("filterField").getValue();
     datastore.setBaseParam( 'search', filterVal);
-    datastore.load({params:{ start : 0 , limit : 100 }});
+    datastore.load({params:{ start : 0 , limit : pageSize }});
 }
 // add a paging toolbar to the grid's footer
 var gridbb = new Ext.PagingToolbar({
   store: datastore,
-  pageSize: 100,
+  pageSize: pageSize,
   displayInfo: true,
   displayMsg: _("ID_DISPLAY_TOTAL"),
   emptyMsg: _("ID_DISPLAY_EMPTY"),
@@ -1412,7 +1413,7 @@ function loadDir() {
     datastore.load({
       params : {
         start: 0,
-        limit: 100,
+        limit: pageSize,
         dir : datastore.directory,
         node : datastore.directory,
         option : 'gridDocuments',
