@@ -120,10 +120,10 @@ class GranularImporter
                     $data['tables']['workflow']['stepSupervisor'] : '';
                 break;
             case 'REPORTTABLES':
-                $objectList['REPORTTABLES']['reportTables'] = isset($data['tables']['workflow']['reportTables']) ?
-                    $data['tables']['workflow']['reportTables'] : '';
-                $objectList['REPORTTABLES']['reportTablesVars'] = isset($data['tables']['workflow']['reportTablesVars']) ?
-                    $data['tables']['workflow']['reportTablesVars'] : '';
+                $objectList['REPORTTABLES']['reportTablesDefinition'] = isset($data['tables']['workflow']['reportTablesDefinition']) ?
+                    $data['tables']['workflow']['reportTablesDefinition'] : '';
+                $objectList['REPORTTABLES']['reportTablesFields'] = isset($data['tables']['workflow']['reportTablesFields']) ?
+                    $data['tables']['workflow']['reportTablesFields'] : '';
                 break;
             default:
                 break;
