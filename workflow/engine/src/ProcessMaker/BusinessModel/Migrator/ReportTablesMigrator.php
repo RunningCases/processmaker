@@ -29,11 +29,52 @@ class ReportTablesMigrator implements Importable, Exportable
     public function import($data, $replace)
     {
         try {
-            $aReportTablesVars = array();
-            if ($replace) {
-                //Todo Create
-            } else {
-                //Todo addOnlyNew
+            $reportTable = new \ProcessMaker\BusinessModel\ReportTable();
+
+            $arrayTableSchema = [];
+            $arrayTablesToExclude = [];
+            $processUid = '';
+
+            foreach ($data['reportTablesDefinition'] as $value) {
+                $arrayTable = $value;
+
+                $processUid = $arrayTable['PRO_UID'];
+
+                $arrayField = [];
+
+                foreach ($data['reportTablesFields'] as $value2) {
+                    if ($value2['ADD_TAB_UID'] == $arrayTable['ADD_TAB_UID']) {
+                        unset($value2['ADD_TAB_UID']);
+
+                        $arrayField[] = $value2;
+                    }
+                }
+
+                if (!empty($arrayField)) {
+                    $arrayTable['FIELDS'] = $arrayField;
+
+                    $arrayTableSchema[] = $arrayTable;
+
+                    //$replace: true  //Delete all tables and create it again
+                    //$replace: false //Only create the tables that do not exist
+                    if (!$replace) {
+                        $additionalTable = new \AdditionalTables();
+
+                        if ($additionalTable->loadByName($arrayTable['ADD_TAB_NAME']) !== false) {
+                            $arrayTablesToExclude[] = $arrayTable['ADD_TAB_NAME'];
+                        }
+                    }
+                }
+            }
+
+            if (!empty($arrayTableSchema)) {
+                $errors = $reportTable->createStructureOfTables(
+                    $arrayTableSchema, [], $processUid, false, true, $arrayTablesToExclude
+                );
+
+                if ($errors != '') {
+                    throw new \Exception($errors);
+                }
             }
         } catch (\Exception $e) {
             $exception = new ImportException($e->getMessage());

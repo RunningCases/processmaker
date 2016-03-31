@@ -3217,6 +3217,7 @@ class Processes
             $getalldditionalTables = $additionalTables->getReportTables($sProUid);
 
             foreach ($getalldditionalTables as $row) {
+                $additionalTables = new AdditionalTables();
                 $additionalTables->setAddTabUid($row['ADD_TAB_UID']);
                 $fieldsAdditionalTables = $additionalTables->getFields();
                 foreach ($fieldsAdditionalTables as $rowField) {
