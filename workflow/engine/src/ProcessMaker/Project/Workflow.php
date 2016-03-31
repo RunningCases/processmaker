@@ -898,19 +898,20 @@ class Workflow extends Handler
                 $emailEvent->delete($sProcessUID,$row["EMAIL_EVENT_UID"],false);
             }
 
-            //Delete files Manager
-            $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
-            $criteria = new \Criteria("workflow");
-            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_UID);
-            $criteria->add(\ProcessFilesPeer::PRO_UID, $sProcessUID, \Criteria::EQUAL);
-            $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            if (!$onlyDiagram) {
+                //Delete files Manager
+                $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
+                $criteria = new \Criteria("workflow");
+                $criteria->addSelectColumn(\ProcessFilesPeer::PRF_UID);
+                $criteria->add(\ProcessFilesPeer::PRO_UID, $sProcessUID, \Criteria::EQUAL);
+                $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
+                $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
-            while ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
-                $filesManager->deleteProcessFilesManager($sProcessUID, $row["PRF_UID"]);
+                while ($rsCriteria->next()) {
+                    $row = $rsCriteria->getRow();
+                    $filesManager->deleteProcessFilesManager($sProcessUID, $row["PRF_UID"]);
+                }
             }
-            
             //Delete the actions by email
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(\AbeConfigurationPeer::PRO_UID, $sProcessUID);

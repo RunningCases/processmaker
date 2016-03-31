@@ -5,6 +5,7 @@ use ProcessMaker\Util;
 use ProcessMaker\Project;
 use ProcessMaker\Project\Adapter;
 use ProcessMaker\BusinessModel\Migrator;
+use ProcessMaker\BusinessModel\Migrator\ImportException;
 
 abstract class Importer
 {
@@ -175,11 +176,17 @@ abstract class Importer
                 } else {
                     $granularObj = new \ProcessMaker\BusinessModel\Migrator\GranularImporter();
                     $objectList = $granularObj->loadObjectsListSelected($this->importData, $objectsToImport);
-                    foreach($objectList as $rowObject) {
-                        if($rowObject['name'] === 'PROCESSDEFINITION') {
-                            $onlyDiagram = true;
-                            $this->removeProject($onlyDiagram);
+                    try {
+                        foreach ($objectList as $rowObject) {
+                            if ($rowObject['name'] === 'PROCESSDEFINITION') {
+                                $onlyDiagram = true;
+                                $this->removeProject($onlyDiagram);
+                            }
                         }
+                    } catch (\Exception $e) {
+                        $exception = new ImportException($e->getMessage());
+                        $exception->setNameException(\G::LoadTranslation('ID_PROCESS_DEFINITION_INCOMPLETE'));
+                        throw $exception;
                     }
                 }
                 $name = $this->currentProcessTitle;
