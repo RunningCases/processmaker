@@ -303,7 +303,7 @@ if (isset($_POST["PRO_FILENAME"]) &&
         if (isset($_POST['objectsToImport']) && sizeof(G::json_decode($_POST['objectsToImport']))){
             $objectsToImport = G::json_decode($_POST['objectsToImport']);
         }
-        $prjUid = $importer->import($option, $optionGroup, null, $objectsToImport);
+        $prjUid = $importer->import($option, $optionGroup, false, $objectsToImport);
 
         G::LoadClass( 'Process' );
         $oProcess = new Process();
