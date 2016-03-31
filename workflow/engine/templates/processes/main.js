@@ -1213,7 +1213,7 @@ function exportImportProcessObjects(typeAction)
                                 failure : function(o, resp) {
                                     var msg = resp.result ? resp.result.msg : resp.response.responseText;
                                     Ext.getCmp('objectsToImport').setValue("");
-                                    w.close();
+                                    granularWindow.close();
                                     Ext.MessageBox.show({
                                         title   : _('ID_ERROR'),
                                         msg     : msg,

@@ -169,7 +169,10 @@ class GranularImporter
                 }
             }
         } catch (\Exception $e) {
-            throw $e;
+            $exception = new ImportException('Please review your current process definition
+                for missing elements, it\'s recommended that a new process should be exported
+                with all the elements.');
+            throw $exception;
         }
     }
 
@@ -186,7 +189,7 @@ class GranularImporter
             if ($generateUid) {
                 if (count($objectList) !== count($this->exportObjects->getObjectsList())) {
                     $exception = new ImportException();
-                    $exception->setNameException(\G::LoadTranslation('ID_PROCESS_DEFINITION_NON_EXISTENT'));
+                    $exception->setNameException(\G::LoadTranslation('ID_PROCESS_DEFINITION_INCOMPLETE'));
                     throw($exception);
                 }
             }
