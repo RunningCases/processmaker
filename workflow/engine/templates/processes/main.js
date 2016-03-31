@@ -1018,7 +1018,7 @@ importProcessExistGroup = function()
       shortGroupList = affectedGroups;
   }
 
-  var processFileTypeTitle = (processFileType == "pm") ? "" : " " + processFileType;
+  var processFileTypeTitle = (importProcessGlobal.processFileType == "pm") ? "" : " " + importProcessGlobal.processFileType;
 
   proFileName         = importProcessGlobal.proFileName;
   groupBeforeAccion   = importProcessGlobal.groupBeforeAccion;
@@ -1225,7 +1225,7 @@ affectedGroupsList = function()
 importProcessExistProcess = function()
 {
 
-  var processFileTypeTitle = (processFileType == "pm") ? "" : " " + processFileType;
+  var processFileTypeTitle = (importProcessGlobal.processFileType == "pm") ? "" : " " + importProcessGlobal.processFileType;
   var processFileType      = importProcessGlobal.processFileType;
   var proFileName          = importProcessGlobal.proFileName;
 
