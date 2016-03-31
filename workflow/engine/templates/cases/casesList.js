@@ -924,14 +924,16 @@ Ext.onReady ( function() {
     );
 
     Ext.Ajax.request({
-        url : 'casesList_Ajax' ,
-        params : {actionAjax : 'processListExtJs',
+        url : 'casesList_Ajax',
+        params : {
+            actionAjax : 'processListExtJs',
             action: action,
-            CATEGORY_UID: filterCategory},
+            CATEGORY_UID: filterCategory
+        },
         success: function ( result, request ) {
             processValues = Ext.util.JSON.decode(result.responseText);
-            comboProcess.getStore().removeAll();
-            comboProcess.getStore().loadData(processValues);
+            suggestProcess.getStore().removeAll();
+            suggestProcess.getStore().loadData(processValues);
         },
         failure: function ( result, request) {
             if (typeof(result.responseText) != 'undefined') {
@@ -940,40 +942,56 @@ Ext.onReady ( function() {
         }
     });
 
-    var comboProcess = new Ext.form.ComboBox({
-        width         : 180,
-        boxMaxWidth   : 200,
-        editable      : false,
-        displayField  : 'APP_PRO_TITLE',
-        valueField    : 'PRO_UID',
-        forceSelection: false,
-        emptyText: _('ID_EMPTY_PROCESSES'),
-        selectOnFocus: true,
-        tpl: resultTpl,
-
-        typeAhead: true,
-        mode: 'local',
-        autocomplete: true,
-        triggerAction: 'all',
-
-        store         : new Ext.data.ArrayStore({
-            fields : ['PRO_UID','APP_PRO_TITLE'],
-            data   : processValues
+    var processStore =  new Ext.data.Store( {
+        proxy : new Ext.data.HttpProxy( {
+            url : 'casesList_Ajax?actionAjax=processListExtJs',
+            method : 'POST'
         }),
+        reader : new Ext.data.JsonReader( {
+            fields : [ {
+                name : 'PRO_UID'
+            }, {
+                name : 'PRO_TITLE'
+            } ]
+        })
+    });
+
+    var suggestProcess = new Ext.form.ComboBox({
+        store: processStore,
+        valueField : 'PRO_UID',
+        displayField:'PRO_TITLE',
+        typeAhead: false,
+        triggerAction: 'all',
+        emptyText : _('ID_EMPTY_PROCESSES'),
+        selectOnFocus : true,
+        editable : true,
+        width: 150,
+        allowBlank : true,
+        autocomplete: true,
+        minChars: 1,
+        hideTrigger:true,
         listeners:{
             scope: this,
             'select': function() {
-                filterProcess = comboProcess.value;
+                filterProcess = suggestProcess.value;
                 if ( action == 'search' ){
                     storeCases.setBaseParam('dateFrom', dateFrom.getValue());
                     storeCases.setBaseParam('dateTo', dateTo.getValue());
                 }
                 storeCases.setBaseParam('process', filterProcess);
-                //
-                //storeCases.load({params:{process: filterProcess, start : 0 , limit : pageSize}});
-            }},
-        iconCls: 'no-icon'  //use iconCls if placing within menu to shift to right side of menu
+            }
+        }
     });
+
+    var resetProcessButton = {
+        text:'X',
+        ctCls:"pm_search_x_button_des",
+        handler: function(){
+            storeCases.setBaseParam('process', '');
+            suggestProcess.setValue('');
+            doSearch();
+        }
+    };
 
     var comboAllUsers = new Ext.form.ComboBox({
         width         : 180,
@@ -1050,10 +1068,9 @@ Ext.onReady ( function() {
                         CATEGORY_UID: filterCategory},
                     success: function ( result, request ) {
                         var data = Ext.util.JSON.decode(result.responseText);
-                        comboProcess.getStore().removeAll();
-                        comboProcess.getStore().loadData( data );
-                        comboProcess.setValue('');
-
+                        suggestProcess.getStore().removeAll();
+                        suggestProcess.getStore().loadData( data );
+                        suggestProcess.setValue('');
                     },
                     failure: function ( result, request) {
                         if (typeof(result.responseText) != 'undefined') {
@@ -1803,7 +1820,8 @@ Ext.onReady ( function() {
         comboCategory,
         "-",
         _('ID_PROCESS'),
-        comboProcess,
+        suggestProcess,
+        resetProcessButton,
         '-',
         textSearch,
         resetSearchButton,
@@ -1827,7 +1845,8 @@ Ext.onReady ( function() {
         comboCategory,
         "-",
         _('ID_PROCESS'),
-        comboProcess,
+        suggestProcess,
+        resetProcessButton,
         '-',
         textSearch,
         resetSearchButton,
@@ -1851,7 +1870,8 @@ Ext.onReady ( function() {
         comboCategory,
         "-",
         _('ID_PROCESS'),
-        comboProcess,
+        suggestProcess,
+        resetProcessButton,
         '-',
         textSearch,
         resetSearchButton,
@@ -1877,7 +1897,8 @@ Ext.onReady ( function() {
         comboCategory,
         "-",
         _('ID_PROCESS'),
-        comboProcess,
+        suggestProcess,
+        resetProcessButton,
         '-',
         textSearch,
         resetSearchButton,
@@ -1896,7 +1917,8 @@ Ext.onReady ( function() {
         comboCategory,
         "-",
         _('ID_PROCESS'),
-        comboProcess,
+        suggestProcess,
+        resetProcessButton,
         '-',
         textSearch,
         resetSearchButton,
@@ -1923,7 +1945,8 @@ Ext.onReady ( function() {
         comboCategory,
         "-",
         _("ID_PROCESS"),
-        comboProcess,
+        suggestProcess,
+        resetProcessButton,
         textSearch,
         resetSearchButton,
         btnSearch,
@@ -1943,7 +1966,8 @@ Ext.onReady ( function() {
         comboCategory,
         "-",
         _('ID_PROCESS'),
-        comboProcess,
+        suggestProcess,
+        resetProcessButton,
         '-',
         _('ID_STATUS'),
         comboStatus,
@@ -2002,7 +2026,8 @@ Ext.onReady ( function() {
             comboCategory,
             "-",
             _('ID_PROCESS'),
-            comboProcess,
+            suggestProcess,
+            resetProcessButton,
             '-',
             _('ID_STATUS'),
             comboStatus,
@@ -2400,7 +2425,7 @@ Ext.onReady ( function() {
     }
 
     comboCategory.setValue("");
-    comboProcess.setValue("");
+    suggestProcess.setValue("");
     comboStatus.setValue("");
     /*----------------------------------********---------------------------------*/
     if (typeof valueFilterStatus != 'undefined') {
