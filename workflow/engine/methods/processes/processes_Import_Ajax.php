@@ -150,6 +150,18 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
         $proType = '';
         $granularImport = false;
         $objectsToImport = '';
+
+        $data = $importer->load();
+        if (version_compare($data['version'], '3.0', '>')) {
+            $objectsToImport = [];
+            $objects = (isset($data['objects'])) ? explode('|', $data['objects']) : "";
+            $ids = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
+            $objects = $ids->getIdObjectList($objects);
+            foreach ($objects as $object) {
+                $objectsToImport[] = (object)array('id' => $object, 'action' => 'replace');
+            }
+        }
+
         if (isset($_POST['objectsToImport']) && sizeof(G::json_decode($_POST['objectsToImport']))){
             $objectsToImport = G::json_decode($_POST['objectsToImport']);
         }
