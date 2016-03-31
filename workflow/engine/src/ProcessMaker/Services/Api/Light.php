@@ -716,7 +716,7 @@ class Light extends Api
     }
 
     /**
-     * Get next step
+     * Get Already Route
      *
      * @param string $app_uid  {@min 1}{@max 32}
      * @param int $cas_index
