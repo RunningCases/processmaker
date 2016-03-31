@@ -666,10 +666,10 @@ class pmDynaform
                 {
                     var data = jsondata;
 
-                    window.project = new PMDynaform.core.Project({
+                    window.dynaform = new PMDynaform.core.Project({
                         data: data,
                         keys: {
-                            server: location.host,
+                            server: httpServerHostname,
                             projectId: prj_uid,
                             workspace: workspace
                         },
@@ -720,10 +720,10 @@ class pmDynaform
                 "var sysLang = '" . SYS_LANG . "';\n" .
                 "$(window).load(function () {\n" .
                 "    var data = jsondata;\n" .
-                "    window.project = new PMDynaform.core.Project({\n" .
+                "    window.dynaform = new PMDynaform.core.Project({\n" .
                 "        data: data,\n" .
                 "        keys: {\n" .
-                "            server: location.host,\n" .
+                "            server: httpServerHostname,\n" .
                 "            projectId: prj_uid,\n" .
                 "            workspace: workspace\n" .
                 "        },\n" .
