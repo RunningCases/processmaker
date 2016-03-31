@@ -265,6 +265,20 @@ try {
             define('DB_ADAPTER', $DB_ADAPTER);
         }
 
+        //Set Time Zone
+        $systemUtcTimeZone = false;
+
+        /*----------------------------------********---------------------------------*/
+        if (PMLicensedFeatures::getSingleton()->verifyfeature('oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=')) {
+            $systemUtcTimeZone = (int)($arraySystemConfiguration['system_utc_time_zone']) == 1;
+        }
+        /*----------------------------------********---------------------------------*/
+
+        ini_set('date.timezone', ($systemUtcTimeZone)? 'UTC' : $arraySystemConfiguration['time_zone']); //Set Time Zone
+
+        define('TIME_ZONE', ini_get('date.timezone'));
+
+        //Processing
         eprintln('Processing workspace: ' . $workspace, 'green');
 
         try {
