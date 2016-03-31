@@ -716,6 +716,28 @@ class Light extends Api
     }
 
     /**
+     * Get next step
+     *
+     * @param string $app_uid  {@min 1}{@max 32}
+     * @param int $cas_index
+     *
+     * @status 204
+     * @url GET /case/:app_uid/:cas_index
+     */
+    public function doIfAlreadyRoute($app_uid, $cas_index)
+    {
+        try {
+            $oAppDelegate = new \AppDelegation();
+            $alreadyRouted = $oAppDelegate->alreadyRouted($app_uid, $cas_index);
+            if ($alreadyRouted) {
+                throw (new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_CASE_DELEGATION_ALREADY_CLOSED')));
+            }
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
      *
      * @url GET /project/:prj_uid/dynaforms
      *
