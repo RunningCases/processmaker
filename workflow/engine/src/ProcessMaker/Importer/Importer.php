@@ -401,11 +401,11 @@ abstract class Importer
         // Build BPMN project struct
         $project = $tables["project"][0];
         $diagram = $tables["diagram"][0];
-        $diagram["activities"] = $tables["activity"];
+        $diagram["activities"] =  (isset($tables["activity"]))? $tables["activity"] : array();
         $diagram["artifacts"] = (isset($tables["artifact"]))? $tables["artifact"] : array();
-        $diagram["events"] = $tables["event"];
-        $diagram["flows"] = $tables["flow"];
-        $diagram["gateways"] = $tables["gateway"];
+        $diagram["events"] = (isset($tables["event"]))? $tables["event"] : array();
+        $diagram["flows"] = (isset($tables["flow"]))? $tables["flow"] : array();
+        $diagram["gateways"] = (isset($tables["gateway"]))? $tables["gateway"]: array();
         $diagram["data"] = (isset($tables["data"]))? $tables["data"] : array();
         $diagram["participants"] = (isset($tables["participant"]))? $tables["participant"] : array();
         $diagram["laneset"] = (isset($tables["laneset"]))? $tables["laneset"] : array();
@@ -433,58 +433,62 @@ abstract class Importer
 
     public function doImport($generateUid = true)
     {
-        $arrayBpmnTables = $this->importData["tables"]["bpmn"];
-        $arrayWorkflowTables = $this->importData["tables"]["workflow"];
-        $arrayWorkflowFiles = $this->importData["files"]["workflow"];
+        try {
+            $arrayBpmnTables = $this->importData["tables"]["bpmn"];
+            $arrayWorkflowTables = $this->importData["tables"]["workflow"];
+            $arrayWorkflowFiles = $this->importData["files"]["workflow"];
 
-        //Import BPMN tables
-        $result = $this->importBpmnTables($arrayBpmnTables, $generateUid);
+            //Import BPMN tables
+            $result = $this->importBpmnTables($arrayBpmnTables, $generateUid);
 
-        $projectUidOld = $arrayBpmnTables["project"][0]["prj_uid"];
-        $projectUid = ($generateUid)? $result[0]["new_uid"] : $result;
+            $projectUidOld = $arrayBpmnTables["project"][0]["prj_uid"];
+            $projectUid = ($generateUid) ? $result[0]["new_uid"] : $result;
 
-        //Import workflow tables
-        if ($generateUid) {
-            $result[0]["object"]  = "project";
-            $result[0]["old_uid"] = $projectUidOld;
-            $result[0]["new_uid"] = $projectUid;
+            //Import workflow tables
+            if ($generateUid) {
+                $result[0]["object"] = "project";
+                $result[0]["old_uid"] = $projectUidOld;
+                $result[0]["new_uid"] = $projectUid;
 
-            $workflow = new \ProcessMaker\Project\Workflow();
+                $workflow = new \ProcessMaker\Project\Workflow();
 
-            list($arrayWorkflowTables, $arrayWorkflowFiles) = $workflow->updateDataUidByArrayUid($arrayWorkflowTables, $arrayWorkflowFiles, $result);
-        }
-
-        $this->importWfTables($arrayWorkflowTables);
-
-        //Import workflow files
-        $this->importWfFiles($arrayWorkflowFiles);
-
-        //Update
-        $workflow = \ProcessMaker\Project\Workflow::load($projectUid);
-
-        foreach ($arrayWorkflowTables["tasks"] as $key => $value) {
-            $arrayTaskData = $value;
-
-            if (!in_array($arrayTaskData["TAS_TYPE"], array("GATEWAYTOGATEWAY", "WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT", "START-TIMER-EVENT", "INTERMEDIATE-CATCH-TIMER-EVENT", "END-EMAIL-EVENT", "INTERMEDIATE-EMAIL-EVENT"))) {
-                $result = $workflow->updateTask($arrayTaskData["TAS_UID"], $arrayTaskData);
+                list($arrayWorkflowTables, $arrayWorkflowFiles) = $workflow->updateDataUidByArrayUid($arrayWorkflowTables, $arrayWorkflowFiles, $result);
             }
+
+            $this->importWfTables($arrayWorkflowTables);
+
+            //Import workflow files
+            $this->importWfFiles($arrayWorkflowFiles);
+
+            //Update
+            $workflow = \ProcessMaker\Project\Workflow::load($projectUid);
+
+            foreach ($arrayWorkflowTables["tasks"] as $key => $value) {
+                $arrayTaskData = $value;
+
+                if (!in_array($arrayTaskData["TAS_TYPE"], array("GATEWAYTOGATEWAY", "WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT", "START-TIMER-EVENT", "INTERMEDIATE-CATCH-TIMER-EVENT", "END-EMAIL-EVENT", "INTERMEDIATE-EMAIL-EVENT"))) {
+                    $result = $workflow->updateTask($arrayTaskData["TAS_UID"], $arrayTaskData);
+                }
+            }
+
+            unset($arrayWorkflowTables["process"]["PRO_CREATE_USER"]);
+            unset($arrayWorkflowTables["process"]["PRO_CREATE_DATE"]);
+            unset($arrayWorkflowTables["process"]["PRO_UPDATE_DATE"]);
+            unset($arrayWorkflowTables["process"]["PRO_CATEGORY"]);
+            unset($arrayWorkflowTables["process"]["PRO_CATEGORY_LABEL"]);
+
+            $workflow->update($arrayWorkflowTables["process"]);
+
+            //Process-Files upgrade
+            $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
+
+            $filesManager->processFilesUpgrade($projectUid);
+
+            //Return
+            return $projectUid;
+        } catch (\Exception $e) {
+            throw $e;
         }
-
-        unset($arrayWorkflowTables["process"]["PRO_CREATE_USER"]);
-        unset($arrayWorkflowTables["process"]["PRO_CREATE_DATE"]);
-        unset($arrayWorkflowTables["process"]["PRO_UPDATE_DATE"]);
-        unset($arrayWorkflowTables["process"]["PRO_CATEGORY"]);
-        unset($arrayWorkflowTables["process"]["PRO_CATEGORY_LABEL"]);
-        
-        $workflow->update($arrayWorkflowTables["process"]);
-
-        //Process-Files upgrade
-        $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
-
-        $filesManager->processFilesUpgrade($projectUid);
-
-        //Return
-        return $projectUid;
     }
 
     /**

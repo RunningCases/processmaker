@@ -1177,8 +1177,56 @@ function exportImportProcessObjects(typeAction)
                         }
                         importProcessGlobal.objectsToImport = processObjectsArray;
                         Ext.getCmp('objectsToImport').setValue(processObjectsArray);
-                        Ext.getCmp('buttonUpload').el.dom.click();
-                        granularWindow.close();
+
+                        var uploader = Ext.getCmp('formUploader');
+                        uploader.getForm().setValues({"objectsToImport":processObjectsArray});
+                        if (uploader.getForm().isValid()) {
+                            uploader.getForm().submit({
+                                url     : 'processes_Import_Ajax',
+                                waitMsg : _('ID_UPLOADING_PROCESS_FILE'),
+                                waitTitle : "&nbsp;",
+                                timeout: 3600,
+                                success: function(o, resp) {
+                                    var resp_      = Ext.util.JSON.decode(resp.response.responseText);
+                                    var sNewProUid = resp_.sNewProUid;
+                                    if (resp_.ExistGroupsInDatabase == 0) {
+                                        if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
+                                            if (typeof(resp_.project_type_aux) != "undefined" && resp_.project_type_aux == "NORMAL") {
+                                                importProcessCallbackFile = false;
+                                            }
+                                            var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
+                                            openWindowIfIE(goTo + sNewProUid);
+                                        } else {
+                                            window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+                                        }
+                                    }
+                                    else {
+                                        affectedGroups = resp_.affectedGroups;
+                                        importProcessGlobal.proFileName       = resp_.proFileName;
+                                        importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
+                                        importProcessGlobal.sNewProUid        = resp_.sNewProUid;
+                                        importProcessGlobal.importOption      = resp_.importOption;
+                                        importProcessExistGroup();
+                                    }
+
+                                },
+                                failure : function(o, resp) {
+                                    var msg = resp.result ? resp.result.msg : resp.response.responseText;
+                                    Ext.getCmp('objectsToImport').setValue("");
+                                    w.close();
+                                    Ext.MessageBox.show({
+                                        title   : _('ID_ERROR'),
+                                        msg     : msg,
+                                        buttons : Ext.MessageBox.OK,
+                                        animEl  : 'mb9',
+                                        fn      : function(){},
+                                        icon    : Ext.MessageBox.ERROR
+                                    });
+                                }
+                            });
+                        }
+
+
                     }
                 }
             }, {
@@ -1592,25 +1640,30 @@ importProcessExistProcess = function()
                   success: function(o, resp) {
                     var resp_      = Ext.util.JSON.decode(resp.response.responseText);
                     var sNewProUid = resp_.sNewProUid;
-
-                    if (resp_.ExistGroupsInDatabase == 0) {
-                        if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {      
-                            if (typeof(resp_.project_type_aux) != "undefined" && resp_.project_type_aux == "NORMAL") {  
-                                importProcessCallbackFile = false;
+                    if(resp_.isGranularImport) {
+                      importProcessGlobal.isGranularImport = resp_.isGranularImport;
+                      importProcessGlobal.objectGranularImport = resp_.objectGranularImport;
+                      exportImportProcessObjects('import');
+                    } else {
+                        if (resp_.ExistGroupsInDatabase == 0) {
+                            if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
+                                if (typeof(resp_.project_type_aux) != "undefined" && resp_.project_type_aux == "NORMAL") {
+                                    importProcessCallbackFile = false;
+                                }
+                                var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
+                                openWindowIfIE(goTo + sNewProUid);
+                            } else {
+                                window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                             }
-                            var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
-                            openWindowIfIE(goTo + sNewProUid);
-                        } else {
-                            window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                         }
-                    }
-                    else {
-                      affectedGroups = resp_.affectedGroups;
-                      importProcessGlobal.proFileName       = resp_.proFileName;
-                      importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
-                      importProcessGlobal.sNewProUid        = resp_.sNewProUid;
-                      importProcessGlobal.importOption      = resp_.importOption;
-                      importProcessExistGroup();
+                      else {
+                          affectedGroups = resp_.affectedGroups;
+                          importProcessGlobal.proFileName       = resp_.proFileName;
+                          importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
+                          importProcessGlobal.sNewProUid        = resp_.sNewProUid;
+                          importProcessGlobal.importOption      = resp_.importOption;
+                          importProcessExistGroup();
+                      }
                     }
                   },
                   failure : function(o, resp) {
