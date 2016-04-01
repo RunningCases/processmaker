@@ -30,7 +30,6 @@ class ReportTablesMigrator implements Importable, Exportable
     {
         try {
             $reportTable = new \ProcessMaker\BusinessModel\ReportTable();
-
             $arrayTableSchema = [];
             $arrayTablesToExclude = [];
             $processUid = '';
