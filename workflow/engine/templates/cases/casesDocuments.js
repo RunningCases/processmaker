@@ -285,6 +285,8 @@ function openActionDialog(caller, action, dataAux)
     return false;
   }
 
+  Ext.Ajax.timeout = 300000;
+
   switch( action ) {
     case 'copyAction':
     case 'edit':
