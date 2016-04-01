@@ -37,7 +37,6 @@ switch ($_SESSION['actionCaseOptions']) {
         break;
     case 'sent':
     case 'unassigned':
-        $_SESSION['TASK'] = -1;
         $statusSendAndUnassigned = true;
         break;
     case 'paused':
@@ -46,8 +45,6 @@ switch ($_SESSION['actionCaseOptions']) {
             if (isset($_SESSION['bNoShowSteps'])) {
                 unset($_SESSION['bNoShowSteps']);
             }
-        } else {
-            $_SESSION['TASK'] = -1;
         }
         break;
     case 'to_revise':
@@ -57,8 +54,6 @@ switch ($_SESSION['actionCaseOptions']) {
             if (isset($_SESSION['bNoShowSteps'])) {
                 unset($_SESSION['bNoShowSteps']);
             }
-        } else {
-            $_SESSION['TASK'] = -1;
         }
         break;
     default:
