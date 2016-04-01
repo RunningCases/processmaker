@@ -100,7 +100,6 @@ class Home extends Controller
         $proData = $process->getAllProcesses( $start, $limit, null, null, false, true );
         $processList = $case->getStartCasesPerType( $_SESSION['USER_LOGGED'], 'category' );
 
-        unset( $processList[0] );
         $processesList = array ();
 
         foreach ($processList as $key => $valueProcess) {
