@@ -62,11 +62,11 @@ class GranularImporter
                 break;
             case 'ASSIGNMENTRULES':
                 $objectList['ASSIGNMENTRULES']['tasks'] = isset($data['tables']['workflow']['tasks']) ?
-                    $data['tables']['workflow']['tasks'] : '';
+                    $data['tables']['workflow']['tasks'] : [];
                 $objectList['ASSIGNMENTRULES']['taskusers'] = isset($data['tables']['workflow']['taskusers']) ?
-                    $data['tables']['workflow']['taskusers'] : '';
+                    $data['tables']['workflow']['taskusers'] : [];
                 $objectList['ASSIGNMENTRULES']['groupwfs'] = isset($data['tables']['workflow']['groupwfs']) ?
-                    $data['tables']['workflow']['groupwfs'] : '';
+                    $data['tables']['workflow']['groupwfs'] : [];
                 break;
             case 'VARIABLES':
                 $objectList['VARIABLES'] = isset($data['tables']['workflow']['processVariables']) ?
