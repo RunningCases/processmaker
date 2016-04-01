@@ -121,9 +121,9 @@ class GranularImporter
                 break;
             case 'REPORTTABLES':
                 $objectList['REPORTTABLES']['reportTablesDefinition'] = isset($data['tables']['workflow']['reportTablesDefinition']) ?
-                    $data['tables']['workflow']['reportTablesDefinition'] : '';
+                    $data['tables']['workflow']['reportTablesDefinition'] : [];
                 $objectList['REPORTTABLES']['reportTablesFields'] = isset($data['tables']['workflow']['reportTablesFields']) ?
-                    $data['tables']['workflow']['reportTablesFields'] : '';
+                    $data['tables']['workflow']['reportTablesFields'] : [];
                 break;
             default:
                 break;

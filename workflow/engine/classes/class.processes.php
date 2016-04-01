@@ -3737,6 +3737,22 @@ class Processes
      * @param array $aTaskUser
      * @return array $aStepTrigger
      */
+    public function removeTaskUserRows($tasks)
+    {
+        foreach ($tasks as $task) {
+            $oCriteria = new \Criteria('workflow');
+            $oCriteria->add(\TaskUserPeer::TAS_UID, $task['TAS_UID']);
+            \TaskUserPeer::doDelete($oCriteria);
+        }
+        return;
+    }
+
+    /**
+     * Get Task User Rows from an array of data
+     *
+     * @param array $aTaskUser
+     * @return array $aStepTrigger
+     */
     public function addNewTaskUserRows($aTaskUser)
     {
         if (is_array($aTaskUser)) {
