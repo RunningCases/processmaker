@@ -340,6 +340,11 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
 
         return $result;
     } catch (SQLException $sqle) {
+        if (isset($sqle->xdebug_message)) {
+            error_log(print_r($sqle->xdebug_message, true));
+        } else {
+            error_log(print_r($sqle, true));
+        }
         $con->rollback();
         throw $sqle;
     }
