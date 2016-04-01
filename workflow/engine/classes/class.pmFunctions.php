@@ -3306,13 +3306,22 @@ function PMFGetNextDerivationInfo($caseUid, $delIndex)
                             break;
                     }
                 }
-            }
 
-            $arrayNextDerivationInfo[] = [
-                'taskUid' => $nextTaskUid,
-                'users'   => $arrayUserUid,
-                'groups'  => $arrayGroupUid,
-            ];
+                $assignmentType = $arrayInfo['NEXT_TASK']['TAS_ASSIGN_TYPE'];
+
+                if ($arrayInfo['NEXT_TASK']['TAS_ASSIGN_TYPE'] == 'SELF_SERVICE' &&
+                    trim($arrayInfo['NEXT_TASK']['TAS_GROUP_VARIABLE']) != ''
+                ) {
+                    $assignmentType = 'SELF_SERVICE_VALUE';
+                }
+
+                $arrayNextDerivationInfo[] = [
+                    'taskUid'        => $nextTaskUid,
+                    'assignmentType' => $assignmentType,
+                    'users'  => $arrayUserUid,
+                    'groups' => $arrayGroupUid,
+                ];
+            }
         }
 
         //Return
