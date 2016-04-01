@@ -67,6 +67,7 @@ try {
     //Load classes
     G::LoadThirdParty('pear/json', 'class.json');
     G::LoadThirdParty('smarty/libs', 'Smarty.class');
+    G::LoadThirdParty('propel', 'Propel');
     G::LoadSystem('error');
     G::LoadSystem('dbconnection');
     G::LoadSystem('dbsession');
@@ -86,6 +87,7 @@ try {
     G::LoadSystem('pagedTable');
     G::LoadSystem('httpProxyController');
     G::LoadClass('system');
+    G::LoadClass('tasks');
 
     require_once('propel/Propel.php');
     require_once('creole/Creole.php');
