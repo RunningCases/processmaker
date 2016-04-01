@@ -5802,10 +5802,8 @@ class Cases
                     case 'DYNAFORM':
                         $oCriteria = new Criteria('workflow');
                         $oCriteria->add(ApplicationPeer::APP_UID, $APP_UID);
-                        if ($aCase['APP_STATUS'] != 'COMPLETED') {
-                            if ($TASK_SOURCE != '' && $TASK_SOURCE != "0") {
-                                $oCriteria->add(StepPeer::TAS_UID, $TASK_SOURCE);
-                            }
+                        if ($TASK_SOURCE != '' && $TASK_SOURCE != "0") {
+                            $oCriteria->add(StepPeer::TAS_UID, $TASK_SOURCE);
                         }
                         if ($O_UID != '' && $O_UID != '0') {
                             $oCriteria->add(DynaformPeer::DYN_UID, $O_UID);
