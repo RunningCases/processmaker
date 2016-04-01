@@ -90,6 +90,9 @@
       </vendor>
     </index>
   </table>
+  <table name="APP_SEQUENCE" idMethod="native">
+    <column name="ID" type="INTEGER" required="true" primaryKey="true"/>
+  </table>
   <table name="APP_DELEGATION">
     <vendor type="mysql">
       <parameter name="Name" value="APP_DELEGATION"/>
