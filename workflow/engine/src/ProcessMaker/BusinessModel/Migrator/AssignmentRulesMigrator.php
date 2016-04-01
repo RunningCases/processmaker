@@ -74,10 +74,10 @@ class AssignmentRulesMigrator implements Importable, Exportable
     {
         try {
             $oAssignRules = new \StdClass();
-            $oAssignRulesTasks = $this->processes->getTaskRows($prj_uid);
-            $oAssignRules->taskusers = $this->processes->getTaskUserRows($oAssignRulesTasks);
+            $oAssignRules->tasks = $this->processes->getTaskRows($prj_uid);
+            $oAssignRules->taskusers = $this->processes->getTaskUserRows($oAssignRules->tasks);
             //groups - task
-            $oDataTaskUsers = $this->processes->getTaskUserRows($oAssignRulesTasks);
+            $oDataTaskUsers = $this->processes->getTaskUserRows($oAssignRules->tasks);
             $oAssignRules->groupwfs = $this->processes->getGroupwfRows($oDataTaskUsers);
 
             $result = array(
