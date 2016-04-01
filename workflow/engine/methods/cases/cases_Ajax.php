@@ -560,7 +560,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         $oCase = new Cases();
         $aProcesses = Array ();
         $G_PUBLISH = new Publisher();
-        $c = $oCase->getAllUploadedDocumentsCriteria( $_SESSION['PROCESS'], $_SESSION['APPLICATION'], $_SESSION['TASK'], $_SESSION['USER_LOGGED'] );
+        $c = $oCase->getAllUploadedDocumentsCriteria( $_SESSION['PROCESS'], $_SESSION['APPLICATION'], $_SESSION['CURRENT_TASK'], $_SESSION['USER_LOGGED'] );
 
         if ($c->getDbName() == 'dbarray') {
             $rs = ArrayBasePeer::doSelectRs( $c );
@@ -597,7 +597,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         $oCase = new Cases();
         $aProcesses = Array ();
         $G_PUBLISH = new Publisher();
-        $c = $oCase->getAllGeneratedDocumentsCriteria( $_SESSION['PROCESS'], $_SESSION['APPLICATION'], $_SESSION['TASK'], $_SESSION['USER_LOGGED'] );
+        $c = $oCase->getAllGeneratedDocumentsCriteria( $_SESSION['PROCESS'], $_SESSION['APPLICATION'], $_SESSION['CURRENT_TASK'], $_SESSION['USER_LOGGED'] );
 
         if ($c->getDbName() == 'dbarray') {
             $rs = ArrayBasePeer::doSelectRs( $c );
