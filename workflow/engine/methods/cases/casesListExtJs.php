@@ -315,70 +315,15 @@ function getAllUsersArray ($action)
     return $users;
 }
 
-function getStatusArray ($action, $userUid)
+function getStatusArray($action, $userUid)
 {
-    global $oAppCache;
-    $status = array ();
-    $status[] = array ('',G::LoadTranslation( 'ID_ALL_STATUS' ));
-    //get the list based in the action provided
-    switch ($action) {
-        case 'sent':
-            $cStatus = $oAppCache->getSentListProcessCriteria( $userUid ); // a little slow
-            break;
-        case 'simple_search':
-        case 'search':
-            $cStatus = new Criteria( 'workflow' );
-            $cStatus->clearSelectColumns();
-            $cStatus->setDistinct();
-            $cStatus->addSelectColumn( ApplicationPeer::APP_STATUS );
-            $oDataset = ApplicationPeer::doSelectRS( $cStatus );
-            $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $status[] = array ($aRow['APP_STATUS'],G::LoadTranslation( 'ID_CASES_STATUS_' . $aRow['APP_STATUS'] )
-                ); //here we can have a translation for the status ( the second param)
-                $oDataset->next();
-            }
-            return $status;
-            break;
-        case 'selfservice':
-            $cStatus = $oAppCache->getUnassignedListCriteria( $userUid );
-            break;
-        case 'paused':
-            $cStatus = $oAppCache->getPausedListCriteria( $userUid );
-            break;
-        case 'to_revise':
-            $cStatus = $oAppCache->getToReviseListCriteria( $userUid );
-            //           $cStatus       = $oAppCache->getPausedListCriteria($userUid);
-            break;
-        case 'to_reassign':
-            $cStatus = $oAppCache->getToReassignListCriteria($userUid);
-            break;
-        case 'todo':
-        case 'draft':
-        case 'gral':
-            //      case 'to_revise' :
-        default:
-            return $status;
-            break;
-    }
-
-    //get the status for this user in this action only for participated, unassigned, paused
-    //    if ( $action != 'todo' && $action != 'draft' && $action != 'to_revise') {
-    if ($action != 'todo' && $action != 'draft') {
-        //$cStatus = new Criteria('workflow');
-        $cStatus->clearSelectColumns();
-        $cStatus->setDistinct();
-        $cStatus->addSelectColumn( AppCacheViewPeer::APP_STATUS );
-        $oDataset = AppCacheViewPeer::doSelectRS( $cStatus, Propel::getDbConnection('workflow_ro') );
-        $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-        $oDataset->next();
-        while ($aRow = $oDataset->getRow()) {
-            $status[] = array ($aRow['APP_STATUS'],G::LoadTranslation( 'ID_CASES_STATUS_' . $aRow['APP_STATUS'] ));
-            //here we can have a translation for the status ( the second param)
-            $oDataset->next();
-        }
-    }
+    $status = array();
+    $status[] = array('', G::LoadTranslation('ID_ALL_STATUS'));
+    $status[] = array('COMPLETED', G::LoadTranslation('ID_CASES_STATUS_COMPLETED'));
+    $status[] = array('DRAFT', G::LoadTranslation('ID_CASES_STATUS_DRAFT'));
+    $status[] = array('TO_DO', G::LoadTranslation('ID_CASES_STATUS_TO_DO'));
+    $status[] = array('CANCELLED', G::LoadTranslation('ID_CASES_STATUS_CANCELLED'));
+    
     return $status;
 }
 
