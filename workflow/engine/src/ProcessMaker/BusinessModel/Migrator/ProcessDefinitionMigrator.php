@@ -38,7 +38,7 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             $pjrUid =$this->bpmn->createFromStruct($data['bpmn'], false);
             //Workflow elements
             $this->processes->createTaskRows($data['workflow']['tasks']);
-            $this->processes->createTaskUserRows($data['workflow']['taskusers']);
+            $this->processes->createTaskUserRows($data['workflow']['taskUsers']);
             $this->processes->createRouteRows($data['workflow']['routes']);
             $this->processes->createLaneRows($data['workflow']['lanes']);
             $this->processes->createGatewayRows($data['workflow']['gateways']);
@@ -105,6 +105,7 @@ class ProcessDefinitionMigrator implements Importable, Exportable
 
             $oData = new \StdClass();
             $oData->tasks = $this->processes->getTaskRows($prj_uid);
+            $oData->taskUsers = $this->processes->getTaskUserRows($oData->tasks);
             $oData->routes = $this->processes->getRouteRows($prj_uid);
             $oData->lanes = $this->processes->getLaneRows($prj_uid);
             $oData->gateways = $this->processes->getGatewayRows($prj_uid);
