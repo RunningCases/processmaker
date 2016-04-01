@@ -1236,6 +1236,15 @@ class Cases
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(ListPausedPeer::APP_UID, $sAppUid);
             ListPausedPeer::doDelete($oCriteria);
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListMyInboxPeer::APP_UID, $sAppUid);
+            ListMyInboxPeer::doDelete($oCriteria);
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListParticipatedHistoryPeer::APP_UID, $sAppUid);
+            ListParticipatedHistoryPeer::doDelete($oCriteria);
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListCompletedPeer::APP_UID, $sAppUid);
+            ListCompletedPeer::doDelete($oCriteria);
             /*----------------------------------********---------------------------------*/
             return $result;
         } catch (exception $e) {
