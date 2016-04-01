@@ -1560,8 +1560,8 @@ class Cases
             $pausedTask[] = $row;
         }
 
-        if (count($pausedTask) == 0) {
-            return false; // return false because there is not any delegation for this task.
+        if (count($pausedTask) === 0) {
+            return array(); // return false because there is not any delegation for this task.
         } else {
             return array('pause' => $pausedTask);
         }

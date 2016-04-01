@@ -1129,8 +1129,12 @@ class Derivation
                             switch ($routeType) {
                                 case "SEC-JOIN":
                                     $arrayOpenThread = ($flagTaskIsMultipleInstance && $flagTaskAssignTypeIsMultipleInstance)? $this->case->searchOpenPreviousTasks($currentDelegation["TAS_UID"], $currentDelegation["APP_UID"]) : array();
-                                    $arrayOpenThread = array_merge($arrayOpenThread, $this->case->getOpenSiblingThreads($nextDel["TAS_UID"], $currentDelegation["APP_UID"], $currentDelegation["DEL_INDEX"], $currentDelegation["TAS_UID"]));
+                                    $arraySiblings = $this->case->getOpenSiblingThreads($nextDel["TAS_UID"], $currentDelegation["APP_UID"], $currentDelegation["DEL_INDEX"], $currentDelegation["TAS_UID"]);
+                                    if(is_array($arrayOpenThread) && is_array($arraySiblings)){
+                                        $arrayOpenThread = array_merge($arrayOpenThread, $arraySiblings);
+                                    }
                                     $canDerivate = empty($arrayOpenThread);
+
                                     break;
                                 default:
                                     $canDerivate = true;

@@ -170,9 +170,6 @@ class Light extends Api
             }
             /*----------------------------------********---------------------------------*/
 
-            if ($newerThan != '') {
-                $response['data'] = array_reverse($response['data']);
-            }
             $result   = $this->parserDataTodo($response['data']);
             return DateTime::convertUtcToIso8601($result, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
@@ -264,9 +261,6 @@ class Light extends Api
             }
             /*----------------------------------********---------------------------------*/
 
-            if ($newerThan != '') {
-                $response['data'] = array_reverse($response['data']);
-            }
             $result   = $this->parserDataDraft($response['data']);
             return DateTime::convertUtcToIso8601($result, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
@@ -367,9 +361,6 @@ class Light extends Api
             }
             /*----------------------------------********---------------------------------*/
 
-            if ($newerThan != '') {
-                $response['data'] = array_reverse($response['data']);
-            }
             $result = $this->parserDataParticipated($response['data']);
             return DateTime::convertUtcToIso8601($result, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
@@ -725,6 +716,28 @@ class Light extends Api
     }
 
     /**
+     * Get Already Route
+     *
+     * @param string $app_uid  {@min 1}{@max 32}
+     * @param int $cas_index
+     *
+     * @status 204
+     * @url GET /case/:app_uid/:cas_index
+     */
+    public function doIfAlreadyRoute($app_uid, $cas_index)
+    {
+        try {
+            $oAppDelegate = new \AppDelegation();
+            $alreadyRouted = $oAppDelegate->alreadyRouted($app_uid, $cas_index);
+            if ($alreadyRouted) {
+                throw (new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_CASE_DELEGATION_ALREADY_CLOSED')));
+            }
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
      *
      * @url GET /project/:prj_uid/dynaforms
      *
@@ -835,6 +848,13 @@ class Light extends Api
     {
         try {
             $oCase = new \Cases();
+
+            $oAppDelegate = new \AppDelegation();
+            $alreadyRouted = $oAppDelegate->alreadyRouted($app_uid, $cas_index);
+            if ($alreadyRouted) {
+                throw (new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_CASE_DELEGATION_ALREADY_CLOSED')));
+            }
+
             $userUid = $this->getUserId();
             $_SESSION["APPLICATION"]  = $app_uid;
             $_SESSION["PROCESS"]      = $pro_uid;
