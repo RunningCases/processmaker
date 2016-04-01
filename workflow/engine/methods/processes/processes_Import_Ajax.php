@@ -27,34 +27,7 @@ use \ProcessMaker\Importer\XmlImporter;
 ini_set("max_execution_time", 0);
 $affectedGroups = array();
 $granularImport = false;
-$objectImport = array();
-
-//if (isset($_FILES["PROCESS_FILENAME"]["name"]) && (preg_match("/^(?:pm|pmx)$/", pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION)))) {
-//    $import = new XmlImporter();
-//    $data = $import->load($_FILES["PROCESS_FILENAME"]["tmp_name"]);
-//
-//    if (version_compare($data['version'], '3.0', '>') && isset($_POST['objectsToImport']) && $_POST['objectsToImport'] === '') {
-//        $objectImport = (isset($data['objects'])) ? explode('|', $data['objects']) : "";
-//        $ids = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
-//        $objectImport = $ids->getIdObjectList($objectImport);
-//        $granularImport = true;
-//        $result = array(
-//            "success"                   => true,
-//            "catchMessage"              => '',
-//            "ExistProcessInDatabase"    => 0,
-//            "ExistGroupsInDatabase"     => 0,
-//            "notExistProcessInDatabase" => 0,
-//            "affectedGroups"            => '',
-//            "sNewProUid"                => '',
-//            "project_type"              => 'bpmn',
-//            "isGranularImport"          => $granularImport,
-//            "objectGranularImport"      => $objectImport,
-//            "project_type_aux"          => ''
-//        );
-//        echo G::json_encode($result);
-//        exit(0);
-//    }
-//}
+$objectImport = '';
 /*----------------------------------********---------------------------------*/
 if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=") &&
     isset($_FILES["PROCESS_FILENAME"]) &&
@@ -148,6 +121,7 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
         $opt2 = XmlImporter::GROUP_IMPORT_OPTION_CREATE_NEW;
         $prjUid = '';
         $proType = '';
+        /*----------------------------------********---------------------------------*/
         $granularImport = false;
         $objectsToImport = '';
 
@@ -165,7 +139,7 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
         if (isset($_POST['objectsToImport']) && sizeof(G::json_decode($_POST['objectsToImport']))){
             $objectsToImport = G::json_decode($_POST['objectsToImport']);
         }
-
+        /*----------------------------------********---------------------------------*/
         if ($_POST['generateUid'] === 'generate') {
                 $generateUid = true;
                 $prjUid = $importer->import($opt1, $opt2, $generateUid, $objectsToImport);
@@ -196,12 +170,14 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
             "project_type_aux"          => $proType
         );
     } catch (Exception $e) {
+        /*----------------------------------********---------------------------------*/
         switch (get_class($e)) {
             case 'ProcessMaker\BusinessModel\Migrator\ImportException':
                 $result =  $e->getNameException();
                 die($result);
                 break;
             default:
+        /*----------------------------------********---------------------------------*/
                 $groupsExists = ($e->getCode() == XmlImporter::IMPORT_STAT_GROUP_ALREADY_EXISTS) ? 1 : 0;
                 if ($groupsExists === 1) {
                     $arrayGroups = XmlImporter::$affectedGroups;
@@ -231,8 +207,10 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
                     "groupBeforeAccion" => 'uploadFileNewProcess',
                     "importOption" => 0
                 );
+        /*----------------------------------********---------------------------------*/
                 break;
         }
+        /*----------------------------------********---------------------------------*/
     }
 
     echo G::json_encode($result);
@@ -273,34 +251,31 @@ if (isset($_POST["PRO_FILENAME"]) &&
     $importer->setSourceFile(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"]);
 
     try {
+        /*----------------------------------********---------------------------------*/
         $objectsToImport = '';
-
-        /*if (isset($_POST['PRO_FILENAME']) && (preg_match("/^(?:pm|pmx)$/", pathinfo($_POST['PRO_FILENAME'], PATHINFO_EXTENSION)))) {
-            $import = new XmlImporter();*/
-            $data = $importer->load();
-            // only uploadFileNewProcessExist??
-            if (version_compare($data['version'], '3.0', '>') && isset($_POST['objectsToImport']) && $_POST['objectsToImport'] === '' && $_POST['IMPORT_OPTION']==="1") {
-                $objectImport = (isset($data['objects'])) ? explode('|', $data['objects']) : "";
-                $ids = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
-                $objectImport = $ids->getIdObjectList($objectImport);
-                $granularImport = true;
-                $result = array(
-                    "success"                   => true,
-                    "catchMessage"              => '',
-                    "ExistProcessInDatabase"    => 0,
-                    "ExistGroupsInDatabase"     => 0,
-                    "notExistProcessInDatabase" => 0,
-                    "affectedGroups"            => '',
-                    "sNewProUid"                => '',
-                    "project_type"              => 'bpmn',
-                    "isGranularImport"          => $granularImport,
-                    "objectGranularImport"      => $objectImport,
-                    "project_type_aux"          => ''
-                );
-                echo G::json_encode($result);
-                exit(0);
-            }
-//        }
+        $data = $importer->load();
+        // only uploadFileNewProcessExist
+        if (version_compare($data['version'], '3.0', '>') && isset($_POST['objectsToImport']) && $_POST['objectsToImport'] === '' && $_POST['IMPORT_OPTION']==="1") {
+            $objectImport = (isset($data['objects'])) ? explode('|', $data['objects']) : "";
+            $ids = new \ProcessMaker\BusinessModel\Migrator\ExportObjects();
+            $objectImport = $ids->getIdObjectList($objectImport);
+            $granularImport = true;
+            $result = array(
+                "success"                   => true,
+                "catchMessage"              => '',
+                "ExistProcessInDatabase"    => 0,
+                "ExistGroupsInDatabase"     => 0,
+                "notExistProcessInDatabase" => 0,
+                "affectedGroups"            => '',
+                "sNewProUid"                => '',
+                "project_type"              => 'bpmn',
+                "isGranularImport"          => $granularImport,
+                "objectGranularImport"      => $objectImport,
+                "project_type_aux"          => ''
+            );
+            echo G::json_encode($result);
+            exit(0);
+        }
 
         if (version_compare($data['version'], '3.0', '>') && $_POST['IMPORT_OPTION']==="3") {
             $objectsToImport = [];
@@ -315,6 +290,7 @@ if (isset($_POST["PRO_FILENAME"]) &&
         if (isset($_POST['objectsToImport']) && sizeof(G::json_decode($_POST['objectsToImport']))){
             $objectsToImport = G::json_decode($_POST['objectsToImport']);
         }
+        /*----------------------------------********---------------------------------*/
         $prjUid = $importer->import($option, $optionGroup, false, $objectsToImport);
 
         G::LoadClass( 'Process' );
@@ -335,12 +311,14 @@ if (isset($_POST["PRO_FILENAME"]) &&
             "project_type_aux"       => $proType
         );
     } catch (Exception $e) {
+        /*----------------------------------********---------------------------------*/
         switch (get_class($e)) {
             case 'ProcessMaker\BusinessModel\Migrator\ImportException':
                 $result =  $e->getNameException();
                 die($result);
                 break;
             default:
+        /*----------------------------------********---------------------------------*/
                 $groupsExists = ($e->getCode() == XmlImporter::IMPORT_STAT_GROUP_ALREADY_EXISTS) ? 1 : 0;
                 if ($groupsExists === 1) {
                     $arrayGroups = XmlImporter::$affectedGroups;
@@ -365,8 +343,10 @@ if (isset($_POST["PRO_FILENAME"]) &&
                     "groupBeforeAccion" => "uploadFileNewProcess",
                     "importOption" => (isset($_POST["IMPORT_OPTION"])) ? (int)($_POST["IMPORT_OPTION"]) : 0
                 );
+        /*----------------------------------********---------------------------------*/
                 break;
         }
+        /*----------------------------------********---------------------------------*/
     }
 
     echo G::json_encode($result);
