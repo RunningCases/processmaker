@@ -171,8 +171,11 @@ abstract class Importer
                 break;
             case self::IMPORT_OPTION_OVERWRITE:
                 //Shouldn't generate new UID for all objects
+                /*----------------------------------********---------------------------------*/
                 if($objectsToImport === ''){
+                /*----------------------------------********---------------------------------*/
                     $this->removeProject();
+                /*----------------------------------********---------------------------------*/
                 } else {
                     $granularObj = new \ProcessMaker\BusinessModel\Migrator\GranularImporter();
                     $objectList = $granularObj->loadObjectsListSelected($this->importData, $objectsToImport);
@@ -189,6 +192,7 @@ abstract class Importer
                         throw $exception;
                     }
                 }
+                /*----------------------------------********---------------------------------*/
                 $name = $this->currentProcessTitle;
                 $generateUid = false;
                 break;
@@ -223,7 +227,7 @@ abstract class Importer
         if(!empty($generateUidFromJs)) {
             $generateUid = $generateUidFromJs;
         }
-
+        /*----------------------------------********---------------------------------*/
         //Granular Import
         try {
             if ($objectsToImport !== '') {
@@ -255,7 +259,7 @@ abstract class Importer
         } catch (\Exception $e) {
             throw  $e;
         }
-
+        /*----------------------------------********---------------------------------*/
 
         $result = $this->doImport($generateUid);
 
