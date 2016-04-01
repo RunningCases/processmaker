@@ -29,11 +29,52 @@ class ReportTablesMigrator implements Importable, Exportable
     public function import($data, $replace)
     {
         try {
-            $aReportTablesVars = array();
-            if ($replace) {
-                //Todo Create
-            } else {
-                //Todo addOnlyNew
+            $reportTable = new \ProcessMaker\BusinessModel\ReportTable();
+
+            $arrayTableSchema = [];
+            $arrayTablesToExclude = [];
+            $processUid = '';
+
+            foreach ($data['reportTablesDefinition'] as $value) {
+                $arrayTable = $value;
+
+                $processUid = $arrayTable['PRO_UID'];
+
+                $arrayField = [];
+
+                foreach ($data['reportTablesFields'] as $value2) {
+                    if ($value2['ADD_TAB_UID'] == $arrayTable['ADD_TAB_UID']) {
+                        unset($value2['ADD_TAB_UID']);
+
+                        $arrayField[] = $value2;
+                    }
+                }
+
+                if (!empty($arrayField)) {
+                    $arrayTable['FIELDS'] = $arrayField;
+
+                    $arrayTableSchema[] = $arrayTable;
+
+                    //$replace: true  //Delete all tables and create it again
+                    //$replace: false //Only create the tables that do not exist
+                    if (!$replace) {
+                        $additionalTable = new \AdditionalTables();
+
+                        if ($additionalTable->loadByName($arrayTable['ADD_TAB_NAME']) !== false) {
+                            $arrayTablesToExclude[] = $arrayTable['ADD_TAB_NAME'];
+                        }
+                    }
+                }
+            }
+
+            if (!empty($arrayTableSchema)) {
+                $errors = $reportTable->createStructureOfTables(
+                    $arrayTableSchema, [], $processUid, false, true, $arrayTablesToExclude
+                );
+
+                if ($errors != '') {
+                    throw new \Exception($errors);
+                }
             }
         } catch (\Exception $e) {
             $exception = new ImportException($e->getMessage());
@@ -61,8 +102,9 @@ class ReportTablesMigrator implements Importable, Exportable
     {
         try {
             $oData = new \StdClass();
-            $oDataReportTables = $this->processes->getReportTables($prj_uid);
-            $oData->reportContent[0] = $this->getData($oDataReportTables);
+
+            $oData->reportTablesDefinition = $this->processes->getReportTables($prj_uid);
+            $oData->reportTablesFields = $this->processes->getReportTablesVar($prj_uid);
 
             $result = array(
                 'workflow-definition' => (array)$oData
@@ -81,75 +123,4 @@ class ReportTablesMigrator implements Importable, Exportable
     {
         // TODO: Implement afterExport() method.
     }
-
-    /**
-     * @param $oDataReportTables
-     * @return array
-     * @throws ExportException
-     */
-    public function getData($oDataReportTables)
-    {
-        $oData = array();
-        $at = new \AdditionalTables();
-        try {
-            \G::LoadCLass('net');
-            $net = new \NET(\G::getIpAddress());
-            \G::LoadClass("system");
-            $META = " \n-----== ProcessMaker Open Source Private Tables ==-----\n" . " @Ver: 1.0 Oct-2009\n" . " @Processmaker version: " . \System::getVersion() . "\n" . " -------------------------------------------------------\n" . " @Export Date: " . date("l jS \of F Y h:i:s A") . "\n" . " @Server address: " . getenv('SERVER_NAME') . " (" . getenv('SERVER_ADDR') . ")\n" . " @Client address: " . $net->hostname . "\n" . " @Workspace: " . SYS_SYS . "\n" . " @Export trace back:\n\n";
-            $EXPORT_TRACEBACK = Array();
-            foreach ($oDataReportTables as $table) {
-                $tableRecord = $at->load($table['ADD_TAB_UID']);
-                $tableData = $at->getAllData($table['ADD_TAB_UID'], null, null, false);
-                $table['ADD_TAB_NAME'] = $tableRecord['ADD_TAB_NAME'];
-                $rows = $tableData['rows'];
-                $count = $tableData['count'];
-                array_push($EXPORT_TRACEBACK, Array('uid' => $table['ADD_TAB_UID'], 'name' => $table['ADD_TAB_NAME'],
-                    'num_regs' => $tableData['count'], 'schema' => 'yes', 'data' => 'no'));
-            }
-            $sTrace = "TABLE UID                        TABLE NAME\tREGS\tSCHEMA\tDATA\n";
-            foreach ($EXPORT_TRACEBACK as $row) {
-                $sTrace .= "{$row['uid']}\t{$row['name']}\t\t{$row['num_regs']}\t{$row['schema']}\t{$row['data']}\n";
-            }
-
-            $META .= $sTrace;
-            $PUBLIC_ROOT_PATH = PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP . 'public' . PATH_SEP;
-            $filenameOnly = strtolower('SYS-' . SYS_SYS . "_" . date("Y-m-d") . '_' . date("Hi") . ".pmt");
-            $filename = $PUBLIC_ROOT_PATH . $filenameOnly;
-            $fp = fopen($filename, "wb");
-
-            $bytesSaved = 0;
-            $bufferType = '@META';
-            $fsData = sprintf("%09d", strlen($META));
-            $fsbufferType = sprintf("%09d", strlen($bufferType));
-            $bytesSaved += fwrite($fp, $fsbufferType);
-            $bytesSaved += fwrite($fp, $bufferType);
-            $bytesSaved += fwrite($fp, $fsData);
-            $bytesSaved += fwrite($fp, $META);
-
-            foreach ($oDataReportTables as $table) {
-                $oAdditionalTables = new \AdditionalTables();
-                $aData = $oAdditionalTables->load($table['ADD_TAB_UID'], true);
-                $bufferType = '@SCHEMA';
-                $SDATA = serialize($aData);
-                $fsUid = sprintf("%09d", strlen($table['ADD_TAB_UID']));
-                $fsData = sprintf("%09d", strlen($SDATA));
-                $fsbufferType = sprintf("%09d", strlen($bufferType));
-                $bytesSaved += fwrite($fp, $fsbufferType);
-                $bytesSaved += fwrite($fp, $bufferType);
-                $bytesSaved += fwrite($fp, $fsUid);
-                $bytesSaved += fwrite($fp, $table['ADD_TAB_UID']);
-                $bytesSaved += fwrite($fp, $fsData);
-                $bytesSaved += fwrite($fp, $SDATA);
-            }
-            $oData['REPORTDATA'] = file_get_contents($filename);
-            fclose($fp);
-            return $oData;
-
-        } catch (\Exception $e) {
-            $exception = new ExportException($e->getMessage());
-            $exception->setNameException($this->className);
-            throw($exception);
-        }
-    }
-
 }

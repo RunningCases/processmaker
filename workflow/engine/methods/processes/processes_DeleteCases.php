@@ -1,6 +1,6 @@
 <?php
 global $RBAC;
-$RBAC->requirePermissions( 'DELETE_PROCESS_CASES', 'PM_FACTORY' );
+$RBAC->requirePermissions( 'PM_DELETE_PROCESS_CASES', 'PM_FACTORY' );
 
 try {
     $uids = explode(',', $_POST['PRO_UIDS']);
