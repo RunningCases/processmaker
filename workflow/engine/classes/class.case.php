@@ -4558,7 +4558,7 @@ class Cases
      * @return object
      */
 
-    public function getAllUploadedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID)
+    public function getAllUploadedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex = 0)
     {
         G::LoadClass("configuration");
 
@@ -4578,7 +4578,7 @@ class Cases
             $listing = $oPluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST, $folderData);
         }
 
-        $aObjectPermissions = $this->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
+        $aObjectPermissions = $this->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex);
 
         if (!is_array($aObjectPermissions)) {
             $aObjectPermissions = array(
@@ -4871,7 +4871,7 @@ class Cases
      * @return object
      */
 
-    public function getAllGeneratedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID)
+    public function getAllGeneratedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex =0)
     {
         G::LoadClass("configuration");
 
@@ -4891,7 +4891,7 @@ class Cases
             $listing = $oPluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST, $folderData);
         }
 
-        $aObjectPermissions = $this->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
+        $aObjectPermissions = $this->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex);
         if (!is_array($aObjectPermissions)) {
             $aObjectPermissions = array(
                 'DYNAFORMS' => array(-1),
@@ -5531,16 +5531,16 @@ class Cases
         /* ADDITIONAL OPERATIONS */
         /*         * * BETWEN VIEW AND BLOCK** */
         $RESULT_OBJECTS['DYNAFORMS'] = G::arrayDiff(
-                        $MAIN_OBJECTS['VIEW']['DYNAFORMS'], $MAIN_OBJECTS['BLOCK']['DYNAFORMS']
+            $MAIN_OBJECTS['VIEW']['DYNAFORMS'], $MAIN_OBJECTS['BLOCK']['DYNAFORMS']
         );
         $RESULT_OBJECTS['INPUT_DOCUMENTS'] = G::arrayDiff(
-                        $MAIN_OBJECTS['VIEW']['INPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['INPUT_DOCUMENTS']
+            $MAIN_OBJECTS['VIEW']['INPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['INPUT_DOCUMENTS']
         );
         $RESULT_OBJECTS['OUTPUT_DOCUMENTS'] = array_merge_recursive(
-                G::arrayDiff($MAIN_OBJECTS['VIEW']['OUTPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['OUTPUT_DOCUMENTS']), G::arrayDiff($MAIN_OBJECTS['DELETE']['OUTPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['OUTPUT_DOCUMENTS'])
+            G::arrayDiff($MAIN_OBJECTS['VIEW']['OUTPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['OUTPUT_DOCUMENTS']), G::arrayDiff($MAIN_OBJECTS['DELETE']['OUTPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['OUTPUT_DOCUMENTS'])
         );
         $RESULT_OBJECTS['CASES_NOTES'] = G::arrayDiff(
-                        $MAIN_OBJECTS['VIEW']['CASES_NOTES'], $MAIN_OBJECTS['BLOCK']['CASES_NOTES']
+            $MAIN_OBJECTS['VIEW']['CASES_NOTES'], $MAIN_OBJECTS['BLOCK']['CASES_NOTES']
         );
         array_push($RESULT_OBJECTS["DYNAFORMS"], -1, -2);
         array_push($RESULT_OBJECTS['INPUT_DOCUMENTS'], -1);
