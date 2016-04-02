@@ -1601,7 +1601,6 @@ function copymove(action) {
     // '+ dropEvent.target.id.replace( /_RRR_/g, '/' ));
     requestParams = getRequestParams();
     if (!((navigator.userAgent.indexOf("MSIE") != -1) || (navigator.userAgent.indexOf("Trident") != -1))) {
-        Ext.getCmp("dirTreePanel").getRootNode().reload();    
         document.getElementById('ext-gen20').style.visibility='hidden';
         document.getElementsByClassName('x-shadow')[0].style.visibility='hidden';          
         parent.frames[0].location.href="casesStartPage?action=documents";
@@ -1837,19 +1836,28 @@ var treepanelmain = new Ext.tree.TreePanel({
       'beforenodedrop' : {
         fn : function(e) {
           if (!((navigator.userAgent.indexOf("MSIE") != -1) || (navigator.userAgent.indexOf("Trident") != -1))) {
-            dropEvent = e;
-            copymoveCtx(e);
-            datastore.reload();
+              if(typeof e.target==="object" && e.target.id==="root"){
+                e.dropStatus=true;
+                return false;
+              }
+              setTimeout(
+                (function(e,datastore){
+                  return function(){
+                    dropEvent = e;
+                    copymoveCtx(e);
+                    datastore.load();
+                  }
+                })(e,datastore),
+                0
+              );
           }
+          e.dropStatus=true;
+          return false;
         }
       },
       'nodedrop' : {
         fn : function(e) { 
-          if ((navigator.userAgent.indexOf("MSIE") != -1) || (navigator.userAgent.indexOf("Trident") != -1)) {
-              dropEvent = e;
-                copymoveCtx(e);
-                datastore.reload();
-          }
+          return false;
         }
       },
       'beforemove' : {

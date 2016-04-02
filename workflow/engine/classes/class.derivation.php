@@ -724,31 +724,31 @@ class Derivation
                 $elementDestType
             );
 
-            if($elementDestUid == "-1" || count($arrayElement) == 0){
+            if($elementDestUid === '-1' || count($arrayElement) === 0 || $elementDestType === 'bpmnEvent'){
                $arrayElement = $this->throwElementToEnd($elementOriginUid, $rouCondition);
             }
 
             foreach ($arrayElement as $value) {
                 switch ($value[1]) {
-                    case "bpmnEvent":
+                    case 'bpmnEvent':
                         if ($arrayEventExecute[$positionEventExecute]) {
                             $event = \BpmnEventPeer::retrieveByPK($value[0]);
 
                             if (!is_null($event)) {
-                                if (preg_match("/^(?:END|INTERMEDIATE)$/", $event->getEvnType()) && $event->getEvnMarker() == "MESSAGETHROW") {
+                                if (preg_match("/^(?:END|INTERMEDIATE)$/", $event->getEvnType()) && $event->getEvnMarker() === 'MESSAGETHROW') {
                                     //Message-Application throw
                                     $result = $messageApplication->create($arrayApplicationData["APP_UID"], $arrayApplicationData["PRO_UID"], $value[0], $arrayApplicationData);
                                 }
 
-                                if (preg_match("/^(?:END|INTERMEDIATE)$/", $event->getEvnType()) && $event->getEvnMarker() == "EMAIL") {
+                                if (preg_match("/^(?:END|INTERMEDIATE)$/", $event->getEvnType()) && $event->getEvnMarker() === 'EMAIL') {
                                     //Email-Event throw
                                     $result = $emailEvent->sendEmail($arrayApplicationData["APP_UID"], $arrayApplicationData["PRO_UID"], $value[0], $arrayApplicationData);
                                 }
                             }
                         }
                         break;
-                    case "bpmnGateway":
-                        $positionEventExecute = "AFTER";
+                    case 'bpmnGateway':
+                        $positionEventExecute = 'AFTER';
                         break;
                 }
             }

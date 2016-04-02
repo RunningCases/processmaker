@@ -320,6 +320,9 @@ class AddonsManager extends BaseAddonsManager
         }
 
         $start = microtime(true);
+        $rate = null;
+        $position = null;
+        $elapsed = null;
 
         while (!feof($handle)) {
             $this->refresh();

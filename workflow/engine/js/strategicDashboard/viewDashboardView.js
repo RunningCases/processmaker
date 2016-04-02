@@ -230,8 +230,7 @@ WidgetBuilder.prototype.setColorForInefficiency = function ($widget, indicatorDa
 
 /**********************************************************************/
 helper = new ViewDashboardHelper();
-var ws = urlProxy.split('/');
-model = new ViewDashboardModel(token, urlProxy, ws[3], moneyUnit);
+model = new ViewDashboardModel(token, urlProxy, workspace, moneyUnit);
 presenter = new ViewDashboardPresenter(model);
 
 window.loadedIndicators = []; //updated in das-title-selector.click->fillIndicatorWidgets, ready->fillIndicatorWidgets

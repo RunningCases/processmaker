@@ -340,6 +340,11 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
 
         return $result;
     } catch (SQLException $sqle) {
+        if (isset($sqle->xdebug_message)) {
+            error_log(print_r($sqle->xdebug_message, true));
+        } else {
+            error_log(print_r($sqle, true));
+        }
         $con->rollback();
         throw $sqle;
     }
@@ -3306,13 +3311,22 @@ function PMFGetNextDerivationInfo($caseUid, $delIndex)
                             break;
                     }
                 }
-            }
 
-            $arrayNextDerivationInfo[] = [
-                'taskUid' => $nextTaskUid,
-                'users'   => $arrayUserUid,
-                'groups'  => $arrayGroupUid,
-            ];
+                $assignmentType = $arrayInfo['NEXT_TASK']['TAS_ASSIGN_TYPE'];
+
+                if ($arrayInfo['NEXT_TASK']['TAS_ASSIGN_TYPE'] == 'SELF_SERVICE' &&
+                    trim($arrayInfo['NEXT_TASK']['TAS_GROUP_VARIABLE']) != ''
+                ) {
+                    $assignmentType = 'SELF_SERVICE_VALUE';
+                }
+
+                $arrayNextDerivationInfo[] = [
+                    'taskUid'        => $nextTaskUid,
+                    'assignmentType' => $assignmentType,
+                    'users'  => $arrayUserUid,
+                    'groups' => $arrayGroupUid,
+                ];
+            }
         }
 
         //Return
