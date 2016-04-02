@@ -234,7 +234,7 @@ abstract class Importer
                 $granularObj = new \ProcessMaker\BusinessModel\Migrator\GranularImporter();
                 $newObjectArray = $objectsToImport;
                 $projectUid = $this->importData['tables']['bpmn']["project"][0]["prj_uid"];
-                $processGranulate = $granularObj->validateImportData($objectsToImport, $generateUid);
+                $processGranulate = $granularObj->validateImportData($objectsToImport);
                 if($generateUid){
                     $result = $granularObj->regenerateAllUids($this->importData, $generateUid);
                     $this->importData = $result['data'];
