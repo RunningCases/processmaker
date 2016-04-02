@@ -161,6 +161,7 @@ class GranularImporter
     public function import($objectList)
     {
         try {
+            $objectList = $this->reorderImportOrder($objectList);
             foreach ($objectList as $data) {
                 $objClass = $this->factory->create($data['name']);
                 if (is_object($objClass)) {
@@ -197,6 +198,39 @@ class GranularImporter
         } catch (\Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * It's very important to import the elements in the right order, if not
+     * chaos will be unleashed, God forgive us all.
+     * @param $objectList
+     */
+    public function reorderImportOrder($objectList)
+    {
+        $arrangeList = array(
+            0 => 12,
+            1 => 13,
+            2 => 0,
+            3 => 1,
+            4 => 2,
+            5 => 3,
+            6 => 4,
+            7 => 5,
+            8 => 6,
+            9 => 7,
+            10 => 8,
+            11 => 9,
+            12 => 10,
+            13 => 11
+        );
+        $orderedList = array();
+        foreach ($arrangeList as $objectOrder => $executionOrder) {
+            if (!empty($objectList[$objectOrder])) {
+                $orderedList[$executionOrder] = $objectList[$objectOrder];
+            }
+        }
+        ksort($orderedList);
+        return $orderedList;
     }
 
     /**
