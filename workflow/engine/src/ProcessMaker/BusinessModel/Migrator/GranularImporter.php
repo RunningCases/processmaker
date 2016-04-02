@@ -6,6 +6,7 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
+use ProcessMaker\Importer\XmlImporter;
 use ProcessMaker\Project\Adapter;
 
 class GranularImporter
@@ -182,13 +183,15 @@ class GranularImporter
      * @return bool
      * @throws \Exception
      */
-    public function validateImportData($objectList)
+    public function validateImportData($objectList, $option)
     {
         try {
-            if (count($objectList) !== count($this->exportObjects->getObjectsList())) {
-                $exception = new ImportException();
-                $exception->setNameException(\G::LoadTranslation('ID_PROCESS_DEFINITION_INCOMPLETE'));
-                throw($exception);
+            if (XmlImporter::IMPORT_OPTION_OVERWRITE !== $option) {
+                if (count($objectList) !== count($this->exportObjects->getObjectsList())) {
+                    $exception = new ImportException();
+                    $exception->setNameException(\G::LoadTranslation('ID_PROCESS_DEFINITION_INCOMPLETE'));
+                    throw($exception);
+                }
             }
             return true;
         } catch (\Exception $e) {
