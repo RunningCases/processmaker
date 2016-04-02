@@ -182,16 +182,13 @@ class GranularImporter
      * @return bool
      * @throws \Exception
      */
-    public function validateImportData($objectList, $generateUid = false)
+    public function validateImportData($objectList)
     {
         try {
-
-            if ($generateUid) {
-                if (count($objectList) !== count($this->exportObjects->getObjectsList())) {
-                    $exception = new ImportException();
-                    $exception->setNameException(\G::LoadTranslation('ID_PROCESS_DEFINITION_INCOMPLETE'));
-                    throw($exception);
-                }
+            if (count($objectList) !== count($this->exportObjects->getObjectsList())) {
+                $exception = new ImportException();
+                $exception->setNameException(\G::LoadTranslation('ID_PROCESS_DEFINITION_INCOMPLETE'));
+                throw($exception);
             }
             return true;
         } catch (\Exception $e) {
