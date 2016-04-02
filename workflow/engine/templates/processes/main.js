@@ -8,6 +8,9 @@ var processesGrid,
     winDesigner,
     newTypeProcess,
     affectedGroups,
+    exportButton,
+    exportMenu,
+    exportComponent,
     processObjectsArray;
 
 /**
@@ -22,6 +25,56 @@ importProcessGlobal.processFileType = "";
 importProcessGlobal.isGranularImport = false;
 importProcessGlobal.objectGranularImport;
 importProcessGlobal.objectsToImport = [];
+
+exportButton = {
+    id: "export",
+    disabled: true,
+    text: _("ID_EXPORT"),
+    iconCls: "silk-add",
+    icon: "/images/export.png",
+    handler: function () {
+        exportProcess();
+    }
+};
+/*----------------------------------********---------------------------------*/
+/**Begin enterprise export component**/
+exportMenu = {
+    xtype: "tbsplit",
+    id: "export",
+    disabled: true,
+    text: _("ID_EXPORT"),
+    iconCls: "silk-add",
+    icon: "/images/export.png",
+    menu: [
+        {
+            text: _("ID_NORMAL_EXPORT"),
+            iconCls: "silk-add",
+            icon: "",
+            handler: function ()
+            {
+                exportProcess();
+            }
+        }, {
+            text: _("ID_GRANULAR_EXPORT"),
+            iconCls: "silk-add",
+            icon: "",
+            handler: function ()
+            {
+                exportImportProcessObjects('export');
+            }
+        }
+    ]
+};
+/**End enterprise export component**/
+/*----------------------------------********---------------------------------*/
+
+exportComponent = exportButton;
+
+/*----------------------------------********---------------------------------*/
+/**Begin enterprise component assignment**/
+exportComponent = exportMenu;
+/**End enterprise component assignment**/
+/*----------------------------------********---------------------------------*/
 
 new Ext.KeyMap(document, {
   key: Ext.EventObject.F5,
@@ -355,33 +408,9 @@ Ext.onReady(function(){
         handler:deleteProcess
       },{
         xtype: 'tbseparator'
-      },{
-        xtype: "tbsplit",
-        id: "export",
-        disabled: true,
-        text: _("ID_EXPORT"),
-        iconCls: "silk-add",
-        icon: "/images/export.png",
-        menu: [
-          {
-              text: _("ID_NORMAL_EXPORT"),
-              iconCls: "silk-add",
-              icon: "",
-              handler: function ()
-              {
-                exportProcess();
-              }
-          }, {
-            text: _("ID_GRANULAR_EXPORT"),
-            iconCls: "silk-add",
-            icon: "",
-            handler: function ()
-            {
-              exportImportProcessObjects('export');
-            }
-          }
-        ]
-      },{
+      },
+        exportComponent
+      ,{
         text: _('ID_IMPORT'),
         iconCls: 'silk-add',
         icon: '/images/import.gif',
