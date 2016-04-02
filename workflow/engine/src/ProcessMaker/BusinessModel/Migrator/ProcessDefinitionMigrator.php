@@ -123,6 +123,7 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             $oData->messageType = $this->processes->getMessageTypes($prj_uid);
             $oData->messageTypeVariable = $this->processes->getMessageTypeVariables($prj_uid);
             $oData->messageEventDefinition = $this->processes->getMessageEventDefinitions($prj_uid);
+            $oData->steps = $this->processes->getStepRows($prj_uid);
             $oData->scriptTask = $this->processes->getScriptTasks($prj_uid);
             $oData->timerEvent = $this->processes->getTimerEvents($prj_uid);
             $oData->emailEvent = $this->processes->getEmailEvent($prj_uid);
