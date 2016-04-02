@@ -248,6 +248,51 @@ Ext.onReady(function(){
           }
       };
   }
+    //Code export - exportGranular (handle)
+    var exportProcessOption;
+    /*----------------------------------********---------------------------------*/
+    if (true) {
+        exportProcessOption = {
+            xtype: "tbsplit",
+            id: "export",
+            disabled: true,
+            text: _("ID_EXPORT"),
+            iconCls: "silk-add",
+            icon: "/images/export.png",
+            menu: [
+                {
+                    text: _("ID_NORMAL_EXPORT"),
+                    iconCls: "silk-add",
+                    icon: "",
+                    handler: function () {
+                        exportProcess();
+                    }
+                }, {
+                    text: _("ID_GRANULAR_EXPORT"),
+                    iconCls: "silk-add",
+                    icon: "",
+                    handler: function () {
+                        exportImportProcessObjects('export');
+                    }
+                }
+            ]
+        };
+    } else {
+    /*----------------------------------********---------------------------------*/
+        exportProcessOption = {
+            id: "export",
+            disabled: true,
+            text: _("ID_EXPORT"),
+            iconCls: "silk-add",
+            icon: "/images/export.png",
+            handler: function () {
+                exportProcess();
+            }
+        };
+    /*----------------------------------********---------------------------------*/
+    }
+    /*----------------------------------********---------------------------------*/
+    //End code export - exportGranular (handle)
 
   processesGrid = new Ext.grid.GridPanel( {
     region: 'center',
@@ -355,33 +400,7 @@ Ext.onReady(function(){
         handler:deleteProcess
       },{
         xtype: 'tbseparator'
-      },{
-        xtype: "tbsplit",
-        id: "export",
-        disabled: true,
-        text: _("ID_EXPORT"),
-        iconCls: "silk-add",
-        icon: "/images/export.png",
-        menu: [
-          {
-              text: _("ID_NORMAL_EXPORT"),
-              iconCls: "silk-add",
-              icon: "",
-              handler: function ()
-              {
-                exportProcess();
-              }
-          }, {
-            text: _("ID_GRANULAR_EXPORT"),
-            iconCls: "silk-add",
-            icon: "",
-            handler: function ()
-            {
-              exportImportProcessObjects('export');
-            }
-          }
-        ]
-      },{
+      },exportProcessOption,{
         text: _('ID_IMPORT'),
         iconCls: 'silk-add',
         icon: '/images/import.gif',
@@ -510,6 +529,47 @@ Ext.onReady(function(){
     var coords = e.getXY();
     messageContextMenu.showAt([coords[0], coords[1]]);
   }
+    //code export - exportGranular (handler)
+    var menuExportOption;
+    /*----------------------------------********---------------------------------*/
+    if (true) {
+        menuExportOption = {
+            text: _("ID_EXPORT"),
+            icon: "/images/export.png",
+            menu: {
+                showSeparator: false,
+                items: [
+                    {
+                        text: _("ID_NORMAL_EXPORT"),
+                        iconCls: "silk-add",
+                        icon: "",
+                        handler: function () {
+                            exportProcess();
+                        }
+                    }, {
+                        text: _("ID_GRANULAR_EXPORT"),
+                        iconCls: "silk-add",
+                        icon: "",
+                        handler: function () {
+                            exportImportProcessObjects('export');
+                        }
+                    }
+                ]
+            }
+        };
+    } else {
+    /*----------------------------------********---------------------------------*/
+        menuExportOption = {
+            text: _("ID_EXPORT"),
+            icon: "/images/export.png",
+            handler: function () {
+                exportProcess();
+            }
+        };
+    /*----------------------------------********---------------------------------*/
+    }
+    /*----------------------------------********---------------------------------*/
+    //End code export - exportGranular (handler)
 
   var arrayContextMenuOption = [
       {
@@ -533,32 +593,7 @@ Ext.onReady(function(){
           iconCls: "button_menu_ext ss_sprite ss_cross",
           handler: deleteProcess
       },
-      {
-          text: _("ID_EXPORT"),
-          icon: "/images/export.png",
-          menu: {
-              showSeparator: false,
-              items: [
-                  {
-                      text: _("ID_NORMAL_EXPORT"),
-                      iconCls: "silk-add",
-                      icon: "",
-                      handler: function ()
-                      {
-                          exportProcess();
-                      }
-                  },{
-                      text: _("ID_GRANULAR_EXPORT"),
-                      iconCls: "silk-add",
-                      icon: "",
-                      handler: function ()
-                      {
-                          exportImportProcessObjects('export');
-                      }
-                  }
-              ]
-          }
-      },
+      menuExportOption,
       {
           id: "mnuGenerateBpmn",
           text: _("ID_GENERATE_BPMN_PROJECT"),
