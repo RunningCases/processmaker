@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\BusinessModel\Light;
 
+use \ProcessMaker\Services\Api;
 use G;
 
 class NotificationDevice
@@ -135,7 +136,7 @@ class NotificationDevice
             }
 
         } catch (\Exception $e) {
-            throw new \Exception(\Api::STAT_APP_EXCEPTION, $e->getMessage());
+            throw new \Exception(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
         return $response;
     }
@@ -229,7 +230,7 @@ class NotificationDevice
                 }
             }
         } catch (\Exception $e) {
-            throw new \Exception(\Api::STAT_APP_EXCEPTION, $e->getMessage());
+            throw new \Exception(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
         return $response;
     }
