@@ -250,18 +250,42 @@ class FilesManager
             $aData = array_change_key_case($aData, CASE_UPPER);
             $oProcessFiles->fromArray($aData, \BasePeer::TYPE_FIELDNAME);
 
+            $sDirectory = PATH_DATA_MAILTEMPLATES . $aData['PRO_UID'] . PATH_SEP . basename($aData['PRF_PATH']);
+            $oProcessFiles->setPrfPath($sDirectory);
+
             if($this->existsProcessFile($aData['PRF_UID'])) {
                 $sPkProcessFiles = \G::generateUniqueID();
                 $oProcessFiles->setPrfUid($sPkProcessFiles);
-
-                $sDirectory = PATH_DATA_MAILTEMPLATES . $aData['PRO_UID'] . PATH_SEP . basename($aData['PRF_PATH']);
-                $oProcessFiles->setPrfPath($sDirectory);
 
                 $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
                 $emailEvent->updatePrfUid($aData['PRF_UID'], $sPkProcessFiles, $aData['PRO_UID']);
             }
 
             $result = $oProcessFiles->save();
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * @param $aData
+     * @throws Exception
+     */
+    public function updateProcessFilesManagerInDb($aData)
+    {
+        try {
+            //update database
+            if ($this->existsProcessFile($aData['prf_uid'])) {
+                $aData = array_change_key_case($aData, CASE_UPPER);
+                $oProcessFiles = \ProcessFilesPeer::retrieveByPK($aData['PRF_UID']);
+                $sDate = date('Y-m-d H:i:s');
+                $oProcessFiles->setPrfUpdateDate($sDate);
+                $oProcessFiles->setProUid($aData['PRO_UID']);
+                $oProcessFiles->setPrfPath($aData['PRF_PATH']);
+                $oProcessFiles->save();
+            } else {
+                $this->addProcessFilesManagerInDb($aData);
+            }
         } catch (Exception $e) {
             throw $e;
         }

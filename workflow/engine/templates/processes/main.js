@@ -2,13 +2,13 @@
  * @author: Erik A. Ortiz
  * Aug 20th, 2010
  */
-var processesGrid;
-var store;
-var comboCategory;
-var winDesigner;
-var newTypeProcess;
-var affectedGroups;
-
+var processesGrid,
+    store,
+    comboCategory,
+    winDesigner,
+    newTypeProcess,
+    affectedGroups,
+    processObjectsArray;
 
 /**
  * Global variables and variable initialization for import process.
@@ -19,6 +19,9 @@ importProcessGlobal.groupBeforeAccion="";
 importProcessGlobal.sNewProUid = "";
 importProcessGlobal.importOption = "";
 importProcessGlobal.processFileType = "";
+importProcessGlobal.isGranularImport = false;
+importProcessGlobal.objectGranularImport;
+importProcessGlobal.objectsToImport = [];
 
 new Ext.KeyMap(document, {
   key: Ext.EventObject.F5,
@@ -45,6 +48,7 @@ Ext.apply(Ext.form.VTypes, {
 });
 
 Ext.onReady(function(){
+  var i;
   setExtStateManagerSetProvider('gridProcessMain');
   Ext.QuickTips.init();
 
@@ -210,7 +214,7 @@ Ext.onReady(function(){
       arrayMenuNewOption.push(mnuNewProject);
   }
 
-  for (var i = 0; i <= arrayMenuNewOptionPlugin.length - 1; i++) {
+  for (i = 0; i <= arrayMenuNewOptionPlugin.length - 1; i++) {
       try {
           if (typeof(arrayMenuNewOptionPlugin[i].handler) != "undefined") {
               eval("arrayMenuNewOptionPlugin[i].handler = " + arrayMenuNewOptionPlugin[i].handler + ";");
@@ -244,6 +248,51 @@ Ext.onReady(function(){
           }
       };
   }
+    //Code export - exportGranular (handle)
+    var exportProcessOption;
+    /*----------------------------------********---------------------------------*/
+    if (true) {
+        exportProcessOption = {
+            xtype: "tbsplit",
+            id: "export",
+            disabled: true,
+            text: _("ID_EXPORT"),
+            iconCls: "silk-add",
+            icon: "/images/export.png",
+            menu: [
+                {
+                    text: _("ID_NORMAL_EXPORT"),
+                    iconCls: "silk-add",
+                    icon: "",
+                    handler: function () {
+                        exportProcess();
+                    }
+                }, {
+                    text: _("ID_GRANULAR_EXPORT"),
+                    iconCls: "silk-add",
+                    icon: "",
+                    handler: function () {
+                        exportImportProcessObjects('export');
+                    }
+                }
+            ]
+        };
+    } else {
+    /*----------------------------------********---------------------------------*/
+        exportProcessOption = {
+            id: "export",
+            disabled: true,
+            text: _("ID_EXPORT"),
+            iconCls: "silk-add",
+            icon: "/images/export.png",
+            handler: function () {
+                exportProcess();
+            }
+        };
+    /*----------------------------------********---------------------------------*/
+    }
+    /*----------------------------------********---------------------------------*/
+    //End code export - exportGranular (handle)
 
   processesGrid = new Ext.grid.GridPanel( {
     region: 'center',
@@ -351,16 +400,7 @@ Ext.onReady(function(){
         handler:deleteProcess
       },{
         xtype: 'tbseparator'
-      },{
-        id: "export",
-        disabled: true,
-        text: _("ID_EXPORT"),
-        iconCls: "silk-add",
-        icon: "/images/export.png",
-        handler: function () {
-          exportProcess();
-        }
-      },{
+      },exportProcessOption,{
         text: _('ID_IMPORT'),
         iconCls: 'silk-add',
         icon: '/images/import.gif',
@@ -489,6 +529,47 @@ Ext.onReady(function(){
     var coords = e.getXY();
     messageContextMenu.showAt([coords[0], coords[1]]);
   }
+    //code export - exportGranular (handler)
+    var menuExportOption;
+    /*----------------------------------********---------------------------------*/
+    if (true) {
+        menuExportOption = {
+            text: _("ID_EXPORT"),
+            icon: "/images/export.png",
+            menu: {
+                showSeparator: false,
+                items: [
+                    {
+                        text: _("ID_NORMAL_EXPORT"),
+                        iconCls: "silk-add",
+                        icon: "",
+                        handler: function () {
+                            exportProcess();
+                        }
+                    }, {
+                        text: _("ID_GRANULAR_EXPORT"),
+                        iconCls: "silk-add",
+                        icon: "",
+                        handler: function () {
+                            exportImportProcessObjects('export');
+                        }
+                    }
+                ]
+            }
+        };
+    } else {
+    /*----------------------------------********---------------------------------*/
+        menuExportOption = {
+            text: _("ID_EXPORT"),
+            icon: "/images/export.png",
+            handler: function () {
+                exportProcess();
+            }
+        };
+    /*----------------------------------********---------------------------------*/
+    }
+    /*----------------------------------********---------------------------------*/
+    //End code export - exportGranular (handler)
 
   var arrayContextMenuOption = [
       {
@@ -512,14 +593,7 @@ Ext.onReady(function(){
           iconCls: "button_menu_ext ss_sprite ss_cross",
           handler: deleteProcess
       },
-      {
-          text: _("ID_EXPORT"),
-          icon: "/images/export.png",
-          handler: function ()
-          {
-              exportProcess();
-          }
-      },
+      menuExportOption,
       {
           id: "mnuGenerateBpmn",
           text: _("ID_GENERATE_BPMN_PROJECT"),
@@ -532,7 +606,7 @@ Ext.onReady(function(){
       }
   ];
 
-  for (var i = 0; i <= arrayContextMenuOptionPlugin.length - 1; i++) {
+  for (i = 0; i <= arrayContextMenuOptionPlugin.length - 1; i++) {
       try {
           if (typeof(arrayContextMenuOptionPlugin[i].handler) != "undefined") {
               eval("arrayContextMenuOptionPlugin[i].handler = " + arrayContextMenuOptionPlugin[i].handler + ";");
@@ -761,6 +835,7 @@ editNewProcess = function(){
 
 deleteProcess = function(){
   var rows = processesGrid.getSelectionModel().getSelections();
+  var i;
   if( rows.length > 0 ) {
     isValid = true;
     errLog = Array();
@@ -917,6 +992,9 @@ function exportProcess() {
   var record = processesGrid.getSelectionModel().getSelections();
 
   if(record.length == 1) {
+    if(Ext.getCmp('exportProcessObjectsWindow')) {
+        Ext.getCmp('exportProcessObjectsWindow').close();
+    }
     var myMask = new Ext.LoadMask(Ext.getBody(), {msg: _("ID_LOADING")});
     var proUid   = record[0].get("PRO_UID");
 
@@ -925,7 +1003,10 @@ function exportProcess() {
     Ext.Ajax.request({
       url: "../processes/processes_Export",
       method: "GET",
-      params: {"pro_uid": proUid},
+      params: {
+          "pro_uid": proUid,
+          "objects": processObjectsArray
+      },
       success: function (response) {
         var result = JSON.parse(response.responseText);
         myMask.hide();
@@ -950,6 +1031,257 @@ function exportProcess() {
       buttons: Ext.MessageBox.OK
     });
   }
+}
+
+function exportImportProcessObjects(typeAction)
+{
+    var defaultTypeAction = 'export',
+        windowTitle = _('ID_EXPORT_PROCESS_OBJECTS'),
+        buttonLabel = _('ID_EXPORT'),
+        storeGrid,
+        storeActionField,
+        checkBoxSelMod,
+        gridProcessObjects,
+        colModel,
+        buttonLabel,
+        granularWindow,
+        i;
+
+    if(typeof typeAction !== undefined) {
+        if(typeAction == 'import') {
+            defaultTypeAction = typeAction;
+            windowTitle = _('ID_IMPORT_PROCESS_OBJECTS');
+            buttonLabel = _('ID_IMPORT');
+        }
+    }
+    storeGrid = new Ext.data.GroupingStore( {
+        remoteSort: true,
+        proxy : new Ext.data.HttpProxy({
+            url: 'processObjects'
+        }),
+        reader : new Ext.data.JsonReader( {
+            totalProperty: 'totalCount',
+            root: 'data',
+            fields : [
+                {name : 'OBJECT_ID'},
+                {name : 'OBJECT_NAME'},
+                {name : 'OBJECT_ACTION'},
+                {name : 'OBJECT_ENABLE'}
+            ]
+        })
+    });
+    storeGrid.load();
+    storeActionField = new Ext.data.ArrayStore({
+        fields: ['value', 'text'],
+        data: [
+            [1, _('ID_ADD_TO_EXISTING')],
+            [2, _('ID_REPLACE_ALL')]
+        ]
+    });
+    checkBoxSelMod = new Ext.grid.CheckboxSelectionModel();
+    gridProcessObjects = new Ext.grid.EditorGridPanel( {
+        region: 'center',
+        layout: 'fit',
+        id: 'processesGrid',
+        height:365,
+        width:340,
+        title : '',
+        stateful : true,
+        stateId : 'gridProcessObjects',
+        enableColumnResize: true,
+        enableHdMenu: false,
+        frame:false,
+        selModel : checkBoxSelMod,
+        showHeaderCheckbox: true,
+        columnLines: true,
+        disableSelection : true,
+        viewConfig: {
+            forceFit:true,
+            cls:"x-grid-empty",
+            emptyText: _('ID_NO_RECORDS_FOUND')
+        },
+        clicksToEdit: 1,
+        cm: new Ext.grid.ColumnModel({
+            defaults: {
+                sortable: false
+            },
+            columns: [
+                checkBoxSelMod,
+                {header: 'objectId', dataIndex: 'OBJECT_ID', hidden: true},
+                {header: 'Name', dataIndex: 'OBJECT_NAME', width: 5},
+                {header: 'Action', dataIndex: 'OBJECT_ACTION', width: 5,
+                    editor: new Ext.form.ComboBox({
+                        displayField: 'text',
+                        forceSelection: true,
+                        mode: 'local',
+                        typeAhead: false,
+                        store: storeActionField,
+                        triggerAction: 'all',
+                        valueField: 'value',
+                        lazyRender: true,
+                        disabled: false
+                    }),
+                    renderer: function(value) {
+                        var recordIndex = storeActionField.find('value', value);
+                        if (recordIndex === -1) {
+                            return _('ID_UNKNOWN') + value;
+                        }
+                        return storeActionField.getAt(recordIndex).get('text');
+                    }
+                },
+                {header: 'Name', dataIndex: 'OBJECT_ENABLE', hidden: true}
+            ]
+        }),
+        store: storeGrid,
+        listeners: {
+            render: function(grid) {
+                colModel = grid.getColumnModel();
+                if(defaultTypeAction === 'export') {
+                    colModel.setHidden(3, true);
+                } else { /*import*/
+                    colModel.setHidden(3, false);
+                    grid.store.on('load', function(store, records, options){
+                        grid.getSelectionModel().selectAll();
+                        store.each(function(row, j){
+                            if(!inArray(row.get('OBJECT_ID'),importProcessGlobal.objectGranularImport)) {
+                                store.remove(row);
+                            }
+                            if(row.get('OBJECT_ID') === 1) { /*process definition*/
+                                row.set("OBJECT_ACTION","2");
+                            }
+                        });
+                    });
+                }
+            },
+            beforeedit: function(editor, e, eOpts) {
+                var row = editor.record;
+                if(row.get('OBJECT_ID') === 1) { /*process definition*/
+                    return false;
+                }
+            }
+        }
+    });
+    granularWindow = new Ext.Window({
+        id          : 'exportProcessObjectsWindow',
+        title       : windowTitle,
+        header      : false,
+        width       : 350,
+        height      : 430,
+        modal       : true,
+        overflowY   : 'scroll',
+        maximizable : false,
+        resizable   : false,
+        items : [
+            gridProcessObjects
+        ],
+        buttons : [
+            {
+                text    : buttonLabel,
+                handler : function() {
+                    var selectedObjects = gridProcessObjects.getSelectionModel().getSelections();
+                    var i;
+                    if(selectedObjects.length < 1) {
+                        Ext.Msg.show({
+                            title: _("ID_INFORMATION"),
+                            msg: _("ID_NO_SELECTION_WARNING"),
+                            icon: Ext.MessageBox.INFO,
+                            buttons: Ext.MessageBox.OK
+                        });
+                        return;
+                    }
+                    processObjectsArray = [];
+                    if(defaultTypeAction === 'export') {
+                        if(selectedObjects.length > 0) {
+                            for (i = 0; i < selectedObjects.length; i++) {
+                                processObjectsArray.push(selectedObjects[i].get('OBJECT_ID'));
+                            }
+                            processObjectsArray = JSON.stringify(processObjectsArray);
+                            exportProcess();
+                        }
+                    } else { /*import*/
+                        if(selectedObjects.length > 0) {
+                            for (i = 0; i < selectedObjects.length; i++) {
+                                processObjectsArray.push(
+                                    {
+                                        id: selectedObjects[i].get('OBJECT_ID'),
+                                        action: selectedObjects[i].get('OBJECT_ACTION') === 1 ? 'merge' : 'replace'
+                                    }
+                                );
+                            }
+                            processObjectsArray = JSON.stringify(processObjectsArray);
+                        }
+                        importProcessGlobal.objectsToImport = processObjectsArray;
+                        Ext.getCmp('objectsToImport').setValue(processObjectsArray);
+
+                        var uploader = Ext.getCmp('formUploader');
+                        uploader.getForm().setValues({"objectsToImport":processObjectsArray});
+                        if (uploader.getForm().isValid()) {
+                            uploader.getForm().submit({
+                                url     : 'processes_Import_Ajax',
+                                waitMsg : _('ID_UPLOADING_PROCESS_FILE'),
+                                waitTitle : "&nbsp;",
+                                timeout: 3600,
+                                success: function(o, resp) {
+                                    var resp_      = Ext.util.JSON.decode(resp.response.responseText);
+                                    var sNewProUid = resp_.sNewProUid;
+                                    if (resp_.ExistGroupsInDatabase == 0) {
+                                        if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
+                                            if (typeof(resp_.project_type_aux) != "undefined" && resp_.project_type_aux == "NORMAL") {
+                                                importProcessCallbackFile = false;
+                                            }
+                                            var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
+                                            openWindowIfIE(goTo + sNewProUid);
+                                        } else {
+                                            window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+                                        }
+                                    }
+                                    else {
+                                        affectedGroups = resp_.affectedGroups;
+                                        importProcessGlobal.proFileName       = resp_.proFileName;
+                                        importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
+                                        importProcessGlobal.sNewProUid        = resp_.sNewProUid;
+                                        importProcessGlobal.importOption      = resp_.importOption;
+                                        importProcessExistGroup();
+                                    }
+
+                                },
+                                failure : function(o, resp) {
+                                    var msg = resp.result ? resp.result.msg : resp.response.responseText;
+                                    Ext.getCmp('objectsToImport').setValue("");
+                                    granularWindow.close();
+                                    Ext.MessageBox.show({
+                                        title   : _('ID_ERROR'),
+                                        msg     : msg,
+                                        buttons : Ext.MessageBox.OK,
+                                        animEl  : 'mb9',
+                                        fn      : function(){},
+                                        icon    : Ext.MessageBox.ERROR
+                                    });
+                                }
+                            });
+                        }
+
+
+                    }
+                }
+            }, {
+                text    : _('ID_CANCEL'),
+                handler : function(){
+                    granularWindow.close();
+                }
+            }
+        ]
+    });
+    granularWindow.show();
+}
+
+function inArray(needle, haystack) {
+    var i;
+    var length = haystack.length;
+    for(i = 0; i < length; i++) {
+        if(haystack[i] == needle) return true;
+    }
+    return false;
 }
 
 function generateBpmn()
@@ -1132,6 +1464,10 @@ importProcessExistGroup = function()
             xtype : 'hidden',
             value : processFileType
           }, {
+            name  : 'objectsToImport',
+            xtype : 'hidden',
+            value : importProcessGlobal.objectsToImport
+          }, {
             xtype  : 'spacer',
             height : 10
           }
@@ -1160,10 +1496,12 @@ importProcessExistGroup = function()
                     }
                   },
                   failure: function(o, resp) {
+                    var msg = resp.result ? resp.result.msg : resp.response.responseText;
+                    Ext.getCmp('objectsToImport').setValue("");
                     w.close();
                     Ext.MessageBox.show({
                       title   : _('ID_ERROR'),
-                      msg     : resp.result.msg,
+                      msg     : msg,
                       buttons : Ext.MessageBox.OK,
                       animEl  : 'mb9',
                       fn      : function(){},
@@ -1188,9 +1526,10 @@ importProcessExistGroup = function()
 
 affectedGroupsList = function()
 {
+    var i;
     var arrayGroups = affectedGroups.split(", ");
     var tableGroups = "<table width='100%' border='0' cellpadding='5'>"
-    for(var i = 0; i < arrayGroups.length; i++) {
+    for(i = 0; i < arrayGroups.length; i++) {
         tableGroups += "<tr><td>"+arrayGroups[i]+"</td></tr>";
     }
     tableGroups += "</table>";
@@ -1314,6 +1653,10 @@ importProcessExistProcess = function()
           xtype : 'hidden',
           value : processFileType
           }, {
+            name  : 'objectsToImport',
+            xtype : 'hidden',
+            value : importProcessGlobal.objectsToImport
+          }, {
             xtype  : 'spacer',
             height : 10
           }
@@ -1332,32 +1675,39 @@ importProcessExistProcess = function()
                   success: function(o, resp) {
                     var resp_      = Ext.util.JSON.decode(resp.response.responseText);
                     var sNewProUid = resp_.sNewProUid;
-
-                    if (resp_.ExistGroupsInDatabase == 0) {
-                        if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {      
-                            if (typeof(resp_.project_type_aux) != "undefined" && resp_.project_type_aux == "NORMAL") {  
-                                importProcessCallbackFile = false;
+                    if(resp_.isGranularImport) {
+                      importProcessGlobal.isGranularImport = resp_.isGranularImport;
+                      importProcessGlobal.objectGranularImport = resp_.objectGranularImport;
+                      exportImportProcessObjects('import');
+                    } else {
+                        if (resp_.ExistGroupsInDatabase == 0) {
+                            if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
+                                if (typeof(resp_.project_type_aux) != "undefined" && resp_.project_type_aux == "NORMAL") {
+                                    importProcessCallbackFile = false;
+                                }
+                                var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
+                                openWindowIfIE(goTo + sNewProUid);
+                            } else {
+                                window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                             }
-                            var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
-                            openWindowIfIE(goTo + sNewProUid);
-                        } else {
-                            window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
                         }
-                    }
-                    else {
-                      affectedGroups = resp_.affectedGroups;
-                      importProcessGlobal.proFileName       = resp_.proFileName;
-                      importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
-                      importProcessGlobal.sNewProUid        = resp_.sNewProUid;
-                      importProcessGlobal.importOption      = resp_.importOption;
-                      importProcessExistGroup();
+                      else {
+                          affectedGroups = resp_.affectedGroups;
+                          importProcessGlobal.proFileName       = resp_.proFileName;
+                          importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
+                          importProcessGlobal.sNewProUid        = resp_.sNewProUid;
+                          importProcessGlobal.importOption      = resp_.importOption;
+                          importProcessExistGroup();
+                      }
                     }
                   },
                   failure : function(o, resp) {
+                    var msg = resp.result ? resp.result.msg : resp.response.responseText;
+                    Ext.getCmp('objectsToImport').setValue("");
                     w.close();
                     Ext.MessageBox.show({
                       title   : _('ID_ERROR'),
-                      msg     : resp.result.msg,
+                      msg     : msg,
                       buttons : Ext.MessageBox.OK,
                       animEl  : 'mb9',
                       fn      : function(){},
@@ -1452,6 +1802,10 @@ changeOrKeepUids = function()
                         xtype : 'hidden',
                         value : processFileType
                     }, {
+                        name  : 'objectsToImport',
+                        xtype : 'hidden',
+                        value : importProcessGlobal.objectsToImport
+                    }, {
                         xtype  : 'spacer',
                         height : 10
                     }
@@ -1541,6 +1895,11 @@ importProcess = function()
               name: 'generateUid',
               xtype: 'hidden',
               value: ''
+            }, {
+              id: 'objectsToImport',
+              name: 'objectsToImport',
+              xtype: 'hidden',
+              value: ''
             }
           ],
           buttons : [{
@@ -1566,77 +1925,81 @@ importProcess = function()
                                       success: function(o, resp)
                                       {
                                           var resp_ = Ext.util.JSON.decode(resp.response.responseText);
+                                          if(resp_.isGranularImport) {
+                                              importProcessGlobal.isGranularImport = resp_.isGranularImport;
+                                              importProcessGlobal.objectGranularImport = resp_.objectGranularImport;
+                                              exportImportProcessObjects('import');
+                                          } else {
+                                              if (resp_.status) {
+                                                  if (resp_.status == "DISABLED-CODE") {
+                                                      Ext.MessageBox.show({
+                                                          title: _("ID_ERROR"),
+                                                          msg: "<div style=\"overflow: auto; width: 500px; height: 150px;\">" + stringReplace("\\x0A", "<br />", resp_.message) + "</div>", //\n 10
+                                                          width: 570,
+                                                          height: 250,
+                                                          icon: Ext.MessageBox.ERROR,
+                                                          buttons: Ext.MessageBox.OK
+                                                      });
 
-                                          if (resp_.status) {
-                                              if (resp_.status == "DISABLED-CODE") {
-                                                  Ext.MessageBox.show({
-                                                      title: _("ID_ERROR"),
-                                                      msg: "<div style=\"overflow: auto; width: 500px; height: 150px;\">" + stringReplace("\\x0A", "<br />", resp_.message) + "</div>", //\n 10
-                                                      width: 570,
-                                                      height: 250,
-                                                      icon: Ext.MessageBox.ERROR,
-                                                      buttons: Ext.MessageBox.OK
-                                                  });
-
-                                                  return;
-                                              }
-                                          }
-
-                                          if (resp_.catchMessage == "") {
-                                              if (resp_.ExistProcessInDatabase == "0") {
-                                                  if(resp_.notExistProcessInDatabase == "1") {
-                                                      importProcessGlobal.sNewProUid        = resp_.sNewProUid;
-                                                      importProcessGlobal.proFileName       = resp_.proFileName;
-                                                      importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
-                                                      changeOrKeepUids();
                                                       return;
                                                   }
-                                                  if (resp_.ExistGroupsInDatabase == "0") {
-                                                      var sNewProUid = resp_.sNewProUid;
+                                              }
 
-                                                      if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") { 
-                                                          if (typeof(resp_.project_type_aux) != "undefined" && resp_.project_type_aux == "NORMAL") {  
-                                                              importProcessCallbackFile = false;
-                                                          }      
-                                                          var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
-                                                          openWindowIfIE(goTo + sNewProUid);
+                                              if (resp_.catchMessage == "") {
+                                                  if (resp_.ExistProcessInDatabase == "0") {
+                                                      if(resp_.notExistProcessInDatabase == "1") {
+                                                          importProcessGlobal.sNewProUid        = resp_.sNewProUid;
+                                                          importProcessGlobal.proFileName       = resp_.proFileName;
+                                                          importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
+                                                          changeOrKeepUids();
+                                                          return;
+                                                      }
+                                                      if (resp_.ExistGroupsInDatabase == "0") {
+                                                          var sNewProUid = resp_.sNewProUid;
+                                                          if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
+                                                              if (typeof(resp_.project_type_aux) != "undefined" && resp_.project_type_aux == "NORMAL") {
+                                                                  importProcessCallbackFile = false;
+                                                              }
+                                                              var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
+                                                              openWindowIfIE(goTo + sNewProUid);
+                                                          } else {
+                                                              window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+                                                          }
                                                       } else {
-                                                          window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+                                                          affectedGroups = resp_.affectedGroups;
+                                                          importProcessGlobal.sNewProUid        = resp_.sNewProUid;
+                                                          importProcessGlobal.proFileName       = resp_.proFileName;
+                                                          importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
+                                                          importProcessExistGroup();
                                                       }
                                                   } else {
-                                                      affectedGroups = resp_.affectedGroups;
-                                                      importProcessGlobal.sNewProUid        = resp_.sNewProUid;
-                                                      importProcessGlobal.proFileName       = resp_.proFileName;
-                                                      importProcessGlobal.groupBeforeAccion = resp_.groupBeforeAccion;
-                                                      importProcessExistGroup();
+                                                      importProcessGlobal.proFileName = resp_.proFileName;
+                                                      importProcessExistProcess();
                                                   }
-                                              } else if (resp_.ExistProcessInDatabase == "1") {
-                                                  importProcessGlobal.proFileName = resp_.proFileName;
-                                                  importProcessExistProcess();
-                                              }
-                                          } else {
-                                              w.close();
-                                              if (Ext.getCmp('changeOrKeepUidsWindow')) {
-                                                  Ext.getCmp('changeOrKeepUidsWindow').close();
-                                              }
+                                              } else {
+                                                  w.close();
+                                                  if (Ext.getCmp('changeOrKeepUidsWindow')) {
+                                                      Ext.getCmp('changeOrKeepUidsWindow').close();
+                                                  }
 
-                                              Ext.MessageBox.show({
-                                                  title  : "",
-                                                  msg    : resp_.catchMessage,
-                                                  buttons: Ext.MessageBox.OK,
-                                                  animEl : "mb9",
-                                                  fn     : function(){},
-                                                  icon   : Ext.MessageBox.ERROR
-                                              });
+                                                  Ext.MessageBox.show({
+                                                      title  : "",
+                                                      msg    : resp_.catchMessage,
+                                                      buttons: Ext.MessageBox.OK,
+                                                      animEl : "mb9",
+                                                      fn     : function(){},
+                                                      icon   : Ext.MessageBox.ERROR
+                                                  });
+                                              }
                                           }
                                       },
                                       failure : function(o, resp)
                                       {
+                                          var msg = resp.catchMessage ? resp.catchMessage : resp.response.responseText;
                                           w.close();
-
                                           Ext.MessageBox.show({
                                               title  : "",
-                                              msg    : resp.catchMessage,
+                                              msg    : msg,
                                               buttons: Ext.MessageBox.OK,
                                               animEl : "mb9",
                                               fn     : function(){},
@@ -1754,10 +2117,11 @@ importProcessBpmnSubmit = function () {
                 }
             },
             failure: function (o, resp) {
+                var msg = resp.catchMessage ? resp.catchMessage : resp.response.responseText;
                 Ext.getCmp('importProcessWindow').close();
                 Ext.MessageBox.show({
                     title: '',
-                    msg: resp.catchMessage,
+                    msg: msg,
                     buttons: Ext.MessageBox.OK,
                     animEl: 'mb9',
                     fn: function () {
@@ -1771,7 +2135,7 @@ importProcessBpmnSubmit = function () {
 
 function activeDeactive(){
   var rows = processesGrid.getSelectionModel().getSelections();
-
+  var i;
   if( rows.length > 0 ) {
     var ids = '';
     for(i=0; i<rows.length; i++) {
@@ -1809,7 +2173,7 @@ function activeDeactive(){
 function enableDisableDebug()
 {
   var rows = processesGrid.getSelectionModel().getSelections();
-
+    var i;
   if( rows.length > 0 ) {
     var ids = '';
     for(i=0; i<rows.length; i++)
@@ -1864,6 +2228,8 @@ function openWindowIfIE(pathDesigner) {
             Ext.getCmp('windowBpmnOptionWindow').close();
         if (Ext.getCmp('changeOrKeepUidsWindow'))
             Ext.getCmp('changeOrKeepUidsWindow').close();
+        if (Ext.getCmp('exportProcessObjectsWindow'))
+            Ext.getCmp('exportProcessObjectsWindow').close();
         processesGrid.store.reload();
         nameTab = PM.Sessions.getCookie('PM-TabPrimary') + '_winDesigner';
         if (winDesigner && winDesigner.closed === false) {
