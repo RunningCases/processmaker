@@ -37,6 +37,20 @@ CREATE TABLE `APPLICATION`
 	KEY `indexAppStatus`(`APP_STATUS`),
 	KEY `indexAppCreateDate`(`APP_CREATE_DATE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='The application';
+
+#-----------------------------------------------------------------------------
+#-- APP_SEQUENCE
+#-----------------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `APP_SEQUENCE`;
+
+
+CREATE TABLE `APP_SEQUENCE`
+(
+	`ID` INTEGER  NOT NULL,
+	PRIMARY KEY (`ID`)
+)ENGINE=InnoDB ;
+
 #-----------------------------------------------------------------------------
 #-- APP_DELEGATION
 #-----------------------------------------------------------------------------
