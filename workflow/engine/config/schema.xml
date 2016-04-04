@@ -1290,6 +1290,9 @@
     <column name="TAS_SELFSERVICE_TIME_UNIT" type="VARCHAR" size="15" default=""/>
     <column name="TAS_SELFSERVICE_TRIGGER_UID" type="VARCHAR" size="32" default=""/>
     <column name="TAS_SELFSERVICE_EXECUTION" type="VARCHAR" size="15" default="EVERY_TIME"/>
+    <index name="indexTasUid">
+      <index-column name="TAS_UID"/>
+    </index>
 
     <validator column="TAS_TYPE">
         <rule name="validValues" value="NORMAL|ADHOC|SUBPROCESS|HIDDEN|GATEWAYTOGATEWAY|WEBENTRYEVENT|END-MESSAGE-EVENT|START-MESSAGE-EVENT|INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT|SCRIPT-TASK|START-TIMER-EVENT|INTERMEDIATE-CATCH-TIMER-EVENT|END-EMAIL-EVENT" message="Please set a valid value for TAS_TYPE" />
@@ -1534,6 +1537,9 @@
     </column>
     <column name="USR_TIME_ZONE" type="VARCHAR" size="100" default="" />
     <column name="USR_DEFAULT_LANG" type="VARCHAR" size="10" default=""/>
+    <index name="indexUsrUid">
+      <index-column name="USR_UID"/>
+    </index>
     <validator column="USR_STATUS">
       <rule name="validValues" value="ACTIVE|INACTIVE|VACATION|CLOSED" message="Please select a valid type."/>
       <rule name="required" message="Type is required."/>
@@ -2513,6 +2519,18 @@
     <column name="APP_FINISH_DATE" type="TIMESTAMP" required="false"/>
     <column name="APP_UPDATE_DATE" type="TIMESTAMP" required="true"/>
     <column name="APP_OVERDUE_PERCENTAGE" type="DOUBLE" required="true"/>
+    <index name="indexAppUid">
+      <index-column name="APP_UID"/>
+    </index>
+    <index name="indexTasUid">
+      <index-column name="TAS_UID"/>
+    </index>
+    <index name="indexUsrUid">
+      <index-column name="USR_UID"/>
+    </index>
+    <index name="indexPrevUsrUid">
+      <index-column name="PREVIOUS_USR_UID"/>
+    </index>
     <index name="indexProUid">
       <index-column name="PRO_UID"/>
       <vendor type="mysql">

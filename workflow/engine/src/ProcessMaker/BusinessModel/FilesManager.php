@@ -85,7 +85,7 @@ class FilesManager
             }
             foreach ($aFiles as $aFile) {
                 $arrayFileUid = $this->getFileManagerUid($sDirectory.$aFile['FILE']);
-                $fcontent = file_get_contents($sDirectory.$aFile['FILE']);
+                $fcontent = '';
                 $fileUid =  $arrayFileUid["PRF_UID"];
                 if ($fileUid != null) {
                     $oProcessFiles = \ProcessFilesPeer::retrieveByPK($fileUid);
