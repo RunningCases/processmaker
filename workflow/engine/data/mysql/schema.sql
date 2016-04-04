@@ -629,7 +629,8 @@ CREATE TABLE `TASK`
 	`TAS_SELFSERVICE_TIME_UNIT` VARCHAR(15) default '',
 	`TAS_SELFSERVICE_TRIGGER_UID` VARCHAR(32) default '',
 	`TAS_SELFSERVICE_EXECUTION` VARCHAR(15) default 'EVERY_TIME',
-	PRIMARY KEY (`TAS_UID`)
+	PRIMARY KEY (`TAS_UID`),
+	KEY `indexTasUid` (`TAS_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Task of workflow';
 #-----------------------------------------------------------------------------
 #-- TASK_USER
@@ -726,7 +727,8 @@ CREATE TABLE `USERS`
 	`USR_BOOKMARK_START_CASES` MEDIUMTEXT,
 	`USR_TIME_ZONE` VARCHAR(100) default '',
 	`USR_DEFAULT_LANG` VARCHAR(10) default '',
-	PRIMARY KEY (`USR_UID`)
+	PRIMARY KEY (`USR_UID`),
+	KEY `indexUsrUid` (`USR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Users';
 #-----------------------------------------------------------------------------
 #-- APP_THREAD
@@ -1194,6 +1196,10 @@ CREATE TABLE `APP_CACHE_VIEW`
 	`APP_UPDATE_DATE` DATETIME  NOT NULL,
 	`APP_OVERDUE_PERCENTAGE` DOUBLE  NOT NULL,
 	PRIMARY KEY (`APP_UID`,`DEL_INDEX`),
+	KEY `indexAppUid`(`APP_UID`),
+	KEY `indexTasUid`(`TAS_UID`),
+	KEY `indexUsrUid`(`USR_UID`),
+	KEY `indexPrevUsrUid`(`PREVIOUS_USR_UID`),
 	KEY `indexProUid`(`PRO_UID`),
 	KEY `indexAppNumber`(`APP_NUMBER`),
 	KEY `protitle`(`APP_PRO_TITLE`),
