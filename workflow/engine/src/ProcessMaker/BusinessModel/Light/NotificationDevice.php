@@ -136,7 +136,7 @@ class NotificationDevice
             }
 
         } catch (\Exception $e) {
-            throw new \Exception(Api::STAT_APP_EXCEPTION, $e->getMessage());
+            throw new \Exception($e->getMessage(), Api::STAT_APP_EXCEPTION);
         }
         return $response;
     }
@@ -230,7 +230,7 @@ class NotificationDevice
                 }
             }
         } catch (\Exception $e) {
-            throw new \Exception(Api::STAT_APP_EXCEPTION, $e->getMessage());
+            throw new \Exception($e->getMessage(), Api::STAT_APP_EXCEPTION);
         }
         return $response;
     }
