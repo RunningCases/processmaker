@@ -54,7 +54,16 @@ class AppSequence extends BaseAppSequence {
         try {
             $con = Propel::getConnection('workflow');
             $stmt = $con->createStatement();
-            $sql = "UPDATE APP_SEQUENCE SET ID=LAST_INSERT_ID('$number')";
+            $c = new Criteria();
+            $rs = AppSequencePeer::doSelectRS($c);
+            $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $rs->next();
+            $row = $rs->getRow();
+            if ($row) {
+                $sql = "UPDATE APP_SEQUENCE SET ID=LAST_INSERT_ID('$number')";
+            } else {
+                $sql = "INSERT INTO APP_SEQUENCE (ID) VALUES ('$number');";
+            }
             $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
         } catch (\Exception $e) {
             throw ($e);
