@@ -7,6 +7,18 @@ use G;
 
 class NotificationDevice
 {
+    
+    
+    public function checkMobileNotifications()
+    {
+        $conf = \System::getSystemConfiguration('', '', SYS_SYS);
+        $activeNotifications = true;
+        if (isset($conf['mobileNotifications'])) {
+            $activeNotifications = $conf['mobileNotifications'] == 1 ? true : false;
+        }
+        return $activeNotifications;
+    }
+    
     /**
      * Post Create register device with userUid
      *
