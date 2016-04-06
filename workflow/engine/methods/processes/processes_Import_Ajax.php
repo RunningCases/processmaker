@@ -33,7 +33,7 @@ $objectsToImport = '';
 if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=") &&
     isset($_FILES["PROCESS_FILENAME"]) &&
     $_FILES["PROCESS_FILENAME"]["error"] == 0 &&
-    preg_match("/^(?:pm|pmx)$/", pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION))
+    preg_match("/^(?:pm|pmx|pmx2)$/", pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION))
 ) {
     //Check disabled code
     $response = array();
@@ -55,6 +55,7 @@ if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm
                 }
                 break;
             case "pmx":
+            case "pmx2":
                 $importer = new XmlImporter();
                 $data = $importer->load($_FILES["PROCESS_FILENAME"]["tmp_name"]);
                 if (isset($data["tables"]["workflow"]["triggers"]) && is_array($data["tables"]["workflow"]["triggers"]) && !empty($data["tables"]["workflow"]["triggers"])) {
@@ -109,8 +110,9 @@ if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm
 }
 /*----------------------------------********---------------------------------*/
 
-if (isset($_FILES["PROCESS_FILENAME"]) &&
-    pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION) == "pmx"
+if (isset($_FILES["PROCESS_FILENAME"]) && (pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION) == "pmx"
+        || pathinfo($_FILES["PROCESS_FILENAME"]["name"], PATHINFO_EXTENSION) == "pmx2")
+
 ) {
     $importer = new XmlImporter();
     $importer->setData("usr_uid", $_SESSION["USER_LOGGED"]);
@@ -219,8 +221,10 @@ if (isset($_FILES["PROCESS_FILENAME"]) &&
 }
 
 if (isset($_POST["PRO_FILENAME"]) &&
-    file_exists(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"]) &&
-    pathinfo(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"], PATHINFO_EXTENSION) == "pmx"
+    file_exists(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"]) && (pathinfo(PATH_DOCUMENT . "input" .
+            PATH_SEP . $_POST["PRO_FILENAME"], PATHINFO_EXTENSION) == "pmx" || pathinfo(PATH_DOCUMENT . "input" .
+            PATH_SEP . $_POST["PRO_FILENAME"], PATHINFO_EXTENSION) == "pmx2")
+
 ) {
     $option = XmlImporter::IMPORT_OPTION_CREATE_NEW;
 

@@ -31,7 +31,16 @@ $conf = new Configurations();
 
 $pmVersion = (preg_match("/^([\d\.]+).*$/", System::getVersion(), $arrayMatch))? $arrayMatch[1] : ""; //Otherwise: Branch master
 
-$arrayFlagImportFileExtension = array("pm", "pmx", "bpmn");
+/*----------------------------------********---------------------------------*/
+if (true) {
+    $arrayFlagImportFileExtension = array("pm", "pmx", "pmx2", "bpmn");
+} else {
+/*----------------------------------********---------------------------------*/
+    $arrayFlagImportFileExtension = array("pm", "pmx", "bpmn");
+/*----------------------------------********---------------------------------*/
+}
+/*----------------------------------********---------------------------------*/
+
 $arrayFlagMenuNewOption       = array("pm" => true, "bpmn" => true);
 
 if ($pmVersion != "") {

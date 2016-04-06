@@ -1914,6 +1914,9 @@ importProcess = function()
                       switch (fileExtension) {
                           case "pm":
                           case "pmx":
+                          /*----------------------------------********---------------------------------*/
+                          case "pmx2":
+                          /*----------------------------------********---------------------------------*/
                               var uploader = Ext.getCmp("uploader");
 
                               if (uploader.getForm().isValid()) {
