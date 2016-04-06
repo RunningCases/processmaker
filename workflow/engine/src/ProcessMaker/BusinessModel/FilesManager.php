@@ -41,7 +41,7 @@ class FilesManager
      *
      * @access public
      */
-    public function getProcessFilesManagerPath($sProcessUID, $path)
+    public function getProcessFilesManagerPath($sProcessUID, $path, $getContent = true)
     {
         try {
             $checkPath = substr($path, -1);
@@ -85,7 +85,10 @@ class FilesManager
             }
             foreach ($aFiles as $aFile) {
                 $arrayFileUid = $this->getFileManagerUid($sDirectory.$aFile['FILE']);
-                $fcontent = '';
+                $fcontent = "";
+                if ($getContent === true) {
+                    $fcontent = file_get_contents($sDirectory . $aFile['FILE']);
+                }
                 $fileUid =  $arrayFileUid["PRF_UID"];
                 if ($fileUid != null) {
                     $oProcessFiles = \ProcessFilesPeer::retrieveByPK($fileUid);
