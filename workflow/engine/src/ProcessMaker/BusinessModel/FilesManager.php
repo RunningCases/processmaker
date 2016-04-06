@@ -243,6 +243,11 @@ class FilesManager
         }
     }
 
+    /**
+     * @param $aData
+     * @throws Exception
+     * @throws \Exception
+     */
     public function addProcessFilesManagerInDb($aData)
     {
         try {
@@ -250,7 +255,26 @@ class FilesManager
             $aData = array_change_key_case($aData, CASE_UPPER);
             $oProcessFiles->fromArray($aData, \BasePeer::TYPE_FIELDNAME);
 
-            $sDirectory = PATH_DATA_MAILTEMPLATES . $aData['PRO_UID'] . PATH_SEP . basename($aData['PRF_PATH']);
+            $path = $aData['PRF_PATH'];
+            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $path = str_replace("/", DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR, $path);
+            }
+
+            $path = explode(DIRECTORY_SEPARATOR,$path);
+            $fileDirectory = $path[count($path)-3];
+
+            switch ($fileDirectory) {
+                case 'mailTemplates':
+                    $sDirectory = PATH_DATA_MAILTEMPLATES . $aData['PRO_UID'] . PATH_SEP . basename($aData['PRF_PATH']);
+                    break;
+                case 'public':
+                    $sDirectory = PATH_DATA_PUBLIC . $aData['PRO_UID'] . PATH_SEP . basename($aData['PRF_PATH']);
+                    break;
+                default:
+                    throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array($aData['PRF_PATH'])));
+                    break;
+            }
+
             $oProcessFiles->setPrfPath($sDirectory);
 
             if($this->existsProcessFile($aData['PRF_UID'])) {
