@@ -36,6 +36,19 @@ class ProcessDefinitionMigrator implements Importable, Exportable
         try {
             //Bpmn elements
             $pjrUid =$this->bpmn->createFromStruct($data['bpmn'], false);
+            //Import workflow elements
+            $this->afterImport($data);
+
+        } catch (\Exception $e) {
+            $exception = new ImportException($e->getMessage());
+            $exception->setNameException($this->className);
+            throw($exception);
+        }
+    }
+
+    public function afterImport($data)
+    {
+        try {
             //Workflow elements
             $this->processes->createTaskRows($data['workflow']['tasks']);
             $this->processes->createTaskUserRows($data['workflow']['taskusers']);
@@ -68,11 +81,6 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             $exception->setNameException($this->className);
             throw($exception);
         }
-    }
-
-    public function afterImport($data)
-    {
-        // TODO: Implement afterImport() method.
     }
 
     public function beforeExport()
