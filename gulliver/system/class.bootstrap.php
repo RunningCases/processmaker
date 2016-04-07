@@ -2880,7 +2880,7 @@ class Bootstrap
         }
     }
 
-    public function getPasswordHashConfig()
+    public static function getPasswordHashConfig()
     {
         G::LoadClass('configuration');
         $config= new Configurations();
@@ -2901,7 +2901,7 @@ class Bootstrap
         return $passwordHashConfig;
     }
 
-    public function getPasswordHashType()
+    public static function getPasswordHashType()
     {
         $passwordHashConfig = Bootstrap::getPasswordHashConfig();
         return $passwordHashConfig['current'];
