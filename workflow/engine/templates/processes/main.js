@@ -1108,8 +1108,8 @@ function exportImportProcessObjects(typeAction)
             columns: [
                 checkBoxSelMod,
                 {header: 'objectId', dataIndex: 'OBJECT_ID', hidden: true},
-                {header: 'Name', dataIndex: 'OBJECT_NAME', width: 5},
-                {header: 'Action', dataIndex: 'OBJECT_ACTION', width: 5,
+                {header: _('ID_CHECK_ALL'), dataIndex: 'OBJECT_NAME', width: 5},
+                {header: '', dataIndex: 'OBJECT_ACTION', width: 5,
                     editor: new Ext.form.ComboBox({
                         displayField: 'text',
                         forceSelection: true,
