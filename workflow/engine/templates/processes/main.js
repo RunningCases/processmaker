@@ -989,48 +989,55 @@ var deleteCases = function(){
 }
 
 function exportProcess() {
-  var record = processesGrid.getSelectionModel().getSelections();
+    var record = processesGrid.getSelectionModel().getSelections();
 
-  if(record.length == 1) {
-    if(Ext.getCmp('exportProcessObjectsWindow')) {
-        Ext.getCmp('exportProcessObjectsWindow').close();
-    }
-    var myMask = new Ext.LoadMask(Ext.getBody(), {msg: _("ID_LOADING")});
-    var proUid   = record[0].get("PRO_UID");
-
-    myMask.show();
-
-    Ext.Ajax.request({
-      url: "../processes/processes_Export",
-      method: "GET",
-      params: {
-          "pro_uid": proUid,
-          "objects": processObjectsArray
-      },
-      success: function (response) {
-        var result = JSON.parse(response.responseText);
-        myMask.hide();
-
-        if (result.success) {
-          window.location = "../processes/processes_DownloadFile?file_hash=" + result.file_hash;
+    if (record.length == 1) {
+        if (Ext.getCmp('exportProcessObjectsWindow')) {
+            Ext.getCmp('exportProcessObjectsWindow').close();
         } else {
-          Ext.Msg.show({title: "", msg: result.message, icon: Ext.MessageBox.ERROR, buttons: Ext.MessageBox.OK});
+            processObjectsArray = '';
         }
-      },
+        var myMask = new Ext.LoadMask(Ext.getBody(), {msg: _("ID_LOADING")});
+        var proUid = record[0].get("PRO_UID");
 
-      failure: function (response, opts) {
-        myMask.hide();
-      }
-    });
-  }
-  else {
-    Ext.Msg.show({
-      title: _("ID_INFORMATION"),
-      msg: _("ID_NO_SELECTION_WARNING"),
-      icon: Ext.MessageBox.INFO,
-      buttons: Ext.MessageBox.OK
-    });
-  }
+        myMask.show();
+
+        Ext.Ajax.request({
+            url: "../processes/processes_Export",
+            method: "GET",
+            params: {
+                "pro_uid": proUid,
+                "objects": processObjectsArray
+            },
+            success: function (response) {
+                var result = JSON.parse(response.responseText);
+                myMask.hide();
+
+                if (result.success) {
+                    window.location = "../processes/processes_DownloadFile?file_hash=" + result.file_hash;
+                } else {
+                    Ext.Msg.show({
+                        title: "",
+                        msg: result.message,
+                        icon: Ext.MessageBox.ERROR,
+                        buttons: Ext.MessageBox.OK
+                    });
+                }
+            },
+
+            failure: function (response, opts) {
+                myMask.hide();
+            }
+        });
+    }
+    else {
+        Ext.Msg.show({
+            title: _("ID_INFORMATION"),
+            msg: _("ID_NO_SELECTION_WARNING"),
+            icon: Ext.MessageBox.INFO,
+            buttons: Ext.MessageBox.OK
+        });
+    }
 }
 
 function exportImportProcessObjects(typeAction)
