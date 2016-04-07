@@ -36,7 +36,7 @@ class G
      * is_https
      * @return void
     */
-    public function is_https()
+    public static function is_https()
     {
         if (isset($_SERVER['HTTPS'])) {
             if ($_SERVER['HTTPS']=='on') {
