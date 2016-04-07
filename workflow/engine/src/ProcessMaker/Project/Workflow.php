@@ -1317,6 +1317,18 @@ class Workflow extends Handler
                 }
             }
 
+            foreach ($arrayWorkflowData["inputs"] as $keyin => $value) {
+                $newUid = $value["INP_DOC_UID"];
+                if(isset($value["INP_DOC_UID_OLD"])){
+                    foreach ($arrayWorkflowData["processVariables"] as $keypv => $vars) {
+                        if($vars['INP_DOC_UID'] === $value["INP_DOC_UID_OLD"]){
+                            $arrayWorkflowData["processVariables"][$keypv]["INP_DOC_UID"] = $newUid;
+                        }
+                    }
+                    unset($arrayWorkflowData["inputs"][$keyin]["INP_DOC_UID_OLD"]);
+                }
+            }
+
             //Workflow files
             foreach ($arrayWorkflowFile as $key => $value) {
                 $arrayFile = $value;
