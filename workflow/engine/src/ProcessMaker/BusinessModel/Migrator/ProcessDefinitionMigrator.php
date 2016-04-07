@@ -35,7 +35,7 @@ class ProcessDefinitionMigrator implements Importable, Exportable
     {
         try {
             //Bpmn elements
-            $pjrUid =$this->bpmn->createFromStruct($data['bpmn'], false);
+            $pjrUid = $this->bpmn->createFromStruct($data['bpmn'], false);
             //Import workflow elements
             $this->afterImport($data);
 
@@ -46,10 +46,15 @@ class ProcessDefinitionMigrator implements Importable, Exportable
         }
     }
 
+    /**
+     * @param $data
+     * @throws ImportException
+     */
     public function afterImport($data)
     {
         try {
             //Workflow elements
+            $this->processes->updateProcessRow($data['workflow']['process']);
             $this->processes->createTaskRows($data['workflow']['tasks']);
             $this->processes->createTaskUserRows($data['workflow']['taskusers']);
             $this->processes->createRouteRows($data['workflow']['routes']);
@@ -70,7 +75,7 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             $this->processes->createWebEntryEvent($data['workflow']['process']['PRO_UID'], $data['workflow']['process']['PRO_CREATE_USER'], $data['workflow']['webEntryEvent']);
             $this->processes->createMessageType($data['workflow']['messageType']);
             $this->processes->createMessageTypeVariable($data['workflow']['messageTypeVariable']);
-            $this->processes->createMessageEventDefinition($data['workflow']['process']['PRO_UID'],$data['workflow']['messageEventDefinition']);
+            $this->processes->createMessageEventDefinition($data['workflow']['process']['PRO_UID'], $data['workflow']['messageEventDefinition']);
             $this->processes->createScriptTask($data['workflow']['process']['PRO_UID'], $data['workflow']['scriptTask']);
             $this->processes->createTimerEvent($data['workflow']['process']['PRO_UID'], $data['workflow']['timerEvent']);
             $this->processes->createEmailEvent($data['workflow']['process']['PRO_UID'], $data['workflow']['emailEvent']);
