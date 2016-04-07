@@ -81,7 +81,7 @@ store = new Ext.data.GroupingStore( {
     store: store,
     tbar:[
       {
-        text: _("ID_RESEND_EMAIL"),
+        text: _("ID_RESEND"),
         iconCls: 'button_menu_ext ss_sprite  ss_world',
         handler:ForwardEmail
       }
@@ -218,7 +218,7 @@ function ForwardEmail(){
   } else {
      Ext.Msg.show({
       title:'',
-      msg:  _("ID_SELECT_ITEM_FROM_LIST"),
+      msg:  _("ID_NO_SELECTION_WARNING"),
       buttons: Ext.Msg.INFO,
       fn: function(){},
       animEl: 'elId',
