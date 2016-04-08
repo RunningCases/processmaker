@@ -251,7 +251,7 @@ Ext.onReady(function(){
     //Code export - exportGranular (handle)
     var exportProcessOption;
     /*----------------------------------********---------------------------------*/
-    if (true) {
+    if (isGranularFeature) {
         exportProcessOption = {
             xtype: "tbsplit",
             id: "export",
@@ -532,7 +532,7 @@ Ext.onReady(function(){
     //code export - exportGranular (handler)
     var menuExportOption;
     /*----------------------------------********---------------------------------*/
-    if (true) {
+    if (isGranularFeature) {
         menuExportOption = {
             text: _("ID_EXPORT"),
             icon: "/images/export.png",
