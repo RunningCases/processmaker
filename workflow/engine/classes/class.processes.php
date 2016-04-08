@@ -1503,6 +1503,26 @@ class Processes
     }
 
     /**
+     * This string replace duplicated routes based on the tasks origin and end
+     * if the route existed is removed and regenerated since probably the last
+     * data is an updated version and we need a different functionality than the
+     * createRouteRows method.
+     * @param $aRoutes array
+     * @return $oTask Tasks array
+     */
+    public function replaceRouteRows($aRoutes)
+    {
+        foreach ($aRoutes as $routeData) {
+            $route = new \Route();
+            foreach ($route->routeExistsFiltered($routeData) as $duplicatedRoute) {
+                $routeData = array_replace_recursive($duplicatedRoute, $routeData);
+                $route->remove($duplicatedRoute['ROU_UID']);
+            }
+            $route->create($routeData);
+        }
+    }
+
+    /**
      * Update Route Rows from a $aRoutes array data and returns those in an array.
      *
      * @param $aRoutes array
