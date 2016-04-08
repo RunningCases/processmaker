@@ -161,26 +161,39 @@ class GranularImporter
     public function import($objectList)
     {
         try {
-            $objectList = $this->reorderImportOrder($objectList);
-            foreach ($objectList as $data) {
-                $objClass = $this->factory->create($data['name']);
-                if (is_object($objClass)) {
-                    $dataImport = $data['data'][$data['name']];
-                    $replace = ($data['value'] == 'replace') ? true : false;
-                    $migratorData = $objClass->import($dataImport, $replace);
+            if (\PMLicensedFeatures::getSingleton()->verifyfeature
+            ("jXsSi94bkRUcVZyRStNVExlTXhEclVadGRRcG9xbjNvTWVFQUF3cklKQVBiVT0=")
+            ) {
+                $objectList = $this->reorderImportOrder($objectList);
+                foreach ($objectList as $data) {
+                    $objClass = $this->factory->create($data['name']);
+                    if (is_object($objClass)) {
+                        $dataImport = $data['data'][$data['name']];
+                        $replace = ($data['value'] == 'replace') ? true : false;
+                        $migratorData = $objClass->import($dataImport, $replace);
+                    }
                 }
+            } else {
+                $exception = new ImportException();
+                $exception->setNameException(\G::LoadTranslation('ID_NO_LICENSE_SELECTIVEIMPORTEXPORT_ENABLED'));
+                throw($exception);
             }
+
         } catch (\Exception $e) {
-            $exception = new ImportException('Please review your current process definition
+            if (get_class($e) === 'ProcessMaker\BusinessModel\Migrator\ImportException') {
+                throw $e;
+            } else {
+                $exception = new ImportException('Please review your current process definition
                 for missing elements, it\'s recommended that a new process should be exported
                 with all the elements.');
-            throw $exception;
+                throw $exception;
+            }
         }
     }
 
     /**
      * @param $objectList
-     * @param bool $generateUid
+     * @param $option
      * @return bool
      * @throws \Exception
      */

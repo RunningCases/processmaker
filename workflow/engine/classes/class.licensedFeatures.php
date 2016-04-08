@@ -282,6 +282,24 @@ class PMLicensedFeatures
                 "type"           => "features",
                 "url"            => "",
                 "version"        => ""
+            ),
+            15 => array(),
+            16 => array(
+                "description" => "Selective Import Export.",
+                "enabled" => false,
+                "id" => "selectiveImportExport",
+                "latest_version" => "",
+                "log" => null,
+                "name" => "selectiveImportExport",
+                "nick" => "selectiveImportExport",
+                "progress" => 0,
+                "publisher" => "Colosa",
+                "release_type" => "localRegistry",
+                "status" => "ready",
+                "store" => "00000000000000000000000000010016",
+                "type" => "features",
+                "url" => "",
+                "version" => ""
             )
         );
 
