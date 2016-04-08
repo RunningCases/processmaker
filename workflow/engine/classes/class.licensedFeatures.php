@@ -283,7 +283,24 @@ class PMLicensedFeatures
                 "url"            => "",
                 "version"        => ""
             ),
-            15 => array(),
+            15 => array(
+                "description" => "This Feature will allow to store all input, output and attached documents generated
+                 in your processes in Google Drive.",
+                "enabled" => false,
+                "id" => "pmGoogleDrive",
+                "latest_version" => "",
+                "log" => null,
+                "name" => "pmGoogleDrive",
+                "nick" => "pmGoogleDrive",
+                "progress" => 0,
+                "publisher" => "Colosa",
+                "release_type" => "localRegistry",
+                "status" => "ready",
+                "store" => "00000000000000000000000000010015",
+                "type" => "features",
+                "url" => "",
+                "version" => ""
+            ),
             16 => array(
                 "description" => "Selective Import Export.",
                 "enabled" => false,
