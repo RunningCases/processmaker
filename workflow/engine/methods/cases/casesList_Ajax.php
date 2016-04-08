@@ -62,16 +62,15 @@ function filterUserListArray($users = array(), $filter = '')
 if ($actionAjax == "userValues") {
     //global $oAppCache;
     $oAppCache = new AppCacheView();
-    $action = isset($_REQUEST['action']) ? $_REQUEST['action'] : null;
-    $query = isset($_REQUEST['query']) ? $_REQUEST['query'] : null;
+    $action = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : null;
+    $query = isset( $_REQUEST['query'] ) ? $_REQUEST['query'] : null;
     $users = array();
-    $users[] = array("USR_UID" => "", "USR_FULLNAME" => G::LoadTranslation("ID_ALL_USERS"));
-    $users[] = array("USR_UID" => "CURRENT_USER", "USR_FULLNAME" => G::LoadTranslation("ID_CURRENT_USER"));
+    $users[] = array ("USR_UID" => "", "USR_FULLNAME" => G::LoadTranslation( "ID_ALL_USERS" ));
+    $users[] = array ("USR_UID" => "CURRENT_USER", "USR_FULLNAME" => G::LoadTranslation( "ID_CURRENT_USER" ));
     $users = filterUserListArray($users, $query);
     //now get users, just for the Search action
     switch ($action) {
         case 'search_simple':
-        case 'to_reassign':
         case 'search':
             G::LoadClass("configuration");
 
@@ -88,10 +87,10 @@ if ($actionAjax == "userValues") {
             $cUsers->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
 
             if (!is_null($query)) {
-                $filters = $cUsers->getNewCriterion(UsersPeer::USR_FIRSTNAME, '%' . $query . '%', Criteria::LIKE)
-                    ->addOr($cUsers->getNewCriterion(UsersPeer::USR_LASTNAME, '%' . $query . '%', Criteria::LIKE)
-                        ->addOr($cUsers->getNewCriterion(UsersPeer::USR_USERNAME, '%' . $query . '%', Criteria::LIKE)));
-                $cUsers->addAnd($filters);
+                $filters = $cUsers->getNewCriterion( UsersPeer::USR_FIRSTNAME, '%'.$query.'%', Criteria::LIKE )->addOr(
+                    $cUsers->getNewCriterion( UsersPeer::USR_LASTNAME, '%'.$query.'%', Criteria::LIKE )->addOr(
+                        $cUsers->getNewCriterion( UsersPeer::USR_USERNAME, '%'.$query.'%', Criteria::LIKE )));
+                $cUsers->addOr( $filters );
             }
             $cUsers->setLimit(20);
             $cUsers->addAscendingOrderByColumn(UsersPeer::TABLE_NAME . "." . $conf->userNameFormatGetFirstFieldByUsersTable());
@@ -163,13 +162,32 @@ if ($actionAjax == "processListExtJs") {
 }
 
 if ($actionAjax == "getUsersToReassign") {
-    $_SESSION['TASK'] = $_REQUEST['TAS_UID'];
-    $case = new Cases();
-    $task = new Task();
-    $tasks = $task->load($_SESSION['TASK']);
-    $result = new stdClass();
-    $result->data = $case->getUsersToReassign($_SESSION['TASK'], $_SESSION['USER_LOGGED'], $_SESSION['PRO_UID']);
-    print G::json_encode($result);
+    $taskUid  = $_POST['taskUid'];
+    $search   = $_POST['search'];
+    $pageSize = $_POST['pageSize'];
+
+    $sortField = (isset($_POST['sort']))?  $_POST['sort'] : '';
+    $sortDir   = (isset($_POST['dir']))?   $_POST['dir'] : '';
+    $start     = (isset($_POST['start']))? $_POST['start'] : 0;
+    $limit     = (isset($_POST['limit']))? $_POST['limit'] : $pageSize;
+
+    $response = [];
+
+    try {
+        $case = new \ProcessMaker\BusinessModel\Cases();
+
+        $result = $case->getUsersToReassign($_SESSION['USER_LOGGED'], $taskUid, ['filter' => $search], $sortField, $sortDir, $start, $limit);
+
+        $response['status'] = 'OK';
+        $response['success'] = true;
+        $response['resultTotal'] = $result['total'];
+        $response['resultRoot'] = $result['data'];
+    } catch (Exception $e) {
+        $response['status'] = 'ERROR';
+        $response['message'] = $e->getMessage();
+    }
+
+    echo G::json_encode($response);
 }
 if ($actionAjax == 'reassignCase') {
 
