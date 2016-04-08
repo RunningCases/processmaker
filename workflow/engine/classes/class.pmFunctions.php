@@ -250,6 +250,9 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
         ((isset($blackList['tables']))? $blackList['tables'] : '') .
         ((isset($blackList['pmtables']))? $blackList['pmtables'] : '')
     );
+    if (!class_exists('PHPSQLParser')) {
+        G::LoadSystem('phpSqlParser');
+    }
     $parseSqlStm = new PHPSQLParser($SqlStatement);
     try {
         //Parsing queries and check the blacklist
