@@ -31,20 +31,25 @@ class GranularExporter
     public function export($objectList)
     {
         try {
-            $exportObject = new ExportObjects();
-            $objectList = $exportObject->mapObjectList($objectList);
-            $this->beforeExport($objectList);
-            foreach ($objectList as $data) {
-                $migrator = $this->factory->create($data);
-                $migratorData = $migrator->export($this->prjuid);
-                $this->mergeData($migratorData);
+            if (\PMLicensedFeatures::getSingleton()->verifyfeature
+            ("jXsSi94bkRUcVZyRStNVExlTXhEclVadGRRcG9xbjNvTWVFQUF3cklKQVBiVT0=")
+            ) {
+                $exportObject = new ExportObjects();
+                $objectList = $exportObject->mapObjectList($objectList);
+                $this->beforeExport($objectList);
+                foreach ($objectList as $data) {
+                    $migrator = $this->factory->create($data);
+                    $migratorData = $migrator->export($this->prjuid);
+                    $this->mergeData($migratorData);
+                }
+                return $this->publish();
+            } else {
+                $exception = new ExportException();
+                $exception->setNameException(\G::LoadTranslation('ID_NO_LICENSE_SELECTIVEIMPORTEXPORT_ENABLED'));
+                throw($exception);
             }
-            return $this->publish();
-        } catch (ExportException $e) {
-            return array(
-                'success' => false,
-                'message' => $e->getMessage()
-            );
+        } catch (\Exception $e) {
+            throw $e;
         }
     }
 
