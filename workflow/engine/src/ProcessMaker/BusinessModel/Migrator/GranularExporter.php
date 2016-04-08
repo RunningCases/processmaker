@@ -55,8 +55,8 @@ class GranularExporter
         $projectData = $bpmnProject->getProject();
         $getProjectName = $this->publisher->truncateName($projectData['PRJ_NAME'], false);
         $outputDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
-        $version = \ProcessMaker\Util\Common::getLastVersion($outputDir . $getProjectName . "-*.pmx") + 1;
-        $outputFilename = $outputDir . sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx");
+        $version = \ProcessMaker\Util\Common::getLastVersion($outputDir . $getProjectName . "-*.pmx2") + 1;
+        $outputFilename = $outputDir . sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx2");
 
         $bpnmDefinition = array(
                         'ACTIVITY'      => [],
