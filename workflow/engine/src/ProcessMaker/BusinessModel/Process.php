@@ -538,20 +538,42 @@ class Process
 
             $trigger = new \ProcessMaker\BusinessModel\Trigger();
 
+            /**
+             * Try catch block is added to escape the exception and continue editing 
+             * the properties of the process, otherwise there is no way to edit 
+             * the properties that the exception is thrown: trigger nonexistent. 
+             * The same goes for the similar blocks.
+             */
             if (isset($arrayData["PRO_TRI_DELETED"]) && $arrayData["PRO_TRI_DELETED"] . "" != "") {
-                $trigger->throwExceptionIfNotExistsTrigger($arrayData["PRO_TRI_DELETED"], $processUid, $this->arrayFieldNameForException["processTriDeleted"]);
+                try {
+                    $trigger->throwExceptionIfNotExistsTrigger($arrayData["PRO_TRI_DELETED"], $processUid, $this->arrayFieldNameForException["processTriDeleted"]);
+                } catch (\Exception $e) {
+                    
+                }
             }
 
             if (isset($arrayData["PRO_TRI_CANCELED"]) && $arrayData["PRO_TRI_CANCELED"] . "" != "") {
-                $trigger->throwExceptionIfNotExistsTrigger($arrayData["PRO_TRI_CANCELED"], $processUid, $this->arrayFieldNameForException["processTriCanceled"]);
+                try {
+                    $trigger->throwExceptionIfNotExistsTrigger($arrayData["PRO_TRI_CANCELED"], $processUid, $this->arrayFieldNameForException["processTriCanceled"]);
+                } catch (\Exception $e) {
+                    
+                }
             }
 
             if (isset($arrayData["PRO_TRI_PAUSED"]) && $arrayData["PRO_TRI_PAUSED"] . "" != "") {
-                $trigger->throwExceptionIfNotExistsTrigger($arrayData["PRO_TRI_PAUSED"], $processUid, $this->arrayFieldNameForException["processTriPaused"]);
+                try {
+                    $trigger->throwExceptionIfNotExistsTrigger($arrayData["PRO_TRI_PAUSED"], $processUid, $this->arrayFieldNameForException["processTriPaused"]);
+                } catch (\Exception $e) {
+                    
+                }
             }
 
             if (isset($arrayData["PRO_TRI_REASSIGNED"]) && $arrayData["PRO_TRI_REASSIGNED"] . "" != "") {
-                $trigger->throwExceptionIfNotExistsTrigger($arrayData["PRO_TRI_REASSIGNED"], $processUid, $this->arrayFieldNameForException["processTriReassigned"]);
+                try {
+                    $trigger->throwExceptionIfNotExistsTrigger($arrayData["PRO_TRI_REASSIGNED"], $processUid, $this->arrayFieldNameForException["processTriReassigned"]);
+                } catch (\Exception $e) {
+                    
+                }
             }
 
             if (isset($arrayData["PRO_PARENT"])) {

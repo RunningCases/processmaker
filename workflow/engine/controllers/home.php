@@ -100,7 +100,6 @@ class Home extends Controller
         $proData = $process->getAllProcesses( $start, $limit, null, null, false, true );
         $processList = $case->getStartCasesPerType( $_SESSION['USER_LOGGED'], 'category' );
 
-        unset( $processList[0] );
         $processesList = array ();
 
         foreach ($processList as $key => $valueProcess) {
@@ -426,12 +425,27 @@ class Home extends Controller
             $dataList['dir']      = $dir;
             $dataList['sort']     = $sort;
             $dataList['category'] = $category;
+            $dataList['action']   = $type;
             /*----------------------------------********---------------------------------*/
             if (true) {
                 //In enterprise version this block of code should always be executed
                 //In community version this block of code is deleted and is executed the other
                 $list = new \ProcessMaker\BusinessModel\Lists();
-                $cases = $list->getList('inbox', $dataList);
+                $listName = 'inbox';
+                switch ($type) {
+                    case 'draft':
+                    case 'todo':
+                        $listName = 'inbox';
+                        $cases = $list->getList($listName, $dataList);
+                        break;
+                    case 'unassigned':
+                        $case = new \ProcessMaker\BusinessModel\Cases();
+                        $cases = $case->getList($dataList);
+                        foreach ($cases['data'] as &$value) {
+                            $value = array_change_key_case($value, CASE_UPPER);
+                        }
+                        break;
+                }
             } else {
             /*----------------------------------********---------------------------------*/
                 $case = new \ProcessMaker\BusinessModel\Cases();
@@ -439,13 +453,13 @@ class Home extends Controller
                 foreach ($cases['data'] as &$value) {
                     $value = array_change_key_case($value, CASE_UPPER);
                 }
-                if(!isset($cases['totalCount'])){
-                    $cases['totalCount'] = $cases['total'];
-                }
             /*----------------------------------********---------------------------------*/
             }
             /*----------------------------------********---------------------------------*/
 
+        }
+        if(!isset($cases['totalCount'])){
+            $cases['totalCount'] = $cases['total'];
         }
 
         // formating & complitting apps data with 'Notes'

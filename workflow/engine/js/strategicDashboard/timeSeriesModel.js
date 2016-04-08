@@ -1,7 +1,7 @@
 var TimeSeriesModel = function (oauthToken, server, workspace, userId, strings) {
     this.server = server;
     this.workspace = workspace;
-    this.baseUrl = "/api/1.0/" + workspace + "/";
+    this.baseUrl = server;
     this.oauthToken = oauthToken;
 	this.helper = new ViewDashboardHelper();
 	this.cache = {};

@@ -1236,6 +1236,15 @@ class Cases
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(ListPausedPeer::APP_UID, $sAppUid);
             ListPausedPeer::doDelete($oCriteria);
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListMyInboxPeer::APP_UID, $sAppUid);
+            ListMyInboxPeer::doDelete($oCriteria);
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListParticipatedHistoryPeer::APP_UID, $sAppUid);
+            ListParticipatedHistoryPeer::doDelete($oCriteria);
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListCompletedPeer::APP_UID, $sAppUid);
+            ListCompletedPeer::doDelete($oCriteria);
             /*----------------------------------********---------------------------------*/
             return $result;
         } catch (exception $e) {
@@ -1560,8 +1569,8 @@ class Cases
             $pausedTask[] = $row;
         }
 
-        if (count($pausedTask) == 0) {
-            return false; // return false because there is not any delegation for this task.
+        if (count($pausedTask) === 0) {
+            return array(); // return false because there is not any delegation for this task.
         } else {
             return array('pause' => $pausedTask);
         }
@@ -4558,7 +4567,7 @@ class Cases
      * @return object
      */
 
-    public function getAllUploadedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID)
+    public function getAllUploadedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex = 0)
     {
         G::LoadClass("configuration");
 
@@ -4578,7 +4587,7 @@ class Cases
             $listing = $oPluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST, $folderData);
         }
 
-        $aObjectPermissions = $this->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
+        $aObjectPermissions = $this->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex);
 
         if (!is_array($aObjectPermissions)) {
             $aObjectPermissions = array(
@@ -4871,7 +4880,7 @@ class Cases
      * @return object
      */
 
-    public function getAllGeneratedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID)
+    public function getAllGeneratedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex =0)
     {
         G::LoadClass("configuration");
 
@@ -4891,7 +4900,7 @@ class Cases
             $listing = $oPluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST, $folderData);
         }
 
-        $aObjectPermissions = $this->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
+        $aObjectPermissions = $this->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex);
         if (!is_array($aObjectPermissions)) {
             $aObjectPermissions = array(
                 'DYNAFORMS' => array(-1),
@@ -5114,12 +5123,12 @@ class Cases
      * @return object
      */
 
-    public function getallDynaformsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID)
+    public function getallDynaformsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex = 0)
     {
         //check OBJECT_PERMISSION table
         $this->verifyTable();
 
-        $aObjectPermissions = $this->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
+        $aObjectPermissions = $this->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex);
         if (!is_array($aObjectPermissions)) {
             $aObjectPermissions = array(
                 'DYNAFORMS' => array(-1),
@@ -5519,28 +5528,28 @@ class Cases
      * @param  Process ID, Application ID, Task ID and User ID
      * @return Array within all user permitions all objects' types
      */
-    public function getAllObjects($PRO_UID, $APP_UID, $TAS_UID = '', $USR_UID = '')
+    public function getAllObjects($PRO_UID, $APP_UID, $TAS_UID = '', $USR_UID = '', $delIndex = 0)
     {
         $ACTIONS = Array('VIEW', 'BLOCK', 'DELETE'); //TO COMPLETE
         $MAIN_OBJECTS = Array();
         $RESULT_OBJECTS = Array();
 
         foreach ($ACTIONS as $action) {
-            $MAIN_OBJECTS[$action] = $this->getAllObjectsFrom($PRO_UID, $APP_UID, $TAS_UID, $USR_UID, $action);
+            $MAIN_OBJECTS[$action] = $this->getAllObjectsFrom($PRO_UID, $APP_UID, $TAS_UID, $USR_UID, $action, $delIndex);
         }
         /* ADDITIONAL OPERATIONS */
         /*         * * BETWEN VIEW AND BLOCK** */
         $RESULT_OBJECTS['DYNAFORMS'] = G::arrayDiff(
-                        $MAIN_OBJECTS['VIEW']['DYNAFORMS'], $MAIN_OBJECTS['BLOCK']['DYNAFORMS']
+            $MAIN_OBJECTS['VIEW']['DYNAFORMS'], $MAIN_OBJECTS['BLOCK']['DYNAFORMS']
         );
         $RESULT_OBJECTS['INPUT_DOCUMENTS'] = G::arrayDiff(
-                        $MAIN_OBJECTS['VIEW']['INPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['INPUT_DOCUMENTS']
+            $MAIN_OBJECTS['VIEW']['INPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['INPUT_DOCUMENTS']
         );
         $RESULT_OBJECTS['OUTPUT_DOCUMENTS'] = array_merge_recursive(
-                G::arrayDiff($MAIN_OBJECTS['VIEW']['OUTPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['OUTPUT_DOCUMENTS']), G::arrayDiff($MAIN_OBJECTS['DELETE']['OUTPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['OUTPUT_DOCUMENTS'])
+            G::arrayDiff($MAIN_OBJECTS['VIEW']['OUTPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['OUTPUT_DOCUMENTS']), G::arrayDiff($MAIN_OBJECTS['DELETE']['OUTPUT_DOCUMENTS'], $MAIN_OBJECTS['BLOCK']['OUTPUT_DOCUMENTS'])
         );
         $RESULT_OBJECTS['CASES_NOTES'] = G::arrayDiff(
-                        $MAIN_OBJECTS['VIEW']['CASES_NOTES'], $MAIN_OBJECTS['BLOCK']['CASES_NOTES']
+            $MAIN_OBJECTS['VIEW']['CASES_NOTES'], $MAIN_OBJECTS['BLOCK']['CASES_NOTES']
         );
         array_push($RESULT_OBJECTS["DYNAFORMS"], -1, -2);
         array_push($RESULT_OBJECTS['INPUT_DOCUMENTS'], -1);
@@ -5793,10 +5802,8 @@ class Cases
                     case 'DYNAFORM':
                         $oCriteria = new Criteria('workflow');
                         $oCriteria->add(ApplicationPeer::APP_UID, $APP_UID);
-                        if ($aCase['APP_STATUS'] != 'COMPLETED') {
-                            if ($TASK_SOURCE != '' && $TASK_SOURCE != "0") {
-                                $oCriteria->add(StepPeer::TAS_UID, $TASK_SOURCE);
-                            }
+                        if ($TASK_SOURCE != '' && $TASK_SOURCE != "0") {
+                            $oCriteria->add(StepPeer::TAS_UID, $TASK_SOURCE);
                         }
                         if ($O_UID != '' && $O_UID != '0') {
                             $oCriteria->add(DynaformPeer::DYN_UID, $O_UID);

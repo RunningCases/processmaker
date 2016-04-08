@@ -1217,10 +1217,10 @@ class BpmnWorkflow extends Project\Bpmn
         }
     }
 
-    public function remove($flagForceRemoveProject = false, $flagRemoveCases = true)
+    public function remove($flagForceRemoveProject = false, $flagRemoveCases = true, $onlyDiagram = false)
     {
         parent::remove($flagForceRemoveProject);
-        $this->wp->remove($flagRemoveCases);
+        $this->wp->remove($flagRemoveCases, $onlyDiagram);
     }
 
     public static function createFromStruct(array $projectData, $generateUid = true)

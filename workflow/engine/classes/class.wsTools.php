@@ -737,6 +737,7 @@ class workspaceTools
         $this->upgradeSchema($systemSchemaRbac, false, true, $onedb); // perform Upgrade to Rbac
         $this->upgradeData();
         $this->checkRbacPermissions();//check or add new permissions
+        $this->checkSequenceNumber();
 
         //There records in table "EMAIL_SERVER"
         $criteria = new Criteria("workflow");
@@ -2305,6 +2306,18 @@ class workspaceTools
             }
         } else {
             CLI::logging("    All roles permissions already updated \n");
+        }
+    }
+    
+    public function checkSequenceNumber()
+    {
+        $oRow = SequencesPeer::retrieveByPK("APP_NUMBER");
+        $oAppSequence = new AppSequence();
+        if (!is_null($oRow)) {
+            $aFields = $oRow->toArray(BasePeer::TYPE_FIELDNAME);
+            $oAppSequence->updateSequenceNumber($aFields['SEQ_VALUE']);
+        } else {
+            $oAppSequence->updateSequenceNumber(0);
         }
     }
 }

@@ -225,7 +225,7 @@ class RBAC
             "PM_SETUP_USERS_AUTHENTICATION_SOURCES", "PER_NAME" => "Setup User Authentication Sources"
         ), array("PER_UID" => "00000000000000000000000000000035", "PER_CODE" => "PM_SETUP_LOGS", "PER_NAME" => "Setup
         Logs"
-        ), array("PER_UID" => "00000000000000000000000000000036", "PER_CODE" => "DELETE_PROCESS_CASES", "PER_NAME" =>
+        ), array("PER_UID" => "00000000000000000000000000000036", "PER_CODE" => "PM_DELETE_PROCESS_CASES", "PER_NAME" =>
             "Delete process cases"
         ), array("PER_UID" => "00000000000000000000000000000037", "PER_CODE" => "PM_EDITPERSONALINFO_CALENDAR",
             "PER_NAME" => "Edit personal info Calendar"

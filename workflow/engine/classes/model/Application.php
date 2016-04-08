@@ -354,7 +354,7 @@ class Application extends BaseApplication
      */
     public function create($sProUid, $sUsrUid)
     {
-        require_once ("classes/model/Sequences.php");
+        require_once ("classes/model/AppSequence.php");
         $con = Propel::getConnection('workflow');
 
         try {
@@ -378,16 +378,11 @@ class Application extends BaseApplication
             $c = new Criteria();
             $c->clearSelectColumns();
 
-            $oSequences = new Sequences();
-            $oSequences->lockSequenceTable();
-
-            $maxNumber = $oSequences->getSequeceNumber("APP_NUMBER");
+            $oAppSequence = new AppSequence();
+            $maxNumber = $oAppSequence->sequenceNumber();
 
             $this->setAppNumber($maxNumber);
             $this->setAppData(serialize(['APP_NUMBER' => $maxNumber, 'PIN' => $pin]));
-
-            $oSequences->changeSequence('APP_NUMBER', $maxNumber);
-            $oSequences->unlockSequenceTable();
 
             if ($this->validate()) {
                 $con->begin();

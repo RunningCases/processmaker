@@ -8,7 +8,8 @@ class XmlImporter extends Importer
      */
     protected $dom;
     protected $root;
-    protected $version = "";
+    protected $version = '';
+    protected $objects = '';
 
     public function __construct()
     {
@@ -129,10 +130,14 @@ class XmlImporter extends Importer
                 );
             }
         }
+        //Get the ProcessObject
+        $this->objects = (isset($this->metadata['export_objects'])) ? $this->metadata['export_objects'] : '';
 
         return array(
-            "tables" => $tables,
-            "files" => array("workflow" => $wfFiles, "bpmn" => array())
+            "tables"  => $tables,
+            "files"   => array("workflow" => $wfFiles, "bpmn" => array()),
+            "version" => $this->getVersion(),
+            "objects" => $this->getObjects()
         );
     }
 
@@ -143,6 +148,23 @@ class XmlImporter extends Importer
         } elseif ($node->nodeType == XML_TEXT_NODE || $node->nodeType == XML_CDATA_SECTION_NODE) {
             return (string) simplexml_import_dom($node->parentNode);
         }
+    }
+
+    /**
+     * Gets the $version value
+     * @return string
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+    /**
+     * Gets the $objects value
+     * @return string
+     */
+    public function getObjects()
+    {
+        return $this->objects;
     }
 }
 
