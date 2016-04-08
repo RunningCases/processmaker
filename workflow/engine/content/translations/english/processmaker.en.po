@@ -27203,6 +27203,114 @@ msgstr "Add to existing"
 msgid "Replace all"
 msgstr "Replace all"
 
+# TRANSLATION
+# LABEL/ID_PROCESS_DEFINITION_NON_EXISTENT
+#: LABEL/ID_PROCESS_DEFINITION_NON_EXISTENT
+msgid "The PROCESS_DEFINITION is required to complete the process."
+msgstr "The PROCESS_DEFINITION is required to complete the process."
+
+# TRANSLATION
+# LABEL/ID_TEMPLATE_PARAMETER_EMPTY
+#: LABEL/ID_TEMPLATE_PARAMETER_EMPTY
+msgid "The TEMPLATE parameter is empty."
+msgstr "The TEMPLATE parameter is empty."
+
+# TRANSLATION
+# LABEL/ID_PRO_UID_PARAMETER_IS_EMPTY
+#: LABEL/ID_PRO_UID_PARAMETER_IS_EMPTY
+msgid "The PRO_UID parameter is empty."
+msgstr "The PRO_UID parameter is empty."
+
+# TRANSLATION
+# LABEL/ID_TAS_UID_PARAMETER_IS_EMPTY
+#: LABEL/ID_TAS_UID_PARAMETER_IS_EMPTY
+msgid "The TAS_UID parameter is empty."
+msgstr "The TAS_UID parameter is empty."
+
+# TRANSLATION
+# LABEL/ID_DYN_UID_PARAMETER_IS_EMPTY
+#: LABEL/ID_DYN_UID_PARAMETER_IS_EMPTY
+msgid "The DYN_UID parameter is empty."
+msgstr "The DYN_UID parameter is empty."
+
+# TRANSLATION
+# LABEL/ID_EMAIL_RESENT_TO
+#: LABEL/ID_EMAIL_RESENT_TO
+msgid "The email was resend to"
+msgstr "The email was resend to"
+
+# TRANSLATION
+# LABEL/ID_USER_NOT_RESPONDED_REQUEST
+#: LABEL/ID_USER_NOT_RESPONDED_REQUEST
+msgid "The user has not responded to this request."
+msgstr "The user has not responded to this request."
+
+# TRANSLATION
+# LABEL/ID_UNEXPECTED_ERROR_OCCURRED_PLEASE
+#: LABEL/ID_UNEXPECTED_ERROR_OCCURRED_PLEASE
+msgid "An unexpected error occurred please try again later."
+msgstr "An unexpected error occurred please try again later."
+
+# TRANSLATION
+# LABEL/ID_UNABLE_TO_SEND_EMAIL
+#: LABEL/ID_UNABLE_TO_SEND_EMAIL
+msgid "Unable to send email, the task is closed."
+msgstr "Unable to send email, the task is closed."
+
+# TRANSLATION
+# LABEL/ID_PLEASE_TRY_LATER
+#: LABEL/ID_PLEASE_TRY_LATER
+msgid "Please try later."
+msgstr "Please try later."
+
+# TRANSLATION
+# LABEL/ID_THERE_PROBLEM_SENDING_EMAIL
+#: LABEL/ID_THERE_PROBLEM_SENDING_EMAIL
+msgid "There was a problem sending the email to"
+msgstr "There was a problem sending the email to"
+
+# TRANSLATION
+# LABEL/ID_MAFE_c5d84b6c19cb058b7b5471b30e926823
+#: LABEL/ID_MAFE_c5d84b6c19cb058b7b5471b30e926823
+msgid "Invalid operation: Delete message flow before converting it to"
+msgstr "Invalid operation: Delete message flow before converting it to"
+
+# TRANSLATION
+# LABEL/ID_MAFE_be1a57f7e1cfe44284e71c5175874967
+#: LABEL/ID_MAFE_be1a57f7e1cfe44284e71c5175874967
+msgid "[LABEL/ID_MAFE_be1a57f7e1cfe44284e71c5175874967] Event"
+msgstr "Event"
+
+# TRANSLATION
+# LABEL/ID_MAFE_d8012aca7276ee78d2e2bd33861d72a1
+#: LABEL/ID_MAFE_d8012aca7276ee78d2e2bd33861d72a1
+msgid "At least one object should be selected in order to execute the action."
+msgstr "At least one object should be selected in order to execute the action."
+
+# TRANSLATION
+# LABEL/ID_MAFE_7e8ad464ec9fa062e514fd034e6ea7a1
+#: LABEL/ID_MAFE_7e8ad464ec9fa062e514fd034e6ea7a1
+msgid "There are problems loading the process objects."
+msgstr "There are problems loading the process objects."
+
+# TRANSLATION
+# LABEL/ID_MAFE_f4b5974fd11406f8410fa7e8502a26a3
+#: LABEL/ID_MAFE_f4b5974fd11406f8410fa7e8502a26a3
+msgid "[LABEL/ID_MAFE_f4b5974fd11406f8410fa7e8502a26a3] Granular"
+msgstr "Granular"
+
+# TRANSLATION
+# LABEL/ID_MAFE_84f6ae383a4278397861eb8c783fe1d8
+#: LABEL/ID_MAFE_84f6ae383a4278397861eb8c783fe1d8
+msgid "[LABEL/ID_MAFE_84f6ae383a4278397861eb8c783fe1d8] Export Process Objects"
+msgstr "Export Process Objects"
+
+# TRANSLATION
+# LABEL/ID_MAFE_5e9df908eafa83cb51c0a3720e8348c7
+#: LABEL/ID_MAFE_5e9df908eafa83cb51c0a3720e8348c7
+msgid "[LABEL/ID_MAFE_5e9df908eafa83cb51c0a3720e8348c7] Check All"
+msgstr "Check All"
+
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
 #: text - ADD_TAB_NAME
