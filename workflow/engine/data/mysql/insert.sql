@@ -6053,7 +6053,25 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_EXPORT_PROCESS_OBJECTS','en','Export Process Objects','2016-03-30') ,
 ( 'LABEL','ID_IMPORT_PROCESS_OBJECTS','en','Import Process Objects','2016-03-30') ,
 ( 'LABEL','ID_ADD_TO_EXISTING','en','Add to existing','2016-03-30') ,
-( 'LABEL','ID_REPLACE_ALL','en','Replace all','2016-03-30') ;
+( 'LABEL','ID_REPLACE_ALL','en','Replace all','2016-03-30') ,
+( 'LABEL','ID_PROCESS_DEFINITION_NON_EXISTENT','en','The PROCESS_DEFINITION is required to complete the process.','2016-03-30') ,
+( 'LABEL','ID_TEMPLATE_PARAMETER_EMPTY','en','The TEMPLATE parameter is empty.','2016-03-30') ,
+( 'LABEL','ID_PRO_UID_PARAMETER_IS_EMPTY','en','The PRO_UID parameter is empty.','2016-03-30') ,
+( 'LABEL','ID_TAS_UID_PARAMETER_IS_EMPTY','en','The TAS_UID parameter is empty.','2016-03-30') ,
+( 'LABEL','ID_DYN_UID_PARAMETER_IS_EMPTY','en','The DYN_UID parameter is empty.','2016-03-30') ,
+( 'LABEL','ID_EMAIL_RESENT_TO','en','The email was resend to','2016-03-30') ,
+( 'LABEL','ID_USER_NOT_RESPONDED_REQUEST','en','The user has not responded to this request.','2016-03-30') ,
+( 'LABEL','ID_UNEXPECTED_ERROR_OCCURRED_PLEASE','en','An unexpected error occurred please try again later.','2016-03-30') ,
+( 'LABEL','ID_UNABLE_TO_SEND_EMAIL','en','Unable to send email, the task is closed.','2016-03-30') ,
+( 'LABEL','ID_PLEASE_TRY_LATER','en','Please try later.','2016-03-30') ,
+( 'LABEL','ID_THERE_PROBLEM_SENDING_EMAIL','en','There was a problem sending the email to','2016-03-30') ,
+( 'LABEL','ID_MAFE_c5d84b6c19cb058b7b5471b30e926823','en','Invalid operation: Delete message flow before converting it to','2016-03-30') ,
+( 'LABEL','ID_MAFE_be1a57f7e1cfe44284e71c5175874967','en','Event','2016-03-30') ,
+( 'LABEL','ID_MAFE_d8012aca7276ee78d2e2bd33861d72a1','en','At least one object should be selected in order to execute the action.','2016-03-30') ,
+( 'LABEL','ID_MAFE_7e8ad464ec9fa062e514fd034e6ea7a1','en','There are problems loading the process objects.','2016-03-30') ,
+( 'LABEL','ID_MAFE_f4b5974fd11406f8410fa7e8502a26a3','en','Granular','2016-03-30') ,
+( 'LABEL','ID_MAFE_84f6ae383a4278397861eb8c783fe1d8','en','Export Process Objects','2016-03-30') ,
+( 'LABEL','ID_MAFE_5e9df908eafa83cb51c0a3720e8348c7','en','Check All','2016-03-30') ;
 
 INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AD','','',' ','') ,
