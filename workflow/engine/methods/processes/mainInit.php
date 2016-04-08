@@ -95,5 +95,14 @@ if(sizeof($callBackFile)) {
 }
 $oHeadPublisher->assign("importProcessCallbackFile", $file);
 
+$isGranularFeature = false;
+/*----------------------------------********---------------------------------*/
+$licensedFeatures = & PMLicensedFeatures::getSingleton();
+if ($licensedFeatures->verifyfeature('jXsSi94bkRUcVZyRStNVExlTXhEclVadGRRcG9xbjNvTWVFQUF3cklKQVBiVT0=')) {
+    $isGranularFeature = true;
+}
+/*----------------------------------********---------------------------------*/
+$oHeadPublisher->assign("isGranularFeature", $isGranularFeature);
+
 G::RenderPage( 'publish', 'extJs' );
 
