@@ -274,17 +274,19 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
                         }
                     }
                 }
-                if(isset($nameOfTable)){
+                if(isset($nameOfTable) && $nameOfTable !== ''){
                     if(in_array($nameOfTable,$aListAllTables)){
                         G::SendTemporalMessage( 'ID_NOT_EXECUTE_QUERY', 'error', 'labels' );
                         throw new SQLException(G::loadTranslation('ID_NOT_EXECUTE_QUERY'));
                     }
                 }
-                if (!empty($arrayOfTables)) {
-                    foreach ($arrayOfTables as $row) {
-                        if(in_array($row, $aListAllTables)){
-                            G::SendTemporalMessage( 'ID_NOT_EXECUTE_QUERY', 'error', 'labels' );
-                            throw new SQLException(G::loadTranslation('ID_NOT_EXECUTE_QUERY'));
+                if (is_array($arrayOfTables)){
+                    foreach ($arrayOfTables as $row){
+                        if(!empty($row)){
+                            if(in_array($row, $aListAllTables)){
+                                G::SendTemporalMessage( 'ID_NOT_EXECUTE_QUERY', 'error', 'labels' );
+                                throw new SQLException(G::loadTranslation('ID_NOT_EXECUTE_QUERY'));
+                            }
                         }
                     }
                 }
