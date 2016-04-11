@@ -4227,7 +4227,7 @@
         <column name="APP_PRO_TITLE" type="VARCHAR" size="255" required="false" default=""/>
         <column name="APP_TAS_TITLE" type="VARCHAR" size="255" required="false" default=""/>
         <column name="APP_CREATE_DATE" type="TIMESTAMP" required="false"/>
-        <column name="APP_FINISH_DATE" type="TIMESTAMP" required="true"/>
+        <column name="APP_FINISH_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
         <column name="DEL_PREVIOUS_USR_UID" type="VARCHAR" size="32" default=""/>
         <column name="DEL_CURRENT_USR_USERNAME" type="VARCHAR" size="100" default=""/>
