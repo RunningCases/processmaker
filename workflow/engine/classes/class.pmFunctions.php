@@ -427,6 +427,17 @@ function evaluateFunction ($aGrid, $sExpresion)
         $pmScript->execute();
 
         $aGrid[$i] = $pmScript->aFields;
+        
+        //compatibility for var_label
+        foreach ($aFields as $j => $val) {
+            if (isset($aGrid[$i][$j . "_label"]) && empty($aGrid[$i][$j . "_label"]) && !empty($aGrid[$i][$j])) {
+                $aGrid[$i][$j . "_label"] = $aGrid[$i][$j];
+            }
+            if (substr($j, -6) !== "_label" && ($val !== $aGrid[$i][$j])) {
+                $aGrid[$i][$j . "_label"] = $aGrid[$i][$j];
+            }
+        }
+        //end
     }
     return $aGrid;
 }
