@@ -4109,6 +4109,25 @@ class Cases
     }
 
     /*
+     * Review is an unassigned Case
+     *
+     * @name isUnassignedPauseCase
+     * @param string $sAppUid
+     * @param string $iDelegation
+     * @return boolean
+     */
+    public static function isUnassignedPauseCase($sAppUid, $iDelegation){
+        $oAppDelegation = new AppDelegation();
+        $aFieldsDel = $oAppDelegation->Load($sAppUid, $iDelegation);
+        $usrUid = $aFieldsDel['USR_UID'];
+        if($usrUid === ''){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /*
      * pause a Case
      *
      * @name pauseCase
@@ -4121,6 +4140,11 @@ class Cases
 
     public function pauseCase($sApplicationUID, $iDelegation, $sUserUID, $sUnpauseDate = null)
     {
+        // Check if the case is unassigned
+        if($this->isUnassignedPauseCase($sApplicationUID, $iDelegation)){
+            throw new Exception( G::LoadTranslation("ID_CASE_NOT_PAUSED", array(G::LoadTranslation("ID_UNASSIGNED_STATUS"))) );
+        }
+
         $oApplication = new Application();
         $aFields = $oApplication->Load($sApplicationUID);
         //get the appthread row id ( APP_THREAD_INDEX' )

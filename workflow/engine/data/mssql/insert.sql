@@ -2738,11 +2738,13 @@ SELECT 'LABEL','ID_SELECT_FILE_PMT_IMPORT','en','Please select a .pmt file','201
   UNION ALL
 SELECT 'LABEL','ID_SELECT_FILE_PM_IMPORT','en','Please select a .pm file','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_PLEASE_SELECT_PLUGIN','en','Please select the plugin','2014-01-15' 
+SELECT 'LABEL','ID_PLEASE_SELECT_PLUGIN','en','Please select the plugin','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_NO_FIELD_FOUND','en','No fields found!','2014-01-15' 
   UNION ALL
 SELECT 'LABEL','ID_UNASSIGNED','en','Unassigned','2014-01-15' 
+  UNION ALL
+SELECT 'LABEL','ID_UNASSIGNED_STATUS','en','Unassigned Status','2016-04-11'
   UNION ALL
 SELECT 'LABEL','ID_CLAIM','en','Claim','2014-01-15' 
   UNION ALL

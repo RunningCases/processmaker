@@ -1315,80 +1315,76 @@ Ext.onReady(function(){
   Actions.pauseCase = function()
   {
 	  Ext.Ajax.request({
-          url : 'ajaxListener' ,
-          params : {action : 'verifySession'},
-          success: function ( result, request ) {
+        url : 'ajaxListener' ,
+        params : {action : 'verifySession'},
+        success: function ( result, request ) {
             var data = Ext.util.JSON.decode(result.responseText);
             if( data.lostSession ) {
-             Ext.Msg.show({
-                    title: _('ID_ERROR'),
-                    msg: data.message,
-                    animEl: 'elId',
-                    icon: Ext.MessageBox.ERROR,
-                    buttons: Ext.MessageBox.OK,
-                    fn : function(btn) {
-                      try
-                                  {
-                                    prnt = parent.parent;
-                                    top.location = top.location;
-                                  }
-                                catch (err)
-                                  {
-                                    parent.location = parent.location;
-                                  }
-                    }
-                  });
+              Ext.Msg.show({
+                title: _('ID_ERROR'),
+                msg: data.message,
+                animEl: 'elId',
+                icon: Ext.MessageBox.ERROR,
+                buttons: Ext.MessageBox.OK,
+                fn : function(btn) {
+                  try{
+                    prnt = parent.parent;
+                    top.location = top.location;
+                  } catch (err){
+                    parent.location = parent.location;
+                  }
+                }
+              });
             } else {
-           if (Ext.getCmp('noteReason').getValue() != '') {
-				var noteReasonTxt = _('ID_CASE_PAUSE_LABEL_NOTE') + ' ' + Ext.getCmp('noteReason').getValue();
-				} else {
-				var noteReasonTxt = '';
-				}
-				var notifyReasonVal = Ext.getCmp('notifyReason').getValue() == true ? 1 : 0;
-				var paramsNote = '&NOTE_REASON=' + noteReasonTxt + '&NOTIFY_PAUSE=' + notifyReasonVal;
+              if (Ext.getCmp('noteReason').getValue() != '') {
+                var noteReasonTxt = _('ID_CASE_PAUSE_LABEL_NOTE') + ' ' + Ext.getCmp('noteReason').getValue();
+              } else {
+                var noteReasonTxt = '';
+              }
+              var notifyReasonVal = Ext.getCmp('notifyReason').getValue() == true ? 1 : 0;
+              var paramsNote = '&NOTE_REASON=' + noteReasonTxt + '&NOTIFY_PAUSE=' + notifyReasonVal;
+              var unpauseDate = Ext.getCmp('unpauseDate').getValue();
+              if( unpauseDate == '') {
+                return;
+              } else {
+                unpauseDate = unpauseDate.format('Y-m-d');
+              }
 
-				var unpauseDate = Ext.getCmp('unpauseDate').getValue();
-				if( unpauseDate == '') {
-				//Ext.getCmp('submitPauseCase').setDisabled(true);
-				return;
-				} else
-				//Ext.getCmp('submitPauseCase').enable();
-
-				unpauseDate = unpauseDate.format('Y-m-d');
-
-				Ext.getCmp('unpauseFrm').getForm().submit({
-				waitTitle : "&nbsp;",
-        url:'ajaxListener',
-				method : 'post',
-				params : {
-				action: 'pauseCase',
-				unpauseDate:unpauseDate,
-				NOTE_REASON: noteReasonTxt,
-				NOTIFY_PAUSE: notifyReasonVal
-				},
-				waitMsg:'Pausing Case '+stringReplace("\\: ", "", _APP_NUM)+'...',
-				timeout : 36000,
-				success : function(res, req) {
-				if(req.result.success) {
-				try {
-				parent.notify('PAUSE CASE', req.result.msg);
-				}
-				catch (e) {
-				}
-				location.href = urlToRedirectAfterPause;
-				} else {
-				PMExt.error(_('ID_ERROR'), req.result.msg);
-				}
-				}
-				});
-		  }
-		  },
-          failure: function ( result, request) {
-           if (typeof(result.responseText) != 'undefined') {
-                   Ext.MessageBox.alert( _('ID_FAILED'), result.responseText);
-               }
-          }
-     });
+              Ext.getCmp('unpauseFrm').getForm().submit({
+                waitTitle : "&nbsp;",
+                url:'ajaxListener',
+                method : 'post',
+                params : {
+                  action: 'pauseCase',
+                  unpauseDate:unpauseDate,
+                  NOTE_REASON: noteReasonTxt,
+                  NOTIFY_PAUSE: notifyReasonVal
+                },
+                waitMsg:'Pausing Case '+stringReplace("\\: ", "", _APP_NUM)+'...',
+                timeout : 36000,
+                success : function(res, req) {
+                  if(req.result.success) {
+                    try {
+                      parent.notify('PAUSE CASE', req.result.msg);
+                    }catch (e) {
+                    }
+                    location.href = urlToRedirectAfterPause;
+                  } else {
+                    PMExt.error(_('ID_ERROR'), req.result.msg);
+                  }
+                },
+                failure: function ( res, req) {
+                  PMExt.error(_('ID_ERROR'), req.result.msg);
+                }
+              });
+            }
+          },
+        failure: function ( result, request) {
+            if (typeof(result.responseText) != 'undefined') {
+              Ext.MessageBox.alert( _('ID_FAILED'), result.responseText);
+            }
+        }
+    });
   }
 
   Actions.unpauseCase = function()

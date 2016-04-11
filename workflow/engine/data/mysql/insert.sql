@@ -2086,6 +2086,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_PLEASE_SELECT_PLUGIN','en','Please select the plugin','2014-01-15') ,
 ( 'LABEL','ID_NO_FIELD_FOUND','en','No fields found!','2014-01-15') ,
 ( 'LABEL','ID_UNASSIGNED','en','Unassigned','2014-01-15') ,
+( 'LABEL','ID_UNASSIGNED_STATUS','en','Unassigned Status','2016-04-11') ,
 ( 'LABEL','ID_CLAIM','en','Claim','2014-01-15') ,
 ( 'LABEL','ID_TABLE_INVALID_SYNTAX','en','Invalid syntax','2014-01-15') ,
 ( 'LABEL','ID_NO_PERMISSION_NO_PARTICIPATED','en','You do not have permission to see this case or you have not participated in it.','2014-01-15') ,
