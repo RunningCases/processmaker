@@ -3974,6 +3974,12 @@ msgid "Unassigned"
 msgstr "Unassigned"
 
 # TRANSLATION
+# LABEL/ID_UNASSIGNED_STATUS
+#: LABEL/ID_UNASSIGNED_STATUS
+msgid "Unassigned Status"
+msgstr "Unassigned Status"
+
+# TRANSLATION
 # LABEL/ID_CLAIM
 #: LABEL/ID_CLAIM
 msgid "Claim"
