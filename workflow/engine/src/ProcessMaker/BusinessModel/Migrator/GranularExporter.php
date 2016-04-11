@@ -150,7 +150,7 @@ class GranularExporter
     protected function mergeData($migratorData)
     {
         $migratorData = $this->verifyConsistenceData($migratorData);
-        $this->data = array_merge_recursive($this->data, $migratorData);
+        $this->data = array_replace_recursive($migratorData, $this->data);
     }
 
     /**
