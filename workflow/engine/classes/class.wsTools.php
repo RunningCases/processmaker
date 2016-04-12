@@ -1306,8 +1306,8 @@ class workspaceTools
             $flagFunction = shell_exec('mysql --version');
         }
 
-        $arrayRegExpEngineSearch = array("/\)\s*TYPE\s*=\s*(InnoDB)/i", "/\)\s*TYPE\s*=\s*(MyISAM)/i");
-        $arrayRegExpEngineReplace = array(") ENGINE=\\1 DEFAULT CHARSET=utf8", ") ENGINE=\\1");
+        $arrayRegExpEngineSearch = array("/\)\s*TYPE\s*=\s*(InnoDB)/i", "/\)\s*TYPE\s*=\s*(MyISAM)/i","/SET\s*FOREIGN_KEY_CHECKS\s*=\s*0\s*;/");
+        $arrayRegExpEngineReplace = array(") ENGINE=\\1 DEFAULT CHARSET=utf8", ") ENGINE=\\1","SET FOREIGN_KEY_CHECKS=0;\nSET unique_checks=0;\nSET AUTOCOMMIT=0;");
 
         if (!$flag && !is_null($flagFunction)) {
             //Replace TYPE by ENGINE
