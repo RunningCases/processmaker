@@ -1313,7 +1313,7 @@ class workspaceTools
             //Replace TYPE by ENGINE
             $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
 
-            file_put_contents($filename, $script);
+            file_put_contents($filename, $script."\nCOMMIT;");
 
             $aHost = explode(':', $parameters['dbHost']);
             $dbHost = $aHost[0];
@@ -1344,6 +1344,7 @@ class workspaceTools
 
                 //Replace TYPE by ENGINE
                 $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
+                $script = $script."\nCOMMIT;";
 
                 $lines = explode("\n", $script);
                 $previous = null;
