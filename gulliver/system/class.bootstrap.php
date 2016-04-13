@@ -2974,5 +2974,19 @@ class Bootstrap
 
     }
 
+    /**
+     * Set Language
+     */
+    public static function isIE()
+    {
+        $isIE = false;
+        if (isset($_SERVER['HTTP_USER_AGENT'])) {
+            $ua = htmlentities($_SERVER['HTTP_USER_AGENT'], ENT_QUOTES, 'UTF-8');
+            if (preg_match('~MSIE|Internet Explorer~i', $ua) || (strpos($ua, 'Trident/7.0; rv:11.0') !== false)) {
+                $isIE = true;
+            }
+        }
+        return $isIE;
+    }
 }
 

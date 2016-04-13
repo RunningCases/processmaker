@@ -86,14 +86,6 @@ function openCase(){
         var appUid   = rowModel.data.APP_UID;
         var delIndex = rowModel.data.DEL_INDEX;
         var caseTitle = (rowModel.data.APP_TITLE) ? rowModel.data.APP_TITLE : rowModel.data.APP_UID;
-        if(ieVersion != 11) {
-            Ext.Msg.show({
-                msg: _('ID_OPEN_CASE') + ' ' + caseTitle,
-                width:300,
-                wait:true,
-                waitConfig: {interval:200}
-            });
-        }
         params = '';
         switch(action){
             case 'to_revise':
@@ -131,7 +123,7 @@ function openCase(){
             // Nothing to do
         }
         params += '&action=' + action;
-        if(ieVersion == 11) {
+        if(isIE) {
             if(casesNewTab) {
                 casesNewTab.close();
             }
@@ -846,10 +838,10 @@ Ext.onReady ( function() {
     //Layout Resizing
     /*----------------------------------********---------------------------------*/
     if (typeof valueFilterStatus != 'undefined') {
-         if (valueFilterStatus != '') {
-         storeCases.setBaseParam('filterStatus', valueFilterStatus);
-         }
-     }
+        if (valueFilterStatus != '') {
+            storeCases.setBaseParam('filterStatus', valueFilterStatus);
+        }
+    }
     /*----------------------------------********---------------------------------*/
     storeCases.on('load',function(){var viewport = Ext.getCmp("viewportcases");viewport.doLayout();})
 
@@ -2577,7 +2569,7 @@ function msgBox(title, msg, type){
 }
 
 Ext.EventManager.on(window, 'beforeunload', function () {
-  if(casesNewTab) {
-    casesNewTab.close();
-  }
+    if(casesNewTab) {
+        casesNewTab.close();
+    }
 });
