@@ -210,10 +210,7 @@ if (isset( $_GET['breakpoint'] )) {
 /**
  * Here we throw the debug view
  */
-$ieVersion = null;
-if(preg_match("/^.*\(.*MSIE (\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch) || preg_match("/^.*\(.*rv.(\d+)\..+\).*$/", $_SERVER["HTTP_USER_AGENT"], $arrayMatch)){
-    $ieVersion = intval($arrayMatch[1]);
-}
+$isIE = Bootstrap::isIE();
 
 if (isset($_GET['breakpoint'])) {
 
@@ -1166,7 +1163,7 @@ if (!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) {
 
 G::RenderPage( 'publish', 'blank' );
 
-if ($_SESSION['TRIGGER_DEBUG']['ISSET'] && $ieVersion != 11) {
+if ($_SESSION['TRIGGER_DEBUG']['ISSET'] && !$isIE) {
     G::evalJScript( '
     if (typeof showdebug != \'undefined\') {
       showdebug();
