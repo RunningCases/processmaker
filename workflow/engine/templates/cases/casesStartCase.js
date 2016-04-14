@@ -445,6 +445,14 @@ Ext.onReady(function() {
 
 function openCaseA(n){
   if (n.attributes.optionType == "startProcess") {
+    if(!isIE) {
+      Ext.Msg.show({
+        title : '',
+        msg : TRANSLATIONS.ID_STARTING_NEW_CASE  + '<br><br><b>' + n.attributes.text + '</b>',
+        wait:true,
+        waitConfig: {interval:500}
+      });
+    }
     Ext.Ajax.request({
       url : 'casesStartPage_Ajax.php',
       params : {

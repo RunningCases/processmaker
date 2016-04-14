@@ -237,6 +237,16 @@ function openCase(){
     var appUid    = rowModel.data.APP_UID;
     var delIndex  = rowModel.data.DEL_INDEX;
     var caseTitle = (rowModel.data.APP_TITLE) ? rowModel.data.APP_TITLE : rowModel.data.APP_UID;
+    if(!isIE) {
+      Ext.Msg.show({
+        msg: _("ID_OPEN_CASE") + " " + caseTitle,
+        width:300,
+        wait:true,
+        waitConfig: {
+          interval:200
+        }
+      });
+    }
     params = '';
     switch(action){
       case 'consolidated':
@@ -264,7 +274,7 @@ function openCase(){
 }
 
 function jumpToCase(appNumber){
-  if(isIE) {  
+  if(!isIE) {
     Ext.MessageBox.show({ msg: _('ID_PROCESSING'), wait:true,waitConfig: {interval:200} });
   }
   Ext.Ajax.request({
