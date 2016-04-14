@@ -112,7 +112,6 @@ try {
     define('DEBUG_CALENDAR_LOG', $arraySystemConfiguration['debug_calendar']);
     define('MEMCACHED_ENABLED',  $arraySystemConfiguration['memcached']);
     define('MEMCACHED_SERVER',   $arraySystemConfiguration['memcached_server']);
-    define('TIME_ZONE',          ini_get('date.timezone'));
 
     //require_once(PATH_GULLIVER . PATH_SEP . 'class.bootstrap.php');
     //define('PATH_GULLIVER_HOME', PATH_TRUNK . 'gulliver' . PATH_SEP);
