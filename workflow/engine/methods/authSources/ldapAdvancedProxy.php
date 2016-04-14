@@ -149,7 +149,25 @@ switch ($function) {
             unset($aData['AUTH_SOURCE_GRID_ATTRIBUTE']);
             unset($aData['AUTH_SOURCE_SHOWGRID']);
         }
+
         $aFields['AUTH_SOURCE_DATA'] = $aData;
+
+        //LDAP_PAGE_SIZE_LIMIT
+        $ldapAdvanced = new ldapAdvanced();
+
+        try {
+            $arrayAuthenticationSourceData = $aFields;
+            $arrayAuthenticationSourceData['AUTH_SOURCE_VERSION'] = 3;
+
+            $aFields['AUTH_SOURCE_DATA']['LDAP_PAGE_SIZE_LIMIT'] = $ldapAdvanced->getPageSizeLimit(
+                $ldapAdvanced->ldapConnection($arrayAuthenticationSourceData),
+                $arrayAuthenticationSourceData['AUTH_SOURCE_BASE_DN']
+            );
+        } catch (Exception $e) {
+            $aFields['AUTH_SOURCE_DATA']['LDAP_PAGE_SIZE_LIMIT'] = $ldapAdvanced->getPageSizeLimit(false);
+        }
+
+        //Save
         if ($aFields['AUTH_SOURCE_UID'] == '') {
             $RBAC->createAuthSource( $aFields );
         } else {
@@ -327,6 +345,7 @@ switch ($function) {
             }
 
             $arrayAuthenticationSourceData = $_POST;
+            $arrayAuthenticationSourceData['AUTH_SOURCE_VERSION'] = 3;
 
             //Test connection
             $ldapAdvanced = new ldapAdvanced();
