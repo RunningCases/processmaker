@@ -56,7 +56,7 @@ class AppDelegation extends BaseAppDelegation
      * @param $isSubprocess is a subprocess inside a process?
      * @return delegation index of the application delegation.
      */
-    public function createAppDelegation ($sProUid, $sAppUid, $sTasUid, $sUsrUid, $sAppThread, $iPriority = 3, $isSubprocess = false, $sPrevious = -1, $sNextTasParam = null)
+    public function createAppDelegation ($sProUid, $sAppUid, $sTasUid, $sUsrUid, $sAppThread, $iPriority = 3, $isSubprocess = false, $sPrevious = -1, $sNextTasParam = null, $flagControl = false)
     {
         if (! isset( $sProUid ) || strlen( $sProUid ) == 0) {
             throw (new Exception( 'Column "PRO_UID" cannot be null.' ));
@@ -82,6 +82,7 @@ class AppDelegation extends BaseAppDelegation
         $criteria = new Criteria("workflow");
         $criteria->add(AppDelegationPeer::APP_UID, $sAppUid);
         $criteria->add(AppDelegationPeer::DEL_LAST_INDEX, 1);
+        $criteria->addDescendingOrderByColumn(AppDelegationPeer::DEL_INDEX);
 
         $criteriaIndex = clone $criteria;
 
@@ -110,6 +111,14 @@ class AppDelegation extends BaseAppDelegation
                 $row = $rsCriteriaDelIndex->getRow();
 
                 $delIndex = (isset($row["DEL_INDEX"]))? $row["DEL_INDEX"] + 1 : 1;
+            }
+        }
+        //Verify successors: parrallel submit in the same time
+        if($flagControl){
+            $nextTaskUid = $sTasUid;
+            $index = $this->getAllTasksBeforeSecJoin($nextTaskUid, $sAppUid);
+            if($this->createThread($index, $sAppUid)){
+                return 0;
             }
         }
 
@@ -156,7 +165,8 @@ class AppDelegation extends BaseAppDelegation
             try {
                 $res = $this->save();
             } catch (PropelException $e) {
-                throw ($e);
+                error_log($e->getMessage());
+                return;
             }
         } else {
             // Something went wrong. We can now get the validationFailures and handle them.
@@ -739,5 +749,50 @@ class AppDelegation extends BaseAppDelegation
             throw $e;
         }
     }
+
+    /**
+    * Get all task before Join Threads
+    *
+    * @param string $nextTaskUid
+    * @param string $sAppUid
+    * @return array $index
+    */
+    public static function getAllTasksBeforeSecJoin($nextTaskUid, $sAppUid){
+        $criteriaR = new Criteria('workflow');
+        $criteriaR->addSelectColumn(AppDelegationPeer::DEL_INDEX);
+        $criteriaR->addJoin(RoutePeer::TAS_UID, AppDelegationPeer::TAS_UID, Criteria::LEFT_JOIN);
+        $criteriaR->add(RoutePeer::ROU_NEXT_TASK, $nextTaskUid, Criteria::EQUAL);
+        $criteriaR->add(RoutePeer::ROU_TYPE, 'SEC-JOIN', Criteria::EQUAL);
+        $criteriaR->add(AppDelegationPeer::APP_UID, $sAppUid, Criteria::EQUAL);
+        $rsCriteriaR = RoutePeer::doSelectRS($criteriaR);
+        $rsCriteriaR->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $index = array();
+        $c = 0;
+        while($rsCriteriaR->next()){
+            $row = $rsCriteriaR->getRow();
+            $index[$c++] = $row['DEL_INDEX'];
+        }
+        return $index;
+    }
+
+    /**
+    * Verify if we need to create a new Thread
+    *
+    * @param array $index
+    * @param string $sAppUid
+    * @return boolean $res
+    */
+    public static function createThread($index, $sAppUid){
+        $criteriaDel = new Criteria("workflow");
+        $criteriaDel->addSelectColumn(AppDelegationPeer::DEL_INDEX);
+        $criteriaDel->addSelectColumn(AppDelegationPeer::DEL_PREVIOUS);
+        $criteriaDel->add(AppDelegationPeer::APP_UID, $sAppUid);
+        $criteriaDel->add(AppDelegationPeer::DEL_PREVIOUS, $index, Criteria::IN);
+        $criteriaDel = AppDelegationPeer::doSelectRS($criteriaDel);
+        $criteriaDel->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $res = $criteriaDel->next();
+        return $res;
+    }
+
 }
 

@@ -48,6 +48,7 @@ G::LoadClass( "plugin" );
 class Derivation
 {
     var $case;
+    protected $flagControl;
 
     /**
      * prepareInformationTask
@@ -1134,6 +1135,9 @@ class Derivation
                                         $arrayOpenThread = array_merge($arrayOpenThread, $arraySiblings);
                                     }
                                     $canDerivate = empty($arrayOpenThread);
+                                    if($canDerivate){
+                                        $this->flagControl = true;
+                                    }
 
                                     break;
                                 default:
@@ -1184,8 +1188,9 @@ class Derivation
                                 break;
                             default:
                                 $iNewDelIndex = $this->doDerivation($currentDelegation, $nextDel, $appFields, $aSP);
-
-                                $arrayDerivationResult[] = ['DEL_INDEX' => $iNewDelIndex, 'TAS_UID' => $nextDel['TAS_UID'], 'USR_UID' => (isset($nextDel['USR_UID']))? $nextDel['USR_UID'] : ''];
+                                if($iNewDelIndex !== 0){
+                                    $arrayDerivationResult[] = ['DEL_INDEX' => $iNewDelIndex, 'TAS_UID' => $nextDel['TAS_UID'], 'USR_UID' => (isset($nextDel['USR_UID']))? $nextDel['USR_UID'] : ''];
+                                }
                                 break;
                         }
 
@@ -1381,7 +1386,7 @@ class Derivation
                 //No Break, need no execute the default ones....
             default:
                 // Create new delegation
-                $iNewDelIndex = $this->case->newAppDelegation( $appFields['PRO_UID'], $currentDelegation['APP_UID'], $nextDel['TAS_UID'], (isset( $nextDel['USR_UID'] ) ? $nextDel['USR_UID'] : ''), $currentDelegation['DEL_INDEX'], $nextDel['DEL_PRIORITY'], $delType, $iAppThreadIndex, $nextDel );
+                $iNewDelIndex = $this->case->newAppDelegation( $appFields['PRO_UID'], $currentDelegation['APP_UID'], $nextDel['TAS_UID'], (isset( $nextDel['USR_UID'] ) ? $nextDel['USR_UID'] : ''), $currentDelegation['DEL_INDEX'], $nextDel['DEL_PRIORITY'], $delType, $iAppThreadIndex, $nextDel, $this->flagControl );
                 break;
         }
 
