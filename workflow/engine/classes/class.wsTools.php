@@ -188,9 +188,6 @@ class workspaceTools
         if ($this->onedb) {
             $dbInfo = $this->getDBInfo();
             $dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'wf_', 'DB_RBAC_USER' => 'wf_', 'DB_REPORT_NAME' => 'wf_', 'DB_REPORT_USER' => 'wf_');
-            if (array_search($key, array('DB_PASS', 'DB_RBAC_PASS', 'DB_REPORT_PASS'))) {
-                $value = $dbInfo['DB_PASS'];
-            }
         } else {
             $dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'rb_', 'DB_RBAC_USER' => 'rb_', 'DB_REPORT_NAME' => 'rp_', 'DB_REPORT_USER' => 'rp_');
         }
@@ -1215,6 +1212,7 @@ class workspaceTools
         $metadata["databases"] = $this->exportDatabase($tempDirectory);
         $metadata["directories"] = array("{$this->name}.files");
         $metadata["version"] = 1;
+        $metadata['backupEngineVersion'] = 2;
         $metaFilename = "$tempDirectory/{$this->name}.meta";
         /* Write metadata to file, but make it prettier before. The metadata is just
          * a JSON codified array.
@@ -1285,7 +1283,7 @@ class workspaceTools
      * @param string $filename the script filename
      * @param string $database the database to execute this script into
      */
-    public function executeSQLScript($database, $filename, $parameters)
+    public function executeSQLScript($database, $filename, $parameters, $versionBackupEngine = 1)
     {
         mysql_query("CREATE DATABASE IF NOT EXISTS " . mysql_real_escape_string($database));
 
@@ -1311,9 +1309,15 @@ class workspaceTools
 
         if (!$flag && !is_null($flagFunction)) {
             //Replace TYPE by ENGINE
-            $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
-
-            file_put_contents($filename, $script."\nCOMMIT;");
+            if( $versionBackupEngine == 1) {
+                $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
+                file_put_contents($filename, $script."\nCOMMIT;");
+            }else{
+                $arrayRegExpEngineSearch = array("/\)\s*TYPE\s*=\s*(InnoDB)/i", "/\)\s*TYPE\s*=\s*(MyISAM)/i");
+                $arrayRegExpEngineReplace = array(") ENGINE=\\1 DEFAULT CHARSET=utf8", ") ENGINE=\\1");
+                $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
+                file_put_contents($filename, $script);
+            }
 
             $aHost = explode(':', $parameters['dbHost']);
             $dbHost = $aHost[0];
@@ -1344,7 +1348,9 @@ class workspaceTools
 
                 //Replace TYPE by ENGINE
                 $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
-                $script = $script."\nCOMMIT;";
+                if( $versionBackupEngine == 1) {
+                    $script = $script."\nCOMMIT;";
+                }
 
                 $lines = explode("\n", $script);
                 $previous = null;
@@ -1517,6 +1523,10 @@ class workspaceTools
         $version = System::getVersion();
         $pmVersion = (preg_match("/^([\d\.]+).*$/", $version, $arrayMatch)) ? $arrayMatch[1] : ""; //Otherwise: Branch master
 
+        /*if($pmVersion == '' && strpos(strtoupper($version), 'BRANCH')){
+            $pmVersion = 'dev-version-backup';
+        }*/
+
         CLI::logging(CLI::warning("
             Warning: A workspace from a newer version of ProcessMaker can NOT be restored in an older version of
             ProcessMaker. For example, restoring from v.3.0 to v.2.5 will not work. However, it may be possible
@@ -1635,7 +1645,8 @@ class workspaceTools
                     }
 
                     CLI::logging("+> Restoring database {$db->name} to $dbName\n");
-                    $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql", $aParameters);
+                    $versionBackupEngine = (isset($metadata->backupEngineVersion)) ? $metadata->backupEngineVersion : 1;
+                    $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql", $aParameters, $versionBackupEngine);
                     $workspace->createDBUser($dbName, $db->pass, "localhost", $dbName);
                     $workspace->createDBUser($dbName, $db->pass, "%", $dbName);
                 }
@@ -1643,7 +1654,9 @@ class workspaceTools
 
             //CLI::logging(CLI::info("$pmVersionWorkspaceToRestore < $pmVersion") . "\n");
 
-            if (version_compare($pmVersionWorkspaceToRestore . "", $pmVersion . "", "<") || $pmVersion == "") {
+            if (($pmVersionWorkspaceToRestore != '') && (version_compare($pmVersionWorkspaceToRestore . "",
+                        $pmVersion . "", "<") || $pmVersion == "")
+            ) {
                 $start = microtime(true);
                 CLI::logging("> Updating database...\n");
                 $workspace->upgradeDatabase($onedb);
@@ -1669,7 +1682,9 @@ class workspaceTools
             $stop = microtime(true);
             CLI::logging("<*>   Check Mafe Requirements Process took " . ($stop - $start) . " seconds.\n");
 
-            if (version_compare($pmVersionWorkspaceToRestore . "", $pmVersion . "", "<") || $pmVersion == "") {
+            if (($pmVersionWorkspaceToRestore != '') && (version_compare($pmVersionWorkspaceToRestore . "",
+                        $pmVersion . "", "<") || $pmVersion == "")
+            ) {
                 $start = microtime(true);
                 CLI::logging("> Updating cache view...\n");
                 $workspace->upgradeCacheView(true, true, $lang);
@@ -1679,8 +1694,14 @@ class workspaceTools
                 $workspace->upgradeTriggersOfTables(true, $lang);
             }
 
+            if($pmVersion == '' && strpos(strtoupper($version), 'BRANCH')){
+                $pmVersion = 'dev-version-backup';
+            }
+
             /*----------------------------------********---------------------------------*/
-            if (version_compare($pmVersionWorkspaceToRestore . "", "2.9", "<") || $pmVersion == "") {
+            if (($pmVersionWorkspaceToRestore != '') && (version_compare($pmVersionWorkspaceToRestore . "", "2.9",
+                        "<") || $pmVersion == "")
+            ) {
                 $start = microtime(true);
                 CLI::logging("> Updating List tables...\n");
                 $workspace->migrateList($workspace->name);
