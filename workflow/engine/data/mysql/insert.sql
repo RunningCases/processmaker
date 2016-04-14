@@ -1994,7 +1994,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_UPLOAD_ERR_NO_FILE','en','No file was uploaded','2014-01-15') ,
 ( 'LABEL','ID_UPLOAD_ERR_PARTIAL','en','The uploaded file was only partially uploaded','2014-01-15') ,
 ( 'LABEL','ID_UPLOAD_ERR_FORM_SIZE','en','The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form','2014-01-15') ,
-( 'LABEL','ID_UPLOAD_ERR_INI_SIZE','en','The uploaded file exceeds the upload_max_filesize directive in php.ini','2014-01-15') ,
+( 'LABEL','ID_UPLOAD_ERR_INI_SIZE','en','The uploaded file exceeds the upload_max_filesize or post_max_size directive in php.ini','2014-01-15') ,
 ( 'LABEL','ID_NOT_PROCESS_RELATED','en','Not from a Process','2014-01-15') ,
 ( 'LABEL','ID_EXTERNAL_FILE','en','External','2014-01-15') ,
 ( 'LABEL','ID_INFO','en','Info','2014-01-15') ,

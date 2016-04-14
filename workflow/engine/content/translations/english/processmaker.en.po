@@ -3436,8 +3436,8 @@ msgstr "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified
 # TRANSLATION
 # LABEL/ID_UPLOAD_ERR_INI_SIZE
 #: LABEL/ID_UPLOAD_ERR_INI_SIZE
-msgid "The uploaded file exceeds the upload_max_filesize directive in php.ini"
-msgstr "The uploaded file exceeds the upload_max_filesize directive in php.ini"
+msgid "The uploaded file exceeds the upload_max_filesize or post_max_size directive in php.ini"
+msgstr "The uploaded file exceeds the upload_max_filesize or post_max_size directive in php.ini"
 
 # TRANSLATION
 # LABEL/ID_NOT_PROCESS_RELATED
