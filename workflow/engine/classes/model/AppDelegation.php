@@ -56,7 +56,7 @@ class AppDelegation extends BaseAppDelegation
      * @param $isSubprocess is a subprocess inside a process?
      * @return delegation index of the application delegation.
      */
-    public function createAppDelegation ($sProUid, $sAppUid, $sTasUid, $sUsrUid, $sAppThread, $iPriority = 3, $isSubprocess = false, $sPrevious = -1, $sNextTasParam = null, $flagControl = false)
+    public function createAppDelegation ($sProUid, $sAppUid, $sTasUid, $sUsrUid, $sAppThread, $iPriority = 3, $isSubprocess = false, $sPrevious = -1, $sNextTasParam = null, $flagControl = false, $flagControlMulInstance = false, $delPrevious = 0)
     {
         if (! isset( $sProUid ) || strlen( $sProUid ) == 0) {
             throw (new Exception( 'Column "PRO_UID" cannot be null.' ));
@@ -121,6 +121,14 @@ class AppDelegation extends BaseAppDelegation
                 return 0;
             }
         }
+        if($flagControlMulInstance){
+            $nextTaskUid = $sTasUid;
+            $index = $this->getAllTheardMultipleInstance($delPrevious, $sAppUid);
+            if($this->createThread($index, $sAppUid)){
+                return 0;
+            }
+        }
+
 
         //Update set
         $criteriaUpdate = new Criteria('workflow');
@@ -792,6 +800,29 @@ class AppDelegation extends BaseAppDelegation
         $criteriaDel->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $res = $criteriaDel->next();
         return $res;
+    }
+
+    /**
+    * Get all Threads for Multiple Instance
+    *
+    * @param string $sPrevious
+    * @param string $sAppUid
+    * @return array $index
+    */
+    public static function getAllTheardMultipleInstance($sPrevious, $sAppUid){
+        $criteriaR = new Criteria('workflow');
+        $criteriaR->addSelectColumn(AppDelegationPeer::DEL_INDEX);
+        $criteriaR->add(AppDelegationPeer::APP_UID, $sAppUid, Criteria::EQUAL);
+        $criteriaR->add(AppDelegationPeer::DEL_PREVIOUS, $sPrevious, Criteria::EQUAL);
+        $rsCriteriaR = AppDelegationPeer::doSelectRS($criteriaR);
+        $rsCriteriaR->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $index = array();
+        $c = 0;
+        while($rsCriteriaR->next()){
+            $row = $rsCriteriaR->getRow();
+            $index[$c++] = $row['DEL_INDEX'];
+        }
+        return $index;
     }
 
 }

@@ -49,6 +49,7 @@ class Derivation
 {
     var $case;
     protected $flagControl;
+    protected $flagControlMulInstance;
 
     /**
      * prepareInformationTask
@@ -1136,7 +1137,11 @@ class Derivation
                                     }
                                     $canDerivate = empty($arrayOpenThread);
                                     if($canDerivate){
-                                        $this->flagControl = true;
+                                        if($flagTaskIsMultipleInstance && $flagTaskAssignTypeIsMultipleInstance){
+                                            $this->flagControlMulInstance = true;
+                                        }else{
+                                            $this->flagControl = true;
+                                        }
                                     }
 
                                     break;
@@ -1385,8 +1390,19 @@ class Derivation
                 $this->setTasLastAssigned( $nextDel['TAS_UID'], $nextDel['USR_UID'] );
                 //No Break, need no execute the default ones....
             default:
+                $delPrevious = 0;
+                if($this->flagControlMulInstance){
+                    $criteriaMulti = new Criteria("workflow");
+                    $criteriaMulti->addSelectColumn(AppDelegationPeer::DEL_PREVIOUS);
+                    $criteriaMulti->add(AppDelegationPeer::TAS_UID, $currentDelegation['TAS_UID'], Criteria::EQUAL);
+                    $criteriaMultiR = AppDelegationPeer::doSelectRS($criteriaMulti);
+                    $criteriaMultiR->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $criteriaMultiR->next();
+                    $row = $criteriaMultiR->getRow();
+                    $delPrevious = $row['DEL_PREVIOUS'];
+                }
                 // Create new delegation
-                $iNewDelIndex = $this->case->newAppDelegation( $appFields['PRO_UID'], $currentDelegation['APP_UID'], $nextDel['TAS_UID'], (isset( $nextDel['USR_UID'] ) ? $nextDel['USR_UID'] : ''), $currentDelegation['DEL_INDEX'], $nextDel['DEL_PRIORITY'], $delType, $iAppThreadIndex, $nextDel, $this->flagControl );
+                $iNewDelIndex = $this->case->newAppDelegation( $appFields['PRO_UID'], $currentDelegation['APP_UID'], $nextDel['TAS_UID'], (isset( $nextDel['USR_UID'] ) ? $nextDel['USR_UID'] : ''), $currentDelegation['DEL_INDEX'], $nextDel['DEL_PRIORITY'], $delType, $iAppThreadIndex, $nextDel, $this->flagControl, $this->flagControlMulInstance, $delPrevious);
                 break;
         }
 
