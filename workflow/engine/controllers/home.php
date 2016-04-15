@@ -458,6 +458,15 @@ class Home extends Controller
             /*----------------------------------********---------------------------------*/
 
         }
+
+        if(empty($cases) && $type == 'search') {
+            $case = new \ProcessMaker\BusinessModel\Cases();
+            $cases = $case->getList($dataList);
+            foreach ($cases['data'] as &$value) {
+                $value = array_change_key_case($value, CASE_UPPER);
+            }
+        }
+
         if(!isset($cases['totalCount'])){
             $cases['totalCount'] = $cases['total'];
         }
