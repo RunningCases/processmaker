@@ -3188,9 +3188,6 @@ class G
      */
     public function pr ($var)
     {
-        G::LoadSystem('inputfilter');
-        $filter = new InputFilter();
-        $var = $filter->xssFilterHard($var);
         print ("<pre>") ;
         print_r( $var );
         print ("</pre>") ;
