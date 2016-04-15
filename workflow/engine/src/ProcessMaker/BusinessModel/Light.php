@@ -1255,7 +1255,7 @@ class Light
      * Get configuration
      * @return mixed
      */
-    public function getConfiguration()
+    public function getConfiguration($params)
     {
         $sysConf = \Bootstrap::getSystemConfiguration('','',SYS_SYS);
         $multiTimeZone = false;
@@ -1304,7 +1304,27 @@ class Light
             $languagesList[] = $languages;
         }
         $response['listLanguage'] = $languagesList;
+        if ($params['fileLimit']) {
+            $response['fileLimit'] = $this->return_bytes(ini_get('post_max_size'));
+        }
         return $response;
+    }
+
+    public function return_bytes($size_str)
+    {
+        switch (substr($size_str, -1)) {
+            case 'M':
+            case 'm':
+                return (int)$size_str * 1048576;
+            case 'K':
+            case 'k':
+                return (int)$size_str * 1024;
+            case 'G':
+            case 'g':
+                return (int)$size_str * 1073741824;
+            default:
+                return $size_str;
+        }
     }
 
     public function getInformationDerivatedCase($app_uid, $del_index)

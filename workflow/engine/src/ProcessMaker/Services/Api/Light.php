@@ -1498,12 +1498,15 @@ class Light extends Api
      *
      * @access public
      * @url GET /config
+     *
+     * @param string $fileLimit {@from path}
      */
-    public function getConfiguration()
+    public function getConfiguration($fileLimit = false)
     {
         try {
+            $params = array('fileLimit' => $fileLimit);
             $oMobile = new \ProcessMaker\BusinessModel\Light();
-            $response = $oMobile->getConfiguration();
+            $response = $oMobile->getConfiguration($params);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
