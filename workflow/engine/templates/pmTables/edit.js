@@ -216,7 +216,7 @@ Ext.onReady(function(){
             listeners:{
               change: function(f,e){  
                 this.setValue(this.getValue().replace(/^\s+/,'').replace(/\s+$/,''));
-                var valueInputField= /^[0-9a-zA-Z \|-]+$/.test(this.getValue()) ? true : false;
+                var valueInputField= /^[0-9a-zA-Z _\|-]+$/.test(this.getValue()) ? true : false;
                 if (!valueInputField) {
                   this.setValue('');
                 }
@@ -224,7 +224,7 @@ Ext.onReady(function(){
             },
             validator: function(v) {
                 if (v != "") {
-                    return (/^[0-9a-zA-Z \|-]+$/.test(v))? true : _('ID_THE') + ' ' +_('ID_FIELD_LABEL') + ' ' + _('ID_FIELD_NOT_EMPTY_OR_SPECIAL_CHAR');
+                    return (/^[0-9a-zA-Z _\|-]+$/.test(v))? true : _('ID_THE') + ' ' +_('ID_FIELD_LABEL') + ' ' + _('ID_FIELD_NOT_EMPTY_OR_SPECIAL_CHAR');
                 } else {
                     return true;
                 }
