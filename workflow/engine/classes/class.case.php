@@ -1750,12 +1750,13 @@ class Cases
      * @return void
      */
 
-    public function newAppDelegation($sProUid, $sAppUid, $sTasUid, $sUsrUid, $sPrevious, $iPriority, $sDelType, $iAppThreadIndex = 1, $nextDel = null, $flagControl = false)
+    public function newAppDelegation($sProUid, $sAppUid, $sTasUid, $sUsrUid, $sPrevious, $iPriority, $sDelType, $iAppThreadIndex = 1, $nextDel = null, $flagControl = false, $flagControlMulInstance = false, $delPrevious = 0)
     {
         try {
             $appDel = new AppDelegation();
             $result = $appDel->createAppDelegation(
-                    $sProUid, $sAppUid, $sTasUid, $sUsrUid, $iAppThreadIndex, $iPriority, false, $sPrevious, $nextDel, $flagControl
+                    $sProUid, $sAppUid, $sTasUid, $sUsrUid, $iAppThreadIndex, $iPriority, false, $sPrevious, $nextDel, $flagControl,
+                    $flagControlMulInstance, $delPrevious
             );
             //update searchindex
             if ($this->appSolr != null) {
