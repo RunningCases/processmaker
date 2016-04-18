@@ -5060,6 +5060,12 @@ msgid "There is {0} cases started with this language, delete action canceled!"
 msgstr "There is {0} cases started with this language, delete action canceled!"
 
 # TRANSLATION
+# LABEL/ID_CANNOT_REMOVE_TEMPLATE_EMAIL_EVENT
+#: LABEL/ID_CANNOT_REMOVE_TEMPLATE_EMAIL_EVENT
+msgid "You can not delete the template {0} because it has a relationship with Email Event"
+msgstr "You can not delete the template {0} because it has a relationship with Email Event"
+
+# TRANSLATION
 # LABEL/ID_TOTAL_CASES
 #: LABEL/ID_TOTAL_CASES
 msgid "Total Cases"

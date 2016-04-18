@@ -495,7 +495,7 @@ class FilesManager
      *
      * @access public
      */
-    public function deleteProcessFilesManager($sProcessUID, $prfUid)
+    public function deleteProcessFilesManager($sProcessUID, $prfUid, $verifyingRelationship = false)
     {
         try {
             $path = '';
@@ -511,6 +511,22 @@ class FilesManager
             }
             if ($path == '') {
                 throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('prf_uid')));
+            }
+
+            $relationshipEmailEvent = false;
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\EmailEventPeer::PRF_UID);
+            $criteria->add(\EmailEventPeer::PRF_UID, $prfUid, \Criteria::EQUAL);
+            $rsCriteria = \EmailEventPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            while ($aRow = $rsCriteria->getRow()) {
+                $relationshipEmailEvent = true;
+                $rsCriteria->next();
+            }
+            if ($relationshipEmailEvent && !$verifyingRelationship) {
+                throw new \Exception(\G::LoadTranslation(G::LoadTranslation('ID_CANNOT_REMOVE_TEMPLATE_EMAIL_EVENT',
+                    array(end(explode(DIRECTORY_SEPARATOR,$path))))));
             }
 
             $sFile = end(explode(DIRECTORY_SEPARATOR,$path));
