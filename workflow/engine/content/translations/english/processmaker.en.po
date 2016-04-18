@@ -24392,6 +24392,12 @@ msgid "The user with \"{0}\" did not have permission to perform this action."
 msgstr "The user with \"{0}\" did not have permission to perform this action."
 
 # TRANSLATION
+# LABEL/ID_NOT_EXECUTE_QUERY
+#: LABEL/ID_NOT_EXECUTE_QUERY
+msgid "Changes to {0} are forbidden. Please contact system administrator for more information."
+msgstr "Changes to {0} are forbidden. Please contact system administrator for more information."
+
+# TRANSLATION
 # LABEL/ID_EMAIL_MORE_THAN_ONE_USER
 #: LABEL/ID_EMAIL_MORE_THAN_ONE_USER
 msgid "This email is assigned to more than one user. Please contact your administrator."

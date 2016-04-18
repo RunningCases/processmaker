@@ -9646,6 +9646,8 @@ SELECT 'LABEL','ID_NO_LICENSE_FEATURE_ENABLED','en','Your license does not have 
   UNION ALL
 SELECT 'LABEL','ID_USER_NOT_ACTIVE','en','The user is not active.','2015-09-08' 
   UNION ALL
+SELECT 'LABEL','ID_NOT_EXECUTE_QUERY','en','Changes to {0} are forbidden. Please contact system administrator for more information.','2016-04-11'
+  UNION ALL
 SELECT 'LABEL','ID_MAFE_b776b96aded5145322e09111013ef8c5','en','Invalid connection type','2016-03-30' 
   UNION ALL
 SELECT 'LABEL','ID_MAFE_89d626523f83c2d1f8a5549a845dd6aa','en','Start Event must have an outgoing sequence flow','2016-03-30' 
