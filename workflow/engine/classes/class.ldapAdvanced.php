@@ -552,16 +552,16 @@ class ldapAdvanced
         ldap_set_option($ldapcnn, LDAP_OPT_REFERRALS, 0);
 
         if (isset($aAuthSource["AUTH_SOURCE_ENABLED_TLS"]) && $aAuthSource["AUTH_SOURCE_ENABLED_TLS"]) {
-            ldap_start_tls($ldapcnn);
+            @ldap_start_tls($ldapcnn);
             $ldapServer = "TLS " . $ldapServer;
             //$this->log($ldapcnn, "start tls");
         }
 
         if ($aAuthSource["AUTH_ANONYMOUS"] == "1") {
-            $bBind = ldap_bind($ldapcnn);
+            $bBind = @ldap_bind($ldapcnn);
             $this->log($ldapcnn, "bind $ldapServer like anonymous user");
         } else {
-            $bBind = ldap_bind($ldapcnn, $aAuthSource['AUTH_SOURCE_SEARCH_USER'], $aAuthSource['AUTH_SOURCE_PASSWORD']);
+            $bBind = @ldap_bind($ldapcnn, $aAuthSource['AUTH_SOURCE_SEARCH_USER'], $aAuthSource['AUTH_SOURCE_PASSWORD']);
             $this->log($ldapcnn, "bind $ldapServer with user " . $aAuthSource["AUTH_SOURCE_SEARCH_USER"]);
         }
 
@@ -820,6 +820,93 @@ class ldapAdvanced
     }
 
     /**
+     * Synchronize Group's members
+     *
+     * @param resource $ldapcnn             LDAP link identifier
+     * @param array    $arrayAuthSourceData Authentication Source Data
+     * @param string   $groupUid            Unique id of Group
+     * @param array    $arrayGroupLdap      LDAP Group
+     * @param string   $memberAttribute     Member attribute
+     * @param array    $arrayData           Data
+     *
+     * @return array Return array data
+     */
+    private function __ldapGroupSynchronizeMembers(
+        $ldapcnn,
+        array $arrayAuthSourceData,
+        $groupUid,
+        array $arrayGroupLdap,
+        $memberAttribute,
+        array $arrayData = []
+    ) {
+        try {
+            unset($arrayData['countMembers']);
+
+            //Get members
+            if (!isset($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_USERS_FILTER'])) {
+                $arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_USERS_FILTER'] = '';
+            }
+
+            $uidUserIdentifier = (isset($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER']))?
+                $arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'] : 'uid';
+
+            $filterUsers = trim($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_USERS_FILTER']);
+
+            $filter = ($filterUsers != '')? $filterUsers : '(' . $this->arrayObjectClassFilter['user'] . ')';
+
+            if (isset($arrayGroupLdap[$memberAttribute])) {
+                if (!is_array($arrayGroupLdap[$memberAttribute])) {
+                    $arrayGroupLdap[$memberAttribute] = [$arrayGroupLdap[$memberAttribute]];
+                }
+
+                $arrayData['countMembers'] = count($arrayGroupLdap[$memberAttribute]);
+                $arrayData['totalUser'] += $arrayData['countMembers'];
+
+                //Synchronize members
+                foreach ($arrayGroupLdap[$memberAttribute] as $value) {
+                    $member = $value; //User DN
+
+                    $searchResult = @ldap_search($ldapcnn, $member, $filter, $this->arrayAttributesForUser);
+
+                    if ($error = ldap_errno($ldapcnn)) {
+                        //
+                    } else {
+                        if ($searchResult) {
+                            if (ldap_count_entries($ldapcnn, $searchResult) > 0) {
+                                $entry = ldap_first_entry($ldapcnn, $searchResult);
+
+                                $arrayUserLdap = $this->ldapGetAttributes($ldapcnn, $entry);
+
+                                $username = (isset($arrayUserLdap[$uidUserIdentifier]))? $arrayUserLdap[$uidUserIdentifier] : '';
+
+                                $arrayData['countUser']++;
+
+                                if ((is_array($username) && !empty($username)) || trim($username) != '') {
+                                    $arrayData = $this->groupSynchronizeUser(
+                                        $groupUid, $this->getUserDataFromAttribute($username, $arrayUserLdap), $arrayData
+                                    );
+                                }
+
+                                //Progress bar
+                                $this->frontEndShow(
+                                    'BAR',
+                                    'Groups: ' . $arrayData['i'] . '/' . $arrayData['n'] . ' ' .
+                                    $this->progressBar($arrayData['totalUser'], $arrayData['countUser'])
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Return
+            return $arrayData;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Get Users from Group
      *
      * @param string $option         Option (SYNCHRONIZE)
@@ -875,67 +962,73 @@ class ldapAdvanced
                     if ($numEntries > 0) {
                         $entry = ldap_first_entry($ldapcnn, $searchResult);
 
-                        $arrayGroupMemberLdap = $this->ldapGetAttributes($ldapcnn, $entry);
+                        $arrayGroupLdap = $this->ldapGetAttributes($ldapcnn, $entry);
 
-                        if (isset($arrayGroupMemberLdap[$memberAttribute])) {
-                            if (!is_array($arrayGroupMemberLdap[$memberAttribute])) {
-                                $arrayGroupMemberLdap[$memberAttribute] = array($arrayGroupMemberLdap[$memberAttribute]);
+                        //Syncronize members
+                        $flagMemberRange = false;
+
+                        $memberAttribute2 = $memberAttribute;
+
+                        if (isset($arrayGroupLdap[$memberAttribute]) && empty($arrayGroupLdap[$memberAttribute])) {
+                            foreach ($arrayGroupLdap as $key => $value) {
+                                if (preg_match('/^member;range=\d+\-\d+$/i', $key)) {
+                                    $memberAttribute2 = $key;
+
+                                    $flagMemberRange = true;
+                                    break;
+                                }
                             }
+                        }
 
-                            $totalUser = count($arrayGroupMemberLdap[$memberAttribute]);
+                        $arrayData = $this->__ldapGroupSynchronizeMembers(
+                            $ldapcnn,
+                            $arrayAuthenticationSourceData,
+                            $arrayGroupData['GRP_UID'],
+                            $arrayGroupLdap,
+                            $memberAttribute2,
+                            array_merge($arrayData, ['totalUser' => $totalUser, 'countUser' => $countUser])
+                        );
 
-                            //Get Users
-                            if (!isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_USERS_FILTER"])) {
-                                $arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_USERS_FILTER"] = "";
-                            }
+                        $totalUser = $arrayData['totalUser'];
+                        $countUser = $arrayData['countUser'];
 
-                            $uidUserIdentifier = (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"]))? $arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"] : "uid";
+                        $limitMemberRange = (isset($arrayData['countMembers']))? $arrayData['countMembers'] : 0;
 
-                            $filterUsers = trim($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_USERS_FILTER"]);
+                        if ($flagMemberRange) {
+                            for ($start = $limitMemberRange; true; $start += $limitMemberRange) {
+                                $end = $start + $limitMemberRange - 1;
 
-                            $filter2 = ($filterUsers != "")? $filterUsers : "(" . $this->arrayObjectClassFilter["user"] . ")";
+                                $memberAttribute2 = $memberAttribute . ';range=' . $start . '-' . $end;
 
-                            $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromGroup() > ldap_search > OK2 > \$filter2 ----> $filter2");
-
-                            $this->log($ldapcnn, "Search $dn accounts with identifier = $uidUserIdentifier");
-
-                            foreach ($arrayGroupMemberLdap[$memberAttribute] as $value) {
-                                $member = $value; //User DN
-
-                                $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromGroup() > ldap_search > OK2 > foreach > \$member ----> $member");
-
-                                //Synchronize User
-                                $searchResult2 = @ldap_search($ldapcnn, $member, $filter2, $this->arrayAttributesForUser);
+                                $searchResult = @ldap_search($ldapcnn, $dn, $filter, [$memberAttribute2]);
 
                                 if ($error = ldap_errno($ldapcnn)) {
-                                    $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromGroup() > ldap_search > OK2 > foreach > ldap_search > ERROR > \$error ---->\n" . print_r($error, true));
+                                    break;
                                 } else {
-                                    $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromGroup() > ldap_search > OK2 > foreach > ldap_search > OK1");
+                                    if ($searchResult) {
+                                        if (ldap_count_entries($ldapcnn, $searchResult) > 0) {
+                                            $entry = ldap_first_entry($ldapcnn, $searchResult);
 
-                                    if ($searchResult2) {
-                                        $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromGroup() > ldap_search > OK2 > foreach > ldap_search > OK2");
+                                            $arrayGroupLdap = $this->ldapGetAttributes($ldapcnn, $entry);
 
-                                        $numEntries2 = ldap_count_entries($ldapcnn, $searchResult2);
-
-                                        $this->debugLog("class.ldapAdvanced.php > function ldapGetUsersFromGroup() > ldap_search > OK2 > foreach > ldap_search > OK2 > \$numEntries2 ----> $numEntries2");
-
-                                        if ($numEntries2 > 0) {
-                                            $entry2 = ldap_first_entry($ldapcnn, $searchResult2);
-
-                                            $arrayUserLdap = $this->ldapGetAttributes($ldapcnn, $entry2);
-
-                                            $username = (isset($arrayUserLdap[$uidUserIdentifier]))? $arrayUserLdap[$uidUserIdentifier] : "";
-
-                                            $countUser++;
-
-                                            if ((is_array($username) && !empty($username)) || trim($username) != "") {
-                                                $arrayUserData = $this->getUserDataFromAttribute($username, $arrayUserLdap);
-
-                                                $arrayData = $this->groupSynchronizeUser($arrayGroupData["GRP_UID"], $arrayUserData, $arrayData);
+                                            foreach ($arrayGroupLdap as $key => $value) {
+                                                if (preg_match('/^member;range=\d+\-\*$/i', $key)) {
+                                                    $memberAttribute2 = $key;
+                                                    break;
+                                                }
                                             }
 
-                                            //Progress bar
-                                            $this->frontEndShow("BAR", "Groups: " . $arrayData["i"] . "/" . $arrayData["n"] . " " . $this->progressBar($totalUser, $countUser));
+                                            $arrayData = $this->__ldapGroupSynchronizeMembers(
+                                                $ldapcnn,
+                                                $arrayAuthenticationSourceData,
+                                                $arrayGroupData['GRP_UID'],
+                                                $arrayGroupLdap,
+                                                $memberAttribute2,
+                                                array_merge($arrayData, ['totalUser' => $totalUser, 'countUser' => $countUser])
+                                            );
+
+                                            $totalUser = $arrayData['totalUser'];
+                                            $countUser = $arrayData['countUser'];
                                         }
                                     }
                                 }
