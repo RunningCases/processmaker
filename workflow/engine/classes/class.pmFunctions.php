@@ -279,16 +279,16 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
                 }
                 if(isset($nameOfTable) && $nameOfTable !== ''){
                     if(in_array($nameOfTable,$aListAllTables)){
-                        G::SendTemporalMessage( 'ID_NOT_EXECUTE_QUERY', 'error', 'labels' );
-                        throw new SQLException(G::loadTranslation('ID_NOT_EXECUTE_QUERY'));
+                        G::SendTemporalMessage( G::loadTranslation('ID_NOT_EXECUTE_QUERY', array($nameOfTable)), 'error', 'labels' );
+                        throw new SQLException(G::loadTranslation('ID_NOT_EXECUTE_QUERY', array($nameOfTable)));
                     }
                 }
                 if (is_array($arrayOfTables)){
                     foreach ($arrayOfTables as $row){
                         if(!empty($row)){
                             if(in_array($row, $aListAllTables)){
-                                G::SendTemporalMessage( 'ID_NOT_EXECUTE_QUERY', 'error', 'labels' );
-                                throw new SQLException(G::loadTranslation('ID_NOT_EXECUTE_QUERY'));
+                                G::SendTemporalMessage(G::loadTranslation('ID_NOT_EXECUTE_QUERY', array($nameOfTable)), 'error', 'labels' );
+                                throw new SQLException(G::loadTranslation('ID_NOT_EXECUTE_QUERY', array($nameOfTable)));
                             }
                         }
                     }
