@@ -6069,6 +6069,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_UNABLE_TO_SEND_EMAIL','en','Unable to send email, the task is closed.','2016-03-30') ,
 ( 'LABEL','ID_PLEASE_TRY_LATER','en','Please try later.','2016-03-30') ,
 ( 'LABEL','ID_THERE_PROBLEM_SENDING_EMAIL','en','There was a problem sending the email to','2016-03-30') ,
+( 'LABEL','ID_USER_CANT_BE_DELETED_FOR_THE_PROCESS','en','The user can''t be deleted because it is referenced in the process {processTitle} in a process permission.','2016-04-18') ,
 ( 'LABEL','ID_MAFE_c5d84b6c19cb058b7b5471b30e926823','en','Invalid operation: Delete message flow before converting it to','2016-03-30') ,
 ( 'LABEL','ID_MAFE_be1a57f7e1cfe44284e71c5175874967','en','Event','2016-03-30') ,
 ( 'LABEL','ID_MAFE_d8012aca7276ee78d2e2bd33861d72a1','en','At least one object should be selected in order to execute the action.','2016-03-30') ,

@@ -197,6 +197,34 @@ try {
             break;
         case 'deleteUser':
             $UID = $_POST['USR_UID'];
+            
+            //process permissions
+            $criteria = new Criteria("workflow");
+            $criteria->addSelectColumn(ObjectPermissionPeer::USR_UID);
+            $criteria->addSelectColumn(ObjectPermissionPeer::PRO_UID);
+            $criteria->add(ObjectPermissionPeer::OP_USER_RELATION, 1, Criteria::EQUAL);
+            $criteria->add(ObjectPermissionPeer::USR_UID, $UID, Criteria::EQUAL);
+            $doSelectRS = DynaformPeer::doSelectRS($criteria);
+            $doSelectRS->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $doSelectRS->next();
+            $objectPermision = $doSelectRS->getRow();
+            if (isset($objectPermision["USR_UID"])) {
+                $criteria = new Criteria("workflow");
+                $criteria->addSelectColumn(ContentPeer::CON_VALUE);
+                $criteria->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE', Criteria::EQUAL);
+                $criteria->add(ContentPeer::CON_ID, $objectPermision["PRO_UID"], Criteria::EQUAL);
+                $criteria->add(ContentPeer::CON_LANG, SYS_LANG, Criteria::EQUAL);
+                $doSelectRS = ContentPeer::doSelectRS($criteria);
+                $doSelectRS->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                $doSelectRS->next();
+                $content = $doSelectRS->getRow();
+                echo G::json_encode(array(
+                    "status" => 'ERROR',
+                    "message" => G::LoadTranslation('ID_USER_CANT_BE_DELETED_FOR_THE_PROCESS', array('processTitle' => isset($content["CON_VALUE"]) ? $content["CON_VALUE"] : $objectPermision['PRO_UID']))
+                ));
+                break;
+            }
+
             G::LoadClass('tasks');
             $oTasks = new Tasks();
             $oTasks->ofToAssignUserOfAllTasks($UID);

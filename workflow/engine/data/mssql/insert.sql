@@ -10612,6 +10612,8 @@ SELECT 'LABEL','ID_PLEASE_TRY_LATER','en','Please try later.','2016-03-30'
   UNION ALL
 SELECT 'LABEL','ID_THERE_PROBLEM_SENDING_EMAIL','en','There was a problem sending the email to','2016-03-30' 
   UNION ALL
+SELECT 'LABEL','ID_USER_CANT_BE_DELETED_FOR_THE_PROCESS','en','The user can''t be deleted because it is referenced in the process {processTitle} in a process permission.','2016-04-18' 
+  UNION ALL
 SELECT 'LABEL','ID_MAFE_c5d84b6c19cb058b7b5471b30e926823','en','Invalid operation: Delete message flow before converting it to','2016-03-30' 
   UNION ALL
 SELECT 'LABEL','ID_MAFE_be1a57f7e1cfe44284e71c5175874967','en','Event','2016-03-30' 

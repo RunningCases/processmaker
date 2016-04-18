@@ -27294,6 +27294,12 @@ msgid "There was a problem sending the email to"
 msgstr "There was a problem sending the email to"
 
 # TRANSLATION
+# LABEL/ID_USER_CANT_BE_DELETED_FOR_THE_PROCESS
+#: LABEL/ID_USER_CANT_BE_DELETED_FOR_THE_PROCESS
+msgid "The user can't be deleted because it is referenced in the process {processTitle} in a process permission."
+msgstr "The user can't be deleted because it is referenced in the process {processTitle} in a process permission."
+
+# TRANSLATION
 # LABEL/ID_MAFE_c5d84b6c19cb058b7b5471b30e926823
 #: LABEL/ID_MAFE_c5d84b6c19cb058b7b5471b30e926823
 msgid "Invalid operation: Delete message flow before converting it to"
