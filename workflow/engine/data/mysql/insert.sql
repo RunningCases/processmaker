@@ -2271,6 +2271,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DELETE_LANGUAGE','en','Remove','2014-01-15') ,
 ( 'LABEL','ID_LANGUAGE_DELETED_SUCCESSFULLY','en','Language deleted successfully!','2014-01-15') ,
 ( 'LABEL','ID_LANGUAGE_CANT_DELETE','en','There is {0} cases started with this language, delete action canceled!','2014-01-15') ,
+( 'LABEL','ID_CANNOT_REMOVE_TEMPLATE_EMAIL_EVENT','en','You can not delete the template {0} because it has a relationship with Email Event','2014-01-15') ,
 ( 'LABEL','ID_TOTAL_CASES','en','Total Cases','2014-01-15') ,
 ( 'LABEL','ID_HEARTBEAT_CONFIG','en','Heart Beat','2014-01-15') ,
 ( 'LABEL','ID_PM_HEARTBEAT_SETTINGS_TITLE','en','Heart Beat Configuration','2014-01-15') ,
