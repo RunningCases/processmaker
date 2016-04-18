@@ -24398,6 +24398,12 @@ msgid "This email is assigned to more than one user. Please contact your adminis
 msgstr "This email is assigned to more than one user. Please contact your administrator."
 
 # TRANSLATION
+# LABEL/ID_EMAIL_EVENT_DEFINITION_DOES_NOT_EXIST
+#: LABEL/ID_EMAIL_EVENT_DEFINITION_DOES_NOT_EXIST
+msgid "The email event definition does not exist."
+msgstr "The email event definition does not exist."
+
+# TRANSLATION
 # LABEL/ID_USER_DOES_NOT_CORRESPOND
 #: LABEL/ID_USER_DOES_NOT_CORRESPOND
 msgid "Wrong authentication. This user does not correspond with the email address."

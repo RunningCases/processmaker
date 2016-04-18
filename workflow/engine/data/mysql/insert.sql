@@ -5575,6 +5575,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASE_USER_INVALID_CANCEL_CASE','en','The user with "{0}" is invalid to cancel the Case.','2015-08-24') ,
 ( 'LABEL','ID_CASE_USER_NOT_HAVE_PERMISSION','en','The user with "{0}" did not have permission to perform this action.','2015-09-01') ,
 ( 'LABEL','ID_EMAIL_MORE_THAN_ONE_USER','en','This email is assigned to more than one user. Please contact your administrator.','2015-09-08') ,
+( 'LABEL','ID_EMAIL_EVENT_DEFINITION_DOES_NOT_EXIST','en','The email event definition does not exist.','2016-04-11') ,
 ( 'LABEL','ID_USER_DOES_NOT_CORRESPOND','en','Wrong authentication. This user does not correspond with the email address.','2015-09-08') ,
 ( 'LABEL','ID_NO_LICENSE_FEATURE_ENABLED','en','Your license does not have the Gmail integration. Please contact your administrator.','2015-09-17') ,
 ( 'LABEL','ID_USER_NOT_ACTIVE','en','The user is not active.','2015-09-08') ,
