@@ -116,7 +116,8 @@ class pmDynaform
 
         if (!isset($_SESSION['USER_LOGGED'])) {
             if (!preg_match("/^.*\/" . SYS_SKIN . "\/tracker\/.*$/", $_SERVER["REQUEST_URI"]) &&
-                    !preg_match("/^.*\/" . SYS_SKIN . "\/[a-z0-9A-Z]+\/[a-z0-9A-Z]+\.php$/", $_SERVER["REQUEST_URI"])
+                !preg_match("/^.*\/" . SYS_SKIN . "\/[a-z0-9A-Z]+\/[a-z0-9A-Z]+\.php$/", $_SERVER["REQUEST_URI"]) &&
+                !preg_match("/^.*\/" . SYS_SKIN . "\/services\/ActionsByEmailDataForm.*$/", $_SERVER["REQUEST_URI"])
             ) {
                 return;
             }
