@@ -442,7 +442,7 @@ class pmDynaform
                     //todo
                     $oCriteria = new Criteria("workflow");
                     $oCriteria->addSelectColumn(ProcessVariablesPeer::INP_DOC_UID);
-                    $oCriteria->add(ProcessVariablesPeer::VAR_NAME, $json->variable);
+                    $oCriteria->add(ProcessVariablesPeer::VAR_UID, $json->var_uid);
                     $rs = ProcessVariablesPeer::doSelectRS($oCriteria);
                     $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                     $rs->next();
