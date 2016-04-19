@@ -2596,13 +2596,20 @@ class workspaceTools
     
     public function checkSequenceNumber()
     {
-        $oRow = SequencesPeer::retrieveByPK("APP_NUMBER");
-        $oAppSequence = new AppSequence();
-        if (!is_null($oRow)) {
-            $aFields = $oRow->toArray(BasePeer::TYPE_FIELDNAME);
-            $oAppSequence->updateSequenceNumber($aFields['SEQ_VALUE']);
-        } else {
-            $oAppSequence->updateSequenceNumber(0);
+        $criteria = new Criteria("workflow");
+        $rsCriteria = AppSequencePeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $rsCriteria->next();
+        $appSequenceRow = $rsCriteria->getRow();
+        if (empty($appSequenceRow)) {
+            $sequenceInstance = SequencesPeer::retrieveByPK("APP_NUMBER");
+            $appSequenceInstance = new AppSequence();
+            if (!is_null($sequenceInstance)) {
+                $sequenceFields = $sequenceInstance->toArray(BasePeer::TYPE_FIELDNAME);
+                $appSequenceInstance->updateSequenceNumber($sequenceFields['SEQ_VALUE']);
+            } else {
+                $appSequenceInstance->updateSequenceNumber(0);
+            }
         }
     }
 
