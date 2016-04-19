@@ -100,6 +100,7 @@ class Cases
         $c->add(ProcessPeer::PRO_SUBPROCESS, '0');
         $c->add(TaskPeer::TAS_START, 'TRUE');
         $c->add(TaskUserPeer::USR_UID, $sUIDUser);
+        $c->add(TaskUserPeer::TU_TYPE, 1);
         if ($processUid != '') {
             $c->add(TaskPeer::PRO_UID, $processUid);
         }
@@ -126,6 +127,7 @@ class Cases
         $c->add(ProcessPeer::PRO_SUBPROCESS, '0');
         $c->add(TaskPeer::TAS_START, 'TRUE');
         $c->add(TaskUserPeer::USR_UID, $aGroups, Criteria::IN);
+        $c->add(TaskUserPeer::TU_TYPE, 1);
         if ($processUid != '') {
             $c->add(TaskPeer::PRO_UID, $processUid);
         }
@@ -157,7 +159,7 @@ class Cases
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
         $c->add(TaskPeer::TAS_START, 'TRUE');
         $c->add(TaskUserPeer::USR_UID, $sUIDUser);
-
+        $c->add(TaskUserPeer::TU_TYPE, 1);
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $rs->next();
@@ -183,7 +185,7 @@ class Cases
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
         $c->add(TaskPeer::TAS_START, 'TRUE');
         $c->add(TaskUserPeer::USR_UID, $aGroups, Criteria::IN);
-
+        $c->add(TaskUserPeer::TU_TYPE, 1);
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $rs->next();
@@ -262,7 +264,7 @@ class Cases
         $c->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
         $c->add(TaskPeer::TAS_START, 'TRUE');
         $c->add(TaskUserPeer::USR_UID, $sUIDUser);
-
+        $c->add(TaskUserPeer::TU_TYPE, 1);
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $rs->next();
@@ -288,7 +290,7 @@ class Cases
         $c->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
         $c->add(TaskPeer::TAS_START, 'TRUE');
         $c->add(TaskUserPeer::USR_UID, $aGroups, Criteria::IN);
-
+        $c->add(TaskUserPeer::TU_TYPE, 1);
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $rs->next();
@@ -404,7 +406,7 @@ class Cases
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
         $c->add(TaskPeer::TAS_ASSIGN_TYPE, 'SELF_SERVICE');
         $c->add(TaskUserPeer::USR_UID, $sUIDUser);
-
+        $c->add(TaskUserPeer::TU_TYPE, 1);
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $rs->next();
@@ -430,7 +432,7 @@ class Cases
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
         $c->add(TaskPeer::TAS_ASSIGN_TYPE, 'SELF_SERVICE');
         $c->add(TaskUserPeer::USR_UID, $aGroups, Criteria::IN);
-
+        $c->add(TaskUserPeer::TU_TYPE, 1);
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $rs->next();
