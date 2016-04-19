@@ -539,6 +539,13 @@ class InputDocument
             //Load the fields
             $arrayField = $case->loadCase($applicationUid);
             $arrayField["APP_DATA"] = array_merge($arrayField["APP_DATA"], \G::getSystemConstants());
+            //Validate Process Uid and Input Document Process Uid
+            $inputDocumentInstance = new \InputDocument();
+            $inputDocumentFields = $inputDocumentInstance->load($inputDocumentUid);
+            if ($arrayField['PRO_UID'] != $inputDocumentFields['PRO_UID']) {
+                throw new \Exception(\G::LoadTranslation("ID_INPUT_DOCUMENT_DOES_NOT_EXIST",
+                                     array('UID=' . $inputDocumentUid, 'PRO_UID=' . $arrayField['PRO_UID'])));
+            }
             //Triggers
             $arrayTrigger = $case->loadTriggers($taskUid, "INPUT_DOCUMENT", $inputDocumentUid, "AFTER");
             //Add Input Document
