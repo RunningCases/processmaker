@@ -57,99 +57,87 @@ try {
             die($json->encode($nodes));
             break;
         case "saveDepartments":
-            $depsToCheck = explode("|", $_REQUEST["departmentsDN"]);
+            $depsToCheck = ($_REQUEST['departmentsDN'] != '')? explode('|', $_REQUEST['departmentsDN']) : [];
             $depsToCheck = array_map("urldecode", $depsToCheck);
             $depsToUncheck = getDepartmentsToUncheck($depsToCheck);
             $RBAC =& RBAC::getSingleton();
             $authenticationSource  = $RBAC->authSourcesObj->load($_REQUEST["authUid"]);
             $ldapAdvanced = getLDAPAdvanceInstance($_REQUEST["authUid"]);
 
-            foreach ($depsToCheck as $departmentDN) {
-                $baseDN = str_replace($authenticationSource["AUTH_SOURCE_BASE_DN"], "", $departmentDN);
-                $ous = custom_ldap_explode_dn($departmentDN);
-                $currentDep = array_shift($ous);
-                $parentDN = implode(",", $ous);
+            foreach ($depsToCheck as $departmentDn) {
+                $departmentUid = $ldapAdvanced->getDepUidIfExistsDN($departmentDn);
 
-                //$ous = custom_ldap_explode_dn($baseDN);
-                //$currentDep = array_shift($ous);
-
-                foreach ($ous as $key => $val) {
-                    $aux = explode("=", $val);
-
-                    if (isset($aux[0]) && strtolower(trim($aux[0])) != "ou") {
-                        unset($ous[$key]);
-                    }
-                }
-
-                if ($currentDep == "") {
-                    $depTitle = "ROOT " . $authenticationSource["AUTH_SOURCE_BASE_DN"];
-                } else {
-                    $depAux = explode("=", $currentDep);
-                    $depTitle = trim($depAux[1]);
-                }
-
-                $departmentUID = $ldapAdvanced->getDepUidIfExistsDN($departmentDN);
-
-                if ($departmentUID == "") {
-                    if (count($ous) == 0) {
-                        $parentUid = "";
+                if ($departmentUid == '') {
+                    if (strcasecmp($departmentDn, $authenticationSource['AUTH_SOURCE_BASE_DN']) == 0) {
+                        $departmentTitle = 'ROOT (' . $authenticationSource['AUTH_SOURCE_BASE_DN'] . ')';
+                        $parentUid = '';
                     } else {
-                        $parentUid = $ldapAdvanced->getDepUidIfExistsDN($parentDN);
+                        $arrayAux = custom_ldap_explode_dn($departmentDn);
+                        $departmentCurrent = array_shift($arrayAux);
+                        $parentDn = implode(',', $arrayAux);
 
-                        if ($parentUid == "") {
-                            $response = new stdclass();
-                            $response->status = "ERROR";
-                            $response->message = "Parent departments are needed before create this sub department " . $parentDN;
-                            die($json->encode($response));
+                        $arrayAux = explode('=', $departmentCurrent);
+                        $departmentTitle = trim($arrayAux[1]);
+                        $parentUid = $ldapAdvanced->getDepUidIfExistsDN($parentDn);
+
+                        if (str_ireplace($authenticationSource['AUTH_SOURCE_BASE_DN'], '', $parentDn) != '' &&
+                            $parentUid == ''
+                        ) {
+                            $response = new stdClass();
+                            $response->status  = 'ERROR';
+                            $response->message = G::LoadTranslation(
+                                'ID_DEPARTMENT_CHECK_PARENT_DEPARTMENT', [$parentDn, $departmentTitle]
+                            );
+
+                            echo $json->encode($response);
+                            exit(0);
                         }
                     }
 
-                    $department = new department();
-                    $row["DEP_TITLE"]    = stripslashes($depTitle);
-                    $row["DEP_PARENT"]   = $parentUid;
-                    $row["DEP_LDAP_DN"]  = $departmentDN;
-                    $row["DEP_REF_CODE"] = "";
-                    $departmentUID = $department->create($row);
+                    $department = new Department();
 
-                    if ($departmentUID == false) {
-                        $response = new stdclass();
-                        $response->status = "ERROR";
-                        $response->message = "Error creating department";
-                        die($json->encode($response));
+                    $departmentUid = $department->create([
+                        'DEP_TITLE'    => stripslashes($departmentTitle),
+                        'DEP_PARENT'   => $parentUid,
+                        'DEP_LDAP_DN'  => $departmentDn,
+                        'DEP_REF_CODE' => ''
+                    ]);
+
+                    if ($departmentUid === false) {
+                        $response = new stdClass();
+                        $response->status  = 'ERROR';
+                        $response->message = G::LoadTranslation('ID_DEPARTMENT_ERROR_CREATE');
+
+                        echo $json->encode($response);
+                        exit(0);
                     }
                 }
             }
 
-            if (count($depsToUncheck) > 0) {
-                foreach ($depsToUncheck as $departmentDN) {
-                    $departmentUID = $ldapAdvanced->getDepUidIfExistsDN($departmentDN);
+            if (!empty($depsToUncheck)) {
+                $baseDnLength = strlen($authenticationSource['AUTH_SOURCE_BASE_DN']);
 
-                    if ($departmentUID != "") {
-                        $department = new department();
-                        $departmentInfo = $department->Load($departmentUID);
+                foreach ($depsToUncheck as $departmentDn) {
+                    $departmentUid = $ldapAdvanced->getDepUidIfExistsDN($departmentDn);
 
-                        $arrayAux1 = custom_ldap_explode_dn($departmentDN);
+                    if ($departmentUid != '' &&
+                        strcasecmp(
+                            substr($departmentDn, strlen($departmentDn) - $baseDnLength),
+                            $authenticationSource['AUTH_SOURCE_BASE_DN']
+                        ) == 0
+                    ) {
+                        $department = new Department();
 
-                        foreach ($arrayAux1 as $index => $value) {
-                            $arrayAux2 = explode("=", $value);
+                        $arrayDepartmentData = $department->Load($departmentUid);
+                        $arrayDepartmentData['DEP_LDAP_DN'] = '';
 
-                            if (isset($arrayAux2[0]) && strtolower(trim($arrayAux2[0])) == "ou") {
-                                unset($arrayAux1[$index]);
-                            }
+                        $result = $department->update($arrayDepartmentData);
+
+                        if (!isset($authenticationSource['AUTH_SOURCE_DATA']['DEPARTMENTS_TO_UNASSIGN'])) {
+                            $authenticationSource['AUTH_SOURCE_DATA']['DEPARTMENTS_TO_UNASSIGN'] = [];
                         }
 
-                        $departmentBaseDn = implode(",", $arrayAux1);
-
-                        if (strtolower($departmentBaseDn) == strtolower($authenticationSource["AUTH_SOURCE_BASE_DN"])) {
-                            $departmentInfo["DEP_LDAP_DN"] = "";
-                            $department->update($departmentInfo);
-
-                            if (!isset($authenticationSource["AUTH_SOURCE_DATA"]["DEPARTMENTS_TO_UNASSIGN"])) {
-                                $authenticationSource["AUTH_SOURCE_DATA"]["DEPARTMENTS_TO_UNASSIGN"] = array();
-                            }
-
-                            $authenticationSource["AUTH_SOURCE_DATA"]["DEPARTMENTS_TO_UNASSIGN"][] = $departmentUID;
-                        }
+                        $authenticationSource['AUTH_SOURCE_DATA']['DEPARTMENTS_TO_UNASSIGN'][] = $departmentUid;
                     }
                 }
 
