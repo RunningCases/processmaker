@@ -61477,4 +61477,4 @@ INSERT INTO ADDONS_MANAGER (ADDON_DESCRIPTION,ADDON_ID,ADDON_NAME,ADDON_NICK,ADD
 ('User-based Language Management.','userBasedLanguage','userBasedLanguage','userBasedLanguage','Colosa','localRegistry','ready','00000000000000000000000000010013','features','','','0'),
 ('User-based Time Zone Management.','userBasedTimeZone','userBasedTimeZone','userBasedTimeZone','Colosa','localRegistry','ready','00000000000000000000000000010014','features','','','0'),
 ('This Feature will allow to store all input, output and attached documents generated in your processes in Google Drive.','pmGoogleDrive','pmGoogleDrive','pmGoogleDrive','Colosa','localRegistry','ready','00000000000000000000000000010015','features','','','0'),
-('Selective Import Export.','selectiveImportExport','selectiveImportExport','selectiveImportExport','Colosa','localRegistry','ready','00000000000000000000000000010016','features','','','0');
+('Promotion Manager','selectiveImportExport','selectiveImportExport','selectiveImportExport','Colosa','localRegistry','ready','00000000000000000000000000010016','features','','','0');

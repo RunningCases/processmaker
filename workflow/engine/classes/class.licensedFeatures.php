@@ -302,7 +302,7 @@ class PMLicensedFeatures
                 "version" => ""
             ),
             16 => array(
-                "description" => "Selective Import Export.",
+                "description" => "Promotion Manager",
                 "enabled" => false,
                 "id" => "selectiveImportExport",
                 "latest_version" => "",
