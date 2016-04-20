@@ -682,7 +682,9 @@ class Light
         switch($extensions){
             case 'jpg':
             case 'jpeg':
-                $imgTmp = imagecreatefromjpeg($path);
+                ini_set('gd.jpeg_ignore_warning', 1);
+                error_reporting(0);
+                $imgTmp = @imagecreatefromjpeg($path);
                 break;
             case 'gif':
                 $imgTmp = imagecreatefromgif($path);
