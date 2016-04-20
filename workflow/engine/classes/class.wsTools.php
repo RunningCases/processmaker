@@ -1563,7 +1563,7 @@ class workspaceTools
             }
             $workspace = new workspaceTools($workspaceName);
 
-            if ($workspace->workspaceExists()) {
+            if (Installer::isset_site($workspaceName)) {
                 if ($overwrite) {
                     if ($workspace->dbInfo['DB_NAME'] == $workspace->dbInfo['DB_RBAC_NAME']) {
                         $newDatabases = 1;
