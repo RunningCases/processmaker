@@ -259,12 +259,14 @@ class FilesManager
             $oProcessFiles->fromArray($aData, \BasePeer::TYPE_FIELDNAME);
 
             $path = $aData['PRF_PATH'];
+            $backPointer = 3;
             if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                $backPointer = 5;
                 $path = str_replace("/", DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR, $path);
             }
 
             $path = explode(DIRECTORY_SEPARATOR,$path);
-            $fileDirectory = $path[count($path)-3];
+            $fileDirectory = $path[count($path)-$backPointer];
 
             switch ($fileDirectory) {
                 case 'mailTemplates':
