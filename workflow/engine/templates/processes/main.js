@@ -1091,7 +1091,7 @@ function exportImportProcessObjects(typeAction)
         layout: 'fit',
         id: 'processesGrid',
         height:365,
-        width:340,
+        width:355,
         title : '',
         stateful : true,
         stateId : 'gridProcessObjects',
@@ -1108,6 +1108,7 @@ function exportImportProcessObjects(typeAction)
             emptyText: _('ID_NO_RECORDS_FOUND')
         },
         clicksToEdit: 1,
+        enableColumnResize: false,
         cm: new Ext.grid.ColumnModel({
             defaults: {
                 sortable: false
