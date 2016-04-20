@@ -1574,6 +1574,10 @@ class workspaceTools
                     if ($newDatabases != $oldDatabases) {
                         throw new Exception("We can't overwrite this workspace because it has a different amount of databases. Not only the 'source' but also the 'target' must have the same amount of databases.");
                     }
+
+                    if(!$workspace->workspaceExists()){
+                        throw new Exception('We can not overwrite this workspace because the workspace '.$workspaceName.' does not exist please check the lower case and upper case.');
+                    }
                     CLI::logging(CLI::warning("> Workspace $workspaceName already exist, overwriting!") . "\n");
                 } else {
                     throw new Exception("Destination workspace already exist (use -o to overwrite)");
