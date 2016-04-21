@@ -112,8 +112,16 @@ class ChangeLog
                     $node = new StdClass();
                     $node->field = $key;
                     $previousValue = !isset($this->values[$key]) ? null : $this->values[$key];
-                    $node->previousValue = (string) $previousValue;
-                    $node->currentValue = (string) $value;
+                    if(!is_array($previousValue)){
+                        $node->previousValue = (string) $previousValue;
+                    } else {
+                        $node->previousValue = "<br />".nl2br(print_r($previousValue, true));
+                    }
+                    if(!is_array($value)){
+                        $node->currentValue = (string) $value;
+                    } else {
+                        $node->currentValue = "<br />".nl2br(print_r($value, true));
+                    }
                     $node->previousValueType = gettype($previousValue);
                     $node->currentValueType = gettype($value);
                     $node->record = $this->getHistoryTitle($row);
