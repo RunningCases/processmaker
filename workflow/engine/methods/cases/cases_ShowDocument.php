@@ -110,6 +110,7 @@ if (! $sw_file_exists) {
         $nameFile = $oAppDocument->Fields['APP_DOC_FILENAME'];
         $licensedFeatures = &PMLicensedFeatures::getSingleton();
         $downloadStatus = false;
+        /*----------------------------------********---------------------------------*/
         if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
             G::LoadClass( "AppDocumentDrive" );
             $drive = new AppDocumentDrive();
@@ -129,6 +130,7 @@ if (! $sw_file_exists) {
                 }
             }
         }
+        /*----------------------------------********---------------------------------*/
         if (!$downloadStatus) {
             G::streamFile( $realPath, $bDownload, $nameFile ); //download
         }
