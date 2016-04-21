@@ -124,11 +124,16 @@ if (isset($_FILES["PROCESS_FILENAME"]) && (pathinfo($_FILES["PROCESS_FILENAME"][
         $opt2 = XmlImporter::GROUP_IMPORT_OPTION_CREATE_NEW;
         $prjUid = '';
         $proType = '';
+        $data = $importer->load();
+        if (version_compare($data['version'], '3.0', '>') && pathinfo($_FILES["PROCESS_FILENAME"]["name"],
+                PATHINFO_EXTENSION) == "pmx"
+        ) {
+            die(G::LoadTranslation("ID_IMPORTER_ERROR_FILE_INVALID_TYPE_OR_CORRUPT_DATA"));
+        }
         /*----------------------------------********---------------------------------*/
         $granularImport = false;
         $objectsToImport = '';
 
-        $data = $importer->load();
         if (version_compare($data['version'], '3.0', '>')) {
             $objectsToImport = [];
             $objects = (isset($data['objects'])) ? explode('|', $data['objects']) : "";
@@ -254,11 +259,14 @@ if (isset($_POST["PRO_FILENAME"]) &&
     $importer = new XmlImporter();
     $importer->setData("usr_uid", $_SESSION["USER_LOGGED"]);
     $importer->setSourceFile(PATH_DOCUMENT . "input" . PATH_SEP . $_POST["PRO_FILENAME"]);
-
+    $data = $importer->load();
+    if (version_compare($data['version'], '3.0', '>') && pathinfo(PATH_DOCUMENT . "input" .
+            PATH_SEP . $_POST["PRO_FILENAME"], PATHINFO_EXTENSION) == "pmx") {
+        die(G::LoadTranslation( "ID_IMPORTER_ERROR_FILE_INVALID_TYPE_OR_CORRUPT_DATA" ));
+    }
     try {
         /*----------------------------------********---------------------------------*/
         $objectsToImport = '';
-        $data = $importer->load();
         // only uploadFileNewProcessExist
         if (version_compare($data['version'], '3.0', '>') && isset($_POST['objectsToImport']) && $_POST['objectsToImport'] === '' && $_POST['IMPORT_OPTION']==="1") {
             $objectImport = (isset($data['objects'])) ? explode('|', $data['objects']) : "";
