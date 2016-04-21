@@ -250,9 +250,20 @@ Ext.onReady(function(){
   }
     //Code export - exportGranular (handle)
     var exportProcessOption;
+    var granularExportProcessOption;
+    var normalExportProcessOption = {
+        id: "export",
+        disabled: true,
+        text: _("ID_EXPORT"),
+        iconCls: "silk-add",
+        icon: "/images/export.png",
+        handler: function () {
+            exportProcess();
+        }
+    };
     /*----------------------------------********---------------------------------*/
     if (isGranularFeature) {
-        exportProcessOption = {
+        granularExportProcessOption = {
             xtype: "tbsplit",
             id: "export",
             disabled: true,
@@ -277,18 +288,10 @@ Ext.onReady(function(){
                 }
             ]
         };
+        exportProcessOption = granularExportProcessOption;
     } else {
     /*----------------------------------********---------------------------------*/
-        exportProcessOption = {
-            id: "export",
-            disabled: true,
-            text: _("ID_EXPORT"),
-            iconCls: "silk-add",
-            icon: "/images/export.png",
-            handler: function () {
-                exportProcess();
-            }
-        };
+        exportProcessOption = normalExportProcessOption;
     /*----------------------------------********---------------------------------*/
     }
     /*----------------------------------********---------------------------------*/
@@ -470,6 +473,17 @@ Ext.onReady(function(){
           var activator = Ext.getCmp('activator');
 
           activator.setDisabled(false);
+          /*----------------------------------********---------------------------------*/
+          if(rowSelected.data.PROJECT_TYPE === 'bpmn' && isGranularFeature){
+              processesGrid.getTopToolbar().remove('export');
+              processesGrid.getTopToolbar().insert(6, granularExportProcessOption);
+              processesGrid.getTopToolbar().doLayout();
+          } else {
+              processesGrid.getTopToolbar().remove('export');
+              processesGrid.getTopToolbar().insert(6, normalExportProcessOption);
+              processesGrid.getTopToolbar().doLayout();
+          }
+          /*----------------------------------********---------------------------------*/
           Ext.ComponentMgr.get("export").setDisabled(false);
 
           if( rowSelected.data.PRO_STATUS == 'ACTIVE' ){
@@ -527,13 +541,34 @@ Ext.onReady(function(){
   function onMessageContextMenu(grid, rowIndex, e) {
     e.stopEvent();
     var coords = e.getXY();
+    /*----------------------------------********---------------------------------*/
+    var rowSelected = grid.getStore().getAt(rowIndex);
+    if(rowSelected.data.PROJECT_TYPE === 'bpmn' && isGranularFeature) {
+        messageContextMenu.remove('export-menu');
+        messageContextMenu.addItem(granularMenuExportOption);
+    } else {
+        messageContextMenu.remove('export-menu');
+        messageContextMenu.addItem(normalMenuExportOption);
+    }
+    /*----------------------------------********---------------------------------*/
     messageContextMenu.showAt([coords[0], coords[1]]);
   }
     //code export - exportGranular (handler)
     var menuExportOption;
+    var granularMenuExportOption;
+    var normalMenuExportOption = {
+        id: 'export-menu',
+        text: _("ID_EXPORT"),
+        icon: "/images/export.png",
+        handler: function () {
+            exportProcess();
+        }
+    };
+
     /*----------------------------------********---------------------------------*/
     if (isGranularFeature) {
-        menuExportOption = {
+        granularMenuExportOption = {
+            id: 'export-menu',
             text: _("ID_EXPORT"),
             icon: "/images/export.png",
             menu: {
@@ -557,15 +592,10 @@ Ext.onReady(function(){
                 ]
             }
         };
+        menuExportOption = granularMenuExportOption;
     } else {
     /*----------------------------------********---------------------------------*/
-        menuExportOption = {
-            text: _("ID_EXPORT"),
-            icon: "/images/export.png",
-            handler: function () {
-                exportProcess();
-            }
-        };
+        menuExportOption = normalMenuExportOption;
     /*----------------------------------********---------------------------------*/
     }
     /*----------------------------------********---------------------------------*/
