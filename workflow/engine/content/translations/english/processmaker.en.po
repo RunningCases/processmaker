@@ -9542,6 +9542,12 @@ msgid "The process you are trying to import already exists. Please select one of
 msgstr "The process you are trying to import already exists. Please select one of the following options to continue:"
 
 # TRANSLATION
+# LABEL/ID_PROCESS_DEFINITION_INCOMPLETE
+#: LABEL/ID_PROCESS_DEFINITION_INCOMPLETE
+msgid "To create a new process all the process objects must be selected/included in the pmx2 file."
+msgstr "To create a new process all the process objects must be selected/included in the pmx2 file."
+
+# TRANSLATION
 # LABEL/ID_DEBUG_MESSAGE
 #: LABEL/ID_DEBUG_MESSAGE
 msgid "Debug Messages"

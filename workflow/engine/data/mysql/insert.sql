@@ -3036,6 +3036,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_IMPORT_PROCESS','en','Import Process','2014-01-15') ,
 ( 'LABEL','ID_UPLOADING_PROCESS_FILE','en','Uploading the process file...','2014-01-15') ,
 ( 'LABEL','ID_IMPORT_ALREADY_EXISTS','en','The process you are trying to import already exists. Please select one of the following options to continue:','2014-10-21') ,
+( 'LABEL','ID_PROCESS_DEFINITION_INCOMPLETE','en','To create a new process all the process objects must be selected/included in the pmx2 file.','2014-10-21') ,
 ( 'LABEL','ID_DEBUG_MESSAGE','en','Debug Messages','2014-01-15') ,
 ( 'LABEL','ID_FIELD_HANDLER_ACTION_DELETE','en','Are you sure you want to remove this','2015-01-16') ,
 ( 'LABEL','ID_PROCESS_EXIST_SOME_GROUP','en','Some of the groups that you are trying to import already exist. Please select one of the following options to continue.','2014-10-21') ,
