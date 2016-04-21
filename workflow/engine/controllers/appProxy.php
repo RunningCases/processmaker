@@ -186,11 +186,7 @@ class AppProxy extends HttpProxyController
 
         G::LoadClass( 'case' );
         $case = new Cases();
-
-        if ($RBAC->userCanAccess( 'PM_ALLCASES' ) < 0 && $case->userParticipatedInCase( $httpData->appUid, $_SESSION['USER_LOGGED'] ) == 0) {
-            throw new Exception( G::LoadTranslation( 'ID_NO_PERMISSION_NO_PARTICIPATED' ) );
-        }
-
+        
         if ($httpData->action == 'sent') { // Get the last valid delegation for participated list
             $criteria = new Criteria();
             $criteria->addSelectColumn(AppDelegationPeer::DEL_INDEX);
