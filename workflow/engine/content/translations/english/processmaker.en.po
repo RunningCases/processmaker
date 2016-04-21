@@ -6782,6 +6782,18 @@ msgid "Department Name"
 msgstr "Department Name"
 
 # TRANSLATION
+# LABEL/ID_DEPARTMENT_ERROR_CREATE
+#: LABEL/ID_DEPARTMENT_ERROR_CREATE
+msgid "Error creating department"
+msgstr "Error creating department"
+
+# TRANSLATION
+# LABEL/ID_DEPARTMENT_CHECK_PARENT_DEPARTMENT
+#: LABEL/ID_DEPARTMENT_CHECK_PARENT_DEPARTMENT
+msgid "It's necessary to check the parent-department: {0} for the sub-department: {1}"
+msgstr "It's necessary to check the parent-department: {0} for the sub-department: {1}"
+
+# TRANSLATION
 # LABEL/ID_CONFIRM_CANCEL_CASE
 #: LABEL/ID_CONFIRM_CANCEL_CASE
 msgid "[LABEL/ID_CONFIRM_CANCEL_CASE] Are you sure you want to cancel this case?"
