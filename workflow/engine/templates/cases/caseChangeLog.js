@@ -64,9 +64,7 @@ Ext.onReady(function () {
                             sortable: false,
                             dataIndex: 'previousValue',
                             renderer: function (value, p, record) {
-                                return ' <button disabled="disabled" class="typeButton">'
-                                    + record.data.previousValueType
-                                    + '</button> ' + value;
+                                return value;
                             }
                         },
                         {
@@ -75,9 +73,7 @@ Ext.onReady(function () {
                             sortable: false,
                             dataIndex: 'currentValue',
                             renderer: function (value, p, record) {
-                                return ' <button disabled="disabled" class="typeButton">'
-                                    + record.data.currentValueType
-                                    + '</button> ' + value;
+                                return value;
                             }
                         },
                         {
