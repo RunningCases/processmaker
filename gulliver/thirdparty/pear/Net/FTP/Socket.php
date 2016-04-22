@@ -635,6 +635,17 @@ function ftp_put(&$control, $remote, $local, $mode, $pos = 0)
  */
 function ftp_get(&$control, $local, $remote, $mode, $resume = 0)
 {
+    if (!class_exists('G')) {
+        $realdocuroot = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']);
+        $docuroot = explode('/', $realdocuroot);
+        array_pop($docuroot);
+        $pathhome = implode('/', $docuroot) . '/';
+        array_pop($docuroot);
+        $pathTrunk = implode('/', $docuroot) . '/';
+        require_once($pathTrunk . 'gulliver/system/class.g.php');
+    }
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
     if (!is_resource($control) || !is_writable(dirname($local)) ||
             !is_integer($mode) || !is_integer($resume)) {
         return false;
@@ -660,8 +671,8 @@ function ftp_get(&$control, $local, $remote, $mode, $resume = 0)
         return false;
     }
 
-    if(is_file($local)) {
-        $fp = fopen($local, 'w'.$windows[$mode]);
+    if(is_file($filter->validatePath($local))) {
+        $fp = fopen($filter->validatePath($local), 'w'.$windows[$mode]);
     } else {
         $fp = false;
     }
