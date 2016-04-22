@@ -726,7 +726,7 @@ class ldapAdvanced
             $ldapcnn = $this->ldapcnn;
 
             //Get Users
-            $limit = $arrayAuthenticationSourceData['AUTH_SOURCE_DATA']['LDAP_PAGE_SIZE_LIMIT'];
+            $limit = $this->__getPageSizeLimitByData($arrayAuthenticationSourceData);
             $flagError = false;
 
             if (!isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_USERS_FILTER"])) {
@@ -763,7 +763,9 @@ class ldapAdvanced
                     }
                 }
 
-                ldap_control_paged_result_response($ldapcnn, $searchResult, $cookie);
+                if (!$flagError) {
+                    ldap_control_paged_result_response($ldapcnn, $searchResult, $cookie);
+                }
             } while (($cookie !== null && $cookie != '') && !$flagError);
 
             //Get Users //2
@@ -1100,16 +1102,11 @@ class ldapAdvanced
             $arrayAuthSource = $rbac->authSourcesObj->load($this->sAuthSource);
 
             $setAttributes = 0;
-            $attributeUserSet = array();
 
-            if (isset($arrayAuthSource["AUTH_SOURCE_DATA"]["AUTH_SOURCE_SHOWGRID"]) &&
-                $arrayAuthSource["AUTH_SOURCE_DATA"]["AUTH_SOURCE_SHOWGRID"] == "on") {
-
+            if (isset($arrayAuthSource['AUTH_SOURCE_DATA']['AUTH_SOURCE_SHOWGRID']) &&
+                $arrayAuthSource['AUTH_SOURCE_DATA']['AUTH_SOURCE_SHOWGRID'] == 'on'
+            ) {
                 $setAttributes = 1;
-
-                foreach ($arrayAuthSource["AUTH_SOURCE_DATA"]["AUTH_SOURCE_GRID_ATTRIBUTE"] as $value) {
-                    $attributeUserSet[$value["attributeUser"]] = $value["attributeLdap"];
-                }
             }
 
             //Get UserName
@@ -1144,12 +1141,17 @@ class ldapAdvanced
             $userDn = $strUser;
 
             if ($verifiedUser["sDN"] != $strUser || $setAttributes==1) {
-                // if not Equals for that user uid
-                if (!class_exists("RbacUsers")) {
-                    require_once(PATH_RBAC."model/RbacUsers.php");
-                }
+                $userDn = $verifiedUser['sDN'];
 
-                $columnsWf = array();
+                //Update data
+                $user = new \ProcessMaker\BusinessModel\User();
+                $arrayUserData = $user->getUserRecordByPk($usrUid, [], false);
+
+                $result = $this->__ldapUserUpdateByDnAndData(
+                    $this->ldapcnn, $arrayAuthSource, $userDn, [$arrayUserData['USR_USERNAME'] => $arrayUserData]
+                );
+
+                //Update DN
                 $con = Propel::getConnection(RbacUsersPeer::DATABASE_NAME);
                 // select set
                 $c1 = new Criteria("rbac");
@@ -1157,76 +1159,9 @@ class ldapAdvanced
                 $c1->add(RbacUsersPeer::USR_AUTH_USER_DN, $strUser);
                 // update set
                 $c2 = new Criteria("rbac");
-                $c2->add(RbacUsersPeer::USR_AUTH_USER_DN, $verifiedUser["sDN"]);
-
-                foreach ($attributeUserSet as $key => $value) {
-                    eval('$flagExist = (defined("RbacUsersPeer::' . $key . '")) ? 1: 0;');
-                    if ($flagExist == 1) {
-                        if ($key == "USR_STATUS") {
-                            $evalValue = $verifiedUser[$key];
-
-                            $statusValue = "0";
-
-                            if (is_string($evalValue) && G::toUpper($evalValue) == "ACTIVE") {
-                                $statusValue = "1";
-                            }
-
-                            if (is_bool($evalValue) && $evalValue == true) {
-                                $statusValue = "1";
-                            }
-
-                            if ((is_float($evalValue) || is_int($evalValue) || is_integer($evalValue) || is_numeric($evalValue)) && (int)$evalValue != 0 && (int)$evalValue != 66050) {
-                                $statusValue = "1";
-                            }
-
-                            $verifiedUser[$key] = $statusValue;
-                        }
-                        //req -  accountexpires
-                        if ($key =="USR_DUE_DATE") {
-                            $verifiedUser[$key] = $this->convertDateADtoPM($verifiedUser[$key]);
-                        }
-                        //end
-
-                        eval('$c2->add(RbacUsersPeer::' . $key . ', $verifiedUser["' . $key . '"]);');
-                    }
-                }
+                $c2->add(RbacUsersPeer::USR_AUTH_USER_DN, $userDn);
 
                 BasePeer::doUpdate($c1, $c2, $con);
-
-                $columnsWf = array();
-
-                foreach ($attributeUserSet as $key => $value) {
-                    if (isset($verifiedUser[$key])) {
-                        if ($key == 'USR_STATUS') {
-
-                            $statusValue = 'INACTIVE';
-
-                            if (is_string($evalValue) && G::toUpper($evalValue) == 'ACTIVE') {
-                                $statusValue = 'ACTIVE';
-                            }
-
-                            if (is_bool($evalValue) && $evalValue == true) {
-                                $statusValue = 'ACTIVE';
-                            }
-
-                            if ((is_float($evalValue) || is_int($evalValue) || is_integer($evalValue) || is_numeric($evalValue)) && (int)$evalValue != 0 && (int)$evalValue > 66000 || (int)$evalValue == 1) {
-                                $statusValue = 'ACTIVE';
-                            }
-
-                            $verifiedUser[$key] = $statusValue;
-                        }
-
-                        $columnsWf[$key] = $verifiedUser[$key];
-                    }
-                }
-
-                $columnsWf['USR_UID'] = $usrUid;
-
-                require_once 'classes/model/Users.php';
-
-                $oUser = new Users();
-                $oUser->update($columnsWf);
-                $userDn = $verifiedUser["sDN"];
             }
 
             //Check ldap connection for user
@@ -1736,7 +1671,7 @@ class ldapAdvanced
             $ldapcnn = $this->ldapcnn;
 
             //Get Departments
-            $limit = $arrayAuthenticationSourceData['AUTH_SOURCE_DATA']['LDAP_PAGE_SIZE_LIMIT'];
+            $limit = $this->__getPageSizeLimitByData($arrayAuthenticationSourceData);
             $flagError = false;
 
             $filter = '(' . $this->arrayObjectClassFilter['department'] . ')';
@@ -1797,7 +1732,9 @@ class ldapAdvanced
                     }
                 }
 
-                ldap_control_paged_result_response($ldapcnn, $searchResult, $cookie);
+                if (!$flagError) {
+                    ldap_control_paged_result_response($ldapcnn, $searchResult, $cookie);
+                }
             } while (($cookie !== null && $cookie != '') && !$flagError);
 
             $str = '';
@@ -2383,7 +2320,7 @@ class ldapAdvanced
             $ldapcnn = $this->ldapcnn;
 
             //Get Groups
-            $limit = $arrayAuthenticationSourceData['AUTH_SOURCE_DATA']['LDAP_PAGE_SIZE_LIMIT'];
+            $limit = $this->__getPageSizeLimitByData($arrayAuthenticationSourceData);
             $flagError = false;
 
             $filter = '(' . $this->arrayObjectClassFilter['group'] . ')';
@@ -2424,7 +2361,9 @@ class ldapAdvanced
                     }
                 }
 
-                ldap_control_paged_result_response($ldapcnn, $searchResult, $cookie);
+                if (!$flagError) {
+                    ldap_control_paged_result_response($ldapcnn, $searchResult, $cookie);
+                }
             } while (($cookie !== null && $cookie != '') && !$flagError);
 
             $str = '';
@@ -2803,22 +2742,18 @@ class ldapAdvanced
     }
 
     /**
-     * Update Users data based on the LDAP Server
+     * Update User data based on the LDAP Server
      *
-     * @param resource $ldapcnn                       LDAP link identifier
-     * @param array    $arrayAuthenticationSourceData Authentication Source Data
-     * @param string   $filterUsers                   Filter
-     * @param array    $arrayUserUid                  UID of Users
-     * @param array    $arrayData                     Data
+     * @param resource $ldapcnn             LDAP link identifier
+     * @param array    $arrayAuthSourceData Authentication Source Data
+     * @param string   $userDn              User DN
+     * @param array    $arrayUser           Users
      *
-     * return void
+     * @return bool
      */
-    public function ldapUsersUpdateData($ldapcnn, array $arrayAuthenticationSourceData, $filterUsers, array $arrayUserUid, array $arrayData)
+    private function __ldapUserUpdateByDnAndData($ldapcnn, array $arrayAuthSourceData, $userDn, array $arrayUser)
     {
         try {
-            $totalUser = $arrayData["totalUser"];
-            $countUser = $arrayData["countUser"];
-
             //Set variables
             $rbac = &RBAC::getSingleton();
 
@@ -2827,138 +2762,177 @@ class ldapAdvanced
             }
 
             //Set variables
-            $arrayAttributesToSync = array();
+            $flagUser = false;
 
-            if (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_GRID_ATTRIBUTE"]) &&
-                !empty($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_GRID_ATTRIBUTE"])
+            $arrayAttributesToSync = [
+                //Default attributes to sync
+                'USR_FIRSTNAME' => 'givenname',
+                'USR_LASTNAME'  => 'sn',
+                'USR_EMAIL'     => 'mail',
+                'USR_STATUS'    => 'useraccountcontrol'
+            ];
+
+            if (isset($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE']) &&
+                !empty($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE'])
             ) {
-                foreach ($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_GRID_ATTRIBUTE"] as $value) {
-                    $arrayAux = $value;
-
-                    $arrayAttributesToSync[$arrayAux["attributeUser"]] = $arrayAux["attributeLdap"];
+                foreach ($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE'] as $value) {
+                    $arrayAttributesToSync[$value['attributeUser']] = $value['attributeLdap'];
                 }
             }
 
-            //Search Users
-            $uidUserIdentifier = (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"]))? $arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"] : "uid";
+            //Search User from LDAP Server
+            $uidUserIdentifier = (isset($arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER']))?
+                $arrayAuthSourceData['AUTH_SOURCE_DATA']['AUTH_SOURCE_IDENTIFIER_FOR_USER'] : 'uid';
 
-            $filter = "(&(" . $this->arrayObjectClassFilter["user"] . ")(|$filterUsers))";
+            $arrayAttribute = array_merge($this->arrayAttributesForUser, array_values($arrayAttributesToSync));
 
-            $searchResult = @ldap_search($ldapcnn, $arrayAuthenticationSourceData["AUTH_SOURCE_BASE_DN"], $filter, array_merge($this->arrayAttributesForUser, array_values($arrayAttributesToSync)));
+            $searchResult = @ldap_search($ldapcnn, $userDn, '(objectclass=*)', $arrayAttribute);
 
             if ($error = ldap_errno($ldapcnn)) {
                 //
             } else {
-                if ($searchResult) {
-                    $numEntries = ldap_count_entries($ldapcnn, $searchResult);
+                if ($searchResult && ldap_count_entries($ldapcnn, $searchResult) > 0) {
+                    $entry = ldap_first_entry($ldapcnn, $searchResult);
 
-                    if ($numEntries > 0) {
-                        //Default attributes to sync
-                        $arrayAttributesToSync["USR_FIRSTNAME"] = (isset($arrayAttributesToSync["USR_FIRSTNAME"]))? $arrayAttributesToSync["USR_FIRSTNAME"] : "givenname";
-                        $arrayAttributesToSync["USR_LASTNAME"]  = (isset($arrayAttributesToSync["USR_LASTNAME"]))?  $arrayAttributesToSync["USR_LASTNAME"] : "sn";
-                        $arrayAttributesToSync["USR_EMAIL"]     = (isset($arrayAttributesToSync["USR_EMAIL"]))?     $arrayAttributesToSync["USR_EMAIL"] : "mail";
-                        $arrayAttributesToSync["USR_STATUS"]    = (isset($arrayAttributesToSync["USR_STATUS"]))?    $arrayAttributesToSync["USR_STATUS"] : "useraccountcontrol";
+                    $arrayUserLdap = $this->ldapGetAttributes($ldapcnn, $entry);
 
-                        //Get Users from DB
-                        $arrayUser = array();
+                    $username = (isset($arrayUserLdap[$uidUserIdentifier]))? $arrayUserLdap[$uidUserIdentifier] : '';
 
-                        $criteria = new Criteria("workflow");
+                    if ((is_array($username) && !empty($username)) || trim($username) != '') {
+                        $username = trim((is_array($username))? $username[0] : $username);
 
-                        $criteria->addSelectColumn(UsersPeer::USR_UID);
-                        $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
+                        if (isset($arrayUser[$username])) {
+                            if (!isset($this->arrayUserUpdateChecked[$username])) {
+                                $this->arrayUserUpdateChecked[$username] = 1;
 
-                        foreach ($arrayAttributesToSync as $key => $value) {
-                            $fieldName = $key;
+                                $arrayUserDataUpdate = [];
 
-                            if ($fieldName != "USR_UID" && $fieldName != "USR_USERNAME") {
-                                $criteria->addSelectColumn(constant("UsersPeer::" . $fieldName));
-                            }
-                        }
+                                foreach ($arrayAttributesToSync as $key => $value) {
+                                    $fieldName = $key;
+                                    $attributeName = strtolower($value);
 
-                        $criteria->add(UsersPeer::USR_UID, $arrayUserUid, Criteria::IN);
-                        //$criteria->add(UsersPeer::USR_USERNAME, "", Criteria::NOT_EQUAL);
-                        $criteria->add(UsersPeer::USR_STATUS, "CLOSED", Criteria::NOT_EQUAL);
+                                    if (isset($arrayUserLdap[$attributeName])) {
+                                        $ldapAttributeValue = trim((is_array($arrayUserLdap[$attributeName]))? $arrayUserLdap[$attributeName][0] : $arrayUserLdap[$attributeName]);
 
-                        $rsCriteria = UsersPeer::doSelectRS($criteria);
-                        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-                        while ($rsCriteria->next()) {
-                            $row = $rsCriteria->getRow();
-
-                            $arrayUser[$row["USR_USERNAME"]] = $row;
-                        }
-
-                        //Get Users from LDAP Server
-                        $entry = ldap_first_entry($ldapcnn, $searchResult);
-
-                        do {
-                            $arrayUserLdap = $this->ldapGetAttributes($ldapcnn, $entry);
-
-                            $username = (isset($arrayUserLdap[$uidUserIdentifier]))? $arrayUserLdap[$uidUserIdentifier] : "";
-
-                            if ((is_array($username) && !empty($username)) || trim($username) != "") {
-                                $username = trim((is_array($username))? $username[0] : $username);
-
-                                if (isset($arrayUser[$username])) {
-                                    if (!isset($this->arrayUserUpdateChecked[$username])) {
-                                        $this->arrayUserUpdateChecked[$username] = 1;
-
-                                        $countUser++;
-
-                                        $arrayUserDataUpdate = array();
-                                        $flagUpdate = false;
-
-                                        foreach ($arrayAttributesToSync as $key => $value) {
-                                            $fieldName = $key;
-                                            $attributeName = strtolower($value);
-
-                                            if (isset($arrayUserLdap[$attributeName])) {
-                                                $ldapAttributeValue = trim((is_array($arrayUserLdap[$attributeName]))? $arrayUserLdap[$attributeName][0] : $arrayUserLdap[$attributeName]);
-
-                                                switch ($fieldName) {
-                                                    case "USR_STATUS":
-                                                        if ($attributeName == "useraccountcontrol") {
-                                                            $ldapAttributeValue = (in_array($ldapAttributeValue, array("512", "544", "66048", "66080")))? "ACTIVE" : "INACTIVE";
-                                                        }
-                                                        break;
-                                                    case "USR_DUE_DATE":
-                                                        if ($attributeName == "accountexpires") {
-                                                            $ldapAttributeValue = $this->convertDateADtoPM($ldapAttributeValue);
-                                                        }
-                                                        break;
+                                        switch ($fieldName) {
+                                            case 'USR_STATUS':
+                                                if ($attributeName == 'useraccountcontrol') {
+                                                    $ldapAttributeValue = (in_array($ldapAttributeValue, array('512', '544', '66048', '66080')))? 'ACTIVE' : 'INACTIVE';
                                                 }
-
-                                                if ($ldapAttributeValue != $arrayUser[$username][$fieldName]) {
-                                                    $arrayUserDataUpdate[$fieldName] = $ldapAttributeValue;
-                                                    $flagUpdate = true;
+                                                break;
+                                            case 'USR_DUE_DATE':
+                                                if ($attributeName == 'accountexpires') {
+                                                    $ldapAttributeValue = $this->convertDateADtoPM($ldapAttributeValue);
                                                 }
-                                            }
+                                                break;
                                         }
 
-                                        if ($flagUpdate) {
-                                            $arrayUserDataUpdate["USR_UID"] = $arrayUser[$username]["USR_UID"];
-
-                                            //Update User data
-                                            $rbac->updateUser($arrayUserDataUpdate);
-
-                                            $user = new Users();
-                                            $result = $user->update($arrayUserDataUpdate);
+                                        if ($ldapAttributeValue != $arrayUser[$username][$fieldName]) {
+                                            $arrayUserDataUpdate[$fieldName] = $ldapAttributeValue;
                                         }
-
-                                        //Progress bar
-                                        $this->frontEndShow("BAR", "Update Users data: " . $countUser . "/" . $totalUser . " " . $this->progressBar($totalUser, $countUser));
-                                    } else {
-                                        $this->log($ldapcnn, "User is repeated: Username \"" . $username . "\", DN \"" . $arrayUserLdap["dn"] . "\"");
                                     }
                                 }
+
+                                if (!empty($arrayUserDataUpdate)) {
+                                    $arrayUserDataUpdate['USR_UID'] = $arrayUser[$username]['USR_UID'];
+
+                                    //Update User data
+                                    $rbac->updateUser($arrayUserDataUpdate);
+
+                                    $user = new Users();
+                                    $result = $user->update($arrayUserDataUpdate);
+                                }
+                            } else {
+                                $this->log(
+                                    $ldapcnn,
+                                    'User is repeated: Username "' . $username .'", DN "' . $arrayUserLdap['dn'] . '"'
+                                );
                             }
-                        } while ($entry = ldap_next_entry($ldapcnn, $entry));
+
+                            $flagUser = true;
+                        }
                     }
                 }
             }
 
             //Return
-            return array($totalUser, $countUser);
+            return $flagUser;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Update Users data based on the LDAP Server
+     *
+     * @param resource $ldapcnn             LDAP link identifier
+     * @param array    $arrayAuthSourceData Authentication Source Data
+     * @param string   $filterUsers         Filter
+     * @param array    $arrayUserUid        UID of Users
+     * @param array    $arrayData           Data
+     *
+     * @return array
+     */
+    private function __ldapUsersUpdateData(
+        $ldapcnn,
+        array $arrayAuthSourceData,
+        $filterUsers,
+        array $arrayUserUid,
+        array $arrayData
+    ) {
+        try {
+            $totalUser = $arrayData['totalUser'];
+            $countUser = $arrayData['countUser'];
+
+            //Search Users
+            $filter = '(&(' . $this->arrayObjectClassFilter['user'] . ')(|' . $filterUsers . '))';
+
+            $searchResult = @ldap_search($ldapcnn, $arrayAuthSourceData['AUTH_SOURCE_BASE_DN'], $filter, $this->arrayAttributesForUser);
+
+            if ($error = ldap_errno($ldapcnn)) {
+                //
+            } else {
+                if ($searchResult && ldap_count_entries($ldapcnn, $searchResult) > 0) {
+                    //Get Users from DB
+                    $arrayUser = [];
+
+                    $criteria = new Criteria('workflow');
+
+                    $criteria->add(UsersPeer::USR_UID, $arrayUserUid, Criteria::IN);
+                    //$criteria->add(UsersPeer::USR_USERNAME, '', Criteria::NOT_EQUAL);
+                    $criteria->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
+
+                    $rsCriteria = UsersPeer::doSelectRS($criteria);
+                    $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+                    while ($rsCriteria->next()) {
+                        $row = $rsCriteria->getRow();
+
+                        $arrayUser[$row['USR_USERNAME']] = $row;
+                    }
+
+                    //Get Users from LDAP Server
+                    $entry = ldap_first_entry($ldapcnn, $searchResult);
+
+                    do {
+                        if ($this->__ldapUserUpdateByDnAndData(
+                                $ldapcnn, $arrayAuthSourceData, ldap_get_dn($ldapcnn, $entry), $arrayUser
+                            )
+                        ) {
+                            $countUser++;
+
+                            //Progress bar
+                            $this->frontEndShow(
+                                'BAR',
+                                'Update Users data: ' . $countUser . '/' . $totalUser . ' ' . $this->progressBar($totalUser, $countUser)
+                            );
+                        }
+                    } while ($entry = ldap_next_entry($ldapcnn, $entry));
+                }
+            }
+
+            //Return
+            return [$totalUser, $countUser];
         } catch (Exception $e) {
             throw $e;
         }
@@ -2991,7 +2965,7 @@ class ldapAdvanced
             $ldapcnn = $this->ldapcnn;
 
             //Update Users
-            $limit = $arrayAuthenticationSourceData['AUTH_SOURCE_DATA']['LDAP_PAGE_SIZE_LIMIT'];
+            $limit = $this->__getPageSizeLimitByData($arrayAuthenticationSourceData);
             $count = 0;
 
             $uidUserIdentifier = (isset($arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"]))? $arrayAuthenticationSourceData["AUTH_SOURCE_DATA"]["AUTH_SOURCE_IDENTIFIER_FOR_USER"] : "uid";
@@ -3008,7 +2982,9 @@ class ldapAdvanced
                 $arrayUserUid[] = $arrayUserData["USR_UID"];
 
                 if ($count == $limit) {
-                    list($totalUser, $countUser) = $this->ldapUsersUpdateData($ldapcnn, $arrayAuthenticationSourceData, $filterUsers, $arrayUserUid, array("totalUser" => $totalUser, "countUser" => $countUser));
+                    list($totalUser, $countUser) = $this->__ldapUsersUpdateData(
+                        $ldapcnn, $arrayAuthenticationSourceData, $filterUsers, $arrayUserUid, ['totalUser' => $totalUser, 'countUser' => $countUser]
+                    );
 
                     $count = 0;
 
@@ -3018,10 +2994,28 @@ class ldapAdvanced
             }
 
             if ($count > 0) {
-                list($totalUser, $countUser) = $this->ldapUsersUpdateData($ldapcnn, $arrayAuthenticationSourceData, $filterUsers, $arrayUserUid, array("totalUser" => $totalUser, "countUser" => $countUser));
+                list($totalUser, $countUser) = $this->__ldapUsersUpdateData(
+                    $ldapcnn, $arrayAuthenticationSourceData, $filterUsers, $arrayUserUid, ['totalUser' => $totalUser, 'countUser' => $countUser]
+                );
             }
         } catch (Exception $e) {
             throw $e;
+        }
+    }
+
+    /**
+     * Get page size limit for a search result
+     *
+     * @param array $arrayAuthSourceData Authentication Source Data
+     *
+     * @return int Returns the page size limit for a search result
+     */
+    private function __getPageSizeLimitByData(array $arrayAuthSourceData)
+    {
+        if (isset($arrayAuthSourceData['AUTH_SOURCE_DATA']['LDAP_PAGE_SIZE_LIMIT'])) {
+            return $arrayAuthSourceData['AUTH_SOURCE_DATA']['LDAP_PAGE_SIZE_LIMIT'];
+        } else {
+            return $this->getPageSizeLimit(false);
         }
     }
 
