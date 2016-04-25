@@ -2048,8 +2048,8 @@ class Cases
                     throw (new PropelException('The row cannot be created!', new PropelException($msg)));
                 }
                 $taskNext = TaskPeer::retrieveByPK($appDel->getTasUid());
-                if($taskNext->getTasType() == 'NORMAL'){
-                    if($oApplication->getAppStatus() == "DRAFT"){
+                if($taskNext->getTasType() !== 'SUBPROCESS'){
+                    if($oApplication->getAppStatus() === 'DRAFT'){
                       $sUserUid = $appDel->getUsrUid();
                       /*----------------------------------********---------------------------------*/
                       $users = new Users();
@@ -2060,15 +2060,6 @@ class Cases
                       /*----------------------------------********---------------------------------*/
                       $users = new Users();
                       $users->refreshTotal($sUserUid, "remove", "inbox");
-                      /*----------------------------------********---------------------------------*/
-                    }
-                }else{
-                   //When start a case with SCRIPT-TASK WEBENTRYEVENT and the status is DRAFT
-                   if($oApplication->getAppStatus() == "DRAFT"){
-                      $sUserUid = $appDel->getUsrUid();
-                      /*----------------------------------********---------------------------------*/
-                      $users = new Users();
-                      $users->refreshTotal($sUserUid, "remove", "draft");
                       /*----------------------------------********---------------------------------*/
                     }
                 }
