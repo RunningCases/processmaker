@@ -1095,7 +1095,7 @@ class Process extends BaseProcess
         $oRuleSet->setFetchmode( ResultSet::FETCHMODE_ASSOC );
         while($oRuleSet->next()) {
             $row = $oRuleSet->getRow();
-            if(isset($row['USR_UID'])) {
+            if(isset($row['USR_UID']) && $row['USR_UID'] != '' ) {
                 $usersArray[$row['USR_UID']] = $row['USR_UID'];
             }
             $oCase->deleteDelegation($row['APP_UID']);
