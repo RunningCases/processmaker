@@ -425,7 +425,7 @@ class DataBaseMaintenance
         if (empty( $aTables ))
             return false;
         printf( "%-70s", "LOCK TABLES" );
-        if (@mysql_query( "LOCK TABLES " . implode( " READ, ", $aTables ) . " READ; " )) {
+        if (@mysql_query( 'LOCK TABLES ' . implode( ' READ, ', $aTables ) . ' READ; ' )) {
             echo "    [OK]\n";
             return true;
         } else {
@@ -455,7 +455,7 @@ class DataBaseMaintenance
     {
 
         $bytesSaved = 0;
-        $result = @mysql_query( "SELECT * FROM `$table`" );
+        $result = @mysql_query( 'SELECT * FROM `'.$table.'`' );
 
         $num_rows = mysql_num_rows( $result );
         $num_fields = mysql_num_fields( $result );
