@@ -45,19 +45,24 @@ class actionsByEmailCoreClass extends PMPlugin
                     throw new Exception('The parameter $data->USR_UID is null.');
                 }
 
-                if ($data->TAS_UID == '') {
+                if ($data->TAS_UID === '') {
                     throw new Exception('The parameter $data->TAS_UID is empty.');
                 }
 
-                if ($data->APP_UID == '') {
+                if ($data->APP_UID === '') {
                     throw new Exception('The parameter $data->APP_UID is empty.');
                 }
 
-                if ($data->DEL_INDEX == '') {
+                if ($data->DEL_INDEX === '') {
                     throw new Exception('The parameter $data->DEL_INDEX is empty.');
                 }
 
-                if ($data->USR_UID == '') {
+                if ($data->DEL_INDEX === 1) {
+                    error_log('The parameter $data->DEL_INDEX is 1, you can not use ActionsByEmail in the initial task', 0);
+                    return;
+                }
+
+                if ($data->USR_UID === '') {
                     error_log('The parameter $data->USR_UID is empty, the routed task may be a self-service type, actions by email does not work with self-service task types.', 0);
                 }
             } catch(Exception $e) {
