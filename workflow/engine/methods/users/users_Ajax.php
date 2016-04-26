@@ -28,7 +28,7 @@ try {
     $_GET = $filter->xssFilterHard($_GET);
     $_POST = $filter->xssFilterHard($_POST);
     $_REQUEST = $filter->xssFilterHard($_REQUEST);
-    
+
     global $RBAC;
     switch ($RBAC->userCanAccess('PM_LOGIN')) {
         case - 2:
@@ -98,7 +98,7 @@ try {
                     echo $oTasks->assignGroup($_POST['TAS_UID'], $_POST['USR_UID'], $_POST['TU_TYPE']);
                     G::auditlog("AssignGroupTask","Assign a Group to a Task -> ".$_POST['TAS_UID'].' User UID -> '.$_POST['USR_UID']);
                     break;
-            }            
+            }
             break;
         case 'ofToAssign':
             G::LoadClass('tasks');
@@ -112,7 +112,7 @@ try {
                     echo $oTasks->ofToAssignGroup($_POST['TAS_UID'], $_POST['USR_UID'], $_POST['TU_TYPE']);
                     G::auditlog("DeleteGroupTask","Delete a Group from a Task -> ".$_POST['TAS_UID'].' User UID -> '.$_POST['USR_UID']);
                     break;
-            }            
+            }
             break;
         case 'changeView':
             $_SESSION['iType'] = $_POST['TU_TYPE'];
@@ -197,7 +197,7 @@ try {
             break;
         case 'deleteUser':
             $UID = $_POST['USR_UID'];
-            
+
             //process permissions
             $criteria = new Criteria("workflow");
             $criteria->addSelectColumn(ObjectPermissionPeer::USR_UID);
@@ -267,7 +267,7 @@ try {
                 $userData = $userInstance->load($_REQUEST['USR_UID']);
                 $userData['USR_STATUS'] = $_REQUEST['NEW_USR_STATUS'];
                 $userInstance->update($userData);
-                
+
                 $msg = $_REQUEST['NEW_USR_STATUS'] == 'ACTIVE'? "EnableUser" : "DisableUser";
                 G::auditLog($msg, "User Name: ".$userData['USR_USERNAME']." User ID: (".$userData['USR_UID'].") ");
                 $response->status = 'OK';
@@ -548,7 +548,9 @@ try {
                 $user = new Users();
                 $u = $user->load($data['USR_REPLACED_BY']);
                 $c = new Configurations();
-                $replaced_by = $c->usersNameFormat($u['USR_USERNAME'], $u['USR_FIRSTNAME'], $u['USR_LASTNAME']);
+                $arrayConfFormat = $c->getFormats();
+
+                $replaced_by = G::getFormatUserList($arrayConfFormat['format'], $u);
             } else {
                 $replaced_by = '';
             }

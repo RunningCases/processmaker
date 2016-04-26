@@ -50,7 +50,7 @@ class User extends Api
                 "filterOption" => (!is_null($filter))? ""      : ((!is_null($lfilter))? "LEFT"   : ((!is_null($rfilter))? "RIGHT"  : ""))
             );
 
-            $response = $user->getUsers($arrayFilterData, null, null, $start, $limit);
+            $response = $user->getUsers($arrayFilterData, null, null, $start, $limit, false);
 
             return \ProcessMaker\Util\DateTime::convertUtcToIso8601($response['data'], $this->arrayFieldIso8601);
         } catch (\Exception $e) {
