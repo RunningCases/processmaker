@@ -39,6 +39,7 @@ var flagValidateUsername = false;
 var userRoleLoad = '';
 
 var PROCESSMAKER_ADMIN = 'PROCESSMAKER_ADMIN';
+var usertmp;
 
 global.IC_UID        = '';
 global.IS_UID        = '';
@@ -279,7 +280,10 @@ Ext.onReady(function () {
           method: "POST"
       }),
 
-      baseParams: {"action": "usersList", "USR_UID": USR_UID, "addNone": 1},
+      baseParams: {
+          "action": "usersList",
+          "USR_UID": USR_UID
+      },
 
       reader: new Ext.data.JsonReader({
           fields: [
@@ -290,19 +294,23 @@ Ext.onReady(function () {
   });
 
   comboReplacedBy = new Ext.form.ComboBox({
-    fieldLabel    : _("ID_REPLACED_BY"),
-    hiddenName    : "USR_REPLACED_BY",
-    id            : "USR_REPLACED_BY",
-    readOnly      : readMode,
-    store         : storeReplacedBy,
-    valueField    : "USR_UID",
-    displayField  : "USER_FULLNAME",
-    emptyText     : (readMode)? ' ': TRANSLATIONS.ID_SELECT,
-    width         : 180,
-    selectOnFocus : true,
-    editable      : false,
-    triggerAction: "all",
-    mode: "local"
+      id: "USR_REPLACED_BY",
+      hiddenName: "USR_REPLACED_BY",
+
+      store: storeReplacedBy,
+      valueField: "USR_UID",
+      displayField: "USER_FULLNAME",
+
+      queryParam: "filter",
+
+      fieldLabel: _("ID_REPLACED_BY"),
+      emptyText: "- " + _("ID_NONE") + " -",
+      readOnly: readMode,
+      minChars: 1,
+      hideTrigger: true,
+
+      width: 260,
+      triggerAction: "all"
   });
 
   var dateField = new Ext.form.DateField({
@@ -1155,6 +1163,12 @@ function editUser()
     frmDetails.render('users-panel');
 
     frmSumary.hide();
+
+    if (typeof(usertmp) != "undefined") {
+        frmDetails.getForm().findField("USR_REPLACED_BY").setValue(usertmp.USR_REPLACED_BY);
+        frmDetails.getForm().findField("USR_REPLACED_BY").setRawValue(usertmp.REPLACED_NAME);
+    }
+
     frmDetails.show();
     if (window.canEditCalendar === true) {
         comboCalendar.setReadOnly(false);
@@ -1201,6 +1215,13 @@ function validateUserName() {
 
 function userFrmEditSubmit()
 {
+    if (typeof(usertmp) != "undefined" &&
+        usertmp.REPLACED_NAME == frmDetails.getForm().findField("USR_REPLACED_BY").getRawValue()
+    ) {
+        frmDetails.getForm().findField("USR_REPLACED_BY").setValue(usertmp.USR_REPLACED_BY);
+        frmDetails.getForm().findField("USR_REPLACED_BY").setRawValue(usertmp.REPLACED_NAME);
+    }
+
     Ext.getCmp("USR_STATUS").setDisabled(readMode);
     Ext.getCmp("frmDetails").getForm().submit({
       url    : "usersAjax",
@@ -1382,18 +1403,7 @@ function saveUser()
 //Load data
 function loadData()
 {
-
     comboCountry.store.load();
-
-
-    //comboRegion
-
-
-    //comboLocation
-
-
-    comboReplacedBy.store.load();
-
 
     comboCalendar.store.on("load", function (store) {
         comboCalendar.setValue(store.getAt(0).get("CALENDAR_UID"));
@@ -1438,6 +1448,8 @@ function loadUserData()
         waitMsg: _("ID_UPLOADING_PROCESS_FILE"),
         success: function (r, o) {
             var data = Ext.util.JSON.decode(r.responseText);
+
+            usertmp = data.user;
 
             Ext.getCmp("frmDetails").getForm().setValues({
                 USR_FIRSTNAME : data.user.USR_FIRSTNAME,
@@ -1506,10 +1518,10 @@ function loadUserData()
                 comboLocation.setValue(data.user.USR_LOCATION);
             });
 
-            comboReplacedBy.store.on("load", function (store) {
+            if (data.user.USR_REPLACED_BY != "") {
                 comboReplacedBy.setValue(data.user.USR_REPLACED_BY);
                 comboReplacedBy.setRawValue(data.user.REPLACED_NAME);
-            });
+            }
 
             comboCalendar.store.on("load", function (store) {
                 comboCalendar.setValue(data.user.USR_CALENDAR);
@@ -1567,8 +1579,6 @@ function loadUserData()
                     IS_UID : data.user.USR_CITY
                 }
             });
-
-            storeReplacedBy.load();
 
             storeCalendar.load();
 

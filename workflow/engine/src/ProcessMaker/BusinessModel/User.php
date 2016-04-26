@@ -361,13 +361,13 @@ class User
     }
 
     /**
-     * Get data of a from a record
+     * Get custom record
      *
      * @param array $record Record
      *
-     * return array Return an array with data User
+     * @return array Return an array with custom record
      */
-    public function getUserDataFromRecord(array $record)
+    private function __getUserCustomRecordFromRecord(array $record)
     {
         try {
             //Get Calendar
@@ -803,7 +803,7 @@ class User
             $row = $rsCriteria->getRow();
 
             //Return
-            return (!$flagGetRecord)? $this->getUserDataFromRecord($row) : $row;
+            return (!$flagGetRecord)? $this->__getUserCustomRecordFromRecord($row) : $row;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -1079,47 +1079,72 @@ class User
     /**
      * Get all Users
      *
-     * @param array  $arrayFilterData Data of the filters
-     * @param string $sortField       Field name to sort
-     * @param string $sortDir         Direction of sorting (ASC, DESC)
-     * @param int    $start           Start
-     * @param int    $limit           Limit
+     * @param array  $arrayWhere     Where (Condition and filters)
+     * @param string $sortField      Field name to sort
+     * @param string $sortDir        Direction of sorting (ASC, DESC)
+     * @param int    $start          Start
+     * @param int    $limit          Limit
+     * @param bool   $flagRecord     Flag that set the "getting" of record
+     * @param bool   $throwException Flag to throw the exception (This only if the parameters are invalid)
+     *                               (TRUE: throw the exception; FALSE: returns FALSE)
      *
-     * return array Return an array with all Users
+     * @return array Return an array with all Users, ThrowTheException/FALSE otherwise
      */
-    public function getUsers($arrayFilterData = null, $sortField = null, $sortDir = null, $start = null, $limit = null)
-    {
+    public function getUsers(
+        array $arrayWhere = null,
+        $sortField = null,
+        $sortDir = null,
+        $start = null,
+        $limit = null,
+        $flagRecord = true,
+        $throwException = true
+    ) {
         try {
             $arrayUser = array();
 
             $numRecTotal = 0;
 
-            //Verify data
-            $process = new \ProcessMaker\BusinessModel\Process();
+            //Verify data and Set variables
+            $flag = !is_null($arrayWhere) && is_array($arrayWhere);
+            $flagCondition = $flag && isset($arrayWhere['condition']);
+            $flagFilter    = $flag && isset($arrayWhere['filter']);
 
-            $process->throwExceptionIfDataNotMetPagerVarDefinition(array("start" => $start, "limit" => $limit), array("start" => "start", "limit" => "limit"));
+            $result = \ProcessMaker\BusinessModel\Validator::validatePagerDataByPagerDefinition(
+                ['$start' => $start, '$limit' => $limit],
+                ['$start' => '$start', '$limit' => '$limit']
+            );
+
+            if ($result !== true) {
+                if ($throwException) {
+                    throw new \Exception($result);
+                } else {
+                    return false;
+                }
+            }
 
             //Set variables
             $filterName = "filter";
 
-            if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"])) {
+            if ($flagFilter) {
                 $arrayAux = array(
                     ""      => "filter",
                     "LEFT"  => "lfilter",
                     "RIGHT" => "rfilter"
                 );
 
-                $filterName = $arrayAux[(isset($arrayFilterData["filterOption"]))? $arrayFilterData["filterOption"] : ""];
+                $filterName = $arrayAux[
+                    (isset($arrayWhere['filterOption']))? $arrayWhere['filterOption'] : ''
+                ];
             }
 
             //Get data
-            if (!is_null($limit) && $limit . "" == "0") {
+            if (!is_null($limit) && (string)($limit) == '0') {
                 //Return
                 return array(
                     "total"     => $numRecTotal,
                     "start"     => (int)((!is_null($start))? $start : 0),
                     "limit"     => (int)((!is_null($limit))? $limit : 0),
-                    $filterName => (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"]))? $arrayFilterData["filter"] : "",
+                    $filterName => ($flagFilter)? $arrayWhere['filter'] : '',
                     "data"      => $arrayUser
                 );
             }
@@ -1127,14 +1152,24 @@ class User
             //Query
             $criteria = $this->getUserCriteria();
 
-            if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"]) && trim($arrayFilterData["filter"]) != "") {
-                $arraySearch = array(
-                    ""      => "%" . $arrayFilterData["filter"] . "%",
-                    "LEFT"  => $arrayFilterData["filter"] . "%",
-                    "RIGHT" => "%" . $arrayFilterData["filter"]
-                );
+            if ($flagCondition && !empty($arrayWhere['condition'])) {
+                foreach ($arrayWhere['condition'] as $value) {
+                    $criteria->add($value[0], $value[1], $value[2]);
+                }
+            } else {
+                $criteria->add(\UsersPeer::USR_STATUS, 'ACTIVE', \Criteria::EQUAL);
+            }
 
-                $search = $arraySearch[(isset($arrayFilterData["filterOption"]))? $arrayFilterData["filterOption"] : ""];
+            if ($flagFilter && trim($arrayWhere['filter']) != '') {
+                $arraySearch = [
+                    ''      => '%' . $arrayWhere['filter'] . '%',
+                    'LEFT'  => $arrayWhere['filter'] . '%',
+                    'RIGHT' => '%' . $arrayWhere['filter']
+                ];
+
+                $search = $arraySearch[
+                    (isset($arrayWhere['filterOption']))? $arrayWhere['filterOption'] : ''
+                ];
 
                 $criteria->add(
                     $criteria->getNewCriterion(\UsersPeer::USR_USERNAME,  $search, \Criteria::LIKE)->addOr(
@@ -1143,33 +1178,23 @@ class User
                 );
             }
 
-            $criteria->add(\UsersPeer::USR_STATUS, "ACTIVE", \Criteria::EQUAL);
-
             //Number records total
-            $criteriaCount = clone $criteria;
-
-            $criteriaCount->clearSelectColumns();
-            $criteriaCount->addSelectColumn("COUNT(" . \UsersPeer::USR_UID . ") AS NUM_REC");
-
-            $rsCriteriaCount = \UsersPeer::doSelectRS($criteriaCount);
-            $rsCriteriaCount->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-            $result = $rsCriteriaCount->next();
-            $row = $rsCriteriaCount->getRow();
-
-            $numRecTotal = (int)($row["NUM_REC"]);
+            $numRecTotal = \UsersPeer::doCount($criteria);
 
             //Query
+            $conf = new \Configurations();
+            $sortFieldDefault = \UsersPeer::TABLE_NAME . '.' . $conf->userNameFormatGetFirstFieldByUsersTable();
+
             if (!is_null($sortField) && trim($sortField) != "") {
                 $sortField = strtoupper($sortField);
 
                 if (in_array(\UsersPeer::TABLE_NAME . "." . $sortField, $criteria->getSelectColumns())) {
                     $sortField = \UsersPeer::TABLE_NAME . "." . $sortField;
                 } else {
-                    $sortField = \UsersPeer::USR_FIRSTNAME;
+                    $sortField = $sortFieldDefault;
                 }
             } else {
-                $sortField = \UsersPeer::USR_FIRSTNAME;
+                $sortField = $sortFieldDefault;
             }
 
             if (!is_null($sortDir) && trim($sortDir) != "" && strtoupper($sortDir) == "DESC") {
@@ -1190,9 +1215,9 @@ class User
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
             while ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
+                $record = $rsCriteria->getRow();
 
-                $arrayUser[] = $this->getUserDataFromRecord($row);
+                $arrayUser[] = ($flagRecord)? $record : $this->__getUserCustomRecordFromRecord($record);
             }
 
             //Return
@@ -1200,7 +1225,7 @@ class User
                 "total"     => $numRecTotal,
                 "start"     => (int)((!is_null($start))? $start : 0),
                 "limit"     => (int)((!is_null($limit))? $limit : 0),
-                $filterName => (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"]))? $arrayFilterData["filter"] : "",
+                $filterName => ($flagFilter)? $arrayWhere['filter'] : '',
                 "data"      => $arrayUser
             );
         } catch (\Exception $e) {
@@ -1385,3 +1410,4 @@ class User
         }
     }
 }
+

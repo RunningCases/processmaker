@@ -60,39 +60,31 @@ switch ($_POST['action']) {
         print (G::json_encode($oData));
         break;
     case 'usersList':
-        require_once 'classes/model/Users.php';
-        $oCriteria = new Criteria();
-        $oCriteria->addSelectColumn(UsersPeer::USR_UID);
-        $oCriteria->addSelectColumn(UsersPeer::USR_USERNAME);
-        $oCriteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
-        $oCriteria->addSelectColumn(UsersPeer::USR_LASTNAME);
-        $oCriteria->addSelectColumn(UsersPeer::USR_EMAIL);
-        $oCriteria->add(UsersPeer::USR_STATUS, array('ACTIVE', 'VACATION'), Criteria::IN);
-        $oCriteria->addAscendingOrderByColumn(UsersPeer::USR_USERNAME);
+        $filter = (isset($_POST['filter']))? $_POST['filter'] : '';
+
+        $arrayUser = [];
+
+        $user = new \ProcessMaker\BusinessModel\User();
+        $conf = new Configurations();
+
+        $arrayConfFormat = $conf->getFormats();
+
+        $arrayCondition = [[UsersPeer::USR_STATUS, ['ACTIVE', 'VACATION'], Criteria::IN]];
+
         if (isset($_POST['USR_UID'])) {
-            $oCriteria->add(UsersPeer::USR_UID, $_POST['USR_UID'], Criteria::NOT_EQUAL);
+            $arrayCondition[] = [UsersPeer::USR_UID, $_POST['USR_UID'], Criteria::NOT_EQUAL];
         }
-        $oDataset = UsersPeer::doSelectRS($oCriteria);
-        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-        G::loadClass('configuration');
-        $oConf = new Configurations();
-        $oConf->loadConfig($obj, 'ENVIRONMENT_SETTINGS', '');
+        $result = $user->getUsers(['condition' => $arrayCondition, 'filter' => $filter], null, null, null, 25);
 
-        $defaultOption = isset($oConf->aConfig['format']) ? $oConf->aConfig['format'] : '';
-
-        $aUserInfo = array();
-        if (isset($_POST['addNone']) && $_POST['addNone'] == '1') {
-            $aUserInfo[] = array('USR_UID' => '', 'USER_FULLNAME' => '- ' . G::LoadTranslation('ID_NONE') . ' -');
+        foreach ($result['data'] as $record) {
+            $arrayUser[] = [
+                'USR_UID'       => $record['USR_UID'],
+                'USER_FULLNAME' => G::getFormatUserList($arrayConfFormat['format'], $record)
+            ];
         }
-        while ($oDataset->next()) {
-            $aRow1 = $oDataset->getRow();
 
-            $infoUser = G::getFormatUserList($defaultOption, $aRow1);
-            $aUserInfo[] = array('USR_UID' => $aRow1['USR_UID'], 'USER_FULLNAME' => $infoUser);
-        }
-        print (G::json_encode($aUserInfo));
-
+        echo G::json_encode($arrayUser);
         break;
     case 'availableCalendars':
         G::LoadClass('calendar');
@@ -164,6 +156,8 @@ switch ($_POST['action']) {
                 $form['USR_LOGGED_NEXT_TIME'] = 0;
             }
 
+            $user = new \ProcessMaker\BusinessModel\User();
+
             $firstName = $form['USR_FIRSTNAME'] ? " - First Name: ". $form['USR_FIRSTNAME'] : "";
             $lastName = $form['USR_LASTNAME'] ? " - Last Name: ". $form['USR_LASTNAME'] : "";
             $email = $form['USR_EMAIL'] ? " - Email: ". $form['USR_EMAIL'] : "";
@@ -227,7 +221,8 @@ switch ($_POST['action']) {
                 $aData['USR_COST_BY_HOUR'] = $form['USR_COST_BY_HOUR'];
                 $aData['USR_UNIT_COST'] = $form['USR_UNIT_COST'];
                 /*----------------------------------********---------------------------------*/
-                $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
+                $aData['USR_REPLACED_BY'] = ($user->getUserRecordByPk($form['USR_REPLACED_BY'], [], false) !== false)?
+                    $form['USR_REPLACED_BY'] : '';
                 $aData['USR_TIME_ZONE'] = $form['USR_TIME_ZONE'];
 
                 require_once 'classes/model/Users.php';
@@ -411,7 +406,8 @@ switch ($_POST['action']) {
                 }
                 /*----------------------------------********---------------------------------*/
                 if (isset($form['USR_REPLACED_BY'])) {
-                    $aData['USR_REPLACED_BY'] = $form['USR_REPLACED_BY'];
+                    $aData['USR_REPLACED_BY'] = ($user->getUserRecordByPk($form['USR_REPLACED_BY'], [], false) !== false)?
+                        $form['USR_REPLACED_BY'] : '';
                 }
                 if (isset($form['USR_AUTH_USER_DN'])) {
                     $aData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];
@@ -535,7 +531,9 @@ switch ($_POST['action']) {
                 $aFields['USR_REPLACED_BY'] = '';
             } else {
                 $c = new Configurations();
-                $replaced_by = $c->usersNameFormat($u['USR_USERNAME'], $u['USR_FIRSTNAME'], $u['USR_LASTNAME']);
+                $arrayConfFormat = $c->getFormats();
+
+                $replaced_by = G::getFormatUserList($arrayConfFormat['format'], $u);
             }
         } else {
             $replaced_by = '';
