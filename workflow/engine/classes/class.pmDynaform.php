@@ -27,7 +27,7 @@ class pmDynaform
         $this->getDynaforms();
         $this->synchronizeSubDynaform();
         $this->getCredentials();
-        if (!isset($this->fields["APP_UID"])) {
+        if (is_array($this->fields) && !isset($this->fields["APP_UID"])) {
             $this->fields["APP_UID"] = null;
         }
         if (isset($this->fields["APP_DATA"]["DYN_CONTENT_HISTORY"])) {
@@ -148,6 +148,9 @@ class pmDynaform
 
     public function jsonr(&$json)
     {
+        if(empty($json)){
+            return;
+        }
         foreach ($json as $key => &$value) {
             $sw1 = is_array($value);
             $sw2 = is_object($value);
