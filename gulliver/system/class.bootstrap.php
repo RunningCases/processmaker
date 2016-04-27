@@ -348,12 +348,18 @@ class Bootstrap
             throw new Exception("Template: $template, doesn't exist!");
         }
 
+        self::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+
         $smarty = new Smarty ();
         $smarty->compile_dir = Bootstrap::sys_get_temp_dir();
         $smarty->cache_dir = Bootstrap::sys_get_temp_dir();
-        $smarty->config_dir = PATH_THIRDPARTY . 'smarty/configs';
-
-        $smarty->template_dir = PATH_TEMPLATE;
+        $configDir = PATH_THIRDPARTY . 'smarty/configs';
+        $configDir = $filter->validateInput($configDir, 'path');
+        $smarty->config_dir = $configDir;
+        $templateDir = PATH_TEMPLATE;
+        $templateDir = $filter->validateInput($templateDir, 'path');
+        $smarty->template_dir = $templateDir;
         $smarty->force_compile = true;
 
         foreach ($data as $key => $value) {
@@ -371,7 +377,7 @@ class Bootstrap
      * @param string $strClass
      * @return void
      */
-    public function LoadSystem($strClass)
+    public static function LoadSystem($strClass)
     {
         require_once (PATH_GULLIVER . 'class.' . $strClass . '.php');
     }
@@ -669,7 +675,7 @@ class Bootstrap
      */
     public static function LoadClass($strClass)
     {
-        Bootstrap::LoadSystem('inputfilter');
+        self::LoadSystem('inputfilter');
         $filter = new InputFilter();
 
         $path = PATH_GULLIVER . 'class.' . $strClass . '.php';
