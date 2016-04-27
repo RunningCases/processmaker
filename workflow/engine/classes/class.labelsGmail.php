@@ -13,7 +13,7 @@ class labelsGmail
                 $labels = array_merge($labels, $labelsResponse->getLabels());
             }
         } catch (Exception $e) {
-            print G::LoadTranslation("ID_PMGMAIL_GENERAL_ERROR") . $e->getMessage();
+            print G::LoadTranslation("ID_PMGMAIL_GENERAL_ERROR") . G::getErrorMessage($e);
             throw ($e);
         }
         return $labels;
@@ -37,7 +37,7 @@ class labelsGmail
         try {
             $message = $service->users_messages->modify($userId, $messageId, $mods);
         } catch (Exception $e) {
-            print G::LoadTranslation("ID_PMGMAIL_GENERAL_ERROR") . $e->getMessage();
+            print G::LoadTranslation("ID_PMGMAIL_GENERAL_ERROR") . G::getErrorMessage($e);
             throw ($e);
         }
     }
@@ -69,7 +69,7 @@ class labelsGmail
                     $messages = array_merge($messages, $messagesResponse->getMessages());
                 }
             } catch (Exception $e) {
-                print G::LoadTranslation("ID_PMGMAIL_GENERAL_ERROR") . $e->getMessage();
+                print G::LoadTranslation("ID_PMGMAIL_GENERAL_ERROR") . G::getErrorMessage($e);
                 throw ($e);
             }
         } while ($pageToken);
