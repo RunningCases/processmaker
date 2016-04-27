@@ -18,6 +18,7 @@ use \ProcessMaker\Util\DateTime;
 class Light extends Api
 {
 
+    private $regexNull = '/^null$/i';
     private $arrayFieldIso8601 = [
         // request lists
         'newerThan',
@@ -137,6 +138,10 @@ class Light extends Api
         $oldestthan =''
     ) {
         try {
+            if (preg_match($this->regexNull, $newerThan)) {
+                return [];
+            }
+
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'todo';
             $dataList['paged']  = true;
@@ -230,6 +235,10 @@ class Light extends Api
         $oldestthan =''
     ) {
         try {
+            if (preg_match($this->regexNull, $newerThan)) {
+                return [];
+            }
+
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'draft';
             $dataList['paged']  = true;
@@ -325,6 +334,10 @@ class Light extends Api
         $oldestthan =''
     ) {
         try {
+            if (preg_match($this->regexNull, $newerThan)) {
+                return [];
+            }
+
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'sent';
             $dataList['paged']  = $paged;
@@ -426,6 +439,10 @@ class Light extends Api
         $oldestthan = ''
     ) {
         try {
+            if (preg_match($this->regexNull, $newerThan)) {
+                return [];
+            }
+
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'paused';
             $dataList['paged']  = true;
@@ -519,6 +536,10 @@ class Light extends Api
         $oldestthan =''
     ) {
         try {
+            if (preg_match($this->regexNull, $newerThan)) {
+                return [];
+            }
+
             $dataList['userId'] = $this->getUserId();
             $dataList['action'] = 'unassigned';
             $dataList['paged']  = false;
