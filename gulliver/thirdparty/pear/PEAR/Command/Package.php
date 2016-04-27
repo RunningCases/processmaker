@@ -444,6 +444,20 @@ Wrote: /usr/src/redhat/RPMS/i386/PEAR::Net_Socket-1.0-1.i386.rpm
 
     function doPackageDependencies($command, $options, $params)
     {
+        if (!class_exists('G')) {
+            $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
+            $docuroot = explode( '/', $realdocuroot );
+            array_pop( $docuroot );
+            $pathhome = implode( '/', $docuroot ) . '/';
+            array_pop( $docuroot );
+            $pathTrunk = implode( '/', $docuroot ) . '/';
+            require_once($pathTrunk.'gulliver/system/class.g.php');
+        }
+
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
+        $command = $filter->validateInput($command);
+
         // $params[0] -> the PEAR package to list its information
         if (sizeof($params) != 1) {
             return $this->raiseError("bad parameter(s), try \"help $command\"");
