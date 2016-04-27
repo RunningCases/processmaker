@@ -396,6 +396,11 @@ try {
 
                     G::uploadFile( $arrayFileTmpName[$i], $sPathName, $sFileName );
 
+                    //set variable for APP_DOC_UID
+                    $aData["APP_DATA"][$oAppDocument->getAppDocFieldname()] = G::json_encode([$oAppDocument->getAppDocUid()]);
+                    $aData["APP_DATA"][$oAppDocument->getAppDocFieldname() . "_label"] = G::json_encode([$oAppDocument->getAppDocFilename()]);
+                    $oCase->updateCase($_SESSION['APPLICATION'], $aData);
+
                     //Plugin Hook PM_UPLOAD_DOCUMENT for upload document
                     $oPluginRegistry = &PMPluginRegistry::getSingleton();
 

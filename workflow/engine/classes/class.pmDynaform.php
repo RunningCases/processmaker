@@ -148,7 +148,7 @@ class pmDynaform
 
     public function jsonr(&$json)
     {
-        if(empty($json)){
+        if (empty($json)) {
             return;
         }
         foreach ($json as $key => &$value) {
@@ -422,18 +422,22 @@ class pmDynaform
                     $oCriteria->add(AppDocumentPeer::APP_DOC_FIELDNAME, $json->name);
                     $oCriteria->add(ContentPeer::CON_CATEGORY, 'APP_DOC_FILENAME');
                     $oCriteria->add(ContentPeer::CON_LANG, $this->lang);
+                    $oCriteria->addDescendingOrderByColumn(AppDocumentPeer::APP_DOC_CREATE_DATE);
+                    $oCriteria->setLimit(1);
                     $rs = AppDocumentPeer::doSelectRS($oCriteria);
                     $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                     $links = array();
                     $labelsFromDb = array();
+                    $appDocUids = array();
                     while ($rs->next()) {
                         $row = $rs->getRow();
-                        $linkDownload = "../cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"];
-                        array_push($links, $linkDownload);
-                        array_push($labelsFromDb, $row["CON_VALUE"]);
+                        $links[] = "../cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"];
+                        $labelsFromDb[] = $row["CON_VALUE"];
+                        $appDocUids[] = $row["APP_DOC_UID"];
                     }
                     $json->data = new stdClass();
                     $json->data->value = $links;
+                    $json->data->app_doc_uid = $appDocUids;
 
                     if (sizeof($labelsFromDb)) {
                         $json->data->label = G::json_encode($labelsFromDb);
