@@ -112,8 +112,9 @@ $(window).load(function () {
                         window.dynaform.getForms()[0].applySuccess();
                         window.dynaform.getForms()[0].prepareFormToPost();
                         form.submit();
+                    } else {
+                        return false;
                     }
-                    return false;
                 };
                 if (triggerDebug === true) {
                     showdebug();
