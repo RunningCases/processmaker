@@ -1728,12 +1728,13 @@ class Cases
      * @param string $app_uid, Uid for case
      * @param array $app_data, Data for case variables
      * @param string $dyn_uid, Uid for dynaform
+     * @param string $del_index, Index for case
      * @param string $usr_uid, Uid for user
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function setCaseVariables($app_uid, $app_data, $dyn_uid = null, $usr_uid)
+    public function setCaseVariables($app_uid, $app_data, $dyn_uid = null, $usr_uid ,$del_index = 0)
     {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
@@ -1771,7 +1772,7 @@ class Cases
         $_SESSION['USER_LOGGED'] = $usr_uid;
 
         $case = new \Cases();
-        $fields = $case->loadCase($app_uid);
+        $fields = $case->loadCase($app_uid, $del_index);
         $_POST['form'] = $app_data;
 
         if (!is_null($dyn_uid) && $dyn_uid != '') {
@@ -1783,6 +1784,17 @@ class Cases
             }
         }
 
+        if (!is_null($dyn_uid) && $del_index > 0) {
+            //save data
+            $data = array();
+            $data['APP_NUMBER'] = $fields['APP_NUMBER'];
+            $data['APP_DATA'] = $fields['APP_DATA'];
+            $data['DEL_INDEX'] = $del_index;
+            $data['TAS_UID'] = $fields['TAS_UID'];;
+            $data['CURRENT_DYNAFORM'] = $dyn_uid;
+            $data['USER_UID'] = $usr_uid;
+            $data['PRO_UID'] = $fields['PRO_UID'];
+        }
         $data['APP_DATA'] = array_merge($fields['APP_DATA'], $_POST['form']);
         $case->updateCase($app_uid, $data);
     }

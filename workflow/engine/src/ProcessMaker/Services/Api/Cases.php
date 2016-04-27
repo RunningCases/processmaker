@@ -862,18 +862,19 @@ class Cases extends Api
      * @param string $app_uid {@min 1}{@max 32}
      * @param array $request_data
      * @param string $dyn_uid {@from path}
+     * @param string $del_index {@from path}
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
      * @url PUT /:app_uid/variable
      */
-    public function doPutCaseVariables($app_uid, $request_data, $dyn_uid = '')
+    public function doPutCaseVariables($app_uid, $request_data, $dyn_uid = '', $del_index = 0)
     {
         try {
             $usr_uid = $this->getUserId();
             $cases = new \ProcessMaker\BusinessModel\Cases();
-            $cases->setCaseVariables($app_uid, $request_data, $dyn_uid, $usr_uid);
+            $cases->setCaseVariables($app_uid, $request_data, $dyn_uid, $usr_uid, $del_index);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
