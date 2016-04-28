@@ -4778,6 +4778,10 @@ class Processes
             foreach ($aGroupwf as $groupBase) {
                 foreach ($sGroupList as $group) {
                     if ($groupBase['CON_VALUE'] == $group['GRP_TITLE'] && $groupBase['CON_ID'] != $group['GRP_UID']) {
+                        $oPro = GroupwfPeer::retrieveByPk( $group['GRP_UID'] );
+                        if(is_object( $oPro ) && get_class( $oPro ) == 'Groupwf') {
+                            $group['GRP_UID'] = G::generateUniqueID();
+                        }
                         $existingGroupList[] = $group;
                     }
                 }
@@ -4808,15 +4812,9 @@ class Processes
         foreach ($sGroupList as $groupBase) {
             foreach ($checkedGroup as $group) {
                 if ($groupBase['GRP_TITLE'] == $group['GRP_TITLE']) {
-                    $index = substr($groupBase['GRP_TITLE'], -1, 0);
-                    if (is_int($index)) {
-                        $index++;
-                    } else {
-                        $index = 1;
-                    }
-                    $groupBase['GRP_TITLE'] = $groupBase['GRP_TITLE'] . $index;
+                    $groupBase['GRP_TITLE'] = $groupBase['GRP_TITLE'] .' '. date('Y-m-d H:i:s');
+                    $groupBase['GRP_UID'] = $group['GRP_UID'];
                 }
-
             }
             $renamedGroupList[] = $groupBase;
         }
