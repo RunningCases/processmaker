@@ -850,7 +850,7 @@ class Cases extends Api
             $usr_uid = $this->getUserId();
             $cases = new \ProcessMaker\BusinessModel\Cases();
             $response = $cases->getCaseVariables($app_uid, $usr_uid);
-            return $response;
+            return DateTime::convertUtcToIso8601($response);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
@@ -874,6 +874,7 @@ class Cases extends Api
         try {
             $usr_uid = $this->getUserId();
             $cases = new \ProcessMaker\BusinessModel\Cases();
+            $request_data = \ProcessMaker\Util\DateTime::convertDataToUtc($request_data);
             $cases->setCaseVariables($app_uid, $request_data, $dyn_uid, $usr_uid, $del_index);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
