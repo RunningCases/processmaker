@@ -1268,7 +1268,8 @@ class Light
             $multiTimeZone = (int)($sysConf['system_utc_time_zone']) == 1;
         }
         /*----------------------------------********---------------------------------*/
-        $offset = timezone_offset_get( new \DateTimeZone( $sysConf['time_zone'] ), new \DateTime() );
+        $tz = isset($_SESSION['USR_TIME_ZONE'])?$_SESSION['USR_TIME_ZONE']:$sysConf['time_zone'];
+        $offset = timezone_offset_get( new \DateTimeZone( $tz ), new \DateTime() );
         $response['timeZone'] = sprintf( "GMT%s%02d:%02d", ( $offset >= 0 ) ? '+' : '-', abs( $offset / 3600 ), abs( ($offset % 3600) / 60 ) );
         $response['multiTimeZone'] = $multiTimeZone;
         $fields = \System::getSysInfo();
@@ -1306,8 +1307,11 @@ class Light
             $languagesList[] = $languages;
         }
         $response['listLanguage'] = $languagesList;
-        if ($params['fileLimit']) {
+        if (isset($params['fileLimit']) && $params['fileLimit']) {
             $response['fileLimit'] = $this->return_bytes(ini_get('post_max_size'));
+        }
+        if (isset($params['tz']) && $params['tz']) {
+            $response['tz'] = isset($_SESSION['USR_TIME_ZONE'])?$_SESSION['USR_TIME_ZONE']:$sysConf['time_zone'];
         }
         return $response;
     }
