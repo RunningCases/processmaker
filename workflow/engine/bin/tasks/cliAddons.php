@@ -133,7 +133,7 @@ function change_hash($command, $opts)
             $workspace->close();
             CLI::logging(pakeColor::colorize("Changed...", "ERROR") . "\n");
         } catch (Exception $e) {
-            echo "> Error:   ".CLI::error($e->getMessage()) . "\n";
+            echo "> Error:   ".CLI::error(G::getErrorMessage($e)) . "\n";
         }
     }
 }

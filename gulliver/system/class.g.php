@@ -526,13 +526,13 @@ class G
             $oHeadPublisher->clearScripts();
             $oHeadPublisher->leimnudInitString = $leimnudInitString;
             $oHeadPublisher->addScriptFile( '/js/maborak/core/maborak.js' );
-            $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', null, array ('MESSAGE' => $e->getMessage()
+            $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', null, array ('MESSAGE' => self::getErrorMessage($e)
             ) );
             if (class_exists( 'SkinEngine' )) {
                 $skinEngine = new SkinEngine( 'publish', 'blank', '' );
                 $skinEngine->dispatch();
             } else {
-                die( $e->getMessage() );
+                die( self::getErrorMessage($e) );
             }
         }
     }
@@ -5656,6 +5656,18 @@ class G
     public function encryptCrc32 ($string)
     {
         return crc32($string);
+    }
+
+    /**
+     * this function get the Message
+     * @access public
+     * @param string $e
+     * @return string
+     *
+     */
+    public static function getErrorMessage($e)
+    {
+        return $e->getMessage();
     }
 }
 
