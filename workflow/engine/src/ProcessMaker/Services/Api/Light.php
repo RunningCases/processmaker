@@ -1533,4 +1533,26 @@ class Light extends Api
         }
         return $response;
     }
+
+    /**
+     * Get configuration ProcessMaker
+     *
+     * @return array
+     *
+     * @url GET /config-user
+     *
+     * @param string $fileLimit {@from path}
+     * @param string $tz {@from path}
+     */
+    public function getConfigurationUser($fileLimit = false, $tz = false)
+    {
+        try {
+            $params = array('fileLimit' => $fileLimit, 'tz' => $tz);
+            $oMobile = new \ProcessMaker\BusinessModel\Light();
+            $response = $oMobile->getConfiguration($params);
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+        return $response;
+    }
 }
