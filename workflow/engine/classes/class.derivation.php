@@ -726,7 +726,25 @@ class Derivation
                 $elementDestType
             );
 
-            if($elementDestUid === '-1' || count($arrayElement) === 0 || $elementDestType === 'bpmnEvent'){
+            //Search next is INTERMEDIATE and MESSAGECATCH
+            $searchMessageCatch = false;
+            if($elementDestType === 'bpmnEvent'){
+                $c = new Criteria("workflow");
+                $c->addSelectColumn(BpmnEventPeer::EVN_TYPE);
+                $c->addSelectColumn(BpmnEventPeer::EVN_MARKER);
+                $c->add(BpmnEventPeer::EVN_UID, $elementDestUid);
+                $c->add(BpmnEventPeer::PRJ_UID, $arrayApplicationData["PRO_UID"]);
+                $rsC = RoutePeer::doSelectRS($c);
+                $rsC->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+                if($rsC->next()){
+                    $row = $rsC->getRow();
+                    if($row['EVN_TYPE'] === 'INTERMEDIATE' && $row['EVN_MARKER'] === 'MESSAGECATCH'){
+                        $searchMessageCatch = true;
+                    }
+                }
+            }
+            if($elementDestUid === '-1' || count($arrayElement) === 0 || $searchMessageCatch){
                $arrayElement = $this->throwElementToEnd($elementOriginUid, $rouCondition);
             }
 
