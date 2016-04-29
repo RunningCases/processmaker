@@ -1007,7 +1007,7 @@ class Cases
                 $fieldsOnBoth = @array_intersect_assoc($FieldsBefore['APP_DATA'], $aApplicationFields);
                 //Add fields that weren't in previous version
                 foreach ($aApplicationFields as $key => $value) {
-                    if (is_array($value) && is_array($fieldsOnBoth[$key])){
+                    if (is_array($value) && isset($fieldsOnBoth[$key]) && is_array($fieldsOnBoth[$key])) {
                         $afieldDifference = $this->arrayRecursiveDiff($value,$fieldsOnBoth[$key]);
                         $dfieldDifference = $this->arrayRecursiveDiff($fieldsOnBoth[$key],$value);
                         if ($afieldDifference || $dfieldDifference){
