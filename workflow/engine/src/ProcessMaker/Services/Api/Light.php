@@ -1479,6 +1479,47 @@ class Light extends Api
     }
 
     /**
+     * Get Case Variables
+     *
+     * @param string $app_uid {@min 1}{@max 32}
+     *
+     * @url GET /:app_uid/variables
+     */
+    public function doGetCaseVariables($app_uid)
+    {
+        try {
+            $usr_uid = $this->getUserId();
+            $cases = new \ProcessMaker\BusinessModel\Cases();
+            $response = $cases->getCaseVariables($app_uid, $usr_uid);
+            return DateTime::convertUtcToTimeZone($response);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
+     * Put Case Variables
+     *
+     * @param string $app_uid {@min 1}{@max 32}
+     * @param array $request_data
+     * @param string $dyn_uid {@from path}
+     * @param string $del_index {@from path}
+     *
+     * @url PUT /:app_uid/variable
+     */
+    public function doPutCaseVariables($app_uid, $request_data, $dyn_uid = '', $del_index = 0)
+    {
+        try {
+            $usr_uid = $this->getUserId();
+            $cases = new \ProcessMaker\BusinessModel\Cases();
+            $request_data = \ProcessMaker\Util\DateTime::convertDataToUtc($request_data);
+            $cases->setCaseVariables($app_uid, $request_data, $dyn_uid, $usr_uid, $del_index);
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
      * Get in base64 the image process (processmap)
      *
      * @url GET /process/:pro_uid/case
