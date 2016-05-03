@@ -60,10 +60,10 @@ class FileHandler
             if ($target == "PUBLIC" && in_array($filename, $arrayPublicFileToExclude)) {
                 continue;
             }
-
+            $filePath = $prj_uid . PATH_SEP . $filename;
             $workflowFile[$target][] = array(
                 "filename" => $filename,
-                "filepath" => $prj_uid . PATH_SEP . $filename,
+                "filepath" => str_replace("\\", "/", $filePath),
                 "file_content" => file_get_contents($templatesFile)
             );
         }

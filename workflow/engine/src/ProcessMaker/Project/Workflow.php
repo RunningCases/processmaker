@@ -1230,10 +1230,10 @@ class Workflow extends Handler
                     if ($target == "PUBLIC" && in_array($filename, $arrayPublicFileToExclude)) {
                         continue;
                     }
-
+                    $filePath = $processUid . PATH_SEP . $filename;
                     $workflowFile[$target][] = array(
                         "filename" => $filename,
-                        "filepath" => $processUid . PATH_SEP . $filename,
+                        "filepath" => str_replace("\\", "/", $filePath),
                         "file_content" => file_get_contents($templatesFile)
                     );
                 }
