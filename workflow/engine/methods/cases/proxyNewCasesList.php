@@ -96,8 +96,13 @@ try {
 
     $filters['sort'] = G::toUpper($filters['sort']);
     $columnsList = $listpeer::getFieldNames(BasePeer::TYPE_FIELDNAME);
+
     if (!(in_array($filters['sort'], $columnsList))) {
-        $filters['sort'] = '';
+        if ($filters['sort'] == 'APP_CURRENT_USER' && ($listName == 'participated' || $listName == 'participated_last')) {
+            $filters['sort'] = 'DEL_CURRENT_USR_LASTNAME';
+        } else {
+            $filters['sort'] = '';
+        }
     }
 
     $filters['dir'] = G::toUpper($filters['dir']);
