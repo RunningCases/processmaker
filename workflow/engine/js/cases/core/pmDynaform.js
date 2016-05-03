@@ -7,6 +7,19 @@ function ajax_post(action, form, method, callback, asynchronous) {
 function dynaFormChanged(frm) {
     return false;
 }
+/**
+ * Create fake submit button to force send data formpost action
+ * and after this is destryed
+ * @param formStep
+ */
+function submitNextStep(formStep) {
+    var btnSubmit = $('<button>');
+    btnSubmit.attr("type","submit");
+    btnSubmit.hide();
+    $(formStep).append(btnSubmit);
+    btnSubmit.click();
+    btnSubmit.remove();
+}
 $(window).load(function () {
     if (pm_run_outside_main_app === 'true') {
         if (parent.showCaseNavigatorPanel) {
@@ -107,14 +120,10 @@ $(window).load(function () {
                 form.appendChild(appuid);
                 form.appendChild(arrayRequired);
                 dyn_forward = document.getElementById("dyn_forward");
-                dyn_forward.onclick = function () {
-                    if (window.dynaform.getForms()[0].isValid()) {
-                        window.dynaform.getForms()[0].applySuccess();
-                        window.dynaform.getForms()[0].prepareFormToPost();
-                        form.submit();
-                    } else {
-                        return false;
-                    }
+                dyn_forward.onclick = function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    submitNextStep(form);
                 };
                 if (triggerDebug === true) {
                     showdebug();
