@@ -3723,6 +3723,7 @@ class Processes
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $rsCriteria->next();
             while ($aRow = $rsCriteria->getRow()) {
+                $aRow['PRF_PATH'] = str_replace("\\", "/", $aRow['PRF_PATH']);
                 $arrayFilesManager[] = $aRow;
                 $rsCriteria->next();
             }
