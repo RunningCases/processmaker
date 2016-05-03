@@ -610,12 +610,8 @@ class workspaceTools
      */
     public function upgradeCasesDirectoryStructure($workspace)
     {
-        define('PATH_DOCUMENT', PATH_DATA . 'sites/' . $workspace . '/' . 'files/');
-        $doclevel = explode('/', PATH_DOCUMENT);
-        $length = sizeof(PATH_DOCUMENT);
-        $filesDir = $doclevel[$length - 1];
-
-        if (is_dir(PATH_DOCUMENT) && is_writable($filesDir)) {
+        define('PATH_DOCUMENT', PATH_DATA . 'sites' . DIRECTORY_SEPARATOR . $workspace . DIRECTORY_SEPARATOR . 'files');
+        if (!is_writable(PATH_DOCUMENT)) {
             CLI::logging(CLI::error("Error:" . PATH_DOCUMENT . " is not writable... please check the su permissions.\n"));
             return;
         }
@@ -632,7 +628,7 @@ class workspaceTools
 
         //Start migration
         for ($index = 0; $index < $dirslength; $index++) {
-            $depthdirlevel = explode('/', $directory[$index]);
+            $depthdirlevel = explode(DIRECTORY_SEPARATOR, $directory[$index]);
             $lastlength = sizeof($depthdirlevel);
             $UIdDir = $depthdirlevel[$lastlength - 1];
             $lenDir = strlen($UIdDir);
@@ -649,26 +645,26 @@ class workspaceTools
                     if (G::recursive_copy($UIdDir, $newDiretory)) {
                         CLI::logging("Removing $UIdDir...\n");
                         G::rm_dir($UIdDir);
-                        rmdir($UIdDir);//remove the diretory itself, G::rm_dir cannot do it
+                        rmdir($UIdDir); //remove the diretory itself, G::rm_dir cannot do it
                     } else {
                         CLI::logging(CLI::error("Error: Failure at coping from $UIdDir...\n"));
                     }
                 } else {
                     CLI::logging("$UIdDir is empty, removing it\n");
-                    rmdir($UIdDir);//remove the diretory itself
+                    rmdir($UIdDir); //remove the diretory itself
                 }
             }
         }
 
         //Start '0' directory migration
-        $black = PATH_DOCUMENT . $blackHoleDir . '/';
+        $black = PATH_DOCUMENT . $blackHoleDir . DIRECTORY_SEPARATOR;
         if (is_dir($black)) {
             $newpattern = array();
-            $file = glob($black . '*.*');//files only
+            $file = glob($black . '*.*'); //files only
             $dirlen = count($file);
 
             for ($index = 0; $index < $dirlen; $index++) {
-                $levelfile = explode('/', $file[$index]);
+                $levelfile = explode(DIRECTORY_SEPARATOR, $file[$index]);
                 $lastlevel = sizeof($levelfile);
                 $goalFile = $levelfile[$lastlevel - 1];
                 $newpattern = G::getPathFromFileUIDPlain($blackHoleDir, $goalFile);
@@ -676,7 +672,7 @@ class workspaceTools
                 G::mk_dir($blackHoleDir . PATH_SEP . $newpattern[0], 0777);
                 //echo `cp -R $black$goalFile $black$newpattern[0]/$newpattern[1]`;
 
-                if (copy($black . $goalFile, $black . $newpattern[0] . '/' . $newpattern[1])) {
+                if (copy($black . $goalFile, $black . $newpattern[0] . DIRECTORY_SEPARATOR . $newpattern[1])) {
                     unlink($file[$index]);
                 } else {
                     CLI::logging(CLI::error("Error: Failure at copy $file[$index] files...\n"));
