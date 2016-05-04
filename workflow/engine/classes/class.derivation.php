@@ -1098,7 +1098,7 @@ class Derivation
                         $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
                         if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())) {
                             //Throw Events
-                            $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
+                            $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true, $nextDel['ROU_CONDITION']);
                         } else {
                             $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true, $nextDel['ROU_CONDITION']);
                         }
@@ -1178,8 +1178,12 @@ class Derivation
                     }
 
                     if ($canDerivate) {
+                        $rouCondition = '';
+                        if(isset($nextDel['ROU_CONDITION'])){
+                            $rouCondition = $nextDel['ROU_CONDITION'];
+                        }
                         //Throw Events
-                        $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true);
+                        $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true, $rouCondition);
 
                         //Derivate
                         $aSP = (isset($aSP))? $aSP : null;
