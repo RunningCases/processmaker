@@ -1308,7 +1308,12 @@ class Light
         }
         $response['listLanguage'] = $languagesList;
         if (isset($params['fileLimit']) && $params['fileLimit']) {
-            $response['fileLimit'] = $this->return_bytes(ini_get('post_max_size'));
+            $postMaxSize = $this->return_bytes(ini_get('post_max_size'));
+            $uploadMaxFileSize = $this->return_bytes(ini_get('upload_max_filesize'));
+            if ($postMaxSize < $uploadMaxFileSize){
+                $uploadMaxFileSize = $postMaxSize;
+            }
+            $response['fileLimit'] = $uploadMaxFileSize;
         }
         if (isset($params['tz']) && $params['tz']) {
             $response['tz'] = isset($_SESSION['USR_TIME_ZONE'])?$_SESSION['USR_TIME_ZONE']:$sysConf['time_zone'];
