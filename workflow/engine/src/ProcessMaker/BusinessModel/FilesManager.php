@@ -259,14 +259,10 @@ class FilesManager
             $oProcessFiles->fromArray($aData, \BasePeer::TYPE_FIELDNAME);
 
             $path = $aData['PRF_PATH'];
-            $backPointer = 3;
-            if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                $backPointer = 5;
-                $path = str_replace("/", DIRECTORY_SEPARATOR.DIRECTORY_SEPARATOR, $path);
-            }
 
-            $path = explode(DIRECTORY_SEPARATOR,$path);
-            $fileDirectory = $path[count($path)-$backPointer];
+            $allDirectories = pathinfo($path);
+            $path = explode('/',$allDirectories['dirname']);
+            $fileDirectory = $path[count($path)-2];
 
             switch ($fileDirectory) {
                 case 'mailTemplates':
@@ -276,7 +272,10 @@ class FilesManager
                     $sDirectory = PATH_DATA_PUBLIC . $aData['PRO_UID'] . PATH_SEP . basename($aData['PRF_PATH']);
                     break;
                 default:
-                    throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array($aData['PRF_PATH'])));
+                    if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+                        error_log(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array($aData['PRF_PATH'])));
+                    }
+                    return;
                     break;
             }
 
@@ -501,10 +500,10 @@ class FilesManager
     {
         try {
             $path = '';
-            $criteria = new \Criteria("workflow");
-            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_PATH);
-            $criteria->add(\ProcessFilesPeer::PRF_UID, $prfUid, \Criteria::EQUAL);
-            $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
+            $criteriaPf = new \Criteria("workflow");
+            $criteriaPf->addSelectColumn(\ProcessFilesPeer::PRF_PATH);
+            $criteriaPf->add(\ProcessFilesPeer::PRF_UID, $prfUid, \Criteria::EQUAL);
+            $rsCriteria = \ProcessFilesPeer::doSelectRS($criteriaPf);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $rsCriteria->next();
             while ($aRow = $rsCriteria->getRow()) {
@@ -542,9 +541,9 @@ class FilesManager
               if (file_exists($path) && !is_dir($path)) {
                   unlink($path);
               }
-            } 
+            }
 
-            $rs = \ProcessFilesPeer::doDelete($criteria);
+            $rs = \ProcessFilesPeer::doDelete($criteriaPf);
         } catch (Exception $e) {
             throw $e;
         }

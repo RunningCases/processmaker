@@ -4213,6 +4213,7 @@ class Processes
             $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
 
             foreach ($arrayData as $value) {
+                $value['PRF_PATH'] = str_replace("\\","/" , $value['PRF_PATH']);
                 $filesManager->addProcessFilesManagerInDb($value);
             }
         } catch (Exception $e) {
