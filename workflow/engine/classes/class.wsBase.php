@@ -2410,6 +2410,7 @@ class wsBase
                     $nodeNext['TAS_DEF_PROC_CODE'] = $val['NEXT_TASK']['TAS_DEF_PROC_CODE'];
                     $nodeNext['DEL_PRIORITY'] = $appdel['DEL_PRIORITY'];
                     $nodeNext['TAS_PARENT'] = $val['NEXT_TASK']['TAS_PARENT'];
+                    $nodeNext['ROU_CONDITION'] = $val['ROU_CONDITION'];
 
                     $nextDelegations[] = $nodeNext;
                     $varResponse = $varResponse . (($varResponse != '') ? ',' : '') . $val['NEXT_TASK']['TAS_TITLE'] . $usrasgdUserName;
