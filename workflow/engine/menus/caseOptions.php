@@ -40,11 +40,8 @@ switch ($_SESSION['actionCaseOptions']) {
         $statusSendAndUnassigned = true;
         break;
     case 'paused':
-        $access = $RBAC->requirePermissions('PM_ALLCASES');
-        if ($access) {
-            if (isset($_SESSION['bNoShowSteps'])) {
-                unset($_SESSION['bNoShowSteps']);
-            }
+        if (isset($_SESSION['bNoShowSteps'])) {
+            unset($_SESSION['bNoShowSteps']);
         }
         break;
     case 'to_revise':
