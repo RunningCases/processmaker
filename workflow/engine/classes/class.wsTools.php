@@ -2004,15 +2004,16 @@ class workspaceTools
             $criteriaWhere->add(UsersPeer::USR_UID, null, Criteria::ISNOTNULL);
 
             BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
+            $this->regenerateListCompleted();
+            $this->regenerateListCanceled();
+            $this->regenerateListMyInbox();
+            $this->regenerateListInbox();
+            $this->regenerateListParticipatedHistory();
+            $this->regenerateListParticipatedLast();
+            $this->regenerateListPaused();
         }
 
-        $this->regenerateListCompleted();
-        $this->regenerateListCanceled();
-        $this->regenerateListMyInbox();
-        $this->regenerateListInbox();
-        $this->regenerateListParticipatedHistory();
-        $this->regenerateListParticipatedLast();
-        $this->regenerateListPaused();
+
         // ADD LISTS COUNTS
         $this->migrateCounters();
 
