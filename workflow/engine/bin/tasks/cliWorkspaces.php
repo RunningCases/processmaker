@@ -363,7 +363,7 @@ function run_database_check($args, $opts) {
 }
 
 function run_migrate_new_cases_lists($args, $opts) {
-  migrate_new_cases_lists("migrate", $args);
+  migrate_new_cases_lists("migrate", $args, $opts);
 
 }
 
@@ -776,15 +776,17 @@ function run_check_workspace_disabled_code($args, $opts)
     }
 }
 
-function migrate_new_cases_lists($command, $args) {
+function migrate_new_cases_lists($command, $args, $opts) {
+  G::LoadSystem('inputfilter');
+  $filter = new InputFilter();
+  $opts = $filter->xssFilterHard($opts);
+  $args = $filter->xssFilterHard($args);
+  $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
   $workspaces = get_workspaces_from_args($args);
-
   foreach ($workspaces as $workspace) {
     print_r("Upgrading database in " . pakeColor::colorize($workspace->name, "INFO") . "\n");
-
     try {
-        $workspace->migrateList($workspace->name, true);
-
+        $workspace->migrateList($workspace->name, true, $lang);
         echo "> List tables are done\n";
     } catch (Exception $e) {
       echo "> Error: ".CLI::error($e->getMessage()) . "\n";
