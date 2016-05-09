@@ -139,14 +139,12 @@ class WebApplication
 
                 $this->loadEnvironment($request["workspace"]);
 
-                Util\Logger::log("REST API Dispatching url: ".$_SERVER["REQUEST_METHOD"]." ".$request["uri"]);
-
                 if (isset($_SERVER["HTTP_X_REQUESTED_WITH"]) && strtoupper($_SERVER["HTTP_X_REQUESTED_WITH"]) == 'MULTIPART') {
                     $this->dispatchMultipleApiRequest($request["uri"], $request["version"]);
                 } else {
                     $this->dispatchApiRequest($request["uri"], $request["version"]);
                 }
-                Util\Logger::log("API::End Dispatch");
+
                 break;
 
             case self::SERVICE_OAUTH2:
