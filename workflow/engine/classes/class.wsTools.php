@@ -111,7 +111,7 @@ class workspaceTools
 
         $start = microtime(true);
         CLI::logging("> Migrate new lists...\n");
-        $this->migrateList($workSpace);
+        $this->migrateList($workSpace, false, $lang);
         $stop = microtime(true);
         $final = $stop - $start;
         CLI::logging("<*>   Migrate new lists Process took $final seconds.\n");
@@ -1704,7 +1704,7 @@ class workspaceTools
             ) {
                 $start = microtime(true);
                 CLI::logging("> Updating List tables...\n");
-                $workspace->migrateList($workspace->name);
+                $workspace->migrateList($workspace->name, false, $lang);
                 $stop = microtime(true);
                 CLI::logging("<*>   Updating List Process took " . ($stop - $start) . " seconds.\n");
             }
@@ -1970,7 +1970,7 @@ class workspaceTools
      *
      * return all LIST TABLES with data
      */
-    public function migrateList($workSpace, $flagReinsert = false)
+    public function migrateList($workSpace, $flagReinsert = false, $lang='en')
     {
         $this->initPropel(true);
 
@@ -2004,13 +2004,13 @@ class workspaceTools
             $criteriaWhere->add(UsersPeer::USR_UID, null, Criteria::ISNOTNULL);
 
             BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
-            $this->regenerateListCompleted();
-            $this->regenerateListCanceled();
-            $this->regenerateListMyInbox();
-            $this->regenerateListInbox();
-            $this->regenerateListParticipatedHistory();
-            $this->regenerateListParticipatedLast();
-            $this->regenerateListPaused();
+            $this->regenerateListCompleted($lang);
+            $this->regenerateListCanceled($lang);
+            $this->regenerateListMyInbox(); // this list require no translation
+            $this->regenerateListInbox(); // this list require no translation
+            $this->regenerateListParticipatedHistory(); // this list require no translation
+            $this->regenerateListParticipatedLast(); // this list require no translation
+            $this->regenerateListPaused(); // this list require no translation
         }
 
 
@@ -2025,7 +2025,7 @@ class workspaceTools
         return true;
     }
 
-    public function regenerateListCanceled()
+    public function regenerateListCanceled($lang = 'en')
     {
         $this->initPropel(true);
         $query = 'INSERT INTO '.$this->dbName.'.LIST_CANCELED
@@ -2070,10 +2070,13 @@ class workspaceTools
                         ('.$this->dbName.'.APP_CACHE_VIEW ACV
                         LEFT JOIN '.$this->dbName.'.CONTENT C_APP ON ACV.APP_UID = C_APP.CON_ID
                             AND C_APP.CON_CATEGORY = \'APP_TITLE\'
+                            AND C_APP.CON_LANG = \''.$lang.'\'
                         LEFT JOIN '.$this->dbName.'.CONTENT C_PRO ON ACV.PRO_UID = C_PRO.CON_ID
                             AND C_PRO.CON_CATEGORY = \'PRO_TITLE\'
+                            AND C_PRO.CON_LANG = \''.$lang.'\'
                         LEFT JOIN '.$this->dbName.'.CONTENT C_TAS ON ACV.TAS_UID = C_TAS.CON_ID
-                            AND C_TAS.CON_CATEGORY = \'TAS_TITLE\')
+                            AND C_TAS.CON_CATEGORY = \'TAS_TITLE\'
+                            AND C_TAS.CON_LANG = \''.$lang.'\')
                             LEFT JOIN
                         ('.$this->dbName.'.APP_DELEGATION AD
                         INNER JOIN '.$this->dbName.'.APP_DELEGATION PREV_AD ON AD.APP_UID = PREV_AD.APP_UID
@@ -2090,7 +2093,7 @@ class workspaceTools
         CLI::logging("> Completed table LIST_CANCELED\n");
     }
 
-    public function regenerateListCompleted(){
+    public function regenerateListCompleted($lang = 'en'){
         $this->initPropel(true);
         $query = 'INSERT INTO '.$this->dbName.'.LIST_COMPLETED
                     (APP_UID,
@@ -2129,10 +2132,13 @@ class workspaceTools
                         ('.$this->dbName.'.APP_CACHE_VIEW ACV
                         LEFT JOIN '.$this->dbName.'.CONTENT C_APP ON ACV.APP_UID = C_APP.CON_ID
                             AND C_APP.CON_CATEGORY = \'APP_TITLE\'
+                            AND C_APP.CON_LANG = \''.$lang.'\'
                         LEFT JOIN '.$this->dbName.'.CONTENT C_PRO ON ACV.PRO_UID = C_PRO.CON_ID
                             AND C_PRO.CON_CATEGORY = \'PRO_TITLE\'
+                            AND C_PRO.CON_LANG = \''.$lang.'\'
                         LEFT JOIN '.$this->dbName.'.CONTENT C_TAS ON ACV.TAS_UID = C_TAS.CON_ID
-                            AND C_TAS.CON_CATEGORY = \'TAS_TITLE\')
+                            AND C_TAS.CON_CATEGORY = \'TAS_TITLE\'
+                            AND C_TAS.CON_LANG = \''.$lang.'\')
                             LEFT JOIN
                         ('.$this->dbName.'.APP_DELEGATION AD
                         INNER JOIN '.$this->dbName.'.APP_DELEGATION PREV_AD ON AD.APP_UID = PREV_AD.APP_UID
