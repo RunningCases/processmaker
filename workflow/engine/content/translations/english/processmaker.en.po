@@ -14566,8 +14566,8 @@ msgstr "Failure to do so could lead your ProcessMaker installation not functioni
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_PHP
 #: LABEL/ID_PROCESSMAKER_REQUIREMENTS_PHP
-msgid "PHP Version >= 5.2.10"
-msgstr "PHP Version >= 5.2.10"
+msgid "PHP Version >= 5.5.33"
+msgstr "PHP Version >= 5.5.33"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_MYSQL
@@ -14626,8 +14626,8 @@ msgstr "LDAP Support (*)"
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_MEMORYLIMIT
 #: LABEL/ID_PROCESSMAKER_REQUIREMENTS_MEMORYLIMIT
-msgid "Memory Limit >= 80M"
-msgstr "Memory Limit >= 80M"
+msgid "Memory Limit >= 256M"
+msgstr "Memory Limit >= 256M"
 
 # TRANSLATION
 # LABEL/ID_ADMINISTRATOR_ROLE_CANT_CHANGED

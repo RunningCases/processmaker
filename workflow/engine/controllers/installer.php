@@ -130,7 +130,7 @@ class Installer extends Controller
         $info->memory = new stdclass();
 
         $info->php->version = phpversion();
-        $info->php->result = version_compare(phpversion(), '5.2.10') >= 0 ? true : false;
+        $info->php->result = version_compare(phpversion(), '5.5.33') >= 0 ? true : false;
 
         // MYSQL info and verification
         $info->mysql->result = false;
@@ -216,7 +216,7 @@ class Installer extends Controller
         // memory limit verification
         $memory = (int) ini_get( "memory_limit" );
         $info->memory->version = $memory . 'M';
-        if ($memory > 80) {
+        if ($memory > 255) {
             $info->memory->result = true;
         } else {
             $info->memory->result = false;
