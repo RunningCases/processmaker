@@ -27218,8 +27218,8 @@ msgstr "Normal"
 # TRANSLATION
 # LABEL/ID_GRANULAR_EXPORT
 #: LABEL/ID_GRANULAR_EXPORT
-msgid "Granular"
-msgstr "Granular"
+msgid "Custom"
+msgstr "Custom"
 
 # TRANSLATION
 # LABEL/ID_EXPORT_PROCESS_OBJECTS
@@ -27344,8 +27344,8 @@ msgstr "There are problems loading the process objects."
 # TRANSLATION
 # LABEL/ID_MAFE_f4b5974fd11406f8410fa7e8502a26a3
 #: LABEL/ID_MAFE_f4b5974fd11406f8410fa7e8502a26a3
-msgid "[LABEL/ID_MAFE_f4b5974fd11406f8410fa7e8502a26a3] Granular"
-msgstr "Granular"
+msgid "[LABEL/ID_MAFE_f4b5974fd11406f8410fa7e8502a26a3] Custom"
+msgstr "Custom"
 
 # TRANSLATION
 # LABEL/ID_MAFE_84f6ae383a4278397861eb8c783fe1d8

@@ -6056,7 +6056,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MAFE_a1d5cbaf61c018e7d8456c66df0332c3','en','An integer or decimal number','2016-03-30') ,
 ( 'LABEL','ID_MAFE_33e7ca8872a98fe4b44833054a5ccc3e','en','An email address','2016-03-30') ,
 ( 'LABEL','ID_NORMAL_EXPORT','en','Normal','2016-03-30') ,
-( 'LABEL','ID_GRANULAR_EXPORT','en','Granular','2016-03-30') ,
+( 'LABEL','ID_GRANULAR_EXPORT','en','Custom','2016-03-30') ,
 ( 'LABEL','ID_EXPORT_PROCESS_OBJECTS','en','Export Process Objects','2016-03-30') ,
 ( 'LABEL','ID_IMPORT_PROCESS_OBJECTS','en','Import Process Objects','2016-03-30') ,
 ( 'LABEL','ID_ADD_TO_EXISTING','en','Add to existing','2016-03-30') ,
@@ -6077,7 +6077,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MAFE_be1a57f7e1cfe44284e71c5175874967','en','Event','2016-03-30') ,
 ( 'LABEL','ID_MAFE_d8012aca7276ee78d2e2bd33861d72a1','en','At least one object should be selected in order to execute the action.','2016-03-30') ,
 ( 'LABEL','ID_MAFE_7e8ad464ec9fa062e514fd034e6ea7a1','en','There are problems loading the process objects.','2016-03-30') ,
-( 'LABEL','ID_MAFE_f4b5974fd11406f8410fa7e8502a26a3','en','Granular','2016-03-30') ,
+( 'LABEL','ID_MAFE_f4b5974fd11406f8410fa7e8502a26a3','en','Custom','2016-03-30') ,
 ( 'LABEL','ID_MAFE_84f6ae383a4278397861eb8c783fe1d8','en','Export Process Objects','2016-03-30') ,
 ( 'LABEL','ID_MAFE_5e9df908eafa83cb51c0a3720e8348c7','en','Check All','2016-03-30') ;
 
