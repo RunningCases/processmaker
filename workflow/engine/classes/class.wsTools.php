@@ -2011,12 +2011,8 @@ class workspaceTools
             $this->regenerateListParticipatedHistory(); // this list require no translation
             $this->regenerateListParticipatedLast(); // this list require no translation
             $this->regenerateListPaused(); // this list require no translation
+            $this->migrateCounters();
         }
-
-
-        // ADD LISTS COUNTS
-        $this->migrateCounters();
-
         if (!$flagReinsert) {
             $this->listFirstExecution("insert");
         }
@@ -2439,6 +2435,7 @@ class workspaceTools
 
     public function migrateCounters()
     {
+        $this->initPropel(true);
         $aTypes = array(
             'to_do',
             'draft',
