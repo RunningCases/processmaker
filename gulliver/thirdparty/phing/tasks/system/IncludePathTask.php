@@ -105,21 +105,11 @@ class IncludePathTask extends TaskPhing {
         $curr_parts = explode(PATH_SEPARATOR, get_include_path());
         $add_parts = explode(PATH_SEPARATOR, $this->classpath);
         $new_parts = array_diff($add_parts, $curr_parts);
-        
-        $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
-        $docuroot = explode( '/', $realdocuroot );
-        array_pop( $docuroot );
-        $pathhome = implode( '/', $docuroot ) . '/';
-        array_pop( $docuroot );
-        $pathTrunk = implode( '/', $docuroot ) . '/';
-        require_once($pathTrunk.'gulliver/system/class.inputfilter.php');
-        $filter = new InputFilter();
+
         if ($new_parts) {
             $this->log("Prepending new include_path components: " . implode(PATH_SEPARATOR, $new_parts), PROJECT_MSG_VERBOSE);
-            $dir = implode(PATH_SEPARATOR, array_merge($new_parts, $curr_parts));
-            $dir = $filter->validateInput($dir, 'path');
-            if(is_dir($dir)) {
-                set_include_path($dir);
+            if(is_dir(implode(PATH_SEPARATOR, array_merge($new_parts, $curr_parts)))) {
+                set_include_path(implode(PATH_SEPARATOR, array_merge($new_parts, $curr_parts)));
             }
         }
         
