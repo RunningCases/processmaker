@@ -1485,12 +1485,12 @@ class Light extends Api
      *
      * @url GET /:app_uid/variables
      */
-    public function doGetCaseVariables($app_uid)
+    public function doGetCaseVariables($app_uid, $dyn_uid = null)
     {
         try {
             $usr_uid = $this->getUserId();
             $cases = new \ProcessMaker\BusinessModel\Cases();
-            $response = $cases->getCaseVariables($app_uid, $usr_uid);
+            $response = $cases->getCaseVariables($app_uid, $usr_uid, $dyn_uid);
             return DateTime::convertUtcToTimeZone($response);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));

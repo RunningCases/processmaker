@@ -1683,17 +1683,66 @@ class Cases
     }
 
     /**
+     * Get fields and values by DynaForm
+     *
+     * @param array $form
+     * @param array $appData
+     * @param array $caseVariable
+     *
+     * return array Return array
+     */
+    private function __getFieldsAndValuesByDynaFormAndAppData(array $form, array $appData, array $caseVariable)
+    {
+        try {
+            $caseVariableAux = [];
+
+            foreach ($form['items'] as $value) {
+                foreach ($value as $value2) {
+                    $field = $value2;
+
+                    if (isset($field['type'])) {
+                        if ($field['type'] != 'form') {
+                            if (isset($field['name']) && isset($appData[$field['name']])) {
+                                if (isset($field['dataType']) && $field['dataType'] != 'grid') {
+                                    $caseVariable[$field['name']] = $appData[$field['name']];
+
+                                    if (isset($appData[$field['name'] . '_label'])) {
+                                        $caseVariable[$field['name'] . '_label'] = $appData[$field['name'] . '_label'];
+                                    } else {
+                                        $caseVariable[$field['name'] . '_label'] = '';
+                                    }
+                                } else {
+                                    $caseVariable[$field['name']] = $appData[$field['name']];
+                                }
+                            }
+                        } else {
+                            $caseVariableAux = $this->__getFieldsAndValuesByDynaFormAndAppData($field, $appData, $caseVariable);
+                            $caseVariable = array_merge($caseVariable, $caseVariableAux);
+                        }
+                    }
+                }
+            }
+
+            //Return
+            return $caseVariable;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Get Case Variables
      *
      * @access public
      * @param string $app_uid, Uid for case
      * @param string $usr_uid, Uid for user
+     * @param string $dynaFormUid, Uid for dynaform
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function getCaseVariables($app_uid, $usr_uid)
+    public function getCaseVariables($app_uid, $usr_uid, $dynaFormUid = null)
     {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
@@ -1718,7 +1767,26 @@ class Cases
 
         $case = new \Cases();
         $fields = $case->loadCase($app_uid);
-        return $fields['APP_DATA'];
+
+        $arrayCaseVariable = [];
+
+        if (!is_null($dynaFormUid)) {
+            $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
+            $arrayDynaFormData = $dynaForm->getDynaFormRecordByPk($dynaFormUid, ['$dynaFormUid' => '$dynaFormUid']);
+
+            $arrayDynContent = \G::json_decode($arrayDynaFormData['DYN_CONTENT'], true);
+
+            $arrayAppData = $fields['APP_DATA'];
+
+            $arrayCaseVariable = $this->__getFieldsAndValuesByDynaFormAndAppData(
+                $arrayDynContent['items'][0], $arrayAppData, $arrayCaseVariable
+            );
+        } else {
+            $arrayCaseVariable = $fields['APP_DATA'];
+        }
+
+        //Return
+        return $arrayCaseVariable;
     }
 
     /**
