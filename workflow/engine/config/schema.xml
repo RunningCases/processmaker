@@ -4726,16 +4726,8 @@
         <parameter name="Extra" value=""/>
       </vendor>
     </column>
-    <column name="ABE_CASE_NOTE_IN_RESPONSE" type="INTEGER" required="false" default="0">
-      <vendor type="mysql">
-        <parameter name="Field" value="ABE_CASE_NOTE_IN_RESPONSE"/>
-        <parameter name="Type" value="int(1)"/>
-        <parameter name="Null" value="YES"/>
-        <parameter name="Key" value=""/>
-        <parameter name="Default" value="0"/>
-        <parameter name="Extra" value=""/>
-      </vendor>
-    </column>
+    <column name="ABE_CASE_NOTE_IN_RESPONSE" type="INTEGER" default="0" />
+    <column name="ABE_FORCE_LOGIN"           type="INTEGER" default="0" />
     <column name="ABE_CREATE_DATE" type="TIMESTAMP" required="true">
       <vendor type="mysql">
         <parameter name="Field" value="ABE_CREATE_DATE"/>
