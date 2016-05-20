@@ -33,7 +33,7 @@ class Light
                 $row = $ds->getRow();
                 $bpmnProjects[] = $row['PRJ_UID'];
             }
-            
+
             $oProcess = new \Process();
             $oCase    = new \Cases();
 
@@ -86,7 +86,10 @@ class Light
                         $c = 0;
                         foreach ($forms as $k => $form) {
                             if ($form['step_type_obj'] == "DYNAFORM") {
+                                $dynaForm = \DynaformPeer::retrieveByPK($form['step_uid_obj']);
+
                                 $newForm[$c]['formId'] = $form['step_uid_obj'];
+                                $newForm[$c]['formUpdateDate'] = $dynaForm->getDynUpdateDate();
                                 $newForm[$c]['index'] = $c+1;
                                 $newForm[$c]['title'] = $form['obj_title'];
                                 $newForm[$c]['description'] = $form['obj_description'];
