@@ -805,15 +805,12 @@ class Light extends Api
             $dynaForm->setFormatFieldNameInUppercase(false);
             $oMobile = new \ProcessMaker\BusinessModel\Light();
             $step = new \ProcessMaker\Services\Api\Project\Activity\Step();
-            \G::LoadClass("pmDynaform");
-            $pmDynaForm = new \pmDynaform();
             $response = array();
             for ($i = 0; $i < count($activitySteps); $i++) {
                 if ($activitySteps[$i]['step_type_obj'] == "DYNAFORM") {
                     $dataForm = $dynaForm->getDynaForm($activitySteps[$i]['step_uid_obj']);
                     $result   = $this->parserDataDynaForm($dataForm);
-                    $result['formContent'] = (isset($result['formContent']) && $result['formContent'] != null)?json_decode($result['formContent']):"";
-                    $pmDynaForm->jsonr($result['formContent']);
+                    $result["formUpdateDate"] = \ProcessMaker\Util\DateTime::convertUtcToIso8601($result["formUpdateDate"]);
                     $result['index']        = $i;
                     $result['stepId']       = $activitySteps[$i]["step_uid"];
                     $result['stepUidObj']   = $activitySteps[$i]["step_uid_obj"];
@@ -821,6 +818,7 @@ class Light extends Api
                     $result['stepPosition'] = $activitySteps[$i]['step_position'];
                     $trigger = $oMobile->statusTriggers($step->doGetActivityStepTriggers($activitySteps[$i]["step_uid"], $act_uid, $prj_uid));
                     $result["triggers"]    = $trigger;
+                    unset($result["formContent"]);
                     $response[] = $result;
                 }
             }
@@ -948,8 +946,8 @@ class Light extends Api
             'dyn_uid'         => 'formId',
             'dyn_title'       => 'formTitle',
             'dyn_description' => 'formDescription',
-            //'dyn_type'        => 'formType',
-            'dyn_content'     => 'formContent'
+            'dyn_content'     => 'formContent',
+            'dyn_update_date'     => 'formUpdateDate'
         );
 
         $response = $this->replaceFields($data, $structure);
