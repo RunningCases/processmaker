@@ -858,17 +858,7 @@ class Phing {
                 }
                 $firstPath = explode(":", implode(PATH_SEPARATOR, array_merge($new_parts, $curr_parts)));
                 if (is_dir($firstPath[0])) {
-                    $realdocuroot = str_replace( '\\', '/', $_SERVER['DOCUMENT_ROOT'] );
-                    $docuroot = explode( '/', $realdocuroot );
-                    array_pop( $docuroot );
-                    $pathhome = implode( '/', $docuroot ) . '/';
-                    array_pop( $docuroot );
-                    $pathTrunk = implode( '/', $docuroot ) . '/';
-                    require_once($pathTrunk.'gulliver/system/class.inputfilter.php');
-                    $filter = new InputFilter();
-                    $incPath = implode(PATH_SEPARATOR, array_merge($new_parts, $curr_parts));
-                    $incPath = $filter->validateInput($incPath, 'path');
-                    ini_set('include_path', $incPath);
+                    ini_set('include_path', implode(PATH_SEPARATOR, array_merge($new_parts, $curr_parts)));
                 }
             }
         }
