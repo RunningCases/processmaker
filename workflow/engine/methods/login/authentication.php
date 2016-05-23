@@ -260,7 +260,7 @@ try {
                 $_SESSION['USR_PASSWORD'] = $pwd;
 
                 $_SESSION['BROWSER_TIME_ZONE'] = $dateTime->getTimeZoneIdByTimeZoneOffset((int)($_POST['form']['BROWSER_TIME_ZONE_OFFSET']), false);
-
+                $_SESSION['URL'] = (isset($_POST['form']['URL']))? $_POST['form']['URL'] : ((isset($_REQUEST['u']))? $_REQUEST['u'] : '');
                 $_SESSION['USER_LANG'] = $lang;
 
                 if (strpos($_SERVER['HTTP_REFERER'], 'home/login') !== false) {

@@ -85,6 +85,8 @@ class AbeConfigurationMapBuilder
 
         $tMap->addColumn('ABE_CASE_NOTE_IN_RESPONSE', 'AbeCaseNoteInResponse', 'int', CreoleTypes::INTEGER, false, null);
 
+        $tMap->addColumn('ABE_FORCE_LOGIN', 'AbeForceLogin', 'int', CreoleTypes::INTEGER, false, null);
+
         $tMap->addColumn('ABE_CREATE_DATE', 'AbeCreateDate', 'int', CreoleTypes::TIMESTAMP, true, null);
 
         $tMap->addColumn('ABE_UPDATE_DATE', 'AbeUpdateDate', 'int', CreoleTypes::TIMESTAMP, false, null);

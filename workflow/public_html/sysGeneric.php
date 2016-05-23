@@ -904,6 +904,7 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
         $noLoginFiles = $noLoginFolders = array ();
         $noLoginFiles[] = 'login';
         $noLoginFiles[] = 'authentication';
+        $noLoginFiles[] = 'authenticationSso';
         $noLoginFiles[] = 'login_Ajax';
         $noLoginFiles[] = 'dbInfo';
         $noLoginFiles[] = 'sysLoginVerify';
