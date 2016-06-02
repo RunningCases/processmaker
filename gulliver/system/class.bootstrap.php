@@ -77,7 +77,6 @@ class Bootstrap
         self::registerClass("DBRecordSet", PATH_GULLIVER . "class.dbrecordset.php");
         self::registerClass("DBSession", PATH_GULLIVER . "class.dbsession.php");
         self::registerClass("DBTable", PATH_GULLIVER . "class.dbtable.php");
-        self::registerClass("XmlForm_Field_HTML", PATH_GULLIVER . "class.dvEditor.php");
         self::registerClass("dynaFormHandler", PATH_GULLIVER . "class.dynaformhandler.php");
         self::registerClass("G_Error", PATH_GULLIVER . "class.error.php");
         self::registerClass("filterForm", PATH_GULLIVER . "class.filterForm.php");
