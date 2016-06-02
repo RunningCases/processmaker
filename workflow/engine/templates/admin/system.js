@@ -85,6 +85,31 @@ Ext.onReady(function(){
 
   cmbTimeZone.setValue(sysConf.time_zone);
 
+  txtExpirationYear = new Ext.form.TextField({
+      xtype: 'numberfield',
+      id        : 'expiration_year',
+      name      : 'expiration_year',
+      fieldLabel: _('ID_DEFAULT_EXPIRATION_YEAR'),
+      allowBlank: false,
+      allowNegative: false,
+      value: 1,
+      maxlength: 15,
+      minValue: 1,
+      validator: function(value){
+       if(value > 0) {
+           return true;
+       } else {
+           PMExt.error( _('ID_ERROR'), _('ERROR_ONLY_POSITIVE_NUMBER'));
+       }
+      },
+      listeners:{
+          change: function(){
+            changeSettings();
+          }
+      }
+  });
+  txtExpirationYear.setValue(sysConf.expiration_year);
+
   saveButton = new Ext.Action({
     text : _('ID_SAVE_SETTINGS'),
     disabled : true,
@@ -122,6 +147,7 @@ Ext.onReady(function(){
           }
         }
       }
+      ,txtExpirationYear
     ]
   });
 
