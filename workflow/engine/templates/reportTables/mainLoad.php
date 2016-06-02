@@ -20,7 +20,7 @@ if(isset($_GET['gui'])) {
 }
 </style>
 <body onresize="autoResizeScreen()" onload="autoResizeScreen()">
-<iframe name="frameMain" id="frameMain" src ="../reportTables/mainInit?PRO_UID=<?php echo $filter->xssFilterHard($gui)?>" width="99%" height="200" frameborder="0">
+<iframe name="frameMain" id="frameMain" src ="../reportTables/mainInit?PRO_UID=<?php echo $filter->xssFilterHard($gui);?>" width="99%" height="200" frameborder="0">
   <p>Your browser does not support iframes.</p>
 </iframe>
 </body>

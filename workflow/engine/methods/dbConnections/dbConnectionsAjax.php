@@ -344,12 +344,14 @@ switch ($action) {
         break;
     case 'showEncodes':
         //G::LoadThirdParty( 'pear/json', 'class.json' );
-        //$oJSON = new Services_JSON();
+        //$oJSON =
+        G::LoadSystem('inputfilter');
+        $filter = new InputFilter();
         $engine = $_POST['engine'];
 
         if ($engine != "0") {
             $dbs = new dbConnections();
-            echo Bootstrap::json_encode( $dbs->getEncondeList( $engine ) );
+            echo Bootstrap::json_encode($dbs->getEncondeList($filter->xssFilterHard($engine)));
 
         } else {
             echo '[["0","..."]]';
