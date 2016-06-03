@@ -83,7 +83,6 @@
   Bootstrap::registerClass('xmlMenu',      PATH_GULLIVER . "class.xmlMenu.php");
   Bootstrap::registerClass('XmlForm_Field_FastSearch', PATH_GULLIVER . "class.xmlformExtension.php");
   Bootstrap::registerClass('XmlForm_Field_XmlMenu', PATH_GULLIVER . "class.xmlMenu.php");
-  Bootstrap::registerClass('XmlForm_Field_HTML',  PATH_GULLIVER . "class.dvEditor.php");
   Bootstrap::registerClass('XmlForm_Field_WYSIWYG_EDITOR',  PATH_GULLIVER . "class.wysiwygEditor.php");
   Bootstrap::registerClass('Controller',          PATH_GULLIVER . "class.controller.php");
   Bootstrap::registerClass('HttpProxyController', PATH_GULLIVER . "class.httpProxyController.php");
@@ -98,7 +97,7 @@
   Bootstrap::registerClass('processMap',   PATH_HOME . "engine/classes/class.processMap.php");
 
   Bootstrap::registerSystemClasses();
-  
+
   require_once( PATH_THIRDPARTY . 'pake' . PATH_SEP . 'pakeFunction.php');
   require_once( PATH_THIRDPARTY . 'pake' . PATH_SEP . 'pakeGetopt.class.php');
   require_once( PATH_CORE . 'config' . PATH_SEP . 'environments.php');
