@@ -91,11 +91,11 @@ try {
             $oTasks = new Tasks();
             switch ((int) $_POST['TU_RELATION']) {
                 case 1:
-                    echo $oTasks->assignUser($_POST['TAS_UID'], $_POST['USR_UID'], $_POST['TU_TYPE']);
+                    echo htmlentities($oTasks->assignUser($_POST['TAS_UID'], $_POST['USR_UID'], $_POST['TU_TYPE']), ENT_QUOTES | ENT_HTML5, 'UTF-8');
                     G::auditlog("AssignUserTask","Assign a User to a Task -> ".$_POST['TAS_UID'].' User UID -> '.$_POST['USR_UID']);
                     break;
                 case 2:
-                    echo $oTasks->assignGroup($_POST['TAS_UID'], $_POST['USR_UID'], $_POST['TU_TYPE']);
+                    echo htmlentities($oTasks->assignGroup($_POST['TAS_UID'], $_POST['USR_UID'], $_POST['TU_TYPE']), ENT_QUOTES | ENT_HTML5, 'UTF-8');
                     G::auditlog("AssignGroupTask","Assign a Group to a Task -> ".$_POST['TAS_UID'].' User UID -> '.$_POST['USR_UID']);
                     break;
             }
