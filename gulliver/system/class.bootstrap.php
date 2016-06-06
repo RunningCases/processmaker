@@ -77,12 +77,10 @@ class Bootstrap
         self::registerClass("DBRecordSet", PATH_GULLIVER . "class.dbrecordset.php");
         self::registerClass("DBSession", PATH_GULLIVER . "class.dbsession.php");
         self::registerClass("DBTable", PATH_GULLIVER . "class.dbtable.php");
-        self::registerClass("XmlForm_Field_HTML", PATH_GULLIVER . "class.dvEditor.php");
         self::registerClass("dynaFormHandler", PATH_GULLIVER . "class.dynaformhandler.php");
         self::registerClass("G_Error", PATH_GULLIVER . "class.error.php");
         self::registerClass("filterForm", PATH_GULLIVER . "class.filterForm.php");
         self::registerClass("Form", PATH_GULLIVER . "class.form.php");
-        self::registerClass("functionTest", PATH_GULLIVER . "class.functionTest.php");
         self::registerClass("G", PATH_GULLIVER . "class.g.php");
         self::registerClass("headPublisher", PATH_GULLIVER . "class.headPublisher.php");
         self::registerClass("Helper", PATH_GULLIVER . "class.helper.php");
@@ -107,9 +105,7 @@ class Bootstrap
         self::registerClass("Table", PATH_GULLIVER . "class.table.php");
         self::registerClass("TemplatePowerParser", PATH_GULLIVER . "class.templatePower.php");
         self::registerClass("TemplatePower", PATH_GULLIVER . "class.templatePower.php");
-        self::registerClass("testTools", PATH_GULLIVER . "class.testTools.php");
         self::registerClass("Tree", PATH_GULLIVER . "class.tree.php");
-        self::registerClass("unitTest", PATH_GULLIVER . "class.unitTest.php");
         self::registerClass("WebResource", PATH_GULLIVER . "class.webResource.php");
         self::registerClass("XmlForm_Field_WYSIWYG_EDITOR", PATH_GULLIVER . "class.wysiwygEditor.php");
         self::registerClass("Xml_Node", PATH_GULLIVER . "class.xmlDocument.php");
@@ -162,8 +158,6 @@ class Bootstrap
         self::registerClass("XmlForm_Field_DVEditor", PATH_GULLIVER . "class.xmlformExtension.php");
         self::registerClass("XmlForm_Field_FastSearch", PATH_GULLIVER . "class.xmlformExtension.php");
         self::registerClass("xmlformTemplate", PATH_GULLIVER . "class.xmlformTemplate.php");
-        self::registerClass("ymlDomain", PATH_GULLIVER . "class.ymlDomain.php");
-        self::registerClass("ymlTestCases", PATH_GULLIVER . "class.ymlTestCases.php");
 
         // ProcessMaker classes
         self::registerClass("InvalidIndexSearchTextException", PATH_CLASSES . "class.AppSolr.php");

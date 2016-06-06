@@ -1,7 +1,6 @@
 <?php
 G::LoadSystem('inputfilter');
 $filter = new InputFilter();
-$_POST['qs'] = $filter->xssFilterHard($_POST['qs']);
 ?>
 <html>
   <style type="text/css">
@@ -13,9 +12,9 @@ $_POST['qs'] = $filter->xssFilterHard($_POST['qs']);
    }
   </style>
   <body onresize="autoResizeScreen()" onload="autoResizeScreen()">
-  <iframe name="casesFrame" id="casesFrame" src ="../cases/main_init<?php echo $_POST['qs'];?>" width="99%" height="768" frameborder="0">
-    <p>Your browser does not support iframes.</p>
-  </iframe>
+<iframe name="casesFrame" id="casesFrame" src ="../cases/main_init<?php echo $filter->xssFilterHard($_POST['qs']);?>" width="99%" height="768" frameborder="0">
+	<p>Your browser does not support iframes.</p>
+</iframe>
   </body>
   <script>
     if ( document.getElementById('pm_submenu') )
