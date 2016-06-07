@@ -1341,15 +1341,21 @@ class Derivation
         /* Start Block : Count the open threads of $currentDelegation['APP_UID'] */
         $openThreads = $this->case->GetOpenThreads( $currentDelegation['APP_UID'] );
 
-        ///////
         $flag = false;
 
-        if ($openThreads == 0) {
+        //check if there is any paused thread
+        $existThareadPause = false;
+        if (isset($arraySiblings['pause'])) {
+            if (!empty($arraySiblings['pause'])) {
+                $existThareadPause = true;
+            }
+        }
+
+        if ($openThreads == 0 && !$existThareadPause) {
             //Close case
             $appFields["APP_STATUS"] = "COMPLETED";
             $appFields["APP_FINISH_DATE"] = "now";
             $this->verifyIsCaseChild($currentDelegation["APP_UID"], $currentDelegation["DEL_INDEX"]);
-
             $flag = true;
         }
 
