@@ -64,6 +64,10 @@ class adminProxy extends HttpProxyController
             $updatedConf['time_zone'] = $httpData->time_zone;
         }
 
+        if ($sysConf['expiration_year'] != $httpData->expiration_year) {
+            $updatedConf['expiration_year'] = $httpData->expiration_year;
+        }
+
         $httpData->memory_limit .= 'M';
         if ($sysConf['memory_limit'] != $httpData->memory_limit) {
             $updatedConf['memory_limit'] = $httpData->memory_limit;
