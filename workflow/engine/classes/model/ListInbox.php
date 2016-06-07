@@ -72,7 +72,7 @@ class ListInbox extends BaseListInbox
                 $listParticipatedLast = new ListParticipatedLast();
                 $listParticipatedLast->refresh($data);
             } else {
-                $data['USR_UID_CURRENT'] = $data['DEL_PREVIOUS_USR_UID']; 
+                $data['USR_UID_CURRENT'] = $data['DEL_PREVIOUS_USR_UID'];
                 $data['DEL_CURRENT_USR_LASTNAME'] = '';
                 $data['DEL_CURRENT_USR_USERNAME'] = '';
                 $data['DEL_CURRENT_USR_FIRSTNAME'] = '';
@@ -402,17 +402,12 @@ class ListInbox extends BaseListInbox
 
         if ($search != '') {
             $criteria->add(
-                $criteria->getNewCriterion( ListInboxPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE )
-                ->addOr(
-                    $criteria->getNewCriterion( ListInboxPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE )
-                    ->addOr(
-                        $criteria->getNewCriterion( ListInboxPeer::APP_NUMBER, $search, Criteria::LIKE )
-                        ->addOr(
-                            $criteria->getNewCriterion( ListInboxPeer::APP_PRO_TITLE, '%' . $search . '%', Criteria::LIKE )
-                        )
-                    )
-                )
-            );
+                $criteria->getNewCriterion(ListInboxPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion(ListInboxPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion(ListInboxPeer::APP_PRO_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion(ListInboxPeer::APP_UID, $search, Criteria::EQUAL)->addOr(
+                $criteria->getNewCriterion(ListInboxPeer::APP_NUMBER, $search, Criteria::EQUAL)
+            )))));
         }
 
         if ($process != '') {

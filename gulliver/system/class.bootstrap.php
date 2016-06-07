@@ -572,9 +572,11 @@ class Bootstrap
      * @author Fernando Ontiveros Lira <fernando@colosa.com>
      * @access public
      * @param string $urlLink
+     * @param array  $arrayFriendlyUri
+     *
      * @return string
      */
-    static public function parseURI($uri)
+    static public function parseURI($uri, array $arrayFriendlyUri = null)
     {
         // *** process the $_POST with magic_quotes enabled
         // The magic_quotes_gpc feature has been DEPRECATED as of PHP 5.3.0.
@@ -583,7 +585,7 @@ class Bootstrap
         }
 
         $aRequestUri = explode('/', $uri);
-        $args = self::parseNormalUri($aRequestUri);
+        $args = self::parseNormalUri($aRequestUri, $arrayFriendlyUri);
 
         if (! empty($args)) {
             define("SYS_LANG", $args ['SYS_LANG']);
@@ -1148,7 +1150,7 @@ class Bootstrap
         //Read Configuration File
         $xmlConfiguration = file_get_contents($configurationFile);
         $xmlConfigurationObj = Bootstrap::xmlParser($xmlConfiguration);
-        
+
         if (!isset($xmlConfigurationObj->result['skinConfiguration']['__CONTENT__']['cssFiles']['__CONTENT__'][$skinVariant]['__CONTENT__'])) {
             $xmlConfigurationObj->result['skinConfiguration']['__CONTENT__']['cssFiles']['__CONTENT__'][$skinVariant]['__CONTENT__'] = array('cssFile' => array());
         }
@@ -2081,9 +2083,11 @@ class Bootstrap
     /**
      *
      * @param unknown_type $aRequestUri
+     * @param array        $arrayFriendlyUri
+     *
      * @return multitype:string mixed Ambigous <number, string>
      */
-    public function parseNormalUri($aRequestUri)
+    public function parseNormalUri($aRequestUri, array $arrayFriendlyUri = null)
     {
         if (substr($aRequestUri[1], 0, 3) == 'sys') {
             define('SYS_TEMP', substr($aRequestUri[1], 3));
@@ -2146,8 +2150,21 @@ class Bootstrap
         $args["SYS_TARGET"] = array_shift($uriVars);
 
         //to enable more than 2 directories...in the methods structure
-        while (!empty($uriVars)) {
-            $args["SYS_TARGET"] = $args["SYS_TARGET"] . "/" . array_shift($uriVars);
+        $key = $args['SYS_COLLECTION'] . '/' . $args['SYS_TARGET'];
+        $flagSysTarget = true;
+
+        if (!is_null($arrayFriendlyUri) && !empty($arrayFriendlyUri) && isset($arrayFriendlyUri[$key])) {
+            if (!preg_match($arrayFriendlyUri[$key], array_shift($uriVars))) {
+                $args['SYS_TARGET'] = false;
+            }
+
+            $flagSysTarget = false;
+        }
+
+        if ($flagSysTarget) {
+            while (!empty($uriVars)) {
+                $args['SYS_TARGET'] = $args['SYS_TARGET'] . '/' . array_shift($uriVars);
+            }
         }
 
         /* Fix to prevent use uxs skin outside siplified interface,

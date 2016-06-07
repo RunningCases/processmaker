@@ -48,14 +48,14 @@ class ListParticipatedLast extends BaseListParticipatedLast
                 $aRow = $dataset->getRow();
                 $data['DEL_CURRENT_USR_USERNAME']  = $aRow['USR_USERNAME'];
                 $data['DEL_CURRENT_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
-                $data['DEL_CURRENT_USR_LASTNAME']  = $aRow['USR_LASTNAME']; 
+                $data['DEL_CURRENT_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
                 $data['DEL_CURRENT_TAS_TITLE'] = $data['APP_TAS_TITLE'];
 
                 $users = new Users();
                 $users->refreshTotal($data['USR_UID'], 'add', 'participated');
             }
         } else {
-            $getData['USR_UID'] = $data['USR_UID_CURRENT']; 
+            $getData['USR_UID'] = $data['USR_UID_CURRENT'];
             $getData['APP_UID'] = $data['APP_UID'];
             $row = $this->getRowFromList($getData);
             if(is_array($row) && sizeof($row)) {
@@ -63,7 +63,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
                 $this->updateCurrentUser($row, $set);
             }
         }
-                
+
         if($this->primaryKeysExists($data)) {
             return;
         }
@@ -151,7 +151,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
 
             if (isset($data['APP_TAS_TITLE'])) {
                 $criteriaSet->add(ListParticipatedLastPeer::DEL_CURRENT_TAS_TITLE, $data['APP_TAS_TITLE']);
-            }            
+            }
 
             BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
 
@@ -229,9 +229,11 @@ class ListParticipatedLast extends BaseListParticipatedLast
 
         if ($search != '' ) {
             $criteria->add(
-                $criteria->getNewCriterion( ListParticipatedLastPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE )->
-                    addOr( $criteria->getNewCriterion( ListParticipatedLastPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE )->
-                            addOr( $criteria->getNewCriterion( ListParticipatedLastPeer::APP_NUMBER, $search, Criteria::LIKE ) ) ) );
+                $criteria->getNewCriterion(ListParticipatedLastPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion(ListParticipatedLastPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion(ListParticipatedLastPeer::APP_UID, $search, Criteria::EQUAL)->addOr(
+                $criteria->getNewCriterion(ListParticipatedLastPeer::APP_NUMBER, $search, Criteria::EQUAL)
+            ))));
         }
 
         if($filterStatus != ''){
@@ -353,12 +355,12 @@ class ListParticipatedLast extends BaseListParticipatedLast
 
         return $data;
     }
-    
+
     public function primaryKeysExists($data) {
         $criteria = new Criteria("workflow");
         $criteria->add(ListParticipatedLastPeer::APP_UID, $data['APP_UID']);
         $criteria->add(ListParticipatedLastPeer::USR_UID, $data['USR_UID']);
-        $criteria->add(ListParticipatedLastPeer::DEL_INDEX, $data['DEL_INDEX']);    
+        $criteria->add(ListParticipatedLastPeer::DEL_INDEX, $data['DEL_INDEX']);
         $dataset = UsersPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
@@ -370,7 +372,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
         }
         return false;
     }
-    
+
     public function getRowFromList($data) {
         $criteria = new Criteria("workflow");
         $criteria->add(ListParticipatedLastPeer::APP_UID, $data['APP_UID']);
@@ -386,14 +388,14 @@ class ListParticipatedLast extends BaseListParticipatedLast
         }
         return false;
     }
- 
+
     public function updateCurrentUser($where, $set)
-    {   
+    {
         $con = Propel::getConnection('workflow');
         //Update - WHERE
         $criteriaWhere = new Criteria("workflow");
         $criteriaWhere->add(ListParticipatedLastPeer::APP_UID, $where["APP_UID"], Criteria::EQUAL);
-        $criteriaWhere->add(ListParticipatedLastPeer::USR_UID, $where["USR_UID"], Criteria::EQUAL); 
+        $criteriaWhere->add(ListParticipatedLastPeer::USR_UID, $where["USR_UID"], Criteria::EQUAL);
         $criteriaWhere->add(ListParticipatedLastPeer::DEL_INDEX, $where["DEL_INDEX"], Criteria::EQUAL);
         //Update - SET
         $criteriaSet = new Criteria("workflow");

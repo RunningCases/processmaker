@@ -221,9 +221,11 @@ class ListCompleted extends BaseListCompleted
 
         if ($search != '') {
             $criteria->add(
-                $criteria->getNewCriterion( 'CON_APP.CON_VALUE', '%' . $search . '%', Criteria::LIKE )->
-                    addOr( $criteria->getNewCriterion( 'CON_TAS.CON_VALUE', '%' . $search . '%', Criteria::LIKE )->
-                        addOr( $criteria->getNewCriterion( ListCompletedPeer::APP_NUMBER, $search, Criteria::LIKE ) ) ) );
+                $criteria->getNewCriterion('CON_APP.CON_VALUE', '%' . $search . '%', Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion('CON_TAS.CON_VALUE', '%' . $search . '%', Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion(ListCompletedPeer::APP_UID, $search, Criteria::EQUAL)->addOr(
+                $criteria->getNewCriterion(ListCompletedPeer::APP_NUMBER, $search, Criteria::EQUAL)
+            ))));
         }
 
         if ($process != '') {

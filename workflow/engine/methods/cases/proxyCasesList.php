@@ -32,6 +32,10 @@ $type = isset( $_GET["type"] ) ? $_GET["type"] : (isset( $_REQUEST["type"] ) ? $
 $dateFrom = isset( $_REQUEST["dateFrom"] ) ? substr( $_REQUEST["dateFrom"], 0, 10 ) : "";
 $dateTo = isset( $_REQUEST["dateTo"] ) ? substr( $_REQUEST["dateTo"], 0, 10 ) : "";
 $first = isset( $_REQUEST["first"] ) ? true :false;
+$openApplicationUid = (isset($_REQUEST['openApplicationUid']) && $_REQUEST['openApplicationUid'] != '')?
+    $_REQUEST['openApplicationUid'] : null;
+
+$search = (!is_null($openApplicationUid))? $openApplicationUid : $search;
 
 if ($sort == 'CASE_SUMMARY' || $sort == 'CASE_NOTES_COUNT') {
     $sort = 'APP_NUMBER';//DEFAULT VALUE

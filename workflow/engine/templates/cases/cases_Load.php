@@ -1,20 +1,22 @@
 <?php
-G::LoadSystem('inputfilter');
+$cd = (isset($_SESSION['__CD__']))? $_SESSION['__CD__'] : '';
+unset($_SESSION['__CD__']);
+
 $filter = new InputFilter();
 ?>
 <html>
   <style type="text/css">
    .Footer .content {
       padding   :0px !important;
-   }  
+   }
    *html body {
       overflow-y: hidden;
    }
   </style>
   <body onresize="autoResizeScreen()" onload="autoResizeScreen()">
-<iframe name="casesFrame" id="casesFrame" src ="../cases/main_init<?php echo $filter->xssFilterHard($_POST['qs']);?>" width="99%" height="768" frameborder="0">
-	<p>Your browser does not support iframes.</p>
-</iframe>
+  <iframe name="casesFrame" id="casesFrame" src ="<?php echo $cd; ?>../cases/main_init<?php echo $filter->xssFilterHard($_POST['qs']); ?>" width="99%" height="768" frameborder="0">
+      <p>Your browser does not support iframes.</p>
+  </iframe>
   </body>
   <script>
     if ( document.getElementById('pm_submenu') )
@@ -28,7 +30,7 @@ $filter = new InputFilter();
 		var containerList1, containerList2;
 		oCasesFrame    = document.getElementById('casesFrame');
 		oClientWinSize = getClientWindowSize();
-		
+
 		containerList1 = document.getElementById("pm_header");
 		if (document.getElementById("mainMenuBG") &&
 			document.getElementById("mainMenuBG").parentNode &&

@@ -188,9 +188,11 @@ class ListUnassigned extends BaseListUnassigned
 
         if ($search != '') {
             $criteria->add(
-                $criteria->getNewCriterion( ListUnassignedPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE )->
-                    addOr( $criteria->getNewCriterion( ListUnassignedPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE )->
-                        addOr( $criteria->getNewCriterion( ListUnassignedPeer::APP_NUMBER, $search, Criteria::LIKE ) ) ) );
+                $criteria->getNewCriterion(ListUnassignedPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion(ListUnassignedPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion(ListUnassignedPeer::APP_UID, $search, Criteria::EQUAL)->addOr(
+                $criteria->getNewCriterion(ListUnassignedPeer::APP_NUMBER, $search, Criteria::EQUAL)
+            ))));
         }
 
         if ($process != '') {

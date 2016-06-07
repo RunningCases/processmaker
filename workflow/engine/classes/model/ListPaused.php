@@ -221,9 +221,11 @@ class ListPaused extends BaseListPaused {
 
         if ($search != '') {
             $criteria->add(
-                $criteria->getNewCriterion( ListPausedPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE )->
-                    addOr( $criteria->getNewCriterion( ListPausedPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE )->
-                        addOr( $criteria->getNewCriterion( ListPausedPeer::APP_NUMBER, $search, Criteria::LIKE ) ) ) );
+                $criteria->getNewCriterion(ListPausedPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion(ListPausedPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion(ListPausedPeer::APP_UID, $search, Criteria::EQUAL)->addOr(
+                $criteria->getNewCriterion(ListPausedPeer::APP_NUMBER, $search, Criteria::EQUAL)
+            ))));
         }
 
         if ($process != '') {

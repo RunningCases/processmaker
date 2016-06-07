@@ -3,6 +3,7 @@ unset($_SESSION['APPLICATION']);
 
 //get the action from GET or POST, default is todo
 $action = isset( $_GET['action'] ) ? $_GET['action'] : (isset( $_POST['action'] ) ? $_POST['action'] : 'todo');
+$openApplicationUid = (isset($_GET['openApplicationUid']))? $_GET['openApplicationUid'] : null;
 
 /*----------------------------------********---------------------------------*/
 $filterAction = isset( $_GET['filterAction'] ) ? $_GET['filterAction'] : (isset( $_POST['filterAction'] ) ? $_POST['filterAction'] : '');
@@ -224,6 +225,8 @@ $oHeadPublisher->addContent( 'cases/casesListExtJs' ); //adding a html file  .ht
 $oHeadPublisher->assign( 'FORMATS', $c->getFormats() );
 $oHeadPublisher->assign('extJsViewState', $oHeadPublisher->getExtJsViewState());
 $oHeadPublisher->assign('isIE', Bootstrap::isIE());
+$oHeadPublisher->assign('__OPEN_APPLICATION_UID__', $openApplicationUid);
+
 G::RenderPage( 'publish', 'extJs' );
 
 function getUserArray ($action, $userUid)
@@ -319,7 +322,7 @@ function getStatusArray($action, $userUid)
     $status[] = array('DRAFT', G::LoadTranslation('ID_CASES_STATUS_DRAFT'));
     $status[] = array('TO_DO', G::LoadTranslation('ID_CASES_STATUS_TO_DO'));
     $status[] = array('CANCELLED', G::LoadTranslation('ID_CASES_STATUS_CANCELLED'));
-    
+
     return $status;
 }
 

@@ -33,6 +33,8 @@ try {
     $filters['action']   = isset( $_REQUEST["action"] ) ? $filter->sanitizeInputValue($_REQUEST["action"], 'nosql') : "";
     $listName            = isset( $_REQUEST["list"] ) ? $filter->sanitizeInputValue($_REQUEST["list"], 'nosql') : "inbox";
     $filters['filterStatus']   = isset( $_REQUEST["filterStatus"] ) ? $filter->sanitizeInputValue($_REQUEST["filterStatus"], 'nosql') : "";
+    $openApplicationUid = (isset($_REQUEST['openApplicationUid']) && $_REQUEST['openApplicationUid'] != '')?
+        $_REQUEST['openApplicationUid'] : null;
 
     // Select list
     switch ($listName) {
@@ -73,6 +75,8 @@ try {
 
 
     // Validate filters
+    $filters['search'] = (!is_null($openApplicationUid))? $openApplicationUid : $filters['search'];
+
     $filters['start'] = (int)$filters['start'];
     $filters['start'] = abs($filters['start']);
     if ($filters['start'] != 0) {
