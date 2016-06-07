@@ -1344,12 +1344,19 @@ class Derivation
         ///////
         $flag = false;
 
-        if ($openThreads == 0) {
+        //check if there is any paused thread
+        $existThreadPaused = false;
+        if (isset($arraySiblings['pause'])) {
+            if (!empty($arraySiblings['pause'])) {
+                $existThreadPaused = true;
+            }
+        }
+
+        if ($openThreads == 0 && !$existThreadPaused) {
             //Close case
             $appFields["APP_STATUS"] = "COMPLETED";
             $appFields["APP_FINISH_DATE"] = "now";
             $this->verifyIsCaseChild($currentDelegation["APP_UID"], $currentDelegation["DEL_INDEX"]);
-
             $flag = true;
         }
 
