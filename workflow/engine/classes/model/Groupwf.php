@@ -343,36 +343,39 @@ class Groupwf extends BaseGroupwf
         return $result;
     }
 
-    public function getAllGroup ($start = null, $limit = null, $search = null, $sortField = null, $sortDir = null)
+    public function getAllGroup($start = null, $limit = null, $search = null, $sortField = null, $sortDir = null)
     {
         require_once PATH_RBAC . "model/RbacUsers.php";
         require_once 'classes/model/TaskUser.php';
         require_once 'classes/model/GroupUser.php';
-
+        $sDelimiter = DBAdapter::getStringDelimiter();
+        $aConditions = [
+            [GroupwfPeer::GRP_UID, 'C.CON_ID'],
+            ['C.CON_CATEGORY', $sDelimiter . 'GRP_TITLE' . $sDelimiter],
+            ['C.CON_LANG', 'if((SELECT COUNT(S.CON_ID) FROM CONTENT AS S WHERE S.CON_ID=C.CON_ID AND S.CON_CATEGORY=C.CON_CATEGORY AND S.CON_LANG=' . $sDelimiter . SYS_LANG . $sDelimiter . ')>0,' . $sDelimiter . SYS_LANG . $sDelimiter . ',' . $sDelimiter . 'en' . $sDelimiter . ')']
+        ];
         $totalCount = 0;
-        $criteria = new Criteria( 'workflow' );
-        $criteria->addSelectColumn( GroupwfPeer::GRP_UID );
-        $criteria->addJoin( GroupwfPeer::GRP_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN );
-        $criteria->add( ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
-        $criteria->add( ContentPeer::CON_LANG, SYS_LANG );
+        $criteria = new Criteria('workflow');
+        $criteria->addSelectColumn(GroupwfPeer::GRP_UID);
+        $criteria->addAlias('C', 'CONTENT');
+        $criteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
 
         if ($search) {
-            $criteria->add( ContentPeer::CON_VALUE, '%' . $search . '%', Criteria::LIKE );
+            $criteria->add('C.CON_VALUE', '%' . $search . '%', Criteria::LIKE);
         }
 
-        $totalRows = GroupwfPeer::doCount( $criteria );
+        $totalRows = GroupwfPeer::doCount($criteria);
 
-        $criteria = new Criteria( 'workflow' );
-        $criteria->addSelectColumn( GroupwfPeer::GRP_UID );
-        $criteria->addSelectColumn( GroupwfPeer::GRP_STATUS );
-        $criteria->addSelectColumn( GroupwfPeer::GRP_UX );
-        $criteria->addAsColumn( 'GRP_TITLE', ContentPeer::CON_VALUE );
-        $criteria->addJoin( GroupwfPeer::GRP_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN );
-        $criteria->add( ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
-        $criteria->add( ContentPeer::CON_LANG, SYS_LANG );
+        $criteria = new Criteria('workflow');
+        $criteria->addSelectColumn(GroupwfPeer::GRP_UID);
+        $criteria->addSelectColumn(GroupwfPeer::GRP_STATUS);
+        $criteria->addSelectColumn(GroupwfPeer::GRP_UX);
+        $criteria->addAlias('C', 'CONTENT');
+        $criteria->addAsColumn('GRP_TITLE', 'C.CON_VALUE');
+        $criteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
 
         if (is_null($sortField) || trim($sortField) == "") {
-            $sortField = ContentPeer::CON_VALUE;
+            $sortField = 'GRP_TITLE';
         }
 
         if (!is_null($sortDir) && trim($sortDir) != "" && strtoupper($sortDir) == "DESC") {
@@ -382,29 +385,28 @@ class Groupwf extends BaseGroupwf
         }
 
         if ($start != '') {
-            $criteria->setOffset( $start );
+            $criteria->setOffset($start);
         }
 
         if ($limit != '') {
-            $criteria->setLimit( $limit );
+            $criteria->setLimit($limit);
         }
 
         if ($search) {
-            $criteria->add( ContentPeer::CON_VALUE, '%' . $search . '%', Criteria::LIKE );
+            $criteria->add('C.CON_VALUE', '%' . $search . '%', Criteria::LIKE);
         }
 
-        $oDataset = GroupwfPeer::doSelectRS( $criteria );
-        $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-        $processes = Array ();
-        $uids = array ();
-        $groups = array ();
-        $aGroups = array ();
+        $oDataset = GroupwfPeer::doSelectRS($criteria);
+        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $processes = array();
+        $uids = array();
+        $groups = array();
+        $aGroups = array();
         while ($oDataset->next()) {
             $groups[] = $oDataset->getRow();
         }
 
-        return array ('rows' => $groups,'totalCount' => $totalRows
-        );
+        return array('rows' => $groups, 'totalCount' => $totalRows);
     }
 
     public function filterGroup ($filter, $start, $limit)
