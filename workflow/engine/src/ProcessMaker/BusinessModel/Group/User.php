@@ -170,6 +170,115 @@ class User
     }
 
     /**
+     * Assign users to groups
+     *
+     * @param array  $arrayData Data of users and groups
+     *
+     * return array Return result
+     */
+    public function createBatch(array $arrayData)
+    {
+        try {
+            //Verify data
+            if (empty($arrayData)) {
+                throw new \Exception(\G::LoadTranslation('ID_INFORMATION_EMPTY'));
+            }
+
+            $arrayAux = [];
+
+            foreach ($arrayData as $value) {
+                $arrayAux = $value;
+
+                if (!isset($arrayAux['groupUid'])){
+                    throw new \Exception(\G::LoadTranslation('ID_DOES_NOT_EXIST', ['groupUid']));
+                }
+
+                if (gettype($arrayAux['groupUid']) != 'string'){
+                    throw new \Exception(\G::LoadTranslation('ID_INVALID_VALUE_STRING', ['groupUid']));
+                }
+
+                if (!isset($arrayAux['users'])) {
+                   throw new \Exception(\G::LoadTranslation('ID_DOES_NOT_EXIST', ['users']));
+                }
+
+                if(gettype($arrayAux['users']) != 'array') {
+                    throw new \Exception(\G::LoadTranslation('ID_INVALID_VALUE_ARRAY', ['users']));
+                }
+            }
+
+            //Assign
+            $group = new \Groupwf();
+
+            $arrayResult = [];
+            $arrayUsrGrp = [];
+
+            foreach ($arrayData as $value) {
+                $flagAssignGrp = 1;
+                $arrayMsg = [];
+
+                $arrayUsrGrp = $value;
+
+                //Verify data
+                $grpUid = \GroupwfPeer::retrieveByPK($arrayUsrGrp['groupUid']);
+
+                if (is_null($grpUid)) {
+                    $arrayMsg['groupUid'] = [$arrayUsrGrp['groupUid'] => 'GROUP_NOT_EXISTS'];
+                    $flagAssignGrp = 0;
+                }
+
+                if ($flagAssignGrp == 1) {
+                    $arrayMsg['groupUid'] = [$arrayUsrGrp['groupUid'] => 'GROUP_EXISTS'];
+
+                    $arrayUsr = $arrayUsrGrp['users'];
+                    $arrayResultUsr = [];
+
+                    foreach ($arrayUsr as $valueUidUser) {
+                        $flagAssignUsr = 1;
+
+                        //Verify data
+                        $userUid = \UsersPeer::retrieveByPK($valueUidUser);
+
+                        if (is_null($userUid)) {
+                            $arrayResultUsr[$valueUidUser] = 'USER_NOT_EXISTS';
+                            $flagAssignUsr = 0;
+                        }
+
+                        if ($flagAssignUsr == 1 && $userUid->getUsrStatus() == 'CLOSED') {
+                            $arrayResultUsr[$valueUidUser] = 'USER_INACTIVE';
+                            $flagAssignUsr = 0;
+                        }
+
+                        $groupUser = \GroupUserPeer::retrieveByPK($arrayUsrGrp['groupUid'], $valueUidUser);
+
+                        if ($flagAssignUsr == 1 && !is_null($groupUser)) {
+                            $arrayResultUsr[$valueUidUser] = 'USER_ALREADY_ASSIGNED';
+                            $flagAssignUsr = 0;
+                        }
+
+                        //Assign
+                        if ($flagAssignUsr == 1) {
+                            $group = new \Groups();
+
+                            $group->addUserToGroup($arrayUsrGrp['groupUid'], $valueUidUser);
+
+                            $arrayResultUsr[$valueUidUser] = 'USER_SUCCESSFULLY_ASSIGNED';
+                        }
+
+                        $arrayMsg['users'] = $arrayResultUsr;
+                    }
+                }
+
+                $arrayResult[] = $arrayMsg;
+            }
+
+            //Return
+            return $arrayResult;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Unassign User of the Group
      *
      * @param string $groupUid Unique id of Group
