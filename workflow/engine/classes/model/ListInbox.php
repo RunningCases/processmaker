@@ -257,8 +257,8 @@ class ListInbox extends BaseListInbox
 
         $criteria = new Criteria();
         $criteria->addSelectColumn(ContentPeer::CON_VALUE);
-        $criteria->add( ContentPeer::CON_ID, $data['APP_UID'], Criteria::EQUAL );
-        $criteria->add( ContentPeer::CON_CATEGORY, 'APP_TITLE', Criteria::EQUAL );
+        $criteria->add( ContentPeer::CON_ID, $data['TAS_UID'], Criteria::EQUAL );
+        $criteria->add( ContentPeer::CON_CATEGORY, 'TAS_DEF_TITLE', Criteria::EQUAL );
         $criteria->add( ContentPeer::CON_LANG, SYS_LANG, Criteria::EQUAL );
         $dataset = ContentPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
