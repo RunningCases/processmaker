@@ -1612,4 +1612,65 @@ class Light extends Api
         }
         return $response;
     }
+    
+    /**
+     * Get next step
+     * 
+     * @url POST /get-next-step/:app_uid
+     * @return array
+     */
+    public function doGetStep($app_uid, $request_data)
+    {
+        $pro_uid = $request_data["pro_uid"];
+        $act_uid = $request_data["act_uid"];
+        $step_uid = $request_data["step_uid"];
+        $step_pos = $request_data["step_pos"];
+        $app_index = $request_data["app_index"];
+        $dyn_uid = isset($request_data["dyn_uid"]) ? $request_data["dyn_uid"] : null;
+        $usr_uid = $this->getUserId();
+
+        $response = [];
+
+        //trigger before
+        $oMobile = new \ProcessMaker\BusinessModel\Light();
+        $triggers = $oMobile->doExecuteTriggerCase($usr_uid, $pro_uid, $act_uid, $app_uid, $step_uid, "before");
+        if ($triggers["status"] === "ok") {
+            $triggers["status"] = "200";
+        }
+        $response["triggers"] = $triggers;
+
+        //conditionalSteps
+        $oCase = new \Cases();
+        $oAppDelegate = new \AppDelegation();
+        $alreadyRouted = $oAppDelegate->alreadyRouted($app_uid, $app_index);
+        if ($alreadyRouted) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, G::LoadTranslation('ID_CASE_DELEGATION_ALREADY_CLOSED')));
+        }
+        $_SESSION["APPLICATION"] = $app_uid;
+        $_SESSION["PROCESS"] = $pro_uid;
+        $_SESSION["INDEX"] = $app_index;
+        $_SESSION["USER_LOGGED"] = $usr_uid;
+        
+        do {
+            $conditionalSteps = $oCase->getNextStep($pro_uid, $app_uid, $app_index, $step_pos);
+            if (is_array($conditionalSteps) && (
+                    $conditionalSteps["TYPE"] === "DYNAFORM" ||
+                    $conditionalSteps["TYPE"] === "DERIVATION")
+            ) {
+                break;
+            } else {
+                $step_pos = $step_pos + 1;
+            }
+        } while ($conditionalSteps !== false);
+        $response["conditionalSteps"] = $conditionalSteps;
+
+        //variables
+        $cases = new \ProcessMaker\BusinessModel\Cases();
+        $variables = $cases->getCaseVariables($app_uid, $usr_uid, $dyn_uid);
+        $variables = DateTime::convertUtcToTimeZone($variables);
+        $response["variables"] = $variables;
+
+        return $response;
+    }
+
 }
