@@ -295,8 +295,9 @@ class ListParticipatedLast extends BaseListParticipatedLast
 
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
-        $criteria = new Criteria();
-
+        $pmTable = new PmTable();
+        $criteria = $pmTable->addPMFieldsToList('sent');
+        
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_UID);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_INDEX);
         $criteria->addSelectColumn(ListParticipatedLastPeer::USR_UID);

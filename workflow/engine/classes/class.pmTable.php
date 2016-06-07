@@ -910,5 +910,65 @@ class PmTable
         $m->execute( $args );
         $m->runBuild();
     }
+
+    public function addPMFieldsToList($action)
+    {
+        $conf = new Configurations();
+        $confCasesList = $conf->getConfiguration('casesList', $action);
+
+        if (!class_exists('AdditionalTables')) {
+            require_once ("classes/model/AdditionalTables.php");
+        }
+
+        $oCriteria = new Criteria('workflow');
+        $oCriteria->clearSelectColumns();
+
+        //If there is PMTable for this case list
+        if (is_array($confCasesList) && count($confCasesList) > 0 && isset($confCasesList["PMTable"]) && trim($confCasesList["PMTable"]) != "") {
+            //Getting the table name
+            $additionalTableUid = $confCasesList["PMTable"];
+
+            $additionalTable = AdditionalTablesPeer::retrieveByPK($additionalTableUid);
+            $tableName = $additionalTable->getAddTabName();
+
+            $additionalTable = new AdditionalTables();
+            $tableData = $additionalTable->load($additionalTableUid, true);
+
+            $tableField = array();
+
+            foreach ($tableData["FIELDS"] as $arrayField) {
+                $tableField[] = $arrayField["FLD_NAME"];
+            }
+
+            foreach ($confCasesList["second"]["data"] as $fieldData) {
+                $fieldData['name'] = ($fieldData['name'] == 'APP_STATUS_LABEL')? 'APP_STATUS' : $fieldData['name'];
+                if (in_array($fieldData["name"], $tableField)) {
+                    $fieldTable = $fieldData["name"];
+                    $fieldName = $tableName . "." . $fieldTable;
+                    $oCriteria->addSelectColumn($fieldName);
+                }
+            }
+
+            switch ($action) {
+                case "sent":
+                    $listTablePeer = 'ListParticipatedLastPeer';
+                    break;
+                case "selfservice":
+                case "unassigned":
+                    $listTablePeer = 'ListUnassignedPeer';
+                    break;
+                case "paused":
+                    $listTablePeer = 'ListPausedPeer';
+                    break;
+                case "todo":
+                case 'draft':
+                    $listTablePeer = 'ListInboxPeer';
+                    break;
+            }
+            
+            $oCriteria->addJoin($listTablePeer::APP_UID, $tableName.'.APP_UID', Criteria::LEFT_JOIN);
+        }
+        return $oCriteria;
+    }
 }
 

@@ -246,7 +246,8 @@ class ListUnassigned extends BaseListUnassigned
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
         $resp = array();
-        $criteria = new Criteria();
+        $pmTable = new PmTable();
+        $criteria = $pmTable->addPMFieldsToList('unassigned');
 
         $criteria->addSelectColumn(ListUnassignedPeer::APP_UID);
         $criteria->addSelectColumn(ListUnassignedPeer::DEL_INDEX);

@@ -200,4 +200,3 @@ try {
     $msg = array("error" => $e->getMessage());
     echo G::json_encode($msg);
 }
-
