@@ -7,6 +7,7 @@ use Criteria;
 use UsersPeer;
 use AppDelegationPeer;
 use AppDelayPeer;
+use ProcessMaker\Util\DateTime;
 
 class Light
 {
@@ -89,7 +90,7 @@ class Light
                                 $dynaForm = \DynaformPeer::retrieveByPK($form['step_uid_obj']);
 
                                 $newForm[$c]['formId'] = $form['step_uid_obj'];
-                                $newForm[$c]['formUpdateDate'] = $dynaForm->getDynUpdateDate();
+                                $newForm[$c]['formUpdateDate'] = DateTime::convertUtcToIso8601($dynaForm->getDynUpdateDate());
                                 $newForm[$c]['index'] = $c+1;
                                 $newForm[$c]['title'] = $form['obj_title'];
                                 $newForm[$c]['description'] = $form['obj_description'];
