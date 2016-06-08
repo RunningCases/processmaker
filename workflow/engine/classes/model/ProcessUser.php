@@ -92,5 +92,23 @@ class ProcessUser extends BaseProcessUser
             throw($oError);
         }
     }
+
+    public function validateUserAccess($proUid, $usrUid, $type)
+    {
+        try {
+            $oCriteria = new Criteria();
+            $oCriteria->add( ProcessUserPeer::PRO_UID, $proUid );
+            $oCriteria->add( ProcessUserPeer::USR_UID, $usrUid );
+            $oCriteria->add( ProcessUserPeer::PU_TYPE, $type );
+            $data = ProcessUserPeer::doSelectOne( $oCriteria );
+            if (! is_null( $data )) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (Exception $oError) {
+            throw ($oError);
+        }
+    }
 }
 

@@ -146,7 +146,6 @@ function openCase(){
 }
 
 function jumpToCase(appNumber){
-
     //  Code add by Brayan Pereyra - cochalo
     //  This ajax validate the appNumber exists
     Ext.MessageBox.show({ msg: _('ID_PROCESSING'), wait:true,waitConfig: {interval:200} });
@@ -157,6 +156,12 @@ function jumpToCase(appNumber){
             if (res.exists === true) {
                 params = 'APP_NUMBER=' + appNumber;
                 params += '&action=jump';
+
+                if(action == 'to_revise') {
+                    params += '&to_revise=true';
+                    params += '&actionFromList=' + action;
+                }
+
                 requestFile = '../cases/open';
                 redirect(requestFile + '?' + params);
             } else {
