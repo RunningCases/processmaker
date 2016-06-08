@@ -36,14 +36,14 @@ class Common extends \Maveriks\Util\Common
                 return;
             }
 
-            $numc = 100;
+            $numc = 50;
 
             switch ($option) {
                 case "BAR":
                     echo "\r" . "| " . $data . str_repeat(" ", $numc - 2 - strlen($data));
                     break;
                 case "TEXT":
-                    echo "\r" . "| " . $data . str_repeat(" ", $numc - 2 - strlen($data)) . "\n";
+                    echo "\r" . '| ' . $data . "\n";
                     break;
                 default:
                     //START, END

@@ -109,24 +109,7 @@ class Light extends Api
     {
         try {
             $oMobile   = new \ProcessMaker\BusinessModel\Light();
-
             $processListStartCase = $oMobile->getProcessListStartCase($this->getUserId());
-            $processListStartCaseFrm = $processListStartCase[0]['forms'];
-
-            foreach ($processListStartCaseFrm as $key => $value) {
-                $valueAux = $value;
-
-                if (array_key_exists('formUpdateDate', $valueAux)) {
-                    $valueAux['formUpdateDate'] = \ProcessMaker\Util\DateTime::convertUtcToIso8601($valueAux['formUpdateDate']);
-                }
-
-                $value = array_replace($value, $valueAux);
-
-                $processListStartCaseFrm[$key] = $value;
-            }
-
-            $processListStartCase[0]['forms'] = $processListStartCaseFrm;
-
             $startCase = $processListStartCase;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));

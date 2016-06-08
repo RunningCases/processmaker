@@ -320,7 +320,7 @@ Ext.onReady(function () {
     editable   : false,
     readOnly   : readMode,
     width      : 120,
-    value      : (new Date().add(Date.YEAR, 1)).format("Y-m-d")
+    value      : (new Date().add(Date.YEAR, EXPIRATION_DATE)).format("Y-m-d")
   });
 
   storeCalendar = new Ext.data.Store({

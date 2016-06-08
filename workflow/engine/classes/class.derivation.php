@@ -1344,14 +1344,15 @@ class Derivation
         $flag = false;
 
         //check if there is any paused thread
-        $existThareadPause = false;
+
+        $existThreadPaused = false;
         if (isset($arraySiblings['pause'])) {
             if (!empty($arraySiblings['pause'])) {
-                $existThareadPause = true;
+                $existThreadPaused = true;
             }
         }
 
-        if ($openThreads == 0 && !$existThareadPause) {
+        if ($openThreads == 0 && !$existThreadPaused) {
             //Close case
             $appFields["APP_STATUS"] = "COMPLETED";
             $appFields["APP_FINISH_DATE"] = "now";
