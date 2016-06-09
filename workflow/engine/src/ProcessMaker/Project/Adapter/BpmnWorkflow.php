@@ -1010,6 +1010,12 @@ class BpmnWorkflow extends Project\Bpmn
                     $routeType = "SEQUENTIAL";
                     $routeCondition = "";
                     $routeDefault = 0;
+                    // The result value returns zero if the element is already mapped as a route
+                    // we need to add this to fix cases of recursion if an already element has been mapped.
+                    // like a loop for example.
+                    if ($result === 0 ) {
+                        return;
+                    }
                 }
 
                 //Flows
