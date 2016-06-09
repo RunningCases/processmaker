@@ -94,7 +94,6 @@ $oHeadPublisher->addScriptCode( '
 	var leimnud = new maborak();
 	leimnud.make();
 	leimnud.Package.Load("rpc,drag,drop,panel,app,validator,fx,dom,abbr",{Instance:leimnud,Type:"module"});
-	leimnud.Package.Load("json",{Type:"file"});
 	leimnud.Package.Load("processmap",{Type:"file",Absolute:true,Path:"/jscore/processmap/core/processmap.js"});
 	leimnud.Package.Load("processes_Map",{Type:"file",Absolute:true,Path:"/jscore/processmap/core/processes_Map.js"});
 	leimnud.Package.Load("stagesmap",{Type:"file",Absolute:true,Path:"/jscore/stagesmap/core/stagesmap.js"});
