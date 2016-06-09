@@ -190,7 +190,6 @@ class AppDelegation extends BaseAppDelegation
 
         // Hook for the trigger PM_CREATE_NEW_DELEGATION
         if (defined( 'PM_CREATE_NEW_DELEGATION' )) {
-            
             $bpmn = new \ProcessMaker\Project\Bpmn();
             $flagActionsByEmail = true;
 

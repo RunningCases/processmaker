@@ -31,7 +31,8 @@ class BpmnWorkflow extends Project\Bpmn
         "intermediate-catch-message-event" => array("type" => "INTERMEDIATE-CATCH-MESSAGE-EVENT", "prefix" => "icme-"),
         "start-timer-event"                => array("type" => "START-TIMER-EVENT",                "prefix" => "ste-"),
         "intermediate-catch-timer-event"   => array("type" => "INTERMEDIATE-CATCH-TIMER-EVENT",   "prefix" => "icte-"),
-        "end-email-event"                  => array("type" => "END-EMAIL-EVENT",                  "prefix" => "eee-")
+        "end-email-event"                  => array("type" => "END-EMAIL-EVENT",                  "prefix" => "eee-"),
+        "intermediate-throw-email-event"   => array("type" => "INTERMEDIATE-THROW-EMAIL-EVENT",   "prefix" => "itee-")
     );
 
     private $arrayElementTaskRelation = array();
@@ -885,10 +886,6 @@ class BpmnWorkflow extends Project\Bpmn
                 \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => "bpmnGateway"
             ));
 
-            //if ($arrayFlow > 0) {
-            //    $this->wp->resetTaskRoutes($activityUid);
-            //}
-
             foreach ($arrayFlow as $value) {
                 $arrayFlowData = $value->toArray();
 
@@ -980,12 +977,13 @@ class BpmnWorkflow extends Project\Bpmn
 
             if (!is_null($arrayEventData)) {
                 $arrayEventType   = array("INTERMEDIATE");
-                $arrayEventMarker = array("MESSAGECATCH", "TIMER");
+                $arrayEventMarker = array("MESSAGECATCH", "TIMER", "EMAIL");
 
                 if (in_array($arrayEventData["EVN_TYPE"], $arrayEventType) && in_array($arrayEventData["EVN_MARKER"], $arrayEventMarker)) {
                     $arrayKey = array(
                         "MESSAGECATCH" => "intermediate-catch-message-event",
-                        "TIMER"        => "intermediate-catch-timer-event"
+                        "TIMER"        => "intermediate-catch-timer-event",
+                        "EMAIL"        => "intermediate-throw-email-event"
                     );
 
                     $taskUid = $this->createTaskByElement(
