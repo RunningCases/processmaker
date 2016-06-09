@@ -2,10 +2,23 @@
 
 namespace ProcessMaker\BusinessModel\Light;
 
+use \ProcessMaker\Services\Api;
 use G;
 
 class NotificationDevice
 {
+    
+    
+    public function checkMobileNotifications()
+    {
+        $conf = \System::getSystemConfiguration('', '', SYS_SYS);
+        $activeNotifications = true;
+        if (isset($conf['mobileNotifications'])) {
+            $activeNotifications = $conf['mobileNotifications'] == 1 ? true : false;
+        }
+        return $activeNotifications;
+    }
+    
     /**
      * Post Create register device with userUid
      *
@@ -135,7 +148,7 @@ class NotificationDevice
             }
 
         } catch (\Exception $e) {
-            throw new \Exception(\Api::STAT_APP_EXCEPTION, $e->getMessage());
+            throw new \Exception($e->getMessage(), Api::STAT_APP_EXCEPTION);
         }
         return $response;
     }
@@ -229,8 +242,9 @@ class NotificationDevice
                 }
             }
         } catch (\Exception $e) {
-            throw new \Exception(\Api::STAT_APP_EXCEPTION, $e->getMessage());
+            throw new \Exception($e->getMessage(), Api::STAT_APP_EXCEPTION);
         }
+        
         return $response;
     }
 

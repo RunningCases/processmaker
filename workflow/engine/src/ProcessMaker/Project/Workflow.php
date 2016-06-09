@@ -115,11 +115,11 @@ class Workflow extends Handler
         $process->update($data);
     }
 
-    public function remove($flagRemoveCases = true)
+    public function remove($flagRemoveCases = true, $onlyDiagram = false)
     {
         try {
             self::log("Remove Process with uid: {$this->proUid}");
-            $this->deleteProcess($this->proUid, $flagRemoveCases);
+            $this->deleteProcess($this->proUid, $flagRemoveCases, $onlyDiagram);
             self::log("Remove Process Success!");
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
@@ -577,7 +577,7 @@ class Workflow extends Handler
         }
     }
 
-    public function deleteProcess($sProcessUID, $flagRemoveCases = true)
+    public function deleteProcess($sProcessUID, $flagRemoveCases = true, $onlyDiagram = false)
     {
         try {
             //G::LoadClass('case');
@@ -651,46 +651,49 @@ class Workflow extends Handler
 
                 $oDataset->next();
             }
-            //Delete the dynaforms of process
-            $oCriteria = new Criteria('workflow');
-            $oCriteria->add(\DynaformPeer::PRO_UID, $sProcessUID);
-            $oDataset = \DynaformPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $oDynaform->remove($aRow['DYN_UID']);
-                $oDataset->next();
-            }
-            //Delete the input documents of process
-            $oCriteria = new Criteria('workflow');
-            $oCriteria->add(\InputDocumentPeer::PRO_UID, $sProcessUID);
-            $oDataset = \InputDocumentPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $oInputDocument->remove($aRow['INP_DOC_UID']);
-                $oDataset->next();
-            }
-            //Delete the output documents of process
-            $oCriteria = new Criteria('workflow');
-            $oCriteria->add(\OutputDocumentPeer::PRO_UID, $sProcessUID);
-            $oDataset = \OutputDocumentPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $oOutputDocument->remove($aRow['OUT_DOC_UID']);
-                $oDataset->next();
-            }
 
-            //Delete the triggers of process
-            $oCriteria = new Criteria('workflow');
-            $oCriteria->add(\TriggersPeer::PRO_UID, $sProcessUID);
-            $oDataset = \TriggersPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $oTrigger->remove($aRow['TRI_UID']);
+            //Delete the dynaforms of process
+            if (!$onlyDiagram) {
+                $oCriteria = new Criteria('workflow');
+                $oCriteria->add(\DynaformPeer::PRO_UID, $sProcessUID);
+                $oDataset = \DynaformPeer::doSelectRS($oCriteria);
+                $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                 $oDataset->next();
+                while ($aRow = $oDataset->getRow()) {
+                    $oDynaform->remove($aRow['DYN_UID']);
+                    $oDataset->next();
+                }
+                //Delete the input documents of process
+                $oCriteria = new Criteria('workflow');
+                $oCriteria->add(\InputDocumentPeer::PRO_UID, $sProcessUID);
+                $oDataset = \InputDocumentPeer::doSelectRS($oCriteria);
+                $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                $oDataset->next();
+                while ($aRow = $oDataset->getRow()) {
+                    $oInputDocument->remove($aRow['INP_DOC_UID']);
+                    $oDataset->next();
+                }
+                //Delete the output documents of process
+                $oCriteria = new Criteria('workflow');
+                $oCriteria->add(\OutputDocumentPeer::PRO_UID, $sProcessUID);
+                $oDataset = \OutputDocumentPeer::doSelectRS($oCriteria);
+                $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                $oDataset->next();
+                while ($aRow = $oDataset->getRow()) {
+                    $oOutputDocument->remove($aRow['OUT_DOC_UID']);
+                    $oDataset->next();
+                }
+
+                //Delete the triggers of process
+                $oCriteria = new Criteria('workflow');
+                $oCriteria->add(\TriggersPeer::PRO_UID, $sProcessUID);
+                $oDataset = \TriggersPeer::doSelectRS($oCriteria);
+                $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                $oDataset->next();
+                while ($aRow = $oDataset->getRow()) {
+                    $oTrigger->remove($aRow['TRI_UID']);
+                    $oDataset->next();
+                }
             }
 
             //Delete the routes of process
@@ -746,39 +749,17 @@ class Workflow extends Handler
                 $oConfiguration->remove($aRow['CFG_UID'], $aRow['OBJ_UID'], $aRow['PRO_UID'], $aRow['USR_UID'], $aRow['APP_UID']);
                 $oDataset->next();
             }
-            //Delete the DB sources of process
-            $oCriteria = new Criteria('workflow');
-            $oCriteria->add(\DbSourcePeer::PRO_UID, $sProcessUID);
-            $oDataset = \DbSourcePeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-
-                /**
-                 * note added by gustavo cruz gustavo-at-colosa-dot-com 27-01-2010
-                 * in order to solve the bug 0004389, we use the validation function Exists
-                 * inside the remove function in order to verify if the DbSource record
-                 * exists in the Database, however there is a strange behavior within the
-                 * propel engine, when the first record is erased somehow the "_deleted"
-                 * attribute of the next row is set to true, so when propel tries to erase
-                 * it, obviously it can't and trows an error. With the "Exist" function
-                 * we ensure that if there is the record in the database, the _delete attribute must be false.
-                 *
-                 * note added by gustavo cruz gustavo-at-colosa-dot-com 28-01-2010
-                 * I have just identified the source of the issue, when is created a $oDbSource DbSource object
-                 * it's used whenever a record is erased or removed in the db, however the problem
-                 * it's that the same object is used every time, and the delete method invoked
-                 * sets the _deleted attribute to true when its called, of course as we use
-                 * the same object, the first time works fine but trowns an error with the
-                 * next record, cos it's the same object and the delete method checks if the _deleted
-                 * attribute it's true or false, the attrib _deleted is setted to true the
-                 * first time and later is never changed, the issue seems to be part of
-                 * every remove function in the model classes, not only DbSource
-                 * i recommend that a more general solution must be achieved to resolve
-                 * this issue in every model class, to prevent future problems.
-                 */
-                $oDbSource->remove($aRow['DBS_UID'], $sProcessUID);
+            if (!$onlyDiagram) {
+                //Delete the DB sources of process
+                $oCriteria = new Criteria('workflow');
+                $oCriteria->add(\DbSourcePeer::PRO_UID, $sProcessUID);
+                $oDataset = \DbSourcePeer::doSelectRS($oCriteria);
+                $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                 $oDataset->next();
+                while ($aRow = $oDataset->getRow()) {
+                    $oDbSource->remove($aRow['DBS_UID'], $sProcessUID);
+                    $oDataset->next();
+                }
             }
             //Delete the supervisors
             $oCriteria = new Criteria('workflow');
@@ -917,19 +898,20 @@ class Workflow extends Handler
                 $emailEvent->delete($sProcessUID,$row["EMAIL_EVENT_UID"],false);
             }
 
-            //Delete files Manager
-            $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
-            $criteria = new \Criteria("workflow");
-            $criteria->addSelectColumn(\ProcessFilesPeer::PRF_UID);
-            $criteria->add(\ProcessFilesPeer::PRO_UID, $sProcessUID, \Criteria::EQUAL);
-            $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            if (!$onlyDiagram) {
+                //Delete files Manager
+                $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
+                $criteria = new \Criteria("workflow");
+                $criteria->addSelectColumn(\ProcessFilesPeer::PRF_UID);
+                $criteria->add(\ProcessFilesPeer::PRO_UID, $sProcessUID, \Criteria::EQUAL);
+                $rsCriteria = \ProcessFilesPeer::doSelectRS($criteria);
+                $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
-            while ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
-                $filesManager->deleteProcessFilesManager($sProcessUID, $row["PRF_UID"]);
+                while ($rsCriteria->next()) {
+                    $row = $rsCriteria->getRow();
+                    $filesManager->deleteProcessFilesManager($sProcessUID, $row["PRF_UID"]);
+                }
             }
-            
             //Delete the actions by email
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(\AbeConfigurationPeer::PRO_UID, $sProcessUID);
@@ -1332,6 +1314,18 @@ class Workflow extends Handler
                     }
 
                     $arrayWorkflowData["dynaforms"][$key]["DYN_CONTENT"] = $dynaFormContent;
+                }
+            }
+
+            foreach ($arrayWorkflowData["inputs"] as $keyin => $value) {
+                $newUid = $value["INP_DOC_UID"];
+                if(isset($value["INP_DOC_UID_OLD"])){
+                    foreach ($arrayWorkflowData["processVariables"] as $keypv => $vars) {
+                        if($vars['INP_DOC_UID'] === $value["INP_DOC_UID_OLD"]){
+                            $arrayWorkflowData["processVariables"][$keypv]["INP_DOC_UID"] = $newUid;
+                        }
+                    }
+                    unset($arrayWorkflowData["inputs"][$keyin]["INP_DOC_UID_OLD"]);
                 }
             }
 

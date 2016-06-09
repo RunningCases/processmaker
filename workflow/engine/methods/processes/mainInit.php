@@ -31,7 +31,16 @@ $conf = new Configurations();
 
 $pmVersion = (preg_match("/^([\d\.]+).*$/", System::getVersion(), $arrayMatch))? $arrayMatch[1] : ""; //Otherwise: Branch master
 
-$arrayFlagImportFileExtension = array("pm", "pmx", "bpmn");
+/*----------------------------------********---------------------------------*/
+if (true) {
+    $arrayFlagImportFileExtension = array("pm", "pmx", "pmx2", "bpmn");
+} else {
+/*----------------------------------********---------------------------------*/
+    $arrayFlagImportFileExtension = array("pm", "pmx", "bpmn");
+/*----------------------------------********---------------------------------*/
+}
+/*----------------------------------********---------------------------------*/
+
 $arrayFlagMenuNewOption       = array("pm" => true, "bpmn" => true);
 
 if ($pmVersion != "") {
@@ -82,7 +91,7 @@ $oHeadPublisher->assign('extJsViewState', $oHeadPublisher->getExtJsViewState());
 
 $deleteCasesFlag = false;
 global $RBAC;
-if($RBAC->userCanAccess('DELETE_PROCESS_CASES') === 1) {
+if($RBAC->userCanAccess('PM_DELETE_PROCESS_CASES') === 1) {
     $deleteCasesFlag = true;
 }
 $oHeadPublisher->assign('deleteCasesFlag', $deleteCasesFlag);

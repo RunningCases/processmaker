@@ -2519,11 +2519,13 @@ class wsBase
 
             // Send notifications Mobile - Start
             try {
-                $oLight = new \ProcessMaker\BusinessModel\Light();
-                $nextIndex = $oLight->getInformationDerivatedCase($appFields['APP_UID'], $delIndex);
                 $notificationMobile = new \ProcessMaker\BusinessModel\Light\NotificationDevice();
-                $notificationMobile->routeCaseNotification($userId, $_SESSION["PROCESS"], $appdel['TAS_UID'],
-                    $appFields, $nextDelegations, $nextIndex, $delIndex);
+                if ($notificationMobile->checkMobileNotifications()) {
+                    $oLight = new \ProcessMaker\BusinessModel\Light();
+                    $nextIndex = $oLight->getInformationDerivatedCase($appFields['APP_UID'], $delIndex);
+                    $notificationMobile->routeCaseNotification($userId, $_SESSION["PROCESS"], $appdel['TAS_UID'],
+                        $appFields, $nextDelegations, $nextIndex, $delIndex);
+                }
             } catch (Exception $e) {
                 \G::log(G::loadTranslation( 'ID_NOTIFICATION_ERROR' ) . '|' . $e->getMessage() , PATH_DATA, "mobile.log");
             }

@@ -177,7 +177,7 @@ switch ($_POST['action']) {
             $zipCode = $form['USR_ZIP_CODE'] ? " - Zip Code: ". $form['USR_ZIP_CODE'] : "";
             $position = $form['USR_POSITION'] ? " - Position: ". $form['USR_POSITION'] : "";
             $role = $form['USR_ROLE'] ? " - Role: ". $form['USR_ROLE'] : "";
-            $languageDef = $form['USR_DEFAULT_LANG'] ? " - Default Language: ". $form['USR_DEFAULT_LANG'] : "";
+            $languageDef = (isset($form['USR_DEFAULT_LANG']))? " - Default Language: " . $form['USR_DEFAULT_LANG'] : "";
             /*----------------------------------********---------------------------------*/
             $costByHour = $form['USR_COST_BY_HOUR'] ? $form['USR_COST_BY_HOUR'] : "";
             $unit = $form['USR_UNIT_COST'] ? $form['USR_UNIT_COST'] : "";
@@ -222,7 +222,7 @@ switch ($_POST['action']) {
                 $aData['USR_POSITION'] = $form['USR_POSITION'];
                 //        $aData['USR_RESUME']       = $form['USR_RESUME'];
                 $aData['USR_ROLE'] = $form['USR_ROLE'];
-                $aData['USR_DEFAULT_LANG'] = $form['USR_DEFAULT_LANG'];
+                $aData['USR_DEFAULT_LANG'] = (isset($form['USR_DEFAULT_LANG']))? $form['USR_DEFAULT_LANG'] : '';
                 /*----------------------------------********---------------------------------*/
                 $aData['USR_COST_BY_HOUR'] = $form['USR_COST_BY_HOUR'];
                 $aData['USR_UNIT_COST'] = $form['USR_UNIT_COST'];

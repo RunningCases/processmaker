@@ -4,6 +4,8 @@ namespace ProcessMaker\Importer;
 use ProcessMaker\Util;
 use ProcessMaker\Project;
 use ProcessMaker\Project\Adapter;
+use ProcessMaker\BusinessModel\Migrator;
+use ProcessMaker\BusinessModel\Migrator\ImportException;
 
 abstract class Importer
 {
@@ -76,7 +78,7 @@ abstract class Importer
         }
     }
 
-    public function import($option = self::IMPORT_OPTION_CREATE_NEW, $optionGroup = self::GROUP_IMPORT_OPTION_CREATE_NEW, $generateUidFromJs = null)
+    public function import($option = self::IMPORT_OPTION_CREATE_NEW, $optionGroup = self::GROUP_IMPORT_OPTION_CREATE_NEW, $generateUidFromJs = null, $objectsToImport = '')
     {
         $this->prepare();
 
@@ -169,7 +171,28 @@ abstract class Importer
                 break;
             case self::IMPORT_OPTION_OVERWRITE:
                 //Shouldn't generate new UID for all objects
-                $this->removeProject();
+                /*----------------------------------********---------------------------------*/
+                if($objectsToImport === ''){
+                /*----------------------------------********---------------------------------*/
+                    $this->removeProject();
+                /*----------------------------------********---------------------------------*/
+                } else {
+                    $granularObj = new \ProcessMaker\BusinessModel\Migrator\GranularImporter();
+                    $objectList = $granularObj->loadObjectsListSelected($this->importData, $objectsToImport);
+                    try {
+                        foreach ($objectList as $rowObject) {
+                            if ($rowObject['name'] === 'PROCESSDEFINITION') {
+                                $onlyDiagram = true;
+                                $this->removeProject($onlyDiagram);
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        $exception = new ImportException($e->getMessage());
+                        $exception->setNameException(\G::LoadTranslation('ID_PROCESS_DEFINITION_INCOMPLETE'));
+                        throw $exception;
+                    }
+                }
+                /*----------------------------------********---------------------------------*/
                 $name = $this->currentProcessTitle;
                 $generateUid = false;
                 break;
@@ -204,6 +227,44 @@ abstract class Importer
         if(!empty($generateUidFromJs)) {
             $generateUid = $generateUidFromJs;
         }
+        /*----------------------------------********---------------------------------*/
+        //Granular Import
+        try {
+            if ($objectsToImport !== '') {
+                $granularObj = new \ProcessMaker\BusinessModel\Migrator\GranularImporter();
+                $newObjectArray = $objectsToImport;
+                $projectUid = $this->importData['tables']['bpmn']["project"][0]["prj_uid"];
+                $processGranulate = $granularObj->validateImportData($objectsToImport, $option);
+                if($generateUid){
+                    $result = $granularObj->regenerateAllUids($this->importData, $generateUid);
+                    $this->importData = $result['data'];
+                    $projectUid = $result['new_uid'];
+                    $newObjectArray = array();
+                    $count = 0;
+                    foreach ($objectsToImport as $key => $rowObject) {
+                        if($rowObject->id != '1'){
+                            $newObjectArray[++$count] = $rowObject;
+                        }
+                    }
+                }
+                if(sizeof($newObjectArray)){
+                    $objectList = $granularObj->loadObjectsListSelected($this->importData, $newObjectArray);
+                    if (sizeof($objectList) > 0 && $processGranulate) {
+                        $granularObj->import($objectList);
+                    }
+                }
+                if($option === self::IMPORT_OPTION_CREATE_NEW || $option === self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW){
+                    $oProcessDef = new \ProcessMaker\BusinessModel\Migrator\ProcessDefinitionMigrator();
+                    $oProcessDef->afterImport($this->importData['tables']);
+                }
+
+                return $projectUid;
+            }
+        } catch (\Exception $e) {
+            throw  $e;
+        }
+        /*----------------------------------********---------------------------------*/
+
         $result = $this->doImport($generateUid);
 
         //Return
@@ -226,7 +287,6 @@ abstract class Importer
 
         $this->importData = $this->load();
 
-        $this->validateImportData();
     }
 
     public function setData($key, $value)
@@ -281,14 +341,14 @@ abstract class Importer
         $project->setDisabled();
     }
 
-    public function removeProject()
+    public function removeProject($onlyDiagram = false)
     {
         /* @var $process \Process */
         $process = new \Process();
         $process->load($this->metadata["uid"]);
         $this->currentProcessTitle = $process->getProTitle();
         $project = \ProcessMaker\Project\Adapter\BpmnWorkflow::load($this->metadata["uid"]);
-        $project->remove(true, false);
+        $project->remove(true, false, $onlyDiagram);
     }
 
     /**
@@ -356,11 +416,11 @@ abstract class Importer
         // Build BPMN project struct
         $project = $tables["project"][0];
         $diagram = $tables["diagram"][0];
-        $diagram["activities"] = $tables["activity"];
+        $diagram["activities"] =  (isset($tables["activity"]))? $tables["activity"] : array();
         $diagram["artifacts"] = (isset($tables["artifact"]))? $tables["artifact"] : array();
-        $diagram["events"] = $tables["event"];
-        $diagram["flows"] = $tables["flow"];
-        $diagram["gateways"] = $tables["gateway"];
+        $diagram["events"] = (isset($tables["event"]))? $tables["event"] : array();
+        $diagram["flows"] = (isset($tables["flow"]))? $tables["flow"] : array();
+        $diagram["gateways"] = (isset($tables["gateway"]))? $tables["gateway"]: array();
         $diagram["data"] = (isset($tables["data"]))? $tables["data"] : array();
         $diagram["participants"] = (isset($tables["participant"]))? $tables["participant"] : array();
         $diagram["laneset"] = (isset($tables["laneset"]))? $tables["laneset"] : array();
@@ -388,58 +448,62 @@ abstract class Importer
 
     public function doImport($generateUid = true)
     {
-        $arrayBpmnTables = $this->importData["tables"]["bpmn"];
-        $arrayWorkflowTables = $this->importData["tables"]["workflow"];
-        $arrayWorkflowFiles = $this->importData["files"]["workflow"];
+        try {
+            $arrayBpmnTables = $this->importData["tables"]["bpmn"];
+            $arrayWorkflowTables = $this->importData["tables"]["workflow"];
+            $arrayWorkflowFiles = $this->importData["files"]["workflow"];
 
-        //Import BPMN tables
-        $result = $this->importBpmnTables($arrayBpmnTables, $generateUid);
+            //Import BPMN tables
+            $result = $this->importBpmnTables($arrayBpmnTables, $generateUid);
 
-        $projectUidOld = $arrayBpmnTables["project"][0]["prj_uid"];
-        $projectUid = ($generateUid)? $result[0]["new_uid"] : $result;
+            $projectUidOld = $arrayBpmnTables["project"][0]["prj_uid"];
+            $projectUid = ($generateUid) ? $result[0]["new_uid"] : $result;
 
-        //Import workflow tables
-        if ($generateUid) {
-            $result[0]["object"]  = "project";
-            $result[0]["old_uid"] = $projectUidOld;
-            $result[0]["new_uid"] = $projectUid;
+            //Import workflow tables
+            if ($generateUid) {
+                $result[0]["object"] = "project";
+                $result[0]["old_uid"] = $projectUidOld;
+                $result[0]["new_uid"] = $projectUid;
 
-            $workflow = new \ProcessMaker\Project\Workflow();
+                $workflow = new \ProcessMaker\Project\Workflow();
 
-            list($arrayWorkflowTables, $arrayWorkflowFiles) = $workflow->updateDataUidByArrayUid($arrayWorkflowTables, $arrayWorkflowFiles, $result);
-        }
-
-        $this->importWfTables($arrayWorkflowTables);
-
-        //Import workflow files
-        $this->importWfFiles($arrayWorkflowFiles);
-
-        //Update
-        $workflow = \ProcessMaker\Project\Workflow::load($projectUid);
-
-        foreach ($arrayWorkflowTables["tasks"] as $key => $value) {
-            $arrayTaskData = $value;
-
-            if (!in_array($arrayTaskData["TAS_TYPE"], array("GATEWAYTOGATEWAY", "WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT", "START-TIMER-EVENT", "INTERMEDIATE-CATCH-TIMER-EVENT", "END-EMAIL-EVENT", "INTERMEDIATE-EMAIL-EVENT"))) {
-                $result = $workflow->updateTask($arrayTaskData["TAS_UID"], $arrayTaskData);
+                list($arrayWorkflowTables, $arrayWorkflowFiles) = $workflow->updateDataUidByArrayUid($arrayWorkflowTables, $arrayWorkflowFiles, $result);
             }
+
+            $this->importWfTables($arrayWorkflowTables);
+
+            //Import workflow files
+            $this->importWfFiles($arrayWorkflowFiles);
+
+            //Update
+            $workflow = \ProcessMaker\Project\Workflow::load($projectUid);
+
+            foreach ($arrayWorkflowTables["tasks"] as $key => $value) {
+                $arrayTaskData = $value;
+
+                if (!in_array($arrayTaskData["TAS_TYPE"], array("GATEWAYTOGATEWAY", "WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT", "START-TIMER-EVENT", "INTERMEDIATE-CATCH-TIMER-EVENT", "END-EMAIL-EVENT", "INTERMEDIATE-EMAIL-EVENT"))) {
+                    $result = $workflow->updateTask($arrayTaskData["TAS_UID"], $arrayTaskData);
+                }
+            }
+
+            unset($arrayWorkflowTables["process"]["PRO_CREATE_USER"]);
+            unset($arrayWorkflowTables["process"]["PRO_CREATE_DATE"]);
+            unset($arrayWorkflowTables["process"]["PRO_UPDATE_DATE"]);
+            unset($arrayWorkflowTables["process"]["PRO_CATEGORY"]);
+            unset($arrayWorkflowTables["process"]["PRO_CATEGORY_LABEL"]);
+
+            $workflow->update($arrayWorkflowTables["process"]);
+
+            //Process-Files upgrade
+            $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
+
+            $filesManager->processFilesUpgrade($projectUid);
+
+            //Return
+            return $projectUid;
+        } catch (\Exception $e) {
+            throw $e;
         }
-
-        unset($arrayWorkflowTables["process"]["PRO_CREATE_USER"]);
-        unset($arrayWorkflowTables["process"]["PRO_CREATE_DATE"]);
-        unset($arrayWorkflowTables["process"]["PRO_UPDATE_DATE"]);
-        unset($arrayWorkflowTables["process"]["PRO_CATEGORY"]);
-        unset($arrayWorkflowTables["process"]["PRO_CATEGORY_LABEL"]);
-        
-        $workflow->update($arrayWorkflowTables["process"]);
-
-        //Process-Files upgrade
-        $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
-
-        $filesManager->processFilesUpgrade($projectUid);
-
-        //Return
-        return $projectUid;
     }
 
     /**

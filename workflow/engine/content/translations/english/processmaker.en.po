@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker (Branch 3.0.1.8)\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-03-18 20:11:58\n"
+"PO-Revision-Date: 2016-03-30 19:23:50\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -10558,8 +10558,8 @@ msgstr "Switching Skin"
 # TRANSLATION
 # LABEL/ID_CONFIRM_REMOVE_FIELD
 #: LABEL/ID_CONFIRM_REMOVE_FIELD
-msgid "Do you want to remove this field?"
-msgstr "Do you want to remove this field?"
+msgid "Do you want to remove the selected rows?"
+msgstr "Do you want to remove the selected rows?"
 
 # TRANSLATION
 # LABEL/ID_INVALID_EXTENSION
@@ -27166,6 +27166,42 @@ msgstr "An integer or decimal number"
 #: LABEL/ID_MAFE_33e7ca8872a98fe4b44833054a5ccc3e
 msgid "An email address"
 msgstr "An email address"
+
+# TRANSLATION
+# LABEL/ID_NORMAL_EXPORT
+#: LABEL/ID_NORMAL_EXPORT
+msgid "[LABEL/ID_NORMAL_EXPORT] Normal"
+msgstr "Normal"
+
+# TRANSLATION
+# LABEL/ID_GRANULAR_EXPORT
+#: LABEL/ID_GRANULAR_EXPORT
+msgid "Granular"
+msgstr "Granular"
+
+# TRANSLATION
+# LABEL/ID_EXPORT_PROCESS_OBJECTS
+#: LABEL/ID_EXPORT_PROCESS_OBJECTS
+msgid "Export Process Objects"
+msgstr "Export Process Objects"
+
+# TRANSLATION
+# LABEL/ID_IMPORT_PROCESS_OBJECTS
+#: LABEL/ID_IMPORT_PROCESS_OBJECTS
+msgid "Import Process Objects"
+msgstr "Import Process Objects"
+
+# TRANSLATION
+# LABEL/ID_ADD_TO_EXISTING
+#: LABEL/ID_ADD_TO_EXISTING
+msgid "Add to existing"
+msgstr "Add to existing"
+
+# TRANSLATION
+# LABEL/ID_REPLACE_ALL
+#: LABEL/ID_REPLACE_ALL
+msgid "Replace all"
+msgstr "Replace all"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml

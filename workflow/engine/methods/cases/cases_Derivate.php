@@ -197,11 +197,13 @@ try {
 
     // Send notifications Mobile - Start
     try {
-        $oLight = new \ProcessMaker\BusinessModel\Light();
-        $nextIndex = $oLight->getInformationDerivatedCase($appFields['APP_UID'], $appFields['DEL_INDEX']);
         $notificationMobile = new \ProcessMaker\BusinessModel\Light\NotificationDevice();
-        $notificationMobile->routeCaseNotification($_SESSION['USER_LOGGED'], $_SESSION['PROCESS'], $_SESSION['TASK'],
-            $appFields, $_POST['form']['TASKS'], $nextIndex, $appFields['DEL_INDEX']);
+        if ($notificationMobile->checkMobileNotifications()) {
+            $oLight = new \ProcessMaker\BusinessModel\Light();
+            $nextIndex = $oLight->getInformationDerivatedCase($appFields['APP_UID'], $appFields['DEL_INDEX']);
+            $notificationMobile->routeCaseNotification($_SESSION['USER_LOGGED'], $_SESSION['PROCESS'], $_SESSION['TASK'],
+                $appFields, $_POST['form']['TASKS'], $nextIndex, $appFields['DEL_INDEX']);
+        }
     } catch (Exception $e) {
         \G::log(G::loadTranslation( 'ID_NOTIFICATION_ERROR' ) . '|' . $e->getMessage() , PATH_DATA, "mobile.log");
     }
