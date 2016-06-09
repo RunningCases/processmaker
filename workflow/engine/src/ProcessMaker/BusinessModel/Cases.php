@@ -2386,14 +2386,39 @@ class Cases
         return $aField;
     }
 
+    private function __getStatusInfoDataByRsCriteria($rsCriteria)
+    {
+        try {
+            $arrayData = [];
+
+            if ($rsCriteria->next()) {
+                $record = $rsCriteria->getRow();
+
+                $arrayData = ['APP_STATUS' => $record['APP_STATUS'], 'DEL_INDEX' => []];
+                $arrayData['DEL_INDEX'][] = $record['DEL_INDEX'];
+
+                while ($rsCriteria->next()) {
+                    $record = $rsCriteria->getRow();
+
+                    $arrayData['DEL_INDEX'][] = $record['DEL_INDEX'];
+                }
+            }
+
+            //Return
+            return $arrayData;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
     /**
      * Get status info Case
      *
      * @param string $applicationUid Unique id of Case
-     * @param int    $del_index      {@min 1}
+     * @param int    $delIndex       Delegation index
      * @param string $userUid        Unique id of User
      *
-     * return array Return an array with status info Case, array empty otherwise
+     * @return array Return an array with status info Case, array empty otherwise
      */
     public function getStatusInfo($applicationUid, $delIndex = 0, $userUid = "")
     {
@@ -2407,7 +2432,8 @@ class Cases
 
             $criteria = new \Criteria("workflow");
 
-            $criteria->addSelectColumn($delimiter . "PAUSED" . $delimiter . " AS APP_STATUS");
+            $criteria->setDistinct();
+            $criteria->addSelectColumn($delimiter . 'PAUSED' . $delimiter . ' AS APP_STATUS');
             $criteria->addSelectColumn(\AppDelayPeer::APP_DEL_INDEX . " AS DEL_INDEX");
 
             $criteria->add(\AppDelayPeer::APP_UID, $applicationUid, \Criteria::EQUAL);
@@ -2428,16 +2454,48 @@ class Cases
             $rsCriteria = \AppDelayPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
-            if ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
+            $arrayData = $this->__getStatusInfoDataByRsCriteria($rsCriteria);
 
-                //Return
-                return array("APP_STATUS" => $row["APP_STATUS"], "DEL_INDEX" => $row["DEL_INDEX"]);
+            if (!empty($arrayData)) {
+                return $arrayData;
+            }
+
+            //Status is UNASSIGNED
+            if ($userUid != '') {
+                $appCacheView = new \AppCacheView();
+
+                $criteria = $appCacheView->getUnassignedListCriteria($userUid);
+            } else {
+                $criteria = new \Criteria('workflow');
+
+                $criteria->add(\AppCacheViewPeer::DEL_FINISH_DATE, null, \Criteria::ISNULL);
+                $criteria->add(\AppCacheViewPeer::USR_UID, '', \Criteria::EQUAL);
+            }
+
+            $criteria->setDistinct();
+            $criteria->clearSelectColumns();
+            $criteria->addSelectColumn($delimiter . 'UNASSIGNED' . $delimiter . ' AS APP_STATUS');
+            $criteria->addSelectColumn(\AppCacheViewPeer::DEL_INDEX);
+
+            $criteria->add(\AppCacheViewPeer::APP_UID, $applicationUid, \Criteria::EQUAL);
+
+            if ($delIndex != 0) {
+                $criteria->add(\AppCacheViewPeer::DEL_INDEX, $delIndex, \Criteria::EQUAL);
+            }
+
+            $rsCriteria = \AppCacheViewPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            $arrayData = $this->__getStatusInfoDataByRsCriteria($rsCriteria);
+
+            if (!empty($arrayData)) {
+                return $arrayData;
             }
 
             //Status is TO_DO, DRAFT
             $criteria = new \Criteria("workflow");
 
+            $criteria->setDistinct();
             $criteria->addSelectColumn(\ApplicationPeer::APP_STATUS);
             $criteria->addSelectColumn(\AppDelegationPeer::DEL_INDEX);
 
@@ -2469,11 +2527,10 @@ class Cases
             $rsCriteria = \ApplicationPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
-            if ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
+            $arrayData = $this->__getStatusInfoDataByRsCriteria($rsCriteria);
 
-                //Return
-                return array("APP_STATUS" => $row["APP_STATUS"], "DEL_INDEX" => $row["DEL_INDEX"]);
+            if (!empty($arrayData)) {
+                return $arrayData;
             }
 
             //Status is CANCELLED, COMPLETED
@@ -2487,9 +2544,6 @@ class Cases
             $arrayCondition[] = array(\ApplicationPeer::APP_UID, $delimiter . $applicationUid . $delimiter, \Criteria::EQUAL);
             $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
 
-            $criteria->add(\ApplicationPeer::APP_STATUS, array("CANCELLED", "COMPLETED"), \Criteria::IN);
-            $criteria->add(\AppDelegationPeer::DEL_LAST_INDEX, 1, \Criteria::EQUAL);
-
             if ($delIndex != 0) {
                 $criteria->add(\AppDelegationPeer::DEL_INDEX, $delIndex, \Criteria::EQUAL);
             }
@@ -2498,14 +2552,38 @@ class Cases
                 $criteria->add(\AppDelegationPeer::USR_UID, $userUid, \Criteria::EQUAL);
             }
 
-            $rsCriteria = \ApplicationPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $criteria2 = clone $criteria;
 
-            if ($rsCriteria->next()) {
-                $row = $rsCriteria->getRow();
+            $criteria2->setDistinct();
 
-                //Return
-                return array("APP_STATUS" => $row["APP_STATUS"], "DEL_INDEX" => $row["DEL_INDEX"]);
+            $criteria2->add(\ApplicationPeer::APP_STATUS, ['CANCELLED', 'COMPLETED'], \Criteria::IN);
+            $criteria2->add(\AppDelegationPeer::DEL_LAST_INDEX, 1, \Criteria::EQUAL);
+
+            $rsCriteria2 = \ApplicationPeer::doSelectRS($criteria2);
+            $rsCriteria2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            $arrayData = $this->__getStatusInfoDataByRsCriteria($rsCriteria2);
+
+            if (!empty($arrayData)) {
+                return $arrayData;
+            }
+
+            //Status is PARTICIPATED
+            $criteria2 = clone $criteria;
+
+            $criteria2->setDistinct();
+            $criteria2->clearSelectColumns();
+            $criteria2->addSelectColumn($delimiter . 'PARTICIPATED' . $delimiter . ' AS APP_STATUS');
+            $criteria2->addSelectColumn(\AppDelegationPeer::DEL_INDEX);
+            $criteria2->addSelectColumn(\ApplicationPeer::APP_UID);
+
+            $rsCriteria2 = \ApplicationPeer::doSelectRS($criteria2);
+            $rsCriteria2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            $arrayData = $this->__getStatusInfoDataByRsCriteria($rsCriteria2);
+
+            if (!empty($arrayData)) {
+                return $arrayData;
             }
 
             //Return

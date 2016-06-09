@@ -427,7 +427,7 @@ function evaluateFunction ($aGrid, $sExpresion)
         $pmScript->execute();
 
         $aGrid[$i] = $pmScript->aFields;
-        
+
         //compatibility for var_label
         foreach ($aFields as $j => $val) {
             if (isset($aGrid[$i][$j . "_label"]) && empty($aGrid[$i][$j . "_label"]) && !empty($aGrid[$i][$j])) {
@@ -3352,3 +3352,42 @@ function PMFGetNextDerivationInfo($caseUid, $delIndex)
     }
 }
 
+/**
+ * @method
+ *
+ * Direct case link
+ *
+ * @name PMFCaseLink
+ * @label PMF Direct case link
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFCaseLink.28.29
+ *
+ * @param string(32) | $caseUid | ID of the case | The unique ID of the case
+ * @param string | $workspace = null | Workspace | The workspace
+ * @param string | $language = null | Language | The language
+ * @param string | $skin = null | Skin | The skin
+ *
+ * @return string | $url | Direct case link | Returns the direct case link, FALSE otherwise
+ */
+function PMFCaseLink($caseUid, $workspace = null, $language = null, $skin = null)
+{
+    try {
+        $case = new \ProcessMaker\BusinessModel\Cases();
+
+        $arrayApplicationData = $case->getApplicationRecordByPk($caseUid, [], false);
+
+        if ($arrayApplicationData === false) {
+            return false;
+        }
+
+        $workspace = (!is_null($workspace))? $workspace : SYS_SYS;
+        $language = (!is_null($language))? $language : SYS_LANG;
+        $skin = (!is_null($skin))? $skin : SYS_SKIN;
+
+        $uri = '/sys' . $workspace . '/' . $language . '/' . $skin . '/cases/opencase/' . $caseUid;
+
+        //Return
+        return ((G::is_https())? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $uri;
+    } catch (Exception $e) {
+        throw $e;
+    }
+}

@@ -408,16 +408,32 @@ class Applications
 
             // the criteria adds new fields if there are defined PM Table Fields in the cases list
             if ($oTmpCriteria != '') {
-                $Criteria->add( $Criteria->getNewCriterion( AppCacheViewPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE )->addOr( $Criteria->getNewCriterion( AppCacheViewPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE )->addOr( $Criteria->getNewCriterion( AppCacheViewPeer::APP_NUMBER, $search, Criteria::LIKE )->addOr( $oTmpCriteria ) ) ) );
+                $Criteria->add(
+                    $Criteria->getNewCriterion(AppCacheViewPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                    $Criteria->getNewCriterion(AppCacheViewPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                    $Criteria->getNewCriterion(AppCacheViewPeer::APP_UID, $search, Criteria::EQUAL)->addOr(
+                    $Criteria->getNewCriterion(AppCacheViewPeer::APP_NUMBER, $search, Criteria::EQUAL)->addOr(
+                    $oTmpCriteria
+                )))));
             } else {
-                $Criteria->add( $Criteria->getNewCriterion( AppCacheViewPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE )->addOr( $Criteria->getNewCriterion( AppCacheViewPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE )->addOr( $Criteria->getNewCriterion( AppCacheViewPeer::APP_NUMBER, $search, Criteria::LIKE ) ) ) );
+                $Criteria->add(
+                    $Criteria->getNewCriterion(AppCacheViewPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                    $Criteria->getNewCriterion(AppCacheViewPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                    $Criteria->getNewCriterion(AppCacheViewPeer::APP_UID, $search, Criteria::EQUAL)->addOr(
+                    $Criteria->getNewCriterion(AppCacheViewPeer::APP_NUMBER, $search, Criteria::EQUAL)
+                ))));
             }
 
             // the count query needs to be the normal criteria query if there are defined PM Table Fields in the cases list
             if ($oTmpCriteria != '') {
                 $CriteriaCount = $Criteria;
             } else {
-                $CriteriaCount->add( $CriteriaCount->getNewCriterion( AppCacheViewPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE )->addOr( $CriteriaCount->getNewCriterion( AppCacheViewPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE )->addOr( $CriteriaCount->getNewCriterion( AppCacheViewPeer::APP_NUMBER, $search, Criteria::LIKE ) ) ) );
+                $CriteriaCount->add(
+                    $CriteriaCount->getNewCriterion(AppCacheViewPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                    $CriteriaCount->getNewCriterion(AppCacheViewPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                    $CriteriaCount->getNewCriterion(AppCacheViewPeer::APP_UID, $search, Criteria::EQUAL)->addOr(
+                    $CriteriaCount->getNewCriterion(AppCacheViewPeer::APP_NUMBER, $search, Criteria::EQUAL)
+                ))));
             }
         }
 

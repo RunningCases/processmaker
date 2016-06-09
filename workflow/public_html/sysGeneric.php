@@ -468,7 +468,15 @@ if (Bootstrap::virtualURI( $_SERVER['REQUEST_URI'], $virtualURITable, $realPath 
 } //virtual URI parser
 
 // the request correspond to valid php page, now parse the URI
-Bootstrap::parseURI( getenv( "REQUEST_URI" ) );
+$arrayFriendlyUri = [];
+$arrayFriendlyUri['cases/opencase'] = '/^[\w\-]{32}$/';
+
+Bootstrap::parseURI(getenv('REQUEST_URI'), $arrayFriendlyUri);
+
+if (SYS_TARGET === false) {
+    header('Location: /errors/error404.php?url=' . urlencode($_SERVER['REQUEST_URI']));
+    exit(0);
+}
 
 // Bootstrap::mylog("sys_temp: ".SYS_TEMP);
 if (Bootstrap::isPMUnderUpdating()) {

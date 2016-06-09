@@ -812,6 +812,12 @@ Ext.onReady ( function() {
         autoSave: true, // <-- false would delay executing create, update, destroy requests until specifically told to do so with some [save] buton.
         sortInfo:{field: 'APP_CACHE_VIEW.APP_NUMBER', direction: "DESC"},
         listeners: {
+            beforeload: function (store, options)
+            {
+                this.setBaseParam(
+                    "openApplicationUid", (__OPEN_APPLICATION_UID__ !== null)? __OPEN_APPLICATION_UID__ : ""
+                );
+            },
             load: function(response){
 
                 if (response.reader.jsonData.result === false) {
@@ -2313,12 +2319,16 @@ Ext.onReady ( function() {
 
     var viewText = Ext.getCmp('casesGrid').getView();
     storeCases.removeAll();
-    if (action != 'search') {
+
+    if (action != "search" || __OPEN_APPLICATION_UID__ !== null) {
         storeCases.load();
     } else {
         viewText.emptyText = _('ID_ENTER_SEARCH_CRITERIA');
         storeCases.load( {params: { first: true}} );
     }
+
+    __OPEN_APPLICATION_UID__ = null;
+
     //newPopUp.add(reassignGrid);
     newPopUp.add(gridForm);
     newPopUp.addButton(btnExecReassignSelected);

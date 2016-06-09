@@ -64,11 +64,52 @@ if (isset( $arrayConfig["DEFAULT_CASES_MENU"] )) {
     $confDefaultOption = "CASES_INBOX";
 }
 
-if (isset( $_GET["id"] ) && isset( $_GET["id"] )) {
-    $defaultOption = "../cases/open?APP_UID=" . $_GET["id"] . "&DEL_INDEX=" . $_GET["i"];
+if (isset($_SESSION['__OPEN_APPLICATION_UID__'])) {
+    $case = new \ProcessMaker\BusinessModel\Cases();
 
-    if (isset( $_GET["a"] )) {
-        $defaultOption .= "&action=" . $_GET["a"];
+    $confDefaultOption = 'CASES_SEARCH';
+    $action = 'search';
+
+    $arrayResult = $case->getStatusInfo($_SESSION['__OPEN_APPLICATION_UID__'], 0, $_SESSION['USER_LOGGED']);
+    $arrayDelIndex = [];
+
+    if (!empty($arrayResult)) {
+        $arrayDefaultOption = [
+            'TO_DO'        => ['CASES_INBOX', 'todo'],
+            'DRAFT'        => ['CASES_DRAFT', 'draft'],
+            'CANCELLED'    => ['CASES_SENT',  'sent'],
+            'COMPLETED'    => ['CASES_SENT',  'sent'],
+            'PARTICIPATED' => ['CASES_SENT',  'sent'],
+            'UNASSIGNED'   => ['CASES_SELFSERVICE', 'unassigned'],
+            'PAUSED'       => ['CASES_PAUSED',      'paused']
+        ];
+
+        $confDefaultOption = $arrayDefaultOption[$arrayResult['APP_STATUS']][0];
+        $action = $arrayDefaultOption[$arrayResult['APP_STATUS']][1];
+
+        $arrayDelIndex = $arrayResult['DEL_INDEX'];
+    } else {
+        $arrayResult = $case->getStatusInfo($_SESSION['__OPEN_APPLICATION_UID__']);
+
+        $arrayDelIndex = $arrayResult['DEL_INDEX'];
+    }
+
+    if (count($arrayDelIndex) == 1) {
+        $defaultOption = '../cases/open?APP_UID=' . $_SESSION['__OPEN_APPLICATION_UID__'] .
+            '&DEL_INDEX=' . $arrayDelIndex[0] . '&action=' . $action;
+    } else {
+        $defaultOption = '../cases/casesListExtJs?action=' . $action .
+            '&openApplicationUid=' . $_SESSION['__OPEN_APPLICATION_UID__'];
+    }
+
+    unset($_SESSION['__OPEN_APPLICATION_UID__']);
+} else {
+    if (isset($_GET['id'])) {
+        $defaultOption = '../cases/open?APP_UID=' . $_GET['id'] . '&DEL_INDEX=' . $_GET['i'];
+
+        if (isset($_GET['a'])) {
+            $defaultOption .= '&action=' . $_GET['a'];
+        }
     }
 }
 
