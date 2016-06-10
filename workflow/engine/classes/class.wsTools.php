@@ -2358,6 +2358,7 @@ class workspaceTools
                     DEL_DELEGATE_DATE,
                     DEL_INIT_DATE,
                     DEL_DUE_DATE,
+                    DEL_CURRENT_TAS_TITLE,
                     DEL_PRIORITY,
                     DEL_THREAD_STATUS)
 
@@ -2382,6 +2383,7 @@ class workspaceTools
                         ACV.DEL_DELEGATE_DATE AS DEL_DELEGATE_DATE,
                         ACV.DEL_INIT_DATE AS DEL_INIT_DATE,
                         ACV.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
+                        ACV.APP_TAS_TITLE AS DEL_CURRENT_TAS_TITLE,
                         ACV.DEL_PRIORITY,
                         ACV.DEL_THREAD_STATUS
                     FROM
