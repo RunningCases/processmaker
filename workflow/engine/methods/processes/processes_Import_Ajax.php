@@ -29,6 +29,9 @@ $affectedGroups = array();
 $granularImport = false;
 $objectImport = '';
 $objectsToImport = '';
+if (isset($_POST["PRO_FILENAME"])) {
+    $_POST["PRO_FILENAME"] = htmlspecialchars_decode($_POST["PRO_FILENAME"]);
+}
 /*----------------------------------********---------------------------------*/
 if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=") &&
     isset($_FILES["PROCESS_FILENAME"]) &&
@@ -231,6 +234,7 @@ if (isset($_POST["PRO_FILENAME"]) &&
             PATH_SEP . $_POST["PRO_FILENAME"], PATHINFO_EXTENSION) == "pmx2")
 
 ) {
+
     $option = XmlImporter::IMPORT_OPTION_CREATE_NEW;
 
     switch ((isset($_POST["IMPORT_OPTION"]))? (int)($_POST["IMPORT_OPTION"]) : 0) {
