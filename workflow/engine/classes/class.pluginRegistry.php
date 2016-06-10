@@ -169,7 +169,7 @@ class PMPluginRegistry
      */
     public function serializeInstance ()
     {
-        return serialize( self::$instance );
+        return serialize( $this );
     }
 
     /**

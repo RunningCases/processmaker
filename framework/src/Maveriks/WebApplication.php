@@ -279,7 +279,7 @@ class WebApplication
 
         // Setting current workspace to Api class
         Services\Api::setWorkspace(SYS_SYS);
-        $cacheDir = defined("PATH_C")? PATH_C: sys_get_temp_dir();
+        $cacheDir = defined("PATH_WORKSPACE") ? PATH_WORKSPACE : (defined("PATH_C")? PATH_C: sys_get_temp_dir());
 
         $sysConfig = \System::getSystemConfiguration();
 
@@ -602,6 +602,7 @@ class WebApplication
     public static function purgeRestApiCache($workspace)
     {
         @unlink(PATH_DATA . 'compiled' . DS . 'routes.php');
+        @unlink(PATH_DATA_SITE . 'routes.php');
         @unlink(PATH_DATA . 'sites' . DS . $workspace . DS . 'api-config.php');
     }
 }
