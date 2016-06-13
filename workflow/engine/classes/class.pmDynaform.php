@@ -19,9 +19,15 @@ class pmDynaform
     public $langs = null;
     public $displayMode = null;
     public $onPropertyRead = "onPropertyReadFormInstance";
+    public $isRTL = false;
+    public $pathRTLCss = '';
+    public $serverConf = null;
 
     public function __construct($fields = array())
     {
+        $this->pathRTLCss = '/lib/pmdynaform/build/css/PMDynaform-rtl.css';
+        $this->serverConf = &serverConf::getSingleton();
+        $this->isRTL = ($this->serverConf->isRtl(SYS_LANG)) ? 'true' : 'false';
         $this->fields = $fields;
         $this->getDynaform();
         $this->getDynaforms();
@@ -670,6 +676,8 @@ class pmDynaform
                 var fieldsRequired = null;
                 var triggerDebug = false;
                 var sysLang = \"" . SYS_LANG . "\";
+                var isRTL = \"" . $this->isRTL . "\";
+                var pathRTLCss = \"" . $this->pathRTLCss . "\";
                 $(window).load(function ()
                 {
                     var data = jsondata;
@@ -726,6 +734,8 @@ class pmDynaform
                 "var fieldsRequired = null;\n" .
                 "var triggerDebug = null;\n" .
                 "var sysLang = '" . SYS_LANG . "';\n" .
+                "var isRTL = " . $this->isRTL . ";\n" .
+                "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
                 "$(window).load(function () {\n" .
                 "    var data = jsondata;\n" .
                 "    window.dynaform = new PMDynaform.core.Project({\n" .
@@ -799,6 +809,8 @@ class pmDynaform
                 "var fieldsRequired = null;\n" .
                 "var triggerDebug = " . ($this->fields["TRIGGER_DEBUG"] === 1 ? "true" : "false") . ";\n" .
                 "var sysLang = '" . SYS_LANG . "';\n" .
+                "var isRTL = " . $this->isRTL . ";\n" .
+                "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/cases_Step.js'></script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
@@ -852,6 +864,8 @@ class pmDynaform
             var fieldsRequired = null;
             var triggerDebug   = null;
             var sysLang = \"" . SYS_LANG . "\";
+            var isRTL = \"" . $this->isRTL . "\";
+            var pathRTLCss = \"" . $this->pathRTLCss . "\";
         </script>
 
         <script type=\"text/javascript\" src=\"/jscore/cases/core/pmDynaform.js\"></script>
@@ -892,6 +906,8 @@ class pmDynaform
                 "var fieldsRequired = " . G::json_encode(array()) . ";\n" .
                 "var triggerDebug = null;\n" .
                 "var sysLang = '" . SYS_LANG . "';\n" .
+                "var isRTL = " . $this->isRTL . ";\n" .
+                "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
                 "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
@@ -930,6 +946,8 @@ class pmDynaform
                 "var fieldsRequired = " . G::json_encode(array()) . ";\n" .
                 "var triggerDebug = null;\n" .
                 "var sysLang = '" . SYS_LANG . "';\n" .
+                "var isRTL = " . $this->isRTL . ";\n" .
+                "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
                 "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
@@ -951,6 +969,8 @@ class pmDynaform
         $javascrip = "" .
                 "<script type='text/javascript'>" .
                 "var sysLang = '" . SYS_LANG . "';\n" .
+                "var isRTL = " . $this->isRTL . ";\n" .
+                "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
                 "var jsonData = " . G::json_encode($json) . ";\n" .
                 "var httpServerHostname = \"" . System::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
                 $js .
@@ -985,6 +1005,8 @@ class pmDynaform
                 "var fieldsRequired = " . G::json_encode(array()) . ";\n" .
                 "var triggerDebug = null;\n" .
                 "var sysLang = '" . SYS_LANG . "';\n" .
+                "var isRTL = " . $this->isRTL . ";\n" .
+                "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
                 "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .

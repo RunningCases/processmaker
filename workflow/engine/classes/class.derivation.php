@@ -1341,10 +1341,10 @@ class Derivation
         /* Start Block : Count the open threads of $currentDelegation['APP_UID'] */
         $openThreads = $this->case->GetOpenThreads( $currentDelegation['APP_UID'] );
 
-        ///////
         $flag = false;
 
         //check if there is any paused thread
+
         $existThreadPaused = false;
         if (isset($arraySiblings['pause'])) {
             if (!empty($arraySiblings['pause'])) {
