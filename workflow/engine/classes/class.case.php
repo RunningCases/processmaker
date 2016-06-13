@@ -4396,6 +4396,132 @@ class Cases
         /*----------------------------------********---------------------------------*/
     }
 
+    /**
+     * Un cancel case
+     * 
+     * @param string $caseUID
+     * @param string $userUID
+     * @return int
+     */
+    public function unCancelCase($appUID, $userUID)
+    {
+        try {
+            global $RBAC;
+            if ($RBAC->userCanAccess('PM_UNCANCELCASE') !== 1) {
+                throw new Exception(G::LoadTranslation('ID_YOU_DO_NOT_HAVE_PERMISSION'));
+            }
+
+            $application = new Application();
+            $rowApplication = $application->load($appUID);
+            if ($rowApplication["APP_STATUS"] !== "CANCELLED") {
+                throw new Exception(G::LoadTranslation('ID_THE_APPLICATION_IS_NOT_CANCELED', [$appUID]));
+            }
+
+            $criteriaAppDelay = new Criteria('workflow');
+            $criteriaAppDelay->add(AppDelayPeer::APP_UID, $appUID);
+            $criteriaAppDelay->add(AppDelayPeer::APP_STATUS, 'CANCELLED');
+            $criteriaAppDelay->add(AppDelayPeer::PRO_UID, $rowApplication['PRO_UID']);
+            $criteriaAppDelay->addDescendingOrderByColumn(AppDelayPeer::APP_ENABLE_ACTION_DATE);
+            $resultSetAppDelay = AppDelayPeer::doSelectRS($criteriaAppDelay);
+            $resultSetAppDelay->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $resultSetAppDelay->next();
+            $rowAppDelay = $resultSetAppDelay->getRow();
+            if (!isset($rowAppDelay['APP_STATUS'])) {
+                throw new Exception(G::LoadTranslation('ID_THREAD_STATUS_DOES_NOT_EXIST_FOR_THE_APPLICATION.', [$appUID]));
+            }
+
+            $users = new Users();
+            $rowUsers = $users->load($userUID);
+
+            //Application
+            $rowApplication['APP_STATUS'] = 'TO_DO';
+            $rowApplication['APP_UPDATE_DATE'] = date('Y-m-d H:i:s');
+            $application->update($rowApplication);
+
+            //AppDelegation
+            $appDelegation = new AppDelegation();
+            $rowAppDelegation = $appDelegation->Load($appUID, $rowAppDelay['APP_DEL_INDEX']);
+
+            $appDelegation = new AppDelegation();
+            $delIndex = $appDelegation->createAppDelegation($rowAppDelegation['PRO_UID'], $rowAppDelegation['APP_UID'], $rowAppDelegation['TAS_UID'], $userUID, $rowAppDelay['APP_THREAD_INDEX']);
+
+            //AppThread
+            $dataAppThread = [
+                'APP_UID' => $rowApplication['APP_UID'],
+                'APP_THREAD_INDEX' => $rowAppDelay['APP_THREAD_INDEX'],
+                'APP_THREAD_STATUS' => 'OPEN',
+                'DEL_INDEX' => $delIndex
+            ];
+            $appThread = new AppThread();
+            $appThread->update($dataAppThread);
+
+            //AppDelay
+            $dataAppDelay = [
+                'PRO_UID' => $rowApplication['PRO_UID'],
+                'APP_UID' => $rowApplication['APP_UID'],
+                'APP_THREAD_INDEX' => $rowAppDelay['APP_THREAD_INDEX'],
+                'APP_DELINDEX' => $delIndex,
+                'APP_TYPE' => 'UNCANCEL',
+                'APP_STATUS' => $rowApplication['APP_STATUS'],
+                'APP_NEXT_TASK' => 0,
+                'APP_DELEGATION_USER' => $userUID,
+                'APP_ENABLE_ACTION_USER' => $userUID,
+                'APP_ENABLE_ACTION_DATE' => date('Y-m-d H:i:s'),
+                'APP_DISABLE_ACTION_USER' => 0
+            ];
+            $appDelay = new AppDelay();
+            $appDelay->create($dataAppDelay);
+
+            //ListCanceled
+            $criteriaListCanceled = new Criteria("workflow");
+            $criteriaListCanceled->add(ListCanceledPeer::APP_UID, $appUID);
+            $resultSetListCanceled = ListCanceledPeer::doSelectRS($criteriaListCanceled);
+            $resultSetListCanceled->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $resultSetListCanceled->next();
+            $rowListCanceled = $resultSetListCanceled->getRow();
+            ListCanceledPeer::doDelete($criteriaListCanceled);
+            $usrTotalCancelled = $rowUsers['USR_TOTAL_CANCELLED'] - 1;
+
+            //ListInbox
+            $rowListCanceled['DEL_PREVIOUS_USR_USERNAME'] = $rowListCanceled['DEL_CURRENT_USR_USERNAME'];
+            $rowListCanceled['DEL_PREVIOUS_USR_FIRSTNAME'] = $rowListCanceled['DEL_CURRENT_USR_FIRSTNAME'];
+            $rowListCanceled['DEL_PREVIOUS_USR_LASTNAME'] = $rowListCanceled['DEL_CURRENT_USR_LASTNAME'];
+            $rowListCanceled['APP_STATUS'] = 'TO_DO';
+            $rowListCanceled['APP_UPDATE_DATE'] = date('Y-m-d H:i:s');
+            $rowListCanceled['DEL_RISK_DATE'] = date('Y-m-d H:i:s');
+            $rowListCanceled['DEL_INDEX'] = $delIndex;
+            unset($rowListCanceled['DEL_CURRENT_USR_USERNAME']);
+            unset($rowListCanceled['DEL_CURRENT_USR_FIRSTNAME']);
+            unset($rowListCanceled['DEL_CURRENT_USR_LASTNAME']);
+            unset($rowListCanceled['APP_CANCELED_DATE']);
+            $listInbox = new ListInbox();
+            $listInbox->create($rowListCanceled);
+            $usrTotalInbox = $rowUsers['USR_TOTAL_INBOX'] + 1;
+
+            //Users
+            $users->update([
+                'USR_UID' => $userUID,
+                'USR_TOTAL_INBOX' => $usrTotalInbox,
+                'USR_TOTAL_CANCELLED' => $usrTotalCancelled
+            ]);
+
+            //ListParticipatedLast
+            $criteriaListParticipatedLast = new Criteria("workflow");
+            $criteriaListParticipatedLast->add(ListParticipatedLastPeer::APP_UID, $appUID);
+            $resultSetListParticipatedLast = ListParticipatedLastPeer::doSelectRS($criteriaListParticipatedLast);
+            $resultSetListParticipatedLast->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $resultSetListParticipatedLast->next();
+            $rowListParticipatedLast = $resultSetListParticipatedLast->getRow();
+            $rowListParticipatedLast['APP_STATUS'] = 'TO_DO';
+            $rowListParticipatedLast['DEL_THREAD_STATUS'] = 'OPEN';
+            $rowListParticipatedLast['DEL_INIT_DATE'] = null;
+            $listParticipatedLast = new ListParticipatedLast();
+            $listParticipatedLast->update($rowListParticipatedLast);
+        } catch (Exception $oException) {
+            throw $oException;
+        }
+    }
+
     /*
      * reactive a case
      *

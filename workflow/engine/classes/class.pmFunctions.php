@@ -3086,6 +3086,26 @@ function PMFGeti18nText($id, $category, $lang = "en")
 
 /**
  * @method
+ * The requested text in the specified language | If not found returns false
+ * @name PMFUnCancelCase
+ * @label PMF Un Cancel Case
+ * @param string | $caseUID | ID Case | Is the unique UID of the case
+ * @param string | $userUID | ID User  | Is the unique ID of the user who will uncancel the case
+ * @return int | $value | Return | Returns 1 if the case was successfully uncancelled, otherwise returns 0 if an error ocurred
+ */
+function PMFUnCancelCase($caseUID, $userUID)
+{
+    try {
+        $cases = new Cases();
+        $cases->unCancelCase($caseUID, $userUID);
+        return 1;
+    } catch (Exception $oException) {
+        return 0;
+    }
+}
+
+/**
+ * @method
  * Function to return an array of objects containing the properties of the fields
  * in a specified DynaForm.
  * It also inserts the "value" and "value_label" as properties in the fields' objects,
