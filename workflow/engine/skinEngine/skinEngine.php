@@ -634,6 +634,7 @@ class SkinEngine
     global $G_SUB_MENU_SELECTED;
     global $G_ID_MENU_SELECTED;
     global $G_ID_SUB_MENU_SELECTED;
+    global $RBAC;
 
     G::verifyPath(PATH_SMARTY_C, true);
     G::verifyPath(PATH_SMARTY_CACHE, true);
@@ -762,8 +763,14 @@ class SkinEngine
             $pmLicenseManagerO = &pmLicenseManager::getSingleton();
             $expireIn          = $pmLicenseManagerO->getExpireIn();
             $expireInLabel     = $pmLicenseManagerO->getExpireInLabel();
-            if($expireInLabel != ""){
-                $smarty->assign('msgVer', '<label class="textBlack">'.$expireInLabel.'</label>&nbsp;&nbsp;');
+
+            if (!is_null($RBAC) &&
+                isset($RBAC->aUserInfo['PROCESSMAKER']['ROLE']['ROL_CODE']) &&
+                $RBAC->aUserInfo['PROCESSMAKER']['ROLE']['ROL_CODE'] == 'PROCESSMAKER_ADMIN'
+            ) {
+                if ($expireInLabel != '') {
+                    $smarty->assign('msgVer', '<label class="textBlack">' . $expireInLabel . '</label>&nbsp;&nbsp;');
+                }
             }
         }
 
