@@ -168,6 +168,9 @@ class Applications
 
         $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
 
+        $Criteria->addSelectColumn(AppCacheViewPeer::TAS_UID);
+        $Criteria->addSelectColumn(AppCacheViewPeer::PRO_UID);
+
         $Criteria->addJoin(AppCacheViewPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
         $Criteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
 
