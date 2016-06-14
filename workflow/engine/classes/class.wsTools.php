@@ -733,6 +733,7 @@ class workspaceTools
         $this->upgradeData();
         $this->checkRbacPermissions();//check or add new permissions
         $this->checkSequenceNumber();
+        $this->migrateIteeToDummytask($this->name);
 
         //There records in table "EMAIL_SERVER"
         $criteria = new Criteria("workflow");
@@ -3189,6 +3190,52 @@ class workspaceTools
                 break;
         }
         return $response;
+    }
+
+    public function migrateIteeToDummytask($workspaceName){
+        $this->initPropel(true);
+        if (!defined("SYS_SYS")) {
+          define("SYS_SYS", $workspaceName);
+        }
+        if (!defined("PATH_DATA_SITE")) {
+          define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
+        }
+        if (!defined("PATH_DOCUMENT")) {
+          define("PATH_DOCUMENT", PATH_DATA . 'sites' . DIRECTORY_SEPARATOR . $workspaceName . DIRECTORY_SEPARATOR . 'files');
+        }
+        $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspaceName);
+        define('MEMCACHED_ENABLED',  $arraySystemConfiguration['memcached']);
+
+        //Search All process
+        $oCriteria = new Criteria("workflow");
+        $oCriteria->addSelectColumn( ProcessPeer::PRO_UID );
+        $oCriteria->addSelectColumn( ProcessPeer::PRO_ITEE );
+        $oCriteria->add(ProcessPeer::PRO_ITEE, '0', Criteria::EQUAL);
+        $rsCriteria = ProcessPeer::doSelectRS($oCriteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $message = "-> Migrating the Intermediate Email Event \n";
+        CLI::logging($message);
+        while ($rsCriteria->next()) {
+            $row = $rsCriteria->getRow();
+            $prj_uid = $row['PRO_UID'];
+            $bpmnProcess = new Process();
+            if($bpmnProcess->isBpmnProcess($prj_uid)){
+                $project = new \ProcessMaker\Project\Adapter\BpmnWorkflow();
+                $diagram = $project->getStruct($prj_uid);
+                $res = $project->updateFromStruct($prj_uid, $diagram);
+                $bpmnProcess->setProUid($prj_uid);
+                $oProcess = new Process();
+                $aProcess['PRO_UID'] = $prj_uid;
+                $aProcess['PRO_ITEE'] = '1';
+                if ($oProcess->processExists($prj_uid)) {
+                    $oProcess->update($aProcess);
+                }
+                $message = "    Process updated ".$bpmnProcess->getProTitle(). "\n";
+                CLI::logging($message);
+            }
+        }
+        $message = "   Migrating Itee Done \n";
+        CLI::logging($message);
     }
 
 }
