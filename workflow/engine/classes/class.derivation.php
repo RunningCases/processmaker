@@ -1358,6 +1358,7 @@ class Derivation
             $appFields["APP_FINISH_DATE"] = "now";
             $this->verifyIsCaseChild($currentDelegation["APP_UID"], $currentDelegation["DEL_INDEX"]);
             $flag = true;
+
         }
 
         if (isset( $iNewDelIndex )) {
@@ -1516,16 +1517,26 @@ class Derivation
                 $aDeriveTasks = $this->prepareInformation( array ('USER_UID' => -1,'APP_UID' => $currentDelegation['APP_UID'],'DEL_INDEX' => $iNewDelIndex
                 ) );
 
-                if (isset( $aDeriveTasks[1] )) {
+                if (isset($aDeriveTasks[1])) {
                     if ($aDeriveTasks[1]['ROU_TYPE'] != 'SELECT') {
-                        $nextDelegations2 = array ();
+                        $nextDelegations2 = array();
                         foreach ($aDeriveTasks as $aDeriveTask) {
-                            $nextDelegations2[] = array ('TAS_UID' => $aDeriveTask['NEXT_TASK']['TAS_UID'],'USR_UID' => $aDeriveTask['NEXT_TASK']['USER_ASSIGNED']['USR_UID'],'TAS_ASSIGN_TYPE' => $aDeriveTask['NEXT_TASK']['TAS_ASSIGN_TYPE'],'TAS_DEF_PROC_CODE' => $aDeriveTask['NEXT_TASK']['TAS_DEF_PROC_CODE'],'DEL_PRIORITY' => 3,'TAS_PARENT' => $aDeriveTask['NEXT_TASK']['TAS_PARENT']
+                            $nextDelegations2[] = array('TAS_UID' => $aDeriveTask['NEXT_TASK']['TAS_UID'], 'USR_UID' => $aDeriveTask['NEXT_TASK']['USER_ASSIGNED']['USR_UID'], 'TAS_ASSIGN_TYPE' => $aDeriveTask['NEXT_TASK']['TAS_ASSIGN_TYPE'], 'TAS_DEF_PROC_CODE' => $aDeriveTask['NEXT_TASK']['TAS_DEF_PROC_CODE'], 'DEL_PRIORITY' => 3, 'TAS_PARENT' => $aDeriveTask['NEXT_TASK']['TAS_PARENT']
                             );
                         }
-                        $currentDelegation2 = array ('APP_UID' => $currentDelegation['APP_UID'],'DEL_INDEX' => $iNewDelIndex,'APP_STATUS' => 'TO_DO','TAS_UID' => $currentDelegation['TAS_UID'],'ROU_TYPE' => $aDeriveTasks[1]['ROU_TYPE']
+                        $currentDelegation2 = array('APP_UID' => $currentDelegation['APP_UID'], 'DEL_INDEX' => $iNewDelIndex, 'APP_STATUS' => 'TO_DO', 'TAS_UID' => $currentDelegation['TAS_UID'], 'ROU_TYPE' => $aDeriveTasks[1]['ROU_TYPE']
                         );
-                        $this->derivate( $currentDelegation2, $nextDelegations2 );
+                        $openThreads = 0;
+                        if ($currentDelegation2['ROU_TYPE'] == 'SEC-JOIN') {
+                            $openThreads = $this->case->GetOpenThreads($currentDelegation['APP_UID']);
+                        }
+                        if ($openThreads == 0) {
+                            $this->derivate($currentDelegation2, $nextDelegations2);
+                        } else {
+                            $oSubApplication = new SubApplication();
+                            $aSubApplication['SA_STATUS'] = 'ACTIVE';
+                            $oSubApplication->update($aSubApplication);
+                        }
                     }
                 }
             }
@@ -1558,31 +1569,31 @@ class Derivation
             $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
             $oDataset->next();
             $aSP = $oDataset->getRow();
-            if ($aSP['SP_SYNCHRONOUS'] == 1) {
+            if ($aSP['SP_SYNCHRONOUS'] == 1 || $aSA['SA_STATUS'] == "ACTIVE") {
                 $appFields = $oCase->loadCase($sApplicationUID, $delIndex);
                 //Copy case variables to parent case
-                $aFields = unserialize( $aSP['SP_VARIABLES_IN'] );
-                $aNewFields = array ();
+                $aFields = unserialize($aSP['SP_VARIABLES_IN']);
+                $aNewFields = array();
                 foreach ($aFields as $sOriginField => $sTargetField) {
-                    $sOriginField = str_replace( '@', '', $sOriginField );
-                    $sOriginField = str_replace( '#', '', $sOriginField );
-                    $sOriginField = str_replace( '%', '', $sOriginField );
-                    $sOriginField = str_replace( '?', '', $sOriginField );
-                    $sOriginField = str_replace( '$', '', $sOriginField );
-                    $sOriginField = str_replace( '=', '', $sOriginField );
-                    $sTargetField = str_replace( '@', '', $sTargetField );
-                    $sTargetField = str_replace( '#', '', $sTargetField );
-                    $sTargetField = str_replace( '%', '', $sTargetField );
-                    $sTargetField = str_replace( '?', '', $sTargetField );
-                    $sTargetField = str_replace( '$', '', $sTargetField );
-                    $sTargetField = str_replace( '=', '', $sTargetField );
-                    $aNewFields[$sTargetField] = isset( $appFields['APP_DATA'][$sOriginField] ) ? $appFields['APP_DATA'][$sOriginField] : '';
-                    if(isset($aParentCase['APP_DATA'][$sTargetField.'_label'])){
-                        $aNewFields[$sTargetField.'_label'] = isset( $appFields['APP_DATA'][$sOriginField.'_label'] ) ? $appFields['APP_DATA'][$sOriginField.'_label'] : '';
+                    $sOriginField = str_replace('@', '', $sOriginField);
+                    $sOriginField = str_replace('#', '', $sOriginField);
+                    $sOriginField = str_replace('%', '', $sOriginField);
+                    $sOriginField = str_replace('?', '', $sOriginField);
+                    $sOriginField = str_replace('$', '', $sOriginField);
+                    $sOriginField = str_replace('=', '', $sOriginField);
+                    $sTargetField = str_replace('@', '', $sTargetField);
+                    $sTargetField = str_replace('#', '', $sTargetField);
+                    $sTargetField = str_replace('%', '', $sTargetField);
+                    $sTargetField = str_replace('?', '', $sTargetField);
+                    $sTargetField = str_replace('$', '', $sTargetField);
+                    $sTargetField = str_replace('=', '', $sTargetField);
+                    $aNewFields[$sTargetField] = isset($appFields['APP_DATA'][$sOriginField]) ? $appFields['APP_DATA'][$sOriginField] : '';
+                    if (isset($aParentCase['APP_DATA'][$sTargetField . '_label'])) {
+                        $aNewFields[$sTargetField . '_label'] = isset($appFields['APP_DATA'][$sOriginField . '_label']) ? $appFields['APP_DATA'][$sOriginField . '_label'] : '';
                     }
                 }
-                $aParentCase['APP_DATA'] = array_merge( $aParentCase['APP_DATA'], $aNewFields );
-                $oCase->updateCase( $aSA['APP_PARENT'], $aParentCase );
+                $aParentCase['APP_DATA'] = array_merge($aParentCase['APP_DATA'], $aNewFields);
+                $oCase->updateCase($aSA['APP_PARENT'], $aParentCase);
                 /*----------------------------------********---------------------------------*/
                 $inbox = new ListInbox();
                 $inbox->update($aParentCase);
@@ -1590,35 +1601,35 @@ class Derivation
 
                 //Update table SUB_APPLICATION
                 $oSubApplication = new SubApplication();
-                $oSubApplication->update( array ('APP_UID' => $sApplicationUID,'APP_PARENT' => $aSA['APP_PARENT'],'DEL_INDEX_PARENT' => $aSA['DEL_INDEX_PARENT'],'DEL_THREAD_PARENT' => $aSA['DEL_THREAD_PARENT'],'SA_STATUS' => 'FINISHED','SA_VALUES_IN' => serialize( $aNewFields ),'SA_FINISH_DATE' => date( 'Y-m-d H:i:s' )
-                ) );
+                $oSubApplication->update(array('APP_UID' => $sApplicationUID, 'APP_PARENT' => $aSA['APP_PARENT'], 'DEL_INDEX_PARENT' => $aSA['DEL_INDEX_PARENT'], 'DEL_THREAD_PARENT' => $aSA['DEL_THREAD_PARENT'], 'SA_STATUS' => 'FINISHED', 'SA_VALUES_IN' => serialize($aNewFields), 'SA_FINISH_DATE' => date('Y-m-d H:i:s')
+                ));
 
                 //Derive the parent case
-                $aDeriveTasks = $this->prepareInformation( array ('USER_UID' => - 1,'APP_UID' => $aSA['APP_PARENT'],'DEL_INDEX' => $aSA['DEL_INDEX_PARENT']
-                ) );
-                if (isset( $aDeriveTasks[1] )) {
+                $aDeriveTasks = $this->prepareInformation(array('USER_UID' => -1, 'APP_UID' => $aSA['APP_PARENT'], 'DEL_INDEX' => $aSA['DEL_INDEX_PARENT']
+                ));
+                if (isset($aDeriveTasks[1])) {
                     if ($aDeriveTasks[1]['ROU_TYPE'] != 'SELECT') {
-                        $nextDelegations2 = array ();
+                        $nextDelegations2 = array();
                         foreach ($aDeriveTasks as $aDeriveTask) {
-                            if (! isset( $aDeriveTask['NEXT_TASK']['USER_ASSIGNED']['USR_UID'] )) {
+                            if (!isset($aDeriveTask['NEXT_TASK']['USER_ASSIGNED']['USR_UID'])) {
                                 $selectedUser = $aDeriveTask['NEXT_TASK']['USER_ASSIGNED'][0];
-                                unset( $aDeriveTask['NEXT_TASK']['USER_ASSIGNED'] );
+                                unset($aDeriveTask['NEXT_TASK']['USER_ASSIGNED']);
                                 $aDeriveTask['NEXT_TASK']['USER_ASSIGNED'] = $selectedUser;
-                                $myLabels = array ($aDeriveTask['NEXT_TASK']['TAS_TITLE'],$aParentCase['APP_NUMBER'],$selectedUser['USR_USERNAME'],$selectedUser['USR_FIRSTNAME'],$selectedUser['USR_LASTNAME']
+                                $myLabels = array($aDeriveTask['NEXT_TASK']['TAS_TITLE'], $aParentCase['APP_NUMBER'], $selectedUser['USR_USERNAME'], $selectedUser['USR_FIRSTNAME'], $selectedUser['USR_LASTNAME']
                                 );
-                                if($aDeriveTask['NEXT_TASK']['TAS_ASSIGN_TYPE'] == "MANUAL"){
-                                    G::SendTemporalMessage( 'ID_TASK_WAS_ASSIGNED_TO_USER', 'warning', 'labels', 10, null, $myLabels );
+                                if ($aDeriveTask['NEXT_TASK']['TAS_ASSIGN_TYPE'] == "MANUAL") {
+                                    G::SendTemporalMessage('ID_TASK_WAS_ASSIGNED_TO_USER', 'warning', 'labels', 10, null, $myLabels);
                                 }
 
                             }
-                            $nextDelegations2[] = array ('TAS_UID' => $aDeriveTask['NEXT_TASK']['TAS_UID'],'USR_UID' => $aDeriveTask['NEXT_TASK']['USER_ASSIGNED']['USR_UID'],'TAS_ASSIGN_TYPE' => $aDeriveTask['NEXT_TASK']['TAS_ASSIGN_TYPE'],'TAS_DEF_PROC_CODE' => $aDeriveTask['NEXT_TASK']['TAS_DEF_PROC_CODE'],'DEL_PRIORITY' => 3,'TAS_PARENT' => $aDeriveTask['NEXT_TASK']['TAS_PARENT']
+                            $nextDelegations2[] = array('TAS_UID' => $aDeriveTask['NEXT_TASK']['TAS_UID'], 'USR_UID' => $aDeriveTask['NEXT_TASK']['USER_ASSIGNED']['USR_UID'], 'TAS_ASSIGN_TYPE' => $aDeriveTask['NEXT_TASK']['TAS_ASSIGN_TYPE'], 'TAS_DEF_PROC_CODE' => $aDeriveTask['NEXT_TASK']['TAS_DEF_PROC_CODE'], 'DEL_PRIORITY' => 3, 'TAS_PARENT' => $aDeriveTask['NEXT_TASK']['TAS_PARENT']
                             );
                         }
-                        $currentDelegation2 = array ('APP_UID' => $aSA['APP_PARENT'],'DEL_INDEX' => $aSA['DEL_INDEX_PARENT'],'APP_STATUS' => 'TO_DO','TAS_UID' => $aParentCase['TAS_UID'],'ROU_TYPE' => $aDeriveTasks[1]['ROU_TYPE']
+                        $currentDelegation2 = array('APP_UID' => $aSA['APP_PARENT'], 'DEL_INDEX' => $aSA['DEL_INDEX_PARENT'], 'APP_STATUS' => 'TO_DO', 'TAS_UID' => $aParentCase['TAS_UID'], 'ROU_TYPE' => $aDeriveTasks[1]['ROU_TYPE']
                         );
-                        $this->derivate( $currentDelegation2, $nextDelegations2 );
+                        $this->derivate($currentDelegation2, $nextDelegations2);
 
-                        if($delIndex > 0 ) {
+                        if ($delIndex > 0) {
                             // Send notifications - Start
                             $oUser = new Users();
                             $aUser = $oUser->load($appFields["CURRENT_USER_UID"]);
@@ -1627,11 +1638,11 @@ class Derivation
 
                             try {
                                 $oCase->sendNotifications($appFields["TAS_UID"],
-                                                          $nextDelegations2,
-                                                          $appFields["APP_DATA"],
-                                                          $sApplicationUID,
-                                                          $delIndex,
-                                                          $sFromName);
+                                    $nextDelegations2,
+                                    $appFields["APP_DATA"],
+                                    $sApplicationUID,
+                                    $delIndex,
+                                    $sFromName);
 
                             } catch (Exception $e) {
                                 G::SendTemporalMessage(G::loadTranslation("ID_NOTIFICATION_ERROR") . " - " . $e->getMessage(), "warning", "string", null, "100%");
