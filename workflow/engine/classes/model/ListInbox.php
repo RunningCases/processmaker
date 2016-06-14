@@ -505,7 +505,8 @@ class ListInbox extends BaseListInbox
      */
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
-        $criteria = new Criteria();
+        $pmTable = new PmTable();
+        $criteria = $pmTable->addPMFieldsToList('todo');
 
         $criteria->addSelectColumn(ListInboxPeer::APP_UID);
         $criteria->addSelectColumn(ListInboxPeer::DEL_INDEX);
@@ -606,5 +607,6 @@ class ListInbox extends BaseListInbox
         $aRow = $dataset->getRow();
         return isset($aRow[$fieldName]) ? $aRow[$fieldName] : NULL;
     }
+
 }
 

@@ -278,7 +278,8 @@ class ListPaused extends BaseListPaused {
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
         $resp = array();
-        $criteria = new Criteria();
+        $pmTable = new PmTable();
+        $criteria = $pmTable->addPMFieldsToList('paused');
 
         $criteria->addSelectColumn(ListPausedPeer::APP_UID);
         $criteria->addSelectColumn(ListPausedPeer::USR_UID);

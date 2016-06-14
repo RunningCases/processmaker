@@ -84,11 +84,6 @@ try {
     $generalConfCasesList = array ();
 }
 
-$caseListBuilder = (count($confCasesList)) ? 1 : 0;
-if ($caseListBuilder) {
-    $urlProxy = 'proxyCasesList';
-}
-
 // reassign header configuration
 $confReassignList = getReassignList();
 
