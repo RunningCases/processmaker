@@ -1577,4 +1577,57 @@ class pmDynaform
         return (string) $value;
     }
 
+    /**
+     * Get grids and fields
+     *
+     * @param mixed $form
+     * @param bool  $flagGridAssocToVar
+     *
+     * @return array Return an array, FALSE otherwise
+     */
+    public static function getGridsAndFields($form, $flagGridAssocToVar = true)
+    {
+        try {
+            if (!is_object($form)) {
+                //This code it runs only in the first call to the method
+                $object = \ProcessMaker\Util\Common::stringToJson($form);
+
+                if ($object !== false) {
+                    $form = $object->items[0];
+                } else {
+                    return false;
+                }
+            }
+
+            $arrayGrid = [];
+
+            foreach ($form->items as $value) {
+                foreach ($value as $value2) {
+                    $field = $value2;
+
+                    if (isset($field->type)) {
+                        switch ($field->type) {
+                            case 'grid':
+                                $flagInsert = ($flagGridAssocToVar)? (isset($field->var_uid) && $field->var_uid != '' && isset($field->variable) && $field->variable != '') : true;
+
+                                if ($flagInsert) {
+                                    $arrayGrid[$field->id] = $field;
+                                }
+                                break;
+                            case 'form':
+                                $arrayGrid = array_merge(
+                                    $arrayGrid, $this->getGridsAndFields($field, $flagGridAssocToVar)
+                                );
+                                break;
+                        }
+                    }
+                }
+            }
+
+            //Return
+            return $arrayGrid;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 }

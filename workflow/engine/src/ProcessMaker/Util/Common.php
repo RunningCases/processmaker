@@ -136,5 +136,23 @@ class Common extends \Maveriks\Util\Common
 
         return $sCode;
     }
+
+    /**
+     * Convert string to JSON
+     *
+     * @param string $string
+     *
+     * @return object Returns an object, FALSE otherwise
+     */
+    public static function stringToJson($string)
+    {
+        try {
+            $object = json_decode($string);
+
+            return (json_last_error() == JSON_ERROR_NONE)? $object : false;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
 

@@ -43,6 +43,21 @@ Ext.onReady(function(){
       ]
     }),
     listeners: {
+        beforeload: function (store, options)
+        {
+            var p = {PRO_UID: (PRO_UID !== false)? PRO_UID : Ext.getCmp("PROCESS").getValue()};
+
+            if (Ext.getCmp("REP_TAB_TYPE").getValue() == "GRID" && Ext.getCmp("REP_TAB_GRID").getValue() != "") {
+                p.TYPE = "GRID";
+                p.GRID_UID = Ext.getCmp("REP_TAB_GRID").getValue();
+            }
+
+            if (Ext.getCmp("searchTxt").getValue() != "") {
+                p.textFilter = Ext.getCmp("searchTxt").getValue();
+            }
+
+            this.baseParams = p;
+        },
       load: function() {
         Ext.getCmp('availableGrid').store.sort();
         storeA.setBaseParam('PRO_UID', (PRO_UID !== false? PRO_UID : Ext.getCmp('PROCESS').getValue()));
@@ -721,9 +736,6 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
         }
     });
 
-  var arrayBpmnTypeData = [["NORMAL", _("ID_GLOBAL")]];
-  var arrayClassicTypeData = [["NORMAL", _("ID_GLOBAL")], ["GRID", _("ID_GRID")]];
-
   var types = new Ext.data.ArrayStore({
       storeId: "types",
       autoDestroy: true,
@@ -866,7 +878,7 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
     valueField : 'FIELD_UID',
     displayField : 'FIELD_NAME',
     triggerAction : 'all',
-    width: 120,
+    width: 200,
     editable : false,
     mode:'local',
     listeners:{
@@ -884,8 +896,6 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
     }
   });
 
-  comboReport.setDisabled(isBpmn);
-
   processStore = new Ext.data.Store( {
     autoLoad: true,
     proxy : new Ext.data.HttpProxy({
@@ -896,7 +906,7 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
       action: 'getProcessList'
     },
     reader : new Ext.data.JsonReader( {
-      fields : [{name : 'PRO_UID'}, {name : 'PRO_TITLE'},{name : 'PRO_DESCRIPTION'}, {name: "PRO_PROCESS_TYPE"}]
+      fields: [{name: "PRO_UID"}, {name: "PRO_TITLE"}, {name: "PRO_DESCRIPTION"}]
     }),
     listeners: {
       load: function() {
@@ -940,7 +950,6 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
     }
   });
 
-  var rptPosArray = 0;
   processComboBox = new Ext.form.ComboBox({
     id: 'PROCESS',
     fieldLabel : _("ID_CASESLIST_APP_PRO_TITLE"),
@@ -960,21 +969,11 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
 
     listeners:{
       select: function(){
-          var dataStore = Ext.getCmp('PROCESS').store.getRange();
-          var i = Ext.getCmp('PROCESS').store.find("PRO_UID", Ext.getCmp('PROCESS').getValue());
+            var dataStoreAux = types.getRange(0);
+            comboReport.setValue(dataStoreAux[0].data.REP_TAB_TYPE);
+            comboGridsList.setVisible(false);
 
-          types.loadData(
-              (dataStore[i].data.PRO_PROCESS_TYPE == "BPMN")? arrayBpmnTypeData : arrayClassicTypeData, false
-          );
-
-          var dataStoreAux = types.getRange(rptPosArray);
-
-          comboReport.setValue(dataStoreAux[0].data.REP_TAB_TYPE);
-          comboReport.setDisabled(dataStore[i].data.PRO_PROCESS_TYPE === "BPMN");
-
-          comboGridsList.setVisible(false);
-
-              comboDbConnections.getStore().reload({params:{PRO_UID : Ext.getCmp('PROCESS').getValue()}});
+            comboDbConnections.getStore().reload({params: {PRO_UID: Ext.getCmp("PROCESS").getValue()}});
         if (Ext.getCmp('REP_TAB_TYPE').getValue() == 'GRID') {
           gridsListStore.reload({params:{PRO_UID : Ext.getCmp('PROCESS').getValue()}});
         } else {
@@ -1409,7 +1408,8 @@ loadFieldNormal = function(){
       action: "getDynafields",
       PRO_UID: PRO_UID !== false ? PRO_UID : Ext.getCmp('PROCESS').getValue(),
       start: 0,
-      limit: pageSize
+      limit: pageSize,
+      loadField: 1
     }
   });
   var assignedGridGotData = Ext.getCmp('assignedGrid').getStore().getCount() > 0;
@@ -1433,7 +1433,8 @@ loadFieldsGrids = function(){
       TYPE: 'GRID',
       GRID_UID: Ext.getCmp('REP_TAB_GRID').getValue(),
       start: 0,
-      limit: pageSize
+      limit: pageSize,
+      loadField: 1
     }
   });
 
@@ -1538,8 +1539,10 @@ function setReportFields(records) {
       isset   : false
     },
     success: function(resp){
-      result = Ext.util.JSON.decode(resp.responseText);
-      availableGrid.store.reload();
+        result = Ext.util.JSON.decode(resp.responseText);
+
+        availableGrid.store.lastOptions.params.loadField = 0;
+        availableGrid.store.reload();
     }
   });
 }
@@ -1603,8 +1606,10 @@ function unsetReportFields(records) {
       isset   : true
     },
     success: function(resp){
-      result = Ext.util.JSON.decode(resp.responseText);
-      availableGrid.store.reload();
+        result = Ext.util.JSON.decode(resp.responseText);
+
+        availableGrid.store.lastOptions.params.loadField = 0;
+        availableGrid.store.reload();
     }
   });
 }
