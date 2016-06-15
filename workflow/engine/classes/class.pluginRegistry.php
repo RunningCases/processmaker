@@ -104,6 +104,7 @@ class PMPluginRegistry
     private $_arrayDesignerMenu = array();
     private $_aMenuOptionsToReplace = array ();
     private $_aImportProcessCallbackFile = array ();
+    private $_aOpenReassignCallback = array ();
 
     /**
      * Registry a plugin javascript to include with js core at same runtime
@@ -413,7 +414,10 @@ class PMPluginRegistry
         if(sizeof( $this->_aImportProcessCallbackFile )){
             unset( $this->_aImportProcessCallbackFile );
         }
-        
+
+        if(sizeof( $this->_aOpenReassignCallback )){
+            unset( $this->_aOpenReassignCallback );
+        }
         //unregistering javascripts from this plugin
         $this->unregisterJavascripts( $sNamespace );
         //unregistering rest services from this plugin
@@ -1748,5 +1752,42 @@ class PMPluginRegistry
     {
         return $this->_aImportProcessCallbackFile;
     }
+
+    /**
+     * Register a callBackFile in the singleton
+     *
+     * @param string $callBackFile
+     *
+     * @return void
+     */
+    public function registerOpenReassignCallback ($callBackFile)
+    {
+        try {
+            $found = false;
+            foreach ($this->_aOpenReassignCallback as $row => $detail) {
+                if ($callBackFile == $detail->callBackFile) {
+                    $detail->callBackFile = $callBackFile;
+                    $found = true;
+                }
+            }
+            if (!$found) {
+                $callBackFile = new OpenReassignCallback( $callBackFile );
+                $this->_aOpenReassignCallback[] = $callBackFile;
+            }
+        } catch(Excepton $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Return all callBackFiles registered
+     *
+     * @return array
+     */
+    public function getOpenReassignCallback()
+    {
+        return $this->_aOpenReassignCallback;
+    }
+
 }
 

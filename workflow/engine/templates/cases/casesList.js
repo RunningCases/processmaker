@@ -1150,6 +1150,13 @@ Ext.onReady ( function() {
         // text: 'Reassign',
         // text: TRANSLATIONS.LABEL_UNSELECT_ALL,
         handler: function(){
+            if(openReassignCallback) {
+                for(var key in openReassignCallback){
+                    var callbackFunction = new Function(openReassignCallback[key]);
+                    callbackFunction.call();
+                }
+                return;
+            }
             reassign();
         }
     });
@@ -2591,3 +2598,4 @@ Ext.EventManager.on(window, 'beforeunload', function () {
         casesNewTab.close();
     }
 });
+ 

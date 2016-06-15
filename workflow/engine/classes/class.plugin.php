@@ -432,6 +432,23 @@ class PMPlugin
             throw $e;
         }
     }
+
+    /**
+     * callBack File on reassign
+     *
+     * @param string $callBackFile
+     *
+     * @return void
+     */
+    public function registerOpenReassignCallback($callBackFile = '')
+    {
+        try {
+            $oPluginRegistry =& PMPluginRegistry::getSingleton();
+            $oPluginRegistry->registerOpenReassignCallback($callBackFile);
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
 }
 
 class menuDetail
@@ -786,6 +803,22 @@ class importCallBack
     public function __construct($namespace, $callBackFile)
     {
         $this->namespace = $namespace;
+        $this->callBackFile  = $callBackFile;
+    }
+}
+
+class OpenReassignCallback
+{
+    public $callBackFile;
+
+    /**
+     * This function is the constructor of the cronFile class
+     * param string $namespace
+     * param string $callBackFile
+     * @return void
+     */
+    public function __construct($callBackFile)
+    {
         $this->callBackFile  = $callBackFile;
     }
 }
