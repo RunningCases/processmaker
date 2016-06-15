@@ -73,6 +73,7 @@ class System
         'error_reporting' => "",
         'display_errors' => 'On',
         'system_utc_time_zone' => 0,
+        'server_protocol' => '',
         'server_hostname_requests_frontend' => ''
     );
 
@@ -1265,11 +1266,14 @@ class System
         try {
             $arraySystemConfiguration = self::getSystemConfiguration();
 
+            $serverProtocol = $arraySystemConfiguration['server_protocol'];
+            $serverProtocol = ($serverProtocol != '')? $serverProtocol : ((G::is_https())? 'https' : 'http');
+
             $serverHostname = $arraySystemConfiguration['server_hostname_requests_frontend'];
             $serverHostname = ($serverHostname != '')? $serverHostname : $_SERVER['HTTP_HOST'];
 
             //Return
-            return ((G::is_https())? 'https://' : 'http://') . $serverHostname;
+            return $serverProtocol . '://' . $serverHostname;
         } catch (Exception $e) {
             throw $e;
         }
