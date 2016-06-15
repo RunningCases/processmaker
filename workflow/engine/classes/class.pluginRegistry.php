@@ -1425,7 +1425,7 @@ class PMPluginRegistry
         foreach ($classesList as $classFile) {
             if (pathinfo($classFile, PATHINFO_EXTENSION) === 'php') {
                 $ns = str_replace(
-                    DIRECTORY_SEPARATOR,
+                    '/',
                     '\\',
                     str_replace('.php', '', str_replace($baseSrcPluginPath, '', $classFile))
                 );
