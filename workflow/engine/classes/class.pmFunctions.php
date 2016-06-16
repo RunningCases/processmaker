@@ -3411,3 +3411,111 @@ function PMFCaseLink($caseUid, $workspace = null, $language = null, $skin = null
         throw $e;
     }
 }
+
+/**
+ *
+ * @method
+ *
+ * This function Associates the uploaded files inside a grid with an Input File of the process
+ *
+ * @name PMFAssociateUploadedFilesWithInputFile
+ * @label PMF Associates the uploaded files inside a grid with an Input File of the process
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFAssociateUploadedFilesWithInputFile.28.29
+ *
+ * @param string(32) | $inputDocumentUid | Unique id of Input Document | The unique id of the Input Document we want to associate with
+ * @param string(32) | $gridVariableName | Variable name of the grid | Variable name of the grid, that contains the uploaded files
+ * @param string(32) | $fileVariableName | Variable name file | Variable name file , of the field in the grid that contains the files
+ * @param string(32) | $caseUid | Unique id of the case | The unique id of the case with the documents (variable application)
+ * @param string(32) | $userUid | Unique id of the user | The unique id of the user that's logged in for doing the upload
+ * @param int | $currentDelIndex | Current Index of the application | Current Index of the application
+ *
+ * @return none | $none | None | None
+ */
+
+function PMFAssociateUploadedFilesWithInputFile($inputDocumentUid, $gridVariableName, $fileVariableName, $caseUid, $userUid, $currentDelIndex)
+{
+    try {
+        require_once 'classes/model/AppDocument.php';
+
+        $appDocument = new AppDocument();
+
+        //First step: get all the documents from this case and this grid that are not associated
+        $criteria = new Criteria('workflow');
+
+        $criteria->add(AppDocumentPeer::APP_UID, $caseUid, Criteria::EQUAL);
+        $criteria->add(AppDocumentPeer::APP_DOC_TYPE, 'ATTACHED', Criteria::EQUAL);
+        $criteria->add(AppDocumentPeer::APP_DOC_FIELDNAME, $gridVariableName . '_%_' . $fileVariableName, Criteria::LIKE);
+        $criteria->add(AppDocumentPeer::APP_DOC_STATUS, 'ACTIVE', Criteria::EQUAL);
+        $criteria->add(AppDocumentPeer::DOC_UID, '-1', Criteria::EQUAL);
+        $criteria->addAscendingOrderByColumn(AppDocumentPeer::APP_DOC_INDEX);
+
+        $numRecTotal = AppDocumentPeer::doCount($criteria);
+
+        //If we have an error in the result set, do not continue
+        if ($numRecTotal == 0) {
+            //Return
+            return false;
+        }
+
+        //Query
+        $rsCriteria = AppDocumentPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+        //Search file in the process, associate with the Input document
+        while ($rsCriteria->next()) {
+            $row = $rsCriteria->getRow();
+
+            //Load the file by its unique identifier, its name, its extension and the path where it's stored
+            $file = $appDocument->load($row['APP_DOC_UID']);
+            $ext = pathinfo($file['APP_DOC_FILENAME'], PATHINFO_EXTENSION);
+            $fileName = $file['APP_DOC_UID'] . '_' . $file['DOC_VERSION'] . '.' . $ext;
+            $pathFile = PATH_DOCUMENT . G::getPathFromUID($caseUid) . PATH_SEP . $fileName;
+            $comment = '';
+
+            //Delete this file so it can't be uploaded again (Includes Mark Database Record)
+            $appDocument->remove($file['APP_DOC_UID'], $file['DOC_VERSION']);
+
+            $fields = array (
+                'APP_UID' => $caseUid,
+                'DEL_INDEX' => $currentDelIndex,
+                'USR_UID' => $userUid,
+                'DOC_UID' => $inputDocumentUid,
+                'APP_DOC_TYPE' => 'INPUT',
+                'APP_DOC_CREATE_DATE' => date('Y-m-d H:i:s'),
+                'APP_DOC_COMMENT' => $comment,
+                'APP_DOC_TITLE' => $file['APP_DOC_TITLE'],
+                'APP_DOC_FILENAME' => $file['APP_DOC_FILENAME'],
+                'APP_DOC_FIELDNAME' => ''
+            );
+
+            $result = $appDocument->create($fields);
+
+            //Copy the file
+            $appUid = $appDocument->getAppUid();
+            $appDocUid = $appDocument->getAppDocUid();
+            $docVersion = $appDocument->getDocVersion();
+            $info = pathinfo( $appDocument->getAppDocFilename() );
+            $extAux = (isset( $info['extension'] )) ? $info['extension'] : '';
+
+            //Save the file
+            $pathName = PATH_DOCUMENT . G::getPathFromUID($appUid) . PATH_SEP;
+            $pathFileName = $appDocUid . '_' . $docVersion . '.' . $extAux;
+
+            copy($pathFile, $pathName . $pathFileName);
+
+            //Update
+            $result = $appDocument->update([
+                'APP_DOC_UID' => $appDocUid,
+                'DOC_VERSION' => $docVersion,
+                'APP_DOC_TAGS' => 'INPUT',
+                'APP_DOC_FIELDNAME' => $file['APP_DOC_FIELDNAME']
+            ]);
+
+            //Remove the old submitted file completely from file system
+            unlink($pathFile);
+        }
+    } catch (Exception $e) {
+        throw $e;
+    }
+}
+
