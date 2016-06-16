@@ -39,8 +39,10 @@ class GranularExporter
                 $this->beforeExport($objectList);
                 foreach ($objectList as $data) {
                     $migrator = $this->factory->create($data);
+                    $migrator->beforeExport();
                     $migratorData = $migrator->export($this->prjuid);
                     $this->mergeData($migratorData);
+                    $migrator->afterExport();
                 }
                 return $this->publish();
             } else {
@@ -121,7 +123,8 @@ class GranularExporter
         $data = array(
             'bpmn-definition' => $bpnmDefinition,
             'workflow-definition' => $workflowDefinition,
-            'workflow-files' => []
+            'workflow-files' => [],
+            'plugin-data' => []
         );
 
         $data["filename"] = $outputFilename;
