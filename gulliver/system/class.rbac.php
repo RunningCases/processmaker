@@ -231,6 +231,8 @@ class RBAC
             "PER_NAME" => "Edit personal info Calendar"
         ), array("PER_UID" => "00000000000000000000000000000038", "PER_CODE" => "PM_UNCANCELCASE",
             "PER_NAME" => "Undo cancel case"
+        ), array("PER_UID" => "00000000000000000000000000000039", "PER_CODE" => "PM_REST_API_APPLICATIONS",
+            "PER_NAME" => "Create rest API Aplications"
         )
         );
         return $permissionsAdmin;
