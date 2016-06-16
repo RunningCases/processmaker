@@ -532,6 +532,7 @@
       <parameter name="Comment" value=""/>
     </vendor>
     <column name="GRP_UID" type="VARCHAR" size="32" required="true" primaryKey="true"/>
+    <column name="GRP_TITLE" type="LONGVARCHAR" required="true"/>
     <column name="GRP_STATUS" type="CHAR" size="8" required="true" default="ACTIVE"/>
     <column name="GRP_LDAP_DN" type="VARCHAR" size="255" required="true" default=""/>
     <column name="GRP_UX" type="VARCHAR" size="128" default="NORMAL"/>

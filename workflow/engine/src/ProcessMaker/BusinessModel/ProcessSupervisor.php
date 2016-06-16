@@ -111,7 +111,7 @@ class ProcessSupervisor
                 $criteriaGroup = new \Criteria("workflow");
 
                 $criteriaGroup->addSelectColumn(\GroupwfPeer::GRP_UID);
-                $criteriaGroup->addAsColumn("GRP_TITLE", \ContentPeer::CON_VALUE);
+                $criteriaGroup->addSelectColumn(\GroupwfPeer::GRP_TITLE);
 
                 switch ($option) {
                     case "ASSIGNED":
@@ -120,12 +120,6 @@ class ProcessSupervisor
                         $arrayCondition = array();
                         $arrayCondition[] = array(\ProcessUserPeer::USR_UID, \GroupwfPeer::GRP_UID, \Criteria::EQUAL);
                         $arrayCondition[] = array(\GroupwfPeer::GRP_STATUS, $delimiter . "ACTIVE" . $delimiter, \Criteria::EQUAL);
-                        $criteriaGroup->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
-
-                        $arrayCondition = array();
-                        $arrayCondition[] = array(\GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::EQUAL);
-                        $arrayCondition[] = array(\ContentPeer::CON_CATEGORY, $delimiter . "GRP_TITLE" . $delimiter, \Criteria::EQUAL);
-                        $arrayCondition[] = array(\ContentPeer::CON_LANG, $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
                         $criteriaGroup->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
 
                         $criteriaGroup->add(\ProcessUserPeer::PU_TYPE, "GROUP_SUPERVISOR", \Criteria::EQUAL);
@@ -145,12 +139,6 @@ class ProcessSupervisor
                                " . \PermissionsPeer::PER_SYSTEM . " = " . $delimiter . $arrayRbacSystemData["SYS_CODE"] . $delimiter . "
                         ";
 
-                        $arrayCondition = array();
-                        $arrayCondition[] = array(\GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::EQUAL);
-                        $arrayCondition[] = array(\ContentPeer::CON_CATEGORY, $delimiter . "GRP_TITLE" . $delimiter, \Criteria::EQUAL);
-                        $arrayCondition[] = array(\ContentPeer::CON_LANG, $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
-                        $criteriaGroup->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
-
                         $criteriaGroup->add(
                             $criteriaGroup->getNewCriterion(\GroupwfPeer::GRP_UID, $arrayGroupUid, \Criteria::NOT_IN)->addAnd(
                             $criteriaGroup->getNewCriterion(\GroupwfPeer::GRP_STATUS, "ACTIVE", \Criteria::EQUAL))->addAnd(
@@ -168,7 +156,7 @@ class ProcessSupervisor
 
                     $search = $arraySearch[(isset($arrayFilterData["filterOption"]))? $arrayFilterData["filterOption"] : ""];
 
-                    $criteriaGroup->add(\ContentPeer::CON_VALUE, $search, \Criteria::LIKE);
+                    $criteriaGroup->add(\GroupwfPeer::GRP_TITLE, $search, \Criteria::LIKE);
                 }
 
                 //Number records total

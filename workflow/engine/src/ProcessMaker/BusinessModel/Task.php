@@ -909,7 +909,7 @@ class Task
                 $criteriaGroup = new \Criteria("workflow");
 
                 $criteriaGroup->addSelectColumn(\GroupwfPeer::GRP_UID);
-                $criteriaGroup->addAsColumn("GRP_TITLE", \ContentPeer::CON_VALUE);
+                $criteriaGroup->addSelectColumn(\GroupwfPeer::GRP_TITLE);
 
                 switch ($option) {
                     case "ASSIGNEE":
@@ -923,10 +923,6 @@ class Task
                         break;
                 }
 
-                $criteriaGroup->addJoin(\GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN);
-                $criteriaGroup->add(\ContentPeer::CON_CATEGORY, "GRP_TITLE", \Criteria::EQUAL);
-                $criteriaGroup->add(\ContentPeer::CON_LANG, SYS_LANG, \Criteria::EQUAL);
-
                 if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"]) && trim($arrayFilterData["filter"]) != "") {
                     $arraySearch = array(
                         ""      => "%" . $arrayFilterData["filter"] . "%",
@@ -936,7 +932,7 @@ class Task
 
                     $search = $arraySearch[(isset($arrayFilterData["filterOption"]))? $arrayFilterData["filterOption"] : ""];
 
-                    $criteriaGroup->add(\ContentPeer::CON_VALUE, $search, \Criteria::LIKE);
+                    $criteriaGroup->add(\GroupwfPeer::GRP_TITLE, $search, \Criteria::LIKE);
                 }
 
                 $criteriaGroup->add(\GroupwfPeer::GRP_STATUS, "ACTIVE", \Criteria::EQUAL);
@@ -1212,12 +1208,9 @@ class Task
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_STATUS );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UX );
-            $criteria->addAsColumn( 'GRP_TITLE', \ContentPeer::CON_VALUE );
-            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
-            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
-            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_TITLE );
             $criteria->add( \GroupwfPeer::GRP_UID, $sAssigneeUID);
-            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
+            $criteria->addAscendingOrderByColumn( \GroupwfPeer::GRP_TITLE );
             $oDataset = \GroupwfPeer::doSelectRS( $criteria );
             $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
             $groups = array ();
@@ -1434,14 +1427,11 @@ class Task
             }
             $criteria = new \Criteria( 'workflow' );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UID );
+            $criteria->addSelectColumn( \GroupwfPeer::GRP_TITLE );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_STATUS );
             $criteria->addSelectColumn( \GroupwfPeer::GRP_UX );
-            $criteria->addAsColumn( 'GRP_TITLE', \ContentPeer::CON_VALUE );
-            $criteria->addJoin( \GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN );
-            $criteria->add( \ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
-            $criteria->add( \ContentPeer::CON_LANG, SYS_LANG );
             $criteria->add( \GroupwfPeer::GRP_UID, $sAssigneeUID);
-            $criteria->addAscendingOrderByColumn( \ContentPeer::CON_VALUE );
+            $criteria->addAscendingOrderByColumn( \GroupwfPeer::GRP_TITLE );
             $oDataset = \GroupwfPeer::doSelectRS( $criteria );
             $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
             $groups = array ();
