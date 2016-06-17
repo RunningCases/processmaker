@@ -235,6 +235,16 @@ class labelsGmail
             $q = "subject:('" . preg_quote($subject, '-') . "') label:('" . $labelsToSearch . "')";
             $messageList = $this->listMessages($service, $mail, $q, $labelsToRemove);
 
+            //if there isn't any message at draft, and lasindex is zero, is a subprocess
+            //and we must search in inbox:
+            if ($actualLastIndex ===  0 && count($messageList) ===0) {
+                $labelsToRemove = $labelsIds['Inbox'];
+                $labelsToSearch = "*-inbox";
+                $labelsToAdd = $labelsIds['Participated'];
+                $q = "subject:('" . preg_quote($subject, '-') . "') label:('" . $labelsToSearch . "')";
+                $messageList = $this->listMessages($service, $mail, $q, $labelsToRemove);
+            }
+
             foreach ($messageList as $message) {
                 $messageId = $message->getId();
 

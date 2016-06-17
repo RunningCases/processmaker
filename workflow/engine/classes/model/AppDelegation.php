@@ -226,12 +226,28 @@ class AppDelegation extends BaseAppDelegation
                 }
                 /*----------------------------------********---------------------------------*/
 
+
+                /*----------------------------------********---------------------------------*/
+                $licensedFeatures = &PMLicensedFeatures::getSingleton ();
+                if ($licensedFeatures->verifyfeature ( '7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09' )) {
+                    G::LoadClass("pmGoogleApi");
+                    try{
+                        $pmGoogle = new PMGoogleApi ();
+                        if ($pmGoogle->getServiceGmailStatus()) {
+                            $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
+                            $Pmgmail->gmailsForRouting($sUsrUid, $sTasUid, $sAppUid, $delIndex, $isSubprocess);
+                        }
+                    } catch (Exception $oError) {
+                        error_log($oError->getMessage());
+                    }
+                }
+                /*----------------------------------********---------------------------------*/
             }
 
-            if ($flagActionsByEmail) {                
+            if ($flagActionsByEmail) {
                 $oPluginRegistry = &PMPluginRegistry::getSingleton();
                 $oPluginRegistry->executeTriggers(PM_CREATE_NEW_DELEGATION, $data);
-            } 
+            }
         }
 
         return $delIndex;
