@@ -104,8 +104,14 @@ class Users extends BaseUsers
             }
             //capture invalid birthday date and replace by null
             $msg = $e->getMessage();
-            if (strpos( 'Unable to parse value of [usr_birthday]', $msg ) != - 1) {
+            if (strpos( 'Unable to parse value of [usr_birthday]', $msg ) !== false) {
                 $oRow->setUsrBirthday( null );
+                $oRow->save();
+                return $this->load( $UsrUid );
+            }
+            //capture invalid create date and replace by null
+            if (strpos( 'Unable to parse value of [usr_create_date]', $msg ) !== false) {
+                $oRow->setUsrCreateDate( null );
                 $oRow->save();
                 return $this->load( $UsrUid );
             }
