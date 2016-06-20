@@ -316,14 +316,16 @@ class PMPluginRegistry
                 if ($eventPlugin == 1) {
                     //$plugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );
                     $this->_aPlugins[$detail->sNamespace] = $detail;
-                    if (method_exists( $detail, "disable" )) {
-                        $detail->disable();
+                    // If plugin class exists check if disable method exist,
+                    // otherwise use default plugin details
+                    if (class_exists($detail->sClassName)) {
+                        $plugin = new $detail->sClassName($detail->sNamespace, $detail->sFilename);
+                    } else {
+                        $plugin = $detail;
                     }
-                    //flag Only Plugin actionsByEmail
-                    if($detail->sNamespace == 'actionsByEmail'){
-                      $plugin = new $detail->sClassName( $detail->sNamespace, $detail->sFilename );
-                      $plugin->disable();
-                    } 
+                    if (method_exists($plugin, "disable")) {
+                        $plugin->disable();
+                    }
                 }
 
                 $sw = true;
