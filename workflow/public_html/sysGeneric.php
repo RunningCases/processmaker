@@ -450,6 +450,7 @@ if (Bootstrap::virtualURI( $_SERVER['REQUEST_URI'], $virtualURITable, $realPath 
             die();
             break;
         case 'errorFile':
+            header('Status: 404');
             header( "location: /errors/error404.php?url=" . urlencode( $_SERVER['REQUEST_URI'] ) );
             if (DEBUG_TIME_LOG)
                 Bootstrap::logTimeByPage(); //log this page
@@ -474,6 +475,7 @@ $arrayFriendlyUri['cases/opencase'] = '/^[\w\-]{32}$/';
 Bootstrap::parseURI(getenv('REQUEST_URI'), $arrayFriendlyUri);
 
 if (SYS_TARGET === false) {
+    header('Status: 404');
     header('Location: /errors/error404.php?url=' . urlencode($_SERVER['REQUEST_URI']));
     exit(0);
 }
@@ -541,6 +543,7 @@ if (! defined( 'PATH_DATA' ) || ! file_exists( PATH_DATA )) {
         $installer->call( $controllerAction );
     } else {
         $_SESSION['phpFileNotFound'] = $_SERVER['REQUEST_URI'];
+        header('Status: 404');
         header( "location: /errors/error404.php?url=" . urlencode( $_SERVER['REQUEST_URI'] ) );
     }
     die();
@@ -577,6 +580,7 @@ if (defined( 'SYS_TEMP' ) && SYS_TEMP != '') {
             Bootstrap::SendTemporalMessage( 'ID_NOT_WORKSPACE', "error" );
             Bootstrap::header( 'location: /sys/' . SYS_LANG . '/' . SYS_SKIN . '/main/sysLogin?errno=2' );
         } else {
+            header('Status: 404');
             header('location: /errors/error404.php?url=' . urlencode($_SERVER['REQUEST_URI']));
         }
         die();
@@ -857,6 +861,7 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
 
     if (! $isControllerCall && ! file_exists( $phpFile )) {
         $_SESSION['phpFileNotFound'] = $_SERVER['REQUEST_URI'];
+        header('Status: 404');
         header( "location: /errors/error404.php?url=" . urlencode( $_SERVER['REQUEST_URI'] ) );
         die();
     }
