@@ -4398,7 +4398,7 @@ class Cases
 
     /**
      * Un cancel case
-     * 
+     *
      * @param string $caseUID
      * @param string $userUID
      * @return int
@@ -5502,7 +5502,8 @@ class Cases
 
                 $sBody2 = G::replaceDataGridField($sBody, $arrayData2, false);
 
-                $respTo = $this->getTo($aTask["TAS_ASSIGN_TYPE"], $aTask["TAS_UID"], $aTask["USR_UID"], $arrayData);
+                $respTo = $this->getTo($aTask['TAS_UID'], $aTask['USR_UID'], $arrayData);
+
                 $sTo = $respTo['to'];
                 $sCc = $respTo['cc'];
 
@@ -5553,67 +5554,104 @@ class Cases
             throw $oException;
         }
     }
-    
-    public function getTo($taskType, $taskUid, $taskUsrUid, $arrayData) 
+
+    public function getTo($taskUid, $userUid, $arrayData)
     {
         $sTo = null;
         $sCc = null;
         $arrayResp = array ();
-        $task = new Tasks ();
+        $tasks = new Tasks();
         $group = new Groups ();
         $oUser = new Users ();
-        
-        switch ($taskType) {
-            case "SELF_SERVICE" :
-                if (isset ( $taskUid ) && ! empty ( $taskUid )) {
-                    $arrayTaskUser = array ();
-                    
-                    $arrayAux1 = $task->getGroupsOfTask ( $taskUid, 1 );
-                    
-                    foreach ( $arrayAux1 as $arrayGroup ) {
-                        $arrayAux2 = $group->getUsersOfGroup ( $arrayGroup ["GRP_UID"] );
-                        
-                        foreach ( $arrayAux2 as $arrayUser ) {
-                            $arrayTaskUser [] = $arrayUser ["USR_UID"];
+
+        $task = TaskPeer::retrieveByPK($taskUid);
+
+        switch ($task->getTasAssignType()) {
+            case 'SELF_SERVICE':
+                $to = '';
+                $cc = '';
+
+                //Query
+                $criteria = new Criteria('workflow');
+
+                $criteria->addSelectColumn(UsersPeer::USR_UID);
+                $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
+                $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+                $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
+                $criteria->addSelectColumn(UsersPeer::USR_EMAIL);
+
+                $criteria->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
+
+                $rsCriteria = null;
+
+                if (trim($task->getTasGroupVariable()) != '') {
+                    //SELF_SERVICE_VALUE
+                    $variable = trim($task->getTasGroupVariable(), ' @#%?$=');
+
+                    //Query
+                    if (isset($arrayData[$variable])) {
+                        $data = $arrayData[$variable];
+
+                        switch (gettype($data)) {
+                            case 'string':
+                                $criteria->addJoin(GroupUserPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
+
+                                $criteria->add(GroupUserPeer::GRP_UID, $data, Criteria::EQUAL);
+
+                                $rsCriteria = GroupUserPeer::doSelectRS($criteria);
+                                break;
+                            case 'array':
+                                $criteria->add(UsersPeer::USR_UID, $data, Criteria::IN);
+
+                                $rsCriteria = UsersPeer::doSelectRS($criteria);
+                                break;
                         }
                     }
-                    
-                    $arrayAux1 = $task->getUsersOfTask ( $taskUid, 1 );
-                    
-                    foreach ( $arrayAux1 as $arrayUser ) {
-                        $arrayTaskUser [] = $arrayUser ["USR_UID"];
-                    }
-                    
-                    $criteria = new Criteria ( "workflow" );
-                    
-                    $criteria->addSelectColumn ( UsersPeer::USR_UID );
-                    $criteria->addSelectColumn ( UsersPeer::USR_USERNAME );
-                    $criteria->addSelectColumn ( UsersPeer::USR_FIRSTNAME );
-                    $criteria->addSelectColumn ( UsersPeer::USR_LASTNAME );
-                    $criteria->addSelectColumn ( UsersPeer::USR_EMAIL );
-                    $criteria->add ( UsersPeer::USR_UID, $arrayTaskUser, Criteria::IN );
-                    $rsCriteria = UsersPeer::doSelectRs ( $criteria );
-                    $rsCriteria->setFetchmode ( ResultSet::FETCHMODE_ASSOC );
-                    
-                    $to = null;
-                    $cc = null;
-                    $sw = 1;
-                    
-                    while ( $rsCriteria->next () ) {
-                        $row = $rsCriteria->getRow ();
-                        
-                        $toAux = ((($row ["USR_FIRSTNAME"] != "") || ($row ["USR_LASTNAME"] != "")) ? $row ["USR_FIRSTNAME"] . " " . $row ["USR_LASTNAME"] . " " : "") . "<" . $row ["USR_EMAIL"] . ">";
-                        
-                        if ($sw == 1) {
-                            $to = $toAux;
-                            $sw = 0;
-                        } else {
-                            $cc = $cc . (($cc != null) ? "," : null) . $toAux;
+                } else {
+                    //SELF_SERVICE
+                    $arrayTaskUser = [];
+
+                    $arrayAux1 = $tasks->getGroupsOfTask($taskUid, 1);
+
+                    foreach ($arrayAux1 as $arrayGroup) {
+                        $arrayAux2 = $group->getUsersOfGroup($arrayGroup['GRP_UID']);
+
+                        foreach ($arrayAux2 as $arrayUser) {
+                            $arrayTaskUser [] = $arrayUser ['USR_UID'];
                         }
                     }
-                    $arrayResp ['to'] = $to;
-                    $arrayResp ['cc'] = $cc;
+
+                    $arrayAux1 = $tasks->getUsersOfTask($taskUid, 1);
+
+                    foreach ($arrayAux1 as $arrayUser) {
+                        $arrayTaskUser[] = $arrayUser['USR_UID'];
+                    }
+
+
+                    //Query
+                    $criteria->add(UsersPeer::USR_UID, $arrayTaskUser, Criteria::IN);
+
+                    $rsCriteria = UsersPeer::doSelectRS($criteria);
                 }
+
+                if (!is_null($rsCriteria)) {
+                    $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+                    while ($rsCriteria->next()) {
+                        $record = $rsCriteria->getRow();
+
+                        $toAux = (($record['USR_FIRSTNAME'] != '' || $record['USR_LASTNAME'] != '')? $record['USR_FIRSTNAME'] . ' ' . $record['USR_LASTNAME'] . ' ' : '') . '<' . $record['USR_EMAIL'] . '>';
+
+                        if ($to == '') {
+                            $to = $toAux;
+                        } else {
+                            $cc .= (($cc != '')? ',' : '') . $toAux;
+                        }
+                    }
+                }
+
+                $arrayResp['to'] = $to;
+                $arrayResp['cc'] = $cc;
                 break;
             case "MULTIPLE_INSTANCE" :
                 $to = null;
@@ -5646,7 +5684,7 @@ class Cases
                     $arrayUsers = $arrayData [$nextTaskAssignVariable];
                     $oDerivation = new Derivation ();
                     $userFields = $oDerivation->getUsersFullNameFromArray ( $arrayUsers );
-                    
+
                     foreach ( $userFields as $row ) {
                         $toAux = ((($row ["USR_FIRSTNAME"] != "") || ($row ["USR_LASTNAME"] != "")) ? $row ["USR_FIRSTNAME"] . " " . $row ["USR_LASTNAME"] . " " : "") . "<" . $row ["USR_EMAIL"] . ">";
                         if ($sw == 1) {
@@ -5661,8 +5699,9 @@ class Cases
                 }
                 break;
             default :
-                if (isset ( $taskUsrUid ) && ! empty ( $taskUsrUid )) {
-                    $aUser = $oUser->load ( $taskUsrUid );
+                if (isset($userUid) && !empty($userUid)) {
+                    $aUser = $oUser->load($userUid);
+
                     $sTo = ((($aUser ["USR_FIRSTNAME"] != "") || ($aUser ["USR_LASTNAME"] != "")) ? $aUser ["USR_FIRSTNAME"] . " " . $aUser ["USR_LASTNAME"] . " " : "") . "<" . $aUser ["USR_EMAIL"] . ">";
                 }
                 $arrayResp ['to'] = $sTo;
