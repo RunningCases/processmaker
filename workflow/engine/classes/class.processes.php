@@ -5941,13 +5941,7 @@ class Processes
             $criteria = new Criteria("workflow");
 
             $criteria->addSelectColumn(ProcessPeer::PRO_UID);
-            $criteria->addAsColumn("PRO_TITLE", ContentPeer::CON_VALUE);
-
-            $arrayCondition = array();
-            $arrayCondition[] = array(ProcessPeer::PRO_UID, ContentPeer::CON_ID, Criteria::EQUAL);
-            $arrayCondition[] = array(ContentPeer::CON_CATEGORY, $delimiter . "PRO_TITLE" . $delimiter, Criteria::EQUAL);
-            $arrayCondition[] = array(ContentPeer::CON_LANG, $delimiter . SYS_LANG . $delimiter, Criteria::EQUAL);
-            $criteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
+            $criteria->addSelectColumn(ProcessPeer::PRO_TITLE);
 
             if ($processUid != "") {
                 $criteria->add(ProcessPeer::PRO_UID, $processUid, Criteria::EQUAL);

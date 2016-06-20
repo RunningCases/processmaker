@@ -47,7 +47,7 @@ class Process extends BaseProcess
      *
      * @var string
      */
-    protected $pro_title = '';
+    protected $pro_title_content = '';
     public $dir = 'ASC';
     public $sort = 'PRO_TITLE';
 
@@ -56,14 +56,14 @@ class Process extends BaseProcess
      *
      * @return string
      */
-    public function getProTitle ()
+    public function getProTitleContent ()
     {
         if ($this->getProUid() == '') {
             throw (new Exception( "Error in getProTitle, the PRO_UID can't be blank" ));
         }
         $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
-        $this->pro_title = Content::load( 'PRO_TITLE', '', $this->getProUid(), $lang );
-        return $this->pro_title;
+        $this->pro_title_content = Content::load( 'PRO_TITLE', '', $this->getProUid(), $lang );
+        return $this->pro_title_content;
     }
 
     /**
@@ -72,7 +72,7 @@ class Process extends BaseProcess
      * @param string $v new value
      * @return void
      */
-    public function setProTitle ($v)
+    public function setProTitleContent ($v)
     {
         if ($this->getProUid() == '') {
             throw (new Exception( "Error in setProTitle, the PRO_UID can't be blank" . print_r( debug_backtrace(), 1 ) ));
@@ -83,11 +83,11 @@ class Process extends BaseProcess
             $v = (string) $v;
         }
 
-        if ($this->pro_title !== $v || $v === '') {
-            $this->pro_title = $v;
+        if ($this->pro_title_content !== $v || $v === '') {
+            $this->pro_title_content = $v;
             $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
 
-            $res = Content::addContent( 'PRO_TITLE', '', $this->getProUid(), $lang, $this->pro_title );
+            $res = Content::addContent( 'PRO_TITLE', '', $this->getProUid(), $lang, $this->pro_title_content );
         }
 
     } // set()
@@ -98,21 +98,21 @@ class Process extends BaseProcess
      *
      * @var string
      */
-    protected $pro_description = '';
+    protected $pro_description_content = '';
 
     /**
      * Get the [Pro_description] column value.
      *
      * @return string
      */
-    public function getProDescription ()
+    public function getProDescriptionContent ()
     {
         if ($this->getProUid() == '') {
             throw (new Exception( "Error in getProDescription, the PRO_UID can't be blank" ));
         }
         $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
-        $this->pro_description = Content::load( 'PRO_DESCRIPTION', '', $this->getProUid(), $lang );
-        return $this->pro_description;
+        $this->pro_description_content = Content::load( 'PRO_DESCRIPTION', '', $this->getProUid(), $lang );
+        return $this->pro_description_content;
     }
 
     /**
@@ -121,7 +121,7 @@ class Process extends BaseProcess
      * @param string $v new value
      * @return void
      */
-    public function setProDescription ($v)
+    public function setProDescriptionContent ($v)
     {
         if ($this->getProUid() == '') {
             throw (new Exception( "Error in setProDescription, the PRO_UID can't be blank" ));
@@ -132,11 +132,11 @@ class Process extends BaseProcess
             $v = (string) $v;
         }
 
-        if ($this->pro_description !== $v || $v === '') {
-            $this->pro_description = $v;
+        if ($this->pro_description_content !== $v || $v === '') {
+            $this->pro_description_content = $v;
             $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
 
-            $res = Content::addContent( 'PRO_DESCRIPTION', '', $this->getProUid(), $lang, $this->pro_description );
+            $res = Content::addContent( 'PRO_DESCRIPTION', '', $this->getProUid(), $lang, $this->pro_description_content );
         }
 
     } // set()
@@ -168,6 +168,8 @@ class Process extends BaseProcess
             }
 
             $this->setProUid( $sNewProUid );
+            $this->setProTitle((isset($aData['PRO_TITLE'])) ? $aData['PRO_TITLE'] : 'Default Process Title');
+            $this->setProDescription((isset($aData['PRO_DESCRIPTION'])) ? $aData['PRO_DESCRIPTION'] : 'Default Process Description');
             $this->setProParent( $sNewProUid );
             $this->setProTime( 1 );
             $this->setProTimeunit( 'DAYS' );
@@ -195,15 +197,15 @@ class Process extends BaseProcess
                 $res = $this->save();
 
                 if (isset( $aData['PRO_TITLE'] )) {
-                    $this->setProTitle( $aData['PRO_TITLE'] );
+                    $this->setProTitleContent( $aData['PRO_TITLE'] );
                 } else {
-                    $this->setProTitle( 'Default Process Title' );
+                    $this->setProTitleContent( 'Default Process Title' );
                 }
 
                 if (isset( $aData['PRO_DESCRIPTION'] )) {
-                    $this->setProDescription( $aData['PRO_DESCRIPTION'] );
+                    $this->setProDescriptionContent( $aData['PRO_DESCRIPTION'] );
                 } else {
-                    $this->setProDescription( 'Default Process Description' );
+                    $this->setProDescriptionContent( 'Default Process Description' );
                 }
 
                 $con->commit();
@@ -264,52 +266,6 @@ class Process extends BaseProcess
                 //        $this->pro_title = $aFields['PRO_TITLE'];
                 //        $this->pro_description = $aFields['PRO_DESCRIPTION'];
 
-                $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
-
-                $c = new Criteria();
-                $c->clearSelectColumns();
-                $c->addSelectColumn( ContentPeer::CON_CATEGORY );
-                $c->addSelectColumn( ContentPeer::CON_VALUE );
-                $c->add( ContentPeer::CON_ID, $ProUid );
-                if (! $getAllLang) {
-                    $c->add( ContentPeer::CON_LANG, $lang );
-                }
-                $rs = ProcessPeer::doSelectRS( $c, Propel::getDbConnection('workflow_ro') );
-                $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-                $rs->next();
-                $row = $rs->getRow();
-
-                while (is_array( $row )) {
-                    switch ($row['CON_CATEGORY']) {
-                        case 'PRO_TITLE':
-                            $aFields['PRO_TITLE'] = $row['CON_VALUE'];
-                            $this->pro_title = $row['CON_VALUE'];
-                            if ($row['CON_VALUE'] !== '') {
-                                $this->setProTitle( $aFields['PRO_TITLE'] );
-                            }
-                            break;
-                        case 'PRO_DESCRIPTION':
-                            $aFields['PRO_DESCRIPTION'] = $row['CON_VALUE'];
-                            $this->pro_description = $row['CON_VALUE'];
-                            if ($row['CON_VALUE'] !== '') {
-                                $this->setProDescription( $aFields['PRO_DESCRIPTION'] );
-                            }
-                            break;
-                    }
-                    $rs->next();
-                    $row = $rs->getRow();
-                }
-
-                //If the prev script doesn't return anithing try to create the values based on EN
-                if (! isset( $aFields['PRO_TITLE'] )) {
-                    $aFields['PRO_TITLE'] = $oPro->getProTitle();
-                    $this->setProTitle( $aFields['PRO_TITLE'] );
-                }
-                if (! isset( $aFields['PRO_DESCRIPTION'] )) {
-                    $aFields['PRO_DESCRIPTION'] = $oPro->getProDescription();
-                    $this->setProDescription( $aFields['PRO_DESCRIPTION'] );
-                }
-
                 //the following code is to copy the parent in old process, when the parent was empty.
                 if ($oPro->getProParent() == '') {
                     $oPro->setProParent( $oPro->getProUid() );
@@ -345,6 +301,8 @@ class Process extends BaseProcess
         $oCriteria = new Criteria( 'workflow' );
 
         $oCriteria->addSelectColumn( ProcessPeer::PRO_UID );
+        $oCriteria->addSelectColumn( ProcessPeer::PRO_TITLE );
+        $oCriteria->addSelectColumn( ProcessPeer::PRO_DESCRIPTION );
         $oCriteria->addSelectColumn( ProcessPeer::PRO_PARENT );
         $oCriteria->addSelectColumn( ProcessPeer::PRO_STATUS );
         $oCriteria->addSelectColumn( ProcessPeer::PRO_CATEGORY );
@@ -366,38 +324,10 @@ class Process extends BaseProcess
             $processes[] = $row;
             $uids[] = $processes[sizeof( $processes ) - 1]['PRO_UID'];
         }
-        //process details will have the info about the processes
-        $processesDetails = Array ();
-
-        //now get the labels for all process, using an array of Uids,
-        $c = new Criteria( 'workflow' );
-        //$c->add ( ContentPeer::CON_CATEGORY, 'PRO_TITLE', Criteria::EQUAL );
-        $c->add( ContentPeer::CON_LANG, defined( 'SYS_LANG' ) ? SYS_LANG : 'en', Criteria::EQUAL );
-        $c->add( ContentPeer::CON_ID, $uids, Criteria::IN );
-
-        $dt = ContentPeer::doSelectRS( $c, Propel::getDbConnection('workflow_ro') );
-        $dt->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-
-        while ($dt->next()) {
-            $row = $dt->getRow();
-            $processesDetails[$row['CON_ID']][$row['CON_CATEGORY']] = $row['CON_VALUE'];
-        }
 
         G::loadClass( 'configuration' );
         $oConf = new Configurations();
         $oConf->loadConfig( $obj, 'ENVIRONMENT_SETTINGS', '' );
-
-        foreach ($processes as $i => $process) {
-            $processes[$i]['PRO_TITLE'] = $processes[$i]['PRO_DESCRIPTION'] = '';
-
-            if (isset( $processesDetails[$process['PRO_UID']]['PRO_TITLE'] )) {
-                $processes[$i]['PRO_TITLE'] = $processesDetails[$process['PRO_UID']]['PRO_TITLE'];
-            }
-
-            if (isset( $processesDetails[$process['PRO_UID']] )) {
-                $processes[$i]['PRO_DESCRIPTION'] = $processesDetails[$process['PRO_UID']]['PRO_DESCRIPTION'];
-            }
-        }
 
         if ($this->dir=='ASC') {
         	usort( $processes, array($this, "ordProcessAsc") );
@@ -429,10 +359,10 @@ class Process extends BaseProcess
                 $oPro->fromArray( $aData, BasePeer::TYPE_FIELDNAME );
                 if ($oPro->validate()) {
                     if (isset( $aData['PRO_TITLE'] )) {
-                        $oPro->setProTitle( $aData['PRO_TITLE'] );
+                        $oPro->setProTitleContent( $aData['PRO_TITLE'] );
                     }
                     if (isset( $aData['PRO_DESCRIPTION'] )) {
-                        $oPro->setProDescription( $aData['PRO_DESCRIPTION'] );
+                        $oPro->setProDescriptionContent( $aData['PRO_DESCRIPTION'] );
                     }
                     $res = $oPro->save();
                     $con->commit();
@@ -469,6 +399,8 @@ class Process extends BaseProcess
         $con = Propel::getConnection( ProcessPeer::DATABASE_NAME );
         //$con->begin(); //does not allow dual BEGIN
         $this->setProUid( $aData['PRO_UID'] );
+        $this->setProTitle((isset($aData['PRO_TITLE'])) ? $aData['PRO_TITLE'] : 'Default Process Title');
+        $this->setProDescription((isset($aData['PRO_DESCRIPTION'])) ? $aData['PRO_DESCRIPTION'] : 'Default Process Description');
         $this->setProParent( $aData['PRO_PARENT'] );
         $this->setProTime( $aData['PRO_TIME'] );
         $this->setProTimeunit( $aData['PRO_TIMEUNIT'] );
@@ -514,14 +446,14 @@ class Process extends BaseProcess
             $res = $this->save();
 
             if (isset( $aData['PRO_TITLE'] ) && trim( $aData['PRO_TITLE'] ) != '') {
-                $this->setProTitle( $aData['PRO_TITLE'] );
+                $this->setProTitleContent( $aData['PRO_TITLE'] );
             } else {
-                $this->setProTitle( 'Default Process Title' );
+                $this->setProTitleContent( 'Default Process Title' );
             }
             if (isset( $aData['PRO_DESCRIPTION'] )) {
-                $this->setProDescription( $aData['PRO_DESCRIPTION'] );
+                $this->setProDescriptionContent( $aData['PRO_DESCRIPTION'] );
             } else {
-                $this->setProDescription( 'Default Process Description' );
+                $this->setProDescriptionContent( 'Default Process Description' );
             }
             $con->commit();
 
@@ -556,9 +488,7 @@ class Process extends BaseProcess
             if (! is_null( $oPro )) {
                 Content::removeContent( 'PRO_TITLE', '', $oPro->getProUid() );
                 Content::removeContent( 'PRO_DESCRIPTION', '', $oPro->getProUid() );
-
                 $this->memcachedDelete();
-
                 return $oPro->delete();
             } else {
                 throw (new Exception( "The row '$ProUid' in table Process doesn't exist!" ));
@@ -577,61 +507,44 @@ class Process extends BaseProcess
     public static function existsByProTitle ($proTitle)
     {
         $oCriteria = new Criteria("workflow");
-
-        $oCriteria->addSelectColumn("COUNT(" . ContentPeer::CON_ID . ") AS NUM_REC");
-
-        $oCriteria->add( ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
-        $oCriteria->add( ContentPeer::CON_LANG, SYS_LANG );
-        $oCriteria->add( ContentPeer::CON_VALUE, $proTitle );
-        $oDataset = ContentPeer::doSelectRS( $oCriteria, Propel::getDbConnection('workflow_ro') );
+        $oCriteria->addSelectColumn(ProcessPeer::PRO_TITLE);
+        $oCriteria->add( ProcessPeer::PRO_TITLE, $proTitle );
+        $oDataset = ProcessPeer::doSelectRS( $oCriteria, Propel::getDbConnection('workflow_ro') );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-
         $oDataset->next();
         $aRow = $oDataset->getRow();
-
-        return ((int)($aRow["NUM_REC"]) > 0)? true : false;
+        return ($aRow)? true : false;
     }
 
-    public static function getByProTitle($proTitle) {
+    public static function getByProTitle($proTitle)
+    {
         $oCriteria = new Criteria("workflow");
-
-        $oCriteria->addSelectColumn(ContentPeer::CON_ID);
-
-        $oCriteria->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE');
-        $oCriteria->add(ContentPeer::CON_LANG, SYS_LANG);
-        $oCriteria->add(ContentPeer::CON_VALUE, $proTitle);
-        $oDataset = ContentPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
+        $oCriteria->add(ProcessPeer::PRO_TITLE, $proTitle);
+        $oDataset = ProcessPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
         $oDataset->next();
         $aRow = $oDataset->getRow();
-        $oProcess = new Process();
-        return isset($aRow["CON_ID"]) ? $oProcess->load($aRow["CON_ID"]) : null;
+        return isset($aRow) ? $aRow : null;
     }
 
-    public static function getNextTitle($proTitle) {
+    public static function getNextTitle($proTitle)
+    {
         $oCriteria = new Criteria('workflow');
-
-        $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
-
-        $oCriteria->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE');
-        $oCriteria->add(ContentPeer::CON_LANG, SYS_LANG);
-        $oCriteria->add(ContentPeer::CON_VALUE, $proTitle . '-%', Criteria::LIKE);
-        $oCriteria->addAscendingOrderByColumn(ContentPeer::CON_VALUE);
-
-        $oDataset = ContentPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
+        $oCriteria->addSelectColumn(ProcessPeer::PRO_TITLE);
+        $oCriteria->add(ProcessPeer::PRO_TITLE, $proTitle . '-%', Criteria::LIKE);
+        $oCriteria->addAscendingOrderByColumn(ProcessPeer::PRO_TITLE);
+        $oDataset = ProcessPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
         $data = array();
         $may = 0;
         while ($oDataset->next()) {
             $row = $oDataset->getRow();
-            $number = explode("-", $row["CON_VALUE"]);
+            $number = explode("-", $row["PRO_TITLE"]);
             $number = $number[count($number) - 1] + 0;
             if ($number > $may) {
                 $may = $number;
             }
-            $row["CON_VALUE"] = $number;
+            $row["PRO_TITLE"] = $number;
             $data[] = $row;
         }
         return $proTitle . "-" . ($may + 1);
@@ -665,6 +578,8 @@ class Process extends BaseProcess
         $oCriteria = new Criteria( 'workflow' );
 
         $oCriteria->addSelectColumn( ProcessPeer::PRO_UID );
+        $oCriteria->addSelectColumn( ProcessPeer::PRO_TITLE );
+        $oCriteria->addSelectColumn( ProcessPeer::PRO_DESCRIPTION );
         $oCriteria->addSelectColumn( ProcessPeer::PRO_PARENT );
         $oCriteria->addSelectColumn( ProcessPeer::PRO_STATUS );
         $oCriteria->addSelectColumn(ProcessPeer::PRO_TYPE);
@@ -744,30 +659,13 @@ class Process extends BaseProcess
             $uids[] = $processes[sizeof( $processes ) - 1]['PRO_UID'];
         }
 
-        //process details will have the info about the processes
-        $processesDetails = Array ();
-
-        //now get the labels for all process, using an array of Uids,
-        $c = new Criteria( 'workflow' );
-        //$c->add ( ContentPeer::CON_CATEGORY, 'PRO_TITLE', Criteria::EQUAL );
-        $c->add( ContentPeer::CON_LANG, defined( 'SYS_LANG' ) ? SYS_LANG : 'en', Criteria::EQUAL );
-        $c->add( ContentPeer::CON_ID, $uids, Criteria::IN );
-
-        $dt = ContentPeer::doSelectRS( $c, Propel::getDbConnection('workflow_ro') );
-        $dt->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-
-        while ($dt->next()) {
-            $row = $dt->getRow();
-            $processesDetails[$row['CON_ID']][$row['CON_CATEGORY']] = $row['CON_VALUE'];
-        }
-
         G::loadClass( 'configuration' );
         $oConf = new Configurations();
         $oConf->loadConfig( $obj, 'ENVIRONMENT_SETTINGS', '' );
 
         foreach ($processes as $process) {
-            $proTitle = isset( $processesDetails[$process['PRO_UID']] ) && isset( $processesDetails[$process['PRO_UID']]['PRO_TITLE'] ) ? $processesDetails[$process['PRO_UID']]['PRO_TITLE'] : '';
-            $proDescription = isset( $processesDetails[$process['PRO_UID']] ) && isset( $processesDetails[$process['PRO_UID']]['PRO_DESCRIPTION'] ) ? $processesDetails[$process['PRO_UID']]['PRO_DESCRIPTION'] : '';
+            $proTitle = isset($process['PRO_TITLE'])? $process['PRO_TITLE'] : '';
+            $proDescription = isset($process['PRO_DESCRIPTION']) ? $process['PRO_DESCRIPTION'] : '';
             $process["PRO_TYPE_PROCESS"] = ($process["PRO_TYPE_PROCESS"] == "PUBLIC") ? G::LoadTranslation("ID_PUBLIC") : G::LoadTranslation("ID_PRIVATE");
 
             // verify if the title is already set on the current language

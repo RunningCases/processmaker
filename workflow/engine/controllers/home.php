@@ -714,15 +714,7 @@ class Home extends Controller
                 $cProcess = new Criteria("workflow");
                 $cProcess->clearSelectColumns();
                 $cProcess->addSelectColumn(ProcessPeer::PRO_UID);
-                $cProcess->addSelectColumn(ContentPeer::CON_VALUE);
-
-                $del = DBAdapter::getStringDelimiter();
-
-                $conds = array();
-                $conds[] = array(ProcessPeer::PRO_UID,      ContentPeer::CON_ID);
-                $conds[] = array(ContentPeer::CON_CATEGORY, $del . "PRO_TITLE" . $del);
-                $conds[] = array(ContentPeer::CON_LANG,     $del . $lang . $del);
-                $cProcess->addJoinMC($conds, Criteria::LEFT_JOIN);
+                $cProcess->addSelectColumn(ProcessPeer::PRO_TITLE);
                 $cProcess->add(ProcessPeer::PRO_STATUS, "ACTIVE");
                 $oDataset = ProcessPeer::doSelectRS($cProcess);
 
@@ -730,7 +722,7 @@ class Home extends Controller
 
                 $oDataset->next();
                 while ($aRow = $oDataset->getRow()) {
-                  $processes[] = array($aRow["PRO_UID"], $aRow["CON_VALUE"]);
+                  $processes[] = array($aRow["PRO_UID"], $aRow["PRO_TITLE"]);
                   $oDataset->next();
                 }
 

@@ -2734,7 +2734,7 @@ class AppSolr
     $c->addSelectColumn (ApplicationPeer::APP_DATA);
   
     $c->addAsColumn ('APP_TITLE', 'capp.CON_VALUE');
-    $c->addAsColumn ('PRO_TITLE', 'cpro.CON_VALUE');
+    $c->addSelectColumn ('pro.PRO_TITLE');
   
     $c->addSelectColumn ('ad.DEL_INDEX');
     $c->addSelectColumn ('ad.DEL_PREVIOUS');
@@ -2767,7 +2767,6 @@ class AppSolr
     $c->addAsColumn("PRO_CATEGORY_UID", "pro.PRO_CATEGORY");
 
     $c->addAlias ('capp', 'CONTENT');
-    $c->addAlias ('cpro', 'CONTENT');
     $c->addAlias ('ad', 'APP_DELEGATION');
     $c->addAlias ('at', 'APP_THREAD');
     $c->addAlias ('ade', 'APP_DELAY');
@@ -2787,22 +2786,7 @@ class AppSolr
         DBAdapter::getStringDelimiter () . 'en' . DBAdapter::getStringDelimiter ()
     );
     $c->addJoinMC ($aConditions, Criteria::LEFT_JOIN);
-  
-    $aConditions = array ();
-    $aConditions [] = array (
-        ApplicationPeer::PRO_UID,
-        'cpro.CON_ID'
-    );
-    $aConditions [] = array (
-        'cpro.CON_CATEGORY',
-        DBAdapter::getStringDelimiter () . 'PRO_TITLE' . DBAdapter::getStringDelimiter ()
-    );
-    $aConditions [] = array (
-        'cpro.CON_LANG',
-        DBAdapter::getStringDelimiter () . 'en' . DBAdapter::getStringDelimiter ()
-    );
-    $c->addJoinMC ($aConditions, Criteria::LEFT_JOIN);
-  
+    $c->addJoin (ApplicationPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
     $c->addJoin (ApplicationPeer::APP_UID, 'ad.APP_UID', Criteria::JOIN);
   
     $aConditions = array ();

@@ -3033,12 +3033,8 @@ function PMFGetProcessUidByName($processName = '')
         $criteria = new Criteria('workflow');
 
         $criteria->addSelectColumn(ProcessPeer::PRO_UID);
-
-        $criteria->addJoin(ContentPeer::CON_ID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
-        $criteria->add(ContentPeer::CON_VALUE, $processName, Criteria::EQUAL);
-        $criteria->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE', Criteria::EQUAL);
-
-        $rsCriteria = ContentPeer::doSelectRS($criteria);
+        $criteria->add(ProcessPeer::PRO_TITLE, $processName, Criteria::EQUAL);
+        $rsCriteria = ProcessPeer::doSelectRS($criteria);
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
         if ($rsCriteria->next()) {

@@ -2641,6 +2641,7 @@ class Cases
             $c->clearSelectColumns();
             $c->addSelectColumn(\TaskPeer::TAS_UID);
             $c->addSelectColumn(\TaskPeer::PRO_UID);
+            $c->addSelectColumn(\ProcessPeer::PRO_TITLE);
             $c->addJoin(\TaskPeer::PRO_UID, \ProcessPeer::PRO_UID, \Criteria::LEFT_JOIN);
             $c->addJoin(\TaskPeer::TAS_UID, \TaskUserPeer::TAS_UID, \Criteria::LEFT_JOIN);
             $c->add(\ProcessPeer::PRO_STATUS, 'ACTIVE');
@@ -2661,20 +2662,6 @@ class Cases
                 \DBAdapter::getStringDelimiter() . SYS_LANG . \DBAdapter::getStringDelimiter()
             );
             $c->addJoinMC( $tasTitleConds, \Criteria::LEFT_JOIN );
-
-            $c->addAsColumn('PRO_TITLE', 'C2.CON_VALUE');
-            $c->addAlias("C2", 'CONTENT');
-            $proTitleConds = array();
-            $proTitleConds[] = array(\ProcessPeer::PRO_UID, 'C2.CON_ID');
-            $proTitleConds[] = array(
-                'C2.CON_CATEGORY',
-                \DBAdapter::getStringDelimiter() . 'PRO_TITLE' . \DBAdapter::getStringDelimiter()
-            );
-            $proTitleConds[] = array(
-                'C2.CON_LANG',
-                \DBAdapter::getStringDelimiter() . SYS_LANG . \DBAdapter::getStringDelimiter()
-            );
-            $c->addJoinMC( $proTitleConds, \Criteria::LEFT_JOIN );
 
             if ($typeView == 'category') {
                 $c->addAsColumn('PRO_CATEGORY', 'PCS.PRO_CATEGORY');

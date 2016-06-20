@@ -1098,26 +1098,19 @@ class Light
                 $cProcess = new Criteria( 'workflow' );
                 $cProcess->clearSelectColumns();
                 $cProcess->addSelectColumn( \ProcessPeer::PRO_UID );
-                $cProcess->addSelectColumn( \ContentPeer::CON_VALUE );
+                $cProcess->addSelectColumn( \ProcessPeer::PRO_TITLE );
                 if ($categoryUid) {
                     $cProcess->add( \ProcessPeer::PRO_CATEGORY, $categoryUid );
                 }
-                $del = DBAdapter::getStringDelimiter();
-                $conds = array ();
-                $conds[] = array (ProcessPeer::PRO_UID,ContentPeer::CON_ID);
-                $conds[] = array (ContentPeer::CON_CATEGORY,$del . 'PRO_TITLE' . $del);
-                $conds[] = array (ContentPeer::CON_LANG,$del . $lang . $del);
-                $cProcess->addJoinMC( $conds, Criteria::LEFT_JOIN );
                 $cProcess->add( ProcessPeer::PRO_STATUS, 'ACTIVE' );
-                $cProcess->addAscendingOrderByColumn(ContentPeer::CON_VALUE);
+                $cProcess->addAscendingOrderByColumn(\ProcessPeer::PRO_TITLE);
 
-                $oDataset = ProcessPeer::doSelectRS( $cProcess );
-                $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+                $oDataset = \ProcessPeer::doSelectRS( $cProcess );
+                $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
                 $oDataset->next();
 
                 while ($aRow = $oDataset->getRow()) {
-                    $processes[] = array ($aRow['PRO_UID'],$aRow['CON_VALUE']
-                    );
+                    $processes[] = array ($aRow['PRO_UID'],$aRow['PRO_TITLE']);
                     $oDataset->next();
                 }
                 return print G::json_encode( $processes );
