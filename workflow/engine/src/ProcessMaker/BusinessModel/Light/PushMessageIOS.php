@@ -19,6 +19,7 @@ class PushMessageIOS
     private $pemFile = 'mobileios.pem';
     private $devices = array();
     private $response = array();
+    private $numberDevices = 0;
 
     /**
      * Sete server notification Ios
@@ -44,13 +45,13 @@ class PushMessageIOS
      */
     public function setPemFile($file)
     {
-        $file = file_exists(PATH_CONFIG . $file)?$file:'mobileios.pem';
+        $file = file_exists(PATH_CONFIG . $file) ? $file : 'mobileios.pem';
         $this->pemFile = $file;
     }
 
     /**
      * Set the devices token to send to
-     * @param array $devicesToken  of device tokens to send to
+     * @param array $devicesToken of device tokens to send to
      */
     public function setDevices($devicesToken)
     {
@@ -81,7 +82,8 @@ class PushMessageIOS
      */
     public function send($message, $data)
     {
-        if (!is_array($this->devices) || count($this->devices) == 0) {
+        $this->numberDevices = count($this->devices);
+        if (!is_array($this->devices) || $this->numberDevices == 0) {
             $this->error("No devices set");
         }
         if (strlen($this->passphrase) < 8) {
@@ -152,6 +154,11 @@ class PushMessageIOS
         }
 
         return $this->response;
+    }
+
+    public function getNumberDevices()
+    {
+        return $this->numberDevices;
     }
 
     public function error($msg)

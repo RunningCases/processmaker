@@ -304,6 +304,9 @@ try {
 
                     $timerEvent->startContinueCaseByTimerEvent(date('Y-m-d H:i:s'), true);
                     break;
+                case 'sendnotificationscron':
+                    sendNotifications();
+                    break;
             }
         } catch (Exception $e) {
             echo $e->getMessage() . "\n";
@@ -1036,3 +1039,50 @@ function synchronizeGmailLabels()
     }
 }
 /*----------------------------------********---------------------------------*/
+
+function sendNotifications()
+{
+    try {
+        global $argvx;
+        if ($argvx != "" && strpos($argvx, "send-notifications") === false) {
+            return false;
+        }
+        setExecutionMessage("Resending Notifications");
+        setExecutionResultMessage("PROCESSING");
+        $notQueue = new \NotificationQueue();
+        $notificationsAndroid = $notQueue->loadStatusDeviceType('pending', 'android');
+        if ($notificationsAndroid) {
+            setExecutionMessage("|-- Send Android's Notifications");
+            $n = 0;
+            foreach ($notificationsAndroid as $key => $item) {
+                $oNotification = new \ProcessMaker\BusinessModel\Light\PushMessageAndroid();
+                $oNotification->setSettingNotification();
+                $oNotification->setDevices(unserialize($item['DEV_UID']));
+                $response['android'] = $oNotification->send($item['NOT_MSG'], unserialize($item['NOT_DATA']));
+                $notQueue = new \NotificationQueue();
+                $notQueue->changeStatusSent($item['NOT_UID']);
+                $n += $oNotification->getNumberDevices();
+            }
+            setExecutionResultMessage("Processed $n");
+        }
+        $notificationsApple = $notQueue->loadStatusDeviceType('pending', 'apple');
+        if($notificationsApple) {
+            setExecutionMessage("|-- Send Apple Notifications");
+            $n = 0;
+            foreach ($notificationsApple as $key => $item) {
+                $oNotification = new \ProcessMaker\BusinessModel\Light\PushMessageIOS();
+                $oNotification->setSettingNotification();
+                $oNotification->setDevices(unserialize($item['DEV_UID']));
+                $response['apple'] = $oNotification->send($item['NOT_MSG'], unserialize($item['NOT_DATA']));
+                $notQueue = new \NotificationQueue();
+                $notQueue->changeStatusSent($item['NOT_UID']);
+                $n += $oNotification->getNumberDevices();
+            }
+            setExecutionResultMessage("Processed $n");
+        }
+    } catch (Exception $e) {
+        setExecutionResultMessage("WITH ERRORS", "error");
+        eprintln("  '-" . $e->getMessage(), "red");
+        saveLog("ExecuteSendNotifications", "error", "Error when sending notifications " . $e->getMessage());
+    }
+}

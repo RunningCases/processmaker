@@ -228,16 +228,26 @@ class NotificationDevice
                     $isExistNextNotifications = $oNoti->isExistNextNotification($appFields['APP_UID'],
                         $currentDelIndex);
                     if (count($devicesAppleIds) > 0 && $isExistNextNotifications) {
-                        $oNotification = new PushMessageIOS();
-                        $oNotification->setSettingNotification();
-                        $oNotification->setDevices($devicesAppleIds);
-                        $response['apple'] = $oNotification->send($message, $data);
+                        $arrayData = array();
+                        $arrayData['NOT_FROM'] = $currentUserId;
+                        $arrayData['DEV_TYPE'] = 'apple';
+                        $arrayData['DEV_UID'] = serialize($devicesAppleIds);
+                        $arrayData['NOT_MSG'] = $message;
+                        $arrayData['NOT_DATA'] = serialize($data);
+                        $arrayData['NOT_STATUS'] = "pending";
+                        $notQueue = new \NotificationQueue();
+                        $notQueue->create($arrayData);
                     }
                     if (count($devicesAndroidIds) > 0 && $isExistNextNotifications) {
-                        $oNotification = new PushMessageAndroid();
-                        $oNotification->setSettingNotification();
-                        $oNotification->setDevices($devicesAndroidIds);
-                        $response['android'] = $oNotification->send($message, $data);
+                        $arrayData = array();
+                        $arrayData['NOT_FROM'] = $currentUserId;
+                        $arrayData['DEV_TYPE'] = 'android';
+                        $arrayData['DEV_UID'] = serialize($devicesAndroidIds);
+                        $arrayData['NOT_MSG'] = $message;
+                        $arrayData['NOT_DATA'] = serialize($data);
+                        $arrayData['NOT_STATUS'] = "pending";
+                        $notQueue = new \NotificationQueue();
+                        $notQueue->create($arrayData);
                     }
                 }
             }
