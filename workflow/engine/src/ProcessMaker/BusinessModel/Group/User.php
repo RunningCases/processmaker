@@ -307,5 +307,61 @@ class User
             throw $e;
         }
     }
+
+    /**
+     * Unassign users to group
+     *
+     * @param string $groupUid  Unique id of Group
+     * @param array  $arrayData Data uid of Users
+     *
+     * @return array Return result
+     */
+    public function unassignUsers($groupUid, array $users)
+    {
+        try {
+            $user = new \ProcessMaker\BusinessModel\User();
+
+            $result = [];
+
+            foreach ($users as $value) {
+                $userUid = $value;
+                $flagRemove = 1;
+
+                //Verify data
+                $arrayUserData = $user->getUserRecordByPk($userUid, [], false);
+
+                if ($arrayUserData === false) {
+                    $result[$userUid] = 'USER_NOT_EXISTS';
+                    $flagRemove = 0;
+                }
+
+                if ($flagRemove == 1 && $arrayUserData['USR_STATUS'] == 'CLOSED') {
+                    $result[$userUid] = 'USER_CLOSED';
+                    $flagRemove = 0;
+                }
+
+                $groupUser = \GroupUserPeer::retrieveByPK($groupUid, $userUid);
+
+                if ($flagRemove == 1 && is_null($groupUser)) {
+                    $result[$userUid] = 'USER_NOT_BELONG_TO_GROUP';
+                    $flagRemove = 0;
+                }
+
+                //Remove
+                $group = new \Groups();
+
+                if ($flagRemove == 1) {
+                    $group->removeUserOfGroup($groupUid, $userUid);
+
+                    $result[$userUid] = 'USER_SUCCESSFULLY_REMOVED';
+                }
+            }
+
+            //Return
+            return $result;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
 
