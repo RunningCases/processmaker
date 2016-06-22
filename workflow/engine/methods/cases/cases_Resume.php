@@ -117,6 +117,9 @@ $Fields['PRO_TITLE'] = $aProc['PRO_TITLE'];
 
 
 $objTask = new Task();
+if(!isset($Fields['TAS_UID']) || $Fields['TAS_UID'] == '') {
+    $Fields['TAS_UID'] = $Fields['APP_DATA']['TASK'];
+}
 $aTask = $objTask->load( $Fields['TAS_UID'] );
 $Fields['TAS_TITLE'] = $aTask['TAS_TITLE'];
 

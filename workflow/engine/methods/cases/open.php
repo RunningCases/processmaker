@@ -54,6 +54,17 @@ if (! isset( $_GET['APP_UID'] ) || ! isset( $_GET['DEL_INDEX'] )) {
     $delIndex = htmlspecialchars($_GET['DEL_INDEX']);
 }
 
+if( isset($_GET['actionFromList']) && ($_GET['actionFromList'] == 'to_revise') ) {
+    $oApp = new Application;
+    $oApp->Load($appUid);
+    if($oApp->getAppStatus() == 'COMPLETED') {
+        unset($_GET['to_revise']);
+    } else {
+        $_GET['APP_UID'] = $appUid;
+        $_GET['DEL_INDEX'] = $delIndex;
+    }
+}
+
 require_once ("classes/model/Step.php");
 G::LoadClass( "configuration" );
 G::LoadClass( "case" );

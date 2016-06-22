@@ -38,6 +38,15 @@ switch ($RBAC->userCanAccess( 'PM_SUPERVISOR' )) {
         die();
         break;
 }
+
+$processUser = new ProcessUser();
+$userAccess = $processUser->validateUserAccess($_GET['PRO_UID'], $_SESSION['USER_LOGGED'], 'SUPERVISOR');
+if(!$userAccess) {
+    G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels' );
+    G::header( 'location: ../login/login' );
+    die();
+}
+
 $_SESSION = $filter->xssFilterHard($_SESSION,"url");
 if ((int) $_SESSION['INDEX'] < 1) {
     $_SERVER['HTTP_REFERER'] = $filter->xssFilterHard($_SERVER['HTTP_REFERER']);

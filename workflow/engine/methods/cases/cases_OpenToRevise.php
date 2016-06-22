@@ -134,6 +134,12 @@ while ($rsCriteria->next()) {
     }
 }
 
+$processUser = new ProcessUser();
+$userAccess = $processUser->validateUserAccess($aFields['PRO_UID'], $_SESSION['USER_LOGGED'], 'SUPERVISOR');
+if(!$userAccess) {
+    $flag = false;
+}
+
 if ($flag) {
     G::header("Location: " . $url);
 } else {
