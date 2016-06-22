@@ -780,7 +780,7 @@ try {
 
             $aFields['TASK'] = $oDerivation->prepareInformation( array ('USER_UID' => $_SESSION['USER_LOGGED'],'APP_UID' => $_SESSION['APPLICATION'],'DEL_INDEX' => $_SESSION['INDEX']
             ) );
-
+            
             if (empty( $aFields['TASK'] )) {
                 throw (new Exception( G::LoadTranslation( 'ID_NO_DERIVATION_RULE' ) ));
             }
