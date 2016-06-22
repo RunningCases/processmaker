@@ -390,20 +390,11 @@ class Dashboard extends Controller
                     $criteria = new Criteria( 'workflow' );
                     $criteria->setDistinct();
                     $criteria->addSelectColumn( GroupwfPeer::GRP_UID );
-                    $criteria->addSelectColumn( ContentPeer::CON_VALUE );
-                    //FROM
-                    $conditions = array ();
-                    $conditions[] = array (GroupwfPeer::GRP_UID,ContentPeer::CON_ID
-                    );
-                    $conditions[] = array (ContentPeer::CON_CATEGORY,DBAdapter::getStringDelimiter() . 'GRP_TITLE' . DBAdapter::getStringDelimiter()
-                    );
-                    $conditions[] = array (ContentPeer::CON_LANG,DBAdapter::getStringDelimiter() . 'en' . DBAdapter::getStringDelimiter()
-                    );
-                    $criteria->addJoinMC( $conditions, Criteria::LEFT_JOIN );
+                    $criteria->addSelectColumn( GroupwfPeer::GRP_TITLE );
                     //WHERE
                     $criteria->add( GroupwfPeer::GRP_STATUS, 'ACTIVE' );
                     //ORDER BY
-                    $criteria->addAscendingOrderByColumn( ContentPeer::CON_VALUE );
+                    $criteria->addAscendingOrderByColumn( GroupwfPeer::GRP_TITLE );
 
                     $dataset = GroupwfPeer::doSelectRS( $criteria );
                     $dataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );

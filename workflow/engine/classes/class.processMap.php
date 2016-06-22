@@ -3474,16 +3474,10 @@ class processMap
         );
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(GroupwfPeer::GRP_UID);
-        $oCriteria->addAsColumn('GRP_TITLE', ContentPeer::CON_VALUE);
-
-        $aConditions [] = array(GroupwfPeer::GRP_UID, ContentPeer::CON_ID);
-        $aConditions [] = array(ContentPeer::CON_CATEGORY, DBAdapter::getStringDelimiter() . 'GRP_TITLE' . DBAdapter::getStringDelimiter());
-        $aConditions [] = array(ContentPeer::CON_LANG, DBAdapter::getStringDelimiter() . SYS_LANG . DBAdapter::getStringDelimiter());
-
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(GroupwfPeer::GRP_TITLE);
         $oCriteria->add(GroupwfPeer::GRP_UID, $aGRUS, Criteria::NOT_IN);
 
-        $oCriteria->addAscendingOrderByColumn(ContentPeer::CON_VALUE);
+        $oCriteria->addAscendingOrderByColumn(GroupwfPeer::GRP_TITLE);
         $oDataset = GroupwfPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
@@ -4068,14 +4062,9 @@ class processMap
         $usersGroups = '<select pm:dependent="0" pm:label="' . G::LoadTranslation('ID_GROUP_USERS') . '" name="form[GROUP_USER]" id="form[GROUP_USER]" class="module_app_input___gray">';
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(GroupwfPeer::GRP_UID);
-        $oCriteria->addAsColumn('GRP_TITLE', ContentPeer::CON_VALUE);
-        $aConditions = array();
-        $aConditions[] = array(GroupwfPeer::GRP_UID, ContentPeer::CON_ID);
-        $aConditions[] = array(ContentPeer::CON_CATEGORY, DBAdapter::getStringDelimiter() . 'GRP_TITLE' . DBAdapter::getStringDelimiter());
-        $aConditions[] = array(ContentPeer::CON_LANG, DBAdapter::getStringDelimiter() . SYS_LANG . DBAdapter::getStringDelimiter());
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(GroupwfPeer::GRP_TITLE);
         $oCriteria->add(GroupwfPeer::GRP_STATUS, 'ACTIVE');
-        $oCriteria->addAscendingOrderByColumn('GRP_TITLE');
+        $oCriteria->addAscendingOrderByColumn(GroupwfPeer::GRP_TITLE);
         $oDataset = GroupwfPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
@@ -5362,13 +5351,7 @@ class processMap
             $sDelimiter = DBAdapter::getStringDelimiter();
             $oCriteria = new Criteria('workflow');
             $oCriteria->addSelectColumn(GroupwfPeer::GRP_UID);
-            $oCriteria->addAsColumn('GRP_TITLE', 'C.CON_VALUE');
-            $oCriteria->addAlias('C', 'CONTENT');
-            $aConditions = array();
-            $aConditions[] = array(GroupwfPeer::GRP_UID, 'C.CON_ID');
-            $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'GRP_TITLE' . $sDelimiter);
-            $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-            $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+            $oCriteria->addSelectColumn(GroupwfPeer::GRP_TITLE);
             $oCriteria->add(GroupwfPeer::GRP_STATUS, 'ACTIVE');
             $oCriteria->add(GroupwfPeer::GRP_UID, $aUIDS1, Criteria::NOT_IN);
             //$oCriteria->add(GroupwfPeer::GRP_UID, '', Criteria::NOT_EQUAL);
@@ -6649,12 +6632,7 @@ class processMap
         $aUsersGroups[] = array('UID' => 'char', 'LABEL' => 'char' );
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(GroupwfPeer::GRP_UID);
-        $oCriteria->addAsColumn('GRP_TITLE', ContentPeer::CON_VALUE);
-        $aConditions = array();
-        $aConditions[] = array(GroupwfPeer::GRP_UID, ContentPeer::CON_ID );
-        $aConditions[] = array(ContentPeer::CON_CATEGORY, DBAdapter::getStringDelimiter() . 'GRP_TITLE' . DBAdapter::getStringDelimiter() );
-        $aConditions[] = array(ContentPeer::CON_LANG, DBAdapter::getStringDelimiter() . SYS_LANG . DBAdapter::getStringDelimiter() );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(GroupwfPeer::GRP_TITLE);
         $oCriteria->add(GroupwfPeer::GRP_STATUS, 'ACTIVE');
         $oDataset = GroupwfPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -7004,13 +6982,7 @@ class processMap
             $sDelimiter = DBAdapter::getStringDelimiter();
             $oCriteria = new Criteria('workflow');
             $oCriteria->addSelectColumn(GroupwfPeer::GRP_UID);
-            $oCriteria->addAsColumn('GRP_TITLE', 'C.CON_VALUE');
-            $oCriteria->addAlias('C', 'CONTENT');
-            $aConditions = array();
-            $aConditions[] = array(GroupwfPeer::GRP_UID, 'C.CON_ID' );
-            $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'GRP_TITLE' . $sDelimiter );
-            $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-            $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+            $oCriteria->addSelectColumn(GroupwfPeer::GRP_TITLE);
             $oCriteria->add(GroupwfPeer::GRP_STATUS, 'ACTIVE');
             $oCriteria->add(GroupwfPeer::GRP_UID, $aUIDS1, Criteria::NOT_IN);
             //$oCriteria->add(GroupwfPeer::GRP_UID, '', Criteria::NOT_EQUAL);
