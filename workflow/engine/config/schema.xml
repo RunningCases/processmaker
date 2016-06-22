@@ -4406,17 +4406,17 @@
             <parameter name="Comment" value="Unassiged list"/>
         </vendor>
         <column name="APP_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
-        <column name="UNA_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="DEL_INDEX" type="INTEGER" required="true" primaryKey="true" default="0"/>
         <column name="TAS_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="APP_NUMBER" type="INTEGER" required="true" default="0"/>
         <column name="APP_TITLE" type="VARCHAR" size="255" required="true" default=""/>
         <column name="APP_PRO_TITLE" type="VARCHAR" size="255" required="true" default=""/>
         <column name="APP_TAS_TITLE" type="VARCHAR" size="255" required="true" default=""/>
-        <column name="APP_PREVIOUS_USR_USERNAME" type="VARCHAR" size="100" default=""/>
-        <column name="APP_PREVIOUS_USR_FIRSTNAME" type="VARCHAR" size="50" default=""/>
-        <column name="APP_PREVIOUS_USR_LASTNAME" type="VARCHAR" size="50" default=""/>
-        <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
+        <column name="DEL_PREVIOUS_USR_USERNAME" type="VARCHAR" size="100" default=""/>
+        <column name="DEL_PREVIOUS_USR_FIRSTNAME" type="VARCHAR" size="50" default=""/>
+        <column name="DEL_PREVIOUS_USR_LASTNAME" type="VARCHAR" size="50" default=""/>
+        <column name="APP_UPDATE_DATE" type="TIMESTAMP" required="true"/>
         <column name="DEL_PREVIOUS_USR_UID" type="VARCHAR" size="32" default=""/>
         <column name="DEL_DELEGATE_DATE" type="TIMESTAMP" required="true"/>
         <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>

@@ -1319,6 +1319,10 @@ class Cases
 
             $appAssignSelfServiceValue->remove($sAppUid, $iDelIndex);
             /*----------------------------------********---------------------------------*/
+            //Delete record of the table LIST_UNASSIGNED
+            $unassigned = new ListUnassigned();
+            $unassigned->remove($sAppUid, $iDelIndex);
+
             $aFields = $oAppDel->toArray(BasePeer::TYPE_FIELDNAME);
             $aFields['APP_STATUS'] = 'TO_DO';
             $inbox = new ListInbox();
