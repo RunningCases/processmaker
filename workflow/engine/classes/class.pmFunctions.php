@@ -3547,3 +3547,95 @@ function PMFRemoveUsersToGroup($groupUid, array $users)
     }
 }
 
+/**
+ * @method
+ *
+ * Copy or attach a file to a Case
+ *
+ * @name PMFCopyDocumentCase
+ * @label PMF Copy Document Case
+ *
+ * @param string | $appDocUid | Document Application ID | The unique Uid of the Document.
+ * @param int | $versionNumber | Version Number | Is the document version.
+ * @param string | $targetCaseUid | Case ID | Is the target case uid where we want to copy the document to.
+ * @param string | $inputDocumentUid =null | InputDocument ID | Optional parameter. Is the input document that we want to associate with in the target case. If is not specified then the file is uploaded as attachment in the case (not associated to any input document).
+ *
+ * @return string | $newUidAppDocUid | ID of the document | Returns ID if it has copied the input document successfully; otherwise, returns exception if an error occurred.
+ */
+function PMFCopyDocumentCase($appDocUid, $versionNumber, $targetCaseUid, $inputDocumentUid = null)
+{
+    try {
+        $messageError = 'function:PMFCopyDocumentCase Error!, ';
+        $appDocument = new AppDocument();
+        $dataFields = $appDocument->load($appDocUid, $versionNumber);
+        if (!$dataFields) {
+            throw new Exception($messageError . 'The AppDocUid does not exist');
+        }
+        $arrayFieldData = array(
+            "APP_UID" => $targetCaseUid,
+            "DEL_INDEX" => $dataFields['DEL_INDEX'],
+            "USR_UID" => $dataFields['USR_UID'],
+            "DOC_UID" => ($inputDocumentUid != null) ? $inputDocumentUid : $dataFields['DOC_UID'],
+            "APP_DOC_TYPE" => $dataFields['APP_DOC_TYPE'],
+            "APP_DOC_CREATE_DATE" => date("Y-m-d H:i:s"),
+            "APP_DOC_COMMENT" => $dataFields['APP_DOC_COMMENT'],
+            "APP_DOC_TITLE" => $dataFields['APP_DOC_TITLE'],
+            "APP_DOC_FILENAME" => $dataFields['APP_DOC_TITLE'],
+            "FOLDER_UID" => $dataFields['FOLDER_UID'],
+            "APP_DOC_TAGS" => $dataFields['APP_DOC_TAGS']
+        );
+
+        $arrayInfo = pathinfo($appDocument->getAppDocFilename());
+        $ext = (isset($arrayInfo['extension']) ? $arrayInfo['extension'] : '');
+        $parcialPath = G::getPathFromUID($dataFields['APP_UID']);
+        $file = G::getPathFromFileUID($dataFields['APP_UID'], $dataFields['APP_DOC_UID']);
+        $realPath = PATH_DOCUMENT . $parcialPath . '/' . $file[0] . $file[1] . '_' . $versionNumber . '.' . $ext;
+        $strFileName = $dataFields['APP_DOC_UID'] . '_' . $versionNumber . '.' . $ext;
+        $newUidAppDocUid = null;
+        if ($dataFields['APP_DOC_TYPE'] == 'INPUT') {
+            if (file_exists($realPath)) {
+                $strPathName = PATH_DOCUMENT . G::getPathFromUID($targetCaseUid) . PATH_SEP;
+                if (!is_dir($strPathName)) {
+                    G::mk_dir($strPathName);
+                }
+                $appNewDocument = new AppDocument();
+                $newUidAppDocUid = $appNewDocument->create($arrayFieldData);
+                $appNewDocument->setAppDocTitle($dataFields['APP_DOC_TITLE']);
+                $appNewDocument->setAppDocComment($dataFields['APP_DOC_COMMENT']);
+                $appNewDocument->setAppDocFilename($dataFields['APP_DOC_FILENAME']);
+                $newStrFileName = $newUidAppDocUid . '_' . $versionNumber . '.' . $ext;
+                $resultCopy = copy($realPath, $strPathName . $newStrFileName);
+                if (!$resultCopy) {
+                    throw new Exception($messageError, 'Could not copy the document');
+                }
+            } else {
+                throw new Exception($messageError, 'The document for copy does not exist');
+            }
+        } else {
+            $pathOutput = PATH_DOCUMENT . G::getPathFromUID($dataFields['APP_UID']) . PATH_SEP . 'outdocs' . PATH_SEP;
+            if (is_dir($pathOutput)) {
+                @chmod($pathOutput, 0755);
+                $strPathName = PATH_DOCUMENT . G::getPathFromUID($targetCaseUid) . PATH_SEP . 'outdocs' . PATH_SEP;
+                if (!is_dir($strPathName)) {
+                    G::mk_dir($strPathName);
+                }
+                @chmod($strPathName, 0755);
+                $oAppDocument = new AppDocument();
+                $newUidAppDocUid = $oAppDocument->create($arrayFieldData);
+                $arrayExtension = array('doc', 'html', 'pdf');
+                $newStrFilename = $newUidAppDocUid . '_' . $versionNumber;
+                foreach ($arrayExtension as $item) {
+                    $resultCopy = copy($pathOutput . $strFileName . $item, $strPathName . $newStrFilename . '.' . $item);
+                    if (!$resultCopy) {
+                        throw new Exception($messageError, 'Could not copy the document');
+                    }
+                }
+            } else {
+                throw new Exception($messageError, 'The document for copy does not exist');
+            }
+        }
+        return $newUidAppDocUid;
+    } catch (Exception $e) {
+        throw $e;
+    }
+}
