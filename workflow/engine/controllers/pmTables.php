@@ -113,13 +113,6 @@ class pmTables extends Controller
         $this->setJSVar( '_plugin_permissions', $repTabPluginPermissions );
         $this->setJSVar( 'sizeTableName', $this->getSizeTableName());
 
-        $isBpmn = 0;
-        if (isset( $_GET['PRO_UID'] )) {
-            $process = new Process();
-            $isBpmn = $process->isBpmnProcess($_GET['PRO_UID']);
-        }
-        $this->setJSVar( 'isBpmn', $isBpmn );
-
         G::RenderPage( 'publish', 'extJs' );
     }
 
