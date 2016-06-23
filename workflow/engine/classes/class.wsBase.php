@@ -229,32 +229,40 @@ class wsBase
     /**
      * get all groups
      *
-     * @param none
-     * @return $result will return an object
+     * @param null $search
+     * @param null $regex
+     * @param null $start
+     * @param null $limit
+     * @return array|stdClass
      */
-    public function groupList ()
+    public function groupList($regex = null, $start = null, $limit = null)
     {
         try {
-            $result = array ();
-            $oCriteria = new Criteria( 'workflow' );
-            $oCriteria->add( GroupwfPeer::GRP_STATUS, 'ACTIVE' );
-            $oDataset = GroupwfPeer::doSelectRS( $oCriteria );
-            $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-            $oDataset->next();
-
-            while ($aRow = $oDataset->getRow()) {
-                $oGroupwf = new Groupwf();
-                $arrayGroupwf = $oGroupwf->Load( $aRow['GRP_UID'] );
-                $result[] = array ('guid' => $aRow['GRP_UID'],'name' => $arrayGroupwf['GRP_TITLE']
-                );
-                $oDataset->next();
+            $criteria = new Criteria('workflow');
+            $criteria->addSelectColumn(GroupwfPeer::GRP_UID);
+            $criteria->addSelectColumn(GroupwfPeer::GRP_TITLE);
+            $criteria->add(GroupwfPeer::GRP_STATUS, 'ACTIVE');
+            $criteria->addAscendingOrderByColumn(GroupwfPeer::GRP_TITLE);
+            if ($regex) {
+                $regex = GroupwfPeer::GRP_TITLE . " REGEXP '" . $regex . "'";
+                $criteria->add(GroupwfPeer::GRP_TITLE, $regex, Criteria::CUSTOM);
             }
-
+            if ($start) {
+                $criteria->setOffset($start);
+            }
+            if ($limit) {
+                $criteria->setLimit($limit);
+            }
+            $rs = GroupwfPeer::doSelectRS($criteria);
+            $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $result = array();
+            while ($rs->next()) {
+                $rows = $rs->getRow();
+                $result[] = array('guid' => $rows['GRP_UID'], 'name' => $rows['GRP_TITLE']);
+            }
             return $result;
         } catch (Exception $e) {
-            $result[] = array ('guid' => $e->getMessage(),'name' => $e->getMessage()
-            );
-
+            $result[] = array('guid' => $e->getMessage(), 'name' => $e->getMessage());
             return $result;
         }
     }
