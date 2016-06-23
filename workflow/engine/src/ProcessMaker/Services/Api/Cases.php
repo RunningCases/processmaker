@@ -1150,4 +1150,20 @@ class Cases extends Api
         }
     }
 
+    /**
+     * Batch reassign
+     * @url POST /reassign
+     *
+     */
+    public function doPostReassign($request_data)
+    {
+        try {
+            $case = new \ProcessMaker\BusinessModel\Cases();
+            $response = $case->doPostReassign($request_data);
+            return $response;
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
 }

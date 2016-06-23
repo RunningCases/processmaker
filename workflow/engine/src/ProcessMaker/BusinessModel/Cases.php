@@ -2905,5 +2905,53 @@ class Cases
             throw $e;
         }
     }
+
+    /**
+     * Batch reassign
+     *
+     * @param array $data
+     *
+     * return json Return an json with the result of the reassigned cases.
+     */
+    public function doPostReassign($data)
+    {
+        if(!is_array($data)) {
+            $isJson = is_string($data) && is_array(G::json_decode($data, true)) ? true : false;
+            if($isJson) {
+                $data = G::json_decode($data, true);
+            } else {
+                return;
+            }
+        }
+
+        $dataResponse = $data;
+
+        G::LoadClass( 'case' );
+        $oCases = new \Cases();
+        $appDelegation = new \AppDelegation();
+        $casesToReassign = $data['cases'];
+        if(sizeof($casesToReassign)) {
+            foreach($casesToReassign as $key => $val) {
+                $usrUid = '';
+                if(array_key_exists('USR_UID', $val)) {
+                    if($val['USR_UID'] != '') {
+                        $usrUid = $val['USR_UID'];
+                    }
+                }
+
+                if($usrUid == '') {
+                    $fields = $appDelegation->load($val['APP_UID'], $val['DEL_INDEX']);
+                    $usrUid = $fields['USR_UID'];
+                }
+
+                $reassigned = $oCases->reassignCase($val['APP_UID'], $val['DEL_INDEX'], $usrUid, $data['usr_uid_target']);
+                $result = $reassigned ? 1 : 0 ;
+                $dataResponse['cases'][$key]['result'] = $result;
+            }
+        }
+        unset($dataResponse['usr_uid_target']);
+
+        return G::json_encode($dataResponse);
+    }
 }
 
