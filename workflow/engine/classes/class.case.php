@@ -200,10 +200,9 @@ class Cases
         $c = new Criteria();
         $c->addSelectColumn(TaskPeer::TAS_UID);
         $c->addSelectColumn(TaskPeer::PRO_UID);
+        $c->addSelectColumn(ProcessPeer::PRO_TITLE);
         $c->addAsColumn('TAS_TITLE', 'C1.CON_VALUE');
-        $c->addAsColumn('PRO_TITLE', 'C2.CON_VALUE');
         $c->addAlias('C1', 'CONTENT');
-        $c->addAlias('C2', 'CONTENT');
         $aConditions = array();
         $aConditions[] = array(TaskPeer::TAS_UID, 'C1.CON_ID');
         $aConditions[] = array(
@@ -213,15 +212,7 @@ class Cases
             'C1.CON_LANG', DBAdapter::getStringDelimiter() . SYS_LANG . DBAdapter::getStringDelimiter()
         );
         $c->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(TaskPeer::PRO_UID, 'C2.CON_ID');
-        $aConditions[] = array(
-            'C2.CON_CATEGORY', DBAdapter::getStringDelimiter() . 'PRO_TITLE' . DBAdapter::getStringDelimiter()
-        );
-        $aConditions[] = array(
-            'C2.CON_LANG', DBAdapter::getStringDelimiter() . SYS_LANG . DBAdapter::getStringDelimiter()
-        );
-        $c->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $c->addJoin (TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->add(TaskPeer::TAS_UID, $tasks, Criteria::IN);
         $c->addAscendingOrderByColumn('PRO_TITLE');
         $c->addAscendingOrderByColumn('TAS_TITLE');
@@ -304,10 +295,9 @@ class Cases
         $c = new Criteria();
         $c->addSelectColumn(TaskPeer::TAS_UID);
         $c->addSelectColumn(TaskPeer::PRO_UID);
+        $c->addSelectColumn(ProcessPeer::PRO_TITLE);
         $c->addAsColumn('TAS_TITLE', 'C1.CON_VALUE');
-        $c->addAsColumn('PRO_TITLE', 'C2.CON_VALUE');
         $c->addAlias('C1', 'CONTENT');
-        $c->addAlias('C2', 'CONTENT');
         if ($typeView == 'category') {
             $c->addAsColumn('PRO_CATEGORY', 'PCS.PRO_CATEGORY');
             $c->addAsColumn('CATEGORY_NAME', 'PCSCAT.CATEGORY_NAME');
@@ -330,15 +320,7 @@ class Cases
             'C1.CON_LANG', DBAdapter::getStringDelimiter() . SYS_LANG . DBAdapter::getStringDelimiter()
         );
         $c->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(TaskPeer::PRO_UID, 'C2.CON_ID');
-        $aConditions[] = array(
-            'C2.CON_CATEGORY', DBAdapter::getStringDelimiter() . 'PRO_TITLE' . DBAdapter::getStringDelimiter()
-        );
-        $aConditions[] = array(
-            'C2.CON_LANG', DBAdapter::getStringDelimiter() . SYS_LANG . DBAdapter::getStringDelimiter()
-        );
-        $c->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $c->addJoin (TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->add(TaskPeer::TAS_UID, $tasks, Criteria::IN);
 
         $c->addAscendingOrderByColumn('PRO_TITLE');
@@ -447,10 +429,9 @@ class Cases
         $c = new Criteria();
         $c->addSelectColumn(TaskPeer::TAS_UID);
         $c->addSelectColumn(TaskPeer::PRO_UID);
+        $c->addSelectColumn(ProcessPeer::PRO_TITLE);
         $c->addAsColumn('TAS_TITLE', 'C1.CON_VALUE');
-        $c->addAsColumn('PRO_TITLE', 'C2.CON_VALUE');
         $c->addAlias('C1', 'CONTENT');
-        $c->addAlias('C2', 'CONTENT');
         $aConditions = array();
         $aConditions[] = array(TaskPeer::TAS_UID, 'C1.CON_ID');
         $aConditions[] = array(
@@ -460,15 +441,7 @@ class Cases
             'C1.CON_LANG', DBAdapter::getStringDelimiter() . SYS_LANG . DBAdapter::getStringDelimiter()
         );
         $c->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(TaskPeer::PRO_UID, 'C2.CON_ID');
-        $aConditions[] = array(
-            'C2.CON_CATEGORY', DBAdapter::getStringDelimiter() . 'PRO_TITLE' . DBAdapter::getStringDelimiter()
-        );
-        $aConditions[] = array(
-            'C2.CON_LANG', DBAdapter::getStringDelimiter() . SYS_LANG . DBAdapter::getStringDelimiter()
-        );
-        $c->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $c->addJoin (TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->add(TaskPeer::TAS_UID, $tasks, Criteria::IN);
         $c->addAscendingOrderByColumn('PRO_TITLE');
         $c->addAscendingOrderByColumn('TAS_TITLE');

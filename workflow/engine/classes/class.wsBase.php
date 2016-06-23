@@ -178,7 +178,7 @@ class wsBase
 
             while ($aRow = $oDataset->getRow()) {
                 $oProcess = new Process();
-                $arrayProcess = $oProcess->Load( $aRow['PRO_UID'] );
+                $arrayProcess = $oProcess->load( $aRow['PRO_UID'] );
                 $result[] = array ('guid' => $aRow['PRO_UID'],'name' => $arrayProcess['PRO_TITLE']
                 );
                 $oDataset->next();

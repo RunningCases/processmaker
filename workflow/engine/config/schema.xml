@@ -871,6 +871,8 @@
       <parameter name="Comment" value="Store process Information"/>
     </vendor>
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+    <column name="PRO_TITLE" type="LONGVARCHAR" required="true"/>
+    <column name="PRO_DESCRIPTION" type="LONGVARCHAR"/>
     <column name="PRO_PARENT" type="VARCHAR" size="32" required="true" default="0"/>
     <column name="PRO_TIME" type="DOUBLE" required="true" default="1"/>
     <column name="PRO_TIMEUNIT" type="VARCHAR" size="20" required="true" null="yes" default="DAYS"/>

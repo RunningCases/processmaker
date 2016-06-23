@@ -67,6 +67,10 @@ class ProcessMapBuilder
 
         $tMap->addPrimaryKey('PRO_UID', 'ProUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
+        $tMap->addColumn('PRO_TITLE', 'ProTitle', 'string', CreoleTypes::LONGVARCHAR, true, null);
+
+        $tMap->addColumn('PRO_DESCRIPTION', 'ProDescription', 'string', CreoleTypes::LONGVARCHAR, false, null);
+
         $tMap->addColumn('PRO_PARENT', 'ProParent', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addColumn('PRO_TIME', 'ProTime', 'double', CreoleTypes::DOUBLE, true, null);
