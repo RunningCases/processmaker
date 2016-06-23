@@ -1897,20 +1897,20 @@ function PMFGenerateOutputDocument ($outputID, $sApplication = null, $index = nu
  * @label PMF Group List
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFGroupList.28.29
  *
+ * @param string | $search = null | String to search | Optional parameter.
+ * @param int | $start = null | Start | Optional parameter.
+ * @param int | $limit = null | Limit | Optional parameter.
  * @return array | $rows | List of groups | An array of groups
  *
  */
-function PMFGroupList () //its test was successfull
+function PMFGroupList ($search = null, $start = null, $limit = null) //its test was successfull
 {
     G::LoadClass( 'wsBase' );
     $ws = new wsBase();
-    $result = $ws->groupList();
-    $rows = Array ();
-    $i = 1;
+    $result = $ws->groupList($search, $start, $limit);
+    $rows = array();
     if (isset( $result )) {
-        foreach ($result as $item) {
-            $rows[$i ++] = $item;
-        }
+        $rows = array_combine(range(1, count($result)), array_values($result));
     }
     return $rows;
 }
