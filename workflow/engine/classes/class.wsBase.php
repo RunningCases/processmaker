@@ -230,11 +230,12 @@ class wsBase
      * get all groups
      *
      * @param null $search
+     * @param null $regex
      * @param null $start
      * @param null $limit
      * @return array|stdClass
      */
-    public function groupList($search = null, $start = null, $limit = null)
+    public function groupList($regex = null, $start = null, $limit = null)
     {
         try {
             $criteria = new Criteria('workflow');
@@ -242,11 +243,9 @@ class wsBase
             $criteria->addSelectColumn(GroupwfPeer::GRP_TITLE);
             $criteria->add(GroupwfPeer::GRP_STATUS, 'ACTIVE');
             $criteria->addAscendingOrderByColumn(GroupwfPeer::GRP_TITLE);
-            if ($search) {
-                $criteria->add(GroupwfPeer::GRP_TITLE, $search, Criteria::EQUAL);
-                $criteria->addOr(GroupwfPeer::GRP_TITLE, $search . '%', Criteria::LIKE);
-                $criteria->addOr(GroupwfPeer::GRP_TITLE, '%' . $search, Criteria::LIKE);
-                $criteria->addOr(GroupwfPeer::GRP_TITLE, '%' . $search . '%', Criteria::LIKE);
+            if ($regex) {
+                $regex = GroupwfPeer::GRP_TITLE . " REGEXP '" . $regex . "'";
+                $criteria->add(GroupwfPeer::GRP_TITLE, $regex, Criteria::CUSTOM);
             }
             if ($start) {
                 $criteria->setOffset($start);
