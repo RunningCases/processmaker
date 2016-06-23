@@ -365,7 +365,13 @@ function getReassignList ()
     );
     $caseColumns[] = array ('header' => 'Reassigned Uid','dataIndex' => 'TAS_UID','width' => 120,'hidden' => true,'hideable' => false
     );
-    $caseColumns[] = array ('header' => G::LoadTranslation( 'ID_REASSIGN_TO' ),'dataIndex' => 'APP_REASSIGN_USER','width' => 170
+    $caseColumns[] = array ('header' => G::LoadTranslation( 'ID_ASSIGNED_TO' ),'dataIndex' => 'APP_CURRENT_USER','width' => 170
+    );
+    $caseColumns[] = array ('header' => G::LoadTranslation( 'ID_REASSIGNED_TO' ),'dataIndex' => 'APP_REASSIGN_USER','width' => 170
+    );
+    $caseColumns[] = array ('header' => G::LoadTranslation( 'ID_REASON' ),'dataIndex' => 'NOTE_REASON','width' => 170
+    );
+    $caseColumns[] = array('header' => G::LoadTranslation('ID_NOTIFY'), 'dataIndex' => 'NOTIFY_REASSIGN', 'width' => 100
     );
 
     $caseReaderFields = array ();
@@ -380,6 +386,7 @@ function getReassignList ()
     $caseReaderFields[] = array ('name' => 'APP_REASSIGN_USER');
     $caseReaderFields[] = array ('name' => 'CASE_SUMMARY');
     $caseReaderFields[] = array ('name' => 'CASE_NOTES_COUNT');
+    $caseReaderFields[] = array ('name' => 'APP_CURRENT_USER');
 
     return array ('caseColumns' => $caseColumns,'caseReaderFields' => $caseReaderFields,'rowsperpage' => 20,'dateformat' => 'M d, Y'
     );
