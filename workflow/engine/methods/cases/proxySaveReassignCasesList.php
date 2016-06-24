@@ -52,6 +52,7 @@ if (empty( $aData )) {
 //      var_dump($sql);
 if (is_array( $aData )) {
     $currentCasesReassigned = 0;
+    require_once ("classes/model/AppNotes.php");
     foreach ($aData as $data) {
         $oTmpReassignCriteria = $oCasesReassignList;
         $oTmpReassignCriteria->add( AppCacheViewPeer::APP_UID, $data->APP_UID );
@@ -66,6 +67,13 @@ if (is_array( $aData )) {
         $casesReassignedCount ++;
         $serverResponse[] = array ('APP_REASSIGN_USER' => $data->APP_REASSIGN_USER,'APP_TITLE' => $data->APP_TITLE,'TAS_TITLE' => $data->APP_TAS_TITLE,'REASSIGNED_CASES' => $currentCasesReassigned
         );
+        
+        // Save the note reassign reason
+        if (isset($data->NOTE_REASON) && $data->NOTE_REASON !== '') {
+            $appNotes = new AppNotes();
+            $noteContent = addslashes($data->NOTE_REASON);
+            $appNotes->postNewNote($row['APP_UID'], $_SESSION['USER_LOGGED'], $noteContent, isset($data->NOTIFY_REASSIGN) ? $data->NOTIFY_REASSIGN : false);
+        }
     }
 } else {
     $oTmpReassignCriteria = $oCasesReassignList;

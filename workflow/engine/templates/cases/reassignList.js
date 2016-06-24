@@ -74,7 +74,7 @@
     disabled      : true,
     width         : 280,
     boxMaxWidth   : 180,
-
+    allowBlank: false,
     //lazyRender    : true,
 //    store         : new Ext.data.Store(),
     store         : storeUsersToReassign,

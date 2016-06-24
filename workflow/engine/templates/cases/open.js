@@ -1047,16 +1047,14 @@ Ext.onReady(function(){
 
     var grdpnlUsersToReassign = new Ext.grid.GridPanel({
         id: "grdpnlUsersToReassign",
-
         store: storeUsersToReassign,
         colModel: cmodelUsersToReassign,
         selModel: smodelUsersToReassign,
-
+        height: 200,
         columnLines: true,
         viewConfig: {forceFit: true},
         enableColumnResize: true,
         enableHdMenu: true,
-
         tbar: [
             {
                 text: _("ID_REASSIGN"),
@@ -1102,19 +1100,52 @@ Ext.onReady(function(){
         ],
         bbar: pagingUsersToReassign,
 
-        title: ""
+        title: "",
+        listeners: {
+            click: function () {
+                textareaReason.enable();
+                checkboxReason.enable();
+            }
+        }
     });
 
+    var textareaReason = new Ext.form.TextArea({
+        id: 'idTextareaReason',
+        disabled: true,
+        fieldLabel : _('ID_REASON_REASSIGN'),
+        emptyText: _('ID_REASON_REASSIGN') + '...',
+        enableKeyEvents: true,
+        width: 200
+    });
+
+    var checkboxReason = new Ext.form.Checkbox({
+        id: 'idCheckboxReason',
+        disabled: true,
+        fieldLabel : _('ID_NOTIFY_USERS_CASE'),
+        labelSeparator: '',
+        labelStyle: 'margin-left:150px;position:absolute;'
+    });
+    
     var winReassignInCasesList = new Ext.Window({
-      title: '',
-      width: 450,
-      height: 350,
-      layout:'fit',
-      autoScroll:true,
-      modal: true,
-      resizable: false,
-      maximizable: false,
-      items: [grdpnlUsersToReassign]
+        title: '',
+        width: 450,
+        height: 350,
+        layout: 'auto',
+        autoScroll: true,
+        modal: true,
+        resizable: false,
+        maximizable: false,
+        items: [{
+                xtype: 'fieldset',
+                labelWidth: 130,
+                border: false,
+                items: [
+                    textareaReason,
+                    checkboxReason
+                ]
+            },
+            grdpnlUsersToReassign
+        ]
     });
 
     Ext.Ajax.request({
@@ -1160,10 +1191,14 @@ Ext.onReady(function(){
     var rowSelected = Ext.getCmp("grdpnlUsersToReassign").getSelectionModel().getSelected();
 
     if( rowSelected ) {
+        if (Ext.getCmp('idTextareaReason').getValue() === '') {
+            Ext.Msg.alert(_('ID_ALERT'), _('ID_THE_REASON_REASSIGN_EMPTY'));
+            return;
+        }
       PMExt.confirm(_('ID_CONFIRM'), _('ID_REASSIGN_CONFIRM'), function(){
         Ext.Ajax.request({
           url : 'ajaxListener' ,
-          params : {action : 'reassignCase', USR_UID: rowSelected.data.USR_UID},
+          params : {action : 'reassignCase', USR_UID: rowSelected.data.USR_UID, NOTE_REASON: Ext.getCmp('idTextareaReason').getValue(), NOTIFY_REASSIGN: Ext.getCmp('idCheckboxReason').getValue()},
           success: function ( result, request ) {
             var data = Ext.util.JSON.decode(result.responseText);
             if( data.status == 0 ) {
