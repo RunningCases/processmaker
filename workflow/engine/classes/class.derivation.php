@@ -1401,6 +1401,7 @@ class Derivation
     {
         $iAppThreadIndex = $appFields['DEL_THREAD'];
         $delType = 'NORMAL';
+        $sendNotificationsMobile = false;
 
         if (is_numeric( $nextDel['DEL_PRIORITY'] )) {
             $nextDel['DEL_PRIORITY'] = (isset( $nextDel['DEL_PRIORITY'] ) ? ($nextDel['DEL_PRIORITY'] >= 1 && $nextDel['DEL_PRIORITY'] <= 5 ? $nextDel['DEL_PRIORITY'] : '3') : '3');
@@ -1523,6 +1524,8 @@ class Derivation
                 }
             }
 
+            $sendNotificationsMobile = $this->sendNotificationsMobile($aOldFields, $aSP, $aNewCase['INDEX']);
+
             //If not is SYNCHRONOUS derivate one more time
             if ($aSP['SP_SYNCHRONOUS'] == 0) {
                 $this->case->setDelInitDate( $currentDelegation['APP_UID'], $iNewDelIndex );
@@ -1553,6 +1556,10 @@ class Derivation
                 }
             }
         } //end switch
+
+        if($iNewDelIndex !== 0 && !$sendNotificationsMobile){
+            $sendNotificationsMobile = $this->sendNotificationsMobile($appFields, $nextDel, $iNewDelIndex);        
+        }
         return $iNewDelIndex;
     }
 
@@ -1798,6 +1805,25 @@ class Derivation
             } else {
                 return '';
             }
+        }
+    }
+
+    /**
+     * @param $appFields
+     * @param $nextDel
+     * @param $iNewDelIndex
+     * @return bool
+     */
+    private function sendNotificationsMobile($appFields, $nextDel, $iNewDelIndex)
+    {
+        try {
+            $notificationMobile = new \ProcessMaker\BusinessModel\Light\NotificationDevice();
+            if ($notificationMobile->checkMobileNotifications()) {
+                $notificationMobile->routeCaseNotificationDevice($appFields, $nextDel, $iNewDelIndex);
+            }
+            return true;
+        } catch (Exception $e) {
+            \G::log(G::loadTranslation('ID_NOTIFICATION_ERROR') . '|' . $e->getMessage(), PATH_DATA, "mobile.log");
         }
     }
 }
