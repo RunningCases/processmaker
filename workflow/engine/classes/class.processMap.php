@@ -98,34 +98,29 @@ class processMap
             $oCriteria = new Criteria('workflow');
             $oCriteria->addSelectColumn(TaskPeer::PRO_UID);
             $oCriteria->addSelectColumn(TaskPeer::TAS_UID);
-            $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
+            $oCriteria->addSelectColumn(TaskPeer::TAS_TITLE);
             $oCriteria->addSelectColumn(TaskPeer::TAS_START);
             $oCriteria->addSelectColumn(TaskPeer::TAS_POSX);
             $oCriteria->addSelectColumn(TaskPeer::TAS_POSY);
             $oCriteria->addSelectColumn(TaskPeer::TAS_COLOR);
             $oCriteria->addSelectColumn(TaskPeer::TAS_TYPE);
-            $aConditions = array();
-            $aConditions[] = array(0 => TaskPeer::TAS_UID, 1 => ContentPeer::CON_ID);
-            $aConditions[] = array(0 => ContentPeer::CON_CATEGORY, 1 => DBAdapter::getStringDelimiter() . 'TAS_TITLE' . DBAdapter::getStringDelimiter() );
-            $aConditions[] = array(0 => ContentPeer::CON_LANG, 1 => DBAdapter::getStringDelimiter() . SYS_LANG . DBAdapter::getStringDelimiter() );
-            $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
             $oCriteria->add(TaskPeer::PRO_UID, $sProcessUID);
             $oDataset = TaskPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
 
             while ($aRow1 = $oDataset->getRow()) {
-                $oTask = new StdClass();
+                $oTask = new stdClass();
                 $oTask->uid = $aRow1['TAS_UID'];
                 $oTask->task_type = $aRow1['TAS_TYPE'];
                 if ($aRow1['TAS_TYPE'] == 'NORMAL') {
-                    if (($aRow1['CON_VALUE'] == "")) {
+                    if (($aRow1['TAS_TITLE'] == "")) {
                         //There is no Label in Current SYS_LANG language so try to find in English - by default
                         $oTask1 = new Task();
                         $aFields1 = $oTask1->load($oTask->uid);
-                        $aRow1['CON_VALUE'] = $oTask1->getTasTitle();
+                        $aRow1['TAS_TITLE'] = $oTask1->getTasTitle();
                     }
-                    $oTask->label = htmlentities($aRow1['CON_VALUE'], ENT_QUOTES, 'UTF-8');
+                    $oTask->label = htmlentities($aRow1['TAS_TITLE'], ENT_QUOTES, 'UTF-8');
                 } else {
                     $oCriteria = new Criteria('workflow');
                     $del = DBAdapter::getStringDelimiter();
@@ -153,10 +148,10 @@ class processMap
                     }
                 }
                 $oTask->taskINI = (strtolower($aRow1['TAS_START']) == 'true' ? true : false);
-                $oTask->position = new StdClass();
+                $oTask->position = new stdClass();
                 $oTask->position->x = (int) $aRow1['TAS_POSX'];
                 $oTask->position->y = (int) $aRow1['TAS_POSY'];
-                $oTask->derivation = new StdClass();
+                $oTask->derivation = new stdClass();
                 $oTask->derivation->type = '';
                 $oTask->derivation->to = array();
                 $oCriteria = new Criteria('workflow');
@@ -189,7 +184,7 @@ class processMap
                             $aRow2['ROU_TYPE'] = 8;
                             break;
                     }
-                    $oTo = new StdClass();
+                    $oTo = new stdClass();
                     $oTo->task = $aRow2['ROU_NEXT_TASK'];
                     $oTo->condition = $aRow2['ROU_CONDITION'];
                     $oTo->executant = $aRow2['ROU_TO_LAST_USER'];
@@ -1356,7 +1351,7 @@ class processMap
     {
         try {
             $oCriteria = new Criteria('workflow');
-            $oCriteria->addSelectColumn('TAS_UID');
+            $oCriteria->addSelectColumn(TaskPeer::TAS_UID);
             $oCriteria->add(TaskPeer::PRO_UID, $sProcessUID);
             $oDataset = TaskPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -1366,48 +1361,27 @@ class processMap
 
             while ($oDataset->next()) {
                 $aRow = $oDataset->getRow();
-
                 $aTasks[] = $aRow["TAS_UID"];
                 $iTaskNumber = $iTaskNumber + 1;
             }
 
             if ($iTaskNumber > 0) {
                 $criteria = new Criteria("workflow");
-
-                $criteria->addSelectColumn(ContentPeer::CON_LANG);
-                $criteria->addSelectColumn(ContentPeer::CON_VALUE);
-                $criteria->add(ContentPeer::CON_ID, $aTasks, Criteria::IN);
-                $criteria->add(ContentPeer::CON_CATEGORY, "TAS_TITLE");
-
-                $rsSQLCON = ContentPeer::doSelectRS($criteria);
+                $criteria->addSelectColumn(TaskPeer::TAS_TITLE);
+                $criteria->add(TaskPeer::TAS_UID, $aTasks, Criteria::IN);
+                $rsSQLCON = TaskPeer::doSelectRS($criteria);
                 $rsSQLCON->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-                $numMaxLang = 0;
                 $numMax = 0;
-
                 while ($rsSQLCON->next()) {
                     $row = $rsSQLCON->getRow();
-
-                    $conLang = $row["CON_LANG"];
-                    $conValue = $row["CON_VALUE"];
-
+                    $conValue = $row["TAS_TITLE"];
                     if (preg_match("/^\S+\s(\d+)$/", $conValue, $matches)) {
                         $n = intval($matches[1]);
-
-                        if ($conLang == SYS_LANG) {
-                            if ($n > $numMaxLang) {
-                                $numMaxLang = $n;
-                            }
-                        } else {
-                            if ($n > $numMax) {
-                                $numMax = $n;
-                            }
+                        if ($n > $numMax) {
+                            $numMax = $n;
                         }
                     }
-                }
-
-                if ($numMaxLang > 0) {
-                    $numMax = $numMaxLang;
                 }
 
                 if ($numMax > 0 && $numMax > $iTaskNumber) {
@@ -1420,7 +1394,7 @@ class processMap
             }
 
             $oTask = new Task();
-            $oNewTask = new StdClass();
+            $oNewTask = new stdClass();
             $oNewTask->label = G::LoadTranslation('ID_TASK') . ' ' . $iTaskNumber;
             $oNewTask->uid = $oTask->create(array('PRO_UID' => $sProcessUID, 'TAS_TITLE' => $oNewTask->label, 'TAS_POSX' => $iX, 'TAS_POSY' => $iY, 'TAS_WIDTH' => $iWidth, 'TAS_HEIGHT' => $iHeight ));
             $oNewTask->statusIcons = array();
@@ -4781,25 +4755,22 @@ class processMap
         $c = new Criteria();
         $c->clearSelectColumns();
         $c->addSelectColumn(TaskPeer::TAS_UID);
+        $c->addSelectColumn(TaskPeer::TAS_TITLE);
         $c->addSelectColumn(TaskPeer::PRO_UID);
+        $c->addSelectColumn(ProcessPeer::PRO_TITLE);
         $c->add(TaskPeer::TAS_START, 'TRUE');
         $c->add(TaskPeer::PRO_UID, $aUIDS, Criteria::NOT_IN);
+        $c->addJoin(TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         //$c->add(TaskPeer::PRO_UID, $sProcessUID, Criteria::NOT_EQUAL);
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $rs->next();
-        $row = $rs->getRow();
-        while (is_array($row)) {
-            $tasks[] = array('TAS_UID' => $row['TAS_UID'], 'PRO_UID' => $row['PRO_UID'] );
-            $rs->next();
-            $row = $rs->getRow();
-        }
         $rows[] = array('uid' => 'char', 'value' => 'char', 'pro_uid' => 'char' );
-        foreach ($tasks as $key => $val) {
-            $tasTitle = Content::load('TAS_TITLE', '', $val['TAS_UID'], SYS_LANG);
-            $proTitle = Content::load('PRO_TITLE', '', $val['PRO_UID'], SYS_LANG);
+        while ($rs->next()) {
+            $row = $rs->getRow();
+            $proTitle = $row['PRO_TITLE'];
+            $tasTitle = $row['TAS_TITLE'];
             $title = " $proTitle ($tasTitle)";
-            $rows[] = array('uid' => $val['TAS_UID'], 'value' => $title, 'pro_uid' => $val['PRO_UID'] );
+            $rows[] = array('uid' => $row['TAS_UID'], 'value' => $title, 'pro_uid' => $row['PRO_UID'] );
         }
         return $rows;
     }
@@ -6613,19 +6584,13 @@ class processMap
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(TaskPeer::PRO_UID);
         $oCriteria->addSelectColumn(TaskPeer::TAS_UID);
-        $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
-        $aConditions = array();
-        $aConditions[] = array(0 => TaskPeer::TAS_UID, 1 => ContentPeer::CON_ID );
-        $aConditions[] = array(0 => ContentPeer::CON_CATEGORY, 1 => DBAdapter::getStringDelimiter() . 'TAS_TITLE' . DBAdapter::getStringDelimiter() );
-        $aConditions[] = array(0 => ContentPeer::CON_LANG, 1 => DBAdapter::getStringDelimiter() . SYS_LANG . DBAdapter::getStringDelimiter() );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(TaskPeer::TAS_TITLE);
         $oCriteria->add(TaskPeer::PRO_UID, $sProcessUID);
         $oDataset = TaskPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
         while ($aRow = $oDataset->getRow()) {
-            $aAllTasks[] = array('UID' => $aRow['TAS_UID'], 'LABEL' => $aRow['CON_VALUE']
-            );
+            $aAllTasks[] = array('UID' => $aRow['TAS_UID'], 'LABEL' => $aRow['TAS_TITLE']);
             $oDataset->next();
         }
         $aUsersGroups = array();

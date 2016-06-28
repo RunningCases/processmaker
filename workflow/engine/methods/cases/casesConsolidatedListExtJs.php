@@ -19,10 +19,8 @@ $usrUid = $_SESSION["USER_LOGGED"];
 $oCriteria = new Criteria("workflow");
 $oCriteria->addSelectColumn("*");
 $oCriteria->addSelectColumn(CaseConsolidatedCorePeer::TAS_UID);
-$oCriteria->addJoin(CaseConsolidatedCorePeer::TAS_UID,ContentPeer::CON_ID, Criteria::LEFT_JOIN);
+$oCriteria->addSelectColumn(TaskPeer::TAS_TITLE);
 $oCriteria->addJoin(CaseConsolidatedCorePeer::TAS_UID,TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
-$oCriteria->addAnd(ContentPeer::CON_CATEGORY, "TAS_TITLE");
-$oCriteria->addAnd(ContentPeer::CON_LANG, "en");
 
 $params = array(); //This will be filled with the parameters
 $sql = BasePeer::createSelectSql($oCriteria, $params);
