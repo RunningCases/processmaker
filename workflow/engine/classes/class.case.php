@@ -7255,13 +7255,17 @@ class Cases
      * @return array (criteria+array)
      */
 
-    public function getUsersParticipatedInCase($sAppUid)
+    public function getUsersParticipatedInCase($sAppUid, $usrStatus = '')
     {
         $c = new Criteria('workflow');
         $c->addSelectColumn(AppDelegationPeer::APP_UID);
         $c->addSelectColumn(AppDelegationPeer::USR_UID);
         $c->addSelectColumn(UsersPeer::USR_USERNAME);
         $c->addSelectColumn(UsersPeer::USR_EMAIL);
+
+        if($usrStatus != '') {
+            $c->add(UsersPeer::USR_STATUS, $usrStatus, CRITERIA::EQUAL);
+        }
 
         $c->add(AppDelegationPeer::APP_UID, $sAppUid, CRITERIA::EQUAL);
         $c->addJoin(AppDelegationPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
