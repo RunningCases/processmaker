@@ -590,6 +590,14 @@ class Ajax
             $data['USER'] = $userData['USR_LASTNAME'] . ' ' . $userData['USR_FIRSTNAME']; //TODO change with the farmated username from environment conf
             $result->status = 0;
             $result->msg = G::LoadTranslation('ID_REASSIGNMENT_SUCCESS', SYS_LANG, $data);
+            
+            // Save the note reassign reason
+            if (isset($_POST['NOTE_REASON']) && $_POST['NOTE_REASON'] !== '') {
+                require_once ("classes/model/AppNotes.php");
+                $appNotes = new AppNotes();
+                $noteContent = addslashes($_POST['NOTE_REASON']);
+                $appNotes->postNewNote($_SESSION['APPLICATION'], $_SESSION['USER_LOGGED'], $noteContent, $_POST['NOTIFY_REASSIGN']);
+            }
         } catch (Exception $e) {
             $result->status = 1;
             $result->msg = $e->getMessage();

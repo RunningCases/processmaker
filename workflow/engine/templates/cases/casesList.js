@@ -658,6 +658,26 @@ Ext.onReady ( function() {
         columns: columns
     });
 
+    for (var i in reassignColumns) {
+        if (reassignColumns[i].dataIndex === 'APP_REASSIGN_USER') {
+            reassignColumns[i].editor = comboUsersToReassign;
+        }
+        if (reassignColumns[i].dataIndex === 'NOTE_REASON') {
+            reassignColumns[i].editor = new Ext.form.TextArea({allowBlank: false});
+        }
+        if (reassignColumns[i].dataIndex === 'NOTIFY_REASSIGN') {
+            reassignColumns[i].editor = new Ext.form.Checkbox({});
+            reassignColumns[i].renderer = function (v, x, s) {
+                if (s.data.NOTIFY_REASSIGN === true) {
+                    return _('ID_YES');
+                }
+                if (s.data.NOTIFY_REASSIGN === true) {
+                    return _('ID_NO');
+                }
+                return s.data.NOTIFY_REASSIGN;
+            };
+        }
+    }
     var reassignCm = new Ext.grid.ColumnModel({
         defaults: {
             sortable: true // columns are sortable by default
@@ -1155,6 +1175,13 @@ Ext.onReady ( function() {
         // text: 'Reassign',
         // text: TRANSLATIONS.LABEL_UNSELECT_ALL,
         handler: function(){
+            if(openReassignCallback) {
+                for(var key in openReassignCallback){
+                    var callbackFunction = new Function(openReassignCallback[key]);
+                    callbackFunction.call();
+                }
+                return;
+            }
             reassign();
         }
     });
@@ -1493,12 +1520,16 @@ Ext.onReady ( function() {
         var rowSelected = Ext.getCmp("grdpnlUsersToReassign").getSelectionModel().getSelected();
 
         if( rowSelected ) {
+            if (Ext.getCmp('idTextareaReasonCasesList').getValue() === '') {
+                Ext.Msg.alert(_('ID_ALERT'), _('ID_THE_REASON_REASSIGN_EMPTY'));
+                return;
+            }
             PMExt.confirm(_('ID_CONFIRM'), _('ID_REASSIGN_CONFIRM'), function(){
                 var loadMask = new Ext.LoadMask(winReassignInCasesList.getEl(), {msg: _('ID_PROCESSING')});
                 loadMask.show();
                 Ext.Ajax.request({
                     url : 'casesList_Ajax' ,
-                    params : {actionAjax : 'reassignCase', USR_UID: rowSelected.data.USR_UID, APP_UID: APP_UID, DEL_INDEX:DEL_INDEX},
+                    params : {actionAjax : 'reassignCase', USR_UID: rowSelected.data.USR_UID, APP_UID: APP_UID, DEL_INDEX:DEL_INDEX, NOTE_REASON: Ext.getCmp('idTextareaReasonCasesList').getValue(), NOTIFY_REASSIGN: Ext.getCmp('idCheckboxReasonCasesList').getValue()},
                     success: function ( result, request ) {
                         var data = Ext.util.JSON.decode(result.responseText);
                         if( data.status == 0 ) {
@@ -1653,6 +1684,23 @@ Ext.onReady ( function() {
                             var smodelUsersToReassign = new Ext.grid.RowSelectionModel({
                                 singleSelect: true
                             });
+                            
+                            var textareaReason = new Ext.form.TextArea({
+                                id: 'idTextareaReasonCasesList',
+                                disabled: true,
+                                fieldLabel : _('ID_REASON_REASSIGN'),
+                                emptyText: _('ID_REASON_REASSIGN') + '...',
+                                enableKeyEvents: true,
+                                width: 200
+                            });
+
+                            var checkboxReason = new Ext.form.Checkbox({
+                                id: 'idCheckboxReasonCasesList',
+                                disabled: true,
+                                fieldLabel : _('ID_NOTIFY_USERS_CASE'),
+                                labelSeparator: '',
+                                labelStyle: 'margin-left:150px;position:absolute;'
+                            });
 
                             var grdpnlUsersToReassign = new Ext.grid.GridPanel({
                                 id: "grdpnlUsersToReassign",
@@ -1660,7 +1708,7 @@ Ext.onReady ( function() {
                                 store: storeUsersToReassign,
                                 colModel: cmodelUsersToReassign,
                                 selModel: smodelUsersToReassign,
-
+                                height: 200,
                                 columnLines: true,
                                 viewConfig: {forceFit: true},
                                 enableColumnResize: true,
@@ -1714,18 +1762,35 @@ Ext.onReady ( function() {
                                 ],
                                 bbar: pagingUsersToReassign,
 
-                                title: ""
+                                title: "",
+                                listeners: {
+                                    click: function () {
+                                        textareaReason.enable();
+                                        checkboxReason.enable();
+                                    }
+                                }
                             });
 
                             winReassignInCasesList = new Ext.Window({
                                 title: '',
                                 width: 450,
                                 height: 350,
-                                layout:'fit',
+                                layout:'auto',
                                 autoScroll:true,
                                 modal: true,
+                                resizable: false,
                                 maximizable: false,
-                                items: [grdpnlUsersToReassign]
+                                items: [{
+                                        xtype: 'fieldset',
+                                        labelWidth: 130,
+                                        border: false,
+                                        items: [
+                                            textareaReason,
+                                            checkboxReason
+                                        ]
+                                    },
+                                    grdpnlUsersToReassign
+                                ]
                             });
 
                             winReassignInCasesList.show();
@@ -2157,113 +2222,93 @@ Ext.onReady ( function() {
         }
     });
 
-    var btnExecReassignSelected = new Ext.Button ({
+    var btnExecReassignSelected = new Ext.Button({
         text: _('ID_REASSIGN'),
-        handler: function(){
+        handler: function () {
             var rs = storeReassignCases.getModifiedRecords();
             if (rs.length < storeReassignCases.totalLength) {
-                Ext.Msg.confirm( _('ID_CONFIRM'), _('ID_CONFIRM_TO_REASSIGN'), function (btn, text) {
-                    if ( btn == 'yes' ) {
+                Ext.Msg.confirm(_('ID_CONFIRM'), _('ID_CONFIRM_TO_REASSIGN'), function (btn, text) {
+                    if (btn == 'yes') {
+                        if (!isValidNoteReason(rs)) {
+                            return;
+                        }
                         ExecReassign();
                     }
                 })
             } else {
+                if (!isValidNoteReason(rs)) {
+                    return;
+                }
                 ExecReassign();
             }
         }
     });
 
+    function isValidNoteReason(data) {
+        var row, sw = true;
+        for (var i = 0; i < data.length; i++) {
+            row = data[i].data;
+            if (!(row.APP_REASSIGN_USER_UID !== '' && row.NOTE_REASON !== undefined && row.NOTE_REASON !== '')) {
+                sw = false;
+            }
+        }
+        if (!sw) {
+            Ext.Msg.alert(_('ID_ALERT'), _('ID_THE_REASON_REASSIGN_USER_EMPTY'));
+        }
+        return sw;
+    }
+
     var gridForm = new Ext.FormPanel({
         id: 'reassign-form',
-        frame: true,
+        border: true,
         labelAlign: 'left',
-        //title: 'Company data',
-        bodyStyle:'padding:5px',
-        width: 750,
-
-
-        layout: 'column',    // Specifies that the items will now be arranged in columns
+        width: 736,
         items: [{
-            id : 'tasksGrid',
-            columnWidth: 0.60,
-            layout: 'fit',
-            items: {
-                id: 'TasksToReassign',
-                xtype: 'grid',
-                ds: storeReassignCases,
-                cm: reassignCm,
-                sm: new Ext.grid.RowSelectionModel({
-                    singleSelect: true
-                    /*listeners: {
-                     rowselect: function(sm, row, rec) {
-                     Ext.getCmp("reassign-form").getForm().loadRecord(rec);
-                     }
-                     }*/
-                }),
-                //autoExpandColumn: 'company',
-                height: 265,
-                title  : _('ID_CASES_TO_REASSIGN_TASK_LIST'),
-                border : true,
-
-                listeners: {
-
-                    click: function() {
-                        rows = this.getSelectionModel().getSelections();
-                        var application = '';
-                        var task = '';
-                        var currentUser = '';
-                        comboUsersToReassign.disable();
-                        if( rows.length > 0 ) {
-                            comboUsersToReassign.enable();
-                            var ids = '';
-                            for(i=0; i<rows.length; i++) {
-                                // filtering duplicate tasks
-                                application = rows[i].get('APP_UID');
-                                task = rows[i].get('TAS_UID');
-                                currentUser = rows[i].get('USR_UID');
+                id: 'tasksGrid',
+                columnWidth: 0.60,
+                layout: 'fit',
+                items: {
+                    id: 'TasksToReassign',
+                    xtype: 'editorgrid',
+                    ds: storeReassignCases,
+                    cm: reassignCm,
+                    sm: new Ext.grid.RowSelectionModel({
+                        singleSelect: true
+                    }),
+                    //autoExpandColumn: 'company',
+                    height: 278,
+                    title: _('ID_CASES_TO_REASSIGN_TASK_LIST'),
+                    border: true,
+                    listeners: {
+                        click: function () {
+                            rows = this.getSelectionModel().getSelections();
+                            var application = '';
+                            var task = '';
+                            var currentUser = '';
+                            comboUsersToReassign.disable();
+                            if (rows.length > 0) {
+                                comboUsersToReassign.enable();
+                                var ids = '';
+                                for (var i = 0; i < rows.length; i++) {
+                                    // filtering duplicate tasks
+                                    application = rows[i].get('APP_UID');
+                                    task = rows[i].get('TAS_UID');
+                                    currentUser = rows[i].get('USR_UID');
+                                }
+                            } else {
                             }
-                        } else {
-
-                        }
-                        comboUsersToReassign.clearValue();
-                        storeUsersToReassign.removeAll();
-                        storeUsersToReassign.setBaseParam('application', application);
-                        storeUsersToReassign.setBaseParam('task', task);
-                        storeUsersToReassign.setBaseParam('currentUser', currentUser);
-
-                        storeUsersToReassign.load();
-                        //alert(record.USERS);
-                    } // Allow rows to be rendered.
-
+                            comboUsersToReassign.clearValue();
+                            storeUsersToReassign.removeAll();
+                            storeUsersToReassign.setBaseParam('application', application);
+                            storeUsersToReassign.setBaseParam('task', task);
+                            storeUsersToReassign.setBaseParam('currentUser', currentUser);
+                            storeUsersToReassign.load();
+                            //alert(record.USERS);
+                        } // Allow rows to be rendered.
+                    }
                 }
             }
-        },{
-            columnWidth: 0.4,
-            xtype: 'fieldset',
-            labelWidth: 50,
-            title: _('ID_USER_LIST'),
-            defaults: {width: 200, border:false},    // Default config options for child items
-            defaultType: 'textfield',
-            autoHeight: true,
-            bodyStyle: Ext.isIE ? 'text-align: left;padding:0 0 5px 15px;' : 'text-align: left; padding:10px 5px;',
-            border: false,
-            //style: {
-            //    "margin-left": "10px", // when you add custom margin in IE 6...
-            //    "margin-right": Ext.isIE6 ? (Ext.isStrict ? "-10px" : "-13px") : "0"  // you have to adjust for it somewhere else
-            //},
-            items:
-                [
-                    comboUsersToReassign,
-                    {
-                        xtype: 'fieldset',
-                        border : true,
-                        defaultType: 'textfield',
-                        title: _('ID_INSTRUCTIONS'),
-                        autoHeight:true,
-                        html: _('ID_INSTRUCTIONS_TEXT')
-                    }
-                ]
-        }]
+        ]
         //renderTo: bd
     });
 

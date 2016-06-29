@@ -902,7 +902,7 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
             if (PHP_VERSION < 5.2) {
                 setcookie(session_name(), session_id(), time() + $timelife, '/', '; HttpOnly');
             } else {
-                setcookie(session_name(), session_id(), time() + $timelife, '/', null, false, true);
+                setcookie(session_name(), session_id(), time() + $timelife, '/', null, G::is_https(), true);
             }
         }
         $RBAC->initRBAC();
@@ -979,7 +979,7 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
                         if (PHP_VERSION < 5.2) {
                             setcookie(session_name(), session_id(), time() + $timelife, '/', '; HttpOnly');
                         } else {
-                            setcookie(session_name(), session_id(), time() + $timelife, '/', null, false, true);
+                            setcookie(session_name(), session_id(), time() + $timelife, '/', null, G::is_https(), true);
                         }
                     }
                     $RBAC->initRBAC();

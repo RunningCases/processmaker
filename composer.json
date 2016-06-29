@@ -29,9 +29,9 @@
     "require": {
         "luracast/restler": "3.0.0-RC4",
         "bshaffer/oauth2-server-php": "v1.0",
-        "colosa/pmUI": "3.0.1.8-dev",
-        "colosa/MichelangeloFE": "3.0.1.8-dev",
-        "colosa/pmdynaform": "3.0.1.8-dev",
+        "colosa/pmUI": "3.1-dev",
+        "colosa/MichelangeloFE": "3.1-dev",
+        "colosa/pmdynaform": "3.1-dev",
         "google/apiclient": "1.1.6",
         "dapphp/securimage": "^3.6"
     },
