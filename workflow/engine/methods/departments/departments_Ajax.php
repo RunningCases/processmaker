@@ -153,13 +153,9 @@ switch ($_POST['action']) {
         $oCriteria = new Criteria( 'workflow' );
 
         $oCriteria->clearSelectColumns();
-        $oCriteria->addSelectColumn( ContentPeer::CON_CATEGORY );
-        $oCriteria->addSelectColumn( ContentPeer::CON_VALUE );
         $oCriteria->addSelectColumn( DepartmentPeer::DEP_PARENT );
-        $oCriteria->add( ContentPeer::CON_CATEGORY, 'DEPO_TITLE' );
-        $oCriteria->addJoin( ContentPeer::CON_ID, DepartmentPeer::DEP_UID, Criteria::LEFT_JOIN );
-        $oCriteria->add( ContentPeer::CON_VALUE, $dep_name );
-        $oCriteria->add( ContentPeer::CON_LANG, SYS_LANG );
+        $oCriteria->addSelectColumn( DepartmentPeer::DEP_TITLE );
+        $oCriteria->add( DepartmentPeer::DEP_TITLE, $dep_name );
         $oCriteria->add( DepartmentPeer::DEP_PARENT, $parent );
 
         $oDataset = DepartmentPeer::doSelectRS( $oCriteria );

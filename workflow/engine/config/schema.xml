@@ -436,6 +436,7 @@
       <parameter name="Comment" value="Departments"/>
     </vendor>
     <column name="DEP_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+    <column name="DEP_TITLE" type="LONGVARCHAR" required="true"/>
     <column name="DEP_PARENT" type="VARCHAR" size="32" required="true" default=""/>
     <column name="DEP_MANAGER" type="VARCHAR" size="32" required="true" default=""/>
     <column name="DEP_LOCATION" type="INTEGER" required="true" default="0"/>

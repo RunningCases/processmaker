@@ -287,7 +287,7 @@ class wsBase
                 $oDepartment = new Department();
                 $aDepartment = $oDepartment->Load( $aRow['DEP_UID'] );
                 $node['guid'] = $aRow['DEP_UID'];
-                $node['name'] = $aDepartment['DEPO_TITLE'];
+                $node['name'] = $aDepartment['DEP_TITLE'];
                 $node['parentUID'] = $aDepartment['DEP_PARENT'];
                 $node['dn'] = $aDepartment['DEP_LDAP_DN'];
 

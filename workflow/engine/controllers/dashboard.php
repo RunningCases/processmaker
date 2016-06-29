@@ -354,27 +354,14 @@ class Dashboard extends Controller
                     $criteria = new Criteria( 'workflow' );
                     $criteria->setDistinct();
                     $criteria->addSelectColumn( DepartmentPeer::DEP_UID );
-                    $criteria->addSelectColumn( ContentPeer::CON_VALUE );
-                    //FROM
-                    $conditions = array ();
-                    $conditions[] = array (DepartmentPeer::DEP_UID,ContentPeer::CON_ID
-                    );
-                    $conditions[] = array (ContentPeer::CON_CATEGORY,DBAdapter::getStringDelimiter() . 'DEPO_TITLE' . DBAdapter::getStringDelimiter()
-                    );
-                    $conditions[] = array (ContentPeer::CON_LANG,DBAdapter::getStringDelimiter() . 'en' . DBAdapter::getStringDelimiter()
-                    );
-                    $criteria->addJoinMC( $conditions, Criteria::LEFT_JOIN );
-                    //WHERE
+                    $criteria->addSelectColumn( DepartmentPeer::DEP_TITLE );
                     $criteria->add( DepartmentPeer::DEP_STATUS, 'ACTIVE' );
-                    //ORDER BY
-                    $criteria->addAscendingOrderByColumn( ContentPeer::CON_VALUE );
-
+                    $criteria->addAscendingOrderByColumn( DepartmentPeer::DEP_TITLE );
                     $dataset = DepartmentPeer::doSelectRS( $criteria );
                     $dataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
                     $dataset->next();
                     while ($row = $dataset->getRow()) {
-                        $departments[] = array ('OWNER_UID' => $row['DEP_UID'],'OWNER_NAME' => $row['CON_VALUE']
-                        );
+                        $departments[] = array('OWNER_UID' => $row['DEP_UID'], 'OWNER_NAME' => $row['DEP_TITLE']);
                         $dataset->next();
                     }
 
