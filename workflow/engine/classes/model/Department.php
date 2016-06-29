@@ -190,7 +190,6 @@ class Department extends BaseDepartment
             if (is_object( $oDept ) && get_class( $oDept ) == 'Department') {
                 $aFields = $oDept->toArray( BasePeer::TYPE_FIELDNAME );
                 $this->fromArray( $aFields, BasePeer::TYPE_FIELDNAME );
-                //$aFields['DEPO_TITLE'] = $oDept->getDepTitle();
                 return $aFields;
             } else {
                 throw (new Exception( "The row '$DepUid' in table Department doesn't exist!" ));
@@ -293,7 +292,7 @@ class Department extends BaseDepartment
                 Content::removeContent( 'DEPO_TITLE', '', $oPro->getDepUid() );
                 Content::removeContent( 'DEPO_DESCRIPTION', '', $oPro->getDepUid() );
 
-                G::auditLog("DeleteDepartament", "Departament Name: ".$dptoTitle['DEPO_TITLE']." Departament ID: (".$oPro->getDepUid().") ");
+                G::auditLog("DeleteDepartament", "Departament Name: ".$dptoTitle['DEP_TITLE']." Departament ID: (".$oPro->getDepUid().") ");
                 return $oPro->delete();
             } else {
                 throw (new Exception( "The row '$ProUid' in table Group doesn't exist!" ));
