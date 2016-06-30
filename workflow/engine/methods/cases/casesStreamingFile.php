@@ -1,5 +1,12 @@
 <?php
-
+if (!isset($_SESSION['USER_LOGGED'])) {
+    $responseObject = new stdclass();
+    $responseObject->error = G::LoadTranslation('ID_LOGIN_AGAIN');
+    $responseObject->success = true;
+    $responseObject->lostSession = true;
+    print G::json_encode( $responseObject );
+    die();
+}
 
 $actionAjax = isset( $_REQUEST['actionAjax'] ) ? $_REQUEST['actionAjax'] : null;
 
