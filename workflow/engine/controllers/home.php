@@ -340,7 +340,7 @@ class Home extends Controller
         $dateFrom = null,
         $dateTo = null,
         $callback = null,
-        $dir = null,
+        $dir = 'DESC',
         $sort = "APP_CACHE_VIEW.APP_NUMBER",
         $category = null)
     {

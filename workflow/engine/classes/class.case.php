@@ -1514,6 +1514,10 @@ class Cases
                 //If exist paused cases
                 $closedTasks[] = $row;
                 $aIndex[] = $row['DEL_INDEX'];
+                $res = $this->GetAllOpenDelegation( array('APP_UID'=>$sAppUid, 'APP_THREAD_PARENT'=>$row['DEL_PREVIOUS']), 'NONE' );
+                foreach ($res as $in) {
+                    $aIndex[] = $in['DEL_INDEX'];
+                }
                 $pausedTasks = $this->getReviewedTasksPaused($sAppUid,$aIndex);
             }
         }
@@ -7067,14 +7071,16 @@ class Cases
      * @return $aThreads
      */
 
-    public function GetAllOpenDelegation($aData)
+    public function GetAllOpenDelegation($aData, $status = 'OPEN')
     {
         try {
             $aThreads = array();
             $c = new Criteria();
             $c->add(AppDelegationPeer::APP_UID, $aData['APP_UID']);
             $c->add(AppDelegationPeer::DEL_PREVIOUS, $aData['APP_THREAD_PARENT']);
-            $c->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
+            if($status === 'OPEN'){
+                $c->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
+            }
             $rs = AppDelegationPeer::doSelectRs($c);
             $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $rs->next();
