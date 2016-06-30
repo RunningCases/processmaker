@@ -13,6 +13,8 @@ DROP TABLE IF EXISTS `APPLICATION`;
 CREATE TABLE `APPLICATION`
 (
 	`APP_UID` VARCHAR(32) default '' NOT NULL,
+	`APP_TITLE` MEDIUMTEXT  NOT NULL,
+	`APP_DESCRIPTION` MEDIUMTEXT,
 	`APP_NUMBER` INTEGER default 0 NOT NULL,
 	`APP_PARENT` VARCHAR(32) default '0' NOT NULL,
 	`APP_STATUS` VARCHAR(100) default '' NOT NULL,
@@ -37,7 +39,6 @@ CREATE TABLE `APPLICATION`
 	KEY `indexAppStatus`(`APP_STATUS`),
 	KEY `indexAppCreateDate`(`APP_CREATE_DATE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='The application';
-
 #-----------------------------------------------------------------------------
 #-- APP_SEQUENCE
 #-----------------------------------------------------------------------------

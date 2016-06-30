@@ -266,14 +266,13 @@ class ListInbox extends BaseListInbox
         $aRow = $dataset->getRow();
         if ($aRow['CON_VALUE'] == '') { 
             $criteria = new Criteria();
-            $criteria->addSelectColumn(ContentPeer::CON_VALUE);
-            $criteria->add( ContentPeer::CON_ID, $data['APP_UID'], Criteria::EQUAL );
-            $criteria->add( ContentPeer::CON_CATEGORY, 'APP_TITLE', Criteria::EQUAL );
-            $criteria->add( ContentPeer::CON_LANG, SYS_LANG, Criteria::EQUAL );
-            $dataset = ContentPeer::doSelectRS($criteria);
+            $criteria->addSelectColumn(ApplicationPeer::APP_TITLE);
+            $criteria->add( ApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
+            $dataset = ApplicationPeer::doSelectRS($criteria);
             $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $dataset->next();
-            $aRow = $dataset->getRow();
+            $aRowApp = $dataset->getRow();
+            $aRow['CON_VALUE'] = $aRowApp['APP_TITLE'];
         }
         $data['APP_TITLE'] = $aRow['CON_VALUE'];
 

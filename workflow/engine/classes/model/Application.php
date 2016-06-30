@@ -46,15 +46,15 @@ class Application extends BaseApplication
      * This value goes in the content table
      * @var        string
      */
-    protected $app_title = '';
-    protected $app_description = '';
+    protected $app_title_content = '';
+    protected $app_description_content = '';
     //protected $app_proc_code = '';
 
     /**
-     * Get the [app_title] column value.
+     * Get the [app_title_content] column value.
      * @return     string
      */
-    public function getAppTitle()
+    public function getAppTitleContent()
     {
         $oApplication = new Application;
         if (!$oApplication->exists($this->getAppUid())) {
@@ -66,18 +66,18 @@ class Application extends BaseApplication
         }
 
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
-        $this->app_title = Content::load('APP_TITLE', '', $this->getAppUid(), $lang);
+        $this->app_title_content = Content::load('APP_TITLE', '', $this->getAppUid(), $lang);
 
-        return $this->app_title;
+        return $this->app_title_content;
     }
 
     /**
-     * Set the [app_title] column value.
+     * Set the [app_title_content] column value.
      *
      * @param      string $v new value
      * @return     void
      */
-    public function setAppTitle($v)
+    public function setAppTitleContent($v)
     {
         if ($this->getAppUid() == '') {
             throw (new Exception( "Error in setAppTitle, the APP_UID can't be blank"));
@@ -89,163 +89,36 @@ class Application extends BaseApplication
             $v = (string) $v;
         }
 
-        if ($this->app_title !== $v || $v === '') {
-            $this->app_title = $v;
+        if ($this->app_title_content !== $v || $v === '') {
+            $this->app_title_content = $v;
             $lang = defined('SYS_LANG')? SYS_LANG : 'en';
-            $res = Content::addContent('APP_TITLE', '', $this->getAppUid(), $lang, $this->app_title);
+            $res = Content::addContent('APP_TITLE', '', $this->getAppUid(), $lang, $this->app_title_content);
         }
     } // set()
 
     /**
-     * Get the [app_description] column value.
+     * Get the [app_description_content] column value.
      * @return     string
      */
-    public function getAppDescription()
+    public function getAppDescriptionContent()
     {
         if ($this->getAppUid() == '') {
             throw (new Exception( "Error in getAppDescription, the APP_UID can't be blank"));
         }
 
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
-        $this->app_description = Content::load('APP_DESCRIPTION', '', $this->getAppUid(), $lang);
+        $this->app_description_content = Content::load('APP_DESCRIPTION', '', $this->getAppUid(), $lang);
 
-        return $this->app_description;
-    }
-
-    public function isEmptyInContent($content, $field, $lang)
-    {
-        if (isset($content[$field][$lang])) {
-            if (trim($content[$field][$lang]) != '') {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public function updateInsertContent($content, $field, $value)
-    {
-        if (isset($content[$field]['en'])) {
-            //update
-            $con = ContentPeer::retrieveByPK($field, '', $this->getAppUid(), 'en');
-            $con->setConValue($value);
-            if ($con->validate()) {
-                $res = $con->save();
-            }
-        } else {
-            //insert
-            $con = new Content();
-            $con->setConCategory($field);
-            $con->setConParent('');
-            $con->setConId($this->getAppUid());
-            $con->setConLang('en');
-            $con->setConValue($value);
-
-            if ($con->validate()) {
-                $res = $con->save();
-            }
-        }
-    }
-
-    public function normalizeContent($content, $field, $lang)
-    {
-        $value = '';
-
-        //if the lang row is not empty, update in 'en' row and continue
-        if (!$this->isEmptyInContent($content, $field, $lang)) {
-            //update/insert only if this lang is != 'en', with this always we will have an en row with last value
-            $value = $content[$field][$lang];
-
-            if ($lang != 'en') {
-                $this->updateInsertContent($content, $field, $value);
-            }
-        } else {
-            //if the lang row is empty, and 'en' row is not empty return 'en' value
-            if (!$this->isEmptyInContent($content, $field, 'en')) {
-                $value = $content[$field]['en'];
-            }
-
-            //if the lang row is empty, and 'en' row is empty get value for 'other' row and update in 'en'
-            //row and continue
-            if ($this->isEmptyInContent($content, $field, 'en')) {
-                if (isset($content[$field]) && is_array($content[$field])) {
-                    foreach ($content[$field] as $lan => $val) {
-                        if (trim($val) != '') {
-                            $value = $val;
-
-                            if ($lan != 'en') {
-                                $this->updateInsertContent($content, $field , $value);
-                                continue;
-                            }
-                        }
-                    }
-                } else {
-                    $this->updateInsertContent($content, $field, '');
-                }
-            }
-        }
-
-        return $value;
+        return $this->app_description_content;
     }
 
     /**
-     * Get the [app_description] , [app_title] column values.
-     * @return     array of string
-     */
-    public function getContentFields()
-    {
-        if ($this->getAppUid() == '') {
-            throw (new Exception("Error in getContentFields, the APP_UID can't be blank"));
-        }
-
-        $lang = defined('SYS_LANG')? SYS_LANG : 'en';
-        $c = new Criteria();
-        $c->clearSelectColumns();
-        $c->addSelectColumn(ContentPeer::CON_CATEGORY);
-        $c->addSelectColumn(ContentPeer::CON_LANG);
-        $c->addSelectColumn(ContentPeer::CON_VALUE);
-        $c->add(ContentPeer::CON_ID,  $this->getAppUid());
-        //$c->add(ContentPeer::CON_LANG, $lang);
-        $c->addAscendingOrderByColumn('CON_CATEGORY');
-        $c->addAscendingOrderByColumn('CON_LANG');
-        $rs = ContentPeer::doSelectRS($c);
-        $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $rs->next();
-        $content = array();
-
-        while ($row = $rs->getRow()) {
-            $conCategory = $row['CON_CATEGORY'];
-            $conLang     = $row['CON_LANG'];
-
-            if (!isset($content[$conCategory])) {
-                $content[$conCategory] = array();
-            }
-
-            if (!isset($content[$conCategory][$conLang])) {
-                $content[$conCategory][$conLang] = array();
-            }
-
-            $content[$conCategory][$conLang] = $row['CON_VALUE'];
-            $rs->next();
-            $row = $rs->getRow();
-        }
-
-        $appTitle       = $this->normalizeContent($content, 'APP_TITLE', $lang);
-        $appDescription = $this->normalizeContent($content, 'APP_DESCRIPTION', $lang);
-
-        $res['APP_TITLE']       = $appTitle;
-        $res['APP_DESCRIPTION'] = $appDescription;
-
-        return $res;
-    }
-
-    /**
-     * Set the [app_description] column value.
+     * Set the [app_description_content] column value.
      *
      * @param      string $v new value
      * @return     void
      */
-    public function setAppDescription($v)
+    public function setAppDescriptionContent($v)
     {
         if ($this->getAppUid() == '') {
             throw ( new Exception( "Error in setAppTitle, the APP_UID can't be blank") );
@@ -257,10 +130,10 @@ class Application extends BaseApplication
             $v = (string) $v;
         }
 
-        if ($this->app_description !== $v || $v === '') {
-            $this->app_description = $v;
+        if ($this->app_description_content !== $v || $v === '') {
+            $this->app_description_content = $v;
             $lang = defined('SYS_LANG')? SYS_LANG : 'en';
-            $res = Content::addContent('APP_DESCRIPTION', '', $this->getAppUid(), $lang, $this->app_description);
+            $res = Content::addContent('APP_DESCRIPTION', '', $this->getAppUid(), $lang, $this->app_description_content);
         }
     } // set()
 
@@ -315,23 +188,13 @@ class Application extends BaseApplication
         $con = Propel::getConnection(ApplicationPeer::DATABASE_NAME);
 
         try {
-            $oApplication = ApplicationPeer::retrieveByPk( $AppUid );
+            $oApplication = ApplicationPeer::retrieveByPK( $AppUid );
             if (!$oApplication) {
                 return false;
             }
             if (is_object($oApplication) && get_class ($oApplication) == 'Application' ) {
                 $aFields = $oApplication->toArray(BasePeer::TYPE_FIELDNAME);
                 $this->fromArray($aFields, BasePeer::TYPE_FIELDNAME);
-
-                //this is the new function to optimize content queries
-                $aContentFields = $oApplication->getContentFields();
-
-                $aFields['APP_TITLE']       = $aContentFields['APP_TITLE'];
-                $aFields['APP_DESCRIPTION'] = $aContentFields['APP_DESCRIPTION'];
-
-                $this->app_title       = $aFields['APP_TITLE'];
-                $this->app_description = $aFields['APP_DESCRIPTION'];
-
                 //$aFields['APP_PROC_CODE'] = $oApplication->getAppProcCode();
                 //$this->setAppProcCode($oApplication->getAppProcCode());
 
@@ -383,16 +246,17 @@ class Application extends BaseApplication
 
             $this->setAppNumber($maxNumber);
             $this->setAppData(serialize(['APP_NUMBER' => $maxNumber, 'PIN' => $pin]));
+            $this->setAppTitle('#' . $maxNumber);
+            $this->setAppDescription('');
 
             if ($this->validate()) {
                 $con->begin();
                 $res = $this->save();
                 $con->commit();
 
+                $this->setAppTitleContent('#' . $maxNumber);
+                $this->setAppDescriptionContent('');
                 //to do: ID_CASE in translation $this->setAppTitle(G::LoadTranslation('ID_CASE') . $maxNumber);
-                $lang = defined('SYS_LANG')? SYS_LANG : 'en';
-                Content::insertContent('APP_TITLE', '', $this->getAppUid(), $lang, '#' . $maxNumber);
-                Content::insertContent('APP_DESCRIPTION', '', $this->getAppUid(), $lang, '');
                 //Content::insertContent('APP_PROC_CODE', '', $this->getAppUid(), $lang, '');
 
                 $con->commit();
@@ -431,10 +295,10 @@ class Application extends BaseApplication
 
                 if ($oApp->validate()) {
                     if (isset($aData['APP_TITLE'])) {
-                        $oApp->setAppTitle($aData['APP_TITLE']);
+                        $this->setAppTitleContent($aData['APP_TITLE']);
                     }
                     if (isset($aData['APP_DESCRIPTION'])) {
-                        $oApp->setAppDescription($aData['APP_DESCRIPTION']);
+                        $this->setAppDescriptionContent($aData['APP_DESCRIPTION']);
                     }
 
                     //if ( isset ( $aData['APP_PROC_CODE'] ) )
@@ -511,6 +375,8 @@ class Application extends BaseApplication
         $this->setAppUid(G::generateUniqueID());
 
         $this->setAppNumber($maxNumber);
+        $this->setAppTitle('');
+        $this->setAppDescription('');
         $this->setAppParent(isset($aData['APP_PARENT'])? $aData['APP_PARENT'] : 0);
         $this->setAppStatus(isset($aData['APP_STATUS'])? $aData['APP_STATUS'] : 'DRAFT');
         $this->setProUid($aData['PRO_UID']);
@@ -558,8 +424,8 @@ class Application extends BaseApplication
 
         if ($this->validate()) {
             $res = $this->save();
-            $this->setAppTitle('');
-            $this->setAppDescription('');
+            $this->setAppTitleContent('');
+            $this->setAppDescriptionContent('');
             $this->setAppProcCode('');
         } else {
             // Something went wrong. We can now get the validationFailures and handle them.

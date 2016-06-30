@@ -22,6 +22,8 @@
       <parameter name="Comment" value="The application"/>
     </vendor>
     <column name="APP_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+    <column name="APP_TITLE" type="LONGVARCHAR" required="true"/>
+    <column name="APP_DESCRIPTION" type="LONGVARCHAR"/>
     <column name="APP_NUMBER" type="INTEGER" required="true" default="0"/>
     <column name="APP_PARENT" type="VARCHAR" size="32" required="true" default="0"/>
     <column name="APP_STATUS" type="VARCHAR" size="100" required="true" default=""/>
