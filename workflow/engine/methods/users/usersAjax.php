@@ -597,6 +597,10 @@ switch ($_POST['action']) {
         $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($aFields['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array($aFields['USR_PASSWORD']))));
         $aFields['USR_LOGGED_NEXT_TIME'] = $aUserProperty['USR_LOGGED_NEXT_TIME'];
 
+        if(array_key_exists('USR_PASSWORD', $aFields)) {
+            unset($aFields['USR_PASSWORD']);
+        }
+
         $result->success = true;
         $result->user = $aFields;
 
