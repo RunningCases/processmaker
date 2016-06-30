@@ -101,6 +101,10 @@ class pmTables extends Controller
             }
         }
 
+        if (preg_match("/^PMT_(.*)$/", $table['ADD_TAB_NAME'], $match)) {
+            $table['ADD_TAB_NAME'] = $match[1];
+        }
+
         $this->includeExtJS( 'pmTables/' . $jsFile );
 
         $this->setJSVar( 'flagProcessmap', (isset($_REQUEST['flagProcessmap'])) ? $_REQUEST['flagProcessmap'] : 0);
