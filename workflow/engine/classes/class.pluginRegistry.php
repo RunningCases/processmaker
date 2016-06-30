@@ -1789,5 +1789,28 @@ class PMPluginRegistry
         return $this->_aOpenReassignCallback;
     }
 
+
+    public function getPluginsData()
+    {
+        return $this->_aPlugins;
+    }
+
+    /**
+     * The following function method extracts the plugin if exists one
+     * with the same uppercase characters, this is required for the
+     *
+     * @param $code
+     */
+    public function getPluginByCode($code)
+    {
+        $plugin = false;
+        foreach ($this->_aPlugins as $plugin) {
+            $plugin = (array)$plugin;
+            if (strtoupper($plugin['sNamespace']) == $code) {
+                return (object)$plugin;
+            }
+        }
+        return $plugin;
+    }
 }
 

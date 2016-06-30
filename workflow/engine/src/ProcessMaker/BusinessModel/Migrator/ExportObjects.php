@@ -7,21 +7,30 @@ class ExportObjects
      * @var array
      */
     protected $objectsList = array(
-        'Process Definition',
-        'Assignment Rules',
-        'Variables',
-        'Dynaforms',
-        'Input Documents',
-        'Output Documents',
-        'Triggers',
-        'Report Tables',
-        'Templates',
-        'Files',
-        'DB Connection',
-        'Permissions',
-        'Supervisors',
-        'Supervisors Objects'
+        'PROCESSDEFINITION' => 'Process Definition',
+        'ASSIGNMENTRULES' => 'Assignment Rules',
+        'VARIABLES' => 'Variables',
+        'DYNAFORMS' => 'Dynaforms',
+        'INPUTDOCUMENTS' => 'Input Documents',
+        'OUTPUTDOCUMENTS' => 'Output Documents',
+        'TRIGGERS' => 'Triggers',
+        'REPORTTABLES' => 'Report Tables',
+        'TEMPLATES' => 'Templates',
+        'FILES' => 'Files',
+        'DBCONNECTION' => 'DB Connection',
+        'PERMISSIONS' => 'Permissions',
+        'SUPERVISORS' => 'Supervisors',
+        'SUPERVISORSOBJECTS' => 'Supervisors Objects'
     );
+
+    /**
+     * ExportObjects constructor.
+     */
+    public function __construct()
+    {
+        $this->objectsList = array_merge($this->objectsList, $this->processMigrablePlugins());
+    }
+
 
     /**
      * @return array
@@ -51,13 +60,12 @@ class ExportObjects
             $aObjectsEnable = explode('|', $objectsEnable);
             foreach ($this->objectsList as $key => $val) {
                 $grid[] = array(
-                    'OBJECT_ID' => $key+1,
+                    'OBJECT_ID' => strtoupper(str_replace(' ', '',$val)),
                     'OBJECT_NAME' => $val,
                     'OBJECT_ACTION' => 1,
                     'OBJECT_ENABLE' => in_array(strtoupper(str_replace(' ', '',$val)), $aObjectsEnable)
                 );
             }
-
             $r = new \stdclass();
             $r->data = $grid;
 
@@ -65,6 +73,21 @@ class ExportObjects
         } catch (\Exception $e) {
             throw $e;
         }
+    }
+
+    public function processMigrablePlugins()
+    {
+        \G::LoadClass("pluginRegistry");
+        $plugins = array();
+        $registry = \PMPluginRegistry::getSingleton();
+        $data = $registry->getPluginsData();
+        foreach ($data as $detail) {
+            $detail = (array)$detail;
+            if (isset($detail['bIsMigrable']) && $detail['bIsMigrable']) {
+                $plugins[strtoupper($detail['sNamespace'])] = $detail['sNamespace'];
+            }
+        }
+        return $plugins;
     }
 
     /**
@@ -75,7 +98,7 @@ class ExportObjects
     public function getObjectName($idObject)
     {
         try {
-            return (str_replace(' ', '', $this->objectsList[$idObject - 1]));
+            return (str_replace(' ', '', $this->objectsList[$idObject]));
 
         } catch (\Exception $e) {
             throw $e;
@@ -92,7 +115,7 @@ class ExportObjects
         try {
             $mapObjectList = array();
             foreach ($objects as $objectId) {
-                array_push($mapObjectList, strtoupper(str_replace(' ', '', $this->objectsList[$objectId - 1])));
+                array_push($mapObjectList, strtoupper(str_replace(' ', '', $this->objectsList[$objectId])));
             }
             return $mapObjectList;
         } catch (\Exception $e) {
@@ -110,10 +133,9 @@ class ExportObjects
         try {
             $idObjectList = array();
             foreach ($this->objectsList as $key => $val) {
-                $key++;
                 foreach ($objects as $row) {
-                    if(strtoupper(str_replace(' ', '', $this->objectsList[$key - 1])) === $row){
-                        array_push($idObjectList, $key);
+                    if(strtoupper(str_replace(' ', '', $this->objectsList[$key])) === $row){
+                        array_push($idObjectList, $row);
                     }
                 }
             }

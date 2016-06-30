@@ -36,8 +36,16 @@ class GranularImporter
         $this->exportObjects = new ExportObjects();
         //create structure
         foreach ($aGranular as $key => $rowObject) {
-            array_push($listObjectGranular, array("name" => strtoupper($this->exportObjects->getObjectName
-            ($rowObject->id)), "data" => "", "value" => $rowObject->action));
+            array_push(
+                $listObjectGranular,
+                array(
+                    "name" => strtoupper(
+                        $this->exportObjects->getObjectName($rowObject->id)
+                    ),
+                    "data" => [],
+                    "value" => $rowObject->action
+                )
+            );
         }
         //add data
         foreach ($listObjectGranular as $key => $rowObject) {
@@ -57,9 +65,9 @@ class GranularImporter
         switch ($nameObject) {
             case 'PROCESSDEFINITION':
                 $objectList['PROCESSDEFINITION']['bpmn'] = isset($data['tables']['bpmn']) ? $this->structureBpmnData
-                ($data['tables']['bpmn']) : '';
+                ($data['tables']['bpmn']) : [];
                 $objectList['PROCESSDEFINITION']['workflow'] = isset($data['tables']['workflow']) ?
-                    $data['tables']['workflow'] : '';
+                    $data['tables']['workflow'] : [];
                 break;
             case 'ASSIGNMENTRULES':
                 $objectList['ASSIGNMENTRULES']['tasks'] = isset($data['tables']['workflow']['tasks']) ?
@@ -127,6 +135,8 @@ class GranularImporter
                     $data['tables']['workflow']['reportTablesFields'] : [];
                 break;
             default:
+                $objectList[$nameObject] = isset($data['tables']['plugins'][strtolower($nameObject)]) ?
+                    $data['tables']['plugins'][strtolower($nameObject)] : '';
                 break;
         }
         return $objectList;
@@ -170,7 +180,9 @@ class GranularImporter
                     if (is_object($objClass)) {
                         $dataImport = $data['data'][$data['name']];
                         $replace = ($data['value'] == 'replace') ? true : false;
+                        $objClass->beforeImport($dataImport);
                         $migratorData = $objClass->import($dataImport, $replace);
+                        $objClass->afterImport($dataImport);
                     }
                 }
             } else {
@@ -201,10 +213,34 @@ class GranularImporter
     {
         try {
             if (XmlImporter::IMPORT_OPTION_OVERWRITE !== $option) {
-                if (count($objectList) !== count($this->exportObjects->getObjectsList())) {
-                    $exception = new ImportException();
-                    $exception->setNameException(\G::LoadTranslation('ID_PROCESS_DEFINITION_INCOMPLETE'));
-                    throw($exception);
+                $nativeElements = array(
+                    'PROCESSDEFINITION',
+                    'ASSIGNMENTRULES',
+                    'VARIABLES',
+                    'DYNAFORMS',
+                    'INPUTDOCUMENTS',
+                    'OUTPUTDOCUMENTS',
+                    'TRIGGERS',
+                    'REPORTTABLES',
+                    'TEMPLATES',
+                    'FILES',
+                    'DBCONNECTION',
+                    'PERMISSIONS',
+                    'SUPERVISORS',
+                    'SUPERVISORSOBJECTS'
+                );
+                foreach ($nativeElements as $element) {
+                    $found = false;
+                    foreach($objectList as $object) {
+                        if ($element == $object->id) {
+                            $found = true;
+                        }
+                    }
+                    if (!$found) {
+                        $exception = new ImportException();
+                        $exception->setNameException(\G::LoadTranslation('ID_PROCESS_DEFINITION_INCOMPLETE'));
+                        throw($exception);
+                    }
                 }
             }
             return true;
@@ -215,7 +251,7 @@ class GranularImporter
 
     /**
      * It's very important to import the elements in the right order, if not
-     * chaos will be unleashed, God forgive us all.
+     * some strange behavior will occur during import and export.
      * @param $objectList
      */
     public function reorderImportOrder($objectList)
@@ -241,6 +277,10 @@ class GranularImporter
             if (!empty($objectList[$objectOrder])) {
                 $orderedList[$executionOrder] = $objectList[$objectOrder];
             }
+        }
+
+        for ($j=count($arrangeList); $j<count($objectList); $j++) {
+            $orderedList[$j] = $objectList[$j];
         }
         ksort($orderedList);
         return $orderedList;
@@ -272,6 +312,7 @@ class GranularImporter
                 list($arrayWorkflowTables, $arrayWorkflowFiles) = $workflow->updateDataUidByArrayUid($arrayWorkflowTables, $arrayWorkflowFiles, $result);
             }
             $newData['tables']['workflow'] = $arrayWorkflowTables;
+            $newData['tables']['plugins'] = $data["tables"]["plugins"];
             $newData['files']['workflow']  = $arrayWorkflowFiles;
 
             return array(

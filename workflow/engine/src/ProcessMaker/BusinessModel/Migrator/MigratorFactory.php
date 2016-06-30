@@ -52,6 +52,9 @@ class MigratorFactory
             case 'PERMISSIONS':
                 $class = new PermissionsMigrator();
                 break;
+            default:
+                $class = new PluginMigratorAdapter($classname);
+                break;
         }
         return $class;
     }

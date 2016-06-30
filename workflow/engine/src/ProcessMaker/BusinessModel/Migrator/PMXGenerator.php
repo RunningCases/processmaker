@@ -56,7 +56,11 @@ class PMXGenerator
 
         $rootNode->appendChild($metadataNode);
 
-        $dbData = array("BPMN" => $data["bpmn-definition"], "workflow" => $data["workflow-definition"]);
+        $dbData = array(
+            "BPMN" => $data["bpmn-definition"],
+            "workflow" => $data["workflow-definition"],
+            "plugins" => $data["plugin-data"]
+        );
         foreach ($dbData as $sectionName => $sectionData) {
             $dataNode = $this->domDocument->createElement("definition");
             $dataNode->setAttribute("class", $sectionName);

@@ -242,7 +242,7 @@ abstract class Importer
                     $newObjectArray = array();
                     $count = 0;
                     foreach ($objectsToImport as $key => $rowObject) {
-                        if($rowObject->id != '1'){
+                        if($rowObject->id != 'PROCESSDEFINITION'){
                             $newObjectArray[++$count] = $rowObject;
                         }
                     }
