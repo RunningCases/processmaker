@@ -1270,6 +1270,40 @@ class TimerEvent
                 }
 
                 if ($flagCase) {
+                    //Update Timer-Event
+                    $arrayData = [];
+
+                    switch ($arrayTimerEventData['TMREVN_OPTION']) {
+                        case 'HOURLY':
+                        case 'DAILY':
+                        case 'MONTHLY':
+                        case 'EVERY':
+                            if ($timerEventNextRunDateNew == '') {
+                                $timerEventNextRunDateNew = $this->getNextRunDateByDataAndDatetime(
+                                    $arrayTimerEventData, $timerEventNextRunDate, false
+                                );
+                            }
+
+                            if ($arrayTimerEventData['TMREVN_OPTION'] != 'EVERY' &&
+                                $arrayTimerEventData['TMREVN_END_DATE'] . '' != '' &&
+                                strtotime($timerEventNextRunDateNew) > strtotime($arrayTimerEventData['TMREVN_END_DATE'] . ' 23:59:59')
+                            ) {
+                                $arrayData['TMREVN_STATUS'] = 'PROCESSED';
+                            } else {
+                                $arrayData['TMREVN_NEXT_RUN_DATE'] = $timerEventNextRunDateNew;
+                            }
+                            break;
+                        case 'ONE-DATE-TIME':
+                            $arrayData['TMREVN_STATUS'] = 'PROCESSED';
+                            break;
+                    }
+
+                    $arrayData['TMREVN_LAST_RUN_DATE'] = $timerEventNextRunDate;
+                    $arrayData['TMREVN_LAST_EXECUTION_DATE'] = date('Y-m-d H:i:s');
+
+                    $result = $this->singleUpdate($arrayTimerEventData['TMREVN_UID'], $arrayData);
+
+                    //Show info in terminal
                     if ($flagRecord) {
                         $common->frontEndShow("TEXT", "");
                     }
@@ -1313,36 +1347,6 @@ class TimerEvent
 
                         $this->log("CREATED-NEW-CASE", "Failed: " . $arrayResult["message"] . ", PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
                     }
-
-                    //Update Timer-Event
-                    $arrayData = array();
-
-                    switch ($arrayTimerEventData["TMREVN_OPTION"]) {
-                        case "HOURLY":
-                        case "DAILY":
-                        case "MONTHLY":
-                        case "EVERY":
-                            if ($timerEventNextRunDateNew == "") {
-                                $timerEventNextRunDateNew = $this->getNextRunDateByDataAndDatetime($arrayTimerEventData, $timerEventNextRunDate, false);
-                            }
-
-                            if ($arrayTimerEventData["TMREVN_OPTION"] != "EVERY" &&
-                                $arrayTimerEventData["TMREVN_END_DATE"] . "" != "" && strtotime($timerEventNextRunDateNew) > strtotime($arrayTimerEventData["TMREVN_END_DATE"] . " 23:59:59")
-                            ) {
-                                $arrayData["TMREVN_STATUS"] = "PROCESSED";
-                            } else {
-                                $arrayData["TMREVN_NEXT_RUN_DATE"] = $timerEventNextRunDateNew;
-                            }
-                            break;
-                        case "ONE-DATE-TIME":
-                            $arrayData["TMREVN_STATUS"] = "PROCESSED";
-                            break;
-                    }
-
-                    $arrayData["TMREVN_LAST_RUN_DATE"] = $timerEventNextRunDate;
-                    $arrayData["TMREVN_LAST_EXECUTION_DATE"] = date("Y-m-d H:i:s");
-
-                    $result = $this->singleUpdate($arrayTimerEventData["TMREVN_UID"], $arrayData);
 
                     $flagRecord = true;
                 }
@@ -1513,6 +1517,7 @@ class TimerEvent
                         }
 
                         if ($flagCase) {
+                            //Show info in terminal
                             if ($flagRecord) {
                                 $common->frontEndShow("TEXT", "");
                             }
