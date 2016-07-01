@@ -1184,7 +1184,7 @@ function exportImportProcessObjects(typeAction)
                             if(!inArray(row.get('OBJECT_ID'),importProcessGlobal.objectGranularImport)) {
                                 store.remove(row);
                             }
-                            if(row.get('OBJECT_ID') === 1) { /*process definition*/
+                            if(row.get('OBJECT_ID') === "PROCESSDEFINITION") { /*process definition*/
                                 row.set("OBJECT_ACTION","2");
                             }
                         });

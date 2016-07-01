@@ -1169,6 +1169,10 @@ class Derivation
                                     if(isset($nextDel["ROU_PREVIOUS_TYPE"])){
                                         if($nextDel["ROU_PREVIOUS_TYPE"] == "SEC-JOIN"){
                                             $arrayOpenThread = $this->case->searchOpenPreviousTasks($nextDel["ROU_PREVIOUS_TASK"], $currentDelegation["APP_UID"]);
+                                            $arraySiblings = $this->case->getOpenSiblingThreads($nextDel["ROU_PREVIOUS_TASK"], $currentDelegation["APP_UID"], $currentDelegation["DEL_INDEX"], $currentDelegation["TAS_UID"]);
+                                            if(is_array($arrayOpenThread) && is_array($arraySiblings)){
+                                               $arrayOpenThread = array_merge($arrayOpenThread, $arraySiblings);
+                                            }
                                             $canDerivate = empty($arrayOpenThread);
                                         }
                                     }
