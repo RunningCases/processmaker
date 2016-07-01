@@ -923,7 +923,7 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
           }
           // setting table attributes for current editing process
           Ext.getCmp('REP_TAB_NAME').setValue(TABLE.ADD_TAB_NAME);
-          Ext.getCmp('REP_TAB_NAME').setDisabled(true);
+          Ext.getCmp('REP_TAB_NAME').setDisabled(false);
           Ext.getCmp('REP_TAB_DSC').setValue(TABLE.ADD_TAB_DESCRIPTION);
 
           // grid
@@ -1052,7 +1052,46 @@ function validateFieldSizeAutoincrement(valueType, defaultValue) {
     buttons:[ {
         id: 'southPanelCreateUpdate',
         text: TABLE === false ? _("ID_CREATE") : _("ID_UPDATE"),
-        handler: createReportTable
+        handler: function()
+        {
+            if (TABLE === false) {
+                createReportTable();
+            } else {
+                var oldRepTabName = TABLE.ADD_TAB_NAME;
+                var newRepTabName = Ext.getCmp("REP_TAB_NAME").getValue().trim();
+
+                if (newRepTabName != "") {
+                    if (oldRepTabName != newRepTabName) {
+                        Ext.MessageBox.show({
+                            title: _("ID_CONFIRM"),
+                            msg: _("ID_RT_RENAME_NAME_TABLE"),
+                            icon: Ext.MessageBox.QUESTION,
+                            buttons: {
+                              yes: _("ID_RT_CONTINUE_TABLE_RENAME"),
+                              no:  _("ID_RT_NOT_CHANGE_NAME")
+                            },
+                            fn: function (buttonId, text, opt)
+                            {
+                                if (buttonId == "yes") {
+                                    createReportTable();
+                                }
+                            }
+                        });
+                    } else {
+                          createReportTable();
+                    }
+                } else {
+                    PMExt.error(
+                        _("ID_ERROR"),
+                        _("ID_TABLE_NAME_IS_REQUIRED"),
+                        function()
+                        {
+                            Ext.getCmp("REP_TAB_NAME").focus();
+                        }
+                    );
+                }
+            }
+        }
       }, {
         id: 'southPanelCancel',
         text:_("ID_CANCEL"),
