@@ -67,7 +67,7 @@ class InputDocument extends BaseInputDocument
             $oInputDocument = InputDocumentPeer::retrieveByPK( $sInpDocUid );
             if (! is_null( $oInputDocument )) {
                 $aFields = $oInputDocument->toArray( BasePeer::TYPE_FIELDNAME );
-                $this->fromArray( $aFields, BasePeer::TYPE_FIELDNAME );
+                $this->fromArray($aFields, BasePeer::TYPE_FIELDNAME);
                 return $aFields;
             } else {
                 throw (new Exception( 'This row doesn\'t exist!' ));
