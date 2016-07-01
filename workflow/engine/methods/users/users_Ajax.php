@@ -497,7 +497,7 @@ try {
                 $row['USR_ROLE'] = isset($uRole['ROL_NAME']) ? ($uRole['ROL_NAME'] != '' ? $uRole['ROL_NAME'] : $uRole['ROL_CODE']) : $uRole['ROL_CODE'];
 
                 $row['DUE_DATE_OK'] = (date('Y-m-d') > date('Y-m-d', strtotime($row['USR_DUE_DATE']))) ? 0 : 1;
-                $row['LAST_LOGIN'] = isset($aLogin[$row['USR_UID']]) ? $aLogin[$row['USR_UID']] : '';
+                $row['LAST_LOGIN'] = isset($aLogin[$row['USR_UID']]) ? \ProcessMaker\Util\DateTime::convertUtcToTimeZone($aLogin[$row['USR_UID']]) : '';
                 $row['TOTAL_CASES'] = isset($row['USR_TOTAL_PARTICIPATED']) ? $row['USR_TOTAL_PARTICIPATED'] : 0;
                 $row['DEP_TITLE'] = isset($aDepart[$row['USR_UID']]) ? $aDepart[$row['USR_UID']] : '';
                 $row['USR_UX'] = isset($uxList[$row['USR_UX']]) ? $uxList[$row['USR_UX']] : $uxList['NORMAL'];
@@ -586,4 +586,3 @@ try {
 } catch (Exception $oException) {
     die($oException->getMessage());
 }
-
