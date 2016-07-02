@@ -655,6 +655,14 @@ Ext.onReady ( function() {
         defaults: {
             sortable: true // columns are sortable by default
         },
+        listeners: {
+            hiddenchange: function (columnModel, columnIndex, hidden) {
+                var grid = Ext.getCmp('casesGrid');
+                if (grid && grid.getView) {
+                    grid.getView().refresh();
+                }
+            }
+        },
         columns: columns
     });
 
