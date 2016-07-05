@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker (Branch 3.1)\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-07-04 20:48:26\n"
+"PO-Revision-Date: 2016-07-05 12:03:37\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -27412,6 +27412,54 @@ msgstr "Fields marked with asterisk (%%ASTERISK%%) are required."
 #: LABEL/ID_MAFE_c7f8f8652db6d74e086d297129179d2f
 msgid "Task/sub-process name can't be empty"
 msgstr "Task/sub-process name can't be empty"
+
+# TRANSLATION
+# LABEL/ID_EMAIL_EVENT_CONFIGURATION_EMAIL
+#: LABEL/ID_EMAIL_EVENT_CONFIGURATION_EMAIL
+msgid "Email event: {0}, in process: {1}, cannot send any mail because its configuration needs to be completed."
+msgstr "Email event: {0}, in process: {1}, cannot send any mail because its configuration needs to be completed."
+
+# TRANSLATION
+# LABEL/ID_CANNOT_REMOVE_TEMPLATE_EMAIL_EVENT
+#: LABEL/ID_CANNOT_REMOVE_TEMPLATE_EMAIL_EVENT
+msgid "You can not delete the template {0} because it has a relationship with Email Event"
+msgstr "You can not delete the template {0} because it has a relationship with Email Event"
+
+# TRANSLATION
+# LABEL/ID_DEPARTMENT_ERROR_CREATE
+#: LABEL/ID_DEPARTMENT_ERROR_CREATE
+msgid "Error creating department"
+msgstr "Error creating department"
+
+# TRANSLATION
+# LABEL/ID_DEPARTMENT_CHECK_PARENT_DEPARTMENT
+#: LABEL/ID_DEPARTMENT_CHECK_PARENT_DEPARTMENT
+msgid "It's necessary to check the parent-department: {0} for the sub-department: {1}"
+msgstr "It's necessary to check the parent-department: {0} for the sub-department: {1}"
+
+# TRANSLATION
+# LABEL/ID_PROCESS_DEFINITION_INCOMPLETE
+#: LABEL/ID_PROCESS_DEFINITION_INCOMPLETE
+msgid "To create a new process all the process objects must be selected/included in the pmx2 file."
+msgstr "To create a new process all the process objects must be selected/included in the pmx2 file."
+
+# TRANSLATION
+# LABEL/ID_NOT_EXECUTE_QUERY
+#: LABEL/ID_NOT_EXECUTE_QUERY
+msgid "Changes to {0} are forbidden. Please contact system administrator for more information."
+msgstr "Changes to {0} are forbidden. Please contact system administrator for more information."
+
+# TRANSLATION
+# LABEL/ID_EMAIL_EVENT_DEFINITION_DOES_NOT_EXIST
+#: LABEL/ID_EMAIL_EVENT_DEFINITION_DOES_NOT_EXIST
+msgid "The email event definition does not exist."
+msgstr "The email event definition does not exist."
+
+# TRANSLATION
+# LABEL/ID_USER_CANT_BE_DELETED_FOR_THE_PROCESS
+#: LABEL/ID_USER_CANT_BE_DELETED_FOR_THE_PROCESS
+msgid "The user can't be deleted because it is referenced in the process {processTitle} in a process permission."
+msgstr "The user can't be deleted because it is referenced in the process {processTitle} in a process permission."
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
