@@ -128,324 +128,59 @@ switch ($_POST['action']) {
         print (G::json_encode($oData));
         break;
     case 'saveUser':
+    case 'savePersonalInfo':
         try {
+            $user = new \ProcessMaker\BusinessModel\User();
             $form = $_POST;
 
-            if (isset($_POST['USR_UID'])) {
-                $form['USR_UID'] = $_POST['USR_UID'];
-            } else {
-                $form['USR_UID'] = '';
+            switch ($_POST['action']) {
+                case 'saveUser';
+                    if (!$user->checkPermission($_SESSION['USER_LOGGED'], 'PM_USERS')) {
+                        throw new Exception(G::LoadTranslation('ID_USER_NOT_HAVE_PERMISSION', [$_SESSION['USER_LOGGED']]));
+                    }
+                    break;
+                case 'savePersonalInfo':
+                    if (!$user->checkPermission($_SESSION['USER_LOGGED'], 'PM_USERS') &&
+                        !$user->checkPermission($_SESSION['USER_LOGGED'], 'PM_EDITPERSONALINFO')
+                    ) {
+                        throw new Exception(G::LoadTranslation('ID_USER_NOT_HAVE_PERMISSION', [$_SESSION['USER_LOGGED']]));
+                    }
+
+                    unset(
+                        $form['USR_REPLACED_BY'],
+                        $form['USR_DUE_DATE'],
+                        $form['USR_STATUS'],
+                        $form['USR_ROLE']
+                    );
+                    break;
+                default:
+                    throw new Exception(G::LoadTranslation('ID_INVALID_DATA'));
+                    break;
             }
 
-            if (!isset($form['USR_NEW_PASS'])) {
-                $form['USR_NEW_PASS'] = '';
-            }
-            if ($form['USR_NEW_PASS'] != '') {
-                $form['USR_PASSWORD'] = Bootstrap::hashPassword($form['USR_NEW_PASS']);
-            }
-            if (!isset($form['USR_CITY'])) {
-                $form['USR_CITY'] = '';
-            }
-            if (!isset($form['USR_LOCATION'])) {
-                $form['USR_LOCATION'] = '';
-            }
-            if (!isset($form['USR_AUTH_USER_DN'])) {
-                $form['USR_AUTH_USER_DN'] = '';
-            }
-            if (!isset($form['USR_LOGGED_NEXT_TIME'])) {
-                $form['USR_LOGGED_NEXT_TIME'] = 0;
+            if (array_key_exists('USR_LOGGED_NEXT_TIME', $form)) {
+                $form['USR_LOGGED_NEXT_TIME'] = ($form['USR_LOGGED_NEXT_TIME'])? 1 : 0;
             }
 
-            $user = new \ProcessMaker\BusinessModel\User();
-
-            $firstName = $form['USR_FIRSTNAME'] ? " - First Name: ". $form['USR_FIRSTNAME'] : "";
-            $lastName = $form['USR_LASTNAME'] ? " - Last Name: ". $form['USR_LASTNAME'] : "";
-            $email = $form['USR_EMAIL'] ? " - Email: ". $form['USR_EMAIL'] : "";
-            $dueDate = $form['USR_DUE_DATE'] ? " - Due Date: ". $form['USR_DUE_DATE'] : "";
-            $status = "";
-            if(isset($form['USR_STATUS'])){
-                $status = $form['USR_STATUS'] ? " - Status: ". $form['USR_STATUS'] : "";
-            }
-            $address = $form['USR_ADDRESS'] ? " - Address: ". $form['USR_ADDRESS'] : "";
-            $phone = $form['USR_PHONE'] ? " - Phone: ". $form['USR_PHONE'] : "";
-            $zipCode = $form['USR_ZIP_CODE'] ? " - Zip Code: ". $form['USR_ZIP_CODE'] : "";
-            $position = $form['USR_POSITION'] ? " - Position: ". $form['USR_POSITION'] : "";
-            $role = $form['USR_ROLE'] ? " - Role: ". $form['USR_ROLE'] : "";
-            $languageDef = (isset($form['USR_DEFAULT_LANG']))? " - Default Language: " . $form['USR_DEFAULT_LANG'] : "";
-            /*----------------------------------********---------------------------------*/
-            $costByHour = $form['USR_COST_BY_HOUR'] ? $form['USR_COST_BY_HOUR'] : "";
-            $unit = $form['USR_UNIT_COST'] ? $form['USR_UNIT_COST'] : "";
-            /*----------------------------------********---------------------------------*/
-            $timeZone = (isset($form['USR_TIME_ZONE']))? ' - Time Zone: ' . $form['USR_TIME_ZONE'] : '';
+            $userUid = '';
 
             if ($form['USR_UID'] == '') {
-                $criteria = new Criteria();
-                $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
-                $criteria->add(UsersPeer::USR_USERNAME, utf8_encode($_POST['USR_USERNAME']));
-                if (UsersPeer::doCount($criteria) > 0) {
-                    throw new Exception(G::LoadTranslation('ID_USERNAME_ALREADY_EXISTS', array('USER_ID' => $_POST['USR_USERNAME'])));
-                }
-                $aData['USR_USERNAME'] = $form['USR_USERNAME'];
-                $aData['USR_PASSWORD'] = $form['USR_PASSWORD'];
-                $aData['USR_FIRSTNAME'] = $form['USR_FIRSTNAME'];
-                $aData['USR_LASTNAME'] = $form['USR_LASTNAME'];
-                $aData['USR_EMAIL'] = $form['USR_EMAIL'];
-                $aData['USR_DUE_DATE'] = $form['USR_DUE_DATE'];
-                $aData['USR_CREATE_DATE'] = date('Y-m-d H:i:s');
-                $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
-                $aData['USR_BIRTHDAY'] = date('Y-m-d');
-                $aData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];
+                $arrayUserData = $user->create($form);
+                $userUid = $arrayUserData['USR_UID'];
 
-                //fixing bug in inactive user when the admin create a new user.
-                $statusWF = $form['USR_STATUS'];
-                $aData['USR_STATUS'] = $form['USR_STATUS'] ;//== 'ACTIVE' ? 1 : 0;
-                try {
-                    $sUserUID = $RBAC->createUser($aData, $form['USR_ROLE']);
-                } catch(Exception $oError) {
-                    throw new Exception($oError->getMessage());
-                }
-                $aData['USR_STATUS'] = $statusWF;
-                $aData['USR_UID'] = $sUserUID;
-                $aData['USR_PASSWORD'] = G::encryptOld($sUserUID); //fake :p
-                $aData['USR_COUNTRY'] = $form['USR_COUNTRY'];
-                $aData['USR_CITY'] = $form['USR_CITY'];
-                $aData['USR_LOCATION'] = $form['USR_LOCATION'];
-                $aData['USR_ADDRESS'] = $form['USR_ADDRESS'];
-                $aData['USR_PHONE'] = $form['USR_PHONE'];
-                $aData['USR_ZIP_CODE'] = $form['USR_ZIP_CODE'];
-                $aData['USR_POSITION'] = $form['USR_POSITION'];
-                //        $aData['USR_RESUME']       = $form['USR_RESUME'];
-                $aData['USR_ROLE'] = $form['USR_ROLE'];
-                $aData['USR_DEFAULT_LANG'] = (isset($form['USR_DEFAULT_LANG']))? $form['USR_DEFAULT_LANG'] : '';
-                /*----------------------------------********---------------------------------*/
-                $aData['USR_COST_BY_HOUR'] = $form['USR_COST_BY_HOUR'];
-                $aData['USR_UNIT_COST'] = $form['USR_UNIT_COST'];
-                /*----------------------------------********---------------------------------*/
-                $aData['USR_REPLACED_BY'] = ($user->getUserRecordByPk($form['USR_REPLACED_BY'], [], false) !== false)?
-                    $form['USR_REPLACED_BY'] : '';
-                $aData['USR_TIME_ZONE'] = $form['USR_TIME_ZONE'];
-
-                require_once 'classes/model/Users.php';
-                $oUser = new Users();
-                $oUser->create($aData);
-                G::auditLog('CreateUser', 'User Name: ' . $aData['USR_USERNAME'] . ' - User ID: (' . $aData['USR_UID'] . ') ' . $firstName . $lastName . $email . $dueDate . $status . $address . $phone . $zipCode . $position . $role . $timeZone . $languageDef);
-
-                if ($_FILES['USR_PHOTO']['error'] != 1) {
-                    //print (PATH_IMAGES_ENVIRONMENT_USERS);
-                    if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
-                        G::uploadFile($_FILES['USR_PHOTO']['tmp_name'], PATH_IMAGES_ENVIRONMENT_USERS, $sUserUID . '.gif');
-                    }
-                } else {
-                    $result->success = false;
-                    $result->fileError = true;
-                    print (G::json_encode($result));
-                    die();
-                }
-                /*
-                  if ($_FILES['USR_RESUME']['error'] != 1) {
-                  if ($_FILES['USR_RESUME']['tmp_name'] != '') {
-                  G::uploadFile($_FILES['USR_RESUME']['tmp_name'], PATH_IMAGES_ENVIRONMENT_FILES . $sUserUID . '/', $_FILES['USR_RESUME']['name']);
-                  }
-                  }
-                  else {
-                  $result->success   = false;
-                  $result->fileError = true;
-                  print(G::json_encode($result));
-                  die;
-                  }
-                 */
-                require_once 'classes/model/UsersProperties.php';
-                $oUserProperty = new UsersProperties();
-                $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($aData['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array(Bootstrap::hashPassword($aData['USR_PASSWORD'])))));
-                $aUserProperty['USR_LOGGED_NEXT_TIME'] = $form['USR_LOGGED_NEXT_TIME'];
-                $oUserProperty->update($aUserProperty);
+                $user->auditLog('INS',  array_merge(['USR_UID' => $userUid, 'USR_USERNAME' => $arrayUserData['USR_USERNAME']], $form));
             } else {
-
-                $aData['USR_UID'] = $form['USR_UID'];
-                $aData['USR_USERNAME'] = $form['USR_USERNAME'];
-
-                if (isset($form['USR_PASSWORD'])) {
-
-                    if ($form['USR_PASSWORD'] != '') {
-                        $aData['USR_PASSWORD'] = $form['USR_PASSWORD'];
-                        require_once 'classes/model/UsersProperties.php';
-                        $oUserProperty = new UsersProperties();
-                        $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($form['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array(Bootstrap::hashPassword($form['USR_PASSWORD'])))));
-
-                        $memKey = 'rbacSession' . session_id();
-                        $memcache = & PMmemcached::getSingleton(defined('SYS_SYS') ? SYS_SYS : '' );
-                        if (($RBAC->aUserInfo = $memcache->get($memKey)) === false) {
-                            $RBAC->loadUserRolePermission($RBAC->sSystem, $_SESSION['USER_LOGGED']);
-                            $memcache->set($memKey, $RBAC->aUserInfo, PMmemcached::EIGHT_HOURS);
-                        }
-                        if ($RBAC->aUserInfo['PROCESSMAKER']['ROLE']['ROL_CODE'] == 'PROCESSMAKER_ADMIN') {
-                            $aUserProperty['USR_LAST_UPDATE_DATE'] = date('Y-m-d H:i:s');
-                            $aUserProperty['USR_LOGGED_NEXT_TIME'] = $form['USR_LOGGED_NEXT_TIME'];
-                            $oUserProperty->update($aUserProperty);
-                        }
-
-                        $aErrors = $oUserProperty->validatePassword($form['USR_NEW_PASS'], $aUserProperty['USR_LAST_UPDATE_DATE'], 0);
-
-                        if (count($aErrors) > 0) {
-                            $sDescription = G::LoadTranslation('ID_POLICY_ALERT') . ':,';
-                            foreach ($aErrors as $sError) {
-                                switch ($sError) {
-                                    case 'ID_PPP_MINIMUN_LENGTH':
-                                        $sDescription .= ' - ' . G::LoadTranslation($sError) . ': ' . PPP_MINIMUN_LENGTH . ',';
-                                        break;
-                                    case 'ID_PPP_MAXIMUN_LENGTH':
-                                        $sDescription .= ' - ' . G::LoadTranslation($sError) . ': ' . PPP_MAXIMUN_LENGTH . ',';
-                                        break;
-                                    case 'ID_PPP_EXPIRATION_IN':
-                                        $sDescription .= ' - ' . G::LoadTranslation($sError) . ' ' . PPP_EXPIRATION_IN . ' ' . G::LoadTranslation('ID_DAYS') . ',';
-                                        break;
-                                    default:
-                                        $sDescription .= ' - ' . G::LoadTranslation($sError) . ',';
-                                        break;
-                                }
-                            }
-                            $sDescription .= '' . G::LoadTranslation('ID_PLEASE_CHANGE_PASSWORD_POLICY');
-                            $result->success = false;
-                            $result->msg = $sDescription;
-                            print (G::json_encode($result));
-                            die();
-                        }
-                        $aHistory = unserialize($aUserProperty['USR_PASSWORD_HISTORY']);
-                        if (!is_array($aHistory)) {
-                            $aHistory = array();
-                        }
-                        if (!defined('PPP_PASSWORD_HISTORY')) {
-                            define('PPP_PASSWORD_HISTORY', 0);
-                        }
-                        if (PPP_PASSWORD_HISTORY > 0) {
-                            //it's looking a password igual into aHistory array that was send for post in md5 way
-                            $c = 0;
-                            $sw = 1;
-                            while (count($aHistory) >= 1 && count($aHistory) > $c && $sw) {
-                                if (strcmp(trim($aHistory[$c]), trim($form['USR_PASSWORD'])) == 0) {
-                                    $sw = 0;
-                                }
-                                $c++;
-                            }
-                            if ($sw == 0) {
-                                $sDescription = G::LoadTranslation('ID_POLICY_ALERT') . ':<br /><br />';
-                                $sDescription .= ' - ' . G::LoadTranslation('PASSWORD_HISTORY') . ': ' . PPP_PASSWORD_HISTORY . '<br />';
-                                $sDescription .= '<br />' . G::LoadTranslation('ID_PLEASE_CHANGE_PASSWORD_POLICY') . '';
-                                $result->success = false;
-                                $result->msg = $sDescription;
-                                print (G::json_encode($result));
-                                die();
-                            }
-
-                            if (count($aHistory) >= PPP_PASSWORD_HISTORY) {
-                                $sLastPassw = array_shift($aHistory);
-                            }
-                            $aHistory[] = $form['USR_PASSWORD'];
-                        }
-                        $aUserProperty['USR_LAST_UPDATE_DATE'] = date('Y-m-d H:i:s');
-                        $aUserProperty['USR_LOGGED_NEXT_TIME'] = $form['USR_LOGGED_NEXT_TIME'];
-                        $aUserProperty['USR_PASSWORD_HISTORY'] = serialize($aHistory);
-                        $oUserProperty->update($aUserProperty);
-                    } else {
-                        require_once 'classes/model/Users.php';
-                        $oUser = new Users();
-                        $aUser = $oUser->load($aData['USR_UID']);
-                        require_once 'classes/model/UsersProperties.php';
-                        $oUserProperty = new UsersProperties();
-                        $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($aData['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array($aUser['USR_PASSWORD']))));
-                        $aUserProperty['USR_LOGGED_NEXT_TIME'] = $form['USR_LOGGED_NEXT_TIME'];
-                        $oUserProperty->update($aUserProperty);
-                    }
-                } else {
-                    require_once 'classes/model/Users.php';
-                    $oUser = new Users();
-                    $aUser = $oUser->load($aData['USR_UID']);
-                    require_once 'classes/model/UsersProperties.php';
-                    $oUserProperty = new UsersProperties();
-                    $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($aData['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array($aUser['USR_PASSWORD']))));
-                    $aUserProperty['USR_LOGGED_NEXT_TIME'] = $form['USR_LOGGED_NEXT_TIME'];
-                    $oUserProperty->update($aUserProperty);
-                }
-                $aData['USR_FIRSTNAME'] = $form['USR_FIRSTNAME'];
-                $aData['USR_LASTNAME'] = $form['USR_LASTNAME'];
-                $aData['USR_EMAIL'] = $form['USR_EMAIL'];
-                $aData['USR_DUE_DATE'] = $form['USR_DUE_DATE'];
-                $aData['USR_UPDATE_DATE'] = date('Y-m-d H:i:s');
-                if (isset($form['USR_STATUS'])) {
-                    $aData['USR_STATUS'] = $form['USR_STATUS'];
-                }
-                if (isset($form['USR_ROLE'])) {
-                    $RBAC->updateUser($aData, $form['USR_ROLE']);
-                } else {
-                    $RBAC->updateUser($aData);
-                }
-                $aData['USR_COUNTRY'] = $form['USR_COUNTRY'];
-                $aData['USR_CITY'] = $form['USR_CITY'];
-                $aData['USR_LOCATION'] = $form['USR_LOCATION'];
-                $aData['USR_ADDRESS'] = $form['USR_ADDRESS'];
-                $aData['USR_PHONE'] = $form['USR_PHONE'];
-                $aData['USR_ZIP_CODE'] = $form['USR_ZIP_CODE'];
-                $aData['USR_POSITION'] = $form['USR_POSITION'];
-                /*
-                  if ($form['USR_RESUME'] != '') {
-                  $aData['USR_RESUME'] = $form['USR_RESUME'];
-                  }
-                 */
-                if (isset($form['USR_ROLE'])) {
-                    $aData['USR_ROLE'] = $form['USR_ROLE'];
-                }
-                if (isset($form['USR_DEFAULT_LANG'])) {
-                    $aData['USR_DEFAULT_LANG'] = $form['USR_DEFAULT_LANG'];
-                }
-                /*----------------------------------********---------------------------------*/
-                if (isset($form['USR_COST_BY_HOUR'])) {
-                    $aData['USR_COST_BY_HOUR'] = $form['USR_COST_BY_HOUR'];
-                }
-                if (isset($form['USR_UNIT_COST'])) {
-                    $aData['USR_UNIT_COST'] = $form['USR_UNIT_COST'];
-                }
-                /*----------------------------------********---------------------------------*/
-                if (isset($form['USR_REPLACED_BY'])) {
-                    $aData['USR_REPLACED_BY'] = ($user->getUserRecordByPk($form['USR_REPLACED_BY'], [], false) !== false)?
-                        $form['USR_REPLACED_BY'] : '';
-                }
-                if (isset($form['USR_AUTH_USER_DN'])) {
-                    $aData['USR_AUTH_USER_DN'] = $form['USR_AUTH_USER_DN'];
+                if (array_key_exists('USR_NEW_PASS', $form) && $form['USR_NEW_PASS'] == '') {
+                    unset($form['USR_NEW_PASS']);
                 }
 
-                if (isset($form['USR_TIME_ZONE'])) {
-                    $aData['USR_TIME_ZONE'] = $form['USR_TIME_ZONE'];
-                }
+                $result = $user->update($form['USR_UID'], $form, $_SESSION['USER_LOGGED']);
+                $userUid = $form['USR_UID'];
 
-                require_once 'classes/model/Users.php';
-                $oUser = new Users();
-                $oUser->update($aData);
-                G::auditLog('UpdateUser', 'User Name: ' . $aData['USR_USERNAME'] . ' - User ID: (' . $aData['USR_UID'] . ') ' . $firstName . $lastName . $email . $dueDate . $status . $address . $phone . $zipCode . $position . $role . $timeZone . $languageDef);
-                if ($_FILES['USR_PHOTO']['error'] != 1) {
-                    if ($_FILES['USR_PHOTO']['tmp_name'] != '') {
-                        $aAux = explode('.', $_FILES['USR_PHOTO']['name']);
-                        G::uploadFile($_FILES['USR_PHOTO']['tmp_name'], PATH_IMAGES_ENVIRONMENT_USERS, $aData['USR_UID'] . '.' . $aAux[1]);
-                        G::resizeImage(PATH_IMAGES_ENVIRONMENT_USERS . $aData['USR_UID'] . '.' . $aAux[1], 96, 96, PATH_IMAGES_ENVIRONMENT_USERS . $aData['USR_UID'] . '.gif');
-                    }
-                } else {
-                    $result->success = false;
-                    $result->fileError = true;
-                    print (G::json_encode($result));
-                    die();
-                }
-                /*
-                  if ($_FILES['USR_RESUME']['error'] != 1) {
-                  if ($_FILES['USR_RESUME']['tmp_name'] != '') {
-                  G::uploadFile($_FILES['USR_RESUME']['tmp_name'], PATH_IMAGES_ENVIRONMENT_FILES . $aData['USR_UID'] . '/', $_FILES['USR_RESUME']['name']);
-                  }
-                  }
-                  else {
-                  $result->success = false;
-                  $result->fileError = true;
-                  print(G::json_encode($result));
-                  die;
-                  }
-                 */
+                $arrayUserData = $user->getUserRecordByPk($userUid, [], false);
+
+                $user->auditLog('UPD',  array_merge(['USR_UID' => $userUid, 'USR_USERNAME' => $arrayUserData['USR_USERNAME']], $form));
+
                 /* Saving preferences */
                 $def_lang = $form['PREF_DEFAULT_LANG'];
                 $def_menu = $form['PREF_DEFAULT_MENUSELECTED'];
@@ -456,13 +191,19 @@ switch ($_POST['action']) {
                 $oConf = new Configurations();
                 $aConf = Array('DEFAULT_LANG' => $def_lang, 'DEFAULT_MENU' => $def_menu, 'DEFAULT_CASES_MENU' => $def_cases_menu);
 
-                /* UPDATING SESSION VARIABLES */
-                $aUser = $RBAC->userObj->load($_SESSION['USER_LOGGED']);
-                //$_SESSION['USR_FULLNAME'] = $aUser['USR_FIRSTNAME'] . ' ' . $aUser['USR_LASTNAME'];
-
-
                 $oConf->aConfig = $aConf;
                 $oConf->saveConfig('USER_PREFERENCES', '', '', $_SESSION['USER_LOGGED']);
+            }
+
+            try {
+                $user->uploadImage($userUid);
+            } catch (Exception $e) {
+                $result = new stdClass();
+                $result->success = false;
+                $result->fileError = true;
+
+                echo G::json_encode($result);
+                exit(0);
             }
 
             if ($_SESSION['USER_LOGGED'] == $form['USR_UID']) {
@@ -471,16 +212,11 @@ switch ($_POST['action']) {
                 $_SESSION['USR_FULLNAME'] = $aUser['USR_FIRSTNAME'] . ' ' . $aUser['USR_LASTNAME'];
             }
 
-            //Save Calendar assigment
-            if ((isset($form['USR_CALENDAR']))) {
-                //Save Calendar ID for this user
-                G::LoadClass("calendar");
-                $calendarObj = new Calendar();
-                $calendarObj->assignCalendarTo($aData['USR_UID'], $form['USR_CALENDAR'], 'USER');
-            }
+            $result = new stdClass();
             $result->success = true;
             print (G::json_encode($result));
         } catch (Exception $e) {
+            $result = new stdClass();
             $result->success = false;
             $result->error = $e->getMessage();
             print (G::json_encode($result));

@@ -504,16 +504,30 @@ class User
             \G::LoadSystem("rbac");
 
             //Verify data
-            $process = new \ProcessMaker\BusinessModel\Process();
             $validator = new \ProcessMaker\BusinessModel\Validator();
 
             $validator->throwExceptionIfDataIsNotArray($arrayData, "\$arrayData");
             $validator->throwExceptionIfDataIsEmpty($arrayData, "\$arrayData");
 
             //Set data
-            $arrayData = array_change_key_case($arrayData, CASE_UPPER);
+            $arrayDataAux = array_change_key_case($arrayData, CASE_UPPER);
+            $arrayData = $arrayDataAux;
 
-            unset($arrayData["USR_UID"]);
+            unset(
+                $arrayData['USR_UID'],
+                $arrayData['USR_COST_BY_HOUR'],
+                $arrayData['USR_UNIT_COST']
+            );
+
+            /*----------------------------------********---------------------------------*/
+            if (array_key_exists('USR_COST_BY_HOUR', $arrayDataAux)) {
+                $arrayData['USR_COST_BY_HOUR'] = $arrayDataAux['USR_COST_BY_HOUR'];
+            }
+
+            if (array_key_exists('USR_UNIT_COST', $arrayDataAux)) {
+                $arrayData['USR_UNIT_COST'] = $arrayDataAux['USR_UNIT_COST'];
+            }
+            /*----------------------------------********---------------------------------*/
 
             $this->throwExceptionIfDataIsInvalid("", $arrayData);
 
@@ -604,15 +618,30 @@ class User
             \G::LoadSystem("rbac");
 
             //Verify data
-            $process = new \ProcessMaker\BusinessModel\Process();
             $validator = new \ProcessMaker\BusinessModel\Validator();
 
             $validator->throwExceptionIfDataIsNotArray($arrayData, "\$arrayData");
             $validator->throwExceptionIfDataIsEmpty($arrayData, "\$arrayData");
 
             //Set data
-            $arrayData = array_change_key_case($arrayData, CASE_UPPER);
+            $arrayDataAux = array_change_key_case($arrayData, CASE_UPPER);
+            $arrayData = $arrayDataAux;
             $arrayDataBackup = $arrayData;
+
+            unset(
+                $arrayData['USR_COST_BY_HOUR'],
+                $arrayData['USR_UNIT_COST']
+            );
+
+            /*----------------------------------********---------------------------------*/
+            if (array_key_exists('USR_COST_BY_HOUR', $arrayDataAux)) {
+                $arrayData['USR_COST_BY_HOUR'] = $arrayDataAux['USR_COST_BY_HOUR'];
+            }
+
+            if (array_key_exists('USR_UNIT_COST', $arrayDataAux)) {
+                $arrayData['USR_UNIT_COST'] = $arrayDataAux['USR_UNIT_COST'];
+            }
+            /*----------------------------------********---------------------------------*/
 
             //Verify data
             $this->throwExceptionIfNotExistsUser($userUid, $this->arrayFieldNameForException["usrUid"]);
@@ -625,12 +654,13 @@ class User
             $permission = $this->loadUserRolePermission("PROCESSMAKER", $userUidLogged);
 
             foreach ($permission as $key => $value) {
-                if ($value["PER_CODE"] == "PM_USERS") {
+                if (preg_match('/^(?:PM_USERS|PM_EDITPERSONALINFO)$/', $value['PER_CODE'])) {
                     $countPermission = $countPermission + 1;
+                    break;
                 }
             }
 
-            if ($countPermission != 1) {
+            if ($countPermission == 0) {
                 throw new \Exception(\G::LoadTranslation("ID_USER_CAN_NOT_UPDATE", array($userUidLogged)));
             }
 
@@ -1260,9 +1290,7 @@ class User
                     \G::resizeImage(PATH_IMAGES_ENVIRONMENT_USERS . $userUid . '.' . $aAux[1], 96, 96, PATH_IMAGES_ENVIRONMENT_USERS . $userUid . '.gif');
                 }
             } else {
-                $result->success = false;
-                $result->fileError = true;
-                throw (new \Exception($result));
+                throw new \Exception(\G::LoadTranslation('ID_ERROR') . ' ' . $_FILES['USR_PHOTO']['error']);
             }
         } catch (\Exception $e) {
             throw $e;
@@ -1405,6 +1433,39 @@ class User
             } else {
                 return $arrayUserData['USR_REPORTS_TO'];
             }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * AuditLog
+     *
+     * @param string $option    Option
+     * @param array  $arrayData Data
+     *
+     * @return void
+     */
+    public function auditLog($option, array $arrayData)
+    {
+        try {
+            $firstName = (array_key_exists('USR_FIRSTNAME', $arrayData))? ' - First Name: ' . $arrayData['USR_FIRSTNAME'] : '';
+            $lastName = (array_key_exists('USR_LASTNAME', $arrayData))? ' - Last Name: ' . $arrayData['USR_LASTNAME'] : '';
+            $email = (array_key_exists('USR_EMAIL', $arrayData))? ' - Email: ' . $arrayData['USR_EMAIL'] : '';
+            $dueDate = (array_key_exists('USR_DUE_DATE', $arrayData))? ' - Due Date: ' . $arrayData['USR_DUE_DATE'] : '';
+            $status = (array_key_exists('USR_STATUS', $arrayData))? ' - Status: ' . $arrayData['USR_STATUS'] : '';
+            $address = (array_key_exists('USR_ADDRESS', $arrayData))? ' - Address: ' . $arrayData['USR_ADDRESS'] : '';
+            $phone = (array_key_exists('USR_PHONE', $arrayData))? ' - Phone: ' . $arrayData['USR_PHONE'] : '';
+            $zipCode = (array_key_exists('USR_ZIP_CODE', $arrayData))? ' - Zip Code: ' . $arrayData['USR_ZIP_CODE'] : '';
+            $position = (array_key_exists('USR_POSITION', $arrayData))? ' - Position: ' . $arrayData['USR_POSITION'] : '';
+            $role = (array_key_exists('USR_ROLE', $arrayData))? ' - Role: ' . $arrayData['USR_ROLE'] : '';
+            $languageDef = (array_key_exists('USR_DEFAULT_LANG', $arrayData))? ' - Default Language: ' . $arrayData['USR_DEFAULT_LANG'] : '';
+            $timeZone = (array_key_exists('USR_TIME_ZONE', $arrayData))? ' - Time Zone: ' . $arrayData['USR_TIME_ZONE'] : '';
+
+            $str = 'User Name: ' . $arrayData['USR_USERNAME'] . ' - User ID: (' . $arrayData['USR_UID'] . ')' .
+                $firstName . $lastName . $email . $dueDate . $status . $address . $phone . $zipCode . $position . $role . $timeZone . $languageDef;
+
+            \G::auditLog(($option == 'INS')? 'CreateUser' : 'UpdateUser', $str);
         } catch (\Exception $e) {
             throw $e;
         }
