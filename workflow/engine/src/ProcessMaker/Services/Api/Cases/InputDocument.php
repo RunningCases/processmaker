@@ -85,8 +85,9 @@ class InputDocument extends Api
     {
         try {
             $userUid = $this->getUserId();
+
             $inputDocument = new \ProcessMaker\BusinessModel\Cases\InputDocument();
-            $response = $inputDocument->addCasesInputDocument($app_uid, $tas_uid, $app_doc_comment, $inp_doc_uid, $userUid);
+            $response = $inputDocument->addCasesInputDocument($app_uid, $tas_uid, $app_doc_comment, $inp_doc_uid, $userUid, false);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
