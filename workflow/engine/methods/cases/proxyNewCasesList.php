@@ -1,10 +1,4 @@
 <?php
-G::LoadSystem('inputfilter');
-$filter = new InputFilter();
-$_GET = $filter->xssFilterHard($_GET);
-$_REQUEST = $filter->xssFilterHard($_REQUEST);
-$_SESSION['USER_LOGGED'] = $filter->xssFilterHard($_SESSION['USER_LOGGED']);
-
 if (!isset($_SESSION['USER_LOGGED'])) {
     $responseObject = new stdclass();
     $responseObject->error = G::LoadTranslation('ID_LOGIN_AGAIN');
@@ -13,6 +7,12 @@ if (!isset($_SESSION['USER_LOGGED'])) {
     print G::json_encode( $responseObject );
     die();
 }
+
+G::LoadSystem('inputfilter');
+$filter = new InputFilter();
+$_GET = $filter->xssFilterHard($_GET);
+$_REQUEST = $filter->xssFilterHard($_REQUEST);
+$_SESSION['USER_LOGGED'] = $filter->xssFilterHard($_SESSION['USER_LOGGED']);
 
 try {
     $userUid = $_SESSION['USER_LOGGED'];
