@@ -1642,24 +1642,43 @@ class Derivation
                         $this->derivate($currentDelegation2, $nextDelegations2);
 
                         if ($delIndex > 0) {
-                            // Send notifications - Start
-                            $oUser = new Users();
-                            $aUser = $oUser->load($appFields["CURRENT_USER_UID"]);
-
-                            $sFromName = $aUser["USR_FIRSTNAME"] . " " . $aUser["USR_LASTNAME"] . ($aUser["USR_EMAIL"] != "" ? " <" . $aUser["USR_EMAIL"] . ">" : "");
-
-                            try {
-                                $oCase->sendNotifications($appFields["TAS_UID"],
-                                    $nextDelegations2,
-                                    $appFields["APP_DATA"],
-                                    $sApplicationUID,
-                                    $delIndex,
-                                    $sFromName);
-
-                            } catch (Exception $e) {
-                                G::SendTemporalMessage(G::loadTranslation("ID_NOTIFICATION_ERROR") . " - " . $e->getMessage(), "warning", "string", null, "100%");
+                            $flagNotification = false;
+                            if ($appFields["CURRENT_USER_UID"] == '') {
+                                $oCriteriaTaskDummy = new Criteria('workflow');
+                                $oCriteriaTaskDummy->add(TaskPeer::PRO_UID, $appFields['PRO_UID']);
+                                $oCriteriaTaskDummy->add(TaskPeer::TAS_UID, $appFields['TAS_UID']);
+                                $oCriteriaTaskDummy->add(
+                                    $oCriteriaTaskDummy->getNewCriterion(TaskPeer::TAS_TYPE, 'SCRIPT-TASK', Criteria::EQUAL)->addOr(
+                                        $oCriteriaTaskDummy->getNewCriterion(TaskPeer::TAS_TYPE, 'INTERMEDIATE-THROW-EMAIL-EVENT', Criteria::EQUAL))
+                                );
+                                $oCriteriaTaskDummy->setLimit(1);
+                                $oDataset = AppDelegationPeer::doSelectRS($oCriteriaTaskDummy);
+                                $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                                $oDataset->next();
+                                if ($row = $oDataset->getRow()) {
+                                    $flagNotification = true;
+                                }
                             }
-                            // Send notifications - End
+                            if (!$flagNotification) {
+                                // Send notifications - Start
+                                $oUser = new Users();
+                                $aUser = $oUser->load($appFields["CURRENT_USER_UID"]);
+
+                                $sFromName = $aUser["USR_FIRSTNAME"] . " " . $aUser["USR_LASTNAME"] . ($aUser["USR_EMAIL"] != "" ? " <" . $aUser["USR_EMAIL"] . ">" : "");
+
+                                try {
+                                    $oCase->sendNotifications($appFields["TAS_UID"],
+                                        $nextDelegations2,
+                                        $appFields["APP_DATA"],
+                                        $sApplicationUID,
+                                        $delIndex,
+                                        $sFromName);
+
+                                } catch (Exception $e) {
+                                    G::SendTemporalMessage(G::loadTranslation("ID_NOTIFICATION_ERROR") . " - " . $e->getMessage(), "warning", "string", null, "100%");
+                                }
+                                // Send notifications - End
+                            }
                         }
                     }
                 }
