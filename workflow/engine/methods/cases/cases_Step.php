@@ -1,4 +1,10 @@
 <?php
+$filter = new InputFilter();
+
+list($_GET['UID'], $_GET['TYPE'], $_GET['POSITION'], $_GET['ACTION']) = $filter->xssRegexFilter(
+    [$_GET['UID'], $_GET['TYPE'], $_GET['POSITION'], $_GET['ACTION']], '/[\-\w]/'
+);
+
 if (!isset($_SESSION['USER_LOGGED'])) {
     if(!strpos($_SERVER['REQUEST_URI'], 'gmail')) {
         $responseObject = new stdclass();
@@ -789,7 +795,7 @@ try {
 
             $aFields['TASK'] = $oDerivation->prepareInformation( array ('USER_UID' => $_SESSION['USER_LOGGED'],'APP_UID' => $_SESSION['APPLICATION'],'DEL_INDEX' => $_SESSION['INDEX']
             ) );
-            
+
             if (empty( $aFields['TASK'] )) {
                 throw (new Exception( G::LoadTranslation( 'ID_NO_DERIVATION_RULE' ) ));
             }
