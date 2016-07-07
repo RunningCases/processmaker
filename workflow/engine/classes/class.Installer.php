@@ -68,7 +68,7 @@ class Installer
      */
     public function create_site($config = Array(), $confirmed = false)
     {
-        $this->options = G::array_concat(Array('isset' => false, 'password' => G::generate_password(12), 'path_data' => @PATH_DATA, 'path_compiled' => @PATH_C, 'name' => $config['name'], 'database' => Array(), 'admin' => Array('username' => 'admin', 'password' => 'admin'
+        $this->options = G::array_concat(Array('isset' => false, 'password' => G::generate_password(15), 'path_data' => @PATH_DATA, 'path_compiled' => @PATH_C, 'name' => $config['name'], 'database' => Array(), 'admin' => Array('username' => 'admin', 'password' => 'admin'
                     ), 'advanced' => Array('ao_db_wf' => 'wf_' . $config['name'], 'ao_db_rb' => 'rb_' . $config['name'], 'ao_db_rp' => 'rp_' . $config['name'], 'ao_db_drop' => false
                     )
                         ), $config);

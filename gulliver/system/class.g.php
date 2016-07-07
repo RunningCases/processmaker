@@ -75,23 +75,97 @@ class G
 
     /**
      * Generate Password Random
-     * @access public
-     * @param  Int
-     * @return String
+     * $availableSets set next options:
+     * l: lowercase set a-z
+     * u: uppercase set A-Z
+     * n: numbers set 0-9
+     * s: symbols set _-+=!@#$%*&,.;:?^()[]{}<>
+     * 
+     * $symbol is source symbol generate
+     * 
+     * @param int $length
+     * @param string $availableSets
+     * @param string $symbol
+     * @return string
      */
-    public function generate_password($length = 8)
+    public function generate_password($length = 15, $availableSets = "luns", $symbol = "_-+=!@#$%*&,.")
     {
+        $chars = "";
+        if (strpos($availableSets, "l") !== false) {
+            $chars = $chars . "abcdefghjkmnpqrstuvwxyz";
+        }
+        if (strpos($availableSets, "u") !== false) {
+            $chars = $chars . "ABCDEFGHJKMNPQRSTUVWXYZ";
+        }
+        if (strpos($availableSets, "n") !== false) {
+            $chars = $chars . "0123456789";
+        }
+        if (strpos($availableSets, "s") !== false) {
+            $chars = $chars . $symbol;
+        }
+        $n = strlen($chars);
+        do {
         $password = "";
-        $possible = "0123456789bcdfghjkmnpqrstvwxyz";
-        $i        = 0;
-        while ($i<$length) {
-            $char = substr($possible, mt_rand(0, strlen($possible)-1), 1);
+            $i = 0;
+            while ($i < $length) {
+                $chars = str_shuffle($chars);
+                $char = substr($chars, mt_rand(0, $n - 1), 1);
             if (!strstr($password, $char)) {
-                $password .= $char;
+                    $password = $password . $char;
                 $i++;
             }
+                $password = str_shuffle($password);
         }
+            $info = G::check_password($password, $length, $length, $availableSets);
+        } while (!$info->isValid);
         return $password;
+    }
+
+    /**
+     * Check password strong
+     * 
+     * $availableSets set next options:
+     * l: lowercase set a-z
+     * u: uppercase set A-Z
+     * n: numbers set 0-9
+     * s: symbols set _-+=!@#$%*&,.;:?^()[]{}<>
+     * 
+     * @param string $password
+     * @param int $min
+     * @param int $max
+     * @param string $availableSets
+     * @return \stdClass
+     */
+    public function check_password($password, $min = 2, $max = 20, $availableSets = "luns")
+    {
+        $info = new stdClass();
+        $info->isValid = true;
+        $info->error = "";
+        if (strlen($password) < $min) {
+            $info->error .= G::LoadTranslation("ID_PASSWORD_TOO_SHORT") . " ";
+            $info->isValid = false;
+        }
+        if (strlen($password) > $max) {
+            $info->error .= G::LoadTranslation("ID_PASSWORD_TOO_LONG") . " ";
+            $info->isValid = false;
+        }
+        if (strpos($availableSets, "l") !== false && !preg_match("#[a-z]+#", $password)) {
+            $info->error .= G::LoadTranslation("ID_PASSWORD_MUST_INCLUDE_AT_LEAST_ONE_LETTER") . " ";
+            $info->isValid = false;
+        }
+        if (strpos($availableSets, "u") !== false && !preg_match("#[A-Z]+#", $password)) {
+            $info->error .= G::LoadTranslation("ID_PASSWORD_MUST_INCLUDE_AT_LEAST_ONE_CAPS") . " ";
+            $info->isValid = false;
+        }
+        if (strpos($availableSets, "n") !== false && !preg_match("#[0-9]+#", $password)) {
+            $info->error .= G::LoadTranslation("ID_PASSWORD_MUST_INCLUDE_AT_LEAST_ONE_NUMBER") . " ";
+            $info->isValid = false;
+        }
+        if (strpos($availableSets, "s") !== false && !preg_match("#\W+#", $password)) {
+            $info->error .= G::LoadTranslation("ID_PASSWORD_MUST_INCLUDE_AT_LEAST_ONE_SYMBOL") . " ";
+            $info->isValid = false;
+        }
+        return $info;
     }
 
     /**
