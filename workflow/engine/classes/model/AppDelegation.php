@@ -96,6 +96,7 @@ class AppDelegation extends BaseAppDelegation
 
             $delIndex = (isset($row["DEL_INDEX"]))? $row["DEL_INDEX"] + 1 : 1;
             $delPreviusUsrUid = $row["USR_UID"];
+            $delPreviousFather = $row["DEL_PREVIOUS"];
         } else {
             $criteriaDelIndex = new Criteria("workflow");
 
@@ -116,7 +117,7 @@ class AppDelegation extends BaseAppDelegation
         //Verify successors: parrallel submit in the same time
         if($flagControl){
             $nextTaskUid = $sTasUid;
-            $index = $this->getAllTasksBeforeSecJoin($nextTaskUid, $sAppUid);
+            $index = $this->getAllTasksBeforeSecJoin($nextTaskUid, $sAppUid, $delPreviousFather);
             if($this->createThread($index, $sAppUid)){
                 return 0;
             }
@@ -781,13 +782,15 @@ class AppDelegation extends BaseAppDelegation
     * @param string $sAppUid
     * @return array $index
     */
-    public static function getAllTasksBeforeSecJoin($nextTaskUid, $sAppUid){
+    public static function getAllTasksBeforeSecJoin($nextTaskUid, $sAppUid, $sDelPrevious){
         $criteriaR = new Criteria('workflow');
         $criteriaR->addSelectColumn(AppDelegationPeer::DEL_INDEX);
+        $criteriaR->addSelectColumn(AppDelegationPeer::DEL_PREVIOUS);
         $criteriaR->addJoin(RoutePeer::TAS_UID, AppDelegationPeer::TAS_UID, Criteria::LEFT_JOIN);
         $criteriaR->add(RoutePeer::ROU_NEXT_TASK, $nextTaskUid, Criteria::EQUAL);
         $criteriaR->add(RoutePeer::ROU_TYPE, 'SEC-JOIN', Criteria::EQUAL);
         $criteriaR->add(AppDelegationPeer::APP_UID, $sAppUid, Criteria::EQUAL);
+        $criteriaR->add(AppDelegationPeer::DEL_PREVIOUS, $sDelPrevious, Criteria::EQUAL);
         $rsCriteriaR = RoutePeer::doSelectRS($criteriaR);
         $rsCriteriaR->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $index = array();
