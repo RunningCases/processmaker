@@ -493,7 +493,7 @@ class InputDocument
      *
      * return array Return an array with data of an InputDocument
      */
-    public function addCasesInputDocument($applicationUid, $taskUid, $appDocComment, $inputDocumentUid, $userUid)
+    public function addCasesInputDocument($applicationUid, $taskUid, $appDocComment, $inputDocumentUid, $userUid, $runningWorkflow = true)
     {
         try {
             if ((isset( $_FILES['form'] )) && ($_FILES['form']['error'] != 0)) {
@@ -535,7 +535,60 @@ class InputDocument
             $appDocType = 'INPUT';
             $case = new \Cases();
             $delIndex = \AppDelegation::getCurrentIndex($applicationUid);
-            $case->thisIsTheCurrentUser($applicationUid, $delIndex, $userUid, "REDIRECT", "casesListExtJs");
+
+            if ($runningWorkflow) {
+                $case->thisIsTheCurrentUser($applicationUid, $delIndex, $userUid, 'REDIRECT', 'casesListExtJs');
+            } else {
+                $criteria = new \Criteria('workflow');
+
+                $criteria->add(\AppDelegationPeer::APP_UID, $applicationUid);
+                $criteria->add(\AppDelegationPeer::DEL_INDEX, $delIndex);
+                $criteria->add(\AppDelegationPeer::USR_UID, $userUid);
+
+                $rsCriteria = \ProcessUserPeer::doSelectRS($criteria);
+
+                if (!$rsCriteria->next()) {
+                    $case2 = new \ProcessMaker\BusinessModel\Cases();
+
+                    $arrayApplicationData = $case2->getApplicationRecordByPk($applicationUid, [], false);
+
+                    $msg = '';
+
+                    $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
+                    $flagps = $supervisor->isUserProcessSupervisor($arrayApplicationData['PRO_UID'], $userUid);
+
+                    if ($flagps == false) {
+                        $msg = \G::LoadTranslation('ID_USER_NOT_IT_BELONGS_CASE_OR_NOT_SUPERVISOR');
+                    }
+
+                    if ($msg == '') {
+                        $criteria = new \Criteria('workflow');
+
+                        $criteria->add(\StepSupervisorPeer::PRO_UID, $arrayApplicationData['PRO_UID'], \Criteria::EQUAL);
+                        $criteria->add(\StepSupervisorPeer::STEP_TYPE_OBJ, 'INPUT_DOCUMENT', \Criteria::EQUAL);
+                        $criteria->add(\StepSupervisorPeer::STEP_UID_OBJ, $inputDocumentUid, \Criteria::EQUAL);
+
+                        $rsCriteria = \StepSupervisorPeer::doSelectRS($criteria);
+
+                        if (!$rsCriteria->next()) {
+                            $msg = \G::LoadTranslation('ID_USER_IS_SUPERVISOR_DOES_NOT_ASSOCIATED_INPUT_DOCUMENT');
+                        }
+                    }
+
+                    if ($msg != '') {
+                        if ($runningWorkflow) {
+                            \G::SendMessageText($msg, 'ERROR');
+                            $backUrlObj = explode('sys' . SYS_SYS, $_SERVER['HTTP_REFERER']);
+
+                            \G::header('location: ' . '/sys' . SYS_SYS . $backUrlObj[1]);
+                            exit(0);
+                        } else {
+                            throw new \Exception($msg);
+                        }
+                    }
+                }
+            }
+
             //Load the fields
             $arrayField = $case->loadCase($applicationUid);
             $arrayField["APP_DATA"] = array_merge($arrayField["APP_DATA"], \G::getSystemConstants());
