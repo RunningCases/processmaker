@@ -1226,7 +1226,7 @@ function userFrmEditSubmit()
     Ext.getCmp("frmDetails").getForm().submit({
       url    : "usersAjax",
       params : {
-        action   : "saveUser",
+        action: __ACTION__,
         USR_UID  : USR_UID,
         USR_CITY : global.IS_UID
       },
