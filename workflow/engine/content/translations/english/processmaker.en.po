@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: ProcessMaker (Branch 3.0.1.8)\n"
+"Project-Id-Version: ProcessMaker (Branch 3.1)\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-03-30 19:23:50\n"
+"PO-Revision-Date: 2016-07-05 12:03:37\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -3436,8 +3436,8 @@ msgstr "The uploaded file exceeds the MAX_FILE_SIZE directive that was specified
 # TRANSLATION
 # LABEL/ID_UPLOAD_ERR_INI_SIZE
 #: LABEL/ID_UPLOAD_ERR_INI_SIZE
-msgid "The uploaded file exceeds the upload_max_filesize or post_max_size directive in php.ini"
-msgstr "The uploaded file exceeds the upload_max_filesize or post_max_size directive in php.ini"
+msgid "The uploaded file exceeds the upload_max_filesize directive in php.ini"
+msgstr "The uploaded file exceeds the upload_max_filesize directive in php.ini"
 
 # TRANSLATION
 # LABEL/ID_NOT_PROCESS_RELATED
@@ -3814,8 +3814,8 @@ msgstr "Process Supervisor"
 # TRANSLATION
 # LABEL/ID_SENT
 #: LABEL/ID_SENT
-msgid "Participated"
-msgstr "Participated"
+msgid "[LABEL/ID_SENT] Sent"
+msgstr "Sent"
 
 # TRANSLATION
 # LABEL/ID_CALENDAR
@@ -3972,12 +3972,6 @@ msgstr "No fields found!"
 #: LABEL/ID_UNASSIGNED
 msgid "Unassigned"
 msgstr "Unassigned"
-
-# TRANSLATION
-# LABEL/ID_UNASSIGNED_STATUS
-#: LABEL/ID_UNASSIGNED_STATUS
-msgid "Unassigned Status"
-msgstr "Unassigned Status"
 
 # TRANSLATION
 # LABEL/ID_CLAIM
@@ -4924,7 +4918,7 @@ msgstr "Draft"
 # TRANSLATION
 # LABEL/ID_TITLE_PARTICIPATED
 #: LABEL/ID_TITLE_PARTICIPATED
-msgid "[LABEL/ID_TITLE_PARTICIPATED] Participated"
+msgid "Participated"
 msgstr "Participated"
 
 # TRANSLATION
@@ -5058,12 +5052,6 @@ msgstr "Language deleted successfully!"
 #: LABEL/ID_LANGUAGE_CANT_DELETE
 msgid "There is {0} cases started with this language, delete action canceled!"
 msgstr "There is {0} cases started with this language, delete action canceled!"
-
-# TRANSLATION
-# LABEL/ID_CANNOT_REMOVE_TEMPLATE_EMAIL_EVENT
-#: LABEL/ID_CANNOT_REMOVE_TEMPLATE_EMAIL_EVENT
-msgid "You can not delete the template {0} because it has a relationship with Email Event"
-msgstr "You can not delete the template {0} because it has a relationship with Email Event"
 
 # TRANSLATION
 # LABEL/ID_TOTAL_CASES
@@ -6780,18 +6768,6 @@ msgstr "Departments"
 #: LABEL/ID_DEPARTMENT_NAME
 msgid "Department Name"
 msgstr "Department Name"
-
-# TRANSLATION
-# LABEL/ID_DEPARTMENT_ERROR_CREATE
-#: LABEL/ID_DEPARTMENT_ERROR_CREATE
-msgid "Error creating department"
-msgstr "Error creating department"
-
-# TRANSLATION
-# LABEL/ID_DEPARTMENT_CHECK_PARENT_DEPARTMENT
-#: LABEL/ID_DEPARTMENT_CHECK_PARENT_DEPARTMENT
-msgid "It's necessary to check the parent-department: {0} for the sub-department: {1}"
-msgstr "It's necessary to check the parent-department: {0} for the sub-department: {1}"
 
 # TRANSLATION
 # LABEL/ID_CONFIRM_CANCEL_CASE
@@ -9540,12 +9516,6 @@ msgstr "Uploading the process file..."
 #: LABEL/ID_IMPORT_ALREADY_EXISTS
 msgid "The process you are trying to import already exists. Please select one of the following options to continue:"
 msgstr "The process you are trying to import already exists. Please select one of the following options to continue:"
-
-# TRANSLATION
-# LABEL/ID_PROCESS_DEFINITION_INCOMPLETE
-#: LABEL/ID_PROCESS_DEFINITION_INCOMPLETE
-msgid "To create a new process all the process objects must be selected/included in the pmx2 file."
-msgstr "To create a new process all the process objects must be selected/included in the pmx2 file."
 
 # TRANSLATION
 # LABEL/ID_DEBUG_MESSAGE
@@ -14566,8 +14536,8 @@ msgstr "Failure to do so could lead your ProcessMaker installation not functioni
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_PHP
 #: LABEL/ID_PROCESSMAKER_REQUIREMENTS_PHP
-msgid "PHP Version >= 5.5.33"
-msgstr "PHP Version >= 5.5.33"
+msgid "PHP recommended version 5.6 or higher (7.0 not supported)"
+msgstr "PHP recommended version 5.6 or higher (7.0 not supported)"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_MYSQL
@@ -14626,8 +14596,8 @@ msgstr "LDAP Support (*)"
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_MEMORYLIMIT
 #: LABEL/ID_PROCESSMAKER_REQUIREMENTS_MEMORYLIMIT
-msgid "Memory Limit >= 256M"
-msgstr "Memory Limit >= 256M"
+msgid "Memory Limit >= 80M"
+msgstr "Memory Limit >= 80M"
 
 # TRANSLATION
 # LABEL/ID_ADMINISTRATOR_ROLE_CANT_CHANGED
@@ -19398,6 +19368,12 @@ msgstr "Lane"
 #: LABEL/ID_MAFE_03937134cedab9078be39a77ee3a48a0
 msgid "[LABEL/ID_MAFE_03937134cedab9078be39a77ee3a48a0] Group"
 msgstr "Group"
+
+# TRANSLATION
+# LABEL/ID_MAFE_7215ee9c7d9dc229d2921a40e899ec5f
+#: LABEL/ID_MAFE_7215ee9c7d9dc229d2921a40e899ec5f
+msgid "[LABEL/ID_MAFE_7215ee9c7d9dc229d2921a40e899ec5f] "
+msgstr ""
 
 # TRANSLATION
 # LABEL/ID_MAFE_5308fcbb3c60d1cb24e45795bf9a0b7e
@@ -24416,22 +24392,10 @@ msgid "The user with \"{0}\" did not have permission to perform this action."
 msgstr "The user with \"{0}\" did not have permission to perform this action."
 
 # TRANSLATION
-# LABEL/ID_NOT_EXECUTE_QUERY
-#: LABEL/ID_NOT_EXECUTE_QUERY
-msgid "Changes to {0} are forbidden. Please contact system administrator for more information."
-msgstr "Changes to {0} are forbidden. Please contact system administrator for more information."
-
-# TRANSLATION
 # LABEL/ID_EMAIL_MORE_THAN_ONE_USER
 #: LABEL/ID_EMAIL_MORE_THAN_ONE_USER
 msgid "This email is assigned to more than one user. Please contact your administrator."
 msgstr "This email is assigned to more than one user. Please contact your administrator."
-
-# TRANSLATION
-# LABEL/ID_EMAIL_EVENT_DEFINITION_DOES_NOT_EXIST
-#: LABEL/ID_EMAIL_EVENT_DEFINITION_DOES_NOT_EXIST
-msgid "The email event definition does not exist."
-msgstr "The email event definition does not exist."
 
 # TRANSLATION
 # LABEL/ID_USER_DOES_NOT_CORRESPOND
@@ -27312,12 +27276,6 @@ msgid "There was a problem sending the email to"
 msgstr "There was a problem sending the email to"
 
 # TRANSLATION
-# LABEL/ID_USER_CANT_BE_DELETED_FOR_THE_PROCESS
-#: LABEL/ID_USER_CANT_BE_DELETED_FOR_THE_PROCESS
-msgid "The user can't be deleted because it is referenced in the process {processTitle} in a process permission."
-msgstr "The user can't be deleted because it is referenced in the process {processTitle} in a process permission."
-
-# TRANSLATION
 # LABEL/ID_MAFE_c5d84b6c19cb058b7b5471b30e926823
 #: LABEL/ID_MAFE_c5d84b6c19cb058b7b5471b30e926823
 msgid "Invalid operation: Delete message flow before converting it to"
@@ -27344,8 +27302,8 @@ msgstr "There are problems loading the process objects."
 # TRANSLATION
 # LABEL/ID_MAFE_f4b5974fd11406f8410fa7e8502a26a3
 #: LABEL/ID_MAFE_f4b5974fd11406f8410fa7e8502a26a3
-msgid "[LABEL/ID_MAFE_f4b5974fd11406f8410fa7e8502a26a3] Custom"
-msgstr "Custom"
+msgid "Granular"
+msgstr "Granular"
 
 # TRANSLATION
 # LABEL/ID_MAFE_84f6ae383a4278397861eb8c783fe1d8
@@ -27358,6 +27316,150 @@ msgstr "Export Process Objects"
 #: LABEL/ID_MAFE_5e9df908eafa83cb51c0a3720e8348c7
 msgid "[LABEL/ID_MAFE_5e9df908eafa83cb51c0a3720e8348c7] Check All"
 msgstr "Check All"
+
+# TRANSLATION
+# LABEL/ID_UNASSIGNED_STATUS
+#: LABEL/ID_UNASSIGNED_STATUS
+msgid "Unassigned Status"
+msgstr "Unassigned Status"
+
+# TRANSLATION
+# LABEL/ID_ROUTE_TO_TASK_INTERMEDIATE-THROW-EMAIL-EVENT
+#: LABEL/ID_ROUTE_TO_TASK_INTERMEDIATE-THROW-EMAIL-EVENT
+msgid "The following case is a \"Intermediate Email Event\""
+msgstr "The following case is a \"Intermediate Email Event\""
+
+# TRANSLATION
+# LABEL/ID_REASON_REASSIGN
+#: LABEL/ID_REASON_REASSIGN
+msgid "Reason to reassign this case"
+msgstr "Reason to reassign this case"
+
+# TRANSLATION
+# LABEL/ID_YOU_DO_NOT_HAVE_PERMISSION
+#: LABEL/ID_YOU_DO_NOT_HAVE_PERMISSION
+msgid "Error: You do not have permission."
+msgstr "Error: You do not have permission."
+
+# TRANSLATION
+# LABEL/ID_THE_APPLICATION_IS_NOT_CANCELED
+#: LABEL/ID_THE_APPLICATION_IS_NOT_CANCELED
+msgid "Error: The application {0} is not canceled."
+msgstr "Error: The application {0} is not canceled."
+
+# TRANSLATION
+# LABEL/ID_THREAD_STATUS_DOES_NOT_EXIST_FOR_THE_APPLICATION
+#: LABEL/ID_THREAD_STATUS_DOES_NOT_EXIST_FOR_THE_APPLICATION
+msgid "Error: Thread status does not exist for the application {0}."
+msgstr "Error: Thread status does not exist for the application {0}."
+
+# TRANSLATION
+# LABEL/ID_NO_PREVIOUS_USR_UID
+#: LABEL/ID_NO_PREVIOUS_USR_UID
+msgid "The previuos task doesn't have any users."
+msgstr "The previuos task doesn't have any users."
+
+# TRANSLATION
+# LABEL/ID_WARNING_GATEWAY_CONVERGENT_WITH_CONDITION
+#: LABEL/ID_WARNING_GATEWAY_CONVERGENT_WITH_CONDITION
+msgid "Your Gateway Convergent has a condition, save again your process."
+msgstr "Your Gateway Convergent has a condition, save again your process."
+
+# TRANSLATION
+# LABEL/ID_RT_RENAME_NAME_TABLE
+#: LABEL/ID_RT_RENAME_NAME_TABLE
+msgid "All references to the previous table name are going to be invalid. Do you really want to change the table name?"
+msgstr "All references to the previous table name are going to be invalid. Do you really want to change the table name?"
+
+# TRANSLATION
+# LABEL/ID_RT_CONTINUE_TABLE_RENAME
+#: LABEL/ID_RT_CONTINUE_TABLE_RENAME
+msgid "Continue renaming the table"
+msgstr "Continue renaming the table"
+
+# TRANSLATION
+# LABEL/ID_RT_NOT_CHANGE_NAME
+#: LABEL/ID_RT_NOT_CHANGE_NAME
+msgid "Do not change name"
+msgstr "Do not change name"
+
+# TRANSLATION
+# LABEL/ID_EXTERNAL_REGISTRATION
+#: LABEL/ID_EXTERNAL_REGISTRATION
+msgid "External Registration"
+msgstr "External Registration"
+
+# TRANSLATION
+# LABEL/ID_FILTER_BY
+#: LABEL/ID_FILTER_BY
+msgid "Filter By"
+msgstr "Filter By"
+
+# TRANSLATION
+# LABEL/ID_MAFE_cae0206c31eaa305dd0e847330c5e837
+#: LABEL/ID_MAFE_cae0206c31eaa305dd0e847330c5e837
+msgid "wildcard"
+msgstr "wildcard"
+
+# TRANSLATION
+# LABEL/ID_MAFE_8efa191bcfbd509f1be06c9eac30cb9c
+#: LABEL/ID_MAFE_8efa191bcfbd509f1be06c9eac30cb9c
+msgid "Fields marked with asterisk (%%ASTERISK%%) are required."
+msgstr "Fields marked with asterisk (%%ASTERISK%%) are required."
+
+# TRANSLATION
+# LABEL/ID_MAFE_c7f8f8652db6d74e086d297129179d2f
+#: LABEL/ID_MAFE_c7f8f8652db6d74e086d297129179d2f
+msgid "Task/sub-process name can't be empty"
+msgstr "Task/sub-process name can't be empty"
+
+# TRANSLATION
+# LABEL/ID_EMAIL_EVENT_CONFIGURATION_EMAIL
+#: LABEL/ID_EMAIL_EVENT_CONFIGURATION_EMAIL
+msgid "Email event: {0}, in process: {1}, cannot send any mail because its configuration needs to be completed."
+msgstr "Email event: {0}, in process: {1}, cannot send any mail because its configuration needs to be completed."
+
+# TRANSLATION
+# LABEL/ID_CANNOT_REMOVE_TEMPLATE_EMAIL_EVENT
+#: LABEL/ID_CANNOT_REMOVE_TEMPLATE_EMAIL_EVENT
+msgid "You can not delete the template {0} because it has a relationship with Email Event"
+msgstr "You can not delete the template {0} because it has a relationship with Email Event"
+
+# TRANSLATION
+# LABEL/ID_DEPARTMENT_ERROR_CREATE
+#: LABEL/ID_DEPARTMENT_ERROR_CREATE
+msgid "Error creating department"
+msgstr "Error creating department"
+
+# TRANSLATION
+# LABEL/ID_DEPARTMENT_CHECK_PARENT_DEPARTMENT
+#: LABEL/ID_DEPARTMENT_CHECK_PARENT_DEPARTMENT
+msgid "It's necessary to check the parent-department: {0} for the sub-department: {1}"
+msgstr "It's necessary to check the parent-department: {0} for the sub-department: {1}"
+
+# TRANSLATION
+# LABEL/ID_PROCESS_DEFINITION_INCOMPLETE
+#: LABEL/ID_PROCESS_DEFINITION_INCOMPLETE
+msgid "To create a new process all the process objects must be selected/included in the pmx2 file."
+msgstr "To create a new process all the process objects must be selected/included in the pmx2 file."
+
+# TRANSLATION
+# LABEL/ID_NOT_EXECUTE_QUERY
+#: LABEL/ID_NOT_EXECUTE_QUERY
+msgid "Changes to {0} are forbidden. Please contact system administrator for more information."
+msgstr "Changes to {0} are forbidden. Please contact system administrator for more information."
+
+# TRANSLATION
+# LABEL/ID_EMAIL_EVENT_DEFINITION_DOES_NOT_EXIST
+#: LABEL/ID_EMAIL_EVENT_DEFINITION_DOES_NOT_EXIST
+msgid "The email event definition does not exist."
+msgstr "The email event definition does not exist."
+
+# TRANSLATION
+# LABEL/ID_USER_CANT_BE_DELETED_FOR_THE_PROCESS
+#: LABEL/ID_USER_CANT_BE_DELETED_FOR_THE_PROCESS
+msgid "The user can't be deleted because it is referenced in the process {processTitle} in a process permission."
+msgstr "The user can't be deleted because it is referenced in the process {processTitle} in a process permission."
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml

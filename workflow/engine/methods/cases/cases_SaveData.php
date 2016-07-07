@@ -23,8 +23,16 @@
  */
 //validate the data post
 if (!isset($_SESSION['USER_LOGGED'])) {
-    G::SendTemporalMessage( 'ID_LOGIN_AGAIN', 'warning', 'labels' );
-    die( '<script type="text/javascript">
+    if(!strpos($_SERVER['REQUEST_URI'], 'gmail')) {
+        $responseObject = new stdclass();
+        $responseObject->error = G::LoadTranslation('ID_LOGIN_AGAIN');
+        $responseObject->success = true;
+        $responseObject->lostSession = true;
+        print G::json_encode( $responseObject );
+        die();
+    } else {
+        G::SendTemporalMessage('ID_LOGIN_AGAIN', 'warning', 'labels');
+        die('<script type="text/javascript">
                     try
                       {
     					var olink = document.location.href;
@@ -58,6 +66,7 @@ if (!isset($_SESSION['USER_LOGGED'])) {
                         parent.location = parent.location;
                       }
                     </script>');
+    }
 }
 
 /**

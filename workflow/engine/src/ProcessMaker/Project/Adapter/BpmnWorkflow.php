@@ -816,16 +816,7 @@ class BpmnWorkflow extends Project\Bpmn
                    }
                 }
 
-                if($elementUidDest != ""){
-                    $aElement[$elementUid] = $elementUidDest;
-                    if($routeType === 'SEC-JOIN'){
-                        $this->arrayElementTaskRelation[$elementUid] = $taskUid;
-                    }else
-                    $this->arrayElementTaskRelation = $aElement;
-                }else {
-                    //Array - Add element
-                    $this->arrayElementTaskRelation[$elementUid] = $taskUid;
-                }
+                $this->arrayElementTaskRelation[$elementUid] = $taskUid;
             }
 
             //Return

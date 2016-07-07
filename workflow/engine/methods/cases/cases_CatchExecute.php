@@ -22,18 +22,12 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 if (!isset($_SESSION['USER_LOGGED'])) {
-    G::SendTemporalMessage( 'ID_LOGIN_AGAIN', 'warning', 'labels' );
-    die( '<script type="text/javascript">
-              try 
-                 {
-                   prnt = parent.parent;
-                   top.location = top.location;
-                 }
-              catch (err) 
-                 {
-                   parent.location = parent.location;
-                 }
-          </script>');
+    $responseObject = new stdclass();
+    $responseObject->error = G::LoadTranslation('ID_LOGIN_AGAIN');
+    $responseObject->success = true;
+    $responseObject->lostSession = true;
+    print G::json_encode( $responseObject );
+    die();
 }
 /* Permissions */
 switch ($RBAC->userCanAccess( 'PM_CASES' )) {

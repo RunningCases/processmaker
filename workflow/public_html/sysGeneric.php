@@ -303,6 +303,9 @@ if ((preg_match("/msie/i", $_SERVER ['HTTP_USER_AGENT']) != 1 ||
 }
 session_start();
 
+ini_set( 'session.cookie_httponly', 1 );
+ini_set( 'session.cookie_secure', 1 );
+
 //$e_all = defined( 'E_DEPRECATED' ) ? E_ALL & ~ E_DEPRECATED : E_ALL;
 //$e_all = defined( 'E_STRICT' ) ? $e_all & ~ E_STRICT : $e_all;
 //$e_all = $config['debug'] ? $e_all : $e_all & ~ E_NOTICE;

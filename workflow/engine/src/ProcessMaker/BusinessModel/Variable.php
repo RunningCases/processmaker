@@ -5,6 +5,8 @@ use \G;
 
 class Variable
 {
+    public $variableTypes = array('string', 'integer', 'float', 'boolean', 'datetime', 'grid', 'array', 'file');
+
     /**
      * Create Variable for a Process
      *
@@ -44,6 +46,7 @@ class Variable
                         throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('$var_name' )));
                     }
                     if (isset($arrayData["VAR_FIELD_TYPE"])) {
+                        $arrayData["VAR_FIELD_TYPE"] = $this->validateVarFieldType($arrayData["VAR_FIELD_TYPE"]);
                         $variable->setVarFieldType($arrayData["VAR_FIELD_TYPE"]);
                     } else {
                         throw new \Exception(\G::LoadTranslation("ID_CAN_NOT_BE_NULL", array('$var_field_type' )));
@@ -151,6 +154,7 @@ class Variable
                         $variable->setVarName($arrayData["VAR_NAME"]);
                     }
                     if (isset($arrayData["VAR_FIELD_TYPE"])) {
+                        $arrayData["VAR_FIELD_TYPE"] = $this->validateVarFieldType($arrayData["VAR_FIELD_TYPE"]);
                         $variable->setVarFieldType($arrayData["VAR_FIELD_TYPE"]);
                     }
                     if (isset($arrayData["VAR_FIELD_SIZE"])) {
@@ -1075,5 +1079,14 @@ class Variable
         } catch (\Exception $e) {
             throw $e;
         }
+    }
+
+    public function validateVarFieldType($type)
+    {
+        $vType = strtolower($type);
+        if(!in_array($vType, $this->variableTypes)) {
+            throw new \Exception(\G::LoadTranslation("ID_RECORD_CANNOT_BE_CREATED"));
+        }
+        return $vType;
     }
 }

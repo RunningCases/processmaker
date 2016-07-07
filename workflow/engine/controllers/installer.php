@@ -130,7 +130,7 @@ class Installer extends Controller
         $info->memory = new stdclass();
 
         $info->php->version = phpversion();
-        $info->php->result = version_compare(phpversion(), '5.5.33') >= 0 ? true : false;
+        $info->php->result = (version_compare(phpversion(), '5.4', '>=') && version_compare(phpversion(), '7.0', '<')) ? true : false;
 
         // MYSQL info and verification
         $info->mysql->result = false;
@@ -727,7 +727,7 @@ class Installer extends Controller
             $rb_workpace = $wf;
             $rp_workpace = $wf;
             if (!$userLogged) {
-                $wfPass = G::generate_password( 12 );
+                $wfPass = G::generate_password( 15 );
                 $this->setGrantPrivilegesMySQL( $wf, $wfPass, $wf, $db_hostname );
                 $this->setGrantPrivilegesMySQL( $rb, $wfPass, $wf, $db_hostname );
                 $this->setGrantPrivilegesMySQL( $rp, $wfPass, $wf, $db_hostname );
@@ -1064,7 +1064,7 @@ class Installer extends Controller
             $this->mssqlQuery( $q );
 
             //CREATE users and GRANT Privileges
-            $wfPass = G::generate_password( 12 );
+            $wfPass = G::generate_password( 15 );
             $this->setGrantPrivilegesMSSQL( $wf, $wfPass, $wf );
 
             //Generate the db.php file and folders

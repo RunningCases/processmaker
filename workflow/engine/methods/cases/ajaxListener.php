@@ -34,6 +34,15 @@
 //require_once 'classes/model/Process.php';
 //require_once 'classes/model/Task.php';
 
+if (!isset($_SESSION['USER_LOGGED'])) {
+    $responseObject = new stdclass();
+    $responseObject->error = G::LoadTranslation('ID_LOGIN_AGAIN');
+    $responseObject->success = true;
+    $responseObject->lostSession = true;
+    print G::json_encode( $responseObject );
+    die();
+}
+
 G::LoadSystem('inputfilter');
 $filter = new InputFilter();
 $_REQUEST = $filter->xssFilterHard($_REQUEST);
