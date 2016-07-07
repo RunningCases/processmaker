@@ -62,7 +62,7 @@ class Application extends BaseApplication
         }
 
         if ($this->getAppUid() == '') {
-            throw (new Exception( "Error in getAppTitle, the APP_UID can't be blank"));
+            throw (new Exception( "Error in getAppTitleContent, the APP_UID can't be blank"));
         }
 
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
@@ -80,7 +80,7 @@ class Application extends BaseApplication
     public function setAppTitleContent($v)
     {
         if ($this->getAppUid() == '') {
-            throw (new Exception( "Error in setAppTitle, the APP_UID can't be blank"));
+            throw (new Exception( "Error in setAppTitleContent, the APP_UID can't be blank"));
         }
 
         //Since the native PHP type for this column is string,
@@ -103,7 +103,7 @@ class Application extends BaseApplication
     public function getAppDescriptionContent()
     {
         if ($this->getAppUid() == '') {
-            throw (new Exception( "Error in getAppDescription, the APP_UID can't be blank"));
+            throw (new Exception( "Error in getAppDescriptionContent, the APP_UID can't be blank"));
         }
 
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
@@ -121,7 +121,7 @@ class Application extends BaseApplication
     public function setAppDescriptionContent($v)
     {
         if ($this->getAppUid() == '') {
-            throw ( new Exception( "Error in setAppTitle, the APP_UID can't be blank") );
+            throw ( new Exception( "Error in setAppDescriptionContent, the APP_UID can't be blank") );
         }
 
         // Since the native PHP type for this column is string,
@@ -295,10 +295,10 @@ class Application extends BaseApplication
 
                 if ($oApp->validate()) {
                     if (isset($aData['APP_TITLE'])) {
-                        $this->setAppTitleContent($aData['APP_TITLE']);
+                        $oApp->setAppTitleContent($aData['APP_TITLE']);
                     }
                     if (isset($aData['APP_DESCRIPTION'])) {
-                        $this->setAppDescriptionContent($aData['APP_DESCRIPTION']);
+                        $oApp->setAppDescriptionContent($aData['APP_DESCRIPTION']);
                     }
 
                     //if ( isset ( $aData['APP_PROC_CODE'] ) )
@@ -311,7 +311,7 @@ class Application extends BaseApplication
                 } else {
                     $msg = '';
 
-                    foreach ($this->getValidationFailures() as $objValidationFailure) {
+                    foreach ($oApp->getValidationFailures() as $objValidationFailure) {
                         $msg .= $objValidationFailure->getMessage() . "<br/>";
                     }
 

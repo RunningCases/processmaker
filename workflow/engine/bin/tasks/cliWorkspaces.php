@@ -257,6 +257,19 @@ CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_new_cases_lists");
 /*----------------------------------********---------------------------------*/
 
+CLI::taskName('migrate-content');
+CLI::taskDescription(<<<EOT
+  Migrating the content schema to match the latest version
+
+  Specify the WORKSPACE to migrate from a existing workspace.
+
+  If no workspace is specified, then the tables schema will be upgraded or
+  migrate on all available workspaces.
+EOT
+);
+CLI::taskArg('workspace', true, true);
+CLI::taskRun("run_migrate_content");
+
   /**
    * Function run_info
    * access public
@@ -811,3 +824,59 @@ function migrate_counters($command, $args) {
 }
 /*----------------------------------********---------------------------------*/
 
+function run_migrate_content($args) {
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
+    $args = $filter->xssFilterHard($args);
+    $workspaces = get_workspaces_from_args($args);
+    foreach ($workspaces as $workspace) {
+        if (!defined('SYS_SYS')) {
+            define('SYS_SYS', $workspace->name);
+        }
+        print_r('Regenerating content in: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
+        migrate_content($workspace);
+    }
+}
+
+function migrate_content($workspace) {
+    if ((!class_exists('Memcache') || !class_exists('Memcached')) && !defined('MEMCACHED_ENABLED')) {
+        define('MEMCACHED_ENABLED', false);
+    }
+    $content = array(
+        'Groupwf' => array(
+            'uid' => 'GRP_UID',
+            'fields' => array('GRP_TITLE'),
+            'methods' => array('exists' => 'GroupwfExists')
+        ),
+        'Process' => array(
+            'uid' => 'PRO_UID',
+            'fields' => array('PRO_TITLE', 'PRO_DESCRIPTION'),
+            'methods' => array('exists' => 'exists')
+        ),
+        'Department' => array(
+            'uid' => 'DEP_UID',
+            'fields' => array('DEPO_TITLE'),
+            'alias' => array('DEPO_TITLE' => 'DEP_TITLE'),
+            'methods' => array('exists' => 'existsDepartment')
+        ),
+        'Task' => array(
+            'uid' => 'TAS_UID',
+            'fields' => array('TAS_TITLE', 'TAS_DESCRIPTION', 'TAS_DEF_TITLE', 'TAS_DEF_SUBJECT_MESSAGE', 'TAS_DEF_PROC_CODE', 'TAS_DEF_MESSAGE', 'TAS_DEF_DESCRIPTION'),
+            'methods' => array('exists' => 'taskExists')
+        ),
+        'InputDocument' => array(
+            'uid' => 'INP_DOC_UID',
+            'fields' => array('INP_DOC_TITLE', 'INP_DOC_DESCRIPTION'),
+            'methods' => array('exists' => 'InputExists')
+        ),
+        'Application' => array(
+            'uid' => 'APP_UID',
+            'fields' => array('APP_TITLE', 'APP_DESCRIPTION'),
+            'methods' => array('exists' => 'exists')
+        )
+    );
+    CLI::logging("-> Regenerating content \n");
+    foreach ($content as $className => $fields) {
+        $workspace->migrateContent($className, $fields, $workspace->name);
+    }
+}

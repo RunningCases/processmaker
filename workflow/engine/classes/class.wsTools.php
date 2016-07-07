@@ -3099,5 +3099,50 @@ class workspaceTools
         }
         return $response;
     }
-
+    
+    /**
+     * Migrate this workspace table Content.
+     * 
+     * @param $className
+     * @param $fields
+     * @param $workSpace
+     * @param mixed|string $sys_lang
+     * @throws Exception
+     */
+    public function migrateContent($className, $fields, $workSpace, $sys_lang = SYS_LANG)
+    {
+        try {
+            $this->initPropel(true);
+            $_SESSION['sys_sys'] = $workSpace;
+            $fieldUidName = $fields['uid'];
+            $oCriteria = new Criteria();
+            $oCriteria->clearSelectColumns();
+            $oCriteria->addAsColumn($fieldUidName, ContentPeer::CON_ID);
+            $oCriteria->addSelectColumn(ContentPeer::CON_CATEGORY);
+            $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
+            $oCriteria->add(ContentPeer::CON_CATEGORY, $fields['fields'], Criteria::IN);
+            $oCriteria->add(ContentPeer::CON_LANG, $sys_lang);
+            $oDataset = ContentPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $methods = $fields['methods'];
+            while ($oDataset->next()) {
+                $row = $oDataset->getRow();
+                $fieldName = $row['CON_CATEGORY'];
+                $fieldName = isset($fields['alias']) && isset($fields['alias'][$fieldName]) ? $fields['alias'][$fieldName] : $fieldName;
+                unset($row['CON_CATEGORY']);
+                $fieldValue = $row['CON_VALUE'];
+                unset($row['CON_VALUE']);
+                $row[$fieldName] = $fieldValue;
+                $oTable = new $className();
+                $mExists = $methods['exists'];
+                if ($oTable->$mExists($row[$fieldUidName])){
+                    $oTable->update($row);
+                }
+            }
+            $classNamePeer = $className . 'Peer';
+            CLI::logging("|--> Add content in table " . $classNamePeer::TABLE_NAME . "\n");
+        } catch (Exception $e) {
+            throw ($e);
+        }
+    }
 }
