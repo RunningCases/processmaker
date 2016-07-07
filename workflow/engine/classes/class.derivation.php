@@ -591,7 +591,17 @@ class Derivation
                 $userFields['USR_EMAIL'] = '';
 
                 //get the report_to user & its full info
-                $useruid = ($tasInfo["USER_UID"] != "")? $this->checkReplacedByUser($this->getDenpendentUser($tasInfo["USER_UID"])) : "";
+                $lastManager = $userTasInfo = $tasInfo["USER_UID"];
+                do {
+                    $userTasInfo = $this->getDenpendentUser($userTasInfo);
+                    $useruid = $this->checkReplacedByUser($userTasInfo);
+                    //When the lastManager is INACTIVE/VACATION and does not have a Replace by, the REPORT_TO is himself
+                    if($lastManager === $userTasInfo){
+                        $useruid = $tasInfo["USER_UID"];
+                    } else {
+                        $lastManager = $userTasInfo;
+                    }
+                } while ($useruid === '');
 
                 if (isset( $useruid ) && $useruid != '') {
                     $userFields = $this->getUsersFullNameFromArray( $useruid );
