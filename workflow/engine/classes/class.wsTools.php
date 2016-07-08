@@ -2373,7 +2373,7 @@ class workspaceTools
                         ACV.APP_PRO_TITLE,
                         ACV.APP_TAS_TITLE,
                         ACV.APP_STATUS,
-                        ACV.PREVIOUS_USR_UID AS DEL_PREVIOUS_USR_UID,
+                        PRE_USR.USR_UID AS DEL_PREVIOUS_USR_UID,
                         PRE_USR.USR_USERNAME AS DEL_PREVIOUS_USR_USERNAME,
                         PRE_USR.USR_FIRSTNAME AS DEL_PREVIOUS_USR_FIRSTNAME,
                         PRE_USR.USR_LASTNAME AS DEL_PREVIOUS_USR_LASTNAME,
@@ -2383,23 +2383,31 @@ class workspaceTools
                         ACV.DEL_DELEGATE_DATE AS DEL_DELEGATE_DATE,
                         ACV.DEL_INIT_DATE AS DEL_INIT_DATE,
                         ACV.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
-                        ACV.APP_TAS_TITLE AS DEL_CURRENT_TAS_TITLE,
+                        CURR_USER_ACV.APP_TAS_TITLE AS DEL_CURRENT_TAS_TITLE,
                         ACV.DEL_PRIORITY,
                         ACV.DEL_THREAD_STATUS
                     FROM
-                        '.$this->dbName.'.APP_CACHE_VIEW ACV
-                            LEFT JOIN
-                        '.$this->dbName.'.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID
-                            LEFT JOIN
-                        '.$this->dbName.'.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID
+                        (SELECT
+                            *, MAX(ACV_INT.DEL_INDEX) MAX_DEL_INDEX
+                        FROM
+                            '.$this->dbName.'.APP_CACHE_VIEW ACV_INT
+                        GROUP BY ACV_INT.APP_UID , ACV_INT.USR_UID) ACV
                             INNER JOIN
                         (SELECT
-                            ACV.APP_UID, ACV.USR_UID, MAX(DEL_INDEX) DEL_INDEX
+                            ACV.APP_UID, ACV.USR_UID, ACV.APP_TAS_TITLE, ACV.PREVIOUS_USR_UID, ACV.DEL_INDEX
                         FROM
-                            '.$this->dbName.'.APP_CACHE_VIEW ACV
-                        GROUP BY ACV.APP_UID , ACV.USR_UID) LAST_ACV ON LAST_ACV.APP_UID = ACV.APP_UID
-                            AND LAST_ACV.USR_UID = ACV.USR_UID
-                            AND LAST_ACV.DEL_INDEX = ACV.DEL_INDEX
+                            APP_CACHE_VIEW ACV
+                            INNER JOIN
+                        (SELECT
+                            ACV_INT.APP_UID, MAX(ACV_INT.DEL_INDEX) DEL_INDEX
+                        FROM
+                            '.$this->dbName.'.APP_CACHE_VIEW ACV_INT
+                        GROUP BY ACV_INT.APP_UID) LAST_ACV ON LAST_ACV.APP_UID = ACV.APP_UID
+                            AND LAST_ACV.DEL_INDEX = ACV.DEL_INDEX) CURR_USER_ACV ON CURR_USER_ACV.APP_UID = ACV.APP_UID
+                            LEFT JOIN
+                        '.$this->dbName.'.USERS PRE_USR ON CURR_USER_ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID
+                            LEFT JOIN
+                        '.$this->dbName.'.USERS CUR_USR ON CURR_USER_ACV.USR_UID = CUR_USR.USR_UID
 		';
         $con = Propel::getConnection("workflow");
         $stmt = $con->createStatement();
