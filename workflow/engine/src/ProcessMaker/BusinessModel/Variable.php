@@ -922,6 +922,7 @@ class Variable
                 $sqlOrderBy = " ORDER BY " . $sFieldSel;
             }
 
+            $start = 0;
             $sqlLimit = "";
             if ($start >= 0) {
                 $sqlLimit = " LIMIT " . $start;
@@ -943,17 +944,43 @@ class Variable
             $row = $ds->getRow();
             if (isset($row["DBS_TYPE"])) {
                 if ($row["DBS_TYPE"] === "pgsql") {
-                    $sqlLimit = $this->limitPgsql($start, $limit);
+                    if ($start >= 0) {
+                        $sqlLimit = " OFFSET " . $start;
+                    }
+                    if ($limit !== "") {
+                        $sqlLimit = $sqlLimit . " LIMIT " . $limit;
+                    }
                 }
                 if ($row["DBS_TYPE"] === "mssql") {
-                    return $this->limitMssqlOracle($sqlSelect, $sqlFrom, $sqlWhere, $sqlGroupBy, $sqlHaving, $sqlOrderBy, $start, $limit, true);
+                    $sqlLimit = "";
+                    if ($limit !== "") {
+                        $wordsSearch = [" DISTINCT ", " ALL "];
+                        $wordsSearchCount = count($wordsSearch);
+                        for ($i = 0; $i < $wordsSearchCount; $i++) {
+                            $stringSearch = $wordsSearch[$i];
+                            $stringPosition = strpos($sqlSelect, $stringSearch);
+                            if ($stringPosition !== false) {
+                                $stringLength = strlen($stringSearch);
+                                $string1 = substr($sqlSelect, 0, $stringPosition + $stringLength);
+                                $string2 = substr($sqlSelect, $stringPosition + $stringLength);
+                                $sqlSelect = $string1 . "TOP(" . $limit . ") " . $string2;
+                            }
+                        }
+                    }
                 }
                 if ($row["DBS_TYPE"] === "oracle") {
-                    return $this->limitMssqlOracle($sqlSelect, $sqlFrom, $sqlWhere, $sqlGroupBy, $sqlHaving, $sqlOrderBy, $start, $limit, false);
+                    $sqlLimit = "";
+                    if ($limit !== "") {
+                        if (strpos($sqlWhere, "WHERE ") === false) {
+                            $sqlWhere = " WHERE ROWNUM <= " . $limit;
+                        } else {
+                            $sqlWhere = $sqlWhere . " AND ROWNUM <= " . $limit;
+                        }
+                    }
                 }
             }
 
-            return $sqlSelect . $sqlFrom . $sqlWhere . $sqlGroupBy . $sqlHaving . $sqlOrderBy . $sqlLimit;
+            return $sqlSelect . $sqlFrom . $sqlWhere . $sqlGroupBy . $sqlHaving . " " . $sqlOrderBy . $sqlLimit;
         }
         if (!empty($sqlParsed['CALL'])) {
             $sCall = "CALL ";
@@ -979,36 +1006,6 @@ class Variable
             }
             return $sCall;
         }
-    }
-
-    public function limitPgsql($start = 0, $limit = "")
-    {
-        $sqlLimit = "";
-        if ($start >= 0) {
-            $sqlLimit = " OFFSET " . $start;
-        }
-        if ($limit !== "") {
-            $sqlLimit = $sqlLimit . " LIMIT " . $limit;
-        }
-        return $sqlLimit;
-    }
-
-    public function limitMssqlOracle($sqlSelect = "", $sqlFrom = "", $sqlWhere = "", $sqlGroupBy = "", $sqlHaving = "", $sqlOrderBy = "", $start = 0, $limit = "", $isMssql = true)
-    {
-        $sqlLimit = "";
-        if ($start >= 0) {
-            $sqlLimit = "WHERE rn >= " . $start;
-        }
-        if ($start >= 0 && $limit != "") {
-            $sqlLimit = "WHERE rn BETWEEN " . $start . " AND " . $limit;
-        }
-        $sql = ""
-                . "SELECT * FROM ("
-                . "    " . $sqlSelect . ", ROW_NUMBER() OVER( " . $sqlOrderBy . " desc )-1 " . ($isMssql ? " AS " : "") . " rn "
-                . "    " . $sqlFrom . $sqlWhere . $sqlGroupBy . $sqlHaving
-                . ")" . ($isMssql ? " AS A " : "")
-                . $sqlLimit;
-        return $sql;
     }
 
     public function getVariableTypeByName($processUid, $variableName)
