@@ -1251,6 +1251,15 @@
     </vendor>
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="TAS_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+
+    <column name="TAS_TITLE" type="LONGVARCHAR" required="true"/>
+    <column name="TAS_DESCRIPTION" type="LONGVARCHAR"/>
+    <column name="TAS_DEF_TITLE" type="LONGVARCHAR"/>
+    <column name="TAS_DEF_SUBJECT_MESSAGE" type="LONGVARCHAR"/>
+    <column name="TAS_DEF_PROC_CODE" type="LONGVARCHAR"/>
+    <column name="TAS_DEF_MESSAGE" type="LONGVARCHAR"/>
+    <column name="TAS_DEF_DESCRIPTION" type="LONGVARCHAR"/>
+
     <column name="TAS_TYPE" type="VARCHAR" size="50" required="true" default="NORMAL"/>
     <column name="TAS_DURATION" type="DOUBLE" required="true" default="0"/>
     <column name="TAS_DELAY_TYPE" type="VARCHAR" size="30" required="true" default=""/>

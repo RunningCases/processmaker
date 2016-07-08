@@ -69,6 +69,20 @@ class TaskMapBuilder
 
         $tMap->addPrimaryKey('TAS_UID', 'TasUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
+        $tMap->addColumn('TAS_TITLE', 'TasTitle', 'string', CreoleTypes::LONGVARCHAR, true, null);
+
+        $tMap->addColumn('TAS_DESCRIPTION', 'TasDescription', 'string', CreoleTypes::LONGVARCHAR, false, null);
+
+        $tMap->addColumn('TAS_DEF_TITLE', 'TasDefTitle', 'string', CreoleTypes::LONGVARCHAR, false, null);
+
+        $tMap->addColumn('TAS_DEF_SUBJECT_MESSAGE', 'TasDefSubjectMessage', 'string', CreoleTypes::LONGVARCHAR, false, null);
+
+        $tMap->addColumn('TAS_DEF_PROC_CODE', 'TasDefProcCode', 'string', CreoleTypes::LONGVARCHAR, false, null);
+
+        $tMap->addColumn('TAS_DEF_MESSAGE', 'TasDefMessage', 'string', CreoleTypes::LONGVARCHAR, false, null);
+
+        $tMap->addColumn('TAS_DEF_DESCRIPTION', 'TasDefDescription', 'string', CreoleTypes::LONGVARCHAR, false, null);
+
         $tMap->addColumn('TAS_TYPE', 'TasType', 'string', CreoleTypes::VARCHAR, true, 50);
 
         $tMap->addColumn('TAS_DURATION', 'TasDuration', 'double', CreoleTypes::DOUBLE, true, null);

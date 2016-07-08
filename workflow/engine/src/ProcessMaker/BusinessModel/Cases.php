@@ -2071,8 +2071,8 @@ class Cases
             $criteria = new \Criteria("workflow");
 
             $criteria->addSelectColumn(\TaskPeer::TAS_UID);
-            $criteria->addAsColumn("TAS_TITLE", "CT.CON_VALUE");
-            $criteria->addAsColumn("TAS_DESCRIPTION", "CD.CON_VALUE");
+            $criteria->addSelectColumn(\TaskPeer::TAS_TITLE);
+            $criteria->addSelectColumn(\TaskPeer::TAS_DESCRIPTION);
             $criteria->addSelectColumn(\TaskPeer::TAS_START);
             $criteria->addSelectColumn(\TaskPeer::TAS_TYPE);
             $criteria->addSelectColumn(\TaskPeer::TAS_DERIVATION);
@@ -2081,21 +2081,6 @@ class Cases
             $criteria->addSelectColumn(\UsersPeer::USR_USERNAME);
             $criteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
             $criteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
-
-            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
-            $criteria->addAlias("CD", \ContentPeer::TABLE_NAME);
-
-            $arrayCondition = array();
-            $arrayCondition[] = array(\TaskPeer::TAS_UID, "CT.CON_ID", \Criteria::EQUAL);
-            $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "TAS_TITLE" . $delimiter, \Criteria::EQUAL);
-            $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
-            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
-
-            $arrayCondition = array();
-            $arrayCondition[] = array(\TaskPeer::TAS_UID, "CD.CON_ID", \Criteria::EQUAL);
-            $arrayCondition[] = array("CD.CON_CATEGORY", $delimiter . "TAS_DESCRIPTION" . $delimiter, \Criteria::EQUAL);
-            $arrayCondition[] = array("CD.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
-            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
 
             $criteria->addJoin(\TaskPeer::TAS_LAST_ASSIGNED, \UsersPeer::USR_UID, \Criteria::LEFT_JOIN);
 
@@ -2120,24 +2105,9 @@ class Cases
                     $criteria2 = new \Criteria("workflow");
 
                     $criteria2->addSelectColumn(\SubProcessPeer::PRO_UID);
-                    $criteria2->addAsColumn("TAS_TITLE", "CT.CON_VALUE");
-                    $criteria2->addAsColumn("TAS_DESCRIPTION", "CD.CON_VALUE");
-
-                    $criteria2->addAlias("CT", \ContentPeer::TABLE_NAME);
-                    $criteria2->addAlias("CD", \ContentPeer::TABLE_NAME);
-
-                    $arrayCondition = array();
-                    $arrayCondition[] = array(\SubProcessPeer::TAS_PARENT, "CT.CON_ID", \Criteria::EQUAL);
-                    $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "TAS_TITLE" . $delimiter, \Criteria::EQUAL);
-                    $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
-                    $criteria2->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
-
-                    $arrayCondition = array();
-                    $arrayCondition[] = array(\SubProcessPeer::TAS_PARENT, "CD.CON_ID", \Criteria::EQUAL);
-                    $arrayCondition[] = array("CD.CON_CATEGORY", $delimiter . "TAS_DESCRIPTION" . $delimiter, \Criteria::EQUAL);
-                    $arrayCondition[] = array("CD.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
-                    $criteria2->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
-
+                    $criteria2->addSelectColumn(\TaskPeer::TAS_TITLE);
+                    $criteria2->addSelectColumn(\TaskPeer::TAS_DESCRIPTION);
+                    $criteria2->addJoin(\SubProcessPeer::TAS_PARENT, \TaskPeer::TAS_UID, \Criteria::LEFT_JOIN);
                     $criteria2->add(\SubProcessPeer::PRO_PARENT, $processUid);
                     $criteria2->add(\SubProcessPeer::TAS_PARENT, $row["TAS_UID"]);
 
@@ -2640,6 +2610,7 @@ class Cases
             $c = new \Criteria();
             $c->clearSelectColumns();
             $c->addSelectColumn(\TaskPeer::TAS_UID);
+            $c->addSelectColumn(\TaskPeer::TAS_TITLE);
             $c->addSelectColumn(\TaskPeer::PRO_UID);
             $c->addSelectColumn(\ProcessPeer::PRO_TITLE);
             $c->addJoin(\TaskPeer::PRO_UID, \ProcessPeer::PRO_UID, \Criteria::LEFT_JOIN);
@@ -2648,20 +2619,6 @@ class Cases
             $c->add(\TaskPeer::TAS_START, 'TRUE');
             $c->add(\TaskUserPeer::USR_UID, $groups, \Criteria::IN);
             $c->add(\TaskPeer::TAS_UID, $bookmark, \Criteria::IN);
-
-            $c->addAsColumn('TAS_TITLE', 'C1.CON_VALUE');
-            $c->addAlias("C1", 'CONTENT');
-            $tasTitleConds = array();
-            $tasTitleConds[] = array(\TaskPeer::TAS_UID, 'C1.CON_ID');
-            $tasTitleConds[] = array(
-                'C1.CON_CATEGORY',
-                \DBAdapter::getStringDelimiter() . 'TAS_TITLE' . \DBAdapter::getStringDelimiter()
-            );
-            $tasTitleConds[] = array(
-                'C1.CON_LANG',
-                \DBAdapter::getStringDelimiter() . SYS_LANG . \DBAdapter::getStringDelimiter()
-            );
-            $c->addJoinMC( $tasTitleConds, \Criteria::LEFT_JOIN );
 
             if ($typeView == 'category') {
                 $c->addAsColumn('PRO_CATEGORY', 'PCS.PRO_CATEGORY');

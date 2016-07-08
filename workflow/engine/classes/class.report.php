@@ -194,29 +194,17 @@ class Report
         $oCriteria = new Criteria( 'workflow' );
         $del = DBAdapter::getStringDelimiter();
         $oCriteria->addSelectColumn( AppDelegationPeer::PRO_UID );
+        $oCriteria->addSelectColumn( TaskPeer::TAS_TITLE );
         $oCriteria->addAsColumn( "MIN", "MIN(" . AppDelegationPeer::DEL_DURATION . ")" );
         $oCriteria->addAsColumn( "MAX", "MAX(" . AppDelegationPeer::DEL_DURATION . ")" );
         $oCriteria->addAsColumn( "TOTALDUR", "SUM(" . AppDelegationPeer::DEL_DURATION . ")" );
         $oCriteria->addAsColumn( "PROMEDIO", "AVG(" . AppDelegationPeer::DEL_DURATION . ")" );
 
         $oCriteria->addJoin( AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN );
-
-        $oCriteria->addAsColumn( 'TAS_TITLE', 'C.CON_VALUE' );
-        $oCriteria->addAlias( "C", 'CONTENT' );
-
-        $proContentConds = array ();
-        $proContentConds[] = array (AppDelegationPeer::TAS_UID,'C.CON_ID'
-        );
-        $proContentConds[] = array ('C.CON_CATEGORY',$del . 'TAS_TITLE' . $del
-        );
-        $proContentConds[] = array ('C.CON_LANG',$del . SYS_LANG . $del
-        );
-        $oCriteria->addJoinMC( $proContentConds, Criteria::LEFT_JOIN );
-
         $oCriteria->add( AppDelegationPeer::PRO_UID, $PRO_UID );
 
         $oCriteria->addGroupByColumn( AppDelegationPeer::PRO_UID );
-        $oCriteria->addGroupByColumn( 'C.CON_VALUE' );
+        $oCriteria->addGroupByColumn( TaskPeer::TAS_TITLE );
 
         $oDataset = AppDelegationPeer::doSelectRS( $oCriteria );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
@@ -359,25 +347,13 @@ class Report
         $oCriteria = new Criteria( 'workflow' );
         $del = DBAdapter::getStringDelimiter();
         $oCriteria->addSelectColumn( AppDelegationPeer::PRO_UID );
+        $oCriteria->addSelectColumn( TaskPeer::TAS_TITLE );
         $oCriteria->addAsColumn( "MIN", "MIN(" . AppDelegationPeer::DEL_DURATION . ")" );
         $oCriteria->addAsColumn( "MAX", "MAX(" . AppDelegationPeer::DEL_DURATION . ")" );
         $oCriteria->addAsColumn( "TOTALDUR", "SUM(" . AppDelegationPeer::DEL_DURATION . ")" );
         $oCriteria->addAsColumn( "PROMEDIO", "AVG(" . AppDelegationPeer::DEL_DURATION . ")" );
 
         $oCriteria->addJoin( AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN );
-
-        $oCriteria->addAsColumn( 'TAS_TITLE', 'C.CON_VALUE' );
-        $oCriteria->addAlias( "C", 'CONTENT' );
-
-        $proContentConds = array ();
-        $proContentConds[] = array (AppDelegationPeer::TAS_UID,'C.CON_ID'
-        );
-        $proContentConds[] = array ('C.CON_CATEGORY',$del . 'TAS_TITLE' . $del
-        );
-        $proContentConds[] = array ('C.CON_LANG',$del . SYS_LANG . $del
-        );
-        $oCriteria->addJoinMC( $proContentConds, Criteria::LEFT_JOIN );
-
         $oCriteria->add( $oCriteria->getNewCriterion( AppDelegationPeer::DEL_INIT_DATE, $from . ' 00:00:00', Criteria::GREATER_EQUAL )->addAnd( $oCriteria->getNewCriterion( AppDelegationPeer::DEL_INIT_DATE, $to . ' 23:59:59', Criteria::LESS_EQUAL ) ) );
 
         if ($startedby != '') {
@@ -387,7 +363,7 @@ class Report
         $oCriteria->add( AppDelegationPeer::PRO_UID, $PRO_UID );
 
         $oCriteria->addGroupByColumn( AppDelegationPeer::PRO_UID );
-        $oCriteria->addGroupByColumn( 'C.CON_VALUE' );
+        $oCriteria->addGroupByColumn( TaskPeer::TAS_TITLE );
 
         return $oCriteria;
     }

@@ -183,34 +183,25 @@ function lookinginforContentProcess ($sproUid)
 
         $oC = new Criteria( 'workflow' );
         $oC->addSelectColumn( TaskPeer::TAS_UID );
+        $oC->addSelectColumn( TaskPeer::TAS_TITLE );
         $oC->add( TaskPeer::PRO_UID, $sproUid );
         $oDataset1 = TaskPeer::doSelectRS( $oC );
         $oDataset1->setFetchmode( ResultSet::FETCHMODE_ASSOC );
 
         while ($oDataset1->next()) {
             $aRow1 = $oDataset1->getRow();
-
-            $oCriteria1 = new Criteria( 'workflow' );
-            $oCriteria1->add( ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
-            $oCriteria1->add( ContentPeer::CON_LANG, SYS_LANG );
-            $oCriteria1->add( ContentPeer::CON_ID, $aRow1['TAS_UID'] );
-            $oDataset2 = ContentPeer::doSelectRS( $oCriteria1 );
-            $oDataset2->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-            $oDataset2->next();
-            $aRow2 = $oDataset2->getRow();
-
-            Content::insertContent( 'TAS_TITLE', '', $aRow2['CON_ID'], 'en', $aRow2['CON_VALUE'] );
+            Content::insertContent( 'TAS_TITLE', '', $aRow1['TAS_UID'], 'en', $aRow1['TAS_TITLE'] );
         }
         $oC2 = new Criteria( 'workflow' );
-        $oC2->add( ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
-        $oC2->add( ContentPeer::CON_LANG, SYS_LANG );
-        $oC2->add( ContentPeer::CON_ID, $sproUid );
-        $oDataset3 = ContentPeer::doSelectRS( $oC2 );
+        $oC2->addSelectColumn(ProcessPeer::PRO_UID);
+        $oC2->addSelectColumn(ProcessPeer::PRO_TITLE);
+        $oC2->add( ProcessPeer::PRO_UID, $sproUid );
+        $oDataset3 = ProcessPeer::doSelectRS( $oC2 );
         $oDataset3->setFetchmode( ResultSet::FETCHMODE_ASSOC );
         $oDataset3->next();
         $aRow3 = $oDataset3->getRow();
 
-        Content::insertContent( 'PRO_TITLE', '', $aRow3['CON_ID'], 'en', $aRow3['CON_VALUE'] );
+        Content::insertContent( 'PRO_TITLE', '', $aRow3['PRO_UID'], 'en', $aRow3['PRO_TITLE'] );
 
     }
     return 1;
