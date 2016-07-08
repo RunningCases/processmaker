@@ -1935,7 +1935,7 @@ class Processes
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
                 $oInput = new InputDocument();
-                $aInput[] = $oInput->Load($aRow['INP_DOC_UID']);
+                $aInput[] = $oInput->load($aRow['INP_DOC_UID']);
                 $oDataset->next();
             }
             return $aInput;

@@ -1456,7 +1456,7 @@ class Process
             $criteria = $inputDocument->getInputDocumentCriteria();
 
             $criteria->add(\InputDocumentPeer::PRO_UID, $processUid, \Criteria::EQUAL);
-            $criteria->addAscendingOrderByColumn("INP_DOC_TITLE");
+            $criteria->addAscendingOrderByColumn(\InputDocumentPeer::INP_DOC_TITLE);
 
             $rsCriteria = \InputDocumentPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);

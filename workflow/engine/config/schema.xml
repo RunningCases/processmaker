@@ -622,6 +622,8 @@
     </vendor>
     <column name="INP_DOC_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" default="0"/>
+    <column name="INP_DOC_TITLE" type="LONGVARCHAR" required="true"/>
+    <column name="INP_DOC_DESCRIPTION" type="LONGVARCHAR"/>
     <column name="INP_DOC_FORM_NEEDED" type="VARCHAR" size="20" required="true" default="REAL"/>
     <column name="INP_DOC_ORIGINAL" type="VARCHAR" size="20" required="true" default="COPY"/>
     <column name="INP_DOC_PUBLISHED" type="VARCHAR" size="20" required="true" default="PRIVATE"/>

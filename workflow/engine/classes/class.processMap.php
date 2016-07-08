@@ -962,13 +962,7 @@ class processMap
             }
             $oCriteria = new Criteria('workflow');
             $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_UID);
-            $oCriteria->addAsColumn('INP_DOC_TITLE', 'C.CON_VALUE');
-            $oCriteria->addAlias('C', 'CONTENT');
-            $aConditions = array();
-            $aConditions[] = array(InputDocumentPeer::INP_DOC_UID, 'C.CON_ID' );
-            $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'INP_DOC_TITLE' . $sDelimiter );
-            $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-            $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+            $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_TITLE);
             $oCriteria->add(InputDocumentPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(InputDocumentPeer::INP_DOC_UID, $sUIDs, Criteria::NOT_IN);
             $oDataset = InputDocumentPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
@@ -978,7 +972,9 @@ class processMap
 
                 if (($aRow['INP_DOC_TITLE'] == null) || ($aRow['INP_DOC_TITLE'] == "")) {
                     // There is no transaltion for this Document name, try to get/regenerate the label
-                    $aRow['INP_DOC_TITLE'] = Content::Load("INP_DOC_TITLE", "", $aRow['INP_DOC_UID'], SYS_LANG);
+                    $oInputDocument = new InputDocument;
+                    $row = $oInputDocument->load($aRow['INP_DOC_UID']);
+                    $aRow['INP_DOC_TITLE'] = $row['INP_DOC_TITLE'];
                 }
                 $aBB[] = array('STEP_UID' => $aRow['INP_DOC_UID'], 'STEP_TITLE' => $aRow['INP_DOC_TITLE'], 'STEP_TYPE_OBJ' => 'INPUT_DOCUMENT', 'STEP_MODE' => '<input type="hidden" id="STEP_MODE_' . $aRow['INP_DOC_UID'] . '">' );
                 $oDataset->next();
@@ -2123,24 +2119,11 @@ class processMap
 
     public function getInputDocumentsCriteria($sProcessUID = '')
     {
-        $sDelimiter = DBAdapter::getStringDelimiter();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_UID);
+        $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_TITLE);
+        $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_DESCRIPTION);
         $oCriteria->addSelectColumn(InputDocumentPeer::PRO_UID);
-        $oCriteria->addAsColumn('INP_DOC_TITLE', 'C1.CON_VALUE');
-        $oCriteria->addAsColumn('INP_DOC_DESCRIPTION', 'C2.CON_VALUE');
-        $oCriteria->addAlias('C1', 'CONTENT');
-        $oCriteria->addAlias('C2', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(InputDocumentPeer::INP_DOC_UID, 'C1.CON_ID' );
-        $aConditions[] = array('C1.CON_CATEGORY', $sDelimiter . 'INP_DOC_TITLE' . $sDelimiter );
-        $aConditions[] = array('C1.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(InputDocumentPeer::INP_DOC_UID, 'C2.CON_ID' );
-        $aConditions[] = array('C2.CON_CATEGORY', $sDelimiter . 'INP_DOC_DESCRIPTION' . $sDelimiter );
-        $aConditions[] = array('C2.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         $oCriteria->add(InputDocumentPeer::PRO_UID, $sProcessUID);
 
         $oDataset = InputDocumentPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
@@ -3172,16 +3155,10 @@ class processMap
         $oCriteria->addSelectColumn(StepSupervisorPeer::STEP_TYPE_OBJ);
         $oCriteria->addSelectColumn(StepSupervisorPeer::STEP_UID_OBJ);
         $oCriteria->addSelectColumn(StepSupervisorPeer::STEP_POSITION);
-        $oCriteria->addAsColumn('INP_DOC_TITLE', 'C.CON_VALUE');
-        $oCriteria->addAlias('C', 'CONTENT');
+        $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_TITLE);
         $aConditions = array();
         $aConditions[] = array(StepSupervisorPeer::STEP_UID_OBJ, InputDocumentPeer::INP_DOC_UID);
         $aConditions[] = array(StepSupervisorPeer::STEP_TYPE_OBJ, $sDelimiter . 'INPUT_DOCUMENT' . $sDelimiter);
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(InputDocumentPeer::INP_DOC_UID, 'C.CON_ID');
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'INP_DOC_TITLE' . $sDelimiter);
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
         $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         $oCriteria->add(StepSupervisorPeer::PRO_UID, $sProcessUID);
         $oCriteria->add(StepSupervisorPeer::STEP_TYPE_OBJ, 'INPUT_DOCUMENT');
@@ -3278,17 +3255,10 @@ class processMap
             $aUIDS[] = $aRow['STEP_UID_OBJ'];
             $oDataset->next();
         }
-        $sDelimiter = DBAdapter::getStringDelimiter();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_UID);
+        $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_TITLE);
         $oCriteria->addSelectColumn(InputDocumentPeer::PRO_UID);
-        $oCriteria->addAsColumn('INP_DOC_TITLE', 'C.CON_VALUE');
-        $oCriteria->addAlias('C', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(InputDocumentPeer::INP_DOC_UID, 'C.CON_ID');
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'INP_DOC_TITLE' . $sDelimiter);
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         $oCriteria->add(InputDocumentPeer::PRO_UID, $sProcessUID);
         $oCriteria->add(InputDocumentPeer::INP_DOC_UID, $aUIDS, Criteria::NOT_IN);
         return $oCriteria;
@@ -4288,13 +4258,7 @@ class processMap
         }
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_UID);
-        $oCriteria->addAsColumn('INP_DOC_TITLE', 'C.CON_VALUE');
-        $oCriteria->addAlias('C', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(InputDocumentPeer::INP_DOC_UID, 'C.CON_ID');
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'INP_DOC_TITLE' . $sDelimiter);
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_TITLE);
         $oCriteria->add(InputDocumentPeer::PRO_UID, $sProcessUID);
         $oCriteria->add(InputDocumentPeer::INP_DOC_UID, $aInputsUIDS, Criteria::NOT_IN);
         $oDataset = InputDocumentPeer::doSelectRS($oCriteria);
@@ -5441,13 +5405,7 @@ class processMap
             }
             $oCriteria = new Criteria('workflow');
             $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_UID);
-            $oCriteria->addAsColumn('INP_DOC_TITLE', 'C.CON_VALUE');
-            $oCriteria->addAlias('C', 'CONTENT');
-            $aConditions = array();
-            $aConditions[] = array(InputDocumentPeer::INP_DOC_UID, 'C.CON_ID');
-            $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'INP_DOC_TITLE' . $sDelimiter);
-            $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-            $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+            $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_TITLE);
             $oCriteria->add(InputDocumentPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(InputDocumentPeer::INP_DOC_UID, $sUIDs, Criteria::NOT_IN);
             $oDataset = InputDocumentPeer::doSelectRS($oCriteria);
@@ -5927,26 +5885,13 @@ class processMap
     public function getExtInputDocumentsCriteria($start, $limit, $sProcessUID = '')
     {
         $aTasks = $this->getAllInputDocsByTask($sProcessUID);
-        $sDelimiter = DBAdapter::getStringDelimiter();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_UID);
+        $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_TITLE);
+        $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_DESCRIPTION);
         $oCriteria->addSelectColumn(InputDocumentPeer::PRO_UID);
         $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_VERSIONING);
         $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_DESTINATION_PATH);
-        $oCriteria->addAsColumn('INP_DOC_TITLE', 'C1.CON_VALUE');
-        $oCriteria->addAsColumn('INP_DOC_DESCRIPTION', 'C2.CON_VALUE');
-        $oCriteria->addAlias('C1', 'CONTENT');
-        $oCriteria->addAlias('C2', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(InputDocumentPeer::INP_DOC_UID, 'C1.CON_ID');
-        $aConditions[] = array('C1.CON_CATEGORY', $sDelimiter . 'INP_DOC_TITLE' . $sDelimiter);
-        $aConditions[] = array('C1.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(InputDocumentPeer::INP_DOC_UID, 'C2.CON_ID');
-        $aConditions[] = array('C2.CON_CATEGORY', $sDelimiter . 'INP_DOC_DESCRIPTION' . $sDelimiter);
-        $aConditions[] = array('C2.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         $oCriteria->add(InputDocumentPeer::PRO_UID, $sProcessUID);
 
         $this->tmpCriteria = clone $oCriteria;
@@ -6425,16 +6370,10 @@ class processMap
         $oCriteria->addSelectColumn(StepSupervisorPeer::STEP_UID_OBJ);
         $oCriteria->addSelectColumn(StepSupervisorPeer::STEP_POSITION);
         $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_UID);
-        $oCriteria->addAsColumn('INP_DOC_TITLE', 'C.CON_VALUE');
-        $oCriteria->addAlias('C', 'CONTENT');
+        $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_TITLE);
         $aConditions = array();
         $aConditions[] = array(StepSupervisorPeer::STEP_UID_OBJ, InputDocumentPeer::INP_DOC_UID);
         $aConditions[] = array(StepSupervisorPeer::STEP_TYPE_OBJ, $sDelimiter . 'INPUT_DOCUMENT' . $sDelimiter);
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(InputDocumentPeer::INP_DOC_UID, 'C.CON_ID');
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'INP_DOC_TITLE' . $sDelimiter);
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
         $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         $oCriteria->add(StepSupervisorPeer::PRO_UID, $sProcessUID);
         $oCriteria->add(StepSupervisorPeer::STEP_TYPE_OBJ, 'INPUT_DOCUMENT');
@@ -6479,16 +6418,7 @@ class processMap
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_UID);
         $oCriteria->addSelectColumn(InputDocumentPeer::PRO_UID);
-        $oCriteria->addAsColumn('INP_DOC_TITLE', 'C.CON_VALUE');
-        $oCriteria->addAlias('C', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(InputDocumentPeer::INP_DOC_UID, 'C.CON_ID'
-        );
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'INP_DOC_TITLE' . $sDelimiter
-        );
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter
-        );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_TITLE);
         $oCriteria->add(InputDocumentPeer::PRO_UID, $sProcessUID);
         $oCriteria->add(InputDocumentPeer::INP_DOC_UID, $aUIDS, Criteria::NOT_IN);
         $oDataset = InputDocumentPeer::doSelectRS($oCriteria);
@@ -6830,13 +6760,7 @@ class processMap
         }
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_UID);
-        $oCriteria->addAsColumn('INP_DOC_TITLE', 'C.CON_VALUE');
-        $oCriteria->addAlias('C', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(InputDocumentPeer::INP_DOC_UID, 'C.CON_ID');
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'INP_DOC_TITLE' . $sDelimiter);
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(InputDocumentPeer::INP_DOC_TITLE);
         $oCriteria->add(InputDocumentPeer::PRO_UID, $sProcessUID);
         $oCriteria->add(InputDocumentPeer::INP_DOC_UID, $aInputsUIDS, Criteria::NOT_IN);
         $oDataset = InputDocumentPeer::doSelectRS($oCriteria);
