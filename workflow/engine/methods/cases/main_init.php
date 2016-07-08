@@ -124,53 +124,19 @@ if ($oServerConf->isRtl( SYS_LANG )) {
 
 $urlProxy = 'casesMenuLoader?action=getAllCounters&r=';
 /*----------------------------------********---------------------------------*/
-$urlProxy = System::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . SYS_SYS . '/system/counters-lists?r=';
-$clientId = 'x-pm-local-client';
-$client = getClientCredentials($clientId);
-$authCode = getAuthorizationCode($client);
-$debug = false; //System::isDebugMode();
-
-$loader = Maveriks\Util\ClassLoader::getInstance();
-$loader->add(PATH_TRUNK . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");
-
-$request = array(
-    'grant_type' => 'authorization_code',
-    'code' => $authCode
-);
-$server = array(
-    'REQUEST_METHOD' => 'POST'
-);
-$headers = array(
-    "PHP_AUTH_USER" => $client['CLIENT_ID'],
-    "PHP_AUTH_PW" => $client['CLIENT_SECRET'],
-    "Content-Type" => "multipart/form-data;",
-    "Authorization" => "Basic " . base64_encode($client['CLIENT_ID'] . ":" . $client['CLIENT_SECRET'])
-);
-
-$request = new \OAuth2\Request(array(), $request, array(), array(), array(), $server, null, $headers);
-$oauthServer = new \ProcessMaker\Services\OAuth2\Server();
-$response = $oauthServer->postToken($request, true);
-
-$clientToken = $response->getParameters();
-$clientToken["client_id"] = $client['CLIENT_ID'];
-$clientToken["client_secret"] = $client['CLIENT_SECRET'];
+$urlProxy = 'casesMenuLoader?action=getAllCountersEnterprise&r=';
 /*----------------------------------********---------------------------------*/
 
-
-$oHeadPublisher->assign( 'regionTreePanel', $regionTreePanel );
-$oHeadPublisher->assign( 'regionDebug', $regionDebug );
-$oHeadPublisher->assign( "defaultOption", $defaultOption ); //User menu permissions
-$oHeadPublisher->assign( 'urlProxy', $urlProxy ); //sending the urlProxy to make
-/*----------------------------------********---------------------------------*/
-$oHeadPublisher->assign( 'credentials', $clientToken );
-/*----------------------------------********---------------------------------*/
-$oHeadPublisher->assign( "_nodeId", isset( $confDefaultOption ) ? $confDefaultOption : "PM_USERS" ); //User menu permissions
-$oHeadPublisher->assign( "FORMATS", $conf->getFormats() );
+$oHeadPublisher->assign('regionTreePanel', $regionTreePanel);
+$oHeadPublisher->assign('regionDebug', $regionDebug);
+$oHeadPublisher->assign("defaultOption", $defaultOption); //User menu permissions
+$oHeadPublisher->assign('urlProxy', $urlProxy); //sending the urlProxy to make
+$oHeadPublisher->assign("_nodeId", isset($confDefaultOption) ? $confDefaultOption : "PM_USERS"); //User menu permissions
+$oHeadPublisher->assign("FORMATS", $conf->getFormats());
 
 $_SESSION["current_ux"] = "NORMAL";
 
-G::RenderPage( "publish", "extJs" );
-
+G::RenderPage("publish", "extJs");
 
 /*----------------------------------********---------------------------------*/
 function getClientCredentials($clientId)
