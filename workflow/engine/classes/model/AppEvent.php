@@ -125,9 +125,9 @@ class AppEvent extends BaseAppEvent
             $oCriteria->addSelectColumn( EventPeer::PRO_UID );
             $oCriteria->addSelectColumn( EventPeer::EVN_WHEN_OCCURS );
             $oCriteria->addSelectColumn( EventPeer::EVN_ACTION );
+            $oCriteria->addSelectColumn( ApplicationPeer::APP_TITLE );
             $oCriteria->addAsColumn( 'EVN_DESCRIPTION', 'C1.CON_VALUE' );
             $oCriteria->addAsColumn( 'TAS_TITLE', 'C2.CON_VALUE' );
-            $oCriteria->addAsColumn( 'APP_TITLE', 'C3.CON_VALUE' );
             $oCriteria->addAsColumn( 'PRO_TITLE', 'C4.CON_VALUE' );
             $oCriteria->addAlias( 'C1', 'CONTENT' );
             $oCriteria->addAlias( 'C2', 'CONTENT' );
@@ -157,14 +157,7 @@ class AppEvent extends BaseAppEvent
             $aConditions[] = array ('C2.CON_LANG',$del . SYS_LANG . $del
             );
             $oCriteria->addJoinMC( $aConditions, Criteria::LEFT_JOIN );
-            $aConditions = array ();
-            $aConditions[] = array (AppDelegationPeer::APP_UID,'C3.CON_ID'
-            );
-            $aConditions[] = array ('C3.CON_CATEGORY',$del . 'APP_TITLE' . $del
-            );
-            $aConditions[] = array ('C3.CON_LANG',$del . SYS_LANG . $del
-            );
-            $oCriteria->addJoinMC( $aConditions, Criteria::LEFT_JOIN );
+            $oCriteria->addJoin(AppEventPeer::APP_UID, ApplicationPeer::APP_UID, Criteria::LEFT_JOIN);
             $aConditions = array ();
             $aConditions[] = array (AppDelegationPeer::PRO_UID,'C4.CON_ID'
             );
