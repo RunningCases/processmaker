@@ -452,6 +452,7 @@ CREATE TABLE `PROCESS`
 	`PRO_DERIVATION_SCREEN_TPL` VARCHAR(128) default '',
 	`PRO_COST` DECIMAL(7,2) default 0,
 	`PRO_UNIT_COST` VARCHAR(50) default '',
+	`PRO_ITEE` INTEGER default 0 NOT NULL,
 	PRIMARY KEY (`PRO_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Store process Information';
 #-----------------------------------------------------------------------------

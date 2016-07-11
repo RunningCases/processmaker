@@ -114,11 +114,10 @@ class Derivation
                     $arrayTaskData["NEXT_TASK"]["TAS_PARENT"] = "";
                 }
 
-                $regexpTaskTypeToExclude = "GATEWAYTOGATEWAY|END-MESSAGE-EVENT|SCRIPT-TASK|INTERMEDIATE-CATCH-TIMER-EVENT|END-EMAIL-EVENT";
+                $regexpTaskTypeToExclude = "GATEWAYTOGATEWAY|END-MESSAGE-EVENT|SCRIPT-TASK|INTERMEDIATE-CATCH-TIMER-EVENT|END-EMAIL-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT";
 
                 $arrayTaskData["NEXT_TASK"]["USER_ASSIGNED"] = (!preg_match("/^(?:" . $regexpTaskTypeToExclude . ")$/", $arrayTaskData["NEXT_TASK"]["TAS_TYPE"]))? $this->getNextAssignedUser($arrayTaskData) : array("USR_UID" => "", "USR_FULLNAME" => "");
             }
-
             //Return
             return $arrayTaskData;
         } catch (Exception $e) {
@@ -149,14 +148,6 @@ class Derivation
             $arrayNextTask = array();
             $arrayNextTaskDefault = array();
             $i = 0;
-
-            //SELECT *
-            //FROM APP_DELEGATION AS A
-            //LEFT JOIN TASK AS T ON(T.TAS_UID = A.TAS_UID)
-            //LEFT JOIN ROUTE AS R ON(R.TAS_UID = A.TAS_UID)
-            //WHERE
-            //APP_UID = '$arrayData["APP_UID"]'
-            //AND DEL_INDEX = '$arrayData["DEL_INDEX"]'
 
             $criteria = new Criteria("workflow");
 
@@ -271,7 +262,7 @@ class Derivation
                         }
                     }
                 } else {
-                    $regexpTaskTypeToInclude = "END-MESSAGE-EVENT|END-EMAIL-EVENT";
+                    $regexpTaskTypeToInclude = "END-MESSAGE-EVENT|END-EMAIL-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT";
 
                     if ($arrayNextTaskData["NEXT_TASK"]["TAS_UID"] == "-1" &&
                         preg_match("/^(?:" . $regexpTaskTypeToInclude . ")$/", $arrayNextTaskData["TAS_TYPE"])
@@ -329,13 +320,6 @@ class Derivation
      */
     function getRouteCondition ($aData)
     {
-        //SELECT *
-        //FROM APP_DELEGATION AS A
-        //LEFT JOIN TASK AS T ON(T.TAS_UID = A.TAS_UID)
-        //LEFT JOIN ROUTE AS R ON(R.TAS_UID = A.TAS_UID)
-        //WHERE
-        //APP_UID = '$aData['APP_UID']'
-        //AND DEL_INDEX = '$aData['DEL_INDEX']'
         $c = new Criteria( 'workflow' );
         $c->clearSelectColumns();
         $c->addSelectColumn( AppDelegationPeer::TAS_UID );
@@ -506,21 +490,9 @@ class Derivation
      */
     function getNextAssignedUser ($tasInfo)
     {
-        //$oUser = new Users();
         $nextAssignedTask = $tasInfo['NEXT_TASK'];
         $lastAssigned = $tasInfo['NEXT_TASK']['TAS_LAST_ASSIGNED'];
         $sTasUid = $tasInfo['NEXT_TASK']['TAS_UID'];
-
-        //// to do: we can increase the LOCATION by COUNTRY, STATE and LOCATION
-        ///* Verify if the next Task is set with the option "TAS_ASSIGN_LOCATION == TRUE" */
-        //$assignLocation = '';
-        //if ($tasInfo['NEXT_TASK']['TAS_ASSIGN_LOCATION'] == 'TRUE') {
-        //    $oUser->load( $tasInfo['USER_UID'] );
-        //    krumo( $oUser->getUsrLocation() );
-        //    //to do: assign for location
-        //    //$assignLocation = " AND USR_LOCATION = " . $oUser->Fields['USR_LOCATION'];
-        //}
-        ///* End - Verify if the next Task is set with the option "TAS_ASSIGN_LOCATION == TRUE" */
 
         $taskNext = TaskPeer::retrieveByPK($nextAssignedTask["TAS_UID"]);
         $bpmnActivityNext = BpmnActivityPeer::retrieveByPK($nextAssignedTask["TAS_UID"]);
@@ -681,239 +653,90 @@ class Derivation
     }
 
     /**
-     * Throw Events for the Case
+     * Execute Event
      *
-     * @param string $elementOriginUid              Unique id of Element Origin      (unique id of Task)
-     * @param string $elementDestUid                Unique id of Element Destination (unique id of Task)
-     * @param array  $arrayApplicationData          Case data
+     * @param string $dummyTaskUid                  Unique id of Element Origin      (unique id of Task) This is the nextTask
+     * @param array  $applicationData               Case data
      * @param bool   $flagEventExecuteBeforeGateway Execute event before gateway
      * @param bool   $flagEventExecuteAfterGateway  Execute event after gateway
      *
      * @return void
      */
-    private function throwEventsBetweenElementOriginAndElementDest($elementOriginUid, $elementDestUid, array $arrayApplicationData, $flagEventExecuteBeforeGateway = true, $flagEventExecuteAfterGateway = true, $rouCondition="")
+    private function executeEvent($dummyTaskUid, array $applicationData, $flagEventExecuteBeforeGateway = true, $flagEventExecuteAfterGateway = true, $elementOriUid='')
     {
         try {
             //Verify if the Project is BPMN
             $bpmn = new \ProcessMaker\Project\Bpmn();
 
-            if (!$bpmn->exists($arrayApplicationData["PRO_UID"])) {
+            if (!$bpmn->exists($applicationData["PRO_UID"])) {
                 return;
             }
 
             //Element origin and dest
+            $arrayElement = array();
             $elementTaskRelation = new \ProcessMaker\BusinessModel\ElementTaskRelation();
-
-            $arrayElement = [
-                "elementOrigin" => ["uid" => $elementOriginUid, "type" => "bpmnActivity"],
-                "elementDest"   => ["uid" => $elementDestUid,   "type" => "bpmnActivity"]
-            ];
-
-            foreach ($arrayElement as $key => $value) {
-                $arrayElementTaskRelationData = $elementTaskRelation->getElementTaskRelationWhere(
+            $arrayElementTaskRelationData = $elementTaskRelation->getElementTaskRelationWhere(
                     [
-                        ElementTaskRelationPeer::PRJ_UID      => $arrayApplicationData["PRO_UID"],
+                        ElementTaskRelationPeer::PRJ_UID      => $applicationData["PRO_UID"],
                         ElementTaskRelationPeer::ELEMENT_TYPE => "bpmnEvent",
-                        ElementTaskRelationPeer::TAS_UID      => $arrayElement[$key]["uid"]
+                        ElementTaskRelationPeer::TAS_UID      => $dummyTaskUid
                     ],
                     true
+            );
+            if(is_null($arrayElementTaskRelationData)){
+                $arrayOtherElement = array();
+                $arrayOtherElement = $bpmn->getElementsBetweenElementOriginAndElementDest(
+                    $elementOriUid,
+                    "bpmnActivity",
+                    $dummyTaskUid,
+                    "bpmnActivity"
                 );
-
-                if (!is_null($arrayElementTaskRelationData)) {
-                    $arrayElement[$key]["uid"]  = $arrayElementTaskRelationData["ELEMENT_UID"];
-                    $arrayElement[$key]["type"] = "bpmnEvent";
+                $count = 0;
+                foreach ($arrayOtherElement as $value) {
+                    if($value[1] === 'bpmnEvent'){
+                        $arrayElement[$count]["uid"]    = $value[0];
+                        $arrayElement[$count++]["type"] = $value[1];
+                    }
                 }
             }
-
-            $elementOriginUid  = $arrayElement["elementOrigin"]["uid"];
-            $elementOriginType = $arrayElement["elementOrigin"]["type"];
-            $elementDestUid    = $arrayElement["elementDest"]["uid"];
-            $elementDestType   = $arrayElement["elementDest"]["type"];
+            if (!is_null($arrayElementTaskRelationData)) {
+                $arrayElement[0]["uid"]  = $arrayElementTaskRelationData["ELEMENT_UID"];
+                $arrayElement[0]["type"] = "bpmnEvent";
+            }
 
             //Throw Events
             $messageApplication = new \ProcessMaker\BusinessModel\MessageApplication();
             $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
-
             $arrayEventExecute = ["BEFORE" => $flagEventExecuteBeforeGateway, "AFTER" => $flagEventExecuteAfterGateway];
             $positionEventExecute = "BEFORE";
 
-            $arrayElement = $bpmn->getElementsBetweenElementOriginAndElementDest(
-                $elementOriginUid,
-                $elementOriginType,
-                $elementDestUid,
-                $elementDestType
-            );
+            if(sizeof($arrayElement)){
+                foreach ($arrayElement as $value) {
+                    switch ($value['type']) {
+                        case 'bpmnEvent':
+                            if ($arrayEventExecute[$positionEventExecute]) {
+                                $event = \BpmnEventPeer::retrieveByPK($value['uid']);
 
-            //Search next is INTERMEDIATE and MESSAGECATCH
-            $searchMessageCatch = false;
-            if($elementDestType === 'bpmnEvent'){
-                $c = new Criteria("workflow");
-                $c->addSelectColumn(BpmnEventPeer::EVN_TYPE);
-                $c->addSelectColumn(BpmnEventPeer::EVN_MARKER);
-                $c->add(BpmnEventPeer::EVN_UID, $elementDestUid);
-                $c->add(BpmnEventPeer::PRJ_UID, $arrayApplicationData["PRO_UID"]);
-                $rsC = RoutePeer::doSelectRS($c);
-                $rsC->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                                if (!is_null($event)) {
+                                    if (preg_match("/^(?:END|INTERMEDIATE)$/", $event->getEvnType()) && $event->getEvnMarker() === 'MESSAGETHROW') {
+                                        //Message-Application throw
+                                        $result = $messageApplication->create($applicationData["APP_UID"], $applicationData["PRO_UID"], $value['uid'], $applicationData);
+                                    }
 
-                if($rsC->next()){
-                    $row = $rsC->getRow();
-                    if($row['EVN_TYPE'] === 'INTERMEDIATE' && $row['EVN_MARKER'] === 'MESSAGECATCH'){
-                        $searchMessageCatch = true;
-                    }
-                }
-            }
-            if($elementDestUid === '-1' || count($arrayElement) === 0 || $searchMessageCatch){
-               $arrayElement = $this->throwElementToEnd($elementOriginUid, $rouCondition);
-            }
-
-            foreach ($arrayElement as $value) {
-                switch ($value[1]) {
-                    case 'bpmnEvent':
-                        if ($arrayEventExecute[$positionEventExecute]) {
-                            $event = \BpmnEventPeer::retrieveByPK($value[0]);
-
-                            if (!is_null($event)) {
-                                if (preg_match("/^(?:END|INTERMEDIATE)$/", $event->getEvnType()) && $event->getEvnMarker() === 'MESSAGETHROW') {
-                                    //Message-Application throw
-                                    $result = $messageApplication->create($arrayApplicationData["APP_UID"], $arrayApplicationData["PRO_UID"], $value[0], $arrayApplicationData);
-                                }
-
-                                if (preg_match("/^(?:END|INTERMEDIATE)$/", $event->getEvnType()) && $event->getEvnMarker() === 'EMAIL') {
-                                    //Email-Event throw
-                                    $result = $emailEvent->sendEmail($arrayApplicationData["APP_UID"], $arrayApplicationData["PRO_UID"], $value[0], $arrayApplicationData);
+                                    if (preg_match("/^(?:END|INTERMEDIATE)$/", $event->getEvnType()) && $event->getEvnMarker() === 'EMAIL') {
+                                        //Email-Event throw
+                                        $result = $emailEvent->sendEmail($applicationData["APP_UID"], $applicationData["PRO_UID"], $value['uid'], $applicationData);
+                                    }
                                 }
                             }
-                        }
-                        break;
-                    case 'bpmnGateway':
-                        $positionEventExecute = 'AFTER';
-                        break;
-                }
-            }
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
-
-    /**
-     * Throw all events to End Process
-     *
-     * @param string $currentTask     Task uid
-     *
-     * @return void
-    */
-    private function throwElementToEnd($currentTask, $routeCondition){
-        try{
-            $bpmnFlow = new BpmnFlow();
-            $rsCriFlow = $bpmnFlow->getElementOriginToElementDest($currentTask);
-            $arrayElement = array();
-            $count = 0;
-            $continue = false;
-            if($rsCriFlow->next()){
-                $continue = true;
-                $row = $rsCriFlow->getRow();
-            }
-            while ($continue) {
-                $array[0] = $row["FLO_ELEMENT_DEST"];
-                $array[1] = $row["FLO_ELEMENT_DEST_TYPE"];
-                $arrayElement[$count++] = $array;
-                $continue = false;
-                if($rsCriFlow->next()){
-                   $continue = true;
-                   $row = $rsCriFlow->getRow();
-                }else{
-                    $rsCriFlow = $bpmnFlow->getElementOriginToElementDest($row["FLO_ELEMENT_DEST"],$routeCondition,"bpmnEvent");
-                    $routeCondition = '';
-                    $continue = false;
-                    if($rsCriFlow->next()){
-                        $continue = true;
-                        $row = $rsCriFlow->getRow();
+                            break;
+                        case 'bpmnGateway':
+                            $positionEventExecute = 'AFTER';
+                            break;
                     }
                 }
             }
-            return $arrayElement;
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
 
-    /**
-     * Throw Events for the Case
-     *
-     * @param string $currentTask     Task uid
-     *
-     * @return void
-    */
-    private function throwAllRouteInFlow($currentTask,$appFields){
-        $criFlow = new Criteria("workflow");
-        $criFlow->addSelectColumn(BpmnFlowPeer::FLO_ELEMENT_ORIGIN);
-        $criFlow->addSelectColumn(BpmnFlowPeer::FLO_ELEMENT_DEST);
-        $criFlow->add(BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $currentTask, Criteria::EQUAL);
-        $rsCriFlow = RoutePeer::doSelectRS($criFlow);
-        $rsCriFlow->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        if($rsCriFlow->next()){
-            $continue = true;
-            $row = $rsCriFlow->getRow();
-        }
-        while ($continue) {
-              $origin  = $row["FLO_ELEMENT_ORIGIN"];
-              $destiny = $row["FLO_ELEMENT_DEST"];
-              $this->throwEventsElemntOriginToElementDest($destiny, $appFields);
-              $currentDestiny = $destiny;
-              $continue = false;
-              if($rsCriFlow->next()){
-                 $continue = true;
-                 $row = $rsCriFlow->getRow();
-              }else{
-                  //Search the next
-                  $criFlow = new Criteria("workflow");
-                  $criFlow->addSelectColumn(BpmnFlowPeer::FLO_ELEMENT_ORIGIN);
-                  $criFlow->addSelectColumn(BpmnFlowPeer::FLO_ELEMENT_DEST);
-                  $criFlow->add(BpmnFlowPeer::FLO_ELEMENT_ORIGIN, $currentDestiny, Criteria::EQUAL);
-                  $rsCriFlow = RoutePeer::doSelectRS($criFlow);
-                  $rsCriFlow->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                  $continue = false;
-                  if($rsCriFlow->next()){
-                     $continue = true;
-                     $row = $rsCriFlow->getRow();
-                  }
-              }
-        }
-        return $currentDestiny;
-    }
-
-    /**
-     * Throw Events for the Case
-     *
-     * @param string $eventUid           Unique id of Event
-     * @param array  $appFields          Case data
-     *
-     * @return void
-    */
-    private function throwEventsElemntOriginToElementDest($eventUid, $appFields){
-        try {
-            //Verify if the Project is BPMN
-            $bpmn = new \ProcessMaker\Project\Bpmn();
-
-            if (!$bpmn->exists($appFields["PRO_UID"])) {
-                return;
-            }
-            //Throw Events
-            $messageApplication = new \ProcessMaker\BusinessModel\MessageApplication();
-            $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
-
-            $event = \BpmnEventPeer::retrieveByPK($eventUid);
-            if (!is_null($event)) {
-                if (preg_match("/^(?:END|INTERMEDIATE)$/", $event->getEvnType()) && $event->getEvnMarker() == "MESSAGETHROW") {
-                    //Message-Application throw
-                    $result = $messageApplication->create($appFields["APP_UID"], $appFields["PRO_UID"], $value[0], $appFields);
-                }
-
-                if (preg_match("/^(?:END|INTERMEDIATE)$/", $event->getEvnType()) && $event->getEvnMarker() == "EMAIL") {
-                    //Email-Event throw
-                    $result = $emailEvent->sendEmail($appFields["APP_UID"], $appFields["PRO_UID"], $eventUid, $appFields);
-                }
-            }
         } catch (Exception $e) {
             throw $e;
         }
@@ -1045,7 +868,7 @@ class Derivation
         $flagFirstIteration = true;
 
         foreach ($nextDelegations as $nextDel) {
-            //BpmnEvent - END-MESSAGE-EVENT, END-EMAIL-EVENT
+            //BpmnEvent - END-MESSAGE-EVENT, END-EMAIL-EVENT, INTERMEDIATE-THROW-EMAIL-EVENT
             //Check and get unique id
             if (preg_match("/^(.{32})\/(\-1)$/", $nextDel["TAS_UID"], $arrayMatch)) {
                 $nextDel["TAS_UID"] = $arrayMatch[2];
@@ -1112,17 +935,14 @@ class Derivation
                     if (!isset($nextDel['ROU_CONDITION'])) {
                         $nextDel['ROU_CONDITION'] = '';
                     }
+                    //Execute the Intermediate Event After the End of Process
+                    $this->executeEvent($nextDel["TAS_UID"], $appFields, true, true);
                     if (isset($nextDel["TAS_UID_DUMMY"]) ) {
                         $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
                         if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())) {
                             //Throw Events
-                            $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true, $nextDel['ROU_CONDITION']);
-                        } else {
-                            $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true, $nextDel['ROU_CONDITION']);
+                            $this->executeEvent($nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
                         }
-                    } else {
-                        //BpmnEvent
-                        $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true, $nextDel['ROU_CONDITION']);
                     }
                     break;
                 case TASK_FINISH_TASK:
@@ -1204,8 +1024,11 @@ class Derivation
                         if(isset($nextDel['ROU_CONDITION'])){
                             $rouCondition = $nextDel['ROU_CONDITION'];
                         }
+                        if(!isset($nextDel['USR_UID'])){
+                            $nextDel['USR_UID'] = '';
+                        }
                         //Throw Events
-                        $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, true, $rouCondition);
+                        $this->executeEvent($nextDel["TAS_UID"], $appFields, true, true, $currentDelegation["TAS_UID"]);
 
                         //Derivate
                         $aSP = (isset($aSP))? $aSP : null;
@@ -1249,7 +1072,7 @@ class Derivation
                         $appFields["APP_DATA"] = $scriptTask->execScriptByActivityUid($nextDel["TAS_UID"], $appFields);
 
                         //Create record in table APP_ASSIGN_SELF_SERVICE_VALUE
-                        $regexpTaskTypeToExclude = "SCRIPT-TASK";
+                        $regexpTaskTypeToExclude = "SCRIPT-TASK|INTERMEDIATE-THROW-EMAIL-EVENT";
 
                         if (!is_null($taskNextDel) && !preg_match("/^(?:" . $regexpTaskTypeToExclude . ")$/", $taskNextDel->getTasType())) {
                             if ($taskNextDel->getTasAssignType() == "SELF_SERVICE" && trim($taskNextDel->getTasGroupVariable()) != "") {
@@ -1269,14 +1092,13 @@ class Derivation
                         }
 
                         //Check if $taskNextDel is Script-Task
-                        if (!is_null($taskNextDel) && $taskNextDel->getTasType() == "SCRIPT-TASK") {
+                        if (!is_null($taskNextDel) && ($taskNextDel->getTasType() === "SCRIPT-TASK" || $taskNextDel->getTasType() === "INTERMEDIATE-THROW-EMAIL-EVENT")) {
                             //Get for $nextDel["TAS_UID"] your next Task
                             $currentDelegationAux = array_merge($currentDelegation, array("DEL_INDEX" => $iNewDelIndex, "TAS_UID" => $nextDel["TAS_UID"]));
                             $nextDelegationsAux   = array();
 
                             $taskNextDelNextDelRouType = "";
                             $i = 0;
-
                             $arrayTaskNextDelNextDelegations = $this->prepareInformation(array(
                                 "USER_UID"  => $_SESSION["USER_LOGGED"],
                                 "APP_UID"   => $currentDelegation["APP_UID"],
@@ -1330,8 +1152,11 @@ class Derivation
 
                         switch ($routeType) {
                             case 'SEC-JOIN':
-                                //Throw Events
-                                $this->throwEventsBetweenElementOriginAndElementDest($currentDelegation["TAS_UID"], $nextDel["TAS_UID"], $appFields, $flagFirstIteration, false);
+                                //If the all Siblings are done execute the events
+                                if(sizeof($arraySiblings) === 0){
+                                    //Throw Events
+                                    $this->executeEvent($nextDel["TAS_UID"], $appFields, $flagFirstIteration, false);
+                                }
 
                                 //Close thread
                                 $this->case->closeAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex );

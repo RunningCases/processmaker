@@ -964,6 +964,9 @@ try {
                     case "INTERMEDIATE-CATCH-TIMER-EVENT":
                         $aFields["TASK"][$sKey]["NEXT_TASK"]["USR_UID"] = G::LoadTranslation("ID_ROUTE_TO_TASK_INTERMEDIATE_CATCH_TIMER_EVENT");
                         break;
+                    case "INTERMEDIATE-THROW-EMAIL-EVENT":
+                        $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TITLE"] = G::LoadTranslation("ID_ROUTE_TO_TASK_INTERMEDIATE-THROW-EMAIL-EVENT");
+                        break;
                 }
 
                 $hiddenName = 'form[TASKS][' . $sKey . ']';

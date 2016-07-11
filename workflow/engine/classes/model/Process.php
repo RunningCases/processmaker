@@ -188,6 +188,7 @@ class Process extends BaseProcess
             $this->setProWidth( 10000 );
             $this->setProTitleX( 0 );
             $this->setProTitleY( 0 );
+            $this->setProItee( 1 );
             $this->setProDynaforms( isset( $aData['PRO_DYNAFORMS'] ) ? (is_array( $aData['PRO_DYNAFORMS'] ) ? serialize( $aData['PRO_DYNAFORMS'] ) : $aData['PRO_DYNAFORMS']) : '' );
 
             if ($this->validate()) {

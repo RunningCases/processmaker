@@ -65,7 +65,7 @@ try {
     $oCurUser->load( $aAppDel['USR_UID'] );
     $Fields['PREVIOUS_USER'] = $oCurUser->getUsrFirstname() . ' ' . $oCurUser->getUsrLastname();
 } catch (Exception $oError) {
-    $Fields['PREVIOUS_USER'] = '';
+    $Fields['PREVIOUS_USER'] = G::LoadTranslation( 'ID_NO_PREVIOUS_USR_UID' );
 }
 
 $objTask = new Task();
