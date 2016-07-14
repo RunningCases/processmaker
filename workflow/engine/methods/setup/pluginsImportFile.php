@@ -242,6 +242,11 @@ try {
         }
         $res = $tar->extract( $path );
 
+        //Check if is enterprise plugin
+        if ($oPluginRegistry->isEnterprisePlugin($sClassName, $path)) {
+            throw new Exception(G::LoadTranslation('ID_PMPLUGIN_IMPORT_PLUGIN_IS_ENTERPRISE', [$filename]));
+        }
+
         /*----------------------------------********---------------------------------*/
         if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
             //Check disabled code
@@ -259,12 +264,8 @@ try {
         }
         /*----------------------------------********---------------------------------*/
 
-        //Check if is enterprise plugin
+        //Get contents of plugin file
         $sContent = file_get_contents( $path . $pluginFile );
-        $chain = preg_quote( 'extends enterprisePlugin' );
-        if (strpos( $sContent, $chain )) {
-            throw (new Exception( 'The plugin ' . $filename . ' is a Enterprise Edition Plugin, please install the Enterprise Plugins Manager to use this plugin.' ));
-        }
         $sContent = str_ireplace( $sAux, $sAux . '_', $sContent );
         $sContent = str_ireplace( 'PATH_PLUGINS', "'" . $path . "'", $sContent );
         $sContent = preg_replace( "/\\\$oPluginRegistry\s*=\s*&\s*PMPluginRegistry::getSingleton\s*\(\s*\)\s*;/i", null, $sContent );
