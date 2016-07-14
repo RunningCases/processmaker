@@ -313,8 +313,8 @@ Ext.onReady(function(){
   }
 
     //Checks all disabled options and removes from new options by pmTypeProject
-    var io = arrayMenuNewOption.length;
-    for (io; io-=1;) {
+    var io = arrayMenuNewOption.length - 1;
+    for (io; io >= 0; io -= 1) {
         if (disabledNewProjectOptions[arrayMenuNewOption[io].pmTypeProject]) {
             arrayMenuNewOption.splice(io, 1);
         }
