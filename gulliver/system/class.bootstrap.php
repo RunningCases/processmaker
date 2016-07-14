@@ -97,6 +97,7 @@ class Bootstrap
         self::registerClass("PMException", PATH_GULLIVER . "class.pmException.php");
         self::registerClass("Publisher", PATH_GULLIVER . "class.publisher.php");
         self::registerClass("RBAC", PATH_GULLIVER . "class.rbac.php");
+        self::registerClass("MonologProvider", PATH_GULLIVER . "class.monologProvider.php");
         self::registerClass("RestClient", PATH_GULLIVER . "class.restClient.php");
         self::registerClass("soapNtlm", PATH_GULLIVER . "class.soapNtlm.php");
         self::registerClass("NTLMSoapClient", PATH_GULLIVER . "class.soapNtlm.php");
@@ -3010,6 +3011,26 @@ class Bootstrap
             }
         }
         return $isIE;
+    }
+
+    /**
+     * Stores a message in the log file, if the file size exceeds
+     *
+     * @param string $channel
+     * @param string $message
+     * @param array  $context
+     * @param string $file
+     * @param string $pathData
+     * @param string $ws workspace
+     *
+     * @return void
+     */
+    public static function registerMonolog($channel, $level, $message, $context, $ws, $file = 'cron.log', $pathData = PATH_DATA)
+    {
+        $fileLog = $pathData .'sites'. PATH_SEP . $ws . PATH_SEP . 'log' . PATH_SEP . $file;
+
+        $registerLogger = &MonologProvider::getSingleton($channel, $fileLog);
+        $registerLogger->addLog($level, $message, $context);
     }
 }
 

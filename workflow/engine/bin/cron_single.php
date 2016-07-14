@@ -143,6 +143,7 @@ try {
     Bootstrap::registerClass('SolrUpdateDocument',  PATH_HOME . 'engine/classes/entities/SolrUpdateDocument.php');
     Bootstrap::registerClass('Xml_Node',            PATH_GULLIVER . 'class.xmlDocument.php');
     Bootstrap::registerClass('wsResponse',          PATH_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'class.wsResponse.php');
+    Bootstrap::initVendors();
 
     /*----------------------------------********---------------------------------*/
     Bootstrap::registerClass('dashboards', PATH_HOME . 'engine/classes/class.dashboards.php');
@@ -277,6 +278,9 @@ try {
         ini_set('date.timezone', ($systemUtcTimeZone)? 'UTC' : $arraySystemConfiguration['time_zone']); //Set Time Zone
 
         define('TIME_ZONE', ini_get('date.timezone'));
+
+        //Enable Monolog
+        Bootstrap::LoadSystem( 'monologProvider' );
 
         //Processing
         eprintln('Processing workspace: ' . $workspace, 'green');
