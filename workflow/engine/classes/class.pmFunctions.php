@@ -3639,3 +3639,57 @@ function PMFCopyDocumentCase($appDocUid, $versionNumber, $targetCaseUid, $inputD
         throw $e;
     }
 }
+
+/**
+ * @method
+ *
+ * Add user or group to Task
+ *
+ * @name PMFAddUserGroupToTask
+ * @label PMF Add user or group to Task
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFAddUserGroupToTask.28.29
+ *
+ * @param string | $taskUid | Task Uid | The unique Id of the Task.
+ * @param string | $userGroupUid | Uid from User or Group | The unique Uid from User or Group.
+ *
+ * @return int Returns 1 when is assigned.
+ */
+
+function PMFAddUserGroupToTask($taskUid, $userGroupUid)
+{
+    //Verify data and Set variables
+    $task = new \ProcessMaker\BusinessModel\Task();
+    $taskwf = TaskPeer::retrieveByPK($taskUid);
+
+    if (is_null($taskwf)) {
+        throw new Exception(G::LoadTranslation('ID_TASK_NOT_EXIST', ['tas_uid', $taskUid]));
+    }
+
+    $uid = '';
+    $userType = '';
+
+    $objUser = UsersPeer::retrieveByPK($userGroupUid);
+
+    if (!is_null($objUser)) {
+        $uid = $userGroupUid;
+        $userType = 'user';
+    } else {
+        $groupUid = GroupwfPeer::retrieveByPK($userGroupUid);
+
+        if (!is_null($groupUid)) {
+            $uid = $userGroupUid;
+            $userType = 'group';
+        } else {
+            throw new Exception(G::LoadTranslation(
+                'ID_USER_GROUP_NOT_CORRESPOND', [$userGroupUid, G::LoadTranslation('ID_USER') . '/' . G::LoadTranslation('ID_GROUP')]
+            ));
+        }
+    }
+
+    //Assignee User/Group
+    $task->addTaskAssignee($taskwf->getProUid(), $taskUid, $uid, $userType);
+
+    //Return
+    return 1;
+}
+
