@@ -419,26 +419,26 @@ class pmDynaform
                     }
                 }
                 if ($key === "type" && ($value === "file") && isset($this->fields["APP_DATA"]["APPLICATION"])) {
-                    $oCriteria = new Criteria("workflow");
-                    $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
-                    $oCriteria->addSelectColumn(AppDocumentPeer::DOC_VERSION);
-                    $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
-                    $oCriteria->addJoin(AppDocumentPeer::APP_DOC_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN);
-                    $oCriteria->add(AppDocumentPeer::APP_UID, $this->fields["APP_DATA"]["APPLICATION"]);
-                    $oCriteria->add(AppDocumentPeer::APP_DOC_FIELDNAME, $json->name);
-                    $oCriteria->add(ContentPeer::CON_CATEGORY, 'APP_DOC_FILENAME');
-                    $oCriteria->add(ContentPeer::CON_LANG, $this->lang);
-                    $oCriteria->addDescendingOrderByColumn(AppDocumentPeer::APP_DOC_CREATE_DATE);
-                    $oCriteria->setLimit(1);
-                    $rs = AppDocumentPeer::doSelectRS($oCriteria);
+                    $oCriteriaAppDocument = new Criteria("workflow");
+                    $oCriteriaAppDocument->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
+                    $oCriteriaAppDocument->addSelectColumn(AppDocumentPeer::DOC_VERSION);
+                    $oCriteriaAppDocument->add(AppDocumentPeer::APP_UID, $this->fields["APP_DATA"]["APPLICATION"]);
+                    $oCriteriaAppDocument->add(AppDocumentPeer::APP_DOC_FIELDNAME, $json->name);
+                    $oCriteriaAppDocument->addDescendingOrderByColumn(AppDocumentPeer::APP_DOC_CREATE_DATE);
+                    $oCriteriaAppDocument->setLimit(1);
+                    $rs = AppDocumentPeer::doSelectRS($oCriteriaAppDocument);
                     $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                    $rs->next();
+
                     $links = array();
                     $labelsFromDb = array();
                     $appDocUids = array();
-                    while ($rs->next()) {
-                        $row = $rs->getRow();
+                    $oAppDocument = new AppDocument();
+
+                    if ($row = $rs->getRow()) {
+                        $oAppDocument->load($row["APP_DOC_UID"], $row["DOC_VERSION"]);
                         $links[] = "../cases/cases_ShowDocument?a=" . $row["APP_DOC_UID"] . "&v=" . $row["DOC_VERSION"];
-                        $labelsFromDb[] = $row["CON_VALUE"];
+                        $labelsFromDb[] = $oAppDocument->getAppDocFilename();
                         $appDocUids[] = $row["APP_DOC_UID"];
                     }
                     $json->data = new stdClass();
