@@ -47,7 +47,7 @@ class ListCompleted extends BaseListCompleted
         $criteria = new Criteria();
         $criteria->addSelectColumn(ProcessPeer::PRO_TITLE);
         $criteria->add(ProcessPeer::PRO_UID, $data['PRO_UID'], Criteria::EQUAL);
-        $dataset = ContentPeer::doSelectRS($criteria);
+        $dataset = ProcessPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
         $aRow = $dataset->getRow();
@@ -57,7 +57,7 @@ class ListCompleted extends BaseListCompleted
         $criteria = new Criteria();
         $criteria->addSelectColumn(TaskPeer::TAS_TITLE);
         $criteria->add(TaskPeer::TAS_UID, $data['TAS_UID'], Criteria::EQUAL);
-        $dataset = ContentPeer::doSelectRS($criteria);
+        $dataset = TaskPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
         $aRow = $dataset->getRow();
