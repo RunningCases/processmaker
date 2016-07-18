@@ -1484,12 +1484,12 @@ class Light extends Api
      *
      * @url GET /:app_uid/variables
      */
-    public function doGetCaseVariables($app_uid, $dyn_uid = null)
+    public function doGetCaseVariables($app_uid, $dyn_uid = null, $pro_uid = null, $act_uid = null, $app_index = null)
     {
         try {
             $usr_uid = $this->getUserId();
             $cases = new \ProcessMaker\BusinessModel\Cases();
-            $response = $cases->getCaseVariables($app_uid, $usr_uid, $dyn_uid);
+            $response = $cases->getCaseVariables($app_uid, $usr_uid, $dyn_uid, $pro_uid, $act_uid, $app_index);
             return DateTime::convertUtcToTimeZone($response);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -1633,7 +1633,7 @@ class Light extends Api
         $_SESSION["PROCESS"] = $pro_uid;
         $_SESSION["INDEX"] = $app_index;
         $_SESSION["USER_LOGGED"] = $usr_uid;
-        
+
         do {
             $conditionalSteps = $oCase->getNextStep($pro_uid, $app_uid, $app_index, $step_pos);
             if (is_array($conditionalSteps) && (
@@ -1649,11 +1649,10 @@ class Light extends Api
 
         //variables
         $cases = new \ProcessMaker\BusinessModel\Cases();
-        $variables = $cases->getCaseVariables($app_uid, $usr_uid, $dyn_uid);
+        $variables = $cases->getCaseVariables($app_uid, $usr_uid, $dyn_uid, $pro_uid, $act_uid, $app_index);
         $variables = DateTime::convertUtcToTimeZone($variables);
         $response["variables"] = $variables;
 
         return $response;
     }
-
 }
