@@ -53,24 +53,15 @@ class Report
         require_once 'classes/model/AppDelegation.php';
         require_once 'classes/model/Application.php';
         $oCriteria = new Criteria( 'workflow' );
-        $del = DBAdapter::getStringDelimiter();
         $oCriteria->addSelectColumn( AppDelegationPeer::PRO_UID );
+        $oCriteria->addSelectColumn(ProcessPeer::PRO_TITLE);
         $oCriteria->addAsColumn( "MIN", "MIN(" . AppDelegationPeer::DEL_DURATION . ")" );
         $oCriteria->addAsColumn( "MAX", "MAX(" . AppDelegationPeer::DEL_DURATION . ")" );
         $oCriteria->addAsColumn( "TOTALDUR", "SUM(" . AppDelegationPeer::DEL_DURATION . ")" );
         $oCriteria->addAsColumn( "PROMEDIO", "AVG(" . AppDelegationPeer::DEL_DURATION . ")" );
-        $oCriteria->addAsColumn( 'PRO_TITLE', 'C1.CON_VALUE' );
-        $oCriteria->addAlias( "C1", 'CONTENT' );
-        $proTitleConds = array ();
-        $proTitleConds[] = array (AppDelegationPeer::PRO_UID,'C1.CON_ID'
-        );
-        $proTitleConds[] = array ('C1.CON_CATEGORY',$del . 'PRO_TITLE' . $del
-        );
-        $proTitleConds[] = array ('C1.CON_LANG',$del . SYS_LANG . $del
-        );
-        $oCriteria->addJoinMC( $proTitleConds, Criteria::LEFT_JOIN );
+        $oCriteria->addJoin(AppDelegationPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $oCriteria->addGroupByColumn( AppDelegationPeer::PRO_UID );
-        $oCriteria->addGroupByColumn( 'C1.CON_VALUE' );
+        $oCriteria->addGroupByColumn(ProcessPeer::PRO_TITLE);
 
         $oDataset = AppDelegationPeer::doSelectRS( $oCriteria );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
@@ -119,20 +110,12 @@ class Report
         $del = DBAdapter::getStringDelimiter();
         $oCriteria->addSelectColumn( UsersPeer::USR_UID );
         $oCriteria->addSelectColumn( AppDelegationPeer::PRO_UID );
+        $oCriteria->addSelectColumn(ProcessPeer::PRO_TITLE);
         $oCriteria->addAsColumn( "MIN", "MIN(" . AppDelegationPeer::DEL_DURATION . ")" );
         $oCriteria->addAsColumn( "MAX", "MAX(" . AppDelegationPeer::DEL_DURATION . ")" );
         $oCriteria->addAsColumn( "TOTALDUR", "SUM(" . AppDelegationPeer::DEL_DURATION . ")" );
         $oCriteria->addAsColumn( "PROMEDIO", "AVG(" . AppDelegationPeer::DEL_DURATION . ")" );
-        $oCriteria->addAsColumn( 'PRO_TITLE', 'C1.CON_VALUE' );
-        $oCriteria->addAlias( "C1", 'CONTENT' );
-        $proTitleConds = array ();
-        $proTitleConds[] = array (AppDelegationPeer::PRO_UID,'C1.CON_ID'
-        );
-        $proTitleConds[] = array ('C1.CON_CATEGORY',$del . 'PRO_TITLE' . $del
-        );
-        $proTitleConds[] = array ('C1.CON_LANG',$del . SYS_LANG . $del
-        );
-        $oCriteria->addJoinMC( $proTitleConds, Criteria::LEFT_JOIN );
+        $oCriteria->addJoin (AppDelegationPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $oCriteria->addJoin( AppDelegationPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN );
         //$oCriteria->add(AppDelegationPeer::DEL_DURATION,  $from, Criteria::GREATER_EQUAL);
         //$oCriteria->add(AppDelegationPeer::DEL_DURATION,  $to, Criteria::LESS_EQUAL);
@@ -144,7 +127,7 @@ class Report
         }
 
         $oCriteria->addGroupByColumn( AppDelegationPeer::PRO_UID );
-        $oCriteria->addGroupByColumn( 'C1.CON_VALUE' );
+        $oCriteria->addGroupByColumn(ProcessPeer::PRO_TITLE);
 
         $oDataset = AppDelegationPeer::doSelectRS( $oCriteria );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
@@ -245,18 +228,10 @@ class Report
         $oCriteria = new Criteria( 'workflow' );
         $del = DBAdapter::getStringDelimiter();
         $oCriteria->addSelectColumn( AppDelegationPeer::PRO_UID );
+        $oCriteria->addSelectColumn(ProcessPeer::PRO_TITLE);
         $oCriteria->addAsColumn( "MIN", "MIN(" . AppDelegationPeer::DEL_DURATION . ")" );
         $oCriteria->addAsColumn( "MAX", "MAX(" . AppDelegationPeer::DEL_DURATION . ")" );
-        $oCriteria->addAsColumn( 'PRO_TITLE', 'C1.CON_VALUE' );
-        $oCriteria->addAlias( "C1", 'CONTENT' );
-        $proTitleConds = array ();
-        $proTitleConds[] = array (AppDelegationPeer::PRO_UID,'C1.CON_ID'
-        );
-        $proTitleConds[] = array ('C1.CON_CATEGORY',$del . 'PRO_TITLE' . $del
-        );
-        $proTitleConds[] = array ('C1.CON_LANG',$del . SYS_LANG . $del
-        );
-        $oCriteria->addJoinMC( $proTitleConds, Criteria::LEFT_JOIN );
+        $oCriteria->addJoin (AppDelegationPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $oCriteria->addGroupByColumn( AppDelegationPeer::PRO_UID );
 
         $oDataset = AppDelegationPeer::doSelectRS( $oCriteria );
@@ -389,20 +364,12 @@ class Report
         $oCriteria = new Criteria( 'workflow' );
         $del = DBAdapter::getStringDelimiter();
         $oCriteria->addSelectColumn( AppDelegationPeer::PRO_UID );
+        $oCriteria->addSelectColumn(ProcessPeer::PRO_TITLE);
         $oCriteria->addAsColumn( "MIN", "MIN(" . AppDelegationPeer::DEL_DURATION . ")" );
         $oCriteria->addAsColumn( "MAX", "MAX(" . AppDelegationPeer::DEL_DURATION . ")" );
-        $oCriteria->addAsColumn( 'PRO_TITLE', 'C1.CON_VALUE' );
-        $oCriteria->addAlias( "C1", 'CONTENT' );
-        $proTitleConds = array ();
-        $proTitleConds[] = array (AppDelegationPeer::PRO_UID,'C1.CON_ID'
-        );
-        $proTitleConds[] = array ('C1.CON_CATEGORY',$del . 'PRO_TITLE' . $del
-        );
-        $proTitleConds[] = array ('C1.CON_LANG',$del . SYS_LANG . $del
-        );
-        $oCriteria->addJoinMC( $proTitleConds, Criteria::LEFT_JOIN );
+        $oCriteria->addJoin(AppDelegationPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $oCriteria->addGroupByColumn( AppDelegationPeer::PRO_UID );
-        $oCriteria->addGroupByColumn( 'C1.CON_VALUE' );
+        $oCriteria->addGroupByColumn(ProcessPeer::PRO_TITLE);
 
         $oCriteria->add( $oCriteria->getNewCriterion( AppDelegationPeer::DEL_INIT_DATE, $from . ' 00:00:00', Criteria::GREATER_EQUAL )->addAnd( $oCriteria->getNewCriterion( AppDelegationPeer::DEL_INIT_DATE, $to . ' 23:59:59', Criteria::LESS_EQUAL ) ) );
 

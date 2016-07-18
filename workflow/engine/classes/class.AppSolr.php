@@ -834,7 +834,7 @@ class AppSolr
     $c->addAsColumn ('USR_PREV_LAST', 'uprev.USR_LASTNAME');
     $c->addAsColumn ('PREVIOUS_USR_UID', 'uprev.USR_UID');
   
-    $c->addAsColumn ('APP_TAS_TITLE', 'ctastitle.CON_VALUE');
+    $c->addAsColumn ('APP_TAS_TITLE', TaskPeer::TAS_TITLE);
     $c->addAsColumn ('APP_THREAD_STATUS', 'at.APP_THREAD_STATUS');
   
     $c->addSelectColumn (AppDelegationPeer::APP_OVERDUE_PERCENTAGE);
@@ -853,7 +853,6 @@ class AppSolr
     $c->addAlias ('u', 'USERS');
     $c->addAlias ('uprev', 'USERS');
     $c->addAlias ('adprev', 'APP_DELEGATION');
-    $c->addAlias ('ctastitle', 'CONTENT');
     $c->addAlias ('at', 'APP_THREAD');
   
     $aConditions = array ();
@@ -880,14 +879,9 @@ class AppSolr
         'adprev.DEL_INDEX'
     );
     $c->addJoinMC ($aConditions, Criteria::LEFT_JOIN);
-  
-    $aConditions = array ();
-    $aConditions [] = array (
-        AppDelegationPeer::TAS_UID,
-        'ctastitle.CON_ID'
-    );
-    $c->addJoinMC ($aConditions, Criteria::LEFT_JOIN);
-  
+
+    $c->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID);
+
     $aConditions = array ();
     $aConditions [] = array (
         'adprev.USR_UID',
@@ -908,10 +902,7 @@ class AppSolr
   
     $c->add (AppDelegationPeer::APP_UID, $aappUIDs, Criteria::IN );
     //$c->add (AppDelegationPeer::DEL_INDEX, $delIndex);
-  
-    $c->add ('ctastitle.CON_CATEGORY', 'TAS_TITLE');
-    $c->add ('ctastitle.CON_LANG', 'en');
-  
+
     $rs = AppDelegationPeer::doSelectRS ($c);
     $rs->setFetchmode (ResultSet::FETCHMODE_ASSOC);
     // echo $c->toString();
@@ -954,7 +945,7 @@ class AppSolr
     $c->addAsColumn ('USR_PREV_LAST', 'uprev.USR_LASTNAME');
     $c->addAsColumn ('PREVIOUS_USR_UID', 'uprev.USR_UID');
     
-    $c->addAsColumn ('APP_TAS_TITLE', 'ctastitle.CON_VALUE');
+    $c->addAsColumn ('APP_TAS_TITLE', TaskPeer::TAS_TITLE);
     $c->addAsColumn ('APP_THREAD_STATUS', 'at.APP_THREAD_STATUS');
     
     $c->addSelectColumn (AppDelegationPeer::APP_OVERDUE_PERCENTAGE);
@@ -973,7 +964,6 @@ class AppSolr
     $c->addAlias ('u', 'USERS');
     $c->addAlias ('uprev', 'USERS');
     $c->addAlias ('adprev', 'APP_DELEGATION');
-    $c->addAlias ('ctastitle', 'CONTENT');
     $c->addAlias ('at', 'APP_THREAD');
     
     $aConditions = array ();
@@ -993,14 +983,9 @@ class AppSolr
         'adprev.DEL_INDEX' 
     );
     $c->addJoinMC ($aConditions, Criteria::LEFT_JOIN);
-    
-    $aConditions = array ();
-    $aConditions [] = array (
-        AppDelegationPeer::TAS_UID,
-        'ctastitle.CON_ID' 
-    );
-    $c->addJoinMC ($aConditions, Criteria::LEFT_JOIN);
-    
+
+    $c->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID);
+
     $aConditions = array ();
     $aConditions [] = array (
         'adprev.USR_UID',
@@ -1021,10 +1006,7 @@ class AppSolr
     
     $c->add (AppDelegationPeer::APP_UID, $appUID);
     $c->add (AppDelegationPeer::DEL_INDEX, $delIndex);
-    
-    $c->add ('ctastitle.CON_CATEGORY', 'TAS_TITLE');
-    $c->add ('ctastitle.CON_LANG', 'en');
-    
+
     $rs = AppDelegationPeer::doSelectRS ($c);
     $rs->setFetchmode (ResultSet::FETCHMODE_ASSOC);
     // echo $c->toString();
