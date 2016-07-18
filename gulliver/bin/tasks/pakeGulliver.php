@@ -2732,7 +2732,7 @@ function run_check_plugin_disabled_code($task, $args)
                 if (count($arrayData) > 0) {
                     G::LoadClass("codeScanner");
 
-                    $cs = new CodeScanner("DISABLED_CODE");
+                    $cs = new CodeScanner(true);
 
                     $strFoundDisabledCode = "";
 

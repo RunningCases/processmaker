@@ -1946,7 +1946,7 @@ class workspaceTools
     /**
      * Get disabled code
      *
-     * return array Return array with disabled code found, array empty otherwise
+     * @return array Returns an array with disabled code found, array empty otherwise
      */
     public function getDisabledCode()
     {
@@ -1958,7 +1958,7 @@ class workspaceTools
             $process = new Processes();
 
             //Return
-            return $process->getDisabledCode();
+            return $process->getDisabledCode(null, $this->name);
         } catch (Exception $e) {
             throw $e;
         }

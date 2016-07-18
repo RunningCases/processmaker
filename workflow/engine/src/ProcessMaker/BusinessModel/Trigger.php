@@ -188,9 +188,7 @@ class Trigger
             //Check disabled code
             \G::LoadClass("codeScanner");
 
-            $arraySystemConfiguration = \System::getSystemConfiguration(PATH_CONFIG . "env.ini");
-
-            $cs = new \CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
+            $cs = new \CodeScanner(SYS_SYS);
 
             $arrayFoundDisabledCode = $cs->checkDisabledCode("SOURCE", $dataTrigger["TRI_WEBBOT"]);
 

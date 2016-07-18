@@ -14,15 +14,33 @@ class CodeScanner
     /**
      * Constructor of the class
      *
-     * return void
+     * @param mixed $option Option
+     *
+     * @return void
      */
-    public function __construct($option)
+    public function __construct($option = null)
     {
         try {
-            switch ($option) {
-                case "DISABLED_CODE":
-                    $this->setArrayDisabledCode();
-                    break;
+            $flag = false;
+
+            if (!is_null($option)) {
+                switch (gettype($option)) {
+                    case 'string':
+                        $workspace = new workspaceTools($option);
+
+                        if ($workspace->workspaceExists()) {
+                            $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspace->name);
+                            $flag = (int)($arraySystemConfiguration['enable_blacklist']) == 1;
+                        }
+                        break;
+                    case 'boolean':
+                        $flag = $option;
+                        break;
+                }
+            }
+
+            if ($flag) {
+                $this->setArrayDisabledCode();
             }
         } catch (Exception $e) {
             throw $e;
@@ -32,9 +50,9 @@ class CodeScanner
     /**
      * Set disabled code
      *
-     * return void
+     * @return void
      */
-    public function setArrayDisabledCode()
+    private function setArrayDisabledCode()
     {
         try {
             //Disabled functions (PHP)
@@ -61,9 +79,9 @@ class CodeScanner
     /**
      * Get disabled code
      *
-     * return array Return array with disabled code
+     * @return array Returns an array with disabled code
      */
-    public function getArrayDisabledCode()
+    private function getArrayDisabledCode()
     {
         try {
             return $this->arrayDisabledCode;
@@ -75,9 +93,9 @@ class CodeScanner
     /**
      * Verify if exists disabled code
      *
-     * return bool Return true if exists disabled code, false otherwise
+     * @return bool Returns true if exists disabled code, false otherwise
      */
-    public function existsDisabledCode()
+    private function existsDisabledCode()
     {
         try {
             return !empty($this->arrayDisabledCode);
@@ -91,9 +109,9 @@ class CodeScanner
      *
      * @param string $source Source
      *
-     * return array Return array with disabled code found, array empty otherwise
+     * @return array Returns an array with disabled code found, array empty otherwise
      */
-    public function checkDisabledCodeInSource($source)
+    private function checkDisabledCodeInSource($source)
     {
         try {
             if (!$this->existsDisabledCode()) {
@@ -155,7 +173,7 @@ class CodeScanner
      * @param string $option Option (SOURCE, PATH, FILE)
      * @param string $data   Data
      *
-     * return array Return array with disabled code found, array empty otherwise
+     * return array Returns an array with disabled code found, array empty otherwise
      */
     public function checkDisabledCode($option, $data)
     {

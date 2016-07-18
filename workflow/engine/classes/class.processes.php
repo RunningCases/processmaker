@@ -5913,11 +5913,12 @@ class Processes
     /**
      * Get disabled code
      *
-     * @param string $processUid Unique id of Process
+     * @param string $processUid    Unique id of Process
+     * @param string $workspaceName Workspace name
      *
-     * return array Return array with disabled code found, array empty otherwise
+     * @return array Returns an array with disabled code found, array empty otherwise
      */
-    public function getDisabledCode($processUid = "")
+    public function getDisabledCode($processUid = null, $workspaceName = null)
     {
         try {
             /*----------------------------------********---------------------------------*/
@@ -5933,7 +5934,7 @@ class Processes
             }
 
             //Set variables
-            $cs = new CodeScanner("DISABLED_CODE");
+            $cs = new CodeScanner((!is_null($workspaceName))? $workspaceName : SYS_SYS);
 
             $delimiter = DBAdapter::getStringDelimiter();
 
@@ -5949,7 +5950,7 @@ class Processes
             $arrayCondition[] = array(ContentPeer::CON_LANG, $delimiter . SYS_LANG . $delimiter, Criteria::EQUAL);
             $criteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
 
-            if ($processUid != "") {
+            if (!is_null($processUid)) {
                 $criteria->add(ProcessPeer::PRO_UID, $processUid, Criteria::EQUAL);
             }
 
