@@ -84,6 +84,8 @@ class ListInbox extends BaseListInbox
                 $listParticipatedLast->create($data);
                 $listParticipatedLast = new ListParticipatedLast();
                 $listParticipatedLast->refresh($data, $isSelfService);
+                $listUnassigned = new ListUnassigned();
+                $listUnassigned->newRow($data, $data['DEL_PREVIOUS_USR_UID']);
             }
 
             return $result;

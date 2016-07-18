@@ -44,8 +44,7 @@ switch ($action) {
         $urlProxy .= '?list=myInbox';
         break;
     case 'unassigned':
-        $urlProxy = 'proxyCasesList';
-        $action = 'unassigned';
+        $urlProxy .= '?list=unassigned';
         break;
     case 'to_revise':
         $urlProxy = 'proxyCasesList';
@@ -58,10 +57,6 @@ switch ($action) {
 
 G::LoadClass("BasePeer");
 G::LoadClass("configuration");
-//require_once ("classes/model/Fields.php");
-//require_once ("classes/model/AppCacheView.php");
-//require_once ("classes/model/Process.php");
-//require_once ("classes/model/Users.php");
 
 $oHeadPublisher = & headPublisher::getSingleton();
 // oHeadPublisher->setExtSkin( 'xtheme-blue');
@@ -109,7 +104,7 @@ if (isset( $generalConfCasesList['casesListDateFormat'] ) && ! empty( $generalCo
     $dateFormat = $config['dateformat'];
 }
 
-if ($action == 'draft' /* &&  $action == 'cancelled' */) {
+if ($action == 'draft') {
     //array_unshift ( $columns, array( 'header'=> '', 'width'=> 50, 'sortable'=> false, 'id'=> 'deleteLink' ) );
 }
 if ($action == 'selfservice') {
@@ -119,14 +114,6 @@ if ($action == 'selfservice') {
 if ($action == 'paused') {
     //array_unshift ( $columns, array( 'header'=> '', 'width'=> 50, 'sortable'=> false, 'id'=> 'unpauseLink' ) );
 }
-/*
-  if ( $action == 'to_reassign' ) {
-    array_unshift ( $columns, array( 'header'=> '', 'width'=> 50, 'sortable'=> false, 'id'=> 'reassignLink' ) );
-  }
-*/
-//  if ( $action == 'cancelled' ) {
-//    array_unshift ( $columns, array( 'header'=> '', 'width'=> 50, 'sortable'=> false, 'id'=> 'reactivateLink' ) );
-//  }
 
 $userUid = (isset( $_SESSION['USER_LOGGED'] ) && $_SESSION['USER_LOGGED'] != '') ? $_SESSION['USER_LOGGED'] : null;
 $oAppCache = new AppCacheView();
@@ -201,19 +188,12 @@ if ($licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjB
 /*----------------------------------********---------------------------------*/
 
 //menu permissions
-/*$c = new Criteria('workflow');
-  $c->clearSelectColumns();
-  $c->addSelectColumn( AppThreadPeer::APP_THREAD_PARENT );
-  $c->add(AppThreadPeer::APP_UID, $APP_UID );
-  $c->add(AppThreadPeer::APP_THREAD_STATUS , 'OPEN' );
-  $cnt = AppThreadPeer::doCount($c);*/
 $cnt = '';
 $menuPerms = '';
 $menuPerms = $menuPerms . ($RBAC->userCanAccess( 'PM_REASSIGNCASE' ) == 1) ? 'R' : ''; //can reassign case
 $oHeadPublisher->assign( '___p34315105', $menuPerms ); // user menu permissions
 G::LoadClass( 'configuration' );
 $c = new Configurations();
-//$oHeadPublisher->addExtJsScript('cases/caseUtils', true);
 $oHeadPublisher->addExtJsScript( 'app/main', true );
 $oHeadPublisher->addExtJsScript( 'cases/casesList', false ); //adding a javascript file .js
 $oHeadPublisher->addContent( 'cases/casesListExtJs' ); //adding a html file  .html.

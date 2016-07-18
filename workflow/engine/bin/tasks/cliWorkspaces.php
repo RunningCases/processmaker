@@ -255,6 +255,19 @@ EOT
 );
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_new_cases_lists");
+
+CLI::taskName('migrate-list-unassigned');
+CLI::taskDescription(<<<EOT
+  Migrating the AppCacheView table to match the latest version of List Unassigned
+
+  Specify the WORKSPACE to migrate from a existing workspace.
+
+  If no workspace is specified, then the tables schema will be upgraded or
+  migrate on all available workspaces.
+EOT
+);
+CLI::taskArg('workspace', true, true);
+CLI::taskRun("run_migrate_list_unassigned");
 /*----------------------------------********---------------------------------*/
 
   /**
@@ -364,11 +377,14 @@ function run_database_check($args, $opts) {
 
 function run_migrate_new_cases_lists($args, $opts) {
   migrate_new_cases_lists("migrate", $args, $opts);
-
 }
 
 function run_migrate_counters($args, $opts) {
   migrate_counters("migrate", $args);
+}
+
+function run_migrate_list_unassigned($args, $opts) {
+  migrate_list_unassigned("migrate", $args, $opts);
 }
 
 function database_upgrade($command, $args) {
@@ -804,6 +820,24 @@ function migrate_counters($command, $args) {
         $workspace->migrateCounters($workspace->name, true);
 
         echo "> Counters are done\n";
+    } catch (Exception $e) {
+      echo "> Error: ".CLI::error($e->getMessage()) . "\n";
+    }
+  }
+}
+
+function migrate_list_unassigned($command, $args, $opts) {
+  G::LoadSystem('inputfilter');
+  $filter = new InputFilter();
+  $opts = $filter->xssFilterHard($opts);
+  $args = $filter->xssFilterHard($args);
+  $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
+  $workspaces = get_workspaces_from_args($args);
+  foreach ($workspaces as $workspace) {
+    print_r("Upgrading Unassigned List in" . pakeColor::colorize($workspace->name, "INFO") . "\n");
+    try {
+        $workspace->regenerateListUnassigned();
+        echo "> Unassigned List is done\n";
     } catch (Exception $e) {
       echo "> Error: ".CLI::error($e->getMessage()) . "\n";
     }
