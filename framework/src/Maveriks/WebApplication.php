@@ -252,6 +252,8 @@ class WebApplication
         $apiIniFile = $servicesDir . DS . 'api.ini';
         // $authenticationClass - contains the class name that validate the authentication for Restler
         $authenticationClass = 'ProcessMaker\\Services\\OAuth2\\Server';
+        // $accessControlClass - contains the class name that validate the Access Control for Restler
+        $accessControlClass = 'ProcessMaker\\Policies\\AccessControl';
         // $pmOauthClientId - contains PM Local OAuth Id (Web Designer)
         $pmOauthClientId = 'x-pm-local-client';
 
@@ -297,6 +299,8 @@ class WebApplication
         $this->rest->setAPIVersion($version);
         // adding $authenticationClass to Restler
         $this->rest->addAuthenticationClass($authenticationClass, '');
+        // adding $accessControlClass to Restler
+        $this->rest->addAuthenticationClass($accessControlClass);
 
         // Setting database connection source
         list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
