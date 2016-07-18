@@ -132,6 +132,8 @@ switch ($_POST['action']) {
         try {
             $user = new \ProcessMaker\BusinessModel\User();
             $form = $_POST;
+            $permissionsToSaveData = $user->getPermissionsForEdit();
+            $form = $user->checkPermissionForEdit($_SESSION['USER_LOGGED'], $permissionsToSaveData, $form);
 
             switch ($_POST['action']) {
                 case 'saveUser';
@@ -145,13 +147,6 @@ switch ($_POST['action']) {
                     ) {
                         throw new Exception(G::LoadTranslation('ID_USER_NOT_HAVE_PERMISSION', [$_SESSION['USER_LOGGED']]));
                     }
-
-                    unset(
-                        $form['USR_REPLACED_BY'],
-                        $form['USR_DUE_DATE'],
-                        $form['USR_STATUS'],
-                        $form['USR_ROLE']
-                    );
                     break;
                 default:
                     throw new Exception(G::LoadTranslation('ID_INVALID_DATA'));
@@ -159,7 +154,7 @@ switch ($_POST['action']) {
             }
 
             if (array_key_exists('USR_LOGGED_NEXT_TIME', $form)) {
-                $form['USR_LOGGED_NEXT_TIME'] = ($form['USR_LOGGED_NEXT_TIME'])? 1 : 0;
+                $form['USR_LOGGED_NEXT_TIME'] = ($form['USR_LOGGED_NEXT_TIME']) ? 1 : 0;
             }
 
             $userUid = '';
@@ -168,7 +163,7 @@ switch ($_POST['action']) {
                 $arrayUserData = $user->create($form);
                 $userUid = $arrayUserData['USR_UID'];
 
-                $user->auditLog('INS',  array_merge(['USR_UID' => $userUid, 'USR_USERNAME' => $arrayUserData['USR_USERNAME']], $form));
+                $user->auditLog('INS', array_merge(['USR_UID' => $userUid, 'USR_USERNAME' => $arrayUserData['USR_USERNAME']], $form));
             } else {
                 if (array_key_exists('USR_NEW_PASS', $form) && $form['USR_NEW_PASS'] == '') {
                     unset($form['USR_NEW_PASS']);
@@ -179,7 +174,7 @@ switch ($_POST['action']) {
 
                 $arrayUserData = $user->getUserRecordByPk($userUid, [], false);
 
-                $user->auditLog('UPD',  array_merge(['USR_UID' => $userUid, 'USR_USERNAME' => $arrayUserData['USR_USERNAME']], $form));
+                $user->auditLog('UPD', array_merge(['USR_UID' => $userUid, 'USR_USERNAME' => $arrayUserData['USR_USERNAME']], $form));
 
                 /* Saving preferences */
                 $def_lang = $form['PREF_DEFAULT_LANG'];
@@ -298,9 +293,9 @@ switch ($_POST['action']) {
                             break;
                     }
                 } else {
-                   if($aFields['PREF_DEFAULT_MENUSELECTED'] == 'PM_STRATEGIC_DASHBOARD'){
-                       $menuSelected = strtoupper(G::LoadTranslation('ID_STRATEGIC_DASHBOARD'));
-                   }
+                    if ($aFields['PREF_DEFAULT_MENUSELECTED'] == 'PM_STRATEGIC_DASHBOARD') {
+                        $menuSelected = strtoupper(G::LoadTranslation('ID_STRATEGIC_DASHBOARD'));
+                    }
                 }
             }
         }
@@ -333,12 +328,16 @@ switch ($_POST['action']) {
         $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($aFields['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array($aFields['USR_PASSWORD']))));
         $aFields['USR_LOGGED_NEXT_TIME'] = $aUserProperty['USR_LOGGED_NEXT_TIME'];
 
-        if(array_key_exists('USR_PASSWORD', $aFields)) {
+        if (array_key_exists('USR_PASSWORD', $aFields)) {
             unset($aFields['USR_PASSWORD']);
         }
 
+        $userPermissions = new \ProcessMaker\BusinessModel\User();
+        $permissions = $userPermissions->loadDetailedPermissions($aFields);
+
         $result->success = true;
         $result->user = $aFields;
+        $result->permission = $permissions;
 
         print (G::json_encode($result));
         break;

@@ -29,7 +29,6 @@ var displayPreferences;
 var box;
 var infoMode;
 var global = {};
-var readMode;
 var usernameText;
 var previousUsername = '';
 var canEdit = true;
@@ -63,6 +62,8 @@ Ext.onReady(function () {
 
   });
 
+  displayPreferences = "display: block;";
+
   if (MODE == "edit" || MODE == "") {
       flagPoliciesPassword = true;
   }
@@ -78,12 +79,7 @@ Ext.onReady(function () {
           //Mode info
           box.setVisible(false);
           box.disable();
-
-          displayPreferences = "display: block;";
-          readMode = true;
       } else {
-          displayPreferences = "display: none;";
-          readMode = false;
           canEdit  = false;
       }
   } else {
@@ -93,8 +89,6 @@ Ext.onReady(function () {
       box.setVisible(false);
       box.disable();
 
-      displayPreferences = "display: none;";
-      readMode = false;
       canEdit  = false;
   }
 
@@ -305,7 +299,6 @@ Ext.onReady(function () {
 
       fieldLabel: _("ID_REPLACED_BY"),
       emptyText: "- " + _("ID_NONE") + " -",
-      readOnly: readMode,
       minChars: 1,
       hideTrigger: true,
 
@@ -317,8 +310,7 @@ Ext.onReady(function () {
     id         : "USR_DUE_DATE",
     fieldLabel : _("ID_EXPIRATION_DATE"),
     format     : "Y-m-d",
-    editable   : false,
-    readOnly   : readMode,
+    editable   : true,
     width      : 120,
     value      : (new Date().add(Date.YEAR, EXPIRATION_DATE)).format("Y-m-d")
   });
@@ -343,7 +335,6 @@ Ext.onReady(function () {
     fieldLabel : _('ID_CALENDAR'),
     hiddenName : 'USR_CALENDAR',
     id         : 'USR_CALENDAR',
-    readOnly   : readMode,
     store      : storeCalendar,
     valueField    : 'CALENDAR_UID',
     displayField  : 'CALENDAR_NAME',
@@ -375,8 +366,7 @@ Ext.onReady(function () {
     typeAhead     : true,
     triggerAction : 'all',
     editable      : false,
-    value         : 'ACTIVE',
-    readOnly      : readMode
+    value         : 'ACTIVE'
   });
 
   storeRole = new Ext.data.Store({
@@ -399,7 +389,6 @@ Ext.onReady(function () {
     fieldLabel    : _('ID_ROLE'),
     hiddenName    : 'USR_ROLE',
     id            : 'USR_ROLE',
-    readOnly      : readMode,
     store         : storeRole,
     valueField    : 'ROL_UID',
     displayField  : 'ROL_CODE',
@@ -548,6 +537,7 @@ Ext.onReady(function () {
           allowBlank : false
         },
         {
+          id             : 'USR_ADDRESS',
           xtype          : 'textarea',
           name           : 'USR_ADDRESS',
           fieldLabel     : _('ID_ADDRESS'),
@@ -804,7 +794,7 @@ Ext.onReady(function () {
     emptyText     : TRANSLATIONS.ID_SELECT,
     width         : 260,
     selectOnFocus : true,
-    editable      : false,
+    editable      : true,
     triggerAction : "all",
     mode          : "local"
   });
@@ -877,7 +867,6 @@ Ext.onReady(function () {
           }
           //location.href = 'users_List';
         }
-        //hidden:readMode
       }
     ]
   });
@@ -1222,7 +1211,6 @@ function userFrmEditSubmit()
         frmDetails.getForm().findField("USR_REPLACED_BY").setRawValue(usertmp.REPLACED_NAME);
     }
 
-    Ext.getCmp("USR_STATUS").setDisabled(readMode);
     Ext.getCmp("frmDetails").getForm().submit({
       url    : "usersAjax",
       params : {
@@ -1469,6 +1457,8 @@ function loadUserData()
                 USR_LOGGED_NEXT_TIME    : data.user.USR_LOGGED_NEXT_TIME
             });
 
+            setReadOnlyItems(data.permission);
+
             if (infoMode) {
                 Ext.getCmp("USR_FIRSTNAME2").setText(data.user.USR_FIRSTNAME);
                 Ext.getCmp("USR_LASTNAME2").setText(data.user.USR_LASTNAME);
@@ -1611,5 +1601,24 @@ function userExecuteEvent(element, event)
         evt.initEvent(event, true, true); //event type,bubbling,cancelable
 
         return !element.dispatchEvent(evt);
+    }
+}
+
+function setReadOnlyItems(permissions) {
+    for (var key in permissions) {
+        disableAndReadOnly(key)
+    }
+}
+function disableAndReadOnly(idElement) {
+    if(idElement == 'USR_TIME_ZONE'){
+        idElement = 'cboTimeZone';
+    }
+    if(idElement == 'USR_CUR_PASS'){
+        idElement = 'currentPassword';
+    }
+    var myBoxCmp = Ext.getCmp(idElement);
+    if (myBoxCmp) {
+        Ext.getCmp(idElement).setReadOnly(true);
+        Ext.getCmp(idElement).disable();
     }
 }
