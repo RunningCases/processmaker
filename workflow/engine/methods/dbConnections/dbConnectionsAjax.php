@@ -351,7 +351,8 @@ switch ($action) {
 
         if ($engine != "0") {
             $dbs = new dbConnections();
-            echo Bootstrap::json_encode($dbs->getEncondeList($filter->xssFilterHard($engine)));
+            $var = Bootstrap::json_encode($dbs->getEncondeList($filter->xssFilterHard($engine)));
+            echo $var;
 
         } else {
             echo '[["0","..."]]';
