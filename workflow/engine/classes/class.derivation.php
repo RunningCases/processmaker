@@ -220,10 +220,6 @@ class Derivation
                     $count++;
                 }
 
-                if ($arrayRouteData["ROU_TYPE"] == "EVALUATE" && !empty($arrayNextTask)) {
-                    $flagAddDelegation = false;
-                }
-
                 if ($flagAddDelegation &&
                     preg_match("/^(?:EVALUATE|PARALLEL-BY-EVALUATION)$/", $arrayRouteData["ROU_TYPE"]) &&
                     trim($arrayRouteData["ROU_CONDITION"]) == ""
