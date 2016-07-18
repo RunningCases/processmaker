@@ -408,11 +408,11 @@ class PMPluginRegistry
                 unset($this->_arrayDesignerMenu[$key]);
             }
         }
-        
+
         if(sizeof( $this->_aMenuOptionsToReplace )){
             unset( $this->_aMenuOptionsToReplace );
         }
-        
+
         if(sizeof( $this->_aImportProcessCallbackFile )){
             unset( $this->_aImportProcessCallbackFile );
         }
@@ -1678,14 +1678,14 @@ class PMPluginRegistry
             throw $e;
         }
     }
-    
+
     /**
      * Replace new options to menu
      *
      * @param unknown_type $namespace
      *
      * @param array $from
-     * 
+     *
      * @param array $options
      *
      * @return void
@@ -1701,7 +1701,7 @@ class PMPluginRegistry
             $this->_aMenuOptionsToReplace[$from["section"]][$from["menuId"]][] = $options;
         }
     }
-    
+
     /**
      * Return all menu Options from a specific section
      *
@@ -1713,10 +1713,10 @@ class PMPluginRegistry
         if(sizeof($oMenuFromPlugin)) {
             if(array_key_exists($strMenuName,$oMenuFromPlugin)) {
                 return $oMenuFromPlugin[$strMenuName];
-            }    
+            }
         }
     }
-    
+
     /**
      * Register a callBackFile in the singleton
      *
@@ -1739,12 +1739,12 @@ class PMPluginRegistry
             if (!$found) {
                 $callBackFile = new importCallBack( $namespace, $callBackFile );
                 $this->_aImportProcessCallbackFile[] = $callBackFile;
-            }    
+            }
         } catch(Excepton $e) {
             throw $e;
         }
     }
-    
+
     /**
      * Return all callBackFiles registered
      *
@@ -1813,6 +1813,26 @@ class PMPluginRegistry
             }
         }
         return $plugin;
+    }
+
+    /**
+     * Checks if the plugin name is Enterprise Plugin
+     *
+     * @param string $pluginName Plugin name
+     * @param string $path       Path to plugin
+     *
+     * @return bool Returns TRUE when plugin name is Enterprise Plugin, FALSE otherwise
+     */
+    public function isEnterprisePlugin($pluginName, $path = null)
+    {
+        $path = (!is_null($path) && $path != '')? rtrim($path, '/\\') . PATH_SEP : PATH_PLUGINS;
+        $pluginFile = $pluginName . '.php';
+
+        //Return
+        return preg_match(
+            '/^.*class\s+' . $pluginName . 'Plugin\s+extends\s+(?:enterprisePlugin)\s*\{.*$/i',
+            str_replace(["\n", "\r", "\t"], ' ', file_get_contents($path . $pluginFile))
+        );
     }
 }
 

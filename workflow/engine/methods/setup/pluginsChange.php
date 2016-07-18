@@ -52,7 +52,9 @@ if ($handle = opendir( PATH_PLUGINS )) {
 
                 if (is_file(PATH_PLUGINS . $pluginName . ".php") && is_dir(PATH_PLUGINS . $pluginName)) {
                     /*----------------------------------********---------------------------------*/
-                    if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
+                    if (!$oPluginRegistry->isEnterprisePlugin($pluginName) &&
+                        PMLicensedFeatures::getSingleton()->verifyfeature('B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=')
+                    ) {
                         //Check disabled code
                         G::LoadClass("codeScanner");
 
