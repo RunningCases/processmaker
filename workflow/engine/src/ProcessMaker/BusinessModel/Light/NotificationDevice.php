@@ -168,7 +168,19 @@ class NotificationDevice
             $typeList = 'todo';
             foreach ($aTasks as $aTask) {
                 $arrayTaskUser = array();
+                $delIndex = null;
+                foreach ($nextIndex as $nIndex) {
+                    if ($aTask['TAS_UID'] == $nIndex['TAS_UID']) {
+                        $delIndex = $nIndex['DEL_INDEX'];
+                        break;
+                    }
+                }
                 switch ($aTask["TAS_ASSIGN_TYPE"]) {
+                    case "MULTIPLE_INSTANCE":
+                    case "MULTIPLE_INSTANCE_VALUE_BASED":
+                        $arrayTaskUser = $this->getTaskUserMultipleInstance($aTask["TAS_UID"], $appFields);
+                        $delIndex = 0;
+                        break;
                     case "SELF_SERVICE":
                         $arrayTaskUser = $this->getTaskUserSelfService($aTask["TAS_UID"], $appFields);
                         $typeList = 'unassigned';
@@ -180,19 +192,12 @@ class NotificationDevice
                         break;
                 }
 
-                $delIndex = null;
-                foreach ($nextIndex as $nIndex) {
-                    if ($aTask['TAS_UID'] == $nIndex['TAS_UID']) {
-                        $delIndex = $nIndex['DEL_INDEX'];
-                        break;
-                    }
-                }
-
                 $userIds = $arrayTaskUser;
                 $message = '#'. $appFields['APP_NUMBER'] . ' : '.$appFields['APP_TITLE'];
                 $data = array(
                     'processId' => $processId,
                     'taskId' => $aTask["TAS_UID"],
+                    'taskAssignType' => $aTask["TAS_ASSIGN_TYPE"],
                     'caseId' => $appFields['APP_UID'],
                     'caseTitle' => $appFields['APP_TITLE'],
                     'delIndex' => $delIndex,
@@ -296,5 +301,16 @@ class NotificationDevice
 
         return $arrayTaskUser;
     }
-
+    public function getTaskUserMultipleInstance($tas_uid, $appFields)
+    {
+        $oDerivation = new \Derivation();
+        $taskNextDel = \TaskPeer::retrieveByPK($tas_uid);
+        $oDerivation->case = new \Cases();
+        $arrayUsersOfTask = $oDerivation->getNextAssignedUser(array("APP_UID" => $appFields['APP_UID'], "NEXT_TASK" => $taskNextDel->toArray(\BasePeer::TYPE_FIELDNAME)));
+        $arrayTaskUser = array();
+        foreach ($arrayUsersOfTask as $arrayUser) {
+            $arrayTaskUser[] = $arrayUser["USR_UID"];
+        }
+        return $arrayTaskUser;
+    }
 }
