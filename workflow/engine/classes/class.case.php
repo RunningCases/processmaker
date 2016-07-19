@@ -73,6 +73,7 @@ class Cases
     private $appSolr = null;
     public $dir = 'ASC';
     public $sort = 'APP_MSG_DATE';
+    public $arrayTriggerExecutionTime = [];
 
     public function __construct()
     {
@@ -1319,6 +1320,10 @@ class Cases
 
             $appAssignSelfServiceValue->remove($sAppUid, $iDelIndex);
             /*----------------------------------********---------------------------------*/
+            //Delete record of the table LIST_UNASSIGNED
+            $unassigned = new ListUnassigned();
+            $unassigned->remove($sAppUid, $iDelIndex);
+
             $aFields = $oAppDel->toArray(BasePeer::TYPE_FIELDNAME);
             $aFields['APP_STATUS'] = 'TO_DO';
             $inbox = new ListInbox();
@@ -1541,6 +1546,10 @@ class Cases
                 //If exist paused cases
                 $closedTasks[] = $row;
                 $aIndex[] = $row['DEL_INDEX'];
+                $res = $this->GetAllOpenDelegation( array('APP_UID'=>$sAppUid, 'APP_THREAD_PARENT'=>$row['DEL_PREVIOUS']), 'NONE' );
+                foreach ($res as $in) {
+                    $aIndex[] = $in['DEL_INDEX'];
+                }
                 $pausedTasks = $this->getReviewedTasksPaused($sAppUid,$aIndex);
             }
         }
@@ -3547,10 +3556,8 @@ class Cases
             $oPMScript = new PMScript();
             $oPMScript->setFields($aFields);
 
-            $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
-
             /*----------------------------------********---------------------------------*/
-            $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
+            $cs = new CodeScanner(SYS_SYS);
 
             $strFoundDisabledCode = "";
             /*----------------------------------********---------------------------------*/
@@ -3585,6 +3592,8 @@ class Cases
                 if ($bExecute) {
                     $oPMScript->setScript($aTrigger['TRI_WEBBOT']);
                     $oPMScript->execute();
+
+                    $this->arrayTriggerExecutionTime[$aTrigger['TRI_UID']] = $oPMScript->scriptExecutionTime;
                 }
             }
             /*----------------------------------********---------------------------------*/
@@ -4394,6 +4403,132 @@ class Cases
         $oListCanceled = new ListCanceled();
         $oListCanceled->create($data);
         /*----------------------------------********---------------------------------*/
+    }
+
+    /**
+     * Un cancel case
+     *
+     * @param string $caseUID
+     * @param string $userUID
+     * @return int
+     */
+    public function unCancelCase($appUID, $userUID)
+    {
+        try {
+            global $RBAC;
+            if ($RBAC->userCanAccess('PM_UNCANCELCASE') !== 1) {
+                throw new Exception(G::LoadTranslation('ID_YOU_DO_NOT_HAVE_PERMISSION'));
+            }
+
+            $application = new Application();
+            $rowApplication = $application->load($appUID);
+            if ($rowApplication["APP_STATUS"] !== "CANCELLED") {
+                throw new Exception(G::LoadTranslation('ID_THE_APPLICATION_IS_NOT_CANCELED', [$appUID]));
+            }
+
+            $criteriaAppDelay = new Criteria('workflow');
+            $criteriaAppDelay->add(AppDelayPeer::APP_UID, $appUID);
+            $criteriaAppDelay->add(AppDelayPeer::APP_STATUS, 'CANCELLED');
+            $criteriaAppDelay->add(AppDelayPeer::PRO_UID, $rowApplication['PRO_UID']);
+            $criteriaAppDelay->addDescendingOrderByColumn(AppDelayPeer::APP_ENABLE_ACTION_DATE);
+            $resultSetAppDelay = AppDelayPeer::doSelectRS($criteriaAppDelay);
+            $resultSetAppDelay->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $resultSetAppDelay->next();
+            $rowAppDelay = $resultSetAppDelay->getRow();
+            if (!isset($rowAppDelay['APP_STATUS'])) {
+                throw new Exception(G::LoadTranslation('ID_THREAD_STATUS_DOES_NOT_EXIST_FOR_THE_APPLICATION.', [$appUID]));
+            }
+
+            $users = new Users();
+            $rowUsers = $users->load($userUID);
+
+            //Application
+            $rowApplication['APP_STATUS'] = 'TO_DO';
+            $rowApplication['APP_UPDATE_DATE'] = date('Y-m-d H:i:s');
+            $application->update($rowApplication);
+
+            //AppDelegation
+            $appDelegation = new AppDelegation();
+            $rowAppDelegation = $appDelegation->Load($appUID, $rowAppDelay['APP_DEL_INDEX']);
+
+            $appDelegation = new AppDelegation();
+            $delIndex = $appDelegation->createAppDelegation($rowAppDelegation['PRO_UID'], $rowAppDelegation['APP_UID'], $rowAppDelegation['TAS_UID'], $userUID, $rowAppDelay['APP_THREAD_INDEX']);
+
+            //AppThread
+            $dataAppThread = [
+                'APP_UID' => $rowApplication['APP_UID'],
+                'APP_THREAD_INDEX' => $rowAppDelay['APP_THREAD_INDEX'],
+                'APP_THREAD_STATUS' => 'OPEN',
+                'DEL_INDEX' => $delIndex
+            ];
+            $appThread = new AppThread();
+            $appThread->update($dataAppThread);
+
+            //AppDelay
+            $dataAppDelay = [
+                'PRO_UID' => $rowApplication['PRO_UID'],
+                'APP_UID' => $rowApplication['APP_UID'],
+                'APP_THREAD_INDEX' => $rowAppDelay['APP_THREAD_INDEX'],
+                'APP_DELINDEX' => $delIndex,
+                'APP_TYPE' => 'UNCANCEL',
+                'APP_STATUS' => $rowApplication['APP_STATUS'],
+                'APP_NEXT_TASK' => 0,
+                'APP_DELEGATION_USER' => $userUID,
+                'APP_ENABLE_ACTION_USER' => $userUID,
+                'APP_ENABLE_ACTION_DATE' => date('Y-m-d H:i:s'),
+                'APP_DISABLE_ACTION_USER' => 0
+            ];
+            $appDelay = new AppDelay();
+            $appDelay->create($dataAppDelay);
+
+            //ListCanceled
+            $criteriaListCanceled = new Criteria("workflow");
+            $criteriaListCanceled->add(ListCanceledPeer::APP_UID, $appUID);
+            $resultSetListCanceled = ListCanceledPeer::doSelectRS($criteriaListCanceled);
+            $resultSetListCanceled->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $resultSetListCanceled->next();
+            $rowListCanceled = $resultSetListCanceled->getRow();
+            ListCanceledPeer::doDelete($criteriaListCanceled);
+            $usrTotalCancelled = $rowUsers['USR_TOTAL_CANCELLED'] - 1;
+
+            //ListInbox
+            $rowListCanceled['DEL_PREVIOUS_USR_USERNAME'] = $rowListCanceled['DEL_CURRENT_USR_USERNAME'];
+            $rowListCanceled['DEL_PREVIOUS_USR_FIRSTNAME'] = $rowListCanceled['DEL_CURRENT_USR_FIRSTNAME'];
+            $rowListCanceled['DEL_PREVIOUS_USR_LASTNAME'] = $rowListCanceled['DEL_CURRENT_USR_LASTNAME'];
+            $rowListCanceled['APP_STATUS'] = 'TO_DO';
+            $rowListCanceled['APP_UPDATE_DATE'] = date('Y-m-d H:i:s');
+            $rowListCanceled['DEL_RISK_DATE'] = date('Y-m-d H:i:s');
+            $rowListCanceled['DEL_INDEX'] = $delIndex;
+            unset($rowListCanceled['DEL_CURRENT_USR_USERNAME']);
+            unset($rowListCanceled['DEL_CURRENT_USR_FIRSTNAME']);
+            unset($rowListCanceled['DEL_CURRENT_USR_LASTNAME']);
+            unset($rowListCanceled['APP_CANCELED_DATE']);
+            $listInbox = new ListInbox();
+            $listInbox->create($rowListCanceled);
+            $usrTotalInbox = $rowUsers['USR_TOTAL_INBOX'] + 1;
+
+            //Users
+            $users->update([
+                'USR_UID' => $userUID,
+                'USR_TOTAL_INBOX' => $usrTotalInbox,
+                'USR_TOTAL_CANCELLED' => $usrTotalCancelled
+            ]);
+
+            //ListParticipatedLast
+            $criteriaListParticipatedLast = new Criteria("workflow");
+            $criteriaListParticipatedLast->add(ListParticipatedLastPeer::APP_UID, $appUID);
+            $resultSetListParticipatedLast = ListParticipatedLastPeer::doSelectRS($criteriaListParticipatedLast);
+            $resultSetListParticipatedLast->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $resultSetListParticipatedLast->next();
+            $rowListParticipatedLast = $resultSetListParticipatedLast->getRow();
+            $rowListParticipatedLast['APP_STATUS'] = 'TO_DO';
+            $rowListParticipatedLast['DEL_THREAD_STATUS'] = 'OPEN';
+            $rowListParticipatedLast['DEL_INIT_DATE'] = null;
+            $listParticipatedLast = new ListParticipatedLast();
+            $listParticipatedLast->update($rowListParticipatedLast);
+        } catch (Exception $oException) {
+            throw $oException;
+        }
     }
 
     /*
@@ -5376,7 +5511,8 @@ class Cases
 
                 $sBody2 = G::replaceDataGridField($sBody, $arrayData2, false);
 
-                $respTo = $this->getTo($aTask["TAS_ASSIGN_TYPE"], $aTask["TAS_UID"], $aTask["USR_UID"], $arrayData);
+                $respTo = $this->getTo($aTask['TAS_UID'], $aTask['USR_UID'], $arrayData);
+
                 $sTo = $respTo['to'];
                 $sCc = $respTo['cc'];
 
@@ -5427,67 +5563,104 @@ class Cases
             throw $oException;
         }
     }
-    
-    public function getTo($taskType, $taskUid, $taskUsrUid, $arrayData) 
+
+    public function getTo($taskUid, $userUid, $arrayData)
     {
         $sTo = null;
         $sCc = null;
         $arrayResp = array ();
-        $task = new Tasks ();
+        $tasks = new Tasks();
         $group = new Groups ();
         $oUser = new Users ();
-        
-        switch ($taskType) {
-            case "SELF_SERVICE" :
-                if (isset ( $taskUid ) && ! empty ( $taskUid )) {
-                    $arrayTaskUser = array ();
-                    
-                    $arrayAux1 = $task->getGroupsOfTask ( $taskUid, 1 );
-                    
-                    foreach ( $arrayAux1 as $arrayGroup ) {
-                        $arrayAux2 = $group->getUsersOfGroup ( $arrayGroup ["GRP_UID"] );
-                        
-                        foreach ( $arrayAux2 as $arrayUser ) {
-                            $arrayTaskUser [] = $arrayUser ["USR_UID"];
+
+        $task = TaskPeer::retrieveByPK($taskUid);
+
+        switch ($task->getTasAssignType()) {
+            case 'SELF_SERVICE':
+                $to = '';
+                $cc = '';
+
+                //Query
+                $criteria = new Criteria('workflow');
+
+                $criteria->addSelectColumn(UsersPeer::USR_UID);
+                $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
+                $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+                $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
+                $criteria->addSelectColumn(UsersPeer::USR_EMAIL);
+
+                $criteria->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
+
+                $rsCriteria = null;
+
+                if (trim($task->getTasGroupVariable()) != '') {
+                    //SELF_SERVICE_VALUE
+                    $variable = trim($task->getTasGroupVariable(), ' @#%?$=');
+
+                    //Query
+                    if (isset($arrayData[$variable])) {
+                        $data = $arrayData[$variable];
+
+                        switch (gettype($data)) {
+                            case 'string':
+                                $criteria->addJoin(GroupUserPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
+
+                                $criteria->add(GroupUserPeer::GRP_UID, $data, Criteria::EQUAL);
+
+                                $rsCriteria = GroupUserPeer::doSelectRS($criteria);
+                                break;
+                            case 'array':
+                                $criteria->add(UsersPeer::USR_UID, $data, Criteria::IN);
+
+                                $rsCriteria = UsersPeer::doSelectRS($criteria);
+                                break;
                         }
                     }
-                    
-                    $arrayAux1 = $task->getUsersOfTask ( $taskUid, 1 );
-                    
-                    foreach ( $arrayAux1 as $arrayUser ) {
-                        $arrayTaskUser [] = $arrayUser ["USR_UID"];
-                    }
-                    
-                    $criteria = new Criteria ( "workflow" );
-                    
-                    $criteria->addSelectColumn ( UsersPeer::USR_UID );
-                    $criteria->addSelectColumn ( UsersPeer::USR_USERNAME );
-                    $criteria->addSelectColumn ( UsersPeer::USR_FIRSTNAME );
-                    $criteria->addSelectColumn ( UsersPeer::USR_LASTNAME );
-                    $criteria->addSelectColumn ( UsersPeer::USR_EMAIL );
-                    $criteria->add ( UsersPeer::USR_UID, $arrayTaskUser, Criteria::IN );
-                    $rsCriteria = UsersPeer::doSelectRs ( $criteria );
-                    $rsCriteria->setFetchmode ( ResultSet::FETCHMODE_ASSOC );
-                    
-                    $to = null;
-                    $cc = null;
-                    $sw = 1;
-                    
-                    while ( $rsCriteria->next () ) {
-                        $row = $rsCriteria->getRow ();
-                        
-                        $toAux = ((($row ["USR_FIRSTNAME"] != "") || ($row ["USR_LASTNAME"] != "")) ? $row ["USR_FIRSTNAME"] . " " . $row ["USR_LASTNAME"] . " " : "") . "<" . $row ["USR_EMAIL"] . ">";
-                        
-                        if ($sw == 1) {
-                            $to = $toAux;
-                            $sw = 0;
-                        } else {
-                            $cc = $cc . (($cc != null) ? "," : null) . $toAux;
+                } else {
+                    //SELF_SERVICE
+                    $arrayTaskUser = [];
+
+                    $arrayAux1 = $tasks->getGroupsOfTask($taskUid, 1);
+
+                    foreach ($arrayAux1 as $arrayGroup) {
+                        $arrayAux2 = $group->getUsersOfGroup($arrayGroup['GRP_UID']);
+
+                        foreach ($arrayAux2 as $arrayUser) {
+                            $arrayTaskUser [] = $arrayUser ['USR_UID'];
                         }
                     }
-                    $arrayResp ['to'] = $to;
-                    $arrayResp ['cc'] = $cc;
+
+                    $arrayAux1 = $tasks->getUsersOfTask($taskUid, 1);
+
+                    foreach ($arrayAux1 as $arrayUser) {
+                        $arrayTaskUser[] = $arrayUser['USR_UID'];
+                    }
+
+
+                    //Query
+                    $criteria->add(UsersPeer::USR_UID, $arrayTaskUser, Criteria::IN);
+
+                    $rsCriteria = UsersPeer::doSelectRS($criteria);
                 }
+
+                if (!is_null($rsCriteria)) {
+                    $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+                    while ($rsCriteria->next()) {
+                        $record = $rsCriteria->getRow();
+
+                        $toAux = (($record['USR_FIRSTNAME'] != '' || $record['USR_LASTNAME'] != '')? $record['USR_FIRSTNAME'] . ' ' . $record['USR_LASTNAME'] . ' ' : '') . '<' . $record['USR_EMAIL'] . '>';
+
+                        if ($to == '') {
+                            $to = $toAux;
+                        } else {
+                            $cc .= (($cc != '')? ',' : '') . $toAux;
+                        }
+                    }
+                }
+
+                $arrayResp['to'] = $to;
+                $arrayResp['cc'] = $cc;
                 break;
             case "MULTIPLE_INSTANCE" :
                 $to = null;
@@ -5520,7 +5693,7 @@ class Cases
                     $arrayUsers = $arrayData [$nextTaskAssignVariable];
                     $oDerivation = new Derivation ();
                     $userFields = $oDerivation->getUsersFullNameFromArray ( $arrayUsers );
-                    
+
                     foreach ( $userFields as $row ) {
                         $toAux = ((($row ["USR_FIRSTNAME"] != "") || ($row ["USR_LASTNAME"] != "")) ? $row ["USR_FIRSTNAME"] . " " . $row ["USR_LASTNAME"] . " " : "") . "<" . $row ["USR_EMAIL"] . ">";
                         if ($sw == 1) {
@@ -5535,8 +5708,9 @@ class Cases
                 }
                 break;
             default :
-                if (isset ( $taskUsrUid ) && ! empty ( $taskUsrUid )) {
-                    $aUser = $oUser->load ( $taskUsrUid );
+                if (isset($userUid) && !empty($userUid)) {
+                    $aUser = $oUser->load($userUid);
+
                     $sTo = ((($aUser ["USR_FIRSTNAME"] != "") || ($aUser ["USR_LASTNAME"] != "")) ? $aUser ["USR_FIRSTNAME"] . " " . $aUser ["USR_LASTNAME"] . " " : "") . "<" . $aUser ["USR_EMAIL"] . ">";
                 }
                 $arrayResp ['to'] = $sTo;
@@ -6929,14 +7103,16 @@ class Cases
      * @return $aThreads
      */
 
-    public function GetAllOpenDelegation($aData)
+    public function GetAllOpenDelegation($aData, $status = 'OPEN')
     {
         try {
             $aThreads = array();
             $c = new Criteria();
             $c->add(AppDelegationPeer::APP_UID, $aData['APP_UID']);
             $c->add(AppDelegationPeer::DEL_PREVIOUS, $aData['APP_THREAD_PARENT']);
-            $c->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
+            if($status === 'OPEN'){
+                $c->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
+            }
             $rs = AppDelegationPeer::doSelectRs($c);
             $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $rs->next();
@@ -7090,13 +7266,17 @@ class Cases
      * @return array (criteria+array)
      */
 
-    public function getUsersParticipatedInCase($sAppUid)
+    public function getUsersParticipatedInCase($sAppUid, $usrStatus = '')
     {
         $c = new Criteria('workflow');
         $c->addSelectColumn(AppDelegationPeer::APP_UID);
         $c->addSelectColumn(AppDelegationPeer::USR_UID);
         $c->addSelectColumn(UsersPeer::USR_USERNAME);
         $c->addSelectColumn(UsersPeer::USR_EMAIL);
+
+        if($usrStatus != '') {
+            $c->add(UsersPeer::USR_STATUS, $usrStatus, CRITERIA::EQUAL);
+        }
 
         $c->add(AppDelegationPeer::APP_UID, $sAppUid, CRITERIA::EQUAL);
         $c->addJoin(AppDelegationPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
@@ -7377,4 +7557,3 @@ class Cases
         return $rows;
     }
 }
-

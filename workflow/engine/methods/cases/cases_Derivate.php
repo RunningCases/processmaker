@@ -88,6 +88,7 @@ try {
     $_SESSION['TRIGGER_DEBUG']['DATA'] = Array ();
     $_SESSION['TRIGGER_DEBUG']['TRIGGERS_NAMES'] = Array ();
     $_SESSION['TRIGGER_DEBUG']['TRIGGERS_VALUES'] = Array ();
+    $_SESSION['TRIGGER_DEBUG']['TRIGGERS_EXECUTION_TIME'] = [];
 
     $triggers = $oCase->loadTriggers( $_SESSION['TASK'], 'ASSIGN_TASK', - 2, 'BEFORE' );
 
@@ -101,6 +102,7 @@ try {
         $_SESSION['TRIGGER_DEBUG']['info'][0]['TIME'] = G::toUpper(G::loadTranslation('ID_BEFORE'));
         $_SESSION['TRIGGER_DEBUG']['info'][0]['TRIGGERS_NAMES'] = $oCase->getTriggerNames( $triggers );
         $_SESSION['TRIGGER_DEBUG']['info'][0]['TRIGGERS_VALUES'] = $triggers;
+        $_SESSION['TRIGGER_DEBUG']['info'][0]['TRIGGERS_EXECUTION_TIME'] = $oCase->arrayTriggerExecutionTime;
     }
 
     unset($appFields['APP_STATUS']);
@@ -146,6 +148,7 @@ try {
         $_SESSION['TRIGGER_DEBUG']['info'][1]['TIME'] = G::toUpper(G::loadTranslation('ID_AFTER'));
         $_SESSION['TRIGGER_DEBUG']['info'][1]['TRIGGERS_NAMES'] = $oCase->getTriggerNames( $triggers );
         $_SESSION['TRIGGER_DEBUG']['info'][1]['TRIGGERS_VALUES'] = $triggers;
+        $_SESSION['TRIGGER_DEBUG']['info'][1]['TRIGGERS_EXECUTION_TIME'] = $oCase->arrayTriggerExecutionTime;
     }
     unset($appFields['APP_STATUS']);
     unset($appFields['APP_PROC_STATUS']);
@@ -173,10 +176,10 @@ try {
         $pmGoogle = new PMGoogleApi ();
         if ($pmGoogle->getServiceGmailStatus ()) {
             $flagGmail = true;
-            
+
             $appDel = new AppDelegation ();
             $actualThread = $appDel->Load ( $_SESSION ['APPLICATION'], $_SESSION ['INDEX'] );
-            
+
             $appDelPrev = $appDel->LoadParallel ( $_SESSION ['APPLICATION'] );
             $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail ();
             if (! $appDelPrev) {
@@ -314,4 +317,3 @@ try {
     $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', $aMessage );
     G::RenderPage( 'publish', 'blank' );
 }
-
