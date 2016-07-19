@@ -172,10 +172,8 @@ function lookinginforContentProcess ($sproUid)
     $oContent = new Content();
     ///we are looking for a pro title for this process $sproUid
     $oCriteria = new Criteria( 'workflow' );
-    $oCriteria->add( ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
-    $oCriteria->add( ContentPeer::CON_LANG, 'en' );
-    $oCriteria->add( ContentPeer::CON_ID, $sproUid );
-    $oDataset = ContentPeer::doSelectRS( $oCriteria );
+    $oCriteria->add( ProcessPeer::PRO_UID, $sproUid );
+    $oDataset = ProcessPeer::doSelectRS( $oCriteria );
     $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
     $oDataset->next();
     $aRow = $oDataset->getRow();

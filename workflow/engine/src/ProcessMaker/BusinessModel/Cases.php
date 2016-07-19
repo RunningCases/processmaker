@@ -710,13 +710,8 @@ class Cases
             $oCriteria->addSelectColumn( \AppDelegationPeer::TAS_UID );
             $oCriteria->addSelectColumn(\AppDelegationPeer::DEL_INIT_DATE);
             $oCriteria->addSelectColumn(\AppDelegationPeer::DEL_TASK_DUE_DATE);
-            $oCriteria->addAsColumn( 'TAS_TITLE', 'C1.CON_VALUE' );
-            $oCriteria->addAlias( "C1", 'CONTENT' );
-            $tasTitleConds   = array ();
-            $tasTitleConds[] = array (\AppDelegationPeer::TAS_UID,'C1.CON_ID');
-            $tasTitleConds[] = array ('C1.CON_CATEGORY',$del . 'TAS_TITLE' . $del);
-            $tasTitleConds[] = array ('C1.CON_LANG',$del . SYS_LANG . $del);
-            $oCriteria->addJoinMC( $tasTitleConds, \Criteria::LEFT_JOIN );
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_TITLE);
+            $oCriteria->addJoin(\AppDelegationPeer::TAS_UID, \TaskPeer::TAS_UID);
             $oCriteria->add( \AppDelegationPeer::APP_UID, $applicationUid );
             $oCriteria->add( \AppDelegationPeer::USR_UID, $userUid );
             $oCriteria->add( \AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN' );

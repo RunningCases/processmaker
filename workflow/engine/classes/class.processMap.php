@@ -123,18 +123,9 @@ class processMap
                     $oTask->label = htmlentities($aRow1['TAS_TITLE'], ENT_QUOTES, 'UTF-8');
                 } else {
                     $oCriteria = new Criteria('workflow');
-                    $del = DBAdapter::getStringDelimiter();
                     $oCriteria->add(SubProcessPeer::PRO_PARENT, $aRow1['PRO_UID']);
                     $oCriteria->add(SubProcessPeer::TAS_PARENT, $aRow1['TAS_UID']);
-
-                    $oCriteria->addAsColumn('TAS_TITLE', 'C1.CON_VALUE');
-                    $oCriteria->addAlias("C1", 'CONTENT');
-                    $tasTitleConds = array();
-                    $tasTitleConds[] = array(SubProcessPeer::TAS_PARENT, 'C1.CON_ID' );
-                    $tasTitleConds[] = array('C1.CON_CATEGORY', $del . 'TAS_TITLE' . $del );
-                    $tasTitleConds[] = array('C1.CON_LANG', $del . SYS_LANG . $del);
-                    $oCriteria->addJoinMC($tasTitleConds, Criteria::LEFT_JOIN);
-
+                    $oCriteria->addJoin(SubProcessPeer::TAS_PARENT, TaskPeer::TAS_UID);
                     $oDatasetX = SubProcessPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
                     $oDatasetX->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                     $oDatasetX->next();
@@ -4574,7 +4565,7 @@ class processMap
     {
         try {
             $oTask = new Task();
-            $oNewTask = new StdClass();
+            $oNewTask = new stdClass();
             $oNewTask->label = G::LoadTranslation('ID_SUBPROCESS');
             $oNewTask->uid = $oTask->create(array('PRO_UID' => $sProcessUID, 'TAS_TITLE' => $oNewTask->label, 'TAS_POSX' => $iX, 'TAS_POSY' => $iY, 'TAS_TYPE' => 'SUBPROCESS' ));
             //$oJSON = new Services_JSON();
@@ -4653,18 +4644,13 @@ class processMap
             //print'<hr>';print_r($_DBArray['NewCase']);print'<hr>';
             $oCriteria = new Criteria('workflow');
             $del = DBAdapter::getStringDelimiter();
+            $oCriteria->addSelectColumn(TaskPeer::TAS_UID);
+            $oCriteria->addSelectColumn(TaskPeer::TAS_TITLE);
+            $oCriteria->addSelectColumn(SubProcessPeer::SP_VARIABLES_OUT);
             $oCriteria->add(SubProcessPeer::PRO_PARENT, $sProcessUID);
             $oCriteria->add(SubProcessPeer::PRO_PARENT, $sProcessUID);
             $oCriteria->add(SubProcessPeer::TAS_PARENT, $sTaskUID);
-
-            $oCriteria->addAsColumn('CON_VALUE', 'C1.CON_VALUE', 'CON_TITLE');
-            $oCriteria->addAlias("C1", 'CONTENT');
-            $tasTitleConds = array();
-            $tasTitleConds[] = array(SubProcessPeer::TAS_PARENT, 'C1.CON_ID' );
-            $tasTitleConds[] = array('C1.CON_CATEGORY', $del . 'TAS_TITLE' . $del );
-            $tasTitleConds[] = array('C1.CON_LANG', $del . SYS_LANG . $del );
-            $oCriteria->addJoinMC($tasTitleConds, Criteria::LEFT_JOIN);
-
+            $oCriteria->addJoin(SubProcessPeer::TAS_PARENT, TaskPeer::TAS_UID);
             $oDataset = SubProcessPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
@@ -4673,8 +4659,7 @@ class processMap
             $aRow['TASKS'] = $aRow['TAS_UID'];
             //print "<hr>".$aRow['TASKS']."<hr>";
             //$aRow['SPROCESS_NAME'] = $aRow['TAS_TITLE'];
-            $aRow['TAS_TITLE'] = $aRow['CON_VALUE'];
-            $aRow['SPROCESS_NAME'] = $aRow['CON_VALUE'];
+            $aRow['SPROCESS_NAME'] = $aRow['TAS_TITLE'];
             $SP_VARIABLES_OUT = unserialize($aRow['SP_VARIABLES_OUT']);
             if (is_array($SP_VARIABLES_OUT)) {
                 $i = 1;
@@ -6037,17 +6022,13 @@ class processMap
             }
             //print'<hr>';print_r($_DBArray['NewCase']);print'<hr>';
             $oCriteria = new Criteria('workflow');
-            $del = DBAdapter::getStringDelimiter();
+            $oCriteria->addSelectColumn(TaskPeer::TAS_UID);
+            $oCriteria->addSelectColumn(TaskPeer::TAS_TITLE);
+            $oCriteria->addSelectColumn(ProcessPeer::PRO_TITLE);
             $oCriteria->add(SubProcessPeer::PRO_PARENT, $sProcessUID);
             $oCriteria->add(SubProcessPeer::TAS_PARENT, $sTaskUID);
-
-            $oCriteria->addAsColumn('CON_VALUE', 'C1.CON_VALUE', 'CON_TITLE');
-            $oCriteria->addAlias("C1", 'CONTENT');
-            $tasTitleConds = array();
-            $tasTitleConds[] = array(SubProcessPeer::TAS_PARENT, 'C1.CON_ID');
-            $tasTitleConds[] = array('C1.CON_CATEGORY', $del . 'TAS_TITLE' . $del);
-            $tasTitleConds[] = array('C1.CON_LANG', $del . SYS_LANG . $del);
-            $oCriteria->addJoinMC($tasTitleConds, Criteria::LEFT_JOIN);
+            $oCriteria->addJoin(SubProcessPeer::TAS_PARENT, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
+            $oCriteria->addJoin(SubProcessPeer::PRO_PARENT, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
 
             $oDataset = SubProcessPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -6065,11 +6046,7 @@ class processMap
             $aRow['TASKS'] = $aRow['TAS_UID'];
             //print "<hr>".$aRow['TASKS']."<hr>";
             //$aRow['SPROCESS_NAME'] = $aRow['TAS_TITLE'];
-            $aRow['TAS_TITLE'] = $aRow['CON_VALUE'];
-            $aRow['SPROCESS_NAME'] = $aRow['CON_VALUE'];
-            $lang = defined('SYS_LANG') ? SYS_LANG : 'en';
-            $aRow['PRO_TITLE'] = Content::load('PRO_TITLE', '', $aRow['PRO_UID'], $lang);
-
+            $aRow['SPROCESS_NAME'] = $aRow['TAS_TITLE'];
             if ($sType == 0) {
                 $SP_VARIABLES_OUT = unserialize($aRow['SP_VARIABLES_OUT']);
                 if (is_array($SP_VARIABLES_OUT)) {
@@ -7037,8 +7014,12 @@ class processMap
         $aFields['OP_ACTION'] = $aRows['OP_ACTION'];
 
         $lang = defined('SYS_LANG') ? SYS_LANG : 'en';
-        $aFields['TASK_TARGET_NAME'] = Content::load('TAS_TITLE', '', $aRows['TAS_UID'], $lang);
-        $aFields['TASK_SOURCE_NAME'] = Content::load('TAS_TITLE', '', $aRows['OP_TASK_SOURCE'], $lang);
+        $oTask = new Task();
+        $aTask = $oTask->load($aRows['TAS_UID']);
+        $aFields['TASK_TARGET_NAME'] = $aTask['TAS_TITLE'];
+        $oTask = new Task();
+        $aTask = $oTask->load($aRows['OP_TASK_SOURCE']);
+        $aFields['TASK_SOURCE_NAME'] = $aTask['TAS_TITLE'];
         $oUser = UsersPeer::retrieveByPK($aRows['USR_UID']);
         if (!is_null($oUser)) {
             $aFields['USR_FULLNAME'] = $oUser->getUsrFirstname() . ' ' . $oUser->getUsrLastname();

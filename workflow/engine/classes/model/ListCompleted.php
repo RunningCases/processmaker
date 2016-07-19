@@ -45,27 +45,23 @@ class ListCompleted extends BaseListCompleted
 
 
         $criteria = new Criteria();
-        $criteria->addSelectColumn(ContentPeer::CON_VALUE);
-        $criteria->add( ContentPeer::CON_ID, $data['PRO_UID'], Criteria::EQUAL );
-        $criteria->add( ContentPeer::CON_CATEGORY, 'PRO_TITLE', Criteria::EQUAL );
-        $criteria->add( ContentPeer::CON_LANG, SYS_LANG, Criteria::EQUAL );
-        $dataset = ContentPeer::doSelectRS($criteria);
+        $criteria->addSelectColumn(ProcessPeer::PRO_TITLE);
+        $criteria->add(ProcessPeer::PRO_UID, $data['PRO_UID'], Criteria::EQUAL);
+        $dataset = ProcessPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
         $aRow = $dataset->getRow();
-        $data['APP_PRO_TITLE'] = $aRow['CON_VALUE'];
+        $data['APP_PRO_TITLE'] = $aRow['PRO_TITLE'];
 
 
         $criteria = new Criteria();
-        $criteria->addSelectColumn(ContentPeer::CON_VALUE);
-        $criteria->add( ContentPeer::CON_ID, $data['TAS_UID'], Criteria::EQUAL );
-        $criteria->add( ContentPeer::CON_CATEGORY, 'TAS_TITLE', Criteria::EQUAL );
-        $criteria->add( ContentPeer::CON_LANG, SYS_LANG, Criteria::EQUAL );
-        $dataset = ContentPeer::doSelectRS($criteria);
+        $criteria->addSelectColumn(TaskPeer::TAS_TITLE);
+        $criteria->add(TaskPeer::TAS_UID, $data['TAS_UID'], Criteria::EQUAL);
+        $dataset = TaskPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
         $aRow = $dataset->getRow();
-        $data['APP_TAS_TITLE'] = $aRow['CON_VALUE'];
+        $data['APP_TAS_TITLE'] = $aRow['TAS_TITLE'];
 
 
         $criteria = new Criteria();

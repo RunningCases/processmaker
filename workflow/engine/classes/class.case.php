@@ -204,7 +204,7 @@ class Cases
         $c->addSelectColumn(ProcessPeer::PRO_TITLE);
         $c->addJoin (TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->add(TaskPeer::TAS_UID, $tasks, Criteria::IN);
-        $c->addAscendingOrderByColumn('PRO_TITLE');
+        $c->addAscendingOrderByColumn(ProcessPeer::PRO_TITLE);
         $c->addAscendingOrderByColumn(TaskPeer::TAS_TITLE);
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -303,8 +303,8 @@ class Cases
         $c->addJoin (TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->add(TaskPeer::TAS_UID, $tasks, Criteria::IN);
 
-        $c->addAscendingOrderByColumn('PRO_TITLE');
-        $c->addAscendingOrderByColumn('TAS_TITLE');
+        $c->addAscendingOrderByColumn(ProcessPeer::PRO_TITLE);
+        $c->addAscendingOrderByColumn(TaskPeer::TAS_TITLE);
 
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -413,8 +413,8 @@ class Cases
         $c->addSelectColumn(ProcessPeer::PRO_TITLE);
         $c->addJoin (TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->add(TaskPeer::TAS_UID, $tasks, Criteria::IN);
-        $c->addAscendingOrderByColumn('PRO_TITLE');
-        $c->addAscendingOrderByColumn('TAS_TITLE');
+        $c->addAscendingOrderByColumn(ProcessPeer::PRO_TITLE);
+        $c->addAscendingOrderByColumn(TaskPeer::TAS_TITLE);
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $rs->next();
@@ -2521,7 +2521,6 @@ class Cases
     public function getTransferHistoryCriteria($sAppUid)
     {
         $c = new Criteria('workflow');
-        $c->addAsColumn('TAS_TITLE', 'TAS_TITLE.CON_VALUE');
         $c->addSelectColumn(UsersPeer::USR_FIRSTNAME);
         $c->addSelectColumn(UsersPeer::USR_LASTNAME);
         $c->addSelectColumn(AppDelegationPeer::DEL_DELEGATE_DATE);
@@ -2545,6 +2544,7 @@ class Cases
         $c->addSelectColumn(AppDelegationPeer::DEL_INIT_DATE);
         $c->addSelectColumn(AppDelayPeer::APP_ENABLE_ACTION_DATE);
         $c->addSelectColumn(AppDelayPeer::APP_DISABLE_ACTION_DATE);
+        $c->addSelectColumn(TaskPeer::TAS_TITLE);
         //APP_DELEGATION LEFT JOIN USERS
         $c->addJoin(AppDelegationPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
 
@@ -2557,14 +2557,8 @@ class Cases
         $app[] = array(AppDelegationPeer::APP_UID, AppDelayPeer::APP_UID);
         $c->addJoinMC($app, Criteria::LEFT_JOIN);
 
-        //LEFT JOIN CONTENT TAS_TITLE
-        $c->addAlias("TAS_TITLE", 'CONTENT');
-        $del = DBAdapter::getStringDelimiter();
-        $appTitleConds = array();
-        $appTitleConds[] = array(AppDelegationPeer::TAS_UID, 'TAS_TITLE.CON_ID');
-        $appTitleConds[] = array('TAS_TITLE.CON_CATEGORY', $del . 'TAS_TITLE' . $del);
-        $appTitleConds[] = array('TAS_TITLE.CON_LANG', $del . SYS_LANG . $del);
-        $c->addJoinMC($appTitleConds, Criteria::LEFT_JOIN);
+        //LEFT JOIN TASK TAS_TITLE
+        $c->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
 
         //WHERE
         $c->add(AppDelegationPeer::APP_UID, $sAppUid);
@@ -2673,7 +2667,7 @@ class Cases
         $c->addSelectColumn(UsersPeer::USR_UID);
         $c->addAsColumn('APP_CURRENT_USER', "CONCAT(USERS.USR_LASTNAME, ' ', USERS.USR_FIRSTNAME)");
         $c->addSelectColumn(ApplicationPeer::APP_STATUS);
-        $c->addAsColumn('APP_PRO_TITLE', 'PRO_TITLE.CON_VALUE');
+        $c->addAsColumn('APP_PRO_TITLE', ProcessPeer::PRO_TITLE);
         $c->addAsColumn('APP_TAS_TITLE', TaskPeer::TAS_TITLE);
         //$c->addAsColumn('APP_DEL_PREVIOUS_USER', 'APP_LAST_USER.USR_USERNAME');
         $c->addAsColumn(
@@ -2682,23 +2676,16 @@ class Cases
             APP_LAST_USER.USR_FIRSTNAME)"
         );
 
-        $c->addAlias("PRO_TITLE", 'CONTENT');
         $c->addAlias("APP_PREV_DEL", 'APP_DELEGATION');
         $c->addAlias("APP_LAST_USER", 'USERS');
 
         $c->addJoin(ApplicationPeer::APP_UID, AppDelegationPeer::APP_UID, Criteria::LEFT_JOIN);
+        $c->addJoin(ApplicationPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
         $appThreadConds[] = array(ApplicationPeer::APP_UID, AppThreadPeer::APP_UID);
         $appThreadConds[] = array(AppDelegationPeer::DEL_INDEX, AppThreadPeer::DEL_INDEX);
         $c->addJoinMC($appThreadConds, Criteria::LEFT_JOIN);
         $c->addJoin(AppDelegationPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
-
-        $del = DBAdapter::getStringDelimiter();
-        $proTitleConds = array();
-        $proTitleConds[] = array(ApplicationPeer::PRO_UID, 'PRO_TITLE.CON_ID');
-        $proTitleConds[] = array('PRO_TITLE.CON_CATEGORY', $del . 'PRO_TITLE' . $del);
-        $proTitleConds[] = array('PRO_TITLE.CON_LANG', $del . SYS_LANG . $del);
-        $c->addJoinMC($proTitleConds, Criteria::LEFT_JOIN);
 
         $prevConds = array();
         $prevConds[] = array(ApplicationPeer::APP_UID, 'APP_PREV_DEL.APP_UID');
@@ -2903,25 +2890,16 @@ class Cases
                 $c->addSelectColumn(UsersPeer::USR_UID);
                 $c->addAsColumn('APP_CURRENT_USER', "CONCAT(USERS.USR_LASTNAME, ' ', USERS.USR_FIRSTNAME)");
                 $c->addSelectColumn(ApplicationPeer::APP_STATUS);
-                $c->addAsColumn('APP_PRO_TITLE', 'PRO_TITLE.CON_VALUE');
+                $c->addAsColumn('APP_PRO_TITLE', ProcessPeer::PRO_TITLE);
                 $c->addAsColumn('APP_TAS_TITLE', TaskPeer::TAS_TITLE);
 
-                $c->addAlias("PRO_TITLE", 'CONTENT');
-
                 $c->addJoin(ApplicationPeer::APP_UID, AppDelegationPeer::APP_UID, Criteria::LEFT_JOIN);
+                $c->addJoin(ApplicationPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
                 $c->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
                 $appThreadConds[] = array(ApplicationPeer::APP_UID, AppThreadPeer::APP_UID);
                 $appThreadConds[] = array(AppDelegationPeer::DEL_INDEX, AppThreadPeer::DEL_INDEX);
                 $c->addJoinMC($appThreadConds, Criteria::LEFT_JOIN);
                 $c->addJoin(AppDelegationPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
-
-                $del = DBAdapter::getStringDelimiter();
-                //
-                $proTitleConds = array();
-                $proTitleConds[] = array(ApplicationPeer::PRO_UID, 'PRO_TITLE.CON_ID');
-                $proTitleConds[] = array('PRO_TITLE.CON_CATEGORY', $del . 'PRO_TITLE' . $del);
-                $proTitleConds[] = array('PRO_TITLE.CON_LANG', $del . SYS_LANG . $del);
-                $c->addJoinMC($proTitleConds, Criteria::LEFT_JOIN);
 
                 $c->add(AppDelegationPeer::USR_UID, '');
                 $c->add(AppDelegationPeer::TAS_UID, $aTasks, Criteria::IN);
@@ -3057,16 +3035,13 @@ class Cases
         $c->addSelectColumn(ApplicationPeer::APP_STATUS);
         if ($titles) {
             $c->addSelectColumn(ApplicationPeer::APP_TITLE);
-            $c->addAsColumn('APP_PRO_TITLE', 'PRO_TITLE.CON_VALUE');
+            $c->addAsColumn('APP_PRO_TITLE', ProcessPeer::PRO_TITLE);
             $c->addAsColumn('APP_TAS_TITLE', TaskPeer::TAS_TITLE);
         }
         //$c->addAsColumn('APP_DEL_PREVIOUS_USER', 'APP_LAST_USER.USR_USERNAME');
         $c->addAsColumn(
                 'APP_DEL_PREVIOUS_USER', "CONCAT(APP_LAST_USER.USR_LASTNAME, ' ', APP_LAST_USER.USR_FIRSTNAME)");
 
-        if ($titles) {
-            $c->addAlias("PRO_TITLE", 'CONTENT');
-        }
         $c->addAlias("APP_PREV_DEL", 'APP_DELEGATION');
         $c->addAlias("APP_LAST_USER", 'USERS');
 
@@ -3078,12 +3053,7 @@ class Cases
         $c->addJoin(AppDelegationPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
 
         if ($titles) {
-            $del = DBAdapter::getStringDelimiter();
-            $proTitleConds = array();
-            $proTitleConds[] = array(ApplicationPeer::PRO_UID, 'PRO_TITLE.CON_ID');
-            $proTitleConds[] = array('PRO_TITLE.CON_CATEGORY', $del . 'PRO_TITLE' . $del);
-            $proTitleConds[] = array('PRO_TITLE.CON_LANG', $del . SYS_LANG . $del);
-            $c->addJoinMC($proTitleConds, Criteria::LEFT_JOIN);
+            $c->addJoin(ApplicationPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         }
 
         $prevConds = array();
@@ -3142,29 +3112,22 @@ class Cases
         $c->addSelectColumn(UsersPeer::USR_UID);
         $c->addAsColumn('APP_CURRENT_USER', "CONCAT(USERS.USR_LASTNAME, ' ', USERS.USR_FIRSTNAME)");
         $c->addSelectColumn(ApplicationPeer::APP_STATUS);
-        $c->addAsColumn('APP_PRO_TITLE', 'PRO_TITLE.CON_VALUE');
+        $c->addAsColumn('APP_PRO_TITLE', ProcessPeer::PRO_TITLE);
         $c->addAsColumn('APP_TAS_TITLE', TaskPeer::TAS_TITLE);
         //$c->addAsColumn('APP_DEL_PREVIOUS_USER', 'APP_LAST_USER.USR_USERNAME');
         $c->addAsColumn(
                 'APP_DEL_PREVIOUS_USER', "CONCAT(APP_LAST_USER.USR_LASTNAME, ' ', APP_LAST_USER.USR_FIRSTNAME)");
 
-        $c->addAlias("PRO_TITLE", 'CONTENT');
         $c->addAlias("APP_PREV_DEL", 'APP_DELEGATION');
         $c->addAlias("APP_LAST_USER", 'USERS');
 
         $c->addJoin(ApplicationPeer::APP_UID, AppDelegationPeer::APP_UID, Criteria::LEFT_JOIN);
+        $c->addJoin(ApplicationPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
         $appThreadConds[] = array(ApplicationPeer::APP_UID, AppThreadPeer::APP_UID);
         $appThreadConds[] = array(AppDelegationPeer::DEL_INDEX, AppThreadPeer::DEL_INDEX);
         $c->addJoinMC($appThreadConds, Criteria::LEFT_JOIN);
         $c->addJoin(AppDelegationPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
-
-        $del = DBAdapter::getStringDelimiter();
-        $proTitleConds = array();
-        $proTitleConds[] = array(ApplicationPeer::PRO_UID, 'PRO_TITLE.CON_ID');
-        $proTitleConds[] = array('PRO_TITLE.CON_CATEGORY', $del . 'PRO_TITLE' . $del);
-        $proTitleConds[] = array('PRO_TITLE.CON_LANG', $del . SYS_LANG . $del);
-        $c->addJoinMC($proTitleConds, Criteria::LEFT_JOIN);
 
         $prevConds = array();
         $prevConds[] = array(ApplicationPeer::APP_UID, 'APP_PREV_DEL.APP_UID');
@@ -5343,7 +5306,9 @@ class Cases
                     $appDelegation = AppDelegationPeer::retrieveByPK($applicationUid, $aTask['DEL_INDEX']);
 
                     if (!is_null($appDelegation)) {
-                        $arrayData2['TAS_TITLE'] = Content::load('TAS_TITLE', '', $appDelegation->getTasUid(), SYS_LANG);
+                        $oTask = new Task();
+                        $aTask = $oTask->load($appDelegation->getTasUid());
+                        $arrayData2['TAS_TITLE'] = $aTask['TAS_TITLE'];
                         $arrayData2['DEL_TASK_DUE_DATE'] = $appDelegation->getDelTaskDueDate();
                     }
                 } else {
@@ -6706,30 +6671,23 @@ class Cases
         $c->addSelectColumn(UsersPeer::USR_UID);
         $c->addAsColumn('APP_CURRENT_USER', "CONCAT(USERS.USR_LASTNAME, ' ', USERS.USR_FIRSTNAME)");
         $c->addSelectColumn(ApplicationPeer::APP_STATUS);
-        $c->addAsColumn('APP_PRO_TITLE', 'PRO_TITLE.CON_VALUE');
+        $c->addAsColumn('APP_PRO_TITLE', ProcessPeer::PRO_TITLE);
         $c->addAsColumn('APP_TAS_TITLE', TaskPeer::TAS_TITLE);
         //$c->addAsColumn('APP_DEL_PREVIOUS_USER', 'APP_LAST_USER.USR_USERNAME');
         $c->addAsColumn(
                 'APP_DEL_PREVIOUS_USER', "CONCAT(APP_LAST_USER.USR_LASTNAME, ' ', APP_LAST_USER.USR_FIRSTNAME)"
         );
 
-        $c->addAlias("PRO_TITLE", 'CONTENT');
         $c->addAlias("APP_PREV_DEL", 'APP_DELEGATION');
         $c->addAlias("APP_LAST_USER", 'USERS');
 
         $c->addJoin(ApplicationPeer::APP_UID, AppDelegationPeer::APP_UID, Criteria::LEFT_JOIN);
+        $c->addJoin(ApplicationPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
         $appThreadConds[] = array(ApplicationPeer::APP_UID, AppThreadPeer::APP_UID);
         $appThreadConds[] = array(AppDelegationPeer::DEL_INDEX, AppThreadPeer::DEL_INDEX);
         $c->addJoinMC($appThreadConds, Criteria::LEFT_JOIN);
         $c->addJoin(AppDelegationPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
-
-        $del = DBAdapter::getStringDelimiter();
-        $proTitleConds = array();
-        $proTitleConds[] = array(ApplicationPeer::PRO_UID, 'PRO_TITLE.CON_ID');
-        $proTitleConds[] = array('PRO_TITLE.CON_CATEGORY', $del . 'PRO_TITLE' . $del);
-        $proTitleConds[] = array('PRO_TITLE.CON_LANG', $del . SYS_LANG . $del);
-        $c->addJoinMC($proTitleConds, Criteria::LEFT_JOIN);
 
         $prevConds = array();
         $prevConds[] = array(ApplicationPeer::APP_UID, 'APP_PREV_DEL.APP_UID');

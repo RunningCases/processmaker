@@ -83,9 +83,7 @@ switch($req){
 
         $criteria->addSelectColumn(ApplicationPeer::PRO_UID);
         $criteria->addSelectColumn(ApplicationPeer::APP_NUMBER);
-
-        $criteria->addAsColumn('PRO_TITLE', 'C2.CON_VALUE');
-        $criteria->addAlias('C2', 'CONTENT');
+        $criteria->addSelectColumn(ProcessPeer::PRO_TITLE);
 
         if ($emailStatus != '') {
             $criteria->add( AppMessagePeer::APP_MSG_STATUS, $emailStatus);
@@ -129,16 +127,7 @@ switch($req){
             $criteria->setOffset($start);
         }
         $criteria->addJoin(AppMessagePeer::APP_UID, ApplicationPeer::APP_UID);
-
-        $conditions = array();
-        $conditions[] = array(ApplicationPeer::PRO_UID, 'C2.CON_ID');
-        $conditions[] = array(
-            'C2.CON_CATEGORY', DBAdapter::getStringDelimiter() . 'PRO_TITLE' . DBAdapter::getStringDelimiter()
-        );
-        $conditions[] = array(
-            'C2.CON_LANG', DBAdapter::getStringDelimiter() . SYS_LANG . DBAdapter::getStringDelimiter()
-        );
-        $criteria->addJoinMC($conditions, Criteria::LEFT_JOIN);
+        $criteria->addJoin(ApplicationPeer::PRO_UID, ProcessPeer::PRO_UID);
         $result = AppMessagePeer::doSelectRS($criteria);
         $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $data = Array();

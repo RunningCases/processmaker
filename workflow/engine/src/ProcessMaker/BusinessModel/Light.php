@@ -176,7 +176,6 @@ class Light
     public function getTransferHistoryCriteria($sAppUid)
     {
         $c = new Criteria('workflow');
-        $c->addAsColumn('TAS_TITLE', 'TAS_TITLE.CON_VALUE');
         $c->addSelectColumn(UsersPeer::USR_FIRSTNAME);
         $c->addSelectColumn(UsersPeer::USR_LASTNAME);
         $c->addSelectColumn(AppDelegationPeer::DEL_DELEGATE_DATE);
@@ -200,6 +199,7 @@ class Light
         $c->addSelectColumn(AppDelegationPeer::DEL_INIT_DATE);
         $c->addSelectColumn(AppDelayPeer::APP_ENABLE_ACTION_DATE);
         $c->addSelectColumn(AppDelayPeer::APP_DISABLE_ACTION_DATE);
+        $c->addSelectColumn(\TaskPeer::TAS_TITLE);
         //APP_DELEGATION LEFT JOIN USERS
         $c->addJoin(AppDelegationPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
 
@@ -212,14 +212,8 @@ class Light
         $app[] = array(AppDelegationPeer::APP_UID, AppDelayPeer::APP_UID);
         $c->addJoinMC($app, Criteria::LEFT_JOIN);
 
-        //LEFT JOIN CONTENT TAS_TITLE
-        $c->addAlias("TAS_TITLE", 'CONTENT');
-        $del = \DBAdapter::getStringDelimiter();
-        $appTitleConds = array();
-        $appTitleConds[] = array(AppDelegationPeer::TAS_UID, 'TAS_TITLE.CON_ID');
-        $appTitleConds[] = array('TAS_TITLE.CON_CATEGORY', $del . 'TAS_TITLE' . $del);
-        $appTitleConds[] = array('TAS_TITLE.CON_LANG', $del . SYS_LANG . $del);
-        $c->addJoinMC($appTitleConds, Criteria::LEFT_JOIN);
+        //LEFT JOIN TASK TAS_TITLE
+        $c->addJoin(AppDelegationPeer::TAS_UID, \TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
 
         //WHERE
         $c->add(AppDelegationPeer::APP_UID, $sAppUid);
@@ -320,11 +314,9 @@ class Light
         $oContent = new \Content();
         ///we are looking for a pro title for this process $sproUid
         $oCriteria = new \Criteria( 'workflow' );
-        $oCriteria->add( \ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
-        $oCriteria->add( \ContentPeer::CON_LANG, 'en' );
-        $oCriteria->add( \ContentPeer::CON_ID, $sproUid );
-        $oDataset = \ContentPeer::doSelectRS( $oCriteria );
-        $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+        $oCriteria->add(\ProcessPeer::PRO_UID, $sproUid);
+        $oDataset = \ProcessPeer::doSelectRS( $oCriteria );
+        $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
         $aRow = $oDataset->getRow();
         if (!is_array($aRow)) {

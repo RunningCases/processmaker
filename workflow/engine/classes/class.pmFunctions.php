@@ -3252,7 +3252,20 @@ function PMFGetGroupUID($groupName)
  */
 function PMFGetTaskUID($taskName, $proUid = null)
 {
-    return PMFGetUidFromText($taskName, 'TAS_TITLE', $proUid);
+    $oCriteria = new Criteria('workflow');
+    $oCriteria->addSelectColumn(TaskPeer::TAS_UID);
+    $oCriteria->add(TaskPeer::TAS_TITLE, $taskName);
+    if(!is_null($proUid)){
+        $oCriteria->add(TaskPeer::PRO_UID, $proUid);
+    }
+    $oDataset = TaskPeer::doSelectRS($oCriteria);
+    $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+    $uids = array();
+    while ($row = $oDataset->getRow()) {
+        $uids[] = $row['TAS_UID'];
+        $oDataset->next();
+    }
+    return $uids;
 }
 
 /**
