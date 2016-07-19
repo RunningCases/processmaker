@@ -3693,3 +3693,52 @@ function PMFAddUserGroupToTask($taskUid, $userGroupUid)
     return 1;
 }
 
+/**
+ * @method
+ *
+ * Remove a user or group from the list of assignees of the Task.
+ *
+ * @name PMFRemoveUserGroupFromTask
+ * @label PMF Remove user or group from a Task
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFRemoveUserGroupFromTask.28.29
+ *
+ * @param string | $taskUid | Task Uid | The unique Id of the Task.
+ * @param string | $userGroupUid | Uid from User or Group | The unique Id from User or Group.
+ *
+ * @return int | $result | Result | Returns 1 when is remove
+ */
+function PMFRemoveUserGroupFromTask($taskUid, $userGroupUid)
+{
+    //Verify data and Set variables
+    $task = new \ProcessMaker\BusinessModel\Task();
+    $taskwf = TaskPeer::retrieveByPK($taskUid);
+
+    if (is_null($taskwf)) {
+        throw new Exception(G::LoadTranslation('ID_TASK_NOT_EXIST', ['tas_uid', $taskUid]));
+    }
+
+    $uid = '';
+
+    $objUser = UsersPeer::retrieveByPK($userGroupUid);
+
+    if (!is_null($objUser)) {
+        $uid = $userGroupUid;
+    } else {
+        $groupUid = GroupwfPeer::retrieveByPK($userGroupUid);
+
+        if (!is_null($groupUid)) {
+            $uid = $userGroupUid;
+        } else {
+            throw new Exception(G::LoadTranslation(
+                'ID_USER_GROUP_NOT_CORRESPOND', [$userGroupUid, G::LoadTranslation('ID_USER') . '/' . G::LoadTranslation('ID_GROUP')]
+            ));
+        }
+    }
+
+    //Remove User/Group
+    $task->removeTaskAssignee($taskwf->getProUid(), $taskUid, $uid);
+
+    //Return
+    return 1;
+}
+
