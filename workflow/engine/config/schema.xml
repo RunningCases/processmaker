@@ -904,6 +904,7 @@
     <column name="PRO_DERIVATION_SCREEN_TPL" type="VARCHAR" size="128" default="" required="false"/>
     <column name="PRO_COST" type="DECIMAL" size="7,2" required="false" default="0"/>
     <column name="PRO_UNIT_COST" type="VARCHAR" size="50" required="false" default=""/>
+    <column name="PRO_ITEE" type="INTEGER" required="true" default="0"/>
     <validator column="PRO_TIMEUNIT">
       <rule name="validValues" value="WEEKS|MONTHS|DAYS|HOURS|MINUTES" message="Please select a valid Time Unit."/>
     </validator>
@@ -1298,7 +1299,7 @@
     </index>
 
     <validator column="TAS_TYPE">
-        <rule name="validValues" value="NORMAL|ADHOC|SUBPROCESS|HIDDEN|GATEWAYTOGATEWAY|WEBENTRYEVENT|END-MESSAGE-EVENT|START-MESSAGE-EVENT|INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT|SCRIPT-TASK|START-TIMER-EVENT|INTERMEDIATE-CATCH-TIMER-EVENT|END-EMAIL-EVENT" message="Please set a valid value for TAS_TYPE" />
+        <rule name="validValues" value="NORMAL|ADHOC|SUBPROCESS|HIDDEN|GATEWAYTOGATEWAY|WEBENTRYEVENT|END-MESSAGE-EVENT|START-MESSAGE-EVENT|INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT|SCRIPT-TASK|START-TIMER-EVENT|INTERMEDIATE-CATCH-TIMER-EVENT|END-EMAIL-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT" message="Please set a valid value for TAS_TYPE" />
     </validator>
     <validator column="TAS_TIMEUNIT">
       <rule name="validValues" value="MINUTES|HOURS|DAYS|WEEKS|MONTHS" message="Please select a valid value for TAS_TIMEUNIT."/>
@@ -4405,17 +4406,17 @@
             <parameter name="Comment" value="Unassiged list"/>
         </vendor>
         <column name="APP_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
-        <column name="UNA_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+        <column name="DEL_INDEX" type="INTEGER" required="true" primaryKey="true" default="0"/>
         <column name="TAS_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
         <column name="APP_NUMBER" type="INTEGER" required="true" default="0"/>
         <column name="APP_TITLE" type="VARCHAR" size="255" required="true" default=""/>
         <column name="APP_PRO_TITLE" type="VARCHAR" size="255" required="true" default=""/>
         <column name="APP_TAS_TITLE" type="VARCHAR" size="255" required="true" default=""/>
-        <column name="APP_PREVIOUS_USR_USERNAME" type="VARCHAR" size="100" default=""/>
-        <column name="APP_PREVIOUS_USR_FIRSTNAME" type="VARCHAR" size="50" default=""/>
-        <column name="APP_PREVIOUS_USR_LASTNAME" type="VARCHAR" size="50" default=""/>
-        <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
+        <column name="DEL_PREVIOUS_USR_USERNAME" type="VARCHAR" size="100" default=""/>
+        <column name="DEL_PREVIOUS_USR_FIRSTNAME" type="VARCHAR" size="50" default=""/>
+        <column name="DEL_PREVIOUS_USR_LASTNAME" type="VARCHAR" size="50" default=""/>
+        <column name="APP_UPDATE_DATE" type="TIMESTAMP" required="true"/>
         <column name="DEL_PREVIOUS_USR_UID" type="VARCHAR" size="32" default=""/>
         <column name="DEL_DELEGATE_DATE" type="TIMESTAMP" required="true"/>
         <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>

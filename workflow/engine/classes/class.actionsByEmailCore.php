@@ -143,11 +143,6 @@ class actionsByEmailCoreClass extends PMPlugin
                             $_SESSION['CURRENT_DYN_UID'] = $configuration['DYN_UID'];
 
                             $scriptCode = '';
-//                            foreach ($dynaform->fields as $fieldName => $field) {
-//                                if ($field->type == 'submit') {
-//                                    unset($dynaform->fields[$fieldName]);
-//                                }
-//                            }
 
                             $__ABE__ = '';
                             $link = (G::is_https() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/ActionsByEmail';
@@ -168,7 +163,7 @@ class actionsByEmailCoreClass extends PMPlugin
                                     $__ABE__ .= '<strong>' . $field->label . '</strong><br /><br /><table align="left" border="0"><tr>';
                                     $index = 1;
                                     $__ABE__.='<br /><td><table align="left" cellpadding="2"><tr>';
-                                    foreach ($customGrid as $key => $value) {    
+                                    foreach ($customGrid as $key => $value) {
                                         $__ABE__ .= '<td align="center"><a style="'.$value['abe_custom_format'].'" ';
                                         $__ABE__ .= 'href="' .urldecode(urlencode($link)). '?ACTION='.G::encrypt('processABE', URL_KEY).'&APP_UID=';
                                         $__ABE__ .= G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY);
@@ -266,18 +261,24 @@ class actionsByEmailCoreClass extends PMPlugin
                             G::LoadClass("Users");
 
                             $user = new Users();
-                            $userDetails = $user->loadDetails($data->PREVIOUS_USR_UID);
 
                             if($configuration['ABE_MAILSERVER_OR_MAILCURRENT'] == 1 && $configuration['ABE_TYPE'] !== ''){
-                                $emailFrom = ($userDetails["USR_FULLNAME"] . ' <' . $userDetails["USR_EMAIL"] . '>');
-                            }else{                          
+                                if($data->PREVIOUS_USR_UID!==''){
+                                    $userDetails = $user->loadDetails($data->PREVIOUS_USR_UID);
+                                    $emailFrom = ($userDetails["USR_FULLNAME"] . ' <' . $userDetails["USR_EMAIL"] . '>');
+                                } else {
+                                    global $RBAC;
+                                    $currentUser = $RBAC->aUserInfo['USER_INFO'];
+                                    $emailFrom = ($currentUser["USR_FIRSTNAME"] .' '. $currentUser["USR_LASTNAME"] .' <' . $currentUser["USR_EMAIL"] . '>');
+                                }
+                            }else{
                                 if(isset($emailSetup["MESS_FROM_NAME"]) && isset($emailSetup["MESS_FROM_MAIL"] )){
                                     $emailFrom = ($emailSetup["MESS_FROM_NAME"] . ' <' . $emailSetup["MESS_FROM_MAIL"] . '>');
                                 }else{
                                     $emailFrom = ((isset($emailSetup["MESS_FROM_NAME"])) ? $emailSetup["MESS_FROM_NAME"] : $emailSetup["MESS_FROM_MAIL"]);
                                 }
                             }
-                            
+
                             G::LoadClass('wsBase');
 
                             $wsBaseInstance = new wsBase();

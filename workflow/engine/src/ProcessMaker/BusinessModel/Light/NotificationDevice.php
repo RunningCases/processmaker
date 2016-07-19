@@ -179,10 +179,13 @@ class NotificationDevice
             }
 
             $userIds = $arrayTaskUser;
+            //sub process
+            $taskAssignType = (isset($nextDel["TAS_ASSIGN_TYPE"])) ? $nextDel["TAS_ASSIGN_TYPE"] : $nextDel["SP_TYPE"];
             $message = '#' . $appFields['APP_NUMBER'] . ' : ' . $appFields['APP_TITLE'];
             $data = array(
                 'processId' => $appFields['PRO_UID'],
                 'taskId' => $nextDel["TAS_UID"],
+                'taskAssignType' => $taskAssignType,
                 'caseId' => $appFields['APP_UID'],
                 'caseTitle' => $appFields['APP_TITLE'],
                 'delIndex' => $iNewDelIndex,
@@ -281,5 +284,4 @@ class NotificationDevice
 
         return $arrayTaskUser;
     }
-
 }

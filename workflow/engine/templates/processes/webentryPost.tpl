@@ -70,72 +70,80 @@ try {
         }
 
         //Save files
-        if (isset($_FILES["form"]["name"]) && count($_FILES["form"]["name"]) > 0) {
-            $arrayField = array();
-            $arrayFileName    = array();
-            $arrayFileTmpName = array();
-            $arrayFileError   = array();
+        if (isset( $_FILES["form"]["name"] ) && count( $_FILES["form"]["name"] ) > 0) {
+            $arrayField = array ();
+            $arrayFileName = array ();
+            $arrayFileTmpName = array ();
+            $arrayFileError = array ();
             $i = 0;
 
-            foreach ($_FILES["form"]["name"] as $fieldIndex => $fieldValue) {
-                if (is_array($fieldValue)) {
-                    foreach ($fieldValue as $index => $value) {
-                        if (is_array($value)) {
-                            foreach ($value as $grdFieldIndex => $grdFieldValue) {
-                                $arrayField[$i]["grdName"] = $fieldIndex;
-                                $arrayField[$i]["grdFieldName"] = $grdFieldIndex;
-                                $arrayField[$i]["index"] = $index;
+                foreach ($_FILES["form"]["name"] as $fieldIndex => $fieldValue) {
+                    if (is_array( $fieldValue )) {
+                        foreach ($fieldValue as $index => $value) {
+                            if (is_array( $value )) {
+                                foreach ($value as $grdFieldIndex => $grdFieldValue) {
+                                    $arrayField[$i]["grdName"] = $fieldIndex;
+                                    $arrayField[$i]["grdFieldName"] = $grdFieldIndex;
+                                    $arrayField[$i]["index"] = $index;
 
-                                $arrayFileName[$i]    = $_FILES["form"]["name"][$fieldIndex][$index][$grdFieldIndex];
-                                $arrayFileTmpName[$i] = $_FILES["form"]["tmp_name"][$fieldIndex][$index][$grdFieldIndex];
-                                $arrayFileError[$i]   = $_FILES["form"]["error"][$fieldIndex][$index][$grdFieldIndex];
-                                $i = $i + 1;
+                                    $arrayFileName[$i] = $_FILES["form"]["name"][$fieldIndex][$index][$grdFieldIndex];
+                                    $arrayFileTmpName[$i] = $_FILES["form"]["tmp_name"][$fieldIndex][$index][$grdFieldIndex];
+                                    $arrayFileError[$i] = $_FILES["form"]["error"][$fieldIndex][$index][$grdFieldIndex];
+                                    $i = $i + 1;
                             }
                         }
                     }
-                } else {
-                    $arrayField[$i] = $fieldIndex;
-
-                    $arrayFileName[$i]    = $_FILES["form"]["name"][$fieldIndex];
-                    $arrayFileTmpName[$i] = $_FILES["form"]["tmp_name"][$fieldIndex];
-                    $arrayFileError[$i]   = $_FILES["form"]["error"][$fieldIndex];
-                    $i = $i + 1;
+                    } else {
+                        $arrayField[$i] = $fieldIndex;
+                        $arrayFileName[$i] = $_FILES["form"]["name"][$fieldIndex];
+                        $arrayFileTmpName[$i] = $_FILES["form"]["tmp_name"][$fieldIndex];
+                        $arrayFileError[$i] = $_FILES["form"]["error"][$fieldIndex];
+                        $i = $i + 1;
+                    }
                 }
-            }
+                if (count( $arrayField ) > 0) {
+                    for ($i = 0; $i <= count( $arrayField ) - 1; $i ++) {
+                        if ($arrayFileError[$i] == 0) {
+                            $indocUid = null;
+                            $fieldName = null;
+                            $fileSizeByField = 0;
 
-            if (count($arrayField) > 0) {
-                for ($i = 0; $i <= count($arrayField) - 1; $i++) {
-                    if ($arrayFileError[$i] == 0) {
-                        $indocUid = null;
-                        $fieldName = null;
+                            if (is_array( $arrayField[$i] )) {
+                                if (isset( $_POST["INPUTS"][$arrayField[$i]["grdName"]][$arrayField[$i]["grdFieldName"]] ) && ! empty( $_POST["INPUTS"][$arrayField[$i]["grdName"]][$arrayField[$i]["grdFieldName"]] )) {
+                                    $indocUid = $_POST["INPUTS"][$arrayField[$i]["grdName"]][$arrayField[$i]["grdFieldName"]];
+                                }
 
-                        if (is_array($arrayField[$i])) {
-                            if (isset($_POST["INPUTS"][$arrayField[$i]["grdName"]][$arrayField[$i]["grdFieldName"]]) &&
-                                !empty($_POST["INPUTS"][$arrayField[$i]["grdName"]][$arrayField[$i]["grdFieldName"]])
-                            ) {
-                                $indocUid = $_POST["INPUTS"][$arrayField[$i]["grdName"]][$arrayField[$i]["grdFieldName"]];
-                            }
+                                $fieldName = $arrayField[$i]["grdName"] . "_" . $arrayField[$i]["index"] . "_" . $arrayField[$i]["grdFieldName"];
 
-                            $fieldName = $arrayField[$i]["grdName"] . "_" . $arrayField[$i]["index"] . "_" . $arrayField[$i]["grdFieldName"];
-                        } else {
-                            if (isset($_POST["INPUTS"][$arrayField[$i]]) &&
-                                !empty($_POST["INPUTS"][$arrayField[$i]])
-                            ) {
+                                if (isset($_FILES["form"]["size"][$arrayField[$i]["grdName"]][$arrayField[$i]["index"]][$arrayField[$i]["grdFieldName"]])) {
+                                    $fileSizeByField = $_FILES["form"]["size"][$arrayField[$i]["grdName"]][$arrayField[$i]["index"]][$arrayField[$i]["grdFieldName"]];
+                                }
+                            } else {
+                                if (isset( $_POST["INPUTS"][$arrayField[$i]] ) && ! empty( $_POST["INPUTS"][$arrayField[$i]] )) {
                                 $indocUid = $_POST["INPUTS"][$arrayField[$i]];
                             }
 
                             $fieldName = $arrayField[$i];
+
+                            if (isset($_FILES["form"]["size"][$fieldName])) {
+                                $fileSizeByField = $_FILES["form"]["size"][$fieldName];
+                            }
                         }
 
-                        $filePath = G::sys_get_temp_dir() . PATH_SEP . $arrayFileName[$i];
-                        file_put_contents($filePath, file_get_contents($arrayFileTmpName[$i]));
+                        $temDir = G::sys_get_temp_dir();
+                        $uploadfile = $temDir . PATH_SEP . basename($arrayFileName[$i]);
+                        $result = move_uploaded_file($arrayFileTmpName[$i], $uploadfile);
+
+                        $filePath = $temDir . PATH_SEP . $arrayFileName[$i];
+                        file_put_contents($filePath, file_get_contents($uploadfile));
+                        $filename = $arrayFileName[$i];
 
                         if ($indocUid != null) {
                             //Input file type
-                            ws_sendFile($filePath, $USR_UID, $caseId, 1, $indocUid, $fieldName);
+                            ws_sendFile($uploadfile, $USR_UID, $caseId, 1, $indocUid, $fieldName, null, null, $filename);
                         } else {
                             //Attached file type
-                            ws_sendFile($filePath, $USR_UID, $caseId, 1, null, $fieldName);
+                            ws_sendFile($uploadfile, $USR_UID, $caseId, 1, null, $fieldName, null, null, $filename);
                         }
                     }
                 }

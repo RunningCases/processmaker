@@ -12,6 +12,11 @@ switch ($action) {
     case 'getProcess':
         getProcess();
         break;
+    /*----------------------------------********---------------------------------*/
+    case 'getAllCountersEnterprise':
+        getAllCountersEnterprise();
+        break;
+    /*----------------------------------********---------------------------------*/
     default: //this is the starting call
         getLoadTreeMenuData();
         break;
@@ -270,6 +275,20 @@ function getProcess ()
     }*/
     echo G::json_encode( $response );
 }
+
+/*----------------------------------********---------------------------------*/
+function getAllCountersEnterprise()
+{
+    try {
+        $userUid = (isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '') ? $_SESSION['USER_LOGGED'] : null;
+        $lists = new \ProcessMaker\BusinessModel\Lists();
+        $response = $lists->getCounters($userUid);
+        echo G::json_encode($response);
+    } catch (\Exception $e) {
+        throw (new Exception($e->getMessage()));
+    }
+}
+/*----------------------------------********---------------------------------*/
 
 function getAllCounters ()
 {

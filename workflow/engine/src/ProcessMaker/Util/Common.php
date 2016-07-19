@@ -37,10 +37,13 @@ class Common extends \Maveriks\Util\Common
             }
 
             $numc = 50;
-
+            $total = $numc - 2 - strlen($data);
+            if($total < 0){
+                $total = 0;
+            }
             switch ($option) {
                 case "BAR":
-                    echo "\r" . "| " . $data . str_repeat(" ", $numc - 2 - strlen($data));
+                    echo "\r" . "| " . $data . str_repeat(" ", $total);
                     break;
                 case "TEXT":
                     echo "\r" . '| ' . $data . "\n";

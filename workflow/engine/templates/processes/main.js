@@ -11,6 +11,93 @@ var processesGrid,
     processObjectsArray;
 
 /**
+ * Shows disabled Process Designer Type message
+ *
+ */
+var disabledProcessTypeMessage = function(){
+    Ext.MessageBox.show({
+        title: _("ID_ERROR"),
+        msg: _("ID_DESIGNER_PROCESS_DESIGNER_IS_DISABLED"),
+        icon: Ext.MessageBox.ERROR,
+        buttons: Ext.MessageBox.OK
+    });
+};
+
+/**
+ * Object which loads all supported Process types and their edit function
+ * You can register here Process types to evitate eval funtion
+ * Ex. registerNewProcessType('CPF_STANDARD_TPL', function(rowSelected){ doSomething();});
+ *
+ * @type {{bpmn: Function, classic: Function, default: Function}}
+ */
+var supportedProcessTypes = {
+    'bpmn': function (rowSelected) {
+        openWindowIfIE("../designer?prj_uid=" + rowSelected.data.PRO_UID);
+    },
+    'classic': function (rowSelected) {
+        location.assign("processes_Map?PRO_UID=" + rowSelected.data.PRO_UID);
+    },
+    'default': function (rowSelected) {
+        var fn = rowSelected.data.PROJECT_TYPE;
+        fn = fn.replace(/\s/g, "_");
+        fn = fn.replace(/\-/g, "_");
+        fn = fn + "DesignerGridRowDblClick";
+
+        // Todo We should remove eval functions as they are NSFW
+        eval("var flag = typeof(" + fn + ") == \"function\";");
+
+        if (flag) {
+            eval(fn + "(rowSelected.data);");
+        } else {
+            disabledProcessTypeMessage();
+        }
+    }
+};
+
+/**
+ * This Object contains default disabled New Options,
+ * Set to true if you want to disable a create option.
+ * Ex. disabledNewProjectOptions["classicProject"] = true;
+ *
+ * @type {{bpmnProject: boolean, classicProject: boolean}}
+ */
+var disabledNewProjectOptions = {
+    'bpmnProject': false,
+    'classicProject': false
+};
+
+/**
+ * Register a new Supported Process Type
+ *
+ * @param name string
+ * @param action function
+ */
+
+function registerNewProcessType(name, action) {
+    try {
+        this.supportedProcessTypes[name] = action;
+    } catch (e) {
+        console.log("Cannot add " + name + " Process type: " + e);
+    }
+}
+
+/**
+ * Disable a Process type for edition
+ * can be used in a plugin like: disableProcessType("classic");
+ *
+ * @param name
+ */
+function disableProcessType(name) {
+    try {
+        if (this.supportedProcessTypes[name]) {
+            this.supportedProcessTypes[name] = disabledProcessTypeMessage;
+        }
+    } catch (e) {
+        console.log("Cannot disable " + name + " Process type:" + e);
+    }
+}
+
+/**
  * Global variables and variable initialization for import process.
  */
 var importProcessGlobal = {};
@@ -225,6 +312,14 @@ Ext.onReady(function(){
       }
   }
 
+    //Checks all disabled options and removes from new options by pmTypeProject
+    var io = arrayMenuNewOption.length - 1;
+    for (io; io >= 0; io -= 1) {
+        if (disabledNewProjectOptions[arrayMenuNewOption[io].pmTypeProject]) {
+            arrayMenuNewOption.splice(io, 1);
+        }
+    }
+
   if (arrayMenuNewOption.length > 1) {
       newTypeProcess = {
           xtype: "tbsplit",
@@ -239,13 +334,20 @@ Ext.onReady(function(){
           }
       };
   } else {
+      // Handler should be the one from the unique option, if not,
+      // should fallback to default pmTypeProject.
+      var handler;
+      if (typeof arrayMenuNewOption[0].handler === "function") {
+          handler = arrayMenuNewOption[0].handler;
+      } else {
+          handler = function () {
+              newProcess({type: arrayMenuNewOption[0].pmTypeProject});
+          }
+      }
       newTypeProcess = {
           text: _("ID_NEW"),
           iconCls: "button_menu_ext ss_sprite ss_add",
-          handler: function ()
-          {
-              newProcess({type: arrayMenuNewOption[0].pmTypeProject});
-          }
+          handler: handler
       };
   }
     //Code export - exportGranular (handle)
@@ -817,34 +919,15 @@ editProcess = function(typeParam)
       return;
   }
 
-    switch (rowSelected.data.PROJECT_TYPE) {
-        case "bpmn":
-            openWindowIfIE("../designer?prj_uid=" + rowSelected.data.PRO_UID);
-            break;
-        case "classic":
-            location.assign("processes_Map?PRO_UID=" + rowSelected.data.PRO_UID);
-            break;
-        default:
-            var fn = rowSelected.data.PROJECT_TYPE;
-            fn = fn.replace(/\s/g, "_");
-            fn = fn.replace(/\-/g, "_");
-            fn = fn + "DesignerGridRowDblClick";
-
-            eval("var flag = typeof(" + fn + ") == \"function\";");
-
-            if (flag) {
-                eval(fn + "(rowSelected.data);");
-            } else {
-                Ext.MessageBox.show({
-                    title: _("ID_ERROR"),
-                    msg: _("ID_DESIGNER_PROCESS_DESIGNER_IS_DISABLED"),
-                    icon: Ext.MessageBox.ERROR,
-                    buttons: Ext.MessageBox.OK
-                });
-            }
-            break;
+    // Look for edit process type, by default there are two options, bpmn and classic,
+    // replacement of old switch statement.
+    var process = supportedProcessTypes[rowSelected.data.PROJECT_TYPE] || false;
+    if (process) {
+        process(rowSelected);
+    } else {
+        supportedProcessTypes['default'](rowSelected);
     }
-}
+};
 
 editNewProcess = function(){
   var rowSelected = processesGrid.getSelectionModel().getSelected();

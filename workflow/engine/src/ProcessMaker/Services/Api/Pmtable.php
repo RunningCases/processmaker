@@ -79,11 +79,11 @@ class Pmtable extends Api
      *
      * @url GET /:pmt_uid/data
      */
-    public function doGetPmTableData($pmt_uid)
+    public function doGetPmTableData($pmt_uid, $filter = null)
     {
         try {
             $oPmTable = new \ProcessMaker\BusinessModel\Table();
-            $response = $oPmTable->getTableData($pmt_uid);
+            $response = $oPmTable->getTableData($pmt_uid, null, $filter);
             return $response;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));

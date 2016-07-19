@@ -770,7 +770,10 @@ class pmTablesProxy extends HttpProxyController
             $fileContent = file_get_contents( $PUBLIC_ROOT_PATH . $filename );
 
             if (strpos( $fileContent, '-----== ProcessMaker Open Source Private Tables ==-----' ) === false) {
-                throw new Exception( G::loadTranslation( 'ID_PMTABLE_INVALID_FILE' ) );
+                $result->success = false;
+                $result->errorType = 'notice';
+                $result->message = G::loadTranslation( 'ID_PMTABLE_INVALID_FILE', array ($filename));
+                return $result;
             }
 
             $currentProUid = '';

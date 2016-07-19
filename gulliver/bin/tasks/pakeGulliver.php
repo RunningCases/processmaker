@@ -2688,7 +2688,12 @@ function run_check_plugin_disabled_code($task, $args)
                         $pluginName = str_replace(".php", "", $file);
 
                         if (is_file(PATH_PLUGINS . $pluginName . ".php") && is_dir(PATH_PLUGINS . $pluginName)) {
-                            if (preg_match("/^.*class\s+" . $pluginName . "Plugin\s+extends\s+(\w*)\s*\{.*$/i", str_replace(array("\n", "\r"), array(" ", " "), file_get_contents(PATH_PLUGINS . $pluginName . ".php")), $arrayMatch)) {
+                            if (preg_match(
+                                    '/^.*class\s+' . $pluginName . 'Plugin\s+extends\s+(\w*)\s*\{.*$/i',
+                                    str_replace(["\n", "\r", "\t"], ' ', file_get_contents(PATH_PLUGINS . $pluginName . '.php')),
+                                    $arrayMatch
+                                )
+                            ) {
                                 $pluginParentClassName = $arrayMatch[1];
 
                                 switch ($option2) {

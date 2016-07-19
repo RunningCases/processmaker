@@ -100,17 +100,19 @@ class PushMessageIOS
 //            $errstr, 60, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $ctx);
 //        if (!$fp)
 //            exit("Failed to connect: $err $errstr" . PHP_EOL);
-
+        $alert = new \stdClass();
+        $alert->{'loc-key'} =  $data['taskAssignType'];
+        $alert->{'loc-args'} =  array($message);
         // Create the payload body
         if (!is_null($data)) {
             $body['aps'] = array(
-                'alert' => $message,
+                'alert' => $alert,
                 'sound' => 'default',
                 'data' => $data
             );
         } else {
             $body['aps'] = array(
-                'alert' => $message,
+                'alert' => $alert,
                 'sound' => 'default'
             );
         }

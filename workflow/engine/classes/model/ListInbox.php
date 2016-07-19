@@ -84,6 +84,8 @@ class ListInbox extends BaseListInbox
                 $listParticipatedLast->create($data);
                 $listParticipatedLast = new ListParticipatedLast();
                 $listParticipatedLast->refresh($data, $isSelfService);
+                $listUnassigned = new ListUnassigned();
+                $listUnassigned->newRow($data, $data['DEL_PREVIOUS_USR_UID']);
             }
 
             return $result;
@@ -264,7 +266,7 @@ class ListInbox extends BaseListInbox
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
         $aRow = $dataset->getRow();
-        if ($aRow['CON_VALUE'] == '') { 
+        if ($aRow['CON_VALUE'] == '') {
             $criteria = new Criteria();
             $criteria->addSelectColumn(ContentPeer::CON_VALUE);
             $criteria->add( ContentPeer::CON_ID, $data['APP_UID'], Criteria::EQUAL );
@@ -306,6 +308,11 @@ class ListInbox extends BaseListInbox
 
 
         $data['APP_PREVIOUS_USER'] = '';
+        if($data['DEL_PREVIOUS_USR_UID'] === ''){
+            global $RBAC;
+            $aUser = $RBAC->aUserInfo['USER_INFO'];
+            $data['DEL_PREVIOUS_USR_UID'] = $aUser['USR_UID'];
+        }
         if ($data['DEL_PREVIOUS_USR_UID'] != '') {
             $criteria = new Criteria();
             $criteria->addSelectColumn(UsersPeer::USR_USERNAME);

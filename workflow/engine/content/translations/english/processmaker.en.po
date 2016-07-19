@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker (Branch 3.1)\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-07-05 12:03:37\n"
+"PO-Revision-Date: 2016-07-11 20:25:46\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -3814,8 +3814,8 @@ msgstr "Process Supervisor"
 # TRANSLATION
 # LABEL/ID_SENT
 #: LABEL/ID_SENT
-msgid "[LABEL/ID_SENT] Sent"
-msgstr "Sent"
+msgid "Participated"
+msgstr "Participated"
 
 # TRANSLATION
 # LABEL/ID_CALENDAR
@@ -4918,7 +4918,7 @@ msgstr "Draft"
 # TRANSLATION
 # LABEL/ID_TITLE_PARTICIPATED
 #: LABEL/ID_TITLE_PARTICIPATED
-msgid "Participated"
+msgid "[LABEL/ID_TITLE_PARTICIPATED] Participated"
 msgstr "Participated"
 
 # TRANSLATION
@@ -27460,6 +27460,48 @@ msgstr "The email event definition does not exist."
 #: LABEL/ID_USER_CANT_BE_DELETED_FOR_THE_PROCESS
 msgid "The user can't be deleted because it is referenced in the process {processTitle} in a process permission."
 msgstr "The user can't be deleted because it is referenced in the process {processTitle} in a process permission."
+
+# TRANSLATION
+# LABEL/ID_USER_NOT_IT_BELONGS_CASE_OR_NOT_SUPERVISOR
+#: LABEL/ID_USER_NOT_IT_BELONGS_CASE_OR_NOT_SUPERVISOR
+msgid "The user does not belong to case or user not is supervisor"
+msgstr "The user does not belong to case or user not is supervisor"
+
+# TRANSLATION
+# LABEL/ID_USER_IS_SUPERVISOR_DOES_NOT_ASSOCIATED_INPUT_DOCUMENT
+#: LABEL/ID_USER_IS_SUPERVISOR_DOES_NOT_ASSOCIATED_INPUT_DOCUMENT
+msgid "The user is supervisor, but it does not have an associated input document"
+msgstr "The user is supervisor, but it does not have an associated input document"
+
+# TRANSLATION
+# LABEL/ID_MAFE_c5bcf625cbb751aba886be634ef4ef47
+#: LABEL/ID_MAFE_c5bcf625cbb751aba886be634ef4ef47
+msgid "Invalid Connection between elements"
+msgstr "Invalid Connection between elements"
+
+# TRANSLATION
+# LABEL/ID_MAFE_815b565aff7fbfe8db5eb2573677e9a4
+#: LABEL/ID_MAFE_815b565aff7fbfe8db5eb2573677e9a4
+msgid "SubProcess must have an incoming sequence flow"
+msgstr "SubProcess must have an incoming sequence flow"
+
+# TRANSLATION
+# LABEL/ID_MAFE_85cc96b9ef52490be95df14539d47a39
+#: LABEL/ID_MAFE_85cc96b9ef52490be95df14539d47a39
+msgid "SubProcess must have an outgoing sequence flow"
+msgstr "SubProcess must have an outgoing sequence flow"
+
+# TRANSLATION
+# LABEL/ID_MAFE_fbd86a8fe4703e24aff466cbe75facd6
+#: LABEL/ID_MAFE_fbd86a8fe4703e24aff466cbe75facd6
+msgid "This is a Message of Error"
+msgstr "This is a Message of Error"
+
+# TRANSLATION
+# LABEL/ID_MAFE_ec6f1a89963c5b95d783e0c260fc959a
+#: LABEL/ID_MAFE_ec6f1a89963c5b95d783e0c260fc959a
+msgid "Can't connect start event to subprocess"
+msgstr "Can't connect start event to subprocess"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml

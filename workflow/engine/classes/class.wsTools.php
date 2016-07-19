@@ -109,12 +109,14 @@ class workspaceTools
         $final = $stop - $start;
         CLI::logging("<*>   Backup log files Process took $final seconds.\n");
 
+        /*----------------------------------********---------------------------------*/
         $start = microtime(true);
         CLI::logging("> Migrate new lists...\n");
         $this->migrateList($workSpace, false, $lang);
         $stop = microtime(true);
         $final = $stop - $start;
         CLI::logging("<*>   Migrate new lists Process took $final seconds.\n");
+        /*----------------------------------********---------------------------------*/
 
         $start = microtime(true);
         CLI::logging("> Updating Files Manager...\n");
@@ -2011,10 +2013,18 @@ class workspaceTools
             $this->regenerateListParticipatedHistory(); // this list require no translation
             $this->regenerateListParticipatedLast(); // this list require no translation
             $this->regenerateListPaused(); // this list require no translation
+            $this->regenerateListUnassigned(); // this list require no translation
             $this->migrateCounters();
         }
         if (!$flagReinsert) {
             $this->listFirstExecution("insert");
+            $this->listFirstExecution('insert', 'unassigned');
+        }
+
+        //Check for the List Unassigned
+        if(!$this->listFirstExecution('check','unassigned')){
+            $this->regenerateListUnassigned(); // this list require no translation
+            $this->listFirstExecution('insert', 'unassigned');
         }
 
         //Return
@@ -2373,7 +2383,7 @@ class workspaceTools
                         ACV.APP_PRO_TITLE,
                         ACV.APP_TAS_TITLE,
                         ACV.APP_STATUS,
-                        ACV.PREVIOUS_USR_UID AS DEL_PREVIOUS_USR_UID,
+                        PRE_USR.USR_UID AS DEL_PREVIOUS_USR_UID,
                         PRE_USR.USR_USERNAME AS DEL_PREVIOUS_USR_USERNAME,
                         PRE_USR.USR_FIRSTNAME AS DEL_PREVIOUS_USR_FIRSTNAME,
                         PRE_USR.USR_LASTNAME AS DEL_PREVIOUS_USR_LASTNAME,
@@ -2383,23 +2393,31 @@ class workspaceTools
                         ACV.DEL_DELEGATE_DATE AS DEL_DELEGATE_DATE,
                         ACV.DEL_INIT_DATE AS DEL_INIT_DATE,
                         ACV.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
-                        ACV.APP_TAS_TITLE AS DEL_CURRENT_TAS_TITLE,
+                        CURR_USER_ACV.APP_TAS_TITLE AS DEL_CURRENT_TAS_TITLE,
                         ACV.DEL_PRIORITY,
                         ACV.DEL_THREAD_STATUS
                     FROM
-                        '.$this->dbName.'.APP_CACHE_VIEW ACV
-                            LEFT JOIN
-                        '.$this->dbName.'.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID
-                            LEFT JOIN
-                        '.$this->dbName.'.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID
+                        (SELECT
+                            *, MAX(ACV_INT.DEL_INDEX) MAX_DEL_INDEX
+                        FROM
+                            '.$this->dbName.'.APP_CACHE_VIEW ACV_INT
+                        GROUP BY ACV_INT.APP_UID , ACV_INT.USR_UID) ACV
                             INNER JOIN
                         (SELECT
-                            ACV.APP_UID, ACV.USR_UID, MAX(DEL_INDEX) DEL_INDEX
+                            ACV.APP_UID, ACV.USR_UID, ACV.APP_TAS_TITLE, ACV.PREVIOUS_USR_UID, ACV.DEL_INDEX
                         FROM
-                            '.$this->dbName.'.APP_CACHE_VIEW ACV
-                        GROUP BY ACV.APP_UID , ACV.USR_UID) LAST_ACV ON LAST_ACV.APP_UID = ACV.APP_UID
-                            AND LAST_ACV.USR_UID = ACV.USR_UID
-                            AND LAST_ACV.DEL_INDEX = ACV.DEL_INDEX
+                            APP_CACHE_VIEW ACV
+                            INNER JOIN
+                        (SELECT
+                            ACV_INT.APP_UID, MAX(ACV_INT.DEL_INDEX) DEL_INDEX
+                        FROM
+                            '.$this->dbName.'.APP_CACHE_VIEW ACV_INT
+                        GROUP BY ACV_INT.APP_UID) LAST_ACV ON LAST_ACV.APP_UID = ACV.APP_UID
+                            AND LAST_ACV.DEL_INDEX = ACV.DEL_INDEX) CURR_USER_ACV ON CURR_USER_ACV.APP_UID = ACV.APP_UID
+                            LEFT JOIN
+                        '.$this->dbName.'.USERS PRE_USR ON CURR_USER_ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID
+                            LEFT JOIN
+                        '.$this->dbName.'.USERS CUR_USR ON CURR_USER_ACV.USR_UID = CUR_USR.USR_UID
 		';
         $con = Propel::getConnection("workflow");
         $stmt = $con->createStatement();
@@ -2434,6 +2452,61 @@ class workspaceTools
         }
         CLI::logging("> Completed table LIST_PAUSED\n");
     }
+
+    /*----------------------------------********---------------------------------*/
+    public function regenerateListUnassigned(){
+        $this->initPropel(true);
+        $truncate = 'TRUNCATE '.$this->dbName.'.LIST_UNASSIGNED';
+        //This executeQuery is very fast than Propel
+        $query = 'INSERT INTO '.$this->dbName.'.LIST_UNASSIGNED
+                    (APP_UID,
+                    DEL_INDEX,
+                    TAS_UID,
+                    PRO_UID,
+                    APP_NUMBER,
+                    APP_TITLE,
+                    APP_PRO_TITLE,
+                    APP_TAS_TITLE,
+                    DEL_PREVIOUS_USR_USERNAME,
+                    DEL_PREVIOUS_USR_FIRSTNAME,
+                    DEL_PREVIOUS_USR_LASTNAME,
+                    APP_UPDATE_DATE,
+                    DEL_PREVIOUS_USR_UID,
+                    DEL_DELEGATE_DATE,
+                    DEL_DUE_DATE,
+                    DEL_PRIORITY)
+
+                    SELECT
+                        ACV.APP_UID,
+                        ACV.DEL_INDEX,
+                        ACV.TAS_UID,
+                        ACV.PRO_UID,
+                        ACV.APP_NUMBER,
+                        ACV.APP_TITLE,
+                        ACV.APP_PRO_TITLE,
+                        ACV.APP_TAS_TITLE,
+                        USR.USR_USERNAME AS DEL_PREVIOUS_USR_USERNAME,
+                        USR.USR_FIRSTNAME AS DEL_PREVIOUS_USR_FIRSTNAME,
+                        USR.USR_LASTNAME AS DEL_PREVIOUS_USR_LASTNAME,
+                        ACV.APP_UPDATE_DATE,
+                        ACV.PREVIOUS_USR_UID AS DEL_PREVIOUS_USR_UID,
+                        ACV.DEL_DELEGATE_DATE AS DEL_DELEGATE_DATE,
+                        ACV.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
+                        ACV.DEL_PRIORITY
+                    FROM
+                        '.$this->dbName.'.APP_CACHE_VIEW ACV
+                            LEFT JOIN
+                        '.$this->dbName.'.USERS USR ON ACV.PREVIOUS_USR_UID = USR.USR_UID
+                    WHERE
+                        ACV.DEL_THREAD_STATUS = \'OPEN\'
+                        AND ACV.USR_UID = \'\' ';
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($truncate);
+        $stmt->executeQuery($query);
+        CLI::logging("> Completed table LIST_UNASSIGNED\n");
+    }
+    /*----------------------------------********---------------------------------*/
 
     public function migrateCounters()
     {
@@ -2532,41 +2605,59 @@ class workspaceTools
      *
      * return boolean value
      */
-    public function listFirstExecution ($action){
+    public function listFirstExecution ($action, $list='all'){
         $this->initPropel(true);
         switch ($action) {
-           case 'insert':
+            case 'insert':
                 $conf  = new Configuration();
-                if (!($conf->exists('MIGRATED_LIST', 'list', 'list', 'list', 'list'))) {
-                    $data["CFG_UID"]  ='MIGRATED_LIST';
-                    $data["OBJ_UID"]  ='list';
-                    $data["CFG_VALUE"]='true';
-                    $data["PRO_UID"]  ='list';
-                    $data["USR_UID"]  ='list';
-                    $data["APP_UID"]  ='list';
-                    $conf->create($data);
+                if($list==='all'){
+                    if (!($conf->exists('MIGRATED_LIST', 'list', 'list', 'list', 'list'))) {
+                        $data["CFG_UID"]  ='MIGRATED_LIST';
+                        $data["OBJ_UID"]  ='list';
+                        $data["CFG_VALUE"]='true';
+                        $data["PRO_UID"]  ='list';
+                        $data["USR_UID"]  ='list';
+                        $data["APP_UID"]  ='list';
+                        $conf->create($data);
+                    }
+                }
+                if($list==='unassigned'){
+                    if (!($conf->exists('MIGRATED_LIST_UNASSIGNED', 'list', 'list', 'list', 'list'))) {
+                        $data["CFG_UID"]  ='MIGRATED_LIST_UNASSIGNED';
+                        $data["OBJ_UID"]  ='list';
+                        $data["CFG_VALUE"]='true';
+                        $data["PRO_UID"]  ='list';
+                        $data["USR_UID"]  ='list';
+                        $data["APP_UID"]  ='list';
+                        $conf->create($data);
+                    }
                 }
                 return true;
+            break;
+            case 'check':
+                        $criteria = new Criteria("workflow");
+                        $criteria->addSelectColumn(ConfigurationPeer::CFG_UID);
+                        if($list==='all'){
+                            $criteria->add(ConfigurationPeer::CFG_UID, "MIGRATED_LIST", CRITERIA::EQUAL);
+                        }
+                        if($list==='unassigned'){
+                            $criteria->add(ConfigurationPeer::CFG_UID, "MIGRATED_LIST_UNASSIGNED", CRITERIA::EQUAL);
+                        }
+                        $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
+                        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                        $aRows = array ();
+                        while ($rsCriteria->next()) {
+                            $aRows[] = $rsCriteria->getRow();
+                        }
+                        if(empty($aRows)){
+                            return false; //If is false continue with the migrated
+                        } else {
+                            return true; //Stop
+                        }
                 break;
-           case 'check':
-                $criteria = new Criteria("workflow");
-                $criteria->addSelectColumn(ConfigurationPeer::CFG_UID);
-                $criteria->add(ConfigurationPeer::CFG_UID, "MIGRATED_LIST", CRITERIA::EQUAL);
-                $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
-                $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                $aRows = array ();
-                while ($rsCriteria->next()) {
-                    $aRows[] = $rsCriteria->getRow();
-                }
-                if(empty($aRows)){
-                    return false; //If is false continue with the migrated
-                } else {
-                    return true; //Stop
-                }
-                break;
-           default:
+            default:
                 return true;
-       }
+        }
     }
 
     /**
@@ -2655,7 +2746,7 @@ class workspaceTools
             CLI::logging("    All roles permissions already updated \n");
         }
     }
-    
+
     public function checkSequenceNumber()
     {
         $criteria = new Criteria("workflow");

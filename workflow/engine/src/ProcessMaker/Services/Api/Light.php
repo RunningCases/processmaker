@@ -902,10 +902,10 @@ class Light extends Api
             $dynaForm->setFormatFieldNameInUppercase(false);
             $_SESSION['PROCESS'] = $prj_uid;
             $response = $dynaForm->getDynaForm($dyn_uid);
-            $result   = $this->parserDataDynaForm($response);
-            $result['formContent'] = (isset($result['formContent']) && $result['formContent'] != null)?json_decode($result['formContent']):"";
+            $result = $this->parserDataDynaForm($response);
+            $result['formContent'] = (isset($result['formContent']) && $result['formContent'] != null) ? \G::json_decode($result['formContent']) : "";
             \G::LoadClass("pmDynaform");
-            $pmDynaForm = new \pmDynaform();
+            $pmDynaForm = new \pmDynaform(["CURRENT_DYNAFORM" => $dyn_uid]);
             $pmDynaForm->jsonr($result['formContent']);
             return $result;
         } catch (\Exception $e) {

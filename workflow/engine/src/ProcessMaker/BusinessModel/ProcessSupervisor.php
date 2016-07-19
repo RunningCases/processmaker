@@ -1523,5 +1523,57 @@ class ProcessSupervisor
         $oCriteria->setStepPosition($pos);
         $oCriteria->save();
     }
-}
 
+    /**
+     * Validate if the user is supervisor of the process
+     *
+     * @param string $projectUid Unique id of process
+     * @param string $userUid    Unique id of User
+     *
+     * @return bool Return
+     */
+    public function isUserProcessSupervisor($projectUid, $userUid)
+    {
+        try {
+            $criteria = new \Criteria('workflow');
+
+            $criteria->add(\ProcessUserPeer::USR_UID, $userUid, \Criteria::EQUAL);
+            $criteria->add(\ProcessUserPeer::PRO_UID, $projectUid, \Criteria::EQUAL);
+            $criteria->add(\ProcessUserPeer::PU_TYPE, 'SUPERVISOR', \Criteria::EQUAL);
+
+            $rsCriteria = \ProcessUserPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                return true;
+            }
+
+            $criteria = new \Criteria('workflow');
+
+            $criteria->addSelectColumn(\ProcessUserPeer::USR_UID);
+
+            $criteria->add(\ProcessUserPeer::PRO_UID, $projectUid, \Criteria::EQUAL);
+            $criteria->add(\ProcessUserPeer::PU_TYPE, 'GROUP_SUPERVISOR', \Criteria::EQUAL);
+
+            $rsCriteria = \ProcessUserPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $record = $rsCriteria->getRow();
+
+                $groupUid = $record['USR_UID'];
+
+                $obj = \GroupUserPeer::retrieveByPK($groupUid, $userUid);
+
+                if (!is_null($obj)) {
+                    return true;
+                }
+            }
+
+            //Return
+            return false;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+}
