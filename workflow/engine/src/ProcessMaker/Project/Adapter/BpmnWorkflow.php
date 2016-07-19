@@ -1480,7 +1480,7 @@ class BpmnWorkflow extends Project\Bpmn
 
                     $uidOld = $lanesetData["LNS_UID"];
                     $lanesetData["LNS_UID"] = Util\Common::generateUID();
-
+                    $diagram = self::refreshElementUid($diagram, $uidOld, $lanesetData["LNS_UID"]);
                     $result[] = array(
                         "object"  => "laneset",
                         "old_uid" => $uidOld,
@@ -1515,13 +1515,6 @@ class BpmnWorkflow extends Project\Bpmn
         foreach ($diagram["lanes"] as $i => $laneData) {
             $laneData = array_change_key_case($laneData, CASE_UPPER);
 
-            //Update UIDs
-            foreach ($result as $value) {
-                if ($laneData["LNS_UID"] == $value["old_uid"]) {
-                    $laneData["LNS_UID"] = $value["new_uid"];
-                }
-            }
-
             $dataObject = $bwp->getLane($laneData["LAN_UID"]);
 
             if ($forceInsert || is_null($dataObject)) {
@@ -1531,7 +1524,7 @@ class BpmnWorkflow extends Project\Bpmn
 
                     $uidOld = $laneData["LAN_UID"];
                     $laneData["LAN_UID"] = Util\Common::generateUID();
-
+                    $diagram = self::refreshElementUid($diagram, $uidOld, $laneData["LAN_UID"]);
                     $result[] = array(
                         "object"  => "lane",
                         "old_uid" => $uidOld,
@@ -2045,6 +2038,25 @@ class BpmnWorkflow extends Project\Bpmn
         } catch (\Exception $e) {
             throw $e;
         }
+    }
+
+    public static function refreshElementUid($diagram, $oldUid, $newUid)
+    {
+        array_walk_recursive(
+            $diagram,
+            function (&$value, $key, $arrayData)
+            {
+                try {
+                    if (strcmp($arrayData['oldUid'], $value) === 0){
+                        $value = $arrayData['newUid'];
+                    }
+                } catch (\Exception $e) {
+                    throw $e;
+                }
+            },
+            ['oldUid' => $oldUid, 'newUid' => $newUid]
+        );
+        return $diagram;
     }
 }
 
