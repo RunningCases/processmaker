@@ -174,11 +174,27 @@ abstract class Importer
                 /*----------------------------------********---------------------------------*/
                 if($objectsToImport === ''){
                 /*----------------------------------********---------------------------------*/
+                    try {
+                        $this->verifyIfTheProcessHasStartedCases();
+                    } catch (\Exception $e) {
+                        throw $e;
+                    }
                     $this->removeProject();
                 /*----------------------------------********---------------------------------*/
                 } else {
                     $granularObj = new \ProcessMaker\BusinessModel\Migrator\GranularImporter();
                     $objectList = $granularObj->loadObjectsListSelected($this->importData, $objectsToImport);
+                    try {
+                        foreach ($objectList as $rowObject) {
+                            if ($rowObject['name'] === 'PROCESSDEFINITION') {
+                                $this->verifyIfTheProcessHasStartedCases();
+                            }
+                        }
+                    } catch (\Exception $e) {
+                        $exception = new ImportException($e->getMessage());
+                        $exception->setNameException($e->getMessage());
+                        throw $exception;
+                    }
                     try {
                         foreach ($objectList as $rowObject) {
                             if ($rowObject['name'] === 'PROCESSDEFINITION') {
@@ -349,6 +365,46 @@ abstract class Importer
         $this->currentProcessTitle = $process->getProTitle();
         $project = \ProcessMaker\Project\Adapter\BpmnWorkflow::load($this->metadata["uid"]);
         $project->remove(true, false, $onlyDiagram);
+    }
+
+    /**
+     * Check tasks that have cases.
+     * 
+     * @return boolean
+     */
+    public function verifyIfTheProcessHasStartedCases()
+    {
+        $tasksIds = array();
+        $importedTasks = $this->importData["tables"]["workflow"]["tasks"];
+        foreach ($importedTasks as $value) {
+            $tasksIds[] = $value["TAS_UID"];
+        }
+
+        $criteria = new \Criteria("workflow");
+        $criteria->addSelectColumn(\TaskPeer::TAS_UID);
+        $criteria->add(\TaskPeer::PRO_UID, $this->metadata["uid"], \Criteria::EQUAL);
+        $criteria->add(\TaskPeer::TAS_UID, $tasksIds, \Criteria::NOT_IN);
+        $ds = \TaskPeer::doSelectRS($criteria);
+        $ds->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $tasksEliminatedIds = array();
+        while ($ds->next()) {
+            $row = $ds->getRow();
+            $tasksEliminatedIds[] = $row["TAS_UID"];
+        }
+
+        $criteria = new \Criteria("workflow");
+        $criteria->addSelectColumn(\AppDelegationPeer::TAS_UID);
+        $criteria->add(\AppDelegationPeer::PRO_UID, $this->metadata["uid"], \Criteria::EQUAL);
+        $criteria->add(\AppDelegationPeer::DEL_FINISH_DATE, null, \Criteria::ISNULL);
+        $criteria->add(\AppDelegationPeer::TAS_UID, $tasksEliminatedIds, \Criteria::IN);
+        $ds = \AppDelegationPeer::doSelectRS($criteria);
+        $ds->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $ds->next();
+        $row = $ds->getRow();
+        if (isset($row["TAS_UID"])) {
+            $exception = new \Exception(\G::LoadTranslation("ID_PROCESS_CANNOT_BE_UPDATED_THERE_ARE_TASKS_WITH_ACTIVE_CASES"));
+            throw $exception;
+        }
     }
 
     /**
