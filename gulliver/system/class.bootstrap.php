@@ -611,9 +611,12 @@ class Bootstrap
      * 0 to delete the temporary file flag
      * 1 to set the temporary file flag.
      * 2 or bigger to check if the temporary file exists.
+     * @content Contains the content of the temporary file
+     * true to all workspace
+     * nameWorkspace to specific workspace
      * return true if the file exists, otherwise false.
      */
-    public function isPMUnderUpdating($setFlag = 2)
+    public function isPMUnderUpdating($setFlag = 2, $content="true")
     {
         if (!defined('PATH_DATA')) {
             return false;
@@ -626,12 +629,16 @@ class Bootstrap
             }
         } elseif ($setFlag == 1) {
             $fp = fopen($fileCheck, 'w');
-            $line = fputs($fp, "true");
+            $line = fputs($fp, $content);
         }
         // checking temporary file
         if ($setFlag >= 1) {
             if (file_exists($fileCheck)) {
-                return true;
+                $res['action'] = true;
+                $fp = fopen($fileCheck, "r");
+                $res['workspace'] = fread($fp, filesize($fileCheck));
+                fclose($fp);
+                return $res;
             }
         }
         return false;
