@@ -72,6 +72,7 @@ class System
         'safari_cookie_lifetime' => 1,
         'error_reporting' => "",
         'display_errors' => 'On',
+        'enable_blacklist' => 0,
         'system_utc_time_zone' => 0,
         'server_protocol' => '',
         'server_hostname_requests_frontend' => ''
