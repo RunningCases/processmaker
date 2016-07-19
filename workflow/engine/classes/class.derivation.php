@@ -1311,6 +1311,10 @@ class Derivation
                 $sTargetField = trim($sTargetField, " @#%?$=");
 
                 $aNewFields[$sTargetField] = isset( $appFields['APP_DATA'][$sOriginField] ) ? $appFields['APP_DATA'][$sOriginField] : '';
+
+                if (array_key_exists($sOriginField . '_label', $appFields['APP_DATA'])) {
+                    $aNewFields[$sTargetField . '_label'] = $appFields['APP_DATA'][$sOriginField . '_label'];
+                }
             }
 
             $aOldFields['APP_DATA'] = array_merge( $aOldFields['APP_DATA'], $aNewFields );
@@ -1431,8 +1435,13 @@ class Derivation
                     $sTargetField = str_replace('$', '', $sTargetField);
                     $sTargetField = str_replace('=', '', $sTargetField);
                     $aNewFields[$sTargetField] = isset($appFields['APP_DATA'][$sOriginField]) ? $appFields['APP_DATA'][$sOriginField] : '';
-                    if (isset($aParentCase['APP_DATA'][$sTargetField . '_label'])) {
-                        $aNewFields[$sTargetField . '_label'] = isset($appFields['APP_DATA'][$sOriginField . '_label']) ? $appFields['APP_DATA'][$sOriginField . '_label'] : '';
+
+                    if (array_key_exists($sOriginField . '_label', $appFields['APP_DATA'])) {
+                        $aNewFields[$sTargetField . '_label'] = $appFields['APP_DATA'][$sOriginField . '_label'];
+                    } else {
+                        if (array_key_exists($sTargetField . '_label', $aParentCase['APP_DATA'])) {
+                            $aNewFields[$sTargetField . '_label'] = '';
+                        }
                     }
                 }
                 $aParentCase['APP_DATA'] = array_merge($aParentCase['APP_DATA'], $aNewFields);
