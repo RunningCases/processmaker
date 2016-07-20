@@ -1658,7 +1658,7 @@ abstract class BaseProcess extends BaseObject implements Persistent
 
             $this->pro_unit_cost = $rs->getString($startcol + 36);
 
-            $this->pro_itee = $rs->getString($startcol + 35);
+            $this->pro_itee = $rs->getString($startcol + 37);
 
             $this->resetModified();
 
@@ -1980,7 +1980,7 @@ abstract class BaseProcess extends BaseObject implements Persistent
             case 36:
                 return $this->getProUnitCost();
                 break;
-            case 35:
+            case 37:
                 return $this->getProItee();
                 break;
             default:
@@ -2183,7 +2183,7 @@ abstract class BaseProcess extends BaseObject implements Persistent
             case 36:
                 $this->setProUnitCost($value);
                 break;
-            case 35:
+            case 37:
                 $this->setProItee($value);
                 break;
         } // switch()
@@ -2357,8 +2357,8 @@ abstract class BaseProcess extends BaseObject implements Persistent
             $this->setProUnitCost($arr[$keys[36]]);
         }
 
-        if (array_key_exists($keys[35], $arr)) {
-            $this->setProItee($arr[$keys[35]]);
+        if (array_key_exists($keys[37], $arr)) {
+            $this->setProItee($arr[$keys[37]]);
         }
 
     }
