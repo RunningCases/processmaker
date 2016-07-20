@@ -73,6 +73,7 @@ class Cases
     private $appSolr = null;
     public $dir = 'ASC';
     public $sort = 'APP_MSG_DATE';
+    public $arrayTriggerExecutionTime = [];
 
     public function __construct()
     {
@@ -3591,6 +3592,8 @@ class Cases
                 if ($bExecute) {
                     $oPMScript->setScript($aTrigger['TRI_WEBBOT']);
                     $oPMScript->execute();
+
+                    $this->arrayTriggerExecutionTime[$aTrigger['TRI_UID']] = $oPMScript->scriptExecutionTime;
                 }
             }
             /*----------------------------------********---------------------------------*/
@@ -7554,4 +7557,3 @@ class Cases
         return $rows;
     }
 }
-
