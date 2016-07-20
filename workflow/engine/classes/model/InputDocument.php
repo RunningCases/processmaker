@@ -197,23 +197,29 @@ class InputDocument extends BaseInputDocument
                     $iResult = $oInputDocument->save();
                     $oConnection->commit();
                     //Add Audit Log
-                    switch ($aData['INP_DOC_FORM_NEEDED']){
-                      case 'VIRTUAL':
-                        $docType = 'Digital';
-                        break;
-                      case 'REAL':
-                        $docType = 'Printed';
-                        break;
-                      case 'VREAL':
-                        $docType = 'Digital/Printed';
-                        break;
+                    $docType = '';
+                    if(!empty($aData['INP_DOC_FORM_NEEDED'])) {
+                        switch ($aData['INP_DOC_FORM_NEEDED']) {
+                            case 'VIRTUAL':
+                                $docType = 'Digital';
+                                break;
+                            case 'REAL':
+                                $docType = 'Printed';
+                                break;
+                            case 'VREAL':
+                                $docType = 'Digital/Printed';
+                                break;
+                        }
                     }
                     if(isset($aData['INP_DOC_VERSIONING']) && $aData['INP_DOC_VERSIONING'] == 1){
                       $enableVersion = 'Yes';
                     }else{
                       $enableVersion = 'No';
                     }
-                    $description = "Input Document Title: ".$aData['INP_DOC_TITLE'].", Input Document Uid: ".$aData['INP_DOC_UID'].", Document Type: ".$docType;
+                    $description = '';
+                    if (!empty( $aData['INP_DOC_TITLE'] )) {
+                        $description = "Input Document Title: ".$aData['INP_DOC_TITLE'].", Input Document Uid: ".$aData['INP_DOC_UID'].", Document Type: ".$docType;
+                    }
                     if(!empty($aData['INP_DOC_DESCRIPTION'])){
                       $description .= ", Description: ".$aData['INP_DOC_DESCRIPTION'];
                     }
