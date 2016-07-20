@@ -121,6 +121,12 @@ class workspaceTools
         $this->processFilesUpgrade();
         $stop = microtime(true);
         CLI::logging("<*>   Updating Files Manager took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Optimizing content data...\n");
+        $this->migrateContent($workSpace, $lang);
+        $stop = microtime(true);
+        CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
     }
 
     /**
@@ -3099,21 +3105,37 @@ class workspaceTools
         }
         return $response;
     }
-    
+
+    public function migrateContent($workspace, $lang = SYS_LANG) {
+        if ((!class_exists('Memcache') || !class_exists('Memcached')) && !defined('MEMCACHED_ENABLED')) {
+            define('MEMCACHED_ENABLED', false);
+        }
+        $this->initPropel(true);
+        $conf  = new Configuration();
+        if (!$conf->exists('MIGRATED_CONTENT', 'content')) {
+            $data["CFG_UID"]  ='MIGRATED_CONTENT';
+            $data["OBJ_UID"]  ='content';
+            $data["CFG_VALUE"]='true';
+            $data["PRO_UID"]  ='';
+            $data["USR_UID"]  ='';
+            $data["APP_UID"]  ='';
+            $this->migrateContentRun($workspace, $lang);
+            $conf->create($data);
+        }
+    }
+
     /**
      * Migrate this workspace table Content.
-     * 
+     *
      * @param $className
      * @param $fields
-     * @param $workSpace
-     * @param mixed|string $sys_lang
+     * @param mixed|string $lang
      * @throws Exception
      */
-    public function migrateContent($className, $fields, $workSpace, $sys_lang = SYS_LANG)
+    public function migrateContentWorkspace($className, $fields, $lang = SYS_LANG)
     {
         try {
             $this->initPropel(true);
-            $_SESSION['sys_sys'] = $workSpace;
             $fieldUidName = $fields['uid'];
             $oCriteria = new Criteria();
             $oCriteria->clearSelectColumns();
@@ -3121,7 +3143,7 @@ class workspaceTools
             $oCriteria->addSelectColumn(ContentPeer::CON_CATEGORY);
             $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
             $oCriteria->add(ContentPeer::CON_CATEGORY, $fields['fields'], Criteria::IN);
-            $oCriteria->add(ContentPeer::CON_LANG, $sys_lang);
+            $oCriteria->add(ContentPeer::CON_LANG, $lang);
             $oDataset = ContentPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $methods = $fields['methods'];
@@ -3140,9 +3162,51 @@ class workspaceTools
                 }
             }
             $classNamePeer = $className . 'Peer';
-            CLI::logging("|--> Add content in table " . $classNamePeer::TABLE_NAME . "\n");
+            CLI::logging("|--> Add content data in table " . $classNamePeer::TABLE_NAME . "\n");
         } catch (Exception $e) {
             throw ($e);
+        }
+    }
+
+    public function migrateContentRun($workspace, $lang = SYS_LANG) {
+        if ((!class_exists('Memcache') || !class_exists('Memcached')) && !defined('MEMCACHED_ENABLED')) {
+            define('MEMCACHED_ENABLED', false);
+        }
+        $content = array(
+            'Groupwf' => array(
+                'uid' => 'GRP_UID',
+                'fields' => array('GRP_TITLE'),
+                'methods' => array('exists' => 'GroupwfExists')
+            ),
+            'Process' => array(
+                'uid' => 'PRO_UID',
+                'fields' => array('PRO_TITLE', 'PRO_DESCRIPTION'),
+                'methods' => array('exists' => 'exists')
+            ),
+            'Department' => array(
+                'uid' => 'DEP_UID',
+                'fields' => array('DEPO_TITLE'),
+                'alias' => array('DEPO_TITLE' => 'DEP_TITLE'),
+                'methods' => array('exists' => 'existsDepartment')
+            ),
+            'Task' => array(
+                'uid' => 'TAS_UID',
+                'fields' => array('TAS_TITLE', 'TAS_DESCRIPTION', 'TAS_DEF_TITLE', 'TAS_DEF_SUBJECT_MESSAGE', 'TAS_DEF_PROC_CODE', 'TAS_DEF_MESSAGE', 'TAS_DEF_DESCRIPTION'),
+                'methods' => array('exists' => 'taskExists')
+            ),
+            'InputDocument' => array(
+                'uid' => 'INP_DOC_UID',
+                'fields' => array('INP_DOC_TITLE', 'INP_DOC_DESCRIPTION'),
+                'methods' => array('exists' => 'InputExists')
+            ),
+            'Application' => array(
+                'uid' => 'APP_UID',
+                'fields' => array('APP_TITLE', 'APP_DESCRIPTION'),
+                'methods' => array('exists' => 'exists')
+            )
+        );
+        foreach ($content as $className => $fields) {
+            $this->migrateContentWorkspace($className, $fields, $lang);
         }
     }
 }

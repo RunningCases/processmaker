@@ -824,59 +824,22 @@ function migrate_counters($command, $args) {
 }
 /*----------------------------------********---------------------------------*/
 
-function run_migrate_content($args) {
+function run_migrate_content($args, $opts) {
     G::LoadSystem('inputfilter');
     $filter = new InputFilter();
     $args = $filter->xssFilterHard($args);
     $workspaces = get_workspaces_from_args($args);
+    $lang = array_key_exists("lang", $opts) ? $opts['lang'] : SYS_LANG;
+    $start = microtime(true);
+    CLI::logging("> Optimizing content data...\n");
     foreach ($workspaces as $workspace) {
         if (!defined('SYS_SYS')) {
             define('SYS_SYS', $workspace->name);
         }
         print_r('Regenerating content in: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
-        migrate_content($workspace);
+        CLI::logging("-> Regenerating content \n");
+        $workspace->migrateContentRun($workspace->name, $lang);
     }
-}
-
-function migrate_content($workspace) {
-    if ((!class_exists('Memcache') || !class_exists('Memcached')) && !defined('MEMCACHED_ENABLED')) {
-        define('MEMCACHED_ENABLED', false);
-    }
-    $content = array(
-        'Groupwf' => array(
-            'uid' => 'GRP_UID',
-            'fields' => array('GRP_TITLE'),
-            'methods' => array('exists' => 'GroupwfExists')
-        ),
-        'Process' => array(
-            'uid' => 'PRO_UID',
-            'fields' => array('PRO_TITLE', 'PRO_DESCRIPTION'),
-            'methods' => array('exists' => 'exists')
-        ),
-        'Department' => array(
-            'uid' => 'DEP_UID',
-            'fields' => array('DEPO_TITLE'),
-            'alias' => array('DEPO_TITLE' => 'DEP_TITLE'),
-            'methods' => array('exists' => 'existsDepartment')
-        ),
-        'Task' => array(
-            'uid' => 'TAS_UID',
-            'fields' => array('TAS_TITLE', 'TAS_DESCRIPTION', 'TAS_DEF_TITLE', 'TAS_DEF_SUBJECT_MESSAGE', 'TAS_DEF_PROC_CODE', 'TAS_DEF_MESSAGE', 'TAS_DEF_DESCRIPTION'),
-            'methods' => array('exists' => 'taskExists')
-        ),
-        'InputDocument' => array(
-            'uid' => 'INP_DOC_UID',
-            'fields' => array('INP_DOC_TITLE', 'INP_DOC_DESCRIPTION'),
-            'methods' => array('exists' => 'InputExists')
-        ),
-        'Application' => array(
-            'uid' => 'APP_UID',
-            'fields' => array('APP_TITLE', 'APP_DESCRIPTION'),
-            'methods' => array('exists' => 'exists')
-        )
-    );
-    CLI::logging("-> Regenerating content \n");
-    foreach ($content as $className => $fields) {
-        $workspace->migrateContent($className, $fields, $workspace->name);
-    }
+    $stop = microtime(true);
+    CLI::logging("<*>   Optimizing content data Process took " . ($stop - $start) . " seconds.\n");
 }
