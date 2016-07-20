@@ -67,6 +67,10 @@ class ApplicationMapBuilder
 
         $tMap->addPrimaryKey('APP_UID', 'AppUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
+        $tMap->addColumn('APP_TITLE', 'AppTitle', 'string', CreoleTypes::LONGVARCHAR, true, null);
+
+        $tMap->addColumn('APP_DESCRIPTION', 'AppDescription', 'string', CreoleTypes::LONGVARCHAR, false, null);
+
         $tMap->addColumn('APP_NUMBER', 'AppNumber', 'int', CreoleTypes::INTEGER, true, null);
 
         $tMap->addColumn('APP_PARENT', 'AppParent', 'string', CreoleTypes::VARCHAR, true, 32);

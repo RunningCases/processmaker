@@ -34,6 +34,18 @@ abstract class BaseProcess extends BaseObject implements Persistent
     protected $pro_uid = '';
 
     /**
+     * The value for the pro_title field.
+     * @var        string
+     */
+    protected $pro_title;
+
+    /**
+     * The value for the pro_description field.
+     * @var        string
+     */
+    protected $pro_description;
+
+    /**
      * The value for the pro_parent field.
      * @var        string
      */
@@ -266,6 +278,28 @@ abstract class BaseProcess extends BaseObject implements Persistent
     {
 
         return $this->pro_uid;
+    }
+
+    /**
+     * Get the [pro_title] column value.
+     * 
+     * @return     string
+     */
+    public function getProTitle()
+    {
+
+        return $this->pro_title;
+    }
+
+    /**
+     * Get the [pro_description] column value.
+     * 
+     * @return     string
+     */
+    public function getProDescription()
+    {
+
+        return $this->pro_description;
     }
 
     /**
@@ -716,6 +750,50 @@ abstract class BaseProcess extends BaseObject implements Persistent
         }
 
     } // setProUid()
+
+    /**
+     * Set the value of [pro_title] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setProTitle($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->pro_title !== $v) {
+            $this->pro_title = $v;
+            $this->modifiedColumns[] = ProcessPeer::PRO_TITLE;
+        }
+
+    } // setProTitle()
+
+    /**
+     * Set the value of [pro_description] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setProDescription($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->pro_description !== $v) {
+            $this->pro_description = $v;
+            $this->modifiedColumns[] = ProcessPeer::PRO_DESCRIPTION;
+        }
+
+    } // setProDescription()
 
     /**
      * Set the value of [pro_parent] column.
@@ -1508,73 +1586,77 @@ abstract class BaseProcess extends BaseObject implements Persistent
 
             $this->pro_uid = $rs->getString($startcol + 0);
 
-            $this->pro_parent = $rs->getString($startcol + 1);
+            $this->pro_title = $rs->getString($startcol + 1);
 
-            $this->pro_time = $rs->getFloat($startcol + 2);
+            $this->pro_description = $rs->getString($startcol + 2);
 
-            $this->pro_timeunit = $rs->getString($startcol + 3);
+            $this->pro_parent = $rs->getString($startcol + 3);
 
-            $this->pro_status = $rs->getString($startcol + 4);
+            $this->pro_time = $rs->getFloat($startcol + 4);
 
-            $this->pro_type_day = $rs->getString($startcol + 5);
+            $this->pro_timeunit = $rs->getString($startcol + 5);
 
-            $this->pro_type = $rs->getString($startcol + 6);
+            $this->pro_status = $rs->getString($startcol + 6);
 
-            $this->pro_assignment = $rs->getString($startcol + 7);
+            $this->pro_type_day = $rs->getString($startcol + 7);
 
-            $this->pro_show_map = $rs->getInt($startcol + 8);
+            $this->pro_type = $rs->getString($startcol + 8);
 
-            $this->pro_show_message = $rs->getInt($startcol + 9);
+            $this->pro_assignment = $rs->getString($startcol + 9);
 
-            $this->pro_subprocess = $rs->getInt($startcol + 10);
+            $this->pro_show_map = $rs->getInt($startcol + 10);
 
-            $this->pro_tri_open = $rs->getString($startcol + 11);
+            $this->pro_show_message = $rs->getInt($startcol + 11);
 
-            $this->pro_tri_deleted = $rs->getString($startcol + 12);
+            $this->pro_subprocess = $rs->getInt($startcol + 12);
 
-            $this->pro_tri_canceled = $rs->getString($startcol + 13);
+            $this->pro_tri_open = $rs->getString($startcol + 13);
 
-            $this->pro_tri_paused = $rs->getString($startcol + 14);
+            $this->pro_tri_deleted = $rs->getString($startcol + 14);
 
-            $this->pro_tri_reassigned = $rs->getString($startcol + 15);
+            $this->pro_tri_canceled = $rs->getString($startcol + 15);
 
-            $this->pro_tri_unpaused = $rs->getString($startcol + 16);
+            $this->pro_tri_paused = $rs->getString($startcol + 16);
 
-            $this->pro_type_process = $rs->getString($startcol + 17);
+            $this->pro_tri_reassigned = $rs->getString($startcol + 17);
 
-            $this->pro_show_delegate = $rs->getInt($startcol + 18);
+            $this->pro_tri_unpaused = $rs->getString($startcol + 18);
 
-            $this->pro_show_dynaform = $rs->getInt($startcol + 19);
+            $this->pro_type_process = $rs->getString($startcol + 19);
 
-            $this->pro_category = $rs->getString($startcol + 20);
+            $this->pro_show_delegate = $rs->getInt($startcol + 20);
 
-            $this->pro_sub_category = $rs->getString($startcol + 21);
+            $this->pro_show_dynaform = $rs->getInt($startcol + 21);
 
-            $this->pro_industry = $rs->getInt($startcol + 22);
+            $this->pro_category = $rs->getString($startcol + 22);
 
-            $this->pro_update_date = $rs->getTimestamp($startcol + 23, null);
+            $this->pro_sub_category = $rs->getString($startcol + 23);
 
-            $this->pro_create_date = $rs->getTimestamp($startcol + 24, null);
+            $this->pro_industry = $rs->getInt($startcol + 24);
 
-            $this->pro_create_user = $rs->getString($startcol + 25);
+            $this->pro_update_date = $rs->getTimestamp($startcol + 25, null);
 
-            $this->pro_height = $rs->getInt($startcol + 26);
+            $this->pro_create_date = $rs->getTimestamp($startcol + 26, null);
 
-            $this->pro_width = $rs->getInt($startcol + 27);
+            $this->pro_create_user = $rs->getString($startcol + 27);
 
-            $this->pro_title_x = $rs->getInt($startcol + 28);
+            $this->pro_height = $rs->getInt($startcol + 28);
 
-            $this->pro_title_y = $rs->getInt($startcol + 29);
+            $this->pro_width = $rs->getInt($startcol + 29);
 
-            $this->pro_debug = $rs->getInt($startcol + 30);
+            $this->pro_title_x = $rs->getInt($startcol + 30);
 
-            $this->pro_dynaforms = $rs->getString($startcol + 31);
+            $this->pro_title_y = $rs->getInt($startcol + 31);
 
-            $this->pro_derivation_screen_tpl = $rs->getString($startcol + 32);
+            $this->pro_debug = $rs->getInt($startcol + 32);
 
-            $this->pro_cost = $rs->getFloat($startcol + 33);
+            $this->pro_dynaforms = $rs->getString($startcol + 33);
 
-            $this->pro_unit_cost = $rs->getString($startcol + 34);
+            $this->pro_derivation_screen_tpl = $rs->getString($startcol + 34);
+
+            $this->pro_cost = $rs->getFloat($startcol + 35);
+
+            $this->pro_unit_cost = $rs->getString($startcol + 36);
 
             $this->pro_itee = $rs->getString($startcol + 35);
 
@@ -1583,7 +1665,7 @@ abstract class BaseProcess extends BaseObject implements Persistent
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 36; // 36 = ProcessPeer::NUM_COLUMNS - ProcessPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 37; // 37 = ProcessPeer::NUM_COLUMNS - ProcessPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Process object", $e);
@@ -1791,105 +1873,111 @@ abstract class BaseProcess extends BaseObject implements Persistent
                 return $this->getProUid();
                 break;
             case 1:
-                return $this->getProParent();
+                return $this->getProTitle();
                 break;
             case 2:
-                return $this->getProTime();
+                return $this->getProDescription();
                 break;
             case 3:
-                return $this->getProTimeunit();
+                return $this->getProParent();
                 break;
             case 4:
-                return $this->getProStatus();
+                return $this->getProTime();
                 break;
             case 5:
-                return $this->getProTypeDay();
+                return $this->getProTimeunit();
                 break;
             case 6:
-                return $this->getProType();
+                return $this->getProStatus();
                 break;
             case 7:
-                return $this->getProAssignment();
+                return $this->getProTypeDay();
                 break;
             case 8:
-                return $this->getProShowMap();
+                return $this->getProType();
                 break;
             case 9:
-                return $this->getProShowMessage();
+                return $this->getProAssignment();
                 break;
             case 10:
-                return $this->getProSubprocess();
+                return $this->getProShowMap();
                 break;
             case 11:
-                return $this->getProTriOpen();
+                return $this->getProShowMessage();
                 break;
             case 12:
-                return $this->getProTriDeleted();
+                return $this->getProSubprocess();
                 break;
             case 13:
-                return $this->getProTriCanceled();
+                return $this->getProTriOpen();
                 break;
             case 14:
-                return $this->getProTriPaused();
+                return $this->getProTriDeleted();
                 break;
             case 15:
-                return $this->getProTriReassigned();
+                return $this->getProTriCanceled();
                 break;
             case 16:
-                return $this->getProTriUnpaused();
+                return $this->getProTriPaused();
                 break;
             case 17:
-                return $this->getProTypeProcess();
+                return $this->getProTriReassigned();
                 break;
             case 18:
-                return $this->getProShowDelegate();
+                return $this->getProTriUnpaused();
                 break;
             case 19:
-                return $this->getProShowDynaform();
+                return $this->getProTypeProcess();
                 break;
             case 20:
-                return $this->getProCategory();
+                return $this->getProShowDelegate();
                 break;
             case 21:
-                return $this->getProSubCategory();
+                return $this->getProShowDynaform();
                 break;
             case 22:
-                return $this->getProIndustry();
+                return $this->getProCategory();
                 break;
             case 23:
-                return $this->getProUpdateDate();
+                return $this->getProSubCategory();
                 break;
             case 24:
-                return $this->getProCreateDate();
+                return $this->getProIndustry();
                 break;
             case 25:
-                return $this->getProCreateUser();
+                return $this->getProUpdateDate();
                 break;
             case 26:
-                return $this->getProHeight();
+                return $this->getProCreateDate();
                 break;
             case 27:
-                return $this->getProWidth();
+                return $this->getProCreateUser();
                 break;
             case 28:
-                return $this->getProTitleX();
+                return $this->getProHeight();
                 break;
             case 29:
-                return $this->getProTitleY();
+                return $this->getProWidth();
                 break;
             case 30:
-                return $this->getProDebug();
+                return $this->getProTitleX();
                 break;
             case 31:
-                return $this->getProDynaforms();
+                return $this->getProTitleY();
                 break;
             case 32:
-                return $this->getProDerivationScreenTpl();
+                return $this->getProDebug();
                 break;
             case 33:
-                return $this->getProCost();
+                return $this->getProDynaforms();
                 break;
             case 34:
+                return $this->getProDerivationScreenTpl();
+                break;
+            case 35:
+                return $this->getProCost();
+                break;
+            case 36:
                 return $this->getProUnitCost();
                 break;
             case 35:
@@ -1916,41 +2004,43 @@ abstract class BaseProcess extends BaseObject implements Persistent
         $keys = ProcessPeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getProUid(),
-            $keys[1] => $this->getProParent(),
-            $keys[2] => $this->getProTime(),
-            $keys[3] => $this->getProTimeunit(),
-            $keys[4] => $this->getProStatus(),
-            $keys[5] => $this->getProTypeDay(),
-            $keys[6] => $this->getProType(),
-            $keys[7] => $this->getProAssignment(),
-            $keys[8] => $this->getProShowMap(),
-            $keys[9] => $this->getProShowMessage(),
-            $keys[10] => $this->getProSubprocess(),
-            $keys[11] => $this->getProTriOpen(),
-            $keys[12] => $this->getProTriDeleted(),
-            $keys[13] => $this->getProTriCanceled(),
-            $keys[14] => $this->getProTriPaused(),
-            $keys[15] => $this->getProTriReassigned(),
-            $keys[16] => $this->getProTriUnpaused(),
-            $keys[17] => $this->getProTypeProcess(),
-            $keys[18] => $this->getProShowDelegate(),
-            $keys[19] => $this->getProShowDynaform(),
-            $keys[20] => $this->getProCategory(),
-            $keys[21] => $this->getProSubCategory(),
-            $keys[22] => $this->getProIndustry(),
-            $keys[23] => $this->getProUpdateDate(),
-            $keys[24] => $this->getProCreateDate(),
-            $keys[25] => $this->getProCreateUser(),
-            $keys[26] => $this->getProHeight(),
-            $keys[27] => $this->getProWidth(),
-            $keys[28] => $this->getProTitleX(),
-            $keys[29] => $this->getProTitleY(),
-            $keys[30] => $this->getProDebug(),
-            $keys[31] => $this->getProDynaforms(),
-            $keys[32] => $this->getProDerivationScreenTpl(),
-            $keys[33] => $this->getProCost(),
-            $keys[34] => $this->getProUnitCost(),
-            $keys[35] => $this->getProItee(),
+            $keys[1] => $this->getProTitle(),
+            $keys[2] => $this->getProDescription(),
+            $keys[3] => $this->getProParent(),
+            $keys[4] => $this->getProTime(),
+            $keys[5] => $this->getProTimeunit(),
+            $keys[6] => $this->getProStatus(),
+            $keys[7] => $this->getProTypeDay(),
+            $keys[8] => $this->getProType(),
+            $keys[9] => $this->getProAssignment(),
+            $keys[10] => $this->getProShowMap(),
+            $keys[11] => $this->getProShowMessage(),
+            $keys[12] => $this->getProSubprocess(),
+            $keys[13] => $this->getProTriOpen(),
+            $keys[14] => $this->getProTriDeleted(),
+            $keys[15] => $this->getProTriCanceled(),
+            $keys[16] => $this->getProTriPaused(),
+            $keys[17] => $this->getProTriReassigned(),
+            $keys[18] => $this->getProTriUnpaused(),
+            $keys[19] => $this->getProTypeProcess(),
+            $keys[20] => $this->getProShowDelegate(),
+            $keys[21] => $this->getProShowDynaform(),
+            $keys[22] => $this->getProCategory(),
+            $keys[23] => $this->getProSubCategory(),
+            $keys[24] => $this->getProIndustry(),
+            $keys[25] => $this->getProUpdateDate(),
+            $keys[26] => $this->getProCreateDate(),
+            $keys[27] => $this->getProCreateUser(),
+            $keys[28] => $this->getProHeight(),
+            $keys[29] => $this->getProWidth(),
+            $keys[30] => $this->getProTitleX(),
+            $keys[31] => $this->getProTitleY(),
+            $keys[32] => $this->getProDebug(),
+            $keys[33] => $this->getProDynaforms(),
+            $keys[34] => $this->getProDerivationScreenTpl(),
+            $keys[35] => $this->getProCost(),
+            $keys[36] => $this->getProUnitCost(),
+            $keys[37] => $this->getProItee(),
         );
         return $result;
     }
@@ -1986,105 +2076,111 @@ abstract class BaseProcess extends BaseObject implements Persistent
                 $this->setProUid($value);
                 break;
             case 1:
-                $this->setProParent($value);
+                $this->setProTitle($value);
                 break;
             case 2:
-                $this->setProTime($value);
+                $this->setProDescription($value);
                 break;
             case 3:
-                $this->setProTimeunit($value);
+                $this->setProParent($value);
                 break;
             case 4:
-                $this->setProStatus($value);
+                $this->setProTime($value);
                 break;
             case 5:
-                $this->setProTypeDay($value);
+                $this->setProTimeunit($value);
                 break;
             case 6:
-                $this->setProType($value);
+                $this->setProStatus($value);
                 break;
             case 7:
-                $this->setProAssignment($value);
+                $this->setProTypeDay($value);
                 break;
             case 8:
-                $this->setProShowMap($value);
+                $this->setProType($value);
                 break;
             case 9:
-                $this->setProShowMessage($value);
+                $this->setProAssignment($value);
                 break;
             case 10:
-                $this->setProSubprocess($value);
+                $this->setProShowMap($value);
                 break;
             case 11:
-                $this->setProTriOpen($value);
+                $this->setProShowMessage($value);
                 break;
             case 12:
-                $this->setProTriDeleted($value);
+                $this->setProSubprocess($value);
                 break;
             case 13:
-                $this->setProTriCanceled($value);
+                $this->setProTriOpen($value);
                 break;
             case 14:
-                $this->setProTriPaused($value);
+                $this->setProTriDeleted($value);
                 break;
             case 15:
-                $this->setProTriReassigned($value);
+                $this->setProTriCanceled($value);
                 break;
             case 16:
-                $this->setProTriUnpaused($value);
+                $this->setProTriPaused($value);
                 break;
             case 17:
-                $this->setProTypeProcess($value);
+                $this->setProTriReassigned($value);
                 break;
             case 18:
-                $this->setProShowDelegate($value);
+                $this->setProTriUnpaused($value);
                 break;
             case 19:
-                $this->setProShowDynaform($value);
+                $this->setProTypeProcess($value);
                 break;
             case 20:
-                $this->setProCategory($value);
+                $this->setProShowDelegate($value);
                 break;
             case 21:
-                $this->setProSubCategory($value);
+                $this->setProShowDynaform($value);
                 break;
             case 22:
-                $this->setProIndustry($value);
+                $this->setProCategory($value);
                 break;
             case 23:
-                $this->setProUpdateDate($value);
+                $this->setProSubCategory($value);
                 break;
             case 24:
-                $this->setProCreateDate($value);
+                $this->setProIndustry($value);
                 break;
             case 25:
-                $this->setProCreateUser($value);
+                $this->setProUpdateDate($value);
                 break;
             case 26:
-                $this->setProHeight($value);
+                $this->setProCreateDate($value);
                 break;
             case 27:
-                $this->setProWidth($value);
+                $this->setProCreateUser($value);
                 break;
             case 28:
-                $this->setProTitleX($value);
+                $this->setProHeight($value);
                 break;
             case 29:
-                $this->setProTitleY($value);
+                $this->setProWidth($value);
                 break;
             case 30:
-                $this->setProDebug($value);
+                $this->setProTitleX($value);
                 break;
             case 31:
-                $this->setProDynaforms($value);
+                $this->setProTitleY($value);
                 break;
             case 32:
-                $this->setProDerivationScreenTpl($value);
+                $this->setProDebug($value);
                 break;
             case 33:
-                $this->setProCost($value);
+                $this->setProDynaforms($value);
                 break;
             case 34:
+                $this->setProDerivationScreenTpl($value);
+                break;
+            case 35:
+                $this->setProCost($value);
+                break;
+            case 36:
                 $this->setProUnitCost($value);
                 break;
             case 35:
@@ -2118,139 +2214,147 @@ abstract class BaseProcess extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[1], $arr)) {
-            $this->setProParent($arr[$keys[1]]);
+            $this->setProTitle($arr[$keys[1]]);
         }
 
         if (array_key_exists($keys[2], $arr)) {
-            $this->setProTime($arr[$keys[2]]);
+            $this->setProDescription($arr[$keys[2]]);
         }
 
         if (array_key_exists($keys[3], $arr)) {
-            $this->setProTimeunit($arr[$keys[3]]);
+            $this->setProParent($arr[$keys[3]]);
         }
 
         if (array_key_exists($keys[4], $arr)) {
-            $this->setProStatus($arr[$keys[4]]);
+            $this->setProTime($arr[$keys[4]]);
         }
 
         if (array_key_exists($keys[5], $arr)) {
-            $this->setProTypeDay($arr[$keys[5]]);
+            $this->setProTimeunit($arr[$keys[5]]);
         }
 
         if (array_key_exists($keys[6], $arr)) {
-            $this->setProType($arr[$keys[6]]);
+            $this->setProStatus($arr[$keys[6]]);
         }
 
         if (array_key_exists($keys[7], $arr)) {
-            $this->setProAssignment($arr[$keys[7]]);
+            $this->setProTypeDay($arr[$keys[7]]);
         }
 
         if (array_key_exists($keys[8], $arr)) {
-            $this->setProShowMap($arr[$keys[8]]);
+            $this->setProType($arr[$keys[8]]);
         }
 
         if (array_key_exists($keys[9], $arr)) {
-            $this->setProShowMessage($arr[$keys[9]]);
+            $this->setProAssignment($arr[$keys[9]]);
         }
 
         if (array_key_exists($keys[10], $arr)) {
-            $this->setProSubprocess($arr[$keys[10]]);
+            $this->setProShowMap($arr[$keys[10]]);
         }
 
         if (array_key_exists($keys[11], $arr)) {
-            $this->setProTriOpen($arr[$keys[11]]);
+            $this->setProShowMessage($arr[$keys[11]]);
         }
 
         if (array_key_exists($keys[12], $arr)) {
-            $this->setProTriDeleted($arr[$keys[12]]);
+            $this->setProSubprocess($arr[$keys[12]]);
         }
 
         if (array_key_exists($keys[13], $arr)) {
-            $this->setProTriCanceled($arr[$keys[13]]);
+            $this->setProTriOpen($arr[$keys[13]]);
         }
 
         if (array_key_exists($keys[14], $arr)) {
-            $this->setProTriPaused($arr[$keys[14]]);
+            $this->setProTriDeleted($arr[$keys[14]]);
         }
 
         if (array_key_exists($keys[15], $arr)) {
-            $this->setProTriReassigned($arr[$keys[15]]);
+            $this->setProTriCanceled($arr[$keys[15]]);
         }
 
         if (array_key_exists($keys[16], $arr)) {
-            $this->setProTriUnpaused($arr[$keys[16]]);
+            $this->setProTriPaused($arr[$keys[16]]);
         }
 
         if (array_key_exists($keys[17], $arr)) {
-            $this->setProTypeProcess($arr[$keys[17]]);
+            $this->setProTriReassigned($arr[$keys[17]]);
         }
 
         if (array_key_exists($keys[18], $arr)) {
-            $this->setProShowDelegate($arr[$keys[18]]);
+            $this->setProTriUnpaused($arr[$keys[18]]);
         }
 
         if (array_key_exists($keys[19], $arr)) {
-            $this->setProShowDynaform($arr[$keys[19]]);
+            $this->setProTypeProcess($arr[$keys[19]]);
         }
 
         if (array_key_exists($keys[20], $arr)) {
-            $this->setProCategory($arr[$keys[20]]);
+            $this->setProShowDelegate($arr[$keys[20]]);
         }
 
         if (array_key_exists($keys[21], $arr)) {
-            $this->setProSubCategory($arr[$keys[21]]);
+            $this->setProShowDynaform($arr[$keys[21]]);
         }
 
         if (array_key_exists($keys[22], $arr)) {
-            $this->setProIndustry($arr[$keys[22]]);
+            $this->setProCategory($arr[$keys[22]]);
         }
 
         if (array_key_exists($keys[23], $arr)) {
-            $this->setProUpdateDate($arr[$keys[23]]);
+            $this->setProSubCategory($arr[$keys[23]]);
         }
 
         if (array_key_exists($keys[24], $arr)) {
-            $this->setProCreateDate($arr[$keys[24]]);
+            $this->setProIndustry($arr[$keys[24]]);
         }
 
         if (array_key_exists($keys[25], $arr)) {
-            $this->setProCreateUser($arr[$keys[25]]);
+            $this->setProUpdateDate($arr[$keys[25]]);
         }
 
         if (array_key_exists($keys[26], $arr)) {
-            $this->setProHeight($arr[$keys[26]]);
+            $this->setProCreateDate($arr[$keys[26]]);
         }
 
         if (array_key_exists($keys[27], $arr)) {
-            $this->setProWidth($arr[$keys[27]]);
+            $this->setProCreateUser($arr[$keys[27]]);
         }
 
         if (array_key_exists($keys[28], $arr)) {
-            $this->setProTitleX($arr[$keys[28]]);
+            $this->setProHeight($arr[$keys[28]]);
         }
 
         if (array_key_exists($keys[29], $arr)) {
-            $this->setProTitleY($arr[$keys[29]]);
+            $this->setProWidth($arr[$keys[29]]);
         }
 
         if (array_key_exists($keys[30], $arr)) {
-            $this->setProDebug($arr[$keys[30]]);
+            $this->setProTitleX($arr[$keys[30]]);
         }
 
         if (array_key_exists($keys[31], $arr)) {
-            $this->setProDynaforms($arr[$keys[31]]);
+            $this->setProTitleY($arr[$keys[31]]);
         }
 
         if (array_key_exists($keys[32], $arr)) {
-            $this->setProDerivationScreenTpl($arr[$keys[32]]);
+            $this->setProDebug($arr[$keys[32]]);
         }
 
         if (array_key_exists($keys[33], $arr)) {
-            $this->setProCost($arr[$keys[33]]);
+            $this->setProDynaforms($arr[$keys[33]]);
         }
 
         if (array_key_exists($keys[34], $arr)) {
-            $this->setProUnitCost($arr[$keys[34]]);
+            $this->setProDerivationScreenTpl($arr[$keys[34]]);
+        }
+
+        if (array_key_exists($keys[35], $arr)) {
+            $this->setProCost($arr[$keys[35]]);
+        }
+
+        if (array_key_exists($keys[36], $arr)) {
+            $this->setProUnitCost($arr[$keys[36]]);
         }
 
         if (array_key_exists($keys[35], $arr)) {
@@ -2270,6 +2374,14 @@ abstract class BaseProcess extends BaseObject implements Persistent
 
         if ($this->isColumnModified(ProcessPeer::PRO_UID)) {
             $criteria->add(ProcessPeer::PRO_UID, $this->pro_uid);
+        }
+
+        if ($this->isColumnModified(ProcessPeer::PRO_TITLE)) {
+            $criteria->add(ProcessPeer::PRO_TITLE, $this->pro_title);
+        }
+
+        if ($this->isColumnModified(ProcessPeer::PRO_DESCRIPTION)) {
+            $criteria->add(ProcessPeer::PRO_DESCRIPTION, $this->pro_description);
         }
 
         if ($this->isColumnModified(ProcessPeer::PRO_PARENT)) {
@@ -2465,6 +2577,10 @@ abstract class BaseProcess extends BaseObject implements Persistent
      */
     public function copyInto($copyObj, $deepCopy = false)
     {
+
+        $copyObj->setProTitle($this->pro_title);
+
+        $copyObj->setProDescription($this->pro_description);
 
         $copyObj->setProParent($this->pro_parent);
 
