@@ -54,8 +54,6 @@ class ProcessDefinitionMigrator implements Importable, Exportable
             //Workflow elements
             $this->processes->updateProcessRow($data['workflow']['process']);
             $this->processes->createTaskRows($data['workflow']['tasks']);
-            $this->processes->createRouteRows($data['workflow']['routes']);
-            $this->processes->replaceRouteRows($data['workflow']['routes']);
             $this->processes->createLaneRows($data['workflow']['lanes']);
             $this->processes->createGatewayRows($data['workflow']['gateways']);
             $this->processes->createStepRows($data['workflow']['steps']);

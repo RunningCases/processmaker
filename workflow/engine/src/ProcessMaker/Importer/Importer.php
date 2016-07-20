@@ -269,10 +269,6 @@ abstract class Importer
                         $granularObj->import($objectList);
                     }
                 }
-                if($option === self::IMPORT_OPTION_CREATE_NEW || $option === self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW){
-                    $oProcessDef = new \ProcessMaker\BusinessModel\Migrator\ProcessDefinitionMigrator();
-                    $oProcessDef->afterImport($this->importData['tables']);
-                }
 
                 return $projectUid;
             }
