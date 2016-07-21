@@ -189,7 +189,8 @@ class NotificationDevice
                 'caseId' => $appFields['APP_UID'],
                 'caseTitle' => $appFields['APP_TITLE'],
                 'delIndex' => $iNewDelIndex,
-                'typeList' => $typeList
+                'typeList' => $typeList,
+                'caseNumber' => $appFields['APP_NUMBER']
             );
 
             if ($userIds) {
