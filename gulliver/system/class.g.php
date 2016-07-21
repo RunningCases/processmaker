@@ -333,7 +333,7 @@ class G
      * @param string $key
      * @return string
      */
-    public function decrypt ($string, $key)
+    public static function decrypt($string, $key)
     {
         //   if ( defined ( 'ENABLE_ENCRYPT' ) && ENABLE_ENCRYPT == 'yes' ) {
         //if (strpos($string, '|', 0) !== false) return $string;
@@ -1820,7 +1820,7 @@ class G
     * @param type Array $aFields
     * @return type String
     */
-    public function replaceDataGridField($sContent, $aFields, $nl2brRecursive = true)
+    public static function replaceDataGridField($sContent, $aFields, $nl2brRecursive = true)
     {
         $nrt     = array("\n",    "\r",    "\t");
         $nrthtml = array("(n /)", "(r /)", "(t /)");
@@ -2816,7 +2816,7 @@ class G
      * @access public
      * @return array
      */
-    public function array_merges ()
+    public static function array_merges()
     {
         $array = array ();
         $arrays = & func_get_args();
@@ -2963,7 +2963,7 @@ class G
      *   Constants: SYS_*
      *   Sessions : USER_* , URS_*
      */
-    public function getSystemConstants($params = null)
+    public static function getSystemConstants($params = null)
     {
         $t1 = G::microtime_float();
         $sysCon = array();
@@ -5704,7 +5704,7 @@ class G
     *
     * @return md5($string)
     */
-    public function encryptOld ($string)
+    public static function encryptOld($string)
     {
         return md5($string);
     }

@@ -3652,7 +3652,7 @@ function PMFCopyDocumentCase($appDocUid, $versionNumber, $targetCaseUid, $inputD
  * @param string | $taskUid | Task Uid | The unique Id of the Task.
  * @param string | $userGroupUid | Uid from User or Group | The unique Uid from User or Group.
  *
- * @return int Returns 1 when is assigned.
+ * @return int | $result | Result | Returns 1 when is assigned
  */
 
 function PMFAddUserGroupToTask($taskUid, $userGroupUid)
@@ -3742,3 +3742,89 @@ function PMFRemoveUserGroupFromTask($taskUid, $userGroupUid)
     return 1;
 }
 
+/**
+ * @method
+ *
+ * Sends emails to user's group using a template file
+ *
+ * @name PMFSendMessageToGroup
+ * @label PMF Send Message To Group
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFSendMessageToGroup.28.29
+ *
+ * @param string(32) | $groupId | Group ID | Unique id of Group.
+ * @param string(32) | $caseId | Case ID | The UID (unique identification) for a case, which is a string of 32 hexadecimal characters to identify the case.
+ * @param string | $from | Sender | The email address of the person who sends out the email.
+ * @param string | $subject | Subject of the email | The subject (title) of the email.
+ * @param string | $template | Name of the template | The name of the template file in plain text or HTML format which will produce the body of the email.
+ * @param array | $arrayField = [] | Variables for email template | Optional parameter. An associative array where the keys are the variable names and the values are the variables' values.
+ * @param array | $arrayAttachment = [] | Attachment | An Optional arrray. An array of files (full paths) to be attached to the email.
+ * @param boolean | $showMessage = true | Show message | Optional parameter. Set to TRUE to show the message in the case's message history.
+ * @param int | $delIndex = 0 | Delegation index of the case | Optional parameter. The delegation index of the current task in the case.
+ * @param mixed | $config = [] | Email server configuration | An optional array: An array of parameters to be used in the Email sent (MESS_ENGINE, MESS_SERVER, MESS_PORT, MESS_FROM_MAIL, MESS_RAUTH, MESS_ACCOUNT, MESS_PASSWORD, and SMTPSecure) Or String: UID of Email server.
+ * @param int | $limit = 100 | Limit | Limit of mails to send in each bach.
+ *
+ * @return int | $result | Result | Returns 1 when is send message to group
+ */
+function PMFSendMessageToGroup(
+    $groupId,
+    $caseId,
+    $from,
+    $subject,
+    $template,
+    $arrayField = [],
+    $arrayAttachment = [],
+    $showMessage = true,
+    $delIndex = 0,
+    $config = [],
+    $limit = 100
+) {
+    //Verify data and Set variables
+    $group = new \ProcessMaker\BusinessModel\Group();
+    $case = new \ProcessMaker\BusinessModel\Cases();
+
+    $group->throwExceptionIfNotExistsGroup($groupId, '$groupId');
+
+    $arrayApplicationData = $case->getApplicationRecordByPk($caseId, ['$applicationUid' => '$caseId'], true);
+
+    //Send mails
+    $criteriaGroupUser = $group->getUserCriteria($groupId, ['condition' => [[UsersPeer::USR_STATUS, 'ACTIVE', Criteria::EQUAL]]]);
+
+    $start = 0;
+
+    do {
+        $flagNextRecord = false;
+
+        $to = '';
+
+        $criteria = clone $criteriaGroupUser;
+
+        $criteria->setOffset($start);
+        $criteria->setLimit($limit);
+
+        $rsCriteria = GroupUserPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+        while ($rsCriteria->next()) {
+            $record = $rsCriteria->getRow();
+
+            $to .= (($to != '')? ', ' : '') . $record['USR_EMAIL'];
+
+            $flagNextRecord = true;
+        }
+
+        if ($flagNextRecord) {
+            $result = PMFSendMessage(
+                $caseId, $from, $to, null, null, $subject, $template, $arrayField, $arrayAttachment, $showMessage, $delIndex, $config
+            );
+
+            if ($result == 0) {
+                return 0;
+            }
+        }
+
+        $start += $limit;
+    } while ($flagNextRecord);
+
+    //Return
+    return 1;
+}
