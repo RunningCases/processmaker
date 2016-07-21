@@ -12,31 +12,13 @@ use \Luracast\Restler\RestException;
 class Pmtable extends Api
 {
     /**
-     * Constructor of the class
-     *
-     * return void
-     */
-    public function __construct()
-    {
-        try {
-            $user = new \ProcessMaker\BusinessModel\User();
-
-            $usrUid = $this->getUserId();
-
-            if (!$user->checkPermission($usrUid, "PM_SETUP")) {
-                throw new \Exception(\G::LoadTranslation("ID_USER_NOT_HAVE_PERMISSION", array($usrUid)));
-            }
-        } catch (\Exception $e) {
-            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
-        }
-    }
-
-    /**
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
+     * @access protected
+     * @class  AccessControl {@permission PM_SETUP_PM_TABLES}
      * @url GET
      */
     public function doGetPmTables()
@@ -57,6 +39,8 @@ class Pmtable extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
+     * @access protected
+     * @class  AccessControl {@permission PM_SETUP_PM_TABLES}
      * @url GET /:pmt_uid
      */
     public function doGetPmTable($pmt_uid)
@@ -77,6 +61,8 @@ class Pmtable extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
+     * @access protected
+     * @class  AccessControl {@permission PM_SETUP_PM_TABLES}
      * @url GET /:pmt_uid/data
      */
     public function doGetPmTableData($pmt_uid, $filter = null)
@@ -99,6 +85,8 @@ class Pmtable extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
+     * @access protected
+     * @class  AccessControl {@permission PM_SETUP_PM_TABLES}
      * @url POST
      * @status 201
      */
@@ -128,6 +116,8 @@ class Pmtable extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
+     * @access protected
+     * @class  AccessControl {@permission PM_SETUP_PM_TABLES}
      * @url POST /:pmt_uid/data
      * @status 201
      */
@@ -153,6 +143,8 @@ class Pmtable extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
+     * @access protected
+     * @class  AccessControl {@permission PM_SETUP_PM_TABLES}
      * @url PUT /:pmt_uid
      */
     public function doPutPmTable(
@@ -177,6 +169,8 @@ class Pmtable extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
+     * @access protected
+     * @class  AccessControl {@permission PM_SETUP_PM_TABLES}
      * @url PUT /:pmt_uid/data
      */
     public function doPutPmTableData(
@@ -200,6 +194,8 @@ class Pmtable extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
+     * @access protected
+     * @class  AccessControl {@permission PM_SETUP_PM_TABLES}
      * @url DELETE /:pmt_uid
      */
     public function doDeletePmTable($pmt_uid)
@@ -226,6 +222,8 @@ class Pmtable extends Api
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      *
+     * @access protected
+     * @class  AccessControl {@permission PM_SETUP_PM_TABLES}
      * @url DELETE /:pmt_uid/data/:key1/:value1
      * @url DELETE /:pmt_uid/data/:key1/:value1/:key2/:value2
      * @url DELETE /:pmt_uid/data/:key1/:value1/:key2/:value2/:key3/:value3
