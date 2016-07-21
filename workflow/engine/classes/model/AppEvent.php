@@ -125,14 +125,11 @@ class AppEvent extends BaseAppEvent
             $oCriteria->addSelectColumn( EventPeer::PRO_UID );
             $oCriteria->addSelectColumn( EventPeer::EVN_WHEN_OCCURS );
             $oCriteria->addSelectColumn( EventPeer::EVN_ACTION );
+            $oCriteria->addSelectColumn( ApplicationPeer::APP_TITLE );
+            $oCriteria->addSelectColumn( TaskPeer::TAS_TITLE );
+            $oCriteria->addSelectColumn( ProcessPeer::PRO_TITLE );
             $oCriteria->addAsColumn( 'EVN_DESCRIPTION', 'C1.CON_VALUE' );
-            $oCriteria->addAsColumn( 'TAS_TITLE', 'C2.CON_VALUE' );
-            $oCriteria->addAsColumn( 'APP_TITLE', 'C3.CON_VALUE' );
-            $oCriteria->addAsColumn( 'PRO_TITLE', 'C4.CON_VALUE' );
             $oCriteria->addAlias( 'C1', 'CONTENT' );
-            $oCriteria->addAlias( 'C2', 'CONTENT' );
-            $oCriteria->addAlias( 'C3', 'CONTENT' );
-            $oCriteria->addAlias( 'C4', 'CONTENT' );
             $oCriteria->addJoin( AppEventPeer::EVN_UID, EventPeer::EVN_UID, Criteria::LEFT_JOIN );
             $del = DBAdapter::getStringDelimiter();
             $aConditions = array ();
@@ -149,31 +146,9 @@ class AppEvent extends BaseAppEvent
             $aConditions[] = array (AppEventPeer::DEL_INDEX,AppDelegationPeer::DEL_INDEX
             );
             $oCriteria->addJoinMC( $aConditions, Criteria::LEFT_JOIN );
-            $aConditions = array ();
-            $aConditions[] = array (AppDelegationPeer::TAS_UID,'C2.CON_ID'
-            );
-            $aConditions[] = array ('C2.CON_CATEGORY',$del . 'TAS_TITLE' . $del
-            );
-            $aConditions[] = array ('C2.CON_LANG',$del . SYS_LANG . $del
-            );
-            $oCriteria->addJoinMC( $aConditions, Criteria::LEFT_JOIN );
-            $aConditions = array ();
-            $aConditions[] = array (AppDelegationPeer::APP_UID,'C3.CON_ID'
-            );
-            $aConditions[] = array ('C3.CON_CATEGORY',$del . 'APP_TITLE' . $del
-            );
-            $aConditions[] = array ('C3.CON_LANG',$del . SYS_LANG . $del
-            );
-            $oCriteria->addJoinMC( $aConditions, Criteria::LEFT_JOIN );
-            $aConditions = array ();
-            $aConditions[] = array (AppDelegationPeer::PRO_UID,'C4.CON_ID'
-            );
-            $aConditions[] = array ('C4.CON_CATEGORY',$del . 'PRO_TITLE' . $del
-            );
-            $aConditions[] = array ('C4.CON_LANG',$del . SYS_LANG . $del
-            );
-
-            $oCriteria->addJoinMC( $aConditions, Criteria::LEFT_JOIN );
+            $oCriteria->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
+            $oCriteria->addJoin(AppEventPeer::APP_UID, ApplicationPeer::APP_UID, Criteria::LEFT_JOIN);
+            $oCriteria->addJoin(AppDelegationPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
             $oCriteria->add( AppEventPeer::EVN_UID, '', Criteria::NOT_EQUAL );
             if ($sProcessUid != '') {
                 $oCriteria->add( EventPeer::PRO_UID, $sProcessUid );
@@ -305,7 +280,7 @@ class AppEvent extends BaseAppEvent
                 $oPMScript = new PMScript();
 
                 $task = new Task();
-                $taskFields = $task->Load( $aRow['TAS_UID'] );
+                $taskFields = $task->load( $aRow['TAS_UID'] );
                 $aFields['APP_DATA']['APP_NUMBER'] = $aFields['APP_NUMBER'];
                 $aFields['APP_DATA']['TAS_TITLE'] = $taskFields['TAS_TITLE'];
                 $aFields['APP_DATA']['DEL_TASK_DUE_DATE'] = $aRow['DEL_TASK_DUE_DATE'];

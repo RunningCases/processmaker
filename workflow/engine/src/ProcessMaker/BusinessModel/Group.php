@@ -102,20 +102,13 @@ class Group
             $criteria = new \Criteria("workflow");
 
             $criteria->addSelectColumn(\GroupwfPeer::GRP_UID);
-
-            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
-
-            $arrayCondition = array();
-            $arrayCondition[] = array(\GroupwfPeer::GRP_UID, "CT.CON_ID", \Criteria::EQUAL);
-            $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "GRP_TITLE" . $delimiter, \Criteria::EQUAL);
-            $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
-            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+            $criteria->addSelectColumn(\GroupwfPeer::GRP_TITLE);
 
             if ($groupUidExclude != "") {
                 $criteria->add(\GroupwfPeer::GRP_UID, $groupUidExclude, \Criteria::NOT_EQUAL);
             }
 
-            $criteria->add("CT.CON_VALUE", $groupTitle, \Criteria::EQUAL);
+            $criteria->add(\GroupwfPeer::GRP_TITLE, $groupTitle, \Criteria::EQUAL);
 
             $rsCriteria = \GroupwfPeer::doSelectRS($criteria);
 
@@ -314,14 +307,10 @@ class Group
             $criteria = new \Criteria("workflow");
 
             $criteria->addSelectColumn(\GroupwfPeer::GRP_UID);
+            $criteria->addSelectColumn(\GroupwfPeer::GRP_TITLE);
             $criteria->addSelectColumn(\GroupwfPeer::GRP_STATUS);
             $criteria->addSelectColumn(\GroupwfPeer::GRP_LDAP_DN);
             $criteria->addSelectColumn(\GroupwfPeer::GRP_UX);
-            $criteria->addAsColumn("GRP_TITLE", \ContentPeer::CON_VALUE);
-            $criteria->addJoin(\GroupwfPeer::GRP_UID, \ContentPeer::CON_ID, \Criteria::LEFT_JOIN);
-            $criteria->add(\ContentPeer::CON_CATEGORY, "GRP_TITLE", \Criteria::EQUAL);
-            $criteria->add(\ContentPeer::CON_LANG, SYS_LANG, \Criteria::EQUAL);
-
             return $criteria;
         } catch (\Exception $e) {
             throw $e;
@@ -508,7 +497,7 @@ class Group
 
                 $search = $arraySearch[(isset($arrayFilterData["filterOption"]))? $arrayFilterData["filterOption"] : ""];
 
-                $criteria->add(\ContentPeer::CON_VALUE, $search, \Criteria::LIKE);
+                $criteria->add(\GroupwfPeer::GRP_TITLE, $search, \Criteria::LIKE);
             }
 
             //Number records total

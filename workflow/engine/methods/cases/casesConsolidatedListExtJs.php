@@ -19,10 +19,8 @@ $usrUid = $_SESSION["USER_LOGGED"];
 $oCriteria = new Criteria("workflow");
 $oCriteria->addSelectColumn("*");
 $oCriteria->addSelectColumn(CaseConsolidatedCorePeer::TAS_UID);
-$oCriteria->addJoin(CaseConsolidatedCorePeer::TAS_UID,ContentPeer::CON_ID, Criteria::LEFT_JOIN);
+$oCriteria->addSelectColumn(TaskPeer::TAS_TITLE);
 $oCriteria->addJoin(CaseConsolidatedCorePeer::TAS_UID,TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
-$oCriteria->addAnd(ContentPeer::CON_CATEGORY, "TAS_TITLE");
-$oCriteria->addAnd(ContentPeer::CON_LANG, "en");
 
 $params = array(); //This will be filled with the parameters
 $sql = BasePeer::createSelectSql($oCriteria, $params);
@@ -211,22 +209,16 @@ function getProcessArray($action, $userUid)
             $cProcess = new Criteria("workflow");
             $cProcess->clearSelectColumns();
             $cProcess->addSelectColumn(ProcessPeer::PRO_UID);
-            $cProcess->addSelectColumn(ContentPeer::CON_VALUE);
+            $cProcess->addSelectColumn(ProcessPeer::PRO_TITLE);
 
             $del = DBAdapter::getStringDelimiter();
-
-            $conds = array();
-            $conds[] = array(ProcessPeer::PRO_UID,      ContentPeer::CON_ID);
-            $conds[] = array(ContentPeer::CON_CATEGORY, $del . "PRO_TITLE" . $del);
-            $conds[] = array(ContentPeer::CON_LANG,     $del . $lang . $del);
-            $cProcess->addJoinMC($conds, Criteria::LEFT_JOIN);
             $cProcess->add(ProcessPeer::PRO_STATUS, "ACTIVE");
             $oDataset = ProcessPeer::doSelectRS($cProcess);
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $processes[] = array($aRow["PRO_UID"], $aRow["CON_VALUE"]);
+                $processes[] = array($aRow["PRO_UID"], $aRow["PRO_TITLE"]);
                 $oDataset->next();
             }
 

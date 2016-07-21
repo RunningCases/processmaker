@@ -22,6 +22,8 @@
       <parameter name="Comment" value="The application"/>
     </vendor>
     <column name="APP_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+    <column name="APP_TITLE" type="LONGVARCHAR" required="true"/>
+    <column name="APP_DESCRIPTION" type="LONGVARCHAR"/>
     <column name="APP_NUMBER" type="INTEGER" required="true" default="0"/>
     <column name="APP_PARENT" type="VARCHAR" size="32" required="true" default="0"/>
     <column name="APP_STATUS" type="VARCHAR" size="100" required="true" default=""/>
@@ -436,6 +438,7 @@
       <parameter name="Comment" value="Departments"/>
     </vendor>
     <column name="DEP_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+    <column name="DEP_TITLE" type="LONGVARCHAR" required="true"/>
     <column name="DEP_PARENT" type="VARCHAR" size="32" required="true" default=""/>
     <column name="DEP_MANAGER" type="VARCHAR" size="32" required="true" default=""/>
     <column name="DEP_LOCATION" type="INTEGER" required="true" default="0"/>
@@ -532,6 +535,7 @@
       <parameter name="Comment" value=""/>
     </vendor>
     <column name="GRP_UID" type="VARCHAR" size="32" required="true" primaryKey="true"/>
+    <column name="GRP_TITLE" type="LONGVARCHAR" required="true"/>
     <column name="GRP_STATUS" type="CHAR" size="8" required="true" default="ACTIVE"/>
     <column name="GRP_LDAP_DN" type="VARCHAR" size="255" required="true" default=""/>
     <column name="GRP_UX" type="VARCHAR" size="128" default="NORMAL"/>
@@ -620,6 +624,8 @@
     </vendor>
     <column name="INP_DOC_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" default="0"/>
+    <column name="INP_DOC_TITLE" type="LONGVARCHAR" required="true"/>
+    <column name="INP_DOC_DESCRIPTION" type="LONGVARCHAR"/>
     <column name="INP_DOC_FORM_NEEDED" type="VARCHAR" size="20" required="true" default="REAL"/>
     <column name="INP_DOC_ORIGINAL" type="VARCHAR" size="20" required="true" default="COPY"/>
     <column name="INP_DOC_PUBLISHED" type="VARCHAR" size="20" required="true" default="PRIVATE"/>
@@ -870,6 +876,8 @@
       <parameter name="Comment" value="Store process Information"/>
     </vendor>
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+    <column name="PRO_TITLE" type="LONGVARCHAR" required="true"/>
+    <column name="PRO_DESCRIPTION" type="LONGVARCHAR"/>
     <column name="PRO_PARENT" type="VARCHAR" size="32" required="true" default="0"/>
     <column name="PRO_TIME" type="DOUBLE" required="true" default="1"/>
     <column name="PRO_TIMEUNIT" type="VARCHAR" size="20" required="true" null="yes" default="DAYS"/>
@@ -1249,6 +1257,15 @@
     </vendor>
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="TAS_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+
+    <column name="TAS_TITLE" type="LONGVARCHAR" required="true"/>
+    <column name="TAS_DESCRIPTION" type="LONGVARCHAR"/>
+    <column name="TAS_DEF_TITLE" type="LONGVARCHAR"/>
+    <column name="TAS_DEF_SUBJECT_MESSAGE" type="LONGVARCHAR"/>
+    <column name="TAS_DEF_PROC_CODE" type="LONGVARCHAR"/>
+    <column name="TAS_DEF_MESSAGE" type="LONGVARCHAR"/>
+    <column name="TAS_DEF_DESCRIPTION" type="LONGVARCHAR"/>
+
     <column name="TAS_TYPE" type="VARCHAR" size="50" required="true" default="NORMAL"/>
     <column name="TAS_DURATION" type="DOUBLE" required="true" default="0"/>
     <column name="TAS_DELAY_TYPE" type="VARCHAR" size="30" required="true" default=""/>

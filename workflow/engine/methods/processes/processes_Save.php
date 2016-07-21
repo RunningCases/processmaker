@@ -40,9 +40,7 @@ switch ($function) {
         $snameProcess = urldecode( $_POST['NAMEPROCESS'] );
         $oCriteria = new Criteria( 'workflow' );
         $oCriteria->addSelectColumn( 'COUNT(*) AS PROCESS' );
-        $oCriteria->add( ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
-        $oCriteria->add( ContentPeer::CON_LANG, SYS_LANG );
-        $oCriteria->add( ContentPeer::CON_VALUE, $snameProcess );
+        $oCriteria->add(ProcessPeer::PRO_TITLE, $snameProcess);
         $oDataset = ContentPeer::doSelectRS( $oCriteria );
         $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
         $oDataset->next();

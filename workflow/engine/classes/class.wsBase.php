@@ -178,7 +178,7 @@ class wsBase
 
             while ($aRow = $oDataset->getRow()) {
                 $oProcess = new Process();
-                $arrayProcess = $oProcess->Load( $aRow['PRO_UID'] );
+                $arrayProcess = $oProcess->load( $aRow['PRO_UID'] );
                 $result[] = array ('guid' => $aRow['PRO_UID'],'name' => $arrayProcess['PRO_TITLE']
                 );
                 $oDataset->next();
@@ -229,32 +229,40 @@ class wsBase
     /**
      * get all groups
      *
-     * @param none
-     * @return $result will return an object
+     * @param null $search
+     * @param null $regex
+     * @param null $start
+     * @param null $limit
+     * @return array|stdClass
      */
-    public function groupList ()
+    public function groupList($regex = null, $start = null, $limit = null)
     {
         try {
-            $result = array ();
-            $oCriteria = new Criteria( 'workflow' );
-            $oCriteria->add( GroupwfPeer::GRP_STATUS, 'ACTIVE' );
-            $oDataset = GroupwfPeer::doSelectRS( $oCriteria );
-            $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-            $oDataset->next();
-
-            while ($aRow = $oDataset->getRow()) {
-                $oGroupwf = new Groupwf();
-                $arrayGroupwf = $oGroupwf->Load( $aRow['GRP_UID'] );
-                $result[] = array ('guid' => $aRow['GRP_UID'],'name' => $arrayGroupwf['GRP_TITLE']
-                );
-                $oDataset->next();
+            $criteria = new Criteria('workflow');
+            $criteria->addSelectColumn(GroupwfPeer::GRP_UID);
+            $criteria->addSelectColumn(GroupwfPeer::GRP_TITLE);
+            $criteria->add(GroupwfPeer::GRP_STATUS, 'ACTIVE');
+            $criteria->addAscendingOrderByColumn(GroupwfPeer::GRP_TITLE);
+            if ($regex) {
+                $regex = GroupwfPeer::GRP_TITLE . " REGEXP '" . $regex . "'";
+                $criteria->add(GroupwfPeer::GRP_TITLE, $regex, Criteria::CUSTOM);
             }
-
+            if ($start) {
+                $criteria->setOffset($start);
+            }
+            if ($limit) {
+                $criteria->setLimit($limit);
+            }
+            $rs = GroupwfPeer::doSelectRS($criteria);
+            $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $result = array();
+            while ($rs->next()) {
+                $rows = $rs->getRow();
+                $result[] = array('guid' => $rows['GRP_UID'], 'name' => $rows['GRP_TITLE']);
+            }
             return $result;
         } catch (Exception $e) {
-            $result[] = array ('guid' => $e->getMessage(),'name' => $e->getMessage()
-            );
-
+            $result[] = array('guid' => $e->getMessage(), 'name' => $e->getMessage());
             return $result;
         }
     }
@@ -279,7 +287,7 @@ class wsBase
                 $oDepartment = new Department();
                 $aDepartment = $oDepartment->Load( $aRow['DEP_UID'] );
                 $node['guid'] = $aRow['DEP_UID'];
-                $node['name'] = $aDepartment['DEPO_TITLE'];
+                $node['name'] = $aDepartment['DEP_TITLE'];
                 $node['parentUID'] = $aDepartment['DEP_PARENT'];
                 $node['dn'] = $aDepartment['DEP_LDAP_DN'];
 
@@ -838,7 +846,7 @@ class wsBase
     public function taskList ($userId)
     {
         try {
-            g::loadClass( 'groups' );
+            G::LoadClass( 'groups' );
             $oGroup = new Groups();
             $aGroups = $oGroup->getActiveGroupsForAnUser( $userId );
 
@@ -847,19 +855,9 @@ class wsBase
             $del = DBAdapter::getStringDelimiter();
             $oCriteria->addSelectColumn( TaskPeer::PRO_UID );
             $oCriteria->addSelectColumn( TaskPeer::TAS_UID );
+            $oCriteria->addSelectColumn( TaskPeer::TAS_TITLE );
             $oCriteria->addSelectColumn( TaskPeer::TAS_START );
             $oCriteria->setDistinct();
-            $oCriteria->addAsColumn( 'TAS_TITLE', 'C1.CON_VALUE' );
-            $oCriteria->addAlias( "C1", 'CONTENT' );
-            $tasTitleConds = array ();
-            $tasTitleConds[] = array (TaskPeer::TAS_UID,'C1.CON_ID'
-            );
-            $tasTitleConds[] = array ('C1.CON_CATEGORY',$del . 'TAS_TITLE' . $del
-            );
-            $tasTitleConds[] = array ('C1.CON_LANG',$del . SYS_LANG . $del
-            );
-            $oCriteria->addJoinMC( $tasTitleConds, Criteria::LEFT_JOIN );
-
             $oCriteria->addJoin( TaskPeer::TAS_UID, TaskUserPeer::TAS_UID, Criteria::LEFT_JOIN );
             $oCriteria->addOr( TaskUserPeer::USR_UID, $userId );
             $oCriteria->addOr( TaskUserPeer::USR_UID, $aGroups, Criteria::IN );
@@ -1952,7 +1950,7 @@ class wsBase
             $pro = $oProcesses->processExists( $processId );
 
             if (! $pro) {
-                $result = new wsResponse( 11, G::loadTranslation( 'ID_INVALID_PROCESS' ) . " " . $processId );
+                $result = new wsResponse( 11, G::LoadTranslation( 'ID_INVALID_PROCESS' ) . " " . $processId );
 
                 $g->sessionVarRestore();
 
@@ -1984,7 +1982,7 @@ class wsBase
                 }
 
                 if ($tasksInThisProcess > 1) {
-                    $result = new wsResponse( 13, G::loadTranslation( 'ID_MULTIPLE_STARTING_TASKS' ) );
+                    $result = new wsResponse( 13, G::LoadTranslation( 'ID_MULTIPLE_STARTING_TASKS' ) );
 
                     $g->sessionVarRestore();
 
@@ -1997,7 +1995,7 @@ class wsBase
             $arrayTaskTypeToExclude = array("START-TIMER-EVENT");
 
             if (!is_null($task) && !in_array($task->getTasType(), $arrayTaskTypeToExclude) && $founded == "") {
-                $result = new wsResponse( 14, G::loadTranslation( 'ID_TASK_INVALID_USER_NOT_ASSIGNED_TASK' ) );
+                $result = new wsResponse( 14, G::LoadTranslation( 'ID_TASK_INVALID_USER_NOT_ASSIGNED_TASK' ) );
 
                 $g->sessionVarRestore();
 
@@ -2046,7 +2044,7 @@ class wsBase
             }
 
             //Response
-            $result = new wsResponse( 0, G::loadTranslation( 'ID_STARTED_SUCCESSFULLY' ) );
+            $result = new wsResponse( 0, G::LoadTranslation( 'ID_STARTED_SUCCESSFULLY' ) );
             $result->caseId = $caseId;
             $result->caseNumber = $caseNr;
 
@@ -2193,7 +2191,7 @@ class wsBase
                 $oCriteria->add( AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL );
 
                 if (AppDelegationPeer::doCount( $oCriteria ) > 1) {
-                    $result = new wsResponse( 20, G::loadTranslation( 'ID_SPECIFY_DELEGATION_INDEX' ) );
+                    $result = new wsResponse( 20, G::LoadTranslation( 'ID_SPECIFY_DELEGATION_INDEX' ) );
                     return $result;
                 }
 
@@ -2208,13 +2206,13 @@ class wsBase
             $appdel = $oAppDel->Load( $caseId, $delIndex );
 
             if ($userId != $appdel['USR_UID']) {
-                $result = new wsResponse( 17, G::loadTranslation( 'ID_CASE_ASSIGNED_ANOTHER_USER' ) );
+                $result = new wsResponse( 17, G::LoadTranslation( 'ID_CASE_ASSIGNED_ANOTHER_USER' ) );
 
                 return $result;
             }
 
             if ($appdel['DEL_FINISH_DATE'] != null) {
-                $result = new wsResponse( 18, G::loadTranslation( 'ID_CASE_DELEGATION_ALREADY_CLOSED' ) );
+                $result = new wsResponse( 18, G::LoadTranslation( 'ID_CASE_DELEGATION_ALREADY_CLOSED' ) );
 
                 return $result;
             }
@@ -2232,7 +2230,7 @@ class wsBase
 
             if (is_array( $aRow )) {
                 if (isset( $aRow['APP_DISABLE_ACTION_USER'] ) && $aRow['APP_DISABLE_ACTION_USER'] != 0 && isset( $aRow['APP_DISABLE_ACTION_DATE'] ) && $aRow['APP_DISABLE_ACTION_DATE'] != '') {
-                    $result = new wsResponse( 19, G::loadTranslation( 'ID_CASE_IN_STATUS' ) . " " . $aRow['APP_TYPE'] );
+                    $result = new wsResponse( 19, G::LoadTranslation( 'ID_CASE_IN_STATUS' ) . " " . $aRow['APP_TYPE'] );
 
                     return $result;
                 }
@@ -2370,19 +2368,19 @@ class wsBase
 
                 if (isset($derive[1])) {
                     if ($derive[1]['ROU_TYPE'] == 'SELECT') {
-                        $result = new wsResponse(21, G::loadTranslation('ID_CAN_NOT_ROUTE_CASE_USING_WEBSERVICES'));
+                        $result = new wsResponse(21, G::LoadTranslation('ID_CAN_NOT_ROUTE_CASE_USING_WEBSERVICES'));
 
                         return $result;
                     }
                 } else {
-                    $result = new wsResponse(22, G::loadTranslation('ID_TASK_DOES_NOT_HAVE_ROUTING_RULE'));
+                    $result = new wsResponse(22, G::LoadTranslation('ID_TASK_DOES_NOT_HAVE_ROUTING_RULE'));
 
                     return $result;
                 }
 
                 foreach ($derive as $key => $val) {
                     if ($val['NEXT_TASK']['TAS_ASSIGN_TYPE'] == 'MANUAL') {
-                        $result = new wsResponse(15, G::loadTranslation('ID_TASK_DEFINED_MANUAL_ASSIGNMENT'));
+                        $result = new wsResponse(15, G::LoadTranslation('ID_TASK_DEFINED_MANUAL_ASSIGNMENT'));
 
                         return $result;
                     }
@@ -2754,18 +2752,10 @@ class wsBase
         $result = array ();
         try {
             $oCriteria = new Criteria( 'workflow' );
-            $del       = DBAdapter::getStringDelimiter();
             $oCriteria->addSelectColumn( AppDelegationPeer::DEL_INDEX );
             $oCriteria->addSelectColumn( AppDelegationPeer::TAS_UID );
-
-            $oCriteria->addAsColumn( 'TAS_TITLE', 'C1.CON_VALUE' );
-            $oCriteria->addAlias( "C1", 'CONTENT' );
-            $tasTitleConds   = array ();
-            $tasTitleConds[] = array (AppDelegationPeer::TAS_UID,'C1.CON_ID');
-            $tasTitleConds[] = array ('C1.CON_CATEGORY',$del . 'TAS_TITLE' . $del);
-            $tasTitleConds[] = array ('C1.CON_LANG',$del . SYS_LANG . $del);
-            $oCriteria->addJoinMC( $tasTitleConds, Criteria::LEFT_JOIN );
-
+            $oCriteria->addSelectColumn(TaskPeer::TAS_TITLE);
+            $oCriteria->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID);
             $oCriteria->add( AppDelegationPeer::APP_UID, $caseId );
             $oCriteria->add( AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN' );
             $oCriteria->add( AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNULL );

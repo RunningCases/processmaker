@@ -132,7 +132,7 @@ class PMDashlet extends DashletInstance implements DashletInterface
                         $departmentInstance = new Department();
                         try {
                             $department = $departmentInstance->load( $row['DAS_INS_OWNER_UID'] );
-                            $row['DAS_INS_OWNER_TITLE'] = $department['DEPO_TITLE'];
+                            $row['DAS_INS_OWNER_TITLE'] = $department['DEP_TITLE'];
                         } catch (Exception $error) {
                             $this->remove( $row['DAS_INS_UID'] );
                             $row['DAS_INS_UID'] = '';
