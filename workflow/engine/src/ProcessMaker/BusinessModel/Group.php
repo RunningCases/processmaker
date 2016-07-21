@@ -625,9 +625,13 @@ class Group
      *
      * return object
      */
-    public function getUserCriteria($groupUid, $arrayFilterData = null, $arrayUserUidExclude = null)
+    public function getUserCriteria($groupUid, array $arrayWhere = null, $arrayUserUidExclude = null)
     {
         try {
+            $flag = !is_null($arrayWhere) && is_array($arrayWhere);
+            $flagCondition = $flag && array_key_exists('condition', $arrayWhere);
+            $flagFilter    = $flag && array_key_exists('filter', $arrayWhere);
+
             $criteria = new \Criteria("workflow");
 
             $criteria->addSelectColumn(\UsersPeer::USR_UID);
@@ -642,17 +646,23 @@ class Group
                 $criteria->add(\GroupUserPeer::GRP_UID, $groupUid, \Criteria::EQUAL);
             }
 
-            $criteria->add(\UsersPeer::USR_STATUS, "CLOSED", \Criteria::NOT_EQUAL);
+            if ($flagCondition && !empty($arrayWhere['condition'])) {
+                foreach ($arrayWhere['condition'] as $value) {
+                    $criteria->add($value[0], $value[1], $value[2]);
+                }
+            } else {
+                $criteria->add(\UsersPeer::USR_STATUS, 'CLOSED', \Criteria::NOT_EQUAL);
+            }
 
             if (!is_null($arrayUserUidExclude) && is_array($arrayUserUidExclude)) {
                 $criteria->add(\UsersPeer::USR_UID, $arrayUserUidExclude, \Criteria::NOT_IN);
             }
 
-            if (!is_null($arrayFilterData) && is_array($arrayFilterData) && isset($arrayFilterData["filter"]) && trim($arrayFilterData["filter"]) != "") {
+            if ($flagFilter && trim($arrayWhere['filter']) != '') {
                 $criteria->add(
-                    $criteria->getNewCriterion(\UsersPeer::USR_USERNAME, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE)->addOr(
-                    $criteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE)->addOr(
-                    $criteria->getNewCriterion(\UsersPeer::USR_LASTNAME, "%" . $arrayFilterData["filter"] . "%", \Criteria::LIKE)))
+                    $criteria->getNewCriterion(\UsersPeer::USR_USERNAME, '%' . $arrayWhere['filter'] . '%', \Criteria::LIKE)->addOr(
+                    $criteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME, '%' . $arrayWhere['filter'] . '%', \Criteria::LIKE)->addOr(
+                    $criteria->getNewCriterion(\UsersPeer::USR_LASTNAME, '%' . $arrayWhere['filter'] . '%', \Criteria::LIKE)))
                 );
             }
 

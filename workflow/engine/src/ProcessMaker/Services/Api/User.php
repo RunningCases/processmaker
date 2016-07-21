@@ -37,6 +37,8 @@ class User extends Api
     }
 
     /**
+     * @access protected
+     * @class  AccessControl {@permission PM_USERS}
      * @url GET
      */
     public function index($filter = null, $lfilter = null, $rfilter = null, $start = null, $limit = null)
@@ -59,6 +61,8 @@ class User extends Api
     }
 
     /**
+     * @access protected
+     * @class  AccessControl {@permission PM_USERS}
      * @url GET /:usr_uid
      *
      * @param string $usr_uid {@min 32}{@max 32}
@@ -78,6 +82,8 @@ class User extends Api
     }
 
     /**
+     * @access protected
+     * @class  AccessControl {@permission PM_USERS}
      * @url POST
      *
      * @param array $request_data
@@ -97,6 +103,8 @@ class User extends Api
     }
 
     /**
+     * @access protected
+     * @class  AccessControl {@permission PM_USERS}
      * @url PUT /:usr_uid
      *
      * @param string $usr_uid      {@min 32}{@max 32}
@@ -114,6 +122,8 @@ class User extends Api
     }
 
     /**
+     * @access protected
+     * @class  AccessControl {@permission PM_USERS}
      * @url DELETE /:usr_uid
      *
      * @param string $usr_uid {@min 32}{@max 32}
@@ -131,6 +141,8 @@ class User extends Api
     /**
      * @param string $usr_uid {@min 32} {@max 32}
      *
+     * @access protected
+     * @class  AccessControl {@permission PM_USERS}
      * @url POST /:usr_uid/image-upload
      */
     public function doPostUserImageUpload($usr_uid)

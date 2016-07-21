@@ -71,9 +71,7 @@ if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm
         if (!empty($arrayTrigger)) {
             G::LoadClass("codeScanner");
 
-            $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
-
-            $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
+            $cs = new CodeScanner(SYS_SYS);
 
             $strFoundDisabledCode = "";
 
@@ -313,7 +311,7 @@ if (isset($_POST["PRO_FILENAME"]) &&
         G::LoadClass( 'Process' );
         $oProcess = new Process();
         $processData = $oProcess->load( $prjUid );
-        $proType = $processData["PRO_TYPE"];    
+        $proType = $processData["PRO_TYPE"];
 
         $result = array(
             "success"                => true,

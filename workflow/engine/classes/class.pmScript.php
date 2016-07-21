@@ -119,6 +119,8 @@ class PMScript
      */
     public $affected_fields;
 
+    public $scriptExecutionTime = 0;
+
     /**
      * Constructor of the class PMScript
      *
@@ -346,7 +348,15 @@ class PMScript
         $sScript .= substr( $this->sScript, $iAux );
         $sScript = "try {\n" . $sScript . "\n} catch (Exception \$oException) {\n " . " \$this->aFields['__ERROR__'] = utf8_encode(\$oException->getMessage());\n}";
         //echo '<pre>-->'; print_r($this->aFields); echo '<---</pre>';
-        $this->executeAndCatchErrors( $sScript, $this->sScript );
+
+        $timeStart = microtime(true);
+
+        $this->executeAndCatchErrors($sScript, $this->sScript);
+
+        $timeEnd = microtime(true);
+
+        $this->scriptExecutionTime = round($timeEnd - $timeStart, 5);
+
         $this->aFields["__VAR_CHANGED__"] = implode(",", $this->affected_fields);
         for ($i = 0; $i < count( $this->affected_fields ); $i ++) {
             $_SESSION['TRIGGER_DEBUG']['DATA'][] = Array ('key' => $this->affected_fields[$i],'value' => isset( $this->aFields[$this->affected_fields[$i]] ) ? $this->aFields[$this->affected_fields[$i]] : ''
@@ -508,7 +518,7 @@ class PMScript
         }
         return $bResult;
     }
-    
+
     Public function evaluateVariable ()
     {
         $process = new Process();
@@ -530,7 +540,7 @@ class PMScript
                 if(strpos($var, '_label') === false) {
                     if(in_array($var,$processVariables)) {
                         if(isset($this->aFields[$var]) && is_array($this->aFields[$var][1]) ) {
-                            $varLabel = $var.'_label';   
+                            $varLabel = $var.'_label';
                             $arrayValue = $this->aFields[$var];
                             if(is_array($arrayValue) && sizeof($arrayValue)) {
                                 foreach($arrayValue as $val) {
@@ -546,7 +556,7 @@ class PMScript
                                         $varType = $varInfo['VAR_FIELD_TYPE'];
                                         switch($varType) {
                                             case 'array':
-                                                $arrayLabels = '["'.implode('","',$arrayLabels).'"]'; 
+                                                $arrayLabels = '["'.implode('","',$arrayLabels).'"]';
                                                 $newFields[$var] = $arrayValues;
                                                 $newFields[$varLabel] = $arrayLabels;
                                             break;
@@ -555,7 +565,7 @@ class PMScript
                                                 $newFields[$varLabel] = $arrayLabels[0];
                                             break;
                                         }
-                                        $this->affected_fields[] = $varLabel; 
+                                        $this->affected_fields[] = $varLabel;
                                         $this->aFields = array_merge($this->aFields,$newFields);
                                         unset($newFields);
                                         unset($arrayValues);
@@ -586,13 +596,13 @@ class PMScript
                                         }
                                     }
                                 } catch (Exception $e) {
-                                    
+
                                 }
                             }
                         }
                     }
                 }
-            }            
+            }
         }
     }
 }

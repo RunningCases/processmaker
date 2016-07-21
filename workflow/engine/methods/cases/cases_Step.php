@@ -196,6 +196,7 @@ if ($flagExecuteBeforeTriggers) {
     $_SESSION['TRIGGER_DEBUG']['DATA'] = Array ();
     $_SESSION['TRIGGER_DEBUG']['TRIGGERS_NAMES'] = Array ();
     $_SESSION['TRIGGER_DEBUG']['TRIGGERS_VALUES'] = Array ();
+    $_SESSION['TRIGGER_DEBUG']['TRIGGERS_EXECUTION_TIME'] = [];
 
     $triggers = $oCase->loadTriggers( $_SESSION['TASK'], $_GET['TYPE'], $_GET['UID'], 'BEFORE' );
 
@@ -210,6 +211,8 @@ if ($flagExecuteBeforeTriggers) {
         //Execute before triggers - Start
         $Fields['APP_DATA'] = $oCase->ExecuteTriggers( $_SESSION['TASK'], $_GET['TYPE'], $_GET['UID'], 'BEFORE', $Fields['APP_DATA'] );
         //Execute before triggers - End
+
+        $_SESSION['TRIGGER_DEBUG']['TRIGGERS_EXECUTION_TIME'] = $oCase->arrayTriggerExecutionTime;
     } else {
         unset( $_SESSION['_NO_EXECUTE_TRIGGERS_'] );
     }
@@ -631,6 +634,8 @@ try {
                     $Fields['DEL_INDEX'] = $_SESSION['INDEX'];
                     $Fields['TAS_UID'] = $_SESSION['TASK'];
                     //Execute after triggers - End
+
+                    $_SESSION['TRIGGER_DEBUG']['TRIGGERS_EXECUTION_TIME'] = $oCase->arrayTriggerExecutionTime;
 
                     //Save data - Start
                     unset($Fields['APP_STATUS']);
@@ -1187,4 +1192,3 @@ if ($_SESSION['TRIGGER_DEBUG']['ISSET'] && !$isIE) {
       showdebug();
     }' );
 }
-

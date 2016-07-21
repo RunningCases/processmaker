@@ -337,7 +337,8 @@ Ext.onReady(function(){
     [
       {name: 'name'},
       {name: 'execution_time'},
-      {name: 'code'}
+      {name: 'code'},
+      {name: "script_execution_time"}
     ]
   );
 
@@ -362,7 +363,8 @@ Ext.onReady(function(){
       columns: [
         {id:'name',header: _('ID_NAME'), width: 60, sortable: true, dataIndex: 'name'},
         {header: _('ID_EXECUTION'), width: 30, sortable: true, dataIndex: 'execution_time'},
-        {header: "Code", width: 30, sortable: false, dataIndex: 'code', hidden: true}
+        {header: "Code", width: 30, sortable: false, dataIndex: 'code', hidden: true},
+        {header: _("ID_EXECUTION_TIME") + " (" + _("ID_MILLISECONDS") + ")", dataIndex: "script_execution_time", width: 60, sortable: true, hidden: true}
       ],
 
       view: new Ext.grid.GroupingView({

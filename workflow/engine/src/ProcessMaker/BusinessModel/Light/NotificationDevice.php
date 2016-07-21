@@ -154,113 +154,96 @@ class NotificationDevice
     }
 
     /**
-     * Send Message each user id
-     *
-     * @param array $request_data
-     * @author Ronald Quenta <ronald.quenta@processmaker.com>
-     *
+     * @param $appFields
+     * @param $nextDel
+     * @param $iNewDelIndex
+     * @return array
+     * @throws \Exception
      */
-    public function routeCaseNotification($currentUserId, $processId, $currentTaskId, $appFields, $aTasks,
-                                          $nextIndex, $currentDelIndex)
+    public function routeCaseNotificationDevice($appFields, $nextDel, $iNewDelIndex)
     {
         try {
             $response = array();
             $typeList = 'todo';
-            foreach ($aTasks as $aTask) {
-                $arrayTaskUser = array();
-                $delIndex = null;
-                foreach ($nextIndex as $nIndex) {
-                    if ($aTask['TAS_UID'] == $nIndex['TAS_UID']) {
-                        $delIndex = $nIndex['DEL_INDEX'];
-                        break;
+            $arrayTaskUser = array();
+            switch ($nextDel["TAS_ASSIGN_TYPE"]) {
+                case "SELF_SERVICE":
+                    $arrayTaskUser = $this->getTaskUserSelfService($nextDel["TAS_UID"], $appFields);
+                    $typeList = 'unassigned';
+                    break;
+                default:
+                    if (isset($nextDel["USR_UID"]) && !empty($nextDel["USR_UID"])) {
+                        $arrayTaskUser = $nextDel["USR_UID"];
+                    }
+                    break;
+            }
+
+            $userIds = $arrayTaskUser;
+            //sub process
+            $taskAssignType = (isset($nextDel["TAS_ASSIGN_TYPE"])) ? $nextDel["TAS_ASSIGN_TYPE"] : $nextDel["SP_TYPE"];
+            $message = '#' . $appFields['APP_NUMBER'] . ' : ' . $appFields['APP_TITLE'];
+            $data = array(
+                'processId' => $appFields['PRO_UID'],
+                'taskId' => $nextDel["TAS_UID"],
+                'taskAssignType' => $taskAssignType,
+                'caseId' => $appFields['APP_UID'],
+                'caseTitle' => $appFields['APP_TITLE'],
+                'delIndex' => $iNewDelIndex,
+                'typeList' => $typeList,
+                'caseNumber' => $appFields['APP_NUMBER']
+            );
+
+            if ($userIds) {
+                $oNoti = new \NotificationDevice();
+                if (is_array($userIds)) {
+                    $devices = $oNoti->loadUsersArrayId($userIds);
+                } else {
+                    $devices = $oNoti->loadByUsersId($userIds);
+                    $lists = new \ProcessMaker\BusinessModel\Lists();
+                    $counter = $lists->getCounters($userIds);
+                    $light = new \ProcessMaker\Services\Api\Light();
+                    $result = $light->parserCountersCases($counter);
+                    $data['counters'] = $result;
+                }
+
+                $devicesAndroidIds = array();
+                $devicesAppleIds = array();
+                foreach ($devices as $dev) {
+                    switch ($dev['DEV_TYPE']) {
+                        case "apple":
+                            $devicesAppleIds[] = $dev['DEV_REG_ID'];
+                            break;
+                        case "android":
+                            $devicesAndroidIds[] = $dev['DEV_REG_ID'];
+                            break;
                     }
                 }
-                switch ($aTask["TAS_ASSIGN_TYPE"]) {
-                    case "MULTIPLE_INSTANCE":
-                    case "MULTIPLE_INSTANCE_VALUE_BASED":
-                        $arrayTaskUser = $this->getTaskUserMultipleInstance($aTask["TAS_UID"], $appFields);
-                        $delIndex = 0;
-                        break;
-                    case "SELF_SERVICE":
-                        $arrayTaskUser = $this->getTaskUserSelfService($aTask["TAS_UID"], $appFields);
-                        $typeList = 'unassigned';
-                        break;
-                    default:
-                        if (isset($aTask["USR_UID"]) && !empty($aTask["USR_UID"])) {
-                            $arrayTaskUser = $aTask["USR_UID"];
-                        }
-                        break;
+                if (count($devicesAppleIds) > 0) {
+                    $arrayData = array();
+                    $arrayData['NOT_FROM'] = $appFields['APP_CUR_USER'];
+                    $arrayData['DEV_TYPE'] = 'apple';
+                    $arrayData['DEV_UID'] = serialize($devicesAppleIds);
+                    $arrayData['NOT_MSG'] = $message;
+                    $arrayData['NOT_DATA'] = serialize($data);
+                    $arrayData['NOT_STATUS'] = "pending";
+                    $notQueue = new \NotificationQueue();
+                    $notQueue->create($arrayData);
                 }
-
-                $userIds = $arrayTaskUser;
-                $message = '#'. $appFields['APP_NUMBER'] . ' : '.$appFields['APP_TITLE'];
-                $data = array(
-                    'processId' => $processId,
-                    'taskId' => $aTask["TAS_UID"],
-                    'taskAssignType' => $aTask["TAS_ASSIGN_TYPE"],
-                    'caseId' => $appFields['APP_UID'],
-                    'caseTitle' => $appFields['APP_TITLE'],
-                    'delIndex' => $delIndex,
-                    'typeList' => $typeList,
-                    'caseNumber' => $appFields['APP_NUMBER']
-                );
-
-                if ($userIds) {
-                    $oNoti = new \NotificationDevice();
-                    $devices = array();
-                    if (is_array($userIds)) {
-                        $devices = $oNoti->loadUsersArrayId($userIds);
-                    } else {
-                        $devices = $oNoti->loadByUsersId($userIds);
-                        $lists   = new \ProcessMaker\BusinessModel\Lists();
-                        $counter = $lists->getCounters($userIds);
-                        $light   = new \ProcessMaker\Services\Api\Light();
-                        $result  = $light->parserCountersCases($counter);
-                        $data['counters'] = $result;
-                    }
-
-                    $devicesAndroidIds = array();
-                    $devicesAppleIds = array();
-                    foreach ($devices as $dev) {
-                        switch ($dev['DEV_TYPE']) {
-                            case "apple":
-                                $devicesAppleIds[] = $dev['DEV_REG_ID'];
-                                break;
-                            case "android":
-                                $devicesAndroidIds[] = $dev['DEV_REG_ID'];
-                                break;
-                        }
-                    }
-                    $isExistNextNotifications = $oNoti->isExistNextNotification($appFields['APP_UID'],
-                        $currentDelIndex);
-                    if (count($devicesAppleIds) > 0 && $isExistNextNotifications) {
-                        $arrayData = array();
-                        $arrayData['NOT_FROM'] = $currentUserId;
-                        $arrayData['DEV_TYPE'] = 'apple';
-                        $arrayData['DEV_UID'] = serialize($devicesAppleIds);
-                        $arrayData['NOT_MSG'] = $message;
-                        $arrayData['NOT_DATA'] = serialize($data);
-                        $arrayData['NOT_STATUS'] = "pending";
-                        $notQueue = new \NotificationQueue();
-                        $notQueue->create($arrayData);
-                    }
-                    if (count($devicesAndroidIds) > 0 && $isExistNextNotifications) {
-                        $arrayData = array();
-                        $arrayData['NOT_FROM'] = $currentUserId;
-                        $arrayData['DEV_TYPE'] = 'android';
-                        $arrayData['DEV_UID'] = serialize($devicesAndroidIds);
-                        $arrayData['NOT_MSG'] = $message;
-                        $arrayData['NOT_DATA'] = serialize($data);
-                        $arrayData['NOT_STATUS'] = "pending";
-                        $notQueue = new \NotificationQueue();
-                        $notQueue->create($arrayData);
-                    }
+                if (count($devicesAndroidIds) > 0) {
+                    $arrayData = array();
+                    $arrayData['NOT_FROM'] = $appFields['APP_CUR_USER'];
+                    $arrayData['DEV_TYPE'] = 'android';
+                    $arrayData['DEV_UID'] = serialize($devicesAndroidIds);
+                    $arrayData['NOT_MSG'] = $message;
+                    $arrayData['NOT_DATA'] = serialize($data);
+                    $arrayData['NOT_STATUS'] = "pending";
+                    $notQueue = new \NotificationQueue();
+                    $notQueue->create($arrayData);
                 }
             }
         } catch (\Exception $e) {
             throw new \Exception($e->getMessage(), Api::STAT_APP_EXCEPTION);
         }
-        
         return $response;
     }
 
@@ -300,18 +283,6 @@ class NotificationDevice
             }
         }
 
-        return $arrayTaskUser;
-    }
-    public function getTaskUserMultipleInstance($tas_uid, $appFields)
-    {
-        $oDerivation = new \Derivation();
-        $taskNextDel = \TaskPeer::retrieveByPK($tas_uid);
-        $oDerivation->case = new \Cases();
-        $arrayUsersOfTask = $oDerivation->getNextAssignedUser(array("APP_UID" => $appFields['APP_UID'], "NEXT_TASK" => $taskNextDel->toArray(\BasePeer::TYPE_FIELDNAME)));
-        $arrayTaskUser = array();
-        foreach ($arrayUsersOfTask as $arrayUser) {
-            $arrayTaskUser[] = $arrayUser["USR_UID"];
-        }
         return $arrayTaskUser;
     }
 }

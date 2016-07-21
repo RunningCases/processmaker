@@ -73,6 +73,7 @@ class Cases
     private $appSolr = null;
     public $dir = 'ASC';
     public $sort = 'APP_MSG_DATE';
+    public $arrayTriggerExecutionTime = [];
 
     public function __construct()
     {
@@ -3555,10 +3556,8 @@ class Cases
             $oPMScript = new PMScript();
             $oPMScript->setFields($aFields);
 
-            $arraySystemConfiguration = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
-
             /*----------------------------------********---------------------------------*/
-            $cs = new CodeScanner((isset($arraySystemConfiguration["enable_blacklist"]) && (int)($arraySystemConfiguration["enable_blacklist"]) == 1)? "DISABLED_CODE" : "");
+            $cs = new CodeScanner(SYS_SYS);
 
             $strFoundDisabledCode = "";
             /*----------------------------------********---------------------------------*/
@@ -3593,6 +3592,8 @@ class Cases
                 if ($bExecute) {
                     $oPMScript->setScript($aTrigger['TRI_WEBBOT']);
                     $oPMScript->execute();
+
+                    $this->arrayTriggerExecutionTime[$aTrigger['TRI_UID']] = $oPMScript->scriptExecutionTime;
                 }
             }
             /*----------------------------------********---------------------------------*/
@@ -7556,4 +7557,3 @@ class Cases
         return $rows;
     }
 }
-

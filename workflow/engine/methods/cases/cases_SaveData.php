@@ -70,21 +70,21 @@ if (!isset($_SESSION['USER_LOGGED'])) {
 }
 
 /**
- * If you can, you may want to set post_max_size to a low value (say 1M) to make 
- * testing easier. First test to see how your script behaves. Try uploading a file 
- * that is larger than post_max_size. If you do you will get a message like this 
+ * If you can, you may want to set post_max_size to a low value (say 1M) to make
+ * testing easier. First test to see how your script behaves. Try uploading a file
+ * that is larger than post_max_size. If you do you will get a message like this
  * in your error log:
- * 
- * [09-Jun-2010 19:28:01] PHP Warning:  POST Content-Length of 30980857 bytes exceeds 
+ *
+ * [09-Jun-2010 19:28:01] PHP Warning:  POST Content-Length of 30980857 bytes exceeds
  * the limit of 2097152 bytes in Unknown on line 0
- * 
+ *
  * This makes the script is not completed.
- * 
+ *
  * Solving the problem:
  * The PHP documentation http://php.net/manual/en/ini.core.php#ini.post-max-size
  * provides a hack to solve this problem:
- * 
- * If the size of post data is greater than post_max_size, the $_POST and $_FILES 
+ *
+ * If the size of post data is greater than post_max_size, the $_POST and $_FILES
  * superglobals are empty.
  */
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && empty($_POST) && empty($_FILES) && $_SERVER['CONTENT_LENGTH'] > 0) {
@@ -149,6 +149,7 @@ try {
     $_SESSION['TRIGGER_DEBUG']['DATA'] = Array ();
     $_SESSION['TRIGGER_DEBUG']['TRIGGERS_NAMES'] = Array ();
     $_SESSION['TRIGGER_DEBUG']['TRIGGERS_VALUES'] = Array ();
+    $_SESSION['TRIGGER_DEBUG']['TRIGGERS_EXECUTION_TIME'] = [];
 
     $triggers = $oCase->loadTriggers( $_SESSION['TASK'], 'DYNAFORM', $_GET['UID'], 'AFTER' );
 
@@ -170,6 +171,8 @@ try {
         //Execute after triggers - Start
         $Fields['APP_DATA'] = $oCase->ExecuteTriggers( $_SESSION['TASK'], 'DYNAFORM', $_GET['UID'], 'AFTER', $Fields['APP_DATA'] );
         //Execute after triggers - End
+
+        $_SESSION['TRIGGER_DEBUG']['TRIGGERS_EXECUTION_TIME'] = $oCase->arrayTriggerExecutionTime;
     }
 
     //save data in PM Tables if necessary
@@ -493,4 +496,3 @@ try {
     G::RenderPage( 'publish', 'blank' );
     die();
 }
-

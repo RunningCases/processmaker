@@ -72,6 +72,7 @@ class System
         'safari_cookie_lifetime' => 1,
         'error_reporting' => "",
         'display_errors' => 'On',
+        'enable_blacklist' => 0,
         'system_utc_time_zone' => 0,
         'server_protocol' => '',
         'server_hostname_requests_frontend' => ''
@@ -984,7 +985,7 @@ class System
         return $aChanges;
     }
 
-    public function getEmailConfiguration ()
+    public static function getEmailConfiguration()
     {
         $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
 
