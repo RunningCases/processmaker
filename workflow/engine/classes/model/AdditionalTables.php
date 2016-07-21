@@ -376,7 +376,7 @@ class AdditionalTables extends BaseAdditionalTables
         }
     }
 
-    public function getAllData($sUID, $start = null, $limit = null, $keyOrderUppercase = true, $filter = '', $appUid = false)
+    public function getAllData($sUID, $start = null, $limit = null, $keyOrderUppercase = true, $filter = '', $appUid = false, $search = '')
     {
         $addTab = new AdditionalTables();
         $aData = $addTab->load($sUID, true);
@@ -443,7 +443,48 @@ class AdditionalTables extends BaseAdditionalTables
             }
             $stringOr = $stringOr . '$oCriteria->add($a);';
             eval($stringOr);
-
+        }
+        if ($search !== '' && is_string($search)) {
+            try {
+                $object = G::json_decode($search);
+                if (isset($object->where)) {
+                    $stringAnd = "";
+                    $closure = "";
+                    $fields = $object->where;
+                    foreach ($fields as $key => $value) {
+                        if (is_string($value)) {
+                            $stringAnd = $stringAnd . '$a = $oCriteria->getNewCriterion(' . $sClassPeerName . '::' . G::toUpper($key) . ', "' . $value . '", Criteria::EQUAL)' . $closure . ';';
+                            $closure = '->addAnd($a)';
+                        }
+                        if (is_object($value)) {
+                            $defined = defined("Base" . $sClassPeerName . "::" . G::toUpper($key));
+                            if ($defined === false) {
+                                throw new Exception(G::loadTranslation("ID_FIELD_NOT_FOUND") . ": " . $key . "");
+                            }
+                            if (isset($value->neq) && $defined) {
+                                $stringAnd = $stringAnd . '$a = $oCriteria->getNewCriterion(' . $sClassPeerName . '::' . G::toUpper($key) . ', "' . $value->neq . '", Criteria::NOT_EQUAL)' . $closure . ';';
+                                $closure = '->addAnd($a)';
+                            }
+                            if (isset($value->like) && $defined) {
+                                $stringAnd = $stringAnd . '$a = $oCriteria->getNewCriterion(' . $sClassPeerName . '::' . G::toUpper($key) . ', "' . $value->like . '", Criteria::LIKE)' . $closure . ';';
+                                $closure = '->addAnd($a)';
+                            }
+                            if (isset($value->nlike) && $defined) {
+                                $stringAnd = $stringAnd . '$a = $oCriteria->getNewCriterion(' . $sClassPeerName . '::' . G::toUpper($key) . ', "' . $value->nlike . '", Criteria::NOT_LIKE)' . $closure . ';';
+                                $closure = '->addAnd($a)';
+                            }
+                        }
+                    }
+                    if (!empty($stringAnd)) {
+                        $stringAnd = $stringAnd . '$oCriteria->add($a);';
+                        eval($stringAnd);
+                    }
+                }
+            } catch (Exception $oError) {
+                throw($oError);
+            }
+        }
+        if ($filter != '' && is_string($filter) || $search !== '' && is_string($search)) {
             $oCriteriaCount = clone $oCriteria;
             eval('$count = ' . $sClassPeerName . '::doCount($oCriteria);');
         }

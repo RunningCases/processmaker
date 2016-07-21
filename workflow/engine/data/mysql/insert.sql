@@ -44,7 +44,32 @@ INSERT INTO CONTENT (CON_CATEGORY,CON_PARENT,CON_ID,CON_LANG,CON_VALUE) VALUES
 ('PER_NAME','','00000000000000000000000000000035','en','Setup Logs'),
 ('PER_NAME','','00000000000000000000000000000036','en','Delete process cases'),
 ('PER_NAME','','00000000000000000000000000000037','en','Edit personal info Calendar'),
-('PER_NAME','','00000000000000000000000000000038','en','Undo cancel case');
+('PER_NAME','','00000000000000000000000000000038','en','Undo cancel case')
+('PER_NAME','','00000000000000000000000000000039','en','Create rest API Aplications'),
+('PER_NAME','','00000000000000000000000000000040','en','Edit User profile First Name'),
+('PER_NAME','','00000000000000000000000000000041','en','Edit User profile Last Name'),
+('PER_NAME','','00000000000000000000000000000042','en','Edit User profile Username'),
+('PER_NAME','','00000000000000000000000000000043','en','Edit User profile Email'),
+('PER_NAME','','00000000000000000000000000000044','en','Edit User profile Address'),
+('PER_NAME','','00000000000000000000000000000045','en','Edit User profile Zip Code'),
+('PER_NAME','','00000000000000000000000000000046','en','Edit User profile Country'),
+('PER_NAME','','00000000000000000000000000000047','en','Edit User profile State or Region'),
+('PER_NAME','','00000000000000000000000000000048','en','Edit User profile Location'),
+('PER_NAME','','00000000000000000000000000000049','en','Edit User profile Phone'),
+('PER_NAME','','00000000000000000000000000000050','en','Edit User profile Position'),
+('PER_NAME','','00000000000000000000000000000051','en','Edit User profile Replaced By'),
+('PER_NAME','','00000000000000000000000000000052','en','Edit User profile Expiration Date'),
+('PER_NAME','','00000000000000000000000000000053','en','Edit User profile Calendar'),
+('PER_NAME','','00000000000000000000000000000054','en','Edit User profile Status'),
+('PER_NAME','','00000000000000000000000000000055','en','Edit User profile Role'),
+('PER_NAME','','00000000000000000000000000000056','en','Edit User profile Time Zone'),
+('PER_NAME','','00000000000000000000000000000057','en','Edit User profile Default Language'),
+('PER_NAME','','00000000000000000000000000000058','en','Edit User profile Costs'),
+('PER_NAME','','00000000000000000000000000000059','en','Edit User profile Password'),
+('PER_NAME','','00000000000000000000000000000060','en','Edit User profile Must Change Password at next Logon'),
+('PER_NAME','','00000000000000000000000000000061','en','Edit User profile Photo'),
+('PER_NAME','','00000000000000000000000000000062','en','Edit User profile Default Main Menu Options'),
+('PER_NAME','','00000000000000000000000000000063','en','Edit User profile Default Cases Menu Options');
 
 INSERT INTO LANGUAGE (LAN_ID,LAN_LOCATION,LAN_NAME,LAN_NATIVE_NAME,LAN_DIRECTION,LAN_WEIGHT,LAN_ENABLED,LAN_CALENDAR) VALUES 
 ('aa','','Afar','','L','0','0','GREGORIAN'),

@@ -233,6 +233,54 @@ class RBAC
             "PER_NAME" => "Undo cancel case"
         ), array("PER_UID" => "00000000000000000000000000000039", "PER_CODE" => "PM_REST_API_APPLICATIONS",
             "PER_NAME" => "Create rest API Aplications"
+        ), array("PER_UID" => "00000000000000000000000000000040", "PER_CODE" => "PM_EDIT_USER_PROFILE_FIRST_NAME",
+            "PER_NAME" => "Edit User profile First Name"
+        ), array("PER_UID" => "00000000000000000000000000000041", "PER_CODE" => "PM_EDIT_USER_PROFILE_LAST_NAME",
+            "PER_NAME" => "Edit User profile Last Name"
+        ), array("PER_UID" => "00000000000000000000000000000042", "PER_CODE" => "PM_EDIT_USER_PROFILE_USERNAME",
+            "PER_NAME" => "Edit User profile Username"
+        ), array("PER_UID" => "00000000000000000000000000000043", "PER_CODE" => "PM_EDIT_USER_PROFILE_EMAIL",
+            "PER_NAME" => "Edit User profile Email"
+        ), array("PER_UID" => "00000000000000000000000000000044", "PER_CODE" => "PM_EDIT_USER_PROFILE_ADDRESS",
+            "PER_NAME" => "Edit User profile Address"
+        ), array("PER_UID" => "00000000000000000000000000000045", "PER_CODE" => "PM_EDIT_USER_PROFILE_ZIP_CODE",
+            "PER_NAME" => "Edit User profile Zip Code"
+        ), array("PER_UID" => "00000000000000000000000000000046", "PER_CODE" => "PM_EDIT_USER_PROFILE_COUNTRY",
+            "PER_NAME" => "Edit User profile Country"
+        ), array("PER_UID" => "00000000000000000000000000000047", "PER_CODE" => "PM_EDIT_USER_PROFILE_STATE_OR_REGION",
+            "PER_NAME" => "Edit User profile State or Region"
+        ), array("PER_UID" => "00000000000000000000000000000048", "PER_CODE" => "PM_EDIT_USER_PROFILE_LOCATION",
+            "PER_NAME" => "Edit User profile Location"
+        ), array("PER_UID" => "00000000000000000000000000000049", "PER_CODE" => "PM_EDIT_USER_PROFILE_PHONE",
+            "PER_NAME" => "Edit User profile Phone"
+        ), array("PER_UID" => "00000000000000000000000000000050", "PER_CODE" => "PM_EDIT_USER_PROFILE_POSITION",
+            "PER_NAME" => "Edit User profile Position"
+        ), array("PER_UID" => "00000000000000000000000000000051", "PER_CODE" => "PM_EDIT_USER_PROFILE_REPLACED_BY",
+            "PER_NAME" => "Edit User profile Replaced By"
+        ), array("PER_UID" => "00000000000000000000000000000052", "PER_CODE" => "PM_EDIT_USER_PROFILE_EXPIRATION_DATE",
+            "PER_NAME" => "Edit User profile Expiration Date"
+        ), array("PER_UID" => "00000000000000000000000000000053", "PER_CODE" => "PM_EDIT_USER_PROFILE_CALENDAR",
+            "PER_NAME" => "Edit User profile Calendar"
+        ), array("PER_UID" => "00000000000000000000000000000054", "PER_CODE" => "PM_EDIT_USER_PROFILE_STATUS",
+            "PER_NAME" => "Edit User profile Status"
+        ), array("PER_UID" => "00000000000000000000000000000055", "PER_CODE" => "PM_EDIT_USER_PROFILE_ROLE",
+            "PER_NAME" => "Edit User profile Role"
+        ), array("PER_UID" => "00000000000000000000000000000056", "PER_CODE" => "PM_EDIT_USER_PROFILE_TIME_ZONE",
+            "PER_NAME" => "Edit User profile Time Zone"
+        ), array("PER_UID" => "00000000000000000000000000000057", "PER_CODE" => "PM_EDIT_USER_PROFILE_DEFAULT_LANGUAGE",
+            "PER_NAME" => "Edit User profile Default Language"
+        ), array("PER_UID" => "00000000000000000000000000000058", "PER_CODE" => "PM_EDIT_USER_PROFILE_COSTS",
+            "PER_NAME" => "Edit User profile Costs"
+        ), array("PER_UID" => "00000000000000000000000000000059", "PER_CODE" => "PM_EDIT_USER_PROFILE_PASSWORD",
+            "PER_NAME" => "Edit User profile Password"
+        ), array("PER_UID" => "00000000000000000000000000000060", "PER_CODE" => "PM_EDIT_USER_PROFILE_USER_MUST_CHANGE_PASSWORD_AT_NEXT_LOGON",
+            "PER_NAME" => "Edit User profile Must Change Password at next Logon"
+        ), array("PER_UID" => "00000000000000000000000000000061", "PER_CODE" => "PM_EDIT_USER_PROFILE_PHOTO",
+            "PER_NAME" => "Edit User profile Photo"
+        ), array("PER_UID" => "00000000000000000000000000000062", "PER_CODE" => "PM_EDIT_USER_PROFILE_DEFAULT_MAIN_MENU_OPTIONS",
+            "PER_NAME" => "Edit User profile Default Main Menu Options"
+        ), array("PER_UID" => "00000000000000000000000000000063", "PER_CODE" => "PM_EDIT_USER_PROFILE_DEFAULT_CASES_MENU_OPTIONS",
+            "PER_NAME" => "Edit User profile Default Cases Menu Options"
         )
         );
         return $permissionsAdmin;
@@ -889,9 +937,23 @@ class RBAC
      * @param string $ROL_UID
      * @return $this->rolesObj->getRolePermissionsByPerUid
      */
-    public function getRolePermissionsByPerUid ($ROL_UID)
+    public function getRolePermissionsByPerUid($ROL_UID)
     {
-        return $this->rolesObj->getRolePermissionsByPerUid( $ROL_UID );
+        return $this->rolesObj->getRolePermissionsByPerUid($ROL_UID);
+    }
+
+    /**
+     * this function is Assigne role permission
+     *
+     *
+     * @access public
+     *
+     * @param string $ROL_UID
+     * @return $this->rolesObj->isAssigneRolePermission
+     */
+    public function getPermissionAssignedRole($ROL_UID, $PER_UID)
+    {
+        return $this->rolesObj->getPermissionAssignedRole($ROL_UID, $PER_UID);
     }
 
     /**
@@ -1271,18 +1333,18 @@ class RBAC
      * @access public
      *
      */
-    public function verifyPermissions ()
+    public function verifyPermissions()
     {
         $message = array();
         $listPermissions = $this->loadPermissionAdmin();
-        $criteria = new Criteria( 'rbac' );
-        $dataset = PermissionsPeer::doSelectRS( $criteria );
-        $dataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+        $criteria = new Criteria('rbac');
+        $dataset = PermissionsPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
         $aRow = $dataset->getRow();
-        while (is_array( $aRow )) {
-            foreach($listPermissions as $key => $item) {
-                if ($aRow['PER_UID'] == $item['PER_UID'] ) {
+        while (is_array($aRow)) {
+            foreach ($listPermissions as $key => $item) {
+                if ($aRow['PER_UID'] == $item['PER_UID']) {
                     unset($listPermissions[$key]);
                     break;
                 }
@@ -1290,39 +1352,42 @@ class RBAC
             $dataset->next();
             $aRow = $dataset->getRow();
         }
-        foreach($listPermissions as $key => $item) {
+        foreach ($listPermissions as $key => $item) {
             //Adding new permissions
             $data = array();
-            $data['PER_UID']         = $item['PER_UID'];
-            $data['PER_CODE']        = $item['PER_CODE'];
+            $data['PER_UID'] = $item['PER_UID'];
+            $data['PER_CODE'] = $item['PER_CODE'];
             $data['PER_CREATE_DATE'] = date('Y-m-d H:i:s');
             $data['PER_UPDATE_DATE'] = $data['PER_CREATE_DATE'];
-            $data['PER_STATUS']      = 1;
-            $permission              = new Permissions();
+            $data['PER_STATUS'] = 1;
+            $permission = new Permissions();
             $permission->fromArray($data, BasePeer::TYPE_FIELDNAME);
             $permission->save();
             $message[] = 'Add permission missing ' . $item['PER_CODE'];
-
             //Adding new labels for new permissions
             $o = new RolesPermissions();
             $o->setPerUid($item['PER_UID']);
             $o->setPermissionName($item['PER_NAME']);
+            //assigning new permissions
+            $this->assigningNewPermissionsPmSetup($item);
+            $this->assigningNewPermissionsPmEditProfile($item);
+        }
+        return $message;
+    }
 
-            //Assigning new permissions
+    /**
+     * Permissions for tab ADMIN
+     * @param array $item
+     */
+    public function assigningNewPermissionsPmSetup($item = array())
+    {
+        if (strpos($item['PER_CODE'], 'PM_SETUP_') !== false) {
             $rolesWithPermissionSetup = $this->getRolePermissionsByPerUid(self::SETUPERMISSIONUID);
             $rolesWithPermissionSetup->next();
             while ($aRow = $rolesWithPermissionSetup->getRow()) {
-                $userRolePermission = $this->getRolePermissions($aRow['ROL_UID']);
-                $userRolePermission->next();
-                $valueNewPermissions = false;
-                while ($aRowPermission = $userRolePermission->getRow()) {
-                    if ($item['PER_CODE'] === $aRowPermission['PER_CODE']) {
-                        $valueNewPermissions = true;
-                    }
-                    $userRolePermission->next();
-                }
-                $dataPermissions = array();
-                if (!$valueNewPermissions) {
+                $isAssignedNewpermissions = $this->getPermissionAssignedRole($aRow['ROL_UID'], $item['PER_UID']);
+                if (!$isAssignedNewpermissions) {
+                    $dataPermissions = array();
                     $dataPermissions['ROL_UID'] = $aRow['ROL_UID'];
                     $dataPermissions['PER_UID'] = $item['PER_UID'];
                     $this->assignPermissionRole($dataPermissions);
@@ -1330,7 +1395,51 @@ class RBAC
                 $rolesWithPermissionSetup->next();
             }
         }
-        return $message;
+    }
+
+    /**
+     * Permissions for Edit Profile User
+     * @param array $item
+     */
+    public function assigningNewPermissionsPmEditProfile($item = array())
+    {
+        if (strpos($item['PER_CODE'], 'PM_EDIT_USER_PROFILE_') !== false) {
+            $allRolesRolUid = $this->getAllRoles('PROCESSMAKER');
+            $perCodePM = array('PROCESSMAKER_ADMIN', 'PROCESSMAKER_OPERATOR', 'PROCESSMAKER_MANAGER');
+            $permissionsForOperator = array(
+                'PM_EDIT_USER_PROFILE_POSITION',
+                'PM_EDIT_USER_PROFILE_REPLACED_BY',
+                'PM_EDIT_USER_PROFILE_EXPIRATION_DATE',
+                'PM_EDIT_USER_PROFILE_STATUS',
+                'PM_EDIT_USER_PROFILE_ROLE',
+                'PM_EDIT_USER_PROFILE_COSTS',
+                'PM_EDIT_USER_PROFILE_USER_MUST_CHANGE_PASSWORD_AT_NEXT_LOGON',
+                'PM_EDIT_USER_PROFILE_DEFAULT_MAIN_MENU_OPTIONS',
+                'PM_EDIT_USER_PROFILE_DEFAULT_CASES_MENU_OPTIONS'
+            );
+            foreach ($allRolesRolUid as $index => $aRow) {
+                $isAssignedNewpermissions = $this->getPermissionAssignedRole($aRow['ROL_UID'], $item['PER_UID']);
+                $assignPermissions = true;
+                if (!$isAssignedNewpermissions) {
+                    if ($aRow['ROL_CODE'] == 'PROCESSMAKER_OPERATOR' && in_array($item['PER_CODE'], $permissionsForOperator)) {
+                        $assignPermissions = false;
+                    }
+                    if (!in_array($aRow['ROL_CODE'], $perCodePM)) {
+                        $assignPermissions = false;
+                        $checkPermisionEdit = $this->getPermissionAssignedRole($aRow['ROL_UID'], '00000000000000000000000000000014');
+                        if ($checkPermisionEdit && !in_array($item['PER_CODE'], $permissionsForOperator)) {
+                            $assignPermissions = true;
+                        }
+                    }
+                    if ($assignPermissions) {
+                        $dataPermissions = array();
+                        $dataPermissions['ROL_UID'] = $aRow['ROL_UID'];
+                        $dataPermissions['PER_UID'] = $item['PER_UID'];
+                        $this->assignPermissionRole($dataPermissions);
+                    }
+                }
+            }
+        }
     }
 }
 
