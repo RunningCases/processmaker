@@ -4772,7 +4772,7 @@ class Processes
         if (is_array($sGroupList)) {
             foreach ($aGroupwf as $groupBase) {
                 foreach ($sGroupList as $group) {
-                    if ($groupBase['GRP_TITLE'] == $group['GRP_TITLE'] && $groupBase['CON_ID'] != $group['GRP_UID']) {
+                    if ($groupBase['GRP_TITLE'] == $group['GRP_TITLE'] && $groupBase['GRP_UID'] != $group['GRP_UID']) {
                         $oPro = GroupwfPeer::retrieveByPk( $group['GRP_UID'] );
                         if(is_object( $oPro ) && get_class( $oPro ) == 'Groupwf') {
                             $group['GRP_UID'] = G::generateUniqueID();
@@ -4848,8 +4848,8 @@ class Processes
         foreach ($sGroupList as $group) {
             $merged = false;
             foreach ($aGroupwf as $groupBase) {
-                if ($groupBase['GRP_TITLE'] == $group['GRP_TITLE'] && $groupBase['CON_ID'] != $group['GRP_UID']) {
-                    $group['GRP_UID'] = $groupBase['CON_ID'];
+                if ($groupBase['GRP_TITLE'] == $group['GRP_TITLE'] && $groupBase['GRP_UID'] != $group['GRP_UID']) {
+                    $group['GRP_UID'] = $groupBase['GRP_UID'];
                     $mergedGroupList[] = $group;
                     $merged = true;
                 }
