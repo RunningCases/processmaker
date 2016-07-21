@@ -82,7 +82,14 @@ function run_upgrade($command, $args)
     CLI::logging("UPGRADE", PROCESSMAKER_PATH . "upgrade.log");
     CLI::logging("Checking files integrity...\n");
     //setting flag to true to check into sysGeneric.php
-    $flag = G::isPMUnderUpdating(1);
+    $workspaces = get_workspaces_from_args($command);
+    $oneWorkspace = 'true';
+    if (count($workspaces) == 1) {
+        foreach ($workspaces as $index => $workspace) {
+            $oneWorkspace = $workspace->name;
+        }
+    }
+    $flag = G::isPMUnderUpdating(1, $oneWorkspace);
     //start to upgrade
     $checksum = System::verifyChecksum();
     if ($checksum === false) {

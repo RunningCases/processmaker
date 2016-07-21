@@ -484,11 +484,14 @@ if (SYS_TARGET === false) {
 }
 
 // Bootstrap::mylog("sys_temp: ".SYS_TEMP);
-if (Bootstrap::isPMUnderUpdating()) {
-    header( "location: /update/updating.php" );
-    if (DEBUG_TIME_LOG)
-        Bootstrap::logTimeByPage();
-    die();
+$arrayUpdating = Bootstrap::isPMUnderUpdating();
+if ($arrayUpdating['action']) {
+    if ($arrayUpdating['workspace'] == "true" || $arrayUpdating['workspace'] == SYS_TEMP) {
+        header("location: /update/updating.php");
+        if (DEBUG_TIME_LOG)
+            Bootstrap::logTimeByPage();
+        die();
+    }
 }
 
 // verify if index.html exists
