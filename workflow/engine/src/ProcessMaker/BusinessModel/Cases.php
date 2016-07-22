@@ -1737,7 +1737,7 @@ class Cases
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
      */
-    public function getCaseVariables($app_uid, $usr_uid, $dynaFormUid = null)
+    public function getCaseVariables($app_uid, $usr_uid, $dynaFormUid = null, $pro_uid = null, $act_uid = null, $app_index = null)
     {
         Validator::isString($app_uid, '$app_uid');
         Validator::appUid($app_uid, '$app_uid');
@@ -1776,11 +1776,33 @@ class Cases
             $arrayCaseVariable = $this->__getFieldsAndValuesByDynaFormAndAppData(
                 $arrayDynContent['items'][0], $arrayAppData, $arrayCaseVariable
             );
+
         } else {
             $arrayCaseVariable = $fields['APP_DATA'];
         }
 
-        //Return
+        //Get historyDate for Dynaform
+        if (!is_null($pro_uid) && !is_null($act_uid) && !is_null($app_index)) {
+            $oCriteriaAppHistory = new \Criteria("workflow");
+            $oCriteriaAppHistory->addSelectColumn(\AppHistoryPeer::HISTORY_DATE);
+            $oCriteriaAppHistory->add(\AppHistoryPeer::APP_UID, $app_uid, \Criteria::EQUAL);
+            $oCriteriaAppHistory->add(\AppHistoryPeer::DEL_INDEX, $app_index, \Criteria::EQUAL);
+            $oCriteriaAppHistory->add(\AppHistoryPeer::PRO_UID, $pro_uid, \Criteria::EQUAL);
+            $oCriteriaAppHistory->add(\AppHistoryPeer::TAS_UID, $act_uid, \Criteria::EQUAL);
+            $oCriteriaAppHistory->add(\AppHistoryPeer::USR_UID, $usr_uid, \Criteria::EQUAL);
+            if (!is_null($dynaFormUid)) {
+                $oCriteriaAppHistory->add(\AppHistoryPeer::DYN_UID, $dynaFormUid, \Criteria::EQUAL);
+            }
+            $oCriteriaAppHistory->addDescendingOrderByColumn('HISTORY_DATE');
+            $oCriteriaAppHistory->setLimit(1);
+            $oDataset = \AppDocumentPeer::doSelectRS($oCriteriaAppHistory);
+            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            if ($aRow = $oDataset->getRow()) {
+                $dateHistory['SYS_VAR_UPDATE_DATE'] = $aRow['HISTORY_DATE'];
+                $arrayCaseVariable = array_merge($arrayCaseVariable, $dateHistory);
+            }
+        }
         return $arrayCaseVariable;
     }
 
