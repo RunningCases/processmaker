@@ -309,23 +309,6 @@ class DataBaseMaintenance
     }
 
     /**
-     * backupSqlData
-     *
-     * @return boolean true or false
-     */
-    function backupSqlData ()
-    {
-        $aTables = $this->getTablesList();
-        foreach ($aTables as $table) {
-            $fsize = $this->dumpSqlInserts( $table );
-            $file = basename( $this->outfile );
-
-        }
-
-        return true;
-    }
-
-    /**
      * restoreAllData
      *
      * @param string $type default value null
@@ -417,67 +400,6 @@ class DataBaseMaintenance
 
         /* close connection */
         $mysqli->close();
-    }
-
-    function lockTables ()
-    {
-        $aTables = $this->getTablesList();
-        if (empty( $aTables ))
-            return false;
-        printf( "%-70s", "LOCK TABLES" );
-        if (@mysql_query( 'LOCK TABLES ' . implode( ' READ, ', $aTables ) . ' READ; ' )) {
-            echo "    [OK]\n";
-            return true;
-        } else {
-            echo "[FAILED]\n" . mysql_error() . "\n";
-            return false;
-        }
-    }
-
-    function unlockTables ()
-    {
-        printf( "%-70s", "UNLOCK TABLES" );
-        if (@mysql_query( "UNLOCK TABLES;" )) {
-            echo "    [OK]\n";
-        } else {
-            echo "[FAILED]\n" . mysql_error() . "\n";
-        }
-    }
-
-    /**
-     * dumpSqlInserts
-     *
-     * @param string $table
-     *
-     * @return integer $bytesSaved;
-     */
-    function dumpSqlInserts ($table)
-    {
-
-        $bytesSaved = 0;
-        $result = @mysql_query( 'SELECT * FROM `'.$table.'`' );
-
-        $num_rows = mysql_num_rows( $result );
-        $num_fields = mysql_num_fields( $result );
-
-        $data = "";
-        for ($i = 0; $i < $num_rows; $i ++) {
-
-            $row = mysql_fetch_object( $result );
-            $data .= "INSERT INTO `$table` VALUES (";
-
-            for ($x = 0; $x < $num_fields; $x ++) {
-                $field_name = mysql_field_name( $result, $x );
-
-                $data .= ($row->$field_name === null) ? 'NULL' : "'" . mysql_real_escape_string( $row->$field_name ) . "'";
-                $data .= ($x < ($num_fields - 1)) ? ", " : false;
-            }
-
-            $data .= ");\n";
-        }
-
-        printf( "%-59s%20s", "Dump of table $table", strlen( $data ) . " Bytes Saved\n" );
-        return $data;
     }
 
     /**
@@ -639,22 +561,3 @@ class DataBaseMaintenance
         return $str;
     }
 }
-
-/*
-// Sample to use
-$oDbMaintainer = new DataBaseMaintenance('localhost', 'root', 'atopml2005');
-$oDbMaintainer->setTempDir('/home/erik/backs/');
-$oDbMaintainer->setDbName('rb_os');
-$oDbMaintainer->connect();
-$oDbMaintainer->backupDataBaseSchema('/home/erik/backs/schema_os.sql');
-$oDbMaintainer->backupSqlData();
-$oDbMaintainer->createDb('neyek12', true);
-
-$o2 = new DataBaseMaintenance('localhost', 'root', 'atopml2005');
-$o2->setTempDir('/home/erik/backs/');
-$o2->setDbName('neyek12');
-$o2->connect();
-
-$o2->restoreFromSql('/home/erik/backs/schema_os.sql');
-$o2->restoreAllData('sql');
-*/
