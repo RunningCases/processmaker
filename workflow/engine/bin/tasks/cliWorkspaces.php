@@ -229,6 +229,18 @@ EOT
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_counters");
 
+CLI::taskName('migrate-itee-to-dummytask');
+CLI::taskDescription(<<<EOT
+  Migrate the Intermediate throw Email Event to Dummy task
+
+  Specify the workspaces, the processes in this workspace will be updated.
+
+  If no workspace is specified, the command will be run in all workspaces.
+EOT
+);
+CLI::taskArg('workspace', true, true);
+CLI::taskRun("run_migrate_itee_to_dummytask");
+
 /*----------------------------------********---------------------------------*/
 CLI::taskName("check-workspace-disabled-code");
 CLI::taskDescription(<<<EOT
@@ -737,6 +749,22 @@ function verifyMigratedDataConsistency($args)
     }
   }
   return $inconsistentRecords;
+}
+
+function run_migrate_itee_to_dummytask($args, $opts){
+  G::LoadSystem('inputfilter');
+  $filter = new InputFilter();
+  $opts = $filter->xssFilterHard($opts);
+  $args = $filter->xssFilterHard($args);
+  $arrayWorkspace = get_workspaces_from_args($args);
+  foreach ($arrayWorkspace as $workspace) {
+    try {
+        $ws = new workspaceTools($workspace->name);
+        $res = $ws->migrateIteeToDummytask($workspace->name);
+    } catch (Exception $e) {
+      echo "> Error: ".CLI::error($e->getMessage()) . "\n";
+    }
+  }
 }
 
 /*----------------------------------********---------------------------------*/
