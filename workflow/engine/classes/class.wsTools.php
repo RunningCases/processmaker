@@ -3349,5 +3349,4 @@ class workspaceTools
         CLI::logging($message);
     }
 
->>>>>>> HOR-1259: Migrate Itee to Dummytask
 }
