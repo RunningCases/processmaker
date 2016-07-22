@@ -131,25 +131,20 @@ if ($actionAjax == "processListExtJs") {
     //get the processes for this user in this action
     $cProcess->clearSelectColumns();
     $cProcess->addSelectColumn(ProcessPeer::PRO_UID);
-    $cProcess->addAsColumn('PRO_TITLE', ContentPeer::CON_VALUE);
+    $cProcess->addSelectColumn(ProcessPeer::PRO_TITLE);
     if ($categoryUid) {
         $cProcess->add(ProcessPeer::PRO_CATEGORY, $categoryUid);
     }
 
     $del = \DBAdapter::getStringDelimiter();
-    $conds = array();
-    $conds[] = array(ProcessPeer::PRO_UID, ContentPeer::CON_ID);
-    $conds[] = array(ContentPeer::CON_CATEGORY, $del . 'PRO_TITLE' . $del);
-    $conds[] = array(ContentPeer::CON_LANG, $del . $lang . $del);
-    $cProcess->addJoinMC($conds, Criteria::LEFT_JOIN);
     $cProcess->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
 
     if (!is_null($query)) {
-        $filters = $cProcess->getNewCriterion(ContentPeer::CON_VALUE, '%' . $query . '%', Criteria::LIKE);
+        $filters = $cProcess->getNewCriterion(ProcessPeer::PRO_TITLE, '%' . $query . '%', Criteria::LIKE);
         $cProcess->addAnd($filters);
     }
 
-    $cProcess->addAscendingOrderByColumn(ContentPeer::CON_VALUE);
+    $cProcess->addAscendingOrderByColumn(ProcessPeer::PRO_TITLE);
 
     $oDataset = ProcessPeer::doSelectRS($cProcess);
     $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);

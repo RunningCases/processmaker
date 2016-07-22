@@ -985,7 +985,7 @@ class System
         return $aChanges;
     }
 
-    public function getEmailConfiguration ()
+    public static function getEmailConfiguration()
     {
         $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
 

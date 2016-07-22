@@ -1935,7 +1935,7 @@ class Processes
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
                 $oInput = new InputDocument();
-                $aInput[] = $oInput->Load($aRow['INP_DOC_UID']);
+                $aInput[] = $oInput->load($aRow['INP_DOC_UID']);
                 $oDataset->next();
             }
             return $aInput;
@@ -4326,10 +4326,7 @@ class Processes
             $criteria = new Criteria("workflow");
 
             $criteria->addSelectColumn(GroupwfPeer::GRP_UID);
-            $criteria->addSelectColumn(ContentPeer::CON_VALUE);
-            $criteria->addJoin(GroupwfPeer::GRP_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN);
-            $criteria->add(ContentPeer::CON_CATEGORY, "GRP_TITLE", Criteria::EQUAL);
-            $criteria->add(ContentPeer::CON_LANG, SYS_LANG, Criteria::EQUAL);
+            $criteria->addSelectColumn(GroupwfPeer::GRP_TITLE);
 
             $rsCriteria = GroupwfPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -4349,7 +4346,7 @@ class Processes
                 foreach ($arrayGroupwf as $key2 => $value2) {
                     $groupwfRecord = $value2;
 
-                    if ($groupwfRecord["CON_VALUE"] == $groupwfsRecord["GRP_TITLE"] && $groupwfRecord["GRP_UID"] != $groupwfsRecord["GRP_UID"]) {
+                    if ($groupwfRecord["GRP_TITLE"] == $groupwfsRecord["GRP_TITLE"] && $groupwfRecord["GRP_UID"] != $groupwfsRecord["GRP_UID"]) {
                         //Update unique id
                         $uidOld = $data->groupwfs[$key]["GRP_UID"];
 
@@ -4763,12 +4760,8 @@ class Processes
         $aGroupwf = array();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(GroupwfPeer::GRP_UID);
-        $oCriteria->addSelectColumn(ContentPeer::CON_ID);
-        $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
-        $oCriteria->add(ContentPeer::CON_CATEGORY, 'GRP_TITLE');
-        $oCriteria->add(ContentPeer::CON_LANG, SYS_LANG);
-        $oCriteria->addJoin(ContentPeer::CON_ID, GroupwfPeer::GRP_UID);
-        $oDataset = ContentPeer::doSelectRS($oCriteria);
+        $oCriteria->addSelectColumn(GroupwfPeer::GRP_TITLE);
+        $oDataset = GroupwfPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
         while ($aRow = $oDataset->getRow()) {
@@ -4779,7 +4772,7 @@ class Processes
         if (is_array($sGroupList)) {
             foreach ($aGroupwf as $groupBase) {
                 foreach ($sGroupList as $group) {
-                    if ($groupBase['CON_VALUE'] == $group['GRP_TITLE'] && $groupBase['CON_ID'] != $group['GRP_UID']) {
+                    if ($groupBase['GRP_TITLE'] == $group['GRP_TITLE'] && $groupBase['GRP_UID'] != $group['GRP_UID']) {
                         $oPro = GroupwfPeer::retrieveByPk( $group['GRP_UID'] );
                         if(is_object( $oPro ) && get_class( $oPro ) == 'Groupwf') {
                             $group['GRP_UID'] = G::generateUniqueID();
@@ -4843,12 +4836,8 @@ class Processes
     {
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(GroupwfPeer::GRP_UID);
-        $oCriteria->addSelectColumn(ContentPeer::CON_ID);
-        $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
-        $oCriteria->add(ContentPeer::CON_CATEGORY, 'GRP_TITLE');
-        $oCriteria->add(ContentPeer::CON_LANG, 'en');
-        $oCriteria->addJoin(ContentPeer::CON_ID, GroupwfPeer::GRP_UID);
-        $oDataset = ContentPeer::doSelectRS($oCriteria);
+        $oCriteria->addSelectColumn(GroupwfPeer::GRP_TITLE);
+        $oDataset = GroupwfPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
         while ($aRow = $oDataset->getRow()) {
@@ -4859,8 +4848,8 @@ class Processes
         foreach ($sGroupList as $group) {
             $merged = false;
             foreach ($aGroupwf as $groupBase) {
-                if ($groupBase['CON_VALUE'] == $group['GRP_TITLE'] && $groupBase['CON_ID'] != $group['GRP_UID']) {
-                    $group['GRP_UID'] = $groupBase['CON_ID'];
+                if ($groupBase['GRP_TITLE'] == $group['GRP_TITLE'] && $groupBase['GRP_UID'] != $group['GRP_UID']) {
+                    $group['GRP_UID'] = $groupBase['GRP_UID'];
                     $mergedGroupList[] = $group;
                     $merged = true;
                 }
@@ -5942,13 +5931,7 @@ class Processes
             $criteria = new Criteria("workflow");
 
             $criteria->addSelectColumn(ProcessPeer::PRO_UID);
-            $criteria->addAsColumn("PRO_TITLE", ContentPeer::CON_VALUE);
-
-            $arrayCondition = array();
-            $arrayCondition[] = array(ProcessPeer::PRO_UID, ContentPeer::CON_ID, Criteria::EQUAL);
-            $arrayCondition[] = array(ContentPeer::CON_CATEGORY, $delimiter . "PRO_TITLE" . $delimiter, Criteria::EQUAL);
-            $arrayCondition[] = array(ContentPeer::CON_LANG, $delimiter . SYS_LANG . $delimiter, Criteria::EQUAL);
-            $criteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
+            $criteria->addSelectColumn(ProcessPeer::PRO_TITLE);
 
             if (!is_null($processUid)) {
                 $criteria->add(ProcessPeer::PRO_UID, $processUid, Criteria::EQUAL);

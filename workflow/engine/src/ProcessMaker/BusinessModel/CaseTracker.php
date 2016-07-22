@@ -200,24 +200,8 @@ class CaseTracker
             $criteria = new \Criteria("workflow");
 
             $criteria->addSelectColumn(\InputDocumentPeer::INP_DOC_UID);
-            $criteria->addAsColumn("INP_DOC_TITLE", "CT.CON_VALUE");
-            $criteria->addAsColumn("INP_DOC_DESCRIPTION", "CD.CON_VALUE");
-
-            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
-            $criteria->addAlias("CD", \ContentPeer::TABLE_NAME);
-
-            $arrayCondition = array();
-            $arrayCondition[] = array(\InputDocumentPeer::INP_DOC_UID, "CT.CON_ID", \Criteria::EQUAL);
-            $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "INP_DOC_TITLE" . $delimiter, \Criteria::EQUAL);
-            $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
-            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
-
-            $arrayCondition = array();
-            $arrayCondition[] = array(\InputDocumentPeer::INP_DOC_UID, "CD.CON_ID", \Criteria::EQUAL);
-            $arrayCondition[] = array("CD.CON_CATEGORY", $delimiter . "INP_DOC_DESCRIPTION" . $delimiter, \Criteria::EQUAL);
-            $arrayCondition[] = array("CD.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
-            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
-
+            $criteria->addSelectColumn(\InputDocumentPeer::INP_DOC_TITLE);
+            $criteria->addSelectColumn(\InputDocumentPeer::INP_DOC_DESCRIPTION);
             $criteria->add(\InputDocumentPeer::PRO_UID, $processUid, \Criteria::EQUAL);
             $criteria->add(\InputDocumentPeer::INP_DOC_UID, $arrayInputDocumentUid, \Criteria::NOT_IN);
 
@@ -229,7 +213,9 @@ class CaseTracker
 
                 if ($row["INP_DOC_TITLE"] . "" == "") {
                     //There is no transaltion for this Document name, try to get/regenerate the label
-                    $row["INP_DOC_TITLE"] = \Content::Load("INP_DOC_TITLE", "", $row["INP_DOC_UID"], SYS_LANG);
+                    $inputDocument = new \InputDocument();
+                    $inputDocumentObj = $inputDocument->load($row['INP_DOC_UID']);
+                    $row["INP_DOC_TITLE"] = $inputDocumentObj['INP_DOC_TITLE'];
                 }
 
                 $arrayCaseTrackerObject[] = array(

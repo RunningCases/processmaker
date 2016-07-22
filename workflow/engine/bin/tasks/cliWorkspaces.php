@@ -282,6 +282,19 @@ CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_list_unassigned");
 /*----------------------------------********---------------------------------*/
 
+CLI::taskName('migrate-content');
+CLI::taskDescription(<<<EOT
+  Migrating the content schema to match the latest version
+
+  Specify the WORKSPACE to migrate from a existing workspace.
+
+  If no workspace is specified, then the tables schema will be upgraded or
+  migrate on all available workspaces.
+EOT
+);
+CLI::taskArg('workspace', true, true);
+CLI::taskRun("run_migrate_content");
+
   /**
    * Function run_info
    * access public
@@ -873,3 +886,22 @@ function migrate_list_unassigned($command, $args, $opts) {
 }
 /*----------------------------------********---------------------------------*/
 
+function run_migrate_content($args, $opts) {
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
+    $args = $filter->xssFilterHard($args);
+    $workspaces = get_workspaces_from_args($args);
+    $lang = array_key_exists("lang", $opts) ? $opts['lang'] : SYS_LANG;
+    $start = microtime(true);
+    CLI::logging("> Optimizing content data...\n");
+    foreach ($workspaces as $workspace) {
+        if (!defined('SYS_SYS')) {
+            define('SYS_SYS', $workspace->name);
+        }
+        print_r('Regenerating content in: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
+        CLI::logging("-> Regenerating content \n");
+        $workspace->migrateContentRun($workspace->name, $lang);
+    }
+    $stop = microtime(true);
+    CLI::logging("<*>   Optimizing content data Process took " . ($stop - $start) . " seconds.\n");
+}

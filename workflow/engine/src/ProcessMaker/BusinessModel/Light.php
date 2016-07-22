@@ -176,7 +176,6 @@ class Light
     public function getTransferHistoryCriteria($sAppUid)
     {
         $c = new Criteria('workflow');
-        $c->addAsColumn('TAS_TITLE', 'TAS_TITLE.CON_VALUE');
         $c->addSelectColumn(UsersPeer::USR_FIRSTNAME);
         $c->addSelectColumn(UsersPeer::USR_LASTNAME);
         $c->addSelectColumn(AppDelegationPeer::DEL_DELEGATE_DATE);
@@ -200,6 +199,7 @@ class Light
         $c->addSelectColumn(AppDelegationPeer::DEL_INIT_DATE);
         $c->addSelectColumn(AppDelayPeer::APP_ENABLE_ACTION_DATE);
         $c->addSelectColumn(AppDelayPeer::APP_DISABLE_ACTION_DATE);
+        $c->addSelectColumn(\TaskPeer::TAS_TITLE);
         //APP_DELEGATION LEFT JOIN USERS
         $c->addJoin(AppDelegationPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
 
@@ -212,14 +212,8 @@ class Light
         $app[] = array(AppDelegationPeer::APP_UID, AppDelayPeer::APP_UID);
         $c->addJoinMC($app, Criteria::LEFT_JOIN);
 
-        //LEFT JOIN CONTENT TAS_TITLE
-        $c->addAlias("TAS_TITLE", 'CONTENT');
-        $del = \DBAdapter::getStringDelimiter();
-        $appTitleConds = array();
-        $appTitleConds[] = array(AppDelegationPeer::TAS_UID, 'TAS_TITLE.CON_ID');
-        $appTitleConds[] = array('TAS_TITLE.CON_CATEGORY', $del . 'TAS_TITLE' . $del);
-        $appTitleConds[] = array('TAS_TITLE.CON_LANG', $del . SYS_LANG . $del);
-        $c->addJoinMC($appTitleConds, Criteria::LEFT_JOIN);
+        //LEFT JOIN TASK TAS_TITLE
+        $c->addJoin(AppDelegationPeer::TAS_UID, \TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
 
         //WHERE
         $c->add(AppDelegationPeer::APP_UID, $sAppUid);
@@ -320,46 +314,31 @@ class Light
         $oContent = new \Content();
         ///we are looking for a pro title for this process $sproUid
         $oCriteria = new \Criteria( 'workflow' );
-        $oCriteria->add( \ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
-        $oCriteria->add( \ContentPeer::CON_LANG, 'en' );
-        $oCriteria->add( \ContentPeer::CON_ID, $sproUid );
-        $oDataset = \ContentPeer::doSelectRS( $oCriteria );
-        $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+        $oCriteria->add(\ProcessPeer::PRO_UID, $sproUid);
+        $oDataset = \ProcessPeer::doSelectRS( $oCriteria );
+        $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
         $aRow = $oDataset->getRow();
-        if (! is_array( $aRow )) {
-
-            $oC = new \Criteria( 'workflow' );
-            $oC->addSelectColumn( \TaskPeer::TAS_UID );
-            $oC->add( \TaskPeer::PRO_UID, $sproUid );
-            $oDataset1 = \TaskPeer::doSelectRS( $oC );
-            $oDataset1->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
-
+        if (!is_array($aRow)) {
+            $oC = new \Criteria('workflow');
+            $oC->addSelectColumn(\TaskPeer::TAS_UID);
+            $oC->addSelectColumn(\TaskPeer::TAS_TITLE);
+            $oC->add(\TaskPeer::PRO_UID, $sproUid);
+            $oDataset1 = \TaskPeer::doSelectRS($oC);
+            $oDataset1->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             while ($oDataset1->next()) {
                 $aRow1 = $oDataset1->getRow();
-
-                $oCriteria1 = new \Criteria( 'workflow' );
-                $oCriteria1->add( ContentPeer::CON_CATEGORY, 'TAS_TITLE' );
-                $oCriteria1->add( ContentPeer::CON_LANG, SYS_LANG );
-                $oCriteria1->add( ContentPeer::CON_ID, $aRow1['TAS_UID'] );
-                $oDataset2 = ContentPeer::doSelectRS( $oCriteria1 );
-                $oDataset2->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-                $oDataset2->next();
-                $aRow2 = $oDataset2->getRow();
-
-                Content::insertContent( 'TAS_TITLE', '', $aRow2['CON_ID'], 'en', $aRow2['CON_VALUE'] );
+                \Content::insertContent('TAS_TITLE', '', $aRow1['TAS_UID'], 'en', $aRow1['TAS_TITLE']);
             }
-            $oC2 = new Criteria( 'workflow' );
-            $oC2->add( ContentPeer::CON_CATEGORY, 'PRO_TITLE' );
-            $oC2->add( ContentPeer::CON_LANG, SYS_LANG );
-            $oC2->add( ContentPeer::CON_ID, $sproUid );
-            $oDataset3 = ContentPeer::doSelectRS( $oC2 );
-            $oDataset3->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+            $oC2 = new Criteria('workflow');
+            $oC2->addSelectColumn(\ProcessPeer::PRO_UID);
+            $oC2->addSelectColumn(\ProcessPeer::PRO_TITLE);
+            $oC2->add(\ProcessPeer::PRO_UID, $sproUid);
+            $oDataset3 = \ProcessPeer::doSelectRS($oC2);
+            $oDataset3->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             $oDataset3->next();
             $aRow3 = $oDataset3->getRow();
-
-            Content::insertContent( 'PRO_TITLE', '', $aRow3['CON_ID'], 'en', $aRow3['CON_VALUE'] );
-
+            \Content::insertContent('PRO_TITLE', '', $aRow3['PRO_UID'], 'en', $aRow3['PRO_TITLE']);
         }
         return 1;
 
@@ -1098,26 +1077,19 @@ class Light
                 $cProcess = new Criteria( 'workflow' );
                 $cProcess->clearSelectColumns();
                 $cProcess->addSelectColumn( \ProcessPeer::PRO_UID );
-                $cProcess->addSelectColumn( \ContentPeer::CON_VALUE );
+                $cProcess->addSelectColumn( \ProcessPeer::PRO_TITLE );
                 if ($categoryUid) {
                     $cProcess->add( \ProcessPeer::PRO_CATEGORY, $categoryUid );
                 }
-                $del = DBAdapter::getStringDelimiter();
-                $conds = array ();
-                $conds[] = array (ProcessPeer::PRO_UID,ContentPeer::CON_ID);
-                $conds[] = array (ContentPeer::CON_CATEGORY,$del . 'PRO_TITLE' . $del);
-                $conds[] = array (ContentPeer::CON_LANG,$del . $lang . $del);
-                $cProcess->addJoinMC( $conds, Criteria::LEFT_JOIN );
                 $cProcess->add( ProcessPeer::PRO_STATUS, 'ACTIVE' );
-                $cProcess->addAscendingOrderByColumn(ContentPeer::CON_VALUE);
+                $cProcess->addAscendingOrderByColumn(\ProcessPeer::PRO_TITLE);
 
-                $oDataset = ProcessPeer::doSelectRS( $cProcess );
-                $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+                $oDataset = \ProcessPeer::doSelectRS( $cProcess );
+                $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
                 $oDataset->next();
 
                 while ($aRow = $oDataset->getRow()) {
-                    $processes[] = array ($aRow['PRO_UID'],$aRow['CON_VALUE']
-                    );
+                    $processes[] = array ($aRow['PRO_UID'],$aRow['PRO_TITLE']);
                     $oDataset->next();
                 }
                 return print G::json_encode( $processes );

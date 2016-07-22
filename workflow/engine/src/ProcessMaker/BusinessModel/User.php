@@ -42,6 +42,36 @@ class User
         "usrPhoto"  => "USR_PHOTO"
     );
 
+    private $arrayPermissionsForEditUser = array (
+        'USR_FIRSTNAME' => 'PM_EDIT_USER_PROFILE_FIRST_NAME',
+        'USR_LASTNAME' => 'PM_EDIT_USER_PROFILE_LAST_NAME',
+        'USR_USERNAME' => 'PM_EDIT_USER_PROFILE_USERNAME',
+        'USR_EMAIL' => 'PM_EDIT_USER_PROFILE_EMAIL',
+        'USR_ADDRESS' => 'PM_EDIT_USER_PROFILE_ADDRESS',
+        'USR_ZIP_CODE' => 'PM_EDIT_USER_PROFILE_ZIP_CODE',
+        'USR_COUNTRY' => 'PM_EDIT_USER_PROFILE_COUNTRY',
+        'USR_REGION' => 'PM_EDIT_USER_PROFILE_STATE_OR_REGION',
+        'USR_LOCATION' => 'PM_EDIT_USER_PROFILE_LOCATION',
+        'USR_PHONE' => 'PM_EDIT_USER_PROFILE_PHONE',
+        'USR_POSITION' => 'PM_EDIT_USER_PROFILE_POSITION',
+        'USR_REPLACED_BY' => 'PM_EDIT_USER_PROFILE_REPLACED_BY',
+        'USR_DUE_DATE' => 'PM_EDIT_USER_PROFILE_EXPIRATION_DATE',
+        'USR_CALENDAR' => 'PM_EDIT_USER_PROFILE_CALENDAR',
+        'USR_STATUS' => 'PM_EDIT_USER_PROFILE_STATUS',
+        'USR_ROLE' => 'PM_EDIT_USER_PROFILE_ROLE',
+        'USR_TIME_ZONE' => 'PM_EDIT_USER_PROFILE_TIME_ZONE',
+        'USR_DEFAULT_LANG' => 'PM_EDIT_USER_PROFILE_DEFAULT_LANGUAGE',
+        'USR_COST_BY_HOUR' => 'PM_EDIT_USER_PROFILE_COSTS',
+        'USR_UNIT_COST' => 'PM_EDIT_USER_PROFILE_COSTS',
+        'USR_CUR_PASS' => 'PM_EDIT_USER_PROFILE_PASSWORD',
+        'USR_NEW_PASS' => 'PM_EDIT_USER_PROFILE_PASSWORD',
+        'USR_CNF_PASS' => 'PM_EDIT_USER_PROFILE_PASSWORD',
+        'USR_LOGGED_NEXT_TIME' => 'PM_EDIT_USER_PROFILE_USER_MUST_CHANGE_PASSWORD_AT_NEXT_LOGON',
+        'USR_PHOTO' => 'PM_EDIT_USER_PROFILE_PHOTO',
+        'PREF_DEFAULT_MENUSELECTED' => 'PM_EDIT_USER_PROFILE_DEFAULT_MAIN_MENU_OPTIONS',
+        'PREF_DEFAULT_CASESELECTED' => 'PM_EDIT_USER_PROFILE_DEFAULT_CASES_MENU_OPTIONS'
+    );
+
     /**
      * Constructor of the class
      *
@@ -56,6 +86,13 @@ class User
         } catch (\Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * @return array
+     */
+    public function getPermissionsForEdit(){
+        return $this->arrayPermissionsForEditUser;
     }
 
     /**
@@ -1320,6 +1357,53 @@ class User
         }
         $fields['USR_BOOKMARK_START_CASES'] = serialize($bookmark);
         $this->userObj->update($fields);
+    }
+
+    /**
+     * @param $userUid
+     * @param array $arrayPermission
+     * @return User
+     * @throws \Exception
+     */
+    public function checkPermissionForEdit($userUid, $arrayPermission = array(), $form)
+    {
+        try {
+            foreach ($arrayPermission as $key => $value) {
+                $flagPermission = $this->checkPermission($userUid, $value);
+                if (!$flagPermission){
+                    unset($form[$key]);
+                }
+            }
+            return $form;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * @param $aFields
+     * @return array
+     * @throws \Exception
+     */
+    public function loadDetailedPermissions($aFields)
+    {
+        try {
+            global $RBAC;
+            $resultPermissionsForUser = array();
+            if ($aFields['USR_UID'] != '') {
+                foreach ($this->arrayPermissionsForEditUser as $index => $item) {
+                    if ($RBAC->userCanAccess($item) !== 1) {
+                        $resultPermissionsForUser[$index] = $item;
+                    }
+                }
+                return $resultPermissionsForUser;
+            } else {
+                $lang = defined('SYS_LANG') ? SYS_LANG : 'en';
+                throw (new \Exception(G::LoadTranslation("ID_USER_UID_DOESNT_EXIST", $lang, array("USR_UID" => $aFields['USR_UID']))));
+            }
+        } catch (\Exception $oError) {
+            throw ($oError);
+        }
     }
 
     /**

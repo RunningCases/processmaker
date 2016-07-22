@@ -129,20 +129,13 @@ class Process
             $criteria = new \Criteria("workflow");
 
             $criteria->addSelectColumn(\ProcessPeer::PRO_UID);
-
-            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
-
-            $arrayCondition = array();
-            $arrayCondition[] = array(\ProcessPeer::PRO_UID, "CT.CON_ID", \Criteria::EQUAL);
-            $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "PRO_TITLE" . $delimiter, \Criteria::EQUAL);
-            $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
-            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+            $criteria->addSelectColumn(\ProcessPeer::PRO_TITLE);
 
             if ($processUidExclude != "") {
                 $criteria->add(\ProcessPeer::PRO_UID, $processUidExclude, \Criteria::NOT_EQUAL);
             }
 
-            $criteria->add("CT.CON_VALUE", $processTitle, \Criteria::EQUAL);
+            $criteria->add(\ProcessPeer::PRO_TITLE, $processTitle, \Criteria::EQUAL);
 
             $rsCriteria = \ProcessPeer::doSelectRS($criteria);
 
@@ -1463,7 +1456,7 @@ class Process
             $criteria = $inputDocument->getInputDocumentCriteria();
 
             $criteria->add(\InputDocumentPeer::PRO_UID, $processUid, \Criteria::EQUAL);
-            $criteria->addAscendingOrderByColumn("INP_DOC_TITLE");
+            $criteria->addAscendingOrderByColumn(\InputDocumentPeer::INP_DOC_TITLE);
 
             $rsCriteria = \InputDocumentPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);

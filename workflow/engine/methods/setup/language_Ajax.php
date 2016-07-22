@@ -147,16 +147,13 @@ try {
 
             $oCriteria = new Criteria( 'workflow' );
             //$oCriteria->addSelectColumn('COUNT('.ContentPeer::CON_CATEGORY.')');
-            $oCriteria->addSelectColumn( ContentPeer::CON_CATEGORY );
-            $oCriteria->addSelectColumn( ContentPeer::CON_VALUE );
-            $oCriteria->add( ContentPeer::CON_LANG, $locale );
-            $oCriteria->add( ContentPeer::CON_CATEGORY, 'APP_TITLE', Criteria::EQUAL );
-            $oDataset = ContentPeer::doSelectRS( $oCriteria );
-
+            $oCriteria->addSelectColumn(ApplicationPeer::APP_TITLE);
+            $oDataset = ApplicationPeer::doSelectRS( $oCriteria );
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
-            $oContent = new Content();
             $aRow = $oDataset->getRow();
 
+            $oContent = new Content();
             if($locale != "en"){ //Default Lengage 'en'
             	if($locale != SYS_LANG){ //Current lenguage
             		//THERE IS NO ANY CASE STARTED FROM THES LANGUAGE

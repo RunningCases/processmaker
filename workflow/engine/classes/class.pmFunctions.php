@@ -1897,20 +1897,20 @@ function PMFGenerateOutputDocument ($outputID, $sApplication = null, $index = nu
  * @label PMF Group List
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFGroupList.28.29
  *
+ * @param string | $regex = null | String to search | Optional parameter.
+ * @param int | $start = null | Start | Optional parameter.
+ * @param int | $limit = null | Limit | Optional parameter.
  * @return array | $rows | List of groups | An array of groups
  *
  */
-function PMFGroupList () //its test was successfull
+function PMFGroupList ($regex = null, $start = null, $limit = null) //its test was successfull
 {
     G::LoadClass( 'wsBase' );
     $ws = new wsBase();
-    $result = $ws->groupList();
-    $rows = Array ();
-    $i = 1;
+    $result = $ws->groupList($regex, $start, $limit);
+    $rows = array();
     if (isset( $result )) {
-        foreach ($result as $item) {
-            $rows[$i ++] = $item;
-        }
+        $rows = array_combine(range(1, count($result)), array_values($result));
     }
     return $rows;
 }
@@ -2984,7 +2984,7 @@ function PMFSaveCurrentData ()
  * @name PMFTasksListByProcessId
  * @label PMF Tasks List By Process Id
  * @param string | $processId | ID Process | To get the current process id, use the system variable @@PROCESS
- * @param string | $lang | Language | Is the language of the text, that must be the same to the column: "CON_LANG" of the CONTENT table
+ * @param string | $lang | Language | This parameter actually is not used, the same is kept by backward compatibility.Is the language of the text, that must be the same to the column: "CON_LANG" of the CONTENT table
  * @return array | $result | Array result | Array of associative arrays which contain the unique task ID and title
  */
 function PMFTasksListByProcessId($processId, $lang = 'en')
@@ -2992,11 +2992,7 @@ function PMFTasksListByProcessId($processId, $lang = 'en')
     $result = array();
     $criteria = new Criteria("workflow");
     $criteria->addSelectColumn(TaskPeer::TAS_UID);
-    $criteria->addSelectColumn(ContentPeer::CON_VALUE);
-    $criteria->addSelectColumn(ContentPeer::CON_LANG);
-    $criteria->addJoin(TaskPeer::TAS_UID, ContentPeer::CON_ID, Criteria::INNER_JOIN);
-    $criteria->add(ContentPeer::CON_CATEGORY, 'TAS_TITLE', Criteria::EQUAL);
-    $criteria->add(ContentPeer::CON_LANG, $lang, Criteria::EQUAL);
+    $criteria->addSelectColumn(TaskPeer::TAS_TITLE);
     $criteria->add(TaskPeer::PRO_UID, $processId, Criteria::EQUAL);
     $ds = TaskPeer::doSelectRS($criteria);
     $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -3033,12 +3029,8 @@ function PMFGetProcessUidByName($processName = '')
         $criteria = new Criteria('workflow');
 
         $criteria->addSelectColumn(ProcessPeer::PRO_UID);
-
-        $criteria->addJoin(ContentPeer::CON_ID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
-        $criteria->add(ContentPeer::CON_VALUE, $processName, Criteria::EQUAL);
-        $criteria->add(ContentPeer::CON_CATEGORY, 'PRO_TITLE', Criteria::EQUAL);
-
-        $rsCriteria = ContentPeer::doSelectRS($criteria);
+        $criteria->add(ProcessPeer::PRO_TITLE, $processName, Criteria::EQUAL);
+        $rsCriteria = ProcessPeer::doSelectRS($criteria);
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
         if ($rsCriteria->next()) {
@@ -3174,14 +3166,18 @@ function PMFDynaFormFields($dynUid, $appUid = false, $delIndex = 0)
  * @name PMFGetTaskName
  * @label PMF Get Task Title Text
  * @param string | $taskUid | ID Task | Is the identifier of task, that must be the same to the column: "TAS_UID" of the TASK table
- * @param string | $lang | Language | Is the language of the text, that must be the same to the column: "CON_LANG" of the CONTENT table
+ * @param string | $lang | Language | This parameter actually is not used, the same is kept by backward compatibility. Is the language of the text, that must be the same to the column: "CON_LANG" 
+ * of the CONTENT table
  * @return string | $text | Translated text | the translated text of a string in Content
  */
 function PMFGetTaskName($taskUid, $lang = SYS_LANG) {
     if (empty($taskUid)) {
         return false;
     }
-    return PMFGeti18nText($taskUid, 'TAS_TITLE', $lang);
+    $oTask = new \Task();
+    $aTasks = $oTask->load($taskUid);
+    $text = isset($aTasks["TAS_TITLE"]) ? $aTasks["TAS_TITLE"] : false;
+    return $text;
 }
 
 /**
@@ -3256,7 +3252,20 @@ function PMFGetGroupUID($groupName)
  */
 function PMFGetTaskUID($taskName, $proUid = null)
 {
-    return PMFGetUidFromText($taskName, 'TAS_TITLE', $proUid);
+    $oCriteria = new Criteria('workflow');
+    $oCriteria->addSelectColumn(TaskPeer::TAS_UID);
+    $oCriteria->add(TaskPeer::TAS_TITLE, $taskName);
+    if(!is_null($proUid)){
+        $oCriteria->add(TaskPeer::PRO_UID, $proUid);
+    }
+    $oDataset = TaskPeer::doSelectRS($oCriteria);
+    $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+    $uids = array();
+    while ($row = $oDataset->getRow()) {
+        $uids[] = $row['TAS_UID'];
+        $oDataset->next();
+    }
+    return $uids;
 }
 
 /**
@@ -3652,7 +3661,7 @@ function PMFCopyDocumentCase($appDocUid, $versionNumber, $targetCaseUid, $inputD
  * @param string | $taskUid | Task Uid | The unique Id of the Task.
  * @param string | $userGroupUid | Uid from User or Group | The unique Uid from User or Group.
  *
- * @return int Returns 1 when is assigned.
+ * @return int | $result | Result | Returns 1 when is assigned
  */
 
 function PMFAddUserGroupToTask($taskUid, $userGroupUid)
@@ -3742,3 +3751,89 @@ function PMFRemoveUserGroupFromTask($taskUid, $userGroupUid)
     return 1;
 }
 
+/**
+ * @method
+ *
+ * Sends emails to user's group using a template file
+ *
+ * @name PMFSendMessageToGroup
+ * @label PMF Send Message To Group
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFSendMessageToGroup.28.29
+ *
+ * @param string(32) | $groupId | Group ID | Unique id of Group.
+ * @param string(32) | $caseId | Case ID | The UID (unique identification) for a case, which is a string of 32 hexadecimal characters to identify the case.
+ * @param string | $from | Sender | The email address of the person who sends out the email.
+ * @param string | $subject | Subject of the email | The subject (title) of the email.
+ * @param string | $template | Name of the template | The name of the template file in plain text or HTML format which will produce the body of the email.
+ * @param array | $arrayField = [] | Variables for email template | Optional parameter. An associative array where the keys are the variable names and the values are the variables' values.
+ * @param array | $arrayAttachment = [] | Attachment | An Optional arrray. An array of files (full paths) to be attached to the email.
+ * @param boolean | $showMessage = true | Show message | Optional parameter. Set to TRUE to show the message in the case's message history.
+ * @param int | $delIndex = 0 | Delegation index of the case | Optional parameter. The delegation index of the current task in the case.
+ * @param mixed | $config = [] | Email server configuration | An optional array: An array of parameters to be used in the Email sent (MESS_ENGINE, MESS_SERVER, MESS_PORT, MESS_FROM_MAIL, MESS_RAUTH, MESS_ACCOUNT, MESS_PASSWORD, and SMTPSecure) Or String: UID of Email server.
+ * @param int | $limit = 100 | Limit | Limit of mails to send in each bach.
+ *
+ * @return int | $result | Result | Returns 1 when is send message to group
+ */
+function PMFSendMessageToGroup(
+    $groupId,
+    $caseId,
+    $from,
+    $subject,
+    $template,
+    $arrayField = [],
+    $arrayAttachment = [],
+    $showMessage = true,
+    $delIndex = 0,
+    $config = [],
+    $limit = 100
+) {
+    //Verify data and Set variables
+    $group = new \ProcessMaker\BusinessModel\Group();
+    $case = new \ProcessMaker\BusinessModel\Cases();
+
+    $group->throwExceptionIfNotExistsGroup($groupId, '$groupId');
+
+    $arrayApplicationData = $case->getApplicationRecordByPk($caseId, ['$applicationUid' => '$caseId'], true);
+
+    //Send mails
+    $criteriaGroupUser = $group->getUserCriteria($groupId, ['condition' => [[UsersPeer::USR_STATUS, 'ACTIVE', Criteria::EQUAL]]]);
+
+    $start = 0;
+
+    do {
+        $flagNextRecord = false;
+
+        $to = '';
+
+        $criteria = clone $criteriaGroupUser;
+
+        $criteria->setOffset($start);
+        $criteria->setLimit($limit);
+
+        $rsCriteria = GroupUserPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+        while ($rsCriteria->next()) {
+            $record = $rsCriteria->getRow();
+
+            $to .= (($to != '')? ', ' : '') . $record['USR_EMAIL'];
+
+            $flagNextRecord = true;
+        }
+
+        if ($flagNextRecord) {
+            $result = PMFSendMessage(
+                $caseId, $from, $to, null, null, $subject, $template, $arrayField, $arrayAttachment, $showMessage, $delIndex, $config
+            );
+
+            if ($result == 0) {
+                return 0;
+            }
+        }
+
+        $start += $limit;
+    } while ($flagNextRecord);
+
+    //Return
+    return 1;
+}

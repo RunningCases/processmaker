@@ -20,22 +20,22 @@ class Task extends BaseTask
      * This value goes in the content table
      * @var        string
      */
-    protected $tas_title = '';
+    protected $tas_title_content = '';
 
     /**
      * Get the tas_title column value.
      * @return     string
      */
-    public function getTasTitle()
+    public function getTasTitleContent()
     {
         if ($this->getTasUid() == "") {
             throw (new Exception("Error in getTasTitle, the getTasUid() can't be blank"));
         }
 
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
-        $this->tas_title = Content::load('TAS_TITLE', '', $this->getTasUid(), $lang);
+        $this->tas_title_content = Content::load('TAS_TITLE', '', $this->getTasUid(), $lang);
 
-        return $this->tas_title;
+        return $this->tas_title_content;
     }
 
     /**
@@ -44,7 +44,7 @@ class Task extends BaseTask
      * @param      string $v new value
      * @return     void
      */
-    public function setTasTitle($v)
+    public function setTasTitleContent($v)
     {
         if ($this->getTasUid() == "") {
             throw (new Exception("Error in setTasTitle, the getTasUid() can't be blank"));
@@ -53,10 +53,10 @@ class Task extends BaseTask
         $v = isset($v)? ((string)$v) : '';
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
 
-        if ($this->tas_title !== $v || $v === "") {
-            $this->tas_title = $v;
+        if ($this->tas_title_content !== $v || $v === "") {
+            $this->tas_title_content = $v;
 
-            $res = Content::addContent('TAS_TITLE', '', $this->getTasUid(), $lang, $this->tas_title);
+            $res = Content::addContent('TAS_TITLE', '', $this->getTasUid(), $lang, $this->tas_title_content);
 
             return $res;
         }
@@ -68,22 +68,22 @@ class Task extends BaseTask
      * This value goes in the content table
      * @var        string
      */
-    protected $tas_description = '';
+    protected $tas_description_content = '';
 
     /**
      * Get the tas_description column value.
      * @return     string
      */
-    public function getTasDescription()
+    public function getTasDescriptionContent()
     {
         if ($this->getTasUid() == "") {
             throw (new Exception( "Error in getTasDescription, the getTasUid() can't be blank"));
         }
 
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
-        $this->tas_description = Content::load('TAS_DESCRIPTION', '', $this->getTasUid(), $lang);
+        $this->tas_description_content = Content::load('TAS_DESCRIPTION', '', $this->getTasUid(), $lang);
 
-        return $this->tas_description;
+        return $this->tas_description_content;
     }
 
     /**
@@ -92,7 +92,7 @@ class Task extends BaseTask
      * @param      string $v new value
      * @return     void
      */
-    public function setTasDescription($v)
+    public function setTasDescriptionContent($v)
     {
         if ($this->getTasUid() == "") {
             throw (new Exception("Error in setTasDescription, the getTasUid() can't be blank"));
@@ -101,10 +101,10 @@ class Task extends BaseTask
         $v = isset($v)? ((string)$v) : '';
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
 
-        if ($this->tas_description !== $v || $v === "") {
-            $this->tas_description = $v;
+        if ($this->tas_description_content !== $v || $v === "") {
+            $this->tas_description_content = $v;
 
-            $res = Content::addContent('TAS_DESCRIPTION', '', $this->getTasUid(), $lang, $this->tas_description);
+            $res = Content::addContent('TAS_DESCRIPTION', '', $this->getTasUid(), $lang, $this->tas_description_content);
 
             return $res;
         }
@@ -116,22 +116,22 @@ class Task extends BaseTask
      * This value goes in the content table
      * @var        string
      */
-    protected $tas_def_title = '';
+    protected $tas_def_title_content = '';
 
     /**
      * Get the tas_def_title column value.
      * @return     string
      */
-    public function getTasDefTitle()
+    public function getTasDefTitleContent()
     {
         if ($this->getTasUid() == "") {
             throw (new Exception( "Error in getTasDefTitle, the getTasUid() can't be blank"));
         }
 
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
-        $this->tas_def_title = Content::load('TAS_DEF_TITLE', '', $this->getTasUid(), $lang);
+        $this->tas_def_title_content = Content::load('TAS_DEF_TITLE', '', $this->getTasUid(), $lang);
 
-        return $this->tas_def_title;
+        return $this->tas_def_title_content;
     }
 
     /**
@@ -140,7 +140,7 @@ class Task extends BaseTask
      * @param      string $v new value
      * @return     void
      */
-    public function setTasDefTitle($v)
+    public function setTasDefTitleContent($v)
     {
         if ($this->getTasUid() == "") {
             throw (new Exception("Error in setTasDefTitle, the getTasUid() can't be blank"));
@@ -149,10 +149,10 @@ class Task extends BaseTask
         $v = isset($v)? ((string)$v) : '';
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
 
-        if ($this->tas_def_title !== $v || $v === "") {
-            $this->tas_def_title = $v;
+        if ($this->tas_def_title_content !== $v || $v === "") {
+            $this->tas_def_title_content = $v;
 
-            $res = Content::addContent('TAS_DEF_TITLE', '', $this->getTasUid(), $lang, $this->tas_def_title);
+            $res = Content::addContent('TAS_DEF_TITLE', '', $this->getTasUid(), $lang, $this->tas_def_title_content);
 
             return $res;
         }
@@ -164,22 +164,22 @@ class Task extends BaseTask
      * This value goes in the content table
      * @var        string
      */
-    protected $tas_def_description = '';
+    protected $tas_def_description_content = '';
 
     /**
      * Get the tas_def_description column value.
      * @return     string
      */
-    public function getTasDefDescription()
+    public function getTasDefDescriptionContent()
     {
         if ($this->getTasUid() == "") {
             throw (new Exception( "Error in getTasDefDescription, the getTasUid() can't be blank"));
         }
 
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
-        $this->tas_def_description = Content::load('TAS_DEF_DESCRIPTION', '', $this->getTasUid(), $lang);
+        $this->tas_def_description_content = Content::load('TAS_DEF_DESCRIPTION', '', $this->getTasUid(), $lang);
 
-        return $this->tas_def_description;
+        return $this->tas_def_description_content;
     }
 
     /**
@@ -188,7 +188,7 @@ class Task extends BaseTask
      * @param      string $v new value
      * @return     void
      */
-    public function setTasDefDescription($v)
+    public function setTasDefDescriptionContent($v)
     {
         if ($this->getTasUid() == "") {
             throw (new Exception("Error in setTasDefDescription, the getTasUid() can't be blank"));
@@ -197,8 +197,8 @@ class Task extends BaseTask
         $v = isset($v)? ((string)$v) : '';
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
 
-        if ($this->tas_def_description !== $v || $v === "") {
-            $this->tas_def_description = $v;
+        if ($this->tas_def_description_content !== $v || $v === "") {
+            $this->tas_def_description_content = $v;
 
             $res = Content::addContent('TAS_DEF_DESCRIPTION', '', $this->getTasUid(), $lang, $v);
             return $res;
@@ -211,22 +211,22 @@ class Task extends BaseTask
      * This value goes in the content table
      * @var        string
      */
-    protected $tas_def_proc_code = '';
+    protected $tas_def_proc_code_content = '';
 
     /**
      * Get the tas_def_proc_code column value.
      * @return     string
      */
-    public function getTasDefProcCode()
+    public function getTasDefProcCodeContent()
     {
         if ($this->getTasUid() == "") {
             throw (new Exception( "Error in getTasDefProcCode, the getTasUid() can't be blank"));
         }
 
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
-        $this->tas_def_proc_code = Content::load('TAS_DEF_PROC_CODE', '', $this->getTasUid(), $lang);
+        $this->tas_def_proc_code_content = Content::load('TAS_DEF_PROC_CODE', '', $this->getTasUid(), $lang);
 
-        return $this->tas_def_proc_code;
+        return $this->tas_def_proc_code_content;
     }
 
     /**
@@ -235,7 +235,7 @@ class Task extends BaseTask
      * @param      string $v new value
      * @return     void
      */
-    public function setTasDefProcCode($v)
+    public function setTasDefProcCodeContent($v)
     {
         if ($this->getTasUid() == "") {
             throw (new Exception("Error in setTasDefProcCode, the getTasUid() can't be blank"));
@@ -244,10 +244,10 @@ class Task extends BaseTask
         $v = isset($v)? ((string)$v) : '';
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
 
-        if ($this->tas_def_proc_code !== $v || $v === "") {
-            $this->tas_def_proc_code = $v;
+        if ($this->tas_def_proc_code_content !== $v || $v === "") {
+            $this->tas_def_proc_code_content = $v;
 
-            $res = Content::addContent('TAS_DEF_PROC_CODE', '', $this->getTasUid(), $lang, $this->tas_def_proc_code);
+            $res = Content::addContent('TAS_DEF_PROC_CODE', '', $this->getTasUid(), $lang, $this->tas_def_proc_code_content);
 
             return $res;
         }
@@ -259,22 +259,22 @@ class Task extends BaseTask
      * This value goes in the content table
      * @var        string
      */
-    protected $tas_def_message = '';
+    protected $tas_def_message_content = '';
 
     /**
      * Get the tas_def_message column value.
      * @return     string
      */
-    public function getTasDefMessage()
+    public function getTasDefMessageContent()
     {
         if ($this->getTasUid() == "") {
             throw (new Exception( "Error in getTasDefMessage, the getTasUid() can't be blank"));
         }
 
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
-        $this->tas_def_message = Content::load('TAS_DEF_MESSAGE', '', $this->getTasUid(), $lang);
+        $this->tas_def_message_content = Content::load('TAS_DEF_MESSAGE', '', $this->getTasUid(), $lang);
 
-        return $this->tas_def_message;
+        return $this->tas_def_message_content;
     }
 
     /**
@@ -283,7 +283,7 @@ class Task extends BaseTask
      * @param      string $v new value
      * @return     void
      */
-    public function setTasDefMessage($v)
+    public function setTasDefMessageContent($v)
     {
         if ($this->getTasUid() == "") {
             throw (new Exception("Error in setTasDefMessage, the getTasUid() can't be blank"));
@@ -291,10 +291,10 @@ class Task extends BaseTask
         $v = isset($v)? ((string)$v) : '';
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
 
-        if ($this->tas_def_message !== $v || $v === "") {
-            $this->tas_def_message = $v;
+        if ($this->tas_def_message_content !== $v || $v === "") {
+            $this->tas_def_message_content = $v;
 
-            $res = Content::addContent('TAS_DEF_MESSAGE', '', $this->getTasUid(), $lang, $this->tas_def_message);
+            $res = Content::addContent('TAS_DEF_MESSAGE', '', $this->getTasUid(), $lang, $this->tas_def_message_content);
 
             return $res;
         }
@@ -306,22 +306,22 @@ class Task extends BaseTask
      * This value goes in the content table
      * @var        string
      */
-    protected $tas_def_subject_message = '';
+    protected $tas_def_subject_message_content = '';
 
     /**
      * Get the tas_def_message column value.
      * @return     string
      */
-    public function getTasDefSubjectMessage()
+    public function getTasDefSubjectMessageContent()
     {
         if ($this->getTasUid() == "") {
             throw (new Exception("Error in getTasDefSubjectMessage, the getTasUid() can't be blank"));
         }
 
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
-        $this->tas_def_subject_message = Content::load('TAS_DEF_SUBJECT_MESSAGE', '', $this->getTasUid(), $lang);
+        $this->tas_def_subject_message_content = Content::load('TAS_DEF_SUBJECT_MESSAGE', '', $this->getTasUid(), $lang);
 
-        return $this->tas_def_subject_message;
+        return $this->tas_def_subject_message_content;
     }
 
     /**
@@ -330,7 +330,7 @@ class Task extends BaseTask
      * @param      string $v new value
      * @return     void
      */
-    public function setTasDefSubjectMessage($v)
+    public function setTasDefSubjectMessageContent($v)
     {
         if ($this->getTasUid() == "") {
             throw (new Exception( "Error in setTasDefSubjectMessage, the getTasUid() can't be blank"));
@@ -339,8 +339,8 @@ class Task extends BaseTask
         $v = isset($v)? ((string)$v) : '';
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
 
-        if ($this->tas_def_subject_message !== $v || $v === "") {
-            $this->tas_def_subject_message = $v;
+        if ($this->tas_def_subject_message_content !== $v || $v === "") {
+            $this->tas_def_subject_message_content = $v;
 
             $res = Content::addContent('TAS_DEF_SUBJECT_MESSAGE', '', $this->getTasUid(), $lang, $v);
 
@@ -370,6 +370,13 @@ class Task extends BaseTask
             $con->begin();
             $this->setProUid($aData['PRO_UID']);
             $this->setTasUid($sTaskUID);
+            $this->setTasTitle((isset($aData['TAS_TITLE']) ? $aData['TAS_TITLE']: ''));
+            $this->setTasDescription((isset($aData['TAS_DESCRIPTION']) ? $aData['TAS_DESCRIPTION']: ''));
+            $this->setTasDefTitle("");
+            $this->setTasDefDescription("");
+            $this->setTasDefProcCode("");
+            $this->setTasDefMessage("");
+            $this->setTasDefSubjectMessage("");
             $this->setTasType("NORMAL");
             $this->setTasDuration("1");
             $this->setTasDelayType("");
@@ -405,16 +412,15 @@ class Task extends BaseTask
             $this->fromArray($aData,BasePeer::TYPE_FIELDNAME);
 
             if ($this->validate()) {
-                $this->setTasTitle((isset($aData['TAS_TITLE']) ? $aData['TAS_TITLE']: ''));
-                $this->setTasDescription((isset($aData['TAS_DESCRIPTION']) ? $aData['TAS_DESCRIPTION']: ''));
-                $this->setTasDefTitle("");
-                $this->setTasDefDescription("");
-                $this->setTasDefProcCode("");
-                $this->setTasDefMessage("");
-                $this->setTasDefSubjectMessage("");
+                $this->setTasTitleContent((isset($aData['TAS_TITLE']) ? $aData['TAS_TITLE']: ''));
+                $this->setTasDescriptionContent((isset($aData['TAS_DESCRIPTION']) ? $aData['TAS_DESCRIPTION']: ''));
+                $this->setTasDefTitleContent("");
+                $this->setTasDefDescriptionContent("");
+                $this->setTasDefProcCodeContent("");
+                $this->setTasDefMessageContent("");
+                $this->setTasDefSubjectMessageContent("");
                 $this->save();
                 $con->commit();
-
                 return $sTaskUID;
             } else {
                 $con->rollback();
@@ -458,19 +464,6 @@ class Task extends BaseTask
                                                                       //Populating attributes
                 $this->setNew(false);
 
-                ///////
-                //Create new records for TASK in CONTENT for the current language, this if is necesary
-                //Populating others attributes
-                $this->setTasUid($TasUid);
-
-                $aFields["TAS_TITLE"] = $this->getTasTitle();
-                $aFields["TAS_DESCRIPTION"] = $this->getTasDescription();
-                $aFields["TAS_DEF_TITLE"] = $this->getTasDefTitle();
-                $aFields["TAS_DEF_DESCRIPTION"] = $this->getTasDefDescription();
-                $aFields["TAS_DEF_PROC_CODE"] = $this->getTasDefProcCode();
-                $aFields["TAS_DEF_MESSAGE"] = $this->getTasDefMessage();
-                $aFields["TAS_DEF_SUBJECT_MESSAGE"] = $this->getTasDefSubjectMessage();
-
                 /*----------------------------------********---------------------------------*/
                 G::LoadClass("indicatorsCalculator");
                 $indicator = new indicatorsCalculator();
@@ -503,52 +496,36 @@ class Task extends BaseTask
             $this->validateAssignType($fields,$oldValues);
             
             if ($this->validate()) {
-                $taskDefTitlePrevious = null;
-
-                $criteria = new Criteria("workflow");
-
-                $criteria->addSelectColumn(ContentPeer::CON_VALUE);
-                $criteria->add(ContentPeer::CON_CATEGORY, "TAS_DEF_TITLE");
-                $criteria->add(ContentPeer::CON_ID, $fields["TAS_UID"]);
-                $criteria->add(ContentPeer::CON_LANG, SYS_LANG);
-
-                $rsCriteria = ContentPeer::doSelectRS($criteria);
-                $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-                while ($rsCriteria->next()) {
-                    $row = $rsCriteria->getRow();
-
-                    $taskDefTitlePrevious = $row["CON_VALUE"];
-                }
+                $taskDefTitlePrevious = $oldValues["TAS_DEF_TITLE"];
 
                 $contentResult = 0;
 
                 if (array_key_exists("TAS_TITLE", $fields)) {
-                    $contentResult += $this->setTasTitle($fields["TAS_TITLE"]);
+                    $contentResult += $this->setTasTitleContent($fields["TAS_TITLE"]);
                 }
 
                 if (array_key_exists("TAS_DESCRIPTION", $fields)) {
-                    $contentResult += $this->setTasDescription($fields["TAS_DESCRIPTION"]);
+                    $contentResult += $this->setTasDescriptionContent($fields["TAS_DESCRIPTION"]);
                 }
 
                 if (array_key_exists("TAS_DEF_TITLE", $fields)) {
-                    $contentResult += $this->setTasDefTitle($fields["TAS_DEF_TITLE"]);
+                    $contentResult += $this->setTasDefTitleContent($fields["TAS_DEF_TITLE"]);
                 }
 
                 if (array_key_exists("TAS_DEF_DESCRIPTION", $fields)) {
-                    $contentResult += $this->setTasDefDescription($fields["TAS_DEF_DESCRIPTION"]);
+                    $contentResult += $this->setTasDefDescriptionContent($fields["TAS_DEF_DESCRIPTION"]);
                 }
 
                 if (array_key_exists("TAS_DEF_PROC_CODE", $fields)) {
-                    $contentResult += $this->setTasDefProcCode($fields["TAS_DEF_PROC_CODE"]);
+                    $contentResult += $this->setTasDefProcCodeContent($fields["TAS_DEF_PROC_CODE"]);
                 }
 
                 if (array_key_exists("TAS_DEF_MESSAGE", $fields)) {
-                    $contentResult += $this->setTasDefMessage(trim($fields["TAS_DEF_MESSAGE"]));
+                    $contentResult += $this->setTasDefMessageContent(trim($fields["TAS_DEF_MESSAGE"]));
                 }
 
                 if (array_key_exists("TAS_DEF_SUBJECT_MESSAGE", $fields)) {
-                    $contentResult += $this->setTasDefSubjectMessage(trim($fields["TAS_DEF_SUBJECT_MESSAGE"]));
+                    $contentResult += $this->setTasDefSubjectMessageContent(trim($fields["TAS_DEF_SUBJECT_MESSAGE"]));
                 }
 
                 if (array_key_exists("TAS_CALENDAR", $fields)) {
@@ -693,15 +670,15 @@ class Task extends BaseTask
             $this->fromArray($aData,BasePeer::TYPE_FIELDNAME);
 
             if ($this->validate()) {
-                $this->setTasTitle((isset($aData['TAS_TITLE'])? $aData['TAS_TITLE'] : ''));
-                $this->setTasDescription((isset($aData['TAS_DESCRIPTION'])? $aData['TAS_DESCRIPTION'] : ''));
-                $this->setTasDefTitle((isset($aData['TAS_DEF_TITLE'])? $aData['TAS_DEF_TITLE'] : ''));
-                $this->setTasDefDescription((isset($aData['TAS_DEF_DESCRIPTION'])? $aData['TAS_DEF_DESCRIPTION'] : ''));
-                $this->setTasDefProcCode((isset($aData['TAS_DEF_DESCRIPTION'])? $aData['TAS_DEF_DESCRIPTION'] : ''));
-                $this->setTasDefMessage((isset($aData['TAS_DEF_MESSAGE'])? $aData['TAS_DEF_MESSAGE'] : ''));
+                $this->setTasTitleContent((isset($aData['TAS_TITLE'])? $aData['TAS_TITLE'] : ''));
+                $this->setTasDescriptionContent((isset($aData['TAS_DESCRIPTION'])? $aData['TAS_DESCRIPTION'] : ''));
+                $this->setTasDefTitleContent((isset($aData['TAS_DEF_TITLE'])? $aData['TAS_DEF_TITLE'] : ''));
+                $this->setTasDefDescriptionContent((isset($aData['TAS_DEF_DESCRIPTION'])? $aData['TAS_DEF_DESCRIPTION'] : ''));
+                $this->setTasDefProcCodeContent((isset($aData['TAS_DEF_DESCRIPTION'])? $aData['TAS_DEF_DESCRIPTION'] : ''));
+                $this->setTasDefMessageContent((isset($aData['TAS_DEF_MESSAGE'])? $aData['TAS_DEF_MESSAGE'] : ''));
 
                 $strAux = isset($aData['TAS_DEF_SUBJECT_MESSAGE'])? $aData['TAS_DEF_SUBJECT_MESSAGE'] : '';
-                $this->setTasDefSubjectMessage($strAux);
+                $this->setTasDefSubjectMessageContent($strAux);
 
                 $this->save();
                 $con->commit();
