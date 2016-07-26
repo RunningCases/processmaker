@@ -3315,7 +3315,9 @@ class workspaceTools
           define("PATH_DOCUMENT", PATH_DATA . 'sites' . DIRECTORY_SEPARATOR . $workspaceName . DIRECTORY_SEPARATOR . 'files');
         }
         $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspaceName);
-        define('MEMCACHED_ENABLED',  $arraySystemConfiguration['memcached']);
+        if (!defined('MEMCACHED_ENABLED')) {
+            define('MEMCACHED_ENABLED', $arraySystemConfiguration['memcached']);
+        }
 
         //Search All process
         $oCriteria = new Criteria("workflow");
