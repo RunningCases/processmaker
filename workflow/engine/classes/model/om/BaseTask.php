@@ -329,9 +329,9 @@ abstract class BaseTask extends BaseObject implements Persistent
 
     /**
      * The value for the tas_selfservice_time field.
-     * @var        string
+     * @var        int
      */
-    protected $tas_selfservice_time = '';
+    protected $tas_selfservice_time = 0;
 
     /**
      * The value for the tas_selfservice_time_unit field.
@@ -918,7 +918,7 @@ abstract class BaseTask extends BaseObject implements Persistent
     /**
      * Get the [tas_selfservice_time] column value.
      * 
-     * @return     string
+     * @return     int
      */
     public function getTasSelfserviceTime()
     {
@@ -2050,19 +2050,19 @@ abstract class BaseTask extends BaseObject implements Persistent
     /**
      * Set the value of [tas_selfservice_time] column.
      * 
-     * @param      string $v new value
+     * @param      int $v new value
      * @return     void
      */
     public function setTasSelfserviceTime($v)
     {
 
-        // Since the native PHP type for this column is string,
-        // we will cast the input to a string (if it is not).
-        if ($v !== null && !is_string($v)) {
-            $v = (string) $v;
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
         }
 
-        if ($this->tas_selfservice_time !== $v || $v === '') {
+        if ($this->tas_selfservice_time !== $v || $v === 0) {
             $this->tas_selfservice_time = $v;
             $this->modifiedColumns[] = TaskPeer::TAS_SELFSERVICE_TIME;
         }
@@ -2252,7 +2252,7 @@ abstract class BaseTask extends BaseObject implements Persistent
 
             $this->tas_selfservice_timeout = $rs->getInt($startcol + 49);
 
-            $this->tas_selfservice_time = $rs->getString($startcol + 50);
+            $this->tas_selfservice_time = $rs->getInt($startcol + 50);
 
             $this->tas_selfservice_time_unit = $rs->getString($startcol + 51);
 
