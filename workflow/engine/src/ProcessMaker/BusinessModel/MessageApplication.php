@@ -422,17 +422,67 @@ class MessageApplication
                                 //Start and derivate new Case
                                 $result = $ws->newCase($processUid, $messageEventDefinitionUserUid, $taskUid, $arrayVariable);
 
-                                $arrayResult = json_decode(json_encode($result), true);
+                                $arrayResult = \G::json_decode(\G::json_encode($result), true);
 
                                 if ($arrayResult["status_code"] == 0) {
                                     $applicationUid = $arrayResult["caseId"];
+                                    $appUid    = $arrayResult["caseId"];
+                                    $appNumber = $arrayResult["caseNumber"];
+                                    $this->syslog(
+                                        200
+                                        ,'Case created'
+                                        ,'CREATED-NEW-CASE'
+                                        ,''//timeZone
+                                        ,$messageEventDefinitionUserUid
+                                        ,$processUid
+                                        ,$taskUid
+                                        ,$appUid
+                                        ,$appNumber
+                                    );
 
                                     $result = $ws->derivateCase($messageEventDefinitionUserUid, $applicationUid, 1);
+                                    $arrayResult = \G::json_decode(\G::json_encode($result), true);
+                                    if ($arrayResult["status_code"] == 0) {
+                                        $this->syslog(
+                                            200
+                                            ,'Case routed'
+                                            ,'ROUTED-NEW-CASE'
+                                            ,''//timeZone
+                                            ,$messageEventDefinitionUserUid
+                                            ,$processUid
+                                            ,$taskUid
+                                            ,$appUid
+                                            ,$appNumber
+                                            ,'1'//Del Index
+                                        );
+                                    } else {
+                                        $this->syslog(
+                                            500
+                                            ,'Failed case routed '.$arrayResult["message"]
+                                            ,'ROUTED-NEW-CASE'
+                                            ,''//timeZone
+                                            ,$messageEventDefinitionUserUid
+                                            ,$processUid
+                                            ,$taskUid
+                                            ,$appUid
+                                            ,$appNumber
+                                        );
+                                    }
 
                                     $flagCatched = true;
 
                                     //Counter
                                     $counterStartMessageEvent++;
+                                } else {
+                                    $this->syslog(
+                                        500
+                                        ,'Failed case created '.$arrayResult["message"]
+                                        ,'CREATED-NEW-CASE'
+                                        ,''//timeZone
+                                        ,$messageEventDefinitionUserUid
+                                        ,$processUid
+                                        ,$taskUid
+                                    );
                                 }
                             }
                             break;
@@ -465,8 +515,37 @@ class MessageApplication
                                     $arrayApplicationData["APP_DATA"] = array_merge($arrayApplicationData["APP_DATA"], $arrayVariable);
 
                                     $arrayResult = $case->updateCase($applicationUid, $arrayApplicationData);
+                                    $appNumber = isset($arrayApplicationData["APP_DATA"]["APP_NUMBER"]) ? $arrayApplicationData["APP_DATA"]["APP_NUMBER"] : '';
 
                                     $result = $ws->derivateCase($userUid, $applicationUid, $delIndex);
+                                    $arrayResult = \G::json_decode(\G::json_encode($result), true);
+                                    if ($arrayResult["status_code"] == 0) {
+                                        $this->syslog(
+                                            200
+                                            ,'Case routed'
+                                            ,'ROUTED-NEW-CASE'
+                                            ,''//timeZone
+                                            ,$userUid
+                                            ,$processUid
+                                            ,$taskUid
+                                            ,$applicationUid
+                                            ,$appNumber
+                                            ,$delIndex
+                                        );
+                                    } else {
+                                        $this->syslog(
+                                        500
+                                        ,'Failed case routed'
+                                        ,'ROUTED-NEW-CASE'
+                                        ,''//timeZone
+                                        ,$userUid
+                                        ,$processUid
+                                        ,$taskUid
+                                        ,$applicationUid
+                                        ,$appNumber
+                                        ,$delIndex
+                                    );
+                                    }
 
                                     $flagCatched = true;
                                 }
@@ -497,8 +576,92 @@ class MessageApplication
             $common->frontEndShow("TEXT", "Total cases started: " . $counterStartMessageEvent);
             $common->frontEndShow("TEXT", "Total cases continued: " . $counterIntermediateCatchMessageEvent);
             $common->frontEndShow("TEXT", "Total Message-Events pending: " . ($totalMessageEvent - ($counterStartMessageEvent + $counterIntermediateCatchMessageEvent)));
+            $this->syslog(
+                200
+                ,'Total Message-Events unread '. $totalMessageEvent
+                ,'RESUME'//Action
+            );
+            $this->syslog(
+                200
+                ,'Total cases started '. $counterStartMessageEvent
+                ,'RESUME'//Action
+            );
+            $this->syslog(
+                200
+                ,'Total cases continued '. $counterIntermediateCatchMessageEvent
+                ,'RESUME'//Action
+            );
+            $this->syslog(
+                200
+                ,'Total Message-Events pending '. ($totalMessageEvent - ($counterStartMessageEvent + $counterIntermediateCatchMessageEvent))
+                ,'RESUME'//Action
+            );
 
             $common->frontEndShow("END");
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * The Syslog register the information in Monolog Class
+     *
+     * @param int $level DEBUG=100 INFO=200 NOTICE=250 WARNING=300 ERROR=400 CRITICAL=500
+     * @param string $message
+     * @param string $ipClient for Context information
+     * @param string $action for Context information
+     * @param string $timeZone for Context information
+     * @param string $workspace for Context information
+     * @param string $usrUid for Context information
+     * @param string $proUid for Context information
+     * @param string $tasUid for Context information
+     * @param string $appUid for Context information
+     * @param string $delIndex for Context information
+     * @param string $stepUid for Context information
+     * @param string $triUid for Context information
+     * @param string $outDocUid for Context information
+     * @param string $inpDocUid for Context information
+     * @param string $url for Context information
+     *
+     * return void
+     */
+    private function syslog(
+        $level,
+        $message,
+        $action='',
+        $timeZone='',
+        $usrUid='',
+        $proUid='',
+        $tasUid='',
+        $appUid='',
+        $appNumber='',
+        $delIndex='',
+        $stepUid='',
+        $triUid='',
+        $outDocUid='',
+        $inpDocUid='',
+        $url=''
+    )
+    {
+        try {
+            $aContext = array(
+                            'ip'        => \G::getIpAddress()
+                            ,'action'   => $action
+                            ,'TimeZone' => $timeZone
+                            ,'workspace'=> (defined("SYS_SYS"))? SYS_SYS : "Wokspace Undefined"
+                            ,'usrUid'   => $usrUid
+                            ,'proUid'   => $proUid
+                            ,'tasUid'   => $tasUid
+                            ,'appUid'   => $appUid
+                            ,'appNumber'=> $appNumber
+                            ,'delIndex' => $delIndex
+                            ,'stepUid'  => $stepUid
+                            ,'triUid'   => $triUid
+                            ,'outDocUid'=> $outDocUid
+                            ,'inpDocUid'=> $inpDocUid
+                            ,'url'      => $url
+                        );
+            \Bootstrap::registerMonolog('MessageEventCron', $level, $message, $aContext, SYS_SYS, 'messageevent.log');
         } catch (\Exception $e) {
             throw $e;
         }

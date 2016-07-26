@@ -1154,6 +1154,70 @@ class TimerEvent
     }
 
     /**
+     * The Syslog register the information in Monolog Class
+     *
+     * @param int $level DEBUG=100 INFO=200 NOTICE=250 WARNING=300 ERROR=400 CRITICAL=500
+     * @param string $message
+     * @param string $ipClient for Context information
+     * @param string $action for Context information
+     * @param string $timeZone for Context information
+     * @param string $workspace for Context information
+     * @param string $usrUid for Context information
+     * @param string $proUid for Context information
+     * @param string $tasUid for Context information
+     * @param string $appUid for Context information
+     * @param string $delIndex for Context information
+     * @param string $stepUid for Context information
+     * @param string $triUid for Context information
+     * @param string $outDocUid for Context information
+     * @param string $inpDocUid for Context information
+     * @param string $url for Context information
+     *
+     * return void
+     */
+    private function syslog(
+        $level,
+        $message,
+        $action='',
+        $timeZone='',
+        $usrUid='',
+        $proUid='',
+        $tasUid='',
+        $appUid='',
+        $appNumber='',
+        $delIndex='',
+        $stepUid='',
+        $triUid='',
+        $outDocUid='',
+        $inpDocUid='',
+        $url=''
+    )
+    {
+        try {
+            $aContext = array(
+                            'ip'        => \G::getIpAddress()
+                            ,'action'   => $action
+                            ,'TimeZone' => $timeZone
+                            ,'workspace'=> (defined("SYS_SYS"))? SYS_SYS : "Wokspace Undefined"
+                            ,'usrUid'   => $usrUid
+                            ,'proUid'   => $proUid
+                            ,'tasUid'   => $tasUid
+                            ,'appUid'   => $appUid
+                            ,'appNumber'=> $appNumber
+                            ,'delIndex' => $delIndex
+                            ,'stepUid'  => $stepUid
+                            ,'triUid'   => $triUid
+                            ,'outDocUid'=> $outDocUid
+                            ,'inpDocUid'=> $inpDocUid
+                            ,'url'      => $url
+                        );
+            \Bootstrap::registerMonolog('TimerEventCron', $level, $message, $aContext, SYS_SYS, 'timerevent.log');
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Start/Continue case by Timer-Event
      *
      * @param string $datetime Datetime (yyyy-mm-dd hh:ii:ss)
@@ -1183,6 +1247,12 @@ class TimerEvent
             $common->frontEndShow("START");
 
             $this->log("START-NEW-CASES", "Date \"$datetime (UTC +00:00)\": Start new cases");
+            $this->syslog(
+                200
+                ,'Start new cases'
+                ,'START-NEW-CASES'
+                ,$datetime
+            );
 
             //Query
             $criteria = $this->getTimerEventCriteria();
@@ -1317,7 +1387,7 @@ class TimerEvent
                     //Start new case
                     $result = $ws->newCase($arrayTimerEventData["PRJ_UID"], "", $taskUid, array());
 
-                    $arrayResult = json_decode(json_encode($result), true);
+                    $arrayResult = \G::json_decode(\G::json_encode($result), true);
 
                     if ($arrayResult["status_code"] == 0) {
                         $applicationUid    = $arrayResult["caseId"];
@@ -1327,25 +1397,69 @@ class TimerEvent
                         $common->frontEndShow("TEXT", "> Routing the case #$applicationNumber...");
 
                         $this->log("CREATED-NEW-CASE", "Case #$applicationNumber created, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                        $this->syslog(
+                            200
+                            ,'Case created'
+                            ,'CREATED-NEW-CASE'
+                            ,$datetime
+                            ,''//UsrUid
+                            ,$arrayTimerEventData["PRJ_UID"]
+                            ,$taskUid
+                            ,$applicationUid
+                            ,$applicationNumber
+                        );
 
                         //Derivate new case
                         $result = $ws->derivateCase("", $applicationUid, 1);
 
-                        $arrayResult = json_decode(json_encode($result), true);
+                        $arrayResult = \G::json_decode(\G::json_encode($result), true);
 
                         if ($arrayResult["status_code"] == 0) {
                             $common->frontEndShow("TEXT", "    - OK");
 
                             $this->log("ROUTED-NEW-CASE", "Case #$applicationNumber routed, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                            $this->syslog(
+                                200
+                                ,'Case routed'
+                                ,'ROUTED-NEW-CASE'
+                                ,$datetime
+                                ,''//usrUid
+                                ,$arrayTimerEventData["PRJ_UID"]
+                                ,$taskUid
+                                ,$applicationUid
+                                ,$applicationNumber
+                                ,'1'//Del Index
+                            );
                         } else {
                             $common->frontEndShow("TEXT", "    - Failed: " . $arrayResult["message"]);
 
                             $this->log("ROUTED-NEW-CASE", "Failed: " . $arrayResult["message"] . ", Case: #$applicationNumber, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                            $this->syslog(
+                                500
+                                ,'Failed case routed'
+                                ,'ROUTED-NEW-CASE'
+                                ,$datetime
+                                ,''//usrUid
+                                ,$arrayTimerEventData["PRJ_UID"]
+                                ,$taskUid
+                                ,$applicationUid
+                                ,$applicationNumber
+                                ,'1'//Del Index
+                            );
                         }
                     } else {
                         $common->frontEndShow("TEXT", "    - Failed: " . $arrayResult["message"]);
 
                         $this->log("CREATED-NEW-CASE", "Failed: " . $arrayResult["message"] . ", PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                        $this->syslog(
+                            500
+                            ,'Failed case created '.$arrayResult["message"]
+                            ,'CREATED-NEW-CASE'
+                            ,$datetime
+                            ,''//usrUid
+                            ,$arrayTimerEventData["PRJ_UID"]
+                            ,$taskUid
+                        );
                     }
 
                     $flagRecord = true;
@@ -1356,14 +1470,32 @@ class TimerEvent
                 $common->frontEndShow("TEXT", "Not exists any record to start a new case, on date \"$datetime (UTC +00:00)\"");
 
                 $this->log("NO-RECORDS", "Not exists any record to start a new case");
+                $this->syslog(
+                    200
+                    ,'Not exists any record to start a new case'
+                    ,'NO-RECORDS'
+                    ,$datetime
+                    );
             }
 
             $common->frontEndShow("END");
 
             $this->log("END-NEW-CASES", "Date \"$datetime (UTC +00:00)\": End new cases");
+            $this->syslog(
+                    200
+                    ,'End new cases'
+                    ,'END-NEW-CASES'
+                    ,$datetime
+                    );
 
             //Intermediate Catch Timer-Event (continue the case) ///////////////////////////////////////////////////////
             $this->log("START-CONTINUE-CASES", "Date \"$datetime (UTC +00:00)\": Start continue the cases");
+            $this->syslog(
+                    200
+                    ,'Start continue the cases'
+                    ,'START-CONTINUE-CASES'
+                    ,$datetime
+                    );
 
             //Query
             $criteriaMain = $this->getTimerEventCriteria();
@@ -1533,7 +1665,7 @@ class TimerEvent
                             //Derivate case
                             $result = $ws->derivateCase("", $applicationUid, $delIndex);
 
-                            $arrayResult = json_decode(json_encode($result), true);
+                            $arrayResult = \G::json_decode(\G::json_encode($result), true);
 
                             if ($arrayResult["status_code"] == 0) {
                                 $common->frontEndShow("TEXT", "    - OK");
@@ -1543,12 +1675,34 @@ class TimerEvent
                                 $common->frontEndShow("TEXT", "    - Failed: " . $arrayResult["message"]);
 
                                 $this->log("CONTINUED-CASE", "Failed: " . $arrayResult["message"] . ", Case: #$applicationNumber, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                                $this->syslog(
+                                    500
+                                    ,'Failed '.$arrayResult["message"]
+                                    ,'CONTINUED-CASE'
+                                    ,$datetime
+                                    ,''//usrUid
+                                    ,$arrayTimerEventData["PRJ_UID"]
+                                    ,$tasUid
+                                    ,$applicationUid
+                                    ,$applicationNumber
+                                );
                             }
 
                             $flagRecord = true;
                         }
                     } else {
                         $this->log("INVALID-CONTINUE-DATE", "Continue date: $continueCaseDate, Case: #$applicationNumber, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                        $this->syslog(
+                            200
+                            ,'Continue date '. $continueCaseDate
+                            ,'INVALID-CONTINUE-DATE'
+                            ,$datetime
+                            ,''//usrUid
+                            ,$arrayTimerEventData["PRJ_UID"]
+                            ,$tasUid
+                            ,$applicationUid
+                            ,$applicationNumber
+                        );
                     }
 
                     $counter++;
@@ -1563,6 +1717,12 @@ class TimerEvent
                 $common->frontEndShow("TEXT", "Not exists any record to continue a case, on date \"$datetime (UTC +00:00)\"");
 
                 $this->log("NO-RECORDS", "Not exists any record to continue a case");
+                $this->syslog(
+                    200
+                    ,'Not exists any record to continue a case'
+                    ,'NO-RECORDS'
+                    ,$datetime
+                );
             }
 
             $common->frontEndShow("END");
