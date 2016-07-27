@@ -4420,7 +4420,7 @@
             <parameter name="Collation" value="utf8_general_ci"/>
             <parameter name="Checksum" value=""/>
             <parameter name="Create_options" value=""/>
-            <parameter name="Comment" value="Unassiged list"/>
+            <parameter name="Comment" value="Unassigned list"/>
         </vendor>
         <column name="APP_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
         <column name="DEL_INDEX" type="INTEGER" required="true" primaryKey="true" default="0"/>
