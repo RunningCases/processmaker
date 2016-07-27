@@ -465,6 +465,9 @@ class ReportTable
             $pmTable->setDataSource($arrayData['REP_TAB_CONNECTION']);
             $pmTable->setColumns($columns);
             $pmTable->setAlterTable($flagAlterTable);
+            if (isset($arrayData['REP_TAB_NAME_OLD_NAME'])) {
+                $pmTable->setOldTableName($arrayData['REP_TAB_NAME_OLD_NAME']);
+            }
 
             if (isset($arrayData['keepData']) && $arrayData['keepData'] == 1) {
                 //PM Table
@@ -472,7 +475,7 @@ class ReportTable
             }
 
             $pmTable->build();
-
+            
             $buildResult = ob_get_contents();
 
             ob_end_clean();

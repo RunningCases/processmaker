@@ -779,7 +779,11 @@ Ext.onReady(function(){
         text: TABLE === false ? _("ID_CREATE") : _("ID_UPDATE"),
         handler: function() {
           if (TABLE === false || dataNumRows == 0 || Ext.getCmp("chkKeepData").checked == true) {
-            createReportTable();
+            if (TABLE !== false && TABLE.ADD_TAB_NAME !== Ext.getCmp('REP_TAB_NAME').getValue().trim()) {
+                PMExt.confirm(_('ID_CONFIRM'), _('ID_THE_NAME_CHANGE_MAY_CAUSE_DATA_LOSS'), createReportTable);
+            } else {
+                createReportTable();
+            }
           }
           else {
             PMExt.confirm(_('ID_CONFIRM'), _('ID_PMTABLE_SAVE_AND_DATA_LOST'), createReportTable);
@@ -804,7 +808,7 @@ Ext.onReady(function(){
   /*** Editing routines ***/
   if (TABLE !== false) {
     Ext.getCmp('REP_TAB_NAME').setValue(TABLE.ADD_TAB_NAME);
-    Ext.getCmp('REP_TAB_NAME').setDisabled(true);
+    Ext.getCmp('REP_TAB_NAME').setDisabled(false);
     Ext.getCmp('REP_TAB_DSC').setValue(TABLE.ADD_TAB_DESCRIPTION);
 
     loadTableRowsFromArray(TABLE.FIELDS);
@@ -927,6 +931,7 @@ function createReportTable()
       REP_TAB_UID: (TABLE !== false)? TABLE.ADD_TAB_UID : "",
       PRO_UID: "",
       REP_TAB_NAME: (TABLE !== false)? tableName : "PMT_" + tableName,
+      REP_TAB_NAME_OLD_NAME: "PMT_" + ((TABLE !== false) ? TABLE.ADD_TAB_NAME : tableName),
       REP_TAB_DSC: tableDescription,
       REP_TAB_CONNECTION: "workflow",
       REP_TAB_TYPE: "",
