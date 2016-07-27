@@ -16,9 +16,16 @@ class Subprocess
         try {
             $pro_uid = $this->validateProUid($pro_uid);
             $tas_uid = $this->validateTasUid($tas_uid);
-
             $oCriteria = new \Criteria('workflow');
-            $del = \DBAdapter::getStringDelimiter();
+            $oCriteria->addSelectColumn(\SubProcessPeer::SP_UID);
+            $oCriteria->addSelectColumn(\SubProcessPeer::PRO_PARENT);
+            $oCriteria->addSelectColumn(\SubProcessPeer::TAS_PARENT);
+            $oCriteria->addSelectColumn(\SubProcessPeer::PRO_UID);
+            $oCriteria->addSelectColumn(\SubProcessPeer::TAS_UID);
+            $oCriteria->addSelectColumn(\TaskPeer::TAS_TITLE);
+            $oCriteria->addSelectColumn(\SubProcessPeer::SP_SYNCHRONOUS);
+            $oCriteria->addSelectColumn(\SubProcessPeer::SP_VARIABLES_OUT);
+            $oCriteria->addSelectColumn(\SubProcessPeer::SP_VARIABLES_IN);
             $oCriteria->add(SubProcessPeer::PRO_PARENT, $pro_uid);
             $oCriteria->add(SubProcessPeer::TAS_PARENT, $tas_uid);
             $oCriteria->addJoin(SubProcessPeer::TAS_PARENT, \TaskPeer::TAS_UID);
