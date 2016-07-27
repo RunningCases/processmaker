@@ -266,7 +266,10 @@ class DataBaseMaintenance
         // Commented that is not assigned to a variable.
         // mysql_escape_string("';");
         if (! @mysql_query( $sql )) {
-            echo mysql_error() . "\n";
+            $ws = (defined("SYS_SYS"))? SYS_SYS : "Wokspace Undefined";
+            Bootstrap::registerMonolog('MysqlCron', 400, mysql_error(), array('sql'=>$sql), $ws, 'mysql.log');
+            $varRes = mysql_error() . "\n";
+            G::outRes( $varRes );
             return false;
         }
         return true;
@@ -284,7 +287,10 @@ class DataBaseMaintenance
         $tableName = str_replace( '.dump', '', basename( $backupFile ) );
         $sql = "LOAD DATA INFILE '$backupFile' INTO TABLE $tableName FIELDS TERMINATED BY '\t|\t' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\t\t\r\r\n'";
         if (! @mysql_query( $sql )) {
-            print mysql_error() . "\n";
+            $ws = (defined("SYS_SYS"))? SYS_SYS : "Wokspace Undefined";
+            Bootstrap::registerMonolog('MysqlCron', 400, mysql_error(), array('sql'=>$sql), $ws, 'mysql.log');
+            $varRes = mysql_error() . "\n";
+            G::outRes( $varRes );
             return false;
         }
         return true;

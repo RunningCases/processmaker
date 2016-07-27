@@ -186,5 +186,5 @@ if ($status == 0) {
     $response["success"] = false;
 }
 
-echo G::json_encode($response);
+G::outRes( G::json_encode($response) );
 

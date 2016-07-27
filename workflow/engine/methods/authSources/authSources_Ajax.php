@@ -136,7 +136,10 @@ try {
                 $response = isset( $aAuth[$authUID] ) ? 'false' : 'true';
                 echo '{success: ' . $response . '}';
             } catch (Exception $ex) {
-                echo '{success: false, error: ' . $ex->getMessage() . '}';
+                $token = strtotime("now");
+                PMException::registerErrorLog($ex, $token);
+                $varRes = '{success: false, error: ' . G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) . '}';
+                G::outRes( $varRes );
             }
             break;
         case 'deleteAuthSource':
@@ -145,7 +148,10 @@ try {
                 $RBAC->removeAuthSource( $_POST['auth_uid'] );
                 echo '{success: true}';
             } catch (Exception $ex) {
-                echo '{success: false, error: ' . $ex->getMessage() . '}';
+                $token = strtotime("now");
+                PMException::registerErrorLog($ex, $token);
+                $varRes = '{success: false, error: ' . G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) . '}';
+                G::outRes( $varRes );
             }
             break;
         case 'authSourcesNew':

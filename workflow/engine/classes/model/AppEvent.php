@@ -318,7 +318,10 @@ class AppEvent extends BaseAppEvent
             return $c;
         } catch (Exception $oError) {
             $log[] = ' Error execute event : ' . $oError->getMessage();
-            die( $oError->getMessage() );
+            $token = strtotime("now");
+            PMException::registerErrorLog($oError, $token);
+            G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
+            die;
             return $oError->getMessage();
         }
     }
