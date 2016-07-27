@@ -7,20 +7,6 @@ require_once PATH_CORE . 'classes' . PATH_SEP . 'model' . PATH_SEP . 'AddonsMana
 function runBgProcessmaker($task, $log)
 {
     require_once (PATH_CORE . "bin/tasks/cliAddons.php");
-    //require_once PATH_CORE . 'classes' . PATH_SEP . 'class.enterpriseUtils.php';
-
-
-    /*
-    $pmosFilename = PATH_TRUNK . "processmaker";
-    $cmd          = "php -f \"$pmosFilename\" $task";
-
-    if (substr(php_uname(), 0, 7) == "Windows"){
-      pclose(popen("start /B ". $cmd, "r"));
-    }
-    else {
-      $str = system("$cmd 1> \"$log.log\" 2> \"$log.err\" < /dev/null &", $retval);
-    }
-    */
 
     $task = str_replace("\"", null, $task);
     $data = explode(" ", $task);
