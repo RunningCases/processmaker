@@ -29,6 +29,37 @@ class Light extends Api
         'dueDate',
         'delRiskDate'
     ];
+
+    /**
+     * Constructor of the class
+     *
+     * return void
+     */
+    public function __construct()
+    {
+        try {
+            /**
+             * The variable $RBAC can be defined as follows: 
+             * 
+             * $RBAC = new \stdClass();
+             * $RBAC->aUserInfo['USER_INFO'] = ["USR_UID" => $this->getUserId()];
+             * 
+             * Please consider removing the use of this variable in model class, 
+             * or perform a corresponding improvement.
+             */
+            global $RBAC;
+            if (!isset($RBAC)) {
+                \Bootstrap::LoadSystem('rbac');
+                $RBAC = \RBAC::getSingleton(PATH_DATA, session_id());
+                $RBAC->sSystem = 'PROCESSMAKER';
+                $RBAC->initRBAC();
+                $RBAC->loadUserRolePermission($RBAC->sSystem, $this->getUserId());
+            }
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
     /**
      * Get list counters
      * @return array
