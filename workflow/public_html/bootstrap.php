@@ -629,15 +629,9 @@
       $noLoginFiles[] = 'dbInfo';
       $noLoginFiles[] = 'sysLoginVerify';
       $noLoginFiles[] = 'processes_Ajax';
-      $noLoginFiles[] = 'updateTranslation';
-      $noLoginFiles[] = 'autoinstallProcesses';
-      $noLoginFiles[] = 'autoinstallPlugins';
-      $noLoginFiles[] = 'heartbeatStatus';
       $noLoginFiles[] = 'showLogoFile';
       $noLoginFiles[] = 'forgotPassword';
       $noLoginFiles[] = 'retrivePassword';
-      $noLoginFiles[] = 'defaultAjaxDynaform';
-      $noLoginFiles[] = 'dynaforms_checkDependentFields';
       $noLoginFiles[] = 'genericAjax';
 
       $noLoginFolders[] = 'services';
