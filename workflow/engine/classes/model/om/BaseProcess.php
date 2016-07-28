@@ -256,6 +256,12 @@ abstract class BaseProcess extends BaseObject implements Persistent
     protected $pro_itee = 1;
 
     /**
+     * The value for the pro_action_done field.
+     * @var        string
+     */
+    protected $pro_action_done = '';
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -727,6 +733,17 @@ abstract class BaseProcess extends BaseObject implements Persistent
     {
 
         return $this->pro_itee;
+    }
+
+    /**
+     * Get the [pro_action_done] column value.
+     * 
+     * @return     string
+     */
+    public function getProActionDone()
+    {
+
+        return $this->pro_action_done;
     }
 
     /**
@@ -1568,6 +1585,28 @@ abstract class BaseProcess extends BaseObject implements Persistent
     } // setProItee()
 
     /**
+     * Set the value of [pro_action_done] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setProActionDone($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->pro_action_done !== $v || $v === '') {
+            $this->pro_action_done = $v;
+            $this->modifiedColumns[] = ProcessPeer::PRO_ACTION_DONE;
+        }
+
+    } // setProActionDone()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -1660,12 +1699,14 @@ abstract class BaseProcess extends BaseObject implements Persistent
 
             $this->pro_itee = $rs->getString($startcol + 37);
 
+            $this->pro_action_done = $rs->getString($startcol + 38);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 37; // 37 = ProcessPeer::NUM_COLUMNS - ProcessPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 39; // 39 = ProcessPeer::NUM_COLUMNS - ProcessPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Process object", $e);
@@ -1983,6 +2024,9 @@ abstract class BaseProcess extends BaseObject implements Persistent
             case 37:
                 return $this->getProItee();
                 break;
+            case 38:
+                return $this->getProActionDone();
+                break;
             default:
                 return null;
                 break;
@@ -2041,6 +2085,7 @@ abstract class BaseProcess extends BaseObject implements Persistent
             $keys[35] => $this->getProCost(),
             $keys[36] => $this->getProUnitCost(),
             $keys[37] => $this->getProItee(),
+            $keys[38] => $this->getProActionDone(),
         );
         return $result;
     }
@@ -2185,6 +2230,9 @@ abstract class BaseProcess extends BaseObject implements Persistent
                 break;
             case 37:
                 $this->setProItee($value);
+                break;
+            case 38:
+                $this->setProActionDone($value);
                 break;
         } // switch()
     }
@@ -2361,6 +2409,10 @@ abstract class BaseProcess extends BaseObject implements Persistent
             $this->setProItee($arr[$keys[37]]);
         }
 
+        if (array_key_exists($keys[38], $arr)) {
+            $this->setProActionDone($arr[$keys[38]]);
+        }
+
     }
 
     /**
@@ -2524,6 +2576,10 @@ abstract class BaseProcess extends BaseObject implements Persistent
             $criteria->add(ProcessPeer::PRO_ITEE, $this->pro_itee);
         }
 
+        if ($this->isColumnModified(ProcessPeer::PRO_ACTION_DONE)) {
+            $criteria->add(ProcessPeer::PRO_ACTION_DONE, $this->pro_action_done);
+        }
+
 
         return $criteria;
     }
@@ -2651,6 +2707,8 @@ abstract class BaseProcess extends BaseObject implements Persistent
         $copyObj->setProUnitCost($this->pro_unit_cost);
 
         $copyObj->setProItee($this->pro_itee);
+
+        $copyObj->setProActionDone($this->pro_action_done);
 
 
         $copyObj->setNew(true);

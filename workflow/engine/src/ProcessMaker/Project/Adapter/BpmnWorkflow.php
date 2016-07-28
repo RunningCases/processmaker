@@ -718,26 +718,10 @@ class BpmnWorkflow extends Project\Bpmn
     }
     */
 
-    public function createTaskByElement($elementUid, $elementType, $key, $elementUidDest="", $routeType = '')
+    private function __createTaskByElement($elementUid, $elementType, $key)
     {
         try {
-            $flagElementTaskRelation = false;
-            if($elementUidDest != ""){
-               if( isset($this->arrayElementTaskRelation[$elementUid][$elementUidDest]) ){
-                   $flagElementTaskRelation = true;
-               }else{
-                  $flagElementTaskRelation = false;
-               }
-            }else{
-                if (isset($this->arrayElementTaskRelation[$elementUid])) {
-                    $taskUid = $this->arrayElementTaskRelation[$elementUid];
-                    $flagElementTaskRelation = true;
-                }else{
-                    $flagElementTaskRelation = false;
-                }
-            }
-            if ($flagElementTaskRelation || (isset($this->arrayElementTaskRelation[$elementUid]) && $routeType ===
-                    'SEC-JOIN')) {
+            if (isset($this->arrayElementTaskRelation[$elementUid])) {
                 $taskUid = $this->arrayElementTaskRelation[$elementUid];
             } else {
                 $taskPosX = 0;
@@ -793,30 +777,16 @@ class BpmnWorkflow extends Project\Bpmn
                 //Element-Task-Relation - Create
                 $elementTaskRelation = new \ProcessMaker\BusinessModel\ElementTaskRelation();
 
-                if($elementUidDest == ""){
-                    $arrayResult = $elementTaskRelation->create(
-                        $this->wp->getUid(),
-                        array(
-                            "ELEMENT_UID"  => $elementUid,
-                            "ELEMENT_TYPE" => $elementType,
-                            "TAS_UID"      => $taskUid
-                        )
-                    );
-                }else{
-                    $createGaToGa = $elementTaskRelation->existsGatewayToGateway($elementUid, $elementUidDest);
-                    if(!$createGaToGa){
-                        $arrayResult = $elementTaskRelation->create(
-                            $this->wp->getUid(),
-                            array(
-                                "ELEMENT_UID"      => $elementUid,
-                                "ELEMENT_TYPE"     => $elementType,
-                                "TAS_UID"          => $taskUid,
-                                "ELEMENT_UID_DEST" => $elementUidDest
-                            )
-                        );
-                   }
-                }
+                $arrayResult = $elementTaskRelation->create(
+                    $this->wp->getUid(),
+                    [
+                        'ELEMENT_UID'  => $elementUid,
+                        'ELEMENT_TYPE' => $elementType,
+                        'TAS_UID'      => $taskUid
+                    ]
+                );
 
+                //Array - Add element
                 $this->arrayElementTaskRelation[$elementUid] = $taskUid;
             }
 
@@ -899,12 +869,10 @@ class BpmnWorkflow extends Project\Bpmn
                         break;
                     case "bpmnGateway":
                         //Gateway ----> Gateway
-                        $taskUid = $this->createTaskByElement(
-                            $gatewayUid,
-                            "bpmnGateway",
-                            "gateway-to-gateway",
-                            $arrayFlowData["FLO_ELEMENT_DEST"],
-                            $routeType
+                        $taskUid = $this->__createTaskByElement(
+                            $arrayFlowData['FLO_ELEMENT_DEST'],
+                            'bpmnGateway',
+                            'gateway-to-gateway'
                         );
 
                         $result = $this->wp->addRoute($activityUid, $taskUid, $routeType, $routeCondition, $routeDefault);
@@ -924,7 +892,7 @@ class BpmnWorkflow extends Project\Bpmn
                                     //$event->getEvnMarker(): EMPTY or MESSAGETHROW
                                     switch ($event->getEvnMarker()) {
                                         case "MESSAGETHROW":
-                                            $taskUid = $this->createTaskByElement(
+                                            $taskUid = $this->__createTaskByElement(
                                                 $event->getEvnUid(),
                                                 "bpmnEvent",
                                                 "end-message-event"
@@ -934,7 +902,7 @@ class BpmnWorkflow extends Project\Bpmn
                                             $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
                                             break;
                                         case "EMAIL":
-                                            $taskUid = $this->createTaskByElement(
+                                            $taskUid = $this->__createTaskByElement(
                                                 $event->getEvnUid(),
                                                 "bpmnEvent",
                                                 "end-email-event"
@@ -986,7 +954,7 @@ class BpmnWorkflow extends Project\Bpmn
                         "EMAIL"        => "intermediate-throw-email-event"
                     );
 
-                    $taskUid = $this->createTaskByElement(
+                    $taskUid = $this->__createTaskByElement(
                         $eventUid,
                         "bpmnEvent",
                         $arrayKey[$arrayEventData["EVN_MARKER"]]
@@ -1039,7 +1007,7 @@ class BpmnWorkflow extends Project\Bpmn
                                         //$event->getEvnMarker(): EMPTY or MESSAGETHROW
                                         switch ($event->getEvnMarker()) {
                                             case "MESSAGETHROW":
-                                                $taskUid = $this->createTaskByElement(
+                                                $taskUid = $this->__createTaskByElement(
                                                     $event->getEvnUid(),
                                                     "bpmnEvent",
                                                     "end-message-event"
@@ -1049,7 +1017,7 @@ class BpmnWorkflow extends Project\Bpmn
                                                 $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
                                                 break;
                                             case "EMAIL":
-                                                $taskUid = $this->createTaskByElement(
+                                                $taskUid = $this->__createTaskByElement(
                                                     $event->getEvnUid(),
                                                     "bpmnEvent",
                                                     "end-email-event"
@@ -1060,7 +1028,7 @@ class BpmnWorkflow extends Project\Bpmn
                                                 break;
                                             default:
                                                 //EMPTY //and others types
-                                                $result = $this->wp->addRoute($activityUid, -1, $routeType, $routeCondition, $routeDefault, $eventUid);
+                                                $result = $this->wp->addRoute($activityUid, -1, $routeType, $routeCondition, $routeDefault);
                                                 break;
                                         }
                                         break;
@@ -1088,17 +1056,16 @@ class BpmnWorkflow extends Project\Bpmn
 
     public function mapBpmnFlowsToWorkflowRoutes()
     {
-        //Task dummies //Delete Task Routes
-        foreach ($this->arrayElementTaskRelation as $value) {
-            $this->wp->resetTaskRoutes($value);
-        }
+        //Delete Routes
+        $criteria = new \Criteria('workflow');
+
+        $criteria->add(\RoutePeer::PRO_UID, $this->wp->getUid(), \Criteria::EQUAL);
+
+        \RoutePeer::doDelete($criteria);
 
         //Activities
         foreach ($this->getActivities() as $value) {
             $activity = $value;
-
-            //Delete Task Routes
-            $this->wp->resetTaskRoutes($activity["ACT_UID"]);
 
             //Flows
             $arrayFlow = \BpmnFlow::findAllBy(array(
@@ -1133,7 +1100,7 @@ class BpmnWorkflow extends Project\Bpmn
                                     //$event->getEvnMarker(): EMPTY or MESSAGETHROW
                                     switch ($event->getEvnMarker()) {
                                         case "MESSAGETHROW":
-                                            $taskUid = $this->createTaskByElement(
+                                            $taskUid = $this->__createTaskByElement(
                                                 $event->getEvnUid(),
                                                 "bpmnEvent",
                                                 "end-message-event"
@@ -1143,7 +1110,7 @@ class BpmnWorkflow extends Project\Bpmn
                                             $result = $this->wp->addRoute($taskUid, -1, "SEQUENTIAL");
                                             break;
                                         case "EMAIL":
-                                            $taskUid = $this->createTaskByElement(
+                                            $taskUid = $this->__createTaskByElement(
                                                 $event->getEvnUid(),
                                                 "bpmnEvent",
                                                 "end-email-event"
@@ -1178,7 +1145,7 @@ class BpmnWorkflow extends Project\Bpmn
                 case "START":
                     switch ($event["EVN_MARKER"]) {
                         case "MESSAGECATCH":
-                            $taskUid = $this->createTaskByElement(
+                            $taskUid = $this->__createTaskByElement(
                                 $event["EVN_UID"],
                                 "bpmnEvent",
                                 "start-message-event"
@@ -1189,7 +1156,7 @@ class BpmnWorkflow extends Project\Bpmn
                             $this->mapBpmnEventToWorkflowRoutes($taskUid, $event["EVN_UID"]);
                             break;
                         case "TIMER":
-                            $taskUid = $this->createTaskByElement(
+                            $taskUid = $this->__createTaskByElement(
                                 $event["EVN_UID"],
                                 "bpmnEvent",
                                 "start-timer-event"
@@ -1481,6 +1448,7 @@ class BpmnWorkflow extends Project\Bpmn
                     $uidOld = $lanesetData["LNS_UID"];
                     $lanesetData["LNS_UID"] = Util\Common::generateUID();
                     $diagram = self::refreshElementUid($diagram, $uidOld, $lanesetData["LNS_UID"]);
+
                     $result[] = array(
                         "object"  => "laneset",
                         "old_uid" => $uidOld,
@@ -1525,6 +1493,7 @@ class BpmnWorkflow extends Project\Bpmn
                     $uidOld = $laneData["LAN_UID"];
                     $laneData["LAN_UID"] = Util\Common::generateUID();
                     $diagram = self::refreshElementUid($diagram, $uidOld, $laneData["LAN_UID"]);
+
                     $result[] = array(
                         "object"  => "lane",
                         "old_uid" => $uidOld,
@@ -1948,14 +1917,27 @@ class BpmnWorkflow extends Project\Bpmn
             $arrayGatewayData = $bwp->getGateway($value);
 
             if (!is_null($arrayGatewayData)) {
-                $arrayFlow = \BpmnFlow::findAllBy(array(
-                    \BpmnFlowPeer::FLO_TYPE              => array("MESSAGE", \Criteria::NOT_EQUAL),
-                    \BpmnFlowPeer::FLO_ELEMENT_DEST      => $arrayGatewayData["GAT_UID"],
-                    \BpmnFlowPeer::FLO_ELEMENT_DEST_TYPE => "bpmnGateway"
-                ));
+                $arrayFlow = \BpmnFlow::findAllBy([
+                    \BpmnFlowPeer::FLO_TYPE              => ['MESSAGE', \Criteria::NOT_EQUAL],
+                    \BpmnFlowPeer::FLO_ELEMENT_DEST      => $arrayGatewayData['GAT_UID'],
+                    \BpmnFlowPeer::FLO_ELEMENT_DEST_TYPE => 'bpmnGateway'
+                ]);
 
                 if (count($arrayFlow) > 1) {
-                    $bwp->updateGateway($arrayGatewayData["GAT_UID"], array("GAT_DIRECTION" => "CONVERGING"));
+                    $arrayFlow = \BpmnFlow::findAllBy([
+                        \BpmnFlowPeer::FLO_TYPE                => ['MESSAGE', \Criteria::NOT_EQUAL],
+                        \BpmnFlowPeer::FLO_ELEMENT_ORIGIN      => $arrayGatewayData['GAT_UID'],
+                        \BpmnFlowPeer::FLO_ELEMENT_ORIGIN_TYPE => 'bpmnGateway'
+                    ]);
+
+                    if (count($arrayFlow) == 1) {
+                        $bwp->updateGateway($arrayGatewayData['GAT_UID'], ['GAT_DIRECTION' => 'CONVERGING']);
+
+                        $arrayFlowData = $arrayFlow[0]->toArray();
+
+                        $bpmn = new Project\Bpmn();
+                        $bpmn->updateFlow($arrayFlowData['FLO_UID'], array_merge($arrayFlowData, ['FLO_CONDITION' => '']));
+                    }
                 }
             }
         }
@@ -1967,6 +1949,8 @@ class BpmnWorkflow extends Project\Bpmn
 
         //Map Bpmn-Flows to Workflow-Routes
         $bwp->mapBpmnFlowsToWorkflowRoutes();
+
+        $bwp->__gatewayToGatewayDeleteCorruptedRecords(); //Delete corrupted records in task and element_task_relation tables
 
         //Return
         return $result;
@@ -2058,5 +2042,74 @@ class BpmnWorkflow extends Project\Bpmn
         );
         return $diagram;
     }
-}
 
+    private function __gatewayToGatewayDeleteCorruptedRecords()
+    {
+        //Delete corrupted records in task and element_task_relation tables
+
+        $actionDone = 'GATEWAYTOGATEWAY_DELETE_CORRUPTED_RECORDS';
+
+        $criteria = new \Criteria('workflow');
+
+        $criteria->addSelectColumn(\ProcessPeer::PRO_UID);
+
+        $criteria->add(\ProcessPeer::PRO_UID, $this->wp->getUid(), \Criteria::EQUAL);
+        $criteria->add(\ProcessPeer::PRO_ACTION_DONE, '%' . $actionDone . '%', \Criteria::LIKE);
+
+        $rsCriteria = \ProcessPeer::doSelectRS($criteria);
+
+        if (!$rsCriteria->next()) {
+            $arrayTaskUid = [];
+
+            $criteria = new \Criteria('workflow');
+
+            $criteria->addSelectColumn(\TaskPeer::TAS_UID);
+
+            $criteria->addAlias('RT',  \RoutePeer::TABLE_NAME);
+            $criteria->addAlias('RNT', \RoutePeer::TABLE_NAME);
+
+            $arrayCondition = [];
+            $arrayCondition[] = [\TaskPeer::TAS_UID, 'RT.TAS_UID', \Criteria::EQUAL];
+            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+            $arrayCondition = [];
+            $arrayCondition[] = [\TaskPeer::TAS_UID, 'RNT.ROU_NEXT_TASK', \Criteria::EQUAL];
+            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+
+            $criteria->add(\TaskPeer::PRO_UID, $this->wp->getUid(), \Criteria::EQUAL);
+            $criteria->add(\TaskPeer::TAS_TYPE, 'GATEWAYTOGATEWAY', \Criteria::EQUAL);
+
+            $criteria->add(
+                $criteria->getNewCriterion('RT.ROU_UID', null, \Criteria::ISNULL)->addAnd(
+                $criteria->getNewCriterion('RNT.ROU_UID', null, \Criteria::ISNULL))
+            );
+
+            $rsCriteria = \TaskPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $record = $rsCriteria->getRow();
+
+                $arrayTaskUid[] = $record['TAS_UID'];
+            }
+
+            //Delete Task corrupted
+            $criteria = new \Criteria('workflow');
+            $criteria->add(\TaskPeer::TAS_UID, $arrayTaskUid, \Criteria::IN);
+            $result = \TaskPeer::doDelete($criteria);
+
+            //Delete ElementTaskRelation corrupted
+            $criteria = new \Criteria('workflow');
+            $criteria->add(\ElementTaskRelationPeer::TAS_UID, $arrayTaskUid, \Criteria::IN);
+            $result = \ElementTaskRelationPeer::doDelete($criteria);
+
+            //Update Process
+            $process = \ProcessPeer::retrieveByPk($this->wp->getUid());
+
+            $arrayActionDone = ($process->getProActionDone() != '')? unserialize($process->getProActionDone()) : [];
+            $arrayActionDone[] = $actionDone;
+
+            $this->wp->update(['PRO_ACTION_DONE' => serialize($arrayActionDone)]);
+        }
+    }
+}

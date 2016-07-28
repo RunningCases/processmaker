@@ -25,10 +25,6 @@ class Workflow extends Handler
     protected $process;
     protected $proUid;
 
-    protected $tasks = array();
-    protected $routes = array();
-
-
     public function __construct($data = null)
     {
         if (! is_null($data)) {
@@ -66,13 +62,13 @@ class Workflow extends Handler
         $data['PRO_CATEGORY'] = array_key_exists('PRO_CATEGORY', $data) ? $data['PRO_CATEGORY'] : "";
 
         try {
-            
+
             // Check to make sure that there aren't any html sneaking into process titles.
 
             $testTitle = htmlspecialchars($data['PRO_TITLE']);
-            
-            if($testTitle != $data['PRO_TITLE']) { 
-                $data['PRO_TITLE'] = $testTitle;    
+
+            if($testTitle != $data['PRO_TITLE']) {
+                $data['PRO_TITLE'] = $testTitle;
             }
 
             self::log("Create Process with data:", $data);
@@ -373,7 +369,7 @@ class Workflow extends Handler
      * @return string
      * @throws \Exception
      */
-    public function addRoute($fromTasUid, $toTasUid, $type, $condition = "", $default = 0, $eventUidOrigin = "")
+    public function addRoute($fromTasUid, $toTasUid, $type, $condition = '', $default = 0)
     {
         try {
             $validTypes = array("SEQUENTIAL", "SELECT", "EVALUATE", "PARALLEL", "PARALLEL-BY-EVALUATION", "SEC-JOIN", "DISCRIMINATOR");
@@ -393,21 +389,13 @@ class Workflow extends Handler
                 //$oTasks->deleteAllRoutesOfTask($this->proUid, $fromTasUid);
             //}
 
-            if($toTasUid == "-1"){
-                $route = \Route::findOneBy(array(
-                    \RoutePeer::TAS_UID => $fromTasUid,
-                    \RoutePeer::ROU_NEXT_TASK => $toTasUid,
-                    \RoutePeer::ROU_ELEMENT_ORIGIN => $eventUidOrigin
-                ));
-            } else {
-                $route = \Route::findOneBy(array(
-                    \RoutePeer::TAS_UID => $fromTasUid,
-                    \RoutePeer::ROU_NEXT_TASK => $toTasUid
-                ));
-            }
+            $route = \Route::findOneBy([
+                \RoutePeer::TAS_UID => $fromTasUid,
+                \RoutePeer::ROU_NEXT_TASK => $toTasUid
+            ]);
 
             if (is_null($route)) {
-                $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $condition, $default, $eventUidOrigin);
+                $result = $this->saveNewPattern($this->proUid, $fromTasUid, $toTasUid, $type, $condition, $default);
             } else {
                 $result = $this->updateRoute($route->getRouUid(), array(
                     "TAS_UID" => $fromTasUid,
@@ -521,7 +509,7 @@ class Workflow extends Handler
         }
     }
 
-    private function saveNewPattern($sProcessUID = "", $sTaskUID = "", $sNextTask = "", $sType = "", $condition = "", $default = 0, $elementUidOrigin = "")
+    private function saveNewPattern($sProcessUID = '', $sTaskUID = '', $sNextTask = '', $sType = '', $condition = '', $default = 0)
     {
         try {
             self::log("Add Route from task: $sTaskUID -> to task: $sNextTask ($sType)");
@@ -544,7 +532,6 @@ class Workflow extends Handler
             $aFields["ROU_CASE"] = (int)($aRow["ROUTE_NUMBER"]) + 1;
             $aFields["ROU_TYPE"] = $sType;
             $aFields["ROU_DEFAULT"] = $default;
-            $aFields["ROU_ELEMENT_ORIGIN"] = $elementUidOrigin;
 
             if(! empty($condition)) {
                 $aFields['ROU_CONDITION'] = $condition;
