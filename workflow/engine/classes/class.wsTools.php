@@ -1136,10 +1136,8 @@ class workspaceTools
             $oDbMaintainer = new DataBaseMaintenance($dbInfo["host"], $dbInfo["user"], $dbInfo["pass"]);
             CLI::logging("Saving database {$dbInfo["name"]}\n");
             $oDbMaintainer->connect($dbInfo["name"]);
-            $oDbMaintainer->lockTables();
             $oDbMaintainer->setTempDir($path . "/");
             $oDbMaintainer->backupDataBase($oDbMaintainer->getTempDir() . $dbInfo["name"] . ".sql");
-            $oDbMaintainer->unlockTables();
             $dbNames[] = $dbInfo;
         }
         return $dbNames;
