@@ -654,12 +654,12 @@ CREATE TABLE `TASK`
 	`TAS_BOUNDARY` VARCHAR(32) default '' NOT NULL,
 	`TAS_DERIVATION_SCREEN_TPL` VARCHAR(128) default '',
 	`TAS_SELFSERVICE_TIMEOUT` INTEGER default 0,
-	`TAS_SELFSERVICE_TIME` VARCHAR(15) default '',
+	`TAS_SELFSERVICE_TIME` INTEGER default 0,
 	`TAS_SELFSERVICE_TIME_UNIT` VARCHAR(15) default '',
 	`TAS_SELFSERVICE_TRIGGER_UID` VARCHAR(32) default '',
 	`TAS_SELFSERVICE_EXECUTION` VARCHAR(15) default 'EVERY_TIME',
 	PRIMARY KEY (`TAS_UID`),
-	KEY `indexTasUid` (`TAS_UID`)
+	KEY `indexTasUid`(`TAS_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Task of workflow';
 #-----------------------------------------------------------------------------
 #-- TASK_USER
