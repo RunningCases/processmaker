@@ -156,6 +156,12 @@ try {
                 G::SendTemporalMessage($errLabel, "warning");
             }
 
+            $u = (array_key_exists('form', $_POST) && array_key_exists('URL', $_POST['form']))? 'u=' . urlencode($_POST['form']['URL']) : '';
+
+            if ($u != '') {
+                $urlLogin = $urlLogin . ((preg_match('/^.+\?.+$/', $urlLogin))? '&' : '?') . $u;
+            }
+
             G::header('Location: ' . $urlLogin);
             exit(0);
         }
