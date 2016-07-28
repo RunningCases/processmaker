@@ -69,9 +69,9 @@ class EmailEvent
                         $aRow['EMAIL'] = $aRow['MESS_ACCOUNT'];
                     } else {
                         $aRow['EMAIL'] = $aRow['MESS_FROM_MAIL'];
-                    } 
+                    }
                     if($aRow['EMAIL'] != "") {
-                        $accountsArray[] = array_change_key_case($aRow, CASE_LOWER);    
+                        $accountsArray[] = array_change_key_case($aRow, CASE_LOWER);
                     }
                 }
                 $result->next();
@@ -445,10 +445,12 @@ class EmailEvent
                     $emailTo = $email;
                 }
             }
-            if(!empty($emailTo)) {
+            if(!empty($emailTo) && $arrayData[3] != '') {
                 $subject = $arrayData[5];
                 $subject = \G::replaceDataField($arrayData[5], $arrayApplicationData['APP_DATA']);
                 \PMFSendMessage($appUID, $arrayData[3], $emailTo, '', '', $subject, $contentFile['prf_filename'], array());
+            } else {
+                \Bootstrap::registerMonolog('EmailEventMailError', 200, \G::LoadTranslation('ID_EMAIL_EVENT_CONFIGURATION_EMAIL', array($eventUid, $prj_uid)), ['eventUid' => $eventUid, 'prj_uid' => $prj_uid], SYS_SYS, 'emailEvent.log');
             }
         }
     }

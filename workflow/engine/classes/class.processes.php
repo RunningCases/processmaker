@@ -4169,7 +4169,16 @@ class Processes
         try {
             $emailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
 
+            $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
+            $arrayEmailServerDefault = $emailServer->getEmailServerDefault();
+
             foreach ($arrayData as $value) {
+                unset($value['EMAIL_EVENT_FROM']);
+
+                if (!empty($arrayEmailServerDefault)) {
+                    $value['EMAIL_EVENT_FROM'] = $arrayEmailServerDefault['MESS_ACCOUNT'];
+                }
+
                 $emailEventData = $emailEvent->save($processUid, $value);
             }
         } catch (Exception $e) {
