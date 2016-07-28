@@ -2393,7 +2393,8 @@ CREATE TABLE `LIST_COMPLETED`
 	`DEL_CURRENT_USR_USERNAME` VARCHAR(100) default '',
 	`DEL_CURRENT_USR_FIRSTNAME` VARCHAR(50) default '',
 	`DEL_CURRENT_USR_LASTNAME` VARCHAR(50) default '',
-	PRIMARY KEY (`APP_UID`)
+	PRIMARY KEY (`APP_UID`),
+	KEY `usrListCompleted`(`USR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Completed list';
 #-----------------------------------------------------------------------------
 #-- LIST_PAUSED

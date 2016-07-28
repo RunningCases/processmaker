@@ -11,6 +11,74 @@ use \UsersPeer;
 class Lists {
 
     /**
+     * @var array
+     */
+    private $mapList;
+    /**
+     * @var \ListInbox
+     */
+    private $ListInbox;
+    /**
+     * @var \ListInbox
+     */
+    private $ListDraft;
+    /**
+     * @var \ListCanceled
+     */
+    private $ListCanceled;
+    /**
+     * @var \ListParticipatedLast
+     */
+    private $ListParticipated;
+    /**
+     * @var \ListPaused
+     */
+    private $ListPaused;
+    /**
+     * @var \ListCompleted
+     */
+    private $ListCompleted;
+    /**
+     * @var Consolidated
+     */
+    private $ListConsolidated;
+    /**
+     * @var \ListUnassigned
+     */
+    private $ListSelfService;
+
+    /**
+     * Lists constructor.
+     */
+    public function __construct()
+    {
+        $this->mapList = array(
+            'ListInbox' => 'CASES_INBOX',
+            'ListDraft' => 'CASES_DRAFT',
+            'ListCanceled' => 'CASES_CANCELLED',
+            'ListParticipated' => 'CASES_SENT',
+            'ListPaused' => 'CASES_PAUSED',
+            'ListCompleted' => 'CASES_COMPLETED',
+            /*----------------------------------********---------------------------------*/
+            'ListConsolidated' => 'CONSOLIDATED_CASES',
+            /*----------------------------------********---------------------------------*/
+            'ListSelfService' => 'CASES_SELFSERVICE'
+        );
+
+        $this->ListInbox = new \ListInbox();
+        $this->ListDraft = new \ListInbox();
+        $this->ListCanceled = new \ListCanceled();
+        $this->ListParticipated = new \ListParticipatedLast();
+        $this->ListPaused = new \ListPaused();
+        $this->ListCompleted = new \ListCompleted();
+        /*----------------------------------********---------------------------------*/
+        $this->ListConsolidated = new Consolidated();
+        /*----------------------------------********---------------------------------*/
+        $this->ListSelfService = new \ListUnassigned();
+    }
+
+
+    /**
      * Get list for Cases
      *
      * @access public
@@ -190,56 +258,34 @@ class Lists {
 
     /**
      * Get counters for lists
-     *
-     * @access public
-     * @param array $userId, User Uid
+     * @param $userId
      * @return array
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
      */
     public function getCounters($userId)
     {
-        $criteria = new Criteria();
-        $criteria->addSelectColumn(UsersPeer::USR_TOTAL_INBOX);
-        $criteria->addSelectColumn(UsersPeer::USR_TOTAL_DRAFT);
-        $criteria->addSelectColumn(UsersPeer::USR_TOTAL_CANCELLED);
-        $criteria->addSelectColumn(UsersPeer::USR_TOTAL_PARTICIPATED);
-        $criteria->addSelectColumn(UsersPeer::USR_TOTAL_PAUSED);
-        $criteria->addSelectColumn(UsersPeer::USR_TOTAL_COMPLETED);
-        $criteria->add( UsersPeer::USR_UID, $userId, Criteria::EQUAL );
-        $dataset = UsersPeer::doSelectRS($criteria);
-        $dataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-        $dataset->next();
-        $aRow = $dataset->getRow();
-
-        $oAppCache = new \AppCacheView();
-        $totalUnassigned = $oAppCache->getListCounters('selfservice', $userId, false);
-
-        $response = array(
-            array('count' => $aRow['USR_TOTAL_INBOX'],          'item' => 'CASES_INBOX'),
-            array('count' => $aRow['USR_TOTAL_DRAFT'],          'item' => 'CASES_DRAFT'),
-            array('count' => $aRow['USR_TOTAL_CANCELLED'],      'item' => 'CASES_CANCELLED'),
-            array('count' => $aRow['USR_TOTAL_PARTICIPATED'],   'item' => 'CASES_SENT'),
-            array('count' => $aRow['USR_TOTAL_PAUSED'],         'item' => 'CASES_PAUSED'),
-            array('count' => $aRow['USR_TOTAL_COMPLETED'],      'item' => 'CASES_COMPLETED'),
-            array('count' => $totalUnassigned,                  'item' => 'CASES_SELFSERVICE')
-        );
-
-        /*----------------------------------********---------------------------------*/
-        $licensedFeatures = & \PMLicensedFeatures::getSingleton();
-        if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
-            $criteria = new Criteria();
-            $criteria->add(\CaseConsolidatedCorePeer::CON_STATUS, 'ACTIVE');
-            $criteria->addJoin(\CaseConsolidatedCorePeer::TAS_UID, \AppCacheViewPeer::TAS_UID, Criteria::LEFT_JOIN);
-            $criteria->add(\AppCacheViewPeer::USR_UID, $userId);
-            $criteria->add(\AppCacheViewPeer::DEL_THREAD_STATUS, 'OPEN');
-            $criteria->add(\AppCacheViewPeer::APP_STATUS, 'TO_DO');
-            $total = \CaseConsolidatedCorePeer::doCount( $criteria );
-            $response[] = array('count' => $total,            'item' => 'CONSOLIDATED_CASES');
+        $list = $this->mapList;
+        $response = array();
+        foreach ($list as $listObject => $item) {
+            switch ($listObject) {
+                case 'ListInbox':
+                    $total = $this->$listObject->getCountList($userId, 'TO_DO');
+                    array_push($response, (array('count' => $total, 'item' => $item)));
+                    break;
+                /*----------------------------------********---------------------------------*/
+                case 'ListConsolidated':
+                    $licensedFeatures = &\PMLicensedFeatures::getSingleton();
+                    if ($licensedFeatures->verifyfeature('7TTeDBQeWRoZTZKYjh4eFpYUlRDUUEyVERPU3FxellWank=')) {
+                        $total = $this->$listObject->getCountList($userId);
+                        array_push($response, (array('count' => $total, 'item' => $item)));
+                    }
+                    break;
+                /*----------------------------------********---------------------------------*/
+                default:
+                    $totalInbox = $this->$listObject->getCountList($userId);
+                    array_push($response, (array('count' => $totalInbox, 'item' => $item)));
+                    break;
+            }
         }
-        /*----------------------------------********---------------------------------*/
-
         return $response;
     }
 }
