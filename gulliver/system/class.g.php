@@ -5558,90 +5558,62 @@ class G
         foreach ($allowedTypes as $allowedType) {
             switch ($allowedType) {
                 case 'xls':
-                    if ($docType[1] == 'vnd.ms-excel' || ($fileExtension == 'xls' && $docType[1] == 'plain')) {
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($docType[1] == 'vnd.ms-excel' || ($fileExtension == 'xls' && $docType[1] == 'plain'));
+                    return $res;
                     break;
                 case 'doc':
-                    if ($docType[1] == 'msword' || ($fileExtension == 'doc' && $docType[1] == 'html')) {
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($docType[1] == 'msword' || ($fileExtension == 'doc' && $docType[1] == 'html'));
+                    return $res;
                     break;
                 case 'ppt':
-                    if ($docType[1] == 'vnd.ms-office') {
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($docType[1] == 'vnd.ms-office');
+                    return $res;
                     break;
                 case 'docx':
-                    if ($docType[1] == 'vnd.openxmlformats-officedocument.wordprocessingml.document') {
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($docType[1] == 'vnd.openxmlformats-officedocument.wordprocessingml.document');
+                    return $res;
                     break;
                 case 'pptx':
-                    if ($docType[1] == 'vnd.openxmlformats-officedocument.presentationml.presentation') {
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($docType[1] == 'vnd.openxmlformats-officedocument.presentationml.presentation');
+                    return $res;
                     break;
                 case 'xlsx':
-                    if ($docType[1] == 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($docType[1] == 'vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                    return $res;
                     break;
                 case 'exe':
-                    if ($docType[1] == 'x-msdownload' || $docType[1] == 'x-dosexec') {
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($docType[1] == 'x-msdownload' || $docType[1] == 'x-dosexec');
+                    return $res;
                     break;
                 case 'wmv':
-                    if($docType[1] == 'x-ms-asf' || $docType[1] == 'x-ms-wmv'){
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($docType[1] == 'x-ms-asf' || $docType[1] == 'x-ms-wmv');
+                    return $res;
                     break;
                 case 'jpg':
-                    if ($docType[1] == 'jpeg'){
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($docType[1] == 'jpeg');
+                    return $res;
                     break;
                 case 'mp3':
-                    if ($docType[1] == 'mpeg'){
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($docType[1] == 'mpeg');
+                    return $res;
                     break;
                 case 'rar':
-                    if ($docType[1] == 'x-rar'){
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($docType[1] == 'x-rar');
+                    return $res;
                     break;
                 case 'txt':
                 case 'pm':
-                    if ($docType[1] == 'plain'){
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($docType[1] == 'plain');
+                    return $res;
                     break;
                 case 'htm':
                 case 'html':
-                    if ($docType[1] == 'html'){
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($docType[1] == 'html');
+                    return $res;
                     break;
                 case 'po':
-                    if ($docType[1] == 'x-po'){
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($docType[1] == 'x-po');
+                    return $res;
                     break;
                 case 'pdf':
                 case 'png':
@@ -5649,16 +5621,12 @@ class G
                 case 'gif':
                 case 'zip':
                 case 'mp4':
-                    if ($docType[1] == $allowedType){
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($docType[1] == $allowedType);
+                    return $res;
                     break;
                 default:
-                    if ($validExtension) {
-                        $res->status = true;
-                        return $res;
-                    }
+                    $res->status = ($validExtension);
+                    return $res;
                     break;
             }
         }

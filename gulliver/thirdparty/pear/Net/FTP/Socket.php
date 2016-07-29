@@ -672,11 +672,12 @@ function ftp_get(&$control, $local, $remote, $mode, $resume = 0)
     }
 
     if(is_file($filter->validatePath($local))) {
-        $fp = fopen($filter->validatePath($local), 'w'.$windows[$mode]);
+        $var = 'w'.$windows[$mode];
+        $fp = fopen($filter->validatePath($local), $var);
     } else {
         $fp = false;
     }
-    
+
     if (!is_resource($fp)) {
         $fp = null;
         return false;
