@@ -120,7 +120,16 @@ $objTask = new Task();
 if(!isset($Fields['TAS_UID']) || $Fields['TAS_UID'] == '') {
     $Fields['TAS_UID'] = $Fields['APP_DATA']['TASK'];
 }
-$aTask = $objTask->load( $Fields['TAS_UID'] );
+$tasksInParallel = explode("-", $Fields['TAS_UID']);
+$tasksInParallel = array_filter($tasksInParallel, function($value) {
+    return !empty($value);
+});
+$nTasksInParallel = count($tasksInParallel);
+if ($nTasksInParallel > 1) {
+    $aTask = $objTask->load($tasksInParallel[$nTasksInParallel - 1]);
+} else {
+    $aTask = $objTask->load($Fields['TAS_UID']);
+}
 $Fields['TAS_TITLE'] = $aTask['TAS_TITLE'];
 
 $objUser = new Users();
