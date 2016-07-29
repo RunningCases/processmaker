@@ -233,42 +233,42 @@ class ActivityPropertiesStructure
     public $tas_title;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@required false}
      */
     public $tas_description;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@required false}
      */
     public $tas_priority_variable;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@required false}
      */
     public $tas_derivation_screen_tpl;
 
     /**
-     * @var string {@from body} {@choice TRUE,FALSE}
+     * @var string {@from body} {@choice TRUE,FALSE} {@required false}
      */
     public $tas_start;
 
     /**
-     * @var string {@from body} {@choice BALANCED,MANUAL,EVALUATE,REPORT_TO,SELF_SERVICE,SELF_SERVICE_EVALUATE,MULTIPLE_INSTANCE,MULTIPLE_INSTANCE_VALUE_BASED}
+     * @var string {@from body} {@choice BALANCED,MANUAL,EVALUATE,REPORT_TO,SELF_SERVICE,SELF_SERVICE_EVALUATE,MULTIPLE_INSTANCE,MULTIPLE_INSTANCE_VALUE_BASED} {@required false}
      */
     public $tas_assign_type;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@required false}
      */
     public $tas_assign_variable;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@required false}
      */
     public $tas_group_variable;
 
     /**
-     * @var string {@from body}
+     * @var int {@from body} {@required false}
      */
     public $tas_selfservice_time;
 
@@ -278,12 +278,12 @@ class ActivityPropertiesStructure
     public $tas_selfservice_timeout;
 
     /**
-     * @var string {@from body} {@choice DAYS,,HOURS,MINUTES}
+     * @var string {@from body} {@choice DAYS,,HOURS,MINUTES} {@required false}
      */
     public $tas_selfservice_time_unit;
 
     /**
-     * @var string {@from body} {@min 0} {@max 32}
+     * @var string {@from body} {@min 0} {@max 32} {@required false}
      */
     public $tas_selfservice_trigger_uid;
 
@@ -298,22 +298,22 @@ class ActivityPropertiesStructure
     public $tas_transfer_fly;
 
     /**
-     * @var int {@from body}
+     * @var int {@from body} {@required false}
      */
     public $tas_duration;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@required false}
      */
     public $tas_timeunit;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@required false}
      */
     public $tas_type_day;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@required false}
      */
     public $tas_calendar;
 
@@ -323,12 +323,12 @@ class ActivityPropertiesStructure
     public $tas_type;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@required false}
      */
     public $tas_def_title;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@required false}
      */
     public $tas_def_description;
 
@@ -338,22 +338,22 @@ class ActivityPropertiesStructure
     public $tas_send_last_email;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@required false}
      */
     public $tas_def_subject_message;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@required false}
      */
     public $tas_def_message_type;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@required false}
      */
     public $tas_def_message;
 
     /**
-     * @var string {@from body}
+     * @var string {@from body} {@required false}
      */
     public $tas_def_message_template;
 }

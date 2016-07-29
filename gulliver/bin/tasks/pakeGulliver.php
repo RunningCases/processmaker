@@ -63,12 +63,6 @@ pake_task('pack-plugin', 'project_exists');
 pake_desc("generate basic CRUD files for an existing class\n   args: <class-name> <table-name> <plugin-name>");
 pake_task('propel-build-crud', 'project_exists');
 
-pake_desc("backup a workspace\n   args: [-c|--compress] <workspace> [<backup-name>|<backup-filename>]");
-pake_task('workspace-backup', 'project_exists');
-
-pake_desc("restore a previously backed-up workspace\n   args: [-o|--overwrite] <filename> <workspace>");
-pake_task('workspace-restore', 'project_exists');
-
 /*----------------------------------********---------------------------------*/
 pake_desc("check standard code\n   args: <directory>");
 pake_task('check-standard-code', 'project_exists' );
@@ -2108,25 +2102,6 @@ function run_workspace_backup($task, $args) {
     if (!isset($gzipPath))
       $tar->_compress = $compress;
 
-    /*** WORKFLOW DATABASE BACKUP ***/
-    $dbSettings = getDataBaseConfiguration($configuration['datasources']['workflow']['connection']);
-    backupDB($dbOpt[0], $dbOpt[1], $dbOpt[2], $dbSettings['dbname'], $tmpDir);
-    printf("Copying folder: %s \n", pakeColor::colorize( $tmpDir, 'INFO'));
-    backupAddTarFolder( $tar, $tmpDir . $dbSettings['dbname'] . PATH_SEP, $tmpDir );
-
-    /*** RBAC DATABASE BACKUP ***/
-    $dbSettings = getDataBaseConfiguration($configuration['datasources']['rbac']['connection']);
-    backupDB($dbOpt[0], $dbOpt[1], $dbOpt[2], $dbSettings['dbname'], $tmpDir);
-    printf("Copying folder: %s \n", pakeColor::colorize( $tmpDir, 'INFO'));
-    backupAddTarFolder( $tar, $tmpDir . $dbSettings['dbname'] . PATH_SEP, $tmpDir );
-
-    /*** RP DATABASE BACKUP ***/
-    $dbSettings = getDataBaseConfiguration($configuration['datasources']['rp']['connection']);
-    backupDB($dbOpt[0], $dbOpt[1], $dbOpt[2], $dbSettings['dbname'], $tmpDir);
-    printf("Copying folder: %s \n", pakeColor::colorize( $tmpDir, 'INFO'));
-    backupAddTarFolder( $tar, $tmpDir . $dbSettings['dbname'] . PATH_SEP, $tmpDir );
-
-
     $pathSharedBase = PATH_DATA . 'sites' . PATH_SEP . $workspace . PATH_SEP;
     printf("copying folder: %s \n", pakeColor::colorize($pathSharedBase, 'INFO'));
     backupAddTarFolder($tar, $pathSharedBase, PATH_DATA . 'sites');
@@ -2165,17 +2140,6 @@ function run_workspace_backup($task, $args) {
     printf("Error: %s\n", pakeColor::colorize($e->getMessage(), 'ERROR'));
     exit(0);
   }
-}
-
-function backupDB($host, $user, $passwd, $dbname, $tmpDir){
-  $oDbMaintainer = new DataBaseMaintenance($host, $user, $passwd);
-  //stablishing connetion with host
-  $oDbMaintainer->connect($dbname);
-  //set temporal dir. for maintenance for oDbMaintainer object
-  $oDbMaintainer->setTempDir($tmpDir . $dbname . PATH_SEP);
-  //create the backup
-  $oDbMaintainer->backupDataBaseSchema($oDbMaintainer->getTempDir() . "$dbname.sql");
-  $oDbMaintainer->backupSqlData();
 }
 
 /**

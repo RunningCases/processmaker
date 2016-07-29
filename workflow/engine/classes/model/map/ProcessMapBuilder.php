@@ -141,6 +141,8 @@ class ProcessMapBuilder
 
         $tMap->addColumn('PRO_ITEE', 'ProItee', 'int', CreoleTypes::INTEGER, true, null);
 
+        $tMap->addColumn('PRO_ACTION_DONE', 'ProActionDone', 'string', CreoleTypes::LONGVARCHAR, false, null);
+
         $tMap->addValidator('PRO_TIMEUNIT', 'validValues', 'propel.validator.ValidValuesValidator', 'WEEKS|MONTHS|DAYS|HOURS|MINUTES', 'Please select a valid Time Unit.');
 
         $tMap->addValidator('PRO_STATUS', 'validValues', 'propel.validator.ValidValuesValidator', 'ACTIVE|INACTIVE|DISABLED', 'Please select a valid Process Status.');

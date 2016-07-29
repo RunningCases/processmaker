@@ -124,13 +124,13 @@ class Capsule {
 
         $path = $this->templatePath . PATH_SEPARATOR . $__old_inc_path;
         if(strpos($path,":")>0){
-            $firstPath = explode(":", $this->templatePath . PATH_SEPARATOR . $__old_inc_path);
+            $firstPath = explode(":", $path);
             if (is_dir($firstPath[0])) {
-                ini_set('include_path', $this->templatePath . PATH_SEPARATOR . $__old_inc_path);
+                ini_set('include_path', $path);
             }
         } else {
-            if(is_dir($this->templatePath . PATH_SEPARATOR . $__old_inc_path)) {
-                ini_set('include_path', $this->templatePath . PATH_SEPARATOR . $__old_inc_path);
+            if(is_dir($path)) {
+                ini_set('include_path', $path);
             }
         }
                 

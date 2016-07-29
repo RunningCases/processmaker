@@ -460,6 +460,7 @@ CREATE TABLE `PROCESS`
 	`PRO_COST` DECIMAL(7,2) default 0,
 	`PRO_UNIT_COST` VARCHAR(50) default '',
 	`PRO_ITEE` INTEGER default 0 NOT NULL,
+        `PRO_ACTION_DONE` MEDIUMTEXT default '',
 	PRIMARY KEY (`PRO_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Store process Information';
 #-----------------------------------------------------------------------------
@@ -537,7 +538,6 @@ CREATE TABLE `ROUTE`
 	`ROU_FROM_PORT` INTEGER default 2 NOT NULL,
 	`ROU_EVN_UID` VARCHAR(32) default '' NOT NULL,
 	`GAT_UID` VARCHAR(32) default '' NOT NULL,
-	`ROU_ELEMENT_ORIGIN` VARCHAR(32) default '',
 	PRIMARY KEY (`ROU_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Differents flows for a flow in business process';
 #-----------------------------------------------------------------------------
@@ -654,12 +654,12 @@ CREATE TABLE `TASK`
 	`TAS_BOUNDARY` VARCHAR(32) default '' NOT NULL,
 	`TAS_DERIVATION_SCREEN_TPL` VARCHAR(128) default '',
 	`TAS_SELFSERVICE_TIMEOUT` INTEGER default 0,
-	`TAS_SELFSERVICE_TIME` VARCHAR(15) default '',
+	`TAS_SELFSERVICE_TIME` INTEGER default 0,
 	`TAS_SELFSERVICE_TIME_UNIT` VARCHAR(15) default '',
 	`TAS_SELFSERVICE_TRIGGER_UID` VARCHAR(32) default '',
 	`TAS_SELFSERVICE_EXECUTION` VARCHAR(15) default 'EVERY_TIME',
 	PRIMARY KEY (`TAS_UID`),
-	KEY `indexTasUid` (`TAS_UID`)
+	KEY `indexTasUid`(`TAS_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Task of workflow';
 #-----------------------------------------------------------------------------
 #-- TASK_USER
@@ -2678,7 +2678,6 @@ CREATE TABLE `ELEMENT_TASK_RELATION`
 	`ELEMENT_UID` VARCHAR(32)  NOT NULL,
 	`ELEMENT_TYPE` VARCHAR(50) default '' NOT NULL,
 	`TAS_UID` VARCHAR(32)  NOT NULL,
-	`ELEMENT_UID_DEST` VARCHAR(32) default '',
 	PRIMARY KEY (`ETR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------

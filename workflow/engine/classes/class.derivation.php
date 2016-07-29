@@ -199,25 +199,22 @@ class Derivation
                     $flagAddDelegation = $pmScript->evaluate();
                 }
 
-                //In the 3.0.1.7 version we have a condition for join and the rouCondition maybe is true, 1, etc
-                $rouCondition = trim($arrayRouteData["ROU_CONDITION"]);
-                if($rouCondition !== '' && $arrayRouteData["ROU_TYPE"] === 'SEC-JOIN'){
-                    error_log(G::LoadTranslation( 'ID_WARNING_GATEWAY_CONVERGENT_WITH_CONDITION' ).' '.$flagAddDelegation);
-                }
+                if (trim($arrayRouteData['ROU_CONDITION']) == '' && $arrayRouteData['ROU_NEXT_TASK'] != '-1') {
+                    $arrayTaskData = $task->load($arrayRouteData['ROU_NEXT_TASK']);
 
-                if ($arrayRouteData["ROU_NEXT_TASK"] != "-1" && $rouCondition === '') {
-                    $arrayTaskData = $task->load($arrayRouteData["ROU_NEXT_TASK"]);
-                    if ($arrayRouteData["ROU_TYPE"] != "SEC-JOIN" && $arrayTaskData["TAS_TYPE"] == "GATEWAYTOGATEWAY") {
+                    if ($arrayRouteData['ROU_TYPE'] != 'SEC-JOIN' && $arrayTaskData['TAS_TYPE'] == 'GATEWAYTOGATEWAY') {
                         $flagAddDelegation = true;
+                    }
+
+                    if($arrayRouteData['ROU_TYPE'] == 'SEC-JOIN'){
+                       $aSecJoin[$count]['ROU_PREVIOUS_TASK'] = $arrayRouteData['ROU_NEXT_TASK'];
+                       $aSecJoin[$count]['ROU_PREVIOUS_TYPE'] = 'SEC-JOIN';
+                       $count++;
                     }
                 }
 
-                //In the 3.0.1.8 version the Secjoin does not have a rouCondition
-                if($arrayRouteData["ROU_NEXT_TASK"] !== '-1' && $arrayRouteData["ROU_TYPE"] === 'SEC-JOIN'){
-                    $arrayTaskData = $task->load($arrayRouteData["ROU_NEXT_TASK"]);
-                    $aSecJoin[$count]["ROU_PREVIOUS_TASK"] = $arrayRouteData["ROU_NEXT_TASK"];
-                    $aSecJoin[$count]["ROU_PREVIOUS_TYPE"] = 'SEC-JOIN';
-                    $count++;
+                if ($arrayRouteData['ROU_TYPE'] == 'EVALUATE' && !empty($arrayNextTask)) {
+                    $flagAddDelegation = false;
                 }
 
                 if ($flagAddDelegation &&
@@ -1393,7 +1390,7 @@ class Derivation
         } //end switch
 
         if($iNewDelIndex !== 0 && !$sendNotificationsMobile){
-            $sendNotificationsMobile = $this->sendNotificationsMobile($appFields, $nextDel, $iNewDelIndex);        
+            $sendNotificationsMobile = $this->sendNotificationsMobile($appFields, $nextDel, $iNewDelIndex);
         }
         return $iNewDelIndex;
     }
@@ -1667,4 +1664,3 @@ class Derivation
         }
     }
 }
-

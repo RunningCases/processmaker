@@ -165,7 +165,7 @@ class TaskMapBuilder
 
         $tMap->addColumn('TAS_SELFSERVICE_TIMEOUT', 'TasSelfserviceTimeout', 'int', CreoleTypes::INTEGER, false, null);
 
-        $tMap->addColumn('TAS_SELFSERVICE_TIME', 'TasSelfserviceTime', 'string', CreoleTypes::VARCHAR, false, 15);
+        $tMap->addColumn('TAS_SELFSERVICE_TIME', 'TasSelfserviceTime', 'int', CreoleTypes::INTEGER, false, null);
 
         $tMap->addColumn('TAS_SELFSERVICE_TIME_UNIT', 'TasSelfserviceTimeUnit', 'string', CreoleTypes::VARCHAR, false, 15);
 
