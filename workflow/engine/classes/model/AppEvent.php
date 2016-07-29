@@ -146,9 +146,13 @@ class AppEvent extends BaseAppEvent
             $aConditions[] = array (AppEventPeer::DEL_INDEX,AppDelegationPeer::DEL_INDEX
             );
             $oCriteria->addJoinMC( $aConditions, Criteria::LEFT_JOIN );
-            $oCriteria->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::LEFT_JOIN);
+            $aConditions = array ();
+            $aConditions[] = array (AppDelegationPeer::TAS_UID,TaskPeer::TAS_UID);
+            $oCriteria->addJoinMC( $aConditions, Criteria::LEFT_JOIN );
             $oCriteria->addJoin(AppEventPeer::APP_UID, ApplicationPeer::APP_UID, Criteria::LEFT_JOIN);
-            $oCriteria->addJoin(AppDelegationPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
+            $aConditions = array ();
+            $aConditions[] = array (AppDelegationPeer::PRO_UID,ProcessPeer::PRO_UID);
+            $oCriteria->addJoinMC( $aConditions, Criteria::LEFT_JOIN );
             $oCriteria->add( AppEventPeer::EVN_UID, '', Criteria::NOT_EQUAL );
             if ($sProcessUid != '') {
                 $oCriteria->add( EventPeer::PRO_UID, $sProcessUid );
