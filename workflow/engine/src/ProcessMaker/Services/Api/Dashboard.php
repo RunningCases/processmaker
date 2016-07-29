@@ -167,8 +167,8 @@ class Dashboard extends Api
     /**
      * Get list Dashboards
      *
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $search {@from path}
@@ -204,8 +204,8 @@ class Dashboard extends Api
      * Get Owners by das_uid
      *
      * @param string $das_uid {@from path}
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $search {@from path}
      *
      * @return array
