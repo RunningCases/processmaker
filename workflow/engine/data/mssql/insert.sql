@@ -7368,7 +7368,7 @@ SELECT 'LABEL','ID_DISABLED_CODE_CODE_AND_LINE','en','{0} (Lines {1})','2014-11-
   UNION ALL
 SELECT 'LABEL','ID_DISABLED_CODE_PROCESS','en','The process "{0}" has the following unwanted code (this code should be removed): {1}','2014-11-18' 
   UNION ALL
-SELECT 'LABEL','ID_LECA','en','Your license has expired, please contact your administrator.','2014-12-01' 
+SELECT 'LABEL','ID_LECA','en','Your license has expired. Please contact your administrator.','2014-12-01'
   UNION ALL
 SELECT 'LABEL','ID_NLIC','en','License installed successfully','2014-12-02' 
   UNION ALL

@@ -4443,7 +4443,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_DISABLED_CODE_TRIGGER_TO_EXECUTE','en','The following triggers has unwanted code (these triggers are not executed): {0}','2014-11-13') ,
 ( 'LABEL','ID_DISABLED_CODE_CODE_AND_LINE','en','{0} (Lines {1})','2014-11-17') ,
 ( 'LABEL','ID_DISABLED_CODE_PROCESS','en','The process "{0}" has the following unwanted code (this code should be removed): {1}','2014-11-18') ,
-( 'LABEL','ID_LECA','en','Your license has expired, please contact your administrator.','2014-12-01') ,
+( 'LABEL','ID_LECA','en','Your license has expired. Please contact your administrator.','2014-12-01') ,
 ( 'LABEL','ID_NLIC','en','License installed successfully','2014-12-02') ,
 ( 'LABEL','ID_ENTERPRISE_PACK_CANT_UPLOAD','en','The Enterprise plugin pack can''t be uploaded from this administrator, upload it from: ADMIN -> Plugins -> Plugins Manager','2014-12-03') ,
 ( 'LABEL','ID_WEB_ENTRY_EVENT_FLOW_EVENT_TO_ACTIVITY_DOES_NOT_EXIST','en','The flow of event to activity does not exist.','2015-01-16') ,
