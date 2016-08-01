@@ -873,7 +873,7 @@ class Phing {
                 // that isn't very compatible w/ other frontends (but
                 // there aren't any right now, so I'm not stressing)
                 print("Error importing $path\n");
-                print($e->getTraceAsString()."\n");
+                error_log( $e->getTraceAsString()."\n" );
             }        
             throw $e;
         }

@@ -343,9 +343,16 @@ try {
     } else {
         $result["addons"] = array();
     }
-    echo G::json_encode($result);
+    G::outRes( G::json_encode($result) );
 
 } catch (Exception $e) {
-    echo G::json_encode(array("success" => false, "errors" => $e->getMessage()));
+    $token = strtotime("now");
+    PMException::registerErrorLog($e, $token);
+    G::outRes(
+        G::json_encode(array(
+            "success" => false,
+            "errors" => G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token))
+        ))
+    );
 }
 

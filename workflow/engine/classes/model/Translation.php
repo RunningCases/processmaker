@@ -192,7 +192,9 @@ class Translation extends BaseTranslation
             $res['rowsJS'] = count( $translationJS );
             return $res;
         } catch (Exception $e) {
-            echo $e->getMessage();
+            $token = strtotime("now");
+            PMException::registerErrorLog($e, $token);
+            G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
         }
     }
 
@@ -239,7 +241,9 @@ class Translation extends BaseTranslation
             $res['rowsMafeJS'] = count( $translation );
             return $res;
         } catch (Exception $e) {
-            echo $e->getMessage();
+            $token = strtotime("now");
+            PMException::registerErrorLog($e, $token);
+            G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
         }
     }
 
@@ -362,7 +366,9 @@ class Translation extends BaseTranslation
             $res['rowsJS'] = count( $translationJS );
             return $res;
         } catch (Exception $e) {
-            echo $e->getMessage();
+            $token = strtotime("now");
+            PMException::registerErrorLog($e, $token);
+            G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
         }
     }
 

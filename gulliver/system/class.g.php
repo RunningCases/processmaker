@@ -5673,6 +5673,17 @@ class G
        return $clean;
    }
    /**
+    * Out the result
+    *
+    * @param string $sVar
+    *
+    * @return showRes($string)
+    */
+    public function outRes ($sInfVar)
+    {
+        echo $sInfVar;
+    }
+   /**
     * encryptOld
     *
     * @param string $string
