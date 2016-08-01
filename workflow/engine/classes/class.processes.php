@@ -4126,7 +4126,11 @@ class Processes
             foreach ($arrayData as $value) {
                 $record = $value;
 
-                $result = $scriptTask->create($processUid, $record);
+                try {
+                    $result = $scriptTask->create($processUid, $record);
+                } catch (Exception $e) {
+                    Bootstrap::registerMonolog('DataError', 400, $e->getMessage(), $record, SYS_SYS, 'processImporter.log');
+                }
             }
         } catch (Exception $e) {
             throw $e;
@@ -6114,4 +6118,3 @@ class ObjectCellection
         }
     }
 }
-

@@ -913,7 +913,7 @@
     <column name="PRO_COST" type="DECIMAL" size="7,2" required="false" default="0"/>
     <column name="PRO_UNIT_COST" type="VARCHAR" size="50" required="false" default=""/>
     <column name="PRO_ITEE" type="INTEGER" required="true" default="0"/>
-    <column name="PRO_ACTION_DONE" type="LONGVARCHAR" default="" />
+    <column name="PRO_ACTION_DONE" type="LONGVARCHAR" />
     <validator column="PRO_TIMEUNIT">
       <rule name="validValues" value="WEEKS|MONTHS|DAYS|HOURS|MINUTES" message="Please select a valid Time Unit."/>
     </validator>
