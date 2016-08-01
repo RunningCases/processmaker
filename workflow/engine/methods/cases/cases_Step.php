@@ -798,8 +798,13 @@ try {
             $aFields['TAS_TYPE_DAY'] = G::LoadTranslation( 'ID_COUNT_DAYS' );
             $aFields['TAS_CALENDAR'] = G::LoadTranslation( 'ID_CALENDAR' );
 
-            $aFields['TASK'] = $oDerivation->prepareInformation( array ('USER_UID' => $_SESSION['USER_LOGGED'],'APP_UID' => $_SESSION['APPLICATION'],'DEL_INDEX' => $_SESSION['INDEX']
-            ) );
+            $oRoute = new \ProcessMaker\Core\RoutingScreen();
+            $arrayData = array(
+                'USER_UID' => $_SESSION['USER_LOGGED'],
+                'APP_UID' => $_SESSION['APPLICATION'],
+                'DEL_INDEX' => $_SESSION['INDEX']
+            );
+            $aFields['TASK'] = $oRoute->prepareInformation($arrayData);
 
             if (empty( $aFields['TASK'] )) {
                 throw (new Exception( G::LoadTranslation( 'ID_NO_DERIVATION_RULE' ) ));
