@@ -221,14 +221,6 @@ EOT
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_database_verify_migration_consistency");
 
-CLI::taskName('migrate-counters');
-CLI::taskDescription(<<<EOT
-  Migrate and regenerate if required, the list counters for each user.
-EOT
-);
-CLI::taskArg('workspace', true, true);
-CLI::taskRun("run_migrate_counters");
-
 CLI::taskName('migrate-itee-to-dummytask');
 CLI::taskDescription(<<<EOT
   Migrate the Intermediate throw Email Event to Dummy task

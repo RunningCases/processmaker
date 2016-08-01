@@ -97,34 +97,6 @@ class ListCompleted extends BaseListCompleted
         $criteriaSet->add(ListParticipatedLastPeer::APP_STATUS, 'COMPLETED');
         BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
 
-        $users = new Users();
-        if($data['USR_UID'] != ''){
-            $users->refreshTotal($data['USR_UID'], 'add', 'completed');
-        }
-        if ($data['DEL_PREVIOUS'] != 0) {
-            $criteria = new Criteria();
-            $criteria->addSelectColumn(TaskPeer::TAS_TYPE);
-            $criteria->add( TaskPeer::TAS_UID, $data['TAS_UID'], Criteria::EQUAL );
-            $dataset = TaskPeer::doSelectRS($criteria);
-            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $dataset->next();
-            $aRow = $dataset->getRow();
-            if ($aRow['TAS_TYPE'] != 'SUBPROCESS') {
-                //$users->refreshTotal($data['USR_UID'], 'remove', 'inbox');
-            }
-        } else {
-            $criteria = new Criteria();
-            $criteria->addSelectColumn(SubApplicationPeer::APP_UID);
-            $criteria->add( SubApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
-            $dataset = SubApplicationPeer::doSelectRS($criteria);
-            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            if ($dataset->next()) {
-                //$users->refreshTotal($data['USR_UID'], 'remove', 'inbox');
-            } else {
-                //$users->refreshTotal($data['USR_UID'], 'remove', 'draft');
-            }
-        }
-
         $con = Propel::getConnection( ListCompletedPeer::DATABASE_NAME );
         try {
             $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );

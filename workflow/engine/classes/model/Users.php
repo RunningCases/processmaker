@@ -445,62 +445,17 @@ class Users extends BaseUsers
         return $aFields;
     }
 
-    public function refreshTotal ($userId, $type = 'add', $list = "inbox", $total = 1)
+    /**
+     * @Deprecated
+     * @param $userId
+     * @param string $type
+     * @param string $list
+     * @param int $total
+     * @throws Exception
+     */
+    public function refreshTotal($userId, $type = 'add', $list = "inbox", $total = 1)
     {
-        if ($userId == "") {
-            return;
-        }
-
-        $nameList = self::getNameTotal($list);
-        $criteria = new Criteria();
-        $criteria->addSelectColumn( $nameList );
-        $criteria->add( UsersPeer::USR_UID, $userId, Criteria::EQUAL );
-        $dataset = ApplicationPeer::doSelectRS($criteria);
-        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $dataset->next();
-        $aRow = $dataset->getRow();
-
-        $num = $aRow[$nameList];
-        if ($type == 'add') {
-            $num++;
-        } else {
-            $num--;
-        }
-
-        $data = array(
-            'USR_UID' => $userId,
-            $nameList => $num
-        );
-        self::update($data);
-    }
-
-    public function getNameTotal($list = "inbox")
-    {
-        switch ($list) {
-            case 'draft':
-                $return = 'USR_TOTAL_DRAFT';
-                break;
-            case 'canceled':
-                $return = 'USR_TOTAL_CANCELLED';
-                break;
-            case 'participated':
-                $return = 'USR_TOTAL_PARTICIPATED';
-                break;
-            case 'paused':
-                $return = 'USR_TOTAL_PAUSED';
-                break;
-            case 'completed':
-                $return = 'USR_TOTAL_COMPLETED';
-                break;
-            case 'unassigned':
-                $return = 'USR_TOTAL_UNASSIGNED';
-                break;
-            case 'inbox':
-            default:
-                $return = 'USR_TOTAL_INBOX';
-                break;
-        }
-        return $return;
+        throw new Exception("This method (refreshTotal) is no longer in use. Please remove reference.");
     }
 
     public function userLanguaje ($usrUid = "")
