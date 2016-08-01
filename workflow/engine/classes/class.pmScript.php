@@ -368,7 +368,7 @@ class PMScript
     /**
      * Evaluate the current script
      *
-     * @return void
+     * @return null
      */
     public function evaluate ()
     {

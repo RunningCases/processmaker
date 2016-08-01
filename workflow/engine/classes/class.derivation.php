@@ -58,7 +58,7 @@ class Derivation
      *
      * @return array Return array
      */
-    private function prepareInformationTask(array $arrayTaskData)
+    protected function prepareInformationTask(array $arrayTaskData)
     {
         try {
             $task = new Task();
