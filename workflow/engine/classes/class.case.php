@@ -1168,6 +1168,9 @@ class Cases
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(ListCompletedPeer::APP_UID, $sAppUid);
             ListCompletedPeer::doDelete($oCriteria);
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListUnassignedPeer::APP_UID, $sAppUid);
+            ListUnassignedPeer::doDelete($oCriteria);
             /*----------------------------------********---------------------------------*/
             return $result;
         } catch (exception $e) {
