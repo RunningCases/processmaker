@@ -440,7 +440,6 @@ try {
             $oCriteria->addSelectColumn(UsersPeer::USR_LASTNAME);
             $oCriteria->addSelectColumn(UsersPeer::USR_EMAIL);
             $oCriteria->addSelectColumn(UsersPeer::USR_ROLE);
-            $oCriteria->addSelectColumn(UsersPeer::USR_TOTAL_PARTICIPATED);
             $oCriteria->addSelectColumn(UsersPeer::USR_DUE_DATE);
             $oCriteria->addSelectColumn(UsersPeer::USR_STATUS);
             $oCriteria->addSelectColumn(UsersPeer::USR_UX);
@@ -482,6 +481,8 @@ try {
             $uxList = adminProxy::getUxTypesList();
 
             $oRoles = new Roles();
+            $oParticipated = new ListParticipatedLast();
+            $oAppCache = new AppCacheView();
             $rows = Array();
             $uRole = Array();
             while ($oDataset->next()) {
@@ -490,15 +491,23 @@ try {
                 try {
                     $uRole = $oRoles->loadByCode($row['USR_ROLE']);
                 } catch (exception $oError) {
-                    $uRole['ROL_NAME'] = G::loadTranslation( 'ID_DELETED' );
+                    $uRole['ROL_NAME'] = G::loadTranslation('ID_DELETED');
                 }
-
+                /*----------------------------------********---------------------------------*/
+                if (true) {
+                    $total = $oParticipated->getCountList($row['USR_UID']);
+                } else {
+                /*----------------------------------********---------------------------------*/
+                    $total = $oAppCache->getListCounters('sent', $row['USR_UID'], false);
+                /*----------------------------------********---------------------------------*/
+                }
+                /*----------------------------------********---------------------------------*/
                 $row['USR_ROLE_ID'] = $row['USR_ROLE'];
                 $row['USR_ROLE'] = isset($uRole['ROL_NAME']) ? ($uRole['ROL_NAME'] != '' ? $uRole['ROL_NAME'] : $uRole['ROL_CODE']) : $uRole['ROL_CODE'];
 
                 $row['DUE_DATE_OK'] = (date('Y-m-d') > date('Y-m-d', strtotime($row['USR_DUE_DATE']))) ? 0 : 1;
                 $row['LAST_LOGIN'] = isset($aLogin[$row['USR_UID']]) ? \ProcessMaker\Util\DateTime::convertUtcToTimeZone($aLogin[$row['USR_UID']]) : '';
-                $row['TOTAL_CASES'] = isset($row['USR_TOTAL_PARTICIPATED']) ? $row['USR_TOTAL_PARTICIPATED'] : 0;
+                $row['TOTAL_CASES'] = $total;
                 $row['DEP_TITLE'] = isset($aDepart[$row['USR_UID']]) ? $aDepart[$row['USR_UID']] : '';
                 $row['USR_UX'] = isset($uxList[$row['USR_UX']]) ? $uxList[$row['USR_UX']] : $uxList['NORMAL'];
                 $row['USR_AUTH_SOURCE'] = isset($aAuthSources[$row['USR_UID']]) ? $aAuthSources[$row['USR_UID']] : 'ProcessMaker (MYSQL)';
