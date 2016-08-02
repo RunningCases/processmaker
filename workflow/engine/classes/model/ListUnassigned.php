@@ -460,5 +460,45 @@ class ListUnassigned extends BaseListUnassigned
 
         return $tasks;
     }
+
+    /**
+     * Returns the number of cases of a user
+     * @param $userUid
+     * @return int
+     */
+    public function getCountList($userUid)
+    {
+        $criteria = new Criteria('workflow');
+        $tasks = $this->getSelfServiceTasks($userUid);
+        $arrayAppAssignSelfServiceValueData = $this->getSelfServiceCasesByEvaluate($userUid);
+
+        if (!empty($arrayAppAssignSelfServiceValueData)) {
+            //Self Service Value Based Assignment
+            $criterionAux = null;
+
+            foreach ($arrayAppAssignSelfServiceValueData as $value) {
+                if (is_null($criterionAux)) {
+                    $criterionAux = $criteria->getNewCriterion(ListUnassignedPeer::APP_UID, $value["APP_UID"], Criteria::EQUAL)->addAnd(
+                        $criteria->getNewCriterion(ListUnassignedPeer::DEL_INDEX, $value["DEL_INDEX"], Criteria::EQUAL))->addAnd(
+                        $criteria->getNewCriterion(ListUnassignedPeer::TAS_UID, $value["TAS_UID"], Criteria::EQUAL));
+                } else {
+                    $criterionAux = $criteria->getNewCriterion(ListUnassignedPeer::APP_UID, $value["APP_UID"], Criteria::EQUAL)->addAnd(
+                        $criteria->getNewCriterion(ListUnassignedPeer::DEL_INDEX, $value["DEL_INDEX"], Criteria::EQUAL))->addAnd(
+                        $criteria->getNewCriterion(ListUnassignedPeer::TAS_UID, $value["TAS_UID"], Criteria::EQUAL))->addOr(
+                        $criterionAux
+                    );
+                }
+            }
+
+            $criteria->add(
+                $criterionAux->addOr($criteria->getNewCriterion(ListUnassignedPeer::TAS_UID, $tasks, Criteria::IN))
+            );
+        } else {
+            //Self Service
+            $criteria->add(ListUnassignedPeer::TAS_UID, $tasks, Criteria::IN);
+        }
+        $total = ListUnassignedPeer::doCount($criteria);
+        return (int)$total;
+    }
 }
 

@@ -320,5 +320,18 @@ class ListCompleted extends BaseListCompleted
 
         return $data;
     }
+
+    /**
+     * Returns the number of cases of a user
+     * @param $usrUid
+     * @return int
+     */
+    public function getCountList($usrUid)
+    {
+        $criteria = new Criteria();
+        $criteria->add(ListCompletedPeer::USR_UID, $usrUid, Criteria::EQUAL);
+        $total = ListCompletedPeer::doCount($criteria);
+        return (int)$total;
+    }
 } // ListCompleted
 

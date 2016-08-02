@@ -328,5 +328,18 @@ class ListPaused extends BaseListPaused {
 
         return $data;
     }
+
+    /**
+     * Returns the number of cases of a user
+     * @param $usrUid
+     * @return int
+     */
+    public function getCountList($usrUid)
+    {
+        $criteria = new Criteria();
+        $criteria->add(ListPausedPeer::USR_UID, $usrUid, Criteria::EQUAL);
+        $total = ListPausedPeer::doCount($criteria);
+        return (int)$total;
+    }
 } // ListPaused
 

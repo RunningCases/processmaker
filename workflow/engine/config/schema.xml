@@ -4269,6 +4269,15 @@
         <column name="DEL_CURRENT_USR_USERNAME" type="VARCHAR" size="100" default=""/>
         <column name="DEL_CURRENT_USR_FIRSTNAME" type="VARCHAR" size="50" default=""/>
         <column name="DEL_CURRENT_USR_LASTNAME" type="VARCHAR" size="50" default=""/>
+        <index name="usrListCompleted">
+          <index-column name="USR_UID"/>
+          <vendor type="mysql">
+            <parameter name="Table" value="LIST_COMPLETED"/>
+            <parameter name="Non_unique" value="1"/>
+            <parameter name="Key_name" value="usrListCompleted"/>
+            <parameter name="Seq_in_index" value="1"/>
+          </vendor>
+        </index>
     </table>
     <table name="LIST_PAUSED">
         <vendor type="mysql">

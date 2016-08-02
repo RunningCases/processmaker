@@ -1106,4 +1106,20 @@ class Consolidated
 
         $oCase->updateCase($appUid, $aData);
     }
+
+    /**
+     * @param $usrUid
+     * @return int
+     */
+    public function getCountList($usrUid)
+    {
+        $criteria = new Criteria();
+        $criteria->add(\CaseConsolidatedCorePeer::CON_STATUS, 'ACTIVE');
+        $criteria->addJoin(\CaseConsolidatedCorePeer::TAS_UID, \AppCacheViewPeer::TAS_UID, Criteria::LEFT_JOIN);
+        $criteria->add(\AppCacheViewPeer::USR_UID, $usrUid);
+        $criteria->add(\AppCacheViewPeer::DEL_THREAD_STATUS, 'OPEN');
+        $criteria->add(\AppCacheViewPeer::APP_STATUS, 'TO_DO');
+        $total = \CaseConsolidatedCorePeer::doCount($criteria);
+        return (int)$total;
+    }
 }
