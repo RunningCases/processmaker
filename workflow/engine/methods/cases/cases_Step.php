@@ -1054,6 +1054,9 @@ try {
                     if(isset($aValues['ROU_CONDITION'])){
                         $aFields['TASK'][$sKey]['NEXT_TASK']['ROU_CONDITION'] = '<input type="hidden" name="' . $hiddenName . '[ROU_CONDITION]"        id="' . $hiddenName . '[ROU_CONDITION]"        value="' . $aValues['ROU_CONDITION'] . '">';
                     }
+                    if(isset($aValues['SOURCE_UID'])){
+                        $aFields['TASK'][$sKey]['NEXT_TASK']['SOURCE_UID'] = '<input type="hidden" name="' . $hiddenName . '[SOURCE_UID]"        id="' . $hiddenName . '[SOURCE_UID]"        value="' . $aValues['SOURCE_UID'] . '">';
+                    }
                 }
             }
 
