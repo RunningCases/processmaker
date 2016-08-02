@@ -598,5 +598,24 @@ class ListInbox extends BaseListInbox
         return isset($aRow[$fieldName]) ? $aRow[$fieldName] : NULL;
     }
 
+    /**
+     * Returns the number of cases of a user
+     * @param $usrUid
+     * @param string $appStatus
+     * @return int
+     */
+    public function getCountList($usrUid, $appStatus = 'DRAFT')
+    {
+        $criteria = new Criteria();
+        $criteria->add(ListInboxPeer::USR_UID, $usrUid, Criteria::EQUAL);
+        if ($appStatus == 'TO_DO') {
+            $criteria->add(ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL);
+        } else {
+            $criteria->add(ListInboxPeer::APP_STATUS, 'DRAFT', Criteria::EQUAL);
+        }
+        $total = ListInboxPeer::doCount($criteria);
+        return (int)$total;
+    }
+
 }
 

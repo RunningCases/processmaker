@@ -460,7 +460,7 @@ CREATE TABLE `PROCESS`
 	`PRO_COST` DECIMAL(7,2) default 0,
 	`PRO_UNIT_COST` VARCHAR(50) default '',
 	`PRO_ITEE` INTEGER default 0 NOT NULL,
-        `PRO_ACTION_DONE` MEDIUMTEXT default '',
+        `PRO_ACTION_DONE` MEDIUMTEXT,
 	PRIMARY KEY (`PRO_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Store process Information';
 #-----------------------------------------------------------------------------
@@ -493,7 +493,8 @@ CREATE TABLE `REPORT_TABLE`
 	`REP_TAB_CONNECTION` VARCHAR(32) default '' NOT NULL,
 	`REP_TAB_CREATE_DATE` DATETIME  NOT NULL,
 	`REP_TAB_STATUS` CHAR(8) default 'ACTIVE' NOT NULL,
-	PRIMARY KEY (`REP_TAB_UID`)
+	PRIMARY KEY (`REP_TAB_UID`),
+	KEY `indexProcessStatus`(`PRO_UID`, `REP_TAB_STATUS`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- REPORT_VAR
@@ -1005,7 +1006,8 @@ CREATE TABLE `SUB_APPLICATION`
 	`SA_VALUES_IN` MEDIUMTEXT,
 	`SA_INIT_DATE` DATETIME,
 	`SA_FINISH_DATE` DATETIME,
-	PRIMARY KEY (`APP_UID`,`APP_PARENT`,`DEL_INDEX_PARENT`,`DEL_THREAD_PARENT`)
+	PRIMARY KEY (`APP_UID`,`APP_PARENT`,`DEL_INDEX_PARENT`,`DEL_THREAD_PARENT`),
+	KEY `indexParent`(`APP_PARENT`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- LOGIN_LOG
@@ -1067,7 +1069,8 @@ CREATE TABLE `ADDITIONAL_TABLES`
 	`ADD_TAB_TYPE` VARCHAR(32) default '',
 	`ADD_TAB_GRID` VARCHAR(256) default '',
 	`ADD_TAB_TAG` VARCHAR(256) default '',
-	PRIMARY KEY (`ADD_TAB_UID`)
+	PRIMARY KEY (`ADD_TAB_UID`),
+	KEY `indexAdditionalProcess`(`PRO_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- FIELDS
@@ -1145,7 +1148,8 @@ CREATE TABLE `EVENT`
 	`EVN_TYPE` VARCHAR(32) default '',
 	`TAS_EVN_UID` VARCHAR(32) default '',
 	PRIMARY KEY (`EVN_UID`),
-	KEY `indexEventTable`(`EVN_UID`)
+	KEY `indexEventTable`(`EVN_UID`),
+	KEY `indexStatusActionProcess`(`EVN_STATUS`, `EVN_ACTION`, `PRO_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- GATEWAY
@@ -2230,7 +2234,8 @@ CREATE TABLE `ADDONS_MANAGER`
 	`ADDON_DOWNLOAD_URL` VARCHAR(2048),
 	`ADDON_DOWNLOAD_PROGRESS` FLOAT,
 	`ADDON_DOWNLOAD_MD5` VARCHAR(32),
-	PRIMARY KEY (`ADDON_ID`,`STORE_ID`)
+	PRIMARY KEY (`ADDON_ID`,`STORE_ID`),
+	KEY `indexAddonsType`(`ADDON_TYPE`)
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------
 #-- LICENSE_MANAGER
@@ -2393,7 +2398,8 @@ CREATE TABLE `LIST_COMPLETED`
 	`DEL_CURRENT_USR_USERNAME` VARCHAR(100) default '',
 	`DEL_CURRENT_USR_FIRSTNAME` VARCHAR(50) default '',
 	`DEL_CURRENT_USR_LASTNAME` VARCHAR(50) default '',
-	PRIMARY KEY (`APP_UID`)
+	PRIMARY KEY (`APP_UID`),
+	KEY `usrListCompleted`(`USR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Completed list';
 #-----------------------------------------------------------------------------
 #-- LIST_PAUSED
@@ -2705,7 +2711,9 @@ CREATE TABLE `ABE_CONFIGURATION`
 	`ABE_SUBJECT_FIELD` VARCHAR(100) default '',
 	`ABE_MAILSERVER_OR_MAILCURRENT` INTEGER default 0,
 	`ABE_CUSTOM_GRID` MEDIUMTEXT,
-	PRIMARY KEY (`ABE_UID`)
+	PRIMARY KEY (`ABE_UID`),
+	KEY `indexAbeProcess`(`PRO_UID`),
+	KEY `indexAbeProcessTask`(`PRO_UID`, `TAS_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='The plugin table for actionsByEmail';
 #-----------------------------------------------------------------------------
 #-- ABE_REQUESTS

@@ -133,7 +133,9 @@ function change_hash($command, $opts)
             $workspace->close();
             CLI::logging(pakeColor::colorize("Changed...", "ERROR") . "\n");
         } catch (Exception $e) {
-            echo "> Error:   ".CLI::error(G::getErrorMessage($e)) . "\n";
+            $token = strtotime("now");
+            PMException::registerErrorLog($e, $token);
+            G::outRes( "> Error:   " . CLI::error(G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token))) . "\n" );
         }
     }
 }

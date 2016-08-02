@@ -405,5 +405,18 @@ class ListParticipatedLast extends BaseListParticipatedLast
         }
         BasePeer::doUpdate($criteriaWhere, $criteriaSet, $con);
     }
+
+    /**
+     * Returns the number of cases of a user
+     * @param $usrUid
+     * @return int
+     */
+    public function getCountList($usrUid)
+    {
+        $criteria = new Criteria();
+        $criteria->add(ListParticipatedLastPeer::USR_UID, $usrUid, Criteria::EQUAL);
+        $total = ListParticipatedLastPeer::doCount($criteria);
+        return (int)$total;
+    }
 }
 

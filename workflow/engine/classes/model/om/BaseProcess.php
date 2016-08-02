@@ -259,7 +259,7 @@ abstract class BaseProcess extends BaseObject implements Persistent
      * The value for the pro_action_done field.
      * @var        string
      */
-    protected $pro_action_done = '';
+    protected $pro_action_done;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -1599,7 +1599,7 @@ abstract class BaseProcess extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->pro_action_done !== $v || $v === '') {
+        if ($this->pro_action_done !== $v) {
             $this->pro_action_done = $v;
             $this->modifiedColumns[] = ProcessPeer::PRO_ACTION_DONE;
         }

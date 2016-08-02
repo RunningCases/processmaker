@@ -845,7 +845,10 @@ class Bootstrap
                 $skinEngine = new SkinEngine('publish', 'blank', '');
                 $skinEngine->dispatch();
             } else {
-                die($e->getMessage());
+                $token = strtotime("now");
+                PMException::registerErrorLog($e, $token);
+                G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
+                die;
             }
         }
     }

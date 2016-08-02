@@ -9,7 +9,7 @@ class actionsByEmailCoreClass extends PMPlugin
 
     public function setup()
     {
-        
+
     }
 
     public function getFieldsForPageSetup()
@@ -66,7 +66,9 @@ class actionsByEmailCoreClass extends PMPlugin
                     error_log('The parameter $data->USR_UID is empty, the routed task may be a self-service type, actions by email does not work with self-service task types.', 0);
                 }
             } catch(Exception $e) {
-                echo $e->getMessage().' Please contact to your system administrator.';
+                $token = strtotime("now");
+                PMException::registerErrorLog($e, $token);
+                G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
                 die;
             }
             G::LoadClass('pmFunctions');
