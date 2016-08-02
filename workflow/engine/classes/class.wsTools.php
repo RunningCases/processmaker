@@ -1997,20 +1997,6 @@ class workspaceTools
                 $list->doDeleteAll();
             }
 
-            //Update //User
-            $criteriaSet = new Criteria("workflow");
-            $criteriaSet->add(UsersPeer::USR_TOTAL_INBOX, 0);
-            $criteriaSet->add(UsersPeer::USR_TOTAL_DRAFT, 0);
-            $criteriaSet->add(UsersPeer::USR_TOTAL_CANCELLED, 0);
-            $criteriaSet->add(UsersPeer::USR_TOTAL_PARTICIPATED, 0);
-            $criteriaSet->add(UsersPeer::USR_TOTAL_PAUSED, 0);
-            $criteriaSet->add(UsersPeer::USR_TOTAL_COMPLETED, 0);
-            $criteriaSet->add(UsersPeer::USR_TOTAL_UNASSIGNED, 0);
-
-            $criteriaWhere = new Criteria("workflow");
-            $criteriaWhere->add(UsersPeer::USR_UID, null, Criteria::ISNOTNULL);
-
-            BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
             $this->regenerateListCompleted($lang);
             $this->regenerateListCanceled($lang);
             $this->regenerateListMyInbox(); // this list require no translation

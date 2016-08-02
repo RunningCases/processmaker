@@ -4232,9 +4232,6 @@ class Cases
                 throw new Exception(G::LoadTranslation('ID_THREAD_STATUS_DOES_NOT_EXIST_FOR_THE_APPLICATION.', [$appUID]));
             }
 
-            $users = new Users();
-            $rowUsers = $users->load($userUID);
-
             //Application
             $rowApplication['APP_STATUS'] = 'TO_DO';
             $rowApplication['APP_UPDATE_DATE'] = date('Y-m-d H:i:s');
@@ -4282,7 +4279,6 @@ class Cases
             $resultSetListCanceled->next();
             $rowListCanceled = $resultSetListCanceled->getRow();
             ListCanceledPeer::doDelete($criteriaListCanceled);
-            $usrTotalCancelled = $rowUsers['USR_TOTAL_CANCELLED'] - 1;
 
             //ListInbox
             $rowListCanceled['DEL_PREVIOUS_USR_USERNAME'] = $rowListCanceled['DEL_CURRENT_USR_USERNAME'];
@@ -4298,14 +4294,6 @@ class Cases
             unset($rowListCanceled['APP_CANCELED_DATE']);
             $listInbox = new ListInbox();
             $listInbox->create($rowListCanceled);
-            $usrTotalInbox = $rowUsers['USR_TOTAL_INBOX'] + 1;
-
-            //Users
-            $users->update([
-                'USR_UID' => $userUID,
-                'USR_TOTAL_INBOX' => $usrTotalInbox,
-                'USR_TOTAL_CANCELLED' => $usrTotalCancelled
-            ]);
 
             //ListParticipatedLast
             $criteriaListParticipatedLast = new Criteria("workflow");
