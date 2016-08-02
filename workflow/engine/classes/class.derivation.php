@@ -50,6 +50,28 @@ class Derivation
     var $case;
     protected $flagControl;
     protected $flagControlMulInstance;
+    private $regexpTaskTypeToInclude;
+
+    public function __construct()
+    {
+        $this->setRegexpTaskTypeToInclude("GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT");
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRegexpTaskTypeToInclude()
+    {
+        return $this->regexpTaskTypeToInclude;
+    }
+
+    /**
+     * @param mixed $regexpTaskTypeToInclude
+     */
+    public function setRegexpTaskTypeToInclude($regexpTaskTypeToInclude)
+    {
+        $this->regexpTaskTypeToInclude = $regexpTaskTypeToInclude;
+    }
 
     /**
      * prepareInformationTask
@@ -240,15 +262,15 @@ class Derivation
             foreach ($arrayNextTaskBackup as $value) {
                 $arrayNextTaskData = $value;
 
-                $regexpTaskTypeToInclude = "GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT";
-
                 if ($arrayNextTaskData["NEXT_TASK"]["TAS_UID"] != "-1" &&
-                    preg_match("/^(?:" . $regexpTaskTypeToInclude . ")$/", $arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"])
+                    preg_match("/^(?:" . $this->regexpTaskTypeToInclude . ")$/", $arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"])
                 ) {
                     $arrayAux = $this->prepareInformation($arrayData, $arrayNextTaskData["NEXT_TASK"]["TAS_UID"]);
 
                     foreach ($arrayAux as $value2) {
-                        $arrayNextTask[++$i] = $value2;
+                        $key = ++$i;
+                        $arrayNextTask[$key] = $value2;
+                        $arrayNextTask[$key]['SOURCE_UID'] = $value['ROU_NEXT_TASK'];
                         foreach($aSecJoin as $rsj){
                           $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TASK"] = $rsj["ROU_PREVIOUS_TASK"];
                           $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TYPE"] = "SEC-JOIN";
@@ -262,7 +284,7 @@ class Derivation
                     ) {
                         $arrayNextTaskData["NEXT_TASK"]["TAS_UID"] = $arrayNextTaskData["TAS_UID"] . "/" . $arrayNextTaskData["NEXT_TASK"]["TAS_UID"];
                     }
-
+                    $arrayNextTaskData['SOURCE_UID'] = $value['ROU_NEXT_TASK'];
                     $arrayNextTask[++$i] = $arrayNextTaskData;
                     foreach($aSecJoin as $rsj){
                         $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TASK"] = $rsj["ROU_PREVIOUS_TASK"];
