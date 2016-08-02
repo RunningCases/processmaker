@@ -5267,15 +5267,19 @@ class Cases
 
             foreach ($arrayTask as $aTask) {
 
+                //if the next is EOP dont send notification and continue with the next
+                if($aTask['TAS_UID'] === '-1'){
+                    continue;
+                }
                 if (isset($aTask['DEL_INDEX'])) {
                     $arrayData2 = $arrayData;
 
                     $appDelegation = AppDelegationPeer::retrieveByPK($applicationUid, $aTask['DEL_INDEX']);
 
                     if (!is_null($appDelegation)) {
-                        $oTask = new Task();
-                        $aTask = $oTask->load($appDelegation->getTasUid());
-                        $arrayData2['TAS_TITLE'] = $aTask['TAS_TITLE'];
+                        $oTaskUpd = new Task();
+                        $aTaskUpdate = $oTaskUpd->load($appDelegation->getTasUid());
+                        $arrayData2['TAS_TITLE'] = $aTaskUpdate['TAS_TITLE'];
                         $arrayData2['DEL_TASK_DUE_DATE'] = $appDelegation->getDelTaskDueDate();
                     }
                 } else {
