@@ -447,6 +447,8 @@ class WebApplication
         define("PATH_SERVICES_REST", PATH_CORE . "services" . PATH_SEP . "rest" . PATH_SEP);
 
         \Bootstrap::registerSystemClasses();
+        \Bootstrap::initVendors();
+        \Bootstrap::LoadSystem( 'monologProvider' );
 
         $arraySystemConfiguration = \System::getSystemConfiguration();
 
