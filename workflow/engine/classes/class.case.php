@@ -1138,18 +1138,6 @@ class Cases
                 $this->appSolr->deleteApplicationSearchIndex($sAppUid);
             }
             /*----------------------------------********---------------------------------*/
-            $criteria = new Criteria();
-            $criteria->addSelectColumn( ListInboxPeer::USR_UID );
-            $criteria->add( ListInboxPeer::APP_UID, $sAppUid, Criteria::EQUAL );
-            $dataset = ApplicationPeer::doSelectRS($criteria);
-            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            while($dataset->next()) {
-                $aRow = $dataset->getRow();
-                $users = new Users();
-                $users->refreshTotal($aRow['USR_UID'], 'remove', 'draft');
-                $users->refreshTotal($aRow['USR_UID'], 'remove', 'participated');
-            }
-
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(ListInboxPeer::APP_UID, $sAppUid);
             ListInboxPeer::doDelete($oCriteria);
@@ -1959,7 +1947,6 @@ class Cases
     public function CloseCurrentDelegation($sAppUid, $iDelIndex)
     {
         try {
-            $oApplication = ApplicationPeer::retrieveByPk($sAppUid);
             $c = new Criteria();
             $c->add(AppDelegationPeer::APP_UID, $sAppUid);
             $c->add(AppDelegationPeer::DEL_INDEX, $iDelIndex);
@@ -1977,22 +1964,6 @@ class Cases
                         $msg .= $objValidationFailure->getMessage() . "<br/>";
                     }
                     throw (new PropelException('The row cannot be created!', new PropelException($msg)));
-                }
-                $taskNext = TaskPeer::retrieveByPK($appDel->getTasUid());
-                if($taskNext->getTasType() !== 'SUBPROCESS'){
-                    if($oApplication->getAppStatus() === 'DRAFT'){
-                      $sUserUid = $appDel->getUsrUid();
-                      /*----------------------------------********---------------------------------*/
-                      $users = new Users();
-                      $users->refreshTotal($sUserUid, "remove", "draft");
-                      /*----------------------------------********---------------------------------*/
-                    }else{
-                      $sUserUid = $appDel->getUsrUid();
-                      /*----------------------------------********---------------------------------*/
-                      $users = new Users();
-                      $users->refreshTotal($sUserUid, "remove", "inbox");
-                      /*----------------------------------********---------------------------------*/
-                    }
                 }
             }
             /*----------------------------------********---------------------------------*/

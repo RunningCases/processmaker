@@ -1540,13 +1540,6 @@
     <column name="USR_REPORTS_TO" type="VARCHAR" size="32" default=""/>
     <column name="USR_REPLACED_BY" type="VARCHAR" size="32" default=""/>
     <column name="USR_UX" type="VARCHAR" size="128" default="NORMAL"/>
-    <column name="USR_TOTAL_INBOX" type="INTEGER" default="0"/>
-    <column name="USR_TOTAL_DRAFT" type="INTEGER" default="0"/>
-    <column name="USR_TOTAL_CANCELLED" type="INTEGER" default="0"/>
-    <column name="USR_TOTAL_PARTICIPATED" type="INTEGER" default="0"/>
-    <column name="USR_TOTAL_PAUSED" type="INTEGER" default="0"/>
-    <column name="USR_TOTAL_COMPLETED" type="INTEGER" default="0"/>
-    <column name="USR_TOTAL_UNASSIGNED" type="INTEGER" default="0"/>
     <column name="USR_COST_BY_HOUR" type="DECIMAL" size="7,2" required="false" default="0"/>
     <column name="USR_UNIT_COST" type="VARCHAR" size="50" required="false" default=""/>
     <column name="USR_PMDRIVE_FOLDER_UID" type="VARCHAR" size="32" default="" required="false"/>

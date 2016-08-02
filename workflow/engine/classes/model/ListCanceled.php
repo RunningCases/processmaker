@@ -97,9 +97,6 @@ class ListCanceled extends BaseListCanceled {
         $oListInbox = new ListInbox();
         $oListInbox->removeAll($data['APP_UID']);
 
-        $users = new Users();
-        $users->refreshTotal($data['USR_UID'], 'add', 'canceled');
-
         //Update - WHERE
         $criteriaWhere = new Criteria("workflow");
         $criteriaWhere->add(ListParticipatedLastPeer::APP_UID, $data["APP_UID"], Criteria::EQUAL);
