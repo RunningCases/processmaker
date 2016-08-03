@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\BusinessModel\Migrator;
 
+use ProcessMaker\BusinessModel;
 /**
  * The assignment rules migrator class.
  * The container class that stores the import and export rules for assignment rules.
@@ -37,13 +38,22 @@ class AssignmentRulesMigrator implements Importable, Exportable
     public function import($data, $replace)
     {
         try {
+            $workflowTaks = array();
+            $dummyTaskTypes = BusinessModel\Task::getDummyTypes();
+            foreach ($data['tasks'] as $key => $value) {
+                $arrayTaskData = $value;
+                if (!in_array($arrayTaskData["TAS_TYPE"], $dummyTaskTypes)) {
+                    $workflowTaks[] = $arrayTaskData;
+                }
+            }
+
             if ($replace) {
-                $this->processes->createTaskRows($data['tasks']);
+                $this->processes->createTaskRows($workflowTaks);
                 $this->processes->addNewGroupRow($data['groupwfs']);
                 $this->processes->removeTaskUserRows($data['tasks']);
                 $this->processes->createTaskUserRows($data['taskusers']);
             } else {
-                $this->processes->addNewTaskRows($data['tasks']);
+                $this->processes->addNewTaskRows($workflowTaks);
                 $this->processes->addNewGroupRow($data['groupwfs']);
                 $this->processes->addNewTaskUserRows($data['taskusers']);
             }
