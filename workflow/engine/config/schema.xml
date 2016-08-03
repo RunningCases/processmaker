@@ -5377,6 +5377,8 @@
     <column name="NOT_DATA" type="LONGVARCHAR" required="true" />
     <column name="NOT_STATUS" type="VARCHAR" size="150" required="true"/>
     <column name="NOT_SEND_DATE" type="TIMESTAMP" required="true" />
+    <column name="APP_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
     <index name="indexNotStatus">
       <index-column name="NOT_STATUS"/>
     </index>
