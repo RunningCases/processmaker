@@ -343,8 +343,6 @@ switch ($action) {
         }
         break;
     case 'showEncodes':
-        //G::LoadThirdParty( 'pear/json', 'class.json' );
-        //$oJSON =
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
         $engine = $_POST['engine'];
@@ -352,10 +350,10 @@ switch ($action) {
         if ($engine != "0") {
             $dbs = new dbConnections();
             $var = Bootstrap::json_encode($dbs->getEncondeList($filter->xssFilterHard($engine)));
-            echo $var;
+            G::outRes($var);
 
         } else {
-            echo '[["0","..."]]';
+            G::outRes('[["0","..."]]');
         }
         break;
 }
