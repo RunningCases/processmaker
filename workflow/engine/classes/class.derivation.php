@@ -80,7 +80,7 @@ class Derivation
      *
      * @return array Return array
      */
-    protected function prepareInformationTask(array $arrayTaskData)
+    private function prepareInformationTask(array $arrayTaskData)
     {
         try {
             $task = new Task();
