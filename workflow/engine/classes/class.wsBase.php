@@ -2379,12 +2379,6 @@ class wsBase
                 }
 
                 foreach ($derive as $key => $val) {
-                    if ($val['NEXT_TASK']['TAS_ASSIGN_TYPE'] == 'MANUAL') {
-                        $result = new wsResponse(15, G::LoadTranslation('ID_TASK_DEFINED_MANUAL_ASSIGNMENT'));
-
-                        return $result;
-                    }
-
                     //Routed to the next task, if end process then not exist user
                     $nodeNext = array();
                     $usrasgdUid = null;
