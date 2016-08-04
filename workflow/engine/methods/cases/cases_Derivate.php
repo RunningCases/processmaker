@@ -122,13 +122,10 @@ try {
     $oDerivation = new Derivation();
     $aCurrentDerivation = array ('APP_UID' => $_SESSION['APPLICATION'],'DEL_INDEX' => $_SESSION['INDEX'],'APP_STATUS' => $sStatus,'TAS_UID' => $_SESSION['TASK'],'ROU_TYPE' => $_POST['form']['ROU_TYPE']
     );
-
-    $aPInformation = $oDerivation->prepareInformation( array ('USER_UID' => $_SESSION['USER_LOGGED'],'APP_UID' => $_SESSION['APPLICATION'],'DEL_INDEX' => $_SESSION['INDEX']
-            ) );
-
-    //$_POST['form']['TASKS'] is the information after the cases_ScreenDerivation
-    $nextTasks = G::array_merges($aPInformation,$_POST['form']['TASKS']);
-
+    $aPInformation = $oDerivation->prepareInformation( array ('USER_UID' => $_SESSION['USER_LOGGED'],'APP_UID' => $_SESSION['APPLICATION'],'DEL_INDEX' => $_SESSION['INDEX'])
+    );
+    $oRoute = new \ProcessMaker\Core\RoutingScreen();
+    $nextTasks = $oRoute->mergeDataDerivation($_POST['form']['TASKS'], $aPInformation);
     $arrayDerivationResult = $oDerivation->derivate($aCurrentDerivation, $nextTasks);
 
     if (!empty($arrayDerivationResult)) {

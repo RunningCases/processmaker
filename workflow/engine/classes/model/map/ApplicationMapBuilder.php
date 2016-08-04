@@ -107,6 +107,8 @@ class ApplicationMapBuilder
 
         $tMap->addColumn('APP_DRIVE_FOLDER_UID', 'AppDriveFolderUid', 'string', CreoleTypes::VARCHAR, false, 32);
 
+        $tMap->addColumn('APP_ROUTING_DATA', 'AppRoutingData', 'string', CreoleTypes::LONGVARCHAR, false, null);
+
         $tMap->addValidator('APP_STATUS', 'validValues', 'propel.validator.ValidValuesValidator', 'DRAFT|TO_DO|PAUSED|COMPLETED|CANCELLED', 'Please select a valid status.');
 
     } // doBuild()

@@ -415,7 +415,8 @@ class Light
             $aData['APP_UID'] = $app_uid;
             $aData['DEL_INDEX'] = $del_index;
             $aData['USER_UID'] = $usr_uid;
-            $derive = $oDerivation->prepareInformation( $aData );
+            $oRoute = new \ProcessMaker\Core\RoutingScreen();
+            $derive = $oRoute->prepareInformation($aData);
             $response = array();
             foreach ($derive as $sKey => &$aValues) {
                 $sPriority = ''; //set priority value
