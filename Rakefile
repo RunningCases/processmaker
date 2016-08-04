@@ -354,7 +354,6 @@ def getJsIncludeFiles
         "gulliver/js/tinymce/jscripts/tiny_mce/plugins/visualchars/editor_plugin.js",
         "gulliver/js/tinymce/jscripts/tiny_mce/plugins/xhtmlxtras/editor_plugin.js",
         "gulliver/js/tinymce/jscripts/tiny_mce/plugins/wordcount/editor_plugin.js",
-        "gulliver/js/tinymce/jscripts/tiny_mce/plugins/visualblocks/editor_plugin.js",
         "gulliver/js/tinymce/jscripts/tiny_mce/plugins/table/editor_plugin.js",
         "gulliver/js/tinymce/jscripts/tiny_mce/plugins/template/editor_plugin.js",
         "gulliver/js/tinymce/jscripts/tiny_mce/plugins/visualblocks/editor_plugin.js",
