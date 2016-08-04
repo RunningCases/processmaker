@@ -636,9 +636,11 @@ class Light extends Api
     {
         $response = array();
         foreach ($data as $field => $d) {
+            $field = preg_quote($field);
             if (is_array($d)) {
                 $newData = array();
                 foreach ($d as $field => $value) {
+                    $field = preg_quote($field);
                     if (
                         preg_match(
                             '/\|(' . $field . ')\|/i',
@@ -1011,7 +1013,7 @@ class Light extends Api
      *
      * @param string $tas_uid {@min 32}{@max 32}
      * @param string $app_uid {@min 32}{@max 32}
-     * @param string $del_index
+     * @param int $del_index
      */
     public function doGetPrepareInformation($tas_uid, $app_uid, $del_index = null)
     {
@@ -1030,7 +1032,7 @@ class Light extends Api
      * @url PUT /cases/:app_uid/route-case
      *
      * @param string $app_uid {@min 32}{@max 32}
-     * @param string $del_index {@from body}
+     * @param int $del_index {@from body}
      * @param array $tasks {@from body}
      */
     public function doPutRouteCase($app_uid, $del_index = null, $tasks = array())
@@ -1591,7 +1593,7 @@ class Light extends Api
      * @access public
      * @url GET /config
      *
-     * @param string $fileLimit {@from path}
+     * @param boolean $fileLimit {@from path}
      */
     public function getConfiguration($fileLimit = false)
     {
@@ -1612,8 +1614,8 @@ class Light extends Api
      *
      * @url GET /config-user
      *
-     * @param string $fileLimit {@from path}
-     * @param string $tz {@from path}
+     * @param boolean $fileLimit {@from path}
+     * @param boolean $tz {@from path}
      */
     public function getConfigurationUser($fileLimit = false, $tz = false)
     {

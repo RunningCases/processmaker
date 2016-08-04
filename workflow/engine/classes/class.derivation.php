@@ -774,58 +774,26 @@ class Derivation
     {
         /*----------------------------------********---------------------------------*/
         try {
-            $user = new Users();
+            if ($arrayNextDelegationData["TAS_UID"] != "-1") {
+                $regexpTaskTypeToExclude = "WEBENTRYEVENT|END-MESSAGE-EVENT|START-MESSAGE-EVENT|INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT|SCRIPT-TASK|INTERMEDIATE-CATCH-TIMER-EVENT";
 
-            if ($arrayNextDelegationData["TAS_UID"] == "-2") {
-                $application = ApplicationPeer::retrieveByPK($arrayApplicationData["APP_UID"]);
+                if (!preg_match("/^(?:" . $regexpTaskTypeToExclude . ")$/", $taskNextDelegation->getTasType())) {
+                    if (!empty($delIndexNew) && empty($aSp)) {
+                        $appDelegation = AppDelegationPeer::retrieveByPK($arrayApplicationData["APP_UID"], $delIndexNew);
+                        $arrayApplicationData2 = $appDelegation->toArray(BasePeer::TYPE_FIELDNAME);
 
-                if ($application->getAppStatus() == "DRAFT") {
-                    //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "draft");
-                } else {
-                    //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "inbox");
-                }
-            } else {
-                if ($arrayNextDelegationData["TAS_UID"] != "-1") {
-                    $regexpTaskTypeToExclude = "WEBENTRYEVENT|END-MESSAGE-EVENT|START-MESSAGE-EVENT|INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT|SCRIPT-TASK|INTERMEDIATE-CATCH-TIMER-EVENT";
+                        $arrayApplicationData2["APP_STATUS"] = $arrayCurrentDelegationData["APP_STATUS"];
 
-                    if (!preg_match("/^(?:" . $regexpTaskTypeToExclude . ")$/", $taskNextDelegation->getTasType())) {
-                        if (!empty($delIndexNew) && empty($aSp)) {
-                            $appDelegation = AppDelegationPeer::retrieveByPK($arrayApplicationData["APP_UID"], $delIndexNew);
-                            $arrayApplicationData2 = $appDelegation->toArray(BasePeer::TYPE_FIELDNAME);
+                        $taskCurrent = TaskPeer::retrieveByPK($arrayCurrentDelegationData["TAS_UID"]);
 
-                            $arrayApplicationData2["APP_STATUS"] = $arrayCurrentDelegationData["APP_STATUS"];
-
-                            $taskCurrent = TaskPeer::retrieveByPK($arrayCurrentDelegationData["TAS_UID"]);
-
-                            if ($taskCurrent->getTasType() == "INTERMEDIATE-CATCH-MESSAGE-EVENT") {
-                                $removeList = false;
-                            }
-
-                            $arrayApplicationData2["REMOVED_LIST"] = $removeList;
-
-                            $inbox = new ListInbox();
-                            $inbox->newRow($arrayApplicationData2, $arrayApplicationData["CURRENT_USER_UID"], false, array(), (($arrayNextDelegationData["TAS_ASSIGN_TYPE"] == "SELF_SERVICE")? true : false));
-                        } else {
-                            if (empty($aSp)) {
-                                $application = ApplicationPeer::retrieveByPK($arrayApplicationData["APP_UID"]);
-
-                                if ($application->getAppStatus() == "DRAFT") {
-                                    //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "draft");
-                                } else {
-                                    //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "inbox");
-                                }
-                            }
+                        if ($taskCurrent->getTasType() == "INTERMEDIATE-CATCH-MESSAGE-EVENT") {
+                            $removeList = false;
                         }
-                    } else {
-                        if ($removeList) {
-                            $application = ApplicationPeer::retrieveByPK($arrayApplicationData["APP_UID"]);
 
-                            if ($application->getAppStatus() == "DRAFT") {
-                                //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "draft");
-                            } else {
-                                //$user->refreshTotal($arrayApplicationData["CURRENT_USER_UID"], "remove", "inbox");
-                            }
-                        }
+                        $arrayApplicationData2["REMOVED_LIST"] = $removeList;
+
+                        $inbox = new ListInbox();
+                        $inbox->newRow($arrayApplicationData2, $arrayApplicationData["CURRENT_USER_UID"], false, array(), (($arrayNextDelegationData["TAS_ASSIGN_TYPE"] == "SELF_SERVICE")? true : false));
                     }
                 }
             }
