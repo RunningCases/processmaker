@@ -50,9 +50,6 @@ class ListParticipatedLast extends BaseListParticipatedLast
                 $data['DEL_CURRENT_USR_FIRSTNAME'] = $aRow['USR_FIRSTNAME'];
                 $data['DEL_CURRENT_USR_LASTNAME']  = $aRow['USR_LASTNAME'];
                 $data['DEL_CURRENT_TAS_TITLE'] = $data['APP_TAS_TITLE'];
-
-                $users = new Users();
-                $users->refreshTotal($data['USR_UID'], 'add', 'participated');
             }
         } else {
             $getData['USR_UID'] = $data['USR_UID_CURRENT'];
@@ -170,17 +167,13 @@ class ListParticipatedLast extends BaseListParticipatedLast
     public function remove ($app_uid, $usr_uid, $del_index)
     {
         try {
-            $flagDelete = false;
-
             if (!is_null(ListParticipatedLastPeer::retrieveByPK($app_uid, $usr_uid, $del_index))) {
                 $criteria = new Criteria("workflow");
 
                 $criteria->add(ListParticipatedLastPeer::APP_UID, $app_uid);
                 $criteria->add(ListParticipatedLastPeer::USR_UID, $usr_uid);
                 $criteria->add(ListParticipatedLastPeer::DEL_INDEX, $del_index);
-
                 $result = ListParticipatedLastPeer::doDelete($criteria);
-                $flagDelete = true;
             } else {
                 $criteria = new Criteria("workflow");
                 $criteria->add(ListParticipatedLastPeer::APP_UID, $app_uid);
@@ -190,13 +183,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
                 if ($rsCriteria->next()) {
                     $criteria2 = clone $criteria;
                     $result = ListParticipatedLastPeer::doDelete($criteria2);
-                    $flagDelete = true;
                 }
-            }
-
-            if ($flagDelete) {
-                $user = new Users();
-                $user->refreshTotal($usr_uid, "removed", "participated");
             }
         } catch (Exception $e) {
             throw $e;
@@ -404,6 +391,19 @@ class ListParticipatedLast extends BaseListParticipatedLast
            eval('$criteriaSet->add( ListParticipatedLastPeer::'.$k.',$v, Criteria::EQUAL);');
         }
         BasePeer::doUpdate($criteriaWhere, $criteriaSet, $con);
+    }
+
+    /**
+     * Returns the number of cases of a user
+     * @param $usrUid
+     * @return int
+     */
+    public function getCountList($usrUid)
+    {
+        $criteria = new Criteria();
+        $criteria->add(ListParticipatedLastPeer::USR_UID, $usrUid, Criteria::EQUAL);
+        $total = ListParticipatedLastPeer::doCount($criteria);
+        return (int)$total;
     }
 }
 

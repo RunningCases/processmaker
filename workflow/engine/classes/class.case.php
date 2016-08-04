@@ -1138,18 +1138,6 @@ class Cases
                 $this->appSolr->deleteApplicationSearchIndex($sAppUid);
             }
             /*----------------------------------********---------------------------------*/
-            $criteria = new Criteria();
-            $criteria->addSelectColumn( ListInboxPeer::USR_UID );
-            $criteria->add( ListInboxPeer::APP_UID, $sAppUid, Criteria::EQUAL );
-            $dataset = ApplicationPeer::doSelectRS($criteria);
-            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            while($dataset->next()) {
-                $aRow = $dataset->getRow();
-                $users = new Users();
-                $users->refreshTotal($aRow['USR_UID'], 'remove', 'draft');
-                $users->refreshTotal($aRow['USR_UID'], 'remove', 'participated');
-            }
-
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(ListInboxPeer::APP_UID, $sAppUid);
             ListInboxPeer::doDelete($oCriteria);
@@ -1168,6 +1156,9 @@ class Cases
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(ListCompletedPeer::APP_UID, $sAppUid);
             ListCompletedPeer::doDelete($oCriteria);
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ListUnassignedPeer::APP_UID, $sAppUid);
+            ListUnassignedPeer::doDelete($oCriteria);
             /*----------------------------------********---------------------------------*/
             return $result;
         } catch (exception $e) {
@@ -1956,7 +1947,6 @@ class Cases
     public function CloseCurrentDelegation($sAppUid, $iDelIndex)
     {
         try {
-            $oApplication = ApplicationPeer::retrieveByPk($sAppUid);
             $c = new Criteria();
             $c->add(AppDelegationPeer::APP_UID, $sAppUid);
             $c->add(AppDelegationPeer::DEL_INDEX, $iDelIndex);
@@ -1974,22 +1964,6 @@ class Cases
                         $msg .= $objValidationFailure->getMessage() . "<br/>";
                     }
                     throw (new PropelException('The row cannot be created!', new PropelException($msg)));
-                }
-                $taskNext = TaskPeer::retrieveByPK($appDel->getTasUid());
-                if($taskNext->getTasType() !== 'SUBPROCESS'){
-                    if($oApplication->getAppStatus() === 'DRAFT'){
-                      $sUserUid = $appDel->getUsrUid();
-                      /*----------------------------------********---------------------------------*/
-                      $users = new Users();
-                      $users->refreshTotal($sUserUid, "remove", "draft");
-                      /*----------------------------------********---------------------------------*/
-                    }else{
-                      $sUserUid = $appDel->getUsrUid();
-                      /*----------------------------------********---------------------------------*/
-                      $users = new Users();
-                      $users->refreshTotal($sUserUid, "remove", "inbox");
-                      /*----------------------------------********---------------------------------*/
-                    }
                 }
             }
             /*----------------------------------********---------------------------------*/
@@ -4258,9 +4232,6 @@ class Cases
                 throw new Exception(G::LoadTranslation('ID_THREAD_STATUS_DOES_NOT_EXIST_FOR_THE_APPLICATION.', [$appUID]));
             }
 
-            $users = new Users();
-            $rowUsers = $users->load($userUID);
-
             //Application
             $rowApplication['APP_STATUS'] = 'TO_DO';
             $rowApplication['APP_UPDATE_DATE'] = date('Y-m-d H:i:s');
@@ -4308,7 +4279,6 @@ class Cases
             $resultSetListCanceled->next();
             $rowListCanceled = $resultSetListCanceled->getRow();
             ListCanceledPeer::doDelete($criteriaListCanceled);
-            $usrTotalCancelled = $rowUsers['USR_TOTAL_CANCELLED'] - 1;
 
             //ListInbox
             $rowListCanceled['DEL_PREVIOUS_USR_USERNAME'] = $rowListCanceled['DEL_CURRENT_USR_USERNAME'];
@@ -4324,14 +4294,6 @@ class Cases
             unset($rowListCanceled['APP_CANCELED_DATE']);
             $listInbox = new ListInbox();
             $listInbox->create($rowListCanceled);
-            $usrTotalInbox = $rowUsers['USR_TOTAL_INBOX'] + 1;
-
-            //Users
-            $users->update([
-                'USR_UID' => $userUID,
-                'USR_TOTAL_INBOX' => $usrTotalInbox,
-                'USR_TOTAL_CANCELLED' => $usrTotalCancelled
-            ]);
 
             //ListParticipatedLast
             $criteriaListParticipatedLast = new Criteria("workflow");
@@ -5305,15 +5267,19 @@ class Cases
 
             foreach ($arrayTask as $aTask) {
 
+                //if the next is EOP dont send notification and continue with the next
+                if($aTask['TAS_UID'] === '-1'){
+                    continue;
+                }
                 if (isset($aTask['DEL_INDEX'])) {
                     $arrayData2 = $arrayData;
 
                     $appDelegation = AppDelegationPeer::retrieveByPK($applicationUid, $aTask['DEL_INDEX']);
 
                     if (!is_null($appDelegation)) {
-                        $oTask = new Task();
-                        $aTask = $oTask->load($appDelegation->getTasUid());
-                        $arrayData2['TAS_TITLE'] = $aTask['TAS_TITLE'];
+                        $oTaskUpd = new Task();
+                        $aTaskUpdate = $oTaskUpd->load($appDelegation->getTasUid());
+                        $arrayData2['TAS_TITLE'] = $aTaskUpdate['TAS_TITLE'];
                         $arrayData2['DEL_TASK_DUE_DATE'] = $appDelegation->getDelTaskDueDate();
                     }
                 } else {

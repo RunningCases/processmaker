@@ -144,8 +144,9 @@ class Consolidated extends Api
      * @copyright Colosa - Bolivia
      *
      * @url POST /derivate/:app_uid/:app_number/:del_index/:field_grid/:field_grid_val
+     * @url POST /derivate/:app_uid/:app_number/:del_index/:field_grid/
      */
-    public function doPostDerivate($app_uid, $app_number, $del_index, $field_grid, $field_grid_val)
+    public function doPostDerivate($app_uid, $app_number, $del_index, $field_grid, $field_grid_val = '')
     {
         try {
             $usr_uid = $this->getUserId();

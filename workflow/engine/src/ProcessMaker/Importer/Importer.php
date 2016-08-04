@@ -209,7 +209,6 @@ abstract class Importer
                     }
                 }
                 /*----------------------------------********---------------------------------*/
-                $name = $this->currentProcessTitle;
                 $generateUid = false;
                 break;
             case self::IMPORT_OPTION_DISABLE_AND_CREATE_NEW:

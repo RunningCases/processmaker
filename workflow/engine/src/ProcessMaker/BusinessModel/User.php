@@ -452,13 +452,6 @@ class User
             $arrayResult[$this->getFieldNameByFormatFieldName('USR_COST_BY_HOUR')]       = $record['USR_COST_BY_HOUR'];
             $arrayResult[$this->getFieldNameByFormatFieldName('USR_UNIT_COST')]          = $record['USR_UNIT_COST'];
             /*----------------------------------********---------------------------------*/
-            $arrayResult[$this->getFieldNameByFormatFieldName('USR_TOTAL_INBOX')]        = $record['USR_TOTAL_INBOX'];
-            $arrayResult[$this->getFieldNameByFormatFieldName('USR_TOTAL_DRAFT')]        = $record['USR_TOTAL_DRAFT'];
-            $arrayResult[$this->getFieldNameByFormatFieldName('USR_TOTAL_CANCELLED')]    = $record['USR_TOTAL_CANCELLED'];
-            $arrayResult[$this->getFieldNameByFormatFieldName('USR_TOTAL_PARTICIPATED')] = $record['USR_TOTAL_PARTICIPATED'];
-            $arrayResult[$this->getFieldNameByFormatFieldName('USR_TOTAL_PAUSED')]       = $record['USR_TOTAL_PAUSED'];
-            $arrayResult[$this->getFieldNameByFormatFieldName('USR_TOTAL_COMPLETED')]    = $record['USR_TOTAL_COMPLETED'];
-            $arrayResult[$this->getFieldNameByFormatFieldName('USR_TOTAL_UNASSIGNED')]   = $record['USR_TOTAL_UNASSIGNED'];
             $arrayResult[$this->getFieldNameByFormatFieldName('USR_PHOTO_PATH')]         = $pathPhotoUser;
 
             if (isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__']) {
@@ -512,13 +505,6 @@ class User
             $criteria->addSelectColumn(\UsersPeer::USR_COST_BY_HOUR);
             $criteria->addSelectColumn(\UsersPeer::USR_UNIT_COST);
             /*----------------------------------********---------------------------------*/
-            $criteria->addSelectColumn(\UsersPeer::USR_TOTAL_INBOX);
-            $criteria->addSelectColumn(\UsersPeer::USR_TOTAL_DRAFT);
-            $criteria->addSelectColumn(\UsersPeer::USR_TOTAL_CANCELLED);
-            $criteria->addSelectColumn(\UsersPeer::USR_TOTAL_PARTICIPATED);
-            $criteria->addSelectColumn(\UsersPeer::USR_TOTAL_PAUSED);
-            $criteria->addSelectColumn(\UsersPeer::USR_TOTAL_COMPLETED);
-            $criteria->addSelectColumn(\UsersPeer::USR_TOTAL_UNASSIGNED);
             $criteria->addSelectColumn(\UsersPeer::USR_TIME_ZONE);
 
             //Return

@@ -97,9 +97,6 @@ class ListCanceled extends BaseListCanceled {
         $oListInbox = new ListInbox();
         $oListInbox->removeAll($data['APP_UID']);
 
-        $users = new Users();
-        $users->refreshTotal($data['USR_UID'], 'add', 'canceled');
-
         //Update - WHERE
         $criteriaWhere = new Criteria("workflow");
         $criteriaWhere->add(ListParticipatedLastPeer::APP_UID, $data["APP_UID"], Criteria::EQUAL);
@@ -305,6 +302,19 @@ class ListCanceled extends BaseListCanceled {
         }
 
         return $data;
+    }
+
+    /**
+     * Returns the number of cases of a user
+     * @param $usrUid
+     * @return int
+     */
+    public function getCountList($usrUid)
+    {
+        $criteria = new Criteria();
+        $criteria->add(ListCanceledPeer::USR_UID, $usrUid, Criteria::EQUAL);
+        $total = ListCanceledPeer::doCount($criteria);
+        return (int)$total;
     }
 } // ListCanceled
 

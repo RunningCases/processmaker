@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker (Branch 3.1)\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-07-11 20:25:46\n"
+"PO-Revision-Date: 2016-07-29 18:36:34\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -472,8 +472,8 @@ msgstr "Assign Screen"
 # TRANSLATION
 # LABEL/ID_ASSIGN_TASK
 #: LABEL/ID_ASSIGN_TASK
-msgid "Assign Task"
-msgstr "Assign Task"
+msgid "Assign Task/Event"
+msgstr "Assign Task/Event"
 
 # TRANSLATION
 # LABEL/ID_UPLOAD
@@ -2602,8 +2602,8 @@ msgstr "Session"
 # TRANSLATION
 # LABEL/ID_NEXT_TASK
 #: LABEL/ID_NEXT_TASK
-msgid "Next Task"
-msgstr "Next Task"
+msgid "Next Task/Event"
+msgstr "Next Task/Event"
 
 # TRANSLATION
 # LABEL/ID_PERMISSIONS_FOR_THE_ROL
@@ -17596,8 +17596,8 @@ msgstr "The process \"{0}\" has the following unwanted code (this code should be
 # TRANSLATION
 # LABEL/ID_LECA
 #: LABEL/ID_LECA
-msgid "Your license has expired, please contact your administrator."
-msgstr "Your license has expired, please contact your administrator."
+msgid "Your license has expired. Please contact your administrator."
+msgstr "Your license has expired. Please contact your administrator."
 
 # TRANSLATION
 # LABEL/ID_NLIC
@@ -20752,7 +20752,7 @@ msgstr "There are no items."
 # TRANSLATION
 # LABEL/ID_MAFE_545106eebc5cfec4095c8903a3e5bea9
 #: LABEL/ID_MAFE_545106eebc5cfec4095c8903a3e5bea9
-msgid "[LABEL/ID_MAFE_545106eebc5cfec4095c8903a3e5bea9] Next Task"
+msgid "Next Task"
 msgstr "Next Task"
 
 # TRANSLATION
@@ -27502,6 +27502,102 @@ msgstr "This is a Message of Error"
 #: LABEL/ID_MAFE_ec6f1a89963c5b95d783e0c260fc959a
 msgid "Can't connect start event to subprocess"
 msgstr "Can't connect start event to subprocess"
+
+# TRANSLATION
+# LABEL/ID_EEPLUGIN_IMPORT_PLUGIN_NOT_IS_ENTERPRISE
+#: LABEL/ID_EEPLUGIN_IMPORT_PLUGIN_NOT_IS_ENTERPRISE
+msgid "The plugin \"{0}\" not is a Enterprise Edition Plugin"
+msgstr "The plugin \"{0}\" not is a Enterprise Edition Plugin"
+
+# TRANSLATION
+# LABEL/ID_PMPLUGIN_IMPORT_PLUGIN_IS_ENTERPRISE
+#: LABEL/ID_PMPLUGIN_IMPORT_PLUGIN_IS_ENTERPRISE
+msgid "The plugin \"{0}\" is a Enterprise Edition Plugin, please install the Enterprise Plugins Manager to use this plugin"
+msgstr "The plugin \"{0}\" is a Enterprise Edition Plugin, please install the Enterprise Plugins Manager to use this plugin"
+
+# TRANSLATION
+# LABEL/ID_USER_GROUP_NOT_CORRESPOND
+#: LABEL/ID_USER_GROUP_NOT_CORRESPOND
+msgid "This id: {0} not correspond to a {1}"
+msgstr "This id: {0} not correspond to a {1}"
+
+# TRANSLATION
+# LABEL/ID_PROCESS_CANNOT_BE_UPDATED_THERE_ARE_TASKS_WITH_ACTIVE_CASES
+#: LABEL/ID_PROCESS_CANNOT_BE_UPDATED_THERE_ARE_TASKS_WITH_ACTIVE_CASES
+msgid "The process cannot be updated because there are tasks with active cases which are not presented in the new definition of the process, please verify that there are not active cases in those tasks before trying to import the process again."
+msgstr "The process cannot be updated because there are tasks with active cases which are not presented in the new definition of the process, please verify that there are not active cases in those tasks before trying to import the process again."
+
+# TRANSLATION
+# LABEL/ID_MILLISECONDS
+#: LABEL/ID_MILLISECONDS
+msgid "Milliseconds"
+msgstr "Milliseconds"
+
+# TRANSLATION
+# LABEL/ID_FIELD_NOT_FOUND
+#: LABEL/ID_FIELD_NOT_FOUND
+msgid "Field not found"
+msgstr "Field not found"
+
+# TRANSLATION
+# LABEL/ID_OUTPUT_DOCUMENT_INVALID_EXTENSION
+#: LABEL/ID_OUTPUT_DOCUMENT_INVALID_EXTENSION
+msgid "Invalid extension"
+msgstr "Invalid extension"
+
+# TRANSLATION
+# LABEL/ID_OUTPUT_DOCUMENT_CONFIG_NOT_SUPPORT_EXTENSION
+#: LABEL/ID_OUTPUT_DOCUMENT_CONFIG_NOT_SUPPORT_EXTENSION
+msgid "The document in its configuration does not support this extension"
+msgstr "The document in its configuration does not support this extension"
+
+# TRANSLATION
+# LABEL/ID_NOT_EXISTS_FILE
+#: LABEL/ID_NOT_EXISTS_FILE
+msgid "File does not exists"
+msgstr "File does not exists"
+
+# TRANSLATION
+# LABEL/ID_EXCEPTION_LOG_INTERFAZ
+#: LABEL/ID_EXCEPTION_LOG_INTERFAZ
+msgid "An internal error occurred #{0}. Please contact your system administrator for more information."
+msgstr "An internal error occurred #{0}. Please contact your system administrator for more information."
+
+# TRANSLATION
+# LABEL/ID_CASE_OUTPUT_DOCUMENT_DOES_NOT_EXIST
+#: LABEL/ID_CASE_OUTPUT_DOCUMENT_DOES_NOT_EXIST
+msgid "This output document with {0}: {1} does not exist."
+msgstr "This output document with {0}: {1} does not exist."
+
+# TRANSLATION
+# LABEL/ID_MAFE_a9f2bfaa472c55e0975d15c0ba59d24d
+#: LABEL/ID_MAFE_a9f2bfaa472c55e0975d15c0ba59d24d
+msgid "Before Output Document"
+msgstr "Before Output Document"
+
+# TRANSLATION
+# LABEL/ID_MAFE_41e80c3ce414de15ab19d996f7072429
+#: LABEL/ID_MAFE_41e80c3ce414de15ab19d996f7072429
+msgid "fileupload"
+msgstr "fileupload"
+
+# TRANSLATION
+# LABEL/ID_MAFE_c72d7ee8a23bae4c80e8cc4521f89f7a
+#: LABEL/ID_MAFE_c72d7ee8a23bae4c80e8cc4521f89f7a
+msgid "Steps for task"
+msgstr "Steps for task"
+
+# TRANSLATION
+# LABEL/ID_MAFE_d0aac4ce1ac97df2b4c6e456bbe3a061
+#: LABEL/ID_MAFE_d0aac4ce1ac97df2b4c6e456bbe3a061
+msgid "Expand all"
+msgstr "Expand all"
+
+# TRANSLATION
+# LABEL/ID_MAFE_ab3cc3868af33a9eb61a93bd0adec2a0
+#: LABEL/ID_MAFE_ab3cc3868af33a9eb61a93bd0adec2a0
+msgid "Collapse all"
+msgstr "Collapse all"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml

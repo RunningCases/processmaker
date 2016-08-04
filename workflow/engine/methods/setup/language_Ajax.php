@@ -163,7 +163,9 @@ try {
             				$trn->removeTranslationEnvironment( $locale );
             				echo G::LoadTranslation( 'ID_LANGUAGE_DELETED_SUCCESSFULLY' );
             			} catch (Exception $e) {
-            				echo $e->getMessage();
+            				$token = strtotime("now");
+                            PMException::registerErrorLog($e, $token);
+                            G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
             			}
             		} else {
             			echo str_replace( '{0}', $aRow[0], G::LoadTranslation( 'ID_LANGUAGE_CANT_DELETE' ) );
@@ -177,6 +179,8 @@ try {
             break;
     }
 } catch (Exception $oException) {
-    die( $oException->getMessage() );
+    $token = strtotime("now");
+    PMException::registerErrorLog($oException, $token);
+    G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
 }
 

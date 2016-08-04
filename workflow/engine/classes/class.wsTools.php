@@ -1997,20 +1997,6 @@ class workspaceTools
                 $list->doDeleteAll();
             }
 
-            //Update //User
-            $criteriaSet = new Criteria("workflow");
-            $criteriaSet->add(UsersPeer::USR_TOTAL_INBOX, 0);
-            $criteriaSet->add(UsersPeer::USR_TOTAL_DRAFT, 0);
-            $criteriaSet->add(UsersPeer::USR_TOTAL_CANCELLED, 0);
-            $criteriaSet->add(UsersPeer::USR_TOTAL_PARTICIPATED, 0);
-            $criteriaSet->add(UsersPeer::USR_TOTAL_PAUSED, 0);
-            $criteriaSet->add(UsersPeer::USR_TOTAL_COMPLETED, 0);
-            $criteriaSet->add(UsersPeer::USR_TOTAL_UNASSIGNED, 0);
-
-            $criteriaWhere = new Criteria("workflow");
-            $criteriaWhere->add(UsersPeer::USR_UID, null, Criteria::ISNOTNULL);
-
-            BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
             $this->regenerateListCompleted($lang);
             $this->regenerateListCanceled($lang);
             $this->regenerateListMyInbox(); // this list require no translation
@@ -2019,7 +2005,6 @@ class workspaceTools
             $this->regenerateListParticipatedLast(); // this list require no translation
             $this->regenerateListPaused(); // this list require no translation
             $this->regenerateListUnassigned(); // this list require no translation
-            $this->migrateCounters();
         }
         if (!$flagReinsert) {
             $this->listFirstExecution("insert");
@@ -2512,98 +2497,6 @@ class workspaceTools
         CLI::logging("> Completed table LIST_UNASSIGNED\n");
     }
     /*----------------------------------********---------------------------------*/
-
-    public function migrateCounters()
-    {
-        $this->initPropel(true);
-        // Updating the COMPLETE, DRAFT, INBOX, CANCELLED, PARTICIPATED counters
-        $query = '
-            UPDATE '.$this->dbName.'.USERS UA
-            INNER JOIN
-            (SELECT
-                U.USR_UID,
-                IFNULL(APP_INBOX, 0) USR_TOTAL_INBOX,
-                IFNULL(APP_DRAFT, 0) USR_TOTAL_DRAFT,
-                IFNULL(NEW_USR_TOTAL_CANCELED, 0) USR_TOTAL_CANCELLED,
-                IFNULL(NEW_USR_TOTAL_PARTICIPATED_LAST, 0) USR_TOTAL_PARTICIPATED,
-                0 USR_TOTAL_PAUSED,
-                IFNULL(NEW_USR_TOTAL_COMPLETED, 0) USR_TOTAL_COMPLETED,
-                0 USR_TOTAL_UNASSIGNED
-
-            FROM
-                '.$this->dbName.'.USERS U
-                    LEFT JOIN
-                (SELECT
-                    USR_UID, COUNT(APP_UID) NEW_USR_TOTAL_PARTICIPATED_LAST
-                FROM
-                    '.$this->dbName.'.LIST_PARTICIPATED_LAST
-                GROUP BY USR_UID) LPL ON U.USR_UID = LPL.USR_UID
-                    LEFT JOIN
-                (SELECT
-                    USR_UID, COUNT(APP_UID) NEW_USR_TOTAL_COMPLETED
-                FROM
-                    '.$this->dbName.'.LIST_COMPLETED
-                GROUP BY USR_UID) LCO ON U.USR_UID = LCO.USR_UID
-                    LEFT JOIN
-                (SELECT
-                    USR_UID, COUNT(DISTINCT APP_UID) APP_INBOX
-                FROM
-                    '.$this->dbName.'.APP_CACHE_VIEW
-                WHERE
-                    APP_STATUS = \'TO_DO\'
-                        AND APP_THREAD_STATUS = \'OPEN\'
-                        AND DEL_THREAD_STATUS = \'OPEN\'
-                        AND DEL_FINISH_DATE IS NULL
-                GROUP BY USR_UID) APP_IN ON U.USR_UID = APP_IN.USR_UID
-                    LEFT JOIN
-                (SELECT
-                    USR_UID, COUNT(DISTINCT APP_UID) APP_DRAFT
-                FROM
-                    '.$this->dbName.'.APP_CACHE_VIEW
-                WHERE
-                    APP_STATUS = \'DRAFT\'
-                        AND APP_THREAD_STATUS = \'OPEN\'
-                        AND DEL_THREAD_STATUS = \'OPEN\'
-                GROUP BY USR_UID) APP_D ON U.USR_UID = APP_D.USR_UID
-                    LEFT JOIN
-                (SELECT
-                    USR_UID, COUNT(APP_UID) NEW_USR_TOTAL_CANCELED
-                FROM
-                    '.$this->dbName.'.LIST_CANCELED
-                GROUP BY USR_UID) LCA ON U.USR_UID = LCA.USR_UID
-                ) UC
-            ON UA.USR_UID = UC.USR_UID
-            SET
-                UA.USR_TOTAL_INBOX = UC.USR_TOTAL_INBOX,
-                UA.USR_TOTAL_DRAFT = UC.USR_TOTAL_DRAFT,
-                UA.USR_TOTAL_CANCELLED = UC.USR_TOTAL_CANCELLED,
-                UA.USR_TOTAL_PARTICIPATED = UC.USR_TOTAL_PARTICIPATED,
-                UA.USR_TOTAL_COMPLETED = UC.USR_TOTAL_COMPLETED';
-        $con = Propel::getConnection("workflow");
-        $stmt = $con->createStatement();
-        $stmt->executeQuery($query);
-        // Updating PAUSED and UNASSIGNED Cases
-        $aTypes = array(
-            'paused',
-            'selfservice'
-        );
-        $users = new Users();
-        $criteria = new Criteria();
-        $criteria->addSelectColumn(UsersPeer::USR_UID);
-        $dataset = UsersPeer::doSelectRS($criteria);
-        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        while($dataset->next()) {
-            $aRow = $dataset->getRow();
-            $oAppCache = new AppCacheView();
-            $aCount = $oAppCache->getAllCounters($aTypes, $aRow['USR_UID'], false);
-            $newData = array(
-                'USR_UID' => $aRow['USR_UID'],
-                'USR_TOTAL_PAUSED' => $aCount['paused'],
-                'USR_TOTAL_UNASSIGNED' => $aCount['selfservice']
-            );
-            $users->update($newData);
-        }
-    }
 
     /**
      * This function checks if List tables are going to migrated
