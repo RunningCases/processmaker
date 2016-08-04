@@ -531,23 +531,11 @@ abstract class Importer
 
             //Update
             $workflow = \ProcessMaker\Project\Workflow::load($projectUid);
+            $dummyTaskTypes = \ProcessMaker\BusinessModel\Task::getDummyTypes();
 
             foreach ($arrayWorkflowTables["tasks"] as $key => $value) {
                 $arrayTaskData = $value;
-
-                if (!in_array($arrayTaskData["TAS_TYPE"], array(
-                    "GATEWAYTOGATEWAY",
-                    "WEBENTRYEVENT",
-                    "END-MESSAGE-EVENT",
-                    "START-MESSAGE-EVENT",
-                    "INTERMEDIATE-THROW-MESSAGE-EVENT",
-                    "INTERMEDIATE-CATCH-MESSAGE-EVENT",
-                    "START-TIMER-EVENT",
-                    "INTERMEDIATE-CATCH-TIMER-EVENT",
-                    "END-EMAIL-EVENT",
-                    "INTERMEDIATE-THROW-EMAIL-EVENT"
-                ))
-                ) {
+                if ( !in_array($arrayTaskData["TAS_TYPE"], $dummyTaskTypes) ) {
                     $result = $workflow->updateTask($arrayTaskData["TAS_UID"], $arrayTaskData);
                 }
             }
