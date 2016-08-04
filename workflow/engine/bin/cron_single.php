@@ -1054,6 +1054,7 @@ function sendNotifications()
         setExecutionMessage("Resending Notifications");
         setExecutionResultMessage("PROCESSING");
         $notQueue = new \NotificationQueue();
+        $notQueue->checkIfCasesOpenForResendingNotification();
         $notificationsAndroid = $notQueue->loadStatusDeviceType('pending', 'android');
         if ($notificationsAndroid) {
             setExecutionMessage("|-- Send Android's Notifications");

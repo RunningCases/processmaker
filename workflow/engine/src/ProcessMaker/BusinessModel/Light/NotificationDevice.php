@@ -226,6 +226,8 @@ class NotificationDevice
                     $arrayData['NOT_MSG'] = $message;
                     $arrayData['NOT_DATA'] = serialize($data);
                     $arrayData['NOT_STATUS'] = "pending";
+                    $arrayData['APP_UID'] = $appFields['APP_UID'];
+                    $arrayData['DEL_INDEX'] = $iNewDelIndex;
                     $notQueue = new \NotificationQueue();
                     $notQueue->create($arrayData);
                 }
@@ -237,6 +239,8 @@ class NotificationDevice
                     $arrayData['NOT_MSG'] = $message;
                     $arrayData['NOT_DATA'] = serialize($data);
                     $arrayData['NOT_STATUS'] = "pending";
+                    $arrayData['APP_UID'] = $appFields['APP_UID'];
+                    $arrayData['DEL_INDEX'] = $iNewDelIndex;
                     $notQueue = new \NotificationQueue();
                     $notQueue->create($arrayData);
                 }

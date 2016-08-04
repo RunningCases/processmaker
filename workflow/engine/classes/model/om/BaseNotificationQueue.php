@@ -70,6 +70,18 @@ abstract class BaseNotificationQueue extends BaseObject implements Persistent
     protected $not_send_date;
 
     /**
+     * The value for the app_uid field.
+     * @var        string
+     */
+    protected $app_uid = '';
+
+    /**
+     * The value for the del_index field.
+     * @var        int
+     */
+    protected $del_index = 0;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -179,6 +191,28 @@ abstract class BaseNotificationQueue extends BaseObject implements Persistent
         } else {
             return date($format, $ts);
         }
+    }
+
+    /**
+     * Get the [app_uid] column value.
+     * 
+     * @return     string
+     */
+    public function getAppUid()
+    {
+
+        return $this->app_uid;
+    }
+
+    /**
+     * Get the [del_index] column value.
+     * 
+     * @return     int
+     */
+    public function getDelIndex()
+    {
+
+        return $this->del_index;
     }
 
     /**
@@ -343,6 +377,50 @@ abstract class BaseNotificationQueue extends BaseObject implements Persistent
     } // setNotSendDate()
 
     /**
+     * Set the value of [app_uid] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setAppUid($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->app_uid !== $v || $v === '') {
+            $this->app_uid = $v;
+            $this->modifiedColumns[] = NotificationQueuePeer::APP_UID;
+        }
+
+    } // setAppUid()
+
+    /**
+     * Set the value of [del_index] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setDelIndex($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->del_index !== $v || $v === 0) {
+            $this->del_index = $v;
+            $this->modifiedColumns[] = NotificationQueuePeer::DEL_INDEX;
+        }
+
+    } // setDelIndex()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -373,12 +451,16 @@ abstract class BaseNotificationQueue extends BaseObject implements Persistent
 
             $this->not_send_date = $rs->getTimestamp($startcol + 6, null);
 
+            $this->app_uid = $rs->getString($startcol + 7);
+
+            $this->del_index = $rs->getInt($startcol + 8);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 7; // 7 = NotificationQueuePeer::NUM_COLUMNS - NotificationQueuePeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 9; // 9 = NotificationQueuePeer::NUM_COLUMNS - NotificationQueuePeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating NotificationQueue object", $e);
@@ -603,6 +685,12 @@ abstract class BaseNotificationQueue extends BaseObject implements Persistent
             case 6:
                 return $this->getNotSendDate();
                 break;
+            case 7:
+                return $this->getAppUid();
+                break;
+            case 8:
+                return $this->getDelIndex();
+                break;
             default:
                 return null;
                 break;
@@ -630,6 +718,8 @@ abstract class BaseNotificationQueue extends BaseObject implements Persistent
             $keys[4] => $this->getNotData(),
             $keys[5] => $this->getNotStatus(),
             $keys[6] => $this->getNotSendDate(),
+            $keys[7] => $this->getAppUid(),
+            $keys[8] => $this->getDelIndex(),
         );
         return $result;
     }
@@ -682,6 +772,12 @@ abstract class BaseNotificationQueue extends BaseObject implements Persistent
             case 6:
                 $this->setNotSendDate($value);
                 break;
+            case 7:
+                $this->setAppUid($value);
+                break;
+            case 8:
+                $this->setDelIndex($value);
+                break;
         } // switch()
     }
 
@@ -733,6 +829,14 @@ abstract class BaseNotificationQueue extends BaseObject implements Persistent
             $this->setNotSendDate($arr[$keys[6]]);
         }
 
+        if (array_key_exists($keys[7], $arr)) {
+            $this->setAppUid($arr[$keys[7]]);
+        }
+
+        if (array_key_exists($keys[8], $arr)) {
+            $this->setDelIndex($arr[$keys[8]]);
+        }
+
     }
 
     /**
@@ -770,6 +874,14 @@ abstract class BaseNotificationQueue extends BaseObject implements Persistent
 
         if ($this->isColumnModified(NotificationQueuePeer::NOT_SEND_DATE)) {
             $criteria->add(NotificationQueuePeer::NOT_SEND_DATE, $this->not_send_date);
+        }
+
+        if ($this->isColumnModified(NotificationQueuePeer::APP_UID)) {
+            $criteria->add(NotificationQueuePeer::APP_UID, $this->app_uid);
+        }
+
+        if ($this->isColumnModified(NotificationQueuePeer::DEL_INDEX)) {
+            $criteria->add(NotificationQueuePeer::DEL_INDEX, $this->del_index);
         }
 
 
@@ -837,6 +949,10 @@ abstract class BaseNotificationQueue extends BaseObject implements Persistent
         $copyObj->setNotStatus($this->not_status);
 
         $copyObj->setNotSendDate($this->not_send_date);
+
+        $copyObj->setAppUid($this->app_uid);
+
+        $copyObj->setDelIndex($this->del_index);
 
 
         $copyObj->setNew(true);
