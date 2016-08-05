@@ -93,7 +93,7 @@
     </index>
   </table>
   <table name="APP_SEQUENCE" idMethod="native">
-    <column name="ID" type="INTEGER" required="true" primaryKey="true"/>
+    <column name="ID" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
   </table>
   <table name="APP_DELEGATION">
     <vendor type="mysql">
@@ -2013,7 +2013,7 @@
       </vendor>
     </index>
   </table>
-  <table name="CASE_CONSOLIDATED">
+  <table name="CASE_CONSOLIDATED" referenceOnly="true">
     <vendor type="mysql">
       <parameter name="Name" value="CASE_CONSOLIDATED"/>
       <parameter name="Engine" value="InnoDB"/>
