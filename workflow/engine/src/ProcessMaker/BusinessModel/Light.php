@@ -451,6 +451,7 @@ class Light
                         $taskAss['delPriority'] = isset($aValues['NEXT_TASK']['DEL_PRIORITY'])?$aValues['NEXT_TASK']['DEL_PRIORITY']:"";
                         $taskAss['taskParent'] = $aValues['NEXT_TASK']['TAS_PARENT'];
                         $taskAss['taskMessage'] = $taskType?$taskMessage:"";
+                        $taskAss['sourceUid'] = $aValues['SOURCE_UID'];
                         $users = array();
                         $users['userId'] = $derive[$sKey]['NEXT_TASK']['USER_ASSIGNED']['USR_UID'];
                         $users['userFullName'] = strip_tags($derive[$sKey]['NEXT_TASK']['USER_ASSIGNED']['USR_FULLNAME']);
@@ -468,6 +469,7 @@ class Light
                         $manual['delPriority'] = isset($aValues['NEXT_TASK']['DEL_PRIORITY'])?$aValues['NEXT_TASK']['DEL_PRIORITY']:"";
                         $manual['taskParent'] = $aValues['NEXT_TASK']['TAS_PARENT'];
                         $manual['taskMessage'] = $taskType?$taskMessage:"";
+                        $manual['sourceUid'] = $aValues['SOURCE_UID'];
                         $Aux = array ();
                         foreach ($aValues['NEXT_TASK']['USER_ASSIGNED'] as $aUser) {
                             $Aux[$aUser['USR_UID']] = $aUser['USR_FULLNAME'];

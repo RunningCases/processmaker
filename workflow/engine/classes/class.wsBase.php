@@ -2249,6 +2249,7 @@ class wsBase
                 $oCase->setDelInitDate( $caseId, $delIndex );
                 $appFields = $oCase->loadCase( $caseId, $delIndex );
             }
+            unset($appFields['APP_ROUTING_DATA']);
 
             $appFields["APP_DATA"]["APPLICATION"] = $caseId;
 
@@ -2439,8 +2440,9 @@ class wsBase
             //derivate case
             $aCurrentDerivation = array ('APP_UID' => $caseId,'DEL_INDEX' => $delIndex,'APP_STATUS' => $sStatus,'TAS_UID' => $appdel['TAS_UID'],'ROU_TYPE' => $row[0]['ROU_TYPE']
             );
-
-            $oDerivation->derivate( $aCurrentDerivation, $nextDelegations );
+            $oRoute = new \ProcessMaker\Core\RoutingScreen();
+            $nextTasks = $oRoute->mergeDataDerivation($nextDelegations, $oDerivation->prepareInformation($aData));
+            $oDerivation->derivate( $aCurrentDerivation, $nextTasks );
             $appFields = $oCase->loadCase( $caseId );
 
             //Execute triggers after derivation
@@ -2485,10 +2487,10 @@ class wsBase
                         $appFields['APP_DATA'] = $oPMScript->aFields;
                         //$appFields['APP_DATA']['APPLICATION'] = $caseId;
                         //$appFields = $oCase->loadCase($caseId);
-                        unset($aFields['APP_STATUS']);
-                        unset($aFields['APP_PROC_STATUS']);
-                        unset($aFields['APP_PROC_CODE']);
-                        unset($aFields['APP_PIN']);
+                        unset($appFields['APP_STATUS']);
+                        unset($appFields['APP_PROC_STATUS']);
+                        unset($appFields['APP_PROC_CODE']);
+                        unset($appFields['APP_PIN']);
                         $oCase->updateCase( $caseId, $appFields );
                     }
                 }
