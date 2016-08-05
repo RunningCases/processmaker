@@ -185,6 +185,8 @@ switch ($action) {
         $oContent->addContent( 'DBS_DESCRIPTION', '', $newid, SYS_LANG, $_POST['desc'] );
         break;
     case 'deleteDbConnection':
+        $result = new stdclass();
+
         try {
             $oDBSource = new DbSource();
             $oContent = new Content();
