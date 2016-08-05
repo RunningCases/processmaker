@@ -264,7 +264,16 @@ class OutputDocument extends BaseOutputDocument
                     $iResult = $oOutputDocument->save();
                     $oConnection->commit();
                     //Add Audit Log
-                    $description = "Output Document Name: ".$aData['OUT_DOC_TITLE'].", Output Document Uid: ".$aData['OUT_DOC_UID'].", Filename generated: ".$aData['OUT_DOC_FILENAME'];
+                    $description = 'Output Document Uid: ' . $aData['OUT_DOC_UID'];
+
+                    if (array_key_exists('OUT_DOC_TITLE', $aData) && (string)($aData['OUT_DOC_TITLE']) != '') {
+                        $description .= ', Output Document Name: ' . $aData['OUT_DOC_TITLE'];
+                    }
+
+                    if (array_key_exists('OUT_DOC_FILENAME', $aData) && (string)($aData['OUT_DOC_FILENAME']) != '') {
+                        $description .= ', Filename generated: ' . $aData['OUT_DOC_FILENAME'];
+                    }
+
                     if(!empty($aData['OUT_DOC_DESCRIPTION'])){
                       $description .= ", Description: ".$aData['OUT_DOC_DESCRIPTION'];
                     }
@@ -274,12 +283,11 @@ class OutputDocument extends BaseOutputDocument
                     if(!empty($aData['OUT_DOC_REPORT_GENERATOR'])){
                         $description .= ", Output Document to Generate: ".$aData['OUT_DOC_GENERATE'];
                     }
-                    if($aData['OUT_DOC_PDF_SECURITY_ENABLED']==0){
-                      $pdfSecurity = 'Disabled';
-                    }else{
-                      $pdfSecurity = 'Enabled';
+
+                    if (array_key_exists('OUT_DOC_PDF_SECURITY_ENABLED', $aData) && (string)($aData['OUT_DOC_PDF_SECURITY_ENABLED']) != '') {
+                        $description .= ', PDF Security: ' . (((int)($aData['OUT_DOC_PDF_SECURITY_ENABLED']) != 0)? 'Enabled' : 'Disabled');
                     }
-                    $description .= ", PDF Security: ".$pdfSecurity;
+
                     if(!empty($aData['OUT_DOC_VERSIONING'])){
                       $description .= ", Enable Versioning: Yes";
                     }
