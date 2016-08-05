@@ -2619,7 +2619,7 @@ function run_update_plugin_attributes($task, $args)
 
         echo "Done!\n";
     } catch (Exception $e) {
-        echo $e->getMessage() . "\n";
+        error_log( $e->getMessage() . "\n" );
     }
 }
 
@@ -2731,7 +2731,7 @@ function run_check_plugin_disabled_code($task, $args)
 
         echo "Done!\n";
     } catch (Exception $e) {
-        echo $e->getMessage() . "\n";
+        error_log( $e->getMessage() . "\n" );
     }
 }
 

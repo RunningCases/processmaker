@@ -297,24 +297,6 @@ class DataBaseMaintenance
     }
 
     /**
-     * backupData
-     *
-     * @return boolean true or false
-     */
-    function backupData ()
-    {
-        $aTables = $this->getTablesList();
-        foreach ($aTables as $table) {
-            if ($this->dumpData( $table ) !== false) {
-                printf( "%20s %s %s\n", 'Dump of table:', $table, " in file {$this->outfile}" );
-            } else {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
      * restoreAllData
      *
      * @param string $type default value null
@@ -471,8 +453,10 @@ class DataBaseMaintenance
                 $queries += 1;
 
                 if (! @mysql_query( $query )) {
-                    echo mysql_error() . "\n";
-                    echo "==>" . $query . "<==\n";
+                    $varRes = mysql_error() . "\n";
+                    G::outRes( $varRes );
+                    $varRes = "==>" . $query . "<==\n";
+                    G::outRes( $varRes );
                 }
             }
 
@@ -520,7 +504,9 @@ class DataBaseMaintenance
                 $mysqli->close();
             } catch (Exception $e) {
                 echo $query;
-                echo $e->getMessage();
+                $token = strtotime("now");
+                PMException::registerErrorLog($e, $token);
+                G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
             }
         }
         return $queries;
@@ -546,7 +532,7 @@ class DataBaseMaintenance
             }
             mysql_free_result( $result );
         } else {
-            echo mysql_error();
+            G::outRes( mysql_error() );
         }
         return $tableSchema;
     }

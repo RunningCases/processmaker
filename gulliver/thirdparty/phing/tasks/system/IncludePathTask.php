@@ -39,6 +39,8 @@ include_once 'phing/types/Path.php';
  */
 class IncludePathTask extends TaskPhing {
    
+    const inclDir = 'include_path';
+
     /**
      * Classname of task to register.
      * This can be a dot-path -- relative to a location on PHP include_path.
@@ -109,7 +111,9 @@ class IncludePathTask extends TaskPhing {
         if ($new_parts) {
             $this->log("Prepending new include_path components: " . implode(PATH_SEPARATOR, $new_parts), PROJECT_MSG_VERBOSE);
             if(is_dir(implode(PATH_SEPARATOR, array_merge($new_parts, $curr_parts)))) {
-                set_include_path(implode(PATH_SEPARATOR, array_merge($new_parts, $curr_parts)));
+                $sPath = implode(PATH_SEPARATOR, array_merge($new_parts, $curr_parts));
+                $inclDir = self::inclDir;
+                ini_set($inclDir, $sPath);
             }
         }
         

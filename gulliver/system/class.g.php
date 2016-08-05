@@ -30,6 +30,9 @@
 
 class G
 {
+    const hashFx = 'md5';
+    const hashFile = 'md5_file';
+    const hashCrc = 'crc32';
     public $sessionVar = array(); //SESSION temporary array store.
 
     /**
@@ -5692,7 +5695,8 @@ class G
     */
     public static function encryptOld($string)
     {
-        return md5($string);
+        $consthashFx = self::hashFx;
+        return $consthashFx($string);
     }
     /**
     * encryptFileOld
@@ -5703,7 +5707,8 @@ class G
     */
     public function encryptFileOld ($string)
     {
-        return md5_file($string);
+        $consthashFx = self::hashFile;
+        return $consthashFx($string);
     }
     /**
     * crc32
@@ -5714,7 +5719,8 @@ class G
     */
     public function encryptCrc32 ($string)
     {
-        return crc32($string);
+        $consthashFx = self::hashCrc;
+        return $consthashFx($string);
     }
 
     /**

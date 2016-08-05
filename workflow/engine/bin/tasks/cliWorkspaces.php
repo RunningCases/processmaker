@@ -321,7 +321,7 @@ function run_workspace_upgrade($args, $opts) {
       $workspace->upgrade($first, false, $workspace->name, $lang);
       $first = false;
     } catch (Exception $e) {
-      echo "Errors upgrading workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n";
+      G::outRes( "Errors upgrading workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n" );
     }
   }
 }
@@ -335,11 +335,11 @@ function run_translation_upgrade($args, $opts) {
   $first = true;
   foreach ($workspaces as $workspace) {
     try {
-      echo "Upgrading translation for " . pakeColor::colorize($workspace->name, "INFO") . "\n";
+      G::outRes( "Upgrading translation for " . pakeColor::colorize($workspace->name, "INFO") . "\n" );
       $workspace->upgradeTranslation($first);
       $first = false;
     } catch (Exception $e) {
-      echo "Errors upgrading translation of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n";
+      G::outRes( "Errors upgrading translation of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n" );
     }
   }
 }
@@ -353,14 +353,13 @@ function run_cacheview_upgrade($args, $opts) {
   $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
   foreach ($workspaces as $workspace) {
     try {
-      echo "Upgrading cache view for " . pakeColor::colorize($workspace->name, "INFO") . "\n";
+      G::outRes( "Upgrading cache view for " . pakeColor::colorize($workspace->name, "INFO") . "\n" );
       $workspace->upgradeCacheView(true, false, $lang);
     } catch (Exception $e) {
-      echo "Errors upgrading cache view of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n";
+      G::outRes( "Errors upgrading cache view of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n" );
     }
   }
 }
-
 function run_plugins_database_upgrade($args, $opts) {
   $workspaces = get_workspaces_from_args($args);
   foreach ($workspaces as $workspace) {
@@ -441,7 +440,7 @@ function database_upgrade($command, $args) {
         echo "> OK\n";
       }
     } catch (Exception $e) {
-      echo "> Error: ".CLI::error($e->getMessage()) . "\n";
+      G::outRes( "> Error: ".CLI::error($e->getMessage()) . "\n" );
     }
   }
 }
@@ -673,10 +672,10 @@ function run_database_generate_self_service_by_value($args, $opts)
             $workspace = $value;
 
             try {
-                echo "Generating the table \"self-service by value\" for " . pakeColor::colorize($workspace->name, "INFO") . "\n";
+                G::outRes( "Generating the table \"self-service by value\" for " . pakeColor::colorize($workspace->name, "INFO") . "\n" );
                 $workspace->appAssignSelfServiceValueTableGenerateData();
             } catch (Exception $e) {
-                echo "Errors generating the table \"self-service by value\" of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n";
+                G::outRes( "Errors generating the table \"self-service by value\" of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n" );
             }
 
             echo "\n";
@@ -684,7 +683,7 @@ function run_database_generate_self_service_by_value($args, $opts)
 
         echo "Done!\n";
     } catch (Exception $e) {
-        echo CLI::error($e->getMessage()) . "\n";
+        G::outRes( CLI::error($e->getMessage()) . "\n" );
     }
 }
 
@@ -754,7 +753,7 @@ function run_migrate_itee_to_dummytask($args, $opts){
         $ws = new workspaceTools($workspace->name);
         $res = $ws->migrateIteeToDummytask($workspace->name);
     } catch (Exception $e) {
-      echo "> Error: ".CLI::error($e->getMessage()) . "\n";
+      G::outRes( "> Error: ".CLI::error($e->getMessage()) . "\n" );
     }
   }
 }
@@ -813,7 +812,7 @@ function run_check_workspace_disabled_code($args, $opts)
                     echo "The workspace it's OK\n\n";
                 }
             } catch (Exception $e) {
-                echo "Errors to check disabled code: " . CLI::error($e->getMessage()) . "\n\n";
+                G::outRes( "Errors to check disabled code: " . CLI::error($e->getMessage()) . "\n\n" );
             }
 
             $workspace->close();
@@ -821,7 +820,7 @@ function run_check_workspace_disabled_code($args, $opts)
 
         echo "Done!\n";
     } catch (Exception $e) {
-        echo CLI::error($e->getMessage()) . "\n";
+        G::outRes( CLI::error($e->getMessage()) . "\n" );
     }
 }
 
@@ -838,7 +837,7 @@ function migrate_new_cases_lists($command, $args, $opts) {
         $workspace->migrateList($workspace->name, true, $lang);
         echo "> List tables are done\n";
     } catch (Exception $e) {
-      echo "> Error: ".CLI::error($e->getMessage()) . "\n";
+      G::outRes( "> Error: ".CLI::error($e->getMessage()) . "\n" );
     }
   }
 }
@@ -854,7 +853,7 @@ function migrate_counters($command, $args) {
 
         echo "> Counters are done\n";
     } catch (Exception $e) {
-      echo "> Error: ".CLI::error($e->getMessage()) . "\n";
+      G::outRes( "> Error: ".CLI::error($e->getMessage()) . "\n" );
     }
   }
 }
@@ -872,7 +871,7 @@ function migrate_list_unassigned($command, $args, $opts) {
         $workspace->regenerateListUnassigned();
         echo "> Unassigned List is done\n";
     } catch (Exception $e) {
-      echo "> Error: ".CLI::error($e->getMessage()) . "\n";
+      G::outRes( "> Error: ".CLI::error($e->getMessage()) . "\n" );
     }
   }
 }
