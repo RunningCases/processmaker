@@ -1264,8 +1264,8 @@ class Light extends Api
      * Get Case Notes
      *
      * @param string $app_uid {@min 1}{@max 32}
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $usr_uid {@from path}
@@ -1535,7 +1535,7 @@ class Light extends Api
      * @param string $app_uid {@min 1}{@max 32}
      * @param array $request_data
      * @param string $dyn_uid {@from path}
-     * @param string $del_index {@from path}
+     * @param int $del_index {@from path}
      *
      * @url PUT /:app_uid/variable
      */

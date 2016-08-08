@@ -79,6 +79,10 @@ class NotificationQueueMapBuilder
 
         $tMap->addColumn('NOT_SEND_DATE', 'NotSendDate', 'int', CreoleTypes::TIMESTAMP, true, null);
 
+        $tMap->addColumn('APP_UID', 'AppUid', 'string', CreoleTypes::VARCHAR, true, 32);
+
+        $tMap->addColumn('DEL_INDEX', 'DelIndex', 'int', CreoleTypes::INTEGER, true, null);
+
     } // doBuild()
 
 } // NotificationQueueMapBuilder

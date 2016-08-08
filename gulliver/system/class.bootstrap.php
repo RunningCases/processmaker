@@ -7,6 +7,7 @@
  */
 class Bootstrap
 {
+    const hashFx = 'md5';
     public static $includeClassPaths = array();
     public static $includePaths = array();
     protected $relativeIncludePaths = array();
@@ -2967,16 +2968,15 @@ class Bootstrap
         }
         return false;
     }
+
     /**
-    * encryptOld
-    *
-    * @param string $string
-    *
-    * @return md5($string)
-    */
+     * @param $string
+     * @return mixed
+     */
     public function encryptOld ($string)
     {
-        return md5($string);
+        $consthashFx = self::hashFx;
+        return $consthashFx($string);
     }
 
     /**

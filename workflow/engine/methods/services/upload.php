@@ -161,7 +161,9 @@ if (isset( $_FILES ) && $_FILES["ATTACH_FILE"]["error"] == 0) {
         }
         //End plugin
     } catch (Exception $e) {
-        print ($e->getMessage()) ;
+        $token = strtotime("now");
+        PMException::registerErrorLog($e, $token);
+        G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
     }
 }
 

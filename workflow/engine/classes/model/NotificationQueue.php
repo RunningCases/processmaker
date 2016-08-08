@@ -27,6 +27,8 @@ class NotificationQueue extends BaseNotificationQueue
             $this->setNotData($arrayData['NOT_DATA']);
             $this->setNotStatus($arrayData['NOT_STATUS']);
             $this->setNotSendDate('now');
+            $this->setAppUid($arrayData['APP_UID']);
+            $this->setDelIndex($arrayData['DEL_INDEX']);
 
             if ($this->validate()) {
                 $cnn->begin();
@@ -60,6 +62,40 @@ class NotificationQueue extends BaseNotificationQueue
             throw $error;
         }
         return $notifications;
+    }
+
+    /**
+     * This method changes the state of a notification when the case ended before running the cron.php
+     */
+    public function checkIfCasesOpenForResendingNotification()
+    {
+        $arrayCondition = array();
+        $criteria = new Criteria();
+        $criteria->clearSelectColumns();
+        $criteria->addSelectColumn(NotificationQueuePeer::APP_UID);
+        $criteria->addSelectColumn(NotificationQueuePeer::DEL_INDEX);
+        $criteria->addSelectColumn(NotificationQueuePeer::NOT_UID);
+        $criteria->add(AppDelegationPeer::DEL_FINISH_DATE, null, Criteria::ISNOTNULL);
+        $arrayCondition[] = array(NotificationQueuePeer::APP_UID, AppDelegationPeer::APP_UID, Criteria::EQUAL);
+        $arrayCondition[] = array(NotificationQueuePeer::DEL_INDEX, AppDelegationPeer::DEL_INDEX, Criteria::EQUAL);
+        $criteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
+        $rs = NotificationQueuePeer::doSelectRS($criteria);
+        $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $notUID = array();
+        while ($rs->next()) {
+            $row = $rs->getRow();
+            if ($row['DEL_INDEX'] != 0 && $row['APP_UID'] != '') {
+                array_push($notUID, $row['NOT_UID']);
+            }
+        }
+
+        $criteriaSet = new Criteria("workflow");
+        $criteriaSet->add(NotificationQueuePeer::NOT_STATUS, 'sent');
+        $criteriaSet->add(NotificationQueuePeer::NOT_SEND_DATE, date('Y-m-d H:i:s'));
+        $criteriaWhere = new Criteria("workflow");
+        $criteriaWhere->add(NotificationQueuePeer::NOT_UID, $notUID, Criteria::IN);
+
+        \BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
     }
 
     public function loadStatusDeviceType($status, $devType)

@@ -1913,32 +1913,32 @@ class Task
             throw $e;
         }
     }
-    
+
     public function getValidateSelfService($data)
-    {                                                    
-        $paused = false;     
+    {
+        $paused = false;
         $data = array_change_key_case($data, CASE_LOWER);
-        $sTaskUID = $data['act_uid']; 
+        $sTaskUID = $data['act_uid'];
         $caseType = isset($data['case_type']) ? ($data['case_type'] == 'assigned' ? $data['case_type'] : 'unassigned') : 'unassigned';
-        $response = new \stdclass();   
+        $response = new \stdclass();
 
         $oCriteria = new \Criteria();
-        $arrayCondition = array();       
+        $arrayCondition = array();
         $arrayCondition[] = array(\AppDelegationPeer::APP_UID, \AppDelayPeer::APP_UID);
-        $arrayCondition[] = array(\AppDelegationPeer::DEL_INDEX, \AppDelayPeer::APP_DEL_INDEX); 
-        $oCriteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);  
-        $oCriteria->add(\AppDelegationPeer::TAS_UID, $sTaskUID); 
-        $oCriteria->add(\AppDelayPeer::APP_DISABLE_ACTION_USER, "0");  
-        $oResult = \AppDelegationPeer::doSelectOne($oCriteria); 
-        if(!empty($oResult)) { 
-            $paused = true; 
+        $arrayCondition[] = array(\AppDelegationPeer::DEL_INDEX, \AppDelayPeer::APP_DEL_INDEX);
+        $oCriteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
+        $oCriteria->add(\AppDelegationPeer::TAS_UID, $sTaskUID);
+        $oCriteria->add(\AppDelayPeer::APP_DISABLE_ACTION_USER, "0");
+        $oResult = \AppDelegationPeer::doSelectOne($oCriteria);
+        if(!empty($oResult)) {
+            $paused = true;
         }
-        
+
         $response->paused = $paused;
         $oCriteria = new \Criteria();
         $oCriteria->add(\AppDelegationPeer::DEL_THREAD_STATUS, "OPEN");
         $oCriteria->add(\AppDelegationPeer::TAS_UID, $sTaskUID);
-        if($caseType == 'unassigned') {   
+        if($caseType == 'unassigned') {
             $oCriteria->add(\AppDelegationPeer::USR_UID, "", \Criteria::EQUAL);
         }
         $oApplication = \AppDelegationPeer::doSelectOne($oCriteria);
@@ -1948,5 +1948,28 @@ class Task
             $response->message = G::LoadTranslation('ID_CURRENT_ASSING_TYPE_WITH_CASES');
         }
         return $response;
+    }
+
+    /**
+     * Return a list of Dummy Types
+     *
+     * return array
+     *
+     * @access public
+     */
+    public static function getDummyTypes(){
+        $aTypes = array(
+                    "GATEWAYTOGATEWAY",
+                    "WEBENTRYEVENT",
+                    "END-MESSAGE-EVENT",
+                    "START-MESSAGE-EVENT",
+                    "INTERMEDIATE-THROW-MESSAGE-EVENT",
+                    "INTERMEDIATE-CATCH-MESSAGE-EVENT",
+                    "START-TIMER-EVENT",
+                    "INTERMEDIATE-CATCH-TIMER-EVENT",
+                    "END-EMAIL-EVENT",
+                    "INTERMEDIATE-THROW-EMAIL-EVENT"
+        );
+        return $aTypes;
     }
 }

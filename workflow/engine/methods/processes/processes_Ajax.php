@@ -993,6 +993,9 @@ try {
         die($sOutput);
     }
 } catch (Exception $oException) {
-    die($oException->getMessage() . "\n" . $oException->getTraceAsString());
+    $token = strtotime("now");
+    PMException::registerErrorLog($oException, $token);
+    G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
+    die;
 }
 

@@ -250,10 +250,10 @@ abstract class BaseProcess extends BaseObject implements Persistent
     protected $pro_unit_cost = '';
 
     /**
-     * The value for the pro_debug field.
+     * The value for the pro_itee field.
      * @var        int
      */
-    protected $pro_itee = 1;
+    protected $pro_itee = 0;
 
     /**
      * The value for the pro_action_done field.
@@ -727,7 +727,7 @@ abstract class BaseProcess extends BaseObject implements Persistent
     /**
      * Get the [pro_itee] column value.
      * 
-     * @return     string
+     * @return     int
      */
     public function getProItee()
     {
@@ -1577,7 +1577,7 @@ abstract class BaseProcess extends BaseObject implements Persistent
             $v = (int) $v;
         }
 
-        if ($this->pro_itee !== $v || $v === 1) {
+        if ($this->pro_itee !== $v || $v === 0) {
             $this->pro_itee = $v;
             $this->modifiedColumns[] = ProcessPeer::PRO_ITEE;
         }
@@ -1697,7 +1697,7 @@ abstract class BaseProcess extends BaseObject implements Persistent
 
             $this->pro_unit_cost = $rs->getString($startcol + 36);
 
-            $this->pro_itee = $rs->getString($startcol + 37);
+            $this->pro_itee = $rs->getInt($startcol + 37);
 
             $this->pro_action_done = $rs->getString($startcol + 38);
 

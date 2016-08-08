@@ -174,7 +174,10 @@ if (isset( $_REQUEST['action'] )) {
                 $varEcho = '{success: true}';
                 G::outRes( $varEcho );
             } catch (Exception $ex) {
-                echo '{success: false, error: ' . $ex->getMessage() . '}';
+                $token = strtotime("now");
+                PMException::registerErrorLog($ex, $token);
+                $resJson = '{success: false, error: ' . G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) . '}';
+                G::outRes( $resJson );
             }
             break;
         default:

@@ -97,7 +97,8 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
 
-        return unlink($filter->validateInput($file,'path'));
+        $sFile=$filter->validateInput($file,'path');
+        return unlink($sFile);
     }
 
     /**
@@ -220,7 +221,8 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
                 $chmod = 0644; // invalid config or simpletest
             }
             $chmod = $chmod & 0666;
-            chmod($filter->validateInput($file, 'path'), $chmod);
+            $sFile = $filter->validateInput($file, 'path');
+            chmod($sFile, $chmod);
         }
         return $result;
     }

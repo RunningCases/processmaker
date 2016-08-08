@@ -103,7 +103,7 @@ abstract class BaseListUnassignedPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('AppUid' => 0, 'DelIndex' => 1, 'TasUid' => 2, 'ProUid' => 3, 'AppNumber' => 4, 'AppTitle' => 5, 'AppProTitle' => 6, 'AppTasTitle' => 7, 'AppPreviousUsrUsername' => 8, 'AppPreviousUsrFirstname' => 9, 'AppPreviousUsrLastname' => 10, 'AppUpdateDate' => 11, 'DelPreviousUsrUid' => 12, 'DelDelegateDate' => 13, 'DelDueDate' => 14, 'DelPriority' => 15, ),
+        BasePeer::TYPE_PHPNAME => array ('AppUid' => 0, 'DelIndex' => 1, 'TasUid' => 2, 'ProUid' => 3, 'AppNumber' => 4, 'AppTitle' => 5, 'AppProTitle' => 6, 'AppTasTitle' => 7, 'DelPreviousUsrUsername' => 8, 'DelPreviousUsrFirstname' => 9, 'DelPreviousUsrLastname' => 10, 'AppUpdateDate' => 11, 'DelPreviousUsrUid' => 12, 'DelDelegateDate' => 13, 'DelDueDate' => 14, 'DelPriority' => 15, ),
         BasePeer::TYPE_COLNAME => array (ListUnassignedPeer::APP_UID => 0, ListUnassignedPeer::DEL_INDEX => 1, ListUnassignedPeer::TAS_UID => 2, ListUnassignedPeer::PRO_UID => 3, ListUnassignedPeer::APP_NUMBER => 4, ListUnassignedPeer::APP_TITLE => 5, ListUnassignedPeer::APP_PRO_TITLE => 6, ListUnassignedPeer::APP_TAS_TITLE => 7, ListUnassignedPeer::DEL_PREVIOUS_USR_USERNAME => 8, ListUnassignedPeer::DEL_PREVIOUS_USR_FIRSTNAME => 9, ListUnassignedPeer::DEL_PREVIOUS_USR_LASTNAME => 10, ListUnassignedPeer::APP_UPDATE_DATE => 11, ListUnassignedPeer::DEL_PREVIOUS_USR_UID => 12, ListUnassignedPeer::DEL_DELEGATE_DATE => 13, ListUnassignedPeer::DEL_DUE_DATE => 14, ListUnassignedPeer::DEL_PRIORITY => 15, ),
         BasePeer::TYPE_FIELDNAME => array ('APP_UID' => 0, 'DEL_INDEX' => 1, 'TAS_UID' => 2, 'PRO_UID' => 3, 'APP_NUMBER' => 4, 'APP_TITLE' => 5, 'APP_PRO_TITLE' => 6, 'APP_TAS_TITLE' => 7, 'DEL_PREVIOUS_USR_USERNAME' => 8, 'DEL_PREVIOUS_USR_FIRSTNAME' => 9, 'DEL_PREVIOUS_USR_LASTNAME' => 10, 'APP_UPDATE_DATE' => 11, 'DEL_PREVIOUS_USR_UID' => 12, 'DEL_DELEGATE_DATE' => 13, 'DEL_DUE_DATE' => 14, 'DEL_PRIORITY' => 15, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, )
@@ -595,7 +595,7 @@ abstract class BaseListUnassignedPeer
     /**
      * Retrieve object using using composite pkey values.
      * @param string $app_uid
-       * @param string $del_index
+       * @param int $del_index
         * @param      Connection $con
      * @return     ListUnassigned
      */

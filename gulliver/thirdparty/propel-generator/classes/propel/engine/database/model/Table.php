@@ -79,6 +79,7 @@ class Table extends XMLElement implements IDMethod {
 	private $heavyIndexing;
 	private $forReferenceOnly;
 	private $isTree;
+	private $referenceOnly = false;
 
 	/**
 	 * Constructs a table object with a name
@@ -126,6 +127,7 @@ class Table extends XMLElement implements IDMethod {
 		$this->description = $this->getAttribute("description");
 		$this->enterface = $this->getAttribute("interface"); // sic ('interface' is reserved word)
 		$this->isTree = $this->booleanValue($this->getAttribute("isTree"));
+		$this->referenceOnly = $this->booleanValue($this->getAttribute('referenceOnly'));
 	}
 
 	/**
@@ -971,6 +973,16 @@ class Table extends XMLElement implements IDMethod {
 	{
 		$this->isTree = (boolean) $v;
 	}
+
+    /**
+     * Get referenceOnly
+     *
+     * @return bool
+     */
+    public function getReferenceOnly()
+    {
+        return $this->referenceOnly;
+    }
 
 	/**
 	 * Returns a XML representation of this table.

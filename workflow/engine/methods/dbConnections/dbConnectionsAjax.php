@@ -185,6 +185,8 @@ switch ($action) {
         $oContent->addContent( 'DBS_DESCRIPTION', '', $newid, SYS_LANG, $_POST['desc'] );
         break;
     case 'deleteDbConnection':
+        $result = new stdclass();
+
         try {
             $oDBSource = new DbSource();
             $oContent = new Content();
@@ -343,8 +345,6 @@ switch ($action) {
         }
         break;
     case 'showEncodes':
-        //G::LoadThirdParty( 'pear/json', 'class.json' );
-        //$oJSON =
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
         $engine = $_POST['engine'];
@@ -352,10 +352,10 @@ switch ($action) {
         if ($engine != "0") {
             $dbs = new dbConnections();
             $var = Bootstrap::json_encode($dbs->getEncondeList($filter->xssFilterHard($engine)));
-            echo $var;
+            G::outRes($var);
 
         } else {
-            echo '[["0","..."]]';
+            G::outRes('[["0","..."]]');
         }
         break;
 }

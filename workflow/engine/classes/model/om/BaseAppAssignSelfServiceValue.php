@@ -55,7 +55,7 @@ abstract class BaseAppAssignSelfServiceValue extends BaseObject implements Persi
      * The value for the grp_uid field.
      * @var        string
      */
-    protected $grp_uid = '';
+    protected $grp_uid;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -229,7 +229,7 @@ abstract class BaseAppAssignSelfServiceValue extends BaseObject implements Persi
             $v = (string) $v;
         }
 
-        if ($this->grp_uid !== $v || $v === '') {
+        if ($this->grp_uid !== $v) {
             $this->grp_uid = $v;
             $this->modifiedColumns[] = AppAssignSelfServiceValuePeer::GRP_UID;
         }
