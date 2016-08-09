@@ -26,12 +26,14 @@ class ListPaused extends BaseListPaused {
     {
         $criteria = new Criteria();
         $criteria->addSelectColumn(ApplicationPeer::APP_TITLE);
-        $criteria->add( ApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
+        $criteria->add(ApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL);
         $dataset = ApplicationPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
         $aRow = $dataset->getRow();
-        $data['APP_TITLE'] = $aRow['APP_TITLE'];
+        if (!isset($data['APP_TITLE'])) {
+            $data['APP_TITLE'] = $aRow['APP_TITLE'];
+        }
 
         $criteria = new Criteria();
         $criteria->addSelectColumn(ProcessPeer::PRO_TITLE);

@@ -1791,7 +1791,6 @@ class PMPluginRegistry
         return $this->_aOpenReassignCallback;
     }
 
-
     public function getPluginsData()
     {
         return $this->_aPlugins;
@@ -1825,7 +1824,7 @@ class PMPluginRegistry
      */
     public function isEnterprisePlugin($pluginName, $path = null)
     {
-        $path = (!is_null($path) && $path != '')? rtrim($path, '/\\') . PATH_SEP : PATH_PLUGINS;
+        $path = (!is_null($path) && $path != '') ? rtrim($path, '/\\') . PATH_SEP : PATH_PLUGINS;
         $pluginFile = $pluginName . '.php';
 
         //Return
@@ -1834,5 +1833,20 @@ class PMPluginRegistry
             str_replace(["\n", "\r", "\t"], ' ', file_get_contents($path . $pluginFile))
         );
     }
+    
+    /**
+     * Use this for extensions
+     *
+     * @return array with namespace and plugin folder
+     */
+    public function getEnabledPlugins()
+    {
+        $enabledPlugins = array();
+        foreach ($this->_aPluginDetails as $row) {
+            if ($row->enabled) {
+                $enabledPlugins[$row->sNamespace] = $row->sPluginFolder;
+            }
+        }
+        return $enabledPlugins;
+    }
 }
-
