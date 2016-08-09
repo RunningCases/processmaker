@@ -20,9 +20,13 @@ class RoutingScreen extends \Derivation
             unset($aDataMerged[$key]['USER_ASSIGNED']);
             $aDataMerged[$key]['DEL_PRIORITY'] = '';
             foreach ($post as $i => $item) {
-                if(isset($post[$i]['SOURCE_UID']) && ($nextTask['NEXT_TASK']['TAS_UID'] === $post[$i]['SOURCE_UID']) && ($post[$i]['SOURCE_UID'] !== $post[$i]['TAS_UID'])){
+                if(isset($post[$i]['SOURCE_UID']) && ($nextTask['NEXT_TASK']['TAS_UID'] === $post[$i]['SOURCE_UID'])){
                     $flagJumpTask = true;
-                    $aDataMerged[$key]['NEXT_ROUTING'][] = $post[$i];
+                    if($post[$i]['SOURCE_UID'] === $post[$i]['TAS_UID']){
+                        $aDataMerged[$key]['USR_UID'] = $post[$i]['USR_UID'];
+                    } else {
+                        $aDataMerged[$key]['NEXT_ROUTING'][] = $post[$i];
+                    }
                 }
             }
         }
