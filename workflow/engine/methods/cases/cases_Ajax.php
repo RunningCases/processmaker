@@ -405,8 +405,9 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
             $APP_UID = $_SESSION['APPLICATION'];
             $DEL_INDEX = $_SESSION['INDEX'];
         }
+        $appTitle = $_POST['APP_TITLE'];
 
-        $oCase->pauseCase( $APP_UID, $DEL_INDEX, $_SESSION['USER_LOGGED'], $unpauseDate );
+        $oCase->pauseCase($APP_UID, $DEL_INDEX, $_SESSION['USER_LOGGED'], $unpauseDate, $appTitle);
         break;
     case 'unpauseCase':
         $sApplicationUID = (isset( $_POST['sApplicationUID'] )) ? $_POST['sApplicationUID'] : $_SESSION['APPLICATION'];
