@@ -1542,8 +1542,16 @@ class Light extends Api
     public function doPutCaseVariables($app_uid, $request_data, $dyn_uid = '', $del_index = 0)
     {
         try {
+            if ($del_index === null) {
+                throw (new \Exception(G::LoadTranslation('ID_CAN_NOT_BE_NULL', array('del_index')), Api::STAT_APP_EXCEPTION));
+            }
             $usr_uid = $this->getUserId();
             $cases = new \ProcessMaker\BusinessModel\Cases();
+            if ($del_index > 0) {
+                if ($cases->caseAlreadyRouted($app_uid, $del_index, $usr_uid)) {
+                    throw (new \Exception(G::LoadTranslation('ID_CASE_ALREADY_DERIVATED'), Api::STAT_APP_EXCEPTION));
+                }
+            }
             $request_data = \ProcessMaker\Util\DateTime::convertDataToUtc($request_data);
             $cases->setCaseVariables($app_uid, $request_data, $dyn_uid, $usr_uid, $del_index);
         } catch (\Exception $e) {
