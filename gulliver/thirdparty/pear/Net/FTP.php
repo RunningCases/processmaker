@@ -489,6 +489,7 @@ define('NET_FTP_ERR_EXTFILELOAD_FAILED', -35);
  */
 class Net_FTP extends PEAR
 {
+    const mkdir = 'mkdir';
     /**
      * The host to connect to
      *
@@ -1434,7 +1435,8 @@ class Net_FTP extends PEAR
 
         if (!@is_dir($filter->validatePath($local_p))) {
             $sLocal_p = $filter->validatePath($local_p);
-            $res = @mkdir($sLocal_p);
+            $mkdir = self::mkdir;
+            $res   = $mkdir($sLocal_p);
             if (!$res) {
                 return $this->raiseError("Could not create dir '$local_p'",
                                          NET_FTP_ERR_CREATELOCALDIR_FAILED);

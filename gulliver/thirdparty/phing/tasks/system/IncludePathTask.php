@@ -40,6 +40,7 @@ include_once 'phing/types/Path.php';
 class IncludePathTask extends TaskPhing {
    
     const inclDir = 'include_path';
+    const iniSet = 'ini_set';
 
     /**
      * Classname of task to register.
@@ -113,7 +114,8 @@ class IncludePathTask extends TaskPhing {
             if(is_dir(implode(PATH_SEPARATOR, array_merge($new_parts, $curr_parts)))) {
                 $sPath = implode(PATH_SEPARATOR, array_merge($new_parts, $curr_parts));
                 $inclDir = self::inclDir;
-                ini_set($inclDir, $sPath);
+                $iniSet  = self::iniSet;
+                $iniSet($inclDir, $sPath);
             }
         }
         
