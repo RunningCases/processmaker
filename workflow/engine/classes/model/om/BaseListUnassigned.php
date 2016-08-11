@@ -35,7 +35,7 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
 
     /**
      * The value for the del_index field.
-     * @var        string
+     * @var        int
      */
     protected $del_index = 0;
 
@@ -151,7 +151,7 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
     /**
      * Get the [del_index] column value.
      * 
-     * @return     string
+     * @return     int
      */
     public function getDelIndex()
     {
@@ -230,7 +230,7 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
      * 
      * @return     string
      */
-    public function getAppPreviousUsrUsername()
+    public function getDelPreviousUsrUsername()
     {
 
         return $this->del_previous_usr_username;
@@ -241,7 +241,7 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
      * 
      * @return     string
      */
-    public function getAppPreviousUsrFirstname()
+    public function getDelPreviousUsrFirstname()
     {
 
         return $this->del_previous_usr_firstname;
@@ -252,7 +252,7 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
      * 
      * @return     string
      */
-    public function getAppPreviousUsrLastname()
+    public function getDelPreviousUsrLastname()
     {
 
         return $this->del_previous_usr_lastname;
@@ -558,7 +558,7 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
      * @param      string $v new value
      * @return     void
      */
-    public function setAppPreviousUsrUsername($v)
+    public function setDelPreviousUsrUsername($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -572,7 +572,7 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
             $this->modifiedColumns[] = ListUnassignedPeer::DEL_PREVIOUS_USR_USERNAME;
         }
 
-    } // setAppPreviousUsrUsername()
+    } // setDelPreviousUsrUsername()
 
     /**
      * Set the value of [del_previous_usr_firstname] column.
@@ -580,7 +580,7 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
      * @param      string $v new value
      * @return     void
      */
-    public function setAppPreviousUsrFirstname($v)
+    public function setDelPreviousUsrFirstname($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -594,7 +594,7 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
             $this->modifiedColumns[] = ListUnassignedPeer::DEL_PREVIOUS_USR_FIRSTNAME;
         }
 
-    } // setAppPreviousUsrFirstname()
+    } // setDelPreviousUsrFirstname()
 
     /**
      * Set the value of [del_previous_usr_lastname] column.
@@ -602,7 +602,7 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
      * @param      string $v new value
      * @return     void
      */
-    public function setAppPreviousUsrLastname($v)
+    public function setDelPreviousUsrLastname($v)
     {
 
         // Since the native PHP type for this column is string,
@@ -616,7 +616,7 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
             $this->modifiedColumns[] = ListUnassignedPeer::DEL_PREVIOUS_USR_LASTNAME;
         }
 
-    } // setAppPreviousUsrLastname()
+    } // setDelPreviousUsrLastname()
 
     /**
      * Set the value of [app_update_date] column.
@@ -1032,13 +1032,13 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
                 return $this->getAppTasTitle();
                 break;
             case 8:
-                return $this->getAppPreviousUsrUsername();
+                return $this->getDelPreviousUsrUsername();
                 break;
             case 9:
-                return $this->getAppPreviousUsrFirstname();
+                return $this->getDelPreviousUsrFirstname();
                 break;
             case 10:
-                return $this->getAppPreviousUsrLastname();
+                return $this->getDelPreviousUsrLastname();
                 break;
             case 11:
                 return $this->getAppUpdateDate();
@@ -1083,9 +1083,9 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
             $keys[5] => $this->getAppTitle(),
             $keys[6] => $this->getAppProTitle(),
             $keys[7] => $this->getAppTasTitle(),
-            $keys[8] => $this->getAppPreviousUsrUsername(),
-            $keys[9] => $this->getAppPreviousUsrFirstname(),
-            $keys[10] => $this->getAppPreviousUsrLastname(),
+            $keys[8] => $this->getDelPreviousUsrUsername(),
+            $keys[9] => $this->getDelPreviousUsrFirstname(),
+            $keys[10] => $this->getDelPreviousUsrLastname(),
             $keys[11] => $this->getAppUpdateDate(),
             $keys[12] => $this->getDelPreviousUsrUid(),
             $keys[13] => $this->getDelDelegateDate(),
@@ -1147,13 +1147,13 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
                 $this->setAppTasTitle($value);
                 break;
             case 8:
-                $this->setAppPreviousUsrUsername($value);
+                $this->setDelPreviousUsrUsername($value);
                 break;
             case 9:
-                $this->setAppPreviousUsrFirstname($value);
+                $this->setDelPreviousUsrFirstname($value);
                 break;
             case 10:
-                $this->setAppPreviousUsrLastname($value);
+                $this->setDelPreviousUsrLastname($value);
                 break;
             case 11:
                 $this->setAppUpdateDate($value);
@@ -1226,15 +1226,15 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[8], $arr)) {
-            $this->setAppPreviousUsrUsername($arr[$keys[8]]);
+            $this->setDelPreviousUsrUsername($arr[$keys[8]]);
         }
 
         if (array_key_exists($keys[9], $arr)) {
-            $this->setAppPreviousUsrFirstname($arr[$keys[9]]);
+            $this->setDelPreviousUsrFirstname($arr[$keys[9]]);
         }
 
         if (array_key_exists($keys[10], $arr)) {
-            $this->setAppPreviousUsrLastname($arr[$keys[10]]);
+            $this->setDelPreviousUsrLastname($arr[$keys[10]]);
         }
 
         if (array_key_exists($keys[11], $arr)) {
@@ -1410,11 +1410,11 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
 
         $copyObj->setAppTasTitle($this->app_tas_title);
 
-        $copyObj->setAppPreviousUsrUsername($this->del_previous_usr_username);
+        $copyObj->setDelPreviousUsrUsername($this->del_previous_usr_username);
 
-        $copyObj->setAppPreviousUsrFirstname($this->del_previous_usr_firstname);
+        $copyObj->setDelPreviousUsrFirstname($this->del_previous_usr_firstname);
 
-        $copyObj->setAppPreviousUsrLastname($this->del_previous_usr_lastname);
+        $copyObj->setDelPreviousUsrLastname($this->del_previous_usr_lastname);
 
         $copyObj->setAppUpdateDate($this->app_update_date);
 
@@ -1431,7 +1431,7 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
 
         $copyObj->setAppUid(''); // this is a pkey column, so set to default value
 
-        $copyObj->setDelIndex(0); // this is a pkey column, so set to default value
+        $copyObj->setDelIndex('0'); // this is a pkey column, so set to default value
 
     }
 

@@ -32,8 +32,8 @@ class Cases extends Api
     /**
      * Get list Cases To Do
      *
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
@@ -79,8 +79,8 @@ class Cases extends Api
     /**
      * Get list Cases To Do with paged
      *
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
@@ -125,8 +125,8 @@ class Cases extends Api
     /**
      * Get list Cases Draft
      *
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
@@ -171,8 +171,8 @@ class Cases extends Api
     /**
      * Get list Cases Draft with paged
      *
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
@@ -217,8 +217,8 @@ class Cases extends Api
     /**
      * Get list Cases Participated
      *
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
@@ -263,8 +263,8 @@ class Cases extends Api
     /**
      * Get list Cases Participated with paged
      *
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
@@ -309,8 +309,8 @@ class Cases extends Api
     /**
      * Get list Cases Unassigned
      *
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
@@ -355,8 +355,8 @@ class Cases extends Api
     /**
      * Get list Cases Unassigned with paged
      *
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
@@ -401,8 +401,8 @@ class Cases extends Api
     /**
      * Get list Cases Paused
      *
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
@@ -447,8 +447,8 @@ class Cases extends Api
     /**
      * Get list Cases Paused with paged
      *
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
@@ -493,8 +493,8 @@ class Cases extends Api
     /**
      * Get list Cases Advanced Search
      *
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
@@ -551,8 +551,8 @@ class Cases extends Api
     /**
      * Get list Cases Advanced Search with Paged
      *
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $cat_uid {@from path}
@@ -862,7 +862,7 @@ class Cases extends Api
      * @param string $app_uid {@min 1}{@max 32}
      * @param array $request_data
      * @param string $dyn_uid {@from path}
-     * @param string $del_index {@from path}
+     * @param int $del_index {@from path}
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
@@ -884,8 +884,8 @@ class Cases extends Api
     /**
      * Get Case Notes
      *
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $usr_uid {@from path}
@@ -934,8 +934,8 @@ class Cases extends Api
     /**
      * Get Case Notes with Paged
      *
-     * @param string $start {@from path}
-     * @param string $limit {@from path}
+     * @param int $start {@from path}
+     * @param int $limit {@from path}
      * @param string $sort {@from path}
      * @param string $dir {@from path}
      * @param string $usr_uid {@from path}

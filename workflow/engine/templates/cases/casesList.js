@@ -344,7 +344,8 @@ function pauseCase(date){
                                     APP_UID: rowModel.data.APP_UID,
                                     DEL_INDEX: rowModel.data.DEL_INDEX,
                                     NOTE_REASON: noteReasonTxt,
-                                    NOTIFY_PAUSE: notifyReasonVal
+                                    NOTIFY_PAUSE: notifyReasonVal,
+                                    APP_TITLE: rowModel.data.APP_TITLE
                                 }
                             });
                         }

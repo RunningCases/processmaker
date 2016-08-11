@@ -1537,7 +1537,8 @@ class workspaceTools
             messages may be displayed during the restore process.") . "\n");
 
         foreach ($metaFiles as $metaFile) {
-            $metadata = G::json_decode(file_get_contents($metaFile));
+            $metadata = preg_replace('/\r|\n/', '', file_get_contents($metaFile));
+            $metadata = G::json_decode(preg_replace('/\s+/', '', $metadata));
             if ($metadata->version != 1) {
                 throw new Exception("Backup version {$metadata->version} not supported");
             }
@@ -1578,8 +1579,8 @@ class workspaceTools
                         throw new Exception("We can't overwrite this workspace because it has a different amount of databases. Not only the 'source' but also the 'target' must have the same amount of databases.");
                     }
 
-                    if(!$workspace->workspaceExists()){
-                        throw new Exception('We can not overwrite this workspace because the workspace '.$workspaceName.' does not exist please check the lower case and upper case.');
+                    if (!$workspace->workspaceExists()) {
+                        throw new Exception('We can not overwrite this workspace because the workspace ' . $workspaceName . ' does not exist please check the lower case and upper case.');
                     }
                     CLI::logging(CLI::warning("> Workspace $workspaceName already exist, overwriting!") . "\n");
                 } else {
@@ -1701,7 +1702,7 @@ class workspaceTools
                 $workspace->upgradeTriggersOfTables(true, $lang);
             }
 
-            if($pmVersion == '' && strpos(strtoupper($version), 'BRANCH')){
+            if ($pmVersion == '' && strpos(strtoupper($version), 'BRANCH')) {
                 $pmVersion = 'dev-version-backup';
             }
 

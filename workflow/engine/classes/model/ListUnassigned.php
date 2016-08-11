@@ -103,7 +103,6 @@ class ListUnassigned extends BaseListUnassigned
 
         $criteria = new Criteria();
         $criteria->addSelectColumn( ApplicationPeer::APP_NUMBER );
-        $criteria->addSelectColumn( ApplicationPeer::APP_TITLE );
         $criteria->addSelectColumn( ApplicationPeer::APP_UPDATE_DATE );
         $criteria->add( ApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
         $dataset = ApplicationPeer::doSelectRS($criteria);

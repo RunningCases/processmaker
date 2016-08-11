@@ -313,7 +313,9 @@ try {
                     break;
             }
         } catch (Exception $e) {
-            echo $e->getMessage() . "\n";
+            $token = strtotime("now");
+            PMException::registerErrorLog($e, $token);
+            G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) . "\n" );
 
             eprintln('Problem in workspace: ' . $workspace . ' it was omitted.', 'red');
         }
@@ -325,7 +327,9 @@ try {
         unlink(PATH_CORE . 'config' . PATH_SEP . '_databases_.php');
     }
 } catch (Exception $e) {
-    echo $e->getMessage() . "\n";
+    $token = strtotime("now");
+    PMException::registerErrorLog($e, $token);
+    G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) . "\n" );
 }
 
 
@@ -1054,6 +1058,7 @@ function sendNotifications()
         setExecutionMessage("Resending Notifications");
         setExecutionResultMessage("PROCESSING");
         $notQueue = new \NotificationQueue();
+        $notQueue->checkIfCasesOpenForResendingNotification();
         $notificationsAndroid = $notQueue->loadStatusDeviceType('pending', 'android');
         if ($notificationsAndroid) {
             setExecutionMessage("|-- Send Android's Notifications");

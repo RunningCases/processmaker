@@ -25,7 +25,7 @@ abstract class BaseNotificationQueuePeer
     const CLASS_DEFAULT = 'classes.model.NotificationQueue';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 7;
+    const NUM_COLUMNS = 9;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -52,6 +52,12 @@ abstract class BaseNotificationQueuePeer
     /** the column name for the NOT_SEND_DATE field */
     const NOT_SEND_DATE = 'NOTIFICATION_QUEUE.NOT_SEND_DATE';
 
+    /** the column name for the APP_UID field */
+    const APP_UID = 'NOTIFICATION_QUEUE.APP_UID';
+
+    /** the column name for the DEL_INDEX field */
+    const DEL_INDEX = 'NOTIFICATION_QUEUE.DEL_INDEX';
+
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
 
@@ -63,10 +69,10 @@ abstract class BaseNotificationQueuePeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('NotUid', 'DevType', 'DevUid', 'NotMsg', 'NotData', 'NotStatus', 'NotSendDate', ),
-        BasePeer::TYPE_COLNAME => array (NotificationQueuePeer::NOT_UID, NotificationQueuePeer::DEV_TYPE, NotificationQueuePeer::DEV_UID, NotificationQueuePeer::NOT_MSG, NotificationQueuePeer::NOT_DATA, NotificationQueuePeer::NOT_STATUS, NotificationQueuePeer::NOT_SEND_DATE, ),
-        BasePeer::TYPE_FIELDNAME => array ('NOT_UID', 'DEV_TYPE', 'DEV_UID', 'NOT_MSG', 'NOT_DATA', 'NOT_STATUS', 'NOT_SEND_DATE', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+        BasePeer::TYPE_PHPNAME => array ('NotUid', 'DevType', 'DevUid', 'NotMsg', 'NotData', 'NotStatus', 'NotSendDate', 'AppUid', 'DelIndex', ),
+        BasePeer::TYPE_COLNAME => array (NotificationQueuePeer::NOT_UID, NotificationQueuePeer::DEV_TYPE, NotificationQueuePeer::DEV_UID, NotificationQueuePeer::NOT_MSG, NotificationQueuePeer::NOT_DATA, NotificationQueuePeer::NOT_STATUS, NotificationQueuePeer::NOT_SEND_DATE, NotificationQueuePeer::APP_UID, NotificationQueuePeer::DEL_INDEX, ),
+        BasePeer::TYPE_FIELDNAME => array ('NOT_UID', 'DEV_TYPE', 'DEV_UID', 'NOT_MSG', 'NOT_DATA', 'NOT_STATUS', 'NOT_SEND_DATE', 'APP_UID', 'DEL_INDEX', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -76,10 +82,10 @@ abstract class BaseNotificationQueuePeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('NotUid' => 0, 'DevType' => 1, 'DevUid' => 2, 'NotMsg' => 3, 'NotData' => 4, 'NotStatus' => 5, 'NotSendDate' => 6, ),
-        BasePeer::TYPE_COLNAME => array (NotificationQueuePeer::NOT_UID => 0, NotificationQueuePeer::DEV_TYPE => 1, NotificationQueuePeer::DEV_UID => 2, NotificationQueuePeer::NOT_MSG => 3, NotificationQueuePeer::NOT_DATA => 4, NotificationQueuePeer::NOT_STATUS => 5, NotificationQueuePeer::NOT_SEND_DATE => 6, ),
-        BasePeer::TYPE_FIELDNAME => array ('NOT_UID' => 0, 'DEV_TYPE' => 1, 'DEV_UID' => 2, 'NOT_MSG' => 3, 'NOT_DATA' => 4, 'NOT_STATUS' => 5, 'NOT_SEND_DATE' => 6, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
+        BasePeer::TYPE_PHPNAME => array ('NotUid' => 0, 'DevType' => 1, 'DevUid' => 2, 'NotMsg' => 3, 'NotData' => 4, 'NotStatus' => 5, 'NotSendDate' => 6, 'AppUid' => 7, 'DelIndex' => 8, ),
+        BasePeer::TYPE_COLNAME => array (NotificationQueuePeer::NOT_UID => 0, NotificationQueuePeer::DEV_TYPE => 1, NotificationQueuePeer::DEV_UID => 2, NotificationQueuePeer::NOT_MSG => 3, NotificationQueuePeer::NOT_DATA => 4, NotificationQueuePeer::NOT_STATUS => 5, NotificationQueuePeer::NOT_SEND_DATE => 6, NotificationQueuePeer::APP_UID => 7, NotificationQueuePeer::DEL_INDEX => 8, ),
+        BasePeer::TYPE_FIELDNAME => array ('NOT_UID' => 0, 'DEV_TYPE' => 1, 'DEV_UID' => 2, 'NOT_MSG' => 3, 'NOT_DATA' => 4, 'NOT_STATUS' => 5, 'NOT_SEND_DATE' => 6, 'APP_UID' => 7, 'DEL_INDEX' => 8, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
     );
 
     /**
@@ -193,6 +199,10 @@ abstract class BaseNotificationQueuePeer
         $criteria->addSelectColumn(NotificationQueuePeer::NOT_STATUS);
 
         $criteria->addSelectColumn(NotificationQueuePeer::NOT_SEND_DATE);
+
+        $criteria->addSelectColumn(NotificationQueuePeer::APP_UID);
+
+        $criteria->addSelectColumn(NotificationQueuePeer::DEL_INDEX);
 
     }
 

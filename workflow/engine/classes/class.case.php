@@ -739,6 +739,9 @@ class Cases
         $cri->addSelectColumn(AppDelegationPeer::TAS_UID);
         $cri->add(AppDelegationPeer::APP_UID, $sAppUid);
         $cri->add(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN");
+        if(isset($fields['DEL_INDEX'])){
+            $cri->add(AppDelegationPeer::DEL_INDEX, $fields['DEL_INDEX']);
+        }
         $rsCri = AppDelegationPeer::doSelectRS($cri);
         $rsCri->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $rsCri->next();
@@ -907,6 +910,9 @@ class Cases
             }
             if (isset($Fields['APP_DESCRIPTION'])) {
                 $appFields['APP_DESCRIPTION'] = $Fields['APP_DESCRIPTION'];
+            }
+            if(isset($Fields['DEL_INDEX'])){
+                $appFields['DEL_INDEX'] = $Fields['DEL_INDEX'];
             }
 
             $arrayNewCaseTitleAndDescription = $this->newRefreshCaseTitleAndDescription($sAppUid, $appFields, $aApplicationFields);
@@ -2106,6 +2112,7 @@ class Cases
                 //DONE: Al ya existir un delegation, se puede "calcular" el caseTitle.
                 $Fields = $Application->toArray(BasePeer::TYPE_FIELDNAME);
                 $aApplicationFields = $Fields['APP_DATA'];
+                $Fields['DEL_INDEX'] = $iDelIndex;
                 $newValues = $this->newRefreshCaseTitleAndDescription($sAppUid, $Fields, $aApplicationFields);
                 if (!isset($newValues['APP_TITLE'])) {
                     $newValues['APP_TITLE'] = '';
@@ -3943,7 +3950,7 @@ class Cases
      * @return object
      */
 
-    public function pauseCase($sApplicationUID, $iDelegation, $sUserUID, $sUnpauseDate = null)
+    public function pauseCase($sApplicationUID, $iDelegation, $sUserUID, $sUnpauseDate = null, $appTitle = null)
     {
         // Check if the case is unassigned
         if($this->isUnassignedPauseCase($sApplicationUID, $iDelegation)){
@@ -3992,11 +3999,12 @@ class Cases
         $this->getExecuteTriggerProcess($sApplicationUID, 'PAUSED');
 
         /*----------------------------------********---------------------------------*/
-        $data = array (
-            'APP_UID'   => $sApplicationUID,
+        $data = array(
+            'APP_UID' => $sApplicationUID,
             'DEL_INDEX' => $iDelegation,
-            'USR_UID'   => $sUserUID,
-            'APP_RESTART_DATE'   => $sUnpauseDate
+            'USR_UID' => $sUserUID,
+            'APP_RESTART_DATE' => $sUnpauseDate,
+            'APP_TITLE' => ($appTitle != null) ? $appTitle : $aFields['APP_TITLE']
         );
         $data = array_merge($aFields, $data);
         $oListPaused = new ListPaused();

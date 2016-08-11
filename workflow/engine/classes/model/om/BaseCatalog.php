@@ -55,7 +55,7 @@ abstract class BaseCatalog extends BaseObject implements Persistent
      * The value for the cat_observation field.
      * @var        string
      */
-    protected $cat_observation = '';
+    protected $cat_observation;
 
     /**
      * The value for the cat_create_date field.
@@ -305,7 +305,7 @@ abstract class BaseCatalog extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->cat_observation !== $v || $v === '') {
+        if ($this->cat_observation !== $v) {
             $this->cat_observation = $v;
             $this->modifiedColumns[] = CatalogPeer::CAT_OBSERVATION;
         }

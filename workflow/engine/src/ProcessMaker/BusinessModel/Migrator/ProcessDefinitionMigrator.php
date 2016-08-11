@@ -3,6 +3,7 @@
 namespace ProcessMaker\BusinessModel\Migrator;
 
 use ProcessMaker\Project\Adapter;
+use ProcessMaker\BusinessModel;
 use Symfony\Component\Config\Definition\Exception\Exception;
 
 class ProcessDefinitionMigrator implements Importable, Exportable
@@ -53,7 +54,15 @@ class ProcessDefinitionMigrator implements Importable, Exportable
         try {
             //Workflow elements
             $this->processes->updateProcessRow($data['workflow']['process']);
-            $this->processes->createTaskRows($data['workflow']['tasks']);
+            $workflowTaks = array();
+            $dummyTaskTypes = BusinessModel\Task::getDummyTypes();
+            foreach ($data['workflow']['tasks'] as $key => $value) {
+                $arrayTaskData = $value;
+                if (!in_array($arrayTaskData["TAS_TYPE"], $dummyTaskTypes)) {
+                    $workflowTaks[] = $arrayTaskData;
+                }
+            }
+            $this->processes->createTaskRows($workflowTaks);
             $this->processes->createLaneRows($data['workflow']['lanes']);
             $this->processes->createGatewayRows($data['workflow']['gateways']);
             $this->processes->createStepRows($data['workflow']['steps']);

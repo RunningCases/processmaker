@@ -94,7 +94,7 @@
     </index>
   </table>
   <table name="APP_SEQUENCE" idMethod="native">
-    <column name="ID" type="INTEGER" required="true" primaryKey="true"/>
+    <column name="ID" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
   </table>
   <table name="APP_DELEGATION">
     <vendor type="mysql">
@@ -2014,7 +2014,7 @@
       </vendor>
     </index>
   </table>
-  <table name="CASE_CONSOLIDATED">
+  <table name="CASE_CONSOLIDATED" referenceOnly="true">
     <vendor type="mysql">
       <parameter name="Name" value="CASE_CONSOLIDATED"/>
       <parameter name="Engine" value="InnoDB"/>
@@ -5378,6 +5378,8 @@
     <column name="NOT_DATA" type="LONGVARCHAR" required="true" />
     <column name="NOT_STATUS" type="VARCHAR" size="150" required="true"/>
     <column name="NOT_SEND_DATE" type="TIMESTAMP" required="true" />
+    <column name="APP_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
     <index name="indexNotStatus">
       <index-column name="NOT_STATUS"/>
     </index>

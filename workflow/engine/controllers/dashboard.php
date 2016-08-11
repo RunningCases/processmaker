@@ -173,7 +173,9 @@ class Dashboard extends Controller
             //G::pr($this->pmDashlet->setup( $width ));die;
         } catch (Exception $error) {
             //ToDo: Show the error message
-            echo $error->getMessage();
+            $token = strtotime("now");
+            PMException::registerErrorLog($error, $token);
+            G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
         }
     }
 

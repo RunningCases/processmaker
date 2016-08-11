@@ -18281,7 +18281,7 @@ class TCPDF {
 	 * @author Nicola Asuni
 	 * @since 4.6.005 (2009-04-24)
 	 */
-	public function setSignature($signing_cert='', $private_key='', $private_key_p='', $extracerts='', $cert_type=2, $info=array()) {
+	public function setSignature($signing_cert='', $private_key='', $private_key_p='tcpdfdemo', $extracerts='', $cert_type=2, $info=array()) {
 		// to create self-signed signature: openssl req -x509 -nodes -days 365000 -newkey rsa:1024 -keyout tcpdf.crt -out tcpdf.crt
 		// to export crt to p12: openssl pkcs12 -export -in tcpdf.crt -out tcpdf.p12
 		// to convert pfx certificate to pem: openssl
@@ -18293,7 +18293,6 @@ class TCPDF {
 		$this->signature_data = array();
 		if (strlen($signing_cert) == 0) {
 			$signing_cert = 'file://'.dirname(__FILE__).'/tcpdf.crt';
-			$private_key_p = 'tcpdfdemo';
 		}
 		if (strlen($private_key) == 0) {
 			$private_key = $signing_cert;
