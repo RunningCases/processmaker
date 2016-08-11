@@ -804,7 +804,7 @@ try {
                 'APP_UID' => $_SESSION['APPLICATION'],
                 'DEL_INDEX' => $_SESSION['INDEX']
             );
-            $aFields['TASK'] = $oRoute->prepareInformation($arrayData);
+            $aFields['TASK'] = $oRoute->prepareRoutingScreen($arrayData);
 
             if (empty( $aFields['TASK'] )) {
                 throw (new Exception( G::LoadTranslation( 'ID_NO_DERIVATION_RULE' ) ));

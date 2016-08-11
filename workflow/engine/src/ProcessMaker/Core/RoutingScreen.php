@@ -8,7 +8,8 @@ class RoutingScreen extends \Derivation
     public function __construct()
     {
         parent::__construct();
-        $this->setRegexpTaskTypeToInclude("GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT|SCRIPT-TASK|INTERMEDIATE-CATCH-TIMER-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT");
+        $this->setRegexpTaskTypeToInclude("GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT|INTERMEDIATE-CATCH-TIMER-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT");
+        $this->flagSanity = true;
     }
 
     public function mergeDataDerivation($post, $prepareInformation)
@@ -35,6 +36,11 @@ class RoutingScreen extends \Derivation
             $aDataMerged = $post;
         }
         return $aDataMerged;
+    }
+
+    public function prepareRoutingScreen($arrayData)
+    {
+        return $this->postSanity($this->prepareInformation($arrayData));
     }
 
 }
