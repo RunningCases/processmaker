@@ -3129,6 +3129,13 @@ class wsBase
                 $g->sessionVarRestore();
                 return $result;
             }
+            $oAppThread = new AppThread();
+            $cant = $oAppThread->countStatus($caseUid, 'OPEN');
+            if($cant > 1){
+                $result = new wsResponse( 100, G::LoadTranslation( "ID_CASE_CANCELLED_PARALLEL" ) );
+                $g->sessionVarRestore();
+                return $result;
+            }
 
             $case = new Cases();
             $case->cancelCase( $caseUid, $delIndex, $userUid );

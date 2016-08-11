@@ -1,5 +1,8 @@
 <?php
 namespace Build\Utils;
+
+include_once('workflow/engine/config/paths_installed.php');
+
 /**
  * Class ProcessMakerPhpBuilderHelper
  * Main Builder class, has methods to build PMUI and MAFE,
@@ -48,6 +51,11 @@ class ProcessMakerPhpBuilderHelper
      */
     public $devDir = array();
     /**
+     * Build Log Directory
+     * @var string
+     */
+    public $logDir = "./shared/log";
+    /**
      * Versions class, it contains versions and hashes from repositories
      * @var Versions
      */
@@ -89,6 +97,7 @@ class ProcessMakerPhpBuilderHelper
         $this->utils = new PhpBuilderUtils();
         $this->versions = new Versions();
         $this->parameters = $this->getConfig(false);
+
         return $this->parameters;
     }
 
@@ -133,6 +142,11 @@ class ProcessMakerPhpBuilderHelper
         $this->baseDir = empty($config['base_dir']) ? $baseDir : $config['base_dir'];
         $this->publicDir = $this->baseDir . "/workflow/public_html";
         $this->buildTempDir = $this->baseDir . "/workflow/buildTemp";
+        $this->logDir = $this->baseDir . "/shared/log";
+        if (defined('PATH_DATA')) {
+            $this->logDir = PATH_DATA . "log";
+        }
+        $this->utils->__set("logDir", $this->logDir);
         $this->utils->refreshDir($this->buildTempDir);
         if (!file_exists($this->publicDir)) {
             $this->utils->exitCode(5);
@@ -194,12 +208,14 @@ class ProcessMakerPhpBuilderHelper
         // Building minified JS Files
         $mafeCompresedFile = $this->dir['targetDir'] . "/js";
         $files = $this->utils->getJsIncludeFiles();
-        $this->utils->minifyFiles("mafe-$hashVendors", 'js', $files, $this->dir['baseDir'] . "/", $mafeCompresedFile . "/", false);
+        $this->utils->minifyFiles("mafe-$hashVendors", 'js', $files, $this->dir['baseDir'] . "/",
+            $mafeCompresedFile . "/", false);
 
         // Building minified CSS
         $mafeCompresedFile = $this->dir['targetDir'] . "/css";
         $files = $this->utils->getCssIncludeFiles();
-        $this->utils->minifyFiles("mafe-$hashVendors", 'css', $files, $this->dir['baseDir'] . "/", $mafeCompresedFile . "/", false);
+        $this->utils->minifyFiles("mafe-$hashVendors", 'css', $files, $this->dir['baseDir'] . "/",
+            $mafeCompresedFile . "/", false);
 
         //Create build-hash file
         $this->utils->echoContent("Create File: buildhash");
@@ -250,22 +266,24 @@ class ProcessMakerPhpBuilderHelper
             $themeDir = $themeDir . $this->theme;
 
             $this->utils->echoContent("1.- Copying lib files into: $pmUIDir");
-            copy("$source/build/js/pmui-$version.js", "$pmUIDir/pmui.min.js");
-            copy("$themeDir/build/pmui-$this->theme.css", "$pmUIDir/pmui.min.css");
+            $this->utils->copy("$source/build/js/pmui-$version.js", "$pmUIDir/pmui.min.js");
+            $this->utils->copy("$themeDir/build/pmui-$this->theme.css", "$pmUIDir/pmui.min.css");
             $this->utils->recCopy("$themeDir/build/images", "$target/css/images");
             $this->utils->recCopy("$source/img", $imgTargetDir);
 
             $this->utils->echoContent("2.- Copying lib files into: $jsTargetDir");
-            copy("$source/libraries/restclient/restclient-min.js", "$jsTargetDir/restclient.min.js");
+            $this->utils->copy("$source/libraries/restclient/restclient-min.js", "$jsTargetDir/restclient.min.js");
 
             $this->utils->echoContent("3.- Copying font files into: $pmUIFontsDir");
             $this->utils->recCopy("$source/themes/$this->theme/fonts", $pmUIFontsDir);
 
             $this->utils->echoFooter("PMUI Build Finished!");
             $response['success'] = true;
+
             return $response;
         } catch (Exception $e) {
             $this->utils->exitCode(8, $e);
+
             return $e;
         }
     }
@@ -343,19 +361,24 @@ class ProcessMakerPhpBuilderHelper
             }
 
             $this->utils->echoContent("Copying files into: $jsTargetDir");
-            copy($source . "/lib/wz_jsgraphics/wz_jsgraphics.js", $jsTargetDir . "/wz_jsgraphics.js");
-            copy($source . "/lib/jQuery/jquery-1.10.2.min.js", $jsTargetDir . "/jquery-1.10.2.min.js");
-            copy($source . "/lib/underscore/underscore-min.js", $jsTargetDir . "/underscore-min.js");
-            copy($source . "/lib/jQueryUI/jquery-ui-1.10.3.custom.min.js", $jsTargetDir . "/jquery-ui-1.10.3.custom.min.js");
-            copy($source . "/lib/jQueryLayout/jquery.layout.min.js", $jsTargetDir . "/jquery.layout.min.js");
-            copy($source . "/lib/modernizr/modernizr.js", $jsTargetDir . "/modernizr.js");
+
+            $this->utils->copy($source . "/lib/wz_jsgraphics/wz_jsgraphics.js", $jsTargetDir . "/wz_jsgraphics.js");
+            $this->utils->copy($source . "/lib/jQuery/jquery-1.10.2.min.js", $jsTargetDir . "/jquery-1.10.2.min.js");
+            $this->utils->copy($source . "/lib/underscore/underscore-min.js", $jsTargetDir . "/underscore-min.js");
+            $this->utils->copy($source . "/lib/jQueryUI/jquery-ui-1.10.3.custom.min.js",
+                $jsTargetDir . "/jquery-ui-1.10.3.custom.min.js");
+            $this->utils->copy($source . "/lib/jQueryLayout/jquery.layout.min.js",
+                $jsTargetDir . "/jquery.layout.min.js");
+            $this->utils->copy($source . "/lib/modernizr/modernizr.js", $jsTargetDir . "/modernizr.js");
 
             $this->utils->recCopy($source . "/src/formDesigner/img/", $target . "/img");
             $this->utils->echoFooter("Michelangelo FE Build Finished");
             $response['success'] = true;
+
             return $response;
         } catch (Exception $e) {
             $this->utils->exitCode(9, $e);
+
             return $e;
         }
 
@@ -377,9 +400,11 @@ class ProcessMakerPhpBuilderHelper
             $this->versions->pmdynaform_ver = $vh['version'] . "." . $vh['hash'];
 
             $response = null;
+
             return $response;
         } catch (Exception $e) {
             $this->utils->exitCode(10, $e);
+
             return $e;
         }
     }
@@ -393,7 +418,7 @@ class ProcessMakerPhpBuilderHelper
         try {
             $this->utils->delTree($this->buildTempDir);
         } catch (Exception $e) {
-
+            $this->utils->log($e);
         }
     }
 }
@@ -410,6 +435,8 @@ class PhpBuilderUtils
      * @var string
      */
     public $extensionsJsConfig;
+    public $logger;
+    public $logDir;
 
     /**
      * Class constructor.
@@ -419,6 +446,8 @@ class PhpBuilderUtils
     {
         $this->extensionsJsConfig = "";
         $this->silentMode = false;
+        $this->logger = array();
+        $this->logDir = "";
     }
 
     /**
@@ -443,6 +472,16 @@ class PhpBuilderUtils
     }
 
     /**
+     * Logger function.
+     *
+     * @param mixed $e
+     */
+    public function  log($e)
+    {
+        $this->logger[] = $e;
+    }
+
+    /**
      * Recursive copy of directories,
      * can be updated with compare values and overwrite if newer
      * @param string $src Source directory
@@ -452,15 +491,37 @@ class PhpBuilderUtils
      */
     function recCopy($src, $dst, $delete = false)
     {
-        if ($delete && file_exists($dst)) $this->delTree($dst);
+        if ($delete && file_exists($dst)) {
+            $this->delTree($dst);
+        }
         if (is_dir($src)) {
-            if (!file_exists($dst)) {
+            if (!file_exists($dst) && is_writable($dst)) {
                 mkdir($dst);
+            } else {
+                $this->log("File doesn't exist or directory is not writable, file: $dst \n");
             }
             $files = scandir($src);
-            foreach ($files as $file)
-                if ($file != "." && $file != "..") $this->recCopy("$src/$file", "$dst/$file");
-        } else if (file_exists($src)) copy($src, $dst);
+            foreach ($files as $file) {
+                if ($file != "." && $file != "..") {
+                    $this->recCopy("$src/$file", "$dst/$file");
+                }
+            }
+        } else {
+            $this->copy($src, $dst);
+        }
+    }
+
+    public function copy($src, $dst)
+    {
+        try {
+            if (file_exists($src) && is_writable($dst)) {
+                copy($src, $dst);
+            } else {
+                $this->log("File doesn't exist or directory is not writable, file: $dst \n");
+            }
+        } catch (Exception $e) {
+            $this->log($e);
+        }
     }
 
     /**
@@ -474,10 +535,10 @@ class PhpBuilderUtils
      */
     function copyIfExist($source, $file, $dest, $destFile, $tmp)
     {
-        if (!file_exists($tmp . $file)) {
-            copy($tmp . $file, $dest . $destFile);
+        if (file_exists($tmp . $file)) {
+            $this->copy($tmp . $file, $dest . $destFile);
         } else {
-            copy($source . $file, $dest . $destFile);
+            $this->copy($source . $file, $dest . $destFile);
         }
     }
 
@@ -492,9 +553,26 @@ class PhpBuilderUtils
         $parts = explode('/', $dir);
         $file = array_pop($parts);
         $dir = '';
-        foreach ($parts as $part)
-            if (!is_dir($dir .= "/$part")) mkdir($dir);
-        file_put_contents("$dir/$file", $contents);
+        foreach ($parts as $part) {
+            if (!is_dir($dir .= "/$part")) {
+                mkdir($dir);
+            }
+        }
+        $this->file_put_contents("/$file", $dir, $contents);
+    }
+
+    public function file_put_contents($file, $dir = "", $contents)
+    {
+        $dst = $dir . $file;
+        try {
+            if (is_writable($dir)) {
+                file_put_contents($dst, $contents);
+            } else {
+                $this->log("Cannot write file, check directory permissions, file: $dst \n");
+            }
+        } catch (Exception $e) {
+            $this->log($e);
+        }
     }
 
     /**
@@ -568,6 +646,7 @@ class PhpBuilderUtils
         foreach ($files as $file) {
             (is_dir("$dir/$file")) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
         }
+
         return rmdir($dir);
     }
 
@@ -645,7 +724,7 @@ class PhpBuilderUtils
         } else {
             $current = $contents;
         }
-        file_put_contents($directory . "/" . $filename, $current);
+        $this->file_put_contents("/$filename", $directory, $current);
     }
 
     /**
@@ -667,6 +746,7 @@ class PhpBuilderUtils
                 $zip->addFile($file, $newFile);
             }
         }
+
         return $zip;
     }
 
@@ -703,7 +783,9 @@ class PhpBuilderUtils
     {
         $arrayItems = array();
         $skipByExclude = false;
-        if (!file_exists($directory)) return $arrayItems;
+        if (!file_exists($directory)) {
+            return $arrayItems;
+        }
         $handle = opendir($directory);
         if ($handle) {
             while (false !== ($file = readdir($handle))) {
@@ -714,7 +796,9 @@ class PhpBuilderUtils
                 if (!$skip && !$skipByExclude) {
                     if (is_dir($directory . DIRECTORY_SEPARATOR . $file)) {
                         if ($recursive) {
-                            $arrayItems = array_merge($arrayItems, $this->directoryToArray($directory . DIRECTORY_SEPARATOR . $file, $recursive, $listDirs, $listFiles, $exclude));
+                            $arrayItems = array_merge($arrayItems,
+                                $this->directoryToArray($directory . DIRECTORY_SEPARATOR . $file, $recursive, $listDirs,
+                                    $listFiles, $exclude));
                         }
                         if ($listDirs) {
                             $file = $directory . DIRECTORY_SEPARATOR . $file;
@@ -730,6 +814,7 @@ class PhpBuilderUtils
             }
             closedir($handle);
         }
+
         return $arrayItems;
     }
 
@@ -760,7 +845,8 @@ class PhpBuilderUtils
         switch ($lib->extension) {
             case "js":
                 $this->echoContent("Building Js File");
-                $this->minifyFiles($lib->name, 'js', $files, $source . "/" . $sourceFrom, $target . "/$target_dir", $addPluginFiles);
+                $this->minifyFiles($lib->name, 'js', $files, $source . "/" . $sourceFrom, $target . "/$target_dir",
+                    $addPluginFiles);
                 break;
             case "css":
                 $this->echoContent("Building Css File");
@@ -791,8 +877,10 @@ class PhpBuilderUtils
             $content = "";
             $content = $content . $this->joinFiles($basePath, $files, $addPlugin);
             $this->file_force_contents($minifiedPath, $content);
+
             return $content;
         }
+
         return false;
     }
 
@@ -807,6 +895,7 @@ class PhpBuilderUtils
         foreach ($pluginDir as $key => $row) {
             $pluginDir[$key] = $row . $pluginAdd;
         }
+
         return $pluginDir;
     }
 
@@ -821,6 +910,7 @@ class PhpBuilderUtils
         foreach ($pluginDir as $key => $row) {
             $pluginDir[$key] = $baseDir . '/' . $row;
         }
+
         return $pluginDir;
     }
 
@@ -846,6 +936,7 @@ class PhpBuilderUtils
                 }
             }
         }
+
         return $content;
     }
 
@@ -859,6 +950,7 @@ class PhpBuilderUtils
         $values = [];
         $values['hash'] = substr(md5($source), 0, 7);
         $values['version'] = '1.0.0';
+
         return $values;
     }
 
@@ -877,6 +969,7 @@ class PhpBuilderUtils
         $values = [];
         $values['hash'] = !empty($hashes[0]) ? $hashes[0] : '';
         $values['version'] = !empty($version[0]) ? $version[0] : '';
+
         return $values;
     }
 
@@ -923,8 +1016,6 @@ Build options:
 
     Will clean the cache directory.
 
-See also: https://bitbucket.com/processmaker/this/page/doesnt/exist/pmphpbuild
-
 END;
     }
 
@@ -969,6 +1060,7 @@ END;
                 $this->echoContent("Exit Code Not found, exit anyway lol");
                 break;
         }
+        $this->writeToFile("build.log", $this->logDir, $this->logger);
         exit($code);
     }
 
@@ -999,6 +1091,7 @@ END;
                 }
             }
         }
+
         return $config;
     }
 
@@ -1021,7 +1114,6 @@ END;
             "workflow/public_html/lib/mafe/mafe.min.js",
             "workflow/public_html/lib/mafe/designer.min.js",
             "gulliver/js/tinymce/jscripts/tiny_mce/tiny_mce.js",
-
             "gulliver/js/tinymce/jscripts/tiny_mce/plugins/pmGrids/editor_plugin.js",
             "gulliver/js/tinymce/jscripts/tiny_mce/plugins/pmSimpleUploader/editor_plugin.js",
             "gulliver/js/tinymce/jscripts/tiny_mce/plugins/pmVariablePicker/editor_plugin.js",
@@ -1063,7 +1155,6 @@ END;
             "gulliver/js/tinymce/jscripts/tiny_mce/plugins/advlink/editor_plugin.js",
             "gulliver/js/tinymce/jscripts/tiny_mce/plugins/advimage/editor_plugin.js",
             "gulliver/js/tinymce/jscripts/tiny_mce/plugins/nonbreaking/editor_plugin.js",
-
             "gulliver/js/codemirror/lib/codemirror.js",
             "gulliver/js/codemirror/addon/hint/show-hint.js",
             "gulliver/js/codemirror/addon/hint/javascript-hint.js",
@@ -1251,7 +1342,8 @@ END;
             "src/models/PanelField.js",
             "src/extends/core/get_scripts.js"
         ];
-        $index = ['appMobile/form-dev.html',
+        $index = [
+            'appMobile/form-dev.html',
             "src/templates/template.html",
             "src/templates/controls.html",
             "src/templates/GridTemplate.html",
@@ -1281,10 +1373,10 @@ END;
 
         $this->minifyFiles('pmDynaform', 'js', $minified, $source . "/", $dev . "/js/", false);
         $this->recCopy($source . "/libs", $dev . "/libs", false);
-        copy($source . "/appMobile/appBuild.js", $dev . "/appBuild.js");
-        copy($source . "/img/geoMap.jpg", $dev . "/geoMap.jpg");
+        $this->copy($source . "/appMobile/appBuild.js", $dev . "/appBuild.js");
+        $this->copy($source . "/img/geoMap.jpg", $dev . "/geoMap.jpg");
         $htmlFile = $this->joinFiles($source, $index);
-        file_put_contents($dev . "/index.html", $htmlFile);
+        $this->file_put_contents("/index.html", $dev, $htmlFile);
 
         $cssmin = [
             "libs/bootstrap-3.1.1/css/bootstrap.min.css",
@@ -1300,7 +1392,8 @@ END;
             "libs/restclient/restclient.js",
             "js/pmDynaform.js"
         ];
-        $index = ["appMobile/form-prod.html",
+        $index = [
+            "appMobile/form-prod.html",
             "src/templates/template.html",
             "src/templates/controls.html",
             "src/templates/GridTemplate.html",
@@ -1332,11 +1425,11 @@ END;
         $this->minifyFiles('pmDynaform.min', 'css', $cssmin, $dev . "/", $prod . "/css/", false);
         $this->minifyFiles('pmDynaform.min', 'js', $minified, $dev . "/", $prod . "/js/", false);
 
-        copy($source . "/appMobile/appBuild.js", $prod . "/appBuild.js");
-        copy($source . "/img/geoMap.jpg", $prod . "/geoMap.jpg");
+        $this->copy($source . "/appMobile/appBuild.js", $prod . "/appBuild.js");
+        $this->copy($source . "/img/geoMap.jpg", $prod . "/geoMap.jpg");
         $this->recCopy($source . "/img", $prod . "/img", false);
         $htmlFile = $this->joinFiles($source, $index);
-        file_put_contents($prod . "/index.html", $htmlFile);
+        $this->file_put_contents("/index.html", $prod, $htmlFile);
 
 
         // Create Zip File
@@ -1347,8 +1440,9 @@ END;
         $zipFile->open($outputFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
         $zipFile = $this->addDirectoryToZip($zipFile, $prod, $directoryToZip);
         $zipFile->close();
-
-        copy($outputFile, $target . "/build-prod.zip");
+        if (file_exists($outputFile)) {
+            copy($outputFile, $target . "/build-prod.zip");
+        }
         $this->echoFooter("PMUI Dynaform Zip Finished!");
     }
 }
@@ -1365,14 +1459,6 @@ class Versions
     public $mafe_hash = "";
     public $pmdynaform_ver = "";
     public $pmdynaform_hash = "";
-
-    /**
-     * Class Constructor
-     */
-    public function __construct()
-    {
-
-    }
 
     /**
      * Get Function of class key

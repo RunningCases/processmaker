@@ -60,8 +60,6 @@ include_once 'phing/system/util/Register.php';
  */
 class Phing {
 
-    const inclDir = 'include_path';
-
     /** The default build file name */
     const DEFAULT_BUILD_FILENAME = "build.xml";
 
@@ -860,9 +858,7 @@ class Phing {
                 }
                 $firstPath = explode(":", implode(PATH_SEPARATOR, array_merge($new_parts, $curr_parts)));
                 if (is_dir($firstPath[0])) {
-                    $sPath = implode(PATH_SEPARATOR, array_merge($new_parts, $curr_parts))
-                    $inclDir = self::inclDir;
-                    ini_set($inclDir, $sPath);
+                    ini_set('include_path', implode(PATH_SEPARATOR, array_merge($new_parts, $curr_parts)));
                 }
             }
         }
