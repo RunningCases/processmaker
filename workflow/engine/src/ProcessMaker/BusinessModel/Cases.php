@@ -2887,6 +2887,53 @@ class Cases
 
         $dataResponse = $data;
 
+        //Verify data
+        $arrayCasesToReassign = $data['cases'];
+
+        $arrayMsg = [];
+
+        foreach($arrayCasesToReassign as $key => $value) {
+            $appDelegation = \AppDelegationPeer::retrieveByPK($value['APP_UID'], $value['DEL_INDEX']);
+
+            if (is_null($appDelegation)) {
+                $arrayMsg[] = [
+                    'app_uid' => $value['APP_UID'],
+                    'del_index' => $value['DEL_INDEX'],
+                    'result' => 0,
+                    'status' => 'DELEGATION_NOT_EXISTS'
+                ];
+            }
+        }
+
+        if (!empty($arrayMsg)) {
+            return  ['cases' => $arrayMsg];
+        }
+
+        $task = new \ProcessMaker\BusinessModel\Task();
+        $userUid = $data['usr_uid_target'];
+
+        foreach($arrayCasesToReassign as $value) {
+            $appDelegation = \AppDelegationPeer::retrieveByPK($value['APP_UID'], $value['DEL_INDEX']);
+
+            //Verify data
+            $taskUid = $appDelegation->getTasUid();
+
+            $flagBoolean = $task->checkUserOrGroupAssignedTask($taskUid, $userUid);
+
+            if (!$flagBoolean) {
+                $arrayMsg[] = [
+                    'app_uid' => $value['APP_UID'],
+                    'del_index' => $value['DEL_INDEX'],
+                    'result' => 0,
+                    'status' => 'USER_NOT_ASSIGNED_TO_TASK'
+                ];
+            }
+        }
+
+        if (!empty($arrayMsg)) {
+            return  ['cases' => $arrayMsg];
+        }
+
         G::LoadClass( 'case' );
         $oCases = new \Cases();
         $appDelegation = new \AppDelegation();
@@ -2908,6 +2955,7 @@ class Cases
                 $reassigned = $oCases->reassignCase($val['APP_UID'], $val['DEL_INDEX'], $usrUid, $data['usr_uid_target']);
                 $result = $reassigned ? 1 : 0 ;
                 $dataResponse['cases'][$key]['result'] = $result;
+                $dataResponse['cases'][$key]['status'] = 'SUCCESS';
             }
         }
         unset($dataResponse['usr_uid_target']);

@@ -29,6 +29,53 @@ class Cases extends Api
         "note_date"
     ];
 
+    public function __isAllowed()
+    {
+        try {
+            $methodName = $this->restler->apiMethodInfo->methodName;
+
+            switch ($methodName) {
+                case 'doPostReassign':
+                    $arrayParameters = $this->parameters[0]['cases'];
+                    $usrUid = $this->getUserId();
+
+                    //Check if the user is supervisor process
+                    $case = new \ProcessMaker\BusinessModel\Cases();
+                    $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
+                    $user = new \ProcessMaker\BusinessModel\User();
+
+                    $count = 0;
+
+                    foreach ($arrayParameters as $value) {
+                        $arrayApplicationData = $case->getApplicationRecordByPk($value['APP_UID'], [], false);
+
+                        if (!empty($arrayApplicationData)) {
+                            $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
+                            $flagps = $supervisor->isUserProcessSupervisor($arrayApplicationData['PRO_UID'], $usrUid);
+
+                            if ($flagps) {
+                                if (!$user->checkPermission($usrUid, 'PM_REASSIGNCASE')) {
+                                    $count = $count + 1;
+                                }
+                            } else {
+                                $count = $count + 1;
+                            }
+                        }
+                    }
+
+                    if ($count == 0) {
+                        return true;
+                    }
+                    break;
+            }
+
+            //Return
+            return false;
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
     /**
      * Get list Cases To Do
      *
@@ -1154,6 +1201,11 @@ class Cases extends Api
      * Batch reassign
      * @url POST /reassign
      *
+     * @access protected
+     * @class  AccessControl {@className \ProcessMaker\Services\Api\Cases}
+     *
+     * @param array $request_data
+     *
      */
     public function doPostReassign($request_data)
     {
@@ -1165,5 +1217,4 @@ class Cases extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
-
 }
