@@ -38,4 +38,9 @@ class RoutingScreen extends \Derivation
         return $aDataMerged;
     }
 
+    public function prepareRoutingScreen($arrayData)
+    {
+        return $this->postSanity($this->prepareInformation($arrayData));
+    }
+
 }
