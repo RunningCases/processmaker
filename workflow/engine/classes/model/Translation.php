@@ -498,7 +498,7 @@ class Translation extends BaseTranslation
             }
         }
 
-        return $this->sort_col($environments, 'LANGUAGE');
+        return $this->sortByColumn($environments, 'LANGUAGE');
 
         /*
         G::LoadSystem('dbMaintenance');
@@ -526,7 +526,7 @@ class Translation extends BaseTranslation
      *          string $colname
      *          bool   $numeric
      **/
-    function sort_col($table, $colname) {
+    function sortByColumn($table, $colname) {
         $tn = $ts = $temp_num = $temp_str = array();
         foreach ($table as $key => $row) {
             if(is_numeric(substr($row[$colname], 0, 1))) {
