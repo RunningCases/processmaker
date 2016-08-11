@@ -9,6 +9,7 @@ class RoutingScreen extends \Derivation
     {
         parent::__construct();
         $this->setRegexpTaskTypeToInclude("GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT|INTERMEDIATE-CATCH-TIMER-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT");
+        $this->flagSanity = true;
     }
 
     public function mergeDataDerivation($post, $prepareInformation)

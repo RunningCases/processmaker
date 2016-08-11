@@ -56,7 +56,6 @@ class Derivation
     public function __construct()
     {
         $this->setRegexpTaskTypeToInclude("GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT");
-        $this->flagSanity = true;
     }
 
     /**
