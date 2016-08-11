@@ -526,7 +526,7 @@ class Translation extends BaseTranslation
      *          string $colname
      *          bool   $numeric
      **/
-    function sortByColumn($table, $colname) {
+    public function sortByColumn($table, $colname) {
         $tn = $ts = $temp_num = $temp_str = array();
         foreach ($table as $key => $row) {
             if(is_numeric(substr($row[$colname], 0, 1))) {
