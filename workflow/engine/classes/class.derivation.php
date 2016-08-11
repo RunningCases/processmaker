@@ -258,8 +258,10 @@ class Derivation
             }
 
             //Check Task GATEWAYTOGATEWAY, END-MESSAGE-EVENT, END-EMAIL-EVENT
-            $arrayNextTaskBackup = $this->preSanity($arrayNextTask);
-
+            $arrayNextTaskBackup = $arrayNextTask;
+            if ($this->flagSanity) {
+                $arrayNextTaskBackup = $this->preSanity($arrayNextTask);
+            }
             $arrayNextTask = array();
             $i = 0;
             foreach ($arrayNextTaskBackup as $value) {
@@ -376,7 +378,7 @@ class Derivation
         if ($arrayNextTask) {
             $arrayTask = array();
             $arrayNotTask = array();
-            $regex = "GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT|SCRIPT-TASK|INTERMEDIATE-CATCH-TIMER-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT";
+            $regex = "GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT|INTERMEDIATE-CATCH-TIMER-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT";
             foreach ($arrayNextTask as $index => $item) {
                 if (($item["NEXT_TASK"]["TAS_UID"] != "-1" &&
                         preg_match("/^(?:" . $regex . ")$/", $item["NEXT_TASK"]["TAS_TYPE"]))
