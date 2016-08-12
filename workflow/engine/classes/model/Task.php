@@ -452,6 +452,26 @@ class Task extends BaseTask
         return $row;
     }
 
+    /**
+     * @param $pro_uid
+     * @param $tas
+     * @return array
+     */
+    public function getEmailServerSettingsForNotification($pro_uid, $tas)
+    {
+        $oCriteria = new Criteria();
+        $oCriteria->clearSelectColumns();
+        $oCriteria->addSelectColumn(TaskPeer::TAS_NOT_EMAIL_FROM_FORMAT);
+        $oCriteria->add(TaskPeer::PRO_UID, $pro_uid );
+        $oCriteria->add(TaskPeer::TAS_UID, $tas );
+        $rs = TaskPeer::doSelectRS($oCriteria);
+        $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $rs->next();
+        $row = $rs->getRow();
+
+        return $row;
+    }
+
     public function load($TasUid)
     {
         try {

@@ -352,6 +352,12 @@ abstract class BaseTask extends BaseObject implements Persistent
     protected $tas_selfservice_execution = 'EVERY_TIME';
 
     /**
+     * The value for the tas_not_email_from_format field.
+     * @var        int
+     */
+    protected $tas_not_email_from_format = 0;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -957,6 +963,17 @@ abstract class BaseTask extends BaseObject implements Persistent
     {
 
         return $this->tas_selfservice_execution;
+    }
+
+    /**
+     * Get the [tas_not_email_from_format] column value.
+     * 
+     * @return     int
+     */
+    public function getTasNotEmailFromFormat()
+    {
+
+        return $this->tas_not_email_from_format;
     }
 
     /**
@@ -2136,6 +2153,28 @@ abstract class BaseTask extends BaseObject implements Persistent
     } // setTasSelfserviceExecution()
 
     /**
+     * Set the value of [tas_not_email_from_format] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setTasNotEmailFromFormat($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->tas_not_email_from_format !== $v || $v === 0) {
+            $this->tas_not_email_from_format = $v;
+            $this->modifiedColumns[] = TaskPeer::TAS_NOT_EMAIL_FROM_FORMAT;
+        }
+
+    } // setTasNotEmailFromFormat()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -2260,12 +2299,14 @@ abstract class BaseTask extends BaseObject implements Persistent
 
             $this->tas_selfservice_execution = $rs->getString($startcol + 53);
 
+            $this->tas_not_email_from_format = $rs->getInt($startcol + 54);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 54; // 54 = TaskPeer::NUM_COLUMNS - TaskPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 55; // 55 = TaskPeer::NUM_COLUMNS - TaskPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Task object", $e);
@@ -2631,6 +2672,9 @@ abstract class BaseTask extends BaseObject implements Persistent
             case 53:
                 return $this->getTasSelfserviceExecution();
                 break;
+            case 54:
+                return $this->getTasNotEmailFromFormat();
+                break;
             default:
                 return null;
                 break;
@@ -2705,6 +2749,7 @@ abstract class BaseTask extends BaseObject implements Persistent
             $keys[51] => $this->getTasSelfserviceTimeUnit(),
             $keys[52] => $this->getTasSelfserviceTriggerUid(),
             $keys[53] => $this->getTasSelfserviceExecution(),
+            $keys[54] => $this->getTasNotEmailFromFormat(),
         );
         return $result;
     }
@@ -2897,6 +2942,9 @@ abstract class BaseTask extends BaseObject implements Persistent
                 break;
             case 53:
                 $this->setTasSelfserviceExecution($value);
+                break;
+            case 54:
+                $this->setTasNotEmailFromFormat($value);
                 break;
         } // switch()
     }
@@ -3137,6 +3185,10 @@ abstract class BaseTask extends BaseObject implements Persistent
             $this->setTasSelfserviceExecution($arr[$keys[53]]);
         }
 
+        if (array_key_exists($keys[54], $arr)) {
+            $this->setTasNotEmailFromFormat($arr[$keys[54]]);
+        }
+
     }
 
     /**
@@ -3364,6 +3416,10 @@ abstract class BaseTask extends BaseObject implements Persistent
             $criteria->add(TaskPeer::TAS_SELFSERVICE_EXECUTION, $this->tas_selfservice_execution);
         }
 
+        if ($this->isColumnModified(TaskPeer::TAS_NOT_EMAIL_FROM_FORMAT)) {
+            $criteria->add(TaskPeer::TAS_NOT_EMAIL_FROM_FORMAT, $this->tas_not_email_from_format);
+        }
+
 
         return $criteria;
     }
@@ -3523,6 +3579,8 @@ abstract class BaseTask extends BaseObject implements Persistent
         $copyObj->setTasSelfserviceTriggerUid($this->tas_selfservice_trigger_uid);
 
         $copyObj->setTasSelfserviceExecution($this->tas_selfservice_execution);
+
+        $copyObj->setTasNotEmailFromFormat($this->tas_not_email_from_format);
 
 
         $copyObj->setNew(true);

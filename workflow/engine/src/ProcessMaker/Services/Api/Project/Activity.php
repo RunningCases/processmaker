@@ -356,5 +356,10 @@ class ActivityPropertiesStructure
      * @var string {@from body} {@required false}
      */
     public $tas_def_message_template;
+
+    /**
+     * @var int {@from body} {@required false}
+     */
+    public $tas_not_email_from_format;
 }
 
