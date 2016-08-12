@@ -633,7 +633,7 @@ function ftp_put(&$control, $remote, $local, $mode, $pos = 0)
  * @access public
  * @return boolean
  */
-function ftp_get(&$control, $local, $remote, $mode, $resume = 0)
+function ftp_get(&$control, $local, $remote, $mode, $resume = 0, $wr='w')
 {
     if (!class_exists('G')) {
         $realdocuroot = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT']);
@@ -672,7 +672,7 @@ function ftp_get(&$control, $local, $remote, $mode, $resume = 0)
     }
 
     if(is_file($filter->validatePath($local))) {
-        $var = 'w'.$windows[$mode];
+        $var = $wr.$windows[$mode];
         $fp = fopen($filter->validatePath($local), $var);
     } else {
         $fp = false;
