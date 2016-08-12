@@ -52,6 +52,7 @@ class Derivation
     protected $flagControlMulInstance;
     private $regexpTaskTypeToInclude;
     public $flagSanity = false;
+    public $node;
 
     public function __construct()
     {
@@ -259,18 +260,19 @@ class Derivation
             //Check Task GATEWAYTOGATEWAY, END-MESSAGE-EVENT, END-EMAIL-EVENT
             $arrayNextTaskBackup = $arrayNextTask;
             if ($this->flagSanity) {
-                $arrayNextTaskBackup = $this->preSanity($arrayNextTask);
+                //$arrayNextTaskBackup = $this->preSanity($arrayNextTask);
             }
             $arrayNextTask = array();
             $i = 0;
             foreach ($arrayNextTaskBackup as $value) {
                 $arrayNextTaskData = $value;
-
+                $this->node[$value['TAS_UID']]['out'][$value['ROU_NEXT_TASK']] = $value['ROU_TYPE'];
+                //$this->node[$value['TAS_UID']]['type'][] = $value['ROU_TYPE'];
                 if ($arrayNextTaskData["NEXT_TASK"]["TAS_UID"] != "-1" &&
                     preg_match("/^(?:" . $this->regexpTaskTypeToInclude . ")$/", $arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"])
                 ) {
                     $arrayAux = $this->prepareInformation($arrayData, $arrayNextTaskData["NEXT_TASK"]["TAS_UID"]);
-
+                    $this->node[$value['ROU_NEXT_TASK']]['in'][$value['TAS_UID']] = $value['ROU_TYPE'];
                     foreach ($arrayAux as $value2) {
                         $key = ++$i;
                         $arrayNextTask[$key] = $value2;
