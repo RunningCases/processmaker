@@ -103,7 +103,7 @@ class RoutingScreen extends \Derivation
             }
             $this->checkElement($this->node[$indexI]);
         }
-        return count($this->convergent) == 0 || count($this->convergent) == count($this->divergent);
+        return count($this->convergent) == 0 || count($this->divergent) == 0 || count($this->convergent) == count($this->divergent);
     }
 
 }
