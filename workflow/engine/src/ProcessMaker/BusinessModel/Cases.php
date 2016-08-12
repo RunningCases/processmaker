@@ -2962,5 +2962,25 @@ class Cases
 
         return G::json_encode($dataResponse);
     }
+    
+    /**
+     * if case already routed
+     * 
+     * @param type $app_uid
+     * @param type $del_index
+     * @param type $usr_uid
+     * @throws type
+     */
+    public function caseAlreadyRouted($app_uid, $del_index, $usr_uid = '')
+    {
+        $c = new \Criteria('workflow');
+        $c->add(\AppDelegationPeer::APP_UID, $app_uid);
+        $c->add(\AppDelegationPeer::DEL_INDEX, $del_index);
+        if (!empty($usr_uid)) {
+            $c->add(\AppDelegationPeer::USR_UID, $usr_uid);
+        }
+        $c->add(\AppDelegationPeer::DEL_FINISH_DATE, null, \Criteria::ISNULL);
+        return !(boolean) \AppDelegationPeer::doCount($c);
+    }
 }
 
