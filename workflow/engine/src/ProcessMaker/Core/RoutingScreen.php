@@ -80,12 +80,9 @@ class RoutingScreen extends \Derivation
         }
         return array_combine(range(1, count($response)), array_values($response));
     }
-    
+
     public function checkElement($element)
     {
-        if (empty($element['in'])) {
-            return true;
-        }
         $outElement = $element['out'];
         foreach ($outElement as $indexO => $outE) {
             if (!$this->isFirst && in_array($outE, $this->gateway)) {
@@ -95,11 +92,14 @@ class RoutingScreen extends \Derivation
                 $this->taskSecJoin[$indexO] = $outE;
             }
         }
+        if (empty($element['in'])) {
+            return true;
+        }
         $this->isFirst = false;
         $inElement = $element['in'];
         foreach ($inElement as $indexI => $inE) {
-            if ($inE == 'SEC-JOIN') {
-                $this->convergent[$indexI]=$inE;
+            if ($inE == 'SEC-JOIN' && strpos($indexI, 'itee') !== false) {
+                $this->convergent[$indexI] = $inE;
             }
             $this->checkElement($this->node[$indexI]);
         }
