@@ -69,6 +69,12 @@ class workspaceTools
         CLI::logging("<*>   Database Upgrade Process took " . ($stop - $start) . " seconds.\n");
 
         $start = microtime(true);
+        CLI::logging("> Check Intermediate Email Event...\n");
+        $this->checkIntermediateEmailEvent();
+        $stop = microtime(true);
+        CLI::logging("<*>   Database Upgrade Process took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
         CLI::logging("> Verify enterprise old...\n");
         $this->verifyFilesOldEnterprise($workSpace);
         $stop = microtime(true);
@@ -143,6 +149,22 @@ class workspaceTools
         $stop = microtime(true);
         $final = $stop - $start;
         CLI::logging("<*>   Database Upgrade Structure Process took $final seconds.\n");
+    }
+
+    public function checkIntermediateEmailEvent()
+    {
+        $oEmailEvent = new \ProcessMaker\BusinessModel\EmailEvent();
+        $oEmailServer = new \ProcessMaker\BusinessModel\EmailServer();
+        $oCriteria = $oEmailEvent->getEmailEventCriteriaEmailServer();
+        $rsCriteria = \EmailServerPeer::doSelectRS($oCriteria);
+        $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        while ($rsCriteria->next()) {
+            $row = $rsCriteria->getRow();
+            $newUidData = $oEmailServer->getUidEmailServer($row['EMAIL_EVENT_FROM']);
+            if (is_array($newUidData)) {
+                $oEmailEvent->update($row['EMAIL_EVENT_UID'], $newUidData);
+            }
+        }
     }
 
     /**

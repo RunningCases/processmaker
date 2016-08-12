@@ -949,6 +949,12 @@ class wsBase
                 }
 
                 $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : System::getEmailConfiguration();
+
+                if (!isset($aSetup['MESS_ENABLED'])) {
+                    $aSetup['MESS_ENABLED'] = 1;
+                    $aSetup['SMTPSecure'] = $aSetup['SMTPSECURE'];
+                    unset($aSetup['SMTPSECURE']);
+                }
             } else {
             /*----------------------------------********---------------------------------*/
                 $aSetup = System::getEmailConfiguration();
