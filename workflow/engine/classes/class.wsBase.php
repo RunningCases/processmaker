@@ -2878,10 +2878,6 @@ class wsBase
              */
             $oCriteria = new Criteria( 'workflow' );
             $aConditions = array ();
-            // $aConditions[] = array(AppDelegationPeer::USR_UID, TaskUserPeer::USR_UID);
-            // $aConditions[] = array(AppDelegationPeer::TAS_UID, TaskUserPeer::TAS_UID);
-            // $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-            //$oCriteria->addJoin(AppDelegationPeer::USR_UID, TaskUserPeer::USR_UID, Criteria::LEFT_JOIN);
             $oCriteria->add( AppDelegationPeer::APP_UID, $caseId );
             $oCriteria->add( AppDelegationPeer::USR_UID, $userIdSource );
             $oCriteria->add( AppDelegationPeer::DEL_INDEX, $delIndex );
