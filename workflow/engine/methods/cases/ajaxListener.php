@@ -603,7 +603,7 @@ class Ajax
             $cases->reassignCase($_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED'], $TO_USR_UID);
             $caseData = $app->load($_SESSION['APPLICATION']);
             $userData = $user->load($TO_USR_UID);
-            //print_r($caseData);
+
             $data['APP_NUMBER'] = $caseData['APP_NUMBER'];
             $data['USER'] = $userData['USR_LASTNAME'] . ' ' . $userData['USR_FIRSTNAME']; //TODO change with the farmated username from environment conf
             $result->status = 0;

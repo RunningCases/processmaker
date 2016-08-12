@@ -7060,7 +7060,10 @@ class Cases
         $rows = array();
         $rs->next();
         while ($row = $rs->getRow()) {
-            $rows[$row['USR_UID']] = $row;
+            //In some cases the thread does not have a User Script task, Itee
+            if($row['USR_UID'] !== ''){
+                $rows[$row['USR_UID']] = $row;
+            }
             $rs->next();
         }
         $response['criteria'] = $c;
