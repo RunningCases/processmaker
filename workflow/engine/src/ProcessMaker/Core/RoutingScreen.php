@@ -5,11 +5,16 @@ namespace ProcessMaker\Core;
 
 class RoutingScreen extends \Derivation
 {
+    protected $convergent;
+    protected $divergent;
+    public $gateway = array('PARALLEL', 'PARALLEL-BY-EVALUATION');
+    public $isFirst;
+    protected $taskSecJoin;
+
     public function __construct()
     {
         parent::__construct();
         $this->setRegexpTaskTypeToInclude("GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT|INTERMEDIATE-CATCH-TIMER-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT");
-        $this->flagSanity = true;
     }
 
     public function mergeDataDerivation($post, $prepareInformation)
@@ -40,7 +45,65 @@ class RoutingScreen extends \Derivation
 
     public function prepareRoutingScreen($arrayData)
     {
-        return $this->postSanity($this->prepareInformation($arrayData));
+        $information= $this->prepareInformation($arrayData);
+        $response = array();
+        $this->taskSecJoin = array();
+        foreach ($information as $index => $element) {
+            $this->divergent = array();
+            $this->convergent = array();
+            $this->isFirst = true;
+            $x = $this->checkElement($this->node[$element['TAS_UID']]);
+            if ($x) {
+                $save = false;
+                foreach ($response as $task) {
+                    if (!in_array($element['ROU_NEXT_TASK'], $task, true)) {
+                        $save = true;
+                    }
+                }
+                if ((!$response || $save)) {
+                    $response[] = $element;
+                }
+            }
+        }
+        if(count($response) > 1){
+            foreach ($response as $index => $task) {
+                $delete = false;
+                foreach ($this->taskSecJoin as $tj => $type) {
+                    if (in_array($tj, $task, true)) {
+                        $delete = true;
+                    }
+                }
+                if ($delete) {
+                    unset($response[$index]);
+                }
+            }
+        }
+        return array_combine(range(1, count($response)), array_values($response));
+    }
+    
+    public function checkElement($element)
+    {
+        if (empty($element['in'])) {
+            return true;
+        }
+        $outElement = $element['out'];
+        foreach ($outElement as $indexO => $outE) {
+            if (!$this->isFirst && in_array($outE, $this->gateway)) {
+                $this->divergent[$indexO] = $outE;
+            }
+            if ($outE == 'SEC-JOIN' && strpos($indexO, 'itee') === false) {
+                $this->taskSecJoin[$indexO] = $outE;
+            }
+        }
+        $this->isFirst = false;
+        $inElement = $element['in'];
+        foreach ($inElement as $indexI => $inE) {
+            if ($inE == 'SEC-JOIN') {
+                $this->convergent[$indexI]=$inE;
+            }
+            $this->checkElement($this->node[$indexI]);
+        }
+        return count($this->convergent) == 0 || count($this->convergent) == count($this->divergent);
     }
 
 }
