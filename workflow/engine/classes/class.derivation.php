@@ -51,7 +51,7 @@ class Derivation
     protected $flagControl;
     protected $flagControlMulInstance;
     private $regexpTaskTypeToInclude;
-    public $flagSanity = false;
+//    public $flagSanity = false;
     public $node;
 
     public function __construct()
@@ -259,9 +259,7 @@ class Derivation
 
             //Check Task GATEWAYTOGATEWAY, END-MESSAGE-EVENT, END-EMAIL-EVENT
             $arrayNextTaskBackup = $arrayNextTask;
-            if ($this->flagSanity) {
-                //$arrayNextTaskBackup = $this->preSanity($arrayNextTask);
-            }
+
             $arrayNextTask = array();
             $i = 0;
             foreach ($arrayNextTaskBackup as $value) {
@@ -331,87 +329,6 @@ class Derivation
         } catch (Exception $e) {
             throw $e;
         }
-    }
-
-    public function preSanity($arrayNextTask)
-    {
-        $arrayNextTaskResponse = array();
-        if ($arrayNextTask) {
-            $arrayTask = array();
-            $arrayNotTask = array();
-            $regex = "END-MESSAGE-EVENT|END-EMAIL-EVENT|SCRIPT-TASK|INTERMEDIATE-CATCH-TIMER-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT";
-            foreach ($arrayNextTask as $index => $item) {
-                if (($item["NEXT_TASK"]["TAS_UID"] != "-1" &&
-                    preg_match("/^(?:" . $regex . ")$/", $item["NEXT_TASK"]["TAS_TYPE"]))
-                ) {
-                    $arrayNotTask[] = $index;
-                } else {
-                    $arrayTask[] = $index;
-                }
-            }
-            if ($arrayTask) {
-                foreach ($arrayNotTask as $item) {
-                    unset($arrayNextTask[$item]);
-                }
-                $arrayNextTaskResponse = array_values($arrayNextTask);
-            } else {
-                $pos = array_shift($arrayNotTask);
-                $arrayNextTaskResponse[] = $arrayNextTask[$pos];
-                foreach ($arrayNextTask as $nextTask) {
-                    $flag = false;
-                    foreach ($arrayNextTaskResponse as $task) {
-                        if (!in_array($nextTask['ROU_NEXT_TASK'], $task, true)) {
-                            $flag = true;
-                        }
-                    }
-                    if ($flag) {
-                        $arrayNextTaskResponse[] = $nextTask;
-                    }
-                }
-            }
-        }
-        return $arrayNextTaskResponse;
-    }
-
-    public function postSanity($arrayNextTask)
-    {
-        $arrayNextTaskResponse = array();
-        if ($arrayNextTask) {
-            $arrayTask = array();
-            $arrayNotTask = array();
-            $regex = "GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT|INTERMEDIATE-CATCH-TIMER-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT";
-            foreach ($arrayNextTask as $index => $item) {
-                if (($item["NEXT_TASK"]["TAS_UID"] != "-1" &&
-                        preg_match("/^(?:" . $regex . ")$/", $item["NEXT_TASK"]["TAS_TYPE"]))
-                    || $item['ROU_TYPE'] == "SEC-JOIN"
-                ) {
-                    $arrayNotTask[] = $index;
-                } else {
-                    $arrayTask[] = $index;
-                }
-            }
-            if ($arrayTask) {
-                foreach ($arrayNotTask as $item) {
-                    unset($arrayNextTask[$item]);
-                }
-                $arrayNextTaskResponse = array_values($arrayNextTask);
-            } else {
-                $pos = array_shift($arrayNotTask);
-                $arrayNextTaskResponse[] = $arrayNextTask[$pos];
-                foreach ($arrayNextTask as $nextTask) {
-                    $flag = false;
-                    foreach ($arrayNextTaskResponse as $task) {
-                        if (!in_array($nextTask['ROU_NEXT_TASK'], $task, true)) {
-                            $flag = true;
-                        }
-                    }
-                    if ($flag) {
-                        $arrayNextTaskResponse[] = $nextTask;
-                    }
-                }
-            }
-        }
-        return array_combine(range(1, count($arrayNextTaskResponse)), array_values($arrayNextTaskResponse));
     }
 
     /**
