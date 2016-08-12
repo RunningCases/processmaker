@@ -51,7 +51,6 @@ class Derivation
     protected $flagControl;
     protected $flagControlMulInstance;
     private $regexpTaskTypeToInclude;
-//    public $flagSanity = false;
     public $node;
 
     public function __construct()
@@ -265,7 +264,6 @@ class Derivation
             foreach ($arrayNextTaskBackup as $value) {
                 $arrayNextTaskData = $value;
                 $this->node[$value['TAS_UID']]['out'][$value['ROU_NEXT_TASK']] = $value['ROU_TYPE'];
-                //$this->node[$value['TAS_UID']]['type'][] = $value['ROU_TYPE'];
                 if ($arrayNextTaskData["NEXT_TASK"]["TAS_UID"] != "-1" &&
                     preg_match("/^(?:" . $this->regexpTaskTypeToInclude . ")$/", $arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"])
                 ) {
