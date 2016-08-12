@@ -14,6 +14,7 @@
 class Capsule {
     
     const inclDir = 'include_path';
+    const iniSet = 'ini_set';
     /**
      * Look for templates here (if relative path provided).
      * @var string
@@ -128,12 +129,14 @@ class Capsule {
             $firstPath = explode(":", $path);
             if (is_dir($firstPath[0])) {
                 $inclDir = self::inclDir;
-                ini_set($inclDir, $path);
+                $iniSet  = self::iniSet;
+                $iniSet($inclDir, $path);
             }
         } else {
             if(is_dir($path)) {
                 $inclDir = self::inclDir;
-                ini_set($inclDir, $path);
+                $iniSet  = self::iniSet;
+                $iniSet($inclDir, $path);
             }
         }
                 
