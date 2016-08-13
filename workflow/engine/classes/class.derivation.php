@@ -1132,7 +1132,7 @@ class Derivation
                     break;
             }
 
-            if ($flagUpdateCounters) {
+            if (!is_null($taskNextDel) && !is_null($bpmnActivityNextDel) && $flagUpdateCounters) {
                 $this->derivateUpdateCounters($currentDelegation, $nextDel, $taskNextDel, $appFields, (isset($iNewDelIndex))? $iNewDelIndex : 0, (isset($aSP))? $aSP : null, $removeList);
             }
 
