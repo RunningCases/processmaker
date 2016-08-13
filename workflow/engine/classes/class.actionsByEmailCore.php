@@ -147,7 +147,15 @@ class actionsByEmailCoreClass extends PMPlugin
                             $scriptCode = '';
 
                             $__ABE__ = '';
-                            $link = (G::is_https() ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . SYS_SKIN . '/services/ActionsByEmail';
+                            $conf = new Configurations();
+                            $envSkin = $conf->getConfiguration('SKIN_CRON', '');
+                            $envHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : SERVER_NAME;
+                            $envProtocol = defined("REQUEST_SCHEME") && REQUEST_SCHEME === "https";
+                            $envPort = (SERVER_PORT . "" != "80") ? ":" . SERVER_PORT : "";
+                            if (!empty($envPort) && strpos($envHost, $envPort) === false) {
+                                $envHost = $envHost . $envPort;
+                            }
+                            $link = (G::is_https() || $envProtocol ? 'https://' : 'http://') . $envHost . '/sys' . SYS_SYS . '/' . SYS_LANG . '/' . $envSkin . '/services/ActionsByEmail';
 
                             switch ($configuration['ABE_TYPE']) {
                                 case 'CUSTOM':
