@@ -45,7 +45,7 @@ class RoutingScreen extends \Derivation
 
     public function prepareRoutingScreen($arrayData)
     {
-        $information= $this->prepareInformation($arrayData);
+        $information = $this->prepareInformation($arrayData);
         $response = array();
         $this->taskSecJoin = array();
         foreach ($information as $index => $element) {
@@ -65,7 +65,7 @@ class RoutingScreen extends \Derivation
                 }
             }
         }
-        if(count($response) > 1){
+        if (count($response) > 1) {
             foreach ($response as $index => $task) {
                 $delete = false;
                 foreach ($this->taskSecJoin as $tj => $type) {
