@@ -678,6 +678,7 @@ class pmDynaform
                 var sysLang = \"" . SYS_LANG . "\";
                 var isRTL = \"" . $this->isRTL . "\";
                 var pathRTLCss = \"" . $this->pathRTLCss . "\";
+                var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "null") . ";
                 $(window).load(function ()
                 {
                     var data = jsondata;
@@ -736,6 +737,7 @@ class pmDynaform
                 "var sysLang = '" . SYS_LANG . "';\n" .
                 "var isRTL = " . $this->isRTL . ";\n" .
                 "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
+                "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "null") . ";\n" .
                 "$(window).load(function () {\n" .
                 "    var data = jsondata;\n" .
                 "    window.dynaform = new PMDynaform.core.Project({\n" .
@@ -811,6 +813,7 @@ class pmDynaform
                 "var sysLang = '" . SYS_LANG . "';\n" .
                 "var isRTL = " . $this->isRTL . ";\n" .
                 "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
+                "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "null") . ";\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/cases_Step.js'></script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
@@ -866,6 +869,7 @@ class pmDynaform
             var sysLang = \"" . SYS_LANG . "\";
             var isRTL = \"" . $this->isRTL . "\";
             var pathRTLCss = \"" . $this->pathRTLCss . "\";
+            var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "null") . ";
         </script>
 
         <script type=\"text/javascript\" src=\"/jscore/cases/core/pmDynaform.js\"></script>
@@ -908,6 +912,7 @@ class pmDynaform
                 "var sysLang = '" . SYS_LANG . "';\n" .
                 "var isRTL = " . $this->isRTL . ";\n" .
                 "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
+                "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "null") . ";\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
                 "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
@@ -948,6 +953,7 @@ class pmDynaform
                 "var sysLang = '" . SYS_LANG . "';\n" .
                 "var isRTL = " . $this->isRTL . ";\n" .
                 "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
+                "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "null") . ";\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
                 "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .
@@ -1007,6 +1013,7 @@ class pmDynaform
                 "var sysLang = '" . SYS_LANG . "';\n" .
                 "var isRTL = " . $this->isRTL . ";\n" .
                 "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
+                "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "null") . ";\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .
                 "<div style='width:100%;padding: 0px 10px 0px 10px;margin:15px 0px 0px 0px;'>\n" .

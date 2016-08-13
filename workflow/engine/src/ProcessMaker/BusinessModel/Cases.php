@@ -2951,9 +2951,33 @@ class Cases
                     $fields = $appDelegation->load($val['APP_UID'], $val['DEL_INDEX']);
                     $usrUid = $fields['USR_UID'];
                 }
+                //Will be not able reassign a case when is paused
+                $flagReassign = true;
+                if (!\AppDelay::isPaused($val['APP_UID'], $val['INDEX'])) {
+                    $dataResponse['cases'][$key]['result'] = 0;
+                    $dataResponse['cases'][$key]['status'] = \G::LoadTranslation('ID_REASSIGNMENT_PAUSED_ERROR');
+                    $flagReassign = false;
+                }
 
-                $reassigned = $oCases->reassignCase($val['APP_UID'], $val['DEL_INDEX'], $usrUid, $data['usr_uid_target']);
-                $result = $reassigned ? 1 : 0 ;
+                //Current users of OPEN DEL_INDEX thread
+                $aCurUser = $oAppDel->getCurrentUsers($val['APP_UID'], $val['INDEX']);
+                if(!empty($aCurUser)){
+                    foreach ($aCurUser as $key => $value) {
+                        if($value === $data['usr_uid_target']){
+                            $flagReassign = false;
+                            $result = 1;
+                        }
+                    }
+                }else {
+                    //DEL_INDEX is CLOSED
+                    $dataResponse['cases'][$key]['result'] = 0;
+                    $dataResponse['cases'][$key]['status'] = \G::LoadTranslation('ID_REASSIGNMENT_ERROR');
+                }
+
+                if($flagReassign) {
+                    $reassigned = $oCases->reassignCase($val['APP_UID'], $val['DEL_INDEX'], $usrUid, $data['usr_uid_target']);
+                    $result = $reassigned ? 1 : 0 ;
+                }
                 $dataResponse['cases'][$key]['result'] = $result;
                 $dataResponse['cases'][$key]['status'] = 'SUCCESS';
             }
@@ -2961,6 +2985,26 @@ class Cases
         unset($dataResponse['usr_uid_target']);
 
         return G::json_encode($dataResponse);
+    }
+    
+    /**
+     * if case already routed
+     * 
+     * @param type $app_uid
+     * @param type $del_index
+     * @param type $usr_uid
+     * @throws type
+     */
+    public function caseAlreadyRouted($app_uid, $del_index, $usr_uid = '')
+    {
+        $c = new \Criteria('workflow');
+        $c->add(\AppDelegationPeer::APP_UID, $app_uid);
+        $c->add(\AppDelegationPeer::DEL_INDEX, $del_index);
+        if (!empty($usr_uid)) {
+            $c->add(\AppDelegationPeer::USR_UID, $usr_uid);
+        }
+        $c->add(\AppDelegationPeer::DEL_FINISH_DATE, null, \Criteria::ISNULL);
+        return !(boolean) \AppDelegationPeer::doCount($c);
     }
 }
 
