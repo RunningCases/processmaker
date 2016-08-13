@@ -394,7 +394,7 @@ class Light
      *
      * return array Return an array with Task Case
      */
-    public function GetPrepareInformation($usr_uid, $tas_uid, $app_uid, $del_index = null)
+    public function getPrepareInformation($usr_uid, $tas_uid, $app_uid, $del_index = null)
     {
         try {
             $oCase = new \Cases();
@@ -417,7 +417,8 @@ class Light
             $aData['APP_UID'] = $app_uid;
             $aData['DEL_INDEX'] = $del_index;
             $aData['USER_UID'] = $usr_uid;
-            $derive = $oDerivation->prepareInformation( $aData );
+            $oRoute = new \ProcessMaker\Core\RoutingScreen();
+            $derive = $oRoute->prepareRoutingScreen($aData);
             $response = array();
             foreach ($derive as $sKey => &$aValues) {
                 $sPriority = ''; //set priority value
@@ -452,6 +453,7 @@ class Light
                         $taskAss['delPriority'] = isset($aValues['NEXT_TASK']['DEL_PRIORITY'])?$aValues['NEXT_TASK']['DEL_PRIORITY']:"";
                         $taskAss['taskParent'] = $aValues['NEXT_TASK']['TAS_PARENT'];
                         $taskAss['taskMessage'] = $taskType?$taskMessage:"";
+                        $taskAss['sourceUid'] = $aValues['SOURCE_UID'];
                         $users = array();
                         $users['userId'] = $derive[$sKey]['NEXT_TASK']['USER_ASSIGNED']['USR_UID'];
                         $users['userFullName'] = strip_tags($derive[$sKey]['NEXT_TASK']['USER_ASSIGNED']['USR_FULLNAME']);
@@ -469,6 +471,7 @@ class Light
                         $manual['delPriority'] = isset($aValues['NEXT_TASK']['DEL_PRIORITY'])?$aValues['NEXT_TASK']['DEL_PRIORITY']:"";
                         $manual['taskParent'] = $aValues['NEXT_TASK']['TAS_PARENT'];
                         $manual['taskMessage'] = $taskType?$taskMessage:"";
+                        $manual['sourceUid'] = $aValues['SOURCE_UID'];
                         $Aux = array ();
                         foreach ($aValues['NEXT_TASK']['USER_ASSIGNED'] as $aUser) {
                             $Aux[$aUser['USR_UID']] = $aUser['USR_FULLNAME'];

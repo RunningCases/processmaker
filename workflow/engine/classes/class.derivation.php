@@ -50,6 +50,29 @@ class Derivation
     var $case;
     protected $flagControl;
     protected $flagControlMulInstance;
+    private $regexpTaskTypeToInclude;
+    public $node;
+
+    public function __construct()
+    {
+        $this->setRegexpTaskTypeToInclude("GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT");
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRegexpTaskTypeToInclude()
+    {
+        return $this->regexpTaskTypeToInclude;
+    }
+
+    /**
+     * @param mixed $regexpTaskTypeToInclude
+     */
+    public function setRegexpTaskTypeToInclude($regexpTaskTypeToInclude)
+    {
+        $this->regexpTaskTypeToInclude = $regexpTaskTypeToInclude;
+    }
 
     /**
      * prepareInformationTask
@@ -235,20 +258,21 @@ class Derivation
 
             //Check Task GATEWAYTOGATEWAY, END-MESSAGE-EVENT, END-EMAIL-EVENT
             $arrayNextTaskBackup = $arrayNextTask;
+
             $arrayNextTask = array();
             $i = 0;
             foreach ($arrayNextTaskBackup as $value) {
                 $arrayNextTaskData = $value;
-
-                $regexpTaskTypeToInclude = "GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT";
-
+                $this->node[$value['TAS_UID']]['out'][$value['ROU_NEXT_TASK']] = $value['ROU_TYPE'];
                 if ($arrayNextTaskData["NEXT_TASK"]["TAS_UID"] != "-1" &&
-                    preg_match("/^(?:" . $regexpTaskTypeToInclude . ")$/", $arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"])
+                    preg_match("/^(?:" . $this->regexpTaskTypeToInclude . ")$/", $arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"])
                 ) {
                     $arrayAux = $this->prepareInformation($arrayData, $arrayNextTaskData["NEXT_TASK"]["TAS_UID"]);
-
+                    $this->node[$value['ROU_NEXT_TASK']]['in'][$value['TAS_UID']] = $value['ROU_TYPE'];
                     foreach ($arrayAux as $value2) {
-                        $arrayNextTask[++$i] = $value2;
+                        $key = ++$i;
+                        $arrayNextTask[$key] = $value2;
+                        $arrayNextTask[$key]['SOURCE_UID'] = $value['ROU_NEXT_TASK'];
                         foreach($aSecJoin as $rsj){
                           $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TASK"] = $rsj["ROU_PREVIOUS_TASK"];
                           $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TYPE"] = "SEC-JOIN";
@@ -262,7 +286,7 @@ class Derivation
                     ) {
                         $arrayNextTaskData["NEXT_TASK"]["TAS_UID"] = $arrayNextTaskData["TAS_UID"] . "/" . $arrayNextTaskData["NEXT_TASK"]["TAS_UID"];
                     }
-
+                    $arrayNextTaskData['SOURCE_UID'] = $value['ROU_NEXT_TASK'];
                     $arrayNextTask[++$i] = $arrayNextTaskData;
                     foreach($aSecJoin as $rsj){
                         $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TASK"] = $rsj["ROU_PREVIOUS_TASK"];
@@ -781,6 +805,47 @@ class Derivation
         /*----------------------------------********---------------------------------*/
     }
 
+    /**
+     * Get valid origin Task
+     *
+     * @param string $applicationUid Unique id of Case
+     * @param int    $delIndex       Delegation index
+     *
+     * @return string Returns valid origin Task
+     */
+    private function __getTaskUidOrigin($applicationUid, $delIndex)
+    {
+        $taskUidOrigin = '';
+
+        do {
+            $criteria = new Criteria('workflow');
+
+            $criteria->addSelectColumn(AppDelegationPeer::DEL_PREVIOUS);
+            $criteria->addSelectColumn(TaskPeer::TAS_UID);
+            $criteria->addSelectColumn(TaskPeer::TAS_TYPE);
+
+            $criteria->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::INNER_JOIN);
+            $criteria->add(AppDelegationPeer::APP_UID, $applicationUid, Criteria::EQUAL);
+            $criteria->add(AppDelegationPeer::DEL_INDEX, $delIndex, Criteria::EQUAL);
+
+            $rsCriteria = AppDelegationPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                $record = $rsCriteria->getRow();
+
+                if (preg_match('/^(?:' . 'NORMAL|SCRIPT\-TASK|WEBENTRYEVENT|START\-MESSAGE\-EVENT|START\-TIMER\-EVENT' . ')$/', $record['TAS_TYPE'])) {
+                    $taskUidOrigin = $record['TAS_UID'];
+                }
+
+                $delIndex = $record['DEL_PREVIOUS'];
+            }
+        } while ($taskUidOrigin == '');
+
+        //Return
+        return $taskUidOrigin;
+    }
+
     /** Derivate
      *
      * @param array $currentDelegation
@@ -805,6 +870,8 @@ class Derivation
 
         //Get data for this DEL_INDEX current
         $appFields = $this->case->loadCase( $currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX'] );
+
+        unset($appFields['APP_ROUTING_DATA']);
 
         //We close the current derivation, then we'll try to derivate to each defined route
         $this->case->CloseCurrentDelegation( $currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX'] );
@@ -1021,6 +1088,7 @@ class Derivation
                                 break;
                             default:
                                 $iNewDelIndex = $this->doDerivation($currentDelegation, $nextDel, $appFields, $aSP);
+
                                 if($iNewDelIndex !== 0){
                                     $arrayDerivationResult[] = ['DEL_INDEX' => $iNewDelIndex, 'TAS_UID' => $nextDel['TAS_UID'], 'USR_UID' => (isset($nextDel['USR_UID']))? $nextDel['USR_UID'] : ''];
                                 }
@@ -1069,15 +1137,22 @@ class Derivation
                             foreach ($arrayTaskNextDelNextDelegations as $key2 => $value2) {
                                 $arrayTaskNextDelNextDel = $value2;
 
-                                if($arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_ASSIGN_TYPE"] == 'MULTIPLE_INSTANCE'){
-                                    $aUserAssigned = true;
-                                    if(!isset($arrayTaskNextDelNextDel["NEXT_TASK"]["USER_ASSIGNED"]["0"]["USR_UID"])){
-                                        throw new Exception(G::LoadTranslation("ID_NO_USERS"));
-                                    }
-                                } else {
-                                    if (!isset($arrayTaskNextDelNextDel["NEXT_TASK"]["USER_ASSIGNED"]["USR_UID"])) {
-                                        throw new Exception(G::LoadTranslation("ID_NO_USERS"));
-                                    }
+                                switch ($arrayTaskNextDelNextDel['NEXT_TASK']['TAS_ASSIGN_TYPE']) {
+                                    case 'MANUAL':
+                                        $arrayTaskNextDelNextDel['NEXT_TASK']['USER_ASSIGNED']['USR_UID'] = '';
+                                        break;
+                                    case 'MULTIPLE_INSTANCE':
+                                        if (!isset($arrayTaskNextDelNextDel['NEXT_TASK']['USER_ASSIGNED']['0']['USR_UID'])) {
+                                            throw new Exception(G::LoadTranslation('ID_NO_USERS'));
+                                        }
+
+                                        $arrayTaskNextDelNextDel['NEXT_TASK']['USER_ASSIGNED']['USR_UID'] = '';
+                                        break;
+                                    default:
+                                        if (!isset($arrayTaskNextDelNextDel['NEXT_TASK']['USER_ASSIGNED']['USR_UID'])) {
+                                            throw new Exception(G::LoadTranslation('ID_NO_USERS'));
+                                        }
+                                        break;
                                 }
 
                                 $rouPreType = "";
@@ -1088,6 +1163,7 @@ class Derivation
                                    $rouPreType = $arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TYPE"];
                                    $rouPreTask = $arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TASK"];
                                 }
+
                                 $nextDelegationsAux[++$i] = array(
                                     "TAS_UID"           => $arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_UID"],
                                     "USR_UID"           => $arrayTaskNextDelNextDel["NEXT_TASK"]["USER_ASSIGNED"]["USR_UID"],
@@ -1195,15 +1271,39 @@ class Derivation
 
     function doDerivation ($currentDelegation, $nextDel, $appFields, $aSP = null)
     {
+        $case = new \ProcessMaker\BusinessModel\Cases();
+        $arrayApplicationData = $case->getApplicationRecordByPk($currentDelegation['APP_UID'], [], false);
+
+        $arrayRoutingData = (!is_null($arrayApplicationData['APP_ROUTING_DATA']) && $arrayApplicationData['APP_ROUTING_DATA'] != '')? unserialize($arrayApplicationData['APP_ROUTING_DATA']) : [];
+
         $iAppThreadIndex = $appFields['DEL_THREAD'];
         $delType = 'NORMAL';
         $sendNotificationsMobile = false;
+
+        $taskNextDel = TaskPeer::retrieveByPK($nextDel["TAS_UID"]);
+
+        $taskUidOrigin = $this->__getTaskUidOrigin($currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX']);
+        $taskUidDest   = $taskNextDel->getTasUid();
+
+        if (array_key_exists($taskUidOrigin . '/' . $taskUidDest, $arrayRoutingData)) {
+            $nextDel['USR_UID'] = $arrayRoutingData[$taskUidOrigin . '/' . $taskUidDest]['USR_UID'];
+
+            unset($arrayRoutingData[$taskUidOrigin . '/' . $taskUidDest]);
+        }
+
+        if ($taskNextDel->getTasType() == 'NORMAL' &&
+            $taskNextDel->getTasAssignType() != 'SELF_SERVICE' &&
+            (is_null($nextDel['USR_UID']) || $nextDel['USR_UID'] == '')
+        ) {
+            throw new Exception(G::LoadTranslation('ID_NO_USERS'));
+        }
 
         if (is_numeric( $nextDel['DEL_PRIORITY'] )) {
             $nextDel['DEL_PRIORITY'] = (isset( $nextDel['DEL_PRIORITY'] ) ? ($nextDel['DEL_PRIORITY'] >= 1 && $nextDel['DEL_PRIORITY'] <= 5 ? $nextDel['DEL_PRIORITY'] : '3') : '3');
         } else {
             $nextDel['DEL_PRIORITY'] = 3;
         }
+
         switch ($nextDel['TAS_ASSIGN_TYPE']) {
             case 'CANCEL_MI':
             case 'STATIC_MI':
@@ -1245,6 +1345,20 @@ class Derivation
                 break;
         }
 
+        if (array_key_exists('NEXT_ROUTING', $nextDel) && is_array($nextDel['NEXT_ROUTING']) && !empty($nextDel['NEXT_ROUTING'])) {
+            if (array_key_exists('TAS_UID', $nextDel['NEXT_ROUTING'])) {
+                $arrayRoutingData[$currentDelegation['TAS_UID'] . '/' . $nextDel['NEXT_ROUTING']['TAS_UID']] = $nextDel['NEXT_ROUTING'];
+            } else {
+                foreach ($nextDel['NEXT_ROUTING'] as $value) {
+                    $arrayRoutingData[$currentDelegation['TAS_UID'] . '/' . $value['TAS_UID']] = $value;
+                }
+            }
+        }
+
+        $application = new Application();
+        $result = $application->update(['APP_UID' => $currentDelegation['APP_UID'], 'APP_ROUTING_DATA' => serialize($arrayRoutingData)]);
+
+        //APP_THREAD
         $iAppThreadIndex = $appFields['DEL_THREAD'];
 
         switch ($currentDelegation['ROU_TYPE']) {

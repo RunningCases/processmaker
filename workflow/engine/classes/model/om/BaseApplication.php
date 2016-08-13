@@ -154,6 +154,12 @@ abstract class BaseApplication extends BaseObject implements Persistent
     protected $app_drive_folder_uid = '';
 
     /**
+     * The value for the app_routing_data field.
+     * @var        string
+     */
+    protected $app_routing_data;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -480,6 +486,17 @@ abstract class BaseApplication extends BaseObject implements Persistent
     {
 
         return $this->app_drive_folder_uid;
+    }
+
+    /**
+     * Get the [app_routing_data] column value.
+     * 
+     * @return     string
+     */
+    public function getAppRoutingData()
+    {
+
+        return $this->app_routing_data;
     }
 
     /**
@@ -961,6 +978,28 @@ abstract class BaseApplication extends BaseObject implements Persistent
     } // setAppDriveFolderUid()
 
     /**
+     * Set the value of [app_routing_data] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setAppRoutingData($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->app_routing_data !== $v) {
+            $this->app_routing_data = $v;
+            $this->modifiedColumns[] = ApplicationPeer::APP_ROUTING_DATA;
+        }
+
+    } // setAppRoutingData()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -1019,12 +1058,14 @@ abstract class BaseApplication extends BaseObject implements Persistent
 
             $this->app_drive_folder_uid = $rs->getString($startcol + 20);
 
+            $this->app_routing_data = $rs->getString($startcol + 21);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 21; // 21 = ApplicationPeer::NUM_COLUMNS - ApplicationPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 22; // 22 = ApplicationPeer::NUM_COLUMNS - ApplicationPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Application object", $e);
@@ -1291,6 +1332,9 @@ abstract class BaseApplication extends BaseObject implements Persistent
             case 20:
                 return $this->getAppDriveFolderUid();
                 break;
+            case 21:
+                return $this->getAppRoutingData();
+                break;
             default:
                 return null;
                 break;
@@ -1332,6 +1376,7 @@ abstract class BaseApplication extends BaseObject implements Persistent
             $keys[18] => $this->getAppDuration(),
             $keys[19] => $this->getAppDelayDuration(),
             $keys[20] => $this->getAppDriveFolderUid(),
+            $keys[21] => $this->getAppRoutingData(),
         );
         return $result;
     }
@@ -1425,6 +1470,9 @@ abstract class BaseApplication extends BaseObject implements Persistent
                 break;
             case 20:
                 $this->setAppDriveFolderUid($value);
+                break;
+            case 21:
+                $this->setAppRoutingData($value);
                 break;
         } // switch()
     }
@@ -1533,6 +1581,10 @@ abstract class BaseApplication extends BaseObject implements Persistent
             $this->setAppDriveFolderUid($arr[$keys[20]]);
         }
 
+        if (array_key_exists($keys[21], $arr)) {
+            $this->setAppRoutingData($arr[$keys[21]]);
+        }
+
     }
 
     /**
@@ -1628,6 +1680,10 @@ abstract class BaseApplication extends BaseObject implements Persistent
             $criteria->add(ApplicationPeer::APP_DRIVE_FOLDER_UID, $this->app_drive_folder_uid);
         }
 
+        if ($this->isColumnModified(ApplicationPeer::APP_ROUTING_DATA)) {
+            $criteria->add(ApplicationPeer::APP_ROUTING_DATA, $this->app_routing_data);
+        }
+
 
         return $criteria;
     }
@@ -1721,6 +1777,8 @@ abstract class BaseApplication extends BaseObject implements Persistent
         $copyObj->setAppDelayDuration($this->app_delay_duration);
 
         $copyObj->setAppDriveFolderUid($this->app_drive_folder_uid);
+
+        $copyObj->setAppRoutingData($this->app_routing_data);
 
 
         $copyObj->setNew(true);

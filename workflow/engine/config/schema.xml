@@ -42,6 +42,7 @@
     <column name="APP_DURATION" type="DOUBLE" default="0"/>
     <column name="APP_DELAY_DURATION" type="DOUBLE" default="0"/>
     <column name="APP_DRIVE_FOLDER_UID" type="VARCHAR" size="32" default="" required="false"/>
+    <column name="APP_ROUTING_DATA" type="LONGVARCHAR" />
     <validator column="APP_STATUS">
       <rule name="validValues" value="DRAFT|TO_DO|PAUSED|COMPLETED|CANCELLED" message="Please select a valid status." />
     </validator>
