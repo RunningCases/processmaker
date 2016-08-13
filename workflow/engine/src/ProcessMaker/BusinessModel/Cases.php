@@ -2887,6 +2887,53 @@ class Cases
 
         $dataResponse = $data;
 
+        //Verify data
+        $arrayCasesToReassign = $data['cases'];
+
+        $arrayMsg = [];
+
+        foreach($arrayCasesToReassign as $key => $value) {
+            $appDelegation = \AppDelegationPeer::retrieveByPK($value['APP_UID'], $value['DEL_INDEX']);
+
+            if (is_null($appDelegation)) {
+                $arrayMsg[] = [
+                    'app_uid' => $value['APP_UID'],
+                    'del_index' => $value['DEL_INDEX'],
+                    'result' => 0,
+                    'status' => 'DELEGATION_NOT_EXISTS'
+                ];
+            }
+        }
+
+        if (!empty($arrayMsg)) {
+            return  ['cases' => $arrayMsg];
+        }
+
+        $task = new \ProcessMaker\BusinessModel\Task();
+        $userUid = $data['usr_uid_target'];
+
+        foreach($arrayCasesToReassign as $value) {
+            $appDelegation = \AppDelegationPeer::retrieveByPK($value['APP_UID'], $value['DEL_INDEX']);
+
+            //Verify data
+            $taskUid = $appDelegation->getTasUid();
+
+            $flagBoolean = $task->checkUserOrGroupAssignedTask($taskUid, $userUid);
+
+            if (!$flagBoolean) {
+                $arrayMsg[] = [
+                    'app_uid' => $value['APP_UID'],
+                    'del_index' => $value['DEL_INDEX'],
+                    'result' => 0,
+                    'status' => 'USER_NOT_ASSIGNED_TO_TASK'
+                ];
+            }
+        }
+
+        if (!empty($arrayMsg)) {
+            return  ['cases' => $arrayMsg];
+        }
+
         G::LoadClass( 'case' );
         $oCases = new \Cases();
         $appDelegation = new \AppDelegation();
@@ -2904,15 +2951,60 @@ class Cases
                     $fields = $appDelegation->load($val['APP_UID'], $val['DEL_INDEX']);
                     $usrUid = $fields['USR_UID'];
                 }
+                //Will be not able reassign a case when is paused
+                $flagReassign = true;
+                if (!\AppDelay::isPaused($val['APP_UID'], $val['INDEX'])) {
+                    $dataResponse['cases'][$key]['result'] = 0;
+                    $dataResponse['cases'][$key]['status'] = \G::LoadTranslation('ID_REASSIGNMENT_PAUSED_ERROR');
+                    $flagReassign = false;
+                }
 
-                $reassigned = $oCases->reassignCase($val['APP_UID'], $val['DEL_INDEX'], $usrUid, $data['usr_uid_target']);
-                $result = $reassigned ? 1 : 0 ;
+                //Current users of OPEN DEL_INDEX thread
+                $aCurUser = $oAppDel->getCurrentUsers($val['APP_UID'], $val['INDEX']);
+                if(!empty($aCurUser)){
+                    foreach ($aCurUser as $key => $value) {
+                        if($value === $data['usr_uid_target']){
+                            $flagReassign = false;
+                            $result = 1;
+                        }
+                    }
+                }else {
+                    //DEL_INDEX is CLOSED
+                    $dataResponse['cases'][$key]['result'] = 0;
+                    $dataResponse['cases'][$key]['status'] = \G::LoadTranslation('ID_REASSIGNMENT_ERROR');
+                }
+
+                if($flagReassign) {
+                    $reassigned = $oCases->reassignCase($val['APP_UID'], $val['DEL_INDEX'], $usrUid, $data['usr_uid_target']);
+                    $result = $reassigned ? 1 : 0 ;
+                }
                 $dataResponse['cases'][$key]['result'] = $result;
+                $dataResponse['cases'][$key]['status'] = 'SUCCESS';
             }
         }
         unset($dataResponse['usr_uid_target']);
 
         return G::json_encode($dataResponse);
+    }
+    
+    /**
+     * if case already routed
+     * 
+     * @param type $app_uid
+     * @param type $del_index
+     * @param type $usr_uid
+     * @throws type
+     */
+    public function caseAlreadyRouted($app_uid, $del_index, $usr_uid = '')
+    {
+        $c = new \Criteria('workflow');
+        $c->add(\AppDelegationPeer::APP_UID, $app_uid);
+        $c->add(\AppDelegationPeer::DEL_INDEX, $del_index);
+        if (!empty($usr_uid)) {
+            $c->add(\AppDelegationPeer::USR_UID, $usr_uid);
+        }
+        $c->add(\AppDelegationPeer::DEL_FINISH_DATE, null, \Criteria::ISNULL);
+        return !(boolean) \AppDelegationPeer::doCount($c);
     }
 }
 

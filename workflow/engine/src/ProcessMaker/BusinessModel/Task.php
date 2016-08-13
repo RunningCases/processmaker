@@ -1972,4 +1972,52 @@ class Task
         );
         return $aTypes;
     }
+
+    /**
+     * Check user to group assigned Task (Normal and/or Ad-Hoc Users)
+     *
+     * @param string $taskUid Unique uid of Task
+     * @param string $userUid Unique uid of User
+     *
+     * return bool
+     */
+    public function checkUserOrGroupAssignedTask($taskUid, $usrUid)
+    {
+        $criteriaUser = new \Criteria('workflow');
+
+        $criteriaUser->add(\TaskUserPeer::TAS_UID, $taskUid, \Criteria::EQUAL);
+        $criteriaUser->add(\TaskUserPeer::USR_UID, $usrUid, \Criteria::EQUAL);
+        $criteriaUser->add(\TaskUserPeer::TU_RELATION, 1, \Criteria::EQUAL);
+
+        $rsCriteria = \TaskUserPeer::doSelectRS($criteriaUser);
+        $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        if ($rsCriteria->next()) {
+            return true;
+        }
+
+        $criteriaGroup = new \Criteria('workflow');
+
+        $criteriaGroup->addSelectColumn(\TaskUserPeer::USR_UID);
+
+        $criteriaGroup->add(\TaskUserPeer::TAS_UID, $taskUid, \Criteria::EQUAL);
+        $criteriaGroup->add(\TaskUserPeer::TU_RELATION, 2, \Criteria::EQUAL);
+
+        $rsCriteriaGroup = \TaskUserPeer::doSelectRS($criteriaGroup);
+        $rsCriteriaGroup->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        while ($rsCriteriaGroup->next()) {
+            $row = $rsCriteriaGroup->getRow();
+            $groupUid = $row['USR_UID'];
+
+            $obj = \GroupUserPeer::retrieveByPK($groupUid, $usrUid);
+
+            if (!is_null($obj)) {
+                return true;
+            }
+        }
+
+        //Return
+        return false;
+    }
 }

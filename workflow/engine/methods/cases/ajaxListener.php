@@ -194,7 +194,9 @@ class Ajax
                 $options[] = Array('text' => G::LoadTranslation('ID_DELETE'), 'fn' => 'deleteCase');
 
                 if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) {
-                    $options[] = Array('text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign');
+                    if (!AppDelay::isPaused($_SESSION['APPLICATION'], $_SESSION['INDEX'])) {
+                        $options[] = Array('text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign');
+                    }
                 }
                 break;
             case 'TO_DO':
@@ -211,7 +213,9 @@ class Ajax
                     $options[] = Array('text' => G::LoadTranslation('ID_UNPAUSE'), 'fn' => 'unpauseCase');
                 }
                 if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1 || $RBAC->userCanAccess('PM_SUPERVISOR') == 1) {
-                    $options[] = Array('text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign');
+                    if (!AppDelay::isPaused($_SESSION['APPLICATION'], $_SESSION['INDEX'])) {
+                        $options[] = Array('text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign');
+                    }
                 }
                 break;
             case 'CANCELLED':
@@ -597,18 +601,39 @@ class Ajax
         $user = new Users();
         $app = new Application();
         $result = new stdclass();
+        $oAppDel = new AppDelegation();
 
         $TO_USR_UID = $_POST['USR_UID'];
         try {
-            $cases->reassignCase($_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED'], $TO_USR_UID);
+            //Current users of OPEN DEL_INDEX thread
+            if(isset($_SESSION['APPLICATION']) && isset($_SESSION['INDEX'])){
+                $aCurUser = $oAppDel->getCurrentUsers($_SESSION['APPLICATION'], $_SESSION['INDEX']);
+            }
+            $flagReassign = true;
+            if(!empty($aCurUser)){
+                foreach ($aCurUser as $key => $value) {
+                    if($value === $TO_USR_UID){
+                        $flagReassign = false;
+                    }
+                }
+            } else {
+                //DEL_INDEX is CLOSED
+                throw new Exception(G::LoadTranslation('ID_REASSIGNMENT_ERROR'));
+            }
+
+            //If the currentUser is diferent to nextUser, create the thread
+            if($flagReassign){
+                $cases->reassignCase($_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED'], $TO_USR_UID);
+            }
+
             $caseData = $app->load($_SESSION['APPLICATION']);
             $userData = $user->load($TO_USR_UID);
-            //print_r($caseData);
+
             $data['APP_NUMBER'] = $caseData['APP_NUMBER'];
             $data['USER'] = $userData['USR_LASTNAME'] . ' ' . $userData['USR_FIRSTNAME']; //TODO change with the farmated username from environment conf
             $result->status = 0;
             $result->msg = G::LoadTranslation('ID_REASSIGNMENT_SUCCESS', SYS_LANG, $data);
-            
+
             // Save the note reassign reason
             if (isset($_POST['NOTE_REASON']) && $_POST['NOTE_REASON'] !== '') {
                 require_once ("classes/model/AppNotes.php");

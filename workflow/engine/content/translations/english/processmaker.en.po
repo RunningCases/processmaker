@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker (Branch 3.1)\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-07-29 18:36:34\n"
+"PO-Revision-Date: 2016-08-12 23:48:36\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -27599,6 +27599,54 @@ msgstr "Expand all"
 msgid "Collapse all"
 msgstr "Collapse all"
 
+# TRANSLATION
+# LABEL/ID_SCRIPT_TASK_ACTIVITY_ALREADY_REGISTERED
+#: LABEL/ID_SCRIPT_TASK_ACTIVITY_ALREADY_REGISTERED
+msgid "The Script-Task with {0}: \"{1}\" already registered"
+msgstr "The Script-Task with {0}: \"{1}\" already registered"
+
+# TRANSLATION
+# LABEL/ID_CASE_CANCELLED_PARALLEL
+#: LABEL/ID_CASE_CANCELLED_PARALLEL
+msgid "To cancel a case, no parallel threads must be active. Only cases with one active thread can be canceled."
+msgstr "To cancel a case, no parallel threads must be active. Only cases with one active thread can be canceled."
+
+# TRANSLATION
+# LABEL/ID_REASSIGNMENT_ERROR
+#: LABEL/ID_REASSIGNMENT_ERROR
+msgid "The case was already derivated to other person. Try to open again the case to reassign."
+msgstr "The case was already derivated to other person. Try to open again the case to reassign."
+
+# TRANSLATION
+# LABEL/ID_REASSIGNMENT_PAUSED_ERROR
+#: LABEL/ID_REASSIGNMENT_PAUSED_ERROR
+msgid "The case is paused and can't be reasigned."
+msgstr "The case is paused and can't be reasigned."
+
+# TRANSLATION
+# LABEL/ID_MAFE_1de162d73f017a9243ce0c939064a014
+#: LABEL/ID_MAFE_1de162d73f017a9243ce0c939064a014
+msgid "Enable gallery"
+msgstr "Enable gallery"
+
+# TRANSLATION
+# LABEL/ID_MAFE_4e357e7345689cff230335282b201a11
+#: LABEL/ID_MAFE_4e357e7345689cff230335282b201a11
+msgid "Enable camera"
+msgstr "Enable camera"
+
+# TRANSLATION
+# LABEL/ID_MAFE_5582ead0a9ee86a54da29c20caee6f57
+#: LABEL/ID_MAFE_5582ead0a9ee86a54da29c20caee6f57
+msgid "Force user login"
+msgstr "Force user login"
+
+# TRANSLATION
+# LABEL/ID_MAFE_f82e519e2e82239be5f49d78b24ea228
+#: LABEL/ID_MAFE_f82e519e2e82239be5f49d78b24ea228
+msgid "Supported Controls: Multiple File."
+msgstr "Supported Controls: Multiple File."
+
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
 #: text - ADD_TAB_NAME
@@ -37140,8 +37188,8 @@ msgstr "Cancel"
 # login/licenseExpired.xml?thetitle
 # login/licenseExpired.xml
 #: title - thetitle
-msgid "Your license has expired or the System does not have a license. To use the ProcessMaker Enterprise Edition upload a valid license"
-msgstr "Your license has expired or the System does not have a license. To use the ProcessMaker Enterprise Edition upload a valid license"
+msgid "Your license has expired or the system does not have a license. To use the ProcessMaker Enterprise Edition upload a valid license"
+msgstr "Your license has expired or the system does not have a license. To use the ProcessMaker Enterprise Edition upload a valid license"
 
 # login/licenseExpired.xml?licenseFile
 # login/licenseExpired.xml
@@ -37158,8 +37206,8 @@ msgstr "Update License"
 # login/licenseExpiredpm3.xml?thetitle
 # login/licenseExpiredpm3.xml
 #: title - thetitle
-msgid "[login/licenseExpiredpm3.xml?thetitle] Your license has expired or the System does not have a license. To use the ProcessMaker Enterprise Edition upload a valid license"
-msgstr "Your license has expired or the System does not have a license. To use the ProcessMaker Enterprise Edition upload a valid license"
+msgid "[login/licenseExpiredpm3.xml?thetitle] Your license has expired or the system does not have a license. To use the ProcessMaker Enterprise Edition upload a valid license"
+msgstr "Your license has expired or the system does not have a license. To use the ProcessMaker Enterprise Edition upload a valid license"
 
 # login/licenseExpiredpm3.xml?licenseFile
 # login/licenseExpiredpm3.xml

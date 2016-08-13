@@ -70,6 +70,7 @@ $(window).load(function () {
     var data = jsondata;
     window.dynaform = new PMDynaform.core.Project({
         data: data,
+        delIndex: delIndex,
         onBeforePrintHandler : function () {
             var nodeClone = $(".pmdynaform-container").clone();
             nodeClone.addClass("printing-form");
