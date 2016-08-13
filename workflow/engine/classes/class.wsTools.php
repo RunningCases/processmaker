@@ -740,6 +740,7 @@ class workspaceTools
         $this->checkRbacPermissions();//check or add new permissions
         $this->checkSequenceNumber();
         $this->migrateIteeToDummytask($this->name);
+        $this->upgradeConfiguration();
 
         //There records in table "EMAIL_SERVER"
         $criteria = new Criteria("workflow");
@@ -3241,6 +3242,14 @@ class workspaceTools
         }
         $message = "   Migrating Itee Done \n";
         CLI::logging($message);
+    }
+
+    public function upgradeConfiguration()
+    {
+        G::LoadClass("configuration");
+        $conf = new Configurations();
+        $conf->aConfig = 'neoclassic';
+        $conf->saveConfig('SKIN_CRON', '');
     }
 
 }

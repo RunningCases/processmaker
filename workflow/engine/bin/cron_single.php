@@ -201,6 +201,7 @@ try {
 
             define('SERVER_NAME', $SERVER_INFO['SERVER_NAME']);
             define('SERVER_PORT', $SERVER_INFO['SERVER_PORT']);
+            define('REQUEST_SCHEME', $SERVER_INFO['REQUEST_SCHEME']);
         } else {
             eprintln('WARNING! No server info found!', 'red');
         }
