@@ -394,7 +394,7 @@ class Light
      *
      * return array Return an array with Task Case
      */
-    public function GetPrepareInformation($usr_uid, $tas_uid, $app_uid, $del_index = null)
+    public function getPrepareInformation($usr_uid, $tas_uid, $app_uid, $del_index = null)
     {
         try {
             $oCase = new \Cases();
@@ -418,7 +418,7 @@ class Light
             $aData['DEL_INDEX'] = $del_index;
             $aData['USER_UID'] = $usr_uid;
             $oRoute = new \ProcessMaker\Core\RoutingScreen();
-            $derive = $oRoute->prepareInformation($aData);
+            $derive = $oRoute->prepareRoutingScreen($aData);
             $response = array();
             foreach ($derive as $sKey => &$aValues) {
                 $sPriority = ''; //set priority value
