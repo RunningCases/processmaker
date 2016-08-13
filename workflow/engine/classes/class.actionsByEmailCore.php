@@ -264,19 +264,19 @@ class actionsByEmailCoreClass extends PMPlugin
 
                             $user = new Users();
 
-                            if($configuration['ABE_MAILSERVER_OR_MAILCURRENT'] == 1 && $configuration['ABE_TYPE'] !== ''){
-                                if($data->PREVIOUS_USR_UID!==''){
+                            if (!$configuration['ABE_MAILSERVER_OR_MAILCURRENT'] && $configuration['ABE_TYPE'] !== '') {
+                                if ($data->PREVIOUS_USR_UID !== '') {
                                     $userDetails = $user->loadDetails($data->PREVIOUS_USR_UID);
                                     $emailFrom = ($userDetails["USR_FULLNAME"] . ' <' . $userDetails["USR_EMAIL"] . '>');
                                 } else {
                                     global $RBAC;
                                     $currentUser = $RBAC->aUserInfo['USER_INFO'];
-                                    $emailFrom = ($currentUser["USR_FIRSTNAME"] .' '. $currentUser["USR_LASTNAME"] .' <' . $currentUser["USR_EMAIL"] . '>');
+                                    $emailFrom = ($currentUser["USR_FIRSTNAME"] . ' ' . $currentUser["USR_LASTNAME"] . ' <' . $currentUser["USR_EMAIL"] . '>');
                                 }
-                            }else{
-                                if(isset($emailSetup["MESS_FROM_NAME"]) && isset($emailSetup["MESS_FROM_MAIL"] )){
+                            } else {
+                                if (isset($emailSetup["MESS_FROM_NAME"]) && isset($emailSetup["MESS_FROM_MAIL"])) {
                                     $emailFrom = ($emailSetup["MESS_FROM_NAME"] . ' <' . $emailSetup["MESS_FROM_MAIL"] . '>');
-                                }else{
+                                } else {
                                     $emailFrom = ((isset($emailSetup["MESS_FROM_NAME"])) ? $emailSetup["MESS_FROM_NAME"] : $emailSetup["MESS_FROM_MAIL"]);
                                 }
                             }
@@ -284,15 +284,16 @@ class actionsByEmailCoreClass extends PMPlugin
                             G::LoadClass('wsBase');
 
                             $wsBaseInstance = new wsBase();
-                            $result = $wsBaseInstance->sendMessage($data->APP_UID,
-                                                                   $emailFrom,
-                                                                   $email,
-                                                                   '',
-                                                                   '',
-                                                                   $subject,
-                                                                   $configuration['ABE_TEMPLATE'],
-                                                                   $caseFields['APP_DATA'],
-                                                                   '');
+                            $result = $wsBaseInstance->sendMessage(
+                                $data->APP_UID,
+                                $emailFrom,
+                                $email,
+                                '',
+                                '',
+                                $subject,
+                                $configuration['ABE_TEMPLATE'],
+                                $caseFields['APP_DATA'],
+                            '');
                             $abeRequest['ABE_REQ_STATUS'] = ($result->status_code == 0 ? 'SENT' : 'ERROR');
 
                             $body = '';

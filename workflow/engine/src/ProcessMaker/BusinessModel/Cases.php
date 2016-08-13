@@ -2876,9 +2876,9 @@ class Cases
      */
     public function doPostReassign($data)
     {
-        if(!is_array($data)) {
+        if (!is_array($data)) {
             $isJson = is_string($data) && is_array(G::json_decode($data, true)) ? true : false;
-            if($isJson) {
+            if ($isJson) {
                 $data = G::json_decode($data, true);
             } else {
                 return;
@@ -2892,7 +2892,7 @@ class Cases
 
         $arrayMsg = [];
 
-        foreach($arrayCasesToReassign as $key => $value) {
+        foreach ($arrayCasesToReassign as $key => $value) {
             $appDelegation = \AppDelegationPeer::retrieveByPK($value['APP_UID'], $value['DEL_INDEX']);
 
             if (is_null($appDelegation)) {
@@ -2906,13 +2906,13 @@ class Cases
         }
 
         if (!empty($arrayMsg)) {
-            return  ['cases' => $arrayMsg];
+            return ['cases' => $arrayMsg];
         }
 
         $task = new \ProcessMaker\BusinessModel\Task();
         $userUid = $data['usr_uid_target'];
 
-        foreach($arrayCasesToReassign as $value) {
+        foreach ($arrayCasesToReassign as $value) {
             $appDelegation = \AppDelegationPeer::retrieveByPK($value['APP_UID'], $value['DEL_INDEX']);
 
             //Verify data
@@ -2931,23 +2931,23 @@ class Cases
         }
 
         if (!empty($arrayMsg)) {
-            return  ['cases' => $arrayMsg];
+            return ['cases' => $arrayMsg];
         }
 
-        G::LoadClass( 'case' );
+        G::LoadClass('case');
         $oCases = new \Cases();
         $appDelegation = new \AppDelegation();
         $casesToReassign = $data['cases'];
-        if(sizeof($casesToReassign)) {
-            foreach($casesToReassign as $key => $val) {
+        if (sizeof($casesToReassign)) {
+            foreach ($casesToReassign as $key => $val) {
                 $usrUid = '';
-                if(array_key_exists('USR_UID', $val)) {
-                    if($val['USR_UID'] != '') {
+                if (array_key_exists('USR_UID', $val)) {
+                    if ($val['USR_UID'] != '') {
                         $usrUid = $val['USR_UID'];
                     }
                 }
 
-                if($usrUid == '') {
+                if ($usrUid == '') {
                     $fields = $appDelegation->load($val['APP_UID'], $val['DEL_INDEX']);
                     $usrUid = $fields['USR_UID'];
                 }
@@ -2961,22 +2961,22 @@ class Cases
 
                 //Current users of OPEN DEL_INDEX thread
                 $aCurUser = $oAppDel->getCurrentUsers($val['APP_UID'], $val['INDEX']);
-                if(!empty($aCurUser)){
+                if (!empty($aCurUser)) {
                     foreach ($aCurUser as $key => $value) {
-                        if($value === $data['usr_uid_target']){
+                        if ($value === $data['usr_uid_target']) {
                             $flagReassign = false;
                             $result = 1;
                         }
                     }
-                }else {
+                } else {
                     //DEL_INDEX is CLOSED
                     $dataResponse['cases'][$key]['result'] = 0;
                     $dataResponse['cases'][$key]['status'] = \G::LoadTranslation('ID_REASSIGNMENT_ERROR');
                 }
 
-                if($flagReassign) {
+                if ($flagReassign) {
                     $reassigned = $oCases->reassignCase($val['APP_UID'], $val['DEL_INDEX'], $usrUid, $data['usr_uid_target']);
-                    $result = $reassigned ? 1 : 0 ;
+                    $result = $reassigned ? 1 : 0;
                 }
                 $dataResponse['cases'][$key]['result'] = $result;
                 $dataResponse['cases'][$key]['status'] = 'SUCCESS';
