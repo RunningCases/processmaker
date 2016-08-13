@@ -33,8 +33,15 @@ class Cases extends Api
     {
         try {
             $methodName = $this->restler->apiMethodInfo->methodName;
-
+            $arrayArgs  = $this->restler->apiMethodInfo->arguments;
             switch ($methodName) {
+                case 'doGetCaseVariables':
+                    $applicationUid = $this->parameters[$arrayArgs['app_uid']];
+                    $dynaformUid = $this->parameters[$arrayArgs['dyn_uid']];
+                    $userUid = $this->getUserId();
+                    $oCases = new \ProcessMaker\BusinessModel\Cases();
+                    return $oCases->checkUserHasPermissionsOrSupervisor($userUid, $applicationUid, $dynaformUid);
+                    break;
                 case 'doPostReassign':
                     $arrayParameters = $this->parameters[0]['cases'];
                     $usrUid = $this->getUserId();
@@ -68,8 +75,6 @@ class Cases extends Api
                     }
                     break;
             }
-
-            //Return
             return false;
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -884,19 +889,24 @@ class Cases extends Api
     /**
      * Get Case Variables
      *
-     * @param string $app_uid {@min 1}{@max 32}
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
-     *
+     * @access protected
+     * @class  AccessControl {@className \ProcessMaker\Services\Api\Cases}
      * @url GET /:app_uid/variables
+     *
+     * @param string $app_uid {@min 1}{@max 32}
+     * @param string $dyn_uid
+     * @param string $pro_uid
+     * @param string $act_uid
+     * @param int $app_index
+     * @return mixed
+     * @throws RestException
      */
-    public function doGetCaseVariables($app_uid)
+    public function doGetCaseVariables($app_uid, $dyn_uid = null, $pro_uid = null, $act_uid = null, $app_index = null)
     {
         try {
             $usr_uid = $this->getUserId();
             $cases = new \ProcessMaker\BusinessModel\Cases();
-            $response = $cases->getCaseVariables($app_uid, $usr_uid);
+            $response = $cases->getCaseVariables($app_uid, $usr_uid, $dyn_uid, $pro_uid, $act_uid, $app_index);
             return DateTime::convertUtcToIso8601($response);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
@@ -1217,4 +1227,5 @@ class Cases extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
+
 }
