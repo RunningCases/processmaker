@@ -1744,22 +1744,6 @@ class Cases
         Validator::isString($usr_uid, '$usr_uid');
         Validator::usrUid($usr_uid, '$usr_uid');
 
-        $appCacheView = new \AppCacheView();
-        $isProcessSupervisor = $appCacheView->getProUidSupervisor($usr_uid);
-        $criteria = new \Criteria("workflow");
-        $criteria->addSelectColumn(\AppDelegationPeer::APP_UID);
-        $criteria->add(\AppDelegationPeer::APP_UID, $app_uid, \Criteria::EQUAL);
-        $criteria->add(\AppDelegationPeer::USR_UID, $usr_uid, \Criteria::EQUAL);
-        $criteria->add(
-            $criteria->getNewCriterion(\AppDelegationPeer::USR_UID, $usr_uid, \Criteria::EQUAL)->addOr(
-            $criteria->getNewCriterion(\AppDelegationPeer::PRO_UID, $isProcessSupervisor, \Criteria::IN))
-        );
-        $rsCriteria = \AppDelegationPeer::doSelectRS($criteria);
-
-        if (!$rsCriteria->next()) {
-            throw (new \Exception(\G::LoadTranslation("ID_NO_PERMISSION_NO_PARTICIPATED", array($usr_uid))));
-        }
-
         $case = new \Cases();
         $fields = $case->loadCase($app_uid);
 
@@ -3005,6 +2989,60 @@ class Cases
         }
         $c->add(\AppDelegationPeer::DEL_FINISH_DATE, null, \Criteria::ISNULL);
         return !(boolean) \AppDelegationPeer::doCount($c);
+    }
+
+    public function checkUserHasPermissionsOrSupervisor($userUid, $applicationUid, $dynaformUid)
+    {
+        if (!empty($dynaformUid)) {
+            $arrayApplicationData = $this->getApplicationRecordByPk($applicationUid, [], false);
+            //Check whether the process supervisor
+            $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
+            $userAccess = $supervisor->isUserProcessSupervisor($arrayApplicationData['PRO_UID'], $userUid);
+            //Check if have objects assigned (Supervisor)
+            $cases = new \Cases();
+            $resultDynaForm = $cases->getAllDynaformsStepsToRevise($applicationUid);
+            $flagSupervisors = false;
+            while ($resultDynaForm->next()) {
+                $row = $resultDynaForm->getRow();
+                if ($row["STEP_UID_OBJ"] = $dynaformUid) {
+                    $flagSupervisors = true;
+                    break;
+                }
+            }
+            //Check if have permissions VIEW
+            $case = new \Cases();
+            $arrayAllObjectsFrom = $case->getAllObjectsFrom($arrayApplicationData['PRO_UID'], $applicationUid, '', $userUid, 'VIEW', 0);
+            $flagPermissionsVIEW = false;
+            if (array_key_exists('DYNAFORMS', $arrayAllObjectsFrom) &&
+                !empty($arrayAllObjectsFrom['DYNAFORMS'])
+            ) {
+                foreach ($arrayAllObjectsFrom['DYNAFORMS'] as $value) {
+                    if ($value == $dynaformUid) {
+                        $flagPermissionsVIEW = true;
+                    }
+                }
+            }
+            //Check if have permissions BLOCK
+            $arrayAllObjectsFrom = $case->getAllObjectsFrom($arrayApplicationData['PRO_UID'], $applicationUid, '', $userUid, 'BLOCK', 0);
+            $flagPermissionsBLOCK = false;
+            if (array_key_exists('DYNAFORMS', $arrayAllObjectsFrom) &&
+                !empty($arrayAllObjectsFrom['DYNAFORMS'])
+            ) {
+                foreach ($arrayAllObjectsFrom['DYNAFORMS'] as $value) {
+                    if ($value == $dynaformUid) {
+                        $flagPermissionsBLOCK = true;
+                    }
+                }
+            }
+            return ($flagSupervisors && $userAccess) || $flagPermissionsVIEW || $flagPermissionsBLOCK;
+        } else {
+            $arrayResult = $this->getStatusInfo($applicationUid, 0, $userUid);
+            $flagParticipated = false;
+            if ($arrayResult) {
+                $flagParticipated = true;
+            }
+            return $flagParticipated;
+        }
     }
 }
 
