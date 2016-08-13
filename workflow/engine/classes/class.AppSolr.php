@@ -31,6 +31,7 @@ require_once "classes/model/GroupUser.php";
 require_once "classes/model/Task.php";
 require_once "classes/model/TaskUser.php";
 require_once "classes/model/Dynaform.php";
+require_once "classes/model/ProcessVariables.php";
 require_once "entities/SolrRequestData.php";
 require_once "entities/SolrUpdateDocument.php";
 require_once "entities/AppSolrQueue.php";
@@ -169,6 +170,8 @@ class AppSolr
   private $_solrInstance = "";
   private $debug = false; //false
   private $debugAppInfo = false;
+  private $trunkSizeAcumulated;
+  private $totalTimeAcumulated;
   
   public function __construct($SolrEnabled, $SolrHost, $SolrInstance)
   {
@@ -2403,6 +2406,7 @@ class AppSolr
           }
         }
       }
+      $dynaformFieldTypes = $this->getVariablesDynaform($documentInformation['PRO_UID'], $dynaformFieldTypes);
       // create cache of dynaformfields
       //$oMemcache->set ("SOLR_DYNAFORM_FIELD_TYPES_" . $documentInformation ['PRO_UID'], $dynaformFieldTypes);
     //}
@@ -2428,6 +2432,29 @@ class AppSolr
     return $result;
   }
   
+  /**
+     * 
+     * 
+     * @param array $dynaformFieldTypes
+     * @return array
+     */
+    public function getVariablesDynaform($processUid, $dynaformFieldTypes = array())
+    {
+        $criteria = new Criteria();
+        $criteria->add(ProcessVariablesPeer::PRJ_UID, $processUid);
+        $ds = ProcessVariablesPeer::doSelectRS($criteria);
+        $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        while ($ds->next()) {
+            $row = $ds->getRow();
+            $type = "text";
+            if ($row["VAR_FIELD_TYPE"] === "datetime") {
+                $type = "date";
+            }
+            $dynaformFieldTypes[$row["VAR_NAME"]] = $type;
+        }
+        return $dynaformFieldTypes;
+    }
+
   /**
    * Find the maximun value of the specified column in the array and return the
    * row index
