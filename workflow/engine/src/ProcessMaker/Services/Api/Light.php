@@ -1189,7 +1189,7 @@ class Light extends Api
                 'CREATE_DATE' => 'caseCreateDate',
                 'UPDATE_DATE' => 'caseUpdateData',
                 'DESCRIPTION' => 'caseDescription',
-                'PRO_UID'     => 'processUid'
+                'PRO_UID'     => 'processId'
             ),
             'task' => array(
                 'TAS_TITLE'         => 'taskTitle',
@@ -1198,7 +1198,7 @@ class Light extends Api
                 'DEL_INIT_DATE'     => 'delInitDate',
                 'DEL_TASK_DUE_DATE' => 'delDueDate',
                 'DEL_FINISH_DATE'   => 'delFinishDate',
-                'TAS_UID'           => 'taskUid'
+                'TAS_UID'           => 'taskId'
             )
         );
 
