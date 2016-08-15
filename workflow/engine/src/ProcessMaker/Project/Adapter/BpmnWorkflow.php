@@ -2106,7 +2106,7 @@ class BpmnWorkflow extends Project\Bpmn
             //Update Process
             $process = \ProcessPeer::retrieveByPk($this->wp->getUid());
 
-            $arrayActionDone = (!is_null($process->getProActionDone()) && $process->getProActionDone() != '')? unserialize($process->getProActionDone()) : [];
+            $arrayActionDone = (!is_null($process->getProActionDone()) && (string)($process->getProActionDone()) != '')? unserialize($process->getProActionDone()) : [];
             $arrayActionDone[] = $actionDone;
 
             $this->wp->update(['PRO_ACTION_DONE' => serialize($arrayActionDone)]);
