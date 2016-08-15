@@ -1217,5 +1217,23 @@ class EmailServer
             throw $e;
         }
     }
+
+    /**
+     * @param $fromAccount
+     * @return array
+     */
+    public function getUidEmailServer($fromAccount){
+        $criteria = new \Criteria("workflow");
+        $criteria->addSelectColumn(\EmailServerPeer::MESS_UID);
+        $criteria->add(
+            $criteria->getNewCriterion(\EmailServerPeer::MESS_ACCOUNT,  $fromAccount, \Criteria::EQUAL)->addOr(
+                $criteria->getNewCriterion(\EmailServerPeer::MESS_FROM_MAIL, $fromAccount, \Criteria::EQUAL))
+        );
+        $criteria->addAsColumn('EMAIL_SERVER_UID', 'MESS_UID');
+        $rsCriteria = \EmailServerPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $rsCriteria->next();
+        return $rsCriteria->getRow();
+    }
 }
 
