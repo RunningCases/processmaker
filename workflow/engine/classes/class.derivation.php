@@ -805,47 +805,6 @@ class Derivation
         /*----------------------------------********---------------------------------*/
     }
 
-    /**
-     * Get valid origin Task
-     *
-     * @param string $applicationUid Unique id of Case
-     * @param int    $delIndex       Delegation index
-     *
-     * @return string Returns valid origin Task
-     */
-    private function __getTaskUidOrigin($applicationUid, $delIndex)
-    {
-        $taskUidOrigin = '';
-
-        do {
-            $criteria = new Criteria('workflow');
-
-            $criteria->addSelectColumn(AppDelegationPeer::DEL_PREVIOUS);
-            $criteria->addSelectColumn(TaskPeer::TAS_UID);
-            $criteria->addSelectColumn(TaskPeer::TAS_TYPE);
-
-            $criteria->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::INNER_JOIN);
-            $criteria->add(AppDelegationPeer::APP_UID, $applicationUid, Criteria::EQUAL);
-            $criteria->add(AppDelegationPeer::DEL_INDEX, $delIndex, Criteria::EQUAL);
-
-            $rsCriteria = AppDelegationPeer::doSelectRS($criteria);
-            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-            if ($rsCriteria->next()) {
-                $record = $rsCriteria->getRow();
-
-                if (preg_match('/^(?:' . 'NORMAL|SCRIPT\-TASK|WEBENTRYEVENT|START\-MESSAGE\-EVENT|START\-TIMER\-EVENT' . ')$/', $record['TAS_TYPE'])) {
-                    $taskUidOrigin = $record['TAS_UID'];
-                }
-
-                $delIndex = $record['DEL_PREVIOUS'];
-            }
-        } while ($taskUidOrigin == '');
-
-        //Return
-        return $taskUidOrigin;
-    }
-
     /** Derivate
      *
      * @param array $currentDelegation
@@ -1274,15 +1233,18 @@ class Derivation
         $case = new \ProcessMaker\BusinessModel\Cases();
         $arrayApplicationData = $case->getApplicationRecordByPk($currentDelegation['APP_UID'], [], false);
 
-        $arrayRoutingData = (!is_null($arrayApplicationData['APP_ROUTING_DATA']) && $arrayApplicationData['APP_ROUTING_DATA'] != '')? unserialize($arrayApplicationData['APP_ROUTING_DATA']) : [];
+        $arrayRoutingData = (!is_null($arrayApplicationData['APP_ROUTING_DATA']) && (string)($arrayApplicationData['APP_ROUTING_DATA']) != '')? unserialize($arrayApplicationData['APP_ROUTING_DATA']) : [];
 
         $iAppThreadIndex = $appFields['DEL_THREAD'];
         $delType = 'NORMAL';
         $sendNotificationsMobile = false;
 
+        $appDelegation = new AppDelegation();
         $taskNextDel = TaskPeer::retrieveByPK($nextDel["TAS_UID"]);
 
-        $taskUidOrigin = $this->__getTaskUidOrigin($currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX']);
+        $arrayAppDelegationPrevious = $appDelegation->getPreviousDelegationValidTask($currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX'], true);
+
+        $taskUidOrigin = $arrayAppDelegationPrevious['TAS_UID'];
         $taskUidDest   = $taskNextDel->getTasUid();
 
         if (array_key_exists($taskUidOrigin . '/' . $taskUidDest, $arrayRoutingData)) {

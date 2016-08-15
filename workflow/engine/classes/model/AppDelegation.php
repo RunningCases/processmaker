@@ -44,6 +44,54 @@
  */
 class AppDelegation extends BaseAppDelegation
 {
+    /**
+     * Get previous delegation (Valid Task)
+     *
+     * @param string $applicationUid        Unique id of Case
+     * @param int    $delIndex              Delegation index
+     * @param bool   $flagIncludeCurrentDel Include current delegation
+     *
+     * @return array Returns previous delegation, FALSE otherwise
+     */
+    public function getPreviousDelegationValidTask($applicationUid, $delIndex, $flagIncludeCurrentDel = false)
+    {
+        $arrayAppDelegationPrevious = false;
+        $flagPrevious = true;
+
+        do {
+            $criteria = new Criteria('workflow');
+
+            $criteria->addSelectColumn(AppDelegationPeer::TABLE_NAME . '.*');
+            $criteria->addSelectColumn(TaskPeer::TAS_TYPE);
+
+            $criteria->addJoin(AppDelegationPeer::TAS_UID, TaskPeer::TAS_UID, Criteria::INNER_JOIN);
+            $criteria->add(AppDelegationPeer::APP_UID, $applicationUid, Criteria::EQUAL);
+            $criteria->add(AppDelegationPeer::DEL_INDEX, $delIndex, Criteria::EQUAL);
+
+            $rsCriteria = AppDelegationPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            if ($rsCriteria->next()) {
+                $record = $rsCriteria->getRow();
+
+                if ($flagIncludeCurrentDel) {
+                    if (preg_match('/^(?:' . 'NORMAL|SCRIPT\-TASK|WEBENTRYEVENT|START\-MESSAGE\-EVENT|START\-TIMER\-EVENT' . ')$/', $record['TAS_TYPE'])) {
+                        $arrayAppDelegationPrevious = $record;
+                        $flagPrevious = false;
+                    }
+                }
+
+                $delIndex = $record['DEL_PREVIOUS'];
+            } else {
+                $flagPrevious = false;
+            }
+
+            $flagIncludeCurrentDel = true;
+        } while ($flagPrevious);
+
+        //Return
+        return $arrayAppDelegationPrevious;
+    }
 
     /**
      * create an application delegation
@@ -130,7 +178,6 @@ class AppDelegation extends BaseAppDelegation
             }
         }
 
-
         //Update set
         $criteriaUpdate = new Criteria('workflow');
         $criteriaUpdate->add(AppDelegationPeer::DEL_LAST_INDEX, 0);
@@ -194,12 +241,14 @@ class AppDelegation extends BaseAppDelegation
             $bpmn = new \ProcessMaker\Project\Bpmn();
             $flagActionsByEmail = true;
 
+            $arrayAppDelegationPrevious = $this->getPreviousDelegationValidTask($sAppUid, $delIndex);
+
             $data = new stdclass();
             $data->TAS_UID = $sTasUid;
             $data->APP_UID = $sAppUid;
             $data->DEL_INDEX = $delIndex;
             $data->USR_UID = $sUsrUid;
-            $data->PREVIOUS_USR_UID = $delPreviusUsrUid;
+            $data->PREVIOUS_USR_UID = ($arrayAppDelegationPrevious !== false)? $arrayAppDelegationPrevious['USR_UID'] : $delPreviusUsrUid;
 
             if ($bpmn->exists($sProUid)) {
                 /*----------------------------------********---------------------------------*/
@@ -481,7 +530,7 @@ class AppDelegation extends BaseAppDelegation
     }
 
 	//usually this function is called when routing in the flow, so by default cron =0
-	public function calculateDuration($cron = 0) 
+	public function calculateDuration($cron = 0)
 	{
 		$this->writeFileIfCalledFromCronForCalculateDuration($cron);
 		$this->patchDataWithValuesForCalculateDuration();
@@ -511,7 +560,7 @@ class AppDelegation extends BaseAppDelegation
 		}
 	}
 
-	public function getValuesToStoreForCalculateDuration($row, $calendar, $calData, $nowDate) 
+	public function getValuesToStoreForCalculateDuration($row, $calendar, $calData, $nowDate)
 	{
         $rowValues = $this->completeRowDataForCalculateDuration($row, $nowDate);
 		return Array(
@@ -531,7 +580,7 @@ class AppDelegation extends BaseAppDelegation
             return 0;
         }
         //TODO 8 daily/hours must be extracted from calendar
-        $taskTime = ($rowValues['cTaskDurationUnit'] == 'DAYS') 
+        $taskTime = ($rowValues['cTaskDurationUnit'] == 'DAYS')
                     ? $rowValues['fTaskDuration'] * 8 / 24
                     : $rowValues['fTaskDuration'] / 24;
 
@@ -541,40 +590,40 @@ class AppDelegation extends BaseAppDelegation
 	//time in days from init or delegate date to finish or today's date
 	private function calculateNetProcessingTime($calendar, $calData, $rowValues)
 	{
-		$initDateForCalc = $this->selectDate ($rowValues['dInitDate'], $rowValues['dDelegateDate'], 'max'); 
-		$endDateForCalc = $this->selectDate ($rowValues['dFinishDate'], $rowValues['dNow'], 'min'); 
+		$initDateForCalc = $this->selectDate ($rowValues['dInitDate'], $rowValues['dDelegateDate'], 'max');
+		$endDateForCalc = $this->selectDate ($rowValues['dFinishDate'], $rowValues['dNow'], 'min');
 		return $calendar->dashCalculateDurationWithCalendar(
-							$initDateForCalc->format('Y-m-d H:i:s'), 
-							$endDateForCalc->format('Y-m-d H:i:s'), 
-							$calData)/(24*60*60);  
+							$initDateForCalc->format('Y-m-d H:i:s'),
+							$endDateForCalc->format('Y-m-d H:i:s'),
+							$calData)/(24*60*60);
 	}
-	
+
 	//time in days from delegate date to init date
 	private function calculateQueueTime($calendar,  $calData, $rowValues)
 	{
-		$initDateForCalc = $rowValues['dDelegateDate']; 
-		$endDateForCalc = $this->selectDate ($rowValues['dInitDate'], $rowValues['dNow'], 'min'); 
+		$initDateForCalc = $rowValues['dDelegateDate'];
+		$endDateForCalc = $this->selectDate ($rowValues['dInitDate'], $rowValues['dNow'], 'min');
 		return $calendar->dashCalculateDurationWithCalendar(
-							$initDateForCalc->format('Y-m-d H:i:s'), 
-							$endDateForCalc->format('Y-m-d H:i:s'), 
-							$calData)/(24*60*60);  
+							$initDateForCalc->format('Y-m-d H:i:s'),
+							$endDateForCalc->format('Y-m-d H:i:s'),
+							$calData)/(24*60*60);
 	}
 
 	//time in days from due date to finish or today date
 	private function calculateDelayTime($calendar, $calData, $rowValues)
 	{
-		$initDateForCalc = $this->selectDate($rowValues['dDueDate'], $rowValues['dDelegateDate'], 'max'); 
-		$endDateForCalc = $this->selectDate ($rowValues['dFinishDate'], $rowValues['dNow'], 'min'); 
+		$initDateForCalc = $this->selectDate($rowValues['dDueDate'], $rowValues['dDelegateDate'], 'max');
+		$endDateForCalc = $this->selectDate ($rowValues['dFinishDate'], $rowValues['dNow'], 'min');
 		return $calendar->dashCalculateDurationWithCalendar(
-							$initDateForCalc->format('Y-m-d H:i:s'), 
-							$endDateForCalc->format('Y-m-d H:i:s'), 
-							$calData)/(24*60*60);  
+							$initDateForCalc->format('Y-m-d H:i:s'),
+							$endDateForCalc->format('Y-m-d H:i:s'),
+							$calData)/(24*60*60);
 	}
 
     //to avoid aplying many times the same conversions and functions the row data
-    //is used to create dates as DateTime objects and other fields are stracted also, 
+    //is used to create dates as DateTime objects and other fields are stracted also,
     //so the array returned will work as a "context" object for the rest of the functions.
-	private function completeRowDataForCalculateDuration($row, $nowDate) 
+	private function completeRowDataForCalculateDuration($row, $nowDate)
 	{
 		return Array(
 			'dDelegateDate'       => $this->createDateFromString ($row['DEL_DELEGATE_DATE']),
@@ -594,10 +643,10 @@ class AppDelegation extends BaseAppDelegation
     //NOTE date1 and date2 are DateTime objects.
 	private function selectDate($date1, $date2, $compareFunction)
 	{
-		if ($date1 == null)	
+		if ($date1 == null)
 			return $date2;
 
-		if ($date2 == null)	
+		if ($date2 == null)
 			return $date1;
 
 		return $compareFunction($date1, $date2);
@@ -643,7 +692,7 @@ class AppDelegation extends BaseAppDelegation
 		$rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
 		return $rs;
 	}
-    private function writeFileIfCalledFromCronForCalculateDuration($cron) 
+    private function writeFileIfCalledFromCronForCalculateDuration($cron)
 	{
 		if ($cron == 1) {
 			$arrayCron = unserialize( trim( @file_get_contents( PATH_DATA . "cron" ) ) );
@@ -652,7 +701,7 @@ class AppDelegation extends BaseAppDelegation
 		}
 	}
 
-	private function patchDataWithValuesForCalculateDuration() 
+	private function patchDataWithValuesForCalculateDuration()
 	{
 		//patch  rows with initdate = null and finish_date
 		$c = new Criteria();
@@ -684,7 +733,7 @@ class AppDelegation extends BaseAppDelegation
 			$row = $rs->getRow();
 		}
 	}
-    
+
 
 
     public function getLastDeleration ($APP_UID)
@@ -858,4 +907,3 @@ class AppDelegation extends BaseAppDelegation
     }
 
 }
-
