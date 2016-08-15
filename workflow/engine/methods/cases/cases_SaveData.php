@@ -101,6 +101,16 @@ try {
         throw new Exception( G::LoadTranslation( 'ID_INVALID_APPLICATION_ID_MSG', array ('<a href=\'' . $_SERVER['HTTP_REFERER'] . '\'>{1}</a>',G::LoadTranslation( 'ID_REOPEN' ) ) ) );
     }
 
+    $arrayVariableDocumentToDelete = [];
+
+    if (array_key_exists('__VARIABLE_DOCUMENT_DELETE__', $_POST['form'])) {
+        if (is_array($_POST['form']['__VARIABLE_DOCUMENT_DELETE__']) && !empty($_POST['form']['__VARIABLE_DOCUMENT_DELETE__'])) {
+            $arrayVariableDocumentToDelete = $_POST['form']['__VARIABLE_DOCUMENT_DELETE__'];
+        }
+
+        unset($_POST['form']['__VARIABLE_DOCUMENT_DELETE__']);
+    }
+
     /*
      * PMDynaform
      * DYN_VERSION is 1: classic Dynaform,
@@ -440,6 +450,13 @@ try {
                 }
             }
         }
+    }
+
+    //Delete MultipleFile
+    if (!empty($arrayVariableDocumentToDelete)) {
+        $case = new \ProcessMaker\BusinessModel\Cases();
+
+        $case->deleteMultipleFile($_SESSION['APPLICATION'], $arrayVariableDocumentToDelete);
     }
 
     //Go to the next step

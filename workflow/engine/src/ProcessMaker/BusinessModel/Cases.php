@@ -1840,6 +1840,16 @@ class Cases
         $_SESSION['APPLICATION'] = $app_uid;
         $_SESSION['USER_LOGGED'] = $usr_uid;
 
+        $arrayVariableDocumentToDelete = [];
+
+        if (array_key_exists('__VARIABLE_DOCUMENT_DELETE__', $app_data)) {
+            if (is_array($app_data['__VARIABLE_DOCUMENT_DELETE__']) && !empty($app_data['__VARIABLE_DOCUMENT_DELETE__'])) {
+                $arrayVariableDocumentToDelete = $app_data['__VARIABLE_DOCUMENT_DELETE__'];
+            }
+
+            unset($app_data['__VARIABLE_DOCUMENT_DELETE__']);
+        }
+
         $case = new \Cases();
         $fields = $case->loadCase($app_uid, $del_index);
         $_POST['form'] = $app_data;
@@ -1866,6 +1876,11 @@ class Cases
         }
         $data['APP_DATA'] = array_merge($fields['APP_DATA'], $_POST['form']);
         $case->updateCase($app_uid, $data);
+
+        //Delete MultipleFile
+        if (!empty($arrayVariableDocumentToDelete)) {
+            $this->deleteMultipleFile($app_uid, $arrayVariableDocumentToDelete);
+        }
     }
 
     /**
@@ -2970,10 +2985,10 @@ class Cases
 
         return G::json_encode($dataResponse);
     }
-    
+
     /**
      * if case already routed
-     * 
+     *
      * @param type $app_uid
      * @param type $del_index
      * @param type $usr_uid
@@ -3044,5 +3059,148 @@ class Cases
             return $flagParticipated;
         }
     }
-}
 
+    /**
+     * Delete MultipleFile in Case data
+     *
+     * @param array  $arrayApplicationData  Case data
+     * @param string $variable1             Variable1
+     * @param string $variable2             Variable2
+     * @param string $type                  Type (NORMAL, GRID)
+     * @param array  $arrayDocumentToDelete Document to delete
+     *
+     * @return array Returns array with Case data updated
+     */
+    private function __applicationDataDeleteMultipleFile(array $arrayApplicationData, $variable1, $variable2, $type, array $arrayDocumentToDelete)
+    {
+        if (array_key_exists($variable1, $arrayApplicationData) &&
+            is_array($arrayApplicationData[$variable1]) && !empty($arrayApplicationData[$variable1])
+        ) {
+            switch ($type) {
+                case 'NORMAL':
+                    $arrayAux = $arrayApplicationData[$variable1];
+                    $arrayApplicationData[$variable1] = [];
+                    $keyd = null;
+
+                    foreach ($arrayAux as $key => $value) {
+                        if ($value['appDocUid'] == $arrayDocumentToDelete['appDocUid'] &&
+                            (int)($value['version']) == (int)($arrayDocumentToDelete['version'])
+                        ) {
+                            $keyd = $key;
+                        } else {
+                            $arrayApplicationData[$variable1][] = $value;
+                        }
+                    }
+
+                    if (!is_null($keyd)) {
+                        $variable1 = $variable1 . '_label';
+
+                        if (array_key_exists($variable1, $arrayApplicationData) &&
+                            is_array($arrayApplicationData[$variable1]) && !empty($arrayApplicationData[$variable1])
+                        ) {
+                            $arrayAux = $arrayApplicationData[$variable1];
+                            $arrayApplicationData[$variable1] = [];
+
+                            foreach ($arrayAux as $key => $value) {
+                                if ($key != $keyd) {
+                                    $arrayApplicationData[$variable1][] = $value;
+                                }
+                            }
+                        }
+                    }
+                    break;
+                case 'GRID':
+                    foreach ($arrayApplicationData[$variable1] as $key => $value) {
+                        if (array_key_exists($variable2, $value)) {
+                            $arrayApplicationData[$variable1][$key] = $this->__applicationDataDeleteMultipleFile(
+                                $value, $variable2, null, 'NORMAL', $arrayDocumentToDelete
+                            );
+                        }
+                    }
+                    break;
+            }
+        }
+
+        //Return
+        return $arrayApplicationData;
+    }
+
+    /**
+     * Delete MultipleFile
+     *
+     * @param string $applicationUid                Unique id of Case
+     * @param array  $arrayVariableDocumentToDelete Variable with Documents to delete
+     *
+     * @return void
+     */
+    public function deleteMultipleFile($applicationUid, array $arrayVariableDocumentToDelete)
+    {
+        $case = new \Cases();
+        $appDocument = new \AppDocument();
+
+        $arrayApplicationData = $this->getApplicationRecordByPk($applicationUid, [], false);
+        $arrayApplicationData['APP_DATA'] = $case->unserializeData($arrayApplicationData['APP_DATA']);
+        $flagDelete = false;
+
+        foreach ($arrayVariableDocumentToDelete as $key => $value) {
+            if (is_array($value) && !empty($value)) {
+                $type = '';
+
+                $arrayAux = $value;
+                $arrayAux = array_shift($arrayAux);
+
+                if (array_key_exists('appDocUid', $arrayAux)) {
+                    $type = 'NORMAL';
+                } else {
+                    $arrayAux = array_shift($arrayAux);
+                    $arrayAux = array_shift($arrayAux);
+
+                    if (array_key_exists('appDocUid', $arrayAux)) {
+                        $type = 'GRID';
+                    }
+                }
+
+                switch ($type) {
+                    case 'NORMAL':
+                        $variable = $key;
+                        $arrayDocumentDelete = $value;
+
+                        foreach ($arrayDocumentDelete as $value2) {
+                            $appDocument->remove($value2['appDocUid'], (int)($value2['version']));
+
+                            $arrayApplicationData['APP_DATA'] = $this->__applicationDataDeleteMultipleFile(
+                                $arrayApplicationData['APP_DATA'], $variable, null, $type, $value2
+                            );
+
+                            $flagDelete = true;
+                        }
+                        break;
+                    case 'GRID':
+                        $grid = $key;
+
+                        foreach ($value as $value2) {
+                            foreach ($value2 as $key3 => $value3) {
+                                $variable = $key3;
+                                $arrayDocumentDelete = $value3;
+
+                                foreach ($arrayDocumentDelete as $value4) {
+                                    $appDocument->remove($value4['appDocUid'], (int)($value4['version']));
+
+                                    $arrayApplicationData['APP_DATA'] = $this->__applicationDataDeleteMultipleFile(
+                                        $arrayApplicationData['APP_DATA'], $grid, $variable, $type, $value4
+                                    );
+
+                                    $flagDelete = true;
+                                }
+                            }
+                        }
+                        break;
+                }
+            }
+        }
+
+        if ($flagDelete) {
+            $result = $case->updateCase($applicationUid, $arrayApplicationData);
+        }
+    }
+}
