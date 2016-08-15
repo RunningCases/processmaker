@@ -2944,7 +2944,7 @@ class Cases
                 }
 
                 //Current users of OPEN DEL_INDEX thread
-                $aCurUser = $oAppDel->getCurrentUsers($val['APP_UID'], $val['INDEX']);
+                $aCurUser = $appDelegation->getCurrentUsers($val['APP_UID'], $val['INDEX']);
                 if (!empty($aCurUser)) {
                     foreach ($aCurUser as $key => $value) {
                         if ($value === $data['usr_uid_target']) {
