@@ -44,7 +44,7 @@ if (isset($_GET["url"]) && $_GET["url"] != "") {
     <title>Processmaker Styleguide</title>
     <!-- Bootstrap core CSS -->
     <link href="../lib/pmdynaform/libs/bootstrap-3.1.1/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../lib/pmdynaform/libs/fonts/css/font-awesome.min.css" rel="stylesheet">
+    <link href="../lib/pmdynaform/libs/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet">
     <!-- Custom styling plus plugins -->
     <link href="../lib/pmdynaform/libs/custom/custom.css" rel="stylesheet">
     <script type="text/javascript" src="../lib/pmdynaform/libs/jquery/jquery-1.11.js"></script>
