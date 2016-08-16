@@ -2942,7 +2942,7 @@ CREATE TABLE `EMAIL_EVENT`
 	`EMAIL_EVENT_TO` MEDIUMTEXT  NOT NULL,
 	`EMAIL_EVENT_SUBJECT` VARCHAR(150) default '',
 	`PRF_UID` VARCHAR(32) default '',
-	`EMAIL_SERVER_UID` VARCHAR(32)  NOT NULL,
+	`EMAIL_SERVER_UID` VARCHAR(32) default '',
 	PRIMARY KEY (`EMAIL_EVENT_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
