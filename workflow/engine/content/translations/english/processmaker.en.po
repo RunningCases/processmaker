@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ProcessMaker (Branch 3.1)\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2016-08-12 23:48:36\n"
+"PO-Revision-Date: 2016-08-16 20:08:15\n"
 "Last-Translator: \n"
 "Language-Team: Colosa Developers Team <developers@colosa.com>\n"
 "MIME-Version: 1.0\n"
@@ -27646,6 +27646,36 @@ msgstr "Force user login"
 #: LABEL/ID_MAFE_f82e519e2e82239be5f49d78b24ea228
 msgid "Supported Controls: Multiple File."
 msgstr "Supported Controls: Multiple File."
+
+# TRANSLATION
+# LABEL/ID_DEFAULT_EXPIRATION_YEAR
+#: LABEL/ID_DEFAULT_EXPIRATION_YEAR
+msgid "Default user expiry date (years)"
+msgstr "Default user expiry date (years)"
+
+# TRANSLATION
+# LABEL/ID_MAFE_497f247967ea9a295c48effdc025c1a1
+#: LABEL/ID_MAFE_497f247967ea9a295c48effdc025c1a1
+msgid "Email From Format"
+msgstr "Email From Format"
+
+# TRANSLATION
+# LABEL/ID_MAFE_28a7de43bb5297bf6122425d52210f93
+#: LABEL/ID_MAFE_28a7de43bb5297bf6122425d52210f93
+msgid "Assigned User"
+msgstr "Assigned User"
+
+# TRANSLATION
+# LABEL/ID_MAFE_31d1eacb86fc41c8ba34934923e8b53e
+#: LABEL/ID_MAFE_31d1eacb86fc41c8ba34934923e8b53e
+msgid "Email Account Settings"
+msgstr "Email Account Settings"
+
+# TRANSLATION
+# LABEL/ID_MAFE_d4903c30cd1efde76c02488c8697503b
+#: LABEL/ID_MAFE_d4903c30cd1efde76c02488c8697503b
+msgid "Assigned user"
+msgstr "Assigned user"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml

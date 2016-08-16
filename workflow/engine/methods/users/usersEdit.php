@@ -19,7 +19,7 @@ $envFile = PATH_CONFIG . 'env.ini';
 if (file_exists($envFile) ) {
     $sysConf = System::getSystemConfiguration($envFile);
     if(isset($sysConf['expiration_year']) && $sysConf['expiration_year']>0){
-       $expirationDate = $sysConf['expiration_year'];
+       $expirationDate = abs($sysConf['expiration_year']);
     }
 }
 
@@ -41,7 +41,7 @@ $oHeadPublisher->assign( 'MAX_FILES_SIZE', ' (' . $UPLOAD_MAX_SIZE . ') ' );
 $oHeadPublisher->assign('SYSTEM_TIME_ZONE', $arraySystemConfiguration['time_zone']);
 $oHeadPublisher->assign('TIME_ZONE_DATA', array_map(function ($value) { return [$value, $value]; }, DateTimeZone::listIdentifiers()));
 $oHeadPublisher->assign('__SYSTEM_UTC_TIME_ZONE__', (isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__'])? 1 : 0);
-$oHeadPublisher->assign('EXPIRATION_DATE', (int)$expirationDate);
+$oHeadPublisher->assign('EXPIRATION_DATE', $expirationDate);
 $oHeadPublisher->assign('LANGUAGE_MANAGEMENT', $languageManagement);
 $oHeadPublisher->assign('__ACTION__', 'saveUser');
 

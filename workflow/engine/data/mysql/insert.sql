@@ -6151,7 +6151,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_MAFE_1de162d73f017a9243ce0c939064a014','en','Enable gallery','2016-08-12') ,
 ( 'LABEL','ID_MAFE_4e357e7345689cff230335282b201a11','en','Enable camera','2016-08-12') ,
 ( 'LABEL','ID_MAFE_5582ead0a9ee86a54da29c20caee6f57','en','Force user login','2016-08-12') ,
-( 'LABEL','ID_MAFE_f82e519e2e82239be5f49d78b24ea228','en','Supported Controls: Multiple File.','2016-08-12') ;
+( 'LABEL','ID_MAFE_f82e519e2e82239be5f49d78b24ea228','en','Supported Controls: Multiple File.','2016-08-12') ,
+( 'LABEL','ID_DEFAULT_EXPIRATION_YEAR','en','Default user expiry date (years)','2016-08-12') ;
 
 INSERT INTO ISO_LOCATION (IC_UID,IL_UID,IL_NAME,IL_NORMAL_NAME,IS_UID)  VALUES 
 ('AD','','',' ','') ,
