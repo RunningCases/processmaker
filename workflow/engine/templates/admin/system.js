@@ -99,7 +99,8 @@ Ext.onReady(function(){
        if(value > 0) {
            return true;
        } else {
-           PMExt.error( _('ID_ERROR'), _('ERROR_ONLY_POSITIVE_NUMBER'));
+           PMExt.error( _('ID_ERROR'), _('ID_INVALID_VALUE_EXPECTING_POSITIVE_INTEGER', _('ID_DEFAULT_EXPIRATION_YEAR')));
+           return false;
        }
       },
       listeners:{
