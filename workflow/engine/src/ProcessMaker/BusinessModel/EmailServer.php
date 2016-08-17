@@ -1041,6 +1041,7 @@ class EmailServer
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
 
+                $arrayData["MESS_UID"]                 = $row["MESS_UID"];
                 $arrayData["MESS_ENGINE"]              = $row["MESS_ENGINE"];
                 $arrayData["MESS_SERVER"]              = $row["MESS_SERVER"];
                 $arrayData["MESS_PORT"]                = (int)($row["MESS_PORT"]);
