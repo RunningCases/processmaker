@@ -469,7 +469,7 @@ class EmailEvent
                     $emailTo = $email;
                 }
             }
-            if (!empty($emailTo) && $arrayData[3] != '') {
+            if (!empty($emailTo)) {
                 $subject = $arrayData[5];
                 $subject = \G::replaceDataField($arrayData[5], $arrayApplicationData['APP_DATA']);
                 \PMFSendMessage($appUID, $configEmailData['MESS_ACCOUNT'], $emailTo, '', '', $subject,
