@@ -177,8 +177,8 @@ switch ($_POST['action']) {
                 $user->auditLog('UPD', array_merge(['USR_UID' => $userUid, 'USR_USERNAME' => $arrayUserData['USR_USERNAME']], $form));
 
                 /* Saving preferences */
-                $def_lang = $form['PREF_DEFAULT_LANG'];
-                $def_menu = $form['PREF_DEFAULT_MENUSELECTED'];
+                $def_lang = isset($form['PREF_DEFAULT_LANG']) ? $form['PREF_DEFAULT_LANG'] : '';
+                $def_menu = isset($form['PREF_DEFAULT_MENUSELECTED']) ? $form['PREF_DEFAULT_MENUSELECTED'] : '';
                 $def_cases_menu = isset($form['PREF_DEFAULT_CASES_MENUSELECTED']) ? $form['PREF_DEFAULT_CASES_MENUSELECTED'] : '';
 
                 G::loadClass('configuration');
@@ -190,15 +190,17 @@ switch ($_POST['action']) {
                 $oConf->saveConfig('USER_PREFERENCES', '', '', $_SESSION['USER_LOGGED']);
             }
 
-            try {
-                $user->uploadImage($userUid);
-            } catch (Exception $e) {
-                $result = new stdClass();
-                $result->success = false;
-                $result->fileError = true;
+            if ($user->checkPermission($userUid, 'PM_EDIT_USER_PROFILE_PHOTO')) {
+                try {
+                    $user->uploadImage($userUid);
+                } catch (Exception $e) {
+                    $result = new stdClass();
+                    $result->success = false;
+                    $result->fileError = true;
 
-                echo G::json_encode($result);
-                exit(0);
+                    echo G::json_encode($result);
+                    exit(0);
+                }
             }
 
             if ($_SESSION['USER_LOGGED'] == $form['USR_UID']) {
