@@ -2937,6 +2937,7 @@ class Cases
         $oCases = new \Cases();
         $appDelegation = new \AppDelegation();
         $casesToReassign = $data['cases'];
+        $result = 0;
         if (sizeof($casesToReassign)) {
             foreach ($casesToReassign as $key => $val) {
                 $usrUid = '';
@@ -2952,14 +2953,14 @@ class Cases
                 }
                 //Will be not able reassign a case when is paused
                 $flagReassign = true;
-                if (!\AppDelay::isPaused($val['APP_UID'], $val['INDEX'])) {
+                if (\AppDelay::isPaused($val['APP_UID'], $val['DEL_INDEX'])) {
                     $dataResponse['cases'][$key]['result'] = 0;
                     $dataResponse['cases'][$key]['status'] = \G::LoadTranslation('ID_REASSIGNMENT_PAUSED_ERROR');
                     $flagReassign = false;
                 }
 
                 //Current users of OPEN DEL_INDEX thread
-                $aCurUser = $appDelegation->getCurrentUsers($val['APP_UID'], $val['INDEX']);
+                $aCurUser = $appDelegation->getCurrentUsers($val['APP_UID'], $val['DEL_INDEX']);
                 if (!empty($aCurUser)) {
                     foreach ($aCurUser as $key => $value) {
                         if ($value === $data['usr_uid_target']) {
