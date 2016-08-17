@@ -3589,7 +3589,7 @@ function PMFCopyDocumentCase($appDocUid, $versionNumber, $targetCaseUid, $inputD
             "APP_DOC_CREATE_DATE" => date("Y-m-d H:i:s"),
             "APP_DOC_COMMENT" => $dataFields['APP_DOC_COMMENT'],
             "APP_DOC_TITLE" => $dataFields['APP_DOC_TITLE'],
-            "APP_DOC_FILENAME" => $dataFields['APP_DOC_TITLE'],
+            "APP_DOC_FILENAME" => $dataFields['APP_DOC_FILENAME'],
             "FOLDER_UID" => $dataFields['FOLDER_UID'],
             "APP_DOC_TAGS" => $dataFields['APP_DOC_TAGS']
         );
@@ -3601,7 +3601,7 @@ function PMFCopyDocumentCase($appDocUid, $versionNumber, $targetCaseUid, $inputD
         $realPath = PATH_DOCUMENT . $parcialPath . '/' . $file[0] . $file[1] . '_' . $versionNumber . '.' . $ext;
         $strFileName = $dataFields['APP_DOC_UID'] . '_' . $versionNumber . '.' . $ext;
         $newUidAppDocUid = null;
-        if ($dataFields['APP_DOC_TYPE'] == 'INPUT') {
+        if ($dataFields['APP_DOC_TYPE'] == 'INPUT' || $dataFields['APP_DOC_TYPE'] == 'ATTACHED') {
             if (file_exists($realPath)) {
                 $strPathName = PATH_DOCUMENT . G::getPathFromUID($targetCaseUid) . PATH_SEP;
                 if (!is_dir($strPathName)) {
