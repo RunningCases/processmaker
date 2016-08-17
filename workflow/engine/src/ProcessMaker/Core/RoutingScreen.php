@@ -29,7 +29,9 @@ class RoutingScreen extends \Derivation
                 if(isset($post[$i]['SOURCE_UID']) && ($nextTask['NEXT_TASK']['TAS_UID'] === $post[$i]['SOURCE_UID'])){
                     $flagJumpTask = true;
                     if($post[$i]['SOURCE_UID'] === $post[$i]['TAS_UID']){
-                        $aDataMerged[$key]['USR_UID'] = $post[$i]['USR_UID'];
+                        if (isset($post[$i]['USR_UID'])) { // Multiple instances task don't send this key
+                            $aDataMerged[$key]['USR_UID'] = $post[$i]['USR_UID'];
+                        }
                     } else {
                         $aDataMerged[$key]['NEXT_ROUTING'][] = $post[$i];
                     }
