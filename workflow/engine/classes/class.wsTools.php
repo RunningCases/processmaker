@@ -763,6 +763,9 @@ class workspaceTools
         $this->checkSequenceNumber();
         $this->migrateIteeToDummytask($this->name);
         $this->upgradeConfiguration();
+        /*----------------------------------********---------------------------------*/
+        $this->upgradeAuditLog($this->name);
+        /*----------------------------------********---------------------------------*/
 
         //There records in table "EMAIL_SERVER"
         $criteria = new Criteria("workflow");
@@ -3272,6 +3275,18 @@ class workspaceTools
         $conf = new Configurations();
         $conf->aConfig = 'neoclassic';
         $conf->saveConfig('SKIN_CRON', '');
+    }
+
+    public function upgradeAuditLog($workspace){
+        G::LoadClass("configuration");
+        $conf = new Configurations();
+        if (!$conf->exists('AUDIT_LOG','log')) {
+            CLI::logging("> Updating Auditlog Config \n");
+            $oServerConf = &serverConf::getSingleton();
+            $sAudit = $oServerConf->getAuditLogProperty('AL_OPTION', $workspace);
+            $conf->aConfig = ($sAudit == 1) ? 'true' : 'false';
+            $conf->saveConfig('AUDIT_LOG', 'log');
+        }
     }
 
 }

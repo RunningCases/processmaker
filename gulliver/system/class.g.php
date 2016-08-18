@@ -5433,12 +5433,13 @@ class G
     public static function auditLog($actionToLog, $valueToLog = "")
     {
 	    $workspace = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
-        $oServerConf = & serverConf::getSingleton();
-        $sflagAudit = $oServerConf->getAuditLogProperty( 'AL_OPTION', $workspace );
+        $conf = new Configurations();
+        $sflag = $conf->getConfiguration('AUDIT_LOG', 'log');
+        $sflagAudit = $sflag == 'true' ? true : false;
         $ipClient = G::getIpAddress();
 
         /*----------------------------------********---------------------------------*/
-        $licensedFeatures = PMLicensedFeatures::getSingleton();        
+        $licensedFeatures = PMLicensedFeatures::getSingleton();
         if ($sflagAudit && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
             $username = isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '' ? $_SESSION['USER_LOGGED'] : 'Unknow User';
             $fullname = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : '-';

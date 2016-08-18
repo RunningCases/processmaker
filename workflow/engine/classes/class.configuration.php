@@ -88,9 +88,9 @@ class Configurations // extends Configuration
         }
     }
 
-    public function exists($cfgID)
+    public function exists($cfgID,$objID='')
     {
-        return $this->Configuration->exists($cfgID,"",'','','');
+        return $this->Configuration->exists($cfgID,$objID,'','','');
     }
 
     /**
