@@ -267,7 +267,7 @@ class DataBaseMaintenance
         // mysql_escape_string("';");
         if (! @mysql_query( $sql )) {
             $ws = (defined("SYS_SYS"))? SYS_SYS : "Wokspace Undefined";
-            Bootstrap::registerMonolog('MysqlCron', 400, mysql_error(), array('sql'=>$sql), $ws, 'mysql.log');
+            Bootstrap::registerMonolog('MysqlCron', 400, mysql_error(), array('sql'=>$sql), $ws, 'processmaker.log');
             $varRes = mysql_error() . "\n";
             G::outRes( $varRes );
             return false;
@@ -288,7 +288,7 @@ class DataBaseMaintenance
         $sql = "LOAD DATA INFILE '$backupFile' INTO TABLE $tableName FIELDS TERMINATED BY '\t|\t' OPTIONALLY ENCLOSED BY '\"' LINES TERMINATED BY '\t\t\r\r\n'";
         if (! @mysql_query( $sql )) {
             $ws = (defined("SYS_SYS"))? SYS_SYS : "Wokspace Undefined";
-            Bootstrap::registerMonolog('MysqlCron', 400, mysql_error(), array('sql'=>$sql), $ws, 'mysql.log');
+            Bootstrap::registerMonolog('MysqlCron', 400, mysql_error(), array('sql'=>$sql), $ws, 'processmaker.log');
             $varRes = mysql_error() . "\n";
             G::outRes( $varRes );
             return false;
@@ -520,7 +520,7 @@ class DataBaseMaintenance
      * @return string $tableSchema
      */
     function getSchemaFromTable ($tablename)
-    {   
+    {
         //$tableSchema = "/* Structure for table `$tablename` */\n";
         //$tableSchema .= "DROP TABLE IF EXISTS `$tablename`;\n\n";
         $tableSchema = "";

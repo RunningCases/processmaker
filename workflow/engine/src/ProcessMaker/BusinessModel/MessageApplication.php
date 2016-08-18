@@ -661,10 +661,9 @@ class MessageApplication
                             ,'inpDocUid'=> $inpDocUid
                             ,'url'      => $url
                         );
-            \Bootstrap::registerMonolog('MessageEventCron', $level, $message, $aContext, SYS_SYS, 'messageevent.log');
+            \Bootstrap::registerMonolog('MessageEventCron', $level, $message, $aContext, SYS_SYS, 'processmaker.log');
         } catch (\Exception $e) {
             throw $e;
         }
     }
 }
-
