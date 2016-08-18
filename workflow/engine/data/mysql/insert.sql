@@ -61526,7 +61526,7 @@ INSERT INTO CONFIGURATION (CFG_UID,OBJ_UID,CFG_VALUE,PRO_UID,USR_UID,APP_UID) VA
 ('ENVIRONMENT_SETTINGS','','a:1:{s:18:"directoryStructure";i:2;}','','',''),
 ('MIGRATED_LIST','list','true','list','list','list'),
 ('MIGRATED_LIST_UNASSIGNED','list','true','list','list','list'),
-('SKIN_CRON','','neoclassic','','','');
+('SKIN_CRON','','s:10:"neoclassic";','','','');
 
 INSERT INTO CATALOG (CAT_UID, CAT_LABEL_ID, CAT_TYPE, CAT_FLAG, CAT_OBSERVATION, CAT_CREATE_DATE, CAT_UPDATE_DATE) VALUES
 ('10','ID_BARS','GRAPHIC','','','2015-03-04','2015-03-04'),
