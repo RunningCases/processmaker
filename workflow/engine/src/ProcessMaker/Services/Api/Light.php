@@ -1552,6 +1552,9 @@ class Light extends Api
     public function doPutCaseVariables($app_uid, $request_data, $dyn_uid = '', $del_index = 0)
     {
         try {
+            if ($del_index <= 0) {
+                throw (new \Exception(G::LoadTranslation('ID_INVALID_VALUE_EXPECTING_POSITIVE_INTEGER', array('del_index')), Api::STAT_APP_EXCEPTION));
+            }
             if ($del_index === null) {
                 throw (new \Exception(G::LoadTranslation('ID_CAN_NOT_BE_NULL', array('del_index')), Api::STAT_APP_EXCEPTION));
             }
