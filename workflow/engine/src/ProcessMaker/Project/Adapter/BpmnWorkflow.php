@@ -351,7 +351,7 @@ class BpmnWorkflow extends Project\Bpmn
                         //$this->updateEventStartObjects($data["FLO_ELEMENT_ORIGIN"], $data["FLO_ELEMENT_DEST"]);
 
                         //WebEntry-Event - Update
-                        $this->updateWebEntryEventByEvent($data["FLO_ELEMENT_ORIGIN"], array("ACT_UID" => $data["FLO_ELEMENT_DEST"]));
+                        $this->__updateWebEntryEventByEvent($data['FLO_ELEMENT_ORIGIN'], ['ACT_UID' => $data['FLO_ELEMENT_DEST']]);
                         break;
                     case "bpmnEvent":
                         $messageEventRelationUid = $this->createMessageEventRelationByBpmnFlow(\BpmnFlowPeer::retrieveByPK($floUid));
@@ -401,7 +401,7 @@ class BpmnWorkflow extends Project\Bpmn
                 //$this->updateEventStartObjects($flowCurrent->getFloElementOrigin(), $flowCurrent->getFloElementDest());
 
                 //WebEntry-Event - Update
-                $this->updateWebEntryEventByEvent($flowCurrent->getFloElementOrigin(), array("ACT_UID" => $flowCurrent->getFloElementDest()));
+                $this->__updateWebEntryEventByEvent($flowCurrent->getFloElementOrigin(), ['ACT_UID' => $flowCurrent->getFloElementDest()]);
             }
         }
 
@@ -487,11 +487,9 @@ class BpmnWorkflow extends Project\Bpmn
                 $event = \BpmnEventPeer::retrieveByPK($flow->getFloElementOrigin());
 
                 if (!is_null($event) && $event->getEvnType() == "START" && $event->getEvnMarker() == "EMPTY") {
-                    $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementDest());
-
                     //Remove as start Task
-                    if (!is_null($activity)) {
-                        $this->wp->setStartTask($activity->getActUid(), false);
+                    if (!is_null(\BpmnActivityPeer::retrieveByPK($flow->getFloElementDest()))) {
+                        $this->wp->setStartTask($flow->getFloElementDest(), false);
                     }
                 }
             }
@@ -500,7 +498,7 @@ class BpmnWorkflow extends Project\Bpmn
 
             //WebEntry-Event - Update
             if (is_null($bpmnFlow)) {
-                $this->updateWebEntryEventByEvent($flow->getFloElementOrigin(), array("WEE_STATUS" => "DISABLED"));
+                $this->__updateWebEntryEventByEvent($flow->getFloElementOrigin(), ['WEE_STATUS' => 'DISABLED']);
             }
         } elseif ($flow->getFloElementOriginType() == "bpmnActivity" &&
             $flow->getFloElementDestType() == "bpmnEvent") {
@@ -509,11 +507,9 @@ class BpmnWorkflow extends Project\Bpmn
             $event = \BpmnEventPeer::retrieveByPK($flow->getFloElementDest());
 
             if (!is_null($event) && $event->getEvnType() == "END" && $event->getEvnMarker() == "EMPTY") {
-                $activity = \BpmnActivityPeer::retrieveByPK($flow->getFloElementOrigin());
-
                 //Remove as end Task
-                if (! is_null($activity)) {
-                    $this->wp->setEndTask($activity->getActUid(), false);
+                if (!is_null(\BpmnActivityPeer::retrieveByPK($flow->getFloElementOrigin()))) {
+                    $this->wp->setEndTask($flow->getFloElementOrigin(), false);
                 }
             }
         } else {
@@ -549,7 +545,7 @@ class BpmnWorkflow extends Project\Bpmn
         // TODO Complete for other routes, activity->activity, activity->gateway and viceversa
     }
 
-    public function updateEventActivityDefinition(\BpmnEvent $bpmnEvent, $flagStartTask)
+    private function __updateEventActivityDefinition(\BpmnEvent $bpmnEvent, $flagStartTask)
     {
         try {
             if ($bpmnEvent->getEvnType() == "START") {
@@ -568,9 +564,10 @@ class BpmnWorkflow extends Project\Bpmn
                             //Setting as start Task
                             //or
                             //Remove as start Task
-                            $bwp = new self;
-                            if ($bwp->getActivity($arrayFlowData["FLO_ELEMENT_DEST"])) {
-                                $this->wp->setStartTask($arrayFlowData["FLO_ELEMENT_DEST"], $flagStartTask);
+                            if (!is_null(\BpmnActivityPeer::retrieveByPK($arrayFlowData['FLO_ELEMENT_DEST']))) {
+                                $this->wp->setStartTask($arrayFlowData['FLO_ELEMENT_DEST'], $flagStartTask);
+
+                                $this->__updateWebEntryEventByEvent($bpmnEvent->getEvnUid());
                             }
                             break;
                     }
@@ -673,7 +670,7 @@ class BpmnWorkflow extends Project\Bpmn
             if ((isset($arrayEventData["EVN_TYPE"]) && $arrayEventData["EVN_TYPE"] != $bpmnEvent->getEvnType()) ||
                 (isset($arrayEventData["EVN_MARKER"]) && $arrayEventData["EVN_MARKER"] != $bpmnEvent->getEvnMarker())
             ) {
-                $this->updateEventActivityDefinition($bpmnEvent, false);
+                $this->__updateEventActivityDefinition($bpmnEvent, false);
                 $this->removeEventDefinition($bpmnEvent);
             }
 
@@ -688,7 +685,7 @@ class BpmnWorkflow extends Project\Bpmn
         try {
             $bpmnEvent = \BpmnEventPeer::retrieveByPK($eventUid);
 
-            $this->updateEventActivityDefinition($bpmnEvent, false);
+            $this->__updateEventActivityDefinition($bpmnEvent, false);
             $this->removeEventDefinition($bpmnEvent);
 
             parent::removeEvent($eventUid);
@@ -1167,7 +1164,7 @@ class BpmnWorkflow extends Project\Bpmn
                             $this->mapBpmnEventToWorkflowRoutes($taskUid, $event["EVN_UID"]);
                             break;
                         case "EMPTY":
-                            $this->updateEventActivityDefinition(\BpmnEventPeer::retrieveByPK($event["EVN_UID"]), true);
+                            $this->__updateEventActivityDefinition(\BpmnEventPeer::retrieveByPK($event['EVN_UID']), true);
                             break;
                     }
                     break;
@@ -1973,7 +1970,7 @@ class BpmnWorkflow extends Project\Bpmn
         $this->wp->setDisabled($value);
     }
 
-    public function updateWebEntryEventByEvent($eventUid, array $arrayData)
+    private function __updateWebEntryEventByEvent($eventUid, array $arrayData = null)
     {
         try {
             $bpmnEvent = \BpmnEventPeer::retrieveByPK($eventUid);
@@ -1987,7 +1984,11 @@ class BpmnWorkflow extends Project\Bpmn
                     $bpmn = \ProcessMaker\Project\Bpmn::load($bpmnEvent->getPrjUid());
                     $bpmnProject = $bpmn->getProject("object");
 
-                    $arrayResult = $webEntryEvent->update($arrayWebEntryEventData["WEE_UID"], $bpmnProject->getPrjAuthor(), $arrayData);
+                    $arrayResult = $webEntryEvent->update(
+                        $arrayWebEntryEventData['WEE_UID'],
+                        $bpmnProject->getPrjAuthor(),
+                        (!is_null($arrayData))? $arrayData : $arrayWebEntryEventData
+                    );
                 }
             }
         } catch (\Exception $e) {

@@ -685,9 +685,13 @@ class WebEntryEvent
                             }
 
                             //Route
-                            if (isset($arrayData["ACT_UID"]) && $arrayData["ACT_UID"] != $arrayWebEntryEventData["ACT_UID"]) {
-                                //Delete
-                                $result = $task->deleteAllRoutesOfTask($arrayWebEntryEventData["PRJ_UID"], $arrayWebEntryEventData["WEE_WE_TAS_UID"], true);
+                            if (array_key_exists('ACT_UID', $arrayData)) {
+                                if ($arrayData['ACT_UID'] != $arrayWebEntryEventData['ACT_UID']) {
+                                    //Delete
+                                    $result = $task->deleteAllRoutesOfTask(
+                                        $arrayWebEntryEventData['PRJ_UID'], $arrayWebEntryEventData['WEE_WE_TAS_UID'], true
+                                    );
+                                }
 
                                 //Add
                                 $workflow = \ProcessMaker\Project\Workflow::load($arrayWebEntryEventData["PRJ_UID"]);
@@ -1001,4 +1005,3 @@ class WebEntryEvent
         }
     }
 }
-
