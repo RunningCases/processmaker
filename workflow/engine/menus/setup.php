@@ -27,8 +27,8 @@ global $RBAC;
 $partnerFlag = (defined('PARTNER_FLAG')) ? PARTNER_FLAG : false;
 
 /*----------------------------------********---------------------------------*/
-$oServerConf = &serverConf::getSingleton();
-$sAudit = $oServerConf->getAuditLogProperty('AL_OPTION', SYS_SYS);
+$conf = new Configurations();
+$sAudit = $conf->getConfiguration('AUDIT_LOG', 'log');
 $licensedFeatures = &PMLicensedFeatures::getSingleton();
 /*----------------------------------********---------------------------------*/
 if ($RBAC->userCanAccess('PM_SETUP') === 1) {
