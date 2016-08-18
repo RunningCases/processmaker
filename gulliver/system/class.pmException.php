@@ -22,7 +22,6 @@ class PMException extends Exception
 
     public function registerErrorLog($error, $token){
         $ws = (defined("SYS_SYS"))? SYS_SYS : "Wokspace Undefined";
-        Bootstrap::registerMonolog('ExceptionCron', 400, $error->getMessage(), array('token'=>$token), $ws, 'exception.log');
+        Bootstrap::registerMonolog('ExceptionCron', 400, $error->getMessage(), array('token'=>$token), $ws, 'processmaker.log');
     }
 }
-
