@@ -1111,15 +1111,22 @@ class Cases
             $criteria = new Criteria("workflow");
             $criteria->add(AppSolrQueuePeer::APP_UID, $sAppUid);
             AppSolrQueuePeer::doDelete($criteria);
-            //Before delete verify if is a child case
-            $oCriteria2 = new Criteria('workflow');
-            $oCriteria2->add(SubApplicationPeer::APP_UID, $sAppUid);
-            $oCriteria2->add(SubApplicationPeer::SA_STATUS, 'ACTIVE');
-            if (SubApplicationPeer::doCount($oCriteria2) > 0) {
-                G::LoadClass('derivation');
-                $oDerivation = new Derivation();
-                $oDerivation->verifyIsCaseChild($sAppUid);
+
+            try {
+                //Before delete verify if is a child case
+                $oCriteria2 = new Criteria('workflow');
+                $oCriteria2->add(SubApplicationPeer::APP_UID, $sAppUid);
+                $oCriteria2->add(SubApplicationPeer::SA_STATUS, 'ACTIVE');
+
+                if (SubApplicationPeer::doCount($oCriteria2) > 0) {
+                    G::LoadClass('derivation');
+                    $oDerivation = new Derivation();
+                    $oDerivation->verifyIsCaseChild($sAppUid);
+                }
+            } catch(Exception $e) {
+                Bootstrap::registerMonolog('DeleteCases', 200, 'Error in sub-process when trying to route a child case related to the case', ['application_uid' => $sAppUid, 'error' => $e->getMessage()], SYS_SYS, 'processmaker.log');
             }
+
             //Delete the registries in the table SUB_APPLICATION
             $oCriteria2 = new Criteria('workflow');
             $oCriteria2->add(SubApplicationPeer::APP_UID, $sAppUid);
