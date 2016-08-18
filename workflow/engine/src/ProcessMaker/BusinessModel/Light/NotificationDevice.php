@@ -7,8 +7,8 @@ use G;
 
 class NotificationDevice
 {
-    
-    
+
+
     public function checkMobileNotifications()
     {
         $conf = \System::getSystemConfiguration('', '', SYS_SYS);
@@ -18,7 +18,7 @@ class NotificationDevice
         }
         return $activeNotifications;
     }
-    
+
     /**
      * Post Create register device with userUid
      *
@@ -166,7 +166,7 @@ class NotificationDevice
             $response = array();
             $typeList = 'todo';
             $arrayTaskUser = array();
-            switch ($nextDel["TAS_ASSIGN_TYPE"]) {
+            switch ((array_key_exists('TAS_ASSIGN_TYPE', $nextDel))? $nextDel['TAS_ASSIGN_TYPE'] : '') {
                 case "SELF_SERVICE":
                     $arrayTaskUser = $this->getTaskUserSelfService($nextDel["TAS_UID"], $appFields);
                     $typeList = 'unassigned';
