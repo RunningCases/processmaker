@@ -303,7 +303,7 @@ class Light
             $response['caseNumber'] = $aData['CASE_NUMBER'];
 
             //Log
-            \Bootstrap::registerMonolog('create-case', 200, "Create case", ['application_uid' => $aData['APPLICATION'], 'usr_uid' => $userId], SYS_SYS, 'mobileLogs.log');
+            \Bootstrap::registerMonolog('MobileCreateCase', 200, "Create case", ['application_uid' => $aData['APPLICATION'], 'usr_uid' => $userId], SYS_SYS, 'processmaker.log');
         } catch (Exception $e) {
             $response['status'] = 'failure';
             $response['message'] = $e->getMessage();
@@ -539,7 +539,7 @@ class Light
             }
 
             //Log
-            \Bootstrap::registerMonolog('route-case', 200, 'Route case', ['application_uid' => $applicationUid, 'usr_uid' => $userUid], SYS_SYS, 'mobileLogs.log');
+            \Bootstrap::registerMonolog('MobileRouteCase', 200, 'Route case', ['application_uid' => $applicationUid, 'usr_uid' => $userUid], SYS_SYS, 'processmaker.log');
         } catch (\Exception $e) {
             throw $e;
         }
@@ -1343,4 +1343,3 @@ class Light
     }
 
 }
-

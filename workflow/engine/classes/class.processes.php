@@ -4129,7 +4129,7 @@ class Processes
                 try {
                     $result = $scriptTask->create($processUid, $record);
                 } catch (Exception $e) {
-                    Bootstrap::registerMonolog('DataError', 400, $e->getMessage(), $record, SYS_SYS, 'processImporter.log');
+                    Bootstrap::registerMonolog('DataError', 400, $e->getMessage(), $record, SYS_SYS, 'processmaker.log');
                 }
             }
         } catch (Exception $e) {

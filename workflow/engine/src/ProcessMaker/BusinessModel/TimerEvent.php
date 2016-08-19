@@ -1211,7 +1211,7 @@ class TimerEvent
                             ,'inpDocUid'=> $inpDocUid
                             ,'url'      => $url
                         );
-            \Bootstrap::registerMonolog('TimerEventCron', $level, $message, $aContext, SYS_SYS, 'timerevent.log');
+            \Bootstrap::registerMonolog('TimerEventCron', $level, $message, $aContext, SYS_SYS, 'processmaker.log');
         } catch (\Exception $e) {
             throw $e;
         }
@@ -1733,4 +1733,3 @@ class TimerEvent
         }
     }
 }
-
