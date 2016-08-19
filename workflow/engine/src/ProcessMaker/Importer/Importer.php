@@ -367,7 +367,7 @@ abstract class Importer
 
     /**
      * Check tasks that have cases.
-     * 
+     *
      * @return boolean
      */
     public function verifyIfTheProcessHasStartedCases()
@@ -500,7 +500,7 @@ abstract class Importer
         $workflow->createDataFileByArrayFile($workflowFiles);
     }
 
-    public function doImport($generateUid = true)
+    public function doImport($generateUid = true, $flagDeleteCategory = true)
     {
         try {
             $arrayBpmnTables = $this->importData["tables"]["bpmn"];
@@ -543,8 +543,13 @@ abstract class Importer
             unset($arrayWorkflowTables["process"]["PRO_CREATE_USER"]);
             unset($arrayWorkflowTables["process"]["PRO_CREATE_DATE"]);
             unset($arrayWorkflowTables["process"]["PRO_UPDATE_DATE"]);
-            unset($arrayWorkflowTables["process"]["PRO_CATEGORY"]);
-            unset($arrayWorkflowTables["process"]["PRO_CATEGORY_LABEL"]);
+
+            if ($flagDeleteCategory) {
+                unset(
+                    $arrayWorkflowTables['process']['PRO_CATEGORY'],
+                    $arrayWorkflowTables['process']['PRO_CATEGORY_LABEL']
+                );
+            }
 
             $workflow->update($arrayWorkflowTables["process"]);
 
@@ -742,10 +747,10 @@ abstract class Importer
             $this->importData["tables"]["workflow"]["process"][0]["PRO_CATEGORY_LABEL"] = null;
             $this->importData["tables"]["workflow"]["process"][0]["PRO_UPDATE_DATE"] = null;
             $this->importData["tables"]["workflow"]["process"] = $this->importData["tables"]["workflow"]["process"][0];
-            return array("prj_uid" => $this->doImport());
+
+            return ['prj_uid' => $this->doImport(true, false)];
         } catch (\Exception $e) {
             return $e->getMessage();
         }
     }
 }
-
