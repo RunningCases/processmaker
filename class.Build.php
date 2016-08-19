@@ -39,7 +39,7 @@ class ProcessMakerPhpBuilderHelper
      * Build temporal directory
      * @var string
      */
-    public $buildTempDir = "./workflow/buildTemp";
+    public $buildTempDir = "./shared/buildTemp";
     /**
      * Production directories
      * @var array
@@ -141,10 +141,11 @@ class ProcessMakerPhpBuilderHelper
         }
         $this->baseDir = empty($config['base_dir']) ? $baseDir : $config['base_dir'];
         $this->publicDir = $this->baseDir . "/workflow/public_html";
-        $this->buildTempDir = $this->baseDir . "/workflow/buildTemp";
+        $this->buildTempDir = $this->baseDir . "/shared/buildTemp";
         $this->logDir = $this->baseDir . "/shared/log";
         if (defined('PATH_DATA')) {
             $this->logDir = PATH_DATA . "log";
+            $this->buildTempDir = PATH_DATA . "buildTemp";
         }
         $this->utils->__set("logDir", $this->logDir);
         $this->utils->refreshDir($this->buildTempDir);
