@@ -209,16 +209,16 @@ class Project extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
-    
+
     /**
      * @url POST /save-as
-     * 
-     * @param string $prj_uid
-     * @param string $prj_name
-     * @param string $prj_description
-     * @param string $prj_category
+     *
+     * @param string $prj_uid         {@from body}
+     * @param string $prj_name        {@from body}
+     * @param string $prj_description {@from body}
+     * @param string $prj_category    {@from body}
      */
-    public function doSaveAs($prj_uid, $prj_name, $prj_description, $prj_category)
+    public function doSaveAs($prj_uid, $prj_name, $prj_description = null, $prj_category = null)
     {
         $importer = new \ProcessMaker\Importer\XmlImporter();
         return $importer->saveAs($prj_uid, $prj_name, $prj_description, $prj_category);
@@ -404,7 +404,7 @@ class Project extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
-    
+
     /**
      * @url PUT /:prj_uid/update-route-order
      *
@@ -420,7 +420,7 @@ class Project extends Api
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
     }
-    
+
     /**
      * @url PUT /:prj_uid/update-route-order-from-project
      *
@@ -437,4 +437,3 @@ class Project extends Api
         }
     }
 }
-
