@@ -21,6 +21,7 @@ function submitNextStep(formStep) {
     btnSubmit.remove();
 }
 $(window).load(function () {
+    var delIndexDefault = "0";
     if (pm_run_outside_main_app === 'true') {
         if (parent.showCaseNavigatorPanel) {
             parent.showCaseNavigatorPanel('DRAFT');
@@ -70,7 +71,7 @@ $(window).load(function () {
     var data = jsondata;
     window.dynaform = new PMDynaform.core.Project({
         data: data,
-        delIndex: delIndex,
+        delIndex: window.delIndex ? window.delIndex :  delIndexDefault,
         onBeforePrintHandler : function () {
             var nodeClone = $(".pmdynaform-container").clone();
             nodeClone.addClass("printing-form");
