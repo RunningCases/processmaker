@@ -153,6 +153,7 @@ try {
     G::LoadClass('derivation');
     G::LoadClass('dates'); //Load Criteria
     G::LoadClass('spool');
+    G::LoadClass('pmException');
 
     //Set variables
     /*----------------------------------********---------------------------------*/
