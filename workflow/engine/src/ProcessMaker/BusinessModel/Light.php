@@ -350,7 +350,7 @@ class Light
      * Execute Trigger case
      *
      */
-    public function doExecuteTriggerCase($usr_uid, $prj_uid, $act_uid, $cas_uid, $step_uid, $type)
+    public function doExecuteTriggerCase($usr_uid, $prj_uid, $act_uid, $cas_uid, $step_uid, $type, $del_index = null)
     {
         $userData = $this->getUserData($usr_uid);
         $c = new \Criteria();
@@ -373,7 +373,7 @@ class Light
         $_SESSION["TASK"] = $act_uid;
         $_SESSION["USER_LOGGED"] = $usr_uid;
         $_SESSION["USR_USERNAME"] = $userData['firstName'];
-        $_SESSION["INDEX"] = $Fields["DEL_INDEX"] = \AppDelegation::getCurrentIndex($cas_uid);
+        $_SESSION["INDEX"] = $Fields["DEL_INDEX"] = $del_index !== null ? $del_index : \AppDelegation::getCurrentIndex($cas_uid);
         $Fields['APP_DATA'] = array_merge( $Fields['APP_DATA'], G::getSystemConstants() );
         $triggers = $oCase->loadTriggers( $act_uid, 'DYNAFORM', $step_uid_obj, strtoupper($type) );
         if($triggers){

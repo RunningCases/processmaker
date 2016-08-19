@@ -1670,7 +1670,7 @@ class Light extends Api
 
         //trigger before
         $oMobile = new \ProcessMaker\BusinessModel\Light();
-        $triggers = $oMobile->doExecuteTriggerCase($usr_uid, $pro_uid, $act_uid, $app_uid, $step_uid, "before");
+        $triggers = $oMobile->doExecuteTriggerCase($usr_uid, $pro_uid, $act_uid, $app_uid, $step_uid, "before", $app_index);
         if ($triggers["status"] === "ok") {
             $triggers["status"] = "200";
         }
