@@ -272,7 +272,10 @@ class Derivation
                     foreach ($arrayAux as $value2) {
                         $key = ++$i;
                         $arrayNextTask[$key] = $value2;
-                        $arrayNextTask[$key]['SOURCE_UID'] = $value['ROU_NEXT_TASK'];
+                        $prefix = substr($value['ROU_NEXT_TASK'], 0, 4);
+                        if($prefix!=='gtg-'){
+                            $arrayNextTask[$key]['SOURCE_UID'] = $value['ROU_NEXT_TASK'];
+                        }
                         foreach($aSecJoin as $rsj){
                           $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TASK"] = $rsj["ROU_PREVIOUS_TASK"];
                           $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TYPE"] = "SEC-JOIN";
@@ -286,7 +289,10 @@ class Derivation
                     ) {
                         $arrayNextTaskData["NEXT_TASK"]["TAS_UID"] = $arrayNextTaskData["TAS_UID"] . "/" . $arrayNextTaskData["NEXT_TASK"]["TAS_UID"];
                     }
-                    $arrayNextTaskData['SOURCE_UID'] = $value['ROU_NEXT_TASK'];
+                    $prefix = substr($value['ROU_NEXT_TASK'], 0, 4);
+                    if($prefix!=='gtg-'){
+                        $arrayNextTaskData['SOURCE_UID'] = $value['ROU_NEXT_TASK'];
+                    }
                     $arrayNextTask[++$i] = $arrayNextTaskData;
                     foreach($aSecJoin as $rsj){
                         $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TASK"] = $rsj["ROU_PREVIOUS_TASK"];
