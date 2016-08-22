@@ -942,10 +942,11 @@ class BpmnWorkflow extends Project\Bpmn
 
             if (!is_null($arrayEventData)) {
                 $arrayEventType   = array("INTERMEDIATE");
-                $arrayEventMarker = array("MESSAGECATCH", "TIMER", "EMAIL");
+                $arrayEventMarker = array("MESSAGETHROW", "MESSAGECATCH", "TIMER", "EMAIL");
 
                 if (in_array($arrayEventData["EVN_TYPE"], $arrayEventType) && in_array($arrayEventData["EVN_MARKER"], $arrayEventMarker)) {
                     $arrayKey = array(
+                        "MESSAGETHROW" => "intermediate-throw-message-event",
                         "MESSAGECATCH" => "intermediate-catch-message-event",
                         "TIMER"        => "intermediate-catch-timer-event",
                         "EMAIL"        => "intermediate-throw-email-event"
