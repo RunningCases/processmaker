@@ -114,22 +114,23 @@ $objProc = new Process();
 $aProc = $objProc->load( $Fields['PRO_UID'] );
 $Fields['PRO_TITLE'] = $aProc['PRO_TITLE'];
 
-
-
 $objTask = new Task();
 if(!isset($Fields['TAS_UID']) || $Fields['TAS_UID'] == '') {
     $Fields['TAS_UID'] = $Fields['APP_DATA']['TASK'];
 }
-$tasksInParallel = explode("-", $Fields['TAS_UID']);
+
+$tasksInParallel = explode('|', $Fields['TAS_UID']);
 $tasksInParallel = array_filter($tasksInParallel, function($value) {
     return !empty($value);
 });
 $nTasksInParallel = count($tasksInParallel);
+
 if ($nTasksInParallel > 1) {
     $aTask = $objTask->load($tasksInParallel[$nTasksInParallel - 1]);
 } else {
     $aTask = $objTask->load($Fields['TAS_UID']);
 }
+
 $Fields['TAS_TITLE'] = $aTask['TAS_TITLE'];
 
 $objUser = new Users();
@@ -153,7 +154,7 @@ if($Fields['APP_STATUS'] != 'COMPLETED'){
       $FieldsPar['USR_UID'] = $row['USR_UID'];
       if(isset($row['USR_UID']) && !empty($row['USR_UID'])) {
         $aUser = $objUser->loadDetails ($row['USR_UID']);
-        $FieldsPar['CURRENT_USER'] = $aUser['USR_FULLNAME'];   
+        $FieldsPar['CURRENT_USER'] = $aUser['USR_FULLNAME'];
       }
       $FieldsPar['DEL_DELEGATE_DATE'] = $row['DEL_DELEGATE_DATE'];
       $FieldsPar['DEL_INIT_DATE']     = $row['DEL_INIT_DATE'];
@@ -162,7 +163,7 @@ if($Fields['APP_STATUS'] != 'COMPLETED'){
       $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume_Current_Task.xml', '', $FieldsPar, '' );
     }
   }
-  
-}
-G::RenderPage( 'publish', 'blank' );
 
+}
+
+G::RenderPage('publish', 'blank');

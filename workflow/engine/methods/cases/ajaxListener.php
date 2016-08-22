@@ -225,16 +225,18 @@ class Ajax
 
         if ($_SESSION["TASK"] != "" && $_SESSION["TASK"] != "-1") {
             $oTask = new Task();
-            $tasksInParallel = explode("-", $_SESSION['TASK']);
+            $tasksInParallel = explode('|', $_SESSION['TASK']);
             $tasksInParallel = array_filter($tasksInParallel, function($value) {
                 return !empty($value);
             });
             $nTasksInParallel = count($tasksInParallel);
+
             if ($nTasksInParallel > 1) {
                 $aTask = $oTask->load($tasksInParallel[$nTasksInParallel - 1]);
             } else {
                 $aTask = $oTask->load($_SESSION['TASK']);
             }
+
             if ($aTask['TAS_TYPE'] == 'ADHOC') {
                 $options[] = Array('text' => G::LoadTranslation('ID_ADHOC_ASSIGNMENT'), 'fn' => 'adhocAssignmentUsers');
             }
@@ -1034,4 +1036,3 @@ $action = $_REQUEST['action'];
 unset($_REQUEST['action']);
 
 $ajax->$action($_REQUEST);
-
