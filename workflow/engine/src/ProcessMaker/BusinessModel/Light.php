@@ -863,12 +863,14 @@ class Light
         $objTask = new \Task();
 
         if (isset($_SESSION['ACTION']) && ($_SESSION['ACTION'] == 'jump')) {
-            $task = explode('-', $Fields['TAS_UID']);
+            $task = explode('|', $Fields['TAS_UID']);
             $Fields['TAS_TITLE'] = '';
+
             for( $i = 0; $i < sizeof($task)-1; $i ++ ) {
                 $aTask = $objTask->load( $task[$i] );
                 $Fields['TAS_TITLE'][] = $aTask['TAS_TITLE'];
             }
+
             $Fields['TAS_TITLE'] = implode(" - ", array_values($Fields['TAS_TITLE']));
         } else {
             $aTask = $objTask->load( $Fields['TAS_UID'] );
