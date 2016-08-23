@@ -231,8 +231,8 @@ class AdditionalTables extends BaseAdditionalTables
                     $oConnection->begin();
                     $iResult = $oAdditionalTables->save();
                     $oConnection->commit();
-                    $addTabDescription = ($aData["ADD_TAB_DESCRIPTION"] != "")? ", Description: " . $aData["ADD_TAB_DESCRIPTION"] : ".";
-                    G::auditLog("UpdatePmtable", "PM Table Name: ".$aData['ADD_TAB_NAME'] . $addTabDescription . ", PM Table ID: (".$aData['ADD_TAB_UID'].") ");
+                    $addTabDescription = (isset($aData["ADD_TAB_DESCRIPTION"]) && $aData["ADD_TAB_DESCRIPTION"] != "") ? ", Description: " . $aData["ADD_TAB_DESCRIPTION"] : ".";
+                    G::auditLog("UpdatePmtable", "PM Table Name: " . ( isset($aData['ADD_TAB_NAME']) ? $aData['ADD_TAB_NAME'] : $aData['ADD_TAB_TAG']) . $addTabDescription . ", PM Table ID: (" . $aData['ADD_TAB_UID'] . ") ");
                 } else {
                     $sMessage = '';
                     $aValidationFailures = $oAdditionalTables->getValidationFailures();
