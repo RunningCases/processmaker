@@ -118,7 +118,7 @@ class Pmgmail {
             $oCases = new \Cases ();
             $application = $appData[0];
 
-            $respTo = $oCases->getTo($aTask ["TAS_ASSIGN_TYPE"], $aTask ["TAS_UID"], $aTask ["USR_UID"], $arrayData);
+            $respTo = $oCases->getTo($aTask ["TAS_UID"], $aTask ["USR_UID"], $arrayData);
             $mailToAddresses = $respTo ['to'];
             $mailCcAddresses = $respTo ['cc'];
             $labelID = "PMUASS";
