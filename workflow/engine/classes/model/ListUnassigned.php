@@ -312,6 +312,7 @@ class ListUnassigned extends BaseListUnassigned
         } else {
             $criteria->addAscendingOrderByColumn($sort);
         }
+        $this->total = ListUnassignedPeer::doCount($criteria);
         if ($paged == 1) {
             $criteria->setLimit( $limit );
             $criteria->setOffset( $start );
@@ -327,7 +328,6 @@ class ListUnassigned extends BaseListUnassigned
             $aRow['DEL_PRIORITY'] = G::LoadTranslation( "ID_PRIORITY_{$aPriorities[$aRow['DEL_PRIORITY']]}" );
             $data[] = $aRow;
         }
-         $this->total = count($data);
         return $data;
     }
 
