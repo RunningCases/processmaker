@@ -901,6 +901,13 @@ class Light
                 $oCase = new \Cases();
                 $delIndex = $oCase->getCurrentDelegation($app_uid, $userUid);
                 $docUid = !empty($file['docUid']) ? $file['docUid'] : -1;
+                $folderId = '';
+                if($docUid !== -1){
+                    $inputDocument = new \InputDocument();
+                    $aInputDocumentData = $inputDocument->load($docUid);
+                    $appFolder = new \AppFolder();
+                    $folderId = $appFolder->createFromPath($aInputDocumentData["INP_DOC_DESTINATION_PATH"], $app_uid);
+                }
                 $appDocType = !empty($file['appDocType']) ? $file['appDocType'] : "ATTACHED";
                 $fieldName = !empty($file['fieldName']) ? $file['fieldName'] : null;
                 $aFields = array(
@@ -913,7 +920,8 @@ class Light
                     "APP_DOC_COMMENT" => "",
                     "APP_DOC_TITLE" => "",
                     "APP_DOC_FILENAME" => $file['name'],
-                    "APP_DOC_FIELDNAME" => $fieldName
+                    "APP_DOC_FIELDNAME" => $fieldName,
+                    "FOLDER_UID" => $folderId
                 );
                 $oAppDocument = new \AppDocument();
                 $oAppDocument->create($aFields);
