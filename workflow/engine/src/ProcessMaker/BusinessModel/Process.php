@@ -567,6 +567,14 @@ class Process
                 }
             }
 
+            if (isset($arrayData["PRO_TRI_UNPAUSED"]) && $arrayData["PRO_TRI_UNPAUSED"] . "" != "") {
+                try {
+                    $trigger->throwExceptionIfNotExistsTrigger($arrayData["PRO_TRI_UNPAUSED"], $processUid, $this->arrayFieldNameForException["processTriUnpaused"]);
+                } catch (\Exception $e) {
+
+                }
+            }
+
             if (isset($arrayData["PRO_TRI_REASSIGNED"]) && $arrayData["PRO_TRI_REASSIGNED"] . "" != "") {
                 try {
                     $trigger->throwExceptionIfNotExistsTrigger($arrayData["PRO_TRI_REASSIGNED"], $processUid, $this->arrayFieldNameForException["processTriReassigned"]);
