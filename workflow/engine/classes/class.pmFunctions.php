@@ -2063,11 +2063,9 @@ function PMFDerivateCase ($caseId, $delIndex, $bExecuteTriggersBeforeAssignment 
     G::LoadClass( 'wsBase' );
     $ws = new wsBase();
     $result = $ws->derivateCase( $sUserLogged, $caseId, $delIndex, $bExecuteTriggersBeforeAssignment );
-    if (isset( $result->status_code )) {
-        return $result->status_code;
-    } else {
-        return 0;
-    }
+    if (is_array($result)) {
+        $result = (object)$result;
+    } 
     if ($result->status_code == 0) {
         return 1;
     } else {
@@ -2350,14 +2348,16 @@ function setCaseTrackerCode ($sApplicationUID, $sCode, $sPIN = '')
 function jumping ($caseId, $delIndex)
 {
     try {
-        $x = PMFDerivateCase( $caseId, $delIndex );
-        if ($x == 0) {
+        $response = PMFDerivateCase($caseId, $delIndex);
+        if ($response) {
+            G::header( 'Location: casesListExtJsRedirector' );
+            die(); // After routing and jumping the case, the thread execution will end
+        } else {
             G::SendTemporalMessage( 'ID_NOT_DERIVATED', 'error', 'labels' );
         }
     } catch (Exception $oException) {
         G::SendTemporalMessage( 'ID_NOT_DERIVATED', 'error', 'labels' );
     }
-    G::header( 'Location: casesListExtJs' );
 }
 
 /**
