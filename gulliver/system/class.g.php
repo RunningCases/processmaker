@@ -5521,6 +5521,7 @@ class G
     {
         // Initialize variables
         $res = new stdclass();
+        $res->status = false;
         $allowedTypes = array_map('G::getRealExtension', explode(',', $InpDocAllowedFiles));
 
         // If required extension is *.* don't validate
@@ -5549,7 +5550,7 @@ class G
 
         // If enabled fileinfo extension check the content
         $finfo = new finfo(FILEINFO_MIME_TYPE);
-        $mimeType = $finfo->file($filesTmpName);
+        $mimeType = $finfo->file($filesTmpName);    
         $docType = explode('/', $mimeType);
 
         // If is a empty file finish validation
@@ -5562,62 +5563,90 @@ class G
         foreach ($allowedTypes as $allowedType) {
             switch ($allowedType) {
                 case 'xls':
-                    $res->status = ($docType[1] == 'vnd.ms-excel' || ($fileExtension == 'xls' && $docType[1] == 'plain'));
-                    return $res;
+                    if ($docType[1] == 'vnd.ms-excel' || ($fileExtension == 'xls' && $docType[1] == 'plain')) {
+                        $res->status = true;
+                        break 2;
+                    }
                     break;
                 case 'doc':
-                    $res->status = ($docType[1] == 'msword' || ($fileExtension == 'doc' && $docType[1] == 'html'));
-                    return $res;
+                    if ($docType[1] == 'msword' || ($fileExtension == 'doc' && $docType[1] == 'html')) {
+                        $res->status = true;
+                        break 2;
+                    }
                     break;
                 case 'ppt':
-                    $res->status = ($docType[1] == 'vnd.ms-office');
-                    return $res;
+                    if ($docType[1] == 'vnd.ms-office') {
+                        $res->status = true;
+                        break 2;
+                    }
                     break;
                 case 'docx':
-                    $res->status = ($docType[1] == 'vnd.openxmlformats-officedocument.wordprocessingml.document');
-                    return $res;
+                    if ($docType[1] == 'vnd.openxmlformats-officedocument.wordprocessingml.document') {
+                        $res->status = true;
+                        break 2;
+                    }
                     break;
                 case 'pptx':
-                    $res->status = ($docType[1] == 'vnd.openxmlformats-officedocument.presentationml.presentation');
-                    return $res;
+                    if ($docType[1] == 'vnd.openxmlformats-officedocument.presentationml.presentation') {
+                        $res->status = true;
+                        break 2;
+                    }
                     break;
                 case 'xlsx':
-                    $res->status = ($docType[1] == 'vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-                    return $res;
+                    if ($docType[1] == 'vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                        $res->status = true;
+                        break 2;
+                    }
                     break;
                 case 'exe':
-                    $res->status = ($docType[1] == 'x-msdownload' || $docType[1] == 'x-dosexec');
-                    return $res;
+                    if ($docType[1] == 'x-msdownload' || $docType[1] == 'x-dosexec') {
+                        $res->status = true;
+                        break 2;
+                    }
                     break;
                 case 'wmv':
-                    $res->status = ($docType[1] == 'x-ms-asf' || $docType[1] == 'x-ms-wmv');
-                    return $res;
+                    if ($docType[1] == 'x-ms-asf' || $docType[1] == 'x-ms-wmv') {
+                        $res->status = true;
+                        break 2;
+                    }
                     break;
                 case 'jpg':
-                    $res->status = ($docType[1] == 'jpeg');
-                    return $res;
+                    if ($docType[1] == 'jpeg') {
+                        $res->status = true;
+                        break 2;
+                    }
                     break;
                 case 'mp3':
-                    $res->status = ($docType[1] == 'mpeg');
-                    return $res;
+                    if ($docType[1] == 'mpeg') {
+                        $res->status = true;
+                        break 2;
+                    }
                     break;
                 case 'rar':
-                    $res->status = ($docType[1] == 'x-rar');
-                    return $res;
+                    if ($docType[1] == 'x-rar') {
+                        $res->status = true;
+                        break 2;
+                    }
                     break;
                 case 'txt':
                 case 'pm':
-                    $res->status = ($docType[1] == 'plain');
-                    return $res;
+                    if ($docType[1] == 'plain') {
+                        $res->status = true;
+                        break 2;
+                    }
                     break;
                 case 'htm':
                 case 'html':
-                    $res->status = ($docType[1] == 'html');
-                    return $res;
+                    if ($docType[1] == 'html') {
+                        $res->status = true;
+                        break 2;
+                    }
                     break;
                 case 'po':
-                    $res->status = ($docType[1] == 'x-po');
-                    return $res;
+                    if ($docType[1] == 'x-po') {
+                        $res->status = true;
+                        break 2;
+                    }
                     break;
                 case 'pdf':
                 case 'png':
@@ -5625,19 +5654,21 @@ class G
                 case 'gif':
                 case 'zip':
                 case 'mp4':
-                    $res->status = ($docType[1] == $allowedType);
-                    return $res;
+                    if ($docType[1] == $allowedType) {
+                        $res->status = true;
+                        break 2;
+                    }
                     break;
                 default:
-                    $res->status = ($validExtension);
-                    return $res;
+                    $res->status = $validExtension;
                     break;
             }
         }
 
         // If content don't match return error
-        $res->status = false;
-        $res->message = G::LoadTranslation('ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION' ) . ' ' . $fileName;
+        if (!$res->status) {
+            $res->message = G::LoadTranslation('ID_UPLOAD_ERR_NOT_ALLOWED_EXTENSION' ) . ' ' . $fileName;
+        }
         return $res;
 
     }
