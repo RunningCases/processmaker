@@ -139,6 +139,7 @@ class AppDelegation extends BaseAppDelegation
 
         $delIndex = 1;
         $delPreviusUsrUid = $sUsrUid;
+        $delPreviousFather = $sPrevious;
         if ($rs->next()) {
             $row = $rs->getRow();
 
@@ -172,8 +173,8 @@ class AppDelegation extends BaseAppDelegation
         }
         if($flagControlMulInstance){
             $nextTaskUid = $sTasUid;
-            $index = $this->getAllTheardMultipleInstance($delPrevious, $sAppUid);
-            if($this->createThread($index, $sAppUid)){
+            $index = $this->getAllTheardMultipleInstance($delPreviousFather, $sAppUid);
+            if($this->createThread($index, $sAppUid, $sUsrUid)){
                 return 0;
             }
         }
@@ -869,14 +870,18 @@ class AppDelegation extends BaseAppDelegation
     *
     * @param array $index
     * @param string $sAppUid
+    * @param string $sUsrUid
     * @return boolean $res
     */
-    public static function createThread($index, $sAppUid){
+    public static function createThread($index, $sAppUid, $sUsrUid = ''){
         $criteriaDel = new Criteria("workflow");
         $criteriaDel->addSelectColumn(AppDelegationPeer::DEL_INDEX);
         $criteriaDel->addSelectColumn(AppDelegationPeer::DEL_PREVIOUS);
         $criteriaDel->add(AppDelegationPeer::APP_UID, $sAppUid);
         $criteriaDel->add(AppDelegationPeer::DEL_PREVIOUS, $index, Criteria::IN);
+        if($sUsrUid !== ''){
+            $criteriaDel->add(AppDelegationPeer::USR_UID, $sUsrUid);
+        }
         $criteriaDel = AppDelegationPeer::doSelectRS($criteriaDel);
         $criteriaDel->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $res = $criteriaDel->next();
