@@ -32,8 +32,7 @@ class PMXPublisher
             if (strlen(basename($outputFile)) >= $limit) {
                 $lastPos = strrpos(basename($outputFile), '.');
                 $fileName = substr(basename($outputFile), 0, $lastPos);
-                $newFileName = str_replace(".", "_", $fileName);
-                $newFileName = str_replace(" ", "_", $fileName);
+                $newFileName = \G::inflect($fileName);
                 $excess = strlen($newFileName) - $limit;
                 $newFileName = substr($newFileName, 0, strlen($newFileName) - $excess);
                 $newOutputFile = str_replace($fileName, $newFileName, $outputFile);
@@ -43,8 +42,7 @@ class PMXPublisher
                 $outputFile = $newOutputFile;
             }
         } else {
-            $outputFile = str_replace(".", "_", $outputFile);
-            $outputFile = str_replace(" ", "_", $outputFile);
+            $outputFile = \G::inflect($outputFile);
             if (strlen($outputFile) >= $limit) {
                 $excess = strlen($outputFile) - $limit;
                 $newFileName = substr($outputFile, 0, strlen($outputFile) - $excess);
