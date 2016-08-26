@@ -979,6 +979,7 @@ class pmDynaform
                 "var sysLang = '" . SYS_LANG . "';\n" .
                 "var isRTL = " . $this->isRTL . ";\n" .
                 "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
+                "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "0") . ";\n" .
                 "var jsonData = " . G::json_encode($json) . ";\n" .
                 "var httpServerHostname = \"" . System::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
                 $js .
