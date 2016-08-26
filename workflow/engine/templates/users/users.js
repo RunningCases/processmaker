@@ -800,12 +800,13 @@ Ext.onReady(function () {
   });
 
     comboDefaultCasesMenuOption.disable();
-    comboDefaultMainMenuOption.on('select',function(cmb,record,index) {
+    comboDefaultMainMenuOption.on('select', function (cmb, record, index) {
         comboDefaultCasesMenuOption.disable();
         if (record.get('id') == 'PM_CASES') {
+            comboDefaultCasesMenuOption.setReadOnly(false);
             comboDefaultCasesMenuOption.enable();
         }
-    },this);
+    }, this);
 
   var preferencesFields = new Ext.form.FieldSet({
     title : _('ID_PREFERENCES'),
@@ -1411,21 +1412,11 @@ function loadData()
     comboLanguage.store.load();
     /*----------------------------------********---------------------------------*/
 
-    comboDefaultMainMenuOption.store.on("load", function (store) {
-        comboDefaultMainMenuOption.setValue(store.getAt(0).get("id"));
-    });
-    storeDefaultMainMenuOption.load();
-
-
-    comboDefaultCasesMenuOption.store.on("load", function (store) {
-        comboDefaultCasesMenuOption.setValue(store.getAt(0).get("id"));
-    });
-    storeDefaultCasesMenuOption.load();
+    setPreferencesData(false, null);
 }
 
 //Load data for Edit mode
-function loadUserData()
-{
+function loadUserData() {
     Ext.Ajax.request({
         url: "usersAjax",
         method: "POST",
@@ -1440,21 +1431,21 @@ function loadUserData()
             usertmp = data.user;
 
             Ext.getCmp("frmDetails").getForm().setValues({
-                USR_FIRSTNAME : data.user.USR_FIRSTNAME,
-                USR_LASTNAME  : data.user.USR_LASTNAME,
-                USR_USERNAME  : data.user.USR_USERNAME,
-                USR_EMAIL     : data.user.USR_EMAIL,
-                USR_ADDRESS   : data.user.USR_ADDRESS,
-                USR_ZIP_CODE  : data.user.USR_ZIP_CODE,
-                USR_PHONE     : data.user.USR_PHONE,
-                USR_POSITION  : data.user.USR_POSITION,
-                USR_DUE_DATE  : data.user.USR_DUE_DATE,
-                USR_STATUS    : data.user.USR_STATUS,
+                USR_FIRSTNAME: data.user.USR_FIRSTNAME,
+                USR_LASTNAME: data.user.USR_LASTNAME,
+                USR_USERNAME: data.user.USR_USERNAME,
+                USR_EMAIL: data.user.USR_EMAIL,
+                USR_ADDRESS: data.user.USR_ADDRESS,
+                USR_ZIP_CODE: data.user.USR_ZIP_CODE,
+                USR_PHONE: data.user.USR_PHONE,
+                USR_POSITION: data.user.USR_POSITION,
+                USR_DUE_DATE: data.user.USR_DUE_DATE,
+                USR_STATUS: data.user.USR_STATUS,
                 /*----------------------------------********---------------------------------*/
-                USR_COST_BY_HOUR : data.user.USR_COST_BY_HOUR,
-                USR_UNIT_COST : data.user.USR_UNIT_COST,
+                USR_COST_BY_HOUR: data.user.USR_COST_BY_HOUR,
+                USR_UNIT_COST: data.user.USR_UNIT_COST,
                 /*----------------------------------********---------------------------------*/
-                USR_LOGGED_NEXT_TIME    : data.user.USR_LOGGED_NEXT_TIME
+                USR_LOGGED_NEXT_TIME: data.user.USR_LOGGED_NEXT_TIME
             });
 
             setReadOnlyItems(data.permission);
@@ -1477,7 +1468,7 @@ function loadUserData()
                 Ext.getCmp("USR_DUE_DATE2").setText(data.user.USR_DUE_DATE);
                 Ext.getCmp("USR_STATUS2").setText(_('ID_' + data.user.USR_STATUS));
                 Ext.getCmp("USR_ROLE2").setText(data.user.USR_ROLE_NAME);
-                Ext.getCmp("USR_TIME_ZONE2").setText((data.user.USR_TIME_ZONE != "")? data.user.USR_TIME_ZONE : SYSTEM_TIME_ZONE);
+                Ext.getCmp("USR_TIME_ZONE2").setText((data.user.USR_TIME_ZONE != "") ? data.user.USR_TIME_ZONE : SYSTEM_TIME_ZONE);
                 /*----------------------------------********---------------------------------*/
                 Ext.getCmp("USR_DEFAULT_LANG2").setText(data.user.USR_DEFAULT_LANG_NAME);
                 Ext.getCmp("USR_COST_BY_HOUR2").setText(data.user.USR_COST_BY_HOUR);
@@ -1490,9 +1481,9 @@ function loadUserData()
                 //
             }
 
-            userRoleLoad  = data.user.USR_ROLE;
+            userRoleLoad = data.user.USR_ROLE;
 
-            comboCountry.store.on("load", function(store) {
+            comboCountry.store.on("load", function (store) {
                 comboCountry.setValue(data.user.USR_COUNTRY);
             });
 
@@ -1521,52 +1512,28 @@ function loadUserData()
                 comboRole.setValue(data.user.USR_ROLE);
             });
 
-            cboTimeZone.setValue((data.user.USR_TIME_ZONE != "")? data.user.USR_TIME_ZONE : SYSTEM_TIME_ZONE);
+            cboTimeZone.setValue((data.user.USR_TIME_ZONE != "") ? data.user.USR_TIME_ZONE : SYSTEM_TIME_ZONE);
 
             /*----------------------------------********---------------------------------*/
             comboLanguage.store.on("load", function (store) {
                 comboLanguage.setValue(data.user.USR_DEFAULT_LANG);
             });
             /*----------------------------------********---------------------------------*/
-
-            if (infoMode) {
-                comboDefaultMainMenuOption.store.on("load", function (store) {
-                    comboDefaultMainMenuOption.setValue(data.user.PREF_DEFAULT_MENUSELECTED);
-
-                    storeDefaultCasesMenuOption.load();
-                });
-
-                comboDefaultCasesMenuOption.store.on("load", function (store) {
-                    if (comboDefaultMainMenuOption.getValue() == 'PM_CASES') {
-                        comboDefaultCasesMenuOption.enable();
-                    }
-
-                    comboDefaultCasesMenuOption.setValue(data.user.PREF_DEFAULT_CASES_MENUSELECTED);
-                });
-            } else {
-                comboDefaultMainMenuOption.store.on("load", function (store) {
-                    comboDefaultMainMenuOption.setValue(store.getAt(0).get("id"));
-                });
-
-                comboDefaultCasesMenuOption.store.on("load", function (store) {
-                    comboDefaultCasesMenuOption.setValue(store.getAt(0).get("id"));
-                });
-            }
-
+            setPreferencesData(true, data);
             previousUsername = Ext.getCmp("USR_USERNAME").getValue();
 
             storeCountry.load();
 
             storeRegion.load({
                 params: {
-                    IC_UID : data.user.USR_COUNTRY
+                    IC_UID: data.user.USR_COUNTRY
                 }
             });
 
             storeLocation.load({
                 params: {
-                    IC_UID : data.user.USR_COUNTRY,
-                    IS_UID : data.user.USR_CITY
+                    IC_UID: data.user.USR_COUNTRY,
+                    IS_UID: data.user.USR_CITY
                 }
             });
 
@@ -1577,15 +1544,39 @@ function loadUserData()
             /*----------------------------------********---------------------------------*/
             storeLanguage.load();
             /*----------------------------------********---------------------------------*/
-
-            storeDefaultMainMenuOption.load();
-
-            //storeDefaultCasesMenuOption.load();
         },
         failure: function (r, o) {
             //viewport.getEl().unmask();
         }
     });
+}
+
+function setPreferencesData(editOrCreate, data) {
+    if (USR_UID != '' && editOrCreate) {
+        comboDefaultMainMenuOption.store.on("load", function (store) {
+            comboDefaultMainMenuOption.setValue(data.user.PREF_DEFAULT_MENUSELECTED);
+        });
+        comboDefaultCasesMenuOption.store.on("load", function (store) {
+            comboDefaultCasesMenuOption.setValue(data.user.PREF_DEFAULT_CASES_MENUSELECTED);
+            comboDefaultCasesMenuOption.enable();
+            if (comboDefaultMainMenuOption.getValue() != 'PM_CASES') {
+                disableAndReadOnly('PREF_DEFAULT_CASES_MENUSELECTED');
+            }
+        });
+    } else {
+        comboDefaultMainMenuOption.store.on("load", function (store) {
+            comboDefaultMainMenuOption.setValue(store.getAt(0).get("id"));
+        });
+        comboDefaultCasesMenuOption.store.on("load", function (store) {
+            comboDefaultCasesMenuOption.setValue(store.getAt(0).get("id"));
+            comboDefaultCasesMenuOption.enable();
+            if (comboDefaultMainMenuOption.getValue() != 'PM_CASES') {
+                disableAndReadOnly('PREF_DEFAULT_CASES_MENUSELECTED');
+            }
+        });
+    }
+    storeDefaultMainMenuOption.load();
+    storeDefaultCasesMenuOption.load();
 }
 
 function userExecuteEvent(element, event)
