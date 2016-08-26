@@ -141,6 +141,10 @@ $Fields['APP_DATA']['__DYNAFORM_OPTIONS']['NEXT_STEP_LABEL'] = '';
  * date: 16-05-08
  * Description: this was added for the additional database connections
  */
+if (! isset( $_GET['ex'] )) {
+    $_GET['ex'] = $_GET['position'];
+}
+
 G::LoadClass( 'dbConnections' );
 $oDbConnections = new dbConnections( $_SESSION['PROCESS'] );
 $oDbConnections->loadAdditionalConnections();
@@ -156,15 +160,11 @@ if ($_GET['DYN_UID'] != '') {
     if ($a->isResponsive()) {
         $a->printEditSupervisor();
     }else{
-        $G_PUBLISH->AddContent( 'dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['DYN_UID'], '', $Fields['APP_DATA'], 'cases_SaveDataSupervisor?UID=' . $_GET['DYN_UID'] );
+        $G_PUBLISH->AddContent( 'dynaform', 'xmlform', $_SESSION['PROCESS'] . '/' . $_GET['DYN_UID'], '', $Fields['APP_DATA'], 'cases_SaveDataSupervisor?UID=' . $_GET['DYN_UID'] . '&ex=' .  $_GET['ex']);
     }
 }
 
 G::RenderPage( 'publish', 'blank' );
-
-if (! isset( $_GET['ex'] )) {
-    $_GET['ex'] = $_GET['position'];
-}
 ?>
 
 <script>
