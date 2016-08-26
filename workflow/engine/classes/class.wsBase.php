@@ -2262,6 +2262,8 @@ class wsBase
             if (! isset( $_SESSION["PROCESS"] )) {
                 $_SESSION["PROCESS"] = $appFields["PRO_UID"];
             }
+            
+            global $oPMScript;
 
             if ($bExecuteTriggersBeforeAssignment) {
                 //Execute triggers before assignment
