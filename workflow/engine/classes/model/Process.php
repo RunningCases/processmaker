@@ -664,15 +664,14 @@ class Process extends BaseProcess
 
         foreach ($processes as $process) {
             $proTitle = isset($process['PRO_TITLE'])? $process['PRO_TITLE'] : '';
-            $proDescription = isset($process['PRO_DESCRIPTION']) ? $process['PRO_DESCRIPTION'] : '';
+            $proDescription = isset($process['PRO_DESCRIPTION']) ? htmlspecialchars($process['PRO_DESCRIPTION']) : '';
             $process["PRO_TYPE_PROCESS"] = ($process["PRO_TYPE_PROCESS"] == "PUBLIC") ? G::LoadTranslation("ID_PUBLIC") : G::LoadTranslation("ID_PRIVATE");
-
             // verify if the title is already set on the current language
             if (trim( $proTitle ) == '') {
                 // if not, then load the record to generate content for current language
                 $proData = $this->load( $process['PRO_UID'] );
                 $proTitle = $proData['PRO_TITLE'];
-                $proDescription = $proData['PRO_DESCRIPTION'];
+                $proDescription = htmlspecialchars($proData['PRO_DESCRIPTION']);
             }
 
             //filtering by $processName
