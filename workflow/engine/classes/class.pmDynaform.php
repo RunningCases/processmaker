@@ -685,7 +685,7 @@ class pmDynaform
 
                     window.dynaform = new PMDynaform.core.Project({
                         data: data,
-                        delIndex: delIndex, 
+                        delIndex: delIndex,
                         keys: {
                             server: httpServerHostname,
                             projectId: prj_uid,
@@ -799,7 +799,7 @@ class pmDynaform
                 "</table>\n";
         $javascrip = "" .
                 "<script type='text/javascript'>\n" .
-                "var jsondata = " . G::json_encode($json) . ";\n" .
+                "var jsondata = " . $this->json_encode($json) . ";\n" .
                 "var httpServerHostname = \"" . System::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
                 "var pm_run_outside_main_app = '" . $this->fields["PM_RUN_OUTSIDE_MAIN_APP"] . "';\n" .
                 "var dyn_uid = '" . $this->fields["CURRENT_DYNAFORM"] . "';\n" .
@@ -980,7 +980,7 @@ class pmDynaform
                 "var isRTL = " . $this->isRTL . ";\n" .
                 "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
                 "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "0") . ";\n" .
-                "var jsonData = " . G::json_encode($json) . ";\n" .
+                "var jsonData = " . $this->json_encode($json) . ";\n" .
                 "var httpServerHostname = \"" . System::getHttpServerHostnameRequestsFrontEnd() . "\";\n" .
                 $js .
                 "</script>";
@@ -1661,5 +1661,51 @@ class pmDynaform
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Returns a string containing the JSON representation of the object
+     *
+     * @param object $json The object being encoded
+     *
+     * @return string Returns a string
+     */
+    public function json_encode($json)
+    {
+        $jsonData = G::json_encode($json);
+
+        if ($jsonData === false) {
+            $jsonLastError = json_last_error();
+            $jsonLastErrorMsg = json_last_error_msg();
+            $token = time();
+
+            $obj = new stdClass();
+            $obj->type = 'panel';
+            $obj->id = '__json_encode_error__';
+            $obj->content = '
+                <div style="border: 1px solid #9A3A1F; background: #F7DBCE; color: #8C0000; font:0.9em arial, verdana, helvetica, sans-serif;">
+                <div style="margin: 0.5em;">
+                <img src="/images/documents/_log_error.png" alt="" style="margin-right: 0.8em; vertical-align: middle;" />' .
+                G::LoadTranslation('ID_EXCEPTION_LOG_INTERFAZ', [$token]) .
+                '</div></div>';
+            $obj->border = 0;
+
+            $json->items[0]->items = [[$obj]];
+
+            $jsonData = G::json_encode($json);
+
+            //Log
+            \Bootstrap::registerMonolog(
+                'RenderDynaForm',
+                400,
+                'JSON encoded string error ' . $jsonLastError . ': ' . $jsonLastErrorMsg,
+                ['token' => $token, 'projectUid' => $this->record['PRO_UID'], 'dynaFormUid' => $this->record['DYN_UID']],
+                SYS_SYS,
+                'processmaker.log'
+            );
+        }
+
+        //Return
+        return $jsonData;
     }
 }
