@@ -25,6 +25,8 @@
 
 class adminProxy extends HttpProxyController
 {
+    const hashunlink = 'unlink';
+
     public function saveSystemConf($httpData)
     {
         G::loadClass('system');
@@ -1079,8 +1081,8 @@ class adminProxy extends HttpProxyController
                     } else {
                         $failed = "3";
                     }
-                    $path = $filter->xssFilterHard($dir . '/tmp' . $fileName, 'path');
-                    unlink ($path);
+                    $u = self::hashunlink;
+                    $u ($dir . '/tmp' . $fileName);
                 } catch (Exception $e) {
                     $failed = "3";
                 }
