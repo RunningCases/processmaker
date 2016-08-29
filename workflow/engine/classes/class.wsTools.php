@@ -62,79 +62,79 @@ class workspaceTools
      */
     public function upgrade($first = false, $buildCacheView = false, $workSpace = SYS_SYS, $onedb = false, $lang = 'en')
     {
-//        $start = microtime(true);
-//        CLI::logging("> Updating database...\n");
-//        $this->upgradeDatabase($onedb);
-//        $stop = microtime(true);
-//        CLI::logging("<*>   Database Upgrade Process took " . ($stop - $start) . " seconds.\n");
-//
-//        $start = microtime(true);
-//        CLI::logging("> Check Intermediate Email Event...\n");
-//        $this->checkIntermediateEmailEvent();
-//        $stop = microtime(true);
-//        CLI::logging("<*>   Database Upgrade Process took " . ($stop - $start) . " seconds.\n");
-//
-//        $start = microtime(true);
-//        CLI::logging("> Verify enterprise old...\n");
-//        $this->verifyFilesOldEnterprise($workSpace);
-//        $stop = microtime(true);
-//        CLI::logging("<*>   Verify took " . ($stop - $start) . " seconds.\n");
-//
-//        $start = microtime(true);
-//        CLI::logging("> Updating translations...\n");
-//        $this->upgradeTranslation($first);
-//        $stop = microtime(true);
-//        $final = $stop - $start;
-//        CLI::logging("<*>   Updating Translations Process took $final seconds.\n");
-//
-//        $start = microtime(true);
-//        CLI::logging("> Updating Content...\n");
-//        $this->upgradeContent($workSpace);
-//        $stop = microtime(true);
-//        $final = $stop - $start;
-//        CLI::logging("<*>   Updating Content Process took $final seconds.\n");
-//
-//        $start = microtime(true);
-//        CLI::logging("> Check Mafe Requirements...\n");
-//        $this->checkMafeRequirements($workSpace, $lang);
-//        $stop = microtime(true);
-//        $final = $stop - $start;
-//        CLI::logging("<*>   Check Mafe Requirements Process took $final seconds.\n");
-//
-//        $start = microtime(true);
-//        CLI::logging("> Updating cache view...\n");
-//        $this->upgradeCacheView($buildCacheView, true, $lang);
-//        $stop = microtime(true);
-//        $final = $stop - $start;
-//        CLI::logging("<*>   Updating cache view Process took $final seconds.\n");
-//
-//        $start = microtime(true);
-//        CLI::logging("> Backup log files...\n");
-//        $this->backupLogFiles();
-//        $stop = microtime(true);
-//        $final = $stop - $start;
-//        CLI::logging("<*>   Backup log files Process took $final seconds.\n");
-//
-//        /*----------------------------------********---------------------------------*/
-//        $start = microtime(true);
-//        CLI::logging("> Migrate new lists...\n");
-//        $this->migrateList($workSpace, false, $lang);
-//        $stop = microtime(true);
-//        $final = $stop - $start;
-//        CLI::logging("<*>   Migrate new lists Process took $final seconds.\n");
-//        /*----------------------------------********---------------------------------*/
-//
-//        $start = microtime(true);
-//        CLI::logging("> Updating Files Manager...\n");
-//        $this->processFilesUpgrade();
-//        $stop = microtime(true);
-//        CLI::logging("<*>   Updating Files Manager took " . ($stop - $start) . " seconds.\n");
-//
-//        $start = microtime(true);
-//        CLI::logging("> Optimizing content data...\n");
-//        $this->migrateContent($workSpace, $lang);
-//        $stop = microtime(true);
-//        CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
+        $start = microtime(true);
+        CLI::logging("> Updating database...\n");
+        $this->upgradeDatabase($onedb);
+        $stop = microtime(true);
+        CLI::logging("<*>   Database Upgrade Process took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Check Intermediate Email Event...\n");
+        $this->checkIntermediateEmailEvent();
+        $stop = microtime(true);
+        CLI::logging("<*>   Database Upgrade Process took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Verify enterprise old...\n");
+        $this->verifyFilesOldEnterprise($workSpace);
+        $stop = microtime(true);
+        CLI::logging("<*>   Verify took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Updating translations...\n");
+        $this->upgradeTranslation($first);
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Updating Translations Process took $final seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Updating Content...\n");
+        $this->upgradeContent($workSpace);
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Updating Content Process took $final seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Check Mafe Requirements...\n");
+        $this->checkMafeRequirements($workSpace, $lang);
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Check Mafe Requirements Process took $final seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Updating cache view...\n");
+        $this->upgradeCacheView($buildCacheView, true, $lang);
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Updating cache view Process took $final seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Backup log files...\n");
+        $this->backupLogFiles();
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Backup log files Process took $final seconds.\n");
+
+        /*----------------------------------********---------------------------------*/
+        $start = microtime(true);
+        CLI::logging("> Migrate new lists...\n");
+        $this->migrateList($workSpace, false, $lang);
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Migrate new lists Process took $final seconds.\n");
+        /*----------------------------------********---------------------------------*/
+
+        $start = microtime(true);
+        CLI::logging("> Updating Files Manager...\n");
+        $this->processFilesUpgrade();
+        $stop = microtime(true);
+        CLI::logging("<*>   Updating Files Manager took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Optimizing content data...\n");
+        $this->migrateContent($workSpace, $lang);
+        $stop = microtime(true);
+        CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
 
         $start = microtime(true);
         CLI::logging("> Clean access and refresh tokens...\n");
