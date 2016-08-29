@@ -135,6 +135,12 @@ class workspaceTools
         $this->migrateContent($workSpace, $lang);
         $stop = microtime(true);
         CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Clean access and refresh tokens...\n");
+        $this->cleanTokens($workSpace);
+        $stop = microtime(true);
+        CLI::logging("<*>   Clean access and refresh tokens took " . ($stop - $start) . " seconds.\n");
     }
 
     /**
@@ -3219,6 +3225,19 @@ class workspaceTools
         foreach ($content as $className => $fields) {
             $this->migrateContentWorkspace($className, $fields, $lang);
         }
+    }
+
+    public function cleanTokens($workspace, $lang = SYS_LANG)
+    {
+        $this->initPropel(true);
+        $oCriteria = new Criteria();
+        $oCriteria->add(OauthAccessTokensPeer::ACCESS_TOKEN, 0, Criteria::NOT_EQUAL);
+        $accessToken = OauthAccessTokensPeer::doDelete($oCriteria);
+        CLI::logging("|--> Clean data in table " . OauthAccessTokensPeer::TABLE_NAME . " rows ".$accessToken."\n");
+        $oCriteria = new Criteria();
+        $oCriteria->add(OauthRefreshTokensPeer::REFRESH_TOKEN, 0, Criteria::NOT_EQUAL);
+        $refreshToken = OauthRefreshTokensPeer::doDelete($oCriteria);
+        CLI::logging("|--> Clean data in table " . OauthRefreshTokensPeer::TABLE_NAME . " rows ".$refreshToken."\n");
     }
 
     public function migrateIteeToDummytask($workspaceName){
