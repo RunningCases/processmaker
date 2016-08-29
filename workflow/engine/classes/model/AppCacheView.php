@@ -1183,6 +1183,36 @@ class AppCacheView extends BaseAppCacheView
         return $this->getToReassign($userUid, false);
     }
 
+    /**
+     * gets the ALL cases list criteria for count by Supervisor
+     * @return Criteria object $Criteria
+     */
+    public function getToReassignSupervisorCountCriteria($userUid)
+    {
+        GLOBAL $RBAC;
+        $aUser = $RBAC->userObj->load( $_SESSION['USER_LOGGED'] );
+
+        $aProcesses = $this->getProUidSupervisor($aUser['USR_UID']);
+        $criteria = $this->getToReassign($userUid, true);
+        $criteria->add(AppCacheViewPeer::PRO_UID, $aProcesses, Criteria::IN);
+        return $criteria;
+    }
+
+    /**
+     * gets the ALL cases list criteria for list  by Supervisor
+     * @return Criteria object $Criteria
+     */
+    public function getToReassignSupervisorListCriteria($userUid)
+    {
+        GLOBAL $RBAC;
+        $aUser = $RBAC->userObj->load( $_SESSION['USER_LOGGED'] );
+
+        $aProcesses = $this->getProUidSupervisor($aUser['USR_UID']);
+        $criteria = $this->getToReassign($userUid, false);
+        $criteria->add(AppCacheViewPeer::PRO_UID, $aProcesses, Criteria::IN);
+        return $criteria;
+    }
+
     public function getDefaultFields()
     {
         return array_merge(

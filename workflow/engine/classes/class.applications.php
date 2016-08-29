@@ -143,8 +143,14 @@ class Applications
                 $CriteriaCount = $oAppCache->getToReviseCountCriteria($userUid);
                 break;
             case "to_reassign":
-                $Criteria = $oAppCache->getToReassignListCriteria($userUid);
-                $CriteriaCount = $oAppCache->getToReassignCountCriteria($userUid);
+                GLOBAL $RBAC;
+                if($RBAC->userCanAccess('PM_REASSIGNCASE') == 1){
+                    $Criteria = $oAppCache->getToReassignListCriteria($userUid);
+                    $CriteriaCount = $oAppCache->getToReassignCountCriteria($userUid);
+                } else {
+                    $Criteria = $oAppCache->getToReassignSupervisorListCriteria($userUid);
+                    $CriteriaCount = $oAppCache->getToReassignSupervisorCountCriteria($userUid);
+                }
                 break;
             case "all":
                 $Criteria = $oAppCache->getAllCasesListCriteria($userUid);

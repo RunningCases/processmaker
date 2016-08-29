@@ -189,9 +189,10 @@ if ($licensedFeatures->verifyfeature('r19Vm5DK1UrT09MenlLYjZxejlhNUZ1b1NhV0JHWjB
 
 //menu permissions
 $cnt = '';
-$menuPerms = '';
-$menuPerms = $menuPerms . ($RBAC->userCanAccess( 'PM_REASSIGNCASE' ) == 1) ? 'R' : ''; //can reassign case
-$oHeadPublisher->assign( '___p34315105', $menuPerms ); // user menu permissions
+$reassignCase    = ($RBAC->userCanAccess( 'PM_REASSIGNCASE' ) == 1) ? 'true' : 'false';
+$reassignCaseSup = ($RBAC->userCanAccess( 'PM_REASSIGNCASE_SUPERVISOR' ) == 1) ? 'true':'false';
+$oHeadPublisher->assign( 'varReassignCase', $reassignCase );
+$oHeadPublisher->assign( 'varReassignCaseSupervisor', $reassignCaseSup );
 G::LoadClass( 'configuration' );
 $c = new Configurations();
 $oHeadPublisher->addExtJsScript( 'app/main', true );

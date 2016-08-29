@@ -57,6 +57,22 @@ if(isset($_REQUEST['action']) && $_REQUEST['action'] == "verifySession" ) {
         die();
     } else {
         $response = new stdclass();
+
+        //Check if the user is a supervisor to this Process
+        GLOBAL $RBAC;
+        if($RBAC->userCanAccess('PM_REASSIGNCASE') == 1){
+            $response->reassigncase = true;
+            $response->message = '';
+        } elseif ($RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
+            $response->reassigncase = false;
+            $response->message = G::LoadTranslation('ID_NOT_ABLE_REASSIGN');
+            $oAppCache = new AppCacheView();
+            $aProcesses = $oAppCache->getProUidSupervisor($_SESSION['USER_LOGGED']);
+            if(in_array($_SESSION['PROCESS'], $aProcesses)){
+                $response->reassigncase = true;
+            }
+        }
+
         print G::json_encode( $response );
         die();
     }
@@ -193,7 +209,7 @@ class Ajax
 
                 $options[] = Array('text' => G::LoadTranslation('ID_DELETE'), 'fn' => 'deleteCase');
 
-                if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) {
+                if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1 || $RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
                     if (!AppDelay::isPaused($_SESSION['APPLICATION'], $_SESSION['INDEX'])) {
                         $options[] = Array('text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign');
                     }
@@ -212,7 +228,7 @@ class Ajax
                 } else {
                     $options[] = Array('text' => G::LoadTranslation('ID_UNPAUSE'), 'fn' => 'unpauseCase');
                 }
-                if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1 || $RBAC->userCanAccess('PM_SUPERVISOR') == 1) {
+                if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1 || $RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
                     if (!AppDelay::isPaused($_SESSION['APPLICATION'], $_SESSION['INDEX'])) {
                         $options[] = Array('text' => G::LoadTranslation('ID_REASSIGN'), 'fn' => 'getUsersToReassign');
                     }

@@ -1125,7 +1125,7 @@ Ext.onReady(function(){
         labelSeparator: '',
         labelStyle: 'margin-left:150px;position:absolute;'
     });
-    
+
     var winReassignInCasesList = new Ext.Window({
         title: '',
         width: 450,
@@ -1172,16 +1172,25 @@ Ext.onReady(function(){
                                   }
                   }
                 });
+          } else if(!data.reassigncase) {
+                Ext.Msg.show({
+                  title: _('ID_WARNING'),
+                  msg: data.message,
+                  animEl: 'elId',
+                  icon: Ext.MessageBox.WARNING,
+                  buttons: Ext.MessageBox.OK,
+                  fn : function(btn) {
+                  }
+                });
           } else {
-              winReassignInCasesList.show();
-
-              grdpnlUsersToReassign.store.load();
+                winReassignInCasesList.show();
+                grdpnlUsersToReassign.store.load();
           }
         },
         failure: function ( result, request) {
-         if (typeof(result.responseText) != 'undefined') {
-                 Ext.MessageBox.alert( _('ID_FAILED'), result.responseText);
-             }
+          if (typeof(result.responseText) != 'undefined') {
+                Ext.MessageBox.alert( _('ID_FAILED'), result.responseText);
+          }
         }
    });
   }

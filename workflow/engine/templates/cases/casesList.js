@@ -984,7 +984,7 @@ Ext.onReady ( function() {
 
     var processStore =  new Ext.data.Store( {
         proxy : new Ext.data.HttpProxy( {
-            url : 'casesList_Ajax?actionAjax=processListExtJs',
+            url : 'casesList_Ajax?actionAjax=processListExtJs&action='+action,
             method : 'POST'
         }),
         reader : new Ext.data.JsonReader( {
@@ -1613,6 +1613,7 @@ Ext.onReady ( function() {
                         var rowSelectedJsonArray = rowAllJsonArray[rowSelectedIndex];
 
                         var TAS_UID = rowSelectedJsonArray.TAS_UID;
+                        var PRO_UID = rowSelectedJsonArray.PRO_UID;
                         var USR_UID = rowSelectedJsonArray.USR_UID;
 
                         var APP_UID = rowSelectedJsonArray.APP_UID;
@@ -1620,7 +1621,31 @@ Ext.onReady ( function() {
 
                         optionMenuReassignGlobal.APP_UID = APP_UID;
                         optionMenuReassignGlobal.DEL_INDEX = DEL_INDEX;
-                        if( rowSelected ){
+
+                        //Check if the user is a supervisor to this Process
+                        var reassigncase = false;
+                        if(varReassignCase == 'true'){
+                            reassigncase = true;
+                        } else if (varReassignCaseSupervisor == 'true') {
+                            aProcessList= JSON.parse(data.processeslist);
+                            for(var i=0; i < aProcessList.length; ++i) {
+                                if(aProcessList[i] == PRO_UID){
+                                    reassigncase = true;
+                                }
+                            }
+                        }
+
+                        if(!reassigncase) {
+                            Ext.Msg.show({
+                              title: _('ID_WARNING'),
+                              msg: data.message,
+                              animEl: 'elId',
+                              icon: Ext.MessageBox.WARNING,
+                              buttons: Ext.MessageBox.OK,
+                              fn : function(btn) {
+                              }
+                            });
+                        } else if( rowSelected ){
                             //Variables
                             var pageSizeUsersToReassign = 10;
 
@@ -1832,15 +1857,17 @@ Ext.onReady ( function() {
         case 'todo':
             menuItems = [optionMenuPause, optionMenuSummary, optionMenuNotes];
 
-            if( ___p34315105.search('R') != -1 )
+            if( varReassignCase == 'true' || varReassignCaseSupervisor == 'true'){
                 menuItems.push(optionMenuReassign);
+            }
 
             break;
 
         case 'draft':
             menuItems = [optionMenuPause, optionMenuSummary, optionMenuNotes];
-            if( ___p34315105.search('R') != -1 )
+            if( varReassignCase == 'true' || varReassignCaseSupervisor == 'true'){
                 menuItems.push(optionMenuReassign);
+            }
             menuItems.push(optionMenuDelete);
 
             break;

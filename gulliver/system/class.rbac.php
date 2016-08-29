@@ -281,6 +281,8 @@ class RBAC
             "PER_NAME" => "Edit User profile Default Main Menu Options"
         ), array("PER_UID" => "00000000000000000000000000000063", "PER_CODE" => "PM_EDIT_USER_PROFILE_DEFAULT_CASES_MENU_OPTIONS",
             "PER_NAME" => "Edit User profile Default Cases Menu Options"
+        ), array("PER_UID" => "00000000000000000000000000000064", "PER_CODE" => "PM_REASSIGNCASE_SUPERVISOR",
+            "PER_NAME" => "Reassign case supervisor"
         )
         );
         return $permissionsAdmin;
