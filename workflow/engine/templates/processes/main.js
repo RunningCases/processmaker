@@ -1198,7 +1198,22 @@ function exportImportProcessObjects(typeAction)
             [2, _('ID_REPLACE_ALL')]
         ]
     });
-    checkBoxSelMod = new Ext.grid.CheckboxSelectionModel();
+    checkBoxSelMod = new Ext.grid.CheckboxSelectionModel({
+        singleSelect:false,
+        listeners: {
+            beforerowselect: function (sm, row_index, keepExisting, record) {
+                sm.suspendEvents();
+                if (sm.isSelected(row_index)) {
+                    // row already selected, deselect it (note: other selections remain intact on deselect).
+                    sm.deselectRow(row_index);
+                } else {
+                    sm.selectRow(row_index, true)
+                }
+                sm.resumeEvents();
+                return false;
+            }
+        }
+    });
     gridProcessObjects = new Ext.grid.EditorGridPanel( {
         region: 'center',
         layout: 'fit',
