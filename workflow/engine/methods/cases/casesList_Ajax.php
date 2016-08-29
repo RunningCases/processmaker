@@ -195,11 +195,30 @@ if ($actionAjax == 'reassignCase') {
     $cases = new Cases();
     $user = new Users();
     $app = new Application();
+    $oAppDel = new AppDelegation();
 
     $TO_USR_UID = $_POST['USR_UID'];
 
     try {
-        $cases->reassignCase($_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED'], $TO_USR_UID);
+        //Current users of OPEN DEL_INDEX thread
+        $aCurUser = $oAppDel->getCurrentUsers($APP_UID, $DEL_INDEX);
+        $flagReassign = true;
+        if(!empty($aCurUser)){
+            foreach ($aCurUser as $key => $value) {
+                if($value === $TO_USR_UID){
+                    $flagReassign = false;
+                }
+            }
+        } else {
+            //DEL_INDEX is CLOSED
+            throw new Exception(G::LoadTranslation('ID_REASSIGNMENT_ERROR'));
+        }
+
+        //If the currentUser is diferent to nextUser, create the thread
+        if($flagReassign){
+            $cases->reassignCase($_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED'], $TO_USR_UID);
+        }
+        
         $caseData = $app->load($_SESSION['APPLICATION']);
         $userData = $user->load($TO_USR_UID);
         //print_r($caseData);
