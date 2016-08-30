@@ -1127,7 +1127,7 @@ function exportProcess() {
                 myMask.hide();
 
                 if (result.success) {
-                    window.location = "../processes/processes_DownloadFile?file_hash=" + result.file_hash;
+                    window.location = "../processes/processes_DownloadFile?file_hash=" + encodeURIComponent(result.file_hash);
                 } else {
                     Ext.Msg.show({
                         title: "",
