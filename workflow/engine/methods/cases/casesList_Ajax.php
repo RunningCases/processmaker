@@ -144,6 +144,21 @@ if ($actionAjax == "processListExtJs") {
         $cProcess->addAnd($filters);
     }
 
+    if($action==='to_revise') {
+        $oAppCache = new AppCacheView();
+        $aProcesses = $oAppCache->getProUidSupervisor($_SESSION['USER_LOGGED']);
+        $cProcess->add(ProcessPeer::PRO_UID, $aProcesses, Criteria::IN);
+    }
+
+    if($action==='to_reassign') {
+        if($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) {
+        } elseif($RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
+            $oAppCache = new AppCacheView();
+            $aProcesses = $oAppCache->getProUidSupervisor($_SESSION['USER_LOGGED']);
+            $cProcess->add(ProcessPeer::PRO_UID, $aProcesses, Criteria::IN);
+        }
+    }
+
     $cProcess->addAscendingOrderByColumn(ProcessPeer::PRO_TITLE);
 
     $oDataset = ProcessPeer::doSelectRS($cProcess);
@@ -154,6 +169,34 @@ if ($actionAjax == "processListExtJs") {
         $processes[] = $aRow;
     }
     return print G::json_encode($processes);
+}
+
+if ($actionAjax == "verifySession") {
+    if (!isset($_SESSION['USER_LOGGED'])) {
+        $response = new stdclass();
+        $response->message = G::LoadTranslation('ID_LOGIN_AGAIN');
+        $response->lostSession = true;
+        print G::json_encode( $response );
+        die();
+    } else {
+        $response = new stdclass();
+        GLOBAL $RBAC;
+        //Check if the user is a supervisor to this Process
+        if($RBAC->userCanAccess('PM_REASSIGNCASE') == 1){
+            $response->reassigncase = true;
+            $response->message = '';
+            $response->processeslist = '';
+        } elseif ($RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
+            $response->reassigncase = true;
+            $response->message = G::LoadTranslation('ID_NOT_ABLE_REASSIGN');
+            $oAppCache = new AppCacheView();
+            $aProcesses = $oAppCache->getProUidSupervisor($_SESSION['USER_LOGGED']);
+            $response->processeslist = G::json_encode( $aProcesses );
+        }
+
+        print G::json_encode( $response );
+        die();
+    }
 }
 
 if ($actionAjax == "getUsersToReassign") {
