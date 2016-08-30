@@ -49,20 +49,9 @@ if (! isset( $_GET['APP_UID'] ) || ! isset( $_GET['DEL_INDEX'] )) {
     } else {
         throw new Exception( "Application ID or Delegation Index is missing!. The System can't open the case." );
     }
-} else { 
+} else {
     $appUid = htmlspecialchars($_GET['APP_UID']);
     $delIndex = htmlspecialchars($_GET['DEL_INDEX']);
-}
-
-if( isset($_GET['actionFromList']) && ($_GET['actionFromList'] == 'to_revise') ) {
-    $oApp = new Application;
-    $oApp->Load($appUid);
-    if($oApp->getAppStatus() == 'COMPLETED') {
-        unset($_GET['to_revise']);
-    } else {
-        $_GET['APP_UID'] = $appUid;
-        $_GET['DEL_INDEX'] = $delIndex;
-    }
 }
 
 require_once ("classes/model/Step.php");
@@ -105,14 +94,21 @@ if( isset($_GET['action']) && ($_GET['action'] == 'jump') ) {
     $case = $oCase->loadCase( $appUid, $delIndex );
 }
 
-if (! isset( $_GET['to_revise'] )) {
-    $script = 'cases_Open?';
+if(isset($_GET['actionFromList']) && ($_GET['actionFromList'] === 'to_revise') ){
+    $oApp = new Application;
+    $oApp->Load($appUid);
+    //If the case is completed can not update the information from supervisor/review
+    if($oApp->getAppStatus() === 'COMPLETED') {
+        $script = 'cases_Open?';
+    } else {
+        $script = 'cases_OpenToRevise?APP_UID=' . $appUid . '&DEL_INDEX=' . $delIndex;
+        $oHeadPublisher->assign( 'treeToReviseTitle', G::loadtranslation( 'ID_STEP_LIST' ) );
+        $casesPanelUrl = 'casesToReviseTreeContent?APP_UID=' . $appUid . '&DEL_INDEX=' . $delIndex;
+        $oHeadPublisher->assign( 'casesPanelUrl', $casesPanelUrl ); //translations
+        echo "<div id='toReviseTree'></div>";
+    }
 } else {
-    $script = 'cases_OpenToRevise?';
-    $oHeadPublisher->assign( 'treeToReviseTitle', G::loadtranslation( 'ID_STEP_LIST' ) );
-    $casesPanelUrl = 'casesToReviseTreeContent?APP_UID=' . $appUid . '&DEL_INDEX=' . $delIndex;
-    $oHeadPublisher->assign( 'casesPanelUrl', $casesPanelUrl ); //translations
-    echo "<div id='toReviseTree'></div>";
+    $script = 'cases_Open?';
 }
 
 // getting bpmn projects

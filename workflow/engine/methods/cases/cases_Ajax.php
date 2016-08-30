@@ -1004,7 +1004,6 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         }
         break;
     case "previusJump":
-        //require_once 'classes/model/Application.php';
 
         $oCriteria = new Criteria( 'workflow' );
         $response = array ("success" => true );
@@ -1017,8 +1016,27 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
 
         if (is_array( $aApplication )) {
             $response['exists'] = true;
+
+            //Check if the user is a supervisor to this Process
+            if(isset($_POST['actionFromList']) && $_POST['actionFromList']==='to_revise'){
+                $oAppCache = new AppCacheView();
+                $aProcesses = $oAppCache->getProUidSupervisor($_SESSION['USER_LOGGED']);
+                if(!in_array($aApplication['PRO_UID'], $aProcesses)){
+                    $response['exists'] = false;
+                    $response['message'] = G::LoadTranslation('ID_NO_PERMISSION_NO_PARTICIPATED');
+                }
+            } else {//Check if the user participated in this case
+                $oParticipated = new ListParticipatedLast();
+                $aParticipated = $oParticipated->loadList($_SESSION['USER_LOGGED'], array(), null, $aApplication['APP_UID']);
+                if(!sizeof($aParticipated)){
+                    //Check in the selfservice list
+                    $response['exists'] = false;
+                    $response['message'] = G::LoadTranslation('ID_NO_PERMISSION_NO_PARTICIPATED');
+                }
+            }
         } else {
             $response['exists'] = false;
+            $response['message'] = G::LoadTranslation('ID_CASE_DOES_NOT_EXIST_JS', array($_POST['appNumber']));
         }
 
         echo Bootstrap::json_encode( $response );
