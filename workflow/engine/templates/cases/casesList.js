@@ -156,11 +156,7 @@ function jumpToCase(appNumber){
             if (res.exists === true) {
                 params = 'APP_NUMBER=' + appNumber;
                 params += '&action=jump';
-
-                if(action == 'to_revise') {
-                    params += '&to_revise=true';
-                    params += '&actionFromList=' + action;
-                }
+                params += '&actionFromList='+action;
 
                 requestFile = '../cases/open';
                 redirect(requestFile + '?' + params);
@@ -168,10 +164,10 @@ function jumpToCase(appNumber){
                 Ext.MessageBox.hide();
                 var message = new Array();
                 message['CASE_NUMBER'] = appNumber;
-                msgBox(_('ID_INPUT_ERROR'), _('ID_CASE_DOES_NOT_EXIST_JS', appNumber), 'error');
+                msgBox(_('ID_INPUT_ERROR'), _(res.message), 'error');
             }
         },
-        params: {action:'previusJump', appNumber: appNumber}
+        params: {action:'previusJump', appNumber: appNumber, actionFromList: action}
     });
 }
 

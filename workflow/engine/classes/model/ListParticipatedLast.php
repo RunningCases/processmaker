@@ -282,11 +282,11 @@ class ListParticipatedLast extends BaseListParticipatedLast
         return (int)$total;
     }
 
-    public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
+    public function loadList($usr_uid, $filters = array(), $callbackRecord = null, $appUid = '')
     {
         $pmTable = new PmTable();
         $criteria = $pmTable->addPMFieldsToList('sent');
-        
+
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_UID);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_INDEX);
         $criteria->addSelectColumn(ListParticipatedLastPeer::USR_UID);
@@ -311,6 +311,12 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_PRIORITY);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_THREAD_STATUS);
         $criteria->add( ListParticipatedLastPeer::USR_UID, $usr_uid, Criteria::EQUAL );
+
+        //Check if the user was participated in a specific case
+        if($appUid != ''){
+            $criteria->add( ListParticipatedLastPeer::APP_UID, $appUid, Criteria::EQUAL );
+        }
+
         self::loadFilters($criteria, $filters);
 
         $sort  = (!empty($filters['sort'])) ? $filters['sort'] : "DEL_DELEGATE_DATE";

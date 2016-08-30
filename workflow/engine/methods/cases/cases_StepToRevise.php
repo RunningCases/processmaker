@@ -39,6 +39,7 @@ switch ($RBAC->userCanAccess( 'PM_SUPERVISOR' )) {
         break;
 }
 
+//If the user does not have the permission and the user can be access from url
 $processUser = new ProcessUser();
 $userAccess = $processUser->validateUserAccess($_GET['PRO_UID'], $_SESSION['USER_LOGGED'], 'SUPERVISOR');
 if(!$userAccess) {
@@ -105,8 +106,8 @@ if (! isset( $_GET['type'] )) {
 }
 if (! isset( $_GET['position'] )) {
     $_GET['position'] = $_SESSION['STEP_POSITION'];
-}else{    
-    if($_GET['type'] == 'DYNAFORM'){        
+}else{
+    if($_GET['type'] == 'DYNAFORM'){
         $criteria = new Criteria();
 
         $criteria->addSelectColumn(StepSupervisorPeer::STEP_POSITION);
@@ -116,7 +117,7 @@ if (! isset( $_GET['position'] )) {
         $rsCriteria = StepSupervisorPeer::doSelectRS($criteria);
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $rsCriteria->next();
-        $aRow = $rsCriteria->getRow();    
+        $aRow = $rsCriteria->getRow();
 
         $_GET['position'] = $aRow['STEP_POSITION'];
     }else{
