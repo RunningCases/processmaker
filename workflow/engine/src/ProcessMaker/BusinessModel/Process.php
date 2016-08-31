@@ -24,6 +24,7 @@ class Process
         "PRO_TRI_DELETED"           => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processTriDeleted"),
         "PRO_TRI_CANCELED"          => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processTriCanceled"),
         "PRO_TRI_PAUSED"            => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processTriPaused"),
+        "PRO_TRI_UNPAUSED"          => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processTriUnpaused"),
         "PRO_TRI_REASSIGNED"        => array("type" => "string",   "required" => false, "empty" => true,  "defaultValues" => array(),     "fieldNameAux" => "processTriReassigned"),
         "PRO_SHOW_DELEGATE"         => array("type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1), "fieldNameAux" => "processShowDelegate"),
         "PRO_SHOW_DYNAFORM"         => array("type" => "int",      "required" => false, "empty" => false, "defaultValues" => array(0, 1), "fieldNameAux" => "processShowDynaform"),
