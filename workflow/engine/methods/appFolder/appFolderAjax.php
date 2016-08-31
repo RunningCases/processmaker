@@ -1374,10 +1374,7 @@ function copyMoveExecuteTree($uidFolder, $newUidFolder)
 {
     require_once ("classes/model/AppDocument.php");
     require_once ('classes/model/AppFolder.php');
-    if($newUidFolder==="root") {
-        return $newUidFolder;
-    }
-    
+
     $appFoder = new AppFolder ();
     $folderContent = $appFoder->getFolderContent($uidFolder);
     $folderOrigin = $appFoder->getFolderStructure($uidFolder);
@@ -1417,7 +1414,7 @@ function copyMoveExecuteTree($uidFolder, $newUidFolder)
             //Copy file
             $arrayPathFromFile = G::getPathFromFileUID($docInfo["APP_UID"], $docUid);
             $newFile = $arrayPathFromFile[0] . PATH_SEP . $arrayPathFromFile[1] . "_" . $docInfo["DOC_VERSION"] . "." . $extension;
-            
+
             if(!file_exists($path . $arrayPathFromFile[0])) {
                 mkdir( $path . $arrayPathFromFile[0], 0777, true );
             }
@@ -1511,7 +1508,7 @@ function uploadExternalDocument()
                     $response['success']= 'success';
                     $response['node']   = '';
                     $_POST ['node']     = "";
-                    $newFolderUid = checkTree($_REQUEST['dir'], $_REQUEST['new_dir']);
+                    $newFolderUid = checkTree($_REQUEST['dir'], ($_REQUEST['new_dir'] == 'root')? '/' : $_REQUEST['new_dir']);
                 }
                 $_POST['selitems'] = array();
             } else {
@@ -1992,4 +1989,3 @@ function extPathName($p_path, $p_addtrailingslash = false)
     }
     return $retval;
 }
-
