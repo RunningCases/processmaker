@@ -10,7 +10,7 @@ class PMXPublisher
     {
         $parentDir = dirname($filename);
 
-        if (! is_dir($parentDir)) {
+        if (!is_dir($parentDir)) {
             Util\Common::mk_dir($parentDir, 0775);
         }
 
@@ -19,7 +19,12 @@ class PMXPublisher
         file_put_contents($outputFile, $data);
         @chmod($outputFile, 0755);
 
-        return basename($outputFile);
+        $currentLocale = setlocale(LC_CTYPE, 0);
+        setlocale(LC_CTYPE, 'en_US.UTF-8');
+        $filename = basename($outputFile);
+        setlocale(LC_CTYPE, $currentLocale);
+
+        return $filename;
     }
 
     public function truncateName($outputFile, $dirName = true)

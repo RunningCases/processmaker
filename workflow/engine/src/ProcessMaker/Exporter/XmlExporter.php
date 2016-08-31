@@ -135,8 +135,13 @@ class XmlExporter extends Exporter
         
         file_put_contents($outputFile, $this->export());
         chmod($outputFile, 0755);
-        
-        return basename($outputFile);
+
+        $currentLocale = setlocale(LC_CTYPE, 0);
+        setlocale(LC_CTYPE, 'en_US.UTF-8');
+        $filename = basename($outputFile);
+        setlocale(LC_CTYPE, $currentLocale);
+
+        return $filename;
     }
 
     /**
