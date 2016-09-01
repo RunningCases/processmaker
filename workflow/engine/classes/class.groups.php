@@ -209,6 +209,8 @@ class Groups
             $oCriteria = new Criteria('workflow');
             $oCriteria->addSelectColumn(GroupwfPeer::GRP_UID);
             $oCriteria->addSelectColumn(GroupwfPeer::GRP_STATUS);
+            $oCriteria->addAsColumn('CON_VALUE',GroupwfPeer::GRP_TITLE);
+            $oCriteria->addAscendingOrderByColumn(GroupwfPeer::GRP_TITLE);
             $oCriteria->add(GroupwfPeer::GRP_UID, $gUIDs, Criteria::NOT_IN);
             $oCriteria->add(GroupwfPeer::GRP_STATUS, 'ACTIVE');
             if ($filter != '') {
@@ -234,6 +236,8 @@ class Groups
             $oCriteria->addSelectColumn(GroupwfPeer::GRP_UID);
             $oCriteria->addSelectColumn(GroupwfPeer::GRP_STATUS);
             $oCriteria->addSelectColumn(GroupwfPeer::GRP_LDAP_DN);
+            $oCriteria->addAsColumn('CON_VALUE',GroupwfPeer::GRP_TITLE);
+            $oCriteria->addAscendingOrderByColumn(GroupwfPeer::GRP_TITLE);
             $oCriteria->addJoin(GroupUserPeer::GRP_UID, GroupwfPeer::GRP_UID, Criteria::LEFT_JOIN);
             $oCriteria->add(GroupUserPeer::USR_UID, $sUserUid, Criteria::EQUAL);
             $oCriteria->add(GroupwfPeer::GRP_STATUS, 'ACTIVE');
