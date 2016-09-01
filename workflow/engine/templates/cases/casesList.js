@@ -100,6 +100,7 @@ function openCase(){
                 params += 'APP_UID=' + appUid;
                 params += '&DEL_INDEX=' + delIndex;
                 params += '&to_revise=true';
+                params += '&actionFromList='+action;
                 requestFile = 'open';
                 break;
             case 'sent': // = participated
