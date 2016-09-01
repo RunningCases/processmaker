@@ -61526,6 +61526,7 @@ INSERT INTO DASHLET_INSTANCE (DAS_INS_UID,DAS_UID,DAS_INS_OWNER_TYPE,DAS_INS_OWN
 
 INSERT INTO CONFIGURATION (CFG_UID,OBJ_UID,CFG_VALUE,PRO_UID,USR_UID,APP_UID) VALUES
 ('ENVIRONMENT_SETTINGS','','a:1:{s:18:"directoryStructure";i:2;}','','',''),
+('ENTERPRISE_SETTING_ENCRYPT','','a:2:{s:7:"current";s:6:"sha256";s:8:"previous";s:3:"md5";}','','',''),
 ('MIGRATED_LIST','list','true','list','list','list'),
 ('MIGRATED_LIST_UNASSIGNED','list','true','list','list','list'),
 ('SKIN_CRON','','s:10:"neoclassic";','','',''),

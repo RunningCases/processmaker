@@ -469,12 +469,12 @@ class Installer
         //  The mysql_escape_string function has been DEPRECATED as of PHP 5.3.0.
         //  $this->run_query('UPDATE USERS SET USR_USERNAME = \''.mysql_escape_string($this->options['admin']['username']).'\', `USR_PASSWORD` = \''.md5($this->options['admin']['password']).'\' WHERE `USR_UID` = \'00000000000000000000000000000001\' LIMIT 1',
         //    "Add 'admin' user in ProcessMaker (wf)");
-        $this->run_query('UPDATE USERS SET USR_USERNAME = \'' . mysql_real_escape_string($this->options['admin']['username']) . '\', ' . '  `USR_PASSWORD` = \'' . G::encryptOld($this->options['admin']['password']) . '\' ' . '  WHERE `USR_UID` = \'00000000000000000000000000000001\' LIMIT 1', "Add 'admin' user in ProcessMaker (wf)");
+        $this->run_query('UPDATE USERS SET USR_USERNAME = \'' . mysql_real_escape_string($this->options['admin']['username']) . '\', ' . '  `USR_PASSWORD` = \'' . G::encryptHash($this->options['admin']['password']) . '\' ' . '  WHERE `USR_UID` = \'00000000000000000000000000000001\' LIMIT 1', "Add 'admin' user in ProcessMaker (wf)");
         mysql_select_db($this->rbac_site_name, $this->connection_database);
         // The mysql_escape_string function has been DEPRECATED as of PHP 5.3.0.
         // $this->run_query('UPDATE USERS SET USR_USERNAME = \''.mysql_escape_string($this->options['admin']['username']).'\', `USR_PASSWORD` = \''.md5($this->options['admin']['password']).'\' WHERE `USR_UID` = \'00000000000000000000000000000001\' LIMIT 1',
         //   "Add 'admin' user in ProcessMaker (rb)");
-        $this->run_query('UPDATE RBAC_USERS SET USR_USERNAME = \'' . mysql_real_escape_string($this->options['admin']['username']) . '\', ' . '  `USR_PASSWORD` = \'' . G::encryptOld($this->options['admin']['password']) . '\' ' . '  WHERE `USR_UID` = \'00000000000000000000000000000001\' LIMIT 1', "Add 'admin' user in ProcessMaker (rb)");
+        $this->run_query('UPDATE RBAC_USERS SET USR_USERNAME = \'' . mysql_real_escape_string($this->options['admin']['username']) . '\', ' . '  `USR_PASSWORD` = \'' . G::encryptHash($this->options['admin']['password']) . '\' ' . '  WHERE `USR_UID` = \'00000000000000000000000000000001\' LIMIT 1', "Add 'admin' user in ProcessMaker (rb)");
     }
 
     /**
