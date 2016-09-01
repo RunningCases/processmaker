@@ -940,7 +940,7 @@ class Derivation
                     break;
                 case TASK_FINISH_TASK:
                     $iAppThreadIndex = $appFields['DEL_THREAD'];
-                    $this->case->closeAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex );
+                    $this->case->closeAppThread($currentDelegation['APP_UID'], $iAppThreadIndex);
                     break;
                 default:
                     //Get all siblingThreads
