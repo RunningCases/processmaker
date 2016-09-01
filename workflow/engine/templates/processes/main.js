@@ -185,7 +185,7 @@ Ext.onReady(function(){
 
   var expander = new Ext.ux.grid.RowExpander({
     tpl : new Ext.Template(
-        '<p><b>' + _('ID_PRO_DESCRIPTION') + ':</b> {PRO_DESCRIPTION:htmlEncode}</p><br>'
+        '<p><b>' + _('ID_PRO_DESCRIPTION') + ':</b> {PRO_DESCRIPTION}</p><br>'
     )
   });
 
