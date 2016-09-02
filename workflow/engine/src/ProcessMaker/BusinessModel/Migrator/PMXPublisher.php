@@ -27,6 +27,11 @@ class PMXPublisher
         return $filename;
     }
 
+    /**
+     * @param $outputFile
+     * @param bool $dirName
+     * @return mixed|string
+     */
     public function truncateName($outputFile, $dirName = true)
     {
         $limit = 200;
@@ -34,23 +39,27 @@ class PMXPublisher
             $limit = 150;
         }
         if ($dirName) {
-            if (strlen(basename($outputFile)) >= $limit) {
-                $lastPos = strrpos(basename($outputFile), '.');
-                $fileName = substr(basename($outputFile), 0, $lastPos);
+            $currentLocale = setlocale(LC_CTYPE, 0);
+            setlocale(LC_CTYPE, 'en_US.UTF-8');
+            $filename = basename($outputFile);
+            if (strlen($filename) >= $limit) {
+                $lastPos = strrpos($filename, '.');
+                $fileName = substr($filename, 0, $lastPos);
                 $newFileName = \G::inflect($fileName);
                 $excess = strlen($newFileName) - $limit;
-                $newFileName = substr($newFileName, 0, strlen($newFileName) - $excess);
+                $newFileName = substr($newFileName, 0, strlen($newFileName) - $excess - 1);
                 $newOutputFile = str_replace($fileName, $newFileName, $outputFile);
                 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                     $newOutputFile = str_replace("/", DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR, $newOutputFile);
                 }
                 $outputFile = $newOutputFile;
             }
+            setlocale(LC_CTYPE, $currentLocale);
         } else {
             $outputFile = \G::inflect($outputFile);
             if (strlen($outputFile) >= $limit) {
                 $excess = strlen($outputFile) - $limit;
-                $newFileName = substr($outputFile, 0, strlen($outputFile) - $excess);
+                $newFileName = substr($outputFile, 0, strlen($outputFile) - $excess - 1);
                 $outputFile = $newFileName;
             }
         }
