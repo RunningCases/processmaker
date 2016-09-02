@@ -2004,13 +2004,14 @@ class Processes
     {
         $map = array();
         foreach ($oData->inputs as $key => $val) {
-            $oldUid = $val['INP_DOC_UID'];
             $newGuid = $this->getUnusedInputGUID();
             $map[$val['INP_DOC_UID']] = $newGuid;
             $oData->inputFiles[$oData->inputs[$key]['INP_DOC_UID']] = $newGuid;
             $oData->inputs[$key]['INP_DOC_UID'] = $newGuid;
-            $oData->inputs[$key]['INP_DOC_UID_OLD'] = $oldUid;
         }
+        
+        $oData->uid["INPUT_DOCUMENT"] = $map;
+        
         if (!isset($oData->inputFiles)) {
             $oData->inputFiles = array();
         }
