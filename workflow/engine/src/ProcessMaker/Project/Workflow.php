@@ -1285,6 +1285,7 @@ class Workflow extends Handler
 
             $arrayWorkflowData = (array)($workflowData);
 
+            //Synchronize dynaforms json.
             foreach ($arrayWorkflowData["dynaforms"] as $key => $value) {
                 if ($arrayWorkflowData["dynaforms"][$key]["DYN_CONTENT"] != "") {
                     $dynaFormContent = $arrayWorkflowData["dynaforms"][$key]["DYN_CONTENT"];
@@ -1304,15 +1305,21 @@ class Workflow extends Handler
                 }
             }
 
-            foreach ($arrayWorkflowData["inputs"] as $keyin => $value) {
-                $newUid = $value["INP_DOC_UID"];
-                if(isset($value["INP_DOC_UID_OLD"])){
-                    foreach ($arrayWorkflowData["processVariables"] as $keypv => $vars) {
-                        if($vars['INP_DOC_UID'] === $value["INP_DOC_UID_OLD"]){
-                            $arrayWorkflowData["processVariables"][$keypv]["INP_DOC_UID"] = $newUid;
+            //Synchronize caseTrackerObject with dynaforms, input documents, output documents.
+            foreach ($arrayWorkflowData["caseTrackerObject"] as $key => $value) {
+                if (isset($arrayWorkflowData["uid"]) &&
+                        isset($arrayWorkflowData["uid"][$value["CTO_TYPE_OBJ"]]) &&
+                        isset($arrayWorkflowData["uid"][$value["CTO_TYPE_OBJ"]][$value["CTO_UID_OBJ"]])) {
+                    $arrayWorkflowData["caseTrackerObject"][$key]["CTO_UID_OBJ"] = $arrayWorkflowData["uid"][$value["CTO_TYPE_OBJ"]][$value["CTO_UID_OBJ"]];
                         }
                     }
-                    unset($arrayWorkflowData["inputs"][$keyin]["INP_DOC_UID_OLD"]);
+
+            //Synchronize variables with process variables.
+            foreach ($arrayWorkflowData["processVariables"] as $key => $value) {
+                if (isset($arrayWorkflowData["uid"]) &&
+                        isset($arrayWorkflowData["uid"]["INPUT_DOCUMENT"]) &&
+                        isset($arrayWorkflowData["uid"]["INPUT_DOCUMENT"][$value["INP_DOC_UID"]])) {
+                    $arrayWorkflowData["processVariables"][$key]["INP_DOC_UID"] = $arrayWorkflowData["uid"]["INPUT_DOCUMENT"][$value["INP_DOC_UID"]];
                 }
             }
 
