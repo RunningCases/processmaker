@@ -101,7 +101,11 @@ function ws_open() {
   global $client;
   $endpoint = WS_WSDL_URL;
   $sessionId = '';
-  @$client = new SoapClient($endpoint);
+
+  $client = new SoapClient(
+      $endpoint,
+      ['stream_context' => stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true]])]
+  );
 
   $user = WS_USER_ID;
   $pass = WS_USER_PASS;
