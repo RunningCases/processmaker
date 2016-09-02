@@ -2008,50 +2008,60 @@ class workspaceTools
      * @param string $workSpace    Workspace
      * @param bool   $flagReinsert Flag that specifies the re-insertion
      *
-     * return all LIST TABLES with data
+     * @return void
      */
     public function migrateList($workSpace, $flagReinsert = false, $lang='en')
     {
         $this->initPropel(true);
 
-        G::LoadClass("case");
+        $flagListAll        = $this->listFirstExecution('check');
+        $flagListUnassigned = $this->listFirstExecution('check', 'unassigned');
 
-        if (!$flagReinsert && $this->listFirstExecution("check")) {
-            return 1;
+        if (!$flagReinsert && $flagListAll && $flagListUnassigned) {
+            return;
         }
+
+        $arrayTable1 = ['ListInbox', 'ListMyInbox', 'ListCanceled', 'ListParticipatedLast', 'ListParticipatedHistory', 'ListPaused', 'ListCompleted'];
+        $arrayTable2 = ['ListUnassigned', 'ListUnassignedGroup'];
+        $arrayTable = array_merge($arrayTable1, $arrayTable2);
 
         if ($flagReinsert) {
             //Delete all records
-            $arrayTable = array("ListInbox", "ListMyInbox", "ListCanceled", "ListParticipatedLast", "ListParticipatedHistory", "ListPaused", "ListCompleted", "ListUnassigned", "ListUnassignedGroup");
-
             foreach ($arrayTable as $value) {
-                $tableName = $value . "Peer";
+                $tableName = $value . 'Peer';
                 $list = new $tableName();
                 $list->doDeleteAll();
             }
+        }
 
+        if (!$flagReinsert && !$flagListAll) {
+            foreach ($arrayTable1 as $value) {
+                $tableName = $value . 'Peer';
+                $list = new $tableName();
+
+                if ((int)($list->doCount(new Criteria())) > 0) {
+                    $flagListAll = true;
+                    break;
+                }
+            }
+        }
+
+        if ($flagReinsert || !$flagListAll) {
             $this->regenerateListCompleted($lang);
             $this->regenerateListCanceled($lang);
-            $this->regenerateListMyInbox(); // this list require no translation
-            $this->regenerateListInbox(); // this list require no translation
-            $this->regenerateListParticipatedHistory(); // this list require no translation
-            $this->regenerateListParticipatedLast(); // this list require no translation
-            $this->regenerateListPaused(); // this list require no translation
-            $this->regenerateListUnassigned(); // this list require no translation
-        }
-        if (!$flagReinsert) {
-            $this->listFirstExecution("insert");
-            $this->listFirstExecution('insert', 'unassigned');
+            $this->regenerateListMyInbox(); //This list require no translation
+            $this->regenerateListInbox();   //This list require no translation
+            $this->regenerateListParticipatedHistory(); //This list require no translation
+            $this->regenerateListParticipatedLast();    //This list require no translation
+            $this->regenerateListPaused(); //This list require no translation
         }
 
-        //Check for the List Unassigned
-        if(!$this->listFirstExecution('check','unassigned')){
-            $this->regenerateListUnassigned(); // this list require no translation
-            $this->listFirstExecution('insert', 'unassigned');
+        if ($flagReinsert || !$flagListUnassigned) {
+            $this->regenerateListUnassigned(); //This list require no translation
         }
 
-        //Return
-        return true;
+        $this->listFirstExecution('insert');
+        $this->listFirstExecution('insert', 'unassigned');
     }
 
     public function regenerateListCanceled($lang = 'en')
