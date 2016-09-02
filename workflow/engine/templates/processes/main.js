@@ -813,9 +813,11 @@ function newProcess(params)
         fieldLabel: _('ID_TITLE'),
         xtype:'textfield',
         width: 260,
+        maxLength: 100,
         maskRe: /^(?!^(PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\...*)(\..+)?$)[^\x00-\x1f\\?*\";|/]+$/i,
         allowBlank: false,
         vtype: "textWithoutTags",
+        autoCreate: {tag: 'input', type: 'text', size: '100', autocomplete: 'off', maxlength: '100'},
         listeners: {
             'focus' : function(value){
                 document.getElementById("PRO_TITLE").onpaste = function() {
