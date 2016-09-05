@@ -287,6 +287,7 @@ class AppDocumentDrive
             $criteria->getNewCriterion(AppDocumentPeer::SYNC_WITH_DRIVE, 'UNSYNCHRONIZED', Criteria::EQUAL)->
             addOr($criteria->getNewCriterion(AppDocumentPeer::SYNC_PERMISSIONS, null, Criteria::NOT_EQUAL))
         );
+        $criteria->add(AppDocumentPeer::APP_DOC_STATUS, 'ACTIVE');
 
         $criteria->addAscendingOrderByColumn('APP_DOC_CREATE_DATE');
         $criteria->addAscendingOrderByColumn('APP_UID');
