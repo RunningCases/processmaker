@@ -18,12 +18,21 @@ class ChangeLog
 {
     /**
      * List of variables that should not be considered
-     * @var string[]
+     * @var string[] $reserved
      */
     private $reserved = [
         'TASK',
         'INDEX',
-        'DYN_CONTENT_HISTORY'
+        'DYN_CONTENT_HISTORY',
+        '__VAR_CHANGED__',
+    ];
+    /**
+     * List of reserved steps
+     * @var string[] $reservedSteps
+     */
+    private $reservedSteps = [
+        -1,
+        -2,
     ];
 
     /**
@@ -179,6 +188,9 @@ class ChangeLog
 
     private function hasPermission($uid)
     {
+        if(array_search($uid, $this->reservedSteps)!==false) {
+            return false;
+        }
         foreach ($this->permissions as $type => $ids) {
             if (array_search($uid, $ids) !== false) {
                 return true;
