@@ -6,12 +6,11 @@
  *
  * @access public
  */
-
 class pmGmail extends Controller
 {
     public function saveConfigPmGmail($httpData)
     {
-        G::LoadClass( "pmGoogleApi" );
+        G::LoadClass("pmGoogleApi");
         $pmGoogle = new PMGoogleApi();
         $result = new StdClass();
         $result->success = true;
@@ -101,7 +100,7 @@ class pmGmail extends Controller
      */
     public function testConfigPmGmail($httpData)
     {
-        G::LoadClass( "pmGoogleApi" );
+        G::LoadClass("pmGoogleApi");
         $pmGoogle = new PMGoogleApi();
 
         $result = new stdClass();
@@ -113,31 +112,50 @@ class pmGmail extends Controller
     }
 
     /**
-     *
+     * Search users with same email
      */
     public function testUserGmail()
     {
         $criteria = new Criteria();
         $criteria->clearSelectColumns();
         $criteria->addSelectColumn('COUNT(*) AS NUM_EMAIL');
-        $criteria->addSelectColumn(UsersPeer::USR_UID);
-        $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
-        $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
+
         $criteria->addSelectColumn(UsersPeer::USR_EMAIL);
         $criteria->addGroupByColumn(UsersPeer::USR_EMAIL);
+
+        $criteria->add(UsersPeer::USR_STATUS, 'ACTIVE');
 
         $rs = UsersPeer::doSelectRS($criteria);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-        $userRepeat = array();
+        $userRepeat = [];
         while ($rs->next()) {
             $row = $rs->getRow();
             if ($row['NUM_EMAIL'] > 1) {
-                $userRepeat[] = array(
-                    'USR_UID' => $row['USR_UID'],
-                    'FULL_NAME' => $row['USR_FIRSTNAME'] . ' ' . $row['USR_LASTNAME'],
-                    'EMAIL' => $row['USR_EMAIL']
-                );
+                $criteriaUsers = new Criteria();
+                $criteriaUsers->clearSelectColumns();
+                $criteriaUsers->addSelectColumn(UsersPeer::USR_UID);
+                $criteriaUsers->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+                $criteriaUsers->addSelectColumn(UsersPeer::USR_LASTNAME);
+                $criteriaUsers->addSelectColumn(UsersPeer::USR_EMAIL);
+
+                $criteriaUsers->add(UsersPeer::USR_EMAIL, $row['USR_EMAIL']);
+                $criteriaUsers->add(UsersPeer::USR_STATUS, 'ACTIVE');
+
+                $rsUsers = UsersPeer::doSelectRS($criteriaUsers);
+                $rsUsers->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                while ($rsUsers->next()) {
+                    $rowUser = $rsUsers->getRow();
+
+                    array_push(
+                        $userRepeat,
+                        [
+                            'USR_UID' => $rowUser['USR_UID'],
+                            'FULL_NAME' => $rowUser['USR_FIRSTNAME'] . ' ' . $rowUser['USR_LASTNAME'],
+                            'EMAIL' => $rowUser['USR_EMAIL']
+                        ]
+                    );
+                }
             }
         }
 
