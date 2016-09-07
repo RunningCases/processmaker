@@ -323,18 +323,19 @@ class Groupwf extends BaseGroupwf
         require_once PATH_RBAC . "model/RbacUsers.php";
         require_once 'classes/model/TaskUser.php';
         require_once 'classes/model/GroupUser.php';
-        $sDelimiter = DBAdapter::getStringDelimiter();
-
         $criteria = new Criteria('workflow');
         $criteria->addSelectColumn(GroupwfPeer::GRP_UID);
         $criteria->addSelectColumn(GroupwfPeer::GRP_TITLE);
         $criteria->addSelectColumn(GroupwfPeer::GRP_STATUS);
         $criteria->addSelectColumn(GroupwfPeer::GRP_UX);
-
         if (is_null($sortField) || trim($sortField) == "") {
             $sortField = GroupwfPeer::GRP_TITLE;
         }
 
+        if ($search) {
+            $criteria->add(GroupwfPeer::GRP_TITLE, '%' . $search . '%', Criteria::LIKE);
+        }
+        $totalRows = GroupwfPeer::doCount($criteria);
         if (!is_null($sortDir) && trim($sortDir) != "" && strtoupper($sortDir) == "DESC") {
             $criteria->addDescendingOrderByColumn($sortField);
         } else {
@@ -349,10 +350,6 @@ class Groupwf extends BaseGroupwf
             $criteria->setLimit($limit);
         }
 
-        if ($search) {
-            $criteria->add(GroupwfPeer::GRP_TITLE, '%' . $search . '%', Criteria::LIKE);
-        }
-
         $oDataset = GroupwfPeer::doSelectRS($criteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $processes = array();
@@ -363,7 +360,7 @@ class Groupwf extends BaseGroupwf
             $groups[] = $oDataset->getRow();
         }
 
-        return array('rows' => $groups, 'totalCount' => count($groups));
+        return array('rows' => $groups, 'totalCount' => $totalRows);
     }
 
     public function filterGroup ($filter, $start, $limit)
