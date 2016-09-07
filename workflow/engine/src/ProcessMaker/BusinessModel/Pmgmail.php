@@ -3,6 +3,10 @@ namespace ProcessMaker\BusinessModel;
 require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "Task.php");
 
 use \G;
+use \Criteria;
+use \UsersPeer;
+use \GroupUserPeer;
+use \ResultSet;
 
 /**
  * @copyright Colosa - Bolivia
@@ -115,19 +119,25 @@ class Pmgmail {
             if (!isset ($aTask ["USR_UID"])) {
                 $aTask ["USR_UID"] = "";
             }
-            $oCases = new \Cases ();
+
             $application = $appData[0];
-
-            $respTo = $oCases->getTo($aTask ["TAS_UID"], $aTask ["USR_UID"], $arrayData);
-            $mailToAddresses = $respTo ['to'];
-            $mailCcAddresses = $respTo ['cc'];
             $labelID = "PMUASS";
+            $isSelfServiceValueBased = false;
 
-            if (( string )$mailToAddresses === "") { // Self Service Value Based
-                $isSelfServiceValueBased = true;
+            if ($aTask["TAS_ASSIGN_TYPE"] === "SELF_SERVICE") {
+                $task = \TaskPeer::retrieveByPK($aTask["TAS_UID"]);
+                if (trim($task->getTasGroupVariable()) != '') {
+                    $isSelfServiceValueBased = true;
+                }
+            }
+
+            if ($isSelfServiceValueBased) {
+                $mailToAddresses = '';
+                $mailCcAddresses = '';
                 $criteria = new \Criteria ("workflow");
                 $criteria->addSelectColumn(\AppAssignSelfServiceValuePeer::GRP_UID);
                 $criteria->add(\AppAssignSelfServiceValuePeer::APP_UID, $app_uid);
+                $criteria->add(\AppAssignSelfServiceValuePeer::DEL_INDEX, $aTask["DEL_INDEX"]);
 
                 $rsCriteria = \AppAssignSelfServiceValuePeer::doSelectRs($criteria);
                 $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
@@ -135,23 +145,21 @@ class Pmgmail {
                 while ($rsCriteria->next()) {
                     $row = $rsCriteria->getRow();
                 }
-                $targetIds = unserialize($row ['GRP_UID']);
-                $oUsers = new \Users ();
 
-                if (is_array($targetIds)) {
-                    foreach ($targetIds as $user) {
-                        $usrData = $oUsers->loadDetails($user);
-                        $nextMail = $usrData ['USR_EMAIL'];
-                        $mailToAddresses .= ($mailToAddresses == '') ? $nextMail : ',' . $nextMail;
-                    }
-                } else {
-                    $group = new \Groups();
-                    $users = $group->getUsersOfGroup($targetIds);
-                    foreach ($users as $user) {
-                        $nextMail = $user['USR_EMAIL'];
-                        $mailToAddresses .= ($mailToAddresses == '') ? $nextMail : ',' . $nextMail;
+                $targetIds = unserialize($row ['GRP_UID']);
+                $usersToSend = $this->getSelfServiceValueBasedUsers($targetIds);
+
+                foreach($usersToSend as $record) {
+                    $toAux = (($record['USR_FIRSTNAME'] != '' || $record['USR_LASTNAME'] != '')
+                                ? $record['USR_FIRSTNAME'] . ' ' . $record['USR_LASTNAME'] . ' '
+                                : '') . '<' . $record['USR_EMAIL'] . '>';
+                    if ($mailToAddresses == '') {
+                        $mailToAddresses = $toAux;
+                    } else {
+                        $mailCcAddresses .= (($mailCcAddresses != '')? ',' : '') . $toAux;
                     }
                 }
+
                 $resultMail = $this->sendEmailWithApplicationData($application,  $labelID, $mailToAddresses, $mailCcAddresses);
             }
         }
@@ -430,6 +438,51 @@ class Pmgmail {
             $arrayResp ['cc'] = $cc;
         }
         return $arrayResp;
+    }
+
+    /**
+     * Returns a list of users emails that are the destion of the emails
+     * that will be sent, based in the list of groups or users that are
+     * passed to this function.
+     * @param $targetIds, array or single value of usr ids or group ids
+     * @return array, list of emails
+     */
+    private function getSelfServiceValueBasedUsers($targetIds) {
+        $result = [];
+        $criteria = new Criteria('workflow');
+        $criteria->setDistinct();
+        $criteria->addSelectColumn(UsersPeer::USR_UID);
+        $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
+        $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+        $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
+        $criteria->addSelectColumn(UsersPeer::USR_EMAIL);
+        $criteria->addJoin(GroupUserPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
+        $criteria->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
+        $rsCriteria = null;
+
+        if (is_array($targetIds)) {
+            $criteriaUid = $criteria->getNewCriterion(UsersPeer::USR_UID, $targetIds, Criteria::IN);
+            $criteriaUid->addOr($criteria->getNewCriterion(GroupUserPeer::GRP_UID, $targetIds, Criteria::IN));
+            $criteria->add($criteriaUid);
+            $rsCriteria = GroupUserPeer::doSelectRS($criteria);
+        }
+        else {
+            $criteriaUid = $criteria->getNewCriterion(UsersPeer::USR_UID, $targetIds, Criteria::EQUAL);
+            $criteriaUid->addOr($criteria->getNewCriterion(GroupUserPeer::GRP_UID, $targetIds, Criteria::EQUAL));
+            $criteria->add($criteriaUid);
+            $rsCriteria = GroupUserPeer::doSelectRS($criteria);
+        }
+
+        if (!is_null($rsCriteria)) {
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+            while ($rsCriteria->next()) {
+                $record = $rsCriteria->getRow();
+                $result [] = $record;
+            }
+        }
+
+        return $result;
     }
 }
 
