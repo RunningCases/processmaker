@@ -2065,7 +2065,7 @@ function PMFDerivateCase ($caseId, $delIndex, $bExecuteTriggersBeforeAssignment 
     $result = $ws->derivateCase( $sUserLogged, $caseId, $delIndex, $bExecuteTriggersBeforeAssignment );
     if (is_array($result)) {
         $result = (object)$result;
-    } 
+    }
     if ($result->status_code == 0) {
         return 1;
     } else {
@@ -3166,7 +3166,7 @@ function PMFDynaFormFields($dynUid, $appUid = false, $delIndex = 0)
  * @name PMFGetTaskName
  * @label PMF Get Task Title Text
  * @param string | $taskUid | ID Task | Is the identifier of task, that must be the same to the column: "TAS_UID" of the TASK table
- * @param string | $lang | Language | This parameter actually is not used, the same is kept by backward compatibility. Is the language of the text, that must be the same to the column: "CON_LANG" 
+ * @param string | $lang | Language | This parameter actually is not used, the same is kept by backward compatibility. Is the language of the text, that must be the same to the column: "CON_LANG"
  * of the CONTENT table
  * @return string | $text | Translated text | the translated text of a string in Content
  */
@@ -3216,56 +3216,105 @@ function PMFGetUidFromText($text, $category, $proUid = null, $lang = SYS_LANG)
 
 /**
  * @method
- * Get UID of a Dynaform
+ *
+ * Get the unique ID of dynaform
+ *
  * @name PMFGetDynaformUID
  * @label PMF Get Dynafrom UID
- * @param string | $dynaformName | Name Dynaform | Is the name of a Dynaform
- * @param string | $proUid = null | Process ID | The process identifier to search the dynaform name. If not specified the current process is used.
- * @return  array | $result | array
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFGetDynaformUID.28.29
+ *
+ * @param string | $dynaFormName | Name dynaform | The name of dynaform
+ * @param string | $processUid = null| ID of the process | The unique ID of process. If not set, the current process ID is used
+ *
+ * @return string | $dynaFormUid | The unique ID of dynaform | Returns the unique ID of dynaform, FALSE otherwise
  */
-function PMFGetDynaformUID($dynaformName, $proUid = null)
+function PMFGetDynaformUID($dynaFormName, $processUid = null)
 {
-    return PMFGetUidFromText($dynaformName, 'DYN_TITLE', $proUid);
+    if (is_null($processUid) && !(isset($_SESSION) && array_key_exists('PROCESS', $_SESSION))) {
+        return false;
+    }
+
+    $arrayResult = PMFGetUidFromText($dynaFormName, 'DYN_TITLE', (!is_null($processUid))? $processUid : $_SESSION['PROCESS']);
+
+    //Return
+    return (!empty($arrayResult))? array_shift($arrayResult) : false;
 }
 
 /**
  * @method
- * Get UID of a Group
+ *
+ * Get the unique ID of group
+ *
  * @name PMFGetGroupUID
  * @label PMF Get Group UID
- * @param string | $groupName | Name Group | Is the name of a Group
- * @return  array | $result | array
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFGetGroupUID.28.29
+
+ * @param string | $groupName | Name group | The name of group
+ *
+ * @return string | $groupUid | The unique ID of group | Returns the unique ID of group, FALSE otherwise
  */
 function PMFGetGroupUID($groupName)
 {
-    return PMFGetUidFromText($groupName, 'GRP_TITLE');
+    $groupUid = '';
+
+    $criteria = new Criteria('workflow');
+
+    $criteria->addSelectColumn(GroupwfPeer::GRP_UID);
+    $criteria->add(GroupwfPeer::GRP_TITLE, $groupName, Criteria::EQUAL);
+
+    $rsCriteria = GroupwfPeer::doSelectRS($criteria);
+    $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+    if ($rsCriteria->next()) {
+        $record = $rsCriteria->getRow();
+
+        $groupUid = $record['GRP_UID'];
+    }
+
+    //Return
+    return ($groupUid != '')? $groupUid : false;
 }
 
 /**
  * @method
- * Get UID of a Task
+ *
+ * Get the unique ID of task
+ *
  * @name PMFGetTaskUID
  * @label PMF Get Task UID
- * @param string | $taskName | Name Task | Is the name of a Task
- * @param string | $proUid  = null| Process ID | The process identifier to search the dynaform name. If not specified the current process is used.
- * @return  array | $result | array
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFGetTaskUID.28.29
+ *
+ * @param string | $taskName | Name task | The name of task
+ * @param string | $processUid = null| ID of the process | The unique ID of process. If not set, the current process ID is used
+ *
+ * @return string | $taskUid | The unique ID of task | Returns the unique ID of task, FALSE otherwise
  */
-function PMFGetTaskUID($taskName, $proUid = null)
+function PMFGetTaskUID($taskName, $processUid = null)
 {
-    $oCriteria = new Criteria('workflow');
-    $oCriteria->addSelectColumn(TaskPeer::TAS_UID);
-    $oCriteria->add(TaskPeer::TAS_TITLE, $taskName);
-    if(!is_null($proUid)){
-        $oCriteria->add(TaskPeer::PRO_UID, $proUid);
+    if (is_null($processUid) && !(isset($_SESSION) && array_key_exists('PROCESS', $_SESSION))) {
+        return false;
     }
-    $oDataset = TaskPeer::doSelectRS($oCriteria);
-    $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-    $uids = array();
-    while ($row = $oDataset->getRow()) {
-        $uids[] = $row['TAS_UID'];
-        $oDataset->next();
+
+    $taskUid = '';
+
+    $criteria = new Criteria('workflow');
+
+    $criteria->addSelectColumn(TaskPeer::TAS_UID);
+    $criteria->add(TaskPeer::TAS_TITLE, $taskName, Criteria::EQUAL);
+
+    $criteria->add(TaskPeer::PRO_UID, (!is_null($processUid))? $processUid : $_SESSION['PROCESS'], Criteria::EQUAL);
+
+    $rsCriteria = TaskPeer::doSelectRS($criteria);
+    $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+    if ($rsCriteria->next()) {
+        $record = $rsCriteria->getRow();
+
+        $taskUid = $record['TAS_UID'];
     }
-    return $uids;
+
+    //Return
+    return ($taskUid != '')? $taskUid : false;
 }
 
 /**
