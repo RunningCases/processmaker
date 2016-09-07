@@ -328,12 +328,14 @@ class Groupwf extends BaseGroupwf
         $criteria->addSelectColumn(GroupwfPeer::GRP_TITLE);
         $criteria->addSelectColumn(GroupwfPeer::GRP_STATUS);
         $criteria->addSelectColumn(GroupwfPeer::GRP_UX);
-        
-        $totalRows = GroupwfPeer::doCount($criteria);
         if (is_null($sortField) || trim($sortField) == "") {
             $sortField = GroupwfPeer::GRP_TITLE;
         }
 
+        if ($search) {
+            $criteria->add(GroupwfPeer::GRP_TITLE, '%' . $search . '%', Criteria::LIKE);
+        }
+        $totalRows = GroupwfPeer::doCount($criteria);
         if (!is_null($sortDir) && trim($sortDir) != "" && strtoupper($sortDir) == "DESC") {
             $criteria->addDescendingOrderByColumn($sortField);
         } else {
@@ -346,10 +348,6 @@ class Groupwf extends BaseGroupwf
 
         if ($limit != '') {
             $criteria->setLimit($limit);
-        }
-
-        if ($search) {
-            $criteria->add(GroupwfPeer::GRP_TITLE, '%' . $search . '%', Criteria::LIKE);
         }
 
         $oDataset = GroupwfPeer::doSelectRS($criteria);
