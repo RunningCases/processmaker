@@ -389,7 +389,7 @@ class Dashboard extends Controller
                     $dataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
                     $dataset->next();
                     while ($row = $dataset->getRow()) {
-                        $groups[] = array ('OWNER_UID' => $row['GRP_UID'],'OWNER_NAME' => $row['CON_VALUE']
+                        $groups[] = array ('OWNER_UID' => $row['GRP_UID'],'OWNER_NAME' => $row['GRP_TITLE']
                         );
                         $dataset->next();
                     }
