@@ -438,6 +438,7 @@ class PhpBuilderUtils
     public $extensionsJsConfig;
     public $logger;
     public $logDir;
+    public $pathSep;
 
     /**
      * Class constructor.
@@ -449,6 +450,11 @@ class PhpBuilderUtils
         $this->silentMode = false;
         $this->logger = array();
         $this->logDir = "";
+        if (defined('PATH_SEP')) {
+            $this->pathSep = PATH_SEP;
+        } else {
+            $this->pathSep = "/";
+        }
     }
 
     /**
@@ -477,7 +483,7 @@ class PhpBuilderUtils
      *
      * @param mixed $e
      */
-    public function  log($e)
+    public function log($e)
     {
         $this->logger[] = $e;
     }
@@ -551,15 +557,15 @@ class PhpBuilderUtils
      */
     function file_force_contents($dir, $contents)
     {
-        $parts = explode('/', $dir);
+        $parts = explode($this->pathSep, $dir);
         $file = array_pop($parts);
         $dir = '';
         foreach ($parts as $part) {
-            if (!is_dir($dir .= "/$part")) {
-                mkdir($dir);
+            if (!is_dir($dir .= $part . $this->pathSep)) {
+                mkdir($dir, 0777, true);
             }
         }
-        $this->file_put_contents("/$file", $dir, $contents);
+        $this->file_put_contents($this->pathSep . $file, $dir, $contents);
     }
 
     public function file_put_contents($file, $dir = "", $contents)
