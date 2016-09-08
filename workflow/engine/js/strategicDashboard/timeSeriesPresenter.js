@@ -74,7 +74,8 @@ TimeSeriesPresenter.prototype.indicatorList = function (dashboardId) {
 	var indicatorsAllowed = [1010, 1030];
 	this.model.indicatorList(dashboardId, dummyDate, dummyDate).done(function (data) {
 		var newArray = [];
-		$.each(data, function(index, originalObject) {
+		var list = data;
+		$.each(list, function(index, originalObject) {
 			if (indicatorsAllowed.indexOf(originalObject.DAS_IND_TYPE*1) >= 0) {
 				var newObject = {label: originalObject.DAS_IND_TITLE,
 								 value: originalObject.DAS_IND_UID
@@ -151,7 +152,8 @@ TimeSeriesPresenter.prototype.historicData = function (indicator, periodicity, i
 	var endDate = this.helper.periodEndDate(periodicity, endPeriod, endYear);
 	this.model.historicData(indicator, periodicity, initDate, endDate).done(function (data) {
 		var graphData = [];
-		$.each(data, function(index, originalObject) {
+		var list = data;
+		$.each(list, function(index, originalObject) {
 			var newObject = {datalabel: that.periodColumnName(periodicity, originalObject) + '/' + originalObject['YEAR'],
 							 value: originalObject.VALUE,
 							 period: that.periodColumnName(periodicity, originalObject),

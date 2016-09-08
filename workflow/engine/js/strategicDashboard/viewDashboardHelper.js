@@ -61,7 +61,8 @@ ViewDashboardHelper.prototype.assert = function (condition, message) {
 
 ViewDashboardHelper.prototype.fillSelectWithOptions = function ($select, options, selectedValue) {
 	$select.empty(); // remove old options
-	$.each(options, function(index, option) {
+    var list = options;
+	$.each(list, function(index, option) {
 	  $select.append($("<option></option>")
 					 .attr("value", option.value).text(option.label));
 	});
