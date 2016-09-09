@@ -444,6 +444,7 @@ try {
             $oCriteria->addSelectColumn(UsersPeer::USR_STATUS);
             $oCriteria->addSelectColumn(UsersPeer::USR_UX);
             $oCriteria->addSelectColumn(UsersPeer::DEP_UID);
+            $oCriteria->addSelectColumn(UsersPeer::USR_LAST_LOGIN);
             $oCriteria->addAsColumn('LAST_LOGIN', 0);
             $oCriteria->addAsColumn('DEP_TITLE', 0);
             $oCriteria->addAsColumn('TOTAL_CASES', 0);
@@ -470,9 +471,6 @@ try {
             $oCriteria->setLimit($limit);
             $oDataset = UsersPeer::DoSelectRs($oCriteria);
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-            $Login = new LoginLog();
-            $aLogin = $Login->getLastLoginAllUsers();
             $Department = new Department();
             $aDepart = $Department->getAllDepartmentsByUser();
             $aAuthSources = $RBAC->getAllAuthSourcesByUser();
@@ -506,7 +504,7 @@ try {
                 $row['USR_ROLE'] = isset($uRole['ROL_NAME']) ? ($uRole['ROL_NAME'] != '' ? $uRole['ROL_NAME'] : $uRole['ROL_CODE']) : $uRole['ROL_CODE'];
 
                 $row['DUE_DATE_OK'] = (date('Y-m-d') > date('Y-m-d', strtotime($row['USR_DUE_DATE']))) ? 0 : 1;
-                $row['LAST_LOGIN'] = isset($aLogin[$row['USR_UID']]) ? \ProcessMaker\Util\DateTime::convertUtcToTimeZone($aLogin[$row['USR_UID']]) : '';
+                $row['LAST_LOGIN'] = isset($row['USR_LAST_LOGIN']) ? \ProcessMaker\Util\DateTime::convertUtcToTimeZone($row['USR_LAST_LOGIN']) : '';
                 $row['TOTAL_CASES'] = $total;
                 $row['DEP_TITLE'] = isset($aDepart[$row['USR_UID']]) ? $aDepart[$row['USR_UID']] : '';
                 $row['USR_UX'] = isset($uxList[$row['USR_UX']]) ? $uxList[$row['USR_UX']] : $uxList['NORMAL'];

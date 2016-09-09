@@ -86,17 +86,24 @@ if (isset ($_SESSION['USER_LOGGED'])) {
     if ($aRow) {
         if ($aRow['LOG_STATUS'] != 'CLOSED' && $aRow['LOG_END_DATE'] == null) {
             $weblog = new LoginLog();
-
+            $endDate = date('Y-m-d H:i:s');
+            $aLog = array();
             $aLog['LOG_UID'] = $aRow['LOG_UID'];
             $aLog['LOG_STATUS'] = 'CLOSED';
             $aLog['LOG_IP'] = $aRow['LOG_IP'];
             $aLog['LOG_SID'] = session_id();
             $aLog['LOG_INIT_DATE'] = $aRow['LOG_INIT_DATE'];
-            $aLog['LOG_END_DATE'] = date('Y-m-d H:i:s');
+            $aLog['LOG_END_DATE'] = $endDate;
             $aLog['LOG_CLIENT_HOSTNAME'] = $aRow['LOG_CLIENT_HOSTNAME'];
             $aLog['USR_UID'] = $aRow['USR_UID'];
 
             $weblog->update($aLog);
+
+            $aLog = array();
+            $aLog['USR_UID'] = $aRow['USR_UID'];
+            $aLog['USR_LAST_LOGIN'] = $endDate;
+            $user = new Users();
+            $aUser = $user->update($aLog);
         }
     }
 } else {

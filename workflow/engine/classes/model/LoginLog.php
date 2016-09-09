@@ -20,20 +20,33 @@ require_once 'classes/model/om/BaseLoginLog.php';
  */
 class LoginLog extends BaseLoginLog
 {
-    public function create ($aData)
+    /**
+     * @param $aData
+     * @return bool
+     * @throws Exception
+     */
+    public function create($aData)
     {
-        $con = Propel::getConnection( LoginLogPeer::DATABASE_NAME );
+        $con = Propel::getConnection("workflow");
         try {
-            $this->fromArray( $aData, BasePeer::TYPE_FIELDNAME );
-            if ($this->validate()) {
-                $result = $this->save();
-            } else {
-                $e = new Exception( "Failed Validation in class " . get_class( $this ) . "." );
-                $e->aValidationFailures = $this->getValidationFailures();
-                throw ($e);
-            }
-            $con->commit();
-            return $result;
+            $tableName = 'LOGIN_LOG';
+            $columns = array('LOG_UID', 'LOG_STATUS', 'LOG_IP', 'LOG_SID', 'LOG_INIT_DATE', 'LOG_CLIENT_HOSTNAME', 'USR_UID');
+
+            $sql = "INSERT INTO " . $tableName
+                . " (" . implode(",", $columns) . ")"
+                . " VALUES ("
+                . "'" . $aData['LOG_UID'] . "'" . ','
+                . "'" . $aData['LOG_STATUS'] . "'" . ','
+                . "'" . $aData['LOG_IP'] . "'" . ','
+                . "'" . $aData['LOG_SID'] . "'" . ','
+                . "'" . $aData['LOG_INIT_DATE'] . "'" . ','
+                . "'" . $aData['LOG_CLIENT_HOSTNAME'] . "'" . ','
+                . "'" . $aData['USR_UID'] . "'" .
+                ")";
+
+            $stmt = $con->createStatement();
+            $stmt->executeQuery($sql);
+            return true;
         } catch (Exception $e) {
             $con->rollback();
             throw ($e);

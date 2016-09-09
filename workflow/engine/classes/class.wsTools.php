@@ -934,6 +934,10 @@ class workspaceTools
                             $oDataBase->executeQuery($oDataBase->generateDropColumnSQL($sTable, $vData));
                             break;
                         case 'ADD':
+                            if ($oDataBase->checkPatchHor1787($sTable, $sColumn, $vData)) {
+                                $oDataBase->executeQuery($oDataBase->generateCheckAddColumnSQL($sTable, $sColumn, $vData));
+                                $oDataBase->executeQuery($oDataBase->deleteAllIndexesIntable($sTable, $sColumn, $vData));
+                            }
                             $oDataBase->executeQuery($oDataBase->generateAddColumnSQL($sTable, $sColumn, $vData));
                             break;
                         case 'CHANGE':
