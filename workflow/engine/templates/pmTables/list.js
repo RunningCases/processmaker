@@ -771,7 +771,7 @@ function updateTag(value)
 function updateTagPermissions(){
     var rowsSelected = Ext.getCmp('infoGrid').getSelectionModel().getSelections();
     if (rowsSelected){
-        location.href = 'pmReports/reportsAjax?action=permissionList&ADD_TAB_NAME='+ rowsSelected[0].get('ADD_TAB_NAME') +'&ADD_TAB_UID='+ rowsSelected[0].get('ADD_TAB_UID')+'&pro_uid='+PRO_UID;
+        location.href = 'pmReports/reportsAjax?action=permissionList&ADD_TAB_NAME='+ rowsSelected[0].get('ADD_TAB_NAME') +'&ADD_TAB_UID='+ rowsSelected[0].get('ADD_TAB_UID')+'&pro_uid='+PRO_UID+'&flagProcessmap='+flagProcessmap;
     }
 };
 
