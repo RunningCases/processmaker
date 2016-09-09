@@ -1557,6 +1557,7 @@
     </column>
     <column name="USR_TIME_ZONE" type="VARCHAR" size="100" default="" />
     <column name="USR_DEFAULT_LANG" type="VARCHAR" size="10" default=""/>
+    <column name="USR_LAST_LOGIN" type="TIMESTAMP" required="false"/>
     <index name="indexUsrUid">
       <index-column name="USR_UID"/>
     </index>
@@ -2166,7 +2167,7 @@
       <index-column name="APP_PARENT"/>
     </index>
   </table>
-  <table name="LOGIN_LOG">
+  <table name="LOGIN_LOG" idMethod="native">
     <vendor type="mysql">
       <parameter name="Name" value="LOGIN_LOG"/>
       <parameter name="Engine" value="InnoDB"/>
@@ -2187,7 +2188,8 @@
       <parameter name="Create_options" value=""/>
       <parameter name="Comment" value=""/>
     </vendor>
-    <column name="LOG_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+    <column name="LOG_ID" type="INTEGER" required="true" autoIncrement="true" primaryKey="true"/>
+    <column name="LOG_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="LOG_STATUS" type="VARCHAR" size="100" required="true" default=""/>
     <column name="LOG_IP" type="VARCHAR" size="15" required="true" default=""/>
     <column name="LOG_SID" type="VARCHAR" size="100" required="true" default=""/>
@@ -2195,24 +2197,6 @@
     <column name="LOG_END_DATE" type="TIMESTAMP" required="false"/>
     <column name="LOG_CLIENT_HOSTNAME" type="VARCHAR" size="100" required="true" default=""/>
     <column name="USR_UID" type="VARCHAR" size="32" required="true" default=""/>
-    <index name="indexLoginLog">
-      <index-column name="USR_UID"/>
-      <index-column name="LOG_INIT_DATE"/>
-      <vendor type="mysql">
-        <parameter name="Table" value="LOGIN_LOG"/>
-        <parameter name="Non_unique" value="1"/>
-        <parameter name="Key_name" value="indexLoginLog"/>
-        <parameter name="Seq_in_index" value="1"/>
-        <parameter name="Column_name" value="USR_UID"/>
-        <parameter name="Collation" value="A"/>
-        <parameter name="Cardinality" value=""/>
-        <parameter name="Sub_part" value=""/>
-        <parameter name="Packed" value=""/>
-        <parameter name="Null" value=""/>
-        <parameter name="Index_type" value="BTREE"/>
-        <parameter name="Comment" value=""/>
-      </vendor>
-    </index>
   </table>
   <table name="USERS_PROPERTIES">
     <vendor type="mysql">

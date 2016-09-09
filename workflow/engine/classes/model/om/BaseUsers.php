@@ -220,6 +220,12 @@ abstract class BaseUsers extends BaseObject implements Persistent
     protected $usr_default_lang = '';
 
     /**
+     * The value for the usr_last_login field.
+     * @var        int
+     */
+    protected $usr_last_login;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -667,6 +673,38 @@ abstract class BaseUsers extends BaseObject implements Persistent
     {
 
         return $this->usr_default_lang;
+    }
+
+    /**
+     * Get the [optionally formatted] [usr_last_login] column value.
+     * 
+     * @param      string $format The date/time format string (either date()-style or strftime()-style).
+     *                          If format is NULL, then the integer unix timestamp will be returned.
+     * @return     mixed Formatted date/time value as string or integer unix timestamp (if format is NULL).
+     * @throws     PropelException - if unable to convert the date/time to timestamp.
+     */
+    public function getUsrLastLogin($format = 'Y-m-d H:i:s')
+    {
+
+        if ($this->usr_last_login === null || $this->usr_last_login === '') {
+            return null;
+        } elseif (!is_int($this->usr_last_login)) {
+            // a non-timestamp value was set externally, so we convert it
+            $ts = strtotime($this->usr_last_login);
+            if ($ts === -1 || $ts === false) {
+                throw new PropelException("Unable to parse value of [usr_last_login] as date/time value: " .
+                    var_export($this->usr_last_login, true));
+            }
+        } else {
+            $ts = $this->usr_last_login;
+        }
+        if ($format === null) {
+            return $ts;
+        } elseif (strpos($format, '%') !== false) {
+            return strftime($format, $ts);
+        } else {
+            return date($format, $ts);
+        }
     }
 
     /**
@@ -1396,6 +1434,35 @@ abstract class BaseUsers extends BaseObject implements Persistent
     } // setUsrDefaultLang()
 
     /**
+     * Set the value of [usr_last_login] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setUsrLastLogin($v)
+    {
+
+        if ($v !== null && !is_int($v)) {
+            $ts = strtotime($v);
+            //Date/time accepts null values
+            if ($v == '') {
+                $ts = null;
+            }
+            if ($ts === -1 || $ts === false) {
+                throw new PropelException("Unable to parse date/time value for [usr_last_login] from input: " .
+                    var_export($v, true));
+            }
+        } else {
+            $ts = $v;
+        }
+        if ($this->usr_last_login !== $ts) {
+            $this->usr_last_login = $ts;
+            $this->modifiedColumns[] = UsersPeer::USR_LAST_LOGIN;
+        }
+
+    } // setUsrLastLogin()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -1476,12 +1543,14 @@ abstract class BaseUsers extends BaseObject implements Persistent
 
             $this->usr_default_lang = $rs->getString($startcol + 31);
 
+            $this->usr_last_login = $rs->getTimestamp($startcol + 32, null);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 32; // 32 = UsersPeer::NUM_COLUMNS - UsersPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 33; // 33 = UsersPeer::NUM_COLUMNS - UsersPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Users object", $e);
@@ -1781,6 +1850,9 @@ abstract class BaseUsers extends BaseObject implements Persistent
             case 31:
                 return $this->getUsrDefaultLang();
                 break;
+            case 32:
+                return $this->getUsrLastLogin();
+                break;
             default:
                 return null;
                 break;
@@ -1833,6 +1905,7 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $keys[29] => $this->getUsrBookmarkStartCases(),
             $keys[30] => $this->getUsrTimeZone(),
             $keys[31] => $this->getUsrDefaultLang(),
+            $keys[32] => $this->getUsrLastLogin(),
         );
         return $result;
     }
@@ -1959,6 +2032,9 @@ abstract class BaseUsers extends BaseObject implements Persistent
                 break;
             case 31:
                 $this->setUsrDefaultLang($value);
+                break;
+            case 32:
+                $this->setUsrLastLogin($value);
                 break;
         } // switch()
     }
@@ -2111,6 +2187,10 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $this->setUsrDefaultLang($arr[$keys[31]]);
         }
 
+        if (array_key_exists($keys[32], $arr)) {
+            $this->setUsrLastLogin($arr[$keys[32]]);
+        }
+
     }
 
     /**
@@ -2250,6 +2330,10 @@ abstract class BaseUsers extends BaseObject implements Persistent
             $criteria->add(UsersPeer::USR_DEFAULT_LANG, $this->usr_default_lang);
         }
 
+        if ($this->isColumnModified(UsersPeer::USR_LAST_LOGIN)) {
+            $criteria->add(UsersPeer::USR_LAST_LOGIN, $this->usr_last_login);
+        }
+
 
         return $criteria;
     }
@@ -2365,6 +2449,8 @@ abstract class BaseUsers extends BaseObject implements Persistent
         $copyObj->setUsrTimeZone($this->usr_time_zone);
 
         $copyObj->setUsrDefaultLang($this->usr_default_lang);
+
+        $copyObj->setUsrLastLogin($this->usr_last_login);
 
 
         $copyObj->setNew(true);
