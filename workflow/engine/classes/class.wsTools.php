@@ -3252,18 +3252,24 @@ class workspaceTools
 
     public function migrateIteeToDummytask($workspaceName){
         $this->initPropel(true);
-        if (!defined("SYS_SYS")) {
-          define("SYS_SYS", $workspaceName);
-        }
-        if (!defined("PATH_DATA_SITE")) {
-          define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
-        }
-        if (!defined("PATH_DOCUMENT")) {
-          define("PATH_DOCUMENT", PATH_DATA . 'sites' . DIRECTORY_SEPARATOR . $workspaceName . DIRECTORY_SEPARATOR . 'files');
-        }
         $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspaceName);
-        if (!defined('MEMCACHED_ENABLED')) {
-            define('MEMCACHED_ENABLED', $arraySystemConfiguration['memcached']);
+        \G::LoadClass("configuration");
+        $conf = new Configurations();
+        \G::$sysSys = $workspaceName;
+        \G::$pathDataSite = PATH_DATA . "sites" . PATH_SEP . \G::$sysSys . PATH_SEP;
+        \G::$pathDocument = PATH_DATA . 'sites' . DIRECTORY_SEPARATOR . $workspaceName . DIRECTORY_SEPARATOR . 'files';
+        \G::$memcachedEnabled = $arraySystemConfiguration['memcached'];
+        \G::$pathDataPublic = \G::$pathDataSite . "public" . PATH_SEP;
+        \G::$sysSkin = $conf->getConfiguration('SKIN_CRON', '');
+        if (is_file(\G::$pathDataSite . PATH_SEP . ".server_info")) {
+            $serverInfo = file_get_contents(\G::$pathDataSite . PATH_SEP . ".server_info");
+            $serverInfo = unserialize($serverInfo);
+            $envHost = $serverInfo["SERVER_NAME"];
+            $envPort = ($serverInfo["SERVER_PORT"] . "" != "80") ? ":" . $serverInfo["SERVER_PORT"] : "";
+            if (!empty($envPort) && strpos($envHost, $envPort) === false) {
+                $envHost = $envHost . $envPort;
+            }
+            \G::$httpHost = $envHost;
         }
 
         //Search All process

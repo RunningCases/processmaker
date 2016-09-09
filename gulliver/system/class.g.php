@@ -35,6 +35,13 @@ class G
     const hashFile = 'md5_file';
     const hashCrc = 'crc32';
     public $sessionVar = array(); //SESSION temporary array store.
+    public static $sysSys;
+    public static $sysSkin;
+    public static $pathDataSite;
+    public static $pathDocument;
+    public static $memcachedEnabled;
+    public static $pathDataPublic;
+    public static $httpHost;
 
     /**
      * is_https
