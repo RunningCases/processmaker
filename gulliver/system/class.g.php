@@ -5769,7 +5769,7 @@ class G
     *
     * @return crc32($string)
     */
-    public function encryptCrc32 ($string)
+    public static function encryptCrc32 ($string)
     {
         $consthashFx = self::hashCrc;
         return $consthashFx($string);
