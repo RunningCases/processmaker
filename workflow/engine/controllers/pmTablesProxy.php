@@ -1270,7 +1270,7 @@ class pmTablesProxy extends HttpProxyController
             $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
             $oDataset->next();
 
-            $excludeFieldsList = array ('title','subtitle','link','file','button','reset','submit','listbox','checkgroup','grid','javascript','location','scannerCode','array'
+            $excludeFieldsList = array ('multipleFile','title','subtitle','link','file','button','reset','submit','listbox','checkgroup','grid','javascript','location','scannerCode','array'
             );
 
             $labelFieldsTypeList = array ('dropdown','radiogroup');
@@ -1321,7 +1321,7 @@ class pmTablesProxy extends HttpProxyController
                 switch ($type) {
                     case 'xmlform':
                         $arrayDataTypeToExclude = ['array', 'grid'];
-                        $arrayTypeToExclude = ['title', 'subtitle', 'link', 'file', 'button', 'reset', 'submit', 'listbox', 'grid', 'array', 'javascript', 'location', 'scannerCode'];
+                        $arrayTypeToExclude = ['multipleFile', 'title', 'subtitle', 'link', 'file', 'button', 'reset', 'submit', 'listbox', 'grid', 'array', 'javascript', 'location', 'scannerCode'];
 
                         $arrayControlSupported = [];
 
