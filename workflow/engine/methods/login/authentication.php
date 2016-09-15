@@ -113,6 +113,7 @@ try {
 
         $_SESSION["USERNAME_PREVIOUS1"] = (isset($_SESSION["USERNAME_PREVIOUS2"]))? $_SESSION["USERNAME_PREVIOUS2"] : "";
         $_SESSION["USERNAME_PREVIOUS2"] = $usr;
+        $_SESSION["FAILED_LOGINS"]      = (isset($frm['FAILED_LOGINS']))? $frm['FAILED_LOGINS'] : 0;
 
         if (!isset($uid) || $uid < 0) {
             if ($_SESSION["USERNAME_PREVIOUS1"] != "" && $_SESSION["USERNAME_PREVIOUS2"] != "" && $_SESSION["USERNAME_PREVIOUS1"] != $_SESSION["USERNAME_PREVIOUS2"]) {
