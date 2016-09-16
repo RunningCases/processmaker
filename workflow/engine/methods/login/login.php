@@ -293,6 +293,7 @@ if (isset($oConf->aConfig["login_defaultLanguage"]) && $oConf->aConfig["login_de
 $G_PUBLISH = new Publisher();
 $version = explode('.', trim(file_get_contents(PATH_GULLIVER . 'VERSION')));
 $version = isset($version[0]) ? intval($version[0]) : 0;
+$aFields["FAILED_LOGINS"] = $sFailedLogins;
 if ($version >= 3) {
     $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/loginpm3', '', $aFields, SYS_URI . 'login/authentication.php');
 }else{
