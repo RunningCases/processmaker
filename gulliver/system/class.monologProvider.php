@@ -29,6 +29,9 @@ class MonologProvider
     public $output = "<%level%> %datetime% %channel% %level_name%: %message% %context% %extra%\n";
     public $dateFormat = "M d H:i:s";
     public $numOfKeepFiles = 60;
+    public $levelDebug = 100;
+    public $bubble = true;
+    public $filePermission = 0775;
 
     public function __construct ($channel, $fileLog)
     {
@@ -36,7 +39,7 @@ class MonologProvider
         $this->formatter = new Monolog\Formatter\LineFormatter($this->output, $this->dateFormat);
 
         //Set Routating Handler
-        $this->streamRoutating = new Monolog\Handler\RotatingFileHandler($fileLog, $this->numOfKeepFiles);
+        $this->streamRoutating = new Monolog\Handler\RotatingFileHandler($fileLog, $this->numOfKeepFiles, $this->levelDebug, $this->bubble, $this->filePermission);
         $this->streamRoutating->setFormatter($this->formatter);
 
         //Create the channel and register the Logger with StreamRoutating
@@ -71,7 +74,7 @@ class MonologProvider
     public function setConfig ($channel, $fileLog)
     {
         //Set Routating Handler
-        $this->streamRoutating = new Monolog\Handler\RotatingFileHandler($fileLog, $this->numOfKeepFiles);
+        $this->streamRoutating = new Monolog\Handler\RotatingFileHandler($fileLog, $this->numOfKeepFiles, $this->levelDebug, $this->bubble, $this->filePermission);
         $this->streamRoutating->setFormatter($this->formatter);
 
         //Create the channel and register the Logger with StreamRoutating
