@@ -409,7 +409,7 @@ class UsersProperties extends BaseUsersProperties
 
             switch ($oConf->aConfig['DEFAULT_MENU']) {
                 case 'PM_SETUP':
-                    if ($RBAC->userCanAccess( 'PM_SETUP' ) == 1) {
+                    if ($RBAC->userCanAccess( 'PM_SETUP' ) == 1 || $RBAC->userCanAccess('PM_USERS') == 1) {
                         $url = 'setup/main';
                     }
                     break;

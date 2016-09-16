@@ -158,12 +158,11 @@ switch ($_POST['action']) {
             }
 
             $userUid = '';
-
+            $auditLogType = '';
             if ($form['USR_UID'] == '') {
                 $arrayUserData = $user->create($form);
                 $userUid = $arrayUserData['USR_UID'];
-
-                $user->auditLog('INS', array_merge(['USR_UID' => $userUid, 'USR_USERNAME' => $arrayUserData['USR_USERNAME']], $form));
+                $auditLogType = 'INS';
             } else {
                 if (array_key_exists('USR_NEW_PASS', $form) && $form['USR_NEW_PASS'] == '') {
                     unset($form['USR_NEW_PASS']);
@@ -171,24 +170,20 @@ switch ($_POST['action']) {
 
                 $result = $user->update($form['USR_UID'], $form, $_SESSION['USER_LOGGED']);
                 $userUid = $form['USR_UID'];
-
                 $arrayUserData = $user->getUserRecordByPk($userUid, [], false);
-
-                $user->auditLog('UPD', array_merge(['USR_UID' => $userUid, 'USR_USERNAME' => $arrayUserData['USR_USERNAME']], $form));
-
-                /* Saving preferences */
-                $def_lang = isset($form['PREF_DEFAULT_LANG']) ? $form['PREF_DEFAULT_LANG'] : '';
-                $def_menu = isset($form['PREF_DEFAULT_MENUSELECTED']) ? $form['PREF_DEFAULT_MENUSELECTED'] : '';
-                $def_cases_menu = isset($form['PREF_DEFAULT_CASES_MENUSELECTED']) ? $form['PREF_DEFAULT_CASES_MENUSELECTED'] : '';
-
-                G::loadClass('configuration');
-
-                $oConf = new Configurations();
-                $aConf = Array('DEFAULT_LANG' => $def_lang, 'DEFAULT_MENU' => $def_menu, 'DEFAULT_CASES_MENU' => $def_cases_menu);
-
-                $oConf->aConfig = $aConf;
-                $oConf->saveConfig('USER_PREFERENCES', '', '', $_SESSION['USER_LOGGED']);
+                $auditLogType = 'UPD';
             }
+
+            $user->auditLog($auditLogType, array_merge(['USR_UID' => $userUid, 'USR_USERNAME' => $arrayUserData['USR_USERNAME']], $form));
+            /* Saving preferences */
+            G::loadClass('configuration');
+            $def_lang = isset($form['PREF_DEFAULT_LANG']) ? $form['PREF_DEFAULT_LANG'] : '';
+            $def_menu = isset($form['PREF_DEFAULT_MENUSELECTED']) ? $form['PREF_DEFAULT_MENUSELECTED'] : '';
+            $def_cases_menu = isset($form['PREF_DEFAULT_CASES_MENUSELECTED']) ? $form['PREF_DEFAULT_CASES_MENUSELECTED'] : '';
+            $oConf = new Configurations();
+            $aConf = Array('DEFAULT_LANG' => $def_lang, 'DEFAULT_MENU' => $def_menu, 'DEFAULT_CASES_MENU' => $def_cases_menu);
+            $oConf->aConfig = $aConf;
+            $oConf->saveConfig('USER_PREFERENCES', '', '', $userUid);
 
             if ($user->checkPermission($userUid, 'PM_EDIT_USER_PROFILE_PHOTO')) {
                 try {
@@ -236,7 +231,7 @@ switch ($_POST['action']) {
         #verifying if it has any preferences on the configurations table
         G::loadClass('configuration');
         $oConf = new Configurations();
-        $oConf->loadConfig($x, 'USER_PREFERENCES', '', '', $_SESSION['USER_LOGGED'], '');
+        $oConf->loadConfig($x, 'USER_PREFERENCES', '', '', $aFields['USR_UID'], '');
 
         $aFields['PREF_DEFAULT_MENUSELECTED'] = '';
         $aFields['PREF_DEFAULT_CASES_MENUSELECTED'] = '';
