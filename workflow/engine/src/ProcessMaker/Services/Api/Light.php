@@ -1564,7 +1564,6 @@ class Light extends Api
             if ($del_index === null) {
                 throw (new \Exception(G::LoadTranslation('ID_CAN_NOT_BE_NULL', array('del_index')), Api::STAT_APP_EXCEPTION));
             }
-
             if ($del_index > 0) {
                 if ($cases->caseAlreadyRouted($app_uid, $del_index, $usr_uid)) {
                     throw (new \Exception(G::LoadTranslation('ID_CASE_ALREADY_DERIVATED'), Api::STAT_APP_EXCEPTION));
