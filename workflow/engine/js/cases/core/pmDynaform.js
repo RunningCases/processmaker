@@ -21,7 +21,8 @@ function submitNextStep(formStep) {
     btnSubmit.remove();
 }
 $(window).load(function () {
-    var delIndexDefault = "0";
+    var delIndexDefault = "0",
+        dyn_uid = window.dyn_uid || null;
     if (pm_run_outside_main_app === 'true') {
         if (parent.showCaseNavigatorPanel) {
             parent.showCaseNavigatorPanel('DRAFT');
@@ -72,6 +73,7 @@ $(window).load(function () {
     window.dynaform = new PMDynaform.core.Project({
         data: data,
         delIndex: window.delIndex ? window.delIndex :  delIndexDefault,
+        dynaformUid: dyn_uid,
         onBeforePrintHandler : function () {
             var nodeClone = $(".pmdynaform-container").clone();
             nodeClone.addClass("printing-form");
