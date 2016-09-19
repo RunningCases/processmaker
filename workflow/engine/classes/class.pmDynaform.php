@@ -134,6 +134,14 @@ class pmDynaform
         if ($this->credentials != null) {
             return $this->credentials;
         }
+        if (isset($_SESSION["PMDYNAFORM_CREDENTIALS"]) && isset($_SESSION["PMDYNAFORM_CREDENTIALS_EXPIRES"])) {
+            $time1 = strtotime(date('Y-m-d H:i:s'));
+            $time2 = strtotime($_SESSION["PMDYNAFORM_CREDENTIALS_EXPIRES"]);
+            if ($time1 < $time2) {
+                $this->credentials = $_SESSION["PMDYNAFORM_CREDENTIALS"];
+                return $this->credentials;
+            }
+        }
         $a = $this->clientToken();
         $this->credentials = array(
             "accessToken" => $a["access_token"],
@@ -149,6 +157,9 @@ class pmDynaform
             unset($_SESSION["USER_LOGGED"]);
         }
 
+        $expires = date("Y-m-d H:i:s") . " +" . $this->credentials["expiresIn"] . " seconds";
+        $_SESSION["PMDYNAFORM_CREDENTIALS"] = $this->credentials;
+        $_SESSION["PMDYNAFORM_CREDENTIALS_EXPIRES"] = date("Y-m-d H:i:s", strtotime($expires));
         return $this->credentials;
     }
 
