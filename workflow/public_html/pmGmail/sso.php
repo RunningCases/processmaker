@@ -124,28 +124,6 @@ if( !isset($_SESSION['USER_LOGGED']) || $_SESSION['USER_LOGGED'] != $decodedResp
 	}
 }
 
-if ($action == "draft"){
-	//sending the email
-	$curlApp = curl_init( 'https://' . $server . '/api/1.0/' . $pmws . '/gmailIntegration/sendEmail/' . $appUid . '/to/' . $gmail . '/index/' . $delIndex );
-    curl_setopt ( $curlApp, CURLOPT_HTTPHEADER, array (
-            'Authorization: Bearer ' . $pmtoken 
-    ) );
-    curl_setopt ( $curlApp, CURLOPT_CUSTOMREQUEST, "POST" );
-    curl_setopt ( $curlApp, CURLOPT_RETURNTRANSFER, true );
-    curl_setopt ( $curlApp, CURLOPT_SSL_VERIFYPEER, false );
-    curl_setopt ( $curlApp, CURLOPT_SSL_VERIFYHOST, false );
-    curl_setopt ( $curlApp, CURLOPT_CONNECTTIMEOUT, 0 );
-
-	$curl_response_app = curl_exec( $curlApp );
-	curl_close( $curlApp );
-
-	$mainUrl = '/sys'. $pmws .'/en/'. $enviroment .'/cases/open?APP_UID='.$appUid.'&DEL_INDEX='.$delIndex.'&action='.$action.'&gmail=1';
-	header( 'location:' . $mainUrl );
-	$_SESSION['APPLICATION'] =$appUid ;
-	$_SESSION['INDEX'] = $delIndex;
-	die;
-}
-
 $_SESSION['server'] = 'https://' . $server . '/sys'. $pmws .'/en/'.$enviroment.'/';
 $_SESSION['PMCase'] = 'cases/cases_Open?APP_UID='.$appUid.'&DEL_INDEX='.$delIndex.'&action='.$action.'&gmail=1';
 $_SESSION['PMProcessmap'] = 'designer?prj_uid=' . $proUid . '&prj_readonly=true&app_uid=' . $appUid;
