@@ -686,6 +686,7 @@ class pmDynaform
                     window.dynaform = new PMDynaform.core.Project({
                         data: data,
                         delIndex: delIndex,
+                        dynaformUid:  dyn_uid,
                         keys: {
                             server: httpServerHostname,
                             projectId: prj_uid,
@@ -744,6 +745,7 @@ class pmDynaform
                 "    window.dynaform = new PMDynaform.core.Project({\n" .
                 "        data: data,\n" .
                 "        delIndex: delIndex,\n" .
+                "        dynaformUid:  dyn_uid,\n" .
                 "        keys: {\n" .
                 "            server: httpServerHostname,\n" .
                 "            projectId: prj_uid,\n" .

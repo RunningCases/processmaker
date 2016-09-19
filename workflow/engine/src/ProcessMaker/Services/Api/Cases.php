@@ -38,7 +38,19 @@ class Cases extends Api
                 case 'doGetCaseVariables':
                     $applicationUid = $this->parameters[$arrayArgs['app_uid']];
                     $dynaformUid = $this->parameters[$arrayArgs['dyn_uid']];
+                    $delIndex = $this->parameters[$arrayArgs['app_index']];
                     $userUid = $this->getUserId();
+                    //Check if the user has the case
+                    $appDelegation = new \AppDelegation();
+                    $aCurUser = $appDelegation->getCurrentUsers($applicationUid, $delIndex);
+                    if (!empty($aCurUser)) {
+                        foreach ($aCurUser as $key => $value) {
+                            if ($value === $userUid) {
+                                return true;
+                            }
+                        }
+                    }
+                    //Check if the user has Permissions
                     $oCases = new \ProcessMaker\BusinessModel\Cases();
                     return $oCases->checkUserHasPermissionsOrSupervisor($userUid, $applicationUid, $dynaformUid);
                     break;
