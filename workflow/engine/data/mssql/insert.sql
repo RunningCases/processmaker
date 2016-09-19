@@ -7327,7 +7327,7 @@ SELECT 'LABEL','ID_MCRYPT_SUPPORT','en','Mcrypt Support','2014-10-17'
   UNION ALL
 SELECT 'LABEL','ID_GENERATE_INFO_SUPPORT','en','A file with the information of your System will be generated. It will help the support team to provide a better support to any issue that may appear','2014-10-22' 
   UNION ALL
-SELECT 'LABEL','ID_CURRENT_BROWSER_NOT_SUPPORTED','en','The current browser is not supported, please use a different browser. Minimum system requirements Internet Explorer 8, Chrome 26, Firefox 20','2014-10-22' 
+SELECT 'LABEL','ID_CURRENT_BROWSER_NOT_SUPPORTED','en','Your browser is not supported. See the list of supported browsers. List of supported browsers is a link to the wiki page: http://wiki.processmaker.com/3.0/Supported_Browsers','2014-10-22' 
   UNION ALL
 SELECT 'LABEL','ID_PMTABLES_CANT_EXPORT','en','There are no tables to export.','2014-10-22' 
   UNION ALL

@@ -17482,7 +17482,7 @@ msgstr "A file with the information of your System will be generated. It will he
 # TRANSLATION
 # LABEL/ID_CURRENT_BROWSER_NOT_SUPPORTED
 #: LABEL/ID_CURRENT_BROWSER_NOT_SUPPORTED
-msgid "The current browser is not supported, please use a different browser. Minimum system requirements Internet Explorer 8, Chrome 26, Firefox 20"
+msgid "Your browser is not supported. See the list of supported browsers. List of supported browsers is a link to the wiki page: http://wiki.processmaker.com/3.0/Supported_Browsers"
 msgstr "The current browser is not supported, please use a different browser. Minimum system requirements Internet Explorer 8, Chrome 26, Firefox 20"
 
 # TRANSLATION
