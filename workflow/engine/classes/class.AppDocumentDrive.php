@@ -376,13 +376,15 @@ class AppDocumentDrive
                             if ($appDoc->getAppDocType() == 'OUTPUT') {
 
                                 if ($sw_file_exists_doc) {
+                                    $nameDoc = !empty($name)? $name : array_pop(explode('/', $realPathDoc));
                                     $result = $this->upload($fields, 'OUTPUT_DOC', 'application/msword', $realPathDoc,
-                                        array_pop(explode('/', $realPathDoc)));
+                                        $nameDoc);
                                 }
                                 if ($sw_file_exists_pdf) {
+                                    $namePdf = !empty($name)? $name : array_pop(explode('/', $realPathPdf));
                                     $info = finfo_open(FILEINFO_MIME_TYPE);
                                     $result = $this->upload($fields, 'OUTPUT_PDF', finfo_file($info, $realPathPdf),
-                                        $realPathPdf, array_pop(explode('/', $realPathPdf)));
+                                        $realPathPdf, $namePdf);
                                 }
                             } else {
                                 $info = finfo_open(FILEINFO_MIME_TYPE);
