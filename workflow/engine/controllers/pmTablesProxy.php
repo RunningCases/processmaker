@@ -506,7 +506,8 @@ class pmTablesProxy extends HttpProxyController
                             $j = 0;
                             foreach ($aAdditionalTables['FIELDS'] as $aField) {
                                 $conData++;
-                                $temp = isset($aAux[$j]) ? '"'.addslashes(stripslashes($aAux[$j])).'"' : '""';
+                                $temp = (array_key_exists($j, $aAux))? '"' . addslashes(stripslashes(utf8_encode($aAux[$j]))) . '"' : '""';
+
                                 if ($temp == '') {
                                     switch ($aField['FLD_TYPE']) {
                                         case 'DATE':
@@ -1691,4 +1692,3 @@ class pmTablesProxy extends HttpProxyController
         }
     }
 }
-
