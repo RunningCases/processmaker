@@ -1784,8 +1784,10 @@ class Cases
             $oDataset->next();
             if ($aRow = $oDataset->getRow()) {
                 $dateHistory['SYS_VAR_UPDATE_DATE'] = $aRow['HISTORY_DATE'];
-                $arrayCaseVariable = array_merge($arrayCaseVariable, $dateHistory);
+            } else {
+                $dateHistory['SYS_VAR_UPDATE_DATE'] = null;
             }
+            $arrayCaseVariable = array_merge($arrayCaseVariable, $dateHistory);
         }
         return $arrayCaseVariable;
     }
