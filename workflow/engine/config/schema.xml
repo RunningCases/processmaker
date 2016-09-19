@@ -3722,7 +3722,7 @@
     <column name="FLO_ELEMENT_DEST_TYPE" type="VARCHAR" size="32" required="true" default=""/>
     <column name="FLO_ELEMENT_DEST_PORT" type="INTEGER" required="true" default="0"/>
     <column name="FLO_IS_INMEDIATE" type="TINYINT" required="false"/>
-    <column name="FLO_CONDITION" type="VARCHAR" size="255" required="false"/>
+    <column name="FLO_CONDITION" type="VARCHAR" size="512" required="false"/>
     <column name="FLO_X1" type="INTEGER" required="true" default="0"/>
     <column name="FLO_Y1" type="INTEGER" required="true" default="0"/>
     <column name="FLO_X2" type="INTEGER" required="true" default="0"/>
