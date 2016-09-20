@@ -121,61 +121,9 @@ if (PMLicensedFeatures
             $code == 0 ? uploadAbeRequest($dataAbeRequests) : '';
 
             if (isset ( $_FILES ['form'] )) {
-                foreach ($_FILES ['form'] ['name'] as $fieldName => $value) {
-                    if ($_FILES ['form'] ['error'] [$fieldName] == 0) {
-                        $appDocument = new AppDocument ( );
-
-                        if ( isset ( $_REQUEST['INPUTS'] [$fieldName] ) && $_REQUEST['INPUTS'] [$fieldName] != '' ) {
-                            require_once 'classes/model/AppFolder.php';
-                            require_once 'classes/model/InputDocument.php';
-
-                            $inputDocument = new InputDocument();
-                            $id = $inputDocument->load($_REQUEST['INPUTS'] [$fieldName]);
-
-                            //Get the Custom Folder ID (create if necessary)
-                            $oFolder=new AppFolder();
-                            $folderId=$oFolder->createFromPath($id['INP_DOC_DESTINATION_PATH']);
-
-                            //Tags
-                            $fileTags=$oFolder->parseTags($id['INP_DOC_TAGS']);
-
-                            $fields = array (
-                                'APP_UID' => $_REQUEST['APP_UID'],
-                                'DEL_INDEX' => $_REQUEST ['DEL_INDEX'],
-                                'USR_UID' => $casesFields['APP_DATA']['USER_LOGGED'],
-                                'DOC_UID' => $_REQUEST['INPUTS'] [$fieldName],
-                                'APP_DOC_TYPE' => 'INPUT',
-                                'APP_DOC_CREATE_DATE' => date ( 'Y-m-d H:i:s' ),
-                                'APP_DOC_COMMENT' => '',
-                                'APP_DOC_TITLE' => '',
-                                'APP_DOC_FILENAME' => $_FILES ['form'] ['name'] [$fieldName],
-                                'FOLDER_UID'          => $folderId,
-                                'APP_DOC_TAGS'        => $fileTags
-                            );
-                        } else {
-                            $fields = array (
-                                'APP_UID' => $_REQUEST['APP_UID'],
-                                'DEL_INDEX' => $_REQUEST ['DEL_INDEX'],
-                                'USR_UID' => $casesFields['APP_DATA']['USER_LOGGED'],
-                                'DOC_UID' => - 1,
-                                'APP_DOC_TYPE' => 'ATTACHED',
-                                'APP_DOC_CREATE_DATE' => date ( 'Y-m-d H:i:s' ),
-                                'APP_DOC_COMMENT' => '',
-                                'APP_DOC_TITLE' => '',
-                                'APP_DOC_FILENAME' => $_FILES ['form'] ['name'] [$fieldName]
-                            );
-                        }
-
-                        $appDocument->create($fields);
-                        $docVersion = $appDocument->getDocVersion();
-                        $appDocUid = $appDocument->getAppDocUid ();
-                        $info = pathinfo ( $appDocument->getAppDocFilename () );
-                        $extension = (isset ( $info ['extension'] ) ? $info ['extension'] : '');
-                        $pathName = PATH_DOCUMENT . $_REQUEST['APP_UID'] . PATH_SEP;
-                        $fileName = $appDocUid . '_'.$docVersion.'.' . $extension;
-
-                        G::uploadFile ( $_FILES ['form'] ['tmp_name'] [$fieldName], $pathName, $fileName );
-                    }
+                if (isset( $_FILES["form"]["name"] ) && count( $_FILES["form"]["name"] ) > 0) {
+                    $oInputDocument = new \ProcessMaker\BusinessModel\Cases\InputDocument();
+                    $oInputDocument->uploadFileCase($_FILES, $case, $current_user_uid, $_REQUEST['APP_UID'], $_REQUEST["DEL_INDEX"]);
                 }
             }
 
