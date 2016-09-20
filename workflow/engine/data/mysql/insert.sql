@@ -4418,7 +4418,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_NAME_EXISTS','en','The name exists','2014-10-15') ,
 ( 'LABEL','ID_MCRYPT_SUPPORT','en','Mcrypt Support','2014-10-17') ,
 ( 'LABEL','ID_GENERATE_INFO_SUPPORT','en','A file with the information of your System will be generated. It will help the support team to provide a better support to any issue that may appear','2014-10-22') ,
-( 'LABEL','ID_CURRENT_BROWSER_NOT_SUPPORTED','en','The current browser is not supported, please use a different browser. Minimum system requirements Internet Explorer 8, Chrome 26, Firefox 20','2014-10-22') ,
+( 'LABEL','ID_CURRENT_BROWSER_NOT_SUPPORTED','en','Your browser is not supported. See the list of supported browsers. List of supported browsers is a link to the wiki page: http://wiki.processmaker.com/3.0/Supported_Browsers','2014-10-22') ,
 ( 'LABEL','ID_PMTABLES_CANT_EXPORT','en','There are no tables to export.','2014-10-22') ,
 ( 'LABEL','ID_SUPPORT','en','Support','2014-10-20') ,
 ( 'LABEL','ID_INPUT_MAX_SIZE','en','The maximum file size exceeds the ''php.ini'' max upload file size value.','2014-10-21') ,
