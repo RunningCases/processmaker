@@ -292,7 +292,7 @@ class Pmgmail {
             fwrite($file, '-**- Delegate Date: @#delDate<br/>');
             fwrite($file, '-**- Process Id: @#proUid<br/>');
             fwrite($file, '-**- Type: @#type<br/>');
-            fwrite($file, '-**- FormFields: @@oform<br/>');
+            fwrite($file, '-**- FormFields: <br/>');
             fwrite($file, '</span>');
             fwrite($file, '</div>');
             fclose($file);
