@@ -646,20 +646,20 @@ class InputDocument
     }
 
     /**
-     * @param $FILES $_FILES request files
-     * @param $Cases \Cases object class.cases
+     * @param $files $_FILES request files
+     * @param $caseInstance \Cases object class.cases
      * @param $userUid string user id
      * @param $appUid string application id
      * @param $delIndex int the index case
      */
-    public function uploadFileCase($FILES, $Cases, $userUid, $appUid, $delIndex)
+    public function uploadFileCase($files, $caseInstance, $userUid, $appUid, $delIndex)
     {
         $arrayField = array();
         $arrayFileName = array();
         $arrayFileTmpName = array();
         $arrayFileError = array();
         $i = 0;
-        foreach ($FILES["form"]["name"] as $fieldIndex => $fieldValue) {
+        foreach ($files["form"]["name"] as $fieldIndex => $fieldValue) {
             if (is_array($fieldValue)) {
                 foreach ($fieldValue as $index => $value) {
                     if (is_array($value)) {
@@ -668,9 +668,9 @@ class InputDocument
                             $arrayField[$i]["grdFieldName"] = $grdFieldIndex;
                             $arrayField[$i]["index"] = $index;
 
-                            $arrayFileName[$i] = $FILES["form"]["name"][$fieldIndex][$index][$grdFieldIndex];
-                            $arrayFileTmpName[$i] = $FILES["form"]["tmp_name"][$fieldIndex][$index][$grdFieldIndex];
-                            $arrayFileError[$i] = $FILES["form"]["error"][$fieldIndex][$index][$grdFieldIndex];
+                            $arrayFileName[$i] = $files["form"]["name"][$fieldIndex][$index][$grdFieldIndex];
+                            $arrayFileTmpName[$i] = $files["form"]["tmp_name"][$fieldIndex][$index][$grdFieldIndex];
+                            $arrayFileError[$i] = $files["form"]["error"][$fieldIndex][$index][$grdFieldIndex];
                             $i = $i + 1;
                         }
                     }
@@ -678,9 +678,9 @@ class InputDocument
             } else {
                 $arrayField[$i] = $fieldIndex;
 
-                $arrayFileName[$i] = $FILES["form"]["name"][$fieldIndex];
-                $arrayFileTmpName[$i] = $FILES["form"]["tmp_name"][$fieldIndex];
-                $arrayFileError[$i] = $FILES["form"]["error"][$fieldIndex];
+                $arrayFileName[$i] = $files["form"]["name"][$fieldIndex];
+                $arrayFileTmpName[$i] = $files["form"]["tmp_name"][$fieldIndex];
+                $arrayFileError[$i] = $files["form"]["error"][$fieldIndex];
                 $i = $i + 1;
             }
         }
@@ -697,16 +697,16 @@ class InputDocument
                             $indocUid = $_POST["INPUTS"][$arrayField[$i]["grdName"]][$arrayField[$i]["grdFieldName"]];
                         }
                         $fieldName = $arrayField[$i]["grdName"] . "_" . $arrayField[$i]["index"] . "_" . $arrayField[$i]["grdFieldName"];
-                        if (isset($FILES["form"]["size"][$arrayField[$i]["grdName"]][$arrayField[$i]["index"]][$arrayField[$i]["grdFieldName"]])) {
-                            $fileSizeByField = $FILES["form"]["size"][$arrayField[$i]["grdName"]][$arrayField[$i]["index"]][$arrayField[$i]["grdFieldName"]];
+                        if (isset($files["form"]["size"][$arrayField[$i]["grdName"]][$arrayField[$i]["index"]][$arrayField[$i]["grdFieldName"]])) {
+                            $fileSizeByField = $files["form"]["size"][$arrayField[$i]["grdName"]][$arrayField[$i]["index"]][$arrayField[$i]["grdFieldName"]];
                         }
                     } else {
                         if (isset($_POST["INPUTS"][$arrayField[$i]]) && !empty($_POST["INPUTS"][$arrayField[$i]])) {
                             $indocUid = $_POST["INPUTS"][$arrayField[$i]];
                         }
                         $fieldName = $arrayField[$i];
-                        if (isset($FILES["form"]["size"][$fieldName])) {
-                            $fileSizeByField = $FILES["form"]["size"][$fieldName];
+                        if (isset($files["form"]["size"][$fieldName])) {
+                            $fileSizeByField = $files["form"]["size"][$fieldName];
                         }
                     }
                     if ($indocUid != null) {
@@ -762,7 +762,7 @@ class InputDocument
                     //set variable for APP_DOC_UID
                     $aData["APP_DATA"][$oAppDocument->getAppDocFieldname()] = \G::json_encode([$oAppDocument->getAppDocUid()]);
                     $aData["APP_DATA"][$oAppDocument->getAppDocFieldname() . "_label"] = \G::json_encode([$oAppDocument->getAppDocFilename()]);
-                    $Cases->updateCase($appUid, $aData);
+                    $caseInstance->updateCase($appUid, $aData);
 
                     //Plugin Hook PM_UPLOAD_DOCUMENT for upload document
                     $oPluginRegistry = &\PMPluginRegistry::getSingleton();
