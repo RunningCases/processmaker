@@ -57,15 +57,15 @@ class Cases extends Api
                         $arrayApplicationData = $case->getApplicationRecordByPk($value['APP_UID'], [], false);
 
                         if (!empty($arrayApplicationData)) {
-                            $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
-                            $flagps = $supervisor->isUserProcessSupervisor($arrayApplicationData['PRO_UID'], $usrUid);
+                            if (!$user->checkPermission($usrUid, 'PM_REASSIGNCASE')) {
+                                if($user->checkPermission($usrUid, 'PM_REASSIGNCASE_SUPERVISOR')){
+                                    $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
+                                    $flagps = $supervisor->isUserProcessSupervisor($arrayApplicationData['PRO_UID'], $usrUid);
+                                    if(!$flagps){
+                                        $count = $count + 1;
+                                    }
 
-                            if ($flagps) {
-                                if (!$user->checkPermission($usrUid, 'PM_REASSIGNCASE')) {
-                                    $count = $count + 1;
                                 }
-                            } else {
-                                $count = $count + 1;
                             }
                         }
                     }
