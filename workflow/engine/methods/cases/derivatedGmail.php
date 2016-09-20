@@ -28,7 +28,7 @@ if(array_key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $pmGoogle-
 	unset($_SESSION['gmail']); //cleaning session
 	$mUrl = '/sys'. $_SESSION['WORKSPACE'] .'/en/'.$_SESSION['currentSkin'].'/cases/cases_Open?APP_UID='.$caseId.'&DEL_INDEX='.$actualIndex.'&action=sent';
 } else{
-	$mUrl = 'casesListExtJs';
+        $mUrl = isset($_GET['uex']) ? '../home' : 'casesListExtJs';
 }
 
 header( 'location:' . $mUrl );

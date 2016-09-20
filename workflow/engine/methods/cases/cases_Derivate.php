@@ -256,7 +256,8 @@ try {
         $aNextStep ['PAGE'] = $casesRedirector . '?ux=' . $_SESSION ['user_experience'];
         $debuggerAvailable = false;
     } else if ($flagGmail === true) {
-        $aNextStep ['PAGE'] = $casesRedirector . '?gmail=1';
+        $ux = isset($_SESSION ['user_experience']) ? '&uex=' . $_SESSION ['user_experience'] : '';
+        $aNextStep ['PAGE'] = $casesRedirector . '?gmail=1' . $ux;
     } else {
         $aNextStep ['PAGE'] = $casesRedirector;
     }
