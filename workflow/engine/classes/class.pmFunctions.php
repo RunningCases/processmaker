@@ -3842,6 +3842,11 @@ function PMFSendMessageToGroup(
 
     $group->throwExceptionIfNotExistsGroup($groupId, '$groupId');
 
+    //if value $limit is 0 changes to 1, improve engine de views pmfunction
+    if ($limit <= 0) {
+        $limit = 1;
+    }
+
     $arrayApplicationData = $case->getApplicationRecordByPk($caseId, ['$applicationUid' => '$caseId'], true);
 
     //Send mails
