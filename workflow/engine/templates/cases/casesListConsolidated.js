@@ -1307,7 +1307,7 @@ function ajaxDerivationRequest(appUid, delIndex, maxLenght, appNumber, fieldGrid
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + credentials.access_token
     },
-    url: urlProxy + 'derivate/' + appUid + '/' + appNumber + '/' + delIndex + '/' + fieldGridGral + '/' + fieldGridGralVal + '/',
+    url: urlProxy + 'derivate/' + appUid + '/' + appNumber + '/' + delIndex + '/' + fieldGridGral + '/' + stringReplace("\\x2F", "__FRASL__", fieldGridGralVal) + '/',
     success: function(response) {
       var dataResponse;
       var fullResponseText = response.responseText;
