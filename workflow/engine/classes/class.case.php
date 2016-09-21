@@ -4224,8 +4224,8 @@ class Cases
     public function unCancelCase($appUID, $userUID)
     {
         try {
-            global $RBAC;
-            if ($RBAC->userCanAccess('PM_UNCANCELCASE') !== 1) {
+            $oUser = new \ProcessMaker\BusinessModel\User();
+            if (!$oUser->checkPermission($userUID, 'PM_UNCANCELCASE')) {
                 throw new Exception(G::LoadTranslation('ID_YOU_DO_NOT_HAVE_PERMISSION'));
             }
 
