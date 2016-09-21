@@ -34,7 +34,13 @@ class PluginMigratorAdapter implements  Exportable, Importable
 
     public function export($prj_uid)
     {
-        return $this->migrator->export($prj_uid);
+        $data = $this->migrator->export($prj_uid);
+        foreach ($data['plugin-data'] as $key => $plugin) {
+            $newKey = str_replace("MIGRATOR", "", strtoupper(get_class($this->migrator))).'.'.$key;
+            $data['plugin-data'][$newKey] = $plugin;
+            unset($data['plugin-data'][$key]);
+        }
+        return $data;
     }
 
     public function afterExport()
