@@ -1909,7 +1909,7 @@ function PMFGroupList ($regex = null, $start = null, $limit = null) //its test w
     $ws = new wsBase();
     $result = $ws->groupList($regex, $start, $limit);
     $rows = array();
-    if (isset( $result )) {
+    if ($result) {
         $rows = array_combine(range(1, count($result)), array_values($result));
     }
     return $rows;
