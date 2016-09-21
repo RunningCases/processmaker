@@ -23,8 +23,7 @@ if (isset( $_GET['ux'] )) {
     }
 /*----------------------------------********---------------------------------*/
 } else if( $statusPMGmail ){
-    $uex = isset($_GET['uex']) ? '?uex=' . $_GET['uex'] : '';
-    $url = $pathDerivateGmail . $uex;
+    $url = $pathDerivateGmail;
 /*----------------------------------********---------------------------------*/
 } else {
     $url = 'casesListExtJs';
