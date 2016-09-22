@@ -1,4 +1,4 @@
-<?php
+<?php 
 $licensedFeatures = & PMLicensedFeatures::getSingleton();
 if (!$licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
     G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels' );
@@ -28,7 +28,10 @@ if(array_key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $pmGoogle-
 	unset($_SESSION['gmail']); //cleaning session
 	$mUrl = '/sys'. $_SESSION['WORKSPACE'] .'/en/'.$_SESSION['currentSkin'].'/cases/cases_Open?APP_UID='.$caseId.'&DEL_INDEX='.$actualIndex.'&action=sent';
 } else{
-        $mUrl = isset($_GET['uex']) ? '../home' : 'casesListExtJs';
+	$mUrl = 'casesListExtJs';
+        if (isset($_SESSION["currentSkin"]) && $_SESSION["currentSkin"] === 'uxs') {
+            $mUrl = '../home';
+        }
 }
 
 header( 'location:' . $mUrl );
