@@ -7341,4 +7341,28 @@ class Cases
         });
         return $rows;
     }
+
+    /**
+     * @param $proUid
+     * @param $dynaformUid
+     * @return bool
+     */
+    public function getAllObjectsTrackerDynaform($proUid, $dynaformUid)
+    {
+        $c = new Criteria();
+        $c->clearSelectColumns();
+        $c->addSelectColumn(CaseTrackerObjectPeer::CTO_TYPE_OBJ);
+        $c->add(CaseTrackerObjectPeer::PRO_UID, $proUid, Criteria::EQUAL);
+        $c->add(CaseTrackerObjectPeer::CTO_UID_OBJ, $dynaformUid, Criteria::EQUAL);
+        $c->setLimit(1);
+        $rs = CaseTrackerObjectPeer::doSelectRS($c);
+        $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $rs->next();
+        $row = $rs->getRow();
+
+        if (is_array($row)) {
+            return true;
+        }
+        return false;
+    }
 }

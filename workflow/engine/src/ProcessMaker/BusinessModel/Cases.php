@@ -3052,7 +3052,9 @@ class Cases
                     }
                 }
             }
-            return ($flagSupervisors && $userAccess) || $flagPermissionsVIEW || $flagPermissionsBLOCK;
+            //check case Tracker
+            $flagCaseTracker = $case->getAllObjectsTrackerDynaform($arrayApplicationData['PRO_UID'], $dynaformUid);
+            return ($flagSupervisors && $userAccess) || $flagPermissionsVIEW || $flagPermissionsBLOCK || $flagCaseTracker;
         } else {
             $arrayResult = $this->getStatusInfo($applicationUid, 0, $userUid);
             $flagParticipated = false;
