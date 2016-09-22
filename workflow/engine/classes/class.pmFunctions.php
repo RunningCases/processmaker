@@ -2972,7 +2972,7 @@ function PMFSaveCurrentData ()
     if (isset($_SESSION['APPLICATION']) && isset($oPMScript->aFields)) {
         G::LoadClass( 'wsBase' );
         $ws = new wsBase();
-        $result = $ws->sendVariables( $_SESSION['APPLICATION'], $oPMScript->aFields );
+        $result = (array) $ws->sendVariables( $_SESSION['APPLICATION'], $oPMScript->aFields );
     }
 
     return $result;
