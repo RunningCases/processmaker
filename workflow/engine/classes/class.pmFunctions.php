@@ -2380,6 +2380,21 @@ function jumping ($caseId, $delIndex)
  */
 function PMFgetLabelOption ($PROCESS, $DYNAFORM_UID, $FIELD_NAME, $FIELD_SELECTED_ID)
 {
+    G::LoadClass("pmDynaform");
+    $data = array();
+    $data["CURRENT_DYNAFORM"] = $DYNAFORM_UID;
+    $dynaform = new pmDynaform($data);
+    if ($dynaform->isResponsive()) {
+        $json = $dynaform->searchFieldByName($DYNAFORM_UID, $FIELD_NAME);
+        $options = $json->options + $json->optionsSql;
+        foreach ($options as $key => $value) {
+            if ((string) $value->value === (string) $FIELD_SELECTED_ID) {
+                return $value->label;
+            }
+        }
+        return null;
+    }
+
     $G_FORM = new Form( "{$PROCESS}/{$DYNAFORM_UID}", PATH_DYNAFORM, SYS_LANG, false );
     if (isset( $G_FORM->fields[$FIELD_NAME]->option[$FIELD_SELECTED_ID] )) {
         return $G_FORM->fields[$FIELD_NAME]->option[$FIELD_SELECTED_ID];
