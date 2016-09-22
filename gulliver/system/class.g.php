@@ -504,7 +504,7 @@ class G
      * @param boolean $createPath if true this public function will create the path
      * @return boolean
      */
-    public function verifyPath ($strPath, $createPath = false)
+    public static function verifyPath ($strPath, $createPath = false)
     {
         $folder_path = strstr( $strPath, '.' ) ? dirname( $strPath ) : $strPath;
 
@@ -1383,7 +1383,7 @@ class G
      * @param string $id
      * @return string
      */
-    public function createUID ($scope, $id)
+    public static function createUID ($scope, $id)
     {
         $e = $scope . $id;
         $e = G::encrypt( $e, URL_KEY );
@@ -1750,7 +1750,7 @@ class G
      *     @fn()  Evaluate string with the function "fn"
      * @author David Callizaya <calidavidx21@hotmail.com>
      */
-    public function replaceDataField ($sqlString, $result, $DBEngine = 'mysql')
+    public static function replaceDataField ($sqlString, $result, $DBEngine = 'mysql')
     {
         if (! is_array( $result )) {
             $result = array ();
@@ -2389,7 +2389,7 @@ class G
      *
      * @return string strtoupper($sText)
      */
-    public function toUpper ($sText)
+    public static function toUpper ($sText)
     {
         return strtoupper( $sText );
     }
@@ -2894,7 +2894,7 @@ class G
      * @access public
      * @return string
      */
-    public function generateCode ($iDigits = 4, $sType = 'NUMERIC')
+    public static function generateCode ($iDigits = 4, $sType = 'NUMERIC')
     {
         if (($iDigits < 4) || ($iDigits > 50)) {
             $iDigits = 4;
