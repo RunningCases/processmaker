@@ -1622,7 +1622,7 @@ function PMFUserList () //its test was successfull
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFAddInputDocument.28.29
  *
  * @param string(32) | $inputDocumentUid | ID of the input document | The unique ID of the input document.
- * @param string(32) | $appDocUid | ID of the application document | The unique ID of the application document; if action is set to null or empty (Add), then this parameter it set to null or empty.
+ * @param string(32) | $appDocUid | ID of the application document | The unique ID of the application document; if action is set to null or empty (Add), then this parameter it set to null.
  * @param int | $docVersion | Document version | Document version.
  * @param string | $appDocType = "INPUT" | Document type | Document type.
  * @param string | $appDocComment | Document comment | Document comment.
