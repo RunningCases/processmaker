@@ -1257,6 +1257,20 @@ class pmDynaform
         return $this->jsonsf($json, $field_id);
     }
 
+    public function searchFieldByName($dyn_uid, $name)
+    {
+        $a = new Criteria("workflow");
+        $a->addSelectColumn(DynaformPeer::DYN_CONTENT);
+        $a->add(DynaformPeer::DYN_UID, $dyn_uid, Criteria::EQUAL);
+        $ds = ProcessPeer::doSelectRS($a);
+        $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $ds->next();
+        $row = $ds->getRow();
+        $json = G::json_decode($row["DYN_CONTENT"]);
+        $this->jsonr($json);
+        return $this->jsonsf($json, $name, "name");
+    }
+
     private function jsonsf(&$json, $id, $for = "id")
     {
         foreach ($json as $key => $value) {
