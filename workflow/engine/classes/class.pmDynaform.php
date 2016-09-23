@@ -626,7 +626,7 @@ class pmDynaform
                     $rs = $stmt->executeQuery($a, \ResultSet::FETCHMODE_NUM);
                     $rs->next();
                     $row = $rs->getRow();
-                    if (isset($row[0]) && $json->type !== "suggest") {
+                    if (isset($row[0]) && $json->type !== "suggest" && $json->type !== "radio") {
                         $data[$json->variable === "" ? $json->id : $json->variable] = $row[0];
                     }
                 } catch (Exception $e) {
