@@ -135,8 +135,19 @@ class GranularImporter
                     $data['tables']['workflow']['reportTablesFields'] : [];
                 break;
             default:
-                $objectList[$nameObject] = isset($data['tables']['plugins'][strtolower($nameObject)]) ?
-                    $data['tables']['plugins'][strtolower($nameObject)] : '';
+                $prjUID = isset($data['tables']['workflow']['process']['PRO_UID'])
+                    ?$data['tables']['workflow']['process']['PRO_UID']
+                    :$data['tables']['workflow']['process'][0]['PRO_UID'];
+                $objectList[$nameObject] = [];
+                $objectList[$nameObject]['metadata'] = [
+                    'PRJ_UID' => $prjUID
+                ];
+                foreach ($data['tables']['plugins'] as $pluginKey => $pluginTable) {
+                    $key = explode(".", $pluginKey);
+                    if ($key[0]===strtolower($nameObject)) {
+                        $objectList[$nameObject][$key[1]] = $pluginTable;
+                    }
+                }
                 break;
         }
         return $objectList;
