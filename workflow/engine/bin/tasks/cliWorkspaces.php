@@ -145,6 +145,8 @@ CLI::taskDescription(<<<EOT
 EOT
 );
 CLI::taskArg('workspace-name', true, true);
+CLI::taskOpt('buildACV', 'If this option is enabled, the Cache View is built.', 'ACV', 'buildACV');
+CLI::taskOpt('noxml', 'If this option is enabled, the XML files translation is not built.', 'NoXml', 'no-xml');
 CLI::taskRun("run_workspace_upgrade");
 
 CLI::taskName('translation-repair');
@@ -308,6 +310,9 @@ function run_workspace_upgrade($args, $opts) {
   $workspaces = get_workspaces_from_args($args);
   $first = true;
   $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
+  $buildCacheView = array_key_exists('buildACV', $opts);
+  $flagUpdateXml  = !array_key_exists('noxml', $opts);
+
   foreach ($workspaces as $workspace) {
     try {
       if (!defined("SYS_SYS")) {
@@ -318,8 +323,9 @@ function run_workspace_upgrade($args, $opts) {
           define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
       }
 
-      $workspace->upgrade($first, false, $workspace->name, $lang);
+      $workspace->upgrade($buildCacheView, $workspace->name, false, $lang, ['updateXml' => $flagUpdateXml, 'updateMafe' => $first]);
       $first = false;
+      $flagUpdateXml = false;
     } catch (Exception $e) {
       G::outRes( "Errors upgrading workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n" );
     }
@@ -336,7 +342,7 @@ function run_translation_upgrade($args, $opts) {
   foreach ($workspaces as $workspace) {
     try {
       G::outRes( "Upgrading translation for " . pakeColor::colorize($workspace->name, "INFO") . "\n" );
-      $workspace->upgradeTranslation($first);
+      $workspace->upgradeTranslation($first, $first);
       $first = false;
     } catch (Exception $e) {
       G::outRes( "Errors upgrading translation of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n" );

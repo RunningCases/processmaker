@@ -58,10 +58,20 @@ class workspaceTools
     /**
      * Upgrade this workspace to the latest system version
      *
-     * @param bool $first true if this is the first workspace to be upgrade
+     * @param bool   $buildCacheView
+     * @param string $workSpace
+     * @param bool   $onedb
+     * @param string $lang
+     * @param array  $arrayOptTranslation
+     *
+     * @return void
      */
-    public function upgrade($first = false, $buildCacheView = false, $workSpace = SYS_SYS, $onedb = false, $lang = 'en')
+    public function upgrade($buildCacheView = false, $workSpace = SYS_SYS, $onedb = false, $lang = 'en', array $arrayOptTranslation = null)
     {
+        if (is_null($arrayOptTranslation)) {
+            $arrayOptTranslation = ['updateXml' => true, 'updateMafe' => true];
+        }
+
         $start = microtime(true);
         CLI::logging("> Updating database...\n");
         $this->upgradeDatabase($onedb);
@@ -82,7 +92,7 @@ class workspaceTools
 
         $start = microtime(true);
         CLI::logging("> Updating translations...\n");
-        $this->upgradeTranslation($first);
+        $this->upgradeTranslation($arrayOptTranslation['updateXml'], $arrayOptTranslation['updateMafe']);
         $stop = microtime(true);
         $final = $stop - $start;
         CLI::logging("<*>   Updating Translations Process took $final seconds.\n");
@@ -397,24 +407,36 @@ class workspaceTools
     /**
      * Upgrade this workspace translations from all avaliable languages.
      *
-     * @param bool $first if updating a series of workspace, true if the first
+     * @param bool $flagXml  Update XML
+     * @param bool $flagMafe Update MAFE
+     *
+     * @return void
      */
-    public function upgradeTranslation($first = true)
+    public function upgradeTranslation($flagXml = true, $flagMafe = true)
     {
         $this->initPropel(true);
-        //require_once ('classes/model/Language.php');
+
         G::LoadThirdParty('pear/json', 'class.json');
+
+        $language = new Language();
+
         foreach (System::listPoFiles() as $poFile) {
             $poName = basename($poFile);
             $names = explode(".", basename($poFile));
             $extension = array_pop($names);
             $langid = array_pop($names);
-            CLI::logging("Updating database translations with $poName\n");
-            Language::import($poFile, false, true, false);
-            if ($first) {
-                CLI::logging("Updating XML form translations with $poName\n");
-                Language::import($poFile, true, false, true);
+
+            CLI::logging('Updating Database translations with ' . $poName . "\n");
+
+            if ($flagXml) {
+                CLI::logging('Updating XML form translations with ' . $poName . "\n");
             }
+
+            if ($flagMafe) {
+                CLI::logging('Updating MAFE translations with ' . $poName . "\n");
+            }
+
+            $language->import($poFile, $flagXml, true, $flagMafe);
         }
     }
 
