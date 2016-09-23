@@ -3598,15 +3598,44 @@ function PMFAssociateUploadedFilesWithInputFile($inputDocumentUid, $gridVariable
  * Remove users from a group
  *
  * @name PMFRemoveUsersToGroup
- * @label PMF Remove users from a group
+ * @label PMF Remove users from a group (deprecated)
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFRemoveUsersToGroup.28.29
  *
+ * @deprecated we corrected the name
  * @param string | $groupId | Group Uid | The unique Uid of the group.
  * @param array | $users | Array of users | Array of users to remove.
  *
  * @return  array | $result | array
  */
 function PMFRemoveUsersToGroup($groupUid, array $users)
+{
+    try {
+        $user = new \ProcessMaker\BusinessModel\Group\User();
+
+        $result = $user->unassignUsers($groupUid, $users);
+
+        //Return
+        return $result;
+    } catch (Exception $e) {
+        throw $e;
+    }
+}
+
+/**
+ * @method
+ *
+ * Remove users from a group
+ *
+ * @name PMFRemoveUsersFromGroup
+ * @label PMF Remove users from a group
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFRemoveUsersFromGroup.28.29
+ *
+ * @param string | $groupId | Group Uid | The unique Uid of the group.
+ * @param array | $users | Array of users | Array of users to remove.
+ *
+ * @return  array | $result | array
+ */
+function PMFRemoveUsersFromGroup($groupUid, array $users)
 {
     try {
         $user = new \ProcessMaker\BusinessModel\Group\User();
