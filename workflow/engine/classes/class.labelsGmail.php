@@ -97,7 +97,7 @@ class labelsGmail
         $mail = $usrData['USR_EMAIL'];
 
         //The Subject to search the email
-        $subject = "[PM] " . $proName . " Case: " . $appNumber;
+        $subject = "[PM] " . $proName . " (" . $index . ") Case: " . $appNumber;
 
         $pmGoogle = new PMGoogleApi();
         $pmGoogle->setUser($mail);
@@ -147,7 +147,7 @@ class labelsGmail
         $mail = $usrData['USR_EMAIL'];
 
         //The Subject to search the email
-        $subject = "[PM] " . $proName . " Case: " . $appNumber;
+        $subject = "[PM] " . $proName . " (" . $index . ") Case: " . $appNumber;
 
         $pmGoogle = new PMGoogleApi();
         $pmGoogle->setUser($mail);
@@ -201,7 +201,7 @@ class labelsGmail
             $mail = $usrData['USR_EMAIL'];
 
             //The Subject to search the email
-            $subject = "[PM] " . $proName . " Case: " . $appNumber;
+            $subject = "[PM] " . $proName . " (" . $index . ") Case: " . $appNumber;
 
             $pmGoogle = new PMGoogleApi();
 
@@ -281,7 +281,7 @@ class labelsGmail
         $tasUid = $application['TAS_UID'];
 
         //The Subject to search the email
-        $subject = "[PM] " . $proName . " Case: " . $appNumber;
+        $subject = "[PM] " . $proName . " (" . $index . ") Case: " . $appNumber;
         $pmGoogle = new PMGoogleApi();
         $pmGoogle->setUser($mail);
         $pmGoogle->setScope(PMGoogleApi::GMAIL_MODIFY);
