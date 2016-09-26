@@ -394,13 +394,13 @@ class AppDocumentDrive
                             }
 
                         } else {
-                            $this->drive->setDriveUser($this->user->getUsrEmail());
+                            $result = $this->drive->setDriveUser($this->user->getUsrEmail());
                         }
                         if ($log) {
                             eprintln('Set Permission:' . $email, 'green');
                         }
-                        $this->drive->setPermission($this->app->getAppDriveFolderUid(), $email, 'user', 'writer');
-
+                        $result = $this->drive->setPermission($this->app->getAppDriveFolderUid(), $email, 'user', 'writer');
+                        $fields['SYNC_PERMISSIONS'] = null;
                     }
                 }
                 if ($result != null) {
