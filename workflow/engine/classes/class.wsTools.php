@@ -415,7 +415,7 @@ class workspaceTools
     public function upgradeTranslation($flagXml = true, $flagMafe = true)
     {
         $this->initPropel(true);
-
+        $this->checkDataConsistenceInContentTable();
         G::LoadThirdParty('pear/json', 'class.json');
 
         $language = new Language();
@@ -438,6 +438,20 @@ class workspaceTools
 
             $language->import($poFile, $flagXml, true, $flagMafe);
         }
+    }
+
+    /**
+     * Verification of the Content data table for column CON_ID
+     * @return void
+     */
+    private function checkDataConsistenceInContentTable()
+    {
+        $criteriaSelect = new Criteria("workflow");
+        $criteriaSelect->add(
+            $criteriaSelect->getNewCriterion(ContentPeer::CON_ID, '%' . "'" . '%', Criteria::LIKE)->addOr(
+                $criteriaSelect->getNewCriterion(ContentPeer::CON_ID, '%' . '"' . '%', Criteria::LIKE)));
+
+        BasePeer::doDelete($criteriaSelect, Propel::getConnection("workflow"));
     }
 
     /**
