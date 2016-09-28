@@ -1402,7 +1402,7 @@ class workspaceTools
                     . ' --host=' . $dbHost
                     . ' --port=' . $dbPort
                     . ' --user=' . $parameters['dbUser']
-                    . ' --password=' . str_replace('"', '\"', str_replace("'", "\'", quotemeta($parameters['dbPass'])))//no change! supports the type passwords: .\+*?[^]($)'"\"'
+                    . ' --password=' . escapeshellarg($parameters['dbPass'])
                     . ' --database=' . mysql_real_escape_string($database)
                     . ' --default_character_set utf8'
                     . ' --execute="SOURCE ' . $filename . '"';
@@ -1410,7 +1410,7 @@ class workspaceTools
                 $command = 'mysql'
                     . ' --host=' . $dbHost
                     . ' --user=' . $parameters['dbUser']
-                    . ' --password=' . str_replace('"', '\"', str_replace("'", "\'", quotemeta($parameters['dbPass'])))//no change! supports the type passwords: .\+*?[^]($)'"\"'
+                    . ' --password=' . escapeshellarg($parameters['dbPass'])
                     . ' --database=' . mysql_real_escape_string($database)
                     . ' --default_character_set utf8'
                     . ' --execute="SOURCE ' . $filename . '"';
