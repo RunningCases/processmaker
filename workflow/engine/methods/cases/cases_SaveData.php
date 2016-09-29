@@ -306,7 +306,7 @@ try {
 
     if (isset( $_FILES["form"]["name"] ) && count( $_FILES["form"]["name"] ) > 0) {
         $oInputDocument = new \ProcessMaker\BusinessModel\Cases\InputDocument();
-        $oInputDocument->uploadFileCase($_FILES, $oCase, $_SESSION["USER_LOGGED"], $_SESSION["APPLICATION"], $_SESSION["INDEX"]);
+        $oInputDocument->uploadFileCase($_FILES, $oCase, $aData, $_SESSION["USER_LOGGED"], $_SESSION["APPLICATION"], $_SESSION["INDEX"]);
     }
 
     //Delete MultipleFile
