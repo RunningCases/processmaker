@@ -123,7 +123,7 @@ if (PMLicensedFeatures
             if (isset ( $_FILES ['form'] )) {
                 if (isset( $_FILES["form"]["name"] ) && count( $_FILES["form"]["name"] ) > 0) {
                     $oInputDocument = new \ProcessMaker\BusinessModel\Cases\InputDocument();
-                    $oInputDocument->uploadFileCase($_FILES, $case, $current_user_uid, $_REQUEST['APP_UID'], $_REQUEST["DEL_INDEX"]);
+                    $oInputDocument->uploadFileCase($_FILES, $case, $casesFields, $current_user_uid, $_REQUEST['APP_UID'], $_REQUEST["DEL_INDEX"]);
                 }
             }
 

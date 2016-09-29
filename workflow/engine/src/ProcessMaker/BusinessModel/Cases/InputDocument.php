@@ -648,11 +648,12 @@ class InputDocument
     /**
      * @param $files $_FILES request files
      * @param $caseInstance \Cases object class.cases
+     * @param $aData array data case
      * @param $userUid string user id
      * @param $appUid string application id
      * @param $delIndex int the index case
      */
-    public function uploadFileCase($files, $caseInstance, $userUid, $appUid, $delIndex)
+    public function uploadFileCase($files, $caseInstance, $aData, $userUid, $appUid, $delIndex)
     {
         $arrayField = array();
         $arrayFileName = array();
