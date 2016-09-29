@@ -1753,7 +1753,13 @@ class Cases
             $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
             $arrayDynaFormData = $dynaForm->getDynaFormRecordByPk($dynaFormUid, ['$dynaFormUid' => '$dynaFormUid']);
 
-            $arrayDynContent = \G::json_decode($arrayDynaFormData['DYN_CONTENT'], true);
+            $arrayDynContent = \G::json_decode($arrayDynaFormData['DYN_CONTENT']);
+
+            \G::LoadClass("pmDynaform");
+            $data["CURRENT_DYNAFORM"] = $dynaFormUid;
+            $pmDynaForm = new \pmDynaform($data);
+            $pmDynaForm->jsonr($arrayDynContent);
+            $arrayDynContent = \G::json_decode(\G::json_encode($arrayDynContent),true);
 
             $arrayAppData = $fields['APP_DATA'];
 
