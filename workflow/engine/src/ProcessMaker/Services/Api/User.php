@@ -17,28 +17,8 @@ class User extends Api
     ];
 
     /**
-     * Constructor of the class
-     *
-     * return void
-     */
-    public function __construct()
-    {
-        try {
-            $user = new \ProcessMaker\BusinessModel\User();
-
-            $usrUid = $this->getUserId();
-
-            if (!$user->checkPermission($usrUid, "PM_USERS")) {
-                throw new \Exception(\G::LoadTranslation("ID_USER_NOT_HAVE_PERMISSION", array($usrUid)));
-            }
-        } catch (\Exception $e) {
-            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
-        }
-    }
-
-    /**
      * @access protected
-     * @class  AccessControl {@permission PM_USERS}
+     * @class  AccessControl {@permission PM_USERS,PM_FACTORY}
      * @url GET
      */
     public function index($filter = null, $lfilter = null, $rfilter = null, $start = null, $limit = null)
@@ -62,7 +42,7 @@ class User extends Api
 
     /**
      * @access protected
-     * @class  AccessControl {@permission PM_USERS}
+     * @class  AccessControl {@permission PM_USERS,PM_FACTORY}
      * @url GET /:usr_uid
      *
      * @param string $usr_uid {@min 32}{@max 32}
@@ -156,4 +136,3 @@ class User extends Api
         }
     }
 }
-
