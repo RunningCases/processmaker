@@ -1672,14 +1672,6 @@ class Light extends Api
 
         $response = [];
 
-        //trigger before
-        $oMobile = new \ProcessMaker\BusinessModel\Light();
-        $triggers = $oMobile->doExecuteTriggerCase($usr_uid, $pro_uid, $act_uid, $app_uid, $step_uid, "before", $app_index);
-        if ($triggers["status"] === "ok") {
-            $triggers["status"] = "200";
-        }
-        $response["triggers"] = $triggers;
-
         //conditionalSteps
         $oCase = new \Cases();
         $oAppDelegate = new \AppDelegation();
@@ -1704,6 +1696,26 @@ class Light extends Api
             }
         } while ($conditionalSteps !== false);
         $response["conditionalSteps"] = $conditionalSteps;
+
+        //trigger before
+        $c = new \Criteria();
+        $c->clearSelectColumns();
+        $c->addSelectColumn(\StepPeer::STEP_UID);
+        $c->addSelectColumn(\StepPeer::STEP_UID_OBJ);
+        $c->add(\StepPeer::TAS_UID, $act_uid);
+        $c->add(\StepPeer::STEP_TYPE_OBJ, 'DYNAFORM');
+        $c->add(\StepPeer::STEP_UID_OBJ, $conditionalSteps['UID']);
+        $rs = \StepPeer::doSelectRS($c);
+        $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $rs->next();
+        $row = $rs->getRow();
+
+        $oMobile = new \ProcessMaker\BusinessModel\Light();
+        $triggers = $oMobile->doExecuteTriggerCase($usr_uid, $pro_uid, $act_uid, $app_uid, $row['STEP_UID'], "before", $app_index);
+        if ($triggers["status"] === "ok") {
+            $triggers["status"] = "200";
+        }
+        $response["triggers"] = $triggers;
 
         //variables
         $cases = new \ProcessMaker\BusinessModel\Cases();
