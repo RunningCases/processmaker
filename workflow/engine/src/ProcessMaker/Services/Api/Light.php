@@ -1670,7 +1670,7 @@ class Light extends Api
         $dyn_uid = isset($request_data["dyn_uid"]) ? $request_data["dyn_uid"] : null;
         $usr_uid = $this->getUserId();
 
-        $response = [];
+        $response = array();
 
         //conditionalSteps
         $oCase = new \Cases();
@@ -1698,24 +1698,27 @@ class Light extends Api
         $response["conditionalSteps"] = $conditionalSteps;
 
         //trigger before
-        $c = new \Criteria();
-        $c->clearSelectColumns();
-        $c->addSelectColumn(\StepPeer::STEP_UID);
-        $c->addSelectColumn(\StepPeer::STEP_UID_OBJ);
-        $c->add(\StepPeer::TAS_UID, $act_uid);
-        $c->add(\StepPeer::STEP_TYPE_OBJ, 'DYNAFORM');
-        $c->add(\StepPeer::STEP_UID_OBJ, $conditionalSteps['UID']);
-        $rs = \StepPeer::doSelectRS($c);
-        $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-        $rs->next();
-        $row = $rs->getRow();
-
-        $oMobile = new \ProcessMaker\BusinessModel\Light();
-        $triggers = $oMobile->doExecuteTriggerCase($usr_uid, $pro_uid, $act_uid, $app_uid, $row['STEP_UID'], "before", $app_index);
-        if ($triggers["status"] === "ok") {
-            $triggers["status"] = "200";
+        if($conditionalSteps) {
+            $c = new \Criteria();
+            $c->clearSelectColumns();
+            $c->addSelectColumn(\StepPeer::STEP_UID);
+            $c->addSelectColumn(\StepPeer::STEP_UID_OBJ);
+            $c->add(\StepPeer::TAS_UID, $act_uid);
+            $c->add(\StepPeer::STEP_TYPE_OBJ, 'DYNAFORM');
+            $c->add(\StepPeer::STEP_UID_OBJ, $conditionalSteps['UID']);
+            $rs = \StepPeer::doSelectRS($c);
+            $rs->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $rs->next();
+            $row = $rs->getRow();
+            if ($row) {
+                $oMobile = new \ProcessMaker\BusinessModel\Light();
+                $triggers = $oMobile->doExecuteTriggerCase($usr_uid, $pro_uid, $act_uid, $app_uid, $row['STEP_UID'], "before", $app_index);
+                if ($triggers["status"] === "ok") {
+                    $triggers["status"] = "200";
+                }
+                $response["triggers"] = $triggers;
+            }
         }
-        $response["triggers"] = $triggers;
 
         //variables
         $cases = new \ProcessMaker\BusinessModel\Cases();
