@@ -1120,6 +1120,9 @@ class Derivation
 
                                         $arrayTaskNextDelNextDel['NEXT_TASK']['USER_ASSIGNED']['USR_UID'] = '';
                                         break;
+                                    case 'MULTIPLE_INSTANCE_VALUE_BASED':
+                                        $arrayTaskNextDelNextDel['NEXT_TASK']['USER_ASSIGNED']['USR_UID'] = '';
+                                        break;
                                     default:
                                         if (!isset($arrayTaskNextDelNextDel['NEXT_TASK']['USER_ASSIGNED']['USR_UID'])) {
                                             throw new Exception(G::LoadTranslation('ID_NO_USERS'));
@@ -1261,8 +1264,9 @@ class Derivation
         $taskUidDest   = $taskNextDel->getTasUid();
 
         if (array_key_exists($taskUidOrigin . '/' . $taskUidDest, $arrayRoutingData)) {
-            $nextDel['USR_UID'] = $arrayRoutingData[$taskUidOrigin . '/' . $taskUidDest]['USR_UID'];
-
+            if(isset($arrayRoutingData[$taskUidOrigin . '/' . $taskUidDest]['USR_UID'])){
+                $nextDel['USR_UID'] = $arrayRoutingData[$taskUidOrigin . '/' . $taskUidDest]['USR_UID'];
+            }
             unset($arrayRoutingData[$taskUidOrigin . '/' . $taskUidDest]);
         }
 
