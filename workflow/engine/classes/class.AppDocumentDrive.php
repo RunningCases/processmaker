@@ -72,8 +72,9 @@ class AppDocumentDrive
                 $process = new Process();
                 $process->setProUid($this->app->getProUid());
 
+                //Set name folder, for cron process.
                 $result = $this->drive->createFolder(
-                    $process->getProTitle() . ' - ' . G::LoadTranslation("ID_CASE") . ' #' . $this->app->getAppNumber(),
+                    'Case #' . $this->app->getAppNumber(),
                     $this->drive->getFolderIdPMDrive($this->user->getUsrUid())
                 );
                 $this->app->setAppDriveFolderUid($result->id);
