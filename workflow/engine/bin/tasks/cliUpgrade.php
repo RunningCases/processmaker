@@ -143,6 +143,10 @@ function run_upgrade($command, $args)
             define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
         }
 
+        if(!defined('DB_ADAPTER')) {
+            define('DB_ADAPTER', 'mysql');
+        }
+
         try {
             $countWorkspace++;
             CLI::logging("Upgrading workspaces ($countWorkspace/$count): " . CLI::info($workspace->name) . "\n");
