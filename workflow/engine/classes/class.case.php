@@ -5287,6 +5287,14 @@ class Cases
 
             foreach ($arrayTask as $aTask) {
 
+                //Check and fix if Task Id is complex
+                if (strpos($aTask['TAS_UID'], "/") !== false) {
+                    $aux = explode("/", $aTask['TAS_UID']);
+                    if (isset($aux[1])) {
+                        $aTask['TAS_UID'] = $aux[1];
+                    }
+                }
+
                 //if the next is EOP dont send notification and continue with the next
                 if($aTask['TAS_UID'] === '-1'){
                     continue;
