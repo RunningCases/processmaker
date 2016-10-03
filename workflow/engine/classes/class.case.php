@@ -5326,10 +5326,12 @@ class Cases
 
                 $sBody2 = G::replaceDataGridField($sBody, $arrayData2, false);
 
-                $respTo = $this->getTo($aTask['TAS_UID'], $aTask['USR_UID'], $arrayData);
-
-                $sTo = $respTo['to'];
-                $sCc = $respTo['cc'];
+                $sTo = null;
+                if($aTask['TAS_UID'] != '-1'){
+                    $respTo = $this->getTo($aTask['TAS_UID'], $aTask['USR_UID'], $arrayData);
+                    $sTo = $respTo['to'];
+                    $sCc = $respTo['cc'];
+                }
 
                 if ($aTask ["TAS_ASSIGN_TYPE"] === "SELF_SERVICE") {
                     if ($swtplDefault == 1) {
