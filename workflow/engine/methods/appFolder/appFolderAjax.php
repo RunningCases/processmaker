@@ -41,6 +41,11 @@ if (($_REQUEST['action']) != 'renameFolder') {
 
     $functionName ($functionParams);
 } else {
+    if (!isset($_REQUEST['item']) ||
+            !isset($_REQUEST['newitemname']) ||
+            !isset($_REQUEST['selitems'])) {
+        exit();
+    }
     $functionName = 'renameFolder';
     $functionParams = isset ($_REQUEST ['params']) ? $_REQUEST ['params'] : array ();
     $oldname = $_REQUEST ['item'];
