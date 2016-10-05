@@ -55,8 +55,13 @@ class ListParticipatedLast extends BaseListParticipatedLast
             $getData['USR_UID'] = $data['USR_UID_CURRENT'];
             $getData['APP_UID'] = $data['APP_UID'];
             $row = $this->getRowFromList($getData);
-            if(is_array($row) && sizeof($row)) {
-                $set = array("DEL_CURRENT_USR_USERNAME" => "","DEL_CURRENT_USR_FIRSTNAME" => "","DEL_CURRENT_USR_LASTNAME" => "","APP_TAS_TITLE" => $data['APP_TAS_TITLE']);
+            if (is_array($row) && sizeof($row)) {
+                $set = array(
+                    "DEL_CURRENT_USR_USERNAME" => "",
+                    "DEL_CURRENT_USR_FIRSTNAME" => "",
+                    "DEL_CURRENT_USR_LASTNAME" => "",
+                    "APP_TAS_TITLE" => $data['APP_TAS_TITLE'],
+                    "DEL_CURRENT_TAS_TITLE" => $data['APP_TAS_TITLE']);
                 $this->updateCurrentUser($row, $set);
             }
         }
