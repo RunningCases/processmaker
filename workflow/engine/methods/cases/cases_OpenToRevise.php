@@ -135,7 +135,7 @@ while ($rsCriteria->next()) {
 }
 
 $processUser = new ProcessUser();
-$userAccess = $processUser->validateUserAccess($aFields['PRO_UID'], $_SESSION['USER_LOGGED'], 'SUPERVISOR');
+$userAccess = $processUser->validateUserAccess($aFields['PRO_UID'], $_SESSION['USER_LOGGED']);
 if(!$userAccess) {
     $flag = false;
 }
