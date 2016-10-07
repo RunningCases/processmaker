@@ -1874,7 +1874,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CONTINUE','en','Continue','2014-01-15') ,
 ( 'LABEL','ID_OPTION','en','Option','2014-01-15') ,
 ( 'LABEL','ID_LAST_EMPLOYEE','en','Last Employee','2014-01-15') ,
-( 'LABEL','ID_EMPLOYEE','en','Employee','2014-01-15') ,
+( 'LABEL','ID_EMPLOYEE','en','Next User','2014-01-15') ,
 ( 'LABEL','ID_SESSION','en','Session','2014-01-15') ,
 ( 'LABEL','ID_NEXT_TASK','en','Next Task/Event','2016-07-29') ,
 ( 'LABEL','ID_PERMISSIONS_FOR_THE_ROL','en','Permissions for the role','2015-01-16') ,

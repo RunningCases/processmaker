@@ -2590,8 +2590,8 @@ msgstr "Last Employee"
 # TRANSLATION
 # LABEL/ID_EMPLOYEE
 #: LABEL/ID_EMPLOYEE
-msgid "Employee"
-msgstr "Employee"
+msgid "Next User"
+msgstr "Next User"
 
 # TRANSLATION
 # LABEL/ID_SESSION
