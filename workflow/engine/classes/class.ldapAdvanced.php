@@ -2817,7 +2817,7 @@ class ldapAdvanced
                                         switch ($fieldName) {
                                             case 'USR_STATUS':
                                                 if ($attributeName == 'useraccountcontrol') {
-                                                    $ldapAttributeValue = (in_array($ldapAttributeValue, array('512', '544', '66048', '66080')))? 'ACTIVE' : 'INACTIVE';
+                                                    $ldapAttributeValue = (preg_match('/^(?:' . '512|544|66048|66080' . ')$/', $ldapAttributeValue))? (($arrayUser[$username][$fieldName] == 'VACATION')? 'VACATION' : 'ACTIVE') : 'INACTIVE';
                                                 }
                                                 break;
                                             case 'USR_DUE_DATE':
@@ -3053,4 +3053,3 @@ class ldapAdvanced
         }
     }
 }
-
