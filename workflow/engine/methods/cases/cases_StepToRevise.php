@@ -41,7 +41,7 @@ switch ($RBAC->userCanAccess( 'PM_SUPERVISOR' )) {
 
 //If the user does not have the permission and the user can be access from url
 $processUser = new ProcessUser();
-$userAccess = $processUser->validateUserAccess($_GET['PRO_UID'], $_SESSION['USER_LOGGED'], 'SUPERVISOR');
+$userAccess = $processUser->validateUserAccess($_GET['PRO_UID'], $_SESSION['USER_LOGGED']);
 if(!$userAccess) {
     G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels' );
     G::header( 'location: ../login/login' );
@@ -58,10 +58,6 @@ if ((int) $_SESSION['INDEX'] < 1) {
 /* Includes */
 G::LoadClass( 'case' );
 G::LoadClass( 'derivation' );
-
-/* GET , POST & $_SESSION Vars */
-//$_SESSION['STEP_POSITION'] = (int)$_GET['POSITION'];
-
 
 /* Menues */
 $G_MAIN_MENU = 'processmaker';
