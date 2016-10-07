@@ -765,17 +765,11 @@ class Cases
                     $res['APP_TITLE'] = $newAppTitle;
                     if (!(isset($fields['APP_TITLE']) && $fields['APP_TITLE'] == $newAppTitle)) {
                         $bUpdatedDefTitle = true;
-                        /// updating the value in content for row (APP_TITLE,$lan)
-                        $con = Propel::getConnection('workflow');
-                        $c1 = new Criteria('workflow');
-                        $c1->add(ContentPeer::CON_CATEGORY, 'APP_TITLE');
-                        $c1->add(ContentPeer::CON_ID, $sAppUid);
-                        $c1->add(ContentPeer::CON_LANG, $lang);
-
-                        // update set
-                        $c2 = new Criteria('workflow');
-                        $c2->add(ContentPeer::CON_VALUE, $newAppTitle);
-                        BasePeer::doUpdate($c1, $c2, $con);
+                        $appData = array();
+                        $appData['APP_UID'] = $sAppUid;
+                        $appData['APP_TITLE'] = $newAppTitle;
+                        $oApplication = new Application();
+                        $oApplication->update($appData);
                     }
                 }
                 $tasDefDescription = trim($row['TAS_DEF_DESCRIPTION']);
@@ -784,16 +778,11 @@ class Cases
                     $res['APP_DESCRIPTION'] = $newAppDescription;
                     if (!(isset($fields['APP_DESCRIPTION']) && $fields['APP_DESCRIPTION'] == $newAppDescription)) {
                         $bUpdatedDefDescription = true;
-                        /// updating the value in content for row (APP_TITLE,$lan)
-                        $con = Propel::getConnection('workflow');
-                        $c1 = new Criteria('workflow');
-                        $c1->add(ContentPeer::CON_CATEGORY, 'APP_DESCRIPTION');
-                        $c1->add(ContentPeer::CON_ID, $sAppUid);
-                        $c1->add(ContentPeer::CON_LANG, $lang);
-                        // update set
-                        $c2 = new Criteria('workflow');
-                        $c2->add(ContentPeer::CON_VALUE, $newAppDescription);
-                        BasePeer::doUpdate($c1, $c2, $con);
+                        $appData = array();
+                        $appData['APP_UID'] = $sAppUid;
+                        $appData['APP_DESCRIPTION'] = $newAppDescription;
+                        $oApplication = new Application();
+                        $oApplication->update($appData);
                     }
                 }
             }
