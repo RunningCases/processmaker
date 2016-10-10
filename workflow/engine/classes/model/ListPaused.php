@@ -296,7 +296,7 @@ class ListPaused extends BaseListPaused {
         $criteria->add( ListPausedPeer::USR_UID, $usr_uid, Criteria::EQUAL );
         self::loadFilters($criteria, $filters);
 
-        $sort  = (!empty($filters['sort'])) ? $filters['sort'] : "APP_PAUSED_DATE";
+        $sort  = (!empty($filters['sort'])) ? ListPausedPeer::TABLE_NAME.'.'.$filters['sort'] : "APP_PAUSED_DATE";
         $dir   = isset($filters['dir']) ? $filters['dir'] : "ASC";
         $start = isset($filters['start']) ? $filters['start'] : "0";
         $limit = isset($filters['limit']) ? $filters['limit'] : "25";

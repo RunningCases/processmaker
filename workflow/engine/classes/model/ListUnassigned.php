@@ -301,7 +301,7 @@ class ListUnassigned extends BaseListUnassigned
 
         //Apply some filters
         self::loadFilters($criteria, $filters);
-        $sort  = (!empty($filters['sort'])) ? $filters['sort'] : "LIST_UNASSIGNED.DEL_DELEGATE_DATE";
+        $sort  = (!empty($filters['sort'])) ? ListUnassignedPeer::TABLE_NAME.'.'.$filters['sort'] : "LIST_UNASSIGNED.DEL_DELEGATE_DATE";
         $dir   = isset($filters['dir']) ? $filters['dir'] : "ASC";
         $start = isset($filters['start']) ? $filters['start'] : "0";
         $limit = isset($filters['limit']) ? $filters['limit'] : "25";
