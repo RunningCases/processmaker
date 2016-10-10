@@ -81,7 +81,6 @@ abstract class Importer
     public function import($option = self::IMPORT_OPTION_CREATE_NEW, $optionGroup = self::GROUP_IMPORT_OPTION_CREATE_NEW, $generateUidFromJs = null, $objectsToImport = '')
     {
         $this->prepare();
-
         //Verify data
         switch ($option) {
             case self::IMPORT_OPTION_CREATE_NEW:
@@ -159,13 +158,11 @@ abstract class Importer
         //Import
         $name = $this->importData["tables"]["bpmn"]["project"][0]["prj_name"];
 
-
-        if (\Process::existsByProTitle($name) && !is_null($generateUidFromJs)) {
-            $name = $name . ' ' . date('Y-m-d H:i:s');
-        }
-
         switch ($option) {
             case self::IMPORT_OPTION_CREATE_NEW:
+                if (\Process::existsByProTitle($name) && !is_null($generateUidFromJs)) {
+                    $name = $name . ' ' . date('Y-m-d H:i:s');
+                }
                 //Shouldn't generate new UID for all objects
                 $generateUid = false;
                 break;

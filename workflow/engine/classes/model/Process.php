@@ -503,16 +503,21 @@ class Process extends BaseProcess
         return (is_object( $oPro ) && get_class( $oPro ) == 'Process');
     }
 
-    public static function existsByProTitle ($proTitle)
+    /**
+     * @param $proTitle
+     * @return bool
+     * @throws PropelException
+     */
+    public static function existsByProTitle($proTitle)
     {
         $oCriteria = new Criteria("workflow");
         $oCriteria->addSelectColumn(ProcessPeer::PRO_TITLE);
-        $oCriteria->add( ProcessPeer::PRO_TITLE, $proTitle );
-        $oDataset = ProcessPeer::doSelectRS( $oCriteria, Propel::getDbConnection('workflow_ro') );
-        $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+        $oCriteria->add(ProcessPeer::PRO_TITLE, $proTitle);
+        $oDataset = ProcessPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
+        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
         $aRow = $oDataset->getRow();
-        return ($aRow)? true : false;
+        return ($aRow) ? true : false;
     }
 
     public static function getByProTitle($proTitle)
