@@ -430,7 +430,7 @@ class MessageApplication
                                     $appNumber = $arrayResult["caseNumber"];
                                     $this->syslog(
                                         200
-                                        ,'Case created'
+                                        ,"Case #$appNumber created"
                                         ,'CREATED-NEW-CASE'
                                         ,''//timeZone
                                         ,$messageEventDefinitionUserUid
@@ -445,7 +445,7 @@ class MessageApplication
                                     if ($arrayResult["status_code"] == 0) {
                                         $this->syslog(
                                             200
-                                            ,'Case routed'
+                                            ,"Case #$appNumber routed"
                                             ,'ROUTED-NEW-CASE'
                                             ,''//timeZone
                                             ,$messageEventDefinitionUserUid
@@ -458,7 +458,7 @@ class MessageApplication
                                     } else {
                                         $this->syslog(
                                             500
-                                            ,'Failed case routed '.$arrayResult["message"]
+                                            ,"Failed case #$appNumber. " . $arrayResult["message"]
                                             ,'ROUTED-NEW-CASE'
                                             ,''//timeZone
                                             ,$messageEventDefinitionUserUid
@@ -476,7 +476,7 @@ class MessageApplication
                                 } else {
                                     $this->syslog(
                                         500
-                                        ,'Failed case created '.$arrayResult["message"]
+                                        ,"Failed case #$appNumber. " . $arrayResult["message"]
                                         ,'CREATED-NEW-CASE'
                                         ,''//timeZone
                                         ,$messageEventDefinitionUserUid
@@ -522,7 +522,7 @@ class MessageApplication
                                     if ($arrayResult["status_code"] == 0) {
                                         $this->syslog(
                                             200
-                                            ,'Case routed'
+                                            ,"Case #$appNumber routed "
                                             ,'ROUTED-NEW-CASE'
                                             ,''//timeZone
                                             ,$userUid
@@ -535,7 +535,7 @@ class MessageApplication
                                     } else {
                                         $this->syslog(
                                         500
-                                        ,'Failed case routed'
+                                        ,"Failed case #$appNumber. " . $arrayResult["message"]
                                         ,'ROUTED-NEW-CASE'
                                         ,''//timeZone
                                         ,$userUid

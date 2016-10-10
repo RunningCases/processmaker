@@ -1399,7 +1399,7 @@ class TimerEvent
                         $this->log("CREATED-NEW-CASE", "Case #$applicationNumber created, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
                         $this->syslog(
                             200
-                            ,'Case created'
+                            ,"Case #$applicationNumber created"
                             ,'CREATED-NEW-CASE'
                             ,$datetime
                             ,''//UsrUid
@@ -1420,7 +1420,7 @@ class TimerEvent
                             $this->log("ROUTED-NEW-CASE", "Case #$applicationNumber routed, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
                             $this->syslog(
                                 200
-                                ,'Case routed'
+                                ,"Case #$applicationNumber routed"
                                 ,'ROUTED-NEW-CASE'
                                 ,$datetime
                                 ,''//usrUid
@@ -1436,7 +1436,7 @@ class TimerEvent
                             $this->log("ROUTED-NEW-CASE", "Failed: " . $arrayResult["message"] . ", Case: #$applicationNumber, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
                             $this->syslog(
                                 500
-                                ,'Failed case routed'
+                                ,"Failed case #$applicationNumber. " . $arrayResult["message"]
                                 ,'ROUTED-NEW-CASE'
                                 ,$datetime
                                 ,''//usrUid
@@ -1453,7 +1453,7 @@ class TimerEvent
                         $this->log("CREATED-NEW-CASE", "Failed: " . $arrayResult["message"] . ", PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
                         $this->syslog(
                             500
-                            ,'Failed case created '.$arrayResult["message"]
+                            ,"Failed case #$applicationNumber. " . $arrayResult["message"]
                             ,'CREATED-NEW-CASE'
                             ,$datetime
                             ,''//usrUid
@@ -1479,14 +1479,6 @@ class TimerEvent
             }
 
             $common->frontEndShow("END");
-
-            $this->log("END-NEW-CASES", "Date \"$datetime (UTC +00:00)\": End new cases");
-            $this->syslog(
-                    200
-                    ,'End new cases'
-                    ,'END-NEW-CASES'
-                    ,$datetime
-                    );
 
             //Intermediate Catch Timer-Event (continue the case) ///////////////////////////////////////////////////////
             $this->log("START-CONTINUE-CASES", "Date \"$datetime (UTC +00:00)\": Start continue the cases");
@@ -1671,13 +1663,25 @@ class TimerEvent
                                 $common->frontEndShow("TEXT", "    - OK");
 
                                 $this->log("CONTINUED-CASE", "Case #$applicationNumber continued, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                                $this->syslog(
+                                    200
+                                    ,"Case #$applicationNumber continued"
+                                    ,'CONTINUED-CASE'
+                                    ,$datetime
+                                    ,''//usrUid
+                                    ,$arrayTimerEventData["PRJ_UID"]
+                                    ,$tasUid
+                                    ,$applicationUid
+                                    ,$applicationNumber
+                                    ,$delIndex
+                                );
                             } else {
                                 $common->frontEndShow("TEXT", "    - Failed: " . $arrayResult["message"]);
 
                                 $this->log("CONTINUED-CASE", "Failed: " . $arrayResult["message"] . ", Case: #$applicationNumber, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
                                 $this->syslog(
                                     500
-                                    ,'Failed '.$arrayResult["message"]
+                                    ,"Failed case #$applicationUid. " . $arrayResult["message"]
                                     ,'CONTINUED-CASE'
                                     ,$datetime
                                     ,''//usrUid
