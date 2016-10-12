@@ -656,7 +656,7 @@ Ext.onReady ( function() {
         listeners: {
             hiddenchange: function (columnModel, columnIndex, hidden) {
                 var grid = Ext.getCmp('casesGrid');
-                if (grid && grid.getView) {
+                if (!hidden && grid && grid.getView) {
                     grid.getView().refresh();
                 }
             }
