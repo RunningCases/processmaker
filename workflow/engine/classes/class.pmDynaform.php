@@ -1254,6 +1254,12 @@ class pmDynaform
         $ds->next();
         $row = $ds->getRow();
         $json = G::json_decode($row["DYN_CONTENT"]);
+
+        $data = array();
+        $data["CURRENT_DYNAFORM"] = $dyn_uid;
+        $pmDynaForm = new pmDynaform($data);
+        $pmDynaForm->jsonr($json);
+
         return $this->jsonsf($json, $field_id);
     }
 
