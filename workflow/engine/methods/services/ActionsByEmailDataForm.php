@@ -61,7 +61,7 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
                 $record = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($record);
                 $a = new pmDynaform($record);
 
-                $a->printABE($action,$record);
+                $a->printABE($action, $record);
             } else {
                 $G_PUBLISH->AddContent(
                     'xmlform',
