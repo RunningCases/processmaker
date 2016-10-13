@@ -58,7 +58,7 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
             $record['APP_DATA'] = $caseFields['APP_DATA'];
 
             if (is_null($caseFields['DEL_FINISH_DATE'])) {
-                $a = new pmDynaform($record);
+                $a = new pmDynaform(\ProcessMaker\Util\DateTime::convertUtcToTimeZone($record));
 
                 $a->printABE($action,$record);
             } else {
