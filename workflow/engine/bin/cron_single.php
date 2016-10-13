@@ -207,6 +207,13 @@ try {
             eprintln('WARNING! No server info found!', 'red');
         }
 
+        $sSerializedFile = PATH_DATA_SITE . 'plugin.singleton';
+
+        if (file_exists($sSerializedFile)) {
+            $pluginRegistry = PMPluginRegistry::loadSingleton($sSerializedFile);
+        }
+        G::LoadClass('pmScript');
+
         //DB
         $phpCode = '';
 
@@ -333,10 +340,6 @@ try {
     PMException::registerErrorLog($e, $token);
     G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) . "\n" );
 }
-
-
-
-
 
 //Functions
 function processWorkspace()
