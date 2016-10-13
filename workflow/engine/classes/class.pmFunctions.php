@@ -3144,7 +3144,7 @@ function PMFDynaFormFields($dynUid, $appUid = false, $delIndex = 0)
     }
     $data["CURRENT_DYNAFORM"] = $dynUid;
 
-    $dynaform = new pmDynaform($data);
+    $dynaform = new pmDynaform(\ProcessMaker\Util\DateTime::convertUtcToTimeZone($data));
     $dynaform->onPropertyRead = function(&$json, $key, $value) {
         if (isset($json->data) && !isset($json->value)) {
             $json->value = $json->data->value;

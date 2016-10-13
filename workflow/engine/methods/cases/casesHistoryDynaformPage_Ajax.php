@@ -394,7 +394,7 @@ if ($actionAjax == 'dynaformChangeLogViewHistory') {
     $FieldsPmDynaform = $Fields;
     $FieldsPmDynaform["PRO_UID"] = $_SESSION['PROCESS'];
     $FieldsPmDynaform["CURRENT_DYNAFORM"] = $_GET['DYN_UID'];
-    $a = new pmDynaform($FieldsPmDynaform);
+    $a = new pmDynaform(\ProcessMaker\Util\DateTime::convertUtcToTimeZone($FieldsPmDynaform));
     if ($a->isResponsive()) {
         $a->printView();
     } else {
@@ -485,7 +485,7 @@ if ($actionAjax == 'historyDynaformGridPreview') {
     G::LoadClass('pmDynaform');
     $FieldsPmDynaform = $Fields;
     $FieldsPmDynaform["CURRENT_DYNAFORM"] = $_GET['DYN_UID'];
-    $a = new pmDynaform($FieldsPmDynaform);
+    $a = new pmDynaform(\ProcessMaker\Util\DateTime::convertUtcToTimeZone($FieldsPmDynaform));
     if ($a->isResponsive()) {
         $a->printView();
     } else {
