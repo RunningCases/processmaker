@@ -298,7 +298,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $criteria->addSelectColumn(ListParticipatedLastPeer::TAS_UID);
         $criteria->addSelectColumn(ListParticipatedLastPeer::PRO_UID);
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_NUMBER);
-        $criteria->addSelectColumn(ListParticipatedLastPeer::APP_TITLE);
+        $criteria->addSelectColumn(ApplicationPeer::APP_TITLE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_PRO_TITLE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_TAS_TITLE);
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_STATUS);
@@ -340,6 +340,8 @@ class ListParticipatedLast extends BaseListParticipatedLast
             $criteria->setLimit( $limit );
             $criteria->setOffset( $start );
         }
+
+        $criteria->addJoin(ListParticipatedLastPeer::APP_UID,ApplicationPeer::APP_UID,Criteria::LEFT_JOIN);
 
         $dataset = ListParticipatedLastPeer::doSelectRS($criteria, Propel::getDbConnection('workflow_ro') );
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
