@@ -1138,16 +1138,15 @@ class TimerEvent
      *
      * return void
      */
-    private function log($action, $value = "")
+    private function log($action, $value = "", $status = "timereventcron")
     {
         try {
             $workspace = (defined("SYS_SYS"))? SYS_SYS : "Wokspace Undefined";
             $ipClient = \G::getIpAddress();
 
-            $username = "timereventcron";
-            $fullname = "timereventcron";
+            $actionTimer = "timereventcron: ";
 
-            \G::log("|". $workspace ."|". $ipClient ."|". $username . "|" . $fullname ."|" . $action . "|" . $value, PATH_DATA, "timerevent.log");
+            \G::log("|". $workspace ."|". $actionTimer . $action ."|". $status . "|" . $value , PATH_DATA, "timerevent.log");
         } catch (\Exception $e) {
             throw $e;
         }
@@ -1396,7 +1395,7 @@ class TimerEvent
                         $common->frontEndShow("TEXT", "    - OK case #$applicationNumber was created");
                         $common->frontEndShow("TEXT", "> Routing the case #$applicationNumber...");
 
-                        $this->log("CREATED-NEW-CASE", "Case #$applicationNumber created, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                        $this->log("CREATED-NEW-CASE", "Case #$applicationNumber created, APP_UID: $applicationUid");
                         $this->syslog(
                             200
                             ,"Case #$applicationNumber created"
@@ -1417,7 +1416,7 @@ class TimerEvent
                         if ($arrayResult["status_code"] == 0) {
                             $common->frontEndShow("TEXT", "    - OK");
 
-                            $this->log("ROUTED-NEW-CASE", "Case #$applicationNumber routed, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                            $this->log("ROUTED-NEW-CASE", "Case #$applicationNumber routed, APP_UID: $applicationUid");
                             $this->syslog(
                                 200
                                 ,"Case #$applicationNumber routed"
@@ -1433,7 +1432,7 @@ class TimerEvent
                         } else {
                             $common->frontEndShow("TEXT", "    - Failed: " . $arrayResult["message"]);
 
-                            $this->log("ROUTED-NEW-CASE", "Failed: " . $arrayResult["message"] . ", Case: #$applicationNumber, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                            $this->log("ROUTED-NEW-CASE", $arrayResult["message"] . ", Case: #$applicationNumber, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"], "Failed");
                             $this->syslog(
                                 500
                                 ,"Failed case #$applicationNumber. " . $arrayResult["message"]
@@ -1450,7 +1449,7 @@ class TimerEvent
                     } else {
                         $common->frontEndShow("TEXT", "    - Failed: " . $arrayResult["message"]);
 
-                        $this->log("CREATED-NEW-CASE", "Failed: " . $arrayResult["message"] . ", PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                        $this->log("CREATED-NEW-CASE", $arrayResult["message"] . ", PRO_UID: " . $arrayTimerEventData["PRJ_UID"], "Failed");
                         $this->syslog(
                             500
                             ,"Failed case #$applicationNumber. " . $arrayResult["message"]
@@ -1662,7 +1661,7 @@ class TimerEvent
                             if ($arrayResult["status_code"] == 0) {
                                 $common->frontEndShow("TEXT", "    - OK");
 
-                                $this->log("CONTINUED-CASE", "Case #$applicationNumber continued, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                                $this->log("CONTINUED-CASE", "Case #$applicationNumber continued, APP_UID: $applicationUid");
                                 $this->syslog(
                                     200
                                     ,"Case #$applicationNumber continued"
@@ -1678,7 +1677,7 @@ class TimerEvent
                             } else {
                                 $common->frontEndShow("TEXT", "    - Failed: " . $arrayResult["message"]);
 
-                                $this->log("CONTINUED-CASE", "Failed: " . $arrayResult["message"] . ", Case: #$applicationNumber, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                                $this->log("CONTINUED-CASE", $arrayResult["message"] . ", Case: #$applicationNumber, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"], "Failed");
                                 $this->syslog(
                                     500
                                     ,"Failed case #$applicationUid. " . $arrayResult["message"]
@@ -1730,8 +1729,6 @@ class TimerEvent
             }
 
             $common->frontEndShow("END");
-
-            $this->log("END-CONTINUE-CASES", "Date \"$datetime (UTC +00:00)\": End continue the cases");
         } catch (\Exception $e) {
             throw $e;
         }
