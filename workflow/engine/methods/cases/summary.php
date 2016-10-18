@@ -40,23 +40,22 @@ try {
     if ($_REQUEST['APP_UID'] == '' || $_REQUEST['DEL_INDEX'] == '' || $_REQUEST['DYN_UID'] == '') {
         throw new Exception( G::LoadTranslation( 'ID_REQUIRED_FIELDS_ERROR' ) . ' (APP_UID, DEL_INDEX, DYN_UID)' );
     }
+
     G::LoadClass( 'case' );
     $case = new Cases();
-    if ($RBAC->userCanAccess( 'PM_ALLCASES' ) < 0 && $case->userParticipatedInCase( $_REQUEST['APP_UID'], $_SESSION['USER_LOGGED'] ) == 0) {
-        throw new Exception( G::LoadTranslation( 'ID_NO_PERMISSION_NO_PARTICIPATED' ) );
-    }
+    $viewSummaryForm = 0;
     $applicationFields = $case->loadCase( $_REQUEST['APP_UID'], $_REQUEST['DEL_INDEX'] );
+
     /*----------------------------------********---------------------------------*/
     $respView = $case->getAllObjectsFrom( $applicationFields['PRO_UID'], $_REQUEST['APP_UID'], $applicationFields['TAS_UID'], $_SESSION['USER_LOGGED'], 'VIEW' );
-
-    if ($respView['SUMMARY_FORM'] == 0) {
-        global $G_PUBLISH;
-        $G_PUBLISH = new Publisher();
-        $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', array ('MESSAGE' => G::LoadTranslation( 'ID_SUMMARY_FORM_NO_PERMISSIONS' )) );
-        G::RenderPage( 'publish', 'blank' );
-        die();
-    }
+    $viewSummaryForm = $respView['SUMMARY_FORM'];
     /*----------------------------------********---------------------------------*/
+
+    //Check if the user has the Process Permissions - Summary Form
+    if ($viewSummaryForm == 0) {
+        throw new Exception( G::LoadTranslation( 'ID_SUMMARY_FORM_NO_PERMISSIONS' ) );
+    }
+
     $applicationFields['APP_DATA']['__DYNAFORM_OPTIONS']['PREVIOUS_STEP_LABEL'] = '';
     $applicationFields['APP_DATA']['__DYNAFORM_OPTIONS']['PREVIOUS_STEP'] = '#';
     $applicationFields['APP_DATA']['__DYNAFORM_OPTIONS']['NEXT_STEP_LABEL'] = '';

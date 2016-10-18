@@ -1681,7 +1681,7 @@ class pmDynaform
                                 break;
                             case 'form':
                                 $arrayGrid = array_merge(
-                                    $arrayGrid, $this->getGridsAndFields($field, $flagGridAssocToVar)
+                                    $arrayGrid, self::getGridsAndFields($field, $flagGridAssocToVar)
                                 );
                                 break;
                         }
