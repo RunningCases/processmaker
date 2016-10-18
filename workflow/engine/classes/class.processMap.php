@@ -131,11 +131,9 @@ class processMap
                     $oDatasetX->next();
                     $aRowx = $oDatasetX->getRow();
                     if ($oProcess->exists($aRowx['PRO_UID'])) {
-                        //$aRowy = $oProcess->load($aRowx['PRO_UID']);
-                        //$oTask->label = $aRowy['PRO_TITLE'];
                         $oTask->label = htmlentities($aRowx['TAS_TITLE'], ENT_QUOTES, 'UTF-8');
                     } else {
-                        $oTask->label = htmlentities($aRow1['CON_VALUE'], ENT_QUOTES, 'UTF-8');
+                        $oTask->label = htmlentities($aRow1['TAS_TITLE'], ENT_QUOTES, 'UTF-8');
                     }
                 }
                 $oTask->taskINI = (strtolower($aRow1['TAS_START']) == 'true' ? true : false);
