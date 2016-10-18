@@ -127,7 +127,7 @@ class AppNotes extends BaseAppNotes
             $response['message'] = '';
         }
 
-        if ($notify) {
+        if ($notify === 'true') {
             if ($noteRecipients == "") {
                 $noteRecipientsA = array ();
                 G::LoadClass( 'case' );
