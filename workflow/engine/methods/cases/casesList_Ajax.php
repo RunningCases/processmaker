@@ -276,7 +276,8 @@ if ($actionAjax == 'reassignCase') {
             require_once ("classes/model/AppNotes.php");
             $appNotes = new AppNotes();
             $noteContent = addslashes($_POST['NOTE_REASON']);
-            $res = $appNotes->postNewNote($_SESSION['APPLICATION'], $_SESSION['USER_LOGGED'], $noteContent, $_POST['NOTIFY_REASSIGN']);
+            $notifyReassign = $_POST['NOTIFY_REASSIGN'] === 'true' ? true: false;
+            $res = $appNotes->postNewNote($_SESSION['APPLICATION'], $_SESSION['USER_LOGGED'], $noteContent, $notifyReassign);
         }
     } catch (Exception $e) {
         $result->status = 1;
