@@ -52,6 +52,12 @@ function __autoload ($sClassName)
     }
 }
 
+if (!defined('PATH_WORKSPACE')) {
+    define('PATH_WORKSPACE', PATH_DATA_SITE);
+
+    set_include_path(get_include_path() . PATH_SEPARATOR . PATH_WORKSPACE);
+}
+
 //Start - Custom functions
 G::LoadClass( 'pmFunctions' );
 //End - Custom functions
