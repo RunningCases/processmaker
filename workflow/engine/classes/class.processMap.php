@@ -1533,16 +1533,16 @@ class processMap
                 $oCriteria->setDistinct();
                 $oCriteria->addSelectColumn(DynaformPeer::DYN_UID);
                 $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
-                
+
                 $aConditions   = array();
                 $aConditions[] = array(DynaformPeer::DYN_UID, ContentPeer::CON_ID);
                 $aConditions[] = array(ContentPeer::CON_CATEGORY, $del . "DYN_TITLE" . $del);
                 $aConditions[] = array(ContentPeer::CON_LANG, $del . "en" . $del);
                 $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-                
+
                 $oCriteria->add(DynaformPeer::PRO_UID, $_SESSION["PROCESS"]);
                 $oCriteria->add(DynaformPeer::DYN_TYPE, "grid");
-                
+
                 $oCriteria->addAscendingOrderByColumn(ContentPeer::CON_VALUE);
 
                 $numRows = DynaformPeer::doCount($oCriteria);
@@ -2499,8 +2499,8 @@ class processMap
             //      echo $sql;
             //      var_dump($aRow);
             //      die();
-            
-           
+
+
             if (is_array($aRow)) {
                 $aFields['ROU_TYPE'] = $aRow['ROU_TYPE'];
                 $aFields['ROU_TYPE_OLD'] = $aRow['ROU_TYPE'];
@@ -2585,7 +2585,7 @@ class processMap
                         throw new Exception(G::loadTranslation('ID_INVALID_ROU_TYPE_DEFINITION_ON_ROUTE_TABLE'));
                         break;
                 }
-                
+
             } else {
                 throw new Exception(G::loadTranslation('ID_NO_DERIVATIONS_DEFINED'));
             }
@@ -4616,13 +4616,11 @@ class processMap
      * @param string $sProcessUID
      * @param string $sTaskUID
      * @param string $sIndex
-     * @return void throw Exception $oError
-     * @throw Exception $oError
+     * @throws Exception
      */
     public function subProcess_Properties($sProcessUID = '', $sTaskUID = '', $sIndex = '')
     {
         try {
-            //echo "$sProcessUID = '', $sTaskUID = '', $sIndex = ''";
             $SP_VARIABLES_OUT = array();
             $SP_VARIABLES_IN = array();
 
@@ -4631,21 +4629,29 @@ class processMap
             $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
             $_DBArray['NewCase'] = $this->subProcess_TaskIni($sProcessUID);
             unset($_DBArray['TheProcesses']);
-            $_DBArray['TheProcesses'][] = array('pro_uid' => 'char', 'value' => 'char' );
+            $_DBArray['TheProcesses'][] = array('pro_uid' => 'char', 'value' => 'char');
             $i = 0;
             foreach ($_DBArray['NewCase'] as $aRow) {
                 if ($i > 0) {
-                    $_DBArray['TheProcesses'][] = array('pro_uid' => $aRow['pro_uid'] . '_' . $i, 'value' => $aRow['value'] );
+                    $_DBArray['TheProcesses'][] = array('pro_uid' => $aRow['pro_uid'] . '_' . $i, 'value' => $aRow['value']);
                 }
                 $i++;
             }
-            //print'<hr>';print_r($_DBArray['NewCase']);print'<hr>';
             $oCriteria = new Criteria('workflow');
-            $del = DBAdapter::getStringDelimiter();
+            $oCriteria->addSelectColumn(SubProcessPeer::SP_UID);
+            $oCriteria->addSelectColumn(SubProcessPeer::PRO_UID);
             $oCriteria->addSelectColumn(TaskPeer::TAS_UID);
             $oCriteria->addSelectColumn(TaskPeer::TAS_TITLE);
+            $oCriteria->addSelectColumn(SubProcessPeer::PRO_PARENT);
+            $oCriteria->addSelectColumn(SubProcessPeer::TAS_PARENT);
+            $oCriteria->addSelectColumn(SubProcessPeer::SP_TYPE);
+            $oCriteria->addSelectColumn(SubProcessPeer::SP_SYNCHRONOUS);
+            $oCriteria->addSelectColumn(SubProcessPeer::SP_SYNCHRONOUS_TYPE);
+            $oCriteria->addSelectColumn(SubProcessPeer::SP_SYNCHRONOUS_WAIT);
             $oCriteria->addSelectColumn(SubProcessPeer::SP_VARIABLES_OUT);
-            $oCriteria->add(SubProcessPeer::PRO_PARENT, $sProcessUID);
+            $oCriteria->addSelectColumn(SubProcessPeer::SP_VARIABLES_IN);
+            $oCriteria->addSelectColumn(SubProcessPeer::SP_GRID_IN);
+            $oCriteria->addSelectColumn(SubProcessPeer::TAS_UID);
             $oCriteria->add(SubProcessPeer::PRO_PARENT, $sProcessUID);
             $oCriteria->add(SubProcessPeer::TAS_PARENT, $sTaskUID);
             $oCriteria->addJoin(SubProcessPeer::TAS_PARENT, TaskPeer::TAS_UID);
@@ -4653,10 +4659,7 @@ class processMap
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             $aRow = $oDataset->getRow();
-
             $aRow['TASKS'] = $aRow['TAS_UID'];
-            //print "<hr>".$aRow['TASKS']."<hr>";
-            //$aRow['SPROCESS_NAME'] = $aRow['TAS_TITLE'];
             $aRow['SPROCESS_NAME'] = $aRow['TAS_TITLE'];
             $SP_VARIABLES_OUT = unserialize($aRow['SP_VARIABLES_OUT']);
             if (is_array($SP_VARIABLES_OUT)) {
@@ -4678,7 +4681,6 @@ class processMap
                 }
             }
             $aRow['INDEX'] = $sIndex;
-            //print '<hr>';print_r($aRow);
             global $G_PUBLISH;
             $G_PUBLISH = new Publisher();
             $G_PUBLISH->AddContent('xmlform', 'xmlform', 'processes/processes_subProcess', '', $aRow, 'processes_subProcessSave');
