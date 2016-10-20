@@ -849,6 +849,7 @@ class Light extends Api
                     $result['stepId']       = $activitySteps[$i]["step_uid"];
                     $result['stepUidObj']   = $activitySteps[$i]["step_uid_obj"];
                     $result['stepMode']     = $activitySteps[$i]['step_mode'];
+                    $result['stepCondition'] = $activitySteps[$i]['step_condition'];
                     $result['stepPosition'] = $activitySteps[$i]['step_position'];
                     $trigger = $oMobile->statusTriggers($step->doGetActivityStepTriggers($activitySteps[$i]["step_uid"], $act_uid, $prj_uid));
                     $result["triggers"]    = $trigger;

@@ -97,6 +97,7 @@ class Light
                                 $newForm[$c]['stepId']      = $form["step_uid"];
                                 $newForm[$c]['stepUidObj']  = $form["step_uid_obj"];
                                 $newForm[$c]['stepMode']    = $form['step_mode'];
+                                $newForm[$c]['stepCondition'] = $form['step_condition'];
                                 $newForm[$c]['stepPosition'] = $form['step_position'];
                                 $trigger = $this->statusTriggers($step->doGetActivityStepTriggers($form["step_uid"], $tempTreeChild['taskId'], $tempTreeChild['processId']));
                                 $newForm[$c]["triggers"]    = $trigger;
