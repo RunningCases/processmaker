@@ -175,6 +175,10 @@ class TaskMapBuilder
 
         $tMap->addColumn('TAS_NOT_EMAIL_FROM_FORMAT', 'TasNotEmailFromFormat', 'int', CreoleTypes::INTEGER, false, null);
 
+        $tMap->addColumn('TAS_OFFLINE', 'TasOffline', 'string', CreoleTypes::VARCHAR, true, 20);
+
+        $tMap->addColumn('TAS_AUTO_ROOT', 'TasAutoRoot', 'string', CreoleTypes::VARCHAR, true, 20);
+
         $tMap->addValidator('TAS_TYPE', 'validValues', 'propel.validator.ValidValuesValidator', 'NORMAL|ADHOC|SUBPROCESS|HIDDEN|GATEWAYTOGATEWAY|WEBENTRYEVENT|END-MESSAGE-EVENT|START-MESSAGE-EVENT|INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT|SCRIPT-TASK|START-TIMER-EVENT|INTERMEDIATE-CATCH-TIMER-EVENT|END-EMAIL-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT', 'Please set a valid value for TAS_TYPE');
 
         $tMap->addValidator('TAS_TIMEUNIT', 'validValues', 'propel.validator.ValidValuesValidator', 'MINUTES|HOURS|DAYS|WEEKS|MONTHS', 'Please select a valid value for TAS_TIMEUNIT.');
