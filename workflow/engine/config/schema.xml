@@ -2197,6 +2197,16 @@
     <column name="LOG_END_DATE" type="TIMESTAMP" required="false"/>
     <column name="LOG_CLIENT_HOSTNAME" type="VARCHAR" size="100" required="true" default=""/>
     <column name="USR_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <index name="indexLoginLogSelect">
+      <index-column name="LOG_SID"/>
+      <index-column name="USR_UID"/>
+      <index-column name="LOG_STATUS"/>
+      <index-column name="LOG_END_DATE"/>
+      <vendor type="mysql">
+        <parameter name="Table" value="LOGIN_LOG"/>
+        <parameter name="Key_name" value="indexLoginLogSelect"/>
+      </vendor>
+    </index>
   </table>
   <table name="USERS_PROPERTIES">
     <vendor type="mysql">

@@ -24,20 +24,6 @@
  */
 class LoginLogPeer extends BaseLoginLogPeer
 {
-  public static function retrieveByPK($pk, $con = null)
-  {
-    if ($con === null) {
-      $con = Propel::getConnection(self::DATABASE_NAME);
-    }
 
-    $criteria = new Criteria(LoginLogPeer::DATABASE_NAME);
-
-    $criteria->add(LoginLogPeer::LOG_UID, $pk);
-
-
-    $v = LoginLogPeer::doSelect($criteria, $con);
-
-    return !empty($v) > 0 ? $v[0] : null;
-  }
 }
 
