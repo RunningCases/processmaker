@@ -88,6 +88,7 @@ if (isset ($_SESSION['USER_LOGGED'])) {
             $weblog = new LoginLog();
             $endDate = date('Y-m-d H:i:s');
             $aLog = array();
+            $aLog['LOG_ID'] = $aRow['LOG_ID'];
             $aLog['LOG_UID'] = $aRow['LOG_UID'];
             $aLog['LOG_STATUS'] = 'CLOSED';
             $aLog['LOG_IP'] = $aRow['LOG_IP'];
