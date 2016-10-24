@@ -13,12 +13,20 @@ function dynaFormChanged(frm) {
  * @param formStep
  */
 function submitNextStep(formStep) {
-    var btnSubmit = $('<button>');
-    btnSubmit.attr("type","submit");
-    btnSubmit.hide();
-    $(formStep).append(btnSubmit);
-    btnSubmit.click();
-    btnSubmit.remove();
+    var btnSubmit,
+        index = 0;
+    btnSubmit = formStep.querySelectorAll('[type="submit"]');
+    if (btnSubmit && btnSubmit.length){
+        btnSubmit[index].click();
+    }else{
+        btnSubmit = $('<button>');
+        btnSubmit.attr("type","submit");
+        btnSubmit.attr("name","form[__NEXT_STEP__]");
+        btnSubmit.hide();
+        $(formStep).append(btnSubmit);
+        btnSubmit.click();
+        btnSubmit.remove();
+    }
 }
 $(window).load(function () {
     var delIndexDefault = "0",
