@@ -1981,26 +1981,22 @@ class workspaceTools
         }
     }
 
-    public function verifyLicenseEnterprise ($workspace)
+    /**
+     * @param $workspace
+     */
+    public function verifyLicenseEnterprise($workspace)
     {
-        $this->initPropel( true );
-
-        require_once ("classes/model/LicenseManager.php");
+        $this->initPropel(true);
         $oCriteria = new Criteria('workflow');
         $oCriteria->add(LicenseManagerPeer::LICENSE_STATUS, 'ACTIVE');
         $oDataset = LicenseManagerPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $row = array();
         if ($oDataset->next()) {
             $row = $oDataset->getRow();
-
-            $tr = LicenseManagerPeer::retrieveByPK ( $row['LICENSE_UID'] );
-            $pos = strpos( $row['LICENSE_PATH'], 'license_' );
-            $license = substr( $row['LICENSE_PATH'], $pos, strlen($row['LICENSE_PATH']));
-            $tr->setLicensePath   ( PATH_DATA . "sites/" . $workspace . "/licenses/" . $license);
-            $tr->setLicenseWorkspace ( $workspace );
-
-            $res = $tr->save ();
+            $tr = LicenseManagerPeer::retrieveByPK($row['LICENSE_UID']);
+            $tr->setLicensePath(PATH_DATA_SITE . basename($row['LICENSE_PATH']));
+            $tr->setLicenseWorkspace($workspace);
+            $res = $tr->save();
         }
     }
 
