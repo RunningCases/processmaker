@@ -167,6 +167,14 @@ abstract class Importer
                 $generateUid = false;
                 break;
             case self::IMPORT_OPTION_OVERWRITE:
+                $obj = \ProcessPeer::retrieveByPK($this->metadata['uid']);
+                if (is_object($obj)) {
+                    if ($obj->getProTitle() !== $name) {
+                        if (\Process::existsByProTitle($name)) {
+                            $name = $name . ' ' . date('Y-m-d H:i:s');
+                        }
+                    }
+                }
                 //Shouldn't generate new UID for all objects
                 /*----------------------------------********---------------------------------*/
                 if($objectsToImport === ''){
@@ -212,13 +220,13 @@ abstract class Importer
                 //Should generate new UID for all objects
                 $this->disableProject();
 
-                $name = "New - " . $name . " - " . date("M d, H:i");
+                $name = "New - " . $name . " - " . date('Y-m-d H:i:s');
 
                 $generateUid = true;
                 break;
             case self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW:
                 //Should generate new UID for all objects
-                $name = \G::LoadTranslation("ID_COPY_OF") . " - " . $name . " - " . date("M d, H:i");
+                $name = \G::LoadTranslation("ID_COPY_OF") . " - " . $name . " - " . date('Y-m-d H:i:s');
 
                 $generateUid = true;
                 break;
