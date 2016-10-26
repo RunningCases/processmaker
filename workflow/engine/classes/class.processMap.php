@@ -123,6 +123,9 @@ class processMap
                     $oTask->label = htmlentities($aRow1['TAS_TITLE'], ENT_QUOTES, 'UTF-8');
                 } else {
                     $oCriteria = new Criteria('workflow');
+                    $oCriteria->addSelectColumn(SubProcessPeer::SP_UID);
+                    $oCriteria->addSelectColumn(SubProcessPeer::PRO_UID);
+                    $oCriteria->addSelectColumn(TaskPeer::TAS_TITLE);
                     $oCriteria->add(SubProcessPeer::PRO_PARENT, $aRow1['PRO_UID']);
                     $oCriteria->add(SubProcessPeer::TAS_PARENT, $aRow1['TAS_UID']);
                     $oCriteria->addJoin(SubProcessPeer::TAS_PARENT, TaskPeer::TAS_UID);
