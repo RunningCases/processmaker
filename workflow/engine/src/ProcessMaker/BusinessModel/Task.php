@@ -115,10 +115,6 @@ class Task
             $task = new \Task();
             $arrayDataAux = $task->load($taskUid);
 
-            //$arrayDataAux["INDEX"] = 0;
-            //$arrayDataAux["IFORM"] = 1;
-            //$arrayDataAux["LANG"] = SYS_LANG;
-
             //Assignment rules
             if ($arrayDataAux["TAS_ASSIGN_TYPE"] == "SELF_SERVICE") {
                 $arrayDataAux["TAS_ASSIGN_TYPE"] = (!empty($arrayDataAux["TAS_GROUP_VARIABLE"])) ? "SELF_SERVICE_EVALUATE" : $arrayDataAux["TAS_ASSIGN_TYPE"];
