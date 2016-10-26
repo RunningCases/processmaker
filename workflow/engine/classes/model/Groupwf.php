@@ -318,7 +318,7 @@ class Groupwf extends BaseGroupwf
         return $result;
     }
 
-    public function getAllGroup($start = null, $limit = null, $search = null, $sortField = null, $sortDir = null)
+    public function getAllGroup($start = null, $limit = null, $search = null, $sortField = null, $sortDir = null, $countUsers = false)
     {
         require_once PATH_RBAC . "model/RbacUsers.php";
         require_once 'classes/model/TaskUser.php';
@@ -336,6 +336,22 @@ class Groupwf extends BaseGroupwf
             $criteria->add(GroupwfPeer::GRP_TITLE, '%' . $search . '%', Criteria::LIKE);
         }
         $totalRows = GroupwfPeer::doCount($criteria);
+
+        if ($countUsers) {
+            //This query must be changed in the next version from Propel
+            $criteria->addAsColumn("GRP_USERS",
+            "(SELECT 
+                COUNT(" . UsersPeer::USR_UID . ")
+            FROM
+                " . GroupUserPeer::TABLE_NAME . "
+            LEFT JOIN
+              " . UsersPeer::TABLE_NAME . "
+            ON (" . GroupUserPeer::USR_UID . " = " . UsersPeer::USR_UID . ")
+            WHERE
+              " . GroupUserPeer::GRP_UID . " = " . GroupwfPeer::GRP_UID . " AND
+              " . UsersPeer::USR_STATUS . " <> 'CLOSED')");
+        }
+
         if (!is_null($sortDir) && trim($sortDir) != "" && strtoupper($sortDir) == "DESC") {
             $criteria->addDescendingOrderByColumn($sortField);
         } else {
