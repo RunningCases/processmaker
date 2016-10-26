@@ -1880,6 +1880,18 @@ msgid "Reassign"
 msgstr "Reassign"
 
 # TRANSLATION
+# LABEL/ID_REASON
+#: LABEL/ID_REASON
+msgid "Reason"
+msgstr "Reason"
+
+# TRANSLATION
+# LABEL/ID_NOTIFY
+#: LABEL/ID_NOTIFY
+msgid "Notify"
+msgstr "Notify"
+
+# TRANSLATION
 # LABEL/ID_PRIORITY_VH
 #: LABEL/ID_PRIORITY_VH
 msgid "VERY HIGH"
@@ -2898,6 +2910,12 @@ msgstr "Process"
 #: LABEL/ID_REASSIGN_CASES
 msgid "Reassign Cases"
 msgstr "Reassign Cases"
+
+# TRANSLATION
+# LABEL/ID_THE_REASON_REASSIGN_USER_EMPTY
+#: LABEL/ID_THE_REASON_REASSIGN_USER_EMPTY
+msgid "Please complete the reassign reason."
+msgstr "Please complete the reassign reason."
 
 # TRANSLATION
 # LABEL/ID_ALERT_MESSAGE
