@@ -2016,4 +2016,33 @@ class Task
         //Return
         return false;
     }
+
+    /**
+     * Return a specific value from TASK table
+     *
+     * @param string $prjUid Unique uid of Project
+     * @param string $actUid Unique uid of Task
+     * @param array $arrayColumns name of column
+     *
+     * return string
+     */
+    public function getColumnValues($prjUid, $actUid, $arrayColumns){
+        try {
+                $prj_uid = $this->validateProUid($prjUid);
+                $taskUid = $this->validateActUid($actUid);
+                $task = new \Task();
+                $arrayDataAux = $task->load($taskUid);
+                $aProperties = array();
+                foreach ($arrayColumns as $value) {
+                    if(isset($arrayDataAux[$value])){
+                        $aProperties[] = $arrayDataAux[$value];
+                    } else {
+                        $aProperties[] = '';
+                    }
+                }
+                return $aProperties;
+        } catch (Exception $e) {
+                throw $e;
+        }
+    }
 }
