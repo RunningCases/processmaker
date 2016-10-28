@@ -82,6 +82,7 @@ class Light
                         $tempTreeChild['text']      = $keyChild; //ellipsis ( $keyChild, 50 );
                         $tempTreeChild['processId'] = $processInfoChild['pro_uid'];
                         $tempTreeChild['taskId']    = $processInfoChild['uid'];
+                        list($tempTreeChild['offlineEnabled'], $tempTreeChild['autoRoot']) = $task->getColumnValues($processInfoChild['pro_uid'], $processInfoChild['uid'], array('TAS_OFFLINE', 'TAS_AUTO_ROOT'));
                         $forms = $task->getSteps($processInfoChild['uid']);
                         $newForm = array();
                         $c = 0;

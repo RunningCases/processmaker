@@ -207,11 +207,24 @@ class Light extends Api
             }
             /*----------------------------------********---------------------------------*/
 
+            //Complete the list information with some task properties
+            $response['data'] = $this->addTaskProperties($response['data']);
+
             $result   = $this->parserDataTodo($response['data']);
             return DateTime::convertUtcToIso8601($result, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
+    }
+
+    public function addTaskProperties($data){
+        $task = new \ProcessMaker\BusinessModel\Task();
+        foreach ($data as $key => $value) {
+            $valueUpper = array_change_key_case($value, CASE_UPPER);
+            list($data[$key]['TAS_OFFLINE'], $data[$key]['TAS_AUTO_ROOT']) = $task->getColumnValues($valueUpper['PRO_UID'], $valueUpper['TAS_UID'], array('TAS_OFFLINE', 'TAS_AUTO_ROOT'));
+        }
+        return $data;
+
     }
 
     public function parserDataTodo ($data)
@@ -240,7 +253,9 @@ class Light extends Api
             ),
             'task' => array(
                 'TAS_UID'       => 'taskId',
-                'APP_TAS_TITLE' => 'name'
+                'APP_TAS_TITLE' => 'name',
+                'TAS_OFFLINE'   => 'offlineEnabled',
+                'TAS_AUTO_ROOT' => 'autoRoot'
             )
         );
 
@@ -302,6 +317,9 @@ class Light extends Api
             }
             /*----------------------------------********---------------------------------*/
 
+            //Complete the list information with some task properties
+            $response['data'] = $this->addTaskProperties($response['data']);
+
             $result   = $this->parserDataDraft($response['data']);
             return DateTime::convertUtcToIso8601($result, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
@@ -334,7 +352,9 @@ class Light extends Api
             ),
             'task' => array(
                 'TAS_UID'       => 'taskId',
-                'APP_TAS_TITLE' => 'name'
+                'APP_TAS_TITLE' => 'name',
+                'TAS_OFFLINE'   => 'offlineEnabled',
+                'TAS_AUTO_ROOT' => 'autoRoot'
             )
         );
 
