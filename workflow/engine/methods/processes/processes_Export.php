@@ -30,7 +30,7 @@ try {
 		$proUid = Bootstrap::json_decode( $_POST['data']);
 		$_GET["pro_uid"] = $proUid->pro_uid;
         /*----------------------------------********---------------------------------*/
-        $_GET["objects"] = $proUid->objects;
+        $_GET["objects"] = (property_exists($proUid, 'objects'))? $proUid->objects : '';
         /*----------------------------------********---------------------------------*/
 	}
     if (\BpmnProject::exists($_GET["pro_uid"]) && isset($_GET['objects'])) {
@@ -68,7 +68,7 @@ try {
 
     	$G_PUBLISH = new Publisher();
     	$G_PUBLISH->AddContent( "xmlform", "xmlform", "processes/processes_Export", "", $result );
-    
+
     	G::RenderPage( "publish", "raw" );
     } else{
     	echo json_encode($response);
@@ -162,4 +162,3 @@ try {
 //    $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', $aMessage );
 //    G::RenderPage( 'publish', 'raw' );
 //}
-
