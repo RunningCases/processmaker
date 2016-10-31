@@ -2970,7 +2970,7 @@ class Cases
                 //Current users of OPEN DEL_INDEX thread
                 $aCurUser = $appDelegation->getCurrentUsers($val['APP_UID'], $val['DEL_INDEX']);
                 if (!empty($aCurUser)) {
-                    foreach ($aCurUser as $key => $value) {
+                    foreach ($aCurUser as $keyAux => $value) {
                         if ($value === $data['usr_uid_target']) {
                             $flagReassign = false;
                             $result = 1;
@@ -2980,14 +2980,15 @@ class Cases
                     //DEL_INDEX is CLOSED
                     $dataResponse['cases'][$key]['result'] = 0;
                     $dataResponse['cases'][$key]['status'] = \G::LoadTranslation('ID_REASSIGNMENT_ERROR');
+                    $flagReassign = false;
                 }
 
                 if ($flagReassign) {
                     $reassigned = $oCases->reassignCase($val['APP_UID'], $val['DEL_INDEX'], $usrUid, $data['usr_uid_target']);
                     $result = $reassigned ? 1 : 0;
+                    $dataResponse['cases'][$key]['status'] = 'SUCCESS';
                 }
                 $dataResponse['cases'][$key]['result'] = $result;
-                $dataResponse['cases'][$key]['status'] = 'SUCCESS';
             }
         }
         unset($dataResponse['usr_uid_target']);

@@ -435,6 +435,7 @@ class pmDynaform
                     $oCriteriaAppDocument->addSelectColumn(AppDocumentPeer::DOC_VERSION);
                     $oCriteriaAppDocument->add(AppDocumentPeer::APP_UID, $this->fields["APP_DATA"]["APPLICATION"]);
                     $oCriteriaAppDocument->add(AppDocumentPeer::APP_DOC_FIELDNAME, $json->name);
+                    $oCriteriaAppDocument->add(AppDocumentPeer::APP_DOC_STATUS, 'ACTIVE');
                     $oCriteriaAppDocument->addDescendingOrderByColumn(AppDocumentPeer::APP_DOC_CREATE_DATE);
                     $oCriteriaAppDocument->setLimit(1);
                     $rs = AppDocumentPeer::doSelectRS($oCriteriaAppDocument);
