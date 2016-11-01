@@ -40,12 +40,6 @@ require_once ("classes/model/AdditionalTables.php");
 require_once ("classes/model/AppDelay.php");*/
 G::LoadClass( 'case' );
 
-G::LoadSystem('inputfilter');
-$filter = new InputFilter();
-$_POST = $filter->xssFilterHard($_POST);
-$_REQUEST = $filter->xssFilterHard($_REQUEST);
-$_SESSION = $filter->xssFilterHard($_SESSION);
-
 $actionAjax = isset($_REQUEST['actionAjax']) ? $_REQUEST['actionAjax'] : null;
 
 function filterUserListArray($users = array(), $filter = '')
