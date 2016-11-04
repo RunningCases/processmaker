@@ -3679,6 +3679,7 @@ class Processes
             $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_EMAIL_FIELD);
             $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_ACTION_FIELD);
             $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_CASE_NOTE_IN_RESPONSE);
+            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_FORCE_LOGIN);
             $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_CREATE_DATE);
             $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_UPDATE_DATE);
             $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_SUBJECT_FIELD);
