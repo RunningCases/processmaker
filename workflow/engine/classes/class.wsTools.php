@@ -233,9 +233,11 @@ class workspaceTools
 
         if ($this->onedb) {
             $dbInfo = $this->getDBInfo();
-            $dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'wf_', 'DB_RBAC_USER' => 'wf_', 'DB_REPORT_NAME' => 'wf_', 'DB_REPORT_USER' => 'wf_');
+            $dbPrefix = array('DB_NAME' => 'wf_', 'DB_RBAC_NAME' => 'wf_', 'DB_REPORT_NAME' => 'wf_');
+            $dbPrefixUser = array('DB_USER' => 'wf_', 'DB_RBAC_USER' => 'wf_', 'DB_REPORT_USER' => 'wf_');
         } else {
-            $dbPrefix = array('DB_NAME' => 'wf_', 'DB_USER' => 'wf_', 'DB_RBAC_NAME' => 'rb_', 'DB_RBAC_USER' => 'rb_', 'DB_REPORT_NAME' => 'rp_', 'DB_REPORT_USER' => 'rp_');
+            $dbPrefix = array('DB_NAME' => 'wf_', 'DB_RBAC_NAME' => 'rb_', 'DB_REPORT_NAME' => 'rp_');
+            $dbPrefixUser = array('DB_USER' => 'wf_', 'DB_RBAC_USER' => 'rb_', 'DB_REPORT_USER' => 'rp_');
         }
 
         if (array_search($key, array('DB_HOST', 'DB_RBAC_HOST', 'DB_REPORT_HOST')) !== false) {
@@ -260,6 +262,14 @@ class workspaceTools
                 $dbName = $value;
             }
             $this->resetDBDiff[$value] = $dbName;
+            $value = $dbName;
+        } elseif (array_key_exists($key, $dbPrefixUser)) {
+            if ($this->resetDBNames) {
+                $dbName = $this->dbGrantUser;
+            } else {
+                $dbName = $value;
+            }
+            $this->resetDBDiff['DB_USER'] = $dbName;
             $value = $dbName;
         }
         return $matches[1] . $value . $matches[4];
@@ -288,6 +298,10 @@ class workspaceTools
         $this->resetDBDiff = array();
         $this->onedb = $onedb;
         $this->unify = $unify;
+        if ($resetDBNames) {
+            $this->dbGrantUser = uniqid('wf_');
+        }
+
 
         if (!$this->workspaceExists()) {
             throw new Exception("Could not find db.php in the workspace");
@@ -1716,8 +1730,10 @@ class workspaceTools
 
             foreach ($metadata->databases as $db) {
                 if ($dbName != $newDBNames[$db->name]) {
-                    $dbName = $newDBNames[$db->name];
-
+                    $dbName = $dbUser = $newDBNames[$db->name];
+                    if(isset($newDBNames['DB_USER'])){
+                        $dbUser = $newDBNames['DB_USER'];
+                    }
                     if (mysql_select_db($dbName, $link)) {
                         if (!$overwrite) {
                             throw new Exception("Destination Database already exist (use -o to overwrite)");
@@ -1727,8 +1743,8 @@ class workspaceTools
                     CLI::logging("+> Restoring database {$db->name} to $dbName\n");
                     $versionBackupEngine = (isset($metadata->backupEngineVersion)) ? $metadata->backupEngineVersion : 1;
                     $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql", $aParameters, $versionBackupEngine);
-                    $workspace->createDBUser($dbName, $db->pass, "localhost", $dbName);
-                    $workspace->createDBUser($dbName, $db->pass, "%", $dbName);
+                    $workspace->createDBUser($dbUser, $db->pass, "localhost", $dbName);
+                    $workspace->createDBUser($dbUser, $db->pass, "%", $dbName);
                 }
             }
 
