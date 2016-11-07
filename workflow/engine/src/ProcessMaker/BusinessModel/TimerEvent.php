@@ -1178,38 +1178,10 @@ class TimerEvent
         $level,
         $message,
         $action='',
-        $timeZone='',
-        $usrUid='',
-        $proUid='',
-        $tasUid='',
-        $appUid='',
-        $appNumber='',
-        $delIndex='',
-        $stepUid='',
-        $triUid='',
-        $outDocUid='',
-        $inpDocUid='',
-        $url=''
+        $aContext = array()
     )
     {
         try {
-            $aContext = array(
-                            'ip'        => \G::getIpAddress()
-                            ,'action'   => $action
-                            ,'TimeZone' => $timeZone
-                            ,'workspace'=> (defined("SYS_SYS"))? SYS_SYS : "Wokspace Undefined"
-                            ,'usrUid'   => $usrUid
-                            ,'proUid'   => $proUid
-                            ,'tasUid'   => $tasUid
-                            ,'appUid'   => $appUid
-                            ,'appNumber'=> $appNumber
-                            ,'delIndex' => $delIndex
-                            ,'stepUid'  => $stepUid
-                            ,'triUid'   => $triUid
-                            ,'outDocUid'=> $outDocUid
-                            ,'inpDocUid'=> $inpDocUid
-                            ,'url'      => $url
-                        );
             \Bootstrap::registerMonolog('TimerEventCron', $level, $message, $aContext, SYS_SYS, 'processmaker.log');
         } catch (\Exception $e) {
             throw $e;
@@ -1233,6 +1205,7 @@ class TimerEvent
             $ws = new \wsBase();
             $case = new \Cases();
             $common = new \ProcessMaker\Util\Common();
+            $sysSys = (defined("SYS_SYS"))? SYS_SYS : "Undefined";
 
             $common->setFrontEnd($frontEnd);
 
@@ -1246,11 +1219,17 @@ class TimerEvent
             $common->frontEndShow("START");
 
             $this->log("START-NEW-CASES", "Date \"$datetime (UTC +00:00)\": Start new cases");
+            $aInfo = array(
+                'ip'       => \G::getIpAddress()
+                ,'action'   => 'START-NEW-CASES'
+                ,'timeZone' => $datetime
+                ,'workspace'=> $sysSys
+            );
             $this->syslog(
                 200
                 ,'Start new cases'
                 ,'START-NEW-CASES'
-                ,$datetime
+                ,$aInfo
             );
 
             //Query
@@ -1396,16 +1375,23 @@ class TimerEvent
                         $common->frontEndShow("TEXT", "> Routing the case #$applicationNumber...");
 
                         $this->log("CREATED-NEW-CASE", "Case #$applicationNumber created, APP_UID: $applicationUid");
+                        $aInfo = array(
+                             'ip'        => \G::getIpAddress()
+                            ,'action'   => 'CREATED-NEW-CASE'
+                            ,'timeZone' => $datetime
+                            ,'workspace'=> $sysSys
+                            ,'proUid'   => $arrayTimerEventData["PRJ_UID"]
+                            ,'tasUid'   => $taskUid
+                            ,'appUid'   => $applicationUid
+                            ,'appNumber'=> $applicationNumber
+                            ,'evnUid'   => $row['EVN_UID']
+                            ,'evnName'  => $row['EVN_NAME']
+                        );
                         $this->syslog(
                             200
                             ,"Case #$applicationNumber created"
                             ,'CREATED-NEW-CASE'
-                            ,$datetime
-                            ,''//UsrUid
-                            ,$arrayTimerEventData["PRJ_UID"]
-                            ,$taskUid
-                            ,$applicationUid
-                            ,$applicationNumber
+                            ,$aInfo
                         );
 
                         //Derivate new case
@@ -1417,47 +1403,68 @@ class TimerEvent
                             $common->frontEndShow("TEXT", "    - OK");
 
                             $this->log("ROUTED-NEW-CASE", "Case #$applicationNumber routed, APP_UID: $applicationUid");
+                            $aInfo = array(
+                                 'ip'       => \G::getIpAddress()
+                                ,'action'   => 'ROUTED-NEW-CASE'
+                                ,'timeZone' => $datetime
+                                ,'workspace'=> $sysSys
+                                ,'proUid'   => $arrayTimerEventData["PRJ_UID"]
+                                ,'tasUid'   => $taskUid
+                                ,'appUid'   => $applicationUid
+                                ,'appNumber'=> $applicationNumber
+                                ,'delIndex' => '1'
+                                ,'evnUid'   => $row['EVN_UID']
+                                ,'evnName'  => $row['EVN_NAME']
+                            );
                             $this->syslog(
                                 200
                                 ,"Case #$applicationNumber routed"
                                 ,'ROUTED-NEW-CASE'
-                                ,$datetime
-                                ,''//usrUid
-                                ,$arrayTimerEventData["PRJ_UID"]
-                                ,$taskUid
-                                ,$applicationUid
-                                ,$applicationNumber
-                                ,'1'//Del Index
+                                ,$aInfo
                             );
                         } else {
                             $common->frontEndShow("TEXT", "    - Failed: " . $arrayResult["message"]);
 
                             $this->log("ROUTED-NEW-CASE", $arrayResult["message"] . ", Case: #$applicationNumber, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"], "Failed");
+                            $aInfo = array(
+                                 'ip'        => \G::getIpAddress()
+                                ,'action'   => 'ROUTED-NEW-CASE'
+                                ,'timeZone' => $datetime
+                                ,'workspace'=> $sysSys
+                                ,'proUid'   => $arrayTimerEventData["PRJ_UID"]
+                                ,'tasUid'   => $taskUid
+                                ,'appUid'   => $applicationUid
+                                ,'appNumber'=> $applicationNumber
+                                ,'delIndex' => '1'
+                                ,'evnUid'   => $row['EVN_UID']
+                                ,'evnName'  => $row['EVN_NAME']
+                            );
                             $this->syslog(
                                 500
                                 ,"Failed case #$applicationNumber. " . $arrayResult["message"]
                                 ,'ROUTED-NEW-CASE'
-                                ,$datetime
-                                ,''//usrUid
-                                ,$arrayTimerEventData["PRJ_UID"]
-                                ,$taskUid
-                                ,$applicationUid
-                                ,$applicationNumber
-                                ,'1'//Del Index
+                                ,$aInfo
                             );
                         }
                     } else {
                         $common->frontEndShow("TEXT", "    - Failed: " . $arrayResult["message"]);
 
                         $this->log("CREATED-NEW-CASE", $arrayResult["message"] . ", PRO_UID: " . $arrayTimerEventData["PRJ_UID"], "Failed");
+                        $aInfo = array(
+                            'ip'        => \G::getIpAddress()
+                            ,'action'   => 'ROUTED-NEW-CASE'
+                            ,'timeZone' => $datetime
+                            ,'workspace'=> $sysSys
+                            ,'proUid'   => $arrayTimerEventData["PRJ_UID"]
+                            ,'tasUid'   => $taskUid
+                            ,'evnUid'   => $row['EVN_UID']
+                            ,'evnName'  => $row['EVN_NAME']
+                        );
                         $this->syslog(
                             500
                             ,"Failed case #$applicationNumber. " . $arrayResult["message"]
                             ,'CREATED-NEW-CASE'
-                            ,$datetime
-                            ,''//usrUid
-                            ,$arrayTimerEventData["PRJ_UID"]
-                            ,$taskUid
+                            ,$aInfo
                         );
                     }
 
@@ -1469,24 +1476,36 @@ class TimerEvent
                 $common->frontEndShow("TEXT", "Not exists any record to start a new case, on date \"$datetime (UTC +00:00)\"");
 
                 $this->log("NO-RECORDS", "Not exists any record to start a new case");
+                $aInfo = array(
+                    'ip'        => \G::getIpAddress()
+                    ,'action'   => $action
+                    ,'TimeZone' => $datetime
+                    ,'workspace'=> $sysSys
+                );
                 $this->syslog(
                     200
                     ,'Not exists any record to start a new case'
                     ,'NO-RECORDS'
-                    ,$datetime
-                    );
+                    ,$aInfo
+                );
             }
 
             $common->frontEndShow("END");
 
             //Intermediate Catch Timer-Event (continue the case) ///////////////////////////////////////////////////////
             $this->log("START-CONTINUE-CASES", "Date \"$datetime (UTC +00:00)\": Start continue the cases");
+            $aInfo = array(
+                'ip'        => \G::getIpAddress()
+                ,'action'   => $action
+                ,'TimeZone' => $datetime
+                ,'workspace'=> $sysSys
+            );
             $this->syslog(
-                    200
-                    ,'Start continue the cases'
-                    ,'START-CONTINUE-CASES'
-                    ,$datetime
-                    );
+                200
+                ,'Start continue the cases'
+                ,'START-CONTINUE-CASES'
+                ,$aInfo
+            );
 
             //Query
             $criteriaMain = $this->getTimerEventCriteria();
@@ -1662,32 +1681,45 @@ class TimerEvent
                                 $common->frontEndShow("TEXT", "    - OK");
 
                                 $this->log("CONTINUED-CASE", "Case #$applicationNumber continued, APP_UID: $applicationUid");
+                                $aInfo = array(
+                                     'ip'        => \G::getIpAddress()
+                                    ,'action'   => 'CONTINUED-CASE'
+                                    ,'timeZone' => $datetime
+                                    ,'workspace'=> $sysSys
+                                    ,'proUid'   => $arrayTimerEventData["PRJ_UID"]
+                                    ,'tasUid'   => $taskUid
+                                    ,'appUid'   => $applicationUid
+                                    ,'appNumber'=> $applicationNumber
+                                    ,'evnUid'   => $row['EVN_UID']
+                                    ,'evnName'  => $row['EVN_NAME']
+                                );
                                 $this->syslog(
                                     200
                                     ,"Case #$applicationNumber continued"
                                     ,'CONTINUED-CASE'
-                                    ,$datetime
-                                    ,''//usrUid
-                                    ,$arrayTimerEventData["PRJ_UID"]
-                                    ,$tasUid
-                                    ,$applicationUid
-                                    ,$applicationNumber
-                                    ,$delIndex
+                                    ,$aInfo
                                 );
                             } else {
                                 $common->frontEndShow("TEXT", "    - Failed: " . $arrayResult["message"]);
 
                                 $this->log("CONTINUED-CASE", $arrayResult["message"] . ", Case: #$applicationNumber, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"], "Failed");
+                                $aInfo = array(
+                                     'ip'        => \G::getIpAddress()
+                                    ,'action'   => 'CONTINUED-CASE'
+                                    ,'timeZone' => $datetime
+                                    ,'workspace'=> $sysSys
+                                    ,'proUid'   => $arrayTimerEventData["PRJ_UID"]
+                                    ,'tasUid'   => $taskUid
+                                    ,'appUid'   => $applicationUid
+                                    ,'appNumber'=> $applicationNumber
+                                    ,'evnUid'   => $row['EVN_UID']
+                                    ,'evnName'  => $row['EVN_NAME']
+                                );
                                 $this->syslog(
                                     500
                                     ,"Failed case #$applicationUid. " . $arrayResult["message"]
                                     ,'CONTINUED-CASE'
-                                    ,$datetime
-                                    ,''//usrUid
-                                    ,$arrayTimerEventData["PRJ_UID"]
-                                    ,$tasUid
-                                    ,$applicationUid
-                                    ,$applicationNumber
+                                    ,$aInfo
                                 );
                             }
 
@@ -1695,16 +1727,23 @@ class TimerEvent
                         }
                     } else {
                         $this->log("INVALID-CONTINUE-DATE", "Continue date: $continueCaseDate, Case: #$applicationNumber, APP_UID: $applicationUid, PRO_UID: " . $arrayTimerEventData["PRJ_UID"]);
+                        $aInfo = array(
+                                     'ip'        => \G::getIpAddress()
+                                    ,'action'   => 'INVALID-CONTINUE-DATE'
+                                    ,'timeZone' => $datetime
+                                    ,'workspace'=> $sysSys
+                                    ,'proUid'   => $arrayTimerEventData["PRJ_UID"]
+                                    ,'tasUid'   => $taskUid
+                                    ,'appUid'   => $applicationUid
+                                    ,'appNumber'=> $applicationNumber
+                                    ,'evnUid'   => $row['EVN_UID']
+                                    ,'evnName'  => $row['EVN_NAME']
+                                );
                         $this->syslog(
                             200
                             ,'Continue date '. $continueCaseDate
                             ,'INVALID-CONTINUE-DATE'
-                            ,$datetime
-                            ,''//usrUid
-                            ,$arrayTimerEventData["PRJ_UID"]
-                            ,$tasUid
-                            ,$applicationUid
-                            ,$applicationNumber
+                            ,$aInfo
                         );
                     }
 
@@ -1720,11 +1759,17 @@ class TimerEvent
                 $common->frontEndShow("TEXT", "Not exists any record to continue a case, on date \"$datetime (UTC +00:00)\"");
 
                 $this->log("NO-RECORDS", "Not exists any record to continue a case");
+                $aInfo = array(
+                    'ip'        => \G::getIpAddress()
+                    ,'action'   => $action
+                    ,'TimeZone' => $datetime
+                    ,'workspace'=> $sysSys
+                );
                 $this->syslog(
                     200
                     ,'Not exists any record to continue a case'
                     ,'NO-RECORDS'
-                    ,$datetime
+                    ,$aInfo
                 );
             }
 

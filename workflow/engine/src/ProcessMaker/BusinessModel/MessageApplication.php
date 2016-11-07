@@ -267,6 +267,7 @@ class MessageApplication
             $criteria->addSelectColumn(\BpmnEventPeer::EVN_UID);
             $criteria->addSelectColumn(\BpmnEventPeer::EVN_TYPE);
             $criteria->addSelectColumn(\BpmnEventPeer::EVN_MARKER);
+            $criteria->addSelectColumn(\BpmnEventPeer::EVN_NAME);
             $criteria->addSelectColumn(\MessageEventDefinitionPeer::MSGED_USR_UID);
             $criteria->addSelectColumn(\MessageEventDefinitionPeer::MSGED_VARIABLES);
             $criteria->addSelectColumn(\MessageEventDefinitionPeer::MSGED_CORRELATION);
@@ -370,6 +371,7 @@ class MessageApplication
             $ws = new \wsBase();
             $case = new \Cases();
             $common = new \ProcessMaker\Util\Common();
+            $sysSys = (defined("SYS_SYS"))? SYS_SYS : "Undefined";
 
             $common->setFrontEnd($frontEnd);
 
@@ -428,44 +430,65 @@ class MessageApplication
                                     $applicationUid = $arrayResult["caseId"];
                                     $appUid    = $arrayResult["caseId"];
                                     $appNumber = $arrayResult["caseNumber"];
+                                    $aInfo = array(
+                                        'ip'       => \G::getIpAddress()
+                                        ,'action'   => 'CREATED-NEW-CASE'
+                                        ,'workspace'=> $sysSys
+                                        ,'usrUid'   => $messageEventDefinitionUserUid
+                                        ,'proUid'   => $processUid
+                                        ,'tasUid'   => $taskUid
+                                        ,'appUid'   => $appUid
+                                        ,'appNumber'=> $appNumber
+                                        ,'evnUid'   => $value['EVN_UID']
+                                        ,'evnName'  => $value['EVN_NAME']
+                                    );
                                     $this->syslog(
                                         200
                                         ,"Case #$appNumber created"
                                         ,'CREATED-NEW-CASE'
-                                        ,''//timeZone
-                                        ,$messageEventDefinitionUserUid
-                                        ,$processUid
-                                        ,$taskUid
-                                        ,$appUid
-                                        ,$appNumber
+                                        ,$aInfo
                                     );
 
                                     $result = $ws->derivateCase($messageEventDefinitionUserUid, $applicationUid, 1);
                                     $arrayResult = \G::json_decode(\G::json_encode($result), true);
                                     if ($arrayResult["status_code"] == 0) {
+                                        $aInfo = array(
+                                            'ip'       => \G::getIpAddress()
+                                            ,'action'   => 'ROUTED-NEW-CASE'
+                                            ,'workspace'=> $sysSys
+                                            ,'usrUid'   => $messageEventDefinitionUserUid
+                                            ,'proUid'   => $processUid
+                                            ,'tasUid'   => $taskUid
+                                            ,'appUid'   => $appUid
+                                            ,'appNumber'=> $appNumber
+                                            ,'delIndex' => '1'
+                                            ,'evnUid'   => $value['EVN_UID']
+                                            ,'evnName'  => $value['EVN_NAME']
+                                        );
                                         $this->syslog(
                                             200
                                             ,"Case #$appNumber routed"
                                             ,'ROUTED-NEW-CASE'
-                                            ,''//timeZone
-                                            ,$messageEventDefinitionUserUid
-                                            ,$processUid
-                                            ,$taskUid
-                                            ,$appUid
-                                            ,$appNumber
-                                            ,'1'//Del Index
+                                            ,$aInfo
                                         );
                                     } else {
+                                        $aInfo = array(
+                                            'ip'       => \G::getIpAddress()
+                                            ,'action'   => 'ROUTED-NEW-CASE'
+                                            ,'workspace'=> $sysSys
+                                            ,'usrUid'   => $messageEventDefinitionUserUid
+                                            ,'proUid'   => $processUid
+                                            ,'tasUid'   => $taskUid
+                                            ,'appUid'   => $appUid
+                                            ,'appNumber'=> $appNumber
+                                            ,'evnUid'   => $value['EVN_UID']
+                                            ,'evnName'  => $value['EVN_NAME']
+                                        );
                                         $this->syslog(
                                             500
                                             ,"Failed case #$appNumber. " . $arrayResult["message"]
                                             ,'ROUTED-NEW-CASE'
-                                            ,''//timeZone
-                                            ,$messageEventDefinitionUserUid
-                                            ,$processUid
-                                            ,$taskUid
-                                            ,$appUid
-                                            ,$appNumber
+                                            ,$aInfo
                                         );
                                     }
 
@@ -474,14 +497,21 @@ class MessageApplication
                                     //Counter
                                     $counterStartMessageEvent++;
                                 } else {
+                                    $aInfo = array(
+                                        'ip'       => \G::getIpAddress()
+                                        ,'action'   => 'CREATED-NEW-CASE'
+                                        ,'workspace'=> $sysSys
+                                        ,'usrUid'   => $messageEventDefinitionUserUid
+                                        ,'proUid'   => $processUid
+                                        ,'tasUid'   => $taskUid
+                                        ,'evnUid'   => $value['EVN_UID']
+                                        ,'evnName'  => $value['EVN_NAME']
+                                    );
                                     $this->syslog(
                                         500
                                         ,"Failed case #$appNumber. " . $arrayResult["message"]
                                         ,'CREATED-NEW-CASE'
-                                        ,''//timeZone
-                                        ,$messageEventDefinitionUserUid
-                                        ,$processUid
-                                        ,$taskUid
+                                        ,$aInfo
                                     );
                                 }
                             }
@@ -520,30 +550,44 @@ class MessageApplication
                                     $result = $ws->derivateCase($userUid, $applicationUid, $delIndex);
                                     $arrayResult = \G::json_decode(\G::json_encode($result), true);
                                     if ($arrayResult["status_code"] == 0) {
+                                        $aInfo = array(
+                                            'ip'       => \G::getIpAddress()
+                                            ,'action'   => 'ROUTED-NEW-CASE'
+                                            ,'workspace'=> $sysSys
+                                            ,'usrUid'   => $userUid
+                                            ,'proUid'   => $processUid
+                                            ,'tasUid'   => $taskUid
+                                            ,'appUid'   => $applicationUid
+                                            ,'appNumber'=> $appNumber
+                                            ,'delIndex' => $delIndex
+                                            ,'evnUid'   => $value['EVN_UID']
+                                            ,'evnName'  => $value['EVN_NAME']
+                                        );
                                         $this->syslog(
                                             200
                                             ,"Case #$appNumber routed "
                                             ,'ROUTED-NEW-CASE'
-                                            ,''//timeZone
-                                            ,$userUid
-                                            ,$processUid
-                                            ,$taskUid
-                                            ,$applicationUid
-                                            ,$appNumber
-                                            ,$delIndex
+                                            ,$aInfo
                                         );
                                     } else {
+                                        $aInfo = array(
+                                            'ip'       => \G::getIpAddress()
+                                            ,'action'   => 'ROUTED-NEW-CASE'
+                                            ,'workspace'=> $sysSys
+                                            ,'usrUid'   => $userUid
+                                            ,'proUid'   => $processUid
+                                            ,'tasUid'   => $taskUid
+                                            ,'appUid'   => $applicationUid
+                                            ,'appNumber'=> $appNumber
+                                            ,'delIndex' => $delIndex
+                                            ,'evnUid'   => $value['EVN_UID']
+                                            ,'evnName'  => $value['EVN_NAME']
+                                        );
                                         $this->syslog(
                                         500
                                         ,"Failed case #$appNumber. " . $arrayResult["message"]
                                         ,'ROUTED-NEW-CASE'
-                                        ,''//timeZone
-                                        ,$userUid
-                                        ,$processUid
-                                        ,$taskUid
-                                        ,$applicationUid
-                                        ,$appNumber
-                                        ,$delIndex
+                                        ,$aInfo
                                     );
                                     }
 
@@ -629,38 +673,10 @@ class MessageApplication
         $level,
         $message,
         $action='',
-        $timeZone='',
-        $usrUid='',
-        $proUid='',
-        $tasUid='',
-        $appUid='',
-        $appNumber='',
-        $delIndex='',
-        $stepUid='',
-        $triUid='',
-        $outDocUid='',
-        $inpDocUid='',
-        $url=''
+        $aContext = array()
     )
     {
         try {
-            $aContext = array(
-                            'ip'        => \G::getIpAddress()
-                            ,'action'   => $action
-                            ,'TimeZone' => $timeZone
-                            ,'workspace'=> (defined("SYS_SYS"))? SYS_SYS : "Wokspace Undefined"
-                            ,'usrUid'   => $usrUid
-                            ,'proUid'   => $proUid
-                            ,'tasUid'   => $tasUid
-                            ,'appUid'   => $appUid
-                            ,'appNumber'=> $appNumber
-                            ,'delIndex' => $delIndex
-                            ,'stepUid'  => $stepUid
-                            ,'triUid'   => $triUid
-                            ,'outDocUid'=> $outDocUid
-                            ,'inpDocUid'=> $inpDocUid
-                            ,'url'      => $url
-                        );
             \Bootstrap::registerMonolog('MessageEventCron', $level, $message, $aContext, SYS_SYS, 'processmaker.log');
         } catch (\Exception $e) {
             throw $e;
