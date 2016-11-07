@@ -3698,6 +3698,31 @@ class Processes
         }
     }
 
+    public function getElementTaskRelation($processUid){
+        try {
+            $arrayElementTask = array();
+            //Get data
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\ElementTaskRelationPeer::ETR_UID);
+            $criteria->addSelectColumn(\ElementTaskRelationPeer::PRJ_UID);
+            $criteria->addSelectColumn(\ElementTaskRelationPeer::ELEMENT_UID);
+            $criteria->addSelectColumn(\ElementTaskRelationPeer::ELEMENT_TYPE);
+            $criteria->addSelectColumn(\ElementTaskRelationPeer::TAS_UID);
+            $criteria->add(ElementTaskRelationPeer::PRJ_UID, $processUid, Criteria::EQUAL);
+            $rsCriteria = ElementTaskRelationPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $rsCriteria->next();
+            while ($aRow = $rsCriteria->getRow()) {
+                $arrayElementTask[] = $aRow;
+                $rsCriteria->next();
+            }
+            //Return
+            return $arrayElementTask;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
     public function getFilesManager($processUid, $template = 'all')
     {
         try {
@@ -4464,6 +4489,7 @@ class Processes
         $oData->emailEvent = $this->getEmailEvent($sProUid);
         $oData->filesManager = $this->getFilesManager($sProUid);
         $oData->abeConfiguration = $this->getActionsByEmail($sProUid);
+        $oData->elementTask = $this->getElementTaskRelation($sProUid);
         $oData->groupwfs = $this->groupwfsMerge($oData->groupwfs, $oData->processUser, "USR_UID");
         $oData->process["PRO_TYPE_PROCESS"] = "PUBLIC";
 
