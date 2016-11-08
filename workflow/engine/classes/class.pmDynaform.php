@@ -1245,21 +1245,49 @@ class pmDynaform
         return false;
     }
 
-    public function searchField($dyn_uid, $field_id)
+    public function searchField($dyn_uid, $field_id, $pro_uid = null)
     {
+        //get pro_uid if empty
+        if (empty($pro_uid)) {
+            $a = new Criteria("workflow");
+            $a->addSelectColumn(DynaformPeer::PRO_UID);
+            $a->add(DynaformPeer::DYN_UID, $dyn_uid, Criteria::EQUAL);
+            $ds = DynaformPeer::doSelectRS($a);
+            $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $ds->next();
+            $row = $ds->getRow();
+            $pro_uid = $row["PRO_UID"];
+        }
+        //get dynaforms
         $a = new Criteria("workflow");
+        $a->addSelectColumn(DynaformPeer::DYN_UID);
         $a->addSelectColumn(DynaformPeer::DYN_CONTENT);
-        $a->add(DynaformPeer::DYN_UID, $dyn_uid, Criteria::EQUAL);
-        $ds = ProcessPeer::doSelectRS($a);
+        $a->add(DynaformPeer::PRO_UID, $pro_uid, Criteria::EQUAL);
+        $ds = DynaformPeer::doSelectRS($a);
         $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $ds->next();
-        $row = $ds->getRow();
-        $json = G::json_decode($row["DYN_CONTENT"]);
 
-        $data = array();
-        $data["CURRENT_DYNAFORM"] = $dyn_uid;
-        $pmDynaForm = new pmDynaform($data);
-        $pmDynaForm->jsonr($json);
+        $json = new stdClass();
+        $dynaforms = array();
+        while ($ds->next()) {
+            $row = $ds->getRow();
+            if ($row["DYN_UID"] === $dyn_uid) {
+                $json = G::json_decode($row["DYN_CONTENT"]);
+            } else {
+                $dynaforms[] = G::json_decode($row["DYN_CONTENT"]);
+            }
+        }
+        //get  subforms
+        $fields = $this->jsonsf2($json, "form", "type");
+        foreach ($fields as $key => $value) {
+            if ($json->items[0]->id !== $value->id) {
+                foreach ($dynaforms as $dynaform) {
+                    if ($value->id === $dynaform->items[0]->id) {
+                        $form = $dynaform->items[0];
+                        $this->jsonReplace($json, $value->id, "id", $form);
+                    }
+                }
+            }
+        }
 
         return $this->jsonsf($json, $field_id);
     }
