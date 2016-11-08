@@ -2917,6 +2917,8 @@ class Cases
         }
 
         $task = new \ProcessMaker\BusinessModel\Task();
+        $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
+
         $userUid = $data['usr_uid_target'];
 
         foreach ($arrayCasesToReassign as $value) {
@@ -2926,8 +2928,9 @@ class Cases
             $taskUid = $appDelegation->getTasUid();
 
             $flagBoolean = $task->checkUserOrGroupAssignedTask($taskUid, $userUid);
+            $flagps = $supervisor->isUserProcessSupervisor($appDelegation->getProUid(), $userUid);
 
-            if (!$flagBoolean) {
+            if (!$flagBoolean && !$flagps) {
                 $arrayMsg[] = [
                     'app_uid' => $value['APP_UID'],
                     'del_index' => $value['DEL_INDEX'],
