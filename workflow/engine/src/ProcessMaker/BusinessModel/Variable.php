@@ -711,6 +711,8 @@ class Variable
     {
         try {
             $arrayRecord = array();
+            $sysSys = (defined("SYS_SYS"))? SYS_SYS : "Undefined";
+            $aContext = \Bootstrap::getDefaultContextLog();
 
             //Verify data
             $process = new \ProcessMaker\BusinessModel\Process();
@@ -791,6 +793,10 @@ class Variable
                     );
                     $rs = $stmt->executeQuery($replaceFields, \ResultSet::FETCHMODE_NUM);
 
+                    //Logger
+                    $aContext['action'] = 'execute-sql-suggest';
+                    $aContext['sql'] = $replaceFields;
+                    \Bootstrap::registerMonolog('sqlExecution', 200, 'Sql Execution', $aContext, $sysSys, 'processmaker.log');
                     while ($rs->next()) {
                         $row = $rs->getRow();
 
@@ -805,6 +811,10 @@ class Variable
             //Return
             return $arrayRecord;
         } catch (\Exception $e) {
+            //Logger
+            $aContext['action'] = 'execute-sql-suggest';
+            $aContext['exception'] = (array)$e;
+            \Bootstrap::registerMonolog('sqlExecution', 400, 'Sql Execution', $aContext, $sysSys, 'processmaker.log');
             throw $e;
         }
     }

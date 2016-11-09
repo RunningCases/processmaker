@@ -165,6 +165,9 @@ class pmDynaform
 
     public function jsonr(&$json)
     {
+        $sysSys = (defined("SYS_SYS"))? SYS_SYS : "Undefined";
+        $aContext = \Bootstrap::getDefaultContextLog();
+
         if (empty($json)) {
             return;
         }
@@ -238,6 +241,10 @@ class pmDynaform
                                     $stmt = $cnn->createStatement();
                                     $sql = G::replaceDataField($json->sql, $this->getValuesDependentFields($json));
                                     $rs = $stmt->executeQuery($sql, \ResultSet::FETCHMODE_NUM);
+                                     //Logger
+                                    $aContext['action'] = 'execute-sql';
+                                    $aContext['sql'] = $sql;
+                                    \Bootstrap::registerMonolog('sqlExecution', 200, 'Sql Execution', $aContext, $sysSys, 'processmaker.log');
                                     while ($rs->next()) {
                                         $row = $rs->getRow();
                                         $option = new stdClass();
@@ -246,6 +253,10 @@ class pmDynaform
                                         $json->optionsSql[] = $option;
                                     }
                                 } catch (Exception $e) {
+                                    //Logger
+                                    $aContext['action'] = 'execute-sql';
+                                    $aContext['exception'] = (array)$e;
+                                    \Bootstrap::registerMonolog('sqlExecution', 400, 'Sql Execution', $aContext, $sysSys, 'processmaker.log');
 
                                 }
                             }
