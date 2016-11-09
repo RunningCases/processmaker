@@ -302,7 +302,7 @@ class Cases
             Validator::catUid($category, '$cat_uid');
         }
         $status = G::toUpper($status);
-        $listStatus = array('TO_DO', 'DRAFT', 'COMPLETED', 'CANCEL', 'OPEN', 'CLOSE');
+        $listStatus = array('TO_DO', 'DRAFT', 'COMPLETED', 'CANCELLED', 'OPEN', 'CLOSE');
         if (!(in_array($status, $listStatus))) {
             $status = '';
         }
