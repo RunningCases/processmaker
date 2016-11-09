@@ -2009,9 +2009,9 @@ class Processes
             $oData->inputFiles[$oData->inputs[$key]['INP_DOC_UID']] = $newGuid;
             $oData->inputs[$key]['INP_DOC_UID'] = $newGuid;
         }
-        
+
         $oData->uid["INPUT_DOCUMENT"] = $map;
-        
+
         if (!isset($oData->inputFiles)) {
             $oData->inputFiles = array();
         }
@@ -3669,20 +3669,6 @@ class Processes
             $arrayActionsByEmail = array();
             //Get data
             $criteria = new \Criteria("workflow");
-            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_UID);
-            $criteria->addSelectColumn(\AbeConfigurationPeer::PRO_UID);
-            $criteria->addSelectColumn(\AbeConfigurationPeer::TAS_UID);
-            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_TYPE);
-            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_TEMPLATE);
-            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_DYN_TYPE);
-            $criteria->addSelectColumn(\AbeConfigurationPeer::DYN_UID);
-            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_EMAIL_FIELD);
-            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_ACTION_FIELD);
-            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_CASE_NOTE_IN_RESPONSE);
-            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_FORCE_LOGIN);
-            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_CREATE_DATE);
-            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_UPDATE_DATE);
-            $criteria->addSelectColumn(\AbeConfigurationPeer::ABE_SUBJECT_FIELD);
             $criteria->add(AbeConfigurationPeer::PRO_UID, $processUid, Criteria::EQUAL);
             $rsCriteria = AbeConfigurationPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -4209,6 +4195,11 @@ class Processes
             $abeConfigurationInstance = new AbeConfiguration();
             foreach ($arrayData as $value) {
                 $value['ABE_UID'] = "";
+
+                if (array_key_exists('ABE_CUSTOM_GRID', $value)) {
+                    $value['ABE_CUSTOM_GRID'] = unserialize($value['ABE_CUSTOM_GRID']);
+                }
+
                 $abeConfigurationInstance->createOrUpdate($value);
             }
         } catch (Exception $e) {
