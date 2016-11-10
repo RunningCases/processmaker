@@ -1318,6 +1318,7 @@
     <column name="TAS_SELFSERVICE_EXECUTION" type="VARCHAR" size="15" default="EVERY_TIME"/>
     <column name="TAS_NOT_EMAIL_FROM_FORMAT" type="INTEGER" default="0"/>
     <column name="TAS_OFFLINE" type="VARCHAR" size="20" required="true" default="FALSE"/>
+    <column name="TAS_EMAIL_SERVER_UID" type="VARCHAR" size="32" required="false" default=""/>
     <column name="TAS_AUTO_ROOT" type="VARCHAR" size="20" required="true" default="FALSE"/>
     <index name="indexTasUid">
       <index-column name="TAS_UID"/>
