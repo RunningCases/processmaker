@@ -562,7 +562,7 @@ class Variable
             //Set data
             \G::LoadClass('pmDynaform');
             $pmDynaform = new \pmDynaform();
-            $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $arrayVariable["field_id"]);
+            $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $arrayVariable["field_id"], $processUid);
             $dbConnection = "workflow";
             if ($field !== null && !empty($field->dbConnection)) {
                 $dbConnection = $field->dbConnection;
@@ -720,7 +720,7 @@ class Variable
             //Set data
             \G::LoadClass('pmDynaform');
             $pmDynaform = new \pmDynaform();
-            $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $variableName);
+            $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $variableName, $processUid);
 
             //Get data
             $filter = str_replace('\'', '\'\'', (isset($arrayVariable['filter']))? $arrayVariable['filter'] : '');
