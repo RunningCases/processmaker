@@ -364,6 +364,12 @@ abstract class BaseTask extends BaseObject implements Persistent
     protected $tas_offline = 'FALSE';
 
     /**
+     * The value for the tas_email_server_uid field.
+     * @var        string
+     */
+    protected $tas_email_server_uid = '';
+
+    /**
      * The value for the tas_auto_root field.
      * @var        string
      */
@@ -997,6 +1003,17 @@ abstract class BaseTask extends BaseObject implements Persistent
     {
 
         return $this->tas_offline;
+    }
+
+    /**
+     * Get the [tas_email_server_uid] column value.
+     * 
+     * @return     string
+     */
+    public function getTasEmailServerUid()
+    {
+
+        return $this->tas_email_server_uid;
     }
 
     /**
@@ -2231,6 +2248,28 @@ abstract class BaseTask extends BaseObject implements Persistent
     } // setTasOffline()
 
     /**
+     * Set the value of [tas_email_server_uid] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setTasEmailServerUid($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->tas_email_server_uid !== $v || $v === '') {
+            $this->tas_email_server_uid = $v;
+            $this->modifiedColumns[] = TaskPeer::TAS_EMAIL_SERVER_UID;
+        }
+
+    } // setTasEmailServerUid()
+
+    /**
      * Set the value of [tas_auto_root] column.
      * 
      * @param      string $v new value
@@ -2381,14 +2420,16 @@ abstract class BaseTask extends BaseObject implements Persistent
 
             $this->tas_offline = $rs->getString($startcol + 55);
 
-            $this->tas_auto_root = $rs->getString($startcol + 56);
+            $this->tas_email_server_uid = $rs->getString($startcol + 56);
+
+            $this->tas_auto_root = $rs->getString($startcol + 57);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 57; // 57 = TaskPeer::NUM_COLUMNS - TaskPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 58; // 58 = TaskPeer::NUM_COLUMNS - TaskPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Task object", $e);
@@ -2761,6 +2802,9 @@ abstract class BaseTask extends BaseObject implements Persistent
                 return $this->getTasOffline();
                 break;
             case 56:
+                return $this->getTasEmailServerUid();
+                break;
+            case 57:
                 return $this->getTasAutoRoot();
                 break;
             default:
@@ -2839,7 +2883,8 @@ abstract class BaseTask extends BaseObject implements Persistent
             $keys[53] => $this->getTasSelfserviceExecution(),
             $keys[54] => $this->getTasNotEmailFromFormat(),
             $keys[55] => $this->getTasOffline(),
-            $keys[56] => $this->getTasAutoRoot(),
+            $keys[56] => $this->getTasEmailServerUid(),
+            $keys[57] => $this->getTasAutoRoot(),
         );
         return $result;
     }
@@ -3040,6 +3085,9 @@ abstract class BaseTask extends BaseObject implements Persistent
                 $this->setTasOffline($value);
                 break;
             case 56:
+                $this->setTasEmailServerUid($value);
+                break;
+            case 57:
                 $this->setTasAutoRoot($value);
                 break;
         } // switch()
@@ -3290,7 +3338,11 @@ abstract class BaseTask extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[56], $arr)) {
-            $this->setTasAutoRoot($arr[$keys[56]]);
+            $this->setTasEmailServerUid($arr[$keys[56]]);
+        }
+
+        if (array_key_exists($keys[57], $arr)) {
+            $this->setTasAutoRoot($arr[$keys[57]]);
         }
 
     }
@@ -3528,6 +3580,10 @@ abstract class BaseTask extends BaseObject implements Persistent
             $criteria->add(TaskPeer::TAS_OFFLINE, $this->tas_offline);
         }
 
+        if ($this->isColumnModified(TaskPeer::TAS_EMAIL_SERVER_UID)) {
+            $criteria->add(TaskPeer::TAS_EMAIL_SERVER_UID, $this->tas_email_server_uid);
+        }
+
         if ($this->isColumnModified(TaskPeer::TAS_AUTO_ROOT)) {
             $criteria->add(TaskPeer::TAS_AUTO_ROOT, $this->tas_auto_root);
         }
@@ -3695,6 +3751,8 @@ abstract class BaseTask extends BaseObject implements Persistent
         $copyObj->setTasNotEmailFromFormat($this->tas_not_email_from_format);
 
         $copyObj->setTasOffline($this->tas_offline);
+
+        $copyObj->setTasEmailServerUid($this->tas_email_server_uid);
 
         $copyObj->setTasAutoRoot($this->tas_auto_root);
 
