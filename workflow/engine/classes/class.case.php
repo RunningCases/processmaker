@@ -2158,6 +2158,18 @@ class Cases
             throw (new Exception('You tried to start a new case without send the USER UID or TASK UID!'));
         }
 
+        //Log
+        $data = [
+            "appUid" => $sAppUid,
+            "usrUid" => $sUsrUid,
+            "tasUid" => $sTasUid,
+            "isSubprocess" => $isSubprocess,
+            "appNumber" => $caseNumber,
+            "delIndex" => $iDelIndex,
+            "appInitDate" => $Fields['APP_INIT_DATE']
+        ];
+        Bootstrap::registerMonolog('CreateCase', 200, "Create case", $data, SYS_SYS, 'processmaker.log');
+
         //call plugin
         if (class_exists('folderData')) {
             $folderData = new folderData(
