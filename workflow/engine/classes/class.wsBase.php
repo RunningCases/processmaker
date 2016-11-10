@@ -2262,7 +2262,7 @@ class wsBase
             if (! isset( $_SESSION["PROCESS"] )) {
                 $_SESSION["PROCESS"] = $appFields["PRO_UID"];
             }
-            
+
             global $oPMScript;
 
             if ($bExecuteTriggersBeforeAssignment) {
@@ -2705,6 +2705,9 @@ class wsBase
                 $oPMScript->setFields( $appFields['APP_DATA'] );
                 $oPMScript->setScript( $row['TRI_WEBBOT'] );
                 $oPMScript->execute();
+
+                //Log
+                Bootstrap::registerMonolog('triggerExecutionTime', 200, 'Trigger execution time', ['proUid' => $appFields['APP_DATA']['PROCESS'], 'tasUid' => $appFields['APP_DATA']['TASK'], 'appUid' => $appFields['APP_DATA']['APPLICATION'], 'triggerInfo' => ['triUid' => $row['TRI_UID'], 'triExecutionTime' => $oPMScript->scriptExecutionTime]], SYS_SYS, 'processmaker.log');
 
                 if (isset($oPMScript->aFields["__ERROR__"]) && trim($oPMScript->aFields["__ERROR__"]) != "" && $oPMScript->aFields["__ERROR__"] != "none") {
                     throw new Exception($oPMScript->aFields["__ERROR__"]);
