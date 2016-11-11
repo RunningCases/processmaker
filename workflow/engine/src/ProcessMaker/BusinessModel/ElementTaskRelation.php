@@ -156,7 +156,7 @@ class ElementTaskRelation
      *
      * return array Return data of the new Element-Task-Relation created
      */
-    public function create($projectUid, array $arrayData)
+    public function create($projectUid, array $arrayData, $verifyPrjUid = true)
     {
         try {
             //Verify data
@@ -173,7 +173,9 @@ class ElementTaskRelation
             unset($arrayData["PRJ_UID"]);
 
             //Verify data
-            $process->throwExceptionIfNotExistsProcess($projectUid, $this->arrayFieldNameForException["projectUid"]);
+            if($verifyPrjUid){
+                $process->throwExceptionIfNotExistsProcess($projectUid, $this->arrayFieldNameForException["projectUid"]);
+            }
 
             $this->throwExceptionIfDataIsInvalid("", $projectUid, $arrayData);
 
@@ -213,6 +215,31 @@ class ElementTaskRelation
 
                 throw $e;
             }
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function existsElementUid($elementUid)
+    {
+        try {
+            $criteria = new \Criteria("workflow");
+
+            $criteria->addSelectColumn(\ElementTaskRelationPeer::ETR_UID);
+            $criteria->addSelectColumn(\ElementTaskRelationPeer::PRJ_UID);
+            $criteria->addSelectColumn(\ElementTaskRelationPeer::ELEMENT_UID);
+            $criteria->addSelectColumn(\ElementTaskRelationPeer::ELEMENT_TYPE);
+            $criteria->addSelectColumn(\ElementTaskRelationPeer::TAS_UID);
+            $criteria->add( \ElementTaskRelationPeer::ELEMENT_UID, $elementUid );
+            $rs = \ElementTaskRelationPeer::doSelectRS( $criteria );
+            $rs->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
+            if ($rs->next()) {
+                return true;
+            } else {
+                return false;
+            }
+
+            return $criteria;
         } catch (\Exception $e) {
             throw $e;
         }

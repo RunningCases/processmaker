@@ -512,6 +512,34 @@ abstract class Importer
             $arrayWorkflowTables = $this->importData["tables"]["workflow"];
             $arrayWorkflowFiles = $this->importData["files"]["workflow"];
 
+            //Element Task Relation
+            $aElementTask = (isset($arrayWorkflowTables["elementTask"]))? $arrayWorkflowTables["elementTask"] : array();
+            $elementTaskRelation = new \ProcessMaker\BusinessModel\ElementTaskRelation();
+            foreach ($aElementTask as $key => $row) {
+                $exists = $elementTaskRelation->existsElementUid($row['ELEMENT_UID']);
+                if(!$exists){
+                    $arrayResult = $elementTaskRelation->create(
+                        $row['PRJ_UID'],
+                        [
+                            'ELEMENT_UID'  => $row['ELEMENT_UID'],
+                            'ELEMENT_TYPE' => $row['ELEMENT_TYPE'],
+                            'TAS_UID'      => $row['TAS_UID']
+                        ],
+                        false
+                    );
+                    $task = new \Task();
+                    foreach ($arrayWorkflowTables["tasks"] as $key => $value) {
+                        $arrayTaskData = $value;
+                        if ( $arrayTaskData['TAS_UID'] === $row['TAS_UID'] ) {
+                            if(!$task->taskExists($row['TAS_UID'])){
+                                $tasUid = $task->create($arrayTaskData, false);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
             //Import BPMN tables
             $result = $this->importBpmnTables($arrayBpmnTables, $generateUid);
 
