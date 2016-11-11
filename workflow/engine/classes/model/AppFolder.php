@@ -394,7 +394,6 @@ class AppFolder extends BaseAppFolder
         $numRecTotal = $row["NUM_REC"];
 
         //Query
-        $oCase->verifyTable();
 
         $oCriteria->addAscendingOrderByColumn( AppDocumentPeer::APP_DOC_INDEX );
         $oCriteria->addDescendingOrderByColumn( AppDocumentPeer::DOC_VERSION );
@@ -536,8 +535,6 @@ class AppFolder extends BaseAppFolder
         }
 
         $numRecTotal = AppDocumentPeer::doCount($oCriteria);
-
-        $oCase->verifyTable();
 
         //Need to review hot to get the Column Type name
         switch($ColumnSort) {

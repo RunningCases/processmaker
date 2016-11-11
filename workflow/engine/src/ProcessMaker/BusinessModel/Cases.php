@@ -1166,9 +1166,9 @@ class Cases
         \G::LoadClass("configuration");
         $conf = new \Configurations();
         $confEnvSetting = $conf->getFormats();
-        //verifica si existe la tabla OBJECT_PERMISSION
+
         $cases = new \cases();
-        $cases->verifyTable();
+
         $listing = false;
         $oPluginRegistry = & \PMPluginRegistry::getSingleton();
         if ($oPluginRegistry->existsTrigger(PM_CASE_DOCUMENT_LIST)) {
@@ -1464,9 +1464,9 @@ class Cases
         \G::LoadClass("configuration");
         $conf = new \Configurations();
         $confEnvSetting = $conf->getFormats();
-        //verifica si la tabla OBJECT_PERMISSION
+        
         $cases = new \cases();
-        $cases->verifyTable();
+
         $listing = false;
         $oPluginRegistry = & \PMPluginRegistry::getSingleton();
         if ($oPluginRegistry->existsTrigger(PM_CASE_DOCUMENT_LIST)) {

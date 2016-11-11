@@ -3521,7 +3521,6 @@ class processMap
     public function getObjectsPermissionsCriteria($sProcessUID)
     {
         G::LoadClass('case');
-        Cases::verifyTable();
         $aObjectsPermissions = array();
         $aObjectsPermissions[] = array('OP_UID' => 'char', 'TASK_TARGET' => 'char', 'GROUP_USER' => 'char', 'TASK_SOURCE' => 'char', 'OBJECT_TYPE' => 'char', 'OBJECT' => 'char', 'PARTICIPATED' => 'char', 'ACTION' => 'char', 'OP_CASE_STATUS' => 'char');
         $oCriteria = new Criteria('workflow');
@@ -3700,7 +3699,6 @@ class processMap
     public function getExtObjectsPermissions($start, $limit, $sProcessUID)
     {
         G::LoadClass('case');
-        Cases::verifyTable();
         $aObjectsPermissions = array();
         //$aObjectsPermissions [] = array('OP_UID' => 'char', 'TASK_TARGET' => 'char', 'GROUP_USER' => 'char', 'TASK_SOURCE' => 'char', 'OBJECT_TYPE' => 'char', 'OBJECT' => 'char', 'PARTICIPATED' => 'char', 'ACTION' => 'char', 'OP_CASE_STATUS' => 'char');
         $oCriteria = new Criteria('workflow');

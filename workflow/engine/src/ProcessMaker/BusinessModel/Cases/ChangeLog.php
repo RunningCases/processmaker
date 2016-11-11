@@ -180,7 +180,6 @@ class ChangeLog
     {
         G::LoadClass('case');
         $oCase = new Cases();
-        $oCase->verifyTable();
         $this->permissions = $oCase->getAllObjects(
             $PRO_UID, $APP_UID, $TAS_UID, $_SESSION['USER_LOGGED']
         );
