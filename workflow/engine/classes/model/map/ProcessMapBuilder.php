@@ -91,6 +91,8 @@ class ProcessMapBuilder
 
         $tMap->addColumn('PRO_SUBPROCESS', 'ProSubprocess', 'int', CreoleTypes::TINYINT, true, null);
 
+        $tMap->addColumn('PRO_TRI_CREATE', 'ProTriCreate', 'string', CreoleTypes::VARCHAR, true, 32);
+
         $tMap->addColumn('PRO_TRI_OPEN', 'ProTriOpen', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addColumn('PRO_TRI_DELETED', 'ProTriDeleted', 'string', CreoleTypes::VARCHAR, true, 32);

@@ -889,6 +889,7 @@
     <column name="PRO_SHOW_MAP" type="TINYINT" required="true" default="1"/>
     <column name="PRO_SHOW_MESSAGE" type="TINYINT" required="true" default="1"/>
     <column name="PRO_SUBPROCESS" type="TINYINT" required="true" default="0"/>
+    <column name="PRO_TRI_CREATE" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_TRI_OPEN" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_TRI_DELETED" type="VARCHAR" size="32" required="true" default=""/>
     <column name="PRO_TRI_CANCELED" type="VARCHAR" size="32" required="true" default=""/>
