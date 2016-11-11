@@ -828,6 +828,9 @@ class Process extends BaseProcess
         $webBotTrigger = '';
 
         switch ($action) {
+            case 'CREATE':
+                $var = ProcessPeer::PRO_TRI_CREATE;
+                break;
             case 'OPEN':
                 $var = ProcessPeer::PRO_TRI_OPEN;
                 break;
