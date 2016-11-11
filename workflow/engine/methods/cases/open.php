@@ -136,6 +136,7 @@ $oHeadPublisher->assign( 'appStatus', $case['APP_STATUS'] );
 $oHeadPublisher->assign( 'tbarGmail', $tBarGmail);
 
 if(!isset($_SESSION['APPLICATION']) || !isset($_SESSION['TASK']) || !isset($_SESSION['INDEX'])) {
+    $_SESSION['PROCESS'] = $case['PRO_UID'];
     $_SESSION['APPLICATION'] = $case['APP_UID'];
     $_SESSION['TASK'] = $case['TAS_UID'];
     $_SESSION['INDEX'] = $case['DEL_INDEX'];
