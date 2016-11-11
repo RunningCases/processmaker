@@ -2184,6 +2184,7 @@ class Cases
             $oPluginRegistry = &PMPluginRegistry::getSingleton();
             $oPluginRegistry->executeTriggers(PM_CREATE_CASE, $folderData);
         }
+        $this->getExecuteTriggerProcess($sAppUid, 'CREATE');
         //end plugin
         return array(
             'APPLICATION' => $sAppUid,
