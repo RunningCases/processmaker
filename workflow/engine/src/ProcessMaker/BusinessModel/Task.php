@@ -274,6 +274,10 @@ class Task
                 }
             }
 
+            if (isset($arrayProperty["TAS_RECEIVE_LAST_EMAIL"])) {
+                $arrayProperty["TAS_RECEIVE_LAST_EMAIL"] = $arrayProperty["TAS_RECEIVE_LAST_EMAIL"] === "TRUE" ? "TRUE" : "FALSE";
+            }
+
             //Validating TAS_ASSIGN_VARIABLE value
             if (!isset($arrayProperty["TAS_ASSIGN_TYPE"])) {
                 $derivateType = $task->kgetassigType($arrayProperty["PRO_UID"], $arrayProperty["TAS_UID"]);
@@ -430,6 +434,42 @@ class Task
                 $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE_TYPE");
                 $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE");
                 $this->unsetVar($arrayProperty, "TAS_DEF_MESSAGE_TEMPLATE");
+            }
+
+            if ($arrayProperty["TAS_RECEIVE_LAST_EMAIL"] == "TRUE") {
+                if (empty($arrayProperty["TAS_RECEIVE_SERVER_UID"])) {
+                    throw (new \Exception("Invalid value specified for 'tas_receive_server_uid'"));
+                }
+                if (empty($arrayProperty["TAS_RECEIVE_SUBJECT_MESSAGE"])) {
+                    throw (new \Exception("Invalid value specified for 'tas_receive_subject_message'"));
+                }
+                if (!isset($arrayProperty["TAS_RECEIVE_MESSAGE_TYPE"])) {
+                    $arrayProperty["TAS_RECEIVE_MESSAGE_TYPE"] = "text";
+                }
+                $valuesDefMessageType = array('text', 'template');
+                if (!in_array($arrayProperty["TAS_RECEIVE_MESSAGE_TYPE"], $valuesDefMessageType)) {
+                    throw (new \Exception("Invalid value specified for 'tas_receive_message_type'"));
+                }
+                if (!isset($arrayProperty["TAS_RECEIVE_MESSAGE_TEMPLATE"])) {
+                    $arrayProperty["TAS_RECEIVE_MESSAGE_TEMPLATE"] = "alert_message.html";
+                }
+                if ($arrayProperty["TAS_RECEIVE_MESSAGE_TYPE"] == 'template') {
+                    if (empty($arrayProperty["TAS_RECEIVE_MESSAGE_TEMPLATE"])) {
+                        throw (new \Exception("Invalid value specified for 'tas_receive_message_template'"));
+                    }
+                    $this->unsetVar($arrayProperty, "TAS_RECEIVE_MESSAGE");
+                } else {
+                    if (empty($arrayProperty["TAS_RECEIVE_MESSAGE"])) {
+                        throw (new \Exception("Invalid value specified for 'tas_receive_message'"));
+                    }
+                    $this->unsetVar($arrayProperty, "TAS_RECEIVE_MESSAGE_TEMPLATE");
+                }
+            } else {
+                $this->unsetVar($arrayProperty, "TAS_RECEIVE_SERVER_UID");
+                $this->unsetVar($arrayProperty, "TAS_RECEIVE_SUBJECT_MESSAGE");
+                $this->unsetVar($arrayProperty, "TAS_RECEIVE_MESSAGE");
+                $this->unsetVar($arrayProperty, "TAS_RECEIVE_MESSAGE_TYPE");
+                $this->unsetVar($arrayProperty, "TAS_RECEIVE_MESSAGE_TEMPLATE");
             }
 
             $result = $task->update($arrayProperty);
