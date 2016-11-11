@@ -32,7 +32,8 @@ class AbeConfiguration extends BaseAbeConfiguration
         'ABE_UPDATE_DATE',
         'ABE_SUBJECT_FIELD',
         'ABE_MAILSERVER_OR_MAILCURRENT',
-        'ABE_CUSTOM_GRID'
+        'ABE_CUSTOM_GRID',
+        'ABE_EMAIL_SERVER_UID'
     ];
 
     public function load($abeUid)

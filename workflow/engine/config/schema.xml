@@ -4809,6 +4809,7 @@
         <parameter name="Default" value=""/>
       </vendor>
     </column>
+    <column name="ABE_EMAIL_SERVER_UID" type="VARCHAR" size="32" required="false" default="" />
       <index name="indexAbeProcess">
         <index-column name="PRO_UID"/>
       </index>
