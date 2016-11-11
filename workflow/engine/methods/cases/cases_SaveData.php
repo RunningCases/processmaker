@@ -183,6 +183,14 @@ try {
         //Execute after triggers - End
 
         $_SESSION['TRIGGER_DEBUG']['TRIGGERS_EXECUTION_TIME'] = $oCase->arrayTriggerExecutionTime;
+        $arrayInfoTriggerExecutionTime = [];
+
+        foreach ($_SESSION['TRIGGER_DEBUG']['TRIGGERS_EXECUTION_TIME'] as $key => $value) {
+            $arrayInfoTriggerExecutionTime[] = ['triUid' => $key, 'triExecutionTime' => $value];
+        }
+
+        //Log
+        Bootstrap::registerMonolog('triggerExecutionTime', 200, 'Trigger execution time', ['proUid' => $_SESSION['PROCESS'], 'tasUid' => $_SESSION['TASK'], 'appUid' => $_SESSION['APPLICATION'], 'after' => 'DYNAFORM', 'triggerInfo' => $arrayInfoTriggerExecutionTime], SYS_SYS, 'processmaker.log');
     }
 
     //save data in PM Tables if necessary

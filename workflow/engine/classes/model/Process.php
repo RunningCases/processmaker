@@ -825,7 +825,7 @@ class Process extends BaseProcess
         }
 
         $action = G::toUpper( $action );
-        $webBotTrigger = '';
+        $arrayWebBotTrigger = [];
 
         switch ($action) {
             case 'CREATE':
@@ -853,6 +853,7 @@ class Process extends BaseProcess
 
         $oCriteria = new Criteria( 'workflow' );
         $oCriteria->addSelectColumn( $var );
+        $oCriteria->addSelectColumn( TriggersPeer::TRI_UID);
         $oCriteria->addSelectColumn( TriggersPeer::TRI_WEBBOT );
         $oCriteria->addJoin( $var, TriggersPeer::TRI_UID, Criteria::LEFT_JOIN );
         $oCriteria->add( ProcessPeer::PRO_UID, $proUid );
@@ -861,10 +862,11 @@ class Process extends BaseProcess
         $oDataSet->setFetchmode( ResultSet::FETCHMODE_ASSOC );
         if ($oDataSet->next()) {
             $row = $oDataSet->getRow();
-            $webBotTrigger = $row['TRI_WEBBOT'];
+            $arrayWebBotTrigger = ['TRI_UID' => $row['TRI_UID'], 'TRI_WEBBOT' => $row['TRI_WEBBOT']];
         }
 
-        return $webBotTrigger;
+        //Return
+        return $arrayWebBotTrigger;
     }
 
     public function memcachedDelete ()
@@ -1022,4 +1024,3 @@ class Process extends BaseProcess
         }
     }
 }
-

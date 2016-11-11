@@ -7122,20 +7122,25 @@ class Cases
 
         require_once ( "classes/model/Process.php" );
         $appProcess = new Process();
-        $webBotTrigger = $appProcess->getTriggerWebBotProcess($proUid, $action);
+        $arrayWebBotTrigger = $appProcess->getTriggerWebBotProcess($proUid, $action);
 
-        if ($webBotTrigger != false && $webBotTrigger != '') {
+        if ($arrayWebBotTrigger['TRI_WEBBOT'] != false && $arrayWebBotTrigger['TRI_WEBBOT'] != '') {
             global $oPMScript;
             $oPMScript = new PMScript();
             $oPMScript->setFields($aFields['APP_DATA']);
-            $oPMScript->setScript($webBotTrigger);
+            $oPMScript->setScript($arrayWebBotTrigger['TRI_WEBBOT']);
             $oPMScript->execute();
+
             $aFields['APP_DATA'] = array_merge($aFields['APP_DATA'], $oPMScript->aFields);
             unset($aFields['APP_STATUS']);
             unset($aFields['APP_PROC_STATUS']);
             unset($aFields['APP_PROC_CODE']);
             unset($aFields['APP_PIN']);
             $this->updateCase($aFields['APP_UID'], $aFields);
+
+            //Log
+            Bootstrap::registerMonolog('triggerExecutionTime', 200, 'Trigger execution time', ['proUid' => $aFields['APP_DATA']['PROCESS'], 'tasUid' => $aFields['APP_DATA']['TASK'], 'appUid' => $aFields['APP_DATA']['APPLICATION'], 'action' => $action, 'triggerInfo' => ['triUid' => $arrayWebBotTrigger['TRI_UID'], 'triExecutionTime' => $oPMScript->scriptExecutionTime]], SYS_SYS, 'processmaker.log');
+
             return true;
         }
         return false;
