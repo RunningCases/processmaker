@@ -97,6 +97,8 @@ class AbeConfigurationMapBuilder
 
         $tMap->addColumn('ABE_CUSTOM_GRID', 'AbeCustomGrid', 'string', CreoleTypes::LONGVARCHAR, false, null);
 
+        $tMap->addColumn('ABE_EMAIL_SERVER_UID', 'AbeEmailServerUid', 'string', CreoleTypes::VARCHAR, false, 32);
+
     } // doBuild()
 
 } // AbeConfigurationMapBuilder
