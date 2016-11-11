@@ -4541,8 +4541,6 @@ class Cases
 
         $confEnvSetting = $conf->getFormats();
 
-        //verifica si existe la tabla OBJECT_PERMISSION
-        $this->verifyTable();
         $listing = false;
         $oPluginRegistry = & PMPluginRegistry::getSingleton();
         if ($oPluginRegistry->existsTrigger(PM_CASE_DOCUMENT_LIST)) {
@@ -4853,9 +4851,6 @@ class Cases
         $conf = new Configurations();
 
         $confEnvSetting = $conf->getFormats();
-
-        //verifica si la tabla OBJECT_PERMISSION
-        $this->verifyTable();
         $listing = false;
         $oPluginRegistry = & PMPluginRegistry::getSingleton();
         if ($oPluginRegistry->existsTrigger(PM_CASE_DOCUMENT_LIST)) {
@@ -5091,9 +5086,6 @@ class Cases
 
     public function getallDynaformsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex = 0)
     {
-        //check OBJECT_PERMISSION table
-        $this->verifyTable();
-
         $aObjectPermissions = $this->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex);
         if (!is_array($aObjectPermissions)) {
             $aObjectPermissions = array(
@@ -6083,31 +6075,6 @@ class Cases
             $caseTracker['DYNADOC'] = (CaseTrackerObjectPeer::doCount($criteria) > 0) ? true : false;
         }
         return $caseTracker;
-    }
-
-    /*
-     * This funcion creates a temporally OBJECT_PERMISSION table
-     * by Everth The Answer
-     *
-     * @name verifyTable
-     * @param
-     * @return object
-     */
-
-    public function verifyTable()
-    {
-        $oCriteria = new Criteria('workflow');
-        $del = DBAdapter::getStringDelimiter();
-
-        $sDataBase = 'database_' . strtolower(DB_ADAPTER);
-        if (G::LoadSystemExist($sDataBase)) {
-            G::LoadSystem($sDataBase);
-            $oDataBase = new database();
-            $sql = $oDataBase->createTableObjectPermission();
-        }
-        $con = Propel::getConnection("workflow");
-        $stmt = $con->prepareStatement($sql);
-        $rs = $stmt->executeQuery();
     }
 
     /*
