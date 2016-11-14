@@ -3035,5 +3035,20 @@ class Bootstrap
         $registerLogger = &MonologProvider::getSingleton($channel, $fileLog);
         $registerLogger->addLog($level, $message, $context);
     }
+    /**
+     * Get the default information from the context
+     *
+     * @return array $aContext void
+     */
+    public static function getDefaultContextLog(){
+        $sysSys = (defined("SYS_SYS"))? SYS_SYS : "Undefined";
+        $date = \ProcessMaker\Util\DateTime::convertUtcToTimeZone(date('Y-m-d H:m:s'));
+        $aContext = array(
+            'ip'           => \G::getIpAddress()
+            ,'timeZone'    => $date
+            ,'workspace'   => $sysSys
+        );
+        return $aContext;
+    }
 }
 

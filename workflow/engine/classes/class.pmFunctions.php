@@ -240,6 +240,8 @@ function literalDate ($date, $lang = 'en')
  */
 function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter = array())
 {
+    $sysSys = (defined("SYS_SYS"))? SYS_SYS : "Undefined";
+    $aContext = \Bootstrap::getDefaultContextLog();
     $con = Propel::getConnection( $DBConnectionUID );
     $con->begin();
     G::loadClass('system');
@@ -342,9 +344,18 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
                 $result = executeQueryOci($SqlStatement, $con, $aParameter);
             }
         }
+        //Logger
+        $aContext['action'] = 'execute-query';
+        $aContext['sql'] = $SqlStatement;
+        \Bootstrap::registerMonolog('sqlExecution', 200, 'Sql Execution', $aContext, $sysSys, 'processmaker.log');
 
         return $result;
     } catch (SQLException $sqle) {
+        //Logger
+        $aContext['action'] = 'execute-query';
+        $aContext['exception'] = (array)$sqle;
+        \Bootstrap::registerMonolog('sqlExecution', 400, 'Sql Execution', $aContext, $sysSys, 'processmaker.log');
+
         if (isset($sqle->xdebug_message)) {
             error_log(print_r($sqle->xdebug_message, true));
         } else {
