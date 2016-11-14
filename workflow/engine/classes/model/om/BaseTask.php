@@ -376,6 +376,48 @@ abstract class BaseTask extends BaseObject implements Persistent
     protected $tas_auto_root = 'FALSE';
 
     /**
+     * The value for the tas_receive_server_uid field.
+     * @var        string
+     */
+    protected $tas_receive_server_uid = '';
+
+    /**
+     * The value for the tas_receive_last_email field.
+     * @var        string
+     */
+    protected $tas_receive_last_email = 'FALSE';
+
+    /**
+     * The value for the tas_receive_email_from_format field.
+     * @var        int
+     */
+    protected $tas_receive_email_from_format = 0;
+
+    /**
+     * The value for the tas_receive_message_type field.
+     * @var        string
+     */
+    protected $tas_receive_message_type = 'text';
+
+    /**
+     * The value for the tas_receive_message_template field.
+     * @var        string
+     */
+    protected $tas_receive_message_template = 'alert_message.html';
+
+    /**
+     * The value for the tas_receive_subject_message field.
+     * @var        string
+     */
+    protected $tas_receive_subject_message;
+
+    /**
+     * The value for the tas_receive_message field.
+     * @var        string
+     */
+    protected $tas_receive_message;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -1025,6 +1067,83 @@ abstract class BaseTask extends BaseObject implements Persistent
     {
 
         return $this->tas_auto_root;
+    }
+
+    /**
+     * Get the [tas_receive_server_uid] column value.
+     * 
+     * @return     string
+     */
+    public function getTasReceiveServerUid()
+    {
+
+        return $this->tas_receive_server_uid;
+    }
+
+    /**
+     * Get the [tas_receive_last_email] column value.
+     * 
+     * @return     string
+     */
+    public function getTasReceiveLastEmail()
+    {
+
+        return $this->tas_receive_last_email;
+    }
+
+    /**
+     * Get the [tas_receive_email_from_format] column value.
+     * 
+     * @return     int
+     */
+    public function getTasReceiveEmailFromFormat()
+    {
+
+        return $this->tas_receive_email_from_format;
+    }
+
+    /**
+     * Get the [tas_receive_message_type] column value.
+     * 
+     * @return     string
+     */
+    public function getTasReceiveMessageType()
+    {
+
+        return $this->tas_receive_message_type;
+    }
+
+    /**
+     * Get the [tas_receive_message_template] column value.
+     * 
+     * @return     string
+     */
+    public function getTasReceiveMessageTemplate()
+    {
+
+        return $this->tas_receive_message_template;
+    }
+
+    /**
+     * Get the [tas_receive_subject_message] column value.
+     * 
+     * @return     string
+     */
+    public function getTasReceiveSubjectMessage()
+    {
+
+        return $this->tas_receive_subject_message;
+    }
+
+    /**
+     * Get the [tas_receive_message] column value.
+     * 
+     * @return     string
+     */
+    public function getTasReceiveMessage()
+    {
+
+        return $this->tas_receive_message;
     }
 
     /**
@@ -2292,6 +2411,160 @@ abstract class BaseTask extends BaseObject implements Persistent
     } // setTasAutoRoot()
 
     /**
+     * Set the value of [tas_receive_server_uid] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setTasReceiveServerUid($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->tas_receive_server_uid !== $v || $v === '') {
+            $this->tas_receive_server_uid = $v;
+            $this->modifiedColumns[] = TaskPeer::TAS_RECEIVE_SERVER_UID;
+        }
+
+    } // setTasReceiveServerUid()
+
+    /**
+     * Set the value of [tas_receive_last_email] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setTasReceiveLastEmail($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->tas_receive_last_email !== $v || $v === 'FALSE') {
+            $this->tas_receive_last_email = $v;
+            $this->modifiedColumns[] = TaskPeer::TAS_RECEIVE_LAST_EMAIL;
+        }
+
+    } // setTasReceiveLastEmail()
+
+    /**
+     * Set the value of [tas_receive_email_from_format] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setTasReceiveEmailFromFormat($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->tas_receive_email_from_format !== $v || $v === 0) {
+            $this->tas_receive_email_from_format = $v;
+            $this->modifiedColumns[] = TaskPeer::TAS_RECEIVE_EMAIL_FROM_FORMAT;
+        }
+
+    } // setTasReceiveEmailFromFormat()
+
+    /**
+     * Set the value of [tas_receive_message_type] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setTasReceiveMessageType($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->tas_receive_message_type !== $v || $v === 'text') {
+            $this->tas_receive_message_type = $v;
+            $this->modifiedColumns[] = TaskPeer::TAS_RECEIVE_MESSAGE_TYPE;
+        }
+
+    } // setTasReceiveMessageType()
+
+    /**
+     * Set the value of [tas_receive_message_template] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setTasReceiveMessageTemplate($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->tas_receive_message_template !== $v || $v === 'alert_message.html') {
+            $this->tas_receive_message_template = $v;
+            $this->modifiedColumns[] = TaskPeer::TAS_RECEIVE_MESSAGE_TEMPLATE;
+        }
+
+    } // setTasReceiveMessageTemplate()
+
+    /**
+     * Set the value of [tas_receive_subject_message] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setTasReceiveSubjectMessage($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->tas_receive_subject_message !== $v) {
+            $this->tas_receive_subject_message = $v;
+            $this->modifiedColumns[] = TaskPeer::TAS_RECEIVE_SUBJECT_MESSAGE;
+        }
+
+    } // setTasReceiveSubjectMessage()
+
+    /**
+     * Set the value of [tas_receive_message] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setTasReceiveMessage($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->tas_receive_message !== $v) {
+            $this->tas_receive_message = $v;
+            $this->modifiedColumns[] = TaskPeer::TAS_RECEIVE_MESSAGE;
+        }
+
+    } // setTasReceiveMessage()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -2424,12 +2697,26 @@ abstract class BaseTask extends BaseObject implements Persistent
 
             $this->tas_auto_root = $rs->getString($startcol + 57);
 
+            $this->tas_receive_server_uid = $rs->getString($startcol + 58);
+
+            $this->tas_receive_last_email = $rs->getString($startcol + 59);
+
+            $this->tas_receive_email_from_format = $rs->getInt($startcol + 60);
+
+            $this->tas_receive_message_type = $rs->getString($startcol + 61);
+
+            $this->tas_receive_message_template = $rs->getString($startcol + 62);
+
+            $this->tas_receive_subject_message = $rs->getString($startcol + 63);
+
+            $this->tas_receive_message = $rs->getString($startcol + 64);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 58; // 58 = TaskPeer::NUM_COLUMNS - TaskPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 65; // 65 = TaskPeer::NUM_COLUMNS - TaskPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Task object", $e);
@@ -2807,6 +3094,27 @@ abstract class BaseTask extends BaseObject implements Persistent
             case 57:
                 return $this->getTasAutoRoot();
                 break;
+            case 58:
+                return $this->getTasReceiveServerUid();
+                break;
+            case 59:
+                return $this->getTasReceiveLastEmail();
+                break;
+            case 60:
+                return $this->getTasReceiveEmailFromFormat();
+                break;
+            case 61:
+                return $this->getTasReceiveMessageType();
+                break;
+            case 62:
+                return $this->getTasReceiveMessageTemplate();
+                break;
+            case 63:
+                return $this->getTasReceiveSubjectMessage();
+                break;
+            case 64:
+                return $this->getTasReceiveMessage();
+                break;
             default:
                 return null;
                 break;
@@ -2885,6 +3193,13 @@ abstract class BaseTask extends BaseObject implements Persistent
             $keys[55] => $this->getTasOffline(),
             $keys[56] => $this->getTasEmailServerUid(),
             $keys[57] => $this->getTasAutoRoot(),
+            $keys[58] => $this->getTasReceiveServerUid(),
+            $keys[59] => $this->getTasReceiveLastEmail(),
+            $keys[60] => $this->getTasReceiveEmailFromFormat(),
+            $keys[61] => $this->getTasReceiveMessageType(),
+            $keys[62] => $this->getTasReceiveMessageTemplate(),
+            $keys[63] => $this->getTasReceiveSubjectMessage(),
+            $keys[64] => $this->getTasReceiveMessage(),
         );
         return $result;
     }
@@ -3089,6 +3404,27 @@ abstract class BaseTask extends BaseObject implements Persistent
                 break;
             case 57:
                 $this->setTasAutoRoot($value);
+                break;
+            case 58:
+                $this->setTasReceiveServerUid($value);
+                break;
+            case 59:
+                $this->setTasReceiveLastEmail($value);
+                break;
+            case 60:
+                $this->setTasReceiveEmailFromFormat($value);
+                break;
+            case 61:
+                $this->setTasReceiveMessageType($value);
+                break;
+            case 62:
+                $this->setTasReceiveMessageTemplate($value);
+                break;
+            case 63:
+                $this->setTasReceiveSubjectMessage($value);
+                break;
+            case 64:
+                $this->setTasReceiveMessage($value);
                 break;
         } // switch()
     }
@@ -3345,6 +3681,34 @@ abstract class BaseTask extends BaseObject implements Persistent
             $this->setTasAutoRoot($arr[$keys[57]]);
         }
 
+        if (array_key_exists($keys[58], $arr)) {
+            $this->setTasReceiveServerUid($arr[$keys[58]]);
+        }
+
+        if (array_key_exists($keys[59], $arr)) {
+            $this->setTasReceiveLastEmail($arr[$keys[59]]);
+        }
+
+        if (array_key_exists($keys[60], $arr)) {
+            $this->setTasReceiveEmailFromFormat($arr[$keys[60]]);
+        }
+
+        if (array_key_exists($keys[61], $arr)) {
+            $this->setTasReceiveMessageType($arr[$keys[61]]);
+        }
+
+        if (array_key_exists($keys[62], $arr)) {
+            $this->setTasReceiveMessageTemplate($arr[$keys[62]]);
+        }
+
+        if (array_key_exists($keys[63], $arr)) {
+            $this->setTasReceiveSubjectMessage($arr[$keys[63]]);
+        }
+
+        if (array_key_exists($keys[64], $arr)) {
+            $this->setTasReceiveMessage($arr[$keys[64]]);
+        }
+
     }
 
     /**
@@ -3588,6 +3952,34 @@ abstract class BaseTask extends BaseObject implements Persistent
             $criteria->add(TaskPeer::TAS_AUTO_ROOT, $this->tas_auto_root);
         }
 
+        if ($this->isColumnModified(TaskPeer::TAS_RECEIVE_SERVER_UID)) {
+            $criteria->add(TaskPeer::TAS_RECEIVE_SERVER_UID, $this->tas_receive_server_uid);
+        }
+
+        if ($this->isColumnModified(TaskPeer::TAS_RECEIVE_LAST_EMAIL)) {
+            $criteria->add(TaskPeer::TAS_RECEIVE_LAST_EMAIL, $this->tas_receive_last_email);
+        }
+
+        if ($this->isColumnModified(TaskPeer::TAS_RECEIVE_EMAIL_FROM_FORMAT)) {
+            $criteria->add(TaskPeer::TAS_RECEIVE_EMAIL_FROM_FORMAT, $this->tas_receive_email_from_format);
+        }
+
+        if ($this->isColumnModified(TaskPeer::TAS_RECEIVE_MESSAGE_TYPE)) {
+            $criteria->add(TaskPeer::TAS_RECEIVE_MESSAGE_TYPE, $this->tas_receive_message_type);
+        }
+
+        if ($this->isColumnModified(TaskPeer::TAS_RECEIVE_MESSAGE_TEMPLATE)) {
+            $criteria->add(TaskPeer::TAS_RECEIVE_MESSAGE_TEMPLATE, $this->tas_receive_message_template);
+        }
+
+        if ($this->isColumnModified(TaskPeer::TAS_RECEIVE_SUBJECT_MESSAGE)) {
+            $criteria->add(TaskPeer::TAS_RECEIVE_SUBJECT_MESSAGE, $this->tas_receive_subject_message);
+        }
+
+        if ($this->isColumnModified(TaskPeer::TAS_RECEIVE_MESSAGE)) {
+            $criteria->add(TaskPeer::TAS_RECEIVE_MESSAGE, $this->tas_receive_message);
+        }
+
 
         return $criteria;
     }
@@ -3755,6 +4147,20 @@ abstract class BaseTask extends BaseObject implements Persistent
         $copyObj->setTasEmailServerUid($this->tas_email_server_uid);
 
         $copyObj->setTasAutoRoot($this->tas_auto_root);
+
+        $copyObj->setTasReceiveServerUid($this->tas_receive_server_uid);
+
+        $copyObj->setTasReceiveLastEmail($this->tas_receive_last_email);
+
+        $copyObj->setTasReceiveEmailFromFormat($this->tas_receive_email_from_format);
+
+        $copyObj->setTasReceiveMessageType($this->tas_receive_message_type);
+
+        $copyObj->setTasReceiveMessageTemplate($this->tas_receive_message_template);
+
+        $copyObj->setTasReceiveSubjectMessage($this->tas_receive_subject_message);
+
+        $copyObj->setTasReceiveMessage($this->tas_receive_message);
 
 
         $copyObj->setNew(true);
