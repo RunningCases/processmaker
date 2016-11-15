@@ -3214,6 +3214,28 @@ class Cases
             }
         }
 
+        //Delete simple files. 
+        //The observations suggested by 'pull request' approver are applied (please see pull request).
+        foreach ($arrayVariableDocumentToDelete as $key => $value) {
+            if (isset($value['appDocUid'])) {
+                $appDocument->remove($value['appDocUid'], (int) (isset($value['version']) ? $value['version'] : 1));
+                if (is_string($arrayApplicationData['APP_DATA'][$key])) {
+                    try {
+                        $files = G::json_decode($arrayApplicationData['APP_DATA'][$key]);
+                        foreach ($files as $keyFile => $valueFile) {
+                            if ($valueFile === $value['appDocUid']) {
+                                unset($files[$keyFile]);
+                            }
+                        }
+                        $arrayApplicationData['APP_DATA'][$key] = G::json_encode($files);
+                    } catch (\Exception $e) {
+                        Bootstrap::registerMonolog('DeleteFile', 400, $e->getMessage(), $value, SYS_SYS, 'processmaker.log');
+                    }
+                }
+                $flagDelete = true;
+            }
+        }
+
         if ($flagDelete) {
             $result = $case->updateCase($applicationUid, $arrayApplicationData);
         }
