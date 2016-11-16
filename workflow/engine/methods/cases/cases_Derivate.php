@@ -186,14 +186,7 @@ try {
     $oUser = new Users();
     $aUser = $oUser->load($_SESSION['USER_LOGGED']);
     $fromName = $aUser['USR_FIRSTNAME'] . ' ' . $aUser['USR_LASTNAME'];
-    $oTask = new Task();
-    $oTaskEmailSetting = $oTask->getEmailServerSettingsForNotification($_SESSION['PROCESS'], $_SESSION['TASK']);
-    if ($oTaskEmailSetting['TAS_NOT_EMAIL_FROM_FORMAT']) {
-        $oEmailServer = new \ProcessMaker\BusinessModel\EmailServer();
-        $dataSettings = $oEmailServer->getEmailServerDefault();
-        $aUser['USR_EMAIL'] = $dataSettings['MESS_FROM_MAIL'];
-        $fromName = $dataSettings['MESS_FROM_NAME'];
-    }
+
     $sFromData = $fromName . ($aUser['USR_EMAIL'] != '' ? ' <' . $aUser['USR_EMAIL'] . '>' : '');
 
     $flagGmail = false;

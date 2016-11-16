@@ -6153,6 +6153,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASE_CANCELLED_PARALLEL','en','To cancel a case, no parallel threads must be active. Only cases with one active thread can be canceled.','2016-08-11') ,
 ( 'LABEL','ID_REASSIGNMENT_ERROR','en','The case was already derivated to other person. Try to open again the case to reassign.','2016-08-12') ,
 ( 'LABEL','ID_REASSIGNMENT_PAUSED_ERROR','en','The case is paused and can''t be reasigned.','2016-08-12') ,
+( 'LABEL','ID_THE_DEFAULT_CONFIGURATION','en','The default configuration was not defined','2016-11-16'),
 ( 'LABEL','ID_MAFE_1de162d73f017a9243ce0c939064a014','en','Enable gallery','2016-08-12') ,
 ( 'LABEL','ID_MAFE_4e357e7345689cff230335282b201a11','en','Enable camera','2016-08-12') ,
 ( 'LABEL','ID_MAFE_5582ead0a9ee86a54da29c20caee6f57','en','Force user login','2016-08-12') ,
