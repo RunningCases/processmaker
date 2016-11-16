@@ -5198,13 +5198,6 @@ class Cases
             if (!class_exists('System')) {
                 G::LoadClass('system');
             }
-            $aConfiguration = System::getEmailConfiguration();
-
-            $msgError = "";
-            if (!isset($aConfiguration['MESS_ENABLED']) || $aConfiguration['MESS_ENABLED'] != '1') {
-                $msgError = "The default configuration wasn't defined";
-                $aConfiguration['MESS_ENGINE'] = '';
-            }
 
             //Send derivation notification - Start
             $oTask = new Task();
@@ -5212,6 +5205,31 @@ class Cases
 
             if ($aTaskInfo['TAS_SEND_LAST_EMAIL'] != 'TRUE') {
                 return false;
+            }
+
+            $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
+
+            $emailServerUid = $aTaskInfo['TAS_EMAIL_SERVER_UID'];
+
+            if ($emailServerUid != '') {
+                $aConfiguration = $emailServer->getEmailServer($emailServerUid, true);
+                $aConfiguration['SMTPSecure'] = $aConfiguration['SMTPSECURE'];
+            } else {
+                $aConfiguration = $emailServer->getEmailServerDefault();
+                $aConfiguration['SMTPSecure'] = $aConfiguration['SMTPSECURE'];
+            }
+
+            $msgError = '';
+
+            if (empty($aConfiguration)) {
+                $msgError = G::LoadTranslation('ID_THE_DEFAULT_CONFIGURATION');
+            }
+
+            if ($aTaskInfo['TAS_NOT_EMAIL_FROM_FORMAT']) {
+                $fromName = $aConfiguration['MESS_FROM_NAME'];
+                $fromMail = $aConfiguration['MESS_FROM_MAIL'];
+
+                $from = $fromName . (($fromMail != '')? ' <' . $fromMail . '>' : '');
             }
 
             $from = G::buildFrom($aConfiguration, $from);

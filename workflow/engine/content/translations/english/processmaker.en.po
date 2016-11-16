@@ -27642,6 +27642,12 @@ msgid "The case is paused and can't be reasigned."
 msgstr "The case is paused and can't be reasigned."
 
 # TRANSLATION
+# LABEL/ID_THE_DEFAULT_CONFIGURATION
+#: LABEL/ID_THE_DEFAULT_CONFIGURATION
+msgid "The default configuration wasn't defined"
+msgstr "The default configuration wasn't defined"
+
+# TRANSLATION
 # LABEL/ID_MAFE_1de162d73f017a9243ce0c939064a014
 #: LABEL/ID_MAFE_1de162d73f017a9243ce0c939064a014
 msgid "Enable gallery"
@@ -50912,4 +50918,3 @@ msgstr "Cancel"
 #: button - PME_ACCEPT
 msgid "[dynaforms/fields/yesno.xml?PME_ACCEPT] Save"
 msgstr "Save"
-
