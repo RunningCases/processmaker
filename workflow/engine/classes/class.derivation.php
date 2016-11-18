@@ -778,7 +778,7 @@ class Derivation
      *
      * @return void
      */
-    private function derivateUpdateCounters(array $arrayCurrentDelegationData, array $arrayNextDelegationData, $taskNextDelegation, array $arrayApplicationData, $delIndexNew, $aSp, $removeList)
+    private function updateList(array $arrayCurrentDelegationData, array $arrayNextDelegationData, $taskNextDelegation, array $arrayApplicationData, $delIndexNew, $aSp, $removeList)
     {
         /*----------------------------------********---------------------------------*/
         try {
@@ -1050,7 +1050,7 @@ class Derivation
 
                                     $iNewDelIndex = $this->doDerivation($currentDelegationAux, $nextDelAux, $appFields, $aSP);
 
-                                    $this->derivateUpdateCounters($currentDelegationAux, $nextDelAux, $taskNextDel, $appFields, $iNewDelIndex, $aSP, $removeList);
+                                    $this->updateList($currentDelegationAux, $nextDelAux, $taskNextDel, $appFields, $iNewDelIndex, $aSP, $removeList);
 
                                     $flagUpdateCounters = false;
                                     $removeList = false;
@@ -1182,9 +1182,8 @@ class Derivation
                     }
                     break;
             }
-
-            if (!is_null($taskNextDel) && !is_null($bpmnActivityNextDel) && $flagUpdateCounters) {
-                $this->derivateUpdateCounters($currentDelegation, $nextDel, $taskNextDel, $appFields, (isset($iNewDelIndex))? $iNewDelIndex : 0, (isset($aSP))? $aSP : null, $removeList);
+            if(!is_null($taskNextDel)){
+                $this->updateList($currentDelegation, $nextDel, $taskNextDel, $appFields, (isset($iNewDelIndex))? $iNewDelIndex : 0, (isset($aSP))? $aSP : null, $removeList);
             }
 
             $removeList = false;
