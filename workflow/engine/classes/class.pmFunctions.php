@@ -2130,15 +2130,16 @@ function PMFNewCaseImpersonate ($processId, $userId, $variables, $taskId = '')
  * @param string(32) | $userId | User ID | The unique ID of the user.
  * @param string(32) | $taskId | Task ID | The unique ID of the task.
  * @param array | $variables | Array of variables | An associative array of the variables which will be sent to the case.
+ * @param string(32) | $status=null | Status | Status of the case DRAFT or TO_DO.
  * @return string | $idNewCase | Case ID | If an error occured, it returns the integer zero. Otherwise, it returns a string with the case UID of the new case.
  *
  */
-function PMFNewCase ($processId, $userId, $taskId, $variables)
+function PMFNewCase ($processId, $userId, $taskId, $variables, $status = null)
 {
     G::LoadClass( 'wsBase' );
     $ws = new wsBase();
 
-    $result = $ws->newCase( $processId, $userId, $taskId, $variables );
+    $result = $ws->newCase($processId, $userId, $taskId, $variables, 0, $status);
 
     if ($result->status_code == 0) {
         return $result->caseId;
