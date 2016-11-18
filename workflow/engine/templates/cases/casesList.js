@@ -85,6 +85,7 @@ function openCase(){
     if(rowModel){
         var appUid   = rowModel.data.APP_UID;
         var delIndex = rowModel.data.DEL_INDEX;
+        var tasUid   = (typeof(rowModel.json.TAS_UID) != 'undefined') ? rowModel.json.TAS_UID : '';
         var caseTitle = (rowModel.data.APP_TITLE) ? rowModel.data.APP_TITLE : rowModel.data.APP_UID;
         if(!isIE) {
             Ext.Msg.show({
@@ -99,6 +100,7 @@ function openCase(){
             case 'to_revise':
                 params += 'APP_UID=' + appUid;
                 params += '&DEL_INDEX=' + delIndex;
+                params += '&TAS_UID=' + tasUid;
                 params += '&to_revise=true';
                 params += '&actionFromList='+action;
                 requestFile = 'open';
