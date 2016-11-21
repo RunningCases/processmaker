@@ -1306,7 +1306,8 @@ CREATE TABLE `APP_HISTORY`
 	`APP_STATUS` VARCHAR(100) default '' NOT NULL,
 	`HISTORY_DATE` DATETIME,
 	`HISTORY_DATA` MEDIUMTEXT  NOT NULL,
-	KEY `indexAppHistory`(`APP_UID`, `TAS_UID`, `USR_UID`)
+	KEY `indexAppHistory`(`APP_UID`, `TAS_UID`, `USR_UID`),
+	KEY `indexDynUid`(`DYN_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='History table for Dynaforms';
 #-----------------------------------------------------------------------------
 #-- APP_FOLDER
