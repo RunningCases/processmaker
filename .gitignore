@@ -38,3 +38,4 @@ update.sh
 workflow/public_html/translations/
 build-prod.zip
 node_modules
+/workflow/engine/config/system-tables.ini

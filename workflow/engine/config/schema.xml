@@ -2052,6 +2052,9 @@
     <column name="DYN_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="REP_TAB_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="CON_STATUS" type="VARCHAR" size="20" required="true" default="ACTIVE"/>
+    <index name="indexConStatus">
+      <index-column name="CON_STATUS"/>
+    </index>
   </table>
   <table name="STAGE">
     <vendor type="mysql">
@@ -2555,6 +2558,11 @@
     <column name="APP_FINISH_DATE" type="TIMESTAMP" required="false"/>
     <column name="APP_UPDATE_DATE" type="TIMESTAMP" required="true"/>
     <column name="APP_OVERDUE_PERCENTAGE" type="DOUBLE" required="true"/>
+    <index name="indexUsrUidThreadStatusAppStatus">
+      <index-column name="USR_UID"/>
+      <index-column name="DEL_THREAD_STATUS"/>
+      <index-column name="APP_STATUS"/>
+    </index>
     <index name="indexAppUid">
       <index-column name="APP_UID"/>
     </index>
