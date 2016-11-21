@@ -1931,9 +1931,10 @@ class wsBase
      * @param string $taskId
      * @param string $variables
      * @param int $executeTriggers : Optional parameter. The execution all triggers of the task, according to your steps, 1 yes 0 no.
+     * @param string $status
      * @return $result will return an object
      */
-    public function newCase($processId, $userId, $taskId, $variables, $executeTriggers = 0)
+    public function newCase($processId, $userId, $taskId, $variables, $executeTriggers = 0, $status = 'DRAFT')
     {
         //$executeTriggers, this parameter is not important, it may be the last parameter in the method
 
@@ -2028,6 +2029,11 @@ class wsBase
 
             $oldFields['DEL_INDEX'] = $case['INDEX'];
             $oldFields['TAS_UID'] = $taskId;
+
+            if (!is_null($status) && $status != 'DRAFT') {
+                $oldFields['APP_STATUS'] = $status;
+            }
+
             $up_case = $oCase->updateCase( $caseId, $oldFields );
 
             //Execute all triggers of the task, according to your steps
