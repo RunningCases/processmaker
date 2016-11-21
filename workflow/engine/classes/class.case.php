@@ -24,41 +24,6 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
-/* require_once ("classes/model/Application.php");
-  require_once ("classes/model/AppCacheView.php");
-  require_once ("classes/model/AppDelay.php");
-  require_once ("classes/model/AppDelegation.php");
-  require_once ("classes/model/AppDocument.php");
-  require_once ("classes/model/AppEvent.php");
-  require_once ("classes/model/AppHistory.php");
-  require_once ("classes/model/AppMessage.php");
-  require_once ("classes/model/AppNotes.php");
-  require_once ("classes/model/AppOwner.php");
-  require_once ("classes/model/AppSolrQueue.php");
-  require_once ("classes/model/AppThread.php");
-  require_once ("classes/model/CaseTracker.php");
-  require_once ("classes/model/CaseTrackerObject.php");
-  require_once ("classes/model/Configuration.php");
-  require_once ("classes/model/Content.php");
-  require_once ("classes/model/DbSource.php");
-  require_once ("classes/model/Dynaform.php"); */
-//require_once ("classes/model/InputDocument.php");
-//require_once ("classes/model/Language.php");
-//require_once ("classes/model/ObjectPermission.php");
-//require_once ("classes/model/OutputDocument.php");
-//require_once ("classes/model/Process.php");
-//require_once ("classes/model/ProcessUser.php");
-//require_once ("classes/model/ReportTable.php");
-//require_once ("classes/model/ReportVar.php");
-//require_once ("classes/model/Route.php");
-//require_once ("classes/model/Step.php");
-//require_once ("classes/model/StepSupervisor.php");
-//require_once ("classes/model/StepTrigger.php");
-//require_once ("classes/model/SubApplication.php");
-//require_once ("classes/model/Task.php");
-//require_once ("classes/model/TaskUser.php");
-//require_once ("classes/model/Triggers.php");
-//require_once ("classes/model/Users.php");
 
 G::LoadClass("pmScript");
 
@@ -5183,17 +5148,272 @@ class Cases
         return $oCriteria;
     }
 
-    /*
-     * This function sends notifications in a task
-     *
-     * @name sendNotifications
-     * @param string $taskUid
-     * @param array $arrayTask
-     * @param array $arrayData
-     * @param string $applicationUid
-     * @param string $delIndex
+    /**
+     * @param $aTaskInfo
+     * @param $arrayData
+     * @param $typeSend
+     * @param $from
+     * @return array
+     * @throws Exception
+     */
+    public function loadDataSendEmail($aTaskInfo, $arrayData, $from, $typeSend)
+    {
+        $eServer = new \ProcessMaker\BusinessModel\EmailServer();
+        $dataLastEmail = array();
+
+        switch ($typeSend) {
+            case 'LAST':
+                if (isset($aTaskInfo['TAS_DEF_SUBJECT_MESSAGE']) && $aTaskInfo['TAS_DEF_SUBJECT_MESSAGE'] != '') {
+                    $sSubject = G::replaceDataField($aTaskInfo['TAS_DEF_SUBJECT_MESSAGE'], $arrayData);
+                } else {
+                    $sSubject = G::LoadTranslation('ID_MESSAGE_SUBJECT_DERIVATION');
+                }
+
+                G::loadClass('configuration');
+                $oConf = new Configurations;
+                $oConf->loadConfig($x, 'TAS_EXTRA_PROPERTIES', $aTaskInfo['TAS_UID'], '', '');
+                $conf = $oConf->aConfig;
+
+                $pathEmail = PATH_DATA_SITE . "mailTemplates" . PATH_SEP . $aTaskInfo["PRO_UID"] . PATH_SEP;
+                $swtplDefault = 0;
+                $sBody = null;
+
+                if (isset($conf["TAS_DEF_MESSAGE_TYPE"]) &&
+                    isset($conf["TAS_DEF_MESSAGE_TEMPLATE"]) &&
+                    $conf["TAS_DEF_MESSAGE_TYPE"] == "template" &&
+                    $conf["TAS_DEF_MESSAGE_TEMPLATE"] != ""
+                ) {
+                    if ($conf["TAS_DEF_MESSAGE_TEMPLATE"] == "alert_message.html") {
+                        $swtplDefault = 1;
+                    }
+
+                    $fileTemplate = $pathEmail . $conf["TAS_DEF_MESSAGE_TEMPLATE"];
+
+                    if (!file_exists($fileTemplate)) {
+                        $tempale = PATH_CORE . "templates" . PATH_SEP . "mails" . PATH_SEP . "alert_message.html";
+                        $copied = @copy($tempale, $fileTemplate);
+                        if ($copied) {
+                            $dataTemplate = array("prf_filename" => $conf["TAS_DEF_MESSAGE_TEMPLATE"],
+                                "prf_path" => $fileTemplate,
+                                "pro_uid" => $aTaskInfo["PRO_UID"],
+                                "usr_uid" => "00000000000000000000000000000001",
+                                "prf_uid" => G::generateUniqueID(),
+                                "prf_type" => "file",
+                                "prf_create_date" => date("Y-m-d H:i:s"));
+                            $filesManager = new ProcessMaker\BusinessModel\FilesManager();
+                            $filesManager->addProcessFilesManagerInDb($dataTemplate);
+                        } else {
+                            throw (new Exception("Template file \"$fileTemplate\" does not exist."));
+                        }
+                    }
+
+                    $sBody = file_get_contents($fileTemplate);
+                } else {
+                    $sBody = nl2br($aTaskInfo['TAS_DEF_MESSAGE']);
+                }
+                if (!class_exists('System')) {
+                    G::LoadClass('system');
+                }
+                $aConfiguration = ($aTaskInfo['TAS_EMAIL_SERVER_UID'] != '') ?
+                    $eServer->getEmailServer($aTaskInfo['TAS_EMAIL_SERVER_UID'], true) : $eServer->getEmailServerDefault();
+                $aConfiguration['SMTPSecure'] = $aConfiguration['SMTPSECURE'];
+                $msgError = '';
+                if (empty($aConfiguration)) {
+                    $msgError = G::LoadTranslation('ID_THE_DEFAULT_CONFIGURATION');
+                    $aConfiguration['MESS_ENGINE'] = '';
+                }
+                if ($aTaskInfo['TAS_NOT_EMAIL_FROM_FORMAT']) {
+                    $fromName = $aConfiguration['MESS_FROM_NAME'];
+                    $fromMail = $aConfiguration['MESS_FROM_MAIL'];
+                    $from = $fromName . (($fromMail != '') ? ' <' . $fromMail . '>' : '');
+                }
+                $dataLastEmail['msgError'] = $msgError;
+                $dataLastEmail['configuration'] = $aConfiguration;
+                $dataLastEmail['subject'] = $sSubject;
+                $dataLastEmail['pathEmail'] = $pathEmail;
+                $dataLastEmail['swtplDeafault'] = $swtplDefault;
+                $dataLastEmail['body'] = $sBody;
+                $dataLastEmail['from'] = $from;
+                break;
+            case 'RECEIVE':
+                if (isset($aTaskInfo['TAS_RECEIVE_SUBJECT_MESSAGE']) && $aTaskInfo['TAS_RECEIVE_SUBJECT_MESSAGE'] != '') {
+                    $sSubject = G::replaceDataField($aTaskInfo['TAS_RECEIVE_SUBJECT_MESSAGE'], $arrayData);
+                } else {
+                    $sSubject = G::LoadTranslation('ID_MESSAGE_SUBJECT_DERIVATION');
+                }
+
+                $pathEmail = PATH_DATA_SITE . "mailTemplates" . PATH_SEP . $aTaskInfo["PRO_UID"] . PATH_SEP;
+                $swtplDefault = 0;
+                $sBody = null;
+
+                if (isset($aTaskInfo["TAS_RECEIVE_MESSAGE_TYPE"]) &&
+                    isset($aTaskInfo["TAS_RECEIVE_MESSAGE_TEMPLATE"]) &&
+                    $aTaskInfo["TAS_RECEIVE_MESSAGE_TYPE"] == "template" &&
+                    $aTaskInfo["TAS_RECEIVE_MESSAGE_TEMPLATE"] != ""
+                ) {
+                    if ($aTaskInfo["TAS_RECEIVE_MESSAGE_TEMPLATE"] == "alert_message.html") {
+                        $swtplDefault = 1;
+                    }
+
+                    $fileTemplate = $pathEmail . $aTaskInfo["TAS_RECEIVE_MESSAGE_TEMPLATE"];
+
+                    if (!file_exists($fileTemplate)) {
+                        $tempale = PATH_CORE . "templates" . PATH_SEP . "mails" . PATH_SEP . "alert_message.html";
+                        $copied = @copy($tempale, $fileTemplate);
+                        if ($copied) {
+                            $dataTemplate = array("prf_filename" => $aTaskInfo["TAS_RECEIVE_MESSAGE_TEMPLATE"],
+                                "prf_path" => $fileTemplate,
+                                "pro_uid" => $aTaskInfo["PRO_UID"],
+                                "usr_uid" => "00000000000000000000000000000001",
+                                "prf_uid" => G::generateUniqueID(),
+                                "prf_type" => "file",
+                                "prf_create_date" => date("Y-m-d H:i:s"));
+                            $filesManager = new ProcessMaker\BusinessModel\FilesManager();
+                            $filesManager->addProcessFilesManagerInDb($dataTemplate);
+                        } else {
+                            throw (new Exception("Template file \"$fileTemplate\" does not exist."));
+                        }
+                    }
+
+                    $sBody = file_get_contents($fileTemplate);
+                } else {
+                    $sBody = nl2br($aTaskInfo['TAS_RECEIVE_MESSAGE']);
+                }
+                if (!class_exists('System')) {
+                    G::LoadClass('system');
+                }
+                $aConfiguration = ($aTaskInfo['TAS_RECEIVE_SERVER_UID'] != '') ?
+                    $eServer->getEmailServer($aTaskInfo['TAS_RECEIVE_SERVER_UID'], true) : $eServer->getEmailServerDefault();
+                $aConfiguration['SMTPSecure'] = $aConfiguration['SMTPSECURE'];
+                $msgError = '';
+                if (empty($aConfiguration)) {
+                    $msgError = G::LoadTranslation('ID_THE_DEFAULT_CONFIGURATION');
+                    $aConfiguration['MESS_ENGINE'] = '';
+                }
+                if ($aTaskInfo['TAS_RECEIVE_EMAIL_FROM_FORMAT']) {
+                    $fromName = $aConfiguration['MESS_FROM_NAME'];
+                    $fromMail = $aConfiguration['MESS_FROM_MAIL'];
+                    $from = $fromName . (($fromMail != '') ? ' <' . $fromMail . '>' : '');
+                }
+                $dataLastEmail['msgError'] = $msgError;
+                $dataLastEmail['configuration'] = $aConfiguration;
+                $dataLastEmail['subject'] = $sSubject;
+                $dataLastEmail['pathEmail'] = $pathEmail;
+                $dataLastEmail['swtplDeafault'] = $swtplDefault;
+                $dataLastEmail['body'] = $sBody;
+                $dataLastEmail['from'] = $from;
+                break;
+        }
+        return $dataLastEmail;
+    }
+
+    /**
+     * @param $dataLastEmail
+     * @param $arrayData
+     * @param $arrayTask
+     */
+    public function sendMessage($dataLastEmail, $arrayData, $arrayTask)
+    {
+        G::LoadClass("spool");
+        foreach ($arrayTask as $aTask) {
+            //Check and fix if Task Id is complex
+            if (strpos($aTask['TAS_UID'], "/") !== false) {
+                $aux = explode("/", $aTask['TAS_UID']);
+                if (isset($aux[1])) {
+                    $aTask['TAS_UID'] = $aux[1];
+                }
+            }
+            //if the next is EOP dont send notification and continue with the next
+            if ($aTask['TAS_UID'] === '-1') {
+                continue;
+            }
+            if (isset($aTask['DEL_INDEX'])) {
+                $arrayData2 = $arrayData;
+                $appDelegation = AppDelegationPeer::retrieveByPK($dataLastEmail['applicationUid'], $aTask['DEL_INDEX']);
+                if (!is_null($appDelegation)) {
+                    $oTaskUpd = new Task();
+                    $aTaskUpdate = $oTaskUpd->load($appDelegation->getTasUid());
+                    $arrayData2['TAS_TITLE'] = $aTaskUpdate['TAS_TITLE'];
+                    $arrayData2['DEL_TASK_DUE_DATE'] = $appDelegation->getDelTaskDueDate();
+                }
+            } else {
+                $arrayData2 = $arrayData;
+            }
+
+            if (isset($aTask['USR_UID']) && !empty($aTask['USR_UID'])) {
+                $user = new \ProcessMaker\BusinessModel\User();
+                $arrayUserData = $user->getUser($aTask['USR_UID'], true);
+                $arrayData2 = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($arrayData2,
+                    (trim($arrayUserData['USR_TIME_ZONE']) != '') ? trim($arrayUserData['USR_TIME_ZONE']) :
+                        \ProcessMaker\Util\System::getTimeZone());
+            } else {
+                $arrayData2 = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($arrayData2);
+            }
+            $sBody2 = G::replaceDataGridField($dataLastEmail['body'], $arrayData2, false);
+            $sTo = null;
+            $sCc = '';
+            if ($aTask['TAS_UID'] != '-1') {
+                $respTo = $this->getTo($aTask['TAS_UID'], $aTask['USR_UID'], $arrayData);
+                $sTo = $respTo['to'];
+                $sCc = $respTo['cc'];
+            }
+
+            if ($aTask ["TAS_ASSIGN_TYPE"] === "SELF_SERVICE") {
+                if ($dataLastEmail['swtplDefault'] == 1) {
+                    G::verifyPath($dataLastEmail['pathEmail'], true); // Create if it does not exist
+                    $fileTemplate = $dataLastEmail['pathEmail'] . G::LoadTranslation('ID_UNASSIGNED_MESSAGE');
+
+                    if ((!file_exists($fileTemplate)) && file_exists(PATH_TPL . "mails" . PATH_SEP .
+                            G::LoadTranslation('ID_UNASSIGNED_MESSAGE'))
+                    ) {
+                        @copy(PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation('ID_UNASSIGNED_MESSAGE'),
+                            $fileTemplate);
+                    }
+                    $sBody2 = G::replaceDataField(file_get_contents($fileTemplate), $arrayData2);
+                }
+            }
+
+            if ($sTo != null) {
+                $oSpool = new spoolRun();
+
+                $oSpool->setConfig($dataLastEmail['configuration']);
+                $oSpool->create(array(
+                    "msg_uid" => "",
+                    'app_uid' => $dataLastEmail['applicationUid'],
+                    'del_index' => $dataLastEmail['delIndex'],
+                    "app_msg_type" => "DERIVATION",
+                    "app_msg_subject" => $dataLastEmail['subject'],
+                    'app_msg_from' => $dataLastEmail['from'],
+                    "app_msg_to" => $sTo,
+                    'app_msg_body' => $sBody2,
+                    "app_msg_cc" => $sCc,
+                    "app_msg_bcc" => "",
+                    "app_msg_attach" => "",
+                    "app_msg_template" => "",
+                    "app_msg_status" => "pending",
+                    "app_msg_error" => $dataLastEmail['msgError']
+                ));
+
+                if ($dataLastEmail['msgError'] == '') {
+                    if (($dataLastEmail['configuration']["MESS_BACKGROUND"] == "") ||
+                        ($dataLastEmail['configuration']["MESS_TRY_SEND_INMEDIATLY"] == "1")
+                    ) {
+                        $oSpool->sendMail();
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * @param $taskUid
+     * @param $arrayTask
+     * @param $arrayData
+     * @param $applicationUid
+     * @param $delIndex
      * @param string $from
-     * @return void
+     * @return bool
+     * @throws Exception
      */
 
     public function sendNotifications($taskUid, $arrayTask, $arrayData, $applicationUid, $delIndex, $from = '')
@@ -5202,194 +5422,17 @@ class Cases
             $arrayApplicationData = $this->loadCase($applicationUid);
             $arrayData['APP_NUMBER'] = $arrayApplicationData['APP_NUMBER'];
 
-            if (!class_exists('System')) {
-                G::LoadClass('system');
-            }
-
-            //Send derivation notification - Start
             $oTask = new Task();
             $aTaskInfo = $oTask->load($taskUid);
 
-            if ($aTaskInfo['TAS_SEND_LAST_EMAIL'] != 'TRUE') {
+            if ($aTaskInfo['TAS_SEND_LAST_EMAIL'] == 'TRUE') {
+                $dataLastEmail = $this->loadDataSendEmail($aTaskInfo, $arrayData, $from, 'LAST');
+                $dataLastEmail['applicationUid'] = $applicationUid;
+                $dataLastEmail['delIndex'] = $delIndex;
+                $this->sendMessage($dataLastEmail, $arrayData, $arrayTask);
+            } else {
                 return false;
             }
-
-            $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
-
-            $emailServerUid = $aTaskInfo['TAS_EMAIL_SERVER_UID'];
-
-            if ($emailServerUid != '') {
-                $aConfiguration = $emailServer->getEmailServer($emailServerUid, true);
-                $aConfiguration['SMTPSecure'] = $aConfiguration['SMTPSECURE'];
-            } else {
-                $aConfiguration = $emailServer->getEmailServerDefault();
-                $aConfiguration['SMTPSecure'] = $aConfiguration['SMTPSECURE'];
-            }
-
-            $msgError = '';
-
-            if (empty($aConfiguration)) {
-                $msgError = G::LoadTranslation('ID_THE_DEFAULT_CONFIGURATION');
-            }
-
-            if ($aTaskInfo['TAS_NOT_EMAIL_FROM_FORMAT']) {
-                $fromName = $aConfiguration['MESS_FROM_NAME'];
-                $fromMail = $aConfiguration['MESS_FROM_MAIL'];
-
-                $from = $fromName . (($fromMail != '')? ' <' . $fromMail . '>' : '');
-            }
-
-            $from = G::buildFrom($aConfiguration, $from);
-
-            if (isset($aTaskInfo['TAS_DEF_SUBJECT_MESSAGE']) && $aTaskInfo['TAS_DEF_SUBJECT_MESSAGE'] != '') {
-                $sSubject = G::replaceDataField($aTaskInfo['TAS_DEF_SUBJECT_MESSAGE'], $arrayData);
-            } else {
-                $sSubject = G::LoadTranslation('ID_MESSAGE_SUBJECT_DERIVATION');
-            }
-
-            //erik: new behaviour for messages
-            G::loadClass('configuration');
-            $oConf = new Configurations;
-            $oConf->loadConfig($x, 'TAS_EXTRA_PROPERTIES', $aTaskInfo['TAS_UID'], '', '');
-            $conf = $oConf->aConfig;
-
-            $pathEmail = PATH_DATA_SITE . "mailTemplates" . PATH_SEP . $aTaskInfo["PRO_UID"] . PATH_SEP;
-            $swtplDefault = 0;
-            $sBody = null;
-
-            if (isset($conf["TAS_DEF_MESSAGE_TYPE"]) &&
-                    isset($conf["TAS_DEF_MESSAGE_TEMPLATE"]) &&
-                    $conf["TAS_DEF_MESSAGE_TYPE"] == "template" &&
-                    $conf["TAS_DEF_MESSAGE_TEMPLATE"] != ""
-            ) {
-                if ($conf["TAS_DEF_MESSAGE_TEMPLATE"] == "alert_message.html") {
-                    $swtplDefault = 1;
-                }
-
-                $fileTemplate = $pathEmail . $conf["TAS_DEF_MESSAGE_TEMPLATE"];
-
-                if (!file_exists($fileTemplate)) {
-                    $tempale = PATH_CORE."templates".PATH_SEP."mails".PATH_SEP."alert_message.html";
-                    $copied = @copy($tempale,$fileTemplate);
-                    if($copied) {
-                        $dataTemplate = array("prf_filename"=>$conf["TAS_DEF_MESSAGE_TEMPLATE"],
-                                              "prf_path"=>$fileTemplate,
-                                              "pro_uid"=>$aTaskInfo["PRO_UID"],
-                                              "usr_uid"=>"00000000000000000000000000000001",
-                                              "prf_uid"=>G::generateUniqueID(),
-                                              "prf_type"=>"file",
-                                              "prf_create_date"=>date("Y-m-d H:i:s"));
-                        $filesManager = new ProcessMaker\BusinessModel\FilesManager();
-                        $filesManager->addProcessFilesManagerInDb($dataTemplate);
-                    } else {
-                        throw (new Exception("Template file \"$fileTemplate\" does not exist."));
-                    }
-                }
-
-                $sBody = file_get_contents($fileTemplate);
-            } else {
-                $sBody = nl2br($aTaskInfo['TAS_DEF_MESSAGE']);
-            }
-
-            G::LoadClass("tasks");
-            G::LoadClass("groups");
-            G::LoadClass("spool");
-
-            $task = new Tasks();
-            $group = new Groups();
-            $oUser = new Users();
-
-            foreach ($arrayTask as $aTask) {
-
-                //Check and fix if Task Id is complex
-                if (strpos($aTask['TAS_UID'], "/") !== false) {
-                    $aux = explode("/", $aTask['TAS_UID']);
-                    if (isset($aux[1])) {
-                        $aTask['TAS_UID'] = $aux[1];
-                    }
-                }
-
-                //if the next is EOP dont send notification and continue with the next
-                if($aTask['TAS_UID'] === '-1'){
-                    continue;
-                }
-                if (isset($aTask['DEL_INDEX'])) {
-                    $arrayData2 = $arrayData;
-
-                    $appDelegation = AppDelegationPeer::retrieveByPK($applicationUid, $aTask['DEL_INDEX']);
-
-                    if (!is_null($appDelegation)) {
-                        $oTaskUpd = new Task();
-                        $aTaskUpdate = $oTaskUpd->load($appDelegation->getTasUid());
-                        $arrayData2['TAS_TITLE'] = $aTaskUpdate['TAS_TITLE'];
-                        $arrayData2['DEL_TASK_DUE_DATE'] = $appDelegation->getDelTaskDueDate();
-                    }
-                } else {
-                    $arrayData2 = $arrayData;
-                }
-
-                if (isset($aTask['USR_UID']) && !empty($aTask['USR_UID'])) {
-                    $user = new \ProcessMaker\BusinessModel\User();
-
-                    $arrayUserData = $user->getUser($aTask['USR_UID'], true);
-
-                    $arrayData2 = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($arrayData2, (trim($arrayUserData['USR_TIME_ZONE']) != '')? trim($arrayUserData['USR_TIME_ZONE']) : \ProcessMaker\Util\System::getTimeZone());
-                } else {
-                    $arrayData2 = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($arrayData2);
-                }
-
-                $sBody2 = G::replaceDataGridField($sBody, $arrayData2, false);
-
-                $sTo = null;
-                if($aTask['TAS_UID'] != '-1'){
-                    $respTo = $this->getTo($aTask['TAS_UID'], $aTask['USR_UID'], $arrayData);
-                    $sTo = $respTo['to'];
-                    $sCc = $respTo['cc'];
-                }
-
-                if ($aTask ["TAS_ASSIGN_TYPE"] === "SELF_SERVICE") {
-                    if ($swtplDefault == 1) {
-                        G::verifyPath ( $pathEmail, true ); // Create if it does not exist
-                        $fileTemplate = $pathEmail . G::LoadTranslation ( 'ID_UNASSIGNED_MESSAGE' );
-
-                        if ((! file_exists ( $fileTemplate )) && file_exists ( PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation ( 'ID_UNASSIGNED_MESSAGE' ) )) {
-                            @copy ( PATH_TPL . "mails" . PATH_SEP . G::LoadTranslation ( 'ID_UNASSIGNED_MESSAGE' ), $fileTemplate );
-                        }
-                        $sBody2 = G::replaceDataField ( file_get_contents ( $fileTemplate ), $arrayData2 );
-                    }
-                }
-
-                if ($sTo != null) {
-                    $oSpool = new spoolRun();
-
-                    $oSpool->setConfig($aConfiguration);
-                    $oSpool->create(array(
-                        "msg_uid" => "",
-                        'app_uid' => $applicationUid,
-                        'del_index' => $delIndex,
-                        "app_msg_type" => "DERIVATION",
-                        "app_msg_subject" => $sSubject,
-                        'app_msg_from' => $from,
-                        "app_msg_to" => $sTo,
-                        'app_msg_body' => $sBody2,
-                        "app_msg_cc" => $sCc,
-                        "app_msg_bcc" => "",
-                        "app_msg_attach" => "",
-                        "app_msg_template" => "",
-                        "app_msg_status" => "pending",
-                        "app_msg_error" => $msgError
-                    ));
-
-                    if ($msgError == '') {
-                        if (($aConfiguration["MESS_BACKGROUND"] == "") ||
-                                ($aConfiguration["MESS_TRY_SEND_INMEDIATLY"] == "1")
-                        ) {
-                            $oSpool->sendMail();
-                        }
-                    }
-                }
-            }
-            //Send derivation notification - End
         } catch (Exception $oException) {
             throw $oException;
         }

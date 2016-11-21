@@ -52,9 +52,11 @@ class Derivation
     protected $flagControlMulInstance;
     private $regexpTaskTypeToInclude;
     public $node;
+    public $userLogged = null;
 
     public function __construct()
     {
+        $this->userLogged = new Users();
         $this->setRegexpTaskTypeToInclude("GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT");
     }
 
@@ -1252,6 +1254,7 @@ class Derivation
 
         $iAppThreadIndex = $appFields['DEL_THREAD'];
         $delType = 'NORMAL';
+        $sendNotifications = false;
         $sendNotificationsMobile = false;
 
         $appDelegation = new AppDelegation();
@@ -1417,6 +1420,9 @@ class Derivation
             }
 
             $sendNotificationsMobile = $this->sendNotificationsMobile($aOldFields, $aSP, $aNewCase['INDEX']);
+            $nextTaskData = $taskNextDel->toArray(BasePeer::TYPE_FIELDNAME);
+            $nextTaskData['USR_UID'] = $aSP['USR_UID'];
+            $sendNotifications = $this->notifyAssignedUser($appFields, $nextTaskData, $aNewCase['INDEX']);
 
             //If not is SYNCHRONOUS derivate one more time
             if ($aSP['SP_SYNCHRONOUS'] == 0) {
@@ -1449,8 +1455,13 @@ class Derivation
             }
         } //end switch
 
-        if($iNewDelIndex !== 0 && !$sendNotificationsMobile){
-            $sendNotificationsMobile = $this->sendNotificationsMobile($appFields, $nextDel, $iNewDelIndex);
+        if ($iNewDelIndex !== 0 && !$sendNotificationsMobile) {
+            $this->sendNotificationsMobile($appFields, $nextDel, $iNewDelIndex);
+        }
+        if ($iNewDelIndex !== 0 && !$sendNotifications) {
+            $nextTaskData = $taskNextDel->toArray(BasePeer::TYPE_FIELDNAME);
+            $nextTaskData['USR_UID'] = $nextDel['USR_UID'];
+            $this->notifyAssignedUser($appFields, $nextTaskData, $iNewDelIndex);
         }
         return $iNewDelIndex;
     }
@@ -1721,6 +1732,32 @@ class Derivation
             return true;
         } catch (Exception $e) {
             \G::log(G::loadTranslation('ID_NOTIFICATION_ERROR') . '|' . $e->getMessage(), PATH_DATA, "mobile.log");
+        }
+    }
+
+    /**
+     * @param $appFields
+     * @param $nextDel
+     * @param $iNewDelIndex
+     * @return bool
+     */
+    public function notifyAssignedUser($appFields, $nextDel, $iNewDelIndex)
+    {
+        try {
+            if ($nextDel['TAS_RECEIVE_LAST_EMAIL'] == 'TRUE') {
+                $taskData = array();
+                $userLogged = $this->userLogged->load($appFields['APP_DATA']['USER_LOGGED']);
+                $fromName = $userLogged['USR_FIRSTNAME'] . ' ' . $userLogged['USR_LASTNAME'];
+                $sFromData = $fromName . ($userLogged['USR_EMAIL'] != '' ? ' <' . $userLogged['USR_EMAIL'] . '>' : '');
+                $dataEmail = $this->case->loadDataSendEmail($nextDel, $appFields['APP_DATA'], $sFromData, 'RECEIVE');
+                $dataEmail['applicationUid'] = $appFields['APP_UID'];
+                $dataEmail['delIndex'] = $iNewDelIndex;
+                array_push($taskData, $nextDel);
+                $this->case->sendMessage($dataEmail, $appFields['APP_DATA'], $taskData);
+            }
+            return true;
+        } catch (Exception $e) {
+            \G::log(G::loadTranslation('ID_NOTIFICATION_ERROR') . '|' . $e->getMessage());
         }
     }
 }
