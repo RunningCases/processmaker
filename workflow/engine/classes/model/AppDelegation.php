@@ -270,7 +270,7 @@ class AppDelegation extends BaseAppDelegation
                         if($dataAbe['ABE_TYPE']!='' && $data->USR_UID!=''){
                             G::LoadClass('actionsByEmailCore');
                             $actionsByEmail = new actionsByEmailCoreClass();
-                            $actionsByEmail->sendActionsByEmail($data);
+                            $actionsByEmail->sendActionsByEmail($data, $dataAbe);
                         }
                     }
                 }

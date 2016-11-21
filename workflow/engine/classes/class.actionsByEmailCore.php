@@ -21,7 +21,12 @@ class actionsByEmailCoreClass extends PMPlugin
     {
     }
 
-    public function sendActionsByEmail($data)
+    /**
+     * @param $data
+     * @param $dataAbe
+     * @throws Exception
+     */
+    public function sendActionsByEmail($data, $dataAbe)
     {
         try {
             // Validations
@@ -73,7 +78,11 @@ class actionsByEmailCoreClass extends PMPlugin
             }
             G::LoadClass('pmFunctions');
 
-            $emailSetup = getEmailConfiguration();
+            $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
+
+            $emailSetup = ($dataAbe['ABE_EMAIL_SERVER_UID'] != '') ?
+                $emailServer->getEmailServer($dataAbe['ABE_EMAIL_SERVER_UID'], true) :
+                $emailServer->getEmailServerDefault();
 
             if (!empty($emailSetup)) {
                 require_once 'classes/model/AbeConfiguration.php';
@@ -144,8 +153,6 @@ class actionsByEmailCoreClass extends PMPlugin
                             // Email
                             $_SESSION['CURRENT_DYN_UID'] = $configuration['DYN_UID'];
 
-                            $scriptCode = '';
-
                             $__ABE__ = '';
                             $conf = new Configurations();
                             $envSkin = defined("SYS_SKIN") ? SYS_SKIN : $conf->getConfiguration('SKIN_CRON', '');
@@ -185,7 +192,6 @@ class actionsByEmailCoreClass extends PMPlugin
                                     $__ABE__.='</tr></table><br />';
                                     break;
                                 case 'LINK':
-                                    // $__ABE__ .= $dynaform->render(PATH_FEATURES . 'actionsByEmail/xmlform.html', $scriptCode) . '<br />';
                                     $__ABE__ .= '<a href="' . $link . 'DataForm?APP_UID=' . G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY) . '&DYN_UID=' . G::encrypt($configuration['DYN_UID'], URL_KEY) . '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY) . '" target="_blank">Please complete this form</a>';
                                     break;
                                 // coment
@@ -290,7 +296,6 @@ class actionsByEmailCoreClass extends PMPlugin
                             }
 
                             G::LoadClass('wsBase');
-
                             $wsBaseInstance = new wsBase();
                             $result = $wsBaseInstance->sendMessage(
                                 $data->APP_UID,
@@ -301,7 +306,12 @@ class actionsByEmailCoreClass extends PMPlugin
                                 $subject,
                                 $configuration['ABE_TEMPLATE'],
                                 $caseFields['APP_DATA'],
-                            '');
+                                null,
+                                true,
+                                0,
+                                $emailSetup,
+                                0
+                            );
                             $abeRequest['ABE_REQ_STATUS'] = ($result->status_code == 0 ? 'SENT' : 'ERROR');
 
                             $body = '';
