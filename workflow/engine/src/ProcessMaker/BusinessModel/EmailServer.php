@@ -1012,7 +1012,11 @@ class EmailServer
                 $this->getFieldNameByFormatFieldName("SMTPSECURE")               => $record["SMTPSECURE"],
                 $this->getFieldNameByFormatFieldName("MESS_TRY_SEND_INMEDIATLY") => $record["MESS_TRY_SEND_INMEDIATLY"],
                 $this->getFieldNameByFormatFieldName("MAIL_TO")                  => $record["MAIL_TO"],
-                $this->getFieldNameByFormatFieldName("MESS_DEFAULT")             => $record["MESS_DEFAULT"]
+                $this->getFieldNameByFormatFieldName("MESS_DEFAULT")             => $record["MESS_DEFAULT"],
+                $this->getFieldNameByFormatFieldName("MESS_BACKGROUND")          => '',
+                $this->getFieldNameByFormatFieldName("MESS_PASSWORD_HIDDEN")     => '',
+                $this->getFieldNameByFormatFieldName("MESS_EXECUTE_EVERY")       => '',
+                $this->getFieldNameByFormatFieldName("MESS_SEND_MAX")            => ''
             );
         } catch (\Exception $e) {
             throw $e;
@@ -1054,6 +1058,10 @@ class EmailServer
                 $arrayData["MESS_TRY_SEND_INMEDIATLY"] = (int)($row["MESS_TRY_SEND_INMEDIATLY"]);
                 $arrayData["MAIL_TO"]                  = $row["MAIL_TO"];
                 $arrayData["MESS_DEFAULT"]             = (int)($row["MESS_DEFAULT"]);
+                $arrayData["MESS_BACKGROUND"]          = '';
+                $arrayData["MESS_PASSWORD_HIDDEN"]     = '';
+                $arrayData["MESS_EXECUTE_EVERY"]       = '';
+                $arrayData["MESS_SEND_MAX"]            = '';
             }
 
             //Return
@@ -1211,6 +1219,10 @@ class EmailServer
             $row["MESS_RAUTH"] = (int)($row["MESS_RAUTH"]);
             $row["MESS_TRY_SEND_INMEDIATLY"] = (int)($row["MESS_TRY_SEND_INMEDIATLY"]);
             $row["MESS_DEFAULT"] = (int)($row["MESS_DEFAULT"]);
+            $row["MESS_BACKGROUND"] = '';
+            $row["MESS_PASSWORD_HIDDEN"] = '';
+            $row["MESS_EXECUTE_EVERY"] = '';
+            $row["MESS_SEND_MAX"] = '';
 
             //Return
             return (!$flagGetRecord)? $this->getEmailServerDataFromRecord($row) : $row;
