@@ -189,6 +189,8 @@ class pmDynaform
                     $triggerValue = substr($value, 2);
                     if (isset($this->fields["APP_DATA"][$triggerValue])) {
                         $json->{$key} = $this->fields["APP_DATA"][$triggerValue];
+                    } else {
+                        $json->{$key} = '';
                     }
                 }
                 //set properties from 'formInstance' variable
