@@ -220,7 +220,9 @@ if ($flagExecuteBeforeTriggers) {
         }
 
         //Log
-        Bootstrap::registerMonolog('triggerExecutionTime', 200, 'Trigger execution time', ['proUid' => $Fields['APP_DATA']['PROCESS'], 'tasUid' => $Fields['APP_DATA']['TASK'], 'appUid' => $Fields['APP_DATA']['APPLICATION'], 'before' => $_GET['TYPE'], 'triggerInfo' => $arrayInfoTriggerExecutionTime], SYS_SYS, 'processmaker.log');
+        if(sizeof($arrayInfoTriggerExecutionTime)>0){
+            Bootstrap::registerMonolog('triggerExecutionTime', 200, 'Trigger execution time', ['proUid' => $Fields['APP_DATA']['PROCESS'], 'tasUid' => $Fields['APP_DATA']['TASK'], 'appUid' => $Fields['APP_DATA']['APPLICATION'], 'before' => $_GET['TYPE'], 'triggerInfo' => $arrayInfoTriggerExecutionTime], SYS_SYS, 'processmaker.log');
+        }
     } else {
         unset( $_SESSION['_NO_EXECUTE_TRIGGERS_'] );
     }
