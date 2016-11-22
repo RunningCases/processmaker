@@ -5,7 +5,7 @@ use \G;
 
 class Variable
 {
-    private $variableTypes = ['string', 'integer', 'float', 'boolean', 'datetime', 'grid', 'array', 'file', 'multiplefile'];
+    private $variableTypes = ['string', 'integer', 'float', 'boolean', 'datetime', 'grid', 'array', 'file', 'multiplefile', 'object'];
 
     /**
      * Create Variable for a Process
