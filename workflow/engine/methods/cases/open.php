@@ -53,6 +53,7 @@ if (! isset( $_GET['APP_UID'] ) || ! isset( $_GET['DEL_INDEX'] )) {
     $appUid = htmlspecialchars($_GET['APP_UID']);
     $delIndex = htmlspecialchars($_GET['DEL_INDEX']);
 }
+$tasUid = (isset($_GET['TAS_UID'])) ? $tasUid = htmlspecialchars($_GET['TAS_UID']) : '';
 
 require_once ("classes/model/Step.php");
 G::LoadClass( "configuration" );
@@ -101,7 +102,7 @@ if(isset($_GET['actionFromList']) && ($_GET['actionFromList'] === 'to_revise') )
     if($oApp->getAppStatus() === 'COMPLETED') {
         $script = 'cases_Open?';
     } else {
-        $script = 'cases_OpenToRevise?APP_UID=' . $appUid . '&DEL_INDEX=' . $delIndex;
+        $script = 'cases_OpenToRevise?APP_UID=' . $appUid . '&DEL_INDEX=' . $delIndex . '&TAS_UID=' . $tasUid;
         $oHeadPublisher->assign( 'treeToReviseTitle', G::loadtranslation( 'ID_STEP_LIST' ) );
         $casesPanelUrl = 'casesToReviseTreeContent?APP_UID=' . $appUid . '&DEL_INDEX=' . $delIndex;
         $oHeadPublisher->assign( 'casesPanelUrl', $casesPanelUrl ); //translations
