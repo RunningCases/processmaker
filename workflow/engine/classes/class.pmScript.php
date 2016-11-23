@@ -258,6 +258,10 @@ class PMScript
                         }
                         eval( "if (!isset(\$this->aFields" . (isset( $aMatch[2][$i][0] ) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0] . ")) { \$this->aFields" . (isset( $aMatch[2][$i][0] ) ? "['" . $aMatch[2][$i][0] . "']" : '') . $aMatch[5][$i][0] . " = null; }" );
                     }
+                } else {
+                    if ($aMatch[1][$i][0] == "&") {
+                        eval( "if (!isset(\$this->aFields['" . $aMatch[2][$i][0] . "'])) { \$this->aFields['" . $aMatch[2][$i][0] . "'] = new stdclass(); }" );
+                    }
                 }
                 $sScript .= $sAux;
                 $iAux = $aMatch[0][$i][1] + strlen( $aMatch[0][$i][0] );
