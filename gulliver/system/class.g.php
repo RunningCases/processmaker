@@ -1758,8 +1758,7 @@ class G
         $result = $result + G::getSystemConstants();
         $__textoEval = "";
         $u = 0;
-        //$count=preg_match_all('/\@(?:([\@\%\#\!Qq])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*(?:[\\\\][\w\W])?)*)\))/',$sqlString,$match,PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
-        $count = preg_match_all( '/\@(?:([\@\%\#\=\!Qq])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*?)*)\))/', $sqlString, $match, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE );
+        $count = preg_match_all( '/\@(?:([\@\%\#\?\$\=\&])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*(?:[\\\\][\w\W])?)*)\))((?:\s*\[[\'"]?\w+[\'"]?\])+|\-\>([a-zA-Z\_]\w*))?/', $sqlString, $match, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE );
         if ($count) {
             for ($r = 0; $r < $count; $r ++) {
                 if (! isset( $result[$match[2][$r][0]] )) {
@@ -1814,6 +1813,13 @@ class G
                     //Non-quoted =
                     if (($match[1][$r][0]=='=')&&(isset($result[$match[2][$r][0]]))) {
                         $__textoEval.=G::replaceDataField($result[$match[2][$r][0]],$result);
+                        continue;
+                    }
+                    //Objects attributes
+                    if (($match[1][$r][0]=='&')&&(isset($result[$match[2][$r][0]]))) {
+                        if (isset($result[$match[2][$r][0]]->{$match[6][$r][0]})) {
+                            $__textoEval.=$result[$match[2][$r][0]]->{$match[6][$r][0]};
+                        }
                         continue;
                     }
                 }
@@ -1891,7 +1897,7 @@ class G
 
         if ($nl2brRecursive) {
             foreach ($aFields as $sKey => $vValue) {
-                if (!is_array($vValue)) {
+                if (!is_array($vValue) && !is_object($vValue)) {
                     $aFields[$sKey] = nl2br($aFields[$sKey]);
                 }
             }

@@ -871,6 +871,24 @@ class Cases
         return $aReturn;
     }
 
+    public function array_key_intersect(&$a, &$b) {
+        $array = array();
+        while (list($key, $value) = each($a)) {
+            if (isset($b[$key])) {
+                if (is_object($b[$key]) && is_object($value)) {
+                    if (serialize($b[$key]) === serialize($value)) {
+                        $array[$key] = $value;
+                    }
+                } else {
+                    if ($b[$key] === $value) {
+                        $array[$key] = $value;
+                    }
+                }
+            }
+        }
+        return $array;
+    }
+
     /*
      * Update an existing case, this info is used in CaseResume
      *
@@ -914,7 +932,7 @@ class Cases
                 //only when that variable is set.. from Save
                 $FieldsBefore = $this->loadCase($sAppUid);
                 $FieldsDifference = $this->arrayRecursiveDiff($FieldsBefore['APP_DATA'], $aApplicationFields);
-                $fieldsOnBoth = @array_intersect_assoc($FieldsBefore['APP_DATA'], $aApplicationFields);
+                $fieldsOnBoth = $this->array_key_intersect($FieldsBefore['APP_DATA'], $aApplicationFields);
                 //Add fields that weren't in previous version
                 foreach ($aApplicationFields as $key => $value) {
                     if (is_array($value) && isset($fieldsOnBoth[$key]) && is_array($fieldsOnBoth[$key])) {
