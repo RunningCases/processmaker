@@ -913,7 +913,7 @@ class wsBase
         $showMessage = true,
         $delIndex = 0,
         $config = array(),
-    	$gmail = 0
+        $gmail = 0
     ) {
         try {
             if (!class_exists('System')) {
