@@ -917,7 +917,7 @@ class Derivation
                 $flagTaskNextDelAssignTypeIsMultipleInstance = preg_match("/^(?:MULTIPLE_INSTANCE|MULTIPLE_INSTANCE_VALUE_BASED)$/", $taskNextDel->getTasAssignType());
             }
 
-            $flagUpdateCounters = true;
+            $flagUpdateList = true;
 
             switch ($nextDel['TAS_UID']) {
                 case TASK_FINISH_PROCESS:
@@ -1052,7 +1052,7 @@ class Derivation
 
                                     $this->updateList($currentDelegationAux, $nextDelAux, $taskNextDel, $appFields, $iNewDelIndex, $aSP, $removeList);
 
-                                    $flagUpdateCounters = false;
+                                    $flagUpdateList = false;
                                     $removeList = false;
 
                                     $arrayDerivationResult[] = ['DEL_INDEX' => $iNewDelIndex, 'TAS_UID' => $nextDelAux['TAS_UID'], 'USR_UID' => (isset($nextDelAux['USR_UID']))? $nextDelAux['USR_UID'] : ''];
@@ -1182,7 +1182,8 @@ class Derivation
                     }
                     break;
             }
-            if(!is_null($taskNextDel)){
+            //$flagUpdateList is updated when is parallel
+            if(!is_null($taskNextDel) && $flagUpdateList){
                 $this->updateList($currentDelegation, $nextDel, $taskNextDel, $appFields, (isset($iNewDelIndex))? $iNewDelIndex : 0, (isset($aSP))? $aSP : null, $removeList);
             }
 
