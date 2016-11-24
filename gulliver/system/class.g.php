@@ -1758,7 +1758,7 @@ class G
         $result = $result + G::getSystemConstants();
         $__textoEval = "";
         $u = 0;
-        $count = preg_match_all( '/\@(?:([\@\%\#\?\$\=\&])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*(?:[\\\\][\w\W])?)*)\))((?:\s*\[[\'"]?\w+[\'"]?\])+|\-\>([a-zA-Z\_]\w*))?/', $sqlString, $match, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE );
+        $count = preg_match_all( '/\@(?:([\@\%\#\?\$\=\&Qq\!])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*(?:[\\\\][\w\W])?)*)\))((?:\s*\[[\'"]?\w+[\'"]?\])+|\-\>([a-zA-Z\_]\w*))?/', $sqlString, $match, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE );
         if ($count) {
             for ($r = 0; $r < $count; $r ++) {
                 if (! isset( $result[$match[2][$r][0]] )) {
