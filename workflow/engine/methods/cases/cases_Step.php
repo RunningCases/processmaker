@@ -292,7 +292,7 @@ try {
     $array['APP_TITLE'] = $sTitleCase;
     $array['CASE'] = G::LoadTranslation( 'ID_CASE' );
     $array['TITLE'] = G::LoadTranslation( 'ID_TITLE' );
-
+    $Fields['TITLE'] = $sTitleCase;
     $noShowTitle = 0;
     if (isset( $oProcessFieds['PRO_SHOW_MESSAGE'] )) {
         $noShowTitle = $oProcessFieds['PRO_SHOW_MESSAGE'];
