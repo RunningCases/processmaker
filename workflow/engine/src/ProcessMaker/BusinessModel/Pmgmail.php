@@ -328,7 +328,7 @@ class Pmgmail {
     }
 
     private function sendEmailWithApplicationData ($application,  $emailTypeLabel, $mailToAddresses, $mailCcAddresses) {
-        $dataFormToShowString = $this->getFormData($application['APP_UID'],$application['DEL_INDEX']);
+        $dataFormToShowString = '';
         $this->createMailTemplateFile();
         $change = array('[', ']', '"');
         $fdata = str_replace($change, ' ', $dataFormToShowString);
