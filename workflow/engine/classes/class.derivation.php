@@ -50,6 +50,8 @@ class Derivation
     var $case;
     protected $flagControl;
     protected $flagControlMulInstance;
+    protected $sys;
+    protected $context;
     private $regexpTaskTypeToInclude;
     public $node;
     public $userLogged = null;
@@ -735,6 +737,9 @@ class Derivation
             $arrayEventExecute = ["BEFORE" => $flagEventExecuteBeforeGateway, "AFTER" => $flagEventExecuteAfterGateway];
             $positionEventExecute = "BEFORE";
 
+            $aContext = $this->context;
+            $aContext['appUid'] = $applicationData["APP_UID"];
+            $aContext['proUid'] = $applicationData["PRO_UID"];
             if(sizeof($arrayElement)){
                 foreach ($arrayElement as $value) {
                     switch ($value['type']) {
@@ -746,11 +751,25 @@ class Derivation
                                     if (preg_match("/^(?:END|INTERMEDIATE)$/", $event->getEvnType()) && $event->getEvnMarker() === 'MESSAGETHROW') {
                                         //Message-Application throw
                                         $result = $messageApplication->create($applicationData["APP_UID"], $applicationData["PRO_UID"], $value['uid'], $applicationData);
+
+                                        $aContext['envUid'] = $value['uid'];
+                                        $aContext['envType'] = $event->getEvnType();
+                                        $aContext['envMarker'] = $event->getEvnMarker();
+                                        $aContext['action'] = 'Message application throw';
+                                        //Logger
+                                        Bootstrap::registerMonolog('CaseDerivation', 200, 'Case Derivation', $aContext, $this->sysSys, 'processmaker.log');
                                     }
 
                                     if (preg_match("/^(?:END|INTERMEDIATE)$/", $event->getEvnType()) && $event->getEvnMarker() === 'EMAIL') {
                                         //Email-Event throw
                                         $result = $emailEvent->sendEmail($applicationData["APP_UID"], $applicationData["PRO_UID"], $value['uid'], $applicationData);
+
+                                        $aContext['envUid'] = $value['uid'];
+                                        $aContext['envType'] = $event->getEvnType();
+                                        $aContext['envMarker'] = $event->getEvnMarker();
+                                        $aContext['action'] = 'Email event throw';
+                                        //Logger
+                                        Bootstrap::registerMonolog('CaseDerivation', 200, 'Case Derivation', $aContext, $this->sysSys, 'processmaker.log');
                                     }
                                 }
                             }
@@ -824,6 +843,9 @@ class Derivation
     function derivate(array $currentDelegation, array $nextDelegations, $removeList = true)
     {
         $arrayDerivationResult = [];
+        $this->context = Bootstrap::getDefaultContextLog();
+        $aContext = $this->context;
+        $this->sysSys = (defined("SYS_SYS"))? SYS_SYS : "Undefined";
 
         //define this...
         if (! defined( 'TASK_FINISH_PROCESS' )) {
@@ -837,6 +859,8 @@ class Derivation
 
         //Get data for this DEL_INDEX current
         $appFields = $this->case->loadCase( $currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX'] );
+        $aContext['appUid'] = $currentDelegation['APP_UID'];
+        $aContext['delIndex'] = $currentDelegation['DEL_INDEX'];
 
         unset($appFields['APP_ROUTING_DATA']);
 
@@ -921,6 +945,7 @@ class Derivation
 
             $flagUpdateList = true;
 
+            $aContext['tasUid'] = $nextDel['TAS_UID'];
             switch ($nextDel['TAS_UID']) {
                 case TASK_FINISH_PROCESS:
                     /*Close all delegations of $currentDelegation['APP_UID'] */
@@ -939,6 +964,9 @@ class Derivation
                             $this->executeEvent($nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
                         }
                     }
+                    $aContext['action'] = 'end-process';
+                    //Logger
+                    Bootstrap::registerMonolog('CaseDerivation', 200, 'Case Derivation', $aContext, $this->sysSys, 'processmaker.log');
                     break;
                 case TASK_FINISH_TASK:
                     $iAppThreadIndex = $appFields['DEL_THREAD'];
@@ -950,6 +978,9 @@ class Derivation
                         }
                     }
                     $this->case->closeAppThread($currentDelegation['APP_UID'], $iAppThreadIndex);
+                    $aContext['action'] = 'finish-task';
+                    //Logger
+                    Bootstrap::registerMonolog('CaseDerivation', 200, 'Case Derivation', $aContext, $this->sysSys, 'processmaker.log');
                     break;
                 default:
                     //Get all siblingThreads
