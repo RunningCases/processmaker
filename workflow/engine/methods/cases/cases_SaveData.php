@@ -358,14 +358,40 @@ try {
            }
         }
 
-        $_POST['next_step'] = $aNextStep;
-        $_POST['previous_step'] = $oCase->getPreviousStep( $_SESSION['PROCESS'], $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['STEP_POSITION'] );
-        $_POST['req_val'] = $missing_req_values;
-        global $G_PUBLISH;
-        $G_PUBLISH = new Publisher();
-        $G_PUBLISH->AddContent( 'view', 'cases/missRequiredFields' );
-        G::RenderPage( 'publish', 'blank' );
-        exit( 0 );
+        /*hotfix notValidateThisFields */
+        $validate = false;
+        $string = serialize($missing_req_values);
+        if(!is_array($_POST['__notValidateThisFields__'])) {
+            $notValidateThisFields = explode("," ,$_POST['__notValidateThisFields__']);
+        } else {
+            $notValidateThisFields = $_POST['__notValidateThisFields__'];
+        }
+
+        foreach($notValidateThisFields as $val) {
+            if(strpos($val,"]")) {
+                $gridField = substr($val,strrpos($val,"["),strlen($val));
+                $gridField = preg_replace("/[^a-zA-Z0-9_-]+/", "", $gridField);
+                $pattern = "/".$gridField."/i";
+            } else {
+                $pattern = "/".$val."/i";
+            }
+            preg_match($pattern, $string, $matches, PREG_OFFSET_CAPTURE);
+            if(sizeof($matches)) {
+                $validate = true;
+            }
+        }
+
+        if(!$validate && !sizeof($matches)) {
+            $_POST['next_step'] = $aNextStep;
+            $_POST['previous_step'] = $oCase->getPreviousStep( $_SESSION['PROCESS'], $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['STEP_POSITION'] );
+            $_POST['req_val'] = $missing_req_values;
+            global $G_PUBLISH;
+            $G_PUBLISH = new Publisher();
+            $G_PUBLISH->AddContent( 'view', 'cases/missRequiredFields' );
+            G::RenderPage( 'publish', 'blank' );
+            exit( 0 );
+        }
+        /*end hotfix notValidateThisFields */
     }
 
     G::header( 'location: ' . $aNextStep['PAGE'] );
