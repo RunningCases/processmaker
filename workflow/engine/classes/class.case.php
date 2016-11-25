@@ -7199,12 +7199,14 @@ class Cases
         $aFields = $this->loadCase($appUid);
         $proUid = $aFields['PRO_UID'];
 
-        require_once ( "classes/model/Process.php" );
+        require_once("classes/model/Process.php");
         $appProcess = new Process();
         $arrayWebBotTrigger = $appProcess->getTriggerWebBotProcess($proUid, $action);
 
         if ($arrayWebBotTrigger['TRI_WEBBOT'] != false && $arrayWebBotTrigger['TRI_WEBBOT'] != '') {
             global $oPMScript;
+            $aFields['APP_DATA']['APPLICATION'] = $appUid;
+            $aFields['APP_DATA']['PROCESS'] = $proUid;
             $oPMScript = new PMScript();
             $oPMScript->setFields($aFields['APP_DATA']);
             $oPMScript->setScript($arrayWebBotTrigger['TRI_WEBBOT']);
