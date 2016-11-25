@@ -391,7 +391,8 @@ class Workflow extends Handler
 
             $route = \Route::findOneBy([
                 \RoutePeer::TAS_UID => $fromTasUid,
-                \RoutePeer::ROU_NEXT_TASK => $toTasUid
+                \RoutePeer::ROU_NEXT_TASK => $toTasUid,
+                \RoutePeer::ROU_CONDITION => $condition
             ]);
 
             if (is_null($route)) {
