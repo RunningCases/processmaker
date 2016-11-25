@@ -138,7 +138,7 @@ try {
 } catch (Exception $oException) {
     $token = strtotime("now");
     PMException::registerErrorLog($oException, $token);
-    G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
+    G::outRes($oException->getMessage());
     die;
 }
 
