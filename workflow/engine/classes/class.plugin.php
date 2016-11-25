@@ -396,7 +396,7 @@ class PMPlugin
             throw $e;
         }
     }
-    
+
     /**
      * Changes the menu properties from the given processmaker section and menu id
      *
@@ -415,7 +415,7 @@ class PMPlugin
             throw $e;
         }
     }
-    
+
     /**
      * callBack File after import process
      *
@@ -449,6 +449,49 @@ class PMPlugin
             throw $e;
         }
     }
+
+    /**
+     * Path registry to file js or css.
+     * @param type $pathFile
+     * @param string $scope
+     * @throws Exception
+     */
+    public function registerDesignerSourcePath($pathFile, $scope = null)
+    {
+        if ($scope === null) {
+            $scope = '/plugin/' . $this->sNamespace . '/';
+        }
+        try {
+            $pluginRegistry = &PMPluginRegistry::getSingleton();
+            $pluginRegistry->registerDesignerSourcePath($this->sNamespace, $scope . $pathFile);
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * Enable build js or css into build.json paths.
+     * @param type $sourcePath
+     */
+    public function enableExtensionSources($sourcePath = 'config/build.json')
+    {
+        $path = PATH_PLUGINS . $this->sPluginFolder . "/";
+        $buildFile = $path . $sourcePath;
+        if (is_file($buildFile)) {
+            $buildObjects = G::json_decode(file_get_contents($buildFile));
+            foreach ($buildObjects as $item) {
+                $item->path = $path . rtrim($item->path, "/\\");
+                $extensionPath = "extension-" . $item->name . "-" . G::browserCacheFilesGetUid() . "." . $item->extension;
+                $file = $path . "public_html/" . $extensionPath;
+                @file_put_contents($file, "", LOCK_EX);
+                foreach ($item->files as $name) {
+                    @file_put_contents($file, file_get_contents($item->path . "/" . $name), FILE_APPEND | LOCK_EX);
+                }
+                $this->registerDesignerSourcePath($extensionPath);
+            }
+        }
+    }
+
 }
 
 class menuDetail

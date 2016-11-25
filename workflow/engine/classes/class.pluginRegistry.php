@@ -105,6 +105,7 @@ class PMPluginRegistry
     private $_aMenuOptionsToReplace = array ();
     private $_aImportProcessCallbackFile = array ();
     private $_aOpenReassignCallback = array ();
+    private $_arrayDesignerSourcePath = array();
 
     /**
      * Registry a plugin javascript to include with js core at same runtime
@@ -406,6 +407,12 @@ class PMPluginRegistry
         foreach ($this->_arrayDesignerMenu as $key => $detail) {
             if ($detail->pluginName == $sNamespace) {
                 unset($this->_arrayDesignerMenu[$key]);
+            }
+        }
+        
+        foreach ($this->_arrayDesignerSourcePath as $key => $detail) {
+            if ($detail->pluginName == $sNamespace) {
+                unset($this->_arrayDesignerSourcePath[$key]);
             }
         }
 
@@ -1849,4 +1856,50 @@ class PMPluginRegistry
         }
         return $enabledPlugins;
     }
+
+    /**
+     * Registry in an array routes for js or css files.
+     * @param type $pluginName
+     * @param type $pathFile
+     * @throws Exception
+     */
+    public function registerDesignerSourcePath($pluginName, $pathFile)
+    {
+        try {
+            $flagFound = false;
+
+            foreach ($this->_arrayDesignerSourcePath as $value) {
+                if ($value->pluginName == $pluginName && $value->pathFile == $pathFile) {
+                    $flagFound = true;
+                    break;
+                }
+            }
+
+            if (!$flagFound) {
+                $obj = new stdClass();
+                $obj->pluginName = $pluginName;
+                $obj->pathFile = $pathFile;
+
+                $this->_arrayDesignerSourcePath[] = $obj;
+            }
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * You obtain an array containing the routes recorded by the
+     * function registerDesignerSourcePath.
+     * @return type
+     * @throws Exception
+     */
+    public function getDesignerSourcePath()
+    {
+        try {
+            return $this->_arrayDesignerSourcePath;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
 }
