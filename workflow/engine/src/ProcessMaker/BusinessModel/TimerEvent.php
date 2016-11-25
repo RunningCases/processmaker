@@ -1138,7 +1138,7 @@ class TimerEvent
      *
      * return void
      */
-    private function log($action, $value = "", $status = "timereventcron")
+    private function log($action, $value = "", $status = "action")
     {
         try {
             $workspace = (defined("SYS_SYS"))? SYS_SYS : "Wokspace Undefined";

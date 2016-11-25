@@ -176,6 +176,8 @@ try {
         }
         /*----------------------------------********---------------------------------*/
     }
+    global $sObject;
+    $sObject = $workspace;
 
     //Workflow
     saveLog('main', 'action', 'checking folder ' . PATH_DB . $workspace);
