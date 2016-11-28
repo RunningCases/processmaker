@@ -186,7 +186,7 @@ class WebApplication
 
         $baseUrl = (empty($input->base_url)) ? $uri : $input->base_url;
 
-        foreach($input->calls as $value) {
+        foreach ($input->calls as $key => $value) {
             $_SERVER["REQUEST_METHOD"] = empty($value->method) ? 'GET' : $value->method;
             $uriTemp = trim($baseUrl) . trim($value->url);
 
@@ -196,7 +196,7 @@ class WebApplication
             }
 
             $inputExecute = empty($value->data) ? '' : json_encode($value->data);
-            $this->responseMultipart[] = $this->dispatchApiRequest($uriTemp, $version, true, $inputExecute);
+            $this->responseMultipart[$key] = $this->dispatchApiRequest($uriTemp, $version, true, $inputExecute);
         }
 
         echo json_encode($this->responseMultipart);
