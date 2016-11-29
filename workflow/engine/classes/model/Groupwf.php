@@ -252,20 +252,13 @@ class Groupwf extends BaseGroupwf
     public function loadByGroupUid ($UidGroup)
     {
         $c = new Criteria( 'workflow' );
-        $del = DBAdapter::getStringDelimiter();
-
         $c->clearSelectColumns();
-        $c->addSelectColumn( ContentPeer::CON_VALUE );
-
-        $c->add( ContentPeer::CON_CATEGORY, 'GRP_TITLE' );
-        $c->add( ContentPeer::CON_ID, $UidGroup );
-        $c->add( ContentPeer::CON_LANG, SYS_LANG );
-
-        $dataset = ContentPeer::doSelectRS( $c );
+        $c->addAsColumn('CON_VALUE', GroupwfPeer::GRP_TITLE);
+        $c->add( GroupwfPeer::GRP_UID, $UidGroup );
+        $dataset = GroupwfPeer::doSelectRS( $c );
         $dataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
         $dataset->next();
         $row = $dataset->getRow();
-
         return $row;
     }
 
