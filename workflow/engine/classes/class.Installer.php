@@ -139,6 +139,7 @@ class Installer
             $islocal = (strcmp(substr($this->options['database']['hostname'], 0, strlen('localhost')), 'localhost') === 0) || (strcmp(substr($this->options['database']['hostname'], 0, strlen('127.0.0.1')), '127.0.0.1') === 0);
 
             $this->wf_site_name = $wf = $this->options['advanced']['ao_db_wf'];
+            $this->wf_user_db = isset($this->options['advanced']['ao_user_wf'])?$this->options['advanced']['ao_user_wf']:uniqid('wf_');
 
             $this->rbac_site_name = $rb = $this->options['advanced']['ao_db_rb'];
             $this->report_site_name = $rp = $this->options['advanced']['ao_db_rp'];
@@ -156,7 +157,7 @@ class Installer
 
             if ($this->cc_status == 1) {
                 $host = ($islocal) ? "localhost" : "%";
-                $this->run_query("GRANT ALL PRIVILEGES ON `$wf`.* TO $wf@'$host' IDENTIFIED BY '{$this->options['password']}' WITH GRANT OPTION", "Grant privileges for user $wf on database $wf");
+                $this->run_query("GRANT ALL PRIVILEGES ON `$wf`.* TO {$this->wf_user_db}@'$host' IDENTIFIED BY '{$this->options['password']}' WITH GRANT OPTION", "Grant privileges for user {$this->wf_user_db} on database $wf");
             }
 
             /* Dump schema workflow && data  */
@@ -182,12 +183,12 @@ class Installer
             $workspace = $this->options['name'];
 
             $endpoint = sprintf(
-            		'%s://%s/sys%s/%s/%s/oauth2/grant',
-            		$http,
-            		$host,
-            		$workspace,
-            		$lang,
-            		SYS_SKIN
+                    '%s://%s/sys%s/%s/%s/oauth2/grant',
+                    $http,
+                    $host,
+                    $workspace,
+                    $lang,
+                    SYS_SKIN
             );
 
             // inserting the outh_client
@@ -227,9 +228,9 @@ class Installer
 
             //Generate the db.php file
             $db_file = $path_site . 'db.php';
-            $db_text = "<?php\n" . "// Processmaker configuration\n" . "define ('DB_ADAPTER', 'mysql' );\n" . "define ('DB_HOST', '" . $this->options['database']['hostname'] . ":" . $myPort . "' );\n" . "define ('DB_NAME', '" . $wf . "' );\n" . "define ('DB_USER', '" . (($this->cc_status == 1) ? $wf : $this->options['database']['username']) . "' );\n" . "define ('DB_PASS', '" . (($this->cc_status == 1) ? $this->options['password'] : $this->options['database']['password']) . "' );\n" . "define ('DB_RBAC_HOST', '" . $this->options['database']['hostname'] . ":" . $myPort . "' );\n" . "define ('DB_RBAC_NAME', '" . $rb . "' );\n" . "define ('DB_RBAC_USER', '" . (($this->cc_status == 1) ? $rb : $this->options['database']['username']) . "' );\n" . "define ('DB_RBAC_PASS', '" . (($this->cc_status == 1) ? $this->options['password'] : $this->options['database']['password']) . "' );\n" . "define ('DB_REPORT_HOST', '" . $this->options['database']['hostname'] . ":" . $myPort . "' );\n" . "define ('DB_REPORT_NAME', '" . $rp . "' );\n" . "define ('DB_REPORT_USER', '" . (($this->cc_status == 1) ? $rp : $this->options['database']['username']) . "' );\n" . "define ('DB_REPORT_PASS', '" . (($this->cc_status == 1) ? $this->options['password'] : $this->options['database']['password']) . "' );\n";
+            $db_text = "<?php\n" . "// Processmaker configuration\n" . "define ('DB_ADAPTER', 'mysql' );\n" . "define ('DB_HOST', '" . $this->options['database']['hostname'] . ":" . $myPort . "' );\n" . "define ('DB_NAME', '" . $wf . "' );\n" . "define ('DB_USER', '" . (($this->cc_status == 1) ? $this->wf_user_db : $this->options['database']['username']) . "' );\n" . "define ('DB_PASS', '" . (($this->cc_status == 1) ? $this->options['password'] : $this->options['database']['password']) . "' );\n" . "define ('DB_RBAC_HOST', '" . $this->options['database']['hostname'] . ":" . $myPort . "' );\n" . "define ('DB_RBAC_NAME', '" . $rb . "' );\n" . "define ('DB_RBAC_USER', '" . (($this->cc_status == 1) ? $this->wf_user_db : $this->options['database']['username']) . "' );\n" . "define ('DB_RBAC_PASS', '" . (($this->cc_status == 1) ? $this->options['password'] : $this->options['database']['password']) . "' );\n" . "define ('DB_REPORT_HOST', '" . $this->options['database']['hostname'] . ":" . $myPort . "' );\n" . "define ('DB_REPORT_NAME', '" . $rp . "' );\n" . "define ('DB_REPORT_USER', '" . (($this->cc_status == 1) ? $this->wf_user_db : $this->options['database']['username']) . "' );\n" . "define ('DB_REPORT_PASS', '" . (($this->cc_status == 1) ? $this->options['password'] : $this->options['database']['password']) . "' );\n";
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
-                $db_text .= "define ('PARTNER_FLAG', " . ((defined('PARTNER_FLAG') && PARTNER_FLAG != '') ? PARTNER_FLAG : ((isset($_REQUEST['PARTNER_FLAG'])) ? $_REQUEST['PARTNER_FLAG']:'false')) . ");\n";
+                $db_text .= "define ('PARTNER_FLAG', " . ((defined('PARTNER_FLAG') && PARTNER_FLAG != '') ? PARTNER_FLAG : ((isset($_REQUEST['PARTNER_FLAG'])) ? $_REQUEST['PARTNER_FLAG'] : 'false')) . ");\n";
                 if (defined('SYSTEM_NAME')) {
                     $db_text .= "  define ('SYSTEM_NAME', '" . SYSTEM_NAME . "');\n";
                 }

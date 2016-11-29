@@ -604,6 +604,11 @@ function run_workspace_restore($args, $opts) {
 
     G::verifyPath(PATH_DATA . 'upgrade', true);
 
+      if(isset($args[1]) && strlen($args[1])>=30){
+          eprintln("Invalid workspace name, insert a maximum of 30 characters.", 'red');
+          return;
+      }
+
     if (strpos($filename, "/") === false && strpos($filename, '\\') === false) {
       $filename = PATH_DATA . "backups/$filename";
       if (!file_exists($filename) && substr_compare($filename, ".tar", -4, 4, true) != 0)

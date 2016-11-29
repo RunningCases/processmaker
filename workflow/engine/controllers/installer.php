@@ -724,18 +724,20 @@ class Installer extends Controller
 
             // CREATE users and GRANT Privileges
             $wf_workpace = $wf;
+            $wfGrantUser = uniqid('wf_');
             $rb_workpace = $wf;
             $rp_workpace = $wf;
             if (!$userLogged) {
                 $wfPass = G::generate_password( 15 );
-                $this->setGrantPrivilegesMySQL( $wf, $wfPass, $wf, $db_hostname );
-                $this->setGrantPrivilegesMySQL( $rb, $wfPass, $wf, $db_hostname );
-                $this->setGrantPrivilegesMySQL( $rp, $wfPass, $wf, $db_hostname );
+                $this->setGrantPrivilegesMySQL( $wfGrantUser, $wfPass, $wf, $db_hostname );
+                $this->setGrantPrivilegesMySQL( $wfGrantUser, $wfPass, $wf, $db_hostname );
+                $this->setGrantPrivilegesMySQL( $wfGrantUser, $wfPass, $wf, $db_hostname );
             } else {
                 $wfPass = $db_password;
                 $rbPass = $db_password;
                 $rpPass = $db_password;
                 $wf = $db_username;
+                $wfGrantUser = $db_username;
                 $rb = $db_username;
                 $rp = $db_username;
             }
@@ -758,15 +760,15 @@ class Installer extends Controller
             $dbText .= sprintf( "  define ('DB_ADAPTER',     '%s' );\n", 'mysql' );
             $dbText .= sprintf( "  define ('DB_HOST',        '%s' );\n", $db_host );
             $dbText .= sprintf( "  define ('DB_NAME',        '%s' );\n", $wf_workpace );
-            $dbText .= sprintf( "  define ('DB_USER',        '%s' );\n", $wf );
+            $dbText .= sprintf( "  define ('DB_USER',        '%s' );\n", $wfGrantUser );
             $dbText .= sprintf( "  define ('DB_PASS',        '%s' );\n", $wfPass );
             $dbText .= sprintf( "  define ('DB_RBAC_HOST',   '%s' );\n", $db_host );
             $dbText .= sprintf( "  define ('DB_RBAC_NAME',   '%s' );\n", $wf_workpace );
-            $dbText .= sprintf( "  define ('DB_RBAC_USER',   '%s' );\n", $wf );
+            $dbText .= sprintf( "  define ('DB_RBAC_USER',   '%s' );\n", $wfGrantUser );
             $dbText .= sprintf( "  define ('DB_RBAC_PASS',   '%s' );\n", $wfPass );
             $dbText .= sprintf( "  define ('DB_REPORT_HOST', '%s' );\n", $db_host );
             $dbText .= sprintf( "  define ('DB_REPORT_NAME', '%s' );\n", $wf_workpace );
-            $dbText .= sprintf( "  define ('DB_REPORT_USER', '%s' );\n", $wf );
+            $dbText .= sprintf( "  define ('DB_REPORT_USER', '%s' );\n", $wfGrantUser );
             $dbText .= sprintf( "  define ('DB_REPORT_PASS', '%s' );\n", $wfPass );
 
             if (defined('PARTNER_FLAG') || isset($_REQUEST['PARTNER_FLAG'])) {
