@@ -1321,7 +1321,7 @@
     <column name="TAS_OFFLINE" type="VARCHAR" size="20" required="true" default="FALSE"/>
     <column name="TAS_EMAIL_SERVER_UID" type="VARCHAR" size="32" required="false" default=""/>
     <column name="TAS_AUTO_ROOT" type="VARCHAR" size="20" required="true" default="FALSE"/>
-    <column name="TAS_RECEIVE_SERVER_UID" type="VARCHAR" size="32" required="true" default=""/>
+    <column name="TAS_RECEIVE_SERVER_UID" type="VARCHAR" size="32" required="false" default=""/>
     <column name="TAS_RECEIVE_LAST_EMAIL" type="VARCHAR" size="20" required="true" default="FALSE"/>
     <column name="TAS_RECEIVE_EMAIL_FROM_FORMAT" type="INTEGER" default="0"/>
     <column name="TAS_RECEIVE_MESSAGE_TYPE" type="VARCHAR" size="20" required="true" default="text"/>
