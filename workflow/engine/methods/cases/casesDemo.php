@@ -96,7 +96,7 @@ try {
         $objTask = new Task();
         $aTask = $objTask->load($val['TAS_UID']);
         $delegations[$key]['TAS_TITLE'] = $aTask['TAS_TITLE'];
-        if ($val['USR_UID'] != - 1) {
+        if ($val['USR_UID'] != - 1 && $val['USR_UID'] != '') {
             $oUser->load( $val['USR_UID'] );
             $delegations[$key]['USR_NAME'] = $oUser->getUsrFirstname() . ' ' . $oUser->getUsrLastname();
         } else {
