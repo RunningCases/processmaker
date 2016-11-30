@@ -141,7 +141,7 @@ class Derivation
                     $arrayTaskData["NEXT_TASK"]["TAS_PARENT"] = "";
                 }
 
-                $regexpTaskTypeToExclude = "GATEWAYTOGATEWAY|END-MESSAGE-EVENT|SCRIPT-TASK|INTERMEDIATE-CATCH-TIMER-EVENT|INTERMEDIATE-THROW-MESSAGE-EVENT|END-EMAIL-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT";
+                $regexpTaskTypeToExclude = "GATEWAYTOGATEWAY|END-MESSAGE-EVENT|SCRIPT-TASK|INTERMEDIATE-CATCH-TIMER-EVENT|INTERMEDIATE-THROW-MESSAGE-EVENT|END-EMAIL-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT";
 
                 $arrayTaskData["NEXT_TASK"]["USER_ASSIGNED"] = (!preg_match("/^(?:" . $regexpTaskTypeToExclude . ")$/", $arrayTaskData["NEXT_TASK"]["TAS_TYPE"]))? $this->getNextAssignedUser($arrayTaskData) : array("USR_UID" => "", "USR_FULLNAME" => "");
             }
