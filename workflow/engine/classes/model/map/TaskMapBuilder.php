@@ -181,7 +181,7 @@ class TaskMapBuilder
 
         $tMap->addColumn('TAS_AUTO_ROOT', 'TasAutoRoot', 'string', CreoleTypes::VARCHAR, true, 20);
 
-        $tMap->addColumn('TAS_RECEIVE_SERVER_UID', 'TasReceiveServerUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addColumn('TAS_RECEIVE_SERVER_UID', 'TasReceiveServerUid', 'string', CreoleTypes::VARCHAR, false, 32);
 
         $tMap->addColumn('TAS_RECEIVE_LAST_EMAIL', 'TasReceiveLastEmail', 'string', CreoleTypes::VARCHAR, true, 20);
 

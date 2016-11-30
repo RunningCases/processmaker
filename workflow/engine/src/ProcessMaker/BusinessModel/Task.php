@@ -437,9 +437,7 @@ class Task
             }
 
             if ($arrayProperty["TAS_RECEIVE_LAST_EMAIL"] == "TRUE") {
-                if (empty($arrayProperty["TAS_RECEIVE_SERVER_UID"])) {
-                    throw (new \Exception("Invalid value specified for 'tas_receive_server_uid'"));
-                }
+
                 if (empty($arrayProperty["TAS_RECEIVE_SUBJECT_MESSAGE"])) {
                     throw (new \Exception("Invalid value specified for 'tas_receive_subject_message'"));
                 }
