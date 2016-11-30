@@ -325,11 +325,6 @@ class WebApplication
                 $relClassPath = str_replace('.php', '', str_replace($servicesDir, '', $classFile));
                 $namespace = '\\ProcessMaker\\Services\\' . str_replace(DS, '\\', $relClassPath);
                 $namespace = strpos($namespace, "//") === false? $namespace: str_replace("//", '', $namespace);
-
-                //if (! class_exists($namespace)) {
-                require_once $classFile;
-                //}
-
                 $this->rest->addAPIClass($namespace);
             }
         }
