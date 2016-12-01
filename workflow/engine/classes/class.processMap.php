@@ -879,24 +879,18 @@ class processMap
     {
         $imgEx = "<div><img src='/images/hasCondition.png' height='16' width='16'></div>";
         $imgNoEx = '<div></div>';
-        $sDelimiter = DBAdapter::getStringDelimiter();
         $oCriteria = new Criteria('workflow');
-        $oCriteria->addSelectColumn('C.CON_VALUE');
-        $oCriteria->addSelectColumn('STEP_UID');
-        $oCriteria->addSelectColumn('TRI_UID');
+        $oCriteria->addAsColumn('CON_VALUE', TriggersPeer::TRI_TITLE);
+        $oCriteria->addSelectColumn(StepTriggerPeer::STEP_UID);
+        $oCriteria->addSelectColumn(StepTriggerPeer::TRI_UID);
         $oCriteria->addAsColumn('TRI_LOCATE_WEBBOT_PARAM', '(SELECT LOCATE(MD5(' . TriggersPeer::TRI_WEBBOT . '),' . TriggersPeer::TRI_PARAM . ') FROM ' . TriggersPeer::TABLE_NAME . ' WHERE ' . TriggersPeer::TRI_UID . '=' . StepTriggerPeer::TRI_UID . ' )');
-        $oCriteria->addSelectColumn('ST_TYPE');
+        $oCriteria->addSelectColumn(StepTriggerPeer::ST_TYPE);
         /*----------------------------------********---------------------------------*/
         $oCriteria->addSelectColumn('IF ('.StepTriggerPeer::ST_CONDITION.' = "", "'.$imgNoEx.'", "'.$imgEx.'") AS CONDITION_SET');
         /*----------------------------------********---------------------------------*/
         $oCriteria->addSelectColumn(StepTriggerPeer::ST_POSITION);
-        $oCriteria->addAsColumn('TRI_TITLE', 'C.CON_VALUE');
-        $oCriteria->addAlias('C', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(StepTriggerPeer::TRI_UID, 'C.CON_ID');
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'TRI_TITLE' . $sDelimiter );
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(TriggersPeer::TRI_TITLE);
+        $oCriteria->addJoin(StepTriggerPeer::TRI_UID, TriggersPeer::TRI_UID, Criteria::LEFT_JOIN);
         $oCriteria->add(StepTriggerPeer::STEP_UID, $sStepUID);
         $oCriteria->add(StepTriggerPeer::TAS_UID, $sTaskUID);
         $oCriteria->add(StepTriggerPeer::ST_TYPE, $sType);
@@ -925,13 +919,7 @@ class processMap
             $sDelimiter = DBAdapter::getStringDelimiter();
             $oCriteria = new Criteria('workflow');
             $oCriteria->addSelectColumn(DynaformPeer::DYN_UID);
-            $oCriteria->addAsColumn('DYN_TITLE', 'C.CON_VALUE');
-            $oCriteria->addAlias('C', 'CONTENT');
-            $aConditions = array();
-            $aConditions[] = array(DynaformPeer::DYN_UID, 'C.CON_ID' );
-            $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'DYN_TITLE' . $sDelimiter );
-            $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-            $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+            $oCriteria->addSelectColumn(DynaformPeer::DYN_TITLE);
             $oCriteria->add(DynaformPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(DynaformPeer::DYN_UID, $sUIDs, Criteria::NOT_IN);
             $oCriteria->add(DynaformPeer::DYN_TYPE, 'xmlform');
@@ -941,10 +929,6 @@ class processMap
             $i = 0;
             while ($aRow = $oDataset->getRow()) {
                 $i++;
-                if (($aRow['DYN_TITLE'] == null) || ($aRow['DYN_TITLE'] == "")) {
-                    // There is no transaltion for this Document name, try to get/regenerate the label
-                    $aRow['DYN_TITLE'] = Content::Load("DYN_TITLE", "", $aRow['DYN_UID'], SYS_LANG);
-                }
                 $aBB[] = array('STEP_UID' => $aRow['DYN_UID'], 'STEP_TITLE' => $aRow['DYN_TITLE'], 'STEP_TYPE_OBJ' => 'DYNAFORM', 'STEP_MODE' => '<select id="STEP_MODE_' . $aRow['DYN_UID'] . '">
                                             <option value="EDIT">' . G::LoadTranslation('ID_EDIT') . '</option>
                                             <option value="VIEW">' . G::LoadTranslation('ID_VIEW') . '</option>
@@ -973,24 +957,13 @@ class processMap
             }
             $oCriteria = new Criteria('workflow');
             $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_UID);
-            $oCriteria->addAsColumn('OUT_DOC_TITLE', 'C.CON_VALUE');
-            $oCriteria->addAlias('C', 'CONTENT');
-            $aConditions = array();
-            $aConditions[] = array(OutputDocumentPeer::OUT_DOC_UID, 'C.CON_ID' );
-            $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'OUT_DOC_TITLE' . $sDelimiter );
-            $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-            $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+            $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_TITLE);
             $oCriteria->add(OutputDocumentPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(OutputDocumentPeer::OUT_DOC_UID, $sUIDs, Criteria::NOT_IN);
             $oDataset = OutputDocumentPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-
-                if (($aRow['OUT_DOC_TITLE'] == null) || ($aRow['OUT_DOC_TITLE'] == "")) {
-                    // There is no transaltion for this Document name, try to get/regenerate the label
-                    $aRow['OUT_DOC_TITLE'] = Content::Load("OUT_DOC_TITLE", "", $aRow['OUT_DOC_UID'], SYS_LANG);
-                }
                 $aBB[] = array('STEP_UID' => $aRow['OUT_DOC_UID'], 'STEP_TITLE' => $aRow['OUT_DOC_TITLE'], 'STEP_TYPE_OBJ' => 'OUTPUT_DOCUMENT', 'STEP_MODE' => '<input type="hidden" id="STEP_MODE_' . $aRow['OUT_DOC_UID'] . '">' );
                 $oDataset->next();
             }
@@ -1535,18 +1508,11 @@ class processMap
 
                 $oCriteria->setDistinct();
                 $oCriteria->addSelectColumn(DynaformPeer::DYN_UID);
-                $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
-
-                $aConditions   = array();
-                $aConditions[] = array(DynaformPeer::DYN_UID, ContentPeer::CON_ID);
-                $aConditions[] = array(ContentPeer::CON_CATEGORY, $del . "DYN_TITLE" . $del);
-                $aConditions[] = array(ContentPeer::CON_LANG, $del . "en" . $del);
-                $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-
+                $oCriteria->addSelectColumn(DynaformPeer::DYN_TITLE);
                 $oCriteria->add(DynaformPeer::PRO_UID, $_SESSION["PROCESS"]);
                 $oCriteria->add(DynaformPeer::DYN_TYPE, "grid");
-
-                $oCriteria->addAscendingOrderByColumn(ContentPeer::CON_VALUE);
+                
+                $oCriteria->addAscendingOrderByColumn(DynaformPeer::DYN_TITLE);
 
                 $numRows = DynaformPeer::doCount($oCriteria);
                 if ($numRows == 0) {
@@ -1914,41 +1880,20 @@ class processMap
 
     public function getDynaformsCriteria($sProcessUID = '')
     {
-        $sDelimiter = DBAdapter::getStringDelimiter();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(DynaformPeer::DYN_UID);
         $oCriteria->addSelectColumn(DynaformPeer::PRO_UID);
         $oCriteria->addSelectColumn(DynaformPeer::DYN_TYPE);
-        $oCriteria->addAsColumn('DYN_TITLE', 'C1.CON_VALUE');
-        $oCriteria->addAsColumn('DYN_DESCRIPTION', 'C2.CON_VALUE');
-        $oCriteria->addAlias('C1', 'CONTENT');
-        $oCriteria->addAlias('C2', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(DynaformPeer::DYN_UID, 'C1.CON_ID' );
-        $aConditions[] = array('C1.CON_CATEGORY', $sDelimiter . 'DYN_TITLE' . $sDelimiter );
-        $aConditions[] = array('C1.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(DynaformPeer::DYN_UID, 'C2.CON_ID' );
-        $aConditions[] = array('C2.CON_CATEGORY', $sDelimiter . 'DYN_DESCRIPTION' . $sDelimiter );
-        $aConditions[] = array('C2.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(DynaformPeer::DYN_TITLE);
+        $oCriteria->addSelectColumn(DynaformPeer::DYN_DESCRIPTION);
         $oCriteria->add(DynaformPeer::PRO_UID, $sProcessUID);
-        $oCriteria->addAscendingOrderByColumn('DYN_TITLE');
+        $oCriteria->addAscendingOrderByColumn(DynaformPeer::DYN_TITLE);
         $oDataset = DynaformPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
         $dynaformArray = array();
         $dynaformArray[] = array('d' => 'char');
         while ($aRow = $oDataset->getRow()) {
-            if (($aRow['DYN_TITLE'] == null) || ($aRow['DYN_TITLE'] == "")) {
-                // There is no transaltion for this Document name, try to get/regenerate the label
-                $aRow['DYN_TITLE'] = Content::Load("DYN_TITLE", "", $aRow['DYN_UID'], SYS_LANG);
-            }
-            if (($aRow['DYN_DESCRIPTION'] == null) || ($aRow['DYN_DESCRIPTION'] == "")) {
-                // There is no transaltion for this Document name, try to get/regenerate the label
-                $aRow['DYN_DESCRIPTION'] = Content::Load("DYN_DESCRIPTION", "", $aRow['DYN_UID'], SYS_LANG);
-            }
             $dynaformArray[] = $aRow;
             $oDataset->next();
         }
@@ -1969,20 +1914,8 @@ class processMap
         $oCriteria->addSelectColumn(DynaformPeer::DYN_UID);
         $oCriteria->addSelectColumn(DynaformPeer::PRO_UID);
         $oCriteria->addSelectColumn(DynaformPeer::DYN_TYPE);
-        $oCriteria->addAsColumn('DYN_TITLE', 'C1.CON_VALUE');
-        $oCriteria->addAsColumn('DYN_DESCRIPTION', 'C2.CON_VALUE');
-        $oCriteria->addAlias('C1', 'CONTENT');
-        $oCriteria->addAlias('C2', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(DynaformPeer::DYN_UID, 'C1.CON_ID');
-        $aConditions[] = array('C1.CON_CATEGORY', $sDelimiter . 'DYN_TITLE' . $sDelimiter);
-        $aConditions[] = array('C1.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(DynaformPeer::DYN_UID, 'C2.CON_ID' );
-        $aConditions[] = array('C2.CON_CATEGORY', $sDelimiter . 'DYN_DESCRIPTION' . $sDelimiter);
-        $aConditions[] = array('C2.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(DynaformPeer::DYN_TITLE);
+        $oCriteria->addSelectColumn(DynaformPeer::DYN_DESCRIPTION);
         $oCriteria->add(DynaformPeer::PRO_UID, $sProcessUID);
 
         $oDataset = DynaformPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
@@ -1990,14 +1923,6 @@ class processMap
         $oDataset->next();
         $dynaformArray = array();
         while ($aRow = $oDataset->getRow()) {
-            if (($aRow['DYN_TITLE'] == null) || ($aRow['DYN_TITLE'] == "")) {
-                // There is no transaltion for this Document name, try to get/regenerate the label
-                $aRow['DYN_TITLE'] = Content::Load("DYN_TITLE", "", $aRow['DYN_UID'], SYS_LANG);
-            }
-            if (($aRow['DYN_DESCRIPTION'] == null) || ($aRow['DYN_DESCRIPTION'] == "")) {
-                // There is no transaltion for this Document name, try to get/regenerate the label
-                $aRow['DYN_DESCRIPTION'] = Content::Load("DYN_DESCRIPTION", "", $aRow['DYN_UID'], SYS_LANG);
-            }
             $dynaformArray[] = $aRow;
             $oDataset->next();
         }
@@ -2037,22 +1962,10 @@ class processMap
         $sDelimiter = DBAdapter::getStringDelimiter();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_UID);
+        $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_TITLE);
+        $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_DESCRIPTION);
         $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_TYPE);
         $oCriteria->addSelectColumn(OutputDocumentPeer::PRO_UID);
-        $oCriteria->addAsColumn('OUT_DOC_TITLE', 'C1.CON_VALUE');
-        $oCriteria->addAsColumn('OUT_DOC_DESCRIPTION', 'C2.CON_VALUE');
-        $oCriteria->addAlias('C1', 'CONTENT');
-        $oCriteria->addAlias('C2', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(OutputDocumentPeer::OUT_DOC_UID, 'C1.CON_ID' );
-        $aConditions[] = array('C1.CON_CATEGORY', $sDelimiter . 'OUT_DOC_TITLE' . $sDelimiter );
-        $aConditions[] = array('C1.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(OutputDocumentPeer::OUT_DOC_UID, 'C2.CON_ID' );
-        $aConditions[] = array('C2.CON_CATEGORY', $sDelimiter . 'OUT_DOC_DESCRIPTION' . $sDelimiter );
-        $aConditions[] = array('C2.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         $oCriteria->add(OutputDocumentPeer::PRO_UID, $sProcessUID);
 
         $oDataset = OutputDocumentPeer::doSelectRS($oCriteria, Propel::getDbConnection('workflow_ro'));
@@ -2177,27 +2090,14 @@ class processMap
 
     public function getTriggersCriteria($sProcessUID = '')
     {
-        $sDelimiter = DBAdapter::getStringDelimiter();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(TriggersPeer::TRI_UID);
+        $oCriteria->addSelectColumn(TriggersPeer::TRI_TITLE);
+        $oCriteria->addSelectColumn(TriggersPeer::TRI_DESCRIPTION);
         $oCriteria->addSelectColumn(TriggersPeer::PRO_UID);
         $oCriteria->addAsColumn('TRI_LOCATE_WEBBOT_PARAM', 'LOCATE(MD5(' . TriggersPeer::TRI_WEBBOT . '),' . TriggersPeer::TRI_PARAM . ')');
-        $oCriteria->addAsColumn('TRI_TITLE', 'C1.CON_VALUE');
-        $oCriteria->addAsColumn('TRI_DESCRIPTION', 'C2.CON_VALUE');
-        $oCriteria->addAlias('C1', 'CONTENT');
-        $oCriteria->addAlias('C2', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(TriggersPeer::TRI_UID, 'C1.CON_ID' );
-        $aConditions[] = array('C1.CON_CATEGORY', $sDelimiter . 'TRI_TITLE' . $sDelimiter );
-        $aConditions[] = array('C1.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(TriggersPeer::TRI_UID, 'C2.CON_ID' );
-        $aConditions[] = array('C2.CON_CATEGORY', $sDelimiter . 'TRI_TITLE' . $sDelimiter );
-        $aConditions[] = array('C2.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         $oCriteria->add(TriggersPeer::PRO_UID, $sProcessUID);
-        $oCriteria->addAscendingOrderByColumn('TRI_TITLE');
+        $oCriteria->addAscendingOrderByColumn(TriggersPeer::TRI_TITLE);
 
         $oDataset = TriggersPeer::doSelectRS($oCriteria);
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -2454,21 +2354,13 @@ class processMap
 
     public function getReportTablesCriteria($sProcessUID = '')
     {
-        $sDelimiter = DBAdapter::getStringDelimiter();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(ReportTablePeer::REP_TAB_UID);
         $oCriteria->addSelectColumn(ReportTablePeer::PRO_UID);
         $oCriteria->addSelectColumn(ReportTablePeer::REP_TAB_NAME);
         $oCriteria->addSelectColumn(ReportTablePeer::REP_TAB_TYPE);
         $oCriteria->addSelectColumn(ReportTablePeer::REP_TAB_CONNECTION);
-        // $oCriteria->addAsColumn ( 'REP_TAB_TITLE', 'C.CON_VALUE' );
-        $oCriteria->addAsColumn('REP_TAB_TITLE', "CASE WHEN C.CON_VALUE IS NULL THEN (SELECT DISTINCT MAX(A.CON_VALUE) FROM CONTENT A WHERE A.CON_ID = REPORT_TABLE.REP_TAB_UID ) ELSE C.CON_VALUE  END ");
-        $oCriteria->addAlias('C', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(ReportTablePeer::REP_TAB_UID, 'C.CON_ID' );
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'REP_TAB_TITLE' . $sDelimiter );
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(ReportTablePeer::REP_TAB_TITLE);
         $oCriteria->add(ReportTablePeer::PRO_UID, $sProcessUID);
         return $oCriteria;
     }
@@ -3108,24 +3000,14 @@ class processMap
 
     public function getSupervisorDynaformsCriteria($sProcessUID = '')
     {
-        $sDelimiter = DBAdapter::getStringDelimiter();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(StepSupervisorPeer::STEP_UID);
         $oCriteria->addSelectColumn(StepSupervisorPeer::PRO_UID);
         $oCriteria->addSelectColumn(StepSupervisorPeer::STEP_TYPE_OBJ);
         $oCriteria->addSelectColumn(StepSupervisorPeer::STEP_UID_OBJ);
         $oCriteria->addSelectColumn(StepSupervisorPeer::STEP_POSITION);
-        $oCriteria->addAsColumn('DYN_TITLE', 'C.CON_VALUE');
-        $oCriteria->addAlias('C', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(StepSupervisorPeer::STEP_UID_OBJ, DynaformPeer::DYN_UID );
-        $aConditions[] = array(StepSupervisorPeer::STEP_TYPE_OBJ, $sDelimiter . 'DYNAFORM' . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(DynaformPeer::DYN_UID, 'C.CON_ID' );
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'DYN_TITLE' . $sDelimiter );
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(DynaformPeer::DYN_TITLE);
+        $oCriteria->addJoin(StepSupervisorPeer::STEP_UID_OBJ, DynaformPeer::DYN_UID, Criteria::LEFT_JOIN);
         $oCriteria->add(StepSupervisorPeer::PRO_UID, $sProcessUID);
         $oCriteria->add(StepSupervisorPeer::STEP_TYPE_OBJ, 'DYNAFORM');
         $oCriteria->addAscendingOrderByColumn(StepSupervisorPeer::STEP_POSITION);
@@ -3213,17 +3095,10 @@ class processMap
             $aUIDS[] = $aRow['STEP_UID_OBJ'];
             $oDataset->next();
         }
-        $sDelimiter = DBAdapter::getStringDelimiter();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(DynaformPeer::DYN_UID);
         $oCriteria->addSelectColumn(DynaformPeer::PRO_UID);
-        $oCriteria->addAsColumn('DYN_TITLE', 'C.CON_VALUE');
-        $oCriteria->addAlias('C', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(DynaformPeer::DYN_UID, 'C.CON_ID');
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'DYN_TITLE' . $sDelimiter);
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(DynaformPeer::DYN_TITLE);
         $oCriteria->add(DynaformPeer::PRO_UID, $sProcessUID);
         $oCriteria->add(DynaformPeer::DYN_TYPE, 'xmlform');
         $oCriteria->add(DynaformPeer::DYN_UID, $aUIDS, Criteria::NOT_IN);
@@ -4229,13 +4104,7 @@ class processMap
         $sDelimiter = DBAdapter::getStringDelimiter();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(DynaformPeer::DYN_UID);
-        $oCriteria->addAsColumn('DYN_TITLE', 'C.CON_VALUE');
-        $oCriteria->addAlias('C', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(DynaformPeer::DYN_UID, 'C.CON_ID');
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'DYN_TITLE' . $sDelimiter);
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(DynaformPeer::DYN_TITLE);
         $oCriteria->add(DynaformPeer::PRO_UID, $sProcessUID);
         $oCriteria->add(DynaformPeer::DYN_TYPE, 'xmlform');
         $oCriteria->add(DynaformPeer::DYN_UID, $aDynaformsUIDS, Criteria::NOT_IN);
@@ -4261,13 +4130,7 @@ class processMap
         }
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_UID);
-        $oCriteria->addAsColumn('OUT_DOC_TITLE', 'C.CON_VALUE');
-        $oCriteria->addAlias('C', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(OutputDocumentPeer::OUT_DOC_UID, 'C.CON_ID');
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'OUT_DOC_TITLE' . $sDelimiter);
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_TITLE);
         $oCriteria->add(OutputDocumentPeer::PRO_UID, $sProcessUID);
         $oCriteria->add(OutputDocumentPeer::OUT_DOC_UID, $aOutputsUIDS, Criteria::NOT_IN);
 
@@ -5037,15 +4900,13 @@ class processMap
                 $usr_uid_evn = $oEvent->getEvnConditions();
 
                 if ($oData['EVN_ACTION'] != '' && $oData['EVN_ACTION'] != 'WEB_ENTRY') {
-                    require_once 'classes/model/Content.php';
                     require_once 'classes/model/Task.php';
                     require_once 'classes/model/Dynaform.php';
-                    $oContent = new Content();
-                    $dynTitle = $oContent->load('DYN_TITLE', '', $oData['EVN_ACTION'], 'en');
                     $task_uid = $oEvent->getEvnTasUidTo();
 
                     $dyn = new Dynaform();
                     $dyn->load($oData['EVN_ACTION']);
+                    $dynTitle = $dyn->getDynTitle();
 
                     $dynUid = $dyn->getDynUid();
 
@@ -5366,13 +5227,7 @@ class processMap
             $sDelimiter = DBAdapter::getStringDelimiter();
             $oCriteria = new Criteria('workflow');
             $oCriteria->addSelectColumn(DynaformPeer::DYN_UID);
-            $oCriteria->addAsColumn('DYN_TITLE', 'C.CON_VALUE');
-            $oCriteria->addAlias('C', 'CONTENT');
-            $aConditions = array();
-            $aConditions[] = array(DynaformPeer::DYN_UID, 'C.CON_ID');
-            $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'DYN_TITLE' . $sDelimiter );
-            $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-            $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+            $oCriteria->addSelectColumn(DynaformPeer::DYN_TITLE);
             $oCriteria->add(DynaformPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(DynaformPeer::DYN_UID, $sUIDs, Criteria::NOT_IN);
             $oCriteria->add(DynaformPeer::DYN_TYPE, 'xmlform');
@@ -5409,13 +5264,7 @@ class processMap
             }
             $oCriteria = new Criteria('workflow');
             $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_UID);
-            $oCriteria->addAsColumn('OUT_DOC_TITLE', 'C.CON_VALUE');
-            $oCriteria->addAlias('C', 'CONTENT');
-            $aConditions = array();
-            $aConditions[] = array(OutputDocumentPeer::OUT_DOC_UID, 'C.CON_ID');
-            $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'OUT_DOC_TITLE' . $sDelimiter);
-            $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-            $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+            $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_TITLE);
             $oCriteria->add(OutputDocumentPeer::PRO_UID, $sProcessUID);
             $oCriteria->add(OutputDocumentPeer::OUT_DOC_UID, $sUIDs, Criteria::NOT_IN);
             $oDataset = OutputDocumentPeer::doSelectRS($oCriteria);
@@ -5666,16 +5515,9 @@ class processMap
             }
             $sDelimiter = DBAdapter::getStringDelimiter();
             $oCriteria = new Criteria('workflow');
-            //$oCriteria->addSelectColumn ( ContentPeer::CON_ID );
-            $oCriteria->addSelectColumn('TRI_UID');
-            $oCriteria->addSelectColumn('C.CON_VALUE');
-            $oCriteria->addAsColumn('TRI_TITLE', 'C.CON_VALUE');
-            $oCriteria->addAlias('C', 'CONTENT');
-            $aConditions = array();
-            $aConditions[] = array('TRI_UID', 'C.CON_ID');
-            $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'TRI_TITLE' . $sDelimiter);
-            $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-            $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+            $oCriteria->addSelectColumn(TriggersPeer::TRI_UID);
+            $oCriteria->addSelectColumn(TriggersPeer::TRI_TITLE);
+            $oCriteria->addAsColumn('CON_VALUE', TriggersPeer::TRI_TITLE);
             $oCriteria->add(TriggersPeer::TRI_UID, $aUIDs, Criteria::NOT_IN);
             $oCriteria->add(TriggersPeer::PRO_UID, $sProcessUID);
             $oDataset = TriggersPeer::doSelectRS($oCriteria);
@@ -5727,22 +5569,9 @@ class processMap
         $sDelimiter = DBAdapter::getStringDelimiter();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(DynaformPeer::DYN_UID);
-        //$oCriteria->addSelectColumn ( DynaformPeer::PRO_UID );
         $oCriteria->addSelectColumn(DynaformPeer::DYN_TYPE);
-        $oCriteria->addAsColumn('DYN_TITLE', 'C1.CON_VALUE');
-        $oCriteria->addAsColumn('DYN_DESCRIPTION', 'C2.CON_VALUE');
-        $oCriteria->addAlias('C1', 'CONTENT');
-        $oCriteria->addAlias('C2', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(DynaformPeer::DYN_UID, 'C1.CON_ID');
-        $aConditions[] = array('C1.CON_CATEGORY', $sDelimiter . 'DYN_TITLE' . $sDelimiter);
-        $aConditions[] = array('C1.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(DynaformPeer::DYN_UID, 'C2.CON_ID');
-        $aConditions[] = array('C2.CON_CATEGORY', $sDelimiter . 'DYN_DESCRIPTION' . $sDelimiter);
-        $aConditions[] = array('C2.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(DynaformPeer::DYN_TITLE);
+        $oCriteria->addSelectColumn(DynaformPeer::DYN_DESCRIPTION);
         $oCriteria->add(DynaformPeer::PRO_UID, $sProcessUID);
 
         //if we have pagination, we use it and limit the query
@@ -5760,16 +5589,6 @@ class processMap
         $normalLabel = G::LoadTranslation('ID_NORMAL');
 
         while ($aRow = $oDataset->getRow()) {
-            //this is a trick to copy the description and title from other language when the current language does not exist for this content row.
-            if (($aRow['DYN_TITLE'] == null) || ($aRow['DYN_TITLE'] == "")) {
-                // There is no transaltion for this Document name, try to get/regenerate the label
-                $aRow['DYN_TITLE'] = Content::Load("DYN_TITLE", "", $aRow['DYN_UID'], SYS_LANG);
-            }
-            if (($aRow['DYN_DESCRIPTION'] == null) || ($aRow['DYN_DESCRIPTION'] == "")) {
-                // There is no transaltion for this Document name, try to get/regenerate the label
-                $aRow['DYN_DESCRIPTION'] = Content::Load("DYN_DESCRIPTION", "", $aRow['DYN_UID'], SYS_LANG);
-            }
-
             if ($aRow['DYN_TYPE'] == 'grid') {
                 $aRow['DYN_TYPE'] = $gridLabel;
             }
@@ -5942,20 +5761,8 @@ class processMap
         $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_UID);
         $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_TYPE);
         $oCriteria->addSelectColumn(OutputDocumentPeer::PRO_UID);
-        $oCriteria->addAsColumn('OUT_DOC_TITLE', 'C1.CON_VALUE');
-        $oCriteria->addAsColumn('OUT_DOC_DESCRIPTION', 'C2.CON_VALUE');
-        $oCriteria->addAlias('C1', 'CONTENT');
-        $oCriteria->addAlias('C2', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(OutputDocumentPeer::OUT_DOC_UID, 'C1.CON_ID' );
-        $aConditions[] = array('C1.CON_CATEGORY', $sDelimiter . 'OUT_DOC_TITLE' . $sDelimiter );
-        $aConditions[] = array('C1.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(OutputDocumentPeer::OUT_DOC_UID, 'C2.CON_ID' );
-        $aConditions[] = array('C2.CON_CATEGORY', $sDelimiter . 'OUT_DOC_DESCRIPTION' . $sDelimiter );
-        $aConditions[] = array('C2.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_TITLE);
+        $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_DESCRIPTION);
         $oCriteria->add(OutputDocumentPeer::PRO_UID, $sProcessUID);
 
         $this->tmpCriteria = clone $oCriteria;
@@ -5972,13 +5779,6 @@ class processMap
         $outputDocArray = array();
         $outputDocArray[] = array('d' => 'char' );
         while ($aRow = $oDataset->getRow()) {
-            // There is no transaltion for this Document name, try to get/regenerate the label
-            if (($aRow['OUT_DOC_TITLE'] == null) || ($aRow['OUT_DOC_TITLE'] == "")) {
-                $outputDocument = new OutputDocument();
-                $outputDocumentObj = $outputDocument->load($aRow['OUT_DOC_UID']);
-                $aRow['OUT_DOC_TITLE'] = $outputDocumentObj['OUT_DOC_TITLE'];
-                $aRow['OUT_DOC_DESCRIPTION'] = $outputDocumentObj['OUT_DOC_DESCRIPTION'];
-            }
             $outputDocArray[] = $aRow;
             $oDataset->next();
         }
@@ -6239,17 +6039,8 @@ class processMap
         $oCriteria->addSelectColumn(StepSupervisorPeer::STEP_UID_OBJ);
         $oCriteria->addSelectColumn(StepSupervisorPeer::STEP_POSITION);
         $oCriteria->addSelectColumn(DynaformPeer::DYN_UID);
-        $oCriteria->addAsColumn('DYN_TITLE', 'C.CON_VALUE');
-        $oCriteria->addAlias('C', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(StepSupervisorPeer::STEP_UID_OBJ, DynaformPeer::DYN_UID);
-        $aConditions[] = array(StepSupervisorPeer::STEP_TYPE_OBJ, $sDelimiter . 'DYNAFORM' . $sDelimiter);
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(DynaformPeer::DYN_UID, 'C.CON_ID');
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'DYN_TITLE' . $sDelimiter);
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(DynaformPeer::DYN_TITLE);
+        $oCriteria->addJoin(StepSupervisorPeer::STEP_UID_OBJ, DynaformPeer::DYN_UID, Criteria::LEFT_JOIN);
         $oCriteria->add(StepSupervisorPeer::PRO_UID, $sProcessUID);
         $oCriteria->add(StepSupervisorPeer::STEP_TYPE_OBJ, 'DYNAFORM');
         $oCriteria->addAscendingOrderByColumn(StepSupervisorPeer::STEP_POSITION);
@@ -6293,13 +6084,7 @@ class processMap
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(DynaformPeer::DYN_UID);
         $oCriteria->addSelectColumn(DynaformPeer::PRO_UID);
-        $oCriteria->addAsColumn('DYN_TITLE', 'C.CON_VALUE');
-        $oCriteria->addAlias('C', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(DynaformPeer::DYN_UID, 'C.CON_ID' );
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'DYN_TITLE' . $sDelimiter );
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(DynaformPeer::DYN_TITLE);
         $oCriteria->add(DynaformPeer::PRO_UID, $sProcessUID);
         $oCriteria->add(DynaformPeer::DYN_TYPE, 'xmlform');
         $oCriteria->add(DynaformPeer::DYN_UID, $aUIDS, Criteria::NOT_IN);
@@ -6718,13 +6503,7 @@ class processMap
         $sDelimiter = DBAdapter::getStringDelimiter();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(DynaformPeer::DYN_UID);
-        $oCriteria->addAsColumn('DYN_TITLE', 'C.CON_VALUE');
-        $oCriteria->addAlias('C', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(DynaformPeer::DYN_UID, 'C.CON_ID');
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'DYN_TITLE' . $sDelimiter );
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(DynaformPeer::DYN_TITLE);
         $oCriteria->add(DynaformPeer::PRO_UID, $sProcessUID);
         $oCriteria->add(DynaformPeer::DYN_TYPE, 'xmlform');
         $oCriteria->add(DynaformPeer::DYN_UID, $aDynaformsUIDS, Criteria::NOT_IN);
@@ -6751,13 +6530,7 @@ class processMap
         }
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_UID);
-        $oCriteria->addAsColumn('OUT_DOC_TITLE', 'C.CON_VALUE');
-        $oCriteria->addAlias('C', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(OutputDocumentPeer::OUT_DOC_UID, 'C.CON_ID' );
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'OUT_DOC_TITLE' . $sDelimiter );
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(OutputDocumentPeer::OUT_DOC_TITLE);
         $oCriteria->add(OutputDocumentPeer::PRO_UID, $sProcessUID);
         $oCriteria->add(OutputDocumentPeer::OUT_DOC_UID, $aOutputsUIDS, Criteria::NOT_IN);
 
@@ -6802,14 +6575,7 @@ class processMap
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(ReportTablePeer::REP_TAB_UID);
         $oCriteria->addSelectColumn(ReportTablePeer::PRO_UID);
-        // $oCriteria->addAsColumn ( 'REP_TAB_TITLE', 'C.CON_VALUE' );
-        $oCriteria->addAsColumn('REP_TAB_TITLE', "CASE WHEN C.CON_VALUE IS NULL THEN (SELECT DISTINCT MAX(A.CON_VALUE) FROM CONTENT A WHERE A.CON_ID = REPORT_TABLE.REP_TAB_UID ) ELSE C.CON_VALUE  END ");
-        $oCriteria->addAlias('C', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(ReportTablePeer::REP_TAB_UID, 'C.CON_ID');
-        $aConditions[] = array('C.CON_CATEGORY', $sDelimiter . 'REP_TAB_TITLE' . $sDelimiter);
-        $aConditions[] = array('C.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
+        $oCriteria->addSelectColumn(ReportTablePeer::REP_TAB_TITLE);
         $oCriteria->add(ReportTablePeer::PRO_UID, $sProcessUID);
 
         $this->tmpCriteria = clone $oCriteria;
@@ -7177,29 +6943,14 @@ class processMap
 
     public function getExtTriggersList($start, $limit, $sProcessUID = '')
     {
-        $sDelimiter = DBAdapter::getStringDelimiter();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(TriggersPeer::TRI_UID);
+        $oCriteria->addSelectColumn(TriggersPeer::TRI_TITLE);
+        $oCriteria->addSelectColumn(TriggersPeer::TRI_DESCRIPTION);
         $oCriteria->addSelectColumn(TriggersPeer::PRO_UID);
         $oCriteria->add(TriggersPeer::PRO_UID, $sProcessUID);
         $this->tmpCriteria = clone $oCriteria;
-
-        $oCriteria->addAsColumn('TRI_TITLE', 'C1.CON_VALUE');
-        $oCriteria->addAsColumn('TRI_DESCRIPTION', 'C2.CON_VALUE');
-        $oCriteria->addAlias('C1', 'CONTENT');
-        $oCriteria->addAlias('C2', 'CONTENT');
-        $aConditions = array();
-        $aConditions[] = array(TriggersPeer::TRI_UID, 'C1.CON_ID');
-        $aConditions[] = array('C1.CON_CATEGORY', $sDelimiter . 'TRI_TITLE' . $sDelimiter);
-        $aConditions[] = array('C1.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter);
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $aConditions = array();
-        $aConditions[] = array(TriggersPeer::TRI_UID, 'C2.CON_ID' );
-        $aConditions[] = array('C2.CON_CATEGORY', $sDelimiter . 'TRI_TITLE' . $sDelimiter );
-        $aConditions[] = array('C2.CON_LANG', $sDelimiter . SYS_LANG . $sDelimiter );
-        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-        $oCriteria->add(TriggersPeer::PRO_UID, $sProcessUID);
-        $oCriteria->addAscendingOrderByColumn('TRI_TITLE');
+        $oCriteria->addAscendingOrderByColumn(TriggersPeer::TRI_TITLE);
 
         if ($start != '') {
             $oCriteria->setOffset($start);

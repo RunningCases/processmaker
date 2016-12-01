@@ -3293,21 +3293,13 @@ class Cases
             $sStepUid = $sStepUidObj;
         }
 
-        $delimiter = DBAdapter::getStringDelimiter();
-
         $c = new Criteria();
         $c->clearSelectColumns();
         $c->addSelectColumn(TriggersPeer::TRI_UID);
-        $c->addAsColumn("TRI_TITLE", ContentPeer::CON_VALUE);
+        $c->addSelectColumn(TriggersPeer::TRI_TITLE);
         $c->addSelectColumn(StepTriggerPeer::ST_CONDITION);
         $c->addSelectColumn(TriggersPeer::TRI_TYPE);
         $c->addSelectColumn(TriggersPeer::TRI_WEBBOT);
-
-        $arrayCondition = array();
-        $arrayCondition[] = array(TriggersPeer::TRI_UID, ContentPeer::CON_ID, Criteria::EQUAL);
-        $arrayCondition[] = array(ContentPeer::CON_CATEGORY, $delimiter . "TRI_TITLE" . $delimiter, Criteria::EQUAL);
-        $arrayCondition[] = array(ContentPeer::CON_LANG, $delimiter . SYS_LANG . $delimiter, Criteria::EQUAL);
-        $c->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
 
         $c->add(StepTriggerPeer::STEP_UID, $sStepUid);
         $c->add(StepTriggerPeer::TAS_UID, $sTasUid);
@@ -3412,34 +3404,21 @@ class Cases
 
     public function getTriggerNames($triggers)
     {
-        $triggers_info = Array();
+        $triggers_info = array();
         $aTriggers = array();
         foreach ($triggers as $key => $val) {
             $aTriggers[] = $val['TRI_UID'];
         }
-        $lang = defined('SYS_LANG') ? SYS_LANG : 'en';
         $c = new Criteria();
         $c->clearSelectColumns();
-        $c->addSelectColumn(ContentPeer::CON_ID);
-        $c->addSelectColumn(ContentPeer::CON_VALUE);
-        $c->add(ContentPeer::CON_ID, $aTriggers, Criteria::IN);
-        $c->add(ContentPeer::CON_CATEGORY, 'TRI_TITLE');
-        $c->add(ContentPeer::CON_LANG, $lang);
+        $c->addSelectColumn(TriggersPeer::TRI_TITLE);
+        $c->add(TriggersPeer::TRI_UID, $aTriggers, Criteria::IN);
         $rs = TriggersPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $rs->next();
-        $row = $rs->getRow();
-        while (is_array($row)) {
-            $info[$row['CON_ID']] = ($row['CON_VALUE'] != '' ? $row['CON_VALUE'] : '-');
+        while ($row = $rs->getRow()) {
+            $triggers_info[] = $row['TRI_TITLE'];
             $rs->next();
-            $row = $rs->getRow();
-        }
-        foreach ($triggers as $key => $val) {
-            if (isset($info[$val['TRI_UID']])) {
-                $triggers_info[] = $info[$val['TRI_UID']];
-            } else {
-                $triggers_info[] = Content::load('TRI_TITLE', '', $val['TRI_UID'], $lang);
-            }
         }
         return $triggers_info;
     }
@@ -3467,7 +3446,6 @@ class Cases
                 $folderData = new folderData(null, null, $sApplicationUID, null, $_SESSION['USER_LOGGED']);
                 $folderData->PMType = "INPUT";
                 $folderData->returnList = true;
-                //$oPluginRegistry      = & PMPluginRegistry::getSingleton();
                 $listing = $oPluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST, $folderData);
             }
 
@@ -3475,7 +3453,6 @@ class Cases
             $oAppDocument = new AppDocument();
             $oCriteria = new Criteria('workflow');
             $oCriteria->add(AppDocumentPeer::APP_UID, $sApplicationUID);
-            //$oCriteria->add(AppDocumentPeer::DEL_INDEX, $iDelegation);
             $oCriteria->add(AppDocumentPeer::DOC_UID, $sDocumentUID);
             if ($sAppDocuUID != "") {
                 $oCriteria->add(AppDocumentPeer::APP_DOC_UID, $sAppDocuUID);
@@ -5108,6 +5085,7 @@ class Cases
 
         //These fields are missing now is completed
         $oCriteria->addSelectColumn(DynaformPeer::DYN_UID);
+        $oCriteria->addSelectColumn(DynaformPeer::DYN_TITLE);
         $oCriteria->addSelectColumn(DynaformPeer::DYN_TYPE);
         $oCriteria->addSelectColumn(DynaformPeer::DYN_FILENAME);
         $oCriteria->addSelectColumn(ApplicationPeer::PRO_UID);
@@ -5127,9 +5105,7 @@ class Cases
         );
 
         while ($aRow = $oDataset->getRow()) {
-            $o = new Dynaform();
-            $o->setDynUid($aRow['DYN_UID']);
-            $aFields['DYN_TITLE'] = $o->getDynTitle();
+            $aFields['DYN_TITLE'] = $aRow['DYN_TITLE'];
             $aFields['DYN_UID'] = $aRow['DYN_UID'];
             $aFields['EDIT'] = G::LoadTranslation('ID_EDIT');
             $aFields['PRO_UID'] = $sProcessUID;

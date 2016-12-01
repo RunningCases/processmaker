@@ -1431,7 +1431,7 @@ class Process
             $criteria = $dynaForm->getDynaFormCriteria();
 
             $criteria->add(\DynaformPeer::PRO_UID, $processUid, \Criteria::EQUAL);
-            $criteria->addAscendingOrderByColumn("DYN_TITLE");
+            $criteria->addAscendingOrderByColumn(\DynaformPeer::DYN_TITLE);
 
             $rsCriteria = \DynaformPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
