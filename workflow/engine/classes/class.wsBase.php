@@ -2455,7 +2455,7 @@ class wsBase
             $aCurrentDerivation = array ('APP_UID' => $caseId,'DEL_INDEX' => $delIndex,'APP_STATUS' => $sStatus,'TAS_UID' => $appdel['TAS_UID'],'ROU_TYPE' => $row[0]['ROU_TYPE']
             );
             $oRoute = new \ProcessMaker\Core\RoutingScreen();
-            $nextTasks = $oRoute->mergeDataDerivation($nextDelegations, $oDerivation->prepareInformation($aData));
+            $nextTasks = $oRoute->mergeDataDerivation($nextDelegations, $oDerivation->prepareInformation($aData), $row[0]['ROU_TYPE']);
             $oDerivation->derivate( $aCurrentDerivation, $nextTasks );
             $appFields = $oCase->loadCase( $caseId );
 
