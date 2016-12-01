@@ -310,7 +310,11 @@ class SkinEngine
     }
 
     $template->assign("doctype", $doctype);
-    $template->assign("meta", $meta);
+
+    if (defined('LOAD_HEADERS_IE') && LOAD_HEADERS_IE == 0) {
+        $template->assign('meta', $meta);
+    }
+
     $template->assign("dirBody", $dirBody);
 
     echo $template->getOutputContent();
@@ -693,7 +697,10 @@ class SkinEngine
         $header .= $oHeadPublisher->getExtJsStylesheets($this->cssFileName);
       }
 
-      $smarty->assign("meta", $meta);
+      if (defined('LOAD_HEADERS_IE') && LOAD_HEADERS_IE == 0) {
+        $smarty->assign('meta', $meta);
+      }
+
       $smarty->assign("header", $header);
 
       $footer = '';

@@ -339,6 +339,8 @@ define( 'MEMCACHED_SERVER', $config['memcached_server'] );
 
 define ('WS_IN_LOGIN', isset($config['WS_IN_LOGIN']) ? $config['WS_IN_LOGIN'] : 'serverconf');
 
+define('LOAD_HEADERS_IE', $config['load_headers_ie']);
+
 // IIS Compatibility, SERVER_ADDR doesn't exist on that env, so we need to define it.
 $_SERVER['SERVER_ADDR'] = isset( $_SERVER['SERVER_ADDR'] ) ? $_SERVER['SERVER_ADDR'] : $_SERVER['SERVER_NAME'];
 

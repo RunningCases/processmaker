@@ -75,7 +75,8 @@ class System
         'enable_blacklist' => 0,
         'system_utc_time_zone' => 0,
         'server_protocol' => '',
-        'server_hostname_requests_frontend' => ''
+        'server_hostname_requests_frontend' => '',
+        'load_headers_ie' => 0
     );
 
     /**
@@ -1281,4 +1282,3 @@ class System
     }
 }
 // end System class
-
