@@ -75,6 +75,7 @@ class System
         'enable_blacklist' => 0,
         'system_utc_time_zone' => 0,
         'server_protocol' => '',
+        'leave_case_warning' => 0,
         'server_hostname_requests_frontend' => '',
         'load_headers_ie' => 0
     );
