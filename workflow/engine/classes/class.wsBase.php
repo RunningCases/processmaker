@@ -630,24 +630,11 @@ class wsBase
     public function triggerList ()
     {
         try {
-            $del = DBAdapter::getStringDelimiter();
-
             $result = array ();
             $oCriteria = new Criteria( 'workflow' );
             $oCriteria->addSelectColumn( TriggersPeer::TRI_UID );
             $oCriteria->addSelectColumn( TriggersPeer::PRO_UID );
-            $oCriteria->addAsColumn( 'TITLE', 'C1.CON_VALUE' );
-            $oCriteria->addAlias( "C1", 'CONTENT' );
-
-            $caseTitleConds = array ();
-            $caseTitleConds[] = array (TriggersPeer::TRI_UID,'C1.CON_ID'
-            );
-            $caseTitleConds[] = array ('C1.CON_CATEGORY',$del . 'TRI_TITLE' . $del
-            );
-            $caseTitleConds[] = array ('C1.CON_LANG',$del . SYS_LANG . $del
-            );
-            $oCriteria->addJoinMC( $caseTitleConds, Criteria::LEFT_JOIN );
-            //$oCriteria->add(TriggersPeer::USR_STATUS, 'ACTIVE');
+            $oCriteria->addAsColumn( 'TITLE', TriggersPeer::TRI_TITLE );
             $oDataset = TriggersPeer::doSelectRS( $oCriteria );
             $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
             $oDataset->next();

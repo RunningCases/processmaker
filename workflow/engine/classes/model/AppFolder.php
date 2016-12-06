@@ -362,18 +362,14 @@ class AppFolder extends BaseAppFolder
             $oCriteria->add( AppDocumentPeer::APP_DOC_STATUS, 'ACTIVE' );
         }
 
-        $oCriteria->addSelectColumn( ContentPeer::CON_VALUE . ' AS NAME');
-        $oCriteria->add( ContentPeer::CON_CATEGORY, "APP_DOC_FILENAME");
-        $oCriteria->add( ContentPeer::CON_LANG, SYS_LANG);
-        $oCriteria->addJoin( AppDocumentPeer::APP_DOC_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN );
-
+        $oCriteria->addSelectColumn( AppDocumentPeer::APP_DOC_FILENAME . ' AS NAME');
         $oCriteria->addSelectColumn( UsersPeer::USR_FIRSTNAME);
         $oCriteria->addSelectColumn( UsersPeer::USR_LASTNAME);
         $oCriteria->addJoin( AppDocumentPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN );
 
         if ($search) {
             $oCriteria->add(
-                $oCriteria->getNewCriterion( ContentPeer::CON_VALUE, '%' . $search . '%', Criteria::LIKE )->
+                $oCriteria->getNewCriterion( AppDocumentPeer::APP_DOC_FILENAME, '%' . $search . '%', Criteria::LIKE )->
                     addOr( $oCriteria->getNewCriterion( UsersPeer::USR_FIRSTNAME, '%' . $search . '%', Criteria::LIKE )->
                     addOr( $oCriteria->getNewCriterion( UsersPeer::USR_LASTNAME, '%' . $search . '%', Criteria::LIKE )))
                 );
@@ -517,11 +513,7 @@ class AppFolder extends BaseAppFolder
             $oCriteria->add( AppDocumentPeer::APP_DOC_STATUS, 'ACTIVE' );
         }
 
-        $oCriteria->addSelectColumn( ContentPeer::CON_VALUE . ' AS NAME');
-        $oCriteria->add( ContentPeer::CON_CATEGORY, "APP_DOC_FILENAME");
-        $oCriteria->add( ContentPeer::CON_LANG, SYS_LANG);
-        $oCriteria->addJoin( AppDocumentPeer::APP_DOC_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN );
-
+        $oCriteria->addSelectColumn( AppDocumentPeer::APP_DOC_FILENAME . ' AS NAME');
         $oCriteria->addSelectColumn( UsersPeer::USR_FIRSTNAME);
         $oCriteria->addSelectColumn( UsersPeer::USR_LASTNAME);
         $oCriteria->addJoin( AppDocumentPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN );

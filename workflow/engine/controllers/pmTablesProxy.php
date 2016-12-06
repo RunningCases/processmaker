@@ -1566,14 +1566,7 @@ class pmTablesProxy extends HttpProxyController
             $criteria->addSelectColumn(DynaformPeer::DYN_UID);
             $criteria->addSelectColumn(DynaformPeer::DYN_FILENAME);
             $criteria->addSelectColumn(DynaformPeer::DYN_CONTENT);
-            $criteria->addSelectColumn(ContentPeer::CON_VALUE . ' AS DYN_TITLE');
-
-            $arrayCondition = [];
-            $arrayCondition[] = [DynaformPeer::DYN_UID, ContentPeer::CON_ID, Criteria::EQUAL];
-            $arrayCondition[] = [ContentPeer::CON_CATEGORY, $delimiter . 'DYN_TITLE' . $delimiter, Criteria::EQUAL];
-            $arrayCondition[] = [ContentPeer::CON_LANG, $delimiter . SYS_LANG . $delimiter, Criteria::EQUAL];
-            $criteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
-
+            $criteria->addSelectColumn(DynaformPeer::DYN_TITLE);
             $criteria->add(DynaformPeer::PRO_UID, $proUid, Criteria::EQUAL);
             $criteria->add(DynaformPeer::DYN_TYPE, 'xmlform', Criteria::EQUAL);
 

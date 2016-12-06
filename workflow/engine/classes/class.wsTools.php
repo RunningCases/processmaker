@@ -2626,27 +2626,27 @@ class workspaceTools
                     }
                 }
                 return true;
-            break;
+                break;
             case 'check':
-                        $criteria = new Criteria("workflow");
-                        $criteria->addSelectColumn(ConfigurationPeer::CFG_UID);
-                        if($list==='all'){
-                            $criteria->add(ConfigurationPeer::CFG_UID, "MIGRATED_LIST", CRITERIA::EQUAL);
-                        }
-                        if($list==='unassigned'){
-                            $criteria->add(ConfigurationPeer::CFG_UID, "MIGRATED_LIST_UNASSIGNED", CRITERIA::EQUAL);
-                        }
-                        $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
-                        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                        $aRows = array ();
-                        while ($rsCriteria->next()) {
-                            $aRows[] = $rsCriteria->getRow();
-                        }
-                        if(empty($aRows)){
-                            return false; //If is false continue with the migrated
-                        } else {
-                            return true; //Stop
-                        }
+                $criteria = new Criteria("workflow");
+                $criteria->addSelectColumn(ConfigurationPeer::CFG_UID);
+                if($list==='all'){
+                    $criteria->add(ConfigurationPeer::CFG_UID, "MIGRATED_LIST", CRITERIA::EQUAL);
+                }
+                if($list==='unassigned'){
+                    $criteria->add(ConfigurationPeer::CFG_UID, "MIGRATED_LIST_UNASSIGNED", CRITERIA::EQUAL);
+                }
+                $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
+                $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                $aRows = array ();
+                while ($rsCriteria->next()) {
+                    $aRows[] = $rsCriteria->getRow();
+                }
+                if(empty($aRows)){
+                    return false; //If is false continue with the migrated
+                } else {
+                    return true; //Stop
+                }
                 break;
             default:
                 return true;
@@ -3016,7 +3016,7 @@ class workspaceTools
         $criteria->addJoinMC(array(
             array(AppCacheViewPeer::APP_UID, ListParticipatedHistoryPeer::APP_UID),
             array(AppCacheViewPeer::DEL_INDEX, ListParticipatedHistoryPeer::DEL_INDEX)
-            ),
+        ),
             Criteria::LEFT_JOIN
         );
 
@@ -3185,22 +3185,27 @@ class workspaceTools
     }
 
 
-    public function migrateContent($workspace, $lang = SYS_LANG) {
+    public function migrateContent($workspace, $lang = SYS_LANG)
+    {
         if ((!class_exists('Memcache') || !class_exists('Memcached')) && !defined('MEMCACHED_ENABLED')) {
             define('MEMCACHED_ENABLED', false);
         }
         $this->initPropel(true);
         $conf  = new Configuration();
-        if (!$conf->exists('MIGRATED_CONTENT', 'content')) {
-            $data["CFG_UID"]  ='MIGRATED_CONTENT';
-            $data["OBJ_UID"]  ='content';
-            $data["CFG_VALUE"]='true';
-            $data["PRO_UID"]  ='';
-            $data["USR_UID"]  ='';
-            $data["APP_UID"]  ='';
-            $this->migrateContentRun($workspace, $lang);
-            $conf->create($data);
+        $blackList = array();
+        if($bExist = $conf->exists('MIGRATED_CONTENT', 'content')){
+            $oConfig = $conf->load('MIGRATED_CONTENT', 'content');
+            $blackList = $oConfig['CFG_VALUE'] == 'true' ? array('Groupwf', 'Process', 'Department', 'Task', 'InputDocument', 'Application') : unserialize($oConfig['CFG_VALUE']);
         }
+
+        $blackList = $this->migrateContentRun($workspace, $lang, $blackList);
+        $data["CFG_UID"] = 'MIGRATED_CONTENT';
+        $data["OBJ_UID"] = 'content';
+        $data["CFG_VALUE"] = serialize($blackList);
+        $data["PRO_UID"] = '';
+        $data["USR_UID"] = '';
+        $data["APP_UID"] = '';
+        $conf->create($data);
     }
 
     /**
@@ -3219,6 +3224,7 @@ class workspaceTools
             $oCriteria = new Criteria();
             $oCriteria->clearSelectColumns();
             $oCriteria->addAsColumn($fieldUidName, ContentPeer::CON_ID);
+            $oCriteria->addSelectColumn(ContentPeer::CON_PARENT);
             $oCriteria->addSelectColumn(ContentPeer::CON_CATEGORY);
             $oCriteria->addSelectColumn(ContentPeer::CON_VALUE);
             $oCriteria->add(ContentPeer::CON_CATEGORY, $fields['fields'], Criteria::IN);
@@ -3231,23 +3237,42 @@ class workspaceTools
                 $fieldName = $row['CON_CATEGORY'];
                 $fieldName = isset($fields['alias']) && isset($fields['alias'][$fieldName]) ? $fields['alias'][$fieldName] : $fieldName;
                 unset($row['CON_CATEGORY']);
-                $fieldValue = $row['CON_VALUE'];
+                $row[$fieldName] = $row['CON_VALUE'];
                 unset($row['CON_VALUE']);
-                $row[$fieldName] = $fieldValue;
                 $oTable = new $className();
-                $mExists = $methods['exists'];
-                if ($oTable->$mExists($row[$fieldUidName])){
-                    $oTable->update($row);
+                $that = array($oTable, $methods['exists']);
+                $params = array($row[$fieldUidName]);
+                if (isset($row['CON_PARENT']) && $row['CON_PARENT'] != ''){
+                    array_push($params, $row['CON_PARENT']);
+                    $fieldName = isset($fields['alias']) && isset($fields['alias']['CON_PARENT']) ? $fields['alias']['CON_PARENT'] : 'CON_PARENT';
+                    $row[$fieldName] = $row['CON_PARENT'];
+                }
+                unset($row['CON_PARENT']);
+                if (call_user_func_array($that, $params)){
+                    if (isset($methods['update'])){
+                        $fn = $methods['update'];
+                        $fn($row);
+                    } else {
+                        $oTable->update($row);
+                    }
                 }
             }
-            $classNamePeer = $className . 'Peer';
+            $classNamePeer = class_exists($className . 'Peer') ? $className . 'Peer' : $fields['peer'];
             CLI::logging("|--> Add content data in table " . $classNamePeer::TABLE_NAME . "\n");
         } catch (Exception $e) {
             throw ($e);
         }
     }
 
-    public function migrateContentRun($workspace, $lang = SYS_LANG) {
+    /**
+     * Migration
+     *
+     * @param $workspace
+     * @param mixed|string $lang
+     * @return array
+     */
+    public function migrateContentRun($workspace, $lang = SYS_LANG, $blackList = array())
+    {
         if ((!class_exists('Memcache') || !class_exists('Memcached')) && !defined('MEMCACHED_ENABLED')) {
             define('MEMCACHED_ENABLED', false);
         }
@@ -3282,11 +3307,60 @@ class workspaceTools
                 'uid' => 'APP_UID',
                 'fields' => array('APP_TITLE', 'APP_DESCRIPTION'),
                 'methods' => array('exists' => 'exists')
+            ),
+            'AppDocument' => array(
+                'uid' => 'APP_DOC_UID',
+                'alias' => array('CON_PARENT' => 'DOC_VERSION'),
+                'fields' => array('APP_DOC_TITLE', 'APP_DOC_COMMENT', 'APP_DOC_FILENAME'),
+                'methods' => array('exists' => 'exists')
+            ),
+            'Dynaform' => array(
+                'uid' => 'DYN_UID',
+                'fields' => array('DYN_TITLE', 'DYN_DESCRIPTION'),
+                'methods' => array('exists' => 'exists')
+            ),
+            'OutputDocument' => array(
+                'uid' => 'OUT_DOC_UID',
+                'fields' => array('OUT_DOC_TITLE', 'OUT_DOC_DESCRIPTION', 'OUT_DOC_FILENAME', 'OUT_DOC_TEMPLATE'),
+                'methods' => array('exists' => 'OutputExists')
+            ),
+            'ReportTable' => array(
+                'uid' => 'REP_TAB_UID',
+                'fields' => array('REP_TAB_TITLE'),
+                'methods' => array('exists' => 'reportTableExists', 'update' => function ($row) {
+                    $oRepTab = \ReportTablePeer::retrieveByPK($row['REP_TAB_UID']);
+                    $oRepTab->fromArray($row, BasePeer::TYPE_FIELDNAME);
+                    if ($oRepTab->validate()) {
+                        $result = $oRepTab->save();
+                    }
+                })
+            ),
+            'Triggers' => array(
+                'uid' => 'TRI_UID',
+                'fields' => array('TRI_TITLE', 'TRI_DESCRIPTION'),
+                'methods' => array('exists' => 'TriggerExists')
+            ),
+            '\ProcessMaker\BusinessModel\WebEntryEvent' => array(
+                'uid' => 'WEE_UID',
+                'fields' => array('WEE_TITLE', 'WEE_DESCRIPTION'),
+                'methods' => array('exists' => 'exists', 'update' => function ($row) {
+                    $webEntry = \WebEntryEventPeer::retrieveByPK($row['WEE_UID']);
+                    $webEntry->fromArray($row, BasePeer::TYPE_FIELDNAME);
+                    if ($webEntry->validate()) {
+                        $result = $webEntry->save();
+                    }
+                }),
+                'peer' => 'WebEntryEventPeer'
             )
         );
+
         foreach ($content as $className => $fields) {
-            $this->migrateContentWorkspace($className, $fields, $lang);
+            if (!in_array($className, $blackList)) {
+                $this->migrateContentWorkspace($className, $fields, $lang);
+                $blackList[] = $className;
+            }
         }
+        return $blackList;
     }
 
     public function cleanTokens($workspace, $lang = SYS_LANG)

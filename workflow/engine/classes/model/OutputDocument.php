@@ -41,30 +41,6 @@
 class OutputDocument extends BaseOutputDocument
 {
 
-    /**
-     * This value goes in the content table
-     * @var string
-     */
-    protected $out_doc_title = '';
-
-    /**
-     * This value goes in the content table
-     * @var   string
-     */
-    protected $out_doc_description = '';
-
-    /**
-     * This value goes in the content table
-     * @var string
-     */
-    protected $out_doc_filename = '';
-
-    /**
-     * This value goes in the content table
-     * @var string
-     */
-    protected $out_doc_template = '';
-
     public function __construct()
     {
         $javaInput = PATH_C . 'javaBridgePM' . PATH_SEP . 'input' . PATH_SEP;
@@ -84,10 +60,6 @@ class OutputDocument extends BaseOutputDocument
             }
 
             $aFields = $oOutputDocument->toArray(BasePeer::TYPE_FIELDNAME);
-            $aFields['OUT_DOC_TITLE'] = $oOutputDocument->getOutDocTitle();
-            $aFields['OUT_DOC_DESCRIPTION'] = $oOutputDocument->getOutDocDescription();
-            $aFields['OUT_DOC_FILENAME'] = $oOutputDocument->getOutDocFilename();
-            $aFields['OUT_DOC_TEMPLATE'] = $oOutputDocument->getOutDocTemplate();
             $this->fromArray($aFields, BasePeer::TYPE_FIELDNAME);
 
             return $aFields;
@@ -109,11 +81,6 @@ class OutputDocument extends BaseOutputDocument
 
             if (!is_null($oOutputDocument)) {
                 $aFields = $oOutputDocument->toArray(BasePeer::TYPE_FIELDNAME);
-                $aFields['OUT_DOC_TITLE'] = $oOutputDocument->getOutDocTitle();
-                $aFields['PRO_UID'] = $oOutputDocument->getProUid();
-                $aFields['OUT_DOC_DESCRIPTION'] = $oOutputDocument->getOutDocDescription();
-                $aFields['OUT_DOC_FILENAME'] = $oOutputDocument->getOutDocFilename();
-                $aFields['OUT_DOC_TEMPLATE'] = $oOutputDocument->getOutDocTemplate();
                 $this->fromArray($aFields, BasePeer::TYPE_FIELDNAME);
 
                 return $aFields;
@@ -158,17 +125,17 @@ class OutputDocument extends BaseOutputDocument
                 $oConnection->begin();
 
                 if (isset($aData['OUT_DOC_TITLE'])) {
-                    $oOutputDocument->setOutDocTitle($aData['OUT_DOC_TITLE']);
+                    $oOutputDocument->setOutDocTitleContent($aData['OUT_DOC_TITLE']);
                 }
 
                 if (isset($aData['OUT_DOC_DESCRIPTION'])) {
-                    $oOutputDocument->setOutDocDescription($aData['OUT_DOC_DESCRIPTION']);
+                    $oOutputDocument->setOutDocDescriptionContent($aData['OUT_DOC_DESCRIPTION']);
                 }
 
-                $oOutputDocument->setOutDocFilename($aData['OUT_DOC_FILENAME']);
+                $oOutputDocument->setOutDocFilenameContent($aData['OUT_DOC_FILENAME']);
 
                 if (isset($aData['OUT_DOC_TEMPLATE'])) {
-                    $oOutputDocument->setOutDocTemplate($aData['OUT_DOC_TEMPLATE']);
+                    $oOutputDocument->setOutDocTemplateContent($aData['OUT_DOC_TEMPLATE']);
                 }
 
                 $iResult = $oOutputDocument->save();
@@ -246,19 +213,19 @@ class OutputDocument extends BaseOutputDocument
                     $oConnection->begin();
 
                     if (isset($aData['OUT_DOC_TITLE'])) {
-                        $oOutputDocument->setOutDocTitle($aData['OUT_DOC_TITLE']);
+                        $oOutputDocument->setOutDocTitleContent($aData['OUT_DOC_TITLE']);
                     }
 
                     if (isset($aData['OUT_DOC_DESCRIPTION'])) {
-                        $oOutputDocument->setOutDocDescription($aData['OUT_DOC_DESCRIPTION']);
+                        $oOutputDocument->setOutDocDescriptionContent($aData['OUT_DOC_DESCRIPTION']);
                     }
 
                     if (isset($aData['OUT_DOC_FILENAME'])) {
-                        $oOutputDocument->setOutDocFilename($aData['OUT_DOC_FILENAME']);
+                        $oOutputDocument->setOutDocFilenameContent($aData['OUT_DOC_FILENAME']);
                     }
 
                     if (isset($aData['OUT_DOC_TEMPLATE'])) {
-                        $oOutputDocument->setOutDocTemplate($aData['OUT_DOC_TEMPLATE']);
+                        $oOutputDocument->setOutDocTemplateContent($aData['OUT_DOC_TEMPLATE']);
                     }
 
                     $iResult = $oOutputDocument->save();
@@ -371,7 +338,7 @@ class OutputDocument extends BaseOutputDocument
      * Get the [out_doc_title] column value.
      * @return string
      */
-    public function getOutDocTitle()
+    public function getOutDocTitleContent()
     {
         if ($this->out_doc_title == '') {
             try {
@@ -392,7 +359,7 @@ class OutputDocument extends BaseOutputDocument
      * @param string $sValue new value
      * @return void
      */
-    public function setOutDocTitle($sValue)
+    public function setOutDocTitleContent($sValue)
     {
         if ($sValue !== null && !is_string($sValue)) {
             $sValue = (string) $sValue;
@@ -417,7 +384,7 @@ class OutputDocument extends BaseOutputDocument
      * Get the [out_doc_comment] column value.
      * @return string
      */
-    public function getOutDocDescription()
+    public function getOutDocDescriptionContent()
     {
         if ($this->out_doc_description == '') {
             try {
@@ -438,7 +405,7 @@ class OutputDocument extends BaseOutputDocument
      * @param string $sValue new value
      * @return void
      */
-    public function setOutDocDescription($sValue)
+    public function setOutDocDescriptionContent($sValue)
     {
         if ($sValue !== null && !is_string($sValue)) {
             $sValue = (string) $sValue;
@@ -463,7 +430,7 @@ class OutputDocument extends BaseOutputDocument
      * Get the [out_doc_filename] column value.
      * @return string
      */
-    public function getOutDocFilename()
+    public function getOutDocFilenameContent()
     {
         if ($this->out_doc_filename == '') {
             try {
@@ -484,7 +451,7 @@ class OutputDocument extends BaseOutputDocument
      * @param string $sValue new value
      * @return void
      */
-    public function setOutDocFilename($sValue)
+    public function setOutDocFilenameContent($sValue)
     {
         if ($sValue !== null && !is_string($sValue)) {
             $sValue = (string) $sValue;
@@ -509,7 +476,7 @@ class OutputDocument extends BaseOutputDocument
      * Get the [out_doc_template] column value.
      * @return string
      */
-    public function getOutDocTemplate()
+    public function getOutDocTemplateContent()
     {
         if ($this->out_doc_template == '') {
             try {
@@ -530,7 +497,7 @@ class OutputDocument extends BaseOutputDocument
      * @param string $sValue new value
      * @return void
      */
-    public function setOutDocTemplate($sValue)
+    public function setOutDocTemplateContent($sValue)
     {
         if ($sValue !== null && !is_string($sValue)) {
             $sValue = (string) $sValue;
