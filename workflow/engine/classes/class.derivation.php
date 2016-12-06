@@ -141,7 +141,7 @@ class Derivation
                     $arrayTaskData["NEXT_TASK"]["TAS_PARENT"] = "";
                 }
 
-                $regexpTaskTypeToExclude = "GATEWAYTOGATEWAY|END-MESSAGE-EVENT|SCRIPT-TASK|INTERMEDIATE-CATCH-TIMER-EVENT|INTERMEDIATE-THROW-MESSAGE-EVENT|END-EMAIL-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT";
+                $regexpTaskTypeToExclude = "GATEWAYTOGATEWAY|END-MESSAGE-EVENT|SCRIPT-TASK|SERVICE-TASK|INTERMEDIATE-CATCH-TIMER-EVENT|INTERMEDIATE-THROW-MESSAGE-EVENT|END-EMAIL-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT";
 
                 $arrayTaskData["NEXT_TASK"]["USER_ASSIGNED"] = (!preg_match("/^(?:" . $regexpTaskTypeToExclude . ")$/", $arrayTaskData["NEXT_TASK"]["TAS_TYPE"]))? $this->getNextAssignedUser($arrayTaskData) : array("USR_UID" => "", "USR_FULLNAME" => "");
             }
@@ -1099,6 +1099,10 @@ class Derivation
                                 }
                                 break;
                         }
+                        //Execute Service Task
+                        if (function_exists('executeServiceTaskByActivityUid')) {
+                            $appFields["APP_DATA"] = executeServiceTaskByActivityUid($nextDel["TAS_UID"], $appFields);
+                        }
 
                         //Execute Script-Task
                         $scriptTask = new \ProcessMaker\BusinessModel\ScriptTask();
@@ -1106,7 +1110,7 @@ class Derivation
                         $appFields["APP_DATA"] = $scriptTask->execScriptByActivityUid($nextDel["TAS_UID"], $appFields);
 
                         //Create record in table APP_ASSIGN_SELF_SERVICE_VALUE
-                        $regexpTaskTypeToExclude = "SCRIPT-TASK|INTERMEDIATE-THROW-EMAIL-EVENT";
+                        $regexpTaskTypeToExclude = "SCRIPT-TASK|INTERMEDIATE-THROW-EMAIL-EVENT|SERVICE-TASK";
 
                         if (!is_null($taskNextDel) && !preg_match("/^(?:" . $regexpTaskTypeToExclude . ")$/", $taskNextDel->getTasType())) {
                             if ($taskNextDel->getTasAssignType() == "SELF_SERVICE" && trim($taskNextDel->getTasGroupVariable()) != "") {
@@ -1126,7 +1130,7 @@ class Derivation
                         }
 
                         //Check if $taskNextDel is Script-Task
-                        if (!is_null($taskNextDel) && ($taskNextDel->getTasType() === "SCRIPT-TASK" || $taskNextDel->getTasType() === "INTERMEDIATE-THROW-EMAIL-EVENT" || $taskNextDel->getTasType() === "INTERMEDIATE-THROW-MESSAGE-EVENT")) {
+                        if (!is_null($taskNextDel) && ($taskNextDel->getTasType() === "SCRIPT-TASK" || $taskNextDel->getTasType() === "INTERMEDIATE-THROW-EMAIL-EVENT" || $taskNextDel->getTasType() === "INTERMEDIATE-THROW-MESSAGE-EVENT" || $taskNextDel->getTasType() === "SERVICE-TASK")) {
                             //Get for $nextDel["TAS_UID"] your next Task
                             $currentDelegationAux = array_merge($currentDelegation, array("DEL_INDEX" => $iNewDelIndex, "TAS_UID" => $nextDel["TAS_UID"]));
                             $nextDelegationsAux   = array();

@@ -5984,15 +5984,8 @@ class Processes
                 $criteriaTrigger = new Criteria("workflow");
 
                 $criteriaTrigger->addSelectColumn(TriggersPeer::TRI_UID);
-                $criteriaTrigger->addAsColumn("TRI_TITLE", ContentPeer::CON_VALUE);
+                $criteriaTrigger->addSelectColumn(TriggersPeer::TRI_TITLE);
                 $criteriaTrigger->addSelectColumn(TriggersPeer::TRI_WEBBOT);
-
-                $arrayCondition = array();
-                $arrayCondition[] = array(TriggersPeer::TRI_UID, ContentPeer::CON_ID, Criteria::EQUAL);
-                $arrayCondition[] = array(ContentPeer::CON_CATEGORY, $delimiter . "TRI_TITLE" . $delimiter, Criteria::EQUAL);
-                $arrayCondition[] = array(ContentPeer::CON_LANG, $delimiter . SYS_LANG . $delimiter, Criteria::EQUAL);
-                $criteriaTrigger->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
-
                 $criteriaTrigger->add(TriggersPeer::PRO_UID, $processUid, Criteria::EQUAL);
 
                 $rsCriteriaTrigger = TriggersPeer::doSelectRS($criteriaTrigger);

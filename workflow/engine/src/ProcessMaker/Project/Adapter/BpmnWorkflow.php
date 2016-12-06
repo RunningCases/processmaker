@@ -205,9 +205,22 @@ class BpmnWorkflow extends Project\Bpmn
 
         $activityCurrent = \BpmnActivityPeer::retrieveByPK($actUid);
 
-        if ($activityCurrent->getActType() == "TASK" && $activityCurrent->getActTaskType() == "SCRIPTTASK") {
-            $taskData["TAS_TYPE"] = "SCRIPT-TASK";
-            $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
+        if ($activityCurrent->getActType() == "TASK") {
+            switch ($activityCurrent->getActTaskType()) {
+                case 'SCRIPTTASK':
+                    $taskData["TAS_TYPE"] = "SCRIPT-TASK";
+                    $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
+                    break;
+                case 'SERVICETASK':
+                    $registry = \PMPluginRegistry::getSingleton();
+                    $taskData["TAS_TYPE"] = "NORMAL";
+                    //The plugin pmConnectors will be moved to the core in pm.3.3
+                    if ($registry->getStatusPlugin('pmConnectors') === 'enabled') {
+                        $taskData["TAS_TYPE"] = "SERVICE-TASK";
+                        $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
+                    }
+                    break;
+            }
         }
 
         $this->wp->addTask($taskData);
@@ -254,6 +267,8 @@ class BpmnWorkflow extends Project\Bpmn
             ));
         }
 
+        $taskData = self::__updateServiceTask($activityBefore, $activityCurrent, $taskData);
+
         if($activityCurrent->getActLoopType() == "PARALLEL"){
            $task = \TaskPeer::retrieveByPK($actUid);
            if($task->getTasAssignType() == "BALANCED" || $task->getTasAssignType() == "MANUAL" || $task->getTasAssignType() == "EVALUATE" || $task->getTasAssignType() == "REPORT_TO" || $task->getTasAssignType() == "SELF_SERVICE"){
@@ -269,6 +284,62 @@ class BpmnWorkflow extends Project\Bpmn
         }
 
         $this->wp->updateTask($actUid, $taskData);
+    }
+
+    /**
+     * @param $actUid
+     * @param $data
+     */
+    public function sincronizeActivityData($actUid, $data)
+    {
+        $registry = \PMPluginRegistry::getSingleton();
+        $taskData = \TaskPeer::retrieveByPK($actUid);
+        //The plugin pmConnectors will be moved to the core in pm.3.3
+        if ($taskData->getTasType() == 'SERVICE-TASK' && $registry->getStatusPlugin('pmConnectors') !== 'enabled') {
+            $taskData = array();
+            $taskData["TAS_TYPE"] = "NORMAL";
+            $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
+            $this->wp->updateTask($actUid, $taskData);
+        }
+    }
+
+    /**
+     * @param null $activityBefore
+     * @param null $activityCurrent
+     * @param $taskData
+     * @return mixed
+     */
+    static function __updateServiceTask($activityBefore, $activityCurrent, $taskData)
+    {
+        $registry = \PMPluginRegistry::getSingleton();
+        if ($activityBefore->getActTaskType() != "SERVICETASK" && $activityCurrent->getActTaskType() == "SERVICETASK") {
+            //The plugin pmConnectors will be moved to the core in pm.3.3
+            if ($registry->getStatusPlugin('pmConnectors') === 'enabled') {
+                $taskData["TAS_TYPE"] = "SERVICE-TASK";
+                $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
+            } else {
+                $taskData["TAS_TYPE"] = "NORMAL";
+                $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
+            }
+        }
+
+        if ($activityBefore->getActTaskType() == "SERVICETASK" && $activityCurrent->getActTaskType() != "SERVICETASK") {
+            $taskData["TAS_TYPE"] = "NORMAL";
+            $taskData["TAS_ASSIGN_TYPE"] = "BALANCED";
+            if($activityCurrent->getActTaskType() == "SCRIPTTASK"){
+                $taskData["TAS_TYPE"] = "SCRIPT-TASK";
+            }
+            //The plugin pmConnectors will be moved to the core in pm.3.3
+            if ($registry->getStatusPlugin('pmConnectors') === 'enabled') {
+                $pathFile = PATH_PLUGINS . 'pmConnectors' . PATH_SEP . 'src' . PATH_SEP . 'Services' . PATH_SEP . 'BusinessModel' . PATH_SEP . 'PmConnectors' . PATH_SEP . 'ServiceTaskBM.php';
+                if (is_file($pathFile)) {
+                    require_once $pathFile;
+                    $serviceTask = new \Services\BusinessModel\PmConnectors\ServiceTaskBM();
+                    $serviceTask->deleteByActivityUid($activityCurrent->getPrjUid(), $activityCurrent->getActUid());
+                }
+            }
+        }
+        return $taskData;
     }
 
     public function removeActivity($actUid)
@@ -1530,7 +1601,6 @@ class BpmnWorkflow extends Project\Bpmn
             $activityData = Util\ArrayUtil::boolToIntValues($activityData);
 
             $activity = $bwp->getActivity($activityData["ACT_UID"]);
-
             if ($forceInsert || is_null($activity)) {
                 if ($generateUid) {
                     //Generate and update UID
@@ -1552,7 +1622,7 @@ class BpmnWorkflow extends Project\Bpmn
             } else {
                 Util\Logger::log("Update Activity ({$activityData["ACT_UID"]}) Skipped - No changes required");
             }
-
+            $bwp->sincronizeActivityData($activityData["ACT_UID"], $activityData);
             $diagram["activities"][$i] = $activityData;
             $whiteList[] = $activityData["ACT_UID"];
 

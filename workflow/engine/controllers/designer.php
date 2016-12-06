@@ -154,6 +154,26 @@ class Designer extends Controller
             }
         }
 
+        //plugin set source path
+        $sourceCss = array();
+        $sourceJs = array();
+
+        $pluginRegistry = &PMPluginRegistry::getSingleton();
+        $srcPath = $pluginRegistry->getDesignerSourcePath();
+
+        foreach ($srcPath as $key => $value) {
+            $ext = pathinfo($value->pathFile, PATHINFO_EXTENSION);
+            if ($ext === "css") {
+                $sourceCss[] = $value->pathFile;
+            }
+            if ($ext === "js") {
+                $sourceJs[] = $value->pathFile;
+            }
+        }
+
+        $this->setVar('sourceCss', $sourceCss);
+        $this->setVar('sourceJs', $sourceJs);
+
         $this->render();
     }
 

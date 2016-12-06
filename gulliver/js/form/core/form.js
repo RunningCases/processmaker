@@ -3566,7 +3566,9 @@ var removeRequiredById = function(sFieldName) {
     } else {
       fieldId = "form["+sFieldName+"]";
     }
-    document.getElementById(fieldId).setAttribute('pm:required','0');
+    if (document.getElementById(fieldId) != null) {
+      document.getElementById(fieldId).setAttribute('pm:required', '1');
+    }
 
     var oAux = document.getElementById('__notValidateThisFields__');
     if (oAux) {
@@ -3583,7 +3585,9 @@ var enableRequiredById = function(sFieldName) {
     } else {
       fieldId = "form["+sFieldName+"]";
     }
-    document.getElementById(fieldId).setAttribute('pm:required','1');
+    if (document.getElementById(fieldId) != null) {
+      document.getElementById(fieldId).setAttribute('pm:required', '1');
+    }
 
     var i;
     var aAux = [];

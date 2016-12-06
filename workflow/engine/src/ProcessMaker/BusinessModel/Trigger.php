@@ -16,27 +16,11 @@ class Trigger
             $criteria = new \Criteria("workflow");
 
             $criteria->addSelectColumn(\TriggersPeer::TRI_UID);
-            $criteria->addAsColumn("TRI_TITLE", "CT.CON_VALUE");
-            $criteria->addAsColumn("TRI_DESCRIPTION", "CD.CON_VALUE");
+            $criteria->addSelectColumn(\TriggersPeer::TRI_TITLE);
+            $criteria->addSelectColumn(\TriggersPeer::TRI_DESCRIPTION);
             $criteria->addSelectColumn(\TriggersPeer::TRI_TYPE);
             $criteria->addSelectColumn(\TriggersPeer::TRI_WEBBOT);
             $criteria->addSelectColumn(\TriggersPeer::TRI_PARAM);
-
-            $criteria->addAlias("CT", \ContentPeer::TABLE_NAME);
-            $criteria->addAlias("CD", \ContentPeer::TABLE_NAME);
-
-            $arrayCondition = array();
-            $arrayCondition[] = array(\TriggersPeer::TRI_UID, "CT.CON_ID", \Criteria::EQUAL);
-            $arrayCondition[] = array("CT.CON_CATEGORY", $delimiter . "TRI_TITLE" . $delimiter, \Criteria::EQUAL);
-            $arrayCondition[] = array("CT.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
-            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
-
-            $arrayCondition = array();
-            $arrayCondition[] = array(\TriggersPeer::TRI_UID, "CD.CON_ID", \Criteria::EQUAL);
-            $arrayCondition[] = array("CD.CON_CATEGORY", $delimiter . "TRI_DESCRIPTION" . $delimiter, \Criteria::EQUAL);
-            $arrayCondition[] = array("CD.CON_LANG", $delimiter . SYS_LANG . $delimiter, \Criteria::EQUAL);
-            $criteria->addJoinMC($arrayCondition, \Criteria::LEFT_JOIN);
-
             return $criteria;
         } catch (\Exception $e) {
             throw $e;
@@ -57,7 +41,7 @@ class Trigger
         $criteria = $this->getTriggerCriteria();
 
         $criteria->add(\TriggersPeer::PRO_UID, $sProcessUID);
-        $criteria->addAscendingOrderByColumn('TRI_TITLE');
+        $criteria->addAscendingOrderByColumn(\TriggersPeer::TRI_TITLE);
 
         $oDataset = \TriggersPeer::doSelectRS($criteria);
         $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
@@ -239,30 +223,15 @@ class Trigger
         $oCriteria = new \Criteria("workflow");
         $oCriteria->addSelectColumn( \TriggersPeer::TRI_UID );
         $oCriteria->add( \TriggersPeer::PRO_UID, $sProcessUID );
+        $oCriteria->add( \TriggersPeer::TRI_TITLE, $sTriggerName );
         if ($sTriggerUid != '') {
             $oCriteria->add( \TriggersPeer::TRI_UID, $sTriggerUid, \Criteria::NOT_EQUAL);
         }
         $oDataset = \TriggersPeer::doSelectRS( $oCriteria );
         $oDataset->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
-        while ($oDataset->next()) {
-            $aRow = $oDataset->getRow();
-
-            $oCriteria1 = new \Criteria( 'workflow' );
-            $oCriteria1->addSelectColumn( 'COUNT(*) AS TRIGGERS' );
-            $oCriteria1->add( \ContentPeer::CON_CATEGORY, 'TRI_TITLE' );
-            $oCriteria1->add( \ContentPeer::CON_ID, $aRow['TRI_UID'] );
-            $oCriteria1->add( \ContentPeer::CON_VALUE, $sTriggerName );
-            $oCriteria1->add( \ContentPeer::CON_LANG, SYS_LANG );
-            $oDataset1 = \ContentPeer::doSelectRS( $oCriteria1 );
-            $oDataset1->setFetchmode( \ResultSet::FETCHMODE_ASSOC );
-            $oDataset1->next();
-            $aRow1 = $oDataset1->getRow();
-
-            if ($aRow1['TRIGGERS']) {
-                return false;
-            }
-        }
-        return true;
+        $oDataset->next();
+        $aRow = $oDataset->getRow();
+        return (!$aRow) ? true : false;
     }
 
     /**

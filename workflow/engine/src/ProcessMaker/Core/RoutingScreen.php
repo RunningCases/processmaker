@@ -17,8 +17,38 @@ class RoutingScreen extends \Derivation
         $this->setRegexpTaskTypeToInclude("GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT|INTERMEDIATE-CATCH-TIMER-EVENT|INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT");
     }
 
-    public function mergeDataDerivation($post, $prepareInformation)
+    /**
+     * This fix only applies to classical processes when routype is SELECT
+     * @param $post
+     * @param $prepareInformation - The first index always starts at 1
+     * @param $rouType
+     * @return mixed - An array is returned whit first index 1
+     */
+    private function beforeMergeData($post, $prepareInformation, $rouType)
     {
+        if ($rouType == 'SELECT') {
+            $post = array_shift($post);
+            foreach ($prepareInformation as $key => $nextTask) {
+                if ($nextTask['ROU_CONDITION'] == $post['ROU_CONDITION'] &&
+                    $post['SOURCE_UID'] == $nextTask['SOURCE_UID']
+                ) {
+                    $prepareInformationData[1] = $nextTask;
+                    return $prepareInformationData;
+                }
+            }
+        }
+        return $prepareInformation;
+    }
+
+    /**
+     * @param $post
+     * @param $prepareInformation
+     * @param $rouType
+     * @return array
+     */
+    public function mergeDataDerivation($post, $prepareInformation, $rouType)
+    {
+        $prepareInformation = $this->beforeMergeData($post, $prepareInformation, $rouType);
         $aDataMerged = array();
         $flagJumpTask = false;
         foreach ($prepareInformation as $key => $nextTask) {

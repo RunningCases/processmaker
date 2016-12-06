@@ -41,17 +41,12 @@
  */
 class Triggers extends BaseTriggers
 {
-    /**
-     * This value goes in the content table
-     * @var        string
-     */
-    protected $tri_title = '';
 
     /**
     * Get the tri_title column value.
     * @return     string
     */
-    public function getTriTitle()
+    public function getTriTitleContent()
     {
         if ($this->getTriUid() == "") {
             throw ( new Exception( "Error in getTriTitle, the getTriUid() can't be blank") );
@@ -67,7 +62,7 @@ class Triggers extends BaseTriggers
      * @param      string $v new value
      * @return     void
      */
-    public function setTriTitle($v)
+    public function setTriTitleContent($v)
     {
         if ($this->getTriUid() == "") {
             throw ( new Exception( "Error in setTriTitle, the getTriUid() can't be blank") );
@@ -83,16 +78,11 @@ class Triggers extends BaseTriggers
     }
 
     /**
-     * This value goes in the content table
-     * @var        string
-     */
-    protected $tri_description = '';
-    /**
      * Get the tri_description column value.
      * @return     string
      */
 
-    public function getTriDescription()
+    public function getTriDescriptionContent()
     {
         if ($this->getTriUid() == "") {
             throw ( new Exception( "Error in getTriDescription, the getTriUid() can't be blank") );
@@ -108,7 +98,7 @@ class Triggers extends BaseTriggers
      * @param      string $v new value
      * @return     void
      */
-    public function setTriDescription($v)
+    public function setTriDescriptionContent($v)
     {
         if ($this->getTriUid() == "") {
             throw ( new Exception( "Error in setTriDescription, the getTriUid() can't be blank") );
@@ -130,9 +120,6 @@ class Triggers extends BaseTriggers
             if (!is_null($oRow)) {
                 $aFields = $oRow->toArray(BasePeer::TYPE_FIELDNAME);
                 $this->fromArray($aFields, BasePeer::TYPE_FIELDNAME);
-                $this->setNew(false);
-                $this->setTriTitle($aFields['TRI_TITLE']=$this->getTriTitle());
-                $this->setTriDescription($aFields['TRI_DESCRIPTION']=$this->getTriDescription());
                 return $aFields;
             } else {
                 throw( new Exception( "The row '$TriUid' in table TRIGGERS doesn't exist!" ));
@@ -157,6 +144,10 @@ class Triggers extends BaseTriggers
             }
             $triggerUid = $this->getTriUid();
             $this->setProUid($aData['PRO_UID']);
+            $triTitle = isset($aData['TRI_TITLE']) ? $aData['TRI_TITLE'] : '';
+            $this->setTriTitle($triTitle);
+            $triDescription = isset($aData['TRI_DESCRIPTION']) ? $aData['TRI_DESCRIPTION'] : '';
+            $this->setTriDescription($triDescription);
             $this->setTriType("SCRIPT");
 
             if (!isset ( $aData['TRI_WEBBOT'] )) {
@@ -166,22 +157,14 @@ class Triggers extends BaseTriggers
             }
 
             if ($this->validate()) {
-                if (!isset ( $aData['TRI_TITLE'] )) {
-                    $this->setTriTitle("");
-                } else {
-                    $this->setTriTitle( $aData['TRI_TITLE'] );
-                }
-                if (!isset ( $aData['TRI_DESCRIPTION'] )) {
-                    $this->setTriDescription("");
-                } else {
-                    $this->setTriDescription( $aData['TRI_DESCRIPTION'] );
-                }
                 if (!isset ( $aData['TRI_PARAM'] )) {
                     $this->setTriParam("");
                 } else {
                     $this->setTriParam( $aData['TRI_PARAM'] );
                 }
                 $result=$this->save();
+                $this->setTriTitleContent($triTitle);
+                $this->setTriDescriptionContent($triDescription);
                 $con->commit();
                 //Add Audit Log
                 $description = "Trigger Name: ".$aData['TRI_TITLE'].", Trigger Uid: ".$triggerUid;
@@ -211,12 +194,13 @@ class Triggers extends BaseTriggers
             if ($this->validate()) {
                 $contentResult=0;
                 if (array_key_exists("TRI_TITLE", $fields)) {
-                    $contentResult+=$this->setTriTitle($fields["TRI_TITLE"]);
+                    $contentResult += $this->setTriTitleContent($fields["TRI_TITLE"]);
                 }
                 if (array_key_exists("TRI_DESCRIPTION", $fields)) {
-                    $contentResult+=$this->setTriDescription($fields["TRI_DESCRIPTION"]);
+                    $contentResult += $this->setTriDescriptionContent($fields["TRI_DESCRIPTION"]);
                 }
-                $result=$this->save();
+                $this->setNew(false);
+                $result = $this->save();
                 $result=($result==0)?($contentResult>0?1:0):$result;
                 $con->commit();
                 return $result;
@@ -364,10 +348,10 @@ class Triggers extends BaseTriggers
                 $oResult->code = 1;
             }
         }
-        
+
         /**
          * Process elements:
-         * 
+         *
          * PRO_TRI_DELETED
          * PRO_TRI_CANCELED
          * PRO_TRI_PAUSED

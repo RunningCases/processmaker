@@ -116,7 +116,6 @@ if ($actionAjax == 'historyGridListChangeLogPanelBody_JXP') {
 }
 
 if ($actionAjax == "showDynaformHistoryGetNomDynaform_JXP") {
-    require_once 'classes/model/ContentPeer.php';
 
     //!dataInput
     $idDin = $_REQUEST['idDin'];
@@ -126,15 +125,11 @@ if ($actionAjax == "showDynaformHistoryGetNomDynaform_JXP") {
     $md5Hash = "";
     $dynTitle = '';
 
-    $c = new Criteria();
-    $c0 = $c->getNewCriterion( ContentPeer::CON_ID, $idDin );
-    $c1 = $c->getNewCriterion( ContentPeer::CON_CATEGORY, 'DYN_TITLE' );
-    $c0->addAnd( $c1 );
-    $c->add( $c0 );
-    $contentObjeto = ContentPeer::doSelectOne( $c );
+    $dynaform = new Dynaform();
+    $row = $dynaform->Load($idDin);
 
-    if (is_object( $contentObjeto )) {
-        $dynTitle = $contentObjeto->getConValue();
+    if ($row) {
+        $dynTitle = $row['DYN_TITLE'];
     }
 
     $md5Hash = G::encryptOld( $idDin . $dynDate );

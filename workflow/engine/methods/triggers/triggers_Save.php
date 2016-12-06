@@ -38,33 +38,9 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
     $snameTrigger = urldecode( $_POST['NAMETRIGGER'] );
     $sPRO_UID = urldecode( $_POST['proUid'] );
 
-    $oCriteria = new Criteria( 'workflow' );
-    $oCriteria->addSelectColumn( TriggersPeer::TRI_UID );
-    $oCriteria->add( TriggersPeer::PRO_UID, $sPRO_UID );
-    $oDataset = TriggersPeer::doSelectRS( $oCriteria );
-    $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-    $flag = true;
-    while ($oDataset->next() && $flag) {
-        $aRow = $oDataset->getRow();
+    $oTrigger = new \ProcessMaker\BusinessModel\Trigger();
+    echo $oTrigger->verifyNameTrigger($sPRO_UID, $snameTrigger);
 
-        $oCriteria1 = new Criteria( 'workflow' );
-        $oCriteria1->addSelectColumn( 'COUNT(*) AS TRIGGERS' );
-        $oCriteria1->add( ContentPeer::CON_CATEGORY, 'TRI_TITLE' );
-        $oCriteria1->add( ContentPeer::CON_ID, $aRow['TRI_UID'] );
-        $oCriteria1->add( ContentPeer::CON_VALUE, $snameTrigger );
-        $oCriteria1->add( ContentPeer::CON_LANG, SYS_LANG );
-        $oDataset1 = ContentPeer::doSelectRS( $oCriteria1 );
-        $oDataset1->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-        $oDataset1->next();
-        $aRow1 = $oDataset1->getRow();
-
-        if ($aRow1['TRIGGERS']) {
-            $flag = false;
-        }
-
-    }
-
-    echo $flag;
 } else {
     G::LoadClass("processMap");
 

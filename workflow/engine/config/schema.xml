@@ -173,6 +173,9 @@
       <parameter name="Comment" value="Documents in an Application"/>
     </vendor>
     <column name="APP_DOC_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+    <column name="APP_DOC_FILENAME" type="LONGVARCHAR" required="true"/>
+    <column name="APP_DOC_TITLE" type="LONGVARCHAR"/>
+    <column name="APP_DOC_COMMENT" type="LONGVARCHAR"/>
     <column name="DOC_VERSION" type="INTEGER" required="true" primaryKey="true" default="1"/>
     <column name="APP_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
@@ -503,6 +506,8 @@
       <parameter name="Comment" value="Forms required"/>
     </vendor>
     <column name="DYN_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+    <column name="DYN_TITLE" type="LONGVARCHAR" required="true"/>
+    <column name="DYN_DESCRIPTION" type="LONGVARCHAR"/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" default="0"/>
     <column name="DYN_TYPE" type="VARCHAR" size="20" required="true" default="xmlform"/>
     <column name="DYN_FILENAME" type="VARCHAR" size="100" required="true" default=""/>
@@ -820,6 +825,10 @@
       <parameter name="Comment" value=""/>
     </vendor>
     <column name="OUT_DOC_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+    <column name="OUT_DOC_TITLE" type="LONGVARCHAR" required="true"/>
+    <column name="OUT_DOC_DESCRIPTION" type="LONGVARCHAR"/>
+    <column name="OUT_DOC_FILENAME" type="LONGVARCHAR"/>
+    <column name="OUT_DOC_TEMPLATE" type="LONGVARCHAR"/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="OUT_DOC_REPORT_GENERATOR" type="VARCHAR" size="10" required="true" default="HTML2PDF"/>
     <column name="OUT_DOC_LANDSCAPE" type="TINYINT" required="true" default="0"/>
@@ -972,6 +981,7 @@
       <parameter name="Comment" value=""/>
     </vendor>
     <column name="REP_TAB_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+    <column name="REP_TAB_TITLE" type="LONGVARCHAR" required="true"/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="REP_TAB_NAME" type="VARCHAR" size="100" required="true" default=""/>
     <column name="REP_TAB_TYPE" type="VARCHAR" size="6" required="true" default=""/>
@@ -1333,7 +1343,7 @@
     </index>
 
     <validator column="TAS_TYPE">
-        <rule name="validValues" value="NORMAL|ADHOC|SUBPROCESS|HIDDEN|GATEWAYTOGATEWAY|WEBENTRYEVENT|END-MESSAGE-EVENT|START-MESSAGE-EVENT|INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT|SCRIPT-TASK|START-TIMER-EVENT|INTERMEDIATE-CATCH-TIMER-EVENT|END-EMAIL-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT" message="Please set a valid value for TAS_TYPE" />
+        <rule name="validValues" value="NORMAL|ADHOC|SUBPROCESS|HIDDEN|GATEWAYTOGATEWAY|WEBENTRYEVENT|END-MESSAGE-EVENT|START-MESSAGE-EVENT|INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT|SCRIPT-TASK|START-TIMER-EVENT|INTERMEDIATE-CATCH-TIMER-EVENT|END-EMAIL-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT|SERVICE-TASK" message="Please set a valid value for TAS_TYPE" />
     </validator>
     <validator column="TAS_TIMEUNIT">
       <rule name="validValues" value="MINUTES|HOURS|DAYS|WEEKS|MONTHS" message="Please select a valid value for TAS_TIMEUNIT."/>
@@ -1497,6 +1507,8 @@
       <parameter name="Comment" value=""/>
     </vendor>
     <column name="TRI_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+    <column name="TRI_TITLE" type="LONGVARCHAR" required="true"/>
+    <column name="TRI_DESCRIPTION" type="LONGVARCHAR"/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="TRI_TYPE" type="VARCHAR" size="20" required="true" default="SCRIPT"/>
     <column name="TRI_WEBBOT" type="LONGVARCHAR" required="true"/>
@@ -4584,6 +4596,8 @@
             <parameter name="Create_options" value="" />
         </vendor>
         <column name="WEE_UID"    type="VARCHAR" size="32" required="true" primaryKey="true" />
+        <column name="WEE_TITLE" type="LONGVARCHAR" required="true"/>
+        <column name="WEE_DESCRIPTION" type="LONGVARCHAR" required="true"/>
         <column name="PRJ_UID"    type="VARCHAR" size="32" required="true" />
         <column name="EVN_UID"    type="VARCHAR" size="32" required="true" />
         <column name="ACT_UID"    type="VARCHAR" size="32" required="true" />

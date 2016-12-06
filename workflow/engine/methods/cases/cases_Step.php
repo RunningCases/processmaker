@@ -978,6 +978,9 @@ try {
                 $optionTaskType = (isset($aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TYPE"]))? $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TYPE"] : "";
 
                 switch ($optionTaskType) {
+                    case "SERVICE-TASK":
+                        $aFields["TASK"][$sKey]["NEXT_TASK"]["USR_UID"] = G::LoadTranslation("ID_ROUTE_TO_TASK_SERVICE_TASK");
+                        break;
                     case "SCRIPT-TASK":
                         $aFields["TASK"][$sKey]["NEXT_TASK"]["USR_UID"] = G::LoadTranslation("ID_ROUTE_TO_TASK_SCRIPT_TASK");
                         break;
