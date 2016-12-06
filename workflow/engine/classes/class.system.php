@@ -77,7 +77,8 @@ class System
         'server_protocol' => '',
         'leave_case_warning' => 0,
         'server_hostname_requests_frontend' => '',
-        'load_headers_ie' => 0
+        'load_headers_ie' => 0,
+        'redirect_to_mobile' => 0
     );
 
     /**

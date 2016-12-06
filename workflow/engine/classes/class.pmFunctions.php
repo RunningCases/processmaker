@@ -3946,3 +3946,22 @@ function PMFSendMessageToGroup(
     //Return
     return 1;
 }
+
+/**
+ * @method
+ *
+ * Direct case link mobile
+ *
+ * @name PMFCaseLinkMobile
+ * @label PMF Direct case link mobile
+ * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFCaseLinkMobile.28.29
+ *
+ * @param string(32) | $applicationUid | ID of the case | The unique ID of the case
+ * @param int | $delIndex = 0 | Delegation index of the case | Optional parameter. The delegation index of a case
+ * @return string | $url | Direct case link to Mobile | Returns the direct case link to Mobile, FALSE otherwise
+ */
+function PMFCaseLinkMobile($applicationUid, $delIndex = 0)
+{
+    //Return
+    return G::caseLinkMobile($applicationUid, $delIndex);
+}
