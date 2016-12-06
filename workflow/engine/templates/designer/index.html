@@ -71,6 +71,9 @@
 
     <link rel="stylesheet" type="text/css" href="/lib/css/mafe-{$buildhash}.css" />
     <link rel="stylesheet" type="text/css" href="/css/{$sys_skin}-pm3.css" />
+    {foreach from=$sourceCss item=pathFile}
+    <link rel="stylesheet" type="text/css" href="{$pathFile}" />
+    {/foreach}
     <script type="text/javascript">
         var prj_uid = "{$prj_uid}";
         var app_uid = "{$app_uid}";
@@ -85,6 +88,9 @@
         var HTTP_SERVER_HOSTNAME = "{$HTTP_SERVER_HOSTNAME}";
     </script>
     <script type="text/javascript" src="/lib/js/mafe-{$buildhash}.js"></script>
+    {foreach from=$sourceJs item=pathFile}
+    <script type="text/javascript" src="{$pathFile}"></script>
+    {/foreach}
 
 {/if}
 

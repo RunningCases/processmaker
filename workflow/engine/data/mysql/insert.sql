@@ -5580,6 +5580,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_NEW_PROJECT','en','New Project','2015-08-18') ,
 ( 'LABEL','ID_NEW_BPMN_PROJECT','en','New BPMN Project','2015-08-18') ,
 ( 'LABEL','ID_ROUTE_TO_TASK_SCRIPT_TASK','en','The following case is a "Script-Task"','2015-08-18') ,
+( 'LABEL','ID_ROUTE_TO_TASK_SERVICE_TASK','en','The following case is a "Service-Task"','2016-11-25') ,
 ( 'LABEL','ID_MAFE_0d82790b0612935992bd564a17ce37d6','en','Quit','2016-08-12') ,
 ( 'LABEL','ID_MAFE_16f49c0f891dce505db0ffe478aff96f','en','Next &#8594;','2016-08-12') ,
 ( 'LABEL','ID_MAFE_064626e308f7d6587778df2924ea847c','en','&#8592; Back','2016-08-12') ,

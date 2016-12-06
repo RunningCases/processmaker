@@ -230,6 +230,19 @@ class Workflow extends Handler
                 $this->removeSupProcess($this->proUid, $tasUid);
             }
 
+            if ($tasType == "SERVICE-TASK") {
+                $registry = \PMPluginRegistry::getSingleton();
+                //The plugin pmConnectors will be moved to the core in pm.3.3
+                if ($registry->getStatusPlugin('pmConnectors') === 'enabled') {
+                    $pathFile = PATH_PLUGINS . 'pmConnectors' . PATH_SEP . 'src' . PATH_SEP . 'Services' . PATH_SEP . 'BusinessModel' . PATH_SEP . 'PmConnectors' . PATH_SEP . 'ServiceTaskBM.php';
+                    if (is_file($pathFile)) {
+                        require_once $pathFile;
+                        $serviceTask = new \Services\BusinessModel\PmConnectors\ServiceTaskBM();
+                        $serviceTask->deleteByActivityUid($this->proUid, $tasUid);
+                    }
+                }
+            }
+
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());
             throw $e;
