@@ -19,14 +19,41 @@ $arrayApplicationData = $case->getApplicationRecordByPk($applicationUid, [], fal
 $G_PUBLISH = new Publisher();
 
 if ($arrayApplicationData !== false) {
-    $_SESSION['__CD__'] = '../';
-    $_SESSION['__OPEN_APPLICATION_UID__'] = $applicationUid;
+    $isBrowserMobile = G::check_is_mobile(strtolower($_SERVER['HTTP_USER_AGENT']));
 
-    $G_PUBLISH->AddContent('view', 'cases/cases_Load');
+    if (!(defined('REDIRECT_TO_MOBILE') && REDIRECT_TO_MOBILE == 1 && $isBrowserMobile)) {
+        $_SESSION['__CD__'] = '../';
+        $_SESSION['__OPEN_APPLICATION_UID__'] = $applicationUid;
 
-    $headPublisher = &headPublisher::getSingleton();
-    $headPublisher->addScriptFile('/jscore/src/PM.js');
-    $headPublisher->addScriptFile('/jscore/src/Sessions.js');
+        $G_PUBLISH->AddContent('view', 'cases/cases_Load');
+
+        $headPublisher = &headPublisher::getSingleton();
+        $headPublisher->addScriptFile('/jscore/src/PM.js');
+        $headPublisher->addScriptFile('/jscore/src/Sessions.js');
+    } else {
+        $case = new \ProcessMaker\BusinessModel\Cases();
+
+        $arrayResult = $case->getStatusInfo($applicationUid, 0, $_SESSION['USER_LOGGED']);
+        $arrayDelIndex = [];
+
+        if (!empty($arrayResult)) {
+            $arrayDelIndex = $arrayResult['DEL_INDEX'];
+        } else {
+            $arrayResult = $case->getStatusInfo($applicationUid);
+            $arrayDelIndex = $arrayResult['DEL_INDEX'];
+        }
+
+        $delIndex = 0;
+
+        if (count($arrayDelIndex) == 1) {
+            $delIndex = $arrayDelIndex[0];
+        }
+
+        $urlMobile = G::caseLinkMobile($applicationUid, $delIndex);
+
+        G::header('Location: ' . $urlMobile);
+        exit(0);
+    }
 } else {
     $G_PUBLISH->AddContent(
         'xmlform',
