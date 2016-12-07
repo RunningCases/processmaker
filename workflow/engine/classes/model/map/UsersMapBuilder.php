@@ -69,7 +69,7 @@ class UsersMapBuilder
 
         $tMap->addColumn('USR_USERNAME', 'UsrUsername', 'string', CreoleTypes::VARCHAR, true, 100);
 
-        $tMap->addColumn('USR_PASSWORD', 'UsrPassword', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addColumn('USR_PASSWORD', 'UsrPassword', 'string', CreoleTypes::VARCHAR, true, 128);
 
         $tMap->addColumn('USR_FIRSTNAME', 'UsrFirstname', 'string', CreoleTypes::VARCHAR, true, 50);
 
