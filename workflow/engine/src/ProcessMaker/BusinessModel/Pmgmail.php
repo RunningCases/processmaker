@@ -134,19 +134,20 @@ class Pmgmail {
             if ($isSelfServiceValueBased) {
                 $mailToAddresses = '';
                 $mailCcAddresses = '';
+                $targetIds = array();
                 $criteria = new \Criteria ("workflow");
-                $criteria->addSelectColumn(\AppAssignSelfServiceValuePeer::GRP_UID);
+                $criteria->addSelectColumn(\AppAssignSelfServiceValueGroupPeer::GRP_UID);
+                $criteria->addJoin(\AppAssignSelfServiceValuePeer::ID, \AppAssignSelfServiceValueGroupPeer::ID, \Criteria::LEFT_JOIN);
                 $criteria->add(\AppAssignSelfServiceValuePeer::APP_UID, $app_uid);
                 $criteria->add(\AppAssignSelfServiceValuePeer::DEL_INDEX, $aTask["DEL_INDEX"]);
-
                 $rsCriteria = \AppAssignSelfServiceValuePeer::doSelectRs($criteria);
                 $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
                 while ($rsCriteria->next()) {
                     $row = $rsCriteria->getRow();
+                    $targetIds[] = $row['GRP_UID'];
                 }
 
-                $targetIds = unserialize($row ['GRP_UID']);
                 $usersToSend = $this->getSelfServiceValueBasedUsers($targetIds);
 
                 foreach($usersToSend as $record) {

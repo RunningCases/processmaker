@@ -1123,7 +1123,7 @@ class Derivation
                                     if (!empty($dataVariable)) {
                                         $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
 
-                                        $appAssignSelfServiceValue->create($appFields["APP_UID"], $iNewDelIndex, array("PRO_UID" => $appFields["PRO_UID"], "TAS_UID" => $nextDel["TAS_UID"], "GRP_UID" => serialize($dataVariable)));
+                                        $appAssignSelfServiceValue->create($appFields["APP_UID"], $iNewDelIndex, array("PRO_UID" => $appFields["PRO_UID"], "TAS_UID" => $nextDel["TAS_UID"], "GRP_UID" => ""), $dataVariable);
                                     }
                                 }
                             }
@@ -1450,7 +1450,7 @@ class Derivation
                     if (!empty($dataVariable)) {
                         $appAssignSelfServiceValue = new AppAssignSelfServiceValue();
 
-                        $appAssignSelfServiceValue->create($aNewCase["APPLICATION"], $aNewCase["INDEX"], array("PRO_UID" => $aNewCase["PROCESS"], "TAS_UID" => $aSP["TAS_UID"], "GRP_UID" => serialize($dataVariable)));
+                        $appAssignSelfServiceValue->create($aNewCase["APPLICATION"], $aNewCase["INDEX"], array("PRO_UID" => $aNewCase["PROCESS"], "TAS_UID" => $aSP["TAS_UID"], "GRP_UID" => ""), $dataVariable);
                     }
                 }
             }

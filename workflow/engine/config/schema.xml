@@ -4062,7 +4062,7 @@
         <column name="LICENSE_TYPE"         type="VARCHAR"      size="32"       required="true" default="0"/>
     </table>
 
-    <table name="APP_ASSIGN_SELF_SERVICE_VALUE">
+    <table name="APP_ASSIGN_SELF_SERVICE_VALUE" idMethod="native">
         <vendor type="mysql">
             <parameter name="Name" value="APP_ASSIGN_SELF_SERVICE_VALUE" />
             <parameter name="Engine" value="InnoDB" />
@@ -4075,11 +4075,32 @@
             <parameter name="Checksum" value="" />
             <parameter name="Create_options" value="" />
         </vendor>
+        <column name="ID"        type="INTEGER" required="true" autoIncrement="true" primaryKey="true"/>
         <column name="APP_UID"   type="VARCHAR" size="32" required="true" />
         <column name="DEL_INDEX" type="INTEGER" required="true" default="0" />
         <column name="PRO_UID"   type="VARCHAR" size="32" required="true" />
         <column name="TAS_UID"   type="VARCHAR" size="32" required="true" />
         <column name="GRP_UID"   type="LONGVARCHAR" required="true" />
+    </table>
+
+    <table name="APP_ASSIGN_SELF_SERVICE_VALUE_GROUP" idMethod="native">
+        <vendor type="mysql">
+            <parameter name="Name" value="APP_ASSIGN_SELF_SERVICE_VALUE_GROUP" />
+            <parameter name="Engine" value="InnoDB" />
+            <parameter name="Version" value="10" />
+            <parameter name="Row_format" value="Dynamic" />
+            <parameter name="Data_free" value="0" />
+            <parameter name="Auto_increment" value="" />
+            <parameter name="Check_time" value="" />
+            <parameter name="Collation" value="utf8_general_ci" />
+            <parameter name="Checksum" value="" />
+            <parameter name="Create_options" value="" />
+        </vendor>
+        <column name="ID"      type="INTEGER" required="true" default="0" />
+        <column name="GRP_UID" type="VARCHAR" size="32" required="true" />
+        <index name="indexId">
+            <index-column name="ID"/>
+        </index>
     </table>
 
     <table name="LIST_INBOX">
