@@ -22,9 +22,17 @@ class pmDynaform
     public $isRTL = false;
     public $pathRTLCss = '';
     public $serverConf = null;
+    private $cache = array();
+    private $sysSys = null;
+    private $context = array();
+    private $dataSources = null;
+    private $databaseProviders = null;
 
     public function __construct($fields = array())
     {
+        $this->sysSys = (defined("SYS_SYS")) ? SYS_SYS : "Undefined";
+        $this->context = \Bootstrap::getDefaultContextLog();
+        $this->dataSources = array("database", "dataVariable");
         $this->pathRTLCss = '/lib/pmdynaform/build/css/PMDynaform-rtl.css';
         $this->serverConf = &serverConf::getSingleton();
         $this->isRTL = ($this->serverConf->isRtl(SYS_LANG)) ? 'true' : 'false';
@@ -163,11 +171,11 @@ class pmDynaform
         return $this->credentials;
     }
 
-    public function jsonr(&$json)
+    public function jsonr(&$json, $clearCache = true)
     {
-        $sysSys = (defined("SYS_SYS"))? SYS_SYS : "Undefined";
-        $aContext = \Bootstrap::getDefaultContextLog();
-
+        if ($clearCache === true) {
+            $this->cache = [];
+        }
         if (empty($json)) {
             return;
         }
@@ -175,7 +183,7 @@ class pmDynaform
             $sw1 = is_array($value);
             $sw2 = is_object($value);
             if ($sw1 || $sw2) {
-                $this->jsonr($value);
+                $this->jsonr($value, false);
             }
             if (!$sw1 && !$sw2) {
                 //read event
@@ -190,7 +198,7 @@ class pmDynaform
                     if (isset($this->fields["APP_DATA"][$triggerValue])) {
                         $json->{$key} = $this->fields["APP_DATA"][$triggerValue];
                     } else {
-                        $json->{$key} = '';
+                        $json->{$key} = "";
                     }
                 }
                 //set properties from 'formInstance' variable
@@ -211,58 +219,114 @@ class pmDynaform
                         }
                     }
                 }
-                //options & query
+                //options & query options
                 if ($key === "type" && ($value === "text" || $value === "textarea" || $value === "hidden" || $value === "dropdown" || $value === "checkgroup" || $value === "radio" || $value === "suggest")) {
-                    if (!isset($json->dbConnection))
+                    if (!isset($json->dbConnection)) {
                         $json->dbConnection = "none";
-                    if (!isset($json->sql))
+                    }
+                    if (!isset($json->sql)) {
                         $json->sql = "";
+                    }
+                    if (!isset($json->datasource)) {
+                        $json->datasource = "database";
+                    }
+                    if (!in_array($json->datasource, $this->dataSources)) {
+                        $json->datasource = "database";
+                    }
+
                     $json->optionsSql = array();
 
-                    switch ((isset($json->datasource)) ? $json->datasource : 'database') {
-                        case 'dataVariable':
-                            $dataVariable = (preg_match('/^\s*@.(.+)\s*$/', $json->dataVariable, $arrayMatch)) ?
-                                    $arrayMatch[1] : $json->dataVariable;
-                            if (isset($this->fields['APP_DATA'][$dataVariable]) &&
-                                    is_array($this->fields['APP_DATA'][$dataVariable]) &&
-                                    !empty($this->fields['APP_DATA'][$dataVariable])
-                            ) {
-                                foreach ($this->fields['APP_DATA'][$dataVariable] as $row) {
-                                    $option = new stdClass();
-                                    $option->value = $row[0];
-                                    $option->label = isset($row[1]) ? $row[1] : "";
-                                    $json->optionsSql[] = $option;
+                    if ($json->datasource === "database" && $json->dbConnection !== "" && $json->dbConnection !== "none" && $json->sql !== "") {
+                        if (isset($json->queryField)) {
+                            $dtFields = $json->queryInputData;
+                        } else {
+                            $dtFields = $this->getValuesDependentFields($json);
+                            foreach ($dtFields as $keyF => $valueF) {
+                                if (isset($this->fields["APP_DATA"][$keyF])) {
+                                    $dtFields[$keyF] = $this->fields["APP_DATA"][$keyF];
                                 }
                             }
-                            break;
-                        default:
-                            //database
-                            if ($json->dbConnection !== '' && $json->dbConnection !== 'none' && $json->sql !== '') {
-                                try {
-                                    $cnn = Propel::getConnection($json->dbConnection);
-                                    $stmt = $cnn->createStatement();
-                                    $sql = G::replaceDataField($json->sql, $this->getValuesDependentFields($json));
-                                    $rs = $stmt->executeQuery($sql, \ResultSet::FETCHMODE_NUM);
-                                     //Logger
-                                    $aContext['action'] = 'execute-sql';
-                                    $aContext['sql'] = $sql;
-                                    \Bootstrap::registerMonolog('sqlExecution', 200, 'Sql Execution', $aContext, $sysSys, 'processmaker.log');
-                                    while ($rs->next()) {
-                                        $row = $rs->getRow();
-                                        $option = new stdClass();
-                                        $option->value = $row[0];
-                                        $option->label = isset($row[1]) ? $row[1] : "";
-                                        $json->optionsSql[] = $option;
-                                    }
-                                } catch (Exception $e) {
-                                    //Logger
-                                    $aContext['action'] = 'execute-sql';
-                                    $aContext['exception'] = (array)$e;
-                                    \Bootstrap::registerMonolog('sqlExecution', 400, 'Sql Execution', $aContext, $sysSys, 'processmaker.log');
+                        }
+                        $sql = G::replaceDataField($json->sql, $dtFields);
+                        if ($value === "suggest") {
+                            $sql = $this->sqlParse($sql, function($parsed, &$select, &$from, &$where, &$groupBy, &$having, &$orderBy, &$limit) use ($json) {
+                                $dt = $parsed["SELECT"];
 
+                                $isWhere = empty($where);
+                                if (!isset($json->queryField) && isset($dt[0]["base_expr"])) {
+                                    $col = $dt[0]["base_expr"];
+                                    $dv = str_replace("'", "''", $json->defaultValue);
+                                    $where = $isWhere ? "WHERE " . $col . "='" . $dv . "'" : $where . " AND " . $col . "='" . $dv . "'";
                                 }
+                                if (isset($json->queryField) && isset($dt[0]["base_expr"])) {
+                                    $col = isset($dt[1]["base_expr"]) ? $dt[1]["base_expr"] : $dt[0]["base_expr"];
+                                    $qf = str_replace("'", "''", $json->queryFilter);
+                                    $where = $isWhere ? "WHERE " . $col . " LIKE '%" . $qf . "%'" : $where . " AND " . $col . " LIKE '%" . $qf . "%'";
+                                }
+
+                                $provider = $this->getDatabaseProvider($json->dbConnection);
+                                $start = 0;
+                                $end = 10;
+                                if (isset($json->queryStart)) {
+                                    $start = $json->queryStart;
+                                }
+                                if (isset($json->queryLimit)) {
+                                    $end = $json->queryLimit;
+                                }
+                                if (empty($limit) && $provider === "mysql") {
+                                    $limit = "LIMIT " . $start . "," . $end . "";
+                                }
+                                if (empty($limit) && $provider === "pgsql") {
+                                    $limit = "OFFSET " . $start . " LIMIT " . $end . "";
+                                }
+                                if ($provider === "mssql") {
+                                    $limit = "";
+                                    if (strpos(strtoupper($select), "TOP") === false) {
+                                        $isDistinct = strpos(strtoupper($select), "DISTINCT");
+                                        $isAll = strpos(strtoupper($select), "ALL");
+                                        if ($isDistinct === false && $isAll === false) {
+                                            $select = preg_replace("/SELECT/", "SELECT TOP(" . $end . ")", strtoupper($select), 1);
+                                        }
+                                        if ($isDistinct !== false) {
+                                            $select = preg_replace("/DISTINCT/", "DISTINCT TOP(" . $end . ")", strtoupper($select), 1);
+                                        }
+                                        if ($isAll !== false) {
+                                            $select = preg_replace("/DISTINCT/", "DISTINCT TOP(" . $end . ")", strtoupper($select), 1);
+                                        }
+                                    }
+                                }
+                                if ($provider === "oracle") {
+                                    $limit = "";
+                                    $rowNumber = "";
+                                    if (strpos(strtoupper($where), "ROWNUM") === false) {
+                                        $rowNumber = " AND " . $start . " <= ROWNUM AND ROWNUM <= " . $end;
+                                    }
+                                    $where = empty($where) ? "WHERE " . $start . " <= ROWNUM AND ROWNUM <= " . $end : $where . $rowNumber;
+                                }
+                            });
+                        }
+                        $dt = $this->getCacheQueryData($json->dbConnection, $sql, $json->type);
+                        foreach ($dt as $row) {
+                            $option = new stdClass();
+                            $option->value = $row[0];
+                            $option->label = isset($row[1]) ? $row[1] : "";
+                            $json->optionsSql[] = $option;
+                        }
+                        if (isset($json->queryField)) {
+                            $json->queryOutputData = $json->optionsSql;
+                        }
+                    }
+
+                    if ($json->datasource === "dataVariable") {
+                        $dataVariable = preg_match('/^\s*@.(.+)\s*$/', $json->dataVariable, $arrayMatch) ? $arrayMatch[1] : $json->dataVariable;
+                        if (isset($this->fields['APP_DATA'][$dataVariable]) && is_array($this->fields['APP_DATA'][$dataVariable])) {
+                            foreach ($this->fields['APP_DATA'][$dataVariable] as $row) {
+                                $option = new stdClass();
+                                $option->value = $row[0];
+                                $option->label = isset($row[1]) ? $row[1] : "";
+                                $json->optionsSql[] = $option;
                             }
-                            break;
+                        }
                     }
                 }
                 //data
@@ -633,18 +697,11 @@ class pmDynaform
                 }
             }
             if ($json->dbConnection !== "" && $json->dbConnection !== "none" && $json->sql !== "") {
-                $cnn = Propel::getConnection($json->dbConnection);
-                $stmt = $cnn->createStatement();
-                try {
-                    $a = G::replaceDataField($json->sql, $data);
-                    $rs = $stmt->executeQuery($a, \ResultSet::FETCHMODE_NUM);
-                    $rs->next();
-                    $row = $rs->getRow();
-                    if (isset($row[0]) && $json->type !== "suggest" && $json->type !== "radio") {
-                        $data[$json->variable === "" ? $json->id : $json->variable] = $row[0];
-                    }
-                } catch (Exception $e) {
-
+                $a = G::replaceDataField($json->sql, $data);
+                $dt = $this->getCacheQueryData($json->dbConnection, $a, $json->type);
+                $row = isset($dt[0]) ? $dt[0] : [];
+                if (isset($row[0]) && $json->type !== "suggest" && $json->type !== "radio") {
+                    $data[$json->variable === "" ? $json->id : $json->variable] = $row[0];
                 }
             }
         }
@@ -658,6 +715,241 @@ class pmDynaform
             $data[$json->variable === "" ? $json->id : $json->variable] = $json->defaultValue;
         }
         return $data;
+    }
+
+    private function getCacheQueryData($connection, $sql, $type = "", $clearCache = false)
+    {
+        $data = [];
+        if (!empty($type)) {
+            $type = "-" . $type;
+        }
+        try {
+            if ($clearCache === true) {
+                unset($this->cache[md5($sql)]);
+            }
+            if (isset($this->cache[md5($sql)])) {
+                $data = $this->cache[md5($sql)];
+            } else {
+                $cnn = Propel::getConnection($connection);
+                $stmt = $cnn->createStatement();
+                $rs = $stmt->executeQuery($sql, \ResultSet::FETCHMODE_NUM);
+                while ($rs->next()) {
+                    $data[] = $rs->getRow();
+                }
+                $this->cache[md5($sql)] = $data;
+
+                $this->context["action"] = "execute-sql" . $type;
+                $this->context["sql"] = $sql;
+                \Bootstrap::registerMonolog("sqlExecution", 200, "Sql Execution", $this->context, $this->sysSys, "processmaker.log");
+            }
+        } catch (Exception $e) {
+            $this->context["action"] = "execute-sql" . $type;
+            $this->context["exception"] = (array) $e;
+            \Bootstrap::registerMonolog("sqlExecution", 400, "Sql Execution", $this->context, $this->sysSys, "processmaker.log");
+        }
+        return $data;
+    }
+
+    public function getDatabaseProvider($dbConnection)
+    {
+        if ($this->databaseProviders === null) {
+            $a = new Criteria("workflow");
+            $a->addSelectColumn(DbSourcePeer::DBS_UID);
+            $a->addSelectColumn(DbSourcePeer::DBS_TYPE);
+            $ds = DbSourcePeer::doSelectRS($a);
+            $ds->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $this->databaseProviders = [];
+            while ($ds->next()) {
+                $this->databaseProviders[] = $ds->getRow();
+            }
+        }
+        foreach ($this->databaseProviders as $key => $value) {
+            if ($value["DBS_UID"] === $dbConnection) {
+                return $value["DBS_TYPE"];
+            }
+        }
+        return null;
+    }
+
+    public function sqlParse($sql, $fn = null)
+    {
+        $sqlParser = new \PHPSQLParser($sql);
+        $parsed = $sqlParser->parsed;
+        if (!empty($parsed["SELECT"])) {
+            $options = isset($parsed["OPTIONS"]) && count($parsed["OPTIONS"]) > 0 ? implode(" ", $parsed["OPTIONS"]) : "";
+            if (!empty($options)) {
+                $options = $options . " ";
+            }
+            $select = "SELECT " . $options;
+            $dt = $parsed["SELECT"];
+            foreach ($dt as $key => $value) {
+                if ($key != 0) {
+                    $select .= ", ";
+                }
+                $sAlias = str_replace("`", "", $dt[$key]["alias"]);
+                $sBaseExpr = $dt[$key]["base_expr"];
+                if (strpos(strtoupper($sBaseExpr), "TOP") !== false) {
+                    $dt[$key]["expr_type"] = "";
+                    $sBaseExpr = trim($sBaseExpr) . " " . trim($sAlias);
+                }
+                switch ($dt[$key]["expr_type"]) {
+                    case "colref":
+                        if ($sAlias === $sBaseExpr) {
+                            $select .= $sAlias;
+                        } else {
+                            $select .= $sBaseExpr . " AS " . $sAlias;
+                        }
+                        break;
+                    case "expression":
+                        if ($sAlias === $sBaseExpr) {
+                            $select .= $sBaseExpr;
+                        } else {
+                            $select .= $sBaseExpr . " AS " . $sAlias;
+                        }
+                        break;
+                    case "subquery":
+                        if (strpos($sAlias, $sBaseExpr, 0) != 0) {
+                            $select .= $sAlias;
+                        } else {
+                            $select .= $sBaseExpr . " AS " . $sAlias;
+                        }
+                        break;
+                    case "operator":
+                        $select .= $sBaseExpr;
+                        break;
+                    default:
+                        $select .= $sBaseExpr;
+                        break;
+                }
+            }
+            $select = trim($select);
+
+            $isOffsetWord = false;
+
+            $from = "";
+            if (!empty($parsed["FROM"])) {
+                $from = "FROM ";
+                $dt = $parsed["FROM"];
+                foreach ($dt as $key => $value) {
+                    //reserved word: OFFSET
+                    if ($dt[$key]["alias"] === "OFFSET") {
+                        $isOffsetWord = true;
+                        $dt[$key]["alias"] = "";
+                    }
+                    if ($key == 0) {
+                        $from .= $dt[$key]["table"]
+                                . ($dt[$key]["table"] == $dt[$key]["alias"] ? "" : " " . $dt[$key]["alias"]);
+                    } else {
+                        $from .= " "
+                                . ($dt[$key]["join_type"] == "JOIN" ? "INNER" : $dt[$key]["join_type"])
+                                . " JOIN "
+                                . $dt[$key]["table"]
+                                . ($dt[$key]["table"] == $dt[$key]["alias"] ? "" : " " . $dt[$key]["alias"]) . " "
+                                . $dt[$key]["ref_type"] . " "
+                                . $dt[$key]["ref_clause"];
+                    }
+                }
+            }
+            $from = trim($from);
+
+            $where = "";
+            if (!empty($parsed["WHERE"])) {
+                $where = "WHERE ";
+                $dt = $parsed["WHERE"];
+                $nw = count($dt);
+                //reserved word: OFFSET
+                if ($dt[$nw - 2]["base_expr"] === "OFFSET") {
+                    $isOffsetWord = true;
+                    if ($dt[$nw - 2]["expr_type"] === "colref") {
+                        $dt[$nw - 2]["base_expr"] = "";
+                    }
+                    if ($dt[$nw - 1]["expr_type"] === "const") {
+                        if (isset($parsed["LIMIT"]["start"])) {
+                            $parsed["LIMIT"]["start"] = $dt[$nw - 1]["base_expr"];
+                        }
+                        $dt[$nw - 1]["base_expr"] = "";
+                    }
+                }
+                foreach ($dt as $key => $value) {
+                    $where .= $value["base_expr"] . " ";
+                }
+            }
+            $where = trim($where);
+
+            $groupBy = "";
+            if (!empty($parsed["GROUP"])) {
+                $groupBy = "GROUP BY ";
+                $dt = $parsed["GROUP"];
+                foreach ($dt as $key => $value) {
+                    $groupBy .= $value["base_expr"] . ", ";
+                }
+                $groupBy = rtrim($groupBy, ", ");
+            }
+            $groupBy = trim($groupBy);
+
+            $having = "";
+            if (!empty($parsed["HAVING"])) {
+                $having = "HAVING ";
+                $dt = $parsed["HAVING"];
+                foreach ($dt as $key => $value) {
+                    $having .= $value["base_expr"] . " ";
+                }
+            }
+            $having = trim($having);
+
+            $orderBy = "";
+            if (!empty($parsed["ORDER"])) {
+                $orderBy = "ORDER BY ";
+                $dt = $parsed["ORDER"];
+                foreach ($dt as $key => $value) {
+                    $orderBy .= $value["base_expr"] . ", ";
+                }
+                $orderBy = rtrim($orderBy, ", ");
+                $orderBy .= " " . $value["direction"];
+            }
+            $orderBy = trim($orderBy);
+
+            $limit = "";
+            if (!empty($parsed["LIMIT"])) {
+                if ($isOffsetWord == false) {
+                    $limit = "LIMIT " . $parsed["LIMIT"]["start"] . ", " . $parsed["LIMIT"]["end"];
+                }
+                if ($isOffsetWord == true) {
+                    $limit = "OFFSET " . $parsed["LIMIT"]["start"] . " LIMIT " . $parsed["LIMIT"]["end"];
+                }
+            }
+
+            if ($fn !== null && (is_callable($fn) || function_exists($fn))) {
+                $fn($parsed, $select, $from, $where, $groupBy, $having, $orderBy, $limit);
+            }
+
+            $dt = [$select, $from, $where, $groupBy, $having, $orderBy, $limit];
+            $query = "";
+            foreach ($dt as $val) {
+                $val = trim($val);
+                if (!empty($val)) {
+                    $query = $query . $val . " ";
+                }
+            }
+            return $query;
+        }
+        if (!empty($parsed["CALL"])) {
+            $sCall = "CALL ";
+            $aCall = $parsed["CALL"];
+            foreach ($aCall as $key => $value) {
+                $sCall .= $value . " ";
+            }
+            return $sCall;
+        }
+        if (!empty($parsed["EXECUTE"])) {
+            $sCall = "EXECUTE ";
+            $aCall = $parsed["EXECUTE"];
+            foreach ($aCall as $key => $value) {
+                $sCall .= $value . " ";
+            }
+            return $sCall;
+        }
+        return $sql;
     }
 
     public function isResponsive()
