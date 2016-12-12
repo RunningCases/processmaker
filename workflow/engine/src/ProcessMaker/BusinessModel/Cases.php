@@ -1750,23 +1750,20 @@ class Cases
         $arrayCaseVariable = [];
 
         if (!is_null($dynaFormUid)) {
-            $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
-            $arrayDynaFormData = $dynaForm->getDynaFormRecordByPk($dynaFormUid, ['$dynaFormUid' => '$dynaFormUid']);
-
-            $arrayDynContent = \G::json_decode($arrayDynaFormData['DYN_CONTENT']);
-
             \G::LoadClass("pmDynaform");
             $data["CURRENT_DYNAFORM"] = $dynaFormUid;
             $pmDynaForm = new \pmDynaform($data);
+            $arrayDynaFormData = $pmDynaForm->getDynaform();
+            $arrayDynContent = \G::json_decode($arrayDynaFormData['DYN_CONTENT']);
             $pmDynaForm->jsonr($arrayDynContent);
-            $arrayDynContent = \G::json_decode(\G::json_encode($arrayDynContent),true);
+
+            $arrayDynContent = \G::json_decode(\G::json_encode($arrayDynContent), true);
 
             $arrayAppData = $fields['APP_DATA'];
 
             $arrayCaseVariable = $this->__getFieldsAndValuesByDynaFormAndAppData(
-                $arrayDynContent['items'][0], $arrayAppData, $arrayCaseVariable
+                    $arrayDynContent['items'][0], $arrayAppData, $arrayCaseVariable
             );
-
         } else {
             $arrayCaseVariable = $fields['APP_DATA'];
         }
