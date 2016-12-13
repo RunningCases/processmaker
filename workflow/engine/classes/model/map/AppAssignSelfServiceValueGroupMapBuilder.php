@@ -5,7 +5,7 @@ include_once 'creole/CreoleTypes.php';
 
 
 /**
- * This class adds structure of 'APP_ASSIGN_SELF_SERVICE_VALUE' table to 'workflow' DatabaseMap object.
+ * This class adds structure of 'APP_ASSIGN_SELF_SERVICE_VALUE_GROUP' table to 'workflow' DatabaseMap object.
  *
  *
  *
@@ -16,13 +16,13 @@ include_once 'creole/CreoleTypes.php';
  *
  * @package    workflow.classes.model.map
  */
-class AppAssignSelfServiceValueMapBuilder
+class AppAssignSelfServiceValueGroupMapBuilder
 {
 
     /**
      * The (dot-path) name of this class
      */
-    const CLASS_NAME = 'classes.model.map.AppAssignSelfServiceValueMapBuilder';
+    const CLASS_NAME = 'classes.model.map.AppAssignSelfServiceValueGroupMapBuilder';
 
     /**
      * The database map.
@@ -60,23 +60,15 @@ class AppAssignSelfServiceValueMapBuilder
     {
         $this->dbMap = Propel::getDatabaseMap('workflow');
 
-        $tMap = $this->dbMap->addTable('APP_ASSIGN_SELF_SERVICE_VALUE');
-        $tMap->setPhpName('AppAssignSelfServiceValue');
+        $tMap = $this->dbMap->addTable('APP_ASSIGN_SELF_SERVICE_VALUE_GROUP');
+        $tMap->setPhpName('AppAssignSelfServiceValueGroup');
 
-        $tMap->setUseIdGenerator(true);
+        $tMap->setUseIdGenerator(false);
 
-        $tMap->addPrimaryKey('ID', 'Id', 'int', CreoleTypes::INTEGER, true, null);
+        $tMap->addColumn('ID', 'Id', 'int', CreoleTypes::INTEGER, true, null);
 
-        $tMap->addColumn('APP_UID', 'AppUid', 'string', CreoleTypes::VARCHAR, true, 32);
-
-        $tMap->addColumn('DEL_INDEX', 'DelIndex', 'int', CreoleTypes::INTEGER, true, null);
-
-        $tMap->addColumn('PRO_UID', 'ProUid', 'string', CreoleTypes::VARCHAR, true, 32);
-
-        $tMap->addColumn('TAS_UID', 'TasUid', 'string', CreoleTypes::VARCHAR, true, 32);
-
-        $tMap->addColumn('GRP_UID', 'GrpUid', 'string', CreoleTypes::LONGVARCHAR, true, null);
+        $tMap->addColumn('GRP_UID', 'GrpUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
     } // doBuild()
 
-} // AppAssignSelfServiceValueMapBuilder
+} // AppAssignSelfServiceValueGroupMapBuilder

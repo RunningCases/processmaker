@@ -289,6 +289,18 @@ EOT
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_content");
 
+CLI::taskName('migrate-self-service-value');
+CLI::taskDescription(<<<EOT
+  Migrate the Self-Service values to a new related table APP_ASSIGN_SELF_SERVICE_VALUE_GROUPS
+
+  Specify the workspaces, the self-service cases in this workspace will be updated.
+
+  If no workspace is specified, the command will be run in all workspaces.
+EOT
+);
+CLI::taskArg('workspace', true, true);
+CLI::taskRun("run_migrate_self_service_value");
+
   /**
    * Function run_info
    * access public
@@ -906,4 +918,20 @@ function run_migrate_content($args, $opts) {
     }
     $stop = microtime(true);
     CLI::logging("<*>   Optimizing content data Process took " . ($stop - $start) . " seconds.\n");
+}
+
+function run_migrate_self_service_value($args, $opts) {
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
+    $args = $filter->xssFilterHard($args);
+    $workspaces = get_workspaces_from_args($args);
+    $start = microtime(true);
+    CLI::logging("> Optimizing Self-Service data...\n");
+    foreach ($workspaces as $workspace) {
+        print_r('Migrating records in: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
+        CLI::logging("-> Migrating Self-Service records \n");
+        $workspace->migrateSelfServiceRecordsRun($workspace->name);
+    }
+    $stop = microtime(true);
+    CLI::logging("<*>   Migrating Self-Service records Process took " . ($stop - $start) . " seconds.\n");
 }

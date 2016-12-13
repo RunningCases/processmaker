@@ -356,26 +356,9 @@ class ListUnassigned extends BaseListUnassigned
             $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::DEL_INDEX);
             $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::TAS_UID);
 
-            $arrayCondition = array();
-            $arrayCondition[] = array(AppAssignSelfServiceValuePeer::APP_UID, AppDelegationPeer::APP_UID, Criteria::EQUAL);
-            $arrayCondition[] = array(AppAssignSelfServiceValuePeer::DEL_INDEX, AppDelegationPeer::DEL_INDEX, Criteria::EQUAL);
-            $arrayCondition[] = array(AppAssignSelfServiceValuePeer::TAS_UID, AppDelegationPeer::TAS_UID, Criteria::EQUAL);
-            $criteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
-
-            $criteria->add(AppDelegationPeer::USR_UID, "", Criteria::EQUAL);
-            $criteria->add(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN", Criteria::EQUAL);
-
-            $criterionAux = null;
-
-            foreach ($arrayUid as $value) {
-                if (is_null($criterionAux)) {
-                    $criterionAux = $criteria->getNewCriterion(AppAssignSelfServiceValuePeer::GRP_UID, "%$value%", Criteria::LIKE);
-                } else {
-                    $criterionAux = $criteria->getNewCriterion(AppAssignSelfServiceValuePeer::GRP_UID, "%$value%", Criteria::LIKE)->addOr($criterionAux);
-                }
-            }
-
-            $criteria->add($criterionAux);
+            $criteria->add(AppAssignSelfServiceValuePeer::ID, AppAssignSelfServiceValuePeer::ID . 
+            " IN (SELECT " . AppAssignSelfServiceValueGroupPeer::ID . " FROM " . AppAssignSelfServiceValueGroupPeer::TABLE_NAME . 
+            " WHERE " . AppAssignSelfServiceValueGroupPeer::GRP_UID . " IN ('" . implode("','", $arrayUid) . "'))", Criteria::CUSTOM);
 
             $rsCriteria = AppAssignSelfServiceValuePeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);

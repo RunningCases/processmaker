@@ -2,52 +2,40 @@
 
 require_once 'propel/util/BasePeer.php';
 // The object class -- needed for instanceof checks in this class.
-// actual class may be a subclass -- as returned by AppAssignSelfServiceValuePeer::getOMClass()
-include_once 'classes/model/AppAssignSelfServiceValue.php';
+// actual class may be a subclass -- as returned by AppAssignSelfServiceValueGroupPeer::getOMClass()
+include_once 'classes/model/AppAssignSelfServiceValueGroup.php';
 
 /**
- * Base static class for performing query and update operations on the 'APP_ASSIGN_SELF_SERVICE_VALUE' table.
+ * Base static class for performing query and update operations on the 'APP_ASSIGN_SELF_SERVICE_VALUE_GROUP' table.
  *
  * 
  *
  * @package    workflow.classes.model.om
  */
-abstract class BaseAppAssignSelfServiceValuePeer
+abstract class BaseAppAssignSelfServiceValueGroupPeer
 {
 
     /** the default database name for this class */
     const DATABASE_NAME = 'workflow';
 
     /** the table name for this class */
-    const TABLE_NAME = 'APP_ASSIGN_SELF_SERVICE_VALUE';
+    const TABLE_NAME = 'APP_ASSIGN_SELF_SERVICE_VALUE_GROUP';
 
     /** A class that can be returned by this peer. */
-    const CLASS_DEFAULT = 'classes.model.AppAssignSelfServiceValue';
+    const CLASS_DEFAULT = 'classes.model.AppAssignSelfServiceValueGroup';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 6;
+    const NUM_COLUMNS = 2;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
 
 
     /** the column name for the ID field */
-    const ID = 'APP_ASSIGN_SELF_SERVICE_VALUE.ID';
-
-    /** the column name for the APP_UID field */
-    const APP_UID = 'APP_ASSIGN_SELF_SERVICE_VALUE.APP_UID';
-
-    /** the column name for the DEL_INDEX field */
-    const DEL_INDEX = 'APP_ASSIGN_SELF_SERVICE_VALUE.DEL_INDEX';
-
-    /** the column name for the PRO_UID field */
-    const PRO_UID = 'APP_ASSIGN_SELF_SERVICE_VALUE.PRO_UID';
-
-    /** the column name for the TAS_UID field */
-    const TAS_UID = 'APP_ASSIGN_SELF_SERVICE_VALUE.TAS_UID';
+    const ID = 'APP_ASSIGN_SELF_SERVICE_VALUE_GROUP.ID';
 
     /** the column name for the GRP_UID field */
-    const GRP_UID = 'APP_ASSIGN_SELF_SERVICE_VALUE.GRP_UID';
+    const GRP_UID = 'APP_ASSIGN_SELF_SERVICE_VALUE_GROUP.GRP_UID';
 
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
@@ -60,10 +48,10 @@ abstract class BaseAppAssignSelfServiceValuePeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('Id', 'AppUid', 'DelIndex', 'ProUid', 'TasUid', 'GrpUid', ),
-        BasePeer::TYPE_COLNAME => array (AppAssignSelfServiceValuePeer::ID, AppAssignSelfServiceValuePeer::APP_UID, AppAssignSelfServiceValuePeer::DEL_INDEX, AppAssignSelfServiceValuePeer::PRO_UID, AppAssignSelfServiceValuePeer::TAS_UID, AppAssignSelfServiceValuePeer::GRP_UID, ),
-        BasePeer::TYPE_FIELDNAME => array ('ID', 'APP_UID', 'DEL_INDEX', 'PRO_UID', 'TAS_UID', 'GRP_UID', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+        BasePeer::TYPE_PHPNAME => array ('Id', 'GrpUid', ),
+        BasePeer::TYPE_COLNAME => array (AppAssignSelfServiceValueGroupPeer::ID, AppAssignSelfServiceValueGroupPeer::GRP_UID, ),
+        BasePeer::TYPE_FIELDNAME => array ('ID', 'GRP_UID', ),
+        BasePeer::TYPE_NUM => array (0, 1, )
     );
 
     /**
@@ -73,10 +61,10 @@ abstract class BaseAppAssignSelfServiceValuePeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'AppUid' => 1, 'DelIndex' => 2, 'ProUid' => 3, 'TasUid' => 4, 'GrpUid' => 5, ),
-        BasePeer::TYPE_COLNAME => array (AppAssignSelfServiceValuePeer::ID => 0, AppAssignSelfServiceValuePeer::APP_UID => 1, AppAssignSelfServiceValuePeer::DEL_INDEX => 2, AppAssignSelfServiceValuePeer::PRO_UID => 3, AppAssignSelfServiceValuePeer::TAS_UID => 4, AppAssignSelfServiceValuePeer::GRP_UID => 5, ),
-        BasePeer::TYPE_FIELDNAME => array ('ID' => 0, 'APP_UID' => 1, 'DEL_INDEX' => 2, 'PRO_UID' => 3, 'TAS_UID' => 4, 'GRP_UID' => 5, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
+        BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'GrpUid' => 1, ),
+        BasePeer::TYPE_COLNAME => array (AppAssignSelfServiceValueGroupPeer::ID => 0, AppAssignSelfServiceValueGroupPeer::GRP_UID => 1, ),
+        BasePeer::TYPE_FIELDNAME => array ('ID' => 0, 'GRP_UID' => 1, ),
+        BasePeer::TYPE_NUM => array (0, 1, )
     );
 
     /**
@@ -86,8 +74,8 @@ abstract class BaseAppAssignSelfServiceValuePeer
      */
     public static function getMapBuilder()
     {
-        include_once 'classes/model/map/AppAssignSelfServiceValueMapBuilder.php';
-        return BasePeer::getMapBuilder('classes.model.map.AppAssignSelfServiceValueMapBuilder');
+        include_once 'classes/model/map/AppAssignSelfServiceValueGroupMapBuilder.php';
+        return BasePeer::getMapBuilder('classes.model.map.AppAssignSelfServiceValueGroupMapBuilder');
     }
     /**
      * Gets a map (hash) of PHP names to DB column names.
@@ -100,7 +88,7 @@ abstract class BaseAppAssignSelfServiceValuePeer
     public static function getPhpNameMap()
     {
         if (self::$phpNameMap === null) {
-            $map = AppAssignSelfServiceValuePeer::getTableMap();
+            $map = AppAssignSelfServiceValueGroupPeer::getTableMap();
             $columns = $map->getColumns();
             $nameMap = array();
             foreach ($columns as $column) {
@@ -155,12 +143,12 @@ abstract class BaseAppAssignSelfServiceValuePeer
      *      $c->addJoin(TablePeer::alias("alias1", TablePeer::PRIMARY_KEY_COLUMN), TablePeer::PRIMARY_KEY_COLUMN);
      * </code>
      * @param      string $alias The alias for the current table.
-     * @param      string $column The column name for current table. (i.e. AppAssignSelfServiceValuePeer::COLUMN_NAME).
+     * @param      string $column The column name for current table. (i.e. AppAssignSelfServiceValueGroupPeer::COLUMN_NAME).
      * @return     string
      */
     public static function alias($alias, $column)
     {
-        return str_replace(AppAssignSelfServiceValuePeer::TABLE_NAME.'.', $alias.'.', $column);
+        return str_replace(AppAssignSelfServiceValueGroupPeer::TABLE_NAME.'.', $alias.'.', $column);
     }
 
     /**
@@ -177,22 +165,14 @@ abstract class BaseAppAssignSelfServiceValuePeer
     public static function addSelectColumns(Criteria $criteria)
     {
 
-        $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::ID);
+        $criteria->addSelectColumn(AppAssignSelfServiceValueGroupPeer::ID);
 
-        $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::APP_UID);
-
-        $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::DEL_INDEX);
-
-        $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::PRO_UID);
-
-        $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::TAS_UID);
-
-        $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::GRP_UID);
+        $criteria->addSelectColumn(AppAssignSelfServiceValueGroupPeer::GRP_UID);
 
     }
 
-    const COUNT = 'COUNT(APP_ASSIGN_SELF_SERVICE_VALUE.ID)';
-    const COUNT_DISTINCT = 'COUNT(DISTINCT APP_ASSIGN_SELF_SERVICE_VALUE.ID)';
+    const COUNT = 'COUNT(*)';
+    const COUNT_DISTINCT = 'COUNT(DISTINCT *)';
 
     /**
      * Returns the number of rows matching criteria.
@@ -210,9 +190,9 @@ abstract class BaseAppAssignSelfServiceValuePeer
         // clear out anything that might confuse the ORDER BY clause
         $criteria->clearSelectColumns()->clearOrderByColumns();
         if ($distinct || in_array(Criteria::DISTINCT, $criteria->getSelectModifiers())) {
-            $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::COUNT_DISTINCT);
+            $criteria->addSelectColumn(AppAssignSelfServiceValueGroupPeer::COUNT_DISTINCT);
         } else {
-            $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::COUNT);
+            $criteria->addSelectColumn(AppAssignSelfServiceValueGroupPeer::COUNT);
         }
 
         // just in case we're grouping: add those columns to the select statement
@@ -220,7 +200,7 @@ abstract class BaseAppAssignSelfServiceValuePeer
             $criteria->addSelectColumn($column);
         }
 
-        $rs = AppAssignSelfServiceValuePeer::doSelectRS($criteria, $con);
+        $rs = AppAssignSelfServiceValueGroupPeer::doSelectRS($criteria, $con);
         if ($rs->next()) {
             return $rs->getInt(1);
         } else {
@@ -233,7 +213,7 @@ abstract class BaseAppAssignSelfServiceValuePeer
      *
      * @param      Criteria $criteria object used to create the SELECT statement.
      * @param      Connection $con
-     * @return     AppAssignSelfServiceValue
+     * @return     AppAssignSelfServiceValueGroup
      * @throws     PropelException Any exceptions caught during processing will be
      *       rethrown wrapped into a PropelException.
      */
@@ -241,7 +221,7 @@ abstract class BaseAppAssignSelfServiceValuePeer
     {
         $critcopy = clone $criteria;
         $critcopy->setLimit(1);
-        $objects = AppAssignSelfServiceValuePeer::doSelect($critcopy, $con);
+        $objects = AppAssignSelfServiceValueGroupPeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -258,7 +238,7 @@ abstract class BaseAppAssignSelfServiceValuePeer
      */
     public static function doSelect(Criteria $criteria, $con = null)
     {
-        return AppAssignSelfServiceValuePeer::populateObjects(AppAssignSelfServiceValuePeer::doSelectRS($criteria, $con));
+        return AppAssignSelfServiceValueGroupPeer::populateObjects(AppAssignSelfServiceValueGroupPeer::doSelectRS($criteria, $con));
     }
     /**
      * Prepares the Criteria object and uses the parent doSelect()
@@ -282,7 +262,7 @@ abstract class BaseAppAssignSelfServiceValuePeer
 
         if (!$criteria->getSelectColumns()) {
             $criteria = clone $criteria;
-            AppAssignSelfServiceValuePeer::addSelectColumns($criteria);
+            AppAssignSelfServiceValueGroupPeer::addSelectColumns($criteria);
         }
 
         // Set the correct dbName
@@ -304,7 +284,7 @@ abstract class BaseAppAssignSelfServiceValuePeer
         $results = array();
 
         // set the class once to avoid overhead in the loop
-        $cls = AppAssignSelfServiceValuePeer::getOMClass();
+        $cls = AppAssignSelfServiceValueGroupPeer::getOMClass();
         $cls = Propel::import($cls);
         // populate the object(s)
         while ($rs->next()) {
@@ -339,13 +319,13 @@ abstract class BaseAppAssignSelfServiceValuePeer
      */
     public static function getOMClass()
     {
-        return AppAssignSelfServiceValuePeer::CLASS_DEFAULT;
+        return AppAssignSelfServiceValueGroupPeer::CLASS_DEFAULT;
     }
 
     /**
-     * Method perform an INSERT on the database, given a AppAssignSelfServiceValue or Criteria object.
+     * Method perform an INSERT on the database, given a AppAssignSelfServiceValueGroup or Criteria object.
      *
-     * @param      mixed $values Criteria or AppAssignSelfServiceValue object containing data that is used to create the INSERT statement.
+     * @param      mixed $values Criteria or AppAssignSelfServiceValueGroup object containing data that is used to create the INSERT statement.
      * @param      Connection $con the connection to use
      * @return     mixed The new primary key.
      * @throws     PropelException Any exceptions caught during processing will be
@@ -360,11 +340,9 @@ abstract class BaseAppAssignSelfServiceValuePeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
         } else {
-            $criteria = $values->buildCriteria(); // build Criteria from AppAssignSelfServiceValue object
+            $criteria = $values->buildCriteria(); // build Criteria from AppAssignSelfServiceValueGroup object
         }
 
-                //$criteria->remove(AppAssignSelfServiceValuePeer::ID); // remove pkey col since this table uses auto-increment
-                
 
         // Set the correct dbName
         $criteria->setDbName(self::DATABASE_NAME);
@@ -384,9 +362,9 @@ abstract class BaseAppAssignSelfServiceValuePeer
     }
 
     /**
-     * Method perform an UPDATE on the database, given a AppAssignSelfServiceValue or Criteria object.
+     * Method perform an UPDATE on the database, given a AppAssignSelfServiceValueGroup or Criteria object.
      *
-     * @param      mixed $values Criteria or AppAssignSelfServiceValue object containing data create the UPDATE statement.
+     * @param      mixed $values Criteria or AppAssignSelfServiceValueGroup object containing data create the UPDATE statement.
      * @param      Connection $con The connection to use (specify Connection exert more control over transactions).
      * @return     int The number of affected rows (if supported by underlying database driver).
      * @throws     PropelException Any exceptions caught during processing will be
@@ -403,9 +381,6 @@ abstract class BaseAppAssignSelfServiceValuePeer
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
-            $comparison = $criteria->getComparison(AppAssignSelfServiceValuePeer::ID);
-            $selectCriteria->add(AppAssignSelfServiceValuePeer::ID, $criteria->remove(AppAssignSelfServiceValuePeer::ID), $comparison);
-
         } else {
             $criteria = $values->buildCriteria(); // gets full criteria
             $selectCriteria = $values->buildPkeyCriteria(); // gets criteria w/ primary key(s)
@@ -418,7 +393,7 @@ abstract class BaseAppAssignSelfServiceValuePeer
     }
 
     /**
-     * Method to DELETE all rows from the APP_ASSIGN_SELF_SERVICE_VALUE table.
+     * Method to DELETE all rows from the APP_ASSIGN_SELF_SERVICE_VALUE_GROUP table.
      *
      * @return     int The number of affected rows (if supported by underlying database driver).
      */
@@ -432,7 +407,7 @@ abstract class BaseAppAssignSelfServiceValuePeer
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->begin();
-            $affectedRows += BasePeer::doDeleteAll(AppAssignSelfServiceValuePeer::TABLE_NAME, $con);
+            $affectedRows += BasePeer::doDeleteAll(AppAssignSelfServiceValueGroupPeer::TABLE_NAME, $con);
             $con->commit();
             return $affectedRows;
         } catch (PropelException $e) {
@@ -442,9 +417,9 @@ abstract class BaseAppAssignSelfServiceValuePeer
     }
 
     /**
-     * Method perform a DELETE on the database, given a AppAssignSelfServiceValue or Criteria object OR a primary key value.
+     * Method perform a DELETE on the database, given a AppAssignSelfServiceValueGroup or Criteria object OR a primary key value.
      *
-     * @param      mixed $values Criteria or AppAssignSelfServiceValue object or primary key or array of primary keys
+     * @param      mixed $values Criteria or AppAssignSelfServiceValueGroup object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param      Connection $con the connection to use
      * @return     int  The number of affected rows (if supported by underlying database driver).
@@ -456,18 +431,29 @@ abstract class BaseAppAssignSelfServiceValuePeer
     public static function doDelete($values, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection(AppAssignSelfServiceValuePeer::DATABASE_NAME);
+            $con = Propel::getConnection(AppAssignSelfServiceValueGroupPeer::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
-        } elseif ($values instanceof AppAssignSelfServiceValue) {
+        } elseif ($values instanceof AppAssignSelfServiceValueGroup) {
 
-            $criteria = $values->buildPkeyCriteria();
+            $criteria = $values->buildCriteria();
         } else {
             // it must be the primary key
             $criteria = new Criteria(self::DATABASE_NAME);
-            $criteria->add(AppAssignSelfServiceValuePeer::ID, (array) $values, Criteria::IN);
+            // primary key is composite; we therefore, expect
+            // the primary key passed to be an array of pkey
+            // values
+            if (count($values) == count($values, COUNT_RECURSIVE)) {
+                // array is not multi-dimensional
+                $values = array($values);
+            }
+            $vals = array();
+            foreach ($values as $value) {
+
+            }
+
         }
 
         // Set the correct dbName
@@ -490,24 +476,24 @@ abstract class BaseAppAssignSelfServiceValuePeer
     }
 
     /**
-     * Validates all modified columns of given AppAssignSelfServiceValue object.
+     * Validates all modified columns of given AppAssignSelfServiceValueGroup object.
      * If parameter $columns is either a single column name or an array of column names
      * than only those columns are validated.
      *
      * NOTICE: This does not apply to primary or foreign keys for now.
      *
-     * @param      AppAssignSelfServiceValue $obj The object to validate.
+     * @param      AppAssignSelfServiceValueGroup $obj The object to validate.
      * @param      mixed $cols Column name or array of column names.
      *
      * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
      */
-    public static function doValidate(AppAssignSelfServiceValue $obj, $cols = null)
+    public static function doValidate(AppAssignSelfServiceValueGroup $obj, $cols = null)
     {
         $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap(AppAssignSelfServiceValuePeer::DATABASE_NAME);
-            $tableMap = $dbMap->getTable(AppAssignSelfServiceValuePeer::TABLE_NAME);
+            $dbMap = Propel::getDatabaseMap(AppAssignSelfServiceValueGroupPeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(AppAssignSelfServiceValueGroupPeer::TABLE_NAME);
 
             if (! is_array($cols)) {
                 $cols = array($cols);
@@ -523,55 +509,7 @@ abstract class BaseAppAssignSelfServiceValuePeer
 
         }
 
-        return BasePeer::doValidate(AppAssignSelfServiceValuePeer::DATABASE_NAME, AppAssignSelfServiceValuePeer::TABLE_NAME, $columns);
-    }
-
-    /**
-     * Retrieve a single object by pkey.
-     *
-     * @param      mixed $pk the primary key.
-     * @param      Connection $con the connection to use
-     * @return     AppAssignSelfServiceValue
-     */
-    public static function retrieveByPK($pk, $con = null)
-    {
-        if ($con === null) {
-            $con = Propel::getConnection(self::DATABASE_NAME);
-        }
-
-        $criteria = new Criteria(AppAssignSelfServiceValuePeer::DATABASE_NAME);
-
-        $criteria->add(AppAssignSelfServiceValuePeer::ID, $pk);
-
-
-        $v = AppAssignSelfServiceValuePeer::doSelect($criteria, $con);
-
-        return !empty($v) > 0 ? $v[0] : null;
-    }
-
-    /**
-     * Retrieve multiple objects by pkey.
-     *
-     * @param      array $pks List of primary keys
-     * @param      Connection $con the connection to use
-     * @throws     PropelException Any exceptions caught during processing will be
-     *       rethrown wrapped into a PropelException.
-     */
-    public static function retrieveByPKs($pks, $con = null)
-    {
-        if ($con === null) {
-            $con = Propel::getConnection(self::DATABASE_NAME);
-        }
-
-        $objs = null;
-        if (empty($pks)) {
-            $objs = array();
-        } else {
-            $criteria = new Criteria();
-            $criteria->add(AppAssignSelfServiceValuePeer::ID, $pks, Criteria::IN);
-            $objs = AppAssignSelfServiceValuePeer::doSelect($criteria, $con);
-        }
-        return $objs;
+        return BasePeer::doValidate(AppAssignSelfServiceValueGroupPeer::DATABASE_NAME, AppAssignSelfServiceValueGroupPeer::TABLE_NAME, $columns);
     }
 }
 
@@ -581,14 +519,14 @@ if (Propel::isInit()) {
     // the MapBuilder classes register themselves with Propel during initialization
     // so we need to load them here.
     try {
-        BaseAppAssignSelfServiceValuePeer::getMapBuilder();
+        BaseAppAssignSelfServiceValueGroupPeer::getMapBuilder();
     } catch (Exception $e) {
         Propel::log('Could not initialize Peer: ' . $e->getMessage(), Propel::LOG_ERR);
     }
 } else {
     // even if Propel is not yet initialized, the map builder class can be registered
     // now and then it will be loaded when Propel initializes.
-    require_once 'classes/model/map/AppAssignSelfServiceValueMapBuilder.php';
-    Propel::registerMapBuilder('classes.model.map.AppAssignSelfServiceValueMapBuilder');
+    require_once 'classes/model/map/AppAssignSelfServiceValueGroupMapBuilder.php';
+    Propel::registerMapBuilder('classes.model.map.AppAssignSelfServiceValueGroupMapBuilder');
 }
 
