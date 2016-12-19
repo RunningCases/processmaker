@@ -710,9 +710,16 @@ class Variable
     public function executeSqlSuggest($processUid, $variableName, array $arrayVariable = array())
     {
         try {
+            $appData = array();
+            if (isset($arrayVariable['app_uid'])) {
+                $case = new \ProcessMaker\BusinessModel\Cases();
+                $fields = $case->getApplicationRecordByPk($arrayVariable['app_uid'], ['$applicationUid' => 'app_uid']);
+                $case = new \Cases();
+                $appData = $case->unserializeData($fields['APP_DATA']);
+            }
             $_SESSION["PROCESS"] = $processUid;
             \G::LoadClass("pmDynaform");
-            $pmDynaform = new \pmDynaform();
+            $pmDynaform = new \pmDynaform(array("APP_DATA" => $appData));
             $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $arrayVariable["field_id"], $processUid);
             $field->queryField = true;
             $field->queryInputData = $arrayVariable;
