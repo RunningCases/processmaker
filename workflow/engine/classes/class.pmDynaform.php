@@ -196,7 +196,9 @@ class pmDynaform
                 if (is_string($value) && in_array(substr($value, 0, 2), $prefixs)) {
                     $triggerValue = substr($value, 2);
                     if (isset($this->fields["APP_DATA"][$triggerValue])) {
-                        $json->{$key} = $this->fields["APP_DATA"][$triggerValue];
+                        if ($key !== "dataVariable") {
+                            $json->{$key} = $this->fields["APP_DATA"][$triggerValue];
+                        }
                     } else {
                         $json->{$key} = "";
                     }
@@ -325,6 +327,18 @@ class pmDynaform
                                 $option->value = $row[0];
                                 $option->label = isset($row[1]) ? $row[1] : "";
                                 $json->optionsSql[] = $option;
+                            }
+                        }
+                        if ($value === "suggest" && isset($json->queryField) && $json->queryField == true) {
+                            $json->queryOutputData = array();
+                            foreach ($json->optionsSql as $option) {
+                                if ($json->queryFilter !== '') {
+                                    if (preg_match('/^.*' . $json->queryFilter . '.*$/i', $option->label)) {
+                                        $json->queryOutputData[] = $option;
+                                    }
+                                } else {
+                                    $json->queryOutputData[] = $option;
+                                }
                             }
                         }
                     }
