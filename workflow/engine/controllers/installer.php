@@ -679,8 +679,8 @@ class Installer extends Controller
         $db_port = $filter->validateInput($db_port);
         $db_username = trim( $_REQUEST['db_username'] );
         $db_username = $filter->validateInput($db_username);
-        $db_password = trim( $_REQUEST['db_password'] );
-        $db_password = $filter->validateInput($db_password);
+        $db_password = urlencode(trim($_REQUEST['db_password']));
+        $db_password = urldecode($filter->validateInput($db_password));
         $wf = trim( $_REQUEST['wfDatabase'] );
         $rb = trim( $_REQUEST['wfDatabase'] );
         $rp = trim( $_REQUEST['wfDatabase'] );
@@ -707,9 +707,6 @@ class Installer extends Controller
 
         try {
             $db_host = ($db_port != '' && $db_port != 3306) ? $db_hostname . ':' . $db_port : $db_hostname;
-            $db_host = $filter->validateInput($db_host);
-            $db_username = $filter->validateInput($db_username);
-            $db_password = $filter->validateInput($db_password);
             $this->link = @mysql_connect( $db_host, $db_username, $db_password );
             $this->installLog( G::LoadTranslation('ID_CONNECT_TO_SERVER', SYS_LANG, Array($db_hostname, $db_port, $db_username ) ));
 
@@ -1023,8 +1020,8 @@ class Installer extends Controller
         $db_port = $filter->validateInput($db_port);
         $db_username = trim( $_REQUEST['db_username'] );
         $db_username = $filter->validateInput($db_username);
-        $db_password = trim( $_REQUEST['db_password'] );
-        $db_password = $filter->validateInput($db_password);
+        $db_password = urlencode(trim($_REQUEST['db_password']));
+        $db_password = urldecode($filter->validateInput($db_password));
         $wf = trim( $_REQUEST['wfDatabase'] );
         $rb = trim( $_REQUEST['wfDatabase'] );
         $rp = trim( $_REQUEST['wfDatabase'] );
@@ -1047,9 +1044,6 @@ class Installer extends Controller
 
         try {
             $db_host = ($db_port != '' && $db_port != 1433) ? $db_hostname . ':' . $db_port : $db_hostname;
-            $db_host = $filter->validateInput($db_host);
-            $db_username = $filter->validateInput($db_username);
-            $db_password = $filter->validateInput($db_password);
             $this->link = @mssql_connect( $db_host, $db_username, $db_password );
             $this->installLog( G::LoadTranslation('ID_CONNECT_TO_SERVER', SYS_LANG, Array( $db_hostname, $db_port, $db_username )) );
 
@@ -1243,7 +1237,8 @@ class Installer extends Controller
         if ($_REQUEST['db_engine'] == 'mysql') {
             $db_hostname = $filter->validateInput($_REQUEST['db_hostname']);
             $db_username = $filter->validateInput($_REQUEST['db_username']);
-            $db_password = $filter->validateInput($_REQUEST['db_password']);
+            $db_password = urlencode($_REQUEST['db_password']);
+            $db_password = urldecode($filter->validateInput($db_password));
             $db_port     = $filter->validateInput($_REQUEST['db_port']);
             if($db_port != "3306"){
                 $db_hostname = $db_hostname.":".$db_port;
@@ -1287,35 +1282,33 @@ class Installer extends Controller
      * Privates functions section, non callable by http request
      */
 
-    private function testMySQLconnection ()
+    private function testMySQLconnection()
     {
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
         $info = new StdClass();
         $info->result = false;
         $info->message = '';
-        if (! function_exists( "mysql_connect" )) {
+        if (!function_exists("mysql_connect")) {
             $info->message = G::LoadTranslation('ID_PHP_MYSQL_NOT _INSTALL');
             return $info;
         }
-        $db_hostname = $_REQUEST['db_hostname'];
-        $db_hostname = $filter->validateInput($db_hostname);
-        $db_port     = $_REQUEST['db_port'];
-        $db_port     = $filter->validateInput($db_port);
-        $db_username = $_REQUEST['db_username'];
-        $db_username = $filter->validateInput($db_username);
-        $db_password = $_REQUEST['db_password'];
-        $db_password = $filter->validateInput($db_password);
-        $fp = @fsockopen( $db_hostname, $db_port, $errno, $errstr, 30 );
-        if (! $fp) {
+        $dataRequest = $_REQUEST;
+        $db_hostname = $filter->validateInput($dataRequest['db_hostname']);
+        $db_port = $filter->validateInput($dataRequest['db_port']);
+        $db_username = $filter->validateInput($dataRequest['db_username']);
+        $db_password = urlencode($dataRequest['db_password']);
+        $db_password = urldecode($filter->validateInput($db_password));
+        $fp = @fsockopen($db_hostname, $db_port, $errno, $errstr, 30);
+        if (!$fp) {
             $info->message .= G::LoadTranslation('ID_CONNECTION_ERROR', SYS_LANG, Array("$errstr ($errno)"));
             return $info;
         }
 
         $db_host = ($db_port != '' && $db_port != 1433) ? $db_hostname . ':' . $db_port : $db_hostname;
 
-        $link = @mysql_connect( $db_host, $db_username, $db_password );
-        if (! $link) {
+        $link = @mysql_connect($db_host, $db_username, $db_password);
+        if (!$link) {
             $info->message .= G::LoadTranslation('ID_MYSQL_CREDENTIALS_WRONG');
             return $info;
         }
@@ -1323,12 +1316,12 @@ class Installer extends Controller
         $db_hostname = $filter->validateInput($db_hostname, 'nosql');
         $query = "SELECT * FROM `information_schema`.`USER_PRIVILEGES` where (GRANTEE = \"'%s'@'%s'\" OR GRANTEE = \"'%s'@'%%'\") ";
         $query = $filter->preventSqlInjection($query, array($db_username, $db_hostname, $db_username));
-        $res = @mysql_query( $query, $link );
-        $row = @mysql_fetch_array( $res );
-        $hasSuper = is_array( $row );
-        @mysql_free_result( $res );
-        @mysql_close( $link );
-        if (! $hasSuper) {
+        $res = @mysql_query($query, $link);
+        $row = @mysql_fetch_array($res);
+        $hasSuper = is_array($row);
+        @mysql_free_result($res);
+        @mysql_close($link);
+        if (!$hasSuper) {
             $info->message .= G::LoadTranslation('ID_CONNECTION_ERROR_PRIVILEGE', SYS_LANG, Array($db_username));
             return $info;
         }
@@ -1337,7 +1330,7 @@ class Installer extends Controller
         return $info;
     }
 
-    private function testMSSQLconnection ()
+    private function testMSSQLconnection()
     {
         G::LoadSystem('inputfilter');
         $filter = new InputFilter();
@@ -1345,30 +1338,27 @@ class Installer extends Controller
         $info->result = false;
         $info->message = '';
 
-        if (! function_exists( "mssql_connect" )) {
+        if (!function_exists("mssql_connect")) {
             $info->message = G::LoadTranslation('ID_PHP_MSSQL_NOT_INSTALLED');
             return $info;
         }
+        $dataRequest = $_REQUEST;
+        $db_hostname = $filter->validateInput($dataRequest['db_hostname']);
+        $db_port = $filter->validateInput($dataRequest['db_port']);
+        $db_username = $filter->validateInput($dataRequest['db_username']);
+        $db_password = urlencode($dataRequest['db_password']);
+        $db_password = urldecode($filter->validateInput($db_password));
 
-        $db_hostname = $_REQUEST['db_hostname'];
-        $db_hostname = $filter->validateInput($db_hostname);
-        $db_port     = $_REQUEST['db_port'];
-        $db_port     = $filter->validateInput($db_port);
-        $db_username = $_REQUEST['db_username'];
-        $db_username = $filter->validateInput($db_username);
-        $db_password = $_REQUEST['db_password'];
-        $db_password = $filter->validateInput($db_password);
-
-        $fp = @fsockopen( $db_hostname, $db_port, $errno, $errstr, 30 );
-        if (! $fp) {
+        $fp = @fsockopen($db_hostname, $db_port, $errno, $errstr, 30);
+        if (!$fp) {
             $info->message .= G::LoadTranslation('ID_CONNECTION_ERROR', SYS_LANG, Array("$errstr ($errno)"));
             return $info;
         }
 
         $db_host = ($db_port != '' && $db_port != 1433) ? $db_hostname . ':' . $db_port : $db_hostname;
 
-        $link = @mssql_connect( $db_host, $db_username, $db_password );
-        if (! $link) {
+        $link = @mssql_connect($db_host, $db_username, $db_password);
+        if (!$link) {
             $info->message .= G::LoadTranslation('ID_MYSQL_CREDENTIALS_WRONG');
             return $info;
         }
@@ -1378,38 +1368,38 @@ class Installer extends Controller
         $hasSecurityAdmin = false;
         $hasSysAdmin = false;
 
-        $res = @mssql_query( "EXEC sp_helpsrvrolemember 'dbcreator' ", $link );
-        $row = mssql_fetch_array( $res );
-        while (is_array( $row )) {
+        $res = @mssql_query("EXEC sp_helpsrvrolemember 'dbcreator' ", $link);
+        $row = mssql_fetch_array($res);
+        while (is_array($row)) {
             if ($row['MemberName'] == $db_username) {
                 $hasDbCreator = true;
             }
-            $row = mssql_fetch_array( $res );
+            $row = mssql_fetch_array($res);
         }
-        mssql_free_result( $res );
+        mssql_free_result($res);
 
-        $res = @mssql_query( "EXEC sp_helpsrvrolemember 'sysadmin' ", $link );
-        $row = mssql_fetch_array( $res );
-        while (is_array( $row )) {
+        $res = @mssql_query("EXEC sp_helpsrvrolemember 'sysadmin' ", $link);
+        $row = mssql_fetch_array($res);
+        while (is_array($row)) {
             if ($row['MemberName'] == $db_username) {
                 $hasSysAdmin = true;
             }
-            $row = mssql_fetch_array( $res );
+            $row = mssql_fetch_array($res);
         }
-        mssql_free_result( $res );
+        mssql_free_result($res);
 
-        $res = @mssql_query( "EXEC sp_helpsrvrolemember 'SecurityAdmin' ", $link );
-        $row = mssql_fetch_array( $res );
-        while (is_array( $row )) {
+        $res = @mssql_query("EXEC sp_helpsrvrolemember 'SecurityAdmin' ", $link);
+        $row = mssql_fetch_array($res);
+        while (is_array($row)) {
             if ($row['MemberName'] == $db_username) {
                 $hasSecurityAdmin = true;
             }
-            $row = mssql_fetch_array( $res );
+            $row = mssql_fetch_array($res);
         }
-        mssql_free_result( $res );
+        mssql_free_result($res);
 
-        if (! ($hasSysAdmin || ($hasSecurityAdmin && $hasDbCreator))) {
-            $info->message .= G::LoadTranslation('ID_CONNECTION_ERROR_SECURITYADMIN', SYS_LANG, Array($db_username) );
+        if (!($hasSysAdmin || ($hasSecurityAdmin && $hasDbCreator))) {
+            $info->message .= G::LoadTranslation('ID_CONNECTION_ERROR_SECURITYADMIN', SYS_LANG, Array($db_username));
             return $info;
         }
 
@@ -1675,8 +1665,8 @@ class Installer extends Controller
                 $db_port = $filter->validateInput($db_port);
                 $db_username = trim( $_REQUEST['db_username'] );
                 $db_username = $filter->validateInput($db_username);
-                $db_password = trim( $_REQUEST['db_password'] );
-                $db_password = $filter->validateInput($db_password);
+                $db_password = urlencode(trim($_REQUEST['db_password']));
+                $db_password = urldecode($filter->validateInput($db_password));
                 $wf = trim( $_REQUEST['wfDatabase'] );
                 $wf = $filter->validateInput($wf);
 
