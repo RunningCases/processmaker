@@ -869,7 +869,8 @@ class pmDynaform
             $where = "";
             if (!empty($parsed["WHERE"])) {
                 $where = "WHERE ";
-                $dt = $parsed["WHERE"];
+                $dt = ($parsed['WHERE'][0]['expr_type'] == 'expression') ? $parsed['WHERE'][0]['sub_tree'] :
+                    $parsed["WHERE"];
                 $nw = count($dt);
                 //reserved word: OFFSET
                 if ($dt[$nw - 2]["base_expr"] === "OFFSET") {
