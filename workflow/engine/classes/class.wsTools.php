@@ -151,6 +151,12 @@ class workspaceTools
         $this->cleanTokens($workSpace);
         $stop = microtime(true);
         CLI::logging("<*>   Clean access and refresh tokens took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Optimizing Self-Service data...\n");
+        $this->migrateSelfServiceRecordsRun($workSpace);
+        $stop = microtime(true);
+        CLI::logging("<*>   Migrating Self-Service records Process took " . ($stop - $start) . " seconds.\n");
     }
 
     /**
