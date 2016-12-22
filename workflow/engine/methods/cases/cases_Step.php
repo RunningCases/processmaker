@@ -55,14 +55,20 @@ if (!isset($_SESSION['USER_LOGGED'])) {
 
 require_once 'classes/model/AppDelegation.php';
 $delegation = new AppDelegation();
-if( $delegation->alreadyRouted($_SESSION['APPLICATION'],$_SESSION['INDEX']) ) {
-	if(array_key_exists('gmail',$_SESSION) && $_SESSION['gmail'] == 1){
-		$mUrl = '../cases/cases_Open?APP_UID='.$_SESSION['APPLICATION'].'&DEL_INDEX='.$_SESSION['INDEX'].'&action=sent';
-		header( 'location:' . $mUrl );
-		die();
-	}
-	G::header('location: ../cases/casesListExtJs');
-	die();
+if ($delegation->alreadyRouted($_SESSION['APPLICATION'], $_SESSION['INDEX'])) {
+    if (array_key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1) {
+        $mUrl = '../cases/cases_Open?APP_UID=' . $_SESSION['APPLICATION'] . '&DEL_INDEX=' . $_SESSION['INDEX'] . '&action=sent';
+        header('location:' . $mUrl);
+        die();
+    }
+    if (SYS_SKIN === "uxs") {
+        G::header('location: ../home/appList');
+        die();
+    } else {
+        die('<script type="text/javascript">'
+                . 'window.parent.location="casesListExtJs?action=todo";'
+                . '</script>');
+    }
 }
 /**
  * cases_Step.php
