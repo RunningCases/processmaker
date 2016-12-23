@@ -43,7 +43,14 @@ class Triggers extends BaseTriggers
 {
 
     /**
-    * Get the tri_title column value.
+     * This value goes in the content table
+     *
+     * @var string
+     */
+    protected $tri_title_content = '';
+
+    /**
+    * Get the tri_title_content column value.
     * @return     string
     */
     public function getTriTitleContent()
@@ -52,12 +59,12 @@ class Triggers extends BaseTriggers
             throw ( new Exception( "Error in getTriTitle, the getTriUid() can't be blank") );
         }
         $lang = defined ( 'SYS_LANG') ? SYS_LANG : 'en';
-        $this->tri_title = Content::load ( 'TRI_TITLE', '', $this->getTriUid(), $lang );
-        return $this->tri_title;
+        $this->tri_title_content = Content::load ( 'TRI_TITLE', '', $this->getTriUid(), $lang );
+        return $this->tri_title_content;
     }
 
     /**
-     * Set the tri_title column value.
+     * Set the tri_title_content column value.
      *
      * @param      string $v new value
      * @return     void
@@ -69,9 +76,9 @@ class Triggers extends BaseTriggers
         }
         $v=isset($v)?((string)$v):'';
         $lang = defined ( 'SYS_LANG') ? SYS_LANG : 'en';
-        if ($this->tri_title !== $v || $v==="") {
-            $this->tri_title = $v;
-            $res = Content::addContent( 'TRI_TITLE', '', $this->getTriUid(), $lang, $this->tri_title );
+        if ($this->tri_title_content !== $v || $v==="") {
+            $this->tri_title_content = $v;
+            $res = Content::addContent( 'TRI_TITLE', '', $this->getTriUid(), $lang, $this->tri_title_content );
             return $res;
         }
         return 0;
