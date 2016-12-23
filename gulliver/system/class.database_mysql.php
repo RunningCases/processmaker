@@ -89,8 +89,8 @@ class database extends database_base
                         $sKeys .= $this->sQuoteCharacter . $sColumnName . $this->sQuoteCharacter . ',';
                     }
 
-                    if (isset( $aParameters['Default'] ) && $aParameters['Default'] != '') {
-                        $sSQL .= " DEFAULT '" . $aParameters['Default'] . "'";
+                    if (isset( $aParameters['Default'] )) {
+                        $sSQL .= " DEFAULT '" . trim($aParameters['Default']) . "'";
                     }
 
                     $sSQL .= ',';
