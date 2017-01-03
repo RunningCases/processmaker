@@ -710,311 +710,33 @@ class Variable
     public function executeSqlSuggest($processUid, $variableName, array $arrayVariable = array())
     {
         try {
-            $arrayRecord = array();
-            $sysSys = (defined("SYS_SYS"))? SYS_SYS : "Undefined";
-            $aContext = \Bootstrap::getDefaultContextLog();
-
-            //Verify data
-            $process = new \ProcessMaker\BusinessModel\Process();
-
-            $process->throwExceptionIfNotExistsProcess($processUid, strtolower("PRJ_UID"));
-
-            //Set data
-            \G::LoadClass('pmDynaform');
-            $pmDynaform = new \pmDynaform();
-            $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $variableName, $processUid);
-
-            //Get data
-            $filter = str_replace('\'', '\'\'', (isset($arrayVariable['filter']))? $arrayVariable['filter'] : '');
-            $start  = (isset($arrayVariable['start']))? $arrayVariable['start'] : 0;
-            $limit  = (isset($arrayVariable['limit']))? $arrayVariable['limit'] : '';
-
-            switch (($field !== null && isset($field->datasource))? $field->datasource : 'database') {
-                case 'dataVariable':
-                    if (!isset($arrayVariable['app_uid'])) {
-                        return [];
-                    }
-
-                    $applicationUid = $arrayVariable['app_uid'];
-
-                    $case = new \ProcessMaker\BusinessModel\Cases();
-
-                    $arrayApplicationData = $case->getApplicationRecordByPk(
-                        $applicationUid, ['$applicationUid' => 'app_uid']
-                    );
-
-                    $case = new \Cases();
-
-                    $arrayApplicationData['APP_DATA'] = $case->unserializeData($arrayApplicationData['APP_DATA']);
-
-                    $dataVariable = (preg_match('/^\s*@.(.+)\s*$/', $field->dataVariable, $arrayMatch))?
-                        $arrayMatch[1] : $field->dataVariable;
-
-                    if (isset($arrayApplicationData['APP_DATA'][$dataVariable]) &&
-                        is_array($arrayApplicationData['APP_DATA'][$dataVariable]) &&
-                        !empty($arrayApplicationData['APP_DATA'][$dataVariable])
-                    ) {
-                        foreach ($arrayApplicationData['APP_DATA'][$dataVariable] as $row) {
-                            $value = $row[0];
-                            $text  = (isset($row[1]))? $row[1] : $row[0];
-
-                            if ($filter !== '') {
-                                if (preg_match('/^.*' . $filter . '.*$/i', $text)) {
-                                    $arrayRecord[] = [strtolower('VALUE') => $value, strtolower('TEXT')  => $text];
-                                }
-                            } else {
-                                $arrayRecord[] = [strtolower('VALUE') => $value, strtolower('TEXT')  => $text];
-                            }
-                        }
-
-                        $arrayRecord = array_slice(
-                            $arrayRecord,
-                            (int)($start),
-                            ($limit !== '')? (int)($limit) : null
-                        );
-                    }
-                    break;
-                default:
-                    //database
-                    $dbConnection = ($field !== null && !empty($field->dbConnection))? $field->dbConnection : 'workflow';
-                    $variableSql  = ($field !== null)? $field->sql : '';
-
-                    $_SESSION['PROCESS'] = $processUid;
-
-                    $cnn = \Propel::getConnection($dbConnection);
-                    $stmt = $cnn->createStatement();
-
-                    $replaceFields = \G::replaceDataField($variableSql, $arrayVariable);
-
-                    $parser = new \PHPSQLParser($replaceFields);
-
-                    $replaceFields = $this->queryModified(
-                        $parser->parsed, $filter, '*searchtype*', $start, $limit, $dbConnection
-                    );
-                    $rs = $stmt->executeQuery($replaceFields, \ResultSet::FETCHMODE_NUM);
-
-                    //Logger
-                    $aContext['action'] = 'execute-sql-suggest';
-                    $aContext['sql'] = $replaceFields;
-                    \Bootstrap::registerMonolog('sqlExecution', 200, 'Sql Execution', $aContext, $sysSys, 'processmaker.log');
-                    while ($rs->next()) {
-                        $row = $rs->getRow();
-
-                        $value = $row[0];
-                        $text  = (isset($row[1]))? $row[1] : $row[0];
-
-                        $arrayRecord[] = [strtolower('VALUE') => $value, strtolower('TEXT')  => $text];
-                    }
-                    break;
+            $appData = array();
+            if (isset($arrayVariable['app_uid'])) {
+                $case = new \ProcessMaker\BusinessModel\Cases();
+                $fields = $case->getApplicationRecordByPk($arrayVariable['app_uid'], ['$applicationUid' => 'app_uid']);
+                $case = new \Cases();
+                $appData = $case->unserializeData($fields['APP_DATA']);
             }
+            $_SESSION["PROCESS"] = $processUid;
+            \G::LoadClass("pmDynaform");
+            $pmDynaform = new \pmDynaform(array("APP_DATA" => $appData));
+            $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $arrayVariable["field_id"], $processUid);
+            $field->queryField = true;
+            $field->queryInputData = $arrayVariable;
+            $field->queryFilter = isset($arrayVariable["filter"]) ? $arrayVariable["filter"] : "";
+            $field->queryStart = isset($arrayVariable["start"]) ? $arrayVariable["start"] : 0;
+            $field->queryLimit = isset($arrayVariable["limit"]) ? $arrayVariable["limit"] : 10;
+            $pmDynaform->jsonr($field);
 
-            //Return
-            return $arrayRecord;
+            $result = array();
+            if (isset($field->queryOutputData) && is_array($field->queryOutputData)) {
+                foreach ($field->queryOutputData as $item) {
+                    $result[] = ["value" => $item->value, "text" => $item->label];
+                }
+            }
+            return $result;
         } catch (\Exception $e) {
-            //Logger
-            $aContext['action'] = 'execute-sql-suggest';
-            $aContext['exception'] = (array)$e;
-            \Bootstrap::registerMonolog('sqlExecution', 400, 'Sql Execution', $aContext, $sysSys, 'processmaker.log');
             throw $e;
-        }
-    }
-
-    public function queryModified($sqlParsed, $inputSel = "", $searchType = "*searchtype*", $start = 0, $limit = "", $dbConnection = "workflow")
-    {
-        if (!empty($sqlParsed['SELECT'])) {
-            $sqlSelectOptions = (isset($sqlParsed["OPTIONS"]) && count($sqlParsed["OPTIONS"]) > 0) ? implode(" ", $sqlParsed["OPTIONS"]) : null;
-
-            $sqlSelect = "SELECT $sqlSelectOptions ";
-            $aSelect = $sqlParsed["SELECT"];
-
-            $sFieldSel = (count($aSelect) > 1 ) ? $aSelect[1]['base_expr'] : $aSelect[0]['base_expr'];
-            foreach ($aSelect as $key => $value) {
-                if ($key != 0)
-                    $sqlSelect .= ", ";
-                $sAlias = str_replace("`", "", $aSelect[$key]['alias']);
-                $sBaseExpr = $aSelect[$key]['base_expr'];
-                switch ($aSelect[$key]['expr_type']) {
-                    case 'colref' : if ($sAlias === $sBaseExpr)
-                            $sqlSelect .= $sAlias;
-                        else
-                            $sqlSelect .= $sBaseExpr . ' AS ' . $sAlias;
-                        break;
-                    case 'expression' : if ($sAlias === $sBaseExpr)
-                            $sqlSelect .= $sBaseExpr;
-                        else
-                            $sqlSelect .= $sBaseExpr . ' AS ' . $sAlias;
-                        break;
-                    case 'subquery' : if (strpos($sAlias, $sBaseExpr, 0) != 0)
-                            $sqlSelect .= $sAlias;
-                        else
-                            $sqlSelect .= $sBaseExpr . " AS " . $sAlias;
-                        break;
-                    case 'operator' : $sqlSelect .= $sBaseExpr;
-                        break;
-                    default : $sqlSelect .= $sBaseExpr;
-                        break;
-                }
-            }
-
-            $sqlFrom = " FROM ";
-            if (!empty($sqlParsed['FROM'])) {
-                $aFrom = $sqlParsed['FROM'];
-                if (count($aFrom) > 0) {
-                    foreach ($aFrom as $key => $value) {
-                        if ($key == 0) {
-                            $sqlFrom .= $aFrom[$key]['table'] . (($aFrom[$key]['table'] == $aFrom[$key]['alias']) ? "" : " " . $aFrom[$key]['alias']);
-                        } else {
-                            $sqlFrom .= " " . (($aFrom[$key]['join_type'] == 'JOIN') ? "INNER" : $aFrom[$key]['join_type']) . " JOIN " . $aFrom[$key]['table']
-                                    . (($aFrom[$key]['table'] == $aFrom[$key]['alias']) ? "" : " " . $aFrom[$key]['alias']) . " " . $aFrom[$key]['ref_type'] . " " . $aFrom[$key]['ref_clause'];
-                        }
-                    }
-                }
-            }
-
-            $sqlConditionLike = "LIKE '%" . $inputSel . "%'";
-
-            switch ($searchType) {
-                case "searchtype*":
-                    $sqlConditionLike = "LIKE '" . $inputSel . "%'";
-                    break;
-                case "*searchtype":
-                    $sqlConditionLike = "LIKE '%" . $inputSel . "'";
-                    break;
-            }
-
-            if (!empty($sqlParsed['WHERE'])) {
-                $sqlWhere = " WHERE ";
-                $aWhere = $sqlParsed['WHERE'];
-                foreach ($aWhere as $key => $value) {
-                    $sqlWhere .= $value['base_expr'] . " ";
-                }
-                $sqlWhere .= " AND " . $sFieldSel . " " . $sqlConditionLike;
-            } else {
-                $sqlWhere = " WHERE " . $sFieldSel . " " . $sqlConditionLike;
-            }
-
-            $sqlGroupBy = "";
-            if (!empty($sqlParsed['GROUP'])) {
-                $sqlGroupBy = "GROUP BY ";
-                $aGroup = $sqlParsed['GROUP'];
-                foreach ($aGroup as $key => $value) {
-                    if ($key != 0)
-                        $sqlGroupBy .= ", ";
-                    if ($value['direction'] == 'ASC')
-                        $sqlGroupBy .= $value['base_expr'];
-                    else
-                        $sqlGroupBy .= $value['base_expr'] . " " . $value['direction'];
-                }
-            }
-
-            $sqlHaving = "";
-            if (!empty($sqlParsed['HAVING'])) {
-                $sqlHaving = "HAVING ";
-                $aHaving = $sqlParsed['HAVING'];
-                foreach ($aHaving as $key => $value) {
-                    $sqlHaving .= $value['base_expr'] . " ";
-                }
-            }
-
-            $sqlOrderBy = "";
-            if (!empty($sqlParsed['ORDER'])) {
-                $sqlOrderBy = "ORDER BY ";
-                $aOrder = $sqlParsed['ORDER'];
-                foreach ($aOrder as $key => $value) {
-                    if ($key != 0)
-                        $sqlOrderBy .= ", ";
-                    if ($value['direction'] == 'ASC')
-                        $sqlOrderBy .= $value['base_expr'];
-                    else
-                        $sqlOrderBy .= $value['base_expr'] . " " . $value['direction'];
-                }
-            } else {
-                $sqlOrderBy = " ORDER BY " . $sFieldSel;
-            }
-
-            $start = 0;
-            $sqlLimit = "";
-            if ($start >= 0) {
-                $sqlLimit = " LIMIT " . $start;
-            }
-            if ($limit !== "") {
-                $sqlLimit = " LIMIT " . $start . "," . $limit;
-            }
-            if (!empty($sqlParsed['LIMIT'])) {
-                $sqlLimit = " LIMIT " . $sqlParsed['LIMIT']['start'] . ", " . $sqlParsed['LIMIT']['end'];
-            }
-
-            //get database provider
-            $a = new \Criteria("workflow");
-            $a->addSelectColumn(\DbSourcePeer::DBS_TYPE);
-            $a->add(\DbSourcePeer::DBS_UID, $dbConnection, \Criteria::EQUAL);
-            $ds = \DbSourcePeer::doSelectRS($a);
-            $ds->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-            $ds->next();
-            $row = $ds->getRow();
-            if (isset($row["DBS_TYPE"])) {
-                if ($row["DBS_TYPE"] === "pgsql") {
-                    if ($start >= 0) {
-                        $sqlLimit = " OFFSET " . $start;
-                    }
-                    if ($limit !== "") {
-                        $sqlLimit = $sqlLimit . " LIMIT " . $limit;
-                    }
-                }
-                if ($row["DBS_TYPE"] === "mssql") {
-                    $sqlLimit = "";
-                    if ($limit !== "") {
-                        $wordsSearch = [" DISTINCT ", " ALL "];
-                        $wordsSearchCount = count($wordsSearch);
-                        for ($i = 0; $i < $wordsSearchCount; $i++) {
-                            $stringSearch = $wordsSearch[$i];
-                            $stringPosition = strpos($sqlSelect, $stringSearch);
-                            if ($stringPosition !== false) {
-                                $stringLength = strlen($stringSearch);
-                                $string1 = substr($sqlSelect, 0, $stringPosition + $stringLength);
-                                $string2 = substr($sqlSelect, $stringPosition + $stringLength);
-                                $sqlSelect = $string1 . "TOP(" . $limit . ") " . $string2;
-                            }
-                        }
-                    }
-                }
-                if ($row["DBS_TYPE"] === "oracle") {
-                    $sqlLimit = "";
-                    if ($limit !== "") {
-                        if (strpos($sqlWhere, "WHERE ") === false) {
-                            $sqlWhere = " WHERE ROWNUM <= " . $limit;
-                        } else {
-                            $sqlWhere = $sqlWhere . " AND ROWNUM <= " . $limit;
-                        }
-                    }
-                }
-            }
-
-            return $sqlSelect . $sqlFrom . $sqlWhere . $sqlGroupBy . $sqlHaving . " " . $sqlOrderBy . $sqlLimit;
-        }
-        if (!empty($sqlParsed['CALL'])) {
-            $sCall = "CALL ";
-            $aCall = $sqlParsed['CALL'];
-            foreach ($aCall as $key => $value) {
-                $sCall .= $value . " ";
-            }
-            return $sCall;
-        }
-        if (!empty($sqlParsed['EXECUTE'])) {
-            $sCall = "EXECUTE ";
-            $aCall = $sqlParsed['EXECUTE'];
-            foreach ($aCall as $key => $value) {
-                $sCall .= $value . " ";
-            }
-            return $sCall;
-        }
-        if (!empty($sqlParsed[''])) {
-            $sCall = "";
-            $aCall = $sqlParsed[''];
-            foreach ($aCall as $key => $value) {
-                $sCall .= $value . " ";
-            }
-            return $sCall;
         }
     }
 

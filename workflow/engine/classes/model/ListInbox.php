@@ -284,8 +284,10 @@ class ListInbox extends BaseListInbox
         $data['APP_PREVIOUS_USER'] = '';
         if($data['DEL_PREVIOUS_USR_UID'] === ''){
             global $RBAC;
-            $aUser = $RBAC->aUserInfo['USER_INFO'];
-            $data['DEL_PREVIOUS_USR_UID'] = $aUser['USR_UID'];
+            if(isset($RBAC->aUserInfo['USER_INFO'])){
+                $aUser = $RBAC->aUserInfo['USER_INFO'];
+                $data['DEL_PREVIOUS_USR_UID'] = $aUser['USR_UID'];
+            }
         }
         if ($data['DEL_PREVIOUS_USR_UID'] != '') {
             $criteria = new Criteria();

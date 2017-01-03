@@ -95,6 +95,8 @@ if ($aDelegation['USR_UID'] == "") {
 
 $validation = (SYS_SKIN != 'uxs') ? 'true' : 'false';
 
+unset($_SESSION['TASK']);
+
 die( '<script type="text/javascript">
   if (' . $validation . ') {
       if (window.parent.frames.length != 0) {

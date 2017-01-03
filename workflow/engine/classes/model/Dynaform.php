@@ -48,10 +48,10 @@ class Dynaform extends BaseDynaform
      *
      * @var string
      */
-    protected $dyn_title = '';
+    protected $dyn_title_content = '';
 
     /**
-     * Get the [Dyn_title] column value.
+     * Get the [Dyn_title_content] column value.
      *
      * @return string
      */
@@ -61,8 +61,8 @@ class Dynaform extends BaseDynaform
             throw (new Exception( "Error in getDynTitle, the DYN_UID can't be blank" ));
         }
         $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
-        $this->dyn_title = Content::load( 'DYN_TITLE', '', $this->getDynUid(), $lang );
-        return $this->dyn_title;
+        $this->dyn_title_content = Content::load( 'DYN_TITLE', '', $this->getDynUid(), $lang );
+        return $this->dyn_title_content;
     }
 
     /**
@@ -82,11 +82,11 @@ class Dynaform extends BaseDynaform
             $v = (string) $v;
         }
 
-        if ($this->dyn_title !== $v || $v === '') {
-            $this->dyn_title = $v;
+        if ($this->dyn_title_content !== $v || $v === '') {
+            $this->dyn_title_content = $v;
             $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
 
-            $res = Content::addContent( 'DYN_TITLE', '', $this->getDynUid(), $lang, $this->dyn_title );
+            $res = Content::addContent( 'DYN_TITLE', '', $this->getDynUid(), $lang, $this->dyn_title_content );
         }
 
     } // set()

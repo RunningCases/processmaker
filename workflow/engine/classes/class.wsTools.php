@@ -151,6 +151,12 @@ class workspaceTools
         $this->cleanTokens($workSpace);
         $stop = microtime(true);
         CLI::logging("<*>   Clean access and refresh tokens took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Optimizing Self-Service data...\n");
+        $this->migrateSelfServiceRecordsRun($workSpace);
+        $stop = microtime(true);
+        CLI::logging("<*>   Migrating Self-Service records Process took " . ($stop - $start) . " seconds.\n");
     }
 
     /**
@@ -3448,6 +3454,52 @@ class workspaceTools
             $conf->aConfig = ($sAudit == 1) ? 'true' : 'false';
             $conf->saveConfig('AUDIT_LOG', 'log');
         }
+    }
+
+    public function migrateSelfServiceRecordsRun($workspace) {
+        // Initializing
+        $this->initPropel(true);
+
+        // Get datat to migrate
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::ID);
+        $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::GRP_UID);
+        $criteria->add(AppAssignSelfServiceValuePeer::GRP_UID, '', Criteria::NOT_EQUAL);
+        $rsCriteria = AppAssignSelfServiceValuePeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+        // Migrating data
+        CLI::logging("-> Migrating Self-Service by Value Cases \n");
+        while ($rsCriteria->next()) {
+            $row = $rsCriteria->getRow();
+            $temp = unserialize($row['GRP_UID']);
+            if (is_array($temp)) {
+                foreach($temp as $groupUid) {
+                    if ($groupUid != '') {
+                        $appAssignSelfServiceValueGroup = new AppAssignSelfServiceValueGroup();
+                        $appAssignSelfServiceValueGroup->setId($row['ID']);
+                        $appAssignSelfServiceValueGroup->setGrpUid($groupUid);
+                        $appAssignSelfServiceValueGroup->save();
+                    }
+                }
+            } else {
+                if ($temp != '') {
+                    $appAssignSelfServiceValueGroup = new AppAssignSelfServiceValueGroup();
+                    $appAssignSelfServiceValueGroup->setId($row['ID']);
+                    $appAssignSelfServiceValueGroup->setGrpUid($temp);
+                    $appAssignSelfServiceValueGroup->save();
+                }
+            }
+            CLI::logging("    Migrating Record ".$row['ID']. "\n");
+        }
+
+        // Updating processed records to empty
+        $con = Propel::getConnection('workflow');
+        $criteriaSet = new Criteria("workflow");
+        $criteriaSet->add(AppAssignSelfServiceValuePeer::GRP_UID, '');
+        BasePeer::doUpdate($criteria, $criteriaSet, $con);
+
+        CLI::logging("   Migrating Self-Service by Value Cases Done \n");
     }
 
 }
