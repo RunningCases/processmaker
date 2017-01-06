@@ -336,6 +336,8 @@ class ListInbox extends BaseListInbox
 
     public function loadFilters (&$criteria, $filters)
     {
+        $action         = isset($filters['action']) ? $filters['action'] : "";
+        $usrUid         = isset($filters['usr_uid']) ? $filters['usr_uid'] : "";
         $filter         = isset($filters['filter']) ? $filters['filter'] : "";
         $search         = isset($filters['search']) ? $filters['search'] : "";
         $process        = isset($filters['process']) ? $filters['process'] : "";
@@ -345,6 +347,29 @@ class ListInbox extends BaseListInbox
         $filterStatus   = isset($filters['filterStatus']) ? $filters['filterStatus'] : "";
         $newestthan     = isset($filters['newestthan'] ) ? $filters['newestthan'] : '';
         $oldestthan     = isset($filters['oldestthan'] ) ? $filters['oldestthan'] : '';
+
+        switch ($action) {
+            case 'draft':
+                $criteria->add( ListInboxPeer::APP_STATUS, 'DRAFT', Criteria::EQUAL );
+                $criteria->add( ListInboxPeer::USR_UID, $usrUid, Criteria::EQUAL );
+            break;
+            case 'to_revise':
+                $criteria->add( ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL );
+                $oAppCache = new AppCacheView();
+                $aProcesses = $oAppCache->getProUidSupervisor($usrUid);
+                $criteria->add(ListInboxPeer::PRO_UID, $aProcesses, Criteria::IN);
+            break;
+            case 'to_reassign':
+                $criteria->add( ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL );
+                if($usrUid !== ''){
+                    $criteria->add( ListInboxPeer::USR_UID, $usrUid, Criteria::EQUAL );
+                }
+            break;
+            default://todo
+                $criteria->add( ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL );
+                $criteria->add( ListInboxPeer::USR_UID, $usrUid, Criteria::EQUAL );
+            break;
+        }
 
         if ($filter != '') {
             switch ($filter) {
@@ -430,13 +455,9 @@ class ListInbox extends BaseListInbox
 
     public function countTotal ($usr_uid, $filters = array())
     {
+        $filters['usr_uid'] = $usr_uid;
+
         $criteria = new Criteria();
-        $criteria->add( ListInboxPeer::USR_UID, $usr_uid, Criteria::EQUAL );
-        if ($filters['action'] == 'draft') {
-            $criteria->add( ListInboxPeer::APP_STATUS, 'DRAFT', Criteria::EQUAL );
-        } else {
-            $criteria->add( ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL );
-        }
         self::loadFilters($criteria, $filters);
         $total = ListInboxPeer::doCount( $criteria );
         return (int)$total;
@@ -453,6 +474,8 @@ class ListInbox extends BaseListInbox
     {
         $pmTable = new PmTable();
         $criteria = $pmTable->addPMFieldsToList('todo');
+
+        $filters['usr_uid'] = $usr_uid;
 
         $criteria->addSelectColumn(ListInboxPeer::APP_UID);
         $criteria->addSelectColumn(ListInboxPeer::DEL_INDEX);
@@ -479,7 +502,6 @@ class ListInbox extends BaseListInbox
         $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
         $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
         $criteria->addJoin( ListInboxPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN );
-        $criteria->add( ListInboxPeer::USR_UID, $usr_uid, Criteria::EQUAL );
         self::loadFilters($criteria, $filters);
 
         $sort  = (!empty($filters['sort'])) ? ListInboxPeer::TABLE_NAME.'.'.$filters['sort'] : "LIST_INBOX.APP_UPDATE_DATE";
@@ -487,12 +509,6 @@ class ListInbox extends BaseListInbox
         $start = isset($filters['start']) ? $filters['start'] : "0";
         $limit = isset($filters['limit']) ? $filters['limit'] : "25";
         $paged = isset($filters['paged']) ? $filters['paged'] : 1;
-
-        if ($filters['action'] == 'draft') {
-            $criteria->add( ListInboxPeer::APP_STATUS, 'DRAFT', Criteria::EQUAL );
-        } else {
-            $criteria->add( ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL );
-        }
 
         if ($dir == "DESC") {
             $criteria->addDescendingOrderByColumn($sort);

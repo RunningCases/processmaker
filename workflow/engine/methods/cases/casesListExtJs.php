@@ -47,10 +47,10 @@ switch ($action) {
         $urlProxy .= '?list=unassigned';
         break;
     case 'to_revise':
-        $urlProxy = 'proxyCasesList';
+        $urlProxy .= '?list=inbox';
         break;
     case 'to_reassign':
-        $urlProxy = 'proxyCasesList';
+        $urlProxy .= '?list=inbox';
         break;
 }
 /*----------------------------------********---------------------------------*/

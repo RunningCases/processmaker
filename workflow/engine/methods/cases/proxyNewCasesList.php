@@ -31,10 +31,21 @@ try {
     $filters['dir']      = isset( $_REQUEST["dir"] ) ? $filter->sanitizeInputValue($_REQUEST["dir"], 'nosql') : "DESC";
 
     $filters['action']   = isset( $_REQUEST["action"] ) ? $filter->sanitizeInputValue($_REQUEST["action"], 'nosql') : "";
+    $filters['user']   = isset( $_REQUEST["user"] ) ? $filter->sanitizeInputValue($_REQUEST["user"], 'nosql') : "";
     $listName            = isset( $_REQUEST["list"] ) ? $filter->sanitizeInputValue($_REQUEST["list"], 'nosql') : "inbox";
     $filters['filterStatus']   = isset( $_REQUEST["filterStatus"] ) ? $filter->sanitizeInputValue($_REQUEST["filterStatus"], 'nosql') : "";
     $openApplicationUid = (isset($_REQUEST['openApplicationUid']) && $_REQUEST['openApplicationUid'] != '')?
         $_REQUEST['openApplicationUid'] : null;
+
+    //Define user when is reassign
+    if($filters['action'] == 'to_reassign') {
+        if($filters['user'] == '' ){
+            $userUid = '';
+        }
+        if($filters['user'] !== '' && $filters['user'] !== 'CURRENT_USER'){
+            $userUid = $filters['user'];
+        }
+    }
 
     // Select list
     switch ($listName) {
