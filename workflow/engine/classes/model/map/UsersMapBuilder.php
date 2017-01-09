@@ -63,9 +63,11 @@ class UsersMapBuilder
         $tMap = $this->dbMap->addTable('USERS');
         $tMap->setPhpName('Users');
 
-        $tMap->setUseIdGenerator(false);
+        $tMap->setUseIdGenerator(true);
 
         $tMap->addPrimaryKey('USR_UID', 'UsrUid', 'string', CreoleTypes::VARCHAR, true, 32);
+
+        $tMap->addColumn('USR_ID', 'UsrId', 'int', CreoleTypes::INTEGER, true, null);
 
         $tMap->addColumn('USR_USERNAME', 'UsrUsername', 'string', CreoleTypes::VARCHAR, true, 100);
 

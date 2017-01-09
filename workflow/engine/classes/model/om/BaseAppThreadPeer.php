@@ -25,7 +25,7 @@ abstract class BaseAppThreadPeer
     const CLASS_DEFAULT = 'classes.model.AppThread';
 
     /** The total number of columns. */
-    const NUM_COLUMNS = 5;
+    const NUM_COLUMNS = 7;
 
     /** The number of lazy-loaded columns. */
     const NUM_LAZY_LOAD_COLUMNS = 0;
@@ -46,6 +46,12 @@ abstract class BaseAppThreadPeer
     /** the column name for the DEL_INDEX field */
     const DEL_INDEX = 'APP_THREAD.DEL_INDEX';
 
+    /** the column name for the APP_NUMBER field */
+    const APP_NUMBER = 'APP_THREAD.APP_NUMBER';
+
+    /** the column name for the DELEGATION_ID field */
+    const DELEGATION_ID = 'APP_THREAD.DELEGATION_ID';
+
     /** The PHP to DB Name Mapping */
     private static $phpNameMap = null;
 
@@ -57,10 +63,10 @@ abstract class BaseAppThreadPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('AppUid', 'AppThreadIndex', 'AppThreadParent', 'AppThreadStatus', 'DelIndex', ),
-        BasePeer::TYPE_COLNAME => array (AppThreadPeer::APP_UID, AppThreadPeer::APP_THREAD_INDEX, AppThreadPeer::APP_THREAD_PARENT, AppThreadPeer::APP_THREAD_STATUS, AppThreadPeer::DEL_INDEX, ),
-        BasePeer::TYPE_FIELDNAME => array ('APP_UID', 'APP_THREAD_INDEX', 'APP_THREAD_PARENT', 'APP_THREAD_STATUS', 'DEL_INDEX', ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
+        BasePeer::TYPE_PHPNAME => array ('AppUid', 'AppThreadIndex', 'AppThreadParent', 'AppThreadStatus', 'DelIndex', 'AppNumber', 'DelegationId', ),
+        BasePeer::TYPE_COLNAME => array (AppThreadPeer::APP_UID, AppThreadPeer::APP_THREAD_INDEX, AppThreadPeer::APP_THREAD_PARENT, AppThreadPeer::APP_THREAD_STATUS, AppThreadPeer::DEL_INDEX, AppThreadPeer::APP_NUMBER, AppThreadPeer::DELEGATION_ID, ),
+        BasePeer::TYPE_FIELDNAME => array ('APP_UID', 'APP_THREAD_INDEX', 'APP_THREAD_PARENT', 'APP_THREAD_STATUS', 'DEL_INDEX', 'APP_NUMBER', 'DELEGATION_ID', ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -70,10 +76,10 @@ abstract class BaseAppThreadPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('AppUid' => 0, 'AppThreadIndex' => 1, 'AppThreadParent' => 2, 'AppThreadStatus' => 3, 'DelIndex' => 4, ),
-        BasePeer::TYPE_COLNAME => array (AppThreadPeer::APP_UID => 0, AppThreadPeer::APP_THREAD_INDEX => 1, AppThreadPeer::APP_THREAD_PARENT => 2, AppThreadPeer::APP_THREAD_STATUS => 3, AppThreadPeer::DEL_INDEX => 4, ),
-        BasePeer::TYPE_FIELDNAME => array ('APP_UID' => 0, 'APP_THREAD_INDEX' => 1, 'APP_THREAD_PARENT' => 2, 'APP_THREAD_STATUS' => 3, 'DEL_INDEX' => 4, ),
-        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
+        BasePeer::TYPE_PHPNAME => array ('AppUid' => 0, 'AppThreadIndex' => 1, 'AppThreadParent' => 2, 'AppThreadStatus' => 3, 'DelIndex' => 4, 'AppNumber' => 5, 'DelegationId' => 6, ),
+        BasePeer::TYPE_COLNAME => array (AppThreadPeer::APP_UID => 0, AppThreadPeer::APP_THREAD_INDEX => 1, AppThreadPeer::APP_THREAD_PARENT => 2, AppThreadPeer::APP_THREAD_STATUS => 3, AppThreadPeer::DEL_INDEX => 4, AppThreadPeer::APP_NUMBER => 5, AppThreadPeer::DELEGATION_ID => 6, ),
+        BasePeer::TYPE_FIELDNAME => array ('APP_UID' => 0, 'APP_THREAD_INDEX' => 1, 'APP_THREAD_PARENT' => 2, 'APP_THREAD_STATUS' => 3, 'DEL_INDEX' => 4, 'APP_NUMBER' => 5, 'DELEGATION_ID' => 6, ),
+        BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, )
     );
 
     /**
@@ -183,6 +189,10 @@ abstract class BaseAppThreadPeer
         $criteria->addSelectColumn(AppThreadPeer::APP_THREAD_STATUS);
 
         $criteria->addSelectColumn(AppThreadPeer::DEL_INDEX);
+
+        $criteria->addSelectColumn(AppThreadPeer::APP_NUMBER);
+
+        $criteria->addSelectColumn(AppThreadPeer::DELEGATION_ID);
 
     }
 

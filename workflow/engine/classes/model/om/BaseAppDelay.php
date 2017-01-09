@@ -112,6 +112,18 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
     protected $app_automatic_disabled_date;
 
     /**
+     * The value for the app_number field.
+     * @var        int
+     */
+    protected $app_number = 0;
+
+    /**
+     * The value for the delegation_id field.
+     * @var        int
+     */
+    protected $delegation_id = 0;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -340,6 +352,28 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
         } else {
             return date($format, $ts);
         }
+    }
+
+    /**
+     * Get the [app_number] column value.
+     * 
+     * @return     int
+     */
+    public function getAppNumber()
+    {
+
+        return $this->app_number;
+    }
+
+    /**
+     * Get the [delegation_id] column value.
+     * 
+     * @return     int
+     */
+    public function getDelegationId()
+    {
+
+        return $this->delegation_id;
     }
 
     /**
@@ -672,6 +706,50 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
     } // setAppAutomaticDisabledDate()
 
     /**
+     * Set the value of [app_number] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setAppNumber($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->app_number !== $v || $v === 0) {
+            $this->app_number = $v;
+            $this->modifiedColumns[] = AppDelayPeer::APP_NUMBER;
+        }
+
+    } // setAppNumber()
+
+    /**
+     * Set the value of [delegation_id] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setDelegationId($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->delegation_id !== $v || $v === 0) {
+            $this->delegation_id = $v;
+            $this->modifiedColumns[] = AppDelayPeer::DELEGATION_ID;
+        }
+
+    } // setDelegationId()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -716,12 +794,16 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
 
             $this->app_automatic_disabled_date = $rs->getTimestamp($startcol + 13, null);
 
+            $this->app_number = $rs->getInt($startcol + 14);
+
+            $this->delegation_id = $rs->getInt($startcol + 15);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 14; // 14 = AppDelayPeer::NUM_COLUMNS - AppDelayPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 16; // 16 = AppDelayPeer::NUM_COLUMNS - AppDelayPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating AppDelay object", $e);
@@ -967,6 +1049,12 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
             case 13:
                 return $this->getAppAutomaticDisabledDate();
                 break;
+            case 14:
+                return $this->getAppNumber();
+                break;
+            case 15:
+                return $this->getDelegationId();
+                break;
             default:
                 return null;
                 break;
@@ -1001,6 +1089,8 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
             $keys[11] => $this->getAppDisableActionUser(),
             $keys[12] => $this->getAppDisableActionDate(),
             $keys[13] => $this->getAppAutomaticDisabledDate(),
+            $keys[14] => $this->getAppNumber(),
+            $keys[15] => $this->getDelegationId(),
         );
         return $result;
     }
@@ -1073,6 +1163,12 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
                 break;
             case 13:
                 $this->setAppAutomaticDisabledDate($value);
+                break;
+            case 14:
+                $this->setAppNumber($value);
+                break;
+            case 15:
+                $this->setDelegationId($value);
                 break;
         } // switch()
     }
@@ -1153,6 +1249,14 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
             $this->setAppAutomaticDisabledDate($arr[$keys[13]]);
         }
 
+        if (array_key_exists($keys[14], $arr)) {
+            $this->setAppNumber($arr[$keys[14]]);
+        }
+
+        if (array_key_exists($keys[15], $arr)) {
+            $this->setDelegationId($arr[$keys[15]]);
+        }
+
     }
 
     /**
@@ -1218,6 +1322,14 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
 
         if ($this->isColumnModified(AppDelayPeer::APP_AUTOMATIC_DISABLED_DATE)) {
             $criteria->add(AppDelayPeer::APP_AUTOMATIC_DISABLED_DATE, $this->app_automatic_disabled_date);
+        }
+
+        if ($this->isColumnModified(AppDelayPeer::APP_NUMBER)) {
+            $criteria->add(AppDelayPeer::APP_NUMBER, $this->app_number);
+        }
+
+        if ($this->isColumnModified(AppDelayPeer::DELEGATION_ID)) {
+            $criteria->add(AppDelayPeer::DELEGATION_ID, $this->delegation_id);
         }
 
 
@@ -1299,6 +1411,10 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
         $copyObj->setAppDisableActionDate($this->app_disable_action_date);
 
         $copyObj->setAppAutomaticDisabledDate($this->app_automatic_disabled_date);
+
+        $copyObj->setAppNumber($this->app_number);
+
+        $copyObj->setDelegationId($this->delegation_id);
 
 
         $copyObj->setNew(true);
