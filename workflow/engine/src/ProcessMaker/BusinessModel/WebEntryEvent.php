@@ -899,6 +899,31 @@ class WebEntryEvent
     }
 
     /**
+     * Get all WebEntry-Events
+     * Return an array with all WebEntry-Events
+     * @return array
+     * @throws \Exception
+     */
+    public function getAllWebEntryEvents()
+    {
+        try {
+            $result = array();
+            $criteria = $this->getWebEntryEventCriteria();
+            $criteria->addJoin(\WebEntryEventPeer::PRJ_UID, \ProcessPeer::PRO_UID, \Criteria::JOIN);
+            $criteria->add(\ProcessPeer::PRO_STATUS, 'ACTIVE', \Criteria::EQUAL);
+            $rsCriteria = \WebEntryEventPeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            while ($rsCriteria->next()) {
+                $row = $rsCriteria->getRow();
+                $result[] = $this->getWebEntryEventDataFromRecord($row);
+            }
+            return $result;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
      * Get data of a WebEntry-Event
      *
      * @param string $webEntryEventUid Unique id of WebEntry-Event
