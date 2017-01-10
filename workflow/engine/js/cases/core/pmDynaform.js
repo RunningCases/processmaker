@@ -82,6 +82,7 @@ $(window).load(function () {
         data: data,
         delIndex: window.delIndex ? window.delIndex :  delIndexDefault,
         dynaformUid: dyn_uid,
+        isRTL: window.isRTL,
         onBeforePrintHandler : function () {
             var nodeClone = $(".pmdynaform-container").clone();
             nodeClone.addClass("printing-form");
