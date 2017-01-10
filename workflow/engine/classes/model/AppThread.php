@@ -40,7 +40,7 @@
  */
 class AppThread extends BaseAppThread
 {
-    public function createAppThread ($sAppUid, $iDelIndex, $iParent)
+    public function createAppThread ($sAppUid, $iDelIndex, $iParent, $appNumber = 0)
     {
         if (!isset($sAppUid) || strlen($sAppUid ) == 0 ) {
             throw ( new Exception ( 'Column "APP_UID" cannot be null.' ) );
@@ -68,6 +68,7 @@ class AppThread extends BaseAppThread
         $this->setAppThreadParent ( $iParent );
         $this->setAppThreadStatus ( 'OPEN' );
         $this->setDelIndex        ( $iDelIndex );
+        $this->setAppNumber($appNumber);
 
         if ($this->validate() ) {
             try {

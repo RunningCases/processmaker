@@ -985,6 +985,7 @@ class Derivation
                 default:
                     //Get all siblingThreads
                     $canDerivate = false;
+                    $nextDel['TAS_ID'] = $taskNextDel->getTasId();
 
                     switch ($currentDelegation['TAS_ASSIGN_TYPE']) {
                         case 'CANCEL_MI':
@@ -1332,9 +1333,22 @@ class Derivation
                     //Incrementing the Del_thread First so that new delegation has new del_thread
                     $iNewAppThreadIndex += 1;
                     //Creating new delegation according to users in group
-                    $iMIDelIndex = $this->case->newAppDelegation( $appFields['PRO_UID'], $currentDelegation['APP_UID'], $nextDel['TAS_UID'], (isset( $aValue['USR_UID'] ) ? $aValue['USR_UID'] : ''), $currentDelegation['DEL_INDEX'], $nextDel['DEL_PRIORITY'], $delType, $iNewAppThreadIndex, $nextDel );
+                    $iMIDelIndex = $this->case->newAppDelegation(
+                        $appFields['PRO_UID'],
+                        $currentDelegation['APP_UID'],
+                        $nextDel['TAS_UID'],
+                        (isset( $aValue['USR_UID'] ) ? $aValue['USR_UID'] : ''),
+                        $currentDelegation['DEL_INDEX'],
+                        $nextDel['DEL_PRIORITY'],
+                        $delType,
+                        $iNewAppThreadIndex,
+                        $nextDel,
+                        $appFields['APP_NUMBER'],
+                        $appFields['PRO_ID'],
+                        $nextDel['TAS_ID']
+                    );
 
-                    $iNewThreadIndex = $this->case->newAppThread( $currentDelegation['APP_UID'], $iMIDelIndex, $iAppThreadIndex );
+                    $iNewThreadIndex = $this->case->newAppThread( $currentDelegation['APP_UID'], $iMIDelIndex, $iAppThreadIndex, $appFields['APP_NUMBER'] );
 
                     //Setting the del Index for Updating the AppThread delIndex
                     if ($key == 0) {
@@ -1358,7 +1372,23 @@ class Derivation
                     $delPrevious = $row['DEL_PREVIOUS'];
                 }
                 // Create new delegation
-                $iNewDelIndex = $this->case->newAppDelegation( $appFields['PRO_UID'], $currentDelegation['APP_UID'], $nextDel['TAS_UID'], (isset( $nextDel['USR_UID'] ) ? $nextDel['USR_UID'] : ''), $currentDelegation['DEL_INDEX'], $nextDel['DEL_PRIORITY'], $delType, $iAppThreadIndex, $nextDel, $this->flagControl, $this->flagControlMulInstance, $delPrevious);
+                $iNewDelIndex = $this->case->newAppDelegation(
+                    $appFields['PRO_UID'],
+                    $currentDelegation['APP_UID'],
+                    $nextDel['TAS_UID'],
+                    (isset( $nextDel['USR_UID'] ) ? $nextDel['USR_UID'] : ''),
+                    $currentDelegation['DEL_INDEX'],
+                    $nextDel['DEL_PRIORITY'],
+                    $delType,
+                    $iAppThreadIndex,
+                    $nextDel,
+                    $this->flagControl,
+                    $this->flagControlMulInstance,
+                    $delPrevious,
+                    $appFields['APP_NUMBER'],
+                    $appFields['PRO_ID'],
+                    $nextDel['TAS_ID']
+                );
                 break;
         }
 
@@ -1383,7 +1413,7 @@ class Derivation
             case 'PARALLEL-BY-EVALUATION':
                 $this->case->closeAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex );
                 $iNewThreadIndex = $this->case->newAppThread( $currentDelegation['APP_UID'], $iNewDelIndex, $iAppThreadIndex );
-                $this->case->updateAppDelegation( $currentDelegation['APP_UID'], $iNewDelIndex, $iNewThreadIndex );
+                $this->case->updateAppDelegation( $currentDelegation['APP_UID'], $iNewDelIndex, $iNewThreadIndex, $appFields['APP_NUMBER'] );
                 break;
             default:
                 $this->case->updateAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex, $iNewDelIndex );

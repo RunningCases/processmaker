@@ -276,6 +276,18 @@ CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_list_unassigned");
 /*----------------------------------********---------------------------------*/
 
+CLI::taskName('migrate-indexing-acv');
+CLI::taskDescription(<<<EOT
+  Migrate and populate the indexes for the new relation fields to avoid the use of APP_CACHE_VIEW table
+
+  Specify the workspace, the self-service cases in this workspace will be updated.
+
+  If no workspace is specified, the command will be running in all workspaces.
+EOT
+);
+CLI::taskArg('workspace', true, true);
+CLI::taskRun("run_migrate_indexing_acv");
+
 CLI::taskName('migrate-content');
 CLI::taskDescription(<<<EOT
   Migrating the content schema to match the latest version

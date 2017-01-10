@@ -104,7 +104,7 @@ class AppDelegation extends BaseAppDelegation
      * @param $isSubprocess is a subprocess inside a process?
      * @return delegation index of the application delegation.
      */
-    public function createAppDelegation ($sProUid, $sAppUid, $sTasUid, $sUsrUid, $sAppThread, $iPriority = 3, $isSubprocess = false, $sPrevious = -1, $sNextTasParam = null, $flagControl = false, $flagControlMulInstance = false, $delPrevious = 0)
+    public function createAppDelegation ($sProUid, $sAppUid, $sTasUid, $sUsrUid, $sAppThread, $iPriority = 3, $isSubprocess = false, $sPrevious = -1, $sNextTasParam = null, $flagControl = false, $flagControlMulInstance = false, $delPrevious = 0, $appNumber = 0, $taskId = 0, $userId = 0, $proId = 0)
     {
         if (! isset( $sProUid ) || strlen( $sProUid ) == 0) {
             throw (new Exception( 'Column "PRO_UID" cannot be null.' ));
@@ -126,6 +126,7 @@ class AppDelegation extends BaseAppDelegation
             throw (new Exception( 'Column "APP_THREAD" cannot be null.' ));
         }
 
+        $this->delegation_id = null;
         //Get max DEL_INDEX
         $criteria = new Criteria("workflow");
         $criteria->add(AppDelegationPeer::APP_UID, $sAppUid);
@@ -196,6 +197,10 @@ class AppDelegation extends BaseAppDelegation
         $this->setDelThread( $sAppThread );
         $this->setDelThreadStatus( 'OPEN' );
         $this->setDelDelegateDate( 'now' );
+        $this->setAppNumber($appNumber);
+        $this->setTasId($taskId);
+        $this->setUsrId($userId);
+        $this->setProId($proId);
 
         //The function return an array now.  By JHL
         $delTaskDueDate = $this->calculateDueDate($sNextTasParam);

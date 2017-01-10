@@ -514,10 +514,8 @@ class Cases
                 $aFields['DEL_TASK_DUE_DATE'] = $aAppDel['DEL_TASK_DUE_DATE'];
                 $aFields['DEL_FINISH_DATE'] = $aAppDel['DEL_FINISH_DATE'];
                 $aFields['CURRENT_USER_UID'] = $aAppDel['USR_UID'];
+                $aFields['PRO_ID'] = $aAppDel['PRO_ID'];
                 try {
-                    //$oCurUser = new Users();
-                    //$oCurUser->load($aAppDel['USR_UID']);
-                    //$aFields['CURRENT_USER'] = $oCurUser->getUsrFirstname() . ' ' . $oCurUser->getUsrLastname();
                     $oCurUser = new Users();
                     if ($jump != '') {
                         $aCases = $oAppDel->LoadParallel($sAppUid);
@@ -1657,16 +1655,38 @@ class Cases
      * @param string $iPriority
      * @param string $sDelType
      * @param string $iAppThreadIndex
+     * @param string $nextDel
+     * @param boolean $flagControl
+     * @param boolean $flagControlMulInstance
+     * @param int $delPrevious
+     * @param int $appNumber
+     * @param int $proId
+     * @param int $tasId
      * @return void
      */
 
-    public function newAppDelegation($sProUid, $sAppUid, $sTasUid, $sUsrUid, $sPrevious, $iPriority, $sDelType, $iAppThreadIndex = 1, $nextDel = null, $flagControl = false, $flagControlMulInstance = false, $delPrevious = 0)
+    public function newAppDelegation($sProUid, $sAppUid, $sTasUid, $sUsrUid, $sPrevious, $iPriority, $sDelType, $iAppThreadIndex = 1, $nextDel = null, $flagControl = false, $flagControlMulInstance = false, $delPrevious = 0, $appNumber = 0, $proId = 0, $tasId = 0)
     {
         try {
+            $user = UsersPeer::retrieveByPK($sUsrUid);
             $appDel = new AppDelegation();
             $result = $appDel->createAppDelegation(
-                    $sProUid, $sAppUid, $sTasUid, $sUsrUid, $iAppThreadIndex, $iPriority, false, $sPrevious, $nextDel, $flagControl,
-                    $flagControlMulInstance, $delPrevious
+                $sProUid,
+                $sAppUid,
+                $sTasUid,
+                $sUsrUid,
+                $iAppThreadIndex,
+                $iPriority,
+                false,
+                $sPrevious,
+                $nextDel,
+                $flagControl,
+                $flagControlMulInstance,
+                $delPrevious,
+                $appNumber,
+                $tasId,
+                $user->getUsrId(),
+                $proId
             );
             //update searchindex
             if ($this->appSolr != null) {
@@ -1869,14 +1889,15 @@ class Cases
      * @param string $sAppUid,
      * @param string $iNewDelIndex
      * @param string $iAppParent
+     * @param string $appNumber
      * @return $iAppThreadIndex $iNewDelIndex, $iAppThreadIndex );
      */
 
-    public function newAppThread($sAppUid, $iNewDelIndex, $iAppParent)
+    public function newAppThread($sAppUid, $iNewDelIndex, $iAppParent, $appNumber = 0)
     {
         try {
             $appThread = new AppThread();
-            $result = $appThread->createAppThread($sAppUid, $iNewDelIndex, $iAppParent);
+            $result = $appThread->createAppThread($sAppUid, $iNewDelIndex, $iAppParent, $appNumber);
             //update searchindex
             if ($this->appSolr != null) {
                 $this->appSolr->updateApplicationSearchIndex($sAppUid);
@@ -2020,6 +2041,7 @@ class Cases
         if ($sTasUid != '') {
             try {
                 $task = TaskPeer::retrieveByPK($sTasUid);
+                $user = UsersPeer::retrieveByPK($sUsrUid);
 
                 if (is_null($task)) {
                     throw new Exception(G::LoadTranslation("ID_TASK_NOT_EXIST", array("TAS_UID", $sTasUid)));
@@ -2046,12 +2068,28 @@ class Cases
                 $iAppThreadIndex = 1; // Start Thread
                 $iAppDelPrio = 3; // Priority
                 $iDelIndex = $AppDelegation->createAppDelegation(
-                        $sProUid, $sAppUid, $sTasUid, $sUsrUid, $iAppThreadIndex, $iAppDelPrio, $isSubprocess
+                    $sProUid,
+                    $sAppUid,
+                    $sTasUid,
+                    $sUsrUid,
+                    $iAppThreadIndex,
+                    $iAppDelPrio,
+                    $isSubprocess,
+                    -1,
+                    null,
+                    false,
+                    false,
+                    0,
+                    $Application->getAppNumber(),
+                    $task->getTasId(),
+                    $user->getUsrId(),
+                    $this->Process->getProId()
+
                 );
 
                 //appThread
                 $AppThread = new AppThread;
-                $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex, 0);
+                $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex, 0, $Application->getAppNumber());
 
                 G::LoadClass('derivation');
                 $oDerivation = new Derivation();
@@ -2077,12 +2115,28 @@ class Cases
                            $AppDelegation = new AppDelegation;
                            $iAppThreadIndex ++; // Start Thread
                            $iAppDelPrio = 3; // Priority
+                           $user = UsersPeer::retrieveByPK($rowUser["USR_UID"]);
                            $iDelIndex1 = $AppDelegation->createAppDelegation(
-                                   $sProUid, $sAppUid, $sTasUid, $rowUser["USR_UID"], $iAppThreadIndex, $iAppDelPrio, $isSubprocess
+                                $sProUid,
+                                $sAppUid,
+                                $sTasUid,
+                                $rowUser["USR_UID"],
+                                $iAppThreadIndex,
+                                $iAppDelPrio,
+                                $isSubprocess,
+                                -1,
+                                null,
+                                false,
+                                false,
+                                0,
+                                $Application->getAppNumber(),
+                                $task->getTasId(),
+                                $user->getUsrId(),
+                                $this->Process->getProId()
                            );
                            //appThread
                            $AppThread = new AppThread;
-                           $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex1, 0);
+                           $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex1, 0, $Application->getAppNumber());
                            //Save Information
                            $aUserFields[$count] = $rowUser;
                            $aUserFields[$count]["DEL_INDEX"] = $iDelIndex1;
@@ -3962,6 +4016,7 @@ class Cases
         $aData['APP_ENABLE_ACTION_USER'] = $sUserUID;
         $aData['APP_ENABLE_ACTION_DATE'] = date('Y-m-d H:i:s');
         $aData['APP_DISABLE_ACTION_DATE'] = $sUnpauseDate;
+        $aData['APP_NUMBER'] = $oApplication->getAppNumber();
         $oAppDelay = new AppDelay();
         $oAppDelay->create($aData);
 
@@ -4017,7 +4072,24 @@ class Cases
         $tasUid = $aFieldsDel['TAS_UID'];
         $usrUid = $aFieldsDel['USR_UID'];
         $delThread = $aFieldsDel['DEL_THREAD'];
-        $iIndex = $oAppDelegation->createAppDelegation($proUid, $appUid, $tasUid, $usrUid, $delThread);
+        $iIndex = $oAppDelegation->createAppDelegation(
+            $proUid,
+            $appUid,
+            $tasUid,
+            $usrUid,
+            $delThread,
+            3,
+            false,
+            -1,
+            null,
+            false,
+            false,
+            0,
+            $aFieldsDel['APP_NUMBER'],
+            $aFieldsDel['TAS_ID'],
+            $aFieldsDel['USR_ID'],
+            $aFieldsDel['PRO_ID']
+        );
 
         //update other fields in the recent new appDelegation
         $aData = array();
@@ -4153,6 +4225,7 @@ class Cases
         $array['APP_DELEGATION_USER'] = $user_logged;
         $array['APP_ENABLE_ACTION_USER'] = $user_logged;
         $array['APP_ENABLE_ACTION_DATE'] = date('Y-m-d H:i:s');
+        $array['APP_NUMBER'] = $oApplication->getAppNumber();
         $delay->create($array);
 
         //Before cancel a case verify if is a child case
@@ -4369,7 +4442,22 @@ class Cases
         $oAppDelegation = new AppDelegation();
         $aFieldsDel = $oAppDelegation->Load($sApplicationUID, $iDelegation);
         $iIndex = $oAppDelegation->createAppDelegation(
-                $aFieldsDel['PRO_UID'], $aFieldsDel['APP_UID'], $aFieldsDel['TAS_UID'], $aFieldsDel['USR_UID'], $aFieldsDel['DEL_THREAD']
+            $aFieldsDel['PRO_UID'],
+            $aFieldsDel['APP_UID'],
+            $aFieldsDel['TAS_UID'],
+            $aFieldsDel['USR_UID'],
+            $aFieldsDel['DEL_THREAD'],
+            3,
+            false,
+            -1,
+            null,
+            false,
+            false,
+            0,
+            $aFieldsDel['APP_NUMBER'],
+            $aFieldsDel['TAS_ID'],
+            $aFieldsDel['USR_ID'],
+            $aFieldsDel['PRO_ID']
         );
         $newDelIndex = $iIndex;
         $aData = array();
@@ -4403,6 +4491,7 @@ class Cases
         $aData['APP_DELEGATION_USER'] = $sUserUID;
         $aData['APP_ENABLE_ACTION_USER'] = $sUserUID;
         $aData['APP_ENABLE_ACTION_DATE'] = date('Y-m-d H:i:s');
+        $aData['APP_NUMBER'] = $aFieldsDel['APP_NUMBER'];
         $oAppDelay = new AppDelay();
         $oAppDelay->create($aData);
 

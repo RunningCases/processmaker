@@ -112,13 +112,6 @@ class workspaceTools
         CLI::logging("<*>   Check Mafe Requirements Process took $final seconds.\n");
 
         $start = microtime(true);
-        CLI::logging("> Updating cache view...\n");
-        $this->upgradeCacheView($buildCacheView, true, $lang);
-        $stop = microtime(true);
-        $final = $stop - $start;
-        CLI::logging("<*>   Updating cache view Process took $final seconds.\n");
-
-        $start = microtime(true);
         CLI::logging("> Backup log files...\n");
         $this->backupLogFiles();
         $stop = microtime(true);
@@ -157,6 +150,12 @@ class workspaceTools
         $this->migrateSelfServiceRecordsRun($workSpace);
         $stop = microtime(true);
         CLI::logging("<*>   Migrating Self-Service records Process took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Migrating and populating indexing for APP_CACHE_VIEW...\n");
+        $this->migratePopulateIndexingACV($workSpace);
+        $stop = microtime(true);
+        CLI::logging("<*>   Migrating an populating indexing for APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
     }
 
     /**
@@ -3500,6 +3499,144 @@ class workspaceTools
         BasePeer::doUpdate($criteria, $criteriaSet, $con);
 
         CLI::logging("   Migrating Self-Service by Value Cases Done \n");
+    }
+
+    public function migratePopulateIndexingACV($workspace) {
+        // Migrating and populating new indexes
+        CLI::logging("-> Migrating And Populating Indexing for APP_CACHE_VIEW Start \n");
+
+        // Initializing
+        $this->initPropel(true);
+        $con = Propel::getConnection(AppDelegationPeer::DATABASE_NAME);
+
+        // Populating APP_THREAD.APP_NUMBER
+        CLI::logging("->   Populating APP_THREAD.APP_NUMBER \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_THREAD AS AT
+                                   INNER JOIN (
+                                       SELECT APPLICATION.APP_UID, APPLICATION.APP_NUMBER
+                                       FROM APPLICATION
+                                   ) AS APP
+                                   ON (AT.APP_UID = APP.APP_UID)
+                                   SET AT.APP_NUMBER = APP.APP_NUMBER
+                                   WHERE AT.APP_NUMBER = 0");
+        $con->commit();
+
+        // Populating APP_THREAD.DELEGATION_ID
+        CLI::logging("->   Populating APP_THREAD.DELEGATION_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_THREAD AS AT
+                                   INNER JOIN (
+                                       SELECT APP_DELEGATION.APP_UID, APP_DELEGATION.DEL_INDEX, APP_DELEGATION.DELEGATION_ID
+                                       FROM APP_DELEGATION
+                                   ) AS APPDEL
+                                   ON (AT.APP_UID = APPDEL.APP_UID AND AT.DEL_INDEX = APPDEL.DEL_INDEX)
+                                   SET AT.DELEGATION_ID = APPDEL.DELEGATION_ID
+                                   WHERE AT.DELEGATION_ID = 0");
+        $con->commit();
+
+        // Populating APP_DELAY.APP_NUMBER
+        CLI::logging("->   Populating APP_DELAY.APP_NUMBER \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_DELAY AS AD
+                                   INNER JOIN (
+                                       SELECT APPLICATION.APP_UID, APPLICATION.APP_NUMBER
+                                       FROM APPLICATION
+                                   ) AS APP
+                                   ON (AD.APP_UID = APP.APP_UID)
+                                   SET AD.APP_NUMBER = APP.APP_NUMBER
+                                   WHERE AD.APP_NUMBER = 0");
+        $con->commit();
+
+        // Populating APP_DELAY.DELEGATION_ID
+        CLI::logging("->   Populating APP_DELAY.DELEGATION_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_DELAY AS AD
+                                   INNER JOIN (
+                                       SELECT APP_DELEGATION.APP_UID, APP_DELEGATION.DEL_INDEX, APP_DELEGATION.DELEGATION_ID
+                                       FROM APP_DELEGATION
+                                   ) AS APPDEL
+                                   ON (AD.APP_UID = APPDEL.APP_UID AND AD.APP_DEL_INDEX = APPDEL.DEL_INDEX)
+                                   SET AD.DELEGATION_ID = APPDEL.DELEGATION_ID
+                                   WHERE AD.DELEGATION_ID = 0");
+        $con->commit();
+
+        // Populating APP_DELEGATION.APP_NUMBER
+        CLI::logging("->   Populating APP_DELEGATION.APP_NUMBER \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_DELEGATION AS AD
+                                   INNER JOIN (
+                                       SELECT APPLICATION.APP_UID, APPLICATION.APP_NUMBER
+                                       FROM APPLICATION
+                                   ) AS APP
+                                   ON (AD.APP_UID = APP.APP_UID)
+                                   SET AD.APP_NUMBER = APP.APP_NUMBER
+                                   WHERE AD.APP_NUMBER = 0");
+        $con->commit();
+
+        // Populating APP_DELEGATION.USR_ID
+        CLI::logging("->   Populating APP_DELEGATION.USR_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_DELEGATION AS AD
+                                   INNER JOIN (
+                                       SELECT USERS.USR_UID, USERS.USR_ID
+                                       FROM USERS
+                                   ) AS USR
+                                   ON (AD.USR_UID = USR.USR_UID)
+                                   SET AD.USR_ID = USR.USR_ID
+                                   WHERE AD.USR_ID = 0");
+        $con->commit();
+
+        // Populating APP_DELEGATION.PRO_ID
+        CLI::logging("->   Populating APP_DELEGATION.PRO_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_DELEGATION AS AD
+                                   INNER JOIN (
+                                       SELECT PROCESS.PRO_UID, PROCESS.PRO_ID
+                                       FROM PROCESS
+                                   ) AS PRO
+                                   ON (AD.PRO_UID = PRO.PRO_UID)
+                                   SET AD.PRO_ID = PRO.PRO_ID
+                                   WHERE AD.PRO_ID = 0");
+        $con->commit();
+
+        // Populating APP_DELEGATION.TAS_ID
+        CLI::logging("->   Populating APP_DELEGATION.TAS_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_DELEGATION AS AD
+                                   INNER JOIN (
+                                       SELECT TASK.TAS_UID, TASK.TAS_ID
+                                       FROM TASK
+                                   ) AS TAS
+                                   ON (AD.TAS_UID = TAS.TAS_UID)
+                                   SET AD.TAS_ID = TAS.TAS_ID
+                                   WHERE AD.TAS_ID = 0");
+        $con->commit();
+
+        // Populating APP_DELEGATION.TAS_ID
+        CLI::logging("->   Populating APPLICATION.APP_STATUS_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APPLICATION
+                                    SET APP_STATUS_ID = (case
+                                        when APP_STATUS = 'DRAFT' then 1
+                                        when APP_STATUS = 'TO_DO' then 2
+                                        when APP_STATUS = 'COMPLETED' then 3
+                                        when APP_STATUS = 'CANCELLED' then 4
+                                    end)
+                                    WHERE APP_STATUS in ('DRAFT', 'TO_DO', 'COMPLETED', 'CANCELLED') AND
+                                    APP_STATUS_ID = 0");
+        $con->commit();
+
+        CLI::logging("-> Migrating And Populating Indexing for APP_CACHE_VIEW Done \n");
     }
 
 }
