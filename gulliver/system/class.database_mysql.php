@@ -207,12 +207,14 @@ class database extends database_base
             }
         }
         if (isset( $aParameters['AutoIncrement'] ) && $aParameters['AutoIncrement']) {
-            $sSQL .= ' AUTO_INCREMENT PRIMARY KEY';
+            $sSQL .= ' AUTO_INCREMENT';
         }
-        /*if ($aParameters['Key'] == 'PRI') {
-         $sKeys .= 'ALTER TABLE ' . $this->sQuoteCharacter . $sTable . $this->sQuoteCharacter .
-                ' ADD PRIMARY KEY (' . $this->sQuoteCharacter . $sColumn . $this->sQuoteCharacter . ')' . $this->sEndLine;
-         }*/
+        if (isset( $aParameters['Unique'] ) && $aParameters['Unique']) {
+            $sSQL .= ' UNIQUE';
+        } else {
+            $sSQL .= ' PRIMARY KEY';
+        }
+
         if (isset( $aParameters['AI'] )) {
             if ($aParameters['AI'] == 1) {
                 $sSQL .= ' AUTO_INCREMENT';

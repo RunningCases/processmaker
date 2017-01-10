@@ -77,7 +77,7 @@ class ApplicationMapBuilder
 
         $tMap->addColumn('APP_STATUS', 'AppStatus', 'string', CreoleTypes::VARCHAR, true, 100);
 
-        $tMap->addColumn('APP_STATUS_ID', 'AppStatusId', 'int', CreoleTypes::INTEGER, true, null);
+        $tMap->addColumn('APP_STATUS_ID', 'AppStatusId', 'int', CreoleTypes::TINYINT, true, null);
 
         $tMap->addColumn('PRO_UID', 'ProUid', 'string', CreoleTypes::VARCHAR, true, 32);
 

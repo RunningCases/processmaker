@@ -807,6 +807,7 @@ class System
                 $required = (in_array(strtolower($required), array('1', 'true'
                 )));
                 $autoIncrement = $oColumn->hasAttribute('autoIncrement') ? $oColumn->hasAttribute('autoIncrement') : false;
+                $unique = $oColumn->hasAttribute('unique') ? $oColumn->hasAttribute('unique') : false;
                 $default = $oColumn->hasAttribute('default') ? $oColumn->getAttribute('default') : null;
 
                 $primaryKey = $oColumn->hasAttribute('primaryKey') ? $oColumn->getAttribute('primaryKey') : null;
@@ -816,8 +817,14 @@ class System
                 if ($primaryKey) {
                     $aPrimaryKeys[] = $sColumName;
                 }
-                $aSchema[$sTableName][$sColumName] = array('Field' => $sColumName, 'Type' => $type,
-                    'Null' => $required ? "NO" : "YES", 'Default' => $default, 'AutoIncrement' => $autoIncrement);
+                $aSchema[$sTableName][$sColumName] = array(
+                    'Field' => $sColumName,
+                    'Type' => $type,
+                    'Null' => $required ? "NO" : "YES",
+                    'Default' => $default,
+                    'AutoIncrement' => $autoIncrement,
+                    'Unique' => $unique
+                );
             }
 
             if (is_array($aPrimaryKeys) && count($aPrimaryKeys) > 0) {

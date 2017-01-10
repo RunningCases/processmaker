@@ -1,6 +1,140 @@
 <?php
 class Applications
 {
+    public function searchAll(
+        $userUid,
+        $start = null,
+        $limit = null,
+        $search = null,
+        $process = null,
+        $status = null,
+        $dir = null,
+        $sort = null,
+        $category = null
+    ) {
+        //Task Dummies
+        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
+
+        $newCriteria = new Criteria("workflow");
+        $newCriteria->addSelectColumn(ApplicationPeer::APP_NUMBER);
+        $newCriteria->addSelectColumn(ApplicationPeer::APP_UID);
+        $newCriteria->addSelectColumn(ApplicationPeer::APP_STATUS);
+        $newCriteria->addSelectColumn(ApplicationPeer::PRO_UID);
+        $newCriteria->addSelectColumn(ApplicationPeer::APP_CREATE_DATE);
+        $newCriteria->addSelectColumn(ApplicationPeer::APP_FINISH_DATE);
+        $newCriteria->addSelectColumn(ApplicationPeer::APP_UPDATE_DATE);
+        $newCriteria->addSelectColumn(ApplicationPeer::APP_TITLE);
+        $newCriteria->addSelectColumn(AppDelegationPeer::USR_UID);
+        $newCriteria->addSelectColumn(AppDelegationPeer::TAS_UID);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_INDEX);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_LAST_INDEX);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_DELEGATE_DATE);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_INIT_DATE);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_FINISH_DATE);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_TASK_DUE_DATE);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_RISK_DATE);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_THREAD_STATUS);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_PRIORITY);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_DURATION);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_QUEUE_DURATION);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_STARTED);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_DELAY_DURATION);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_FINISHED);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_DELAYED);
+        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_DELAY_DURATION);
+        $newCriteria->addSelectColumn(UsersPeer::USR_LASTNAME);
+        $newCriteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+        $newCriteria->addSelectColumn(UsersPeer::USR_USERNAME);
+        $newCriteria->addSelectColumn(TaskPeer::TAS_TITLE);
+        $newCriteria->addSelectColumn(ProcessPeer::PRO_TITLE);
+        $newCriteria->addJoin(AppDelegationPeer::APP_NUMBER , ApplicationPeer::APP_NUMBER, Criteria::LEFT_JOIN);
+        $newCriteria->addJoin(AppDelegationPeer::DELEGATION_ID , AppThreadPeer::DELEGATION_ID, Criteria::LEFT_JOIN);
+        $newCriteria->addJoin(AppDelegationPeer::USR_ID , UsersPeer::USR_ID, Criteria::LEFT_JOIN);
+        $newCriteria->addJoin(AppDelegationPeer::PRO_ID , ProcessPeer::PRO_ID, Criteria::LEFT_JOIN);
+        $newCriteria->addJoin(AppDelegationPeer::TAS_ID , TaskPeer::TAS_ID, Criteria::LEFT_JOIN);
+        $newCriteria->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
+        switch ($status) {
+            case 1: //DRAFT
+                $newCriteria->add(ApplicationPeer::APP_STATUS_ID, 1);
+                break;
+            case 2: //TO_DO
+                $newCriteria->add(ApplicationPeer::APP_STATUS_ID, 2);
+                break;
+            case 3: //COMPLETED
+                $newCriteria->addOr(AppDelegationPeer::DEL_THREAD_STATUS, 'CLOSED');
+                $newCriteria->add(ApplicationPeer::APP_STATUS_ID, 3);
+                $newCriteria->add(AppDelegationPeer::DEL_LAST_INDEX, '1');
+                break;
+            case 4: //CANCELLED
+                $newCriteria->addOr(AppDelegationPeer::DEL_THREAD_STATUS, 'CLOSED');
+                $newCriteria->add(ApplicationPeer::APP_STATUS_ID, 4);
+                $newCriteria->add(AppDelegationPeer::DEL_LAST_INDEX, '1');
+                break;
+            case "PAUSED": //This status is not considered in the search, maybe we can add in the new versions
+                $newCriteria->add(ApplicationPeer::APP_STATUS, 'TO_DO');
+                break;
+            default:
+                break;
+        }
+        if (!empty($userUid)) {
+            $newCriteria->add(AppDelegationPeer::USR_ID, $userUid);
+        }
+        if (!empty($process)) {
+            $newCriteria->add(ProcessPeer::PRO_ID, $process);
+        }
+        if (!empty($category)) {
+            $newCriteria->add(ProcessPeer::PRO_CATEGORY, $category);
+        }
+        if (!empty($search)) {
+            //APP_NUMBER APP_TAS_TITLE APP_TITLE
+            $newCriteria->add( $newCriteria->getNewCriterion( ApplicationPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE )
+            ->addOr( $newCriteria->getNewCriterion( TaskPeer::TAS_TITLE, '%' . $search . '%', Criteria::LIKE )
+            ->addOr( $newCriteria->getNewCriterion( ApplicationPeer::APP_NUMBER, '%' . $search . '%', Criteria::LIKE ) ) ) );
+        }
+
+        $newCriteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
+        $totalCount = ApplicationPeer::doCount($newCriteria, false);
+
+        //Filters
+        if ($dir == "DESC") {
+            $newCriteria->addDescendingOrderByColumn($sort);
+        } else {
+            $newCriteria->addAscendingOrderByColumn($sort);
+        }
+        $newCriteria->setLimit( $limit );
+        $newCriteria->setOffset( $start );
+
+        $oDataset = ApplicationPeer::doSelectRS( $newCriteria, Propel::getDbConnection('workflow') );
+        $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+
+        $result = array ();
+        $result['totalCount'] = $totalCount;
+        $rows = array();
+        $aPriorities = array ('1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH');
+        while ($oDataset->next()) {
+            $aRow = $oDataset->getRow();
+            if (isset( $aRow['APP_STATUS'] )) {
+                $aRow['APP_STATUS_LABEL'] = G::LoadTranslation( "ID_{$aRow['APP_STATUS']}" );
+            }
+            if (isset( $aRow['DEL_PRIORITY'] )) {
+                $aRow['DEL_PRIORITY'] = G::LoadTranslation( "ID_PRIORITY_{$aPriorities[$aRow['DEL_PRIORITY']]}" );
+            }
+            $aRow["APP_CURRENT_USER"] = $aRow["USR_LASTNAME"].' '.$aRow["USR_FIRSTNAME"];
+            $aRow["APPDELCR_APP_TAS_TITLE"] = '';
+            $aRow["USRCR_USR_UID"] = $aRow["USR_UID"];
+            $aRow["USRCR_USR_FIRSTNAME"] = $aRow["USR_FIRSTNAME"];
+            $aRow["USRCR_USR_LASTNAME"] = $aRow["USR_LASTNAME"];
+            $aRow["USRCR_USR_USERNAME"] = $aRow["USR_USERNAME"];
+            $aRow["APP_OVERDUE_PERCENTAGE"] = '';
+            $aRow["APP_TAS_TITLE"] = $aRow["TAS_TITLE"];
+            $aRow["APP_TITLE"] = $aRow["APP_TITLE"];
+            $aRow["APP_PRO_TITLE"] = $aRow["PRO_TITLE"];
+            $rows[] = $aRow;
+        }
+        $result['data'] = $rows;
+        return $result;
+    }
+
     public function getAll(
         $userUid,
         $start = null,

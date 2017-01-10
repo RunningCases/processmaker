@@ -235,14 +235,14 @@ function getUserArray ($action, $userUid)
         case 'search':
             $cUsers = new Criteria( 'workflow' );
             $cUsers->clearSelectColumns();
-            $cUsers->addSelectColumn( UsersPeer::USR_UID );
+            $cUsers->addSelectColumn( UsersPeer::USR_ID );
             $cUsers->addSelectColumn( UsersPeer::USR_FIRSTNAME );
             $cUsers->addSelectColumn( UsersPeer::USR_LASTNAME );
             $oDataset = UsersPeer::doSelectRS( $cUsers );
             $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
-                $users[] = array ($aRow['USR_UID'],$aRow['USR_LASTNAME'] . ' ' . $aRow['USR_FIRSTNAME']);
+                $users[] = array ($aRow['USR_ID'],$aRow['USR_LASTNAME'] . ' ' . $aRow['USR_FIRSTNAME']);
                 $oDataset->next();
             }
             break;
@@ -308,14 +308,11 @@ function getAllUsersArray ($action)
 
 function getStatusArray($action, $userUid)
 {
-    $status = array();
-    $status[] = array('', G::LoadTranslation('ID_ALL_STATUS'));
-    $status[] = array('COMPLETED', G::LoadTranslation('ID_CASES_STATUS_COMPLETED'));
-    $status[] = array('DRAFT', G::LoadTranslation('ID_CASES_STATUS_DRAFT'));
-    $status[] = array('TO_DO', G::LoadTranslation('ID_CASES_STATUS_TO_DO'));
-    $status[] = array('CANCELLED', G::LoadTranslation('ID_CASES_STATUS_CANCELLED'));
-
-    return $status;
+    $aStatus = Application::$app_status_values;
+    foreach ($aStatus as $key => $value) {
+        $status[] =  array ($value, G::LoadTranslation( 'ID_CASES_STATUS_' . $key ));
+    }
+    return $aStatus;
 }
 
 //these getXX function gets the default fields in casesListSetup

@@ -28,16 +28,6 @@ if (!isset($_SESSION['USER_LOGGED'])) {
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
-/*require_once 'classes/model/Application.php';
-require_once 'classes/model/Users.php';
-require_once 'classes/model/AppThread.php';
-require_once 'classes/model/AppDelay.php';
-require_once 'classes/model/Process.php';
-require_once 'classes/model/Task.php';
-require_once ("classes/model/AppCacheView.php");
-require_once ("classes/model/AppDelegation.php");
-require_once ("classes/model/AdditionalTables.php");
-require_once ("classes/model/AppDelay.php");*/
 G::LoadClass( 'case' );
 
 $actionAjax = isset($_REQUEST['actionAjax']) ? $_REQUEST['actionAjax'] : null;
@@ -74,7 +64,7 @@ if ($actionAjax == "userValues") {
 
             $cUsers = new Criteria('workflow');
             $cUsers->clearSelectColumns();
-            $cUsers->addSelectColumn(UsersPeer::USR_UID);
+            $cUsers->addSelectColumn(UsersPeer::USR_ID);
             $cUsers->addSelectColumn(UsersPeer::USR_USERNAME);
             $cUsers->addSelectColumn(UsersPeer::USR_FIRSTNAME);
             $cUsers->addSelectColumn(UsersPeer::USR_LASTNAME);
@@ -96,7 +86,7 @@ if ($actionAjax == "userValues") {
 
                 $usrFullName = $conf->usersNameFormatBySetParameters($confEnvSetting["format"], $row["USR_USERNAME"], $row["USR_FIRSTNAME"], $row["USR_LASTNAME"]);
 
-                $users[] = array("USR_UID" => $row["USR_UID"], "USR_FULLNAME" => $usrFullName);
+                $users[] = array("USR_ID" => $row["USR_UID"], "USR_FULLNAME" => $usrFullName);
             }
             break;
         default:
@@ -124,7 +114,7 @@ if ($actionAjax == "processListExtJs") {
     $cProcess = new Criteria('workflow');
     //get the processes for this user in this action
     $cProcess->clearSelectColumns();
-    $cProcess->addSelectColumn(ProcessPeer::PRO_UID);
+    $cProcess->addSelectColumn(ProcessPeer::PRO_ID);
     $cProcess->addSelectColumn(ProcessPeer::PRO_TITLE);
     if ($categoryUid) {
         $cProcess->add(ProcessPeer::PRO_CATEGORY, $categoryUid);
@@ -221,6 +211,7 @@ if ($actionAjax == "getUsersToReassign") {
 
     echo G::json_encode($response);
 }
+
 if ($actionAjax == 'reassignCase') {
 
     $APP_UID = $_REQUEST["APP_UID"];
@@ -255,16 +246,15 @@ if ($actionAjax == 'reassignCase') {
         if($flagReassign){
             $cases->reassignCase($_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED'], $TO_USR_UID);
         }
-        
+
         $caseData = $app->load($_SESSION['APPLICATION']);
         $userData = $user->load($TO_USR_UID);
-        //print_r($caseData);
         $data['APP_NUMBER'] = $caseData['APP_NUMBER'];
         $data['USER'] = $userData['USR_LASTNAME'] . ' ' . $userData['USR_FIRSTNAME']; //TODO change with the farmated username from environment conf
         $result = new stdClass();
         $result->status = 0;
         $result->msg = G::LoadTranslation('ID_REASSIGNMENT_SUCCESS', SYS_LANG, $data);
-        
+
         // Save the note reassign reason
         if (isset($_POST['NOTE_REASON']) && $_POST['NOTE_REASON'] !== '') {
             require_once ("classes/model/AppNotes.php");

@@ -27,7 +27,7 @@
     <column name="APP_NUMBER" type="INTEGER" required="true" default="0"/>
     <column name="APP_PARENT" type="VARCHAR" size="32" required="true" default="0"/>
     <column name="APP_STATUS" type="VARCHAR" size="100" required="true" default=""/>
-    <column name="APP_STATUS_ID" type="INTEGER" required="true" default="1"/>
+    <column name="APP_STATUS_ID" type="TINYINT" required="true" default="1"/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" default=""/>
     <column name="APP_PROC_STATUS" type="VARCHAR" size="100" required="true" default=""/>
     <column name="APP_PROC_CODE" type="VARCHAR" size="100" required="true" default=""/>
