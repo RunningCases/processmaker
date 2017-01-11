@@ -823,7 +823,8 @@ class System
                     'Null' => $required ? "NO" : "YES",
                     'Default' => $default,
                     'AutoIncrement' => $autoIncrement,
-                    'Unique' => $unique
+                    'Unique' => $unique,
+                    'PrimaryKey' => $primaryKey
                 );
             }
 

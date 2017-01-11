@@ -209,12 +209,14 @@ class database extends database_base
         if (isset( $aParameters['AutoIncrement'] ) && $aParameters['AutoIncrement']) {
             $sSQL .= ' AUTO_INCREMENT';
         }
-        if (isset( $aParameters['Unique'] ) && $aParameters['Unique']) {
-            $sSQL .= ' UNIQUE';
-        } else {
+        if (isset( $aParameters['PrimaryKey'] ) && $aParameters['PrimaryKey']) {
             $sSQL .= ' PRIMARY KEY';
         }
+        if (isset( $aParameters['Unique'] ) && $aParameters['Unique']) {
+            $sSQL .= ' UNIQUE';
+        }
 
+        //we need to check the property AI
         if (isset( $aParameters['AI'] )) {
             if ($aParameters['AI'] == 1) {
                 $sSQL .= ' AUTO_INCREMENT';

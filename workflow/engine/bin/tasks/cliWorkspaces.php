@@ -947,3 +947,18 @@ function run_migrate_self_service_value($args, $opts) {
     $stop = microtime(true);
     CLI::logging("<*>   Migrating Self-Service records Process took " . ($stop - $start) . " seconds.\n");
 }
+
+function run_migrate_indexing_acv($args, $opts) {
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
+    $args = $filter->xssFilterHard($args);
+    $workspaces = get_workspaces_from_args($args);
+    $start = microtime(true);
+    CLI::logging("> Migrating and populating indexing for APP_CACHE_VIEW...\n");
+    foreach ($workspaces as $workspace) {
+        print_r('Indexing for APP_CACHE_VIEW: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
+        $workspace->migratePopulateIndexingACV($workspace->name);
+    }
+    $stop = microtime(true);
+    CLI::logging("<*>   Migrating an populating indexing for APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
+}

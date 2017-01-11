@@ -308,11 +308,13 @@ function getAllUsersArray ($action)
 
 function getStatusArray($action, $userUid)
 {
+    $status = array();
     $aStatus = Application::$app_status_values;
+    $status[] = array('', G::LoadTranslation('ID_ALL_STATUS'));
     foreach ($aStatus as $key => $value) {
         $status[] =  array ($value, G::LoadTranslation( 'ID_CASES_STATUS_' . $key ));
     }
-    return $aStatus;
+    return $status;
 }
 
 //these getXX function gets the default fields in casesListSetup
