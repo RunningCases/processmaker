@@ -409,6 +409,7 @@ class Task extends BaseTask
             $this->setTasPosx("");
             $this->setTasPosy("");
             $this->setTasColor("");
+            $this->setTasGroupVariable("");
             $this->fromArray($aData,BasePeer::TYPE_FIELDNAME);
 
             if ($this->validate()) {
