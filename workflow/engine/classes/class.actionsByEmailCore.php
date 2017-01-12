@@ -177,7 +177,7 @@ class actionsByEmailCoreClass extends PMPlugin
                                     $configuration['CURRENT_DYNAFORM'] = $configuration['DYN_UID'];
                                     $file = $obj->printPmDynaformAbe($configuration);
                                     $__ABE__ .= $file;
-                                    $__ABE__ .= '<strong>' . $field->label . '</strong><table align="left" border="0"><tr>';
+                                    $__ABE__ .= '<div style="width: 100%"></div><strong>' . $field->label . '</strong><table align="left" border="0"><tr>';
                                     $index = 1;
                                     $__ABE__ .= '<td><table align="left" cellpadding="2"><tr>';
                                     foreach ($customGrid as $key => $value) {
@@ -189,7 +189,7 @@ class actionsByEmailCoreClass extends PMPlugin
                                         $__ABE__ .= '</a></td>' . (($index % 5 == 0) ? '</tr><tr>' : '  ');
                                         $index++;
                                     }
-                                    $__ABE__ .= '</tr></table><br/>';
+                                    $__ABE__ .= '</tr></table></div>';
                                     break;
                                 case 'LINK':
                                     $__ABE__ .= '<a href="' . $link . 'DataForm?APP_UID=' . G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY) . '&DYN_UID=' . G::encrypt($configuration['DYN_UID'], URL_KEY) . '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY) . '" target="_blank">Please complete this form</a>';
