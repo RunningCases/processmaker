@@ -778,6 +778,10 @@ class AdditionalTables extends BaseAdditionalTables
             // quick fix
             // map all empty values as NULL for Database
             foreach ($caseData as $dKey => $dValue) {
+                if (is_array($dValue) && count($dValue)) {
+                    $j = key($dValue);
+                    $dValue = (is_array($dValue[$j])) ? $dValue : $dValue[$j];
+                }
                 if (!is_array($dValue)) {
                     foreach ($fieldTypes as $key => $fieldType) {
                         foreach ($fieldType as $name => $theType) {
@@ -897,6 +901,10 @@ class AdditionalTables extends BaseAdditionalTables
                         $caseData = unserialize($caseData);
                     }
                     foreach ($caseData as $i => $v) {
+                        if (is_array($v) && count($v)) {
+                            $j = key($v);
+                            $v = (is_array($v[$j])) ? $v : $v[$j];
+                        }
                         foreach ($fieldTypes as $key => $fieldType) {
                             foreach ($fieldType as $name => $type) {
                                 if ( strtoupper ( $i) == $name) {
