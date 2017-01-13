@@ -1193,9 +1193,11 @@ class Cases
     public function setCatchUser($sAppUid, $iDelIndex, $usrId)
     {
         try {
+            $user = UsersPeer::retrieveByPk($usrId);
             $oAppDel = AppDelegationPeer::retrieveByPk($sAppUid, $iDelIndex);
             $oAppDel->setDelInitDate("now");
             $oAppDel->setUsrUid($usrId);
+            $oAppDel->setUsrId($user->getUsrId());
             $oAppDel->save();
 
             //update searchindex
@@ -4065,6 +4067,7 @@ class Cases
 
         //get information about current $iDelegation row
         $oAppDelegation = new AppDelegation();
+        $user = UsersPeer::retrieveByPK($sUserUID);
         $aFieldsDel = $oAppDelegation->Load($sApplicationUID, $iDelegation);
         //and creates a new AppDelegation row with the same user, task, process, etc.
         $proUid = $aFieldsDel['PRO_UID'];
@@ -4087,7 +4090,7 @@ class Cases
             0,
             $aFieldsDel['APP_NUMBER'],
             $aFieldsDel['TAS_ID'],
-            $aFieldsDel['USR_ID'],
+            (empty($user)) ? 0 : $user->getUsrId(),
             $aFieldsDel['PRO_ID']
         );
 
@@ -4439,13 +4442,14 @@ class Cases
     public function reassignCase($sApplicationUID, $iDelegation, $sUserUID, $newUserUID, $sType = 'REASSIGN')
     {
         $this->CloseCurrentDelegation($sApplicationUID, $iDelegation);
+        $user = UsersPeer::retrieveByPK($newUserUID);
         $oAppDelegation = new AppDelegation();
         $aFieldsDel = $oAppDelegation->Load($sApplicationUID, $iDelegation);
         $iIndex = $oAppDelegation->createAppDelegation(
             $aFieldsDel['PRO_UID'],
             $aFieldsDel['APP_UID'],
             $aFieldsDel['TAS_UID'],
-            $aFieldsDel['USR_UID'],
+            (empty($user)) ? 0 : $user->getUsrId(),
             $aFieldsDel['DEL_THREAD'],
             3,
             false,
@@ -4470,6 +4474,7 @@ class Cases
         $aData['USR_UID'] = $newUserUID;
         $aData['DEL_INIT_DATE'] = null;
         $aData['DEL_FINISH_DATE'] = null;
+        $aData['USR_ID'] = (empty($user)) ? 0 : $user->getUsrId();
         $oAppDelegation->update($aData);
         $oAppThread = new AppThread();
         $oAppThread->update(
