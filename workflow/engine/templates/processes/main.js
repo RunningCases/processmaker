@@ -1626,12 +1626,27 @@ importProcessExistGroup = function()
                   success : function(o, resp) {
                     var resp_            = Ext.util.JSON.decode(resp.response.responseText);
                     var sNewProUid       = resp_.sNewProUid;
-
-                    if (typeof(resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
-                        var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
-                        openWindowIfIE(goTo + sNewProUid);
+                    if (resp_.catchMessage === '') {
+                        if (typeof (resp_.project_type) != "undefined" && resp_.project_type == "bpmn") {
+                            var goTo = importProcessCallbackFile ? importProcessCallbackFile : "../designer?prj_uid=";
+                            openWindowIfIE(goTo + sNewProUid);
+                        } else {
+                            window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+                        }
                     } else {
-                        window.location.href = "processes_Map?PRO_UID=" + sNewProUid;
+                        Ext.getCmp('objectsToImport').setValue("");
+                        Ext.getCmp('importProcessExistGroupWindow').close();
+                        Ext.getCmp('importProcessExistProcessWindow').close();
+                        Ext.getCmp('importProcessWindow').close();
+                        Ext.MessageBox.show({
+                            title: _('ID_ERROR'),
+                            msg: resp_.catchMessage,
+                            buttons: Ext.MessageBox.OK,
+                            animEl: 'mb9',
+                            fn: function () {},
+                            icon: Ext.MessageBox.ERROR
+                        });
+                        processesGrid.store.reload();
                     }
                   },
                   failure: function(o, resp) {
