@@ -1685,7 +1685,7 @@ class Cases
                 $delPrevious,
                 $appNumber,
                 $tasId,
-                $user->getUsrId(),
+                (empty($user)) ? 0 : $user->getUsrId(),
                 $proId
             );
             //update searchindex

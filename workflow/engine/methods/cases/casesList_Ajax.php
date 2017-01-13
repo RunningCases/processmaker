@@ -114,7 +114,12 @@ if ($actionAjax == "processListExtJs") {
     $cProcess = new Criteria('workflow');
     //get the processes for this user in this action
     $cProcess->clearSelectColumns();
-    $cProcess->addSelectColumn(ProcessPeer::PRO_ID);
+    if($action == 'search'){
+        $cProcess->addSelectColumn(ProcessPeer::PRO_ID);
+    } else {
+        $cProcess->addSelectColumn(ProcessPeer::PRO_UID);
+    }
+
     $cProcess->addSelectColumn(ProcessPeer::PRO_TITLE);
     if ($categoryUid) {
         $cProcess->add(ProcessPeer::PRO_CATEGORY, $categoryUid);
@@ -150,6 +155,9 @@ if ($actionAjax == "processListExtJs") {
 
     while ($oDataset->next()) {
         $aRow = $oDataset->getRow();
+        if(!isset($aRow['PRO_UID'])){
+            $aRow['PRO_UID'] = $aRow['PRO_ID'];
+        }
         $processes[] = $aRow;
     }
     return print G::json_encode($processes);

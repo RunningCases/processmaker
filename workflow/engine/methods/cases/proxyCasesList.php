@@ -124,7 +124,9 @@ try {
             $filterStatus,
             $dir,
             (strpos($sort, ".") !== false)? $sort : "APPLICATION." . $sort,
-            $category
+            $category,
+            $dateFrom,
+            $dateTo
         );
 
         $data['data'] = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($data['data']);

@@ -10,7 +10,9 @@ class Applications
         $status = null,
         $dir = null,
         $sort = null,
-        $category = null
+        $category = null,
+        $dateFrom = null,
+        $dateTo =null
     ) {
         //Task Dummies
         $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
@@ -73,7 +75,9 @@ class Applications
             case "PAUSED": //This status is not considered in the search, maybe we can add in the new versions
                 $newCriteria->add(ApplicationPeer::APP_STATUS, 'TO_DO');
                 break;
-            default:
+            default: //All status
+                $newCriteria->addOr(AppDelegationPeer::DEL_THREAD_STATUS, 'CLOSED');
+                $newCriteria->add(AppDelegationPeer::DEL_LAST_INDEX, '1');
                 break;
         }
         if (!empty($userUid)) {
@@ -90,6 +94,13 @@ class Applications
             $newCriteria->add( $newCriteria->getNewCriterion( ApplicationPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE )
             ->addOr( $newCriteria->getNewCriterion( TaskPeer::TAS_TITLE, '%' . $search . '%', Criteria::LIKE )
             ->addOr( $newCriteria->getNewCriterion( ApplicationPeer::APP_NUMBER, '%' . $search . '%', Criteria::LIKE ) ) ) );
+        }
+        if (!empty($dateFrom)){
+            $newCriteria->add(AppDelegationPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL) ;
+        }
+        if (!empty($dateTo)){
+            $dateTo = $dateTo . " 23:59:59";
+            $newCriteria->addAnd(AppDelegationPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL) ;
         }
 
         $newCriteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
