@@ -6,7 +6,6 @@ use \Smarty;
 use \Criteria;
 use \ReportTablePeer;
 use \ResultSet;
-use \AppCacheViewPeer;
 use \CaseConsolidatedCorePeer;
 use \ContentPeer;
 
@@ -31,15 +30,11 @@ class Consolidated
         $criteria = new Criteria();
         $criteria->addSelectColumn(CaseConsolidatedCorePeer::DYN_UID);
         $criteria->addSelectColumn(\ReportTablePeer::REP_TAB_NAME);
+        $criteria->addAsColumn('CON_VALUE', \ReportTablePeer::REP_TAB_TITLE);
         $criteria->addSelectColumn(\ReportTablePeer::REP_TAB_UID);
         $criteria->addSelectColumn(ContentPeer::CON_VALUE);
         $criteria->addSelectColumn(CaseConsolidatedCorePeer::CON_STATUS);
-
         $criteria->addJoin( CaseConsolidatedCorePeer::REP_TAB_UID, ReportTablePeer::REP_TAB_UID, Criteria::LEFT_JOIN );
-        $criteria->addJoin( CaseConsolidatedCorePeer::REP_TAB_UID, ContentPeer::CON_ID, Criteria::LEFT_JOIN );
-        $criteria->add( ContentPeer::CON_CATEGORY, "REP_TAB_TITLE");
-        $criteria->add( ContentPeer::CON_LANG, SYS_LANG);
-
         $criteria->add( CaseConsolidatedCorePeer::TAS_UID, $tas_uid, Criteria::EQUAL );
         $criteria->add( CaseConsolidatedCorePeer::CON_STATUS, 'ACTIVE', Criteria::EQUAL );
 
@@ -74,7 +69,6 @@ class Consolidated
     */
     public function postDerivate ($app_uid, $app_number, $del_index, $usr_uid, $fieldName='', $fieldValue='')
     {
-        G::LoadClass("library");
         G::LoadClass("wsBase");
         G::LoadClass("case");
         $ws = new \wsBase();
@@ -118,7 +112,7 @@ class Consolidated
 
         $response = array();
 
-        $response["casesNumRec"] = \Library::getCasesNumRec($usr_uid);
+        $response["casesNumRec"] = self::getCasesNumRec($usr_uid);
 
         if (is_array($res)) {
             $response ["message"] = "<b>" . G::LoadTranslation("ID_CASE") . " " . $app_number . "</b> " .
@@ -128,6 +122,35 @@ class Consolidated
             $response ["message"] = G::LoadTranslation("ID_CASE") . " " . $app_number . " " . $res->message;
         }
         return $response;
+    }
+
+    /**
+     * @param $userUid
+     * @return int
+     */
+    public static function getCasesNumRec($userUid)
+    {
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(CaseConsolidatedCorePeer::CON_STATUS);
+        $criteria->add(CaseConsolidatedCorePeer::CON_STATUS, "ACTIVE");
+        $activeNumRec = CaseConsolidatedCorePeer::doCount($criteria);
+        $numRec = 0;
+
+        $criteria->clearSelectColumns();
+        $criteria->addAsColumn('NUMREC', 'COUNT(' . \ListInboxPeer::TAS_UID . ')');
+        $criteria->addJoin(CaseConsolidatedCorePeer::TAS_UID, \ListInboxPeer::TAS_UID, \Criteria::LEFT_JOIN);
+        $criteria->add(\ListInboxPeer::USR_UID, $userUid, Criteria::EQUAL);
+        $criteria->add(\ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL);
+        $rsSql = CaseConsolidatedCorePeer::doSelectRS($criteria);
+        $rsSql->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+        while ($rsSql->next()) {
+            $row = $rsSql->getRow();
+            $numRec = $row["NUMREC"];
+        }
+
+        $numRec = ($activeNumRec > 0) ? $numRec : 0;
+        return $numRec;
     }
 
     
@@ -235,11 +258,12 @@ class Consolidated
 
             $response = array();
             $searchFields = array();
-            //
-            $query = "SELECT REP_TAB_UID
-                      FROM   CASE_CONSOLIDATED
-                      WHERE  TAS_UID = '" . $tas_uid . "'";
-            $caseConsolidated = executeQuery($query);
+
+            $criteria = new Criteria();
+            $criteria->addSelectColumn(CaseConsolidatedCorePeer::REP_TAB_UID);
+            $criteria->add(CaseConsolidatedCorePeer::TAS_UID, $tas_uid, Criteria::EQUAL);
+            $caseConsolidated = CaseConsolidatedCorePeer::doSelectRS($criteria);
+            $caseConsolidated->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
             $tableUid  = null;
             $tableName = null;
@@ -273,12 +297,11 @@ class Consolidated
             $oCriteria->addSelectColumn("*");
             $oCriteria->addSelectColumn($tableName . ".APP_UID");
             
-            $oCriteria->addJoin($tableName . ".APP_UID", AppCacheViewPeer::APP_UID, Criteria::LEFT_JOIN);
+            $oCriteria->addJoin($tableName . ".APP_UID", \ListInboxPeer::APP_UID, \Criteria::LEFT_JOIN);
             
-            $oCriteria->add(AppCacheViewPeer::DEL_THREAD_STATUS, "OPEN");
-            $oCriteria->add(AppCacheViewPeer::TAS_UID, $tas_uid);
-            $oCriteria->add(AppCacheViewPeer::USR_UID, $usr_uid);
-            $oCriteria->add(AppCacheViewPeer::APP_STATUS, "TO_DO");
+            $oCriteria->add(\ListInboxPeer::TAS_UID, $tas_uid);
+            $oCriteria->add(\ListInboxPeer::USR_UID, $usr_uid);
+            $oCriteria->add(\ListInboxPeer::APP_STATUS, "TO_DO");
             
             if ($search != "") {
                 $filename = $pro_uid . PATH_SEP . $dyn_uid . ".xml";
@@ -333,10 +356,10 @@ class Consolidated
 
                 if ($oTmpCriteria != null) {
                     $oCriteria->add(
-                        $oCriteria->getNewCriterion(AppCacheViewPeer::APP_NUMBER, $search, Criteria::LIKE)->addOr($oTmpCriteria)
+                        $oCriteria->getNewCriterion(\ListInboxPeer::APP_NUMBER, $search, Criteria::LIKE)->addOr($oTmpCriteria)
                     );
                 } else {
-                    $oCriteria->add($oCriteria->getNewCriterion(AppCacheViewPeer::APP_NUMBER, $search, Criteria::LIKE));
+                    $oCriteria->add($oCriteria->getNewCriterion(\ListInboxPeer::APP_NUMBER, $search, Criteria::LIKE));
                 }
             }
             
@@ -344,7 +367,7 @@ class Consolidated
             $filter = new \InputFilter();
 
             if ($sort != "") {
-                $reportTable = new ReportTables();
+                $reportTable = new \ReportTables();
                 $arrayReportTableVar = $reportTable->getTableVars($tableUid);
                 $tableName = $filter->validateInput($tableName);
                 $sort = $filter->validateInput($sort);
@@ -352,7 +375,7 @@ class Consolidated
                     $sort = strtoupper($sort);
                     eval('$field = ' . $tableName . 'Peer::' . $sort . ';');
                 } else {
-                    eval('$field = AppCacheViewPeer::' . $sort . ';');
+                    eval('$field = \ListInboxPeer::' . $sort . ';');
                 }
 
                 if ($dir == "ASC") {
@@ -361,7 +384,7 @@ class Consolidated
                     $oCriteria->addDescendingOrderByColumn($field);
                 }
             } else {
-                $oCriteria->addDescendingOrderByColumn(AppCacheViewPeer::APP_NUMBER);
+                $oCriteria->addDescendingOrderByColumn(\ListInboxPeer::APP_NUMBER);
             }
 
             //pagination pagination attributes
@@ -369,7 +392,7 @@ class Consolidated
             $oCriteria->setOffset($start);
             //end of pagination attributes
 
-            $oDataset = AppCacheViewPeer::doSelectRS($oCriteria);
+            $oDataset = \ListInboxPeer::doSelectRS($oCriteria);
             //eval('$oDataset = '.$className.'Peer::doSelectRS($oCriteria);');
 
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -404,17 +427,15 @@ class Consolidated
                 $response["data"][] = $val;
             }
 
-            $query = "SELECT COUNT(APP_CACHE_VIEW.TAS_UID) AS QTY
-                      FROM   CASE_CONSOLIDATED
-                             LEFT JOIN CONTENT ON (CASE_CONSOLIDATED.TAS_UID = CONTENT.CON_ID)
-                             LEFT JOIN APP_CACHE_VIEW ON (CASE_CONSOLIDATED.TAS_UID = APP_CACHE_VIEW.TAS_UID)
-                             LEFT JOIN TASK ON (CASE_CONSOLIDATED.TAS_UID = TASK.TAS_UID)
-                      WHERE  CONTENT.CON_CATEGORY = 'TAS_TITLE' AND
-                             CONTENT.CON_LANG = 'en' AND
-                             APP_CACHE_VIEW.DEL_THREAD_STATUS = 'OPEN' AND
-                             USR_UID = '" . $usr_uid . "' AND
-                             APP_CACHE_VIEW.TAS_UID = '" . $tas_uid . "'";
-            $count = executeQuery($query);
+            $criteria = new Criteria();
+            $criteria->addAsColumn('QTY', 'COUNT(' . \ListInboxPeer::TAS_UID . ')');
+            $criteria->addJoin(\CaseConsolidatedCorePeer::TAS_UID, \TaskPeer::TAS_UID, \Criteria::LEFT_JOIN);
+            $criteria->addJoin(\CaseConsolidatedCorePeer::TAS_UID, \ListInboxPeer::TAS_UID, \Criteria::LEFT_JOIN);
+            $criteria->add(\ListInboxPeer::USR_UID, $usr_uid, \Criteria::EQUAL);
+            $criteria->add(\ListInboxPeer::TAS_UID, $tas_uid, \Criteria::EQUAL);
+            $criteria->add(\ListInboxPeer::APP_STATUS, 'TO_DO', \Criteria::EQUAL);
+            $count = CaseConsolidatedCorePeer::doSelectRS($criteria);
+            $count->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
             $totalCount = 0;
             foreach ($count as $item) {
@@ -1115,10 +1136,9 @@ class Consolidated
     {
         $criteria = new Criteria();
         $criteria->add(\CaseConsolidatedCorePeer::CON_STATUS, 'ACTIVE');
-        $criteria->addJoin(\CaseConsolidatedCorePeer::TAS_UID, \AppCacheViewPeer::TAS_UID, Criteria::LEFT_JOIN);
-        $criteria->add(\AppCacheViewPeer::USR_UID, $usrUid);
-        $criteria->add(\AppCacheViewPeer::DEL_THREAD_STATUS, 'OPEN');
-        $criteria->add(\AppCacheViewPeer::APP_STATUS, 'TO_DO');
+        $criteria->addJoin(\CaseConsolidatedCorePeer::TAS_UID, \ListInboxPeer::TAS_UID, Criteria::LEFT_JOIN);
+        $criteria->add(\ListInboxPeer::USR_UID, $usrUid, Criteria::EQUAL);
+        $criteria->add(\ListInboxPeer::APP_STATUS, 'TO_DO',Criteria::EQUAL);
         $total = \CaseConsolidatedCorePeer::doCount($criteria);
         return (int)$total;
     }
