@@ -171,25 +171,25 @@ class actionsByEmailCoreClass extends PMPlugin
                                     $variables = $variableService->doGetVariables($caseFields['PRO_UID']);
                                     $field = new stdClass();
                                     $field->label = '';
-                                    $actionField = str_replace(array('@@','@#','@=','@%','@?','@$'), '', $configuration['ABE_ACTION_FIELD']);
+                                    $actionField = str_replace(array('@@', '@#', '@=', '@%', '@?', '@$'), '', $configuration['ABE_ACTION_FIELD']);
                                     G::LoadClass('pmDynaform');
                                     $obj = new pmDynaform($configuration['DYN_UID']);
                                     $configuration['CURRENT_DYNAFORM'] = $configuration['DYN_UID'];
                                     $file = $obj->printPmDynaformAbe($configuration);
                                     $__ABE__ .= $file;
-                                    $__ABE__ .= '<strong>' . $field->label . '</strong><br /><br /><table align="left" border="0"><tr>';
+                                    $__ABE__ .= '<div style="width: 100%"></div><strong>' . $field->label . '</strong><table align="left" border="0"><tr>';
                                     $index = 1;
-                                    $__ABE__.='<br /><td><table align="left" cellpadding="2"><tr>';
+                                    $__ABE__ .= '<td><table align="left" cellpadding="2"><tr>';
                                     foreach ($customGrid as $key => $value) {
-                                        $__ABE__ .= '<td align="center"><a style="'.$value['abe_custom_format'].'" ';
-                                        $__ABE__ .= 'href="' .urldecode(urlencode($link)). '?ACTION='.G::encrypt('processABE', URL_KEY).'&APP_UID=';
+                                        $__ABE__ .= '<td align="center"><a style="' . $value['abe_custom_format'] . '" ';
+                                        $__ABE__ .= 'href="' . urldecode(urlencode($link)) . '?ACTION=' . G::encrypt('processABE', URL_KEY) . '&APP_UID=';
                                         $__ABE__ .= G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY);
                                         $__ABE__ .= '&FIELD=' . G::encrypt($actionField, URL_KEY) . '&VALUE=' . G::encrypt($value['abe_custom_value'], URL_KEY);
                                         $__ABE__ .= '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY) . '" target="_blank" >' . $value['abe_custom_label'];
                                         $__ABE__ .= '</a></td>' . (($index % 5 == 0) ? '</tr><tr>' : '  ');
                                         $index++;
                                     }
-                                    $__ABE__.='</tr></table><br />';
+                                    $__ABE__ .= '</tr></table></div>';
                                     break;
                                 case 'LINK':
                                     $__ABE__ .= '<a href="' . $link . 'DataForm?APP_UID=' . G::encrypt($data->APP_UID, URL_KEY) . '&DEL_INDEX=' . G::encrypt($data->DEL_INDEX, URL_KEY) . '&DYN_UID=' . G::encrypt($configuration['DYN_UID'], URL_KEY) . '&ABER=' . G::encrypt($abeRequest['ABE_REQ_UID'], URL_KEY) . '" target="_blank">Please complete this form</a>';
