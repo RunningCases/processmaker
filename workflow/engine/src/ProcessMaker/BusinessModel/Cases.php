@@ -3033,11 +3033,11 @@ class Cases
 
     public function checkUserHasPermissionsOrSupervisor($userUid, $applicationUid, $dynaformUid)
     {
+        $arrayApplicationData = $this->getApplicationRecordByPk($applicationUid, [], false);
+        //Check whether the process supervisor
+        $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
+        $userAccess = $supervisor->isUserProcessSupervisor($arrayApplicationData['PRO_UID'], $userUid);
         if (!empty($dynaformUid)) {
-            $arrayApplicationData = $this->getApplicationRecordByPk($applicationUid, [], false);
-            //Check whether the process supervisor
-            $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
-            $userAccess = $supervisor->isUserProcessSupervisor($arrayApplicationData['PRO_UID'], $userUid);
             //Check if have objects assigned (Supervisor)
             $cases = new \Cases();
             $resultDynaForm = $cases->getAllDynaformsStepsToRevise($applicationUid);
@@ -3080,7 +3080,7 @@ class Cases
         } else {
             $arrayResult = $this->getStatusInfo($applicationUid, 0, $userUid);
             $flagParticipated = false;
-            if ($arrayResult) {
+            if ($arrayResult || $userAccess) {
                 $flagParticipated = true;
             }
             return $flagParticipated;
