@@ -1087,6 +1087,17 @@ try {
              * @author Erik Amaru Ortiz <erik@colosa.com>
              */
             $tplFile = 'cases/cases_ScreenDerivation';
+            if($_SESSION['TASK'] == '-1'){
+                $oCriteria = new Criteria();
+                $oCriteria->addSelectColumn( AppDelegationPeer::TAS_UID );
+                $oCriteria->add( AppDelegationPeer::APP_UID, $_SESSION['APPLICATION'] );
+                $oCriteria->add( AppDelegationPeer::DEL_INDEX, $_SESSION['INDEX'] );
+                $rsCriteria = AppDelegationPeer::doSelectRS( $oCriteria );
+                $rsCriteria->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+                $rsCriteria->next();
+                $data = $rsCriteria->getRow();
+                $_SESSION['TASK'] = $data['TAS_UID'];
+            }
             $task = TaskPeer::retrieveByPk( $_SESSION['TASK'] );
 
             $tasDerivationScreenTpl = $task->getTasDerivationScreenTpl();

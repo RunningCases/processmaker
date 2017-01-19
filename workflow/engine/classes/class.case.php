@@ -1194,6 +1194,7 @@ class Cases
     {
         try {
             $user = UsersPeer::retrieveByPk($usrId);
+
             $oAppDel = AppDelegationPeer::retrieveByPk($sAppUid, $iDelIndex);
             $oAppDel->setDelInitDate("now");
             $oAppDel->setUsrUid($usrId);
@@ -4460,7 +4461,7 @@ class Cases
             0,
             $aFieldsDel['APP_NUMBER'],
             $aFieldsDel['TAS_ID'],
-            $aFieldsDel['USR_ID'],
+            (empty($user)) ? 0 : $user->getUsrId(),
             $aFieldsDel['PRO_ID']
         );
         $newDelIndex = $iIndex;
