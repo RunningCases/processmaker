@@ -2505,6 +2505,7 @@ class Processes
                         $data->processVariables[$key]['VAR_UID'] = $newGuid;
                     }
                 }
+                $data->uid["PROCESS_VARIABLES"] = $map;
             }
 
         } catch (Exception $e) {
@@ -2608,6 +2609,9 @@ class Processes
     public function renewAll(&$oData)
     {
         $oData->uid = array();
+        if (isset($oData->process["PRO_PARENT"]) && isset($oData->process["PRO_UID"])) {
+            $oData->uid["PROCESS"] = array($oData->process["PRO_PARENT"] => $oData->process["PRO_UID"]);
+        }
 
         $this->renewAllTaskGuid($oData);
         $this->renewAllDynaformGuid($oData);
