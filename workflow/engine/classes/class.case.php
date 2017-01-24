@@ -2085,7 +2085,7 @@ class Cases
                     0,
                     $Application->getAppNumber(),
                     $task->getTasId(),
-                    $user->getUsrId(),
+                    (empty($user)) ? 0 : $user->getUsrId(),
                     $this->Process->getProId()
 
                 );
@@ -2114,12 +2114,12 @@ class Cases
                     $count = 0;
                     foreach($userFields as $rowUser){
                         if($rowUser["USR_UID"] != $sUsrUid){
-                           //appDelegation
-                           $AppDelegation = new AppDelegation;
-                           $iAppThreadIndex ++; // Start Thread
-                           $iAppDelPrio = 3; // Priority
-                           $user = UsersPeer::retrieveByPK($rowUser["USR_UID"]);
-                           $iDelIndex1 = $AppDelegation->createAppDelegation(
+                            //appDelegation
+                            $AppDelegation = new AppDelegation;
+                            $iAppThreadIndex ++; // Start Thread
+                            $iAppDelPrio = 3; // Priority
+                            $user = UsersPeer::retrieveByPK($rowUser["USR_UID"]);
+                            $iDelIndex1 = $AppDelegation->createAppDelegation(
                                 $sProUid,
                                 $sAppUid,
                                 $sTasUid,
@@ -2134,7 +2134,7 @@ class Cases
                                 0,
                                 $Application->getAppNumber(),
                                 $task->getTasId(),
-                                $user->getUsrId(),
+                                (empty($user)) ? 0 : $user->getUsrId(),
                                 $this->Process->getProId()
                            );
                            //appThread
