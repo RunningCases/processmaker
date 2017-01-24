@@ -1402,6 +1402,10 @@ class workspaceTools
         $arrayRegExpEngineSearch = array("/\)\s*TYPE\s*=\s*(InnoDB)/i", "/\)\s*TYPE\s*=\s*(MyISAM)/i","/SET\s*FOREIGN_KEY_CHECKS\s*=\s*0\s*;/");
         $arrayRegExpEngineReplace = array(") ENGINE=\\1 DEFAULT CHARSET=utf8", ") ENGINE=\\1","SET FOREIGN_KEY_CHECKS=0;\nSET unique_checks=0;\nSET AUTOCOMMIT=0;");
 
+        //replace DEFINER
+        $script = preg_replace('/DEFINER=[^*]*/', '', file_get_contents($filename));
+        file_put_contents($filename, $script);
+        
         if (!$flag && !is_null($flagFunction)) {
             //Replace TYPE by ENGINE
             if( $versionBackupEngine == 1) {
