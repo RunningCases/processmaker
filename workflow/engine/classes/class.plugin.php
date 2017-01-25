@@ -485,7 +485,8 @@ class PMPlugin
                 $file = $path . "public_html/" . $extensionPath;
                 @file_put_contents($file, "", LOCK_EX);
                 foreach ($item->files as $name) {
-                    @file_put_contents($file, file_get_contents($item->path . "/" . $name), FILE_APPEND | LOCK_EX);
+                    $content = file_get_contents($item->path . "/" . $name) . "\n";
+                    @file_put_contents($file, $content, FILE_APPEND | LOCK_EX);
                 }
                 $this->registerDesignerSourcePath($extensionPath);
             }
