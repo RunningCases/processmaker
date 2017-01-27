@@ -52,14 +52,14 @@
         },
         {
             "name": "colosa/MichelangeloFE",
-            "version": "3.1-dev",
+            "version": "release/3.2-dev",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/michelangelofe.git",
                 "reference": "7e889f23a7e8397c052a4d9ae6331334b57c9d48"
             },
             "require": {
-                "colosa/pmui": "3.1-dev"
+                "colosa/pmui": "release/3.2-dev"
             },
             "type": "library",
             "description": "ProcessMaker Michelangelo Front End",
@@ -71,7 +71,7 @@
         },
         {
             "name": "colosa/pmDynaform",
-            "version": "3.1-dev",
+            "version": "release/3.2-dev",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/pmdynaform.git",
@@ -87,7 +87,7 @@
         },
         {
             "name": "colosa/pmUI",
-            "version": "3.1-dev",
+            "version": "release/3.2-dev",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/pmui.git",
@@ -571,7 +571,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "3.1-dev"
+                    "dev-master": "release/3.2-dev"
                 }
             },
             "autoload": {
