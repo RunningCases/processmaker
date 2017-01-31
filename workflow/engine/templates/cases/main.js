@@ -16,7 +16,6 @@ var propStore;
 var triggerStore;
 
 var debugVariablesFilter;
-var ReloadTreeMenuItemDetail;
 var NOTIFIER_FLAG = false;
 var result;
 var _action = '';
@@ -258,39 +257,6 @@ Ext.onReady(function(){
     }
   });
 
-
-
-  var treeMenuItemDetail = new Ext.tree.TreePanel({
-      id: 'tree_menuItem_detail',
-      region: 'south',
-      animate:true,
-      autoScroll:true,
-      loader: new Ext.tree.TreeLoader({
-        dataUrl:'casesMenuLoader?action=getProcess'
-      }),
-      enableDD:true,
-      containerScroll: true,
-      border: false,
-      width: 250,
-      height: 120,
-      dropConfig: {appendOnly:true},
-      collapsible: true,
-      split: true,
-      margins: '0 2 2 2',
-      cmargins: '2 2 2 2',
-      rootVisible: false,
-      root: new Ext.tree.AsyncTreeNode()/*,
-      tbar: [{
-        text: 'reload',
-        handler: ReloadTreeMenuItemDetail
-      }]*/
-  });
-
-  ReloadTreeMenuItemDetail = function(params){
-    treeMenuItemDetail.loader.dataUrl = 'casesMenuLoader?action=getProcess&item='+params.item;
-    treeMenuItemDetail.root.reload();
-  }
-
   // set the root node
   var root = new Ext.tree.AsyncTreeNode({
       text: 'Ext JS',
@@ -299,8 +265,6 @@ Ext.onReady(function(){
       loaded:false,
       expanded:true
   });
-
-  treeMenuItemDetail.setRootNode(root);
 
   mainMenu = new Ext.Panel({
     id:'menuTreePanel',
@@ -317,8 +281,7 @@ Ext.onReady(function(){
     margins: '0 0 0 2',
 
     items: [
-      treeMenuItems,
-      treeMenuItemDetail
+      treeMenuItems
     ]
   });
   mainMenu.setTitle("<div style=\"height: 18px;\"><a href=\"javascript:;\"><img id=\"refreshNotifiers\" src=\"/images/refresh.gif\" onclick=\"updateCasesTree(); updateCasesView();\" /></a></div>");
@@ -530,15 +493,6 @@ Ext.onReady(function(){
   menuPanelC.hide();
   menuPanelC.ownerCt.doLayout();
 
-  /**show*/
-  //w.show();
-  //w.ownerCt.doLayout();
-  //w.expand();
-
-  var menuPanelDetail = Ext.getCmp('tree_menuItem_detail');
-  menuPanelDetail.hide();
-  menuPanelDetail.ownerCt.doLayout();
-
   //FORMATS.casesListRefreshTime is in seconds
   setTimeout("timer()", parseInt(FORMATS.casesListRefreshTime) * 1000);
 });
@@ -571,9 +525,7 @@ function updateCasesTree() {
   document.getElementById('refreshNotifiers').src = '/images/ext/default/grid/loading.gif';
 
   itemsTypes = Array('CASES_INBOX', 'CASES_DRAFT', 'CASES_CANCELLED', 'CASES_SENT', 'CASES_PAUSED', 'CASES_COMPLETED', 'CASES_SELFSERVICE');
-  if (currentSelectedTreeMenuItem) {
-    ReloadTreeMenuItemDetail({item: currentSelectedTreeMenuItem});
-  }
+
   Ext.Ajax.request({
     url: urlProxy + Math.random(),
     success: function (response) {

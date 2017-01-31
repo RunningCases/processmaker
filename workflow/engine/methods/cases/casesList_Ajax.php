@@ -64,6 +64,30 @@ if ($actionAjax == "userValues") {
     $users = filterUserListArray($users, $query);
     //now get users, just for the Search action
     switch ($action) {
+        case 'to_reassign':
+            $cUsers = $oAppCache->getToReassignListCriteria(null);
+            $cUsers->addSelectColumn(AppCacheViewPeer::USR_UID);
+
+            if (g::MySQLSintaxis()) {
+                $cUsers->addGroupByColumn(AppCacheViewPeer::USR_UID);
+            }
+
+            if (!is_null($query)) {
+                $filters = $cUsers->getNewCriterion(UsersPeer::USR_FIRSTNAME, '%' . $query . '%', Criteria::LIKE)->addOr(
+                    $cUsers->getNewCriterion(UsersPeer::USR_LASTNAME, '%' . $query . '%', Criteria::LIKE)->addOr(
+                        $cUsers->getNewCriterion(UsersPeer::USR_USERNAME, '%' . $query . '%', Criteria::LIKE)));
+                $cUsers->addAnd($filters);
+            }
+            $cUsers->setLimit(20);
+            $cUsers->addAscendingOrderByColumn(AppCacheViewPeer::APP_CURRENT_USER);
+            $oDataset = AppCacheViewPeer::doSelectRS($cUsers, Propel::getDbConnection('workflow_ro'));
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $users[] = array("USR_UID" => $aRow['USR_UID'], "USR_FULLNAME" => $aRow['APP_CURRENT_USER']);
+                $oDataset->next();
+            }
+            break;
         case 'search_simple':
         case 'search':
             G::LoadClass("configuration");
