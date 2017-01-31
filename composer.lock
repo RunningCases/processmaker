@@ -56,7 +56,7 @@
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/michelangelofe.git",
-                "reference": "7e889f23a7e8397c052a4d9ae6331334b57c9d48"
+                "reference": "733277aef23c643b094c123043c3dbee975997a4"
             },
             "require": {
                 "colosa/pmui": "release/3.2-dev"
@@ -75,7 +75,7 @@
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/pmdynaform.git",
-                "reference": "c2008027bd721ac42e4a7d98cc773f82ac25921e"
+                "reference": "efb60f8f989ee83f91459f82810f90d8ef7a6d64"
             },
             "type": "library",
             "description": "JS Library to render ProcessMaker Dynaforms",
@@ -91,7 +91,7 @@
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/pmui.git",
-                "reference": "851ee86a1006df111ee8b281bf2b033cdbcc6f0b"
+                "reference": "462ab5f45a4cce1ca9920fcb854255f10abea1e1"
             },
             "type": "library",
             "description": "JS UI Library",
