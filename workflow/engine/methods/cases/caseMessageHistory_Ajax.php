@@ -93,6 +93,7 @@ if ($actionAjax == 'messageHistoryGridList_JXP') {
         }
     }
 
+    $totalCount = 0;
     foreach ($appMessageArray as $index => $value) {
         if (($appMessageArray[$index]['APP_MSG_SHOW_MESSAGE'] == 1  && $respMess != 'BLOCK' ) &&
             ($appMessageArray[$index]['DEL_INDEX'] == 0 || in_array($appMessageArray[$index]['DEL_INDEX'], $delIndex ))) {
@@ -104,12 +105,6 @@ if ($actionAjax == 'messageHistoryGridList_JXP') {
             $appMessageArray[$index]['APP_MSG_BODY'] = str_replace('\"','"',$appMessageArray[$index]['APP_MSG_BODY']);
             $appMessageArray[$index]['APP_MSG_BODY'] = str_replace('"','\"',$appMessageArray[$index]['APP_MSG_BODY']);
             $aProcesses[] = array_merge($appMessageArray[$index], array('MSGS_HISTORY' => $respMess));
-        }
-    }
-
-    $totalCount = 0;
-    foreach ($appMessageCountArray as $index => $value) {
-        if ($appMessageCountArray[$index]['APP_MSG_SHOW_MESSAGE'] == 1) {
             $totalCount ++;
         }
     }
