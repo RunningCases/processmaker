@@ -65,6 +65,9 @@ class RoutingScreen extends \Derivation
                     } else {
                         $aDataMerged[$key]['NEXT_ROUTING'][] = $post[$i];
                     }
+                    if (isset($post[$i]['NEXT_TASK'])) {
+                        $aDataMerged[$key]['NEXT_TASK'] = $post[$i]['NEXT_TASK'];
+                    }
                 }
             }
         }
