@@ -93,8 +93,8 @@ if ($handle = opendir( PATH_PLUGINS )) {
      * Calls PMExtensionClass Builder to include Plugins changes.
      */
     $config = Bootstrap::getSystemConfiguration();
-
-    if (!empty($config['experimental_features'])) {
+    $activeExperimentalFeatures = isset($config['experimental_features']) ? $config['experimental_features'] : true;
+    if ($activeExperimentalFeatures) {
         $phpBuilder = new ProcessMakerPhpBuilderHelper();
         $phpBuilder->enabledExtensions = $oPluginRegistry->getEnabledPlugins();
         if (!empty($phpBuilder->enabledExtensions)) {
