@@ -9,9 +9,6 @@ switch ($action) {
     case 'getAllCounters':
         getAllCounters();
         break;
-    case 'getProcess':
-        getProcess();
-        break;
     /*----------------------------------********---------------------------------*/
     case 'getAllCountersEnterprise':
         getAllCountersEnterprise();
@@ -216,64 +213,6 @@ function getLoadTreeMenuData ()
     $xml .= '</menu_cases>';
 
     print $xml;*/
-}
-
-// get the process summary of specific case list type,
-function getProcess ()
-{
-    global $G_TMP_MENU;
-    global $userId;
-    if (! isset( $_GET['item'] )) {
-        die();
-    }
-
-    $oMenu = new Menu();
-    $oMenu->load( 'cases' );
-    $type = $_GET['item'];
-    $oCases = new AppCacheView();
-
-    $aTypesID = array ();
-    $aTypesID['CASES_INBOX'] = 'to_do';
-    $aTypesID['CASES_DRAFT'] = 'draft';
-    $aTypesID['CASES_CANCELLED'] = 'cancelled';
-    $aTypesID['CASES_SENT'] = 'sent';
-    $aTypesID['CASES_PAUSED'] = 'paused';
-    $aTypesID['CASES_COMPLETED'] = 'completed';
-    $aTypesID['CASES_SELFSERVICE'] = 'selfservice';
-    //$aTypesID['CASES_TO_REVISE']   = 'to_revise';
-    //$aTypesID['CASES_TO_REASSIGN'] = 'to_reassign';
-    $aTypesID = Array ('CASES_INBOX' => 'to_do','CASES_DRAFT' => 'draft','CASES_CANCELLED' => 'cancelled','CASES_SENT' => 'sent','CASES_PAUSED' => 'paused','CASES_COMPLETED' => 'completed','CASES_SELFSERVICE' => 'selfservice','CASES_TO_REVISE' => 'to_revise','CASES_TO_REASSIGN' => 'to_reassign');
-
-    $aCount = $oCases->getAllCounters( Array ($aTypesID[$type]
-    ), $userId, true );
-
-    $response = Array ();
-    //disabling the summary...
-    /*
-    $i=0;
-    foreach($aCount[$aTypesID[$type]]['sumary'] as $PRO_UID=>$process){
-      //{"text":"state","id":"src\/state","cls":"folder", loaded:true},
-      $response[$i] = new stdClass();
-      $response[$i]->text = $process['name'] . ' ('.$process['count'].')';
-      $response[$i]->id = $process['name'];
-      $response[$i]->cls = 'folder';
-      $response[$i]->loaded = true;
-      $i++;
-    }
-    */
-    //ordering
-    /*for($i=0; $i<=count($response)-1; $i++){
-      for($j=$i+1; $j<=count($response); $j++){
-
-        echo $response[$j]->text .'<'. $response[$i]->text;
-        if($response[$j]->text[0] < $response[$i]->text[0]){
-          $x = $response[$i];
-          $response[$i] = $response[$j];
-          $response[$j] = $x;
-        }
-      }
-    }*/
-    echo G::json_encode( $response );
 }
 
 /*----------------------------------********---------------------------------*/
