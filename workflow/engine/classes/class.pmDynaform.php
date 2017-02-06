@@ -1913,6 +1913,12 @@ class pmDynaform
                 if ($validatorClass !== null) {
                     $validatorClass->validatePost($post);
                 }
+                //Clears the data in the appData for grids
+                if (array_key_exists($json->id, $this->fields) && $json->type === 'grid' &&
+                    !array_key_exists($json->id, $post)
+                ) {
+                    $post[$json->variable] = array(array());
+                }
             }
         };
         $json = G::json_decode($this->record["DYN_CONTENT"]);
