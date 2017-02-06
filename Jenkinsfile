@@ -12,8 +12,8 @@ node {
     // on jira ticket
     def jiraTicket = env.BRANCH_NAME.find(/HOR-\d+/)
 
-    def shortname = env.BRANCH_NAME.replace('/', '-').toLowerCase()
-    def dbSuffix = shortname.replace('-', '').replace('.', '')
+    def shortname = env.BRANCH_NAME.replace('/', '-').replace('.', '-').toLowerCase()
+    def dbSuffix = shortname.replace('-', '')
 
     echo "Building for ${env.BRANCH_NAME}"
 
