@@ -1232,8 +1232,10 @@ class G
                 case 'txt':
                     G::sendHeaders( $filename, 'text/html', $download, $downloadFileName );
                     break;
-                case 'doc':
                 case 'pdf':
+                    G::sendHeaders( $filename, 'application/pdf', $download, $downloadFileName );
+                    break;
+                case 'doc':
                 case 'pm':
                 case 'po':
                     G::sendHeaders( $filename, 'application/octet-stream', $download, $downloadFileName );
@@ -1283,12 +1285,14 @@ class G
     {
         if ($download) {
             if ($downloadFileName == '') {
-                $aAux = explode( '/', $filename );
-                $downloadFileName = $aAux[count( $aAux ) - 1];
+                $aAux = explode('/', $filename);
+                $downloadFileName = $aAux[count($aAux) - 1];
             }
-            header( 'Content-Disposition: attachment; filename="' . $downloadFileName . '"' );
+            header('Content-Disposition: attachment; filename="' . $downloadFileName . '"');
+        } else {
+            header('Content-Disposition: inline; filename="' . $downloadFileName . '"');
         }
-        header( 'Content-Type: ' . $contentType );
+        header('Content-Type: ' . $contentType);
 
         //if userAgent (BROWSER) is MSIE we need special headers to avoid MSIE behaivor.
         $userAgent = strtolower( $_SERVER['HTTP_USER_AGENT'] );
