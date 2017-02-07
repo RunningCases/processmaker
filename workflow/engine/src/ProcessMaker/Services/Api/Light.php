@@ -30,6 +30,35 @@ class Light extends Api
         'delRiskDate'
     ];
 
+    public function __isAllowed()
+    {
+        try {
+            $methodName = $this->restler->apiMethodInfo->methodName;
+            $arrayArgs  = $this->restler->apiMethodInfo->arguments;
+            switch ($methodName) {
+                case 'doIfAlreadyRoute':
+                    $applicationUid = $this->parameters[$arrayArgs['app_uid']];
+                    $delIndex = $this->parameters[$arrayArgs['cas_index']];
+                    $userUid = $this->getUserId();
+                    //Check if the user has the case
+                    $appDelegation = new \AppDelegation();
+                    $aCurUser = $appDelegation->getCurrentUsers($applicationUid, $delIndex);
+                    if (!empty($aCurUser)) {
+                        foreach ($aCurUser as $key => $value) {
+                            if ($value === $userUid) {
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                    break;
+            }
+            return false;
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
     /**
      * Constructor of the class
      *
@@ -793,6 +822,8 @@ class Light extends Api
     /**
      * Get Already Route
      *
+     * @access protected
+     * @class  AccessControl {@className \ProcessMaker\Services\Api\Light}
      * @param string $app_uid  {@min 1}{@max 32}
      * @param int $cas_index
      *
