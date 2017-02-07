@@ -3263,7 +3263,7 @@ class Cases
      * @param array $objectPermissions
      * @return array Returns array with all access
      */
-    public function userAuthorization($usrUid, $proUid, $appUid, $rolesPermissions=array(), $objectPermissions=array()){
+    public function userAuthorization($usrUid, $proUid, $appUid, $rolesPermissions = array(), $objectPermissions = array()) {
         $arrayAccess = array();
 
         //User has participated
