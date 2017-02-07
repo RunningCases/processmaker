@@ -1029,13 +1029,13 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
             );
 
             //Check if the user is a supervisor to this Process
-            if(isset($_POST['actionFromList']) && $_POST['actionFromList']==='to_revise'){
-                if(!$aUserCanAccess['supervisor']){
+            if (isset($_POST['actionFromList']) && $_POST['actionFromList']==='to_revise') {
+                if (!$aUserCanAccess['supervisor']) {
                     $response['exists'] = false;
                     $response['message'] = G::LoadTranslation('ID_NO_PERMISSION_NO_PARTICIPATED');
                 }
             } else {//Check if the user participated in this case
-                if(!$aUserCanAccess['participated'] && !$aUserCanAccess['rolesPermissions']['PM_ALLCASES'] && !$aUserCanAccess['objectPermissions']['SUMMARY_FORM']){
+                if (!$aUserCanAccess['participated'] && !$aUserCanAccess['rolesPermissions']['PM_ALLCASES'] && !$aUserCanAccess['objectPermissions']['SUMMARY_FORM']) {
                     $response['exists'] = false;
                     $response['message'] = G::LoadTranslation('ID_NO_PERMISSION_NO_PARTICIPATED');
                 }

@@ -141,19 +141,19 @@ $oHeadPublisher = & headPublisher::getSingleton();
 $oHeadPublisher->addScriptFile( '/jscore/cases/core/cases_Step.js' );
 $G_PUBLISH = new Publisher();
 $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume.xml', '', $Fields, '' );
-if($Fields['APP_STATUS'] != 'COMPLETED'){
+if ($Fields['APP_STATUS'] != 'COMPLETED') {
     $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume_Current_Task_Title.xml', '', $Fields, '' );
     $objDel = new AppDelegation();
     $parallel = $objDel->LoadParallel($Fields['APP_UID']);
     $FieldsPar = $Fields;
-    foreach($parallel as $row){
+    foreach ($parallel as $row) {
         $FieldsPar['TAS_UID'] = $row['TAS_UID'];
         $aTask = $objTask->load( $row['TAS_UID'] );
         $FieldsPar['TAS_TITLE'] = $aTask['TAS_TITLE'];
         $FieldsPar['USR_UID'] = $row['USR_UID'];
-        if(isset($row['USR_UID']) && !empty($row['USR_UID'])) {
-          $aUser = $objUser->loadDetails ($row['USR_UID']);
-          $FieldsPar['CURRENT_USER'] = $aUser['USR_FULLNAME'];
+        if (isset($row['USR_UID']) && !empty($row['USR_UID'])) {
+            $aUser = $objUser->loadDetails ($row['USR_UID']);
+            $FieldsPar['CURRENT_USER'] = $aUser['USR_FULLNAME'];
         }
         $FieldsPar['DEL_DELEGATE_DATE'] = $row['DEL_DELEGATE_DATE'];
         $FieldsPar['DEL_INIT_DATE']     = $row['DEL_INIT_DATE'];

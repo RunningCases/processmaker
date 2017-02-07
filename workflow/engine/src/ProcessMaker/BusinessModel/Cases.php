@@ -3263,7 +3263,7 @@ class Cases
      * @param array $objectPermissions
      * @return array Returns array with all access
      */
-    public static function userAuthorization($usrUid, $proUid, $appUid, $rolesPermissions=array(), $objectPermissions=array()){
+    public function userAuthorization($usrUid, $proUid, $appUid, $rolesPermissions=array(), $objectPermissions=array()){
         $arrayAccess = array();
 
         //User has participated
@@ -3277,7 +3277,7 @@ class Cases
         $arrayAccess['supervisor'] = (!in_array($proUid, $aProcesses)) ? false : true;
 
         //Roles Permissions
-        if (sizeof($rolesPermissions)) {
+        if (count($rolesPermissions)>0) {
             global $RBAC;
             foreach ($rolesPermissions as $value) {
                 $arrayAccess['rolesPermissions'][$value] = ($RBAC->userCanAccess($value) < 0) ? false : true;
@@ -3285,11 +3285,11 @@ class Cases
         }
 
         //Object Permissions
-        if (sizeof($objectPermissions)) {
+        if (count($objectPermissions) > 0) {
             $oCase = new \Cases();
             foreach ($objectPermissions as $key => $value) {
                 $resPermission = $oCase->getAllObjectsFrom($proUid, $appUid, '', $usrUid, $value);
-                if(isset($resPermission[$key])){
+                if (isset($resPermission[$key])) {
                     $arrayAccess['objectPermissions'][$key] = $resPermission[$key];
                 }
             }
