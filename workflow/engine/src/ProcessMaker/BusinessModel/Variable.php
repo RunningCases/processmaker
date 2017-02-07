@@ -575,6 +575,11 @@ class Variable
             $cnn = \Propel::getConnection($dbConnection);
             $stmt = $cnn->createStatement();
 
+            if (isset($arrayVariable['app_uid']) && !empty($arrayVariable['app_uid'])) {
+                $case = new \Cases();
+                $fields = $case->loadCase($arrayVariable['app_uid']);
+                $arrayVariable = array_merge($fields['APP_DATA'], $arrayVariable);
+            }
             $replaceFields = G::replaceDataField($variableSql, $arrayVariable);
 
             $rs = $stmt->executeQuery($replaceFields, \ResultSet::FETCHMODE_NUM);
