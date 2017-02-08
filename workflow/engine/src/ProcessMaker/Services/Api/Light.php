@@ -43,12 +43,8 @@ class Light extends Api
                     //Check if the user has the case
                     $appDelegation = new \AppDelegation();
                     $aCurUser = $appDelegation->getCurrentUsers($applicationUid, $delIndex);
-                    if (!empty($aCurUser)) {
-                        foreach ($aCurUser as $key => $value) {
-                            if ($value === $userUid) {
-                                return true;
-                            }
-                        }
+                    if (!empty($aCurUser) && in_array($userUid, $aCurUser)) {
+                        return true;
                     }
                     return false;
                     break;
