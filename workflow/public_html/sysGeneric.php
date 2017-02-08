@@ -342,6 +342,7 @@ define ('WS_IN_LOGIN', isset($config['WS_IN_LOGIN']) ? $config['WS_IN_LOGIN'] : 
 define('LOAD_HEADERS_IE', $config['load_headers_ie']);
 define('LEAVE_CASE_WARNING', $config['leave_case_warning']);
 define('REDIRECT_TO_MOBILE', $config['redirect_to_mobile']);
+define('DISABLE_PHP_UPLOAD_EXECUTION', $config['disable_php_upload_execution']);
 
 // IIS Compatibility, SERVER_ADDR doesn't exist on that env, so we need to define it.
 $_SERVER['SERVER_ADDR'] = isset( $_SERVER['SERVER_ADDR'] ) ? $_SERVER['SERVER_ADDR'] : $_SERVER['SERVER_NAME'];
@@ -811,6 +812,17 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
             transactionLog($phpFile);
             Bootstrap::streamFile( $phpFile );
             die();
+        }
+
+        Bootstrap::initVendors();
+        Bootstrap::LoadSystem( 'monologProvider' );
+        if (\Bootstrap::getDisablePhpUploadExecution() === 1) {
+            $message = \G::LoadTranslation('THE_PHP_FILES_EXECUTION_WAS_DISABLED');
+            \Bootstrap::registerMonologPhpUploadExecution('phpExecution', 550, $message, $phpFile);
+            echo $message;
+            die();
+        } else {
+            \Bootstrap::registerMonologPhpUploadExecution('phpExecution', 200, 'Php Execution', $phpFile);
         }
 
         $avoidChangedWorkspaceValidation = true;
