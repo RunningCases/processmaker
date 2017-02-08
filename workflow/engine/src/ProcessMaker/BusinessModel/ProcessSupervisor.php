@@ -129,14 +129,14 @@ class ProcessSupervisor
                         $sql = "
                         SELECT DISTINCT " . \GroupUserPeer::GRP_UID . "
                         FROM   " . \GroupUserPeer::TABLE_NAME . ", " . \UsersPeer::TABLE_NAME . ",
-                               " . \UsersRolesPeer::TABLE_NAME . ", " . \RolesPermissionsPeer::TABLE_NAME . ", " . \PermissionsPeer::TABLE_NAME . "
+                               " . DB_RBAC_NAME . '.' . \UsersRolesPeer::TABLE_NAME . ", " . DB_RBAC_NAME . '.' . \RolesPermissionsPeer::TABLE_NAME . ", " . DB_RBAC_NAME . '.' . \PermissionsPeer::TABLE_NAME . "
                         WHERE  " . \GroupUserPeer::GRP_UID . " = " . \GroupwfPeer::GRP_UID . " AND
                                " . \GroupUserPeer::USR_UID . " = " . \UsersPeer::USR_UID . " AND " . \UsersPeer::USR_STATUS . " = " . $delimiter . "ACTIVE" . $delimiter . " AND
-                               " . \UsersPeer::USR_UID . " = " . \UsersRolesPeer::USR_UID . " AND
-                               " . \UsersRolesPeer::ROL_UID . " = " . \RolesPermissionsPeer::ROL_UID . " AND
-                               " . \RolesPermissionsPeer::PER_UID . " = " . \PermissionsPeer::PER_UID . " AND
-                               " . \PermissionsPeer::PER_CODE . " = " . $delimiter . "PM_SUPERVISOR" . $delimiter . " AND
-                               " . \PermissionsPeer::PER_SYSTEM . " = " . $delimiter . $arrayRbacSystemData["SYS_CODE"] . $delimiter . "
+                               " . \UsersPeer::USR_UID . " = " . DB_RBAC_NAME . '.' . \UsersRolesPeer::USR_UID . " AND
+                               " . DB_RBAC_NAME . '.'. \UsersRolesPeer::ROL_UID . " = " . DB_RBAC_NAME . '.'. \RolesPermissionsPeer::ROL_UID . " AND
+                               " . DB_RBAC_NAME . '.'. \RolesPermissionsPeer::PER_UID . " = " . DB_RBAC_NAME . '.'. \PermissionsPeer::PER_UID . " AND
+                               " . DB_RBAC_NAME . '.'. \PermissionsPeer::PER_CODE . " = " . $delimiter . "PM_SUPERVISOR" . $delimiter . " AND
+                               " . DB_RBAC_NAME . '.'. \PermissionsPeer::PER_SYSTEM . " = " . $delimiter . $arrayRbacSystemData["SYS_CODE"] . $delimiter . "
                         ";
 
                         $criteriaGroup->add(
@@ -209,13 +209,13 @@ class ProcessSupervisor
                         break;
                     case "AVAILABLE":
                         $sql = "
-                        SELECT DISTINCT " . \UsersRolesPeer::USR_UID . "
-                        FROM   " . \UsersRolesPeer::TABLE_NAME . ", " . \RolesPermissionsPeer::TABLE_NAME . ", " . \PermissionsPeer::TABLE_NAME . "
-                        WHERE  " . \UsersRolesPeer::USR_UID . " = " . \UsersPeer::USR_UID . " AND
-                               " . \UsersRolesPeer::ROL_UID . " = " . \RolesPermissionsPeer::ROL_UID . " AND
-                               " . \RolesPermissionsPeer::PER_UID . " = " . \PermissionsPeer::PER_UID . " AND
-                               " . \PermissionsPeer::PER_CODE . " = " . $delimiter . "PM_SUPERVISOR" . $delimiter . " AND
-                               " . \PermissionsPeer::PER_SYSTEM . " = " . $delimiter . $arrayRbacSystemData["SYS_CODE"] . $delimiter . "
+                        SELECT DISTINCT " . DB_RBAC_NAME . '.'. \UsersRolesPeer::USR_UID . "
+                        FROM   " . DB_RBAC_NAME . '.'.\UsersRolesPeer::TABLE_NAME . ", " . DB_RBAC_NAME . '.'. \RolesPermissionsPeer::TABLE_NAME . ", " . DB_RBAC_NAME . '.'. \PermissionsPeer::TABLE_NAME . "
+                        WHERE  " . DB_RBAC_NAME . '.'.\UsersRolesPeer::USR_UID . " = " . \UsersPeer::USR_UID . " AND
+                               " . DB_RBAC_NAME . '.'.\UsersRolesPeer::ROL_UID . " = " . DB_RBAC_NAME . '.'. \RolesPermissionsPeer::ROL_UID . " AND
+                               " . DB_RBAC_NAME . '.'.\RolesPermissionsPeer::PER_UID . " = " . DB_RBAC_NAME . '.'. \PermissionsPeer::PER_UID . " AND
+                               " . DB_RBAC_NAME . '.'.\PermissionsPeer::PER_CODE . " = " . $delimiter . "PM_SUPERVISOR" . $delimiter . " AND
+                               " . DB_RBAC_NAME . '.'.\PermissionsPeer::PER_SYSTEM . " = " . $delimiter . $arrayRbacSystemData["SYS_CODE"] . $delimiter . "
                         ";
 
                         $criteriaUser->add(
