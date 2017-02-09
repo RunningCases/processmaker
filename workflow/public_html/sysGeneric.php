@@ -117,6 +117,10 @@ if (file_exists($requestFile)) {
         header( "location: /errors/error404.php?url=" . urlencode( $_SERVER['REQUEST_URI'] ) );
         die;
     }
+    if ($request === "app.php" || $request === "sysGeneric.php") {
+        //HTTP/1.0 403 Forbidden
+        http_response_code(403);
+    }
     $pos = strripos($request, ".") + 1;
     $size = strlen($request);
     if($pos < $size) {
