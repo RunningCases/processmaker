@@ -3269,15 +3269,15 @@ class Cases
         //User has participated
         $oParticipated = new \ListParticipatedLast();
         $aParticipated = $oParticipated->loadList($usrUid, array(), null, $appUid);
-        $arrayAccess['participated'] = (!sizeof($aParticipated)) ? false : true;
+        $arrayAccess['participated'] = (count($aParticipated) == 0) ? false : true;
 
         //User is supervisor
-        $oAppCache = new \AppCacheView();
-        $aProcesses = $oAppCache->getProUidSupervisor($usrUid);
-        $arrayAccess['supervisor'] = (!in_array($proUid, $aProcesses)) ? false : true;
+        $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
+        $isSupervisor = $supervisor->isUserProcessSupervisor($proUid, $usrUid);
+        $arrayAccess['supervisor'] = (!$isSupervisor) ? false : true;
 
         //Roles Permissions
-        if (count($rolesPermissions)>0) {
+        if (count($rolesPermissions) > 0) {
             global $RBAC;
             foreach ($rolesPermissions as $value) {
                 $arrayAccess['rolesPermissions'][$value] = ($RBAC->userCanAccess($value) < 0) ? false : true;
