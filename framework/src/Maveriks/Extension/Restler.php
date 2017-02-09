@@ -141,4 +141,57 @@ class Restler extends \Luracast\Restler\Restler
     {
         return $this->workspace;
     }
+
+    protected function call()
+    {
+        $this->dispatch('call');
+        $o = & $this->apiMethodInfo;
+        $accessLevel = max(\Luracast\Restler\Defaults::$apiAccessLevel,
+            $o->accessLevel);
+        $object =  \Luracast\Restler\Scope::get($o->className);
+        switch ($accessLevel) {
+            case 3 : //protected method
+                $reflectionMethod = new \ReflectionMethod(
+                    $object,
+                    $o->methodName
+                );
+                $reflectionMethod->setAccessible(true);
+                $result = $reflectionMethod->invokeArgs(
+                    $object,
+                    $o->parameters
+                );
+                break;
+            default :
+                $object = $this->reviewApiExtensions($o->className);
+                $result = call_user_func_array(array(
+                    $object,
+                    $o->methodName
+                ), $o->parameters);
+        }
+        $this->responseData = $result;
+    }
+
+    public function reviewApiExtensions($className)
+    {
+        $object = \Luracast\Restler\Scope::get($className);
+        $classReflection = new \ReflectionClass($object);
+        $classShortName = $classReflection->getShortName();
+        \G::LoadClass('pluginRegistry');
+        $registry = \PMPluginRegistry::getSingleton();
+        $pluginsActive = $registry->getEnabledPlugins();
+        foreach ($pluginsActive as $name => $plugin) {
+            $pathExtensions = PATH_PLUGINS . $plugin . PATH_SEP . 'src' . PATH_SEP . 'Services' . PATH_SEP . 'Ext' . PATH_SEP;
+            $sFileExits = file_exists($pathExtensions . 'Ext' . $classShortName . '.php');
+            if ($sFileExits) {
+                require_once($pathExtensions . 'Ext' . $classShortName . '.php');
+                $classExtName = 'Ext' . $classShortName;
+                $newObjectExt = new $classExtName();
+                if (is_subclass_of($newObjectExt, $className)) {
+                    $object = $newObjectExt;
+                }
+            }
+        }
+        return $object;
+    }
+
 }
