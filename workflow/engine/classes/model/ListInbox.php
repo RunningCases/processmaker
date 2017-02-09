@@ -403,51 +403,17 @@ class ListInbox extends BaseListInbox
             $criteria->addJoinMC($aConditions, Criteria::INNER_JOIN);
         }
 
-        if ($dateFrom != "") {
-            if ($dateTo != "") {
-                if ($dateFrom == $dateTo) {
-                    $dateSame = $dateFrom;
-                    $dateFrom = $dateSame . " 00:00:00";
-                    $dateTo = $dateSame . " 23:59:59";
-                } else {
-                    $dateFrom = $dateFrom . " 00:00:00";
-                    $dateTo = $dateTo . " 23:59:59";
-                }
-
-                $criteria->add( $criteria->getNewCriterion( ListInboxPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL )->
-                addAnd( $criteria->getNewCriterion( ListInboxPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL ) ) );
-            } else {
-                $dateFrom = $dateFrom . " 00:00:00";
-
-                $criteria->add( ListInboxPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL );
-            }
-        } elseif ($dateTo != "") {
-            $dateTo = $dateTo . " 23:59:59";
-
-            $criteria->add( ListInboxPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL );
-        }
-
-        if ($newestthan != '') {
-            $criteria->add( $criteria->getNewCriterion( ListInboxPeer::DEL_DELEGATE_DATE, $newestthan, Criteria::GREATER_THAN ));
-        }
-
-        if ($oldestthan != '') {
-            $criteria->add( $criteria->getNewCriterion( ListInboxPeer::DEL_DELEGATE_DATE, $oldestthan, Criteria::LESS_THAN ));
-        }
-
-        if ($filterStatus != '') {
-            switch ($filterStatus) {
-                case 'ON_TIME':
-                    $criteria->add( ListInboxPeer::DEL_RISK_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_RISK_DATE." , NOW( ) ) > 0", Criteria::CUSTOM);
-                    break;
-                case 'AT_RISK':
-                    $criteria->add( ListInboxPeer::DEL_RISK_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_RISK_DATE .", NOW( ) ) < 0", Criteria::CUSTOM);
-                    $criteria->add( ListInboxPeer::DEL_DUE_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_DUE_DATE .", NOW( ) ) >  0", Criteria::CUSTOM);
-                    break;
-                case 'OVERDUE':
-                    $criteria->add( ListInboxPeer::DEL_DUE_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_DUE_DATE." , NOW( ) ) < 0", Criteria::CUSTOM);
-                    break;
-            }
+        switch ($filterStatus) {
+            case 'ON_TIME':
+                $criteria->add( ListInboxPeer::DEL_RISK_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_RISK_DATE." , NOW( ) ) > 0", Criteria::CUSTOM);
+                break;
+            case 'AT_RISK':
+                $criteria->add( ListInboxPeer::DEL_RISK_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_RISK_DATE .", NOW( ) ) < 0", Criteria::CUSTOM);
+                $criteria->add( ListInboxPeer::DEL_DUE_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_DUE_DATE .", NOW( ) ) >  0", Criteria::CUSTOM);
+                break;
+            case 'OVERDUE':
+                $criteria->add( ListInboxPeer::DEL_DUE_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_DUE_DATE." , NOW( ) ) < 0", Criteria::CUSTOM);
+                break;
         }
     }
 

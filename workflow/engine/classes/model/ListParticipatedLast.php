@@ -209,11 +209,11 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $oldestthan     = isset($filters['oldestthan'] ) ? $filters['oldestthan'] : '';
 
         switch ($filter) {
-            case 'read':
-                $criteria->add( ListParticipatedLastPeer::DEL_INIT_DATE, null, Criteria::ISNOTNULL );
+            case 'started':
+                $criteria->add(ListParticipatedLastPeer::DEL_INDEX, 1, Criteria::EQUAL);
                 break;
-            case 'unread':
-                $criteria->add( ListParticipatedLastPeer::DEL_INIT_DATE, null, Criteria::ISNULL );
+            case 'completed':
+                $criteria->add( ListParticipatedLastPeer::APP_STATUS, 'COMPLETED', Criteria::EQUAL);
                 break;
         }
 
@@ -226,8 +226,17 @@ class ListParticipatedLast extends BaseListParticipatedLast
             ))));
         }
 
-        if($filterStatus != ''){
-            $criteria->add(ListParticipatedLastPeer::APP_STATUS, '%' . $filterStatus . '%', Criteria::LIKE );
+        switch ($filterStatus) {
+            case 'ON_TIME':
+                $criteria->add( ListInboxPeer::DEL_RISK_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_RISK_DATE." , NOW( ) ) > 0", Criteria::CUSTOM);
+                break;
+            case 'AT_RISK':
+                $criteria->add( ListInboxPeer::DEL_RISK_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_RISK_DATE .", NOW( ) ) < 0", Criteria::CUSTOM);
+                $criteria->add( ListInboxPeer::DEL_DUE_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_DUE_DATE .", NOW( ) ) >  0", Criteria::CUSTOM);
+                break;
+            case 'OVERDUE':
+                $criteria->add( ListInboxPeer::DEL_DUE_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_DUE_DATE." , NOW( ) ) < 0", Criteria::CUSTOM);
+                break;
         }
 
         if ($process != '') {
@@ -241,22 +250,6 @@ class ListParticipatedLast extends BaseListParticipatedLast
             $aConditions[] = array(ListParticipatedLastPeer::PRO_UID, ProcessPeer::PRO_UID);
             $aConditions[] = array(ProcessPeer::PRO_CATEGORY, "'" . $category . "'");
             $criteria->addJoinMC($aConditions, Criteria::INNER_JOIN);
-        }
-
-        if (!empty($dateFrom)) {
-            $criteria->add(ListParticipatedLastPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL);
-        }
-        if (!empty($dateTo)) {
-            $dateTo = $dateTo . " 23:59:59";
-            $criteria->add(ListParticipatedLastPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL);
-        }
-
-        if ($newestthan != '') {
-            $criteria->add( $criteria->getNewCriterion( ListParticipatedLastPeer::DEL_DELEGATE_DATE, $newestthan, Criteria::GREATER_THAN ));
-        }
-
-        if ($oldestthan != '') {
-            $criteria->add( $criteria->getNewCriterion( ListParticipatedLastPeer::DEL_DELEGATE_DATE, $oldestthan, Criteria::LESS_THAN ));
         }
     }
 
