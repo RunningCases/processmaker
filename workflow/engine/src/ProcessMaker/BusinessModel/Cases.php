@@ -3274,7 +3274,7 @@ class Cases
         //User is supervisor
         $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
         $isSupervisor = $supervisor->isUserProcessSupervisor($proUid, $usrUid);
-        $arrayAccess['supervisor'] = (!$isSupervisor) ? false : true;
+        $arrayAccess['supervisor'] = ($isSupervisor) ? true : false;
 
         //Roles Permissions
         if (count($rolesPermissions) > 0) {
