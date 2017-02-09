@@ -4528,6 +4528,11 @@ class Cases
 
         /*----------------------------------********---------------------------------*/
         $this->getExecuteTriggerProcess($sApplicationUID, 'REASSIGNED');
+        
+        //Delete record of the table LIST_UNASSIGNED
+        $unassigned = new ListUnassigned();
+        $unassigned->remove($sApplicationUID, $iDelegation);
+        
         return true;
     }
 

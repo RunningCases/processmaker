@@ -12,6 +12,7 @@ use \CasesPeer;
 class Cases
 {
     private $formatFieldNameInUppercase = true;
+    private $messageResponse = [];
 
     /**
      * Set the format of the fields name (uppercase, lowercase)
@@ -2878,6 +2879,7 @@ class Cases
      *
      * return json Return an json with the result of the reassigned cases.
      */
+
     public function doPostReassign($data)
     {
         if (!is_array($data)) {
@@ -2888,112 +2890,125 @@ class Cases
                 return;
             }
         }
-
         $dataResponse = $data;
-
-        //Verify data
-        $arrayCasesToReassign = $data['cases'];
-
-        $arrayMsg = [];
-
-        foreach ($arrayCasesToReassign as $key => $value) {
-            $appDelegation = \AppDelegationPeer::retrieveByPK($value['APP_UID'], $value['DEL_INDEX']);
-
-            if (is_null($appDelegation)) {
-                $arrayMsg[] = [
-                    'app_uid' => $value['APP_UID'],
-                    'del_index' => $value['DEL_INDEX'],
-                    'result' => 0,
-                    'status' => 'DELEGATION_NOT_EXISTS'
-                ];
-            }
-        }
-
-        if (!empty($arrayMsg)) {
-            return ['cases' => $arrayMsg];
-        }
-
-        $task = new \ProcessMaker\BusinessModel\Task();
-        $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
-
-        $userUid = $data['usr_uid_target'];
-
-        foreach ($arrayCasesToReassign as $value) {
-            $appDelegation = \AppDelegationPeer::retrieveByPK($value['APP_UID'], $value['DEL_INDEX']);
-
-            //Verify data
-            $taskUid = $appDelegation->getTasUid();
-
-            $flagBoolean = $task->checkUserOrGroupAssignedTask($taskUid, $userUid);
-            $flagps = $supervisor->isUserProcessSupervisor($appDelegation->getProUid(), $userUid);
-
-            if (!$flagBoolean && !$flagps) {
-                $arrayMsg[] = [
-                    'app_uid' => $value['APP_UID'],
-                    'del_index' => $value['DEL_INDEX'],
-                    'result' => 0,
-                    'status' => 'USER_NOT_ASSIGNED_TO_TASK'
-                ];
-            }
-        }
-
-        if (!empty($arrayMsg)) {
-            return ['cases' => $arrayMsg];
-        }
-
-        G::LoadClass('case');
-        $oCases = new \Cases();
-        $appDelegation = new \AppDelegation();
         $casesToReassign = $data['cases'];
-        $result = 0;
-        if (sizeof($casesToReassign)) {
-            foreach ($casesToReassign as $key => $val) {
-                $usrUid = '';
-                if (array_key_exists('USR_UID', $val)) {
-                    if ($val['USR_UID'] != '') {
-                        $usrUid = $val['USR_UID'];
+        $oCases = new \Cases();
+        foreach ($casesToReassign as $key => $val) {
+            $appDelegation = \AppDelegationPeer::retrieveByPK($val['APP_UID'], $val['DEL_INDEX']);
+            $existDelegation = $this->validateReassignData($appDelegation, $val, $data, 'DELEGATION_NOT_EXISTS');
+            if ($existDelegation) {
+                $existDelegation = $this->validateReassignData($appDelegation, $val, $data, 'USER_NOT_ASSIGNED_TO_TASK');
+                if ($existDelegation) {
+                    $usrUid = '';
+                    if (array_key_exists('USR_UID', $val)) {
+                        if ($val['USR_UID'] != '') {
+                            $usrUid = $val['USR_UID'];
+                        }
+                    }
+                    if ($usrUid == '') {
+                        $fields = $appDelegation->toArray(\BasePeer::TYPE_FIELDNAME);
+                        $usrUid = $fields['USR_UID'];
+                    }
+                    //Will be not able reassign a case when is paused
+                    $flagPaused = $this->validateReassignData($appDelegation, $val, $data, 'ID_REASSIGNMENT_PAUSED_ERROR');
+                    //Current users of OPEN DEL_INDEX thread
+                    $flagSameUser = $this->validateReassignData($appDelegation, $val, $data, 'REASSIGNMENT_TO_THE_SAME_USER');
+                    //reassign case
+                    if ($flagPaused && $flagSameUser) {
+                        $reassigned = $oCases->reassignCase($val['APP_UID'], $val['DEL_INDEX'], $usrUid, $data['usr_uid_target']);
+                        $result = $reassigned ? 1 : 0;
+                        $this->messageResponse = [
+                            'APP_UID' => $val['APP_UID'],
+                            'DEL_INDEX' => $val['DEL_INDEX'],
+                            'RESULT' => $result,
+                            'STATUS' => 'SUCCESS'
+                        ];
                     }
                 }
+            }
+            $dataResponse['cases'][$key] = $this->messageResponse;
+        }
+        unset($dataResponse['usr_uid_target']);
+        return G::json_encode($dataResponse);
+    }
 
-                if ($usrUid == '') {
-                    $fields = $appDelegation->load($val['APP_UID'], $val['DEL_INDEX']);
-                    $usrUid = $fields['USR_UID'];
+    /**
+     * @param $appDelegation
+     * @param $value
+     * @param $data
+     * @param string $type
+     * @return bool
+     */
+    private function validateReassignData($appDelegation, $value, $data, $type = 'DELEGATION_NOT_EXISTS')
+    {
+        $return = true;
+        switch ($type) {
+            case 'DELEGATION_NOT_EXISTS':
+                if (is_null($appDelegation)) {
+                    $this->messageResponse = [
+                        'APP_UID' => $value['APP_UID'],
+                        'DEL_INDEX' => $value['DEL_INDEX'],
+                        'RESULT' => 0,
+                        'STATUS' => $type
+                    ];
+                    $return = false;
                 }
-                //Will be not able reassign a case when is paused
-                $flagReassign = true;
-                if (\AppDelay::isPaused($val['APP_UID'], $val['DEL_INDEX'])) {
-                    $dataResponse['cases'][$key]['result'] = 0;
-                    $dataResponse['cases'][$key]['status'] = \G::LoadTranslation('ID_REASSIGNMENT_PAUSED_ERROR');
-                    $flagReassign = false;
-                }
+                break;
+            case 'USER_NOT_ASSIGNED_TO_TASK':
+                $task = new \ProcessMaker\BusinessModel\Task();
+                $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
+                $taskUid = $appDelegation->getTasUid();
+                $flagBoolean = $task->checkUserOrGroupAssignedTask($taskUid, $data['usr_uid_target']);
+                $flagps = $supervisor->isUserProcessSupervisor($appDelegation->getProUid(), $data['usr_uid_target']);
 
-                //Current users of OPEN DEL_INDEX thread
-                $aCurUser = $appDelegation->getCurrentUsers($val['APP_UID'], $val['DEL_INDEX']);
+                if (!$flagBoolean && !$flagps) {
+                    $this->messageResponse = [
+                        'APP_UID' => $value['APP_UID'],
+                        'DEL_INDEX' => $value['DEL_INDEX'],
+                        'RESULT' => 0,
+                        'STATUS' => 'USER_NOT_ASSIGNED_TO_TASK'
+                    ];
+                    $return = false;
+                }
+                break;
+            case 'ID_REASSIGNMENT_PAUSED_ERROR':
+                if (\AppDelay::isPaused($value['APP_UID'], $value['DEL_INDEX'])) {
+                    $this->messageResponse = [
+                        'APP_UID' => $value['APP_UID'],
+                        'DEL_INDEX' => $value['DEL_INDEX'],
+                        'RESULT' => 0,
+                        'STATUS' => \G::LoadTranslation('ID_REASSIGNMENT_PAUSED_ERROR')
+                    ];
+                    $return = false;
+                }
+                break;
+            case 'REASSIGNMENT_TO_THE_SAME_USER':
+                $aCurUser = $appDelegation->getCurrentUsers($value['APP_UID'], $value['DEL_INDEX']);
                 if (!empty($aCurUser)) {
-                    foreach ($aCurUser as $keyAux => $value) {
-                        if ($value === $data['usr_uid_target']) {
-                            $flagReassign = false;
-                            $result = 1;
+                    foreach ($aCurUser as $keyAux => $val) {
+                        if ($val === $data['usr_uid_target']) {
+                            $this->messageResponse = [
+                                'APP_UID' => $value['APP_UID'],
+                                'DEL_INDEX' => $value['DEL_INDEX'],
+                                'RESULT' => 1,
+                                'STATUS' => 'SUCCESS'
+                            ];
+                            $return = false;
                         }
                     }
                 } else {
                     //DEL_INDEX is CLOSED
-                    $dataResponse['cases'][$key]['result'] = 0;
-                    $dataResponse['cases'][$key]['status'] = \G::LoadTranslation('ID_REASSIGNMENT_ERROR');
-                    $flagReassign = false;
+                    $this->messageResponse = [
+                        'APP_UID' => $value['APP_UID'],
+                        'DEL_INDEX' => $value['DEL_INDEX'],
+                        'RESULT' => 0,
+                        'STATUS' => \G::LoadTranslation('ID_REASSIGNMENT_ERROR')
+                    ];
+                    $return = false;
                 }
-
-                if ($flagReassign) {
-                    $reassigned = $oCases->reassignCase($val['APP_UID'], $val['DEL_INDEX'], $usrUid, $data['usr_uid_target']);
-                    $result = $reassigned ? 1 : 0;
-                    $dataResponse['cases'][$key]['status'] = 'SUCCESS';
-                }
-                $dataResponse['cases'][$key]['result'] = $result;
-            }
+                break;
         }
-        unset($dataResponse['usr_uid_target']);
-
-        return G::json_encode($dataResponse);
+        return $return;
     }
 
     /**
@@ -3018,11 +3033,11 @@ class Cases
 
     public function checkUserHasPermissionsOrSupervisor($userUid, $applicationUid, $dynaformUid)
     {
+        $arrayApplicationData = $this->getApplicationRecordByPk($applicationUid, [], false);
+        //Check whether the process supervisor
+        $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
+        $userAccess = $supervisor->isUserProcessSupervisor($arrayApplicationData['PRO_UID'], $userUid);
         if (!empty($dynaformUid)) {
-            $arrayApplicationData = $this->getApplicationRecordByPk($applicationUid, [], false);
-            //Check whether the process supervisor
-            $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
-            $userAccess = $supervisor->isUserProcessSupervisor($arrayApplicationData['PRO_UID'], $userUid);
             //Check if have objects assigned (Supervisor)
             $cases = new \Cases();
             $resultDynaForm = $cases->getAllDynaformsStepsToRevise($applicationUid);
@@ -3065,7 +3080,7 @@ class Cases
         } else {
             $arrayResult = $this->getStatusInfo($applicationUid, 0, $userUid);
             $flagParticipated = false;
-            if ($arrayResult) {
+            if ($arrayResult || $userAccess) {
                 $flagParticipated = true;
             }
             return $flagParticipated;

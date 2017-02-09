@@ -1009,7 +1009,7 @@ try {
                     $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_TRANSFER_HIDDEN_FLY'] = "<input type=hidden name='" . $hiddenName . "[NEXT_TASK][TAS_TRANSFER_HIDDEN_FLY]' id='" . $hiddenName . "[NEXT_TASK][TAS_TRANSFER_HIDDEN_FLY]' value=" . $aValues['NEXT_TASK']['TAS_TRANSFER_FLY'] . ">";
                     if ($aValues['NEXT_TASK']['TAS_TRANSFER_FLY'] == 'true') {
                         $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_DURATION'] = '<input type="text" size="5" name="' . $hiddenName . '[NEXT_TASK][TAS_DURATION]" id="' . $hiddenName . '[NEXT_TASK][TAS_DURATION]" value="' . $aValues['NEXT_TASK']['TAS_DURATION'] . '">';
-                        $hoursSelected = $daysSelected = '';
+                        $hoursSelected = $daysSelected = $minSelected = '';
                         if ($aFields['TASK'][$sKey]['NEXT_TASK']['TAS_TIMEUNIT'] == 'HOURS') {
                             $hoursSelected = "selected = 'selected'";
                         } else {

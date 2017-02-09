@@ -26,7 +26,7 @@ try {
     G::LoadSystem('inputfilter');
     $filter = new InputFilter();
     $_POST = $filter->xssFilterHard($_POST);
-    
+
     G::LoadInclude( 'ajax' );
     if (isset( $_POST['form'] )) {
         $_POST = $_POST['form'];
@@ -153,7 +153,6 @@ try {
             $oDataset->next();
             $aRow = $oDataset->getRow();
 
-            $oContent = new Content();
             if($locale != "en"){ //Default Lengage 'en'
             	if($locale != SYS_LANG){ //Current lenguage
             		//THERE IS NO ANY CASE STARTED FROM THES LANGUAGE

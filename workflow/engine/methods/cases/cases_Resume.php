@@ -56,12 +56,13 @@ if (isset($_SESSION['ACTION']) && ($_SESSION['ACTION'] == 'jump')) {
     $Fields = $oCase->loadCase( $_SESSION['APPLICATION'], $_SESSION['INDEX']);
 }
 
+//Check the participated
 $participated = $oCase->userParticipatedInCase( $_GET['APP_UID'], $_SESSION['USER_LOGGED'] );
+//Check if is Supervisor
+$processUser = new ProcessUser();
+$userAccess = $processUser->validateUserAccess($Fields['PRO_UID'], $_SESSION['USER_LOGGED']);
 
-if ($RBAC->userCanAccess( 'PM_ALLCASES' ) < 0 && $participated == 0) {
-    /*if (strtoupper($Fields['APP_STATUS']) != 'COMPLETED') {
-      $oCase->thisIsTheCurrentUser($_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED'], 'SHOW_MESSAGE');
-    }*/
+if ($RBAC->userCanAccess( 'PM_ALLCASES' ) < 0 && !$participated && !$userAccess) {
     $aMessage['MESSAGE'] = G::LoadTranslation( 'ID_NO_PERMISSION_NO_PARTICIPATED' );
     $G_PUBLISH = new Publisher();
     $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', $aMessage );
@@ -77,12 +78,10 @@ if (isset( $aRow['APP_TYPE'] )) {
             $Fields['STATUS'] = ucfirst( strtolower( G::LoadTranslation( 'ID_CANCELLED' ) ) );
             break;
     }
-
-    //$Fields['STATUS'] = $aRow['APP_TYPE'];
 }
 
 $actions = 'false';
-if ($_GET['action'] == 'paused') {
+if (isset($_GET['action']) && $_GET['action'] == 'paused') {
     $actions = 'true';
 }
 

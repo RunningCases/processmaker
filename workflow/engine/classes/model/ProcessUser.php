@@ -97,21 +97,21 @@ class ProcessUser extends BaseProcessUser
     {
         try {
             $oCriteria = new Criteria();
-            $oCriteria->add( ProcessUserPeer::PRO_UID, $proUid );
-            $oCriteria->add( ProcessUserPeer::PU_TYPE, 'SUPERVISOR' );
-            $oCriteria->add( ProcessUserPeer::USR_UID, $usrUid );
-            $dataset = ProcessUserPeer::doSelectRS( $oCriteria );
-            $dataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+            $oCriteria->add(ProcessUserPeer::PRO_UID, $proUid);
+            $oCriteria->add(ProcessUserPeer::PU_TYPE, 'SUPERVISOR');
+            $oCriteria->add(ProcessUserPeer::USR_UID, $usrUid);
+            $dataset = ProcessUserPeer::doSelectRS($oCriteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             //If the user is in Assigned supervisors list
-            if($dataset->next()){
+            if ($dataset->next()) {
                 return true;
             } else {
                 //If the user is in a group in Assigned supervisors list
                 $oCriteria = new Criteria();
-                $oCriteria->add( ProcessUserPeer::PRO_UID, $proUid );
-                $oCriteria->add( ProcessUserPeer::PU_TYPE, 'GROUP_SUPERVISOR');
-                $dataset = ProcessUserPeer::doSelectRS( $oCriteria );
-                $dataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+                $oCriteria->add(ProcessUserPeer::PRO_UID, $proUid);
+                $oCriteria->add(ProcessUserPeer::PU_TYPE, 'GROUP_SUPERVISOR');
+                $dataset = ProcessUserPeer::doSelectRS($oCriteria);
+                $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                 $oGroups = new Groups();
                 $aGroups = $oGroups->getActiveGroupsForAnUser($usrUid);
                 while ($dataset->next()) {
@@ -119,8 +119,6 @@ class ProcessUser extends BaseProcessUser
                     $groupUid = $row['USR_UID'];
                     if (in_array($groupUid, $aGroups)) {
                         return true;
-                    } else {
-                        return false;
                     }
                 }
                 return false;

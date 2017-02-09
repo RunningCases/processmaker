@@ -527,13 +527,27 @@ function WSLogin ($user, $pass, $endpoint = "")
 function WSOpen ($force = false)
 {
     if (isset( $_SESSION["WS_SESSION_ID"] ) || $force) {
+        $optionsHeaders = array(
+            "cache_wsdl" => WSDL_CACHE_NONE,
+            "soap_version" => SOAP_1_1,
+            "trace" => 1,
+            "stream_context" => stream_context_create(
+                array(
+                    'ssl' => array(
+                        'verify_peer' => 0,
+                        'verify_peer_name' => 0
+                    )
+                )
+            )
+        );
+
         if (! isset( $_SESSION["WS_END_POINT"] )) {
-            $defaultEndpoint = "http://" . $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . "/sys" . SYS_SYS . "/en/classic/services/wsdl2";
+            $defaultEndpoint = $_SERVER["REQUEST_SCHEME"] . "://" . $_SERVER["SERVER_NAME"] . ":" . $_SERVER["SERVER_PORT"] . "/sys" . SYS_SYS . "/en/classic/services/wsdl2";
         }
 
         $endpoint = isset( $_SESSION["WS_END_POINT"] ) ? $_SESSION["WS_END_POINT"] : $defaultEndpoint;
 
-        $client = new SoapClient( $endpoint );
+        $client = new SoapClient( $endpoint, $optionsHeaders);
 
         return $client;
     } else {

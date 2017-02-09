@@ -69,16 +69,18 @@ class Light
             $task->setArrayParamException(array("taskUid" => "act_uid", "stepUid" => "step_uid"));
 
             $webEntryEvent = new \ProcessMaker\BusinessModel\WebEntryEvent();
-            $webEntryEvent->setFormatFieldNameInUppercase(false);
-            $webEntryEvent->setArrayFieldNameForException(array("processUid" => "prj_uid"));
+            $arrayWebEntryEvent = array();
+            $allWebEntryEvents = $webEntryEvent->getAllWebEntryEvents();
+            foreach ($allWebEntryEvents as $webEntryEvents) {
+                $arrayWebEntryEvent[] = $webEntryEvents["ACT_UID"];
+            }
 
             $step = new \ProcessMaker\Services\Api\Project\Activity\Step();
             $response = array();
             foreach ($processList as $key => $processInfo) {
                 $tempTreeChildren = array ();
                 foreach ($processList[$key] as $keyChild => $processInfoChild) {
-                    $webEntryEventStart = $webEntryEvent->getWebEntryEvents($processInfoChild['pro_uid']);
-                    if (empty($webEntryEventStart) && in_array($processInfoChild['pro_uid'], $bpmnProjects)) {
+                    if (!in_array($processInfoChild['uid'], $arrayWebEntryEvent) && in_array($processInfoChild['pro_uid'], $bpmnProjects)) {
                         $tempTreeChild['text']      = $keyChild; //ellipsis ( $keyChild, 50 );
                         $tempTreeChild['processId'] = $processInfoChild['pro_uid'];
                         $tempTreeChild['taskId']    = $processInfoChild['uid'];

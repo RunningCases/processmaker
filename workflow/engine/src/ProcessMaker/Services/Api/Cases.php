@@ -60,7 +60,6 @@ class Cases extends Api
 
                     //Check if the user is supervisor process
                     $case = new \ProcessMaker\BusinessModel\Cases();
-                    $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
                     $user = new \ProcessMaker\BusinessModel\User();
 
                     $count = 0;
@@ -70,10 +69,10 @@ class Cases extends Api
 
                         if (!empty($arrayApplicationData)) {
                             if (!$user->checkPermission($usrUid, 'PM_REASSIGNCASE')) {
-                                if($user->checkPermission($usrUid, 'PM_REASSIGNCASE_SUPERVISOR')){
+                                if ($user->checkPermission($usrUid, 'PM_REASSIGNCASE_SUPERVISOR')) {
                                     $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
                                     $flagps = $supervisor->isUserProcessSupervisor($arrayApplicationData['PRO_UID'], $usrUid);
-                                    if(!$flagps){
+                                    if (!$flagps) {
                                         $count = $count + 1;
                                     }
 

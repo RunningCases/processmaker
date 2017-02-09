@@ -26,32 +26,38 @@ $actionAjax = isset( $_REQUEST['actionAjax'] ) ? $_REQUEST['actionAjax'] : null;
 
 if ($actionAjax == 'historyGridList_JXP') {
 
-    G::LoadClass( 'case' );
-    G::LoadClass( "BasePeer" );
+    G::LoadClass('case');
+    G::LoadClass("BasePeer");
 
     global $G_PUBLISH;
-    $c = Cases::getTransferHistoryCriteria( $_SESSION['APPLICATION'] );
+    $criteria = Cases::getTransferHistoryCriteria($_SESSION['APPLICATION']);
 
+    $rs = GulliverBasePeer::doSelectRs($criteria);
+    $totalCount = $rs->getRecordCount();
+
+    $start = $_REQUEST["start"];
+    $limit = $_REQUEST["limit"];
+
+    $criteria->setLimit($limit);
+    $criteria->setOffset($start);
+
+    $rs = GulliverBasePeer::doSelectRs($criteria);
+    $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
     $result = new stdClass();
-    $aProcesses = Array ();
-
-    $rs = GulliverBasePeer::doSelectRs( $c );
-    $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-    $rs->next();
-    for ($j = 0; $j < $rs->getRecordCount(); $j ++) {
+    $aProcesses = Array();
+    while ($rs->next()) {
         $result = $rs->getRow();
         $result["ID_HISTORY"] = $result["PRO_UID"] . '_' . $result["APP_UID"] . '_' . $result["TAS_UID"];
         $aProcesses[] = $result;
-        $rs->next();
     }
 
     $newDir = '/tmp/test/directory';
-    G::verifyPath( $newDir );
+    G::verifyPath($newDir);
     $r = new stdclass();
     $r->data = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($aProcesses);
-    $r->totalCount = 2;
+    $r->totalCount = $totalCount;
 
-    echo G::json_encode( $r );
+    echo G::json_encode($r);
 }
 
 if ($actionAjax == 'historyGridListChangeLogPanelBody_JXP') {

@@ -548,46 +548,49 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         G::RenderPage( 'publish', 'raw' );
         break;
     case 'uploadDocumentGrid_Ajax':
-        G::LoadClass( 'case' );
-        G::LoadClass( "BasePeer" );
+        G::LoadClass('case');
+        G::LoadClass("BasePeer");
         global $G_PUBLISH;
 
         $arrayToTranslation = array(
-            "INPUT"    => G::LoadTranslation("ID_INPUT_DB"),
-            "OUTPUT"   => G::LoadTranslation("ID_OUTPUT_DB"),
+            "INPUT" => G::LoadTranslation("ID_INPUT_DB"),
+            "OUTPUT" => G::LoadTranslation("ID_OUTPUT_DB"),
             "ATTACHED" => G::LoadTranslation("ID_ATTACHED_DB")
         );
 
         $oCase = new Cases();
-        $aProcesses = Array ();
+        $aProcesses = Array();
         $G_PUBLISH = new Publisher();
-        $c = $oCase->getAllUploadedDocumentsCriteria( $_SESSION['PROCESS'], $_SESSION['APPLICATION'], 
-            $_SESSION['CURRENT_TASK'], $_SESSION['USER_LOGGED'], $_SESSION['INDEX']);
-
-        if ($c->getDbName() == 'dbarray') {
-            $rs = ArrayBasePeer::doSelectRs( $c );
+        $criteria = $oCase->getAllUploadedDocumentsCriteria($_SESSION['PROCESS'], $_SESSION['APPLICATION'], $_SESSION['CURRENT_TASK'], $_SESSION['USER_LOGGED'], $_SESSION['INDEX']);
+        if ($criteria->getDbName() == 'dbarray') {
+            $rs = ArrayBasePeer::doSelectRs($criteria);
         } else {
-            $rs = GulliverBasePeer::doSelectRs( $c );
+            $rs = GulliverBasePeer::doSelectRs($criteria);
         }
+        $totalCount = $rs->getRecordCount();
 
-        $rs->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-        $rs->next();
+        $start = $_REQUEST["start"];
+        $limit = $_REQUEST["limit"];
 
-        $totalCount = 0;
-
-        for ($j = 0; $j < $rs->getRecordCount(); $j ++) {
+        $criteria->setLimit($limit);
+        $criteria->setOffset($start);
+        if ($criteria->getDbName() == 'dbarray') {
+            $rs = ArrayBasePeer::doSelectRs($criteria);
+        } else {
+            $rs = GulliverBasePeer::doSelectRs($criteria);
+        }
+        $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        while ($rs->next()) {
             $result = $rs->getRow();
-            $result["TYPE"] = (array_key_exists($result["TYPE"], $arrayToTranslation))? $arrayToTranslation[$result["TYPE"]] : $result["TYPE"];
+            $result["TYPE"] = (array_key_exists($result["TYPE"], $arrayToTranslation)) ? $arrayToTranslation[$result["TYPE"]] : $result["TYPE"];
             $aProcesses[] = $result;
-            $rs->next();
-            $totalCount ++;
         }
 
         $r = new stdclass();
         $r->data = $aProcesses;
         $r->totalCount = $totalCount;
 
-        echo Bootstrap::json_encode( $r );
+        echo Bootstrap::json_encode($r);
         break;
     case 'generateDocumentGrid_Ajax':
 

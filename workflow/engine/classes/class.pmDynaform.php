@@ -27,6 +27,7 @@ class pmDynaform
     private $context = array();
     private $dataSources = null;
     private $databaseProviders = null;
+    private $propertiesToExclude = array();
 
     public function __construct($fields = array())
     {
@@ -37,6 +38,7 @@ class pmDynaform
         $this->serverConf = &serverConf::getSingleton();
         $this->isRTL = ($this->serverConf->isRtl(SYS_LANG)) ? 'true' : 'false';
         $this->fields = $fields;
+        $this->propertiesToExclude = array('dataVariable');
         $this->getDynaform();
         $this->getDynaforms();
         $this->synchronizeSubDynaform();
@@ -196,11 +198,13 @@ class pmDynaform
                 if (is_string($value) && in_array(substr($value, 0, 2), $prefixs)) {
                     $triggerValue = substr($value, 2);
                     if (isset($this->fields["APP_DATA"][$triggerValue])) {
-                        if ($key !== "dataVariable") {
+                        if (!in_array($key, $this->propertiesToExclude)) {
                             $json->{$key} = $this->fields["APP_DATA"][$triggerValue];
                         }
                     } else {
-                        $json->{$key} = "";
+                        if (!in_array($key, $this->propertiesToExclude)) {
+                            $json->{$key} = "";
+                        }
                     }
                 }
                 //set properties from 'formInstance' variable
@@ -1908,6 +1912,12 @@ class pmDynaform
                 $validatorClass = ProcessMaker\BusinessModel\DynaForm\ValidatorFactory::createValidatorClass($json->type, $json);
                 if ($validatorClass !== null) {
                     $validatorClass->validatePost($post);
+                }
+                //Clears the data in the appData for grids
+                if (array_key_exists($json->id, $this->fields) && $json->type === 'grid' &&
+                    !array_key_exists($json->id, $post)
+                ) {
+                    $post[$json->variable] = array(array());
                 }
             }
         };
