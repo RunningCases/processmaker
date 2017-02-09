@@ -27420,6 +27420,18 @@ msgid "Filter By"
 msgstr "Filter By"
 
 # TRANSLATION
+# LABEL/THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED
+#: LABEL/THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED
+msgid "The upload of PHP files was disabled please contact the system administrator."
+msgstr "The upload of PHP files was disabled please contact the system administrator."
+
+# TRANSLATION
+# LABEL/THE_PHP_FILES_EXECUTION_WAS_DISABLED
+#: LABEL/THE_PHP_FILES_EXECUTION_WAS_DISABLED
+msgid "The PHP files execution was disabled please contact the system administrator."
+msgstr "The PHP files execution was disabled please contact the system administrator."
+
+# TRANSLATION
 # LABEL/ID_MAFE_cae0206c31eaa305dd0e847330c5e837
 #: LABEL/ID_MAFE_cae0206c31eaa305dd0e847330c5e837
 msgid "wildcard"
