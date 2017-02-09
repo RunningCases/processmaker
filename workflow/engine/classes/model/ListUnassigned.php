@@ -218,12 +218,6 @@ class ListUnassigned extends BaseListUnassigned
         }
     }
 
-    public function countTotal ($usr_uid, $filters = array())
-    {
-        $total = $this->total;
-        return (int)$total;
-    }
-
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
         $resp = array();
@@ -446,9 +440,10 @@ class ListUnassigned extends BaseListUnassigned
     /**
      * Returns the number of cases of a user
      * @param $userUid
+     * @param array $filters
      * @return int
      */
-    public function getCountList($userUid)
+    public function getCountList($userUid, $filters = array())
     {
         $criteria = new Criteria('workflow');
         $tasks = $this->getSelfServiceTasks($userUid);

@@ -12,112 +12,133 @@ class Applications
         $sort = null,
         $category = null,
         $dateFrom = null,
-        $dateTo =null
+        $dateTo = null
     ) {
         //Task Dummies
         $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
 
-        $newCriteria = new Criteria("workflow");
-        $newCriteria->addSelectColumn(ApplicationPeer::APP_NUMBER);
-        $newCriteria->addSelectColumn(ApplicationPeer::APP_UID);
-        $newCriteria->addSelectColumn(ApplicationPeer::APP_STATUS);
-        $newCriteria->addSelectColumn(ApplicationPeer::PRO_UID);
-        $newCriteria->addSelectColumn(ApplicationPeer::APP_CREATE_DATE);
-        $newCriteria->addSelectColumn(ApplicationPeer::APP_FINISH_DATE);
-        $newCriteria->addSelectColumn(ApplicationPeer::APP_UPDATE_DATE);
-        $newCriteria->addSelectColumn(ApplicationPeer::APP_TITLE);
-        $newCriteria->addSelectColumn(AppDelegationPeer::USR_UID);
-        $newCriteria->addSelectColumn(AppDelegationPeer::TAS_UID);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_INDEX);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_LAST_INDEX);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_DELEGATE_DATE);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_INIT_DATE);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_FINISH_DATE);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_TASK_DUE_DATE);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_RISK_DATE);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_THREAD_STATUS);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_PRIORITY);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_DURATION);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_QUEUE_DURATION);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_STARTED);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_DELAY_DURATION);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_FINISHED);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_DELAYED);
-        $newCriteria->addSelectColumn(AppDelegationPeer::DEL_DELAY_DURATION);
-        $newCriteria->addSelectColumn(UsersPeer::USR_LASTNAME);
-        $newCriteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
-        $newCriteria->addSelectColumn(UsersPeer::USR_USERNAME);
-        $newCriteria->addSelectColumn(TaskPeer::TAS_TITLE);
-        $newCriteria->addSelectColumn(ProcessPeer::PRO_TITLE);
-        $newCriteria->addJoin(AppDelegationPeer::APP_NUMBER , ApplicationPeer::APP_NUMBER, Criteria::LEFT_JOIN);
-        $newCriteria->addJoin(AppDelegationPeer::DELEGATION_ID , AppThreadPeer::DELEGATION_ID, Criteria::LEFT_JOIN);
-        $newCriteria->addJoin(AppDelegationPeer::USR_ID , UsersPeer::USR_ID, Criteria::LEFT_JOIN);
-        $newCriteria->addJoin(AppDelegationPeer::PRO_ID , ProcessPeer::PRO_ID, Criteria::LEFT_JOIN);
-        $newCriteria->addJoin(AppDelegationPeer::TAS_ID , TaskPeer::TAS_ID, Criteria::LEFT_JOIN);
-        $newCriteria->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
+        $con = Propel::getConnection(AppDelegationPeer::DATABASE_NAME);
+        $con->begin();
+        $sqlCount = "SELECT STRAIGHT_JOIN COUNT(*) AS TOTAL FROM APP_DELEGATION";
+        $sql = "SELECT
+                    STRAIGHT_JOIN APPLICATION.APP_NUMBER,
+                    APPLICATION.APP_UID,
+                    APPLICATION.APP_STATUS,
+                    APPLICATION.APP_STATUS AS APP_STATUS_LABEL,
+                    APPLICATION.PRO_UID,
+                    APPLICATION.APP_CREATE_DATE,
+                    APPLICATION.APP_FINISH_DATE,
+                    APPLICATION.APP_UPDATE_DATE,
+                    APPLICATION.APP_TITLE,
+                    APP_DELEGATION.USR_UID,
+                    APP_DELEGATION.TAS_UID,
+                    APP_DELEGATION.DEL_INDEX,
+                    APP_DELEGATION.DEL_LAST_INDEX,
+                    APP_DELEGATION.DEL_DELEGATE_DATE,
+                    APP_DELEGATION.DEL_INIT_DATE,
+                    APP_DELEGATION.DEL_FINISH_DATE,
+                    APP_DELEGATION.DEL_TASK_DUE_DATE,
+                    APP_DELEGATION.DEL_RISK_DATE,
+                    APP_DELEGATION.DEL_THREAD_STATUS,
+                    APP_DELEGATION.DEL_PRIORITY,
+                    APP_DELEGATION.DEL_DURATION,
+                    APP_DELEGATION.DEL_QUEUE_DURATION,
+                    APP_DELEGATION.DEL_STARTED,
+                    APP_DELEGATION.DEL_DELAY_DURATION,
+                    APP_DELEGATION.DEL_FINISHED,
+                    APP_DELEGATION.DEL_DELAYED,
+                    APP_DELEGATION.DEL_DELAY_DURATION,
+                    TASK.TAS_TITLE AS APP_TAS_TITLE,
+                    USERS.USR_LASTNAME,
+                    USERS.USR_FIRSTNAME,
+                    USERS.USR_USERNAME,
+                    PROCESS.PRO_TITLE AS APP_PRO_TITLE
+                FROM APP_DELEGATION
+        ";
+
+        $sqlJoin  = " LEFT JOIN APPLICATION ON (APP_DELEGATION.APP_NUMBER=APPLICATION.APP_NUMBER)";
+        $sqlCount.= " LEFT JOIN TASK ON (APP_DELEGATION.TAS_ID=TASK.TAS_ID)";
+
+        if (in_array($status, array(1, 2, 3, 4)) || !empty($search)) {
+            $sqlCount .= $sqlJoin;
+        }
+
+        $sqlJoin .= " LEFT JOIN TASK ON (APP_DELEGATION.TAS_ID=TASK.TAS_ID)";
+        $sqlWhere = " WHERE TASK.TAS_TYPE NOT IN ('" . implode("','",$arrayTaskTypeToExclude) . "')";
         switch ($status) {
             case 1: //DRAFT
-                $newCriteria->add(ApplicationPeer::APP_STATUS_ID, 1);
+                $sqlWhere .= " AND APP_DELEGATION.DEL_THREAD_STATUS='OPEN'";
+                $sqlWhere .= " AND APPLICATION.APP_STATUS_ID = 1";
                 break;
             case 2: //TO_DO
-                $newCriteria->add(ApplicationPeer::APP_STATUS_ID, 2);
+                $sqlWhere .= " AND APP_DELEGATION.DEL_THREAD_STATUS='OPEN'";
+                $sqlWhere .= " AND APPLICATION.APP_STATUS_ID = 2";
                 break;
             case 3: //COMPLETED
-                $newCriteria->addOr(AppDelegationPeer::DEL_THREAD_STATUS, 'CLOSED');
-                $newCriteria->add(ApplicationPeer::APP_STATUS_ID, 3);
-                $newCriteria->add(AppDelegationPeer::DEL_LAST_INDEX, '1');
+                $sqlWhere .= " AND APPLICATION.APP_STATUS_ID = 3";
+                $sqlWhere .= " AND APP_DELEGATION.DEL_LAST_INDEX = 1";
                 break;
             case 4: //CANCELLED
-                $newCriteria->addOr(AppDelegationPeer::DEL_THREAD_STATUS, 'CLOSED');
-                $newCriteria->add(ApplicationPeer::APP_STATUS_ID, 4);
-                $newCriteria->add(AppDelegationPeer::DEL_LAST_INDEX, '1');
+                $sqlWhere .= " AND APPLICATION.APP_STATUS_ID = 4";
+                $sqlWhere .= " AND APP_DELEGATION.DEL_LAST_INDEX = 1";
                 break;
             case "PAUSED": //This status is not considered in the search, maybe we can add in the new versions
-                $newCriteria->add(ApplicationPeer::APP_STATUS, 'TO_DO');
+                $sqlWhere .= " AND APPLICATION.APP_STATUS = 'TO_DO'";
                 break;
             default: //All status
-                $newCriteria->addOr(AppDelegationPeer::DEL_THREAD_STATUS, 'CLOSED');
-                $newCriteria->add(AppDelegationPeer::DEL_LAST_INDEX, '1');
+                $sqlWhere .= " AND APP_DELEGATION.DEL_LAST_INDEX = 1";
                 break;
         }
+        $sqlJoin .= $sqlJoinUser = " LEFT JOIN USERS ON (APP_DELEGATION.USR_ID=USERS.USR_ID)";
         if (!empty($userUid)) {
-            $newCriteria->add(AppDelegationPeer::USR_ID, $userUid);
+            $sqlWhere .= " AND APP_DELEGATION.USR_ID = " . $userUid;
+            $sqlCount = $sqlCount . $sqlJoinUser;
         }
+        $sqlJoin .= $sqlJoinPro = " LEFT JOIN PROCESS ON (APP_DELEGATION.PRO_ID=PROCESS.PRO_ID)";
         if (!empty($process)) {
-            $newCriteria->add(ProcessPeer::PRO_ID, $process);
+            $sqlWhere .= " AND APP_DELEGATION.PRO_ID = " . $process;
         }
         if (!empty($category)) {
-            $newCriteria->add(ProcessPeer::PRO_CATEGORY, $category);
+            $category = mysql_real_escape_string($category);
+            $sqlWhere .= " AND PROCESS.PRO_CATEGORY = '{$category}'";
+        }
+        if (!empty($process) || !empty($category)) {
+            $sqlCount = $sqlCount . $sqlJoinPro;
         }
         if (!empty($search)) {
             //APP_NUMBER APP_TAS_TITLE APP_TITLE
-            $newCriteria->add( $newCriteria->getNewCriterion( ApplicationPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE )
-            ->addOr( $newCriteria->getNewCriterion( TaskPeer::TAS_TITLE, '%' . $search . '%', Criteria::LIKE )
-            ->addOr( $newCriteria->getNewCriterion( ApplicationPeer::APP_NUMBER, '%' . $search . '%', Criteria::LIKE ) ) ) );
+            $sqlWhere .= " AND (APPLICATION.APP_TITLE LIKE '%{$search}%' OR APPLICATION.APP_NUMBER LIKE '%{$search}%' OR TASK.TAS_TITLE LIKE '%{$search}%')";
         }
-        if (!empty($dateFrom)){
-            $newCriteria->add(AppDelegationPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL) ;
+        if (!empty($dateFrom)) {
+            $sqlWhere .= " AND APP_DELEGATION.DEL_DELEGATE_DATE >= '{$dateFrom}'";
         }
-        if (!empty($dateTo)){
+        if (!empty($dateTo)) {
             $dateTo = $dateTo . " 23:59:59";
-            $newCriteria->addAnd(AppDelegationPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL) ;
+            $sqlWhere .= " AND APP_DELEGATION.DEL_DELEGATE_DATE <= '{$dateTo}'";
         }
-
-        $newCriteria->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
-        $totalCount = ApplicationPeer::doCount($newCriteria, false);
+        $stmt = $con->createStatement();
+        //Get total count
+        $iCount = $stmt->executeQuery($sqlCount . $sqlWhere);
+        $iCount->next();
+        $aRow = $iCount->getRow();
+        $totalCount = $aRow['TOTAL'];
 
         //Filters
-        if ($dir == "DESC") {
-            $newCriteria->addDescendingOrderByColumn($sort);
-        } else {
-            $newCriteria->addAscendingOrderByColumn($sort);
+        if (!empty($sort)) {
+            if ($sort === 'APP_NUMBER') {
+                $sort = 'APP_DELEGATION.APP_NUMBER';
+            }
+            $sqlWhere .= " ORDER BY " . $sort;
         }
-        $newCriteria->setLimit( $limit );
-        $newCriteria->setOffset( $start );
-
-        $oDataset = ApplicationPeer::doSelectRS( $newCriteria, Propel::getDbConnection('workflow') );
-        $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-
+        if (!empty($dir)) {
+            $sqlWhere .= "  " . $dir;
+        }
+        if (!empty($start)) {
+            $sqlWhere .= " LIMIT $start, " . $limit;
+        } else {
+            $sqlWhere .= " LIMIT " . $limit;
+        }
+        $oDataset = $stmt->executeQuery($sql . $sqlJoin . $sqlWhere);
         $result = array ();
         $result['totalCount'] = $totalCount;
         $rows = array();
@@ -137,9 +158,6 @@ class Applications
             $aRow["USRCR_USR_LASTNAME"] = $aRow["USR_LASTNAME"];
             $aRow["USRCR_USR_USERNAME"] = $aRow["USR_USERNAME"];
             $aRow["APP_OVERDUE_PERCENTAGE"] = '';
-            $aRow["APP_TAS_TITLE"] = $aRow["TAS_TITLE"];
-            $aRow["APP_TITLE"] = $aRow["APP_TITLE"];
-            $aRow["APP_PRO_TITLE"] = $aRow["PRO_TITLE"];
             $rows[] = $aRow;
         }
         $result['data'] = $rows;

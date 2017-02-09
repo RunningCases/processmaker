@@ -18,7 +18,7 @@ CREATE TABLE `APPLICATION`
 	`APP_NUMBER` INTEGER default 0 NOT NULL,
 	`APP_PARENT` VARCHAR(32) default '0' NOT NULL,
 	`APP_STATUS` VARCHAR(100) default '' NOT NULL,
-	`APP_STATUS_ID` TINYINT default 1 NOT NULL,
+	`APP_STATUS_ID` TINYINT default 0 NOT NULL,
 	`PRO_UID` VARCHAR(32) default '' NOT NULL,
 	`APP_PROC_STATUS` VARCHAR(100) default '' NOT NULL,
 	`APP_PROC_CODE` VARCHAR(100) default '' NOT NULL,
@@ -2436,7 +2436,8 @@ CREATE TABLE `LIST_PARTICIPATED_LAST`
 	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
 	`DEL_THREAD_STATUS` VARCHAR(32) default 'OPEN' NOT NULL,
 	PRIMARY KEY (`APP_UID`,`USR_UID`,`DEL_INDEX`),
-	KEY `usrIndex`(`USR_UID`)
+	KEY `usrIndex`(`USR_UID`),
+	KEY `delDelegateDate`(`DEL_DELEGATE_DATE`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Participated last list';
 #-----------------------------------------------------------------------------
 #-- LIST_COMPLETED

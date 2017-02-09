@@ -208,15 +208,13 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $newestthan     = isset($filters['newestthan'] ) ? $filters['newestthan'] : '';
         $oldestthan     = isset($filters['oldestthan'] ) ? $filters['oldestthan'] : '';
 
-        if ($filter != '') {
-            switch ($filter) {
-                case 'read':
-                    $criteria->add( ListParticipatedLastPeer::DEL_INIT_DATE, null, Criteria::ISNOTNULL );
-                    break;
-                case 'unread':
-                    $criteria->add( ListParticipatedLastPeer::DEL_INIT_DATE, null, Criteria::ISNULL );
-                    break;
-            }
+        switch ($filter) {
+            case 'read':
+                $criteria->add( ListParticipatedLastPeer::DEL_INIT_DATE, null, Criteria::ISNOTNULL );
+                break;
+            case 'unread':
+                $criteria->add( ListParticipatedLastPeer::DEL_INIT_DATE, null, Criteria::ISNULL );
+                break;
         }
 
         if ($search != '' ) {
@@ -245,28 +243,12 @@ class ListParticipatedLast extends BaseListParticipatedLast
             $criteria->addJoinMC($aConditions, Criteria::INNER_JOIN);
         }
 
-        if ($dateFrom != "") {
-            if ($dateTo != "") {
-                if ($dateFrom == $dateTo) {
-                    $dateSame = $dateFrom;
-                    $dateFrom = $dateSame . " 00:00:00";
-                    $dateTo = $dateSame . " 23:59:59";
-                } else {
-                    $dateFrom = $dateFrom . " 00:00:00";
-                    $dateTo = $dateTo . " 23:59:59";
-                }
-
-                $criteria->add( $criteria->getNewCriterion( ListParticipatedLastPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL )->
-                    addAnd( $criteria->getNewCriterion( ListParticipatedLastPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL ) ) );
-            } else {
-                $dateFrom = $dateFrom . " 00:00:00";
-
-                $criteria->add( ListParticipatedLastPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL );
-            }
-        } elseif ($dateTo != "") {
+        if (!empty($dateFrom)) {
+            $criteria->add(ListParticipatedLastPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL);
+        }
+        if (!empty($dateTo)) {
             $dateTo = $dateTo . " 23:59:59";
-
-            $criteria->add( ListParticipatedLastPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL );
+            $criteria->add(ListParticipatedLastPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL);
         }
 
         if ($newestthan != '') {
@@ -276,15 +258,6 @@ class ListParticipatedLast extends BaseListParticipatedLast
         if ($oldestthan != '') {
             $criteria->add( $criteria->getNewCriterion( ListParticipatedLastPeer::DEL_DELEGATE_DATE, $oldestthan, Criteria::LESS_THAN ));
         }
-    }
-
-    public function countTotal ($usr_uid, $filters = array())
-    {
-        $criteria = new Criteria();
-        $criteria->add( ListParticipatedLastPeer::USR_UID, $usr_uid, Criteria::EQUAL );
-        self::loadFilters($criteria, $filters);
-        $total = ListParticipatedLastPeer::doCount( $criteria );
-        return (int)$total;
     }
 
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null, $appUid = '')
@@ -408,15 +381,23 @@ class ListParticipatedLast extends BaseListParticipatedLast
 
     /**
      * Returns the number of cases of a user
-     * @param $usrUid
+     * @param string $usrUid
+     * @param array  $filters
      * @return int
      */
-    public function getCountList($usrUid)
+    public function getCountList($usrUid, $filters = array())
     {
         $criteria = new Criteria();
+        $criteria->addSelectColumn('COUNT(*) AS TOTAL');
         $criteria->add(ListParticipatedLastPeer::USR_UID, $usrUid, Criteria::EQUAL);
-        $total = ListParticipatedLastPeer::doCount($criteria);
-        return (int)$total;
+        if (count($filters)) {
+            self::loadFilters($criteria, $filters);
+        }
+        $dataset = ListParticipatedLastPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        return (int)$aRow['TOTAL'];
     }
 }
 

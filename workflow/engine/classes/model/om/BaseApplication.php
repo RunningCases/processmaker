@@ -67,7 +67,7 @@ abstract class BaseApplication extends BaseObject implements Persistent
      * The value for the app_status_id field.
      * @var        int
      */
-    protected $app_status_id = 1;
+    protected $app_status_id = 0;
 
     /**
      * The value for the pro_uid field.
@@ -663,7 +663,7 @@ abstract class BaseApplication extends BaseObject implements Persistent
             $v = (int) $v;
         }
 
-        if ($this->app_status_id !== $v || $v === 1) {
+        if ($this->app_status_id !== $v || $v === 0) {
             $this->app_status_id = $v;
             $this->modifiedColumns[] = ApplicationPeer::APP_STATUS_ID;
         }

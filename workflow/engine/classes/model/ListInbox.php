@@ -334,7 +334,7 @@ class ListInbox extends BaseListInbox
         self::create($data, $isSelfService);
     }
 
-    public function loadFilters (&$criteria, $filters)
+    public static function loadFilters (&$criteria, $filters)
     {
         $action         = isset($filters['action']) ? $filters['action'] : "";
         $usrUid         = isset($filters['usr_uid']) ? $filters['usr_uid'] : "";
@@ -371,15 +371,13 @@ class ListInbox extends BaseListInbox
             break;
         }
 
-        if ($filter != '') {
-            switch ($filter) {
-                case 'read':
-                    $criteria->add( ListInboxPeer::DEL_INIT_DATE, null, Criteria::ISNOTNULL );
-                    break;
-                case 'unread':
-                    $criteria->add( ListInboxPeer::DEL_INIT_DATE, null, Criteria::ISNULL );
-                    break;
-            }
+        switch ($filter) {
+            case 'read':
+                $criteria->add( ListInboxPeer::DEL_INIT_DATE, NULL, Criteria::ISNOTNULL );
+                break;
+            case 'unread':
+                $criteria->add( ListInboxPeer::DEL_INIT_DATE, NULL, Criteria::ISNULL );
+                break;
         }
 
         if ($search != '') {
@@ -451,16 +449,6 @@ class ListInbox extends BaseListInbox
                     break;
             }
         }
-    }
-
-    public function countTotal ($usr_uid, $filters = array())
-    {
-        $filters['usr_uid'] = $usr_uid;
-
-        $criteria = new Criteria();
-        self::loadFilters($criteria, $filters);
-        $total = ListInboxPeer::doCount( $criteria );
-        return (int)$total;
     }
 
     /**
@@ -570,24 +558,27 @@ class ListInbox extends BaseListInbox
         return isset($aRow[$fieldName]) ? $aRow[$fieldName] : NULL;
     }
 
-    /**
+   /**
      * Returns the number of cases of a user
-     * @param $usrUid
-     * @param string $appStatus
+     * @param string $usrUid
+     * @param array  $filters
+     * @param string $status
      * @return int
      */
-    public function getCountList($usrUid, $appStatus = 'DRAFT')
+    public function getCountList($usrUid, $filters = array())
     {
+        $filters['usr_uid'] = $usrUid;
         $criteria = new Criteria();
+        $criteria->addSelectColumn('COUNT(*) AS TOTAL');
         $criteria->add(ListInboxPeer::USR_UID, $usrUid, Criteria::EQUAL);
-        if ($appStatus == 'TO_DO') {
-            $criteria->add(ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL);
-        } else {
-            $criteria->add(ListInboxPeer::APP_STATUS, 'DRAFT', Criteria::EQUAL);
+        if (count($filters)) {
+            self::loadFilters($criteria, $filters);
         }
-        $total = ListInboxPeer::doCount($criteria);
-        return (int)$total;
+        $dataset = ListInboxPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        return (int)$aRow['TOTAL'];
     }
-
 }
 

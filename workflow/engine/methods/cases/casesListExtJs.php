@@ -312,7 +312,11 @@ function getStatusArray($action, $userUid)
     $aStatus = Application::$app_status_values;
     $status[] = array('', G::LoadTranslation('ID_ALL_STATUS'));
     foreach ($aStatus as $key => $value) {
-        $status[] =  array ($value, G::LoadTranslation( 'ID_CASES_STATUS_' . $key ));
+        if ($action == 'search') {
+            $status[] =  array ($value, G::LoadTranslation( 'ID_CASES_STATUS_' . $key ));
+        } else {
+            $status[] =  array ($key, G::LoadTranslation( 'ID_CASES_STATUS_' . $key ));
+        }
     }
     return $status;
 }

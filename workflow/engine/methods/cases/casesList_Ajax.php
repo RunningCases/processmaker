@@ -138,7 +138,7 @@ if ($actionAjax == "processListExtJs") {
     $cProcess = new Criteria('workflow');
     //get the processes for this user in this action
     $cProcess->clearSelectColumns();
-    if($action == 'search'){
+    if ($action == 'search') {
         $cProcess->addSelectColumn(ProcessPeer::PRO_ID);
     } else {
         $cProcess->addSelectColumn(ProcessPeer::PRO_UID);
@@ -157,13 +157,13 @@ if ($actionAjax == "processListExtJs") {
         $cProcess->addAnd($filters);
     }
 
-    if($action==='to_revise') {
+    if ($action==='to_revise') {
         $oAppCache = new AppCacheView();
         $aProcesses = $oAppCache->getProUidSupervisor($_SESSION['USER_LOGGED']);
         $cProcess->add(ProcessPeer::PRO_UID, $aProcesses, Criteria::IN);
     }
 
-    if($action==='to_reassign') {
+    if ($action==='to_reassign') {
         if($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) {
         } elseif($RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
             $oAppCache = new AppCacheView();
