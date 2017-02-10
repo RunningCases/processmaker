@@ -10,9 +10,6 @@ if (!isset($_SESSION['USER_LOGGED'])) {
 
 G::LoadSystem('inputfilter');
 $filter = new InputFilter();
-$_GET = $filter->xssFilterHard($_GET);
-$_REQUEST = $filter->xssFilterHard($_REQUEST);
-$_SESSION['USER_LOGGED'] = $filter->xssFilterHard($_SESSION['USER_LOGGED']);
 
 try {
     $userUid = $_SESSION['USER_LOGGED'];
@@ -187,6 +184,7 @@ try {
     );
 
     $response = array();
+
     $response['filters']        = $filters;
     $response['totalCount']     = $list->getCountList($userUid, $filters);
     $response = $filter->xssFilterHard($response);

@@ -533,6 +533,7 @@ class WebApplication
         define("PATH_DYNAFORM",                 PATH_DATA_SITE . "xmlForms/");
         define("PATH_IMAGES_ENVIRONMENT_FILES", PATH_DATA_SITE . "usersFiles" . PATH_SEP);
         define("PATH_IMAGES_ENVIRONMENT_USERS", PATH_DATA_SITE . "usersPhotographies" . PATH_SEP);
+        define('DISABLE_PHP_UPLOAD_EXECUTION', $arraySystemConfiguration['disable_php_upload_execution']);
 
         /**
          * Global definitions, before it was the defines.php file
