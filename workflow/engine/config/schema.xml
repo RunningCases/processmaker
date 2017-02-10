@@ -177,6 +177,10 @@
     <index name="INDEX_USR_UID">
       <index-column name="USR_UID"/>
     </index>
+    <index name="INDEX_THREAD_STATUS_APP_NUMBER">
+      <index-column name="DEL_THREAD_STATUS"/>
+      <index-column name="APP_NUMBER"/>
+    </index>
   </table>
   <table name="APP_DOCUMENT">
     <vendor type="mysql">
