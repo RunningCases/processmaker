@@ -208,6 +208,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $newestthan     = isset($filters['newestthan'] ) ? $filters['newestthan'] : '';
         $oldestthan     = isset($filters['oldestthan'] ) ? $filters['oldestthan'] : '';
 
+        //Filter Started by me and Completed by me
         switch ($filter) {
             case 'started':
                 $criteria->add(ListParticipatedLastPeer::DEL_INDEX, 1, Criteria::EQUAL);
@@ -215,6 +216,21 @@ class ListParticipatedLast extends BaseListParticipatedLast
             case 'completed':
                 $criteria->add( ListParticipatedLastPeer::APP_STATUS, 'COMPLETED', Criteria::EQUAL);
                 break;
+        }
+        //Check the inbox to call
+        switch ($filterStatus) {
+            case 'DRAFT':
+                $criteria->add( ListParticipatedLastPeer::APP_STATUS, 'DRAFT', Criteria::EQUAL );
+            break;
+            case 'TO_DO':
+                $criteria->add( ListParticipatedLastPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL );
+            break;
+            case 'COMPLETED':
+                $criteria->add( ListParticipatedLastPeer::APP_STATUS, 'COMPLETED', Criteria::EQUAL );
+            break;
+            case 'CANCELLED':
+                $criteria->add( ListParticipatedLastPeer::APP_STATUS, 'CANCELLED', Criteria::EQUAL );
+            break;
         }
 
         if ($search != '' ) {
@@ -226,25 +242,11 @@ class ListParticipatedLast extends BaseListParticipatedLast
             ))));
         }
 
-        switch ($filterStatus) {
-            case 'ON_TIME':
-                $criteria->add( ListInboxPeer::DEL_RISK_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_RISK_DATE." , NOW( ) ) > 0", Criteria::CUSTOM);
-                break;
-            case 'AT_RISK':
-                $criteria->add( ListInboxPeer::DEL_RISK_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_RISK_DATE .", NOW( ) ) < 0", Criteria::CUSTOM);
-                $criteria->add( ListInboxPeer::DEL_DUE_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_DUE_DATE .", NOW( ) ) >  0", Criteria::CUSTOM);
-                break;
-            case 'OVERDUE':
-                $criteria->add( ListInboxPeer::DEL_DUE_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_DUE_DATE." , NOW( ) ) < 0", Criteria::CUSTOM);
-                break;
-        }
-
         if ($process != '') {
             $criteria->add( ListParticipatedLastPeer::PRO_UID, $process, Criteria::EQUAL);
         }
 
         if ($category != '') {
-            // INNER JOIN FOR TAS_TITLE
             $criteria->addSelectColumn(ProcessPeer::PRO_CATEGORY);
             $aConditions   = array();
             $aConditions[] = array(ListParticipatedLastPeer::PRO_UID, ProcessPeer::PRO_UID);

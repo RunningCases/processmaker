@@ -334,7 +334,7 @@ class ListInbox extends BaseListInbox
         self::create($data, $isSelfService);
     }
 
-    public static function loadFilters (&$criteria, $filters)
+    public function loadFilters (&$criteria, $filters)
     {
         $action         = isset($filters['action']) ? $filters['action'] : "";
         $usrUid         = isset($filters['usr_uid']) ? $filters['usr_uid'] : "";
@@ -348,6 +348,7 @@ class ListInbox extends BaseListInbox
         $newestthan     = isset($filters['newestthan'] ) ? $filters['newestthan'] : '';
         $oldestthan     = isset($filters['oldestthan'] ) ? $filters['oldestthan'] : '';
 
+        //Check the inbox to call
         switch ($action) {
             case 'draft':
                 $criteria->add( ListInboxPeer::APP_STATUS, 'DRAFT', Criteria::EQUAL );
@@ -371,6 +372,7 @@ class ListInbox extends BaseListInbox
             break;
         }
 
+        //Filter Read Unread All
         switch ($filter) {
             case 'read':
                 $criteria->add( ListInboxPeer::DEL_INIT_DATE, NULL, Criteria::ISNOTNULL );
@@ -380,29 +382,7 @@ class ListInbox extends BaseListInbox
                 break;
         }
 
-        if ($search != '') {
-            $criteria->add(
-                $criteria->getNewCriterion(ListInboxPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
-                $criteria->getNewCriterion(ListInboxPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
-                $criteria->getNewCriterion(ListInboxPeer::APP_PRO_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
-                $criteria->getNewCriterion(ListInboxPeer::APP_UID, $search, Criteria::EQUAL)->addOr(
-                $criteria->getNewCriterion(ListInboxPeer::APP_NUMBER, $search, Criteria::EQUAL)
-            )))));
-        }
-
-        if ($process != '') {
-            $criteria->add( ListInboxPeer::PRO_UID, $process, Criteria::EQUAL);
-        }
-
-        if ($category != '') {
-            // INNER JOIN FOR TAS_TITLE
-            $criteria->addSelectColumn(ProcessPeer::PRO_CATEGORY);
-            $aConditions   = array();
-            $aConditions[] = array(ListInboxPeer::PRO_UID, ProcessPeer::PRO_UID);
-            $aConditions[] = array(ProcessPeer::PRO_CATEGORY, "'" . $category . "'");
-            $criteria->addJoinMC($aConditions, Criteria::INNER_JOIN);
-        }
-
+        //Filter Task Status
         switch ($filterStatus) {
             case 'ON_TIME':
                 $criteria->add( ListInboxPeer::DEL_RISK_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_RISK_DATE." , NOW( ) ) > 0", Criteria::CUSTOM);
@@ -414,6 +394,31 @@ class ListInbox extends BaseListInbox
             case 'OVERDUE':
                 $criteria->add( ListInboxPeer::DEL_DUE_DATE  , "TIMEDIFF(". ListInboxPeer::DEL_DUE_DATE." , NOW( ) ) < 0", Criteria::CUSTOM);
                 break;
+        }
+
+        //Filter Search
+        if ($search != '') {
+            $criteria->add(
+                $criteria->getNewCriterion(ListInboxPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion(ListInboxPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion(ListInboxPeer::APP_PRO_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion(ListInboxPeer::APP_UID, $search, Criteria::EQUAL)->addOr(
+                $criteria->getNewCriterion(ListInboxPeer::APP_NUMBER, $search, Criteria::EQUAL)
+            )))));
+        }
+
+        //Filter Process Id
+        if ($process != '') {
+            $criteria->add( ListInboxPeer::PRO_UID, $process, Criteria::EQUAL);
+        }
+
+        //Filter Category
+        if ($category != '') {
+            $criteria->addSelectColumn(ProcessPeer::PRO_CATEGORY);
+            $aConditions   = array();
+            $aConditions[] = array(ListInboxPeer::PRO_UID, ProcessPeer::PRO_UID);
+            $aConditions[] = array(ProcessPeer::PRO_CATEGORY, "'" . $category . "'");
+            $criteria->addJoinMC($aConditions, Criteria::INNER_JOIN);
         }
     }
 
