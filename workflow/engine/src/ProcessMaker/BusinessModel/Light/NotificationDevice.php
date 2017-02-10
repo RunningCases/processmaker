@@ -199,11 +199,6 @@ class NotificationDevice
                     $devices = $oNoti->loadUsersArrayId($userIds);
                 } else {
                     $devices = $oNoti->loadByUsersId($userIds);
-                    $lists = new \ProcessMaker\BusinessModel\Lists();
-                    $counter = $lists->getCounters($userIds);
-                    $light = new \ProcessMaker\Services\Api\Light();
-                    $result = $light->parserCountersCases($counter);
-                    $data['counters'] = $result;
                 }
 
                 $devicesAndroidIds = array();

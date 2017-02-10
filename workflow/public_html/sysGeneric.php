@@ -117,6 +117,10 @@ if (file_exists($requestFile)) {
         header( "location: /errors/error404.php?url=" . urlencode( $_SERVER['REQUEST_URI'] ) );
         die;
     }
+    if ($request === "app.php" || $request === "sysGeneric.php") {
+        //HTTP/1.0 403 Forbidden
+        http_response_code(403);
+    }
     $pos = strripos($request, ".") + 1;
     $size = strlen($request);
     if($pos < $size) {
@@ -307,19 +311,10 @@ if (!(array_key_exists('REMOTE_USER', $_SERVER) && (string)($_SERVER['REMOTE_USE
     ini_set('session.cookie_httponly', 1);
     ini_set('session.cookie_secure', 1);
 }
-
 //$e_all = defined( 'E_DEPRECATED' ) ? E_ALL & ~ E_DEPRECATED : E_ALL;
 //$e_all = defined( 'E_STRICT' ) ? $e_all & ~ E_STRICT : $e_all;
 //$e_all = $config['debug'] ? $e_all : $e_all & ~ E_NOTICE;
 //$e_all = E_ALL & ~ E_DEPRECATED & ~ E_STRICT & ~ E_NOTICE  & ~E_WARNING;
-
-G::LoadSystem('inputfilter');
-$filter = new InputFilter();
-$config['display_errors'] = $filter->validateInput($config['display_errors']);
-$config['error_reporting'] = $filter->validateInput($config['error_reporting']);
-$config['memory_limit'] = $filter->validateInput($config['memory_limit']);
-$config['wsdl_cache'] = $filter->validateInput($config['wsdl_cache'],'int');
-$config['time_zone'] = $filter->validateInput($config['time_zone']);
 
 // Do not change any of these settings directly, use env.ini instead
 ini_set( 'display_errors', $config['display_errors']);
@@ -515,7 +510,6 @@ if (defined( 'PATH_DATA' ) && file_exists( PATH_DATA )) {
     $oServerConf = & serverConf::getSingleton();
 }
 $pathFile = PATH_THIRDPARTY . '/pear/PEAR.php';
-$pathFile = $filter->validateInput($pathFile,'path');
 require_once $pathFile;
 
 //Bootstrap::LoadSystem( 'pmException' );
@@ -531,7 +525,6 @@ if (! defined( 'PATH_DATA' ) || ! file_exists( PATH_DATA )) {
     //NewRelic Snippet - By JHL
     transactionLog(PATH_CONTROLLERS.'installer.php');
     $pathFile = PATH_CONTROLLERS . 'installer.php';
-    $pathFile = $filter->validateInput($pathFile,'path');
     require_once ($pathFile);
     $controller = 'Installer';
 
@@ -578,7 +571,6 @@ if ($oServerConf->isWSDisabled( SYS_TEMP )) {
 if (defined( 'SYS_TEMP' ) && SYS_TEMP != '') {
     //this is the default, the workspace db.php file is in /shared/workflow/sites/SYS_SYS
     $pathFile = PATH_DB . SYS_TEMP . '/db.php';
-    $pathFile = $filter->validateInput($pathFile,'path');
     if (file_exists( $pathFile )) {
         require_once ($pathFile);
         define( 'SYS_SYS', SYS_TEMP );
@@ -600,7 +592,6 @@ if (defined( 'SYS_TEMP' ) && SYS_TEMP != '') {
 } else { //when we are in global pages, outside any valid workspace
     if (SYS_TARGET === 'newSite') {
         $phpFile = G::ExpandPath( 'methods' ) . SYS_COLLECTION . "/" . SYS_TARGET . '.php';
-        $phpFile = $filter->validateInput($phpFile,'path');
         //NewRelic Snippet - By JHL
         transactionLog($phpFile);
         require_once ($phpFile);
@@ -608,12 +599,11 @@ if (defined( 'SYS_TEMP' ) && SYS_TEMP != '') {
     } else {
         if (SYS_TARGET == "dbInfo") { //Show dbInfo when no SYS_SYS
             $pathFile = PATH_METHODS . "login/dbInfo.php";
-            $pathFile = $filter->validateInput($pathFile,'path');
             require_once ($pathFile);
         } else {
 
             if (substr( SYS_SKIN, 0, 2 ) === 'ux' && SYS_TARGET != 'sysLoginVerify') { // new ux sysLogin - extjs based form
-                $pathFile = $filter->validateInput(PATH_CONTROLLERS . 'main.php','path');
+                $pathFile = PATH_CONTROLLERS . 'main.php';
                 require_once $pathFile;
                 $controllerClass = 'Main';
                 $controllerAction = SYS_TARGET == 'sysLoginVerify' ? SYS_TARGET : 'sysLogin';
@@ -625,7 +615,7 @@ if (defined( 'SYS_TEMP' ) && SYS_TEMP != '') {
                     $controller->call( $controllerAction );
                 }
             } else { // classic sysLogin interface
-                $pathFile = $filter->validateInput(PATH_METHODS . "login/sysLogin.php",'path');
+                $pathFile = PATH_METHODS . "login/sysLogin.php";
                 require_once ($pathFile);
                 die();
             }
@@ -710,9 +700,7 @@ if (defined( 'DEBUG_SQL_LOG' ) && DEBUG_SQL_LOG) {
 
 //Set Time Zone
 /*----------------------------------********---------------------------------*/
-if (PMLicensedFeatures::getSingleton()->verifyfeature('oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=')) {
-    $_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int)($config['system_utc_time_zone']) == 1;
-}
+$_SESSION['__SYSTEM_UTC_TIME_ZONE__'] = (int)($config['system_utc_time_zone']) == 1;
 /*----------------------------------********---------------------------------*/
 
 ini_set('date.timezone', (isset($_SESSION['__SYSTEM_UTC_TIME_ZONE__']) && $_SESSION['__SYSTEM_UTC_TIME_ZONE__'])? 'UTC' : $config['time_zone']); //Set Time Zone
@@ -737,7 +725,7 @@ ob_start();
 
 // Rebuild the base Workflow translations if not exists
 if (! is_file( PATH_LANGUAGECONT . 'translation.en' )) {
-    $pathFile = $filter->validateInput(PATH_CLASSES . "model" . PATH_SEP . "Translation.php", "path");
+    $pathFile = PATH_CLASSES . "model" . PATH_SEP . "Translation.php";
 
     require_once ($pathFile);
 
@@ -747,7 +735,7 @@ if (! is_file( PATH_LANGUAGECONT . 'translation.en' )) {
 
 // TODO: Verify if the language set into url is defined in translations env.
 if (SYS_LANG != 'en' && ! is_file( PATH_LANGUAGECONT . 'translation.' . SYS_LANG )) {
-    $pathFile = $filter->validateInput(PATH_CLASSES . "model" . PATH_SEP . "Translation.php", "path");
+    $pathFile = PATH_CLASSES . "model" . PATH_SEP . "Translation.php";
 
     require_once ($pathFile);
 
@@ -821,7 +809,7 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
     //erik: verify if it is a Controller Class or httpProxyController Class
     if (is_file( PATH_CONTROLLERS . SYS_COLLECTION . '.php' )) {
         Bootstrap::LoadSystem( 'controller' );
-        $pathFile = $filter->validateInput(PATH_CONTROLLERS . SYS_COLLECTION . '.php','path');
+        $pathFile = PATH_CONTROLLERS . SYS_COLLECTION . '.php';
         require_once $pathFile;
         $controllerClass = SYS_COLLECTION;
         //if the method name is empty set default to index method
@@ -854,7 +842,6 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
         $pluginControllerPath = PATH_PLUGINS . $pluginName . PATH_SEP . 'controllers' . PATH_SEP;
 
         $pathFile = $pluginControllerPath. $controllerClass . '.php';
-        $pathFile = $filter->validateInput($pathFile,'path');
         if (is_file($pathFile)) {
             require_once $pathFile;
         } elseif (is_file($pluginControllerPath. ucfirst($controllerClass) . '.php')) {
