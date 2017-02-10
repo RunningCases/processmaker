@@ -1534,6 +1534,18 @@ function uploadExternalDocument()
 
         //Read. Instance Document classes
         if (!empty($quequeUpload)) {
+            foreach ($quequeUpload as $key => $fileObj) {
+                $extension = pathinfo($fileObj['fileName'], PATHINFO_EXTENSION);
+                if (\Bootstrap::getDisablePhpUploadExecution() === 1 && $extension === 'php') {
+                    $message = \G::LoadTranslation('THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED');
+                    \Bootstrap::registerMonologPhpUploadExecution('phpUpload', 550, $message, $fileObj['fileName']);
+                    $response['error'] = $message;
+                    $response['message'] = $message;
+                    $response['success'] = false;
+                    print_r(G::json_encode($response));
+                    exit();
+                }
+            }
             $docUid=$_POST['docUid'];
             $appDocUid=isset($_POST['APP_DOC_UID'])?$_POST['APP_DOC_UID']:"";
             $docVersion=isset($_POST['docVersion'])?$_POST['docVersion']:"";
