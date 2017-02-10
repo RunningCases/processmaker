@@ -2964,5 +2964,40 @@ class Bootstrap
         );
         return $aContext;
     }
+
+    /**
+     * get DISABLE_PHP_UPLOAD_EXECUTION value defined in env.ini
+     * @return int
+     */
+    public static function getDisablePhpUploadExecution()
+    {
+        $disablePhpUploadExecution = 0;
+        if (defined("DISABLE_PHP_UPLOAD_EXECUTION")) {
+            $disablePhpUploadExecution = (int) DISABLE_PHP_UPLOAD_EXECUTION;
+        }
+        return $disablePhpUploadExecution;
+    }
+
+    /**
+     * Record the action of executing a php file or attempting to upload a php 
+     * file in server.
+     * @param type $channel
+     * @param type $level
+     * @param type $message
+     * @param type $fileName
+     */
+    public static function registerMonologPhpUploadExecution($channel, $level, $message, $fileName)
+    {
+        $context = \Bootstrap::getDefaultContextLog();
+        $context['action'] = $channel;
+        $context['filename'] = $fileName;
+        if (defined("SYS_CURRENT_URI") && defined("SYS_CURRENT_PARMS")) {
+            $context['url'] = SYS_CURRENT_URI . '?' . SYS_CURRENT_PARMS;
+        }
+        $context['usrUid'] = isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : '';
+        $sysSys = defined("SYS_SYS") ? SYS_SYS : "Undefined";
+        \Bootstrap::registerMonolog($channel, $level, $message, $context, $sysSys, 'processmaker.log');
+    }
+
 }
 
