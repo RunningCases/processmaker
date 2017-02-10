@@ -3252,4 +3252,49 @@ class Cases
             $result = $case->updateCase($applicationUid, $arrayApplicationData);
         }
     }
+
+    /**
+     * Get Permissions, Participate, Access
+     *
+     * @param string $usrUid
+     * @param string $proUid
+     * @param string $appUid
+     * @param array $rolesPermissions
+     * @param array $objectPermissions
+     * @return array Returns array with all access
+     */
+    public function userAuthorization($usrUid, $proUid, $appUid, $rolesPermissions = array(), $objectPermissions = array()) {
+        $arrayAccess = array();
+
+        //User has participated
+        $oParticipated = new \ListParticipatedLast();
+        $aParticipated = $oParticipated->loadList($usrUid, array(), null, $appUid);
+        $arrayAccess['participated'] = (count($aParticipated) == 0) ? false : true;
+
+        //User is supervisor
+        $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
+        $isSupervisor = $supervisor->isUserProcessSupervisor($proUid, $usrUid);
+        $arrayAccess['supervisor'] = ($isSupervisor) ? true : false;
+
+        //Roles Permissions
+        if (count($rolesPermissions) > 0) {
+            global $RBAC;
+            foreach ($rolesPermissions as $value) {
+                $arrayAccess['rolesPermissions'][$value] = ($RBAC->userCanAccess($value) < 0) ? false : true;
+            }
+        }
+
+        //Object Permissions
+        if (count($objectPermissions) > 0) {
+            $oCase = new \Cases();
+            foreach ($objectPermissions as $key => $value) {
+                $resPermission = $oCase->getAllObjectsFrom($proUid, $appUid, '', $usrUid, $value);
+                if (isset($resPermission[$key])) {
+                    $arrayAccess['objectPermissions'][$key] = $resPermission[$key];
+                }
+            }
+        }
+
+        return $arrayAccess;
+    }
 }

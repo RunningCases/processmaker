@@ -49,20 +49,24 @@ $G_ID_SUB_MENU_SELECTED = '_';
 
 /* Prepare page before to show */
 $oCase = new Cases();
-//$Fields = $oCase->loadCase( $_SESSION['APPLICATION'], $_SESSION['INDEX'] );
+
 if (isset($_SESSION['ACTION']) && ($_SESSION['ACTION'] == 'jump')) {
     $Fields = $oCase->loadCase( $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['ACTION']);
 } else {
     $Fields = $oCase->loadCase( $_SESSION['APPLICATION'], $_SESSION['INDEX']);
 }
 
-//Check the participated
-$participated = $oCase->userParticipatedInCase( $_GET['APP_UID'], $_SESSION['USER_LOGGED'] );
-//Check if is Supervisor
-$processUser = new ProcessUser();
-$userAccess = $processUser->validateUserAccess($Fields['PRO_UID'], $_SESSION['USER_LOGGED']);
+//Check the authorization
+$objCase = new \ProcessMaker\BusinessModel\Cases();
+$aUserCanAccess = $objCase->userAuthorization(
+    $_SESSION['USER_LOGGED'],
+    $Fields['PRO_UID'],
+    $_GET['APP_UID'],
+    array('PM_ALLCASES'),
+    array('SUMMARY_FORM'=>'VIEW')
+);
 
-if ($RBAC->userCanAccess( 'PM_ALLCASES' ) < 0 && !$participated && !$userAccess) {
+if (!$aUserCanAccess['participated'] && !$aUserCanAccess['supervisor'] && !$aUserCanAccess['rolesPermissions']['PM_ALLCASES'] && !$aUserCanAccess['objectPermissions']['SUMMARY_FORM']) {
     $aMessage['MESSAGE'] = G::LoadTranslation( 'ID_NO_PERMISSION_NO_PARTICIPATED' );
     $G_PUBLISH = new Publisher();
     $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', $aMessage );
@@ -133,36 +137,30 @@ if ($nTasksInParallel > 1) {
 $Fields['TAS_TITLE'] = $aTask['TAS_TITLE'];
 
 $objUser = new Users();
-
 $oHeadPublisher = & headPublisher::getSingleton();
 $oHeadPublisher->addScriptFile( '/jscore/cases/core/cases_Step.js' );
 $G_PUBLISH = new Publisher();
 $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume.xml', '', $Fields, '' );
-if($Fields['APP_STATUS'] != 'COMPLETED'){
-  $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume_Current_Task_Title.xml', '', $Fields, '' );
-  $objDel = new AppDelegation();
-  $parallel = $objDel->LoadParallel ($Fields['APP_UID'],$_GET['DEL_INDEX']);
-  $FieldsPar = $Fields;
-  if(empty($parallel)){
-    $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume_Current_Task.xml', '', $Fields, '' );
-  }else{
-    foreach($parallel as $row){
-      $FieldsPar['TAS_UID'] = $row['TAS_UID'];
-      $aTask = $objTask->load( $row['TAS_UID'] );
-      $FieldsPar['TAS_TITLE'] = $aTask['TAS_TITLE'];
-      $FieldsPar['USR_UID'] = $row['USR_UID'];
-      if(isset($row['USR_UID']) && !empty($row['USR_UID'])) {
-        $aUser = $objUser->loadDetails ($row['USR_UID']);
-        $FieldsPar['CURRENT_USER'] = $aUser['USR_FULLNAME'];
-      }
-      $FieldsPar['DEL_DELEGATE_DATE'] = $row['DEL_DELEGATE_DATE'];
-      $FieldsPar['DEL_INIT_DATE']     = $row['DEL_INIT_DATE'];
-      $FieldsPar['DEL_TASK_DUE_DATE'] = $row['DEL_TASK_DUE_DATE'];
-      $FieldsPar['DEL_FINISH_DATE']   = $row['DEL_FINISH_DATE'];
-      $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume_Current_Task.xml', '', $FieldsPar, '' );
+if ($Fields['APP_STATUS'] != 'COMPLETED') {
+    $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume_Current_Task_Title.xml', '', $Fields, '' );
+    $objDel = new AppDelegation();
+    $parallel = $objDel->LoadParallel($Fields['APP_UID']);
+    $FieldsPar = $Fields;
+    foreach ($parallel as $row) {
+        $FieldsPar['TAS_UID'] = $row['TAS_UID'];
+        $aTask = $objTask->load( $row['TAS_UID'] );
+        $FieldsPar['TAS_TITLE'] = $aTask['TAS_TITLE'];
+        $FieldsPar['USR_UID'] = $row['USR_UID'];
+        if (isset($row['USR_UID']) && !empty($row['USR_UID'])) {
+            $aUser = $objUser->loadDetails ($row['USR_UID']);
+            $FieldsPar['CURRENT_USER'] = $aUser['USR_FULLNAME'];
+        }
+        $FieldsPar['DEL_DELEGATE_DATE'] = $row['DEL_DELEGATE_DATE'];
+        $FieldsPar['DEL_INIT_DATE']     = $row['DEL_INIT_DATE'];
+        $FieldsPar['DEL_TASK_DUE_DATE'] = $row['DEL_TASK_DUE_DATE'];
+        $FieldsPar['DEL_FINISH_DATE']   = $row['DEL_FINISH_DATE'];
+        $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume_Current_Task.xml', '', $FieldsPar);
     }
-  }
-
 }
 
 G::RenderPage('publish', 'blank');
