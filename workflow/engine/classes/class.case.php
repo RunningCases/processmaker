@@ -5230,7 +5230,7 @@ class Cases
                 $dataLastEmail['configuration'] = $aConfiguration;
                 $dataLastEmail['subject'] = $sSubject;
                 $dataLastEmail['pathEmail'] = $pathEmail;
-                $dataLastEmail['swtplDeafault'] = $swtplDefault;
+                $dataLastEmail['swtplDefault'] = $swtplDefault;
                 $dataLastEmail['body'] = $sBody;
                 $dataLastEmail['from'] = $from;
                 break;
@@ -5298,7 +5298,7 @@ class Cases
                 $dataLastEmail['configuration'] = $aConfiguration;
                 $dataLastEmail['subject'] = $sSubject;
                 $dataLastEmail['pathEmail'] = $pathEmail;
-                $dataLastEmail['swtplDeafault'] = $swtplDefault;
+                $dataLastEmail['swtplDefault'] = $swtplDefault;
                 $dataLastEmail['body'] = $sBody;
                 $dataLastEmail['from'] = $from;
                 break;
