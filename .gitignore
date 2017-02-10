@@ -20,7 +20,6 @@ workflow/public_html/index.html
 .DS_Store
 .idea
 composer.phar
-composer.lock
 vendor/
 workflow/engine/config/schema-transformed.xml
 workflow/engine/config/_databases_.php
