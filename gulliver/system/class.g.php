@@ -45,19 +45,16 @@ class G
 
     /**
      * is_https
-     * @return void
-    */
+     * @return bool
+     */
     public static function is_https()
     {
-        if (isset($_SERVER['HTTPS'])) {
-            if ($_SERVER['HTTPS']=='on') {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
+        $is_http = false;
+        if ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on') ||
+            (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) {
+            $is_http = true;
         }
+        return $is_http;
     }
 
     /**
@@ -1244,7 +1241,14 @@ class G
                     if ($download) {
                         G::sendHeaders( $filename, 'text/plain', $download, $downloadFileName );
                     } else {
-                        require_once ($filename);
+                        if (\Bootstrap::getDisablePhpUploadExecution() === 0) {
+                            \Bootstrap::registerMonologPhpUploadExecution('phpExecution', 200, 'Php Execution', $filename);
+                            require_once ($filename);
+                        } else {
+                            $message = G::LoadTranslation('THE_PHP_FILES_EXECUTION_WAS_DISABLED');
+                            \Bootstrap::registerMonologPhpUploadExecution('phpExecution', 550, $message, $filename);
+                            echo $message;
+                        }
                         return;
                     }
                     break;
@@ -5542,15 +5546,23 @@ class G
         $res->status = false;
         $allowedTypes = array_map('G::getRealExtension', explode(',', $InpDocAllowedFiles));
 
+        // Get the file extension
+        $aux = pathinfo($fileName);
+        $fileExtension = isset($aux['extension']) ? strtolower($aux['extension']) : '';
+
+        if (\Bootstrap::getDisablePhpUploadExecution() === 1 && $fileExtension === 'php') {
+            $message = \G::LoadTranslation('THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED');
+            \Bootstrap::registerMonologPhpUploadExecution('phpUpload', 550, $message, $fileName);
+            $res->status = false;
+            $res->message = $message;
+            return $res;
+        }
+
         // If required extension is *.* don't validate
         if (in_array('*', $allowedTypes)) {
             $res->status = true;
             return $res;
         }
-
-        // Get the file extension
-        $aux = pathinfo($fileName);
-        $fileExtension = isset($aux['extension']) ? strtolower($aux['extension']) : '';
 
         // If no valid extension finish (unnecesary check file content)
         $validExtension = in_array($fileExtension, $allowedTypes);

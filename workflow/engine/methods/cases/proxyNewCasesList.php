@@ -10,9 +10,6 @@ if (!isset($_SESSION['USER_LOGGED'])) {
 
 G::LoadSystem('inputfilter');
 $filter = new InputFilter();
-$_GET = $filter->xssFilterHard($_GET);
-$_REQUEST = $filter->xssFilterHard($_REQUEST);
-$_SESSION['USER_LOGGED'] = $filter->xssFilterHard($_SESSION['USER_LOGGED']);
 
 try {
     $userUid = $_SESSION['USER_LOGGED'];
@@ -194,8 +191,6 @@ try {
     $response = array();
     $response['filters']        = $filtersData;
     $response['totalCount']     = $list->countTotal($userUid, $filtersData);
-
-    $response = $filter->xssFilterHard($response);
 
     $response['data'] = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($result);
 
