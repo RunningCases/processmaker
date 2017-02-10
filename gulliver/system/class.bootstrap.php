@@ -2949,6 +2949,7 @@ class Bootstrap
         $registerLogger = &MonologProvider::getSingleton($channel, $fileLog);
         $registerLogger->addLog($level, $message, $context);
     }
+
     /**
      * Get the default information from the context
      *
@@ -2963,6 +2964,25 @@ class Bootstrap
             ,'workspace'   => $sysSys
         );
         return $aContext;
+    }
+
+    /**
+     * Set the constant to related the Workspaces
+     *
+     * @param string $workspace
+     *
+     * @return void
+     */
+    public static function setConstantsRelatedWs($wsName){
+        if (!defined('SYS_SYS')) {
+            define('SYS_SYS', $wsName);
+        }
+        if (!defined('PATH_DATA_SITE')) {
+            define('PATH_DATA_SITE', PATH_DATA . 'sites' . PATH_SEP . $wsName . PATH_SEP);
+        }
+        if (!defined('PATH_WORKSPACE')) {
+            define('PATH_WORKSPACE', PATH_DATA_SITE);
+        }
     }
 }
 

@@ -52,6 +52,7 @@ function __autoload ($sClassName)
     }
 }
 
+Bootstrap::setConstantRelatedWs('SYS_SYS');
 if (!defined('PATH_WORKSPACE')) {
     define('PATH_WORKSPACE', PATH_DATA_SITE);
 
