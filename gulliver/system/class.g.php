@@ -45,19 +45,16 @@ class G
 
     /**
      * is_https
-     * @return void
-    */
+     * @return bool
+     */
     public static function is_https()
     {
-        if (isset($_SERVER['HTTPS'])) {
-            if ($_SERVER['HTTPS']=='on') {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            return false;
+        $is_http = false;
+        if ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on') ||
+            (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https')) {
+            $is_http = true;
         }
+        return $is_http;
     }
 
     /**
