@@ -1896,7 +1896,7 @@ class Cases
      * @return $iAppThreadIndex $iNewDelIndex, $iAppThreadIndex );
      */
 
-    public function newAppThread($sAppUid, $iNewDelIndex, $iAppParent, $appNumber = 0)
+    public function newAppThread($sAppUid, $iNewDelIndex, $iAppParent)
     {
         try {
             $appThread = new AppThread();
