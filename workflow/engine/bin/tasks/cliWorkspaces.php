@@ -954,11 +954,11 @@ function run_migrate_indexing_acv($args, $opts) {
     $args = $filter->xssFilterHard($args);
     $workspaces = get_workspaces_from_args($args);
     $start = microtime(true);
-    CLI::logging("> Migrating and populating indexing for APP_CACHE_VIEW...\n");
+    CLI::logging("> Migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW...\n");
     foreach ($workspaces as $workspace) {
         print_r('Indexing for APP_CACHE_VIEW: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
         $workspace->migratePopulateIndexingACV($workspace->name);
     }
     $stop = microtime(true);
-    CLI::logging("<*>   Migrating an populating indexing for APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
+    CLI::logging("<*>   Migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
 }
