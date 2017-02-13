@@ -3018,11 +3018,7 @@ class Bootstrap
         if (defined('PATH_DATA_SITE') && !defined('PATH_WORKSPACE')) {
             define('PATH_WORKSPACE', PATH_DATA_SITE);
         }
-        if (defined('PATH_DATA_SITE')) {
-            set_include_path(get_include_path() . PATH_SEPARATOR . PATH_DATA_SITE);
-        } elseif (defined('PATH_WORKSPACE')) {
-            set_include_path(get_include_path() . PATH_SEPARATOR . PATH_WORKSPACE);
-        }
+        set_include_path(get_include_path() . PATH_SEPARATOR . PATH_DATA_SITE);
     }
 
 }
