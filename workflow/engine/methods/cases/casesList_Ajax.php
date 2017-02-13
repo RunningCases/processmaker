@@ -164,8 +164,8 @@ if ($actionAjax == "processListExtJs") {
     }
 
     if ($action==='to_reassign') {
-        if($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) {
-        } elseif($RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
+        if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) {
+        } elseif ($RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
             $oAppCache = new AppCacheView();
             $aProcesses = $oAppCache->getProUidSupervisor($_SESSION['USER_LOGGED']);
             $cProcess->add(ProcessPeer::PRO_UID, $aProcesses, Criteria::IN);
@@ -198,7 +198,7 @@ if ($actionAjax == "verifySession") {
         $response = new stdclass();
         GLOBAL $RBAC;
         //Check if the user is a supervisor to this Process
-        if($RBAC->userCanAccess('PM_REASSIGNCASE') == 1){
+        if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) {
             $response->reassigncase = true;
             $response->message = '';
             $response->processeslist = '';
