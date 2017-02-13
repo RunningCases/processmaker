@@ -52,7 +52,7 @@ function __autoload ($sClassName)
     }
 }
 
-if (defined('SYS_SYS')) {
+if (defined('SYS_SYS') && (!defined('PATH_DATA_SITE') || !defined('PATH_WORKSPACE'))) {
     Bootstrap::setConstantsRelatedWs(SYS_SYS);
 }
 
