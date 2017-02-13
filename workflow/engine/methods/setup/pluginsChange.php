@@ -92,16 +92,12 @@ if ($handle = opendir( PATH_PLUGINS )) {
     /**
      * Calls PMExtensionClass Builder to include Plugins changes.
      */
-    $config = Bootstrap::getSystemConfiguration();
-
-    if (!empty($config['experimental_features'])) {
-        $phpBuilder = new ProcessMakerPhpBuilderHelper();
-        $phpBuilder->enabledExtensions = $oPluginRegistry->getEnabledPlugins();
-        if (!empty($phpBuilder->enabledExtensions)) {
-            $phpBuilder->extension = true;
-        }
-        $phpBuilder->buildAll();
+    $phpBuilder = new ProcessMakerPhpBuilderHelper();
+    $phpBuilder->enabledExtensions = $oPluginRegistry->getEnabledPlugins();
+    if (!empty($phpBuilder->enabledExtensions)) {
+        $phpBuilder->extension = true;
     }
+    $phpBuilder->buildAll();
 }
 
   //$oPluginRegistry->showArrays();

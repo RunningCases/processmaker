@@ -1212,6 +1212,19 @@ class Derivation
                                 $this->case->closeAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex );
                                 break;
                             default:
+                                if ($nextDel['ROU_PREVIOUS_TYPE'] == 'SEC-JOIN') {
+                                    $criteria = new Criteria('workflow');
+                                    $criteria->clearSelectColumns();
+                                    $criteria->addSelectColumn(AppThreadPeer::APP_THREAD_PARENT);
+                                    $criteria->add(AppThreadPeer::APP_UID, $appFields['APP_UID']);
+                                    $criteria->add(AppThreadPeer::APP_THREAD_STATUS, 'OPEN');
+                                    $criteria->add(AppThreadPeer::APP_THREAD_INDEX, $iAppThreadIndex);
+                                    $rsCriteria = AppThreadPeer::doSelectRS($criteria);
+                                    $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                                    if ($rsCriteria->next()) {
+                                        $this->case->closeAppThread($currentDelegation['APP_UID'], $iAppThreadIndex);
+                                    }
+                                }
                                 if ($currentDelegation['TAS_ASSIGN_TYPE'] == 'STATIC_MI' || $currentDelegation['TAS_ASSIGN_TYPE'] == 'CANCEL_MI') {
                                     $this->case->closeAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex );
                                 }
