@@ -3569,7 +3569,7 @@ class workspaceTools
                                    WHERE AD.TAS_ID = 0");
         $con->commit();
 
-        // Populating APP_DELEGATION.TAS_ID
+        // Populating APPLICATION.APP_STATUS_ID
         CLI::logging("->   Populating APPLICATION.APP_STATUS_ID \n");
         $con->begin();
         $stmt = $con->createStatement();
