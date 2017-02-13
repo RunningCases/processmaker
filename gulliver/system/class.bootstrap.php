@@ -3007,7 +3007,7 @@ class Bootstrap
      *
      * @return void
      */
-    public static function setConstantsRelatedWs($wsName = null){
+    public static function setConstantsRelatedWs($wsName = null) {
         if (!defined('SYS_SYS') && !is_null($wsName)) {
             //If SYS_SYS exists, is not update with $wsName
             define('SYS_SYS', $wsName);
