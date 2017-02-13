@@ -52,14 +52,8 @@ function __autoload ($sClassName)
     }
 }
 
-if (defined( 'SYS_SYS' )) {
-    Bootstrap::setConstantsRelatedWs('SYS_SYS');
-}
-
-if (!defined('PATH_WORKSPACE')) {
-    define('PATH_WORKSPACE', PATH_DATA_SITE);
-
-    set_include_path(get_include_path() . PATH_SEPARATOR . PATH_WORKSPACE);
+if (defined('SYS_SYS')) {
+    Bootstrap::setConstantsRelatedWs(SYS_SYS);
 }
 
 //Start - Custom functions

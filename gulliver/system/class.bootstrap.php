@@ -3011,11 +3011,12 @@ class Bootstrap
         if (!defined('SYS_SYS')) {
             define('SYS_SYS', $wsName);
         }
-        if (!defined('PATH_DATA_SITE')) {
-            define('PATH_DATA_SITE', PATH_DATA . 'sites' . PATH_SEP . $wsName . PATH_SEP);
+        if (defined('SYS_SYS') && !defined('PATH_DATA_SITE')) {
+            define('PATH_DATA_SITE', PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP);
         }
-        if (!defined('PATH_WORKSPACE')) {
+        if (defined('PATH_DATA_SITE') && !defined('PATH_WORKSPACE')) {
             define('PATH_WORKSPACE', PATH_DATA_SITE);
+            set_include_path(get_include_path() . PATH_SEPARATOR . PATH_WORKSPACE);
         }
     }
 
