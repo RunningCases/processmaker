@@ -3513,62 +3513,6 @@ class workspaceTools
         $this->initPropel(true);
         $con = Propel::getConnection(AppDelegationPeer::DATABASE_NAME);
 
-        // Populating APP_THREAD.APP_NUMBER
-        CLI::logging("->   Populating APP_THREAD.APP_NUMBER \n");
-        $con->begin();
-        $stmt = $con->createStatement();
-        $rs = $stmt->executeQuery("UPDATE APP_THREAD AS AT
-                                   INNER JOIN (
-                                       SELECT APPLICATION.APP_UID, APPLICATION.APP_NUMBER
-                                       FROM APPLICATION
-                                   ) AS APP
-                                   ON (AT.APP_UID = APP.APP_UID)
-                                   SET AT.APP_NUMBER = APP.APP_NUMBER
-                                   WHERE AT.APP_NUMBER = 0");
-        $con->commit();
-
-        // Populating APP_THREAD.DELEGATION_ID
-        CLI::logging("->   Populating APP_THREAD.DELEGATION_ID \n");
-        $con->begin();
-        $stmt = $con->createStatement();
-        $rs = $stmt->executeQuery("UPDATE APP_THREAD AS AT
-                                   INNER JOIN (
-                                       SELECT APP_DELEGATION.APP_UID, APP_DELEGATION.DEL_INDEX, APP_DELEGATION.DELEGATION_ID
-                                       FROM APP_DELEGATION
-                                   ) AS APPDEL
-                                   ON (AT.APP_UID = APPDEL.APP_UID AND AT.DEL_INDEX = APPDEL.DEL_INDEX)
-                                   SET AT.DELEGATION_ID = APPDEL.DELEGATION_ID
-                                   WHERE AT.DELEGATION_ID = 0");
-        $con->commit();
-
-        // Populating APP_DELAY.APP_NUMBER
-        CLI::logging("->   Populating APP_DELAY.APP_NUMBER \n");
-        $con->begin();
-        $stmt = $con->createStatement();
-        $rs = $stmt->executeQuery("UPDATE APP_DELAY AS AD
-                                   INNER JOIN (
-                                       SELECT APPLICATION.APP_UID, APPLICATION.APP_NUMBER
-                                       FROM APPLICATION
-                                   ) AS APP
-                                   ON (AD.APP_UID = APP.APP_UID)
-                                   SET AD.APP_NUMBER = APP.APP_NUMBER
-                                   WHERE AD.APP_NUMBER = 0");
-        $con->commit();
-
-        // Populating APP_DELAY.DELEGATION_ID
-        CLI::logging("->   Populating APP_DELAY.DELEGATION_ID \n");
-        $con->begin();
-        $stmt = $con->createStatement();
-        $rs = $stmt->executeQuery("UPDATE APP_DELAY AS AD
-                                   INNER JOIN (
-                                       SELECT APP_DELEGATION.APP_UID, APP_DELEGATION.DEL_INDEX, APP_DELEGATION.DELEGATION_ID
-                                       FROM APP_DELEGATION
-                                   ) AS APPDEL
-                                   ON (AD.APP_UID = APPDEL.APP_UID AND AD.APP_DEL_INDEX = APPDEL.DEL_INDEX)
-                                   SET AD.DELEGATION_ID = APPDEL.DELEGATION_ID
-                                   WHERE AD.DELEGATION_ID = 0");
-        $con->commit();
-
         // Populating APP_DELEGATION.APP_NUMBER
         CLI::logging("->   Populating APP_DELEGATION.APP_NUMBER \n");
         $con->begin();

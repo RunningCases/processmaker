@@ -1900,7 +1900,7 @@ class Cases
     {
         try {
             $appThread = new AppThread();
-            $result = $appThread->createAppThread($sAppUid, $iNewDelIndex, $iAppParent, $appNumber);
+            $result = $appThread->createAppThread($sAppUid, $iNewDelIndex, $iAppParent);
             //update searchindex
             if ($this->appSolr != null) {
                 $this->appSolr->updateApplicationSearchIndex($sAppUid);
@@ -2092,7 +2092,7 @@ class Cases
 
                 //appThread
                 $AppThread = new AppThread;
-                $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex, 0, $Application->getAppNumber());
+                $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex, 0);
 
                 G::LoadClass('derivation');
                 $oDerivation = new Derivation();
@@ -2139,7 +2139,7 @@ class Cases
                            );
                            //appThread
                            $AppThread = new AppThread;
-                           $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex1, 0, $Application->getAppNumber());
+                           $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex1, 0);
                            //Save Information
                            $aUserFields[$count] = $rowUser;
                            $aUserFields[$count]["DEL_INDEX"] = $iDelIndex1;

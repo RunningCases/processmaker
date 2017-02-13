@@ -58,18 +58,6 @@ abstract class BaseAppThread extends BaseObject implements Persistent
     protected $del_index = 0;
 
     /**
-     * The value for the app_number field.
-     * @var        int
-     */
-    protected $app_number = 0;
-
-    /**
-     * The value for the delegation_id field.
-     * @var        int
-     */
-    protected $delegation_id = 0;
-
-    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -136,28 +124,6 @@ abstract class BaseAppThread extends BaseObject implements Persistent
     {
 
         return $this->del_index;
-    }
-
-    /**
-     * Get the [app_number] column value.
-     * 
-     * @return     int
-     */
-    public function getAppNumber()
-    {
-
-        return $this->app_number;
-    }
-
-    /**
-     * Get the [delegation_id] column value.
-     * 
-     * @return     int
-     */
-    public function getDelegationId()
-    {
-
-        return $this->delegation_id;
     }
 
     /**
@@ -271,50 +237,6 @@ abstract class BaseAppThread extends BaseObject implements Persistent
     } // setDelIndex()
 
     /**
-     * Set the value of [app_number] column.
-     * 
-     * @param      int $v new value
-     * @return     void
-     */
-    public function setAppNumber($v)
-    {
-
-        // Since the native PHP type for this column is integer,
-        // we will cast the input value to an int (if it is not).
-        if ($v !== null && !is_int($v) && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->app_number !== $v || $v === 0) {
-            $this->app_number = $v;
-            $this->modifiedColumns[] = AppThreadPeer::APP_NUMBER;
-        }
-
-    } // setAppNumber()
-
-    /**
-     * Set the value of [delegation_id] column.
-     * 
-     * @param      int $v new value
-     * @return     void
-     */
-    public function setDelegationId($v)
-    {
-
-        // Since the native PHP type for this column is integer,
-        // we will cast the input value to an int (if it is not).
-        if ($v !== null && !is_int($v) && is_numeric($v)) {
-            $v = (int) $v;
-        }
-
-        if ($this->delegation_id !== $v || $v === 0) {
-            $this->delegation_id = $v;
-            $this->modifiedColumns[] = AppThreadPeer::DELEGATION_ID;
-        }
-
-    } // setDelegationId()
-
-    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -341,16 +263,12 @@ abstract class BaseAppThread extends BaseObject implements Persistent
 
             $this->del_index = $rs->getInt($startcol + 4);
 
-            $this->app_number = $rs->getInt($startcol + 5);
-
-            $this->delegation_id = $rs->getInt($startcol + 6);
-
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 7; // 7 = AppThreadPeer::NUM_COLUMNS - AppThreadPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 5; // 5 = AppThreadPeer::NUM_COLUMNS - AppThreadPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating AppThread object", $e);
@@ -569,12 +487,6 @@ abstract class BaseAppThread extends BaseObject implements Persistent
             case 4:
                 return $this->getDelIndex();
                 break;
-            case 5:
-                return $this->getAppNumber();
-                break;
-            case 6:
-                return $this->getDelegationId();
-                break;
             default:
                 return null;
                 break;
@@ -600,8 +512,6 @@ abstract class BaseAppThread extends BaseObject implements Persistent
             $keys[2] => $this->getAppThreadParent(),
             $keys[3] => $this->getAppThreadStatus(),
             $keys[4] => $this->getDelIndex(),
-            $keys[5] => $this->getAppNumber(),
-            $keys[6] => $this->getDelegationId(),
         );
         return $result;
     }
@@ -648,12 +558,6 @@ abstract class BaseAppThread extends BaseObject implements Persistent
             case 4:
                 $this->setDelIndex($value);
                 break;
-            case 5:
-                $this->setAppNumber($value);
-                break;
-            case 6:
-                $this->setDelegationId($value);
-                break;
         } // switch()
     }
 
@@ -697,14 +601,6 @@ abstract class BaseAppThread extends BaseObject implements Persistent
             $this->setDelIndex($arr[$keys[4]]);
         }
 
-        if (array_key_exists($keys[5], $arr)) {
-            $this->setAppNumber($arr[$keys[5]]);
-        }
-
-        if (array_key_exists($keys[6], $arr)) {
-            $this->setDelegationId($arr[$keys[6]]);
-        }
-
     }
 
     /**
@@ -734,14 +630,6 @@ abstract class BaseAppThread extends BaseObject implements Persistent
 
         if ($this->isColumnModified(AppThreadPeer::DEL_INDEX)) {
             $criteria->add(AppThreadPeer::DEL_INDEX, $this->del_index);
-        }
-
-        if ($this->isColumnModified(AppThreadPeer::APP_NUMBER)) {
-            $criteria->add(AppThreadPeer::APP_NUMBER, $this->app_number);
-        }
-
-        if ($this->isColumnModified(AppThreadPeer::DELEGATION_ID)) {
-            $criteria->add(AppThreadPeer::DELEGATION_ID, $this->delegation_id);
         }
 
 
@@ -815,10 +703,6 @@ abstract class BaseAppThread extends BaseObject implements Persistent
         $copyObj->setAppThreadStatus($this->app_thread_status);
 
         $copyObj->setDelIndex($this->del_index);
-
-        $copyObj->setAppNumber($this->app_number);
-
-        $copyObj->setDelegationId($this->delegation_id);
 
 
         $copyObj->setNew(true);

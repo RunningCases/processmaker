@@ -1348,7 +1348,7 @@ class Derivation
                         $nextDel['TAS_ID']
                     );
 
-                    $iNewThreadIndex = $this->case->newAppThread( $currentDelegation['APP_UID'], $iMIDelIndex, $iAppThreadIndex, $appFields['APP_NUMBER'] );
+                    $iNewThreadIndex = $this->case->newAppThread( $currentDelegation['APP_UID'], $iMIDelIndex, $iAppThreadIndex);
 
                     //Setting the del Index for Updating the AppThread delIndex
                     if ($key == 0) {

@@ -1651,14 +1651,6 @@
     <column name="APP_THREAD_PARENT" type="INTEGER" required="true" default="0"/>
     <column name="APP_THREAD_STATUS" type="VARCHAR" size="32" required="true" default="OPEN"/>
     <column name="DEL_INDEX" type="INTEGER" required="true" default="0"/>
-    <column name="APP_NUMBER" type="INTEGER" required="false" default="0"/>
-    <column name="DELEGATION_ID" type="INTEGER" required="false" default="0"/>
-    <index name="INDEX_APP_NUMBER">
-      <index-column name="APP_NUMBER"/>
-    </index>
-    <index name="INDEX_DELEGATION_ID">
-      <index-column name="DELEGATION_ID"/>
-    </index>
     <validator column="APP_THREAD_STATUS">
       <rule name="validValues" value="CLOSED|OPEN" message="Please select a valid status."/>
     </validator>
@@ -1698,8 +1690,6 @@
     <column name="APP_DISABLE_ACTION_USER" type="VARCHAR" size="32" default="0"/>
     <column name="APP_DISABLE_ACTION_DATE" type="TIMESTAMP"/>
     <column name="APP_AUTOMATIC_DISABLED_DATE" type="TIMESTAMP"/>
-    <column name="APP_NUMBER" type="INTEGER" required="false" default="0"/>
-    <column name="DELEGATION_ID" type="INTEGER" required="false" default="0"/>
     <index name="indexAppDelay">
       <index-column name="PRO_UID"/>
       <index-column name="APP_UID"/>
@@ -1725,12 +1715,6 @@
     </index>
     <index name="indexAppUid">
       <index-column name="APP_UID"/>
-    </index>
-    <index name="INDEX_APP_NUMBER">
-      <index-column name="APP_NUMBER"/>
-    </index>
-    <index name="INDEX_DELEGATION_ID">
-      <index-column name="DELEGATION_ID"/>
     </index>
   </table>
   <table name="PROCESS_USER">

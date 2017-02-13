@@ -125,7 +125,7 @@ class Applications
 
         //Filters
         if (!empty($sort)) {
-            if ($sort === 'APP_NUMBER') {
+            if ($sort === 'APP_NUMBER' || $sort === 'APPLICATION.APP_NUMBER') {
                 $sort = 'APP_DELEGATION.APP_NUMBER';
             }
             $sqlWhere .= " ORDER BY " . $sort;

@@ -75,10 +75,6 @@ class AppThreadMapBuilder
 
         $tMap->addColumn('DEL_INDEX', 'DelIndex', 'int', CreoleTypes::INTEGER, true, null);
 
-        $tMap->addColumn('APP_NUMBER', 'AppNumber', 'int', CreoleTypes::INTEGER, false, null);
-
-        $tMap->addColumn('DELEGATION_ID', 'DelegationId', 'int', CreoleTypes::INTEGER, false, null);
-
         $tMap->addValidator('APP_THREAD_STATUS', 'validValues', 'propel.validator.ValidValuesValidator', 'CLOSED|OPEN', 'Please select a valid status.');
 
     } // doBuild()
