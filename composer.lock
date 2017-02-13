@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "98d0285e56960342341a1a39337891ad",
+    "content-hash": "da8938c847b4f778aa2acc95daaeb38c",
     "packages": [
         {
             "name": "bshaffer/oauth2-server-php",
@@ -51,7 +51,7 @@
         },
         {
             "name": "colosa/MichelangeloFE",
-            "version": "dev-release/3.2",
+            "version": "release/3.2-dev",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/michelangelofe.git",
@@ -70,11 +70,11 @@
         },
         {
             "name": "colosa/pmDynaform",
-            "version": "dev-release/3.2",
+            "version": "release/3.2-dev",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/pmdynaform.git",
-                "reference": "e189423614abd5fce667645799e54781a596ba0b"
+                "reference": "efb60f8f989ee83f91459f82810f90d8ef7a6d64"
             },
             "type": "library",
             "description": "JS Library to render ProcessMaker Dynaforms",
@@ -82,11 +82,11 @@
             "keywords": [
                 "js lib ProcessMaker Dynaforms"
             ],
-            "time": "2017-02-01 19:31:09"
+            "time": "2017-02-09 17:03:07"
         },
         {
             "name": "colosa/pmUI",
-            "version": "dev-release/3.2",
+            "version": "release/3.2-dev",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/pmui.git",
