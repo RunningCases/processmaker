@@ -362,7 +362,7 @@ class ListInbox extends BaseListInbox
             break;
             case 'to_reassign':
                 $criteria->add( ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL );
-                if($usrUid !== ''){
+                if ($usrUid !== '') {
                     $criteria->add( ListInboxPeer::USR_UID, $usrUid, Criteria::EQUAL );
                 }
             break;

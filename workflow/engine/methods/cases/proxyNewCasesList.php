@@ -32,11 +32,11 @@ try {
     $openApplicationUid = (isset($_REQUEST['openApplicationUid']) && $_REQUEST['openApplicationUid'] != '') ? $_REQUEST['openApplicationUid'] : null;
 
     //Define user when is reassign
-    if($filters['action'] == 'to_reassign') {
-        if($filters['user'] == '' ){
+    if ($filters['action'] == 'to_reassign') {
+        if ($filters['user'] == '' ) {
             $userUid = '';
         }
-        if($filters['user'] !== '' && $filters['user'] !== 'CURRENT_USER'){
+        if ($filters['user'] !== '' && $filters['user'] !== 'CURRENT_USER') {
             $userUid = $filters['user'];
         }
     }

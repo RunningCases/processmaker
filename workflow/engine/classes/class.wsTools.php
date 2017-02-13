@@ -152,10 +152,10 @@ class workspaceTools
         CLI::logging("<*>   Migrating Self-Service records Process took " . ($stop - $start) . " seconds.\n");
 
         $start = microtime(true);
-        CLI::logging("> Migrating and populating indexing for APP_CACHE_VIEW...\n");
+        CLI::logging("> Migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW...\n");
         $this->migratePopulateIndexingACV($workSpace);
         $stop = microtime(true);
-        CLI::logging("<*>   Migrating an populating indexing for APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
+        CLI::logging("<*>   Migrating an populating indexing for avoiding the use of table APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
     }
 
     /**
@@ -3507,7 +3507,7 @@ class workspaceTools
 
     public function migratePopulateIndexingACV($workspace) {
         // Migrating and populating new indexes
-        CLI::logging("-> Migrating And Populating Indexing for APP_CACHE_VIEW Start \n");
+        CLI::logging("-> Migrating an populating indexing for avoiding the use of table APP_CACHE_VIEW Start \n");
 
         // Initializing
         $this->initPropel(true);
@@ -3584,7 +3584,7 @@ class workspaceTools
                                     APP_STATUS_ID = 0");
         $con->commit();
 
-        CLI::logging("-> Migrating And Populating Indexing for APP_CACHE_VIEW Done \n");
+        CLI::logging("-> Migrating And Populating Indexing for avoiding the use of table APP_CACHE_VIEW Done \n");
     }
 
 }

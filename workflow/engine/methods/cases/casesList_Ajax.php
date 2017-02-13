@@ -179,7 +179,7 @@ if ($actionAjax == "processListExtJs") {
 
     while ($oDataset->next()) {
         $aRow = $oDataset->getRow();
-        if(!isset($aRow['PRO_UID'])){
+        if (!isset($aRow['PRO_UID'])) {
             $aRow['PRO_UID'] = $aRow['PRO_ID'];
         }
         $processes[] = $aRow;
