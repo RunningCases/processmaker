@@ -1019,20 +1019,23 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
 
         if (is_array( $aApplication )) {
             $response['exists'] = true;
+            $objCase = new \ProcessMaker\BusinessModel\Cases();
+            $aUserCanAccess = $objCase->userAuthorization(
+                $_SESSION['USER_LOGGED'],
+                $aApplication['PRO_UID'],
+                $aApplication['APP_UID'],
+                array('PM_ALLCASES'),
+                array('SUMMARY_FORM'=>'VIEW')
+            );
 
             //Check if the user is a supervisor to this Process
-            if(isset($_POST['actionFromList']) && $_POST['actionFromList']==='to_revise'){
-                $oAppCache = new AppCacheView();
-                $aProcesses = $oAppCache->getProUidSupervisor($_SESSION['USER_LOGGED']);
-                if(!in_array($aApplication['PRO_UID'], $aProcesses)){
+            if (isset($_POST['actionFromList']) && $_POST['actionFromList']==='to_revise') {
+                if (!$aUserCanAccess['supervisor']) {
                     $response['exists'] = false;
                     $response['message'] = G::LoadTranslation('ID_NO_PERMISSION_NO_PARTICIPATED');
                 }
             } else {//Check if the user participated in this case
-                $oParticipated = new ListParticipatedLast();
-                $aParticipated = $oParticipated->loadList($_SESSION['USER_LOGGED'], array(), null, $aApplication['APP_UID']);
-                if(!sizeof($aParticipated)){
-                    //Check in the selfservice list
+                if (!$aUserCanAccess['participated'] && !$aUserCanAccess['rolesPermissions']['PM_ALLCASES'] && !$aUserCanAccess['objectPermissions']['SUMMARY_FORM']) {
                     $response['exists'] = false;
                     $response['message'] = G::LoadTranslation('ID_NO_PERMISSION_NO_PARTICIPATED');
                 }
