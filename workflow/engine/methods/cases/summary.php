@@ -70,7 +70,6 @@ try {
     $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
     if ($result->next()) {
         G::LoadClass('pmDynaform');
-        G::LoadClass('pmDynaform');
         $FieldsPmDynaform = $applicationFields;
         $FieldsPmDynaform["CURRENT_DYNAFORM"] = $_REQUEST['DYN_UID'];
         $a = new pmDynaform(\ProcessMaker\Util\DateTime::convertUtcToTimeZone($FieldsPmDynaform));
