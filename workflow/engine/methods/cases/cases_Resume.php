@@ -49,22 +49,32 @@ $G_ID_SUB_MENU_SELECTED = '_';
 
 /* Prepare page before to show */
 $oCase = new Cases();
-
-if (isset($_SESSION['ACTION']) && ($_SESSION['ACTION'] == 'jump')) {
-    $Fields = $oCase->loadCase( $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['ACTION']);
-} else {
-    $Fields = $oCase->loadCase( $_SESSION['APPLICATION'], $_SESSION['INDEX']);
-}
-
 //Check the authorization
 $objCase = new \ProcessMaker\BusinessModel\Cases();
 $aUserCanAccess = $objCase->userAuthorization(
     $_SESSION['USER_LOGGED'],
-    $Fields['PRO_UID'],
+    $_SESSION['PROCESS'],
     $_GET['APP_UID'],
     array('PM_ALLCASES'),
-    array('SUMMARY_FORM'=>'VIEW')
+    array('SUMMARY_FORM' => 'VIEW')
 );
+
+if (isset($_SESSION['ACTION']) && ($_SESSION['ACTION'] == 'jump')) {
+    $Fields = $oCase->loadCase( $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['ACTION']);
+    $process = new Process();
+    $processData = $process->load($Fields['PRO_UID']);
+    if (isset($processData['PRO_DYNAFORMS']['PROCESS']) && $processData['PRO_DYNAFORMS']['PROCESS'] != '' &&
+        $aUserCanAccess['objectPermissions']['SUMMARY_FORM']
+    ) {
+        $_REQUEST['APP_UID'] = $Fields['APP_UID'];
+        $_REQUEST['DEL_INDEX'] = $Fields['DEL_INDEX'];
+        $_REQUEST['DYN_UID'] = $processData['PRO_DYNAFORMS']['PROCESS'];
+        require_once(PATH_METHODS . 'cases' . PATH_SEP . 'summary.php');
+        exit();
+    }
+} else {
+    $Fields = $oCase->loadCase( $_SESSION['APPLICATION'], $_SESSION['INDEX']);
+}
 
 if (!$aUserCanAccess['participated'] && !$aUserCanAccess['supervisor'] && !$aUserCanAccess['rolesPermissions']['PM_ALLCASES'] && !$aUserCanAccess['objectPermissions']['SUMMARY_FORM']) {
     $aMessage['MESSAGE'] = G::LoadTranslation( 'ID_NO_PERMISSION_NO_PARTICIPATED' );
