@@ -429,6 +429,10 @@ class PMPluginRegistry
         if(sizeof( $this->_aOpenReassignCallback )){
             unset( $this->_aOpenReassignCallback );
         }
+
+        if (sizeof($this->_restExtendServices)) {
+            $this->disableExtendsRestService($sNamespace);
+        }
         //unregistering javascripts from this plugin
         $this->unregisterJavascripts( $sNamespace );
         //unregistering rest services from this plugin
@@ -1472,7 +1476,7 @@ class PMPluginRegistry
         $apiPath = PATH_SEP . "Services" . PATH_SEP . "Ext" . PATH_SEP;
         $classFile = $baseSrcPluginPath . $apiPath . 'Ext' . $className . '.php';
         if (file_exists($classFile)) {
-            $this->_restExtendServices[$className] = array(
+            $this->_restExtendServices[$sNamespace][$className] = array(
                 "filePath" => $classFile,
                 "classParent" => $className,
                 "classExtend" => 'Ext' . $className
@@ -1484,23 +1488,33 @@ class PMPluginRegistry
      * Get a extend rest service class from a plugin to be served by processmaker
      *
      * @param string $className The service (api) class name
-     * @return bool
+     * @return array
      */
     public function getExtendsRestService($className)
     {
-        return isset($this->_restExtendServices[$className]) ? $this->_restExtendServices[$className] : array();
+        $responseRestExtendService = array();
+        foreach ($this->_restExtendServices as $sNamespace => $restExtendService) {
+            if (isset($restExtendService[$className])) {
+                $responseRestExtendService = $restExtendService[$className];
+                break;
+            }
+        }
+        return $responseRestExtendService;
     }
 
     /**
      * Remove a extend rest service class from a plugin to be served by processmaker
      *
+     * @param string $sNamespace
      * @param string $className The service (api) class name
      * @return bool
      */
-    public function disableExtendsRestService($sNamespace, $className)
+    public function disableExtendsRestService($sNamespace, $className = '')
     {
-        if (isset($this->_restExtendServices[$className])) {
-            unset($this->_restExtendServices[$className]);
+        if (isset($this->_restExtendServices[$sNamespace][$className]) && !empty($className)) {
+            unset($this->_restExtendServices[$sNamespace][$className]);
+        } elseif (empty($className)) {
+            unset($this->_restExtendServices[$sNamespace]);
         }
     }
 
