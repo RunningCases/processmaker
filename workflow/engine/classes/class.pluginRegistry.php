@@ -1465,7 +1465,6 @@ class PMPluginRegistry
      *
      * @param string $sNamespace The namespace for the plugin
      * @param string $className The service (api) class name
-     * @return bool
      */
     public function registerExtendsRestService($sNamespace, $className)
     {
@@ -1479,7 +1478,6 @@ class PMPluginRegistry
                 "classExtend" => 'Ext' . $className
             );
         }
-        return true;
     }
 
     /**
