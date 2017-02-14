@@ -442,6 +442,7 @@ class AppDelegation extends BaseAppDelegation
         //Get Task properties
         $task = TaskPeer::retrieveByPK( $this->getTasUid() );
 
+        $aData = array();
         $aData['TAS_UID'] = $this->getTasUid();
         //Added to allow User defined Timing Control at Run time from Derivation screen
         if (isset( $sNextTasParam['NEXT_TASK']['TAS_TRANSFER_HIDDEN_FLY'] ) && $sNextTasParam['NEXT_TASK']['TAS_TRANSFER_HIDDEN_FLY'] == 'true') {
@@ -471,7 +472,7 @@ class AppDelegation extends BaseAppDelegation
         //Calendar - Use the dates class to calculate dates
         $calendar = new calendar();
 
-        $arrayCalendarData = array();
+        $arrayCalendarData = $calendar->getCalendarData($aCalendarUID);
 
         if ($calendar->pmCalendarUid == "") {
             $calendar->getCalendar(null, $this->getProUid(), $this->getTasUid());
@@ -480,11 +481,11 @@ class AppDelegation extends BaseAppDelegation
         }
 
         //Due date
-        /*$iDueDate = $calendar->calculateDate( $this->getDelDelegateDate(), $aData['TAS_DURATION'], $aData['TAS_TIMEUNIT']         //hours or days, ( we only accept this two types or maybe weeks
-        );*/
-        $dueDate = $calendar->dashCalculateDate($this->getDelDelegateDate(), $aData["TAS_DURATION"], $aData["TAS_TIMEUNIT"], $arrayCalendarData);
+        $initDate = $this->getDelDelegateDate();
+        $timeZone = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($initDate);
+        $dueDate = $calendar->dashCalculateDate($timeZone, $aData["TAS_DURATION"], $aData["TAS_TIMEUNIT"], $arrayCalendarData);
 
-        //Return
+        $dueDate = \ProcessMaker\Util\DateTime::convertDataToUtc($dueDate);
         return $dueDate;
     }
 
