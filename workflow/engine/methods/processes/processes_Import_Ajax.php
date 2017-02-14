@@ -498,7 +498,7 @@ if ($action == "uploadFileNewProcess") {
                 $affectedGroups = implode(', ', $affectedGroups);
             }
         }
-        $result->affectedGroups = $affectedGroups;
+        $result->affectedGroups = empty($affectedGroups) ? "" : $affectedGroups;
 
         //Add Audit Log
         $process = new Process();
@@ -641,7 +641,7 @@ if ($action == "uploadFileNewProcessExist") {
                 $affectedGroups = implode(', ', $affectedGroups);
             }
         }
-        $result->affectedGroups = $affectedGroups;
+        $result->affectedGroups = empty($affectedGroups) ? "" : $affectedGroups;
 
         //!data ouput
     } catch (Exception $e) {
