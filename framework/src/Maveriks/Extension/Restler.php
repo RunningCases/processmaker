@@ -145,10 +145,9 @@ class Restler extends \Luracast\Restler\Restler
     protected function call()
     {
         $this->dispatch('call');
-        $o = & $this->apiMethodInfo;
-        $accessLevel = max(\Luracast\Restler\Defaults::$apiAccessLevel,
-            $o->accessLevel);
-        $object =  \Luracast\Restler\Scope::get($o->className);
+        $o = &$this->apiMethodInfo;
+        $accessLevel = max(\Luracast\Restler\Defaults::$apiAccessLevel, $o->accessLevel);
+        $object = \Luracast\Restler\Scope::get($o->className);
         switch ($accessLevel) {
             case 3 : //protected method
                 $reflectionMethod = new \ReflectionMethod(
@@ -175,11 +174,11 @@ class Restler extends \Luracast\Restler\Restler
     {
         $classReflection = new \ReflectionClass($object);
         $classShortName = $classReflection->getShortName();
-        $registry = \PMPluginRegistry::getSingleton();
+        $registry = &\PMPluginRegistry::getSingleton();
         $pluginsApiExtend = $registry->getExtendsRestService($classShortName);
         if ($pluginsApiExtend) {
             $classFilePath = $pluginsApiExtend['filePath'];
-            if(file_exists($classFilePath)) {
+            if (file_exists($classFilePath)) {
                 require_once($classFilePath);
                 $classExtName = $pluginsApiExtend['classExtend'];
                 $newObjectExt = new $classExtName();

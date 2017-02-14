@@ -1472,7 +1472,7 @@ class PMPluginRegistry
         $baseSrcPluginPath = PATH_PLUGINS . $sNamespace . PATH_SEP . "src";
         $apiPath = PATH_SEP . "Services" . PATH_SEP . "Ext" . PATH_SEP;
         $classFile = $baseSrcPluginPath . $apiPath . 'Ext' . $className . '.php';
-        if(file_exists($classFile)){
+        if (file_exists($classFile)) {
             $this->_restExtendServices[$className] = array(
                 "filePath" => $classFile,
                 "classParent" => $className,
