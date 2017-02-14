@@ -124,7 +124,6 @@ class Table
         if ($validate) {
             $pro_uid = $this->validateProUid($pro_uid);
             $rep_uid = $this->validateTabUid($rep_uid);
-            G::loadClass('pmTable');
         }
 
         $additionalTables = new AdditionalTables();
@@ -728,7 +727,6 @@ class Table
      */
     public function getDynafields ($pro_uid, $rep_tab_type, $rep_tab_grid = '')
     {
-        G::LoadClass( 'reportTables' );
 
         $dynFields = array();
         $aFields   = array();
@@ -1105,8 +1103,6 @@ class Table
                 $fld_type = 'TIMESTAMP';
                 break;
         }
-
-        G::loadClass('pmTable');
 
         $columnsTypes = \PmTable::getPropelSupportedColumnTypes();
         $res = array_search($fld_type, $columnsTypes);

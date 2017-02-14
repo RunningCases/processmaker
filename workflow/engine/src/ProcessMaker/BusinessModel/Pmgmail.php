@@ -356,7 +356,6 @@ class Pmgmail {
             error_log(G::LoadTranslation('ID_EMAIL_ENGINE_IS_NOT_ENABLED'));
             return false;
         }
-        \G::LoadClass("wsBase");
 
         $ws = new \wsBase();
         $resultMail = $ws->sendMessage(

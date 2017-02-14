@@ -454,7 +454,6 @@ class Process
     public function throwExceptionIfNotExistsRoutingScreenTemplate($processUid, $fileName, $fieldNameForException)
     {
         try {
-            \G::LoadClass("processes");
 
             $arrayFile = \Processes::getProcessFiles($processUid, "mail");
             $flag = 0;
@@ -719,7 +718,6 @@ class Process
         }
 
         if ($delete || $type == "SEQUENTIAL" || $type == "SEC-JOIN" || $type == "DISCRIMINATOR") {
-            //\G::LoadClass("tasks");
 
             $tasks = new \Tasks();
 
@@ -1201,8 +1199,7 @@ class Process
     public function deleteProcess($sProcessUID)
     {
         try {
-            G::LoadClass('case');
-            G::LoadClass('reportTables');
+
             //Instance all classes necesaries
             $oProcess = new Process();
             $oDynaform = new Dynaform();
@@ -1624,9 +1621,6 @@ class Process
 
             //Verify data
             $this->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
-
-            //Get data
-            \G::LoadClass("triggerLibrary");
 
             $triggerWizard = new \ProcessMaker\BusinessModel\TriggerWizard();
             $triggerWizard->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);

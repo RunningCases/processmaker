@@ -45,13 +45,9 @@ if (isset( $_POST['PROCESS'] )) {
 }
 
     #Global Definitions
-require_once 'classes/model/DbSource.php';
-require_once 'classes/model/Content.php';
 
 $G_PUBLISH = new Publisher();
-G::LoadClass( 'processMap' );
-G::LoadClass( 'ArrayPeer' );
-G::LoadClass( 'dbConnections' );
+
 global $_DBArray;
 
 switch ($action) {
@@ -209,8 +205,6 @@ switch ($action) {
         break;
     case 'testConnection':
         sleep( 0 );
-
-        G::LoadClass("net");
 
         define("SUCCESSFULL", "SUCCESSFULL");
         define("FAILED", "FAILED");

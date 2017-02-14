@@ -566,10 +566,6 @@ class WebApplication
         define( 'PML_UPLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/uploadProcess' );
         define( 'PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/download' );
 
-        // create memcached singleton
-        //\Bootstrap::LoadClass("memcached");
-        //$memcache = PMmemcached::getSingleton( SYS_SYS );
-
         \Propel::init(PATH_CONFIG . "databases.php");
 
         //Set Time Zone

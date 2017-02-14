@@ -55,7 +55,6 @@ switch ($function) {
 
         $_POST['form']['PRO_TITLE'] = trim( $_POST['form']['PRO_TITLE'] );
 
-        G::LoadClass( 'processMap' );
         $oProcessMap = new ProcessMap();
         if (! isset( $_POST['form']['PRO_UID'] )) {
             $_POST['form']['USR_UID'] = $_SESSION['USER_LOGGED'];
@@ -83,7 +82,7 @@ switch ($function) {
         }
 
         //Save Calendar ID for this process
-        G::LoadClass( "calendar" );
+
         $calendarObj = new Calendar();
         $calendarObj->assignCalendarTo( $sProUid, $_POST['form']['PRO_CALENDAR'], 'PROCESS' );
 
@@ -150,7 +149,7 @@ G::auditLog('EditProcess','Edit fields ('.implode(', ',$fields).') in process "'
 if(isset($_POST['form']['PRO_UID']) && !empty($_POST['form']['PRO_UID'])) {
     $valuesProcess['PRO_UID'] = $_POST['form']['PRO_UID'];
     $valuesProcess['PRO_UPDATE_DATE'] = date("Y-m-d H:i:s");
-    G::LoadClass('processes');
+
     $infoProcess = new Processes();
     $resultProcess = $infoProcess->updateProcessRow($valuesProcess);
 }

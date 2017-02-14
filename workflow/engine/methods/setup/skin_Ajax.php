@@ -28,7 +28,6 @@ $functionName();
 
 function updatePageSize ()
 {
-    G::LoadClass( 'configuration' );
     $c = new Configurations();
     $arr['pageSize'] = $_REQUEST['size'];
     $arr['dateSave'] = date( 'Y-m-d H:i:s' );
@@ -46,8 +45,6 @@ function skinList ()
     } else {
         $textFilter = '';
     }
-
-    G::loadClass( 'system' );
 
     $skinList = System::getSkingList();
     $wildcard = '';

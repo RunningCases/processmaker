@@ -75,7 +75,7 @@ class App
     $partnerid = $HTTP_SESSION_VARS['CURRENT_PARTNER'];
     
     $mdbc = new DBConnection();
-    G::LoadClass( "slip" );
+
     $slip = new Slip;
     $slip->SetTo( $mdbc );
     $slip->Load( $slipid );
@@ -95,7 +95,7 @@ class App
     $partnerid = $HTTP_SESSION_VARS['CURRENT_PARTNER'];
     
     $mdbc = new DBConnection();
-    G::LoadClass( "slip" );
+
     $slip = new Slip;
     $slip->SetTo( $mdbc );
     $slip->Load( $slipid );

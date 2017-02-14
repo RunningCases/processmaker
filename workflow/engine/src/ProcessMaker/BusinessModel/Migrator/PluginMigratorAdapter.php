@@ -15,7 +15,6 @@ class PluginMigratorAdapter implements  Exportable, Importable
      */
     public function __construct($pluginName)
     {
-        \G::LoadClass('pluginRegistry');
         $registry = \PMPluginRegistry::getSingleton();
         $plugin = $registry->getPluginByCode($pluginName);
         require_once (

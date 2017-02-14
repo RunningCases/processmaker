@@ -195,7 +195,7 @@ class Variable
                         "VAR_SQL" => $variable->getVarSql(),
                         "VAR_ACCEPTED_VALUES" => $variable->getVarAcceptedValues()
                     );
-                    \G::LoadClass('pmDynaform');
+
                     $pmDynaform = new \pmDynaform();
                     $pmDynaform->synchronizeVariable($processUid, $newVariable, $oldVariable);
                 } else {
@@ -239,7 +239,7 @@ class Variable
             $this->throwExceptionIfVariableIsAssociatedAditionalTable($variableUid);
 
             $variable = $this->getVariable($processUid, $variableUid);
-            \G::LoadClass('pmDynaform');
+
             $pmDynaform = new \pmDynaform();
             $isUsed = $pmDynaform->isUsed($processUid, $variable);
             if ($isUsed !== false) {

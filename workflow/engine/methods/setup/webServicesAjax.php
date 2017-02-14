@@ -23,12 +23,10 @@
  */
 ini_set( "soap.wsdl_cache_enabled", "0" ); // enabling WSDL cache
 
-G::LoadSystem('inputfilter');
 $filter = new InputFilter();
 $_GET = $filter->xssFilterHard($_GET);
 //$_SESSION = $filter->xssFilterHard($_SESSION); 
 
-G::LoadClass( 'ArrayPeer' );
 if ($RBAC->userCanAccess( 'PM_SETUP' ) != 1 && $RBAC->userCanAccess( 'PM_FACTORY' ) != 1) {
     G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels' );
     //G::header('location: ../login/login');
@@ -60,7 +58,6 @@ switch ($_POST['action']) {
         }
         break;
     case 'showDetails':
-        G::LoadClass( 'groups' );
 
         $dbc = new DBConnection();
         $ses = new DBSession( $dbc );
@@ -303,7 +300,6 @@ try {
                     $_DBArray['role'] = $rows;
                     $_SESSION['_DBArray'] = $_DBArray;
 
-                    G::LoadClass( 'ArrayPeer' );
                     $c = new Criteria( 'dbarray' );
                     $c->setDBArrayTable( 'role' );
                     $c->addAscendingOrderByColumn( 'name' );
@@ -366,7 +362,6 @@ try {
                     $_DBArray['group'] = $rows;
                     $_SESSION['_DBArray'] = $_DBArray;
 
-                    G::LoadClass( 'ArrayPeer' );
                     $c = new Criteria( 'dbarray' );
                     $c->setDBArrayTable( 'group' );
                     $c->addAscendingOrderByColumn( 'name' );
@@ -450,7 +445,6 @@ try {
                     $_DBArray['case'] = $rows;
                     $_SESSION['_DBArray'] = $_DBArray;
 
-                    G::LoadClass( 'ArrayPeer' );
                     $c = new Criteria( 'dbarray' );
                     $c->setDBArrayTable( 'case' );
                     //$c->addAscendingOrderByColumn ( 'name' );
@@ -525,7 +519,6 @@ try {
                     $_DBArray['case'] = $rows;
                     $_SESSION['_DBArray'] = $_DBArray;
 
-                    G::LoadClass( 'ArrayPeer' );
                     $c = new Criteria( 'dbarray' );
                     $c->setDBArrayTable( 'case' );
                     $G_PUBLISH->AddContent( 'propeltable', 'paged-table', 'setup/wsrUnassignedCaseList', $c );
@@ -590,7 +583,6 @@ try {
                     $_DBArray['user'] = $rows;
                     $_SESSION['_DBArray'] = $_DBArray;
 
-                    G::LoadClass( 'ArrayPeer' );
                     $c = new Criteria( 'dbarray' );
                     $c->setDBArrayTable( 'user' );
                     $c->addAscendingOrderByColumn( 'name' );
@@ -873,7 +865,6 @@ try {
                     $_DBArray['task'] = $rows;
                     $_SESSION['_DBArray'] = $_DBArray;
 
-                    G::LoadClass( 'ArrayPeer' );
                     $c = new Criteria( 'dbarray' );
                     $c->setDBArrayTable( 'task' );
                     $c->addAscendingOrderByColumn( 'name' );
@@ -958,7 +949,6 @@ try {
                     $_DBArray['triggers'] = $rows;
                     $_SESSION['_DBArray'] = $_DBArray;
 
-                    G::LoadClass( 'ArrayPeer' );
                     $c = new Criteria( 'dbarray' );
                     $c->setDBArrayTable( 'triggers' );
                     $c->addAscendingOrderByColumn( 'name' );
@@ -1102,7 +1092,6 @@ try {
                     $_DBArray['WS_TMP_CASE_UID'] = $frm["CASE_ID"];
                     $_SESSION['_DBArray'] = $_DBArray;
 
-                    G::LoadClass( 'ArrayPeer' );
                     $c = new Criteria( 'dbarray' );
                     $c->setDBArrayTable( 'inputDocument' );
                     $c->addAscendingOrderByColumn( 'name' );
@@ -1175,7 +1164,6 @@ try {
                     $_DBArray['inputDocuments'] = $rows;
                     $_SESSION['_DBArray'] = $_DBArray;
 
-                    G::LoadClass( 'ArrayPeer' );
                     $c = new Criteria( 'dbarray' );
                     $c->setDBArrayTable( 'inputDocuments' );
                     $c->addAscendingOrderByColumn( 'name' );
@@ -1314,7 +1302,6 @@ try {
                     $_DBArray['documents'] = $documentArray;
                     $_SESSION['_DBArray'] = $_DBArray;
 
-                    G::LoadClass( 'ArrayPeer' );
                     $c = new Criteria( 'dbarray' );
                     $c->setDBArrayTable( 'outputDocument' );
                     $c->addAscendingOrderByColumn( 'name' );
@@ -1425,7 +1412,6 @@ try {
                     $_DBArray['taskCases'] = $rows;
                     $_SESSION['_DBArray']  = $_DBArray;
 
-                    G::LoadClass( 'ArrayPeer' );
                     $c = new Criteria( 'dbarray' );
                     $c->setDBArrayTable( 'taskCases' );
                     $c->addAscendingOrderByColumn( 'name' );

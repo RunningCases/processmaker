@@ -528,9 +528,6 @@ function getGridsVars ($sProcessUID)
 
 function getVarsGrid ($proUid, $dynUid)
 {
-    G::LoadClass( 'dynaformhandler' );
-    G::LoadClass( 'AppSolr' );
-
     $dynaformFields = array ();
 
     if (is_file( PATH_DATA . '/sites/'. SYS_SYS .'/xmlForms/'. $proUid .'/'.$dynUid. '.xml' ) && filesize( PATH_DATA . '/sites/'. SYS_SYS .'/xmlForms/'. $proUid .'/'. $dynUid .'.xml' ) > 0) {

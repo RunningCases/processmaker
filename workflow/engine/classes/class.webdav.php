@@ -123,8 +123,7 @@ class ProcessMakerWebDav extends HTTP_WebDAV_Server
         //list all active processes
         if (count($paths) == 1 && $paths[0] == 'processes' && is_dir($pathProcesses)) {
             // try to get the process directory list
-            G::LoadClass('processMap');
-            G::LoadClass('model/Process');
+
             $oProcessMap = new processMap();
             $oProcess = new Process();
             $c = $oProcessMap->getConditionProcessList();

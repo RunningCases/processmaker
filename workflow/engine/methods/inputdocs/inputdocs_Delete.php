@@ -36,13 +36,6 @@ try {
             break;
     }
 
-    require_once 'classes/model/StepSupervisor.php';
-    require_once 'classes/model/ObjectPermission.php';
-    require_once 'classes/model/InputDocument.php';
-    require_once 'classes/model/Step.php';
-    require_once 'classes/model/ObjectPermission.php';
-    G::LoadClass( 'processMap' );
-
     if (isset( $_POST['function'] )) {
         $sfunction = $_POST['function'];
     } else {

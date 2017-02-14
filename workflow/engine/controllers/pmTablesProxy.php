@@ -25,9 +25,6 @@ class pmTablesProxy extends HttpProxyController
      */
     public function getList ($httpData)
     {
-        G::LoadClass( 'configuration' );
-        G::LoadClass( 'processMap' );
-        G::LoadClass( 'pmTable' );
         $configurations = new Configurations();
         $processMap = new processMap();
 
@@ -113,7 +110,6 @@ class pmTablesProxy extends HttpProxyController
         if (! isset( $_SESSION['PROCESS'] )) {
             $_SESSION['PROCESS'] = $_POST['PRO_UID'];
         }
-        G::LoadClass( 'dbConnections' );
         $proUid = $_POST['PRO_UID'];
         $dbConn = new DbConnections();
         $dbConnections = $dbConn->getConnectionsProUid( $proUid, array('mysql') );
@@ -142,7 +138,6 @@ class pmTablesProxy extends HttpProxyController
      */
     public function getDynafields ($httpData)
     {
-        G::LoadClass( 'reportTables' );
 
         $aFields['FIELDS'] = array ();
         $aFields['PRO_UID'] = $httpData->PRO_UID;
@@ -272,7 +267,6 @@ class pmTablesProxy extends HttpProxyController
                 }
 
                 if ($row->type == 'CLASSIC') {
-                    G::LoadClass( 'reportTables' );
                     $rp = new reportTables();
                     $rp->deleteReportTable( $row->id );
                     $count ++;
@@ -321,9 +315,6 @@ class pmTablesProxy extends HttpProxyController
      */
     public function dataView ($httpData)
     {
-        require_once 'classes/model/AdditionalTables.php';
-
-        G::LoadClass( 'configuration' );
         $co = new Configurations();
         $config = $co->getConfiguration( 'additionalTablesData', 'pageSize', '', $_SESSION['USER_LOGGED'] );
         $limit_size = isset( $config['pageSize'] ) ? $config['pageSize'] : 20;
@@ -462,8 +453,6 @@ class pmTablesProxy extends HttpProxyController
 
         public function importCSV ($httpData)
     {
-        G::LoadClass('pmFunctions');
-        G::LoadSystem('inputfilter');
         $filter = new InputFilter();
         $countRow = 250;
         $tmpfilename = $_FILES['form']['tmp_name']['CSV_FILE'];
@@ -949,10 +938,7 @@ class pmTablesProxy extends HttpProxyController
 
         try {
             $result = new stdClass();
-            G::LoadCLass( 'net' );
             $net = new NET( G::getIpAddress() );
-
-            G::LoadClass( "system" );
 
             $META = " \n-----== ProcessMaker Open Source Private Tables ==-----\n" . " @Ver: 1.0 Oct-2009\n" . " @Processmaker version: " . System::getVersion() . "\n" . " -------------------------------------------------------\n" . " @Export Date: " . date( "l jS \of F Y h:i:s A" ) . "\n" . " @Server address: " . getenv( 'SERVER_NAME' ) . " (" . getenv( 'SERVER_ADDR' ) . ")\n" . " @Client address: " . $net->hostname . "\n" . " @Workspace: " . SYS_SYS . "\n" . " @Export trace back:\n\n";
 
@@ -1184,8 +1170,7 @@ class pmTablesProxy extends HttpProxyController
     public function genDataReport ($httpData)
     {
         $result = new stdClass();
-        G::loadClass( 'pmTable' );
-        require_once 'classes/model/AdditionalTables.php';
+
         $result->message = '';
         $result->success = true;
 
@@ -1253,7 +1238,6 @@ class pmTablesProxy extends HttpProxyController
 
     public function _getDynafields ($proUid, $type = 'xmlform', $start = null, $limit = null, $filter = null)
     {
-        G::LoadClass('pmDynaform');
 
         $cache = 1;
         if (! isset( $_SESSION['_cache_pmtables'] ) || (isset( $_SESSION['_cache_pmtables'] ) && $_SESSION['_cache_pmtables']['pro_uid'] != $proUid) || (isset( $_SESSION['_cache_pmtables'] ) && $_SESSION['_cache_pmtables']['dyn_uid'] != $this->dynUid)) {
@@ -1556,7 +1540,6 @@ class pmTablesProxy extends HttpProxyController
     public function _getGridFields ($proUid)
     {
         try {
-            G::LoadClass('pmDynaform');
 
             $bpmn = new \ProcessMaker\Project\Bpmn();
             $flagIsBpmn = $bpmn->exists($proUid);

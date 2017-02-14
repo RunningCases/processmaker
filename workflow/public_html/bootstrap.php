@@ -245,7 +245,6 @@
   // defining the serverConf singleton
   if (defined('PATH_DATA') && file_exists(PATH_DATA)) {
     //Instance Server Configuration Singleton
-    G::LoadClass('serverConfiguration');
     $oServerConf =& serverConf::getSingleton();
   }
 
@@ -393,7 +392,6 @@
   define('SERVER_PORT',  $_SERVER ['SERVER_PORT']);
 
   // create memcached singleton
-  G::LoadClass ( 'memcached' );
   $memcache = & PMmemcached::getSingleton(SYS_SYS);
 
   // verify configuration for rest service
@@ -418,9 +416,6 @@
           }
       }
   }
-
-  // load Plugins base class
-  G::LoadClass('plugin');
 
   //here we are loading all plugins registered
   //the singleton has a list of enabled plugins
@@ -647,7 +642,6 @@
         $bRedirect = true;
 
         if (isset($_GET['sid'])) {
-          G::LoadClass('sessions');
           $oSessions = new Sessions();
           if ($aSession = $oSessions->verifySession($_GET['sid'])) {
             require_once 'classes/model/Users.php';

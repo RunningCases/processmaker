@@ -1,8 +1,5 @@
 <?php
 
-G::LoadClass("pmFunctions");
-G::LoadClass("reportTables");
-
 class ConsolidatedCases
 {
     private $existTable;
@@ -54,7 +51,6 @@ class ConsolidatedCases
         $oReportTables = new ReportTables();
         $oReportTables->deleteAllReportVars($_POST['form']['REP_TAB_UID']);
 
-        G::LoadClass("pmDynaform");
         $pmDyna = new pmDynaform(array());
         $pmDyna->fields["CURRENT_DYNAFORM"] = $DynUid;
         $dataDyna = $pmDyna->getDynaform();
@@ -212,7 +208,6 @@ class ConsolidatedCases
 
     public function createReportTable($dataRepTab)
     {
-        G::LoadClass("reportTables");
         $oReportTable = new ReportTable();
         $oReportTable->create($dataRepTab);
         return $oReportTable->getRepTabUid();

@@ -24,8 +24,7 @@
  */
 
 try {
-	G::LoadClass('tree');
-	G::LoadClass('processMap');
+
   //call plugin
   $oPluginRegistry = &PMPluginRegistry::getSingleton();
   $externalSteps   = $oPluginRegistry->getSteps();

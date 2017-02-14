@@ -737,7 +737,6 @@ function sortContent()
 function openPMFolder()
 {
     $WIDTH_PANEL = 350;
-    G::LoadClass ('tree');
     $folderContent = $oPMFolder->getFolderList ($_POST ['folderID'] != '0' ?
         $_POST ['folderID'] == 'NA' ? "" : $_POST ['folderID'] : $rootFolder);
     //krumo($folderContent);
@@ -826,7 +825,6 @@ function getPMFolderContent()
     $_DBArray ['PM_FOLDER_DOC'] = $folderContent;
     $_SESSION ['_DBArray'] = $_DBArray;
 
-    G::LoadClass ('ArrayPeer');
     $c = new Criteria ('dbarray');
     $c->setDBArrayTable ('PM_FOLDER_DOC');
     $c->addAscendingOrderByColumn ('id');
@@ -1121,25 +1119,6 @@ function uploadDocument()
         $finalResponse=str_replace('"'.$key.'"',$originalFunction,$finalResponse);
     }
     echo ($finalResponse);
-
-    /*
-     //krumo($_POST);
-     G::LoadClass ('case');
-     $oCase = new Cases ();
-
-     $G_PUBLISH = new Publisher ();
-     $Fields ['DOC_UID'] = $_POST ['docID'];
-     $Fields ['APP_DOC_UID'] = $_POST ['appDocId'];
-     $Fields ['actionType'] = $_POST ['actionType'];
-     $Fields ['docVersion'] = $_POST ['docVersion'];
-
-     $Fields ['appId'] = $_POST ['appId'];
-     $Fields ['docType'] = $_POST ['docType'];
-     $G_PUBLISH->AddContent ('xmlform', 'xmlform', 'cases/cases_AttachInputDocumentGeneral', '', $Fields,
-     'appFolderSaveDocument?UID=' . $_POST ['docID'] . '&appId=' . $_POST ['appId'] . '&docType=' .
-     $_POST ['docType']);
-     G::RenderPage ('publish', 'raw');
-     */
 }
 function copyAction()
 {
@@ -1344,7 +1323,6 @@ function documentVersionHistory()
     $_DBArray ['PM_FOLDER_DOC_HISTORY'] = $folderContent;
     $_SESSION ['_DBArray'] = $_DBArray;
 
-    G::LoadClass ('ArrayPeer');
     $c = new Criteria ('dbarray');
     $c->setDBArrayTable ('PM_FOLDER_DOC_HISTORY');
     $c->addAscendingOrderByColumn ('id');
@@ -1697,19 +1675,6 @@ function uploadExternalDocument()
         }
     }
     print_r(G::json_encode($response));
-    /*
-     G::LoadClass ('case');
-     $oCase = new Cases ();
-
-     $G_PUBLISH = new Publisher ();
-     $Fields ['DOC_UID'] = "-1";
-
-     $Fields ['appId'] = "00000000000000000000000000000000";
-
-     $G_PUBLISH->AddContent ('xmlform', 'xmlform', 'cases/cases_AttachInputDocumentGeneral', '', $Fields,
-     'appFolderSaveDocument?UID=-1&appId=' . $Fields ['appId'] . "&folderId=" . $_POST ['folderID']);
-     G::RenderPage ('publish', 'raw');
-     */
 }
 
 function newFolder()

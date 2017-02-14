@@ -31,8 +31,6 @@ class ProcessPermissions
             $op_uid  = $this->validateOpUid($op_uid);
         }
 
-        G::LoadClass('case');
-
         $aObjectsPermissions = array();
         $oCriteria = new \Criteria('workflow');
         $oCriteria->add(ObjectPermissionPeer::PRO_UID, $pro_uid);

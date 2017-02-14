@@ -21,10 +21,8 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
-G::LoadClass( 'Installer' );
 $inst = new Installer();
 
-G::LoadClass( 'processes' );
 $oProcess = new Processes();
 
 //Get Available autoinstall process

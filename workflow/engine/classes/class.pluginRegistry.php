@@ -596,19 +596,12 @@ class PMPluginRegistry
 
     public function uninstallPluginWorkspaces ($arrayPlugin)
     {
-        G::LoadClass( "system" );
-        G::LoadClass( "wsTools" );
-
         $workspace = System::listWorkspaces();
 
         foreach ($workspace as $indexWS => $ws) {
             $wsPathDataSite = PATH_DATA . "sites" . PATH_SEP . $ws->name . PATH_SEP;
 
             if (file_exists( $wsPathDataSite . "plugin.singleton" )) {
-                //G::LoadClass("plugin");
-                //Here we are loading all plug-ins registered
-                //The singleton has a list of enabled plug-ins
-
 
                 $pluginRegistry = &PMPluginRegistry::getSingleton();
                 $pluginRegistry->unSerializeInstance( file_get_contents( $wsPathDataSite . "plugin.singleton" ) );
@@ -1628,8 +1621,6 @@ class PMPluginRegistry
     public function updatePluginAttributesInAllWorkspaces($pluginName)
     {
         try {
-            G::LoadClass("system");
-            G::LoadClass("wsTools");
 
             //Set variables
             $pluginFileName = $pluginName . ".php";

@@ -32,10 +32,6 @@ $id = '';
 if (isset( $_POST['id'] ))
     $id = $_POST['id'];
 
-G::LoadClass( 'languages' );
-G::LoadSystem( 'database_mysql' );
-G::LoadSystem('inputfilter');
-
 $aUpgradeData = unserialize( file_get_contents( PATH_DATA . 'log' . PATH_SEP . "upgrade.data.bin" ) );
 $aWorkspaces = $aUpgradeData['workspaces'];
 

@@ -41,9 +41,6 @@
 	$oDataset->next();
 	$aRow = $oDataset->getRow();
 	
-	G::LoadClass('groups');
-	G::LoadClass('tree');
-	
 	$groups = new Groups();
 	
 	$tree = new Tree();

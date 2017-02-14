@@ -28,7 +28,6 @@ $_POST['action'] = get_ajax_value( 'action' );
 
 switch ($_POST['action']) {
     case 'updatePageSize':
-        G::LoadClass( 'configuration' );
         $c = new Configurations();
         $arr['pageSize'] = $_REQUEST['size'];
         $arr['dateSave'] = date( 'Y-m-d H:i:s' );

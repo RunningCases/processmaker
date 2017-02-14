@@ -28,7 +28,6 @@ if (!isset($_SESSION['USER_LOGGED'])) {
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
-G::LoadClass( 'case' );
 
 $actionAjax = isset($_REQUEST['actionAjax']) ? $_REQUEST['actionAjax'] : null;
 
@@ -303,7 +302,6 @@ if ($actionAjax == 'showHistoryMessage') {
     </script>
     <?php
 
-    G::LoadClass( 'case' );
     $oCase = new Cases();
 
     $_POST["APP_UID"] = $_REQUEST["APP_UID"];

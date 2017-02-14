@@ -23,7 +23,6 @@
  */
 
 $pluginFile = $_GET['id'];
-G::LoadClass( 'plugin' );
 
 $oPluginRegistry = & PMPluginRegistry::getSingleton();
 

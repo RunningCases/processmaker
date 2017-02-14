@@ -317,7 +317,6 @@ class PmBootstrap extends Bootstrap
         $bRedirect = true;
 
         if (isset($_GET['sid'])) {
-          G::LoadClass('sessions');
           $oSessions = new Sessions();
           if ($aSession = $oSessions->verifySession($_GET['sid'])) {
             require_once 'classes/model/Users.php';

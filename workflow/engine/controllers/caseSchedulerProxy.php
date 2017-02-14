@@ -14,7 +14,6 @@ class caseSchedulerProxy extends HttpProxyController
         $sch_uid = $oData['EVN_ACTION'];
 
         if ($sch_uid != '') {
-            G::LoadClass( 'processMap' );
             $oProcessMap = new processMap( new DBConnection() );
             $rows = $oProcessMap->caseNewSchedulerList( $sch_uid );
             if ($rows['SCH_OPTION'] == '3') {
@@ -114,11 +113,7 @@ class caseSchedulerProxy extends HttpProxyController
         $messageCode = true;
         $message = $result->message;
 
-        G::LoadClass( 'Task' );
-        //G::LoadClass ( 'Event' );
-        G::LoadClass( 'User' );
-        G::LoadClass( 'TaskUser' );
-        G::LoadClass( 'Groupwf' );
+
 
         $event = new Event();
         $event->load( $sEVN_UID );
@@ -128,9 +123,6 @@ class caseSchedulerProxy extends HttpProxyController
         $task->load( $sTASKS );
         $sTASKS_SEL = $task->getTasTitle();
 
-        if (! class_exists( 'GroupUser' )) {
-            G::LoadClass( 'GroupUser' );
-        }
         // if the user has been authenticated, then check if has the rights or
         // permissions to create the webentry
         if ($result->status_code == 0) {

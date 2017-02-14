@@ -109,9 +109,6 @@ class Task
             $prj_uid = $this->validateProUid($prj_uid);
             $taskUid = $this->validateActUid($act_uid);
 
-            //G::LoadClass("configuration");
-            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.configuration.php");
-
             $task = new \Task();
             $arrayDataAux = $task->load($taskUid);
 
@@ -421,7 +418,6 @@ class Task
                 }
                 //Additional configuration
                 if (isset($arrayProperty["TAS_DEF_MESSAGE_TYPE"])) {
-                    \G::LoadClass("configuration");
                     $oConf = new \Configurations();
                     if (!isset($arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"])) {
                         $arrayProperty["TAS_DEF_MESSAGE_TEMPLATE"] = "alert_message.html";
@@ -473,7 +469,6 @@ class Task
             $result = $task->update($arrayProperty);
             if (!empty($arrayProperty['CONSOLIDATE_DATA'])) {
                 if (!empty($arrayProperty['CONSOLIDATE_DATA']['consolidated_dynaform'])) {
-                    G::LoadClass("consolidatedCases");
                     $consolidated = new \ConsolidatedCases();
                     $dataConso = array(
                         'con_status' => $arrayProperty['CONSOLIDATE_DATA']['consolidated_enable'],
@@ -514,7 +509,6 @@ class Task
             $prj_uid = $this->validateProUid($prj_uid);
             $act_uid = $this->validateActUid($act_uid);
 
-            G::LoadClass('tasks');
             $tasks = new \Tasks();
             $tasks->deleteTask($act_uid);
         } catch (Exception $e) {
@@ -720,8 +714,6 @@ class Task
     public function getUsers($taskUid, $taskUserType, $keyCaseToLower = false)
     {
         try {
-            //G::LoadClass("BasePeer");
-            require_once (PATH_TRUNK . "workflow" . PATH_SEP . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.BasePeer.php");
 
             $arrayData = array();
             $keyCase = ($keyCaseToLower)? CASE_LOWER : CASE_UPPER;

@@ -34,11 +34,7 @@ if (($RBAC_Response = $RBAC->userCanAccess( "PM_FACTORY" )) != 1) {
  * Created on 21/12/2007
  *
  */
-G::LoadClass( 'dynaformEditor' );
-G::LoadClass( 'toolBar' );
-G::LoadClass( 'dynaFormField' );
 
-//G::LoadClass('configuration');
 $G_MAIN_MENU = 'processmaker';
 $G_SUB_MENU = 'processes';
 $G_ID_MENU_SELECTED = 'PROCESSES';

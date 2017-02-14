@@ -25,11 +25,6 @@
  * @package workflow-engine-bin-tasks
  */
 
-G::LoadClass("system");
-G::LoadClass("wsTools");
-G::LoadSystem("dbMaintenance");
-G::LoadClass("cli");
-
 CLI::taskName('upgrade');
 CLI::taskDescription("Upgrade workspaces.\n\n This command should be run after upgrading ProcessMaker to a new version so that all workspaces are also upgraded to the\n  new version.");
 

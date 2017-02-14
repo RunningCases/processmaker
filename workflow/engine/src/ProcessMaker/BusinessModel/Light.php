@@ -234,8 +234,6 @@ class Light
      */
     public function getCasesListHistory($app_uid)
     {
-        G::LoadClass( 'case' );
-        G::LoadClass( "BasePeer" );
 
         //global $G_PUBLISH;
         $c = $this->getTransferHistoryCriteria( $app_uid );
@@ -525,7 +523,7 @@ class Light
             if (!$delIndex) {
                 $delIndex = \AppDelegation::getCurrentIndex($applicationUid);
             }
-            \G::LoadClass('wsBase');
+
             $ws = new \wsBase();
             $fields = $ws->derivateCase($userUid, $applicationUid, $delIndex, $bExecuteTriggersBeforeAssignment = false, $tasks);
             $array = json_decode(json_encode($fields), true);
@@ -780,9 +778,7 @@ class Light
         $_SESSION["USERNAME_PREVIOUS2"] = $usernamePrevious2;
 
         /*----------------------------------********---------------------------------*/
-        if (!class_exists('pmLicenseManager')) {
-            G::LoadClass('pmLicenseManager');
-        }
+
         $licenseManager =& \pmLicenseManager::getSingleton();
         if (in_array(md5($licenseManager->result), array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
             $G_PUBLISH = new \Publisher();
@@ -1088,7 +1084,7 @@ class Light
             case 'search':
                 //in search action, the query to obtain all process is too slow, so we need to query directly to
                 //process and content tables, and for that reason we need the current language in AppCacheView.
-                G::loadClass( 'configuration' );
+
                 $oConf = new \Configurations();
                 $oConf->loadConfig( $x, 'APP_CACHE_VIEW_ENGINE', '', '', '', '' );
                 $appCacheViewEngine = $oConf->aConfig;
@@ -1166,9 +1162,7 @@ class Light
      */
     public function getUsersToReassign($usr_uid, $task_uid)
     {
-        //G::LoadClass( 'tasks' );
-        G::LoadSystem( 'rbac' );
-        G::LoadClass( 'memcached' );
+
         $memcache = \PMmemcached::getSingleton( SYS_SYS );
         $RBAC = \RBAC::getSingleton( PATH_DATA, session_id() );
         $RBAC->sSystem = 'PROCESSMAKER';

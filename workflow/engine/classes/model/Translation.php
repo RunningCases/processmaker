@@ -547,7 +547,6 @@ class Translation extends BaseTranslation
 
     public function getInfoFromPOFile ($file)
     {
-        G::loadClass( 'i18n_po' );
         $POFile = new i18n_PO( $file );
         $POFile->readInit();
         $POHeaders = $POFile->getHeaders();

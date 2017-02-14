@@ -115,7 +115,7 @@ global $_DBArray;
 $_DBArray['reports'] = $reports;
 
 $_SESSION['_DBArray'] = $_DBArray;
-G::LoadClass( 'ArrayPeer' );
+
 $oCriteria = new Criteria( 'dbarray' );
 $oCriteria->setDBArrayTable( 'reports' );
 

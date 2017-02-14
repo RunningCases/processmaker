@@ -26,10 +26,6 @@ $G_SUB_MENU = 'setup';
 $G_ID_MENU_SELECTED = 'SETUP';
 $G_ID_SUB_MENU_SELECTED = 'MAILSYSTEM';
 
-G::LoadClass( 'package' );
-G::LoadClass( 'smtp' );
-G::LoadClass( 'spool' );
-
 $run = new spoolRun();
 unset( $run );
 

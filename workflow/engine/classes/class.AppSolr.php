@@ -187,8 +187,6 @@ class AppSolr
    */
   public function isSolrEnabled()
   {
-    G::LoadClass ('searchIndex');
-
     $searchIndex = new BpmnEngine_Services_SearchIndex ($this->_solrIsEnabled, $this->_solrHost);
     // execute query
     $solrStatusResult = $searchIndex->isEnabled ($this->_solrInstance);    
@@ -295,8 +293,6 @@ class AppSolr
     $result ['data'] = array ();
     $result ['success'] = false;
     $result ['message'] = "Error description.";
-    
-    G::LoadClass ('searchIndex');
     
     try {
       if($this->debug)
@@ -1059,23 +1055,10 @@ class AppSolr
     // ex: phrase => TEXT:"This is a lazy dog"
     
     // search the first
-    
-    // cache the index fields
-    //G::LoadClass ('PMmemcached');
-    //$oMemcache = PMmemcached::getSingleton ($this->_solrInstance);
-    //$ListFieldsInfo = $oMemcache->get ('Solr_Index_Fields');
-    //if (! $ListFieldsInfo) {
-      G::LoadClass ('searchIndex');
-      
+
       $searchIndex = new BpmnEngine_Services_SearchIndex ($this->_solrIsEnabled, $this->_solrHost);
       // execute query
       $ListFieldsInfo = $searchIndex->getIndexFields ($this->_solrInstance);
-      
-      //var_dump($ListFieldsInfo);
-      // cache
-      //$oMemcache->set ('Solr_Index_Fields', $ListFieldsInfo);
-    
-    //}
     
     $tok = strtok ($plainSearchText, " ");
     
@@ -1367,8 +1350,6 @@ class AppSolr
       );
       $oSolrUpdateDocument = Entity_SolrUpdateDocument::createForRequest ($data);
       
-      G::LoadClass ('searchIndex');
-      
       $oSearchIndex = new BpmnEngine_Services_SearchIndex ($this->_solrIsEnabled, $this->_solrHost);
 
       $oSearchIndex->updateIndexDocument ($oSolrUpdateDocument);
@@ -1477,9 +1458,7 @@ class AppSolr
       }        
     }*/
     
-    try{ 
-    
-      G::LoadClass ('searchIndex');
+    try{
 
       $oSearchIndex = new BpmnEngine_Services_SearchIndex ($this->_solrIsEnabled, $this->_solrHost);
 
@@ -2169,8 +2148,6 @@ class AppSolr
    */
   public function getApplicationIndexData($AppUID, $allAppDbData)
   {
-    //G::LoadClass ('memcached');
-
     // get all the application data
     //$allAppDbData = $this->getApplicationDelegationData ($AppUID);
     // check if the application record was found
@@ -2383,7 +2360,6 @@ class AppSolr
     //$oMemcache = PMmemcached::getSingleton ($this->_solrInstance);
     //$dynaformFieldTypes = $oMemcache->get ("SOLR_DYNAFORM_FIELD_TYPES_" . $documentInformation ['PRO_UID']);
     //if (! $dynaformFieldTypes) {
-      G::LoadClass ('dynaformhandler');
       $dynaformFileNames = $this->getProcessDynaformFileNames ($documentInformation ['PRO_UID']);
       $dynaformFields = array ();
       foreach ($dynaformFileNames as $dynaformFileName) {
@@ -3023,8 +2999,6 @@ class AppSolr
    */
   public function getCountApplicationsSearchIndex()
   {
-    G::LoadClass ('searchIndex');
-    
     $searchIndex = new BpmnEngine_Services_SearchIndex ($this->_solrIsEnabled, $this->_solrHost);
     // execute query
     $count = $searchIndex->getNumberDocuments ($this->_solrInstance);
@@ -3039,12 +3013,9 @@ class AppSolr
    */
   public function optimizeSearchIndex()
   {
-    G::LoadClass ('searchIndex');
-    
     $searchIndex = new BpmnEngine_Services_SearchIndex ($this->_solrIsEnabled, $this->_solrHost);
     // execute query
     $searchIndex->optimizeIndexChanges ($this->_solrInstance);
-  
   }  
   
   /**

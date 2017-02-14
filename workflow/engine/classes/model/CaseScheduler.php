@@ -454,8 +454,6 @@ class CaseScheduler extends BaseCaseScheduler
                             $pluginParts = explode("--", $row["CASE_SH_PLUGIN_UID"]);
 
                             if (count($pluginParts) == 2) {
-                                //Plugins
-                                G::LoadClass("plugin");
 
                                 //Here we are loading all plugins registered
                                 //The singleton has a list of enabled plugins

@@ -542,8 +542,6 @@ class spoolRun
                         }
                         break;
                     case 'OPENMAIL':
-                        G::LoadClass( 'package' );
-                        G::LoadClass( 'smtp' );
                         $pack = new package( $this->fileData );
                         $header = $pack->returnHeader();
                         $body = $pack->returnBody();
@@ -592,9 +590,6 @@ class spoolRun
      */
     public function resendEmails ($dateResend = null, $cron = 0)
     {
-        if (!class_exists('System')) {
-            G::LoadClass('system');
-        }
         $aConfiguration = System::getEmailConfiguration();
 
         if (!isset($aConfiguration["MESS_ENABLED"])) {

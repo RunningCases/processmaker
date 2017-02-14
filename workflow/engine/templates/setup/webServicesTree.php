@@ -23,10 +23,6 @@
  *
  */
 
-//G::genericForceLogin( 'WF_MYINFO' , 'login/noViewPage', $urlLogin = 'login/login' );
-
-G::LoadClass('tree');
-
 $wsSessionId = '';
 if (isset ( $_SESSION ['WS_SESSION_ID'] )) {
     $wsSessionId = $_SESSION ['WS_SESSION_ID'];

@@ -393,7 +393,6 @@ class ActionsByEmail
 
         if ($dataRes = $resultRes->getRow()) {
             if (is_null($dataRes['DEL_FINISH_DATE'])) {
-                \G::LoadClass('spool');
 
                 $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
                 $criteria = $emailServer->getEmailServerCriteria();
@@ -577,7 +576,6 @@ class ActionsByEmail
         $resultD->next();
         $configuration = $resultD->getRow();
 
-        \G::LoadClass('pmDynaform');
         $field = new \stdClass();
         $obj = new \pmDynaform($configuration);
 
@@ -669,7 +667,6 @@ class ActionsByEmail
                         /*----------------------------------********---------------------------------*/
                         //SSO
                         if (\PMLicensedFeatures::getSingleton()->verifyfeature('x4TTzlISnp2K2tnSTJoMC8rTDRMTjlhMCtZeXV0QnNCLzU=')) {
-                            \G::LoadClass('pmSso');
 
                             $sso = new \pmSsoClass();
 

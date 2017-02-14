@@ -178,7 +178,6 @@ class ChangeLog
 
     private function loadPermissions($APP_UID, $PRO_UID, $TAS_UID)
     {
-        G::LoadClass('case');
         $oCase = new Cases();
         $this->permissions = $oCase->getAllObjects(
             $PRO_UID, $APP_UID, $TAS_UID, $_SESSION['USER_LOGGED']

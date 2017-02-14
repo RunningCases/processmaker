@@ -29,7 +29,7 @@ function pagedTable_BeforeQuery (&$ntable)
 {
     $file = G::decrypt( $ntable->xmlForm->values['URL'], URL_KEY );
     /* Start Block: Defines the virtual XMLDB*/
-    G::LoadClass( 'xmlDb' );
+
     define( 'DB_XMLDB_HOST', PATH_DYNAFORM . $file . '.xml' );
     define( 'DB_XMLDB_USER', '' );
     define( 'DB_XMLDB_PASS', '' );
@@ -78,7 +78,7 @@ if (isset( $page ) && $page !== '') {
 
 $file = G::decrypt( $ntable->xmlForm->values['URL'], URL_KEY );
 /* Start Block: Defines the virtual XMLDB*/
-G::LoadClass( 'xmlDb' );
+
 define( 'DB_XMLDB_HOST', PATH_DYNAFORM . $file . '.xml' );
 define( 'DB_XMLDB_USER', '' );
 define( 'DB_XMLDB_PASS', '' );
@@ -132,7 +132,7 @@ switch ($function) {
         return;
 }
 $ntable->renderTable( 'content' );
-G::LoadClass( 'configuration' );
+
 $dbc = new DBConnection();
 $conf = new Configuration( $dbc, $ntable );
 $conf->setConfig( $ntable->__Configuration, $ntable, $conf->aConfig );

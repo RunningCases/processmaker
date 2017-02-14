@@ -23,9 +23,6 @@
  *
  * @package workflow-engine-bin-tasks
  */
-G::LoadClass("system");
-G::LoadClass("wsTools");
-
 
 CLI::taskName('mafe-translation');
 CLI::taskDescription(<<<EOT

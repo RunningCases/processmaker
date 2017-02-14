@@ -4,29 +4,8 @@ ini_set( "soap.wsdl_cache_enabled", "0" ); // disabling WSDL cache
 
 $wsdl = PATH_METHODS . "services" . PATH_SEP . "pmos.wsdl";
 
-require_once ("classes/model/Application.php");
-require_once ("classes/model/AppDelegation.php");
-require_once ("classes/model/AppThread.php");
-require_once ("classes/model/Dynaform.php");
-require_once ("classes/model/Groupwf.php");
-require_once ("classes/model/InputDocument.php");
-require_once ("classes/model/Language.php");
-require_once ("classes/model/OutputDocument.php");
-require_once ("classes/model/Process.php");
-require_once ("classes/model/ReportTable.php");
-require_once ("classes/model/ReportVar.php");
-require_once ("classes/model/Step.php");
-require_once ("classes/model/StepTrigger.php");
-require_once ("classes/model/Task.php");
-require_once ("classes/model/TaskUser.php");
-require_once ("classes/model/Triggers.php");
-require_once ("classes/model/Users.php");
-require_once ("classes/model/Session.php");
-require_once ("classes/model/Content.php");
-
 function login ($params)
 {
-    G::LoadClass( 'wsBase' );
     $ws = new wsBase();
     $res = $ws->login( $params->userid, $params->password );
     return $res->getPayloadArray();
@@ -38,18 +17,15 @@ function ProcessList ($params)
     //if you are not an admin user, then this function will return only
     //your valid process
     if ($x == 0) {
-        G::LoadClass( 'sessions' );
         $oSessions = new Sessions();
         $session = $oSessions->getSessionUser( $params->sessionId );
         $userId = $session['USR_UID'];
 
-        G::LoadClass( 'wsBase' );
         $ws = new wsBase();
         $res = $ws->processListVerified( $userId );
         return $res;
     }
 
-    G::LoadClass( 'wsBase' );
     $ws = new wsBase();
     $res = $ws->processList();
     return array ("processes" => $res
@@ -64,7 +40,6 @@ function RoleList ($params)
         return $result;
     }
 
-    G::LoadClass( 'wsBase' );
     $ws = new wsBase();
     $res = $ws->roleList();
     return array ("roles" => $res
@@ -79,7 +54,6 @@ function GroupList ($params)
         return $result;
     }
 
-    G::LoadClass( 'wsBase' );
     $ws = new wsBase();
     $res = $ws->groupList();
     return array ("groups" => $res
@@ -91,16 +65,13 @@ function CaseList ($params)
     ifSessionExpiredBreakThis( $params->sessionId );
     $x = ifPermission( $params->sessionId, 'PM_CASES' );
     if ($x == 0) {
-        G::LoadClass( 'wsResponse' );
         return new wsResponse( 9, G::LoadTranslation('ID_SESSION_EXPIRED') );
     }
 
-    G::LoadClass( 'sessions' );
     $oSessions = new Sessions();
     $session = $oSessions->getSessionUser( $params->sessionId );
     $userId = $session['USR_UID'];
 
-    G::LoadClass( 'wsBase' );
     $ws = new wsBase();
     $res = $ws->caseList( $userId );
     return array ("cases" => $res
@@ -115,7 +86,6 @@ function UserList ($params)
         return $result;
     }
 
-    G::LoadClass( 'wsBase' );
     $ws = new wsBase();
     $res = $ws->userList();
     return array ("users" => $res
@@ -127,11 +97,9 @@ function SendMessage ($params)
     ifSessionExpiredBreakThis( $params->sessionId );
     $x = ifPermission( $params->sessionId, 'PM_CASES' );
     if ($x == 0) {
-        G::LoadClass( 'wsResponse' );
         $result = new wsResponse( 24, G::LoadTranslation('ID_NOT_PRIVILEGES') );
         return $result;
     }
-    G::LoadClass( 'wsBase' );
     $ws = new wsBase();
     $res = $ws->sendMessage( $params->caseId, $params->from, $params->to, $params->cc, $params->bcc, $params->subject, $params->template );
     return $res->getPayloadArray();
@@ -142,11 +110,9 @@ function getCaseInfo ($params)
     ifSessionExpiredBreakThis( $params->sessionId );
     $x = ifPermission( $params->sessionId, 'PM_CASES' );
     if ($x == 0) {
-        G::LoadClass( 'wsResponse' );
         $result = new wsResponse( 24, "You do not have privileges" );
         return $result;
     }
-    G::LoadClass( 'wsBase' );
     $ws = new wsBase();
     $res = $ws->getCaseInfo( $params->caseId, $params->delIndex );
     return $res;
@@ -159,11 +125,9 @@ function SendVariables ($params)
     ifSessionExpiredBreakThis( $params->sessionId );
     $x = ifPermission( $params->sessionId, 'PM_CASES' );
     if ($x == 0) {
-        G::LoadClass( 'wsResponse' );
         $result = new wsResponse( 24, G::LoadTranslation('ID_NOT_PRIVILEGES') );
         return $result;
     }
-    G::LoadClass( 'wsBase' );
     $ws = new wsBase();
     $variables = $params->variables;
     if (is_object( $variables )) {
@@ -189,12 +153,10 @@ function GetVariables ($params)
     ifSessionExpiredBreakThis( $params->sessionId );
     $x = ifPermission( $params->sessionId, 'PM_CASES' );
     if ($x == 0) {
-        G::LoadClass( 'wsResponse' );
         $result = new wsResponse( 24, G::LoadTranslation('ID_NOT_PRIVILEGES') );
         return $result;
     }
 
-    G::LoadClass( 'wsBase' );
     $ws = new wsBase();
 
     $res = $ws->getVariables( $params->caseId, $params->variables );
@@ -207,7 +169,6 @@ function DerivateCase ($params)
     ifSessionExpiredBreakThis( $params->sessionId );
     $x = ifPermission( $params->sessionId, 'PM_CASES' );
     if ($x == 0) {
-        G::LoadClass( 'wsResponse' );
         $result = new wsResponse( 24, G::LoadTranslation('ID_NOT_PRIVILEGES') );
         return $result;
     }
@@ -215,7 +176,6 @@ function DerivateCase ($params)
     $oSession = new Sessions();
     $user = $oSession->getSessionUser( $params->sessionId );
 
-    G::LoadClass( 'wsBase' );
     $ws = new wsBase();
     $res = $ws->derivateCase( $user['USR_UID'], $params->caseId, $params->delIndex );
     return $res;
@@ -228,7 +188,6 @@ function executeTrigger ($params)
     ifSessionExpiredBreakThis( $params->sessionId );
     $x = ifPermission( $params->sessionId, 'PM_CASES' );
     if ($x == 0) {
-        G::LoadClass( 'wsResponse' );
         $result = new wsResponse( 24, G::LoadTranslation('ID_NOT_PRIVILEGES') );
         return $result;
     }
@@ -236,7 +195,6 @@ function executeTrigger ($params)
     $oSession = new Sessions();
     $user = $oSession->getSessionUser( $params->sessionId );
 
-    G::LoadClass( 'wsBase' );
     $ws = new wsBase();
     $delIndex = (isset( $params->delIndex )) ? $params->delIndex : 1;
     $res = $ws->executeTrigger( $user['USR_UID'], $params->caseId, $params->triggerIndex, $delIndex );
@@ -245,16 +203,13 @@ function executeTrigger ($params)
 
 function NewCaseImpersonate ($params)
 {
-    G::LoadSystem('inputfilter');
     $filter = new InputFilter();
     ifSessionExpiredBreakThis( $params->sessionId );
     $x = ifPermission( $params->sessionId, 'PM_CASES' );
     if ($x == 0) {
-        G::LoadClass( 'wsResponse' );
         $result = new wsResponse( 24, G::LoadTranslation('ID_NOT_PRIVILEGES') );
         return $result;
     }
-    G::LoadClass( 'wsBase' );
     $ws = new wsBase();
     $variables = $params->variables;
     foreach ($variables as $key => $val) {
@@ -271,14 +226,10 @@ function NewCaseImpersonate ($params)
 
 function NewCase ($params)
 {
-    G::LoadClass( 'wsBase' );
-    G::LoadClass( 'sessions' );
-    G::LoadSystem('inputfilter');
     $filter = new InputFilter();
     ifSessionExpiredBreakThis( $params->sessionId );
     $x = ifPermission( $params->sessionId, 'PM_CASES' );
     if ($x == 0) {
-        G::LoadClass( 'wsResponse' );
         $result = new wsResponse( 24, G::LoadTranslation('ID_NOT_PRIVILEGES') );
         return $result;
     }
@@ -341,19 +292,15 @@ function AssignUserToGroup ($params)
     ifSessionExpiredBreakThis( $params->sessionId );
     $x = ifPermission( $params->sessionId, 'PM_USERS' );
     if ($x == 0) {
-        G::LoadClass( 'wsResponse' );
         $result = new wsResponse( 24, G::LoadTranslation('ID_NOT_PRIVILEGES') );
         return $result;
     }
-    G::LoadClass( 'sessions' );
     $sessions = new Sessions();
     $user = $sessions->getSessionUser( $params->sessionId );
     if (! is_array( $user )) {
-        G::LoadClass( 'wsResponse' );
         return new wsResponse( 3, G::LoadTranslation('ID_USER_NOT_REGISTERED_SYSTEM') );
     }
 
-    G::LoadClass( 'wsBase' );
     $ws = new wsBase();
     $res = $ws->assignUserToGroup( $params->userId, $params->groupId );
     return $res->getPayloadArray();
@@ -364,11 +311,9 @@ function CreateUser ($params)
     ifSessionExpiredBreakThis( $params->sessionId );
     $x = ifPermission( $params->sessionId, 'PM_USERS' );
     if ($x == 0) {
-        G::LoadClass( 'wsResponse' );
         $result = new wsResponse( 24, G::LoadTranslation('ID_NOT_PRIVILEGES') );
         return $result;
     }
-    G::LoadClass( 'wsBase' );
     $ws = new wsBase();
     $res = $ws->createUser( $params->userId, $params->firstname, $params->lastname, $params->email, $params->role, $params->password );
     return $res->getPayloadArray();
@@ -381,8 +326,7 @@ function TaskList ($params)
         $result[] = array ('guid' => 24,'name' => G::LoadTranslation('ID_NOT_PRIVILEGES') );
         return $result;
     }
-    G::LoadClass( 'wsBase' );
-    G::LoadClass( 'sessions' );
+
     $ws = new wsBase();
     $oSessions = new Sessions();
     $session = $oSessions->getSessionUser( $params->sessionId );
@@ -400,7 +344,7 @@ function TaskCase ($params)
         $result[] = array ('guid' => 24,'name' => G::LoadTranslation('ID_NOT_PRIVILEGES') );
         return $result;
     }
-    G::LoadClass( 'wsBase' );
+
     $ws = new wsBase();
     $res = $ws->taskCase( $params->caseId );
     return array ("taskCases" => $res
@@ -410,9 +354,7 @@ function TaskCase ($params)
 function ReassignCase ($params)
 {
     ifSessionExpiredBreakThis( $params->sessionId );
-    //G::LoadClass('wsResponse');
-    //return new wsResponse (1, print_r($params,1));
-    G::LoadClass( 'wsBase' );
+
     $ws = new wsBase();
     $res = $ws->reassignCase( $params->sessionId, $params->caseId, $params->delIndex, $params->userIdSource, $params->userIdTarget );
     return $res;
@@ -420,11 +362,10 @@ function ReassignCase ($params)
 
 function ifSessionExpiredBreakThis ($sessionId)
 { #added By Erik AO <erik@colosa.com> in datetime 26.06.2008 10:00:00
-    G::LoadClass( 'sessions' );
+
     $oSessions = new Sessions();
     $session = $oSessions->verifySession( $sessionId );
     if ($session == '') {
-        G::LoadClass( 'wsResponse' );
         return new wsResponse( 9, G::LoadTranslation('ID_SESSION_EXPIRED') );
     }
 }
@@ -433,7 +374,6 @@ function ifPermission ($sessionId, $permission)
 {
     global $RBAC;
     $RBAC->initRBAC();
-    G::LoadClass( 'sessions' );
     $oSession = new Sessions();
     $user = $oSession->getSessionUser( $sessionId );
 

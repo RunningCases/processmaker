@@ -2985,7 +2985,7 @@ class XmlForm_Field_File extends XmlForm_Field
         }
 
         if (isset( $_SESSION["APPLICATION"] ) && isset( $_SESSION["USER_LOGGED"] ) && isset( $_SESSION["TASK"] ) && isset( $this->input ) && $this->input != null && $this->mode == "view") {
-
+            require_once ("classes/model/AppDocument.php");
 
 
             $case = new Cases();

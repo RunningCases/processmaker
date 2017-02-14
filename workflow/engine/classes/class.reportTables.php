@@ -25,7 +25,6 @@
  *
  */
 
-G::LoadClass( 'case' );
 
 /**
  * ReportTables - Report tables class

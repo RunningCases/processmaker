@@ -89,7 +89,6 @@ function getLangFiles()
 
 function getWorkspacesAvailable()
 {
-    G::LoadClass ('serverConfiguration');
     $oServerConf = & serverConf::getSingleton ();
     $dir = PATH_DB;
     $filesArray = array ();

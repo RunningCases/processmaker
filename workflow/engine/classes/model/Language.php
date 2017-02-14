@@ -305,9 +305,6 @@ class Language extends BaseLanguage
     //export
     public function export ()
     {
-        G::LoadSystem( 'i18n_po' );
-        G::LoadClass( "system" );
-
         //get labels MichelangeloFE
         try {
             $oTranslation = new Translation();
@@ -687,9 +684,6 @@ class Language extends BaseLanguage
         if (!file_exists(PATH_PLUGINS . $plugin . PATH_SEP . 'translations' . PATH_SEP . 'translations.php')) {
             throw new Exception( 'Translation.php not exist in plugin ' .  $plugin);
         }
-
-        G::LoadSystem( 'i18n_po' );
-        G::LoadClass( "system" );
 
         $language = new Language();
 

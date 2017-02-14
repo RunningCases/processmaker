@@ -50,7 +50,7 @@ try {
     $oOP->delete();
     $result->success = true;
     $result->msg = G::LoadTranslation( 'ID_REPORTTABLE_REMOVED' );
-    G::LoadClass( 'processMap' );
+
     $oProcessMap = new ProcessMap();
     $oProcessMap->getObjectsPermissionsCriteria( $sProcessUID );
 } catch (Exception $e) {

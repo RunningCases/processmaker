@@ -20,9 +20,6 @@ if ( isset($_GET['t'] ) ) {
 }
 
 try {
-    G::LoadClass("BasePeer" );
-    require_once ( "classes/model/AdditionalTables.php" );
-    require_once ( "classes/model/Fields.php" );
 
     $sUIDUserLogged = $_SESSION['USER_LOGGED'];
     $oCriteria = new Criteria('workflow');

@@ -32,9 +32,6 @@ $functionName( $functionParams );
 
 function getProcessList ()
 {
-    G::LoadClass( 'case' );
-    G::LoadClass( 'process' );
-    G::LoadClass( 'calendar' );
     $calendar = new Calendar();
     $oProcess = new Process();
     $oCase = new Cases();
@@ -179,8 +176,6 @@ function lookinginforContentProcess ($sproUid)
 
 function startCase ()
 {
-    G::LoadClass( 'case' );
-    G::LoadSystem('inputfilter');
     $filter = new InputFilter();
     $_POST = $filter->xssFilterHard($_POST);
     $_REQUEST = $filter->xssFilterHard($_REQUEST);
@@ -239,9 +234,6 @@ function startCase ()
 
 function getSimpleDashboardData ()
 {
-    G::LoadClass( "BasePeer" );
-    require_once ("classes/model/AppCacheView.php");
-    require_once 'classes/model/Process.php';
     $sUIDUserLogged = $_SESSION['USER_LOGGED'];
 
     $Criteria = new Criteria( 'workflow' );

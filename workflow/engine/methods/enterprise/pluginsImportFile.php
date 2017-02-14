@@ -33,8 +33,6 @@ $response = array();
 $status = 1;
 
 try {
-    //Load the variables
-    G::LoadClass("plugin");
 
     if (!isset($_FILES["form"]["error"]["PLUGIN_FILENAME"]) || $_FILES["form"]["error"]["PLUGIN_FILENAME"] == 1) {
         $str = "There was an error uploading the file, probably the file size if greater than upload_max_filesize parameter in php.ini, please check this parameter and try again.";
@@ -120,37 +118,6 @@ try {
         if (!isset($oClass->iPMVersion)) {
             $oClass->iPMVersion = 0;
         }
-
-        //if ($oClass->iPMVersion > 0) {
-        //  G::LoadClass("system");
-        //  if (System::getVersion() > 0) {
-        //    if ($oClass->iPMVersion > System::getVersion()) {
-        //      //throw new Exception('This plugin needs version ' . $oClass->iPMVersion . ' or higher of ProcessMaker');
-        //    }
-        //  }
-        //}
-
-        /*
-        if (!isset($oClass->aDependences)) {
-           $oClass->aDependences = null;
-        }
-        if (!empty($oClass->aDependences)) {
-            foreach ($oClass->aDependences as $aDependence) {
-                if (file_exists(PATH_PLUGINS . $aDependence['sClassName'] . '.php')) {
-                    require_once PATH_PLUGINS . $aDependence['sClassName'] . '.php';
-                    if (!$oPluginRegistry->getPluginDetails($aDependence['sClassName'] . '.php')) {
-                        throw new Exception('This plugin needs "' . $aDependence['sClassName'] . '" plugin');
-                    }
-                } else {
-                    throw new Exception('This plugin needs "' . $aDependence['sClassName'] . '" plugin');
-                }
-            }
-        }
-        unset($oClass);
-        if ($fVersionOld > $fVersionNew) {
-           throw new Exception('A recent version of this plugin was already installed.');
-        }
-        */
 
         $res = $tar->extract(PATH_PLUGINS);
     } else {

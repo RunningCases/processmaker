@@ -53,7 +53,6 @@ $G_FORM = new form( G::getUIDName( urlDecode( $_POST['form'] ) ) );
 $G_FORM->id = urlDecode( $_POST['form'] );
 $G_FORM->values = $_SESSION[$G_FORM->id];
 
-G::LoadClass( 'xmlDb' );
 $file = G::decrypt( $G_FORM->values['PME_A'], URL_KEY );
 define( 'DB_XMLDB_HOST', PATH_DYNAFORM . $file . '.xml' );
 define( 'DB_XMLDB_USER', '' );

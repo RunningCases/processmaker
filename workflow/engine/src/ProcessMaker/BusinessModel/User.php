@@ -608,7 +608,6 @@ class User
                 //Save Calendar assigment
                 if (isset($arrayData["USR_CALENDAR"])) {
                     //Save Calendar ID for this user
-                    \G::LoadClass("calendar");
 
                     $calendar = new \Calendar();
                     $calendar->assignCalendarTo($arrayData["USR_UID"], $arrayData["USR_CALENDAR"], "USER");
@@ -804,7 +803,6 @@ class User
                 //Save Calendar assigment
                 if (isset($arrayData["USR_CALENDAR"])) {
                     //Save Calendar ID for this user
-                    \G::LoadClass("calendar");
 
                     $calendar = new \Calendar();
                     $calendar->assignCalendarTo($userUid, $arrayData["USR_CALENDAR"], "USER");
@@ -1085,7 +1083,6 @@ class User
             //Verify data
             $this->throwExceptionIfNotExistsUser($usrUid, $this->arrayFieldNameForException["usrUid"]);
 
-            \G::LoadClass('case');
             $oProcessMap = new \Cases();
             $USR_UID = $usrUid;
             $total = 0;
@@ -1102,10 +1099,8 @@ class User
                 throw new \Exception(\G::LoadTranslation("ID_USER_CAN_NOT_BE_DELETED", array($USR_UID)));
             } else {
                 $UID = $usrUid;
-                \G::LoadClass('tasks');
                 $oTasks = new \Tasks();
                 $oTasks->ofToAssignUserOfAllTasks($UID);
-                \G::LoadClass('groups');
                 $oGroups = new \Groups();
                 $oGroups->removeUserOfAllGroups($UID);
                 $this->changeUserStatus($UID, 'CLOSED');

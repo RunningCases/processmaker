@@ -22,7 +22,7 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
-G::LoadClass('tree');
+
 $oTree           = new Tree();
 $oTree->nodeType ="blank";
 $oTree->name     = 'Information';

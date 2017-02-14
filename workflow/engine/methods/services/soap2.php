@@ -7,30 +7,6 @@ define( 'WEB_SERVICE_VERSION', '2.0' );
 //$wsdl = PATH_METHODS . "services" . PATH_SEP . "pmos.wsdl";
 $wsdl = PATH_METHODS . "services" . PATH_SEP . "pmos2.wsdl";
 
-require_once ("classes/model/Application.php");
-require_once ("classes/model/AppDelegation.php");
-require_once ("classes/model/AppThread.php");
-require_once ("classes/model/Dynaform.php");
-require_once ("classes/model/Department.php");
-require_once ("classes/model/Groupwf.php");
-require_once ("classes/model/InputDocument.php");
-require_once ("classes/model/Language.php");
-require_once ("classes/model/OutputDocument.php");
-require_once ("classes/model/Process.php");
-require_once ("classes/model/ReportTable.php");
-require_once ("classes/model/ReportVar.php");
-require_once ("classes/model/Step.php");
-require_once ("classes/model/StepTrigger.php");
-require_once ("classes/model/Task.php");
-require_once ("classes/model/TaskUser.php");
-require_once ("classes/model/Triggers.php");
-require_once ("classes/model/Users.php");
-require_once ("classes/model/Session.php");
-require_once ("classes/model/Content.php");
-
-G::LoadClass( 'wsResponse' );
-G::LoadClass( 'wsBase' );
-
 function login ($params)
 {
     $ws = new wsBase();
@@ -72,7 +48,6 @@ function ProcessList ($params)
      * if you are not an admin user, then this function will return only your valid process *
      */
     if (ifPermission( $params->sessionId, 'PM_FACTORY' ) == 0) {
-        G::LoadClass( 'sessions' );
 
         $oSessions = new Sessions();
         $session = $oSessions->getSessionUser( $params->sessionId );
@@ -199,8 +174,6 @@ function CaseList ($params)
         );
     }
 
-    G::LoadClass( 'sessions' );
-
     $oSessions = new Sessions();
     $session = $oSessions->getSessionUser( $params->sessionId );
     $userId = $session['USR_UID'];
@@ -232,8 +205,6 @@ function UnassignedCaseList ($params)
         return array ("cases" => $o
         );
     }
-
-    G::LoadClass( 'sessions' );
 
     $oSessions = new Sessions();
     $session = $oSessions->getSessionUser( $params->sessionId );
@@ -336,8 +307,6 @@ function outputDocumentList ($params)
         );
     }
 
-    G::LoadClass( 'sessions' );
-
     $oSessions = new Sessions();
     $session = $oSessions->getSessionUser( $params->sessionId );
     $userId = $session['USR_UID'];
@@ -382,8 +351,6 @@ function inputDocumentList ($params)
         return array ("documents" => $o
         );
     }
-
-    G::LoadClass( 'sessions' );
 
     $oSessions = new Sessions();
     $session = $oSessions->getSessionUser( $params->sessionId );
@@ -689,8 +656,6 @@ function NewCaseImpersonate ($params)
 
 function NewCase ($params)
 {
-    G::LoadClass( "sessions" );
-    G::LoadSystem('inputfilter');
     $filter = new InputFilter();
 
     $vsResult = isValidSession( $params->sessionId );
@@ -796,8 +761,6 @@ function AssignUserToGroup ($params)
         return $result->getPayloadArray();
     }
 
-    G::LoadClass( 'sessions' );
-
     $sessions = new Sessions();
     $user = $sessions->getSessionUser( $params->sessionId );
 
@@ -824,8 +787,6 @@ function AssignUserToDepartment ($params)
 
         return $result->getPayloadArray();
     }
-
-    G::LoadClass( 'sessions' );
 
     $sessions = new Sessions();
     $user = $sessions->getSessionUser( $params->sessionId );
@@ -968,8 +929,6 @@ function TaskList ($params)
         );
     }
 
-    G::LoadClass( 'sessions' );
-
     $ws = new wsBase();
     $oSessions = new Sessions();
     $session = $oSessions->getSessionUser( $params->sessionId );
@@ -1055,8 +1014,6 @@ function getCaseNotes ($params)
  */
 function isValidSession ($sessionId)
 {
-    G::LoadClass( 'sessions' );
-
     $oSessions = new Sessions();
     $session = $oSessions->verifySession( $sessionId );
 
@@ -1088,8 +1045,6 @@ function ifPermission ($sessionId, $permission)
     global $RBAC;
 
     $RBAC->initRBAC();
-
-    G::LoadClass( 'sessions' );
 
     $oSession = new Sessions();
     $user = $oSession->getSessionUser( $sessionId );
@@ -1228,8 +1183,6 @@ function claimCase($params)
 
         return $result;
     }
-
-    G::LoadClass('sessions');
 
     $oSessions = new Sessions();
     $session = $oSessions->getSessionUser($params->sessionId);

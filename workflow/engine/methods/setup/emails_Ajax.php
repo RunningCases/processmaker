@@ -62,8 +62,6 @@ switch ($request) {
         }
         break;
     case 'testConnection':
-        G::LoadClass( 'net' );
-        G::LoadThirdParty( 'phpmailer', 'class.smtp' );
 
         define( "SUCCESSFUL", 'SUCCESSFUL' );
         define( "FAILED", 'FAILED' );
@@ -233,7 +231,6 @@ switch ($request) {
 
 function sendTestMail ()
 {
-    G::LoadClass( "system" );
     $sFrom = ($_POST['FROM_NAME'] != '' ? $_POST['FROM_NAME'] . ' ' : '') . '<' . $_POST['FROM_EMAIL'] . '>';
     $sSubject = G::LoadTranslation( 'ID_MESS_TEST_SUBJECT' );
     $msg = G::LoadTranslation( 'ID_MESS_TEST_BODY' );
@@ -259,7 +256,6 @@ function sendTestMail ()
   <a href='http://www.processmaker.com' style='color:#c40000;'>www.processmaker.com</a><br /></td>
   </tr></tbody></table>";
 
-    G::LoadClass( 'spool' );
     $oSpool = new spoolRun();
 
     $passwd = $_POST['MESS_PASSWORD'];

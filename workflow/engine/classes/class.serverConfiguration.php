@@ -346,8 +346,6 @@ class serverConf
     {
         $sMySQLVersion = '?????';
         if (defined("DB_HOST")) {
-            G::LoadClass('net');
-            G::LoadClass('dbConnections');
             $dbNetView = new NET(DB_HOST);
             $dbNetView->loginDbServer(DB_USER, DB_PASS);
 

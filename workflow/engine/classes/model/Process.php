@@ -327,7 +327,6 @@ class Process extends BaseProcess
             $uids[] = $processes[sizeof( $processes ) - 1]['PRO_UID'];
         }
 
-        G::loadClass( 'configuration' );
         $oConf = new Configurations();
         $oConf->loadConfig( $obj, 'ENVIRONMENT_SETTINGS', '' );
 
@@ -667,7 +666,6 @@ class Process extends BaseProcess
             $uids[] = $processes[sizeof( $processes ) - 1]['PRO_UID'];
         }
 
-        G::loadClass( 'configuration' );
         $oConf = new Configurations();
         $oConf->loadConfig( $obj, 'ENVIRONMENT_SETTINGS', '' );
 

@@ -34,7 +34,6 @@ class adminProxy extends HttpProxyController
      */
     public function saveSystemConf($httpData)
     {
-        G::loadClass('system');
         $envFile = PATH_CONFIG . 'env.ini';
         $updateRedirector = false;
         $restart = false;
@@ -211,7 +210,6 @@ class adminProxy extends HttpProxyController
 
     public function uxGroupUpdate($httpData)
     {
-        G::LoadClass('groups');
         $groups = new Groups();
         $users = $groups->getUsersOfGroup($httpData->GRP_UID);
         $success = true;
@@ -295,7 +293,6 @@ class adminProxy extends HttpProxyController
         //]
 
         $form = $_POST;
-        G::LoadClass('calendar');
         $calendarObj=new calendar();
         $calendarObj->saveCalendarInfo($form);
         echo "{success: true}";
@@ -368,9 +365,6 @@ class adminProxy extends HttpProxyController
     */
     public function testConnection($params)
     {
-        G::LoadClass('net');
-        G::LoadThirdParty('phpmailer', 'class.smtp');
-
         if ($_POST['typeTest'] == 'MAIL') {
             $eregMail = "/^[0-9a-zA-Z]+(?:[._][0-9a-zA-Z]+)*@[0-9a-zA-Z]+(?:[._-][0-9a-zA-Z]+)*\.[0-9a-zA-Z]{2,3}$/";
 
@@ -583,8 +577,6 @@ class adminProxy extends HttpProxyController
     public function sendTestMail()
     {
         global $G_PUBLISH;
-        G::LoadClass("system");
-        G::LoadClass('spool');
 
         $aConfiguration = array(
             'MESS_ENGINE'    => $_POST['MESS_ENGINE'],
@@ -766,8 +758,6 @@ class adminProxy extends HttpProxyController
      */
     public function loadFields()
     {
-        G::loadClass('configuration');
-
         $oConfiguration = new Configurations();
         $oConfiguration->loadConfig($x, 'Emails','','','','');
         $fields = $oConfiguration->aConfig;
@@ -795,7 +785,6 @@ class adminProxy extends HttpProxyController
      */
     public function getListImage($httpData)
     {
-        G::LoadClass('replacementLogo');
         $uplogo       = PATH_TPL . 'setup' . PATH_SEP . 'uplogo.html';
         $width        = "100%";
         $upload       = new replacementLogo();
@@ -1101,7 +1090,6 @@ class adminProxy extends HttpProxyController
      */
     public function getNameCurrentLogo()
     {
-        G::LoadClass('replacementLogo');
         $upload       = new replacementLogo();
         $aPhotoSelect = $upload->getNameLogo($_SESSION['USER_LOGGED']);
         $sPhotoSelect = trim($aPhotoSelect['DEFAULT_LOGO_NAME']);
@@ -1197,7 +1185,6 @@ class adminProxy extends HttpProxyController
                     $snameLogo = urldecode($_GET['NAMELOGO']);
                     $snameLogo = trim($snameLogo);
                     $snameLogo = self::changeNamelogo($snameLogo);
-                    G::loadClass('configuration');
                     $oConf = new Configurations;
                     $aConf = Array(
                         'WORKSPACE_LOGO_NAME' => SYS_SYS,
@@ -1213,7 +1200,6 @@ class adminProxy extends HttpProxyController
                     break;
                 case 'restoreLogo':
                     $snameLogo = $_GET['NAMELOGO'];
-                    G::loadClass('configuration');
                     $oConf = new Configurations;
                     $aConf = Array(
                       'WORKSPACE_LOGO_NAME' => '',

@@ -30,9 +30,6 @@
  * @LastModification 30/05/2008
  */
 
-G::LoadClass('tree');
-G::LoadClass('net');
-
 $width_content = '430px';
 
 $html = '

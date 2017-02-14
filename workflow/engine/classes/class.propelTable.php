@@ -25,11 +25,6 @@
  *
  */
 
-G::LoadClass( 'filterForm' );
-G::LoadClass( 'xmlMenu' );
-G::LoadClass( "BasePeer" );
-G::LoadClass( "ArrayPeer" );
-
 /**
  * Class pagedTable
  *

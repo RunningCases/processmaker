@@ -43,9 +43,6 @@ if ($actionAjax == 'messageHistoryGridList_JXP') {
         $_REQUEST['limit'] = 20;
     }
 
-    G::LoadClass( 'case' );
-    G::LoadClass( "BasePeer" );
-
     $dir = isset( $_POST['dir'] ) ? $_POST['dir'] : 'ASC';
     $sort = isset( $_POST['sort'] ) ? $_POST['sort'] : '';
 
@@ -160,7 +157,6 @@ if ($actionAjax == 'showHistoryMessage') {
       </script>
     <?php
 
-    G::LoadClass( 'case' );
     $oCase = new Cases();
 
     $_POST["APP_UID"] = $_REQUEST["APP_UID"];
@@ -192,13 +188,9 @@ if ($actionAjax == 'sendMailMessage_JXP') {
         $_POST['APP_UID'] = $_REQUEST['APP_UID'];
         $_POST['APP_MSG_UID'] = $_REQUEST['APP_MSG_UID'];
 
-        G::LoadClass( 'case' );
-        G::LoadClass( 'spool' );
 
         $oCase = new Cases();
         $data = $oCase->getHistoryMessagesTrackerView( $_POST['APP_UID'], $_POST['APP_MSG_UID'] );
-
-        G::LoadClass('system');
 
         $aSetup = System::getEmailConfiguration();
 

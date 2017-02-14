@@ -11,8 +11,6 @@ $sWE_USR = $oData->WE_USR;
 
 $withWS = $sWE_TYPE == 'WS';
 
-G::LoadClass( "system" );
-
 try {
     $pathProcess = PATH_DATA_SITE . 'public' . PATH_SEP . $sPRO_UID . PATH_SEP;
     G::mk_dir( $pathProcess, 0777 );
@@ -24,7 +22,6 @@ try {
         throw (new Exception( "The task '" . $TaskFields['TAS_TITLE'] . "' doesn't have a valid assignment type. The task needs to have a 'Cyclical Assignment'." ));
     }
 
-    G::LoadClass( 'tasks' );
     $oTask = new Tasks();
     $user = $oTask->assignUsertoTask( $sTASKS );
 

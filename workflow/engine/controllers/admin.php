@@ -18,7 +18,7 @@ class Admin extends Controller
         global $RBAC;
         $RBAC->requirePermissions( 'PM_SETUP' );
         require_once PATH_CONTROLLERS . 'main.php';
-        G::loadClass( 'system' );
+
         $skinsList = System::getSkingList();
         foreach ($skinsList['skins'] as $key => $value) {
             if ($value['SKIN_WORKSPACE'] != 'Global') {
@@ -36,7 +36,6 @@ class Admin extends Controller
         }
 
         $this->includeExtJS( 'admin/system' );
-        //G::LoadClass('configuration');
 
         // $c = new Configurations();
         // $configPage = $c->getConfiguration('usersList', 'pageSize','',$_SESSION['USER_LOGGED']);
@@ -61,7 +60,6 @@ class Admin extends Controller
         $RBAC->requirePermissions( 'PM_SETUP' );
         require_once PATH_CONTROLLERS . 'adminProxy.php';
         $this->includeExtJS( 'admin/uxUsersList' );
-        G::LoadClass( 'configuration' );
 
         $c = new Configurations();
         $configPage = $c->getConfiguration( 'usersList', 'pageSize', '', $_SESSION['USER_LOGGED'] );
@@ -84,8 +82,6 @@ class Admin extends Controller
     {
         global $RBAC;
         //$RBAC->requirePermissions('PM_SETUP_ADVANCE');
-        G::LoadClass( 'configuration' );
-        G::LoadClass( 'calendar' );
 
         $CalendarUid = str_replace( '"', '', isset( $_GET['id'] ) ? $_GET['id'] : G::GenerateUniqueID() );
         $calendarObj = new calendar();
@@ -169,7 +165,6 @@ class Admin extends Controller
         global $RBAC;
         $RBAC->requirePermissions( 'PM_SETUP_ADVANCE', 'PM_SETUP_LOGO');
 
-        G::LoadClass( 'configuration' );
         $c = new Configurations();
         $configPage = $c->getConfiguration( 'additionalTablesList', 'pageSize', '', $_SESSION['USER_LOGGED'] );
         $Config['pageSize'] = isset( $configPage['pageSize'] ) ? $configPage['pageSize'] : 20;
@@ -214,7 +209,6 @@ class Admin extends Controller
 
     private function _getSystemInfo ()
     {
-        G::LoadClass( "system" );
 
         if (getenv( 'HTTP_CLIENT_IP' )) {
             $ip = getenv( 'HTTP_CLIENT_IP' );
@@ -236,8 +230,6 @@ class Admin extends Controller
 
         $redhat .= " (" . PHP_OS . ")";
         if (defined( "DB_HOST" )) {
-            G::LoadClass( 'net' );
-            G::LoadClass( 'dbConnections' );
             $dbNetView = new NET( DB_HOST );
             $dbNetView->loginDbServer( DB_USER, DB_PASS );
 

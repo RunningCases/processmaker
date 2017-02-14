@@ -675,11 +675,6 @@ function fieldSave()
     echo G::json_encode($result);
 }
 
-require_once ("classes" . PATH_SEP . "model" . PATH_SEP . "Fields.php");
-
-G::LoadClass("BasePeer");
-G::LoadClass("configuration");
-
 $callback = (isset($_POST["callback"]))? $_POST["callback"] : "stcCallback1001";
 $dir  = (isset($_POST["dir"]))?  $_POST["dir"] : "DESC";
 $sort = (isset($_POST["sort"]))? $_POST["sort"] : "";

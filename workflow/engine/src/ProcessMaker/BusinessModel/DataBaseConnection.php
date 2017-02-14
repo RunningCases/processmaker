@@ -61,7 +61,6 @@ class DataBaseConnection
                 $dbs_uid = $this->validateDbsUid($dbs_uid, $pro_uid);
             }
 
-            G::LoadClass( 'dbConnections' );
             $dbs = new dbConnections($pro_uid);
             $oDBConnection = new DbSource();
             $aFields = $oDBConnection->load($dbs_uid, $pro_uid);
@@ -123,7 +122,6 @@ class DataBaseConnection
             $dbs_uid = $this->validateDbsUid($dbs_uid, $pro_uid);
         }
 
-        G::LoadClass('dbConnections');
         $oDBSource = new DbSource();
         $oContent  = new \Content();
         $dataDBConnection = array_change_key_case($dataDBConnection, CASE_UPPER);
@@ -271,8 +269,6 @@ class DataBaseConnection
         $dataCon = array_change_key_case($dataCon, CASE_UPPER);
 
         $flagTns = ($dataCon["DBS_TYPE"] == "oracle" && $dataCon["DBS_CONNECTION_TYPE"] == "TNS")? 1 : 0;
-
-        G::LoadClass( 'net' );
 
         if ($flagTns == 0) {
             $Server = new \NET($dataCon['DBS_SERVER']);
@@ -427,9 +423,6 @@ class DataBaseConnection
      */
     public function getDbEngines ()
     {
-        if (!class_exists('dbConnections')) {
-            G::LoadClass('dbConnections');
-        }
         $dbs = new dbConnections();
         $dbServices = $dbs->getDbServicesAvailables();
         return $dbServices;

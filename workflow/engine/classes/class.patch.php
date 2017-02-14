@@ -1,8 +1,5 @@
 <?php
 
-G::LoadClass("Task");
-G::LoadClass("TaskUser");
-
 /**
  * class, helping to set some not desirable settings but necesary
  * @author reav
@@ -26,10 +23,6 @@ class p11835 extends patch
      */
     static public function isApplicable()
     {
-        if (! class_exists('System')) {
-            G::LoadClass("System");
-        }
-
         patch::$isPathchable = false;
         $con = Propel::getConnection("workflow");
         $stmt = $con->prepareStatement("describe TASK;");
@@ -93,10 +86,6 @@ class p11835 extends patch
                 $aRow = $recordSet->getRow();
             }
         }
-        
-        //Fix BUG-15394
-        
-        G::LoadClass("configuration");
         
         $conf = new Configurations();
         

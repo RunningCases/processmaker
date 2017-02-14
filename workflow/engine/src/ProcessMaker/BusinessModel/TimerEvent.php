@@ -1209,7 +1209,6 @@ class TimerEvent
     public function startContinueCaseByTimerEvent($datetime, $frontEnd = false)
     {
         try {
-            \G::LoadClass("wsBase");
 
             //Set variables
             $ws = new \wsBase();

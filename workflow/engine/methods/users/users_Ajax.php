@@ -208,7 +208,6 @@ try {
             //Assign user in a group
             $USR_UID = $_POST['USR_UID'];
             $gUIDs = explode(',', $_POST['GRP_UID']);
-            G::LoadClass('groups');
             $oGroup = new Groups();
             foreach ($gUIDs as $GRP_UID) {
                 $oGroup->addUserToGroup($GRP_UID, $USR_UID);
@@ -218,7 +217,6 @@ try {
             //Remove a user from a group
             $USR_UID = $_POST['USR_UID'];
             $gUIDs = explode(',', $_POST['GRP_UID']);
-            G::LoadClass('groups');
             $oGroup = new Groups();
             foreach ($gUIDs as $GRP_UID) {
                 $oGroup->removeUserOfGroup($GRP_UID, $USR_UID);
@@ -322,7 +320,6 @@ try {
             echo '{users: ' . G::json_encode($rows['data']) . ', total_users: ' . $oDatasetUsers["totalRows"] . '}';
             break;
         case 'updatePageSize':
-            G::LoadClass('configuration');
             $c = new Configurations();
             $arr['pageSize'] = $_REQUEST['size'];
             $arr['dateSave'] = date('Y-m-d H:i:s');

@@ -38,8 +38,6 @@ if ($RBAC->userCanAccess( 'PM_SUPERVISOR' ) != 1) {
     }
 }
 
-    /* Includes */
-G::LoadClass( 'case' );
 
 /* GET , POST & $_SESSION Vars */
 if (isset( $_SESSION['APPLICATION'] )) {

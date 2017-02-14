@@ -68,7 +68,7 @@ switch ($request) {
         echo G::json_encode($response);
         break;
     default:
-        G::LoadClass('case');
+
         $oApp = new Cases();
         $aFields = $oApp->loadCase($_SESSION['APPLICATION']);
 

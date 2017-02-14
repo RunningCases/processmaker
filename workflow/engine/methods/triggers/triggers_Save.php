@@ -42,7 +42,6 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
     echo $oTrigger->verifyNameTrigger($sPRO_UID, $snameTrigger);
 
 } else {
-    G::LoadClass("processMap");
 
     $response = array();
 
@@ -61,7 +60,6 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
             isset($value["TRI_WEBBOT"])
         ) {
             //Check disabled code
-            G::LoadClass("codeScanner");
 
             $cs = new CodeScanner(SYS_SYS);
 

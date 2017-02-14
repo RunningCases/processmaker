@@ -49,9 +49,9 @@ try {
     $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
     $oDataset->next();
     $c = 0;
-    G::LoadClass( 'tasks' );
+
     $oTasks = new Tasks();
-    G::LoadClass( 'groups' );
+
     $oGroups = new Groups();
     require_once 'classes/model/Users.php';
     $oUser = new Users();

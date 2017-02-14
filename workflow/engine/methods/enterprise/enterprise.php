@@ -1,6 +1,4 @@
 <?php
-require_once ("classes/model/Configuration.php");
-G::LoadClass("plugin");
 
 if (!defined("PATH_PM_ENTERPRISE")) {
     define("PATH_PM_ENTERPRISE", PATH_CORE . "enterprise/");

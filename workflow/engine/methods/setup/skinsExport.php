@@ -120,8 +120,6 @@ switch ($RBAC->userCanAccess( 'PM_SETUP' )) {
         break;
 }
 
-G::LoadClass( "system" );
-
 $id = $_GET['id'];
 
 $fileObj = PATH_SKINS . $id . '.cnf';

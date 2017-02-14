@@ -285,13 +285,6 @@ class Users extends BaseUsers
         }
 
         try {
-            require_once ("classes/model/IsoCountry.php");
-            require_once ("classes/model/IsoLocation.php");
-            require_once ("classes/model/IsoSubdivision.php");
-            require_once ("classes/model/Language.php");
-
-            G::LoadClass( "calendar" );
-
             $aFields = $this->load( $userUid );
 
             $c = new Criteria( "workflow" );

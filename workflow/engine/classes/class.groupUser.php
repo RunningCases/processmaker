@@ -39,8 +39,6 @@
  * @copyright 2007 COLOSA
  */
 
-G::LoadClass( 'pmObject' );
-
 class GroupUser extends DBTable
 {
 

@@ -928,7 +928,6 @@ class Installer extends Controller
 
 
             //erik: for new env conf handling
-            G::loadClass( 'system' );
             $envFile = PATH_CONFIG . 'env.ini';
 
             // getting configuration from env.ini

@@ -14,8 +14,6 @@ class newSiteProxy extends HttpProxyController
             $action = (isset( $_POST['action'] )) ? trim( $_POST['action'] ) : 'test';
             $ao_db_drop = (isset( $_POST['AO_DB_DROP'] )) ? true : false;
 
-            G::LoadClass( 'Installer' );
-            //G::LoadClass( 'json' );
             $name = trim( $_POST['NW_TITLE'] );
             $inst = new Installer();
             if ($inst->isset_site($name)) {

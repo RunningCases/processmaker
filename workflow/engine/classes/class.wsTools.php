@@ -5,9 +5,7 @@
  *
  * @author Alexandre Rosenfeld
  */
-G::LoadSystem('dbMaintenance');
-G::LoadClass("cli");
-G::LoadClass("multipleFilesBackup");
+
 /**
  * class workspaceTools
  *
@@ -666,7 +664,6 @@ class workspaceTools
 
         //require_once ('classes/model/AppCacheView.php');
         //check the language, if no info in config about language, the default is 'en'
-        G::LoadClass("configuration");
 
         $oConf = new Configurations();
         $oConf->loadConfig($x, 'APP_CACHE_VIEW_ENGINE', '', '', '', '');
@@ -824,7 +821,6 @@ class workspaceTools
 
         //Set value of 2 to the directory structure version.
         $this->initPropel(true);
-        G::LoadClass("configuration");
         $conf = new Configurations();
         if (!$conf->exists("ENVIRONMENT_SETTINGS")) {
             $conf->aConfig = array("format" => '@userName (@firstName @lastName)',
@@ -861,7 +857,6 @@ class workspaceTools
      */
     public function upgradeDatabase($onedb = false, $checkOnly = false)
     {
-        G::LoadClass("patch");
         $this->initPropel(true);
         p11835::$dbAdapter = $this->dbAdapter;
         p11835::isApplicable();
@@ -1142,19 +1137,6 @@ class workspaceTools
 
         if (isset($this->dbHost)) {
 
-            //TODO: This code stopped working with the refactoring
-            //require_once ("propel/Propel.php");
-            //G::LoadClass('dbConnections');
-            //$dbConns = new dbConnections('');
-            //$availdb = '';
-            //foreach( $dbConns->getDbServicesAvailables() as $key => $val ) {
-            //if(!empty($availdb))
-            //  $availdb .= ', ';
-            //  $availdb .= $val['name'];
-            //}
-
-
-            G::LoadClass('net');
             $dbNetView = new NET($this->dbHost);
             $dbNetView->loginDbServer($this->dbUser, $this->dbPass);
             try {
@@ -1990,7 +1972,6 @@ class workspaceTools
     public function changeHashPassword ($workspace, $response)
     {
         $this->initPropel( true );
-        G::LoadClass("enterprise");
         $licensedFeatures = & PMLicensedFeatures::getSingleton();
         /*----------------------------------********---------------------------------*/
         if ($licensedFeatures->verifyfeature('95OY24wcXpEMzIyRmlNSnF0STNFSHJzMG9wYTJKekpLNmY2ZmRCeGtuZk5oUDloaUNhUGVjTDJBPT0=')) {
@@ -2102,8 +2083,6 @@ class workspaceTools
     {
         try {
             $this->initPropel(true);
-
-            G::LoadClass("processes");
 
             $process = new Processes();
 
@@ -3529,7 +3508,6 @@ class workspaceTools
     public function migrateIteeToDummytask($workspaceName){
         $this->initPropel(true);
         $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspaceName);
-        \G::LoadClass("configuration");
         $conf = new Configurations();
         \G::$sysSys = $workspaceName;
         \G::$pathDataSite = PATH_DATA . "sites" . PATH_SEP . \G::$sysSys . PATH_SEP;
@@ -3582,14 +3560,12 @@ class workspaceTools
 
     public function upgradeConfiguration()
     {
-        G::LoadClass("configuration");
         $conf = new Configurations();
         $conf->aConfig = 'neoclassic';
         $conf->saveConfig('SKIN_CRON', '');
     }
 
     public function upgradeAuditLog($workspace){
-        G::LoadClass("configuration");
         $conf = new Configurations();
         if (!$conf->exists('AUDIT_LOG','log')) {
             CLI::logging("> Updating Auditlog Config \n");

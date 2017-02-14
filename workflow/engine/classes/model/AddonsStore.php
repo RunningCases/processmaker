@@ -1,6 +1,5 @@
 <?php
 require_once 'classes/model/om/BaseAddonsStore.php';
-G::LoadClass("system");
 
 define("STORE_VERSION", 1);
 class AddonsStore extends BaseAddonsStore

@@ -6,8 +6,6 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
         $G_PUBLISH = new Publisher();
 
         try {
-            G::LoadClass('case');
-            G::LoadClass('pmDynaform');
 
             //Validations
             if (!isset($_REQUEST['APP_UID'])) {

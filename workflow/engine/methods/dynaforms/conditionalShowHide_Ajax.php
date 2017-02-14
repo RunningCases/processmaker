@@ -84,7 +84,6 @@ try {
             global $_DBArray;
             $_DBArray['DYNAFIELDS'] = $rows;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass( 'ArrayPeer' );
             $oCriteria = new Criteria( 'dbarray' );
             $oCriteria->setDBArrayTable( 'DYNAFIELDS' );
 

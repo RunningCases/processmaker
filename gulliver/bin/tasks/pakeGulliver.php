@@ -191,7 +191,7 @@ function run_generate_unit_test_class($task, $args) {
   }
 
   include ('test' . PATH_SEP . 'bootstrap' . PATH_SEP . 'unit.php');
-
+  require_once ('propel/Propel.php');
 
   require_once ($classFilename);
 

@@ -64,9 +64,6 @@ if (!isset($_GET['DEL_INDEX'])) {
 
 $tasUid = (isset($_GET['TAS_UID'])) ? $tasUid = htmlspecialchars($_GET['TAS_UID']) : '';
 
-require_once ("classes/model/Step.php");
-G::LoadClass( "configuration" );
-G::LoadClass( "case" );
 $oCase = new Cases();
 $conf = new Configurations();
 
@@ -77,7 +74,6 @@ $urlToRedirectAfterPause = 'casesListExtJs';
 /*----------------------------------********---------------------------------*/
 $licensedFeatures = &PMLicensedFeatures::getSingleton();
 if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-    G::LoadClass( "pmGoogleApi" );
     $pmGoogle = new PMGoogleApi();
     if (array_key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $pmGoogle->getServiceGmailStatus()) {
         $_SESSION['gmail'] = 0;

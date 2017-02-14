@@ -127,7 +127,7 @@ class DynaForm extends Api
     public function doGetDynaFormLanguage($dyn_uid, $prj_uid, $lang)
     {
         try {
-            \G::LoadClass('pmDynaform');
+
             $pmDynaform = new \pmDynaform();
             return $pmDynaform->downloadLanguage($dyn_uid, $lang);
         } catch (\Exception $e) {
@@ -144,7 +144,7 @@ class DynaForm extends Api
     public function doPostDynaFormLanguage($dyn_uid, $prj_uid)
     {
         try {
-            \G::LoadClass('pmDynaform');
+
             $pmDynaform = new \pmDynaform();
             $pmDynaform->uploadLanguage($dyn_uid);
         } catch (\Exception $e) {
@@ -161,7 +161,7 @@ class DynaForm extends Api
     public function doDeleteDynaFormLanguage($dyn_uid, $prj_uid, $lang)
     {
         try {
-            \G::LoadClass('pmDynaform');
+
             $pmDynaform = new \pmDynaform();
             $pmDynaform->deleteLanguage($dyn_uid, $lang);
         } catch (\Exception $e) {
@@ -178,7 +178,7 @@ class DynaForm extends Api
     public function doGetListDynaFormLanguage($dyn_uid, $prj_uid)
     {
         try {
-            \G::LoadClass('pmDynaform');
+
             $pmDynaform = new \pmDynaform();
             return $pmDynaform->listLanguage($dyn_uid);
         } catch (\Exception $e) {

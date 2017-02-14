@@ -31,13 +31,6 @@
  * @copyright 2007 COLOSA
  * @author David Callizaya <davidsantos@colosa.com>
  */
-G::LoadSystem("webResource");
-G::LoadClass('toolBar');
-G::LoadClass('dynaFormField');
-require_once ('classes/model/Process.php');
-require_once ('classes/model/Dynaform.php');
-G::LoadClass('xmlDb');
-G::LoadSystem('dynaformhandler');
 
 /**
  *
@@ -194,7 +187,6 @@ class dynaformEditor extends WebResource
             global $_DBArray;
             $_DBArray['fields'] = $aFields;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass('ArrayPeer');
             $oCriteria = new Criteria('dbarray');
             $oCriteria->setDBArrayTable('fields');
             /**

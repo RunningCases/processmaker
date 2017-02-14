@@ -218,7 +218,6 @@ class Applications
         $dir = isset($dir)? $dir : "DESC";
 
         if (isset($sort)) {
-            G::LoadClass('phpSqlParser');
             $parser = new PHPSQLParser($sort);
             $sort = $parser->parsed;
             $sort = $sort[''][0];
@@ -237,8 +236,6 @@ class Applications
         $dateFrom = isset($dateFrom)? $dateFrom : "";
         $dateTo = isset($dateTo)? $dateTo : "";
 
-        G::LoadClass("BasePeer");
-        G::LoadClass("configuration");
         //require_once ("classes/model/AppCacheView.php");
         //require_once ("classes/model/AppDelegation.php");
         //require_once ("classes/model/AdditionalTables.php");
@@ -1128,16 +1125,6 @@ class Applications
 
     public function getSteps ($appUid, $index, $tasUid, $proUid)
     {
-        //require_once 'classes/model/Step.php';
-        //require_once 'classes/model/Content.php';
-        //require_once 'classes/model/AppDocument.php';
-        //require_once 'classes/model/InputDocumentPeer.php';
-        //require_once 'classes/model/OutputDocument.php';
-        //require_once 'classes/model/Dynaform.php';
-
-        //G::LoadClass( 'pmScript' );
-        G::LoadClass( 'case' );
-
         $steps = Array ();
         $case = new Cases();
         $step = new Step();

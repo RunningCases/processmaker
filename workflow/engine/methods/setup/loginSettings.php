@@ -23,8 +23,7 @@
  */
 global $RBAC;
 $RBAC->requirePermissions( 'PM_SETUP' );
- 
-G::loadClass( 'configuration' );
+
 $oConf = new Configurations();
 
 $oHeadPublisher = & headPublisher::getSingleton();

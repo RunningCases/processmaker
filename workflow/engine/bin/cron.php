@@ -74,15 +74,8 @@ try {
     $classLoader->addClass('Bootstrap', PATH_TRUNK . 'gulliver' . PATH_SEP . 'system' . PATH_SEP . 'class.bootstrap.php');
     Bootstrap::initVendors();
 
-    //Enable Monolog
-    Bootstrap::LoadSystem( 'monologProvider' );
-
     $classLoader->addModelClassPath(PATH_TRUNK . 'workflow' . PATH_SEP . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'model' . PATH_SEP);
     //Load classes
-    G::LoadThirdParty('propel', 'Propel');
-    G::LoadClass('system');
-    G::LoadClass('tasks');
-    G::LoadClass('pmException');
 
     $arraySystemConfiguration = System::getSystemConfiguration();
 

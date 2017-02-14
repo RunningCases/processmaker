@@ -1,7 +1,4 @@
 <?php
-G::LoadClass("system");
-G::LoadClass("wsTools");
-
 /*
 //Support ProcessMaker 1.8 which doesn't have the CLI class.
 define("CLI2", class_exists("CLI"));
@@ -58,11 +55,6 @@ function run_addon_core_install($args)
         if (!defined("DB_ADAPTER")) {
             define("DB_ADAPTER", $args[3]);
         }
-        ///////
-        //***************** Plugins **************************
-        G::LoadClass("plugin");
-        //Here we are loading all plugins registered
-        //the singleton has a list of enabled plugins
 
         $sSerializedFile = PATH_DATA_SITE . "plugin.singleton";
         $oPluginRegistry = &PMPluginRegistry::getSingleton();
@@ -110,8 +102,6 @@ function change_hash($command, $opts)
     }
     $workspaces = get_workspaces_from_args($command);
 
-    require_once (PATH_GULLIVER . PATH_SEP . 'class.bootstrap.php');
-    Bootstrap::LoadClass("plugin");
     foreach ($workspaces as $workspace) {
         CLI::logging("Checking workspace: ".pakeColor::colorize($workspace->name, "INFO")."\n");
         try {

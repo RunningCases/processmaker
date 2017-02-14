@@ -5,7 +5,6 @@ class processOptionsProxy extends HttpProxyController
 
     public function loadInputDocuments ($params)
     {
-        G::LoadClass( 'processMap' );
         $oProcessMap = new processMap( new DBConnection() );
 
         $pro_uid = $params->PRO_UID;
@@ -25,7 +24,6 @@ class processOptionsProxy extends HttpProxyController
 
     public function canDeleteInputDoc ($params)
     {
-        G::LoadClass( 'processMap' );
         $oProcessMap = new processMap( new DBConnection() );
         $aRows = $oProcessMap->getAllInputDocsByTask( $params->PRO_UID );
         $response = isset( $aRows[$params->IDOC_UID] ) ? false : true;
@@ -34,11 +32,6 @@ class processOptionsProxy extends HttpProxyController
 
     public function deleteInputDoc ($params)
     {
-        require_once 'classes/model/StepSupervisor.php';
-        require_once 'classes/model/ObjectPermission.php';
-        require_once 'classes/model/InputDocument.php';
-        G::LoadClass( 'processMap' );
-
         $oStepSupervisor = new StepSupervisor();
         $fields2 = $oStepSupervisor->loadInfo( $params->IDOC_UID );
         $oStepSupervisor->remove( $fields2['STEP_UID'] );
@@ -70,8 +63,6 @@ class processOptionsProxy extends HttpProxyController
 
     public function saveInputDoc ($params)
     {
-        require_once 'classes/model/InputDocument.php';
-        G::LoadClass( 'processMap' );
 
         $aData = array ();
         $aData['PRO_UID'] = $params->PRO_UID;

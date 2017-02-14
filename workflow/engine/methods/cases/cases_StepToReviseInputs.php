@@ -45,9 +45,6 @@ if ((int) $_SESSION['INDEX'] < 1) {
     G::header( 'location: ' . $_SERVER['HTTP_REFERER'] );
     die();
 }
-/* Includes */
-G::LoadClass( 'case' );
-G::LoadClass( 'derivation' );
 
 /* GET , POST & $_SESSION Vars */
 //$_SESSION['STEP_POSITION'] = (int)$_GET['POSITION'];
@@ -99,7 +96,6 @@ if (! isset( $_GET['ex'] ) || empty($_GET['ex'])) {
 }
 
 if (! isset( $_GET['INP_DOC_UID'] )) {
-    G::LoadClass( 'case' );
     $oCase = new Cases();
     $G_PUBLISH->AddContent( 'propeltable', 'paged-table', 'cases/cases_InputdocsListToRevise', $oCase->getInputDocumentsCriteriaToRevise( $_SESSION['APPLICATION'] ), '' );
 } else {

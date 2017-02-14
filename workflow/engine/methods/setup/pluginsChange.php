@@ -27,9 +27,7 @@ $pluginFile = $_GET['id'];
 $pluginStatus = $_GET['status'];
 
 $items = array ();
-G::LoadClass( 'plugin' );
 //here we are enabling or disabling the plugin and all related options registered.
-G::LoadSystem('inputfilter');
 $filter = new InputFilter();
 $path = PATH_PLUGINS . $pluginFile;
 $path = $filter->validateInput($path, 'path');
@@ -56,7 +54,6 @@ if ($handle = opendir( PATH_PLUGINS )) {
                         PMLicensedFeatures::getSingleton()->verifyfeature('B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=')
                     ) {
                         //Check disabled code
-                        G::LoadClass("codeScanner");
 
                         $cs = new CodeScanner(SYS_SYS);
 

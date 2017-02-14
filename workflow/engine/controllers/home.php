@@ -99,14 +99,9 @@ class Home extends Controller
             return;
         }
 
-        require_once 'classes/model/UsersProperties.php';
-        G::LoadClass( 'process' );
-        G::LoadClass( 'case' );
-
         $userProperty = new UsersProperties();
         $process = new Process();
         $case = new Cases();
-        G::loadClass( 'system' );
         $sysConf = System::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
 
         //Get ProcessStatistics Info
@@ -192,7 +187,6 @@ class Home extends Controller
         $solrEnabled = false;
 
         if (($solrConf = System::solrEnv()) !== false) {
-            G::LoadClass("AppSolr");
 
             $ApplicationSolrIndex = new AppSolr(
                 $solrConf["solr_enabled"],
@@ -212,7 +206,6 @@ class Home extends Controller
         if ($solrEnabled) {
             $cases = $ApplicationSolrIndex->getAppGridData($this->userUid, 0, 1, 'todo');
         } else {
-            G::LoadClass( 'applications' );
 
             $apps = new Applications();
 
@@ -420,7 +413,6 @@ class Home extends Controller
         ) &&
         (($solrConf = System::solrEnv()) !== false)
         ) {
-            G::LoadClass("AppSolr");
 
             $ApplicationSolrIndex = new AppSolr(
                 $solrConf["solr_enabled"],
@@ -537,7 +529,6 @@ class Home extends Controller
             }
 
             if (isset( $row['DEL_DELEGATE_DATE'] )) {
-                G::LoadClass( "configuration" );
                 $conf = new Configurations();
                 $generalConfCasesList = $conf->getConfiguration( 'ENVIRONMENT_SETTINGS', '' );
                 $cases['data'][$i]['DEL_DELEGATE_DATE'] = '';
@@ -565,7 +556,6 @@ class Home extends Controller
 
     public function startCase ($httpData)
     {
-        G::LoadClass( 'case' );
         $case = new Cases();
         $aData = $case->startCase( $httpData->id, $_SESSION['USER_LOGGED'] );
 

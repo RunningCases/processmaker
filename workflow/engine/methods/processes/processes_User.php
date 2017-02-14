@@ -38,7 +38,6 @@ try {
     else
         throw (new Exception( 'the process uid is not defined!.' ));
 
-    G::LoadClass( 'processMap' );
     $oProcessMap = new ProcessMap();
     $c = $oProcessMap->listProcessesUser( $sProUid );
 

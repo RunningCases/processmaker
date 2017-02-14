@@ -72,7 +72,7 @@ try { //ini_set('display_errors','1');
             $snameLogo = urldecode( $_GET['NAMELOGO'] );
             $snameLogo = trim( $snameLogo );
             $snameLogo = changeNamelogo( $snameLogo );
-            G::loadClass( 'configuration' );
+
             $oConf = new Configurations();
             $aConf = Array ('WORKSPACE_LOGO_NAME' => SYS_SYS,'DEFAULT_LOGO_NAME' => $snameLogo
             );
@@ -86,7 +86,7 @@ try { //ini_set('display_errors','1');
             break;
         case 'restoreLogo':
             $snameLogo = $_GET['NAMELOGO'];
-            G::loadClass( 'configuration' );
+
             $oConf = new Configurations();
             $aConf = Array ('WORKSPACE_LOGO_NAME' => '','DEFAULT_LOGO_NAME' => ''
             );

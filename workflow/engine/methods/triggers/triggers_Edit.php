@@ -70,7 +70,7 @@ if (isset( $_GET['TRI_UID'] )) {
 }
 $aFields['STEP_UID'] = isset($_GET['STEP_UID'])?$_GET['STEP_UID']:'';
 $aFields['ST_TYPE'] = isset($_GET['ST_TYPE'])?$_GET['ST_TYPE']:'';
-G::LoadClass( 'xmlfield_InputPM' );
+
 $G_PUBLISH = new Publisher();
 $G_PUBLISH->AddContent( 'xmlform', 'xmlform', $xmlform, '', $aFields, $xmlform_action );
 $oHeadPublisher =& headPublisher::getSingleton();

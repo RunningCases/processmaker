@@ -305,7 +305,6 @@ class AdditionalTables extends BaseAdditionalTables
         FieldsPeer::doDelete($criteria);
 
         //remove all related to pmTable
-        G::loadClass('pmTable');
         $pmTable = new pmTable($additionalTable['ADD_TAB_NAME']);
         $pmTable->setDataSource($additionalTable['DBS_UID']);
         $pmTable->remove();
@@ -585,7 +584,6 @@ class AdditionalTables extends BaseAdditionalTables
             if ($oClass->validate()) {
                 $iResult = $oClass->save();
                 if ($keysAutoIncrement == 1 && $aFields[$keyUIDAutoIncrement] == '' && isset($_SESSION['APPLICATION']) && $_SESSION['APPLICATION'] != '') {
-                    G::LoadClass('case');
                     $oCaseKeyAuto = new Cases();
                     $newId = $oClass->getId();
                     $aFields = $oCaseKeyAuto->loadCase($_SESSION['APPLICATION']);
@@ -849,7 +847,6 @@ class AdditionalTables extends BaseAdditionalTables
      */
     public function updateReportTables($proUid, $appUid, $appNumber, $caseData, $appStatus)
     {
-        G::loadClass('pmTable');
         //get all Active Report Tables
         $criteria = new Criteria('workflow');
         $criteria->add(AdditionalTablesPeer::PRO_UID, $proUid);

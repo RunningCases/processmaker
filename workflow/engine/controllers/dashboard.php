@@ -22,7 +22,6 @@ class Dashboard extends Controller
             G::header( 'location: login/login' );
             exit(0);
         }
-        G::LoadClass( 'pmDashlet' );
         $this->pmDashlet = new PMDashlet();
     }
 
@@ -36,7 +35,6 @@ class Dashboard extends Controller
             $dashletsHide  = array();
             $dashletColumns = 2;
 
-            G::LoadClass( 'configuration' );
             $oConfiguration = new Configurations();
             $aConfiguration = $oConfiguration->load('Dashboard', '', '', $_SESSION['USER_LOGGED']);
             if (is_array($aConfiguration) && count($aConfiguration) != 0) {
@@ -126,7 +124,6 @@ class Dashboard extends Controller
             $orderDashlet[1] = Bootstrap::json_decode($data->positionCol1);
             $orderDashlet[2] = Bootstrap::json_decode($data->positionCol2);
 
-            G::loadClass('configuration');
             $oConfiguration = new Configurations();
             $aConfiguration = $oConfiguration->load('Dashboard', '', '', $_SESSION['USER_LOGGED']);
 

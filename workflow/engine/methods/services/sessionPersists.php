@@ -15,7 +15,6 @@ if (isset($_REQUEST['dynaformEditorParams'])) {
             $dynaform = new Dynaform();
             $dynaform->load($_REQUEST['DYN_UID']);
 
-            G::LoadClass('dynaformEditor');
             $editor = new dynaformEditor(array());
             $editor->file = $dynaform->getDynFilename();
             $editor->home = PATH_DYNAFORM;

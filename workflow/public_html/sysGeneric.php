@@ -502,7 +502,6 @@ define( 'SYS_URI', '/sys' . SYS_TEMP . '/' . SYS_LANG . '/' . SYS_SKIN . '/' );
 // defining the serverConf singleton
 if (defined( 'PATH_DATA' ) && file_exists( PATH_DATA )) {
     //Instance Server Configuration Singleton
-    Bootstrap::LoadClass( 'serverConfiguration' );
     $oServerConf = & serverConf::getSingleton();
 }
 $pathFile = PATH_THIRDPARTY . '/pear/PEAR.php';
@@ -637,11 +636,9 @@ define( 'SERVER_PORT', $_SERVER['SERVER_PORT'] );
 
 
 // create memcached singleton
-Bootstrap::LoadClass( 'memcached' );
 $memcache = & PMmemcached::getSingleton( SYS_SYS );
 
 // load Plugins base class
-Bootstrap::LoadClass( 'plugin' );
 
 //here we are loading all plugins registered
 //the singleton has a list of enabled plugins
@@ -972,7 +969,6 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
         if (! in_array( SYS_TARGET, $noLoginFiles ) && ! in_array( SYS_COLLECTION, $noLoginFolders ) && $bWE != true && $collectionPlugin != 'services') {
             $bRedirect = true;
             if (isset( $_GET['sid'] )) {
-                Bootstrap::LoadClass( 'sessions' );
                 $oSessions = new Sessions();
                 if ($aSession = $oSessions->verifySession( $_GET['sid'] )) {
                     require_once 'classes/model/Users.php';

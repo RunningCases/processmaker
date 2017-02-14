@@ -163,7 +163,6 @@ class AddonsManager extends BaseAddonsManager
     public function getInstalledVersion()
     {
         if ($this->isCore()) {
-            G::LoadClass("system");
             return (EnterpriseUtils::pmVersion(System::getVersion()));
         } else {
             if ($this->isPlugin()) {

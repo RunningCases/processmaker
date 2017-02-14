@@ -1,8 +1,5 @@
 <?php
 
-G::LoadClass("system");
-G::LoadClass("wsTools");
-
 function ls_dir($dir, $basename = null)
 {
     $files = array();

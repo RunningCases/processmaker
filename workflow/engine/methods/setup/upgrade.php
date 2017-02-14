@@ -61,8 +61,6 @@ $G_SUB_MENU = 'setup';
 $G_ID_MENU_SELECTED = 'SETUP';
 $G_ID_SUB_MENU_SELECTED = 'UPGRADE';
 
-G::LoadClass( "system" );
-
 $Fields['PM_VERSION'] = System::getVersion();
 $Fields['MAX_FILE_SIZE'] = $uploadMaxSize . " (" . $UPLOAD_MAX_SIZE . ") ";
 

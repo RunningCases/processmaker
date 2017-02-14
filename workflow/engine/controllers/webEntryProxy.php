@@ -60,12 +60,6 @@ class webEntryProxy extends HttpProxyController
         $messageCode = true;
         $message = $result->message;
 
-        G::LoadClass( 'Task' );
-        //G::LoadClass ( 'Event' );
-        G::LoadClass( 'User' );
-        G::LoadClass( 'TaskUser' );
-        G::LoadClass( 'Groupwf' );
-
         $event = new Event();
         $event->load( $sEVN_UID );
         $sTASKS = $event->getEvnTasUidTo();
@@ -74,9 +68,6 @@ class webEntryProxy extends HttpProxyController
         $task->load( $sTASKS );
         $sTASKS_SEL = $task->getTasTitle();
 
-        if (! class_exists( 'GroupUser' )) {
-            G::LoadClass( 'GroupUser' );
-        }
         // if the user has been authenticated, then check if has the rights or
         // permissions to create the webentry
         if ($result->status_code == 0) {
@@ -132,11 +123,6 @@ class webEntryProxy extends HttpProxyController
             unlink( PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "public" . PATH_SEP . $pro_uid . PATH_SEP . $filename );
             unlink( PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "public" . PATH_SEP . $pro_uid . PATH_SEP . str_replace( ".php", "Post", $filename ) . ".php" );
         }
-
-        //return $params;
-
-
-        G::LoadClass( "system" );
 
         $pathProcess = PATH_DATA_SITE . 'public' . PATH_SEP . $sPRO_UID . PATH_SEP;
         G::mk_dir( $pathProcess, 0777 );
@@ -242,7 +228,6 @@ class webEntryProxy extends HttpProxyController
 
     public function load ($params)
     {
-        G::LoadClass( 'processMap' );
         $oProcessMap = new processMap( new DBConnection() );
         $PRO_UID = $params->PRO_UID;
         $EVN_UID = $params->EVN_UID;

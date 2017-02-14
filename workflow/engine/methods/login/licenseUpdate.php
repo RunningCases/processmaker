@@ -12,9 +12,7 @@ if ($aux['extension'] != 'dat') {
     $dir = PATH_DATA_SITE;
     G::uploadFile($aInfoLoadFile["tmp_name"], $dir, $aInfoLoadFile["name"]);
     //reading the file that was uploaded
-    if (!class_exists('pmLicenseManager')) {
-        G::LoadClass('pmLicenseManager');
-    }
+
     $licenseManager =& pmLicenseManager::getSingleton();
     $response = $licenseManager->installLicense($dir . $aInfoLoadFile["name"], false, false);
 

@@ -67,7 +67,6 @@ switch ($function) {
                 break;
                 break;
         }
-        G::LoadClass( "translation" );
 
         $dbc = new DBConnection();
         $obj = new Translation();

@@ -319,7 +319,6 @@ class System
      */
     public function getUpgradedFilesList ()
     {
-        G::LoadClass( 'archive' );
         $this->sFilesList = new gzip_file( $this->sFilename );
         $this->sFilesList->set_options( array ('basedir' => dirname( $this->sFilename ),'overwrite' => 1
         ) );
@@ -579,8 +578,6 @@ class System
         //now include the files and classes needed for upgrade databases, dont move this files, because we
         //are getting the last files in this point.  Even the files was in the patch we will take the new ones.
         include PATH_METHODS . PATH_SEP . 'setup' . PATH_SEP . 'upgrade_RBAC.php';
-        G::LoadClass( 'languages' );
-        G::LoadSystem( 'database_mysql' );
 
         $bForceXml = true;
         $bParseSchema = true;
@@ -1028,7 +1025,6 @@ class System
             //Return
             return $arrayDataEmailServerConfig;
         } else {
-            G::LoadClass("configuration");
 
             $conf = new Configurations();
             $config = $conf->load("Emails");

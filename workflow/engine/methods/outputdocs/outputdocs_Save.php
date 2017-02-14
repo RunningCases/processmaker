@@ -39,10 +39,6 @@ try {
 
     //default:
 
-
-    require_once 'classes/model/OutputDocument.php';
-    G::LoadClass( 'processMap' );
-
     $oOutputDocument = new OutputDocument();
 
     if (isset( $_POST['form'] ))
@@ -69,7 +65,7 @@ try {
         if ((isset( $aData['OUT_DOC_TYPE'] )) && ($aData['OUT_DOC_TYPE'] == 'JRXML')) {
             $dynaformUid = $aData['DYN_UID'];
             $outDocUid = $oOutputDocument->create( $aData );
-            G::LoadClass( 'javaBridgePM' );
+
             $jbpm = new JavaBridgePM();
             print $jbpm->generateJrxmlFromDynaform( $outDocUid, $dynaformUid, 'classic' );
         } else {

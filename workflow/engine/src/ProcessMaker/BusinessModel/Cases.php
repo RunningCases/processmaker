@@ -374,7 +374,6 @@ class Cases
         try {
             $solrEnabled = 0;
             if (($solrEnv = \System::solrEnv()) !== false) {
-                \G::LoadClass("AppSolr");
                 $appSolr = new \AppSolr(
                     $solrEnv["solr_enabled"],
                     $solrEnv["solr_host"],
@@ -388,7 +387,6 @@ class Cases
             }
             if ($solrEnabled == 1) {
                 try {
-                    \G::LoadClass("searchIndex");
                     $arrayData = array();
                     $delegationIndexes = array();
                     $columsToInclude = array("APP_UID");
@@ -463,7 +461,6 @@ class Cases
                             if (!isset($row)) {
                                 continue;
                             }
-                            \G::LoadClass('wsBase');
                             $ws = new \wsBase();
                             $fields = $ws->getCaseInfo($applicationUid, $row["DEL_INDEX"]);
                             $array = json_decode(json_encode($fields), true);
@@ -677,7 +674,7 @@ class Cases
     public function addCase($processUid, $taskUid, $userUid, $variables)
     {
         try {
-            \G::LoadClass('wsBase');
+
             $ws = new \wsBase();
             if ($variables) {
                 $variables = array_shift($variables);
@@ -721,7 +718,7 @@ class Cases
     public function addCaseImpersonate($processUid, $userUid, $taskUid, $variables)
     {
         try {
-            \G::LoadClass('wsBase');
+
             $ws = new \wsBase();
             if ($variables) {
                 $variables = array_shift($variables);
@@ -776,7 +773,7 @@ class Cases
             if (!$delIndex) {
                 $delIndex = \AppDelegation::getCurrentIndex($applicationUid);
             }
-            \G::LoadClass('wsBase');
+
             $ws = new \wsBase();
             $fields = $ws->reassignCase($userUid, $applicationUid, $delIndex, $userUidSource, $userUidTarget);
             $array = json_decode(json_encode($fields), true);
@@ -1068,7 +1065,7 @@ class Cases
                     throw (new \Exception(\G::LoadTranslation("ID_CASE_ALREADY_DERIVATED")));
                 }
             }
-            \G::LoadClass('wsBase');
+
             $ws = new \wsBase();
             $fields = $ws->derivateCase($userUid, $applicationUid, $delIndex, $bExecuteTriggersBeforeAssignment = false);
             $array = json_decode(json_encode($fields), true);
@@ -1095,7 +1092,7 @@ class Cases
      */
     public function getAllUploadedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID)
     {
-        \G::LoadClass("configuration");
+
         $conf = new \Configurations();
         $confEnvSetting = $conf->getFormats();
 
@@ -1374,7 +1371,7 @@ class Cases
         // Get input documents added/modified by a supervisor - End
         global $_DBArray;
         $_DBArray['inputDocuments'] = $aInputDocuments;
-        \G::LoadClass('ArrayPeer');
+
         $oCriteria = new \Criteria('dbarray');
         $oCriteria->setDBArrayTable('inputDocuments');
         $oCriteria->addDescendingOrderByColumn('CREATE_DATE');
@@ -1393,7 +1390,7 @@ class Cases
      */
     public function getAllGeneratedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID)
     {
-        \G::LoadClass("configuration");
+
         $conf = new \Configurations();
         $confEnvSetting = $conf->getFormats();
         
@@ -1602,7 +1599,7 @@ class Cases
         }
         global $_DBArray;
         $_DBArray['outputDocuments'] = $aOutputDocuments;
-        \G::LoadClass('ArrayPeer');
+
         $oCriteria = new \Criteria('dbarray');
         $oCriteria->setDBArrayTable('outputDocuments');
         $oCriteria->addDescendingOrderByColumn('CREATE_DATE');
@@ -1691,7 +1688,7 @@ class Cases
         $arrayCaseVariable = [];
 
         if (!is_null($dynaFormUid)) {
-            \G::LoadClass("pmDynaform");
+
             $data["CURRENT_DYNAFORM"] = $dynaFormUid;
             $pmDynaForm = new \pmDynaform($data);
             $arrayDynaFormData = $pmDynaForm->getDynaform();

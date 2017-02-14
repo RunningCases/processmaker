@@ -10,7 +10,6 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
                 $G_PUBLISH = new Publisher();
 
                 try {
-                    G::LoadClass('case');
 
                     //Validations
                     if (!isset($_REQUEST['APP_UID'])) {
@@ -65,8 +64,6 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
 
                         $case->updateCase($_REQUEST['APP_UID'], $caseFieldsABE);
 
-                        G::LoadClass('wsBase');
-
                         $ws = new wsBase();
 
                         $result = $ws->derivateCase(
@@ -97,7 +94,6 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
                         $message = '<strong>' . G::loadTranslation('ID_ABE_ANSWER_SUBMITTED') . '</strong>';
 
                         //Save Cases Notes
-                        G::LoadClass('actionsByEmailUtils');
 
                         $dataAbeRequests = loadAbeRequest($_REQUEST['ABER']);
                         $dataAbeConfiguration = loadAbeConfiguration($dataAbeRequests['ABE_UID']);

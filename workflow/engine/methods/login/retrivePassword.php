@@ -1,10 +1,6 @@
 <?php
 $data = $_POST['form'];
 global $RBAC;
-require_once PATH_RBAC."model/RbacUsers.php";
-G::LoadClass('pmFunctions');
-require_once 'classes/model/Users.php';
-G::LoadClass("system");
 
 $rbacUser = new RbacUsers();
 $user = new Users();
@@ -60,8 +56,6 @@ if ($userData['USR_EMAIL'] != '' && $userData['USR_EMAIL'] === $data['USR_EMAIL'
   <br /><hr><b>This Business Process is powered by ProcessMaker ver. ".System::getVersion().".<b><br />
   <a href='http://www.processmaker.com' style='color:#c40000;'>www.processmaker.com</a><br /></td>
   </tr></tbody></table>";
-
-    G::LoadClass('spool');
 
     $oSpool = new spoolRun();
 

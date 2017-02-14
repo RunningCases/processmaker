@@ -47,7 +47,6 @@ switch ($RBAC->userCanAccess( 'PM_REPORTS' )) {
 try {
 
     //form type format hours in the form xml
-    G::LoadClass( 'xmlfield_InputPM' );
 
     $G_MAIN_MENU = 'processmaker';
     $G_ID_MENU_SELECTED = 'REPORTS';
@@ -69,7 +68,6 @@ try {
                 $fields['TO'] = date( 'Y-m-d' );
             }
 
-            G::LoadClass( 'report' );
             $oReport = new Report();
             if ($sw == 0) {
                 $c = $oReport->generatedReport1();
@@ -103,7 +101,6 @@ try {
                 $fields['TO'] = date( 'Y-m-d' );
             }
 
-            G::LoadClass( 'report' );
             $oReport = new Report();
 
             if ($sw == 0) {
@@ -135,7 +132,6 @@ try {
                 $fields['TO'] = date( 'Y-m-d' );
             }
 
-            G::LoadClass( 'report' );
             $oReport = new Report();
 
             if ($sw == 0) {
@@ -164,7 +160,6 @@ try {
                 $fields['TASKS'] = $_POST['form']['TASKS'];
             }
 
-            G::LoadClass( 'report' );
             $oReport = new Report();
 
             if ($sw == 0) {
@@ -193,7 +188,6 @@ try {
                 $fields['TASKS'] = $_POST['form']['TASKS'];
             }
 
-            G::LoadClass( 'report' );
             $oReport = new Report();
 
             if ($sw == 0) {

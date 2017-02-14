@@ -6,8 +6,6 @@ if ($RBAC->userCanAccess( 'PM_SETUP' ) != 1 && $RBAC->userCanAccess( 'PM_SETUP_A
     die();
 }
 try {
-
-    G::LoadClass( 'serverConfiguration' );
     $oServerConf = & serverConf::getSingleton();
     /*you can use SYS_TEMP or SYS_SYS ON HEAR_BEAT_CONF to save for each workspace*/
     $sflag = $_POST['HB_OPTION'];

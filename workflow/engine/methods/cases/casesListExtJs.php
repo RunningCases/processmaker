@@ -55,9 +55,6 @@ switch ($action) {
 }
 /*----------------------------------********---------------------------------*/
 
-G::LoadClass("BasePeer");
-G::LoadClass("configuration");
-
 $oHeadPublisher = & headPublisher::getSingleton();
 // oHeadPublisher->setExtSkin( 'xtheme-blue');
 //get the configuration for this action
@@ -123,7 +120,6 @@ if ($action == "todo" || $action == "draft" || $action == "sent" || $action == "
     $action == "unassigned" || $action == "search") {
     $solrConfigured = ($solrConf = System::solrEnv()) !== false ? 1 : 0;
     if ($solrConfigured == 1) {
-        G::LoadClass('AppSolr');
         $applicationSolrIndex = new AppSolr(
             $solrConf['solr_enabled'],
             $solrConf['solr_host'],
@@ -189,7 +185,6 @@ $reassignCase    = ($RBAC->userCanAccess( 'PM_REASSIGNCASE' ) == 1) ? 'true' : '
 $reassignCaseSup = ($RBAC->userCanAccess( 'PM_REASSIGNCASE_SUPERVISOR' ) == 1) ? 'true':'false';
 $oHeadPublisher->assign( 'varReassignCase', $reassignCase );
 $oHeadPublisher->assign( 'varReassignCaseSupervisor', $reassignCaseSup );
-G::LoadClass( 'configuration' );
 $c = new Configurations();
 $oHeadPublisher->addExtJsScript( 'app/main', true );
 $oHeadPublisher->addExtJsScript( 'cases/casesList', false ); //adding a javascript file .js

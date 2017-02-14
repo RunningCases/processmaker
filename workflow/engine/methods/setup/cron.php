@@ -1,7 +1,4 @@
 <?php
-G::LoadClass( "system" );
-G::LoadClass( "wsTools" );
-G::LoadClass( "configuration" );
 
 global $RBAC;
 

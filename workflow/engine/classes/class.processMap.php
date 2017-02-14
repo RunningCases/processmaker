@@ -28,41 +28,6 @@
  *
  * @package workflow.engine.ProcessMaker
  */
-//G::LoadThirdParty( 'pear/json', 'class.json' );
-//G::LoadClass( 'groups' );
-//G::LoadClass( 'tasks' );
-//G::LoadClass('xmlfield_InputPM');
-//G::LoadClass( 'calendar' );
-//require_once 'classes/model/AppDelegation.php';
-//require_once 'classes/model/CaseTracker.php';
-//require_once 'classes/model/CaseTrackerObject.php';
-//require_once 'classes/model/Configuration.php';
-//require_once 'classes/model/Content.php';
-//require_once 'classes/model/DbSource.php';
-//require_once 'classes/model/Dynaform.php';
-//require_once 'classes/model/Event.php';
-//require_once 'classes/model/Groupwf.php';
-//require_once 'classes/model/InputDocument.php';
-//require_once 'classes/model/ObjectPermission.php';
-//require_once 'classes/model/OutputDocument.php';
-//require_once 'classes/model/Process.php';
-//require_once 'classes/model/ProcessUser.php';
-//require_once 'classes/model/ReportTable.php';
-//require_once 'classes/model/Route.php';
-//require_once 'classes/model/CaseScheduler.php';
-//require_once 'classes/model/LogCasesScheduler.php';
-//require_once 'classes/model/Step.php';
-//require_once 'classes/model/StepSupervisor.php';
-//require_once 'classes/model/StepTrigger.php';
-//require_once 'classes/model/SubProcess.php';
-//require_once 'classes/model/SwimlanesElements.php';
-//require_once 'classes/model/Task.php';
-//require_once 'classes/model/TaskUser.php';
-//require_once 'classes/model/Triggers.php';
-//require_once 'classes/model/Users.php';
-//require_once 'classes/model/Gateway.php';
-//require_once 'classes/model/om/BaseUsers.php';
-
 /**
  * processMap - Process Map class
  *
@@ -306,7 +271,6 @@ class processMap
                 }
 
                 $msg = array();
-                G::LoadClass('derivation');
                 $Derivation = new Derivation();
                 $users = $Derivation->getAllUsersFromAnyTask($aRow1['TAS_UID']);
                 $sw_error = false;
@@ -315,7 +279,6 @@ class processMap
                     $msg[] = G::LoadTranslation('ID_NO_USERS');
                 }
 
-                G::LoadClass('ArrayPeer');
                 $stepsCriteria = $this->getStepsCriteria($aRow1['TAS_UID']);
                 $oDatasetSteps = ArrayBasePeer::doSelectRS($stepsCriteria);
                 $oDatasetSteps->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -466,7 +429,7 @@ class processMap
             $oProcess = new Process();
 
             if (!is_null($oProcess)) {
-                G::loadClass('processes');
+
                 $calendar = new Calendar();
                 $files = Processes::getProcessFiles($sProcessUID, 'mail');
 
@@ -516,8 +479,6 @@ class processMap
     public function deleteProcess($sProcessUID)
     {
         try {
-            G::LoadClass('case');
-            G::LoadClass('reportTables');
             //Instance all classes necesaries
             $oProcess = new Process();
             $oDynaform = new Dynaform();
@@ -857,7 +818,6 @@ class processMap
             $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
             $_DBArray['steps'] = $aSteps;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass('ArrayPeer');
             $oCriteria = new Criteria('dbarray');
             $oCriteria->setDBArrayTable('steps');
             $oCriteria->addAscendingOrderByColumn('STEP_POSITION');
@@ -980,7 +940,6 @@ class processMap
             $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
             $_DBArray['availableBB'] = $aBB;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass('ArrayPeer');
             $oCriteria = new Criteria('dbarray');
             $oCriteria->setDBArrayTable('availableBB');
             $oCriteria->addAscendingOrderByColumn('STEP_TYPE_OBJ');
@@ -1160,7 +1119,7 @@ class processMap
             $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
             $_DBArray['taskUsers'] = $aUsers;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass('ArrayPeer');
+
             $oCriteria = new Criteria('dbarray');
             $oCriteria->setDBArrayTable('taskUsers');
             $oCriteria->addDescendingOrderByColumn(TaskUserPeer::TU_RELATION);
@@ -1235,7 +1194,7 @@ class processMap
             $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
             $_DBArray['availableUsers'] = $aUsers;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass('ArrayPeer');
+
             $oCriteria = new Criteria('dbarray');
             $oCriteria->setDBArrayTable('availableUsers');
             $oCriteria->addDescendingOrderByColumn(TaskUserPeer::TU_RELATION);
@@ -1427,7 +1386,7 @@ class processMap
              * Task Notifications *
              */
             if ($iForm == 7 || $iForm == 1) {
-                G::loadClass('processes');
+
                 $files = Processes::getProcessFiles($aFields['PRO_UID'], 'mail');
 
                 $templates = array();
@@ -1443,7 +1402,7 @@ class processMap
 
                 if ($iForm == 7) {
                     // Additional configuration
-                    G::loadClass('configuration');
+
                     $oConf = new Configurations();
                     $oConf->loadConfig($x, 'TAS_EXTRA_PROPERTIES', $aFields['TAS_UID'], '', '');
                     $conf = $oConf->aConfig;
@@ -1523,7 +1482,7 @@ class processMap
             }
 
             global $G_PUBLISH;
-            G::LoadClass('xmlfield_InputPM');
+
             $G_PUBLISH = new Publisher();
             if ($sw_template) {
                 $G_PUBLISH->AddContent('view', $sFilename);
@@ -1988,7 +1947,7 @@ class processMap
         $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
         $_DBArray['outputDocArray'] = $outputDocArray;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass('ArrayPeer');
+
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('outputDocArray');
 
@@ -2052,7 +2011,7 @@ class processMap
 
         $_DBArray['inputDocArrayMain'] = $inputDocArray;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass('ArrayPeer');
+
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('inputDocArrayMain');
 
@@ -2150,115 +2109,6 @@ class processMap
     public function caseSchedulerList($sProcessUID = '')
     {
         try {
-            /* $oCaseScheduler = new CaseScheduler();
-              $aRows = $oCaseScheduler->getAll();
-
-              //$oCaseScheduler->caseSchedulerCron();
-              // g::pr($aRows); die;
-
-              $fieldNames = Array(
-              'SCH_UID' => 'char',
-              'SCH_NAME' => 'char',
-              'PRO_UID' => 'char',
-              'TAS_UID' => 'char',
-              'SCH_TIME_NEXT_RUN' => 'char',
-              'SCH_LAST_RUN_TIME' => 'char',
-              'SCH_STATE' => 'char',
-              'SCH_LAST_STATE' => 'char',
-              'USR_UID' => 'char',
-              'SCH_OPTION' => 'char',
-              'SCH_START_TIME' => 'char',
-              'SCH_START_DATE' => 'char',
-              'SCH_DAYS_PERFORM_TASK' => 'char',
-              'SCH_EVERY_DAYS' => 'char',
-              'SCH_WEEK_DAYS' => 'char',
-              'SCH_START_DAY' => 'char',
-              'SCH_MONTHS' => 'char',
-              'SCH_END_DATE' => 'char',
-              'SCH_REPEAT_EVERY' => 'char',
-              'SCH_REPEAT_UNTIL' => 'char',
-              'SCH_REPEAT_STOP_IF_RUNNING' => 'char',
-              'PRO_PARENT' => 'char',
-              'PRO_TIME' => 'char',
-              'PRO_TIMEUNIT' => 'char',
-              'PRO_STATUS' => 'char',
-              'PRO_TYPE_DAY' => 'char',
-              'PRO_TYPE' => 'char',
-              'PRO_ASSIGNMENT' => 'char',
-              'PRO_SHOW_MAP' => 'char',
-              'PRO_SHOW_MESSAGE' => 'char',
-              'PRO_SHOW_DELEGATE' => 'char',
-              'PRO_SHOW_DYNAFORM' => 'char',
-              'PRO_CATEGORY' => 'char',
-              'PRO_SUB_CATEGORY' => 'char',
-              'PRO_INDUSTRY' => 'char',
-              'PRO_UPDATE_DATE' => 'char',
-              'PRO_CREATE_DATE' => 'char',
-              'PRO_CREATE_USER' => 'char',
-              'PRO_HEIGHT' => 'char',
-              'PRO_WIDTH' => 'char',
-              'PRO_TITLE_X' => 'char',
-              'PRO_TITLE_Y' => 'char',
-              'PRO_DEBUG' => 'char',
-              'PRO_TITLE' => 'char',
-              'PRO_DESCRIPTION' => 'char',
-              'TAS_TYPE' => 'char',
-              'TAS_DURATION' => 'char',
-              'TAS_DELAY_TYPE' => 'char',
-              'TAS_TEMPORIZER' => 'char',
-              'TAS_TYPE_DAY' => 'char',
-              'TAS_TIMEUNIT' => 'char',
-              'TAS_ALERT' => 'char',
-              'TAS_PRIORITY_VARIABLE' => 'char',
-              'TAS_ASSIGN_TYPE' => 'char',
-              'TAS_ASSIGN_VARIABLE' => 'char',
-              'TAS_ASSIGN_LOCATION' => 'char',
-              'TAS_ASSIGN_LOCATION_ADHOC' => 'char',
-              'TAS_TRANSFER_FLY' => 'char',
-              'TAS_LAST_ASSIGNED' => 'char',
-              'TAS_USER' => 'char',
-              'TAS_CAN_UPLOAD' => 'char',
-              'TAS_VIEW_UPLOAD' => 'char',
-              'TAS_VIEW_ADDITIONAL_DOCUMENTATION' => 'char',
-              'TAS_CAN_CANCEL' => 'char',
-              'TAS_OWNER_APP' => 'char',
-              'STG_UID' => 'char',
-              'TAS_CAN_PAUSE' => 'char',
-              'TAS_CAN_SEND_MESSAGE' => 'char',
-              'TAS_CAN_DELETE_DOCS' => 'char',
-              'TAS_SELF_SERVICE' => 'char',
-              'TAS_START' => 'char',
-              'TAS_TO_LAST_USER' => 'char',
-              'TAS_SEND_LAST_EMAIL' => 'char',
-              'TAS_DERIVATION' => 'char',
-              'TAS_POSX' => 'char',
-              'TAS_POSY' => 'char',
-              'TAS_COLOR' => 'char',
-              'TAS_TITLE' => 'char',
-              'TAS_DESCRIPTION' => 'char',
-              'TAS_DEF_TITLE' => 'char',
-              'TAS_DEF_DESCRIPTION' => 'char',
-              'TAS_DEF_PROC_CODE' => 'char',
-              'TAS_DEF_MESSAGE' => 'char'
-              );
-
-
-              $aRows = array_merge(Array($fieldNames), $aRows);
-
-              // g::pr($aRows); die;
-
-              global $_DBArray;
-              $_DBArray['cases_scheduler']   = $aRows;
-              $_SESSION['_DBArray'] = $_DBArray;
-              G::LoadClass('ArrayPeer');
-              $oCriteria = new Criteria('dbarray');
-              $oCriteria->setDBArrayTable('cases_scheduler');
-              $G_PUBLISH = new Publisher;
-
-              $G_PUBLISH->AddContent('propeltable', 'paged-table', '/cases/cases_Scheduler_List', $oCriteria, array('CONFIRM' => G::LoadTranslation('ID_MSG_CONFIRM_DELETE_CASE_SCHEDULER')));
-              G::RenderPage('publish');
-              //return true; */
-            G::LoadSystem('inputfilter');
             $filter = new InputFilter();
             $schedulerPath = SYS_URI . "cases/cases_Scheduler_List";
             $schedulerPath = $filter->xssFilterHard($schedulerPath);
@@ -2426,7 +2276,7 @@ class processMap
                         $sXmlform = 'patterns_Select';
                         break;
                     case 'EVALUATE':
-                        G::LoadClass('xmlfield_InputPM');
+
                         $aFields['GRID_EVALUATE_TYPE']['ROU_UID'][$aRow['ROU_CASE']] = $aRow['ROU_UID'];
                         $aFields['GRID_EVALUATE_TYPE']['ROU_NEXT_TASK'][$aRow['ROU_CASE']] = $aRow['ROU_NEXT_TASK'];
                         $aFields['GRID_EVALUATE_TYPE']['ROU_CONDITION'][$aRow['ROU_CASE']] = $aRow['ROU_CONDITION'];
@@ -2451,7 +2301,6 @@ class processMap
                         $sXmlform = 'patterns_Parallel';
                         break;
                     case 'PARALLEL-BY-EVALUATION':
-                        G::LoadClass('xmlfield_InputPM');
                         $aFields['GRID_PARALLEL_EVALUATION_TYPE']['ROU_UID'][$aRow['ROU_CASE']] = $aRow['ROU_UID'];
                         $aFields['GRID_PARALLEL_EVALUATION_TYPE']['ROU_NEXT_TASK'][$aRow['ROU_CASE']] = $aRow['ROU_NEXT_TASK'];
                         $aFields['GRID_PARALLEL_EVALUATION_TYPE']['ROU_CONDITION'][$aRow['ROU_CASE']] = $aRow['ROU_CONDITION'];
@@ -2465,12 +2314,10 @@ class processMap
                         $sXmlform = 'patterns_ParallelByEvaluation';
                         break;
                     case 'DISCRIMINATOR':
-                        G::LoadClass('xmlfield_InputPM');
                         $aFields['GRID_DISCRIMINATOR_TYPE']['ROU_UID'][$aRow['ROU_CASE']] = $aRow['ROU_UID'];
                         $aFields['GRID_DISCRIMINATOR_TYPE']['ROU_NEXT_TASK'][$aRow['ROU_CASE']] = $aRow['ROU_NEXT_TASK'];
                         $aFields['GRID_DISCRIMINATOR_TYPE']['ROU_CONDITION'][$aRow['ROU_CASE']] = $aRow['ROU_CONDITION'];
                         $aFields['GRID_DISCRIMINATOR_TYPE']['ROU_OPTIONAL'][$aRow['ROU_CASE']] = $aRow['ROU_OPTIONAL'];
-                        G::LoadClass('tasks');
                         $oTasks = new Tasks();
                         $routeData = $oTasks->getRouteByType($sProcessUID, $aRow['ROU_NEXT_TASK'], $aRow['ROU_TYPE']);
                         $aFields['ROUTE_COUNT'] = count($routeData);
@@ -2830,7 +2677,7 @@ class processMap
         $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
         $_DBArray['processes'] = $aProcesses;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass('ArrayPeer');
+
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('processes');
         return $oCriteria;
@@ -2937,7 +2784,7 @@ class processMap
             $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
             $_DBArray['reports'] = $row;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass('ArrayPeer');
+
             $oCriteria = new Criteria('dbarray');
             $oCriteria->setDBArrayTable('reports');
             //if ($TaskFields['TAS_ASSIGN_TYPE'] == 'BALANCED') {
@@ -3397,7 +3244,7 @@ class processMap
      */
     public function getObjectsPermissionsCriteria($sProcessUID)
     {
-        G::LoadClass('case');
+
         $aObjectsPermissions = array();
         $aObjectsPermissions[] = array('OP_UID' => 'char', 'TASK_TARGET' => 'char', 'GROUP_USER' => 'char', 'TASK_SOURCE' => 'char', 'OBJECT_TYPE' => 'char', 'OBJECT' => 'char', 'PARTICIPATED' => 'char', 'ACTION' => 'char', 'OP_CASE_STATUS' => 'char');
         $oCriteria = new Criteria('workflow');
@@ -3550,7 +3397,7 @@ class processMap
         $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
         $_DBArray['objectsPermissions'] = $aObjectsPermissions;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass('ArrayPeer');
+
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('objectsPermissions');
         return $oCriteria;
@@ -3575,7 +3422,7 @@ class processMap
 
     public function getExtObjectsPermissions($start, $limit, $sProcessUID)
     {
-        G::LoadClass('case');
+
         $aObjectsPermissions = array();
         //$aObjectsPermissions [] = array('OP_UID' => 'char', 'TASK_TARGET' => 'char', 'GROUP_USER' => 'char', 'TASK_SOURCE' => 'char', 'OBJECT_TYPE' => 'char', 'OBJECT' => 'char', 'PARTICIPATED' => 'char', 'ACTION' => 'char', 'OP_CASE_STATUS' => 'char');
         $oCriteria = new Criteria('workflow');
@@ -3777,7 +3624,7 @@ class processMap
             $aAllDynaforms[] = array('UID' => $aRow['DYN_UID'], 'LABEL' => $aRow['DYN_TITLE']);
             $oDataset->next();
         }
-        G::LoadClass('ArrayPeer');
+
         $oDataset = ArrayBasePeer::doSelectRS($this->getInputDocumentsCriteria($sProcessUID));
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
@@ -3786,7 +3633,7 @@ class processMap
             $aAllInputs[] = array('UID' => $aRow['INP_DOC_UID'], 'LABEL' => $aRow['INP_DOC_TITLE']);
             $oDataset->next();
         }
-        G::LoadClass('ArrayPeer');
+
         $oDataset = ArrayBasePeer::doSelectRS($this->getOutputDocumentsCriteria($sProcessUID));
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
@@ -3927,7 +3774,7 @@ class processMap
             $oDataset->next();
         }
         //inputs
-        G::LoadClass('ArrayPeer');
+
         $oDataset = ArrayBasePeer::doSelectRS($this->getInputDocumentsCriteria($sProcessUID));
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
@@ -3939,7 +3786,7 @@ class processMap
             $oDataset->next();
         }
         //outputs
-        G::LoadClass('ArrayPeer');
+
         $oDataset = ArrayBasePeer::doSelectRS($this->getOutputDocumentsCriteria($sProcessUID));
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
@@ -4050,7 +3897,7 @@ class processMap
         $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
         $_DBArray['objects'] = $aObjects;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass('ArrayPeer');
+
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('objects');
         $oCriteria->addAscendingOrderByColumn('CTO_POSITION');
@@ -4147,7 +3994,7 @@ class processMap
         $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
         $_DBArray['availableObjects'] = $aAvailableObjects;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass('ArrayPeer');
+
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('availableObjects');
         return $oCriteria;
@@ -4252,7 +4099,7 @@ class processMap
      */
     public function processFilesManager($sProcessUID)
     {
-        G::LoadClass('ArrayPeer');
+
         global $_DBArray;
         global $G_PUBLISH;
 
@@ -4332,7 +4179,7 @@ class processMap
         $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
         $_DBArray['objects'] = $aTheFiles;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass('ArrayPeer');
+
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('objects');
         $oCriteria->addAscendingOrderByColumn('DOWNLOAD_TEXT');
@@ -5105,7 +4952,7 @@ class processMap
             $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
             $_DBArray['taskUsers'] = $aUsers;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass('ArrayPeer');
+
             $oCriteria = new Criteria('dbarray');
             $oCriteria->setDBArrayTable('taskUsers');
             $oCriteria->addDescendingOrderByColumn(TaskUserPeer::TU_RELATION);
@@ -5296,7 +5143,7 @@ class processMap
             $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
             $_DBArray['availableBB'] = $aBB;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass('ArrayPeer');
+
             $oCriteria = new Criteria('dbarray');
             $oCriteria->setDBArrayTable('availableBB');
             $oCriteria->addAscendingOrderByColumn('STEP_TYPE_OBJ');
@@ -5413,7 +5260,7 @@ class processMap
             $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
             $_DBArray['steps'] = $aSteps;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass('ArrayPeer');
+
             $oCriteria = new Criteria('dbarray');
             $oCriteria->setDBArrayTable('steps');
             $oCriteria->addAscendingOrderByColumn('STEP_POSITION');
@@ -5788,7 +5635,7 @@ class processMap
         $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
         $_DBArray['outputDocArray'] = $outputDocArray;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass('ArrayPeer');
+
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('outputDocArray');
 
@@ -6334,7 +6181,7 @@ class processMap
             $aAllDynaforms[] = array('UID' => $aRow['DYN_UID'], 'LABEL' => $aRow['DYN_TITLE'] );
             $oDataset->next();
         }
-        G::LoadClass('ArrayPeer');
+
         $oDataset = ArrayBasePeer::doSelectRS($this->getInputDocumentsCriteria($sProcessUID));
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
@@ -6343,7 +6190,7 @@ class processMap
             $aAllInputs[] = array('UID' => $aRow['INP_DOC_UID'], 'LABEL' => $aRow['INP_DOC_TITLE'] );
             $oDataset->next();
         }
-        G::LoadClass('ArrayPeer');
+
         $oDataset = ArrayBasePeer::doSelectRS($this->getOutputDocumentsCriteria($sProcessUID));
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $oDataset->next();
@@ -6464,7 +6311,7 @@ class processMap
         $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
         $_DBArray['objects'] = $aObjects;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass('ArrayPeer');
+
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('objects');
         $oCriteria->addAscendingOrderByColumn('CTO_POSITION');
@@ -6544,14 +6391,6 @@ class processMap
             $oDataset->next();
         }
         return $aAvailableObjects;
-        /* global $_DBArray;
-          $_DBArray = (isset($_SESSION ['_DBArray']) ? $_SESSION ['_DBArray'] : '');
-          $_DBArray ['availableObjects'] = $aAvailableObjects;
-          $_SESSION ['_DBArray'] = $_DBArray;
-          G::LoadClass('ArrayPeer');
-          $oCriteria = new Criteria('dbarray');
-          $oCriteria->setDBArrayTable('availableObjects');
-          return $oCriteria; */
     }
 
     //new functions
@@ -6734,7 +6573,6 @@ class processMap
             $_DBArray = (isset($_SESSION['_DBArray']) ? $_SESSION['_DBArray'] : '');
             $_DBArray['taskUsers'] = $aUsers;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass('ArrayPeer');
             $oCriteria = new Criteria('dbarray');
             $oCriteria->setDBArrayTable('taskUsers');
             $oCriteria->addDescendingOrderByColumn(TaskUserPeer::TU_RELATION);

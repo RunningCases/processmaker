@@ -25,12 +25,6 @@
  *
  */
 
-//require_once 'classes/model/om/BaseAppDelegation.php';
-//require_once ("classes/model/HolidayPeer.php");
-//require_once ("classes/model/TaskPeer.php");
-//require_once ("classes/model/Task.php");
-//G::LoadClass( "dates" );
-
 /**
  * Skeleton subclass for representing a row from the 'APP_DELEGATION' table.
  *
@@ -273,7 +267,6 @@ class AppDelegation extends BaseAppDelegation
                         $dataAbe = $resultAbe->getRow();
                         $flagActionsByEmail = false;
                         if($dataAbe['ABE_TYPE']!='' && $data->USR_UID!=''){
-                            G::LoadClass('actionsByEmailCore');
                             $actionsByEmail = new actionsByEmailCoreClass();
                             $actionsByEmail->sendActionsByEmail($data, $dataAbe);
                         }
@@ -285,7 +278,6 @@ class AppDelegation extends BaseAppDelegation
                 /*----------------------------------********---------------------------------*/
                 $licensedFeatures = &PMLicensedFeatures::getSingleton ();
                 if ($licensedFeatures->verifyfeature ( '7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09' )) {
-                    G::LoadClass("pmGoogleApi");
                     try{
                         $pmGoogle = new PMGoogleApi ();
                         if ($pmGoogle->getServiceGmailStatus()) {

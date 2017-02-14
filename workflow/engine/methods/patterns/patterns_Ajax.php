@@ -29,7 +29,6 @@ if (isset( $_POST['mode'] ) && $_POST['mode'] != '') {
     $aData = $_POST['form'];
 }
 
-G::LoadClass( 'tasks' );
 $oTasks = new Tasks();
 $rou_id = 0;
 switch ($aData['action']) {

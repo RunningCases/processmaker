@@ -1,5 +1,4 @@
 <?php
-G::LoadClass("ldapAdvanced");
 
 $function = $_REQUEST['functionAccion'];
 
@@ -298,7 +297,6 @@ switch ($function) {
             $aData['USR_UID'] = $sUserUID;
             $aData['USR_ROLE'] = 'PROCESSMAKER_OPERATOR';
 
-            G::LoadClass("calendar");
             $calendarObj = new Calendar();
             $calendarObj->assignCalendarTo($sUserUID, '00000000000000000000000000000001', 'USER');
 

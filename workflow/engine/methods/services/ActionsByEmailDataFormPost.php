@@ -103,8 +103,6 @@ if (PMLicensedFeatures
         //Update case info
         $case->updateCase($appUid, $casesFields);
 
-        G::LoadClass('wsBase');
-
         $wsBaseInstance = new wsBase();
         $result = $wsBaseInstance->derivateCase($casesFields['CURRENT_USER_UID'], $appUid, $delIndex, true);
         $code = (is_array($result) ? $result['status_code'] : $result->status_code);

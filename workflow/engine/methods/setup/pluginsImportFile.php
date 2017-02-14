@@ -29,7 +29,6 @@ $RBAC->requirePermissions( 'PM_SETUP_ADVANCE' );
 
 try {
     //load the variables
-    G::LoadClass( 'plugin' );
     if (! isset( $_FILES['form']['error']['PLUGIN_FILENAME'] ) || $_FILES['form']['error']['PLUGIN_FILENAME'] == 1) {
         throw (new Exception( G::loadTranslation( 'ID_ERROR_UPLOADING_PLUGIN_FILENAME' ) ));
     }
@@ -250,7 +249,6 @@ try {
         /*----------------------------------********---------------------------------*/
         if (PMLicensedFeatures::getSingleton()->verifyfeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
             //Check disabled code
-            G::LoadClass("codeScanner");
 
             $cs = new CodeScanner(SYS_SYS);
 
@@ -282,7 +280,6 @@ try {
             $oClass->iPMVersion = 0;
         }
         if ($oClass->iPMVersion > 0) {
-            G::LoadClass( "system" );
             if (System::getVersion() > 0) {
                 if ($oClass->iPMVersion > System::getVersion()) {
                     //throw new Exception('This plugin needs version ' . $oClass->iPMVersion . ' or higher of ProcessMaker');

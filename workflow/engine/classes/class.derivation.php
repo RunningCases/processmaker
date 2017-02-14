@@ -36,8 +36,6 @@ require_once ('classes/model/SubApplication.php');
 require_once ('classes/model/SubProcess.php');
 require_once ("classes/model/Users.php");
 
-G::LoadClass( "plugin" );
-
 /**
  * derivation - derivation class
  *
@@ -168,10 +166,6 @@ class Derivation
     public function prepareInformation(array $arrayData, $taskUid = "")
     {
         try {
-            if (!class_exists("Cases")) {
-                G::LoadClass("case");
-            }
-
             $this->case = new Cases();
             $task = new Task();
 
@@ -223,8 +217,6 @@ class Derivation
 
                 //Evaluate the condition if there are conditions defined
                 if (trim($arrayRouteData["ROU_CONDITION"]) != "" && $arrayRouteData["ROU_TYPE"] != "SELECT") {
-                    G::LoadClass("pmScript");
-
                     $pmScript = new PMScript();
                     $pmScript->setFields($arrayApplicationData["APP_DATA"]);
                     $pmScript->setScript($arrayRouteData["ROU_CONDITION"]);
@@ -1743,8 +1735,6 @@ class Derivation
 
     function getGrpUser ($aData)
     {
-        G::LoadClass( 'groups' );
-        G::LoadClass( 'tasks' );
         require_once 'classes/model/Content.php';
         $oTasks = new Tasks();
         $oGroups = new Groups();

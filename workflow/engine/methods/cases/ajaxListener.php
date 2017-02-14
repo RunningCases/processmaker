@@ -82,9 +82,6 @@ class Ajax
 
     public function getCaseMenu($params)
     {
-
-        G::LoadClass("configuration");
-        G::LoadClass("case");
         global $G_TMP_MENU;
         global $sStatus;
         $sStatus = $params['app_status'];
@@ -123,7 +120,7 @@ class Ajax
             print G::json_encode( $response );
             die();
         }
-        G::LoadClass('applications');
+
         $applications = new Applications();
 
         $proUid = isset($_SESSION['PROCESS']) ? $_SESSION['PROCESS'] : '';
@@ -268,8 +265,6 @@ class Ajax
         global $G_TABLE;
         global $RBAC;
 
-        G::LoadClass('processMap');
-
         $oTemplatePower = new TemplatePower(PATH_TPL . 'processes/processes_Map.html');
         $oTemplatePower->prepare();
         $G_PUBLISH = new Publisher();
@@ -381,7 +376,6 @@ class Ajax
             $processData['PRO_AUTHOR'] = '(USER DELETED)';
         }
 
-        G::LoadClass('configuration');
         $conf = new Configurations();
         $conf->getFormats();
         $processData['PRO_CREATE_DATE'] = $conf->getSystemDate($processData['PRO_CREATE_DATE']);
@@ -397,7 +391,7 @@ class Ajax
             print G::json_encode( $response );
             die();
         }
-        G::LoadClass('tasks');
+
         $task = new Task();
         if ($_SESSION['TASK'] == '-1') {
             $_SESSION['TASK'] = $_SESSION['CURRENT_TASK'];
@@ -412,7 +406,6 @@ class Ajax
     public function caseHistory()
     {
         global $G_PUBLISH;
-        G::loadClass('configuration');
 
         $oHeadPublisher = & headPublisher::getSingleton();
         $conf = new Configurations();
@@ -425,7 +418,6 @@ class Ajax
     public function messageHistory()
     {
         global $G_PUBLISH;
-        G::loadClass('configuration');
 
         $oHeadPublisher = & headPublisher::getSingleton();
         $conf = new Configurations();
@@ -438,7 +430,6 @@ class Ajax
     public function dynaformHistory()
     {
         global $G_PUBLISH;
-        G::loadClass('configuration');
 
         $oHeadPublisher = & headPublisher::getSingleton();
         $conf = new Configurations();
@@ -451,7 +442,7 @@ class Ajax
     public function changeLogHistory()
     {
         global $G_PUBLISH;
-        G::loadClass('configuration');
+
         $idHistory = sprintf(
             '%s_%s_%s',
             $_SESSION['PROCESS'],
@@ -477,7 +468,6 @@ class Ajax
             die();
         }
         global $G_PUBLISH;
-        G::loadClass('configuration');
 
         $oHeadPublisher = & headPublisher::getSingleton();
         $conf = new Configurations();
@@ -491,7 +481,6 @@ class Ajax
     public function uploadedDocumentsSummary()
     {
         global $G_PUBLISH;
-        G::loadClass('configuration');
 
         $oHeadPublisher = & headPublisher::getSingleton();
         $conf = new Configurations();
@@ -505,7 +494,6 @@ class Ajax
     public function generatedDocuments()
     {
         global $G_PUBLISH;
-        G::loadClass('configuration');
 
         $oHeadPublisher = & headPublisher::getSingleton();
         $conf = new Configurations();
@@ -519,7 +507,6 @@ class Ajax
     public function generatedDocumentsSummary()
     {
         global $G_PUBLISH;
-        G::loadClass('configuration');
 
         $oHeadPublisher = & headPublisher::getSingleton();
         $conf = new Configurations();
@@ -985,7 +972,7 @@ class Ajax
         $Fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["NEXT_STEP_LABEL"] = "";
         $Fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["NEXT_STEP"] = "#";
         $Fields["APP_DATA"]["__DYNAFORM_OPTIONS"]["NEXT_ACTION"] = "return false;";
-        G::LoadClass('pmDynaform');
+
         $FieldsPmDynaform = $Fields;
         $FieldsPmDynaform["PRO_UID"] = $_SESSION['PROCESS'];
         $FieldsPmDynaform["CURRENT_DYNAFORM"] = $_REQUEST['DYN_UID'];
@@ -1046,7 +1033,6 @@ if (!($ajax instanceof Ajax)) {
     $ajax = new Ajax();
 }
 
-G::LoadClass('case');
 
 $action = $_REQUEST['action'];
 

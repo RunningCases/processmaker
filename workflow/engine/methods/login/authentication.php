@@ -178,7 +178,6 @@ try {
         if ($oPluginRegistry->existsTrigger ( PM_LOGIN )) {
             $oPluginRegistry->executeTriggers ( PM_LOGIN , $loginInfo );
         }
-        G::LoadClass("enterprise");
         enterpriseClass::enterpriseSystemUpdate($loginInfo);
         $_SESSION['USER_LOGGED']  = $uid;
         $_SESSION['USR_USERNAME'] = $usr;
@@ -292,7 +291,6 @@ try {
     unset($_SESSION['FAILED_LOGINS']);
 
     // increment logins in heartbeat
-    G::LoadClass('serverConfiguration');
     $oServerConf =& serverConf::getSingleton();
     $oServerConf->sucessfulLogin();
 

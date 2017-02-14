@@ -12,7 +12,6 @@ class pmLicenseManager
 
     public function __construct($flagActivatePlugins = true)
     {
-        G::LoadClass('serverConfiguration');
         $oServerConf = &serverConf::getSingleton();
         $oServerConf->setProperty('LOGIN_NO_WS', true);
 
@@ -82,7 +81,6 @@ class pmLicenseManager
                 $this->supportStartDate = date("Y-m-d H:i:s", strtotime($this->supportStartDate));
                 $this->supportEndDate = date("Y-m-d H:i:s", strtotime($this->supportEndDate));
 
-                G::LoadClass( "configuration" );
                 $conf = new Configurations();
                 if ( defined('SYS_SYS') && $conf->exists("ENVIRONMENT_SETTINGS")) {
                     $this->supportStartDate = $conf->getSystemDate($this->supportStartDate);
@@ -376,7 +374,7 @@ class pmLicenseManager
             G::SendTemporalMessage ( 'ID_ISNT_LICENSE', 'tmp-info', 'labels' );
             return false;
         } else {
-            G::LoadClass ( 'serverConfiguration' );
+
             $oServerConf = & serverConf::getSingleton ();
             $oServerConf->setProperty ( 'ACTIVE_LICENSE',array(SYS_SYS => $path));
             $this->saveDataLicense( $results, $path, $redirect );

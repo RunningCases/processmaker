@@ -14,7 +14,6 @@ class Main extends Controller
 
     public function __construct ()
     {
-        G::LoadClass( 'memcached' );
         $this->memcache = & PMmemcached::getSingleton( defined( 'SYS_SYS' ) ? SYS_SYS : '' );
 
         define( 'ERROR_EXCEPTION', 1 );
@@ -107,9 +106,6 @@ class Main extends Controller
      */
     public function login ()
     {
-        require_once 'classes/model/LoginLog.php';
-        G::LoadClass( 'system' );
-        G::loadClass( 'configuration' );
         $this->conf = new Configurations();
 
         // getting posibles errors passed by GET method
@@ -197,8 +193,6 @@ class Main extends Controller
 
         $availableLangArray = $this->getLanguagesList();
 
-        G::LoadClass( "serverConfiguration" );
-
         $sflag = 0;
 
         if (($nextBeatDate = $this->memcache->get( 'nextBeatDate' )) === false) {
@@ -236,7 +230,6 @@ class Main extends Controller
 
         $this->setJSVar( 'flagGettingStarted', ($flagGettingStarted == 0) );
 
-        G::loadClass( 'configuration' );
         $oConf = new Configurations();
         $oConf->loadConfig( $obj, 'ENVIRONMENT_SETTINGS', '' );
 
@@ -292,10 +285,7 @@ class Main extends Controller
      */
     public function sysLogin ()
     {
-        require_once ("propel/Propel.php");
-        require_once ("creole/Creole.php");
-        G::LoadClass( 'system' );
-        G::LoadThirdParty( "pake", "pakeColor.class" );
+
         Propel::init( PATH_CORE . "config/databases.php" );
         Creole::registerDriver( 'dbarray', 'creole.contrib.DBArrayConnection' );
 
@@ -313,7 +303,6 @@ class Main extends Controller
         $aField['LOGIN_VERIFY_MSG'] = G::loadTranslation( 'LOGIN_VERIFY_MSG' );
 
         //Get Server Configuration
-        G::LoadClass( 'serverConfiguration' );
         $oServerConf = & serverConf::getSingleton();
 
         $availableLangArray = $this->getLanguagesList();
@@ -357,9 +346,6 @@ class Main extends Controller
     {
         $this->setResponseType( 'json' );
         global $RBAC;
-        require_once PATH_RBAC . "model/RbacUsers.php";
-        require_once 'classes/model/Users.php';
-        G::LoadClass( "system" );
 
         $rbacUser = new RbacUsers();
         $user = new Users();
@@ -477,7 +463,6 @@ class Main extends Controller
 
         if (defined( "SYS_SYS" )) {
             if (($aFotoSelect = $this->memcache->get( 'aFotoSelect' )) === false) {
-                G::LoadClass( 'replacementLogo' );
                 $oLogoR = new replacementLogo();
                 $aFotoSelect = $oLogoR->getNameLogo( (isset( $_SESSION['USER_LOGGED'] )) ? $_SESSION['USER_LOGGED'] : '' );
                 $this->memcache->set( 'aFotoSelect', $aFotoSelect, 1 * 3600 );
@@ -528,7 +513,6 @@ class Main extends Controller
 
     private function getWorkspacesAvailable ()
     {
-        G::LoadClass( 'serverConfiguration' );
         $oServerConf = & serverConf::getSingleton();
         $dir = PATH_DB;
         $filesArray = array ();
@@ -688,7 +672,6 @@ class Main extends Controller
 
     private function _getSystemInfo ()
     {
-        G::LoadClass( "system" );
 
         if (getenv( 'HTTP_CLIENT_IP' )) {
             $ip = getenv( 'HTTP_CLIENT_IP' );
@@ -710,8 +693,6 @@ class Main extends Controller
 
         $redhat .= " (" . PHP_OS . ")";
         if (defined( "DB_HOST" )) {
-            G::LoadClass( 'net' );
-            G::LoadClass( 'dbConnections' );
             $dbNetView = new NET( DB_HOST );
             $dbNetView->loginDbServer( DB_USER, DB_PASS );
 
