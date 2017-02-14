@@ -117,6 +117,8 @@ class PMPluginRegistry
      */
     private $_restServices = array ();
 
+    private $_restExtendServices = array ();
+
     private $_restServiceEnabled = array();
 
     private static $instance = null;
@@ -1458,6 +1460,38 @@ class PMPluginRegistry
         return true;
     }
 
+    /**
+     * Register a extend rest service class from a plugin to be served by processmaker
+     *
+     * @param string $sNamespace The namespace for the plugin
+     * @param string $className The service (api) class name
+     * @return bool
+     */
+    public function registerExtendsRestService($sNamespace, $className)
+    {
+        $baseSrcPluginPath = PATH_PLUGINS . $sNamespace . PATH_SEP . "src";
+        $apiPath = PATH_SEP . "Services" . PATH_SEP . "Ext" . PATH_SEP;
+        $classFile = $baseSrcPluginPath . $apiPath . 'Ext' . $className . '.php';
+        if(file_exists($classFile)){
+            $this->_restExtendServices[$className] = array(
+                "filePath" => $classFile,
+                "classParent" => $className,
+                "classExtend" => 'Ext' . $className
+            );
+        }
+        return true;
+    }
+
+    /**
+     * Get a extend rest service class from a plugin to be served by processmaker
+     *
+     * @param string $className The service (api) class name
+     * @return bool
+     */
+    public function getExtendsRestService($className)
+    {
+        return isset($this->_restExtendServices[$className]) ? $this->_restExtendServices[$className] : array();
+    }
     /**
      * Unregister a rest service class of a plugin
      *

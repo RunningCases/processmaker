@@ -162,7 +162,7 @@ class Restler extends \Luracast\Restler\Restler
                 );
                 break;
             default :
-                $object = $this->reviewApiExtensions($o->className);
+                $object = $this->reviewApiExtensions($object, $o->className);
                 $result = call_user_func_array(array(
                     $object,
                     $o->methodName
@@ -171,20 +171,17 @@ class Restler extends \Luracast\Restler\Restler
         $this->responseData = $result;
     }
 
-    public function reviewApiExtensions($className)
+    public function reviewApiExtensions($object, $className)
     {
-        $object = \Luracast\Restler\Scope::get($className);
         $classReflection = new \ReflectionClass($object);
         $classShortName = $classReflection->getShortName();
-        \G::LoadClass('pluginRegistry');
         $registry = \PMPluginRegistry::getSingleton();
-        $pluginsActive = $registry->getEnabledPlugins();
-        foreach ($pluginsActive as $name => $plugin) {
-            $pathExtensions = PATH_PLUGINS . $plugin . PATH_SEP . 'src' . PATH_SEP . 'Services' . PATH_SEP . 'Ext' . PATH_SEP;
-            $sFileExits = file_exists($pathExtensions . 'Ext' . $classShortName . '.php');
-            if ($sFileExits) {
-                require_once($pathExtensions . 'Ext' . $classShortName . '.php');
-                $classExtName = 'Ext' . $classShortName;
+        $pluginsApiExtend = $registry->getExtendsRestService($classShortName);
+        if ($pluginsApiExtend) {
+            $classFilePath = $pluginsApiExtend['filePath'];
+            if(file_exists($classFilePath)) {
+                require_once($classFilePath);
+                $classExtName = $pluginsApiExtend['classExtend'];
                 $newObjectExt = new $classExtName();
                 if (is_subclass_of($newObjectExt, $className)) {
                     $object = $newObjectExt;
