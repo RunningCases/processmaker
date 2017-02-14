@@ -4184,6 +4184,9 @@
         <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_RISK_DATE" type="TIMESTAMP" required="false" />
         <column name="DEL_PRIORITY" type="VARCHAR" size="32" required="true" default="3"/>
+        <column name="PRO_ID" type="INTEGER" required="false" default="0"/>
+        <column name="USR_ID" type="INTEGER" required="false" default="0"/>
+        <column name="APP_STATUS_ID" type="TINYINT" required="false" default="0"/>
         <index name="indexUser">
           <index-column name="USR_UID"/>
           <vendor type="mysql">
@@ -4213,6 +4216,12 @@
                 <parameter name="Key_name" value="indexInboxUserStatusUpdateDate"/>
                 <parameter name="Seq_in_index" value="1"/>
             </vendor>
+        </index>
+        <index name="INDEX_PRO_ID">
+            <index-column name="PRO_ID"/>
+        </index>
+        <index name="INDEX_USR_ID">
+            <index-column name="USR_ID"/>
         </index>
     </table>
     <table name="LIST_PARTICIPATED_HISTORY">
@@ -4256,6 +4265,8 @@
         <column name="DEL_INIT_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_PRIORITY" type="VARCHAR" size="32" required="true" default="3"/>
+        <column name="PRO_ID" type="INTEGER" required="false" default="0"/>
+        <column name="USR_ID" type="INTEGER" required="false" default="0"/>
         <index name="indexInboxUser">
             <index-column name="USR_UID"/>
             <index-column name="DEL_DELEGATE_DATE"/>
@@ -4265,6 +4276,12 @@
                 <parameter name="Key_name" value="indexParticipatedUser"/>
                 <parameter name="Seq_in_index" value="1"/>
             </vendor>
+        </index>
+        <index name="INDEX_PRO_ID">
+            <index-column name="PRO_ID"/>
+        </index>
+        <index name="INDEX_USR_ID">
+            <index-column name="USR_ID"/>
         </index>
     </table>
     <table name="LIST_PARTICIPATED_LAST">
@@ -4311,6 +4328,9 @@
         <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_PRIORITY" type="VARCHAR" size="32" required="true" default="3"/>
         <column name="DEL_THREAD_STATUS" type="VARCHAR" size="32" required="true" default="OPEN"/>
+        <column name="PRO_ID" type="INTEGER" required="false" default="0"/>
+        <column name="USR_ID" type="INTEGER" required="false" default="0"/>
+        <column name="APP_STATUS_ID" type="TINYINT" required="false" default="0"/>
         <index name="usrIndex">
             <index-column name="USR_UID"/>
             <vendor type="mysql">
@@ -4328,6 +4348,12 @@
                 <parameter name="Key_name" value="delDelegateDate"/>
                 <parameter name="Seq_in_index" value="1"/>
             </vendor>
+        </index>
+        <index name="INDEX_PRO_ID">
+            <index-column name="PRO_ID"/>
+        </index>
+        <index name="INDEX_USR_ID">
+            <index-column name="USR_ID"/>
         </index>
     </table>
     <table name="LIST_COMPLETED">
@@ -4366,6 +4392,14 @@
         <column name="DEL_CURRENT_USR_USERNAME" type="VARCHAR" size="100" default=""/>
         <column name="DEL_CURRENT_USR_FIRSTNAME" type="VARCHAR" size="50" default=""/>
         <column name="DEL_CURRENT_USR_LASTNAME" type="VARCHAR" size="50" default=""/>
+        <column name="PRO_ID" type="INTEGER" required="false" default="0"/>
+        <column name="USR_ID" type="INTEGER" required="false" default="0"/>
+        <index name="INDEX_PRO_ID">
+            <index-column name="PRO_ID"/>
+        </index>
+        <index name="INDEX_USR_ID">
+            <index-column name="USR_ID"/>
+        </index>
         <index name="usrListCompleted">
           <index-column name="USR_UID"/>
           <vendor type="mysql">
@@ -4419,6 +4453,14 @@
         <column name="DEL_INIT_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_PRIORITY" type="VARCHAR" size="32" required="true" default="3"/>
+        <column name="PRO_ID" type="INTEGER" required="false" default="0"/>
+        <column name="USR_ID" type="INTEGER" required="false" default="0"/>
+        <index name="INDEX_PRO_ID">
+            <index-column name="PRO_ID"/>
+        </index>
+        <index name="INDEX_USR_ID">
+            <index-column name="USR_ID"/>
+        </index>
         <index name="indexPausedUser">
             <index-column name="USR_UID"/>
             <vendor type="mysql">
@@ -4468,6 +4510,14 @@
         <column name="DEL_INIT_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_PRIORITY" type="VARCHAR" size="32" required="true" default="3"/>
+        <column name="PRO_ID" type="INTEGER" required="false" default="0"/>
+        <column name="USR_ID" type="INTEGER" required="false" default="0"/>
+        <index name="INDEX_PRO_ID">
+            <index-column name="PRO_ID"/>
+        </index>
+        <index name="INDEX_USR_ID">
+            <index-column name="USR_ID"/>
+        </index>
         <index name="indexCanceledUser">
             <index-column name="USR_UID"/>
             <vendor type="mysql">
@@ -4524,6 +4574,15 @@
         <column name="DEL_INIT_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_PRIORITY" type="VARCHAR" size="32" required="true" default="3"/>
+        <column name="PRO_ID" type="INTEGER" required="false" default="0"/>
+        <column name="USR_ID" type="INTEGER" required="false" default="0"/>
+        <column name="APP_STATUS_ID" type="TINYINT" required="false" default="0"/>
+        <index name="INDEX_PRO_ID">
+            <index-column name="PRO_ID"/>
+        </index>
+        <index name="INDEX_USR_ID">
+            <index-column name="USR_ID"/>
+        </index>
     </table>
     <table name="LIST_UNASSIGNED">
         <vendor type="mysql">
@@ -4562,6 +4621,10 @@
         <column name="DEL_DELEGATE_DATE" type="TIMESTAMP" required="true"/>
         <column name="DEL_DUE_DATE" type="TIMESTAMP" required="false"/>
         <column name="DEL_PRIORITY" type="VARCHAR" size="32" required="true" default="3"/>
+        <column name="PRO_ID" type="INTEGER" required="false" default="0"/>
+        <index name="INDEX_PRO_ID">
+            <index-column name="PRO_ID"/>
+        </index>
     </table>
     <table name="LIST_UNASSIGNED_GROUP">
         <vendor type="mysql">
@@ -4588,6 +4651,10 @@
         <column name="USR_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
         <column name="TYPE"    type="VARCHAR" size="255" required="true" primaryKey="true" default=""/>
         <column name="TYP_UID" type="VARCHAR" size="32" required="true" default=""/>
+        <column name="USR_ID" type="INTEGER" required="false" default="0"/>
+        <index name="INDEX_USR_ID">
+            <index-column name="USR_ID"/>
+        </index>
     </table>
     <table name="MESSAGE_TYPE">
         <vendor type="mysql">
