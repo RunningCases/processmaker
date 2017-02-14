@@ -1492,6 +1492,20 @@ class PMPluginRegistry
     {
         return isset($this->_restExtendServices[$className]) ? $this->_restExtendServices[$className] : array();
     }
+
+    /**
+     * Remove a extend rest service class from a plugin to be served by processmaker
+     *
+     * @param string $className The service (api) class name
+     * @return bool
+     */
+    public function disableExtendsRestService($sNamespace, $className)
+    {
+        if (isset($this->_restExtendServices[$className])) {
+            unset($this->_restExtendServices[$className]);
+        }
+    }
+
     /**
      * Unregister a rest service class of a plugin
      *

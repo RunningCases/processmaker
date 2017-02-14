@@ -361,6 +361,17 @@ class PMPlugin
     }
 
     /**
+     * Register a extend rest service and expose it
+     *
+     * @param string $className that is name class to extends
+     */
+    function disableExtendsRestService($className)
+    {
+        $oPluginRegistry =& PMPluginRegistry::getSingleton();
+        $oPluginRegistry->disableExtendsRestService($this->sNamespace, $className);
+    }
+
+    /**
      * Unregister a rest service
      *
      * @author  Erik Amaru Ortiz <erik@colosa.com>
