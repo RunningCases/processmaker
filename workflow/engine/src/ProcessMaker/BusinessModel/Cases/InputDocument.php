@@ -971,6 +971,16 @@ class InputDocument
                         $aFields = array("APP_UID" => $appUid, "DEL_INDEX" => $delIndex, "USR_UID" => $userUid, "DOC_UID" => -1, "APP_DOC_TYPE" => "ATTACHED", "APP_DOC_CREATE_DATE" => date("Y-m-d H:i:s"), "APP_DOC_COMMENT" => "", "APP_DOC_TITLE" => "", "APP_DOC_FILENAME" => $arrayFileName[$i], "APP_DOC_FIELDNAME" => $fieldName);
                     }
 
+                    $sExtension = pathinfo($aFields["APP_DOC_FILENAME"]);
+                    if (\Bootstrap::getDisablePhpUploadExecution() === 1 && $sExtension["extension"] === 'php') {
+                        $message = \G::LoadTranslation('THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED');
+                        \Bootstrap::registerMonologPhpUploadExecution('phpUpload', 550, $message, $sFileName);
+                        \G::SendMessageText($message, "ERROR");
+                        $backUrlObj = explode("sys" . SYS_SYS, $_SERVER['HTTP_REFERER']);
+                        \G::header("location: " . "/sys" . SYS_SYS . $backUrlObj[1]);
+                        die();
+                    }
+
                     $oAppDocument = new \AppDocument();
                     $oAppDocument->create($aFields);
 
