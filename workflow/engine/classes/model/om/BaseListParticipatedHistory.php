@@ -148,6 +148,18 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
     protected $del_priority = '3';
 
     /**
+     * The value for the pro_id field.
+     * @var        int
+     */
+    protected $pro_id = 0;
+
+    /**
+     * The value for the usr_id field.
+     * @var        int
+     */
+    protected $usr_id = 0;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -442,6 +454,28 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
     {
 
         return $this->del_priority;
+    }
+
+    /**
+     * Get the [pro_id] column value.
+     * 
+     * @return     int
+     */
+    public function getProId()
+    {
+
+        return $this->pro_id;
+    }
+
+    /**
+     * Get the [usr_id] column value.
+     * 
+     * @return     int
+     */
+    public function getUsrId()
+    {
+
+        return $this->usr_id;
     }
 
     /**
@@ -906,6 +940,50 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
     } // setDelPriority()
 
     /**
+     * Set the value of [pro_id] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setProId($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->pro_id !== $v || $v === 0) {
+            $this->pro_id = $v;
+            $this->modifiedColumns[] = ListParticipatedHistoryPeer::PRO_ID;
+        }
+
+    } // setProId()
+
+    /**
+     * Set the value of [usr_id] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setUsrId($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->usr_id !== $v || $v === 0) {
+            $this->usr_id = $v;
+            $this->modifiedColumns[] = ListParticipatedHistoryPeer::USR_ID;
+        }
+
+    } // setUsrId()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -962,12 +1040,16 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
 
             $this->del_priority = $rs->getString($startcol + 19);
 
+            $this->pro_id = $rs->getInt($startcol + 20);
+
+            $this->usr_id = $rs->getInt($startcol + 21);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 20; // 20 = ListParticipatedHistoryPeer::NUM_COLUMNS - ListParticipatedHistoryPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 22; // 22 = ListParticipatedHistoryPeer::NUM_COLUMNS - ListParticipatedHistoryPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating ListParticipatedHistory object", $e);
@@ -1231,6 +1313,12 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
             case 19:
                 return $this->getDelPriority();
                 break;
+            case 20:
+                return $this->getProId();
+                break;
+            case 21:
+                return $this->getUsrId();
+                break;
             default:
                 return null;
                 break;
@@ -1271,6 +1359,8 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
             $keys[17] => $this->getDelInitDate(),
             $keys[18] => $this->getDelDueDate(),
             $keys[19] => $this->getDelPriority(),
+            $keys[20] => $this->getProId(),
+            $keys[21] => $this->getUsrId(),
         );
         return $result;
     }
@@ -1361,6 +1451,12 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
                 break;
             case 19:
                 $this->setDelPriority($value);
+                break;
+            case 20:
+                $this->setProId($value);
+                break;
+            case 21:
+                $this->setUsrId($value);
                 break;
         } // switch()
     }
@@ -1465,6 +1561,14 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
             $this->setDelPriority($arr[$keys[19]]);
         }
 
+        if (array_key_exists($keys[20], $arr)) {
+            $this->setProId($arr[$keys[20]]);
+        }
+
+        if (array_key_exists($keys[21], $arr)) {
+            $this->setUsrId($arr[$keys[21]]);
+        }
+
     }
 
     /**
@@ -1554,6 +1658,14 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
 
         if ($this->isColumnModified(ListParticipatedHistoryPeer::DEL_PRIORITY)) {
             $criteria->add(ListParticipatedHistoryPeer::DEL_PRIORITY, $this->del_priority);
+        }
+
+        if ($this->isColumnModified(ListParticipatedHistoryPeer::PRO_ID)) {
+            $criteria->add(ListParticipatedHistoryPeer::PRO_ID, $this->pro_id);
+        }
+
+        if ($this->isColumnModified(ListParticipatedHistoryPeer::USR_ID)) {
+            $criteria->add(ListParticipatedHistoryPeer::USR_ID, $this->usr_id);
         }
 
 
@@ -1657,6 +1769,10 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
         $copyObj->setDelDueDate($this->del_due_date);
 
         $copyObj->setDelPriority($this->del_priority);
+
+        $copyObj->setProId($this->pro_id);
+
+        $copyObj->setUsrId($this->usr_id);
 
 
         $copyObj->setNew(true);
