@@ -36,7 +36,7 @@ function filterUserListArray($users = array(), $filter = '')
 {
     $filteredUsers = array();
     foreach ($users as $user) {
-        if (stripos($user['USR_FULLNAME'], $filter) || empty($filter)) {
+        if (stripos($user['USR_FULLNAME'], $filter) !== false || empty($filter)) {
             $filteredUsers[] = $user;
         }
     }
@@ -55,27 +55,31 @@ if ($actionAjax == "userValues") {
     //now get users, just for the Search action
     switch ($action) {
         case 'to_reassign':
-            $cUsers = $oAppCache->getToReassignListCriteria(null);
-            $cUsers->addSelectColumn(AppCacheViewPeer::USR_UID);
-
-            if (g::MySQLSintaxis()) {
-                $cUsers->addGroupByColumn(AppCacheViewPeer::USR_UID);
-            }
-
+            G::LoadClass("configuration");
+            $conf = new Configurations();
+            $confEnvSetting = $conf->getFormats();
+            $cUsers = new Criteria('workflow');
+            $cUsers->clearSelectColumns();
+            $cUsers->addSelectColumn(UsersPeer::USR_UID);
+            $cUsers->addSelectColumn(UsersPeer::USR_USERNAME);
+            $cUsers->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+            $cUsers->addSelectColumn(UsersPeer::USR_LASTNAME);
+            $cUsers->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
             if (!is_null($query)) {
                 $filters = $cUsers->getNewCriterion(UsersPeer::USR_FIRSTNAME, '%' . $query . '%', Criteria::LIKE)->addOr(
-                    $cUsers->getNewCriterion(UsersPeer::USR_LASTNAME, '%' . $query . '%', Criteria::LIKE)->addOr(
-                        $cUsers->getNewCriterion(UsersPeer::USR_USERNAME, '%' . $query . '%', Criteria::LIKE)));
-                $cUsers->addAnd($filters);
+                        $cUsers->getNewCriterion(UsersPeer::USR_LASTNAME, '%' . $query . '%', Criteria::LIKE)->addOr(
+                                $cUsers->getNewCriterion(UsersPeer::USR_USERNAME, '%' . $query . '%', Criteria::LIKE)));
+                $cUsers->addOr($filters);
             }
             $cUsers->setLimit(20);
-            $cUsers->addAscendingOrderByColumn(AppCacheViewPeer::APP_CURRENT_USER);
-            $oDataset = AppCacheViewPeer::doSelectRS($cUsers, Propel::getDbConnection('workflow_ro'));
+            $cUsers->addAscendingOrderByColumn(UsersPeer::TABLE_NAME . "." . $conf->userNameFormatGetFirstFieldByUsersTable());
+            $oDataset = UsersPeer::doSelectRS($cUsers);
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $users[] = array("USR_UID" => $aRow['USR_UID'], "USR_FULLNAME" => $aRow['APP_CURRENT_USER']);
-                $oDataset->next();
+
+            while ($oDataset->next()) {
+                $row = $oDataset->getRow();
+                $usrFullName = $conf->usersNameFormatBySetParameters($confEnvSetting["format"], $row["USR_USERNAME"], $row["USR_FIRSTNAME"], $row["USR_LASTNAME"]);
+                $users[] = array("USR_UID" => $row["USR_UID"], "USR_FULLNAME" => $usrFullName);
             }
             break;
         case 'search_simple':
