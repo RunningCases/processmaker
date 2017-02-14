@@ -2525,6 +2525,7 @@ class workspaceTools
         $delaycriteria->addSelectColumn(AppDelayPeer::APP_UID);
         $delaycriteria->addSelectColumn(AppDelayPeer::PRO_UID);
         $delaycriteria->addSelectColumn(AppDelayPeer::APP_DEL_INDEX);
+        $delaycriteria->addSelectColumn(AppDelayPeer::APP_DISABLE_ACTION_DATE);
         $delaycriteria->addSelectColumn(AppCacheViewPeer::APP_NUMBER);
         $delaycriteria->addSelectColumn(AppCacheViewPeer::USR_UID);
         $delaycriteria->addSelectColumn(AppCacheViewPeer::APP_STATUS);
@@ -2540,6 +2541,7 @@ class workspaceTools
             $row = $rsCriteria->getRow();
             $data = $row;
             $data["DEL_INDEX"] = $row["APP_DEL_INDEX"];
+            $data["APP_RESTART_DATE"] = $row["APP_DISABLE_ACTION_DATE"];
             $listPaused = new ListPaused();
             $listPaused ->remove($row["APP_UID"],$row["APP_DEL_INDEX"],$data);
             $listPaused->setDeleted(false);

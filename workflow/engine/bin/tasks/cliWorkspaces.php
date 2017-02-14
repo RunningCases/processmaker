@@ -848,21 +848,21 @@ function run_check_workspace_disabled_code($args, $opts)
 }
 
 function migrate_new_cases_lists($command, $args, $opts) {
-  G::LoadSystem('inputfilter');
-  $filter = new InputFilter();
-  $opts = $filter->xssFilterHard($opts);
-  $args = $filter->xssFilterHard($args);
-  $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
-  $workspaces = get_workspaces_from_args($args);
-  foreach ($workspaces as $workspace) {
-    print_r("Upgrading database in " . pakeColor::colorize($workspace->name, "INFO") . "\n");
-    try {
-        $workspace->migrateList($workspace->name, true, $lang);
-        echo "> List tables are done\n";
-    } catch (Exception $e) {
-      G::outRes( "> Error: ".CLI::error($e->getMessage()) . "\n" );
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
+    $opts = $filter->xssFilterHard($opts);
+    $args = $filter->xssFilterHard($args);
+    $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
+    $workspaces = get_workspaces_from_args($args);
+    foreach ($workspaces as $workspace) {
+        print_r("Upgrading database in " . pakeColor::colorize($workspace->name, "INFO") . "\n");
+        try {
+            $workspace->migrateList($workspace->name, true, $lang);
+            echo "> List tables are done\n";
+        } catch (Exception $e) {
+            G::outRes( "> Error: ".CLI::error($e->getMessage()) . "\n" );
+        }
     }
-  }
 }
 
 function migrate_counters($command, $args) {
