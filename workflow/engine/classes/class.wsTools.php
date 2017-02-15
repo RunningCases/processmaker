@@ -277,6 +277,9 @@ class workspaceTools
             $this->resetDBDiff['DB_USER'] = $dbName;
             $value = $dbName;
         }
+        if (array_search($key, array('DB_PASS', 'DB_RBAC_PASS', 'DB_REPORT_PASS')) !== false && !empty($this->dbGrantUserPassword)) {
+            $value = $this->dbGrantUserPassword;
+        }
         return $matches[1] . $value . $matches[4];
     }
 
@@ -305,6 +308,7 @@ class workspaceTools
         $this->unify = $unify;
         if ($resetDBNames) {
             $this->dbGrantUser = uniqid('wf_');
+            $this->dbGrantUserPassword = G::generate_password(12, "luns", ".");
         }
 
 
@@ -946,7 +950,7 @@ class workspaceTools
                 }
             }
         }
-
+        $workspaceSchema = $this->getSchema($rbac);
         $changes = System::compareSchema($workspaceSchema, $schema);
 
         $changed = (count($changes['tablesToAdd']) > 0 || count($changes['tablesToAlter']) > 0 || count($changes['tablesWithNewIndex']) > 0 || count($changes['tablesToAlterIndex']) > 0);
@@ -1349,16 +1353,12 @@ class workspaceTools
             throw new Exception("Unable to retrieve users: " . mysql_error());
         }
         $users = mysql_num_rows($result);
-        if ($users != 0) {
-            $result = mysql_query("DROP USER '$username'@'$hostname'");
-            if ($result === false) {
-                throw new Exception("Unable to drop user: " . mysql_error());
-            }
-        }
+        if ($users === 0) {
         CLI::logging("Creating user $username for $hostname\n");
-        $result = mysql_query("CREATE USER '$username'@'$hostname' IDENTIFIED BY '$password'");
-        if ($result === false) {
-            throw new Exception("Unable to create user $username: " . mysql_error());
+            $result = mysql_query("CREATE USER '$username'@'$hostname' IDENTIFIED BY '$password'");
+            if ($result === false) {
+                throw new Exception("Unable to create user $username: " . mysql_error());
+            }
         }
         $result = mysql_query("GRANT ALL ON $database.* TO '$username'@'$hostname'");
         if ($result === false) {
@@ -1752,8 +1752,8 @@ class workspaceTools
                     CLI::logging("+> Restoring database {$db->name} to $dbName\n");
                     $versionBackupEngine = (isset($metadata->backupEngineVersion)) ? $metadata->backupEngineVersion : 1;
                     $workspace->executeSQLScript($dbName, "$tempDirectory/{$db->name}.sql", $aParameters, $versionBackupEngine);
-                    $workspace->createDBUser($dbUser, $db->pass, "localhost", $dbName);
-                    $workspace->createDBUser($dbUser, $db->pass, "%", $dbName);
+                    $workspace->createDBUser($dbUser, ($workspace->dbGrantUserPassword != '' ? $workspace->dbGrantUserPassword : $db->pass), "localhost", $dbName);
+                    $workspace->createDBUser($dbUser, ($workspace->dbGrantUserPassword != '' ? $workspace->dbGrantUserPassword : $db->pass), "%", $dbName);
                 }
             }
 
@@ -2524,6 +2524,7 @@ class workspaceTools
         $delaycriteria->addSelectColumn(AppDelayPeer::APP_UID);
         $delaycriteria->addSelectColumn(AppDelayPeer::PRO_UID);
         $delaycriteria->addSelectColumn(AppDelayPeer::APP_DEL_INDEX);
+        $delaycriteria->addSelectColumn(AppDelayPeer::APP_DISABLE_ACTION_DATE);
         $delaycriteria->addSelectColumn(AppCacheViewPeer::APP_NUMBER);
         $delaycriteria->addSelectColumn(AppCacheViewPeer::USR_UID);
         $delaycriteria->addSelectColumn(AppCacheViewPeer::APP_STATUS);
@@ -2539,6 +2540,7 @@ class workspaceTools
             $row = $rsCriteria->getRow();
             $data = $row;
             $data["DEL_INDEX"] = $row["APP_DEL_INDEX"];
+            $data["APP_RESTART_DATE"] = $row["APP_DISABLE_ACTION_DATE"];
             $listPaused = new ListPaused();
             $listPaused ->remove($row["APP_UID"],$row["APP_DEL_INDEX"],$data);
             $listPaused->setDeleted(false);

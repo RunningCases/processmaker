@@ -2949,6 +2949,7 @@ class Bootstrap
         $registerLogger = &MonologProvider::getSingleton($channel, $fileLog);
         $registerLogger->addLog($level, $message, $context);
     }
+
     /**
      * Get the default information from the context
      *
@@ -2979,7 +2980,7 @@ class Bootstrap
     }
 
     /**
-     * Record the action of executing a php file or attempting to upload a php 
+     * Record the action of executing a php file or attempting to upload a php
      * file in server.
      * @param type $channel
      * @param type $level
@@ -2997,6 +2998,27 @@ class Bootstrap
         $context['usrUid'] = isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : '';
         $sysSys = defined("SYS_SYS") ? SYS_SYS : "Undefined";
         \Bootstrap::registerMonolog($channel, $level, $message, $context, $sysSys, 'processmaker.log');
+    }
+
+    /*
+     * Set the constant to related the Workspaces
+     *
+     * @param string $workspace
+     *
+     * @return void
+     */
+    public static function setConstantsRelatedWs($wsName = null) {
+        if (!defined('SYS_SYS') && !is_null($wsName)) {
+            //If SYS_SYS exists, is not update with $wsName
+            define('SYS_SYS', $wsName);
+        }
+        if (defined('SYS_SYS') && !defined('PATH_DATA_SITE')) {
+            define('PATH_DATA_SITE', PATH_DATA . 'sites' . PATH_SEP . SYS_SYS . PATH_SEP);
+        }
+        if (defined('PATH_DATA_SITE') && !defined('PATH_WORKSPACE')) {
+            define('PATH_WORKSPACE', PATH_DATA_SITE);
+        }
+        set_include_path(get_include_path() . PATH_SEPARATOR . PATH_DATA_SITE);
     }
 
 }
