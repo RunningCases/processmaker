@@ -86,7 +86,9 @@ class Applications
                 $sqlWhere .= " AND APPLICATION.APP_STATUS = 'TO_DO'";
                 break;
             default: //All status
-                $sqlWhere .= " AND APP_DELEGATION.DEL_LAST_INDEX = 1";
+                $sqlCount.= " LEFT JOIN APPLICATION ON (APP_DELEGATION.APP_NUMBER=APPLICATION.APP_NUMBER)";
+                $sqlWhere .= " AND ((APPLICATION.APP_STATUS_ID IN (1,2) AND APP_DELEGATION.DEL_THREAD_STATUS='OPEN') ";
+                $sqlWhere .= " OR (APPLICATION.APP_STATUS_ID IN (3,4) AND APP_DELEGATION.DEL_LAST_INDEX = 1)) ";
                 break;
         }
         $sqlJoin .= $sqlJoinUser = " LEFT JOIN USERS ON (APP_DELEGATION.USR_ID=USERS.USR_ID)";
@@ -106,7 +108,7 @@ class Applications
             $sqlCount = $sqlCount . $sqlJoinPro;
         }
         if (!empty($search)) {
-            //APP_NUMBER APP_TAS_TITLE APP_TITLE
+            //In the filter search we check in the following columns: APP_NUMBER APP_TAS_TITLE APP_TITLE
             $sqlWhere .= " AND (APPLICATION.APP_TITLE LIKE '%{$search}%' OR APPLICATION.APP_NUMBER LIKE '%{$search}%' OR TASK.TAS_TITLE LIKE '%{$search}%')";
         }
         if (!empty($dateFrom)) {
