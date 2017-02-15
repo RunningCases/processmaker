@@ -1032,47 +1032,6 @@ Ext.onReady ( function() {
         }
     };
 
-    var comboAllUsers = new Ext.form.ComboBox({
-        width         : 180,
-        boxMaxWidth   : 180,
-        editable      : false,
-        displayField  : 'USR_FULLNAME',
-        valueField    : 'USR_UID',
-        //typeAhead     : true,
-        mode          : 'local',
-        forceSelection: true,
-        triggerAction: 'all',
-
-        emptyText: _('ID_EMPTY_USERS'),
-        selectOnFocus: true,
-        //getListParent: function() {
-        //  return this.el.up('.x-menu');
-        //},
-        store         : new Ext.data.ArrayStore({
-            fields: ['USR_UID','USR_FULLNAME'],
-            data  : allUsersValues
-        }),
-        listeners:{
-            scope: this,
-            'select': function() {
-                filterProcess = comboAllUsers.value;
-
-                /*if (filterProcess==''){
-                 btnSelectAll.hide();
-                 btnUnSelectAll.hide();
-                 btnReassign.hide();
-                 }
-                 else  {
-                 btnSelectAll.show();
-                 btnUnSelectAll.show();
-                 btnReassign.show();
-                 }*/
-                storeCases.setBaseParam( 'user', filterProcess);
-                //storeCases.load({params:{user: filterProcess, start : 0 , limit : pageSize}});
-            }},
-        iconCls: 'no-icon'  //use iconCls if placing within menu to shift to right side of menu
-    });
-
     var comboCategory = new Ext.form.ComboBox({
         width           : 180,
         boxMaxWidth     : 200,
@@ -2533,7 +2492,6 @@ Ext.onReady ( function() {
     if(typeof(comboUser) != 'undefined'){
         comboUser.setValue("");
     }
-    comboAllUsers.setValue("CURRENT_USER");
 
     function reassign(){
         storeReassignCases.removeAll();

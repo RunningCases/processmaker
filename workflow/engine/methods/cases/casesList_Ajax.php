@@ -43,85 +43,51 @@ function filterUserListArray($users = array(), $filter = '')
     return $filteredUsers;
 }
 
+//Load the suggest list of users
 if ($actionAjax == "userValues") {
-    //global $oAppCache;
-    $oAppCache = new AppCacheView();
     $action = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : null;
     $query = isset( $_REQUEST['query'] ) ? $_REQUEST['query'] : null;
+
+    G::LoadClass("configuration");
+    $conf = new Configurations();
+    $confEnvSetting = $conf->getFormats();
     $users = array();
-    $users[] = array ("USR_UID" => "", "USR_FULLNAME" => G::LoadTranslation( "ID_ALL_USERS" ));
-    $users[] = array ("USR_UID" => "CURRENT_USER", "USR_FULLNAME" => G::LoadTranslation( "ID_CURRENT_USER" ));
-    $users = filterUserListArray($users, $query);
-    //now get users, just for the Search action
+    $cUsers = new Criteria('workflow');
+    $cUsers->clearSelectColumns();
+    $cUsers->addSelectColumn(UsersPeer::USR_USERNAME);
+    $cUsers->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+    $cUsers->addSelectColumn(UsersPeer::USR_LASTNAME);
     switch ($action) {
         case 'to_reassign':
-            G::LoadClass("configuration");
-            $conf = new Configurations();
-            $confEnvSetting = $conf->getFormats();
-            $cUsers = new Criteria('workflow');
-            $cUsers->clearSelectColumns();
             $cUsers->addSelectColumn(UsersPeer::USR_UID);
-            $cUsers->addSelectColumn(UsersPeer::USR_USERNAME);
-            $cUsers->addSelectColumn(UsersPeer::USR_FIRSTNAME);
-            $cUsers->addSelectColumn(UsersPeer::USR_LASTNAME);
-            $cUsers->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
-            if (!is_null($query)) {
-                $filters = $cUsers->getNewCriterion(UsersPeer::USR_FIRSTNAME, '%' . $query . '%', Criteria::LIKE)->addOr(
-                        $cUsers->getNewCriterion(UsersPeer::USR_LASTNAME, '%' . $query . '%', Criteria::LIKE)->addOr(
-                                $cUsers->getNewCriterion(UsersPeer::USR_USERNAME, '%' . $query . '%', Criteria::LIKE)));
-                $cUsers->addOr($filters);
-            }
-            $cUsers->setLimit(20);
-            $cUsers->addAscendingOrderByColumn(UsersPeer::TABLE_NAME . "." . $conf->userNameFormatGetFirstFieldByUsersTable());
-            $oDataset = UsersPeer::doSelectRS($cUsers);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-            while ($oDataset->next()) {
-                $row = $oDataset->getRow();
-                $usrFullName = $conf->usersNameFormatBySetParameters($confEnvSetting["format"], $row["USR_USERNAME"], $row["USR_FIRSTNAME"], $row["USR_LASTNAME"]);
-                $users[] = array("USR_UID" => $row["USR_UID"], "USR_FULLNAME" => $usrFullName);
-            }
             break;
         case 'search_simple':
         case 'search':
-            G::LoadClass("configuration");
-
-            $conf = new Configurations();
-
-            $confEnvSetting = $conf->getFormats();
-
-            $cUsers = new Criteria('workflow');
-            $cUsers->clearSelectColumns();
             $cUsers->addSelectColumn(UsersPeer::USR_ID);
-            $cUsers->addSelectColumn(UsersPeer::USR_USERNAME);
-            $cUsers->addSelectColumn(UsersPeer::USR_FIRSTNAME);
-            $cUsers->addSelectColumn(UsersPeer::USR_LASTNAME);
-            $cUsers->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
-
-            if (!is_null($query)) {
-                $filters = $cUsers->getNewCriterion( UsersPeer::USR_FIRSTNAME, '%'.$query.'%', Criteria::LIKE )->addOr(
-                    $cUsers->getNewCriterion( UsersPeer::USR_LASTNAME, '%'.$query.'%', Criteria::LIKE )->addOr(
-                        $cUsers->getNewCriterion( UsersPeer::USR_USERNAME, '%'.$query.'%', Criteria::LIKE )));
-                $cUsers->addOr( $filters );
-            }
-            $cUsers->setLimit(20);
-            $cUsers->addAscendingOrderByColumn(UsersPeer::TABLE_NAME . "." . $conf->userNameFormatGetFirstFieldByUsersTable());
-            $oDataset = UsersPeer::doSelectRS($cUsers);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-            while ($oDataset->next()) {
-                $row = $oDataset->getRow();
-
-                $usrFullName = $conf->usersNameFormatBySetParameters($confEnvSetting["format"], $row["USR_USERNAME"], $row["USR_FIRSTNAME"], $row["USR_LASTNAME"]);
-
-                $users[] = array("USR_ID" => $row["USR_UID"], "USR_FULLNAME" => $usrFullName);
-            }
-            break;
-        default:
-            return $users;
             break;
     }
-    //return $users;
+    $cUsers->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
+    if (!is_null($query)) {
+        $filters = $cUsers->getNewCriterion(UsersPeer::USR_FIRSTNAME, '%' . $query . '%', Criteria::LIKE)->addOr(
+            $cUsers->getNewCriterion(UsersPeer::USR_LASTNAME, '%' . $query . '%', Criteria::LIKE)->addOr(
+            $cUsers->getNewCriterion(UsersPeer::USR_USERNAME, '%' . $query . '%', Criteria::LIKE)));
+            $cUsers->addOr($filters);
+    }
+    $cUsers->setLimit(20);
+    $cUsers->addAscendingOrderByColumn(UsersPeer::TABLE_NAME . "." . $conf->userNameFormatGetFirstFieldByUsersTable());
+    $oDataset = UsersPeer::doSelectRS($cUsers);
+    $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+    while ($oDataset->next()) {
+        $row = $oDataset->getRow();
+        $usrFullName = $conf->usersNameFormatBySetParameters($confEnvSetting["format"], $row["USR_USERNAME"], $row["USR_FIRSTNAME"], $row["USR_LASTNAME"]);
+        if ($action === 'search') {
+            //Only for the advanced search we used the USR_ID column
+            $users[] = array("USR_UID" => $row["USR_ID"], "USR_FULLNAME" => $usrFullName);
+        } else {
+            $users[] = array("USR_UID" => $row["USR_UID"], "USR_FULLNAME" => $usrFullName);
+        }
+    }
     return print G::json_encode($users);
 }
 
