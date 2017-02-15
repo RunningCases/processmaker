@@ -48,7 +48,7 @@ class Dashboard extends BaseDashboard
                 $this->setUser($data['USR_UID']);
             }
 
-            G::LoadSystem('inputfilter');
+
             $filter = new InputFilter();
             if (isset($data['DAS_TITLE'])) {
                 $data['DAS_TITLE'] = $filter ->validateInput($data['DAS_TITLE'], "string");

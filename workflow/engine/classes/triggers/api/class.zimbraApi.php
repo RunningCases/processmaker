@@ -807,7 +807,7 @@ class Zimbra
     protected function message($message)
     {
         if ($this->debug) {
-            G::LoadSystem('inputfilter');
+
             $filter = new InputFilter();
             $message = $filter->xssFilterHard($message);
             echo $message;
@@ -830,7 +830,7 @@ class Zimbra
      */
     protected function soapRequest($body, $header = false, $connecting = false)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
 
         if (!$connecting && !$this->_connected) {

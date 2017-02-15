@@ -29,7 +29,7 @@
  * @Date 16/05/2008
  * @LastModification none
  */
-//G::LoadThirdParty( 'pear/json', 'class.json' );
+
 try {
     //$oJSON = new Services_JSON();
     $stdObj = Bootstrap::json_decode( stripslashes( $_POST['data'] ) );

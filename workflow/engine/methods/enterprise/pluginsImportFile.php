@@ -52,7 +52,7 @@ try {
         throw (new Exception($str));
     }
 
-    G::LoadThirdParty("pear/Archive","Tar");
+
     $tar = new Archive_Tar($path. $filename);
     $sFileName  = substr($filename, 0, strrpos($filename, "."));
     $sClassName = substr($filename, 0, strpos($filename, "-"));

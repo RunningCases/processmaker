@@ -576,7 +576,7 @@ try {
                             $util->setInputPath( $javaInput );
                             $util->setOutputPath( $javaOutput );
 
-                            G::LoadSystem('inputfilter');
+
                             $filter = new InputFilter();
 
                             //$content = file_get_contents ( PATH_DYNAFORM . $aOD['PRO_UID'] . PATH_SEP . $aOD['OUT_DOC_UID'] . '.jrxml' );
@@ -610,7 +610,7 @@ try {
                             $util->setInputPath( $javaInput );
                             $util->setOutputPath( $javaOutput );
 
-                            G::LoadSystem('inputfilter');
+
                             $filter = new InputFilter();
 
                             $locationFrom = PATH_DYNAFORM . $aOD['PRO_UID'] . PATH_SEP . $aOD['OUT_DOC_UID'] . '.pdf';

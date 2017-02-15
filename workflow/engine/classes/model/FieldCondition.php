@@ -132,7 +132,7 @@ class FieldCondition extends BaseFieldCondition
     public function getConditionScript ($DYN_UID)
     {
         require_once 'classes/model/Dynaform.php';
-        G::LoadSystem( 'dynaformhandler' );
+
 
         $oDynaform = DynaformPeer::retrieveByPk( $DYN_UID );
         $PRO_UID = $oDynaform->getProUid();

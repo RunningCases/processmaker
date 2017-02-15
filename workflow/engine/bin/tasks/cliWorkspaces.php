@@ -341,7 +341,7 @@ function run_info($args, $opts) {
 }
 
 function run_workspace_upgrade($args, $opts) {
-  G::LoadSystem('inputfilter');
+
   $filter = new InputFilter();
   $opts = $filter->xssFilterHard($opts);
   $args = $filter->xssFilterHard($args);
@@ -371,7 +371,7 @@ function run_workspace_upgrade($args, $opts) {
 }
 
 function run_translation_upgrade($args, $opts) {
-  G::LoadSystem('inputfilter');
+
   $filter = new InputFilter();
   $opts = $filter->xssFilterHard($opts);
   $args = $filter->xssFilterHard($args);
@@ -389,7 +389,7 @@ function run_translation_upgrade($args, $opts) {
 }
 
 function run_cacheview_upgrade($args, $opts) {
-  G::LoadSystem('inputfilter');
+
   $filter = new InputFilter();
   $opts = $filter->xssFilterHard($opts);
   $args = $filter->xssFilterHard($args);
@@ -471,7 +471,7 @@ function run_migrate_list_unassigned($args, $opts) {
  * @return void
 */
 function database_upgrade($command, $args) {
-  G::LoadSystem('inputfilter');
+
   $filter = new InputFilter();
   $command = $filter->xssFilterHard($command);
   $args = $filter->xssFilterHard($args);
@@ -730,7 +730,7 @@ function runStructureDirectories($command, $args) {
 
 function run_database_generate_self_service_by_value($args, $opts)
 {
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     $opts = $filter->xssFilterHard($opts);
     $args = $filter->xssFilterHard($args);
@@ -812,7 +812,7 @@ function verifyMigratedDataConsistency($args)
 }
 
 function run_migrate_itee_to_dummytask($args, $opts){
-  G::LoadSystem('inputfilter');
+
   $filter = new InputFilter();
   $opts = $filter->xssFilterHard($opts);
   $args = $filter->xssFilterHard($args);
@@ -944,7 +944,7 @@ function migrate_counters($command, $args) {
 }
 
 function migrate_list_unassigned($command, $args, $opts) {
-  G::LoadSystem('inputfilter');
+
   $filter = new InputFilter();
   $opts = $filter->xssFilterHard($opts);
   $args = $filter->xssFilterHard($args);
@@ -1013,7 +1013,7 @@ function migrate_content($args, $opts)
 }
 
 function run_migrate_self_service_value($args, $opts) {
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     $args = $filter->xssFilterHard($args);
     $workspaces = get_workspaces_from_args($args);

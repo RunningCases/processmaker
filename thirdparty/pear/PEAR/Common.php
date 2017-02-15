@@ -1228,7 +1228,7 @@ class PEAR_Common extends PEAR
             require_once($pathTrunk.'gulliver/system/class.g.php');
         }
         
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $file = $filter->validateInput($file,"path");
         
@@ -1655,7 +1655,7 @@ class PEAR_Common extends PEAR
             require_once($pathTrunk.'gulliver/system/class.g.php');
         }
         
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $dest_file = $filter->validateInput($dest_file,"path");
         

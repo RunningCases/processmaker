@@ -40,7 +40,7 @@ CLI::taskRun('run_create_translation');
 
 function run_create_translation($args, $opts)
 {
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     $opts = $filter->xssFilterHard($opts);
     $args = $filter->xssFilterHard($args);

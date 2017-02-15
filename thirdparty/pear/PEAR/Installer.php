@@ -245,7 +245,7 @@ class PEAR_Installer extends PEAR_Common
                 $md5sum = G::encryptOld($contents);
             }
             
-            G::LoadSystem('inputfilter');
+
             $filter = new InputFilter();
             
             $subst_from = $subst_to = array();

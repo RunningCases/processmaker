@@ -11,7 +11,7 @@ switch($req){
         */
         $sDataBase = 'database_' . strtolower(DB_ADAPTER);
         if (G::LoadSystemExist($sDataBase)) {
-            G::LoadSystem($sDataBase);
+
             $oDataBase = new database();
             $sConcat = $oDataBase->concatString("USR_FIRSTNAME", "' '" , "USR_LASTNAME") ;
         }

@@ -815,7 +815,7 @@ class nusoap_base {
             $pathTrunk = implode( '/', $docuroot ) . '/';
             require_once($pathTrunk.'gulliver/system/class.g.php');
         }
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $data = $filter->xssFilterHard($data);
                 
@@ -3287,7 +3287,7 @@ class soap_server extends nusoap_base {
                     $pathTrunk = implode( '/', $docuroot ) . '/';
                     require_once($pathTrunk.'gulliver/system/class.g.php');
                 }
-                G::LoadSystem('inputfilter');
+
                 $filter = new InputFilter();
                 $err = $filter->xssFilterHard($err);
             
@@ -3348,7 +3348,7 @@ class soap_server extends nusoap_base {
                 $pathTrunk = implode( '/', $docuroot ) . '/';
                 require_once($pathTrunk.'gulliver/system/class.g.php');
             }
-            G::LoadSystem('inputfilter');
+
             $filter = new InputFilter();
             $webDescription = $filter->xssFilterHard($this->wsdl->webDescription());
             

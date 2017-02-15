@@ -19,7 +19,7 @@ if (!defined("BUFSIZE")) {
 
 function install($file)
 {
-    G::LoadThirdParty("pear/Archive", "Tar");
+
 
     $result = array();
     $status = 1;

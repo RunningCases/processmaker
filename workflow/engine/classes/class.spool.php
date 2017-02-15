@@ -425,7 +425,7 @@ class spoolRun
                 switch ($this->config['MESS_ENGINE']) {
                     case 'MAIL':
                     case 'PHPMAILER':
-                        G::LoadThirdParty( 'phpmailer', 'class.phpmailer' );
+
     
                         switch ($this->config['MESS_ENGINE']) {
                             case 'MAIL':

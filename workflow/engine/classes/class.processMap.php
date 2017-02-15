@@ -3102,7 +3102,7 @@ class processMap
      */
     public function listNoProcessesUser($sProcessUID)
     {
-        G::LoadSystem('rbac');
+
         $memcache = & PMmemcached::getSingleton(SYS_SYS);
 
         $oCriteria = new Criteria('workflow');
@@ -5796,7 +5796,7 @@ class processMap
      */
     public function listExtNoProcessesUser($sProcessUID)
     {
-        G::LoadSystem('rbac');
+
         $memcache = & PMmemcached::getSingleton(SYS_SYS);
 
         $oCriteria = new Criteria('workflow');

@@ -257,7 +257,7 @@ try {
         define('TIME_ZONE', ini_get('date.timezone'));
 
         //Enable Monolog
-        Bootstrap::LoadSystem( 'monologProvider' );
+
 
         //Processing
         eprintln('Processing workspace: ' . $workspace, 'green');

@@ -30,13 +30,13 @@ class Upgrade
 
     public function install()
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         //echo "Starting core installation...\n";
         $start = microtime(1);
         $filename = $this->addon->getDownloadFilename();
         $time = microtime(1);
-        G::LoadThirdParty( 'pear/Archive','Tar');
+
         $archive = new Archive_Tar ($filename);
         //printf("Time to open archive: %f\n", microtime(1) - $time);
         $time = microtime(1);

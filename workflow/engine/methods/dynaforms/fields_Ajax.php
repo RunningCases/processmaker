@@ -46,7 +46,7 @@ if (($RBAC_Response = $RBAC->userCanAccess( "PM_FACTORY" )) != 1) {
 if (isset( $_SESSION['CURRENT_PAGE_INITILIZATION'] )) {
     eval( $_SESSION['CURRENT_PAGE_INITILIZATION'] );
 }
-    //G::LoadSystem('json');
+
 //require_once (PATH_THIRDPARTY . 'pear/json/class.json.php');
 //$json = new Services_JSON();
 $G_FORM = new form( G::getUIDName( urlDecode( $_POST['form'] ) ) );

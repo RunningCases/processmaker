@@ -1,5 +1,5 @@
 <?php
-G::LoadSystem('inputfilter');
+
 $filter = new InputFilter();
 $_GET = $filter->xssFilterHard($_GET);
 $_POST = $filter->xssFilterHard($_POST);
@@ -280,7 +280,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
                 */
                 $sDataBase = 'database_' . strtolower( DB_ADAPTER );
                 if (G::LoadSystemExist( $sDataBase )) {
-                    G::LoadSystem( $sDataBase );
+
                     $oDataBase = new database();
                     $sConcat = $oDataBase->concatString( "U.USR_LASTNAME", "' '", "U.USR_FIRSTNAME" );
                 }

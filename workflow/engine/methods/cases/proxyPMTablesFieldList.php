@@ -502,7 +502,7 @@ function fieldReset($translation)
 
 function fieldComplete($translation)
 {
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     global $action;
 
@@ -567,7 +567,7 @@ function fieldComplete($translation)
 
 function fieldLabelReset($translation)
 {
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     global $action;
 
@@ -606,7 +606,7 @@ function fieldLabelReset($translation)
 
 function fieldSave()
 {
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     global $conf;
     global $action;

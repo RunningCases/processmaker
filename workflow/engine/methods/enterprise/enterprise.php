@@ -295,29 +295,6 @@ class enterprisePlugin extends PMPlugin
         }
     }
 
-    /*
-    public function tableIsInstalled()
-    {
-        G::LoadSystem("database_" . DB_ADAPTER);
-        $database = new database(DB_ADAPTER, DB_HOST, DB_USER, DB_PASS, DB_NAME);
-
-        $cnn = Propel::getConnection($this->database);
-        $stmt = $cnn->createStatement();
-
-        $sw = true;
-
-        foreach ($this->table as $key => $table) {
-            $rs = $stmt->executeQuery($database->generateShowTablesLikeSQL($table), ResultSet::FETCHMODE_ASSOC);
-
-            if ($rs->getRecordCount() == 0) {
-                $sw = false;
-            }
-        }
-
-        return ($sw);
-    }
-    */
-
     public function sqlExecute($sqlFile)
     {
         $file = fopen($sqlFile, "r");

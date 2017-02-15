@@ -163,7 +163,7 @@ if (! (isset( $fields->Fields['XMLNODE_NAME'] ) && ($fields->Fields['XMLNODE_NAM
         $tableExists = true;
         $sDataBase = 'database_' . strtolower( DB_ADAPTER );
         if (G::LoadSystemExist( $sDataBase )) {
-            G::LoadSystem( $sDataBase );
+
             $oDataBase = new database();
             $dataBase = $Fields['PME_SQLCONNECTION'];
             if ($Fields['PME_SQLCONNECTION'] == 'workflow') {

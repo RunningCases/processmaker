@@ -354,7 +354,7 @@ class Step extends BaseStep
     public function loadInfoAssigDynaform ($sproUid, $sObjUID)
     {
         require_once ("classes/model/DynaformPeer.php");
-        G::LoadSystem( 'dynaformhandler' );
+
 
         $oC = new Criteria( 'workflow' );
         $oC->add( DynaformPeer::DYN_UID, $sObjUID );
@@ -452,7 +452,7 @@ class Step extends BaseStep
     public function loadInfoAssigConnecctionDB ($sproUid, $sdbsUid)
     {
         require_once ("classes/model/DynaformPeer.php");
-        G::LoadSystem( 'dynaformhandler' );
+
         $swDynaform = true;
         $swTriggers = true;
         //we are looking for triggers if there is at least one db connection
@@ -528,7 +528,7 @@ class Step extends BaseStep
     {
 
         require_once ("classes/model/DynaformPeer.php");
-        G::LoadSystem( 'dynaformhandler' );
+
         $uidsGrids = array ();
         $oC = new Criteria( 'workflow' );
         $oC->add( DynaformPeer::DYN_UID, $sObjUID );

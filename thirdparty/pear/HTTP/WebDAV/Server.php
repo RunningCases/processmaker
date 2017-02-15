@@ -678,7 +678,7 @@ class HTTP_WebDAV_Server
                 $pathTrunk = implode( '/', $docuroot ) . '/';
                 require_once($pathTrunk.'gulliver/system/class.g.php');
             }
-            G::LoadSystem('inputfilter');
+
             $filter = new InputFilter();
             $ns_defs = $filter->xssFilterHard($ns_defs);
 
@@ -831,7 +831,7 @@ class HTTP_WebDAV_Server
                 $pathTrunk = implode( '/', $docuroot ) . '/';
                 require_once($pathTrunk.'gulliver/system/class.g.php');
             }
-            G::LoadSystem('inputfilter');
+
             $filter = new InputFilter();
             $_mergePathes = $filter->xssFilterHard($this->_urlencode($this->_mergePathes($_SERVER["SCRIPT_NAME"], $this->path)));
 
@@ -1167,7 +1167,7 @@ class HTTP_WebDAV_Server
                         $pathTrunk = implode( '/', $docuroot ) . '/';
                         require_once($pathTrunk.'gulliver/system/class.g.php');
                     }
-                    G::LoadSystem('inputfilter');
+
                     $filter = new InputFilter();
                     $val = $filter->xssFilterHard($val);
                     
@@ -1226,7 +1226,7 @@ class HTTP_WebDAV_Server
                         $pathTrunk = implode( '/', $docuroot ) . '/';
                         require_once($pathTrunk.'gulliver/system/class.g.php');
                     }
-                    G::LoadSystem('inputfilter');
+
                     $filter = new InputFilter();
                     $key = $filter->xssFilterHard($key);
             
@@ -1439,7 +1439,7 @@ class HTTP_WebDAV_Server
                 $pathTrunk = implode( '/', $docuroot ) . '/';
                 require_once($pathTrunk.'gulliver/system/class.g.php');
             }
-            G::LoadSystem('inputfilter');
+
             $filter = new InputFilter();
             $options = $filter->xssFilterHard($options);
             $timeout = $filter->xssFilterHard($timeout);

@@ -39,7 +39,7 @@ try {
       } */
     //$oJSON = new Services_JSON();
 
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     $_GET = $filter->xssFilterHard($_GET);
     $_POST = $filter->xssFilterHard($_POST);
@@ -186,7 +186,7 @@ try {
             include (PATH_METHODS . 'processes/processes_webEntryValidate.php');
             break;
         case 'webEntry_delete':
-            G::LoadSystem('inputfilter');
+
             $filter = new InputFilter();
             $form = $_REQUEST;
             $filePath = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "public" . PATH_SEP . $form['PRO_UID'] . PATH_SEP . $form['FILENAME'];
@@ -639,7 +639,7 @@ try {
             break;
         case 'loginPML':
 
-            //G::LoadThirdParty( 'pear/json', 'class.json' );
+
             $oProcesses = new Processes();
             try {
                 if ($oProcesses->ws_open($oData->u, $oData->p) == 1) {

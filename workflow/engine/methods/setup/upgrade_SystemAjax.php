@@ -162,7 +162,7 @@ function processSchemaFile ()
     global $DB_NAME;
 
     try {
-        G::LoadSystem( 'database_' . strtolower( $DB_ADAPTER ) );
+
 
         $aOldSchema = array ();
         $oDataBase = new database( $DB_ADAPTER, $DB_HOST, $DB_USER, $DB_PASS, $DB_NAME );

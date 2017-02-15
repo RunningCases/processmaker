@@ -92,7 +92,7 @@ function print_endpoint_names()
         $pathTrunk = implode( '/', $docuroot ) . '/';
         require_once($pathTrunk.'gulliver/system/class.g.php');
     }
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     $currTest = $filter->xssFilterHard($iop->currentTest);
     
@@ -163,7 +163,7 @@ foreach ($args[0] as $arg) {
                 $pathTrunk = implode( '/', $docuroot ) . '/';
                 require_once($pathTrunk.'gulliver/system/class.g.php');
             }
-            G::LoadSystem('inputfilter');
+
             $filter = new InputFilter();
             $arg[1] = $filter->xssFilterHard($arg[1]);
     

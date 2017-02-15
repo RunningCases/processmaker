@@ -96,7 +96,7 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
             require_once($pathTrunk.'gulliver/system/class.g.php');
         }
         
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
 
         $sFile=$filter->validateInput($file,'path');
@@ -209,7 +209,7 @@ class HTMLPurifier_DefinitionCache_Serializer extends HTMLPurifier_DefinitionCac
             $pathTrunk = implode('/', $docuroot) . '/';
             require_once($pathTrunk . 'gulliver/system/class.g.php');
         }
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
 
         if(is_file($file)) {

@@ -281,6 +281,12 @@ define( 'PML_WSDL_URL', PML_SERVER . '/syspmLibrary/en/green/services/wsdl' );
 define( 'PML_UPLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/uploadProcess' );
 define( 'PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/download' );
 
+//Call Gulliver Classes
+
+
+//Loading the autoloader libraries feature
+Bootstrap::registerSystemClasses();
+
 $config = Bootstrap::getSystemConfiguration();
 
 // starting session
@@ -507,10 +513,10 @@ if (defined( 'PATH_DATA' ) && file_exists( PATH_DATA )) {
 $pathFile = PATH_THIRDPARTY . '/pear/PEAR.php';
 require_once $pathFile;
 
-//Bootstrap::LoadSystem( 'pmException' );
+
 
 // Create headPublisher singleton
-//Bootstrap::LoadSystem( 'headPublisher' );
+
 $oHeadPublisher = & headPublisher::getSingleton();
 
 // Installer, redirect to install if we don't have a valid shared data folder
@@ -819,7 +825,7 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
 
     //erik: verify if it is a Controller Class or httpProxyController Class
     if (is_file( PATH_CONTROLLERS . SYS_COLLECTION . '.php' )) {
-        Bootstrap::LoadSystem( 'controller' );
+
         $pathFile = PATH_CONTROLLERS . SYS_COLLECTION . '.php';
         require_once $pathFile;
         $controllerClass = SYS_COLLECTION;
@@ -889,13 +895,13 @@ if (! $avoidChangedWorkspaceValidation && isset( $_SESSION['WORKSPACE'] ) && $_S
 }
 
 // enable rbac
-Bootstrap::LoadSystem( 'rbac' );
+
 $RBAC = &RBAC::getSingleton( PATH_DATA, session_id() );
 $RBAC->sSystem = 'PROCESSMAKER';
 
 //Enable Monolog
 Bootstrap::initVendors();
-Bootstrap::LoadSystem( 'monologProvider' );
+
 // define and send Headers for all pages
 if (! defined( 'EXECUTE_BY_CRON' )) {
     header( "Expires: " . gmdate( "D, d M Y H:i:s", mktime( 0, 0, 0, date( 'm' ), date( 'd' ) - 1, date( 'Y' ) ) ) . " GMT" );

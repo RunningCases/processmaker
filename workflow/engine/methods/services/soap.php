@@ -120,7 +120,7 @@ function getCaseInfo ($params)
 
 function SendVariables ($params)
 {
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     ifSessionExpiredBreakThis( $params->sessionId );
     $x = ifPermission( $params->sessionId, 'PM_CASES' );

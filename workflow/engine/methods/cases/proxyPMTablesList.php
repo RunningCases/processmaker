@@ -1,6 +1,6 @@
 <?php
 
-G::LoadSystem('inputfilter');
+
 $filter = new InputFilter();
 $_SESSION['USER_LOGGED'] = $filter->xssFilterHard($_SESSION['USER_LOGGED']);
 

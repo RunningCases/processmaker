@@ -2037,7 +2037,7 @@ function get_DirDB($workspace) {
   }
 
   require_once ($dbFile);
-
+  require_once ("propel/Propel.php");
 
   Propel::init(PATH_CORE . "config/databases.php");
   $configuration = Propel::getConfiguration();

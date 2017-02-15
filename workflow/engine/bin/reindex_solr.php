@@ -150,8 +150,8 @@ if (! defined ('SYS_SYS')) {
       define ('TIME_ZONE', $config ['time_zone']);
 
       date_default_timezone_set (TIME_ZONE);
-      
-      G::LoadSystem('inputfilter');
+
+
       $filter = new InputFilter();
       $TIME_ZONE = $filter->xssFilterHard(TIME_ZONE);
       $MEMCACHED_ENABLED = $filter->xssFilterHard(MEMCACHED_ENABLED);

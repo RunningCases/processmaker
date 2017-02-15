@@ -23,7 +23,7 @@
  *
  * @package workflow-engine-bin-tasks
  */
-G::LoadSystem("g");
+
 
 CLI::taskName('flush-cache');
 CLI::taskDescription(<<<EOT

@@ -30,7 +30,7 @@
  * @Param  var action from POST request
  */
 
-G::LoadSystem('inputfilter');
+
 $filter = new InputFilter();
 $_POST = $filter->xssFilterHard($_POST);
 
@@ -338,7 +338,7 @@ switch ($action) {
         }
         break;
     case 'showEncodes':
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $engine = $_POST['engine'];
 

@@ -143,7 +143,7 @@ class DynaForm
 
         if ($dataDyna['DYN_TYPE'] == 'grid') {
             $formsDepend = array();
-            \G::LoadSystem( 'dynaformhandler' );
+
 
             $oCriteria = new \Criteria( 'workflow' );
             $oCriteria->addSelectColumn( \DynaformPeer::DYN_UID );

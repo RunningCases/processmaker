@@ -1,7 +1,7 @@
 <?php
 
 ini_set("max_execution_time", 0);
-G::LoadSystem('inputfilter');
+
 $filter = new InputFilter();
 $_FILES = $filter->xssFilterHard($_FILES);
 $_SESSION['USER_LOGGED'] = $filter->xssFilterHard($_SESSION['USER_LOGGED']);

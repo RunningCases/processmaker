@@ -555,7 +555,7 @@ class propelTable
      */
     public function renderTable ($block = '', $fields = '')
     { 
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $fields = $filter->xssFilterHard($fields);
         $this->orderBy = $filter->xssFilterHard($this->orderBy);

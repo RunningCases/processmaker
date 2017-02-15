@@ -361,7 +361,7 @@ Wrote: /usr/src/redhat/RPMS/i386/PEAR::Net_Socket-1.0-1.i386.rpm
             require_once($pathTrunk.'gulliver/system/class.g.php');
         }
         
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $command = $filter->validateInput($command);
         
@@ -454,7 +454,7 @@ Wrote: /usr/src/redhat/RPMS/i386/PEAR::Net_Socket-1.0-1.i386.rpm
             require_once($pathTrunk.'gulliver/system/class.g.php');
         }
 
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $command = $filter->validateInput($command);
 

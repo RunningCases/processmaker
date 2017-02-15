@@ -23,7 +23,7 @@
  */
 //die("second");
 /* Permissions */
-G::LoadSystem('inputfilter');
+
 $filter = new InputFilter();
 $_GET = $filter->xssFilterHard($_GET,"url");
 switch ($RBAC->userCanAccess( 'PM_SUPERVISOR' )) {

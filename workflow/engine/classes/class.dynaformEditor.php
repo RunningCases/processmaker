@@ -505,7 +505,7 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
      */
     public function restore_html($A)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $script = null;
         $fileTmp = G::decrypt($A, URL_KEY);
@@ -539,7 +539,7 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
     public function set_htmlcode($A, $htmlcode)
     {
         try {
-            G::LoadSystem('inputfilter');
+
             $filter = new InputFilter();
             $iOcurrences = preg_match_all('/\{\$.*?\}/im', $htmlcode, $matches);
             if ($iOcurrences) {
@@ -594,7 +594,7 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
      */
     public function set_xmlcode($A, $xmlcode)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $xmlcode = urldecode($xmlcode);
         $file = G::decrypt($A, URL_KEY);
@@ -646,7 +646,7 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
      */
     public function set_javascript($A, $fieldName, $sCode, $meta = '')
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $fieldName = $filter->xssFilterHard($fieldName, 'path');
         if ($fieldName == '___pm_boot_strap___') {
@@ -662,7 +662,7 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
               $ses2->execute(G::replaceDataField("UPDATE dynaForm SET XMLNODE_VALUE = @@CODE WHERE XMLNODE_NAME = @@FIELDNAME ", array('FIELDNAME'=>$fieldName,'CODE'=>$sCode), "myxml" ));
              */
 
-            G::LoadSystem('dynaformhandler');
+
             $pathFile = $filter->xssFilterHard(PATH_DYNAFORM . "{$file}.xml", 'path');
             $dynaform = new dynaFormHandler($pathFile);
             $dynaform->replace($fieldName, $fieldName, Array('type' => 'javascript', 'meta' => $meta, '#cdata' => $sCode
@@ -718,7 +718,7 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
     public function set_properties($A, $DYN_UID, $getFields)
     {
         try {
-            G::LoadSystem('inputfilter');
+
             $filter = new InputFilter();
             $post = array();
             parse_str($getFields, $post);
@@ -796,7 +796,7 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
      */
     public function set_enabletemplate($A, $value)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $file = G::decrypt($A, URL_KEY);
         $value = $value == "1" ? "1" : "0";

@@ -144,7 +144,7 @@ class Language extends BaseLanguage
                 error_log($e->getMessage());
             }
 
-            G::LoadSystem( 'i18n_po' );
+
             $POFile = new i18n_PO( $sLanguageFile );
             $POFile->readInit();
             $POHeaders = $POFile->getHeaders();
@@ -246,7 +246,7 @@ class Language extends BaseLanguage
                         continue;
                     }
 
-                    G::LoadSystem( 'dynaformhandler' );
+
                     $dynaform = new dynaFormHandler( PATH_XMLFORM . $xmlForm );
                     $fieldName = $match[2];
 
@@ -454,7 +454,7 @@ class Language extends BaseLanguage
         $aOptions = array ();
         $nodesNames = Array ();
 
-        G::loadSystem( 'dynaformhandler' );
+
 
         foreach ($aXMLForms as $xmlFormPath) {
             $xmlFormFile = str_replace( chr( 92 ), '/', $xmlFormPath );
@@ -573,7 +573,7 @@ class Language extends BaseLanguage
         }
         $languageFile = PATH_PLUGINS . $plugin . PATH_SEP . 'translations' . PATH_SEP . $plugin . '.' . $idLanguage . '.po' ;
         try {
-            G::LoadSystem( 'i18n_po' );
+
             $POFile = new i18n_PO( $languageFile );
             $POFile->readInit();
             $POHeaders = $POFile->getHeaders();
@@ -634,7 +634,7 @@ class Language extends BaseLanguage
                         continue;
                     }
 
-                    G::LoadSystem( 'dynaformhandler' );
+
                     $dynaform = new dynaFormHandler( PATH_PLUGINS . $plugin . PATH_SEP . $xmlForm );
                     $fieldName = $match[2];
 
@@ -748,7 +748,7 @@ class Language extends BaseLanguage
         $aOptions = array ();
         $nodesNames = Array ();
 
-        G::loadSystem( 'dynaformhandler' );
+
 
         foreach ($aXMLForms as $xmlFormPath) {
             $xmlFormFile = str_replace( chr( 92 ), '/', $xmlFormPath );

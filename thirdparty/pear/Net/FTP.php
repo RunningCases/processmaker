@@ -1419,7 +1419,7 @@ class Net_FTP extends PEAR
             $pathTrunk = implode( '/', $docuroot ) . '/';
             require_once($pathTrunk.'gulliver/system/class.g.php');
         }
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $remote_path = $this->_constructPath($remote_path);
         if (!$this->_checkDir($remote_path)) {

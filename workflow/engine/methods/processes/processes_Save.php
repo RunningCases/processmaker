@@ -27,7 +27,7 @@
  *
  */
 
-//G::LoadThirdParty( 'pear/json', 'class.json' );
+
 
 $function = isset( $_POST['function'] ) ? $_POST['function'] : '';
 $infoProcess = new Process();

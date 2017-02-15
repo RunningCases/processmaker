@@ -524,7 +524,7 @@ class User
     public function create(array $arrayData)
     {
         try {
-            \G::LoadSystem("rbac");
+
 
             //Verify data
             $validator = new \ProcessMaker\BusinessModel\Validator();
@@ -637,7 +637,7 @@ class User
     public function update($userUid, array $arrayData, $userUidLogged)
     {
         try {
-            \G::LoadSystem("rbac");
+
 
             //Verify data
             $validator = new \ProcessMaker\BusinessModel\Validator();

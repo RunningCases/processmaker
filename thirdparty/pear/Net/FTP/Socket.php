@@ -644,7 +644,7 @@ function ftp_get(&$control, $local, $remote, $mode, $resume = 0, $wr='w')
         $pathTrunk = implode('/', $docuroot) . '/';
         require_once($pathTrunk . 'gulliver/system/class.g.php');
     }
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     if (!is_resource($control) || !is_writable(dirname($local)) ||
             !is_integer($mode) || !is_integer($resume)) {

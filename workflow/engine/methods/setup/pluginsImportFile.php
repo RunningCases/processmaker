@@ -47,7 +47,7 @@ try {
         $path = PATH_DOCUMENT . 'input' . PATH_SEP;
         if (strpos($filename, 'enterprise') !== false) {
 
-            G::LoadThirdParty( 'pear/Archive', 'Tar' );
+
             $tar = new Archive_Tar( $path . $filename );
             $sFileName = substr( $filename, 0, strrpos( $filename, '.' ) );
             $sClassName = substr( $filename, 0, strpos( $filename, '-' ) );
@@ -121,7 +121,7 @@ try {
         $path = PATH_DOCUMENT . 'input' . PATH_SEP;
         if (strpos($filename, 'plugins-') !== false) {
 
-            G::LoadThirdParty( 'pear/Archive', 'Tar' );
+
             $tar = new Archive_Tar( $path . $filename );
             $sFileName = substr( $filename, 0, strrpos( $filename, '.' ) );
             $sClassName = substr( $filename, 0, strpos( $filename, '-' ) );
@@ -196,7 +196,7 @@ try {
         ) ) ));
     }
 
-    G::LoadThirdParty( 'pear/Archive', 'Tar' );
+
     $tar = new Archive_Tar( $path . $filename );
     $sFileName = substr( $filename, 0, strrpos( $filename, '.' ) );
     $sClassName = substr( $filename, 0, strpos( $filename, '-' ) );

@@ -279,7 +279,7 @@ class Dynaform extends BaseDynaform
         // For a description of a table
         $sDataBase = 'database_' . strtolower( DB_ADAPTER );
         if (G::LoadSystemExist( $sDataBase )) {
-            G::LoadSystem( $sDataBase );
+
             $oDataBase = new database();
             $sql = $oDataBase->getTableDescription( $addTabName );
         } else {

@@ -8,7 +8,7 @@ if (!isset($_SESSION['USER_LOGGED'])) {
     die();
 }
 
-G::LoadSystem('inputfilter');
+
 $filter = new InputFilter();
 $_GET = $filter->xssFilterHard($_GET);
 $_REQUEST = $filter->xssFilterHard($_REQUEST);

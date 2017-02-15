@@ -314,7 +314,7 @@ class Translation extends BaseTranslation
             $translation[$key] = $row;
         }
 
-        G::LoadSystem( 'i18n_po' );
+
         $POFile = new i18n_PO( $languageFile );
         $POFile->readInit();
         while ($rowTranslation = $POFile->getTranslation()) {
@@ -501,7 +501,7 @@ class Translation extends BaseTranslation
         return $this->sortByColumn($environments, 'LANGUAGE');
 
         /*
-        G::LoadSystem('dbMaintenance');
+
         $o = new DataBaseMaintenance('localhost', 'root', 'atopml2005');
         $o->connect('wf_os');
         $r = $o->query('select * from ISO_COUNTRY');

@@ -130,8 +130,8 @@ if (! defined ('SYS_SYS')) {
 
       include_once (PATH_HOME . 'engine' . PATH_SEP . 'config' . PATH_SEP . 'paths_installed.php');
       include_once (PATH_HOME . 'engine' . PATH_SEP . 'config' . PATH_SEP . 'paths.php');
-      
-      G::LoadSystem('inputfilter');
+
+
       $filter = new InputFilter();
       $TIME_ZONE = $filter->xssFilterHard(TIME_ZONE);
       $MEMCACHED_ENABLED = $filter->xssFilterHard(MEMCACHED_ENABLED);

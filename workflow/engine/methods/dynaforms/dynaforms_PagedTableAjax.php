@@ -39,7 +39,7 @@ function pagedTable_BeforeQuery (&$ntable)
 }
 require_once (PATH_GULLIVER_HOME . 'methods/pagedTableAjax.php');
 die();
-G::LoadSystem( 'pagedTable' );
+
 G::LoadInclude( 'ajax' );
 
 $id = get_ajax_value( 'ptID' );

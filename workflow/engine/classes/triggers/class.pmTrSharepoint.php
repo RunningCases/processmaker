@@ -3,7 +3,7 @@
 /**
  * class.pmTrSharepoint.php
  */
-G::LoadSystem("soapNtlm");
+
 
 class wscaller
 {

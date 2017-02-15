@@ -291,7 +291,7 @@ class System
      */
     public function verifyFileForUpgrade ()
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $upgradeFilename = isset( $_FILES['form']['name']['UPGRADE_FILENAME'] ) ? $_FILES['form']['name']['UPGRADE_FILENAME'] : '';
         $tempFilename = isset( $_FILES['form']['tmp_name']['UPGRADE_FILENAME'] ) ? $_FILES['form']['tmp_name']['UPGRADE_FILENAME'] : '';
@@ -626,7 +626,7 @@ class System
             }
         }
 
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
 
         //clean up xmlform folders
@@ -744,7 +744,7 @@ class System
      */
     public static function getPluginSchema ($pluginName)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $pathFile = $filter->xssFilterHard(PATH_PLUGINS . $pluginName . "/config/schema.xml", 'path');
         if (file_exists( $pathFile )) {

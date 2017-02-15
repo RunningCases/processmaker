@@ -74,7 +74,7 @@ class Light extends Api
              */
             global $RBAC;
             if (!isset($RBAC)) {
-                \Bootstrap::LoadSystem('rbac');
+
                 $RBAC = \RBAC::getSingleton(PATH_DATA, session_id());
                 $RBAC->sSystem = 'PROCESSMAKER';
                 $RBAC->initRBAC();

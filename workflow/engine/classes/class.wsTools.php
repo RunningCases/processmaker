@@ -484,7 +484,7 @@ class workspaceTools
     {
         $this->initPropel(true);
         $this->checkDataConsistenceInContentTable();
-        G::LoadThirdParty('pear/json', 'class.json');
+
 
         $language = new Language();
 
@@ -533,7 +533,7 @@ class workspaceTools
             return $this->db;
         }
 
-        G::LoadSystem('database_' . strtolower($this->dbAdapter));
+
         if ($rbac == true) {
             $this->db = new database($this->dbAdapter, $this->dbRbacHost, $this->dbRbacUser, $this->dbRbacPass, $this->dbRbacName);
         } else {
@@ -1292,7 +1292,7 @@ class workspaceTools
      */
     static public function createBackup($filename, $compress = true)
     {
-        G::LoadThirdParty('pear/Archive', 'Tar');
+
         if (!file_exists(dirname($filename))) {
             mkdir(dirname($filename));
         }
@@ -1547,7 +1547,7 @@ class workspaceTools
 
     static public function getBackupInfo($filename)
     {
-        G::LoadThirdParty('pear/Archive', 'Tar');
+
         $backup = new Archive_Tar($filename);
         //Get a temporary directory in the upgrade directory
         $tempDirectory = PATH_DATA . "upgrade/" . basename(tempnam(__FILE__, ''));
@@ -1613,7 +1613,7 @@ class workspaceTools
      */
     static public function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en', $port = '')
     {
-        G::LoadThirdParty('pear/Archive', 'Tar');
+
         $backup = new Archive_Tar($filename);
         //Get a temporary directory in the upgrade directory
         $tempDirectory = PATH_DATA . "upgrade/" . basename(tempnam(__FILE__, ''));
@@ -1886,7 +1886,7 @@ class workspaceTools
         }
 
         if ($swv == 1) {
-            G::LoadThirdParty("pear/Archive", "Tar");
+
 
             //Extract
             $tar = new Archive_Tar($f);
@@ -2856,7 +2856,7 @@ class workspaceTools
     public function checkRbacPermissions(){
         CLI::logging("-> Verifying roles permissions in RBAC \n");
         //Update table RBAC permissions
-        Bootstrap::LoadSystem('rbac');
+
         $RBAC = &RBAC::getSingleton();
         $RBAC->initRBAC();
         $result = $RBAC->verifyPermissions();

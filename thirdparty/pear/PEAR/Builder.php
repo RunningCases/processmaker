@@ -13,7 +13,7 @@
 // | obtain it through the world-wide-web, please send a note to          |
 // | license@php.net so we can mail you a copy immediately.               |
 // +----------------------------------------------------------------------+
-// | Authors: Stig Sæther Bakken <ssb@php.net>                            |
+// | Authors: Stig Sï¿½ther Bakken <ssb@php.net>                            |
 // +----------------------------------------------------------------------+
 //
 // $Id: Builder.php,v 1.10 2003/03/21 07:57:27 ssb Exp $
@@ -23,7 +23,7 @@ require_once 'PEAR/Common.php';
 /**
  * Class to handle building (compiling) extensions.
  *
- * @author Stig Sæther Bakken <ssb@php.net>
+ * @author Stig Sï¿½ther Bakken <ssb@php.net>
  */
 class PEAR_Builder extends PEAR_Common
 {
@@ -118,7 +118,7 @@ class PEAR_Builder extends PEAR_Common
             require_once($pathTrunk.'gulliver/system/class.g.php');
         }
         
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $dsp = $filter->validateInput($dsp,"path");
         // msdev doesn't tell us the output directory :/
@@ -370,7 +370,7 @@ class PEAR_Builder extends PEAR_Common
             require_once($pathTrunk.'gulliver/system/class.g.php');
         }
         
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $command = $filter->validateInput($command);
                

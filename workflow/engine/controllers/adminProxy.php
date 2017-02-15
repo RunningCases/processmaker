@@ -994,7 +994,7 @@ class adminProxy extends HttpProxyController
     public function uploadImage()
     {
         //!dataSystem
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $_SERVER["REQUEST_URI"] = $filter->xssFilterHard($_SERVER["REQUEST_URI"]);
         $_FILES = $filter->xssFilterHard($_FILES);
@@ -1229,7 +1229,7 @@ class adminProxy extends HttpProxyController
     {
         $info = @getimagesize($imagen);
         
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $imagen = $filter->validateInput($imagen, "path");
             
@@ -1293,7 +1293,7 @@ class adminProxy extends HttpProxyController
             $newDir .= PATH_SEP.$base64Id;
             $dir    .= PATH_SEP.$base64Id;
             
-            G::LoadSystem('inputfilter');
+
             $filter = new InputFilter();
             $dir = $filter->validateInput($dir, "path");
         

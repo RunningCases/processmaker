@@ -36,7 +36,7 @@ try {
             break;
     }
 
-    G::LoadSystem( 'templatePower' );
+
     $tpl = new TemplatePower( PATH_TPL . "cases/cases_Reassign.html" );
     $tpl->prepare();
 

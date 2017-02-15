@@ -559,7 +559,7 @@ class pmTablesProxy extends HttpProxyController
      */
     public function importCSVDeprecated ($httpData)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $tmpfilename = $_FILES['form']['tmp_name']['CSV_FILE'];
         //$tmpfilename = $filter->xssFilterHard($tmpfilename, 'path');
@@ -1264,7 +1264,7 @@ class pmTablesProxy extends HttpProxyController
             );
 
             $labelFieldsTypeList = array ('dropdown','radiogroup');
-            G::loadSystem( 'dynaformhandler' );
+
             $index = 0;
 
             while ($aRow = $oDataset->getRow()) {

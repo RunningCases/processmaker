@@ -356,8 +356,8 @@ class Consolidated
                     $oCriteria->add($oCriteria->getNewCriterion(\ListInboxPeer::APP_NUMBER, $search, Criteria::LIKE));
                 }
             }
+            
 
-            G::LoadSystem('inputfilter');
             $filter = new \InputFilter();
 
             if ($sort != "") {

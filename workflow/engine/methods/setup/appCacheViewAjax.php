@@ -1,6 +1,6 @@
 <?php
 require_once('classes/model/AppCacheView.php');
-G::LoadSystem('inputfilter');
+
 $filter = new InputFilter();
 $_POST = $filter->xssFilterHard($_POST);
 $_GET = $filter->xssFilterHard($_GET);

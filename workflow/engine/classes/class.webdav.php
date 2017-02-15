@@ -397,7 +397,7 @@ class ProcessMakerWebDav extends HTTP_WebDAV_Server
      */
     public function GET(&$options)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $options = $filter->xssFilterHard($options);
         $paths = $filter->xssFilterHard($this->paths);
@@ -944,7 +944,7 @@ class ProcessMakerWebDav extends HTTP_WebDAV_Server
      */
     public function checkLock($path)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $path = $filter->validateInput($path, 'nosql');
         $result = false;

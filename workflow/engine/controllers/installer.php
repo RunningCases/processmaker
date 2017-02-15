@@ -324,7 +324,7 @@ class Installer extends Controller
             }
         }
 
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $pathShared = $filter->validateInput($_REQUEST['pathShared'], 'path');
 
@@ -401,7 +401,7 @@ class Installer extends Controller
             }
         }
 
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $logFile = $filter->validateInput($logFile, 'path');
 
@@ -449,7 +449,7 @@ class Installer extends Controller
      */
     public function mysqlQuery ($sql)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $sql = $filter->preventSqlInjection($sql, Array());
         $this->installLog( $sql );
@@ -469,7 +469,7 @@ class Installer extends Controller
      */
     public function mssqlQuery ($sql)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $sql = $filter->preventSqlInjection($sql, Array());
         $this->installLog( $sql );
@@ -609,7 +609,7 @@ class Installer extends Controller
      */
     public function setGrantPrivilegesMySQL ($psUser, $psPassword, $psDatabase, $host)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $host = ($host == 'localhost' || $host == '127.0.0.1' ? 'localhost' : '%');
 
@@ -674,7 +674,7 @@ class Installer extends Controller
 
     public function createMySQLWorkspace ()
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         ini_set( 'max_execution_time', '0' );
         $info = new StdClass();
@@ -1013,7 +1013,7 @@ class Installer extends Controller
 
     public function createMSSQLWorkspace ()
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         ini_set( 'max_execution_time', '0' );
 
@@ -1236,7 +1236,7 @@ class Installer extends Controller
 
     public function checkDatabases ()
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $this->setResponseType( 'json' );
         $info = new stdclass();
@@ -1291,7 +1291,7 @@ class Installer extends Controller
 
     private function testMySQLconnection()
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $info = new StdClass();
         $info->result = false;
@@ -1339,7 +1339,7 @@ class Installer extends Controller
 
     private function testMSSQLconnection()
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $info = new stdClass();
         $info->result = false;
@@ -1436,7 +1436,7 @@ class Installer extends Controller
                 foreach ($fileTar as $value) {
                     $dataFile = pathinfo($value);
                     $nameSkinTmp = $dataFile['filename'];
-                    G::LoadThirdParty( 'pear/Archive', 'Tar' );
+
                     $tar = new Archive_Tar( $value );
 
                     $pathSkinTmp = $pathSkinPartner . 'tmp' . PATH_SEP;
@@ -1523,7 +1523,7 @@ class Installer extends Controller
 
     public function buildParternExtras($username, $password, $workspace, $lang, $skinName)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         ini_set('max_execution_time', '0');
         ini_set('memory_limit', '256M');

@@ -46,7 +46,7 @@ try {
             }
 
             $aFields = $RBAC->getAuthSource( $_POST['sUID'] );
-            //G::LoadThirdParty( 'pear/json', 'class.json' );
+
             //$oJSON = new Services_JSON();
             $i = 0;
             $oUser = new Users();

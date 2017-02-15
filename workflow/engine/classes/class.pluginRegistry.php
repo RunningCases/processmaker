@@ -465,7 +465,7 @@ class PMPluginRegistry
      */
     public function installPluginArchive ($filename, $pluginName)
     {
-        G::LoadThirdParty( "pear/Archive", "Tar" );
+
         $tar = new Archive_Tar( $filename );
         $files = $tar->listContent();
         $plugins = array ();
@@ -530,7 +530,7 @@ class PMPluginRegistry
         if (! file_exists( PATH_PLUGINS . $pluginFile )) {
             throw (new Exception( "File \"$pluginFile\" doesn't exist" ));
         }
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $path = PATH_PLUGINS . $pluginFile;
         //$path = $filter->validateInput($path, 'path');
@@ -554,7 +554,7 @@ class PMPluginRegistry
 
         ///////
         $path = PATH_PLUGINS . $pluginFile;
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $path = $filter->validateInput($path, 'path');
         require_once ($path);
@@ -1023,7 +1023,7 @@ class PMPluginRegistry
      */
     public function executeTriggers ($triggerId, $oData)
     {
-        G::LoadThirdParty( "pear", "PEAR" );
+
         foreach ($this->_aTriggers as $row => $detail) {
             if ($triggerId == $detail->sTriggerId) {
                 //review all folders registered for this namespace

@@ -762,7 +762,7 @@ class Table
      */
     public function _getDynafields ($pro_uid, $type = 'xmlform', $rep_tab_grid = '')
     {
-        G::loadSystem( 'dynaformhandler' );
+
 
         $oCriteria = new \Criteria( 'workflow' );
         $oCriteria->addSelectColumn( \DynaformPeer::DYN_FILENAME );
@@ -1038,7 +1038,7 @@ class Table
             throw (new \Exception("The property rep_tab_grid: '$rep_tab_grid' is incorrect."));
         }
 
-        G::loadSystem('dynaformhandler');
+
         $grids = array();
         $namesGrid = array();
         $aFieldsNames = array();

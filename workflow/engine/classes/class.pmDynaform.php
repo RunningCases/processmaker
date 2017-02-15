@@ -1817,7 +1817,7 @@ class pmDynaform
             throw new Exception(G::LoadTranslation("ID_FILE_UPLOAD_INCORRECT_EXTENSION"));
         }
         $translation = array();
-        G::LoadSystem('i18n_po');
+
         $i18n = new i18n_PO($_FILES["LANGUAGE"]["tmp_name"]);
         $i18n->readInit();
         while ($rowTranslation = $i18n->getTranslation()) {
