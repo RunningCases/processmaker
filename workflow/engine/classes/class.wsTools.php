@@ -1576,8 +1576,11 @@ class workspaceTools
      * workspace, or overwriting a previous one
      *
      * @param string $filename the backup filename
-     * @param string $newWorkspaceName if defined, supplies the name for the
-     * workspace to restore to
+     * @param string $srcWorkspace name of the source workspace
+     * @param string $dstWorkspace name of the destination workspace
+     * @param string $overwrite if you need overwrite the database
+     * @param string $lang for define the language
+     * @param string $port of database if is empty take 3306
      */
     static public function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en', $port = '')
     {
@@ -1620,10 +1623,6 @@ class workspaceTools
 
         $version = System::getVersion();
         $pmVersion = (preg_match("/^([\d\.]+).*$/", $version, $arrayMatch)) ? $arrayMatch[1] : ""; //Otherwise: Branch master
-
-        /*if($pmVersion == '' && strpos(strtoupper($version), 'BRANCH')){
-            $pmVersion = 'dev-version-backup';
-        }*/
 
         CLI::logging(CLI::warning("
             Warning: A workspace from a newer version of ProcessMaker can NOT be restored in an older version of
@@ -1757,8 +1756,6 @@ class workspaceTools
                 }
             }
 
-            //CLI::logging(CLI::info("$pmVersionWorkspaceToRestore < $pmVersion") . "\n");
-
             if (($pmVersionWorkspaceToRestore != '') && (version_compare($pmVersionWorkspaceToRestore . "",
                         $pmVersion . "", "<") || $pmVersion == "")
             ) {
@@ -1803,17 +1800,34 @@ class workspaceTools
                 $pmVersion = 'dev-version-backup';
             }
 
+            //Move the labels of content to the corresponding table
+            $start = microtime(true);
+            CLI::logging("> Optimizing content data...\n");
+            $workspace->migrateContent($workspace->name, $lang);
+            $stop = microtime(true);
+            CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
+
+            //Move the data of cases to the corresponding List
             /*----------------------------------********---------------------------------*/
-            if (($pmVersionWorkspaceToRestore != '') && (version_compare($pmVersionWorkspaceToRestore . "", "2.9",
-                        "<") || $pmVersion == "")
-            ) {
-                $start = microtime(true);
-                CLI::logging("> Updating List tables...\n");
-                $workspace->migrateList($workspace->name, false, $lang);
-                $stop = microtime(true);
-                CLI::logging("<*>   Updating List Process took " . ($stop - $start) . " seconds.\n");
-            }
+            $start = microtime(true);
+            CLI::logging("> Updating List tables...\n");
+            $workspace->migrateList($workspace->name, false, $lang);
+            $stop = microtime(true);
+            CLI::logging("<*>   Updating List Process took " . ($stop - $start) . " seconds.\n");
             /*----------------------------------********---------------------------------*/
+
+            $start = microtime(true);
+            CLI::logging("> Updating Files Manager...\n");
+            $workspace->processFilesUpgrade();
+            $stop = microtime(true);
+            CLI::logging("<*>   Updating Files Manager took " . ($stop - $start) . " seconds.\n");
+
+            //Populate the new fields for replace string UID to Interger ID
+            $start = microtime(true);
+            CLI::logging("> Migrating and populating indexing for APP_CACHE_VIEW...\n");
+            $workspace->migratePopulateIndexingACV($workspace->name);
+            $stop = microtime(true);
+            CLI::logging("<*>   Migrating an populating indexing for APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
 
             mysql_close($link);
         }
