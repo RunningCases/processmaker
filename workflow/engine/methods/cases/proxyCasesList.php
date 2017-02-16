@@ -115,22 +115,18 @@ try {
         G::LoadClass("applications");
 
         $apps = new Applications();
-        $data = $apps->getAll(
+        $data = $apps->searchAll(
             $userUid,
             $start,
             $limit,
-            $action,
-            $filter,
             $search,
             $process,
             $filterStatus,
-            $type,
-            $dateFrom,
-            $dateTo,
-            $callback,
             $dir,
-            (strpos($sort, ".") !== false)? $sort : "APP_CACHE_VIEW." . $sort,
-            $category
+            (strpos($sort, ".") !== false)? $sort : "APPLICATION." . $sort,
+            $category,
+            $dateFrom,
+            $dateTo
         );
 
         $data['data'] = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($data['data']);

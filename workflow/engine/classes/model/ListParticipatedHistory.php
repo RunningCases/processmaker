@@ -162,15 +162,6 @@ class ListParticipatedHistory extends BaseListParticipatedHistory
         }
     }
 
-    public function countTotal ($usr_uid, $filters = array())
-    {
-        $criteria = new Criteria();
-        $criteria->add( ListParticipatedHistoryPeer::USR_UID, $usr_uid, Criteria::EQUAL );
-        self::loadFilters($criteria, $filters);
-        $total = ListParticipatedHistoryPeer::doCount( $criteria );
-        return (int)$total;
-    }
-
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
         $criteria = new Criteria();
@@ -228,6 +219,27 @@ class ListParticipatedHistory extends BaseListParticipatedHistory
         }
 
         return $data;
+    }
+
+    /**
+     * Returns the number of cases of a user
+     * @param $usrUid
+     * @param array $filters
+     * @return int
+     */
+    public function getCountList($usrUid, $filters = array())
+    {
+        $criteria = new Criteria();
+        $criteria->addSelectColumn('COUNT(*) AS TOTAL');
+        $criteria->add(ListParticipatedHistoryPeer::USR_UID, $usrUid, Criteria::EQUAL);
+        if (count($filters)) {
+            self::loadFilters($criteria, $filters);
+        }
+        $dataset = ListParticipatedHistoryPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        return (int)$aRow['TOTAL'];
     }
 }
 

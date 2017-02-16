@@ -232,15 +232,6 @@ class ListCompleted extends BaseListCompleted
         }
     }
 
-    public function countTotal ($usr_uid, $filters = array())
-    {
-        $criteria = new Criteria();
-        $criteria->add( ListCompletedPeer::USR_UID, $usr_uid, Criteria::EQUAL );
-        self::loadFilters($criteria, $filters);
-        $total = ListCompletedPeer::doCount( $criteria );
-        return (int)$total;
-    }
-
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
         $resp = array();
@@ -296,14 +287,22 @@ class ListCompleted extends BaseListCompleted
     /**
      * Returns the number of cases of a user
      * @param $usrUid
+     * @param array $filters
      * @return int
      */
-    public function getCountList($usrUid)
+    public function getCountList($usrUid, $filters = array())
     {
         $criteria = new Criteria();
+        $criteria->addSelectColumn('COUNT(*) AS TOTAL');
         $criteria->add(ListCompletedPeer::USR_UID, $usrUid, Criteria::EQUAL);
-        $total = ListCompletedPeer::doCount($criteria);
-        return (int)$total;
+        if (count($filters)) {
+            self::loadFilters($criteria, $filters);
+        }
+        $dataset = ListCompletedPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        return (int)$aRow['TOTAL'];
     }
 } // ListCompleted
 

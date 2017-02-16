@@ -1160,7 +1160,9 @@ class Processes
     public function getProcessRow($sProUid, $getAllLang = false)
     {
         $oProcess = new Process();
-        return $oProcess->Load($sProUid, $getAllLang);
+        $pProcess = $oProcess->Load( $sProUid, $getAllLang );
+        unset($pProcess['PRO_ID']);
+        return $pProcess;
     }
 
     /**

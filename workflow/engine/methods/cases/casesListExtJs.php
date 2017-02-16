@@ -47,10 +47,10 @@ switch ($action) {
         $urlProxy .= '?list=unassigned';
         break;
     case 'to_revise':
-        $urlProxy = 'proxyCasesList';
+        $urlProxy .= '?list=inbox';
         break;
     case 'to_reassign':
-        $urlProxy = 'proxyCasesList';
+        $urlProxy .= '?list=inbox';
         break;
 }
 /*----------------------------------********---------------------------------*/
@@ -139,8 +139,6 @@ if ($action == "todo" || $action == "draft" || $action == "sent" || $action == "
 $processes[] = array ('',G::LoadTranslation( 'ID_ALL_PROCESS' ));
 $status = getStatusArray( $action, $userUid );
 $category = getCategoryArray();
-$users = getUserArray( $action, $userUid );
-$allUsers = getAllUsersArray( $action );
 
 $oHeadPublisher->assign( 'reassignReaderFields', $reassignReaderFields ); //sending the fields to get from proxy
 $oHeadPublisher->addExtJsScript( 'cases/reassignList', false );
@@ -160,8 +158,6 @@ $oHeadPublisher->assign( 'PMDateFormat', $dateFormat ); //sending the fields to 
 $oHeadPublisher->assign( 'statusValues', $status ); //Sending the listing of status
 $oHeadPublisher->assign( 'processValues', $processes ); //Sending the listing of processes
 $oHeadPublisher->assign( 'categoryValues', $category ); //Sending the listing of categories
-$oHeadPublisher->assign( 'userValues', $users ); //Sending the listing of users
-$oHeadPublisher->assign( 'allUsersValues', $allUsers ); //Sending the listing of all users
 $oHeadPublisher->assign( 'solrEnabled', $solrEnabled ); //Sending the status of solar
 $oHeadPublisher->assign( 'enableEnterprise', $enableEnterprise ); //sending the page size
 
@@ -221,38 +217,6 @@ $oHeadPublisher->assign( 'openReassignCallback', $jsFunction );
 
 G::RenderPage( 'publish', 'extJs' );
 
-function getUserArray ($action, $userUid)
-{
-    global $oAppCache;
-    $status = array ();
-
-    $users[] = array ("",G::LoadTranslation( "ID_ALL_USERS" ));
-    $users[] = array ("CURRENT_USER",G::LoadTranslation( "ID_CURRENT_USER" ));
-
-    //now get users, just for the Search action
-    switch ($action) {
-        case 'search_simple':
-        case 'search':
-            $cUsers = new Criteria( 'workflow' );
-            $cUsers->clearSelectColumns();
-            $cUsers->addSelectColumn( UsersPeer::USR_UID );
-            $cUsers->addSelectColumn( UsersPeer::USR_FIRSTNAME );
-            $cUsers->addSelectColumn( UsersPeer::USR_LASTNAME );
-            $oDataset = UsersPeer::doSelectRS( $cUsers );
-            $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $users[] = array ($aRow['USR_UID'],$aRow['USR_LASTNAME'] . ' ' . $aRow['USR_FIRSTNAME']);
-                $oDataset->next();
-            }
-            break;
-        default:
-            return $users;
-            break;
-    }
-    return $users;
-}
-
 function getCategoryArray ()
 {
     global $oAppCache;
@@ -276,45 +240,18 @@ function getCategoryArray ()
     return $category;
 }
 
-function getAllUsersArray ($action)
-{
-    global $oAppCache;
-    $status = array ();
-    $users[] = array ("CURRENT_USER",G::LoadTranslation( "ID_CURRENT_USER" )
-    );
-    $users[] = array ("",G::LoadTranslation( "ID_ALL_USERS" )
-    );
-
-    if ($action == 'to_reassign') {
-        //now get users, just for the Search action
-        $cUsers = $oAppCache->getToReassignListCriteria(null);
-        $cUsers->addSelectColumn( AppCacheViewPeer::USR_UID );
-
-        if (g::MySQLSintaxis()) {
-            $cUsers->addGroupByColumn( AppCacheViewPeer::USR_UID );
-        }
-
-        $cUsers->addAscendingOrderByColumn( AppCacheViewPeer::APP_CURRENT_USER );
-        $oDataset = AppCacheViewPeer::doSelectRS( $cUsers , Propel::getDbConnection('workflow_ro') );
-        $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-        $oDataset->next();
-        while ($aRow = $oDataset->getRow()) {
-            $users[] = array ($aRow['USR_UID'],$aRow['APP_CURRENT_USER']);
-            $oDataset->next();
-        }
-    }
-    return $users;
-}
-
 function getStatusArray($action, $userUid)
 {
     $status = array();
+    $aStatus = Application::$app_status_values;
     $status[] = array('', G::LoadTranslation('ID_ALL_STATUS'));
-    $status[] = array('COMPLETED', G::LoadTranslation('ID_CASES_STATUS_COMPLETED'));
-    $status[] = array('DRAFT', G::LoadTranslation('ID_CASES_STATUS_DRAFT'));
-    $status[] = array('TO_DO', G::LoadTranslation('ID_CASES_STATUS_TO_DO'));
-    $status[] = array('CANCELLED', G::LoadTranslation('ID_CASES_STATUS_CANCELLED'));
-
+    foreach ($aStatus as $key => $value) {
+        if ($action == 'search') {
+            $status[] =  array ($value, G::LoadTranslation( 'ID_CASES_STATUS_' . $key ));
+        } else {
+            $status[] =  array ($key, G::LoadTranslation( 'ID_CASES_STATUS_' . $key ));
+        }
+    }
     return $status;
 }
 

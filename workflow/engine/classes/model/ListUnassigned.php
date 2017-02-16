@@ -160,17 +160,6 @@ class ListUnassigned extends BaseListUnassigned
         $dateFrom = isset($filters['dateFrom']) ? $filters['dateFrom'] : "";
         $dateTo = isset($filters['dateTo']) ? $filters['dateTo'] : "";
 
-        if ($filter != '') {
-            switch ($filter) {
-                case 'read':
-                    $criteria->add( ListUnassignedPeer::DEL_INIT_DATE, null, Criteria::ISNOTNULL );
-                    break;
-                case 'unread':
-                    $criteria->add( ListUnassignedPeer::DEL_INIT_DATE, null, Criteria::ISNULL );
-                    break;
-            }
-        }
-
         if ($search != '') {
             $criteria->add(
                 $criteria->getNewCriterion(ListUnassignedPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
@@ -185,43 +174,12 @@ class ListUnassigned extends BaseListUnassigned
         }
 
         if ($category != '') {
-            // INNER JOIN FOR TAS_TITLE
             $criteria->addSelectColumn(ProcessPeer::PRO_CATEGORY);
             $aConditions   = array();
             $aConditions[] = array(ListUnassignedPeer::PRO_UID, ProcessPeer::PRO_UID);
             $aConditions[] = array(ProcessPeer::PRO_CATEGORY, "'" . $category . "'");
             $criteria->addJoinMC($aConditions, Criteria::INNER_JOIN);
         }
-
-        if ($dateFrom != "") {
-            if ($dateTo != "") {
-                if ($dateFrom == $dateTo) {
-                    $dateSame = $dateFrom;
-                    $dateFrom = $dateSame . " 00:00:00";
-                    $dateTo = $dateSame . " 23:59:59";
-                } else {
-                    $dateFrom = $dateFrom . " 00:00:00";
-                    $dateTo = $dateTo . " 23:59:59";
-                }
-
-                $criteria->add( $criteria->getNewCriterion( ListUnassignedPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL )->
-                    addAnd( $criteria->getNewCriterion( ListUnassignedPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL ) ) );
-            } else {
-                $dateFrom = $dateFrom . " 00:00:00";
-
-                $criteria->add( ListUnassignedPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL );
-            }
-        } elseif ($dateTo != "") {
-            $dateTo = $dateTo . " 23:59:59";
-
-            $criteria->add( ListUnassignedPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL );
-        }
-    }
-
-    public function countTotal ($usr_uid, $filters = array())
-    {
-        $total = $this->total;
-        return (int)$total;
     }
 
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
@@ -446,9 +404,10 @@ class ListUnassigned extends BaseListUnassigned
     /**
      * Returns the number of cases of a user
      * @param $userUid
+     * @param array $filters
      * @return int
      */
-    public function getCountList($userUid)
+    public function getCountList($userUid, $filters = array())
     {
         $criteria = new Criteria('workflow');
         $tasks = $this->getSelfServiceTasks($userUid);

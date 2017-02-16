@@ -1,6 +1,171 @@
 <?php
 class Applications
 {
+    public function searchAll(
+        $userUid,
+        $start = null,
+        $limit = null,
+        $search = null,
+        $process = null,
+        $status = null,
+        $dir = null,
+        $sort = null,
+        $category = null,
+        $dateFrom = null,
+        $dateTo = null
+    ) {
+        //Task Dummies
+        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
+
+        $con = Propel::getConnection(AppDelegationPeer::DATABASE_NAME);
+        $con->begin();
+        $sqlCount = "SELECT STRAIGHT_JOIN COUNT(*) AS TOTAL FROM APP_DELEGATION";
+        $sql = "SELECT
+                    STRAIGHT_JOIN APPLICATION.APP_NUMBER,
+                    APPLICATION.APP_UID,
+                    APPLICATION.APP_STATUS,
+                    APPLICATION.APP_STATUS AS APP_STATUS_LABEL,
+                    APPLICATION.PRO_UID,
+                    APPLICATION.APP_CREATE_DATE,
+                    APPLICATION.APP_FINISH_DATE,
+                    APPLICATION.APP_UPDATE_DATE,
+                    APPLICATION.APP_TITLE,
+                    APP_DELEGATION.USR_UID,
+                    APP_DELEGATION.TAS_UID,
+                    APP_DELEGATION.DEL_INDEX,
+                    APP_DELEGATION.DEL_LAST_INDEX,
+                    APP_DELEGATION.DEL_DELEGATE_DATE,
+                    APP_DELEGATION.DEL_INIT_DATE,
+                    APP_DELEGATION.DEL_FINISH_DATE,
+                    APP_DELEGATION.DEL_TASK_DUE_DATE,
+                    APP_DELEGATION.DEL_RISK_DATE,
+                    APP_DELEGATION.DEL_THREAD_STATUS,
+                    APP_DELEGATION.DEL_PRIORITY,
+                    APP_DELEGATION.DEL_DURATION,
+                    APP_DELEGATION.DEL_QUEUE_DURATION,
+                    APP_DELEGATION.DEL_STARTED,
+                    APP_DELEGATION.DEL_DELAY_DURATION,
+                    APP_DELEGATION.DEL_FINISHED,
+                    APP_DELEGATION.DEL_DELAYED,
+                    APP_DELEGATION.DEL_DELAY_DURATION,
+                    TASK.TAS_TITLE AS APP_TAS_TITLE,
+                    USERS.USR_LASTNAME,
+                    USERS.USR_FIRSTNAME,
+                    USERS.USR_USERNAME,
+                    PROCESS.PRO_TITLE AS APP_PRO_TITLE
+                FROM APP_DELEGATION
+        ";
+
+        $sqlJoin  = " LEFT JOIN APPLICATION ON (APP_DELEGATION.APP_NUMBER=APPLICATION.APP_NUMBER)";
+        $sqlCount.= " LEFT JOIN TASK ON (APP_DELEGATION.TAS_ID=TASK.TAS_ID)";
+
+        if (in_array($status, array(1, 2, 3, 4)) || !empty($search)) {
+            $sqlCount .= $sqlJoin;
+        }
+
+        $sqlJoin .= " LEFT JOIN TASK ON (APP_DELEGATION.TAS_ID=TASK.TAS_ID)";
+        $sqlWhere = " WHERE TASK.TAS_TYPE NOT IN ('" . implode("','",$arrayTaskTypeToExclude) . "')";
+        switch ($status) {
+            case 1: //DRAFT
+                $sqlWhere .= " AND APP_DELEGATION.DEL_THREAD_STATUS='OPEN'";
+                $sqlWhere .= " AND APPLICATION.APP_STATUS_ID = 1";
+                break;
+            case 2: //TO_DO
+                $sqlWhere .= " AND APP_DELEGATION.DEL_THREAD_STATUS='OPEN'";
+                $sqlWhere .= " AND APPLICATION.APP_STATUS_ID = 2";
+                break;
+            case 3: //COMPLETED
+                $sqlWhere .= " AND APPLICATION.APP_STATUS_ID = 3";
+                $sqlWhere .= " AND APP_DELEGATION.DEL_LAST_INDEX = 1";
+                break;
+            case 4: //CANCELLED
+                $sqlWhere .= " AND APPLICATION.APP_STATUS_ID = 4";
+                $sqlWhere .= " AND APP_DELEGATION.DEL_LAST_INDEX = 1";
+                break;
+            case "PAUSED": //This status is not considered in the search, maybe we can add in the new versions
+                $sqlWhere .= " AND APPLICATION.APP_STATUS = 'TO_DO'";
+                break;
+            default: //All status
+                $sqlCount.= " LEFT JOIN APPLICATION ON (APP_DELEGATION.APP_NUMBER=APPLICATION.APP_NUMBER)";
+                $sqlWhere .= " AND ((APPLICATION.APP_STATUS_ID IN (1,2) AND APP_DELEGATION.DEL_THREAD_STATUS='OPEN') ";
+                $sqlWhere .= " OR (APPLICATION.APP_STATUS_ID IN (3,4) AND APP_DELEGATION.DEL_LAST_INDEX = 1)) ";
+                break;
+        }
+        $sqlJoin .= $sqlJoinUser = " LEFT JOIN USERS ON (APP_DELEGATION.USR_ID=USERS.USR_ID)";
+        if (!empty($userUid)) {
+            $sqlWhere .= " AND APP_DELEGATION.USR_ID = " . $userUid;
+            $sqlCount = $sqlCount . $sqlJoinUser;
+        }
+        $sqlJoin .= $sqlJoinPro = " LEFT JOIN PROCESS ON (APP_DELEGATION.PRO_ID=PROCESS.PRO_ID)";
+        if (!empty($process)) {
+            $sqlWhere .= " AND APP_DELEGATION.PRO_ID = " . $process;
+        }
+        if (!empty($category)) {
+            $category = mysql_real_escape_string($category);
+            $sqlWhere .= " AND PROCESS.PRO_CATEGORY = '{$category}'";
+        }
+        if (!empty($process) || !empty($category)) {
+            $sqlCount = $sqlCount . $sqlJoinPro;
+        }
+        if (!empty($search)) {
+            //In the filter search we check in the following columns: APP_NUMBER APP_TAS_TITLE APP_TITLE
+            $sqlWhere .= " AND (APPLICATION.APP_TITLE LIKE '%{$search}%' OR APPLICATION.APP_NUMBER LIKE '%{$search}%' OR TASK.TAS_TITLE LIKE '%{$search}%')";
+        }
+        if (!empty($dateFrom)) {
+            $sqlWhere .= " AND APP_DELEGATION.DEL_DELEGATE_DATE >= '{$dateFrom}'";
+        }
+        if (!empty($dateTo)) {
+            $dateTo = $dateTo . " 23:59:59";
+            $sqlWhere .= " AND APP_DELEGATION.DEL_DELEGATE_DATE <= '{$dateTo}'";
+        }
+        $stmt = $con->createStatement();
+        //Get total count
+        $iCount = $stmt->executeQuery($sqlCount . $sqlWhere);
+        $iCount->next();
+        $aRow = $iCount->getRow();
+        $totalCount = $aRow['TOTAL'];
+
+        //Filters
+        if (!empty($sort)) {
+            if ($sort === 'APP_NUMBER' || $sort === 'APPLICATION.APP_NUMBER') {
+                $sort = 'APP_DELEGATION.APP_NUMBER';
+            }
+            $sqlWhere .= " ORDER BY " . $sort;
+        }
+        if (!empty($dir)) {
+            $sqlWhere .= "  " . $dir;
+        }
+        if (!empty($start)) {
+            $sqlWhere .= " LIMIT $start, " . $limit;
+        } else {
+            $sqlWhere .= " LIMIT " . $limit;
+        }
+        $oDataset = $stmt->executeQuery($sql . $sqlJoin . $sqlWhere);
+        $result = array ();
+        $result['totalCount'] = $totalCount;
+        $rows = array();
+        $aPriorities = array ('1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH');
+        while ($oDataset->next()) {
+            $aRow = $oDataset->getRow();
+            if (isset( $aRow['APP_STATUS'] )) {
+                $aRow['APP_STATUS_LABEL'] = G::LoadTranslation( "ID_{$aRow['APP_STATUS']}" );
+            }
+            if (isset( $aRow['DEL_PRIORITY'] )) {
+                $aRow['DEL_PRIORITY'] = G::LoadTranslation( "ID_PRIORITY_{$aPriorities[$aRow['DEL_PRIORITY']]}" );
+            }
+            $aRow["APP_CURRENT_USER"] = $aRow["USR_LASTNAME"].' '.$aRow["USR_FIRSTNAME"];
+            $aRow["APPDELCR_APP_TAS_TITLE"] = '';
+            $aRow["USRCR_USR_UID"] = $aRow["USR_UID"];
+            $aRow["USRCR_USR_FIRSTNAME"] = $aRow["USR_FIRSTNAME"];
+            $aRow["USRCR_USR_LASTNAME"] = $aRow["USR_LASTNAME"];
+            $aRow["USRCR_USR_USERNAME"] = $aRow["USR_USERNAME"];
+            $aRow["APP_OVERDUE_PERCENTAGE"] = '';
+            $rows[] = $aRow;
+        }
+        $result['data'] = $rows;
+        return $result;
+    }
+
     public function getAll(
         $userUid,
         $start = null,

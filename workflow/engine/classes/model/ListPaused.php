@@ -195,18 +195,16 @@ class ListPaused extends BaseListPaused {
         $search = isset($filters['search']) ? $filters['search'] : "";
         $process = isset($filters['process']) ? $filters['process'] : "";
         $category = isset($filters['category']) ? $filters['category'] : "";
-        $dateFrom = isset($filters['dateFrom']) ? $filters['dateFrom'] : "";
-        $dateTo = isset($filters['dateTo']) ? $filters['dateTo'] : "";
+        $filterStatus   = isset($filters['filterStatus']) ? $filters['filterStatus'] : "";
 
-        if ($filter != '') {
-            switch ($filter) {
-                case 'read':
-                    $criteria->add( ListPausedPeer::DEL_INIT_DATE, null, Criteria::ISNOTNULL );
-                    break;
-                case 'unread':
-                    $criteria->add( ListPausedPeer::DEL_INIT_DATE, null, Criteria::ISNULL );
-                    break;
-            }
+        //Filter Read Unread All
+        switch ($filter) {
+            case 'read':
+                $criteria->add(ListPausedPeer::DEL_INIT_DATE, NULL, Criteria::ISNOTNULL);
+                break;
+            case 'unread':
+                $criteria->add(ListPausedPeer::DEL_INIT_DATE, NULL, Criteria::ISNULL);
+                break;
         }
 
         if ($search != '') {
@@ -219,50 +217,16 @@ class ListPaused extends BaseListPaused {
         }
 
         if ($process != '') {
-            $criteria->add( ListPausedPeer::PRO_UID, $process, Criteria::EQUAL);
+            $criteria->add(ListPausedPeer::PRO_UID, $process, Criteria::EQUAL);
         }
 
         if ($category != '') {
-            // INNER JOIN FOR TAS_TITLE
             $criteria->addSelectColumn(ProcessPeer::PRO_CATEGORY);
             $aConditions   = array();
             $aConditions[] = array(ListPausedPeer::PRO_UID, ProcessPeer::PRO_UID);
             $aConditions[] = array(ProcessPeer::PRO_CATEGORY, "'" . $category . "'");
             $criteria->addJoinMC($aConditions, Criteria::INNER_JOIN);
         }
-
-        if ($dateFrom != "") {
-            if ($dateTo != "") {
-                if ($dateFrom == $dateTo) {
-                    $dateSame = $dateFrom;
-                    $dateFrom = $dateSame . " 00:00:00";
-                    $dateTo = $dateSame . " 23:59:59";
-                } else {
-                    $dateFrom = $dateFrom . " 00:00:00";
-                    $dateTo = $dateTo . " 23:59:59";
-                }
-
-                $criteria->add( $criteria->getNewCriterion( ListPausedPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL )->
-                    addAnd( $criteria->getNewCriterion( ListPausedPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL ) ) );
-            } else {
-                $dateFrom = $dateFrom . " 00:00:00";
-
-                $criteria->add( ListPausedPeer::DEL_DELEGATE_DATE, $dateFrom, Criteria::GREATER_EQUAL );
-            }
-        } elseif ($dateTo != "") {
-            $dateTo = $dateTo . " 23:59:59";
-
-            $criteria->add( ListPausedPeer::DEL_DELEGATE_DATE, $dateTo, Criteria::LESS_EQUAL );
-        }
-    }
-
-    public function countTotal ($usr_uid, $filters = array())
-    {
-        $criteria = new Criteria();
-        $criteria->add( ListPausedPeer::USR_UID, $usr_uid, Criteria::EQUAL );
-        self::loadFilters($criteria, $filters);
-        $total = ListPausedPeer::doCount( $criteria );
-        return (int)$total;
     }
 
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
@@ -327,15 +291,23 @@ class ListPaused extends BaseListPaused {
 
     /**
      * Returns the number of cases of a user
-     * @param $usrUid
+     * @param string $usrUid
+     * @param array  $filters
      * @return int
      */
-    public function getCountList($usrUid)
+    public function getCountList($usrUid, $filters = array())
     {
         $criteria = new Criteria();
+        $criteria->addSelectColumn('COUNT(*) AS TOTAL');
         $criteria->add(ListPausedPeer::USR_UID, $usrUid, Criteria::EQUAL);
-        $total = ListPausedPeer::doCount($criteria);
-        return (int)$total;
+        if (count($filters)) {
+            self::loadFilters($criteria, $filters);
+        }
+        $dataset = ListPausedPeer::doSelectRS($criteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        $aRow = $dataset->getRow();
+        return (int)$aRow['TOTAL'];
     }
 } // ListPaused
 

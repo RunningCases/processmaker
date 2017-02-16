@@ -201,7 +201,7 @@ class Lists {
         }
 
         if ($total) {
-            $total = $list->countTotal($userUid, $filters);
+            $total = $list->getCountList($userUid, $filters);
             return $total;
         }
 
@@ -249,7 +249,7 @@ class Lists {
             $response['filters']        = $filtersData;
             $response['data']           = $result;
             $filtersData['action']      = $filters["action"];
-            $response['totalCount']     = $list->countTotal($userUid, $filtersData);
+            $response['totalCount']     = $list->getCountList($userUid, $filtersData);
         } else {
             $response = $result;
         }
@@ -267,8 +267,8 @@ class Lists {
         $response = array();
         foreach ($list as $listObject => $item) {
             switch ($listObject) {
-                case 'ListInbox':
-                    $total = $this->$listObject->getCountList($userId, 'TO_DO');
+                case 'ListDraft':
+                    $total = $this->$listObject->getCountList($userId, array('action'=>'draft'));
                     array_push($response, (array('count' => $total, 'item' => $item)));
                     break;
                 /*----------------------------------********---------------------------------*/
