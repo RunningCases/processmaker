@@ -126,7 +126,7 @@ class Applications
         $totalCount = $aRow['TOTAL'];
 
         //Filters
-        if (!empty($sort)) {error_log($sort);
+        if (!empty($sort)) {
             switch ($sort) {
                 case 'APP_NUMBER':
                     //The order by APP_DELEGATION.APP_NUMBER is must be fast than APPLICATION.APP_NUMBER
