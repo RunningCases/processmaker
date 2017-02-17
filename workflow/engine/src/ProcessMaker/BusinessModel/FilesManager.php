@@ -90,7 +90,7 @@ class FilesManager
                     $fcontent = file_get_contents($sDirectory . $aFile['FILE']);
                 }
                 $fileUid = isset($arrayFileUid["PRF_UID"]) ? $arrayFileUid["PRF_UID"] : '';
-                $derivationScreen = isset($arrayFileUid["DERIVATION_SCREEN_TPL"]) ? 'true' : 'false';
+                $derivationScreen = isset($arrayFileUid["DERIVATION_SCREEN_TPL"]) ? true : false;
                 if ($fileUid != null) {
                     $oProcessFiles = \ProcessFilesPeer::retrieveByPK($fileUid);
                     $editable = $oProcessFiles->getPrfEditable();
@@ -128,7 +128,7 @@ class FilesManager
                                          'prf_create_date' => '',
                                          'prf_update_date' => '',
                                          'prf_content' => $fcontent,
-                                         'prf_derivation_screen' => 'false');
+                                         'prf_derivation_screen' => false);
                 }
             }
             return $aTheFiles;
