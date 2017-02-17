@@ -181,6 +181,7 @@ class pmDynaform
         if (empty($json)) {
             return;
         }
+        $dataGridEnvironment = [];
         foreach ($json as $key => &$value) {
             $sw1 = is_array($value);
             $sw2 = is_object($value);
@@ -259,6 +260,9 @@ class pmDynaform
                                 $dt = $parsed["SELECT"];
 
                                 $isWhere = empty($where);
+                                if ($isWhere === false) {
+                                    $where = substr_replace($where, " (", 5, 0) . ")";
+                                }
                                 if (!isset($json->queryField) && isset($dt[0]["base_expr"])) {
                                     $col = $dt[0]["base_expr"];
                                     $dv = str_replace("'", "''", $json->defaultValue);
@@ -628,6 +632,26 @@ class pmDynaform
                 }
                 //grid
                 if ($key === "type" && ($value === "grid")) {
+                    //todo compatibility 'columnWidth'
+                    foreach ($json->columns as $column) {
+                        if (!isset($column->columnWidth) && $column->type !== "hidden") {
+                            $json->layout = "static";
+                            $column->columnWidth = "";
+                        }
+                        $column->parentIsGrid = true;
+                    }
+                    //data grid environment
+                    $json->dataGridEnvironment = "onDataGridEnvironment";
+                    if (isset($this->fields["APP_DATA"])) {
+                        $dataGridEnvironment = $this->fields["APP_DATA"];
+                        $this->fields["APP_DATA"] = [];
+                    }
+                }
+                if ($key === "dataGridEnvironment" && ($value === "onDataGridEnvironment")) {
+                    if (isset($this->fields["APP_DATA"])) {
+                        $this->fields["APP_DATA"] = $dataGridEnvironment;
+                        $dataGridEnvironment = [];
+                    }
                     if (isset($this->fields["APP_DATA"][$json->name])) {
                         //rows
                         $rows = $this->fields["APP_DATA"][$json->name];
@@ -647,13 +671,6 @@ class pmDynaform
                         }
                         $json->rows = count($rows);
                         $json->data = $rows;
-                    }
-                    //todo compatibility 'columnWidth'
-                    foreach ($json->columns as $column) {
-                        if (!isset($column->columnWidth) && $column->type !== "hidden") {
-                            $json->layout = "static";
-                            $column->columnWidth = "";
-                        }
                     }
                 }
                 //languages
