@@ -117,6 +117,8 @@ class PMPluginRegistry
      */
     private $_restServices = array ();
 
+    private $_restExtendServices = array ();
+
     private $_restServiceEnabled = array();
 
     private static $instance = null;
@@ -426,6 +428,10 @@ class PMPluginRegistry
 
         if(sizeof( $this->_aOpenReassignCallback )){
             unset( $this->_aOpenReassignCallback );
+        }
+
+        if (sizeof($this->_restExtendServices)) {
+            $this->disableExtendsRestService($sNamespace);
         }
         //unregistering javascripts from this plugin
         $this->unregisterJavascripts( $sNamespace );
@@ -1456,6 +1462,60 @@ class PMPluginRegistry
         \Maveriks\WebApplication::purgeRestApiCache(basename(PATH_DATA_SITE));
 
         return true;
+    }
+
+    /**
+     * Register a extend rest service class from a plugin to be served by processmaker
+     *
+     * @param string $sNamespace The namespace for the plugin
+     * @param string $className The service (api) class name
+     */
+    public function registerExtendsRestService($sNamespace, $className)
+    {
+        $baseSrcPluginPath = PATH_PLUGINS . $sNamespace . PATH_SEP . "src";
+        $apiPath = PATH_SEP . "Services" . PATH_SEP . "Ext" . PATH_SEP;
+        $classFile = $baseSrcPluginPath . $apiPath . 'Ext' . $className . '.php';
+        if (file_exists($classFile)) {
+            $this->_restExtendServices[$sNamespace][$className] = array(
+                "filePath" => $classFile,
+                "classParent" => $className,
+                "classExtend" => 'Ext' . $className
+            );
+        }
+    }
+
+    /**
+     * Get a extend rest service class from a plugin to be served by processmaker
+     *
+     * @param string $className The service (api) class name
+     * @return array
+     */
+    public function getExtendsRestService($className)
+    {
+        $responseRestExtendService = array();
+        foreach ($this->_restExtendServices as $sNamespace => $restExtendService) {
+            if (isset($restExtendService[$className])) {
+                $responseRestExtendService = $restExtendService[$className];
+                break;
+            }
+        }
+        return $responseRestExtendService;
+    }
+
+    /**
+     * Remove a extend rest service class from a plugin to be served by processmaker
+     *
+     * @param string $sNamespace
+     * @param string $className The service (api) class name
+     * @return bool
+     */
+    public function disableExtendsRestService($sNamespace, $className = '')
+    {
+        if (isset($this->_restExtendServices[$sNamespace][$className]) && !empty($className)) {
+            unset($this->_restExtendServices[$sNamespace][$className]);
+        } elseif (empty($className)) {
+            unset($this->_restExtendServices[$sNamespace]);
+        }
     }
 
     /**

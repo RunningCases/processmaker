@@ -259,6 +259,9 @@ class pmDynaform
                                 $dt = $parsed["SELECT"];
 
                                 $isWhere = empty($where);
+                                if ($isWhere === false) {
+                                    $where = substr_replace($where, " (", 5, 0) . ")";
+                                }
                                 if (!isset($json->queryField) && isset($dt[0]["base_expr"])) {
                                     $col = $dt[0]["base_expr"];
                                     $dv = str_replace("'", "''", $json->defaultValue);
