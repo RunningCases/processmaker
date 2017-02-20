@@ -65,7 +65,9 @@ class ListMyInbox extends BaseListMyInbox
     public function update($data)
     {
         $p = new Process();
-        $data['PRO_ID'] = $p->load($data['PRO_UID'])['PRO_ID'];
+        if(!empty($data['PRO_UID'])) {
+            $data['PRO_ID'] = $p->load($data['PRO_UID'])['PRO_ID'];
+        }
         $u = new Users();
         if(!empty($data['USR_UID'])) {
             $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
