@@ -3627,7 +3627,7 @@ class workspaceTools
             . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_UNASSIGNED_GROUP.USR_UID)');
         $con->commit();
 
-        CLI::logging("-> Populating PRO_ID, USR_ID aat LIST_*  Done \n");
+        CLI::logging("-> Populating PRO_ID, USR_ID at LIST_*  Done \n");
     }
 
 }

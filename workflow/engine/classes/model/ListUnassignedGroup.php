@@ -54,6 +54,7 @@ class ListUnassignedGroup extends BaseListUnassignedGroup {
      */
     public function update($data)
     {
+        $u = new Users();
         if(!empty($data['USR_UID'])) {
             $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
         }

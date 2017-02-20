@@ -160,7 +160,7 @@ class ListInbox extends BaseListInbox
 
         $p = new Process();
         if (!empty($data['PRO_UID'])) {
-            $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
+            $data['PRO_ID'] = $p->load($data['PRO_UID'])['PRO_ID'];
         }
         $u = new Users();
         if (!empty($data['USR_UID'])) {
