@@ -25,7 +25,9 @@ class ListUnassignedGroup extends BaseListUnassignedGroup {
     public function create($data)
     { 
         $u = new Users();
-        if(!empty($data['USR_UID'])) $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
+        if(!empty($data['USR_UID'])) {
+            $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
+        }
         $con = Propel::getConnection( ListUnassignedGroupPeer::DATABASE_NAME );
         try {
             $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
@@ -52,6 +54,9 @@ class ListUnassignedGroup extends BaseListUnassignedGroup {
      */
     public function update($data)
     {
+        if(!empty($data['USR_UID'])) {
+            $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
+        }
         $con = Propel::getConnection( ListUnassignedGroupPeer::DATABASE_NAME );
         try {
             $con->begin();

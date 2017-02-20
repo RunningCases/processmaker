@@ -16,7 +16,7 @@ function list_ids($command, $args)
 
     foreach ($workspaces as $index => $workspace) {
         $hostPort1 = explode(":", $workspace->dbInfo['DB_HOST']);
-        $hostPort = $hostPort1[0].(isset($hostPort[1]) ? ";port=".$hostPort[1] : "");
+        $hostPort = $hostPort1[0] . (isset($hostPort[1]) ? ";port=" . $hostPort[1] : "");
         $connectionString = sprintf("%s:host=%s;dbname=%s",
                                     $workspace->dbInfo['DB_ADAPTER'], $hostPort,
                                     $workspace->dbInfo['DB_NAME']);
@@ -49,8 +49,7 @@ function list_ids($command, $args)
         $dbh->query('UPDATE LIST_UNASSIGNED SET '
             . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_UNASSIGNED.PRO_UID);');
         $dbh->query('UPDATE LIST_UNASSIGNED_GROUP SET '
-            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_UNASSIGNED_GROUP.USR_UID); '
-            );
+            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_UNASSIGNED_GROUP.USR_UID);');
     }
 
     //Done

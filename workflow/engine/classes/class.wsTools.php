@@ -3587,6 +3587,40 @@ class workspaceTools
         $con->commit();
 
         CLI::logging("-> Migrating And Populating Indexing for avoiding the use of table APP_CACHE_VIEW Done \n");
+
+        // Populating PRO_ID, USR_ID
+        CLI::logging("->   Populating PRO_ID, USR_ID aat LIST_* \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery();
+        $stmt->executeQuery('UPDATE LIST_CANCELLED SET '
+            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_CANCELLED.USR_UID), '
+            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_CANCELLED.PRO_UID);');
+        $stmt->executeQuery('UPDATE LIST_COMPLETED SET '
+            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_COMPLETED.USR_UID), '
+            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_COMPLETED.PRO_UID)');
+        $stmt->executeQuery('UPDATE LIST_INBOX SET '
+            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_INBOX.USR_UID), '
+            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_INBOX.PRO_UID);');
+        $stmt->executeQuery('UPDATE LIST_MY_INBOX SET '
+            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_MY_INBOX.USR_UID), '
+            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_MY_INBOX.PRO_UID);');
+        $stmt->executeQuery('UPDATE LIST_PARTICIPATED_HISTORY SET '
+            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_PARTICIPATED_HISTORY.USR_UID), '
+            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_PARTICIPATED_HISTORY.PRO_UID);');
+        $stmt->executeQuery('UPDATE LIST_PARTICIPATED_LAST SET '
+            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_PARTICIPATED_LAST.USR_UID), '
+            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_PARTICIPATED_LAST.PRO_UID);');
+        $stmt->executeQuery('UPDATE LIST_PAUSED SET '
+            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_PAUSED.USR_UID), '
+            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_PAUSED.PRO_UID);');
+        $stmt->executeQuery('UPDATE LIST_UNASSIGNED SET '
+            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_UNASSIGNED.PRO_UID);');
+        $stmt->executeQuery('UPDATE LIST_UNASSIGNED_GROUP SET '
+            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_UNASSIGNED_GROUP.USR_UID);');
+        $con->commit();
+
+        CLI::logging("-> Populating PRO_ID, USR_ID aat LIST_*  Done \n");
     }
 
 }
