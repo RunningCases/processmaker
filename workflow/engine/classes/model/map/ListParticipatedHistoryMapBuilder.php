@@ -109,6 +109,8 @@ class ListParticipatedHistoryMapBuilder
 
         $tMap->addColumn('USR_ID', 'UsrId', 'int', CreoleTypes::INTEGER, false, null);
 
+        $tMap->addColumn('TAS_ID', 'TasId', 'int', CreoleTypes::INTEGER, false, null);
+
     } // doBuild()
 
 } // ListParticipatedHistoryMapBuilder

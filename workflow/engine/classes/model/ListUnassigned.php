@@ -30,6 +30,10 @@ class ListUnassigned extends BaseListUnassigned
         if(!empty($data['PRO_UID'])) {
             $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
         }
+        $t = new Task();
+        if (!empty($data['TAS_UID'])) {
+            $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
+        }
         $con = Propel::getConnection( ListUnassignedPeer::DATABASE_NAME );
         try {
             $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
@@ -60,6 +64,10 @@ class ListUnassigned extends BaseListUnassigned
         $p = new Process();
         if(!empty($data['PRO_UID'])) {
             $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
+        }
+        $t = new Task();
+        if (!empty($data['TAS_UID'])) {
+            $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
         }
         $con = Propel::getConnection( ListUnassignedPeer::DATABASE_NAME );
         try {

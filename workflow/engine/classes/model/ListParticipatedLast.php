@@ -78,6 +78,10 @@ class ListParticipatedLast extends BaseListParticipatedLast
         if(!empty($data['USR_UID'])) {
             $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
         }
+        $t = new Task();
+        if (!empty($data['TAS_UID'])) {
+            $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
+        }
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
             $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
@@ -113,6 +117,10 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $u = new Users();
         if(!empty($data['USR_UID'])) {
             $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
+        }
+        $t = new Task();
+        if (!empty($data['TAS_UID'])) {
+            $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
         }
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {

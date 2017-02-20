@@ -130,6 +130,12 @@ abstract class BaseListCompleted extends BaseObject implements Persistent
     protected $usr_id = 0;
 
     /**
+     * The value for the tas_id field.
+     * @var        int
+     */
+    protected $tas_id = 0;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -370,6 +376,17 @@ abstract class BaseListCompleted extends BaseObject implements Persistent
     {
 
         return $this->usr_id;
+    }
+
+    /**
+     * Get the [tas_id] column value.
+     * 
+     * @return     int
+     */
+    public function getTasId()
+    {
+
+        return $this->tas_id;
     }
 
     /**
@@ -761,6 +778,28 @@ abstract class BaseListCompleted extends BaseObject implements Persistent
     } // setUsrId()
 
     /**
+     * Set the value of [tas_id] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setTasId($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->tas_id !== $v || $v === 0) {
+            $this->tas_id = $v;
+            $this->modifiedColumns[] = ListCompletedPeer::TAS_ID;
+        }
+
+    } // setTasId()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -811,12 +850,14 @@ abstract class BaseListCompleted extends BaseObject implements Persistent
 
             $this->usr_id = $rs->getInt($startcol + 16);
 
+            $this->tas_id = $rs->getInt($startcol + 17);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 17; // 17 = ListCompletedPeer::NUM_COLUMNS - ListCompletedPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 18; // 18 = ListCompletedPeer::NUM_COLUMNS - ListCompletedPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating ListCompleted object", $e);
@@ -1071,6 +1112,9 @@ abstract class BaseListCompleted extends BaseObject implements Persistent
             case 16:
                 return $this->getUsrId();
                 break;
+            case 17:
+                return $this->getTasId();
+                break;
             default:
                 return null;
                 break;
@@ -1108,6 +1152,7 @@ abstract class BaseListCompleted extends BaseObject implements Persistent
             $keys[14] => $this->getDelCurrentUsrLastname(),
             $keys[15] => $this->getProId(),
             $keys[16] => $this->getUsrId(),
+            $keys[17] => $this->getTasId(),
         );
         return $result;
     }
@@ -1189,6 +1234,9 @@ abstract class BaseListCompleted extends BaseObject implements Persistent
                 break;
             case 16:
                 $this->setUsrId($value);
+                break;
+            case 17:
+                $this->setTasId($value);
                 break;
         } // switch()
     }
@@ -1281,6 +1329,10 @@ abstract class BaseListCompleted extends BaseObject implements Persistent
             $this->setUsrId($arr[$keys[16]]);
         }
 
+        if (array_key_exists($keys[17], $arr)) {
+            $this->setTasId($arr[$keys[17]]);
+        }
+
     }
 
     /**
@@ -1358,6 +1410,10 @@ abstract class BaseListCompleted extends BaseObject implements Persistent
 
         if ($this->isColumnModified(ListCompletedPeer::USR_ID)) {
             $criteria->add(ListCompletedPeer::USR_ID, $this->usr_id);
+        }
+
+        if ($this->isColumnModified(ListCompletedPeer::TAS_ID)) {
+            $criteria->add(ListCompletedPeer::TAS_ID, $this->tas_id);
         }
 
 
@@ -1445,6 +1501,8 @@ abstract class BaseListCompleted extends BaseObject implements Persistent
         $copyObj->setProId($this->pro_id);
 
         $copyObj->setUsrId($this->usr_id);
+
+        $copyObj->setTasId($this->tas_id);
 
 
         $copyObj->setNew(true);

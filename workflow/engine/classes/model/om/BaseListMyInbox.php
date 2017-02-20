@@ -190,6 +190,12 @@ abstract class BaseListMyInbox extends BaseObject implements Persistent
     protected $usr_id = 0;
 
     /**
+     * The value for the tas_id field.
+     * @var        int
+     */
+    protected $tas_id = 0;
+
+    /**
      * The value for the app_status_id field.
      * @var        int
      */
@@ -630,6 +636,17 @@ abstract class BaseListMyInbox extends BaseObject implements Persistent
     {
 
         return $this->usr_id;
+    }
+
+    /**
+     * Get the [tas_id] column value.
+     * 
+     * @return     int
+     */
+    public function getTasId()
+    {
+
+        return $this->tas_id;
     }
 
     /**
@@ -1280,6 +1297,28 @@ abstract class BaseListMyInbox extends BaseObject implements Persistent
     } // setUsrId()
 
     /**
+     * Set the value of [tas_id] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setTasId($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->tas_id !== $v || $v === 0) {
+            $this->tas_id = $v;
+            $this->modifiedColumns[] = ListMyInboxPeer::TAS_ID;
+        }
+
+    } // setTasId()
+
+    /**
      * Set the value of [app_status_id] column.
      * 
      * @param      int $v new value
@@ -1372,14 +1411,16 @@ abstract class BaseListMyInbox extends BaseObject implements Persistent
 
             $this->usr_id = $rs->getInt($startcol + 26);
 
-            $this->app_status_id = $rs->getInt($startcol + 27);
+            $this->tas_id = $rs->getInt($startcol + 27);
+
+            $this->app_status_id = $rs->getInt($startcol + 28);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 28; // 28 = ListMyInboxPeer::NUM_COLUMNS - ListMyInboxPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 29; // 29 = ListMyInboxPeer::NUM_COLUMNS - ListMyInboxPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating ListMyInbox object", $e);
@@ -1665,6 +1706,9 @@ abstract class BaseListMyInbox extends BaseObject implements Persistent
                 return $this->getUsrId();
                 break;
             case 27:
+                return $this->getTasId();
+                break;
+            case 28:
                 return $this->getAppStatusId();
                 break;
             default:
@@ -1714,7 +1758,8 @@ abstract class BaseListMyInbox extends BaseObject implements Persistent
             $keys[24] => $this->getDelPriority(),
             $keys[25] => $this->getProId(),
             $keys[26] => $this->getUsrId(),
-            $keys[27] => $this->getAppStatusId(),
+            $keys[27] => $this->getTasId(),
+            $keys[28] => $this->getAppStatusId(),
         );
         return $result;
     }
@@ -1828,6 +1873,9 @@ abstract class BaseListMyInbox extends BaseObject implements Persistent
                 $this->setUsrId($value);
                 break;
             case 27:
+                $this->setTasId($value);
+                break;
+            case 28:
                 $this->setAppStatusId($value);
                 break;
         } // switch()
@@ -1962,7 +2010,11 @@ abstract class BaseListMyInbox extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[27], $arr)) {
-            $this->setAppStatusId($arr[$keys[27]]);
+            $this->setTasId($arr[$keys[27]]);
+        }
+
+        if (array_key_exists($keys[28], $arr)) {
+            $this->setAppStatusId($arr[$keys[28]]);
         }
 
     }
@@ -2084,6 +2136,10 @@ abstract class BaseListMyInbox extends BaseObject implements Persistent
             $criteria->add(ListMyInboxPeer::USR_ID, $this->usr_id);
         }
 
+        if ($this->isColumnModified(ListMyInboxPeer::TAS_ID)) {
+            $criteria->add(ListMyInboxPeer::TAS_ID, $this->tas_id);
+        }
+
         if ($this->isColumnModified(ListMyInboxPeer::APP_STATUS_ID)) {
             $criteria->add(ListMyInboxPeer::APP_STATUS_ID, $this->app_status_id);
         }
@@ -2193,6 +2249,8 @@ abstract class BaseListMyInbox extends BaseObject implements Persistent
         $copyObj->setProId($this->pro_id);
 
         $copyObj->setUsrId($this->usr_id);
+
+        $copyObj->setTasId($this->tas_id);
 
         $copyObj->setAppStatusId($this->app_status_id);
 
