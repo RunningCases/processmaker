@@ -160,6 +160,12 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
     protected $usr_id = 0;
 
     /**
+     * The value for the tas_id field.
+     * @var        int
+     */
+    protected $tas_id = 0;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -476,6 +482,17 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
     {
 
         return $this->usr_id;
+    }
+
+    /**
+     * Get the [tas_id] column value.
+     * 
+     * @return     int
+     */
+    public function getTasId()
+    {
+
+        return $this->tas_id;
     }
 
     /**
@@ -984,6 +1001,28 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
     } // setUsrId()
 
     /**
+     * Set the value of [tas_id] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setTasId($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->tas_id !== $v || $v === 0) {
+            $this->tas_id = $v;
+            $this->modifiedColumns[] = ListParticipatedHistoryPeer::TAS_ID;
+        }
+
+    } // setTasId()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -1044,12 +1083,14 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
 
             $this->usr_id = $rs->getInt($startcol + 21);
 
+            $this->tas_id = $rs->getInt($startcol + 22);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 22; // 22 = ListParticipatedHistoryPeer::NUM_COLUMNS - ListParticipatedHistoryPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 23; // 23 = ListParticipatedHistoryPeer::NUM_COLUMNS - ListParticipatedHistoryPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating ListParticipatedHistory object", $e);
@@ -1319,6 +1360,9 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
             case 21:
                 return $this->getUsrId();
                 break;
+            case 22:
+                return $this->getTasId();
+                break;
             default:
                 return null;
                 break;
@@ -1361,6 +1405,7 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
             $keys[19] => $this->getDelPriority(),
             $keys[20] => $this->getProId(),
             $keys[21] => $this->getUsrId(),
+            $keys[22] => $this->getTasId(),
         );
         return $result;
     }
@@ -1457,6 +1502,9 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
                 break;
             case 21:
                 $this->setUsrId($value);
+                break;
+            case 22:
+                $this->setTasId($value);
                 break;
         } // switch()
     }
@@ -1569,6 +1617,10 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
             $this->setUsrId($arr[$keys[21]]);
         }
 
+        if (array_key_exists($keys[22], $arr)) {
+            $this->setTasId($arr[$keys[22]]);
+        }
+
     }
 
     /**
@@ -1666,6 +1718,10 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
 
         if ($this->isColumnModified(ListParticipatedHistoryPeer::USR_ID)) {
             $criteria->add(ListParticipatedHistoryPeer::USR_ID, $this->usr_id);
+        }
+
+        if ($this->isColumnModified(ListParticipatedHistoryPeer::TAS_ID)) {
+            $criteria->add(ListParticipatedHistoryPeer::TAS_ID, $this->tas_id);
         }
 
 
@@ -1773,6 +1829,8 @@ abstract class BaseListParticipatedHistory extends BaseObject implements Persist
         $copyObj->setProId($this->pro_id);
 
         $copyObj->setUsrId($this->usr_id);
+
+        $copyObj->setTasId($this->tas_id);
 
 
         $copyObj->setNew(true);

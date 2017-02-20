@@ -40,6 +40,10 @@ class ListInbox extends BaseListInbox
             if (!empty($data['USR_UID'])) {
                 $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
             }
+            $t = new Task();
+            if (!empty($data['TAS_UID'])) {
+                $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
+            }
             $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
             if ($this->validate()) {
                 $result = $this->save();
@@ -161,6 +165,10 @@ class ListInbox extends BaseListInbox
         $u = new Users();
         if (!empty($data['USR_UID'])) {
             $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
+        }
+        $t = new Task();
+        if (!empty($data['TAS_UID'])) {
+            $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
         }
         $con = Propel::getConnection( ListInboxPeer::DATABASE_NAME );
         try {

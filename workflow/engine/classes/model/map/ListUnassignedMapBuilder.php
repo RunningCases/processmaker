@@ -99,6 +99,8 @@ class ListUnassignedMapBuilder
 
         $tMap->addColumn('PRO_ID', 'ProId', 'int', CreoleTypes::INTEGER, false, null);
 
+        $tMap->addColumn('TAS_ID', 'TasId', 'int', CreoleTypes::INTEGER, false, null);
+
     } // doBuild()
 
 } // ListUnassignedMapBuilder

@@ -148,6 +148,12 @@ abstract class BaseListCanceled extends BaseObject implements Persistent
     protected $usr_id = 0;
 
     /**
+     * The value for the tas_id field.
+     * @var        int
+     */
+    protected $tas_id = 0;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -463,6 +469,17 @@ abstract class BaseListCanceled extends BaseObject implements Persistent
     {
 
         return $this->usr_id;
+    }
+
+    /**
+     * Get the [tas_id] column value.
+     * 
+     * @return     int
+     */
+    public function getTasId()
+    {
+
+        return $this->tas_id;
     }
 
     /**
@@ -934,6 +951,28 @@ abstract class BaseListCanceled extends BaseObject implements Persistent
     } // setUsrId()
 
     /**
+     * Set the value of [tas_id] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setTasId($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->tas_id !== $v || $v === 0) {
+            $this->tas_id = $v;
+            $this->modifiedColumns[] = ListCanceledPeer::TAS_ID;
+        }
+
+    } // setTasId()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -990,12 +1029,14 @@ abstract class BaseListCanceled extends BaseObject implements Persistent
 
             $this->usr_id = $rs->getInt($startcol + 19);
 
+            $this->tas_id = $rs->getInt($startcol + 20);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 20; // 20 = ListCanceledPeer::NUM_COLUMNS - ListCanceledPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 21; // 21 = ListCanceledPeer::NUM_COLUMNS - ListCanceledPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating ListCanceled object", $e);
@@ -1259,6 +1300,9 @@ abstract class BaseListCanceled extends BaseObject implements Persistent
             case 19:
                 return $this->getUsrId();
                 break;
+            case 20:
+                return $this->getTasId();
+                break;
             default:
                 return null;
                 break;
@@ -1299,6 +1343,7 @@ abstract class BaseListCanceled extends BaseObject implements Persistent
             $keys[17] => $this->getDelPriority(),
             $keys[18] => $this->getProId(),
             $keys[19] => $this->getUsrId(),
+            $keys[20] => $this->getTasId(),
         );
         return $result;
     }
@@ -1389,6 +1434,9 @@ abstract class BaseListCanceled extends BaseObject implements Persistent
                 break;
             case 19:
                 $this->setUsrId($value);
+                break;
+            case 20:
+                $this->setTasId($value);
                 break;
         } // switch()
     }
@@ -1493,6 +1541,10 @@ abstract class BaseListCanceled extends BaseObject implements Persistent
             $this->setUsrId($arr[$keys[19]]);
         }
 
+        if (array_key_exists($keys[20], $arr)) {
+            $this->setTasId($arr[$keys[20]]);
+        }
+
     }
 
     /**
@@ -1582,6 +1634,10 @@ abstract class BaseListCanceled extends BaseObject implements Persistent
 
         if ($this->isColumnModified(ListCanceledPeer::USR_ID)) {
             $criteria->add(ListCanceledPeer::USR_ID, $this->usr_id);
+        }
+
+        if ($this->isColumnModified(ListCanceledPeer::TAS_ID)) {
+            $criteria->add(ListCanceledPeer::TAS_ID, $this->tas_id);
         }
 
 
@@ -1675,6 +1731,8 @@ abstract class BaseListCanceled extends BaseObject implements Persistent
         $copyObj->setProId($this->pro_id);
 
         $copyObj->setUsrId($this->usr_id);
+
+        $copyObj->setTasId($this->tas_id);
 
 
         $copyObj->setNew(true);

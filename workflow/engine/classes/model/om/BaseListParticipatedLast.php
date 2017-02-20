@@ -178,6 +178,12 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
     protected $usr_id = 0;
 
     /**
+     * The value for the tas_id field.
+     * @var        int
+     */
+    protected $tas_id = 0;
+
+    /**
      * The value for the app_status_id field.
      * @var        int
      */
@@ -533,6 +539,17 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
     {
 
         return $this->usr_id;
+    }
+
+    /**
+     * Get the [tas_id] column value.
+     * 
+     * @return     int
+     */
+    public function getTasId()
+    {
+
+        return $this->tas_id;
     }
 
     /**
@@ -1118,6 +1135,28 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
     } // setUsrId()
 
     /**
+     * Set the value of [tas_id] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setTasId($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->tas_id !== $v || $v === 0) {
+            $this->tas_id = $v;
+            $this->modifiedColumns[] = ListParticipatedLastPeer::TAS_ID;
+        }
+
+    } // setTasId()
+
+    /**
      * Set the value of [app_status_id] column.
      * 
      * @param      int $v new value
@@ -1206,14 +1245,16 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
             $this->usr_id = $rs->getInt($startcol + 24);
 
-            $this->app_status_id = $rs->getInt($startcol + 25);
+            $this->tas_id = $rs->getInt($startcol + 25);
+
+            $this->app_status_id = $rs->getInt($startcol + 26);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 26; // 26 = ListParticipatedLastPeer::NUM_COLUMNS - ListParticipatedLastPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 27; // 27 = ListParticipatedLastPeer::NUM_COLUMNS - ListParticipatedLastPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating ListParticipatedLast object", $e);
@@ -1493,6 +1534,9 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
                 return $this->getUsrId();
                 break;
             case 25:
+                return $this->getTasId();
+                break;
+            case 26:
                 return $this->getAppStatusId();
                 break;
             default:
@@ -1540,7 +1584,8 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
             $keys[22] => $this->getDelThreadStatus(),
             $keys[23] => $this->getProId(),
             $keys[24] => $this->getUsrId(),
-            $keys[25] => $this->getAppStatusId(),
+            $keys[25] => $this->getTasId(),
+            $keys[26] => $this->getAppStatusId(),
         );
         return $result;
     }
@@ -1648,6 +1693,9 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
                 $this->setUsrId($value);
                 break;
             case 25:
+                $this->setTasId($value);
+                break;
+            case 26:
                 $this->setAppStatusId($value);
                 break;
         } // switch()
@@ -1774,7 +1822,11 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[25], $arr)) {
-            $this->setAppStatusId($arr[$keys[25]]);
+            $this->setTasId($arr[$keys[25]]);
+        }
+
+        if (array_key_exists($keys[26], $arr)) {
+            $this->setAppStatusId($arr[$keys[26]]);
         }
 
     }
@@ -1886,6 +1938,10 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
 
         if ($this->isColumnModified(ListParticipatedLastPeer::USR_ID)) {
             $criteria->add(ListParticipatedLastPeer::USR_ID, $this->usr_id);
+        }
+
+        if ($this->isColumnModified(ListParticipatedLastPeer::TAS_ID)) {
+            $criteria->add(ListParticipatedLastPeer::TAS_ID, $this->tas_id);
         }
 
         if ($this->isColumnModified(ListParticipatedLastPeer::APP_STATUS_ID)) {
@@ -2006,6 +2062,8 @@ abstract class BaseListParticipatedLast extends BaseObject implements Persistent
         $copyObj->setProId($this->pro_id);
 
         $copyObj->setUsrId($this->usr_id);
+
+        $copyObj->setTasId($this->tas_id);
 
         $copyObj->setAppStatusId($this->app_status_id);
 
