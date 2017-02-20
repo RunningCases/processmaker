@@ -2201,7 +2201,7 @@ class Processes
         foreach (array("PRO_TRI_DELETED", "PRO_TRI_CANCELED", "PRO_TRI_PAUSED", "PRO_TRI_REASSIGNED") as $value) {
             $key = $value;
 
-            if (isset($map[$oData->process[$key]])) {
+            if (isset($oData->process[$key]) && isset($map[$oData->process[$key]])) {
                 $oData->process[$key] = $map[$oData->process[$key]];
             }
         }
@@ -5071,8 +5071,21 @@ class Processes
                         $fileContent = fread($fp, $fsContent); //reading string $XmlContent
                         $newFileName = $pathMailTem . $sFileName;
                         $bytesSaved = @file_put_contents($newFileName, $fileContent);
-                        if ($bytesSaved != $fsContent) {
+                        if($bytesSaved === false){
                             throw (new Exception('Error writing MailTemplate file in directory : ' . $pathMailTem));
+                        }
+                        if ($bytesSaved != $fsContent) {
+                            $channel = "writingMailTemplate";
+                            $context = \Bootstrap::getDefaultContextLog();
+                            $context['action'] = $channel;
+                            if (defined("SYS_CURRENT_URI") && defined("SYS_CURRENT_PARMS")) {
+                                $context['url'] = SYS_CURRENT_URI . '?' . SYS_CURRENT_PARMS;
+                            }
+                            $context['usrUid'] = isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : '';
+                            $sysSys = defined("SYS_SYS") ? SYS_SYS : "Undefined";
+                            $message = 'The imported template has a number of byes different than the original template, please verify if the file \'' . $newFileName . '\' is correct.';
+                            $level = 400;
+                            Bootstrap::registerMonolog($channel, $level, $message, $context, $sysSys, 'processmaker.log');
                         }
                     }
                 }

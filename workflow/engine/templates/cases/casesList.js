@@ -1289,7 +1289,7 @@ Ext.onReady ( function() {
         displayField:'USR_FULLNAME',
         typeAhead: false,
         triggerAction: 'all',
-        emptyText : _('ID_ALL_USERS'),
+        emptyText: '- ' + _('ID_ALL_USERS') + ' -',
         selectOnFocus : true,
         editable : true,
         width: 180,
@@ -1305,6 +1305,7 @@ Ext.onReady ( function() {
                 storeCases.setBaseParam( 'user', filterUser);
                 storeCases.setBaseParam( 'start', 0);
                 storeCases.setBaseParam( 'limit', pageSize);
+                doSearch();
             }
         }
     });
@@ -1356,6 +1357,7 @@ Ext.onReady ( function() {
         ctCls:"pm_search_x_button_des",
         handler: function(){
             suggestUser.setValue('');
+            storeCases.setBaseParam('user', '');
             doSearch();
         }
     }
@@ -2367,7 +2369,7 @@ Ext.onReady ( function() {
             storeCases.setBaseParam("search", textSearch.getValue());
             break;
         case "to_reassign":
-            storeCases.setBaseParam("user", comboAllUsers.store.getAt(0).get(comboAllUsers.valueField));
+            storeCases.setBaseParam("user", "");
             storeCases.setBaseParam("category", "");
             storeCases.setBaseParam("process", "");
             storeCases.setBaseParam("search", textSearch.getValue());

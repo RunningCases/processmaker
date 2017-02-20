@@ -1636,7 +1636,9 @@ importProcessExistGroup = function()
                     } else {
                         Ext.getCmp('objectsToImport').setValue("");
                         Ext.getCmp('importProcessExistGroupWindow').close();
-                        Ext.getCmp('importProcessExistProcessWindow').close();
+                        if (Ext.getCmp('importProcessExistProcessWindow')) {
+                            Ext.getCmp('importProcessExistProcessWindow').close();
+                        }
                         Ext.getCmp('importProcessWindow').close();
                         Ext.MessageBox.show({
                             title: _('ID_ERROR'),
