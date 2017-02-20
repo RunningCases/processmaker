@@ -2439,35 +2439,36 @@ class workspaceTools
         CLI::logging("> Completed table LIST_PARTICIPATED_HISTORY\n");
     }
 
-    public function regenerateListParticipatedLast(){
+    public function regenerateListParticipatedLast()
+    {
         $this->initPropel(true);
-        $query = 'INSERT INTO '.$this->dbName.'.LIST_PARTICIPATED_LAST
+        $query = 'INSERT INTO ' . $this->dbName . '.LIST_PARTICIPATED_LAST
                     (
-                    APP_UID,
-                    USR_UID,
-                    DEL_INDEX,
-                    TAS_UID,
-                    PRO_UID,
-                    APP_NUMBER,
-                    APP_TITLE,
-                    APP_PRO_TITLE,
-                    APP_TAS_TITLE,
-                    APP_STATUS,
-                    DEL_PREVIOUS_USR_UID,
-                    DEL_PREVIOUS_USR_USERNAME,
-                    DEL_PREVIOUS_USR_FIRSTNAME,
-                    DEL_PREVIOUS_USR_LASTNAME,
-                    DEL_CURRENT_USR_USERNAME,
-                    DEL_CURRENT_USR_FIRSTNAME,
-                    DEL_CURRENT_USR_LASTNAME,
-                    DEL_DELEGATE_DATE,
-                    DEL_INIT_DATE,
-                    DEL_DUE_DATE,
-                    DEL_CURRENT_TAS_TITLE,
-                    DEL_PRIORITY,
-                    DEL_THREAD_STATUS)
-
-                    SELECT
+                      APP_UID,
+                      USR_UID,
+                      DEL_INDEX,
+                      TAS_UID,
+                      PRO_UID,
+                      APP_NUMBER,
+                      APP_TITLE,
+                      APP_PRO_TITLE,
+                      APP_TAS_TITLE,
+                      APP_STATUS,
+                      DEL_PREVIOUS_USR_UID,
+                      DEL_PREVIOUS_USR_USERNAME,
+                      DEL_PREVIOUS_USR_FIRSTNAME,
+                      DEL_PREVIOUS_USR_LASTNAME,
+                      DEL_CURRENT_USR_USERNAME,
+                      DEL_CURRENT_USR_FIRSTNAME,
+                      DEL_CURRENT_USR_LASTNAME,
+                      DEL_DELEGATE_DATE,
+                      DEL_INIT_DATE,
+                      DEL_DUE_DATE,
+                      DEL_CURRENT_TAS_TITLE,
+                      DEL_PRIORITY,
+                      DEL_THREAD_STATUS)
+                    
+                      SELECT
                         ACV.APP_UID,
                         ACV.USR_UID,
                         ACV.DEL_INDEX,
@@ -2478,44 +2479,73 @@ class workspaceTools
                         ACV.APP_PRO_TITLE,
                         ACV.APP_TAS_TITLE,
                         ACV.APP_STATUS,
-                        PRE_USR.USR_UID AS DEL_PREVIOUS_USR_UID,
-                        PRE_USR.USR_USERNAME AS DEL_PREVIOUS_USR_USERNAME,
-                        PRE_USR.USR_FIRSTNAME AS DEL_PREVIOUS_USR_FIRSTNAME,
-                        PRE_USR.USR_LASTNAME AS DEL_PREVIOUS_USR_LASTNAME,
-                        CUR_USR.USR_USERNAME AS DEL_CURRENT_USR_USERNAME,
-                        CUR_USR.USR_FIRSTNAME AS DEL_CURRENT_USR_FIRSTNAME,
-                        CUR_USR.USR_LASTNAME AS DEL_CURRENT_USR_LASTNAME,
-                        ACV.DEL_DELEGATE_DATE AS DEL_DELEGATE_DATE,
-                        ACV.DEL_INIT_DATE AS DEL_INIT_DATE,
-                        ACV.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
-                        CURR_USER_ACV.APP_TAS_TITLE AS DEL_CURRENT_TAS_TITLE,
+                        DEL_PREVIOUS_USR_UID,
+                        IFNULL(PRE_USR.USR_USERNAME, CUR_USR.USR_USERNAME)   AS DEL_PREVIOUS_USR_USERNAME,
+                        IFNULL(PRE_USR.USR_FIRSTNAME, CUR_USR.USR_FIRSTNAME) AS DEL_PREVIOUS_USR_USERNAME,
+                        IFNULL(PRE_USR.USR_LASTNAME, CUR_USR.USR_LASTNAME)   AS DEL_PREVIOUS_USR_USERNAME,
+                        CUR_USR.USR_USERNAME                                 AS DEL_CURRENT_USR_USERNAME,
+                        CUR_USR.USR_FIRSTNAME                                AS DEL_CURRENT_USR_FIRSTNAME,
+                        CUR_USR.USR_LASTNAME                                 AS DEL_CURRENT_USR_LASTNAME,
+                        ACV.DEL_DELEGATE_DATE                                AS DEL_DELEGATE_DATE,
+                        ACV.DEL_INIT_DATE                                    AS DEL_INIT_DATE,
+                        ACV.DEL_TASK_DUE_DATE                                AS DEL_DUE_DATE,
+                        ACV.APP_TAS_TITLE                                    AS DEL_CURRENT_TAS_TITLE,
                         ACV.DEL_PRIORITY,
                         ACV.DEL_THREAD_STATUS
-                    FROM
-                        (SELECT
-                            *, MAX(ACV_INT.DEL_INDEX) MAX_DEL_INDEX
-                        FROM
-                            '.$this->dbName.'.APP_CACHE_VIEW ACV_INT
-                        GROUP BY ACV_INT.APP_UID , ACV_INT.USR_UID) ACV
-                            INNER JOIN
-                        (SELECT
-                            ACV.APP_UID, ACV.USR_UID, ACV.APP_TAS_TITLE, ACV.PREVIOUS_USR_UID, ACV.DEL_INDEX
-                        FROM
-                            APP_CACHE_VIEW ACV
-                            INNER JOIN
-                        (SELECT
-                            ACV_INT.APP_UID, MAX(ACV_INT.DEL_INDEX) DEL_INDEX
-                        FROM
-                            '.$this->dbName.'.APP_CACHE_VIEW ACV_INT
-                        GROUP BY ACV_INT.APP_UID) LAST_ACV ON LAST_ACV.APP_UID = ACV.APP_UID
-                            AND LAST_ACV.DEL_INDEX = ACV.DEL_INDEX) CURR_USER_ACV ON CURR_USER_ACV.APP_UID = ACV.APP_UID
-                            LEFT JOIN
-                        '.$this->dbName.'.USERS PRE_USR ON CURR_USER_ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID
-                            LEFT JOIN
-                        '.$this->dbName.'.USERS CUR_USR ON CURR_USER_ACV.USR_UID = CUR_USR.USR_UID
-		';
+                      FROM
+                        (
+                          SELECT
+                            CASE WHEN ACV1.PREVIOUS_USR_UID = \'\' AND ACV1.DEL_INDEX = 1
+                              THEN ACV1.USR_UID
+                            ELSE ACV1.PREVIOUS_USR_UID END AS DEL_PREVIOUS_USR_UID,
+                            ACV1.*
+                          FROM ' . $this->dbName . '.APP_CACHE_VIEW ACV1
+                            JOIN
+                            (SELECT
+                               ACV_INT.APP_UID,
+                               MAX(ACV_INT.DEL_INDEX) MAX_DEL_INDEX
+                             FROM
+                               ' . $this->dbName . '.APP_CACHE_VIEW ACV_INT
+                             GROUP BY
+                               ACV_INT.USR_UID,
+                               ACV_INT.APP_UID
+                            ) ACV2
+                              ON ACV2.APP_UID = ACV1.APP_UID AND ACV2.MAX_DEL_INDEX = ACV1.DEL_INDEX
+                        ) ACV
+                        LEFT JOIN ' . $this->dbName . '.USERS PRE_USR ON ACV.PREVIOUS_USR_UID = PRE_USR.USR_UID
+                        LEFT JOIN ' . $this->dbName . '.USERS CUR_USR ON ACV.USR_UID = CUR_USR.USR_UID';
         $con = Propel::getConnection("workflow");
         $stmt = $con->createStatement();
+        $stmt->executeQuery($query);
+        CLI::logging(">  Inserted data into table LIST_PARTICIPATED_LAST\n");
+        $query = 'UPDATE ' . $this->dbName . '.LIST_PARTICIPATED_LAST LPL, (
+                       SELECT
+                         TASK.TAS_TITLE,
+                         CUR_USER.APP_UID,
+                         USERS.USR_UID,
+                         USERS.USR_USERNAME,
+                         USERS.USR_FIRSTNAME,
+                         USERS.USR_LASTNAME
+                       FROM (
+                              SELECT
+                                APP_UID,
+                                TAS_UID,
+                                DEL_INDEX,
+                                USR_UID
+                              FROM ' . $this->dbName . '.APP_DELEGATION
+                              WHERE DEL_LAST_INDEX = 1
+                            ) CUR_USER
+                         LEFT JOIN ' . $this->dbName . '.USERS ON CUR_USER.USR_UID = USERS.USR_UID
+                         LEFT JOIN ' . $this->dbName . '.TASK ON CUR_USER.TAS_UID = TASK.TAS_UID) USERS_VALUES
+                    SET
+                      LPL.DEL_CURRENT_USR_USERNAME  = USERS_VALUES.USR_USERNAME,
+                      LPL.DEL_CURRENT_USR_FIRSTNAME = USERS_VALUES.USR_FIRSTNAME,
+                      LPL.DEL_CURRENT_USR_LASTNAME  = USERS_VALUES.USR_LASTNAME,
+                      LPL.DEL_CURRENT_TAS_TITLE     = USERS_VALUES.TAS_TITLE
+                    WHERE LPL.APP_UID = USERS_VALUES.APP_UID';
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+        CLI::logging("> Updating the current users data on table LIST_PARTICIPATED_LAST\n");
         $stmt->executeQuery($query);
         CLI::logging("> Completed table LIST_PARTICIPATED_LAST\n");
     }
