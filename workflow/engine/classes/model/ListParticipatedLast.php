@@ -71,9 +71,13 @@ class ListParticipatedLast extends BaseListParticipatedLast
         }
 
         $p = new Process();
-        if(!empty($data['PRO_UID'])) $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
+        if(!empty($data['PRO_UID'])) {
+            $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
+        }
         $u = new Users();
-        if(!empty($data['USR_UID'])) $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
+        if(!empty($data['USR_UID'])) {
+            $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
+        }
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
             $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
@@ -103,9 +107,13 @@ class ListParticipatedLast extends BaseListParticipatedLast
     {
         $data['DEL_THREAD_STATUS'] = (isset($data['DEL_THREAD_STATUS'])) ? $data['DEL_THREAD_STATUS'] : 'OPEN';
         $p = new Process();
-        if(!empty($data['PRO_UID'])) $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
+        if(!empty($data['PRO_UID'])) {
+            $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
+        }
         $u = new Users();
-        if(!empty($data['USR_UID'])) $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
+        if(!empty($data['USR_UID'])) {
+            $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
+        }
         $con = Propel::getConnection( ListParticipatedLastPeer::DATABASE_NAME );
         try {
             $con->begin();
