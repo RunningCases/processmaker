@@ -2488,8 +2488,8 @@ msgstr "The PIN is invalid"
 # TRANSLATION
 # LABEL/ID_MAP
 #: LABEL/ID_MAP
-msgid "Where is my Case?"
-msgstr "Where is my Case?"
+msgid "My Case Status"
+msgstr "My Case Status"
 
 # TRANSLATION
 # LABEL/ID_DYNADOC
@@ -2662,8 +2662,8 @@ msgstr "Delete Stage"
 # TRANSLATION
 # LABEL/ID_HISTORY_MESSAGES
 #: LABEL/ID_HISTORY_MESSAGES
-msgid "My History Messages"
-msgstr "My History Messages"
+msgid "My Message History"
+msgstr "My Message History"
 
 # TRANSLATION
 # LABEL/ID_STAGE
@@ -4522,14 +4522,14 @@ msgstr "User Reassignment"
 # TRANSLATION
 # LABEL/ID_CASES_LIST_SETUP
 #: LABEL/ID_CASES_LIST_SETUP
-msgid "Cases Lists"
-msgstr "Cases Lists"
+msgid "Case Lists"
+msgstr "Case Lists"
 
 # TRANSLATION
 # LABEL/ID_APPCACHE_SETUP
 #: LABEL/ID_APPCACHE_SETUP
-msgid "Cases List Cache Builder"
-msgstr "Cases List Cache Builder"
+msgid "Case List Cache Builder"
+msgstr "Case List Cache Builder"
 
 # TRANSLATION
 # LABEL/ID_CLEAR_CACHE_MSG1
@@ -4750,8 +4750,8 @@ msgstr "Country"
 # TRANSLATION
 # LABEL/ID_LAN_UPDATE_DATE
 #: LABEL/ID_LAN_UPDATE_DATE
-msgid "Update Date"
-msgstr "Update Date"
+msgid "Date Updated"
+msgstr "Date Updated"
 
 # TRANSLATION
 # LABEL/ID_LAN_REV_DATE
@@ -4918,8 +4918,8 @@ msgstr "Available Fields"
 # TRANSLATION
 # LABEL/ID_CASES_LIST_FIELDS
 #: LABEL/ID_CASES_LIST_FIELDS
-msgid "Cases List Fields"
-msgstr "Cases List Fields"
+msgid "Case List Fields"
+msgstr "Case List Fields"
 
 # TRANSLATION
 # LABEL/ID_TITLE_INBOX
@@ -5206,8 +5206,8 @@ msgstr "All Users"
 # TRANSLATION
 # LABEL/ID_ALL_STATUS
 #: LABEL/ID_ALL_STATUS
-msgid "All Status"
-msgstr "All Status"
+msgid "All Statuses"
+msgstr "All Statuses"
 
 # TRANSLATION
 # LABEL/ID_CONFIRM
@@ -5236,8 +5236,8 @@ msgstr "Debug"
 # TRANSLATION
 # LABEL/ID_PRO_CREATE_DATE
 #: LABEL/ID_PRO_CREATE_DATE
-msgid "Create Date"
-msgstr "Create Date"
+msgid "Date Created"
+msgstr "Date Created"
 
 # TRANSLATION
 # LABEL/ID_ON
@@ -6352,8 +6352,8 @@ msgstr "Current User"
 # TRANSLATION
 # LABEL/ID_LAST_MODIFY
 #: LABEL/ID_LAST_MODIFY
-msgid "[LABEL/ID_LAST_MODIFY] Last Modify"
-msgstr "Last Modify"
+msgid "[LABEL/ID_LAST_MODIFY] Last Modified"
+msgstr "Last Modified"
 
 # TRANSLATION
 # LABEL/ID_DELEGATION_DATE
@@ -10006,8 +10006,8 @@ msgstr "Your password is"
 # TRANSLATION
 # LABEL/ID_ENABLE_FOTGOT_PASSWORD
 #: LABEL/ID_ENABLE_FOTGOT_PASSWORD
-msgid "Enable Forgot password"
-msgstr "Enable Forgot password"
+msgid "Enable Password Recovery"
+msgstr "Enable Password Recovery"
 
 # TRANSLATION
 # LABEL/ID_NEW_PASSWORD_SENT
@@ -11512,8 +11512,8 @@ msgstr "Assigned To"
 # TRANSLATION
 # LABEL/ID_DASHLETS_INSTANCES
 #: LABEL/ID_DASHLETS_INSTANCES
-msgid "Dashlets Instances"
-msgstr "Dashlets Instances"
+msgid "Dashlet Instances"
+msgstr "Dashlet Instances"
 
 # TRANSLATION
 # LABEL/ID_INPUT_DOC_DOESNT_EXIST
@@ -12634,8 +12634,8 @@ msgstr "The current password is incorrect"
 # TRANSLATION
 # LABEL/ID_MAX_LIFETIME
 #: LABEL/ID_MAX_LIFETIME
-msgid "Cookie lifetime (seconds)"
-msgstr "Cookie lifetime (seconds)"
+msgid "Cookie Lifetime (Seconds)"
+msgstr "Cookie Lifetime (Seconds)"
 
 # TRANSLATION
 # LABEL/ID_SUCCESSFUL_CONNECTION
@@ -13966,8 +13966,8 @@ msgstr "The system has detected that changes to the case labels will affect more
 # TRANSLATION
 # LABEL/ID_MESSAGE_LOGIN
 #: LABEL/ID_MESSAGE_LOGIN
-msgid "The default language set here is for the \"Language\" dropdown box displayed on the login screen. This configuration is set for each workspace."
-msgstr "The default language set here is for the \"Language\" dropdown box displayed on the login screen. This configuration is set for each workspace."
+msgid "The default language set here is for the Language dropdown box displayed on the login screen. This configuration is set for each workspace."
+msgstr "The default language set here is for the Language dropdown box displayed on the login screen. This configuration is set for each workspace."
 
 # TRANSLATION
 # LABEL/ID_MESSAGE_SYSTEM
@@ -14518,8 +14518,8 @@ msgstr "No Emails to display"
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_CHECK
 #: LABEL/ID_PROCESSMAKER_REQUIREMENTS_CHECK
-msgid "Check PM requirements"
-msgstr "Check PM requirements"
+msgid "Check PM Requirements"
+msgstr "Check PM Requirements"
 
 # TRANSLATION
 # LABEL/ID_PHP_INFO
@@ -14542,14 +14542,14 @@ msgstr "Check again"
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION
 #: LABEL/ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION
-msgid "If any of these items are not supported (marked as No), then please take actions to correct them.<br />"
-msgstr "If any of these items are not supported (marked as No), then please take actions to correct them.<br />"
+msgid "If any of these items are not supported (marked as \" No\"), then please take actions to correct them.<br />"
+msgstr "If any of these items are not supported (marked as \" No\"), then please take actions to correct them.<br />"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION2
 #: LABEL/ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION2
-msgid "Failure to do so could lead your ProcessMaker installation not functioning correctly!<br />"
-msgstr "Failure to do so could lead your ProcessMaker installation not functioning correctly!<br />"
+msgid "Failure to do so correctly could lead to your ProcessMaker installation not functioning correctly!<br />"
+msgstr "Failure to do so correctly could lead to your ProcessMaker installation not functioning correctly!<br />"
 
 # TRANSLATION
 # LABEL/ID_PROCESSMAKER_REQUIREMENTS_PHP
@@ -14662,8 +14662,8 @@ msgstr "Restart labels with system fields"
 # TRANSLATION
 # LABEL/ID_CASESLIST_FIELD_LABEL_RESET_ID
 #: LABEL/ID_CASESLIST_FIELD_LABEL_RESET_ID
-msgid "Restart labels with system fields with the labels ID for its translation"
-msgstr "Restart labels with system fields with the labels ID for its translation"
+msgid "Restart labels with system fields with the ID of the label for its translation"
+msgstr "Restart labels with system fields with the ID of the label for its translation"
 
 # TRANSLATION
 # LABEL/ID_SKIN_TEAM
@@ -14938,8 +14938,8 @@ msgstr "Do you want to clear the information from the first row?"
 # TRANSLATION
 # LABEL/ID_FROM_NAME
 #: LABEL/ID_FROM_NAME
-msgid "From name"
-msgstr "From name"
+msgid "Sender Name"
+msgstr "Sender Name"
 
 # TRANSLATION
 # LABEL/ID_ACCEPT
@@ -15418,8 +15418,8 @@ msgstr "Group cannot be deleted while it's assigned to a task"
 # TRANSLATION
 # LABEL/ID_FROM_EMAIL
 #: LABEL/ID_FROM_EMAIL
-msgid "From Mail"
-msgstr "From Mail"
+msgid "Sender Email"
+msgstr "Sender Email"
 
 # TRANSLATION
 # LABEL/ID_UNSAVED_TRIGGERS_WINDOW
@@ -16702,8 +16702,8 @@ msgstr "No new versions available"
 # TRANSLATION
 # LABEL/ID_CHECK_UPDATES
 #: LABEL/ID_CHECK_UPDATES
-msgid "Check for updates (you need to be connected to Internet)"
-msgstr "Check for updates (you need to be connected to Internet)"
+msgid "Check for updates (you need to be connected to the Internet)"
+msgstr "Check for updates (you need to be connected to the Internet)"
 
 # TRANSLATION
 # LABEL/ID_YOUR_LICENSE
@@ -16948,14 +16948,14 @@ msgstr "Audit Log has been disabled"
 # TRANSLATION
 # LABEL/ID_AUDIT_LOG_DETAILS_1
 #: LABEL/ID_AUDIT_LOG_DETAILS_1
-msgid "When this option is enabled, all changes made in the \"ADMIN\" tab are registered in a log."
-msgstr "When this option is enabled, all changes made in the \"ADMIN\" tab are registered in a log."
+msgid "When this option is enabled, all changes made in the Admin tab are registered in a log."
+msgstr "When this option is enabled, all changes made in the Admin tab are registered in a log."
 
 # TRANSLATION
 # LABEL/ID_AUDIT_LOG_DETAILS_2
 #: LABEL/ID_AUDIT_LOG_DETAILS_2
-msgid "and the user will be able to see those changes in the \"Audit Log\" option in Logs Menu"
-msgstr "and the user will be able to see those changes in the \"Audit Log\" option in Logs Menu"
+msgid "and the user will be able to see those changes in the Audit Log option in Logs Menu"
+msgstr "and the user will be able to see those changes in the Audit Log option in Logs Menu"
 
 # TRANSLATION
 # LABEL/ID_PRIVATE
@@ -17494,8 +17494,8 @@ msgstr "Mcrypt Support"
 # TRANSLATION
 # LABEL/ID_GENERATE_INFO_SUPPORT
 #: LABEL/ID_GENERATE_INFO_SUPPORT
-msgid "A file with the information of your System will be generated. It will help the support team to provide a better support to any issue that may appear"
-msgstr "A file with the information of your System will be generated. It will help the support team to provide a better support to any issue that may appear"
+msgid "A file with information about your System will be generated. It will help the support team provide better support for any issue that may occur."
+msgstr "A file with information about your System will be generated. It will help the support team provide better support for any issue that may occur."
 
 # TRANSLATION
 # LABEL/ID_CURRENT_BROWSER_NOT_SUPPORTED
@@ -17752,8 +17752,8 @@ msgstr "Default"
 # TRANSLATION
 # LABEL/ID_EMAIL_SERVER_ACCOUNT_FROM
 #: LABEL/ID_EMAIL_SERVER_ACCOUNT_FROM
-msgid "[LABEL/ID_EMAIL_SERVER_ACCOUNT_FROM] Account From"
-msgstr "Account From"
+msgid "[LABEL/ID_EMAIL_SERVER_ACCOUNT_FROM] Sender Account"
+msgstr "Sender Account"
 
 # TRANSLATION
 # LABEL/ID_EMAIL_SERVER_TEST_CONNECTION_VERIFYING_MAIL
@@ -18850,8 +18850,8 @@ msgstr "Sort by"
 # TRANSLATION
 # LABEL/ID_CUSTOM_CASES_LISTS
 #: LABEL/ID_CUSTOM_CASES_LISTS
-msgid "Custom Cases Lists"
-msgstr "Custom Cases Lists"
+msgid "Custom Case List"
+msgstr "Custom Case List"
 
 # TRANSLATION
 # LABEL/ID_NO_INEFFICIENT_PROCESSES
@@ -22570,8 +22570,8 @@ msgstr "Edit permission"
 # TRANSLATION
 # LABEL/ID_MAFE_3901de5bd75f430a8ce0bed0f2f90056
 #: LABEL/ID_MAFE_3901de5bd75f430a8ce0bed0f2f90056
-msgid "[LABEL/ID_MAFE_3901de5bd75f430a8ce0bed0f2f90056] Status Case"
-msgstr "Status Case"
+msgid "[LABEL/ID_MAFE_3901de5bd75f430a8ce0bed0f2f90056] Case Status"
+msgstr "Case Status"
 
 # TRANSLATION
 # LABEL/ID_MAFE_521019040a0f4f7773357aa6bc22180b
@@ -26062,8 +26062,8 @@ msgstr "Please enter a numeric value"
 # TRANSLATION
 # LABEL/ID_MAFE_42b5e40c0f14c557113865a3aa78b673
 #: LABEL/ID_MAFE_42b5e40c0f14c557113865a3aa78b673
-msgid "Insert a SQL query like: SELECT [Key field], [Label field] FROM [Table name]"
-msgstr "Insert a SQL query like: SELECT [Key field], [Label field] FROM [Table name]"
+msgid "Insert an SQL query like: SELECT [Key field], [Label field] FROM [Table name]"
+msgstr "Insert an SQL query like: SELECT [Key field], [Label field] FROM [Table name]"
 
 # TRANSLATION
 # LABEL/ID_MAFE_6b66a61fa66288a9a7ad6474d2e686ec
@@ -26842,14 +26842,14 @@ msgstr "Are you sure to disable the Google Drive Integration? If you do this, th
 # TRANSLATION
 # LABEL/ID_GMAIL_HELP_ENABLE
 #: LABEL/ID_GMAIL_HELP_ENABLE
-msgid "Enabling this option, users will be able to use the  Gmail extension that allows to interact with Processamaker from the urser's Gmail web page."
-msgstr "Enabling this option, users will be able to use the  Gmail extension that allows to interact with Processamaker from the urser's Gmail web page."
+msgid "When this option is enabled, users will be able to use the Gmail extension that allows interaction with ProcessMaker from the user's Gmail web page."
+msgstr "When this option is enabled, users will be able to use the Gmail extension that allows interaction with ProcessMaker from the user's Gmail web page."
 
 # TRANSLATION
 # LABEL/ID_DRIVE_HELP_ENABLE
 #: LABEL/ID_DRIVE_HELP_ENABLE
-msgid "Enabling this option will allow to store all input, output and attached documents generated in your processes in Google Drive."
-msgstr "Enabling this option will allow to store all input, output and attached documents generated in your processes in Google Drive."
+msgid "When this option is enabled, all input, output and attached documents generated in your processes can be stored in Google Drive."
+msgstr "When this option is enabled, all input, output and attached documents generated in your processes can be stored in Google Drive."
 
 # TRANSLATION
 # LABEL/ID_ENABLE_PMDRIVE
@@ -27440,8 +27440,8 @@ msgstr "wildcard"
 # TRANSLATION
 # LABEL/ID_MAFE_8efa191bcfbd509f1be06c9eac30cb9c
 #: LABEL/ID_MAFE_8efa191bcfbd509f1be06c9eac30cb9c
-msgid "Fields marked with asterisk (%%ASTERISK%%) are required."
-msgstr "Fields marked with asterisk (%%ASTERISK%%) are required."
+msgid "Fields marked with an asterisk (%%ASTERISK%%) are required."
+msgstr "Fields marked with an asterisk (%%ASTERISK%%) are required."
 
 # TRANSLATION
 # LABEL/ID_MAFE_c7f8f8652db6d74e086d297129179d2f
@@ -27692,8 +27692,8 @@ msgstr "Supported Controls: Multiple File."
 # TRANSLATION
 # LABEL/ID_DEFAULT_EXPIRATION_YEAR
 #: LABEL/ID_DEFAULT_EXPIRATION_YEAR
-msgid "Default user expiry date (years)"
-msgstr "Default user expiry date (years)"
+msgid "Default User Expiry Date (Years)"
+msgstr "Default User Expiry Date (Years)"
 
 # TRANSLATION
 # LABEL/ID_MAFE_497f247967ea9a295c48effdc025c1a1
