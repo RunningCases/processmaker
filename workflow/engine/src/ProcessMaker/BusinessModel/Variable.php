@@ -576,9 +576,30 @@ class Variable
             $stmt = $cnn->createStatement();
 
             if (isset($arrayVariable['app_uid']) && !empty($arrayVariable['app_uid'])) {
+                $delIndex = isset($arrayVariable["del_index"]) ? $arrayVariable["del_index"] : 0;
                 $case = new \Cases();
-                $fields = $case->loadCase($arrayVariable['app_uid']);
+                $fields = $case->loadCase($arrayVariable['app_uid'], (int) $delIndex);
                 $arrayVariable = array_merge($fields['APP_DATA'], $arrayVariable);
+
+                //Set the global variables
+                if (!isset($arrayVariable['APPLICATION']) || empty($arrayVariable['APPLICATION'])) {
+                    $arrayVariable['APPLICATION'] = $arrayVariable['app_uid'];
+                }
+                if (!isset($arrayVariable['PROCESS']) || empty($arrayVariable['PROCESS'])) {
+                    $arrayVariable['PROCESS'] = $fields['PRO_UID'];
+                }
+                if (isset($fields['TASK']) && !empty($fields['TASK'])) {
+                    $arrayVariable['TASK'] = $fields['TASK'];
+                }
+                if (isset($fields['INDEX']) && !empty($fields['INDEX'])) {
+                    $arrayVariable['INDEX'] = $fields['INDEX'];
+                }
+                $arrayVariable['USER_LOGGED'] = \ProcessMaker\Services\OAuth2\Server::getUserId();
+                if (isset($arrayVariable['USER_LOGGED']) && !empty($arrayVariable['USER_LOGGED'])) {
+                    $oUserLogged = new \Users();
+                    $oUserLogged->load($arrayVariable['USER_LOGGED']);
+                    $arrayVariable['USR_USERNAME'] = $oUserLogged->getUsrUsername();
+                }
             }
             $replaceFields = G::replaceDataField($variableSql, $arrayVariable);
 
