@@ -96,33 +96,51 @@ function ws_parser($result) {
   return $rows;
 }
 
-function ws_open() {
-  global $sessionId;
-  global $client;
-  $endpoint = WS_WSDL_URL;
-  $sessionId = '';
+/**
+ * Initiates a connection using the SoapClient object, to start a web services 
+ * session in ProcessMaker.
+ * 
+ * @global type $sessionId
+ * @global SoapClient $client
+ * @return int
+ * @throws Exception
+ */
+function ws_open()
+{
+    global $sessionId;
+    global $client;
+    $endpoint = WS_WSDL_URL;
+    $sessionId = '';
 
-  $client = new SoapClient(
-      $endpoint,
-      ['stream_context' => stream_context_create(['ssl' => ['verify_peer' => false, 'verify_peer_name' => false, 'allow_self_signed' => true]])]
-  );
+    $streamContext = stream_context_create(array(
+        'ssl' => array(
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+            'allow_self_signed' => true
+        ))
+    );
+    $options = array(
+        "cache_wsdl" => WSDL_CACHE_NONE,
+        "stream_context" => $streamContext
+    );
+    $client = new SoapClient($endpoint, $options);
 
-  $user = WS_USER_ID;
-  $pass = WS_USER_PASS;
+    $user = WS_USER_ID;
+    $pass = WS_USER_PASS;
 
-  $params = array (
-    'userid' => $user,
-    'password' => $pass
-  );
-  $result = $client->__SoapCall('login', array (
-    $params
-  ));
+    $params = array(
+        'userid' => $user,
+        'password' => $pass
+    );
+    $result = $client->__SoapCall('login', array(
+        $params
+    ));
 
-  if ($result->status_code == 0) {
-    $sessionId = $result->message;
-    return 1;
-  }
-  throw (new Exception($result->message));
+    if ($result->status_code == 0) {
+        $sessionId = $result->message;
+        return 1;
+    }
+    throw (new Exception($result->message));
 }
 
 function ws_open_with_params($endpoint, $user, $pass) {
