@@ -4420,7 +4420,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_UPDATE_ENVIRONMENT_SETTINGS','en','Update Environment Settings','2014-10-13') ,
 ( 'LABEL','ID_NAME_EXISTS','en','The name exists','2014-10-15') ,
 ( 'LABEL','ID_MCRYPT_SUPPORT','en','Mcrypt Support','2014-10-17') ,
-( 'LABEL','ID_GENERATE_INFO_SUPPORT','en','A file with information* about *your System will be generated. It will help the support team provide better support for any issue that may occur.','2017-02-21') ,
+( 'LABEL','ID_GENERATE_INFO_SUPPORT','en','A file with information about your System will be generated. It will help the support team provide better support for any issue that may occur.','2017-02-21') ,
 ( 'LABEL','ID_CURRENT_BROWSER_NOT_SUPPORTED','en','Your browser is not supported. See the list of supported browsers. List of supported browsers is a link to the wiki page: http://wiki.processmaker.com/3.0/Supported_Browsers','2014-10-22') ,
 ( 'LABEL','ID_PMTABLES_CANT_EXPORT','en','There are no tables to export.','2014-10-22') ,
 ( 'LABEL','ID_SUPPORT','en','Support','2014-10-20') ,

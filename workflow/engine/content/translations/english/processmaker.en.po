@@ -17494,8 +17494,8 @@ msgstr "Mcrypt Support"
 # TRANSLATION
 # LABEL/ID_GENERATE_INFO_SUPPORT
 #: LABEL/ID_GENERATE_INFO_SUPPORT
-msgid "A file with information* about *your System will be generated. It will help the support team provide better support for any issue that may occur."
-msgstr "A file with information* about *your System will be generated. It will help the support team provide better support for any issue that may occur."
+msgid "A file with information about your System will be generated. It will help the support team provide better support for any issue that may occur."
+msgstr "A file with information about your System will be generated. It will help the support team provide better support for any issue that may occur."
 
 # TRANSLATION
 # LABEL/ID_CURRENT_BROWSER_NOT_SUPPORTED
