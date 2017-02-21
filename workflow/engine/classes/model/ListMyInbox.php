@@ -25,17 +25,20 @@ class ListMyInbox extends BaseListMyInbox
      */
     public function create($data)
     {
-        $p = new Process();
         if (!empty($data['PRO_UID'])) {
+            $p = new Process();
             $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
         }
-        $u = new Users();
         if (!empty($data['USR_UID'])) {
-            $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
+            $u = new Users();
+            $data['USR_ID'] = $u->load($data['USR_UID'])['USR_ID'];
         }
-        $t = new Task();
         if (!empty($data['TAS_UID'])) {
+            $t = new Task();
             $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
+        }
+        if (!empty($data['APP_STATUS'])) {
+            $data['APP_STATUS_ID'] = Application::$app_status_values[$data['APP_STATUS']];
         }
         $con = Propel::getConnection( ListMyInboxPeer::DATABASE_NAME );
         try {
@@ -64,17 +67,16 @@ class ListMyInbox extends BaseListMyInbox
      */
     public function update($data)
     {
-        $p = new Process();
-        if(!empty($data['PRO_UID'])) {
-            $data['PRO_ID'] = $p->load($data['PRO_UID'])['PRO_ID'];
-        }
-        $u = new Users();
         if(!empty($data['USR_UID'])) {
-            $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
+            $u = new Users();
+            $data['USR_ID'] = $u->load($data['USR_UID'])['USR_ID'];
         }
-        $t = new Task();
         if (!empty($data['TAS_UID'])) {
+            $t = new Task();
             $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
+        }
+        if (!empty($data['APP_STATUS'])) {
+            $data['APP_STATUS_ID'] = Application::$app_status_values[$data['APP_STATUS']];
         }
         $con = Propel::getConnection( ListMyInboxPeer::DATABASE_NAME );
         try {

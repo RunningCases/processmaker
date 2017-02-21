@@ -97,16 +97,16 @@ class ListCompleted extends BaseListCompleted
         $criteriaSet->add(ListParticipatedLastPeer::APP_STATUS, 'COMPLETED');
         BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
 
-        $p = new Process();
         if (!empty($data['PRO_UID'])) {
+            $p = new Process();
             $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
         }
-        $u = new Users();
         if (!empty($data['USR_UID'])) {
-            $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
+            $u = new Users();
+            $data['USR_ID'] = $u->load($data['USR_UID'])['USR_ID'];
         }
-        $t = new Task();
         if (!empty($data['TAS_UID'])) {
+            $t = new Task();
             $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
         }
         $con = Propel::getConnection( ListCompletedPeer::DATABASE_NAME );
@@ -136,16 +136,12 @@ class ListCompleted extends BaseListCompleted
      */
     public function update($data)
     {
-        $p = new Process();
-        if (!empty($data['PRO_UID'])) {
-            $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
-        }
-        $u = new Users();
         if (!empty($data['USR_UID'])) {
-            $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
+            $u = new Users();
+            $data['USR_ID'] = $u->load($data['USR_UID'])['USR_ID'];
         }
-        $t = new Task();
         if (!empty($data['TAS_UID'])) {
+            $t = new Task();
             $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
         }
         $con = Propel::getConnection( ListCompletedPeer::DATABASE_NAME );
