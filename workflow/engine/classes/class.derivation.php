@@ -822,7 +822,7 @@ class Derivation
                         $arrayApplicationData2["REMOVED_LIST"] = $removeList;
 
                         $inbox = new ListInbox();
-                        $inbox->newRow($arrayApplicationData2, $arrayApplicationData["CURRENT_USER_UID"], false, array(), (($arrayNextDelegationData["TAS_ASSIGN_TYPE"] == "SELF_SERVICE")? true : false));
+                        $inbox->newRow($arrayApplicationData2, $arrayApplicationData["CURRENT_USER_UID"], (($arrayNextDelegationData["TAS_ASSIGN_TYPE"] == "SELF_SERVICE")? true : false));
                     }
                 }
             }
@@ -1405,9 +1405,14 @@ class Derivation
 
         //if there are subprocess to create
         if (isset( $aSP )) {
+            //Check if is Selfservice the task in the subprocess
+            $isSelfservice = false;
+            if(empty($aSP['USR_UID'])){
+                $isSelfservice = true;
+            }
             //Create the new case in the sub-process
-            // set the initial date to null the time its created
-            $aNewCase = $this->case->startCase( $aSP['TAS_UID'], $aSP['USR_UID'], true, $appFields);
+            //Set the initial date to null the time its created
+            $aNewCase = $this->case->startCase( $aSP['TAS_UID'], $aSP['USR_UID'], true, $appFields, $isSelfservice);
 
             $taskNextDel = TaskPeer::retrieveByPK($aSP["TAS_UID"]); //Sub-Process
 
