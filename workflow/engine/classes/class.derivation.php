@@ -1407,7 +1407,7 @@ class Derivation
         if (isset( $aSP )) {
             //Check if is Selfservice the task in the subprocess
             $isSelfservice = false;
-            if(empty($aSP['USR_UID'])){
+            if (empty($aSP['USR_UID'])) {
                 $isSelfservice = true;
             }
             //Create the new case in the sub-process
