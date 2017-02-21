@@ -127,8 +127,15 @@ class Applications
 
         //Filters
         if (!empty($sort)) {
-            if ($sort === 'APP_NUMBER' || $sort === 'APPLICATION.APP_NUMBER') {
-                $sort = 'APP_DELEGATION.APP_NUMBER';
+            switch ($sort) {
+                case 'APP_NUMBER':
+                    //The order by APP_DELEGATION.APP_NUMBER is must be fast than APPLICATION.APP_NUMBER
+                    $sort = 'APP_DELEGATION.APP_NUMBER';
+                    break;
+                case 'APP_CURRENT_USER':
+                    //The column APP_CURRENT_USER is concat those fields
+                    $sort = 'USR_LASTNAME, USR_FIRSTNAME';
+                    break;
             }
             $sqlWhere .= " ORDER BY " . $sort;
         }

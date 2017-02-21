@@ -843,7 +843,7 @@ Ext.onReady ( function() {
         reader: readerCasesList,
         writer: writerCasesList,  // <-- plug a DataWriter into the store just as you would a Reader
         autoSave: true, // <-- false would delay executing create, update, destroy requests until specifically told to do so with some [save] buton.
-        sortInfo:{field: 'APPLICATION.APP_NUMBER', direction: "DESC"},
+        sortInfo:{field: 'APP_NUMBER', direction: "DESC"},
         listeners: {
             beforeload: function (store, options)
             {

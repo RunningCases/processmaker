@@ -16,8 +16,10 @@ $_SESSION['USER_LOGGED'] = $filter->xssFilterHard($_SESSION['USER_LOGGED']);
 
 //Getting the extJs parameters
 $callback = isset( $_REQUEST["callback"] ) ? $_REQUEST["callback"] : "stcCallback1001";
+//This default value was defined in casesList.js
 $dir = isset( $_REQUEST["dir"] ) ? $_REQUEST["dir"] : "DESC";
-$sort = isset( $_REQUEST["sort"] ) ? $_REQUEST["sort"] : "";
+//This default value was defined in casesList.js
+$sort = isset( $_REQUEST["sort"] ) ? $_REQUEST["sort"] : "APP_NUMBER";
 $start = isset( $_REQUEST["start"] ) ? $_REQUEST["start"] : "0";
 $limit = isset( $_REQUEST["limit"] ) ? $_REQUEST["limit"] : "25";
 $filter = isset( $_REQUEST["filter"] ) ? $_REQUEST["filter"] : "";
@@ -31,7 +33,7 @@ $action = isset( $_GET["action"] ) ? $_GET["action"] : (isset( $_REQUEST["action
 $type = isset( $_GET["type"] ) ? $_GET["type"] : (isset( $_REQUEST["type"] ) ? $_REQUEST["type"] : "extjs");
 $dateFrom = isset( $_REQUEST["dateFrom"] ) ? substr( $_REQUEST["dateFrom"], 0, 10 ) : "";
 $dateTo = isset( $_REQUEST["dateTo"] ) ? substr( $_REQUEST["dateTo"], 0, 10 ) : "";
-$first = isset( $_REQUEST["first"] ) ? true :false;
+$first = isset( $_REQUEST["first"] ) ? true : false;
 $openApplicationUid = (isset($_REQUEST['openApplicationUid']) && $_REQUEST['openApplicationUid'] != '')?
     $_REQUEST['openApplicationUid'] : null;
 
@@ -107,10 +109,6 @@ try {
             $sort,
             $category
         );
-
-        $data['data'] = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($data['data']);
-
-        $result = G::json_encode($data);
     } else {
         G::LoadClass("applications");
 
@@ -123,17 +121,14 @@ try {
             $process,
             $filterStatus,
             $dir,
-            (strpos($sort, ".") !== false)? $sort : "APPLICATION." . $sort,
+            $sort,
             $category,
             $dateFrom,
             $dateTo
         );
-
-        $data['data'] = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($data['data']);
-
-        $result = G::json_encode($data);
     }
-
+    $data['data'] = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($data['data']);
+    $result = G::json_encode($data);
     echo $result;
 } catch (Exception $e) {
     $msg = array("error" => $e->getMessage());
