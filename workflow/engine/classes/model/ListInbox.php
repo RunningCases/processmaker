@@ -32,17 +32,20 @@ class ListInbox extends BaseListInbox
                 $aData = $oCase->loadCase( $data["APP_UID"] );
                 $data['APP_TITLE'] = G::replaceDataField($data['APP_TITLE'], $aData['APP_DATA']);
             }
-            $p = new Process();
             if (!empty($data['PRO_UID'])) {
+                $p = new Process();
                 $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
             }
-            $u = new Users();
             if (!empty($data['USR_UID'])) {
+                $u = new Users();
                 $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
             }
-            $t = new Task();
             if (!empty($data['TAS_UID'])) {
+                $t = new Task();
                 $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
+            }
+            if (!empty($data['APP_STATUS'])) {
+                $data['APP_STATUS_ID'] = Application::$app_status_values[$data['APP_STATUS']];
             }
             $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
             if ($this->validate()) {
@@ -158,17 +161,16 @@ class ListInbox extends BaseListInbox
             $data['DEL_PRIORITY'] = $this->getTaskPriority($data['TAS_UID'], $data['PRO_UID'], $data["APP_UID"]);
         }
 
-        $p = new Process();
-        if (!empty($data['PRO_UID'])) {
-            $data['PRO_ID'] = $p->load($data['PRO_UID'])['PRO_ID'];
-        }
-        $u = new Users();
         if (!empty($data['USR_UID'])) {
+            $u = new Users();
             $data['USR_ID'] = $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
         }
-        $t = new Task();
         if (!empty($data['TAS_UID'])) {
+            $t = new Task();
             $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
+        }
+        if (!empty($data['APP_STATUS'])) {
+            $data['APP_STATUS_ID'] = Application::$app_status_values[$data['APP_STATUS']];
         }
         $con = Propel::getConnection( ListInboxPeer::DATABASE_NAME );
         try {

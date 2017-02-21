@@ -26,12 +26,12 @@ class ListUnassigned extends BaseListUnassigned
      */
     public function create($data)
     {
-        $p = new Process();
         if(!empty($data['PRO_UID'])) {
+            $p = new Process();
             $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
         }
-        $t = new Task();
         if (!empty($data['TAS_UID'])) {
+            $t = new Task();
             $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
         }
         $con = Propel::getConnection( ListUnassignedPeer::DATABASE_NAME );
@@ -61,12 +61,8 @@ class ListUnassigned extends BaseListUnassigned
      */
     public function update($data)
     {
-        $p = new Process();
-        if(!empty($data['PRO_UID'])) {
-            $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
-        }
-        $t = new Task();
         if (!empty($data['TAS_UID'])) {
+            $t = new Task();
             $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
         }
         $con = Propel::getConnection( ListUnassignedPeer::DATABASE_NAME );
