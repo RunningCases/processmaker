@@ -46,7 +46,7 @@ class AccessControl implements iAuthenticate
                         500,
                         'Authentication Class should implement iAuthenticate');
                 } elseif (!$authObj->{Defaults::$authenticationMethod}()) {
-                    throw new RestException(401);
+                    throw new RestException(403, "You don't have permission to access this endpoint or resource on this server.");
                 }
             } elseif (!$this->verifyAccess(self::$permission)) {
                 throw new RestException(401);
