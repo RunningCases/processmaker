@@ -27719,6 +27719,30 @@ msgstr "Email Account Settings"
 msgid "Assigned user"
 msgstr "Assigned user"
 
+# TRANSLATION
+# LABEL/ID_CASE_NUMBER_CAPITALIZED
+#: LABEL/ID_CASE_NUMBER_CAPITALIZED
+msgid "Case Number"
+msgstr "Case Number"
+
+# TRANSLATION
+# LABEL/ID_ANSWERED
+#: LABEL/ID_ANSWERED
+msgid "Answered"
+msgstr "Answered"
+
+# TRANSLATION
+# LABEL/ID_VIEW_RESPONSE
+#: LABEL/ID_VIEW_RESPONSE
+msgid "View Response"
+msgstr "View Response"
+
+# TRANSLATION
+# LABEL/ID_ERROR_MESSAGE
+#: LABEL/ID_ERROR_MESSAGE
+msgid "Error Message"
+msgstr "Error Message"
+
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
 #: text - ADD_TAB_NAME
@@ -50936,3 +50960,4 @@ msgstr "Cancel"
 #: button - PME_ACCEPT
 msgid "[dynaforms/fields/yesno.xml?PME_ACCEPT] Save"
 msgstr "Save"
+
