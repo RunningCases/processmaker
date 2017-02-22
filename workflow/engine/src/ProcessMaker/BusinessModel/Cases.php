@@ -3307,4 +3307,38 @@ class Cases
 
         return $arrayAccess;
     }
+
+    /**
+     * Get Global System Variables
+     * @param array $appData
+     * @param array $dataVariable
+     * @return array
+     * @throws \Exception
+     */
+    public static function getGlobalVariables($appData = array(), $dataVariable = array())
+    {
+        $appData = array_change_key_case($appData, CASE_UPPER);
+        $dataVariable = array_change_key_case($dataVariable, CASE_UPPER);
+
+        if (!isset($dataVariable['APPLICATION']) || empty($dataVariable['APPLICATION'])) {
+            $dataVariable['APPLICATION'] = (isset($dataVariable['APP_UID']) && $dataVariable['APP_UID'] != '') ? $dataVariable['APP_UID'] : $appData['APPLICATION'];
+        }
+        if (!isset($dataVariable['PROCESS']) || empty($dataVariable['PROCESS'])) {
+            $dataVariable['PROCESS'] = (isset($dataVariable['PRO_UID']) && $dataVariable['PRO_UID'] != '') ? $dataVariable['PRO_UID'] : $appData['PROCESS'];
+        }
+        if (isset($appData['TASK']) && !empty($appData['TASK'])) {
+            $dataVariable['TASK'] = $appData['TASK'];
+        }
+        if (isset($appData['INDEX']) && !empty($appData['INDEX'])) {
+            $dataVariable['INDEX'] = $appData['INDEX'];
+        }
+        $dataVariable['USER_LOGGED'] = \ProcessMaker\Services\OAuth2\Server::getUserId();
+        if (isset($dataVariable['USER_LOGGED']) && !empty($dataVariable['USER_LOGGED'])) {
+            $oUserLogged = new \Users();
+            $oUserLogged->load($dataVariable['USER_LOGGED']);
+            $dataVariable['USR_USERNAME'] = $oUserLogged->getUsrUsername();
+        }
+
+        return $dataVariable;
+    }
 }

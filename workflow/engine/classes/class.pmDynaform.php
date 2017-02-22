@@ -254,6 +254,7 @@ class pmDynaform
                                 }
                             }
                         }
+                        $dtFields = array_merge($this->fields['APP_DATA'], $dtFields);
                         $sql = G::replaceDataField($json->sql, $dtFields);
                         if ($value === "suggest") {
                             $sql = $this->sqlParse($sql, function($parsed, &$select, &$from, &$where, &$groupBy, &$having, &$orderBy, &$limit) use ($json) {
