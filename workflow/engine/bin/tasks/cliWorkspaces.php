@@ -313,6 +313,21 @@ EOT
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_self_service_value");
 
+/**
+ * Complete the PRO_ID and USR_ID in the LIST_* tables.
+ *
+ * It calls the list_ids@cliListIds.php
+ */
+CLI::taskName('list-ids');
+CLI::taskDescription(<<<EOT
+    Complete the PRO_ID and USR_ID in the LIST_* tables.
+EOT
+);
+CLI::taskOpt("lang", "", "lLANG", "lang=LANG");
+CLI::taskArg('workspace');
+CLI::taskRun("cliListIds");
+/*----------------------------------********---------------------------------*/
+
   /**
    * Function run_info
    * access public
