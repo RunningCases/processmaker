@@ -28,6 +28,7 @@ class pmDynaform
     private $dataSources = null;
     private $databaseProviders = null;
     private $propertiesToExclude = array();
+    public static $prefixs = array("@@", "@#", "@%", "@?", "@$", "@=");
 
     public function __construct($fields = array())
     {
@@ -195,7 +196,7 @@ class pmDynaform
                     $fn($json, $key, $value);
                 }
                 //set properties from trigger
-                $prefixs = array("@@", "@#", "@%", "@?", "@$", "@=");
+                $prefixs = self::$prefixs;
                 if (is_string($value) && in_array(substr($value, 0, 2), $prefixs)) {
                     $triggerValue = substr($value, 2);
                     if (isset($this->fields["APP_DATA"][$triggerValue])) {
