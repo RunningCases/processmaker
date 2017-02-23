@@ -19,7 +19,6 @@ class Applications
 
         $con = Propel::getConnection(AppDelegationPeer::DATABASE_NAME);
         $con->begin();
-        $sqlCount = "SELECT STRAIGHT_JOIN COUNT(*) AS TOTAL FROM APP_DELEGATION";
         $sql = "SELECT
                     STRAIGHT_JOIN APPLICATION.APP_NUMBER,
                     APPLICATION.APP_UID,
@@ -55,11 +54,11 @@ class Applications
                     PROCESS.PRO_TITLE AS APP_PRO_TITLE
                 FROM APP_DELEGATION
         ";
-
-        $sqlJoin  = " LEFT JOIN APPLICATION ON (APP_DELEGATION.APP_NUMBER=APPLICATION.APP_NUMBER)";
+        $sqlCount = "SELECT STRAIGHT_JOIN COUNT(*) AS TOTAL FROM APP_DELEGATION";
         $sqlCount.= " LEFT JOIN TASK ON (APP_DELEGATION.TAS_ID=TASK.TAS_ID)";
 
-        if (in_array($status, array(1, 2, 3, 4)) || !empty($search)) {
+        $sqlJoin  = " LEFT JOIN APPLICATION ON (APP_DELEGATION.APP_NUMBER=APPLICATION.APP_NUMBER)";
+        if (in_array($status, array(1, 2, 3, 4)) || !empty($search) || empty($status)) {
             $sqlCount .= $sqlJoin;
         }
 
@@ -86,7 +85,6 @@ class Applications
                 $sqlWhere .= " AND APPLICATION.APP_STATUS = 'TO_DO'";
                 break;
             default: //All status
-                $sqlCount.= " LEFT JOIN APPLICATION ON (APP_DELEGATION.APP_NUMBER=APPLICATION.APP_NUMBER)";
                 $sqlWhere .= " AND ((APPLICATION.APP_STATUS_ID IN (1,2) AND APP_DELEGATION.DEL_THREAD_STATUS='OPEN') ";
                 $sqlWhere .= " OR (APPLICATION.APP_STATUS_ID IN (3,4) AND APP_DELEGATION.DEL_LAST_INDEX = 1)) ";
                 break;
