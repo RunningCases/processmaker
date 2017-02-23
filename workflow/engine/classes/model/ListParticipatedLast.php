@@ -74,7 +74,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
         }
         if (!empty($data['USR_UID'])) {
             $u = new Users();
-            $data['USR_ID'] = $u->load($data['USR_UID'])['USR_ID'];
+            $data['USR_ID'] =  $data['USR_UID']==='SELF_SERVICES' ? null : $u->load($data['USR_UID'])['USR_ID'];
         }
         if (!empty($data['TAS_UID'])) {
             $t = new Task();
