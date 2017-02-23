@@ -3316,14 +3316,14 @@ class Cases
     public function getLastParticipatedByUser($appUid, $userUid, $threadStatus = '')
     {
         $criteria = new \Criteria('workflow');
-        $criteria->addSelectColumn(\ListParticipatedLastPeer::DEL_INDEX);
-        $criteria->addSelectColumn(\ListParticipatedLastPeer::DEL_THREAD_STATUS);
-        $criteria->add(\ListParticipatedLastPeer::APP_UID, $appUid, \Criteria::EQUAL);
-        $criteria->add(\ListParticipatedLastPeer::USR_UID, $userUid, \Criteria::EQUAL);
+        $criteria->addSelectColumn(\AppDelegationPeer::DEL_INDEX);
+        $criteria->addSelectColumn(\AppDelegationPeer::DEL_THREAD_STATUS);
+        $criteria->add(\AppDelegationPeer::APP_UID, $appUid, \Criteria::EQUAL);
+        $criteria->add(\AppDelegationPeer::USR_UID, $userUid, \Criteria::EQUAL);
         if (!empty($threadStatus)) {
-            $criteria->add(\ListParticipatedLastPeer::DEL_THREAD_STATUS, $threadStatus, \Criteria::EQUAL);
+            $criteria->add(\AppDelegationPeer::DEL_THREAD_STATUS, $threadStatus, \Criteria::EQUAL);
         }
-        $dataSet = \ListParticipatedLastPeer::doSelectRS($criteria);
+        $dataSet = \AppDelegationPeer::doSelectRS($criteria);
         $dataSet->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
         $dataSet->next();
         $row = $dataSet->getRow();
