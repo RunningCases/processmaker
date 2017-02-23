@@ -1368,7 +1368,7 @@ class adminProxy extends HttpProxyController
                 $pmRestClient->delete();
             }
 
-            $http = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on') ? 'https' : 'http';
+            $http = G::is_https() ? 'https' : 'http';
             $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
             $host = $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] != '80' ? ':' . $_SERVER['SERVER_PORT'] : '');
 
