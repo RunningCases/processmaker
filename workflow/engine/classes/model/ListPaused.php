@@ -117,7 +117,7 @@ class ListPaused extends BaseListPaused
         $oListInbox = new ListInbox();
         $oListInbox->remove($data['APP_UID'], $data['DEL_INDEX']);
 
-        if (!empty($data['PRO_UID'])) {
+        if (!empty($data['PRO_UID']) && empty($data['PRO_ID'])) {
             $p = new Process();
             $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
         }

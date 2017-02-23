@@ -27,7 +27,7 @@ class ListMyInbox extends BaseListMyInbox
      */
     public function create($data)
     {
-        if (!empty($data['PRO_UID'])) {
+        if (!empty($data['PRO_UID']) && empty($data['PRO_ID'])) {
             $p = new Process();
             $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
         }

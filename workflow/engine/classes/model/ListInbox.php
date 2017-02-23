@@ -33,7 +33,7 @@ class ListInbox extends BaseListInbox
                 $aData = $oCase->loadCase($data["APP_UID"]);
                 $data['APP_TITLE'] = G::replaceDataField($data['APP_TITLE'], $aData['APP_DATA']);
             }
-            if (!empty($data['PRO_UID'])) {
+            if (!empty($data['PRO_UID']) && empty($data['PRO_ID'])) {
                 $p = new Process();
                 $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
             }

@@ -108,7 +108,7 @@ class ListCanceled extends BaseListCanceled
         $criteriaSet->add(ListParticipatedLastPeer::APP_STATUS, 'CANCELLED');
         BasePeer::doUpdate($criteriaWhere, $criteriaSet, Propel::getConnection("workflow"));
 
-        if (!empty($data['PRO_UID'])) {
+        if (!empty($data['PRO_UID']) && empty($data['PRO_ID'])) {
             $p = new Process();
             $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
         }
