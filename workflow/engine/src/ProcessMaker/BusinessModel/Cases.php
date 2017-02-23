@@ -3302,4 +3302,31 @@ class Cases
 
         return $arrayAccess;
     }
+    /**
+     * Get index last participation from a user
+     *
+     * This function return the last participation
+     * by default is not considered the status OPEN or CLOSED
+     * in parallel cases return the first to find
+     * @param string $appUid
+     * @param string $userUid
+     * @param string $threadStatus
+     * @return integer delIndex
+     */
+    public function getLastParticipatedByUser($appUid, $userUid, $threadStatus = '')
+    {
+        $criteria = new \Criteria('workflow');
+        $criteria->addSelectColumn(\ListParticipatedLastPeer::DEL_INDEX);
+        $criteria->addSelectColumn(\ListParticipatedLastPeer::DEL_THREAD_STATUS);
+        $criteria->add(\ListParticipatedLastPeer::APP_UID, $appUid, \Criteria::EQUAL);
+        $criteria->add(\ListParticipatedLastPeer::USR_UID, $userUid, \Criteria::EQUAL);
+        if (!empty($threadStatus)) {
+            $criteria->add(\ListParticipatedLastPeer::DEL_THREAD_STATUS, $threadStatus, \Criteria::EQUAL);
+        }
+        $dataSet = \ListParticipatedLastPeer::doSelectRS($criteria);
+        $dataSet->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $dataSet->next();
+        $row = $dataSet->getRow();
+        return isset($row['DEL_INDEX']) ? $row['DEL_INDEX'] : 0;
+    }
 }
