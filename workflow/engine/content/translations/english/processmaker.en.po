@@ -16954,8 +16954,8 @@ msgstr "When this option is enabled, all changes made in the Admin tab are regis
 # TRANSLATION
 # LABEL/ID_AUDIT_LOG_DETAILS_2
 #: LABEL/ID_AUDIT_LOG_DETAILS_2
-msgid "and the user will be able to see those changes in the Audit Log option in Logs Menu"
-msgstr "and the user will be able to see those changes in the Audit Log option in Logs Menu"
+msgid "The user will be able to see those changes in the Audit Log option in the Logs menu."
+msgstr "The user will be able to see those changes in the Audit Log option in the Logs menu."
 
 # TRANSLATION
 # LABEL/ID_PRIVATE
