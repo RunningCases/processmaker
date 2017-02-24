@@ -6870,18 +6870,15 @@ class Cases
 
     public function getCurrentDelegationCase($sApplicationUID = '')
     {
-        $oSession = new DBSession(new DBConnection());
-        $oDataset = $oSession->Execute('
-            SELECT
-            DEL_INDEX
-            FROM
-            APP_DELEGATION
-            WHERE
-            APP_UID = "' . $sApplicationUID . '"
-            ORDER BY DEL_DELEGATE_DATE DESC
-        ');
-        $aRow = $oDataset->Read();
-        return $aRow['DEL_INDEX'];
+        $criteria = new \Criteria('workflow');
+        $criteria->addSelectColumn(\AppDelegationPeer::DEL_INDEX);
+        $criteria->add(\AppDelegationPeer::APP_UID, $sApplicationUID, Criteria::EQUAL);
+        $criteria->add(\AppDelegationPeer::DEL_LAST_INDEX, 1, Criteria::EQUAL);
+        $dataSet = AppDelegationPeer::doSelectRS($criteria);
+        $dataSet->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataSet->next();
+        $row = $dataSet->getRow();
+        return isset($row['DEL_INDEX']) ? $row['DEL_INDEX'] : 0;
     }
 
     public function clearCaseSessionData()
