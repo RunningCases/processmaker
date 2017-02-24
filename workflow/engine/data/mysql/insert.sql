@@ -4328,7 +4328,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_AUDIT_LOG_ENABLED','en','Audit Log has been enabled','2014-09-19') ,
 ( 'LABEL','ID_AUDIT_LOG_DISABLED','en','Audit Log has been disabled','2014-09-19') ,
 ( 'LABEL','ID_AUDIT_LOG_DETAILS_1','en','When this option is enabled, all changes made in the Admin tab are registered in a log.','2017-02-21') ,
-( 'LABEL','ID_AUDIT_LOG_DETAILS_2','en','and the user will be able to see those changes in the Audit Log option in Logs Menu','2017-02-21') ,
+( 'LABEL','ID_AUDIT_LOG_DETAILS_2','en','The user will be able to see those changes in the Audit Log option in the Logs menu.','2017-02-21') ,
 ( 'LABEL','ID_PRIVATE','en','Private','2014-09-22') ,
 ( 'LABEL','ID_CASES_LIST','en','Cases Lists','2015-04-28') ,
 ( 'LABEL','ID_MENU_NAME','en','Enterprise Manager','2014-10-17') ,
