@@ -574,36 +574,15 @@ class Variable
 
             $cnn = \Propel::getConnection($dbConnection);
             $stmt = $cnn->createStatement();
-
             if (isset($arrayVariable['app_uid']) && !empty($arrayVariable['app_uid'])) {
                 $delIndex = isset($arrayVariable["del_index"]) ? $arrayVariable["del_index"] : 0;
                 $case = new \Cases();
                 $fields = $case->loadCase($arrayVariable['app_uid'], (int) $delIndex);
-                $arrayVariable = array_merge($fields['APP_DATA'], $arrayVariable);
-
-                //Set the global variables
-                if (!isset($arrayVariable['APPLICATION']) || empty($arrayVariable['APPLICATION'])) {
-                    $arrayVariable['APPLICATION'] = $arrayVariable['app_uid'];
-                }
-                if (!isset($arrayVariable['PROCESS']) || empty($arrayVariable['PROCESS'])) {
-                    $arrayVariable['PROCESS'] = $fields['PRO_UID'];
-                }
-                if (isset($fields['TASK']) && !empty($fields['TASK'])) {
-                    $arrayVariable['TASK'] = $fields['TASK'];
-                }
-                if (isset($fields['INDEX']) && !empty($fields['INDEX'])) {
-                    $arrayVariable['INDEX'] = $fields['INDEX'];
-                }
-                $arrayVariable['USER_LOGGED'] = \ProcessMaker\Services\OAuth2\Server::getUserId();
-                if (isset($arrayVariable['USER_LOGGED']) && !empty($arrayVariable['USER_LOGGED'])) {
-                    $oUserLogged = new \Users();
-                    $oUserLogged->load($arrayVariable['USER_LOGGED']);
-                    $arrayVariable['USR_USERNAME'] = $oUserLogged->getUsrUsername();
-                }
+                $arrayVariable = array_merge($fields['APP_DATA'], \ProcessMaker\BusinessModel\Cases::getGlobalVariables($fields['APP_DATA']));
             }
-            $replaceFields = G::replaceDataField($variableSql, $arrayVariable);
+            $sql = G::replaceDataField($variableSql, $arrayVariable);
 
-            $rs = $stmt->executeQuery($replaceFields, \ResultSet::FETCHMODE_NUM);
+            $rs = $stmt->executeQuery($sql, \ResultSet::FETCHMODE_NUM);
 
             while ($rs->next()) {
                 $row = $rs->getRow();
@@ -742,6 +721,8 @@ class Variable
                 $fields = $case->getApplicationRecordByPk($arrayVariable['app_uid'], ['$applicationUid' => 'app_uid']);
                 $case = new \Cases();
                 $appData = $case->unserializeData($fields['APP_DATA']);
+                $appData = array_merge($appData, \ProcessMaker\BusinessModel\Cases::getGlobalVariables($appData));
+                $arrayVariable = array_merge($appData, $arrayVariable);
             }
             $_SESSION["PROCESS"] = $processUid;
             \G::LoadClass("pmDynaform");
