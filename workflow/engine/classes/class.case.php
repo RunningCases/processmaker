@@ -2039,7 +2039,7 @@ class Cases
      * @return Fields
      */
 
-    public function startCase($sTasUid, $sUsrUid, $isSubprocess = false, $dataPreviusApplication = array())
+    public function startCase($sTasUid, $sUsrUid, $isSubprocess = false, $dataPreviusApplication = array(), $isSelfService = false)
     {
         if ($sTasUid != '') {
             try {
@@ -2182,15 +2182,16 @@ class Cases
                 if(!$isSubprocess){
                     $Fields['APP_STATUS'] = 'DRAFT';
                 }
+
                 $inbox = new ListInbox();
-                $inbox->newRow($Fields, $sUsrUid, $isSubprocess, $dataPreviusApplication);
+                $inbox->newRow($Fields, $sUsrUid, $isSelfService);
 
                 //Multiple Instance
                 foreach($aUserFields as $rowUser){
                   $Fields["USR_UID"] = $rowUser["USR_UID"];
                   $Fields["DEL_INDEX"] = $rowUser["DEL_INDEX"];
                   $inbox = new ListInbox();
-                  $inbox->newRow($Fields, $sUsrUid, $isSubprocess, $dataPreviusApplication);
+                  $inbox->newRow($Fields, $sUsrUid, $isSelfService);
                 }
                 /*----------------------------------********---------------------------------*/
             } catch (exception $e) {
@@ -4528,11 +4529,11 @@ class Cases
 
         /*----------------------------------********---------------------------------*/
         $this->getExecuteTriggerProcess($sApplicationUID, 'REASSIGNED');
-        
+
         //Delete record of the table LIST_UNASSIGNED
         $unassigned = new ListUnassigned();
         $unassigned->remove($sApplicationUID, $iDelegation);
-        
+
         return true;
     }
 

@@ -99,7 +99,7 @@ class ListUnassigned extends BaseListUnassigned
     public function newRow ($data, $delPreviusUsrUid)
     {
         $data['DEL_PREVIOUS_USR_UID'] = $delPreviusUsrUid;
-        $data['DEL_DUE_DATE'] = $data['DEL_TASK_DUE_DATE'];
+        $data['DEL_DUE_DATE'] = isset($data['DEL_TASK_DUE_DATE']) ? $data['DEL_TASK_DUE_DATE'] : '';
 
         $criteria = new Criteria();
         $criteria->addSelectColumn( ApplicationPeer::APP_NUMBER );

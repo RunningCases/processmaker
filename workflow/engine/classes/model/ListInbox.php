@@ -216,7 +216,20 @@ class ListInbox extends BaseListInbox
         }
     }
 
-    public function newRow ($data, $delPreviusUsrUid, $isInitSubprocess = false, $dataPreviusApplication = array(), $isSelfService = false)
+    /**
+     * Define the variables before created the row
+     *
+     * This method is used before create the new data
+     * we completed the information about some variables
+     * for create the record
+     *
+     * @param array $data
+     * @param string $delPreviusUsrUid Uid from the user previous
+     * @param boolean $isSelfService this value define if the case is Unassigned
+     * @return void
+     *
+     */
+    public function newRow ($data, $delPreviusUsrUid, $isSelfService = false)
     {
         $removeList = true;
         if (isset($data['REMOVED_LIST'])) {
