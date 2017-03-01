@@ -769,7 +769,7 @@ class FilesManager
                                     if (is_file($f)) {
                                         $arrayProcessFilesData = $this->getFileManagerUid($f);
 
-                                        if (is_null($arrayProcessFilesData["PRF_UID"])) {
+                                        if (empty($arrayProcessFilesData["PRF_UID"])) {
                                             rename($dir . PATH_SEP . $file, $dir . PATH_SEP . $file . ".tmp");
 
                                             $arrayData = array(
