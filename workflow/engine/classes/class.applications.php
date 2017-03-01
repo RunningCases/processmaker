@@ -1,6 +1,25 @@
 <?php
 class Applications
 {
+    /**
+     * This function return information by searching cases
+     *
+     * The query is related to advanced search with diferents filters
+     * We can search by process, status of case, category of process, users, delegate date from and to
+     *
+     * @param string $userUid
+     * @param integer $start for the pagination
+     * @param integer $limit for the pagination
+     * @param string $search
+     * @param integer $process the pro_id
+     * @param integer $status of the case
+     * @param string $dir if the order is DESC or ASC
+     * @param string $sort name of column by sort
+     * @param string $category uid for the process
+     * @param date $dateFrom
+     * @param date $dateTo
+     * @return array $result result of the query
+     */
     public function searchAll(
         $userUid,
         $start = null,
@@ -14,12 +33,15 @@ class Applications
         $dateFrom = null,
         $dateTo = null
     ) {
-        //Task Dummies
+        //Exclude the Task Dummies in the delegations
         $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT");
 
+        //Start the connection to database
         $con = Propel::getConnection(AppDelegationPeer::DATABASE_NAME);
         $con->begin();
-        $sql = "SELECT
+        $stmt = $con->createStatement();
+
+        $sqlData = "SELECT
                     STRAIGHT_JOIN APPLICATION.APP_NUMBER,
                     APPLICATION.APP_UID,
                     APPLICATION.APP_STATUS,
@@ -54,76 +76,66 @@ class Applications
                     PROCESS.PRO_TITLE AS APP_PRO_TITLE
                 FROM APP_DELEGATION
         ";
-        $sqlCount = "SELECT STRAIGHT_JOIN COUNT(*) AS TOTAL FROM APP_DELEGATION";
-        $sqlCount.= " LEFT JOIN TASK ON (APP_DELEGATION.TAS_ID=TASK.TAS_ID)";
+        $sqlData .= " LEFT JOIN APPLICATION ON (APP_DELEGATION.APP_NUMBER = APPLICATION.APP_NUMBER)";
+        $sqlData .= " LEFT JOIN TASK ON (APP_DELEGATION.TAS_ID = TASK.TAS_ID)";
+        $sqlData .= " LEFT JOIN USERS ON (APP_DELEGATION.USR_ID = USERS.USR_ID)";
+        $sqlData .= " LEFT JOIN PROCESS ON (APP_DELEGATION.PRO_ID = PROCESS.PRO_ID)";
 
-        $sqlJoin  = " LEFT JOIN APPLICATION ON (APP_DELEGATION.APP_NUMBER=APPLICATION.APP_NUMBER)";
-        if (in_array($status, array(1, 2, 3, 4)) || !empty($search) || empty($status)) {
-            $sqlCount .= $sqlJoin;
-        }
-
-        $sqlJoin .= " LEFT JOIN TASK ON (APP_DELEGATION.TAS_ID=TASK.TAS_ID)";
-        $sqlWhere = " WHERE TASK.TAS_TYPE NOT IN ('" . implode("','",$arrayTaskTypeToExclude) . "')";
+        $sqlData .= " WHERE TASK.TAS_TYPE NOT IN ('" . implode("','",$arrayTaskTypeToExclude) . "')";
         switch ($status) {
             case 1: //DRAFT
-                $sqlWhere .= " AND APP_DELEGATION.DEL_THREAD_STATUS='OPEN'";
-                $sqlWhere .= " AND APPLICATION.APP_STATUS_ID = 1";
+                $sqlData .= " AND APP_DELEGATION.DEL_THREAD_STATUS='OPEN'";
+                $sqlData .= " AND APPLICATION.APP_STATUS_ID = 1";
                 break;
             case 2: //TO_DO
-                $sqlWhere .= " AND APP_DELEGATION.DEL_THREAD_STATUS='OPEN'";
-                $sqlWhere .= " AND APPLICATION.APP_STATUS_ID = 2";
+                $sqlData .= " AND APP_DELEGATION.DEL_THREAD_STATUS='OPEN'";
+                $sqlData .= " AND APPLICATION.APP_STATUS_ID = 2";
                 break;
             case 3: //COMPLETED
-                $sqlWhere .= " AND APPLICATION.APP_STATUS_ID = 3";
-                $sqlWhere .= " AND APP_DELEGATION.DEL_LAST_INDEX = 1";
+                $sqlData .= " AND APPLICATION.APP_STATUS_ID = 3";
+                $sqlData .= " AND APP_DELEGATION.DEL_LAST_INDEX = 1";
                 break;
             case 4: //CANCELLED
-                $sqlWhere .= " AND APPLICATION.APP_STATUS_ID = 4";
-                $sqlWhere .= " AND APP_DELEGATION.DEL_LAST_INDEX = 1";
+                $sqlData .= " AND APPLICATION.APP_STATUS_ID = 4";
+                $sqlData .= " AND APP_DELEGATION.DEL_LAST_INDEX = 1";
                 break;
             case "PAUSED": //This status is not considered in the search, maybe we can add in the new versions
-                $sqlWhere .= " AND APPLICATION.APP_STATUS = 'TO_DO'";
+                $sqlData .= " AND APPLICATION.APP_STATUS = 'TO_DO'";
                 break;
             default: //All status
-                $sqlWhere .= " AND ((APPLICATION.APP_STATUS_ID IN (1,2) AND APP_DELEGATION.DEL_THREAD_STATUS='OPEN') ";
-                $sqlWhere .= " OR (APPLICATION.APP_STATUS_ID IN (3,4) AND APP_DELEGATION.DEL_LAST_INDEX = 1)) ";
+                $sqlData .= " AND (APP_DELEGATION.DEL_THREAD_STATUS = 'OPEN' ";
+                $sqlData .= " OR (APP_DELEGATION.DEL_THREAD_STATUS = 'CLOSED' AND APP_DELEGATION.DEL_LAST_INDEX = 1)) ";
                 break;
         }
-        $sqlJoin .= $sqlJoinUser = " LEFT JOIN USERS ON (APP_DELEGATION.USR_ID=USERS.USR_ID)";
+
         if (!empty($userUid)) {
-            $sqlWhere .= " AND APP_DELEGATION.USR_ID = " . $userUid;
-            $sqlCount = $sqlCount . $sqlJoinUser;
+            $sqlData .= " AND APP_DELEGATION.USR_ID = " . $userUid;
         }
-        $sqlJoin .= $sqlJoinPro = " LEFT JOIN PROCESS ON (APP_DELEGATION.PRO_ID=PROCESS.PRO_ID)";
+
         if (!empty($process)) {
-            $sqlWhere .= " AND APP_DELEGATION.PRO_ID = " . $process;
+            $sqlData .= " AND APP_DELEGATION.PRO_ID = " . $process;
         }
+
         if (!empty($category)) {
             $category = mysql_real_escape_string($category);
-            $sqlWhere .= " AND PROCESS.PRO_CATEGORY = '{$category}'";
+            $sqlData .= " AND PROCESS.PRO_CATEGORY = '{$category}'";
         }
-        if (!empty($process) || !empty($category)) {
-            $sqlCount = $sqlCount . $sqlJoinPro;
-        }
+
         if (!empty($search)) {
             //In the filter search we check in the following columns: APP_NUMBER APP_TAS_TITLE APP_TITLE
-            $sqlWhere .= " AND (APPLICATION.APP_TITLE LIKE '%{$search}%' OR APPLICATION.APP_NUMBER LIKE '%{$search}%' OR TASK.TAS_TITLE LIKE '%{$search}%')";
+            $sqlData .= " AND (APPLICATION.APP_TITLE LIKE '%{$search}%' OR APP_DELEGATION.APP_NUMBER LIKE '%{$search}%' OR TASK.TAS_TITLE LIKE '%{$search}%')";
         }
+
         if (!empty($dateFrom)) {
-            $sqlWhere .= " AND APP_DELEGATION.DEL_DELEGATE_DATE >= '{$dateFrom}'";
+            $sqlData .= " AND APP_DELEGATION.DEL_DELEGATE_DATE >= '{$dateFrom}'";
         }
+
         if (!empty($dateTo)) {
             $dateTo = $dateTo . " 23:59:59";
-            $sqlWhere .= " AND APP_DELEGATION.DEL_DELEGATE_DATE <= '{$dateTo}'";
+            $sqlData .= " AND APP_DELEGATION.DEL_DELEGATE_DATE <= '{$dateTo}'";
         }
-        $stmt = $con->createStatement();
-        //Get total count
-        $iCount = $stmt->executeQuery($sqlCount . $sqlWhere);
-        $iCount->next();
-        $aRow = $iCount->getRow();
-        $totalCount = $aRow['TOTAL'];
 
-        //Filters
+        //Add the additional filters
         if (!empty($sort)) {
             switch ($sort) {
                 case 'APP_NUMBER':
@@ -131,23 +143,29 @@ class Applications
                     $sort = 'APP_DELEGATION.APP_NUMBER';
                     break;
                 case 'APP_CURRENT_USER':
-                    //The column APP_CURRENT_USER is concat those fields
+                    //The column APP_CURRENT_USER is result of concat those fields
                     $sort = 'USR_LASTNAME, USR_FIRSTNAME';
                     break;
             }
-            $sqlWhere .= " ORDER BY " . $sort;
+            $sqlData .= " ORDER BY " . $sort;
         }
+
+        //Sorts the records in descending order by default
         if (!empty($dir)) {
-            $sqlWhere .= "  " . $dir;
+            $sqlData .= "  " . $dir;
         }
+
+        //Define the number of records by return
         if (!empty($start)) {
-            $sqlWhere .= " LIMIT $start, " . $limit;
+            $sqlData .= " LIMIT $start, " . $limit;
         } else {
-            $sqlWhere .= " LIMIT " . $limit;
+            $sqlData .= " LIMIT " . $limit;
         }
-        $oDataset = $stmt->executeQuery($sql . $sqlJoin . $sqlWhere);
+
+        $oDataset = $stmt->executeQuery($sqlData);
         $result = array ();
-        $result['totalCount'] = $totalCount;
+        //By performance enable always the pagination
+        $result['totalCount'] = $start + $limit + 1;
         $rows = array();
         $aPriorities = array ('1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH');
         while ($oDataset->next()) {
