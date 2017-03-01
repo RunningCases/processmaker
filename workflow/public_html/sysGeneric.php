@@ -959,6 +959,7 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
         $noLoginFiles[] = 'propelTableAjax';
         $noLoginFiles[] = 'licenseUpdate';
         $noLoginFiles[] = 'casesStreamingFile';
+        $noLoginFiles[] = 'opencase';
 
         $noLoginFolders[] = 'services';
         $noLoginFolders[] = 'tracker';

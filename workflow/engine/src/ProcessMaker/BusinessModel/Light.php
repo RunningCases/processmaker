@@ -818,7 +818,17 @@ class Light
             case 'participated':
                 $oCase = new \Cases();
                 $iDelIndex = $oCase->getCurrentDelegationCase( $app_uid );
-                $aFields = $oCase->loadCase( $app_uid, $iDelIndex );
+                $aFields = $oCase->loadCase($app_uid, $iDelIndex);
+                $response = $this->getInfoResume($userUid, $aFields, $type);
+                break;
+            case 'lastopenindex':
+                //Get the last participate from a user
+                $oNewCase = new \ProcessMaker\BusinessModel\Cases();
+                $iDelIndex = $oNewCase->getLastParticipatedByUser($app_uid, $userUid, 'OPEN');
+                $oCase = new \Cases();
+                $aFields = $oCase->loadCase($app_uid, $iDelIndex);
+                $aFields['DEL_INDEX'] = $iDelIndex === 0 ? '' : $iDelIndex;
+                $aFields['USR_UID'] = $userUid;
                 $response = $this->getInfoResume($userUid, $aFields, $type);
                 break;
         }
@@ -835,23 +845,8 @@ class Light
      */
     public function getInfoResume($userUid, $Fields, $type)
     {
-        //print_r($Fields);die;
-        /* Includes */
-        G::LoadClass( 'case' );
         /* Prepare page before to show */
-        //$oCase = new \Cases();
-
-//        $participated = $oCase->userParticipatedInCase( $Fields['APP_UID'], $userUid );
-//        if ($RBAC->userCanAccess( 'PM_ALLCASES' ) < 0 && $participated == 0) {
-//            /*if (strtoupper($Fields['APP_STATUS']) != 'COMPLETED') {
-//              $oCase->thisIsTheCurrentUser($_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED'], 'SHOW_MESSAGE');
-//            }*/
-//            $aMessage['MESSAGE'] = G::LoadTranslation( 'ID_NO_PERMISSION_NO_PARTICIPATED' );
-//            $G_PUBLISH = new Publisher();
-//            $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'login/showMessage', '', $aMessage );
-//            G::RenderPage( 'publishBlank', 'blank' );
-//            die();
-//        }
+        G::LoadClass( 'case' );
 
         $objProc = new \Process();
         $aProc = $objProc->load( $Fields['PRO_UID'] );
@@ -869,15 +864,11 @@ class Light
             }
 
             $Fields['TAS_TITLE'] = implode(" - ", array_values($Fields['TAS_TITLE']));
-        } else {
-            $aTask = $objTask->load( $Fields['TAS_UID'] );
+        } elseif (isset($Fields['TAS_UID']) && !empty($Fields['TAS_UID'])) {
+            $aTask = $objTask->load($Fields['TAS_UID']);
             $Fields['TAS_TITLE'] = $aTask['TAS_TITLE'];
         }
 
-//        require_once(PATH_GULLIVER .'../thirdparty/smarty/libs/Smarty.class.php');
-//        $G_PUBLISH = new \Publisher();
-//        $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'cases/cases_Resume.xml', '', $Fields, '' );
-//        $G_PUBLISH->RenderContent();
         return $Fields;
     }
 
