@@ -5808,39 +5808,6 @@ class G
     {
         return $e->getMessage();
     }
-
-    /**
-     * Direct case link mobile
-     * @access public
-     *
-     * @param string
-     * @param int
-     *
-     * @return string
-     */
-    public static function caseLinkMobile($applicationUid, $delIndex = 0)
-    {
-        $application = ApplicationPeer::retrieveByPK($applicationUid);
-
-        if (is_null($application) || !is_numeric($delIndex) || $delIndex < 0) {
-            return false;
-        }
-
-        if ($delIndex != 0) {
-            $appDelegation = AppDelegationPeer::retrieveByPK($applicationUid, $delIndex);
-
-            if (is_null($appDelegation)) {
-                return false;
-            }
-
-            $uri = 'processmakerMobile://' . $applicationUid . '/' . $delIndex;
-        } else {
-            $uri = 'processmakerMobile://' . $applicationUid;
-        }
-
-        //Return
-        return $uri;
-    }
 }
 
 /**

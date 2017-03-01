@@ -1271,7 +1271,8 @@ class Light extends Api
                 'CREATE_DATE' => 'caseCreateDate',
                 'UPDATE_DATE' => 'caseUpdateData',
                 'DESCRIPTION' => 'caseDescription',
-                'PRO_UID'     => 'processId'
+                'PRO_UID'     => 'processId',
+                'DEL_INDEX'   => 'delIndex'
             ),
             'task' => array(
                 'TAS_TITLE'         => 'taskTitle',

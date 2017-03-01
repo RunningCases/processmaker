@@ -2396,7 +2396,7 @@ class Cases
             if ($rsCriteria->next()) {
                 $record = $rsCriteria->getRow();
 
-                $arrayData = ['APP_STATUS' => $record['APP_STATUS'], 'DEL_INDEX' => []];
+                $arrayData = ['APP_STATUS' => $record['APP_STATUS'], 'DEL_INDEX' => [], 'PRO_UID' => $record['PRO_UID']];
                 $arrayData['DEL_INDEX'][] = $record['DEL_INDEX'];
 
                 while ($rsCriteria->next()) {
@@ -2437,6 +2437,7 @@ class Cases
             $criteria->setDistinct();
             $criteria->addSelectColumn($delimiter . 'PAUSED' . $delimiter . ' AS APP_STATUS');
             $criteria->addSelectColumn(\AppDelayPeer::APP_DEL_INDEX . " AS DEL_INDEX");
+            $criteria->addSelectColumn(\AppDelayPeer::PRO_UID);
 
             $criteria->add(\AppDelayPeer::APP_UID, $applicationUid, \Criteria::EQUAL);
             $criteria->add(\AppDelayPeer::APP_TYPE, "PAUSE", \Criteria::EQUAL);
@@ -2478,6 +2479,7 @@ class Cases
             $criteria->clearSelectColumns();
             $criteria->addSelectColumn($delimiter . 'UNASSIGNED' . $delimiter . ' AS APP_STATUS');
             $criteria->addSelectColumn(\AppCacheViewPeer::DEL_INDEX);
+            $criteria->addSelectColumn(\AppCacheViewPeer::PRO_UID);
 
             $criteria->add(\AppCacheViewPeer::APP_UID, $applicationUid, \Criteria::EQUAL);
 
@@ -2499,6 +2501,7 @@ class Cases
 
             $criteria->setDistinct();
             $criteria->addSelectColumn(\ApplicationPeer::APP_STATUS);
+            $criteria->addSelectColumn(\ApplicationPeer::PRO_UID);
             $criteria->addSelectColumn(\AppDelegationPeer::DEL_INDEX);
 
             $arrayCondition = array();
@@ -2539,6 +2542,7 @@ class Cases
             $criteria = new \Criteria("workflow");
 
             $criteria->addSelectColumn(\ApplicationPeer::APP_STATUS);
+            $criteria->addSelectColumn(\ApplicationPeer::PRO_UID);
             $criteria->addSelectColumn(\AppDelegationPeer::DEL_INDEX);
 
             $arrayCondition = array();
@@ -2578,6 +2582,7 @@ class Cases
             $criteria2->addSelectColumn($delimiter . 'PARTICIPATED' . $delimiter . ' AS APP_STATUS');
             $criteria2->addSelectColumn(\AppDelegationPeer::DEL_INDEX);
             $criteria2->addSelectColumn(\ApplicationPeer::APP_UID);
+            $criteria2->addSelectColumn(\ApplicationPeer::PRO_UID);
 
             $rsCriteria2 = \ApplicationPeer::doSelectRS($criteria2);
             $rsCriteria2->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
@@ -3308,6 +3313,7 @@ class Cases
         return $arrayAccess;
     }
 
+
     /**
      * Get Global System Variables
      * @param array $appData
@@ -3340,5 +3346,33 @@ class Cases
         }
 
         return $dataVariable;
+    }
+
+    /**
+     * Get index last participation from a user
+     *
+     * This function return the last participation
+     * by default is not considered the status OPEN or CLOSED
+     * in parallel cases return the first to find
+     * @param string $appUid
+     * @param string $userUid
+     * @param string $threadStatus
+     * @return integer delIndex
+     */
+    public function getLastParticipatedByUser($appUid, $userUid, $threadStatus = '')
+    {
+        $criteria = new \Criteria('workflow');
+        $criteria->addSelectColumn(\AppDelegationPeer::DEL_INDEX);
+        $criteria->addSelectColumn(\AppDelegationPeer::DEL_THREAD_STATUS);
+        $criteria->add(\AppDelegationPeer::APP_UID, $appUid, \Criteria::EQUAL);
+        $criteria->add(\AppDelegationPeer::USR_UID, $userUid, \Criteria::EQUAL);
+        if (!empty($threadStatus)) {
+            $criteria->add(\AppDelegationPeer::DEL_THREAD_STATUS, $threadStatus, \Criteria::EQUAL);
+        }
+        $dataSet = \AppDelegationPeer::doSelectRS($criteria);
+        $dataSet->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $dataSet->next();
+        $row = $dataSet->getRow();
+        return isset($row['DEL_INDEX']) ? $row['DEL_INDEX'] : 0;
     }
 }
