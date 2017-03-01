@@ -1698,19 +1698,29 @@ class Cases
 
                     if (isset($field['type'])) {
                         if ($field['type'] != 'form') {
-                            if (isset($field['name']) && isset($appData[$field['name']])) {
-                                if (isset($field['dataType']) && $field['dataType'] != 'grid') {
-                                    $caseVariable[$field['name']] = $appData[$field['name']];
-
-                                    if (isset($appData[$field['name'] . '_label'])) {
-                                        $caseVariable[$field['name'] . '_label'] = $appData[$field['name'] . '_label'];
-                                    } else {
-                                        $caseVariable[$field['name'] . '_label'] = '';
-                                    }
-                                } else {
-                                    $caseVariable[$field['name']] = $appData[$field['name']];
+                            foreach ($field as &$val) {
+                                if (is_string($val) && in_array(substr($val, 0, 2), \pmDynaform::$prefixs)) {
+                                    $val = substr($val, 2);
                                 }
                             }
+                            foreach ($appData as $key => $valueKey) {
+                                if (in_array($key, $field, true) != false) {
+                                    $keyname = array_search($key, $field);
+                                    if (isset($field['dataType']) && $field['dataType'] != 'grid') {
+                                        $caseVariable[$field[$keyname]] = $appData[$field[$keyname]];
+
+                                        if (isset($appData[$field[$keyname] . '_label'])) {
+                                            $caseVariable[$field[$keyname] . '_label'] = $appData[$field[$keyname] . '_label'];
+                                        } else {
+                                            $caseVariable[$field[$keyname] . '_label'] = '';
+                                        }
+                                    } else {
+                                        $caseVariable[$field[$keyname]] = $appData[$field[$keyname]];
+                                    }
+                                    break;
+                                }
+                            }
+
                         } else {
                             $caseVariableAux = $this->__getFieldsAndValuesByDynaFormAndAppData($field, $appData, $caseVariable);
                             $caseVariable = array_merge($caseVariable, $caseVariableAux);
