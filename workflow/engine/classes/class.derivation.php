@@ -1418,8 +1418,9 @@ class Derivation
         $application = new Application();
         $result = $application->update(['APP_UID' => $currentDelegation['APP_UID'], 'APP_ROUTING_DATA' => serialize($arrayRoutingData)]);
 
-        //APP_THREAD
+        //We updated the information relate to APP_THREAD
         $iAppThreadIndex = $appFields['DEL_THREAD'];
+<<<<<<< HEAD
 
         switch ($currentDelegation['ROU_TYPE']) {
             case 'PARALLEL':
@@ -1432,6 +1433,20 @@ class Derivation
                 $this->case->updateAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex, $iNewDelIndex );
                 break;
         } //en switch
+=======
+        if (isset($currentDelegation['ROUTE_TYPES']) && sizeof($currentDelegation['ROUTE_TYPES']) > 1) {
+            //If the next is more than one thread: Parallel or other
+            foreach ($currentDelegation['ROUTE_TYPES'] as $key => $value) {
+                if ($value['ROU_NEXT_TASK'] === $nextDel['TAS_UID']) {
+                    $routeType = ($value['ROU_TYPE'] === 'EVALUATE') ? 'PARALLEL-AND-EXCLUSIVE' : $value['ROU_TYPE'];
+                    $this->updateAppThread($routeType, $currentDelegation['APP_UID'], $iAppThreadIndex, $iNewDelIndex);
+                }
+            }
+        } else {
+            //If the next is a sequential derivation
+            $this->updateAppThread($currentDelegation['ROU_TYPE'], $currentDelegation['APP_UID'], $iAppThreadIndex, $iNewDelIndex);
+        }
+>>>>>>> HOR-2777
 
         //if there are subprocess to create
         if (isset( $aSP )) {
@@ -1548,6 +1563,28 @@ class Derivation
             $this->notifyAssignedUser($appFields, $nextTaskData, $iNewDelIndex);
         }
         return $iNewDelIndex;
+    }
+
+    /**
+     * This function create, update and closed a new record related to appThread
+     *
+     * Related to route type we can change the records in the APP_THREAD table
+     * @param  string $routeType this variable recibe information about the derivation
+     * @return void
+     */
+    function updateAppThread($routeType, $appUid, $iAppThreadIndex, $iNewDelIndex) {
+        switch ($routeType) {
+            case 'PARALLEL':
+            case 'PARALLEL-BY-EVALUATION':
+            case 'PARALLEL-AND-EXCLUSIVE':
+                $this->case->closeAppThread($appUid, $iAppThreadIndex);
+                $iNewThreadIndex = $this->case->newAppThread($appUid, $iNewDelIndex, $iAppThreadIndex);
+                $this->case->updateAppDelegation($appUid, $iNewDelIndex, $iNewThreadIndex);
+                break;
+            default:
+                $this->case->updateAppThread($appUid, $iAppThreadIndex, $iNewDelIndex);
+                break;
+        }
     }
 
     /* verifyIsCaseChild

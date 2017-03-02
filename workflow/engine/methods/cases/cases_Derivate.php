@@ -126,14 +126,34 @@ try {
 
     $oCase->updateCase($_SESSION["APPLICATION"], $appFields); //Save data
 
-    //derivate case
+    //Prepare information for the derivation
     $oDerivation = new Derivation();
-    $aCurrentDerivation = array ('APP_UID' => $_SESSION['APPLICATION'],'DEL_INDEX' => $_SESSION['INDEX'],'APP_STATUS' => $sStatus,'TAS_UID' => $_SESSION['TASK'],'ROU_TYPE' => $_POST['form']['ROU_TYPE']
+    $aCurrentDerivation = array (
+        'APP_UID' => $_SESSION['APPLICATION'],
+        'DEL_INDEX' => $_SESSION['INDEX'],
+        'APP_STATUS' => $sStatus,
+        'TAS_UID' => $_SESSION['TASK'],
+        'ROU_TYPE' => $_POST['form']['ROU_TYPE']
     );
-    $aPInformation = $oDerivation->prepareInformation( array ('USER_UID' => $_SESSION['USER_LOGGED'],'APP_UID' => $_SESSION['APPLICATION'],'DEL_INDEX' => $_SESSION['INDEX'])
+    $aPInformation = $oDerivation->prepareInformation(
+        array (
+            'USER_UID' => $_SESSION['USER_LOGGED'],
+            'APP_UID' => $_SESSION['APPLICATION'],
+            'DEL_INDEX' => $_SESSION['INDEX']
+        )
     );
     $oRoute = new \ProcessMaker\Core\RoutingScreen();
     $nextTasks = $oRoute->mergeDataDerivation($_POST['form']['TASKS'], $aPInformation, $_POST['form']['ROU_TYPE']);
+
+    //Get all route types
+    $aRouteTypes = array();
+    foreach ($aPInformation as $key => $value) {
+        $aRouteTypes[$key]['ROU_NEXT_TASK'] = $value['ROU_NEXT_TASK'];
+        $aRouteTypes[$key]['ROU_TYPE'] = $value['ROU_TYPE'];
+    }
+    $aCurrentDerivation['ROUTE_TYPES'] = $aRouteTypes;
+
+    //Derivate the case
     $arrayDerivationResult = $oDerivation->derivate($aCurrentDerivation, $nextTasks);
 
     if (!empty($arrayDerivationResult)) {
