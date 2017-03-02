@@ -2133,6 +2133,34 @@ Ext.onReady ( function() {
         items: itemToolbar
     });
 
+    var pagingToolBar;
+    if (action === 'search') {
+        pagingToolBar = new Ext.PagingToolbar({
+            pageSize: pageSize,
+            afterPageText: '',
+            store: storeCases,
+            displayInfo: true,
+            displayMsg: '',
+            emptyMsg: '',
+            listeners: {
+                afterlayout: function (toolbar, opts) {
+                    var buttons = Ext.query('em', toolbar.el.dom);
+                    //Hide the "First Page" and "Last Page" buttons
+                    buttons[0].style.display = 'none';
+                    buttons[3].style.display = 'none';
+                }
+            }
+        });
+    } else {
+        pagingToolBar = new Ext.PagingToolbar({
+            pageSize: pageSize,
+            store: storeCases,
+            displayInfo: true,
+            //displayMsg: 'Displaying items {0} - {1} of {2} ' + ' &nbsp; ' ,
+            displayMsg: _('ID_DISPLAY_ITEMS') + ' &nbsp; ',
+            emptyMsg: _('ID_DISPLAY_EMPTY')
+        })
+    }
     var mask = new Ext.LoadMask(Ext.getBody(), {msg: _('ID_LOADING')});
     // create the editor grid
     grid = new Ext.grid.GridPanel({
@@ -2171,14 +2199,7 @@ Ext.onReady ( function() {
 
         tbar: tb,
         // paging bar on the bottom
-        bbar: new Ext.PagingToolbar({
-            pageSize: pageSize,
-            store: storeCases,
-            displayInfo: true,
-            //displayMsg: 'Displaying items {0} - {1} of {2} ' + ' &nbsp; ' ,
-            displayMsg: _('ID_DISPLAY_ITEMS') + ' &nbsp; ',
-            emptyMsg: _('ID_DISPLAY_EMPTY')
-        })
+        bbar: pagingToolBar
     });
 
 
