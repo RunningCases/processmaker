@@ -5674,27 +5674,38 @@ class Processes
         return $oData;
     }
 
-    private function loadIdsFor($modelClass, $uidTableField, $idTableField, &$data)
+    private function loadIdsFor($modelClass, $uidTableField, $idTableField,
+                                &$data)
     {
         if (empty($data)) {
             return $data;
         }
         if (!is_array($data)) {
-            throw new Exception("Invalid input data form $modelClass($key)" . G::json_encode($data));
+            throw new Exception("Invalid input data form $modelClass($key)".G::json_encode($data));
         }
-        $uidField = explode('.', $uidTableField)[1];
-        $idField = explode('.', $idTableField)[1];
+        $uidTableFieldArray = explode('.', $uidTableField);
+        $idTableFieldArray = explode('.', $idTableField);
+        if (count($uidTableFieldArray) !== 2) {
+            throw new Exception('Invalid argument $uidTableField, expected a "TABLE.COLUMN" string');
+        }
+        if (count($idTableFieldArray) !== 2) {
+            throw new Exception('Invalid argument $idTableField, expected a "TABLE.COLUMN" string');
+        }
+        $uidField = $uidTableFieldArray[1];
+        $idField = $idTableFieldArray[1];
         if (isset($data[$uidField])) {
             //$data is an single row
             $model = new $modelClass();
             $row = $model->load($data[$uidField]);
-            $data[$idField] = $model->getByName($idTableField, BasePeer::TYPE_COLNAME);
+            $data[$idField] = $model->getByName($idTableField,
+                                                BasePeer::TYPE_COLNAME);
         } else {
             //$data is an array of row
             foreach ($data as &$dataRow) {
                 $model = new $modelClass();
                 $row = $model->load($dataRow[$uidField]);
-                $dataRow[$idField] = $model->getByName($idTableField, BasePeer::TYPE_COLNAME);
+                $dataRow[$idField] = $model->getByName($idTableField,
+                                                       BasePeer::TYPE_COLNAME);
             }
         }
         return $data;
