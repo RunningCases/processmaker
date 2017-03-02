@@ -363,6 +363,10 @@ abstract class Importer
     public function removeProject($onlyDiagram = false)
     {
         /* @var $process \Process */
+        $processes = new \Processes();
+        $this->importData["tables"]["workflow"] = $processes
+            ->loadIdsFromData($this->importData["tables"]["workflow"]);
+
         $process = new \Process();
         $process->load($this->metadata["uid"]);
         $this->currentProcessTitle = $process->getProTitle();

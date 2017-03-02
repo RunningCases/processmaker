@@ -1194,6 +1194,8 @@ class Processes
     {
         $oProcess = new Process();
         if ($oProcess->processExists($row['PRO_UID'])) {
+            $processRow = $oProcess->load($row['PRO_UID']);
+            $row['PRO_ID'] = $processRow['PRO_ID'];
             $oProcess->update($row);
         } else {
             $oProcess->create($row);
@@ -5597,6 +5599,119 @@ class Processes
     }
 
     /**
+     *
+     * @param type $oData
+     */
+    public function loadIdsFromData($oData)
+    {
+        if (is_array($oData)) {
+            $this->loadIdsFor(
+                Process::class,
+                ProcessPeer::PRO_UID,
+                ProcessPeer::PRO_ID,
+                $oData['process']
+            );
+            $this->loadIdsFor(
+                Task::class,
+                TaskPeer::TAS_UID,
+                TaskPeer::TAS_ID,
+                $oData['tasks']
+            );
+        } else {
+            $this->loadIdsFor(
+                Process::class,
+                ProcessPeer::PRO_UID,
+                ProcessPeer::PRO_ID,
+                $oData->process
+            );
+            $this->loadIdsFor(
+                Task::class,
+                TaskPeer::TAS_UID,
+                TaskPeer::TAS_ID,
+                $oData->tasks
+            );
+        }
+        /**
+         * @todo The following code matches the Models and the correspondent Property
+         *   in the imported data object, so it could be used to change the UID
+         *   fields by ID on the other tables.
+         * $this->loadIdsFor(ProcessCategory::class, ProcessCategoryPeer::CATEGORY_UID, ?, $oData->processCategory);
+         * $this->loadIdsFor(SwimlanesElements::class, ?, ?, $oData->lanes);
+         * $this->loadIdsFor(Gateway::class, GatewayPeer::GAT_UID, ?, $oData->gateways);
+         * $this->loadIdsFor(Dynaform::class, $oData->dynaforms);
+         * $this->loadIdsFor(InputDocument::class, $oData->inputs);
+         * $this->loadIdsFor(OutputDocument::class, $oData->outputs);
+         * $this->loadIdsFor(Step::class, $oData->steps);
+         * $this->loadIdsFor(StepSupervisor::class, $oData->stepSupervisor);
+         * $this->loadIdsFor(Triggers::class, $oData->triggers);
+         * $this->loadIdsFor(StepTrigger::class, $oData->steptriggers);
+         * $this->loadIdsFor(TaskUser::class, ?, ?, $oData->taskusers);
+         * $this->loadIdsFor(Groupwf::class, $oData->groupwfs);
+         * $this->loadIdsFor(DbSource::class, $oData->dbconnections);
+         * $this->loadIdsFor(ReportTables::class, $oData->reportTablesVars);
+         * $this->loadIdsFor(SubProcess::class, $oData->subProcess);
+         * $this->loadIdsFor(CaseTracker::class, $oData->caseTracker);
+         * $this->loadIdsFor(CaseTrackerObject::class, $oData->caseTrackerObject);
+         * $this->loadIdsFor(ObjectPermission::class, $oData->objectPermissions);
+         * $this->loadIdsFor(Stage::class, $oData->stage);
+         * $this->loadIdsFor(FieldCondition::class, $oData->fieldCondition);
+         * $this->loadIdsFor(Event::class, $oData->event);
+         * $this->loadIdsFor(CaseScheduler::class, $oData->caseScheduler);
+         * $this->loadIdsFor(Configuration::class, $oData->taskExtraProperties);
+         * $this->loadIdsFor(ProcessUser::class, $oData->processUser);
+         * $this->loadIdsFor(ProcessVariables::class, $oData->processVariables);
+         * $this->loadIdsFor(\ProcessMaker\BusinessModel\WebEntry::class, $arrayProcessData["PRO_UID"], $arrayProcessData["PRO_CREATE_USER"], $oData->webEntry);
+         * $this->loadIdsFor(\ProcessMaker\BusinessModel\WebEntryEvent::class, $arrayProcessData["PRO_UID"], $arrayProcessData["PRO_CREATE_USER"], $oData->webEntryEvent);
+         * $this->loadIdsFor(\ProcessMaker\BusinessModel\MessageType::class, $oData->messageType);
+         * $this->loadIdsFor(\ProcessMaker\BusinessModel\MessageType\Variable::class, $oData->messageTypeVariable);
+         * $this->loadIdsFor(\ProcessMaker\BusinessModel\MessageEventDefinition::class, $arrayProcessData["PRO_UID"], $oData->messageEventDefinition);
+         * $this->loadIdsFor(\ProcessMaker\BusinessModel\ScriptTask::class, $arrayProcessData["PRO_UID"], $oData->scriptTask);
+         * $this->loadIdsFor(\ProcessMaker\BusinessModel\TimerEvent::class, $arrayProcessData["PRO_UID"], $oData->timerEvent);
+         * $this->loadIdsFor(\ProcessMaker\BusinessModel\EmailEvent::class, $arrayProcessData["PRO_UID"], $oData->emailEvent);
+         * $this->loadIdsFor(AbeConfiguration::class, $arrayProcessData["PRO_UID"], $oData->abeConfiguration);
+         * $this->loadIdsFor(\ProcessMaker\BusinessModel\FilesManager::class, $arrayProcessData["PRO_UID"], $oData->filesManager);
+         */
+        return $oData;
+    }
+
+    private function loadIdsFor($modelClass, $uidTableField, $idTableField,
+                                &$data)
+    {
+        if (empty($data)) {
+            return $data;
+        }
+        if (!is_array($data)) {
+            throw new Exception("Invalid input data form $modelClass($key)".G::json_encode($data));
+        }
+        $uidTableFieldArray = explode('.', $uidTableField);
+        $idTableFieldArray = explode('.', $idTableField);
+        if (count($uidTableFieldArray) !== 2) {
+            throw new Exception('Invalid argument $uidTableField, expected a "TABLE.COLUMN" string');
+        }
+        if (count($idTableFieldArray) !== 2) {
+            throw new Exception('Invalid argument $idTableField, expected a "TABLE.COLUMN" string');
+        }
+        $uidField = $uidTableFieldArray[1];
+        $idField = $idTableFieldArray[1];
+        if (isset($data[$uidField])) {
+            //$data is an single row
+            $model = new $modelClass();
+            $row = $model->load($data[$uidField]);
+            $data[$idField] = $model->getByName($idTableField,
+                                                BasePeer::TYPE_COLNAME);
+        } else {
+            //$data is an array of row
+            foreach ($data as &$dataRow) {
+                $model = new $modelClass();
+                $row = $model->load($dataRow[$uidField]);
+                $dataRow[$idField] = $model->getByName($idTableField,
+                                                       BasePeer::TYPE_COLNAME);
+            }
+        }
+        return $data;
+    }
+
+    /**
      * this function creates a new Process, defined in the object $oData
      *
      * @param string $sProUid
@@ -5604,6 +5719,7 @@ class Processes
      */
     public function updateProcessFromData($oData, $pmFilename)
     {
+        $oData = $this->loadIdsFromData($oData);
         $this->updateProcessRow($oData->process);
         $this->removeProcessRows($oData->process['PRO_UID']);
         $this->removeAllFieldCondition($oData->dynaforms);
