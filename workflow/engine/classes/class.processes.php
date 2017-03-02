@@ -5604,8 +5604,33 @@ class Processes
      */
     public function loadIdsFromData($oData)
     {
-        $this->loadIdsFor(Process::class, ProcessPeer::PRO_UID, ProcessPeer::PRO_ID, $oData['process']);
-        $this->loadIdsFor(Task::class, TaskPeer::TAS_UID, TaskPeer::TAS_ID, $oData['tasks']);
+        if (is_array($oData)) {
+            $this->loadIdsFor(
+                Process::class,
+                ProcessPeer::PRO_UID,
+                ProcessPeer::PRO_ID,
+                $oData['process']
+            );
+            $this->loadIdsFor(
+                Task::class,
+                TaskPeer::TAS_UID,
+                TaskPeer::TAS_ID,
+                $oData['tasks']
+            );
+        } else {
+            $this->loadIdsFor(
+                Process::class,
+                ProcessPeer::PRO_UID,
+                ProcessPeer::PRO_ID,
+                $oData->process
+            );
+            $this->loadIdsFor(
+                Task::class,
+                TaskPeer::TAS_UID,
+                TaskPeer::TAS_ID,
+                $oData->tasks
+            );
+        }
         /**
          * @todo The following code matches the Models and the correspondent Property
          *   in the imported data object, so it could be used to change the UID
@@ -5683,6 +5708,7 @@ class Processes
      */
     public function updateProcessFromData($oData, $pmFilename)
     {
+        $oData = $this->loadIdsFromData($oData);
         $this->updateProcessRow($oData->process);
         $this->removeProcessRows($oData->process['PRO_UID']);
         $this->removeAllFieldCondition($oData->dynaforms);
