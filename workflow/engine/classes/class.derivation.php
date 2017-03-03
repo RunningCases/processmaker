@@ -832,6 +832,38 @@ class Derivation
         /*----------------------------------********---------------------------------*/
     }
 
+    /**
+     * This function prepare the information before call the derivate function
+     *
+     * We can route a case from differents ways from cases_Derivate and derivateCase used in PMFDerivateCase
+     * before this we need to process the information
+     *
+     * @param array $aDataForPrepareInfo
+     * @param array $tasks
+     * @param string $rouType
+     * @param array $aCurrentDerivation
+     * @return array $arrayDerivationResult
+     */
+    function beforeDerivate($aDataForPrepareInfo, $tasks, $rouType, $aCurrentDerivation)
+    {
+        $aPInformation = $this->prepareInformation($aDataForPrepareInfo);
+        $oRoute = new \ProcessMaker\Core\RoutingScreen();
+        $nextTasks = $oRoute->mergeDataDerivation($tasks, $aPInformation, $rouType);
+
+        //Get all route types
+        $aRouteTypes = array();
+        foreach ($aPInformation as $key => $value) {
+            $aRouteTypes[$key]['ROU_NEXT_TASK'] = $value['ROU_NEXT_TASK'];
+            $aRouteTypes[$key]['ROU_TYPE'] = $value['ROU_TYPE'];
+        }
+        $aCurrentDerivation['ROUTE_TYPES'] = $aRouteTypes;
+
+        //Derivate the case
+        $arrayDerivationResult = $this->derivate($aCurrentDerivation, $nextTasks);
+
+        return $arrayDerivationResult;
+    }
+
     /** Derivate
      *
      * @param array $currentDelegation

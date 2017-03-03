@@ -826,7 +826,7 @@ try {
                 throw (new Exception( G::LoadTranslation( 'ID_NO_DERIVATION_RULE' ) ));
             }
 
-            //take the first derivation rule as the task derivation rule type.
+            //Take the first derivation rule as the task derivation rule type.
             $aFields['PROCESS']['ROU_TYPE'] = $aFields['TASK'][1]['ROU_TYPE'];
             $aFields['PROCESS']['ROU_FINISH_FLAG'] = false;
 
