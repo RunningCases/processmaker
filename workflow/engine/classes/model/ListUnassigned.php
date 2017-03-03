@@ -14,8 +14,10 @@ require_once 'classes/model/om/BaseListUnassigned.php';
  *
  * @package    classes.model
  */
+// @codingStandardsIgnoreStart
 class ListUnassigned extends BaseListUnassigned
 {
+    // @codingStandardsIgnoreEnd
     private $total = 0;
     /**
      * Create List Unassigned Table
@@ -26,19 +28,27 @@ class ListUnassigned extends BaseListUnassigned
      */
     public function create($data)
     {
-        $con = Propel::getConnection( ListUnassignedPeer::DATABASE_NAME );
+        if (!empty($data['PRO_UID']) && empty($data['PRO_ID'])) {
+            $p = new Process();
+            $data['PRO_ID'] =  $p->load($data['PRO_UID'])['PRO_ID'];
+        }
+        if (!empty($data['TAS_UID'])) {
+            $t = new Task();
+            $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
+        }
+        $con = Propel::getConnection(ListUnassignedPeer::DATABASE_NAME);
         try {
-            $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
+            $this->fromArray($data, BasePeer::TYPE_FIELDNAME);
             if ($this->validate()) {
                 $result = $this->save();
             } else {
-                $e = new Exception( "Failed Validation in class " . get_class( $this ) . "." );
+                $e = new Exception("Failed Validation in class " . get_class($this) . ".");
                 $e->aValidationFailures = $this->getValidationFailures();
                 throw ($e);
             }
             $con->commit();
             return $result;
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             $con->rollback();
             throw ($e);
         }
@@ -53,18 +63,22 @@ class ListUnassigned extends BaseListUnassigned
      */
     public function update($data)
     {
-        $con = Propel::getConnection( ListUnassignedPeer::DATABASE_NAME );
+        if (!empty($data['TAS_UID'])) {
+            $t = new Task();
+            $data['TAS_ID'] = $t->load($data['TAS_UID'])['TAS_ID'];
+        }
+        $con = Propel::getConnection(ListUnassignedPeer::DATABASE_NAME);
         try {
             $con->begin();
-            $this->setNew( false );
-            $this->fromArray( $data, BasePeer::TYPE_FIELDNAME );
+            $this->setNew(false);
+            $this->fromArray($data, BasePeer::TYPE_FIELDNAME);
             if ($this->validate()) {
                 $result = $this->save();
                 $con->commit();
                 return $result;
             } else {
                 $con->rollback();
-                throw (new Exception( "Failed Validation in class " . get_class( $this ) . "." ));
+                throw (new Exception("Failed Validation in class " . get_class($this) . "."));
             }
         } catch (Exception $e) {
             $con->rollback();
@@ -80,9 +94,9 @@ class ListUnassigned extends BaseListUnassigned
      * @throws type
      *
      */
-    public function remove ($appUid, $delIndex)
+    public function remove($appUid, $delIndex)
     {
-        $con = Propel::getConnection( ListUnassignedPeer::DATABASE_NAME );
+        $con = Propel::getConnection(ListUnassignedPeer::DATABASE_NAME);
         try {
             $this->setAppUid($appUid);
             $this->setDelIndex($delIndex);
@@ -96,15 +110,15 @@ class ListUnassigned extends BaseListUnassigned
         }
     }
 
-    public function newRow ($data, $delPreviusUsrUid)
+    public function newRow($data, $delPreviusUsrUid)
     {
         $data['DEL_PREVIOUS_USR_UID'] = $delPreviusUsrUid;
         $data['DEL_DUE_DATE'] = isset($data['DEL_TASK_DUE_DATE']) ? $data['DEL_TASK_DUE_DATE'] : '';
 
         $criteria = new Criteria();
-        $criteria->addSelectColumn( ApplicationPeer::APP_NUMBER );
-        $criteria->addSelectColumn( ApplicationPeer::APP_UPDATE_DATE );
-        $criteria->add( ApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL );
+        $criteria->addSelectColumn(ApplicationPeer::APP_NUMBER);
+        $criteria->addSelectColumn(ApplicationPeer::APP_UPDATE_DATE);
+        $criteria->add(ApplicationPeer::APP_UID, $data['APP_UID'], Criteria::EQUAL);
         $dataset = ApplicationPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
@@ -113,7 +127,7 @@ class ListUnassigned extends BaseListUnassigned
 
         $criteria = new Criteria();
         $criteria->addSelectColumn(ProcessPeer::PRO_TITLE);
-        $criteria->add( ProcessPeer::PRO_UID, $data['PRO_UID'], Criteria::EQUAL );
+        $criteria->add(ProcessPeer::PRO_UID, $data['PRO_UID'], Criteria::EQUAL);
         $dataset = ProcessPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
@@ -123,7 +137,7 @@ class ListUnassigned extends BaseListUnassigned
 
         $criteria = new Criteria();
         $criteria->addSelectColumn(TaskPeer::TAS_TITLE);
-        $criteria->add( TaskPeer::TAS_UID, $data['TAS_UID'], Criteria::EQUAL );
+        $criteria->add(TaskPeer::TAS_UID, $data['TAS_UID'], Criteria::EQUAL);
         $dataset = TaskPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $dataset->next();
@@ -137,7 +151,7 @@ class ListUnassigned extends BaseListUnassigned
             $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
             $criteria->addSelectColumn(UsersPeer::USR_FIRSTNAME);
             $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
-            $criteria->add( UsersPeer::USR_UID, $data['DEL_PREVIOUS_USR_UID'], Criteria::EQUAL );
+            $criteria->add(UsersPeer::USR_UID, $data['DEL_PREVIOUS_USR_UID'], Criteria::EQUAL);
             $dataset = UsersPeer::doSelectRS($criteria);
             $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
             $dataset->next();
@@ -151,7 +165,7 @@ class ListUnassigned extends BaseListUnassigned
         return true;
     }
 
-    public function loadFilters (&$criteria, $filters)
+    public function loadFilters(&$criteria, $filters)
     {
         $filter = isset($filters['filter']) ? $filters['filter'] : "";
         $search = isset($filters['search']) ? $filters['search'] : "";
@@ -162,15 +176,21 @@ class ListUnassigned extends BaseListUnassigned
 
         if ($search != '') {
             $criteria->add(
-                $criteria->getNewCriterion(ListUnassignedPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
-                $criteria->getNewCriterion(ListUnassignedPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
-                $criteria->getNewCriterion(ListUnassignedPeer::APP_UID, $search, Criteria::EQUAL)->addOr(
-                $criteria->getNewCriterion(ListUnassignedPeer::APP_NUMBER, $search, Criteria::EQUAL)
-            ))));
+                $criteria->getNewCriterion(ListUnassignedPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)
+                ->addOr(
+                    $criteria->getNewCriterion(ListUnassignedPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)
+                    ->addOr(
+                        $criteria->getNewCriterion(ListUnassignedPeer::APP_UID, $search, Criteria::EQUAL)
+                        ->addOr(
+                            $criteria->getNewCriterion(ListUnassignedPeer::APP_NUMBER, $search, Criteria::EQUAL)
+                        )
+                    )
+                )
+            );
         }
 
         if ($process != '') {
-            $criteria->add( ListUnassignedPeer::PRO_UID, $process, Criteria::EQUAL);
+            $criteria->add(ListUnassignedPeer::PRO_UID, $process, Criteria::EQUAL);
         }
 
         if ($category != '') {
@@ -186,7 +206,7 @@ class ListUnassigned extends BaseListUnassigned
     {
         $resp = array();
         $pmTable = new PmTable();
-        $tasks = $this->getSelfServiceTasks( $usr_uid );
+        $tasks = $this->getSelfServiceTasks($usr_uid);
         $criteria = $pmTable->addPMFieldsToList('unassigned');
 
         $criteria->addSelectColumn(ListUnassignedPeer::APP_UID);
@@ -237,11 +257,15 @@ class ListUnassigned extends BaseListUnassigned
                         Criteria::EQUAL
                     )->addAnd(
                         $criteria->getNewCriterion(
-                            ListUnassignedPeer::DEL_INDEX, $value["DEL_INDEX"], Criteria::EQUAL
+                            ListUnassignedPeer::DEL_INDEX,
+                            $value["DEL_INDEX"],
+                            Criteria::EQUAL
                         )
                     )->addAnd(
                         $criteria->getNewCriterion(
-                            ListUnassignedPeer::TAS_UID, $value["TAS_UID"], Criteria::EQUAL
+                            ListUnassignedPeer::TAS_UID,
+                            $value["TAS_UID"],
+                            Criteria::EQUAL
                         )
                     )->addOr(
                         $criterionAux
@@ -252,14 +276,16 @@ class ListUnassigned extends BaseListUnassigned
             $criteria->add(
                 $criterionAux->addOr($criteria->getNewCriterion(ListUnassignedPeer::TAS_UID, $tasks, Criteria::IN))
             );
-        }else{
+        } else {
             //Load Selfservice
             $criteria->add(ListUnassignedPeer::TAS_UID, $tasks, Criteria::IN);
         }
 
         //Apply some filters
         self::loadFilters($criteria, $filters);
-        $sort  = (!empty($filters['sort'])) ? ListUnassignedPeer::TABLE_NAME.'.'.$filters['sort'] : "LIST_UNASSIGNED.DEL_DELEGATE_DATE";
+        $sort  = (!empty($filters['sort'])) ?
+            ListUnassignedPeer::TABLE_NAME.'.'.$filters['sort'] :
+            "LIST_UNASSIGNED.DEL_DELEGATE_DATE";
         $dir   = isset($filters['dir']) ? $filters['dir'] : "ASC";
         $start = isset($filters['start']) ? $filters['start'] : "0";
         $limit = isset($filters['limit']) ? $filters['limit'] : "25";
@@ -272,18 +298,21 @@ class ListUnassigned extends BaseListUnassigned
         }
         $this->total = ListUnassignedPeer::doCount($criteria);
         if ($paged == 1) {
-            $criteria->setLimit( $limit );
-            $criteria->setOffset( $start );
+            $criteria->setLimit($limit);
+            $criteria->setOffset($start);
         }
         $dataset = ListUnassignedPeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $aPriorities = array ('1' => 'VL','2' => 'L','3' => 'N','4' => 'H','5' => 'VH');
+        $aPriorities = array('1' => 'VL', '2' => 'L', '3' => 'N', '4' => 'H', '5' => 'VH');
 
         $data = array();
         while ($dataset->next()) {
             $aRow = (is_null($callbackRecord))? $dataset->getRow() : $callbackRecord($dataset->getRow());
-            $aRow['DEL_PRIORITY'] = (isset($aRow['DEL_PRIORITY']) && is_numeric($aRow['DEL_PRIORITY']) && $aRow['DEL_PRIORITY'] <= 5 && $aRow['DEL_PRIORITY'] > 0 ) ? $aRow['DEL_PRIORITY'] : 3;
-            $aRow['DEL_PRIORITY'] = G::LoadTranslation( "ID_PRIORITY_{$aPriorities[$aRow['DEL_PRIORITY']]}" );
+            $aRow['DEL_PRIORITY'] = (isset($aRow['DEL_PRIORITY']) &&
+                is_numeric($aRow['DEL_PRIORITY']) &&
+                $aRow['DEL_PRIORITY'] <= 5 &&
+                $aRow['DEL_PRIORITY'] > 0) ? $aRow['DEL_PRIORITY'] : 3;
+            $aRow['DEL_PRIORITY'] = G::LoadTranslation("ID_PRIORITY_{$aPriorities[$aRow['DEL_PRIORITY']]}");
             $data[] = $aRow;
         }
         return $data;
@@ -314,9 +343,15 @@ class ListUnassigned extends BaseListUnassigned
             $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::DEL_INDEX);
             $criteria->addSelectColumn(AppAssignSelfServiceValuePeer::TAS_UID);
 
-            $criteria->add(AppAssignSelfServiceValuePeer::ID, AppAssignSelfServiceValuePeer::ID . 
-            " IN (SELECT " . AppAssignSelfServiceValueGroupPeer::ID . " FROM " . AppAssignSelfServiceValueGroupPeer::TABLE_NAME . 
-            " WHERE " . AppAssignSelfServiceValueGroupPeer::GRP_UID . " IN ('" . implode("','", $arrayUid) . "'))", Criteria::CUSTOM);
+            $criteria->add(
+                AppAssignSelfServiceValuePeer::ID,
+                AppAssignSelfServiceValuePeer::ID.
+                " IN (SELECT ".AppAssignSelfServiceValueGroupPeer::ID.
+                " FROM ".AppAssignSelfServiceValueGroupPeer::TABLE_NAME.
+                " WHERE ".AppAssignSelfServiceValueGroupPeer::GRP_UID." IN ('".
+                implode("','", $arrayUid)."'))",
+                Criteria::CUSTOM
+            );
 
             $rsCriteria = AppAssignSelfServiceValuePeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -419,13 +454,33 @@ class ListUnassigned extends BaseListUnassigned
 
             foreach ($arrayAppAssignSelfServiceValueData as $value) {
                 if (is_null($criterionAux)) {
-                    $criterionAux = $criteria->getNewCriterion(ListUnassignedPeer::APP_UID, $value["APP_UID"], Criteria::EQUAL)->addAnd(
-                        $criteria->getNewCriterion(ListUnassignedPeer::DEL_INDEX, $value["DEL_INDEX"], Criteria::EQUAL))->addAnd(
-                        $criteria->getNewCriterion(ListUnassignedPeer::TAS_UID, $value["TAS_UID"], Criteria::EQUAL));
+                    $criterionAux = $criteria->getNewCriterion(
+                        ListUnassignedPeer::APP_UID,
+                        $value["APP_UID"],
+                        Criteria::EQUAL
+                    )->addAnd(
+                        $criteria->getNewCriterion(ListUnassignedPeer::DEL_INDEX, $value["DEL_INDEX"], Criteria::EQUAL)
+                    )->addAnd(
+                        $criteria->getNewCriterion(ListUnassignedPeer::TAS_UID, $value["TAS_UID"], Criteria::EQUAL)
+                    );
                 } else {
-                    $criterionAux = $criteria->getNewCriterion(ListUnassignedPeer::APP_UID, $value["APP_UID"], Criteria::EQUAL)->addAnd(
-                        $criteria->getNewCriterion(ListUnassignedPeer::DEL_INDEX, $value["DEL_INDEX"], Criteria::EQUAL))->addAnd(
-                        $criteria->getNewCriterion(ListUnassignedPeer::TAS_UID, $value["TAS_UID"], Criteria::EQUAL))->addOr(
+                    $criterionAux = $criteria->getNewCriterion(
+                        ListUnassignedPeer::APP_UID,
+                        $value["APP_UID"],
+                        Criteria::EQUAL
+                    )->addAnd(
+                        $criteria->getNewCriterion(
+                            ListUnassignedPeer::DEL_INDEX,
+                            $value["DEL_INDEX"],
+                            Criteria::EQUAL
+                        )
+                    )->addAnd(
+                        $criteria->getNewCriterion(
+                            ListUnassignedPeer::TAS_UID,
+                            $value["TAS_UID"],
+                            Criteria::EQUAL
+                        )
+                    )->addOr(
                         $criterionAux
                     );
                 }
@@ -442,4 +497,3 @@ class ListUnassigned extends BaseListUnassigned
         return (int)$total;
     }
 }
-

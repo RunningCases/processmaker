@@ -124,6 +124,18 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
     protected $del_priority = '3';
 
     /**
+     * The value for the pro_id field.
+     * @var        int
+     */
+    protected $pro_id = 0;
+
+    /**
+     * The value for the tas_id field.
+     * @var        int
+     */
+    protected $tas_id = 0;
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -374,6 +386,28 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
     {
 
         return $this->del_priority;
+    }
+
+    /**
+     * Get the [pro_id] column value.
+     * 
+     * @return     int
+     */
+    public function getProId()
+    {
+
+        return $this->pro_id;
+    }
+
+    /**
+     * Get the [tas_id] column value.
+     * 
+     * @return     int
+     */
+    public function getTasId()
+    {
+
+        return $this->tas_id;
     }
 
     /**
@@ -750,6 +784,50 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
     } // setDelPriority()
 
     /**
+     * Set the value of [pro_id] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setProId($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->pro_id !== $v || $v === 0) {
+            $this->pro_id = $v;
+            $this->modifiedColumns[] = ListUnassignedPeer::PRO_ID;
+        }
+
+    } // setProId()
+
+    /**
+     * Set the value of [tas_id] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setTasId($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->tas_id !== $v || $v === 0) {
+            $this->tas_id = $v;
+            $this->modifiedColumns[] = ListUnassignedPeer::TAS_ID;
+        }
+
+    } // setTasId()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -798,12 +876,16 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
 
             $this->del_priority = $rs->getString($startcol + 15);
 
+            $this->pro_id = $rs->getInt($startcol + 16);
+
+            $this->tas_id = $rs->getInt($startcol + 17);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 16; // 16 = ListUnassignedPeer::NUM_COLUMNS - ListUnassignedPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 18; // 18 = ListUnassignedPeer::NUM_COLUMNS - ListUnassignedPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating ListUnassigned object", $e);
@@ -1055,6 +1137,12 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
             case 15:
                 return $this->getDelPriority();
                 break;
+            case 16:
+                return $this->getProId();
+                break;
+            case 17:
+                return $this->getTasId();
+                break;
             default:
                 return null;
                 break;
@@ -1091,6 +1179,8 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
             $keys[13] => $this->getDelDelegateDate(),
             $keys[14] => $this->getDelDueDate(),
             $keys[15] => $this->getDelPriority(),
+            $keys[16] => $this->getProId(),
+            $keys[17] => $this->getTasId(),
         );
         return $result;
     }
@@ -1169,6 +1259,12 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
                 break;
             case 15:
                 $this->setDelPriority($value);
+                break;
+            case 16:
+                $this->setProId($value);
+                break;
+            case 17:
+                $this->setTasId($value);
                 break;
         } // switch()
     }
@@ -1257,6 +1353,14 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
             $this->setDelPriority($arr[$keys[15]]);
         }
 
+        if (array_key_exists($keys[16], $arr)) {
+            $this->setProId($arr[$keys[16]]);
+        }
+
+        if (array_key_exists($keys[17], $arr)) {
+            $this->setTasId($arr[$keys[17]]);
+        }
+
     }
 
     /**
@@ -1330,6 +1434,14 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
 
         if ($this->isColumnModified(ListUnassignedPeer::DEL_PRIORITY)) {
             $criteria->add(ListUnassignedPeer::DEL_PRIORITY, $this->del_priority);
+        }
+
+        if ($this->isColumnModified(ListUnassignedPeer::PRO_ID)) {
+            $criteria->add(ListUnassignedPeer::PRO_ID, $this->pro_id);
+        }
+
+        if ($this->isColumnModified(ListUnassignedPeer::TAS_ID)) {
+            $criteria->add(ListUnassignedPeer::TAS_ID, $this->tas_id);
         }
 
 
@@ -1425,6 +1537,10 @@ abstract class BaseListUnassigned extends BaseObject implements Persistent
         $copyObj->setDelDueDate($this->del_due_date);
 
         $copyObj->setDelPriority($this->del_priority);
+
+        $copyObj->setProId($this->pro_id);
+
+        $copyObj->setTasId($this->tas_id);
 
 
         $copyObj->setNew(true);
