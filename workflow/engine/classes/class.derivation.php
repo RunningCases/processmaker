@@ -59,7 +59,7 @@ class Derivation
     public function __construct()
     {
         $this->userLogged = new Users();
-        $this->setRegexpTaskTypeToInclude("GATEWAYTOGATEWAY|END-MESSAGE-EVENT|END-EMAIL-EVENT");
+        $this->setRegexpTaskTypeToInclude("GATEWAYTOGATEWAY");
     }
 
     /**
@@ -269,7 +269,7 @@ class Derivation
                 $arrayNextTaskData = $value;
                 $this->node[$value['TAS_UID']]['out'][$value['ROU_NEXT_TASK']] = $value['ROU_TYPE'];
                 if ($arrayNextTaskData["NEXT_TASK"]["TAS_UID"] != "-1" &&
-                    preg_match("/^(?:GATEWAYTOGATEWAY)$/", $arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"])
+                    preg_match("/^(?:" . $this->regexpTaskTypeToInclude . ")$/", $arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"])
                 ) {
                     $arrayAux = $this->prepareInformation($arrayData, $arrayNextTaskData["NEXT_TASK"]["TAS_UID"]);
                     $this->node[$value['ROU_NEXT_TASK']]['in'][$value['TAS_UID']] = $value['ROU_TYPE'];
