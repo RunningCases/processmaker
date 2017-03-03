@@ -1112,20 +1112,6 @@ try {
                 $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TITLE"] = G::LoadTranslation("ID_ROUTE_TO_TASK_INTERMEDIATE_CATCH_MESSAGE_EVENT");
             }
 
-
-            //in the case of an end event (message or mail) we need to show the end of process data in the
-            //routing screen.
-            if ( array_key_exists("TASK", $aFields)
-                && array_key_exists("1", $aFields["TASK"])
-                && array_key_exists("NEXT_TASK", $aFields["TASK"]["1"])
-                && array_key_exists("TAS_TYPE", $aFields["TASK"]["1"]["NEXT_TASK"])
-                && preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $aFields["TASK"]["1"]["NEXT_TASK"]["TAS_TYPE"])
-            ) {
-                $aFields["TASK"]["1"]["NEXT_TASK"]["TAS_TITLE"] = G::LoadTranslation( 'ID_END_OF_PROCESS' );
-                $aFields["TASK"]["1"]["NEXT_TASK"]["USR_UID"] = " ";
-                $aFields["TASK"]["1"]["NEXT_TASK"]["USR_HIDDEN_FIELD"] = $_SESSION["USR_FULLNAME"];
-            }
-
             $G_PUBLISH->AddContent( 'smarty', $tplFile, '', '', $aFields );
             /*
             if (isset( $aFields['TASK'][1]['NEXT_TASK']['USER_ASSIGNED'])){
