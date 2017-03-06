@@ -324,7 +324,7 @@ class PMDashlet extends DashletInstance implements DashletInterface
                 }
             }
             foreach ($dashletsInstances as $key => $field) {
-                $dashletsInstances[$key]['DAS_TITLE'] = $field['DAS_TITLE'] . '</span><span style="float:right; font: bold;" id="'. $field['DAS_INS_UID'] .'">';
+                $dashletsInstances[$key]['DAS_TITLE'] = htmlentities($field['DAS_TITLE'], ENT_QUOTES, 'UTF-8') . '</span><span style="float:right; font: bold;" id="'. $field['DAS_INS_UID'] .'">';
             }
             // Check for role assigments
             // ToDo: Next release
