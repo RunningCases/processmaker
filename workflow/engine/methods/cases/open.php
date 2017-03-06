@@ -90,6 +90,10 @@ foreach ($_GET as $k => $v) {
 }
 
 if( isset($_GET['action']) && ($_GET['action'] == 'jump') ) {
+    $oNewCase = new \ProcessMaker\BusinessModel\Cases();
+    //We need to get the last index OPEN or CLOSED (by Paused cases)
+    //Set true because we need to check if the case is paused
+    $delIndex = $oNewCase->getOneLastThread($appUid, true);
     $case = $oCase->loadCase( $appUid, $delIndex, $_GET['action']);
 } else {
     $case = $oCase->loadCase( $appUid, $delIndex );

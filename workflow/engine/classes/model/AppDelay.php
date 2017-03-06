@@ -111,7 +111,6 @@ class AppDelay extends BaseAppDelay
         } else {
             return false;
         }
-
     }
 }
 
