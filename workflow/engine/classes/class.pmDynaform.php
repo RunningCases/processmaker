@@ -196,8 +196,7 @@ class pmDynaform
                     $fn($json, $key, $value);
                 }
                 //set properties from trigger
-                $prefixs = self::$prefixs;
-                if (is_string($value) && in_array(substr($value, 0, 2), $prefixs)) {
+                if (is_string($value) && in_array(substr($value, 0, 2), self::$prefixs)) {
                     $triggerValue = substr($value, 2);
                     if (isset($this->fields["APP_DATA"][$triggerValue])) {
                         if (!in_array($key, $this->propertiesToExclude)) {
@@ -255,7 +254,6 @@ class pmDynaform
                                 }
                             }
                         }
-                        $dtFields = array_merge($this->fields['APP_DATA'], $dtFields);
                         $sql = G::replaceDataField($json->sql, $dtFields);
                         if ($value === "suggest") {
                             $sql = $this->sqlParse($sql, function($parsed, &$select, &$from, &$where, &$groupBy, &$having, &$orderBy, &$limit) use ($json) {
@@ -268,7 +266,9 @@ class pmDynaform
                                 if (!isset($json->queryField) && isset($dt[0]["base_expr"])) {
                                     $col = $dt[0]["base_expr"];
                                     $dv = str_replace("'", "''", $json->defaultValue);
-                                    $where = $isWhere ? "WHERE " . $col . "='" . $dv . "'" : $where . " AND " . $col . "='" . $dv . "'";
+                                    if ($dv !== "") {
+                                        $where = $isWhere ? "WHERE " . $col . "='" . $dv . "'" : $where . " AND " . $col . "='" . $dv . "'";
+                                    }
                                 }
                                 if (isset($json->queryField) && isset($dt[0]["base_expr"])) {
                                     $col = isset($dt[1]["base_expr"]) ? $dt[1]["base_expr"] : $dt[0]["base_expr"];
@@ -723,9 +723,9 @@ class pmDynaform
         }
         $data = array();
         if (isset($json->dbConnection) && isset($json->sql)) {
-            $salida = array();
-            preg_match_all('/\@(?:([\@\%\#\=\!Qq])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*?)*)\))/', $json->sql, $salida, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
-            $variables = isset($salida[2]) ? $salida[2] : array();
+            $result = array();
+            preg_match_all('/\@(?:([\@\%\#\=\!Qq])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*?)*)\))/', $json->sql, $result, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
+            $variables = isset($result[2]) ? $result[2] : array();
             foreach ($variables as $key => $value) {
                 $jsonSearch = $this->jsonsf(G::json_decode($this->record["DYN_CONTENT"]), $value[0], $json->variable === "" ? "id" : "variable");
                 $a = $this->getValuesDependentFields($jsonSearch);
@@ -734,8 +734,15 @@ class pmDynaform
                 }
             }
             if ($json->dbConnection !== "" && $json->dbConnection !== "none" && $json->sql !== "") {
-                $a = G::replaceDataField($json->sql, $data);
-                $dt = $this->getCacheQueryData($json->dbConnection, $a, $json->type);
+                if (isset($this->fields["APP_DATA"])) {
+                    foreach ($this->fields["APP_DATA"] as $keyA => $valueA) {
+                        if (!isset($data[$keyA]) && !is_array($valueA)) {
+                            $data[$keyA] = $valueA;
+                        }
+                    }
+                }
+                $sql = G::replaceDataField($json->sql, $data);
+                $dt = $this->getCacheQueryData($json->dbConnection, $sql, $json->type);
                 $row = isset($dt[0]) ? $dt[0] : [];
                 if (isset($row[0]) && $json->type !== "suggest" && $json->type !== "radio") {
                     $data[$json->variable === "" ? $json->id : $json->variable] = $row[0];
