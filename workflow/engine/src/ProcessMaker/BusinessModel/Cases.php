@@ -1717,7 +1717,6 @@ class Cases
                                     } else {
                                         $caseVariable[$field[$keyname]] = $appData[$field[$keyname]];
                                     }
-                                    break;
                                 }
                             }
 
