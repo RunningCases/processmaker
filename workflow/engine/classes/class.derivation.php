@@ -1452,34 +1452,22 @@ class Derivation
 
         //We updated the information relate to APP_THREAD
         $iAppThreadIndex = $appFields['DEL_THREAD'];
-<<<<<<< HEAD
-
-        switch ($currentDelegation['ROU_TYPE']) {
-            case 'PARALLEL':
-            case 'PARALLEL-BY-EVALUATION':
-                $this->case->closeAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex );
-                $iNewThreadIndex = $this->case->newAppThread( $currentDelegation['APP_UID'], $iNewDelIndex, $iAppThreadIndex );
-                $this->case->updateAppDelegation( $currentDelegation['APP_UID'], $iNewDelIndex, $iNewThreadIndex, $appFields['APP_NUMBER'] );
-                break;
-            default:
-                $this->case->updateAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex, $iNewDelIndex );
-                break;
-        } //en switch
-=======
+        $isUpdatedThread = false;
         if (isset($currentDelegation['ROUTE_TYPES']) && sizeof($currentDelegation['ROUTE_TYPES']) > 1) {
             //If the next is more than one thread: Parallel or other
             foreach ($currentDelegation['ROUTE_TYPES'] as $key => $value) {
                 if ($value['ROU_NEXT_TASK'] === $nextDel['TAS_UID']) {
+                    $isUpdatedThread = true;
                     $routeType = ($value['ROU_TYPE'] === 'EVALUATE') ? 'PARALLEL-AND-EXCLUSIVE' : $value['ROU_TYPE'];
                     $this->updateAppThread($routeType, $currentDelegation['APP_UID'], $iAppThreadIndex, $iNewDelIndex);
                 }
             }
-        } else {
+        }
+        if (!$isUpdatedThread) {
             //If the next is a sequential derivation
             $this->updateAppThread($currentDelegation['ROU_TYPE'], $currentDelegation['APP_UID'], $iAppThreadIndex, $iNewDelIndex);
         }
->>>>>>> HOR-2777
-
+        
         //if there are subprocess to create
         if (isset( $aSP )) {
             //Check if is Selfservice the task in the subprocess
