@@ -36,7 +36,7 @@ class ProcessDefinitionMigrator implements Importable, Exportable
     {
         try {
             //Bpmn elements
-            $pjrUid = $this->bpmn->createFromStruct($data['bpmn'], false);
+            $pjrUid = $this->bpmn->createFromStruct($data['bpmn'], false, $data);
             //Import workflow elements
         } catch (\Exception $e) {
             $exception = new ImportException($e->getMessage());

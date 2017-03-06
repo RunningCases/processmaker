@@ -5605,26 +5605,26 @@ class Processes
     public function loadIdsFromData($oData)
     {
         if (is_array($oData)) {
-            $this->loadIdsFor(
+            $oData['process'] = $this->loadIdsFor(
                 Process::class,
                 ProcessPeer::PRO_UID,
                 ProcessPeer::PRO_ID,
                 $oData['process']
             );
-            $this->loadIdsFor(
+            $oData['tasks'] = $this->loadIdsFor(
                 Task::class,
                 TaskPeer::TAS_UID,
                 TaskPeer::TAS_ID,
                 $oData['tasks']
             );
         } else {
-            $this->loadIdsFor(
+            $oData->process = $this->loadIdsFor(
                 Process::class,
                 ProcessPeer::PRO_UID,
                 ProcessPeer::PRO_ID,
                 $oData->process
             );
-            $this->loadIdsFor(
+            $oData->tasks = $this->loadIdsFor(
                 Task::class,
                 TaskPeer::TAS_UID,
                 TaskPeer::TAS_ID,
@@ -5701,10 +5701,10 @@ class Processes
                                                 BasePeer::TYPE_COLNAME);
         } else {
             //$data is an array of row
-            foreach ($data as &$dataRow) {
+            foreach ($data as $i => $dataRow) {
                 $model = new $modelClass();
                 $row = $model->load($dataRow[$uidField]);
-                $dataRow[$idField] = $model->getByName($idTableField,
+                $data[$i][$idField] = $model->getByName($idTableField,
                                                        BasePeer::TYPE_COLNAME);
             }
         }
