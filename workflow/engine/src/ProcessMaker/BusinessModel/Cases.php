@@ -3339,4 +3339,37 @@ class Cases
         $row = $dataSet->getRow();
         return isset($row['DEL_INDEX']) ? $row['DEL_INDEX'] : 0;
     }
+
+    /**
+     * Get last index, we can considering the pause thread
+     *
+     * This function return the last index thread and will be considered the paused cases
+     * Is created by Jump to and redirect the correct thread
+     * by default is not considered the paused thread
+     * in parallel cases return the first thread to find
+     * @param string $appUid
+     * @param boolean $checkCaseIsPaused
+     * @return integer delIndex
+     */
+    public function getOneLastThread($appUid, $checkCaseIsPaused = false)
+    {
+        $criteria = new \Criteria('workflow');
+        $criteria->addSelectColumn(\AppDelegationPeer::DEL_INDEX);
+        $criteria->addSelectColumn(\AppDelegationPeer::DEL_THREAD_STATUS);
+        $criteria->add(\AppDelegationPeer::APP_UID, $appUid, \Criteria::EQUAL);
+        $dataSet = \AppDelegationPeer::doSelectRS($criteria);
+        $dataSet->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $dataSet->next();
+        $row = $dataSet->getRow();
+        $delIndex = 0;
+        while (is_array($row)) {
+            $delIndex = $row['DEL_INDEX'];
+            if ($checkCaseIsPaused && \AppDelay::isPaused($appUid, $delIndex)) {
+                return $delIndex;
+            }
+            $dataSet->next();
+            $row = $dataSet->getRow();
+        }
+        return $delIndex;
+    }
 }
