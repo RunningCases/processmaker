@@ -135,7 +135,6 @@ class BpmnWorkflow extends Project\Bpmn
         }
 
         $arrayData["PRO_UPDATE_DATE"] = date("Y-m-d H:i:s");
-//Dave: Aca se actualiza el PROCESS
         $this->wp->update($arrayData);
     }
 
