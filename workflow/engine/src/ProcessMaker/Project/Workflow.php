@@ -178,9 +178,6 @@ class Workflow extends Handler
     {
         // Setting defaults
         $taskData['TAS_UID'] = array_key_exists('TAS_UID', $taskData) ? $taskData['TAS_UID'] : Common::generateUID();
-        if (array_key_exists('TAS_ID', $taskData)) {
-            $taskData['TAS_ID'] = $taskData['TAS_ID'];
-        }
         $taskData['PRO_UID'] = $this->proUid;
 
         try {
