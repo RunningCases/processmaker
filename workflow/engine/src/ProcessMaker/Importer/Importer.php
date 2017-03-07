@@ -235,6 +235,9 @@ abstract class Importer
         $this->importData["tables"]["bpmn"]["project"][0]["prj_name"] = $name;
         $this->importData["tables"]["bpmn"]["diagram"][0]["dia_name"] = $name;
         $this->importData["tables"]["bpmn"]["process"][0]["pro_name"] = $name;
+        if (!empty($this->importData["tables"]["workflow"]["process"][0]['PRO_ID'])) {
+            $this->importData["tables"]["bpmn"]["process"][0]["pro_id"] = $this->importData["tables"]["workflow"]["process"][0]['PRO_ID'];
+        }
         $this->importData["tables"]["workflow"]["process"][0]["PRO_TITLE"] = $name;
 
         if ($this->importData["tables"]["workflow"]["process"][0]["PRO_UPDATE_DATE"] . "" == "") {

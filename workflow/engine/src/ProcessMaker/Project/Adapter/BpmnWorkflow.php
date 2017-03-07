@@ -86,6 +86,10 @@ class BpmnWorkflow extends Project\Bpmn
                 $wpData["PRO_CATEGORY"] = $data["PRJ_CATEGORY"];
             }
 
+            if (array_key_exists("PRO_ID", $data)) {
+                $wpData["PRO_ID"] = $data["PRO_ID"];
+            }
+
             $this->wp = new Project\Workflow();
             $this->wp->create($wpData);
 
@@ -131,7 +135,6 @@ class BpmnWorkflow extends Project\Bpmn
         }
 
         $arrayData["PRO_UPDATE_DATE"] = date("Y-m-d H:i:s");
-
         $this->wp->update($arrayData);
     }
 
@@ -185,6 +188,9 @@ class BpmnWorkflow extends Project\Bpmn
 
         $actUid = parent::addActivity($data);
         $taskData["TAS_UID"] = $actUid;
+        if (!empty($data["TAS_ID"])) {
+            $taskData["TAS_ID"] = $data["TAS_ID"];
+        }
 
         if (array_key_exists("ACT_NAME", $data)) {
             $taskData["TAS_TITLE"] = $data["ACT_NAME"];
@@ -1254,7 +1260,7 @@ class BpmnWorkflow extends Project\Bpmn
         $this->wp->remove($flagRemoveCases, $onlyDiagram);
     }
 
-    public static function createFromStruct(array $projectData, $generateUid = true)
+    public static function createFromStruct(array $projectData, $generateUid = true, $allData = null)
     {
         $projectData["prj_name"] = trim($projectData["prj_name"]);
         if ($projectData["prj_name"] == '') {
@@ -1300,6 +1306,10 @@ class BpmnWorkflow extends Project\Bpmn
             $data["PRJ_CATEGORY"] = $projectData["prj_category"];
         }
 
+        if (isset($projectData["process"]["pro_id"])) {
+            $data["PRO_ID"] = $projectData["process"]["pro_id"];
+        }
+
         $bwp->create($data);
 
         $diagramData = $processData = array();
@@ -1329,7 +1339,7 @@ class BpmnWorkflow extends Project\Bpmn
 
         $bwp->addProcess($processData);
 
-        $mappedUid = array_merge($result, self::updateFromStruct($bwp->prjUid, $projectData, $generateUid, true));
+        $mappedUid = array_merge($result, self::updateFromStruct($bwp->prjUid, $projectData, $generateUid, true, $allData));
 
         return $generateUid ? $mappedUid : $bwp->getUid();
     }
@@ -1456,10 +1466,15 @@ class BpmnWorkflow extends Project\Bpmn
      *
      * @param $prjUid
      * @param $projectData
+     * @param $allData All data from import file
      * @return array
      */
-    public static function updateFromStruct($prjUid, $projectData, $generateUid = true, $forceInsert = false)
-    {
+    public static function updateFromStruct(
+        $prjUid, $projectData,
+        $generateUid = true,
+        $forceInsert = false,
+        $allData = null
+    ) {
         $diagram = isset($projectData["diagrams"]) && isset($projectData["diagrams"][0]) ? $projectData["diagrams"][0] : array();
         $diagram["activities"] = isset($diagram["activities"])? $diagram["activities"]: array();
         $diagram["artifacts"]  = isset($diagram["artifacts"])? $diagram["artifacts"]: array();
@@ -1614,6 +1629,13 @@ class BpmnWorkflow extends Project\Bpmn
                         "old_uid" => $uidOld,
                         "new_uid" => $activityData["ACT_UID"]
                     );
+                } elseif (!empty($allData['workflow']['tasks']) && is_array($allData['workflow']['tasks'])) {
+                    foreach ($allData['workflow']['tasks'] as $task) {
+                        if (!empty($task['TAS_ID']) && $activityData["ACT_UID"] === $task['TAS_UID']) {
+                            $activityData["TAS_ID"] = $task['TAS_ID'];
+                            break;
+                        }
+                    }
                 }
 
                 $bwp->addActivity($activityData);
