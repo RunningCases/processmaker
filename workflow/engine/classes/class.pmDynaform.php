@@ -2139,4 +2139,45 @@ class pmDynaform
         return defined("LEAVE_CASE_WARNING") ? LEAVE_CASE_WARNING : 0;
     }
 
+    /**
+     * Unset a json property from the following controls: text, textarea, dropdown,
+     * checkbox, checkgroup, radio, datetime, suggest, hidden, file, grid.
+     * @param stdClass $json
+     * @param string $property
+     * @return void
+     */
+    public function jsonUnsetProperty(&$json, $property)
+    {
+        if (empty($json)) {
+            return;
+        }
+        foreach ($json as $key => &$value) {
+            $sw1 = is_array($value);
+            $sw2 = is_object($value);
+            if ($sw1 || $sw2) {
+                $this->jsonUnsetProperty($value, $property);
+            }
+            if (!$sw1 && !$sw2) {
+                if ($key === "type" && (
+                        $value === "text" ||
+                        $value === "textarea" ||
+                        $value === "dropdown" ||
+                        $value === "checkbox" ||
+                        $value === "checkgroup" ||
+                        $value === "radio" ||
+                        $value === "datetime" ||
+                        $value === "suggest" ||
+                        $value === "hidden" ||
+                        $value === "file" ||
+                        $value === "grid")) {
+                    if ($value === "grid" && $property === "data") {
+                        $json->{$property} = [];
+                    } else {
+                        unset($json->{$property});
+                    }
+                }
+            }
+        }
+    }
+
 }
