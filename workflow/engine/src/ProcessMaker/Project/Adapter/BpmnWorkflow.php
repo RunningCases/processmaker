@@ -1629,7 +1629,7 @@ class BpmnWorkflow extends Project\Bpmn
                         "old_uid" => $uidOld,
                         "new_uid" => $activityData["ACT_UID"]
                     );
-                } else {
+                } elseif (!empty($allData['workflow']['tasks']) && is_array($allData['workflow']['tasks'])) {
                     foreach ($allData['workflow']['tasks'] as $task) {
                         if (!empty($task['TAS_ID']) && $activityData["ACT_UID"] === $task['TAS_UID']) {
                             $activityData["TAS_ID"] = $task['TAS_ID'];
