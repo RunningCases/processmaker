@@ -1115,6 +1115,7 @@ try {
 
             if ($aFields["TASK"][$sKey]['NEXT_TASK']["TAS_TYPE"] === "END-EMAIL-EVENT" || $aFields["TASK"][$sKey]['NEXT_TASK']["TAS_TYPE"] === "END-MESSAGE-EVENT") {
                 $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TITLE"] = G::LoadTranslation("ID_END_OF_PROCESS");
+                //Value of $aFields["TASK"][$sKey]["NEXT_TASK"]["USR_UID"] is not used in template.
                 $aFields["TASK"][$sKey]["NEXT_TASK"]["USR_UID"] = $_SESSION['USR_FULLNAME'];
                 $aFields["TASK"][$sKey]["NEXT_TASK"]["USR_USERNAME"] = $_SESSION['USR_FULLNAME'];
             }
