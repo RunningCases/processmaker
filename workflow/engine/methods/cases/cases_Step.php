@@ -1106,10 +1106,17 @@ try {
             $title = htmlentities($aFields['TASK'][$sKey]['NEXT_TASK']['TAS_TITLE'], ENT_QUOTES, 'UTF-8');
             $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_TITLE'] = $title;
 
+            //todo These two conditions must go to the RoutingScreen class
             if (!preg_match("/\-1$/", $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_UID"]) &&
                 $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TYPE"] == "INTERMEDIATE-CATCH-MESSAGE-EVENT"
             ) {
                 $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TITLE"] = G::LoadTranslation("ID_ROUTE_TO_TASK_INTERMEDIATE_CATCH_MESSAGE_EVENT");
+            }
+
+            if ($aFields["TASK"][$sKey]['NEXT_TASK']["TAS_TYPE"] === "END-EMAIL-EVENT" || $aFields["TASK"][$sKey]['NEXT_TASK']["TAS_TYPE"] === "END-MESSAGE-EVENT") {
+                $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TITLE"] = G::LoadTranslation("ID_END_OF_PROCESS");
+                $aFields["TASK"][$sKey]["NEXT_TASK"]["USR_UID"] = $_SESSION['USER_FULLNAME'];
+                $aFields["TASK"][$sKey]["NEXT_TASK"]["USR_USERNAME"] = $_SESSION['USER_FULLNAME'];
             }
 
             $G_PUBLISH->AddContent( 'smarty', $tplFile, '', '', $aFields );
