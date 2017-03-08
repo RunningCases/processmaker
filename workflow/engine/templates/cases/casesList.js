@@ -843,7 +843,7 @@ Ext.onReady ( function() {
         reader: readerCasesList,
         writer: writerCasesList,  // <-- plug a DataWriter into the store just as you would a Reader
         autoSave: true, // <-- false would delay executing create, update, destroy requests until specifically told to do so with some [save] buton.
-        sortInfo:{field: 'APP_CACHE_VIEW.APP_NUMBER', direction: "DESC"},
+        sortInfo:{field: 'APP_NUMBER', direction: "DESC"},
         listeners: {
             beforeload: function (store, options)
             {
@@ -1031,47 +1031,6 @@ Ext.onReady ( function() {
             doSearch();
         }
     };
-
-    var comboAllUsers = new Ext.form.ComboBox({
-        width         : 180,
-        boxMaxWidth   : 180,
-        editable      : false,
-        displayField  : 'USR_FULLNAME',
-        valueField    : 'USR_UID',
-        //typeAhead     : true,
-        mode          : 'local',
-        forceSelection: true,
-        triggerAction: 'all',
-
-        emptyText: _('ID_EMPTY_USERS'),
-        selectOnFocus: true,
-        //getListParent: function() {
-        //  return this.el.up('.x-menu');
-        //},
-        store         : new Ext.data.ArrayStore({
-            fields: ['USR_UID','USR_FULLNAME'],
-            data  : allUsersValues
-        }),
-        listeners:{
-            scope: this,
-            'select': function() {
-                filterProcess = comboAllUsers.value;
-
-                /*if (filterProcess==''){
-                 btnSelectAll.hide();
-                 btnUnSelectAll.hide();
-                 btnReassign.hide();
-                 }
-                 else  {
-                 btnSelectAll.show();
-                 btnUnSelectAll.show();
-                 btnReassign.show();
-                 }*/
-                storeCases.setBaseParam( 'user', filterProcess);
-                //storeCases.load({params:{user: filterProcess, start : 0 , limit : pageSize}});
-            }},
-        iconCls: 'no-icon'  //use iconCls if placing within menu to shift to right side of menu
-    });
 
     var comboCategory = new Ext.form.ComboBox({
         width           : 180,
@@ -2174,6 +2133,34 @@ Ext.onReady ( function() {
         items: itemToolbar
     });
 
+    var pagingToolBar;
+    if (action === 'search') {
+        pagingToolBar = new Ext.PagingToolbar({
+            pageSize: pageSize,
+            afterPageText: '',
+            store: storeCases,
+            displayInfo: true,
+            displayMsg: '',
+            emptyMsg: '',
+            listeners: {
+                afterlayout: function (toolbar, opts) {
+                    var buttons = Ext.query('em', toolbar.el.dom);
+                    //Hide the "First Page" and "Last Page" buttons
+                    buttons[0].style.display = 'none';
+                    buttons[3].style.display = 'none';
+                }
+            }
+        });
+    } else {
+        pagingToolBar = new Ext.PagingToolbar({
+            pageSize: pageSize,
+            store: storeCases,
+            displayInfo: true,
+            //displayMsg: 'Displaying items {0} - {1} of {2} ' + ' &nbsp; ' ,
+            displayMsg: _('ID_DISPLAY_ITEMS') + ' &nbsp; ',
+            emptyMsg: _('ID_DISPLAY_EMPTY')
+        })
+    }
     var mask = new Ext.LoadMask(Ext.getBody(), {msg: _('ID_LOADING')});
     // create the editor grid
     grid = new Ext.grid.GridPanel({
@@ -2212,14 +2199,7 @@ Ext.onReady ( function() {
 
         tbar: tb,
         // paging bar on the bottom
-        bbar: new Ext.PagingToolbar({
-            pageSize: pageSize,
-            store: storeCases,
-            displayInfo: true,
-            //displayMsg: 'Displaying items {0} - {1} of {2} ' + ' &nbsp; ' ,
-            displayMsg: _('ID_DISPLAY_ITEMS') + ' &nbsp; ',
-            emptyMsg: _('ID_DISPLAY_EMPTY')
-        })
+        bbar: pagingToolBar
     });
 
 
@@ -2533,7 +2513,6 @@ Ext.onReady ( function() {
     if(typeof(comboUser) != 'undefined'){
         comboUser.setValue("");
     }
-    comboAllUsers.setValue("CURRENT_USER");
 
     function reassign(){
         storeReassignCases.removeAll();

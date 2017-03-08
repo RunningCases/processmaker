@@ -34,6 +34,12 @@ abstract class BaseUsers extends BaseObject implements Persistent
     protected $usr_uid = '';
 
     /**
+     * The value for the usr_id field.
+     * @var        int
+     */
+    protected $usr_id;
+
+    /**
      * The value for the usr_username field.
      * @var        string
      */
@@ -248,6 +254,17 @@ abstract class BaseUsers extends BaseObject implements Persistent
     {
 
         return $this->usr_uid;
+    }
+
+    /**
+     * Get the [usr_id] column value.
+     * 
+     * @return     int
+     */
+    public function getUsrId()
+    {
+
+        return $this->usr_id;
     }
 
     /**
@@ -728,6 +745,28 @@ abstract class BaseUsers extends BaseObject implements Persistent
         }
 
     } // setUsrUid()
+
+    /**
+     * Set the value of [usr_id] column.
+     * 
+     * @param      int $v new value
+     * @return     void
+     */
+    public function setUsrId($v)
+    {
+
+        // Since the native PHP type for this column is integer,
+        // we will cast the input value to an int (if it is not).
+        if ($v !== null && !is_int($v) && is_numeric($v)) {
+            $v = (int) $v;
+        }
+
+        if ($this->usr_id !== $v) {
+            $this->usr_id = $v;
+            $this->modifiedColumns[] = UsersPeer::USR_ID;
+        }
+
+    } // setUsrId()
 
     /**
      * Set the value of [usr_username] column.
@@ -1481,76 +1520,78 @@ abstract class BaseUsers extends BaseObject implements Persistent
 
             $this->usr_uid = $rs->getString($startcol + 0);
 
-            $this->usr_username = $rs->getString($startcol + 1);
+            $this->usr_id = $rs->getInt($startcol + 1);
 
-            $this->usr_password = $rs->getString($startcol + 2);
+            $this->usr_username = $rs->getString($startcol + 2);
 
-            $this->usr_firstname = $rs->getString($startcol + 3);
+            $this->usr_password = $rs->getString($startcol + 3);
 
-            $this->usr_lastname = $rs->getString($startcol + 4);
+            $this->usr_firstname = $rs->getString($startcol + 4);
 
-            $this->usr_email = $rs->getString($startcol + 5);
+            $this->usr_lastname = $rs->getString($startcol + 5);
 
-            $this->usr_due_date = $rs->getDate($startcol + 6, null);
+            $this->usr_email = $rs->getString($startcol + 6);
 
-            $this->usr_create_date = $rs->getTimestamp($startcol + 7, null);
+            $this->usr_due_date = $rs->getDate($startcol + 7, null);
 
-            $this->usr_update_date = $rs->getTimestamp($startcol + 8, null);
+            $this->usr_create_date = $rs->getTimestamp($startcol + 8, null);
 
-            $this->usr_status = $rs->getString($startcol + 9);
+            $this->usr_update_date = $rs->getTimestamp($startcol + 9, null);
 
-            $this->usr_country = $rs->getString($startcol + 10);
+            $this->usr_status = $rs->getString($startcol + 10);
 
-            $this->usr_city = $rs->getString($startcol + 11);
+            $this->usr_country = $rs->getString($startcol + 11);
 
-            $this->usr_location = $rs->getString($startcol + 12);
+            $this->usr_city = $rs->getString($startcol + 12);
 
-            $this->usr_address = $rs->getString($startcol + 13);
+            $this->usr_location = $rs->getString($startcol + 13);
 
-            $this->usr_phone = $rs->getString($startcol + 14);
+            $this->usr_address = $rs->getString($startcol + 14);
 
-            $this->usr_fax = $rs->getString($startcol + 15);
+            $this->usr_phone = $rs->getString($startcol + 15);
 
-            $this->usr_cellular = $rs->getString($startcol + 16);
+            $this->usr_fax = $rs->getString($startcol + 16);
 
-            $this->usr_zip_code = $rs->getString($startcol + 17);
+            $this->usr_cellular = $rs->getString($startcol + 17);
 
-            $this->dep_uid = $rs->getString($startcol + 18);
+            $this->usr_zip_code = $rs->getString($startcol + 18);
 
-            $this->usr_position = $rs->getString($startcol + 19);
+            $this->dep_uid = $rs->getString($startcol + 19);
 
-            $this->usr_resume = $rs->getString($startcol + 20);
+            $this->usr_position = $rs->getString($startcol + 20);
 
-            $this->usr_birthday = $rs->getDate($startcol + 21, null);
+            $this->usr_resume = $rs->getString($startcol + 21);
 
-            $this->usr_role = $rs->getString($startcol + 22);
+            $this->usr_birthday = $rs->getDate($startcol + 22, null);
 
-            $this->usr_reports_to = $rs->getString($startcol + 23);
+            $this->usr_role = $rs->getString($startcol + 23);
 
-            $this->usr_replaced_by = $rs->getString($startcol + 24);
+            $this->usr_reports_to = $rs->getString($startcol + 24);
 
-            $this->usr_ux = $rs->getString($startcol + 25);
+            $this->usr_replaced_by = $rs->getString($startcol + 25);
 
-            $this->usr_cost_by_hour = $rs->getFloat($startcol + 26);
+            $this->usr_ux = $rs->getString($startcol + 26);
 
-            $this->usr_unit_cost = $rs->getString($startcol + 27);
+            $this->usr_cost_by_hour = $rs->getFloat($startcol + 27);
 
-            $this->usr_pmdrive_folder_uid = $rs->getString($startcol + 28);
+            $this->usr_unit_cost = $rs->getString($startcol + 28);
 
-            $this->usr_bookmark_start_cases = $rs->getString($startcol + 29);
+            $this->usr_pmdrive_folder_uid = $rs->getString($startcol + 29);
 
-            $this->usr_time_zone = $rs->getString($startcol + 30);
+            $this->usr_bookmark_start_cases = $rs->getString($startcol + 30);
 
-            $this->usr_default_lang = $rs->getString($startcol + 31);
+            $this->usr_time_zone = $rs->getString($startcol + 31);
 
-            $this->usr_last_login = $rs->getTimestamp($startcol + 32, null);
+            $this->usr_default_lang = $rs->getString($startcol + 32);
+
+            $this->usr_last_login = $rs->getTimestamp($startcol + 33, null);
 
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 33; // 33 = UsersPeer::NUM_COLUMNS - UsersPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 34; // 34 = UsersPeer::NUM_COLUMNS - UsersPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating Users object", $e);
@@ -1758,99 +1799,102 @@ abstract class BaseUsers extends BaseObject implements Persistent
                 return $this->getUsrUid();
                 break;
             case 1:
-                return $this->getUsrUsername();
+                return $this->getUsrId();
                 break;
             case 2:
-                return $this->getUsrPassword();
+                return $this->getUsrUsername();
                 break;
             case 3:
-                return $this->getUsrFirstname();
+                return $this->getUsrPassword();
                 break;
             case 4:
-                return $this->getUsrLastname();
+                return $this->getUsrFirstname();
                 break;
             case 5:
-                return $this->getUsrEmail();
+                return $this->getUsrLastname();
                 break;
             case 6:
-                return $this->getUsrDueDate();
+                return $this->getUsrEmail();
                 break;
             case 7:
-                return $this->getUsrCreateDate();
+                return $this->getUsrDueDate();
                 break;
             case 8:
-                return $this->getUsrUpdateDate();
+                return $this->getUsrCreateDate();
                 break;
             case 9:
-                return $this->getUsrStatus();
+                return $this->getUsrUpdateDate();
                 break;
             case 10:
-                return $this->getUsrCountry();
+                return $this->getUsrStatus();
                 break;
             case 11:
-                return $this->getUsrCity();
+                return $this->getUsrCountry();
                 break;
             case 12:
-                return $this->getUsrLocation();
+                return $this->getUsrCity();
                 break;
             case 13:
-                return $this->getUsrAddress();
+                return $this->getUsrLocation();
                 break;
             case 14:
-                return $this->getUsrPhone();
+                return $this->getUsrAddress();
                 break;
             case 15:
-                return $this->getUsrFax();
+                return $this->getUsrPhone();
                 break;
             case 16:
-                return $this->getUsrCellular();
+                return $this->getUsrFax();
                 break;
             case 17:
-                return $this->getUsrZipCode();
+                return $this->getUsrCellular();
                 break;
             case 18:
-                return $this->getDepUid();
+                return $this->getUsrZipCode();
                 break;
             case 19:
-                return $this->getUsrPosition();
+                return $this->getDepUid();
                 break;
             case 20:
-                return $this->getUsrResume();
+                return $this->getUsrPosition();
                 break;
             case 21:
-                return $this->getUsrBirthday();
+                return $this->getUsrResume();
                 break;
             case 22:
-                return $this->getUsrRole();
+                return $this->getUsrBirthday();
                 break;
             case 23:
-                return $this->getUsrReportsTo();
+                return $this->getUsrRole();
                 break;
             case 24:
-                return $this->getUsrReplacedBy();
+                return $this->getUsrReportsTo();
                 break;
             case 25:
-                return $this->getUsrUx();
+                return $this->getUsrReplacedBy();
                 break;
             case 26:
-                return $this->getUsrCostByHour();
+                return $this->getUsrUx();
                 break;
             case 27:
-                return $this->getUsrUnitCost();
+                return $this->getUsrCostByHour();
                 break;
             case 28:
-                return $this->getUsrPmdriveFolderUid();
+                return $this->getUsrUnitCost();
                 break;
             case 29:
-                return $this->getUsrBookmarkStartCases();
+                return $this->getUsrPmdriveFolderUid();
                 break;
             case 30:
-                return $this->getUsrTimeZone();
+                return $this->getUsrBookmarkStartCases();
                 break;
             case 31:
-                return $this->getUsrDefaultLang();
+                return $this->getUsrTimeZone();
                 break;
             case 32:
+                return $this->getUsrDefaultLang();
+                break;
+            case 33:
                 return $this->getUsrLastLogin();
                 break;
             default:
@@ -1874,38 +1918,39 @@ abstract class BaseUsers extends BaseObject implements Persistent
         $keys = UsersPeer::getFieldNames($keyType);
         $result = array(
             $keys[0] => $this->getUsrUid(),
-            $keys[1] => $this->getUsrUsername(),
-            $keys[2] => $this->getUsrPassword(),
-            $keys[3] => $this->getUsrFirstname(),
-            $keys[4] => $this->getUsrLastname(),
-            $keys[5] => $this->getUsrEmail(),
-            $keys[6] => $this->getUsrDueDate(),
-            $keys[7] => $this->getUsrCreateDate(),
-            $keys[8] => $this->getUsrUpdateDate(),
-            $keys[9] => $this->getUsrStatus(),
-            $keys[10] => $this->getUsrCountry(),
-            $keys[11] => $this->getUsrCity(),
-            $keys[12] => $this->getUsrLocation(),
-            $keys[13] => $this->getUsrAddress(),
-            $keys[14] => $this->getUsrPhone(),
-            $keys[15] => $this->getUsrFax(),
-            $keys[16] => $this->getUsrCellular(),
-            $keys[17] => $this->getUsrZipCode(),
-            $keys[18] => $this->getDepUid(),
-            $keys[19] => $this->getUsrPosition(),
-            $keys[20] => $this->getUsrResume(),
-            $keys[21] => $this->getUsrBirthday(),
-            $keys[22] => $this->getUsrRole(),
-            $keys[23] => $this->getUsrReportsTo(),
-            $keys[24] => $this->getUsrReplacedBy(),
-            $keys[25] => $this->getUsrUx(),
-            $keys[26] => $this->getUsrCostByHour(),
-            $keys[27] => $this->getUsrUnitCost(),
-            $keys[28] => $this->getUsrPmdriveFolderUid(),
-            $keys[29] => $this->getUsrBookmarkStartCases(),
-            $keys[30] => $this->getUsrTimeZone(),
-            $keys[31] => $this->getUsrDefaultLang(),
-            $keys[32] => $this->getUsrLastLogin(),
+            $keys[1] => $this->getUsrId(),
+            $keys[2] => $this->getUsrUsername(),
+            $keys[3] => $this->getUsrPassword(),
+            $keys[4] => $this->getUsrFirstname(),
+            $keys[5] => $this->getUsrLastname(),
+            $keys[6] => $this->getUsrEmail(),
+            $keys[7] => $this->getUsrDueDate(),
+            $keys[8] => $this->getUsrCreateDate(),
+            $keys[9] => $this->getUsrUpdateDate(),
+            $keys[10] => $this->getUsrStatus(),
+            $keys[11] => $this->getUsrCountry(),
+            $keys[12] => $this->getUsrCity(),
+            $keys[13] => $this->getUsrLocation(),
+            $keys[14] => $this->getUsrAddress(),
+            $keys[15] => $this->getUsrPhone(),
+            $keys[16] => $this->getUsrFax(),
+            $keys[17] => $this->getUsrCellular(),
+            $keys[18] => $this->getUsrZipCode(),
+            $keys[19] => $this->getDepUid(),
+            $keys[20] => $this->getUsrPosition(),
+            $keys[21] => $this->getUsrResume(),
+            $keys[22] => $this->getUsrBirthday(),
+            $keys[23] => $this->getUsrRole(),
+            $keys[24] => $this->getUsrReportsTo(),
+            $keys[25] => $this->getUsrReplacedBy(),
+            $keys[26] => $this->getUsrUx(),
+            $keys[27] => $this->getUsrCostByHour(),
+            $keys[28] => $this->getUsrUnitCost(),
+            $keys[29] => $this->getUsrPmdriveFolderUid(),
+            $keys[30] => $this->getUsrBookmarkStartCases(),
+            $keys[31] => $this->getUsrTimeZone(),
+            $keys[32] => $this->getUsrDefaultLang(),
+            $keys[33] => $this->getUsrLastLogin(),
         );
         return $result;
     }
@@ -1941,99 +1986,102 @@ abstract class BaseUsers extends BaseObject implements Persistent
                 $this->setUsrUid($value);
                 break;
             case 1:
-                $this->setUsrUsername($value);
+                $this->setUsrId($value);
                 break;
             case 2:
-                $this->setUsrPassword($value);
+                $this->setUsrUsername($value);
                 break;
             case 3:
-                $this->setUsrFirstname($value);
+                $this->setUsrPassword($value);
                 break;
             case 4:
-                $this->setUsrLastname($value);
+                $this->setUsrFirstname($value);
                 break;
             case 5:
-                $this->setUsrEmail($value);
+                $this->setUsrLastname($value);
                 break;
             case 6:
-                $this->setUsrDueDate($value);
+                $this->setUsrEmail($value);
                 break;
             case 7:
-                $this->setUsrCreateDate($value);
+                $this->setUsrDueDate($value);
                 break;
             case 8:
-                $this->setUsrUpdateDate($value);
+                $this->setUsrCreateDate($value);
                 break;
             case 9:
-                $this->setUsrStatus($value);
+                $this->setUsrUpdateDate($value);
                 break;
             case 10:
-                $this->setUsrCountry($value);
+                $this->setUsrStatus($value);
                 break;
             case 11:
-                $this->setUsrCity($value);
+                $this->setUsrCountry($value);
                 break;
             case 12:
-                $this->setUsrLocation($value);
+                $this->setUsrCity($value);
                 break;
             case 13:
-                $this->setUsrAddress($value);
+                $this->setUsrLocation($value);
                 break;
             case 14:
-                $this->setUsrPhone($value);
+                $this->setUsrAddress($value);
                 break;
             case 15:
-                $this->setUsrFax($value);
+                $this->setUsrPhone($value);
                 break;
             case 16:
-                $this->setUsrCellular($value);
+                $this->setUsrFax($value);
                 break;
             case 17:
-                $this->setUsrZipCode($value);
+                $this->setUsrCellular($value);
                 break;
             case 18:
-                $this->setDepUid($value);
+                $this->setUsrZipCode($value);
                 break;
             case 19:
-                $this->setUsrPosition($value);
+                $this->setDepUid($value);
                 break;
             case 20:
-                $this->setUsrResume($value);
+                $this->setUsrPosition($value);
                 break;
             case 21:
-                $this->setUsrBirthday($value);
+                $this->setUsrResume($value);
                 break;
             case 22:
-                $this->setUsrRole($value);
+                $this->setUsrBirthday($value);
                 break;
             case 23:
-                $this->setUsrReportsTo($value);
+                $this->setUsrRole($value);
                 break;
             case 24:
-                $this->setUsrReplacedBy($value);
+                $this->setUsrReportsTo($value);
                 break;
             case 25:
-                $this->setUsrUx($value);
+                $this->setUsrReplacedBy($value);
                 break;
             case 26:
-                $this->setUsrCostByHour($value);
+                $this->setUsrUx($value);
                 break;
             case 27:
-                $this->setUsrUnitCost($value);
+                $this->setUsrCostByHour($value);
                 break;
             case 28:
-                $this->setUsrPmdriveFolderUid($value);
+                $this->setUsrUnitCost($value);
                 break;
             case 29:
-                $this->setUsrBookmarkStartCases($value);
+                $this->setUsrPmdriveFolderUid($value);
                 break;
             case 30:
-                $this->setUsrTimeZone($value);
+                $this->setUsrBookmarkStartCases($value);
                 break;
             case 31:
-                $this->setUsrDefaultLang($value);
+                $this->setUsrTimeZone($value);
                 break;
             case 32:
+                $this->setUsrDefaultLang($value);
+                break;
+            case 33:
                 $this->setUsrLastLogin($value);
                 break;
         } // switch()
@@ -2064,131 +2112,135 @@ abstract class BaseUsers extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[1], $arr)) {
-            $this->setUsrUsername($arr[$keys[1]]);
+            $this->setUsrId($arr[$keys[1]]);
         }
 
         if (array_key_exists($keys[2], $arr)) {
-            $this->setUsrPassword($arr[$keys[2]]);
+            $this->setUsrUsername($arr[$keys[2]]);
         }
 
         if (array_key_exists($keys[3], $arr)) {
-            $this->setUsrFirstname($arr[$keys[3]]);
+            $this->setUsrPassword($arr[$keys[3]]);
         }
 
         if (array_key_exists($keys[4], $arr)) {
-            $this->setUsrLastname($arr[$keys[4]]);
+            $this->setUsrFirstname($arr[$keys[4]]);
         }
 
         if (array_key_exists($keys[5], $arr)) {
-            $this->setUsrEmail($arr[$keys[5]]);
+            $this->setUsrLastname($arr[$keys[5]]);
         }
 
         if (array_key_exists($keys[6], $arr)) {
-            $this->setUsrDueDate($arr[$keys[6]]);
+            $this->setUsrEmail($arr[$keys[6]]);
         }
 
         if (array_key_exists($keys[7], $arr)) {
-            $this->setUsrCreateDate($arr[$keys[7]]);
+            $this->setUsrDueDate($arr[$keys[7]]);
         }
 
         if (array_key_exists($keys[8], $arr)) {
-            $this->setUsrUpdateDate($arr[$keys[8]]);
+            $this->setUsrCreateDate($arr[$keys[8]]);
         }
 
         if (array_key_exists($keys[9], $arr)) {
-            $this->setUsrStatus($arr[$keys[9]]);
+            $this->setUsrUpdateDate($arr[$keys[9]]);
         }
 
         if (array_key_exists($keys[10], $arr)) {
-            $this->setUsrCountry($arr[$keys[10]]);
+            $this->setUsrStatus($arr[$keys[10]]);
         }
 
         if (array_key_exists($keys[11], $arr)) {
-            $this->setUsrCity($arr[$keys[11]]);
+            $this->setUsrCountry($arr[$keys[11]]);
         }
 
         if (array_key_exists($keys[12], $arr)) {
-            $this->setUsrLocation($arr[$keys[12]]);
+            $this->setUsrCity($arr[$keys[12]]);
         }
 
         if (array_key_exists($keys[13], $arr)) {
-            $this->setUsrAddress($arr[$keys[13]]);
+            $this->setUsrLocation($arr[$keys[13]]);
         }
 
         if (array_key_exists($keys[14], $arr)) {
-            $this->setUsrPhone($arr[$keys[14]]);
+            $this->setUsrAddress($arr[$keys[14]]);
         }
 
         if (array_key_exists($keys[15], $arr)) {
-            $this->setUsrFax($arr[$keys[15]]);
+            $this->setUsrPhone($arr[$keys[15]]);
         }
 
         if (array_key_exists($keys[16], $arr)) {
-            $this->setUsrCellular($arr[$keys[16]]);
+            $this->setUsrFax($arr[$keys[16]]);
         }
 
         if (array_key_exists($keys[17], $arr)) {
-            $this->setUsrZipCode($arr[$keys[17]]);
+            $this->setUsrCellular($arr[$keys[17]]);
         }
 
         if (array_key_exists($keys[18], $arr)) {
-            $this->setDepUid($arr[$keys[18]]);
+            $this->setUsrZipCode($arr[$keys[18]]);
         }
 
         if (array_key_exists($keys[19], $arr)) {
-            $this->setUsrPosition($arr[$keys[19]]);
+            $this->setDepUid($arr[$keys[19]]);
         }
 
         if (array_key_exists($keys[20], $arr)) {
-            $this->setUsrResume($arr[$keys[20]]);
+            $this->setUsrPosition($arr[$keys[20]]);
         }
 
         if (array_key_exists($keys[21], $arr)) {
-            $this->setUsrBirthday($arr[$keys[21]]);
+            $this->setUsrResume($arr[$keys[21]]);
         }
 
         if (array_key_exists($keys[22], $arr)) {
-            $this->setUsrRole($arr[$keys[22]]);
+            $this->setUsrBirthday($arr[$keys[22]]);
         }
 
         if (array_key_exists($keys[23], $arr)) {
-            $this->setUsrReportsTo($arr[$keys[23]]);
+            $this->setUsrRole($arr[$keys[23]]);
         }
 
         if (array_key_exists($keys[24], $arr)) {
-            $this->setUsrReplacedBy($arr[$keys[24]]);
+            $this->setUsrReportsTo($arr[$keys[24]]);
         }
 
         if (array_key_exists($keys[25], $arr)) {
-            $this->setUsrUx($arr[$keys[25]]);
+            $this->setUsrReplacedBy($arr[$keys[25]]);
         }
 
         if (array_key_exists($keys[26], $arr)) {
-            $this->setUsrCostByHour($arr[$keys[26]]);
+            $this->setUsrUx($arr[$keys[26]]);
         }
 
         if (array_key_exists($keys[27], $arr)) {
-            $this->setUsrUnitCost($arr[$keys[27]]);
+            $this->setUsrCostByHour($arr[$keys[27]]);
         }
 
         if (array_key_exists($keys[28], $arr)) {
-            $this->setUsrPmdriveFolderUid($arr[$keys[28]]);
+            $this->setUsrUnitCost($arr[$keys[28]]);
         }
 
         if (array_key_exists($keys[29], $arr)) {
-            $this->setUsrBookmarkStartCases($arr[$keys[29]]);
+            $this->setUsrPmdriveFolderUid($arr[$keys[29]]);
         }
 
         if (array_key_exists($keys[30], $arr)) {
-            $this->setUsrTimeZone($arr[$keys[30]]);
+            $this->setUsrBookmarkStartCases($arr[$keys[30]]);
         }
 
         if (array_key_exists($keys[31], $arr)) {
-            $this->setUsrDefaultLang($arr[$keys[31]]);
+            $this->setUsrTimeZone($arr[$keys[31]]);
         }
 
         if (array_key_exists($keys[32], $arr)) {
-            $this->setUsrLastLogin($arr[$keys[32]]);
+            $this->setUsrDefaultLang($arr[$keys[32]]);
+        }
+
+        if (array_key_exists($keys[33], $arr)) {
+            $this->setUsrLastLogin($arr[$keys[33]]);
         }
 
     }
@@ -2204,6 +2256,10 @@ abstract class BaseUsers extends BaseObject implements Persistent
 
         if ($this->isColumnModified(UsersPeer::USR_UID)) {
             $criteria->add(UsersPeer::USR_UID, $this->usr_uid);
+        }
+
+        if ($this->isColumnModified(UsersPeer::USR_ID)) {
+            $criteria->add(UsersPeer::USR_ID, $this->usr_id);
         }
 
         if ($this->isColumnModified(UsersPeer::USR_USERNAME)) {
@@ -2387,6 +2443,8 @@ abstract class BaseUsers extends BaseObject implements Persistent
      */
     public function copyInto($copyObj, $deepCopy = false)
     {
+
+        $copyObj->setUsrId($this->usr_id);
 
         $copyObj->setUsrUsername($this->usr_username);
 

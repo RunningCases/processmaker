@@ -63,11 +63,13 @@ class TaskMapBuilder
         $tMap = $this->dbMap->addTable('TASK');
         $tMap->setPhpName('Task');
 
-        $tMap->setUseIdGenerator(false);
+        $tMap->setUseIdGenerator(true);
 
         $tMap->addColumn('PRO_UID', 'ProUid', 'string', CreoleTypes::VARCHAR, true, 32);
 
         $tMap->addPrimaryKey('TAS_UID', 'TasUid', 'string', CreoleTypes::VARCHAR, true, 32);
+
+        $tMap->addColumn('TAS_ID', 'TasId', 'int', CreoleTypes::INTEGER, true, null);
 
         $tMap->addColumn('TAS_TITLE', 'TasTitle', 'string', CreoleTypes::LONGVARCHAR, true, null);
 

@@ -235,6 +235,9 @@ abstract class Importer
         $this->importData["tables"]["bpmn"]["project"][0]["prj_name"] = $name;
         $this->importData["tables"]["bpmn"]["diagram"][0]["dia_name"] = $name;
         $this->importData["tables"]["bpmn"]["process"][0]["pro_name"] = $name;
+        if (!empty($this->importData["tables"]["workflow"]["process"][0]['PRO_ID'])) {
+            $this->importData["tables"]["bpmn"]["process"][0]["pro_id"] = $this->importData["tables"]["workflow"]["process"][0]['PRO_ID'];
+        }
         $this->importData["tables"]["workflow"]["process"][0]["PRO_TITLE"] = $name;
 
         if ($this->importData["tables"]["workflow"]["process"][0]["PRO_UPDATE_DATE"] . "" == "") {
@@ -363,6 +366,10 @@ abstract class Importer
     public function removeProject($onlyDiagram = false)
     {
         /* @var $process \Process */
+        $processes = new \Processes();
+        $this->importData["tables"]["workflow"] = $processes
+            ->loadIdsFromData($this->importData["tables"]["workflow"]);
+
         $process = new \Process();
         $process->load($this->metadata["uid"]);
         $this->currentProcessTitle = $process->getProTitle();
