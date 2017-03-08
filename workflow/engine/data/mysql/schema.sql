@@ -18,6 +18,7 @@ CREATE TABLE `APPLICATION`
 	`APP_NUMBER` INTEGER default 0 NOT NULL,
 	`APP_PARENT` VARCHAR(32) default '0' NOT NULL,
 	`APP_STATUS` VARCHAR(100) default '' NOT NULL,
+	`APP_STATUS_ID` TINYINT default 0 NOT NULL,
 	`PRO_UID` VARCHAR(32) default '' NOT NULL,
 	`APP_PROC_STATUS` VARCHAR(100) default '' NOT NULL,
 	`APP_PROC_CODE` VARCHAR(100) default '' NOT NULL,
@@ -35,6 +36,7 @@ CREATE TABLE `APPLICATION`
 	`APP_DRIVE_FOLDER_UID` VARCHAR(32) default '',
 	`APP_ROUTING_DATA` MEDIUMTEXT,
 	PRIMARY KEY (`APP_UID`),
+	UNIQUE KEY `INDEX_APP_NUMBER` (`APP_NUMBER`),
 	KEY `indexApp`(`PRO_UID`, `APP_STATUS`, `APP_UID`),
 	KEY `indexAppNumber`(`APP_NUMBER`),
 	KEY `indexAppStatus`(`APP_STATUS`),
@@ -63,6 +65,8 @@ CREATE TABLE `APP_DELEGATION`
 (
 	`APP_UID` VARCHAR(32) default '' NOT NULL,
 	`DEL_INDEX` INTEGER default 0 NOT NULL,
+	`DELEGATION_ID` INTEGER  NOT NULL AUTO_INCREMENT,
+	`APP_NUMBER` INTEGER default 0,
 	`DEL_PREVIOUS` INTEGER default 0 NOT NULL,
 	`DEL_LAST_INDEX` INTEGER default 0 NOT NULL,
 	`PRO_UID` VARCHAR(32) default '' NOT NULL,
@@ -85,7 +89,17 @@ CREATE TABLE `APP_DELEGATION`
 	`DEL_DELAYED` TINYINT default 0,
 	`DEL_DATA` MEDIUMTEXT  NOT NULL,
 	`APP_OVERDUE_PERCENTAGE` DOUBLE default 0 NOT NULL,
-	PRIMARY KEY (`APP_UID`,`DEL_INDEX`)
+	`USR_ID` INTEGER default 0,
+	`PRO_ID` INTEGER default 0,
+	`TAS_ID` INTEGER default 0,
+	PRIMARY KEY (`APP_UID`,`DEL_INDEX`),
+	UNIQUE KEY `DELEGATION_ID` (`DELEGATION_ID`),
+	KEY `INDEX_APP_NUMBER`(`APP_NUMBER`),
+	KEY `INDEX_USR_ID`(`USR_ID`),
+	KEY `INDEX_PRO_ID`(`PRO_ID`),
+	KEY `INDEX_TAS_ID`(`TAS_ID`),
+	KEY `INDEX_USR_UID`(`USR_UID`),
+	KEY `INDEX_THREAD_STATUS_APP_NUMBER`(`DEL_THREAD_STATUS`, `APP_NUMBER`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Delegation a task to user';
 #-----------------------------------------------------------------------------
 #-- APP_DOCUMENT
@@ -432,6 +446,7 @@ DROP TABLE IF EXISTS `PROCESS`;
 CREATE TABLE `PROCESS`
 (
 	`PRO_UID` VARCHAR(32) default '' NOT NULL,
+	`PRO_ID` INTEGER  NOT NULL AUTO_INCREMENT,
 	`PRO_TITLE` MEDIUMTEXT  NOT NULL,
 	`PRO_DESCRIPTION` MEDIUMTEXT,
 	`PRO_PARENT` VARCHAR(32) default '0' NOT NULL,
@@ -471,7 +486,8 @@ CREATE TABLE `PROCESS`
 	`PRO_UNIT_COST` VARCHAR(50) default '',
 	`PRO_ITEE` INTEGER default 0 NOT NULL,
 	`PRO_ACTION_DONE` MEDIUMTEXT,
-	PRIMARY KEY (`PRO_UID`)
+	PRIMARY KEY (`PRO_UID`),
+	UNIQUE KEY `INDEX_PRO_ID` (`PRO_ID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Store process Information';
 #-----------------------------------------------------------------------------
 #-- PROCESS_OWNER
@@ -618,6 +634,7 @@ CREATE TABLE `TASK`
 (
 	`PRO_UID` VARCHAR(32) default '' NOT NULL,
 	`TAS_UID` VARCHAR(32) default '' NOT NULL,
+	`TAS_ID` INTEGER  NOT NULL AUTO_INCREMENT,
 	`TAS_TITLE` MEDIUMTEXT  NOT NULL,
 	`TAS_DESCRIPTION` MEDIUMTEXT,
 	`TAS_DEF_TITLE` MEDIUMTEXT,
@@ -682,6 +699,7 @@ CREATE TABLE `TASK`
 	`TAS_RECEIVE_SUBJECT_MESSAGE` MEDIUMTEXT,
 	`TAS_RECEIVE_MESSAGE` MEDIUMTEXT,
 	PRIMARY KEY (`TAS_UID`),
+	UNIQUE KEY `INDEX_TAS_ID` (`TAS_ID`),
 	KEY `indexTasUid`(`TAS_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Task of workflow';
 #-----------------------------------------------------------------------------
@@ -743,6 +761,7 @@ DROP TABLE IF EXISTS `USERS`;
 CREATE TABLE `USERS`
 (
 	`USR_UID` VARCHAR(32) default '' NOT NULL,
+	`USR_ID` INTEGER  NOT NULL AUTO_INCREMENT,
 	`USR_USERNAME` VARCHAR(100) default '' NOT NULL,
 	`USR_PASSWORD` VARCHAR(128) default '' NOT NULL,
 	`USR_FIRSTNAME` VARCHAR(50) default '' NOT NULL,
@@ -776,6 +795,7 @@ CREATE TABLE `USERS`
 	`USR_DEFAULT_LANG` VARCHAR(10) default '',
 	`USR_LAST_LOGIN` DATETIME,
 	PRIMARY KEY (`USR_UID`),
+	UNIQUE KEY `INDEX_USR_ID` (`USR_ID`),
 	KEY `indexUsrUid`(`USR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Users';
 #-----------------------------------------------------------------------------
@@ -2339,10 +2359,18 @@ CREATE TABLE `LIST_INBOX`
 	`DEL_DUE_DATE` DATETIME,
 	`DEL_RISK_DATE` DATETIME,
 	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
+	`PRO_ID` INTEGER default 0,
+	`USR_ID` INTEGER default 0,
+	`TAS_ID` INTEGER default 0,
+	`APP_STATUS_ID` TINYINT default 0,
 	PRIMARY KEY (`APP_UID`,`DEL_INDEX`),
 	KEY `indexUser`(`USR_UID`),
 	KEY `indexInboxUser`(`USR_UID`, `DEL_DELEGATE_DATE`),
-	KEY `indexInboxUserStatusUpdateDate`(`USR_UID`, `APP_STATUS`, `APP_UPDATE_DATE`)
+	KEY `indexInboxUserStatusUpdateDate`(`USR_UID`, `APP_STATUS`, `APP_UPDATE_DATE`),
+	KEY `INDEX_PRO_ID`(`PRO_ID`),
+	KEY `INDEX_USR_ID`(`USR_ID`),
+	KEY `INDEX_TAS_ID`(`TAS_ID`),
+	KEY `INDEX_APP_STATUS_ID`(`APP_STATUS_ID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Inbox list';
 #-----------------------------------------------------------------------------
 #-- LIST_PARTICIPATED_HISTORY
@@ -2373,8 +2401,14 @@ CREATE TABLE `LIST_PARTICIPATED_HISTORY`
 	`DEL_INIT_DATE` DATETIME,
 	`DEL_DUE_DATE` DATETIME,
 	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
+	`PRO_ID` INTEGER default 0,
+	`USR_ID` INTEGER default 0,
+	`TAS_ID` INTEGER default 0,
 	PRIMARY KEY (`APP_UID`,`DEL_INDEX`),
-	KEY `indexInboxUser`(`USR_UID`, `DEL_DELEGATE_DATE`)
+	KEY `indexInboxUser`(`USR_UID`, `DEL_DELEGATE_DATE`),
+	KEY `INDEX_PRO_ID`(`PRO_ID`),
+	KEY `INDEX_USR_ID`(`USR_ID`),
+	KEY `INDEX_TAS_ID`(`TAS_ID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Participated history list';
 #-----------------------------------------------------------------------------
 #-- LIST_PARTICIPATED_LAST
@@ -2408,8 +2442,16 @@ CREATE TABLE `LIST_PARTICIPATED_LAST`
 	`DEL_DUE_DATE` DATETIME,
 	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
 	`DEL_THREAD_STATUS` VARCHAR(32) default 'OPEN' NOT NULL,
+	`PRO_ID` INTEGER default 0,
+	`USR_ID` INTEGER default 0,
+	`TAS_ID` INTEGER default 0,
+	`APP_STATUS_ID` TINYINT default 0,
 	PRIMARY KEY (`APP_UID`,`USR_UID`,`DEL_INDEX`),
-	KEY `usrIndex`(`USR_UID`)
+	KEY `usrIndex`(`USR_UID`),
+	KEY `delDelegateDate`(`DEL_DELEGATE_DATE`),
+	KEY `INDEX_PRO_ID`(`PRO_ID`),
+	KEY `INDEX_USR_ID`(`USR_ID`),
+	KEY `INDEX_TAS_ID`(`TAS_ID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Participated last list';
 #-----------------------------------------------------------------------------
 #-- LIST_COMPLETED
@@ -2435,7 +2477,13 @@ CREATE TABLE `LIST_COMPLETED`
 	`DEL_CURRENT_USR_USERNAME` VARCHAR(100) default '',
 	`DEL_CURRENT_USR_FIRSTNAME` VARCHAR(50) default '',
 	`DEL_CURRENT_USR_LASTNAME` VARCHAR(50) default '',
+	`PRO_ID` INTEGER default 0,
+	`USR_ID` INTEGER default 0,
+	`TAS_ID` INTEGER default 0,
 	PRIMARY KEY (`APP_UID`),
+	KEY `INDEX_PRO_ID`(`PRO_ID`),
+	KEY `INDEX_USR_ID`(`USR_ID`),
+	KEY `INDEX_TAS_ID`(`TAS_ID`),
 	KEY `usrListCompleted`(`USR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Completed list';
 #-----------------------------------------------------------------------------
@@ -2469,7 +2517,13 @@ CREATE TABLE `LIST_PAUSED`
 	`DEL_INIT_DATE` DATETIME,
 	`DEL_DUE_DATE` DATETIME,
 	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
+	`PRO_ID` INTEGER default 0,
+	`USR_ID` INTEGER default 0,
+	`TAS_ID` INTEGER default 0,
 	PRIMARY KEY (`APP_UID`,`DEL_INDEX`),
+	KEY `INDEX_PRO_ID`(`PRO_ID`),
+	KEY `INDEX_USR_ID`(`USR_ID`),
+	KEY `INDEX_TAS_ID`(`TAS_ID`),
 	KEY `indexPausedUser`(`USR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Paused list';
 #-----------------------------------------------------------------------------
@@ -2499,7 +2553,13 @@ CREATE TABLE `LIST_CANCELED`
 	`DEL_INIT_DATE` DATETIME,
 	`DEL_DUE_DATE` DATETIME,
 	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
+	`PRO_ID` INTEGER default 0,
+	`USR_ID` INTEGER default 0,
+	`TAS_ID` INTEGER default 0,
 	PRIMARY KEY (`APP_UID`),
+	KEY `INDEX_PRO_ID`(`PRO_ID`),
+	KEY `INDEX_USR_ID`(`USR_ID`),
+	KEY `INDEX_TAS_ID`(`TAS_ID`),
 	KEY `indexCanceledUser`(`USR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Canceled list';
 #-----------------------------------------------------------------------------
@@ -2536,7 +2596,14 @@ CREATE TABLE `LIST_MY_INBOX`
 	`DEL_INIT_DATE` DATETIME,
 	`DEL_DUE_DATE` DATETIME,
 	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
-	PRIMARY KEY (`APP_UID`)
+	`PRO_ID` INTEGER default 0,
+	`USR_ID` INTEGER default 0,
+	`TAS_ID` INTEGER default 0,
+	`APP_STATUS_ID` TINYINT default 0,
+	PRIMARY KEY (`APP_UID`),
+	KEY `INDEX_PRO_ID`(`PRO_ID`),
+	KEY `INDEX_USR_ID`(`USR_ID`),
+	KEY `INDEX_TAS_ID`(`TAS_ID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='My Inbox list';
 #-----------------------------------------------------------------------------
 #-- LIST_UNASSIGNED
@@ -2563,7 +2630,11 @@ CREATE TABLE `LIST_UNASSIGNED`
 	`DEL_DELEGATE_DATE` DATETIME  NOT NULL,
 	`DEL_DUE_DATE` DATETIME,
 	`DEL_PRIORITY` VARCHAR(32) default '3' NOT NULL,
-	PRIMARY KEY (`APP_UID`,`DEL_INDEX`)
+	`PRO_ID` INTEGER default 0,
+	`TAS_ID` INTEGER default 0,
+	PRIMARY KEY (`APP_UID`,`DEL_INDEX`),
+	KEY `INDEX_PRO_ID`(`PRO_ID`),
+	KEY `INDEX_TAS_ID`(`TAS_ID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Unassigned list';
 #-----------------------------------------------------------------------------
 #-- LIST_UNASSIGNED_GROUP
@@ -2578,7 +2649,9 @@ CREATE TABLE `LIST_UNASSIGNED_GROUP`
 	`USR_UID` VARCHAR(32) default '' NOT NULL,
 	`TYPE` VARCHAR(255) default '' NOT NULL,
 	`TYP_UID` VARCHAR(32) default '' NOT NULL,
-	PRIMARY KEY (`UNA_UID`,`USR_UID`,`TYPE`)
+	`USR_ID` INTEGER default 0,
+	PRIMARY KEY (`UNA_UID`,`USR_UID`,`TYPE`),
+	KEY `INDEX_USR_ID`(`USR_ID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Unassiged list';
 #-----------------------------------------------------------------------------
 #-- MESSAGE_TYPE

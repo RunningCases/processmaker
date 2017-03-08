@@ -28,16 +28,6 @@ if (!isset($_SESSION['USER_LOGGED'])) {
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
-/*require_once 'classes/model/Application.php';
-require_once 'classes/model/Users.php';
-require_once 'classes/model/AppThread.php';
-require_once 'classes/model/AppDelay.php';
-require_once 'classes/model/Process.php';
-require_once 'classes/model/Task.php';
-require_once ("classes/model/AppCacheView.php");
-require_once ("classes/model/AppDelegation.php");
-require_once ("classes/model/AdditionalTables.php");
-require_once ("classes/model/AppDelay.php");*/
 G::LoadClass( 'case' );
 
 $actionAjax = isset($_REQUEST['actionAjax']) ? $_REQUEST['actionAjax'] : null;
@@ -53,85 +43,51 @@ function filterUserListArray($users = array(), $filter = '')
     return $filteredUsers;
 }
 
+//Load the suggest list of users
 if ($actionAjax == "userValues") {
-    //global $oAppCache;
-    $oAppCache = new AppCacheView();
     $action = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : null;
     $query = isset( $_REQUEST['query'] ) ? $_REQUEST['query'] : null;
+
+    G::LoadClass("configuration");
+    $conf = new Configurations();
+    $confEnvSetting = $conf->getFormats();
     $users = array();
-    $users[] = array ("USR_UID" => "", "USR_FULLNAME" => G::LoadTranslation( "ID_ALL_USERS" ));
-    $users[] = array ("USR_UID" => "CURRENT_USER", "USR_FULLNAME" => G::LoadTranslation( "ID_CURRENT_USER" ));
-    $users = filterUserListArray($users, $query);
-    //now get users, just for the Search action
+    $cUsers = new Criteria('workflow');
+    $cUsers->clearSelectColumns();
+    $cUsers->addSelectColumn(UsersPeer::USR_USERNAME);
+    $cUsers->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+    $cUsers->addSelectColumn(UsersPeer::USR_LASTNAME);
     switch ($action) {
         case 'to_reassign':
-            G::LoadClass("configuration");
-            $conf = new Configurations();
-            $confEnvSetting = $conf->getFormats();
-            $cUsers = new Criteria('workflow');
-            $cUsers->clearSelectColumns();
             $cUsers->addSelectColumn(UsersPeer::USR_UID);
-            $cUsers->addSelectColumn(UsersPeer::USR_USERNAME);
-            $cUsers->addSelectColumn(UsersPeer::USR_FIRSTNAME);
-            $cUsers->addSelectColumn(UsersPeer::USR_LASTNAME);
-            $cUsers->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
-            if (!is_null($query)) {
-                $filters = $cUsers->getNewCriterion(UsersPeer::USR_FIRSTNAME, '%' . $query . '%', Criteria::LIKE)->addOr(
-                        $cUsers->getNewCriterion(UsersPeer::USR_LASTNAME, '%' . $query . '%', Criteria::LIKE)->addOr(
-                                $cUsers->getNewCriterion(UsersPeer::USR_USERNAME, '%' . $query . '%', Criteria::LIKE)));
-                $cUsers->addOr($filters);
-            }
-            $cUsers->setLimit(20);
-            $cUsers->addAscendingOrderByColumn(UsersPeer::TABLE_NAME . "." . $conf->userNameFormatGetFirstFieldByUsersTable());
-            $oDataset = UsersPeer::doSelectRS($cUsers);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-            while ($oDataset->next()) {
-                $row = $oDataset->getRow();
-                $usrFullName = $conf->usersNameFormatBySetParameters($confEnvSetting["format"], $row["USR_USERNAME"], $row["USR_FIRSTNAME"], $row["USR_LASTNAME"]);
-                $users[] = array("USR_UID" => $row["USR_UID"], "USR_FULLNAME" => $usrFullName);
-            }
             break;
         case 'search_simple':
         case 'search':
-            G::LoadClass("configuration");
-
-            $conf = new Configurations();
-
-            $confEnvSetting = $conf->getFormats();
-
-            $cUsers = new Criteria('workflow');
-            $cUsers->clearSelectColumns();
-            $cUsers->addSelectColumn(UsersPeer::USR_UID);
-            $cUsers->addSelectColumn(UsersPeer::USR_USERNAME);
-            $cUsers->addSelectColumn(UsersPeer::USR_FIRSTNAME);
-            $cUsers->addSelectColumn(UsersPeer::USR_LASTNAME);
-            $cUsers->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
-
-            if (!is_null($query)) {
-                $filters = $cUsers->getNewCriterion( UsersPeer::USR_FIRSTNAME, '%'.$query.'%', Criteria::LIKE )->addOr(
-                    $cUsers->getNewCriterion( UsersPeer::USR_LASTNAME, '%'.$query.'%', Criteria::LIKE )->addOr(
-                        $cUsers->getNewCriterion( UsersPeer::USR_USERNAME, '%'.$query.'%', Criteria::LIKE )));
-                $cUsers->addOr( $filters );
-            }
-            $cUsers->setLimit(20);
-            $cUsers->addAscendingOrderByColumn(UsersPeer::TABLE_NAME . "." . $conf->userNameFormatGetFirstFieldByUsersTable());
-            $oDataset = UsersPeer::doSelectRS($cUsers);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-            while ($oDataset->next()) {
-                $row = $oDataset->getRow();
-
-                $usrFullName = $conf->usersNameFormatBySetParameters($confEnvSetting["format"], $row["USR_USERNAME"], $row["USR_FIRSTNAME"], $row["USR_LASTNAME"]);
-
-                $users[] = array("USR_UID" => $row["USR_UID"], "USR_FULLNAME" => $usrFullName);
-            }
-            break;
-        default:
-            return $users;
+            $cUsers->addSelectColumn(UsersPeer::USR_ID);
             break;
     }
-    //return $users;
+    $cUsers->add(UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL);
+    if (!is_null($query)) {
+        $filters = $cUsers->getNewCriterion(UsersPeer::USR_FIRSTNAME, '%' . $query . '%', Criteria::LIKE)->addOr(
+            $cUsers->getNewCriterion(UsersPeer::USR_LASTNAME, '%' . $query . '%', Criteria::LIKE)->addOr(
+            $cUsers->getNewCriterion(UsersPeer::USR_USERNAME, '%' . $query . '%', Criteria::LIKE)));
+            $cUsers->addOr($filters);
+    }
+    $cUsers->setLimit(20);
+    $cUsers->addAscendingOrderByColumn(UsersPeer::TABLE_NAME . "." . $conf->userNameFormatGetFirstFieldByUsersTable());
+    $oDataset = UsersPeer::doSelectRS($cUsers);
+    $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+    while ($oDataset->next()) {
+        $row = $oDataset->getRow();
+        $usrFullName = $conf->usersNameFormatBySetParameters($confEnvSetting["format"], $row["USR_USERNAME"], $row["USR_FIRSTNAME"], $row["USR_LASTNAME"]);
+        if ($action === 'search') {
+            //Only for the advanced search we used the USR_ID column
+            $users[] = array("USR_UID" => $row["USR_ID"], "USR_FULLNAME" => $usrFullName);
+        } else {
+            $users[] = array("USR_UID" => $row["USR_UID"], "USR_FULLNAME" => $usrFullName);
+        }
+    }
     return print G::json_encode($users);
 }
 
@@ -152,7 +108,12 @@ if ($actionAjax == "processListExtJs") {
     $cProcess = new Criteria('workflow');
     //get the processes for this user in this action
     $cProcess->clearSelectColumns();
-    $cProcess->addSelectColumn(ProcessPeer::PRO_UID);
+    if ($action == 'search') {
+        $cProcess->addSelectColumn(ProcessPeer::PRO_ID);
+    } else {
+        $cProcess->addSelectColumn(ProcessPeer::PRO_UID);
+    }
+
     $cProcess->addSelectColumn(ProcessPeer::PRO_TITLE);
     if ($categoryUid) {
         $cProcess->add(ProcessPeer::PRO_CATEGORY, $categoryUid);
@@ -166,15 +127,15 @@ if ($actionAjax == "processListExtJs") {
         $cProcess->addAnd($filters);
     }
 
-    if($action==='to_revise') {
+    if ($action==='to_revise') {
         $oAppCache = new AppCacheView();
         $aProcesses = $oAppCache->getProUidSupervisor($_SESSION['USER_LOGGED']);
         $cProcess->add(ProcessPeer::PRO_UID, $aProcesses, Criteria::IN);
     }
 
-    if($action==='to_reassign') {
-        if($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) {
-        } elseif($RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
+    if ($action==='to_reassign') {
+        if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) {
+        } elseif ($RBAC->userCanAccess('PM_REASSIGNCASE_SUPERVISOR') == 1) {
             $oAppCache = new AppCacheView();
             $aProcesses = $oAppCache->getProUidSupervisor($_SESSION['USER_LOGGED']);
             $cProcess->add(ProcessPeer::PRO_UID, $aProcesses, Criteria::IN);
@@ -188,6 +149,9 @@ if ($actionAjax == "processListExtJs") {
 
     while ($oDataset->next()) {
         $aRow = $oDataset->getRow();
+        if (!isset($aRow['PRO_UID'])) {
+            $aRow['PRO_UID'] = $aRow['PRO_ID'];
+        }
         $processes[] = $aRow;
     }
     return print G::json_encode($processes);
@@ -204,7 +168,7 @@ if ($actionAjax == "verifySession") {
         $response = new stdclass();
         GLOBAL $RBAC;
         //Check if the user is a supervisor to this Process
-        if($RBAC->userCanAccess('PM_REASSIGNCASE') == 1){
+        if ($RBAC->userCanAccess('PM_REASSIGNCASE') == 1) {
             $response->reassigncase = true;
             $response->message = '';
             $response->processeslist = '';
@@ -249,6 +213,7 @@ if ($actionAjax == "getUsersToReassign") {
 
     echo G::json_encode($response);
 }
+
 if ($actionAjax == 'reassignCase') {
 
     $APP_UID = $_REQUEST["APP_UID"];
@@ -283,16 +248,15 @@ if ($actionAjax == 'reassignCase') {
         if($flagReassign){
             $cases->reassignCase($_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['USER_LOGGED'], $TO_USR_UID);
         }
-        
+
         $caseData = $app->load($_SESSION['APPLICATION']);
         $userData = $user->load($TO_USR_UID);
-        //print_r($caseData);
         $data['APP_NUMBER'] = $caseData['APP_NUMBER'];
         $data['USER'] = $userData['USR_LASTNAME'] . ' ' . $userData['USR_FIRSTNAME']; //TODO change with the farmated username from environment conf
         $result = new stdClass();
         $result->status = 0;
         $result->msg = G::LoadTranslation('ID_REASSIGNMENT_SUCCESS', SYS_LANG, $data);
-        
+
         // Save the note reassign reason
         if (isset($_POST['NOTE_REASON']) && $_POST['NOTE_REASON'] !== '') {
             require_once ("classes/model/AppNotes.php");

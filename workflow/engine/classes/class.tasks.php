@@ -96,7 +96,9 @@ class Tasks
             $oDataset->next();
             while ($aRow = $oDataset->getRow()) {
                 $oTask = new Task();
-                $aTasks[] = $oTask->load($aRow['TAS_UID']);
+                $pTask = $oTask->load($aRow['TAS_UID']);
+                unset($pTask['TAS_ID']);
+                $aTasks[] = $pTask;
                 $oDataset->next();
             }
             return $aTasks;

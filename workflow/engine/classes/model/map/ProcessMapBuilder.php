@@ -63,9 +63,11 @@ class ProcessMapBuilder
         $tMap = $this->dbMap->addTable('PROCESS');
         $tMap->setPhpName('Process');
 
-        $tMap->setUseIdGenerator(false);
+        $tMap->setUseIdGenerator(true);
 
         $tMap->addPrimaryKey('PRO_UID', 'ProUid', 'string', CreoleTypes::VARCHAR, true, 32);
+
+        $tMap->addColumn('PRO_ID', 'ProId', 'int', CreoleTypes::INTEGER, true, null);
 
         $tMap->addColumn('PRO_TITLE', 'ProTitle', 'string', CreoleTypes::LONGVARCHAR, true, null);
 

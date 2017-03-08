@@ -165,6 +165,9 @@ class Process extends BaseProcess
                 } while ($this->processExists( $sNewProUid ));
             } else {
                 $sNewProUid = $aData['PRO_UID'];
+                if (!empty($aData['PRO_ID'])) {
+                    $this->setProId($aData['PRO_ID']);
+                }
             }
 
             $this->setProUid( $sNewProUid );
