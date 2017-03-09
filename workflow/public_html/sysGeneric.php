@@ -950,7 +950,6 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
         $noLoginFiles[] = 'ajaxListener';
         $noLoginFiles[] = 'cases_Step';
         $noLoginFiles[] = 'cases_ShowOutputDocument';
-        $noLoginFiles[] = 'cases_ShowDocument';
         $noLoginFiles[] = 'cases_CatchExecute';
         $noLoginFiles[] = 'cases_SaveData';
         $noLoginFiles[] = 'cases_Derivate';
