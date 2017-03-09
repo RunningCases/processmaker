@@ -1236,19 +1236,22 @@ class Cases
 
     public function multiInstanceIsCompleted($appUid, $tasUid, $previousDelIndex)
     {
+        $result = false;
         try {
             $c = new Criteria();
             $c->clearSelectColumns();
-            $c->addSelectColumn('COUNT(*)');
             $c->add(AppDelegationPeer::APP_UID, $appUid);
             $c->add(AppDelegationPeer::TAS_UID, $tasUid);
             $c->add(AppDelegationPeer::DEL_PREVIOUS, $previousDelIndex);
             $c->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
             $rs = AppDelegationPeer::doSelectRs($c);
-            $rs->next();
-            $row = $rs->getRow();
-            //if no open threads exists, the multiinstance is completes
-            return intval($row[0]) === 0;
+
+            if ($rs->next()) {
+               $result = false;
+            } else {
+                $result = true;
+            }
+
         } catch (exception $e) {
             throw ($e);
         }

@@ -1015,11 +1015,10 @@ class Derivation
                     //is triggered:
                     if (isset($nextDel["TAS_UID_DUMMY"]) && $flagTaskAssignTypeIsMultipleInstance) {
                         $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
-                        $currentDeltegionAllData = AppDelegationPeer::retrieveByPK($currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX']);
-                        if ($this->case->multiInstanceIsCompleted($currentDeltegionAllData->getAppUid(),
-                                                                    $currentDeltegionAllData->getTasUid(),
-                                                                    $currentDeltegionAllData->getDelPrevious()
-                                && preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType()))) {
+                        if ($this->case->multiInstanceIsCompleted($appFields['APP_UID'],
+                                                                    $appFields['TAS_UID'],
+                                                                    $appFields['DEL_PREVIOUS'])
+                                && preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())) {
                             $this->executeEvent($nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
                         }
                     }
