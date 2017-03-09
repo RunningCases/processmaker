@@ -598,5 +598,45 @@ class AppDocument extends BaseAppDocument
         }
         return false;
     }
+
+    /**
+     * Check if the user $userCanDownload can download the Output Document
+     *
+     * The user that generate the output document can download the same output document file
+     * A participated user or a supervisor must have the process permission "view" to be able to download the output document
+     * @param string $userGenerateDocument
+     * @param string $userCanDownload
+     * @param string $proUid
+     * @param string $appUid
+     * @param string $sAppDocUid
+     * @return boolean
+     */
+    public function canDownloadOutput($userGenerateDocument, $userCanDownload, $proUid, $appUid, $sAppDocUid)
+    {
+        //Check if the user Logged was generate the document
+        if ($userGenerateDocument !== $userCanDownload) {
+            $oCase = new Cases();
+            $resPermission = $oCase->getAllObjectsFrom($proUid, $appUid, '', $userCanDownload, 'VIEW');
+            $objCase = new \ProcessMaker\BusinessModel\Cases();
+            $aUserCanAccess = $objCase->userAuthorization(
+                $userCanDownload,
+                $proUid,
+                $appUid,
+                array(),
+                array('OUTPUT_DOCUMENTS'=>'VIEW')
+            );
+
+            //If the user was not participated can not download
+            if (!$aUserCanAccess['participated']) {
+                return false;
+            }
+
+            //If the user does not have the process permission can not download
+            if (!in_array($sAppDocUid, $aUserCanAccess['objectPermissions']['OUTPUT_DOCUMENTS'])) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
 
