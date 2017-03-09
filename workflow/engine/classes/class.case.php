@@ -1254,6 +1254,8 @@ class Cases
 
         } catch (exception $e) {
             throw ($e);
+        } finally {
+           return $result;
         }
     }
 
