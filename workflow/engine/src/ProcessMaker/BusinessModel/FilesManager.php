@@ -148,7 +148,7 @@ class FilesManager
      *
      * @access public
      */
-    public function addProcessFilesManager($sProcessUID, $userUID, $aData)
+    public function addProcessFilesManager($sProcessUID, $userUID, $aData, $isImport = false)
     {
         try {
             $aData['prf_path'] = rtrim($aData['prf_path'], '/') . '/';
@@ -190,7 +190,7 @@ class FilesManager
                     if ($extention == '.exe') {
                         throw new \Exception(\G::LoadTranslation('ID_FILE_UPLOAD_INCORRECT_EXTENSION'));
                     }
-                    if (\Bootstrap::getDisablePhpUploadExecution() === 1 && $extention === '.php') {
+                    if (\Bootstrap::getDisablePhpUploadExecution() === 1 && $extention === '.php' && !$isImport) {
                         $message = \G::LoadTranslation('THE_UPLOAD_OF_PHP_FILES_WAS_DISABLED');
                         \Bootstrap::registerMonologPhpUploadExecution('phpUpload', 550, $message, $aData['prf_filename']);
                         throw new \Exception($message);
@@ -708,7 +708,7 @@ class FilesManager
      *
      * return void
      */
-    public function processFilesUpgrade($projectUid = "")
+    public function processFilesUpgrade($projectUid = "", $isImport = false)
     {
         try {
             //Set variables
@@ -778,7 +778,7 @@ class FilesManager
                                                 "prf_content"  => ""
                                             );
 
-                                            $arrayData = $this->addProcessFilesManager($row["PRJ_UID"], "00000000000000000000000000000001", $arrayData);
+                                            $arrayData = $this->addProcessFilesManager($row["PRJ_UID"], "00000000000000000000000000000001", $arrayData, $isImport);
 
                                             rename($dir . PATH_SEP . $file . ".tmp", $dir . PATH_SEP . $file);
                                         }

@@ -4018,11 +4018,23 @@ class Processes
     {
         try {
             $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
-
             foreach ($arrayData as $value) {
                 $record = $value;
-
-                $arrayWebEntryData = $webEntry->create($processUid, $userUidCreator, $record);
+                //This $record["WE_TITLE"] value only exists for bpmn projects, because 
+                //it is saving the value in the 'CONTENT' table when creating the 
+                //web entry from the designer. A classic process uses the methods 
+                //of bpmn to be able to perform the import of the web entry so this 
+                //value is required, since for the classics the name of the dynaform 
+                //is used as filename, this value is filled with this option.
+                if (empty($record["WE_TITLE"])) {
+                    $fileName = $record["WE_DATA"];
+                    $name = pathinfo($fileName, PATHINFO_FILENAME);
+                    $record["WE_TITLE"] = $name;
+                }
+                //The false parameter is sent in order to prevent the WebEntry::create 
+                //method from performing integrity validation with tasks and users 
+                //assigned to the task and other tables related to web entry
+                $arrayWebEntryData = $webEntry->create($processUid, $userUidCreator, $record, false);
             }
         } catch (Exception $e) {
             throw $e;

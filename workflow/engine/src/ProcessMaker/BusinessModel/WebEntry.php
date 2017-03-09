@@ -571,7 +571,7 @@ class WebEntry
      *
      * return array Return data of the new Web Entry created
      */
-    public function create($processUid, $userUidCreator, array $arrayData)
+    public function create($processUid, $userUidCreator, array $arrayData, $validate = true)
     {
         try {
             //Verify data
@@ -590,7 +590,9 @@ class WebEntry
             //Verify data
             $process->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
 
-            $this->throwExceptionIfDataIsInvalid("", $processUid, $arrayData);
+            if ($validate === true) {
+                $this->throwExceptionIfDataIsInvalid("", $processUid, $arrayData);
+            }
 
             //Create
             $cnn = \Propel::getConnection("workflow");
@@ -946,5 +948,90 @@ class WebEntry
             throw $e;
         }
     }
+    
+    /**
+     * Check the existence of a file of type web entry, returns true if it exists 
+     * and false otherwise. Verification is done by the field WE_DATA and PRO_UID.
+     * The PRO_UID key and the file path are required.
+     * @param type $proUid
+     * @param type $filePath
+     * @return boolean
+     */
+    public static function isWebEntry($proUid, $filePath)
+    {
+        $fileName = basename($filePath);
+        if (empty($proUid) || empty($fileName)) {
+            return false;
+        }
+        $fileName = trim($fileName);
+        $postfix = "Post.php";
+        $n = strlen($postfix);
+        $string = substr($fileName, 0, -$n);
+        if ($string . $postfix === $fileName) {
+            $fileName = $string . ".php";
+        }
+        $criteria = new \Criteria("workflow");
+        $criteria->addSelectColumn(\WebEntryPeer::WE_DATA);
+        $criteria->add(\WebEntryPeer::PRO_UID, $proUid, \Criteria::EQUAL);
+        $criteria->add(\WebEntryPeer::WE_DATA, $fileName, \Criteria::EQUAL);
+        $resultSet = \WebEntryPeer::doSelectRS($criteria);
+        $resultSet->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $resultSet->next();
+        $row = $resultSet->getRow();
+        return isset($row["WE_DATA"]);
+    }
+
+    /**
+     * Fill the WEB_ENTRY table for the classic processes.
+     * @param type $data
+     */
+    public function createClassic($data)
+    {
+        $cnn = \Propel::getConnection("workflow");
+        $criteria = new \Criteria("workflow");
+        $criteria->add(\WebEntryPeer::PRO_UID, $data["PRO_UID"], \Criteria::EQUAL);
+        $criteria->add(\WebEntryPeer::WE_DATA, $data["WE_DATA"], \Criteria::EQUAL);
+        $result = \WebEntryPeer::doSelect($criteria, $cnn);
+
+        if (isset($result[0])) {
+            $webEntry = $result[0];
+            $webEntry->fromArray($data, \BasePeer::TYPE_FIELDNAME);
+        } else {
+            $webEntry = new \WebEntry();
+            $webEntry->fromArray($data, \BasePeer::TYPE_FIELDNAME);
+            $webEntry->setWeUid(\ProcessMaker\Util\Common::generateUID());
+            $webEntry->setWeCreateDate("now");
+            $webEntry->setWeMethod("WS");
+            $webEntry->setWeInputDocumentAccess(1);
+        }
+        $webEntry->setWeUpdateDate("now");
+
+        if ($webEntry->validate()) {
+            $cnn->begin();
+            $result = $webEntry->save();
+            $cnn->commit();
+        }
+    }
+
+    /**
+     * Removes a record from the WEB_ENTRY table for the classic processes.
+     * The PRO_UID key and the file path are required.
+     * @param type $proUid
+     * @param type $filePath
+     * @return boolean
+     */
+    public function deleteClassic($proUid, $filePath)
+    {
+        $fileName = basename($filePath);
+        if (empty($proUid) || empty($fileName)) {
+            return false;
+        }
+        $criteria = new \Criteria("workflow");
+        $criteria->add(\WebEntryPeer::PRO_UID, $proUid, \Criteria::EQUAL);
+        $criteria->add(\WebEntryPeer::WE_DATA, $fileName, \Criteria::EQUAL);
+        $result = \WebEntryPeer::doDelete($criteria);
+        return $result;
+    }
+
 }
 
