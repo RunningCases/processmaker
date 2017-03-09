@@ -634,6 +634,7 @@ class pmDynaform
                 }
                 //grid
                 if ($key === "type" && ($value === "grid")) {
+                    $columnsDataVariable = [];
                     //todo compatibility 'columnWidth'
                     foreach ($json->columns as $column) {
                         if (!isset($column->columnWidth) && $column->type !== "hidden") {
@@ -641,12 +642,27 @@ class pmDynaform
                             $column->columnWidth = "";
                         }
                         $column->parentIsGrid = true;
+                        //save dataVariable value, only for columns control
+                        if (!empty($column->dataVariable) && is_string($column->dataVariable)) {
+                            if (in_array(substr($column->dataVariable, 0, 2), self::$prefixs)) {
+                                $dataVariableValue = substr($column->dataVariable, 2);
+                                if (!in_array($dataVariableValue, $columnsDataVariable)) {
+                                    $columnsDataVariable[] = $dataVariableValue;
+                                }
+                            }
+                        }
                     }
                     //data grid environment
                     $json->dataGridEnvironment = "onDataGridEnvironment";
                     if (isset($this->fields["APP_DATA"])) {
                         $dataGridEnvironment = $this->fields["APP_DATA"];
                         $this->fields["APP_DATA"] = [];
+                        //restore AppData with dataVariable definition, only for columns control
+                        foreach ($columnsDataVariable as $dge) {
+                            if (isset($dataGridEnvironment[$dge])) {
+                                $this->fields["APP_DATA"][$dge] = $dataGridEnvironment[$dge];
+                            }
+                        }
                     }
                 }
                 if ($key === "dataGridEnvironment" && ($value === "onDataGridEnvironment")) {
