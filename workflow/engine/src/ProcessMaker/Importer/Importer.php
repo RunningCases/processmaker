@@ -596,7 +596,9 @@ abstract class Importer
             //Process-Files upgrade
             $filesManager = new \ProcessMaker\BusinessModel\FilesManager();
 
-            $filesManager->processFilesUpgrade($projectUid);
+            //The true parameter tells the method to ignore the php file upload 
+            //check when it is an import.
+            $filesManager->processFilesUpgrade($projectUid, true);
 
             //Return
             return $projectUid;

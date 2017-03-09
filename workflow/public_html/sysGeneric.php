@@ -798,13 +798,14 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
         if ($extension != 'php') {
             //NewRelic Snippet - By JHL
             transactionLog($phpFile);
-            Bootstrap::streamFile( $phpFile );
+            Bootstrap::streamFile($phpFile);
             die();
         }
 
         Bootstrap::initVendors();
-        Bootstrap::LoadSystem( 'monologProvider' );
-        if (\Bootstrap::getDisablePhpUploadExecution() === 1) {
+        Bootstrap::LoadSystem('monologProvider');
+        $isWebEntry = \ProcessMaker\BusinessModel\WebEntry::isWebEntry(SYS_COLLECTION, $phpFile);
+        if (\Bootstrap::getDisablePhpUploadExecution() === 1 && !$isWebEntry) {
             $message = \G::LoadTranslation('THE_PHP_FILES_EXECUTION_WAS_DISABLED');
             \Bootstrap::registerMonologPhpUploadExecution('phpExecution', 550, $message, $phpFile);
             echo $message;

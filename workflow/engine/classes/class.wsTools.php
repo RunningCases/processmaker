@@ -188,6 +188,12 @@ class workspaceTools
         $this->migratePopulateIndexingACV($workSpace);
         $stop = microtime(true);
         CLI::logging("<*>   Migrating an populating indexing for avoiding the use of table APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
+        
+        $start = microtime(true);
+        CLI::logging("> Updating rows in Web Entry table for classic processes...\n");
+        $this->updatingWebEntryClassicModel($workSpace);
+        $stop = microtime(true);
+        CLI::logging("<*>   Updating rows in Web Entry table for classic processes took " . ($stop - $start) . " seconds.\n");
     }
 
     /**
@@ -3674,6 +3680,106 @@ class workspaceTools
         $con->commit();
 
         CLI::logging("-> Populating PRO_ID, USR_ID at LIST_*  Done \n");
+    }
+    
+    /**
+     * It populates the WEB_ENTRY table for the classic processes, this procedure 
+     * is done to verify the execution of php files generated when the WebEntry 
+     * is configured.
+     * @param type $workSpace
+     */
+    public function updatingWebEntryClassicModel($workSpace, $force = false)
+    {
+        //We obtain from the configuration the list of proUids obtained so that 
+        //we do not go through again.
+        $cfgUid = 'UPDATING_ROWS_WEB_ENTRY';
+        $objUid = 'blackList';
+        $blackList = [];
+        $conf = new Configuration();
+        $ifExists = $conf->exists($cfgUid, $objUid);
+        if ($ifExists) {
+            $oConfig = $conf->load($cfgUid, $objUid);
+            $blackList = unserialize($oConfig['CFG_VALUE']);
+        }
+
+        //The following query returns all the classic processes that do not have 
+        //a record in the WEB_ENTRY table.
+        $oCriteria = new Criteria("workflow");
+        $oCriteria->addSelectColumn(ProcessPeer::PRO_UID);
+        $oCriteria->addSelectColumn(BpmnProcessPeer::PRJ_UID);
+        $oCriteria->addJoin(ProcessPeer::PRO_UID, BpmnProcessPeer::PRJ_UID, Criteria::LEFT_JOIN);
+        $oCriteria->addJoin(ProcessPeer::PRO_UID, WebEntryPeer::PRO_UID, Criteria::LEFT_JOIN);
+        $oCriteria->add(BpmnProcessPeer::PRJ_UID, null, Criteria::EQUAL);
+        $oCriteria->add(WebEntryPeer::PRO_UID, null, Criteria::EQUAL);
+        if ($force === false) {
+            $oCriteria->add(ProcessPeer::PRO_UID, $blackList, Criteria::NOT_IN);
+        }
+        $rsCriteria = ProcessPeer::doSelectRS($oCriteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $process = new Process();
+        while ($rsCriteria->next()) {
+            $row = $rsCriteria->getRow();
+            $proUid = $row['PRO_UID'];
+            if (!in_array($proUid, $blackList)) {
+                $blackList[] = $proUid;
+            }
+            $path = PATH_DATA . "sites" . PATH_SEP . $this->name . PATH_SEP . "public" . PATH_SEP . $proUid;
+            if (is_dir($path)) {
+                $dir = opendir($path);
+                while ($fileName = readdir($dir)) {
+                    if ($fileName !== "." && $fileName !== ".." && strpos($fileName, "wsClient.php") === false && strpos($fileName, "Post.php") === false
+                    ) {
+                        CLI::logging("Verifying if file: " . $fileName . " is a web entry\n");
+                        $step = new Criteria("workflow");
+                        $step->addSelectColumn(StepPeer::PRO_UID);
+                        $step->addSelectColumn(StepPeer::TAS_UID);
+                        $step->addSelectColumn(StepPeer::STEP_TYPE_OBJ);
+                        $step->addSelectColumn(StepPeer::STEP_UID_OBJ);
+                        $step->add(StepPeer::STEP_TYPE_OBJ, "DYNAFORM", Criteria::EQUAL);
+                        $step->add(StepPeer::PRO_UID, $proUid, Criteria::EQUAL);
+                        $stepRs = StepPeer::doSelectRS($step);
+                        $stepRs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                        while ($stepRs->next()) {
+                            $row1 = $stepRs->getRow();
+                            $content = file_get_contents($path . "/" . $fileName);
+                            if (strpos($content, $proUid . "/" . $row1["STEP_UID_OBJ"]) !== false) {
+                                //The default user admin is set. This task is 
+                                //carried out by the system administrator.
+                                $userUid = "00000000000000000000000000000001";
+                                //save data in table WEB_ENTRY
+                                $arrayData = [
+                                    "PRO_UID" => $proUid,
+                                    "DYN_UID" => $row1["STEP_UID_OBJ"],
+                                    "TAS_UID" => $row1["TAS_UID"],
+                                    "WE_DATA" => $fileName,
+                                    "USR_UID" => $userUid,
+                                    "WE_CREATE_USR_UID" => $userUid,
+                                    "WE_UPDATE_USR_UID" => $userUid
+                                ];
+                                $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
+                                $webEntry->createClassic($arrayData);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //The list of proUids obtained is saved in the configuration so that it 
+        //does not go through again.
+        $data = [
+            "CFG_UID" => $cfgUid,
+            "OBJ_UID" => $objUid,
+            "CFG_VALUE" => serialize($blackList),
+            "PRO_UID" => '',
+            "USR_UID" => '',
+            "APP_UID" => ''
+        ];
+        if ($ifExists) {
+            $conf->update($data);
+        } else {
+            $conf->create($data);
+        }
     }
 
 }
