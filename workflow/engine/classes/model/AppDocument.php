@@ -626,17 +626,14 @@ class AppDocument extends BaseAppDocument
                 array('OUTPUT_DOCUMENTS'=>'VIEW')
             );
 
-            //If the user was not participated can not download
-            if (!$aUserCanAccess['participated']) {
-                return false;
-            }
-
             //If the user does not have the process permission can not download
-            if (!in_array($sAppDocUid, $aUserCanAccess['objectPermissions']['OUTPUT_DOCUMENTS'])) {
-                return false;
+            if (in_array($sAppDocUid, $aUserCanAccess['objectPermissions']['OUTPUT_DOCUMENTS'])) {
+                return true;
             }
+        } else {
+            return true;
         }
-        return true;
+        return false;
     }
 }
 
