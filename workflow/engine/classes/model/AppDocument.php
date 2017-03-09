@@ -537,7 +537,7 @@ class AppDocument extends BaseAppDocument
     }
 
     /**
-     * The user that uploaded an input document can download the same input file.
+     * The user that uploaded a document can download the same input file.
      * A participated user or a supervisor must have the process permission "view" to be able to download the input document.
      * If the user is a supervisor and had the input document assign, he can download the file too.
      * @param $user
@@ -545,7 +545,7 @@ class AppDocument extends BaseAppDocument
      * @param $version
      * @return bool
      */
-    public function checkPermissionsToDownload($user, $appDocUid, $version)
+    public function canDownloadInput($user, $appDocUid, $version)
     {
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(AppDocumentPeer::APP_UID);
@@ -581,7 +581,7 @@ class AppDocument extends BaseAppDocument
                 array('INPUT_DOCUMENTS' => 'VIEW')
             );
 
-            if ($userAuthorization['objectPermissions']['INPUT_DOCUMENTS'][0] == $appDocUid) {
+            if (in_array($appDocUid, $userAuthorization['objectPermissions']['INPUT_DOCUMENTS'])) {
                 return true;
             }
 

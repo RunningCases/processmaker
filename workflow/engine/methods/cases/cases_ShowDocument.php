@@ -52,7 +52,7 @@ if (isset($_REQUEST['actionAjax']) && $_REQUEST['actionAjax'] == "verifySession"
 
 $oAppDocument = new AppDocument();
 
-if (!$oAppDocument->checkPermissionsToDownload($_SESSION['USER_LOGGED'], $_GET['a'], $_GET['v'])) {
+if (!$oAppDocument->canDownloadInput($_SESSION['USER_LOGGED'], $_GET['a'], $_GET['v'])) {
     G::header('Location: /errors/error403.php');
     die();
 }
