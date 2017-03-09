@@ -5,9 +5,6 @@
  *
  * @author Alexandre Rosenfeld
  */
-G::LoadSystem('dbMaintenance');
-G::LoadClass("cli");
-G::LoadClass("multipleFilesBackup");
 
 /**
  * class workspaceTools
@@ -24,41 +21,41 @@ class workspaceTools
     public $dbInfoRegExp = "/( *define *\( *'(?P<key>.*?)' *, *\n* *')(?P<value>.*?)(' *\) *;.*)/";
     public $initPropel = false;
     public $initPropelRoot = false;
-    public static $populateIdsQueries = [
-        'UPDATE LIST_CANCELED SET '
-            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_CANCELED.USR_UID),'
-            . 'TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_CANCELED.TAS_UID), '
-            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_CANCELED.PRO_UID)',
-        'UPDATE LIST_COMPLETED SET '
-            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_COMPLETED.USR_UID),'
-            . 'TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_COMPLETED.TAS_UID), '
-            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_COMPLETED.PRO_UID)',
-        'UPDATE LIST_INBOX SET '
-            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_INBOX.USR_UID),'
-            . 'TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_INBOX.TAS_UID), '
-            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_INBOX.PRO_UID)',
-        'UPDATE LIST_MY_INBOX SET '
-            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_MY_INBOX.USR_UID),'
-            . 'TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_MY_INBOX.TAS_UID),'
-            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_MY_INBOX.PRO_UID)',
-        'UPDATE LIST_PARTICIPATED_HISTORY SET '
-            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_PARTICIPATED_HISTORY.USR_UID),'
-            . 'TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_PARTICIPATED_HISTORY.TAS_UID), '
-            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_PARTICIPATED_HISTORY.PRO_UID)',
-        'UPDATE LIST_PARTICIPATED_LAST SET '
-            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_PARTICIPATED_LAST.USR_UID),'
-            . 'TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_PARTICIPATED_LAST.TAS_UID), '
-            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_PARTICIPATED_LAST.PRO_UID)',
-        'UPDATE LIST_PAUSED SET '
-            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_PAUSED.USR_UID),'
-            . 'TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_PAUSED.TAS_UID),'
-            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_PAUSED.PRO_UID)',
-        'UPDATE LIST_UNASSIGNED SET '
-            . 'TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_UNASSIGNED.TAS_UID), '
-            . 'PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_UNASSIGNED.PRO_UID)',
-        'UPDATE LIST_UNASSIGNED_GROUP SET '
-            . 'USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_UNASSIGNED_GROUP.USR_UID)',
-    ];
+    public static $populateIdsQueries = array(
+        'UPDATE LIST_CANCELED SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_CANCELED.USR_UID),
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_CANCELED.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_CANCELED.PRO_UID)',
+        'UPDATE LIST_COMPLETED SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_COMPLETED.USR_UID),
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_COMPLETED.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_COMPLETED.PRO_UID)',
+        'UPDATE LIST_INBOX SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_INBOX.USR_UID),
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_INBOX.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_INBOX.PRO_UID)',
+        'UPDATE LIST_MY_INBOX SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_MY_INBOX.USR_UID),
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_MY_INBOX.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_MY_INBOX.PRO_UID)',
+        'UPDATE LIST_PARTICIPATED_HISTORY SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_PARTICIPATED_HISTORY.USR_UID),
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_PARTICIPATED_HISTORY.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_PARTICIPATED_HISTORY.PRO_UID)',
+        'UPDATE LIST_PARTICIPATED_LAST SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_PARTICIPATED_LAST.USR_UID),
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_PARTICIPATED_LAST.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_PARTICIPATED_LAST.PRO_UID)',
+        'UPDATE LIST_PAUSED SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_PAUSED.USR_UID),
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_PAUSED.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_PAUSED.PRO_UID)',
+        'UPDATE LIST_UNASSIGNED SET
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_UNASSIGNED.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_UNASSIGNED.PRO_UID)',
+        'UPDATE LIST_UNASSIGNED_GROUP SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_UNASSIGNED_GROUP.USR_UID)',
+    );
 
     /**
      * Create a workspace tools object.
@@ -153,6 +150,12 @@ class workspaceTools
         $final = $stop - $start;
         CLI::logging("<*>   Backup log files Process took $final seconds.\n");
 
+        $start = microtime(true);
+        CLI::logging("> Optimizing content data...\n");
+        $this->migrateContent($workSpace, $lang);
+        $stop = microtime(true);
+        CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
+
         /*----------------------------------********---------------------------------*/
         $start = microtime(true);
         CLI::logging("> Migrate new lists...\n");
@@ -167,12 +170,6 @@ class workspaceTools
         $this->processFilesUpgrade();
         $stop = microtime(true);
         CLI::logging("<*>   Updating Files Manager took " . ($stop - $start) . " seconds.\n");
-
-        $start = microtime(true);
-        CLI::logging("> Optimizing content data...\n");
-        $this->migrateContent($workSpace, $lang);
-        $stop = microtime(true);
-        CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
 
         $start = microtime(true);
         CLI::logging("> Clean access and refresh tokens...\n");
