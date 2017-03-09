@@ -802,7 +802,7 @@ class Variable
                 $fields = $case->loadCase($appUid, $delIndex);
                 $appData = $fields["APP_DATA"];
                 $appData = array_merge($appData, \ProcessMaker\BusinessModel\Cases::getGlobalVariables($appData));
-                $params = array_merge($params, $appData);
+                $params = array_merge($appData, $params);
             }
 
             //This value is required to be able to query the database.
