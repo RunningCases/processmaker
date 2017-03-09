@@ -1003,12 +1003,27 @@ class Derivation
                 case TASK_FINISH_TASK:
                     $iAppThreadIndex = $appFields['DEL_THREAD'];
                     $this->case->closeAppThread($currentDelegation['APP_UID'], $iAppThreadIndex);
+
                     if (isset($nextDel["TAS_UID_DUMMY"]) && !$flagTaskAssignTypeIsMultipleInstance) {
                         $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
                         if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())) {
                             $this->executeEvent($nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
                         }
                     }
+
+                    //if the next task is an end event and the multiinstance threads are finished the end event
+                    //is triggered:
+                    if (isset($nextDel["TAS_UID_DUMMY"]) && $flagTaskAssignTypeIsMultipleInstance) {
+                        $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
+                        $currentDeltegionAllData = AppDelegationPeer::retrieveByPK($currentDelegation['APP_UID'], $currentDelegation['DEL_INDEX']);
+                        if ($this->case->multiInstanceIsCompleted($currentDeltegionAllData->getAppUid(),
+                                                                    $currentDeltegionAllData->getTasUid(),
+                                                                    $currentDeltegionAllData->getDelPrevious()
+                                && preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType()))) {
+                            $this->executeEvent($nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
+                        }
+                    }
+
                     $this->case->closeAppThread($currentDelegation['APP_UID'], $iAppThreadIndex);
                     $aContext['action'] = 'finish-task';
                     //Logger

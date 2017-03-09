@@ -1225,6 +1225,35 @@ class Cases
         }
     }
 
+
+  /*
+  * Determines if the all threads of a multiinstance task are closed
+  *
+  * @$appUid string appUid of the instance to be tested
+  * @$tasUid string task uid of the multiinstance task
+  * @$previousDelIndex int previous del index of the instance corresponding to the multiinstance task
+  */
+
+    public function multiInstanceIsCompleted($appUid, $tasUid, $previousDelIndex)
+    {
+        try {
+            $c = new Criteria();
+            $c->clearSelectColumns();
+            $c->addSelectColumn('COUNT(*)');
+            $c->add(AppDelegationPeer::APP_UID, $appUid);
+            $c->add(AppDelegationPeer::TAS_UID, $tasUid);
+            $c->add(AppDelegationPeer::DEL_PREVIOUS, $previousDelIndex);
+            $c->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
+            $rs = AppDelegationPeer::doSelectRs($c);
+            $rs->next();
+            $row = $rs->getRow();
+            //if no open threads exists, the multiinstance is completes
+            return intval($row[0]) === 0;
+        } catch (exception $e) {
+            throw ($e);
+        }
+    }
+
     /*
      * GetOpenThreads
      *
