@@ -150,6 +150,12 @@ class workspaceTools
         $final = $stop - $start;
         CLI::logging("<*>   Backup log files Process took $final seconds.\n");
 
+        $start = microtime(true);
+        CLI::logging("> Optimizing content data...\n");
+        $this->migrateContent($workSpace, $lang);
+        $stop = microtime(true);
+        CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
+
         /*----------------------------------********---------------------------------*/
         $start = microtime(true);
         CLI::logging("> Migrate new lists...\n");
@@ -164,12 +170,6 @@ class workspaceTools
         $this->processFilesUpgrade();
         $stop = microtime(true);
         CLI::logging("<*>   Updating Files Manager took " . ($stop - $start) . " seconds.\n");
-
-        $start = microtime(true);
-        CLI::logging("> Optimizing content data...\n");
-        $this->migrateContent($workSpace, $lang);
-        $stop = microtime(true);
-        CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
 
         $start = microtime(true);
         CLI::logging("> Clean access and refresh tokens...\n");
