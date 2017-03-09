@@ -535,5 +535,68 @@ class AppDocument extends BaseAppDocument
         $oAppDocument = AppDocumentPeer::retrieveByPK( $sAppDocUid, $iVersion );
         return (is_object( $oAppDocument ) && get_class( $oAppDocument ) == 'AppDocument');
     }
+
+    /**
+     * The user that uploaded an input document can download the same input file.
+     * A participated user or a supervisor must have the process permission "view" to be able to download the input document.
+     * If the user is a supervisor and had the input document assign, he can download the file too.
+     * @param $user
+     * @param $appDocUid
+     * @param $version
+     * @return bool
+     */
+    public function checkPermissionsToDownload($user, $appDocUid, $version)
+    {
+        $oCriteria = new Criteria('workflow');
+        $oCriteria->addSelectColumn(AppDocumentPeer::APP_UID);
+        $oCriteria->addJoin(AppDocumentPeer::DOC_UID, InputDocumentPeer::INP_DOC_UID, Criteria::LEFT_JOIN);
+        $oCriteria->add(AppDocumentPeer::USR_UID, $user);
+        $oCriteria->add(AppDocumentPeer::APP_DOC_UID, $appDocUid);
+        $oCriteria->add(AppDocumentPeer::DOC_VERSION, $version);
+        $oCriteria->setLimit(1);
+        $dataset = AppDocumentPeer::doSelectRS($oCriteria);
+        $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $dataset->next();
+        if ($dataset->getRow()) {
+            return true;
+        } else {
+            $oCriteria = new Criteria("workflow");
+            $oCriteria->addSelectColumn(AppDocumentPeer::APP_UID);
+            $oCriteria->addSelectColumn(AppDocumentPeer::DOC_UID);
+            $oCriteria->addSelectColumn(InputDocumentPeer::PRO_UID);
+            $oCriteria->addJoin(AppDocumentPeer::DOC_UID, InputDocumentPeer::INP_DOC_UID, Criteria::LEFT_JOIN);
+            $oCriteria->add(AppDocumentPeer::APP_DOC_UID, $appDocUid);
+            $oCriteria->add(AppDocumentPeer::DOC_VERSION, $version);
+            $oCriteria->setLimit(1);
+            $dataset = AppDocumentPeer::doSelectRS($oCriteria);
+            $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $dataset->next();
+            $row = $dataset->getRow();
+            $cases = new \ProcessMaker\BusinessModel\Cases();
+            $userAuthorization = $cases->userAuthorization(
+                $user,
+                $row['PRO_UID'],
+                $row['APP_UID'],
+                array(),
+                array('INPUT_DOCUMENTS' => 'VIEW')
+            );
+
+            if ($userAuthorization['objectPermissions']['INPUT_DOCUMENTS'][0] == $appDocUid) {
+                return true;
+            }
+
+            if ($userAuthorization['supervisor']) {
+                $criteria = new Criteria("workflow");
+                $criteria->addSelectColumn(StepSupervisorPeer::STEP_UID);
+                $criteria->add(StepSupervisorPeer::STEP_TYPE_OBJ, "INPUT_DOCUMENT", \Criteria::EQUAL);
+                $criteria->add(StepSupervisorPeer::STEP_UID_OBJ, $row['DOC_UID'], \Criteria::EQUAL);
+                $rsCriteria = StepSupervisorPeer::doSelectRS($criteria);
+                if ($rsCriteria->next()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
 

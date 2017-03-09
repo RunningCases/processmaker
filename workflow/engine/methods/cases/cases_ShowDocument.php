@@ -51,6 +51,12 @@ if (isset($_REQUEST['actionAjax']) && $_REQUEST['actionAjax'] == "verifySession"
 //a = Case UID
 
 $oAppDocument = new AppDocument();
+
+if (!$oAppDocument->checkPermissionsToDownload($_SESSION['USER_LOGGED'], $_GET['a'], $_GET['v'])) {
+    G::header('Location: /errors/error403.php');
+    die();
+}
+
 if (! isset( $_GET['v'] )) {
     //Load last version of the document
     $docVersion = $oAppDocument->getLastAppDocVersion( $_GET['a'] );
