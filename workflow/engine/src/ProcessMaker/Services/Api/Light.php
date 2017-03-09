@@ -998,7 +998,6 @@ class Light extends Api
             \G::LoadClass("pmDynaform");
             $pmDynaform = new \pmDynaform(array("APP_DATA" => $caseVariables, "CURRENT_DYNAFORM" => $dyn_uid));
             $pmDynaform->jsonr($result['formContent']);
-            $pmDynaform->jsonUnsetProperty($result['formContent'], "data");
             return $result;
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
