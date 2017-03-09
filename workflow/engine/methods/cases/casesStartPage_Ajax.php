@@ -213,7 +213,6 @@ function startCase ()
     $filter = new InputFilter();
     $_POST = $filter->xssFilterHard($_POST);
     $_REQUEST = $filter->xssFilterHard($_REQUEST);
-    $_SESSION = $filter->xssFilterHard($_SESSION);
 
     /* GET , POST & $_SESSION Vars */
     /* unset any variable, because we are starting a new case */
