@@ -338,6 +338,7 @@ define('LOAD_HEADERS_IE', $config['load_headers_ie']);
 define('LEAVE_CASE_WARNING', $config['leave_case_warning']);
 define('REDIRECT_TO_MOBILE', $config['redirect_to_mobile']);
 define('DISABLE_PHP_UPLOAD_EXECUTION', $config['disable_php_upload_execution']);
+define('DISABLE_DOWNLOAD_DOCUMENTS_SESSION_VALIDATION', $config['disable_download_documents_session_validation']);
 
 // IIS Compatibility, SERVER_ADDR doesn't exist on that env, so we need to define it.
 $_SERVER['SERVER_ADDR'] = isset( $_SERVER['SERVER_ADDR'] ) ? $_SERVER['SERVER_ADDR'] : $_SERVER['SERVER_NAME'];
@@ -950,6 +951,7 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
         $noLoginFiles[] = 'ajaxListener';
         $noLoginFiles[] = 'cases_Step';
         $noLoginFiles[] = 'cases_ShowOutputDocument';
+        $noLoginFiles[] = 'cases_ShowDocument';
         $noLoginFiles[] = 'cases_CatchExecute';
         $noLoginFiles[] = 'cases_SaveData';
         $noLoginFiles[] = 'cases_Derivate';
