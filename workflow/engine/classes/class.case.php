@@ -1146,6 +1146,17 @@ class Cases
             $oCriteria->add(ListUnassignedPeer::APP_UID, $sAppUid);
             ListUnassignedPeer::doDelete($oCriteria);
             /*----------------------------------********---------------------------------*/
+            //Logger deleteCase
+            $nameFiles = '';
+            foreach (debug_backtrace() as $node) {
+                $nameFiles .= $node['file'] . ":" . $node['function'] . "(" . $node['line'] . ")\n";
+            }
+            $dataLog = \Bootstrap::getDefaultContextLog();
+            $dataLog['usrUid'] = isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : G::LoadTranslation('UID_UNDEFINED_USER');
+            $dataLog['appUid'] = $sAppUid;
+            $dataLog['request'] = $nameFiles;
+            $dataLog['action'] = 'DeleteCases';
+            Bootstrap::registerMonolog('DeleteCases', 200, 'Delete Case', $dataLog, $dataLog['workspace'], 'processmaker.log');
             return $result;
         } catch (exception $e) {
             throw ($e);
