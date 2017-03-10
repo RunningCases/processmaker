@@ -615,8 +615,6 @@ class AppDocument extends BaseAppDocument
     {
         //Check if the user Logged was generate the document
         if ($userGenerateDocument !== $userCanDownload) {
-            $oCase = new Cases();
-            $resPermission = $oCase->getAllObjectsFrom($proUid, $appUid, '', $userCanDownload, 'VIEW');
             $objCase = new \ProcessMaker\BusinessModel\Cases();
             $aUserCanAccess = $objCase->userAuthorization(
                 $userCanDownload,
