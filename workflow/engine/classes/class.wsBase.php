@@ -2268,10 +2268,6 @@ class wsBase
                     $oPMScript = new PMScript();
 
                     foreach ($aTriggers as $aTrigger) {
-                        //$appFields = $oCase->loadCase( $caseId );
-                        //$appFields['APP_DATA']['APPLICATION'] = $caseId;
-
-
                         //Set variables
                         $params = new stdClass();
                         $params->appData = $appFields["APP_DATA"];
@@ -2320,10 +2316,6 @@ class wsBase
                 $oPMScript = new PMScript();
 
                 foreach ($aTriggers as $aTrigger) {
-                    //$appFields = $oCase->loadCase( $caseId );
-                    //$appFields['APP_DATA']['APPLICATION'] = $caseId;
-
-
                     //Set variables
                     $params = new stdClass();
                     $params->appData = $appFields["APP_DATA"];
@@ -2416,12 +2408,6 @@ class wsBase
                 $appFields['TAS_UID'] = $derive['TAS_UID'];
             }
 
-            //Save data - Start
-            //$appFields = $oCase->loadCase( $caseId );
-            //$oCase->updateCase ( $caseId, $appFields );
-            //Save data - End
-
-
             $row = array ();
             $oCriteria = new Criteria( 'workflow' );
             $del = DBAdapter::getStringDelimiter();
@@ -2433,25 +2419,33 @@ class wsBase
             $oDataset->next();
 
             while ($aRow = $oDataset->getRow()) {
-                $row[] = array ('ROU_TYPE' => $aRow['ROU_TYPE'],'ROU_NEXT_TASK' => $aRow['ROU_NEXT_TASK']
-                );
+                $row[] = array('ROU_TYPE' => $aRow['ROU_TYPE'], 'ROU_NEXT_TASK' => $aRow['ROU_NEXT_TASK']);
                 $oDataset->next();
             }
 
-            //derivate case
-            $aCurrentDerivation = array ('APP_UID' => $caseId,'DEL_INDEX' => $delIndex,'APP_STATUS' => $sStatus,'TAS_UID' => $appdel['TAS_UID'],'ROU_TYPE' => $row[0]['ROU_TYPE']
+            $aCurrentDerivation = array (
+                'APP_UID' => $caseId,
+                'DEL_INDEX' => $delIndex,
+                'APP_STATUS' => $sStatus,
+                'TAS_UID' => $appdel['TAS_UID'],
+                'ROU_TYPE' => $row[0]['ROU_TYPE']
             );
-            $oRoute = new \ProcessMaker\Core\RoutingScreen();
-            $nextTasks = $oRoute->mergeDataDerivation($nextDelegations, $oDerivation->prepareInformation($aData), $row[0]['ROU_TYPE']);
-            $oDerivation->derivate( $aCurrentDerivation, $nextTasks );
+
+            //We define some parameters in the before the derivation
+            //Then this function will be route the case
+            $oDerivation->beforeDerivate(
+                $aData,
+                $nextDelegations,
+                $row[0]['ROU_TYPE'],
+                $aCurrentDerivation
+            );
+
             $appFields = $oCase->loadCase( $caseId );
 
             //Execute triggers after derivation
             $aTriggers = $oCase->loadTriggers( $appdel['TAS_UID'], 'ASSIGN_TASK', - 2, 'AFTER' );
 
             if (count( $aTriggers ) > 0) {
-                //$appFields['APP_DATA']['APPLICATION'] = $caseId;
-
 
                 //Set variables
                 $params = new stdClass();
