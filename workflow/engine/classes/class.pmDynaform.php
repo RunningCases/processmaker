@@ -577,6 +577,17 @@ class pmDynaform
                         $json->inputDocuments = array($row["INP_DOC_UID"]);
                     }
                 }
+                if ($key === "type" && ($value === "multipleFile")) {
+                    $json->data = new stdClass();
+                    $json->data->value = "";
+                    $json->data->label = "";
+                    if (isset($this->fields["APP_DATA"][$json->name])) {
+                        $json->data->value = $this->fields["APP_DATA"][$json->name];
+                    }
+                    if (isset($this->fields["APP_DATA"][$json->name . "_label"])) {
+                        $json->data->label = $this->fields["APP_DATA"][$json->name . "_label"];
+                    }
+                }
                 //synchronize var_label
                 if ($key === "type" && ($value === "dropdown" || $value === "suggest" || $value === "radio")) {
                     if (isset($this->fields["APP_DATA"]["__VAR_CHANGED__"]) && in_array($json->name, explode(",", $this->fields["APP_DATA"]["__VAR_CHANGED__"]))) {
@@ -678,7 +689,7 @@ class pmDynaform
                             $cells = array();
                             foreach ($json->columns as $column) {
                                 //data
-                                if ($column->type === "text" || $column->type === "textarea" || $column->type === "dropdown" || $column->type === "suggest" || $column->type === "datetime" || $column->type === "checkbox" || $column->type === "file" || $column->type === "link" || $column->type === "hidden") {
+                                if ($column->type === "text" || $column->type === "textarea" || $column->type === "dropdown" || $column->type === "suggest" || $column->type === "datetime" || $column->type === "checkbox" || $column->type === "file" || $column->type === "multipleFile" || $column->type === "link" || $column->type === "hidden") {
                                     array_push($cells, array(
                                         "value" => isset($row[$column->name]) ? $row[$column->name] : "",
                                         "label" => isset($row[$column->name . "_label"]) ? $row[$column->name . "_label"] : (isset($row[$column->name]) ? $row[$column->name] : "")
