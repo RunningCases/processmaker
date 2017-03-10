@@ -1,14 +1,20 @@
 <?php
-if (!isset($_SESSION['USER_LOGGED'])) {
-    if ((isset( $_POST['request'] )) && ($_POST['request'] == true)) {
-        $response = new stdclass();
-        $response->message = G::LoadTranslation('ID_LOGIN_AGAIN1');
-        $response->lostSession = true;
-        print G::json_encode( $response );
-        die();
+if (isset($_REQUEST['actionAjax']) && $_REQUEST['actionAjax'] == "verifySession" ) {
+    if (!isset($_SESSION['USER_LOGGED'])) {
+        if ((isset( $_POST['request'] )) && ($_POST['request'] == true)) {
+            $response = new stdclass();
+            $response->message = G::LoadTranslation('ID_LOGIN_AGAIN');
+            $response->lostSession = true;
+            print G::json_encode( $response );
+            die();
+        } else {
+            G::SendMessageText( G::LoadTranslation('ID_LOGIN_TO_SEE_OUTPUTDOCS'), "WARNING" );
+            G::header("location: " . "/");
+            die();
+        }
     } else {
-        G::SendMessageText( G::LoadTranslation('ID_LOGIN_TO_SEE_OUTPUTDOCS'), "WARNING" );
-        G::header("location: " . "/");
+        $response = new stdclass();
+        print G::json_encode( $response );
         die();
     }
 }
@@ -50,8 +56,20 @@ $sAppDocUid = $oAppDocument->getAppDocUid();
 $sDocUid = $oAppDocument->Fields['DOC_UID'];
 
 $oOutputDocument = new OutputDocument();
-$oOutputDocument->Fields = $oOutputDocument->getByUid( $sDocUid );
+$oOutputDocument->Fields = $oOutputDocument->getByUid($sDocUid);
 $download = $oOutputDocument->Fields['OUT_DOC_OPEN_TYPE'];
+
+//Check if the user can be download the Output Document
+if (!$oAppDocument->canDownloadOutput(
+    $oAppDocument->Fields['USR_UID'],
+    $_SESSION['USER_LOGGED'],
+    $oOutputDocument->Fields['PRO_UID'],
+    $oAppDocument->Fields['APP_UID'],
+    $sAppDocUid)
+) {
+   G::header('Location: /errors/error403.php');
+   die();
+}
 
 $info = pathinfo( $oAppDocument->getAppDocFilename() );
 if (! isset( $_GET['ext'] )) {
@@ -83,7 +101,7 @@ if (file_exists( $realPath )) {
     $realPath = $realPath2;
 }
 
-if (! $sw_file_exists) {
+if (!$sw_file_exists) {
 
     $oPluginRegistry = & PMPluginRegistry::getSingleton();
     if ($oPluginRegistry->existsTrigger( PM_UPLOAD_DOCUMENT )) {
@@ -137,10 +155,6 @@ if (! $sw_file_exists) {
         if (!$downloadStatus) {
             G::streamFile( $realPath, $download, $nameFile); //download
         }
-
-        //die($realPath);
-        //G::streamFile( $realPath, $download, $info['basename'] . $ver . '.' . $ext );
     }
 }
-//G::streamFile ( $realPath, true);
 
