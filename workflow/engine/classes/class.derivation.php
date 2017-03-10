@@ -269,7 +269,7 @@ class Derivation
                 $arrayNextTaskData = $value;
                 $this->node[$value['TAS_UID']]['out'][$value['ROU_NEXT_TASK']] = $value['ROU_TYPE'];
                 if ($arrayNextTaskData["NEXT_TASK"]["TAS_UID"] != "-1" &&
-                    preg_match("/^(?:" . $this->regexpTaskTypeToInclude . ")$/", $arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"])
+                    preg_match("/^(?:" . $this->regexpTaskTypeToInclude . ")$/", $arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"]) && $arrayNextTaskData['ROU_TYPE'] != "SEC-JOIN"
                 ) {
                     $arrayAux = $this->prepareInformation($arrayData, $arrayNextTaskData["NEXT_TASK"]["TAS_UID"]);
                     $this->node[$value['ROU_NEXT_TASK']]['in'][$value['TAS_UID']] = $value['ROU_TYPE'];
@@ -832,6 +832,38 @@ class Derivation
         /*----------------------------------********---------------------------------*/
     }
 
+    /**
+     * This function prepare the information before call the derivate function
+     *
+     * We can route a case from differents ways from cases_Derivate and derivateCase used in PMFDerivateCase
+     * before this we need to process the information
+     *
+     * @param array $aDataForPrepareInfo
+     * @param array $tasks
+     * @param string $rouType
+     * @param array $aCurrentDerivation
+     * @return array $arrayDerivationResult
+     */
+    function beforeDerivate($aDataForPrepareInfo, $tasks, $rouType, $aCurrentDerivation)
+    {
+        $aPInformation = $this->prepareInformation($aDataForPrepareInfo);
+        $oRoute = new \ProcessMaker\Core\RoutingScreen();
+        $nextTasks = $oRoute->mergeDataDerivation($tasks, $aPInformation, $rouType);
+
+        //Get all route types
+        $aRouteTypes = array();
+        foreach ($aPInformation as $key => $value) {
+            $aRouteTypes[$key]['ROU_NEXT_TASK'] = $value['ROU_NEXT_TASK'];
+            $aRouteTypes[$key]['ROU_TYPE'] = $value['ROU_TYPE'];
+        }
+        $aCurrentDerivation['ROUTE_TYPES'] = $aRouteTypes;
+
+        //Derivate the case
+        $arrayDerivationResult = $this->derivate($aCurrentDerivation, $nextTasks);
+
+        return $arrayDerivationResult;
+    }
+
     /** Derivate
      *
      * @param array $currentDelegation
@@ -971,12 +1003,26 @@ class Derivation
                 case TASK_FINISH_TASK:
                     $iAppThreadIndex = $appFields['DEL_THREAD'];
                     $this->case->closeAppThread($currentDelegation['APP_UID'], $iAppThreadIndex);
+
                     if (isset($nextDel["TAS_UID_DUMMY"]) && !$flagTaskAssignTypeIsMultipleInstance) {
                         $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
                         if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())) {
                             $this->executeEvent($nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
                         }
                     }
+
+                    //if the next task is an end event and the multiinstance threads are finished the end event
+                    //is triggered:
+                    if (isset($nextDel["TAS_UID_DUMMY"]) && $flagTaskAssignTypeIsMultipleInstance) {
+                        $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
+                        if ($this->case->multiInstanceIsCompleted($appFields['APP_UID'],
+                                                                    $appFields['TAS_UID'],
+                                                                    $appFields['DEL_PREVIOUS'])
+                                && preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())) {
+                            $this->executeEvent($nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
+                        }
+                    }
+
                     $this->case->closeAppThread($currentDelegation['APP_UID'], $iAppThreadIndex);
                     $aContext['action'] = 'finish-task';
                     //Logger
@@ -985,6 +1031,7 @@ class Derivation
                 default:
                     //Get all siblingThreads
                     $canDerivate = false;
+                    $nextDel['TAS_ID'] = $taskNextDel->getTasId();
 
                     switch ($currentDelegation['TAS_ASSIGN_TYPE']) {
                         case 'CANCEL_MI':
@@ -1345,9 +1392,22 @@ class Derivation
                     //Incrementing the Del_thread First so that new delegation has new del_thread
                     $iNewAppThreadIndex += 1;
                     //Creating new delegation according to users in group
-                    $iMIDelIndex = $this->case->newAppDelegation( $appFields['PRO_UID'], $currentDelegation['APP_UID'], $nextDel['TAS_UID'], (isset( $aValue['USR_UID'] ) ? $aValue['USR_UID'] : ''), $currentDelegation['DEL_INDEX'], $nextDel['DEL_PRIORITY'], $delType, $iNewAppThreadIndex, $nextDel );
+                    $iMIDelIndex = $this->case->newAppDelegation(
+                        $appFields['PRO_UID'],
+                        $currentDelegation['APP_UID'],
+                        $nextDel['TAS_UID'],
+                        (isset( $aValue['USR_UID'] ) ? $aValue['USR_UID'] : ''),
+                        $currentDelegation['DEL_INDEX'],
+                        $nextDel['DEL_PRIORITY'],
+                        $delType,
+                        $iNewAppThreadIndex,
+                        $nextDel,
+                        $appFields['APP_NUMBER'],
+                        $appFields['PRO_ID'],
+                        $nextDel['TAS_ID']
+                    );
 
-                    $iNewThreadIndex = $this->case->newAppThread( $currentDelegation['APP_UID'], $iMIDelIndex, $iAppThreadIndex );
+                    $iNewThreadIndex = $this->case->newAppThread( $currentDelegation['APP_UID'], $iMIDelIndex, $iAppThreadIndex);
 
                     //Setting the del Index for Updating the AppThread delIndex
                     if ($key == 0) {
@@ -1371,7 +1431,23 @@ class Derivation
                     $delPrevious = $row['DEL_PREVIOUS'];
                 }
                 // Create new delegation
-                $iNewDelIndex = $this->case->newAppDelegation( $appFields['PRO_UID'], $currentDelegation['APP_UID'], $nextDel['TAS_UID'], (isset( $nextDel['USR_UID'] ) ? $nextDel['USR_UID'] : ''), $currentDelegation['DEL_INDEX'], $nextDel['DEL_PRIORITY'], $delType, $iAppThreadIndex, $nextDel, $this->flagControl, $this->flagControlMulInstance, $delPrevious);
+                $iNewDelIndex = $this->case->newAppDelegation(
+                    $appFields['PRO_UID'],
+                    $currentDelegation['APP_UID'],
+                    $nextDel['TAS_UID'],
+                    (isset( $nextDel['USR_UID'] ) ? $nextDel['USR_UID'] : ''),
+                    $currentDelegation['DEL_INDEX'],
+                    $nextDel['DEL_PRIORITY'],
+                    $delType,
+                    $iAppThreadIndex,
+                    $nextDel,
+                    $this->flagControl,
+                    $this->flagControlMulInstance,
+                    $delPrevious,
+                    $appFields['APP_NUMBER'],
+                    $appFields['PRO_ID'],
+                    $nextDel['TAS_ID']
+                );
                 break;
         }
 
@@ -1388,21 +1464,24 @@ class Derivation
         $application = new Application();
         $result = $application->update(['APP_UID' => $currentDelegation['APP_UID'], 'APP_ROUTING_DATA' => serialize($arrayRoutingData)]);
 
-        //APP_THREAD
+        //We updated the information relate to APP_THREAD
         $iAppThreadIndex = $appFields['DEL_THREAD'];
-
-        switch ($currentDelegation['ROU_TYPE']) {
-            case 'PARALLEL':
-            case 'PARALLEL-BY-EVALUATION':
-                $this->case->closeAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex );
-                $iNewThreadIndex = $this->case->newAppThread( $currentDelegation['APP_UID'], $iNewDelIndex, $iAppThreadIndex );
-                $this->case->updateAppDelegation( $currentDelegation['APP_UID'], $iNewDelIndex, $iNewThreadIndex );
-                break;
-            default:
-                $this->case->updateAppThread( $currentDelegation['APP_UID'], $iAppThreadIndex, $iNewDelIndex );
-                break;
-        } //en switch
-
+        $isUpdatedThread = false;
+        if (isset($currentDelegation['ROUTE_TYPES']) && sizeof($currentDelegation['ROUTE_TYPES']) > 1) {
+            //If the next is more than one thread: Parallel or other
+            foreach ($currentDelegation['ROUTE_TYPES'] as $key => $value) {
+                if ($value['ROU_NEXT_TASK'] === $nextDel['TAS_UID']) {
+                    $isUpdatedThread = true;
+                    $routeType = ($value['ROU_TYPE'] === 'EVALUATE') ? 'PARALLEL-AND-EXCLUSIVE' : $value['ROU_TYPE'];
+                    $this->updateAppThread($routeType, $currentDelegation['APP_UID'], $iAppThreadIndex, $iNewDelIndex);
+                }
+            }
+        }
+        if (!$isUpdatedThread) {
+            //If the next is a sequential derivation
+            $this->updateAppThread($currentDelegation['ROU_TYPE'], $currentDelegation['APP_UID'], $iAppThreadIndex, $iNewDelIndex);
+        }
+        
         //if there are subprocess to create
         if (isset( $aSP )) {
             //Check if is Selfservice the task in the subprocess
@@ -1518,6 +1597,28 @@ class Derivation
             $this->notifyAssignedUser($appFields, $nextTaskData, $iNewDelIndex);
         }
         return $iNewDelIndex;
+    }
+
+    /**
+     * This function create, update and closed a new record related to appThread
+     *
+     * Related to route type we can change the records in the APP_THREAD table
+     * @param  string $routeType this variable recibe information about the derivation
+     * @return void
+     */
+    function updateAppThread($routeType, $appUid, $iAppThreadIndex, $iNewDelIndex) {
+        switch ($routeType) {
+            case 'PARALLEL':
+            case 'PARALLEL-BY-EVALUATION':
+            case 'PARALLEL-AND-EXCLUSIVE':
+                $this->case->closeAppThread($appUid, $iAppThreadIndex);
+                $iNewThreadIndex = $this->case->newAppThread($appUid, $iNewDelIndex, $iAppThreadIndex);
+                $this->case->updateAppDelegation($appUid, $iNewDelIndex, $iNewThreadIndex);
+                break;
+            default:
+                $this->case->updateAppThread($appUid, $iAppThreadIndex, $iNewDelIndex);
+                break;
+        }
     }
 
     /* verifyIsCaseChild

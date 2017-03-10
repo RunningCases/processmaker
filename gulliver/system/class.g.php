@@ -96,7 +96,7 @@ class G
      * @param string $symbol
      * @return string
      */
-    public function generate_password($length = 15, $availableSets = "luns", $symbol = "_-+=!@#$%*&,.")
+    public function generate_password($length = 15, $availableSets = "luns", $symbol = "_-$!")
     {
         $chars = "";
         if (strpos($availableSets, "l") !== false) {

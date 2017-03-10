@@ -276,6 +276,18 @@ CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_list_unassigned");
 /*----------------------------------********---------------------------------*/
 
+CLI::taskName('migrate-indexing-acv');
+CLI::taskDescription(<<<EOT
+  Migrate and populate the indexes for the new relation fields to avoid the use of APP_CACHE_VIEW table
+
+  Specify the workspace, the self-service cases in this workspace will be updated.
+
+  If no workspace is specified, the command will be running in all workspaces.
+EOT
+);
+CLI::taskArg('workspace', true, true);
+CLI::taskRun("run_migrate_indexing_acv");
+
 CLI::taskName('migrate-content');
 CLI::taskDescription(<<<EOT
   Migrating the content schema to match the latest version
@@ -300,6 +312,21 @@ EOT
 );
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_self_service_value");
+
+/**
+ * Complete the PRO_ID and USR_ID in the LIST_* tables.
+ *
+ * It calls the list_ids@cliListIds.php
+ */
+CLI::taskName('list-ids');
+CLI::taskDescription(<<<EOT
+    Complete the PRO_ID and USR_ID in the LIST_* tables.
+EOT
+);
+CLI::taskOpt("lang", "", "lLANG", "lang=LANG");
+CLI::taskArg('workspace');
+CLI::taskRun("cliListIds");
+/*----------------------------------********---------------------------------*/
 
   /**
    * Function run_info
@@ -934,4 +961,19 @@ function run_migrate_self_service_value($args, $opts) {
     }
     $stop = microtime(true);
     CLI::logging("<*>   Migrating Self-Service records Process took " . ($stop - $start) . " seconds.\n");
+}
+
+function run_migrate_indexing_acv($args, $opts) {
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
+    $args = $filter->xssFilterHard($args);
+    $workspaces = get_workspaces_from_args($args);
+    $start = microtime(true);
+    CLI::logging("> Migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW...\n");
+    foreach ($workspaces as $workspace) {
+        print_r('Indexing for APP_CACHE_VIEW: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
+        $workspace->migratePopulateIndexingACV($workspace->name);
+    }
+    $stop = microtime(true);
+    CLI::logging("<*>   Migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
 }

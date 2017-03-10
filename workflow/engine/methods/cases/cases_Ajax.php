@@ -4,7 +4,6 @@ $filter = new InputFilter();
 $_GET = $filter->xssFilterHard($_GET);
 $_POST = $filter->xssFilterHard($_POST);
 $_REQUEST = $filter->xssFilterHard($_REQUEST);
-$_SESSION = $filter->xssFilterHard($_SESSION);
 
 if (!isset($_SESSION['USER_LOGGED'])) {
     $response = new stdclass();

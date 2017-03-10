@@ -48,7 +48,7 @@ class Application extends BaseApplication
      */
     protected $app_title_content = '';
     protected $app_description_content = '';
-    //protected $app_proc_code = '';
+    public static $app_status_values = ['DRAFT' => 1, 'TO_DO' => 2, 'COMPLETED' => 3, 'CANCELLED' => 4];
 
     /**
      * Get the [app_title_content] column value.
@@ -225,7 +225,8 @@ class Application extends BaseApplication
             $this->setAppUid(G::generateUniqueID());
             $this->setAppParent('');
             $this->setAppStatus('DRAFT');
-            $this->setProUid( $sProUid);
+            $this->setAppStatusId(1);
+            $this->setProUid($sProUid);
             $this->setAppProcStatus('');
             $this->setAppProcCode('');
             $this->setAppParallel('N');
@@ -294,15 +295,15 @@ class Application extends BaseApplication
                 $oApp->fromArray($aData, BasePeer::TYPE_FIELDNAME);
 
                 if ($oApp->validate()) {
+                    if (isset($aData['APP_STATUS'])) {
+                        $oApp->setAppStatusId(self::$app_status_values[$aData['APP_STATUS']]);
+                    }
                     if (isset($aData['APP_TITLE'])) {
                         $oApp->setAppTitleContent($aData['APP_TITLE']);
                     }
                     if (isset($aData['APP_DESCRIPTION'])) {
                         $oApp->setAppDescriptionContent($aData['APP_DESCRIPTION']);
                     }
-
-                    //if ( isset ( $aData['APP_PROC_CODE'] ) )
-                      //$oApp->setAppProcCode( $aData['APP_PROC_CODE'] );
 
                     $res = $oApp->save();
                     $con->commit();

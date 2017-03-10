@@ -5,9 +5,6 @@
  *
  * @author Alexandre Rosenfeld
  */
-G::LoadSystem('dbMaintenance');
-G::LoadClass("cli");
-G::LoadClass("multipleFilesBackup");
 
 /**
  * class workspaceTools
@@ -24,6 +21,41 @@ class workspaceTools
     public $dbInfoRegExp = "/( *define *\( *'(?P<key>.*?)' *, *\n* *')(?P<value>.*?)(' *\) *;.*)/";
     public $initPropel = false;
     public $initPropelRoot = false;
+    public static $populateIdsQueries = array(
+        'UPDATE LIST_CANCELED SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_CANCELED.USR_UID),
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_CANCELED.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_CANCELED.PRO_UID)',
+        'UPDATE LIST_COMPLETED SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_COMPLETED.USR_UID),
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_COMPLETED.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_COMPLETED.PRO_UID)',
+        'UPDATE LIST_INBOX SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_INBOX.USR_UID),
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_INBOX.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_INBOX.PRO_UID)',
+        'UPDATE LIST_MY_INBOX SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_MY_INBOX.USR_UID),
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_MY_INBOX.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_MY_INBOX.PRO_UID)',
+        'UPDATE LIST_PARTICIPATED_HISTORY SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_PARTICIPATED_HISTORY.USR_UID),
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_PARTICIPATED_HISTORY.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_PARTICIPATED_HISTORY.PRO_UID)',
+        'UPDATE LIST_PARTICIPATED_LAST SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_PARTICIPATED_LAST.USR_UID),
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_PARTICIPATED_LAST.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_PARTICIPATED_LAST.PRO_UID)',
+        'UPDATE LIST_PAUSED SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_PAUSED.USR_UID),
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_PAUSED.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_PAUSED.PRO_UID)',
+        'UPDATE LIST_UNASSIGNED SET
+            TAS_ID=(SELECT TAS_ID FROM TASK WHERE TASK.TAS_UID=LIST_UNASSIGNED.TAS_UID),
+            PRO_ID=(SELECT PRO_ID FROM PROCESS WHERE PROCESS.PRO_UID=LIST_UNASSIGNED.PRO_UID)',
+        'UPDATE LIST_UNASSIGNED_GROUP SET
+            USR_ID=(SELECT USR_ID FROM USERS WHERE USERS.USR_UID=LIST_UNASSIGNED_GROUP.USR_UID)',
+    );
 
     /**
      * Create a workspace tools object.
@@ -112,18 +144,17 @@ class workspaceTools
         CLI::logging("<*>   Check Mafe Requirements Process took $final seconds.\n");
 
         $start = microtime(true);
-        CLI::logging("> Updating cache view...\n");
-        $this->upgradeCacheView($buildCacheView, true, $lang);
-        $stop = microtime(true);
-        $final = $stop - $start;
-        CLI::logging("<*>   Updating cache view Process took $final seconds.\n");
-
-        $start = microtime(true);
         CLI::logging("> Backup log files...\n");
         $this->backupLogFiles();
         $stop = microtime(true);
         $final = $stop - $start;
         CLI::logging("<*>   Backup log files Process took $final seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Optimizing content data...\n");
+        $this->migrateContent($workSpace, $lang);
+        $stop = microtime(true);
+        CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
 
         /*----------------------------------********---------------------------------*/
         $start = microtime(true);
@@ -141,12 +172,6 @@ class workspaceTools
         CLI::logging("<*>   Updating Files Manager took " . ($stop - $start) . " seconds.\n");
 
         $start = microtime(true);
-        CLI::logging("> Optimizing content data...\n");
-        $this->migrateContent($workSpace, $lang);
-        $stop = microtime(true);
-        CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
-
-        $start = microtime(true);
         CLI::logging("> Clean access and refresh tokens...\n");
         $this->cleanTokens($workSpace);
         $stop = microtime(true);
@@ -157,6 +182,18 @@ class workspaceTools
         $this->migrateSelfServiceRecordsRun($workSpace);
         $stop = microtime(true);
         CLI::logging("<*>   Migrating Self-Service records Process took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW...\n");
+        $this->migratePopulateIndexingACV($workSpace);
+        $stop = microtime(true);
+        CLI::logging("<*>   Migrating an populating indexing for avoiding the use of table APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
+        
+        $start = microtime(true);
+        CLI::logging("> Updating rows in Web Entry table for classic processes...\n");
+        $this->updatingWebEntryClassicModel($workSpace);
+        $stop = microtime(true);
+        CLI::logging("<*>   Updating rows in Web Entry table for classic processes took " . ($stop - $start) . " seconds.\n");
     }
 
     /**
@@ -1577,8 +1614,11 @@ class workspaceTools
      * workspace, or overwriting a previous one
      *
      * @param string $filename the backup filename
-     * @param string $newWorkspaceName if defined, supplies the name for the
-     * workspace to restore to
+     * @param string $srcWorkspace name of the source workspace
+     * @param string $dstWorkspace name of the destination workspace
+     * @param string $overwrite if you need overwrite the database
+     * @param string $lang for define the language
+     * @param string $port of database if is empty take 3306
      */
     static public function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en', $port = '')
     {
@@ -1621,10 +1661,6 @@ class workspaceTools
 
         $version = System::getVersion();
         $pmVersion = (preg_match("/^([\d\.]+).*$/", $version, $arrayMatch)) ? $arrayMatch[1] : ""; //Otherwise: Branch master
-
-        /*if($pmVersion == '' && strpos(strtoupper($version), 'BRANCH')){
-            $pmVersion = 'dev-version-backup';
-        }*/
 
         CLI::logging(CLI::warning("
             Warning: A workspace from a newer version of ProcessMaker can NOT be restored in an older version of
@@ -1758,8 +1794,6 @@ class workspaceTools
                 }
             }
 
-            //CLI::logging(CLI::info("$pmVersionWorkspaceToRestore < $pmVersion") . "\n");
-
             if (($pmVersionWorkspaceToRestore != '') && (version_compare($pmVersionWorkspaceToRestore . "",
                         $pmVersion . "", "<") || $pmVersion == "")
             ) {
@@ -1804,17 +1838,34 @@ class workspaceTools
                 $pmVersion = 'dev-version-backup';
             }
 
+            //Move the labels of content to the corresponding table
+            $start = microtime(true);
+            CLI::logging("> Optimizing content data...\n");
+            $workspace->migrateContent($workspace->name, $lang);
+            $stop = microtime(true);
+            CLI::logging("<*>   Optimizing content data took " . ($stop - $start) . " seconds.\n");
+
+            //Move the data of cases to the corresponding List
             /*----------------------------------********---------------------------------*/
-            if (($pmVersionWorkspaceToRestore != '') && (version_compare($pmVersionWorkspaceToRestore . "", "2.9",
-                        "<") || $pmVersion == "")
-            ) {
-                $start = microtime(true);
-                CLI::logging("> Updating List tables...\n");
-                $workspace->migrateList($workspace->name, false, $lang);
-                $stop = microtime(true);
-                CLI::logging("<*>   Updating List Process took " . ($stop - $start) . " seconds.\n");
-            }
+            $start = microtime(true);
+            CLI::logging("> Updating List tables...\n");
+            $workspace->migrateList($workspace->name, false, $lang);
+            $stop = microtime(true);
+            CLI::logging("<*>   Updating List Process took " . ($stop - $start) . " seconds.\n");
             /*----------------------------------********---------------------------------*/
+
+            $start = microtime(true);
+            CLI::logging("> Updating Files Manager...\n");
+            $workspace->processFilesUpgrade();
+            $stop = microtime(true);
+            CLI::logging("<*>   Updating Files Manager took " . ($stop - $start) . " seconds.\n");
+
+            //Populate the new fields for replace string UID to Interger ID
+            $start = microtime(true);
+            CLI::logging("> Migrating and populating indexing for APP_CACHE_VIEW...\n");
+            $workspace->migratePopulateIndexingACV($workspace->name);
+            $stop = microtime(true);
+            CLI::logging("<*>   Migrating an populating indexing for APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
 
             mysql_close($link);
         }
@@ -3536,6 +3587,199 @@ class workspaceTools
         BasePeer::doUpdate($criteria, $criteriaSet, $con);
 
         CLI::logging("   Migrating Self-Service by Value Cases Done \n");
+    }
+
+    public function migratePopulateIndexingACV($workspace) {
+        // Migrating and populating new indexes
+        CLI::logging("-> Migrating an populating indexing for avoiding the use of table APP_CACHE_VIEW Start \n");
+
+        // Initializing
+        $this->initPropel(true);
+        $con = Propel::getConnection(AppDelegationPeer::DATABASE_NAME);
+
+        // Populating APP_DELEGATION.APP_NUMBER
+        CLI::logging("->   Populating APP_DELEGATION.APP_NUMBER \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_DELEGATION AS AD
+                                   INNER JOIN (
+                                       SELECT APPLICATION.APP_UID, APPLICATION.APP_NUMBER
+                                       FROM APPLICATION
+                                   ) AS APP
+                                   ON (AD.APP_UID = APP.APP_UID)
+                                   SET AD.APP_NUMBER = APP.APP_NUMBER
+                                   WHERE AD.APP_NUMBER = 0");
+        $con->commit();
+
+        // Populating APP_DELEGATION.USR_ID
+        CLI::logging("->   Populating APP_DELEGATION.USR_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_DELEGATION AS AD
+                                   INNER JOIN (
+                                       SELECT USERS.USR_UID, USERS.USR_ID
+                                       FROM USERS
+                                   ) AS USR
+                                   ON (AD.USR_UID = USR.USR_UID)
+                                   SET AD.USR_ID = USR.USR_ID
+                                   WHERE AD.USR_ID = 0");
+        $con->commit();
+
+        // Populating APP_DELEGATION.PRO_ID
+        CLI::logging("->   Populating APP_DELEGATION.PRO_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_DELEGATION AS AD
+                                   INNER JOIN (
+                                       SELECT PROCESS.PRO_UID, PROCESS.PRO_ID
+                                       FROM PROCESS
+                                   ) AS PRO
+                                   ON (AD.PRO_UID = PRO.PRO_UID)
+                                   SET AD.PRO_ID = PRO.PRO_ID
+                                   WHERE AD.PRO_ID = 0");
+        $con->commit();
+
+        // Populating APP_DELEGATION.TAS_ID
+        CLI::logging("->   Populating APP_DELEGATION.TAS_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_DELEGATION AS AD
+                                   INNER JOIN (
+                                       SELECT TASK.TAS_UID, TASK.TAS_ID
+                                       FROM TASK
+                                   ) AS TAS
+                                   ON (AD.TAS_UID = TAS.TAS_UID)
+                                   SET AD.TAS_ID = TAS.TAS_ID
+                                   WHERE AD.TAS_ID = 0");
+        $con->commit();
+
+        // Populating APPLICATION.APP_STATUS_ID
+        CLI::logging("->   Populating APPLICATION.APP_STATUS_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APPLICATION
+                                    SET APP_STATUS_ID = (case
+                                        when APP_STATUS = 'DRAFT' then 1
+                                        when APP_STATUS = 'TO_DO' then 2
+                                        when APP_STATUS = 'COMPLETED' then 3
+                                        when APP_STATUS = 'CANCELLED' then 4
+                                    end)
+                                    WHERE APP_STATUS in ('DRAFT', 'TO_DO', 'COMPLETED', 'CANCELLED') AND
+                                    APP_STATUS_ID = 0");
+        $con->commit();
+
+        CLI::logging("-> Migrating And Populating Indexing for avoiding the use of table APP_CACHE_VIEW Done \n");
+
+        // Populating PRO_ID, USR_ID
+        CLI::logging("->   Populating PRO_ID, USR_ID at LIST_* \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        foreach(workspaceTools::$populateIdsQueries as $query) {
+            $stmt->executeQuery($query);
+        }
+        $con->commit();
+
+        CLI::logging("-> Populating PRO_ID, USR_ID at LIST_*  Done \n");
+    }
+    
+    /**
+     * It populates the WEB_ENTRY table for the classic processes, this procedure 
+     * is done to verify the execution of php files generated when the WebEntry 
+     * is configured.
+     * @param type $workSpace
+     */
+    public function updatingWebEntryClassicModel($workSpace, $force = false)
+    {
+        //We obtain from the configuration the list of proUids obtained so that 
+        //we do not go through again.
+        $cfgUid = 'UPDATING_ROWS_WEB_ENTRY';
+        $objUid = 'blackList';
+        $blackList = [];
+        $conf = new Configuration();
+        $ifExists = $conf->exists($cfgUid, $objUid);
+        if ($ifExists) {
+            $oConfig = $conf->load($cfgUid, $objUid);
+            $blackList = unserialize($oConfig['CFG_VALUE']);
+        }
+
+        //The following query returns all the classic processes that do not have 
+        //a record in the WEB_ENTRY table.
+        $oCriteria = new Criteria("workflow");
+        $oCriteria->addSelectColumn(ProcessPeer::PRO_UID);
+        $oCriteria->addSelectColumn(BpmnProcessPeer::PRJ_UID);
+        $oCriteria->addJoin(ProcessPeer::PRO_UID, BpmnProcessPeer::PRJ_UID, Criteria::LEFT_JOIN);
+        $oCriteria->addJoin(ProcessPeer::PRO_UID, WebEntryPeer::PRO_UID, Criteria::LEFT_JOIN);
+        $oCriteria->add(BpmnProcessPeer::PRJ_UID, null, Criteria::EQUAL);
+        $oCriteria->add(WebEntryPeer::PRO_UID, null, Criteria::EQUAL);
+        if ($force === false) {
+            $oCriteria->add(ProcessPeer::PRO_UID, $blackList, Criteria::NOT_IN);
+        }
+        $rsCriteria = ProcessPeer::doSelectRS($oCriteria);
+        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $process = new Process();
+        while ($rsCriteria->next()) {
+            $row = $rsCriteria->getRow();
+            $proUid = $row['PRO_UID'];
+            if (!in_array($proUid, $blackList)) {
+                $blackList[] = $proUid;
+            }
+            $path = PATH_DATA . "sites" . PATH_SEP . $this->name . PATH_SEP . "public" . PATH_SEP . $proUid;
+            if (is_dir($path)) {
+                $dir = opendir($path);
+                while ($fileName = readdir($dir)) {
+                    if ($fileName !== "." && $fileName !== ".." && strpos($fileName, "wsClient.php") === false && strpos($fileName, "Post.php") === false
+                    ) {
+                        CLI::logging("Verifying if file: " . $fileName . " is a web entry\n");
+                        $step = new Criteria("workflow");
+                        $step->addSelectColumn(StepPeer::PRO_UID);
+                        $step->addSelectColumn(StepPeer::TAS_UID);
+                        $step->addSelectColumn(StepPeer::STEP_TYPE_OBJ);
+                        $step->addSelectColumn(StepPeer::STEP_UID_OBJ);
+                        $step->add(StepPeer::STEP_TYPE_OBJ, "DYNAFORM", Criteria::EQUAL);
+                        $step->add(StepPeer::PRO_UID, $proUid, Criteria::EQUAL);
+                        $stepRs = StepPeer::doSelectRS($step);
+                        $stepRs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                        while ($stepRs->next()) {
+                            $row1 = $stepRs->getRow();
+                            $content = file_get_contents($path . "/" . $fileName);
+                            if (strpos($content, $proUid . "/" . $row1["STEP_UID_OBJ"]) !== false) {
+                                //The default user admin is set. This task is 
+                                //carried out by the system administrator.
+                                $userUid = "00000000000000000000000000000001";
+                                //save data in table WEB_ENTRY
+                                $arrayData = [
+                                    "PRO_UID" => $proUid,
+                                    "DYN_UID" => $row1["STEP_UID_OBJ"],
+                                    "TAS_UID" => $row1["TAS_UID"],
+                                    "WE_DATA" => $fileName,
+                                    "USR_UID" => $userUid,
+                                    "WE_CREATE_USR_UID" => $userUid,
+                                    "WE_UPDATE_USR_UID" => $userUid
+                                ];
+                                $webEntry = new \ProcessMaker\BusinessModel\WebEntry();
+                                $webEntry->createClassic($arrayData);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        //The list of proUids obtained is saved in the configuration so that it 
+        //does not go through again.
+        $data = [
+            "CFG_UID" => $cfgUid,
+            "OBJ_UID" => $objUid,
+            "CFG_VALUE" => serialize($blackList),
+            "PRO_UID" => '',
+            "USR_UID" => '',
+            "APP_UID" => ''
+        ];
+        if ($ifExists) {
+            $conf->update($data);
+        } else {
+            $conf->create($data);
+        }
     }
 
 }

@@ -97,6 +97,10 @@ class ListUnassignedMapBuilder
 
         $tMap->addColumn('DEL_PRIORITY', 'DelPriority', 'string', CreoleTypes::VARCHAR, true, 32);
 
+        $tMap->addColumn('PRO_ID', 'ProId', 'int', CreoleTypes::INTEGER, false, null);
+
+        $tMap->addColumn('TAS_ID', 'TasId', 'int', CreoleTypes::INTEGER, false, null);
+
     } // doBuild()
 
 } // ListUnassignedMapBuilder
