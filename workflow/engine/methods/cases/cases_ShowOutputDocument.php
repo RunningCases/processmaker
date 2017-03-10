@@ -1,23 +1,4 @@
 <?php
-if (isset($_REQUEST['actionAjax']) && $_REQUEST['actionAjax'] == "verifySession" ) {
-    if (!isset($_SESSION['USER_LOGGED'])) {
-        if ((isset( $_POST['request'] )) && ($_POST['request'] == true)) {
-            $response = new stdclass();
-            $response->message = G::LoadTranslation('ID_LOGIN_AGAIN');
-            $response->lostSession = true;
-            print G::json_encode( $response );
-            die();
-        } else {
-            G::SendMessageText( G::LoadTranslation('ID_LOGIN_TO_SEE_OUTPUTDOCS'), "WARNING" );
-            G::header("location: " . "/");
-            die();
-        }
-    } else {
-        $response = new stdclass();
-        print G::json_encode( $response );
-        die();
-    }
-}
 /**
  * cases_ShowOutputDocument.php
  *
@@ -46,6 +27,26 @@ if (isset($_REQUEST['actionAjax']) && $_REQUEST['actionAjax'] == "verifySession"
  * @author David Callizaya <davidsantos@colosa.com>
  */
 
+if (isset($_REQUEST['actionAjax']) && $_REQUEST['actionAjax'] == "verifySession" ) {
+    if (!isset($_SESSION['USER_LOGGED'])) {
+        if ((isset( $_POST['request'] )) && ($_POST['request'] == true)) {
+            $response = new stdclass();
+            $response->message = G::LoadTranslation('ID_LOGIN_AGAIN');
+            $response->lostSession = true;
+            print G::json_encode( $response );
+            die();
+        } else {
+            G::SendMessageText( G::LoadTranslation('ID_LOGIN_TO_SEE_OUTPUTDOCS'), "WARNING" );
+            G::header("location: " . "/");
+            die();
+        }
+    } else {
+        $response = new stdclass();
+        print G::json_encode( $response );
+        die();
+    }
+}
+
 require_once ("classes/model/AppDocumentPeer.php");
 require_once ("classes/model/OutputDocumentPeer.php");
 
@@ -60,16 +61,19 @@ $oOutputDocument->Fields = $oOutputDocument->getByUid($sDocUid);
 $download = $oOutputDocument->Fields['OUT_DOC_OPEN_TYPE'];
 
 //Check if the user can be download the Output Document
-if (!$oAppDocument->canDownloadOutput(
-    $oAppDocument->Fields['USR_UID'],
-    $_SESSION['USER_LOGGED'],
-    $oOutputDocument->Fields['PRO_UID'],
-    $oAppDocument->Fields['APP_UID'],
-    $sAppDocUid)
-) {
-   G::header('Location: /errors/error403.php');
-   die();
+if (defined('DISABLE_DOWNLOAD_DOCUMENTS_SESSION_VALIDATION') && DISABLE_DOWNLOAD_DOCUMENTS_SESSION_VALIDATION == 0) {
+    if (!$oAppDocument->canDownloadOutput(
+        $oAppDocument->Fields['USR_UID'],
+        $_SESSION['USER_LOGGED'],
+        $oOutputDocument->Fields['PRO_UID'],
+        $oAppDocument->Fields['APP_UID'],
+        $sAppDocUid)
+    ) {
+       G::header('Location: /errors/error403.php');
+       die();
+    }
 }
+
 
 $info = pathinfo( $oAppDocument->getAppDocFilename() );
 if (! isset( $_GET['ext'] )) {

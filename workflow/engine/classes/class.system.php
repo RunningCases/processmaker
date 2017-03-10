@@ -79,7 +79,8 @@ class System
         'server_hostname_requests_frontend' => '',
         'load_headers_ie' => 0,
         'redirect_to_mobile' => 0,
-        'disable_php_upload_execution' => 0
+        'disable_php_upload_execution' => 0,
+        'disable_download_documents_session_validation' => 0
     );
 
     /**

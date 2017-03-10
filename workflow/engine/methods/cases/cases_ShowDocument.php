@@ -26,8 +26,6 @@
  *
  * @author David Callizaya <davidsantos@colosa.com>
  */
-
-require_once ("classes/model/AppDocumentPeer.php");
 if (isset($_REQUEST['actionAjax']) && $_REQUEST['actionAjax'] == "verifySession" ) {
     if (!isset($_SESSION['USER_LOGGED'])) {
         if ((isset( $_POST['request'] )) && ($_POST['request'] == true)) {
@@ -47,14 +45,17 @@ if (isset($_REQUEST['actionAjax']) && $_REQUEST['actionAjax'] == "verifySession"
         die();
     }
 }
-//v = Version
-//a = Case UID
-
+require_once ("classes/model/AppDocumentPeer.php");
 $oAppDocument = new AppDocument();
 
-if (!$oAppDocument->canDownloadInput($_SESSION['USER_LOGGED'], $_GET['a'], $_GET['v'])) {
-    G::header('Location: /errors/error403.php');
-    die();
+//Check if the user can be download the input Document
+//Send the parameter v = Version
+//Send the parameter a = Case UID
+if (defined('DISABLE_DOWNLOAD_DOCUMENTS_SESSION_VALIDATION') && DISABLE_DOWNLOAD_DOCUMENTS_SESSION_VALIDATION == 0) {
+    if (!$oAppDocument->canDownloadInput($_SESSION['USER_LOGGED'], $_GET['a'], $_GET['v'])) {
+        G::header('Location: /errors/error403.php');
+        die();
+    }
 }
 
 if (! isset( $_GET['v'] )) {
