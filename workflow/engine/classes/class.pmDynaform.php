@@ -182,6 +182,7 @@ class pmDynaform
         if (empty($json)) {
             return;
         }
+        $dataGridEnvironment = [];
         foreach ($json as $key => &$value) {
             $sw1 = is_array($value);
             $sw2 = is_object($value);
@@ -195,8 +196,7 @@ class pmDynaform
                     $fn($json, $key, $value);
                 }
                 //set properties from trigger
-                $prefixs = self::$prefixs;
-                if (is_string($value) && in_array(substr($value, 0, 2), $prefixs)) {
+                if (is_string($value) && in_array(substr($value, 0, 2), self::$prefixs)) {
                     $triggerValue = substr($value, 2);
                     if (isset($this->fields["APP_DATA"][$triggerValue])) {
                         if (!in_array($key, $this->propertiesToExclude)) {
@@ -266,7 +266,9 @@ class pmDynaform
                                 if (!isset($json->queryField) && isset($dt[0]["base_expr"])) {
                                     $col = $dt[0]["base_expr"];
                                     $dv = str_replace("'", "''", $json->defaultValue);
-                                    $where = $isWhere ? "WHERE " . $col . "='" . $dv . "'" : $where . " AND " . $col . "='" . $dv . "'";
+                                    if ($dv !== "") {
+                                        $where = $isWhere ? "WHERE " . $col . "='" . $dv . "'" : $where . " AND " . $col . "='" . $dv . "'";
+                                    }
                                 }
                                 if (isset($json->queryField) && isset($dt[0]["base_expr"])) {
                                     $col = isset($dt[1]["base_expr"]) ? $dt[1]["base_expr"] : $dt[0]["base_expr"];
@@ -575,6 +577,17 @@ class pmDynaform
                         $json->inputDocuments = array($row["INP_DOC_UID"]);
                     }
                 }
+                if ($key === "type" && ($value === "multipleFile")) {
+                    $json->data = new stdClass();
+                    $json->data->value = "";
+                    $json->data->label = "";
+                    if (isset($this->fields["APP_DATA"][$json->name])) {
+                        $json->data->value = $this->fields["APP_DATA"][$json->name];
+                    }
+                    if (isset($this->fields["APP_DATA"][$json->name . "_label"])) {
+                        $json->data->label = $this->fields["APP_DATA"][$json->name . "_label"];
+                    }
+                }
                 //synchronize var_label
                 if ($key === "type" && ($value === "dropdown" || $value === "suggest" || $value === "radio")) {
                     if (isset($this->fields["APP_DATA"]["__VAR_CHANGED__"]) && in_array($json->name, explode(",", $this->fields["APP_DATA"]["__VAR_CHANGED__"]))) {
@@ -632,6 +645,42 @@ class pmDynaform
                 }
                 //grid
                 if ($key === "type" && ($value === "grid")) {
+                    $columnsDataVariable = [];
+                    //todo compatibility 'columnWidth'
+                    foreach ($json->columns as $column) {
+                        if (!isset($column->columnWidth) && $column->type !== "hidden") {
+                            $json->layout = "static";
+                            $column->columnWidth = "";
+                        }
+                        $column->parentIsGrid = true;
+                        //save dataVariable value, only for columns control
+                        if (!empty($column->dataVariable) && is_string($column->dataVariable)) {
+                            if (in_array(substr($column->dataVariable, 0, 2), self::$prefixs)) {
+                                $dataVariableValue = substr($column->dataVariable, 2);
+                                if (!in_array($dataVariableValue, $columnsDataVariable)) {
+                                    $columnsDataVariable[] = $dataVariableValue;
+                                }
+                            }
+                        }
+                    }
+                    //data grid environment
+                    $json->dataGridEnvironment = "onDataGridEnvironment";
+                    if (isset($this->fields["APP_DATA"])) {
+                        $dataGridEnvironment = $this->fields["APP_DATA"];
+                        $this->fields["APP_DATA"] = [];
+                        //restore AppData with dataVariable definition, only for columns control
+                        foreach ($columnsDataVariable as $dge) {
+                            if (isset($dataGridEnvironment[$dge])) {
+                                $this->fields["APP_DATA"][$dge] = $dataGridEnvironment[$dge];
+                            }
+                        }
+                    }
+                }
+                if ($key === "dataGridEnvironment" && ($value === "onDataGridEnvironment")) {
+                    if (isset($this->fields["APP_DATA"])) {
+                        $this->fields["APP_DATA"] = $dataGridEnvironment;
+                        $dataGridEnvironment = [];
+                    }
                     if (isset($this->fields["APP_DATA"][$json->name])) {
                         //rows
                         $rows = $this->fields["APP_DATA"][$json->name];
@@ -640,7 +689,7 @@ class pmDynaform
                             $cells = array();
                             foreach ($json->columns as $column) {
                                 //data
-                                if ($column->type === "text" || $column->type === "textarea" || $column->type === "dropdown" || $column->type === "suggest" || $column->type === "datetime" || $column->type === "checkbox" || $column->type === "file" || $column->type === "link" || $column->type === "hidden") {
+                                if ($column->type === "text" || $column->type === "textarea" || $column->type === "dropdown" || $column->type === "suggest" || $column->type === "datetime" || $column->type === "checkbox" || $column->type === "file" || $column->type === "multipleFile" || $column->type === "link" || $column->type === "hidden") {
                                     array_push($cells, array(
                                         "value" => isset($row[$column->name]) ? $row[$column->name] : "",
                                         "label" => isset($row[$column->name . "_label"]) ? $row[$column->name . "_label"] : (isset($row[$column->name]) ? $row[$column->name] : "")
@@ -651,13 +700,6 @@ class pmDynaform
                         }
                         $json->rows = count($rows);
                         $json->data = $rows;
-                    }
-                    //todo compatibility 'columnWidth'
-                    foreach ($json->columns as $column) {
-                        if (!isset($column->columnWidth) && $column->type !== "hidden") {
-                            $json->layout = "static";
-                            $column->columnWidth = "";
-                        }
                     }
                 }
                 //languages
@@ -708,9 +750,9 @@ class pmDynaform
         }
         $data = array();
         if (isset($json->dbConnection) && isset($json->sql)) {
-            $salida = array();
-            preg_match_all('/\@(?:([\@\%\#\=\!Qq])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*?)*)\))/', $json->sql, $salida, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
-            $variables = isset($salida[2]) ? $salida[2] : array();
+            $result = array();
+            preg_match_all('/\@(?:([\@\%\#\=\!Qq])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*?)*)\))/', $json->sql, $result, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
+            $variables = isset($result[2]) ? $result[2] : array();
             foreach ($variables as $key => $value) {
                 $jsonSearch = $this->jsonsf(G::json_decode($this->record["DYN_CONTENT"]), $value[0], $json->variable === "" ? "id" : "variable");
                 $a = $this->getValuesDependentFields($jsonSearch);
@@ -719,8 +761,15 @@ class pmDynaform
                 }
             }
             if ($json->dbConnection !== "" && $json->dbConnection !== "none" && $json->sql !== "") {
-                $a = G::replaceDataField($json->sql, $data);
-                $dt = $this->getCacheQueryData($json->dbConnection, $a, $json->type);
+                if (isset($this->fields["APP_DATA"])) {
+                    foreach ($this->fields["APP_DATA"] as $keyA => $valueA) {
+                        if (!isset($data[$keyA]) && !is_array($valueA)) {
+                            $data[$keyA] = $valueA;
+                        }
+                    }
+                }
+                $sql = G::replaceDataField($json->sql, $data);
+                $dt = $this->getCacheQueryData($json->dbConnection, $sql, $json->type);
                 $row = isset($dt[0]) ? $dt[0] : [];
                 if (isset($row[0]) && $json->type !== "suggest" && $json->type !== "radio") {
                     $data[$json->variable === "" ? $json->id : $json->variable] = $row[0];
@@ -2115,6 +2164,47 @@ class pmDynaform
     public function getLeaveCaseWarning()
     {
         return defined("LEAVE_CASE_WARNING") ? LEAVE_CASE_WARNING : 0;
+    }
+
+    /**
+     * Unset a json property from the following controls: text, textarea, dropdown,
+     * checkbox, checkgroup, radio, datetime, suggest, hidden, file, grid.
+     * @param stdClass $json
+     * @param string $property
+     * @return void
+     */
+    public function jsonUnsetProperty(&$json, $property)
+    {
+        if (empty($json)) {
+            return;
+        }
+        foreach ($json as $key => &$value) {
+            $sw1 = is_array($value);
+            $sw2 = is_object($value);
+            if ($sw1 || $sw2) {
+                $this->jsonUnsetProperty($value, $property);
+            }
+            if (!$sw1 && !$sw2) {
+                if ($key === "type" && (
+                        $value === "text" ||
+                        $value === "textarea" ||
+                        $value === "dropdown" ||
+                        $value === "checkbox" ||
+                        $value === "checkgroup" ||
+                        $value === "radio" ||
+                        $value === "datetime" ||
+                        $value === "suggest" ||
+                        $value === "hidden" ||
+                        $value === "file" ||
+                        $value === "grid")) {
+                    if ($value === "grid" && $property === "data") {
+                        $json->{$property} = [];
+                    } else {
+                        unset($json->{$property});
+                    }
+                }
+            }
+        }
     }
 
 }

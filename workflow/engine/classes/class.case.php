@@ -483,7 +483,6 @@ class Cases
             try {
                 $oUser->load($oApp->getAppInitUser());
                 $uFields = $oUser->toArray(BasePeer::TYPE_FIELDNAME);
-                //$aFields['TITLE'] = $oApp->getAppTitle();
                 $aFields['TITLE'] = $aFields['APP_TITLE'];
                 $aFields['DESCRIPTION'] = $aFields['APP_DESCRIPTION'];
                 $aFields['CREATOR'] = $oUser->getUsrFirstname() . ' ' . $oUser->getUsrLastname();
@@ -514,6 +513,10 @@ class Cases
                 $aFields['DEL_TASK_DUE_DATE'] = $aAppDel['DEL_TASK_DUE_DATE'];
                 $aFields['DEL_FINISH_DATE'] = $aAppDel['DEL_FINISH_DATE'];
                 $aFields['CURRENT_USER_UID'] = $aAppDel['USR_UID'];
+
+                //Update the global variables
+                $aFields['TASK'] = $aAppDel['TAS_UID'];
+                $aFields['INDEX'] = $aAppDel['DEL_INDEX'];
                 $aFields['PRO_ID'] = $aAppDel['PRO_ID'];
                 try {
                     $oCurUser = new Users();

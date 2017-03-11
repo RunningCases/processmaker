@@ -971,6 +971,40 @@ class Light extends Api
     }
 
     /**
+     * @url GET /project/:prj_uid/dynaformprocessed/:dyn_uid
+     *
+     * @param string $dyn_uid {@min 32}{@max 32}
+     * @param string $prj_uid {@min 32}{@max 32}
+     */
+    public function doGetDynaformProcessed($prj_uid, $dyn_uid, $app_uid = null, $del_index = 0)
+    {
+        try {
+            $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
+            $dynaForm->setFormatFieldNameInUppercase(false);
+            $_SESSION['PROCESS'] = $prj_uid;
+            $response = $dynaForm->getDynaForm($dyn_uid);
+            $result = $this->parserDataDynaForm($response);
+            $result['formContent'] = (isset($result['formContent']) && $result['formContent'] != null) ?
+                \G::json_decode($result['formContent']) : "";
+
+            $caseVariables = array();
+            if (!is_null($app_uid)) {
+                $case = new \Cases();
+                $fields = $case->loadCase($app_uid, $del_index);
+                $caseVariables = array_merge($fields['APP_DATA'],
+                    \ProcessMaker\BusinessModel\Cases::getGlobalVariables($fields['APP_DATA']));
+            }
+
+            \G::LoadClass("pmDynaform");
+            $pmDynaform = new \pmDynaform(array("APP_DATA" => $caseVariables, "CURRENT_DYNAFORM" => $dyn_uid));
+            $pmDynaform->jsonr($result['formContent']);
+            return $result;
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
      * @url GET /project/:prj_uid/dynaform/:dyn_uid
      *
      * @param string $dyn_uid {@min 32}{@max 32}

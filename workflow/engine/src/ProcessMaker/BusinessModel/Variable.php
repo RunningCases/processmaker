@@ -552,44 +552,7 @@ class Variable
     public function executeSql($processUid, $variableName, array $arrayVariable = array())
     {
         try {
-            $arrayRecord = array();
-
-            //Verify data
-            $process = new \ProcessMaker\BusinessModel\Process();
-
-            $process->throwExceptionIfNotExistsProcess($processUid, strtolower("PRJ_UID"));
-
-            //Set data
-            \G::LoadClass('pmDynaform');
-            $pmDynaform = new \pmDynaform();
-            $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $arrayVariable["field_id"], $processUid);
-            $dbConnection = "workflow";
-            if ($field !== null && !empty($field->dbConnection)) {
-                $dbConnection = $field->dbConnection;
-            }
-            $variableSql = $field !== null ? $field->sql : "";
-
-            //Get data
-            $_SESSION["PROCESS"] = $processUid;
-
-            $cnn = \Propel::getConnection($dbConnection);
-            $stmt = $cnn->createStatement();
-
-            $replaceFields = G::replaceDataField($variableSql, $arrayVariable);
-
-            $rs = $stmt->executeQuery($replaceFields, \ResultSet::FETCHMODE_NUM);
-
-            while ($rs->next()) {
-                $row = $rs->getRow();
-
-                $arrayRecord[] = array(
-                    strtolower("VALUE") => $row[0],
-                    strtolower("TEXT") => isset($row[1]) ? $row[1] : $row[0]
-                );
-            }
-
-            //Return
-            return $arrayRecord;
+            return $this->executeSqlControl($processUid, $arrayVariable);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -710,31 +673,7 @@ class Variable
     public function executeSqlSuggest($processUid, $variableName, array $arrayVariable = array())
     {
         try {
-            $appData = array();
-            if (isset($arrayVariable['app_uid'])) {
-                $case = new \ProcessMaker\BusinessModel\Cases();
-                $fields = $case->getApplicationRecordByPk($arrayVariable['app_uid'], ['$applicationUid' => 'app_uid']);
-                $case = new \Cases();
-                $appData = $case->unserializeData($fields['APP_DATA']);
-            }
-            $_SESSION["PROCESS"] = $processUid;
-            \G::LoadClass("pmDynaform");
-            $pmDynaform = new \pmDynaform(array("APP_DATA" => $appData));
-            $field = $pmDynaform->searchField($arrayVariable["dyn_uid"], $arrayVariable["field_id"], $processUid);
-            $field->queryField = true;
-            $field->queryInputData = $arrayVariable;
-            $field->queryFilter = isset($arrayVariable["filter"]) ? $arrayVariable["filter"] : "";
-            $field->queryStart = isset($arrayVariable["start"]) ? $arrayVariable["start"] : 0;
-            $field->queryLimit = isset($arrayVariable["limit"]) ? $arrayVariable["limit"] : 10;
-            $pmDynaform->jsonr($field);
-
-            $result = array();
-            if (isset($field->queryOutputData) && is_array($field->queryOutputData)) {
-                foreach ($field->queryOutputData as $item) {
-                    $result[] = ["value" => $item->value, "text" => $item->label];
-                }
-            }
-            return $result;
+            return $this->executeSqlControl($processUid, $arrayVariable);
         } catch (\Exception $e) {
             throw $e;
         }
@@ -818,4 +757,82 @@ class Variable
         }
         return $vType;
     }
+    
+    /**
+     * Executes the sql string of a control and returns the data in the queryOutputData 
+     * property of the control. The control returned by the pmDynaform :: searchField 
+     * function is the php representation of the json definition, which can be 
+     * supported by the pmDynaform :: jsonr function.
+     * The params parameter must contain: dyn_uid, field_id and optionally 
+     * app_uid, del_index, filter, start, limit, and so many related control variables 
+     * to be sent and their corresponding value. 
+     * The parameters: filter, start and limit, are only necessary for the suggest 
+     * control.
+     * If app_uid is not sent you can not get the appData in an environment where 
+     * only endPoint is used, it is always advisable to send the app_uid and _index.
+     * Note: You do not get triguer execution values where only endPoint is used.
+     * @param type $proUid
+     * @param array $params
+     * @return array
+     * @throws \Exception
+     */
+    public function executeSqlControl($proUid, array $params = array())
+    {
+        try {
+            //Get and clear vector data that does not correspond to variables 
+            //related to a control.
+            $dynUid = $params["dyn_uid"];
+            $fieldId = $params["field_id"];
+            $filter = isset($params["filter"]) ? $params["filter"] : "";
+            $start = isset($params["start"]) ? $params["start"] : 0;
+            $limit = isset($params["limit"]) ? $params["limit"] : 10;
+            $appUid = empty($params["app_uid"]) ? null : $params["app_uid"];
+            $delIndex = (int) isset($params["del_index"]) ? $params["del_index"] : 0;
+            unset($params["dyn_uid"]);
+            unset($params["field_id"]);
+            unset($params["app_uid"]);
+            unset($params["del_index"]);
+            unset($params["filter"]);
+            unset($params["start"]);
+            unset($params["limit"]);
+
+            //Get appData and system variables
+            if ($appUid !== null) {
+                $case = new \Cases();
+                $fields = $case->loadCase($appUid, $delIndex);
+                $appData = $fields["APP_DATA"];
+                $appData = array_merge($appData, \ProcessMaker\BusinessModel\Cases::getGlobalVariables($appData));
+                $params = array_merge($appData, $params);
+            }
+
+            //This value is required to be able to query the database.
+            $_SESSION["PROCESS"] = $proUid;
+            //The pmdynaform class is instantiated
+            \G::LoadClass("pmDynaform");
+            $pmDynaform = new \pmDynaform(array("APP_DATA" => $params));
+
+            //Get control from dynaform.
+            //The parameters: queryFilter, queryStart, queryLimit, are only necessary 
+            //for the suggest control, the rest of the controls are ignored.
+            $field = $pmDynaform->searchField($dynUid, $fieldId, $proUid);
+            $field->queryField = true;
+            $field->queryInputData = $params;
+            $field->queryFilter = $filter;
+            $field->queryStart = $start;
+            $field->queryLimit = $limit;
+
+            //Populate control data
+            $pmDynaform->jsonr($field);
+            $result = array();
+            if (isset($field->queryOutputData) && is_array($field->queryOutputData)) {
+                foreach ($field->queryOutputData as $item) {
+                    $result[] = ["value" => $item->value, "text" => $item->label];
+                }
+            }
+            return $result;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
 }
