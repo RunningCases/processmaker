@@ -51,7 +51,7 @@ DROP TABLE IF EXISTS `APP_SEQUENCE`;
 
 CREATE TABLE `APP_SEQUENCE`
 (
-	`ID` INTEGER  NOT NULL AUTO_INCREMENT,
+	`ID` INTEGER  NOT NULL,
 	PRIMARY KEY (`ID`)
 )ENGINE=InnoDB ;
 #-----------------------------------------------------------------------------

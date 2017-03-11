@@ -98,7 +98,7 @@
     </unique>
   </table>
   <table name="APP_SEQUENCE" idMethod="native">
-    <column name="ID" type="INTEGER" required="true" primaryKey="true" autoIncrement="true" />
+    <column name="ID" type="INTEGER" required="true" primaryKey="true"/>
   </table>
   <table name="APP_DELEGATION" idMethod="native">
     <vendor type="mysql">
