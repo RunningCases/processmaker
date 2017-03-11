@@ -5428,11 +5428,12 @@ class Cases
                 }
                 $aConfiguration = ($aTaskInfo['TAS_RECEIVE_SERVER_UID'] != '') ?
                     $eServer->getEmailServer($aTaskInfo['TAS_RECEIVE_SERVER_UID'], true) : $eServer->getEmailServerDefault();
-                $aConfiguration['SMTPSecure'] = $aConfiguration['SMTPSECURE'];
                 $msgError = '';
                 if (empty($aConfiguration)) {
                     $msgError = G::LoadTranslation('ID_THE_DEFAULT_CONFIGURATION');
                     $aConfiguration['MESS_ENGINE'] = '';
+                } else {
+                    $aConfiguration['SMTPSecure'] = $aConfiguration['SMTPSECURE'];
                 }
                 if ($aTaskInfo['TAS_RECEIVE_EMAIL_FROM_FORMAT']) {
                     $fromName = $aConfiguration['MESS_FROM_NAME'];
