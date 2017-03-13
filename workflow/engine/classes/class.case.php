@@ -5370,6 +5370,20 @@ class Cases
                     $fromName = $aConfiguration['MESS_FROM_NAME'];
                     $fromMail = $aConfiguration['MESS_FROM_MAIL'];
                     $from = $fromName . (($fromMail != '') ? ' <' . $fromMail . '>' : '');
+                    //If the configuration was not configured correctly
+                    if (empty($fromMail)) {
+                        $dataLog = \Bootstrap::getDefaultContextLog();
+                        $dataLog['appUid'] = $arrayData['APPLICATION'];
+                        $dataLog['usrUid'] = $arrayData['USER_LOGGED'];
+                        $dataLog['appNumber'] = $arrayData['APP_NUMBER'];
+                        $dataLog['tasUid'] = $arrayData['TASK'];
+                        $dataLog['proUid'] = $aTaskInfo['PRO_UID'];
+                        $dataLog['appMessageStatus'] = 'pending';
+                        $dataLog['subject'] = $sSubject;
+                        $dataLog['from'] = $from;
+                        $dataLog['action'] = G::LoadTranslation('ID_EMAIL_SERVER_FROM_MAIL_EMPTY');
+                        Bootstrap::registerMonolog('EmailServer', 300, 'Email server', $dataLog, $dataLog['workspace'], 'processmaker.log');
+                    }
                 }
                 $dataLastEmail['msgError'] = $msgError;
                 $dataLastEmail['configuration'] = $aConfiguration;
@@ -5438,6 +5452,20 @@ class Cases
                     $fromName = $aConfiguration['MESS_FROM_NAME'];
                     $fromMail = $aConfiguration['MESS_FROM_MAIL'];
                     $from = $fromName . (($fromMail != '') ? ' <' . $fromMail . '>' : '');
+                    //If the configuration was not configured correctly
+                    if (empty($fromMail)) {
+                        $dataLog = \Bootstrap::getDefaultContextLog();
+                        $dataLog['appUid'] = $arrayData['APPLICATION'];
+                        $dataLog['usrUid'] = $arrayData['USER_LOGGED'];
+                        $dataLog['appNumber'] = $arrayData['APP_NUMBER'];
+                        $dataLog['tasUid'] = $arrayData['TASK'];
+                        $dataLog['proUid'] = $aTaskInfo['PRO_UID'];
+                        $dataLog['appMessageStatus'] = 'pending';
+                        $dataLog['subject'] = $sSubject;
+                        $dataLog['from'] = $from;
+                        $dataLog['action'] = G::LoadTranslation('ID_EMAIL_SERVER_FROM_MAIL_EMPTY');
+                        Bootstrap::registerMonolog('EmailServer', 300, 'Email server', $dataLog, $dataLog['workspace'], 'processmaker.log');
+                    }
                 }
                 $dataLastEmail['msgError'] = $msgError;
                 $dataLastEmail['configuration'] = $aConfiguration;
