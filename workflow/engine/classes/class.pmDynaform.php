@@ -320,7 +320,7 @@ class pmDynaform
                         $dt = $this->getCacheQueryData($json->dbConnection, $sql, $json->type);
                         foreach ($dt as $row) {
                             $option = new stdClass();
-                            $option->value = $row[0];
+                            $option->value = isset($row[0]) ? $row[0] : "";
                             $option->label = isset($row[1]) ? $row[1] : "";
                             $json->optionsSql[] = $option;
                         }
@@ -334,7 +334,7 @@ class pmDynaform
                         if (isset($this->fields['APP_DATA'][$dataVariable]) && is_array($this->fields['APP_DATA'][$dataVariable])) {
                             foreach ($this->fields['APP_DATA'][$dataVariable] as $row) {
                                 $option = new stdClass();
-                                $option->value = $row[0];
+                                $option->value = isset($row[0]) ? $row[0] : "";
                                 $option->label = isset($row[1]) ? $row[1] : "";
                                 $json->optionsSql[] = $option;
                             }
@@ -343,7 +343,7 @@ class pmDynaform
                             $json->queryOutputData = array();
                             foreach ($json->optionsSql as $option) {
                                 if ($json->queryFilter !== '') {
-                                    if (preg_match('/^.*' . $json->queryFilter . '.*$/i', $option->label)) {
+                                    if (stripos($option->label, $json->queryFilter) !== false) {
                                         $json->queryOutputData[] = $option;
                                     }
                                 } else {
