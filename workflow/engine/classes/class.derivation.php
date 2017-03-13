@@ -1249,7 +1249,7 @@ class Derivation
                         switch ($routeType) {
                             case 'SEC-JOIN':
                                 //If the all Siblings are done execute the events
-                                if(sizeof($arraySiblings) === 0){
+                                if (sizeof($arraySiblings) === 0 && !$flagTaskAssignTypeIsMultipleInstance) {
                                     //Throw Events
                                     $this->executeEvent($nextDel["TAS_UID"], $appFields, $flagFirstIteration, false);
                                 }
