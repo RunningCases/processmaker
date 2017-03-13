@@ -80,7 +80,7 @@ while ($rsSql->next()) {
             listeners: {
                 activate: function ()
                 {
-                      generateGridClassic(\"$processUid\", \"$taskUid\", \"$dynaformUid\");
+                      generateGrid(\"$processUid\", \"$taskUid\", \"$dynaformUid\");
                 }
             }
         }";
