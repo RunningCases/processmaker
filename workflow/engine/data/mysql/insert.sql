@@ -3380,6 +3380,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_PREFIX','en','Prefix','2014-01-15') ,
 ( 'LABEL','ID_AUTO_PREFIX','en','Auto Prefix','2014-01-15') ,
 ( 'LABEL','ID_NOTIFICATION_ERROR','en','A problem occurred while trying to send the Task Notification.','2014-10-21') ,
+( 'LABEL','ID_EMAIL_SERVER_FROM_MAIL_EMPTY','en','The email has not been sent because configuration email in the Email Server Settings (admin/settings/email) is empty. Please fill this information.','2016-03-13') ,
 ( 'LABEL','ID_INVALID_APPLICATION_ID_MSG','en','An invalid application ID was stored for the session. <br/> This could have happened if you opened another case in a new tab or window. <br/> Please {0} the case.','2014-10-21') ,
 ( 'LABEL','ID_REOPEN','en','re-open','2014-01-15') ,
 ( 'LABEL','ID_HOST','en','Host','2014-01-15') ,

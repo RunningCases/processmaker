@@ -1526,6 +1526,12 @@ msgid "Notification for task assignment"
 msgstr "Notification for task assignment"
 
 # TRANSLATION
+# LABEL/ID_EMAIL_SERVER_FROM_MAIL_EMPTY
+#: LABEL/ID_EMAIL_SERVER_FROM_MAIL_EMPTY
+msgid "The email has not been sent because configuration email in the Email Server Settings (admin/settings/email) is empty. Please fill this information."
+msgstr "The email has not been sent because configuration email in the Email Server Settings (admin/settings/email) is empty. Please fill this information."
+
+# TRANSLATION
 # LABEL/ID_PERMITIONS
 #: LABEL/ID_PERMITIONS
 msgid "[LABEL/ID_PERMITIONS] Permissions"
