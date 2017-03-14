@@ -269,7 +269,7 @@ class Derivation
                 $arrayNextTaskData = $value;
                 $this->node[$value['TAS_UID']]['out'][$value['ROU_NEXT_TASK']] = $value['ROU_TYPE'];
                 if ($arrayNextTaskData["NEXT_TASK"]["TAS_UID"] != "-1" &&
-                    preg_match("/^(?:" . $this->regexpTaskTypeToInclude . ")$/", $arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"]) && $arrayNextTaskData['ROU_TYPE'] != "SEC-JOIN"
+                    preg_match("/^(?:" . $this->regexpTaskTypeToInclude . ")$/", $arrayNextTaskData["NEXT_TASK"]["TAS_TYPE"])
                 ) {
                     $arrayAux = $this->prepareInformation($arrayData, $arrayNextTaskData["NEXT_TASK"]["TAS_UID"]);
                     $this->node[$value['ROU_NEXT_TASK']]['in'][$value['TAS_UID']] = $value['ROU_TYPE'];
@@ -1006,7 +1006,8 @@ class Derivation
 
                     if (isset($nextDel["TAS_UID_DUMMY"]) && !$flagTaskAssignTypeIsMultipleInstance) {
                         $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
-                        if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())) {
+                        if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())
+                            && array_key_exists('ROU_PREVIOUS_TYPE', $nextDel) && $nextDel['ROU_PREVIOUS_TYPE'] !== "SEC-JOIN") {
                             $this->executeEvent($nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
                         }
                     }
