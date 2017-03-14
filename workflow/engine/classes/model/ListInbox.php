@@ -493,6 +493,14 @@ class ListInbox extends BaseListInbox
             $aConditions[] = array(ProcessPeer::PRO_CATEGORY, "'" . $category . "'");
             $criteria->addJoinMC($aConditions, Criteria::INNER_JOIN);
         }
+        //Those filters: $newestthan, $oldestthan is used from mobile GET /light/todo
+        if ($newestthan != '') {
+            $criteria->add( $criteria->getNewCriterion( ListInboxPeer::DEL_DELEGATE_DATE, $newestthan, Criteria::GREATER_THAN ));
+        }
+
+        if ($oldestthan != '') {
+            $criteria->add( $criteria->getNewCriterion( ListInboxPeer::DEL_DELEGATE_DATE, $oldestthan, Criteria::LESS_THAN ));
+        }
     }
 
     /**
