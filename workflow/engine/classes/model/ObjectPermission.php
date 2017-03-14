@@ -149,5 +149,164 @@ class ObjectPermission extends BaseObjectPermission
         }
         return $res;
     }
+
+    /**
+     * Verify if the user has a objectPermission
+     *
+     * @param string $usrUid the uid of the user
+     * @param string $proUid the uid of the process
+     * @param string $tasUid the uid of the task
+     * @param string $action for the object permissions VIEW, BLOCK, RESEND
+     *
+     * @return array
+     */
+    public function verifyObjectPermissionPerUser ($usrUid, $proUid, $tasUid = '', $action = '')
+    {
+        $userPermissions = array();
+        $oCriteria = new Criteria('workflow');
+        $oCriteria->add(
+                $oCriteria->getNewCriterion(ObjectPermissionPeer::USR_UID, $usrUid)->addOr(
+                        $oCriteria->getNewCriterion(ObjectPermissionPeer::USR_UID, '')->addOr(
+                                $oCriteria->getNewCriterion(ObjectPermissionPeer::USR_UID, '0')
+                        )
+                )
+        );
+        $oCriteria->add(ObjectPermissionPeer::PRO_UID, $proUid);
+        $oCriteria->add(ObjectPermissionPeer::OP_ACTION, $action);
+        $oCriteria->add(
+                $oCriteria->getNewCriterion(ObjectPermissionPeer::TAS_UID, $tasUid)->addOr(
+                        $oCriteria->getNewCriterion(ObjectPermissionPeer::TAS_UID, '')->addOr(
+                                $oCriteria->getNewCriterion(ObjectPermissionPeer::TAS_UID, '0')
+                        )
+                )
+        );
+
+        $rs = ObjectPermissionPeer::doSelectRS($oCriteria);
+        $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+        while ($rs->next()) {
+            $row = $rs->getRow();
+
+            if ($row["OP_CASE_STATUS"] == "ALL" || $row["OP_CASE_STATUS"] == "" || $row["OP_CASE_STATUS"] == "0" ||
+                $row["OP_CASE_STATUS"] == $aCase["APP_STATUS"]
+            ) {
+                array_push($userPermissions, $row);
+            }
+        }
+        return $userPermissions;
+    }
+
+    /**
+     * Verify if the user has a objectPermission
+     *
+     * @param string $usrUid the uid of the user
+     * @param string $proUid the uid of the process
+     * @param string $tasUid the uid of the task
+     * @param string $action for the object permissions VIEW, BLOCK, RESEND
+     *
+     * @return array
+     */
+    public function verifyObjectPermissionPerGroup ($usrUid, $proUid, $tasUid = '', $action = '')
+    {
+        G::loadClass('groups');
+        $gr = new Groups();
+        $records = $gr->getActiveGroupsForAnUser($usrUid);
+        $groupPermissions = array();
+
+        foreach ($records as $group) {
+            $oCriteria = new Criteria('workflow');
+            $oCriteria->add(ObjectPermissionPeer::USR_UID, $group);
+            $oCriteria->add(ObjectPermissionPeer::PRO_UID, $proUid);
+            $oCriteria->add(ObjectPermissionPeer::OP_ACTION, $action);
+            $oCriteria->add(
+                    $oCriteria->getNewCriterion(ObjectPermissionPeer::TAS_UID, $tasUid)->addOr(
+                            $oCriteria->getNewCriterion(ObjectPermissionPeer::TAS_UID, '')->addOr(
+                                    $oCriteria->getNewCriterion(ObjectPermissionPeer::TAS_UID, '0')
+                            )
+                    )
+            );
+
+            $rs = ObjectPermissionPeer::doSelectRS($oCriteria);
+            $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            while ($rs->next()) {
+                $row = $rs->getRow();
+
+                if ($row["OP_CASE_STATUS"] == "ALL" || $row["OP_CASE_STATUS"] == "" || $row["OP_CASE_STATUS"] == "0" ||
+                    $row["OP_CASE_STATUS"] == $aCase["APP_STATUS"]
+                ) {
+                    array_push($groupPermissions, $row);
+                }
+            }
+        }
+        return $groupPermissions;
+    }
+
+    /**
+     * Verify if the user has the Message History access
+     *
+     * @param string $appUid the uid of the case
+     * @param string $proUid the uid of the process
+     * @param string $usrUid the uid of the user
+     * @param string $opTaskSource the uid of a task selected in origin task
+     * @param int $opUserRelation if the permission is by user or group
+     * @param string $statusCase the status of the case COMPLETED, TO_DO
+     * @param int $opParticipated the value selected in participation required
+     *
+     * @return array with the indexes with the messageHistory permission
+     */
+    public function objectPermissionMessage ($appUid, $proUid, $usrUid, $obAction, $opTaskSource, $opUserRelation, $statusCase = '', $opParticipated = 0)
+    {
+        $result['MSGS_HISTORY'] = array('PERMISSION' => $obAction);
+        $arrayDelIndex = array();
+
+        $oCriteria = new Criteria('workflow');
+        if ($opUserRelation == 1) {
+            //The relation is one is related to users
+            $oCriteria->add(AppDelegationPeer::APP_UID, $appUid);
+            $oCriteria->add(AppDelegationPeer::PRO_UID, $proUid);
+
+            //If the permission Participation required = YES
+            if ((int)$opParticipated === 1) {
+                $oCriteria->add(AppDelegationPeer::USR_UID, $usrUid);
+            }
+
+            //If the case is COMPLETED we can not considered the Origin Task
+            if ($statusCase != 'COMPLETED' && !empty($opTaskSource) && (int)$opTaskSource != 0) {
+                $oCriteria->add(AppDelegationPeer::TAS_UID, $opTaskSource);
+            }
+
+            $oDataset = AppDelegationPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $arrayDelIndex[] = $aRow["DEL_INDEX"];
+                $oDataset->next();
+            }
+        } else {
+            //The relation is two is related to groups
+            $oCriteria->add(AppDelegationPeer::APP_UID, $appUid);
+            $oCriteria->add(AppDelegationPeer::PRO_UID, $proUid);
+
+            //If the permission Participation required = YES
+            if ((int)$opParticipated === 1) {
+                $oCriteria->addJoin(GroupUserPeer::USR_UID, AppDelegationPeer::USR_UID, Criteria::LEFT_JOIN);
+                $oCriteria->add(GroupUserPeer::GRP_UID, $usrUid);
+            }
+
+            //If the case is COMPLETED we can not considered the Origin Task
+            if ($statusCase != 'COMPLETED' && !empty($opTaskSource) && (int)$opTaskSource != 0) {
+                $oCriteria->add(AppDelegationPeer::TAS_UID, $opTaskSource);
+            }
+
+            $oDataset = AppDelegationPeer::doSelectRS($oCriteria);
+            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            while ($aRow = $oDataset->getRow()) {
+                $arrayDelIndex[] = $aRow["DEL_INDEX"];
+                $oDataset->next();
+            }
+        }
+        return array_merge(array("DEL_INDEX" => $arrayDelIndex), $result["MSGS_HISTORY"]);
+    }
 }
 
