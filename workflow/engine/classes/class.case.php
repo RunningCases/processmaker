@@ -5828,7 +5828,6 @@ class Cases
             $opParticipated = (int)$row['OP_PARTICIPATE'];
             $opType = $row['OP_OBJ_TYPE'];
             $opObjUid = $row['OP_OBJ_UID'];
-            $obAction = $row['OP_ACTION'];
             $obCaseStatus = $row['OP_CASE_STATUS'];
             //We should verify if the user participated
             //The values of OP_CASE_STATUS is [ALL, COMPLETED, DRAFT, TO_DO, PAUSED, COMPLETED]
@@ -5920,7 +5919,7 @@ class Cases
                         $result['MSGS_HISTORY'] = $oObjectPermission->objectPermissionMessage(
                             $appUid,
                             $proUid,
-                            $usrUid,
+                            $userUid,
                             $action,
                             $opTaskSource,
                             $opUserRelation,
@@ -6035,7 +6034,7 @@ class Cases
                         $result['MSGS_HISTORY'] = $oObjectPermission->objectPermissionMessage(
                             $appUid,
                             $proUid,
-                            $usrUid,
+                            $userUid,
                             $action,
                             $opTaskSource,
                             $opUserRelation
