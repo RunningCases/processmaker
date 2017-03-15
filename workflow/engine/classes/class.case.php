@@ -819,7 +819,7 @@ class Cases
     {
         $aReturn = array();
         foreach ($aArray1 as $mKey => $mValue) {
-            if (array_key_exists($mKey, $aArray2)) {
+            if (is_array($aArray2) && array_key_exists($mKey, $aArray2)) {
                 if (is_array($mValue)) {
                     $aRecursiveDiff = $this->arrayRecursiveDiff($mValue, $aArray2[$mKey]);
                     if (count($aRecursiveDiff)) {
