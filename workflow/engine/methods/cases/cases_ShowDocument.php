@@ -48,21 +48,27 @@ if (isset($_REQUEST['actionAjax']) && $_REQUEST['actionAjax'] == "verifySession"
 require_once ("classes/model/AppDocumentPeer.php");
 $oAppDocument = new AppDocument();
 
+if (empty($_GET['a'])) {
+    G::header('Location: /errors/error403.php');
+    die();
+}
+
+if (empty($_GET['v'])) {
+    //Load last version of the document
+    $docVersion = $oAppDocument->getLastAppDocVersion($_GET['a']);
+} else {
+    $docVersion = $_GET['v'];
+}
+
 //Check if the user can be download the input Document
 //Send the parameter v = Version
 //Send the parameter a = Case UID
 if (defined('DISABLE_DOWNLOAD_DOCUMENTS_SESSION_VALIDATION') && DISABLE_DOWNLOAD_DOCUMENTS_SESSION_VALIDATION == 0) {
-    if (!$oAppDocument->canDownloadInput($_SESSION['USER_LOGGED'], $_GET['a'], $_GET['v'])) {
+
+    if (!$oAppDocument->canDownloadInput($_SESSION['USER_LOGGED'], $_GET['a'], $docVersion)) {
         G::header('Location: /errors/error403.php');
         die();
     }
-}
-
-if (! isset( $_GET['v'] )) {
-    //Load last version of the document
-    $docVersion = $oAppDocument->getLastAppDocVersion( $_GET['a'] );
-} else {
-    $docVersion = $_GET['v'];
 }
 
 $oAppDocument->Fields = $oAppDocument->load( $_GET['a'], $docVersion );
