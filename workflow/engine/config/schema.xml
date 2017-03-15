@@ -612,6 +612,9 @@
       <rule name="maxLength" value="32" message="User UID can be no larger than ${value} in size"/>
       <rule name="required" message="User UID is required."/>
     </validator>
+    <index name="indexForUsrUid">
+      <index-column name="USR_UID"/>
+    </index>
   </table>
   <table name="HOLIDAY" idMethod="native">
     <vendor type="mysql">
