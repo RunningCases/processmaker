@@ -5877,79 +5877,44 @@ class Cases
                 }
             }
 
-            //If need need to check more details about the permissions
+            //If user can be see the objects process
+            //We will be prepare the data relate to the Type can be ANY, DYNAFORM, INPUT, OUTPUT, ...
             if (!$sw_participate) {
                 switch ($opType) {
                     case 'ANY':
-                        //for dynaforms
-                        $oCriteria = new Criteria('workflow');
-                        $oCriteria->add(ApplicationPeer::APP_UID, $appUid);
-                        $oCriteria->addJoin(ApplicationPeer::PRO_UID, StepPeer::PRO_UID);
-                        $oCriteria->addJoin(StepPeer::STEP_UID_OBJ, DynaformPeer::DYN_UID);
-                        if ($aCase['APP_STATUS'] != 'COMPLETED') {
-                            if ($opTaskSource != '' && $opTaskSource != "0" && $opTaskSource != 0) {
-                                $oCriteria->add(StepPeer::TAS_UID, $opTaskSource);
-                            }
-                        }
-                        $oCriteria->add(StepPeer::STEP_TYPE_OBJ, 'DYNAFORM');
-                        $oCriteria->addAscendingOrderByColumn(StepPeer::STEP_POSITION);
-                        $oCriteria->setDistinct();
-
-                        $oDataset = DynaformPeer::doSelectRS($oCriteria);
-                        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                        $oDataset->next();
-
-                        while ($aRow = $oDataset->getRow()) {
-                            if (!in_array($aRow['DYN_UID'], $result['DYNAFORM'])) {
-                                array_push($result['DYNAFORM'], $aRow['DYN_UID']);
-                            }
-                            $oDataset->next();
-                        }
-
-                        //InputDocuments and OutputDocuments
-                        $oCriteria = new Criteria('workflow');
-                        $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
-                        $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_TYPE);
-
-                        $arrayCondition = array();
-                        $arrayCondition[] = array(AppDelegationPeer::APP_UID, AppDocumentPeer::APP_UID, Criteria::EQUAL);
-                        $arrayCondition[] = array(AppDelegationPeer::DEL_INDEX, AppDocumentPeer::DEL_INDEX, Criteria::EQUAL);
-                        $oCriteria->addJoinMC($arrayCondition, Criteria::LEFT_JOIN);
-
-                        $oCriteria->add(AppDelegationPeer::APP_UID, $appUid);
-                        $oCriteria->add(AppDelegationPeer::PRO_UID, $proUid);
-                        if ($aCase['APP_STATUS'] != 'COMPLETED') {
-                            if ($opTaskSource != '' && $opTaskSource != "0" && $opTaskSource != 0) {
-                                $oCriteria->add(AppDelegationPeer::TAS_UID, $opTaskSource);
-                            }
-                        }
-                        $oCriteria->add(
-                                $oCriteria->getNewCriterion(AppDocumentPeer::APP_DOC_TYPE, 'INPUT')->
-                                        addOr($oCriteria->getNewCriterion(AppDocumentPeer::APP_DOC_TYPE, 'OUTPUT'))->
-                                        addOr($oCriteria->
-                                                getNewCriterion(AppDocumentPeer::APP_DOC_TYPE, 'ATTACHED'))
+                        //For dynaforms
+                        $result['DYNAFORM'] = $oObjectPermission->objectPermissionByDynaform(
+                            $appUid,
+                            $opTaskSource,
+                            $opObjUid,
+                            $aCase['APP_STATUS'],
+                            $opParticipated
                         );
-
-                        $oDataset = AppDelegationPeer::doSelectRS($oCriteria);
-                        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-                        while ($oDataset->next()) {
-                            $aRow = $oDataset->getRow();
-
-                            if ($aRow['APP_DOC_TYPE'] == "ATTACHED") {
-                                $aRow['APP_DOC_TYPE'] = "INPUT";
-                            }
-                            if (!in_array($aRow['APP_DOC_UID'], $result[$aRow['APP_DOC_TYPE']])) {
-                                array_push($result[$aRow['APP_DOC_TYPE']], $aRow['APP_DOC_UID']);
-                            }
-                        }
+                        //For Ouputs
+                        $result['OUTPUT'] = $oObjectPermission->objectPermissionByOutputInput(
+                            $appUid,
+                            $proUid,
+                            $opTaskSource,
+                            'OUTPUT',
+                            $aCase['APP_STATUS'],
+                            $opParticipated
+                        );
+                        //For Inputs
+                        $result['INPUT'] = $oObjectPermission->objectPermissionByOutputInput(
+                            $appUid,
+                            $proUid,
+                            $opTaskSource,
+                            'INPUT',
+                            $aCase['APP_STATUS'],
+                            $opParticipated
+                        );
 
                         $result['CASES_NOTES'] = 1;
                         /*----------------------------------********---------------------------------*/
                         $result['SUMMARY_FORM'] = 1;
                         /*----------------------------------********---------------------------------*/
 
-                        // Message History
+                        //Message History
                         $result['MSGS_HISTORY'] = $oObjectPermission->objectPermissionMessage(
                             $appUid,
                             $proUid,
@@ -5962,99 +5927,30 @@ class Cases
                         );
                         break;
                     case 'DYNAFORM':
-                        $oCriteria = new Criteria('workflow');
-                        $oCriteria->add(ApplicationPeer::APP_UID, $appUid);
-                        if ($opTaskSource != '' && $opTaskSource != "0") {
-                            $oCriteria->add(StepPeer::TAS_UID, $opTaskSource);
-                        }
-                        if ($opObjUid != '' && $opObjUid != '0') {
-                            $oCriteria->add(DynaformPeer::DYN_UID, $opObjUid);
-                        }
-                        $oCriteria->addJoin(ApplicationPeer::PRO_UID, StepPeer::PRO_UID);
-                        $oCriteria->addJoin(StepPeer::STEP_UID_OBJ, DynaformPeer::DYN_UID);
-                        $oCriteria->add(StepPeer::STEP_TYPE_OBJ, 'DYNAFORM');
-                        $oCriteria->addAscendingOrderByColumn(StepPeer::STEP_POSITION);
-                        $oCriteria->setDistinct();
-
-                        $oDataset = DynaformPeer::doSelectRS($oCriteria);
-                        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                        $oDataset->next();
-
-                        while ($aRow = $oDataset->getRow()) {
-                            if (!in_array($aRow['DYN_UID'], $result['DYNAFORM'])) {
-                                array_push($result['DYNAFORM'], $aRow['DYN_UID']);
-                            }
-                            $oDataset->next();
-                        }
+                        $result['DYNAFORM'] = $oObjectPermission->objectPermissionByDynaform(
+                            $appUid,
+                            $opTaskSource,
+                            $opObjUid,
+                            $aCase['APP_STATUS']
+                        );
                         break;
                     case 'INPUT':
+                        $result['INPUT'] = $oObjectPermission->objectPermissionByOutputInput(
+                            $appUid,
+                            $proUid,
+                            $opTaskSource,
+                            'INPUT',
+                            $aCase['APP_STATUS']
+                        );
+                        break;
                     case 'OUTPUT':
-                        if ($row['OP_OBJ_TYPE'] == 'INPUT') {
-                            $obj_type = 'INPUT';
-                        } else {
-                            $obj_type = 'OUTPUT';
-                        }
-                        $oCriteria = new Criteria('workflow');
-                        $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
-                        $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_TYPE);
-                        $oCriteria->add(AppDelegationPeer::APP_UID, $appUid);
-                        $oCriteria->add(AppDelegationPeer::PRO_UID, $proUid);
-                        if ($aCase['APP_STATUS'] != 'COMPLETED') {
-                            if ($opTaskSource != '' && $opTaskSource != "0" && $opTaskSource != 0) {
-                                $oCriteria->add(AppDelegationPeer::TAS_UID, $opTaskSource);
-                            }
-                        }
-                        if ($opObjUid != '' && $opObjUid != '0') {
-                            $oCriteria->add(AppDocumentPeer::DOC_UID, $opObjUid);
-                        }
-                        if ($obj_type == 'INPUT') {
-                            $oCriteria->add(
-                                    $oCriteria->getNewCriterion(AppDocumentPeer::APP_DOC_TYPE, $obj_type)->
-                                            addOr($oCriteria->getNewCriterion(AppDocumentPeer::APP_DOC_TYPE, 'ATTACHED'))
-                            );
-                        } else {
-                            $oCriteria->add(AppDocumentPeer::APP_DOC_TYPE, $obj_type);
-                        }
-
-                        $aConditions = Array();
-                        $aConditions[] = array(AppDelegationPeer::APP_UID, AppDocumentPeer::APP_UID);
-                        $aConditions[] = array(AppDelegationPeer::DEL_INDEX, AppDocumentPeer::DEL_INDEX);
-                        $oCriteria->addJoinMC($aConditions, Criteria::LEFT_JOIN);
-
-                        $oDataset = AppDocumentPeer::doSelectRS($oCriteria);
-                        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                        $oDataset->next();
-                        while ($aRow = $oDataset->getRow()) {
-                            if (!in_array($aRow['APP_DOC_UID'], $result[$obj_type])) {
-                                array_push($result[$obj_type], $aRow['APP_DOC_UID']);
-                            }
-                            $oDataset->next();
-                        }
-                        if ($obj_type == 'INPUT') {
-                            // For supervisor documents
-                            $oCriteria = new Criteria('workflow');
-                            $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
-                            $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_TYPE);
-                            $oCriteria->add(ApplicationPeer::APP_UID, $appUid);
-                            $oCriteria->add(ApplicationPeer::PRO_UID, $proUid);
-                            if ($opObjUid != '' && $opObjUid != '0') {
-                                $oCriteria->add(AppDocumentPeer::DOC_UID, $opObjUid);
-                            }
-                            $oCriteria->add(AppDocumentPeer::APP_DOC_TYPE, 'INPUT');
-                            $oCriteria->add(AppDocumentPeer::DEL_INDEX, 100000);
-
-                            $oCriteria->addJoin(ApplicationPeer::APP_UID, AppDocumentPeer::APP_UID, Criteria::LEFT_JOIN);
-
-                            $oDataset = AppDocumentPeer::doSelectRS($oCriteria);
-                            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                            $oDataset->next();
-                            while ($aRow = $oDataset->getRow()) {
-                                if (!in_array($aRow['APP_DOC_UID'], $result['INPUT'])) {
-                                    array_push($result['INPUT'], $aRow['APP_DOC_UID']);
-                                }
-                                $oDataset->next();
-                            }
-                        }
+                        $result['OUTPUT'] = $oObjectPermission->objectPermissionByOutputInput(
+                            $appUid,
+                            $proUid,
+                            $opTaskSource,
+                            'OUTPUT',
+                            $aCase['APP_STATUS']
+                        );
                         break;
                     case 'CASES_NOTES':
                         $result['CASES_NOTES'] = 1;
@@ -6076,7 +5972,6 @@ class Cases
                             $opParticipated
                         );
                         break;
-
                 }
             }
         }
