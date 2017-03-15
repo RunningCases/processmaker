@@ -1113,15 +1113,6 @@ try {
                 $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TITLE"] = G::LoadTranslation("ID_ROUTE_TO_TASK_INTERMEDIATE_CATCH_MESSAGE_EVENT");
             }
 
-            if (!empty($aFields["TASK"][$sKey]['NEXT_TASK']["TAS_TYPE"]) &&
-                ($aFields["TASK"][$sKey]['NEXT_TASK']["TAS_TYPE"] === "END-EMAIL-EVENT" || $aFields["TASK"][$sKey]['NEXT_TASK']["TAS_TYPE"] === "END-MESSAGE-EVENT")
-            ) {
-                $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TITLE"] = G::LoadTranslation("ID_END_OF_PROCESS");
-                //Value of $aFields["TASK"][$sKey]["NEXT_TASK"]["USR_UID"] is not used in routing template when is an end event.
-                $aFields["TASK"][$sKey]["NEXT_TASK"]["USR_UID"] = $_SESSION['USR_FULLNAME'];
-                $aFields["TASK"][$sKey]["NEXT_TASK"]["USR_USERNAME"] = $_SESSION['USR_FULLNAME'];
-            }
-
             $G_PUBLISH->AddContent( 'smarty', $tplFile, '', '', $aFields );
             /*
             if (isset( $aFields['TASK'][1]['NEXT_TASK']['USER_ASSIGNED'])){
