@@ -282,7 +282,8 @@ CREATE TABLE `GROUP_USER`
 (
 	`GRP_UID` VARCHAR(32) default '0' NOT NULL,
 	`USR_UID` VARCHAR(32) default '0' NOT NULL,
-	PRIMARY KEY (`GRP_UID`,`USR_UID`)
+	PRIMARY KEY (`GRP_UID`,`USR_UID`),
+	KEY `indexForUsrUid`(`USR_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------
 #-- HOLIDAY
