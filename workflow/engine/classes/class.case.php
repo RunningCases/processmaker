@@ -5791,7 +5791,7 @@ class Cases
      * @param string $delIndex
      * @return Array within all user permitions all objects' types
      */
-    public function getAllObjectsFrom($proUid, $appUid, $tasUid = "", $usrUid = "", $action = "", $delIndex = 0)
+    public function getAllObjectsFrom($proUid, $appUid, $tasUid = '', $usrUid = '', $action = '', $delIndex = 0)
     {
         $aCase = $this->loadCase($appUid);
 
@@ -5829,21 +5829,26 @@ class Cases
             $opType = $row['OP_OBJ_TYPE'];
             $opObjUid = $row['OP_OBJ_UID'];
             $obCaseStatus = $row['OP_CASE_STATUS'];
-            //We should verify if the user participated
-            //The values of OP_CASE_STATUS is [ALL, COMPLETED, DRAFT, TO_DO, PAUSED, COMPLETED]
-            $sw_participate = false; // must be false for default
-            if ($obCaseStatus != 'COMPLETED') {
-                if ($opParticipated == 1) {
-                    $oCriteriax = new Criteria('workflow');
-                    $oCriteriax->add(AppDelegationPeer::USR_UID, $usrUid);
-                    $oCriteriax->add(AppDelegationPeer::APP_UID, $appUid);
 
-                    if (AppDelegationPeer::doCount($oCriteriax) == 0) {
-                        //If the user has not participated in the case
-                        $sw_participate = true;
-                    }
+            //The values of obCaseStatus is [ALL, COMPLETED, DRAFT, TO_DO, PAUSED]
+            //If the case is todo and we need the participate
+            //but we did not participated did not validate nothing and return array empty
+            $sw_participate = false; // must be false for default
+            if ($obCaseStatus != 'COMPLETED' && $opParticipated == 1) {
+                $oCriteriax = new Criteria('workflow');
+                $oCriteriax->add(AppDelegationPeer::USR_UID, $usrUid);
+                $oCriteriax->add(AppDelegationPeer::APP_UID, $appUid);
+                $datasetx = AppDelegationPeer::doSelectRS($oCriteriax);
+                $datasetx->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                $datasetx->next();
+                $aRow = $datasetx->getRow();
+                if (!is_array($aRow)) {
+                    //The user was not participated in the case and the participation is required
+                    $sw_participate = true;
                 }
             }
+
+            //If need need to check more details about the permissions
             if (!$sw_participate) {
                 switch ($opType) {
                     case 'ANY':
@@ -6037,7 +6042,9 @@ class Cases
                             $userUid,
                             $action,
                             $opTaskSource,
-                            $opUserRelation
+                            $opUserRelation,
+                            $aCase['APP_STATUS'],
+                            $opParticipated
                         );
                         break;
 
