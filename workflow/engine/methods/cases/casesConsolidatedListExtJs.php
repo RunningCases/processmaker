@@ -59,32 +59,17 @@ while ($rsSql->next()) {
 
     $grdTitle = htmlentities($proTitle . " / " . $tabTitle, ENT_QUOTES, "UTF-8");
     $tabTitle = htmlentities(substr($proTitle, 0, 25) . ((strlen($proTitle) > 25) ? "..." : null) . " / " . $tabTitle, ENT_QUOTES, "UTF-8");
-
-    $oProcess = new Process();
-    $isBpmn = $oProcess->isBpmnProcess($processUid);
-    if ($isBpmn) {
-        $arrayTabItem[] = "
-        {
-            title: \"<span onmouseover=\\\"toolTipTab('$grdTitle', 1);\\\" onmouseout=\\\"toolTipTab('', 0);\\\">$tabTitle</span>\",
-            listeners: {
-                activate: function ()
-                {
-                      generateGrid(\"$processUid\", \"$taskUid\", \"$dynaformUid\");
-                }
+    
+    $arrayTabItem[] = "
+    {
+        title: \"<span onmouseover=\\\"toolTipTab('$grdTitle', 1);\\\" onmouseout=\\\"toolTipTab('', 0);\\\">$tabTitle</span>\",
+        listeners: {
+            activate: function ()
+            {
+                  generateGrid(\"$processUid\", \"$taskUid\", \"$dynaformUid\");
             }
-        }";
-    } else {
-        $arrayTabItem[] = "
-        {
-            title: \"<span onmouseover=\\\"toolTipTab('$grdTitle', 1);\\\" onmouseout=\\\"toolTipTab('', 0);\\\">$tabTitle</span>\",
-            listeners: {
-                activate: function ()
-                {
-                      generateGridClassic(\"$processUid\", \"$taskUid\", \"$dynaformUid\");
-                }
-            }
-        }";
-    }
+        }
+    }";
 }
 
 if (count($arrayTabItem) > 0) {

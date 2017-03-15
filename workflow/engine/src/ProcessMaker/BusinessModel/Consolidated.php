@@ -570,8 +570,16 @@ class Consolidated
             $readOnly = (isset($field->readOnly))? $field->readOnly : null;
             $required = (isset($field->required))? $field->required : null;
             $validate = (isset($field->validate))? strtolower($field->validate) : null;
+            
+            if (isset($field->options) && !isset($field->storeData)) {
+                $options = [];
+                foreach ($field->options as $keyField => $valueField) {
+                    $options[] = [$keyField, $valueField];
+                }
+                $field->storeData = G::json_encode($options);
+            }
 
-            $fieldReadOnly = ($readOnly . "" == "1" || $field->readOnly == 'view')? "readOnly: true," : null;
+            $fieldReadOnly = ($readOnly . "" == "1" || $readOnly == 'view')? "readOnly: true," : null;
             $fieldRequired = ($required . "" == "1")? "allowBlank: false," : null;
             $fieldValidate = ($validate == "alpha" || $validate == "alphanum" || $validate == "email" || $validate == "int" || $validate == "real")? "vtype: \"$validate\"," : null;
 
