@@ -848,13 +848,16 @@ function generateGrid(proUid, tasUid, dynUid) {
 }
 
 function ajaxDerivationRequest(appUid, delIndex, maxLenght, appNumber, fieldGridGral, fieldGridGralVal) {
+    if (fieldGridGralVal !== null) {
+        fieldGridGralVal = stringReplace("\\x2F", "__FRASL__", fieldGridGralVal);
+    }
     Ext.Ajax.request({
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + credentials.access_token
         },
-        url: urlProxy + 'derivate/' + appUid + '/' + appNumber + '/' + delIndex + '/' + fieldGridGral + '/' + stringReplace("\\x2F", "__FRASL__", fieldGridGralVal) + '/',
+        url: urlProxy + 'derivate/' + appUid + '/' + appNumber + '/' + delIndex + '/' + fieldGridGral + '/' + fieldGridGralVal + '/',
         success: function (response) {
             var dataResponse;
             var fullResponseText = response.responseText;

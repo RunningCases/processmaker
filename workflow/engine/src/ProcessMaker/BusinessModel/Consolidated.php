@@ -461,12 +461,12 @@ class Consolidated
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
-    */
+     */
     public function getDataGenerate($pro_uid, $tas_uid, $dyn_uid)
     {
-        G::LoadClass ('case');
-        G::LoadClass ('pmFunctions');
-        G::LoadClass ("configuration");
+        G::LoadClass('case');
+        G::LoadClass('pmFunctions');
+        G::LoadClass("configuration");
         $hasTextArea = false;
 
         $conf = new \Configurations();
@@ -534,17 +534,17 @@ class Consolidated
         } else {
             $filename = $pro_uid . PATH_SEP . $dyn_uid . ".xml";
             if (!class_exists('Smarty')) {
-                require_once(PATH_THIRDPARTY . 'smarty' . PATH_SEP . 'libs' . PATH_SEP . 'Smarty.class.php');  
+                require_once(PATH_THIRDPARTY . 'smarty' . PATH_SEP . 'libs' . PATH_SEP . 'Smarty.class.php');
             }
             $xmlfrm = new \XmlForm();
             $xmlfrm->home = PATH_DYNAFORM;
-            $xmlfrm->parseFile($filename, SYS_LANG, true);    
+            $xmlfrm->parseFile($filename, SYS_LANG, true);
         }
 
-        $caseColumns      = array();
+        $caseColumns = array();
         $caseReaderFields = array();
 
-        $dropList          = array();
+        $dropList = array();
         $comboBoxYesNoList = array();
 
         $caseColumns[] = array("header" => "APP_UID", "dataIndex" => "APP_UID", "width" => 100, "hidden" => true, "hideable" => false);
@@ -558,19 +558,16 @@ class Consolidated
         $caseReaderFields[] = array("name" => "APP_TITLE");
         $caseReaderFields[] = array("name" => "DEL_INDEX");
 
-        //$caseColumns[] = array("header" => "FLAG", "dataIndex" => "FLAG", "width" => 55, "xtype"=>"checkcolumn");
-        //$caseReaderFields[] = array("name" => "FLAG", "type"=>"bool");
-
         foreach ($xmlfrm->fields as $index => $value) {
             $field = $value;
 
             $editor = null;
             $renderer = null;
 
-            $readOnly = (isset($field->readOnly))? $field->readOnly : null;
-            $required = (isset($field->required))? $field->required : null;
-            $validate = (isset($field->validate))? strtolower($field->validate) : null;
-            
+            $readOnly = (isset($field->readOnly)) ? $field->readOnly : null;
+            $required = (isset($field->required)) ? $field->required : null;
+            $validate = (isset($field->validate)) ? strtolower($field->validate) : null;
+
             if (isset($field->options) && !isset($field->storeData)) {
                 $options = [];
                 foreach ($field->options as $keyField => $valueField) {
@@ -579,12 +576,12 @@ class Consolidated
                 $field->storeData = G::json_encode($options);
             }
 
-            $fieldReadOnly = ($readOnly . "" == "1" || $readOnly == 'view')? "readOnly: true," : null;
-            $fieldRequired = ($required . "" == "1")? "allowBlank: false," : null;
-            $fieldValidate = ($validate == "alpha" || $validate == "alphanum" || $validate == "email" || $validate == "int" || $validate == "real")? "vtype: \"$validate\"," : null;
+            $fieldReadOnly = ($readOnly . "" == "1" || $readOnly == 'view') ? "readOnly: true," : null;
+            $fieldRequired = ($required . "" == "1") ? "allowBlank: false," : null;
+            $fieldValidate = ($validate == "alpha" || $validate == "alphanum" || $validate == "email" || $validate == "int" || $validate == "real") ? "vtype: \"$validate\"," : null;
 
-            $fieldLabel = (($fieldRequired != null)? "<span style='color: red;'>&#42;</span> ": null) . $field->label;
-            $fieldDisabled = ($field->mode == "view")? "true" : "false";
+            $fieldLabel = (($fieldRequired != null) ? "<span style='color: red;'>&#42;</span> " : null) . $field->label;
+            $fieldDisabled = ($field->mode == "view") ? "true" : "false";
 
             switch ($field->type) {
                 case "dropdown":
@@ -646,14 +643,15 @@ class Consolidated
                                    $fieldRequired
                                    $fieldValidate
                                    cls: \"\"
-                                 }) *";    
+                                 }) *";
                     }
 
-                    
-                    $editor = eregi_replace("[\n|\r|\n\r]", ' ', $editor);
+                    //Important for windows servers, because the character '\r' 
+                    //breaks the json definition.
+                    $editor = $this->removeLineBreaks($editor);
                     $width = $field->colWidth;
-                    
-                    $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
+
+                    $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "date":
@@ -679,16 +677,20 @@ class Consolidated
                                      cls: \"\"
                                  }) *";
 
-                    //$renderer = "* formatDate *";
                     $renderer = "* function (value){
                                      return Ext.isDate(value)? value.dateFormat('{$dateFormat}') : value;
                                    } *";
+
+                    //Important for windows servers, because the character '\r' 
+                    //breaks the json definition.
+                    $editor = $this->removeLineBreaks($editor);
+                    $renderer = $this->removeLineBreaks($renderer);
 
                     if ($field->mode == "view") {
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name, "type" => "date");
                     break;
                 case "currency":
@@ -716,11 +718,15 @@ class Consolidated
                                    cls: \"\"
                                  }) *";
 
+                    //Important for windows servers, because the character '\r' 
+                    //breaks the json definition.
+                    $editor = $this->removeLineBreaks($editor);
+
                     if ($field->mode != "edit") {
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "percentage":
@@ -747,11 +753,16 @@ class Consolidated
                                      return (value + ' %');
                                    } *";
 
+                    //Important for windows servers, because the character '\r' 
+                    //breaks the json definition.
+                    $editor = $this->removeLineBreaks($editor);
+                    $renderer = $this->removeLineBreaks($renderer);
+
                     if ($field->mode != "edit") {
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "textarea":
@@ -764,7 +775,7 @@ class Consolidated
 
                     $width = $size;
 
-                    $editor   = "* new Ext.form.TextArea({
+                    $editor = "* new Ext.form.TextArea({
                                      growMin: 60,
                                      growMax: 1000,
                                      grow: true,
@@ -781,7 +792,12 @@ class Consolidated
 
                     $renderer = "* function (value) {  return (value);  } *";
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    //Important for windows servers, because the character '\r' 
+                    //breaks the json definition.
+                    $editor = $this->removeLineBreaks($editor);
+                    $renderer = $this->removeLineBreaks($renderer);
+
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
 
                     $hasTextArea = true;
@@ -810,7 +826,12 @@ class Consolidated
                                      return Ext.isDate(value)? value.dateFormat('{$dateFormat}') : value;
                                    } *";
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    //Important for windows servers, because the character '\r' 
+                    //breaks the json definition.
+                    $editor = $this->removeLineBreaks($editor);
+                    $renderer = $this->removeLineBreaks($renderer);
+
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name, "type" => "date");
                     break;
                 case "link":
@@ -829,7 +850,11 @@ class Consolidated
                                        return linkRenderer(value);
                                    } *";
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "hidden" => false, "hideable" => false, "clicksToEdit" => 1, "sortable" => true);
+                    //Important for windows servers, because the character '\r' 
+                    //breaks the json definition.
+                    $renderer = $this->removeLineBreaks($renderer);
+
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "hidden" => false, "hideable" => false, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "hidden":
@@ -844,7 +869,11 @@ class Consolidated
 
                     $editor = "* new Ext.form.TextField({ allowBlank: false }) *";
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)$width, "align" => $align, "editor" => $editor, "frame" => "true", "hidden" => "true", "hideable" => false, "clicksToEdit" => "1");
+                    //Important for windows servers, because the character '\r' 
+                    //breaks the json definition.
+                    $editor = $this->removeLineBreaks($editor);
+
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) $width, "align" => $align, "editor" => $editor, "frame" => "true", "hidden" => "true", "hideable" => false, "clicksToEdit" => "1");
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "yesno":
@@ -859,7 +888,7 @@ class Consolidated
                     $dropList[] = $field->name;
                     $comboBoxYesNoList[] = $field->name;
 
-                    $editor="* new Ext.form.ComboBox({
+                    $editor = "* new Ext.form.ComboBox({
                                  id: \"cbo" . $field->name . "_" . $pro_uid . "\",
 
                                  valueField:   'value',
@@ -887,31 +916,11 @@ class Consolidated
                                  cls: \"\"
                                }) *";
 
-                    /*
-                    $renderer = "* function(value) {
-                                     idx = this.editor.store.find(this.editor.valueField, value);
-                                     if (currentFieldEdited == '{$field->name}') {
-                                       if (rec = this.editor.store.getAt(idx)) {
-                                         rowLabels['{$field->name}'] = rec.get(this.editor.displayField);
-                                                       return rec.get(this.editor.displayField);
-                                       }
-                                       else {
-                                         return value;
-                                       }
-                                     }
-                                     else {
-                                       if (typeof(currentFieldEdited) == 'undefined') {
-                                         return value;
-                                       }
-                                       else {
-                                         return (rowLabels['{$field->name}']);
-                                       }
-                                     }
-                                   } *";
-                    */
+                    //Important for windows servers, because the character '\r' 
+                    //breaks the json definition.
+                    $editor = $this->removeLineBreaks($editor);
 
-                    //$caseColumns[] = array('header' => $fieldLabel, 'dataIndex' => $field->name, 'width' => (int)$width, 'align' => $align, 'editor' => $editor, 'renderer' => $renderer, 'frame' => 'true', 'clicksToEdit' => '1');
-                    $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
+                    $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "checkbox":
@@ -926,9 +935,13 @@ class Consolidated
                     $dropList[] = $field->name;
                     $comboBoxYesNoList[] = $field->name;
 
-                    $editor="* new Ext.form.Checkbox({ $fieldReadOnly $fieldRequired $fieldValidate cls: \"\"}) *";
+                    $editor = "* new Ext.form.Checkbox({ $fieldReadOnly $fieldRequired $fieldValidate cls: \"\"}) *";
 
-                   $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    //Important for windows servers, because the character '\r' 
+                    //breaks the json definition.
+                    $editor = $this->removeLineBreaks($editor);
+
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "text":
@@ -943,40 +956,51 @@ class Consolidated
                     $width = $size;
                     $editor = "* new Ext.form.TextField({ $fieldReadOnly $fieldRequired $fieldValidate cls: \"\"}) *";
 
+                    //Important for windows servers, because the character '\r' 
+                    //breaks the json definition.
+                    $editor = $this->removeLineBreaks($editor);
+
                     if ($field->mode != "edit" && $field->mode != "parent") {
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
             }
         }
 
         @unlink(PATH_C . "ws" . PATH_SEP . SYS_SYS . PATH_SEP . "xmlform" . PATH_SEP . $pro_uid . PATH_SEP . $dyn_uid . "." . SYS_LANG);
 
+        $array ['columnModel'] = $caseColumns;
+        $array ['readerFields'] = $caseReaderFields;
+        $array ["dropList"] = $dropList;
+        $array ["comboBoxYesNoList"] = $comboBoxYesNoList;
+        $array ['hasTextArea'] = $hasTextArea;
 
-        
-        $array ['columnModel']          = $caseColumns;
-        $array ['readerFields']         = $caseReaderFields;
-        $array ["dropList"]             = $dropList;
-        $array ["comboBoxYesNoList"]    = $comboBoxYesNoList;
-        $array ['hasTextArea']          = $hasTextArea;
-        
         $temp = G::json_encode($array);
 
-        //$temp = str_replace("***","'",$temp);
-        $temp = str_replace('"*','',  $temp);
-        $temp = str_replace('*"','',  $temp);
-        $temp = str_replace('\t','',  $temp);
-        $temp = str_replace('\n','',  $temp);
-        $temp = str_replace('\/','/', $temp);
-        $temp = str_replace('\"','"', $temp);
-        $temp = str_replace('"checkcolumn"','\'checkcolumn\'',$temp);
+        $temp = str_replace('"*', '', $temp);
+        $temp = str_replace('*"', '', $temp);
+        $temp = str_replace('\t', '', $temp);
+        $temp = str_replace('\n', '', $temp);
+        $temp = str_replace('\/', '/', $temp);
+        $temp = str_replace('\"', '"', $temp);
+        $temp = str_replace('"checkcolumn"', '\'checkcolumn\'', $temp);
 
         print $temp;
         die();
     }
 
+    /**
+     * Important for windows servers, because the character '\r' breaks the json 
+     * definition.
+     * @param string $string
+     * @return string
+     */
+    public function removeLineBreaks($string)
+    {
+        return preg_replace("[\n|\r|\n\r]", ' ', $string);
+    }
 
     /**
      * Get Dropdown Label
