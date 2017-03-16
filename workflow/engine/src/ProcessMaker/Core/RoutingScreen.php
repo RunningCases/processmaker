@@ -108,7 +108,7 @@ class RoutingScreen extends \Derivation
                         $delete = true;
                     }
                 }
-                if ($delete && $response[$index]["NEXT_TASK"]["TAS_UID"] !== "-1") {
+                if ($delete && $response[$index]["NEXT_TASK"]["TAS_UID"] === "-1") {
                     unset($response[$index]);
                 }
             }
