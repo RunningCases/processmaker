@@ -5897,6 +5897,7 @@ class Cases
                             $proUid,
                             $opTaskSource,
                             'OUTPUT',
+                            $opObjUid,
                             $aCase['APP_STATUS']
                         );
                         //For Inputs
@@ -5905,6 +5906,7 @@ class Cases
                             $proUid,
                             $opTaskSource,
                             'INPUT',
+                            $opObjUid,
                             $aCase['APP_STATUS']
                         );
 
@@ -5939,6 +5941,7 @@ class Cases
                             $proUid,
                             $opTaskSource,
                             'INPUT',
+                            $opObjUid,
                             $aCase['APP_STATUS']
                         );
                         break;
@@ -5948,6 +5951,7 @@ class Cases
                             $proUid,
                             $opTaskSource,
                             'OUTPUT',
+                            $opObjUid,
                             $aCase['APP_STATUS']
                         );
                         break;

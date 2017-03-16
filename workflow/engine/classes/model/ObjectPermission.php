@@ -359,11 +359,12 @@ class ObjectPermission extends BaseObjectPermission
      * @param string $proUid the uid of the process
      * @param string $opTaskSource the uid of a task selected in origin task
      * @param string $obType can be INPUT or OUTPUT
+     * @param string $opObjUid uid of object [specific input or specific ouput]
      * @param string $statusCase the status of the case COMPLETED, TO_DO
      *
      * @return array with the uid of input or outputs
      */
-    public function objectPermissionByOutputInput ($appUid, $proUid, $opTaskSource, $obType = 'OUTPUT', $statusCase = '')
+    public function objectPermissionByOutputInput ($appUid, $proUid, $opTaskSource, $obType = 'OUTPUT', $opObjUid = '', $statusCase = '')
     {
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
@@ -377,6 +378,9 @@ class ObjectPermission extends BaseObjectPermission
 
         if ($statusCase != 'COMPLETED' && $opTaskSource != '' && (int)$opTaskSource != 0) {
             $oCriteria->add(AppDelegationPeer::TAS_UID, $opTaskSource);
+        }
+        if ($opObjUid != '' && $opObjUid != '0') {
+            $oCriteria->add(AppDocumentPeer::DOC_UID, $opObjUid);
         }
         switch ($obType) {
             case 'INPUT':
