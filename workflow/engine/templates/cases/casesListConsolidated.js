@@ -848,6 +848,9 @@ function generateGrid(proUid, tasUid, dynUid) {
 }
 
 function ajaxDerivationRequest(appUid, delIndex, maxLenght, appNumber, fieldGridGral, fieldGridGralVal) {
+    if (fieldGridGralVal !== null) {
+        fieldGridGralVal = stringReplace("\\x2F", "__FRASL__", fieldGridGralVal);
+    }
     Ext.Ajax.request({
         method: 'POST',
         headers: {
