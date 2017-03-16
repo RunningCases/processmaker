@@ -5357,8 +5357,9 @@ class Cases
                 if (!class_exists('System')) {
                     G::LoadClass('system');
                 }
-                $aConfiguration = ($aTaskInfo['TAS_EMAIL_SERVER_UID'] != '') ?
-                    $eServer->getEmailServer($aTaskInfo['TAS_EMAIL_SERVER_UID'], true) : $eServer->getEmailServerDefault();
+                $aConfiguration = (!is_null(\EmailServerPeer::retrieveByPK($aTaskInfo['TAS_EMAIL_SERVER_UID']))) ?
+                    $eServer->getEmailServer($aTaskInfo['TAS_EMAIL_SERVER_UID'], true) :
+                    $eServer->getEmailServerDefault();
                 $msgError = '';
                 if (empty($aConfiguration)) {
                     $msgError = G::LoadTranslation('ID_THE_DEFAULT_CONFIGURATION');
@@ -5440,8 +5441,9 @@ class Cases
                 if (!class_exists('System')) {
                     G::LoadClass('system');
                 }
-                $aConfiguration = ($aTaskInfo['TAS_RECEIVE_SERVER_UID'] != '') ?
-                    $eServer->getEmailServer($aTaskInfo['TAS_RECEIVE_SERVER_UID'], true) : $eServer->getEmailServerDefault();
+                $aConfiguration = (!is_null(\EmailServerPeer::retrieveByPK($aTaskInfo['TAS_RECEIVE_SERVER_UID']))) ?
+                    $eServer->getEmailServer($aTaskInfo['TAS_RECEIVE_SERVER_UID'], true) :
+                    $eServer->getEmailServerDefault();
                 $msgError = '';
                 if (empty($aConfiguration)) {
                     $msgError = G::LoadTranslation('ID_THE_DEFAULT_CONFIGURATION');
