@@ -309,7 +309,11 @@ class Creole {
         );
 
         $info = parse_url($dsn);
-        $info['pass'] = urldecode($info['pass']);
+
+        if (!is_null($dsn)) {
+            $info['pass'] = urldecode($info['pass']);
+        }
+
         if (count($info) === 1) { // if there's only one element in result, then it must be the phptype
             $parsed['phptype'] = array_pop($info);
             return $parsed;
