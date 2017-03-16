@@ -360,6 +360,7 @@ class MessageApplication
      *
      * @param bool $frontEnd Flag to represent progress bar
      *
+     * @throws \Exception
      * @return void
      */
     public function catchMessageEvent($frontEnd = false)
@@ -382,6 +383,9 @@ class MessageApplication
             $counterIntermediateCatchMessageEvent = 0;
             $counter = 0;
 
+            $start = 0;
+            $limit = 1000;
+
             $flagFirstTime = false;
 
             $common->frontEndShow("START");
@@ -389,7 +393,7 @@ class MessageApplication
             do {
                 $flagNextRecords = false;
 
-                $arrayMessageApplicationUnread = $this->getMessageApplications(array("messageApplicationStatus" => "UNREAD"), null, null, 0, 1000);
+                $arrayMessageApplicationUnread = $this->getMessageApplications(array("messageApplicationStatus" => "UNREAD"), null, null, $start, $limit);
 
                 if (!$flagFirstTime) {
                     $totalMessageEvent = $arrayMessageApplicationUnread["total"];
@@ -398,6 +402,7 @@ class MessageApplication
                 }
 
                 foreach ($arrayMessageApplicationUnread["data"] as $value) {
+                    $start++;
                     if ($counter + 1 > $totalMessageEvent) {
                         $flagNextRecords = false;
                         break;
@@ -425,11 +430,11 @@ class MessageApplication
                                 $result = $ws->newCase($processUid, $messageEventDefinitionUserUid, $taskUid, $arrayVariable);
 
                                 $arrayResult = \G::json_decode(\G::json_encode($result), true);
+                                $appNumber = !empty($arrayResult["caseNumber"]) ? $arrayResult["caseNumber"] : '';
 
                                 if ($arrayResult["status_code"] == 0) {
                                     $applicationUid = $arrayResult["caseId"];
                                     $appUid    = $arrayResult["caseId"];
-                                    $appNumber = $arrayResult["caseNumber"];
                                     $aInfo = array(
                                         'ip'       => \G::getIpAddress()
                                         ,'action'   => 'CREATED-NEW-CASE'
@@ -592,12 +597,14 @@ class MessageApplication
                                     }
 
                                     $flagCatched = true;
+                                    break;
                                 }
                             }
 
                             //Counter
                             if ($flagCatched) {
                                 $counterIntermediateCatchMessageEvent++;
+                                $start--;
                             }
                             break;
                     }
