@@ -316,11 +316,10 @@ class ObjectPermission extends BaseObjectPermission
      * @param string $opTaskSource the uid of a task selected in origin task
      * @param integer $opObjUid uid of dynaform
      * @param string $statusCase the status of the case COMPLETED, TO_DO
-     * @param int $opParticipated the value selected in participation required
      *
      * @return array with the uid of dynaforms
      */
-    public function objectPermissionByDynaform ($appUid, $opTaskSource = 0, $opObjUid = '', $statusCase = '', $opParticipated = 0)
+    public function objectPermissionByDynaform ($appUid, $opTaskSource = 0, $opObjUid = '', $statusCase = '')
     {
         $oCriteria = new Criteria('workflow');
         $oCriteria->addJoin(ApplicationPeer::PRO_UID, StepPeer::PRO_UID);
@@ -361,11 +360,10 @@ class ObjectPermission extends BaseObjectPermission
      * @param string $opTaskSource the uid of a task selected in origin task
      * @param string $obType can be INPUT or OUTPUT
      * @param string $statusCase the status of the case COMPLETED, TO_DO
-     * @param int $opParticipated the value selected in participation required
      *
      * @return array with the uid of input or outputs
      */
-    public function objectPermissionByOutputInput ($appUid, $proUid, $opTaskSource, $obType = 'OUTPUT', $statusCase = '', $opParticipated = 0)
+    public function objectPermissionByOutputInput ($appUid, $proUid, $opTaskSource, $obType = 'OUTPUT', $statusCase = '')
     {
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);

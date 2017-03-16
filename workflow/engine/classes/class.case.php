@@ -5887,8 +5887,7 @@ class Cases
                             $appUid,
                             $opTaskSource,
                             $opObjUid,
-                            $aCase['APP_STATUS'],
-                            $opParticipated
+                            $aCase['APP_STATUS']
                         );
                         //For Ouputs
                         $result['OUTPUT'] = $oObjectPermission->objectPermissionByOutputInput(
@@ -5896,8 +5895,7 @@ class Cases
                             $proUid,
                             $opTaskSource,
                             'OUTPUT',
-                            $aCase['APP_STATUS'],
-                            $opParticipated
+                            $aCase['APP_STATUS']
                         );
                         //For Inputs
                         $result['INPUT'] = $oObjectPermission->objectPermissionByOutputInput(
@@ -5905,8 +5903,7 @@ class Cases
                             $proUid,
                             $opTaskSource,
                             'INPUT',
-                            $aCase['APP_STATUS'],
-                            $opParticipated
+                            $aCase['APP_STATUS']
                         );
 
                         $result['CASES_NOTES'] = 1;
