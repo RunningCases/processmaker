@@ -681,13 +681,14 @@ class Consolidated
                                      return Ext.isDate(value)? value.dateFormat('{$dateFormat}') : value;
                                    } *";
 
-                    if ($field->mode == "view") {
-                        $editor = null;
-                    }
-
                     //Important for windows servers, because the character '\r' 
                     //breaks the json definition.
                     $editor = $this->removeLineBreaks($editor);
+                    $renderer = $this->removeLineBreaks($renderer);
+
+                    if ($field->mode == "view") {
+                        $editor = null;
+                    }
 
                     $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name, "type" => "date");
