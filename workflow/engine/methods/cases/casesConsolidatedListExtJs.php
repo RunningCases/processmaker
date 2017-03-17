@@ -59,7 +59,7 @@ while ($rsSql->next()) {
 
     $grdTitle = htmlentities($proTitle . " / " . $tabTitle, ENT_QUOTES, "UTF-8");
     $tabTitle = htmlentities(substr($proTitle, 0, 25) . ((strlen($proTitle) > 25) ? "..." : null) . " / " . $tabTitle, ENT_QUOTES, "UTF-8");
-    
+
     $arrayTabItem[] = "
     {
         title: \"<span onmouseover=\\\"toolTipTab('$grdTitle', 1);\\\" onmouseout=\\\"toolTipTab('', 0);\\\">$tabTitle</span>\",
