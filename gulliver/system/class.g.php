@@ -5459,12 +5459,25 @@ class G
         $sflag = $conf->getConfiguration('AUDIT_LOG', 'log');
         $sflagAudit = $sflag == 'true' ? true : false;
         $ipClient = G::getIpAddress();
+        $username = 'Unknow User';
+        $fullname = '-';
 
         /*----------------------------------********---------------------------------*/
         $licensedFeatures = PMLicensedFeatures::getSingleton();
         if ($sflagAudit && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
-            $username = isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '' ? $_SESSION['USER_LOGGED'] : 'Unknow User';
-            $fullname = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : '-';
+            if (isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '') {
+                $username = $_SESSION['USER_LOGGED'];
+            } else {
+                //Get the usrUid related to the accessToken
+                $userUid = \ProcessMaker\Services\OAuth2\Server::getUserId();
+                if (!empty($userUid)) {
+                    $oUserLogged = new \Users();
+                    $user = $oUserLogged->loadDetails($userUid);
+                    $username = $user['USR_UID'];
+                    $fullname = $user['USR_FULLNAME'];
+                }
+            }
+            $fullname = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : $fullname;
             G::log("|". $workspace ."|". $ipClient ."|". $username . "|" . $fullname ."|" . $actionToLog . "|" . $valueToLog, PATH_DATA, "audit.log");
         }
         /*----------------------------------********---------------------------------*/
