@@ -5451,34 +5451,39 @@ class G
     }
 
     /**
-    */
+     * This function save history about some actions in the file audit.log
+     * The data is used in the Audit Log functionality
+     *
+     * @param string $actionToLog
+     * @param string $valueToLog
+     * @return void
+     */
     public static function auditLog($actionToLog, $valueToLog = "")
     {
-	    $workspace = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
+        $workspace = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
         $conf = new Configurations();
         $sflag = $conf->getConfiguration('AUDIT_LOG', 'log');
         $sflagAudit = $sflag == 'true' ? true : false;
         $ipClient = G::getIpAddress();
-        $username = 'Unknow User';
-        $fullname = '-';
+        $userUid = 'Unknow User';
+        $fullName = '-';
 
         /*----------------------------------********---------------------------------*/
         $licensedFeatures = PMLicensedFeatures::getSingleton();
         if ($sflagAudit && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
             if (isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '') {
-                $username = $_SESSION['USER_LOGGED'];
+                $userUid = $_SESSION['USER_LOGGED'];
             } else {
                 //Get the usrUid related to the accessToken
                 $userUid = \ProcessMaker\Services\OAuth2\Server::getUserId();
                 if (!empty($userUid)) {
                     $oUserLogged = new \Users();
                     $user = $oUserLogged->loadDetails($userUid);
-                    $username = $user['USR_UID'];
-                    $fullname = $user['USR_FULLNAME'];
+                    $fullName = $user['USR_FULLNAME'];
                 }
             }
-            $fullname = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : $fullname;
-            G::log("|". $workspace ."|". $ipClient ."|". $username . "|" . $fullname ."|" . $actionToLog . "|" . $valueToLog, PATH_DATA, "audit.log");
+            $fullName = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : $fullName;
+            G::log("|". $workspace ."|". $ipClient ."|". $userUid . "|" . $fullName ."|" . $actionToLog . "|" . $valueToLog, PATH_DATA, "audit.log");
         }
         /*----------------------------------********---------------------------------*/
     }
