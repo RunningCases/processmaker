@@ -1932,9 +1932,6 @@ Ext.onReady ( function() {
 
     var toolbarUnassigned = [
         optionMenuOpen,
-        btnRead,
-        '-',
-        btnUnread,
         '-',
         btnAll,
         '->', // begin using the right-justified button container
