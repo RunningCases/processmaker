@@ -19,13 +19,13 @@ class Consolidated
      * Get Consolidated
      *
      * @access public
-     * @param string $tas_uid, Task Uid
+     * @param string $tas_uid , Task Uid
      * @return array
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
-    */
-    public function get ($tas_uid)
+     */
+    public function get($tas_uid)
     {
         $criteria = new Criteria();
         $criteria->addSelectColumn(CaseConsolidatedCorePeer::DYN_UID);
@@ -34,9 +34,9 @@ class Consolidated
         $criteria->addSelectColumn(\ReportTablePeer::REP_TAB_UID);
         $criteria->addSelectColumn(ContentPeer::CON_VALUE);
         $criteria->addSelectColumn(CaseConsolidatedCorePeer::CON_STATUS);
-        $criteria->addJoin( CaseConsolidatedCorePeer::REP_TAB_UID, ReportTablePeer::REP_TAB_UID, Criteria::LEFT_JOIN );
-        $criteria->add( CaseConsolidatedCorePeer::TAS_UID, $tas_uid, Criteria::EQUAL );
-        $criteria->add( CaseConsolidatedCorePeer::CON_STATUS, 'ACTIVE', Criteria::EQUAL );
+        $criteria->addJoin(CaseConsolidatedCorePeer::REP_TAB_UID, ReportTablePeer::REP_TAB_UID, Criteria::LEFT_JOIN);
+        $criteria->add(CaseConsolidatedCorePeer::TAS_UID, $tas_uid, Criteria::EQUAL);
+        $criteria->add(CaseConsolidatedCorePeer::CON_STATUS, 'ACTIVE', Criteria::EQUAL);
 
         $dataset = CaseConsolidatedCorePeer::doSelectRS($criteria);
         $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -44,9 +44,9 @@ class Consolidated
             $response = $dataset->getRow();
         } else {
             $response = array(
-                'REP_TAB_UID'   => '',
-                'REP_TAB_NAME'  => '__' . $tas_uid,
-                'CON_VALUE'     => '__' . $tas_uid,
+                'REP_TAB_UID' => '',
+                'REP_TAB_NAME' => '__' . $tas_uid,
+                'CON_VALUE' => '__' . $tas_uid,
             );
         }
         return array_change_key_case($response, CASE_LOWER);;
@@ -56,18 +56,18 @@ class Consolidated
      * Put Data Generate
      *
      * @access public
-     * @param string $app_uid, Process Uid
-     * @param string $app_number, Task Uid
-     * @param string $del_index, Task Uid
-     * @param string $usr_uid, Task Uid
-     * @param string $fieldName, Field Name
-     * @param string $fieldValue, Field Value
+     * @param string $app_uid , Process Uid
+     * @param string $app_number , Task Uid
+     * @param string $del_index , Task Uid
+     * @param string $usr_uid , Task Uid
+     * @param string $fieldName , Field Name
+     * @param string $fieldValue , Field Value
      * @return string
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
-    */
-    public function postDerivate ($app_uid, $app_number, $del_index, $usr_uid, $fieldName='', $fieldValue='')
+     */
+    public function postDerivate($app_uid, $app_number, $del_index, $usr_uid, $fieldName = '', $fieldValue = '')
     {
         G::LoadClass("wsBase");
         G::LoadClass("case");
@@ -80,12 +80,12 @@ class Consolidated
             //Update data grid
             $aData = $aFields['APP_DATA'];
             foreach ($aData as $k => $dataField) {
-               if(is_array($dataField)){
-                   $pos = count($dataField);
-                   if(isset($aData[$k][$pos][$fieldName])){
-                      $aData[$k][$pos][$fieldName] = $fieldValue;
-                   }
-               }
+                if (is_array($dataField)) {
+                    $pos = count($dataField);
+                    if (isset($aData[$k][$pos][$fieldName])) {
+                        $aData[$k][$pos][$fieldName] = $fieldValue;
+                    }
+                }
             }
             $aFields['APP_DATA'] = $aData;
             $oCase->updateCase($app_uid, $aFields);
@@ -153,22 +153,22 @@ class Consolidated
         return $numRec;
     }
 
-    
+
     /**
      * Put Data Generate
      *
      * @access public
-     * @param string $pro_uid, Process Uid
-     * @param string $tas_uid, Task Uid
-     * @param string $dyn_uid, Dynaform Uid
+     * @param string $pro_uid , Process Uid
+     * @param string $tas_uid , Task Uid
+     * @param string $dyn_uid , Dynaform Uid
      * @return string
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
-    */
-    public function putDataGrid ($pro_uid, $tas_uid, $dyn_uid, $usr_uid, $data)
+     */
+    public function putDataGrid($pro_uid, $tas_uid, $dyn_uid, $usr_uid, $data)
     {
-        $option = (isset($data["option"]))? $data["option"] : null;
+        $option = (isset($data["option"])) ? $data["option"] : null;
         $response = array();
         switch ($option) {
             case "ALL":
@@ -216,38 +216,39 @@ class Consolidated
         }
         return $response;
     }
+
     /**
      * Get Data Generate
      *
      * @access public
-     * @param string $pro_uid, Process Uid
-     * @param string $tas_uid, Task Uid
-     * @param string $dyn_uid, Dynaform Uid
+     * @param string $pro_uid , Process Uid
+     * @param string $tas_uid , Task Uid
+     * @param string $dyn_uid , Dynaform Uid
      * @return string
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
-    */
-    public function getDataGrid ($pro_uid, $tas_uid, $dyn_uid, $usr_uid, $start = '', $limit = '', $search = '')
+     */
+    public function getDataGrid($pro_uid, $tas_uid, $dyn_uid, $usr_uid, $start = '', $limit = '', $search = '')
     {
-        $start    = !empty($start)      ?   $start      : "0";
-        $limit    = !empty($limit)      ?   $limit      : "20";
-        $search   = !empty($search)     ?   $search     : "";
+        $start = !empty($start) ? $start : "0";
+        $limit = !empty($limit) ? $limit : "20";
+        $search = !empty($search) ? $search : "";
 
-        $callback = isset($_REQUEST["callback"])? $_REQUEST["callback"] : "stcCallback1001";
-        $dir      = isset($_REQUEST["dir"])?      $_REQUEST["dir"]    : "DESC";
-        $sort     = isset($_REQUEST["sort"])?     $_REQUEST["sort"]   : "";
-        $filter   = isset($_REQUEST["filter"])?   $_REQUEST["filter"] : "";
-        $user     = isset($_REQUEST["user"])?     $_REQUEST["user"]   : "";
-        $status   = isset($_REQUEST["status"])?   strtoupper($_REQUEST["status"]) : "";
-        $action   = isset($_GET["action"])?    $_GET["action"] : (isset($_REQUEST["action"])? $_REQUEST["action"] : "todo");
-        $type     = isset($_GET["type"])?      $_GET["type"] : (isset($_REQUEST["type"])? $_REQUEST["type"] : "extjs");
-        $user     = isset($_REQUEST["user"])?     $_REQUEST["user"] : "";
-        $dateFrom = isset($_REQUEST["dateFrom"])? substr($_REQUEST["dateFrom"], 0, 10) : "";
-        $dateTo   = isset($_REQUEST["dateTo"])?   substr($_REQUEST["dateTo"], 0, 10) : "";
+        $callback = isset($_REQUEST["callback"]) ? $_REQUEST["callback"] : "stcCallback1001";
+        $dir = isset($_REQUEST["dir"]) ? $_REQUEST["dir"] : "DESC";
+        $sort = isset($_REQUEST["sort"]) ? $_REQUEST["sort"] : "";
+        $filter = isset($_REQUEST["filter"]) ? $_REQUEST["filter"] : "";
+        $user = isset($_REQUEST["user"]) ? $_REQUEST["user"] : "";
+        $status = isset($_REQUEST["status"]) ? strtoupper($_REQUEST["status"]) : "";
+        $action = isset($_GET["action"]) ? $_GET["action"] : (isset($_REQUEST["action"]) ? $_REQUEST["action"] : "todo");
+        $type = isset($_GET["type"]) ? $_GET["type"] : (isset($_REQUEST["type"]) ? $_REQUEST["type"] : "extjs");
+        $user = isset($_REQUEST["user"]) ? $_REQUEST["user"] : "";
+        $dateFrom = isset($_REQUEST["dateFrom"]) ? substr($_REQUEST["dateFrom"], 0, 10) : "";
+        $dateTo = isset($_REQUEST["dateTo"]) ? substr($_REQUEST["dateTo"], 0, 10) : "";
 
-        $rowUid = isset($_REQUEST["rowUid"])? $_REQUEST["rowUid"] : "";
-        $dropdownList = isset($_REQUEST ["dropList"])? G::json_decode($_REQUEST ["dropList"]) : array();
+        $rowUid = isset($_REQUEST["rowUid"]) ? $_REQUEST["rowUid"] : "";
+        $dropdownList = isset($_REQUEST ["dropList"]) ? G::json_decode($_REQUEST ["dropList"]) : array();
 
         try {
             G::LoadClass("pmFunctions");
@@ -265,13 +266,13 @@ class Consolidated
             $caseConsolidated = CaseConsolidatedCorePeer::doSelectRS($criteria);
             $caseConsolidated->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-            $tableUid  = null;
+            $tableUid = null;
             $tableName = null;
 
             foreach ($caseConsolidated as $item) {
                 $criteria = new Criteria();
                 $criteria->addSelectColumn(ReportTablePeer::REP_TAB_NAME);
-                $criteria->add(ReportTablePeer::REP_TAB_UID,$item["REP_TAB_UID"]);
+                $criteria->add(ReportTablePeer::REP_TAB_UID, $item["REP_TAB_UID"]);
 
                 $result = ReportTablePeer::doSelectRS($criteria);
                 $result->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -279,7 +280,7 @@ class Consolidated
                 if ($result->next()) {
                     $row = $result->getRow();
 
-                    $tableUid  = $item["REP_TAB_UID"];
+                    $tableUid = $item["REP_TAB_UID"];
                     $tableName = $row["REP_TAB_NAME"];
                 } else {
                     throw new \Exception("Not found the report table");
@@ -289,25 +290,25 @@ class Consolidated
             $className = $tableName;
 
             if (!class_exists($className)) {
-                require_once (PATH_DB . SYS_SYS . PATH_SEP . "classes" . PATH_SEP . $className . ".php");
+                require_once(PATH_DB . SYS_SYS . PATH_SEP . "classes" . PATH_SEP . $className . ".php");
             }
 
             $oCriteria = new Criteria("workflow");
-            
+
             $oCriteria->addSelectColumn("*");
             $oCriteria->addSelectColumn($tableName . ".APP_UID");
-            
+
             $oCriteria->addJoin($tableName . ".APP_UID", \ListInboxPeer::APP_UID, \Criteria::LEFT_JOIN);
-            
+
             $oCriteria->add(\ListInboxPeer::TAS_UID, $tas_uid);
             $oCriteria->add(\ListInboxPeer::USR_UID, $usr_uid);
             $oCriteria->add(\ListInboxPeer::APP_STATUS, "TO_DO");
-            
+
             if ($search != "") {
                 $filename = $pro_uid . PATH_SEP . $dyn_uid . ".xml";
 
                 if (!class_exists('Smarty')) {
-                    require_once(PATH_THIRDPARTY . 'smarty' . PATH_SEP . 'libs' . PATH_SEP . 'Smarty.class.php');  
+                    require_once(PATH_THIRDPARTY . 'smarty' . PATH_SEP . 'libs' . PATH_SEP . 'Smarty.class.php');
                 }
                 $G_FORM = new \xmlform();
                 $G_FORM->home = PATH_DYNAFORM;
@@ -335,7 +336,7 @@ class Consolidated
 
                     if ($sw == 0) {
                         if ($dataType[$index] == 'currency' || $dataType[$index] == 'percentage') {
-                            if ( is_numeric($search) || is_float($search) ) {
+                            if (is_numeric($search) || is_float($search)) {
                                 $oTmpCriteria = $oNewCriteria->getNewCriterion($field, $search);
                             }
                         } else {
@@ -343,7 +344,7 @@ class Consolidated
                         }
                     } else {
                         if ($dataType[$index] == 'currency' || $dataType[$index] == 'percentage') {
-                            if ( is_numeric($search) || is_float($search) ) {
+                            if (is_numeric($search) || is_float($search)) {
                                 $oTmpCriteria = $oNewCriteria->getNewCriterion($field, $search)->addOr($oTmpCriteria);
                             }
                         } else {
@@ -362,7 +363,7 @@ class Consolidated
                     $oCriteria->add($oCriteria->getNewCriterion(\ListInboxPeer::APP_NUMBER, $search, Criteria::LIKE));
                 }
             }
-            
+
             G::LoadSystem('inputfilter');
             $filter = new \InputFilter();
 
@@ -387,16 +388,12 @@ class Consolidated
                 $oCriteria->addDescendingOrderByColumn(\ListInboxPeer::APP_NUMBER);
             }
 
-            //pagination pagination attributes
             $oCriteria->setLimit($limit);
             $oCriteria->setOffset($start);
-            //end of pagination attributes
 
             $oDataset = \ListInboxPeer::doSelectRS($oCriteria);
-            //eval('$oDataset = '.$className.'Peer::doSelectRS($oCriteria);');
 
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            //$oDataset->next();
 
             $aTaskConsolidated = array();
 
@@ -454,9 +451,9 @@ class Consolidated
      * Get Data Generate
      *
      * @access public
-     * @param string $pro_uid, Process Uid
-     * @param string $tas_uid, Task Uid
-     * @param string $dyn_uid, Dynaform Uid
+     * @param string $pro_uid , Process Uid
+     * @param string $tas_uid , Task Uid
+     * @param string $dyn_uid , Dynaform Uid
      * @return string
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -646,19 +643,13 @@ class Consolidated
                                  }) *";
                     }
 
-                    //Important for windows servers, because the character '\r' 
-                    //breaks the json definition.
                     $editor = $this->removeLineBreaks($editor);
                     $width = $field->colWidth;
 
-                    $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
+                    $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "date":
-                    //minValue: '01/01/06',
-                    //disabledDays: [0, 6],
-                    //disabledDaysText: 'Plants are not available on the weekends'
-
                     $align = "center";
                     $size = 100;
 
@@ -676,28 +667,19 @@ class Consolidated
                                      $fieldValidate
                                      cls: \"\"
                                  }) *";
-
+                    $editor = $this->removeLineBreaks($editor);
                     $renderer = "* function (value){
                                      return Ext.isDate(value)? value.dateFormat('{$dateFormat}') : value;
                                    } *";
-
-                    //Important for windows servers, because the character '\r' 
-                    //breaks the json definition.
-                    $editor = $this->removeLineBreaks($editor);
                     $renderer = $this->removeLineBreaks($renderer);
-
                     if ($field->mode == "view") {
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name, "type" => "date");
                     break;
                 case "currency":
-                    //align: 'right',
-                    //renderer: 'usMoney',
-                    //allowBlank: false,
-                    //allowNegative: false,
                     $align = 'right';
                     $size = 100;
 
@@ -717,16 +699,12 @@ class Consolidated
                                    $fieldValidate
                                    cls: \"\"
                                  }) *";
-
-                    //Important for windows servers, because the character '\r' 
-                    //breaks the json definition.
                     $editor = $this->removeLineBreaks($editor);
-
                     if ($field->mode != "edit") {
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "percentage":
@@ -748,21 +726,16 @@ class Consolidated
                                    $fieldValidate
                                    cls: \"\"
                                  }) *";
-
+                    $editor = $this->removeLineBreaks($editor);
                     $renderer = "* function (value){
                                      return (value + ' %');
                                    } *";
-
-                    //Important for windows servers, because the character '\r' 
-                    //breaks the json definition.
-                    $editor = $this->removeLineBreaks($editor);
                     $renderer = $this->removeLineBreaks($renderer);
-
                     if ($field->mode != "edit") {
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "textarea":
@@ -789,15 +762,10 @@ class Consolidated
                                      $fieldValidate
                                      cls: \"\"
                                    }) *";
-
-                    $renderer = "* function (value) {  return (value);  } *";
-
-                    //Important for windows servers, because the character '\r' 
-                    //breaks the json definition.
                     $editor = $this->removeLineBreaks($editor);
+                    $renderer = "* function (value) {  return (value);  } *";
                     $renderer = $this->removeLineBreaks($renderer);
-
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
 
                     $hasTextArea = true;
@@ -820,18 +788,12 @@ class Consolidated
                                      $fieldValidate
                                      cls: \"\"
                                  }) *";
-
-                    //$renderer = "* formatDate *";
+                    $editor = $this->removeLineBreaks($editor);
                     $renderer = "* function (value){
                                      return Ext.isDate(value)? value.dateFormat('{$dateFormat}') : value;
                                    } *";
-
-                    //Important for windows servers, because the character '\r' 
-                    //breaks the json definition.
-                    $editor = $this->removeLineBreaks($editor);
                     $renderer = $this->removeLineBreaks($renderer);
-
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name, "type" => "date");
                     break;
                 case "link":
@@ -849,12 +811,8 @@ class Consolidated
                                    {
                                        return linkRenderer(value);
                                    } *";
-
-                    //Important for windows servers, because the character '\r' 
-                    //breaks the json definition.
                     $renderer = $this->removeLineBreaks($renderer);
-
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "hidden" => false, "hideable" => false, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "hidden" => false, "hideable" => false, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "hidden":
@@ -868,12 +826,8 @@ class Consolidated
                     $width = $size;
 
                     $editor = "* new Ext.form.TextField({ allowBlank: false }) *";
-
-                    //Important for windows servers, because the character '\r' 
-                    //breaks the json definition.
                     $editor = $this->removeLineBreaks($editor);
-
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) $width, "align" => $align, "editor" => $editor, "frame" => "true", "hidden" => "true", "hideable" => false, "clicksToEdit" => "1");
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)$width, "align" => $align, "editor" => $editor, "frame" => "true", "hidden" => "true", "hideable" => false, "clicksToEdit" => "1");
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "yesno":
@@ -915,12 +869,8 @@ class Consolidated
                                  $fieldValidate
                                  cls: \"\"
                                }) *";
-
-                    //Important for windows servers, because the character '\r' 
-                    //breaks the json definition.
                     $editor = $this->removeLineBreaks($editor);
-
-                    $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
+                    $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "checkbox":
@@ -936,12 +886,8 @@ class Consolidated
                     $comboBoxYesNoList[] = $field->name;
 
                     $editor = "* new Ext.form.Checkbox({ $fieldReadOnly $fieldRequired $fieldValidate cls: \"\"}) *";
-
-                    //Important for windows servers, because the character '\r' 
-                    //breaks the json definition.
                     $editor = $this->removeLineBreaks($editor);
-
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "text":
@@ -955,21 +901,19 @@ class Consolidated
 
                     $width = $size;
                     $editor = "* new Ext.form.TextField({ $fieldReadOnly $fieldRequired $fieldValidate cls: \"\"}) *";
-
-                    //Important for windows servers, because the character '\r' 
-                    //breaks the json definition.
                     $editor = $this->removeLineBreaks($editor);
 
                     if ($field->mode != "edit" && $field->mode != "parent") {
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
             }
         }
 
         @unlink(PATH_C . "ws" . PATH_SEP . SYS_SYS . PATH_SEP . "xmlform" . PATH_SEP . $pro_uid . PATH_SEP . $dyn_uid . "." . SYS_LANG);
+
 
         $array ['columnModel'] = $caseColumns;
         $array ['readerFields'] = $caseReaderFields;
@@ -991,23 +935,13 @@ class Consolidated
         die();
     }
 
-    /**
-     * Important for windows servers, because the character '\r' breaks the json 
-     * definition.
-     * @param string $string
-     * @return string
-     */
-    public function removeLineBreaks($string)
-    {
-        return preg_replace("[\n|\r|\n\r]", ' ', $string);
-    }
 
     /**
      * Get Dropdown Label
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
-    */
+     */
     public function getDropdownLabel($appUid, $pro_uid, $dyn_uid, $fieldName, $fieldVal)
     {
         $oCase = new Cases();
@@ -1082,7 +1016,7 @@ class Consolidated
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
-    */
+     */
     public function checkValidDate($field)
     {
         if (($timestamp = strtotime($field)) === false || is_double($field) || is_float($field) || is_bool($field) || is_int($field)) {
@@ -1097,7 +1031,7 @@ class Consolidated
      *
      * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
      * @copyright Colosa - Bolivia
-    */
+     */
     function consolidatedUpdate($dynaformUid, $dataUpdate, $usr_uid)
     {
         G::LoadClass("case");
@@ -1118,46 +1052,48 @@ class Consolidated
         }
 
         $auxAppDataApplication = $fields["APP_DATA"]["APPLICATION"];
-        $auxAppDataProcess     = $fields["APP_DATA"]["PROCESS"];
-        $auxAppDataTask        = $fields["APP_DATA"]["TASK"];
-        $auxAppDataIndex       = $fields["APP_DATA"]["INDEX"];
+        $auxAppDataProcess = $fields["APP_DATA"]["PROCESS"];
+        $auxAppDataTask = $fields["APP_DATA"]["TASK"];
+        $auxAppDataIndex = $fields["APP_DATA"]["INDEX"];
 
         foreach ($array["form"] as $key => $value) {
             $array["form"][$key] = (string)$array["form"][$key];
-            if (isset($fields["APP_DATA"][$key.'_label'])) {
-                $array["form"][$key.'_label']   = (string)$array["form"][$key];
+            if (isset($fields["APP_DATA"][$key . '_label'])) {
+                $array["form"][$key . '_label'] = (string)$array["form"][$key];
             }
         }
-        /*
-        $_POST['form'] = $array["form"];
-        if (!class_exists('Smarty')) {
-            require_once(PATH_THIRDPARTY . 'smarty' . PATH_SEP . 'libs' . PATH_SEP . 'Smarty.class.php');  
-        }
-        $oForm = new \Form( $auxAppDataProcess . "/" . $dynaformUid , PATH_DYNAFORM );
-        $oForm->validatePost();
-        $array["form"] = $_POST['form'];
-        */
 
         $fields["APP_DATA"] = array_merge($fields["APP_DATA"], G::getSystemConstants());
         $fields["APP_DATA"] = array_merge($fields["APP_DATA"], $array["form"]);
 
         $fields["APP_DATA"]["APPLICATION"] = $auxAppDataApplication;
-        $fields["APP_DATA"]["PROCESS"]     = $auxAppDataProcess;
-        $fields["APP_DATA"]["TASK"]        = $auxAppDataTask;
-        $fields["APP_DATA"]["INDEX"]       = $auxAppDataIndex;
+        $fields["APP_DATA"]["PROCESS"] = $auxAppDataProcess;
+        $fields["APP_DATA"]["TASK"] = $auxAppDataTask;
+        $fields["APP_DATA"]["INDEX"] = $auxAppDataIndex;
 
         $aData = array();
-        $aData["APP_NUMBER"]       = $fields["APP_NUMBER"];
-        $aData["APP_PROC_STATUS"]  = $fields["APP_PROC_STATUS"];
-        $aData["APP_DATA"]         = $fields["APP_DATA"];
-        $aData["DEL_INDEX"]        = $delIndex;
-        $aData["TAS_UID"]          = $fields["APP_DATA"]["TASK"];
+        $aData["APP_NUMBER"] = $fields["APP_NUMBER"];
+        $aData["APP_PROC_STATUS"] = $fields["APP_PROC_STATUS"];
+        $aData["APP_DATA"] = $fields["APP_DATA"];
+        $aData["DEL_INDEX"] = $delIndex;
+        $aData["TAS_UID"] = $fields["APP_DATA"]["TASK"];
         $aData["CURRENT_DYNAFORM"] = $dynaformUid;
-        $aData["USER_UID"]         = $usr_uid;
-        $aData["APP_STATUS"]       = $fields["APP_STATUS"];
-        $aData["PRO_UID"]          = $fields["APP_DATA"]["PROCESS"];
+        $aData["USER_UID"] = $usr_uid;
+        $aData["APP_STATUS"] = $fields["APP_STATUS"];
+        $aData["PRO_UID"] = $fields["APP_DATA"]["PROCESS"];
 
         $oCase->updateCase($appUid, $aData);
+    }
+
+    /**
+     * Important for windows servers, because the character '\r' breaks the json
+     * definition.
+     * @param string $string
+     * @return string
+     */
+    public function removeLineBreaks($string)
+    {
+        return preg_replace("[\n|\r|\n\r]", ' ', $string);
     }
 
     /**
@@ -1170,7 +1106,7 @@ class Consolidated
         $criteria->add(\CaseConsolidatedCorePeer::CON_STATUS, 'ACTIVE');
         $criteria->addJoin(\CaseConsolidatedCorePeer::TAS_UID, \ListInboxPeer::TAS_UID, Criteria::LEFT_JOIN);
         $criteria->add(\ListInboxPeer::USR_UID, $usrUid, Criteria::EQUAL);
-        $criteria->add(\ListInboxPeer::APP_STATUS, 'TO_DO',Criteria::EQUAL);
+        $criteria->add(\ListInboxPeer::APP_STATUS, 'TO_DO', Criteria::EQUAL);
         $total = \CaseConsolidatedCorePeer::doCount($criteria);
         return (int)$total;
     }

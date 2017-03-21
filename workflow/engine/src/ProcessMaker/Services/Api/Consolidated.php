@@ -151,7 +151,8 @@ class Consolidated extends Api
         try {
             $usr_uid = $this->getUserId();
             $consolidated = new \ProcessMaker\BusinessModel\Consolidated();
-            return $consolidated->postDerivate($app_uid, $app_number, $del_index, $usr_uid,$field_grid, str_replace('__FRASL__', '/', $field_grid_val));
+            return $consolidated->postDerivate($app_uid, $app_number, $del_index, $usr_uid, $field_grid,
+                str_replace('__FRASL__', '/', $field_grid_val));
         } catch (\Exception $e) {
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }

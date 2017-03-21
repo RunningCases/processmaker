@@ -8,13 +8,16 @@ Ext.ns("Ext.ux.renderer", "Ext.ux.grid");
 Ext.ux.grid.ComboColumn = Ext.extend(Ext.grid.Column, {
     //@cfg {String} gridId
     //The id of the grid this column is in. This is required to be able to refresh the view once the combo store has loaded
+
     gridId: undefined,
+
     constructor: function (cfg) {
         Ext.ux.grid.ComboColumn.superclass.constructor.call(this, cfg);
+
         //Detect if there is an editor and if it at least extends a combobox, otherwise just treat it as a normal column and render the value itself
         this.renderer = (this.editor && this.editor.triggerAction) ? Ext.ux.renderer.ComboBoxRenderer(this.editor, this.gridId) : function (value) {
-            return value;
-        };
+                return value;
+            };
     }
 });
 
@@ -38,7 +41,6 @@ Ext.ux.renderer.ComboBoxRenderer = function (combo, gridId) {
             }
         }
 
-        //return value;
         if (grdNumRows > 1 || grdNumRows == 0) {
             return value;
         } else {
@@ -53,26 +55,24 @@ Ext.ux.renderer.ComboBoxRenderer = function (combo, gridId) {
     }
 
     return function (value) {
-        //If we are trying to load the displayField from a store that is not loaded
-        //add a single listener to the combo store's load event to refresh the grid view
         if (combo.store.getCount() == 0 && gridId) {
             combo.store.on(
-                    "load",
-                    function () {
-                        var grid = Ext.getCmp(gridId);
-                        if (grid) {
-                            grid.getView().refresh();
-                        }
-                    },
-                    {
-                        single: true
+                "load",
+                function () {
+                    var grid = Ext.getCmp(gridId);
+                    if (grid) {
+                        grid.getView().refresh();
                     }
+                },
+                {
+                    single: true
+                }
             );
 
             if (grdNumRows > 1 || grdNumRows == 0) {
                 return value;
             } else {
-                if (typeof (grdRowLabel[comboBoxField]) == "undefined") {
+                if (typeof(grdRowLabel[comboBoxField]) == "undefined") {
                     grdRowLabel[comboBoxField] = value;
                     return grdRowLabel[comboBoxField];
                 } else {
@@ -101,10 +101,11 @@ var browserHeight = 0;
 if (typeof window.innerWidth != "undefined") {
     browserWidth = window.innerWidth;
     browserHeight = window.innerHeight;
-} else {
+}
+else {
     //IE6 in standards compliant mode (i.e. with a valid doctype as the first line in the document)
     if (typeof document.documentElement != "undefined" && typeof document.documentElement.clientWidth != "undefined" &&
-            document.documentElement.clientWidth != 0) {
+        document.documentElement.clientWidth != 0) {
         browserWidth = document.documentElement.clientWidth;
         browserHeight = document.documentElement.clientHeight;
     } else {
@@ -125,8 +126,8 @@ new Ext.KeyMap(document, {
     fn: function (keycode, e) {
         if (!e.ctrlKey) {
             if (Ext.isIE) {
-                //IE6 doesn't allow cancellation of the F5 key, so trick it into
-                //thinking some other key was pressed (backspace in this case)
+                // IE6 doesn't allow cancellation of the F5 key, so trick it into
+                // thinking some other key was pressed (backspace in this case)
                 e.browserEvent.keyCode = 8;
             }
             e.stopEvent();
@@ -203,7 +204,7 @@ function jumpToCase(appNumber) {
         url: 'cases_Ajax',
         success: function (response) {
             var res = Ext.decode(response.responseText),
-                    nameTab;
+                nameTab;
             if (res.exists === true) {
                 params = 'APP_NUMBER=' + appNumber;
                 params += '&action=jump';
@@ -233,33 +234,33 @@ function pauseCase(date) {
     unpauseDate = date.format('Y-m-d');
 
     Ext.Msg.confirm(
-            _("ID_CONFIRM"),
-            _("ID_PAUSE_CASE_TO_DATE") + " " + date.format("M j, Y"),
-            function (btn, text) {
-                if (btn == 'yes') {
-                    Ext.MessageBox.show({
-                        msg: _("ID_PROCESSING"),
-                        wait: true,
-                        waitConfig: {
-                            interval: 200
-                        }
-                    });
-                    Ext.Ajax.request({
-                        url: '../cases/cases_Ajax',
-                        success: function (response) {
-                            parent.updateCasesView();
-                            parent.updateCasesTree();
-                            Ext.MessageBox.hide();
-                        },
-                        params: {
-                            action: 'pauseCase',
-                            unpausedate: unpauseDate,
-                            APP_UID: rowModel.data.APP_UID,
-                            DEL_INDEX: rowModel.data.DEL_INDEX
-                        }
-                    });
-                }
+        _("ID_CONFIRM"),
+        _("ID_PAUSE_CASE_TO_DATE") + " " + date.format("M j, Y"),
+        function (btn, text) {
+            if (btn == 'yes') {
+                Ext.MessageBox.show({
+                    msg: _("ID_PROCESSING"),
+                    wait: true,
+                    waitConfig: {
+                        interval: 200
+                    }
+                });
+                Ext.Ajax.request({
+                    url: '../cases/cases_Ajax',
+                    success: function (response) {
+                        parent.updateCasesView();
+                        parent.updateCasesTree();
+                        Ext.MessageBox.hide();
+                    },
+                    params: {
+                        action: 'pauseCase',
+                        unpausedate: unpauseDate,
+                        APP_UID: rowModel.data.APP_UID,
+                        DEL_INDEX: rowModel.data.DEL_INDEX
+                    }
+                });
             }
+        }
     );
 }
 
@@ -274,23 +275,21 @@ function strReplace(strs, strr, str) {
 
 function toolTipTab(str, show) {
     document.getElementById("toolTipTab").innerHTML = str;
-    document.getElementById("toolTipTab").style.left = "3px"; //x
-    document.getElementById("toolTipTab").style.top = "27px"; //y
+    document.getElementById("toolTipTab").style.left = "3px";
+    document.getElementById("toolTipTab").style.top = "27px";
     document.getElementById("toolTipTab").style.display = (show == 1) ? "inline" : "none";
 }
 
 var pnlMain;
 
 Ext.apply(Ext.form.VTypes, {
-    "int": function (value, field)
-    {
+    "int": function (value, field) {
         return /^\d*$/.test(value);
     },
     intText: "This field should only contain numbers",
     intMask: /[\d]/,
 
-    real: function (value, field)
-    {
+    real: function (value, field) {
         return /^\d*\.?\d*$/.test(value);
     },
     realText: "This field should only contain numbers and the point",
@@ -330,25 +329,25 @@ Ext.onReady(function () {
         text: _("ID_DERIVATED"),
         handler: function () {
             Ext.Msg.confirm(_("ID_CONFIRM_ROUTING"), _("ID_ROUTE_BATCH_ROUTING"),
-                    function (btn, text) {
-                        if (btn == 'yes') {
-                            htmlMessage = "";
-                            var selectedRow = Ext.getCmp(gridId).getSelectionModel().getSelections();
-                            var maxLenght = selectedRow.length;
-                            for (var i in selectedRow) {
-                                rowGrid = selectedRow[i].data
-                                for (fieldGrid in rowGrid) {
-                                    if (fieldGrid != 'APP_UID' && fieldGrid != 'APP_NUMBER' && fieldGrid != 'APP_TITLE' && fieldGrid != 'DEL_INDEX') {
-                                        fieldGridGral = fieldGrid;
-                                        fieldGridGralVal = rowGrid[fieldGrid];
-                                    }
+                function (btn, text) {
+                    if (btn == 'yes') {
+                        htmlMessage = "";
+                        var selectedRow = Ext.getCmp(gridId).getSelectionModel().getSelections();
+                        var maxLenght = selectedRow.length;
+                        for (var i in selectedRow) {
+                            rowGrid = selectedRow[i].data;
+                            for (fieldGrid in rowGrid) {
+                                if (fieldGrid != 'APP_UID' && fieldGrid != 'APP_NUMBER' && fieldGrid != 'APP_TITLE' && fieldGrid != 'DEL_INDEX') {
+                                    fieldGridGral = fieldGrid;
+                                    fieldGridGralVal = (rowGrid[fieldGrid] != null ) ? rowGrid[fieldGrid] : '';
                                 }
-                                if (selectedRow[i].data) {
-                                    ajaxDerivationRequest(selectedRow[i].data["APP_UID"], selectedRow[i].data["DEL_INDEX"], maxLenght, selectedRow[i].data["APP_NUMBER"], fieldGridGral, fieldGridGralVal);
-                                }
+                            }
+                            if (selectedRow[i].data) {
+                                ajaxDerivationRequest(selectedRow[i].data["APP_UID"], selectedRow[i].data["DEL_INDEX"], maxLenght, selectedRow[i].data["APP_NUMBER"], fieldGridGral, fieldGridGralVal);
                             }
                         }
                     }
+                }
             );
         }
     });
@@ -438,7 +437,7 @@ Ext.onReady(function () {
         listeners: {
             specialkey: function (f, e) {
                 if (e.getKey() == e.ENTER) {
-                    //defining an id and using the Ext.getCmp method improves the accesibility of Ext components
+                    // defining an id and using the Ext.getCmp method improves the accesibility of Ext components
                     caseNumber = parseFloat(Ext.util.Format.trim(Ext.getCmp('textJump').getValue()));
                     if (caseNumber) {
                         jumpToCase(caseNumber);
@@ -533,23 +532,21 @@ Ext.onReady(function () {
         if (treePanel1) {
             node = treePanel1.getNodeById(_nodeId);
         }
-        if (window.node) {
+        if (node) {
             node.select();
         }
     }
 
-    if (parent.updateCasesTree) {
-        parent.updateCasesTree();
-    }
+    parent.updateCasesTree();
+
     function inArray(arr, obj) {
         for (var i = 0; i < arr.length; i++) {
-            if (arr[i] == obj)
-                return true;
+            if (arr[i] == obj) return true;
         }
         return false;
     }
 
-    //Add the additional 'advanced' VTypes -- [Begin]
+    // Add the additional 'advanced' VTypes -- [Begin]
     Ext.apply(Ext.form.VTypes, {
         daterange: function (val, field) {
             var date = field.parseDate(val);
@@ -562,7 +559,8 @@ Ext.onReady(function () {
                 start.setMaxValue(date);
                 start.validate();
                 this.dateRangeMax = date;
-            } else if (field.endDateField && (!this.dateRangeMin || (date.getTime() != this.dateRangeMin.getTime()))) {
+            }
+            else if (field.endDateField && (!this.dateRangeMin || (date.getTime() != this.dateRangeMin.getTime()))) {
                 var end = Ext.getCmp(field.endDateField);
                 end.setMinValue(date);
                 end.validate();
@@ -574,11 +572,10 @@ Ext.onReady(function () {
             return true;
         }
     });
-    //Add the additional 'advanced' VTypes -- [End]
 });
 
 function msgBox(title, msg, type) {
-    if (typeof ('type') == 'undefined') {
+    if (typeof('type') == 'undefined') {
         type = 'info';
     }
 
@@ -595,7 +592,8 @@ function msgBox(title, msg, type) {
     Ext.Msg.show({
         title: title,
         msg: msg,
-        fn: function () {},
+        fn: function () {
+        },
         animEl: 'elId',
         icon: icon,
         buttons: Ext.MessageBox.OK
@@ -610,18 +608,14 @@ function renderSummary(val, p, r) {
     var summaryIcon = '<img src="/images/ext/default/s.gif" class="x-tree-node-icon ss_layout_header" unselectable="off" id="extdd-17" ';
     summaryIcon += 'onclick="openSummaryWindow(' + "'" + r.data['APP_UID'] + "'" + ', ' + r.data['DEL_INDEX'] + ')" title="' + _('ID_SUMMARY') + '" />';
     return summaryIcon;
-}
+};
 
-function generateGrid(proUid, tasUid, dynUid) {
-    var pager = 20; //pageSize
-    var pagei = 0; //start
+function generateGridClassic(proUid, tasUid, dynUid) {
 
+    var pager = 20;
+    var pagei = 0;
     Ext.Ajax.request({
-        url: urlProxy + 'generate/' + proUid + '/' + tasUid + '/' + dynUid,
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + credentials.access_token
-        },
+        url: '../pmConsolidatedCL/proxyGenerateGrid',
         success: function (response) {
             var dataResponse = Ext.util.JSON.decode(response.responseText);
             var viewConfigObject;
@@ -648,23 +642,13 @@ function generateGrid(proUid, tasUid, dynUid) {
                 id: "storeConsolidatedGrid",
                 remoteSort: true,
                 proxy: new Ext.data.HttpProxy({
-                    method: 'GET',
-                    url: urlProxy + 'cases/' + proUid + '/' + tasUid + '/' + dynUid,
+                    url: "../pmConsolidatedCL/proxyConsolidated",
                     api: {
-                        read: {
-                            method: 'GET',
-                            url: urlProxy + 'cases/' + proUid + '/' + tasUid + '/' + dynUid
-                        },
-                        update: {
-                            method: 'PUT',
-                            url: urlProxy + 'cases/' + proUid + '/' + tasUid + '/' + dynUid
-                        }
-                    },
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'Bearer ' + credentials.access_token
+                        read: "../pmConsolidatedCL/proxyConsolidated",
+                        update: "../pmConsolidatedCL/consolidatedUpdateAjax"
                     }
                 }),
+
                 reader: new Ext.data.JsonReader({
                     fields: dataResponse.readerFields,
                     totalProperty: "totalCount",
@@ -672,49 +656,54 @@ function generateGrid(proUid, tasUid, dynUid) {
                     root: "data",
                     messageProperty: "message"
                 }),
+
                 writer: new Ext.data.JsonWriter({
-                    encode: false,
+                    encode: true,
                     writeAllFields: false
-                }), //<-- plug a DataWriter into the store just as you would a Reader
-                autoSave: true, //<-- false would delay executing create, update, destroy requests until specifically told to do so with some [save] buton.
+                }),
+                autoSave: true,
                 listeners: {
                     beforeload: function (store, options) {
                         grdNumRows = 0;
                     },
+
                     load: function (store, records, options) {
                         grdNumRows = store.getCount();
+
                         consolidatedGrid.setDisabled(false);
                     }
                 }
             });
 
-            //Loading data data from a request in Ajax
-            //storeConsolidated.load();
-            //Example of a load with parameters for a data store
-            //storeConsolidated.load({params:{start: 0 , limit: pageSize, action: 'todo'}});
-            //Definition of the column model based on server response
-            //shorthand alias
             var xColumns = dataResponse.columnModel;
             xColumns.unshift(smodel);
 
             var cm = new Ext.grid.ColumnModel(xColumns);
-            cm.config[2].renderer = renderTitle; //Case Number
-            cm.config[3].renderer = renderTitle; //Case Title
-            cm.config[4].renderer = renderSummary; //Case Summary
+            cm.config[2].renderer = renderTitle;
+            cm.config[3].renderer = renderTitle;
+            cm.config[4].renderer = renderSummary;
 
-            //Grid generation based on previously defined attributes
+            storeConsolidated.setBaseParam("limit", pager);
+            storeConsolidated.setBaseParam("start", pagei);
+            storeConsolidated.setBaseParam('tasUid', tasUid);
+            storeConsolidated.setBaseParam('dynUid', dynUid);
+            storeConsolidated.setBaseParam('proUid', proUid);
+            storeConsolidated.setBaseParam('dropList', Ext.util.JSON.encode(dataResponse.dropList));
             storeConsolidated.load();
 
             consolidatedGrid = new Ext.grid.EditorGridPanel({
                 id: gridId,
                 region: "center",
+
                 store: storeConsolidated,
                 cm: cm,
                 sm: smodel,
                 width: pnlMain.getSize().width,
                 height: browserHeight - 35,
+
                 layout: 'fit',
                 viewConfig: viewConfigObject,
+
                 listeners: {
                     beforeedit: function (e) {
                         var selRow = Ext.getCmp(gridId).getSelectionModel().getSelected();
@@ -732,7 +721,14 @@ function generateGrid(proUid, tasUid, dynUid) {
                                 swYesNo = 1;
                             }
                         }
+
                         if (swDropdown == 1 && swYesNo == 0) {
+                            storeAux = Ext.StoreMgr.get("store" + e.field + "_" + proUid);
+                            storeAux.setBaseParam("appUid", selRow.data["APP_UID"]);
+                            storeAux.setBaseParam("dynUid", dynUid);
+                            storeAux.setBaseParam("proUid", proUid);
+                            storeAux.setBaseParam("fieldName", e.field);
+                            storeAux.load();
                         }
                     },
 
@@ -769,29 +765,24 @@ function generateGrid(proUid, tasUid, dynUid) {
 
                                         Ext.Ajax.request({
                                             url: "consolidatedUpdateAjax",
-                                            method: 'PUT',
-                                            url: urlProxy + 'cases/' + proUid + '/' + tasUid + '/' + dynUid,
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                                'Authorization': 'Bearer ' + credentials.access_token
-                                            },
-                                            jsonData: {
+                                            method: "POST",
+                                            params: {
                                                 "option": "ALL",
                                                 "dynaformUid": dynUid,
                                                 "dataUpdate": dataUpdate
                                             },
+
                                             success: function (response, opts) {
-                                                var dataResponse = eval("(" + response.responseText + ")"); //json
+                                                var dataResponse = eval("(" + response.responseText + ")");
 
                                                 if (dataResponse.status && dataResponse.status == "OK") {
-                                                    if (typeof (storeConsolidated.lastOptions.params) != "undefined") {
+                                                    if (typeof(storeConsolidated.lastOptions.params) != "undefined") {
                                                         pagei = storeConsolidated.lastOptions.params.start;
                                                     }
 
                                                     storeConsolidated.setBaseParam("start", pagei);
                                                     storeConsolidated.load();
                                                 } else {
-
                                                 }
                                             }
                                         });
@@ -820,6 +811,7 @@ function generateGrid(proUid, tasUid, dynUid) {
                         Ext.QuickTips.unregister(e.target);
                     }
                 },
+
                 tbar: new Ext.Toolbar({
                     height: 33,
                     items: toolbarconsolidated
@@ -834,13 +826,251 @@ function generateGrid(proUid, tasUid, dynUid) {
                 })
             });
 
-            //Removal of all elements of the main panel where the grid is loaded
             pnlMain.removeAll();
-            //Addition of previously defined grid
             pnlMain.add(consolidatedGrid);
-            //Recharge of the elements of the grid, for visualization.
             pnlMain.doLayout();
         },
+
+        failure: function () {
+            alert("Failure...");
+        },
+
+        params: {
+            xaction: 'read',
+            tasUid: tasUid,
+            dynUid: dynUid,
+            proUid: proUid
+        }
+    });
+}
+
+function generateGrid(proUid, tasUid, dynUid) {
+    var pager = 20;
+    var pagei = 0;
+
+    Ext.Ajax.request({
+        url: urlProxy + 'generate/' + proUid + '/' + tasUid + '/' + dynUid,
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + credentials.access_token
+        },
+        success: function (response) {
+            var dataResponse = Ext.util.JSON.decode(response.responseText);
+            var viewConfigObject;
+            var textArea = dataResponse.hasTextArea;
+
+            if (textArea == false) {
+                viewConfigObject = {
+                };
+            } else {
+                viewConfigObject = {
+                    enableRowBody: true,
+                    showPreview: true,
+                    getRowClass: function (record, rowIndex, p, store) {
+                        if (this.showPreview) {
+                            p.body = '<p><br /></p>';
+                            return 'x-grid3-row-expanded';
+                        }
+                        return 'x-grid3-row-collapsed';
+                    }
+                };
+            }
+            storeConsolidated = new Ext.data.Store({
+                id: "storeConsolidatedGrid",
+                remoteSort: true,
+                proxy: new Ext.data.HttpProxy({
+                    method: 'GET',
+                    url: urlProxy + 'cases/' + proUid + '/' + tasUid + '/' + dynUid,
+                    api: {
+                        read: {
+                            method: 'GET',
+                            url: urlProxy + 'cases/' + proUid + '/' + tasUid + '/' + dynUid
+                        },
+                        update: {
+                            method: 'PUT',
+                            url: urlProxy + 'cases/' + proUid + '/' + tasUid + '/' + dynUid
+                        }
+                    },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + credentials.access_token
+                    }
+                }),
+                reader: new Ext.data.JsonReader({
+                    fields: dataResponse.readerFields,
+                    totalProperty: "totalCount",
+                    idProperty: "APP_UID",
+                    root: "data",
+                    messageProperty: "message"
+                }),
+
+                writer: new Ext.data.JsonWriter({
+                    encode: false,
+                    writeAllFields: false
+                }),
+                autoSave: true,
+
+                listeners: {
+                    beforeload: function (store, options) {
+                        grdNumRows = 0;
+                    },
+
+                    load: function (store, records, options) {
+                        grdNumRows = store.getCount();
+
+                        consolidatedGrid.setDisabled(false);
+                    }
+                }
+            });
+
+            var xColumns = dataResponse.columnModel;
+            xColumns.unshift(smodel);
+
+            var cm = new Ext.grid.ColumnModel(xColumns);
+            cm.config[2].renderer = renderTitle;
+            cm.config[3].renderer = renderTitle;
+            cm.config[4].renderer = renderSummary;
+
+            storeConsolidated.load();
+
+            consolidatedGrid = new Ext.grid.EditorGridPanel({
+                id: gridId,
+                region: "center",
+
+                store: storeConsolidated,
+                cm: cm,
+                sm: smodel,
+                width: pnlMain.getSize().width,
+                height: browserHeight - 35,
+
+                layout: 'fit',
+                viewConfig: viewConfigObject,
+
+                listeners: {
+                    beforeedit: function (e) {
+                        var selRow = Ext.getCmp(gridId).getSelectionModel().getSelected();
+
+                        var swDropdown = 0;
+                        for (var i = 0; i <= dataResponse.dropList.length - 1 && swDropdown == 0; i++) {
+                            if (dataResponse.dropList[i] == e.field) {
+                                swDropdown = 1;
+                            }
+                        }
+
+                        var swYesNo = 0;
+                        for (var i = 0; i <= dataResponse.comboBoxYesNoList.length - 1 && swYesNo == 0; i++) {
+                            if (dataResponse.comboBoxYesNoList[i] == e.field) {
+                                swYesNo = 1;
+                            }
+                        }
+                    },
+
+                    afteredit: function (e) {
+
+                        if (Ext.getCmp("chk_allColumn").checked) {
+                            Ext.Msg.show({
+                                title: "",
+                                msg: "The modification will be applied to all rows in your selection.",
+                                buttons: Ext.Msg.YESNO,
+                                fn: function (btn) {
+                                    if (btn == "yes") {
+
+                                        consolidatedGrid.setDisabled(true);
+
+                                        var dataUpdate = "";
+                                        var strValue = "";
+                                        var sw = 0;
+
+                                        if (e.value instanceof Date) {
+                                            var mAux = e.value.getMonth() + 1;
+                                            var dAux = e.value.getDate();
+                                            var hAux = e.value.getHours();
+                                            var iAux = e.value.getMinutes();
+                                            var sAux = e.value.getSeconds();
+
+                                            strValue = e.value.getFullYear() + "-" + ((mAux <= 9) ? "0" : "") + mAux + "-" + ((dAux <= 9) ? "0" : "") + dAux;
+                                            strValue = strValue + " " + ((hAux <= 9) ? "0" + ((hAux == 0) ? "0" : hAux) : hAux) + ":" + ((iAux <= 9) ? "0" + ((iAux == 0) ? "0" : iAux) : iAux) + ":" + ((sAux <= 9) ? "0" + ((sAux == 0) ? "0" : sAux) : sAux);
+                                        } else {
+                                            strValue = strReplace("\"", "\\\"", e.value + "");
+                                        }
+
+                                        storeConsolidated.each(function (record) {
+                                            dataUpdate = dataUpdate + ((sw == 1) ? "(sep1 /)" : "") + record.data["APP_UID"] + "(sep2 /)" + e.field + "(sep2 /)" + strValue;
+                                            sw = 1;
+                                        });
+
+                                        Ext.Ajax.request({
+                                            url: "consolidatedUpdateAjax",
+                                            method: 'PUT',
+                                            url: urlProxy + 'cases/' + proUid + '/' + tasUid + '/' + dynUid,
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'Authorization': 'Bearer ' + credentials.access_token
+                                            },
+                                            jsonData: {
+                                                "option": "ALL",
+                                                "dynaformUid": dynUid,
+                                                "dataUpdate": dataUpdate
+                                            },
+                                            success: function (response, opts) {
+                                                var dataResponse = eval("(" + response.responseText + ")");
+
+                                                if (dataResponse.status && dataResponse.status == "OK") {
+                                                    if (typeof(storeConsolidated.lastOptions.params) != "undefined") {
+                                                        pagei = storeConsolidated.lastOptions.params.start;
+                                                    }
+
+                                                    storeConsolidated.setBaseParam("start", pagei);
+                                                    storeConsolidated.load();
+                                                } else {
+                                                }
+                                            }
+                                        });
+                                    }
+                                },
+                                icon: Ext.MessageBox.QUESTION
+                            });
+                        }
+                    },
+
+                    mouseover: function (e, cell) {
+                        var rowIndex = consolidatedGrid.getView().findRowIndex(cell);
+                        if (!(rowIndex === false)) {
+                            var record = consolidatedGrid.store.getAt(rowIndex);
+                            var msg = record.get('APP_TITLE');
+                            Ext.QuickTips.register({
+                                text: msg,
+                                target: e.target
+                            });
+                        } else {
+                            Ext.QuickTips.unregister(e.target);
+                        }
+                    },
+
+                    mouseout: function (e, cell) {
+                        Ext.QuickTips.unregister(e.target);
+                    }
+                },
+
+                tbar: new Ext.Toolbar({
+                    height: 33,
+                    items: toolbarconsolidated
+                }),
+
+                bbar: new Ext.PagingToolbar({
+                    pageSize: pager,
+                    store: storeConsolidated,
+                    displayInfo: true,
+                    displayMsg: _("ID_DISPLAY_ITEMS"),
+                    emptyMsg: _("ID_DISPLAY_EMPTY")
+                })
+            });
+
+            pnlMain.removeAll();
+            pnlMain.add(consolidatedGrid);
+            pnlMain.doLayout();
+        },
+
         failure: function () {
             alert("Failure...");
         }
@@ -848,16 +1078,18 @@ function generateGrid(proUid, tasUid, dynUid) {
 }
 
 function ajaxDerivationRequest(appUid, delIndex, maxLenght, appNumber, fieldGridGral, fieldGridGralVal) {
-    if (fieldGridGralVal !== null) {
+    if (String(fieldGridGralVal).indexOf("/") != -1) {
         fieldGridGralVal = stringReplace("\\x2F", "__FRASL__", fieldGridGralVal);
     }
+    var uri = urlProxy + 'derivate/' + appUid + '/' + appNumber + '/' + delIndex + '/' + fieldGridGral + '/';
+    var urlrequest = (fieldGridGralVal == '') ? uri : uri + fieldGridGralVal + '/';
     Ext.Ajax.request({
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + credentials.access_token
         },
-        url: urlProxy + 'derivate/' + appUid + '/' + appNumber + '/' + delIndex + '/' + fieldGridGral + '/' + fieldGridGralVal + '/',
+        url: urlrequest,
         success: function (response) {
             var dataResponse;
             var fullResponseText = response.responseText;
@@ -891,7 +1123,6 @@ function ajaxDerivationRequest(appUid, delIndex, maxLenght, appNumber, fieldGrid
                     }
                 });
             }
-            //if an exception die trigger happens
         },
 
         failure: function () {
