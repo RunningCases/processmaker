@@ -193,11 +193,10 @@ CLI::taskRun("run_database_generate_self_service_by_value");
 
 CLI::taskName('database-verify-consistency');
 CLI::taskDescription(<<<EOT
-  Verify the database data is consistent so any database-upgrade
-  operation cloud be executed flawlessly.
+  Verify that the database data is consistent so any database-upgrade operation will be executed flawlessly.
 
-  Specify the workspaces whose database schema should be verified.
-  The workspace parameter is mandatory.
+  Specify the workspaces whose database schema should be verified. If none are specified, then
+  all available workspaces will be specified.
 
   This command will read the system schema and data in an attempt to verify the database
   integrity. Use this command to check the database data consistency before any costly
