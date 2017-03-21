@@ -43,6 +43,11 @@ try {
     $Fields["APP_DATA"] = array_merge( $Fields["APP_DATA"], G::getSystemConstants() );
     $Fields["APP_DATA"] = array_merge( $Fields["APP_DATA"], $_POST["form"] );
 
+    //If didn't is not submitted any variable and the $_POST is empty
+    if (!isset($_POST['form'])) {
+        $_POST['form'] = array();
+    }
+
     //save data in PM Tables if necessary
     $newValues = array ();
     foreach ($_POST['form'] as $sField => $sAux) {

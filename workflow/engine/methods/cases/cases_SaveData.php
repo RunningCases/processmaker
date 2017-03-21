@@ -103,6 +103,11 @@ try {
 
     $arrayVariableDocumentToDelete = [];
 
+    //If didn't is not submitted any variable and the $_POST is empty
+    if (!isset($_POST['form'])) {
+        $_POST['form'] = array();
+    }
+
     if (array_key_exists('__VARIABLE_DOCUMENT_DELETE__', $_POST['form'])) {
         if (is_array($_POST['form']['__VARIABLE_DOCUMENT_DELETE__']) && !empty($_POST['form']['__VARIABLE_DOCUMENT_DELETE__'])) {
             $arrayVariableDocumentToDelete = $_POST['form']['__VARIABLE_DOCUMENT_DELETE__'];

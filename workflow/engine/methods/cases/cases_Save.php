@@ -57,7 +57,12 @@ if (isset( $_SESSION['STEP_POSITION'] )) {
     unset( $_SESSION['STEP_POSITION'] );
 }
 
-    /* Process */
+//If didn't is not submitted any variable and the $_POST is empty
+if (!isset($_POST['form'])) {
+    $_POST['form'] = array();
+}
+
+/* Process */
 try {
     $oCase = new Cases();
     $aData = $oCase->startCase( $_POST['form']['TAS_UID'], $_SESSION['USER_LOGGED'] );
