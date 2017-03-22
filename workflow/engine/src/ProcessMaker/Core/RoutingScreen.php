@@ -80,7 +80,7 @@ class RoutingScreen extends \Derivation
 
     public function prepareRoutingScreen($arrayData)
     {
-        $information = $this->prepareInformation($arrayData);
+        $information = $this->prepareInformationForRoutingScreen($arrayData);
         $response = array();
         $this->taskSecJoin = array();
         foreach ($information as $index => $element) {
