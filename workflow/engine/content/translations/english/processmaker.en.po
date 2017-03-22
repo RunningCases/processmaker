@@ -3058,8 +3058,8 @@ msgstr "Role"
 # TRANSLATION
 # LABEL/ID_MSG_CANNOT_DELETE_USER
 #: LABEL/ID_MSG_CANNOT_DELETE_USER
-msgid "User cannot be deleted while still assigned to cases."
-msgstr "User cannot be deleted while still assigned to cases."
+msgid "The user cannot be deleted since it is referenced in a process design and/or has assigned cases."
+msgstr "The user cannot be deleted since it is referenced in a process design and/or has assigned cases."
 
 # TRANSLATION
 # LABEL/ID_MSG_REMOVE_PLUGIN
