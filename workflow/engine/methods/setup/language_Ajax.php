@@ -153,9 +153,9 @@ try {
             $oDataset->next();
             $aRow = $oDataset->getRow();
 
-            if ($locale != "en") { //Default Lengage 'en'
-                if ($locale != SYS_LANG) { //Current lenguage
-                    //THERE IS NO ANY CASE STARTED FROM THES LANGUAGE
+            if ($locale != "en") { //Default Language 'en'
+                if ($locale != SYS_LANG) { //Current Language
+                    //THERE IS NO ANY CASE STARTED FROM THIS LANGUAGE
                     if (empty($aRow)) { //so we can delete this language
                         try {
                             Content::removeLanguageContent($locale);
