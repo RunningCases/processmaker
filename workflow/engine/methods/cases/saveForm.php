@@ -43,7 +43,7 @@ try {
     $Fields["APP_DATA"] = array_merge( $Fields["APP_DATA"], G::getSystemConstants() );
     $Fields["APP_DATA"] = array_merge( $Fields["APP_DATA"], $_POST["form"] );
 
-    //If didn't is not submitted any variable and the $_POST is empty
+    //If no variables are submitted and the $_POST variable is empty
     if (!isset($_POST['form'])) {
         $_POST['form'] = array();
     }

@@ -57,7 +57,7 @@ if (isset( $_SESSION['STEP_POSITION'] )) {
     unset( $_SESSION['STEP_POSITION'] );
 }
 
-//If didn't is not submitted any variable and the $_POST is empty
+//If no variables are submitted and the $_POST variable is empty
 if (!isset($_POST['form'])) {
     $_POST['form'] = array();
 }
