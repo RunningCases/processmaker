@@ -297,6 +297,15 @@ class ListParticipatedLast extends BaseListParticipatedLast
             $aConditions[] = array(ProcessPeer::PRO_CATEGORY, "'".$category."'");
             $criteria->addJoinMC($aConditions, Criteria::INNER_JOIN);
         }
+
+        //Those filters: $newestthan, $oldestthan is used from mobile GET /light/participated
+        if ($newestthan != '') {
+            $criteria->add( $criteria->getNewCriterion( ListParticipatedLastPeer::DEL_DELEGATE_DATE, $newestthan, Criteria::GREATER_THAN ));
+        }
+
+        if ($oldestthan != '') {
+            $criteria->add( $criteria->getNewCriterion( ListParticipatedLastPeer::DEL_DELEGATE_DATE, $oldestthan, Criteria::LESS_THAN ));
+        }
     }
 
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null, $appUid = '')
