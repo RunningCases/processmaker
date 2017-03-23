@@ -52,7 +52,7 @@ class Derivation
     protected $flagControlMulInstance;
     protected $sys;
     protected $context;
-    private $regexpTaskTypeToInclude;
+    protected $regexpTaskTypeToInclude;
     public $node;
     public $userLogged = null;
 
@@ -85,7 +85,7 @@ class Derivation
      *
      * @return array Return array
      */
-    private function prepareInformationTask(array $arrayTaskData)
+    protected function prepareInformationTask(array $arrayTaskData)
     {
         try {
             $task = new Task();
@@ -152,7 +152,7 @@ class Derivation
         }
     }
 
-    /**
+     /**
      * prepareInformation
      *
      * @param array  $arrayData Data
