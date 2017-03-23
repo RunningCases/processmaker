@@ -950,7 +950,15 @@ class Derivation
                         $aSP['USR_UID'] = $nextDel['USR_UID'];
                     }
                     $aTask = $oTask->load( $nextDel['TAS_PARENT'] );
-                    $nextDel = array ('TAS_UID' => $aTask['TAS_UID'],'USR_UID' => $aSP['USR_UID'],'TAS_ASSIGN_TYPE' => $aTask['TAS_ASSIGN_TYPE'],'TAS_DEF_PROC_CODE' => $aTask['TAS_DEF_PROC_CODE'],'DEL_PRIORITY' => 3,'TAS_PARENT' => ''
+                    $nextDel = array (
+                        'TAS_UID' => $aTask['TAS_UID'],
+                        'USR_UID' => $aSP['USR_UID'],
+                        'TAS_ASSIGN_TYPE' => $aTask['TAS_ASSIGN_TYPE'],
+                        'TAS_DEF_PROC_CODE' => $aTask['TAS_DEF_PROC_CODE'],
+                        'DEL_PRIORITY' => 3,
+                        'TAS_PARENT' => '',
+                        'ROU_PREVIOUS_TYPE' => isset($nextDel['ROU_PREVIOUS_TYPE']) ? $nextDel['ROU_PREVIOUS_TYPE'] : '',
+                        'ROU_PREVIOUS_TASK' => isset($nextDel['ROU_PREVIOUS_TASK']) ? $nextDel['ROU_PREVIOUS_TASK'] : ''
                     );
                 } else {
                     continue;
@@ -1069,7 +1077,12 @@ class Derivation
                                 case "SEC-JOIN":
                                     $arrayOpenThread = ($flagTaskIsMultipleInstance && $flagTaskAssignTypeIsMultipleInstance)? $this->case->searchOpenPreviousTasks($currentDelegation["TAS_UID"], $currentDelegation["APP_UID"]) : array();
 
-                                    if ($flagTaskIsMultipleInstance && $flagTaskAssignTypeIsMultipleInstance && $nextDel["ROU_PREVIOUS_TYPE"] == 'SEC-JOIN') {
+                                    if (
+                                        $flagTaskIsMultipleInstance
+                                        && $flagTaskAssignTypeIsMultipleInstance
+                                        && isset($nextDel["ROU_PREVIOUS_TYPE"])
+                                        && $nextDel["ROU_PREVIOUS_TYPE"] == 'SEC-JOIN'
+                                    ) {
                                         $appDelegation = new AppDelegation();
                                         $arraySiblings = $appDelegation->getAllTasksBeforeSecJoin(
                                             $nextDel["ROU_PREVIOUS_TASK"],
