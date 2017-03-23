@@ -152,7 +152,7 @@ class Derivation
         }
     }
 
-      /**
+     /**
      * prepareInformation
      *
      * @param array  $arrayData Data
