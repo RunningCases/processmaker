@@ -12,6 +12,7 @@ use G;
 use ElementTaskRelationPeer;
 use BpmnEventPeer;
 use ResultSet;
+use PMScript;
 
 class RoutingScreen extends \Derivation
 {
@@ -274,17 +275,22 @@ class RoutingScreen extends \Derivation
                     $arrayAux = $this->prepareInformationForRoutingScreen($arrayData, $arrayNextTaskData["NEXT_TASK"]["TAS_UID"]);
                     $this->node[$value['ROU_NEXT_TASK']]['in'][$value['TAS_UID']] = $value['ROU_TYPE'];
                     $notShowNextTaskWhenJoinOf = "INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT|SCRIPT-TASK|INTERMEDIATE-CATCH-TIMER-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT";
-                    if (array_key_exists('INTERMEDIATE-THROW-EMAIL-EVENT', $arrayAux) && array_key_exists('ROU_TYPE', $arrayAux) &&
-                        preg_match("/^(?:" . $notShowNextTaskWhenJoinOf . ")$/", $arrayAux["TAS_TYPE"]) &&
-                        $arrayAux['ROU_TYPE'] === 'SEC-JOIN') {
-                        foreach ($arrayAux as $value2) {
+
+                    foreach ($arrayAux as $value2) {
+                        
+                        //@TODO move this logic to the prepareInformation of the Derivation class
+                        $intermediateEventAndJoinPresent = (array_key_exists('TAS_TYPE', $value2)
+                                                                && array_key_exists('ROU_TYPE', $value2)
+                                                                && preg_match("/^(?:" . $notShowNextTaskWhenJoinOf . ")$/", $value2["TAS_TYPE"])
+                                                                && $value2['ROU_TYPE'] === 'SEC-JOIN');
+                        if (!$intermediateEventAndJoinPresent) {
                             $key = ++$i;
                             $arrayNextTask[$key] = $value2;
                             $prefix = substr($value['ROU_NEXT_TASK'], 0, 4);
-                            if($prefix!=='gtg-'){
+                            if ($prefix!=='gtg-') {
                                 $arrayNextTask[$key]['SOURCE_UID'] = $value['ROU_NEXT_TASK'];
                             }
-                            foreach($aSecJoin as $rsj){
+                            foreach ($aSecJoin as $rsj) {
                                 $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TASK"] = $rsj["ROU_PREVIOUS_TASK"];
                                 $arrayNextTask[$i]["NEXT_TASK"]["ROU_PREVIOUS_TYPE"] = "SEC-JOIN";
                             }
