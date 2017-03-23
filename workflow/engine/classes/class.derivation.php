@@ -950,7 +950,15 @@ class Derivation
                         $aSP['USR_UID'] = $nextDel['USR_UID'];
                     }
                     $aTask = $oTask->load( $nextDel['TAS_PARENT'] );
-                    $nextDel = array ('TAS_UID' => $aTask['TAS_UID'],'USR_UID' => $aSP['USR_UID'],'TAS_ASSIGN_TYPE' => $aTask['TAS_ASSIGN_TYPE'],'TAS_DEF_PROC_CODE' => $aTask['TAS_DEF_PROC_CODE'],'DEL_PRIORITY' => 3,'TAS_PARENT' => ''
+                    $nextDel = array (
+                        'TAS_UID' => $aTask['TAS_UID'],
+                        'USR_UID' => $aSP['USR_UID'],
+                        'TAS_ASSIGN_TYPE' => $aTask['TAS_ASSIGN_TYPE'],
+                        'TAS_DEF_PROC_CODE' => $aTask['TAS_DEF_PROC_CODE'],
+                        'DEL_PRIORITY' => 3,
+                        'TAS_PARENT' => '',
+                        'ROU_PREVIOUS_TYPE' => isset($nextDel['ROU_PREVIOUS_TYPE']) ? $nextDel['ROU_PREVIOUS_TYPE'] : '',
+                        'ROU_PREVIOUS_TASK' => isset($nextDel['ROU_PREVIOUS_TASK']) ? $nextDel['ROU_PREVIOUS_TASK'] : ''
                     );
                 } else {
                     continue;
@@ -1068,7 +1076,28 @@ class Derivation
                             switch ($routeType) {
                                 case "SEC-JOIN":
                                     $arrayOpenThread = ($flagTaskIsMultipleInstance && $flagTaskAssignTypeIsMultipleInstance)? $this->case->searchOpenPreviousTasks($currentDelegation["TAS_UID"], $currentDelegation["APP_UID"]) : array();
-                                    $arraySiblings = $this->case->getOpenSiblingThreads($nextDel["TAS_UID"], $currentDelegation["APP_UID"], $currentDelegation["DEL_INDEX"], $currentDelegation["TAS_UID"]);
+
+                                    if (
+                                        $flagTaskIsMultipleInstance
+                                        && $flagTaskAssignTypeIsMultipleInstance
+                                        && isset($nextDel["ROU_PREVIOUS_TYPE"])
+                                        && $nextDel["ROU_PREVIOUS_TYPE"] == 'SEC-JOIN'
+                                    ) {
+                                        $appDelegation = new AppDelegation();
+                                        $arraySiblings = $appDelegation->getAllTasksBeforeSecJoin(
+                                            $nextDel["ROU_PREVIOUS_TASK"],
+                                            $currentDelegation["APP_UID"],
+                                            $appFields['DEL_PREVIOUS'],
+                                            'OPEN'
+                                        );
+                                    } else {
+                                        $arraySiblings = $this->case->getOpenSiblingThreads(
+                                            $nextDel["TAS_UID"],
+                                            $currentDelegation["APP_UID"],
+                                            $currentDelegation["DEL_INDEX"],
+                                            $currentDelegation["TAS_UID"]
+                                        );
+                                    }
                                     if(is_array($arrayOpenThread) && is_array($arraySiblings)){
                                         $arrayOpenThread = array_merge($arrayOpenThread, $arraySiblings);
                                     }
