@@ -30,8 +30,12 @@
 ////////////////////////////////////////////////////
 use ProcessMaker\Util\ElementTranslation;
 
-if (! class_exists( 'PMScript' )) {
-    G::LoadClass( 'pmScript' );
+if (!class_exists('Monolog\Logger')) {
+    Bootstrap::initVendors();
+}
+
+if (!class_exists('PMScript')) {
+    G::LoadClass('pmScript');
 }
 
 /**
