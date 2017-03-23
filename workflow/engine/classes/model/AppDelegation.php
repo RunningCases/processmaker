@@ -851,7 +851,7 @@ class AppDelegation extends BaseAppDelegation
     * @param string $sAppUid
     * @return array $index
     */
-    public static function getAllTasksBeforeSecJoin($nextTaskUid, $sAppUid, $sDelPrevious){
+    public static function getAllTasksBeforeSecJoin($nextTaskUid, $sAppUid, $sDelPrevious, $threadStatus = ''){
         $criteriaR = new Criteria('workflow');
         $criteriaR->addSelectColumn(AppDelegationPeer::DEL_INDEX);
         $criteriaR->addSelectColumn(AppDelegationPeer::DEL_PREVIOUS);
@@ -860,6 +860,9 @@ class AppDelegation extends BaseAppDelegation
         $criteriaR->add(RoutePeer::ROU_TYPE, 'SEC-JOIN', Criteria::EQUAL);
         $criteriaR->add(AppDelegationPeer::APP_UID, $sAppUid, Criteria::EQUAL);
         $criteriaR->add(AppDelegationPeer::DEL_PREVIOUS, $sDelPrevious, Criteria::EQUAL);
+        if (!empty($threadStatus)) {
+            $criteriaR->add(AppDelegationPeer::DEL_THREAD_STATUS, $threadStatus, Criteria::EQUAL);
+        }
         $rsCriteriaR = RoutePeer::doSelectRS($criteriaR);
         $rsCriteriaR->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $index = array();
