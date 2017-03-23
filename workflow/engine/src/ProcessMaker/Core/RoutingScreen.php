@@ -13,6 +13,7 @@ use ElementTaskRelationPeer;
 use BpmnEventPeer;
 use ResultSet;
 use PMScript;
+use Exception;
 
 class RoutingScreen extends \Derivation
 {
@@ -277,7 +278,7 @@ class RoutingScreen extends \Derivation
                     $notShowNextTaskWhenJoinOf = "INTERMEDIATE-THROW-MESSAGE-EVENT|INTERMEDIATE-CATCH-MESSAGE-EVENT|SCRIPT-TASK|INTERMEDIATE-CATCH-TIMER-EVENT|INTERMEDIATE-THROW-EMAIL-EVENT";
 
                     foreach ($arrayAux as $value2) {
-                        
+
                         //@TODO move this logic to the prepareInformation of the Derivation class
                         $intermediateEventAndJoinPresent = (array_key_exists('TAS_TYPE', $value2)
                                                                 && array_key_exists('ROU_TYPE', $value2)
