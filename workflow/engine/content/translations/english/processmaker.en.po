@@ -1466,6 +1466,12 @@ msgid "Table already exists"
 msgstr "Table already exists"
 
 # TRANSLATION
+# LABEL/ID_BATCH_ROUTING_TABLE_ALREADY_EXISTS
+#: LABEL/ID_BATCH_ROUTING_TABLE_ALREADY_EXISTS
+msgid "The specified batch routing table already exists. The existing table will be used to store the batch routing information. Please be sure that the table has the correct batch routing configuration."
+msgstr "The specified batch routing table already exists. The existing table will be used to store the batch routing information. Please be sure that the table has the correct batch routing configuration."
+
+# TRANSLATION
 # LABEL/ID_LANGUAGES
 #: LABEL/ID_LANGUAGES
 msgid "Language"
