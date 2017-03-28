@@ -926,8 +926,7 @@ class pmDynaform
             $where = "";
             if (!empty($parsed["WHERE"])) {
                 $where = "WHERE ";
-                $dt = ($parsed['WHERE'][0]['expr_type'] == 'expression') ? $parsed['WHERE'][0]['sub_tree'] :
-                    $parsed["WHERE"];
+                $dt = ($parsed['WHERE'][0]['expr_type'] == 'expression') ? $parsed['WHERE'][0]['sub_tree'] : $parsed["WHERE"];
                 $nw = count($dt);
                 //reserved word: OFFSET
                 if ($dt[$nw - 2]["base_expr"] === "OFFSET") {
@@ -953,9 +952,11 @@ class pmDynaform
                 $groupBy = "GROUP BY ";
                 $dt = $parsed["GROUP"];
                 foreach ($dt as $key => $value) {
-                    $groupBy .= $value["base_expr"] . ", ";
+                    $search = explode(" ", $value["base_expr"]);
+                    $groupBy .= $search[0] . ", ";
                 }
                 $groupBy = rtrim($groupBy, ", ");
+                $groupBy .= " " . $value["direction"];
             }
             $groupBy = trim($groupBy);
 
@@ -974,7 +975,8 @@ class pmDynaform
                 $orderBy = "ORDER BY ";
                 $dt = $parsed["ORDER"];
                 foreach ($dt as $key => $value) {
-                    $orderBy .= $value["base_expr"] . ", ";
+                    $search = explode(" ", $value["base_expr"]);
+                    $orderBy .= $search[0] . ", ";
                 }
                 $orderBy = rtrim($orderBy, ", ");
                 $orderBy .= " " . $value["direction"];
