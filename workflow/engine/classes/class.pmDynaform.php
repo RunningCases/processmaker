@@ -956,7 +956,6 @@ class pmDynaform
                     $groupBy .= $search[0] . ", ";
                 }
                 $groupBy = rtrim($groupBy, ", ");
-                $groupBy .= " " . $value["direction"];
             }
             $groupBy = trim($groupBy);
 
