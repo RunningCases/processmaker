@@ -952,8 +952,8 @@ class pmDynaform
                 $groupBy = "GROUP BY ";
                 $dt = $parsed["GROUP"];
                 foreach ($dt as $key => $value) {
-                    $search = explode(" ", $value["base_expr"]);
-                    $groupBy .= $search[0] . ", ";
+                    $search = preg_replace("/ ASC$/i", "", $value["base_expr"]);
+                    $groupBy .= $search . ", ";
                 }
                 $groupBy = rtrim($groupBy, ", ");
             }
@@ -974,8 +974,8 @@ class pmDynaform
                 $orderBy = "ORDER BY ";
                 $dt = $parsed["ORDER"];
                 foreach ($dt as $key => $value) {
-                    $search = explode(" ", $value["base_expr"]);
-                    $orderBy .= $search[0] . ", ";
+                    $search = preg_replace("/ ASC$/i", "", $value["base_expr"]);
+                    $orderBy .= $search . ", ";
                 }
                 $orderBy = rtrim($orderBy, ", ");
                 $orderBy .= " " . $value["direction"];
