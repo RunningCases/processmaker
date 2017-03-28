@@ -975,10 +975,9 @@ class pmDynaform
                 $dt = $parsed["ORDER"];
                 foreach ($dt as $key => $value) {
                     $search = preg_replace("/ ASC$/i", "", $value["base_expr"]);
-                    $orderBy .= $search . ", ";
+                    $orderBy .= $search . " " . $value["direction"] . ", ";
                 }
                 $orderBy = rtrim($orderBy, ", ");
-                $orderBy .= " " . $value["direction"];
             }
             $orderBy = trim($orderBy);
 
