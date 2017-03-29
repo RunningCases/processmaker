@@ -5,7 +5,9 @@
  *
  * @author Alexandre Rosenfeld
  */
-
+G::LoadSystem('dbMaintenance');
+G::LoadClass("cli");
+G::LoadClass("multipleFilesBackup");
 /**
  * class workspaceTools
  *
