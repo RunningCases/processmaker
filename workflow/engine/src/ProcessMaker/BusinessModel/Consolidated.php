@@ -646,7 +646,7 @@ class Consolidated
                     $editor = $this->removeLineBreaks($editor);
                     $width = $field->colWidth;
 
-                    $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
+                    $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "date":
@@ -676,7 +676,7 @@ class Consolidated
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name, "type" => "date");
                     break;
                 case "currency":
@@ -704,7 +704,7 @@ class Consolidated
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "percentage":
@@ -735,7 +735,7 @@ class Consolidated
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "textarea":
@@ -765,7 +765,7 @@ class Consolidated
                     $editor = $this->removeLineBreaks($editor);
                     $renderer = "* function (value) {  return (value);  } *";
                     $renderer = $this->removeLineBreaks($renderer);
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
 
                     $hasTextArea = true;
@@ -793,7 +793,7 @@ class Consolidated
                                      return Ext.isDate(value)? value.dateFormat('{$dateFormat}') : value;
                                    } *";
                     $renderer = $this->removeLineBreaks($renderer);
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "editor" => $editor, "renderer" => $renderer, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name, "type" => "date");
                     break;
                 case "link":
@@ -812,7 +812,7 @@ class Consolidated
                                        return linkRenderer(value);
                                    } *";
                     $renderer = $this->removeLineBreaks($renderer);
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "hidden" => false, "hideable" => false, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "renderer" => $renderer, "frame" => true, "hidden" => false, "hideable" => false, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "hidden":
@@ -827,7 +827,7 @@ class Consolidated
 
                     $editor = "* new Ext.form.TextField({ allowBlank: false }) *";
                     $editor = $this->removeLineBreaks($editor);
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)$width, "align" => $align, "editor" => $editor, "frame" => "true", "hidden" => "true", "hideable" => false, "clicksToEdit" => "1");
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) $width, "align" => $align, "editor" => $editor, "frame" => "true", "hidden" => "true", "hideable" => false, "clicksToEdit" => "1");
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "yesno":
@@ -870,7 +870,7 @@ class Consolidated
                                  cls: \"\"
                                }) *";
                     $editor = $this->removeLineBreaks($editor);
-                    $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
+                    $caseColumns[] = array("xtype" => "combocolumn", "gridId" => "gridId", "header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => "true", "clicksToEdit" => "1");
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "checkbox":
@@ -885,9 +885,18 @@ class Consolidated
                     $dropList[] = $field->name;
                     $comboBoxYesNoList[] = $field->name;
 
-                    $editor = "* new Ext.form.Checkbox({ $fieldReadOnly $fieldRequired $fieldValidate cls: \"\"}) *";
+                    $inputValue = "";
+                    $uncheckedValue = "";
+                    if (isset($field->value)) {
+                        $inputValue = ",inputValue: '" . $field->value . "'";
+                    }
+                    if (isset($field->falseValue)) {
+                        $uncheckedValue = ",uncheckedValue: '" . $field->falseValue . "'";
+                    }
+
+                    $editor = "* new Ext.form.CheckboxCustom({ $fieldReadOnly $fieldRequired $fieldValidate cls: \"\" " . $inputValue . $uncheckedValue . " }) *";
                     $editor = $this->removeLineBreaks($editor);
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
                     break;
                 case "text":
@@ -907,7 +916,7 @@ class Consolidated
                         $editor = null;
                     }
 
-                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int)($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
+                    $caseColumns[] = array("header" => $fieldLabel, "dataIndex" => $field->name, "width" => (int) ($width), "align" => $align, "editor" => $editor, "frame" => true, "clicksToEdit" => 1, "sortable" => true);
                     $caseReaderFields[] = array("name" => $field->name);
             }
         }
@@ -934,7 +943,6 @@ class Consolidated
         print $temp;
         die();
     }
-
 
     /**
      * Get Dropdown Label
