@@ -36,7 +36,7 @@ if(isset( $_GET['gmail']) && $_GET['gmail'] == 1){
 
 //Check if we have the information for open the case
 if (!isset($_GET['APP_UID']) && !isset($_GET['APP_NUMBER']) && !isset($_GET['DEL_INDEX'])) {
-    throw new Exception("Application ID or Delegation Index is missing!. The System can't open the case.");
+    throw new Exception(G::LoadTranslation('ID_APPLICATION_OR_INDEX_MISSING'));
 }
 //Get the APP_UID related to APP_NUMBER
 if (!isset($_GET['APP_UID']) && isset($_GET['APP_NUMBER'])) {
