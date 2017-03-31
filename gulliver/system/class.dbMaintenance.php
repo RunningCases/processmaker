@@ -49,6 +49,7 @@ class DataBaseMaintenance
     protected $tmpDir;
     protected $outfile;
     protected $infile;
+    protected $isWindows;
 
     /**
      * __construct
@@ -64,7 +65,7 @@ class DataBaseMaintenance
         $this->tmpDir = './';
         $this->link = null;
         $this->dbName = null;
-
+        $this->isWindows = strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
         if (isset( $host ) && isset( $user ) && isset( $passwd )) {
             $this->host = $host;
             $this->user = $user;
@@ -405,7 +406,7 @@ class DataBaseMaintenance
         //marks (delayed variable substitution) and double quotes with spaces and 
         //adds double quotes around the string.
         //See: http://php.net/manual/en/function.escapeshellarg.php
-        if (PATH_SEP !== "/") {
+        if ($this->isWindows) {
             $password = $this->escapeshellargCustom($this->passwd);
         }
         $aHost = explode(':', $this->host);
@@ -451,15 +452,15 @@ class DataBaseMaintenance
     private function escapeshellargCustom($string, $quotes = "")
     {
         if ($quotes === "") {
-            $quotes = PHP_OS == "WINNT" ? "\"" : "'";
+            $quotes = $this->isWindows ? "\"" : "'";
         }
         $n = strlen($string);
-        $especial = ["!", "%", "\""];
+        $special = ["!", "%", "\""];
         $substring = "";
         $result1 = [];
         $result2 = [];
         for ($i = 0; $i < $n; $i++) {
-            if (in_array($string[$i], $especial, true)) {
+            if (in_array($string[$i], $special, true)) {
                 $result2[] = $string[$i];
                 $result1[] = $substring;
                 $substring = "";
