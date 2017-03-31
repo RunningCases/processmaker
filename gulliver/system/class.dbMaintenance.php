@@ -399,30 +399,86 @@ class DataBaseMaintenance
      */
     function backupDataBase ($outfile)
     {
+        $password = escapeshellarg($this->passwd);
+        
+        //On Windows, escapeshellarg() instead replaces percent signs, exclamation 
+        //marks (delayed variable substitution) and double quotes with spaces and 
+        //adds double quotes around the string.
+        //See: http://php.net/manual/en/function.escapeshellarg.php
+        if (PATH_SEP !== "/") {
+            $password = $this->escapeshellargCustom($this->passwd);
+        }
         $aHost = explode(':', $this->host);
         $dbHost = $aHost[0];
         if (isset($aHost[1])) {
             $dbPort = $aHost[1];
             $command = 'mysqldump'
-                . ' --user=' . $this->user
-                . ' --password=' . escapeshellarg($this->passwd)
-                . ' --host=' . $dbHost
-                . ' --port=' . $dbPort
-                . ' --opt'
-                . ' --skip-comments'
-                . ' ' . $this->dbName
-                . ' > ' . $outfile;
+                    . ' --user=' . $this->user
+                    . ' --password=' . $password
+                    . ' --host=' . $dbHost
+                    . ' --port=' . $dbPort
+                    . ' --opt'
+                    . ' --skip-comments'
+                    . ' ' . $this->dbName
+                    . ' > ' . $outfile;
         } else {
             $command = 'mysqldump'
-                . ' --host=' . $dbHost
-                . ' --user=' . $this->user
-                . ' --opt'
-                . ' --skip-comments'
-                . ' --password=' . escapeshellarg($this->passwd)
-                . ' ' . $this->dbName
-                . ' > ' . $outfile;
+                    . ' --host=' . $dbHost
+                    . ' --user=' . $this->user
+                    . ' --opt'
+                    . ' --skip-comments'
+                    . ' --password=' . $password
+                    . ' ' . $this->dbName
+                    . ' > ' . $outfile;
         }
         shell_exec($command);
+    }
+
+    /**
+     * string escapeshellargCustom ( string $arg , character $quotes)
+     * 
+     * escapeshellarg() adds single quotes around a string and quotes/escapes any 
+     * existing single quotes allowing you to pass a string directly to a shell 
+     * function and having it be treated as a single safe argument. This function 
+     * should be used to escape individual arguments to shell functions coming 
+     * from user input. The shell functions include exec(), system() and the 
+     * backtick operator.
+     * 
+     * On Windows, escapeshellarg() instead replaces percent signs, exclamation 
+     * marks (delayed variable substitution) and double quotes with spaces and 
+     * adds double quotes around the string.
+     */
+    private function escapeshellargCustom($string, $quotes = "")
+    {
+        if ($quotes === "") {
+            $quotes = PHP_OS == "WINNT" ? "\"" : "'";
+        }
+        $n = strlen($string);
+        $especial = ["!", "%", "\""];
+        $substring = "";
+        $result1 = [];
+        $result2 = [];
+        for ($i = 0; $i < $n; $i++) {
+            if (in_array($string[$i], $especial, true)) {
+                $result2[] = $string[$i];
+                $result1[] = $substring;
+                $substring = "";
+            } else {
+                $substring = $substring . $string[$i];
+            }
+        }
+        $result1[] = $substring;
+        //Rebuild the password string
+        $n = count($result1);
+        for ($i = 0; $i < $n; $i++) {
+            $result1[$i] = trim(escapeshellarg($result1[$i]), $quotes);
+            if (isset($result2[$i])) {
+                $result1[$i] = $result1[$i] . $result2[$i];
+            }
+        }
+        //add simple quotes, see escapeshellarg function
+        $newString = $quotes . implode("", $result1) . $quotes;
+        return $newString;
     }
 
     /**

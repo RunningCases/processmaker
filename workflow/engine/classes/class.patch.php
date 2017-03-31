@@ -26,27 +26,19 @@ class p11835 extends patch
      */
     static public function isApplicable()
     {
-        if (!class_exists('System')) {
+        if (! class_exists('System')) {
             G::LoadClass("System");
         }
 
         patch::$isPathchable = false;
         $con = Propel::getConnection("workflow");
-        $stmt = $con->prepareStatement("SHOW TABLES LIKE 'TASK'");
+        $stmt = $con->prepareStatement("describe TASK;");
         $rs = $stmt->executeQuery();
         $rs->next();
-        $row = $rs->getRow();
-        if (empty($row) === true) {
-            return patch::$isPathchable;
-        }
-
-        $stmt = $con->prepareStatement("DESCRIBE TASK");
-        $rs = $stmt->executeQuery();
-        $rs->next();
-        while ($row = $rs->getRow()) {
+        while($row = $rs->getRow()) {
             if ($row ['Field'] == "TAS_GROUP_VARIABLE") {
-                $version = System::getVersion();
-                $version = explode('-', $version);
+                $version = System::getVersion ();
+                $version = explode('-',$version);
                 if ($version[0] == '2.5.1') {
                     echo "Version " . $version[0] . " Patch\n";
                     patch::$isPathchable = true;
