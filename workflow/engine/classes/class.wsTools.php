@@ -1701,19 +1701,6 @@ class workspaceTools
 
             if (Installer::isset_site($workspaceName)) {
                 if ($overwrite) {
-                    if ($workspace->dbInfo['DB_NAME'] == $workspace->dbInfo['DB_RBAC_NAME']) {
-                        $newDatabases = 1;
-                    } else {
-                        $newDatabases = 3;
-                    }
-
-                    if ($newDatabases != $oldDatabases) {
-                        throw new Exception("We can't overwrite this workspace because it has a different amount of databases. Not only the 'source' but also the 'target' must have the same amount of databases.");
-                    }
-
-                    if (!$workspace->workspaceExists()) {
-                        throw new Exception('We can not overwrite this workspace because the workspace ' . $workspaceName . ' does not exist please check the lower case and upper case.');
-                    }
                     CLI::logging(CLI::warning("> Workspace $workspaceName already exist, overwriting!") . "\n");
                 } else {
                     throw new Exception("Destination workspace already exist (use -o to overwrite)");
