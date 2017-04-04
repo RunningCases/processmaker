@@ -312,6 +312,7 @@ class GranularImporter
             $arrayWorkflowFiles = $data["files"]["workflow"];
             $arrayBpmnTablesFormat = $this->structureBpmnData($arrayBpmnTables);
             $arrayBpmnTablesFormat['prj_type'] = $arrayWorkflowTables['process']['PRO_TYPE'];
+            $arrayBpmnTablesFormat['pro_status'] = $arrayWorkflowTables['process']['PRO_STATUS'];
             $result = $this->bpmn->createFromStruct($arrayBpmnTablesFormat, $generateUid);
             $projectUidOld = $arrayBpmnTables["project"][0]["prj_uid"];
             $projectUid = ($generateUid) ? $result[0]["new_uid"] : $result;
