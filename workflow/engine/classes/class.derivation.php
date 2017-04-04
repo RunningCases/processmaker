@@ -1011,28 +1011,33 @@ class Derivation
                 case TASK_FINISH_TASK:
                     $iAppThreadIndex = $appFields['DEL_THREAD'];
                     $this->case->closeAppThread($currentDelegation['APP_UID'], $iAppThreadIndex);
+                    if (isset($nextDel["TAS_UID_DUMMY"])) {
+                        $criteria = new Criteria("workflow");
+                        $criteria->addSelectColumn(RoutePeer::TAS_UID);
+                        $criteria->addJoin(RoutePeer::TAS_UID, AppDelegationPeer::TAS_UID);
+                        $criteria->add(RoutePeer::PRO_UID, $appFields['PRO_UID']);
+                        $criteria->add(RoutePeer::ROU_NEXT_TASK, $nextDel['ROU_PREVIOUS_TASK']);
+                        $criteria->add(RoutePeer::ROU_TYPE, $nextDel['ROU_PREVIOUS_TYPE']);
+                        $criteria->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
+                        $rsCriteria = RoutePeer::doSelectRS($criteria);
+                        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+                        $executeEvent = ($rsCriteria->next()) ? false : true;
 
-                    if (isset($nextDel["TAS_UID_DUMMY"]) && !$flagTaskAssignTypeIsMultipleInstance) {
+                        $multiInstanceCompleted = true;
+                        if ($flagTaskAssignTypeIsMultipleInstance) {
+                            $multiInstanceCompleted = $this->case->multiInstanceIsCompleted(
+                                $appFields['APP_UID'],
+                                $appFields['TAS_UID'],
+                                $appFields['DEL_PREVIOUS']);
+                        }
+
                         $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
                         if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())
-                            && array_key_exists('ROU_PREVIOUS_TYPE', $nextDel) && $nextDel['ROU_PREVIOUS_TYPE'] !== "SEC-JOIN") {
+                            && $multiInstanceCompleted && $executeEvent
+                        ) {
                             $this->executeEvent($nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
                         }
                     }
-
-                    //if the next task is an end event and the multiinstance threads are finished the end event
-                    //is triggered:
-                    if (isset($nextDel["TAS_UID_DUMMY"]) && $flagTaskAssignTypeIsMultipleInstance) {
-                        $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
-                        if ($this->case->multiInstanceIsCompleted($appFields['APP_UID'],
-                                                                    $appFields['TAS_UID'],
-                                                                    $appFields['DEL_PREVIOUS'])
-                                && preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())) {
-                            $this->executeEvent($nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
-                        }
-                    }
-
-                    $this->case->closeAppThread($currentDelegation['APP_UID'], $iAppThreadIndex);
                     $aContext['action'] = 'finish-task';
                     //Logger
                     Bootstrap::registerMonolog('CaseDerivation', 200, 'Case Derivation', $aContext, $this->sysSys, 'processmaker.log');
@@ -1753,7 +1758,15 @@ class Derivation
                                 }
 
                             }
-                            $nextDelegations2[] = array('TAS_UID' => $aDeriveTask['NEXT_TASK']['TAS_UID'], 'USR_UID' => $aDeriveTask['NEXT_TASK']['USER_ASSIGNED']['USR_UID'], 'TAS_ASSIGN_TYPE' => $aDeriveTask['NEXT_TASK']['TAS_ASSIGN_TYPE'], 'TAS_DEF_PROC_CODE' => $aDeriveTask['NEXT_TASK']['TAS_DEF_PROC_CODE'], 'DEL_PRIORITY' => 3, 'TAS_PARENT' => $aDeriveTask['NEXT_TASK']['TAS_PARENT']
+                            $nextDelegations2[] = array(
+                                'TAS_UID' => $aDeriveTask['NEXT_TASK']['TAS_UID'],
+                                'USR_UID' => $aDeriveTask['NEXT_TASK']['USER_ASSIGNED']['USR_UID'],
+                                'TAS_ASSIGN_TYPE' => $aDeriveTask['NEXT_TASK']['TAS_ASSIGN_TYPE'],
+                                'TAS_DEF_PROC_CODE' => $aDeriveTask['NEXT_TASK']['TAS_DEF_PROC_CODE'],
+                                'DEL_PRIORITY' => 3,
+                                'TAS_PARENT' => $aDeriveTask['NEXT_TASK']['TAS_PARENT'],
+                                'ROU_PREVIOUS_TASK' => isset($aDeriveTask['NEXT_TASK']['ROU_PREVIOUS_TASK']) ? $aDeriveTask['NEXT_TASK']['ROU_PREVIOUS_TASK'] : '',
+                                'ROU_PREVIOUS_TYPE' => isset($aDeriveTask['NEXT_TASK']['ROU_PREVIOUS_TYPE']) ? $aDeriveTask['NEXT_TASK']['ROU_PREVIOUS_TYPE'] : ''
                             );
                         }
                         $currentDelegation2 = array('APP_UID' => $aSA['APP_PARENT'], 'DEL_INDEX' => $aSA['DEL_INDEX_PARENT'], 'APP_STATUS' => 'TO_DO', 'TAS_UID' => $aParentCase['TAS_UID'], 'ROU_TYPE' => $aDeriveTasks[1]['ROU_TYPE']
