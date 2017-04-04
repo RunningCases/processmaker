@@ -18,12 +18,12 @@ if (PMLicensedFeatures
          * reference, eg:
          * <?php
          * $obj = new stdClass();
-         * $obj->valor1 = "value";
+         * $obj->value = "value";
          * 
-         * $a = ["uno" => 1, "dos" => $obj, "tres" => 3];
+         * $a = ["one" => 1, "two" => $obj, "three" => 3];
          * $b = $a;
 
-         * $a["dos"]->valor1 = "modify";
+         * $a["two"]->value = "modify";
          * 
          * In 'b' is reflected the output of 'a'.
          */
