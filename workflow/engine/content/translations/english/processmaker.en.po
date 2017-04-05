@@ -2108,6 +2108,12 @@ msgid "This case does not exist"
 msgstr "This case does not exist"
 
 # TRANSLATION
+# LABEL/ID_APPLICATION_OR_INDEX_MISSING
+#: LABEL/ID_APPLICATION_OR_INDEX_MISSING
+msgid "Application ID or Delegation Index is missing!. The System can not open the case."
+msgstr "Application ID or Delegation Index is missing!. The System can not open the case."
+
+# TRANSLATION
 # LABEL/ID_PLEASE_SELECT_UPGRADE_FILE
 #: LABEL/ID_PLEASE_SELECT_UPGRADE_FILE
 msgid "Please select the upgrade file"

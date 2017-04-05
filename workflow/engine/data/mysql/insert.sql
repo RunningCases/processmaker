@@ -1792,6 +1792,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASE_IS_CURRENTLY_WITH_ANOTHER_USER','en','The case is currently opened by another user','2014-01-15') ,
 ( 'LABEL','ID_IN','en','in','2014-01-15') ,
 ( 'LABEL','ID_CASE_DOES_NOT_EXISTS','en','This case does not exist','2014-01-15') ,
+( 'LABEL','ID_APPLICATION_OR_INDEX_MISSING','en','Application ID or Delegation Index is missing!. The System can not open the case.','2017-03-30') ,
 ( 'LABEL','ID_PLEASE_SELECT_UPGRADE_FILE','en','Please select the upgrade file','2014-01-15') ,
 ( 'LABEL','ID_PLEASE_SELECT_MAX_X_FIELDS','en','Please select 80 fields at most','2014-01-15') ,
 ( 'LABEL','ID_UPGRADE_READY','en','System upgraded from revision','2014-01-15') ,
