@@ -176,7 +176,7 @@ class Process extends BaseProcess
             $this->setProParent( $sNewProUid );
             $this->setProTime( 1 );
             $this->setProTimeunit( 'DAYS' );
-            $this->setProStatus( 'ACTIVE' );
+            $this->setProStatus((isset($aData["PRO_STATUS"])) ? $aData["PRO_STATUS"] : 'ACTIVE');
             $this->setProTypeDay( '' );
             $this->setProType((isset($aData["PRO_TYPE"]))? $aData["PRO_TYPE"]: "NORMAL");
             $this->setProAssignment( 'FALSE' );
