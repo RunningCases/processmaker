@@ -3467,6 +3467,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'JAVASCRIPT','ID_MESSAGE_FIELD_REQUIRED','en','Message Field is required.','2014-01-15') ,
 ( 'JAVASCRIPT','ID_TEMPLATE_FIELD_REQUIRED','en','Template Field is required.','2014-01-15') ,
 ( 'LABEL','ID_ADMINS_CANT_USE_UXS','en','Administrators users cannot use this User Experience.','2014-01-15') ,
+( 'LABEL','ID_THE_NAME_CHANGE_MAY_CAUSE_DATA_LOSS','en','The change might cause data loss in the PM table. Do you want to continue?','2017-03-30') ,
 ( 'LABEL','ID_IMPORT_PMT','en','Import PM Table','2014-01-15') ,
 ( 'LABEL','ID_OVERWRITE_EXIST','en','Overwrite if exists?','2014-01-15') ,
 ( 'LABEL','ID_SELECT_PM_FILE','en','Select a .pmt file','2014-01-15') ,
