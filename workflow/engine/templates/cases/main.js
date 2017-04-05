@@ -1,27 +1,23 @@
 var PANEL_EAST_OPEN = false;
-var currentSelectedTreeMenuItem = null;
 var centerPanel;
-var menuTree, setFlag;
+var setFlag;
 var flagRefresh = true;
-
 var debugVarTpl = new Ext.Template('<span style="font-size:11">{value}</span>');
-debugVarTpl.compile();
-
 var detailsText = '<i></i>';
-
 var debugTriggersDetailTpl = new Ext.Template('<pre style="font-size:10px"><code>{code}</code></pre>');
-debugTriggersDetailTpl.compile();
-
 var propStore;
 var triggerStore;
-
-var debugVariablesFilter;
-var NOTIFIER_FLAG = false;
 var result;
 var _action = '';
-var _CASE_TITLE;
 //@var treeMenuItemsLoaded -> added to flag the "treeMenuItems" tree, to ensure that its onload event is executed just once
 var treeMenuItemsLoaded = false;
+
+debugVarTpl.compile();
+debugTriggersDetailTpl.compile();
+
+setFlag = function (val) {
+    flagRefresh = val;
+};
 
 Ext.onReady(function(){
   new Ext.KeyMap(document, {
@@ -35,7 +31,6 @@ Ext.onReady(function(){
         updateCasesTree();
       }
       else
-        //Ext.Msg.alert('Refresh', 'You clicked: CTRL-F5');
        	Ext.Msg.alert(_('ID_REFRESH_LABEL'),_('ID_REFRESH_MESSAGE'));
     }
   });
@@ -46,119 +41,17 @@ Ext.onReady(function(){
   var resetGrid = function() {
     propStore.load();
   };
+  var resetTriggers = function(){
+    triggerStore.load();
+  };
 
   var debugVariablesFilterDynaform = function(){
     propStore.load({params:{filter:'dyn'}});
-  }
+  };
 
   var debugVariablesFilterSystem = function(){
     propStore.load({params:{filter:'sys'}});
-  }
-
-  var resetTriggers = function(){
-    triggerStore.load();
-  }
-
-  propStore = new Ext.data.Store({
-    proxy: new Ext.data.HttpProxy({url: 'debug_vars'}),
-    reader: new Ext.data.DynamicJsonReader({root: 'data'})
-  });
-
-  propStore.on('load', function(){
-    propStore.fields = propStore.recordType.prototype.fields;
-    debugVariables.setSource(propStore.getAt(0).data);
-  });
-
-
-  var debugVariables = new Ext.grid.PropertyGrid({
-    id: 'debugVariables',
-    title:TRANSLATIONS.ID_VARIABLES,
-    autoHeight: false,
-    height: 300,
-    width: 400,
-    region: 'center',
-    margins: '2 2 0 2',
-
-    border: true,
-    stripeRows: true,
-    listeners: {
-      beforeedit: function(event) { //Cancel editing - read only
-        event.cancel = true;
-      }
-    },
-    tbar: [
-      {text: TRANSLATIONS.ID_ALL, handler: resetGrid},
-      {text: TRANSLATIONS.ID_DYNAFORM, handler: debugVariablesFilterDynaform},
-      {text: TRANSLATIONS.ID_SYSTEM, handler: debugVariablesFilterSystem}
-    ],
-    sm: new Ext.grid.RowSelectionModel({singleSelect: true}),
-    viewConfig: {
-      forceFit: true
-    }
-
-  });
-
-  //set debug variable details
-  debugVariables.getSelectionModel().on('rowselect', function(sm, rowIdx, r) {
-    var detailPanel = Ext.getCmp('debug-details-panel');
-    var d = {}
-
-    d.name  = r.data.name;
-    d.value = parent.parent.htmlentities ? parent.parent.htmlentities(r.data.value) : r.data.value;
-
-    debugVarTpl.overwrite(detailPanel.body, d);
-    detailPanel.setTitle(r.data.name);
-
-    if(r.data.value == '<object>' || r.data.value == '<array>' ){
-      Ext.getCmp('deatachAction').setDisabled(false);
-      Ext.Ajax.request({
-        url: 'debug_vars?r='+Math.random(),
-        success: function(response){
-          try{
-            result = eval('('+response.responseText+')');
-
-            var store1a = new Ext.data.ArrayStore({fields: result.headers});
-              // manually load local data
-              store1a.loadData(result.rows);
-
-              var myGridPanel = new Ext.grid.GridPanel({
-                store: store1a,
-                height: 200,
-                border : false,
-                columns: result.columns,
-                stripeRows : true,
-                layout: 'fit',
-                viewConfig:{forceFit:true, scrollOffset:0},
-                listeners: {
-                  rowdblclick: function(grid, n,e){
-
-                  },
-                  render: function(){
-                    this.loadMask = new Ext.LoadMask(this.body, { msg:_('ID_LOADING_GRID') });
-                  }
-                }
-              });
-
-              Ext.each(detailPanel.items.items, function(childPanel) {
-                  detailPanel.remove(childPanel, true);
-
-              });
-
-              detailPanel.add(myGridPanel);
-              detailPanel.doLayout();
-          } catch (e){
-            //alert(""+e);
-          }
-        },
-        failure: function(){},
-        params: {request: 'getRows', fieldname:r.data.name}
-      });
-
-
-    } else
-      Ext.getCmp('deatachAction').setDisabled(true);
-
-  });
+  };
 
   //center iframe panel
   centerPanel = {
@@ -169,7 +62,7 @@ Ext.onReady(function(){
       id   : 'casesSubFrame'
     },
     deferredRender: false
-  }
+  };
 
   /**
    * Menu Panel
@@ -200,32 +93,8 @@ Ext.onReady(function(){
         if( tp.attributes.url ){
           document.getElementById('casesSubFrame').src = tp.attributes.url;
         }
-      } ,
-      'render': function(tp){
-        /*tp.getSelectionModel().on('selectionchange', function(tree, node){
-
-          if( node.attributes.url ){
-            document.getElementById('casesSubFrame').src = node.attributes.url;
-          }
-          //var el = Ext.getCmp('details-panel').body;
-          if(node.attributes.tagName == 'option' && node.attributes.cases_count ){
-            ReloadTreeMenuItemDetail({item:node.attributes.id});
-            currentSelectedTreeMenuItem = node.attributes.id;
-            Ext.getCmp('tree_menuItem_detail').setTitle(node.attributes.title.toUpperCase() + ' - Related processes: '+node.attributes.processes_count);
-          } else {
-            //el.update(detailsText);
-            Ext.getCmp('tree_menuItem_detail').setTitle('');
-            currentSelectedTreeMenuItem = null;
-            ReloadTreeMenuItemDetail({item:''});
-          }
-        })*/
-
-      }/*,
-      'afterrender': {
-        fn: setNode,
-        scope: this
-      }*/
-
+      },
+      'render': function(tp){}
     }
   });
 
@@ -241,13 +110,13 @@ Ext.onReady(function(){
         updateCasesTree();
       }
 
-      if( _nodeId != '' ){
-        treePanel1 = Ext.getCmp('tree-panel')
+      if(_nodeId !== ''){
+        treePanel1 = Ext.getCmp('tree-panel');
         if(treePanel1)
           node = treePanel1.getNodeById(_nodeId);
         if(node) {
           node.select();
-          if (_nodeId == 'CASES_START_CASE') {
+          if (_nodeId === 'CASES_START_CASE') {
             updateCasesTree();
           }
         }
@@ -286,6 +155,102 @@ Ext.onReady(function(){
   });
   mainMenu.setTitle("<div style=\"height: 18px;\"><a href=\"javascript:;\"><img id=\"refreshNotifiers\" src=\"/images/refresh.gif\" onclick=\"updateCasesTree(); updateCasesView();\" /></a></div>");
 
+  propStore = new Ext.data.Store({
+      proxy: new Ext.data.HttpProxy({url: 'debug_vars'}),
+      reader: new Ext.data.DynamicJsonReader({root: 'data'})
+  });
+
+  propStore.on('load', function(){
+      propStore.fields = propStore.recordType.prototype.fields;
+      debugVariables.setSource(propStore.getAt(0).data);
+  });
+
+  /**
+   * Triggers Panel
+   */
+  var debugVariables = new Ext.grid.PropertyGrid({
+      id: 'debugVariables',
+      title:TRANSLATIONS.ID_VARIABLES,
+      autoHeight: false,
+      height: 300,
+      width: 400,
+      region: 'center',
+      margins: '2 2 0 2',
+      border: true,
+      stripeRows: true,
+      listeners: {
+          beforeedit: function(event) { //Cancel editing - read only
+              event.cancel = true;
+          }
+      },
+      tbar: [
+          {text: TRANSLATIONS.ID_ALL, handler: resetGrid},
+          {text: TRANSLATIONS.ID_DYNAFORM, handler: debugVariablesFilterDynaform},
+          {text: TRANSLATIONS.ID_SYSTEM, handler: debugVariablesFilterSystem}
+      ],
+      sm: new Ext.grid.RowSelectionModel({singleSelect: true}),
+      viewConfig: {
+          forceFit: true
+      }
+  });
+
+  //set debug variable details
+  debugVariables.getSelectionModel().on('rowselect', function(sm, rowIdx, r) {
+      var detailPanel = Ext.getCmp('debug-details-panel'),
+          d = {};
+      d.name  = r.data.name;
+      d.value = parent.parent.htmlentities ? parent.parent.htmlentities(r.data.value) : r.data.value;
+      debugVarTpl.overwrite(detailPanel.body, d);
+      detailPanel.setTitle(r.data.name);
+
+      if(r.data.value === '<object>' || r.data.value === '<array>' ){
+          Ext.getCmp('deatachAction').setDisabled(false);
+          Ext.Ajax.request({
+              url: 'debug_vars?r='+Math.random(),
+              success: function(response){
+                  try{
+                      result = eval('('+response.responseText+')');
+
+                      var store1a = new Ext.data.ArrayStore({fields: result.headers});
+                      // manually load local data
+                      store1a.loadData(result.rows);
+
+                      var myGridPanel = new Ext.grid.GridPanel({
+                          store: store1a,
+                          height: 200,
+                          border : false,
+                          columns: result.columns,
+                          stripeRows : true,
+                          layout: 'fit',
+                          viewConfig:{forceFit:true, scrollOffset:0},
+                          listeners: {
+                              rowdblclick: function(grid, n,e){
+
+                              },
+                              render: function(){
+                                  this.loadMask = new Ext.LoadMask(this.body, { msg:_('ID_LOADING_GRID') });
+                              }
+                          }
+                      });
+
+                      Ext.each(detailPanel.items.items, function(childPanel) {
+                          detailPanel.remove(childPanel, true);
+                      });
+
+                      detailPanel.add(myGridPanel);
+                      detailPanel.doLayout();
+                  } catch (e){
+
+                  }
+              },
+              failure: function(){},
+              params: {request: 'getRows', fieldname:r.data.name}
+          });
+      } else
+          Ext.getCmp('deatachAction').setDisabled(true);
+
+  });
+
   /**
    * Triggers Panel
    */
@@ -310,19 +275,12 @@ Ext.onReady(function(){
     sortInfo:{field: 'name', direction: "ASC"},
     groupField:'execution_time',
     groupDir: 'DESC',
-    proxy: new Ext.data.HttpProxy({url: 'debug_triggers?r='+Math.random()}),
-    listeners: {
-      load : function() {
-        var detailPanel = Ext.getCmp('debug-details-panel');
-        detailPanel.setTitle('');
-        debugTriggersDetailTpl.overwrite(detailPanel.body, {});
-      }
-    }
+    proxy: new Ext.data.HttpProxy({url: 'debug_triggers?r='+Math.random()})
   });
 
   var debugTriggers = new xg.GridPanel({
+      id: 'debugTriggers',
       store: triggerStore,
-
       columns: [
         {id:'name',header: _('ID_NAME'), width: 60, sortable: true, dataIndex: 'name'},
         {header: _('ID_EXECUTION'), width: 30, sortable: true, dataIndex: 'execution_time'},
@@ -338,15 +296,12 @@ Ext.onReady(function(){
       width: 700,
       height: 450,
       title: TRANSLATIONS.ID_TRIGGERS,
-      /*tbar: [
-        {text: TRANSLATIONS.ID_OPEN_IN_POPUP, handler: triggerWindow}
-      ],*/
       sm: new Ext.grid.RowSelectionModel({singleSelect: true}),
       viewConfig: {
         forceFit: true
       },
       listeners: {
-        rowdblclick: function(grid, n,e){
+        rowdblclick: function(grid, n,e) {
           triggerWindow();
         }
       }
@@ -355,32 +310,31 @@ Ext.onReady(function(){
   debugTriggers.getSelectionModel().on('rowselect', function(sm, rowIdx, r) {
     Ext.getCmp('deatachAction').setDisabled(false);
     var detailPanel = Ext.getCmp('debug-details-panel');
-    detailPanel.setTitle(r.data.name);
     debugTriggersDetailTpl.overwrite(detailPanel.body, r.data);
+    detailPanel.setTitle(r.data.name);
   });
 
   function triggerWindow() {
     var r = debugTriggers.getSelectionModel().getSelected();
-    if(r){
-    var w = new Ext.Window({
-      title: r.data.name,
-      width: 500,
-      height: 400,
-      modal: true,
-      autoScroll: true,
-      maximizable: true,
-      items: [],
-      listeners:{
-        show:function() {
-          this.loadMask = new Ext.LoadMask(this.body, { msg:_('ID_LOADING') });
-        }
-      }
-    });
-    w.show();
-
-    debugTriggersDetailTpl.overwrite(w.body, r.data);
+    if(r) {
+      var w = new Ext.Window({
+          title: r.data.name,
+          width: 500,
+          height: 400,
+          modal: true,
+          autoScroll: true,
+          maximizable: true,
+          items: [],
+          listeners:{
+            show: function() {
+              this.loadMask = new Ext.LoadMask(this.body, { msg:_('ID_LOADING') });
+            }
+          }
+      });
+      w.show();
+      debugTriggersDetailTpl.overwrite(w.body, r.data);
     }
-  };
+  }
 
 
   debugPanel = new Ext.Panel({
@@ -404,7 +358,6 @@ Ext.onReady(function(){
         tabPosition: 'top',
         region:'center',
         split: true,
-        //height:detailsdebugVariablesHeight,
         items: [
           debugVariables,
           debugTriggers
@@ -413,7 +366,10 @@ Ext.onReady(function(){
           beforetabchange: function(){
             Ext.getCmp('deatachAction').setDisabled(true);
             Ext.getCmp('debug-details-panel').html = '';
-          }
+          },
+            tabchange: function (tabpanel, tab) {
+              clearItemSelected(tab.id);
+            }
         }
       }),
       {
@@ -426,7 +382,6 @@ Ext.onReady(function(){
         split: true,
         margins: '0 2 2 2',
         cmargins: '2 2 2 2',
-        //height: detailsMenuTreePanelHeight,
         height: 50,
         html: detailsText,
         tbar:[
@@ -437,11 +392,11 @@ Ext.onReady(function(){
             text: _('ID_OPEN_IN_A_NEW_WINDOW'),
             iconCls: 'ss_sprite ss_application_form',
             handler: function(){
-              if( Ext.getCmp('debugPanelTabs').getActiveTab().id == 'debugVariables' ){
-                var store1a = new Ext.data.ArrayStore({fields: result.headers});
+              if( Ext.getCmp('debugPanelTabs').getActiveTab().id === 'debugVariables' ){
+                var i,
+                    store1a = new Ext.data.ArrayStore({fields: result.headers});
                 store1a.loadData(result.rows);
-
-                for(i=0; i<result.columns.length; i++){
+                for(i = 0; i < result.columns.length; i += 1){
                   result.columns[i].editor = new Ext.form.TextField({allowBlank: true, readOnly:true})
                 }
 
@@ -465,7 +420,6 @@ Ext.onReady(function(){
                   layout:'fit',
                   autoScroll:true,
                   modal: true,
-
                   maximizable: true,
                   items: [myGridPanel]
                 });
@@ -479,20 +433,46 @@ Ext.onReady(function(){
     }]
   });
 
+  function restartPanelDetail () {
+      var detailPanel = Ext.getCmp('debug-details-panel'),
+          domDetailPanel;
+      if (detailPanel && detailPanel.body) {
+          domDetailPanel = detailPanel.body.dom;
+          detailPanel.setTitle("");
+          domDetailPanel.innerHTML = "";
+      }
+  }
+
+  function clearItemSelected (id) {
+      var debugVar = Ext.getCmp("debugVariables"),
+          debugTri = Ext.getCmp("debugTriggers");
+      switch (id) {
+          case "debugTriggers":
+              if (debugVar && debugVar.getSelectionModel().getSelected()) {
+                  debugVar.getSelectionModel().clearSelections();
+                  restartPanelDetail();
+              }
+              break;
+          case "debugVariables":
+              if (debugTri && debugTri.getSelectionModel().getSelected()) {
+                  debugTri.getSelectionModel().clearSelections();
+                  restartPanelDetail();
+              }
+              break;
+      }
+  }
+
   var viewport = new Ext.Viewport({
     layout: 'border',
     items: [ mainMenu, centerPanel, debugPanel]
   });
 
-
   /** after panel creation routines */
   var menuPanelC = Ext.getCmp('debugPanel');
-  //w.collapse();
 
   /**hide*/
   menuPanelC.hide();
   menuPanelC.ownerCt.doLayout();
-
   //FORMATS.casesListRefreshTime is in seconds
   setTimeout("timer()", parseInt(FORMATS.casesListRefreshTime) * 1000);
 });
@@ -517,8 +497,7 @@ function updateCasesView(viewList) {
             }
         }
     }
-  }
-  catch(e){};
+  } catch(e){}
 }
 
 function updateCasesTree() {
@@ -541,11 +520,8 @@ function updateCasesTree() {
 
           if (oldValue != newValue && oldValue != 0) {
             document.getElementById('NOTIFIER_' + result[i].item).innerHTML = '<b>' + result[i].count + '</b>';
-            //NOTIFIER_FLAG = true;
           } else {
-            //if(NOTIFIER_FLAG === false){
             document.getElementById('NOTIFIER_' + result[i].item).innerHTML = result[i].count;
-            //}
           }
         }
         else continue;
@@ -558,12 +534,7 @@ function updateCasesTree() {
   });
 }
 
-setFlag = function (val) {
-  flagRefresh = val;
-}
-
-function timer()
-{
+function timer() {
     if (flagRefresh) {
       updateCasesTree();
       updateCasesView();
@@ -694,10 +665,6 @@ Ext.app.menuLoader = Ext.extend(Ext.ux.tree.XmlTreeLoader, {
   }
 });
 
-function setDefaultOption(){
-  //document.getElementById('casesSubFrame').src = "casesListExtJs";
-}
-
 var notify = function(title, msg){
   PMExt.notify(title, msg);
-}
+};
