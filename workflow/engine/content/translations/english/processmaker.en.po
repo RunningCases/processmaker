@@ -2108,6 +2108,12 @@ msgid "This case does not exist"
 msgstr "This case does not exist"
 
 # TRANSLATION
+# LABEL/ID_APPLICATION_OR_INDEX_MISSING
+#: LABEL/ID_APPLICATION_OR_INDEX_MISSING
+msgid "Application ID or Delegation Index is missing!. The System can not open the case."
+msgstr "Application ID or Delegation Index is missing!. The System can not open the case."
+
+# TRANSLATION
 # LABEL/ID_PLEASE_SELECT_UPGRADE_FILE
 #: LABEL/ID_PLEASE_SELECT_UPGRADE_FILE
 msgid "Please select the upgrade file"
@@ -11922,6 +11928,12 @@ msgstr "Administrators users cannot use this User Experience."
 #: LABEL/ID_IMPORT_PMT
 msgid "Import PM Table"
 msgstr "Import PM Table"
+
+# TRANSLATION
+# LABEL/ID_THE_NAME_CHANGE_MAY_CAUSE_DATA_LOSS
+#: LABEL/ID_THE_NAME_CHANGE_MAY_CAUSE_DATA_LOSS
+msgid "The change might cause data loss in the PM table. Do you want to continue?"
+msgstr "The change might cause data loss in the PM table. Do you want to continue?"
 
 # TRANSLATION
 # LABEL/ID_OVERWRITE_EXIST

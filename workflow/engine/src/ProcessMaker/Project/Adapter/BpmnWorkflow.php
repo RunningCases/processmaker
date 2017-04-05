@@ -90,6 +90,10 @@ class BpmnWorkflow extends Project\Bpmn
                 $wpData["PRO_ID"] = $data["PRO_ID"];
             }
 
+            if (array_key_exists("PRO_STATUS", $data)) {
+                $wpData["PRO_STATUS"] = $data["PRO_STATUS"];
+            }
+
             $this->wp = new Project\Workflow();
             $this->wp->create($wpData);
 
@@ -1308,6 +1312,10 @@ class BpmnWorkflow extends Project\Bpmn
 
         if (isset($projectData["process"]["pro_id"])) {
             $data["PRO_ID"] = $projectData["process"]["pro_id"];
+        }
+
+        if (isset($projectData['pro_status'])) {
+            $data["PRO_STATUS"] = $projectData['pro_status'];
         }
 
         $bwp->create($data);
