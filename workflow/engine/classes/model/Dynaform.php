@@ -82,7 +82,7 @@ class Dynaform extends BaseDynaform
             $v = (string) $v;
         }
 
-        if ($this->dyn_title_content !== $v || $v === '') {
+        if (in_array(DynaformPeer::DYN_TITLE, $this->modifiedColumns) || $v === '') {
             $this->dyn_title_content = $v;
             $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
 
@@ -131,7 +131,7 @@ class Dynaform extends BaseDynaform
             $v = (string) $v;
         }
 
-        if ($this->dyn_description !== $v || $v === '') {
+        if (in_array(DynaformPeer::DYN_DESCRIPTION, $this->modifiedColumns) || $v === '') {
             $this->dyn_description = $v;
             $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
 

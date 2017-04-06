@@ -89,7 +89,7 @@ class Application extends BaseApplication
             $v = (string) $v;
         }
 
-        if ($this->app_title_content !== $v || $v === '') {
+        if (in_array(ApplicationPeer::APP_TITLE, $this->modifiedColumns) || $v === '') {
             $this->app_title_content = $v;
             $lang = defined('SYS_LANG')? SYS_LANG : 'en';
             $res = Content::addContent('APP_TITLE', '', $this->getAppUid(), $lang, $this->app_title_content);
@@ -130,7 +130,7 @@ class Application extends BaseApplication
             $v = (string) $v;
         }
 
-        if ($this->app_description_content !== $v || $v === '') {
+        if (in_array(ApplicationPeer::APP_DESCRIPTION, $this->modifiedColumns) || $v === '') {
             $this->app_description_content = $v;
             $lang = defined('SYS_LANG')? SYS_LANG : 'en';
             $res = Content::addContent('APP_DESCRIPTION', '', $this->getAppUid(), $lang, $this->app_description_content);

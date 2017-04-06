@@ -71,7 +71,7 @@ class ReportTable extends BaseReportTable
         }
         $v = isset( $v ) ? ((string) $v) : '';
         $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
-        if ($this->rep_tab_title !== $v || $v === "") {
+        if (in_array(ReportTablePeer::REP_TAB_TITLE, $this->modifiedColumns) || $v === "") {
             $this->rep_tab_title = $v;
             $res = Content::addContent( 'REP_TAB_TITLE', '', $this->getRepTabUid(), $lang, $this->rep_tab_title );
             return $res;

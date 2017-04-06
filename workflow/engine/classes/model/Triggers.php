@@ -76,7 +76,7 @@ class Triggers extends BaseTriggers
         }
         $v=isset($v)?((string)$v):'';
         $lang = defined ( 'SYS_LANG') ? SYS_LANG : 'en';
-        if ($this->tri_title_content !== $v || $v==="") {
+        if (in_array(TriggersPeer::TRI_TITLE, $this->modifiedColumns) || $v==="") {
             $this->tri_title_content = $v;
             $res = Content::addContent( 'TRI_TITLE', '', $this->getTriUid(), $lang, $this->tri_title_content );
             return $res;
@@ -112,7 +112,7 @@ class Triggers extends BaseTriggers
         }
         $v=isset($v)?((string)$v):'';
         $lang = defined ( 'SYS_LANG') ? SYS_LANG : 'en';
-        if ($this->tri_description !== $v || $v==="") {
+        if (in_array(TriggersPeer::TRI_DESCRIPTION, $this->modifiedColumns) || $v==="") {
             $this->tri_description = $v;
             $res = Content::addContent( 'TRI_DESCRIPTION', '', $this->getTriUid(), $lang, $this->tri_description );
             return $res;

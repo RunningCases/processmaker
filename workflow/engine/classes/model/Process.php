@@ -83,7 +83,7 @@ class Process extends BaseProcess
             $v = (string) $v;
         }
 
-        if ($this->pro_title_content !== $v || $v === '') {
+        if (in_array(ProcessPeer::PRO_TITLE, $this->modifiedColumns) || $v === '') {
             $this->pro_title_content = $v;
             $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
 
@@ -132,7 +132,7 @@ class Process extends BaseProcess
             $v = (string) $v;
         }
 
-        if ($this->pro_description_content !== $v || $v === '') {
+        if (in_array(ProcessPeer::PRO_DESCRIPTION, $this->modifiedColumns) || $v === '') {
             $this->pro_description_content = $v;
             $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
 

@@ -167,7 +167,7 @@ class Department extends BaseDepartment
             $v = (string) $v;
         }
 
-        if ($this->depo_title !== $v || $v === '') {
+        if (in_array(DepartmentPeer::DEP_TITLE, $this->modifiedColumns) || $v === '') {
             $this->depo_title = $v;
             $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
             $res = Content::addContent( 'DEPO_TITLE', '', $this->getDepUid(), $lang, $this->depo_title );
