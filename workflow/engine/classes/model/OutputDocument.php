@@ -364,8 +364,7 @@ class OutputDocument extends BaseOutputDocument
         if ($sValue !== null && !is_string($sValue)) {
             $sValue = (string) $sValue;
         }
-
-        if ($this->out_doc_title !== $sValue || $sValue === '') {
+        if (in_array(OutputDocumentPeer::OUT_DOC_TITLE, $this->modifiedColumns) || $sValue === '') {
             try {
                 $this->out_doc_title = $sValue;
 
@@ -411,7 +410,7 @@ class OutputDocument extends BaseOutputDocument
             $sValue = (string) $sValue;
         }
 
-        if ($this->out_doc_description !== $sValue || $sValue === '') {
+        if (in_array(OutputDocumentPeer::OUT_DOC_DESCRIPTION, $this->modifiedColumns) || $sValue === '') {
             try {
                 $this->out_doc_description = $sValue;
 
@@ -457,7 +456,7 @@ class OutputDocument extends BaseOutputDocument
             $sValue = (string) $sValue;
         }
 
-        if ($this->out_doc_filename !== $sValue || $sValue === '') {
+        if (in_array(OutputDocumentPeer::OUT_DOC_FILENAME, $this->modifiedColumns) || $sValue === '') {
             try {
                 $this->out_doc_filename = $sValue;
 
@@ -503,7 +502,7 @@ class OutputDocument extends BaseOutputDocument
             $sValue = (string) $sValue;
         }
 
-        if ($this->out_doc_template !== $sValue || $sValue === '') {
+        if (in_array(OutputDocumentPeer::OUT_DOC_TEMPLATE, $this->modifiedColumns) || $sValue === '') {
             try {
                 $this->out_doc_template = $sValue;
 
