@@ -681,7 +681,7 @@ class pmDynaform
                         $this->fields["APP_DATA"] = $dataGridEnvironment;
                         $dataGridEnvironment = [];
                     }
-                    if (isset($this->fields["APP_DATA"][$json->name])) {
+                    if (isset($this->fields["APP_DATA"][$json->name]) && is_array($this->fields["APP_DATA"][$json->name])) {
                         //rows
                         $rows = $this->fields["APP_DATA"][$json->name];
                         foreach ($rows as $keyRow => $row) {
