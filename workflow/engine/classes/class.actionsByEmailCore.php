@@ -80,7 +80,7 @@ class actionsByEmailCoreClass extends PMPlugin
 
             $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
 
-            $emailSetup = ($dataAbe['ABE_EMAIL_SERVER_UID'] != '') ?
+            $emailSetup = (!is_null(\EmailServerPeer::retrieveByPK($dataAbe['ABE_EMAIL_SERVER_UID']))) ?
                 $emailServer->getEmailServer($dataAbe['ABE_EMAIL_SERVER_UID'], true) :
                 $emailServer->getEmailServerDefault();
 
