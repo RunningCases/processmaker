@@ -209,9 +209,9 @@ class Dynaform extends BaseDynaform
             $this->setDynVersion( $aData['DYN_VERSION'] );
             if ($this->validate()) {
                 $con->begin();
-                $res = $this->save();
                 $this->setDynTitleContent( $dynTitle );
                 $this->setDynDescriptionContent( $dynDescription );
+                $res = $this->save();
                 $con->commit();
                 
                 //Add Audit Log
