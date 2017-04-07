@@ -169,9 +169,9 @@ class Triggers extends BaseTriggers
                 } else {
                     $this->setTriParam( $aData['TRI_PARAM'] );
                 }
-                $result=$this->save();
                 $this->setTriTitleContent($triTitle);
                 $this->setTriDescriptionContent($triDescription);
+                $result = $this->save();
                 $con->commit();
                 //Add Audit Log
                 $description = "Trigger Name: ".$aData['TRI_TITLE'].", Trigger Uid: ".$triggerUid;

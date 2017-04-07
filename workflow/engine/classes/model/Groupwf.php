@@ -106,14 +106,12 @@ class Groupwf extends BaseGroupwf
 
             if ($this->validate()) {
                 $con->begin();
-                $res = $this->save();
-
                 if (isset( $aData['GRP_TITLE'] )) {
                     $this->setGrpTitleContent( $aData['GRP_TITLE'] );
                 } else {
                     $this->setGrpTitleContent( 'Default Group Title' );
                 }
-
+                $res = $this->save();
                 $con->commit();
                 return $this->getGrpUid();
             } else {

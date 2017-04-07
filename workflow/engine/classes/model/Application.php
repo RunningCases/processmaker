@@ -252,14 +252,11 @@ class Application extends BaseApplication
 
             if ($this->validate()) {
                 $con->begin();
-                $res = $this->save();
-                $con->commit();
-
                 $this->setAppTitleContent('#' . $maxNumber);
                 $this->setAppDescriptionContent('');
                 //to do: ID_CASE in translation $this->setAppTitle(G::LoadTranslation('ID_CASE') . $maxNumber);
                 //Content::insertContent('APP_PROC_CODE', '', $this->getAppUid(), $lang, '');
-
+                $res = $this->save();
                 $con->commit();
 
                 return $this->getAppUid();

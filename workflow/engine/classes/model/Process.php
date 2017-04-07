@@ -198,7 +198,6 @@ class Process extends BaseProcess
 
             if ($this->validate()) {
                 $con->begin();
-                $res = $this->save();
 
                 if (isset( $aData['PRO_TITLE'] )) {
                     $this->setProTitleContent( $aData['PRO_TITLE'] );
@@ -212,6 +211,7 @@ class Process extends BaseProcess
                     $this->setProDescriptionContent( 'Default Process Description' );
                 }
 
+                $res = $this->save();
                 $con->commit();
 
                 $this->memcachedDelete();
@@ -445,7 +445,6 @@ class Process extends BaseProcess
         $this->setProDynaforms( isset( $aData['PRO_DYNAFORMS'] ) ? (is_array( $aData['PRO_DYNAFORMS'] ) ? serialize( $aData['PRO_DYNAFORMS'] ) : $aData['PRO_DYNAFORMS']) : '' );
         if ($this->validate()) {
             $con->begin();
-            $res = $this->save();
 
             if (isset( $aData['PRO_TITLE'] ) && trim( $aData['PRO_TITLE'] ) != '') {
                 $this->setProTitleContent( $aData['PRO_TITLE'] );
@@ -457,6 +456,8 @@ class Process extends BaseProcess
             } else {
                 $this->setProDescriptionContent( 'Default Process Description' );
             }
+
+            $res = $this->save();
             $con->commit();
 
             $this->memcachedDelete();
