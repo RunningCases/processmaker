@@ -823,6 +823,9 @@ class pmDynaform
 
     public function getDatabaseProvider($dbConnection)
     {
+        if ($dbConnection === "workflow" || $dbConnection === "rbac" || $dbConnection === "rp") {
+            return "mysql";
+        }
         if ($this->databaseProviders === null) {
             $a = new Criteria("workflow");
             $a->addSelectColumn(DbSourcePeer::DBS_UID);
