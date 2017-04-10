@@ -1900,22 +1900,6 @@ class PMPluginRegistry
             str_replace(["\n", "\r", "\t"], ' ', file_get_contents($path . $pluginFile))
         );
     }
-    
-    /**
-     * Use this for extensions
-     *
-     * @return array with namespace and plugin folder
-     */
-    public function getEnabledPlugins()
-    {
-        $enabledPlugins = array();
-        foreach ($this->_aPluginDetails as $row) {
-            if ($row->enabled) {
-                $enabledPlugins[$row->sNamespace] = $row->sPluginFolder;
-            }
-        }
-        return $enabledPlugins;
-    }
 
     /**
      * Registry in an array routes for js or css files.
