@@ -272,7 +272,6 @@ Ext.onReady(function(){
 
   triggerStore = new Ext.data.GroupingStore({
     reader: reader,
-    sortInfo:{field: 'name', direction: "ASC"},
     groupField:'execution_time',
     groupDir: 'DESC',
     proxy: new Ext.data.HttpProxy({url: 'debug_triggers?r='+Math.random()})
