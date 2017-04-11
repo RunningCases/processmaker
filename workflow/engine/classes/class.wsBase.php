@@ -2183,6 +2183,8 @@ class wsBase
             $varResponse = '';
             $varTriggers = "\n";
 
+            $previousAppData = array();
+
             if ($delIndex == '') {
                 $oCriteria = new Criteria( 'workflow' );
                 $oCriteria->addSelectColumn( AppDelegationPeer::DEL_INDEX );
@@ -2257,6 +2259,10 @@ class wsBase
             }
 
             global $oPMScript;
+
+            if (isset($oPMScript->aFields['APPLICATION']) && ($oPMScript->aFields['APPLICATION'] != $caseId)) {
+                $previousAppData = $oPMScript->aFields;
+            }
 
             if ($bExecuteTriggersBeforeAssignment) {
                 //Execute triggers before assignment
@@ -2591,6 +2597,10 @@ class wsBase
             $res['routing'] = $aCurrentUsers;
 
             $g->sessionVarRestore();
+
+            if (!empty($previousAppData)) {
+                $oPMScript->aFields = $previousAppData;
+            }
 
             return $res;
         } catch (Exception $e) {
