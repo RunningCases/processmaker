@@ -166,7 +166,7 @@ try {
     $_SESSION['TRIGGER_DEBUG']['NUM_TRIGGERS'] = count( $triggers );
     $_SESSION['TRIGGER_DEBUG']['TIME'] = G::toUpper(G::loadTranslation('ID_AFTER'));
     if ($_SESSION['TRIGGER_DEBUG']['NUM_TRIGGERS'] != 0) {
-        $_SESSION['TRIGGER_DEBUG']['TRIGGERS_NAMES'] = $oCase->getTriggerNames( $triggers );
+        $_SESSION['TRIGGER_DEBUG']['TRIGGERS_NAMES'] = array_column($triggers, 'TRI_TITLE');
         $_SESSION['TRIGGER_DEBUG']['TRIGGERS_VALUES'] = $triggers;
         $oProcess = new Process();
         $oProcessFieds = $oProcess->Load( $_SESSION['PROCESS'] );
