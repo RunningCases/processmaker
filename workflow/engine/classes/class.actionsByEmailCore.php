@@ -158,7 +158,13 @@ class actionsByEmailCoreClass extends PMPlugin
                             $envSkin = defined("SYS_SKIN") ? SYS_SKIN : $conf->getConfiguration('SKIN_CRON', '');
                             $envHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : SERVER_NAME;
                             $envProtocol = defined("REQUEST_SCHEME") && REQUEST_SCHEME === "https";
-                            $envPort = (SERVER_PORT . "" != "80") ? ":" . SERVER_PORT : "";
+                            if (isset($_SERVER['SERVER_PORT'])) {
+                                $envPort = ($_SERVER['SERVER_PORT'] != "80") ? ":" . $_SERVER['SERVER_PORT'] : "";
+                            } else if (defined('SERVER_PORT')) {
+                                $envPort = (SERVER_PORT . "" != "80") ? ":" . SERVER_PORT : "";
+                            } else {
+                                $envPort = ""; // Empty by default
+                            }
                             if (!empty($envPort) && strpos($envHost, $envPort) === false) {
                                 $envHost = $envHost . $envPort;
                             }
