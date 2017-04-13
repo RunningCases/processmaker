@@ -2598,10 +2598,10 @@ class workspaceTools
                          LEFT JOIN ' . $this->dbName . '.USERS ON CUR_USER.USR_UID = USERS.USR_UID
                          LEFT JOIN ' . $this->dbName . '.TASK ON CUR_USER.TAS_UID = TASK.TAS_UID) USERS_VALUES
                     SET
-                      LPL.DEL_CURRENT_USR_USERNAME  = USERS_VALUES.USR_USERNAME,
-                      LPL.DEL_CURRENT_USR_FIRSTNAME = USERS_VALUES.USR_FIRSTNAME,
-                      LPL.DEL_CURRENT_USR_LASTNAME  = USERS_VALUES.USR_LASTNAME,
-                      LPL.DEL_CURRENT_TAS_TITLE     = USERS_VALUES.TAS_TITLE
+                      LPL.DEL_CURRENT_USR_USERNAME  = IFNULL(USERS_VALUES.USR_USERNAME, \'\'),
+                      LPL.DEL_CURRENT_USR_FIRSTNAME = IFNULL(USERS_VALUES.USR_FIRSTNAME, \'\'),
+                      LPL.DEL_CURRENT_USR_LASTNAME  = IFNULL(USERS_VALUES.USR_LASTNAME, \'\'),
+                      LPL.DEL_CURRENT_TAS_TITLE     = IFNULL(USERS_VALUES.TAS_TITLE, \'\')
                     WHERE LPL.APP_UID = USERS_VALUES.APP_UID';
         $con = Propel::getConnection("workflow");
         $stmt = $con->createStatement();
