@@ -1249,15 +1249,7 @@ class Derivation
                                         break;
                                 }
 
-                                $rouPreType = "";
-                                $rouPreTask = "";
                                 $taskNextDelNextDelRouType = $arrayTaskNextDelNextDel["ROU_TYPE"];
-
-                                if(isset($arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TYPE"]) && isset($arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TASK"])){
-                                   $rouPreType = $arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TYPE"];
-                                   $rouPreTask = $arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TASK"];
-                                }
-
                                 $nextDelegationsAux[++$i] = array(
                                     "TAS_UID"           => $arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_UID"],
                                     "USR_UID"           => $arrayTaskNextDelNextDel["NEXT_TASK"]["USER_ASSIGNED"]["USR_UID"],
@@ -1265,8 +1257,8 @@ class Derivation
                                     "TAS_DEF_PROC_CODE" => $arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_DEF_PROC_CODE"],
                                     "DEL_PRIORITY"      => "",
                                     "TAS_PARENT"        => $arrayTaskNextDelNextDel["NEXT_TASK"]["TAS_PARENT"],
-                                    "ROU_PREVIOUS_TYPE" => $rouPreType,
-                                    "ROU_PREVIOUS_TASK" => $rouPreTask
+                                    "ROU_PREVIOUS_TYPE" => isset($arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TYPE"]) ? $arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TYPE"] : '',
+                                    "ROU_PREVIOUS_TASK" => isset($arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TASK"]) ? $arrayTaskNextDelNextDel["NEXT_TASK"]["ROU_PREVIOUS_TASK"] : ''
                                 );
                             }
 
@@ -1614,8 +1606,8 @@ class Derivation
                                 'TAS_DEF_PROC_CODE' => $aDeriveTask['NEXT_TASK']['TAS_DEF_PROC_CODE'],
                                 'DEL_PRIORITY' => 3,
                                 'TAS_PARENT' => $aDeriveTask['NEXT_TASK']['TAS_PARENT'],
-                                'ROU_PREVIOUS_TYPE' => $aDeriveTask['NEXT_TASK']['ROU_PREVIOUS_TYPE'],
-                                'ROU_PREVIOUS_TASK' => $aDeriveTask['NEXT_TASK']['ROU_PREVIOUS_TASK']
+                                'ROU_PREVIOUS_TYPE' => isset($aDeriveTask['NEXT_TASK']['ROU_PREVIOUS_TYPE']) ? $aDeriveTask['NEXT_TASK']['ROU_PREVIOUS_TYPE'] : '',
+                                'ROU_PREVIOUS_TASK' => isset($aDeriveTask['NEXT_TASK']['ROU_PREVIOUS_TASK']) ? $aDeriveTask['NEXT_TASK']['ROU_PREVIOUS_TASK'] : ''
                             );
                         }
                         $currentDelegation2 = array(
