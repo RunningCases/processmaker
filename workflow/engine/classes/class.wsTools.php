@@ -146,6 +146,13 @@ class workspaceTools
         CLI::logging("<*>   Check Mafe Requirements Process took $final seconds.\n");
 
         $start = microtime(true);
+        CLI::logging("> Updating Triggers...\n");
+        $this->updateTriggers(true, $lang);
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Updating Triggers Process took $final seconds.\n");
+
+        $start = microtime(true);
         CLI::logging("> Backup log files...\n");
         $this->backupLogFiles();
         $stop = microtime(true);
@@ -3784,4 +3791,14 @@ class workspaceTools
         }
     }
 
+    /**
+     * Updating triggers
+     * @param $flagRecreate
+     * @param $lang
+     */
+    public function updateTriggers($flagRecreate, $lang)
+    {
+        $this->initPropel(true);
+        $this->upgradeTriggersOfTables($flagRecreate, $lang);
+    }
 }
