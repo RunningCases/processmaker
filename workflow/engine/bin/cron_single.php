@@ -630,7 +630,6 @@ function executeScheduledCases($sNow=null)
     try {
         global $argvx;
         global $sNow;
-
         $log = array();
 
         if ($argvx != "" && strpos($argvx, "scheduler") === false) {
@@ -640,10 +639,18 @@ function executeScheduledCases($sNow=null)
         setExecutionMessage("Executing the scheduled starting cases");
         setExecutionResultMessage('PROCESSING');
 
-        $sNow = isset($sNow)? $sNow : date('Y-m-d H:i:s');
+        if (isset($sNow)) {
+            //as the $sNow param that comes from the command line doesn't specicy a time zone
+            //we assume that the user set this time using the server time zone so we use the gmdate
+            //function to convert it
+            $runDate =  gmdate('Y-m-d H:i:s', strtotime($sNow));
+        }
+        else {
+            $runDate =  gmdate('Y-m-d H:i:s');
+        }
 
         $oCaseScheduler = new CaseScheduler();
-        $oCaseScheduler->caseSchedulerCron($sNow, $log, 1);
+        $oCaseScheduler->caseSchedulerCron($runDate, $log, 1);
 
         foreach ($log as $value) {
             $arrayCron = unserialize(trim(@file_get_contents(PATH_DATA . "cron")));
