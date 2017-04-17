@@ -2170,7 +2170,7 @@ class wsBase
      */
     function executeTriggerFromDerivate($appData, $tasUid, $stepType, $stepUidObj, $triggerType, $labelAssigment = '')
     {
-        $varTriggers = "\n";
+        $varTriggers = "";
         $oCase = new Cases();
 
         //Execute triggers before assignment
@@ -2223,7 +2223,7 @@ class wsBase
 
     /**
      * Derivate Case moves the case to the next task in the process according to the routing rules
-     *
+     * This function is used from: action by email, web entry, PMFDerivateCase, Mobile
      * @param string $userId
      * @param string $caseId
      * @param string $delIndex
@@ -2318,13 +2318,14 @@ class wsBase
                 $previousAppData = $oPMScript->aFields;
             }
 
+            $varTriggers = "\n";
             //Execute triggers before assignment
             if ($bExecuteTriggersBeforeAssignment) {
-                $varTriggers = $this->executeTriggerFromDerivate($appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -1, 'BEFORE', "-= Before Assignment =-");
+                $varTriggers .= $this->executeTriggerFromDerivate($appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -1, 'BEFORE', "-= Before Assignment =-");
             }
 
             //Execute triggers before routing
-            $varTriggers = $this->executeTriggerFromDerivate($appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -2, 'BEFORE', "-= Before Derivation =-");
+            $varTriggers .= $this->executeTriggerFromDerivate($appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -2, 'BEFORE', "-= Before Derivation =-");
 
             $oDerivation = new Derivation();
             if (!empty($tasks)) {
@@ -2414,7 +2415,7 @@ class wsBase
             $appFields = $oCase->loadCase( $caseId );
 
             //Execute triggers after routing
-            $varTriggers = $this->executeTriggerFromDerivate($appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -2, 'AFTER', "-= After Derivation =-");
+            $varTriggers .= $this->executeTriggerFromDerivate($appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -2, 'AFTER', "-= After Derivation =-");
 
             $sFromName = "";
 

@@ -124,7 +124,6 @@ class AppDelay extends BaseAppDelay
         $oCriteria = new Criteria( 'workflow' );
         $oCriteria->addSelectColumn( AppDelayPeer::APP_UID );
         $oCriteria->addSelectColumn( AppDelayPeer::APP_DEL_INDEX );
-        $oCriteria->add( AppDelayPeer::APP_TYPE, '' );
         $oCriteria->add( AppDelayPeer::APP_UID, $appUid );
         $oCriteria->add( $oCriteria->getNewCriterion( AppDelayPeer::APP_TYPE, 'PAUSE' )->addOr( $oCriteria->getNewCriterion( AppDelayPeer::APP_TYPE, 'CANCEL' ) ) );
         $oCriteria->addAscendingOrderByColumn( AppDelayPeer::APP_ENABLE_ACTION_DATE );
