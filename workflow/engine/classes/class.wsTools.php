@@ -2620,6 +2620,7 @@ class workspaceTools
         $delaycriteria->addSelectColumn(AppCacheViewPeer::USR_UID);
         $delaycriteria->addSelectColumn(AppCacheViewPeer::APP_STATUS);
         $delaycriteria->addSelectColumn(AppCacheViewPeer::TAS_UID);
+        $delaycriteria->addSelectColumn(AppCacheViewPeer::DEL_DELEGATE_DATE);
 
         $delaycriteria->addJoin( AppCacheViewPeer::APP_UID, AppDelayPeer::APP_UID . ' AND ' . AppCacheViewPeer::DEL_INDEX . ' = ' . AppDelayPeer::APP_DEL_INDEX, Criteria::INNER_JOIN );
         $delaycriteria->add(AppDelayPeer::APP_DISABLE_ACTION_USER, "0", CRITERIA::EQUAL);
