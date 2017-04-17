@@ -2533,7 +2533,7 @@ function PMFRedirectToStep ($sApplicationUID, $iDelegation, $sStepType, $sStepUi
  * Returns a list of the next assigned users to a case.
  *
  * @name PMFGetNextAssignedUser
- * @label PMFGet Next Assigned User
+ * @label PMF  Get Next Assigned User
  *
  * @param string(32) | $application | Case ID | Id of the case
  * @param string(32) | $task | Task ID | Id of the task
