@@ -2598,7 +2598,7 @@ function PMFGetNextAssignedUser ($application, $task, $delIndex = null, $userUid
  * @label PMF Get User Email Address
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFGetUserEmailAddress.28.29
  *
- * @param string(32) or Array | $id | Case ID | Id of the case.
+ * @param string(32) or Array | $id | List of Recipients | which can be a mixture of user IDs, group IDs, variable names or email addresses
  * @param string(32) | $APP_UID = null | Application ID | Id of the Application.
  * @param string(32) | $prefix = "usr" | prefix | Id of the task.
  * @return array | $aRecipient | Array of the Recipient | Return an Array of the Recipient.
