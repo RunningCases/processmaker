@@ -153,7 +153,7 @@ try {
         $result = ws_routeCase($caseId, 1);
         $assign = $result->message;
 
-        $aMessage["MESSAGE"] = "<br />Case created in ProcessMaker<br />Case Number: $caseNr <br />Case Id: $caseId<br />Case derivated to: $assign";
+        $aMessage["MESSAGE"] = "<br />Case created in ProcessMaker<br />Case Number: $caseNr <br />Case Id: $caseId<br />Case routed to: $assign";
     } else {
         $aMessage["MESSAGE"] = "<font color=\"red\">
                                 An error occurred while the application was being processed.<br />
