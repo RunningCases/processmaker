@@ -21,8 +21,6 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
-include_once (PATH_TRUNK."/class.Build.php");
-use Build\Utils\ProcessMakerPhpBuilderHelper;
 
 // lets display the items
 $pluginFile = $_GET['id'];
@@ -88,16 +86,6 @@ if ($handle = opendir( PATH_PLUGINS )) {
         }
     }
     closedir( $handle );
-
-    /**
-     * Calls PMExtensionClass Builder to include Plugins changes.
-     */
-    $phpBuilder = new ProcessMakerPhpBuilderHelper();
-    $phpBuilder->enabledExtensions = $oPluginRegistry->getEnabledPlugins();
-    if (!empty($phpBuilder->enabledExtensions)) {
-        $phpBuilder->extension = true;
-    }
-    $phpBuilder->buildAll();
 }
 
   //$oPluginRegistry->showArrays();
