@@ -1701,6 +1701,9 @@ class workspaceTools
 
             if (Installer::isset_site($workspaceName)) {
                 if ($overwrite) {
+                    if (!$workspace->workspaceExists()) {
+                        throw new Exception('We can not overwrite this workspace because the workspace ' . $workspaceName . ' does not exist please check the lower case and upper case.');
+                    }
                     CLI::logging(CLI::warning("> Workspace $workspaceName already exist, overwriting!") . "\n");
                 } else {
                     throw new Exception("Destination workspace already exist (use -o to overwrite)");
