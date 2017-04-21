@@ -2305,6 +2305,7 @@
     <column name="USR_LAST_UPDATE_DATE" type="TIMESTAMP"/>
     <column name="USR_LOGGED_NEXT_TIME" type="INTEGER" default="0"/>
     <column name="USR_PASSWORD_HISTORY" type="LONGVARCHAR" required="false"/>
+    <column name="USR_SETTING_DESIGNER" type="LONGVARCHAR"/>
   </table>
   <table name="ADDITIONAL_TABLES">
     <vendor type="mysql">
