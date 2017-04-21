@@ -57,10 +57,11 @@ class Project extends Api
         try {
             $project = Adapter\BpmnWorkflow::getStruct($prj_uid);
 
-            $oUserProperty = (new \UsersProperties)->load($this->getUserId());
+            $oUserProperty = \UsersPropertiesPeer::retrieveByPK($this->getUserId());
             $project['usr_setting_designer'] = null;
-            if ($oUserProperty['USR_SETTING_DESIGNER']) {
-                $project['usr_setting_designer'] = json_decode($oUserProperty['USR_SETTING_DESIGNER']);
+            if ($oUserProperty) {
+                $aFields = $oUserProperty->toArray( \BasePeer::TYPE_FIELDNAME );
+                $project['usr_setting_designer'] = $aFields['USR_SETTING_DESIGNER'] ? json_decode($aFields['USR_SETTING_DESIGNER']) : null;
             }
             return DateTime::convertUtcToIso8601($project, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
