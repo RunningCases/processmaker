@@ -58,9 +58,9 @@ class Project extends Api
             $project = Adapter\BpmnWorkflow::getStruct($prj_uid);
 
             $oUserProperty = (new \UsersProperties)->load($this->getUserId());
-            $project['user_setting_designer'] = null;
-            if (!$oUserProperty['USR_SETTING_DESIGNER'] && $oUserProperty['USR_SETTING_DESIGNER']) {
-                $project['user_setting_designer'] = unserialize($oUserProperty['USR_SETTING_DESIGNER']);
+            $project['usr_setting_designer'] = null;
+            if ($oUserProperty['USR_SETTING_DESIGNER']) {
+                $project['usr_setting_designer'] = json_decode($oUserProperty['USR_SETTING_DESIGNER']);
             }
             return DateTime::convertUtcToIso8601($project, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
@@ -101,18 +101,19 @@ class Project extends Api
     public function doPutProject($prj_uid, $request_data)
     {
         try {
-            if (array_key_exists('user_setting_designer', $request_data)) {
+            if (array_key_exists('usr_setting_designer', $request_data)) {
                 $oUserProperty = \UsersPropertiesPeer::retrieveByPK($this->getUserId());
                 if ($oUserProperty) {
-                    $oUserProperty->fromArray($request_data, \BasePeer::TYPE_FIELDNAME);
+                    $data['USR_SETTING_DESIGNER'] = json_encode($request_data['usr_setting_designer']);
+                    $oUserProperty->fromArray($data, \BasePeer::TYPE_FIELDNAME);
                     $oUserProperty->save();
                 } else {
                     $oUserProperty = new \UsersProperties();
                     $oUserProperty->setUsrUid($this->getUserId());
-                    $oUserProperty->setUsrSettingDesigner(serialize($request_data['user_setting_designer']));
+                    $oUserProperty->setUsrSettingDesigner(serialize($request_data['usr_setting_designer']));
                     $oUserProperty->save();
                 }
-                unset($request_data['user_setting_designer']);
+                unset($request_data['usr_setting_designer']);
             }
 
             Validator::throwExceptionIfDataNotMetIso8601Format($request_data, $this->arrayFieldIso8601);
