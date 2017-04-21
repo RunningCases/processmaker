@@ -17,7 +17,8 @@ require_once 'classes/model/om/BaseListPaused.php';
 // @codingStandardsIgnoreStart
 class ListPaused extends BaseListPaused
 {
-    // @codingStandardsIgnoreEnd
+    private $additionalClassName = '';
+
     /**
      * Create List Paused Table
      *
@@ -212,7 +213,14 @@ class ListPaused extends BaseListPaused
         }
     }
 
-    public function loadFilters(&$criteria, $filters)
+    /**
+     * This function add restriction in the query related to the filters
+     * @param Criteria $criteria, must be contain only select of columns
+     * @param array $filters
+     * @param array $additionalColumns information about the new columns related to custom cases list
+     * @throws PropelException
+     */
+    public function loadFilters(&$criteria, $filters, $additionalColumns = array())
     {
         $filter = isset($filters['filter']) ? $filters['filter'] : "";
         $search = isset($filters['search']) ? $filters['search'] : "";
@@ -230,25 +238,64 @@ class ListPaused extends BaseListPaused
                 break;
         }
 
+        //Filter Search
         if ($search != '') {
-            $criteria->add(
-                $criteria->getNewCriterion(ListPausedPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)
-                ->addOr(
-                    $criteria->getNewCriterion(ListPausedPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)
-                    ->addOr(
-                        $criteria->getNewCriterion(ListPausedPeer::APP_UID, $search, Criteria::EQUAL)
+            //If we have additional tables configured in the custom cases list, prepare the variables for search
+            if (count($additionalColumns) > 0) {
+                require_once(PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP . $this->additionalClassName . '.php');
+                $oNewCriteria = new Criteria("workflow");
+                $oTmpCriteria = '';
+                $sw = 0;
+            }
+
+            //We prepare the query related to the custom cases list
+            foreach ($additionalColumns as $key => $value) {
+                if ($sw === 0) {
+                    $oTmpCriteria = $oNewCriteria->getNewCriterion($value, "%" . $search . "%", Criteria::LIKE);
+                } else {
+                    $oTmpCriteria = $oNewCriteria->getNewCriterion($value, "%" . $search . "%", Criteria::LIKE)->addOr($oTmpCriteria);
+                }
+                $sw = 1;
+            }
+            if (!empty($oTmpCriteria)) {
+                $criteria->add(
+                    $criteria->getNewCriterion(ListPausedPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)
                         ->addOr(
-                            $criteria->getNewCriterion(ListPausedPeer::APP_NUMBER, $search, Criteria::EQUAL)
+                            $criteria->getNewCriterion(ListPausedPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)
+                                ->addOr(
+                                    $criteria->getNewCriterion(ListPausedPeer::APP_UID, $search, Criteria::EQUAL)
+                                        ->addOr(
+                                            $criteria->getNewCriterion(ListPausedPeer::APP_NUMBER, $search, Criteria::EQUAL)
+                                                ->addOr(
+                                                    $oTmpCriteria
+                                                )
+                                        )
+
+                                )
                         )
-                    )
-                )
-            );
+                );
+            } else {
+                $criteria->add(
+                    $criteria->getNewCriterion(ListPausedPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)
+                        ->addOr(
+                            $criteria->getNewCriterion(ListPausedPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)
+                                ->addOr(
+                                    $criteria->getNewCriterion(ListPausedPeer::APP_UID, $search, Criteria::EQUAL)
+                                        ->addOr(
+                                            $criteria->getNewCriterion(ListPausedPeer::APP_NUMBER, $search, Criteria::EQUAL)
+                                        )
+                                )
+                        )
+                );
+            }
         }
 
+        //Filter Process Id
         if ($process != '') {
             $criteria->add(ListPausedPeer::PRO_UID, $process, Criteria::EQUAL);
         }
 
+        //Filter Category
         if ($category != '') {
             $criteria->addSelectColumn(ProcessPeer::PRO_CATEGORY);
             $aConditions   = array();
@@ -258,11 +305,21 @@ class ListPaused extends BaseListPaused
         }
     }
 
+    /**
+     * This function get the information in the corresponding cases list
+     * @param string $usr_uid, must be show cases related to this user
+     * @param array $filters for apply in the result
+     * @param null $callbackRecord
+     * @return array $data
+     * @throws PropelException
+     */
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
         $resp = array();
         $pmTable = new PmTable();
         $criteria = $pmTable->addPMFieldsToList('paused');
+        $this->additionalClassName = $pmTable->tableClassName;
+        $additionalColumns =  $criteria->getSelectColumns();
 
         $criteria->addSelectColumn(ListPausedPeer::APP_UID);
         $criteria->addSelectColumn(ListPausedPeer::USR_UID);
@@ -287,7 +344,7 @@ class ListPaused extends BaseListPaused
         $criteria->addSelectColumn(ListPausedPeer::DEL_DUE_DATE);
         $criteria->addSelectColumn(ListPausedPeer::DEL_PRIORITY);
         $criteria->add(ListPausedPeer::USR_UID, $usr_uid, Criteria::EQUAL);
-        self::loadFilters($criteria, $filters);
+        self::loadFilters($criteria, $filters, $additionalColumns);
 
         $sort  = (!empty($filters['sort'])) ? ListPausedPeer::TABLE_NAME.'.'.$filters['sort'] : "APP_PAUSED_DATE";
         $dir   = isset($filters['dir']) ? $filters['dir'] : "ASC";

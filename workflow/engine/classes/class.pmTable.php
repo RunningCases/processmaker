@@ -54,6 +54,7 @@ class PmTable
     private $db;
     private $alterTable = true;
     private $keepData = false;
+    public $tableClassName = '';
 
     public function __construct ($tableName = null)
     {
@@ -67,7 +68,7 @@ class PmTable
 
     /**
      * Set oldTableName to pmTable
-     * 
+     *
      * @param string $oldTableName
      */
     public function setOldTableName($oldTableName)
@@ -672,7 +673,7 @@ class PmTable
                         $table = $this->oldTableName;
                         $tableBackup = str_replace($this->tableName, $this->oldTableName, $tableBackup);
                         $sqlTableBackup = str_replace($this->tableName, $this->oldTableName, $sqlTableBackup);
-                        
+
                         //Delete backup if exists
                         $rs = $stmt->executeQuery(str_replace($table, $tableBackup, $queryStack["drop"]));
 
@@ -955,6 +956,7 @@ class PmTable
 
             $additionalTable = AdditionalTablesPeer::retrieveByPK($additionalTableUid);
             $tableName = $additionalTable->getAddTabName();
+            $this->tableClassName = $additionalTable->getAddTabClassName();
 
             $additionalTable = new AdditionalTables();
             $tableData = $additionalTable->load($additionalTableUid, true);
@@ -990,8 +992,12 @@ class PmTable
                     $listTablePeer = 'ListInboxPeer';
                     break;
             }
-            
-            $oCriteria->addJoin($listTablePeer::APP_UID, $tableName.'.APP_UID', Criteria::LEFT_JOIN);
+            //Some PMtables does not have the APP NUMBER columns, but if exist we must be use
+            if (in_array($tableName.'.APP_NUMBER', $oCriteria->getSelectColumns())) {
+                $oCriteria->addJoin($listTablePeer::APP_NUMBER, $tableName.'.APP_NUMBER', Criteria::LEFT_JOIN);
+            } else {
+                $oCriteria->addJoin($listTablePeer::APP_UID, $tableName.'.APP_UID', Criteria::LEFT_JOIN);
+            }
         }
         return $oCriteria;
     }

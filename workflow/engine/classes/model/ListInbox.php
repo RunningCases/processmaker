@@ -16,7 +16,8 @@ require_once 'classes/model/om/BaseListInbox.php';
 // @codingStandardsIgnoreStart
 class ListInbox extends BaseListInbox
 {
-    // @codingStandardsIgnoreEnd
+    private $additionalClassName = '';
+
     /**
      * Create List Inbox Table
      *
@@ -384,7 +385,14 @@ class ListInbox extends BaseListInbox
         self::create($data, $isSelfService);
     }
 
-    public function loadFilters(&$criteria, $filters)
+    /**
+     * This function add restriction in the query related to the filters
+     * @param Criteria $criteria, must be contain only select of columns
+     * @param array $filters
+     * @param array $additionalColumns information about the new columns related to custom cases list
+     * @throws PropelException
+     */
+    public function loadFilters(&$criteria, $filters, $additionalColumns = array())
     {
         $action         = isset($filters['action']) ? $filters['action'] : "";
         $usrUid         = isset($filters['usr_uid']) ? $filters['usr_uid'] : "";
@@ -463,21 +471,60 @@ class ListInbox extends BaseListInbox
 
         //Filter Search
         if ($search != '') {
-            $criteria->add(
-                $criteria->getNewCriterion(ListInboxPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)
-                ->addOr(
-                    $criteria->getNewCriterion(ListInboxPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)
-                    ->addOr(
-                        $criteria->getNewCriterion(ListInboxPeer::APP_PRO_TITLE, '%' . $search . '%', Criteria::LIKE)
+            //If we have additional tables configured in the custom cases list, prepare the variables for search
+            if (count($additionalColumns) > 0) {
+                require_once(PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP . $this->additionalClassName . '.php');
+                $oNewCriteria = new Criteria("workflow");
+                $oTmpCriteria = '';
+                $sw = 0;
+            }
+
+            //We prepare the query related to the custom cases list
+            foreach ($additionalColumns as $key => $value) {
+                if ($sw === 0) {
+                    $oTmpCriteria = $oNewCriteria->getNewCriterion($value, "%" . $search . "%", Criteria::LIKE);
+                } else {
+                    $oTmpCriteria = $oNewCriteria->getNewCriterion($value, "%" . $search . "%", Criteria::LIKE)->addOr($oTmpCriteria);
+                }
+                $sw = 1;
+            }
+
+            if (!empty($oTmpCriteria)) {
+                $criteria->add(
+                    $criteria->getNewCriterion(ListInboxPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)
                         ->addOr(
-                            $criteria->getNewCriterion(ListInboxPeer::APP_UID, $search, Criteria::EQUAL)
-                            ->addOr(
-                                $criteria->getNewCriterion(ListInboxPeer::APP_NUMBER, $search, Criteria::EQUAL)
-                            )
+                            $criteria->getNewCriterion(ListInboxPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)
+                                ->addOr(
+                                    $criteria->getNewCriterion(ListInboxPeer::APP_PRO_TITLE, '%' . $search . '%', Criteria::LIKE)
+                                        ->addOr(
+                                            $criteria->getNewCriterion(ListInboxPeer::APP_UID, $search, Criteria::EQUAL)
+                                                ->addOr(
+                                                    $criteria->getNewCriterion(ListInboxPeer::APP_NUMBER, $search, Criteria::EQUAL)
+                                                        ->addOr(
+                                                            $oTmpCriteria
+                                                        )
+                                                )
+                                        )
+                                )
                         )
-                    )
-                )
-            );
+                );
+            } else {
+                $criteria->add(
+                    $criteria->getNewCriterion(ListInboxPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)
+                        ->addOr(
+                            $criteria->getNewCriterion(ListInboxPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)
+                                ->addOr(
+                                    $criteria->getNewCriterion(ListInboxPeer::APP_PRO_TITLE, '%' . $search . '%', Criteria::LIKE)
+                                        ->addOr(
+                                            $criteria->getNewCriterion(ListInboxPeer::APP_UID, $search, Criteria::EQUAL)
+                                                ->addOr(
+                                                    $criteria->getNewCriterion(ListInboxPeer::APP_NUMBER, $search, Criteria::EQUAL)
+                                                )
+                                        )
+                                )
+                        )
+                );
+            }
         }
 
         //Filter Process Id
@@ -504,16 +551,20 @@ class ListInbox extends BaseListInbox
     }
 
     /**
-     * @param $usr_uid
-     * @param array $filters
+     * This function get the information in the corresponding cases list
+     * @param string $usr_uid, must be show cases related to this user
+     * @param array $filters for apply in the result
      * @param null $callbackRecord
-     * @return array
+     * @return array $data
      * @throws PropelException
      */
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
         $pmTable = new PmTable();
-        $criteria = $pmTable->addPMFieldsToList('todo');
+        $list = isset($filters['action']) ? $filters['action'] : "";
+        $criteria = $pmTable->addPMFieldsToList($list);
+        $this->additionalClassName = $pmTable->tableClassName;
+        $additionalColumns =  $criteria->getSelectColumns();
 
         $filters['usr_uid'] = $usr_uid;
 
@@ -542,7 +593,7 @@ class ListInbox extends BaseListInbox
         $criteria->addSelectColumn(UsersPeer::USR_LASTNAME);
         $criteria->addSelectColumn(UsersPeer::USR_USERNAME);
         $criteria->addJoin(ListInboxPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
-        self::loadFilters($criteria, $filters);
+        self::loadFilters($criteria, $filters, $additionalColumns);
 
         $sort  = (!empty($filters['sort'])) ?
             ListInboxPeer::TABLE_NAME.'.'.$filters['sort'] :
@@ -615,7 +666,7 @@ class ListInbox extends BaseListInbox
         return isset($aRow[$fieldName]) ? $aRow[$fieldName] : null;
     }
 
-   /**
+    /**
      * Returns the number of cases of a user
      * @param string $usrUid
      * @param array  $filters

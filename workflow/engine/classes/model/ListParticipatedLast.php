@@ -14,7 +14,8 @@ require_once 'classes/model/om/BaseListParticipatedLast.php';
  */
 class ListParticipatedLast extends BaseListParticipatedLast
 {
-    // @codingStandardsIgnoreEnd
+    private $additionalClassName = '';
+
     /**
      * Create List Participated History Table.
      *
@@ -234,7 +235,14 @@ class ListParticipatedLast extends BaseListParticipatedLast
         }
     }
 
-    public function loadFilters(&$criteria, $filters)
+    /**
+     * This function add restriction in the query related to the filters
+     * @param Criteria $criteria, must be contain only select of columns
+     * @param array $filters
+     * @param array $additionalColumns information about the new columns related to custom cases list
+     * @throws PropelException
+     */
+    public function loadFilters(&$criteria, $filters, $additionalColumns = array())
     {
         $filter = isset($filters['filter']) ? $filters['filter'] : '';
         $search = isset($filters['search']) ? $filters['search'] : '';
@@ -271,25 +279,64 @@ class ListParticipatedLast extends BaseListParticipatedLast
                 break;
         }
 
+        //Filter Search
         if ($search != '') {
-            $criteria->add(
-                $criteria->getNewCriterion(ListParticipatedLastPeer::APP_TITLE, '%'.$search.'%', Criteria::LIKE)
-                ->addOr(
-                    $criteria->getNewCriterion(ListParticipatedLastPeer::APP_TAS_TITLE, '%'.$search.'%', Criteria::LIKE)
-                    ->addOr(
-                        $criteria->getNewCriterion(ListParticipatedLastPeer::APP_UID, $search, Criteria::EQUAL)
+            //If we have additional tables configured in the custom cases list, prepare the variables for search
+            if (count($additionalColumns) > 0) {
+                require_once(PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP . $this->additionalClassName . '.php');
+                $oNewCriteria = new Criteria("workflow");
+                $oTmpCriteria = '';
+                $sw = 0;
+            }
+
+            //We prepare the query related to the custom cases list
+            foreach ($additionalColumns as $key => $value) {
+                if ($sw === 0) {
+                    $oTmpCriteria = $oNewCriteria->getNewCriterion($value, "%" . $search . "%", Criteria::LIKE);
+                } else {
+                    $oTmpCriteria = $oNewCriteria->getNewCriterion($value, "%" . $search . "%", Criteria::LIKE)->addOr($oTmpCriteria);
+                }
+                $sw = 1;
+            }
+            if (!empty($oTmpCriteria)) {
+                $criteria->add(
+                    $criteria->getNewCriterion(ListParticipatedLastPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)
                         ->addOr(
-                            $criteria->getNewCriterion(ListParticipatedLastPeer::APP_NUMBER, $search, Criteria::EQUAL)
+                            $criteria->getNewCriterion(ListParticipatedLastPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)
+                                ->addOr(
+                                    $criteria->getNewCriterion(ListParticipatedLastPeer::APP_UID, $search, Criteria::EQUAL)
+                                        ->addOr(
+                                            $criteria->getNewCriterion(ListParticipatedLastPeer::APP_NUMBER, $search, Criteria::EQUAL)
+                                                ->addOr(
+                                                    $oTmpCriteria
+                                                )
+                                        )
+
+                                )
                         )
-                    )
-                )
-            );
+                );
+            } else {
+                $criteria->add(
+                    $criteria->getNewCriterion(ListParticipatedLastPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)
+                        ->addOr(
+                            $criteria->getNewCriterion(ListParticipatedLastPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)
+                                ->addOr(
+                                    $criteria->getNewCriterion(ListParticipatedLastPeer::APP_UID, $search, Criteria::EQUAL)
+                                        ->addOr(
+                                            $criteria->getNewCriterion(ListParticipatedLastPeer::APP_NUMBER, $search, Criteria::EQUAL)
+                                        )
+                                )
+                        )
+                );
+            }
         }
 
+        //Filter Process Id
         if ($process != '') {
             $criteria->add(ListParticipatedLastPeer::PRO_UID, $process, Criteria::EQUAL);
         }
 
+        //Filter Category
         if ($category != '') {
             $criteria->addSelectColumn(ProcessPeer::PRO_CATEGORY);
             $aConditions = array();
@@ -308,10 +355,21 @@ class ListParticipatedLast extends BaseListParticipatedLast
         }
     }
 
+    /**
+     * This function get the information in the corresponding cases list
+     * @param string $usr_uid, must be show cases related to this user
+     * @param array $filters for apply in the result
+     * @param null $callbackRecord
+     * @param string $appUid related to the specific case
+     * @return array $data
+     * @throws PropelException
+     */
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null, $appUid = '')
     {
         $pmTable = new PmTable();
         $criteria = $pmTable->addPMFieldsToList('sent');
+        $this->additionalClassName = $pmTable->tableClassName;
+        $additionalColumns =  $criteria->getSelectColumns();
 
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_UID);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_INDEX);
@@ -343,7 +401,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
             $criteria->add(ListParticipatedLastPeer::APP_UID, $appUid, Criteria::EQUAL);
         }
 
-        self::loadFilters($criteria, $filters);
+        self::loadFilters($criteria, $filters, $additionalColumns);
 
         $sort = (!empty($filters['sort'])) ?
             ListParticipatedLastPeer::TABLE_NAME.'.'.$filters['sort'] :
