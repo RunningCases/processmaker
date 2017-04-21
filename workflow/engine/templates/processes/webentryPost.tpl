@@ -16,6 +16,11 @@ define("WS_USER_PASS",  "{wsPass}");
 define("WS_ROUNDROBIN", "{wsRoundRobin}");
 
 try {
+    if (isset($_SESSION["__submitFormWebEntry__"]) && $_SESSION["__submitFormWebEntry__"] === true) {
+        header("location:/sysworkflow/en/neoclassic/84823022258da8428b8bae5013752026/11315111158da8453481cb0056624392.php");
+        exit();
+    }
+    
     @include_once ("wsClient.php");
 
     if (!function_exists("ws_open")){
@@ -196,6 +201,7 @@ try {
     $G_PUBLISH = new Publisher();
     $G_PUBLISH->AddContent("xmlform", "xmlform", "login/showInfo", "", $aMessage);
     G::RenderPage("publish", "blank");
+    $_SESSION["__submitFormWebEntry__"] = true;
 } catch (Exception $e) {
     $G_PUBLISH = new Publisher();
     $suggest_message = "This web entry should be regenerated, please contact to your system administrator.";
