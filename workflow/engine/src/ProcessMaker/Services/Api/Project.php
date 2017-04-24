@@ -61,7 +61,7 @@ class Project extends Api
             $project['usr_setting_designer'] = null;
             if ($oUserProperty) {
                 $aFields = $oUserProperty->toArray( \BasePeer::TYPE_FIELDNAME );
-                $project['usr_setting_designer'] = $aFields['USR_SETTING_DESIGNER'] ? json_decode($aFields['USR_SETTING_DESIGNER']) : null;
+                $project['usr_setting_designer'] = $aFields['USR_SETTING_DESIGNER'] ? \G::json_decode($aFields['USR_SETTING_DESIGNER']) : null;
             }
             return DateTime::convertUtcToIso8601($project, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
@@ -103,17 +103,11 @@ class Project extends Api
     {
         try {
             if (array_key_exists('usr_setting_designer', $request_data)) {
-                $oUserProperty = \UsersPropertiesPeer::retrieveByPK($this->getUserId());
-                if ($oUserProperty) {
-                    $data['USR_SETTING_DESIGNER'] = json_encode($request_data['usr_setting_designer']);
-                    $oUserProperty->fromArray($data, \BasePeer::TYPE_FIELDNAME);
-                    $oUserProperty->save();
-                } else {
-                    $oUserProperty = new \UsersProperties();
-                    $oUserProperty->setUsrUid($this->getUserId());
-                    $oUserProperty->setUsrSettingDesigner(serialize($request_data['usr_setting_designer']));
-                    $oUserProperty->save();
-                }
+                $oUserProperty = new \UsersProperties();
+                $property = $oUserProperty->loadOrCreateIfNotExists($this->getUserId());
+                $usrSettingDesigner = array_merge(\G::json_decode($property['USR_SETTING_DESIGNER'], true), $request_data['usr_setting_designer']);
+                $property['USR_SETTING_DESIGNER'] = \G::json_encode($usrSettingDesigner);
+                $oUserProperty->update($property);
                 unset($request_data['usr_setting_designer']);
             }
 
