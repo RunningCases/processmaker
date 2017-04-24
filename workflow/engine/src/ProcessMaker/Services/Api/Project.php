@@ -57,12 +57,9 @@ class Project extends Api
         try {
             $project = Adapter\BpmnWorkflow::getStruct($prj_uid);
 
-            $oUserProperty = \UsersPropertiesPeer::retrieveByPK($this->getUserId());
-            $project['usr_setting_designer'] = null;
-            if ($oUserProperty) {
-                $aFields = $oUserProperty->toArray( \BasePeer::TYPE_FIELDNAME );
-                $project['usr_setting_designer'] = $aFields['USR_SETTING_DESIGNER'] ? \G::json_decode($aFields['USR_SETTING_DESIGNER']) : null;
-            }
+            $userProperty = new \UsersProperties();
+            $property = $userProperty->loadOrCreateIfNotExists($this->getUserId());
+            $project['usr_setting_designer'] = isset($property['USR_SETTING_DESIGNER']) ? \G::json_decode($property['USR_SETTING_DESIGNER']) : null;
             return DateTime::convertUtcToIso8601($project, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -102,10 +99,11 @@ class Project extends Api
     public function doPutProject($prj_uid, $request_data)
     {
         try {
+            $oUserProperty = new \UsersProperties();
+            $property = $oUserProperty->loadOrCreateIfNotExists($this->getUserId());
             if (array_key_exists('usr_setting_designer', $request_data)) {
-                $oUserProperty = new \UsersProperties();
-                $property = $oUserProperty->loadOrCreateIfNotExists($this->getUserId());
-                $usrSettingDesigner = array_merge(\G::json_decode($property['USR_SETTING_DESIGNER'], true), $request_data['usr_setting_designer']);
+                $propertyArray = isset($property['USR_SETTING_DESIGNER']) ? \G::json_decode($property['USR_SETTING_DESIGNER'], true) : [];
+                $usrSettingDesigner = array_merge($propertyArray, $request_data['usr_setting_designer']);
                 $property['USR_SETTING_DESIGNER'] = \G::json_encode($usrSettingDesigner);
                 $oUserProperty->update($property);
                 unset($request_data['usr_setting_designer']);
