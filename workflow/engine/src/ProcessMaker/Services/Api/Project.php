@@ -99,9 +99,9 @@ class Project extends Api
     public function doPutProject($prj_uid, $request_data)
     {
         try {
-            $oUserProperty = new \UsersProperties();
-            $property = $oUserProperty->loadOrCreateIfNotExists($this->getUserId());
             if (array_key_exists('usr_setting_designer', $request_data)) {
+                $oUserProperty = new \UsersProperties();
+                $property = $oUserProperty->loadOrCreateIfNotExists($this->getUserId());
                 $propertyArray = isset($property['USR_SETTING_DESIGNER']) ? \G::json_decode($property['USR_SETTING_DESIGNER'], true) : [];
                 $usrSettingDesigner = array_merge($propertyArray, $request_data['usr_setting_designer']);
                 $property['USR_SETTING_DESIGNER'] = \G::json_encode($usrSettingDesigner);
