@@ -2331,8 +2331,8 @@ class Cases
             $rs->next();
             $row = $rs->getRow();
             $iLastStep = intval($row[0]);
-            if($iPosition > $iLastStep) {
-                throw (new Exception(G::LoadTranslation("ID_NO_RECORDS_FOUND")));
+            if ($iPosition > $iLastStep) {
+                throw (new Exception(G::LoadTranslation('ID_STEP_DOES_NOT_EXIST', array(G::LoadTranslation('ID_POSITION'), $iPosition))));
             }
             $iPosition += 1;
             $aNextStep = null;
