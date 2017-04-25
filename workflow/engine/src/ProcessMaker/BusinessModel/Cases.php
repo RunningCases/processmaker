@@ -233,7 +233,6 @@ class Cases
         }
 
         G::LoadClass("applications");
-        $solrEnabled = false;
         $userUid = $dataList["userId"];
         $callback = isset( $dataList["callback"] ) ? $dataList["callback"] : "stcCallback1001";
         $dir = isset( $dataList["dir"] ) ? $dataList["dir"] : "DESC";
@@ -327,70 +326,30 @@ class Cases
             }
         }
 
-        if ((
-                $action == "todo" || $action == "draft" || $action == "paused" || $action == "sent" ||
-                $action == "selfservice" || $action == "unassigned" || $action == "search"
-            ) &&
-            (($solrConf = \System::solrEnv()) !== false)
-        ) {
-            G::LoadClass("AppSolr");
+        G::LoadClass("applications");
+        $apps = new \Applications();
+        $result = $apps->getAll(
+            $userUid,
+            $start,
+            $limit,
+            $action,
+            $filter,
+            $search,
+            $process,
+            $status,
+            $type,
+            $dateFrom,
+            $dateTo,
+            $callback,
+            $dir,
+            (strpos($sort, ".") !== false) ? $sort : "APP_CACHE_VIEW." . $sort,
+            $category,
+            true,
+            $paged,
+            $newerThan,
+            $oldestThan
+        );
 
-            $ApplicationSolrIndex = new \AppSolr(
-                $solrConf["solr_enabled"],
-                $solrConf["solr_host"],
-                $solrConf["solr_instance"]
-            );
-
-            if ($ApplicationSolrIndex->isSolrEnabled() && $solrConf['solr_enabled'] == true) {
-                //Check if there are missing records to reindex and reindex them
-                $ApplicationSolrIndex->synchronizePendingApplications();
-                $solrEnabled = true;
-            }
-        }
-
-        if ($solrEnabled) {
-            $result = $ApplicationSolrIndex->getAppGridData(
-                $userUid,
-                $start,
-                $limit,
-                $action,
-                $filter,
-                $search,
-                $process,
-                $status,
-                $type,
-                $dateFrom,
-                $dateTo,
-                $callback,
-                $dir,
-                $sort,
-                $category
-            );
-        } else {
-            G::LoadClass("applications");
-            $apps = new \Applications();
-            $result = $apps->getAll(
-                $userUid,
-                $start,
-                $limit,
-                $action,
-                $filter,
-                $search,
-                $process,
-                $status,
-                $type,
-                $dateFrom,
-                $dateTo,
-                $callback,
-                $dir,
-                (strpos($sort, ".") !== false)? $sort : "APP_CACHE_VIEW." . $sort,
-                $category,
-                true,
-                $paged,
-                $newerThan,
-                $oldestThan
-            );
-        }
         if (!empty($result['data'])) {
             foreach ($result['data'] as &$value) {
                 $value = array_change_key_case($value, CASE_LOWER);
