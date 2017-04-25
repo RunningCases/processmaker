@@ -2299,9 +2299,7 @@ class Cases
         G::LoadClass('pmScript');
         $oPMScript = new PMScript();
         $oApplication = new Application();
-        //$aFields    = $oApplication->load($sAppUid);
-        $oApplication = ApplicationPeer::retrieveByPk($sAppUid);
-        $aFields = $oApplication->toArray(BasePeer::TYPE_FIELDNAME);
+        $aFields    = $oApplication->Load($sAppUid);
         if (!is_array($aFields['APP_DATA'])) {
             $aFields['APP_DATA'] = G::array_merges(G::getSystemConstants(), unserialize($aFields['APP_DATA']));
         }
