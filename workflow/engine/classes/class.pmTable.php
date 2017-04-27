@@ -992,7 +992,7 @@ class PmTable
                     $listTablePeer = 'ListInboxPeer';
                     break;
             }
-            //Some PMtables does not have the APP NUMBER columns, but if exist we must be use
+            //Some PM tables don’t have the APP NUMBER column; but if exists, we must use it
             if (in_array($tableName.'.APP_NUMBER', $oCriteria->getSelectColumns())) {
                 $oCriteria->addJoin($listTablePeer::APP_NUMBER, $tableName.'.APP_NUMBER', Criteria::LEFT_JOIN);
             } else {

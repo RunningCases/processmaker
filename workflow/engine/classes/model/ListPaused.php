@@ -242,21 +242,16 @@ class ListPaused extends BaseListPaused
         if ($search != '') {
             //If we have additional tables configured in the custom cases list, prepare the variables for search
             if (count($additionalColumns) > 0) {
-                require_once(PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP . $this->additionalClassName . '.php');
+                require_once(PATH_DATA_SITE . 'classes' . PATH_SEP . $this->additionalClassName . '.php');
                 $oNewCriteria = new Criteria("workflow");
-                $oTmpCriteria = '';
-                $sw = 0;
-            }
+                $oTmpCriteria = $oNewCriteria->getNewCriterion(current($additionalColumns), "%" . $search . "%", Criteria::LIKE);
 
-            //We prepare the query related to the custom cases list
-            foreach ($additionalColumns as $key => $value) {
-                if ($sw === 0) {
-                    $oTmpCriteria = $oNewCriteria->getNewCriterion($value, "%" . $search . "%", Criteria::LIKE);
-                } else {
+                //We prepare the query related to the custom cases list
+                foreach (array_slice($additionalColumns, 1) as $value) {
                     $oTmpCriteria = $oNewCriteria->getNewCriterion($value, "%" . $search . "%", Criteria::LIKE)->addOr($oTmpCriteria);
                 }
-                $sw = 1;
             }
+
             if (!empty($oTmpCriteria)) {
                 $criteria->add(
                     $criteria->getNewCriterion(ListPausedPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)
