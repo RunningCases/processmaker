@@ -26,14 +26,14 @@ class ControlUnderUpdating implements iAuthenticate
         $underUpdating = \Bootstrap::isPMUnderUpdating();
         if ($underUpdating['action']) {
             $sysTemp = true;
-            if (defined("SYS_TEMP")) {
+            if (defined('SYS_TEMP')) {
                 $sysTemp = $underUpdating['workspace'] == SYS_TEMP;
             }
-            if ($underUpdating['workspace'] == "true" || $sysTemp) {
+            if ($underUpdating['workspace'] == 'true' || $sysTemp) {
                 $message = 'The server is currently unable to handle the request '
-                        . 'due to a temporary overloading or maintenance of the '
-                        . 'server (An application update has probably been '
-                        . 'performed on the server).';
+                        . 'due to temporary overloading or server maintenance ('
+                        . 'an application update has probably been performed on '
+                        . 'the server)';
                 throw new RestException(503, $message);
             }
         }
