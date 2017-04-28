@@ -30,11 +30,11 @@ class ControlUnderUpdating implements iAuthenticate
                 $sysTemp = $underUpdating['workspace'] == SYS_TEMP;
             }
             if ($underUpdating['workspace'] == "true" || $sysTemp) {
-                $mesage = 'The server is currently unable to handle the request '
+                $message = 'The server is currently unable to handle the request '
                         . 'due to a temporary overloading or maintenance of the '
                         . 'server (An application update has probably been '
                         . 'performed on the server).';
-                throw new RestException(503, $mesage);
+                throw new RestException(503, $message);
             }
         }
         return $response;
