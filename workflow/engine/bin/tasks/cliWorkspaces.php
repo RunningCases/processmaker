@@ -326,7 +326,6 @@ EOT
 CLI::taskOpt("lang", "", "lLANG", "lang=LANG");
 CLI::taskArg('workspace');
 CLI::taskRun("cliListIds");
-/*----------------------------------********---------------------------------*/
 
   /**
    * Function run_info
