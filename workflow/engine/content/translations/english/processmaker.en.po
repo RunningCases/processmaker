@@ -6082,8 +6082,8 @@ msgstr "First select a PM Table from the list please."
 # TRANSLATION
 # LABEL/ID_CONFIRM_DELETE_PM_TABLE
 #: LABEL/ID_CONFIRM_DELETE_PM_TABLE
-msgid "Do you want to delete selected tables?"
-msgstr "Do you want to delete selected tables?"
+msgid "Do you want to delete the selected tables?"
+msgstr "Do you want to delete the selected tables?"
 
 # TRANSLATION
 # LABEL/ID_TITLE_START_CASE
@@ -6346,8 +6346,8 @@ msgstr "First select a ROW from the list"
 # TRANSLATION
 # LABEL/ID_MSG_CONFIRM_DELETE_ROW
 #: LABEL/ID_MSG_CONFIRM_DELETE_ROW
-msgid "Do you want to delete selected row?"
-msgstr "Do you want to delete selected row?"
+msgid "Do you want to delete the selected row?"
+msgstr "Do you want to delete the selected row?"
 
 # TRANSLATION
 # LABEL/ID_SENT_BY
@@ -7300,8 +7300,8 @@ msgstr "Edit Department"
 # TRANSLATION
 # LABEL/ID_CONFIRM_DELETE_DEPARTMENT
 #: LABEL/ID_CONFIRM_DELETE_DEPARTMENT
-msgid "Do you want to delete selected department?"
-msgstr "Do you want to delete selected department?"
+msgid "Do you want to delete the selected department?"
+msgstr "Do you want to delete the selected department?"
 
 # TRANSLATION
 # LABEL/ID_DEPARTMENT_SUCCESS_DELETE
@@ -7390,8 +7390,8 @@ msgstr "The category cannot be deleted while it is still assigned to processes."
 # TRANSLATION
 # LABEL/ID_CONFIRM_DELETE_CATEGORY
 #: LABEL/ID_CONFIRM_DELETE_CATEGORY
-msgid "Do you want to delete selected category?"
-msgstr "Do you want to delete selected category?"
+msgid "Do you want to delete the selected category?"
+msgstr "Do you want to delete the selected category?"
 
 # TRANSLATION
 # LABEL/ID_GROUP_USERS
@@ -8134,8 +8134,8 @@ msgstr "Starting Task"
 # TRANSLATION
 # LABEL/ID_CONFIRM_DELETE_AUTHENTICATION
 #: LABEL/ID_CONFIRM_DELETE_AUTHENTICATION
-msgid "Do you want to delete selected authentication source?"
-msgstr "Do you want to delete selected authentication source?"
+msgid "Do you want to delete the selected authentication source?"
+msgstr "Do you want to delete the selected authentication source?"
 
 # TRANSLATION
 # LABEL/ID_ASSIGNMENT_RULES
@@ -8902,8 +8902,8 @@ msgstr "Rich Text File"
 # TRANSLATION
 # LABEL/ID_CONFIRM_DELETE_CALENDAR
 #: LABEL/ID_CONFIRM_DELETE_CALENDAR
-msgid "Do you want to delete selected calendar?"
-msgstr "Do you want to delete selected calendar?"
+msgid "Do you want to delete the selected calendar?"
+msgstr "Do you want to delete the selected calendar?"
 
 # TRANSLATION
 # LABEL/ID_CALENDAR_SUCCESS_DELETE
@@ -9418,8 +9418,8 @@ msgstr "Input Document has been deleted correctly."
 # TRANSLATION
 # LABEL/ID_CONFIRM_DELETE_INPUT_DOC
 #: LABEL/ID_CONFIRM_DELETE_INPUT_DOC
-msgid "Do you want to delete selected Input Document?"
-msgstr "Do you want to delete selected Input Document?"
+msgid "Do you want to delete the selected Input Document?"
+msgstr "Do you want to delete the selected Input Document?"
 
 # TRANSLATION
 # LABEL/ID_MSG_CANNOT_DELETE_INPUT_DOC
@@ -10450,8 +10450,8 @@ msgstr "From each table select at least one Schema/Data to export."
 # TRANSLATION
 # LABEL/ID_CONFIRM_DELETE_SKIN
 #: LABEL/ID_CONFIRM_DELETE_SKIN
-msgid "Do you want to delete selected skin?"
-msgstr "Do you want to delete selected skin?"
+msgid "Do you want to delete the selected skin?"
+msgstr "Do you want to delete the selected skin?"
 
 # TRANSLATION
 # LABEL/ID_MESSAGE_SUBJECT_NOTE_NOTIFICATION
