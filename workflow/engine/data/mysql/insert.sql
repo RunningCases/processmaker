@@ -1954,7 +1954,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_PENDING','en','Pending','2014-01-15') ,
 ( 'LABEL','ID_FULL_NAME','en','Full Name','2014-01-15') ,
 ( 'LABEL','ID_ROLE','en','Role','2014-01-15') ,
-( 'LABEL','ID_MSG_CANNOT_DELETE_USER','en','User cannot be deleted while still assigned to cases.','2014-10-21') ,
+( 'LABEL','ID_MSG_CANNOT_DELETE_USER','en','The user cannot be deleted since it is referenced in a process design and/or has assigned cases.','2017-03-22') ,
 ( 'LABEL','ID_MSG_REMOVE_PLUGIN','en','Are you sure that you want to remove this plugin?','2014-01-15') ,
 ( 'JAVASCRIPT','USERS_REASSIGN','en','This user cannot be deleted because he/she still has some pending tasks. <br/><br/>Do you want to reassign these tasks to another user now?','2014-01-15') ,
 ( 'LABEL','LOGIN_VERIFY_MSG','en','Verifying...','2014-01-15') ,
