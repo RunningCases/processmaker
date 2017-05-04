@@ -398,26 +398,45 @@ class WebEntry
                     $weTitle = $this->sanitizeFilename($arrayWebEntryData["WE_TITLE"]);
                     $fileName = $weTitle;
 
-                    $fileContent = "<?php\n";
+                    $fileContent = "<?php\n\n";
                     $fileContent .= "global \$_DBArray;\n";
                     $fileContent .= "if (!isset(\$_DBArray)) {\n";
-                    $fileContent .= "  \$_DBArray = array();\n";
+                    $fileContent .= "    \$_DBArray = array();\n";
                     $fileContent .= "}\n";
                     $fileContent .= "\$_SESSION[\"PROCESS\"] = \"" . $processUid . "\";\n";
                     $fileContent .= "\$_SESSION[\"CURRENT_DYN_UID\"] = \"" . $dynaFormUid . "\";\n";
                     $fileContent .= "\$G_PUBLISH = new Publisher();\n";
-                    $fileContent .= "\$_SESSION[\"__submitFormWebEntry__\"] = false;\n";
 
                     $fileContent .= "G::LoadClass(\"pmDynaform\");\n";
                     $fileContent .= "\$a = new pmDynaform(array(\"CURRENT_DYNAFORM\" => \"" . $arrayWebEntryData["DYN_UID"] . "\"));\n";
-                    $fileContent .= "if (\$a->isResponsive()) {";
-                    $fileContent .= "  \$a->printWebEntry(\"" . $fileName . "Post.php\");";
-                    $fileContent .= "} else {";
-                    $fileContent .= "  \$G_PUBLISH->AddContent(\"dynaform\", \"xmlform\", \"" . $processUid . PATH_SEP . $dynaFormUid . "\", \"\", array(), \"" . $fileName . "Post.php\");\n";
-                    $fileContent .= "  G::RenderPage(\"publish\", \"blank\");";
-                    $fileContent .= "}";
+                    $fileContent .= "if (\$a->isResponsive()) {\n";
+                    $fileContent .= "    \$a->printWebEntry(\"" . $fileName . "Post.php\");\n";
+                    $fileContent .= "} else {\n";
+                    $fileContent .= "    \$G_PUBLISH->AddContent(\"dynaform\", \"xmlform\", \"" . $processUid . PATH_SEP . $dynaFormUid . "\", \"\", array(), \"" . $fileName . "Post.php\");\n";
+                    $fileContent .= "    G::RenderPage(\"publish\", \"blank\");\n";
+                    $fileContent .= "}\n";
 
                     file_put_contents($pathDataPublicProcess . PATH_SEP . $fileName . ".php", $fileContent);
+
+                    //Create file to display information and prevent resubmission data (Post/Redirect/Get).
+                    $fileNamePreventResubmission = $pathDataPublicProcess . PATH_SEP . $weTitle . "Info.php";
+                    $filePreventResubmission = ""
+                            . "<?php\n"
+                            . "\n"
+                            . "\$G_PUBLISH = new Publisher();\n"
+                            . "\$show = \"login/showMessage\";\n"
+                            . "\$message = \"\";\n"
+                            . "if (isset(\$_SESSION[\"__webEntrySuccess__\"])) {\n"
+                            . "    \$show = \"login/showInfo\";\n"
+                            . "    \$message = \$_SESSION[\"__webEntrySuccess__\"];\n"
+                            . "} else {\n"
+                            . "    \$show = \"login/showMessage\";\n"
+                            . "    \$message = \$_SESSION[\"__webEntryError__\"];\n"
+                            . "}\n"
+                            . "\$G_PUBLISH->AddContent(\"xmlform\", \"xmlform\", \$show, \"\", \$message);\n"
+                            . "G::RenderPage(\"publish\", \"blank\");\n"
+                            . "\n";
+                    file_put_contents($fileNamePreventResubmission, $filePreventResubmission);
 
                     //Creating the second file, the  post file who receive the post form.
                     $pluginTpl = PATH_TPL . "processes" . PATH_SEP . "webentryPost.tpl";
@@ -433,6 +452,7 @@ class WebEntry
                     $template->assign("wsUser", $usrUsername);
                     $template->assign("wsPass", \Bootstrap::getPasswordHashType() . ':' . $usrPassword);
                     $template->assign("wsRoundRobin", $wsRoundRobin);
+                    $template->assign("weTitle", $weTitle);
 
                     if ($webEntryInputDocumentAccess == 0) {
                         //Restricted to process permissions

@@ -16,13 +16,6 @@ define("WS_USER_PASS",  "{wsPass}");
 define("WS_ROUNDROBIN", "{wsRoundRobin}");
 
 try {
-    if (isset($_SESSION["__submitFormWebEntry__"]) && $_SESSION["__submitFormWebEntry__"] === true) {
-        $G_PUBLISH = new Publisher();
-        $G_PUBLISH->AddContent("xmlform", "xmlform", "login/showInfo", "", $_SESSION["__submitFormWebEntryData__"]);
-        G::RenderPage("publish", "blank");
-        exit();
-    }
-    
     @include_once ("wsClient.php");
 
     if (!function_exists("ws_open")){
@@ -200,15 +193,11 @@ try {
         exit( 0 );
     }
 	/*----------------------------------********---------------------------------*/
-    $G_PUBLISH = new Publisher();
-    $G_PUBLISH->AddContent("xmlform", "xmlform", "login/showInfo", "", $aMessage);
-    G::RenderPage("publish", "blank");
-    $_SESSION["__submitFormWebEntry__"] = true;
-    $_SESSION["__submitFormWebEntryData__"] = $aMessage;
+    $_SESSION["__webEntrySuccess__"] = $aMessage;
+    header("location:{weTitle}Info.php");
 } catch (Exception $e) {
-    $G_PUBLISH = new Publisher();
     $suggest_message = "This web entry should be regenerated, please contact to your system administrator.";
     $aMessage["MESSAGE"] = "<font color=\"red\"><pre>" . $e->getMessage() . "</pre>" . $suggest_message . "</font>";
-    $G_PUBLISH->AddContent("xmlform", "xmlform", "login/showMessage", "", $aMessage);
-    G::RenderPage("publish", "blank");
+    $_SESSION["__webEntryError__"] = $aMessage;
+    header("location:{weTitle}Info.php");
 }

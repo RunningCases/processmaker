@@ -60,7 +60,28 @@ try {
         $sContent .= "\$G_PUBLISH->AddContent('dynaform', 'xmlform', '" . $sPRO_UID . '/' . $sDYNAFORM . "', '', array(), '" . $dynTitle . 'Post.php' . "');\n";
         $sContent .= "G::RenderPage('publish', 'blank');";
         file_put_contents( $pathProcess . $dynTitle . '.php', $sContent );
-        //creating the second file, the  post file who receive the post form.
+        
+        //Create file to display information and prevent resubmission data (Post/Redirect/Get).
+        $fileNamePreventResubmission = $pathProcess . $dynTitle . "Info.php";
+        $filePreventResubmission = ""
+                . "<?php\n"
+                . "\n"
+                . "\$G_PUBLISH = new Publisher();\n"
+                . "\$show = \"login/showMessage\";\n"
+                . "\$message = \"\";\n"
+                . "if (isset(\$_SESSION[\"__webEntrySuccess__\"])) {\n"
+                . "    \$show = \"login/showInfo\";\n"
+                . "    \$message = \$_SESSION[\"__webEntrySuccess__\"];\n"
+                . "} else {\n"
+                . "    \$show = \"login/showMessage\";\n"
+                . "    \$message = \$_SESSION[\"__webEntryError__\"];\n"
+                . "}\n"
+                . "\$G_PUBLISH->AddContent(\"xmlform\", \"xmlform\", \$show, \"\", \$message);\n"
+                . "G::RenderPage(\"publish\", \"blank\");\n"
+                . "\n";
+        file_put_contents($fileNamePreventResubmission, $filePreventResubmission);
+
+//creating the second file, the  post file who receive the post form.
         $pluginTpl = PATH_CORE . 'templates' . PATH_SEP . 'processes' . PATH_SEP . 'webentryPost.tpl';
         $template = new TemplatePower( $pluginTpl );
         $template->prepare();
@@ -72,6 +93,7 @@ try {
         $template->assign( 'wsUser', $sWS_USER );
         $template->assign( 'wsPass', Bootstrap::hashPassword($sWS_PASS, '', true) );
         $template->assign( 'wsRoundRobin', $sWS_ROUNDROBIN );
+        $template->assign( 'weTitle', $dynTitle);
 
         G::auditLog('WebEntry','Generate web entry with web services ('.$dynTitle.'.php) in process "'.$resultProcess['PRO_TITLE'].'"');
 
