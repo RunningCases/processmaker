@@ -1722,6 +1722,9 @@ function PMFAddInputDocument(
  * @label PMF Generate Output Document
  *
  * @param string(32) | $outputID | Output ID | Output Document ID
+ * @param string(32) | $sApplication = null | Case ID | The unique ID for a case
+ * @param string(32) | $index = null | Index | Value for Index
+ * @param string(32) | $sUserLogged = null | User UID | User Logged UID
  * @return none | $none | None | None
  *
  */
