@@ -316,7 +316,7 @@ class InputDocument extends BaseInputDocument
         if ($sValue !== null && ! is_string( $sValue )) {
             $sValue = (string) $sValue;
         }
-        if ($this->inp_doc_title_content !== $sValue || $sValue === '') {
+        if (in_array(InputDocumentPeer::INP_DOC_TITLE, $this->modifiedColumns) || $sValue === '') {
             try {
                 $this->inp_doc_title_content = $sValue;
 
@@ -356,7 +356,7 @@ class InputDocument extends BaseInputDocument
         if ($sValue !== null && ! is_string( $sValue )) {
             $sValue = (string) $sValue;
         }
-        if ($this->inp_doc_description_content !== $sValue || $sValue === '') {
+        if (in_array(InputDocumentPeer::INP_DOC_DESCRIPTION, $this->modifiedColumns) || $sValue === '') {
             try {
                 $this->inp_doc_description_content = $sValue;
 

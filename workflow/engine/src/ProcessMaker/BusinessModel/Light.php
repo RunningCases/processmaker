@@ -78,6 +78,9 @@ class Light
                         $tempTreeChild['processId'] = $processInfoChild['pro_uid'];
                         $tempTreeChild['taskId']    = $processInfoChild['uid'];
                         list($tempTreeChild['offlineEnabled'], $tempTreeChild['autoRoot']) = $task->getColumnValues($processInfoChild['pro_uid'], $processInfoChild['uid'], array('TAS_OFFLINE', 'TAS_AUTO_ROOT'));
+                        //Add process category
+                        $tempTreeChild['categoryName'] = $processInfoChild['catname'];
+                        $tempTreeChild['categoryId'] = $processInfoChild['cat'];
                         $forms = $task->getSteps($processInfoChild['uid']);
                         $newForm = array();
                         $c = 0;

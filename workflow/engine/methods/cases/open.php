@@ -34,25 +34,34 @@ if(isset( $_GET['gmail']) && $_GET['gmail'] == 1){
     $tBarGmail = true;
 }
 
-if (! isset( $_GET['APP_UID'] ) || ! isset( $_GET['DEL_INDEX'] )) {
-    if (isset( $_GET['APP_NUMBER'] )) {
-        G::LoadClass( 'case' );
-        $oCase = new Cases();
-        $appUid = $oCase->getApplicationUIDByNumber( htmlspecialchars($_GET['APP_NUMBER']) );
-        $delIndex = $oCase->getCurrentDelegation( $appUid, $_SESSION['USER_LOGGED'] );
-        if (is_null( $appUid )) {
-            throw new Exception( G::LoadTranslation( 'ID_CASE_DOES_NOT_EXISTS' ) );
-        }
-        if (is_null( $delIndex )) {
-            throw new Exception( G::LoadTranslation( 'ID_CASE_IS_CURRENTLY_WITH_ANOTHER_USER' ) );
-        }
-    } else {
-        throw new Exception( "Application ID or Delegation Index is missing!. The System can't open the case." );
+//Check if we have the information for open the case
+if (!isset($_GET['APP_UID']) && !isset($_GET['APP_NUMBER']) && !isset($_GET['DEL_INDEX'])) {
+    throw new Exception(G::LoadTranslation('ID_APPLICATION_OR_INDEX_MISSING'));
+}
+//Get the APP_UID related to APP_NUMBER
+if (!isset($_GET['APP_UID']) && isset($_GET['APP_NUMBER'])) {
+    G::LoadClass('case');
+    $oCase = new Cases();
+    $appUid = $oCase->getApplicationUIDByNumber(htmlspecialchars($_GET['APP_NUMBER']));
+    if (is_null( $appUid )) {
+        throw new Exception(G::LoadTranslation('ID_CASE_DOES_NOT_EXISTS'));
     }
 } else {
     $appUid = htmlspecialchars($_GET['APP_UID']);
+}
+//If we don't have the DEL_INDEX we get the current delIndex. Data reporting tool does not have this information
+if (!isset($_GET['DEL_INDEX'])) {
+    G::LoadClass('case');
+    $oCase = new Cases();
+    $delIndex = $oCase->getCurrentDelegation($appUid, $_SESSION['USER_LOGGED']);
+    if (is_null( $delIndex )) {
+        throw new Exception(G::LoadTranslation('ID_CASE_IS_CURRENTLY_WITH_ANOTHER_USER'));
+    }
+    $_GET['DEL_INDEX'] = $delIndex;
+} else {
     $delIndex = htmlspecialchars($_GET['DEL_INDEX']);
 }
+
 $tasUid = (isset($_GET['TAS_UID'])) ? $tasUid = htmlspecialchars($_GET['TAS_UID']) : '';
 
 require_once ("classes/model/Step.php");
