@@ -3125,7 +3125,7 @@ function PMFGeti18nText($id, $category, $lang = "en")
  * @method
  * The requested text in the specified language | If not found returns false
  * @name PMFUnCancelCase
- * @label PMF Un Cancel Case
+ * @label PMF Restore Case
  * @param string | $caseUID | ID Case | Is the unique UID of the case
  * @param string | $userUID | ID User  | Is the unique ID of the user who will uncancel the case
  * @return int | $value | Return | Returns 1 if the case was successfully uncancelled, otherwise returns 0 if an error ocurred
