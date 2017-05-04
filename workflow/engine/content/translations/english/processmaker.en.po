@@ -2114,6 +2114,24 @@ msgid "Application ID or Delegation Index is missing!. The System can not open t
 msgstr "Application ID or Delegation Index is missing!. The System can not open the case."
 
 # TRANSLATION
+# LABEL/ID_MEMORY_LIMIT_VALIDATE
+#: LABEL/ID_MEMORY_LIMIT_VALIDATE
+msgid "Memory Limit value has to be either a positive integer or -1."
+msgstr "Memory Limit value has to be either a positive integer or -1."
+
+# TRANSLATION
+# LABEL/ID_LIFETIME_VALIDATE
+#: LABEL/ID_LIFETIME_VALIDATE
+msgid "Max Lifetime value has to be a positive integer."
+msgstr "Max Lifetime value has to be a positive integer."
+
+# TRANSLATION
+# LABEL/ID_DEFAULT_EXPIRATION_YEAR_VALIDATE
+#: LABEL/ID_DEFAULT_EXPIRATION_YEAR_VALIDATE
+msgid "Default Expiration Year value has to be a positive integer."
+msgstr "Default Expiration Year value has to be a positive integer."
+
+# TRANSLATION
 # LABEL/ID_PLEASE_SELECT_UPGRADE_FILE
 #: LABEL/ID_PLEASE_SELECT_UPGRADE_FILE
 msgid "Please select the upgrade file"

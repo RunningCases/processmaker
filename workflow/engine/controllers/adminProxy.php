@@ -1538,19 +1538,19 @@ class adminProxy extends HttpProxyController
         if (!((is_numeric($httpData->memory_limit)) && ((int)$httpData->memory_limit == $httpData->memory_limit) &&
             ((int)$httpData->memory_limit >= -1))
         ) {
-            throw new Exception('The Memory Limit has to be either a positive integer or -1 ');
+            throw new Exception(G::LoadTranslation('ID_MEMORY_LIMIT_VALIDATE'));
         }
 
         if (!((is_numeric($httpData->max_life_time)) && ((int)$httpData->max_life_time == $httpData->max_life_time) &&
             ((int)$httpData->max_life_time > 0))
         ) {
-            throw new Exception('The Max Lifetime has to be either a positive integer ');
+            throw new Exception(G::LoadTranslation('ID_LIFETIME_VALIDATE'));
         }
 
         if (!((is_numeric($httpData->expiration_year)) && ((int)$httpData->expiration_year == $httpData->expiration_year) &&
             ((int)$httpData->expiration_year > 0))
         ) {
-            throw new Exception('The Default Expiration Year has to be either a positive integer');
+            throw new Exception(G::LoadTranslation('ID_DEFAULT_EXPIRATION_YEAR_VALIDATE'));
         }
 
         if (!file_exists($envFile)) {
