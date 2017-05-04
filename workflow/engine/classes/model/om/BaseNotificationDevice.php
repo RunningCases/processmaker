@@ -49,7 +49,7 @@ abstract class BaseNotificationDevice extends BaseObject implements Persistent
      * The value for the dev_reg_id field.
      * @var        string
      */
-    protected $dev_reg_id = '';
+    protected $dev_reg_id;
 
     /**
      * The value for the dev_type field.
@@ -283,7 +283,7 @@ abstract class BaseNotificationDevice extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->dev_reg_id !== $v || $v === '') {
+        if ($this->dev_reg_id !== $v) {
             $this->dev_reg_id = $v;
             $this->modifiedColumns[] = NotificationDevicePeer::DEV_REG_ID;
         }
