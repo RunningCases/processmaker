@@ -78,10 +78,10 @@ class OutputDocuments extends Api
      *
      * @param string $prjUid {@min 32} {@max 32}
      * @param string $outputDocumentUid {@min 32} {@max 32}
-     * @param OutputDocumentStructure $request_data
+     * @param array $request_data
      *
      */
-    public function doPutProjectOutputDocument($prjUid, $outputDocumentUid, OutputDocumentStructure $request_data)
+    public function doPutProjectOutputDocument($prjUid, $outputDocumentUid, $request_data)
     {
         try {
             $request_data = (array)($request_data);

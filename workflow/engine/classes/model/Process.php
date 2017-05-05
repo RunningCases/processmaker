@@ -83,7 +83,7 @@ class Process extends BaseProcess
             $v = (string) $v;
         }
 
-        if ($this->pro_title_content !== $v || $v === '') {
+        if (in_array(ProcessPeer::PRO_TITLE, $this->modifiedColumns) || $v === '') {
             $this->pro_title_content = $v;
             $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
 
@@ -132,7 +132,7 @@ class Process extends BaseProcess
             $v = (string) $v;
         }
 
-        if ($this->pro_description_content !== $v || $v === '') {
+        if (in_array(ProcessPeer::PRO_DESCRIPTION, $this->modifiedColumns) || $v === '') {
             $this->pro_description_content = $v;
             $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
 
@@ -176,7 +176,7 @@ class Process extends BaseProcess
             $this->setProParent( $sNewProUid );
             $this->setProTime( 1 );
             $this->setProTimeunit( 'DAYS' );
-            $this->setProStatus( 'ACTIVE' );
+            $this->setProStatus((isset($aData["PRO_STATUS"])) ? $aData["PRO_STATUS"] : 'ACTIVE');
             $this->setProTypeDay( '' );
             $this->setProType((isset($aData["PRO_TYPE"]))? $aData["PRO_TYPE"]: "NORMAL");
             $this->setProAssignment( 'FALSE' );
@@ -198,7 +198,6 @@ class Process extends BaseProcess
 
             if ($this->validate()) {
                 $con->begin();
-                $res = $this->save();
 
                 if (isset( $aData['PRO_TITLE'] )) {
                     $this->setProTitleContent( $aData['PRO_TITLE'] );
@@ -212,6 +211,7 @@ class Process extends BaseProcess
                     $this->setProDescriptionContent( 'Default Process Description' );
                 }
 
+                $res = $this->save();
                 $con->commit();
 
                 $this->memcachedDelete();
@@ -445,7 +445,6 @@ class Process extends BaseProcess
         $this->setProDynaforms( isset( $aData['PRO_DYNAFORMS'] ) ? (is_array( $aData['PRO_DYNAFORMS'] ) ? serialize( $aData['PRO_DYNAFORMS'] ) : $aData['PRO_DYNAFORMS']) : '' );
         if ($this->validate()) {
             $con->begin();
-            $res = $this->save();
 
             if (isset( $aData['PRO_TITLE'] ) && trim( $aData['PRO_TITLE'] ) != '') {
                 $this->setProTitleContent( $aData['PRO_TITLE'] );
@@ -457,6 +456,8 @@ class Process extends BaseProcess
             } else {
                 $this->setProDescriptionContent( 'Default Process Description' );
             }
+
+            $res = $this->save();
             $con->commit();
 
             $this->memcachedDelete();

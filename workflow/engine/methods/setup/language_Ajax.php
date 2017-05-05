@@ -153,27 +153,27 @@ try {
             $oDataset->next();
             $aRow = $oDataset->getRow();
 
-            if($locale != "en"){ //Default Lengage 'en'
-            	if($locale != SYS_LANG){ //Current lenguage
-            		//THERE IS NO ANY CASE STARTED FROM THES LANGUAGE
-            		if ($aRow[0] == 0) { //so we can delete this language
-            			try {
-            				Content::removeLanguageContent( $locale );
-            				$trn->removeTranslationEnvironment( $locale );
-            				echo G::LoadTranslation( 'ID_LANGUAGE_DELETED_SUCCESSFULLY' );
-            			} catch (Exception $e) {
-            				$token = strtotime("now");
+            if ($locale != "en") { //Default Language 'en'
+                if ($locale != SYS_LANG) { //Current Language
+                    //THERE IS NO ANY CASE STARTED FROM THIS LANGUAGE
+                    if (empty($aRow)) { //so we can delete this language
+                        try {
+                            Content::removeLanguageContent($locale);
+                            $trn->removeTranslationEnvironment($locale);
+                            echo G::LoadTranslation('ID_LANGUAGE_DELETED_SUCCESSFULLY');
+                        } catch (Exception $e) {
+                            $token = strtotime("now");
                             PMException::registerErrorLog($e, $token);
-                            G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
-            			}
-            		} else {
-            			echo str_replace( '{0}', $aRow[0], G::LoadTranslation( 'ID_LANGUAGE_CANT_DELETE' ) );
-            		}
-            	} else {
-            		echo str_replace( '{0}', $aRow[0], G::LoadTranslation( 'ID_LANGUAGE_CANT_DELETE_CURRENTLY' ) );
-            	}
+                            G::outRes(G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)));
+                        }
+                    } else {
+                        echo str_replace('{0}', $aRow['APP_TITLE'], G::LoadTranslation('ID_LANGUAGE_CANT_DELETE'));
+                    }
+                } else {
+                    echo str_replace('{0}', $aRow['APP_TITLE'], G::LoadTranslation('ID_LANGUAGE_CANT_DELETE_CURRENTLY'));
+                }
             } else {
-            	echo str_replace( '{0}', $aRow[0], G::LoadTranslation( 'ID_LANGUAGE_CANT_DELETE_DEFAULT' ) );
+                echo str_replace('{0}', $aRow['APP_TITLE'], G::LoadTranslation('ID_LANGUAGE_CANT_DELETE_DEFAULT'));
             }
             break;
     }

@@ -14,6 +14,7 @@ class GranularImporter
 
     protected $factory;
     protected $data;
+    protected $regeneratedUids;
     /**
      * GranularImporter constructor.
      */
@@ -140,7 +141,8 @@ class GranularImporter
                     :$data['tables']['workflow']['process'][0]['PRO_UID'];
                 $objectList[$nameObject] = [];
                 $objectList[$nameObject]['metadata'] = [
-                    'PRJ_UID' => $prjUID
+                    'PRJ_UID' => $prjUID,
+                    'REGENERATED_UIDS' => $this->regeneratedUids
                 ];
                 foreach ($data['tables']['plugins'] as $pluginKey => $pluginTable) {
                     $key = explode(".", $pluginKey);
@@ -310,7 +312,10 @@ class GranularImporter
             $arrayBpmnTables = $data["tables"]["bpmn"];
             $arrayWorkflowTables = $data["tables"]["workflow"];
             $arrayWorkflowFiles = $data["files"]["workflow"];
-            $result = $this->bpmn->createFromStruct($this->structureBpmnData($arrayBpmnTables), $generateUid);
+            $arrayBpmnTablesFormat = $this->structureBpmnData($arrayBpmnTables);
+            $arrayBpmnTablesFormat['prj_type'] = $arrayWorkflowTables['process']['PRO_TYPE'];
+            $arrayBpmnTablesFormat['pro_status'] = $arrayWorkflowTables['process']['PRO_STATUS'];
+            $result = $this->bpmn->createFromStruct($arrayBpmnTablesFormat, $generateUid);
             $projectUidOld = $arrayBpmnTables["project"][0]["prj_uid"];
             $projectUid = ($generateUid) ? $result[0]["new_uid"] : $result;
             if ($generateUid) {
@@ -325,6 +330,7 @@ class GranularImporter
             $newData['tables']['workflow'] = $arrayWorkflowTables;
             $newData['tables']['plugins'] = isset($data["tables"]["plugins"]) ? $data["tables"]["plugins"] : [];
             $newData['files']['workflow'] = $arrayWorkflowFiles;
+            $this->regeneratedUids = $result;
 
             return array(
                 'data' => $newData,

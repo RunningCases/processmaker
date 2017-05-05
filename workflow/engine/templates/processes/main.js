@@ -388,7 +388,13 @@ Ext.onReady(function(){
                         exportImportProcessObjects('export');
                     }
                 }
-            ]
+            ],
+            listeners: {
+                "click": function (obj, e)
+                {
+                    obj.showMenu();
+                }
+            }
         };
         exportProcessOption = granularExportProcessOption;
     } else {

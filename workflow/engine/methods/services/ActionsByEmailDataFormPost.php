@@ -5,6 +5,30 @@ if (PMLicensedFeatures
         ->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
     $G_PUBLISH = new Publisher();
     try {
+        /**
+         * $backupSession = serialize($_SESSION);
+         * This script runs with $ _SESSION ['USER_LOGGED'] = '00000000000000000000000000000001', 
+         * this action enables login as admin if you enter the url 'http://myserver.net/sysworkflow/en/neoclassic/processes/main', 
+         * in the Browser that invoked this script. 
+         * This action ensures that any changes to the session variables required by 
+         * this script do not affect the main session if it exists, for example 
+         * when multiple tabs are open.
+         * Serialization is used because for object types the simple assignment: 
+         * $backupSession = $ _SESSION will not work because the assignment is by 
+         * reference, eg:
+         * <?php
+         * $obj = new stdClass();
+         * $obj->value = "value";
+         * 
+         * $a = ["one" => 1, "two" => $obj, "three" => 3];
+         * $b = $a;
+
+         * $a["two"]->value = "modify";
+         * 
+         * In 'b' is reflected the output of 'a'.
+         */
+        $backupSession = serialize($_SESSION);
+        
         if ($_REQUEST['APP_UID'] == '') {
             if($_GET['APP_UID'] == ''){
                  throw new Exception('The parameter APP_UID is empty.');
@@ -146,11 +170,12 @@ if (PMLicensedFeatures
             throw $error;
         }
 
+        $_SESSION = unserialize($backupSession);
         $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/showInfo', '', $aMessage);
     } catch (Exception $error) {
         $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/showMessage', '', array('MESSAGE' => $error->getMessage().' Please contact to your system administrator.'));
     }
-
+    $_SESSION = unserialize($backupSession);
     G::RenderPage('publish', 'blank');
 }
 

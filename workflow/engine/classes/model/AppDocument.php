@@ -369,7 +369,7 @@ class AppDocument extends BaseAppDocument
         if ($sValue !== null && ! is_string( $sValue )) {
             $sValue = (string) $sValue;
         }
-        if ($this->app_doc_title !== $sValue || $sValue === '') {
+        if (in_array(AppDocumentPeer::APP_DOC_TITLE, $this->modifiedColumns) || $sValue === '') {
             try {
                 $this->app_doc_title = $sValue;
                 $iResult = Content::addContent( 'APP_DOC_TITLE', $this->getDocVersion(), $this->getAppDocUid(), (defined( 'SYS_LANG' ) ? SYS_LANG : 'en'), $this->app_doc_title );
@@ -411,7 +411,7 @@ class AppDocument extends BaseAppDocument
         if ($sValue !== null && ! is_string( $sValue )) {
             $sValue = (string) $sValue;
         }
-        if ($this->app_doc_comment !== $sValue || $sValue === '') {
+        if (in_array(AppDocumentPeer::APP_DOC_COMMENT, $this->modifiedColumns) || $sValue === '') {
             try {
                 $this->app_doc_comment = $sValue;
                 $iResult = Content::addContent( 'APP_DOC_COMMENT', $this->getDocVersion(), $this->getAppDocUid(), (defined( 'SYS_LANG' ) ? SYS_LANG : 'en'), $this->app_doc_comment );
@@ -453,7 +453,7 @@ class AppDocument extends BaseAppDocument
         if ($sValue !== null && ! is_string( $sValue )) {
             $sValue = (string) $sValue;
         }
-        if ($this->app_doc_filename !== $sValue || $sValue === '') {
+        if (in_array(AppDocumentPeer::APP_DOC_FILENAME, $this->modifiedColumns) || $sValue === '') {
             try {
                 $this->app_doc_filename = $sValue;
                 $iResult = Content::addContent( 'APP_DOC_FILENAME', $this->getDocVersion(), $this->getAppDocUid(), (defined( 'SYS_LANG' ) ? SYS_LANG : 'en'), $this->app_doc_filename );

@@ -209,7 +209,7 @@ if ($flagExecuteBeforeTriggers) {
     $_SESSION['TRIGGER_DEBUG']['NUM_TRIGGERS'] = count( $triggers );
     $_SESSION['TRIGGER_DEBUG']['TIME'] = G::toUpper(G::loadTranslation('ID_BEFORE'));
     if ($_SESSION['TRIGGER_DEBUG']['NUM_TRIGGERS'] != 0) {
-        $_SESSION['TRIGGER_DEBUG']['TRIGGERS_NAMES'] = $oCase->getTriggerNames( $triggers );
+        $_SESSION['TRIGGER_DEBUG']['TRIGGERS_NAMES'] = array_column($triggers, 'TRI_TITLE');
         $_SESSION['TRIGGER_DEBUG']['TRIGGERS_VALUES'] = $triggers;
     }
 
@@ -418,7 +418,7 @@ try {
 
 
                     $oHeadPublisher = & headPublisher::getSingleton();
-                    $titleDocument = "<h3>" . $Fields['INP_DOC_TITLE'] . "<br><small>" . G::LoadTranslation( 'ID_INPUT_DOCUMENT' ) . "</small></h3>";
+                    $titleDocument = "<h3>" . htmlspecialchars($Fields['INP_DOC_TITLE'], ENT_QUOTES) . "<br><small>" . G::LoadTranslation('ID_INPUT_DOCUMENT') . "</small></h3>";
                     if ($Fields['INP_DOC_DESCRIPTION']) {
                         $titleDocument .= " " . str_replace( "\n", "", str_replace( "'", "\'", nl2br( html_entity_decode($Fields['INP_DOC_DESCRIPTION'], ENT_COMPAT, "UTF-8") ) ) ) . "";
                     }
