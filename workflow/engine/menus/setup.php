@@ -63,16 +63,6 @@ if ($RBAC->userCanAccess('PM_SETUP') === 1) {
     }
 }
 
-if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') === 1) {
-    if ($RBAC->userCanAccess('PM_SETUP_LANGUAGE') === 1) {
-        $G_TMP_MENU->AddIdRawOption(
-            'LANGUAGES', 'languages',
-            G::LoadTranslation('ID_LANGUAGES'),
-            'icon-language.png','', 'settings'
-        );
-    }
-}
-
 if ($RBAC->userCanAccess('PM_SETUP') === 1) {
     if ($RBAC->userCanAccess('PM_SETUP_SKIN') === 1) {
         $G_TMP_MENU->AddIdRawOption(
@@ -101,14 +91,6 @@ if ($RBAC->userCanAccess('PM_SETUP') === 1) {
             "", '', 'settings'
         );
     }
-}
-
-if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') === 1) {
-    $G_TMP_MENU->AddIdRawOption(
-        'APPCACHEVIEW_SETUP', '../setup/appCacheViewConf',
-        G::LoadTranslation('ID_APPCACHE_SETUP'),
-        "", '', 'settings'
-    );
 }
 
 if ($RBAC->userCanAccess('PM_SETUP') === 1) {
@@ -159,6 +141,20 @@ if ($RBAC->userCanAccess('PM_SETUP') === 1) {
 }
 //tools options
 if ($RBAC->userCanAccess('PM_SETUP_ADVANCE') === 1) {
+    if ($RBAC->userCanAccess('PM_SETUP_LANGUAGE') === 1) {
+        $G_TMP_MENU->AddIdRawOption(
+            'LANGUAGES', 'languages',
+            G::LoadTranslation('ID_LANGUAGES'),
+            'icon-language.png','', 'settings'
+        );
+    }
+    if ($RBAC->userCanAccess('PM_SETUP_CASES_LIST_CACHE_BUILDER') === 1) {
+        $G_TMP_MENU->AddIdRawOption(
+            'APPCACHEVIEW_SETUP', '../setup/appCacheViewConf',
+            G::LoadTranslation('ID_APPCACHE_SETUP'),
+            "", '', 'settings'
+        );
+    }
     if (!$partnerFlag) {
         if ($RBAC->userCanAccess('PM_SETUP_PLUGINS') === 1) {
             $G_TMP_MENU->AddIdRawOption(
@@ -277,13 +273,6 @@ if ($licenseStatusInfo["message"] != "") {
 /*----------------------------------********---------------------------------*/
 if ($RBAC->userCanAccess('PM_SETUP') == 1) {
     /*----------------------------------********---------------------------------*/
-    if ($RBAC->userCanAccess('PM_SETUP_CASES_LIST_CACHE_BUILDER') == 1) {
-        $G_TMP_MENU->AddIdRawOption(
-            'PMENTERPRISE', '../enterprise/addonsStore',
-            G::LoadTranslation('ID_MENU_NAME') . $licStatusMsg,
-            '', '', 'plugins'
-        );
-    }
     if ($RBAC->userCanAccess('PM_SETUP_CUSTOM_CASES_LIST') == 1) {
         $G_TMP_MENU->AddIdRawOption(
             'CASES_LIST_SETUP', '../cases/casesListSetup',
