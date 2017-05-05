@@ -1722,6 +1722,9 @@ function PMFAddInputDocument(
  * @label PMF Generate Output Document
  *
  * @param string(32) | $outputID | Output ID | Output Document ID
+ * @param string(32) | $sApplication = null | Case ID | The unique ID for a case
+ * @param string(32) | $index = null | Index | Value for Index
+ * @param string(32) | $sUserLogged = null | User UID | User Logged UID
  * @return none | $none | None | None
  *
  */
@@ -3125,7 +3128,7 @@ function PMFGeti18nText($id, $category, $lang = "en")
  * @method
  * The requested text in the specified language | If not found returns false
  * @name PMFUnCancelCase
- * @label PMF Un Cancel Case
+ * @label PMF Restore Case
  * @param string | $caseUID | ID Case | Is the unique UID of the case
  * @param string | $userUID | ID User  | Is the unique ID of the user who will uncancel the case
  * @return int | $value | Return | Returns 1 if the case was successfully uncancelled, otherwise returns 0 if an error ocurred

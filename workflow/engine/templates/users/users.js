@@ -116,20 +116,6 @@ Ext.onReady(function () {
         width      : 400
 
       }
-/*
-      ,{
-        xtype: 'fileuploadfield',
-        id: 'USR_RESUME',
-        emptyText: _('ID_PLEASE_SELECT_FILE'),
-        fieldLabel: _('ID_RESUME'),
-        name: 'USR_RESUME',
-        buttonText: '',
-        width: 260,
-        buttonCfg:{
-          iconCls: 'upload-icon'
-        }
-      }
-*/
     ]
   });
 
@@ -308,8 +294,9 @@ Ext.onReady(function () {
 
   var dateField = new Ext.form.DateField({
     id         : "USR_DUE_DATE",
-    fieldLabel : _("ID_EXPIRATION_DATE"),
+    fieldLabel : '<span style=\"color:red;\" ext:qtip="'+ _('ID_FIELD_REQUIRED', _("ID_EXPIRATION_DATE")) +'"> * </span>' + _("ID_EXPIRATION_DATE"),
     format     : "Y-m-d",
+    allowBlank:false,
     editable   : true,
     width      : 120,
     value      : (new Date().add(Date.YEAR, EXPIRATION_DATE)).format("Y-m-d")
@@ -1205,8 +1192,8 @@ function validateUserName() {
 
 function userFrmEditSubmit()
 {
-    if (typeof(usertmp) != "undefined" &&
-        usertmp.REPLACED_NAME == frmDetails.getForm().findField("USR_REPLACED_BY").getRawValue()
+    if (typeof(usertmp) !== "undefined" &&
+        usertmp.REPLACED_NAME === frmDetails.getForm().findField("USR_REPLACED_BY").getRawValue()
     ) {
         frmDetails.getForm().findField("USR_REPLACED_BY").setValue(usertmp.USR_REPLACED_BY);
         frmDetails.getForm().findField("USR_REPLACED_BY").setRawValue(usertmp.REPLACED_NAME);
