@@ -1933,7 +1933,6 @@ Ext.onReady ( function() {
     var toolbarUnassigned = [
         optionMenuOpen,
         '-',
-        btnAll,
         '->', // begin using the right-justified button container
         _("ID_CATEGORY"),
         comboCategory,
