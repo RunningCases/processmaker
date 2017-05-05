@@ -199,5 +199,5 @@ try {
     $suggest_message = "This web entry should be regenerated, please contact to your system administrator.";
     $aMessage["MESSAGE"] = "<font color=\"red\"><pre>" . $e->getMessage() . "</pre>" . $suggest_message . "</font>";
     $_SESSION["__webEntryError__"] = $aMessage;
-    header("location:{weTitle}Info.php");
+    G::header("location:{weTitle}Info.php");
 }
