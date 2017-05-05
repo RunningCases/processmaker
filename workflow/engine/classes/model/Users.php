@@ -474,5 +474,16 @@ class Users extends BaseUsers
             throw ($oError);
         }
     }
-}
 
+    /**
+     * Load a process object by USR_ID
+     *
+     * @param type $id
+     * @return Users
+     */
+    public static function loadById($id) {
+        $criteria = new Criteria(UsersPeer::DATABASE_NAME);
+        $criteria->add(UsersPeer::USR_ID, $id);
+        return UsersPeer::doSelect($criteria)[0];
+    }
+}
