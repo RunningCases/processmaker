@@ -60,6 +60,10 @@ try {
         $sContent .= "\$G_PUBLISH->AddContent('dynaform', 'xmlform', '" . $sPRO_UID . '/' . $sDYNAFORM . "', '', array(), '" . $dynTitle . 'Post.php' . "');\n";
         $sContent .= "G::RenderPage('publish', 'blank');";
         file_put_contents( $pathProcess . $dynTitle . '.php', $sContent );
+        
+        //Create file to display information and prevent resubmission data (Post/Redirect/Get).
+        \ProcessMaker\BusinessModel\WebEntry::createFileInfo($pathProcess . $dynTitle . "Info.php");
+
         //creating the second file, the  post file who receive the post form.
         $pluginTpl = PATH_CORE . 'templates' . PATH_SEP . 'processes' . PATH_SEP . 'webentryPost.tpl';
         $template = new TemplatePower( $pluginTpl );
@@ -72,6 +76,7 @@ try {
         $template->assign( 'wsUser', $sWS_USER );
         $template->assign( 'wsPass', Bootstrap::hashPassword($sWS_PASS, '', true) );
         $template->assign( 'wsRoundRobin', $sWS_ROUNDROBIN );
+        $template->assign( 'weTitle', $dynTitle);
 
         G::auditLog('WebEntry','Generate web entry with web services ('.$dynTitle.'.php) in process "'.$resultProcess['PRO_TITLE'].'"');
 
