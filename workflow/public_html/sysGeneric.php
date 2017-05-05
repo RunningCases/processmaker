@@ -962,6 +962,7 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
         $noLoginFiles[] = 'licenseUpdate';
         $noLoginFiles[] = 'casesStreamingFile';
         $noLoginFiles[] = 'opencase';
+        $noLoginFiles[] = 'defaultAjaxDynaform';
 
         $noLoginFolders[] = 'services';
         $noLoginFolders[] = 'tracker';

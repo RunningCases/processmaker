@@ -27,28 +27,18 @@ class adminProxy extends HttpProxyController
 {
     const hashunlink = 'unlink';
 
+    /**
+     * Save configurations of systemConf
+     * @param $httpData
+     * @throws Exception
+     */
     public function saveSystemConf($httpData)
     {
         G::loadClass('system');
         $envFile = PATH_CONFIG . 'env.ini';
         $updateRedirector = false;
         $restart = false;
-
-        if (!file_exists($envFile) ) {
-            if (!is_writable(PATH_CONFIG)) {
-                throw new Exception('The enviroment config directory is not writable. <br/>Please give write permission to directory: /workflow/engine/config');
-            }
-            $content  = ";\r\n";
-            $content .= "; ProcessMaker System Bootstrap Configuration\r\n";
-            $content .= ";\r\n";
-            file_put_contents($envFile, $content);
-            //@chmod($envFile, 0777);
-        } else {
-            if (!is_writable($envFile)) {
-                throw new Exception('The enviroment ini file file is not writable. <br/>Please give write permission to file: /workflow/engine/config/env.ini');
-            }
-        }
-
+        self::validateDataSystemConf($httpData, $envFile);
         $sysConf = System::getSystemConfiguration($envFile);
         $updatedConf = array();
 
@@ -1536,5 +1526,46 @@ class adminProxy extends HttpProxyController
         G::streamFile($support, true);
         G::rm_dir($support);
     }
-}
 
+    /**
+     * Validate data before saving
+     * @param $httpData
+     * @param $envFile
+     * @throws Exception
+     */
+    public static function validateDataSystemConf($httpData, $envFile)
+    {
+        if (!((is_numeric($httpData->memory_limit)) && ((int)$httpData->memory_limit == $httpData->memory_limit) &&
+            ((int)$httpData->memory_limit >= -1))
+        ) {
+            throw new Exception(G::LoadTranslation('ID_MEMORY_LIMIT_VALIDATE'));
+        }
+
+        if (!((is_numeric($httpData->max_life_time)) && ((int)$httpData->max_life_time == $httpData->max_life_time) &&
+            ((int)$httpData->max_life_time > 0))
+        ) {
+            throw new Exception(G::LoadTranslation('ID_LIFETIME_VALIDATE'));
+        }
+
+        if (!((is_numeric($httpData->expiration_year)) && ((int)$httpData->expiration_year == $httpData->expiration_year) &&
+            ((int)$httpData->expiration_year > 0))
+        ) {
+            throw new Exception(G::LoadTranslation('ID_DEFAULT_EXPIRATION_YEAR_VALIDATE'));
+        }
+
+        if (!file_exists($envFile)) {
+            if (!is_writable(PATH_CONFIG)) {
+                throw new Exception('The enviroment config directory is not writable. <br/>Please give write permission to directory: /workflow/engine/config');
+            }
+            $content = ";\r\n";
+            $content .= "; ProcessMaker System Bootstrap Configuration\r\n";
+            $content .= ";\r\n";
+            file_put_contents($envFile, $content);
+            //@chmod($envFile, 0777);
+        } else {
+            if (!is_writable($envFile)) {
+                throw new Exception('The enviroment ini file is not writable. <br/>Please give write permission to file: /workflow/engine/config/env.ini');
+            }
+        }
+    }
+}
