@@ -8,7 +8,9 @@ class RoutingScreen extends \Derivation
     protected $convergent;
     protected $divergent;
     public $gateway = array('PARALLEL', 'PARALLEL-BY-EVALUATION');
+    public $routeType = array('SEC-JOIN', 'EVALUATE');
     public $isFirst;
+    public $isUniqueSecJoin = false;
     protected $taskSecJoin;
 
     public function __construct()
@@ -56,23 +58,20 @@ class RoutingScreen extends \Derivation
             unset($aDataMerged[$key]['USER_ASSIGNED']);
             $aDataMerged[$key]['DEL_PRIORITY'] = '';
             foreach ($post as $i => $item) {
-                if(isset($post[$i]['SOURCE_UID']) && ($nextTask['NEXT_TASK']['TAS_UID'] === $post[$i]['SOURCE_UID'])){
+                if (isset($post[$i]['SOURCE_UID']) && ($nextTask['NEXT_TASK']['TAS_UID'] === $post[$i]['SOURCE_UID'])) {
                     $flagJumpTask = true;
-                    if($post[$i]['SOURCE_UID'] === $post[$i]['TAS_UID']){
+                    if ($post[$i]['SOURCE_UID'] === $post[$i]['TAS_UID']) {
                         if (isset($post[$i]['USR_UID'])) { // Multiple instances task don't send this key
                             $aDataMerged[$key]['USR_UID'] = $post[$i]['USR_UID'];
                         }
                     } else {
                         $aDataMerged[$key]['NEXT_ROUTING'][] = $post[$i];
                     }
-                    if (isset($post[$i]['NEXT_TASK'])) {
-                        $aDataMerged[$key]['NEXT_TASK'] = $post[$i]['NEXT_TASK'];
-                    }
                 }
             }
         }
         //If flagJumpTask is false the template does not Jump Intermediate Events
-        if(!$flagJumpTask){
+        if (!$flagJumpTask) {
             $aDataMerged = $post;
         }
         return $aDataMerged;
@@ -100,7 +99,7 @@ class RoutingScreen extends \Derivation
                 }
             }
         }
-        if (count($response) > 1) {
+        if (count($response) > 1 && !$this->isUniqueSecJoin) {
             foreach ($response as $index => $task) {
                 $delete = false;
                 foreach ($this->taskSecJoin as $tj => $type) {
@@ -108,7 +107,7 @@ class RoutingScreen extends \Derivation
                         $delete = true;
                     }
                 }
-                if ($delete && $response[$index]["NEXT_TASK"]["TAS_UID"] === "-1") {
+                if ($delete) {
                     unset($response[$index]);
                 }
             }
@@ -120,11 +119,14 @@ class RoutingScreen extends \Derivation
     {
         $outElement = $element['out'];
         foreach ($outElement as $indexO => $outE) {
-            if (!$this->isFirst && in_array($outE, $this->gateway)) {
+            if ((!$this->isFirst && in_array($outE, $this->gateway))) {
                 $this->divergent[$indexO] = $outE;
             }
             if ($outE == 'SEC-JOIN' && strpos($indexO, 'itee') === false) {
                 $this->taskSecJoin[$indexO] = $outE;
+            }
+            if (in_array($outE, $this->routeType) && strpos($indexO, 'gtg') !== false) {
+                $this->convergent[$indexO] = $outE;
             }
         }
         if (empty($element['in'])) {
@@ -133,12 +135,14 @@ class RoutingScreen extends \Derivation
         $this->isFirst = false;
         $inElement = $element['in'];
         foreach ($inElement as $indexI => $inE) {
-            if ($inE == 'SEC-JOIN' && strpos($indexI, 'itee') !== false) {
+            if (($inE == 'SEC-JOIN' && strpos($indexI, 'itee') !== false) || $inE == 'SEC-JOIN') {
                 $this->convergent[$indexI] = $inE;
             }
             $this->checkElement($this->node[$indexI]);
+            if ($inE == 'SEC-JOIN' && count($inElement) == 1) {
+                $this->isUniqueSecJoin = true;
+            }
         }
         return count($this->convergent) == 0 || count($this->divergent) == 0 || count($this->convergent) == count($this->divergent);
     }
-
 }

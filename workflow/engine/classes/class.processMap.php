@@ -2916,13 +2916,15 @@ class processMap
                         if ($archivo != '..') {
                             $one = 0;
                             $two = 0;
+                            $three = 0;
 
                             $alink = $link . $archivo;
 
                             $one = count(explode('wsClient.php', $archivo));
                             $two = count(explode('Post.php', $archivo));
+                            $three = count(explode('Info.php', $archivo));
 
-                            if ($one == 1 && $two == 1) {
+                            if ($one == 1 && $two == 1 && $three == 1) {
                                 $arlink = "<a href='" . $alink . "' target='blank'><font color='#9999CC'>" . $alink . "</font></a>";
                                 $linkdelete = sprintf("<a href='javascript:webEntry_delete(\"%s\",\"%s\",\"%s\");'><font color='red'>delete</font></a>", $alink, $archivo, $sProcessUID);
                                 $row[] = array('W_LINK' => $arlink, 'W_FILENAME' => $archivo, 'W_PRO_UID' => $sProcessUID );

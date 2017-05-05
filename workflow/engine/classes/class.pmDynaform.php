@@ -681,7 +681,7 @@ class pmDynaform
                         $this->fields["APP_DATA"] = $dataGridEnvironment;
                         $dataGridEnvironment = [];
                     }
-                    if (isset($this->fields["APP_DATA"][$json->name])) {
+                    if (isset($this->fields["APP_DATA"][$json->name]) && is_array($this->fields["APP_DATA"][$json->name])) {
                         //rows
                         $rows = $this->fields["APP_DATA"][$json->name];
                         foreach ($rows as $keyRow => $row) {
@@ -754,6 +754,10 @@ class pmDynaform
             preg_match_all('/\@(?:([\@\%\#\=\!Qq])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*?)*)\))/', $json->sql, $result, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
             $variables = isset($result[2]) ? $result[2] : array();
             foreach ($variables as $key => $value) {
+                //Prevents an infinite cycle. If the name of the variable is used within its own dependent.
+                if ($value[0] === $json->variable) {
+                    continue;
+                }
                 $jsonSearch = $this->jsonsf(G::json_decode($this->record["DYN_CONTENT"]), $value[0], $json->variable === "" ? "id" : "variable");
                 $a = $this->getValuesDependentFields($jsonSearch);
                 foreach ($a as $i => $v) {
@@ -823,6 +827,9 @@ class pmDynaform
 
     public function getDatabaseProvider($dbConnection)
     {
+        if ($dbConnection === "workflow" || $dbConnection === "rbac" || $dbConnection === "rp") {
+            return "mysql";
+        }
         if ($this->databaseProviders === null) {
             $a = new Criteria("workflow");
             $a->addSelectColumn(DbSourcePeer::DBS_UID);
@@ -926,8 +933,7 @@ class pmDynaform
             $where = "";
             if (!empty($parsed["WHERE"])) {
                 $where = "WHERE ";
-                $dt = ($parsed['WHERE'][0]['expr_type'] == 'expression') ? $parsed['WHERE'][0]['sub_tree'] :
-                    $parsed["WHERE"];
+                $dt = ($parsed['WHERE'][0]['expr_type'] == 'expression') ? $parsed['WHERE'][0]['sub_tree'] : $parsed["WHERE"];
                 $nw = count($dt);
                 //reserved word: OFFSET
                 if ($dt[$nw - 2]["base_expr"] === "OFFSET") {
@@ -953,7 +959,8 @@ class pmDynaform
                 $groupBy = "GROUP BY ";
                 $dt = $parsed["GROUP"];
                 foreach ($dt as $key => $value) {
-                    $groupBy .= $value["base_expr"] . ", ";
+                    $search = preg_replace("/ ASC$/i", "", $value["base_expr"]);
+                    $groupBy .= $search . ", ";
                 }
                 $groupBy = rtrim($groupBy, ", ");
             }
@@ -974,10 +981,10 @@ class pmDynaform
                 $orderBy = "ORDER BY ";
                 $dt = $parsed["ORDER"];
                 foreach ($dt as $key => $value) {
-                    $orderBy .= $value["base_expr"] . ", ";
+                    $search = preg_replace("/ ASC$/i", "", $value["base_expr"]);
+                    $orderBy .= $search . " " . $value["direction"] . ", ";
                 }
                 $orderBy = rtrim($orderBy, ", ");
-                $orderBy .= " " . $value["direction"];
             }
             $orderBy = trim($orderBy);
 
