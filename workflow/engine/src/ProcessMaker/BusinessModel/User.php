@@ -1213,7 +1213,7 @@ class User
                 }
             } else {
                 if (!is_null($status)) {
-                    $criteria->add(\UsersPeer::USR_STATUS, uppercase($status), \Criteria::EQUAL);
+                    $criteria->add(\UsersPeer::USR_STATUS, strtoupper($status), \Criteria::EQUAL);
                 }
             }
 
