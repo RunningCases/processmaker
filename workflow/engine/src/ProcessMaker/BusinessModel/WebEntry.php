@@ -419,24 +419,7 @@ class WebEntry
                     file_put_contents($pathDataPublicProcess . PATH_SEP . $fileName . ".php", $fileContent);
 
                     //Create file to display information and prevent resubmission data (Post/Redirect/Get).
-                    $fileNamePreventResubmission = $pathDataPublicProcess . PATH_SEP . $weTitle . "Info.php";
-                    $filePreventResubmission = ""
-                            . "<?php\n"
-                            . "\n"
-                            . "\$G_PUBLISH = new Publisher();\n"
-                            . "\$show = \"login/showMessage\";\n"
-                            . "\$message = \"\";\n"
-                            . "if (isset(\$_SESSION[\"__webEntrySuccess__\"])) {\n"
-                            . "    \$show = \"login/showInfo\";\n"
-                            . "    \$message = \$_SESSION[\"__webEntrySuccess__\"];\n"
-                            . "} else {\n"
-                            . "    \$show = \"login/showMessage\";\n"
-                            . "    \$message = \$_SESSION[\"__webEntryError__\"];\n"
-                            . "}\n"
-                            . "\$G_PUBLISH->AddContent(\"xmlform\", \"xmlform\", \$show, \"\", \$message);\n"
-                            . "G::RenderPage(\"publish\", \"blank\");\n"
-                            . "\n";
-                    file_put_contents($fileNamePreventResubmission, $filePreventResubmission);
+                    self::createFileInfo($pathDataPublicProcess . PATH_SEP . $weTitle . "Info.php");
 
                     //Creating the second file, the  post file who receive the post form.
                     $pluginTpl = PATH_TPL . "processes" . PATH_SEP . "webentryPost.tpl";
@@ -1052,6 +1035,31 @@ class WebEntry
         $criteria->add(\WebEntryPeer::WE_DATA, $fileName, \Criteria::EQUAL);
         $result = \WebEntryPeer::doDelete($criteria);
         return $result;
+    }
+
+    /**
+     * Create file to display information and prevent resubmission data (Post/Redirect/Get).
+     * @param string $pathFileName
+     */
+    public static function createFileInfo($pathFileName)
+    {
+        $code = ""
+                . "<?php\n"
+                . "\n"
+                . "\$G_PUBLISH = new Publisher();\n"
+                . "\$show = \"login/showMessage\";\n"
+                . "\$message = \"\";\n"
+                . "if (isset(\$_SESSION[\"__webEntrySuccess__\"])) {\n"
+                . "    \$show = \"login/showInfo\";\n"
+                . "    \$message = \$_SESSION[\"__webEntrySuccess__\"];\n"
+                . "} else {\n"
+                . "    \$show = \"login/showMessage\";\n"
+                . "    \$message = \$_SESSION[\"__webEntryError__\"];\n"
+                . "}\n"
+                . "\$G_PUBLISH->AddContent(\"xmlform\", \"xmlform\", \$show, \"\", \$message);\n"
+                . "G::RenderPage(\"publish\", \"blank\");\n"
+                . "\n";
+        file_put_contents($pathFileName, $code);
     }
 
 }

@@ -62,26 +62,9 @@ try {
         file_put_contents( $pathProcess . $dynTitle . '.php', $sContent );
         
         //Create file to display information and prevent resubmission data (Post/Redirect/Get).
-        $fileNamePreventResubmission = $pathProcess . $dynTitle . "Info.php";
-        $filePreventResubmission = ""
-                . "<?php\n"
-                . "\n"
-                . "\$G_PUBLISH = new Publisher();\n"
-                . "\$show = \"login/showMessage\";\n"
-                . "\$message = \"\";\n"
-                . "if (isset(\$_SESSION[\"__webEntrySuccess__\"])) {\n"
-                . "    \$show = \"login/showInfo\";\n"
-                . "    \$message = \$_SESSION[\"__webEntrySuccess__\"];\n"
-                . "} else {\n"
-                . "    \$show = \"login/showMessage\";\n"
-                . "    \$message = \$_SESSION[\"__webEntryError__\"];\n"
-                . "}\n"
-                . "\$G_PUBLISH->AddContent(\"xmlform\", \"xmlform\", \$show, \"\", \$message);\n"
-                . "G::RenderPage(\"publish\", \"blank\");\n"
-                . "\n";
-        file_put_contents($fileNamePreventResubmission, $filePreventResubmission);
+        \ProcessMaker\BusinessModel\WebEntry::createFileInfo($pathProcess . $dynTitle . "Info.php");
 
-//creating the second file, the  post file who receive the post form.
+        //creating the second file, the  post file who receive the post form.
         $pluginTpl = PATH_CORE . 'templates' . PATH_SEP . 'processes' . PATH_SEP . 'webentryPost.tpl';
         $template = new TemplatePower( $pluginTpl );
         $template->prepare();
