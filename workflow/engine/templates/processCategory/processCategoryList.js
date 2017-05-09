@@ -296,7 +296,7 @@ NewCategoryWindow = function(){
              maxLength :100,
              allowBlank: false,
              validator: function (v) {
-                 return !/[~`!#$%\^&*+=[\]\\';,/{}|\\":<>\?]/.test(v);
+                 return !/[:<>/]/.test(v);
              }
            }
     ],
