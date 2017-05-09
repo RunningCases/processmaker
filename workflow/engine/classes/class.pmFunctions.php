@@ -3372,7 +3372,7 @@ function PMFGetTaskUID($taskName, $processUid = null)
  * Get Group Users
  * @name PMFGetGroupUsers
  * @label PMF Group Users
- * @param string | $GroupUID | UID of Group
+ * @param string | $GroupUID | Group UID
  * @return  array | $result | array
  */
 function PMFGetGroupUsers($GroupUID)
