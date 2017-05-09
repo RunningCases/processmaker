@@ -165,16 +165,6 @@ switch ($request) {
             } else {
                 $result->info[] = array('name' => 'Error', 'value' => $res['msg']);
             }
-
-            $res = $appCache->setSuperForUser($currentUser);
-            if (!isset($res['error'])) {
-                $result->info[] = array('name' => G::LoadTranslation('ID_SETTING_SUPER'), 'value' => G::LoadTranslation('ID_SUCCESSFULLY'));
-            } else {
-                $result->error = true;
-                $result->errorMsg = $res['msg'];
-            }
-            $currentUserIsSuper = true;
-
         }
 
         //now check if table APPCACHEVIEW exists, and it have correct number of fields, etc.

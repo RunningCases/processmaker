@@ -68,7 +68,8 @@ INSERT INTO CONTENT (CON_CATEGORY,CON_PARENT,CON_ID,CON_LANG,CON_VALUE) VALUES
 ('PER_NAME','','00000000000000000000000000000061','en','Edit User profile Photo'),
 ('PER_NAME','','00000000000000000000000000000062','en','Edit User profile Default Main Menu Options'),
 ('PER_NAME','','00000000000000000000000000000063','en','Edit User profile Default Cases Menu Options'),
-('PER_NAME','','00000000000000000000000000000064','en','Reassign case supervisor');
+('PER_NAME','','00000000000000000000000000000064','en','Reassign case supervisor'),
+('PER_NAME','','00000000000000000000000000000065','en','Setup Custom Cases List');
 
 INSERT INTO LANGUAGE (LAN_ID,LAN_LOCATION,LAN_NAME,LAN_NATIVE_NAME,LAN_DIRECTION,LAN_WEIGHT,LAN_ENABLED,LAN_CALENDAR) VALUES 
 ('aa','','Afar','','L','0','0','GREGORIAN'),
@@ -1793,6 +1794,9 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_IN','en','in','2014-01-15') ,
 ( 'LABEL','ID_CASE_DOES_NOT_EXISTS','en','This case does not exist','2014-01-15') ,
 ( 'LABEL','ID_APPLICATION_OR_INDEX_MISSING','en','Application ID or Delegation Index is missing!. The System can not open the case.','2017-03-30') ,
+( 'LABEL','ID_MEMORY_LIMIT_VALIDATE','en','Memory Limit value has to be either a positive integer or -1','2017-04-05') ,
+( 'LABEL','ID_LIFETIME_VALIDATE','en','Max Lifetime value has to be a positive integer','2017-04-05') ,
+( 'LABEL','ID_DEFAULT_EXPIRATION_YEAR_VALIDATE','en','Default Expiration Year value has to be a positive integer','2017-04-05') ,
 ( 'LABEL','ID_PLEASE_SELECT_UPGRADE_FILE','en','Please select the upgrade file','2014-01-15') ,
 ( 'LABEL','ID_PLEASE_SELECT_MAX_X_FIELDS','en','Please select 80 fields at most','2014-01-15') ,
 ( 'LABEL','ID_UPGRADE_READY','en','System upgraded from revision','2014-01-15') ,
