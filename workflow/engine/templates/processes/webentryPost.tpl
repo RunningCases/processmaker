@@ -193,13 +193,11 @@ try {
         exit( 0 );
     }
 	/*----------------------------------********---------------------------------*/
-    $G_PUBLISH = new Publisher();
-    $G_PUBLISH->AddContent("xmlform", "xmlform", "login/showInfo", "", $aMessage);
-    G::RenderPage("publish", "blank");
+    $_SESSION["__webEntrySuccess__"] = $aMessage;
+    G::header("location:{weTitle}Info.php");
 } catch (Exception $e) {
-    $G_PUBLISH = new Publisher();
     $suggest_message = "This web entry should be regenerated, please contact to your system administrator.";
     $aMessage["MESSAGE"] = "<font color=\"red\"><pre>" . $e->getMessage() . "</pre>" . $suggest_message . "</font>";
-    $G_PUBLISH->AddContent("xmlform", "xmlform", "login/showMessage", "", $aMessage);
-    G::RenderPage("publish", "blank");
+    $_SESSION["__webEntryError__"] = $aMessage;
+    G::header("location:{weTitle}Info.php");
 }
