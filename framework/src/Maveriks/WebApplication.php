@@ -254,6 +254,8 @@ class WebApplication
         $authenticationClass = 'ProcessMaker\\Services\\OAuth2\\Server';
         // $accessControlClass - contains the class name that validate the Access Control for Restler
         $accessControlClass = 'ProcessMaker\\Policies\\AccessControl';
+        // $controlUnderUpdating - ControlUnderUpdating sends an error signal 503 to report that the application is in update
+        $controlUnderUpdating = 'ProcessMaker\\Policies\\ControlUnderUpdating';
         // $pmOauthClientId - contains PM Local OAuth Id (Web Designer)
         $pmOauthClientId = 'x-pm-local-client';
 
@@ -301,6 +303,8 @@ class WebApplication
         $this->rest->addAuthenticationClass($authenticationClass, '');
         // adding $accessControlClass to Restler
         $this->rest->addAuthenticationClass($accessControlClass);
+        // adding $controlUnderUpdating to Restler
+        $this->rest->addAuthenticationClass($controlUnderUpdating);
 
         // Setting database connection source
         list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
