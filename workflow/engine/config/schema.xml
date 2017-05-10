@@ -5543,7 +5543,7 @@
     <column name="DEV_UID"          type="VARCHAR" size="32"  required="true"  primaryKey="true" default=""/>
     <column name="USR_UID"          type="VARCHAR" size="32"  required="true"  primaryKey="true" default=""/>
     <column name="SYS_LANG"         type="VARCHAR" size="10"  required="false" default=""/>
-    <column name="DEV_REG_ID"       type="VARCHAR" size="150" required="true"  default=""/>
+    <column name="DEV_REG_ID"       type="VARCHAR" size="255" required="true"  default=""/>
     <column name="DEV_TYPE"         type="VARCHAR" size="50"  required="true"  default=""/>
     <column name="DEV_CREATE"       type="TIMESTAMP"          required="true"  />
     <column name="DEV_UPDATE"       type="TIMESTAMP"          required="true"  />
