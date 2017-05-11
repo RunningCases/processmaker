@@ -566,12 +566,13 @@ class Light
             $gestor    = fopen($direction, "r");
             $contenido = fread($gestor, filesize($direction));
             fclose($gestor);
-            $oUser    = new \Users();
+            $oUser = new \Users();
             $aUserLog = $oUser->loadDetailed($userUid);
             $response['userId']     = $aUserLog['USR_UID'];
+            $response['userName']   = $aUserLog['USR_USERNAME'];
             $response['firstName']  = $aUserLog['USR_FIRSTNAME'];
             $response['lastName']   = $aUserLog['USR_LASTNAME'];
-            $response['fullName']   = $aUserLog['USR_FIRSTNAME'].' '.$aUserLog['USR_LASTNAME'];
+            $response['fullName']   = $aUserLog['USR_FULLNAME'];
             $response['email']      = $aUserLog['USR_EMAIL'];
             $response['userRole']   = $aUserLog['USR_ROLE_NAME'];
             $response['userPhone']  = $aUserLog['USR_PHONE'];
