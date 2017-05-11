@@ -7145,6 +7145,7 @@ class Cases
             $aFields['APP_DATA']['APPLICATION'] = $appUid;
             $aFields['APP_DATA']['PROCESS'] = $proUid;
             $oPMScript = new PMScript();
+            $oPMScript->setDataTrigger($arrayWebBotTrigger);
             $oPMScript->setFields($aFields['APP_DATA']);
             $oPMScript->setScript($arrayWebBotTrigger['TRI_WEBBOT']);
             $oPMScript->execute();

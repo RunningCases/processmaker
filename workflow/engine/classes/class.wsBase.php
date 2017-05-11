@@ -2203,6 +2203,7 @@ class wsBase
                 }
 
                 if ($bExecute) {
+                    $oPMScript->setDataTrigger($aTrigger);
                     $oPMScript->setScript( $aTrigger['TRI_WEBBOT'] );
                     $oPMScript->execute();
 
@@ -2610,6 +2611,7 @@ class wsBase
                 $aTriggers[] = $row;
 
                 $oPMScript = new PMScript();
+                $oPMScript->setDataTrigger($row);
                 $oPMScript->setFields( $appFields['APP_DATA'] );
                 $oPMScript->setScript( $row['TRI_WEBBOT'] );
                 $oPMScript->execute();
