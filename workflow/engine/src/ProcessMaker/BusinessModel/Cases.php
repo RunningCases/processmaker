@@ -1095,6 +1095,12 @@ class Cases
         try {
             if (!$delIndex) {
                 $delIndex = \AppDelegation::getCurrentIndex($applicationUid);
+                //Check if the next task is a subprocess SYNCHRONOUS with a thread Open
+                $subAppData = new \SubApplication();
+                $caseSubprocessPending = $subAppData->isSubProcessWithCasePending($applicationUid, $delIndex);
+                if ($caseSubprocessPending) {
+                    throw (new \Exception(\G::LoadTranslation("ID_CASE_ALREADY_DERIVATED")));
+                }
             }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();
