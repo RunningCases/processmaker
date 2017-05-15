@@ -38,17 +38,33 @@ CLI::taskRun('run_flush_cache');
 
 function run_flush_cache($args, $opts)
 {
-    $rootDir = realpath(__DIR__."/../../../../");
+    $rootDir = realpath(__DIR__ . "/../../../../");
     $app = new Maveriks\WebApplication();
     $app->setRootDir($rootDir);
     $loadConstants = false;
     $workspaces = get_workspaces_from_args($args);
 
-    if (! defined("PATH_C")) {
-        die("ERROR: seems processmaker is not properly installed (System constants are missing).".PHP_EOL);
+    if (!defined("PATH_C")) {
+        die("ERROR: seems processmaker is not properly installed (System constants are missing)." . PHP_EOL);
     }
 
-    CLI::logging("Flush ".pakeColor::colorize("system", "INFO")." cache ... ");
+    //Update singleton file by workspace
+    $dateSystem = date('Y-m-d H:i:s');
+    $date = $dateSystem;
+    foreach ($workspaces as $workspace) {
+        $cmd = 'php -f '
+                . '"' . PATH_CORE . 'bin' . PATH_SEP . 'cron_single.php' . '" '
+                . '"' . base64_encode(PATH_HOME) . '" '
+                . '"' . base64_encode(PATH_TRUNK) . '" '
+                . '"' . base64_encode(PATH_OUTTRUNK) . '" '
+                . '"updateSingleton" '
+                . '"' . $workspace->name . '" '
+                . '"' . $dateSystem . '" '
+                . '"' . $date . '" ';
+        passthru($cmd);
+    }
+
+    CLI::logging("Flush " . pakeColor::colorize("system", "INFO") . " cache ... ");
     G::rm_dir(PATH_C);
     G::mk_dir(PATH_C, 0777);
     echo "DONE" . PHP_EOL;
@@ -60,8 +76,8 @@ function run_flush_cache($args, $opts)
         G::mk_dir($workspace->path . "/cache", 0777);
         G::rm_dir($workspace->path . "/cachefiles");
         G::mk_dir($workspace->path . "/cachefiles", 0777);
-        if (file_exists($workspace->path.'/routes.php')) {
-            unlink($workspace->path.'/routes.php');
+        if (file_exists($workspace->path . '/routes.php')) {
+            unlink($workspace->path . '/routes.php');
         }
         echo "DONE" . PHP_EOL;
     }
