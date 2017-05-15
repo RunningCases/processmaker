@@ -426,8 +426,24 @@ function run_database_import($args, $opts) {
   throw new Exception("Not implemented");
 }
 
+/**
+ * Check if we need to execute an external program for each workspace
+ * If we will apply the command for all workspaces we need to execute one by one by redefined the constants
+ * @param string $args, workspaceName that we need to apply the database-upgrade
+ * @param string $opts
+ *
+ * @return void
+*/
 function run_database_upgrade($args, $opts) {
-  database_upgrade("upgrade", $args);
+    //Check if the command is executed by a specific workspace
+    if (count($args) === 1) {
+        database_upgrade('upgrade', $args);
+    } else {
+        $workspaces = get_workspaces_from_args($args);
+        foreach ($workspaces as $workspace) {
+            passthru('./processmaker database-upgrade '.$workspace->name);
+        }
+    }
 }
 
 function run_database_check($args, $opts) {
@@ -446,27 +462,31 @@ function run_migrate_list_unassigned($args, $opts) {
   migrate_list_unassigned("migrate", $args, $opts);
 }
 
+/**
+ * This function is execute only by one workspace
+ * @param string $command, the specific actions must be: upgrade|check
+ * @param array $args, workspaceName for to apply the database-upgrade
+ *
+ * @return void
+*/
 function database_upgrade($command, $args) {
   G::LoadSystem('inputfilter');
   $filter = new InputFilter();
   $command = $filter->xssFilterHard($command);
   $args = $filter->xssFilterHard($args);
+  //Load the attributes for the workspace
   $workspaces = get_workspaces_from_args($args);
   $checkOnly = (strcmp($command, "check") == 0);
+  //Loop, read all the attributes related to the one workspace
+  $wsName = $workspaces[key($workspaces)]->name;
+  Bootstrap::setConstantsRelatedWs($wsName);
+  if ($checkOnly) {
+    print_r("Checking database in ".pakeColor::colorize($wsName, "INFO")."\n");
+  } else {
+    print_r("Upgrading database in ".pakeColor::colorize($wsName, "INFO")."\n");
+  }
+
   foreach ($workspaces as $workspace) {
-    if (!defined("SYS_SYS")) {
-        define("SYS_SYS", $workspace->name);
-    }
-
-    if (!defined("PATH_DATA_SITE")) {
-        define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
-    }
-
-    if ($checkOnly)
-      print_r("Checking database in ".pakeColor::colorize($workspace->name, "INFO")."\n");
-    else
-      print_r("Upgrading database in ".pakeColor::colorize($workspace->name, "INFO")."\n");
-
     try {
       $changes = $workspace->upgradeDatabase($checkOnly);
       if ($changes != false) {
