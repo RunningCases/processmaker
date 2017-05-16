@@ -428,7 +428,7 @@ function run_database_import($args, $opts) {
 
 /**
  * Check if we need to execute an external program for each workspace
- * If we will apply the command for all workspaces we need to execute one by one by redefined the constants
+ * If we apply the command for all workspaces we will need to execute one by one by redefining the constants
  * @param string $args, workspaceName that we need to apply the database-upgrade
  * @param string $opts
  *
@@ -463,7 +463,7 @@ function run_migrate_list_unassigned($args, $opts) {
 }
 
 /**
- * This function is execute only by one workspace
+ * This function is executed only by one workspace
  * @param string $command, the specific actions must be: upgrade|check
  * @param array $args, workspaceName for to apply the database-upgrade
  *
