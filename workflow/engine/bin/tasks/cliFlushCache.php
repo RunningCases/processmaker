@@ -38,6 +38,26 @@ CLI::taskRun('run_flush_cache');
 
 function run_flush_cache($args, $opts)
 {
+    if (count($args) === 1) {
+        flush_cache($args, $opts);
+    } else {
+        $workspaces = get_workspaces_from_args($args);
+        foreach ($workspaces as $workspace) {
+            passthru("./processmaker flush-cache " . $workspace->name);
+        }
+    }
+}
+
+/**
+ * Flush the cache files for the specified workspace(s).
+ * If no workspace is specified, then the cache will be flushed in all available 
+ * workspaces.
+ * 
+ * @param type $args
+ * @param type $opts
+ */
+function flush_cache($args, $opts)
+{
     $rootDir = realpath(__DIR__ . "/../../../../");
     $app = new Maveriks\WebApplication();
     $app->setRootDir($rootDir);
@@ -49,21 +69,35 @@ function run_flush_cache($args, $opts)
     }
 
     //Update singleton file by workspace
-    $dateSystem = date('Y-m-d H:i:s');
-    $date = $dateSystem;
     foreach ($workspaces as $workspace) {
-        $cmd = 'php -f '
-                . '"' . PATH_CORE . 'bin' . PATH_SEP . 'cron_single.php' . '" '
-                . '"' . base64_encode(PATH_HOME) . '" '
-                . '"' . base64_encode(PATH_TRUNK) . '" '
-                . '"' . base64_encode(PATH_OUTTRUNK) . '" '
-                . '"updateSingleton" '
-                . '"' . $workspace->name . '" '
-                . '"' . $dateSystem . '" '
-                . '"' . $date . '" ';
-        passthru($cmd);
+        eprint("Update singleton in workspace " . $workspace->name . " ... ");
+        if (!defined("SYS_SYS")) {
+            define("SYS_SYS", $workspace->name);
+        }
+        if (!defined("PATH_DATA_SITE")) {
+            define('PATH_DATA_SITE', PATH_DATA . 'sites/' . $workspace->name . '/');
+        }
+        $pathSingleton = PATH_DATA . "sites" . PATH_SEP . $workspace->name . PATH_SEP . "plugin.singleton";
+        $oPluginRegistry = PMPluginRegistry::loadSingleton($pathSingleton);
+        $items = \PMPlugin::getlist($workspace->name);
+        foreach ($items as $item) {
+            if ($item["sStatusFile"] === true) {
+                $path = PATH_PLUGINS . $item["sFile"];
+                require_once($path);
+                $details = $oPluginRegistry->getPluginDetails($item["sFile"]);
+                //Only if the API directory structure is defined
+                $pathApiDirectory = PATH_PLUGINS . $details->sPluginFolder . PATH_SEP . "src" . PATH_SEP . "Services" . PATH_SEP . "Api";
+                if (is_dir($pathApiDirectory)) {
+                    $oPluginRegistry->enablePlugin($details->sNamespace);
+                    $oPluginRegistry->setupPlugins();
+                    file_put_contents($pathSingleton, $oPluginRegistry->serializeInstance());
+                }
+            }
+        }
+        eprintln("DONE");
     }
 
+    //flush the cache files
     CLI::logging("Flush " . pakeColor::colorize("system", "INFO") . " cache ... ");
     G::rm_dir(PATH_C);
     G::mk_dir(PATH_C, 0777);

@@ -324,9 +324,6 @@ try {
                 case 'sendnotificationscron':
                     sendNotifications();
                     break;
-                case 'updateSingleton':
-                    updateSingleton($workspace);
-                    break;
             }
         } catch (Exception $e) {
             $token = strtotime("now");
@@ -1134,34 +1131,4 @@ function sendNotifications()
         eprintln("  '-" . $e->getMessage(), "red");
         saveLog("ExecuteSendNotifications", "error", "Error when sending notifications " . $e->getMessage());
     }
-}
-
-/**
- * Update singleton file in workspace.
- * 
- * @param string $workspace
- */
-function updateSingleton($workspace)
-{
-    eprint("* Update singleton ... ");
-    G::LoadClass('case');
-    $pathSingleton = PATH_DATA . "sites" . PATH_SEP . $workspace . PATH_SEP . "plugin.singleton";
-    $oPluginRegistry = PMPluginRegistry::loadSingleton($pathSingleton);
-    $items = \PMPlugin::getlist($workspace);
-    foreach ($items as $item) {
-        if ($item["sStatusFile"] === true) {
-            $path = PATH_PLUGINS . $item["sFile"];
-            require_once($path);
-            $details = $oPluginRegistry->getPluginDetails($item["sFile"]);
-            //Only if the API directory structure is defined
-            $pathApiDirectory = PATH_PLUGINS . $details->sPluginFolder . PATH_SEP . "src" . PATH_SEP . "Services" . PATH_SEP . "Api";
-            if (is_dir($pathApiDirectory)) {
-                $oPluginRegistry->enablePlugin($details->sNamespace);
-                $oPluginRegistry->setupPlugins();
-                file_put_contents($pathSingleton, $oPluginRegistry->serializeInstance());
-                G::auditLog("EnablePlugin", "Plugin Name: " . $details->sNamespace);
-            }
-        }
-    }
-    eprint("DONE");
 }
