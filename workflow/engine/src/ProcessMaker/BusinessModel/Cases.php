@@ -232,12 +232,14 @@ class Cases
             Validator::usrUid($dataList["userId"], "userId");
         }
 
-        G::LoadClass("applications");
         $solrEnabled = false;
         $userUid = $dataList["userId"];
         $callback = isset( $dataList["callback"] ) ? $dataList["callback"] : "stcCallback1001";
         $dir = isset( $dataList["dir"] ) ? $dataList["dir"] : "DESC";
-        $sort = isset( $dataList["sort"] ) ? $dataList["sort"] : "APP_CACHE_VIEW.APP_NUMBER";
+        $sort = isset( $dataList["sort"] ) ? $dataList["sort"] : "APPLICATION.APP_NUMBER";
+        if ($sort === 'APP_CACHE_VIEW.APP_NUMBER') {
+            $sort = "APPLICATION.APP_NUMBER";
+        }
         $start = isset( $dataList["start"] ) ? $dataList["start"] : "0";
         $limit = isset( $dataList["limit"] ) ? $dataList["limit"] : "";
         $filter = isset( $dataList["filter"] ) ? $dataList["filter"] : "";
@@ -254,166 +256,36 @@ class Cases
         $newerThan = (!empty($dataList['newerThan']))? $dataList['newerThan'] : '';
         $oldestThan = (!empty($dataList['oldestthan']))? $dataList['oldestthan'] : '';
         $first = isset( $dataList["first"] ) ? true :false;
+        $filterStatus = isset( $dataList["filterStatus"] ) ? strtoupper( $dataList["filterStatus"] ) : "";
 
-        $u = new \ProcessMaker\BusinessModel\User();
+        $apps = new \Applications();
+        $response = $apps->searchAll(
+            $userUid,
+            $start,
+            $limit,
+            $search,
+            $process,
+            $filterStatus,
+            $dir,
+            $sort,
+            $category,
+            $dateFrom,
+            $dateTo
+        );
 
-        if ($action == "search" && !$u->checkPermission($dataList["userId"], "PM_ALLCASES")) {
-            throw new \Exception(\G::LoadTranslation("ID_CASE_USER_NOT_HAVE_PERMISSION", array($dataList["userId"])));
-        }
-
-        $valuesCorrect = array('todo', 'draft', 'paused', 'sent', 'selfservice', 'unassigned', 'search');
-        if (!in_array($action, $valuesCorrect)) {
-            throw (new \Exception(\G::LoadTranslation("ID_INCORRECT_VALUE_ACTION")));
-        }
-
-        $start = (int)$start;
-        $start = abs($start);
-        if ($start != 0) {
-            $start--;
-        }
-        $limit = (int)$limit;
-        $limit = abs($limit);
-        if ($limit == 0) {
-            G::LoadClass("configuration");
-            $conf = new \Configurations();
-            $generalConfCasesList = $conf->getConfiguration('ENVIRONMENT_SETTINGS', '');
-            if (isset($generalConfCasesList['casesListRowNumber'])) {
-                $limit = (int)$generalConfCasesList['casesListRowNumber'];
-            } else {
-                $limit = 25;
-            }
-        } else {
-            $limit = (int)$limit;
-        }
-        if ($sort != 'APP_CACHE_VIEW.APP_NUMBER') {
-            $sort = G::toUpper($sort);
-            $columnsAppCacheView = \AppCacheViewPeer::getFieldNames(\BasePeer::TYPE_FIELDNAME);
-            if (!(in_array($sort, $columnsAppCacheView))) {
-                $sort = 'APP_CACHE_VIEW.APP_NUMBER';
-            }
-        }
-        $dir = G::toUpper($dir);
-        if (!($dir == 'DESC' || $dir == 'ASC')) {
-            $dir = 'ASC';
-        }
-        if ($process != '') {
-            Validator::proUid($process, '$pro_uid');
-        }
-        if ($category != '') {
-            Validator::catUid($category, '$cat_uid');
-        }
-        $status = G::toUpper($status);
-        $listStatus = array('TO_DO', 'DRAFT', 'COMPLETED', 'CANCELLED', 'OPEN', 'CLOSE');
-        if (!(in_array($status, $listStatus))) {
-            $status = '';
-        }
-        if ($user != '') {
-            Validator::usrUid($user, '$usr_uid');
-        }
-        if ($dateFrom != '') {
-            Validator::isDate($dateFrom, 'Y-m-d', '$date_from');
-        }
-        if ($dateTo != '') {
-            Validator::isDate($dateTo, 'Y-m-d', '$date_to');
-        }
-
-        if ($action == 'search' || $action == 'to_reassign') {
-            $userUid = ($user == "CURRENT_USER") ? $userUid : $user;
-            if ($first) {
-                $result = array();
-                $result['totalCount'] = 0;
-                $result['data'] = array();
-                return $result;
-            }
-        }
-
-        if ((
-                $action == "todo" || $action == "draft" || $action == "paused" || $action == "sent" ||
-                $action == "selfservice" || $action == "unassigned" || $action == "search"
-            ) &&
-            (($solrConf = \System::solrEnv()) !== false)
-        ) {
-            G::LoadClass("AppSolr");
-
-            $ApplicationSolrIndex = new \AppSolr(
-                $solrConf["solr_enabled"],
-                $solrConf["solr_host"],
-                $solrConf["solr_instance"]
-            );
-
-            if ($ApplicationSolrIndex->isSolrEnabled() && $solrConf['solr_enabled'] == true) {
-                //Check if there are missing records to reindex and reindex them
-                $ApplicationSolrIndex->synchronizePendingApplications();
-                $solrEnabled = true;
-            }
-        }
-
-        if ($solrEnabled) {
-            $result = $ApplicationSolrIndex->getAppGridData(
-                $userUid,
-                $start,
-                $limit,
-                $action,
-                $filter,
-                $search,
-                $process,
-                $status,
-                $type,
-                $dateFrom,
-                $dateTo,
-                $callback,
-                $dir,
-                $sort,
-                $category
-            );
-        } else {
-            G::LoadClass("applications");
-            $apps = new \Applications();
-            $result = $apps->getAll(
-                $userUid,
-                $start,
-                $limit,
-                $action,
-                $filter,
-                $search,
-                $process,
-                $status,
-                $type,
-                $dateFrom,
-                $dateTo,
-                $callback,
-                $dir,
-                (strpos($sort, ".") !== false)? $sort : "APP_CACHE_VIEW." . $sort,
-                $category,
-                true,
-                $paged,
-                $newerThan,
-                $oldestThan
-            );
-        }
-        if (!empty($result['data'])) {
-            foreach ($result['data'] as &$value) {
-                $value = array_change_key_case($value, CASE_LOWER);
-            }
-        }
-        if ($paged == false) {
-            $response = $result['data'];
-        } else {
-            $response['total'] = $result['totalCount'];
-            $response['start'] = $start+1;
-            $response['limit'] = $limit;
-            $response['sort']  = G::toLower($sort);
-            $response['dir']   = G::toLower($dir);
-            $response['cat_uid']  = $category;
-            $response['pro_uid']  = $process;
-            $response['search']   = $search;
-            if ($action == 'search') {
-                $response['app_status'] = G::toLower($status);
-                $response['usr_uid'] = $user;
-                $response['date_from'] = $dateFrom;
-                $response['date_to'] = $dateTo;
-            }
-            $response['data'] = $result['data'];
+        $response['total'] = 0;
+        $response['start'] = $start + 1;
+        $response['limit'] = $limit;
+        $response['sort'] = G::toLower($sort);
+        $response['dir'] = G::toLower($dir);
+        $response['cat_uid'] = $category;
+        $response['pro_uid'] = $process;
+        $response['search'] = $search;
+        if ($action == 'search') {
+            $response['app_status'] = G::toLower($status);
+            $response['usr_uid'] = $user;
+            $response['date_from'] = $dateFrom;
+            $response['date_to'] = $dateTo;
         }
         return $response;
     }
@@ -1136,6 +1008,12 @@ class Cases
         try {
             if (!$delIndex) {
                 $delIndex = \AppDelegation::getCurrentIndex($applicationUid);
+                //Check if the next task is a subprocess SYNCHRONOUS with a thread Open
+                $subAppData = new \SubApplication();
+                $caseSubprocessPending = $subAppData->isSubProcessWithCasePending($applicationUid, $delIndex);
+                if ($caseSubprocessPending) {
+                    throw (new \Exception(\G::LoadTranslation("ID_CASE_ALREADY_DERIVATED")));
+                }
             }
             \G::LoadClass('wsBase');
             $ws = new \wsBase();

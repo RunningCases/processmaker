@@ -286,6 +286,17 @@ class Home extends Controller
         $user = (isset($httpData->user)) ? $httpData->user : null;
         $dateFrom = (isset($httpData->dateFrom)) ? $httpData->dateFrom : null;
         $dateTo = (isset($httpData->dateTo)) ? $httpData->dateTo : null;
+        if (!empty($process)) {
+            $processTitle = Process::loadById($process)->getProTitle();
+        } else {
+            $processTitle = '';
+        }
+        if (!empty($user)) {
+            $userObject = Users::loadById($user);
+            $userName = $userObject->getUsrLastname()." ".$userObject->getUsrFirstname();
+        } else {
+            $userName = '';
+        }
 
         $cases = $this->getAppsData( $httpData->t, null, null, $user, null, $search, $process, $status, $dateFrom, $dateTo, null, null, 'APP_CACHE_VIEW.APP_NUMBER', $category);
         $arraySearch = array($process,  $status,  $search, $category, $user, $dateFrom, $dateTo );
@@ -294,9 +305,7 @@ class Home extends Controller
         $processes = array();
         $processes = $this->getProcessArray($httpData->t, $this->userID );
         $this->setVar( 'statusValues', $this->getStatusArray( $httpData->t, $this->userID  ) );
-        $this->setVar( 'processValues', $processes );
         $this->setVar( 'categoryValues', $this->getCategoryArray() );
-        $this->setVar( 'userValues', $this->getUserArray( $httpData->t, $this->userID ) );
         $this->setVar( 'allUsersValues', $this->getAllUsersArray( 'search' ) );
         $this->setVar( 'categoryTitle', G::LoadTranslation("ID_CATEGORY") );
         $this->setVar( 'processTitle', G::LoadTranslation("ID_PROCESS") );
@@ -315,6 +324,11 @@ class Home extends Controller
         $this->setVar( 'appListStart', $this->appListLimit );
         $this->setVar( 'appListLimit', 10 );
         $this->setVar( 'listType', $httpData->t );
+
+        $this->setVar( 'processCurrentTitle', $processTitle );
+        $this->setVar( 'userCurrentName', $userName );
+        $this->setVar( 'currentUserLabel', G::LoadTranslation( "ID_ALL_USERS" ) );
+        $this->setVar( 'allProcessLabel', G::LoadTranslation("ID_ALL_PROCESS") );
 
         $this->render();
     }
@@ -545,7 +559,7 @@ class Home extends Controller
         $this->render();
     }
 
-    function getUserArray ($action, $userUid)
+    function getUserArray ($action, $userUid, $search = null)
     {
         global $oAppCache;
         $status = array ();
@@ -561,6 +575,10 @@ class Home extends Controller
                 $cUsers->addSelectColumn( UsersPeer::USR_UID );
                 $cUsers->addSelectColumn( UsersPeer::USR_FIRSTNAME );
                 $cUsers->addSelectColumn( UsersPeer::USR_LASTNAME );
+                if (!empty($search)) {
+                    $cUsers->addOr(UsersPeer::USR_FIRSTNAME, "%$search%", Criteria::LIKE);
+                    $cUsers->addOr(UsersPeer::USR_LASTNAME, "%$search%", Criteria::LIKE);
+                }
                 $oDataset = UsersPeer::doSelectRS( $cUsers );
                 $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
                 $oDataset->next();
@@ -693,60 +711,75 @@ class Home extends Controller
         }
         return $status;
     }
-    function getProcessArray($action, $userUid)
+
+    /**
+     * Get the list of active processes
+     * 
+     * @global type $oAppCache
+     * @param type $action
+     * @param type $userUid
+     * @return array
+     */
+    private function getProcessArray($action, $userUid, $search=null)
     {
         global $oAppCache;
 
         $processes = array();
         $processes[] = array("", G::LoadTranslation("ID_ALL_PROCESS"));
 
-        switch ($action) {
-            case "simple_search":
-            case "search":
-                //In search action, the query to obtain all process is too slow, so we need to query directly to
-                //process and content tables, and for that reason we need the current language in AppCacheView.
-                G::loadClass("configuration");
-                $oConf = new Configurations;
-                $oConf->loadConfig($x, "APP_CACHE_VIEW_ENGINE", "", "", "", "");
-                $appCacheViewEngine = $oConf->aConfig;
-                $lang = isset($appCacheViewEngine["LANG"])? $appCacheViewEngine["LANG"] : "en";
-
-                $cProcess = new Criteria("workflow");
-                $cProcess->clearSelectColumns();
-                $cProcess->addSelectColumn(ProcessPeer::PRO_UID);
-                $cProcess->addSelectColumn(ProcessPeer::PRO_TITLE);
-                $cProcess->add(ProcessPeer::PRO_STATUS, "ACTIVE");
-                $oDataset = ProcessPeer::doSelectRS($cProcess);
-
-                $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-                $oDataset->next();
-                while ($aRow = $oDataset->getRow()) {
-                  $processes[] = array($aRow["PRO_UID"], $aRow["PRO_TITLE"]);
-                  $oDataset->next();
-                }
-
-                return ($processes);
-                break;
-            case "consolidated":
-            default:
-                $cProcess = $oAppCache->getToDoListCriteria($userUid); //fast enough
-                break;
-       }
-
+        $cProcess = new Criteria("workflow");
         $cProcess->clearSelectColumns();
-        $cProcess->setDistinct();
-        $cProcess->addSelectColumn(AppCacheViewPeer::PRO_UID);
-        $cProcess->addSelectColumn(AppCacheViewPeer::APP_PRO_TITLE);
-        $oDataset = AppCacheViewPeer::doSelectRS($cProcess);
-        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $oDataset->next();
-
-        while ($aRow = $oDataset->getRow()) {
-            $processes[] = array($aRow["PRO_UID"], $aRow["APP_PRO_TITLE"]);
-            $oDataset->next();
+        $cProcess->addSelectColumn(ProcessPeer::PRO_ID);
+        $cProcess->addSelectColumn(ProcessPeer::PRO_TITLE);
+        $cProcess->add(ProcessPeer::PRO_STATUS, "ACTIVE");
+        if (!empty($search)) {
+            $cProcess->add(ProcessPeer::PRO_TITLE, "%$search%", Criteria::LIKE);
         }
+        $oDataset = ProcessPeer::doSelectRS($cProcess);
+
+        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+
+        $oDataset->next();
+        while ($aRow = $oDataset->getRow()) {
+          $processes[] = array($aRow["PRO_ID"], $aRow["PRO_TITLE"]);
+          $oDataset->next();
+        }
+
         return ($processes);
+    }
+
+    /**
+     * Get the list of processes
+     * @param type $httpData
+     */
+    public function getProcesses($httpData)
+    {
+        $processes = [];
+        foreach ($this->getProcessArray($httpData->t, null, $httpData->term) as $row) {
+            $processes[] = [
+                'id'    => $row[0],
+                'label' => $row[1],
+                'value' => $row[1],
+            ];
+        }
+        print G::json_encode($processes);
+    }
+
+    /**
+     * Get the list of users
+     * @param type $httpData
+     */
+    public function getUsers($httpData)
+    {
+        $users = [];
+        foreach ($this->getUserArray($httpData->t, null, $httpData->term) as $row) {
+            $users[] = [
+                'id'    => $row[0],
+                'label' => $row[1],
+                'value' => $row[1],
+            ];
+        }
+        print G::json_encode($users);
     }
 }
 

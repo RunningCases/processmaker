@@ -284,6 +284,8 @@ class Server implements iAuthenticate
      */
     public function postToken($request = null, $returnResponse = false)
     {
+        \ProcessMaker\Policies\ControlUnderUpdating::verifyUnderUpgrading();
+        
         // Handle a request for an OAuth2.0 Access Token and send the response to the client
         if ($request == null) {
             $request = \OAuth2\Request::createFromGlobals();

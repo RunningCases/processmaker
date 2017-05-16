@@ -78,6 +78,9 @@ class Light
                         $tempTreeChild['processId'] = $processInfoChild['pro_uid'];
                         $tempTreeChild['taskId']    = $processInfoChild['uid'];
                         list($tempTreeChild['offlineEnabled'], $tempTreeChild['autoRoot']) = $task->getColumnValues($processInfoChild['pro_uid'], $processInfoChild['uid'], array('TAS_OFFLINE', 'TAS_AUTO_ROOT'));
+                        //Add process category
+                        $tempTreeChild['categoryName'] = $processInfoChild['catname'];
+                        $tempTreeChild['categoryId'] = $processInfoChild['cat'];
                         $forms = $task->getSteps($processInfoChild['uid']);
                         $newForm = array();
                         $c = 0;
@@ -563,12 +566,13 @@ class Light
             $gestor    = fopen($direction, "r");
             $contenido = fread($gestor, filesize($direction));
             fclose($gestor);
-            $oUser    = new \Users();
+            $oUser = new \Users();
             $aUserLog = $oUser->loadDetailed($userUid);
             $response['userId']     = $aUserLog['USR_UID'];
+            $response['userName']   = $aUserLog['USR_USERNAME'];
             $response['firstName']  = $aUserLog['USR_FIRSTNAME'];
             $response['lastName']   = $aUserLog['USR_LASTNAME'];
-            $response['fullName']   = $aUserLog['USR_FIRSTNAME'].' '.$aUserLog['USR_LASTNAME'];
+            $response['fullName']   = $aUserLog['USR_FULLNAME'];
             $response['email']      = $aUserLog['USR_EMAIL'];
             $response['userRole']   = $aUserLog['USR_ROLE_NAME'];
             $response['userPhone']  = $aUserLog['USR_PHONE'];

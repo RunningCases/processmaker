@@ -622,6 +622,7 @@ class ScriptTask
 
                     if (!is_null($trigger)) {
                         $pmScript = new \PMScript();
+                        $pmScript->setDataTrigger($trigger->toArray(\BasePeer::TYPE_FIELDNAME));
                         $pmScript->setFields($arrayApplicationData["APP_DATA"]);
                         $pmScript->setScript($trigger->getTriWebbot());
 
