@@ -83,8 +83,10 @@ function flush_cache($args, $opts)
                 //Only if the API directory structure is defined
                 $pathApiDirectory = PATH_PLUGINS . $details->sPluginFolder . PATH_SEP . "src" . PATH_SEP . "Services" . PATH_SEP . "Api";
                 if (is_dir($pathApiDirectory)) {
-                    $oPluginRegistry->enablePlugin($details->sNamespace);
-                    $oPluginRegistry->setupPlugins();
+                    if (class_exists($details->sClassName)) {
+                        $oPlugin = new $details->sClassName($details->sNamespace, $details->sFilename);
+                        $oPlugin->setup();
+                    }
                     file_put_contents($pathSingleton, $oPluginRegistry->serializeInstance());
                 }
             }
