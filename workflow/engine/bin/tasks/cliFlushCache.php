@@ -71,12 +71,7 @@ function flush_cache($args, $opts)
     //Update singleton file by workspace
     foreach ($workspaces as $workspace) {
         eprint("Update singleton in workspace " . $workspace->name . " ... ");
-        if (!defined("SYS_SYS")) {
-            define("SYS_SYS", $workspace->name);
-        }
-        if (!defined("PATH_DATA_SITE")) {
-            define('PATH_DATA_SITE', PATH_DATA . 'sites/' . $workspace->name . '/');
-        }
+        Bootstrap::setConstantsRelatedWs($workspace->name);
         $pathSingleton = PATH_DATA . "sites" . PATH_SEP . $workspace->name . PATH_SEP . "plugin.singleton";
         $oPluginRegistry = PMPluginRegistry::loadSingleton($pathSingleton);
         $items = \PMPlugin::getlist($workspace->name);
