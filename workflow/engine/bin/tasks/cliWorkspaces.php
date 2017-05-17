@@ -298,6 +298,7 @@ CLI::taskDescription(<<<EOT
 EOT
 );
 CLI::taskArg('workspace', true, true);
+CLI::taskOpt("lang", "Specify the language to migrate the content data. If not specified, then 'en' (English) will be used by default.\n        Ex: -lfr (French) Ex: --lang=zh-CN (Mainland Chinese)", "l:","lang=");
 CLI::taskRun("run_migrate_content");
 
 CLI::taskName('migrate-self-service-value');
@@ -945,18 +946,48 @@ function migrate_list_unassigned($command, $args, $opts) {
 }
 /*----------------------------------********---------------------------------*/
 
+/**
+ * Check if we need to execute an external program for each workspace
+ * If we apply the command for all workspaces we will need to execute one by one by redefining the constants
+ * @param string $args, workspaceName that we need to apply the database-upgrade
+ * @param string $opts, specify the language
+ *
+ * @return void
+*/
 function run_migrate_content($args, $opts) {
+    //Check the additional parameters
+    $lang = array_key_exists("lang", $opts) ? '--lang=' . $opts['lang'] : '--lang=' . SYS_LANG;
+    //Check if the command is executed by a specific workspace
+    if (count($args) === 1) {
+        migrate_content($args, $opts);
+    } else {
+        $workspaces = get_workspaces_from_args($args);
+        foreach ($workspaces as $workspace) {
+            passthru('./processmaker migrate-content ' . $lang . ' '.$workspace->name);
+        }
+    }
+}
+/**
+ * This function is executed only by one workspace
+ * @param array $args, workspaceName for to apply the migrate-content
+ * @param array $opts, specify the language
+ *
+ * @return void
+*/
+function migrate_content($args, $opts)
+{
     G::LoadSystem('inputfilter');
     $filter = new InputFilter();
     $args = $filter->xssFilterHard($args);
     $workspaces = get_workspaces_from_args($args);
     $lang = array_key_exists("lang", $opts) ? $opts['lang'] : SYS_LANG;
     $start = microtime(true);
+    //We defined the constants related the workspace
+    $wsName = $workspaces[key($workspaces)]->name;
+    Bootstrap::setConstantsRelatedWs($wsName);error_log(SYS_SYS.$lang);
+    //Loop, read all the attributes related to the one workspace
     CLI::logging("> Optimizing content data...\n");
     foreach ($workspaces as $workspace) {
-        if (!defined('SYS_SYS')) {
-            define('SYS_SYS', $workspace->name);
-        }
         print_r('Regenerating content in: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
         CLI::logging("-> Regenerating content \n");
         $workspace->migrateContentRun($workspace->name, $lang);
