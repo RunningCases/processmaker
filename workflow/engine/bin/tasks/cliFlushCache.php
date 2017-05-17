@@ -86,8 +86,8 @@ function flush_cache($args, $opts)
                     if (class_exists($details->sClassName)) {
                         $oPlugin = new $details->sClassName($details->sNamespace, $details->sFilename);
                         $oPlugin->setup();
+                        file_put_contents($pathSingleton, $oPluginRegistry->serializeInstance());
                     }
-                    file_put_contents($pathSingleton, $oPluginRegistry->serializeInstance());
                 }
             }
         }
