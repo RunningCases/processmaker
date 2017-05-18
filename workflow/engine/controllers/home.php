@@ -279,6 +279,7 @@ class Home extends Controller
         // settings html template
         $this->setView( $this->userUxBaseTemplate . PATH_SEP . 'appListSearch' );
 
+        // get data
         $process = (isset($httpData->process)) ? $httpData->process : null;
         $status = (isset($httpData->status)) ? $httpData->status : null;
         $search = (isset($httpData->search)) ? $httpData->search : null;
@@ -286,16 +287,14 @@ class Home extends Controller
         $user = (isset($httpData->user)) ? $httpData->user : null;
         $dateFrom = (isset($httpData->dateFrom)) ? $httpData->dateFrom : null;
         $dateTo = (isset($httpData->dateTo)) ? $httpData->dateTo : null;
+        $processTitle = "";
         if (!empty($process)) {
             $processTitle = Process::loadById($process)->getProTitle();
-        } else {
-            $processTitle = '';
         }
-        if (!empty($user)) {
+        $userName = "";
+        if (!empty($user) && $user !== "ALL" && $user !== "CURRENT_USER") {
             $userObject = Users::loadById($user);
-            $userName = $userObject->getUsrLastname()." ".$userObject->getUsrFirstname();
-        } else {
-            $userName = '';
+            $userName = $userObject->getUsrLastname() . " " . $userObject->getUsrFirstname();
         }
 
         $cases = $this->getAppsData( $httpData->t, null, null, $user, null, $search, $process, $status, $dateFrom, $dateTo, null, null, 'APP_CACHE_VIEW.APP_NUMBER', $category);

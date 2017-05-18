@@ -227,9 +227,7 @@ class Cases
     {
         Validator::isArray($dataList, '$dataList');
         if (!isset($dataList["userId"])) {
-            throw (new \Exception(\G::LoadTranslation("ID_USER_NOT_EXIST", array('userId',''))));
-        } else {
-            Validator::usrUid($dataList["userId"], "userId");
+            $dataList["userId"] = null;
         }
 
         $solrEnabled = false;
