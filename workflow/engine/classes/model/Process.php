@@ -1027,4 +1027,16 @@ class Process extends BaseProcess
             $users->update($newData);
         }
     }
+
+    /**
+     * Load a process object by PRO_ID
+     *
+     * @param type $id
+     * @return Process
+     */
+    public static function loadById($id) {
+        $criteria = new Criteria(ProcessPeer::DATABASE_NAME);
+        $criteria->add(ProcessPeer::PRO_ID, $id);
+        return ProcessPeer::doSelect($criteria)[0];
+    }
 }

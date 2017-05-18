@@ -156,6 +156,9 @@ class Applications
         }
 
         //Define the number of records by return
+        if(empty($limit)) {
+            $limit = 25;
+        }
         if (!empty($start)) {
             $sqlData .= " LIMIT $start, " . $limit;
         } else {

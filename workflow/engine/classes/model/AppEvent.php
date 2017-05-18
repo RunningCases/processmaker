@@ -288,6 +288,7 @@ class AppEvent extends BaseAppEvent
                 $aFields['APP_DATA']['APP_NUMBER'] = $aFields['APP_NUMBER'];
                 $aFields['APP_DATA']['TAS_TITLE'] = $taskFields['TAS_TITLE'];
                 $aFields['APP_DATA']['DEL_TASK_DUE_DATE'] = $aRow['DEL_TASK_DUE_DATE'];
+                $oPMScript->setDataTrigger($oTrigger->toArray(\BasePeer::TYPE_FIELDNAME));
                 $oPMScript->setFields( $aFields['APP_DATA'] );
                 $oPMScript->setScript( $oTrigger->getTriWebbot() );
 

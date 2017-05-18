@@ -97,6 +97,10 @@ if (file_exists( $dir )) {
  */
 class PMScript
 {
+    /**
+     * @var array $dataTrigger
+     */
+    public $dataTrigger = array();
 
     /**
      * Original fields
@@ -208,15 +212,35 @@ class PMScript
         return true;
     }
 
-    public function executeAndCatchErrors ($sScript, $sCode)
+    /**
+     * @param $dataTrigger
+     */
+    public function setDataTrigger($dataTrigger)
     {
-        ob_start( 'handleFatalErrors' );
-        set_error_handler( 'handleErrors' );
+        $this->dataTrigger = is_array($dataTrigger) ? $dataTrigger : array();
+    }
+
+    /**
+     * @param $sScript
+     * @param $sCode
+     */
+    public function executeAndCatchErrors($sScript, $sCode)
+    {
+        ob_start('handleFatalErrors');
+        set_error_handler('handleErrors');
         $_SESSION['_CODE_'] = $sCode;
-        eval( $sScript );
+        $_SESSION['_DATA_TRIGGER_'] = $this->dataTrigger;
+        $_SESSION['_DATA_TRIGGER_']['_EXECUTION_TIME_'] = microtime(true);
+        eval($sScript);
+        $this->scriptExecutionTime = round(microtime(true) -
+            $_SESSION['_DATA_TRIGGER_']['_EXECUTION_TIME_'], 5);
         $this->evaluateVariable();
-        unset( $_SESSION['_CODE_'] );
         ob_end_flush();
+
+        //log trigger execution in processmaker.log
+        G::logTriggerExecution($_SESSION, '', '', $this->scriptExecutionTime);
+        unset($_SESSION['_CODE_']);
+        unset($_SESSION['_DATA_TRIGGER_']);
     }
 
     /**
@@ -363,13 +387,7 @@ class PMScript
         $sScript = "try {\n" . $sScript . "\n} catch (Exception \$oException) {\n " . " \$this->aFields['__ERROR__'] = utf8_encode(\$oException->getMessage());\n}";
         //echo '<pre>-->'; print_r($this->aFields); echo '<---</pre>';
 
-        $timeStart = microtime(true);
-
         $this->executeAndCatchErrors($sScript, $this->sScript);
-
-        $timeEnd = microtime(true);
-
-        $this->scriptExecutionTime = round($timeEnd - $timeStart, 5);
 
         $this->aFields["__VAR_CHANGED__"] = implode(",", $this->affected_fields);
         for ($i = 0; $i < count( $this->affected_fields ); $i ++) {
@@ -692,16 +710,19 @@ function pmSqlEscape ($vValue)
  * author: Julio Cesar Laura Avenda�o <juliocesar@colosa.com>
  * date: 2009-10-01
  * ************************************************************************* */
-/*
- * Convert to data base escaped string
- * @param string $errno
- * @param string $errstr
- * @param string $errfile
- * @param string $errline
- * @return void
+/**
+ * @param $errno
+ * @param $errstr
+ * @param $errfile
+ * @param $errline
  */
-function handleErrors ($errno, $errstr, $errfile, $errline)
+function handleErrors($errno, $errstr, $errfile, $errline)
 {
+    if ($errno != 2048 && isset($_SESSION['_DATA_TRIGGER_']['_EXECUTION_TIME_'])) {
+        G::logTriggerExecution($_SESSION, $errstr, '', round(microtime(true) -
+            $_SESSION['_DATA_TRIGGER_']['_EXECUTION_TIME_'], 5));
+    }
+
     if ($errno != '' && ($errno != 8) && ($errno != 2048)) {
         if (isset( $_SESSION['_CODE_'] )) {
             $sCode = $_SESSION['_CODE_'];
@@ -726,9 +747,13 @@ function handleErrors ($errno, $errstr, $errfile, $errline)
 
 function handleFatalErrors ($buffer)
 {
-    G::LoadClass( 'case' );
-    $oCase = new Cases();
+    if (!empty($buffer)) {
+        G::logTriggerExecution($_SESSION, $buffer, 'FATAL_ERROR');
+    }
+
     if (preg_match( '/(error<\/b>:)(.+)(<br)/', $buffer, $regs )) {
+        G::LoadClass( 'case' );
+        $oCase = new Cases();
         $err = preg_replace( '/<.*?>/', '', $regs[2] );
         $aAux = explode( ' in ', $err );
         $sCode = isset($_SESSION['_CODE_']) ? $_SESSION['_CODE_'] : null;
