@@ -74,15 +74,18 @@ function flush_cache($args, $opts)
         Bootstrap::setConstantsRelatedWs($workspace->name);
         $pathSingleton = PATH_DATA . "sites" . PATH_SEP . $workspace->name . PATH_SEP . "plugin.singleton";
         $oPluginRegistry = PMPluginRegistry::loadSingleton($pathSingleton);
-        $items = \PMPlugin::getlist($workspace->name);
+        $items = \PMPlugin::getListAllPlugins($workspace->name);
         foreach ($items as $item) {
-            if ($item["sStatusFile"] === true) {
-                $path = PATH_PLUGINS . $item["sFile"];
-                require_once($path);
-                $details = $oPluginRegistry->getPluginDetails($item["sFile"]);
+            if ($item->enabled === true) {
+                require_once($item->sFilename);
+                $details = $oPluginRegistry->getPluginDetails(basename($item->sFilename));
                 //Only if the API directory structure is defined
                 $pathApiDirectory = PATH_PLUGINS . $details->sPluginFolder . PATH_SEP . "src" . PATH_SEP . "Services" . PATH_SEP . "Api";
                 if (is_dir($pathApiDirectory)) {
+                    $pluginSrcDir = PATH_PLUGINS . $details->sNamespace . PATH_SEP . 'src';
+                    $loader = \Maveriks\Util\ClassLoader::getInstance();
+                    $loader->add($pluginSrcDir);
+                    $oPluginRegistry->registerRestService($details->sNamespace);
                     if (class_exists($details->sClassName)) {
                         $oPlugin = new $details->sClassName($details->sNamespace, $details->sFilename);
                         $oPlugin->setup();

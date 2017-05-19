@@ -520,7 +520,7 @@ class PMPlugin
      * @param string $workspace
      * @return array
      */
-    public static function getList($workspace)
+    public static function getListPluginsManager($workspace)
     {
         $items = Array();
         $aPluginsPP = array();
@@ -569,6 +569,27 @@ class PMPlugin
                             'sFile' => $file,
                             'sStatusFile' => $pluginDetail->enabled
                         ];
+                    }
+                }
+            }
+            closedir($handle);
+        }
+        return $items;
+    }
+    
+    public static function getListAllPlugins($workspace)
+    {
+        $pathSingleton = PATH_DATA . "sites" . PATH_SEP . $workspace . PATH_SEP . "plugin.singleton";
+        $oPluginRegistry = PMPluginRegistry::loadSingleton($pathSingleton);
+        //$oPluginRegistry = PMPluginRegistry::getSingleton();
+        $items = [];
+        if ($handle = opendir(PATH_PLUGINS)) {
+            while (false !== ($file = readdir($handle))) {
+                if (strpos($file, '.php', 1) && is_file(PATH_PLUGINS . $file)) {
+                    include_once (PATH_PLUGINS . $file);
+                    $detail = $oPluginRegistry->getPluginDetails($file);
+                    if ($detail !== null) {
+                        $items[] = $detail;
                     }
                 }
             }
