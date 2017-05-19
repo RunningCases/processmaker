@@ -1,0 +1,80 @@
+<?php
+
+use ProcessMaker\Importer\XmlImporter;
+use PHPUnit\Framework\TestCase;
+
+/**
+ * Test case that could instance a workspace DB
+ *
+ */
+class WorkflowTestCase extends TestCase
+{
+
+    /**
+     * Create and install the database.
+     */
+    protected function setupDB()
+    {
+        //Install Database
+        $pdo0 = new PDO("mysql:host=".DB_HOST, DB_USER, DB_PASS);
+        $pdo0->query('DROP DATABASE IF EXISTS '.DB_NAME);
+        $pdo0->query('CREATE DATABASE '.DB_NAME);
+        $pdo = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME, DB_USER,
+                       DB_PASS);
+        $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, 0);
+        //inmemory
+        /* $inmemory = false;
+          if ($inmemory) {
+          $sql = str_replace(
+          ['ENGINE=InnoDB', 'MEDIUMTEXT'],
+          ['ENGINE=MEMORY', 'VARCHAR(2000)'],
+          file_get_contents(PATH_CORE.'data/mysql/schema.sql')
+          );
+          } else {
+          $sql = file_get_contents(PATH_CORE.'data/mysql/schema.sql');
+          }
+          $pdo->exec($sql); */
+        $pdo->exec(file_get_contents(PATH_CORE.'data/mysql/schema.sql'));
+        $pdo->exec(file_get_contents(PATH_RBAC_CORE.'data/mysql/schema.sql'));
+        $pdo->exec(file_get_contents(PATH_CORE.'data/mysql/insert.sql'));
+        $pdo->exec(file_get_contents(PATH_RBAC_CORE.'data/mysql/insert.sql'));
+    }
+
+    /**
+     * Drop the database.
+     */
+    protected function dropDB()
+    {
+        //Install Database
+        $pdo0 = new PDO("mysql:host=".DB_HOST, DB_USER, DB_PASS);
+        $pdo0->query('DROP DATABASE IF EXISTS '.DB_NAME);
+    }
+
+    /**
+     * Import a process to the database.
+     * 
+     * @param type $filename ProcessMaker file to be imported
+     * @return string PRO_UID
+     */
+    protected function import($filename)
+    {
+        $importer = new XmlImporter();
+        $importer->setSourceFile($filename);
+        return $importer->import(
+                XmlImporter::IMPORT_OPTION_CREATE_NEW,
+                XmlImporter::GROUP_IMPORT_OPTION_CREATE_NEW, true
+        );
+    }
+
+    /**
+     * Rebuild workflow's schema.sql
+     */
+    protected function rebuildModel()
+    {
+        $pwd = getcwd();
+        chdir(PATH_CORE);
+        exec('../../gulliver/bin/gulliver propel-build-sql mysql');
+        exec('../../gulliver/bin/gulliver propel-build-model');
+        chdir($pwd);
+    }
+}

@@ -7,7 +7,7 @@ class WebEntry
         "WE_UID"                   => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "webEntryUid"),
 
         "TAS_UID"                  => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "taskUid"),
-        "DYN_UID"                  => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "dynaFormUid"),
+        "DYN_UID"                  => array("type" => "string", "required" => false,  "empty" => true, "defaultValues" => array(),             "fieldNameAux" => "dynaFormUid"),
         "USR_UID"                  => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "userUid"),
         "WE_TITLE"                 => array("type" => "string", "required" => false,  "empty" => true, "defaultValues" => array(),             "fieldNameAux" => "webEntryTitle"),
         "WE_DESCRIPTION"           => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),             "fieldNameAux" => "webEntryDescription"),
@@ -386,7 +386,9 @@ class WebEntry
 
                     $dynaForm = new \Dynaform();
 
-                    $arrayDynaFormData = $dynaForm->Load($arrayWebEntryData["DYN_UID"]);
+                    if(!empty($arrayWebEntryData["DYN_UID"])) {
+                        $arrayDynaFormData = $dynaForm->Load($arrayWebEntryData["DYN_UID"]);
+                    }
 
                     //Creating sys.info;
                     $sitePublicPath = "";
@@ -445,7 +447,7 @@ class WebEntry
                         $template->assign("USR_VAR", "\$USR_UID = -1;");
                     }
 
-                    $template->assign("dynaform", $arrayDynaFormData["DYN_TITLE"]);
+                    $template->assign("dynaform", empty($arrayDynaFormData) ? '' : $arrayDynaFormData["DYN_TITLE"]);
                     $template->assign("timestamp", date("l jS \of F Y h:i:s A"));
                     $template->assign("ws", $this->sysSys);
                     $template->assign("version", \System::getVersion());
@@ -589,7 +591,9 @@ class WebEntry
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
             unset($arrayData["WE_UID"]);
-            unset($arrayData["WE_DATA"]);
+            if (isset($arrayData['WE_LINK_GENERATION']) && $arrayData['WE_LINK_GENERATION']==='DEFAULT') {
+                unset($arrayData["WE_DATA"]);
+            }
 
             //Verify data
             $process->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);
@@ -630,7 +634,9 @@ class WebEntry
                     }
 
                     //Set WE_DATA
-                    $this->setWeData($webEntryUid);
+                    if (isset($arrayData['WE_LINK_GENERATION']) && $arrayData['WE_LINK_GENERATION']==='DEFAULT') {
+                        $this->setWeData($webEntryUid);
+                    }
 
                     //Return
                     return $this->getWebEntry($webEntryUid);
@@ -711,7 +717,9 @@ class WebEntry
                     }
 
                     //Set WE_DATA
-                    $this->setWeData($webEntryUid);
+                    if (isset($arrayData['WE_LINK_GENERATION']) && $arrayData['WE_LINK_GENERATION']==='DEFAULT') {
+                        $this->setWeData($webEntryUid);
+                    }
 
                     //Return
                     if (!$this->formatFieldNameInUppercase) {
@@ -840,7 +848,7 @@ class WebEntry
     public function getWebEntryDataFromRecord(array $record)
     {
         try {
-            if ($record["WE_METHOD"] == "WS") {
+            if ((isset($record['WE_LINK_GENERATION']) && $record['WE_LINK_GENERATION']==='DEFAULT') && $record["WE_METHOD"] == "WS") {
                 $http = (\G::is_https())? "https://" : "http://";
                 $url = $http . $_SERVER["HTTP_HOST"] . "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $record["PRO_UID"];
 

@@ -8,7 +8,7 @@ class WebEntryEvent
 
         "EVN_UID"         => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "eventUid"),
         "ACT_UID"         => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "activityUid"),
-        "DYN_UID"         => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "dynaFormUid"),
+        "DYN_UID"         => array("type" => "string", "required" => false,  "empty" => true, "defaultValues" => array(),                      "fieldNameAux" => "dynaFormUid"),
         "USR_UID"         => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "userUid"),
 
         "WEE_TITLE"       => array("type" => "string", "required" => false,  "empty" => true, "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventTitle"),
@@ -336,7 +336,7 @@ class WebEntryEvent
      *
      * return void
      */
-    public function createWebEntry($projectUid, $eventUid, $activityUid, $dynaFormUid, $userUid, $title, $description, $userUidCreator)
+    public function createWebEntry($projectUid, $eventUid, $activityUid, $dynaFormUid, $userUid, $title, $description, $userUidCreator, $arrayData=[])
     {
         try {
             $bpmn = new \ProcessMaker\Project\Bpmn();
@@ -365,7 +365,9 @@ class WebEntryEvent
             $step = new \Step();
 
             $stepUid = $step->create(array("PRO_UID" => $projectUid, "TAS_UID" => $this->webEntryEventWebEntryTaskUid));
-            $result = $step->update(array("STEP_UID" => $stepUid, "STEP_TYPE_OBJ" => "DYNAFORM", "STEP_UID_OBJ" => $dynaFormUid, "STEP_POSITION" => 1, "STEP_MODE" => "EDIT"));
+            if (!empty($dynaFormUid)) {
+                $result = $step->update(array("STEP_UID" => $stepUid, "STEP_TYPE_OBJ" => "DYNAFORM", "STEP_UID_OBJ" => $dynaFormUid, "STEP_POSITION" => 1, "STEP_MODE" => "EDIT"));
+            }
 
             //Task - User
             $task = new \Tasks();
@@ -378,10 +380,29 @@ class WebEntryEvent
             $result = $workflow->addRoute($this->webEntryEventWebEntryTaskUid, $activityUid, "SEQUENTIAL");
 
             //WebEntry
-            $arrayWebEntryData = $this->webEntry->create(
-                $projectUid,
-                $userUidCreator,
-                array(
+            if(isset($arrayData['WE_LINK_GENERATION']) && $arrayData['WE_LINK_GENERATION']==='ADVANCED') {
+                $arrayData['WE_DATA'] = isset($arrayData['WEE_URL'])?$arrayData['WEE_URL']:null;
+            }
+            $data0 = [];
+            foreach($arrayData as $k => $v) {
+                $exists = array_search($k, [
+                    'WE_DATA',
+                    'WE_TYPE',
+                    'WE_CUSTOM_TITLE',
+                    'WE_AUTHENTICATION',
+                    'WE_HIDE_INFORMATION_BAR',
+                    'WE_CALLBACK',
+                    'WE_CALLBACK_URL',
+                    'WE_LINK_GENERATION',
+                    'WE_LINK_SKIN',
+                    'WE_LINK_LANGUAGE',
+                    'WE_LINK_DOMAIN',
+                ]);
+                if($exists!==false) {
+                    $data0[$k] = $v;
+                }
+            }
+            $data = array_merge($data0, array(
                     "TAS_UID"                  => $this->webEntryEventWebEntryTaskUid,
                     "DYN_UID"                  => $dynaFormUid,
                     "USR_UID"                  => $userUid,
@@ -389,7 +410,11 @@ class WebEntryEvent
                     "WE_DESCRIPTION"           => $description,
                     "WE_METHOD"                => "WS",
                     "WE_INPUT_DOCUMENT_ACCESS" => 1
-                )
+                ));
+            $arrayWebEntryData = $this->webEntry->create(
+                $projectUid,
+                $userUidCreator,
+                $data
             );
 
             $this->webEntryEventWebEntryUid = $arrayWebEntryData[$this->getFieldNameByFormatFieldName("WE_UID")];
@@ -484,11 +509,12 @@ class WebEntryEvent
                         $projectUid,
                         $arrayData["EVN_UID"],
                         $arrayData["ACT_UID"],
-                        $arrayData["DYN_UID"],
+                        empty($arrayData["DYN_UID"])?null:$arrayData["DYN_UID"],
                         $arrayData["USR_UID"],
                         $arrayData["WEE_TITLE"],
                         $arrayData["WEE_DESCRIPTION"],
-                        $userUidCreator
+                        $userUidCreator,
+                        $arrayData
                     );
                 }
 
@@ -614,7 +640,8 @@ class WebEntryEvent
                             $arrayFinalData["USR_UID"],
                             $arrayFinalData["WEE_TITLE"],
                             $arrayFinalData["WEE_DESCRIPTION"],
-                            $userUidUpdater
+                            $userUidUpdater,
+                            $arrayFinalData
                         );
 
                         $arrayData["WEE_WE_UID"] = $this->webEntryEventWebEntryUid;
@@ -688,21 +715,27 @@ class WebEntryEvent
 
                             //WebEntry
                             $arrayDataAux = array();
-
-                            if (isset($arrayData["DYN_UID"])) {
-                                $arrayDataAux["DYN_UID"]  = $arrayData["DYN_UID"];
-                            }
-
-                            if (isset($arrayData["USR_UID"])) {
-                                $arrayDataAux["USR_UID"] = $arrayData["USR_UID"];
-                            }
-
-                            if (isset($arrayData["WEE_TITLE"])) {
-                                $arrayDataAux["WE_TITLE"] = $arrayData["WEE_TITLE"];
-                            }
-
-                            if (isset($arrayData["WEE_DESCRIPTION"])) {
-                                $arrayDataAux["WE_DESCRIPTION"] = $arrayData["WEE_DESCRIPTION"];
+                            $webEntryMap = [
+                                'DYN_UID' => 'DYN_UID',
+                                'USR_UID' => 'USR_UID',
+                                'WE_TYPE' => 'WE_TYPE',
+                                'WE_TITLE' => 'WEE_TITLE',
+                                'WE_DESCRIPTION' => 'WEE_DESCRIPTION',
+                                'WE_CUSTOM_TITLE' => 'WE_CUSTOM_TITLE',
+                                'WE_AUTHENTICATION' => 'WE_AUTHENTICATION',
+                                'WE_HIDE_INFORMATION_BAR' => 'WE_HIDE_INFORMATION_BAR',
+                                'WE_CALLBACK' => 'WE_CALLBACK',
+                                'WE_CALLBACK_URL' => 'WE_CALLBACK_URL',
+                                'WE_LINK_GENERATION' => 'WE_LINK_GENERATION',
+                                'WE_LINK_SKIN' => 'WE_LINK_SKIN',
+                                'WE_LINK_LANGUAGE' => 'WE_LINK_LANGUAGE',
+                                'WE_LINK_DOMAIN' => 'WE_LINK_DOMAIN',
+                                'WE_DATA' => 'WEE_URL',
+                            ];
+                            foreach($webEntryMap as $k => $v) {
+                                if (array_key_exists($v, $arrayData)) {
+                                    $arrayDataAux[$k]  = $arrayData[$v];
+                                }
                             }
 
                             if (count($arrayDataAux) > 0) {
@@ -801,8 +834,13 @@ class WebEntryEvent
 
     /**
      * Get criteria for WebEntry-Event
-     *
-     * return object
+     * 
+     * @category webentry2,PROD-181,webentry1
+     * @link https://processmaker.atlassian.net/browse/PROD-181 Web Entry 2 Feature definition
+     * @link URL description https://processmaker.atlassian.net/browse/PROD-1 Web Entry 1 Feature definition
+     * @group webentry2
+     * @return \Criteria
+     * @throws \Exception
      */
     public function getWebEntryEventCriteria()
     {
@@ -820,6 +858,18 @@ class WebEntryEvent
             $criteria->addSelectColumn(\WebEntryEventPeer::WEE_WE_UID);
             $criteria->addSelectColumn(\WebEntryEventPeer::WEE_WE_TAS_UID);
             $criteria->addSelectColumn(\WebEntryPeer::WE_DATA . " AS WEE_WE_URL");
+            $criteria->addSelectColumn(\WebEntryPeer::WE_CUSTOM_TITLE);
+            $criteria->addSelectColumn(\WebEntryPeer::WE_TYPE);
+            //$criteria->addSelectColumn(\WebEntryPeer::WE_MULTIPLE_UID);
+            $criteria->addSelectColumn(\WebEntryPeer::WE_AUTHENTICATION);
+            $criteria->addSelectColumn(\WebEntryPeer::WE_HIDE_INFORMATION_BAR);
+            $criteria->addSelectColumn(\WebEntryPeer::WE_CALLBACK);
+            $criteria->addSelectColumn(\WebEntryPeer::WE_CALLBACK_URL);
+            $criteria->addSelectColumn(\WebEntryPeer::WE_LINK_GENERATION);
+            $criteria->addSelectColumn(\WebEntryPeer::WE_LINK_SKIN);
+            $criteria->addSelectColumn(\WebEntryPeer::WE_LINK_LANGUAGE);
+            $criteria->addSelectColumn(\WebEntryPeer::WE_LINK_DOMAIN);
+            $criteria->addSelectColumn(\WebEntryPeer::TAS_UID);
             $criteria->addJoin(\WebEntryEventPeer::WEE_WE_UID, \WebEntryPeer::WE_UID, \Criteria::LEFT_JOIN);
             return $criteria;
         } catch (\Exception $e) {
@@ -837,7 +887,10 @@ class WebEntryEvent
     public function getWebEntryEventDataFromRecord(array $record)
     {
         try {
-            if ($record["WEE_WE_UID"] . "" != "") {
+            if (
+                (isset($record['WE_LINK_GENERATION']) && $record['WE_LINK_GENERATION']==='DEFAULT')
+                && $record["WEE_WE_UID"] . "" != ""
+            ) {
                 $http = (\G::is_https())? "https://" : "http://";
                 $url = $http . $_SERVER["HTTP_HOST"] . "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $record["PRJ_UID"];
 
@@ -845,15 +898,27 @@ class WebEntryEvent
             }
 
             return array(
-                $this->getFieldNameByFormatFieldName("WEE_UID")         => $record["WEE_UID"],
-                $this->getFieldNameByFormatFieldName("EVN_UID")         => $record["EVN_UID"],
-                $this->getFieldNameByFormatFieldName("ACT_UID")         => $record["ACT_UID"],
-                $this->getFieldNameByFormatFieldName("DYN_UID")         => $record["DYN_UID"],
-                $this->getFieldNameByFormatFieldName("USR_UID")         => $record["USR_UID"],
-                $this->getFieldNameByFormatFieldName("WEE_TITLE")       => $record["WEE_TITLE"],
-                $this->getFieldNameByFormatFieldName("WEE_DESCRIPTION") => $record["WEE_DESCRIPTION"] . "",
-                $this->getFieldNameByFormatFieldName("WEE_URL")         => $record["WEE_WE_URL"] . "",
-                $this->getFieldNameByFormatFieldName("WEE_STATUS")      => $record["WEE_STATUS"]
+                $this->getFieldNameByFormatFieldName("WEE_UID")                 => $record["WEE_UID"],
+                $this->getFieldNameByFormatFieldName("EVN_UID")                 => $record["EVN_UID"],
+                $this->getFieldNameByFormatFieldName("ACT_UID")                 => $record["ACT_UID"],
+                $this->getFieldNameByFormatFieldName("DYN_UID")                 => $record["DYN_UID"],
+                $this->getFieldNameByFormatFieldName("USR_UID")                 => $record["USR_UID"],
+                $this->getFieldNameByFormatFieldName("WEE_TITLE")               => $record["WEE_TITLE"],
+                $this->getFieldNameByFormatFieldName("WEE_DESCRIPTION")         => $record["WEE_DESCRIPTION"]."",
+                $this->getFieldNameByFormatFieldName("WEE_STATUS")              => $record["WEE_STATUS"]."",
+                $this->getFieldNameByFormatFieldName("WEE_URL")                 => $record["WEE_WE_URL"]."",
+                $this->getFieldNameByFormatFieldName("WE_TYPE")                 => $record["WE_TYPE"],
+                $this->getFieldNameByFormatFieldName("WE_CUSTOM_TITLE")         => $record["WE_CUSTOM_TITLE"],
+                //$this->getFieldNameByFormatFieldName("WE_MULTIPLE_UID")         => $record["WE_MULTIPLE_UID"],
+                $this->getFieldNameByFormatFieldName("WE_AUTHENTICATION")       => $record["WE_AUTHENTICATION"],
+                $this->getFieldNameByFormatFieldName("WE_HIDE_INFORMATION_BAR") => $record["WE_HIDE_INFORMATION_BAR"],
+                $this->getFieldNameByFormatFieldName("WE_CALLBACK")             => $record["WE_CALLBACK"],
+                $this->getFieldNameByFormatFieldName("WE_CALLBACK_URL")         => $record["WE_CALLBACK_URL"],
+                $this->getFieldNameByFormatFieldName("WE_LINK_GENERATION")      => $record["WE_LINK_GENERATION"],
+                $this->getFieldNameByFormatFieldName("WE_LINK_SKIN")            => $record["WE_LINK_SKIN"],
+                $this->getFieldNameByFormatFieldName("WE_LINK_LANGUAGE")        => $record["WE_LINK_LANGUAGE"],
+                $this->getFieldNameByFormatFieldName("WE_LINK_DOMAIN")          => $record["WE_LINK_DOMAIN"],
+                $this->getFieldNameByFormatFieldName("TAS_UID")                 => $record["TAS_UID"],
             );
         } catch (\Exception $e) {
             throw $e;
