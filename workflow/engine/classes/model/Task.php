@@ -53,7 +53,7 @@ class Task extends BaseTask
         $v = isset($v)? ((string)$v) : '';
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
 
-        if ($this->tas_title_content !== $v || $v === "") {
+        if (in_array(TaskPeer::TAS_TITLE, $this->modifiedColumns) || $v === "") {
             $this->tas_title_content = $v;
 
             $res = Content::addContent('TAS_TITLE', '', $this->getTasUid(), $lang, $this->tas_title_content);
@@ -101,7 +101,7 @@ class Task extends BaseTask
         $v = isset($v)? ((string)$v) : '';
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
 
-        if ($this->tas_description_content !== $v || $v === "") {
+        if (in_array(TaskPeer::TAS_DESCRIPTION, $this->modifiedColumns) || $v === "") {
             $this->tas_description_content = $v;
 
             $res = Content::addContent('TAS_DESCRIPTION', '', $this->getTasUid(), $lang, $this->tas_description_content);
@@ -149,7 +149,7 @@ class Task extends BaseTask
         $v = isset($v)? ((string)$v) : '';
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
 
-        if ($this->tas_def_title_content !== $v || $v === "") {
+        if (in_array(TaskPeer::TAS_DEF_TITLE, $this->modifiedColumns) || $v === "") {
             $this->tas_def_title_content = $v;
 
             $res = Content::addContent('TAS_DEF_TITLE', '', $this->getTasUid(), $lang, $this->tas_def_title_content);
@@ -197,7 +197,7 @@ class Task extends BaseTask
         $v = isset($v)? ((string)$v) : '';
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
 
-        if ($this->tas_def_description_content !== $v || $v === "") {
+        if (in_array(TaskPeer::TAS_DEF_DESCRIPTION, $this->modifiedColumns) || $v === "") {
             $this->tas_def_description_content = $v;
 
             $res = Content::addContent('TAS_DEF_DESCRIPTION', '', $this->getTasUid(), $lang, $v);
@@ -244,7 +244,7 @@ class Task extends BaseTask
         $v = isset($v)? ((string)$v) : '';
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
 
-        if ($this->tas_def_proc_code_content !== $v || $v === "") {
+        if (in_array(TaskPeer::TAS_DEF_PROC_CODE, $this->modifiedColumns) || $v === "") {
             $this->tas_def_proc_code_content = $v;
 
             $res = Content::addContent('TAS_DEF_PROC_CODE', '', $this->getTasUid(), $lang, $this->tas_def_proc_code_content);
@@ -291,7 +291,7 @@ class Task extends BaseTask
         $v = isset($v)? ((string)$v) : '';
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
 
-        if ($this->tas_def_message_content !== $v || $v === "") {
+        if (in_array(TaskPeer::TAS_DEF_MESSAGE, $this->modifiedColumns) || $v === "") {
             $this->tas_def_message_content = $v;
 
             $res = Content::addContent('TAS_DEF_MESSAGE', '', $this->getTasUid(), $lang, $this->tas_def_message_content);
@@ -339,7 +339,7 @@ class Task extends BaseTask
         $v = isset($v)? ((string)$v) : '';
         $lang = defined('SYS_LANG')? SYS_LANG : 'en';
 
-        if ($this->tas_def_subject_message_content !== $v || $v === "") {
+        if (in_array(TaskPeer::TAS_DEF_SUBJECT_MESSAGE, $this->modifiedColumns) || $v === "") {
             $this->tas_def_subject_message_content = $v;
 
             $res = Content::addContent('TAS_DEF_SUBJECT_MESSAGE', '', $this->getTasUid(), $lang, $v);

@@ -2156,10 +2156,75 @@ class wsBase
             return $result;
         }
     }
+    /**
+     * Execute the trigger defined in the steps
+     * This function is used when the case is derived from abe, Soap, PMFDerivateCase
+     *
+     * @param array $appData contain all the information about the case
+     * @param string $tasUid
+     * @param string $stepType
+     * @param string $stepUidObj
+     * @param string $triggerType
+     * @param string $labelAssigment
+     * @return string $varTriggers
+     */
+    function executeTriggerFromDerivate($appData, $tasUid, $stepType, $stepUidObj, $triggerType, $labelAssigment = '')
+    {
+        $varTriggers = "";
+        $oCase = new Cases();
+
+        //Execute triggers before assignment
+        $aTriggers = $oCase->loadTriggers($tasUid, $stepType, $stepUidObj, $triggerType);
+
+        if (count( $aTriggers ) > 0) {
+            $varTriggers = $varTriggers . "<br /><b>".$labelAssigment."</b><br />";
+
+            $oPMScript = new PMScript();
+
+            foreach ($aTriggers as $aTrigger) {
+                //Set variables
+                $params = new stdClass();
+                $params->appData = $appData;
+
+                if ($this->stored_system_variables) {
+                    $params->option = "STORED SESSION";
+                    $params->SID = $this->wsSessionId;
+                }
+
+                $appFields["APP_DATA"] = array_merge($appData, G::getSystemConstants($params));
+
+                //PMScript
+                $oPMScript->setFields( $appFields['APP_DATA'] );
+                $bExecute = true;
+
+                if ($aTrigger['ST_CONDITION'] !== '') {
+                    $oPMScript->setScript( $aTrigger['ST_CONDITION'] );
+                    $bExecute = $oPMScript->evaluate();
+                }
+
+                if ($bExecute) {
+                    $oPMScript->setDataTrigger($aTrigger);
+                    $oPMScript->setScript( $aTrigger['TRI_WEBBOT'] );
+                    $oPMScript->execute();
+
+                    $trigger = TriggersPeer::retrieveByPk($aTrigger["TRI_UID"]);
+                    $varTriggers = $varTriggers . "&nbsp;- " . nl2br(htmlentities($trigger->getTriTitle(), ENT_QUOTES)) . "<br />";
+
+                    $appFields['APP_DATA'] = $oPMScript->aFields;
+                    unset($appFields['APP_STATUS']);
+                    unset($appFields['APP_PROC_STATUS']);
+                    unset($appFields['APP_PROC_CODE']);
+                    unset($appFields['APP_PIN']);
+                    $oCase->updateCase($caseId, $appFields);
+                }
+            }
+        }
+        return $varTriggers;
+    }
 
     /**
-     * derivate Case moves the case to the next task in the process according to the routing rules
-     *
+     * Derivate Case moves the case to the next task in the process according to the routing rules
+     * This function is used from: action by email, web entry, PMFDerivateCase, Mobile
      * @param string $userId
      * @param string $caseId
      * @param string $delIndex
@@ -2178,10 +2243,10 @@ class wsBase
             $_SESSION["INDEX"] = $delIndex;
             $_SESSION["USER_LOGGED"] = $userId;
 
+            //Define variables
             $sStatus = 'TO_DO';
-
             $varResponse = '';
-            $varTriggers = "\n";
+            $previousAppData = array();
 
             if ($delIndex == '') {
                 $oCriteria = new Criteria( 'workflow' );
@@ -2216,18 +2281,10 @@ class wsBase
                 return $result;
             }
 
-            $oCriteria = new Criteria( 'workflow' );
-            $oCriteria->addSelectColumn( AppDelayPeer::APP_UID );
-            $oCriteria->addSelectColumn( AppDelayPeer::APP_DEL_INDEX );
-            $oCriteria->add( AppDelayPeer::APP_TYPE, '' );
-            $oCriteria->add( $oCriteria->getNewCriterion( AppDelayPeer::APP_TYPE, 'PAUSE' )->addOr( $oCriteria->getNewCriterion( AppDelayPeer::APP_TYPE, 'CANCEL' ) ) );
-            $oCriteria->addAscendingOrderByColumn( AppDelayPeer::APP_ENABLE_ACTION_DATE );
-            $oDataset = AppDelayPeer::doSelectRS( $oCriteria );
-            $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-            $oDataset->next();
-            $aRow = $oDataset->getRow();
-
-            if (is_array( $aRow )) {
+            //Validate if the case is paused or cancelled
+            $oAppDelay = new AppDelay();
+            $aRow = $oAppDelay->getCasesCancelOrPaused($caseId);
+            if (is_array($aRow)) {
                 if (isset( $aRow['APP_DISABLE_ACTION_USER'] ) && $aRow['APP_DISABLE_ACTION_USER'] != 0 && isset( $aRow['APP_DISABLE_ACTION_DATE'] ) && $aRow['APP_DISABLE_ACTION_DATE'] != '') {
                     $result = new wsResponse( 19, G::LoadTranslation( 'ID_CASE_IN_STATUS' ) . " " . $aRow['APP_TYPE'] );
 
@@ -2258,101 +2315,18 @@ class wsBase
 
             global $oPMScript;
 
+            if (isset($oPMScript->aFields['APPLICATION']) && ($oPMScript->aFields['APPLICATION'] != $caseId)) {
+                $previousAppData = $oPMScript->aFields;
+            }
+
+            $varTriggers = "\n";
+            //Execute triggers before assignment
             if ($bExecuteTriggersBeforeAssignment) {
-                //Execute triggers before assignment
-                $aTriggers = $oCase->loadTriggers( $appdel['TAS_UID'], 'ASSIGN_TASK', - 1, 'BEFORE' );
-
-                if (count( $aTriggers ) > 0) {
-                    $varTriggers = $varTriggers . "<br /><b>-= Before Assignment =-</b><br />";
-
-                    $oPMScript = new PMScript();
-
-                    foreach ($aTriggers as $aTrigger) {
-                        //Set variables
-                        $params = new stdClass();
-                        $params->appData = $appFields["APP_DATA"];
-
-                        if ($this->stored_system_variables) {
-                            $params->option = "STORED SESSION";
-                            $params->SID = $this->wsSessionId;
-                        }
-
-                        $appFields["APP_DATA"] = array_merge( $appFields["APP_DATA"], G::getSystemConstants( $params ) );
-
-                        //PMScript
-                        $oPMScript->setFields( $appFields['APP_DATA'] );
-                        $bExecute = true;
-
-                        if ($aTrigger['ST_CONDITION'] !== '') {
-                            $oPMScript->setScript( $aTrigger['ST_CONDITION'] );
-                            $bExecute = $oPMScript->evaluate();
-                        }
-
-                        if ($bExecute) {
-                            $oPMScript->setScript( $aTrigger['TRI_WEBBOT'] );
-                            $oPMScript->execute();
-
-                            $trigger = TriggersPeer::retrieveByPk($aTrigger["TRI_UID"]);
-                            $varTriggers = $varTriggers . "&nbsp;- " . nl2br(htmlentities($trigger->getTriTitle(), ENT_QUOTES)) . "<br />";
-
-                            //$appFields = $oCase->loadCase( $caseId );
-                            $appFields['APP_DATA'] = $oPMScript->aFields;
-                            unset($appFields['APP_STATUS']);
-                            unset($appFields['APP_PROC_STATUS']);
-                            unset($appFields['APP_PROC_CODE']);
-                            unset($appFields['APP_PIN']);
-                            $oCase->updateCase( $caseId, $appFields );
-                        }
-                    }
-                }
+                $varTriggers .= $this->executeTriggerFromDerivate($appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -1, 'BEFORE', "-= Before Assignment =-");
             }
 
-            //Execute triggers before derivation BEFORE_ROUTING
-            $aTriggers = $oCase->loadTriggers( $appdel['TAS_UID'], 'ASSIGN_TASK', - 2, 'BEFORE' );
-
-            if (count( $aTriggers ) > 0) {
-                $varTriggers .= "<b>-= Before Derivation =-</b><br/>";
-
-                $oPMScript = new PMScript();
-
-                foreach ($aTriggers as $aTrigger) {
-                    //Set variables
-                    $params = new stdClass();
-                    $params->appData = $appFields["APP_DATA"];
-
-                    if ($this->stored_system_variables) {
-                        $params->option = "STORED SESSION";
-                        $params->SID = $this->wsSessionId;
-                    }
-
-                    $appFields["APP_DATA"] = array_merge( $appFields["APP_DATA"], G::getSystemConstants( $params ) );
-
-                    //PMScript
-                    $oPMScript->setFields( $appFields['APP_DATA'] );
-                    $bExecute = true;
-
-                    if ($aTrigger['ST_CONDITION'] !== '') {
-                        $oPMScript->setScript( $aTrigger['ST_CONDITION'] );
-                        $bExecute = $oPMScript->evaluate();
-                    }
-
-                    if ($bExecute) {
-                        $oPMScript->setScript( $aTrigger['TRI_WEBBOT'] );
-                        $oPMScript->execute();
-
-                        $oTrigger = TriggersPeer::retrieveByPk( $aTrigger['TRI_UID'] );
-                        $varTriggers .= "&nbsp;- " . nl2br( htmlentities( $oTrigger->getTriTitle(), ENT_QUOTES ) ) . "<br/>";
-                        //$appFields = $oCase->loadCase( $caseId );
-                        $appFields['APP_DATA'] = $oPMScript->aFields;
-                        unset($appFields['APP_STATUS']);
-                        unset($appFields['APP_PROC_STATUS']);
-                        unset($appFields['APP_PROC_CODE']);
-                        unset($appFields['APP_PIN']);
-                        //$appFields['APP_DATA']['APPLICATION'] = $caseId;
-                        $oCase->updateCase( $caseId, $appFields );
-                    }
-                }
-            }
+            //Execute triggers before routing
+            $varTriggers .= $this->executeTriggerFromDerivate($appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -2, 'BEFORE', "-= Before Derivation =-");
 
             $oDerivation = new Derivation();
             if (!empty($tasks)) {
@@ -2396,8 +2370,8 @@ class wsBase
                     $nodeNext['TAS_DEF_PROC_CODE'] = $val['NEXT_TASK']['TAS_DEF_PROC_CODE'];
                     $nodeNext['DEL_PRIORITY'] = $appdel['DEL_PRIORITY'];
                     $nodeNext['TAS_PARENT'] = $val['NEXT_TASK']['TAS_PARENT'];
-                    $nodeNext['ROU_CONDITION'] = $val['ROU_CONDITION'];
-
+                    $nodeNext['ROU_PREVIOUS_TYPE'] = (isset($val['NEXT_TASK']['ROU_PREVIOUS_TYPE'])) ? $val['NEXT_TASK']['ROU_PREVIOUS_TYPE'] : '';
+                    $nodeNext['ROU_PREVIOUS_TASK'] = (isset($val['NEXT_TASK']['ROU_PREVIOUS_TASK'])) ? $val['NEXT_TASK']['ROU_PREVIOUS_TASK'] : '';
                     $nextDelegations[] = $nodeNext;
                     $varResponse = $varResponse . (($varResponse != '') ? ',' : '') . $val['NEXT_TASK']['TAS_TITLE'] . $usrasgdUserName;
                 }
@@ -2408,27 +2382,26 @@ class wsBase
                 $appFields['TAS_UID'] = $derive['TAS_UID'];
             }
 
-            $row = array ();
-            $oCriteria = new Criteria( 'workflow' );
-            $del = DBAdapter::getStringDelimiter();
-            $oCriteria->addSelectColumn( RoutePeer::ROU_TYPE );
-            $oCriteria->addSelectColumn( RoutePeer::ROU_NEXT_TASK );
-            $oCriteria->add( RoutePeer::TAS_UID, $appdel['TAS_UID'] );
-            $oDataset = TaskPeer::doSelectRS( $oCriteria );
-            $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-            $oDataset->next();
-
-            while ($aRow = $oDataset->getRow()) {
-                $row[] = array('ROU_TYPE' => $aRow['ROU_TYPE'], 'ROU_NEXT_TASK' => $aRow['ROU_NEXT_TASK']);
-                $oDataset->next();
-            }
+            //Get from the route information the nextTask
+            $nextTaskUid = $appdel['TAS_UID'];
+            $nextRouteType = '';
+            do {
+                $oRoute = new \Route();
+                $nextRouteTask = $oRoute->getNextRouteByTask($nextTaskUid);
+                $prefix = '';
+                if (isset($nextRouteTask['ROU_NEXT_TASK'])) {
+                    $nextTaskUid = $nextRouteTask['ROU_NEXT_TASK'];
+                    $nextRouteType = $nextRouteTask['ROU_TYPE'];
+                    $prefix = substr($nextTaskUid, 0, 4);
+                }
+            } while ($prefix == 'gtg-');
 
             $aCurrentDerivation = array (
                 'APP_UID' => $caseId,
                 'DEL_INDEX' => $delIndex,
                 'APP_STATUS' => $sStatus,
                 'TAS_UID' => $appdel['TAS_UID'],
-                'ROU_TYPE' => $row[0]['ROU_TYPE']
+                'ROU_TYPE' => $nextRouteType
             );
 
             //We define some parameters in the before the derivation
@@ -2436,66 +2409,19 @@ class wsBase
             $oDerivation->beforeDerivate(
                 $aData,
                 $nextDelegations,
-                $row[0]['ROU_TYPE'],
+                $nextRouteType,
                 $aCurrentDerivation
             );
 
             $appFields = $oCase->loadCase( $caseId );
 
-            //Execute triggers after derivation
-            $aTriggers = $oCase->loadTriggers( $appdel['TAS_UID'], 'ASSIGN_TASK', - 2, 'AFTER' );
-
-            if (count( $aTriggers ) > 0) {
-
-                //Set variables
-                $params = new stdClass();
-                $params->appData = $appFields["APP_DATA"];
-
-                if ($this->stored_system_variables) {
-                    $params->option = "STORED SESSION";
-                    $params->SID = $this->wsSessionId;
-                }
-
-                $appFields["APP_DATA"] = array_merge( $appFields["APP_DATA"], G::getSystemConstants( $params ) );
-
-                //PMScript
-                $oPMScript = new PMScript();
-                $oPMScript->setFields( $appFields['APP_DATA'] );
-
-                $varTriggers .= "<b>-= After Derivation =-</b><br/>";
-
-                foreach ($aTriggers as $aTrigger) {
-                    $bExecute = true;
-
-                    if ($aTrigger['ST_CONDITION'] !== '') {
-                        $oPMScript->setScript( $aTrigger['ST_CONDITION'] );
-                        $bExecute = $oPMScript->evaluate();
-                    }
-
-                    if ($bExecute) {
-                        $oPMScript->setScript( $aTrigger['TRI_WEBBOT'] );
-                        $oPMScript->execute();
-
-                        $oTrigger = TriggersPeer::retrieveByPk( $aTrigger['TRI_UID'] );
-                        $varTriggers .= "&nbsp;- " . nl2br( htmlentities( $oTrigger->getTriTitle(), ENT_QUOTES ) ) . "<br/>";
-                        //$appFields = $oCase->loadCase($caseId);
-                        $appFields['APP_DATA'] = $oPMScript->aFields;
-                        //$appFields['APP_DATA']['APPLICATION'] = $caseId;
-                        //$appFields = $oCase->loadCase($caseId);
-                        unset($appFields['APP_STATUS']);
-                        unset($appFields['APP_PROC_STATUS']);
-                        unset($appFields['APP_PROC_CODE']);
-                        unset($appFields['APP_PIN']);
-                        $oCase->updateCase( $caseId, $appFields );
-                    }
-                }
-            }
+            //Execute triggers after routing
+            $varTriggers .= $this->executeTriggerFromDerivate($appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -2, 'AFTER', "-= After Derivation =-");
 
             $sFromName = "";
 
             if ($userId != "") {
                 $user = new Users();
-
                 $arrayUserData = $user->load($userId);
 
                 if (trim($arrayUserData["USR_EMAIL"]) == "") {
@@ -2507,15 +2433,9 @@ class wsBase
 
             $oCase->sendNotifications( $appdel['TAS_UID'], $nextDelegations, $appFields['APP_DATA'], $caseId, $delIndex, $sFromName );
 
-            //Save data - Start
-            //$appFields = $oCase->loadCase($caseId);
-            //$oCase->updateCase($caseId, $appFields);
-            //Save data - End
-
-
             $oProcess = new Process();
             $oProcessFieds = $oProcess->Load( $appFields['PRO_UID'] );
-            //here dubug mode in web entry
+            //here debug mode in web entry
 
 
             if (isset( $oProcessFieds['PRO_DEBUG'] ) && $oProcessFieds['PRO_DEBUG']) {
@@ -2528,7 +2448,7 @@ class wsBase
 
             $res = $result->getPayloadArray();
 
-            //now fill the array of AppDelegationPeer
+            //Now fill the array of AppDelegationPeer
             $oCriteria = new Criteria( 'workflow' );
             $oCriteria->addSelectColumn( AppDelegationPeer::DEL_INDEX );
             $oCriteria->addSelectColumn( AppDelegationPeer::USR_UID );
@@ -2546,7 +2466,6 @@ class wsBase
 
             while ($oDataset->next()) {
                 $aAppDel = $oDataset->getRow();
-
                 $oUser = new Users();
 
                 try {
@@ -2566,7 +2485,7 @@ class wsBase
                     $taskName = '';
                 }
 
-                // execute events
+                //Execute events
                 $eventPro = $_SESSION["PROCESS"];
                 $eventApp = $caseId;
                 $eventInd = $aAppDel['DEL_INDEX'];
@@ -2574,8 +2493,7 @@ class wsBase
 
                 $oEvent = new Event();
                 $oEvent->createAppEvents( $eventPro, $eventApp, $eventInd, $eventTas );
-                // end events
-
+                //End events
 
                 $currentUser = new stdClass();
                 $currentUser->userId = $aAppDel['USR_UID'];
@@ -2591,6 +2509,10 @@ class wsBase
             $res['routing'] = $aCurrentUsers;
 
             $g->sessionVarRestore();
+
+            if (!empty($previousAppData)) {
+                $oPMScript->aFields = $previousAppData;
+            }
 
             return $res;
         } catch (Exception $e) {
@@ -2689,12 +2611,10 @@ class wsBase
                 $aTriggers[] = $row;
 
                 $oPMScript = new PMScript();
+                $oPMScript->setDataTrigger($row);
                 $oPMScript->setFields( $appFields['APP_DATA'] );
                 $oPMScript->setScript( $row['TRI_WEBBOT'] );
                 $oPMScript->execute();
-
-                //Log
-                Bootstrap::registerMonolog('triggerExecutionTime', 200, 'Trigger execution time', ['proUid' => $appFields['APP_DATA']['PROCESS'], 'tasUid' => $appFields['APP_DATA']['TASK'], 'appUid' => $appFields['APP_DATA']['APPLICATION'], 'triggerInfo' => ['triUid' => $row['TRI_UID'], 'triExecutionTime' => $oPMScript->scriptExecutionTime]], SYS_SYS, 'processmaker.log');
 
                 if (isset($oPMScript->aFields["__ERROR__"]) && trim($oPMScript->aFields["__ERROR__"]) != "" && $oPMScript->aFields["__ERROR__"] != "none") {
                     throw new Exception($oPMScript->aFields["__ERROR__"]);

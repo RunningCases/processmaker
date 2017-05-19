@@ -1722,6 +1722,9 @@ function PMFAddInputDocument(
  * @label PMF Generate Output Document
  *
  * @param string(32) | $outputID | Output ID | Output Document ID
+ * @param string(32) | $sApplication = null | Case ID | The unique ID for a case
+ * @param string(32) | $index = null | Index | Value for Index
+ * @param string(32) | $sUserLogged = null | User UID | User Logged UID
  * @return none | $none | None | None
  *
  */
@@ -2533,14 +2536,14 @@ function PMFRedirectToStep ($sApplicationUID, $iDelegation, $sStepType, $sStepUi
  * Returns a list of the next assigned users to a case.
  *
  * @name PMFGetNextAssignedUser
- * @label PMFGet Next Assigned User
+ * @label PMF  Get Next Assigned User
  *
  * @param string(32) | $application | Case ID | Id of the case
  * @param string(32) | $task | Task ID | Id of the task
  * @return array | $array | List of users | Return a list of users
  *
  */
-function PMFGetNextAssignedUser ($application, $task, $delIndex = null, $userUid = null)
+function PMFGetNextAssignedUser($application, $task, $delIndex = null, $userUid = null)
 {
 
     require_once 'classes/model/AppDelegation.php';
@@ -2551,33 +2554,34 @@ function PMFGetNextAssignedUser ($application, $task, $delIndex = null, $userUid
     require_once 'classes/model/GroupUser.php';
 
     $oTask = new Task();
-    $TaskFields = $oTask->load( $task );
+    $TaskFields = $oTask->load($task);
     $typeTask = $TaskFields['TAS_ASSIGN_TYPE'];
 
     $g = new G();
 
     $g->sessionVarSave();
 
-    $_SESSION['INDEX'] = (!is_null($delIndex) ? $delIndex : (isset($_SESSION['INDEX']) ? $_SESSION['INDEX'] : null));
-    $_SESSION['USER_LOGGED'] = (!is_null($userUid) ? $userUid : (isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : null));
+    $_SESSION['INDEX'] = (!empty($delIndex) ? $delIndex : (isset($_SESSION['INDEX']) ? $_SESSION['INDEX'] : null));
+    $_SESSION['USER_LOGGED'] = (!empty($userUid) ? $userUid : (isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED']
+        : null));
 
     if ($typeTask == 'BALANCED' && !is_null($_SESSION['INDEX']) && !is_null($_SESSION['USER_LOGGED'])) {
 
-        G::LoadClass( 'derivation' );
+        G::LoadClass('derivation');
         $oDerivation = new Derivation();
-        $aDeriv = $oDerivation->prepareInformation( array ('USER_UID' => $_SESSION['USER_LOGGED'],'APP_UID' => $application,'DEL_INDEX' => $_SESSION['INDEX']
-        ) );
+        $aDeriv = $oDerivation->prepareInformation(array('USER_UID' => $_SESSION['USER_LOGGED'], 'APP_UID' => $application, 'DEL_INDEX' => $_SESSION['INDEX']
+        ));
 
         foreach ($aDeriv as $derivation) {
 
-            $aUser = array ('USR_UID' => $derivation['NEXT_TASK']['USER_ASSIGNED']['USR_UID'],'USR_USERNAME' => $derivation['NEXT_TASK']['USER_ASSIGNED']['USR_USERNAME'],'USR_FIRSTNAME' => $derivation['NEXT_TASK']['USER_ASSIGNED']['USR_FIRSTNAME'],'USR_LASTNAME' => $derivation['NEXT_TASK']['USER_ASSIGNED']['USR_LASTNAME'],'USR_EMAIL' => $derivation['NEXT_TASK']['USER_ASSIGNED']['USR_EMAIL']
+            $aUser = array('USR_UID' => $derivation['NEXT_TASK']['USER_ASSIGNED']['USR_UID'], 'USR_USERNAME' => $derivation['NEXT_TASK']['USER_ASSIGNED']['USR_USERNAME'], 'USR_FIRSTNAME' => $derivation['NEXT_TASK']['USER_ASSIGNED']['USR_FIRSTNAME'], 'USR_LASTNAME' => $derivation['NEXT_TASK']['USER_ASSIGNED']['USR_LASTNAME'], 'USR_EMAIL' => $derivation['NEXT_TASK']['USER_ASSIGNED']['USR_EMAIL']
             );
             $aUsers[] = $aUser;
         }
 
         $g->sessionVarRestore();
 
-        if (count( $aUsers ) == 1) {
+        if (count($aUsers) == 1) {
             return $aUser;
         } else {
             return $aUsers;
@@ -2598,7 +2602,7 @@ function PMFGetNextAssignedUser ($application, $task, $delIndex = null, $userUid
  * @label PMF Get User Email Address
  * @link http://wiki.processmaker.com/index.php/ProcessMaker_Functions#PMFGetUserEmailAddress.28.29
  *
- * @param string(32) or Array | $id | Case ID | Id of the case.
+ * @param string(32) or Array | $id | List of Recipients | which can be a mixture of user IDs, group IDs, variable names or email addresses
  * @param string(32) | $APP_UID = null | Application ID | Id of the Application.
  * @param string(32) | $prefix = "usr" | prefix | Id of the task.
  * @return array | $aRecipient | Array of the Recipient | Return an Array of the Recipient.
@@ -3125,7 +3129,7 @@ function PMFGeti18nText($id, $category, $lang = "en")
  * @method
  * The requested text in the specified language | If not found returns false
  * @name PMFUnCancelCase
- * @label PMF Un Cancel Case
+ * @label PMF Restore Case
  * @param string | $caseUID | ID Case | Is the unique UID of the case
  * @param string | $userUID | ID User  | Is the unique ID of the user who will uncancel the case
  * @return int | $value | Return | Returns 1 if the case was successfully uncancelled, otherwise returns 0 if an error ocurred
@@ -3279,10 +3283,10 @@ function PMFGetDynaformUID($dynaFormName, $processUid = null)
         return false;
     }
 
-    $arrayResult = PMFGetUidFromText($dynaFormName, 'DYN_TITLE', (!is_null($processUid))? $processUid : $_SESSION['PROCESS']);
+    $arrayResult = PMFGetUidFromText($dynaFormName, 'DYN_TITLE', (!empty($processUid)) ? $processUid : $_SESSION['PROCESS']);
 
     //Return
-    return (!empty($arrayResult))? array_shift($arrayResult) : false;
+    return (!empty($arrayResult)) ? array_shift($arrayResult) : false;
 }
 
 /**
@@ -3347,7 +3351,8 @@ function PMFGetTaskUID($taskName, $processUid = null)
     $criteria->addSelectColumn(TaskPeer::TAS_UID);
     $criteria->add(TaskPeer::TAS_TITLE, $taskName, Criteria::EQUAL);
 
-    $criteria->add(TaskPeer::PRO_UID, (!is_null($processUid))? $processUid : $_SESSION['PROCESS'], Criteria::EQUAL);
+    $criteria->add(TaskPeer::PRO_UID, (!empty($processUid)) ? $processUid : $_SESSION['PROCESS'],
+        Criteria::EQUAL);
 
     $rsCriteria = TaskPeer::doSelectRS($criteria);
     $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -3359,7 +3364,7 @@ function PMFGetTaskUID($taskName, $processUid = null)
     }
 
     //Return
-    return ($taskUid != '')? $taskUid : false;
+    return ($taskUid != '') ? $taskUid : false;
 }
 
 /**
@@ -3367,7 +3372,7 @@ function PMFGetTaskUID($taskName, $processUid = null)
  * Get Group Users
  * @name PMFGetGroupUsers
  * @label PMF Group Users
- * @param string | $GroupUID | Is UID of Group
+ * @param string | $GroupUID | Group UID
  * @return  array | $result | array
  */
 function PMFGetGroupUsers($GroupUID)
@@ -3501,15 +3506,14 @@ function PMFCaseLink($caseUid, $workspace = null, $language = null, $skin = null
         if ($arrayApplicationData === false) {
             return false;
         }
-
-        $workspace = (!is_null($workspace))? $workspace : SYS_SYS;
-        $language = (!is_null($language))? $language : SYS_LANG;
-        $skin = (!is_null($skin))? $skin : SYS_SKIN;
+        $workspace = (!empty($workspace)) ? $workspace : SYS_SYS;
+        $language = (!empty($language)) ? $language : SYS_LANG;
+        $skin = (!empty($skin)) ? $skin : SYS_SKIN;
 
         $uri = '/sys' . $workspace . '/' . $language . '/' . $skin . '/cases/opencase/' . $caseUid;
 
         //Return
-        return ((G::is_https())? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $uri;
+        return ((G::is_https()) ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] . $uri;
     } catch (Exception $e) {
         throw $e;
     }
@@ -3707,7 +3711,7 @@ function PMFCopyDocumentCase($appDocUid, $versionNumber, $targetCaseUid, $inputD
             "APP_UID" => $targetCaseUid,
             "DEL_INDEX" => $dataFields['DEL_INDEX'],
             "USR_UID" => $dataFields['USR_UID'],
-            "DOC_UID" => ($inputDocumentUid != null) ? $inputDocumentUid : $dataFields['DOC_UID'],
+            "DOC_UID" => (!empty($inputDocumentUid)) ? $inputDocumentUid : $dataFields['DOC_UID'],
             "APP_DOC_TYPE" => $dataFields['APP_DOC_TYPE'],
             "APP_DOC_CREATE_DATE" => date("Y-m-d H:i:s"),
             "APP_DOC_COMMENT" => $dataFields['APP_DOC_COMMENT'],

@@ -5,7 +5,9 @@
  *
  * @author Alexandre Rosenfeld
  */
-
+G::LoadSystem('dbMaintenance');
+G::LoadClass("cli");
+G::LoadClass("multipleFilesBackup");
 /**
  * class workspaceTools
  *
@@ -142,6 +144,13 @@ class workspaceTools
         $stop = microtime(true);
         $final = $stop - $start;
         CLI::logging("<*>   Check Mafe Requirements Process took $final seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Updating Triggers...\n");
+        $this->updateTriggers(true, $lang);
+        $stop = microtime(true);
+        $final = $stop - $start;
+        CLI::logging("<*>   Updating Triggers Process took $final seconds.\n");
 
         $start = microtime(true);
         CLI::logging("> Backup log files...\n");
@@ -1701,16 +1710,6 @@ class workspaceTools
 
             if (Installer::isset_site($workspaceName)) {
                 if ($overwrite) {
-                    if ($workspace->dbInfo['DB_NAME'] == $workspace->dbInfo['DB_RBAC_NAME']) {
-                        $newDatabases = 1;
-                    } else {
-                        $newDatabases = 3;
-                    }
-
-                    if ($newDatabases != $oldDatabases) {
-                        throw new Exception("We can't overwrite this workspace because it has a different amount of databases. Not only the 'source' but also the 'target' must have the same amount of databases.");
-                    }
-
                     if (!$workspace->workspaceExists()) {
                         throw new Exception('We can not overwrite this workspace because the workspace ' . $workspaceName . ' does not exist please check the lower case and upper case.');
                     }
@@ -2589,10 +2588,10 @@ class workspaceTools
                          LEFT JOIN ' . $this->dbName . '.USERS ON CUR_USER.USR_UID = USERS.USR_UID
                          LEFT JOIN ' . $this->dbName . '.TASK ON CUR_USER.TAS_UID = TASK.TAS_UID) USERS_VALUES
                     SET
-                      LPL.DEL_CURRENT_USR_USERNAME  = USERS_VALUES.USR_USERNAME,
-                      LPL.DEL_CURRENT_USR_FIRSTNAME = USERS_VALUES.USR_FIRSTNAME,
-                      LPL.DEL_CURRENT_USR_LASTNAME  = USERS_VALUES.USR_LASTNAME,
-                      LPL.DEL_CURRENT_TAS_TITLE     = USERS_VALUES.TAS_TITLE
+                      LPL.DEL_CURRENT_USR_USERNAME  = IFNULL(USERS_VALUES.USR_USERNAME, \'\'),
+                      LPL.DEL_CURRENT_USR_FIRSTNAME = IFNULL(USERS_VALUES.USR_FIRSTNAME, \'\'),
+                      LPL.DEL_CURRENT_USR_LASTNAME  = IFNULL(USERS_VALUES.USR_LASTNAME, \'\'),
+                      LPL.DEL_CURRENT_TAS_TITLE     = IFNULL(USERS_VALUES.TAS_TITLE, \'\')
                     WHERE LPL.APP_UID = USERS_VALUES.APP_UID';
         $con = Propel::getConnection("workflow");
         $stmt = $con->createStatement();
@@ -2611,6 +2610,7 @@ class workspaceTools
         $delaycriteria->addSelectColumn(AppCacheViewPeer::USR_UID);
         $delaycriteria->addSelectColumn(AppCacheViewPeer::APP_STATUS);
         $delaycriteria->addSelectColumn(AppCacheViewPeer::TAS_UID);
+        $delaycriteria->addSelectColumn(AppCacheViewPeer::DEL_DELEGATE_DATE);
 
         $delaycriteria->addJoin( AppCacheViewPeer::APP_UID, AppDelayPeer::APP_UID . ' AND ' . AppCacheViewPeer::DEL_INDEX . ' = ' . AppDelayPeer::APP_DEL_INDEX, Criteria::INNER_JOIN );
         $delaycriteria->add(AppDelayPeer::APP_DISABLE_ACTION_USER, "0", CRITERIA::EQUAL);
@@ -3782,4 +3782,14 @@ class workspaceTools
         }
     }
 
+    /**
+     * Updating triggers
+     * @param $flagRecreate
+     * @param $lang
+     */
+    public function updateTriggers($flagRecreate, $lang)
+    {
+        $this->initPropel(true);
+        $this->upgradeTriggersOfTables($flagRecreate, $lang);
+    }
 }

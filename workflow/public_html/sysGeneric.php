@@ -733,6 +733,9 @@ if (! is_file( PATH_LANGUAGECONT . 'translation.en' )) {
 
     $pmTranslation = new Translation();
     $fields = $pmTranslation->generateFileTranslation("en");
+
+    // Load Language Translation
+    Bootstrap::LoadTranslationObject("en");
 }
 
 // TODO: Verify if the language set into url is defined in translations env.
@@ -743,6 +746,9 @@ if (SYS_LANG != 'en' && ! is_file( PATH_LANGUAGECONT . 'translation.' . SYS_LANG
 
     $pmTranslation = new Translation();
     $fields = $pmTranslation->generateFileTranslation(SYS_LANG);
+
+    // Load Language Translation
+    Bootstrap::LoadTranslationObject(SYS_LANG);
 }
 
 // Setup plugins
@@ -962,6 +968,7 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
         $noLoginFiles[] = 'licenseUpdate';
         $noLoginFiles[] = 'casesStreamingFile';
         $noLoginFiles[] = 'opencase';
+        $noLoginFiles[] = 'defaultAjaxDynaform';
 
         $noLoginFolders[] = 'services';
         $noLoginFolders[] = 'tracker';

@@ -60,7 +60,8 @@ class Groupwf extends BaseGroupwf
             $v = (string) $v;
         }
 
-        if ($this->grp_title_content !== $v || $v === '') {
+        if (in_array(GroupwfPeer::GRP_TITLE, $this->modifiedColumns) !== $v || $v
+        === '') {
             $this->grp_title_content = $v;
             $lang = defined( 'SYS_LANG' ) ? SYS_LANG : 'en';
             $res = Content::addContent( 'GRP_TITLE', '', $this->getGrpUid(), $lang, $this->grp_title_content );
@@ -105,14 +106,12 @@ class Groupwf extends BaseGroupwf
 
             if ($this->validate()) {
                 $con->begin();
-                $res = $this->save();
-
                 if (isset( $aData['GRP_TITLE'] )) {
                     $this->setGrpTitleContent( $aData['GRP_TITLE'] );
                 } else {
                     $this->setGrpTitleContent( 'Default Group Title' );
                 }
-
+                $res = $this->save();
                 $con->commit();
                 return $this->getGrpUid();
             } else {

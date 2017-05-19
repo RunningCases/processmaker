@@ -473,13 +473,15 @@ class EmailServer
                     $arrayResult[$arrayMailTestName[1]] = $this->testConnectionByStep($arrayDataAux);
                     $arrayResult[$arrayMailTestName[1]]["title"] = \G::LoadTranslation("ID_EMAIL_SERVER_TEST_CONNECTION_VERIFYING_MAIL");
 
-                    if ((int)($arrayData["MESS_TRY_SEND_INMEDIATLY"]) == 1) {
+                    if ((int)($arrayData["MESS_TRY_SEND_INMEDIATLY"]) == 1 && $arrayData['MAIL_TO'] != '') {
                         $arrayResult[$arrayMailTestName[2]] = $this->testConnectionByStep($arrayData);
                         $arrayResult[$arrayMailTestName[2]]["title"] = \G::LoadTranslation("ID_EMAIL_SERVER_TEST_CONNECTION_SENDING_EMAIL", array($arrayData["MAIL_TO"]));
                     }
                     break;
                 case "PHPMAILER":
-                    for ($step = 1; $step <= 5; $step++) {
+                    $numSteps = ($arrayData['MAIL_TO'] != '') ? count($arrayPhpMailerTestName) :
+                        count($arrayPhpMailerTestName) - 1;
+                    for ($step = 1; $step <= $numSteps; $step++) {
                         $arrayResult[$arrayPhpMailerTestName[$step]] = $this->testConnectionByStep($arrayData, $step);
 
                         switch ($step) {

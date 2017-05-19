@@ -91,6 +91,8 @@ try {
     require_once('propel/Propel.php');
     require_once('creole/Creole.php');
 
+    //TODO: get rid of the global variable improving the timezone activation when this feature is enabled
+    global $arraySystemConfiguration;
     $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspace);
 
     $e_all = (defined('E_DEPRECATED'))?            E_ALL  & ~E_DEPRECATED : E_ALL;
@@ -630,7 +632,6 @@ function executeScheduledCases($sNow=null)
     try {
         global $argvx;
         global $sNow;
-
         $log = array();
 
         if ($argvx != "" && strpos($argvx, "scheduler") === false) {
@@ -640,10 +641,10 @@ function executeScheduledCases($sNow=null)
         setExecutionMessage("Executing the scheduled starting cases");
         setExecutionResultMessage('PROCESSING');
 
-        $sNow = isset($sNow)? $sNow : date('Y-m-d H:i:s');
+        $runDate = runDateForScheduledCases($sNow);
 
         $oCaseScheduler = new CaseScheduler();
-        $oCaseScheduler->caseSchedulerCron($sNow, $log, 1);
+        $oCaseScheduler->caseSchedulerCron($runDate, $log, 1);
 
         foreach ($log as $value) {
             $arrayCron = unserialize(trim(@file_get_contents(PATH_DATA . "cron")));
@@ -658,6 +659,35 @@ function executeScheduledCases($sNow=null)
         setExecutionResultMessage('WITH ERRORS', 'error');
         eprintln("  '-".$oError->getMessage(), 'red');
     }
+}
+
+function runDateForScheduledCases($sNow) {
+    global $arraySystemConfiguration;
+
+    $runDate = isset($sNow)? $sNow : date('Y-m-d H:i:s');
+
+    $systemUtcTimeZone = false;
+    /*----------------------------------********---------------------------------*/
+    if (PMLicensedFeatures::getSingleton()->verifyfeature('oq3S29xemxEZXJpZEIzN01qenJUaStSekY4cTdJVm5vbWtVM0d4S2lJSS9qUT0=')) {
+        $systemUtcTimeZone = (int)($arraySystemConfiguration['system_utc_time_zone']) == 1;
+    }
+    /*----------------------------------********---------------------------------*/
+
+    if ($systemUtcTimeZone) {
+        if (isset($sNow)) {
+            //as the $sNow param that comes from the command line doesn't specicy a time zone
+            //we assume that the user set this time using the server time zone so we use the gmdate
+            //function to convert it
+            $currentTimeZone = date_default_timezone_get();
+            date_default_timezone_set($arraySystemConfiguration['time_zone']);
+            $runDate =  gmdate('Y-m-d H:i:s', strtotime($sNow));
+            date_default_timezone_set($currentTimeZone);
+        }
+        else {
+            $runDate =  gmdate('Y-m-d H:i:s');
+        }
+    }
+    return $runDate;
 }
 
 function executeUpdateAppTitle()
@@ -838,6 +868,7 @@ function executeCaseSelfService()
                         global $oPMScript;
 
                         $oPMScript = new PMScript();
+                        $oPMScript->setDataTrigger($row);
                         $oPMScript->setFields($appFields["APP_DATA"]);
                         $oPMScript->setScript($row["TRI_WEBBOT"]);
                         $oPMScript->execute();

@@ -209,7 +209,7 @@ if ($flagExecuteBeforeTriggers) {
     $_SESSION['TRIGGER_DEBUG']['NUM_TRIGGERS'] = count( $triggers );
     $_SESSION['TRIGGER_DEBUG']['TIME'] = G::toUpper(G::loadTranslation('ID_BEFORE'));
     if ($_SESSION['TRIGGER_DEBUG']['NUM_TRIGGERS'] != 0) {
-        $_SESSION['TRIGGER_DEBUG']['TRIGGERS_NAMES'] = $oCase->getTriggerNames( $triggers );
+        $_SESSION['TRIGGER_DEBUG']['TRIGGERS_NAMES'] = array_column($triggers, 'TRI_TITLE');
         $_SESSION['TRIGGER_DEBUG']['TRIGGERS_VALUES'] = $triggers;
     }
 
@@ -219,16 +219,7 @@ if ($flagExecuteBeforeTriggers) {
         //Execute before triggers - End
 
         $_SESSION['TRIGGER_DEBUG']['TRIGGERS_EXECUTION_TIME'] = $oCase->arrayTriggerExecutionTime;
-        $arrayInfoTriggerExecutionTime = [];
 
-        foreach ($_SESSION['TRIGGER_DEBUG']['TRIGGERS_EXECUTION_TIME'] as $key => $value) {
-            $arrayInfoTriggerExecutionTime[] = ['triUid' => $key, 'triExecutionTime' => $value];
-        }
-
-        //Log
-        if(sizeof($arrayInfoTriggerExecutionTime)>0){
-            Bootstrap::registerMonolog('triggerExecutionTime', 200, 'Trigger execution time', ['proUid' => $Fields['APP_DATA']['PROCESS'], 'tasUid' => $Fields['APP_DATA']['TASK'], 'appUid' => $Fields['APP_DATA']['APPLICATION'], 'before' => $_GET['TYPE'], 'triggerInfo' => $arrayInfoTriggerExecutionTime], SYS_SYS, 'processmaker.log');
-        }
     } else {
         unset( $_SESSION['_NO_EXECUTE_TRIGGERS_'] );
     }
@@ -278,6 +269,7 @@ try {
     $aNextStep = $oCase->getNextStep( $_SESSION['PROCESS'], $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['STEP_POSITION'] );
     $aPreviousStep = $oCase->getPreviousStep( $_SESSION['PROCESS'], $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['STEP_POSITION'] );
 } catch (Exception $e) {
+    throw $e;
 }
 //Obtain previous and next step - End
 
@@ -418,7 +410,7 @@ try {
 
 
                     $oHeadPublisher = & headPublisher::getSingleton();
-                    $titleDocument = "<h3>" . $Fields['INP_DOC_TITLE'] . "<br><small>" . G::LoadTranslation( 'ID_INPUT_DOCUMENT' ) . "</small></h3>";
+                    $titleDocument = "<h3>" . htmlspecialchars($Fields['INP_DOC_TITLE'], ENT_QUOTES) . "<br><small>" . G::LoadTranslation('ID_INPUT_DOCUMENT') . "</small></h3>";
                     if ($Fields['INP_DOC_DESCRIPTION']) {
                         $titleDocument .= " " . str_replace( "\n", "", str_replace( "'", "\'", nl2br( html_entity_decode($Fields['INP_DOC_DESCRIPTION'], ENT_COMPAT, "UTF-8") ) ) ) . "";
                     }

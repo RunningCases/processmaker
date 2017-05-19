@@ -89,7 +89,7 @@ class Application extends BaseApplication
             $v = (string) $v;
         }
 
-        if ($this->app_title_content !== $v || $v === '') {
+        if (in_array(ApplicationPeer::APP_TITLE, $this->modifiedColumns) || $v === '') {
             $this->app_title_content = $v;
             $lang = defined('SYS_LANG')? SYS_LANG : 'en';
             $res = Content::addContent('APP_TITLE', '', $this->getAppUid(), $lang, $this->app_title_content);
@@ -130,7 +130,7 @@ class Application extends BaseApplication
             $v = (string) $v;
         }
 
-        if ($this->app_description_content !== $v || $v === '') {
+        if (in_array(ApplicationPeer::APP_DESCRIPTION, $this->modifiedColumns) || $v === '') {
             $this->app_description_content = $v;
             $lang = defined('SYS_LANG')? SYS_LANG : 'en';
             $res = Content::addContent('APP_DESCRIPTION', '', $this->getAppUid(), $lang, $this->app_description_content);
@@ -189,9 +189,6 @@ class Application extends BaseApplication
 
         try {
             $oApplication = ApplicationPeer::retrieveByPK( $AppUid );
-            if (!$oApplication) {
-                return false;
-            }
             if (is_object($oApplication) && get_class ($oApplication) == 'Application' ) {
                 $aFields = $oApplication->toArray(BasePeer::TYPE_FIELDNAME);
                 $this->fromArray($aFields, BasePeer::TYPE_FIELDNAME);
@@ -252,14 +249,11 @@ class Application extends BaseApplication
 
             if ($this->validate()) {
                 $con->begin();
-                $res = $this->save();
-                $con->commit();
-
                 $this->setAppTitleContent('#' . $maxNumber);
                 $this->setAppDescriptionContent('');
                 //to do: ID_CASE in translation $this->setAppTitle(G::LoadTranslation('ID_CASE') . $maxNumber);
                 //Content::insertContent('APP_PROC_CODE', '', $this->getAppUid(), $lang, '');
-
+                $res = $this->save();
                 $con->commit();
 
                 return $this->getAppUid();

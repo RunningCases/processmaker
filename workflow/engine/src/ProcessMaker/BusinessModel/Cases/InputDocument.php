@@ -944,6 +944,12 @@ class InputDocument
                         //***Validating the file allowed extensions***
                         $res = \G::verifyInputDocExtension($aID['INP_DOC_TYPE_FILE'], $arrayFileName[$i], $arrayFileTmpName[$i]);
                         if ($res->status == 0) {
+                            //The value of the variable "_label" is cleared because the file load failed.
+                            //The validation of the die command should be improved.
+                            if (isset($aData["APP_DATA"][$item . "_label"]) && !empty($aData["APP_DATA"][$item . "_label"])) {
+                                unset($aData["APP_DATA"][$item . "_label"]);
+                                $caseInstance->updateCase($appUid, $aData);
+                            }
                             $message = $res->message;
                             \G::SendMessageText($message, "ERROR");
                             $backUrlObj = explode("sys" . SYS_SYS, $_SERVER['HTTP_REFERER']);

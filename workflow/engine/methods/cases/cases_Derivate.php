@@ -100,17 +100,9 @@ try {
         //save trigger variables for debugger
         $_SESSION['TRIGGER_DEBUG']['info'][0]['NUM_TRIGGERS'] = sizeof( $triggers );
         $_SESSION['TRIGGER_DEBUG']['info'][0]['TIME'] = G::toUpper(G::loadTranslation('ID_BEFORE'));
-        $_SESSION['TRIGGER_DEBUG']['info'][0]['TRIGGERS_NAMES'] = $oCase->getTriggerNames( $triggers );
+        $_SESSION['TRIGGER_DEBUG']['info'][0]['TRIGGERS_NAMES'] = array_column($triggers, 'TRI_TITLE');
         $_SESSION['TRIGGER_DEBUG']['info'][0]['TRIGGERS_VALUES'] = $triggers;
         $_SESSION['TRIGGER_DEBUG']['info'][0]['TRIGGERS_EXECUTION_TIME'] = $oCase->arrayTriggerExecutionTime;
-        $arrayInfoTriggerExecutionTime = [];
-
-        foreach ($_SESSION['TRIGGER_DEBUG']['info'][0]['TRIGGERS_EXECUTION_TIME'] as $key => $value) {
-            $arrayInfoTriggerExecutionTime[] = ['triUid' => $key, 'triExecutionTime' => $value];
-        }
-
-        //Log
-        Bootstrap::registerMonolog('triggerExecutionTime', 200, 'Trigger execution time', ['proUid' => $appFields['APP_DATA']['PROCESS'], 'tasUid' => $appFields['APP_DATA']['TASK'], 'appUid' => $appFields['APP_DATA']['APPLICATION'], 'before' => 'ASSIGN_TASK', 'triggerInfo' => $arrayInfoTriggerExecutionTime], SYS_SYS, 'processmaker.log');
     }
 
     unset($appFields['APP_STATUS']);
@@ -171,17 +163,9 @@ try {
 
         $_SESSION['TRIGGER_DEBUG']['info'][1]['NUM_TRIGGERS'] = sizeof( $triggers );
         $_SESSION['TRIGGER_DEBUG']['info'][1]['TIME'] = G::toUpper(G::loadTranslation('ID_AFTER'));
-        $_SESSION['TRIGGER_DEBUG']['info'][1]['TRIGGERS_NAMES'] = $oCase->getTriggerNames( $triggers );
+        $_SESSION['TRIGGER_DEBUG']['info'][1]['TRIGGERS_NAMES'] = array_column($triggers, 'TRI_TITLE');
         $_SESSION['TRIGGER_DEBUG']['info'][1]['TRIGGERS_VALUES'] = $triggers;
         $_SESSION['TRIGGER_DEBUG']['info'][1]['TRIGGERS_EXECUTION_TIME'] = $oCase->arrayTriggerExecutionTime;
-        $arrayInfoTriggerExecutionTimeAux = [];
-
-        foreach ($_SESSION['TRIGGER_DEBUG']['info'][1]['TRIGGERS_EXECUTION_TIME'] as $key => $value) {
-            $arrayInfoTriggerExecutionTimeAux[] = ['triUid' => $key, 'triExecutionTime' => $value];
-        }
-
-        //Log
-        Bootstrap::registerMonolog('triggerExecutionTime', 200, 'Trigger execution time', ['proUid' => $appFields['APP_DATA']['PROCESS'], 'tasUid' => $appFields['APP_DATA']['TASK'], 'appUid' => $appFields['APP_DATA']['APPLICATION'], 'after' => 'ASSIGN_TASK', 'triggerInfo' => $arrayInfoTriggerExecutionTimeAux], SYS_SYS, 'processmaker.log');
     }
     unset($appFields['APP_STATUS']);
     unset($appFields['APP_PROC_STATUS']);

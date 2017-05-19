@@ -30,9 +30,9 @@ class newSiteProxy extends HttpProxyController
                     return;
                 }
             }
-            $user = (isset( $_POST['NW_USERNAME'] )) ? trim( $_POST['NW_USERNAME'] ) : 'admin';
-            $pass = (isset( $_POST['NW_PASSWORD'] )) ? $_POST['NW_PASSWORD'] : 'admin';
-            $pass1 = (isset( $_POST['NW_PASSWORD2'] )) ? $_POST['NW_PASSWORD2'] : 'admin';
+            $user = (isset($_POST['NW_USERNAME'])) ? trim($_POST['NW_USERNAME']) : 'admin';
+            $pass = (isset($_POST['NW_PASSWORD'])) ? trim($_POST['NW_PASSWORD']) : 'admin';
+            $pass1 = (isset($_POST['NW_PASSWORD2'])) ? trim($_POST['NW_PASSWORD2']) : 'admin';
 
 
             $ao_db_wf = (isset( $_POST['AO_DB_WF'] )) ? $_POST['AO_DB_WF'] : false;
