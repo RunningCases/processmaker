@@ -219,16 +219,7 @@ if ($flagExecuteBeforeTriggers) {
         //Execute before triggers - End
 
         $_SESSION['TRIGGER_DEBUG']['TRIGGERS_EXECUTION_TIME'] = $oCase->arrayTriggerExecutionTime;
-        $arrayInfoTriggerExecutionTime = [];
 
-        foreach ($_SESSION['TRIGGER_DEBUG']['TRIGGERS_EXECUTION_TIME'] as $key => $value) {
-            $arrayInfoTriggerExecutionTime[] = ['triUid' => $key, 'triExecutionTime' => $value];
-        }
-
-        //Log
-        if(sizeof($arrayInfoTriggerExecutionTime)>0){
-            Bootstrap::registerMonolog('triggerExecutionTime', 200, 'Trigger execution time', ['proUid' => $Fields['APP_DATA']['PROCESS'], 'tasUid' => $Fields['APP_DATA']['TASK'], 'appUid' => $Fields['APP_DATA']['APPLICATION'], 'before' => $_GET['TYPE'], 'triggerInfo' => $arrayInfoTriggerExecutionTime], SYS_SYS, 'processmaker.log');
-        }
     } else {
         unset( $_SESSION['_NO_EXECUTE_TRIGGERS_'] );
     }

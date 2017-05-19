@@ -70,6 +70,7 @@ class Applications
                     APP_DELEGATION.DEL_DELAYED,
                     APP_DELEGATION.DEL_DELAY_DURATION,
                     TASK.TAS_TITLE AS APP_TAS_TITLE,
+                    TASK.TAS_TYPE AS APP_TAS_TYPE,
                     USERS.USR_LASTNAME,
                     USERS.USR_FIRSTNAME,
                     USERS.USR_USERNAME,
@@ -156,6 +157,9 @@ class Applications
         }
 
         //Define the number of records by return
+        if(empty($limit)) {
+            $limit = 25;
+        }
         if (!empty($start)) {
             $sqlData .= " LIMIT $start, " . $limit;
         } else {

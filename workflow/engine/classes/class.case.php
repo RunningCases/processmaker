@@ -3478,11 +3478,13 @@ class Cases
                 $bExecute = true;
 
                 if ($aTrigger['ST_CONDITION'] !== '') {
+                    $oPMScript->setDataTrigger($aTrigger);
                     $oPMScript->setScript($aTrigger['ST_CONDITION']);
                     $bExecute = $oPMScript->evaluate();
                 }
 
                 if ($bExecute) {
+                    $oPMScript->setDataTrigger($aTrigger);
                     $oPMScript->setScript($aTrigger['TRI_WEBBOT']);
                     $oPMScript->execute();
 
@@ -7143,6 +7145,7 @@ class Cases
             $aFields['APP_DATA']['APPLICATION'] = $appUid;
             $aFields['APP_DATA']['PROCESS'] = $proUid;
             $oPMScript = new PMScript();
+            $oPMScript->setDataTrigger($arrayWebBotTrigger);
             $oPMScript->setFields($aFields['APP_DATA']);
             $oPMScript->setScript($arrayWebBotTrigger['TRI_WEBBOT']);
             $oPMScript->execute();
@@ -7153,9 +7156,6 @@ class Cases
             unset($aFields['APP_PROC_CODE']);
             unset($aFields['APP_PIN']);
             $this->updateCase($aFields['APP_UID'], $aFields);
-
-            //Log
-            Bootstrap::registerMonolog('triggerExecutionTime', 200, 'Trigger execution time', ['proUid' => $aFields['APP_DATA']['PROCESS'], 'tasUid' => $aFields['APP_DATA']['TASK'], 'appUid' => $aFields['APP_DATA']['APPLICATION'], 'action' => $action, 'triggerInfo' => ['triUid' => $arrayWebBotTrigger['TRI_UID'], 'triExecutionTime' => $oPMScript->scriptExecutionTime]], SYS_SYS, 'processmaker.log');
 
             return true;
         }

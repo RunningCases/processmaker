@@ -270,7 +270,7 @@ class Light extends Api
                 'PREVIOUS_USR_UID'       => 'userId',
                 'PREVIOUS_USR_FIRSTNAME' => 'firstName',
                 'PREVIOUS_USR_LASTNAME'  => 'lastName',
-                'PREVIOUS_USR_USERNAME'  => 'fullName',
+                'PREVIOUS_USR_USERNAME'  => 'userName',
             ),
             'process' => array(
                 'PRO_UID'       => 'processId',
@@ -369,7 +369,7 @@ class Light extends Api
                 'USR_UID'       => 'userId',
                 'USR_FIRSTNAME' => 'firstName',
                 'USR_LASTNAME'  => 'lastName',
-                'USR_USERNAME'  => 'fullName',
+                'USR_USERNAME'  => 'userName',
             ),
             'process' => array(
                 'PRO_UID'       => 'processId',
@@ -472,13 +472,13 @@ class Light extends Api
                 'USR_UID'       => 'userId',
                 'USR_FIRSTNAME' => 'firstName',
                 'USR_LASTNAME'  => 'lastName',
-                'USR_USERNAME'  => 'fullName',
+                'USR_USERNAME'  => 'userName',
             ),
             'prevUser' => array(
                 'PREVIOUS_USR_UID'       => 'userId',
                 'PREVIOUS_USR_FIRSTNAME' => 'firstName',
                 'PREVIOUS_USR_LASTNAME'  => 'lastName',
-                'PREVIOUS_USR_USERNAME'  => 'fullName',
+                'PREVIOUS_USR_USERNAME'  => 'userName',
             ),
             'process' => array(
                 'PRO_UID'       => 'processId',
@@ -572,13 +572,13 @@ class Light extends Api
                 'USR_UID'       => 'userId',
                 'DEL_CURRENT_USR_FIRSTNAME' => 'firstName',
                 'DEL_CURRENT_USR_LASTNAME'  => 'lastName',
-                'DEL_CURRENT_USR_USERNAME'  => 'fullName',
+                'DEL_CURRENT_USR_USERNAME'  => 'userName',
             ),
             'prevUser' => array(
                 'DEL_PREVIOUS_USR_UID'       => 'userId',
                 'DEL_PREVIOUS_USR_FIRSTNAME' => 'firstName',
                 'DEL_PREVIOUS_USR_LASTNAME'  => 'lastName',
-                'DEL_PREVIOUS_USR_USERNAME'  => 'fullName',
+                'DEL_PREVIOUS_USR_USERNAME'  => 'userName',
             ),
             'process' => array(
                 'PRO_UID'       => 'processId',
@@ -655,13 +655,13 @@ class Light extends Api
                 'usrcr_usr_uid'       => 'userId',
                 'usrcr_usr_firstname' => 'firstName',
                 'usrcr_usr_lastname'  => 'lastName',
-                'usrcr_usr_username'  => 'fullName',
+                'usrcr_usr_username'  => 'userName',
             ),
             'prevUser' => array(
                 'previous_usr_uid'       => 'userId',
                 'previous_usr_firstname' => 'firstName',
                 'previous_usr_lastname'  => 'lastName',
-                'previous_usr_username'  => 'fullName',
+                'previous_usr_username'  => 'userName',
             ),
             'process' => array(
                 'pro_uid'       => 'processId',
