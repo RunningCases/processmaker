@@ -8,9 +8,9 @@
 <TABLE_NAME_DEFAULT type="hidden" />
 <IFORM type="hidden" />
 
-<CON_STATUS type="checkbox" value="ACTIVE" falsevalue="INACTIVE">
-  <en><![CDATA[Enable consolidate for this task.]]></en>
-</CON_STATUS>
+  <CON_STATUS type="checkbox" value="ACTIVE" falsevalue="INACTIVE">
+    <en><![CDATA[Enable consolidate for this task.]]></en>
+  </CON_STATUS>
 
 <DYN_UID type="dropdown">
   <![CDATA[
@@ -31,16 +31,16 @@
     <option name="">- Select a DynaForm template -</option>
   </en>
 </DYN_UID>
-<TABLE_NAME type="text" maxlength="60" validate="Login" size="40" mode="edit" required="1" mask="">
-  <en><![CDATA[Table Name]]></en>
-</TABLE_NAME>
-<TITLE type="text" maxlength="60" validate="Any" size="40" mode="edit">
-  <en><![CDATA[Title]]></en>
-</TITLE>
+  <TABLE_NAME type="text" maxlength="60" validate="Login" size="40" mode="edit" required="1" mask="">
+    <en><![CDATA[Table Name]]></en>
+  </TABLE_NAME>
+  <TITLE type="text" maxlength="60" validate="Any" size="40" mode="edit">
+    <en><![CDATA[Title]]></en>
+  </TITLE>
 
 <APPLY type="button" onClick="conSaveProperties(0)" >
-  <en><![CDATA[Apply]]></en>
-</APPLY>
+    <en><![CDATA[Apply]]></en>
+  </APPLY>
 
 <JS type="javascript">
   <![CDATA[
@@ -69,7 +69,7 @@
             case 1:
                 tableName.failed();
 
-                if(confirm("The table name already exists\n\nDo you want to overwrite the table?")) {
+                if(confirm("@G::LoadTranslation(ID_BATCH_ROUTING_TABLE_ALREADY_EXISTS)")) {
                     conSaveProperties(1);
                 }
                 break;
@@ -114,6 +114,5 @@
       hideRow('TITLE');
     }
   };
-  ]]>
-</JS>
+  ]]></JS>
 </dynaForm>
