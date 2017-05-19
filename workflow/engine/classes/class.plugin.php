@@ -577,11 +577,16 @@ class PMPlugin
         return $items;
     }
     
+    /**
+     * Gets a general list of all plugins within processmaker per workspace.
+     * 
+     * @param string $workspace
+     * @return array
+     */
     public static function getListAllPlugins($workspace)
     {
         $pathSingleton = PATH_DATA . "sites" . PATH_SEP . $workspace . PATH_SEP . "plugin.singleton";
         $oPluginRegistry = PMPluginRegistry::loadSingleton($pathSingleton);
-        //$oPluginRegistry = PMPluginRegistry::getSingleton();
         $items = [];
         if ($handle = opendir(PATH_PLUGINS)) {
             while (false !== ($file = readdir($handle))) {
