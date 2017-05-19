@@ -84,7 +84,10 @@ switch ($request) {
         //Add missing items
         $systemConstants['PIN'] = $aVars['PIN'];
         $systemConstants['APP_NUMBER'] = $aVars['APP_NUMBER'];
-        $systemConstants['__VAR_CHANGED__'] = $aVars['__VAR_CHANGED__'];
+        //when a case with dynaform is started there are no changed variables, this event is validated
+        if (isset($aVars['__VAR_CHANGED__'])) {
+            $systemConstants['__VAR_CHANGED__'] = $aVars['__VAR_CHANGED__'];
+        }
 
         if (isset($_POST['filter']) && $_POST['filter'] == 'dyn') {
             $sysVars = array_keys($systemConstants);
