@@ -77,4 +77,30 @@ class WorkflowTestCase extends TestCase
         exec('../../gulliver/bin/gulliver propel-build-model');
         chdir($pwd);
     }
+
+    /**
+     * Set the text of and specific translated message.
+     *
+     * @global array $translation
+     * @param type $msgId
+     * @param type $text
+     */
+    protected function setTranslation($msgId, $text)
+    {
+        global $translation;
+        $translation[$msgId] = $text;
+    }
+
+    /**
+     * Clear all the translated messages loaded.
+     * 
+     * @global array $translation
+     */
+    protected function clearTranslations()
+    {
+        global $translation;
+        foreach ($translation as $msgId => $text) {
+            unset($translation[$msgId]);
+        }
+    }
 }

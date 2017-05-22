@@ -3334,7 +3334,7 @@
         <column name="PRO_UID" type="VARCHAR" size="32" required="true" />
         <column name="TAS_UID" type="VARCHAR" size="32" required="true" />
         <column name="DYN_UID" type="VARCHAR" size="32" required="false" />
-        <column name="USR_UID" type="VARCHAR" size="32" default="" />
+        <column name="USR_UID" type="VARCHAR" size="32" required="false" />
         <column name="WE_METHOD" type="VARCHAR" size="4" default="HTML" />
         <column name="WE_INPUT_DOCUMENT_ACCESS" type="INTEGER" default="0" />
         <column name="WE_DATA" type="LONGVARCHAR" />
@@ -4805,7 +4805,7 @@
         <column name="EVN_UID"    type="VARCHAR" size="32" required="true" />
         <column name="ACT_UID"    type="VARCHAR" size="32" required="true" />
         <column name="DYN_UID"    type="VARCHAR" size="32" required="false" />
-        <column name="USR_UID"    type="VARCHAR" size="32" required="true" />
+        <column name="USR_UID"    type="VARCHAR" size="32" required="false" />
         <column name="WEE_STATUS" type="VARCHAR" size="10" required="true" default="ENABLED" />
         <column name="WEE_WE_UID"     type="VARCHAR" size="32" required="true" default="" />
         <column name="WEE_WE_TAS_UID" type="VARCHAR" size="32" required="true" default="" />

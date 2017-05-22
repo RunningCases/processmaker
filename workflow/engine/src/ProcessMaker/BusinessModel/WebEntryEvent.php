@@ -9,7 +9,7 @@ class WebEntryEvent
         "EVN_UID"         => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "eventUid"),
         "ACT_UID"         => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "activityUid"),
         "DYN_UID"         => array("type" => "string", "required" => false,  "empty" => true, "defaultValues" => array(),                      "fieldNameAux" => "dynaFormUid"),
-        "USR_UID"         => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "userUid"),
+        "USR_UID"         => array("type" => "string", "required" => false,  "empty" => true, "defaultValues" => array(),                      "fieldNameAux" => "userUid"),
 
         "WEE_TITLE"       => array("type" => "string", "required" => false,  "empty" => true, "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventTitle"),
         "WEE_DESCRIPTION" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventDescription"),
@@ -260,6 +260,15 @@ class WebEntryEvent
 
             //Verify data - Field definition
             $process = new \ProcessMaker\BusinessModel\Process();
+            //Dependent fields:
+            if (!isset($arrayData['WE_AUTHENTICATION']) || $arrayData['WE_AUTHENTICATION']
+                == 'ANONYMOUS') {
+                $this->arrayFieldDefinition['USR_UID']['required'] = true;
+            }
+            if (!isset($arrayData['WE_TYPE']) || $arrayData['WE_TYPE']
+                == 'SINGLE') {
+                $this->arrayFieldDefinition['DYN_UID']['required'] = true;
+            }
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, $flagInsert);
 
@@ -371,8 +380,9 @@ class WebEntryEvent
 
             //Task - User
             $task = new \Tasks();
-
-            $result = $task->assignUser($this->webEntryEventWebEntryTaskUid, $userUid, 1);
+            if (!(isset($arrayData['WE_AUTHENTICATION']) && $arrayData['WE_AUTHENTICATION']==='LOGIN_REQUIRED')) {
+                $task->assignUser($this->webEntryEventWebEntryTaskUid, $userUid, 1);
+            }
 
             //Route
             $workflow = \ProcessMaker\Project\Workflow::load($projectUid);
@@ -489,6 +499,14 @@ class WebEntryEvent
 
             if (!isset($arrayData["WEE_STATUS"])) {
                 $arrayData["WEE_STATUS"] = "ENABLED";
+            }
+
+            if (!array_key_exists('USR_UID', $arrayData)) {
+                $arrayData['USR_UID'] = null;
+            }
+
+            if (!isset($arrayData["WEE_TITLE"])) {
+                $arrayData["WEE_TITLE"] = null;
             }
 
             //Verify data

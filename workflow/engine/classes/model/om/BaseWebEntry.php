@@ -55,7 +55,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
      * The value for the usr_uid field.
      * @var        string
      */
-    protected $usr_uid = '';
+    protected $usr_uid;
 
     /**
      * The value for the we_method field.
@@ -560,7 +560,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->usr_uid !== $v || $v === '') {
+        if ($this->usr_uid !== $v) {
             $this->usr_uid = $v;
             $this->modifiedColumns[] = WebEntryPeer::USR_UID;
         }

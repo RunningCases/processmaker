@@ -2,7 +2,7 @@
 // ProcessMaker Test Unit Bootstrap
 // Defining the PATH_SEP constant, he we are defining if the the path separator symbol will be '\\' or '/'
 
-error_reporting(E_ALL ^ E_STRICT);
+error_reporting(E_ALL ^ E_STRICT ^ E_DEPRECATED);
 define('PATH_SEP', '/');
 
 if (!defined('__DIR__')) {
@@ -232,3 +232,8 @@ define('TIME_ZONE', $config ['time_zone']);
 
 require_once 'WorkflowTestCase.php';
 require_once(PATH_CLASSES.'model/Task.php');
+
+global $RBAC;
+$RBAC = \RBAC::getSingleton( PATH_DATA, session_id() );
+$RBAC->sSystem = 'PROCESSMAKER';
+\G::LoadClass('pmFunctions');

@@ -79,7 +79,7 @@ class WebEntryEventMapBuilder
 
         $tMap->addColumn('DYN_UID', 'DynUid', 'string', CreoleTypes::VARCHAR, false, 32);
 
-        $tMap->addColumn('USR_UID', 'UsrUid', 'string', CreoleTypes::VARCHAR, true, 32);
+        $tMap->addColumn('USR_UID', 'UsrUid', 'string', CreoleTypes::VARCHAR, false, 32);
 
         $tMap->addColumn('WEE_STATUS', 'WeeStatus', 'string', CreoleTypes::VARCHAR, true, 10);
 

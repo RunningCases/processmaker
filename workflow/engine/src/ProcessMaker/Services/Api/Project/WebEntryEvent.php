@@ -32,6 +32,8 @@ class WebEntryEvent extends Api
 
     /**
      * @url GET /:prj_uid/web-entry-events
+     * @access protected
+     * @class  AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid {@min 32}{@max 32}
      */

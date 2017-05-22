@@ -7,8 +7,10 @@ namespace ProcessMaker\BusinessModel;
  */
 class WebEntryEventTest extends \WorkflowTestCase
 {
+    const SKIP_VALUE = '&SKIP_VALUE%';
+
     /**
-     * @var WebEntryEvent
+     * @var WebEntryEvent $object
      */
     protected $object;
     private $processUid;
@@ -18,8 +20,7 @@ class WebEntryEventTest extends \WorkflowTestCase
     private $domain = 'http://domain.localhost';
 
     /**
-     * Sets up the fixture, for example, opens a network connection.
-     * This method is called before a test is executed.
+     * Sets up the unit test.
      */
     protected function setUp()
     {
@@ -27,6 +28,10 @@ class WebEntryEventTest extends \WorkflowTestCase
         $this->processUid = $this->import(__DIR__.'/WebEntryEventTest.pmx');
         $this->processUid2 = $this->import(__DIR__.'/WebEntryEventTest2.pmx');
         $this->object = new WebEntryEvent;
+        $this->setTranslation('ID_INVALID_VALUE_CAN_NOT_BE_EMPTY',
+                              'ID_INVALID_VALUE_CAN_NOT_BE_EMPTY({0})');
+        $this->setTranslation('ID_UNDEFINED_VALUE_IS_REQUIRED',
+                              'ID_UNDEFINED_VALUE_IS_REQUIRED({0})');
     }
 
     /**
@@ -36,10 +41,12 @@ class WebEntryEventTest extends \WorkflowTestCase
     protected function tearDown()
     {
         //$this->dropDB();
+        $this->clearTranslations();
     }
 
     /**
      * @covers ProcessMaker\BusinessModel\WebEntryEvent::getWebEntryEvents
+     * @category HOR-3207:5
      */
     public function testGetWebEntryEvents()
     {
@@ -65,7 +72,6 @@ class WebEntryEventTest extends \WorkflowTestCase
         $entryEvents = $this->object->getAllWebEntryEvents();
         $this->assertCount(3, $entryEvents);
         $this->assertNull($entryEvents[0]['WE_CUSTOM_TITLE']);
-        //$this->assertNull($entryEvents[0]['WE_MULTIPLE_UID']);
         $this->assertEquals($entryEvents[0]['WE_AUTHENTICATION'], 'ANONYMOUS');
         $this->assertEquals($entryEvents[0]['WE_HIDE_INFORMATION_BAR'], '0');
         $this->assertEquals($entryEvents[0]['WE_CALLBACK'], 'PROCESS_MAKER');
@@ -78,6 +84,7 @@ class WebEntryEventTest extends \WorkflowTestCase
 
     /**
      * @covers ProcessMaker\BusinessModel\WebEntryEvent::getWebEntryEvent
+     * @category HOR-3207:6
      */
     public function testGetWebEntryEvent()
     {
@@ -86,6 +93,11 @@ class WebEntryEventTest extends \WorkflowTestCase
         $this->assertEquals($entryEvents[0], $entry);
     }
 
+    /**
+     * Duplicated web entry
+     * @cover ProcessMaker\BusinessModel\WebEntryEvent::create
+     * @category HOR-3207:7,HOR-3207:2
+     */
     public function testCreateSingleNonAuthAlreadyRegistered()
     {
         $this->expectException(\Exception::class);
@@ -100,6 +112,7 @@ class WebEntryEventTest extends \WorkflowTestCase
             'DYN_UID'    => $dynaform->getDynUid(),
             'WEE_STATUS' => 'ENABLED',
             'USR_UID'    => $this->adminUid,
+            'WEE_TITLE'  => $entryEvents[0]['EVN_UID'],
             ]
         );
         $this->assertEquals(
@@ -111,6 +124,7 @@ class WebEntryEventTest extends \WorkflowTestCase
     /**
      * Create a new empty single non auth WE
      * @cover ProcessMaker\BusinessModel\WebEntryEvent::create
+     * @category HOR-3207:7
      */
     public function testCreateSingleNonAuth()
     {
@@ -131,6 +145,7 @@ class WebEntryEventTest extends \WorkflowTestCase
     /**
      * Create a new empty multiple non auth WE
      * @cover ProcessMaker\BusinessModel\WebEntryEvent::create
+     * @category HOR-3207:7
      */
     public function testCreateNewMultipleNonAuth()
     {
@@ -140,7 +155,7 @@ class WebEntryEventTest extends \WorkflowTestCase
             $processUid, $entryEvents,
             [
             'WEE_URL'                 => $this->domain."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
-            'WE_TYPE'                 => "SINGLE",
+            'WE_TYPE'                 => "MULTIPLE",
             'WE_CUSTOM_TITLE'         => $this->customTitle,
             'WE_AUTHENTICATION'       => 'ANONYMOUS',
             'WE_HIDE_INFORMATION_BAR' => "0",
@@ -157,6 +172,7 @@ class WebEntryEventTest extends \WorkflowTestCase
     /**
      * Delete a webentry
      * @cover ProcessMaker\BusinessModel\WebEntryEvent::delete
+     * @category HOR-3207:9
      */
     public function testDelete()
     {
@@ -164,6 +180,7 @@ class WebEntryEventTest extends \WorkflowTestCase
         $criteria = new \Criteria;
         $criteria->add(\WebEntryPeer::PRO_UID, $processUid);
         $entryEvents = $this->object->getWebEntryEvents($processUid);
+        $fistWebEntryUid = $entryEvents[0]['WEE_UID'];
         $this->assertCount(2, $entryEvents);
         $this->assertCount(2, \WebEntryPeer::doSelect($criteria));
         $this->object->delete($entryEvents[0]['WEE_UID']);
@@ -174,11 +191,14 @@ class WebEntryEventTest extends \WorkflowTestCase
         $entryEvents = $this->object->getWebEntryEvents($processUid);
         $this->assertCount(0, $entryEvents);
         $this->assertCount(0, \WebEntryPeer::doSelect($criteria));
+        $this->expectException(\Exception::class);
+        $this->object->delete($fistWebEntryUid);
     }
 
     /**
      * Create different combinations of WE
      * @cover ProcessMaker\BusinessModel\WebEntryEvent::create
+     * @category HOR-3207:7
      */
     public function testCreate()
     {
@@ -192,10 +212,8 @@ class WebEntryEventTest extends \WorkflowTestCase
                 $this->domain."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
                 null
             ],
-            //'WE_TYPE'            => ['SINGLE', 'MULTIPLE'],
-            //'WE_AUTHENTICATION'  => ['ANONYMOUS', 'LOGIN_REQUIRED'],
-            //'WE_HIDE_INFORMATION_BAR'=>['0', '1'],
-            //'WE_CALLBACK'=>['PROCESS_MAKER', 'CUSTOM', 'CUSTOM_CLEAR'],
+            'WEE_STATUS'         => ['ENABLED', null],
+            'WE_TYPE'            => ['MULTIPLE'],
             'WE_LINK_SKIN'       => [SYS_SKIN, null],
             'WE_LINK_LANGUAGE'   => [SYS_LANG, null],
         ]);
@@ -206,14 +224,15 @@ class WebEntryEventTest extends \WorkflowTestCase
         foreach ($rows as $row) {
             try {
                 $data = [
-                    'EVN_UID'    => $event->getEvnUid(),
-                    'ACT_UID'    => $entryEvents[0]['ACT_UID'],
-                    'WEE_STATUS' => 'ENABLED',
-                    'USR_UID'    => $this->adminUid,
-                    'WEE_TITLE'  => $event->getEvnUid(),
+                    'EVN_UID'   => $event->getEvnUid(),
+                    'ACT_UID'   => $entryEvents[0]['ACT_UID'],
+                    'USR_UID'   => $this->adminUid,
+                    'WEE_TITLE' => $event->getEvnUid(),
                 ];
                 foreach ($row as $key => $value) {
-                    if (isset($value)) $data[$key] = $value;
+                    if (isset($value)) {
+                        $data[$key] = $value;
+                    }
                 }
                 $this->object->create($processUid, $this->adminUid, $data);
                 $entryEvents2 = $this->object->getWebEntryEvents($processUid);
@@ -249,6 +268,7 @@ class WebEntryEventTest extends \WorkflowTestCase
     /**
      * Create a WE with invalid parameters
      * @cover ProcessMaker\BusinessModel\WebEntryEvent::create
+     * @category HOR-3207:7,HOR-3207:2
      */
     public function testInvalidCreate()
     {
@@ -278,6 +298,7 @@ class WebEntryEventTest extends \WorkflowTestCase
      * Update different combinations of web entries
      * @throws \PHPUnit_Framework_ExpectationFailedException
      * @cover ProcessMaker\BusinessModel\WebEntryEvent::update
+     * @category HOR-3207:8
      */
     public function testUpdate()
     {
@@ -302,13 +323,7 @@ class WebEntryEventTest extends \WorkflowTestCase
                 null
             ],
             'DYN_UID'            => $dynaformIds,
-            //WEE_STATUS DELETE THE WEB_ENTRY (NOT USED FROM UI)
-            //'WEE_STATUS'            => ['ENABLED', 'DISABLED'],
-            //'WE_AUTHENTICATION'  => ['ANONYMOUS', 'LOGIN_REQUIRED'],
-            //'WE_HIDE_INFORMATION_BAR'=>['0', '1'],
-            //'WE_CALLBACK'=>['PROCESS_MAKER', 'CUSTOM', 'CUSTOM_CLEAR'],
-            'WE_LINK_SKIN'     => [SYS_SKIN, null],
-            'WE_LINK_LANGUAGE' => [SYS_LANG, null],
+            'USR_UID'            => [null, $this->adminUid, static::SKIP_VALUE],
         ]);
         foreach ($rows as $row) {
             try {
@@ -338,6 +353,7 @@ class WebEntryEventTest extends \WorkflowTestCase
     /**
      * Update WE with invalid parameters
      * @cover ProcessMaker\BusinessModel\WebEntryEvent::update
+     * @category HOR-3207:8,HOR-3207:2
      */
     public function testInvalidUpdate()
     {
@@ -346,11 +362,11 @@ class WebEntryEventTest extends \WorkflowTestCase
         $entryEvent = $entryEvents[0];
         $webEntryEventUid = $entryEvent['WEE_UID'];
         $userUidUpdater = $this->adminUid;
-        
+
         $this->expectException(\Exception::class);
         $this->expectExceptionMessageRegExp('/(Please enter a valid value for (WE_TYPE|WE_AUTHENTICATION|WE_CALLBACK|WE_LINK_GENERATION)\s*){4,4}/');
         $this->object->update($webEntryEventUid, $userUidUpdater,
-            [
+                              [
             'WEE_URL'                 => $this->domain."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
             'WE_TYPE'                 => "NOT-VALID-SINGLE",
             'WE_CUSTOM_TITLE'         => $this->customTitle,
@@ -366,21 +382,120 @@ class WebEntryEventTest extends \WorkflowTestCase
         );
     }
 
-    //Auxiliar methods
+    /**
+     * Required USR_UID
+     * @cover ProcessMaker\BusinessModel\WebEntryEvent::update
+     * @category HOR-3207:2
+     */
+    public function testUsrUidNotRequiredIfLoginRequired()
+    {
+        $processUid = $this->processUid2;
+        $entryEvents = $this->object->getWebEntryEvents($processUid);
+        list($webEntry, $entryEvent) = $this->createWebEntryEvent(
+            $processUid, $entryEvents,
+            [
+            'WE_AUTHENTICATION' => 'LOGIN_REQUIRED',
+            'DYN_UID'           => $entryEvents[0]['DYN_UID'],
+            'USR_UID'           => null,
+            ]
+        );
+    }
+
+    /**
+     * Required fields
+     * @cover ProcessMaker\BusinessModel\WebEntryEvent::create
+     * @category HOR-3207:2
+     */
+    public function testRequiredFields()
+    {
+        $processUid = $this->processUid2;
+        $entryEvents = $this->object->getWebEntryEvents($processUid);
+        $dynaform = $this->getADynaform($processUid);
+        $criteria = new \Criteria();
+        $criteria->add(\BpmnEventPeer::PRJ_UID, $processUid);
+        $criteria->add(\BpmnEventPeer::EVN_NAME, 'simple start');
+        $event = \BpmnEventPeer::doSelectOne($criteria);
+        //EVN_UID
+        try {
+            $data = [
+            ];
+            $this->object->create($processUid, $this->adminUid, $data);
+        } catch (\Exception $e) {
+            $this->assertEquals('ID_INVALID_VALUE_CAN_NOT_BE_EMPTY($arrayData)',
+                                $e->getMessage());
+        }
+        //EVN_UID
+        try {
+            $data = [
+                'WE_CUSTOM_TITLE' => $this->customTitle,
+            ];
+            $this->object->create($processUid, $this->adminUid, $data);
+        } catch (\Exception $e) {
+            $this->assertEquals('ID_UNDEFINED_VALUE_IS_REQUIRED(EVN_UID)',
+                                $e->getMessage());
+        }
+        //ACT_UID
+        try {
+            $data = [
+                'EVN_UID' => $event->getEvnUid(),
+            ];
+            $this->object->create($processUid, $this->adminUid, $data);
+        } catch (\Exception $e) {
+            $this->assertEquals('ID_UNDEFINED_VALUE_IS_REQUIRED(ACT_UID)',
+                                $e->getMessage());
+        }
+        //DYN_UID
+        try {
+            $data = [
+                'EVN_UID' => $event->getEvnUid(),
+                'ACT_UID' => $entryEvents[0]['ACT_UID'],
+            ];
+            $this->object->create($processUid, $this->adminUid, $data);
+        } catch (\Exception $e) {
+            $this->assertEquals('ID_UNDEFINED_VALUE_IS_REQUIRED(DYN_UID)',
+                                $e->getMessage());
+        }
+        //USR_UID (WE_AUTHENTICATION=ANONYMOUS)
+        try {
+            $data = [
+                'EVN_UID' => $event->getEvnUid(),
+                'ACT_UID' => $entryEvents[0]['ACT_UID'],
+                'DYN_UID' => $dynaform->getDynUid(),
+            ];
+            $this->object->create($processUid, $this->adminUid, $data);
+        } catch (\Exception $e) {
+            $this->assertEquals('ID_UNDEFINED_VALUE_IS_REQUIRED(USR_UID)',
+                                $e->getMessage());
+        }
+        //WEE_TITLE
+        try {
+            $data = [
+                'EVN_UID' => $event->getEvnUid(),
+                'ACT_UID' => $entryEvents[0]['ACT_UID'],
+                'DYN_UID' => $dynaform->getDynUid(),
+                'USR_UID' => $this->adminUid,
+            ];
+            $this->object->create($processUid, $this->adminUid, $data);
+        } catch (\Exception $e) {
+            $this->assertEquals('ID_INVALID_VALUE_CAN_NOT_BE_EMPTY(WEE_TITLE)',
+                                $e->getMessage());
+        }
+    }
 
     /**
      * get a dynaform
      * @return type
      */
-    private function getADynaform()
+    private function getADynaform($processUid = null)
     {
         $criteria = new \Criteria;
-        $criteria->add(\DynaformPeer::PRO_UID, $this->processUid);
+        $criteria->add(\DynaformPeer::PRO_UID,
+                       $processUid ? $processUid : $this->processUid);
         return \DynaformPeer::doSelectOne($criteria);
     }
 
     /**
-     *
+     * Get a WebEntry from a WebEntryEvent array
      * @param type $webEntryEvent
      * @return \WebEntry
      */
@@ -390,6 +505,12 @@ class WebEntryEventTest extends \WorkflowTestCase
         return \WebEntryPeer::retrieveByPK($wee->getWeeWeUid());
     }
 
+    /**
+     * The default generated WebEntryUrl.
+     *
+     * @param \WebEntry $we
+     * @return type
+     */
     private function getSimpleWebEntryUrl(\WebEntry $we)
     {
         return (\G::is_https() ? "https://" : "http://").
@@ -397,6 +518,14 @@ class WebEntryEventTest extends \WorkflowTestCase
             SYS_LANG."/".SYS_SKIN."/".$we->getProUid()."/".$we->getWeData();
     }
 
+    /**
+     * Create a WebEntryEvent using some default properties.
+     *
+     * @param type $processUid
+     * @param type $entryEvents
+     * @param type $config
+     * @return type
+     */
     private function createWebEntryEvent($processUid, $entryEvents, $config)
     {
         $this->assertCount(1, $entryEvents,
@@ -447,7 +576,10 @@ class WebEntryEventTest extends \WorkflowTestCase
             $ii = $i;
             foreach ($combinations as $key => $values) {
                 $c = count($values);
-                $row[$key] = $values[$ii % $c];
+                $value = $values[$ii % $c];
+                if (static::SKIP_VALUE !== $value) {
+                    $row[$key] = $value;
+                }
                 $ii = floor($ii / $c);
             }
             $rows[] = $row;

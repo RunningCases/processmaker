@@ -1307,7 +1307,7 @@ class wsBase
 
             return $result;
         } catch (Exception $e) {
-            $result = wsCreateUserResponse( 100, $e->getMessage(), null );
+            $result = new wsCreateUserResponse( 100, $e->getMessage(), null );
 
             return $result;
         }
