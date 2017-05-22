@@ -1073,4 +1073,42 @@ class WebEntryEvent
             throw $e;
         }
     }
+
+    /**
+     * Web Entry 2.0 Rest - Generate Link EP
+     *
+     * @category PROD-181,HOR-3210
+     * @link https://processmaker.atlassian.net/browse/PROD-181 Web Entry 2 Feature definition
+     * @link https://processmaker.atlassian.net/browse/HOR-3210 Generate link specification
+     * @group webentry2
+     */
+    public function generateLink($prj_uid, $wee_uid)
+    {
+        $webEntryEvent = \WebEntryEventPeer::retrieveByPK($wee_uid);
+        if (empty($webEntryEvent)) {
+            throw new \Exception(
+                \G::LoadTranslation("ID_WEB_ENTRY_EVENT_DOES_NOT_EXIST", array("WEE_UID", $wee_uid))
+            );
+        }
+        $webEntry = \WebEntryPeer::retrieveByPK($webEntryEvent->getWeeWeUid());
+        if (empty($webEntryEvent)) {
+            throw new \Exception(
+                \G::LoadTranslation(
+                    "ID_WEB_ENTRY_EVENT_DOES_NOT_EXIST",
+                    array("WE_UID", $webEntryEvent->getWeeWeUid())
+                )
+            );
+        }
+        if ($webEntry->getWeLinkGeneration() === 'ADVANCED') {
+            $domain = $webEntry->getWeLinkDomain();
+            $url = $domain . "/sys".SYS_SYS."/".
+                $webEntry->getWeLinkLanguage()."/".
+                $webEntry->getWeLinkSkin()."/".$prj_uid;
+            return $url."/".$webEntry->getWeUid().'.php';
+        } else {
+            $http = (\G::is_https()) ? "https://" : "http://";
+            $url = $http.$_SERVER["HTTP_HOST"]."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$prj_uid;
+            return $url."/".$webEntry->getWeData();
+        }
+    }
 }

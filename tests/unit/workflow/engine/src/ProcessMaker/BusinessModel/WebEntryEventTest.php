@@ -34,6 +34,8 @@ class WebEntryEventTest extends \WorkflowTestCase
                               'ID_INVALID_VALUE_CAN_NOT_BE_EMPTY({0})');
         $this->setTranslation('ID_UNDEFINED_VALUE_IS_REQUIRED',
                               'ID_UNDEFINED_VALUE_IS_REQUIRED({0})');
+        $this->setTranslation('ID_WEB_ENTRY_EVENT_DOES_NOT_EXIST',
+                              'ID_WEB_ENTRY_EVENT_DOES_NOT_EXIST({0})');
     }
 
     /**
@@ -577,6 +579,65 @@ class WebEntryEventTest extends \WorkflowTestCase
             [[$uidStepWithTrigger, "BEFORE"]],
             $triggers
         );
+    }
+
+    /**
+     * @covers ProcessMaker\BusinessModel\WebEntryEvent::generateLink
+     * @category HOR-3210:5
+     */
+    public function testGenerateLinkSingleDefaultAnonymous()
+    {
+        $processUid = $this->processUid;
+        $entryEvents = $this->object->getWebEntryEvents($processUid);
+        $webEntry = $this->getWebEntry($entryEvents[0]);
+        $link = $this->object->generateLink($processUid, $entryEvents[0]['WEE_UID']);
+        $this->assertEquals($this->getSimpleWebEntryUrl($webEntry), $link);
+    }
+
+    /**
+     * @covers ProcessMaker\BusinessModel\WebEntryEvent::generateLink
+     * @category HOR-3210:5
+     */
+    public function testGenerateLinkMultipleAnon()
+    {
+        $processUid = $this->processUid2;
+        $entryEvents = $this->object->getWebEntryEvents($processUid);
+        $this->assertCount(1, $entryEvents,
+                           'Expected 1 event with web entry in process WebEntry2');
+        $criteria = new \Criteria();
+        $criteria->add(\BpmnEventPeer::PRJ_UID, $processUid);
+        $criteria->add(\BpmnEventPeer::EVN_NAME, 'simple start');
+        $event = \BpmnEventPeer::doSelectOne($criteria);
+        $data = [
+            'EVN_UID'           => $event->getEvnUid(),
+            'ACT_UID'           => $entryEvents[0]['ACT_UID'],
+            'WE_AUTHENTICATION' => 'ANONYMOUS',
+            'USR_UID'           => $this->adminUid,
+            'WE_TYPE'           => 'MULTIPLE',
+            'WEE_TITLE'         => $event->getEvnUid(),
+        ];
+        $this->object->create($processUid, $this->adminUid, $data);
+        $entryEvents2 = $this->object->getWebEntryEvents($processUid);
+        foreach ($entryEvents2 as $entryEvent) {
+            if ($entryEvent['EVN_UID'] === $event->getEvnUid()) {
+                break;
+            }
+        }
+        $webEntry = $this->getWebEntry($entryEvent);
+        $link = $this->object->generateLink($processUid, $entryEvent['WEE_UID']);
+        $this->assertEquals($this->getSimpleWebEntryUrl($webEntry), $link);
+    }
+
+    /**
+     * @covers ProcessMaker\BusinessModel\WebEntryEvent::generateLink
+     * @category HOR-3210:5
+     */
+    public function testGenerateLinkForMissingWE()
+    {
+        $processUid = $this->processUid;
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('ID_WEB_ENTRY_EVENT_DOES_NOT_EXIST(WEE_UID)');
+        $link = $this->object->generateLink($processUid, 'INVALID-UID');
     }
 
     /**

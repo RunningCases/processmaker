@@ -11,6 +11,9 @@ use \Luracast\Restler\RestException;
  */
 class WebEntryEvent extends Api
 {
+    /**
+     * @var \ProcessMaker\BusinessModel\WebEntryEvent $webEntryEvent
+     */
     private $webEntryEvent;
 
     /**
@@ -136,6 +139,20 @@ class WebEntryEvent extends Api
         try {
             $this->webEntryEvent->delete($wee_uid);
             return ['success' => true];
+        } catch (\Exception $e) {
+            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+        }
+    }
+
+    /**
+     * @url GET /:prj_uid/web-entry-event/:wee_uid/generate-link
+     * @class  AccessControl {@permission PM_FACTORY}
+     *
+     */
+    public function generateLink($prj_uid, $wee_uid)
+    {
+        try {
+            $this->webEntryEvent->generateLink($prj_uid, $wee_uid);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
