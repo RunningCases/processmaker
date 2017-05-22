@@ -32,11 +32,11 @@ class System
      *
      * @return array
      */
-    public static function token()
+    public static function tokenUserLogged()
     {
         $client = self::getClientCredentials();
 
-        $authCode = self::getAuthorizationCode($client);
+        $authCode = self::getAuthorizationCodeUserLogged($client);
 
         $loader = \Maveriks\Util\ClassLoader::getInstance();
         $loader->add(PATH_TRUNK . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");
@@ -64,12 +64,20 @@ class System
         return $clientToken;
     }
 
+    /**
+     * Get client credentials
+     * @return array
+     */
     protected function getClientCredentials()
     {
         $oauthQuery = new PmPdo(self::getDsn());
         return $oauthQuery->getClientDetails(self::CLIENT_ID);
     }
 
+    /**
+     * Get DNS of workspace
+     * @return array
+     */
     protected function getDsn()
     {
         list($host, $port) = strpos(DB_HOST, ':') !== false ? explode(':', DB_HOST) : array(DB_HOST, '');
@@ -79,7 +87,12 @@ class System
         return array('dsn' => $dsn, 'username' => DB_USER, 'password' => DB_PASS);
     }
 
-    protected function getAuthorizationCode($client)
+    /**
+     * Get authorization code for user logged in session
+     * @param $client
+     * @return bool|string
+     */
+    protected function getAuthorizationCodeUserLogged($client)
     {
         Server::setDatabaseSource(self::getDsn());
         Server::setPmClientId($client['CLIENT_ID']);
