@@ -29,6 +29,14 @@ class Designer extends Controller
         $client = $this->getClientCredentials();
 
         if (isset($httpData->tracker_designer) && $httpData->tracker_designer == 1) {
+            try {
+                $response = \ProcessMaker\BusinessModel\Light\Tracker::authentication($_SESSION['CASE'], $_SESSION['PIN']);
+            } catch (\Exception $e) {
+                G::header('Location: /errors/error403.php');
+                die();
+            }
+            $httpData->prj_uid = $response['process'];
+            $httpData->app_uid = $response['app_uid'];
             $client["tracker_designer"] = 1;
         }
 

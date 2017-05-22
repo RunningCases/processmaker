@@ -13,14 +13,14 @@ class Tracker
     }
 
     /**
-     * authenticaction for case tracker
+     * Authentication for case tracker
      *
-     * @param $case numbre case
-     * @param $pin code pin access for case tracek
+     * @param int $case number case
+     * @param int $pin code pin access for case track
      * @return array
      * @throws \Exception
      */
-    public function authentication($case, $pin)
+    public static function authentication($case, $pin)
     {
         $cases = new \Cases();
         $response = array();
