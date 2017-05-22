@@ -171,7 +171,6 @@ class Process
                     $fieldNameAux = (isset($arrayFieldNameForException[$arrayFieldDefinition[$fieldName]['fieldNameAux']]))? $arrayFieldNameForException[$arrayFieldDefinition[$fieldName]['fieldNameAux']] : $fieldName;
 
                     if ($arrayFieldDefinition[$fieldName]["required"] && !isset($arrayData[$fieldName])) {
-                        var_dump($fieldNameAux);
                         throw new \Exception(\G::LoadTranslation('ID_UNDEFINED_VALUE_IS_REQUIRED', [$fieldNameAux]));
                     }
                 }
