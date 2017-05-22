@@ -10751,7 +10751,7 @@ SELECT 'LABEL','ID_SCRIPT_TASK_ACTIVITY_ALREADY_REGISTERED','en','The Script-Tas
   UNION ALL
 SELECT 'LABEL','ID_CASE_CANCELLED_PARALLEL','en','To cancel a case, no parallel threads must be active. Only cases with one active thread can be canceled.','2016-08-11' 
   UNION ALL
-SELECT 'LABEL','ID_REASSIGNMENT_ERROR','en','The case was already derivated to other person. Try to open again the case to reassign.','2016-08-12' 
+SELECT 'LABEL','ID_REASSIGNMENT_ERROR','en','The case has already been routed or assigned to another person. Try to open the case again to reassign it.','2016-08-12'
   UNION ALL
 SELECT 'LABEL','ID_REASSIGNMENT_PAUSED_ERROR','en','The case is paused and can''t be reasigned.','2016-08-12' 
   UNION ALL
