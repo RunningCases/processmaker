@@ -984,7 +984,7 @@ function migrate_content($args, $opts)
     $start = microtime(true);
     //We defined the constants related the workspace
     $wsName = $workspaces[key($workspaces)]->name;
-    Bootstrap::setConstantsRelatedWs($wsName);error_log(SYS_SYS.$lang);
+    Bootstrap::setConstantsRelatedWs($wsName);
     //Loop, read all the attributes related to the one workspace
     CLI::logging("> Optimizing content data...\n");
     foreach ($workspaces as $workspace) {
