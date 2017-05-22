@@ -50,6 +50,7 @@ class WebEntryEvent extends Api
 
     /**
      * @url GET /:prj_uid/web-entry-event/:wee_uid
+     * @class  AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid {@min 32}{@max 32}
      * @param string $wee_uid {@min 32}{@max 32}
@@ -67,6 +68,7 @@ class WebEntryEvent extends Api
 
     /**
      * @url GET /:prj_uid/web-entry-event/event/:evn_uid
+     * @class  AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid {@min 32}{@max 32}
      * @param string $evn_uid {@min 32}{@max 32}
@@ -84,6 +86,7 @@ class WebEntryEvent extends Api
 
     /**
      * @url POST /:prj_uid/web-entry-event
+     * @class  AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param array  $request_data
@@ -105,6 +108,7 @@ class WebEntryEvent extends Api
 
     /**
      * @url PUT /:prj_uid/web-entry-event/:wee_uid
+     * @class  AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid      {@min 32}{@max 32}
      * @param string $wee_uid      {@min 32}{@max 32}
@@ -121,6 +125,7 @@ class WebEntryEvent extends Api
 
     /**
      * @url DELETE /:prj_uid/web-entry-event/:wee_uid
+     * @class  AccessControl {@permission PM_FACTORY}
      *
      * @param string $prj_uid {@min 32}{@max 32}
      * @param string $wee_uid {@min 32}{@max 32}
