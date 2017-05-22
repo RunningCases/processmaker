@@ -820,7 +820,6 @@ function newProcess(params)
         xtype:'textfield',
         width: 260,
         maxLength: 100,
-        maskRe: /^(?!^(PRN|AUX|CLOCK\$|NUL|CON|COM\d|LPT\d|\...*)(\..+)?$)[^\x00-\x1f\\?*\";|/]+$/i,
         allowBlank: false,
         vtype: "textWithoutTags",
         autoCreate: {tag: 'input', type: 'text', size: '100', autocomplete: 'off', maxlength: '100'},
@@ -837,16 +836,7 @@ function newProcess(params)
         xtype:'textarea',
         width: 260
       },
-      ProcessCategories/*,
-      {
-        id: 'editor',
-        xtype: 'radiogroup',
-        fieldLabel: _('ID_OPEN_WITH'),
-        items: [
-          {boxLabel: _('ID_CLASSIC_EDITOR'), name: 'editor', inputValue: 'classic', checked: true},
-          {boxLabel: _('ID_BPMN_EDITOR'), name: 'editor', inputValue: 'bpmn'}
-        ]
-      }*/
+      ProcessCategories
     ],
     buttons : [{
       text : _('ID_CREATE'),
