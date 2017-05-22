@@ -1346,7 +1346,7 @@ class pmDynaform
                 "var pm_run_outside_main_app = null;\n" .
                 "var dyn_uid = '" . $this->fields["CURRENT_DYNAFORM"] . "';\n" .
                 "var __DynaformName__ = null;\n" .
-                "var app_uid = null;\n" .
+                "var app_uid = '" . G::decrypt($record['APP_UID'], URL_KEY) . "';\n" .
                 "var prj_uid = '" . $this->record["PRO_UID"] . "';\n" .
                 "var step_mode = null;\n" .
                 "var workspace = '" . SYS_SYS . "';\n" .
