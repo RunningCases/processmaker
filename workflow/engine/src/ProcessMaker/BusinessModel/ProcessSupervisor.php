@@ -1478,7 +1478,7 @@ class ProcessSupervisor
         $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
         if ($rsCriteria->next()) {
-                return true;
+            return true;
         }
         //Check if the user is in a group defined as supervisor
         $criteria = new \Criteria('workflow');

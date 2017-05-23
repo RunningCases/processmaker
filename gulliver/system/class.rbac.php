@@ -78,6 +78,7 @@ class RBAC
             'users_Ajax.php' => array(
                 'availableUsers' => array('PM_FACTORY'),
                 'assign' => array('PM_FACTORY'),
+                'changeView' => array(),
                 'ofToAssign' => array('PM_FACTORY'),
                 'usersGroup' => array('PM_FACTORY'),
                 'canDeleteUser' => array('PM_USERS'),
@@ -91,6 +92,7 @@ class RBAC
                 'loadAuthSourceByUID' => array('PM_USERS'),
                 'updateAuthServices' => array('PM_USERS'),
                 'usersList' => array('PM_USERS'),
+                'updatePageSize' => array(),
                 'summaryUserData' => array('PM_USERS'),
                 'verifyIfUserAssignedAsSupervisor' => array('PM_USERS'),
             )
@@ -1475,18 +1477,20 @@ class RBAC
      */
     public function allows($file, $action)
     {
-        $access = true;
-        $permissions = isset($this->authorizedActions[$file][$action]) ? $this->authorizedActions[$file][$action] : array();
-        $totalPermissions = count($permissions);
-        $countAccess = 0;
-        foreach ($permissions as $key => $value) {
-            if ($this->userCanAccess($value) == 1) {
-                $countAccess++;
+        $access = false;
+        if (isset($this->authorizedActions[$file][$action])) {
+            $permissions = $this->authorizedActions[$file][$action];
+            $totalPermissions = count($permissions);
+            $countAccess = 0;
+            foreach ($permissions as $key => $value) {
+                if ($this->userCanAccess($value) == 1) {
+                    $countAccess++;
+                }
             }
-        }
-        //Check if the user has all permissions that needed
-        if ($countAccess !== $totalPermissions) {
-            $access = false;
+            //Check if the user has all permissions that needed
+            if ($countAccess == $totalPermissions) {
+                $access = true;
+            }
         }
 
         if (!$access) {
