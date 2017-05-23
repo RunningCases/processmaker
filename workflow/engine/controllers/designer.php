@@ -30,7 +30,7 @@ class Designer extends Controller
 
         if (isset($httpData->tracker_designer) && $httpData->tracker_designer == 1) {
             try {
-                if(!isset($_SESSION['CASE']) && !isset($_SESSION['PIN'])){
+                if (!isset($_SESSION['CASE']) && !isset($_SESSION['PIN'])) {
                     throw (new \Exception(
                         \G::LoadTranslation('ID_CASE_NOT_EXISTS') . "\n" . \G::LoadTranslation('ID_PIN_INVALID')
                     ));
