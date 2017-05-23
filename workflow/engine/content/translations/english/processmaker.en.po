@@ -6838,8 +6838,8 @@ msgstr "Last Name"
 # TRANSLATION
 # LABEL/ID_REASSIGNMENT_SUCCESS
 #: LABEL/ID_REASSIGNMENT_SUCCESS
-msgid "The case #{APP_NUMBER} was reassigned to user {USER} successfully!"
-msgstr "The case #{APP_NUMBER} was reassigned to user {USER} successfully!"
+msgid "Case #{APP_NUMBER} was reassigned to user {USER}."
+msgstr "Case #{APP_NUMBER} was reassigned to user {USER}."
 
 # TRANSLATION
 # LABEL/ID_REASSIGN_CONFIRM

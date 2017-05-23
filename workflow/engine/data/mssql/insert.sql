@@ -3725,7 +3725,7 @@ SELECT 'LABEL','ID_FIRSTNAME','en','First Name','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_LASTNAME','en','Last Name','2014-01-15' 
   UNION ALL
-SELECT 'LABEL','ID_REASSIGNMENT_SUCCESS','en','The case #{APP_NUMBER} was reassigned to user {USER} successfully!','2014-01-15' 
+SELECT 'LABEL','ID_REASSIGNMENT_SUCCESS','en','Case #{APP_NUMBER} was reassigned to user {USER}.','2014-01-15'
   UNION ALL
 SELECT 'LABEL','ID_REASSIGN_CONFIRM','en','Are you sure to reassign the current case?','2014-01-15' 
   UNION ALL
