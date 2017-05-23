@@ -22,18 +22,6 @@ class WorkflowTestCase extends TestCase
         $pdo = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME, DB_USER,
                        DB_PASS);
         $pdo->setAttribute(PDO::ATTR_EMULATE_PREPARES, 0);
-        //inmemory
-        /* $inmemory = false;
-          if ($inmemory) {
-          $sql = str_replace(
-          ['ENGINE=InnoDB', 'MEDIUMTEXT'],
-          ['ENGINE=MEMORY', 'VARCHAR(2000)'],
-          file_get_contents(PATH_CORE.'data/mysql/schema.sql')
-          );
-          } else {
-          $sql = file_get_contents(PATH_CORE.'data/mysql/schema.sql');
-          }
-          $pdo->exec($sql); */
         $pdo->exec(file_get_contents(PATH_CORE.'data/mysql/schema.sql'));
         $pdo->exec(file_get_contents(PATH_RBAC_CORE.'data/mysql/schema.sql'));
         $pdo->exec(file_get_contents(PATH_CORE.'data/mysql/insert.sql'));

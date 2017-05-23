@@ -390,11 +390,11 @@ class WebEntryEvent
             $result = $workflow->addRoute($this->webEntryEventWebEntryTaskUid, $activityUid, "SEQUENTIAL");
 
             //WebEntry
-            if(isset($arrayData['WE_LINK_GENERATION']) && $arrayData['WE_LINK_GENERATION']==='ADVANCED') {
+            if (isset($arrayData['WE_LINK_GENERATION']) && $arrayData['WE_LINK_GENERATION']==='ADVANCED') {
                 $arrayData['WE_DATA'] = isset($arrayData['WEE_URL'])?$arrayData['WEE_URL']:null;
             }
             $data0 = [];
-            foreach($arrayData as $k => $v) {
+            foreach ($arrayData as $k => $v) {
                 $exists = array_search($k, [
                     'WE_DATA',
                     'WE_TYPE',
@@ -408,7 +408,7 @@ class WebEntryEvent
                     'WE_LINK_LANGUAGE',
                     'WE_LINK_DOMAIN',
                 ]);
-                if($exists!==false) {
+                if ($exists !== false) {
                     $data0[$k] = $v;
                 }
             }
@@ -750,7 +750,7 @@ class WebEntryEvent
                                 'WE_LINK_DOMAIN' => 'WE_LINK_DOMAIN',
                                 'WE_DATA' => 'WEE_URL',
                             ];
-                            foreach($webEntryMap as $k => $v) {
+                            foreach ($webEntryMap as $k => $v) {
                                 if (array_key_exists($v, $arrayData)) {
                                     $arrayDataAux[$k]  = $arrayData[$v];
                                 }
@@ -878,7 +878,6 @@ class WebEntryEvent
             $criteria->addSelectColumn(\WebEntryPeer::WE_DATA . " AS WEE_WE_URL");
             $criteria->addSelectColumn(\WebEntryPeer::WE_CUSTOM_TITLE);
             $criteria->addSelectColumn(\WebEntryPeer::WE_TYPE);
-            //$criteria->addSelectColumn(\WebEntryPeer::WE_MULTIPLE_UID);
             $criteria->addSelectColumn(\WebEntryPeer::WE_AUTHENTICATION);
             $criteria->addSelectColumn(\WebEntryPeer::WE_HIDE_INFORMATION_BAR);
             $criteria->addSelectColumn(\WebEntryPeer::WE_CALLBACK);
@@ -927,7 +926,6 @@ class WebEntryEvent
                 $this->getFieldNameByFormatFieldName("WEE_URL")                 => $record["WEE_WE_URL"]."",
                 $this->getFieldNameByFormatFieldName("WE_TYPE")                 => $record["WE_TYPE"],
                 $this->getFieldNameByFormatFieldName("WE_CUSTOM_TITLE")         => $record["WE_CUSTOM_TITLE"],
-                //$this->getFieldNameByFormatFieldName("WE_MULTIPLE_UID")         => $record["WE_MULTIPLE_UID"],
                 $this->getFieldNameByFormatFieldName("WE_AUTHENTICATION")       => $record["WE_AUTHENTICATION"],
                 $this->getFieldNameByFormatFieldName("WE_HIDE_INFORMATION_BAR") => $record["WE_HIDE_INFORMATION_BAR"],
                 $this->getFieldNameByFormatFieldName("WE_CALLBACK")             => $record["WE_CALLBACK"],

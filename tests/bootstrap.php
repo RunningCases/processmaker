@@ -205,7 +205,7 @@ Bootstrap::registerClass('processMap',
 Bootstrap::registerSystemClasses();
 Bootstrap::initVendors();
 Bootstrap::LoadSystem('monologProvider');
-// including workspace shared classes -> particularlly for pmTables
+// including workspace shared classes -> particularly for pmTables
 set_include_path(get_include_path().PATH_SEPARATOR.PATH_WORKSPACE);
 
 $arraySystemConfiguration = \System::getSystemConfiguration();

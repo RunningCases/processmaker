@@ -113,7 +113,7 @@ class WebEntryMapBuilder
 
         $tMap->addValidator('WE_AUTHENTICATION', 'validValues', 'propel.validator.ValidValuesValidator', 'ANONYMOUS|LOGIN_REQUIRED', 'Please enter a valid value for WE_AUTHENTICATION');
 
-        $tMap->addValidator('WE_CALLBACK', 'validValues', 'propel.validator.ValidValuesValidator', 'PROCESS_MAKER|CUSTOM|CUSTOM_CLEAR', 'Please enter a valid value for WE_CALLBACK');
+        $tMap->addValidator('WE_CALLBACK', 'validValues', 'propel.validator.ValidValuesValidator', 'PROCESSMAKER|CUSTOM|CUSTOM_CLEAR', 'Please enter a valid value for WE_CALLBACK');
 
         $tMap->addValidator('WE_LINK_GENERATION', 'validValues', 'propel.validator.ValidValuesValidator', 'DEFAULT|ADVANCED', 'Please enter a valid value for WE_LINK_GENERATION');
 

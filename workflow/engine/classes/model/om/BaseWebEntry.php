@@ -127,7 +127,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
      * The value for the we_callback field.
      * @var        string
      */
-    protected $we_callback = 'PROCESS_MAKER';
+    protected $we_callback = 'PROCESSMAKER';
 
     /**
      * The value for the we_callback_url field.
@@ -832,7 +832,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->we_callback !== $v || $v === 'PROCESS_MAKER') {
+        if ($this->we_callback !== $v || $v === 'PROCESSMAKER') {
             $this->we_callback = $v;
             $this->modifiedColumns[] = WebEntryPeer::WE_CALLBACK;
         }

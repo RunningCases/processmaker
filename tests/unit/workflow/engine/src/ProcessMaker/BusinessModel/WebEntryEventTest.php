@@ -35,12 +35,11 @@ class WebEntryEventTest extends \WorkflowTestCase
     }
 
     /**
-     * Tears down the fixture, for example, closes a network connection.
-     * This method is called after a test is executed.
+     * Tears down the unit test.
      */
     protected function tearDown()
     {
-        //$this->dropDB();
+        $this->dropDB();
         $this->clearTranslations();
     }
 
@@ -56,7 +55,7 @@ class WebEntryEventTest extends \WorkflowTestCase
         $this->assertNull($entryEvents[0]['WE_CUSTOM_TITLE']);
         $this->assertEquals($entryEvents[0]['WE_AUTHENTICATION'], 'ANONYMOUS');
         $this->assertEquals($entryEvents[0]['WE_HIDE_INFORMATION_BAR'], '0');
-        $this->assertEquals($entryEvents[0]['WE_CALLBACK'], 'PROCESS_MAKER');
+        $this->assertEquals($entryEvents[0]['WE_CALLBACK'], 'PROCESSMAKER');
         $this->assertNull($entryEvents[0]['WE_CALLBACK_URL']);
         $this->assertEquals($entryEvents[0]['WE_LINK_GENERATION'], 'DEFAULT');
         $this->assertNull($entryEvents[0]['WE_LINK_SKIN']);
@@ -74,7 +73,7 @@ class WebEntryEventTest extends \WorkflowTestCase
         $this->assertNull($entryEvents[0]['WE_CUSTOM_TITLE']);
         $this->assertEquals($entryEvents[0]['WE_AUTHENTICATION'], 'ANONYMOUS');
         $this->assertEquals($entryEvents[0]['WE_HIDE_INFORMATION_BAR'], '0');
-        $this->assertEquals($entryEvents[0]['WE_CALLBACK'], 'PROCESS_MAKER');
+        $this->assertEquals($entryEvents[0]['WE_CALLBACK'], 'PROCESSMAKER');
         $this->assertNull($entryEvents[0]['WE_CALLBACK_URL']);
         $this->assertEquals($entryEvents[0]['WE_LINK_GENERATION'], 'DEFAULT');
         $this->assertNull($entryEvents[0]['WE_LINK_SKIN']);
@@ -152,19 +151,20 @@ class WebEntryEventTest extends \WorkflowTestCase
         $processUid = $this->processUid2;
         $entryEvents = $this->object->getWebEntryEvents($processUid);
         $this->createWebEntryEvent(
-            $processUid, $entryEvents,
+            $processUid,
+            $entryEvents,
             [
-            'WEE_URL'                 => $this->domain."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
-            'WE_TYPE'                 => "MULTIPLE",
-            'WE_CUSTOM_TITLE'         => $this->customTitle,
-            'WE_AUTHENTICATION'       => 'ANONYMOUS',
-            'WE_HIDE_INFORMATION_BAR' => "0",
-            'WE_CALLBACK'             => "PROCESS_MAKER",
-            'WE_CALLBACK_URL'         => "http://domain.localhost/callback",
-            'WE_LINK_GENERATION'      => "ADVANCED",
-            'WE_LINK_SKIN'            => SYS_SKIN,
-            'WE_LINK_LANGUAGE'        => SYS_LANG,
-            'WE_LINK_DOMAIN'          => $this->domain,
+                'WEE_URL'                 => $this->domain."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
+                'WE_TYPE'                 => "MULTIPLE",
+                'WE_CUSTOM_TITLE'         => $this->customTitle,
+                'WE_AUTHENTICATION'       => 'ANONYMOUS',
+                'WE_HIDE_INFORMATION_BAR' => "0",
+                'WE_CALLBACK'             => "PROCESSMAKER",
+                'WE_CALLBACK_URL'         => "http://domain.localhost/callback",
+                'WE_LINK_GENERATION'      => "ADVANCED",
+                'WE_LINK_SKIN'            => SYS_SKIN,
+                'WE_LINK_LANGUAGE'        => SYS_LANG,
+                'WE_LINK_DOMAIN'          => $this->domain,
             ]
         );
     }
@@ -279,17 +279,17 @@ class WebEntryEventTest extends \WorkflowTestCase
         $this->createWebEntryEvent(
             $processUid, $entryEvents,
             [
-            'WEE_URL'                 => $this->domain."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
-            'WE_TYPE'                 => "NOT-VALID-SINGLE",
-            'WE_CUSTOM_TITLE'         => $this->customTitle,
-            'WE_AUTHENTICATION'       => 'NOT-VALID-ANONYMOUS',
-            'WE_HIDE_INFORMATION_BAR' => "0",
-            'WE_CALLBACK'             => "NOT-VALID-PROCESS_MAKER",
-            'WE_CALLBACK_URL'         => "http://domain.localhost/callback",
-            'WE_LINK_GENERATION'      => "NOT-VALID-ADVANCED",
-            'WE_LINK_SKIN'            => SYS_SKIN,
-            'WE_LINK_LANGUAGE'        => SYS_LANG,
-            'WE_LINK_DOMAIN'          => $this->domain,
+                'WEE_URL'                 => $this->domain."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
+                'WE_TYPE'                 => "NOT-VALID-SINGLE",
+                'WE_CUSTOM_TITLE'         => $this->customTitle,
+                'WE_AUTHENTICATION'       => 'NOT-VALID-ANONYMOUS',
+                'WE_HIDE_INFORMATION_BAR' => "0",
+                'WE_CALLBACK'             => "NOT-VALID-PROCESSMAKER",
+                'WE_CALLBACK_URL'         => "http://domain.localhost/callback",
+                'WE_LINK_GENERATION'      => "NOT-VALID-ADVANCED",
+                'WE_LINK_SKIN'            => SYS_SKIN,
+                'WE_LINK_LANGUAGE'        => SYS_LANG,
+                'WE_LINK_DOMAIN'          => $this->domain,
             ]
         );
     }
@@ -365,19 +365,21 @@ class WebEntryEventTest extends \WorkflowTestCase
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessageRegExp('/(Please enter a valid value for (WE_TYPE|WE_AUTHENTICATION|WE_CALLBACK|WE_LINK_GENERATION)\s*){4,4}/');
-        $this->object->update($webEntryEventUid, $userUidUpdater,
-                              [
-            'WEE_URL'                 => $this->domain."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
-            'WE_TYPE'                 => "NOT-VALID-SINGLE",
-            'WE_CUSTOM_TITLE'         => $this->customTitle,
-            'WE_AUTHENTICATION'       => 'NOT-VALID-ANONYMOUS',
-            'WE_HIDE_INFORMATION_BAR' => "0",
-            'WE_CALLBACK'             => "NOT-VALID-PROCESS_MAKER",
-            'WE_CALLBACK_URL'         => "http://domain.localhost/callback",
-            'WE_LINK_GENERATION'      => "NOT-VALID-ADVANCED",
-            'WE_LINK_SKIN'            => SYS_SKIN,
-            'WE_LINK_LANGUAGE'        => SYS_LANG,
-            'WE_LINK_DOMAIN'          => $this->domain,
+        $this->object->update(
+            $webEntryEventUid,
+            $userUidUpdater,
+            [
+                'WEE_URL'                 => $this->domain."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
+                'WE_TYPE'                 => "NOT-VALID-SINGLE",
+                'WE_CUSTOM_TITLE'         => $this->customTitle,
+                'WE_AUTHENTICATION'       => 'NOT-VALID-ANONYMOUS',
+                'WE_HIDE_INFORMATION_BAR' => "0",
+                'WE_CALLBACK'             => "NOT-VALID-PROCESSMAKER",
+                'WE_CALLBACK_URL'         => "http://domain.localhost/callback",
+                'WE_LINK_GENERATION'      => "NOT-VALID-ADVANCED",
+                'WE_LINK_SKIN'            => SYS_SKIN,
+                'WE_LINK_LANGUAGE'        => SYS_LANG,
+                'WE_LINK_DOMAIN'          => $this->domain,
             ]
         );
     }
@@ -394,9 +396,9 @@ class WebEntryEventTest extends \WorkflowTestCase
         list($webEntry, $entryEvent) = $this->createWebEntryEvent(
             $processUid, $entryEvents,
             [
-            'WE_AUTHENTICATION' => 'LOGIN_REQUIRED',
-            'DYN_UID'           => $entryEvents[0]['DYN_UID'],
-            'USR_UID'           => null,
+                'WE_AUTHENTICATION' => 'LOGIN_REQUIRED',
+                'DYN_UID'           => $entryEvents[0]['DYN_UID'],
+                'USR_UID'           => null,
             ]
         );
     }

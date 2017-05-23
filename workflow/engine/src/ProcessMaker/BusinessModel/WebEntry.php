@@ -386,7 +386,7 @@ class WebEntry
 
                     $dynaForm = new \Dynaform();
 
-                    if(!empty($arrayWebEntryData["DYN_UID"])) {
+                    if (!empty($arrayWebEntryData["DYN_UID"])) {
                         $arrayDynaFormData = $dynaForm->Load($arrayWebEntryData["DYN_UID"]);
                     }
 
