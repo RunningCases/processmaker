@@ -182,7 +182,13 @@ Ext.onReady(function(){
             text: _("ID_SAVE"),
             handler: function (btn, ev)
             {
-                if( newForm.getForm().findField('name').getValue().trim() == "") {
+                var reg = new RegExp(/(<([^>]+)>)/ig),
+                    nameGroups = newForm.getForm().findField('name').getValue();
+                if (reg.test(nameGroups)){
+                    Ext.Msg.alert(_('ID_WARNING'), _("ID_FIELD_INVALID", _("ID_GROUP_NAME")));
+                    newForm.getForm().findField('name').setValue("");
+                    return false;
+                } else if (nameGroups.trim() == "") {
                     Ext.Msg.alert(_('ID_WARNING'), _("ID_FIELD_REQUIRED", _("ID_GROUP_NAME")));
                     newForm.getForm().findField('name').setValue("");
                     return false;
@@ -434,8 +440,8 @@ CheckGroupName = function(grp_name, function_success, function_failure){
     params: {action: 'exitsGroupName', GRP_NAME: grp_name},
     success: function(resp, opt){
       viewport.getEl().unmask();
-      var checked = eval(resp.responseText);
-      (!checked) ? function_success() : function_failure();
+      var response = JSON.parse(resp.responseText);
+      (!response.success) ? function_success() : function_failure(response.msg);
     },
     failure: function(r,o) {
       viewport.getEl().unmask();
@@ -452,11 +458,11 @@ SaveNewGroupAction = function(){
 };
 
 //Show Duplicate Group Name Message
-DuplicateGroupName = function(){
-  Ext.getCmp("btnCreateSave").setDisabled(false);
-  Ext.getCmp("btnUpdateSave").setDisabled(false);
-
-  PMExt.warning(_('ID_GROUPS'), _('ID_MSG_GROUP_NAME_EXISTS'));
+DuplicateGroupName = function (msg) {
+    Ext.getCmp("btnCreateSave").setDisabled(false);
+    Ext.getCmp("btnUpdateSave").setDisabled(false);
+    newForm.getForm().findField('name').setValue("");
+    PMExt.warning(_('ID_GROUPS'), msg ? msg : _('ID_MSG_GROUP_NAME_EXISTS'));
 };
 
 //Save New Group
