@@ -22,6 +22,7 @@ class Home extends Controller
 
     private $clientBrowser;
     private $lastSkin;
+    private $usrId;
 
     public function __construct ()
     {
@@ -39,6 +40,10 @@ class Home extends Controller
             $this->userName = isset( $_SESSION['USR_USERNAME'] ) ? $_SESSION['USR_USERNAME'] : '';
             $this->userFullName = isset( $_SESSION['USR_FULLNAME'] ) ? $_SESSION['USR_FULLNAME'] : '';
             $this->userRolName = isset( $_SESSION['USR_ROLENAME'] ) ? $_SESSION['USR_ROLENAME'] : '';
+            
+            $users = new Users();
+            $users = $users->load($this->userID);
+            $this->usrId = $users["USR_ID"];
         }
     }
 
@@ -261,7 +266,6 @@ class Home extends Controller
 
         // settings vars and rendering
         $this->setVar( 'cases', $cases['data'] );
-        $this->setVar( 'cases_count', $cases['totalCount'] );
         $this->setVar( 'title', $title );
         $this->setVar( 'noPerms', G::LoadTranslation( 'ID_CASES_NOTES_NO_PERMISSIONS' ));
         $this->setVar( 'appListStart', $this->appListLimit );
@@ -296,7 +300,7 @@ class Home extends Controller
             $userObject = Users::loadById($user);
             $userName = $userObject->getUsrLastname() . " " . $userObject->getUsrFirstname();
         }
-
+        
         $cases = $this->getAppsData( $httpData->t, null, null, $user, null, $search, $process, $status, $dateFrom, $dateTo, null, null, 'APP_CACHE_VIEW.APP_NUMBER', $category);
         $arraySearch = array($process,  $status,  $search, $category, $user, $dateFrom, $dateTo );
 
@@ -317,7 +321,6 @@ class Home extends Controller
         $this->setVar( 'arraySearch', $arraySearch );
 
         $this->setVar( 'cases', $cases['data'] );
-        $this->setVar( 'cases_count', $cases['totalCount'] );
         $this->setVar( 'title', $title );
         $this->setVar( 'noPerms', G::LoadTranslation( 'ID_CASES_NOTES_NO_PERMISSIONS' ));
         $this->setVar( 'appListStart', $this->appListLimit );
@@ -368,13 +371,13 @@ class Home extends Controller
         $notesLimit = 4;
         switch ($user) {
             case 'CURRENT_USER':
-                $user = $this->userID;
+                $user = $this->usrId;
                 break;
             case 'ALL':
                 $user = null;
                 break;
             case null:
-                $user = $this->userID;
+                $user = $this->usrId;
                 break;
             default:
                 //$user = $this->userID;
@@ -449,6 +452,8 @@ class Home extends Controller
                     case 'draft':
                     case 'todo':
                         $listName = 'inbox';
+                        $userObject = Users::loadById($dataList['userId']);
+                        $dataList['userId']   = $userObject->getUsrUid();
                         $cases = $list->getList($listName, $dataList);
                         break;
                     case 'unassigned':
@@ -558,31 +563,32 @@ class Home extends Controller
         $this->render();
     }
 
-    function getUserArray ($action, $userUid, $search = null)
+    function getUserArray($action, $userUid, $search = null)
     {
         global $oAppCache;
-        $status = array ();
-        $users[] = array ("CURRENT_USER",G::LoadTranslation( "ID_CURRENT_USER" ));
-        $users[] = array ("ALL",G::LoadTranslation( "ID_ALL_USERS" ));
+        $status = array();
+        $users[] = array("CURRENT_USER", G::LoadTranslation("ID_CURRENT_USER"));
+        $users[] = array("ALL", G::LoadTranslation("ID_ALL_USERS"));
 
         //now get users, just for the Search action
         switch ($action) {
             case 'search_simple':
             case 'search':
-                $cUsers = new Criteria( 'workflow' );
+                $cUsers = new Criteria('workflow');
                 $cUsers->clearSelectColumns();
-                $cUsers->addSelectColumn( UsersPeer::USR_UID );
-                $cUsers->addSelectColumn( UsersPeer::USR_FIRSTNAME );
-                $cUsers->addSelectColumn( UsersPeer::USR_LASTNAME );
+                $cUsers->addSelectColumn(UsersPeer::USR_UID);
+                $cUsers->addSelectColumn(UsersPeer::USR_FIRSTNAME);
+                $cUsers->addSelectColumn(UsersPeer::USR_LASTNAME);
+                $cUsers->addSelectColumn(UsersPeer::USR_ID);
                 if (!empty($search)) {
                     $cUsers->addOr(UsersPeer::USR_FIRSTNAME, "%$search%", Criteria::LIKE);
                     $cUsers->addOr(UsersPeer::USR_LASTNAME, "%$search%", Criteria::LIKE);
                 }
-                $oDataset = UsersPeer::doSelectRS( $cUsers );
-                $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+                $oDataset = UsersPeer::doSelectRS($cUsers);
+                $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                 $oDataset->next();
                 while ($aRow = $oDataset->getRow()) {
-                    $users[] = array ($aRow['USR_UID'], htmlentities($aRow['USR_LASTNAME'] . ' ' . $aRow['USR_FIRSTNAME'], ENT_QUOTES, "UTF-8"));
+                    $users[] = array($aRow['USR_ID'], htmlentities($aRow['USR_LASTNAME'] . ' ' . $aRow['USR_FIRSTNAME'], ENT_QUOTES, "UTF-8"));
                     $oDataset->next();
                 }
                 break;
