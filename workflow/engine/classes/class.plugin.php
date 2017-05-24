@@ -585,6 +585,7 @@ class PMPlugin
      */
     public static function getListAllPlugins($workspace)
     {
+        PMPluginRegistry::saveState();
         $pathSingleton = PATH_DATA . "sites" . PATH_SEP . $workspace . PATH_SEP . "plugin.singleton";
         $oPluginRegistry = PMPluginRegistry::loadSingleton($pathSingleton);
         $items = [];
@@ -600,6 +601,7 @@ class PMPlugin
             }
             closedir($handle);
         }
+        PMPluginRegistry::restoreState();
         return $items;
     }
 
