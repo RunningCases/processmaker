@@ -253,6 +253,7 @@ switch ($_POST['action']) {
         while ($oDataset->next()) {
             $arrData[] = $oDataset->getRow();
         }
+        G::header('Content-Type: application/json');
         echo '{success: true, members: ' . G::json_encode( $arrData ) . ', total_users: ' . $totalRows . '}';
         break;
     case 'availableMembers':
@@ -321,6 +322,7 @@ switch ($_POST['action']) {
         while ($oDataset->next()) {
             $arrData[] = $oDataset->getRow();
         }
+        G::header('Content-Type: application/json');
         echo '{success: true, members: ' . G::json_encode( $arrData ) . ', total_users: ' . $totalRows . '}';
         break;
     case 'assignUsersToGroupsMultiple':
