@@ -452,6 +452,8 @@ class Home extends Controller
                     case 'draft':
                     case 'todo':
                         $listName = 'inbox';
+                        //The change is made because the method 'getList()' does not 
+                        //support 'USR_UID', this method uses the numeric field 'USR_ID'.
                         $userObject = Users::loadById($dataList['userId']);
                         $dataList['userId']   = $userObject->getUsrUid();
                         $cases = $list->getList($listName, $dataList);
