@@ -1684,6 +1684,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 
 ( 'LABEL','ID_PLEASE_ENTER_REQUIRED_FIELDS','en','Please enter the required fields','2014-01-15') ,
 ( 'LABEL','ID_TABLE_ALREADY_EXISTS','en','Table already exists','2014-01-15') ,
+( 'LABEL','ID_BATCH_ROUTING_TABLE_ALREADY_EXISTS','en','The specified batch routing table already exists. The existing table will be used to store the batch routing information. Please be sure that the table has the correct batch routing configuration.','2017-03-27') ,
 ( 'LABEL','ID_LANGUAGES','en','Language','2014-01-15') ,
 ( 'LABEL','ID_EXPORT','en','Export','2014-01-15') ,
 ( 'LABEL','ID_MSG_CONFIRM_REMOVE_LANGUAGE','en','Are you sure you want to remove this language?','2014-01-15') ,
