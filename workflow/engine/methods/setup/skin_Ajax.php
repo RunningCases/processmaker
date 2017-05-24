@@ -1,8 +1,4 @@
 <?php
-G::LoadSystem('inputfilter');
-$filter = new InputFilter();
-$_REQUEST = $filter->xssFilterHard($_REQUEST);
-
 if (! isset( $_REQUEST['action'] )) {
     $res['success'] = false;
     $res['error'] = $res['message'] = G::LoadTranslation('ID_REQUEST_ACTION');
@@ -17,8 +13,7 @@ if (! function_exists( $_REQUEST['action'] ) || !G::isUserFunction($_REQUEST['ac
     print G::json_encode( $res );
     die();
 }
-$restrictedFunctions = array ('copy_skin_folder','addTarFolder'
-);
+$restrictedFunctions = array ('copy_skin_folder','addTarFolder');
 if (in_array( $_REQUEST['action'], $restrictedFunctions )) {
     $res['success'] = false;
     $res['error'] = $res['message'] = G::LoadTranslation('ID_REQUEST_ACTION_NOT_EXIST');
@@ -26,9 +21,9 @@ if (in_array( $_REQUEST['action'], $restrictedFunctions )) {
     die();
 }
 
-$functionName = $_REQUEST['action'];
+$functionName = $_REQUEST['action'];error_log($functionName);
 $functionParams = isset( $_REQUEST['params'] ) ? $_REQUEST['params'] : array ();
-
+//$RBAC->allows(basename(__FILE__), $functionName);
 $functionName();
 
 function updatePageSize ()
@@ -166,7 +161,7 @@ function newSkin ($baseSkin = 'classic')
         $configFileFinal = PATH_CUSTOM_SKINS . $skinFolder . PATH_SEP . 'config.xml';
 
         $xmlConfiguration = file_get_contents( $configFileOriginal );
-        
+
         $workspace = ($_REQUEST['workspace'] == 'global') ? '' : SYS_SYS;
 
         $xmlConfigurationObj = G::xmlParser($xmlConfiguration);
@@ -356,9 +351,9 @@ function exportSkin ($skinToExport = "")
         $response['success'] = true;
         $response['message'] = $skinTar;
         G::auditLog("ExportSkin", "Skin Name: ".$skinName);
-        
+
         $response = $filter->xssFilterHard($response);
-        
+
         print_r( G::json_encode( $response ) );
     } catch (Exception $e) {
         $response['success'] = false;
@@ -374,7 +369,7 @@ function deleteSkin ()
     $filter = new InputFilter();
     try {
         $_REQUEST['SKIN_FOLDER_ID'] = $filter->xssFilterHard($_REQUEST['SKIN_FOLDER_ID']);
-    
+
         if (! (isset( $_REQUEST['SKIN_FOLDER_ID'] ))) {
             throw (new Exception( G::LoadTranslation( 'ID_SKIN_FOLDER_REQUIRED' ) ));
         }
@@ -400,9 +395,9 @@ function deleteSkin ()
 
 function streamSkin ()
 {
-    $skinTar = $_REQUEST['file'];
+    $skinTar = basename($_REQUEST['file']);
     $bDownload = true;
-    G::streamFile( $skinTar, $bDownload, basename( $skinTar ) );
+    G::streamFile(PATH_CUSTOM_SKINS . $skinTar, $bDownload, $skinTar);
     @unlink( $fileTar );
 }
 
