@@ -4776,7 +4776,7 @@
         </vendor>
         <column name="WEE_UID"    type="VARCHAR" size="32" required="true" primaryKey="true" />
         <column name="WEE_TITLE" type="LONGVARCHAR" required="false"/>
-        <column name="WEE_DESCRIPTION" type="LONGVARCHAR" required="true"/>
+        <column name="WEE_DESCRIPTION" type="LONGVARCHAR" required="false"/>
         <column name="PRJ_UID"    type="VARCHAR" size="32" required="true" />
         <column name="EVN_UID"    type="VARCHAR" size="32" required="true" />
         <column name="ACT_UID"    type="VARCHAR" size="32" required="true" />
