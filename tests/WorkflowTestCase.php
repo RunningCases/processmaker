@@ -67,6 +67,16 @@ class WorkflowTestCase extends TestCase
     }
 
     /**
+     * Clean the shared folder to only have the sites.
+     */
+    protected function cleanShared()
+    {
+        $this->rrmdir(PATH_DATA.'skins');
+        mkdir(PATH_DATA.'skins');
+        clearstatcache();
+    }
+
+    /**
      * Set the text of and specific translated message.
      *
      * @global array $translation
@@ -90,5 +100,18 @@ class WorkflowTestCase extends TestCase
         foreach ($translation as $msgId => $text) {
             unset($translation[$msgId]);
         }
+    }
+
+    private function rrmdir($dir)
+    {
+        if (!is_dir($dir)) {
+            return;
+        }
+        $files = array_diff(scandir($dir), array('.', '..'));
+        foreach ($files as $file) {
+            (is_dir("$dir/$file") && !is_link($dir)) ? $this->rrmdir("$dir/$file")
+                        : unlink("$dir/$file");
+        }
+        return rmdir($dir);
     }
 }
