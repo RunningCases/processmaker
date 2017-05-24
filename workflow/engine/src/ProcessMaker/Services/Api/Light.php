@@ -632,8 +632,20 @@ class Light extends Api
             $dataList['oldestthan']  = $oldestthan;
             Validator::throwExceptionIfDataNotMetIso8601Format($dataList, $this->arrayFieldIso8601);
             $dataList = DateTime::convertDataToUtc($dataList, $this->arrayFieldIso8601);
-            $oCases   = new \ProcessMaker\BusinessModel\Cases();
-            $response = $oCases->getList($dataList);
+
+            /*----------------------------------********---------------------------------*/
+            if (true) {
+                //In enterprise version this block of code should always be executed
+                //In community version this block of code is deleted and is executed the other
+                $oCases   = new \ProcessMaker\BusinessModel\Lists();
+                $response = $oCases->getList('unassigned', $dataList);
+            } else {
+            /*----------------------------------********---------------------------------*/
+                $oCases = new \ProcessMaker\BusinessModel\Cases();
+                $response = $oCases->getList($dataList);
+            /*----------------------------------********---------------------------------*/
+            }
+            /*----------------------------------********---------------------------------*/
             $result   = $this->parserDataUnassigned($response);
             return DateTime::convertUtcToIso8601($result, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
