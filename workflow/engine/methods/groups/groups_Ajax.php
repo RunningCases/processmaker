@@ -125,24 +125,19 @@ switch ($_POST['action']) {
         $result->success = true;
         $result->groups = $arrData;
         $result->total_groups = $data['totalCount'];
-
+        G::header('Content-Type: application/json');
         echo G::json_encode( $result );
         break;
     case 'exitsGroupName':
-        $groupName = strip_tags($_POST['GRP_NAME']);
-        if ($groupName) {
-            require_once 'classes/model/Groupwf.php';
-            G::LoadClass('Groupswf');
-            $oGroup = new Groupwf();
-            $oCriteria = $oGroup->loadByGroupname($_POST['GRP_NAME']);
-            $oDataset = GroupwfPeer::doSelectRS($oCriteria);
-            $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            $oDataset->next();
-            $aRow = $oDataset->getRow();
-            $response = ($aRow) ? \G::json_encode(['success' => true]) : \G::json_decode(['success' => false]);
-        } else {
-            $response = \G::json_encode(['success' => true, 'msg' => \G::LoadTranslation('ID_FIELD_INVALID')]);
-        }
+        require_once 'classes/model/Groupwf.php';
+        G::LoadClass( 'Groupswf' );
+        $oGroup = new Groupwf();
+        $oCriteria = $oGroup->loadByGroupname( $_POST['GRP_NAME'] );
+        $oDataset = GroupwfPeer::doSelectRS( $oCriteria );
+        $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
+        $oDataset->next();
+        $aRow = $oDataset->getRow();
+        $response = ($aRow) ? 'true' : 'false';
         echo $response;
         break;
     case 'saveNewGroup':
