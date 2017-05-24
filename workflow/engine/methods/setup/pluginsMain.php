@@ -30,7 +30,7 @@ $headPublisher->assign( "PROCESSMAKER_URL", "/sys" . SYS_SYS . "/" . SYS_LANG . 
 $headPublisher->assign( "SYS_SKIN", SYS_SKIN );
 
 $oPluginRegistry = &PMPluginRegistry::getSingleton();
-if ($oPluginRegistry->getStatusPlugin('pmWorkspaceManagement') == "enabled") {
+if ($oPluginRegistry->getStatusPlugin('pmWorkspaceManagement') && $oPluginRegistry->getStatusPlugin('pmWorkspaceManagement') == "enabled") {
     $headPublisher = $oPluginRegistry->executeMethod('pmWorkspaceManagement', 'disableButtonsPluginMain', $headPublisher);
 }
 
