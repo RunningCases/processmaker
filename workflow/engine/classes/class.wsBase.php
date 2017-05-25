@@ -2447,7 +2447,7 @@ class wsBase
             }
 
             $res = $result->getPayloadArray();
-
+                
             //Now fill the array of AppDelegationPeer
             $oCriteria = new Criteria( 'workflow' );
             $oCriteria->addSelectColumn( AppDelegationPeer::DEL_INDEX );
@@ -2486,7 +2486,7 @@ class wsBase
                 }
 
                 //Execute events
-                $eventPro = $_SESSION["PROCESS"];
+                $eventPro = $appFields['PRO_UID'];
                 $eventApp = $caseId;
                 $eventInd = $aAppDel['DEL_INDEX'];
                 $eventTas = $aAppDel['TAS_UID'];
