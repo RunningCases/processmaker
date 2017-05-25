@@ -446,25 +446,15 @@ class Home extends Controller
             if (true) {
                 //In enterprise version this block of code should always be executed
                 //In community version this block of code is deleted and is executed the other
-                $list = new \ProcessMaker\BusinessModel\Lists();
-                $listName = 'inbox';
-                switch ($type) {
-                    case 'draft':
-                    case 'todo':
-                        $listName = 'inbox';
-                        //The change is made because the method 'getList()' does not 
-                        //support 'USR_UID', this method uses the numeric field 'USR_ID'.
-                        $userObject = Users::loadById($dataList['userId']);
-                        $dataList['userId']   = $userObject->getUsrUid();
-                        $cases = $list->getList($listName, $dataList);
-                        break;
-                    case 'unassigned':
-                        $case = new \ProcessMaker\BusinessModel\Cases();
-                        $cases = $case->getList($dataList);
-                        foreach ($cases['data'] as &$value) {
-                            $value = array_change_key_case($value, CASE_UPPER);
-                        }
-                        break;
+                $swType = $type === "todo" || $type === "draft";
+                if ($swType || $type === "unassigned") {
+                    //The change is made because the method 'getList()' does not 
+                    //support 'USR_UID', this method uses the numeric field 'USR_ID'.
+                    $userObject = Users::loadById($dataList['userId']);
+                    $dataList['userId'] = $userObject->getUsrUid();
+                    $listType = $swType ? "inbox" : $type;
+                    $list = new \ProcessMaker\BusinessModel\Lists();
+                    $cases = $list->getList($listType, $dataList);
                 }
             } else {
             /*----------------------------------********---------------------------------*/
