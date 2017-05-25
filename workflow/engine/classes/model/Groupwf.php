@@ -267,9 +267,9 @@ class Groupwf extends BaseGroupwf
         $criteria = new Criteria( 'workflow' );
         $criteria->addSelectColumn( GroupwfPeer::GRP_UID );
         $criteria->addSelectColumn( GroupwfPeer::GRP_TITLE );
+        $criteria->addAsColumn('CON_VALUE', GroupwfPeer::GRP_TITLE);
         $criteria->addSelectColumn( GroupwfPeer::GRP_STATUS );
         $criteria->addSelectColumn( GroupwfPeer::GRP_LDAP_DN );
-        $criteria->addSelectColumn( ContentPeer::CON_VALUE );
         $criteria->add( GroupwfPeer::GRP_STATUS, 'ACTIVE' );
         $criteria->addAscendingOrderByColumn( GroupwfPeer::GRP_TITLE );
 
