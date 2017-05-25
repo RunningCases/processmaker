@@ -51,7 +51,7 @@ class SkinsTest extends \WorkflowTestCase
     }
 
     /**
-     * Get defaut skins, one custom global and one custom current workspace skin.
+     * Get default skins, one custom global and one custom current workspace skin.
      *
      * @covers ProcessMaker\BusinessModel\Skins::getSkins
      * @covers ProcessMaker\BusinessModel\Skins::createSkin

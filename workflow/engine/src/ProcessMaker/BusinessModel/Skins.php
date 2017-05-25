@@ -40,7 +40,7 @@ class Skins
         $skinDescription = '',
         $skinAuthor = 'ProcessMaker Team',
         $skinWorkspace = 'global',
-        $skinBase = 'classic'
+        $skinBase = 'neoclassic'
     ) {
         try {
             if (!(isset($skinName))) {
@@ -61,7 +61,7 @@ class Skins
             switch ($skinBase) {
                 //Validate skin base
                 case 'uxmodern':
-                    $this->copy_skin_folder(G::ExpandPath("skinEngine").'uxmodern'.PATH_SEP,
+                    $this->copySkinFolder(G::ExpandPath("skinEngine").'uxmodern'.PATH_SEP,
                                                           PATH_CUSTOM_SKINS.$skinFolder,
                                                           array("config.xml"
                     ));
@@ -69,7 +69,7 @@ class Skins
                     break;
                 case 'classic':
                     //Special Copy of this dir + xmlreplace
-                    $this->copy_skin_folder(G::ExpandPath("skinEngine").'base'.PATH_SEP,
+                    $this->copySkinFolder(G::ExpandPath("skinEngine").'base'.PATH_SEP,
                                                           PATH_CUSTOM_SKINS.$skinFolder,
                                                           array("config.xml", "baseCss"
                     ));
@@ -77,7 +77,7 @@ class Skins
                     break;
                 case 'neoclassic':
                     //Special Copy of this dir + xmlreplace
-                    $this->copy_skin_folder(G::ExpandPath("skinEngine").'neoclassic'.PATH_SEP,
+                    $this->copySkinFolder(G::ExpandPath("skinEngine").'neoclassic'.PATH_SEP,
                                                           PATH_CUSTOM_SKINS.$skinFolder,
                                                           array("config.xml", "baseCss"
                     ));
@@ -85,7 +85,7 @@ class Skins
                     break;
                 default:
                     //Commmon copy/paste of a folder + xmlrepalce
-                    $this->copy_skin_folder(PATH_CUSTOM_SKINS.$skinBase,
+                    $this->copySkinFolder(PATH_CUSTOM_SKINS.$skinBase,
                                             PATH_CUSTOM_SKINS.$skinFolder,
                                             array("config.xml"
                     ));
@@ -151,7 +151,7 @@ class Skins
         }
     }
 
-    private function copy_skin_folder($path, $dest, $exclude = array())
+    private function copySkinFolder($path, $dest, $exclude = array())
     {
         $defaultExcluded = array(".", "..");
         $excludedItems = array_merge($defaultExcluded, $exclude);
@@ -164,7 +164,7 @@ class Skins
                         continue;
                     }
                     if (is_dir($path.PATH_SEP.$file)) {
-                        $this->copy_skin_folder($path.PATH_SEP.$file,
+                        $this->copySkinFolder($path.PATH_SEP.$file,
                                                 $dest.PATH_SEP.$file, $exclude);
                     } else {
                         copy($path.PATH_SEP.$file, $dest.PATH_SEP.$file);
