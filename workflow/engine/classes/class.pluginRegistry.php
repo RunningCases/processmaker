@@ -122,6 +122,7 @@ class PMPluginRegistry
     private $_restServiceEnabled = array();
 
     private static $instance = null;
+    private static $stateSaved = null;
 
     /**
      * This function is the constructor of the PMPluginRegistry class
@@ -1943,6 +1944,30 @@ class PMPluginRegistry
             return $this->_arrayDesignerSourcePath;
         } catch (Exception $e) {
             throw $e;
+        }
+    }
+
+    /**
+     * Saves the state of instance, in the private property 'stateSaved'. 
+     * Use the 'restoreState()' method to put the instance in the saved state.
+     */
+    public static function saveState()
+    {
+        $pluginRegistry = PMPluginRegistry::getSingleton();
+        self::$stateSaved = $pluginRegistry->serializeInstance();
+    }
+
+    /**
+     * Restores the state of the instance that is in the private variable 'stateSaved'. 
+     * You must save the state of the instacia with the method 'saveState()' 
+     * before being called.
+     */
+    public static function restoreState()
+    {
+        if (self::$stateSaved !== null) {
+            $pluginRegistry = PMPluginRegistry::getSingleton();
+            self::$instance = $pluginRegistry->unSerializeInstance(self::$stateSaved);
+            self::$stateSaved = null;
         }
     }
 

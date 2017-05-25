@@ -35,6 +35,12 @@ try {
     $a->next();
     $row = $a->getRow();
     $swpmdynaform = isset($row) && $row["DYN_VERSION"] == 2;
+
+    //If no variables are submitted and the $_POST variable is empty
+    if (!isset($_POST['form'])) {
+        $_POST['form'] = array();
+    }
+
     if ($swpmdynaform) {
         $pmdynaform = $_POST["form"];
     }

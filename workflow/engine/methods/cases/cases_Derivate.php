@@ -69,7 +69,10 @@ G::LoadClass( 'pmScript' );
 G::LoadClass( 'case' );
 G::LoadClass( 'derivation' );
 
-//require_once 'classes/model/Event.php';
+//If no variables are submitted and the $_POST variable is empty
+if (!isset($_POST['form'])) {
+    $_POST['form'] = array();
+}
 
 /* GET , POST & $_SESSION Vars */
 /* Process the info */

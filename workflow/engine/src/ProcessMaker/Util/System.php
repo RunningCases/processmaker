@@ -34,28 +34,14 @@ class System
     }
 
     /**
-     * Flush the cache files for the specified workspace(s).
-     * If no workspace is specified, then the cache will be flushed in all available
-     * workspaces.
+     * Flush the cache files for the specified workspace.
      *
-     * @param array $args
-     * @param type $opts
+     * @param object $workspace
      */
-    public static function flushCache($args, $opts = null)
+    public static function flushCache($workspace)
     {
-        $rootDir = realpath(PATH_HOME . "/../");
-        $app = new \Maveriks\WebApplication();
-        $app->setRootDir($rootDir);
-        $loadConstants = false;
-        $workspaces = self::getWorkspacesFromArgs($args);
-
-        if (!defined("PATH_C")) {
-            die("ERROR: seems processmaker is not properly installed (System constants are missing)." . PHP_EOL);
-        }
-
-        //Update singleton file by workspace
-        foreach ($workspaces as $workspace) {
-            eprint("Update singleton in workspace " . $workspace->name . " ... ");
+        try {
+            //Update singleton file by workspace
             \Bootstrap::setConstantsRelatedWs($workspace->name);
             $pathSingleton = PATH_DATA . "sites" . PATH_SEP . $workspace->name . PATH_SEP . "plugin.singleton";
             $oPluginRegistry = \PMPluginRegistry::loadSingleton($pathSingleton);
@@ -74,23 +60,15 @@ class System
                         if (class_exists($details->sClassName)) {
                             $oPlugin = new $details->sClassName($details->sNamespace, $details->sFilename);
                             $oPlugin->setup();
-                            file_put_contents($pathSingleton, $oPluginRegistry->serializeInstance());
                         }
+                        file_put_contents($pathSingleton, $oPluginRegistry->serializeInstance());
                     }
                 }
             }
-            eprintln("DONE");
-        }
 
-        //flush the cache files
-        \CLI::logging("Flush " . \pakeColor::colorize("system", "INFO") . " cache ... ");
-        \G::rm_dir(PATH_C);
-        \G::mk_dir(PATH_C, 0777);
-        echo "DONE" . PHP_EOL;
-
-        foreach ($workspaces as $workspace) {
-            echo "Flush workspace " . \pakeColor::colorize($workspace->name, "INFO") . " cache ... ";
-
+            //flush the cache files
+            \G::rm_dir(PATH_C);
+            \G::mk_dir(PATH_C, 0777);
             \G::rm_dir($workspace->path . "/cache");
             \G::mk_dir($workspace->path . "/cache", 0777);
             \G::rm_dir($workspace->path . "/cachefiles");
@@ -98,7 +76,8 @@ class System
             if (file_exists($workspace->path . '/routes.php')) {
                 unlink($workspace->path . '/routes.php');
             }
-            echo "DONE" . PHP_EOL;
+        } catch (\Exception $e) {
+            throw new \Exception("Error: cannot perform this task. " . $e->getMessage());
         }
     }
 }
