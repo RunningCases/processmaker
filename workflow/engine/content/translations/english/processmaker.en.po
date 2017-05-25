@@ -1466,6 +1466,12 @@ msgid "Table already exists"
 msgstr "Table already exists"
 
 # TRANSLATION
+# LABEL/ID_BATCH_ROUTING_TABLE_ALREADY_EXISTS
+#: LABEL/ID_BATCH_ROUTING_TABLE_ALREADY_EXISTS
+msgid "The specified batch routing table already exists. The existing table will be used to store the batch routing information. Please be sure that the table has the correct batch routing configuration."
+msgstr "The specified batch routing table already exists. The existing table will be used to store the batch routing information. Please be sure that the table has the correct batch routing configuration."
+
+# TRANSLATION
 # LABEL/ID_LANGUAGES
 #: LABEL/ID_LANGUAGES
 msgid "Language"
@@ -6838,8 +6844,8 @@ msgstr "Last Name"
 # TRANSLATION
 # LABEL/ID_REASSIGNMENT_SUCCESS
 #: LABEL/ID_REASSIGNMENT_SUCCESS
-msgid "The case #{APP_NUMBER} was reassigned to user {USER} successfully!"
-msgstr "The case #{APP_NUMBER} was reassigned to user {USER} successfully!"
+msgid "Case #{APP_NUMBER} was reassigned to user {USER}."
+msgstr "Case #{APP_NUMBER} was reassigned to user {USER}."
 
 # TRANSLATION
 # LABEL/ID_REASSIGN_CONFIRM
@@ -27686,8 +27692,8 @@ msgstr "To cancel a case, no parallel threads must be active. Only cases with on
 # TRANSLATION
 # LABEL/ID_REASSIGNMENT_ERROR
 #: LABEL/ID_REASSIGNMENT_ERROR
-msgid "The case was already derivated to other person. Try to open again the case to reassign."
-msgstr "The case was already derivated to other person. Try to open again the case to reassign."
+msgid "The case has already been routed or assigned to another person. Try to open the case again to reassign it."
+msgstr "The case has already been routed or assigned to another person. Try to open the case again to reassign it."
 
 # TRANSLATION
 # LABEL/ID_REASSIGNMENT_PAUSED_ERROR

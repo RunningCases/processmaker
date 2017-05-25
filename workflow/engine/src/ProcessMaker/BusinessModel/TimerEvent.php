@@ -1756,9 +1756,9 @@ class TimerEvent
             } while ($flagNextRecord);
 
             if (!$flagRecord) {
-                $common->frontEndShow("TEXT", "Not exists any record to continue a case, on date \"$datetime (UTC +00:00)\"");
+                $common->frontEndShow("TEXT", "No existing records to continue a case, on date \"$datetime (UTC +00:00)\"");
 
-                $this->log("NO-RECORDS", "Not exists any record to continue a case");
+                $this->log("NO-RECORDS", "No existing records to continue a case");
                 $aInfo = array(
                     'ip'        => \G::getIpAddress()
                     ,'action'   => $action
@@ -1767,7 +1767,7 @@ class TimerEvent
                 );
                 $this->syslog(
                     200
-                    ,'Not exists any record to continue a case'
+                    ,'No existing records to continue a case'
                     ,'NO-RECORDS'
                     ,$aInfo
                 );

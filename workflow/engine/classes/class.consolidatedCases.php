@@ -24,7 +24,7 @@ class ConsolidatedCases
             return true;
         }
         if ($this->existTable && $Status) {
-            throw (new \Exception(\G::LoadTranslation("ID_TABLE_ALREADY_EXISTS")));
+            throw (new \Exception(\G::LoadTranslation("ID_BATCH_ROUTING_TABLE_ALREADY_EXISTS")));
         }
 
         if ($RepTabUid != '') {
