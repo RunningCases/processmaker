@@ -36,12 +36,23 @@ EOT
 CLI::taskArg('workspace', true, true);
 CLI::taskRun('run_flush_cache');
 
+/**
+ * Flush the cache files for the specified workspace.
+ * If no workspace is specified, then the cache will be flushed in all available 
+ * workspaces.
+ * 
+ * @param array $args
+ * @param array $opts
+ */
 function run_flush_cache($args, $opts)
 {
+    if (!defined("PATH_C")) {
+        die("ERROR: seems processmaker is not properly installed (System constants are missing)." . PHP_EOL);
+    }
+    $workspaces = get_workspaces_from_args($args);
     if (count($args) === 1) {
-        flush_cache($args, $opts);
+        flush_cache($workspaces[0]);
     } else {
-        $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
             passthru("./processmaker flush-cache " . $workspace->name);
         }
@@ -49,67 +60,21 @@ function run_flush_cache($args, $opts)
 }
 
 /**
- * Flush the cache files for the specified workspace(s).
- * If no workspace is specified, then the cache will be flushed in all available 
- * workspaces.
+ * Flush the cache files for the specified workspace.
  * 
- * @param type $args
- * @param type $opts
+ * @param object $workspace
  */
-function flush_cache($args, $opts)
+function flush_cache($workspace)
 {
-    $rootDir = realpath(__DIR__ . "/../../../../");
-    $app = new Maveriks\WebApplication();
-    $app->setRootDir($rootDir);
-    $loadConstants = false;
-    $workspaces = get_workspaces_from_args($args);
-
-    if (!defined("PATH_C")) {
-        die("ERROR: seems processmaker is not properly installed (System constants are missing)." . PHP_EOL);
-    }
-
-    //Update singleton file by workspace
-    foreach ($workspaces as $workspace) {
-        eprint("Update singleton in workspace " . $workspace->name . " ... ");
-        Bootstrap::setConstantsRelatedWs($workspace->name);
-        $pathSingleton = PATH_DATA . "sites" . PATH_SEP . $workspace->name . PATH_SEP . "plugin.singleton";
-        $oPluginRegistry = PMPluginRegistry::loadSingleton($pathSingleton);
-        $items = \PMPlugin::getlist($workspace->name);
-        foreach ($items as $item) {
-            if ($item["sStatusFile"] === true) {
-                $path = PATH_PLUGINS . $item["sFile"];
-                require_once($path);
-                $details = $oPluginRegistry->getPluginDetails($item["sFile"]);
-                //Only if the API directory structure is defined
-                $pathApiDirectory = PATH_PLUGINS . $details->sPluginFolder . PATH_SEP . "src" . PATH_SEP . "Services" . PATH_SEP . "Api";
-                if (is_dir($pathApiDirectory)) {
-                    if (class_exists($details->sClassName)) {
-                        $oPlugin = new $details->sClassName($details->sNamespace, $details->sFilename);
-                        $oPlugin->setup();
-                        file_put_contents($pathSingleton, $oPluginRegistry->serializeInstance());
-                    }
-                }
-            }
-        }
-        eprintln("DONE");
-    }
-
-    //flush the cache files
-    CLI::logging("Flush " . pakeColor::colorize("system", "INFO") . " cache ... ");
-    G::rm_dir(PATH_C);
-    G::mk_dir(PATH_C, 0777);
-    echo "DONE" . PHP_EOL;
-
-    foreach ($workspaces as $workspace) {
-        echo "Flush workspace " . pakeColor::colorize($workspace->name, "INFO") . " cache ... ";
-
-        G::rm_dir($workspace->path . "/cache");
-        G::mk_dir($workspace->path . "/cache", 0777);
-        G::rm_dir($workspace->path . "/cachefiles");
-        G::mk_dir($workspace->path . "/cachefiles", 0777);
-        if (file_exists($workspace->path . '/routes.php')) {
-            unlink($workspace->path . '/routes.php');
-        }
+    try {
+        CLI::logging("Flush " . pakeColor::colorize("system", "INFO") . " cache ... ");
+        echo PHP_EOL;
+        echo " Update singleton in workspace " . $workspace->name . " ... ";
+        echo PHP_EOL;
+        echo " Flush workspace " . pakeColor::colorize($workspace->name, "INFO") . " cache ... " . PHP_EOL;
+        $status = \ProcessMaker\Util\System::flushCache($workspace);
         echo "DONE" . PHP_EOL;
+    } catch (Exception $e) {
+        echo $e->getMessage() . PHP_EOL;
     }
 }
