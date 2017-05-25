@@ -53,6 +53,24 @@ class System extends Api
     }
 
     /**
+     * Get a list of the installed languages.
+     *
+     * @category HOR-3209,PROD-181
+     * @return array
+     * @url GET /languages
+     */
+    public function doGetLanguages()
+    {
+        try {
+            $language = new \ProcessMaker\BusinessModel\Language;
+            $list = $language->getLanguageList();
+            return ["data" => $list];
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
+    /**
      * @return array
      *
      * @author Gustavo Cruz <gustavo.cruz@colosa.com>
