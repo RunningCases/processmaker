@@ -11,7 +11,7 @@ class WebEntryEvent
         "DYN_UID"         => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "dynaFormUid"),
         "USR_UID"         => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "userUid"),
 
-        "WEE_TITLE"       => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventTitle"),
+        "WEE_TITLE"       => array("type" => "string", "required" => false,  "empty" => true, "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventTitle"),
         "WEE_DESCRIPTION" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventDescription"),
         "WEE_STATUS"      => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("ENABLED", "DISABLED"), "fieldNameAux" => "webEntryEventStatus")
     );

@@ -9,7 +9,7 @@ class WebEntry
         "TAS_UID"                  => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "taskUid"),
         "DYN_UID"                  => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "dynaFormUid"),
         "USR_UID"                  => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "userUid"),
-        "WE_TITLE"                 => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),             "fieldNameAux" => "webEntryTitle"),
+        "WE_TITLE"                 => array("type" => "string", "required" => false,  "empty" => true, "defaultValues" => array(),             "fieldNameAux" => "webEntryTitle"),
         "WE_DESCRIPTION"           => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),             "fieldNameAux" => "webEntryDescription"),
         "WE_METHOD"                => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array("WS", "HTML"), "fieldNameAux" => "webEntryMethod"),
         "WE_INPUT_DOCUMENT_ACCESS" => array("type" => "int",    "required" => true,  "empty" => false, "defaultValues" => array(0, 1),         "fieldNameAux" => "webEntryInputDocumentAccess")
