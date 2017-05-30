@@ -195,6 +195,16 @@ class Users extends BaseUsers
                 $translation  = $translations->loadByCode($aFields['USR_DEFAULT_LANG']);
                 $aFields['USR_DEFAULT_LANG_NAME'] = $translation['LANGUAGE_NAME'];
 
+                //Get the fullName with the correct format related to the settings
+                $conf = new \Configurations();
+                $confEnvSetting = $conf->getFormats();
+                $aFields['USR_FULLNAME'] = $conf->usersNameFormatBySetParameters(
+                    $confEnvSetting['format'],
+                    $aFields['USR_USERNAME'],
+                    $aFields['USR_FIRSTNAME'],
+                    $aFields['USR_LASTNAME']
+                );
+
                 $result = $aFields;
 
                 return $result;
@@ -474,5 +484,16 @@ class Users extends BaseUsers
             throw ($oError);
         }
     }
-}
 
+    /**
+     * Load a process object by USR_ID
+     *
+     * @param type $id
+     * @return Users
+     */
+    public static function loadById($id) {
+        $criteria = new Criteria(UsersPeer::DATABASE_NAME);
+        $criteria->add(UsersPeer::USR_ID, $id);
+        return UsersPeer::doSelect($criteria)[0];
+    }
+}

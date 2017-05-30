@@ -103,6 +103,11 @@ try {
 
     $arrayVariableDocumentToDelete = [];
 
+    //If no variables are submitted and the $_POST variable is empty
+    if (!isset($_POST['form'])) {
+        $_POST['form'] = array();
+    }
+
     if (array_key_exists('__VARIABLE_DOCUMENT_DELETE__', $_POST['form'])) {
         if (is_array($_POST['form']['__VARIABLE_DOCUMENT_DELETE__']) && !empty($_POST['form']['__VARIABLE_DOCUMENT_DELETE__'])) {
             $arrayVariableDocumentToDelete = $_POST['form']['__VARIABLE_DOCUMENT_DELETE__'];
@@ -183,14 +188,6 @@ try {
         //Execute after triggers - End
 
         $_SESSION['TRIGGER_DEBUG']['TRIGGERS_EXECUTION_TIME'] = $oCase->arrayTriggerExecutionTime;
-        $arrayInfoTriggerExecutionTime = [];
-
-        foreach ($_SESSION['TRIGGER_DEBUG']['TRIGGERS_EXECUTION_TIME'] as $key => $value) {
-            $arrayInfoTriggerExecutionTime[] = ['triUid' => $key, 'triExecutionTime' => $value];
-        }
-
-        //Log
-        Bootstrap::registerMonolog('triggerExecutionTime', 200, 'Trigger execution time', ['proUid' => $_SESSION['PROCESS'], 'tasUid' => $_SESSION['TASK'], 'appUid' => $_SESSION['APPLICATION'], 'after' => 'DYNAFORM', 'triggerInfo' => $arrayInfoTriggerExecutionTime], SYS_SYS, 'processmaker.log');
     }
 
     //save data in PM Tables if necessary

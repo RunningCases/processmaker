@@ -754,6 +754,10 @@ class pmDynaform
             preg_match_all('/\@(?:([\@\%\#\=\!Qq])([a-zA-Z\_]\w*)|([a-zA-Z\_][\w\-\>\:]*)\(((?:[^\\\\\)]*?)*)\))/', $json->sql, $result, PREG_PATTERN_ORDER | PREG_OFFSET_CAPTURE);
             $variables = isset($result[2]) ? $result[2] : array();
             foreach ($variables as $key => $value) {
+                //Prevents an infinite cycle. If the name of the variable is used within its own dependent.
+                if ($value[0] === $json->variable) {
+                    continue;
+                }
                 $jsonSearch = $this->jsonsf(G::json_decode($this->record["DYN_CONTENT"]), $value[0], $json->variable === "" ? "id" : "variable");
                 $a = $this->getValuesDependentFields($jsonSearch);
                 foreach ($a as $i => $v) {
@@ -1342,7 +1346,7 @@ class pmDynaform
                 "var pm_run_outside_main_app = null;\n" .
                 "var dyn_uid = '" . $this->fields["CURRENT_DYNAFORM"] . "';\n" .
                 "var __DynaformName__ = null;\n" .
-                "var app_uid = null;\n" .
+                "var app_uid = '" . G::decrypt($record['APP_UID'], URL_KEY) . "';\n" .
                 "var prj_uid = '" . $this->record["PRO_UID"] . "';\n" .
                 "var step_mode = null;\n" .
                 "var workspace = '" . SYS_SYS . "';\n" .

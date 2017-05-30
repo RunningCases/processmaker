@@ -587,13 +587,16 @@ Ext.onReady ( function() {
     }
 
     //Render Full Name
-    full_name = function(v, x, s) {
+    full_name = function (v, x, s) {
+        var resp;
         if (s.data.USR_UID && s.data.USR_USERNAME) {
-            return _FNF(s.data.USR_USERNAME, s.data.USR_FIRSTNAME, s.data.USR_LASTNAME);
+            resp = _FNF(s.data.USR_USERNAME, s.data.USR_FIRSTNAME, s.data.USR_LASTNAME);
+        } else if (s && s.json && s.json["APP_TAS_TYPE"] === "SUBPROCESS") {
+            resp = '';
+        } else {
+            resp = '[' + _('ID_UNASSIGNED').toUpperCase() + ']';
         }
-        else {
-            return '[' + _('ID_UNASSIGNED').toUpperCase() + ']';
-        }
+        return resp;
     };
 
     previous_full_name = function(v, x, s) {
@@ -1932,11 +1935,7 @@ Ext.onReady ( function() {
 
     var toolbarUnassigned = [
         optionMenuOpen,
-        btnRead,
         '-',
-        btnUnread,
-        '-',
-        btnAll,
         '->', // begin using the right-justified button container
         _("ID_CATEGORY"),
         comboCategory,

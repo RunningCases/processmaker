@@ -35,6 +35,12 @@ try {
     $a->next();
     $row = $a->getRow();
     $swpmdynaform = isset($row) && $row["DYN_VERSION"] == 2;
+
+    //If no variables are submitted and the $_POST variable is empty
+    if (!isset($_POST['form'])) {
+        $_POST['form'] = array();
+    }
+
     if ($swpmdynaform) {
         $pmdynaform = $_POST["form"];
     }
@@ -153,7 +159,7 @@ try {
         $result = ws_routeCase($caseId, 1);
         $assign = $result->message;
 
-        $aMessage["MESSAGE"] = "<br />Case created in ProcessMaker<br />Case Number: $caseNr <br />Case Id: $caseId<br />Case derivated to: $assign";
+        $aMessage["MESSAGE"] = "<br />Case created in ProcessMaker<br />Case Number: $caseNr <br />Case Id: $caseId<br />Case routed to: $assign";
     } else {
         $aMessage["MESSAGE"] = "<font color=\"red\">
                                 An error occurred while the application was being processed.<br />
@@ -193,13 +199,11 @@ try {
         exit( 0 );
     }
 	/*----------------------------------********---------------------------------*/
-    $G_PUBLISH = new Publisher();
-    $G_PUBLISH->AddContent("xmlform", "xmlform", "login/showInfo", "", $aMessage);
-    G::RenderPage("publish", "blank");
+    $_SESSION["__webEntrySuccess__"] = $aMessage;
+    G::header("location:{weTitle}Info.php");
 } catch (Exception $e) {
-    $G_PUBLISH = new Publisher();
     $suggest_message = "This web entry should be regenerated, please contact to your system administrator.";
     $aMessage["MESSAGE"] = "<font color=\"red\"><pre>" . $e->getMessage() . "</pre>" . $suggest_message . "</font>";
-    $G_PUBLISH->AddContent("xmlform", "xmlform", "login/showMessage", "", $aMessage);
-    G::RenderPage("publish", "blank");
+    $_SESSION["__webEntryError__"] = $aMessage;
+    G::header("location:{weTitle}Info.php");
 }

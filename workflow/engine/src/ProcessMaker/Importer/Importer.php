@@ -14,6 +14,7 @@ abstract class Importer
     protected $filename = "";
     protected $saveDir = "";
     protected $metadata = array();
+    protected $prjCreateUser = '';
     /**
      * Title of the process before being updated/deleted.
      * @var string
@@ -494,6 +495,7 @@ abstract class Importer
         $project["diagrams"] = array($diagram);
         $project["prj_author"] = isset($this->data["usr_uid"])? $this->data["usr_uid"]: "00000000000000000000000000000001";
         $project["process"] = $tables["process"][0];
+        $project["prjCreateUser"] = $this->prjCreateUser;
 
         return Adapter\BpmnWorkflow::createFromStruct($project, $generateUid);
     }
@@ -761,7 +763,7 @@ abstract class Importer
         }
     }
 
-    public function saveAs($prj_uid, $prj_name, $prj_description, $prj_category)
+    public function saveAs($prj_uid, $prj_name, $prj_description, $prj_category, $prj_user = '')
     {
         try {
             $exporter = new \ProcessMaker\Exporter\XmlExporter($prj_uid);
@@ -779,6 +781,7 @@ abstract class Importer
 
             $this->setSourceFile($outputFilename);
             $this->prepare();
+            $this->prjCreateUser = $prj_user;
             $this->importData["tables"]["bpmn"]["project"][0]["prj_name"] = $prj_name;
             $this->importData["tables"]["bpmn"]["project"][0]["prj_description"] = $prj_description;
             $this->importData["tables"]["bpmn"]["diagram"][0]["dia_name"] = $prj_name;

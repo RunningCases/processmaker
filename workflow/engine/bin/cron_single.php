@@ -868,6 +868,7 @@ function executeCaseSelfService()
                         global $oPMScript;
 
                         $oPMScript = new PMScript();
+                        $oPMScript->setDataTrigger($row);
                         $oPMScript->setFields($appFields["APP_DATA"]);
                         $oPMScript->setScript($row["TRI_WEBBOT"]);
                         $oPMScript->execute();

@@ -11,7 +11,7 @@ class WebEntryEvent
         "DYN_UID"         => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "dynaFormUid"),
         "USR_UID"         => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "userUid"),
 
-        "WEE_TITLE"       => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventTitle"),
+        "WEE_TITLE"       => array("type" => "string", "required" => false,  "empty" => true, "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventTitle"),
         "WEE_DESCRIPTION" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventDescription"),
         "WEE_STATUS"      => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("ENABLED", "DISABLED"), "fieldNameAux" => "webEntryEventStatus")
     );
@@ -992,6 +992,26 @@ class WebEntryEvent
 
             //Return
             return (!$flagGetRecord)? $this->getWebEntryEventDataFromRecord($row) : $row;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    /**
+     * This function verify if a user $userUid was configure in a Web Entry and return the total of records
+     *
+     * @param string $userUid uid of a user
+     *
+     * return integer $total
+     */
+    public function getWebEntryRelatedToUser($userUid)
+    {
+        try {
+            //Get data
+            $criteria = $this->getWebEntryEventCriteria();
+            $criteria->add(\WebEntryEventPeer::USR_UID, $userUid, \Criteria::EQUAL);
+            $total = \WebEntryEventPeer::doCount($criteria);
+            return $total;
         } catch (\Exception $e) {
             throw $e;
         }

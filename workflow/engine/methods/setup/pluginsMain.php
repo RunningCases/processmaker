@@ -29,6 +29,11 @@ $headPublisher->addExtJsScript( 'setup/pluginsMain', false );
 $headPublisher->assign( "PROCESSMAKER_URL", "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN );
 $headPublisher->assign( "SYS_SKIN", SYS_SKIN );
 
+$oPluginRegistry = &PMPluginRegistry::getSingleton();
+if ($oPluginRegistry->getStatusPlugin('pmWorkspaceManagement') && $oPluginRegistry->getStatusPlugin('pmWorkspaceManagement') == "enabled") {
+    $headPublisher = $oPluginRegistry->executeMethod('pmWorkspaceManagement', 'disableButtonsPluginMain', $headPublisher);
+}
+
 if (isset( $_SESSION['__PLUGIN_ERROR__'] )) {
     $headPublisher->assign( '__PLUGIN_ERROR__', $_SESSION['__PLUGIN_ERROR__'] );
     unset( $_SESSION['__PLUGIN_ERROR__'] );
