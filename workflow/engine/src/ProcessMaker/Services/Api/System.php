@@ -7,7 +7,6 @@ use \Luracast\Restler\RestException;
 /**
  * Pmtable Api Controller
  *
- * @protected
  */
 class System extends Api
 {
@@ -18,6 +17,7 @@ class System extends Api
      * @copyright Colosa - Bolivia
      *
      * @url GET /db-engines
+     * @protected
      */
     public function doGetDataBaseEngines()
     {
@@ -39,6 +39,7 @@ class System extends Api
      * @copyright Colosa - Bolivia
      *
      * @url GET /counters-lists
+     * @protected
      */
     public function doGetCountersLists()
     {
@@ -58,6 +59,7 @@ class System extends Api
      * @category HOR-3209,PROD-181
      * @return array
      * @url GET /languages
+     * @public
      */
     public function doGetLanguages()
     {
@@ -77,6 +79,7 @@ class System extends Api
      * @copyright Colosa - Bolivia
      *
      * @url GET /enabled-features
+     * @protected
      */
     public function doGetEnabledFeatures()
     {
