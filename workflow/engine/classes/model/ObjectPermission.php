@@ -409,5 +409,39 @@ class ObjectPermission extends BaseObjectPermission
         }
         return $result;
     }
+
+    /**
+     * Verify if the user has a objectPermission for some process
+     *
+     * @param string $usrUid the uid of the user
+     * @param int $typeRelation
+     *
+     * @return array
+     */
+    public function objectPermissionPerUser($usrUid, $typeRelation = 1)
+    {
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(ObjectPermissionPeer::USR_UID);
+        $criteria->addSelectColumn(ObjectPermissionPeer::PRO_UID);
+        $criteria->add(ObjectPermissionPeer::OP_USER_RELATION, $typeRelation, Criteria::EQUAL);
+        $criteria->add(ObjectPermissionPeer::USR_UID, $usrUid, Criteria::EQUAL);
+        $doSelectRS = ObjectPermissionPeer::doSelectRS($criteria);
+        $doSelectRS->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+        $doSelectRS->next();
+        $objectPermision = $doSelectRS->getRow();
+        $data = array();
+        if (isset($objectPermision["USR_UID"])) {
+            $criteria = new Criteria("workflow");
+            $criteria->addSelectColumn(ProcessPeer::PRO_TITLE);
+            $criteria->add(ProcessPeer::PRO_UID, $objectPermision["PRO_UID"], Criteria::EQUAL);
+            $doSelectRS = ProcessPeer::doSelectRS($criteria);
+            $doSelectRS->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $doSelectRS->next();
+            $content = $doSelectRS->getRow();
+            $data['PRO_TITLE'] = $content["PRO_TITLE"];
+            $data['PRO_UID'] = $objectPermision["PRO_UID"];
+        }
+        return $data;
+    }
 }
 
