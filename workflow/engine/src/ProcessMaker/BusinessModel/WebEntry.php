@@ -337,7 +337,7 @@ class WebEntry
      *
      * return void
      */
-    public function setWeData($webEntryUid)
+    protected function setWeData($webEntryUid, $arrayData)
     {
         try {
             //Verify data
@@ -405,12 +405,12 @@ class WebEntry
                     $fileContent .= "if (!isset(\$_DBArray)) {\n";
                     $fileContent .= "    \$_DBArray = array();\n";
                     $fileContent .= "}\n";
-                    $fileContent .= "\$_SESSION[\"PROCESS\"] = \"" . $processUid . "\";\n";
+                    $fileContent .= "\$_SESSION[\"PROCESS\"] = \$processUid;\n";
                     $fileContent .= "\$_SESSION[\"CURRENT_DYN_UID\"] = \"" . $dynaFormUid . "\";\n";
                     $fileContent .= "\$G_PUBLISH = new Publisher();\n";
 
                     $fileContent .= "G::LoadClass(\"pmDynaform\");\n";
-                    $fileContent .= "\$a = new pmDynaform(array(\"CURRENT_DYNAFORM\" => \"" . $arrayWebEntryData["DYN_UID"] . "\"));\n";
+                    $fileContent .= "\$a = new pmDynaform(array(\"CURRENT_DYNAFORM\" => \"" . $dynaFormUid . "\"));\n";
                     $fileContent .= "if (\$a->isResponsive()) {\n";
                     $fileContent .= "    \$a->printWebEntry(\"" . $fileName . "Post.php\");\n";
                     $fileContent .= "} else {\n";
@@ -554,15 +554,17 @@ class WebEntry
             }
 
             //Update
-            //Update where
-            $criteriaWhere = new \Criteria("workflow");
-            $criteriaWhere->add(\WebEntryPeer::WE_UID, $webEntryUid);
+            if (!isset($arrayData['WE_LINK_GENERATION']) || $arrayData['WE_LINK_GENERATION']==='DEFAULT') {
+                //Update where
+                $criteriaWhere = new \Criteria("workflow");
+                $criteriaWhere->add(\WebEntryPeer::WE_UID, $webEntryUid);
 
-            //Update set
-            $criteriaSet = new \Criteria("workflow");
-            $criteriaSet->add(\WebEntryPeer::WE_DATA, $webEntryData);
+                //Update set
+                $criteriaSet = new \Criteria("workflow");
+                $criteriaSet->add(\WebEntryPeer::WE_DATA, $webEntryData);
 
-            \BasePeer::doUpdate($criteriaWhere, $criteriaSet, \Propel::getConnection("workflow"));
+                \BasePeer::doUpdate($criteriaWhere, $criteriaSet, \Propel::getConnection("workflow"));
+            }
         } catch (\Exception $e) {
             throw $e;
         }
@@ -634,9 +636,7 @@ class WebEntry
                     }
 
                     //Set WE_DATA
-                    if (isset($arrayData['WE_LINK_GENERATION']) && $arrayData['WE_LINK_GENERATION']==='DEFAULT') {
-                        $this->setWeData($webEntryUid);
-                    }
+                    $this->setWeData($webEntryUid, $arrayData);
 
                     //Return
                     return $this->getWebEntry($webEntryUid);
@@ -717,9 +717,7 @@ class WebEntry
                     }
 
                     //Set WE_DATA
-                    if (isset($arrayData['WE_LINK_GENERATION']) && $arrayData['WE_LINK_GENERATION']==='DEFAULT') {
-                        $this->setWeData($webEntryUid);
-                    }
+                    $this->setWeData($webEntryUid, $arrayData);
 
                     //Return
                     if (!$this->formatFieldNameInUppercase) {
@@ -848,7 +846,7 @@ class WebEntry
     public function getWebEntryDataFromRecord(array $record)
     {
         try {
-            if ((isset($record['WE_LINK_GENERATION']) && $record['WE_LINK_GENERATION']==='DEFAULT') && $record["WE_METHOD"] == "WS") {
+            if ((!isset($record['WE_LINK_GENERATION']) || $record['WE_LINK_GENERATION']==='DEFAULT') && $record["WE_METHOD"] == "WS") {
                 $http = (\G::is_https())? "https://" : "http://";
                 $url = $http . $_SERVER["HTTP_HOST"] . "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $record["PRO_UID"];
 
@@ -1070,5 +1068,14 @@ class WebEntry
         file_put_contents($pathFileName, $code);
     }
 
+    public function isWebEntryOne($processUid, $weUid)
+    {
+        return true;
+    }
+
+    public function isTaskAWebEntry($tasUid)
+    {
+        return substr($tasUid, 0, 4) === 'wee-';
+    }
 }
 

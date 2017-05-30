@@ -881,7 +881,7 @@ class WebEntryEvent
     {
         try {
             if (
-                (isset($record['WE_LINK_GENERATION']) && $record['WE_LINK_GENERATION']==='DEFAULT')
+                (!isset($record['WE_LINK_GENERATION']) || $record['WE_LINK_GENERATION']==='DEFAULT')
                 && $record["WEE_WE_UID"] . "" != ""
             ) {
                 $http = (\G::is_https())? "https://" : "http://";
