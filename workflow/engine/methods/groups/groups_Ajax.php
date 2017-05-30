@@ -269,27 +269,17 @@ switch ($_POST['action']) {
         $limit = isset( $_REQUEST['limit'] ) ? $_REQUEST['limit'] : $limit_size;
         $filter = isset( $_REQUEST['textFilter'] ) ? $_REQUEST['textFilter'] : '';
 
-        $sGroupUID = $_REQUEST['gUID'];
-        $oCriteria = new Criteria( 'workflow' );
-        $oCriteria->addSelectColumn( GroupUserPeer::GRP_UID );
-        $oCriteria->addSelectColumn( UsersPeer::USR_UID );
-        $oCriteria->addJoin( GroupUserPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN );
-        $oCriteria->add( GroupUserPeer::GRP_UID, $sGroupUID );
-        $oCriteria->add( UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL );
-        $oDataset = UsersPeer::doSelectRS( $oCriteria );
-        $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-        $oDataset->next();
-        $uUIDs = array ();
-        while ($aRow = $oDataset->getRow()) {
-            $uUIDs[] = $aRow['USR_UID'];
-            $oDataset->next();
-        }
+        $inputFilter = new InputFilter();
+        $subQuery = "SELECT " . GroupUserPeer::USR_UID .
+                    " FROM " . GroupUserPeer::TABLE_NAME .
+                    " WHERE " . GroupUserPeer::GRP_UID . " = '" .
+                    $inputFilter->quoteSmart($_REQUEST['gUID'], Propel::getConnection("workflow")) . "'";
 
         $aUsers = Array ();
         $oCriteria = new Criteria( 'workflow' );
         $oCriteria->addSelectColumn( 'COUNT(*) AS CNT' );
         $oCriteria->add( UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL );
-        $oCriteria->add( UsersPeer::USR_UID, $uUIDs, Criteria::NOT_IN );
+        $oCriteria->add( UsersPeer::USR_UID, UsersPeer::USR_UID . " NOT IN ($subQuery)", Criteria::CUSTOM );
         $filter = (isset( $_POST['textFilter'] )) ? $_POST['textFilter'] : '';
         if ($filter != '') {
             $oCriteria->add( $oCriteria->getNewCriterion( UsersPeer::USR_USERNAME, '%' . $filter . '%', Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( UsersPeer::USR_FIRSTNAME, '%' . $filter . '%', Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( UsersPeer::USR_LASTNAME, '%' . $filter . '%', Criteria::LIKE ) ) ) );
@@ -308,7 +298,7 @@ switch ($_POST['action']) {
         $oCriteria->addSelectColumn( UsersPeer::USR_EMAIL );
         $oCriteria->addSelectColumn( UsersPeer::USR_STATUS );
         $oCriteria->add( UsersPeer::USR_STATUS, 'CLOSED', Criteria::NOT_EQUAL );
-        $oCriteria->add( UsersPeer::USR_UID, $uUIDs, Criteria::NOT_IN );
+        $oCriteria->add( UsersPeer::USR_UID, UsersPeer::USR_UID . " NOT IN ($subQuery)", Criteria::CUSTOM );
         $filter = (isset( $_POST['textFilter'] )) ? $_POST['textFilter'] : '';
         if ($filter != '') {
             $oCriteria->add( $oCriteria->getNewCriterion( UsersPeer::USR_USERNAME, '%' . $filter . '%', Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( UsersPeer::USR_FIRSTNAME, '%' . $filter . '%', Criteria::LIKE )->addOr( $oCriteria->getNewCriterion( UsersPeer::USR_LASTNAME, '%' . $filter . '%', Criteria::LIKE ) ) ) );
