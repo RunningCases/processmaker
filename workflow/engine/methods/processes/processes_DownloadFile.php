@@ -1,5 +1,5 @@
 <?php
-//$RBAC->allows(basename(__FILE__), 'downloadFileHash');
+$RBAC->allows(basename(__FILE__), 'downloadFileHash');
 
 if (!isset($_GET["file_hash"])) {
     throw new Exception("Invalid Request, param 'file_hash' was not sent.");

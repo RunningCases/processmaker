@@ -21,9 +21,9 @@ if (in_array( $_REQUEST['action'], $restrictedFunctions )) {
     die();
 }
 
-$functionName = $_REQUEST['action'];error_log($functionName);
+$functionName = $_REQUEST['action'];
 $functionParams = isset( $_REQUEST['params'] ) ? $_REQUEST['params'] : array ();
-//$RBAC->allows(basename(__FILE__), $functionName);
+$RBAC->allows(basename(__FILE__), $functionName);
 $functionName();
 
 function updatePageSize ()

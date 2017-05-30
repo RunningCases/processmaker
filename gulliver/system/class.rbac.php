@@ -94,8 +94,23 @@ class RBAC
                 'usersList' => array('PM_USERS'),
                 'updatePageSize' => array(),
                 'summaryUserData' => array('PM_USERS'),
-                'verifyIfUserAssignedAsSupervisor' => array('PM_USERS'),
+                'verifyIfUserAssignedAsSupervisor' => array('PM_USERS')
+            ),
+            'skin_Ajax.php' => array(
+                'updatePageSize' => array(),
+                'skinList' => array('PM_SETUP_SKIN'),
+                'newSkin' => array('PM_SETUP_SKIN'),
+                'importSkin' => array('PM_SETUP_SKIN'),
+                'exportSkin' => array('PM_SETUP_SKIN'),
+                'deleteSkin' => array('PM_SETUP_SKIN'),
+                'addTarFolder' => array('PM_SETUP_SKIN'),
+                'copy_skin_folder' => array('PM_SETUP_SKIN'),
+                'deleteSkin' => array('PM_SETUP_SKIN')
+            ),
+            'processes_DownloadFile.php' => array(
+                'downloadFileHash' => array('PM_FACTORY')
             )
+
         );
     }
 
