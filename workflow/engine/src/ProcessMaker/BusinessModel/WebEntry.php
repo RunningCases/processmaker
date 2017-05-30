@@ -1067,15 +1067,5 @@ class WebEntry
                 . "\n";
         file_put_contents($pathFileName, $code);
     }
-
-    public function isWebEntryOne($processUid, $weUid)
-    {
-        return true;
-    }
-
-    public function isTaskAWebEntry($tasUid)
-    {
-        return substr($tasUid, 0, 4) === 'wee-';
-    }
 }
 
