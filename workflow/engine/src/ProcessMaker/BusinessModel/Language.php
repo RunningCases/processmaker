@@ -25,6 +25,7 @@ class Language
         $availableLangArray = [];
 
         foreach ($translationsTable as $locale) {
+            $row = [];
             $row['LANG_ID'] = $locale['LOCALE'];
 
             if ($locale['COUNTRY'] != '.') {
