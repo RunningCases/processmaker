@@ -1461,4 +1461,37 @@ class ProcessSupervisor
             throw $e;
         }
     }
+    /**
+     * Check if the user is supervisor for some process
+     *
+     * @param string $userUid Unique id of User
+     *
+     * @return bool Return
+     */
+    public function isUserSupervisor($userUid)
+    {
+        //Check if the user is defined as supervisor
+        $criteria = new \Criteria('workflow');
+        $criteria->add(\ProcessUserPeer::USR_UID, $userUid, \Criteria::EQUAL);
+        $criteria->add(\ProcessUserPeer::PU_TYPE, 'SUPERVISOR', \Criteria::EQUAL);
+        $rsCriteria = \ProcessUserPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        if ($rsCriteria->next()) {
+            return true;
+        }
+        //Check if the user is in a group defined as supervisor
+        $criteria = new \Criteria('workflow');
+        $criteria->addSelectColumn(\ProcessUserPeer::USR_UID);
+        $criteria->addJoin(\ProcessUserPeer::USR_UID, \GroupUserPeer::GRP_UID, \Criteria::LEFT_JOIN);
+        $criteria->add(\ProcessUserPeer::PU_TYPE, 'GROUP_SUPERVISOR', \Criteria::EQUAL);
+        $criteria->add(\GroupUserPeer::USR_UID, $userUid, \Criteria::EQUAL);
+        $rsCriteria = \ProcessUserPeer::doSelectRS($criteria);
+        $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        if ($rsCriteria->next()) {
+            return true;
+        }
+        return false;
+    }
 }
