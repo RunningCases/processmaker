@@ -118,6 +118,7 @@ class WebEntryEvent extends Api
     {
         try {
             $arrayData = $this->webEntryEvent->update($wee_uid, $this->getUserId(), $request_data);
+            return $this->webEntryEvent->getWebEntryEvent($wee_uid);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
@@ -134,6 +135,7 @@ class WebEntryEvent extends Api
     {
         try {
             $this->webEntryEvent->delete($wee_uid);
+            return ['success' => true];
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
