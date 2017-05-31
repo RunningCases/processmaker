@@ -152,7 +152,8 @@ class FilesManager
     {
         try {
             $aData['prf_path'] = rtrim($aData['prf_path'], '/') . '/';
-            if (!$aData['prf_filename'] || strpbrk($aData['prf_filename'], "\\/?%*:|\"<>") !== false) {
+            $path = pathinfo($aData['prf_filename']);
+            if (!$aData['prf_filename'] || $path['dirname'] != '.') {
                 throw new \Exception(\G::LoadTranslation("ID_INVALID_VALUE_FOR", array('prf_filename')));
             }
             $extention = strstr($aData['prf_filename'], '.');
