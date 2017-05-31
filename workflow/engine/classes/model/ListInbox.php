@@ -394,17 +394,18 @@ class ListInbox extends BaseListInbox
      */
     public function loadFilters(&$criteria, $filters, $additionalColumns = array())
     {
-        $action         = isset($filters['action']) ? $filters['action'] : "";
-        $usrUid         = isset($filters['usr_uid']) ? $filters['usr_uid'] : "";
-        $filter         = isset($filters['filter']) ? $filters['filter'] : "";
-        $search         = isset($filters['search']) ? $filters['search'] : "";
-        $process        = isset($filters['process']) ? $filters['process'] : "";
-        $category       = isset($filters['category']) ? $filters['category'] : "";
-        $dateFrom       = isset($filters['dateFrom']) ? $filters['dateFrom'] : "";
-        $dateTo         = isset($filters['dateTo']) ? $filters['dateTo'] : "";
-        $filterStatus   = isset($filters['filterStatus']) ? $filters['filterStatus'] : "";
-        $newestthan     = isset($filters['newestthan']) ? $filters['newestthan'] : '';
-        $oldestthan     = isset($filters['oldestthan']) ? $filters['oldestthan'] : '';
+        $action = isset($filters['action']) ? $filters['action'] : '';
+        $usrUid = isset($filters['usr_uid']) ? $filters['usr_uid'] : '';
+        $filter = isset($filters['filter']) ? $filters['filter'] : '';
+        $search = isset($filters['search']) ? $filters['search'] : '';
+        $caseLink = isset($filters['caseLink']) ? $filters['caseLink'] : '';
+        $process = isset($filters['process']) ? $filters['process'] : '';
+        $category = isset($filters['category']) ? $filters['category'] : '';
+        $dateFrom = isset($filters['dateFrom']) ? $filters['dateFrom'] : '';
+        $dateTo = isset($filters['dateTo']) ? $filters['dateTo'] : '';
+        $filterStatus = isset($filters['filterStatus']) ? $filters['filterStatus'] : '';
+        $newestthan = isset($filters['newestthan']) ? $filters['newestthan'] : '';
+        $oldestthan = isset($filters['oldestthan']) ? $filters['oldestthan'] : '';
 
         //Check the inbox to call
         switch ($action) {
@@ -471,54 +472,40 @@ class ListInbox extends BaseListInbox
 
         //Filter Search
         if ($search != '') {
-            $oTmpCriteria = '';
-            //If we have additional tables configured in the custom cases list, prepare the variables for search
-            if (count($additionalColumns) > 0) {
-                require_once(PATH_DATA_SITE . 'classes' . PATH_SEP . $this->additionalClassName . '.php');
-                $oNewCriteria = new Criteria("workflow");
-                $oTmpCriteria = $oNewCriteria->getNewCriterion(current($additionalColumns), "%" . $search . "%", Criteria::LIKE);
-
-                //We prepare the query related to the custom cases list
-                foreach (array_slice($additionalColumns, 1) as $value) {
-                    $oTmpCriteria = $oNewCriteria->getNewCriterion($value, "%" . $search . "%", Criteria::LIKE)->addOr($oTmpCriteria);
-                }
-            }
-
-            if (!empty($oTmpCriteria)) {
-                $criteria->add(
-                    $criteria->getNewCriterion(ListInboxPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)
-                        ->addOr(
-                            $criteria->getNewCriterion(ListInboxPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)
-                                ->addOr(
-                                    $criteria->getNewCriterion(ListInboxPeer::APP_PRO_TITLE, '%' . $search . '%', Criteria::LIKE)
-                                        ->addOr(
-                                            $criteria->getNewCriterion(ListInboxPeer::APP_UID, $search, Criteria::EQUAL)
-                                                ->addOr(
-                                                    $criteria->getNewCriterion(ListInboxPeer::APP_NUMBER, $search, Criteria::EQUAL)
-                                                        ->addOr(
-                                                            $oTmpCriteria
-                                                        )
-                                                )
-                                        )
-                                )
-                        )
-                );
+            //Check if we need to search to the APP_UID
+            if (!empty($caseLink)) {
+                $criteria->add(ListInboxPeer::APP_UID, $search, Criteria::EQUAL);
             } else {
-                $criteria->add(
-                    $criteria->getNewCriterion(ListInboxPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)
-                        ->addOr(
-                            $criteria->getNewCriterion(ListInboxPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)
-                                ->addOr(
-                                    $criteria->getNewCriterion(ListInboxPeer::APP_PRO_TITLE, '%' . $search . '%', Criteria::LIKE)
-                                        ->addOr(
-                                            $criteria->getNewCriterion(ListInboxPeer::APP_UID, $search, Criteria::EQUAL)
-                                                ->addOr(
-                                                    $criteria->getNewCriterion(ListInboxPeer::APP_NUMBER, $search, Criteria::EQUAL)
-                                                )
-                                        )
-                                )
-                        )
-                );
+                $oTmpCriteria = '';
+                //If we have additional tables configured in the custom cases list, prepare the variables for search
+                if (count($additionalColumns) > 0) {
+                    require_once(PATH_DATA_SITE . 'classes' . PATH_SEP . $this->additionalClassName . '.php');
+                    $oNewCriteria = new Criteria("workflow");
+                    $oTmpCriteria = $oNewCriteria->getNewCriterion(current($additionalColumns), "%" . $search . "%", Criteria::LIKE);
+
+                    //We prepare the query related to the custom cases list
+                    foreach (array_slice($additionalColumns, 1) as $value) {
+                        $oTmpCriteria = $oNewCriteria->getNewCriterion($value, "%" . $search . "%", Criteria::LIKE)->addOr($oTmpCriteria);
+                    }
+                }
+
+                if (!empty($oTmpCriteria)) {
+                    $criteria->add(
+                        $criteria->getNewCriterion(ListInboxPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                        $criteria->getNewCriterion(ListInboxPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                        $criteria->getNewCriterion(ListInboxPeer::APP_PRO_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                        $criteria->getNewCriterion(ListInboxPeer::APP_NUMBER, $search, Criteria::EQUAL)->addOr(
+                            $oTmpCriteria
+                        ))))
+                    );
+                } else {
+                    $criteria->add(
+                        $criteria->getNewCriterion(ListInboxPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                        $criteria->getNewCriterion(ListInboxPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                        $criteria->getNewCriterion(ListInboxPeer::APP_PRO_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
+                        $criteria->getNewCriterion(ListInboxPeer::APP_NUMBER, $search, Criteria::EQUAL))))
+                    );
+                }
             }
         }
 
