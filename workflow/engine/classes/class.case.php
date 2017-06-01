@@ -2227,19 +2227,20 @@ class Cases
                 $Fields['DEL_INDEX'] = $iDelIndex;
                 $Fields['APP_STATUS'] = 'TO_DO';
                 $Fields['DEL_DELEGATE_DATE'] = $Fields['APP_INIT_DATE'];
-                if(!$isSubprocess){
+                if (!$isSubprocess) {
                     $Fields['APP_STATUS'] = 'DRAFT';
+                } else {
+                    $Fields['APP_INIT_DATE'] = null;
                 }
-
                 $inbox = new ListInbox();
                 $inbox->newRow($Fields, $sUsrUid, $isSelfService);
 
                 //Multiple Instance
-                foreach($aUserFields as $rowUser){
-                  $Fields["USR_UID"] = $rowUser["USR_UID"];
-                  $Fields["DEL_INDEX"] = $rowUser["DEL_INDEX"];
-                  $inbox = new ListInbox();
-                  $inbox->newRow($Fields, $sUsrUid, $isSelfService);
+                foreach ($aUserFields as $rowUser) {
+                    $Fields["USR_UID"] = $rowUser["USR_UID"];
+                    $Fields["DEL_INDEX"] = $rowUser["DEL_INDEX"];
+                    $inbox = new ListInbox();
+                    $inbox->newRow($Fields, $sUsrUid, $isSelfService);
                 }
                 /*----------------------------------********---------------------------------*/
             } catch (exception $e) {
