@@ -109,6 +109,24 @@ class RBAC
             ),
             'processes_DownloadFile.php' => array(
                 'downloadFileHash' => array('PM_FACTORY')
+            ),
+            'processProxy.php' => array(
+                'categoriesList' => array(),
+                'getCategoriesList' => array(),
+                'saveProcess' => array('PM_FACTORY'),
+                'changeStatus' => array(),
+                'changeDebugMode' => array(),
+                'getUsers' => array(),
+                'getGroups' => array(),
+                'assignActorsTask' => array(),
+                'removeActorsTask' => array(),
+                'getActorsTask' => array(),
+                'getProcessDetail' => array(),
+                'getProperties' => array(),
+                'saveProperties' => array(),
+                'getCaledarList' => array(),
+                'getPMVariables' => array(),
+                'generateBpmn' => array()
             )
 
         );
