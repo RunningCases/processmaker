@@ -611,26 +611,31 @@ class Derivation
                 }
                 break;
             case 'SELF_SERVICE':
-                $AppFields = $this->case->loadCase($tasInfo['APP_UID']);
-                $variable = str_replace('@@', '', $nextAssignedTask['TAS_GROUP_VARIABLE']);
+                //Check if is Self Service Value Based Assignment
+                if (!empty($nextAssignedTask['TAS_GROUP_VARIABLE'])) {
+                    $appFields = $this->case->loadCase($tasInfo['APP_UID']);
+                    $variable = str_replace('@@', '', $nextAssignedTask['TAS_GROUP_VARIABLE']);
 
-                if (isset($AppFields['APP_DATA'][$variable])) {
-                    $arrVar = $AppFields['APP_DATA'][$variable];
-                    if (is_array($arrVar)) {
-                        $statusToCheck = $arrVar;
-                    } else {
-                        $statusToCheck = array($arrVar);
-                    }
-                    $toValidate = array('ACTIVE', 'VACATION');
-                    $gpr = new GroupUser();
-                    if (!$gpr->groupsUsersAvailable($statusToCheck, $toValidate)) {
-                        if (!($gpr->groupsUsersAvailable($statusToCheck, $toValidate, "groups"))) {
-                            throw (new Exception("Task doesn't have a valid user in variable $variable or this variable doesn't exist."));
+                    //If the variable exists will be validate the UID's
+                    if (isset($appFields['APP_DATA'][$variable])) {
+                        $arrVar = $appFields['APP_DATA'][$variable];
+                        if (is_array($arrVar)) {
+                            $statusToCheck = $arrVar;
+                        } else {
+                            $statusToCheck = array($arrVar);
                         }
+                        $toValidate = array('ACTIVE', 'VACATION');
+                        $gpr = new GroupUser();
+                        if (!$gpr->groupsUsersAvailable($statusToCheck, $toValidate)) {
+                            if (!($gpr->groupsUsersAvailable($statusToCheck, $toValidate, "groups"))) {
+                                throw (new Exception("Task doesn't have a valid user in variable $variable or this variable doesn't exist."));
+                            }
+                        }
+                    } else {
+                        throw (new Exception("Task doesn't have a valid user in variable $variable or this variable doesn't exist."));
                     }
-                } else {
-                    throw (new Exception("Task doesn't have a valid user in variable $variable or this variable doesn't exist."));
                 }
+
                 //look for USR_REPORTS_TO to this user
                 $userFields['USR_UID'] = '';
                 $userFields['USR_FULLNAME'] = '<b>' . G::LoadTranslation('ID_UNASSIGNED') . '</b>';
