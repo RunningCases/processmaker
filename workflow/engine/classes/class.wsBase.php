@@ -2160,15 +2160,23 @@ class wsBase
      * Execute the trigger defined in the steps
      * This function is used when the case is derived from abe, Soap, PMFDerivateCase
      *
-     * @param array $appData contain all the information about the case
-     * @param string $tasUid
-     * @param string $stepType
-     * @param string $stepUidObj
-     * @param string $triggerType
-     * @param string $labelAssigment
-     * @return string $varTriggers
+     * @param string $caseId, Uid related to the case
+     * @param array $appData, contain all the information about the case
+     * @param string $tasUid, Uid related to the task
+     * @param string $stepType, before or after step
+     * @param string $stepUidObj, can be -1, -2
+     * @param string $triggerType, can be BEFORE, AFTER
+     * @param string $labelAssigment, label related to the triggerType
      */
-    function executeTriggerFromDerivate($appData, $tasUid, $stepType, $stepUidObj, $triggerType, $labelAssigment = '')
+    function executeTriggerFromDerivate(
+        $caseId,
+        $appData,
+        $tasUid,
+        $stepType,
+        $stepUidObj,
+        $triggerType,
+        $labelAssigment = ''
+    )
     {
         $varTriggers = "";
         $oCase = new Cases();
@@ -2322,11 +2330,11 @@ class wsBase
             $varTriggers = "\n";
             //Execute triggers before assignment
             if ($bExecuteTriggersBeforeAssignment) {
-                $varTriggers .= $this->executeTriggerFromDerivate($appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -1, 'BEFORE', "-= Before Assignment =-");
+                $varTriggers .= $this->executeTriggerFromDerivate($caseId, $appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -1, 'BEFORE', "-= Before Assignment =-");
             }
 
             //Execute triggers before routing
-            $varTriggers .= $this->executeTriggerFromDerivate($appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -2, 'BEFORE', "-= Before Derivation =-");
+            $varTriggers .= $this->executeTriggerFromDerivate($caseId, $appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -2, 'BEFORE', "-= Before Derivation =-");
 
             $oDerivation = new Derivation();
             if (!empty($tasks)) {
@@ -2416,7 +2424,7 @@ class wsBase
             $appFields = $oCase->loadCase( $caseId );
 
             //Execute triggers after routing
-            $varTriggers .= $this->executeTriggerFromDerivate($appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -2, 'AFTER', "-= After Derivation =-");
+            $varTriggers .= $this->executeTriggerFromDerivate($caseId, $appFields["APP_DATA"], $appdel['TAS_UID'], 'ASSIGN_TASK', -2, 'AFTER', "-= After Derivation =-");
 
             $sFromName = "";
 
