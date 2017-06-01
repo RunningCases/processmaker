@@ -605,17 +605,36 @@ class Derivation
                 if (isset( $useruid ) && $useruid != '') {
                     $userFields = $this->getUsersFullNameFromArray( $useruid );
                 }
-
                 // if there is no report_to user info, throw an exception indicating this
                 if (! isset( $userFields ) || $userFields['USR_UID'] == '') {
                     throw (new Exception( G::LoadTranslation( 'ID_MSJ_REPORSTO' ) )); // "The current user does not have a valid Reports To user.  Please contact administrator.") ) ;
                 }
                 break;
             case 'SELF_SERVICE':
+                $AppFields = $this->case->loadCase($tasInfo['APP_UID']);
+                $variable = str_replace('@@', '', $nextAssignedTask['TAS_GROUP_VARIABLE']);
+
+                if (isset($AppFields['APP_DATA'][$variable])) {
+                    $arrVar = $AppFields['APP_DATA'][$variable];
+                    if (is_array($arrVar)) {
+                        $statusToCheck = $arrVar;
+                    } else {
+                        $statusToCheck = array($arrVar);
+                    }
+                    $toValidate = array('ACTIVE', 'VACATION');
+                    $gpr = new GroupUser();
+                    if (!$gpr->groupsUsersAvailable($statusToCheck, $toValidate)) {
+                        if (!($gpr->groupsUsersAvailable($statusToCheck, $toValidate, "groups"))) {
+                            throw (new Exception("Task doesn't have a valid user in variable $variable or this variable doesn't exist."));
+                        }
+                    }
+                } else {
+                    throw (new Exception("Task doesn't have a valid user in variable $variable or this variable doesn't exist."));
+                }
                 //look for USR_REPORTS_TO to this user
                 $userFields['USR_UID'] = '';
-                $userFields['USR_FULLNAME'] = '<b>' . G::LoadTranslation( 'ID_UNASSIGNED' ) . '</b>';
-                $userFields['USR_USERNAME'] = '<b>' . G::LoadTranslation( 'ID_UNASSIGNED' ) . '</b>';
+                $userFields['USR_FULLNAME'] = '<b>' . G::LoadTranslation('ID_UNASSIGNED') . '</b>';
+                $userFields['USR_USERNAME'] = '<b>' . G::LoadTranslation('ID_UNASSIGNED') . '</b>';
                 $userFields['USR_FIRSTNAME'] = '';
                 $userFields['USR_LASTNAME'] = '';
                 $userFields['USR_EMAIL'] = '';
