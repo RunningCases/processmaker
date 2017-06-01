@@ -2,6 +2,8 @@
 
 namespace ProcessMaker\BusinessModel;
 
+use ProcessMaker\Importer\XmlImporter;
+
 /**
  * WebEntryEventTest test
  */
@@ -165,6 +167,7 @@ class WebEntryEventTest extends \WorkflowTestCase
                 'WE_LINK_SKIN'            => SYS_SKIN,
                 'WE_LINK_LANGUAGE'        => SYS_LANG,
                 'WE_LINK_DOMAIN'          => $this->domain,
+                'WEE_STATUS'              => 'DISABLED',
             ]
         );
     }
@@ -482,6 +485,98 @@ class WebEntryEventTest extends \WorkflowTestCase
             $this->assertEquals('ID_INVALID_VALUE_CAN_NOT_BE_EMPTY(WEE_TITLE)',
                                 $e->getMessage());
         }
+    }
+
+    /**
+     * Tests importing a BPMN with WE2 information.
+     * The import maintain the UIDs.
+     *
+     * @cover ProcessMaker\BusinessModel\WebEntryEvent
+     */
+    public function testImportProcessWithWE2()
+    {
+        $proUid = $this->import(__DIR__.'/WebEntry2-multi-login.pmx');
+        $this->assertNotEmpty($proUid);
+        $taskCriteria = new \Criteria;
+        $taskCriteria->add(\TaskPeer::PRO_UID, $proUid);
+        $taskCriteria->add(\TaskPeer::TAS_UID, "wee-%", \Criteria::LIKE);
+        $task = \TaskPeer::doSelectOne($taskCriteria);
+        //Check steps
+        $criteria = new \Criteria;
+        $criteria->add(\StepPeer::TAS_UID, $task->getTasUid());
+        $criteria->addAscendingOrderByColumn(\StepPeer::STEP_POSITION);
+        $steps = [];
+        $stepWithTrigger = 1;
+        $uidStepWithTrigger = null;
+        foreach (\StepPeer::doSelect($criteria) as $index => $step) {
+            $steps[]=$step->getStepTypeObj();
+            if ($index == $stepWithTrigger) {
+                $uidStepWithTrigger = $step->getStepUid();
+            }
+        }
+        $this->assertEquals(
+            ["DYNAFORM", "DYNAFORM", "INPUT_DOCUMENT", "OUTPUT_DOCUMENT"],
+            $steps
+        );
+        //Check triggers
+        $criteriaTri = new \Criteria;
+        $criteriaTri->add(\StepTriggerPeer::TAS_UID, $task->getTasUid());
+        $criteriaTri->add(\StepTriggerPeer::STEP_UID, $uidStepWithTrigger);
+        $criteriaTri->addAscendingOrderByColumn(\StepTriggerPeer::ST_POSITION);
+        $triggers = [];
+        foreach (\StepTriggerPeer::doSelect($criteriaTri) as $stepTri) {
+            $triggers[]=[$stepTri->getStepUid(), $stepTri->getStType()];
+        }
+        $this->assertEquals(
+            [[$uidStepWithTrigger, "BEFORE"]],
+            $triggers
+        );
+    }
+
+    /**
+     * Tests importing a BPMN with WE2 information.
+     * The import regenerates the UIDs.
+     *
+     * @cover ProcessMaker\BusinessModel\WebEntryEvent
+     */
+    public function testImportProcessWithWE2WithRegenUid()
+    {
+        $proUid = $this->import(__DIR__.'/WebEntry2-multi-login.pmx', true);
+        $this->assertNotEmpty($proUid);
+        $taskCriteria = new \Criteria;
+        $taskCriteria->add(\TaskPeer::PRO_UID, $proUid);
+        $taskCriteria->add(\TaskPeer::TAS_UID, "wee-%", \Criteria::LIKE);
+        $task = \TaskPeer::doSelectOne($taskCriteria);
+        //Check steps
+        $criteria = new \Criteria;
+        $criteria->add(\StepPeer::TAS_UID, $task->getTasUid());
+        $criteria->addAscendingOrderByColumn(\StepPeer::STEP_POSITION);
+        $steps = [];
+        $stepWithTrigger = 1;
+        $uidStepWithTrigger = null;
+        foreach (\StepPeer::doSelect($criteria) as $index => $step) {
+            $steps[]=$step->getStepTypeObj();
+            if ($index == $stepWithTrigger) {
+                $uidStepWithTrigger = $step->getStepUid();
+            }
+        }
+        $this->assertEquals(
+            ["DYNAFORM", "DYNAFORM", "INPUT_DOCUMENT", "OUTPUT_DOCUMENT"],
+            $steps
+        );
+        //Check triggers
+        $criteriaTri = new \Criteria;
+        $criteriaTri->add(\StepTriggerPeer::TAS_UID, $task->getTasUid());
+        $criteriaTri->add(\StepTriggerPeer::STEP_UID, $uidStepWithTrigger);
+        $criteriaTri->addAscendingOrderByColumn(\StepTriggerPeer::ST_POSITION);
+        $triggers = [];
+        foreach (\StepTriggerPeer::doSelect($criteriaTri) as $stepTri) {
+            $triggers[]=[$stepTri->getStepUid(), $stepTri->getStType()];
+        }
+        $this->assertEquals(
+            [[$uidStepWithTrigger, "BEFORE"]],
+            $triggers
+        );
     }
 
     /**

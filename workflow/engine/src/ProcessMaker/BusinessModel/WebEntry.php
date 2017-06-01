@@ -269,13 +269,13 @@ class WebEntry
                 $task->throwExceptionIfNotExistsTask($processUid, $arrayData["TAS_UID"], $this->arrayFieldNameForException["taskUid"]);
             }
 
-            if (isset($arrayData["DYN_UID"])) {
+            if (!empty($arrayData["DYN_UID"])) {
                 $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
 
                 $dynaForm->throwExceptionIfNotExistsDynaForm($arrayData["DYN_UID"], $processUid, $this->arrayFieldNameForException["dynaFormUid"]);
             }
 
-            if ($arrayDataMain["WE_METHOD"] == "WS" && isset($arrayData["USR_UID"])) {
+            if ($arrayDataMain["WE_METHOD"] == "WS" && !empty($arrayData["USR_UID"])) {
                 $process->throwExceptionIfNotExistsUser($arrayData["USR_UID"], $this->arrayFieldNameForException["userUid"]);
             }
 
@@ -301,7 +301,7 @@ class WebEntry
                 }
             }
 
-            if (isset($arrayData["DYN_UID"])) {
+            if (isset($arrayData["DYN_UID"]) && (!isset($arrayData["WE_TYPE"]) || $arrayData["WE_TYPE"]==='SINGLE')) {
                 $dynaForm = new \Dynaform();
 
                 $arrayDynaFormData = $dynaForm->Load($arrayData["DYN_UID"]);
@@ -313,7 +313,7 @@ class WebEntry
                 }
             }
 
-            if ($arrayDataMain["WE_METHOD"] == "WS" && isset($arrayData["USR_UID"])) {
+            if ($arrayDataMain["WE_METHOD"] == "WS" && !empty($arrayData["USR_UID"])) {
                 $user = new \Users();
 
                 $arrayUserData = $user->load($arrayData["USR_UID"]);

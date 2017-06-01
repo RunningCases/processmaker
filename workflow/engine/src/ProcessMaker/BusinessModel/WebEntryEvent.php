@@ -317,18 +317,30 @@ class WebEntryEvent
                 }
             }
 
-            if (isset($arrayData["DYN_UID"])) {
+            if (!empty($arrayData["DYN_UID"])) {
                 $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
 
                 $dynaForm->throwExceptionIfNotExistsDynaForm($arrayData["DYN_UID"], $projectUid, $this->arrayFieldNameForException["dynaFormUid"]);
             }
 
-            if (isset($arrayData["USR_UID"])) {
+            if (!empty($arrayData["USR_UID"])) {
                 $process->throwExceptionIfNotExistsUser($arrayData["USR_UID"], $this->arrayFieldNameForException["userUid"]);
             }
         } catch (\Exception $e) {
             throw $e;
         }
+    }
+
+    /**
+     * Return an UID for the task related to the WebEntryEvent.
+     * TAS_UID is based on the EVN_UID to maintain the steps assignation
+     * during the import process
+     *
+     */
+    public static function getTaskUidFromEvnUid($eventUid)
+    {
+        $prefix = "wee-";
+        return $prefix . substr($eventUid, (32 - strlen($prefix)) * -1);
     }
 
     /**
@@ -355,40 +367,46 @@ class WebEntryEvent
             //Task
             $task = new \Task();
 
-            $prefix = "wee-";
+            $tasUid = static::getTaskUidFromEvnUid($eventUid);
 
-            $this->webEntryEventWebEntryTaskUid = $task->create(
-                array(
-                    "TAS_UID"   => $prefix . substr(\ProcessMaker\Util\Common::generateUID(), (32 - strlen($prefix)) * -1),
-                    "PRO_UID"   => $projectUid,
-                    "TAS_TYPE"  => "WEBENTRYEVENT",
-                    "TAS_TITLE" => "WEBENTRYEVENT",
-                    "TAS_START" => "TRUE",
-                    "TAS_POSX"  => (int)($arrayEventData["BOU_X"]),
-                    "TAS_POSY"  => (int)($arrayEventData["BOU_Y"])
-                ),
-                false
-            );
+            if (\TaskPeer::retrieveByPK($tasUid)) {
+                $this->webEntryEventWebEntryTaskUid = $tasUid;
+            } else {
+                $this->webEntryEventWebEntryTaskUid = $task->create(
+                    array(
+                        "TAS_UID"   => $tasUid,
+                        "PRO_UID"   => $projectUid,
+                        "TAS_TYPE"  => "WEBENTRYEVENT",
+                        "TAS_TITLE" => "WEBENTRYEVENT",
+                        "TAS_START" => "TRUE",
+                        "TAS_POSX"  => (int)($arrayEventData["BOU_X"]),
+                        "TAS_POSY"  => (int)($arrayEventData["BOU_Y"])
+                    ),
+                    false
+                );
 
-            //Task - Step
-            $step = new \Step();
+                if (!isset($arrayData['WE_TYPE']) || $arrayData['WE_TYPE']==='SINGLE') {
+                    //Task - Step
+                    $step = new \Step();
 
-            $stepUid = $step->create(array("PRO_UID" => $projectUid, "TAS_UID" => $this->webEntryEventWebEntryTaskUid));
-            if (!empty($dynaFormUid)) {
-                $result = $step->update(array("STEP_UID" => $stepUid, "STEP_TYPE_OBJ" => "DYNAFORM", "STEP_UID_OBJ" => $dynaFormUid, "STEP_POSITION" => 1, "STEP_MODE" => "EDIT"));
+                    $stepUid = $step->create(array("PRO_UID" => $projectUid, "TAS_UID" => $this->webEntryEventWebEntryTaskUid));
+                    if (!empty($dynaFormUid)) {
+                        $result = $step->update(array("STEP_UID" => $stepUid, "STEP_TYPE_OBJ" => "DYNAFORM", "STEP_UID_OBJ" => $dynaFormUid, "STEP_POSITION" => 1, "STEP_MODE" => "EDIT"));
+                    }
+                }
+
+                //Task - User
+                $task = new \Tasks();
+                if (!(isset($arrayData['WE_AUTHENTICATION']) && $arrayData['WE_AUTHENTICATION']==='LOGIN_REQUIRED')) {
+                    $task->assignUser($this->webEntryEventWebEntryTaskUid, $userUid, 1);
+                }
+
+                //Route
+                $workflow = \ProcessMaker\Project\Workflow::load($projectUid);
+
+                $result = $workflow->addRoute($this->webEntryEventWebEntryTaskUid, $activityUid, "SEQUENTIAL");
+
             }
-
-            //Task - User
-            $task = new \Tasks();
-            if (!(isset($arrayData['WE_AUTHENTICATION']) && $arrayData['WE_AUTHENTICATION']==='LOGIN_REQUIRED')) {
-                $task->assignUser($this->webEntryEventWebEntryTaskUid, $userUid, 1);
-            }
-
-            //Route
-            $workflow = \ProcessMaker\Project\Workflow::load($projectUid);
-
-            $result = $workflow->addRoute($this->webEntryEventWebEntryTaskUid, $activityUid, "SEQUENTIAL");
-
             //WebEntry
             if (isset($arrayData['WE_LINK_GENERATION']) && $arrayData['WE_LINK_GENERATION']==='ADVANCED') {
                 $arrayData['WE_DATA'] = isset($arrayData['WEE_URL'])?$arrayData['WEE_URL']:null;
@@ -522,19 +540,17 @@ class WebEntryEvent
 
             try {
                 //WebEntry
-                if ($arrayData["WEE_STATUS"] == "ENABLED") {
-                    $this->createWebEntry(
-                        $projectUid,
-                        $arrayData["EVN_UID"],
-                        $arrayData["ACT_UID"],
-                        empty($arrayData["DYN_UID"])?null:$arrayData["DYN_UID"],
-                        $arrayData["USR_UID"],
-                        $arrayData["WEE_TITLE"],
-                        $arrayData["WEE_DESCRIPTION"],
-                        $userUidCreator,
-                        $arrayData
-                    );
-                }
+                $this->createWebEntry(
+                    $projectUid,
+                    $arrayData["EVN_UID"],
+                    $arrayData["ACT_UID"],
+                    empty($arrayData["DYN_UID"])?null:$arrayData["DYN_UID"],
+                    $arrayData["USR_UID"],
+                    $arrayData["WEE_TITLE"],
+                    $arrayData["WEE_DESCRIPTION"],
+                    $userUidCreator,
+                    $arrayData
+                );
 
                 //WebEntry-Event
                 $webEntryEvent = new \WebEntryEvent();
@@ -634,38 +650,6 @@ class WebEntryEvent
 
             try {
                 //WebEntry
-                $option = "UPDATE";
-
-                if (isset($arrayData["WEE_STATUS"])) {
-                    if ($arrayData["WEE_STATUS"] == "ENABLED") {
-                        if ($arrayWebEntryEventData["WEE_STATUS"] == "DISABLED") {
-                            $option = "INSERT";
-                        }
-                    } else {
-                        if ($arrayWebEntryEventData["WEE_STATUS"] == "ENABLED") {
-                            $option = "DELETE";
-                        }
-                    }
-                }
-
-                switch ($option) {
-                    case "INSERT":
-                        $this->createWebEntry(
-                            $arrayFinalData["PRJ_UID"],
-                            $arrayFinalData["EVN_UID"],
-                            $arrayFinalData["ACT_UID"],
-                            $arrayFinalData["DYN_UID"],
-                            $arrayFinalData["USR_UID"],
-                            $arrayFinalData["WEE_TITLE"],
-                            $arrayFinalData["WEE_DESCRIPTION"],
-                            $userUidUpdater,
-                            $arrayFinalData
-                        );
-
-                        $arrayData["WEE_WE_UID"] = $this->webEntryEventWebEntryUid;
-                        $arrayData["WEE_WE_TAS_UID"] = $this->webEntryEventWebEntryTaskUid;
-                        break;
-                    case "UPDATE":
                         if ($arrayWebEntryEventData["WEE_WE_UID"] != "") {
                             $task = new \Tasks();
 
@@ -760,14 +744,6 @@ class WebEntryEvent
                                 $arrayDataAux = $this->webEntry->update($arrayWebEntryEventData["WEE_WE_UID"], $userUidUpdater, $arrayDataAux);
                             }
                         }
-                        break;
-                    case "DELETE":
-                        $this->deleteWebEntry($arrayWebEntryEventData["WEE_WE_UID"], $arrayWebEntryEventData["WEE_WE_TAS_UID"]);
-
-                        $arrayData["WEE_WE_UID"] = "";
-                        $arrayData["WEE_WE_TAS_UID"] = "";
-                        break;
-                }
 
                 //WebEntry-Event
                 $webEntryEvent = \WebEntryEventPeer::retrieveByPK($webEntryEventUid);

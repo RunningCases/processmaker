@@ -884,6 +884,29 @@ class Processes
     }
 
     /**
+     * change and Renew all Task GUID owned by WebEntries
+     *
+     * @param string $oData
+     * @return boolean
+     */
+    public function renewAllWebEntryEventGuid(&$oData)
+    {
+        $map = array();
+        foreach ($oData->webEntryEvent as $key => $val) {
+            if (isset($val["EVN_UID_OLD"])) {
+                $uidNew = \ProcessMaker\BusinessModel\WebEntryEvent::getTaskUidFromEvnUid($val["EVN_UID"]);
+                $uidOld = \ProcessMaker\BusinessModel\WebEntryEvent::getTaskUidFromEvnUid($val["EVN_UID_OLD"]);
+                foreach($oData->tasks as $index => $task) {
+                    if ($task["TAS_UID"]===$uidOld) {
+                        $oData->tasks[$index]["TAS_UID"]=$uidNew;
+                        $oData->tasks[$index]["TAS_UID_OLD"]=$uidOld;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * change and Renew all Task GUID, because the process needs to have a new set of tasks
      *
      * @param string $oData
@@ -2617,6 +2640,7 @@ class Processes
             $oData->uid["PROCESS"] = array($oData->process["PRO_PARENT"] => $oData->process["PRO_UID"]);
         }
 
+        $this->renewAllWebEntryEventGuid($oData);
         $this->renewAllTaskGuid($oData);
         $this->renewAllDynaformGuid($oData);
         $this->renewAllInputGuid($oData);
