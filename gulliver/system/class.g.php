@@ -2950,6 +2950,16 @@ class G
     {
         return (bool) preg_match( '/^[0-9A-Za-z]{14,}/', $uid );
     }
+    
+    /**
+     * Verify if the input string is a valid UID of size 32
+     * @param string $uid
+     * @return boolean
+     */
+    public static function verifyUniqueID32($uid)
+    {
+        return (bool) preg_match('/^[0-9A-Za-z]{32,32}$/', $uid);
+    }
 
     /**
      * is_utf8
