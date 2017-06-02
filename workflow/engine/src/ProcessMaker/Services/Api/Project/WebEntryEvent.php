@@ -152,7 +152,8 @@ class WebEntryEvent extends Api
     public function generateLink($prj_uid, $wee_uid)
     {
         try {
-            $this->webEntryEvent->generateLink($prj_uid, $wee_uid);
+            $link = $this->webEntryEvent->generateLink($prj_uid, $wee_uid);
+            return ["link" => $link];
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
         }
