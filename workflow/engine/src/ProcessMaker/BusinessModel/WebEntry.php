@@ -405,7 +405,7 @@ class WebEntry
                     $fileContent .= "if (!isset(\$_DBArray)) {\n";
                     $fileContent .= "    \$_DBArray = array();\n";
                     $fileContent .= "}\n";
-                    $fileContent .= "\$_SESSION[\"PROCESS\"] = \$processUid;\n";
+                    $fileContent .= "\$_SESSION[\"PROCESS\"] = \"" . $processUid . "\";\n";
                     $fileContent .= "\$_SESSION[\"CURRENT_DYN_UID\"] = \"" . $dynaFormUid . "\";\n";
                     $fileContent .= "\$G_PUBLISH = new Publisher();\n";
 
