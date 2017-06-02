@@ -119,9 +119,9 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
 
     /**
      * The value for the we_hide_information_bar field.
-     * @var        boolean
+     * @var        string
      */
-    protected $we_hide_information_bar = false;
+    protected $we_hide_information_bar = '0';
 
     /**
      * The value for the we_callback field.
@@ -383,7 +383,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
     /**
      * Get the [we_hide_information_bar] column value.
      * 
-     * @return     boolean
+     * @return     string
      */
     public function getWeHideInformationBar()
     {
@@ -804,13 +804,19 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
     /**
      * Set the value of [we_hide_information_bar] column.
      * 
-     * @param      boolean $v new value
+     * @param      string $v new value
      * @return     void
      */
     public function setWeHideInformationBar($v)
     {
 
-        if ($this->we_hide_information_bar !== $v || $v === false) {
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->we_hide_information_bar !== $v || $v === '0') {
             $this->we_hide_information_bar = $v;
             $this->modifiedColumns[] = WebEntryPeer::WE_HIDE_INFORMATION_BAR;
         }
@@ -996,7 +1002,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
 
             $this->we_authentication = $rs->getString($startcol + 14);
 
-            $this->we_hide_information_bar = $rs->getBoolean($startcol + 15);
+            $this->we_hide_information_bar = $rs->getString($startcol + 15);
 
             $this->we_callback = $rs->getString($startcol + 16);
 
