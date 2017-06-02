@@ -27785,6 +27785,18 @@ msgstr "View Response"
 msgid "Error Message"
 msgstr "Error Message"
 
+# TRANSLATION
+# LABEL/ID_CASE_CREATED
+#: LABEL/ID_CASE_CREATED
+msgid "Case created"
+msgstr "Case created"
+
+# TRANSLATION
+# LABEL/ID_CASE_ROUTED_TO
+#: LABEL/ID_CASE_ROUTED_TO
+msgid "Case routed to"
+msgstr "Case routed to"
+
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml
 #: text - ADD_TAB_NAME

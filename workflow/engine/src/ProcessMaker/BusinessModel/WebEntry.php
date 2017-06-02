@@ -402,8 +402,7 @@ class WebEntry
                     $fileContent .= '$webEntry = new ' . WebEntry::class . ";\n";
                     $fileContent .= "\$processUid = \"" . $processUid . "\";\n";
                     $fileContent .= "\$weUid = \"" . $arrayWebEntryData['WE_UID'] . "\";\n";
-                    $fileContent .= "\$tasUid = \"" . $arrayWebEntryData['TAS_UID'] . "\";\n";
-                    $fileContent .= 'if (!$webEntry->isWebEntryOne($processUid, $weUid)) {'."\n";
+                    $fileContent .= 'if (!$webEntry->isWebEntryOne($weUid)) {'."\n";
                     $fileContent .= "    return require(PATH_METHODS . 'webentry/access.php');\n";
                     $fileContent .= "}\n";
                     $fileContent .= "if (!isset(\$_DBArray)) {\n";
@@ -1079,7 +1078,7 @@ class WebEntry
      * @param type $weUid
      * @return boolean
      */
-    public function isWebEntryOne($processUid, $weUid)
+    public function isWebEntryOne($weUid)
     {
         $webEntry = \WebEntryPeer::retrieveByPK($weUid);
         return $webEntry->getWeType()==='SINGLE' && $webEntry->getWeAuthentication()==='ANONYMOUS';
@@ -1089,7 +1088,7 @@ class WebEntry
      * Verify if a Task is and Web Entry auxiliar task.
      *
      * @param type $tasUid
-     * @return type
+     * @return boolean
      */
     public function isTaskAWebEntry($tasUid)
     {
@@ -1112,11 +1111,11 @@ class WebEntry
     {
         $appNumber = $data['APP_NUMBER'];
         $appUid = $data['APPLICATION'];
-        $message = "\nCase created in ProcessMaker".
-            "\nCase Number: $appNumber".
-            "\nCase Id: $appUid";
+        $message = "\n".\G::LoadTranslation('ID_CASE_CREATED').
+            "\n".\G::LoadTranslation('ID_CASE_NUMBER').": $appNumber".
+            "\n".\G::LoadTranslation('ID_CASESLIST_APP_UID').": $appUid";
         foreach($data['_DELEGATION_DATA'] as $task) {
-            $message.="\nCase routed to: ".
+            $message.="\n".\G::LoadTranslation('ID_CASE_ROUTED_TO').": ".
                 $task['NEXT_TASK']['TAS_TITLE'].
                 "(".htmlentities($task['NEXT_TASK']['USER_ASSIGNED']['USR_USERNAME']).")";
         }
