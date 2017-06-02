@@ -321,9 +321,6 @@ class WebEntry
                 //Verify if User is assigned to Task
                 $projectUser = new \ProcessMaker\BusinessModel\ProjectUser();
 
-                if (!$projectUser->userIsAssignedToTask($arrayData["USR_UID"], $arrayDataMain["TAS_UID"])) {
-                    //throw new \Exception(\G::LoadTranslation("ID_USER_DOES_NOT_HAVE_ACTIVITY_ASSIGNED", array($arrayUserData["USR_USERNAME"], $arrayTaskData["TAS_TITLE"])));
-                }
             }
         } catch (\Exception $e) {
             throw $e;
