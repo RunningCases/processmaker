@@ -104,8 +104,13 @@ class System extends Api
     }
 
     /**
+     * Get the list of installed skins.
+     *
      * @url GET /skins
      * @return array
+     * @access protected
+     * @class  AccessControl {@permission PM_FACTORY}
+     * @protected
      */
     public function doGetSkins()
     {
