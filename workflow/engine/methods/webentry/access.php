@@ -22,7 +22,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
 <html>
     <head>
         <link rel="stylesheet" href="/lib/pmdynaform/libs/bootstrap-3.1.1/css/bootstrap.min.css">
-        <title><?=  htmlentities($webEntryModel->getWeCustomTitle()) ?></title>
+        <title><?php echo htmlentities($webEntryModel->getWeCustomTitle()); ?></title>
         <?php
             $oHeadPublisher = & headPublisher::getSingleton();
             echo $oHeadPublisher->getExtJsStylesheets(SYS_SKIN);
@@ -89,11 +89,11 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
         <div class="header">
             <img id="avatar">
             <span class="logout"><a href="javascript:void(1)" id="userInformation"></a></span>
-            <span class="logout"><a href="javascript:logout(1)" id="logout"><?=G::LoadTranslation('ID_LOGOUT')?></a></span>
+            <span class="logout"><a href="javascript:logout(1)" id="logout"><?php echo G::LoadTranslation('ID_LOGOUT'); ?></a></span>
         </div>
         <iframe id="iframe" ></iframe>
         <form id="messageBox" class="formDefault formWE" method="post" style="display: none;">
-            <div class="borderForm" style="width:520px; padding-left:0; padding-right:0; border-width:1;">
+            <div class="borderForm" style="width:520px; padding-left:0; padding-right:0; border-width:1px;">
                 <div class="boxTop"><div class="a">&nbsp;</div><div class="b">&nbsp;</div><div class="c">&nbsp;</div></div>
                 <div class="content" style="height:100%;">
                     <table width="99%">
@@ -101,7 +101,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                                 <td valign="top">
                                     <table cellspacing="0" cellpadding="0" border="0" width="100%">
                                         <tbody><tr>
-                                                <td class="FormTitle" colspan="2" align=""><span id="form[TITLE]" name="form[TITLE]" pmfieldtype="title"><?=G::LoadTranslation('ID_ERROR')?></span></td>
+                                                <td class="FormTitle" colspan="2" align=""><span id="form[TITLE]" name="form[TITLE]" pmfieldtype="title"><?php echo G::LoadTranslation('ID_ERROR'); ?></span></td>
                                             </tr>
                                             <tr>
                                                 <td class="FormLabel" width="0"><label for="form[MESSAGE]"></label></td>
@@ -109,7 +109,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                                             </tr>
                                             <tr id="messageBoxReset" style="display:none;">
                                                 <td class="FormLabel" width="0"></td>
-                                                <td class="FormFieldContent" width="520" style="text-align: right;"><button type="button" onclick="resetLocalData(true)"><?=G::LoadTranslation('ID_RESET')?></button></td>
+                                                <td class="FormFieldContent" width="520" style="text-align: right;"><button type="button" onclick="resetLocalData(true)"><?php echo G::LoadTranslation('ID_RESET'); ?></button></td>
                                             </tr>
                                         </tbody></table>
                                 </td>
@@ -128,12 +128,12 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                 if (reload) {
                     location.reload();
                 }
-            }
+            };
             var app = {
                 $element:{
-                    avatar: document.getElementById("avatar"),
-                    userInformation: document.getElementById("userInformation"),
-                    errorMessage: document.getElementById("errorMessage")
+                    avatar: $("#avatar").get(0),
+                    userInformation: $("#userInformation").get(0),
+                    errorMessage: $("#errorMessage").get(0)
                 },
                 setAvatar:function(src){
                     this.$element.avatar.src=src;
@@ -148,7 +148,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                     return this.$element.userInformation.textContent;
                 },
                 loadUserInformation:function(userInformation) {
-                    var format = <?= G::json_encode($userInformationFormat) ?>;
+                    var format = <?php echo G::json_encode($userInformationFormat); ?>;
                     this.setAvatar(userInformation.image);
                     for(var key in userInformation) {
                         format = format.replace("@"+key, userInformation[key]);
@@ -176,14 +176,14 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
         </script>
         <script>
             !function () {
-                var DEBUG_ENABLED = true;
-                var processUid = <?= G::json_encode($webEntryModel->getProUid()) ?>;
-                var tasUid = <?= G::json_encode($webEntryModel->getTasUid()) ?>;
-                var weUid = <?= G::json_encode($webEntryModel->getWeUid()) ?>;
-                var forceLogin = <?= G::json_encode($webEntryModel->getWeAuthentication()==='LOGIN_REQUIRED') ?>;
-                var isLogged = <?= G::json_encode(!empty($_SESSION['USER_LOGGED'])) ?>;
-                var closeSession = <?= G::json_encode($webEntryModel->getWeCallback()==='CUSTOM_CLEAR') ?>;
-                var hideInformationBar = <?= G::json_encode(!!$webEntryModel->getWeHideInformationBar()) ?>;
+                var DEBUG_ENABLED = false;
+                var processUid = <?php echo  G::json_encode($webEntryModel->getProUid()); ?>;
+                var tasUid = <?php echo  G::json_encode($webEntryModel->getTasUid()); ?>;
+                var weUid = <?php echo  G::json_encode($webEntryModel->getWeUid()); ?>;
+                var forceLogin = <?php echo  G::json_encode($webEntryModel->getWeAuthentication()==='LOGIN_REQUIRED'); ?>;
+                var isLogged = <?php echo  G::json_encode(!empty($_SESSION['USER_LOGGED'])); ?>;
+                var closeSession = <?php echo  G::json_encode($webEntryModel->getWeCallback()==='CUSTOM_CLEAR'); ?>;
+                var hideInformationBar = <?php echo  G::json_encode(!!$webEntryModel->getWeHideInformationBar()); ?>;
                 if (!forceLogin) {
                     $("#logout").hide();
                 }
@@ -196,16 +196,16 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                         $('#messageBoxReset').hide();
                     }
                     $('#messageBox').show();
-                }
+                };
                 var log = function() {
                     if (DEBUG_ENABLED) {
                         console.log.apply(console, arguments);
                     }
-                }
+                };
                 if (localStorage.weData) {
                     try {
                         weData = JSON.parse(localStorage.weData);
-                        if (weData.TAS_UID!=tasUid) {
+                        if (weData.TAS_UID!==tasUid) {
                             //TAS_UID is different, reset.
                             resetLocalData();
                         }
@@ -221,7 +221,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                     return (iframe.contentDocument) ?
                       iframe.contentDocument :
                       iframe.contentWindow.document;
-                }
+                };
                 var open = function (url, callback) {
                     return new Promise(function (resolve, reject) {
                         var iframe = document.getElementById("iframe");
@@ -232,7 +232,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                                     if (callback(event, resolve, reject)) {
                                         iframe.style.opacity = 1;
                                     }
-                                }
+                                };
                             })();
                         } else {
                             iframe.style.opacity = 1;
@@ -246,14 +246,14 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                             reject(this, arguments);
                         };
                     });
-                }
+                };
                 var verifyLogin = function () {
                     if (forceLogin) {
                         return login();
                     } else {
                         return anonymousLogin();
                     }
-                }
+                };
                 var login = function () {
                     return new Promise(function (logged, failure) {
                         if (!isLogged) {
@@ -276,16 +276,16 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                               });
                         }
                     });
-                }
+                };
                 var anonymousLogin = function () {
                     return new Promise(function (resolve, failure) {
                         log("anonymousLogin");
                         $.ajax({
-                            url: '../services/webentry/anonymous_login',
+                            url: '../services/webentry/anonymousLogin',
                             method: 'get',
                             dataType: 'json',
                             data: {
-                                we_uid: weUid,
+                                we_uid: weUid
                             },
                             success: function (userInformation) {
                                 resolve(userInformation);
@@ -295,20 +295,20 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                             }
                         });
                     });
-                }
+                };
                 var loadUserInformation = function (userInformation) {
                     return new Promise(function (resolve, reject) {
                         log("userInformation:", userInformation);
                         app.loadUserInformation(userInformation);
                         resolve();
                     });
-                }
+                };
                 var checkWebEntryCase = function (userInformation) {
                     return new Promise(function (resolve, reject) {
                         if (localStorage.weData) {
                             log("checkWebEntryCase");
                             $.ajax({
-                                url: '../services/webentry/check_case',
+                                url: '../services/webentry/checkCase',
                                 method: 'post',
                                 dataType: 'json',
                                 data: {
@@ -331,7 +331,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                             resolve();
                         }
                     });
-                }
+                };
                 var initCase = function () {
                     return new Promise(function (resolve, reject) {
                         if (!hideInformationBar) {
@@ -346,7 +346,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                                 data: {
                                     action: 'startCase',
                                     processId: processUid,
-                                    taskId: tasUid,
+                                    taskId: tasUid
                                 },
                                 success: function (data) {
                                     data.TAS_UID = tasUid;
@@ -359,7 +359,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                             resolve(weData);
                         }
                     });
-                }
+                };
                 var casesStep = function (data) {
                     return new Promise(function (resolve, reject) {
                         log("casesStep");
@@ -386,13 +386,13 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                             reject();
                         });
                     });
-                }
+                };
                 var routeWebEntry = function (callbackUrl) {
                     return new Promise(function (resolve, reject) {
                         log("routeWebEntry", callbackUrl);
                         resolve(callbackUrl);
                     });
-                }
+                };
                 var closeWebEntry = function (callbackUrl) {
                     return new Promise(function (resolve, reject) {
                         log("closeWebEntry");
@@ -402,70 +402,69 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                         }
                         resolve(callbackUrl);
                     });
-                }
+                };
                 var redirectCallback = function (callbackUrl) {
                     return new Promise(function (resolve, reject) {
                         log("redirect");
                         location.href = callbackUrl;
-                        //open(callbackUrl);
                         resolve();
                     });
-                }
+                };
                 //Errors
                 var errorLogin = function () {
                     return new Promise(function (resolve, reject) {
                         log("errorLogin");
-                        var msg = <?=G::json_encode(G::LoadTranslation('ID_EXCEPTION_LOG_INTERFAZ'))?>;
+                        var msg = <?php echo G::json_encode(G::LoadTranslation('ID_EXCEPTION_LOG_INTERFAZ')); ?>;
                         msg = msg.replace("{0}", "LOGIN");
                         error(msg);
                         resetLocalData();
                     });
-                }
+                };
                 var errorLoadUserInfo = function () {
                     return new Promise(function (resolve, reject) {
                         log("errorLoadUserInfo");
-                        var msg = <?=G::json_encode(G::LoadTranslation('ID_EXCEPTION_LOG_INTERFAZ'))?>;
+                        var msg = <?php echo G::json_encode(G::LoadTranslation('ID_EXCEPTION_LOG_INTERFAZ')); ?>;
                         msg = msg.replace("{0}", "USR001");
                         error(msg);
                         resetLocalData();
                     });
-                }
+                };
                 var errorCheckWebEntry = function () {
                     return new Promise(function (resolve, reject) {
                         log("errorCheckWebEntry");
-                        var msg = <?=G::json_encode(G::LoadTranslation('ID_EXCEPTION_LOG_INTERFAZ'))?>;
+                        var msg = <?php echo G::json_encode(G::LoadTranslation('ID_EXCEPTION_LOG_INTERFAZ')); ?>;
                         msg = msg.replace("{0}", "WEE001");
                         error(msg);
                         resetLocalData();
                     });
-                }
+                };
                 var errorInitCase = function () {
                     return new Promise(function (resolve, reject) {
                         log("error Init case");
-                        var msg = <?=G::json_encode(G::LoadTranslation('ID_EXCEPTION_LOG_INTERFAZ'))?>;
+                        var msg = <?php echo G::json_encode(G::LoadTranslation('ID_EXCEPTION_LOG_INTERFAZ')); ?>;
                         msg = msg.replace("{0}", "INIT001");
                         error(msg);
                         resetLocalData();
                     });
-                }
+                };
                 var errorStep = function () {
                     return new Promise(function (resolve, reject) {
                         log("Step Error");
-                        var msg = <?=G::json_encode(G::LoadTranslation('ID_EXCEPTION_LOG_INTERFAZ'))?>;
+                        var msg = <?php echo G::json_encode(G::LoadTranslation('ID_EXCEPTION_LOG_INTERFAZ')); ?>;
                         msg = msg.replace("{0}", "STEP001");
                         error(msg);
                         resetLocalData();
                     });
-                }
+                };
                 var errorRouting = function () {
                     return new Promise(function (resolve, reject) {
                         log("errorRouting");
-                        var msg = <?=G::json_encode(G::LoadTranslation('ID_EXCEPTION_LOG_INTERFAZ'))?>;
+                        var msg = <?php echo G::json_encode(G::LoadTranslation('ID_EXCEPTION_LOG_INTERFAZ')); ?>;
                         msg = msg.replace("{0}", "ROU001");
                         error(msg);
                         resetLocalData();
                     });
-                }
+                };
                 //Execute WebEntry Flow
                 verifyLogin().catch(errorLogin)
                   .then(loadUserInformation).catch(errorLoadUserInfo)

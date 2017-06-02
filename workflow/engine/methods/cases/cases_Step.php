@@ -1109,11 +1109,10 @@ try {
                 $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TITLE"] = G::LoadTranslation("ID_ROUTE_TO_TASK_INTERMEDIATE_CATCH_MESSAGE_EVENT");
             }
 
-            //SKIP ASSIGN SCRREN
+            //SKIP ASSIGN SCREEN
             if (!empty($aFields['TASK'][1])) {
                 $currentTask = $aFields['TASK'][1];
                 $isWebEntry = $bmWebEntry->isTaskAWebEntry($currentTask['TAS_UID']);
-                $skipRoutingScreen = $isWebEntry;
                 if ($isWebEntry) {
                     $tplFile = 'webentry/cases_ScreenDerivation';
                     $caseId = $currentTask['APP_UID'];
