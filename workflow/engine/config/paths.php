@@ -68,6 +68,8 @@
 
   // include Gulliver Class
   require_once( PATH_GULLIVER . PATH_SEP . 'class.g.php');
+  // include Bootstrap Class
+  require_once (PATH_GULLIVER . PATH_SEP . 'class.bootstrap.php');
 
   if(file_exists(FILE_PATHS_INSTALLED)) {
     // backward compatibility; parsing old definitions in the compiled path constant
