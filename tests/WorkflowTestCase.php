@@ -44,7 +44,7 @@ class WorkflowTestCase extends TestCase
      * @param type $filename ProcessMaker file to be imported
      * @return string PRO_UID
      */
-    protected function import($filename, $regenerateUids=false)
+    protected function import($filename, $regenerateUids = false)
     {
         $importer = new XmlImporter();
         $importer->setSourceFile($filename);
