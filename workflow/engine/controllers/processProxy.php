@@ -3,6 +3,12 @@
 class ProcessProxy extends HttpProxyController
 {
 
+    public function call ($name)
+    {
+        global $RBAC;
+        $RBAC->allows(basename(__FILE__), $name);
+        parent::call($name);
+    }
     /**
      * get Process Categories List with defailt value (empty option) and -All- aoption
      */
@@ -50,53 +56,6 @@ class ProcessProxy extends HttpProxyController
             }
 
             $sProUid = $project->getUid();
-
-
-//        require_once 'classes/model/Task.php';
-//        G::LoadClass( 'processMap' );
-//        $oProcessMap = new ProcessMap();
-//
-//        $httpData->PRO_TITLE = trim( $httpData->PRO_TITLE );
-//
-//        try {
-//            if (! isset( $httpData->PRO_UID )) {
-//                if (Process::existsByProTitle( $httpData->PRO_TITLE )) {
-//                    $result = array ('success' => false,'msg' => G::LoadTranslation( 'ID_SAVE_PROCESS_ERROR' ),'errors' => array ('PRO_TITLE' => G::LoadTranslation( 'ID_PROCESSTITLE_ALREADY_EXISTS', SYS_LANG, Array ('PRO_TITLE' => $httpData->PRO_TITLE
-//                    ) )
-//                    )
-//                    );
-//                    print G::json_encode( $result );
-//                    exit( 0 );
-//                }
-//
-//                $processData['USR_UID'] = $_SESSION['USER_LOGGED'];
-//                $processData['PRO_TITLE'] = $httpData->PRO_TITLE;
-//                $processData['PRO_DESCRIPTION'] = $httpData->PRO_DESCRIPTION;
-//                $processData['PRO_CATEGORY'] = $httpData->PRO_CATEGORY;
-//
-//                $sProUid = $oProcessMap->createProcess( $processData );
-//
-//                //call pluginsx
-//                $oData['PRO_UID'] = $sProUid;
-//                $oData['PRO_TEMPLATE'] = isset( $httpData->PRO_TEMPLATE ) && $httpData->PRO_TEMPLATE != '' ? $httpData->PRO_TEMPLATE : '';
-//                $oData['PROCESSMAP'] = $oProcessMap;
-//
-//                $oPluginRegistry = & PMPluginRegistry::getSingleton();
-//                $oPluginRegistry->executeTriggers( PM_NEW_PROCESS_SAVE, $oData );
-//
-//            } else {
-//                //$oProcessMap->updateProcess($_POST['form']);
-//                $sProUid = $httpData->PRO_UID;
-//            }
-//
-//            //Save Calendar ID for this process
-//            if (isset( $httpData->PRO_CALENDAR )) {
-//                G::LoadClass( "calendar" );
-//                $calendarObj = new Calendar();
-//                $calendarObj->assignCalendarTo( $sProUid, $httpData->PRO_CALENDAR, 'PROCESS' );
-//            }
-//
-
             $this->success = true;
             $this->PRO_UID = $sProUid;
             $this->msg = G::LoadTranslation( 'ID_CREATE_PROCESS_SUCCESS' );
