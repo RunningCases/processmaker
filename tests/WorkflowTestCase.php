@@ -40,7 +40,7 @@ class WorkflowTestCase extends TestCase
 
     /**
      * Import a process to the database.
-     * 
+     *
      * @param type $filename ProcessMaker file to be imported
      * @return string PRO_UID
      */
@@ -81,7 +81,7 @@ class WorkflowTestCase extends TestCase
 
     /**
      * Clear all the translated messages loaded.
-     * 
+     *
      * @global array $translation
      */
     protected function clearTranslations()
