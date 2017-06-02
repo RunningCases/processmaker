@@ -519,7 +519,7 @@ class ListInbox extends BaseListInbox
         $list = isset($filters['action']) ? $filters['action'] : "";
         $criteria = $pmTable->addPMFieldsToList($list);
         $this->additionalClassName = $pmTable->tableClassName;
-        $additionalColumns =  $criteria->getSelectColumns();
+        $additionalColumns = $criteria->getSelectColumns();
         $filters['usr_uid'] = $usr_uid;
 
         $criteria->addSelectColumn(ListInboxPeer::APP_UID);

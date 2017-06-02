@@ -280,7 +280,7 @@ class ListPaused extends BaseListPaused
         $pmTable = new PmTable();
         $criteria = $pmTable->addPMFieldsToList('paused');
         $this->additionalClassName = $pmTable->tableClassName;
-        $additionalColumns =  $criteria->getSelectColumns();
+        $additionalColumns = $criteria->getSelectColumns();
 
         $criteria->addSelectColumn(ListPausedPeer::APP_UID);
         $criteria->addSelectColumn(ListPausedPeer::USR_UID);

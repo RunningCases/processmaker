@@ -225,7 +225,7 @@ class ListUnassigned extends BaseListUnassigned
         $tasks = $this->getSelfServiceTasks($usr_uid);
         $criteria = $pmTable->addPMFieldsToList('unassigned');
         $this->additionalClassName = $pmTable->tableClassName;
-        $additionalColumns =  $criteria->getSelectColumns();
+        $additionalColumns = $criteria->getSelectColumns();
 
         $criteria->addSelectColumn(ListUnassignedPeer::APP_UID);
         $criteria->addSelectColumn(ListUnassignedPeer::DEL_INDEX);

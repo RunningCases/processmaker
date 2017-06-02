@@ -330,7 +330,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $pmTable = new PmTable();
         $criteria = $pmTable->addPMFieldsToList('sent');
         $this->additionalClassName = $pmTable->tableClassName;
-        $additionalColumns =  $criteria->getSelectColumns();
+        $additionalColumns = $criteria->getSelectColumns();
 
         $criteria->addSelectColumn(ListParticipatedLastPeer::APP_UID);
         $criteria->addSelectColumn(ListParticipatedLastPeer::DEL_INDEX);
