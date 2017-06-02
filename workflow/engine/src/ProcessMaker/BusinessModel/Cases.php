@@ -3283,4 +3283,50 @@ class Cases
         }
         return $delIndex;
     }
+    /**
+     * This function will be return the criteria for the search filter
+     *
+     * We considered in the search criteria the custom cases list,
+     * the titles related to: caseTitle taskTitle processTitle and
+     * the case number
+     * @param Criteria $criteria, must be contain the initial criteria for search
+     * @param string $listPeer, name of the list class
+     * @param string $search, the parameter for search in the table
+     * @param string $additionalClassName, name of the className of pmtable
+     * @param array $additionalColumns, columns related to the custom cases list
+     * @throws PropelException
+     */
+    public function getSearchCriteriaListCases(&$criteria, $listPeer ,$search, $additionalClassName = '', $additionalColumns = array() )
+    {
+        $oTmpCriteria = '';
+        //If we have additional tables configured in the custom cases list, prepare the variables for search
+        if (count($additionalColumns) > 0) {
+            require_once(PATH_DATA_SITE . 'classes' . PATH_SEP . $additionalClassName . '.php');
+            $oNewCriteria = new \Criteria("workflow");
+            $oTmpCriteria = $oNewCriteria->getNewCriterion(current($additionalColumns), "%" . $search . "%", \Criteria::LIKE);
+
+            //We prepare the query related to the custom cases list
+            foreach (array_slice($additionalColumns, 1) as $value) {
+                $oTmpCriteria = $oNewCriteria->getNewCriterion($value, "%" . $search . "%", \Criteria::LIKE)->addOr($oTmpCriteria);
+            }
+        }
+
+        if (!empty($oTmpCriteria)) {
+            $criteria->add(
+                $criteria->getNewCriterion($listPeer::APP_TITLE, '%' . $search . '%', \Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion($listPeer::APP_TAS_TITLE, '%' . $search . '%', \Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion($listPeer::APP_PRO_TITLE, '%' . $search . '%', \Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion($listPeer::APP_NUMBER, $search, \Criteria::EQUAL)->addOr(
+                    $oTmpCriteria
+                ))))
+            );
+        } else {
+            $criteria->add(
+                $criteria->getNewCriterion($listPeer::APP_TITLE, '%' . $search . '%', \Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion($listPeer::APP_TAS_TITLE, '%' . $search . '%', \Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion($listPeer::APP_PRO_TITLE, '%' . $search . '%', \Criteria::LIKE)->addOr(
+                $criteria->getNewCriterion($listPeer::APP_NUMBER, $search, \Criteria::EQUAL))))
+            );
+        }
+    }
 }

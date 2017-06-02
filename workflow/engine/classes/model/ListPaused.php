@@ -246,34 +246,8 @@ class ListPaused extends BaseListPaused
                 $criteria->add(ListPausedPeer::APP_UID, $search, Criteria::EQUAL);
             } else {
                 //If we have additional tables configured in the custom cases list, prepare the variables for search
-                if (count($additionalColumns) > 0) {
-                    require_once(PATH_DATA_SITE . 'classes' . PATH_SEP . $this->additionalClassName . '.php');
-                    $oNewCriteria = new Criteria("workflow");
-                    $oTmpCriteria = $oNewCriteria->getNewCriterion(current($additionalColumns), "%" . $search . "%", Criteria::LIKE);
-
-                    //We prepare the query related to the custom cases list
-                    foreach (array_slice($additionalColumns, 1) as $value) {
-                        $oTmpCriteria = $oNewCriteria->getNewCriterion($value, "%" . $search . "%", Criteria::LIKE)->addOr($oTmpCriteria);
-                    }
-                }
-
-                if (!empty($oTmpCriteria)) {
-                    $criteria->add(
-                        $criteria->getNewCriterion(ListPausedPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
-                        $criteria->getNewCriterion(ListPausedPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
-                        $criteria->getNewCriterion(ListPausedPeer::APP_PRO_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
-                        $criteria->getNewCriterion(ListPausedPeer::APP_NUMBER, $search, Criteria::EQUAL)->addOr(
-                            $oTmpCriteria
-                        ))))
-                    );
-                } else {
-                    $criteria->add(
-                        $criteria->getNewCriterion(ListPausedPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
-                        $criteria->getNewCriterion(ListPausedPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
-                        $criteria->getNewCriterion(ListPausedPeer::APP_PRO_TITLE, '%' . $search . '%', Criteria::LIKE)->addOr(
-                        $criteria->getNewCriterion(ListPausedPeer::APP_NUMBER, $search, Criteria::EQUAL))))
-                    );
-                }
+                $casesList = new \ProcessMaker\BusinessModel\Cases();
+                $casesList->getSearchCriteriaListCases($criteria, 'ListPausedPeer', $search, $this->additionalClassName, $additionalColumns);
             }
         }
 
