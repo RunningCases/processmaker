@@ -145,9 +145,11 @@ class WebEntryEvent extends Api
     }
 
     /**
-     * @url GET /:prj_uid/web-entry-event/:wee_uid/generate-link
-     * @class  AccessControl {@permission PM_FACTORY}
+     * Get the web entry URL.
      *
+     * @url GET /:prj_uid/web-entry-event/:wee_uid/generate-link
+     * @access protected
+     * @class  AccessControl {@permission PM_FACTORY}
      */
     public function generateLink($prj_uid, $wee_uid)
     {
