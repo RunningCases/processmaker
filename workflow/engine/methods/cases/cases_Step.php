@@ -161,6 +161,7 @@ $G_PUBLISH->AddContent( 'template', '', '', '', $oTemplatePower );
 
 $oCase = new Cases();
 $oStep = new Step();
+$bmWebEntry = new \ProcessMaker\BusinessModel\WebEntry;
 
 $Fields = $oCase->loadCase( $_SESSION['APPLICATION'] );
 $Fields['APP_DATA'] = array_merge( $Fields['APP_DATA'], G::getSystemConstants() );
@@ -294,6 +295,9 @@ try {
     $noShowTitle = 0;
     if (isset( $oProcessFieds['PRO_SHOW_MESSAGE'] )) {
         $noShowTitle = $oProcessFieds['PRO_SHOW_MESSAGE'];
+    }
+    if ($bmWebEntry->isTaskAWebEntry($_SESSION['TASK'])) {
+        $noShowTitle = 1;
     }
 
     switch ($_GET['TYPE']) {
@@ -1103,6 +1107,27 @@ try {
                 $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TYPE"] == "INTERMEDIATE-CATCH-MESSAGE-EVENT"
             ) {
                 $aFields["TASK"][$sKey]["NEXT_TASK"]["TAS_TITLE"] = G::LoadTranslation("ID_ROUTE_TO_TASK_INTERMEDIATE_CATCH_MESSAGE_EVENT");
+            }
+
+            //SKIP ASSIGN SCREEN
+            if (!empty($aFields['TASK'][1])) {
+                $currentTask = $aFields['TASK'][1];
+                $isWebEntry = $bmWebEntry->isTaskAWebEntry($currentTask['TAS_UID']);
+                if ($isWebEntry) {
+                    $tplFile = 'webentry/cases_ScreenDerivation';
+                    $caseId = $currentTask['APP_UID'];
+                    $delIndex = $currentTask['DEL_INDEX'];
+                    $derivationResponse = PMFDerivateCase($caseId, $delIndex, true);
+                    if ($derivationResponse) {
+                        $webEntryUrl = $bmWebEntry->getCallbackUrlByTask($currentTask['TAS_UID']);
+                        $delegationData = $Fields['APP_DATA'];
+                        $delegationData['_DELEGATION_DATA'] = $aFields['TASK'];
+                        $delegationData['_DELEGATION_MESSAGE'] = $bmWebEntry->getDelegationMessage($delegationData);
+                        $webEntryUrlEvaluated = \G::replaceDataField($webEntryUrl, $delegationData);
+                    }
+                    $aFields['derivationResponse'] = $derivationResponse;
+                    $aFields['webEntryUrlEvaluated'] = $webEntryUrlEvaluated;
+                }
             }
 
             $G_PUBLISH->AddContent( 'smarty', $tplFile, '', '', $aFields );

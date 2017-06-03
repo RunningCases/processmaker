@@ -321,9 +321,6 @@ class WebEntry
                 //Verify if User is assigned to Task
                 $projectUser = new \ProcessMaker\BusinessModel\ProjectUser();
 
-                if (!$projectUser->userIsAssignedToTask($arrayData["USR_UID"], $arrayDataMain["TAS_UID"])) {
-                    throw new \Exception(\G::LoadTranslation("ID_USER_DOES_NOT_HAVE_ACTIVITY_ASSIGNED", array($arrayUserData["USR_USERNAME"], $arrayTaskData["TAS_TITLE"])));
-                }
             }
         } catch (\Exception $e) {
             throw $e;
@@ -402,6 +399,12 @@ class WebEntry
 
                     $fileContent = "<?php\n\n";
                     $fileContent .= "global \$_DBArray;\n";
+                    $fileContent .= '$webEntry = new ' . WebEntry::class . ";\n";
+                    $fileContent .= "\$processUid = \"" . $processUid . "\";\n";
+                    $fileContent .= "\$weUid = \"" . $arrayWebEntryData['WE_UID'] . "\";\n";
+                    $fileContent .= 'if (!$webEntry->isWebEntryOne($weUid)) {'."\n";
+                    $fileContent .= "    return require(PATH_METHODS . 'webentry/access.php');\n";
+                    $fileContent .= "}\n";
                     $fileContent .= "if (!isset(\$_DBArray)) {\n";
                     $fileContent .= "    \$_DBArray = array();\n";
                     $fileContent .= "}\n";
@@ -1066,6 +1069,57 @@ class WebEntry
                 . "G::RenderPage(\"publish\", \"blank\");\n"
                 . "\n";
         file_put_contents($pathFileName, $code);
+    }
+
+    /**
+     * Verify if web entry is a single dynaform without login required.
+     *
+     * @param type $processUid
+     * @param type $weUid
+     * @return boolean
+     */
+    public function isWebEntryOne($weUid)
+    {
+        $webEntry = \WebEntryPeer::retrieveByPK($weUid);
+        return $webEntry->getWeType()==='SINGLE' && $webEntry->getWeAuthentication()==='ANONYMOUS';
+    }
+
+    /**
+     * Verify if a Task is and Web Entry auxiliar task.
+     *
+     * @param type $tasUid
+     * @return boolean
+     */
+    public function isTaskAWebEntry($tasUid)
+    {
+        return substr($tasUid, 0, 4) === 'wee-';
+    }
+
+    public function getCallbackUrlByTask($tasUid)
+    {
+        $criteria = new \Criteria;
+        $criteria->add(\WebEntryPeer::TAS_UID, $tasUid);
+        $webEntry = \WebEntryPeer::doSelectOne($criteria);
+        if ($webEntry->getWeCallback()==='CUSTOM' || $webEntry->getWeCallback()==='CUSTOM_CLEAR') {
+            return $webEntry->getWeCallbackUrl();
+        } else {
+            return '../services/webentry/completed?message=@%_DELEGATION_MESSAGE';
+        }
+    }
+
+    public function getDelegationMessage($data)
+    {
+        $appNumber = $data['APP_NUMBER'];
+        $appUid = $data['APPLICATION'];
+        $message = "\n".\G::LoadTranslation('ID_CASE_CREATED').
+            "\n".\G::LoadTranslation('ID_CASE_NUMBER').": $appNumber".
+            "\n".\G::LoadTranslation('ID_CASESLIST_APP_UID').": $appUid";
+        foreach($data['_DELEGATION_DATA'] as $task) {
+            $message.="\n".\G::LoadTranslation('ID_CASE_ROUTED_TO').": ".
+                $task['NEXT_TASK']['TAS_TITLE'].
+                "(".htmlentities($task['NEXT_TASK']['USER_ASSIGNED']['USR_USERNAME']).")";
+        }
+        return $message;
     }
 }
 
