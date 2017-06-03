@@ -102,4 +102,25 @@ class System extends Api
             throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
         }
     }
+
+    /**
+     * Get the list of installed skins.
+     *
+     * @url GET /skins
+     * @return array
+     * @access protected
+     * @class  AccessControl {@permission PM_FACTORY}
+     * @protected
+     */
+    public function doGetSkins()
+    {
+        try {
+            $model = new \ProcessMaker\BusinessModel\Skins();
+            $response = $model->getSkins();
+            return ["data" => $response];
+        } catch (\Exception $e) {
+            throw (new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage()));
+        }
+    }
+
 }

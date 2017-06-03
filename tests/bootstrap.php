@@ -33,7 +33,6 @@ define('PATH_DATA', realpath($GLOBALS['PATH_DATA']).'/');
 define('PATH_C', PATH_TRUNK.'tmp/');
 define('PATH_SMARTY_C', PATH_TRUNK.'tmp/');
 define('PATH_SMARTY_CACHE', PATH_TRUNK.'tmp/');
-
 define('PATH_DATA_SITE', PATH_DATA.'sites/'.SYS_SYS.'/');
 define('PATH_DOCUMENT', PATH_DATA_SITE.'files/');
 define('PATH_DATA_MAILTEMPLATES', PATH_DATA_SITE.'mailTemplates/');
@@ -43,6 +42,7 @@ define('PATH_DYNAFORM', PATH_DATA_SITE.'xmlForms/');
 define('PATH_IMAGES_ENVIRONMENT_FILES', PATH_DATA_SITE.'usersFiles'.PATH_SEP);
 define('PATH_IMAGES_ENVIRONMENT_USERS',
        PATH_DATA_SITE.'usersPhotographies'.PATH_SEP);
+define( 'PATH_CUSTOM_SKINS', PATH_DATA . 'skins' . PATH_SEP );
 
 
 //require  PATH_HOME . 'engine' . PATH_SEP . 'config' . PATH_SEP . 'paths.php';

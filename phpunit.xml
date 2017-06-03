@@ -12,17 +12,6 @@
          bootstrap="tests/bootstrap.php"
 >
     <testsuites>
-<!--        <testsuite name="automated">
-            <directory>./tests/automated/</directory>
-        </testsuite>
-
-        <testsuite name="unit">
-            <directory>./tests/unit/</directory>
-        </testsuite>
-
-        <testsuite name="api">
-            <directory>./workflow/engine/src/</directory>
-        </testsuite>-->
         <testsuite name="workflow">
             <directory>./tests/workflow/engine/src/</directory>
         </testsuite>
@@ -55,7 +44,7 @@
         <var name="DB_USER" value="root" />
         <var name="DB_PASS" value="" />
         <var name="PATH_DB" value="./test_shared/workflow_data/sites/" />
-        <var name="PATH_DATA" value="./test_shared/workflow_data/sites/" />
+        <var name="PATH_DATA" value="./test_shared/workflow_data/" />
         <var name="APP_HOST" value="localhost" />
         <var name="HTTPS" value="off" />
     </php>
