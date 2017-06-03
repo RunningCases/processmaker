@@ -95,7 +95,7 @@ class WebEntryMapBuilder
 
         $tMap->addColumn('WE_AUTHENTICATION', 'WeAuthentication', 'string', CreoleTypes::VARCHAR, true, 14);
 
-        $tMap->addColumn('WE_HIDE_INFORMATION_BAR', 'WeHideInformationBar', 'boolean', CreoleTypes::BOOLEAN, false, null);
+        $tMap->addColumn('WE_HIDE_INFORMATION_BAR', 'WeHideInformationBar', 'string', CreoleTypes::CHAR, false, 1);
 
         $tMap->addColumn('WE_CALLBACK', 'WeCallback', 'string', CreoleTypes::VARCHAR, true, 13);
 
