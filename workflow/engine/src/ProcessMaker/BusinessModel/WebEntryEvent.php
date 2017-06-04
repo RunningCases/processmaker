@@ -904,14 +904,13 @@ class WebEntryEvent
     public function getWebEntryEventDataFromRecord(array $record)
     {
         try {
-            if (
-                (!isset($record['WE_LINK_GENERATION']) || $record['WE_LINK_GENERATION']==='DEFAULT')
-                && $record["WEE_WE_UID"] . "" != ""
-            ) {
-                $http = (\G::is_https())? "https://" : "http://";
-                $url = $http . $_SERVER["HTTP_HOST"] . "/sys" . SYS_SYS . "/" . SYS_LANG . "/" . SYS_SKIN . "/" . $record["PRJ_UID"];
-
-                $record["WEE_WE_URL"] = $url . "/" . $record["WEE_WE_URL"];
+            if ($record["WEE_WE_UID"]."" != "") {
+                $record["WEE_WE_URL"] = $this->getGeneratedLink(
+                    $record["WEE_UID"], $record["PRJ_UID"],
+                    $record["WE_LINK_GENERATION"], $record["WE_LINK_DOMAIN"],
+                    $record["WE_LINK_LANGUAGE"], $record["WE_LINK_SKIN"],
+                    $record["WEE_WE_URL"]
+                );
             }
 
             return array(
@@ -1123,22 +1122,53 @@ class WebEntryEvent
                 )
             );
         }
+        return $this->getGeneratedLink(
+            $webEntry->getWeUid(),
+            $prj_uid,
+            $webEntry->getWeLinkGeneration(),
+            $webEntry->getWeLinkDomain(),
+            $webEntry->getWeLinkLanguage(),
+            $webEntry->getWeLinkSkin(),
+            $webEntry->getWeData()
+        );
+    }
+
+    /**
+     * Get the WebEntry URL.
+     *
+     * @param string $weUid
+     * @param string $weLinkGeneration
+     * @param string $weLinkDomain
+     * @param string $weLinkLanguage
+     * @param string $weLinkSkin
+     * @param string $weData
+     * @return string
+     */
+    private function getGeneratedLink(
+        $weUid,
+        $prj_uid,
+        $weLinkGeneration,
+        $weLinkDomain,
+        $weLinkLanguage,
+        $weLinkSkin,
+        $weData
+    ) {
         $http = (\G::is_https()) ? "https://" : "http://";
         $port = $_SERVER['SERVER_PORT'] == '80' ? '' : ':'.$_SERVER['SERVER_PORT'];
-        if ($webEntry->getWeLinkGeneration() === 'ADVANCED') {
-            $domain = $webEntry->getWeLinkDomain();
+        if ($weLinkGeneration === 'ADVANCED') {
+            $domain = $weLinkDomain;
             $hasProtocol = strpos($domain, 'http://') === 0 ||
                 strpos($domain, 'https://') === 0;
             $hasPort = preg_match('/\:\d+$/', $domain);
             $url = ($hasProtocol ? '' : $http).
                 $domain.($hasPort ? '' : $port).
                 "/sys".SYS_SYS."/".
-                $webEntry->getWeLinkLanguage()."/".
-                $webEntry->getWeLinkSkin()."/".$prj_uid;
-            return $url."/".$webEntry->getWeUid().'.php';
+                $weLinkLanguage."/".
+                $weLinkSkin."/".$prj_uid;
+            return $url."/".$weUid.'.php';
         } else {
             $url = $http.$_SERVER["HTTP_HOST"]."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$prj_uid;
-            return $url."/".$webEntry->getWeData();
+            return $url."/".$weData;
         }
     }
 }
