@@ -4,16 +4,19 @@ namespace ProcessMaker\BusinessModel;
 class WebEntryEvent
 {
     private $arrayFieldDefinition = array(
-        "WEE_UID"         => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventUid"),
+        "WEE_UID"          => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventUid"),
 
-        "EVN_UID"         => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "eventUid"),
-        "ACT_UID"         => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "activityUid"),
-        "DYN_UID"         => array("type" => "string", "required" => false,  "empty" => true, "defaultValues" => array(),                      "fieldNameAux" => "dynaFormUid"),
-        "USR_UID"         => array("type" => "string", "required" => false,  "empty" => true, "defaultValues" => array(),                      "fieldNameAux" => "userUid"),
+        "EVN_UID"          => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "eventUid"),
+        "ACT_UID"          => array("type" => "string", "required" => true,  "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "activityUid"),
+        "DYN_UID"          => array("type" => "string", "required" => false,  "empty" => true, "defaultValues" => array(),                      "fieldNameAux" => "dynaFormUid"),
+        "USR_UID"          => array("type" => "string", "required" => false,  "empty" => true, "defaultValues" => array(),                      "fieldNameAux" => "userUid"),
 
-        "WEE_TITLE"       => array("type" => "string", "required" => false,  "empty" => true, "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventTitle"),
-        "WEE_DESCRIPTION" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventDescription"),
-        "WEE_STATUS"      => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("ENABLED", "DISABLED"), "fieldNameAux" => "webEntryEventStatus")
+        "WEE_TITLE"        => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventTitle"),
+        "WEE_DESCRIPTION"  => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventDescription"),
+        "WEE_STATUS"       => array("type" => "string", "required" => false, "empty" => false, "defaultValues" => array("ENABLED", "DISABLED"), "fieldNameAux" => "webEntryEventStatus"),
+        "WE_LINK_SKIN"     => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventSkin"),
+        "WE_LINK_LANGUAGE" => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventLanguage"),
+        "WE_LINK_DOMAIN"   => array("type" => "string", "required" => false, "empty" => true,  "defaultValues" => array(),                      "fieldNameAux" => "webEntryEventDomain"),
     );
 
     private $formatFieldNameInUppercase = true;
@@ -268,6 +271,15 @@ class WebEntryEvent
             if (!isset($arrayData['WE_TYPE']) || $arrayData['WE_TYPE']
                 == 'SINGLE') {
                 $this->arrayFieldDefinition['DYN_UID']['required'] = true;
+            }
+            if (isset($arrayData['WE_LINK_GENERATION']) && $arrayData['WE_LINK_GENERATION']
+                == 'ADVANCED') {
+                $this->arrayFieldDefinition['WE_LINK_SKIN']['required'] = true;
+                $this->arrayFieldDefinition['WE_LINK_LANGUAGE']['required'] = true;
+                $this->arrayFieldDefinition['WE_LINK_DOMAIN']['required'] = true;
+                $this->arrayFieldDefinition['WE_LINK_SKIN']['empty'] = false;
+                $this->arrayFieldDefinition['WE_LINK_LANGUAGE']['empty'] = false;
+                $this->arrayFieldDefinition['WE_LINK_DOMAIN']['empty'] = false;
             }
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, $flagInsert);
@@ -1099,14 +1111,20 @@ class WebEntryEvent
                 )
             );
         }
+        $http = (\G::is_https()) ? "https://" : "http://";
+        $port = $_SERVER['SERVER_PORT'] == '80' ? '' : ':'.$_SERVER['SERVER_PORT'];
         if ($webEntry->getWeLinkGeneration() === 'ADVANCED') {
             $domain = $webEntry->getWeLinkDomain();
-            $url = $domain . "/sys".SYS_SYS."/".
+            $hasProtocol = strpos($domain, 'http://') === 0 ||
+                strpos($domain, 'https://') === 0;
+            $hasPort = preg_match('/\:\d+$/', $domain);
+            $url = ($hasProtocol ? '' : $http).
+                $domain.($hasPort ? '' : $port).
+                "/sys".SYS_SYS."/".
                 $webEntry->getWeLinkLanguage()."/".
                 $webEntry->getWeLinkSkin()."/".$prj_uid;
             return $url."/".$webEntry->getWeUid().'.php';
         } else {
-            $http = (\G::is_https()) ? "https://" : "http://";
             $url = $http.$_SERVER["HTTP_HOST"]."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$prj_uid;
             return $url."/".$webEntry->getWeData();
         }

@@ -4480,8 +4480,8 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_EMAIL_SERVER_TEST_CONNECTION_SENDING_EMAIL','en','Sending a test mail to: {0}','2014-12-24') ;
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
-( 'LABEL','ID_EVENT_NOT_IS_START_EVENT','en','The event with {0}: {1} not is "Start Event".','2015-01-13') ,
-( 'LABEL','ID_WEB_ENTRY_EVENT_DOES_NOT_IS_REGISTERED','en','The event with {0}: {1} does not is registered.','2015-01-16') ,
+( 'LABEL','ID_EVENT_NOT_IS_START_EVENT','en','The event with {0}: {1} is not a "Start Event".','2015-01-13') ,
+( 'LABEL','ID_WEB_ENTRY_EVENT_DOES_NOT_IS_REGISTERED','en','The event with {0}: {1} is not registered.','2015-01-16') ,
 ( 'LABEL','ID_WEB_ENTRY_EVENT_TITLE_ALREADY_EXISTS','en','The WebEntry-Event title with {0}: "{1}" already exists.','2015-01-16') ,
 ( 'LABEL','ID_CASE_STOPPED_TRIGGER','en','The case has not stopped due to its trigger.','2015-01-29') ,
 ( 'LABEL','ID_TRANSLATION_NOT_WRITEABLE','en','The translation file is not writable. <br/>Please give write permission to file:','2015-01-31') ,
