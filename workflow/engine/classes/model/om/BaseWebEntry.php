@@ -121,7 +121,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
      * The value for the we_hide_information_bar field.
      * @var        string
      */
-    protected $we_hide_information_bar = '0';
+    protected $we_hide_information_bar = '1';
 
     /**
      * The value for the we_callback field.
@@ -816,7 +816,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->we_hide_information_bar !== $v || $v === '0') {
+        if ($this->we_hide_information_bar !== $v || $v === '1') {
             $this->we_hide_information_bar = $v;
             $this->modifiedColumns[] = WebEntryPeer::WE_HIDE_INFORMATION_BAR;
         }
