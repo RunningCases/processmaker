@@ -17836,14 +17836,14 @@ msgstr "Sending a test mail to: {0}"
 # TRANSLATION
 # LABEL/ID_EVENT_NOT_IS_START_EVENT
 #: LABEL/ID_EVENT_NOT_IS_START_EVENT
-msgid "The event with {0}: {1} not is \"Start Event\"."
-msgstr "The event with {0}: {1} not is \"Start Event\"."
+msgid "The event with {0}: {1} is not a \"Start Event\"."
+msgstr "The event with {0}: {1} is not a \"Start Event\"."
 
 # TRANSLATION
 # LABEL/ID_WEB_ENTRY_EVENT_DOES_NOT_IS_REGISTERED
 #: LABEL/ID_WEB_ENTRY_EVENT_DOES_NOT_IS_REGISTERED
-msgid "The event with {0}: {1} does not is registered."
-msgstr "The event with {0}: {1} does not is registered."
+msgid "The event with {0}: {1} is not registered."
+msgstr "The event with {0}: {1} is not registered."
 
 # TRANSLATION
 # LABEL/ID_WEB_ENTRY_EVENT_TITLE_ALREADY_EXISTS
