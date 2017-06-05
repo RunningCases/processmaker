@@ -2122,7 +2122,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_UNASSIGNED','en','Unassigned','2014-01-15') ,
 ( 'LABEL','ID_CLAIM','en','Claim','2014-01-15') ,
 ( 'LABEL','ID_TABLE_INVALID_SYNTAX','en','Invalid syntax','2014-01-15') ,
-( 'LABEL','ID_NO_PERMISSION_NO_PARTICIPATED','en','You do not have permission to see this case or you have not participated in it.','2014-01-15') ,
+( 'LABEL','ID_NO_PERMISSION_NO_PARTICIPATED','en','You cannot open this case because on the reason below: <br> You do not have permission to see this case. <br> You have not participated in this case. <br> Case is already claimed.','2017-06-05') ,
 ( 'JAVASCRIPT','ID_EMPTY_NODENAME','en','The field name contains spaces or it''s empty!','2014-01-15') ,
 ( 'JAVASCRIPT','ID_SUGGEST_NEW_ENTRIES_ALERT','en','You should set all options for new entries.','2014-01-15') ,
 ( 'LABEL','ID_ISNT_LICENSE','en','This isn''t the correct license.','2014-01-15') ,
