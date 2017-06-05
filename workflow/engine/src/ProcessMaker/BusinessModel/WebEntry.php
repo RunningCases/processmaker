@@ -596,9 +596,7 @@ class WebEntry
             $arrayData = array_change_key_case($arrayData, CASE_UPPER);
 
             unset($arrayData["WE_UID"]);
-            if (isset($arrayData['WE_LINK_GENERATION']) && $arrayData['WE_LINK_GENERATION']==='DEFAULT') {
-                unset($arrayData["WE_DATA"]);
-            }
+            unset($arrayData["WE_DATA"]);
 
             //Verify data
             $process->throwExceptionIfNotExistsProcess($processUid, $this->arrayFieldNameForException["processUid"]);

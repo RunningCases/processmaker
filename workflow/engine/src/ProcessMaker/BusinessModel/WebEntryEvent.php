@@ -280,19 +280,19 @@ class WebEntryEvent
                 $this->arrayFieldDefinition['WE_LINK_SKIN']['empty'] = false;
                 $this->arrayFieldDefinition['WE_LINK_LANGUAGE']['empty'] = false;
                 $this->arrayFieldDefinition['WE_LINK_DOMAIN']['empty'] = false;
-                $modelSkins = new \ProcessMaker\BusinessModel\Skins();
-                $skins = [];
-                foreach ($modelSkins->getSkins() as $mSkin) {
-                    $skins[] = $mSkin['SKIN_FOLDER_ID'];
-                }
-                $this->arrayFieldDefinition['WE_LINK_SKIN']['defaultValues'] = $skins;
-                $modelLanguages = new \ProcessMaker\BusinessModel\Language();
-                $languages = [];
-                foreach ($modelLanguages->getLanguageList() as $mLang) {
-                    $languages[] = $mLang['LANG_ID'];
-                }
-                $this->arrayFieldDefinition['WE_LINK_LANGUAGE']['defaultValues'] = $languages;
             }
+            $modelSkins = new \ProcessMaker\BusinessModel\Skins();
+            $skins = [];
+            foreach ($modelSkins->getSkins() as $mSkin) {
+                $skins[] = $mSkin['SKIN_FOLDER_ID'];
+            }
+            $this->arrayFieldDefinition['WE_LINK_SKIN']['defaultValues'] = $skins;
+            $modelLanguages = new \ProcessMaker\BusinessModel\Language();
+            $languages = [];
+            foreach ($modelLanguages->getLanguageList() as $mLang) {
+                $languages[] = $mLang['LANG_ID'];
+            }
+            $this->arrayFieldDefinition['WE_LINK_LANGUAGE']['defaultValues'] = $languages;
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, $flagInsert);
 
@@ -674,100 +674,100 @@ class WebEntryEvent
 
             try {
                 //WebEntry
-                        if ($arrayWebEntryEventData["WEE_WE_UID"] != "") {
-                            $task = new \Tasks();
+                if ($arrayWebEntryEventData["WEE_WE_UID"] != "") {
+                    $task = new \Tasks();
 
-                            //Task - Step
-                            if (isset($arrayData["DYN_UID"]) && $arrayData["DYN_UID"] != $arrayWebEntryEventData["DYN_UID"]) {
-                                //Delete
-                                $step = new \Step();
+                    //Task - Step for WE_TYPE=SINGLE
+                    if (isset($arrayData["DYN_UID"]) && $arrayData["DYN_UID"] != $arrayWebEntryEventData["DYN_UID"] && $arrayData["WE_TYPE"]==='SINGLE') {
+                        //Delete
+                        $step = new \Step();
 
-                                $criteria = new \Criteria("workflow");
+                        $criteria = new \Criteria("workflow");
 
-                                $criteria->add(\StepPeer::TAS_UID, $arrayWebEntryEventData["WEE_WE_TAS_UID"]);
+                        $criteria->add(\StepPeer::TAS_UID, $arrayWebEntryEventData["WEE_WE_TAS_UID"]);
 
-                                $rsCriteria = \StepPeer::doSelectRS($criteria);
-                                $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+                        $rsCriteria = \StepPeer::doSelectRS($criteria);
+                        $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
-                                while ($rsCriteria->next()) {
-                                    $row = $rsCriteria->getRow();
+                        while ($rsCriteria->next()) {
+                            $row = $rsCriteria->getRow();
 
-                                    $result = $step->remove($row["STEP_UID"]);
-                                }
-
-                                //Add
-                                $step = new \Step();
-
-                                $stepUid = $step->create(array("PRO_UID" => $arrayWebEntryEventData["PRJ_UID"], "TAS_UID" => $arrayWebEntryEventData["WEE_WE_TAS_UID"]));
-                                $result = $step->update(array("STEP_UID" => $stepUid, "STEP_TYPE_OBJ" => "DYNAFORM", "STEP_UID_OBJ" => $arrayData["DYN_UID"], "STEP_POSITION" => 1, "STEP_MODE" => "EDIT"));
-                            }
-
-                            //Task - User
-                            if (isset($arrayData["USR_UID"]) && $arrayData["USR_UID"] != $arrayWebEntryEventData["USR_UID"]) {
-                                //Unassign
-                                $taskUser = new \TaskUser();
-
-                                $criteria = new \Criteria("workflow");
-
-                                $criteria->add(\TaskUserPeer::TAS_UID, $arrayWebEntryEventData["WEE_WE_TAS_UID"]);
-
-                                $rsCriteria = \TaskUserPeer::doSelectRS($criteria);
-                                $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-                                while ($rsCriteria->next()) {
-                                    $row = $rsCriteria->getRow();
-
-                                    $result = $taskUser->remove($row["TAS_UID"], $row["USR_UID"], $row["TU_TYPE"], $row["TU_RELATION"]);
-                                }
-
-                                //Assign
-                                $result = $task->assignUser($arrayWebEntryEventData["WEE_WE_TAS_UID"], $arrayData["USR_UID"], 1);
-                            }
-
-                            //Route
-                            if (array_key_exists('ACT_UID', $arrayData)) {
-                                if ($arrayData['ACT_UID'] != $arrayWebEntryEventData['ACT_UID']) {
-                                    //Delete
-                                    $result = $task->deleteAllRoutesOfTask(
-                                        $arrayWebEntryEventData['PRJ_UID'], $arrayWebEntryEventData['WEE_WE_TAS_UID'], true
-                                    );
-                                }
-
-                                //Add
-                                $workflow = \ProcessMaker\Project\Workflow::load($arrayWebEntryEventData["PRJ_UID"]);
-
-                                $result = $workflow->addRoute($arrayWebEntryEventData["WEE_WE_TAS_UID"], $arrayData["ACT_UID"], "SEQUENTIAL");
-                            }
-
-                            //WebEntry
-                            $arrayDataAux = array();
-                            $webEntryMap = [
-                                'DYN_UID' => 'DYN_UID',
-                                'USR_UID' => 'USR_UID',
-                                'WE_TYPE' => 'WE_TYPE',
-                                'WE_TITLE' => 'WEE_TITLE',
-                                'WE_DESCRIPTION' => 'WEE_DESCRIPTION',
-                                'WE_CUSTOM_TITLE' => 'WE_CUSTOM_TITLE',
-                                'WE_AUTHENTICATION' => 'WE_AUTHENTICATION',
-                                'WE_HIDE_INFORMATION_BAR' => 'WE_HIDE_INFORMATION_BAR',
-                                'WE_CALLBACK' => 'WE_CALLBACK',
-                                'WE_CALLBACK_URL' => 'WE_CALLBACK_URL',
-                                'WE_LINK_GENERATION' => 'WE_LINK_GENERATION',
-                                'WE_LINK_SKIN' => 'WE_LINK_SKIN',
-                                'WE_LINK_LANGUAGE' => 'WE_LINK_LANGUAGE',
-                                'WE_LINK_DOMAIN' => 'WE_LINK_DOMAIN',
-                                'WE_DATA' => 'WEE_URL',
-                            ];
-                            foreach ($webEntryMap as $k => $v) {
-                                if (array_key_exists($v, $arrayData)) {
-                                    $arrayDataAux[$k]  = $arrayData[$v];
-                                }
-                            }
-
-                            if (count($arrayDataAux) > 0) {
-                                $arrayDataAux = $this->webEntry->update($arrayWebEntryEventData["WEE_WE_UID"], $userUidUpdater, $arrayDataAux);
-                            }
+                            $result = $step->remove($row["STEP_UID"]);
                         }
+
+                        //Add
+                        $step = new \Step();
+
+                        $stepUid = $step->create(array("PRO_UID" => $arrayWebEntryEventData["PRJ_UID"], "TAS_UID" => $arrayWebEntryEventData["WEE_WE_TAS_UID"]));
+                        $result = $step->update(array("STEP_UID" => $stepUid, "STEP_TYPE_OBJ" => "DYNAFORM", "STEP_UID_OBJ" => $arrayData["DYN_UID"], "STEP_POSITION" => 1, "STEP_MODE" => "EDIT"));
+                    }
+
+                    //Task - User
+                    if (!empty($arrayData["USR_UID"]) && $arrayData["USR_UID"] != $arrayWebEntryEventData["USR_UID"]) {
+                        //Unassign
+                        $taskUser = new \TaskUser();
+
+                        $criteria = new \Criteria("workflow");
+
+                        $criteria->add(\TaskUserPeer::TAS_UID, $arrayWebEntryEventData["WEE_WE_TAS_UID"]);
+
+                        $rsCriteria = \TaskUserPeer::doSelectRS($criteria);
+                        $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+                        while ($rsCriteria->next()) {
+                            $row = $rsCriteria->getRow();
+
+                            $result = $taskUser->remove($row["TAS_UID"], $row["USR_UID"], $row["TU_TYPE"], $row["TU_RELATION"]);
+                        }
+
+                        //Assign
+                        $result = $task->assignUser($arrayWebEntryEventData["WEE_WE_TAS_UID"], $arrayData["USR_UID"], 1);
+                    }
+
+                    //Route
+                    if (array_key_exists('ACT_UID', $arrayData)) {
+                        if ($arrayData['ACT_UID'] != $arrayWebEntryEventData['ACT_UID']) {
+                            //Delete
+                            $result = $task->deleteAllRoutesOfTask(
+                                $arrayWebEntryEventData['PRJ_UID'], $arrayWebEntryEventData['WEE_WE_TAS_UID'], true
+                            );
+                        }
+
+                        //Add
+                        $workflow = \ProcessMaker\Project\Workflow::load($arrayWebEntryEventData["PRJ_UID"]);
+
+                        $result = $workflow->addRoute($arrayWebEntryEventData["WEE_WE_TAS_UID"], $arrayData["ACT_UID"], "SEQUENTIAL");
+                    }
+
+                    //WebEntry
+                    $arrayDataAux = array();
+                    $webEntryMap = [
+                        'DYN_UID' => 'DYN_UID',
+                        'USR_UID' => 'USR_UID',
+                        'WE_TYPE' => 'WE_TYPE',
+                        'WE_TITLE' => 'WEE_TITLE',
+                        'WE_DESCRIPTION' => 'WEE_DESCRIPTION',
+                        'WE_CUSTOM_TITLE' => 'WE_CUSTOM_TITLE',
+                        'WE_AUTHENTICATION' => 'WE_AUTHENTICATION',
+                        'WE_HIDE_INFORMATION_BAR' => 'WE_HIDE_INFORMATION_BAR',
+                        'WE_CALLBACK' => 'WE_CALLBACK',
+                        'WE_CALLBACK_URL' => 'WE_CALLBACK_URL',
+                        'WE_LINK_GENERATION' => 'WE_LINK_GENERATION',
+                        'WE_LINK_SKIN' => 'WE_LINK_SKIN',
+                        'WE_LINK_LANGUAGE' => 'WE_LINK_LANGUAGE',
+                        'WE_LINK_DOMAIN' => 'WE_LINK_DOMAIN',
+                        'WE_DATA' => 'WEE_URL',
+                    ];
+                    foreach ($webEntryMap as $k => $v) {
+                        if (array_key_exists($v, $arrayData)) {
+                            $arrayDataAux[$k]  = $arrayData[$v];
+                        }
+                    }
+
+                    if (count($arrayDataAux) > 0) {
+                        $arrayDataAux = $this->webEntry->update($arrayWebEntryEventData["WEE_WE_UID"], $userUidUpdater, $arrayDataAux);
+                    }
+                }
 
                 //WebEntry-Event
                 $webEntryEvent = \WebEntryEventPeer::retrieveByPK($webEntryEventUid);
@@ -1165,7 +1165,7 @@ class WebEntryEvent
                 "/sys".SYS_SYS."/".
                 $weLinkLanguage."/".
                 $weLinkSkin."/".$prj_uid;
-            return $url."/".$weUid.'.php';
+            return $url."/".$weData;
         } else {
             $url = $http.$_SERVER["HTTP_HOST"]."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$prj_uid;
             return $url."/".$weData;

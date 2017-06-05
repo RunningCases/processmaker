@@ -23,6 +23,8 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
     <head>
         <link rel="stylesheet" href="/lib/pmdynaform/libs/bootstrap-3.1.1/css/bootstrap.min.css">
         <title><?php echo htmlentities($webEntryModel->getWeCustomTitle()); ?></title>
+        <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+        <META HTTP-EQUIV="Expires" CONTENT="-1">
         <?php
             $oHeadPublisher = & headPublisher::getSingleton();
             echo $oHeadPublisher->getExtJsStylesheets(SYS_SKIN);
@@ -91,7 +93,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
             <span class="logout"><a href="javascript:void(1)" id="userInformation"></a></span>
             <span class="logout"><a href="javascript:logout(1)" id="logout"><?php echo G::LoadTranslation('ID_LOGOUT'); ?></a></span>
         </div>
-        <iframe id="iframe" ></iframe>
+        <iframe id="iframe"></iframe>
         <form id="messageBox" class="formDefault formWE" method="post" style="display: none;">
             <div class="borderForm" style="width:520px; padding-left:0; padding-right:0; border-width:1px;">
                 <div class="boxTop"><div class="a">&nbsp;</div><div class="b">&nbsp;</div><div class="c">&nbsp;</div></div>
@@ -119,6 +121,8 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                 <div class="boxBottom"><div class="a">&nbsp;</div><div class="b">&nbsp;</div><div class="c">&nbsp;</div></div>
             </div>
         </form>
+        <div id="mylog">
+        </div>
         <script src="/lib/js/jquery-1.10.2.min.js"></script>
         <script>
             var weData = {};
@@ -162,10 +166,13 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                     return this.$element.errorMessage.textContent;
                 }
             };
-            function logout(reload) {
+            function logout(reload, callback) {
                 $.ajax({
                     url: '../login/login',
                     success: function () {
+                        if (typeof callback==='function') {
+                            callback();
+                        }
                         if (reload) {
                             resetLocalData();
                             location.reload();
@@ -238,7 +245,9 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                             iframe.style.opacity = 1;
                             onLoadIframe = function () {};
                         }
-                        iframe.src = url;
+                        //This code is to prevent error at back history
+                        //in Firefox
+                        setTimeout(function(){iframe.src = url;}, 0);
                         window.fullfill = function () {
                             resolve.apply(this, arguments);
                         };
@@ -352,6 +361,9 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                                     data.TAS_UID = tasUid;
                                     localStorage.weData = JSON.stringify(data);
                                     resolve(data);
+                                },
+                                error: function () {
+                                    reject();
                                 }
                             });
                         } else {
@@ -370,7 +382,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                             function (event, resolve, reject) {
                                 var contentDocument = getContentDocument(event.target);
                                 var stepTitle = contentDocument.getElementsByTagName("title");
-                                if (!stepTitle || stepTitle[0].textContent === 'Runtime Exception.') {
+                                if (!stepTitle || !stepTitle.length || stepTitle[0].textContent === 'Runtime Exception.') {
                                     if (contentDocument.location.search.match(/&POSITION=10000&/)) {
                                         //Catch error if webentry was deleted.
                                         reject();
@@ -398,14 +410,25 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                         log("closeWebEntry");
                         resetLocalData();
                         if (closeSession) {
-                            logout(false);
+                            //This code is to prevent error at back history
+                            //in Firefox
+                            $("#iframe").hide();
+                            $("#iframe").attr("src", "../login/login");
+                            logout(false, function() {
+                                resolve(callbackUrl);
+                            });
+                        } else {
+                            //This code is to prevent error at back history
+                            //in Firefox
+                            open("../webentry/logged", function() {
+                                resolve(callbackUrl);
+                            });
                         }
-                        resolve(callbackUrl);
                     });
                 };
                 var redirectCallback = function (callbackUrl) {
                     return new Promise(function (resolve, reject) {
-                        log("redirect");
+                        log("redirect: "+callbackUrl);
                         location.href = callbackUrl;
                         resolve();
                     });
