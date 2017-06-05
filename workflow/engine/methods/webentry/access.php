@@ -121,8 +121,6 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                 <div class="boxBottom"><div class="a">&nbsp;</div><div class="b">&nbsp;</div><div class="c">&nbsp;</div></div>
             </div>
         </form>
-        <div id="mylog">
-        </div>
         <script src="/lib/js/jquery-1.10.2.min.js"></script>
         <script>
             var weData = {};
