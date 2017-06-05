@@ -191,7 +191,7 @@ class ListUnassigned extends BaseListUnassigned
             } else {
                 //If we have additional tables configured in the custom cases list, prepare the variables for search
                 $casesList = new \ProcessMaker\BusinessModel\Cases();
-                $casesList->getSearchCriteriaListCases($criteria, 'ListUnassignedPeer', $search, $this->additionalClassName, $additionalColumns);
+                $casesList->getSearchCriteriaListCases($criteria, __CLASS__ . 'Peer', $search, $this->additionalClassName, $additionalColumns);
             }
         }
 

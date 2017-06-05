@@ -478,7 +478,7 @@ class ListInbox extends BaseListInbox
             } else {
                 //If we have additional tables configured in the custom cases list, prepare the variables for search
                 $casesList = new \ProcessMaker\BusinessModel\Cases();
-                $casesList->getSearchCriteriaListCases($criteria, 'ListInboxPeer', $search, $this->additionalClassName, $additionalColumns);
+                $casesList->getSearchCriteriaListCases($criteria, __CLASS__ . 'Peer', $search, $this->additionalClassName, $additionalColumns);
             }
         }
 
