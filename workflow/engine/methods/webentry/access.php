@@ -25,6 +25,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
         <title><?php echo htmlentities($webEntryModel->getWeCustomTitle()); ?></title>
         <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
         <META HTTP-EQUIV="Expires" CONTENT="-1">
+        <script src="/js/bluebird/bluebird.min.js"></script>
         <?php
             $oHeadPublisher = & headPublisher::getSingleton();
             echo $oHeadPublisher->getExtJsStylesheets(SYS_SKIN);
