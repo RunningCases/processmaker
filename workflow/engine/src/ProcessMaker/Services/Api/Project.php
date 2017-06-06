@@ -150,6 +150,9 @@ class Project extends Api
             PATH_SEP . $outputFilename;
         $httpStream = new HttpStream();
         $fileExtension = pathinfo($outputFilename, PATHINFO_EXTENSION);
+
+        \G::auditLog('ExportProcess','Export process "' . $granularExporter->getProjectName() . '"');
+
         $httpStream->loadFromFile($outputFilename);
         $httpStream->setHeader("Content-Type", "application/xml; charset=UTF-8");
         $httpStream->send();
@@ -174,6 +177,8 @@ class Project extends Api
 
         $httpStream = new \ProcessMaker\Util\IO\HttpStream();
         $fileExtension = pathinfo($outputFilename, PATHINFO_EXTENSION);
+
+        \G::auditLog('ExportProcess','Export process "' . $exporter->getProjectName() . '"');
 
         $httpStream->loadFromFile($outputFilename);
         $httpStream->setHeader("Content-Type", "application/xml; charset=UTF-8");
