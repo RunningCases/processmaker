@@ -39,7 +39,8 @@ try {
         if (sizeof($_GET['objects']) == 0) {
         /*----------------------------------********---------------------------------*/
             $exporter = new ProcessMaker\Exporter\XmlExporter($_GET["pro_uid"]);
-            $getProjectName = $exporter->truncateName($exporter->getProjectName(), false);
+            $projectName = $exporter->getProjectName();
+            $getProjectName = $exporter->truncateName($projectName, false);
 
             $version = ProcessMaker\Util\Common::getLastVersion($outputDir . $getProjectName . "-*.pmx") + 1;
             $outputFilename = sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx");
@@ -48,8 +49,10 @@ try {
         }else{
             $granularExporter = new \ProcessMaker\BusinessModel\Migrator\GranularExporter($_GET['pro_uid']);
             $outputFilename = $granularExporter->export($_GET['objects']);
+            $projectName = $granularExporter->getProjectName();
         }
         /*----------------------------------********---------------------------------*/
+        G::auditLog('ExportProcess','Export process "' . $projectName . '"');
     } else {
         $oProcess = new Processes();
         $proFields = $oProcess->serializeProcess($_GET["pro_uid"]);
@@ -57,6 +60,7 @@ try {
         $outputFilename = $result["FILENAME"];
 
         rename($outputDir . $outputFilename . "tpm", $outputDir . $outputFilename);
+        G::auditLog('ExportProcess','Export process "' . $result["PRO_TITLE"] . '"');
     }
     $response->file_hash = base64_encode($outputFilename);
     $response->success = true;

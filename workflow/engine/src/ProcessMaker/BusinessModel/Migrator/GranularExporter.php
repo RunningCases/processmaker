@@ -12,6 +12,7 @@ class GranularExporter
     protected $generator;
     protected $data;
     protected $prjuid;
+    protected $prjName = '';
     /**
      * GranularExporter constructor.
      */
@@ -60,6 +61,7 @@ class GranularExporter
         $objectList = func_get_args()[0];
         $bpmnProject = Project\Bpmn::load($this->prjuid);
         $projectData = $bpmnProject->getProject();
+        $this->prjName = $projectData['PRJ_NAME'];
         $getProjectName = $this->publisher->truncateName($projectData['PRJ_NAME'], false);
         $outputDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
         $version = \ProcessMaker\Util\Common::getLastVersion($outputDir . $getProjectName . "-*.pmx2") + 1;
@@ -172,7 +174,7 @@ class GranularExporter
                 }
             }
         }
-        return $migratorData; 
+        return $migratorData;
     }
 
     public function publish()
@@ -184,4 +186,12 @@ class GranularExporter
             )
         );
     }
+    /**
+    * Get the project name
+    */
+    public function getProjectName()
+    {
+        return $this->prjName;
+    }
+
 }
