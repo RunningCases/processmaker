@@ -4586,6 +4586,31 @@ msgid "Case Id"
 msgstr "Case Id"
 
 # TRANSLATION
+# LABEL/ID_ABE_FORM_ALREADY_FILLED
+#: LABEL/ID_ABE_FORM_ALREADY_FILLED
+msgid "The form has already been filled and sent."
+msgstr "The form has already been filled and sent."
+
+# TRANSLATION
+# LABEL/ID_ABE_INFORMATION_SUBMITTED
+#: LABEL/ID_ABE_INFORMATION_SUBMITTED
+msgid "The information was submitted. Thank you."
+msgstr "The information was submitted. Thank you."
+
+# TRANSLATION
+# LABEL/ID_ABE_ANSWER_SUBMITTED
+#: LABEL/ID_ABE_ANSWER_SUBMITTED
+msgid "The answer has been submited. Thank you."
+msgstr "The answer has been submited. Thank you."
+
+# TRANSLATION
+# LABEL/ID_ABE_RESPONSE_SENT
+#: LABEL/ID_ABE_RESPONSE_SENT
+msgid "The response has already been sent."
+msgstr "The response has already been sent."
+
+
+# TRANSLATION
 # LABEL/ID_CASESLIST_DEL_INDEX
 #: LABEL/ID_CASESLIST_DEL_INDEX
 msgid "Case Index"

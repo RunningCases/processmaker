@@ -67,7 +67,7 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
                     'xmlform',
                     'login/showInfo',
                     '',
-                    ['MESSAGE' => '<strong>The form has already been filled and sent.</strong>']
+                    ['MESSAGE' => '<strong>' . G::loadTranslation('ID_ABE_FORM_ALREADY_FILLED') . '</strong>']
                 );
             }
         } catch (Exception $e) {

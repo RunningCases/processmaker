@@ -152,7 +152,7 @@ if (PMLicensedFeatures
             }
 
             $assign = $result['message'];
-            $aMessage['MESSAGE'] = '<strong>The information was submitted. Thank you.</strong>';
+            $aMessage['MESSAGE'] = '<strong>' . G::loadTranslation('ID_ABE_INFORMATION_SUBMITTED') . '</strong>';
         } else {
             throw new Exception('An error occurred while the application was being processed.<br /><br />
                                  Error code: ' . $result->status_code . '<br />
