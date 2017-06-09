@@ -3362,12 +3362,13 @@ class Cases
         //if the user is not in the task, we need to return a valid del index, so we are returning the latest delindex
         $oCriteria = new Criteria();
         $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
+        $oCriteria->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
         $oCriteria->addDescendingOrderByColumn(AppDelegationPeer::DEL_DELEGATE_DATE);
         $oApplication = AppDelegationPeer::doSelectOne($oCriteria);
         if (!is_null($oApplication)) {
             return $oApplication->getDelIndex();
         }
-        throw ( new Exception('this case has 0 delegations') );
+        throw ( new Exception('This case has 0 current delegations') );
     }
 
     /*
