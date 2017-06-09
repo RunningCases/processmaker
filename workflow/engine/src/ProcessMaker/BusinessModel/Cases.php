@@ -459,25 +459,7 @@ class Cases
                 }
             } else {
                 \G::LoadClass("wsBase");
-
-                //Verify data
-                $this->throwExceptionIfNotExistsCase($applicationUid, 0, $this->getFieldNameByFormatFieldName("APP_UID"));
-
-                $criteria = new \Criteria("workflow");
-
-                $criteria->addSelectColumn(\AppDelegationPeer::APP_UID);
-                $criteria->add(\AppDelegationPeer::APP_UID, $applicationUid);
-                $criteria->add(\AppDelegationPeer::USR_UID, $userUid);
-
-                $rsCriteria = \AppDelegationPeer::doSelectRS($criteria);
-
-                if (!$rsCriteria->next()) {
-                    throw new \Exception(\G::LoadTranslation("ID_NO_PERMISSION_NO_PARTICIPATED"));
-                }
-
-                //Get data
                 $ws = new \wsBase();
-
                 $fields = $ws->getCaseInfo($applicationUid, 0);
                 $array = json_decode(json_encode($fields), true);
 
