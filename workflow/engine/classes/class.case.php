@@ -3347,7 +3347,7 @@ class Cases
      * @return integer
      */
 
-    public function getCurrentDelegation($sApplicationUID = '', $sUserUID = '')
+    public function getCurrentDelegation($sApplicationUID = '', $sUserUID = '', $onlyOpenThreads = false)
     {
         $oCriteria = new Criteria();
         $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
@@ -3362,7 +3362,9 @@ class Cases
         //if the user is not in the task, we need to return a valid del index, so we are returning the latest delindex
         $oCriteria = new Criteria();
         $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
-        $oCriteria->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
+        if ($onlyOpenThreads) {
+            $oCriteria->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
+        }
         $oCriteria->addDescendingOrderByColumn(AppDelegationPeer::DEL_DELEGATE_DATE);
         $oApplication = AppDelegationPeer::doSelectOne($oCriteria);
         if (!is_null($oApplication)) {
