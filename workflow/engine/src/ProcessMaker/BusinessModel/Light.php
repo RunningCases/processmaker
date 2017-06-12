@@ -1013,7 +1013,7 @@ class Light
     {
         $response = array("status" => "fail");
         $oCase = new \Cases();
-        $iDelIndex = $oCase->getCurrentDelegation( $sAppUid, '' );
+        $iDelIndex = $oCase->getCurrentDelegation( $sAppUid, '', true );
 
         $oAppDelegation = new \AppDelegation();
         $aDelegation = $oAppDelegation->load( $sAppUid, $iDelIndex );
