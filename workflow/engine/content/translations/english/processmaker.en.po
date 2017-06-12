@@ -4600,8 +4600,8 @@ msgstr "The information was submitted. Thank you."
 # TRANSLATION
 # LABEL/ID_ABE_ANSWER_SUBMITTED
 #: LABEL/ID_ABE_ANSWER_SUBMITTED
-msgid "The answer has been submited. Thank you."
-msgstr "The answer has been submited. Thank you."
+msgid "The answer has been submitted. Thank you."
+msgstr "The answer has been submitted. Thank you."
 
 # TRANSLATION
 # LABEL/ID_ABE_RESPONSE_SENT

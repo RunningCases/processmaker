@@ -2217,7 +2217,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CASESLIST_APP_UID','en','Case Id','2014-01-15') ,
 ( 'LABEL','ID_ABE_FORM_ALREADY_FILLED','en','The form has already been filled and sent.','2017-06-09') ,
 ( 'LABEL','ID_ABE_INFORMATION_SUBMITTED','en','The information was submitted. Thank you.','2017-06-19') ,
-( 'LABEL','ID_ABE_ANSWER_SUBMITTED','en','The answer has been submited. Thank you.','2017-06-19') ,
+( 'LABEL','ID_ABE_ANSWER_SUBMITTED','en','The answer has been submitted. Thank you.','2017-06-19') ,
 ( 'LABEL','ID_ABE_RESPONSE_SENT','en','The response has already been sent.','2017-06-19') ,
 ( 'LABEL','ID_CASESLIST_DEL_INDEX','en','Case Index','2014-01-15') ,
 ( 'LABEL','ID_CASESLIST_APP_NUMBER','en','#','2014-01-15') ,
