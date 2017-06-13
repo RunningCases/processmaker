@@ -86,7 +86,7 @@ class Cases extends Api
                     }
                     break;
                 case "doGetCaseInfo" :
-                    $appUid = $this->parameters[0];
+                    $appUid = $this->parameters[$arrayArgs['app_uid']];
                     $usrUid = $this->getUserId();
                     //Check if the user is supervisor process
                     $case = new \ProcessMaker\BusinessModel\Cases();
@@ -97,15 +97,14 @@ class Cases extends Api
                         $criteria->addSelectColumn(\AppDelegationPeer::APP_UID);
                         $criteria->add(\AppDelegationPeer::APP_UID, $appUid);
                         $criteria->add(\AppDelegationPeer::USR_UID, $usrUid);
+                        $criteria->setLimit(1);
                         $rsCriteria = \AppDelegationPeer::doSelectRS($criteria);
                         if ($rsCriteria->next()) {
                             return true;
                         } else {
-                            if ($user->checkPermission($usrUid, 'PM_SUPERVISOR')) {
-                                $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
-                                $flagps = $supervisor->isUserProcessSupervisor($arrayApplicationData['PRO_UID'], $usrUid);
-                                return $flagps;
-                            }
+                            $supervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
+                            $flagps = $supervisor->isUserProcessSupervisor($arrayApplicationData['PRO_UID'], $usrUid);
+                            return $flagps;
                         }
                     }
                     break;
@@ -695,7 +694,7 @@ class Cases extends Api
 
     /**
      * @access protected
-     * @class  AccessControl {@className \ProcessMaker\Services\Api\Cases}
+     * @class AccessControl {@className \ProcessMaker\Services\Api\Cases}
      * @url GET /:app_uid
      *
      * @param string $app_uid {@min 32}{@max 32}
