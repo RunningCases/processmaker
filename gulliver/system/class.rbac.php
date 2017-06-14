@@ -70,9 +70,48 @@ class RBAC
     public $singleSignOn = false;
 
     private static $instance = null;
+    public $authorizedActions = array();
 
     public function __construct ()
     {
+        $this->authorizedActions = array(
+            'users_Ajax.php' => array(
+                'availableUsers' => array('PM_FACTORY'),
+                'assign' => array('PM_FACTORY'),
+                'changeView' => array(),
+                'ofToAssign' => array('PM_FACTORY'),
+                'usersGroup' => array('PM_FACTORY'),
+                'canDeleteUser' => array('PM_USERS'),
+                'deleteUser' => array('PM_USERS'),
+                'changeUserStatus' => array('PM_USERS'),
+                'availableGroups' => array('PM_USERS'),
+                'assignedGroups' => array('PM_USERS'),
+                'assignGroupsToUserMultiple' => array('PM_USERS'),
+                'deleteGroupsToUserMultiple' => array('PM_USERS'),
+                'authSources' => array('PM_USERS'),
+                'loadAuthSourceByUID' => array('PM_USERS'),
+                'updateAuthServices' => array('PM_USERS'),
+                'usersList' => array('PM_USERS'),
+                'updatePageSize' => array(),
+                'summaryUserData' => array('PM_USERS'),
+                'verifyIfUserAssignedAsSupervisor' => array('PM_USERS')
+            ),
+            'skin_Ajax.php' => array(
+                'updatePageSize' => array(),
+                'skinList' => array('PM_SETUP_SKIN'),
+                'newSkin' => array('PM_SETUP_SKIN'),
+                'importSkin' => array('PM_SETUP_SKIN'),
+                'exportSkin' => array('PM_SETUP_SKIN'),
+                'deleteSkin' => array('PM_SETUP_SKIN'),
+                'addTarFolder' => array('PM_SETUP_SKIN'),
+                'copy_skin_folder' => array('PM_SETUP_SKIN'),
+                'deleteSkin' => array('PM_SETUP_SKIN')
+            ),
+            'processes_DownloadFile.php' => array(
+                'downloadFileHash' => array('PM_FACTORY')
+            )
+
+        );
     }
 
     /**
@@ -1443,6 +1482,37 @@ class RBAC
                     }
                 }
             }
+        }
+    }
+    /**
+     * This function verify if the user allows to the file with a specific action
+     * If the action is not defined in the authorizedActions we give the allow
+     * @param string $file
+     * @param string $action
+     *
+     * @return void
+     */
+    public function allows($file, $action)
+    {
+        $access = false;
+        if (isset($this->authorizedActions[$file][$action])) {
+            $permissions = $this->authorizedActions[$file][$action];
+            $totalPermissions = count($permissions);
+            $countAccess = 0;
+            foreach ($permissions as $key => $value) {
+                if ($this->userCanAccess($value) == 1) {
+                    $countAccess++;
+                }
+            }
+            //Check if the user has all permissions that needed
+            if ($countAccess == $totalPermissions) {
+                $access = true;
+            }
+        }
+
+        if (!$access) {
+            G::header('Location: /errors/error403.php');
+            die();
         }
     }
 }

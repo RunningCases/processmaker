@@ -15188,6 +15188,12 @@ msgid "A problem occurred during the installation of the system. Please, uninsta
 msgstr "A problem occurred during the installation of the system. Please, uninstall the partial installation and try again."
 
 # TRANSLATION
+# LABEL/ID_PROCESSMAKER_ALREADY_INSTALLED
+#: LABEL/ID_PROCESSMAKER_ALREADY_INSTALLED
+msgid "ProcessMaker is already installed."
+msgstr "ProcessMaker is already installed."
+
+# TRANSLATION
 # LABEL/ID_LICENSE_EMPTY
 #: LABEL/ID_LICENSE_EMPTY
 msgid "Can not find any license"
