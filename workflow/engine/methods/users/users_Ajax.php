@@ -84,17 +84,23 @@ try {
             //Check before delete a user
             G::LoadClass('case');
             $oProcessMap = new Cases();
-            $USR_UID = $_POST['uUID'];
+            $userUid = $_POST['uUID'];
             $total = 0;
             $history = 0;
-            $c = $oProcessMap->getCriteriaUsersCases('TO_DO', $USR_UID);
+            $c = $oProcessMap->getCriteriaUsersCases('TO_DO', $userUid);
             $total += ApplicationPeer::doCount($c);
-            $c = $oProcessMap->getCriteriaUsersCases('DRAFT', $USR_UID);
+            $c = $oProcessMap->getCriteriaUsersCases('DRAFT', $userUid);
             $total += ApplicationPeer::doCount($c);
-            $c = $oProcessMap->getCriteriaUsersCases('COMPLETED', $USR_UID);
+            $c = $oProcessMap->getCriteriaUsersCases('COMPLETED', $userUid);
             $history += ApplicationPeer::doCount($c);
-            $c = $oProcessMap->getCriteriaUsersCases('CANCELLED', $USR_UID);
+            $c = $oProcessMap->getCriteriaUsersCases('CANCELLED', $userUid);
             $history += ApplicationPeer::doCount($c);
+            //Check if the user is configured in Web Entry
+            if ($total === 0) {
+                $webEntry = new \ProcessMaker\BusinessModel\WebEntryEvent();
+                $total = $webEntry->getWebEntryRelatedToUser($userUid);
+            }
+
             $response = '{success: true, candelete: ';
             $response .= ($total > 0) ? 'false' : 'true';
             $response .= ', hashistory: ';

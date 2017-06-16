@@ -57,6 +57,9 @@ class Project extends Api
         try {
             $project = Adapter\BpmnWorkflow::getStruct($prj_uid);
 
+            $userProperty = new \UsersProperties();
+            $property = $userProperty->loadOrCreateIfNotExists($this->getUserId());
+            $project['usr_setting_designer'] = isset($property['USR_SETTING_DESIGNER']) ? \G::json_decode($property['USR_SETTING_DESIGNER']) : null;
             return DateTime::convertUtcToIso8601($project, $this->arrayFieldIso8601);
         } catch (\Exception $e) {
             throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
@@ -96,6 +99,16 @@ class Project extends Api
     public function doPutProject($prj_uid, $request_data)
     {
         try {
+            if (array_key_exists('usr_setting_designer', $request_data)) {
+                $oUserProperty = new \UsersProperties();
+                $property = $oUserProperty->loadOrCreateIfNotExists($this->getUserId());
+                $propertyArray = isset($property['USR_SETTING_DESIGNER']) ? \G::json_decode($property['USR_SETTING_DESIGNER'], true) : [];
+                $usrSettingDesigner = array_merge($propertyArray, $request_data['usr_setting_designer']);
+                $property['USR_SETTING_DESIGNER'] = \G::json_encode($usrSettingDesigner);
+                $oUserProperty->update($property);
+                unset($request_data['usr_setting_designer']);
+            }
+
             Validator::throwExceptionIfDataNotMetIso8601Format($request_data, $this->arrayFieldIso8601);
             return Adapter\BpmnWorkflow::updateFromStruct($prj_uid, DateTime::convertDataToUtc($request_data, $this->arrayFieldIso8601));
         } catch (\Exception $e) {
@@ -226,7 +239,7 @@ class Project extends Api
     public function doSaveAs($prj_uid, $prj_name, $prj_description = null, $prj_category = null)
     {
         $importer = new \ProcessMaker\Importer\XmlImporter();
-        return $importer->saveAs($prj_uid, $prj_name, $prj_description, $prj_category);
+        return $importer->saveAs($prj_uid, $prj_name, $prj_description, $prj_category, $this->getUserId());
     }
 
     /**

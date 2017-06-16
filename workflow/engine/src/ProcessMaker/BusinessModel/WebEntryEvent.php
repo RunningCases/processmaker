@@ -996,4 +996,24 @@ class WebEntryEvent
             throw $e;
         }
     }
+
+    /**
+     * This function verify if a user $userUid was configure in a Web Entry and return the total of records
+     *
+     * @param string $userUid uid of a user
+     *
+     * return integer $total
+     */
+    public function getWebEntryRelatedToUser($userUid)
+    {
+        try {
+            //Get data
+            $criteria = $this->getWebEntryEventCriteria();
+            $criteria->add(\WebEntryEventPeer::USR_UID, $userUid, \Criteria::EQUAL);
+            $total = \WebEntryEventPeer::doCount($criteria);
+            return $total;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }

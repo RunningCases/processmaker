@@ -2227,19 +2227,20 @@ class Cases
                 $Fields['DEL_INDEX'] = $iDelIndex;
                 $Fields['APP_STATUS'] = 'TO_DO';
                 $Fields['DEL_DELEGATE_DATE'] = $Fields['APP_INIT_DATE'];
-                if(!$isSubprocess){
+                if (!$isSubprocess) {
                     $Fields['APP_STATUS'] = 'DRAFT';
+                } else {
+                    $Fields['APP_INIT_DATE'] = null;
                 }
-
                 $inbox = new ListInbox();
                 $inbox->newRow($Fields, $sUsrUid, $isSelfService);
 
                 //Multiple Instance
-                foreach($aUserFields as $rowUser){
-                  $Fields["USR_UID"] = $rowUser["USR_UID"];
-                  $Fields["DEL_INDEX"] = $rowUser["DEL_INDEX"];
-                  $inbox = new ListInbox();
-                  $inbox->newRow($Fields, $sUsrUid, $isSelfService);
+                foreach ($aUserFields as $rowUser) {
+                    $Fields["USR_UID"] = $rowUser["USR_UID"];
+                    $Fields["DEL_INDEX"] = $rowUser["DEL_INDEX"];
+                    $inbox = new ListInbox();
+                    $inbox->newRow($Fields, $sUsrUid, $isSelfService);
                 }
                 /*----------------------------------********---------------------------------*/
             } catch (exception $e) {
@@ -2299,9 +2300,7 @@ class Cases
         G::LoadClass('pmScript');
         $oPMScript = new PMScript();
         $oApplication = new Application();
-        //$aFields    = $oApplication->load($sAppUid);
-        $oApplication = ApplicationPeer::retrieveByPk($sAppUid);
-        $aFields = $oApplication->toArray(BasePeer::TYPE_FIELDNAME);
+        $aFields    = $oApplication->Load($sAppUid);
         if (!is_array($aFields['APP_DATA'])) {
             $aFields['APP_DATA'] = G::array_merges(G::getSystemConstants(), unserialize($aFields['APP_DATA']));
         }
@@ -2331,7 +2330,9 @@ class Cases
             $rs->next();
             $row = $rs->getRow();
             $iLastStep = intval($row[0]);
-
+            if ($iPosition != 10000 && $iPosition > $iLastStep) {
+                throw (new Exception(G::LoadTranslation('ID_STEP_DOES_NOT_EXIST', array(G::LoadTranslation('ID_POSITION'), $iPosition))));
+            }
             $iPosition += 1;
             $aNextStep = null;
             if ($iPosition <= $iLastStep) {
@@ -3481,11 +3482,13 @@ class Cases
                 $bExecute = true;
 
                 if ($aTrigger['ST_CONDITION'] !== '') {
+                    $oPMScript->setDataTrigger($aTrigger);
                     $oPMScript->setScript($aTrigger['ST_CONDITION']);
                     $bExecute = $oPMScript->evaluate();
                 }
 
                 if ($bExecute) {
+                    $oPMScript->setDataTrigger($aTrigger);
                     $oPMScript->setScript($aTrigger['TRI_WEBBOT']);
                     $oPMScript->execute();
 
@@ -7146,6 +7149,7 @@ class Cases
             $aFields['APP_DATA']['APPLICATION'] = $appUid;
             $aFields['APP_DATA']['PROCESS'] = $proUid;
             $oPMScript = new PMScript();
+            $oPMScript->setDataTrigger($arrayWebBotTrigger);
             $oPMScript->setFields($aFields['APP_DATA']);
             $oPMScript->setScript($arrayWebBotTrigger['TRI_WEBBOT']);
             $oPMScript->execute();
@@ -7156,9 +7160,6 @@ class Cases
             unset($aFields['APP_PROC_CODE']);
             unset($aFields['APP_PIN']);
             $this->updateCase($aFields['APP_UID'], $aFields);
-
-            //Log
-            Bootstrap::registerMonolog('triggerExecutionTime', 200, 'Trigger execution time', ['proUid' => $aFields['APP_DATA']['PROCESS'], 'tasUid' => $aFields['APP_DATA']['TASK'], 'appUid' => $aFields['APP_DATA']['APPLICATION'], 'action' => $action, 'triggerInfo' => ['triUid' => $arrayWebBotTrigger['TRI_UID'], 'triExecutionTime' => $oPMScript->scriptExecutionTime]], SYS_SYS, 'processmaker.log');
 
             return true;
         }

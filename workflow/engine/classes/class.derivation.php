@@ -1486,7 +1486,7 @@ class Derivation
                     $appFields['PRO_UID'],
                     $currentDelegation['APP_UID'],
                     $nextDel['TAS_UID'],
-                    (isset( $nextDel['USR_UID'] ) ? $nextDel['USR_UID'] : ''),
+                    $this->verifyCurrentUserInTask($nextDel, $aSP),
                     $currentDelegation['DEL_INDEX'],
                     $nextDel['DEL_PRIORITY'],
                     $delType,
@@ -1667,6 +1667,22 @@ class Derivation
             $this->notifyAssignedUser($appFields, $nextTaskData, $iNewDelIndex);
         }
         return $iNewDelIndex;
+    }
+
+    /**
+     * This function returns the current user Checking cases where USR_ID exists or checking a subprocess (SYNCHRONOUS)
+     * @param $nextDel
+     * @param null $aSP
+     * @return string
+     */
+    function verifyCurrentUserInTask($nextDel, $aSP = null)
+    {
+        if (isset($aSP) && $aSP["SP_SYNCHRONOUS"] == "1") {
+            $currentUser = "";
+        } else {
+            $currentUser = isset($nextDel['USR_UID']) ? $nextDel['USR_UID'] : "";
+        }
+        return $currentUser;
     }
 
     /**

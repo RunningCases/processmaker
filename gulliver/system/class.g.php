@@ -2950,6 +2950,16 @@ class G
     {
         return (bool) preg_match( '/^[0-9A-Za-z]{14,}/', $uid );
     }
+    
+    /**
+     * Verify if the input string is a valid UID of size 32
+     * @param string $uid
+     * @return boolean
+     */
+    public static function verifyUniqueID32($uid)
+    {
+        return (bool) preg_match('/^[0-9A-Za-z]{32,32}$/', $uid);
+    }
 
     /**
      * is_utf8
@@ -5825,6 +5835,39 @@ class G
     public static function getErrorMessage($e)
     {
         return $e->getMessage();
+    }
+
+    /**
+     * Add log of execution of triggers
+     * @param $data
+     * @param string $stringError
+     * @param string $typeTriggerError
+     * @param int $executionTime
+     */
+    public static function logTriggerExecution($data, $sError = 'NO-ERROR', $typeError = '', $executionTime = 0)
+    {
+        if ((!empty($data['_CODE_']) || $typeError == 'FATAL_ERROR') && isset($data['_DATA_TRIGGER_']) &&
+            !isset($data['_DATA_TRIGGER_']['_TRI_LOG_'])
+        ) {
+            $lg = Bootstrap::getDefaultContextLog();
+            $lg['TRI_TITLE'] = isset($data['_DATA_TRIGGER_']['TRI_TITLE']) ? $data['_DATA_TRIGGER_']['TRI_TITLE'] : '';
+            $lg['TRI_UID'] = isset($data['_DATA_TRIGGER_']['TRI_UID']) ? $data['_DATA_TRIGGER_']['TRI_UID'] : '';
+            $lg['TRI_CODE'] = isset($data['_DATA_TRIGGER_']['TRI_WEBBOT']) ? $data['_DATA_TRIGGER_']['TRI_WEBBOT'] : '';
+            $lg['TRI_EXECUTION_TIME'] = $executionTime;
+            $lg['TRI_MSG_ERROR'] = $sError;
+            $lg['APP_UID'] = isset($data['APPLICATION']) ? $data['APPLICATION'] : '';
+            $lg['PRO_UID'] = isset($data['PROCESS']) ? $data['PROCESS'] : '';
+            $lg['TAS_UID'] = isset($data['TASK']) ? $data['TASK'] : '';
+            $lg['USR_UID'] = isset($data['USER_LOGGED']) ? $data['USER_LOGGED'] : '';
+
+            Bootstrap::registerMonolog(
+                (empty($sError)) ? 'TriggerExecution' : 'TriggerExecutionError',
+                (empty($sError)) ? 200 : 400,
+                (empty($sError)) ? 'Trigger Execution' : 'Trigger Execution Error',
+                $lg, $lg['workspace'], 'processmaker.log');
+
+            $_SESSION['_DATA_TRIGGER_']['_TRI_LOG_'] = true;
+        }
     }
 }
 

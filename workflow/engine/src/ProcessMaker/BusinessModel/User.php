@@ -1140,6 +1140,7 @@ class User
      * @param bool   $flagRecord     Flag that set the "getting" of record
      * @param bool   $throwException Flag to throw the exception (This only if the parameters are invalid)
      *                               (TRUE: throw the exception; FALSE: returns FALSE)
+     * @param string $status         The user's status, which can be "ACTIVE", "INACTIVE" or "VACATION"
      *
      * @return array Return an array with all Users, ThrowTheException/FALSE otherwise
      */
@@ -1150,7 +1151,8 @@ class User
         $start = null,
         $limit = null,
         $flagRecord = true,
-        $throwException = true
+        $throwException = true,
+        $status = null
     ) {
         try {
             $arrayUser = array();
@@ -1210,7 +1212,9 @@ class User
                     $criteria->add($value[0], $value[1], $value[2]);
                 }
             } else {
-                $criteria->add(\UsersPeer::USR_STATUS, 'ACTIVE', \Criteria::EQUAL);
+                if (!is_null($status)) {
+                    $criteria->add(\UsersPeer::USR_STATUS, strtoupper($status), \Criteria::EQUAL);
+                }
             }
 
             if ($flagFilter && trim($arrayWhere['filter']) != '') {

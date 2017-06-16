@@ -514,6 +514,96 @@ class PMPlugin
             }
         }
     }
+    
+    /**
+     * Gets an array of plugins that are in the processmaker plugin directory.
+     * @param string $workspace
+     * @return array
+     */
+    public static function getListPluginsManager($workspace)
+    {
+        $items = Array();
+        $aPluginsPP = array();
+        if (is_file(PATH_PLUGINS . 'enterprise/data/data')) {
+            $aPlugins = unserialize(trim(file_get_contents(PATH_PLUGINS . 'enterprise/data/data')));
+            foreach ($aPlugins as $aPlugin) {
+                $aPluginsPP[] = substr($aPlugin['sFilename'], 0, strpos($aPlugin['sFilename'], '-')) . '.php';
+            }
+        }
+        $oPluginRegistry = PMPluginRegistry::getSingleton();
+        if ($handle = opendir(PATH_PLUGINS)) {
+            while (false !== ($file = readdir($handle))) {
+                if (in_array($file, $aPluginsPP)) {
+                    continue;
+                }
+                if (strpos($file, '.php', 1) && is_file(PATH_PLUGINS . $file)) {
+                    include_once (PATH_PLUGINS . $file);
+                    $pluginDetail = $oPluginRegistry->getPluginDetails($file);
+                    if ($pluginDetail === null) {
+                        continue;
+                    }
+                    $status_label = $pluginDetail->enabled ? G::LoadTranslation('ID_ENABLED') : G::LoadTranslation('ID_DISABLED');
+                    $status = $pluginDetail->enabled ? 1 : 0;
+                    if (isset($pluginDetail->aWorkspaces)) {
+                        if (!is_array($pluginDetail->aWorkspaces)) {
+                            $pluginDetail->aWorkspaces = array();
+                        }
+                        if (!in_array($workspace, $pluginDetail->aWorkspaces)) {
+                            continue;
+                        }
+                    }
+                    $setup = $pluginDetail->sSetupPage != '' && $pluginDetail->enabled ? '1' : '0';
+
+                    if (isset($pluginDetail) && !$pluginDetail->bPrivate) {
+                        $items[] = [
+                            'id' => (count($items) + 1),
+                            'namespace' => $pluginDetail->sNamespace,
+                            'title' => $pluginDetail->sFriendlyName . "\n(" . $pluginDetail->sNamespace . '.php)',
+                            'className' => $pluginDetail->sNamespace,
+                            'description' => $pluginDetail->sDescription,
+                            'version' => $pluginDetail->iVersion,
+                            'setupPage' => $pluginDetail->sSetupPage,
+                            'status_label' => $status_label,
+                            'status' => $status,
+                            'setup' => $setup,
+                            'sFile' => $file,
+                            'sStatusFile' => $pluginDetail->enabled
+                        ];
+                    }
+                }
+            }
+            closedir($handle);
+        }
+        return $items;
+    }
+    
+    /**
+     * Gets a general list of all plugins within processmaker per workspace.
+     * 
+     * @param string $workspace
+     * @return array
+     */
+    public static function getListAllPlugins($workspace)
+    {
+        PMPluginRegistry::saveState();
+        $pathSingleton = PATH_DATA . "sites" . PATH_SEP . $workspace . PATH_SEP . "plugin.singleton";
+        $oPluginRegistry = PMPluginRegistry::loadSingleton($pathSingleton);
+        $items = [];
+        if ($handle = opendir(PATH_PLUGINS)) {
+            while (false !== ($file = readdir($handle))) {
+                if (strpos($file, '.php', 1) && is_file(PATH_PLUGINS . $file)) {
+                    include_once (PATH_PLUGINS . $file);
+                    $detail = $oPluginRegistry->getPluginDetails($file);
+                    if ($detail !== null) {
+                        $items[] = $detail;
+                    }
+                }
+            }
+            closedir($handle);
+        }
+        PMPluginRegistry::restoreState();
+        return $items;
+    }
 
 }
 

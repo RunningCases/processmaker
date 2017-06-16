@@ -318,7 +318,7 @@ class ActivityPropertiesStructure
     public $tas_calendar;
 
     /**
-     * @var string {@from body} {@choice NORMAL,ADHOC}
+     * @var string {@from body} {@choice NORMAL,ADHOC,SUBPROCESS}
      */
     public $tas_type;
 

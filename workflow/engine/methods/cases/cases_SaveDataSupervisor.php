@@ -27,6 +27,11 @@ $dynaForm = DynaformPeer::retrieveByPK($_GET["UID"]);
 
 $flagDynaFormNewVersion = !is_null($dynaForm) && $dynaForm->getDynVersion() == 2;
 
+//If no variables are submitted and the $_POST variable is empty
+if (!isset($_POST['form'])) {
+    $_POST['form'] = array();
+}
+
 if ($flagDynaFormNewVersion) {
     $dataForm = $_POST["form"];
 }
@@ -205,8 +210,9 @@ if (isset( $_FILES["form"]["name"] ) && count( $_FILES["form"]["name"] ) > 0) {
 		}
 	}
 }
-
+//Define the STEP_POSITION
+$ex = isset($_GET['ex']) ? $_GET['ex'] : 0;
 //go to the next step
 $aNextStep = $oCase->getNextSupervisorStep( $_SESSION['PROCESS'], $_SESSION['STEP_POSITION'] );
-G::header( 'Location: cases_StepToRevise?type=DYNAFORM&ex=' . $_GET['ex'] . '&PRO_UID=' . $_SESSION['PROCESS'] . '&DYN_UID=' . $aNextStep['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'] . '&position=' . $aNextStep['POSITION'] . '&DEL_INDEX=' . $_SESSION['INDEX'] );
+G::header( 'Location: cases_StepToRevise?type=DYNAFORM&ex=' . $ex . '&PRO_UID=' . $_SESSION['PROCESS'] . '&DYN_UID=' . $aNextStep['UID'] . '&APP_UID=' . $_SESSION['APPLICATION'] . '&position=' . $aNextStep['POSITION'] . '&DEL_INDEX=' . $_SESSION['INDEX'] );
 die();

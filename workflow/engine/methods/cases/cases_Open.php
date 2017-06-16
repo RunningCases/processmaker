@@ -90,7 +90,13 @@ try {
         case 'DRAFT':
         case 'TO_DO':
             //Check if the case is in pause, check a valid record in table APP_DELAY
-            if (AppDelay::isPaused( $sAppUid, $iDelIndex )) {
+            $isPaused = AppDelay::isPaused($sAppUid, $iDelIndex);
+
+            //Check if the case is a waiting for a SYNCHRONOUS subprocess
+            $subAppData = new \SubApplication();
+            $caseSubprocessPending = $subAppData->isSubProcessWithCasePending($sAppUid, $iDelIndex);
+
+            if ($isPaused || $caseSubprocessPending) {
                 //the case is paused show only the resume
                 $_SESSION['APPLICATION'] = $sAppUid;
                 $_SESSION['INDEX'] = $iDelIndex;
@@ -109,19 +115,11 @@ try {
 
             if ($_action == 'search') {
                 //verify if the case is with the current user
-                $c = new Criteria( 'workflow' );
-                $c->add( AppDelegationPeer::APP_UID, $sAppUid );
-                $c->add( AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN' );
-                $c->add( AppDelegationPeer::DEL_INDEX, $iDelIndex );
-                $oDataset = AppDelegationPeer::doSelectRs( $c );
-                $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-                $oDataset->next();
-                $aData = $oDataset->getRow();
-                if ($aData['USR_UID'] !== $_SESSION['USER_LOGGED'] && $aData['USR_UID'] !== '') {
+                $aData = AppDelegation::getCurrentUsers($sAppUid, $iDelIndex);
+                if ($aData['USR_UID'] !== $_SESSION['USER_LOGGED'] && !empty($aData['USR_UID'])) {
                     //distinct "" for selfservice
                     //so we show just the resume
                     $_SESSION['alreadyDerivated'] = true;
-                    //the case is paused show only the resume
                     $_SESSION['APPLICATION'] = $sAppUid;
                     $_SESSION['INDEX'] = $iDelIndex;
                     $_SESSION['PROCESS'] = $aFields['PRO_UID'];
