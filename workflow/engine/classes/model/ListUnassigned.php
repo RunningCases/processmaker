@@ -17,8 +17,9 @@ require_once 'classes/model/om/BaseListUnassigned.php';
 // @codingStandardsIgnoreStart
 class ListUnassigned extends BaseListUnassigned
 {
-    // @codingStandardsIgnoreEnd
+    private $additionalClassName = '';
     private $total = 0;
+
     /**
      * Create List Unassigned Table
      *
@@ -165,34 +166,41 @@ class ListUnassigned extends BaseListUnassigned
         return true;
     }
 
-    public function loadFilters(&$criteria, $filters)
+    /**
+     * This function add restriction in the query related to the filters
+     * @param Criteria $criteria, must be contain only select of columns
+     * @param array $filters
+     * @param array $additionalColumns information about the new columns related to custom cases list
+     * @throws PropelException
+     */
+    public function loadFilters(&$criteria, $filters, $additionalColumns = array())
     {
-        $filter = isset($filters['filter']) ? $filters['filter'] : "";
-        $search = isset($filters['search']) ? $filters['search'] : "";
-        $process = isset($filters['process']) ? $filters['process'] : "";
-        $category = isset($filters['category']) ? $filters['category'] : "";
-        $dateFrom = isset($filters['dateFrom']) ? $filters['dateFrom'] : "";
-        $dateTo = isset($filters['dateTo']) ? $filters['dateTo'] : "";
+        $filter = isset($filters['filter']) ? $filters['filter'] : '';
+        $search = isset($filters['search']) ? $filters['search'] : '';
+        $caseLink = isset($filters['caseLink']) ? $filters['caseLink'] : '';
+        $process = isset($filters['process']) ? $filters['process'] : '';
+        $category = isset($filters['category']) ? $filters['category'] : '';
+        $dateFrom = isset($filters['dateFrom']) ? $filters['dateFrom'] : '';
+        $dateTo = isset($filters['dateTo']) ? $filters['dateTo'] : '';
 
+        //Filter Search
         if ($search != '') {
-            $criteria->add(
-                $criteria->getNewCriterion(ListUnassignedPeer::APP_TITLE, '%' . $search . '%', Criteria::LIKE)
-                ->addOr(
-                    $criteria->getNewCriterion(ListUnassignedPeer::APP_TAS_TITLE, '%' . $search . '%', Criteria::LIKE)
-                    ->addOr(
-                        $criteria->getNewCriterion(ListUnassignedPeer::APP_UID, $search, Criteria::EQUAL)
-                        ->addOr(
-                            $criteria->getNewCriterion(ListUnassignedPeer::APP_NUMBER, $search, Criteria::EQUAL)
-                        )
-                    )
-                )
-            );
+            //Check if we need to search to the APP_UID
+            if (!empty($caseLink)) {
+                $criteria->add(ListUnassignedPeer::APP_UID, $search, Criteria::EQUAL);
+            } else {
+                //If we have additional tables configured in the custom cases list, prepare the variables for search
+                $casesList = new \ProcessMaker\BusinessModel\Cases();
+                $casesList->getSearchCriteriaListCases($criteria, __CLASS__ . 'Peer', $search, $this->additionalClassName, $additionalColumns);
+            }
         }
 
+        //Filter Process Id
         if ($process != '') {
             $criteria->add(ListUnassignedPeer::PRO_UID, $process, Criteria::EQUAL);
         }
 
+        //Filter Category
         if ($category != '') {
             $criteria->addSelectColumn(ProcessPeer::PRO_CATEGORY);
             $aConditions   = array();
@@ -202,12 +210,22 @@ class ListUnassigned extends BaseListUnassigned
         }
     }
 
+    /**
+     * This function get the information in the corresponding cases list
+     * @param string $usr_uid, must be show cases related to this user
+     * @param array $filters for apply in the result
+     * @param null $callbackRecord
+     * @return array $data
+     * @throws PropelException
+     */
     public function loadList($usr_uid, $filters = array(), $callbackRecord = null)
     {
         $resp = array();
         $pmTable = new PmTable();
         $tasks = $this->getSelfServiceTasks($usr_uid);
         $criteria = $pmTable->addPMFieldsToList('unassigned');
+        $this->additionalClassName = $pmTable->tableClassName;
+        $additionalColumns = $criteria->getSelectColumns();
 
         $criteria->addSelectColumn(ListUnassignedPeer::APP_UID);
         $criteria->addSelectColumn(ListUnassignedPeer::DEL_INDEX);
@@ -282,7 +300,7 @@ class ListUnassigned extends BaseListUnassigned
         }
 
         //Apply some filters
-        self::loadFilters($criteria, $filters);
+        self::loadFilters($criteria, $filters, $additionalColumns);
         $sort  = (!empty($filters['sort'])) ?
             ListUnassignedPeer::TABLE_NAME.'.'.$filters['sort'] :
             "LIST_UNASSIGNED.DEL_DELEGATE_DATE";
