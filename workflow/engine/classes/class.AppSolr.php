@@ -2912,20 +2912,21 @@ class AppSolr
     $oAppSolrQueue->createUpdate ($AppUid, $traceData, $updated);
   }
 
-  private function getCurrentTraceInfo()
-  {
-    $resultTraceString = "";
-
-    //
-    $traceData = debug_backtrace();
-    foreach ($traceData as $key => $value) {
-      if($value['function'] != 'getCurrentTraceInfo' && $value['function'] != 'require_once')
-        $resultTraceString .= $value['file'] . " (" . $value['line'] . ") " . $value['function'] . "\n";
+    private function getCurrentTraceInfo()
+    {
+        $resultTraceString = "";
+        $traceData = debug_backtrace();
+        foreach ($traceData as $key => $value) {
+            if ($value['function'] != 'getCurrentTraceInfo' && $value['function'] != 'require_once') {
+                if (isset($value['file']) && isset($value['line']) && isset($value['function'])) {
+                    $resultTraceString .= $value['file'] . " (" . $value['line'] . ") " . $value['function'] . "\n";
+                }
+            }
+        }
+        return $resultTraceString;
     }
-    return $resultTraceString;
-  }
-  
-  /**
+
+    /**
    * Update application records in Solr that are stored in APP_SOLR_QUEUE table
    */
   public function synchronizePendingApplications()
