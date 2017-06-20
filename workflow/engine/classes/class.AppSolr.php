@@ -2926,7 +2926,7 @@ class AppSolr
         return $resultTraceString;
     }
 
-    /**
+  /**
    * Update application records in Solr that are stored in APP_SOLR_QUEUE table
    */
   public function synchronizePendingApplications()
