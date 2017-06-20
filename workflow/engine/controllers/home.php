@@ -3,7 +3,6 @@
 /**
  * Home controller
  *
- * @author Erik Amaru Ortiz <erik@colosa.com, aortiz.erik@gmail.com>
  * @inherits Controller
  * @access public
  */
@@ -24,9 +23,15 @@ class Home extends Controller
     private $lastSkin;
     private $usrId;
 
+    public function call ($name)
+    {
+        global $RBAC;
+        $RBAC->allows(basename(__FILE__), $name);
+        parent::call($name);
+    }
+
     public function __construct ()
     {
-        //die($_SESSION['user_experience']);
         // setting client browser information
         $this->clientBrowser = G::getBrowser();
 
@@ -484,7 +489,6 @@ class Home extends Controller
                     }
                 }
 
-                //$swType = $type === "todo" || $type === "draft";
                 if (!empty($listType)) {
                     //The change is made because the method 'getList()' does not
                     //support 'USR_UID', this method uses the numeric field 'USR_ID'.
@@ -569,7 +573,6 @@ class Home extends Controller
 
         $oCase = new Cases();
         $aNextStep = $oCase->getNextStep( $_SESSION['PROCESS'], $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_SESSION['STEP_POSITION'] );
-        //../cases/cases_Open?APP_UID={$APP.APP_UID}&DEL_INDEX={$APP.DEL_INDEX}&action=todo
         $aNextStep['PAGE'] = '../cases/cases_Open?APP_UID=' . $aData['APPLICATION'] . '&DEL_INDEX=' . $aData['INDEX'] . '&action=draft';
         $_SESSION['BREAKSTEP']['NEXT_STEP'] = $aNextStep;
 

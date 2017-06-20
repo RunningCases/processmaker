@@ -127,6 +127,22 @@ class RBAC
                 'getCaledarList' => array(),
                 'getPMVariables' => array(),
                 'generateBpmn' => array()
+            ),
+            'home.php' => array(
+                'login' => array('PM_LOGIN'),
+                'index' => array('PM_CASES'),
+                'indexSingle' => array('PM_CASES'),
+                'appList' => array('PM_CASES'),
+                'appAdvancedSearch' => array('PM_ALLCASES'),
+                'getApps' => array('PM_ALLCASES'),
+                'getAppsData' => array('PM_ALLCASES'),
+                'startCase' => array('PM_CASES'),
+                'error' => array(),
+                'getUserArray' => array('PM_ALLCASES'),
+                'getCategoryArray' => array('PM_ALLCASES'),
+                'getAllUsersArray' => array('PM_ALLCASES'),
+                'getStatusArray' => array('PM_ALLCASES'),
+                'getProcessArray' => array('PM_ALLCASES')
             )
 
         );
