@@ -38,10 +38,18 @@ class Installer extends Controller
 
     public function index ($httpData)
     {
+        if (file_exists(FILE_PATHS_INSTALLED)) {
+            $this->setJSVar('messageError', G::LoadTranslation('ID_PROCESSMAKER_ALREADY_INSTALLED'));
+            $this->includeExtJS('installer/stopInstall');
+            $this->setView('installer/mainStopInstall');
+            G::RenderPage('publish', 'extJs');
+            return;
+        }
         if ((strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') && (file_exists($this->path_shared . 'partner.info'))) {
-            $this->includeExtJS( 'installer/stopInstall');
-            $this->setView( 'installer/mainStopInstall' );
-            G::RenderPage( 'publish', 'extJs' );
+            $this->setJSVar('messageError', G::LoadTranslation('ID_NO_INSTALL'));
+            $this->includeExtJS('installer/stopInstall');
+            $this->setView('installer/mainStopInstall');
+            G::RenderPage('publish', 'extJs');
             return;
         }
 

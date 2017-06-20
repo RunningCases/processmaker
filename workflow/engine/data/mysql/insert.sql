@@ -4027,6 +4027,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_ROLE_NAME_NOT_EMPTY','en','The ''Name'' field can not be empty.','2014-01-15') ,
 ( 'LABEL','ID_TITLE_NO_INSTALL','en','SYSTEM INSTALLATION FAILED','2014-01-15') ,
 ( 'LABEL','ID_NO_INSTALL','en','A problem occurred during the installation of the system. Please, uninstall the partial installation and try again.','2014-01-15') ,
+( 'LABEL','ID_PROCESSMAKER_ALREADY_INSTALLED','en','ProcessMaker is already installed.','2017-05-31') ,
 ( 'LABEL','ID_LICENSE_EMPTY','en','Can not find any license','2014-01-15') ,
 ( 'LABEL','ID_ADD_LICENSE','en','Please add a new license','2014-01-15') ,
 ( 'LABEL','ID_DEFAULT_CALENDAR','en','Default Calendar','2014-01-15') ,
