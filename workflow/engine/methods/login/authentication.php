@@ -427,12 +427,6 @@ try {
         setcookie("PM-TabPrimary", 101010010, time() + (24 * 60 * 60), '/');
     }
 
-    $oHeadPublisher = &headPublisher::getSingleton();
-    $oHeadPublisher->extJsInit = true;
-
-    $oHeadPublisher->addExtJsScript('login/init', false);    //adding a javascript file .js
-    $oHeadPublisher->assign('uriReq', $sLocation);
-
     $oPluginRegistry =& PMPluginRegistry::getSingleton();
     if ($oPluginRegistry->existsTrigger ( PM_AFTER_LOGIN )) {
         $oPluginRegistry->executeTriggers ( PM_AFTER_LOGIN , $_SESSION['USER_LOGGED'] );
