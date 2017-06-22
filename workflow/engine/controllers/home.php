@@ -484,7 +484,6 @@ class Home extends Controller
                     }
                 }
 
-                //$swType = $type === "todo" || $type === "draft";
                 if (!empty($listType)) {
                     //The change is made because the method 'getList()' does not
                     //support 'USR_UID', this method uses the numeric field 'USR_ID'.
@@ -613,8 +612,10 @@ class Home extends Controller
                 $cUsers->addSelectColumn(UsersPeer::USR_USERNAME);
                 $cUsers->addSelectColumn(UsersPeer::USR_ID);
                 if (!empty($search)) {
-                    $cUsers->addOr(UsersPeer::USR_FIRSTNAME, '%' . $search . '%', Criteria::LIKE);
-                    $cUsers->addOr(UsersPeer::USR_LASTNAME, '%' . $search . '%', Criteria::LIKE);
+                    $cUsers->add(
+                        $cUsers->getNewCriterion(UsersPeer::USR_FIRSTNAME, '%' . $search . '%', Criteria::LIKE)->addOr(
+                        $cUsers->getNewCriterion(UsersPeer::USR_LASTNAME, '%' . $search . '%', Criteria::LIKE))
+                    );
                 }
                 $oDataset = UsersPeer::doSelectRS($cUsers);
                 $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
