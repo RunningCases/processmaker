@@ -1152,7 +1152,9 @@ class Cases
             //Logger deleteCase
             $nameFiles = '';
             foreach (debug_backtrace() as $node) {
-                $nameFiles .= $node['file'] . ":" . $node['function'] . "(" . $node['line'] . ")\n";
+                if (isset($node['file']) && isset($node['function']) && isset($node['line'])) {
+                    $nameFiles .= $node['file'] . ":" . $node['function'] . "(" . $node['line'] . ")\n";
+                }
             }
             $dataLog = \Bootstrap::getDefaultContextLog();
             $dataLog['usrUid'] = isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : G::LoadTranslation('UID_UNDEFINED_USER');
