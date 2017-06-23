@@ -1864,6 +1864,14 @@ class G
 
             $arrayGrid = array_unique($arrayGrid);
 
+            //Given the set: 'valueOne', 'valueOneTwo', where the second string 
+            //contains the first string, this causes the larger string to take 
+            //the second, resulting in a delimitation error, to avoid this problem 
+            //we first search the string larger size.
+            usort($arrayGrid, function($a, $b) {
+                return strlen($b) - strlen($a);
+            });
+
             foreach ($arrayGrid as $index => $value) {
                 if($value !== "") {
                     $grdName = $value;
