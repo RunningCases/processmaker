@@ -1544,5 +1544,163 @@ class User
             throw $e;
         }
     }
+    /**
+     * This function get the list of users
+     *
+     * @param string $authSource, authentication source
+     * @param string $filter
+     * @param string $sort
+     * @param integer $start
+     * @param integer $limit
+     * @param string $dir related to order the column
+     *
+     * @return void
+     */
+    public function getAllUsersWithAuthSource(
+        $authSource = '',
+        $filter = '',
+        $sort = '',
+        $start = 0,
+        $limit = 20,
+        $dir = 'ASC'
+    )
+    {
+        global $RBAC;
+        $aUsers = array();
+        if ($authSource != '') {
+            $aUsers = $RBAC->getListUsersByAuthSource($authSource);
+        }
+        $oCriteria = new \Criteria('workflow');
+        $oCriteria->addSelectColumn('COUNT(*) AS CNT');
+        if ($filter != '') {
+            $cc = $oCriteria->getNewCriterion(\UsersPeer::USR_USERNAME, '%' . $filter . '%', \Criteria::LIKE)
+            ->addOr($oCriteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME, '%' . $filter . '%', \Criteria::LIKE)
+            ->addOr($oCriteria->getNewCriterion(\UsersPeer::USR_LASTNAME, '%' . $filter . '%', \Criteria::LIKE)
+            ->addOr($oCriteria->getNewCriterion(\UsersPeer::USR_EMAIL, '%' . $filter . '%', \Criteria::LIKE))));
+            $oCriteria->add($cc);
+        }
+        $oCriteria->add(\UsersPeer::USR_STATUS, array('CLOSED'), \Criteria::NOT_IN);
+
+        if ($authSource != '') {
+            $totalRows = sizeof($aUsers);
+        } else {
+            $oDataset = \UsersPeer::DoSelectRs($oCriteria);
+            $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $oDataset->next();
+            $row = $oDataset->getRow();
+            $totalRows = $row['CNT'];
+        }
+        $oCriteria->clearSelectColumns();
+        $oCriteria->addSelectColumn(\UsersPeer::USR_UID);
+        $oCriteria->addSelectColumn(\UsersPeer::USR_USERNAME);
+        $oCriteria->addSelectColumn(\UsersPeer::USR_FIRSTNAME);
+        $oCriteria->addSelectColumn(\UsersPeer::USR_LASTNAME);
+        $oCriteria->addSelectColumn(\UsersPeer::USR_EMAIL);
+        $oCriteria->addSelectColumn(\UsersPeer::USR_ROLE);
+        $oCriteria->addSelectColumn(\UsersPeer::USR_DUE_DATE);
+        $oCriteria->addSelectColumn(\UsersPeer::USR_STATUS);
+        $oCriteria->addSelectColumn(\UsersPeer::USR_UX);
+        $oCriteria->addSelectColumn(\UsersPeer::DEP_UID);
+        $oCriteria->addSelectColumn(\UsersPeer::USR_LAST_LOGIN);
+        $oCriteria->addAsColumn('LAST_LOGIN', 0);
+        $oCriteria->addAsColumn('DEP_TITLE', 0);
+        $oCriteria->addAsColumn('TOTAL_CASES', 0);
+        $oCriteria->addAsColumn('DUE_DATE_OK', 1);
+        $sep = "'";
+        $oCriteria->add(\UsersPeer::USR_STATUS, array('CLOSED'), \Criteria::NOT_IN);
+        if ($filter != '') {
+            $cc = $oCriteria->getNewCriterion(\UsersPeer::USR_USERNAME, '%' . $filter . '%', \Criteria::LIKE)
+            ->addOr($oCriteria->getNewCriterion(\UsersPeer::USR_FIRSTNAME, '%' . $filter . '%', \Criteria::LIKE)
+            ->addOr($oCriteria->getNewCriterion(\UsersPeer::USR_LASTNAME, '%' . $filter . '%', \Criteria::LIKE)
+            ->addOr($oCriteria->getNewCriterion(\UsersPeer::USR_EMAIL, '%' . $filter . '%', \Criteria::LIKE))));
+            $oCriteria->add($cc);
+        }
+        if (sizeof($aUsers) > 0) {
+            $oCriteria->add(\UsersPeer::USR_UID, $aUsers, \Criteria::IN);
+        } elseif ($totalRows == 0 && $authSource != '') {
+            $oCriteria->add(\UsersPeer::USR_UID, '', \Criteria::IN);
+        }
+        if ($sort != '') {
+            if ($dir == 'ASC') {
+                $oCriteria->addAscendingOrderByColumn($sort);
+            } else {
+                $oCriteria->addDescendingOrderByColumn($sort);
+            }
+        }
+        $oCriteria->setOffset($start);
+        $oCriteria->setLimit($limit);
+        $oDataset = \UsersPeer::DoSelectRs($oCriteria);
+        $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+        return $oDataset;
+    }
+    /**
+     * This function get additional information related to the user
+     * Information about the department, rol, cases, authentication
+     *
+     * @param criteria $oDatasetUsers, criteria for search users
+     *
+     * @return array $dataUsers array of users with the additional information
+     */
+    public function getAdditionalInfoFromUsers($oDatasetUsers)
+    {
+        global $RBAC;
+        //Get the information about the department
+        $Department = new \Department();
+        $aDepart = $Department->getAllDepartmentsByUser();
+
+        //Get the authentication sources
+        $aAuthSources = $RBAC->getAllAuthSourcesByUser();
+
+        //Get roles
+        $oRoles = new \Roles();
+
+        //Get cases
+        $oParticipated = new \ListParticipatedLast();
+        $oAppCache = new \AppCacheView();
+
+        $rows = array();
+        $uRole = array();
+        $totalRows = 0;
+        $dataUsers = array();
+        while ($oDatasetUsers->next()) {
+            $totalRows++;
+            $row = $oDatasetUsers->getRow();
+
+            //Add the role information related to the user
+            try {
+                $uRole = $oRoles->loadByCode($row['USR_ROLE']);
+            } catch (\exception $oError) {
+                $uRole['ROL_NAME'] = G::loadTranslation('ID_DELETED');
+            }
+            $row['USR_ROLE_ID'] = $row['USR_ROLE'];
+            $row['USR_ROLE'] = isset($uRole['ROL_NAME']) ? ($uRole['ROL_NAME'] != '' ? $uRole['ROL_NAME'] : $uRole['ROL_CODE']) : $uRole['ROL_CODE'];
+
+            /*----------------------------------********---------------------------------*/
+            if (true) {
+                $total = $oParticipated->getCountList($row['USR_UID']);
+            } else {
+            /*----------------------------------********---------------------------------*/
+                $total = $oAppCache->getListCounters('sent', $row['USR_UID'], false);
+            /*----------------------------------********---------------------------------*/
+            }
+            /*----------------------------------********---------------------------------*/
+            $row['TOTAL_CASES'] = $total;
+
+            $row['DUE_DATE_OK'] = (date('Y-m-d') > date('Y-m-d', strtotime($row['USR_DUE_DATE']))) ? 0 : 1;
+            $row['LAST_LOGIN'] = isset($row['USR_LAST_LOGIN']) ? \ProcessMaker\Util\DateTime::convertUtcToTimeZone($row['USR_LAST_LOGIN']) : '';
+            //Add the department information related to the user
+            $row['DEP_TITLE'] = isset($aDepart[$row['USR_UID']]) ? $aDepart[$row['USR_UID']] : '';
+            //Add the authentication information related to the user
+            $row['USR_AUTH_SOURCE'] = isset($aAuthSources[$row['USR_UID']]) ? $aAuthSources[$row['USR_UID']] : 'ProcessMaker (MYSQL)';
+
+            $rows[] = $row;
+        }
+        $dataUsers['data'] = $rows;
+        $dataUsers['totalCount'] = $totalRows;
+
+        return $dataUsers;
+    }
+
 }
 

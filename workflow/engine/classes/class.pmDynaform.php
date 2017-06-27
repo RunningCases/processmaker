@@ -1357,7 +1357,7 @@ class pmDynaform
                 "var sysLang = '" . SYS_LANG . "';\n" .
                 "var isRTL = " . $this->isRTL . ";\n" .
                 "var pathRTLCss = '" . $this->pathRTLCss . "';\n" .
-                "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? $this->fields["DEL_INDEX"] : "0") . ";\n" .
+                "var delIndex = " . (isset($this->fields["DEL_INDEX"]) ? G::decrypt($this->fields["DEL_INDEX"], URL_KEY) : "0") . ";\n" .
                 "var leaveCaseWarning = " . $this->getLeaveCaseWarning() . ";\n" .
                 "</script>\n" .
                 "<script type='text/javascript' src='/jscore/cases/core/pmDynaform.js'></script>\n" .

@@ -1152,7 +1152,9 @@ class Cases
             //Logger deleteCase
             $nameFiles = '';
             foreach (debug_backtrace() as $node) {
-                $nameFiles .= $node['file'] . ":" . $node['function'] . "(" . $node['line'] . ")\n";
+                if (isset($node['file']) && isset($node['function']) && isset($node['line'])) {
+                    $nameFiles .= $node['file'] . ":" . $node['function'] . "(" . $node['line'] . ")\n";
+                }
             }
             $dataLog = \Bootstrap::getDefaultContextLog();
             $dataLog['usrUid'] = isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : G::LoadTranslation('UID_UNDEFINED_USER');
@@ -3348,7 +3350,7 @@ class Cases
      * @return integer
      */
 
-    public function getCurrentDelegation($sApplicationUID = '', $sUserUID = '')
+    public function getCurrentDelegation($sApplicationUID = '', $sUserUID = '', $onlyOpenThreads = false)
     {
         $oCriteria = new Criteria();
         $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
@@ -3363,12 +3365,15 @@ class Cases
         //if the user is not in the task, we need to return a valid del index, so we are returning the latest delindex
         $oCriteria = new Criteria();
         $oCriteria->add(AppDelegationPeer::APP_UID, $sApplicationUID);
+        if ($onlyOpenThreads) {
+            $oCriteria->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
+        }
         $oCriteria->addDescendingOrderByColumn(AppDelegationPeer::DEL_DELEGATE_DATE);
         $oApplication = AppDelegationPeer::doSelectOne($oCriteria);
         if (!is_null($oApplication)) {
             return $oApplication->getDelIndex();
         }
-        throw ( new Exception('this case has 0 delegations') );
+        throw ( new Exception('This case has 0 current delegations') );
     }
 
     /*

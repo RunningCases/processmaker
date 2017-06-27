@@ -4042,8 +4042,8 @@ msgstr "Invalid syntax"
 # TRANSLATION
 # LABEL/ID_NO_PERMISSION_NO_PARTICIPATED
 #: LABEL/ID_NO_PERMISSION_NO_PARTICIPATED
-msgid "You do not have permission to see this case or you have not participated in it."
-msgstr "You do not have permission to see this case or you have not participated in it."
+msgid "You cannot open this case because on the reason below: <br> You do not have permission to see this case. <br> You have not participated in this case. <br> Case is already claimed."
+msgstr "You cannot open this case because on the reason below: <br> You do not have permission to see this case. <br> You have not participated in this case. <br> Case is already claimed."
 
 # TRANSLATION
 # JAVASCRIPT/ID_EMPTY_NODENAME
@@ -15186,6 +15186,12 @@ msgstr "SYSTEM INSTALLATION FAILED"
 #: LABEL/ID_NO_INSTALL
 msgid "A problem occurred during the installation of the system. Please, uninstall the partial installation and try again."
 msgstr "A problem occurred during the installation of the system. Please, uninstall the partial installation and try again."
+
+# TRANSLATION
+# LABEL/ID_PROCESSMAKER_ALREADY_INSTALLED
+#: LABEL/ID_PROCESSMAKER_ALREADY_INSTALLED
+msgid "ProcessMaker is already installed."
+msgstr "ProcessMaker is already installed."
 
 # TRANSLATION
 # LABEL/ID_LICENSE_EMPTY

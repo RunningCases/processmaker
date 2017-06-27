@@ -408,9 +408,8 @@ Ext.onReady(function(){
   processesGrid = new Ext.grid.GridPanel( {
     region: 'center',
     layout: 'fit',
-    id: 'processesGrid',
-    height:500,
-    //autoWidth : true,
+    id: 'granularGridPanel',
+    height: 500,
     width:'',
     title : '',
     stateful : true,
@@ -421,13 +420,6 @@ Ext.onReady(function(){
     plugins: expander,
     cls : 'grid_with_checkbox',
     columnLines: true,
-
-
-    /*view: new Ext.grid.GroupingView({
-        //forceFit:true,
-        //groupTextTpl: '{text} ({[values.rs.length]} {[values.rs.length > 1 ? "Items" : "Item"]})'
-        groupTextTpl: '{text}'
-    }),*/
     viewConfig: {
       forceFit:true,
       cls:"x-grid-empty",
