@@ -132,6 +132,7 @@ class Users extends BaseUsers
         $c->addSelectColumn( UsersPeer::USR_LASTNAME );
 
         $c->add( UsersPeer::USR_EMAIL, $sUsrEmail );
+        $c->add( UsersPeer::USR_STATUS, 'ACTIVE' );
         return $c;
     }
 
