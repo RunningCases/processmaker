@@ -334,7 +334,7 @@ class ObjectPermission extends BaseObjectPermission
         if ($opObjUid != '' && $opObjUid != '0') {
             $oCriteria->add(DynaformPeer::DYN_UID, $opObjUid);
         }
-
+        $oCriteria->addSelectColumn("*");
         $oCriteria->addAscendingOrderByColumn(StepPeer::STEP_POSITION);
         $oCriteria->setDistinct();
 

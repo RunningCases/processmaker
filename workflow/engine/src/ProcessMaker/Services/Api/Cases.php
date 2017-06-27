@@ -952,6 +952,7 @@ class Cases extends Api
     /**
      * Get Case Notes
      *
+     * @param string $app_uid {@min 1}{@max 32}
      * @param int $start {@from path}
      * @param int $limit {@from path}
      * @param string $sort {@from path}
