@@ -8,27 +8,24 @@ if (!isset($_SESSION['USER_LOGGED'])) {
     die();
 }
 
-G::LoadSystem('inputfilter');
-$filter = new InputFilter();
-
 try {
     $userUid = $_SESSION['USER_LOGGED'];
-    $filters['paged'] = isset($_REQUEST["paged"]) ? $filter->sanitizeInputValue($_REQUEST["paged"], 'nosql') : true;
-    $filters['count'] = isset($_REQUEST['count']) ? $filter->sanitizeInputValue($_REQUEST["count"], 'nosql') : true;
-    $filters['category'] = isset($_REQUEST["category"]) ? $filter->sanitizeInputValue($_REQUEST["category"], 'nosql') : "";
-    $filters['process'] = isset($_REQUEST["process"]) ? $filter->sanitizeInputValue($_REQUEST["process"], 'nosql') : "";
-    $filters['search'] = isset($_REQUEST["search"]) ? $filter->sanitizeInputValue($_REQUEST["search"], 'nosql') : "";
-    $filters['filter'] = isset($_REQUEST["filter"]) ? $filter->sanitizeInputValue($_REQUEST["filter"], 'nosql') : "";
-    $filters['dateFrom'] = (!empty($_REQUEST["dateFrom"])) ? substr( $_REQUEST["dateFrom"], 0, 10 ) : "";
-    $filters['dateTo'] = (!empty($_REQUEST["dateTo"])) ? substr( $_REQUEST["dateTo"], 0, 10 ) : "";
-    $filters['start'] = isset($_REQUEST["start"]) ? $filter->sanitizeInputValue($_REQUEST["start"], 'nosql') : "0";
-    $filters['limit'] = isset($_REQUEST["limit"]) ? $filter->sanitizeInputValue($_REQUEST["limit"], 'nosql') : "25";
-    $filters['sort'] = (isset($_REQUEST['sort']))? (($_REQUEST['sort'] == 'APP_STATUS_LABEL')? 'APP_STATUS' : $filter->sanitizeInputValue($_REQUEST["sort"], 'nosql')) : '';
-    $filters['dir'] = isset($_REQUEST["dir"]) ? $filter->sanitizeInputValue($_REQUEST["dir"], 'nosql') : "DESC";
-    $filters['action'] = isset($_REQUEST["action"]) ? $filter->sanitizeInputValue($_REQUEST["action"], 'nosql') : "";
-    $filters['user'] = isset($_REQUEST["user"]) ? $filter->sanitizeInputValue($_REQUEST["user"], 'nosql') : "";
-    $listName = isset($_REQUEST["list"]) ? $filter->sanitizeInputValue($_REQUEST["list"], 'nosql') : "inbox";
-    $filters['filterStatus'] = isset($_REQUEST["filterStatus"]) ? $filter->sanitizeInputValue($_REQUEST["filterStatus"], 'nosql') : "";
+    $filters['paged'] = isset($_REQUEST["paged"]) ? $_REQUEST["paged"] : true;
+    $filters['count'] = isset($_REQUEST['count']) ? $_REQUEST["count"] : true;
+    $filters['category'] = isset($_REQUEST["category"]) ? $_REQUEST["category"] : "";
+    $filters['process'] = isset($_REQUEST["process"]) ? $_REQUEST["process"] : "";
+    $filters['search'] = isset($_REQUEST["search"]) ? $_REQUEST["search"] : "";
+    $filters['filter'] = isset($_REQUEST["filter"]) ? $_REQUEST["filter"] : "";
+    $filters['dateFrom'] = (!empty($_REQUEST["dateFrom"])) ? substr($_REQUEST["dateFrom"], 0, 10) : "";
+    $filters['dateTo'] = (!empty($_REQUEST["dateTo"])) ? substr($_REQUEST["dateTo"], 0, 10) : "";
+    $filters['start'] = isset($_REQUEST["start"]) ? $_REQUEST["start"] : "0";
+    $filters['limit'] = isset($_REQUEST["limit"]) ? $_REQUEST["limit"] : "25";
+    $filters['sort'] = (isset($_REQUEST['sort'])) ? (($_REQUEST['sort'] == 'APP_STATUS_LABEL') ? 'APP_STATUS' : $_REQUEST["sort"]) : '';
+    $filters['dir'] = isset($_REQUEST["dir"]) ? $_REQUEST["dir"] : "DESC";
+    $filters['action'] = isset($_REQUEST["action"]) ? $_REQUEST["action"] : "";
+    $filters['user'] = isset($_REQUEST["user"]) ? $_REQUEST["user"] : "";
+    $listName = isset($_REQUEST["list"]) ? $_REQUEST["list"] : "inbox";
+    $filters['filterStatus'] = isset($_REQUEST["filterStatus"]) ? $_REQUEST["filterStatus"] : "";
     $openApplicationUid = (isset($_REQUEST['openApplicationUid']) && $_REQUEST['openApplicationUid'] != '') ? $_REQUEST['openApplicationUid'] : null;
 
     //Define user when is reassign
@@ -184,10 +181,8 @@ try {
     );
 
     $response = array();
-
     $response['filters']        = $filters;
     $response['totalCount']     = $list->getCountList($userUid, $filters);
-    $response = $filter->xssFilterHard($response);
     $response['data'] = \ProcessMaker\Util\DateTime::convertUtcToTimeZone($result);
     echo G::json_encode($response);
 } catch (Exception $e) {
