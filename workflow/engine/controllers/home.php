@@ -40,7 +40,7 @@ class Home extends Controller
             $this->userName = isset( $_SESSION['USR_USERNAME'] ) ? $_SESSION['USR_USERNAME'] : '';
             $this->userFullName = isset( $_SESSION['USR_FULLNAME'] ) ? $_SESSION['USR_FULLNAME'] : '';
             $this->userRolName = isset( $_SESSION['USR_ROLENAME'] ) ? $_SESSION['USR_ROLENAME'] : '';
-            
+
             $users = new Users();
             $users = $users->load($this->userID);
             $this->usrId = $users["USR_ID"];
@@ -300,8 +300,23 @@ class Home extends Controller
             $userObject = Users::loadById($user);
             $userName = $userObject->getUsrLastname() . " " . $userObject->getUsrFirstname();
         }
-        
-        $cases = $this->getAppsData( $httpData->t, null, null, $user, null, $search, $process, $status, $dateFrom, $dateTo, null, null, 'APP_CACHE_VIEW.APP_NUMBER', $category);
+
+        $cases = $this->getAppsData(
+            $httpData->t,
+            null,
+            null,
+            $user,
+            null,
+            $search,
+            $process,
+            $status,
+            $dateFrom,
+            $dateTo,
+            null,
+            null,
+            'APP_CACHE_VIEW.APP_NUMBER',
+            $category
+        );
         $arraySearch = array($process,  $status,  $search, $category, $user, $dateFrom, $dateTo );
 
         // settings vars and rendering
@@ -377,7 +392,11 @@ class Home extends Controller
                 $user = null;
                 break;
             case null:
-                $user = $this->usrId;
+                if ($type === 'search') {
+                    $user = null;
+                } else {
+                    $user = $this->usrId;
+                }
                 break;
             default:
                 //$user = $this->userID;
@@ -442,17 +461,34 @@ class Home extends Controller
             $dataList['sort']     = $sort;
             $dataList['category'] = $category;
             $dataList['action']   = $type;
+            $dataList['dir'] = 'DESC';
             /*----------------------------------********---------------------------------*/
             if (true) {
                 //In enterprise version this block of code should always be executed
                 //In community version this block of code is deleted and is executed the other
-                $swType = $type === "todo" || $type === "draft";
-                if ($swType || $type === "unassigned") {
-                    //The change is made because the method 'getList()' does not 
+                $listType = '';
+                if (!empty($type)) {
+                    switch ($type) {
+                        case 'todo':
+                            $listType = 'inbox';
+                            break;
+                        case 'draft':
+                            $listType = 'inbox';
+                            break;
+                        case 'unassigned':
+                            $listType = 'unassigned';
+                            break;
+                        case 'search':
+                            $dataList['filterStatus'] = $status;
+                            break;
+                    }
+                }
+
+                if (!empty($listType)) {
+                    //The change is made because the method 'getList()' does not
                     //support 'USR_UID', this method uses the numeric field 'USR_ID'.
                     $userObject = Users::loadById($dataList['userId']);
                     $dataList['userId'] = $userObject->getUsrUid();
-                    $listType = $swType ? "inbox" : $type;
                     $list = new \ProcessMaker\BusinessModel\Lists();
                     $cases = $list->getList($listType, $dataList);
                 }
@@ -557,7 +593,9 @@ class Home extends Controller
 
     function getUserArray($action, $userUid, $search = null)
     {
-        global $oAppCache;
+        G::LoadClass("configuration");
+        $conf = new Configurations();
+        $confEnvSetting = $conf->getFormats();
         $status = array();
         $users[] = array("CURRENT_USER", G::LoadTranslation("ID_CURRENT_USER"));
         $users[] = array("ALL", G::LoadTranslation("ID_ALL_USERS"));
@@ -571,16 +609,25 @@ class Home extends Controller
                 $cUsers->addSelectColumn(UsersPeer::USR_UID);
                 $cUsers->addSelectColumn(UsersPeer::USR_FIRSTNAME);
                 $cUsers->addSelectColumn(UsersPeer::USR_LASTNAME);
+                $cUsers->addSelectColumn(UsersPeer::USR_USERNAME);
                 $cUsers->addSelectColumn(UsersPeer::USR_ID);
                 if (!empty($search)) {
-                    $cUsers->addOr(UsersPeer::USR_FIRSTNAME, "%$search%", Criteria::LIKE);
-                    $cUsers->addOr(UsersPeer::USR_LASTNAME, "%$search%", Criteria::LIKE);
+                    $cUsers->add(
+                        $cUsers->getNewCriterion(UsersPeer::USR_FIRSTNAME, '%' . $search . '%', Criteria::LIKE)->addOr(
+                        $cUsers->getNewCriterion(UsersPeer::USR_LASTNAME, '%' . $search . '%', Criteria::LIKE))
+                    );
                 }
                 $oDataset = UsersPeer::doSelectRS($cUsers);
                 $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
                 $oDataset->next();
                 while ($aRow = $oDataset->getRow()) {
-                    $users[] = array($aRow['USR_ID'], htmlentities($aRow['USR_LASTNAME'] . ' ' . $aRow['USR_FIRSTNAME'], ENT_QUOTES, "UTF-8"));
+                    $usrFullName = $conf->usersNameFormatBySetParameters(
+                        $confEnvSetting["format"],
+                        $aRow["USR_USERNAME"],
+                        $aRow["USR_FIRSTNAME"],
+                        $aRow["USR_LASTNAME"]
+                    );
+                    $users[] = array($aRow['USR_ID'], htmlentities($usrFullName, ENT_QUOTES, "UTF-8"));
                     $oDataset->next();
                 }
                 break;
@@ -644,66 +691,14 @@ class Home extends Controller
 
     function getStatusArray ($action, $userUid)
     {
-        global $oAppCache;
-        $status = array ();
-        $status[] = array ('',G::LoadTranslation( 'ID_ALL_STATUS' ));
-        //get the list based in the action provided
-        switch ($action) {
-            case 'sent':
-                $cStatus = $oAppCache->getSentListProcessCriteria( $userUid ); // a little slow
-                break;
-            case 'simple_search':
-            case 'search':
-                $cStatus = new Criteria( 'workflow' );
-                $cStatus->clearSelectColumns();
-                $cStatus->setDistinct();
-                $cStatus->addSelectColumn( ApplicationPeer::APP_STATUS );
-                $oDataset = ApplicationPeer::doSelectRS( $cStatus );
-                $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-                $oDataset->next();
-                while ($aRow = $oDataset->getRow()) {
-                    $status[] = array ($aRow['APP_STATUS'],G::LoadTranslation( 'ID_CASES_STATUS_' . $aRow['APP_STATUS'] )
-                    ); //here we can have a translation for the status ( the second param)
-                    $oDataset->next();
-                }
-                return $status;
-                break;
-            case 'selfservice':
-                $cStatus = $oAppCache->getUnassignedListCriteria( $userUid );
-                break;
-            case 'paused':
-                $cStatus = $oAppCache->getPausedListCriteria( $userUid );
-                break;
-            case 'to_revise':
-                $cStatus = $oAppCache->getToReviseListCriteria( $userUid );
-                //           $cStatus       = $oAppCache->getPausedListCriteria($userUid);
-                break;
-            case 'to_reassign':
-                $cStatus = $oAppCache->getToReassignListCriteria($userUid);
-                break;
-            case 'todo':
-            case 'draft':
-            case 'gral':
-                //      case 'to_revise' :
-            default:
-                return $status;
-                break;
-        }
-
-        //get the status for this user in this action only for participated, unassigned, paused
-        //    if ( $action != 'todo' && $action != 'draft' && $action != 'to_revise') {
-        if ($action != 'todo' && $action != 'draft') {
-            //$cStatus = new Criteria('workflow');
-            $cStatus->clearSelectColumns();
-            $cStatus->setDistinct();
-            $cStatus->addSelectColumn( AppCacheViewPeer::APP_STATUS );
-            $oDataset = AppCacheViewPeer::doSelectRS( $cStatus );
-            $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );
-            $oDataset->next();
-            while ($aRow = $oDataset->getRow()) {
-                $status[] = array ($aRow['APP_STATUS'],G::LoadTranslation( 'ID_CASES_STATUS_' . $aRow['APP_STATUS'] ));
-                //here we can have a translation for the status ( the second param)
-                $oDataset->next();
+        $status = array();
+        $aStatus = Application::$app_status_values;
+        $status[] = array('', G::LoadTranslation('ID_ALL_STATUS'));
+        foreach ($aStatus as $key => $value) {
+            if ($action == 'search') {
+                $status[] =  array ($value, G::LoadTranslation( 'ID_CASES_STATUS_' . $key ));
+            } else {
+                $status[] =  array ($key, G::LoadTranslation( 'ID_CASES_STATUS_' . $key ));
             }
         }
         return $status;
@@ -711,7 +706,7 @@ class Home extends Controller
 
     /**
      * Get the list of active processes
-     * 
+     *
      * @global type $oAppCache
      * @param type $action
      * @param type $userUid
