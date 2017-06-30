@@ -103,9 +103,9 @@ class RBAC
                 'importSkin' => array('PM_SETUP_SKIN'),
                 'exportSkin' => array('PM_SETUP_SKIN'),
                 'deleteSkin' => array('PM_SETUP_SKIN'),
+                'streamSkin' => array('PM_SETUP_SKIN'),
                 'addTarFolder' => array('PM_SETUP_SKIN'),
-                'copy_skin_folder' => array('PM_SETUP_SKIN'),
-                'deleteSkin' => array('PM_SETUP_SKIN')
+                'copy_skin_folder' => array('PM_SETUP_SKIN')
             ),
             'processes_DownloadFile.php' => array(
                 'downloadFileHash' => array('PM_FACTORY')
