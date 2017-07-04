@@ -20,11 +20,7 @@
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true" processUncoveredFilesFromWhitelist="false">
             <directory suffix=".php">./workflow/engine/classes</directory>
-           <!-- <directory suffix=".php">./workflow/engine/controllers</directory>
-            <directory suffix=".php">./workflow/engine/methods</directory> -->
             <directory suffix=".php">./workflow/engine/src</directory>
-           <!-- <directory suffix=".php">./gulliver/bin</directory> -->
-           <!-- <directory suffix=".php">./gulliver/system</directory> -->
         </whitelist>
         <exclude>
             <directory>./workflow/engine/classes/model/map</directory>
@@ -35,18 +31,19 @@
     </filter>
 
     <php>
-        <var name="SYS_SYS" value="os" />
+        <var name="SYS_SYS" value="test" />
         <var name="SYS_LANG" value="en" />
-        <var name="SYS_SKIN" value="classic" />
+        <var name="SYS_SKIN" value="neoclassic" />
         <var name="DB_ADAPTER" value="mysql" />
-        <var name="DB_HOST" value="localhost" />
+        <var name="DB_HOST" value="processmaker3" />
         <var name="DB_NAME" value="wf_test" />
-        <var name="DB_USER" value="root" />
-        <var name="DB_PASS" value="" />
-        <var name="PATH_DB" value="./test_shared/workflow_data/sites/" />
-        <var name="PATH_DATA" value="./test_shared/workflow_data/" />
-        <var name="APP_HOST" value="localhost" />
+        <var name="DB_USER" value="paula" />
+        <var name="DB_PASS" value="68M=muF@Xt,-vcN" />
+        <var name="PATH_DB" value="./shared/sites/" />
+        <var name="PATH_DATA" value="./shared/" />
+        <var name="APP_HOST" value="processmaker3" />
         <var name="HTTPS" value="off" />
+        <var name="SERVER_PORT" value="8080" />
     </php>
 
     <logging>

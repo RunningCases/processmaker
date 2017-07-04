@@ -8,8 +8,10 @@ define('PATH_SEP', '/');
 if (!defined('__DIR__')) {
     define('__DIR__', dirname(__FILE__));
 }
-$_SERVER["HTTP_HOST"] = $GLOBALS['APP_HOST'];
+$_SERVER["HTTP_HOST"] = $GLOBALS['APP_HOST'].
+    ($GLOBALS['SERVER_PORT'] === '80' ? '' : ':'.$GLOBALS['SERVER_PORT']);
 $_SERVER['HTTPS'] = $GLOBALS['HTTPS'];
+$_SERVER['SERVER_PORT'] = $GLOBALS['SERVER_PORT'];
 
 // Defining the Home Directory
 define('PATH_TRUNK', realpath(__DIR__.'/../').PATH_SEP);

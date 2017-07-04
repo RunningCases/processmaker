@@ -210,7 +210,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                 if (localStorage.weData) {
                     try {
                         weData = JSON.parse(localStorage.weData);
-                        if (weData.TAS_UID!==tasUid) {
+                        if (weData.TAS_UID!==tasUid || !weData.APPLICATION || !weData.INDEX) {
                             //TAS_UID is different, reset.
                             resetLocalData();
                         }
@@ -265,7 +265,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                     return new Promise(function (logged, failure) {
                         if (!isLogged) {
                             log("login");
-                            open('../login/login?u=' + encodeURIComponent(location.pathname + '/../../webentry/logged'))
+                            open('../login/login?inIFrame=1&u=' + encodeURIComponent(location.pathname + '/../../webentry/logged'))
                               .then(function (userInformation) {
                                   logged(userInformation);
                               })
@@ -411,7 +411,7 @@ $webEntryModel = \WebEntryPeer::retrieveByPK($weUid);
                             //This code is to prevent error at back history
                             //in Firefox
                             $("#iframe").hide();
-                            $("#iframe").attr("src", "../login/login");
+                            $("#iframe").attr("src", "../login/login?inIFrame=1");
                             logout(false, function() {
                                 resolve(callbackUrl);
                             });
