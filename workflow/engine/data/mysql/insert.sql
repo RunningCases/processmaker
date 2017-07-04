@@ -4069,7 +4069,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_EVENT_ADD_CURRENT','en','Add current task user','2014-02-12') ,
 ( 'LABEL','ID_EVENT_ADD_USERS','en','Add users','2014-02-12') ,
 ( 'LABEL','ID_EVENT_REMOVE_SELECTED','en','Remove selected','2014-02-12') ,
-( 'LABEL','ENTER_VALID_URL','en','Enter a valid URL to be redirected when entry will be completed','2014-06-30') ;
+( 'LABEL','ENTER_VALID_URL','en','Enter a valid URL to redirect the browser after the web entry is completed','2017-07-04') ;
 INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE )  VALUES 
 
 ( 'LABEL','ID_EVENT_ADD_DYNAVAR','en','Add dynavar','2014-02-12') ,
