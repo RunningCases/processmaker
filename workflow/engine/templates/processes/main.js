@@ -408,7 +408,7 @@ Ext.onReady(function(){
   processesGrid = new Ext.grid.GridPanel( {
     region: 'center',
     layout: 'fit',
-    id: 'granularGridPanel',
+    id: 'processesGrid',
     height: 500,
     width:'',
     title : '',
@@ -1207,7 +1207,7 @@ function exportImportProcessObjects(typeAction)
     gridProcessObjects = new Ext.grid.EditorGridPanel( {
         region: 'center',
         layout: 'fit',
-        id: 'processesGrid',
+        id: 'gridProcessObjects',
         height:365,
         width:355,
         title : '',
