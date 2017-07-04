@@ -142,7 +142,9 @@ class RBAC
                 'getCategoryArray' => array('PM_ALLCASES'),
                 'getAllUsersArray' => array('PM_ALLCASES'),
                 'getStatusArray' => array('PM_ALLCASES'),
-                'getProcessArray' => array('PM_ALLCASES')
+                'getProcessArray' => array('PM_ALLCASES'),
+                'getProcesses' => array('PM_ALLCASES'),
+                'getUsers' => array('PM_ALLCASES')
             )
 
         );
