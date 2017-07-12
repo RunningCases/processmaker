@@ -2285,4 +2285,5 @@ class Derivation
         }
         return $iNewDelIndex;
     }
+
 }
