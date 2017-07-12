@@ -82,6 +82,13 @@ try {
         $_SESSION['CURRENT_TASK'] = $aFields['TAS_UID'];
     }
 
+    unset($_SESSION['ACTION']);
+    $flagJump = '';
+    if ($_action == 'jump') {
+        $_SESSION['ACTION'] = 'jump';
+        $flagJump = 1;
+    }
+
     switch ($aFields['APP_STATUS']) {
         case 'DRAFT':
         case 'TO_DO':
@@ -201,13 +208,7 @@ try {
                     $_SESSION['INDEX'] = $row['DEL_INDEX'];
                 }
 
-                if ($_action == 'jump') {
-                    $Fields = $oCase->loadCase( $_SESSION['APPLICATION'], $_SESSION['INDEX'], 1);
-                    $_SESSION['ACTION'] = 'jump';
-                } else {
-                    $Fields = $oCase->loadCase( $_SESSION['APPLICATION'], $_SESSION['INDEX']);
-                    unset($_SESSION['ACTION']);
-                }
+                $Fields = $oCase->loadCase($_SESSION['APPLICATION'], $_SESSION['INDEX'], $flagJump);
 
                 $_SESSION['CURRENT_TASK'] = $Fields['TAS_UID'];
                 require_once (PATH_METHODS . 'cases' . PATH_SEP . 'cases_Resume.php');
@@ -220,7 +221,7 @@ try {
             $_SESSION['PROCESS'] = $aFields['PRO_UID'];
             $_SESSION['TASK'] = - 1;
             $_SESSION['STEP_POSITION'] = 0;
-            $Fields = $oCase->loadCase( $_SESSION['APPLICATION'], $_SESSION['INDEX']);
+            $Fields = $oCase->loadCase($_SESSION['APPLICATION'], $_SESSION['INDEX'], $flagJump);
             $_SESSION['CURRENT_TASK'] = $Fields['TAS_UID'];
 
             require_once (PATH_METHODS . 'cases' . PATH_SEP . 'cases_Resume.php');
