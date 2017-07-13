@@ -805,9 +805,6 @@ class BpmnWorkflow extends Project\Bpmn
         try {
             if (isset($this->arrayElementTaskRelation[$elementUid])) {
                 $taskUid = $this->arrayElementTaskRelation[$elementUid];
-                //Task - User
-                //Assign to admin
-                $this->assignUserAdminInMessageEvents($elementType, $key, $taskUid);
             } else {
                 $taskPosX = 0;
                 $taskPosY = 0;
@@ -847,9 +844,17 @@ class BpmnWorkflow extends Project\Bpmn
                     "TAS_POSY"  => $taskPosY
                 ));
 
-                //Task - User
-                //Assign to admin
-                $this->assignUserAdminInMessageEvents($elementType, $key, $taskUid);
+                if ($elementType == "bpmnEvent" &&
+                    in_array($key, array("end-message-event", "start-message-event", "intermediate-catch-message-event"))
+                ) {
+                    if (in_array($key, array("start-message-event", "intermediate-catch-message-event"))) {
+                        //Task - User
+                        //Assign to admin
+                        $task = new \Tasks();
+
+                        $result = $task->assignUser($taskUid, "00000000000000000000000000000001", 1);
+                    }
+                }
 
                 //Element-Task-Relation - Create
                 $elementTaskRelation = new \ProcessMaker\BusinessModel\ElementTaskRelation();
@@ -871,27 +876,6 @@ class BpmnWorkflow extends Project\Bpmn
             return $taskUid;
         } catch (\Exception $e) {
             throw $e;
-        }
-    }
-
-    /**
-     * Task - User, Assign 'admin' user in 'start-message-event' and 
-     * 'intermediate-catch-message-event' elements.
-     * @param string $elementType
-     * @param string $key
-     * @param string $taskUid
-     */
-    public function assignUserAdminInMessageEvents($elementType, $key, $taskUid)
-    {
-        try {
-            if ($elementType == "bpmnEvent" && in_array($key, ["start-message-event", "intermediate-catch-message-event"])) {
-                $task = new \Tasks();
-                $task->assignUser($taskUid, "00000000000000000000000000000001", 1);
-            }
-        } catch (Exception $e) {
-            $context = \Bootstrap::getDefaultContextLog();
-            $context['action'] = $e->getMessage();
-            \Bootstrap::registerMonolog('Import', 300, 'assign user', $context, $context["workspace"], 'processmaker.log');
         }
     }
 

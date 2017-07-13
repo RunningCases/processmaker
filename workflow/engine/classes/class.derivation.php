@@ -1236,7 +1236,8 @@ class Derivation
                         }
 
                         //Check if $taskNextDel is Script-Task
-                        if (!is_null($taskNextDel) && ($taskNextDel->getTasType() === "SCRIPT-TASK" || $taskNextDel->getTasType() === "INTERMEDIATE-THROW-EMAIL-EVENT" || $taskNextDel->getTasType() === "INTERMEDIATE-THROW-MESSAGE-EVENT" || $taskNextDel->getTasType() === "SERVICE-TASK")) {
+                        $arrayTaskTypeToExclude = ["SCRIPT-TASK", "INTERMEDIATE-THROW-EMAIL-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "SERVICE-TASK", "START-MESSAGE-EVENT"];
+                        if (!is_null($taskNextDel) && (in_array($taskNextDel->getTasType(), $arrayTaskTypeToExclude))) {
                             //Get for $nextDel["TAS_UID"] your next Task
                             $currentDelegationAux = array_merge($currentDelegation, array("DEL_INDEX" => $iNewDelIndex, "TAS_UID" => $nextDel["TAS_UID"]));
                             $nextDelegationsAux   = array();
