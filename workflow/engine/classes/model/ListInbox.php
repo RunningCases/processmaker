@@ -549,9 +549,16 @@ class ListInbox extends BaseListInbox
         $criteria->addJoin(ListInboxPeer::USR_UID, UsersPeer::USR_UID, Criteria::LEFT_JOIN);
         self::loadFilters($criteria, $filters, $additionalColumns);
 
-        $sort  = (!empty($filters['sort'])) ?
-            ListInboxPeer::TABLE_NAME.'.'.$filters['sort'] :
-            "LIST_INBOX.APP_UPDATE_DATE";
+        //We will be defined the sort
+        $casesList = new \ProcessMaker\BusinessModel\Cases();
+        $sort = $casesList->getSortColumn(
+            __CLASS__ . 'Peer',
+            BasePeer::TYPE_FIELDNAME,
+            empty($filters['sort']) ? "APP_UPDATE_DATE" : $filters['sort'],
+            $this->additionalClassName,
+            $additionalColumns
+        );
+
         $dir   = isset($filters['dir']) ? $filters['dir'] : "ASC";
         $start = isset($filters['start']) ? $filters['start'] : "0";
         $limit = isset($filters['limit']) ? $filters['limit'] : "25";
@@ -624,7 +631,6 @@ class ListInbox extends BaseListInbox
      * Returns the number of cases of a user
      * @param string $usrUid
      * @param array  $filters
-     * @param string $status
      * @return int
      */
     public function getCountList($usrUid, $filters = array())

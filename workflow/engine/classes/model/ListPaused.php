@@ -307,7 +307,16 @@ class ListPaused extends BaseListPaused
         $criteria->add(ListPausedPeer::USR_UID, $usr_uid, Criteria::EQUAL);
         self::loadFilters($criteria, $filters, $additionalColumns);
 
-        $sort  = (!empty($filters['sort'])) ? ListPausedPeer::TABLE_NAME.'.'.$filters['sort'] : "APP_PAUSED_DATE";
+        //We will be defined the sort
+        $casesList = new \ProcessMaker\BusinessModel\Cases();
+        $sort = $casesList->getSortColumn(
+            __CLASS__ . 'Peer',
+            BasePeer::TYPE_FIELDNAME,
+            empty($filters['sort']) ? "APP_PAUSED_DATE" : $filters['sort'],
+            $this->additionalClassName,
+            $additionalColumns
+        );
+
         $dir   = isset($filters['dir']) ? $filters['dir'] : "ASC";
         $start = isset($filters['start']) ? $filters['start'] : "0";
         $limit = isset($filters['limit']) ? $filters['limit'] : "25";
