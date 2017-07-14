@@ -313,6 +313,7 @@ class ListPaused extends BaseListPaused
             __CLASS__ . 'Peer',
             BasePeer::TYPE_FIELDNAME,
             empty($filters['sort']) ? "APP_PAUSED_DATE" : $filters['sort'],
+            "APP_PAUSED_DATE",
             $this->additionalClassName,
             $additionalColumns
         );

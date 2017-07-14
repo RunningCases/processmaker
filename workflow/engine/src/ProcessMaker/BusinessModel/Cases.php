@@ -3337,13 +3337,14 @@ class Cases
      * @param string $listPeer, name of the list class
      * @param string $field, name of the fieldName
      * @param string $sort, name of column by sort
+     * @param string $defaultSort, name of column by sort default
      * @param string $additionalClassName, name of the className of pmTable
      * @param array $additionalColumns, columns related to the custom cases list
      * @return string $tableName
      */
-    public function getSortColumn($listPeer, $field, $sort, $additionalClassName = '', $additionalColumns = array())
+    public function getSortColumn($listPeer, $field, $sort, $defaultSort, $additionalClassName = '', $additionalColumns = array())
     {
-        $columnSort = $sort;
+        $columnSort = $defaultSort;
 
         //We will check if the column by sort is a LIST table
         $columnsList = $listPeer::getFieldNames($field);
@@ -3351,16 +3352,17 @@ class Cases
             $columnSort  = $listPeer::TABLE_NAME . '.' . $sort;
         } else {
             //We will sort by CUSTOM CASE LIST table
-            if (count($additionalColumns) > 0) {
+            if (in_array($sort, $additionalColumns)) {
                 require_once(PATH_DATA_SITE . 'classes' . PATH_SEP . $additionalClassName . '.php');
                 $aTable = explode('.', current($additionalColumns));
                 if (count($aTable) > 0) {
                     $tableName = $aTable[0];
                 }
+                if (!empty($tableName)) {
+                    $columnSort = $tableName . '.' . $sort;
+                }
             }
-            if (!empty($tableName)) {
-                $columnSort = $tableName . '.' . $sort;
-            }
+
         }
 
         return $columnSort;

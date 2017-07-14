@@ -555,6 +555,7 @@ class ListInbox extends BaseListInbox
             __CLASS__ . 'Peer',
             BasePeer::TYPE_FIELDNAME,
             empty($filters['sort']) ? "APP_UPDATE_DATE" : $filters['sort'],
+            "APP_UPDATE_DATE",
             $this->additionalClassName,
             $additionalColumns
         );

@@ -370,6 +370,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
             __CLASS__ . 'Peer',
             BasePeer::TYPE_FIELDNAME,
             empty($filters['sort']) ? "DEL_DELEGATE_DATE" : $filters['sort'],
+            "DEL_DELEGATE_DATE",
             $this->additionalClassName,
             $additionalColumns
         );
