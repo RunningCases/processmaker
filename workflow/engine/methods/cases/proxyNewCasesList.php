@@ -24,6 +24,7 @@ try {
     $filters['start'] = isset($_REQUEST["start"]) ? $filter->sanitizeInputValue($_REQUEST["start"], 'nosql') : "0";
     $filters['limit'] = isset($_REQUEST["limit"]) ? $filter->sanitizeInputValue($_REQUEST["limit"], 'nosql') : "25";
     $filters['sort'] = (isset($_REQUEST['sort']))? (($_REQUEST['sort'] == 'APP_STATUS_LABEL')? 'APP_STATUS' : $filter->sanitizeInputValue($_REQUEST["sort"], 'nosql')) : '';
+    $filters['sort'] = G::toUpper($filters['sort']);
     $filters['dir'] = isset($_REQUEST["dir"]) ? $filter->sanitizeInputValue($_REQUEST["dir"], 'nosql') : "DESC";
     $filters['action'] = isset($_REQUEST["action"]) ? $filter->sanitizeInputValue($_REQUEST["action"], 'nosql') : "";
     $filters['user'] = isset($_REQUEST["user"]) ? $filter->sanitizeInputValue($_REQUEST["user"], 'nosql') : "";
@@ -102,16 +103,26 @@ try {
     } else {
         $filters['limit'] = (int)$filters['limit'];
     }
-
-    $filters['sort'] = G::toUpper($filters['sort']);
-    $columnsList = $listpeer::getFieldNames(BasePeer::TYPE_FIELDNAME);
-
-    if (!(in_array($filters['sort'], $columnsList))) {
-        if ($filters['sort'] == 'APP_CURRENT_USER' && ($listName == 'participated' || $listName == 'participated_last')) {
+    
+    switch ($filters['sort']) {
+        case 'APP_CURRENT_USER':
             $filters['sort'] = 'DEL_CURRENT_USR_LASTNAME';
-        } else {
-            $filters['sort'] = '';
-        }
+            break;
+        case 'DEL_TASK_DUE_DATE':
+            $filters['sort'] = 'DEL_DUE_DATE';
+            break;
+        case 'APP_UPDATE_DATE':
+            $filters['sort'] = 'DEL_DELEGATE_DATE';
+            break;
+        case 'APP_DEL_PREVIOUS_USER':
+            $filters['sort'] = 'DEL_DUE_DATE';
+            break;
+        case 'DEL_CURRENT_TAS_TITLE':
+            $filters['sort'] = 'APP_TAS_TITLE';
+            break;
+        case 'APP_STATUS_LABEL':
+            $filters['sort'] = 'APP_STATUS';
+            break;
     }
 
     $filters['dir'] = G::toUpper($filters['dir']);
