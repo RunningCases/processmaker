@@ -116,6 +116,9 @@ function getLoadTreeMenuData ()
             }
         }
 
+        //This function generates an xml, so it prevents the output of a badly formed xml 
+        //by cleaning any content prior to this function with ob_clean
+        ob_clean();
         echo $xml->asXML();
         die;
     }
