@@ -1005,9 +1005,9 @@ class Light extends Api
                 $fields = $case->loadCase($app_uid, $del_index);
                 $caseVariables = array_merge($fields['APP_DATA'],
                     \ProcessMaker\BusinessModel\Cases::getGlobalVariables($fields['APP_DATA']));
+                
+                $caseVariables = DateTime::convertUtcToTimeZone($caseVariables);
             }
-
-            $caseVariables = DateTime::convertUtcToTimeZone($caseVariables);
 
             \G::LoadClass("pmDynaform");
             $pmDynaform = new \pmDynaform(array("APP_DATA" => $caseVariables, "CURRENT_DYNAFORM" => $dyn_uid));
