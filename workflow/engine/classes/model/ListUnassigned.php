@@ -301,9 +301,18 @@ class ListUnassigned extends BaseListUnassigned
 
         //Apply some filters
         self::loadFilters($criteria, $filters, $additionalColumns);
-        $sort  = (!empty($filters['sort'])) ?
-            ListUnassignedPeer::TABLE_NAME.'.'.$filters['sort'] :
-            "LIST_UNASSIGNED.DEL_DELEGATE_DATE";
+
+        //We will be defined the sort
+        $casesList = new \ProcessMaker\BusinessModel\Cases();
+        $sort = $casesList->getSortColumn(
+            __CLASS__ . 'Peer',
+            BasePeer::TYPE_FIELDNAME,
+            empty($filters['sort']) ? "DEL_DELEGATE_DATE" : $filters['sort'],
+            "DEL_DELEGATE_DATE",
+            $this->additionalClassName,
+            $additionalColumns
+        );
+
         $dir   = isset($filters['dir']) ? $filters['dir'] : "ASC";
         $start = isset($filters['start']) ? $filters['start'] : "0";
         $limit = isset($filters['limit']) ? $filters['limit'] : "25";

@@ -1033,38 +1033,7 @@ class Derivation
                     Bootstrap::registerMonolog('CaseDerivation', 200, 'Case Derivation', $aContext, $this->sysSys, 'processmaker.log');
                     break;
                 case TASK_FINISH_TASK:
-                    $iAppThreadIndex = $appFields['DEL_THREAD'];
-                    $this->case->closeAppThread($currentDelegation['APP_UID'], $iAppThreadIndex);
-                    if (isset($nextDel["TAS_UID_DUMMY"])) {
-                        $criteria = new Criteria("workflow");
-                        $criteria->addSelectColumn(RoutePeer::TAS_UID);
-                        $criteria->addJoin(RoutePeer::TAS_UID, AppDelegationPeer::TAS_UID);
-                        $criteria->add(RoutePeer::PRO_UID, $appFields['PRO_UID']);
-                        $criteria->add(RoutePeer::ROU_NEXT_TASK, isset($nextDel['ROU_PREVIOUS_TASK']) ? $nextDel['ROU_PREVIOUS_TASK'] : '');
-                        $criteria->add(RoutePeer::ROU_TYPE, isset($nextDel['ROU_PREVIOUS_TYPE']) ? $nextDel['ROU_PREVIOUS_TYPE'] : '');
-                        $criteria->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
-                        $rsCriteria = RoutePeer::doSelectRS($criteria);
-                        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                        $executeEvent = ($rsCriteria->next()) ? false : true;
-
-                        $multiInstanceCompleted = true;
-                        if ($flagTaskAssignTypeIsMultipleInstance) {
-                            $multiInstanceCompleted = $this->case->multiInstanceIsCompleted(
-                                $appFields['APP_UID'],
-                                $appFields['TAS_UID'],
-                                $appFields['DEL_PREVIOUS']);
-                        }
-
-                        $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
-                        if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())
-                            && $multiInstanceCompleted && $executeEvent
-                        ) {
-                            $this->executeEvent($nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
-                        }
-                    }
-                    $aContext['action'] = 'finish-task';
-                    //Logger
-                    Bootstrap::registerMonolog('CaseDerivation', 200, 'Case Derivation', $aContext, $this->sysSys, 'processmaker.log');
+                    $this->finishTask($currentDelegation, $nextDel, $appFields, $flagFirstIteration, $flagTaskAssignTypeIsMultipleInstance, $aContext);
                     break;
                 default:
                     //Get all siblingThreads
@@ -1348,7 +1317,7 @@ class Derivation
         /* Start Block : Count the open threads of $currentDelegation['APP_UID'] */
         $openThreads = $this->case->GetOpenThreads( $currentDelegation['APP_UID'] );
 
-        $flag = false;
+        $flagUpdateCase = false;
 
         //check if there is any paused thread
 
@@ -1364,18 +1333,22 @@ class Derivation
             $appFields["APP_STATUS"] = "COMPLETED";
             $appFields["APP_FINISH_DATE"] = "now";
             $this->verifyIsCaseChild($currentDelegation["APP_UID"], $currentDelegation["DEL_INDEX"]);
-            $flag = true;
+            $flagUpdateCase = true;
 
         }
 
-        if (isset( $iNewDelIndex )) {
+        //The variable $iNewDelIndex will be true if we created a new index the variable
+        if (isset($iNewDelIndex)) {
             $appFields["DEL_INDEX"] = $iNewDelIndex;
-            $appFields["TAS_UID"] = $nextDel["TAS_UID"];
-
-            $flag = true;
+            $excludeTasUid = array(TASK_FINISH_PROCESS, TASK_FINISH_TASK);
+            //If the last TAS_UID value is not valid we will check for the TAS_UID value
+            if (in_array($nextDel["TAS_UID"], $excludeTasUid) && is_array($arrayDerivationResult) && isset(current($arrayDerivationResult)["TAS_UID"])) {
+                $appFields["TAS_UID"] = current($arrayDerivationResult)["TAS_UID"];
+            }
+            $flagUpdateCase = true;
         }
 
-        if ($flag) {
+        if ($flagUpdateCase) {
             //Start Block : UPDATES APPLICATION
             $this->case->updateCase( $currentDelegation["APP_UID"], $appFields );
             //End Block : UPDATES APPLICATION
@@ -2008,5 +1981,48 @@ class Derivation
         } catch (Exception $e) {
             \G::log(G::loadTranslation('ID_NOTIFICATION_ERROR') . '|' . $e->getMessage());
         }
+    }
+    /**
+     * @param array $currentDelegation
+     * @param array $nextDel
+     * @param array $appFields
+     * @param boolean $flagFirstIteration
+     * @param boolean $flagTaskAssignTypeIsMultipleInstance
+     * @param array $aContext
+     * @return void
+     */
+    public function finishTask($currentDelegation, $nextDel, $appFields, $flagFirstIteration = true, $flagTaskAssignTypeIsMultipleInstance = false, $aContext = array()) {
+        $iAppThreadIndex = $appFields['DEL_THREAD'];
+        $this->case->closeAppThread($currentDelegation['APP_UID'], $iAppThreadIndex);
+        if (isset($nextDel["TAS_UID_DUMMY"])) {
+            $criteria = new Criteria("workflow");
+            $criteria->addSelectColumn(RoutePeer::TAS_UID);
+            $criteria->addJoin(RoutePeer::TAS_UID, AppDelegationPeer::TAS_UID);
+            $criteria->add(RoutePeer::PRO_UID, $appFields['PRO_UID']);
+            $criteria->add(RoutePeer::ROU_NEXT_TASK, isset($nextDel['ROU_PREVIOUS_TASK']) ? $nextDel['ROU_PREVIOUS_TASK'] : '');
+            $criteria->add(RoutePeer::ROU_TYPE, isset($nextDel['ROU_PREVIOUS_TYPE']) ? $nextDel['ROU_PREVIOUS_TYPE'] : '');
+            $criteria->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
+            $rsCriteria = RoutePeer::doSelectRS($criteria);
+            $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
+            $executeEvent = ($rsCriteria->next()) ? false : true;
+
+            $multiInstanceCompleted = true;
+            if ($flagTaskAssignTypeIsMultipleInstance) {
+                $multiInstanceCompleted = $this->case->multiInstanceIsCompleted(
+                    $appFields['APP_UID'],
+                    $appFields['TAS_UID'],
+                    $appFields['DEL_PREVIOUS']);
+            }
+
+            $taskDummy = TaskPeer::retrieveByPK($nextDel["TAS_UID_DUMMY"]);
+            if (preg_match("/^(?:END-MESSAGE-EVENT|END-EMAIL-EVENT)$/", $taskDummy->getTasType())
+                && $multiInstanceCompleted && $executeEvent
+            ) {
+                $this->executeEvent($nextDel["TAS_UID_DUMMY"], $appFields, $flagFirstIteration, true);
+            }
+        }
+        $aContext['action'] = 'finish-task';
+        //Logger
+        Bootstrap::registerMonolog('CaseDerivation', 200, 'Case Derivation', $aContext, $this->sysSys, 'processmaker.log');
     }
 }
