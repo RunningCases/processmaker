@@ -621,18 +621,19 @@ class ScriptTask
                     $trigger = \TriggersPeer::retrieveByPK($scriptTasObjUid);
 
                     if (!is_null($trigger)) {
-                        $pmScript = new \PMScript();
-                        $pmScript->setDataTrigger($trigger->toArray(\BasePeer::TYPE_FIELDNAME));
-                        $pmScript->setFields($arrayApplicationData["APP_DATA"]);
-                        $pmScript->setScript($trigger->getTriWebbot());
+                        //Some Pmf functions uses this global variable $oPMScript for review the aFields defined
+                        global $oPMScript;
+                        $oPMScript = new \PMScript();
+                        $oPMScript->setDataTrigger($trigger->toArray(\BasePeer::TYPE_FIELDNAME));
+                        $oPMScript->setFields($arrayApplicationData["APP_DATA"]);
+                        $oPMScript->setScript($trigger->getTriWebbot());
+                        $oPMScript->execute();
 
-                        $result = $pmScript->execute();
-
-                        if (isset($pmScript->aFields["__ERROR__"]))  {
-                            \G::log("Case Uid: " . $arrayApplicationData["APP_UID"] . ", Error: " . $pmScript->aFields["__ERROR__"], PATH_DATA . "log/ScriptTask.log");
+                        if (isset($oPMScript->aFields["__ERROR__"]))  {
+                            \G::log("Case Uid: " . $arrayApplicationData["APP_UID"] . ", Error: " . $oPMScript->aFields["__ERROR__"], PATH_DATA . "log/ScriptTask.log");
                         }
 
-                        $arrayApplicationData["APP_DATA"] = $pmScript->aFields;
+                        $arrayApplicationData["APP_DATA"] = $oPMScript->aFields;
 
                         $case = new \Cases();
 
