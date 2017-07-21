@@ -32,18 +32,17 @@ $filter = new InputFilter();
 $path = PATH_PLUGINS . $pluginFile;
 $path = $filter->validateInput($path, 'path');
 
-$oPluginRegistry = & PMPluginRegistry::getSingleton();
+$oPluginRegistry =& ProcessMaker\Plugins\PluginsRegistry::loadSingleton();
 
-if ($handle = opendir( PATH_PLUGINS )) {
-    while (false !== ($file = readdir( $handle ))) {
-        if (strpos( $file, '.php', 1 ) && $file == $pluginFile) {
-
+if ($handle = opendir(PATH_PLUGINS)) {
+    while (false !== ($file = readdir($handle))) {
+        if (strpos($file, '.php', 1) && $file == $pluginFile) {
             if ($pluginStatus == '1') {
                 //print "change to disable";
-                $details = $oPluginRegistry->getPluginDetails( $pluginFile );
-                $oPluginRegistry->disablePlugin( $details->sNamespace );
-                $size = file_put_contents( PATH_DATA_SITE . 'plugin.singleton', $oPluginRegistry->serializeInstance() );
-                G::auditLog("DisablePlugin", "Plugin Name: ".$details->sNamespace);
+                $details = $oPluginRegistry->getPluginDetails($pluginFile);
+                $oPluginRegistry->disablePlugin($details->sNamespace);
+                $oPluginRegistry->pluginAdapter->savePlugin($details->sNamespace, $oPluginRegistry);
+                G::auditLog("DisablePlugin", "Plugin Name: " . $details->sNamespace);
                 //print "size saved : $size  <br>";
             } else {
                 $pluginName = str_replace(".php", "", $pluginFile);
@@ -51,17 +50,21 @@ if ($handle = opendir( PATH_PLUGINS )) {
                 if (is_file(PATH_PLUGINS . $pluginName . ".php") && is_dir(PATH_PLUGINS . $pluginName)) {
                     /*----------------------------------********---------------------------------*/
                     if (!$oPluginRegistry->isEnterprisePlugin($pluginName) &&
-                        PMLicensedFeatures::getSingleton()->verifyfeature('B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=')
+                        PMLicensedFeatures::getSingleton()
+                            ->verifyfeature('B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=')
                     ) {
                         //Check disabled code
 
                         $cs = new CodeScanner(SYS_SYS);
 
-                        $arrayFoundDisabledCode = array_merge($cs->checkDisabledCode("FILE", PATH_PLUGINS . $pluginName . ".php"), $cs->checkDisabledCode("PATH", PATH_PLUGINS . $pluginName));
+                        $arrayFoundDisabledCode = array_merge(
+                            $cs->checkDisabledCode("FILE", PATH_PLUGINS . $pluginName . ".php"),
+                            $cs->checkDisabledCode("PATH", PATH_PLUGINS . $pluginName)
+                        );
 
                         if (!empty($arrayFoundDisabledCode)) {
                             $response = array();
-                            $response["status"]  = "DISABLED-CODE";
+                            $response["status"] = "DISABLED-CODE";
                             $response["message"] = G::LoadTranslation("ID_DISABLED_CODE_PLUGIN");
 
                             echo G::json_encode($response);
@@ -75,16 +78,16 @@ if ($handle = opendir( PATH_PLUGINS )) {
                     $details = $oPluginRegistry->getPluginDetails($pluginFile);
                     $oPluginRegistry->enablePlugin($details->sNamespace);
                     $oPluginRegistry->setupPlugins(); //get and setup enabled plugins
-                    $size = file_put_contents(PATH_DATA_SITE . "plugin.singleton", $oPluginRegistry->serializeInstance());
+                    $oPluginRegistry->pluginAdapter->savePlugin($details->sNamespace, $oPluginRegistry);
                     G::auditLog("EnablePlugin", "Plugin Name: " . $details->sNamespace);
                     //print "size saved : $size  <br>";
                 }
             }
         }
     }
-    closedir( $handle );
+    closedir($handle);
 }
 
-  //$oPluginRegistry->showArrays();
-  //G::Header('location: pluginsList');
+//$oPluginRegistry->showArrays();
+//G::Header('location: pluginsList');
 

@@ -56,11 +56,6 @@ function run_addon_core_install($args)
             define("DB_ADAPTER", $args[3]);
         }
 
-        $sSerializedFile = PATH_DATA_SITE . "plugin.singleton";
-        $oPluginRegistry = &PMPluginRegistry::getSingleton();
-        if (file_exists($sSerializedFile)) {
-            $oPluginRegistry->unSerializeInstance(file_get_contents($sSerializedFile));
-        }
         ///////
         //echo "** Installation starting... (workspace: $workspace, store: $storeId, id: $addonName)\n";
         $ws = new workspaceTools($workspace);

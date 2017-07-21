@@ -638,17 +638,6 @@ $memcache = & PMmemcached::getSingleton( SYS_SYS );
 
 // load Plugins base class
 
-//here we are loading all plugins registered
-//the singleton has a list of enabled plugins
-$sSerializedFile = PATH_DATA_SITE . 'plugin.singleton';
-
-if (file_exists( $sSerializedFile )) {
-    $oPluginRegistry = PMPluginRegistry::loadSingleton($sSerializedFile);
-    $attributes = $oPluginRegistry->getAttributes();
-    Bootstrap::LoadTranslationPlugins( defined( 'SYS_LANG' ) ? SYS_LANG : "en" , $attributes);
-} else{
-    $oPluginRegistry = PMPluginRegistry::getSingleton();
-}
 // setup propel definitions and logging
 //changed to autoloader
 //require_once ("propel/Propel.php");
@@ -688,6 +677,17 @@ if (defined( 'DEBUG_SQL_LOG' ) && DEBUG_SQL_LOG) {
 } else {
     Propel::init( PATH_CORE . "config/databases.php" );
 }
+
+//here we are loading all plugins registered
+//the singleton has a list of enabled plugins
+$sSerializedFile = PATH_DATA_SITE . 'plugin.singleton';
+$oPluginRegistry = &ProcessMaker\Plugins\PluginsRegistry::loadSingleton();
+$attributes = $oPluginRegistry->getAttributes();
+Bootstrap::LoadTranslationPlugins( defined( 'SYS_LANG' ) ? SYS_LANG : "en" , $attributes);
+
+// Setup plugins
+$avoidChangedWorkspaceValidation = false;
+$oPluginRegistry->setupPlugins(); //get and setup enabled plugins
 
 //Set Time Zone
 /*----------------------------------********---------------------------------*/
@@ -740,9 +740,7 @@ if (SYS_LANG != 'en' && ! is_file( PATH_LANGUAGECONT . 'translation.' . SYS_LANG
     Bootstrap::LoadTranslationObject(SYS_LANG);
 }
 
-// Setup plugins
-$oPluginRegistry->setupPlugins(); //get and setup enabled plugins
-$avoidChangedWorkspaceValidation = false;
+
 
 // Load custom Classes and Model from Plugins.
 Bootstrap::LoadAllPluginModelClasses();

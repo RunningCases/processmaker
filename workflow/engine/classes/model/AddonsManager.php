@@ -149,9 +149,7 @@ class AddonsManager extends BaseAddonsManager
             //$oPluginRegistry->disablePlugin($oDetails->sNamespace);
             $oPluginRegistry->disablePlugin($this->getAddonName());
         }
-
-        //$oPluginRegistry->setupPlugins();
-        file_put_contents(PATH_DATA_SITE . "plugin.singleton", $oPluginRegistry->serializeInstance());
+        $oPluginRegistry->pluginAdapter->savePlugin($this->getAddonName(), $oPluginRegistry);
         return true;
     }
 

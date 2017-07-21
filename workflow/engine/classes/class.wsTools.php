@@ -201,6 +201,12 @@ class workspaceTools
         $this->updatingWebEntryClassicModel($workSpace);
         $stop = microtime(true);
         CLI::logging("<*>   Updating rows in Web Entry table for classic processes took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Migrating and populating data...\n");
+        $this->migrateSingleton($workSpace, $lang);
+        $stop = microtime(true);
+        CLI::logging("<*>   Migrating and populating data Singleton took " . ($stop - $start) . " seconds.\n");
     }
 
     /**
@@ -3866,5 +3872,31 @@ class workspaceTools
     {
         $this->initPropel(true);
         $this->upgradeTriggersOfTables($flagRecreate, $lang);
+    }
+
+    /**
+     * @param $workspace
+     * @param mixed|string $lang
+     */
+    public function migrateSingleton($workspace, $lang = SYS_LANG)
+    {
+        if ((!class_exists('Memcache') || !class_exists('Memcached')) && !defined('MEMCACHED_ENABLED')) {
+            define('MEMCACHED_ENABLED', false);
+        }
+        $this->initPropel(true);
+        $conf  = new Configuration();
+        if(!$bExist = $conf->exists('MIGRATED_PLUGIN', 'singleton')){
+            $pathSingleton = PATH_DATA . 'sites' . PATH_SEP . $workspace . PATH_SEP . 'plugin.singleton';
+            $oPluginRegistry = unserialize(file_get_contents($pathSingleton));
+            $pluginAdapter = new \ProcessMaker\Plugins\Adapters\PluginAdapter();
+            $pluginAdapter->save($oPluginRegistry);
+            $data["CFG_UID"] = 'MIGRATED_PLUGIN';
+            $data["OBJ_UID"] = 'singleton';
+            $data["CFG_VALUE"] = 'true';
+            $data["PRO_UID"] = '';
+            $data["USR_UID"] = '';
+            $data["APP_UID"] = '';
+            $conf->create($data);
+        }
     }
 }

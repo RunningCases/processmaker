@@ -117,11 +117,11 @@ class enterprisePlugin extends PMPlugin
 
     public function setup()
     {
-        if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
+        if (!PluginsRegistryPeer::retrieveByPK(md5('enterprise'))) {
             $pluginRegistry = &PMPluginRegistry::getSingleton();
             $pluginDetail = $pluginRegistry->getPluginDetails("enterprise.php");
             $pluginRegistry->enablePlugin($pluginDetail->sNamespace);
-            file_put_contents(PATH_DATA_SITE . "plugin.singleton", $pluginRegistry->serializeInstance());
+            $pluginRegistry->pluginAdapter->savePlugin($pluginDetail->sNamespace, $pluginRegistry);
         }
     }
 

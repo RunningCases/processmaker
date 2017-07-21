@@ -140,30 +140,21 @@ class PMPluginRegistry
      *
      * @return object
      */
-    public static function getSingleton ()
+    public static function getSingleton()
     {
-        if (self::$instance == null) {
-            self::$instance = new PMPluginRegistry();
-        }
-        return self::$instance;
+        return \ProcessMaker\Plugins\PluginsRegistry::loadSingleton();
     }
 
     /**
      * Load the singleton instance from a serialized stored file
      *
      * @param $file
-     * @return PMPluginRegistry
+     * @return object
      * @throws Exception
      */
     public static function loadSingleton($file)
     {
-        self::$instance = unserialize(file_get_contents($file));
-
-        if (! is_object(self::$instance) || get_class(self::$instance) != "PMPluginRegistry") {
-            throw new Exception("Can't load main PMPluginRegistry object.");
-        }
-
-        return self::$instance;
+        return \ProcessMaker\Plugins\PluginsRegistry::loadSingleton();
     }
 
     /**
@@ -1939,7 +1930,7 @@ class PMPluginRegistry
     }
 
     /**
-     * Saves the state of instance, in the private property 'stateSaved'. 
+     * Saves the state of instance, in the private property 'stateSaved'.
      * Use the 'restoreState()' method to put the instance in the saved state.
      */
     public static function saveState()
@@ -1949,8 +1940,8 @@ class PMPluginRegistry
     }
 
     /**
-     * Restores the state of the instance that is in the private variable 'stateSaved'. 
-     * You must save the state of the instacia with the method 'saveState()' 
+     * Restores the state of the instance that is in the private variable 'stateSaved'.
+     * You must save the state of the instacia with the method 'saveState()'
      * before being called.
      */
     public static function restoreState()
@@ -1962,4 +1953,12 @@ class PMPluginRegistry
         }
     }
 
+    function iterateVisible()
+    {
+        $response = array();
+        foreach ($this as $key => $value) {
+            $response[$key] = $value;
+        }
+        return $response;
+    }
 }

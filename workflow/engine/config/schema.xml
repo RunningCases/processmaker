@@ -5615,4 +5615,32 @@
       <index-column name="NOT_STATUS"/>
     </index>
   </table>
+  <table name="PLUGINS_REGISTRY" idMethod="native">
+    <!--PluginDetails-->
+    <column name="ID" type="INTEGER" required="true" autoIncrement="true" unique="true"/>
+    <column name="PR_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
+    <column name="PLUGIN_NAMESPACE" type="VARCHAR" size="100" required="true"/>
+    <column name="PLUGIN_DESCRIPTION" type="VARCHAR" size="200" default=""/>
+    <column name="CLASS_NAME" type="VARCHAR" size="100" required="true"/>
+    <column name="FRIENDLY_NAME" type="VARCHAR" size="150" default=""/>
+    <column name="FILE_NAME" type="VARCHAR" size="250" required="true" default=""/>
+    <column name="PLUGIN_FOLDER" type="VARCHAR" size="100" required="true" default=""/>
+    <column name="PLUGIN_VERSION" type="VARCHAR" size="50" default=""/>
+    <column name="PLUGIN_ENABLE" type="BOOLEAN" default="false"/>
+    <column name="PLUGIN_PRIVATE" type="BOOLEAN" default="false"/>
+    <!--PluginProperties-->
+    <column name="PLUGIN_MENUS" type="LONGVARCHAR"/>
+    <column name="PLUGIN_FOLDERS" type="LONGVARCHAR"/>
+    <column name="PLUGIN_TRIGGERS" type="LONGVARCHAR"/>
+    <column name="PLUGIN_PM_FUNCTIONS" type="LONGVARCHAR"/>
+    <column name="PLUGIN_REDIRECT_LOGIN" type="LONGVARCHAR"/>
+    <column name="PLUGIN_STEPS" type="LONGVARCHAR"/>
+    <column name="PLUGIN_CSS" type="LONGVARCHAR"/>
+    <column name="PLUGIN_JS" type="LONGVARCHAR"/>
+    <column name="PLUGIN_REST_SERVICE" type="LONGVARCHAR"/>
+    <column name="PLUGIN_ATTRIBUTES" type="LONGVARCHAR"/>
+    <unique name="INDEX_PLUGINS_REGISTRY_ID">
+      <unique-column name="ID" />
+    </unique>
+  </table>
 </database>

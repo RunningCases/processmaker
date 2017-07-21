@@ -222,7 +222,7 @@ try {
         file_put_contents($pathFileFlag, 'New Enterprise');
     }
 
-    $oPluginRegistry = & PMPluginRegistry::getSingleton();
+    $oPluginRegistry =& ProcessMaker\Plugins\PluginsRegistry::loadSingleton();
     $pluginFile = $sClassName . '.php';
 
     if ($bMainFile && $bClassFile) {
@@ -323,14 +323,13 @@ try {
     require_once (PATH_PLUGINS . $pluginFile);
 
     $oPluginRegistry->registerPlugin( $sClassName, PATH_PLUGINS . $sClassName . ".php" );
-    $size = file_put_contents( PATH_DATA_SITE . "plugin.singleton", $oPluginRegistry->serializeInstance() );
 
     $details = $oPluginRegistry->getPluginDetails( $pluginFile );
 
     $oPluginRegistry->installPlugin( $details->sNamespace );
 
     $oPluginRegistry->setupPlugins(); //get and setup enabled plugins
-    $size = file_put_contents( PATH_DATA_SITE . "plugin.singleton", $oPluginRegistry->serializeInstance() );
+    $oPluginRegistry->pluginAdapter->savePlugin($details->sNamespace , $oPluginRegistry);
 
     $response = $oPluginRegistry->verifyTranslation( $details->sNamespace);
     G::auditLog("InstallPlugin", "Plugin Name: ".$details->sNamespace );

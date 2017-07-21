@@ -303,6 +303,19 @@ CLI::taskArg('workspace', true, true);
 CLI::taskOpt("lang", "Specify the language to migrate the content data. If not specified, then 'en' (English) will be used by default.\n        Ex: -lfr (French) Ex: --lang=zh-CN (Mainland Chinese)", "l:","lang=");
 CLI::taskRun("run_migrate_content");
 
+CLI::taskName('migrate-plugin-information');
+CLI::taskDescription(<<<EOT
+  Migrating the content schema to match the latest version
+
+  Specify the WORKSPACE to migrate from a existing workspace.
+
+  If no workspace is specified, then the tables schema will be upgraded or
+  migrate on all available workspaces.
+EOT
+);
+CLI::taskArg('workspace', true, true);
+CLI::taskRun("run_migrate_plugin");
+
 CLI::taskName('migrate-self-service-value');
 CLI::taskDescription(<<<EOT
   Migrate the Self-Service values to a new related table APP_ASSIGN_SELF_SERVICE_VALUE_GROUPS
@@ -1080,4 +1093,25 @@ function run_migrate_indexing_acv($args, $opts) {
     }
     $stop = microtime(true);
     CLI::logging("<*>   Migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
+}
+
+function run_migrate_plugin($args, $opts) {
+    G::LoadSystem('inputfilter');
+    $filter = new InputFilter();
+    $args = $filter->xssFilterHard($args);
+    $workspaces = get_workspaces_from_args($args);
+    $lang = array_key_exists("lang", $opts) ? $opts['lang'] : SYS_LANG;
+    $start = microtime(true);
+    CLI::logging("> Migrating and populating data...\n");
+    /** @var workspaceTools $workspace */
+    foreach ($workspaces as $workspace) {
+        if (!defined('SYS_SYS')) {
+            define('SYS_SYS', $workspace->name);
+        }
+        print_r('Regenerating Singleton in: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
+        CLI::logging("-> Regenerating Singleton \n");
+        $workspace->migrateSingleton($workspace->name, $lang);
+    }
+    $stop = microtime(true);
+    CLI::logging("<*>   Migrating and populating data Singleton took " . ($stop - $start) . " seconds.\n");
 }

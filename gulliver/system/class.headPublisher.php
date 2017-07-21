@@ -386,7 +386,7 @@ class headPublisher
          */
         // Load external/plugin css
         // NOTE is necesary to move this to decorator server
-        if (class_exists('PMPluginRegistry')) {
+        if (class_exists('PMPluginRegistry') && PATH_DATA != PATH_C) {
             $oPluginRegistry = & PMPluginRegistry::getSingleton();
             $registeredCss = $oPluginRegistry->getRegisteredCss();
             foreach ($registeredCss as $cssFile) {
@@ -550,7 +550,7 @@ class headPublisher
         $this->extJsScript[] = '/extjs/' . $cacheName;
 
         //hook for registered javascripts from plugins
-        if (class_exists('PMPluginRegistry')) {
+        if (class_exists('PMPluginRegistry') && PATH_DATA != PATH_C) {
             $oPluginRegistry = & PMPluginRegistry::getSingleton();
             $pluginJavascripts = $oPluginRegistry->getRegisteredJavascriptBy($filename);
         } else {
