@@ -242,7 +242,7 @@ class ListUnassigned extends BaseListUnassigned
         $criteria->addSelectColumn(ListUnassignedPeer::DEL_DUE_DATE);
         $criteria->addSelectColumn(ListUnassignedPeer::DEL_PRIORITY);
         //Self Service Value Based Assignment
-        $criteria= $this->getCriteriaWhereSelfService($criteria, $usr_uid);
+        $criteria = $this->getCriteriaWhereSelfService($criteria, $usr_uid);
 
         //Apply some filters
         self::loadFilters($criteria, $filters, $additionalColumns);
@@ -417,7 +417,7 @@ class ListUnassigned extends BaseListUnassigned
      */
     public function getCountList($userUid, $filters = array())
     {
-        $criteria = $criteria = new Criteria('workflow');
+        $criteria = new Criteria('workflow');
         $this->getCriteriaWhereSelfService($criteria, $userUid);
         $total = ListUnassignedPeer::doCount($criteria);
         return (int)$total;
@@ -441,14 +441,42 @@ class ListUnassigned extends BaseListUnassigned
 
             //Load Self Service Value Based Assignment
             $firstRow = current($aSelfServiceValueBased);
-            $criterionAux = sprintf("((LIST_UNASSIGNED.APP_UID='%s' AND LIST_UNASSIGNED.DEL_INDEX=%d AND LIST_UNASSIGNED.TAS_UID='%s') ",  $firstRow["APP_UID"], $firstRow["DEL_INDEX"], $firstRow["TAS_UID"]);
+            $criterionAux = sprintf(
+                "((
+                    LIST_UNASSIGNED.APP_UID='%s' AND 
+                    LIST_UNASSIGNED.DEL_INDEX=%d AND 
+                    LIST_UNASSIGNED.TAS_UID='%s'
+                ) ",
+                $firstRow["APP_UID"],
+                $firstRow["DEL_INDEX"],
+                $firstRow["TAS_UID"]
+            );
             foreach (array_slice($aSelfServiceValueBased, 1) as $value) {
-                $criterionAux .= sprintf(" OR (LIST_UNASSIGNED.APP_UID='%s' AND LIST_UNASSIGNED.DEL_INDEX=%d AND LIST_UNASSIGNED.TAS_UID='%s') ",  $value["APP_UID"], $value["DEL_INDEX"], $value["TAS_UID"]);
+                $criterionAux .= sprintf(
+                    " OR (
+                        LIST_UNASSIGNED.APP_UID='%s' AND 
+                        LIST_UNASSIGNED.DEL_INDEX=%d AND 
+                        LIST_UNASSIGNED.TAS_UID='%s'
+                    ) ",
+                    $value["APP_UID"],
+                    $value["DEL_INDEX"],
+                    $value["TAS_UID"]
+                );
             }
             $criterionAux .= ")";
             //And Load SelfService
             $criteria->add(
-                $criteria->getNewCriterion(ListUnassignedPeer::TAS_UID, $tasks, Criteria::IN)->addOr($criteria->getNewCriterion(ListUnassignedPeer::TAS_UID, $criterionAux, Criteria::CUSTOM))
+                $criteria->getNewCriterion(
+                    ListUnassignedPeer::TAS_UID,
+                    $tasks,
+                    Criteria::IN
+                )->addOr(
+                    $criteria->getNewCriterion(
+                        ListUnassignedPeer::TAS_UID,
+                        $criterionAux,
+                        Criteria::CUSTOM
+                    )
+                )
             );
         } else {
             //Self Service
