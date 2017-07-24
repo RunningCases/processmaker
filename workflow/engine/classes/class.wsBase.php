@@ -1986,7 +1986,7 @@ class wsBase
 
             $task = TaskPeer::retrieveByPK($taskId);
 
-            $arrayTaskTypeToExclude = array("START-TIMER-EVENT");
+            $arrayTaskTypeToExclude = array("START-TIMER-EVENT", "START-MESSAGE-EVENT");
 
             if (!is_null($task) && !in_array($task->getTasType(), $arrayTaskTypeToExclude) && $founded == "") {
                 $result = new wsResponse( 14, G::LoadTranslation( 'ID_TASK_INVALID_USER_NOT_ASSIGNED_TASK' ) );
