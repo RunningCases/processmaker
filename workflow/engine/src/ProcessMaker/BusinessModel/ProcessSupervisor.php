@@ -1494,4 +1494,36 @@ class ProcessSupervisor
         }
         return false;
     }
+
+    /**
+     * This function define if the supervisor can be review and edit
+     * The appStatus can be:TO_DO, DRAFT, COMPLETED, CANCELLED
+     * The thread status can be: PAUSED
+     * @param string $appUid
+     * @param integer $delIndex
+     * @return array
+     */
+    public function reviewCaseStatusForSupervisor($appUid, $delIndex = 0)
+    {
+        $oApp = new \Application();
+        $oApp->Load($appUid);
+        $canEdit = false;
+        switch ($oApp->getAppStatus()) {
+            case 'TO_DO':
+                //Verify if the case is paused because the supervisor can not edit the PAUSED case
+                $oDelay = new \AppDelay();
+                if ($oDelay->isPaused($appUid, $delIndex)) {
+                    $canEdit = false;
+                } else {
+                    $canEdit = true;
+                }
+            break;
+            case 'COMPLETED':
+            case 'CANCELLED':
+            default:
+                $canEdit = false;
+        }
+
+        return $canEdit;
+    }
 }
