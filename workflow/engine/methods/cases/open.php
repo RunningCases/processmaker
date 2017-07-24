@@ -109,12 +109,14 @@ if( isset($_GET['action']) && ($_GET['action'] == 'jump') ) {
 }
 
 if(isset($_GET['actionFromList']) && ($_GET['actionFromList'] === 'to_revise') ){
-    $oApp = new Application;
-    $oApp->Load($appUid);
-    //If the case is completed can not update the information from supervisor/review
-    if($oApp->getAppStatus() === 'COMPLETED') {
+    $oSupervisor = new \ProcessMaker\BusinessModel\ProcessSupervisor();
+    $caseCanBeReview = $oSupervisor->reviewCaseStatusForSupervisor($appUid, $delIndex);
+    //Check if the case has the correct status for update the information from supervisor/review
+    if (!$caseCanBeReview) {
+        //The supervisor can not edit the information
         $script = 'cases_Open?';
     } else {
+        //The supervisor can edit the information, the case are in TO_DO
         $script = 'cases_OpenToRevise?APP_UID=' . $appUid . '&DEL_INDEX=' . $delIndex . '&TAS_UID=' . $tasUid;
         $oHeadPublisher->assign( 'treeToReviseTitle', G::loadtranslation( 'ID_STEP_LIST' ) );
         $casesPanelUrl = 'casesToReviseTreeContent?APP_UID=' . $appUid . '&DEL_INDEX=' . $delIndex;
