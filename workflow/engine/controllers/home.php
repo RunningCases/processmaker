@@ -9,7 +9,7 @@
 
 class Home extends Controller
 {
-    private $userID;
+    private $userUid;
     private $userName;
     private $userFullName;
     private $userRolName;
@@ -23,6 +23,9 @@ class Home extends Controller
     private $lastSkin;
     private $usrId;
 
+    /**
+     * Check the if the user has permissions over functions
+     */
     public function call ($name)
     {
         global $RBAC;
@@ -41,13 +44,13 @@ class Home extends Controller
         $this->userUxBaseTemplate = (is_dir( PATH_CUSTOM_SKINS . 'uxs' )) ? PATH_CUSTOM_SKINS . 'simplified' . PATH_SEP . 'templates' : 'home';
 
         if (isset( $_SESSION['USER_LOGGED'] ) && ! empty( $_SESSION['USER_LOGGED'] )) {
-            $this->userID = isset( $_SESSION['USER_LOGGED'] ) ? $_SESSION['USER_LOGGED'] : null;
+            $this->userUid = isset( $_SESSION['USER_LOGGED'] ) ? $_SESSION['USER_LOGGED'] : null;
             $this->userName = isset( $_SESSION['USR_USERNAME'] ) ? $_SESSION['USR_USERNAME'] : '';
             $this->userFullName = isset( $_SESSION['USR_FULLNAME'] ) ? $_SESSION['USR_FULLNAME'] : '';
             $this->userRolName = isset( $_SESSION['USR_ROLENAME'] ) ? $_SESSION['USR_ROLENAME'] : '';
 
             $users = new Users();
-            $users = $users->load($this->userID);
+            $users = $users->load($this->userUid);
             $this->usrId = $users["USR_ID"];
         }
     }
@@ -64,7 +67,10 @@ class Home extends Controller
         $skin = $this->clientBrowser['name'] == 'msie' ? $this->lastSkin : 'simplified';
 
         if (! is_array( $data )) {
-            $data = array ('u' => '','p' => '','m' => ''
+            $data = array (
+                'u' => '',
+                'p' => '',
+                'm' => ''
             );
         }
 
@@ -163,7 +169,7 @@ class Home extends Controller
 
         $this->setView( $this->userUxBaseTemplate . PATH_SEP . 'index' );
 
-        $this->setVar( 'usrUid', $this->userID );
+        $this->setVar( 'usrUid', $this->userUid );
         $this->setVar( 'userName', $this->userName );
         $this->setVar( 'processList', $processesList );
         $this->setVar( 'canStartCase', $case->canStartCase( $_SESSION['USER_LOGGED'] ) );
@@ -204,13 +210,13 @@ class Home extends Controller
         }
 
         if ($solrEnabled) {
-            $cases = $ApplicationSolrIndex->getAppGridData($this->userID, 0, 1, 'todo');
+            $cases = $ApplicationSolrIndex->getAppGridData($this->userUid, 0, 1, 'todo');
         } else {
             G::LoadClass( 'applications' );
 
             $apps = new Applications();
 
-            $cases = $apps->getAll( $this->userID, 0, 1, 'todo' );
+            $cases = $apps->getAll( $this->userUid, 0, 1, 'todo' );
         }
 
         if (! isset( $cases['data'][0] )) {
@@ -234,7 +240,7 @@ class Home extends Controller
 
         $this->setView( $this->userUxBaseTemplate . PATH_SEP . 'indexSingle' );
 
-        $this->setVar( 'usrUid', $this->userID );
+        $this->setVar( 'usrUid', $this->userUid );
         $this->setVar( 'userName', $this->userName );
         $this->setVar( 'steps', $steps );
         $this->setVar( 'default_url', "cases/cases_Open?APP_UID={$lastApp['APP_UID']}&DEL_INDEX={$lastApp['DEL_INDEX']}&action=todo" );
@@ -325,9 +331,7 @@ class Home extends Controller
         $arraySearch = array($process,  $status,  $search, $category, $user, $dateFrom, $dateTo );
 
         // settings vars and rendering
-        $processes = array();
-        $processes = $this->getProcessArray($httpData->t, $this->userID );
-        $this->setVar( 'statusValues', $this->getStatusArray( $httpData->t, $this->userID  ) );
+        $this->setVar( 'statusValues', $this->getStatusArray( $httpData->t, $this->userUid) );
         $this->setVar( 'categoryValues', $this->getCategoryArray() );
         $this->setVar( 'allUsersValues', $this->getAllUsersArray( 'search' ) );
         $this->setVar( 'categoryTitle', G::LoadTranslation("ID_CATEGORY") );
@@ -404,7 +408,7 @@ class Home extends Controller
                 }
                 break;
             default:
-                //$user = $this->userID;
+
                 break;
         }
 
@@ -453,6 +457,7 @@ class Home extends Controller
             );
         } else {
             $dataList['userId']   = $user;
+            $dataList['userUid']  = $this->userUid;
             $dataList['start']    = $start;
             $dataList['limit']    = $limit;
             $dataList['filter']   = $filter;
@@ -512,7 +517,7 @@ class Home extends Controller
 
         if(empty($cases) && $type == 'search') {
             $case = new \ProcessMaker\BusinessModel\Cases();
-            $cases = $case->getList($dataList);
+            $cases = $case->getCasesSearch($dataList);
             foreach ($cases['data'] as &$value) {
                 $value = array_change_key_case($value, CASE_UPPER);
             }
@@ -600,7 +605,7 @@ class Home extends Controller
         G::LoadClass("configuration");
         $conf = new Configurations();
         $confEnvSetting = $conf->getFormats();
-        $status = array();
+        $users = array();
         $users[] = array("CURRENT_USER", G::LoadTranslation("ID_CURRENT_USER"));
         $users[] = array("ALL", G::LoadTranslation("ID_ALL_USERS"));
 
@@ -644,10 +649,9 @@ class Home extends Controller
 
     function getCategoryArray ()
     {
-        global $oAppCache;
         require_once 'classes/model/ProcessCategory.php';
-        $category[] = array ("",G::LoadTranslation( "ID_ALL_CATEGORIES" )
-        );
+        $category = array();
+        $category[] = array ("",G::LoadTranslation( "ID_ALL_CATEGORIES" ));
 
         $criteria = new Criteria( 'workflow' );
         $criteria->addSelectColumn( ProcessCategoryPeer::CATEGORY_UID );
@@ -666,11 +670,9 @@ class Home extends Controller
     function getAllUsersArray ($action)
     {
         global $oAppCache;
-        $status = array ();
-        $users[] = array ("CURRENT_USER",G::LoadTranslation( "ID_CURRENT_USER" )
-        );
-        $users[] = array ("",G::LoadTranslation( "ID_ALL_USERS" )
-        );
+        $users = array ();
+        $users[] = array ("CURRENT_USER",G::LoadTranslation( "ID_CURRENT_USER" ));
+        $users[] = array ("",G::LoadTranslation( "ID_ALL_USERS" ));
 
         if ($action == 'to_reassign') {
             //now get users, just for the Search action
@@ -718,8 +720,6 @@ class Home extends Controller
      */
     private function getProcessArray($action, $userUid, $search=null)
     {
-        global $oAppCache;
-
         $processes = array();
         $processes[] = array("", G::LoadTranslation("ID_ALL_PROCESS"));
 
@@ -732,9 +732,7 @@ class Home extends Controller
             $cProcess->add(ProcessPeer::PRO_TITLE, "%$search%", Criteria::LIKE);
         }
         $oDataset = ProcessPeer::doSelectRS($cProcess);
-
         $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
         $oDataset->next();
         while ($aRow = $oDataset->getRow()) {
           $processes[] = array($aRow["PRO_ID"], $aRow["PRO_TITLE"]);

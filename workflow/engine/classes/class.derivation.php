@@ -1341,9 +1341,11 @@ class Derivation
         if (isset($iNewDelIndex)) {
             $appFields["DEL_INDEX"] = $iNewDelIndex;
             $excludeTasUid = array(TASK_FINISH_PROCESS, TASK_FINISH_TASK);
-            //If the last TAS_UID value is not valid we will check for the TAS_UID value
+            //If the last TAS_UID value is not valid we will check for the valid TAS_UID value
             if (in_array($nextDel["TAS_UID"], $excludeTasUid) && is_array($arrayDerivationResult) && isset(current($arrayDerivationResult)["TAS_UID"])) {
                 $appFields["TAS_UID"] = current($arrayDerivationResult)["TAS_UID"];
+            } else {
+                $appFields["TAS_UID"] = $nextDel["TAS_UID"];
             }
             $flagUpdateCase = true;
         }
