@@ -331,7 +331,8 @@ Ext.onReady(function () {
     editable      : false,
     allowBlank    : false,
     triggerAction : 'all',
-    mode          : 'local'
+    mode          : 'local',
+    tpl: '<tpl for="."><div class="x-combo-list-item">{CALENDAR_NAME:htmlEncode}</div></tpl>'
   });
 
   var status = new Ext.data.SimpleStore({
