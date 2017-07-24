@@ -551,7 +551,7 @@ class headPublisher
         $this->extJsScript[] = '/extjs/' . $cacheName;
 
         //hook for registered javascripts from plugins
-        if (class_exists('PMPluginRegistry') && defined('SYS_SYS')) {
+        if (class_exists('ProcessMaker\Plugins\PluginRegistry') && defined('SYS_SYS')) {
             $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
             $pluginJavascripts = $oPluginRegistry->getRegisteredJavascriptBy($filename);
         } else {
