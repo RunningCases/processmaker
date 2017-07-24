@@ -790,7 +790,7 @@ class SkinEngine
           $sWspaceSelect = trim($aFotoSelect['WORKSPACE_LOGO_NAME']);
         }
       }
-      if (class_exists('PMPluginRegistry')) {
+      if (class_exists('PMPluginRegistry') && defined("SYS_SYS")) {
         $oPluginRegistry = &PMPluginRegistry::getSingleton();
         if ( isset($sFotoSelect) && $sFotoSelect!='' && !(strcmp($sWspaceSelect, SYS_SYS)) ){
           $sCompanyLogo = $oPluginRegistry->getCompanyLogo($sFotoSelect);

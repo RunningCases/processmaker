@@ -144,7 +144,7 @@ class PluginsRegistry extends Plugins
      * get the plugin details, by filename
      *
      * @param string $sFilename
-     * @return null
+     * @return null|PluginDetail
      */
     public function getPluginDetails($sFilename)
     {

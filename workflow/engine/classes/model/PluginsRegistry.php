@@ -108,7 +108,7 @@ class PluginsRegistry extends BasePluginsRegistry
 
     public static function update($aData)
     {
-        $oConnection = Propel::getConnection(UsersPropertiesPeer::DATABASE_NAME);
+        $oConnection = Propel::getConnection(PluginsRegistryPeer::DATABASE_NAME);
         try {
             $oPluginsRegistry = PluginsRegistryPeer::retrieveByPK($aData['PR_UID']);
             if ($oPluginsRegistry) {
@@ -135,4 +135,36 @@ class PluginsRegistry extends BasePluginsRegistry
             throw ($oError);
         }
     }
+
+    public static function enable($pr_uid)
+    {
+        $oConnection = Propel::getConnection(PluginsRegistryPeer::DATABASE_NAME);
+        try {
+            $oPluginsRegistry = PluginsRegistryPeer::retrieveByPK($pr_uid);
+            if ($oPluginsRegistry) {
+                $aData['PLUGIN_ENABLE'] = true;
+                $oPluginsRegistry->fromArray($aData, BasePeer::TYPE_FIELDNAME);
+                if ($oPluginsRegistry->validate()) {
+                    $oConnection->begin();
+                    $iResult = $oPluginsRegistry->save();
+                    $oConnection->commit();
+                    return $iResult;
+                } else {
+                    $sMessage = '';
+                    $aValidationFailures = $oPluginsRegistry->getValidationFailures();
+                    /** @var ValidationFailed $oValidationFailure */
+                    foreach ($aValidationFailures as $oValidationFailure) {
+                        $sMessage .= $oValidationFailure->getMessage() . '<br />';
+                    }
+                    throw (new Exception('The registry cannot be updated!<br />' . $sMessage));
+                }
+            } else {
+                throw (new Exception('This row doesn\'t exist!'));
+            }
+        } catch (Exception $oError) {
+            $oConnection->rollback();
+            throw ($oError);
+        }
+    }
+
 }

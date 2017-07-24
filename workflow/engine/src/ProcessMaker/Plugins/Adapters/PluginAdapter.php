@@ -40,11 +40,11 @@ class PluginAdapter
     {
         $this->pluginRegistry = \G::json_decode(\G::json_encode($pluginsSingleton->iterateVisible()));
         foreach ($this->pluginRegistry->_aPluginDetails as $nameSpace => $value) {
-            $this->savePluginOld($nameSpace, $this->pluginRegistry);
+            $this->savePluginMigrate($nameSpace, $this->pluginRegistry);
         }
     }
 
-    public function savePluginOld($sNamespace, $pluginRegistry)
+    public function savePluginMigrate($sNamespace, $pluginRegistry)
     {
         $structurePlugin = $this->getOldPluginStructure($sNamespace, $pluginRegistry);
         $plugin = $this->diffFieldTable($structurePlugin);
@@ -126,6 +126,10 @@ class PluginAdapter
                     $plugin->pluginName == $nameSpace
                 ) {
                     $structurePlugins[$propertyName][] = $plugin;
+                } elseif (is_array($plugin) && $key == $nameSpace) {
+                    $structurePlugins[$propertyName][$key] = $plugin;
+                } elseif (is_bool($plugin) && $key == $nameSpace) {
+                    $structurePlugins[$propertyName][$key] = $plugin;
                 } elseif (is_string($plugin) && $plugin == $nameSpace) {
                     $structurePlugins[$propertyName][] = $plugin;
                 }
@@ -240,7 +244,7 @@ class PluginAdapter
                     property_exists($oPlugins, $nameAttribute) &&
                     $plugin->_aPluginDetails[$namePlugin]->enabled
                 ) {
-                    $oPlugins->{$nameAttribute} = array_merge($oPlugins->{$nameAttribute}, $detail);
+                    $oPlugins->{$nameAttribute} = array_merge($oPlugins->{$nameAttribute}, (array)$detail);
                 }
             }
         }

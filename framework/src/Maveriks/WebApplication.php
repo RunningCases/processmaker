@@ -358,7 +358,7 @@ class WebApplication
         }
 
         // hook to get rest api classes from plugins
-        if (class_exists('PMPluginRegistry') && file_exists(PATH_DATA_SITE . 'plugin.singleton')) {
+        if (class_exists('PMPluginRegistry')) {
             $pluginRegistry = \PMPluginRegistry::loadSingleton(PATH_DATA_SITE . 'plugin.singleton');
             $plugins = $pluginRegistry->getRegisteredRestServices();
 
@@ -370,8 +370,9 @@ class WebApplication
                     $loader->add($pluginSourceDir);
 
                     foreach ($plugin as $class) {
-                        if (class_exists($class['namespace'])) {
-                            $this->rest->addAPIClass($class['namespace'], strtolower($pluginName));
+                        $className = is_object($class) ? $class->namespace: $class['namespace'];
+                        if (class_exists($className)) {
+                            $this->rest->addAPIClass($className, strtolower($pluginName));
                         }
                     }
                 }
