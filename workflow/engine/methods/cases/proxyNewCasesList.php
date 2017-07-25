@@ -10,6 +10,7 @@ if (!isset($_SESSION['USER_LOGGED'])) {
 
 try {
     $userUid = $_SESSION['USER_LOGGED'];
+
     $filters['paged'] = isset($_REQUEST["paged"]) ? $_REQUEST["paged"] : true;
     $filters['count'] = isset($_REQUEST['count']) ? $_REQUEST["count"] : true;
     $filters['category'] = isset($_REQUEST["category"]) ? $_REQUEST["category"] : "";
@@ -26,6 +27,7 @@ try {
     $filters['user'] = isset($_REQUEST["user"]) ? $_REQUEST["user"] : "";
     $listName = isset($_REQUEST["list"]) ? $_REQUEST["list"] : "inbox";
     $filters['filterStatus'] = isset($_REQUEST["filterStatus"]) ? $_REQUEST["filterStatus"] : "";
+    $filters['sort'] = G::toUpper($filters['sort']);
     $openApplicationUid = (isset($_REQUEST['openApplicationUid']) && $_REQUEST['openApplicationUid'] != '') ? $_REQUEST['openApplicationUid'] : null;
 
     //Define user when is reassign
@@ -99,16 +101,26 @@ try {
     } else {
         $filters['limit'] = (int)$filters['limit'];
     }
-
-    $filters['sort'] = G::toUpper($filters['sort']);
-    $columnsList = $listpeer::getFieldNames(BasePeer::TYPE_FIELDNAME);
-
-    if (!(in_array($filters['sort'], $columnsList))) {
-        if ($filters['sort'] == 'APP_CURRENT_USER' && ($listName == 'participated' || $listName == 'participated_last')) {
+    
+    switch ($filters['sort']) {
+        case 'APP_CURRENT_USER':
             $filters['sort'] = 'DEL_CURRENT_USR_LASTNAME';
-        } else {
-            $filters['sort'] = '';
-        }
+            break;
+        case 'DEL_TASK_DUE_DATE':
+            $filters['sort'] = 'DEL_DUE_DATE';
+            break;
+        case 'APP_UPDATE_DATE':
+            $filters['sort'] = 'DEL_DELEGATE_DATE';
+            break;
+        case 'APP_DEL_PREVIOUS_USER':
+            $filters['sort'] = 'DEL_DUE_DATE';
+            break;
+        case 'DEL_CURRENT_TAS_TITLE':
+            $filters['sort'] = 'APP_TAS_TITLE';
+            break;
+        case 'APP_STATUS_LABEL':
+            $filters['sort'] = 'APP_STATUS';
+            break;
     }
 
     $filters['dir'] = G::toUpper($filters['dir']);

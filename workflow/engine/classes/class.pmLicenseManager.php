@@ -67,7 +67,7 @@ class pmLicenseManager
             $this->id       = $results ['ID'];
             $this->expireIn = $this->getExpireIn ();
             $this->features = $this->result!='TMINUS'?isset($results ['DATA']['CUSTOMER_PLUGIN'])? $results ['DATA']['CUSTOMER_PLUGIN'] : $this->getActiveFeatures() : array();
-            $this->licensedfeatures = $this->result!='TMINUS'?isset($results ['DATA']['CUSTOMER_LICENSED_FEATURES'])? $results ['DATA']['CUSTOMER_LICENSED_FEATURES'] : array() : array();
+            $this->licensedfeatures = $this->result != 'TMINUS' ? (isset($results ['DATA']['CUSTOMER_LICENSED_FEATURES']) && is_array($results ['DATA']['CUSTOMER_LICENSED_FEATURES'])) ? $results ['DATA']['CUSTOMER_LICENSED_FEATURES'] : array() : array();
             $this->licensedfeaturesList = isset($results ['DATA']['LICENSED_FEATURES_LIST'])? $results ['DATA']['LICENSED_FEATURES_LIST'] : null;
             $this->status   = $this->getCurrentLicenseStatus ();
 

@@ -214,14 +214,17 @@ class Cases
     }
 
     /**
-     * Get list for Cases
+     * Get list of cases from: todo, draft, unassigned
+     * Get list of cases for the following REST endpoints:
+     * /light/todo
+     * /light/draft
+     * /light/participated
+     * /light/paused
+     * /light/unassigned
      *
      * @access public
      * @param array $dataList, Data for list
-     * @return array
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
+     * @return array $response
      */
     public function getList($dataList = array())
     {
@@ -230,8 +233,8 @@ class Cases
             $dataList["userId"] = null;
         }
 
-        $solrEnabled = false;
-        $userUid = $dataList["userId"];
+        //We need to use the USR_UID for the cases in the list
+        $userUid = isset($dataList["userUid"]) ? $dataList["userUid"] : $dataList["userId"];
         $callback = isset( $dataList["callback"] ) ? $dataList["callback"] : "stcCallback1001";
         $dir = isset( $dataList["dir"] ) ? $dataList["dir"] : "DESC";
         $sort = isset( $dataList["sort"] ) ? $dataList["sort"] : "APPLICATION.APP_NUMBER";
@@ -244,7 +247,6 @@ class Cases
         $process = isset( $dataList["process"] ) ? $dataList["process"] : "";
         $category = isset( $dataList["category"] ) ? $dataList["category"] : "";
         $status = isset( $dataList["status"] ) ? strtoupper( $dataList["status"] ) : "";
-        $user = isset( $dataList["user"] ) ? $dataList["user"] : "";
         $search = isset( $dataList["search"] ) ? $dataList["search"] : "";
         $action = isset( $dataList["action"] ) ? $dataList["action"] : "todo";
         $paged = isset( $dataList["paged"] ) ? $dataList["paged"] : true;
@@ -253,12 +255,84 @@ class Cases
         $dateTo = (!empty( $dataList["dateTo"] )) ? substr( $dataList["dateTo"], 0, 10 ) : "";
         $newerThan = (!empty($dataList['newerThan']))? $dataList['newerThan'] : '';
         $oldestThan = (!empty($dataList['oldestthan']))? $dataList['oldestthan'] : '';
-        $first = isset( $dataList["first"] ) ? true :false;
+
+        $apps = new \Applications();
+        $response = $apps->getAll(
+                $userUid,
+                $start,
+                $limit,
+                $action,
+                $filter,
+                $search,
+                $process,
+                $status,
+                $type,
+                $dateFrom,
+                $dateTo,
+                $callback,
+                $dir,
+                (strpos($sort, ".") !== false)? $sort : "APP_CACHE_VIEW." . $sort,
+                $category,
+                true,
+                $paged,
+                $newerThan,
+                $oldestThan
+        );
+        if (!empty($response['data'])) {
+            foreach ($response['data'] as &$value) {
+                $value = array_change_key_case($value, CASE_LOWER);
+            }
+        }
+
+        if ($paged) {
+            $response['total'] = $response['totalCount'];
+            $response['start'] = $start+1;
+            $response['limit'] = $limit;
+            $response['sort'] = G::toLower($sort);
+            $response['dir'] = G::toLower($dir);
+            $response['cat_uid'] = $category;
+            $response['pro_uid'] = $process;
+            $response['search'] = $search;
+        } else {
+            $response = $response['data'];
+        }
+        return $response;
+    }
+    /**
+     * Search cases and get list of cases
+     *
+     * @access public
+     * @param array $dataList, Data for list
+     * @return array $response
+     */
+    public function getCasesSearch($dataList = array())
+    {
+        Validator::isArray($dataList, '$dataList');
+        if (!isset($dataList["userId"])) {
+            $dataList["userId"] = null;
+        }
+
+        //We need to user the USR_ID for performance
+        $userId = $dataList["userId"];
+        $dir = isset( $dataList["dir"] ) ? $dataList["dir"] : "DESC";
+        $sort = isset( $dataList["sort"] ) ? $dataList["sort"] : "APPLICATION.APP_NUMBER";
+        if ($sort === 'APP_CACHE_VIEW.APP_NUMBER') {
+            $sort = "APPLICATION.APP_NUMBER";
+        }
+        $start = isset( $dataList["start"] ) ? $dataList["start"] : "0";
+        $limit = isset( $dataList["limit"] ) ? $dataList["limit"] : "";
+        $process = isset( $dataList["process"] ) ? $dataList["process"] : "";
+        $category = isset( $dataList["category"] ) ? $dataList["category"] : "";
+        $status = isset( $dataList["status"] ) ? strtoupper( $dataList["status"] ) : "";
+        $user = isset( $dataList["user"] ) ? $dataList["user"] : "";
+        $search = isset( $dataList["search"] ) ? $dataList["search"] : "";
+        $dateFrom = (!empty( $dataList["dateFrom"] )) ? substr( $dataList["dateFrom"], 0, 10 ) : "";
+        $dateTo = (!empty( $dataList["dateTo"] )) ? substr( $dataList["dateTo"], 0, 10 ) : "";
         $filterStatus = isset( $dataList["filterStatus"] ) ? strtoupper( $dataList["filterStatus"] ) : "";
 
         $apps = new \Applications();
         $response = $apps->searchAll(
-            $userUid,
+            $userId,
             $start,
             $limit,
             $search,
@@ -272,19 +346,18 @@ class Cases
         );
 
         $response['total'] = 0;
-        $response['start'] = $start + 1;
+        $response['start'] = $start+1;
         $response['limit'] = $limit;
         $response['sort'] = G::toLower($sort);
         $response['dir'] = G::toLower($dir);
         $response['cat_uid'] = $category;
         $response['pro_uid'] = $process;
         $response['search'] = $search;
-        if ($action == 'search') {
-            $response['app_status'] = G::toLower($status);
-            $response['usr_uid'] = $user;
-            $response['date_from'] = $dateFrom;
-            $response['date_to'] = $dateTo;
-        }
+        $response['app_status'] = G::toLower($status);
+        $response['usr_uid'] = $user;
+        $response['date_from'] = $dateFrom;
+        $response['date_to'] = $dateTo;
+
         return $response;
     }
 
@@ -3328,5 +3401,43 @@ class Cases
                 $criteria->getNewCriterion($listPeer::APP_NUMBER, $search, \Criteria::EQUAL))))
             );
         }
+    }
+
+    /**
+     * This function get the table.column by order by the result
+     * We can include the additional table related to the custom cases list
+     *
+     * @param string $listPeer, name of the list class
+     * @param string $field, name of the fieldName
+     * @param string $sort, name of column by sort
+     * @param string $defaultSort, name of column by sort default
+     * @param string $additionalClassName, name of the className of pmTable
+     * @param array $additionalColumns, columns related to the custom cases list with the format TABLE_NAME.COLUMN_NAME
+     * @return string $tableName
+     */
+    public function getSortColumn($listPeer, $field, $sort, $defaultSort, $additionalClassName = '', $additionalColumns = array())
+    {
+        $columnSort = $defaultSort;
+        $tableName = '';
+
+        //We will check if the column by sort is a LIST table
+        $columnsList = $listPeer::getFieldNames($field);
+        if (in_array($sort, $columnsList)) {
+            $columnSort  = $listPeer::TABLE_NAME . '.' . $sort;
+        } else {
+            //We will sort by CUSTOM CASE LIST table
+            if (count($additionalColumns) > 0) {
+                require_once(PATH_DATA_SITE . 'classes' . PATH_SEP . $additionalClassName . '.php');
+                $aTable = explode('.', current($additionalColumns));
+                if (count($aTable) > 0) {
+                    $tableName = $aTable[0];
+                }
+            }
+            if (in_array($tableName . '.' . $sort, $additionalColumns)) {
+                $columnSort = $tableName . '.' . $sort;
+            }
+        }
+
+        return $columnSort;
     }
 }

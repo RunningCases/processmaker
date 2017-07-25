@@ -506,7 +506,12 @@ class pmTablesProxy extends HttpProxyController
                             $j = 0;
                             foreach ($aAdditionalTables['FIELDS'] as $aField) {
                                 $conData++;
-                                $temp = (array_key_exists($j, $aAux))? '"' . addslashes(stripslashes(utf8_encode($aAux[$j]))) . '"' : '""';
+
+                                if (array_key_exists($j, $aAux)) {
+                                    $temp = '"' . addslashes(stripslashes(G::is_utf8($aAux[$j]) ? $aAux[$j] : utf8_encode($aAux[$j]))) . '"';
+                                } else {
+                                    $temp = '""';
+                                }
 
                                 if ($temp == '') {
                                     switch ($aField['FLD_TYPE']) {
