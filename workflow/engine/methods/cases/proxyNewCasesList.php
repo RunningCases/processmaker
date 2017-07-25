@@ -79,9 +79,10 @@ try {
             break;
     }
 
-
     // Validate filters
     $filters['search'] = (!is_null($openApplicationUid))? $openApplicationUid : $filters['search'];
+    //Set a flag for review in the list by APP_UID when is used the case Link with parallel task
+    $filters['caseLink'] = (!is_null($openApplicationUid))? $openApplicationUid : '';
 
     $filters['start'] = (int)$filters['start'];
     $filters['start'] = abs($filters['start']);
