@@ -322,6 +322,7 @@ class ObjectPermission extends BaseObjectPermission
     public function objectPermissionByDynaform ($appUid, $opTaskSource = 0, $opObjUid = '', $statusCase = '')
     {
         $oCriteria = new Criteria('workflow');
+        $oCriteria->addSelectColumn("*");
         $oCriteria->addJoin(ApplicationPeer::PRO_UID, StepPeer::PRO_UID);
         $oCriteria->addJoin(StepPeer::STEP_UID_OBJ, DynaformPeer::DYN_UID);
         $oCriteria->add(ApplicationPeer::APP_UID, $appUid);
@@ -334,7 +335,6 @@ class ObjectPermission extends BaseObjectPermission
         if ($opObjUid != '' && $opObjUid != '0') {
             $oCriteria->add(DynaformPeer::DYN_UID, $opObjUid);
         }
-
         $oCriteria->addAscendingOrderByColumn(StepPeer::STEP_POSITION);
         $oCriteria->setDistinct();
 
