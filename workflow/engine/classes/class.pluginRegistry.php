@@ -1953,7 +1953,11 @@ class PMPluginRegistry
         }
     }
 
-    function iterateVisible()
+    /**
+     * Get all variables of object
+     * @return array
+     */
+    public function iterateVisible()
     {
         $response = array();
         foreach ($this as $key => $value) {
