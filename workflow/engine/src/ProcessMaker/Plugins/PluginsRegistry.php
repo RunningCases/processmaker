@@ -1711,6 +1711,10 @@ class PluginsRegistry extends Plugins
         }
     }
 
+    /**
+     * Get all variables of object
+     * @return array
+     */
     public function iterateVisible()
     {
         $response = array();
