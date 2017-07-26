@@ -203,10 +203,10 @@ class workspaceTools
         CLI::logging("<*>   Updating rows in Web Entry table for classic processes took " . ($stop - $start) . " seconds.\n");
 
         $start = microtime(true);
-        CLI::logging("> Migrating and populating data...\n");
-        $this->migrateSingleton($workSpace, $lang);
+        CLI::logging("> Migrating and populating plugin singleton data...\n");
+        $this->migrateSingleton($workSpace);
         $stop = microtime(true);
-        CLI::logging("<*>   Migrating and populating data Singleton took " . ($stop - $start) . " seconds.\n");
+        CLI::logging("<*>   Migrating and populating plugin singleton data took " . ($stop - $start) . " seconds.\n");
     }
 
     /**
@@ -3876,16 +3876,15 @@ class workspaceTools
 
     /**
      * @param $workspace
-     * @param mixed|string $lang
      */
-    public function migrateSingleton($workspace, $lang = SYS_LANG)
+    public function migrateSingleton($workspace)
     {
         if ((!class_exists('Memcache') || !class_exists('Memcached')) && !defined('MEMCACHED_ENABLED')) {
             define('MEMCACHED_ENABLED', false);
         }
         $this->initPropel(true);
         $conf  = new Configuration();
-        if(!$bExist = $conf->exists('MIGRATED_PLUGIN', 'singleton')){
+        if (!$bExist = $conf->exists('MIGRATED_PLUGIN', 'singleton')) {
             $pathSingleton = PATH_DATA . 'sites' . PATH_SEP . $workspace . PATH_SEP . 'plugin.singleton';
             $oPluginRegistry = unserialize(file_get_contents($pathSingleton));
             $pluginAdapter = new \ProcessMaker\Plugins\Adapters\PluginAdapter();

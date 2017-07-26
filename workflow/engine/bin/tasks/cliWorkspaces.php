@@ -303,14 +303,14 @@ CLI::taskArg('workspace', true, true);
 CLI::taskOpt("lang", "Specify the language to migrate the content data. If not specified, then 'en' (English) will be used by default.\n        Ex: -lfr (French) Ex: --lang=zh-CN (Mainland Chinese)", "l:","lang=");
 CLI::taskRun("run_migrate_content");
 
-CLI::taskName('migrate-plugin-information');
+CLI::taskName('migrate-plugins-singleton-information');
 CLI::taskDescription(<<<EOT
   Migrating the content schema to match the latest version
 
-  Specify the WORKSPACE to migrate from a existing workspace.
+  Specify the WORKSPACE to migrate from an existing workspace.
 
   If no workspace is specified, then the tables schema will be upgraded or
-  migrate on all available workspaces.
+  migrated to all available workspaces.
 EOT
 );
 CLI::taskArg('workspace', true, true);
@@ -1096,22 +1096,21 @@ function run_migrate_indexing_acv($args, $opts) {
 }
 
 function run_migrate_plugin($args, $opts) {
-    G::LoadSystem('inputfilter');
-    $filter = new InputFilter();
-    $args = $filter->xssFilterHard($args);
     $workspaces = get_workspaces_from_args($args);
-    $lang = array_key_exists("lang", $opts) ? $opts['lang'] : SYS_LANG;
-    $start = microtime(true);
-    CLI::logging("> Migrating and populating data...\n");
-    /** @var workspaceTools $workspace */
-    foreach ($workspaces as $workspace) {
-        if (!defined('SYS_SYS')) {
-            define('SYS_SYS', $workspace->name);
-        }
+    //Check if the command is executed by a specific workspace
+    if (count($workspaces) === 1) {
+        $workspace = array_shift($workspaces);
         print_r('Regenerating Singleton in: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
+        $workspace->migrateSingleton($workspace->name);
         CLI::logging("-> Regenerating Singleton \n");
-        $workspace->migrateSingleton($workspace->name, $lang);
+    } else {
+        CLI::logging("> Migrating and populating data...\n");
+        $start = microtime(true);
+        /** @var workspaceTools $workspace */
+        foreach ($workspaces as $workspace) {
+            passthru('./processmaker migrate-plugins-singleton-information '.$workspace->name);
+        }
+        $stop = microtime(true);
+        CLI::logging("<*>   Migrating and populating data Singleton took " . ($stop - $start) . " seconds.\n");
     }
-    $stop = microtime(true);
-    CLI::logging("<*>   Migrating and populating data Singleton took " . ($stop - $start) . " seconds.\n");
 }

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: dev-ronald
- * Date: 7/20/17
- * Time: 9:49 AM
- */
 
 namespace ProcessMaker\Plugins\Interfaces;
 

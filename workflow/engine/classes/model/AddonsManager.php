@@ -385,7 +385,7 @@ class AddonsManager extends BaseAddonsManager
                 $_SESSION["__ENTERPRISE_INSTALL__"] = 1;
             }
 
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
+            $oPluginRegistry = &ProcessMaker\Plugins\PluginsRegistry::loadSingleton();
             $oPluginRegistry->installPluginArchive($filename, $this->getAddonName());
 
             $this->setState();

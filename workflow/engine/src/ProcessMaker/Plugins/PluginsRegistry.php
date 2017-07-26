@@ -75,9 +75,6 @@ class PluginsRegistry extends Plugins
     {
         if (self::$instance == null) {
             self::$instance = new PluginsRegistry();
-            if (!is_object(self::$instance) || get_class(self::$instance) != "ProcessMaker\Plugins\PluginsRegistry") {
-                throw new \Exception("Can't load main PluginRegistry object.");
-            }
         }
         return self::$instance;
     }
@@ -133,10 +130,6 @@ class PluginsRegistry extends Plugins
             $detail->bPrivate = $plugin->bPrivate;
         }
 
-        //if (isset($this->_aPluginDetails[$sNamespace])){
-        //    $detail->enabled = $this->_aPluginDetails[$sNamespace]->enabled;
-        //}
-
         $this->_aPluginDetails[$sNamespace] = $detail;
     }
 
@@ -191,7 +184,6 @@ class PluginsRegistry extends Plugins
             $pluginSrcDir = PATH_PLUGINS . $currentPlugin->sNamespace . PATH_SEP . 'src';
 
             if (is_dir($pluginSrcDir)) {
-                //Bootstrap::registerDir($detail->sNamespace.'/src', $pluginSrcDir);
                 $loader = ClassLoader::getInstance();
                 $loader->add($pluginSrcDir);
             }
@@ -217,10 +209,8 @@ class PluginsRegistry extends Plugins
     public function disablePlugin($sNamespace, $eventPlugin = 1)
     {
         if ($currentPlugin = $this->_aPluginDetails[$sNamespace]) {
-            //unset($currentPlugin->_aPluginDetails[$sNamespace]);
             $currentPlugin->enabled = false;
             if ($eventPlugin == 1) {
-                //$currentPlugin->_aPlugins[$currentPlugin->sNamespace] = $currentPlugin;
                 // If plugin class exists check if disable method exist,
                 // otherwise use default plugin details
                 if (class_exists($currentPlugin->sClassName)) {
@@ -276,7 +266,6 @@ class PluginsRegistry extends Plugins
         $namePlugin = array();
         foreach ($files as $f) {
             if (preg_match("/^([\w\.]*).ini$/", $f["filename"], $matches)) {
-                //if (preg_match( "/^(.*pluginConfig)\.ini$/", $f["filename"], $matches )) {
                 $plugins[] = $matches[1];
             }
             if (preg_match("/^.*($pluginName)\.php$/", $f["filename"], $matches)) {
@@ -288,29 +277,25 @@ class PluginsRegistry extends Plugins
             throw new \Exception("Multiple plugins in one archive are not supported currently");
         }
 
-        //if (isset($pluginName) && !in_array($pluginName, $plugins)) {
         if (isset($pluginName) && !in_array($pluginName, $namePlugin)) {
             throw new \Exception("Plugin '$pluginName' not found in archive");
         }
 
-        //$pluginName = $plugins[0];
         $pluginFile = "$pluginName.php";
 
         $res = $tar->extract(PATH_PLUGINS);
         if (!file_exists(PATH_PLUGINS . $pluginFile)) {
             throw (new \Exception("File \"$pluginFile\" doesn't exist"));
         }
-//        $filter = new \InputFilter();
         $path = PATH_PLUGINS . $pluginFile;
-//        $path = $filter->validateInput($path, 'path');
         require_once($path);
         /** @var PluginDetail $details */
         $details = $this->getPluginDetails($pluginFile);
 
         $this->installPlugin($details->sNamespace);
-//        $this->setupPlugins();
 
         $this->enablePlugin($details->sNamespace);
+        $this->pluginAdapter->savePlugin($details->sNamespace, $this);
     }
 
     public function uninstallPlugin($sNamespace)
@@ -375,6 +360,7 @@ class PluginsRegistry extends Plugins
             foreach ($arrayPlugin as $index => $value) {
                 if (isset($attributes["_aPluginDetails"][$value])) {
                     $pluginRegistry->disablePlugin($value, 0);
+                    $pluginRegistry->pluginAdapter->savePlugin($value, $pluginRegistry);
                 }
             }
 
@@ -748,12 +734,6 @@ class PluginsRegistry extends Plugins
     public function getReports()
     {
         return $this->_aReports;
-//        $report = array();
-//        foreach ($this->_aReports as $row => $detail) {
-//            $sClassName = str_replace('plugin', 'class', $this->_aPluginDetails[$detail]->sClassName);
-//            $report[] = $sClassName;
-//        }
-//        return $report;
     }
 
     /**
@@ -764,12 +744,6 @@ class PluginsRegistry extends Plugins
     public function getPmFunctions()
     {
         return $this->_aPmFunctions;
-//        $pmf = array();
-//        foreach ($this->_aPmFunctions as $row => $detail) {
-//            $sClassName = str_replace('plugin', 'class', $this->_aPluginDetails[$detail]->sClassName);
-//            $pmf[] = $sClassName;
-//        }
-//        return $pmf;
     }
 
     /**
@@ -973,10 +947,7 @@ class PluginsRegistry extends Plugins
     {
         try {
             require_once(PATH_CORE . "methods" . PATH_SEP . "enterprise" . PATH_SEP . "enterprise.php");
-//            require_once("class.serverConfiguration.php");
             $iPlugins = 0;
-//            $oServerConf =& \serverConf::getSingleton();
-//            $oServerConf->addPlugin(SYS_SYS, $this->_aPluginDetails);
             foreach ($this->_aPluginDetails as $namespace => $detail) {
                 if (isset($detail->enabled) && $detail->enabled) {
                     if (!empty($detail->sFilename) && file_exists($detail->sFilename)) {
@@ -1029,7 +1000,6 @@ class PluginsRegistry extends Plugins
             $classFile = PATH_PLUGINS . $pluginFolder . PATH_SEP . 'class.' . $pluginFolder . '.php';
             if (file_exists($classFile)) {
                 $sClassName = substr_replace($className, "class", -6, 6);
-                //$sClassName = str_replace ( 'plugin', 'class', $className );
                 if (!class_exists($sClassName)) {
                     require_once $classFile;
                 }
@@ -1083,18 +1053,6 @@ class PluginsRegistry extends Plugins
      */
     public function eevalidate()
     {
-//        $fileL = PATH_DATA_SITE . 'license.dat';
-//        $fileS = PATH_DATA . 'license.dat';
-//        if ((file_exists($fileL)) || (file_exists($fileS))) {
-//            //Found a License
-//            if (class_exists('pmLicenseManager')) {
-//                $sSerializedFile = PATH_DATA_SITE . 'lmn.singleton';
-//                $pmLicenseManagerO = &\pmLicenseManager::getSingleton();
-//                if (file_exists($sSerializedFile)) {
-//                    $pmLicenseManagerO->unSerializeInstance(file_get_contents($sSerializedFile));
-//                }
-//            }
-//        }
     }
 
     /**
