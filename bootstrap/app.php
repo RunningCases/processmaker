@@ -15,6 +15,9 @@ $app = new Illuminate\Foundation\Application(
     realpath(__DIR__.'/../')
 );
 
+// Change storage path
+$app->useStoragePath(realpath(__DIR__.'/../shared/'));
+
 /*
 |--------------------------------------------------------------------------
 | Bind Important Interfaces

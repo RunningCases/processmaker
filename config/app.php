@@ -8,6 +8,7 @@ return [
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
 
     'providers' => [
+        Illuminate\Filesystem\FilesystemServiceProvider::class,
         Illuminate\Cache\CacheServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
     ],
