@@ -87,7 +87,3 @@ if ($handle = opendir(PATH_PLUGINS)) {
     }
     closedir($handle);
 }
-
-//$oPluginRegistry->showArrays();
-//G::Header('location: pluginsList');
-
