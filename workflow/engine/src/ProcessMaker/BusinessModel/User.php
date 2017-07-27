@@ -1631,8 +1631,7 @@ class User
         $oCriteria->setLimit($limit);
         $oDataset = \UsersPeer::DoSelectRs($oCriteria);
         $oDataset->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
-
-        return $oDataset;
+        return array("data" => $oDataset, "totalRows" => $totalRows);
     }
     /**
      * This function get additional information related to the user
