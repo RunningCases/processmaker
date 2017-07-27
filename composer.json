@@ -27,6 +27,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
+        "laravel/framework": "5.4.*",
         "luracast/restler": "^3.0",
         "bshaffer/oauth2-server-php": "v1.0",
         "colosa/pmUI": "develop-dev",
@@ -46,7 +47,7 @@
     },
     "require-dev": {
         "guzzle/guzzle": "~3.1.1",
-        "behat/behat": "2.4.*@stable"
+        "phpunit/phpunit": "~5.7"
     },
     "autoload": {
         "psr-0": {
@@ -78,5 +79,10 @@
             "thirdparty/HTMLPurifier/HTMLPurifier.auto.php",
             "workflow/engine/classes/class.pmFunctions.php"
         ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
     }
 }
