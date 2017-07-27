@@ -318,8 +318,8 @@ try {
             //Get all list of users with the additional information related to department, role, authentication, cases
             $oUser = new \ProcessMaker\BusinessModel\User();
             $oDatasetUsers = $oUser->getAllUsersWithAuthSource($authSource, $filter, $sort, $start, $limit, $dir);
-            $rows = $oUser->getAdditionalInfoFromUsers($oDatasetUsers);
-            echo '{users: ' . G::json_encode($rows['data']) . ', total_users: ' . $rows['totalCount'] . '}';
+            $rows = $oUser->getAdditionalInfoFromUsers($oDatasetUsers["data"]);
+            echo '{users: ' . G::json_encode($rows['data']) . ', total_users: ' . $oDatasetUsers["totalRows"] . '}';
             break;
         case 'updatePageSize':
             G::LoadClass('configuration');
