@@ -3559,7 +3559,7 @@ class workspaceTools
         CLI::logging("-> Migrating Self-Service by Value Cases \n");
         while ($rsCriteria->next()) {
             $row = $rsCriteria->getRow();
-            $temp = unserialize($row['GRP_UID']);
+            $temp = @unserialize($row['GRP_UID']);
             if (is_array($temp)) {
                 foreach($temp as $groupUid) {
                     if ($groupUid != '') {
