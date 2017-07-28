@@ -700,7 +700,7 @@ abstract class Importer
                 "KEEP"      => self::IMPORT_OPTION_KEEP_WITHOUT_CHANGING_AND_CREATE_NEW
             );
 
-            $option = $arrayAux[$option];
+            $opt = $arrayAux[$option];
 
             $arrayAux = array(
                 (($optionGroup != "")? "CREATE" : "") => self::GROUP_IMPORT_OPTION_CREATE_NEW,
@@ -724,7 +724,8 @@ abstract class Importer
 
             //Import
             try {
-                $projectUid = $this->import($option, $optionGroup);
+                $generateUID = (isset($option) && $option == "CREATE") ? true : false;
+                $projectUid = $this->import($opt, $optionGroup, $generateUID);
 
                 $arrayData = array_merge(array("PRJ_UID" => $projectUid), $arrayData);
             } catch (\Exception $e) {
