@@ -321,10 +321,12 @@ class Installer extends Controller
         if ($info->pathShared->result) {
             $info->pathShared->message = G::LoadTranslation('ID_WRITEABLE');
         } else {
+            //Verify and create the shared path
             G::verifyPath( $_REQUEST['pathShared'], true );
             $info->pathShared->result = G::is_writable_r( $_REQUEST['pathShared'], $noWritableFiles );
             if ($info->pathShared->result) {
                 $info->pathShared->message = G::LoadTranslation('ID_WRITEABLE');
+                $info->success = $this->verifySharedFrameworkPaths($_REQUEST['pathShared']);
             } else {
                 $info->success = false;
             }
@@ -1738,5 +1740,26 @@ class Installer extends Controller
                 }
             }
         }
+    }
+
+    /**
+     * Verify/create framework shared directory structure
+     *
+     */
+    private function verifySharedFrameworkPaths($sharedPath)
+    {
+        $paths = [
+            $sharedPath.'framework' => 0770,
+            $sharedPath.'framework'.DIRECTORY_SEPARATOR.'cache' => 0770,
+        ];
+        foreach ($paths as $path => $permission) {
+            if (!file_exists($path)) {
+                G::mk_dir($path, $permission);
+            }
+            if (!file_exists($path)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

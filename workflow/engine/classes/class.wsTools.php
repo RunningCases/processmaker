@@ -199,6 +199,12 @@ class workspaceTools
         $this->updatingWebEntryClassicModel($workSpace);
         $stop = microtime(true);
         CLI::logging("<*>   Updating rows in Web Entry table for classic processes took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Update framework paths...\n");
+        $this->updatingFrameworkPaths($workSpace);
+        $stop = microtime(true);
+        CLI::logging("<*>   Update framework paths took " . ($stop - $start) . " seconds.\n");
     }
 
     /**
@@ -3896,6 +3902,24 @@ class workspaceTools
             CLI::logging($fixReferencePath->getResumeDebug());
         } catch (Exception $e) {
             CLI::logging(CLI::error("Error:" . "Error updating generated class files for PM Tables, proceed to regenerate manually: " . $e));
+        }
+    }
+
+    /**
+     * Updating framework directory structure
+     *
+     */
+    private function updatingFrameworkPaths($workSpace = SYS_SYS)
+    {
+        $paths = [
+            PATH_DATA.'framework' => 0770,
+            PATH_DATA.'framework'.DIRECTORY_SEPARATOR.'cache' => 0770,
+        ];
+        foreach ($paths as $path => $permission) {
+            if (!file_exists($path)) {
+                G::mk_dir($path, $permission);
+            }
+            CLI::logging("    $path [".(file_exists($path) ? 'OK' : 'MISSING')."]\n");
         }
     }
 }
