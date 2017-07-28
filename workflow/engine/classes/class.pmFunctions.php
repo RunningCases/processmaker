@@ -2227,6 +2227,11 @@ function PMFCreateUser ($userId, $password, $firstname, $lastname, $email, $role
     $ws = new wsBase();
     $result = $ws->createUser( $userId, $firstname, $lastname, $email, $role, $password, $dueDate, $status );
 
+    //When the user is created the $result parameter is an array, in other case is a object exception
+    if (!is_object($result)) {
+        $result = (object)$result;
+    }
+
     if ($result->status_code == 0) {
         return 1;
     } else {
