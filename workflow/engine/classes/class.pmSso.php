@@ -25,23 +25,14 @@ G::LoadClass ('pmFunctions');
         $RBAC = RBAC::getSingleton();
         $RBAC->initRBAC();
         $res = false;
-        $server = $_SERVER['SERVER_SOFTWARE'];
-        $webserver = explode("/", $server);
         if(isset($_SERVER['REMOTE_USER']) && $_SERVER['REMOTE_USER'] !=''){
-            // IIS Verification
-            if (!is_array($webserver) || (is_array($webserver) && ($webserver[0] == 'Microsoft-IIS'))){
-                $userFull = $_SERVER['REMOTE_USER'];
-                $userPN = explode("\\", $userFull);
-                if (is_array($userPN)){
-                    $user = $userPN[1];
-                } else {
-                    $user = $userFull;
-                }
+            $userFull = $_SERVER['REMOTE_USER'];
+            $userPN = explode("\\", $userFull);
+            if (is_array($userPN)){
+                $user = $userPN[1];
             } else {
-                $userFull = $_SERVER['REMOTE_USER'];
-                $user = $_SERVER['REMOTE_USER'];
+                $user = $userFull;
             }
-            // End IIS Verification
 
             $resVerifyUser = $RBAC->verifyUser($user);
             if ($resVerifyUser == 0) {
