@@ -2600,34 +2600,91 @@ class workspaceTools
         CLI::logging("> Completed table LIST_PARTICIPATED_LAST\n");
     }
 
+    /**
+     * This function overwrite the table LIST_PAUSED
+     * Get the principal information in the tables appDelay, appDelegation
+     * For the labels we use the tables user, process, task and application
+     * @return void
+     */
     public function regenerateListPaused(){
-        $delaycriteria = new Criteria("workflow");
-        $delaycriteria->addSelectColumn(AppDelayPeer::APP_UID);
-        $delaycriteria->addSelectColumn(AppDelayPeer::PRO_UID);
-        $delaycriteria->addSelectColumn(AppDelayPeer::APP_DEL_INDEX);
-        $delaycriteria->addSelectColumn(AppDelayPeer::APP_DISABLE_ACTION_DATE);
-        $delaycriteria->addSelectColumn(AppCacheViewPeer::APP_NUMBER);
-        $delaycriteria->addSelectColumn(AppCacheViewPeer::USR_UID);
-        $delaycriteria->addSelectColumn(AppCacheViewPeer::APP_STATUS);
-        $delaycriteria->addSelectColumn(AppCacheViewPeer::TAS_UID);
-        $delaycriteria->addSelectColumn(AppCacheViewPeer::DEL_DELEGATE_DATE);
-
-        $delaycriteria->addJoin( AppCacheViewPeer::APP_UID, AppDelayPeer::APP_UID . ' AND ' . AppCacheViewPeer::DEL_INDEX . ' = ' . AppDelayPeer::APP_DEL_INDEX, Criteria::INNER_JOIN );
-        $delaycriteria->add(AppDelayPeer::APP_DISABLE_ACTION_USER, "0", CRITERIA::EQUAL);
-        $delaycriteria->add(AppDelayPeer::APP_TYPE, "PAUSE", CRITERIA::EQUAL);
-        $rsCriteria = AppDelayPeer::doSelectRS($delaycriteria);
-        $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-
-        while ($rsCriteria->next()) {
-            $row = $rsCriteria->getRow();
-            $data = $row;
-            $data["DEL_INDEX"] = $row["APP_DEL_INDEX"];
-            $data["APP_RESTART_DATE"] = $row["APP_DISABLE_ACTION_DATE"];
-            $listPaused = new ListPaused();
-            $listPaused ->remove($row["APP_UID"],$row["APP_DEL_INDEX"],$data);
-            $listPaused->setDeleted(false);
-            $listPaused->create($data);
-        }
+        $this->initPropel(true);
+        $query =  'INSERT INTO '.$this->dbName.'.LIST_PAUSED
+                  (
+                  APP_UID,
+                  DEL_INDEX,
+                  USR_UID,
+                  TAS_UID,
+                  PRO_UID,
+                  APP_NUMBER,
+                  APP_TITLE,
+                  APP_PRO_TITLE,
+                  APP_TAS_TITLE,
+                  APP_PAUSED_DATE,
+                  APP_RESTART_DATE,
+                  DEL_PREVIOUS_USR_UID,
+                  DEL_PREVIOUS_USR_USERNAME,
+                  DEL_PREVIOUS_USR_FIRSTNAME,
+                  DEL_PREVIOUS_USR_LASTNAME,
+                  DEL_CURRENT_USR_USERNAME,
+                  DEL_CURRENT_USR_FIRSTNAME,
+                  DEL_CURRENT_USR_LASTNAME,
+                  DEL_DELEGATE_DATE,
+                  DEL_INIT_DATE,
+                  DEL_DUE_DATE,
+                  DEL_PRIORITY,
+                  PRO_ID,
+                  USR_ID,
+                  TAS_ID
+                  )
+                  SELECT
+                      AD1.APP_UID,
+                      AD1.DEL_INDEX,
+                      AD1.USR_UID,
+                      AD1.TAS_UID,
+                      AD1.PRO_UID,
+                      AD1.APP_NUMBER,
+                      APPLICATION.APP_TITLE,
+                      PROCESS.PRO_TITLE,
+                      TASK.TAS_TITLE,
+                      APP_DELAY.APP_ENABLE_ACTION_DATE AS APP_PAUSED_DATE ,
+                      APP_DELAY.APP_DISABLE_ACTION_DATE AS APP_RESTART_DATE,
+                      AD2.USR_UID AS DEL_PREVIOUS_USR_UID,
+                      PREVIOUS.USR_USERNAME AS DEL_PREVIOUS_USR_USERNAME,
+                      PREVIOUS.USR_FIRSTNAME AS DEL_CURRENT_USR_FIRSTNAME,
+                      PREVIOUS.USR_LASTNAME AS DEL_PREVIOUS_USR_LASTNAME,
+                      USERS.USR_USERNAME AS DEL_CURRENT_USR_USERNAME,
+                      USERS.USR_FIRSTNAME AS DEL_CURRENT_USR_FIRSTNAME,
+                      USERS.USR_LASTNAME AS DEL_CURRENT_USR_LASTNAME,
+                      AD1.DEL_DELEGATE_DATE AS DEL_DELEGATE_DATE,
+                      AD1.DEL_INIT_DATE AS DEL_INIT_DATE,
+                      AD1.DEL_TASK_DUE_DATE AS DEL_DUE_DATE,
+                      AD1.DEL_PRIORITY AS DEL_PRIORITY,
+                      PROCESS.PRO_ID,
+                      USERS.USR_ID,
+                      TASK.TAS_ID
+                  FROM
+                        '.$this->dbName.'.APP_DELAY
+                  LEFT JOIN
+                        '.$this->dbName.'.APP_DELEGATION AS AD1 ON (APP_DELAY.APP_NUMBER = AD1.APP_NUMBER AND AD1.DEL_INDEX = APP_DELAY.APP_DEL_INDEX)
+                  LEFT JOIN
+                        '.$this->dbName.'.APP_DELEGATION AS AD2 ON (AD1.APP_NUMBER = AD2.APP_NUMBER AND AD1.DEL_PREVIOUS = AD2.DEL_INDEX)
+                  LEFT JOIN
+                        '.$this->dbName.'.USERS ON (APP_DELAY.APP_DELEGATION_USER_ID = USERS.USR_ID)
+                  LEFT JOIN
+                        '.$this->dbName.'.USERS PREVIOUS ON (AD2.USR_ID = PREVIOUS.USR_ID)
+                  LEFT JOIN
+                        '.$this->dbName.'.APPLICATION ON (AD1.APP_NUMBER = APPLICATION.APP_NUMBER)
+                  LEFT JOIN
+                        '.$this->dbName.'.PROCESS ON (AD1.PRO_ID = PROCESS.PRO_ID)
+                  LEFT JOIN
+                        '.$this->dbName.'.TASK ON (AD1.TAS_ID = TASK.TAS_ID)
+                  WHERE
+                       APP_DELAY.APP_DISABLE_ACTION_USER = "0" AND
+                       APP_DELAY.APP_TYPE = "PAUSE"
+               ';
+        $con = Propel::getConnection("workflow");
+        $stmt = $con->createStatement();
+        $stmt->executeQuery($query);
         CLI::logging("> Completed table LIST_PAUSED\n");
     }
 
@@ -3666,6 +3723,48 @@ class workspaceTools
                                     end)
                                     WHERE APP_STATUS in ('DRAFT', 'TO_DO', 'COMPLETED', 'CANCELLED') AND
                                     APP_STATUS_ID = 0");
+        $con->commit();
+
+        // Populating APP_DELAY.USR_ID
+        CLI::logging("->   Populating APP_DELAY.USR_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_DELAY AS AD
+                                   INNER JOIN (
+                                       SELECT USERS.USR_UID, USERS.USR_ID
+                                       FROM USERS
+                                   ) AS USR
+                                   ON (AD.APP_DELEGATION_USER = USR.USR_UID)
+                                   SET AD.APP_DELEGATION_USER_ID = USR.USR_ID
+                                   WHERE AD.APP_DELEGATION_USER_ID = 0");
+        $con->commit();
+
+        // Populating APP_DELAY.PRO_ID
+        CLI::logging("->   Populating APP_DELAY.PRO_ID \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_DELAY AS AD
+                                   INNER JOIN (
+                                       SELECT PROCESS.PRO_UID, PROCESS.PRO_ID
+                                       FROM PROCESS
+                                   ) AS PRO
+                                   ON (AD.PRO_UID = PRO.PRO_UID)
+                                   SET AD.PRO_ID = PRO.PRO_ID
+                                   WHERE AD.PRO_ID = 0");
+        $con->commit();
+
+        // Populating APP_DELAY.APP_NUMBER
+        CLI::logging("->   Populating APP_DELAY.APP_NUMBER \n");
+        $con->begin();
+        $stmt = $con->createStatement();
+        $rs = $stmt->executeQuery("UPDATE APP_DELAY AS AD
+                                   INNER JOIN (
+                                       SELECT APPLICATION.APP_UID, APPLICATION.APP_NUMBER
+                                       FROM APPLICATION
+                                   ) AS APP
+                                   ON (AD.APP_UID = APP.APP_UID)
+                                   SET AD.APP_NUMBER = APP.APP_NUMBER
+                                   WHERE AD.APP_NUMBER = 0");
         $con->commit();
 
         CLI::logging("-> Migrating And Populating Indexing for avoiding the use of table APP_CACHE_VIEW Done \n");
