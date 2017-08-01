@@ -1667,8 +1667,11 @@ class Process
             foreach ($aAux as $sName => $sValue) {
                 $aFields[] = array ('sName' => $sName,'sType' => 'system','sLabel' => G::LoadTranslation('ID_TINY_SYSTEM_VARIABLE'), 'sUid' => '');
             }
-            //we're adding the ping variable to the system list
+            //we're adding the pin variable to the system list
             $aFields[] = array ('sName' => 'PIN','sType' => 'system','sLabel' => G::LoadTranslation('ID_TINY_SYSTEM_VARIABLE'), 'sUid' => '');
+            
+            //we're adding the app_number variable to the system list
+            $aFields[] = array('sName' => 'APP_NUMBER', 'sType' => 'system', 'sLabel' => G::LoadTranslation('ID_TINY_SYSTEM_VARIABLE'), 'sUid' => '');
         }
 
         $aInvalidTypes = array("title", "subtitle", "file", "button", "reset", "submit", "javascript");
