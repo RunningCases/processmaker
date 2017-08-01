@@ -76,8 +76,8 @@ abstract class BaseAppDelayPeer
     /** the column name for the APP_AUTOMATIC_DISABLED_DATE field */
     const APP_AUTOMATIC_DISABLED_DATE = 'APP_DELAY.APP_AUTOMATIC_DISABLED_DATE';
 
-    /** the column name for the APP_DELEGATION_USR_ID field */
-    const APP_DELEGATION_USR_ID = 'APP_DELAY.APP_DELEGATION_USR_ID';
+    /** the column name for the APP_DELEGATION_USER_ID field */
+    const APP_DELEGATION_USER_ID = 'APP_DELAY.APP_DELEGATION_USER_ID';
 
     /** the column name for the PRO_ID field */
     const PRO_ID = 'APP_DELAY.PRO_ID';
@@ -93,9 +93,9 @@ abstract class BaseAppDelayPeer
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
     private static $fieldNames = array (
-        BasePeer::TYPE_PHPNAME => array ('AppDelayUid', 'ProUid', 'AppUid', 'AppNumber', 'AppThreadIndex', 'AppDelIndex', 'AppType', 'AppStatus', 'AppNextTask', 'AppDelegationUser', 'AppEnableActionUser', 'AppEnableActionDate', 'AppDisableActionUser', 'AppDisableActionDate', 'AppAutomaticDisabledDate', 'AppDelegationUsrId', 'ProId', ),
-        BasePeer::TYPE_COLNAME => array (AppDelayPeer::APP_DELAY_UID, AppDelayPeer::PRO_UID, AppDelayPeer::APP_UID, AppDelayPeer::APP_NUMBER, AppDelayPeer::APP_THREAD_INDEX, AppDelayPeer::APP_DEL_INDEX, AppDelayPeer::APP_TYPE, AppDelayPeer::APP_STATUS, AppDelayPeer::APP_NEXT_TASK, AppDelayPeer::APP_DELEGATION_USER, AppDelayPeer::APP_ENABLE_ACTION_USER, AppDelayPeer::APP_ENABLE_ACTION_DATE, AppDelayPeer::APP_DISABLE_ACTION_USER, AppDelayPeer::APP_DISABLE_ACTION_DATE, AppDelayPeer::APP_AUTOMATIC_DISABLED_DATE, AppDelayPeer::APP_DELEGATION_USR_ID, AppDelayPeer::PRO_ID, ),
-        BasePeer::TYPE_FIELDNAME => array ('APP_DELAY_UID', 'PRO_UID', 'APP_UID', 'APP_NUMBER', 'APP_THREAD_INDEX', 'APP_DEL_INDEX', 'APP_TYPE', 'APP_STATUS', 'APP_NEXT_TASK', 'APP_DELEGATION_USER', 'APP_ENABLE_ACTION_USER', 'APP_ENABLE_ACTION_DATE', 'APP_DISABLE_ACTION_USER', 'APP_DISABLE_ACTION_DATE', 'APP_AUTOMATIC_DISABLED_DATE', 'APP_DELEGATION_USR_ID', 'PRO_ID', ),
+        BasePeer::TYPE_PHPNAME => array ('AppDelayUid', 'ProUid', 'AppUid', 'AppNumber', 'AppThreadIndex', 'AppDelIndex', 'AppType', 'AppStatus', 'AppNextTask', 'AppDelegationUser', 'AppEnableActionUser', 'AppEnableActionDate', 'AppDisableActionUser', 'AppDisableActionDate', 'AppAutomaticDisabledDate', 'AppDelegationUserId', 'ProId', ),
+        BasePeer::TYPE_COLNAME => array (AppDelayPeer::APP_DELAY_UID, AppDelayPeer::PRO_UID, AppDelayPeer::APP_UID, AppDelayPeer::APP_NUMBER, AppDelayPeer::APP_THREAD_INDEX, AppDelayPeer::APP_DEL_INDEX, AppDelayPeer::APP_TYPE, AppDelayPeer::APP_STATUS, AppDelayPeer::APP_NEXT_TASK, AppDelayPeer::APP_DELEGATION_USER, AppDelayPeer::APP_ENABLE_ACTION_USER, AppDelayPeer::APP_ENABLE_ACTION_DATE, AppDelayPeer::APP_DISABLE_ACTION_USER, AppDelayPeer::APP_DISABLE_ACTION_DATE, AppDelayPeer::APP_AUTOMATIC_DISABLED_DATE, AppDelayPeer::APP_DELEGATION_USER_ID, AppDelayPeer::PRO_ID, ),
+        BasePeer::TYPE_FIELDNAME => array ('APP_DELAY_UID', 'PRO_UID', 'APP_UID', 'APP_NUMBER', 'APP_THREAD_INDEX', 'APP_DEL_INDEX', 'APP_TYPE', 'APP_STATUS', 'APP_NEXT_TASK', 'APP_DELEGATION_USER', 'APP_ENABLE_ACTION_USER', 'APP_ENABLE_ACTION_DATE', 'APP_DISABLE_ACTION_USER', 'APP_DISABLE_ACTION_DATE', 'APP_AUTOMATIC_DISABLED_DATE', 'APP_DELEGATION_USER_ID', 'PRO_ID', ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
     );
 
@@ -106,9 +106,9 @@ abstract class BaseAppDelayPeer
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
     private static $fieldKeys = array (
-        BasePeer::TYPE_PHPNAME => array ('AppDelayUid' => 0, 'ProUid' => 1, 'AppUid' => 2, 'AppNumber' => 3, 'AppThreadIndex' => 4, 'AppDelIndex' => 5, 'AppType' => 6, 'AppStatus' => 7, 'AppNextTask' => 8, 'AppDelegationUser' => 9, 'AppEnableActionUser' => 10, 'AppEnableActionDate' => 11, 'AppDisableActionUser' => 12, 'AppDisableActionDate' => 13, 'AppAutomaticDisabledDate' => 14, 'AppDelegationUsrId' => 15, 'ProId' => 16, ),
-        BasePeer::TYPE_COLNAME => array (AppDelayPeer::APP_DELAY_UID => 0, AppDelayPeer::PRO_UID => 1, AppDelayPeer::APP_UID => 2, AppDelayPeer::APP_NUMBER => 3, AppDelayPeer::APP_THREAD_INDEX => 4, AppDelayPeer::APP_DEL_INDEX => 5, AppDelayPeer::APP_TYPE => 6, AppDelayPeer::APP_STATUS => 7, AppDelayPeer::APP_NEXT_TASK => 8, AppDelayPeer::APP_DELEGATION_USER => 9, AppDelayPeer::APP_ENABLE_ACTION_USER => 10, AppDelayPeer::APP_ENABLE_ACTION_DATE => 11, AppDelayPeer::APP_DISABLE_ACTION_USER => 12, AppDelayPeer::APP_DISABLE_ACTION_DATE => 13, AppDelayPeer::APP_AUTOMATIC_DISABLED_DATE => 14, AppDelayPeer::APP_DELEGATION_USR_ID => 15, AppDelayPeer::PRO_ID => 16, ),
-        BasePeer::TYPE_FIELDNAME => array ('APP_DELAY_UID' => 0, 'PRO_UID' => 1, 'APP_UID' => 2, 'APP_NUMBER' => 3, 'APP_THREAD_INDEX' => 4, 'APP_DEL_INDEX' => 5, 'APP_TYPE' => 6, 'APP_STATUS' => 7, 'APP_NEXT_TASK' => 8, 'APP_DELEGATION_USER' => 9, 'APP_ENABLE_ACTION_USER' => 10, 'APP_ENABLE_ACTION_DATE' => 11, 'APP_DISABLE_ACTION_USER' => 12, 'APP_DISABLE_ACTION_DATE' => 13, 'APP_AUTOMATIC_DISABLED_DATE' => 14, 'APP_DELEGATION_USR_ID' => 15, 'PRO_ID' => 16, ),
+        BasePeer::TYPE_PHPNAME => array ('AppDelayUid' => 0, 'ProUid' => 1, 'AppUid' => 2, 'AppNumber' => 3, 'AppThreadIndex' => 4, 'AppDelIndex' => 5, 'AppType' => 6, 'AppStatus' => 7, 'AppNextTask' => 8, 'AppDelegationUser' => 9, 'AppEnableActionUser' => 10, 'AppEnableActionDate' => 11, 'AppDisableActionUser' => 12, 'AppDisableActionDate' => 13, 'AppAutomaticDisabledDate' => 14, 'AppDelegationUserId' => 15, 'ProId' => 16, ),
+        BasePeer::TYPE_COLNAME => array (AppDelayPeer::APP_DELAY_UID => 0, AppDelayPeer::PRO_UID => 1, AppDelayPeer::APP_UID => 2, AppDelayPeer::APP_NUMBER => 3, AppDelayPeer::APP_THREAD_INDEX => 4, AppDelayPeer::APP_DEL_INDEX => 5, AppDelayPeer::APP_TYPE => 6, AppDelayPeer::APP_STATUS => 7, AppDelayPeer::APP_NEXT_TASK => 8, AppDelayPeer::APP_DELEGATION_USER => 9, AppDelayPeer::APP_ENABLE_ACTION_USER => 10, AppDelayPeer::APP_ENABLE_ACTION_DATE => 11, AppDelayPeer::APP_DISABLE_ACTION_USER => 12, AppDelayPeer::APP_DISABLE_ACTION_DATE => 13, AppDelayPeer::APP_AUTOMATIC_DISABLED_DATE => 14, AppDelayPeer::APP_DELEGATION_USER_ID => 15, AppDelayPeer::PRO_ID => 16, ),
+        BasePeer::TYPE_FIELDNAME => array ('APP_DELAY_UID' => 0, 'PRO_UID' => 1, 'APP_UID' => 2, 'APP_NUMBER' => 3, 'APP_THREAD_INDEX' => 4, 'APP_DEL_INDEX' => 5, 'APP_TYPE' => 6, 'APP_STATUS' => 7, 'APP_NEXT_TASK' => 8, 'APP_DELEGATION_USER' => 9, 'APP_ENABLE_ACTION_USER' => 10, 'APP_ENABLE_ACTION_DATE' => 11, 'APP_DISABLE_ACTION_USER' => 12, 'APP_DISABLE_ACTION_DATE' => 13, 'APP_AUTOMATIC_DISABLED_DATE' => 14, 'APP_DELEGATION_USER_ID' => 15, 'PRO_ID' => 16, ),
         BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, )
     );
 
@@ -240,7 +240,7 @@ abstract class BaseAppDelayPeer
 
         $criteria->addSelectColumn(AppDelayPeer::APP_AUTOMATIC_DISABLED_DATE);
 
-        $criteria->addSelectColumn(AppDelayPeer::APP_DELEGATION_USR_ID);
+        $criteria->addSelectColumn(AppDelayPeer::APP_DELEGATION_USER_ID);
 
         $criteria->addSelectColumn(AppDelayPeer::PRO_ID);
 

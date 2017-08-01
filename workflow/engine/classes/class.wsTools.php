@@ -2669,7 +2669,7 @@ class workspaceTools
                   LEFT JOIN
                         '.$this->dbName.'.APP_DELEGATION AS AD2 ON (AD1.APP_NUMBER = AD2.APP_NUMBER AND AD1.DEL_PREVIOUS = AD2.DEL_INDEX)
                   LEFT JOIN
-                        '.$this->dbName.'.USERS ON (APP_DELAY.APP_DELEGATION_USR_ID = USERS.USR_ID)
+                        '.$this->dbName.'.USERS ON (APP_DELAY.APP_DELEGATION_USER_ID = USERS.USR_ID)
                   LEFT JOIN
                         '.$this->dbName.'.USERS PREVIOUS ON (AD2.USR_ID = PREVIOUS.USR_ID)
                   LEFT JOIN
@@ -3735,8 +3735,8 @@ class workspaceTools
                                        FROM USERS
                                    ) AS USR
                                    ON (AD.APP_DELEGATION_USER = USR.USR_UID)
-                                   SET AD.APP_DELEGATION_USR_ID = USR.USR_ID
-                                   WHERE AD.APP_DELEGATION_USR_ID = 0");
+                                   SET AD.APP_DELEGATION_USER_ID = USR.USR_ID
+                                   WHERE AD.APP_DELEGATION_USER_ID = 0");
         $con->commit();
 
         // Populating APP_DELAY.PRO_ID

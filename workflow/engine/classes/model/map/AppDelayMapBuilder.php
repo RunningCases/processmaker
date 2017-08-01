@@ -95,7 +95,7 @@ class AppDelayMapBuilder
 
         $tMap->addColumn('APP_AUTOMATIC_DISABLED_DATE', 'AppAutomaticDisabledDate', 'int', CreoleTypes::TIMESTAMP, false, null);
 
-        $tMap->addColumn('APP_DELEGATION_USR_ID', 'AppDelegationUsrId', 'int', CreoleTypes::INTEGER, false, null);
+        $tMap->addColumn('APP_DELEGATION_USER_ID', 'AppDelegationUserId', 'int', CreoleTypes::INTEGER, false, null);
 
         $tMap->addColumn('PRO_ID', 'ProId', 'int', CreoleTypes::INTEGER, false, null);
 

@@ -118,10 +118,10 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
     protected $app_automatic_disabled_date;
 
     /**
-     * The value for the app_delegation_usr_id field.
+     * The value for the app_delegation_user_id field.
      * @var        int
      */
-    protected $app_delegation_usr_id = 0;
+    protected $app_delegation_user_id = 0;
 
     /**
      * The value for the pro_id field.
@@ -372,14 +372,14 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
     }
 
     /**
-     * Get the [app_delegation_usr_id] column value.
+     * Get the [app_delegation_user_id] column value.
      * 
      * @return     int
      */
-    public function getAppDelegationUsrId()
+    public function getAppDelegationUserId()
     {
 
-        return $this->app_delegation_usr_id;
+        return $this->app_delegation_user_id;
     }
 
     /**
@@ -745,12 +745,12 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
     } // setAppAutomaticDisabledDate()
 
     /**
-     * Set the value of [app_delegation_usr_id] column.
+     * Set the value of [app_delegation_user_id] column.
      * 
      * @param      int $v new value
      * @return     void
      */
-    public function setAppDelegationUsrId($v)
+    public function setAppDelegationUserId($v)
     {
 
         // Since the native PHP type for this column is integer,
@@ -759,12 +759,12 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
             $v = (int) $v;
         }
 
-        if ($this->app_delegation_usr_id !== $v || $v === 0) {
-            $this->app_delegation_usr_id = $v;
-            $this->modifiedColumns[] = AppDelayPeer::APP_DELEGATION_USR_ID;
+        if ($this->app_delegation_user_id !== $v || $v === 0) {
+            $this->app_delegation_user_id = $v;
+            $this->modifiedColumns[] = AppDelayPeer::APP_DELEGATION_USER_ID;
         }
 
-    } // setAppDelegationUsrId()
+    } // setAppDelegationUserId()
 
     /**
      * Set the value of [pro_id] column.
@@ -835,7 +835,7 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
 
             $this->app_automatic_disabled_date = $rs->getTimestamp($startcol + 14, null);
 
-            $this->app_delegation_usr_id = $rs->getInt($startcol + 15);
+            $this->app_delegation_user_id = $rs->getInt($startcol + 15);
 
             $this->pro_id = $rs->getInt($startcol + 16);
 
@@ -1094,7 +1094,7 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
                 return $this->getAppAutomaticDisabledDate();
                 break;
             case 15:
-                return $this->getAppDelegationUsrId();
+                return $this->getAppDelegationUserId();
                 break;
             case 16:
                 return $this->getProId();
@@ -1134,7 +1134,7 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
             $keys[12] => $this->getAppDisableActionUser(),
             $keys[13] => $this->getAppDisableActionDate(),
             $keys[14] => $this->getAppAutomaticDisabledDate(),
-            $keys[15] => $this->getAppDelegationUsrId(),
+            $keys[15] => $this->getAppDelegationUserId(),
             $keys[16] => $this->getProId(),
         );
         return $result;
@@ -1213,7 +1213,7 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
                 $this->setAppAutomaticDisabledDate($value);
                 break;
             case 15:
-                $this->setAppDelegationUsrId($value);
+                $this->setAppDelegationUserId($value);
                 break;
             case 16:
                 $this->setProId($value);
@@ -1302,7 +1302,7 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
         }
 
         if (array_key_exists($keys[15], $arr)) {
-            $this->setAppDelegationUsrId($arr[$keys[15]]);
+            $this->setAppDelegationUserId($arr[$keys[15]]);
         }
 
         if (array_key_exists($keys[16], $arr)) {
@@ -1380,8 +1380,8 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
             $criteria->add(AppDelayPeer::APP_AUTOMATIC_DISABLED_DATE, $this->app_automatic_disabled_date);
         }
 
-        if ($this->isColumnModified(AppDelayPeer::APP_DELEGATION_USR_ID)) {
-            $criteria->add(AppDelayPeer::APP_DELEGATION_USR_ID, $this->app_delegation_usr_id);
+        if ($this->isColumnModified(AppDelayPeer::APP_DELEGATION_USER_ID)) {
+            $criteria->add(AppDelayPeer::APP_DELEGATION_USER_ID, $this->app_delegation_user_id);
         }
 
         if ($this->isColumnModified(AppDelayPeer::PRO_ID)) {
@@ -1470,7 +1470,7 @@ abstract class BaseAppDelay extends BaseObject implements Persistent
 
         $copyObj->setAppAutomaticDisabledDate($this->app_automatic_disabled_date);
 
-        $copyObj->setAppDelegationUsrId($this->app_delegation_usr_id);
+        $copyObj->setAppDelegationUserId($this->app_delegation_user_id);
 
         $copyObj->setProId($this->pro_id);
 
