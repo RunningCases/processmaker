@@ -167,12 +167,14 @@ class AppNotes extends BaseAppNotes
             $oCase = new Cases();
             $aFields = $oCase->loadCase( $appUid );
             $configNoteNotification['subject'] = G::LoadTranslation( 'ID_MESSAGE_SUBJECT_NOTE_NOTIFICATION' ) . " @#APP_TITLE ";
-            $configNoteNotification['body'] = G::LoadTranslation( 'ID_CASE' ) . ": @#APP_TITLE<br />" . G::LoadTranslation( 'ID_AUTHOR' ) . ": $authorName<br /><br />$noteContent";
+            //Define the body for the notification
+            $body = G::LoadTranslation('ID_CASE_TITLE') . ": @#APP_TITLE<br />";
+            $body .= G::LoadTranslation('ID_CASE_NUMBER') . ": @#APP_NUMBER<br />";
+            $body .= G::LoadTranslation('ID_AUTHOR') . ": $authorName<br /><br />$noteContent";
+            $configNoteNotification['body'] = $body;
 
             $sFrom = G::buildFrom($aConfiguration, $sFrom);
-
             $sSubject = G::replaceDataField( $configNoteNotification['subject'], $aFields );
-
             $sBody = nl2br( G::replaceDataField( $configNoteNotification['body'], $aFields ) );
 
             G::LoadClass( 'spool' );

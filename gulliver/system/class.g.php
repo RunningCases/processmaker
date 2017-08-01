@@ -2970,11 +2970,10 @@ class G
      */
     public function is_utf8 ($string)
     {
-        if (is_array( $string )) {
-            $enc = implode( '', $string );
-            return @! ((ord( $enc[0] ) != 239) && (ord( $enc[1] ) != 187) && (ord( $enc[2] ) != 191));
+        if (preg_match('//u', $string)) {
+            return true;
         } else {
-            return (utf8_encode( utf8_decode( $string ) ) == $string);
+            return false;
         }
     }
 

@@ -844,18 +844,6 @@ class BpmnWorkflow extends Project\Bpmn
                     "TAS_POSY"  => $taskPosY
                 ));
 
-                if ($elementType == "bpmnEvent" &&
-                    in_array($key, array("end-message-event", "start-message-event", "intermediate-catch-message-event"))
-                ) {
-                    if (in_array($key, array("start-message-event", "intermediate-catch-message-event"))) {
-                        //Task - User
-                        //Assign to admin
-                        $task = new \Tasks();
-
-                        $result = $task->assignUser($taskUid, "00000000000000000000000000000001", 1);
-                    }
-                }
-
                 //Element-Task-Relation - Create
                 $elementTaskRelation = new \ProcessMaker\BusinessModel\ElementTaskRelation();
 

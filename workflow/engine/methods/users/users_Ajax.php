@@ -109,9 +109,10 @@ try {
             echo $response;
             break;
         case 'deleteUser':
+            $usrUid = $_POST['USR_UID'];
             //Check if the user was defined in a process permissions
             $oObjectPermission = new ObjectPermission();
-            $aProcess = $oObjectPermission->objectPermissionPerUser($_POST['USR_UID'], 1);
+            $aProcess = $oObjectPermission->objectPermissionPerUser($usrUid, 1);
             if (count($aProcess) > 0) {
                 echo G::json_encode(array(
                     "status" => 'ERROR',
@@ -123,19 +124,19 @@ try {
             //Remove from tasks
             G::LoadClass('tasks');
             $oTasks = new Tasks();
-            $oTasks->ofToAssignUserOfAllTasks($UID);
+            $oTasks->ofToAssignUserOfAllTasks($usrUid);
 
             //Remove from groups
             G::LoadClass('groups');
             $oGroups = new Groups();
-            $oGroups->removeUserOfAllGroups($UID);
+            $oGroups->removeUserOfAllGroups($usrUid);
 
             //Update the table Users
             require_once 'classes/model/Users.php';
-            $RBAC->changeUserStatus($UID, 'CLOSED');
-            $RBAC->updateUser(array('USR_UID' => $UID,'USR_USERNAME' => ''), '');
+            $RBAC->changeUserStatus($usrUid, 'CLOSED');
+            $RBAC->updateUser(array('USR_UID' => $usrUid,'USR_USERNAME' => ''), '');
             $oUser = new Users();
-            $aFields = $oUser->load($UID);
+            $aFields = $oUser->load($usrUid);
             $aFields['USR_STATUS'] = 'CLOSED';
             $userName = $aFields['USR_USERNAME'];
             $aFields['USR_USERNAME'] = '';
@@ -144,16 +145,16 @@ try {
             //Delete Dashboard
             require_once 'classes/model/DashletInstance.php';
             $criteria = new Criteria( 'workflow' );
-            $criteria->add( DashletInstancePeer::DAS_INS_OWNER_UID, $UID );
+            $criteria->add( DashletInstancePeer::DAS_INS_OWNER_UID, $usrUid );
             $criteria->add( DashletInstancePeer::DAS_INS_OWNER_TYPE , 'USER');
             DashletInstancePeer::doDelete( $criteria );
 
             //Delete users as supervisor
             $criteria = new Criteria("workflow");
-            $criteria->add(ProcessUserPeer::USR_UID, $UID, Criteria::EQUAL);
+            $criteria->add(ProcessUserPeer::USR_UID, $usrUid, Criteria::EQUAL);
             $criteria->add(ProcessUserPeer::PU_TYPE, "SUPERVISOR", Criteria::EQUAL);
             ProcessUserPeer::doDelete($criteria);
-            G::auditLog("DeleteUser", "User Name: ". $userName." User ID: (".$UID.") ");
+            G::auditLog("DeleteUser", "User Name: ". $userName." User ID: (".$usrUid.") ");
             break;
         case 'changeUserStatus':
             //When the user change the status: ACTIVE, INACTIVE, VACATION
@@ -317,8 +318,8 @@ try {
             //Get all list of users with the additional information related to department, role, authentication, cases
             $oUser = new \ProcessMaker\BusinessModel\User();
             $oDatasetUsers = $oUser->getAllUsersWithAuthSource($authSource, $filter, $sort, $start, $limit, $dir);
-            $rows = $oUser->getAdditionalInfoFromUsers($oDatasetUsers);
-            echo '{users: ' . G::json_encode($rows['data']) . ', total_users: ' . $rows['totalCount'] . '}';
+            $rows = $oUser->getAdditionalInfoFromUsers($oDatasetUsers["data"]);
+            echo '{users: ' . G::json_encode($rows['data']) . ', total_users: ' . $oDatasetUsers["totalRows"] . '}';
             break;
         case 'updatePageSize':
             G::LoadClass('configuration');

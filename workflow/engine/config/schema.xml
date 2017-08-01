@@ -1689,6 +1689,7 @@
     <column name="APP_DELAY_UID" type="VARCHAR" size="32" required="true" primaryKey="true" default=""/>
     <column name="PRO_UID" type="VARCHAR" size="32" required="true" default="0"/>
     <column name="APP_UID" type="VARCHAR" size="32" required="true" default="0"/>
+    <column name="APP_NUMBER" type="INTEGER" required="false" default="0"/>
     <column name="APP_THREAD_INDEX" type="INTEGER" required="true" default="0"/>
     <column name="APP_DEL_INDEX" type="INTEGER" required="true" default="0"/>
     <column name="APP_TYPE" type="VARCHAR" size="20" required="true" default="0"/>
@@ -1700,6 +1701,17 @@
     <column name="APP_DISABLE_ACTION_USER" type="VARCHAR" size="32" default="0"/>
     <column name="APP_DISABLE_ACTION_DATE" type="TIMESTAMP"/>
     <column name="APP_AUTOMATIC_DISABLED_DATE" type="TIMESTAMP"/>
+    <column name="APP_DELEGATION_USER_ID" type="INTEGER" required="false" default="0"/>
+    <column name="PRO_ID" type="INTEGER" required="false" default="0"/>
+    <index name="INDEX_APP_NUMBER">
+      <index-column name="APP_NUMBER"/>
+    </index>
+    <index name="INDEX_USR_ID">
+      <index-column name="APP_DELEGATION_USER_ID"/>
+    </index>
+    <index name="INDEX_PRO_ID">
+      <index-column name="PRO_ID"/>
+    </index>
     <index name="indexAppDelay">
       <index-column name="PRO_UID"/>
       <index-column name="APP_UID"/>
