@@ -132,7 +132,8 @@ CREATE TABLE `APP_DOCUMENT`
 	`SYNC_WITH_DRIVE` VARCHAR(32) default 'UNSYNCHRONIZED' NOT NULL,
 	`SYNC_PERMISSIONS` MEDIUMTEXT,
 	PRIMARY KEY (`APP_DOC_UID`,`DOC_VERSION`),
-	KEY `indexAppDocument`(`FOLDER_UID`, `APP_DOC_UID`)
+	KEY `indexAppDocument`(`FOLDER_UID`, `APP_DOC_UID`),
+	KEY `indexAppUid`(`APP_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8' COMMENT='Documents in an Application';
 #-----------------------------------------------------------------------------
 #-- APP_MESSAGE
