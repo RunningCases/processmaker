@@ -3,251 +3,236 @@
 namespace ProcessMaker\Plugins\Adapters;
 
 use PMPluginRegistry;
-use ProcessMaker\Plugins\Interfaces\Plugins;
-use ProcessMaker\Plugins\PluginsRegistry;
 
+/**
+ * Adapts the plugin singleton file and converts it to table
+ * Class PluginAdapter
+ * @package ProcessMaker\Plugins\Adapters
+ */
 class PluginAdapter
 {
-    protected $pluginRegistry;
     /**
-     * @var array $aliasNameAttributes
+     * This array is a map to change the old key to the new, corresponding of each class
+     * @var array
      */
-    private $aliasNameAttributes = [
-        'sNamespace' => 'PLUGIN_NAMESPACE',
-        'sDescription' => 'PLUGIN_DESCRIPTION',
-        'sClassName' => 'CLASS_NAME',
-        'sFriendlyName' => 'FRIENDLY_NAME',
-        'sFilename' => 'FILE_NAME',
-        'sPluginFolder' => 'PLUGIN_FOLDER',
-        'iVersion' => 'PLUGIN_VERSION',
-        'enabled' => 'PLUGIN_ENABLE',
-        'bPrivate' => 'PLUGIN_PRIVATE',
-        '_aMenus' => 'PLUGIN_MENUS',
-        '_aFolders' => 'PLUGIN_FOLDERS',
-        '_aTriggers' => 'PLUGIN_TRIGGERS',
-        '_aPmFunctions' => 'PLUGIN_PM_FUNCTIONS',
-        '_aRedirectLogin' => 'PLUGIN_REDIRECT_LOGIN',
-        '_aSteps' => 'PLUGIN_STEPS',
-        '_aCSSStyleSheets' => 'PLUGIN_CSS',
-        '_aJavascripts' => 'PLUGIN_JS',
-        '_restServices' => 'PLUGIN_REST_SERVICE',
+    private $keyNames = [
+        'sNamespace' => 'Namespace',
+        //MenuDetail
+        'sMenuId' => 'MenuId',
+        'sFilename' => 'Filename',
+        //FolderDetail
+        'sFolderId' => 'FolderId',
+        'sFolderName' => 'FolderName',
+        //TriggerDetail
+        'sTriggerId' => 'TriggerId',
+        'sTriggerName' => 'TriggerName',
+        //RedirectDetail
+        'sRoleCode' => 'RoleCode',
+        'sPathMethod' => 'PathMethod',
+        //StepDetail
+        'sStepId' => 'StepId',
+        'sStepName' => 'StepName',
+        'sStepTitle' => 'StepTitle',
+        'sSetupStepPage' => 'SetupStepPage',
+        //CssFile->_aCSSStyleSheets
+        'sCssFile' => 'CssFile',
+        //ToolbarDetail->_aToolbarFiles
+        'sToolbarId' => 'ToolbarId',
+        //CaseSchedulerPlugin->_aCaseSchedulerPlugin
+        'sActionId' => 'ActionId',
+        'sActionForm' => 'ActionForm',
+        'sActionSave' => 'ActionSave',
+        'sActionExecute' => 'ActionExecute',
+        'sActionGetFields' => 'ActionGetFields',
+        //TaskExtendedProperty->_aTaskExtendedProperties
+        //DashboardPage->_aDashboardPages
+        'sPage' => 'Page',
+        'sName' => 'Name',
+        'sIcon' => 'Icon',
+        //CronFile->_aCronFiles
+        'namespace' => 'Namespace',
+        'cronFile' => 'CronFile',
+        //ImportCallBack->_aImportProcessCallbackFile
+        //OpenReassignCallback->_aOpenReassignCallback
+        'callBackFile' => 'CallBackFile',
+        //JsFile->_aJavascripts
+        'sCoreJsFile' => 'CoreJsFile',
+        'pluginJsFile' => 'PluginJsFile',
     ];
 
     /**
-     * @param PMPluginRegistry|PluginsRegistry $pluginsSingleton
+     * Map the fields of the table with their type
+     * @var array $attributes
      */
-    public function save($pluginsSingleton)
-    {
-        $this->pluginRegistry = \G::json_decode(\G::json_encode($pluginsSingleton->iterateVisible()));
-        foreach ($this->pluginRegistry->_aPluginDetails as $nameSpace => $value) {
-            $this->savePluginMigrate($nameSpace, $this->pluginRegistry);
-        }
-    }
-
-    public function savePluginMigrate($sNamespace, $pluginRegistry)
-    {
-        $structurePlugin = $this->getOldPluginStructure($sNamespace, $pluginRegistry);
-        $plugin = $this->diffFieldTable($structurePlugin);
-        if ($plugin['PLUGIN_NAMESPACE']) {
-            $fieldPlugin = \PluginsRegistry::loadOrCreateIfNotExists(md5($plugin['PLUGIN_NAMESPACE']), $plugin);
-            \PluginsRegistry::update($fieldPlugin);
-        }
-    }
-
-    public function savePlugin($sNamespace, $pluginRegistry)
-    {
-        $structurePlugin = $this->getPluginStructure($sNamespace, $pluginRegistry);
-        $plugin = $this->diffFieldTable($structurePlugin);
-        if ($plugin['PLUGIN_NAMESPACE']) {
-            $fieldPlugin = \PluginsRegistry::loadOrCreateIfNotExists(md5($plugin['PLUGIN_NAMESPACE']), $plugin);
-            \PluginsRegistry::update($fieldPlugin);
-        }
-    }
+    private $attributes = [
+        'sNamespace' => ['name' => 'PLUGIN_NAMESPACE', 'type' => 'string'],
+        'sDescription' => ['name' => 'PLUGIN_DESCRIPTION', 'type' => 'string'],
+        'sClassName' => ['name' => 'PLUGIN_CLASS_NAME', 'type' => 'string'],
+        'sFriendlyName' => ['name' => 'PLUGIN_FRIENDLY_NAME', 'type' => 'string'],
+        'sFilename' => ['name' => 'PLUGIN_FILE', 'type' => 'string'],
+        'sPluginFolder' => ['name' => 'PLUGIN_FOLDER', 'type' => 'string'],
+        'sSetupPage' => ['name' => 'PLUGIN_SETUP_PAGE', 'type' => 'string'],
+        'aWorkspaces' => ['name' => 'PLUGIN_WORKSPACES', 'type' => 'array'],
+        'sCompanyLogo' => ['name' => 'PLUGIN_COMPANY_LOGO', 'type' => 'string'],
+        'iVersion' => ['name' => 'PLUGIN_VERSION', 'type' => 'int'],
+        'enabled' => ['name' => 'PLUGIN_ENABLE', 'type' => 'bool'],
+        'bPrivate' => ['name' => 'PLUGIN_PRIVATE', 'type' => 'bool'],
+        '_aMenus' => ['name' => 'PLUGIN_MENUS', 'type' => 'array'],
+        '_aFolders' => ['name' => 'PLUGIN_FOLDERS', 'type' => 'array'],
+        '_aTriggers' => ['name' => 'PLUGIN_TRIGGERS', 'type' => 'array'],
+        '_aPmFunctions' => ['name' => 'PLUGIN_PM_FUNCTIONS', 'type' => 'array'],
+        '_aRedirectLogin' => ['name' => 'PLUGIN_REDIRECT_LOGIN', 'type' => 'array'],
+        '_aSteps' => ['name' => 'PLUGIN_STEPS', 'type' => 'array'],
+        '_aCSSStyleSheets' => ['name' => 'PLUGIN_CSS', 'type' => 'array'],
+        '_aCss' => ['name' => 'PLUGIN_CSS', 'type' => 'array'],
+        '_aJavascripts' => ['name' => 'PLUGIN_JS', 'type' => 'array'],
+        '_aJs' => ['name' => 'PLUGIN_JS', 'type' => 'array'],
+        '_restServices' => ['name' => 'PLUGIN_REST_SERVICE', 'type' => 'array'],
+    ];
 
     /**
-     * @param string $nameSpace
-     * @param object $pluginsRegistry
+     * Data of the plugin singleton in array structure
+     * @var array $PMPluginRegistry
+     */
+    private $PMPluginRegistry;
+
+    /**
+     * Returns the structure of the table in attributes
      * @return array
      */
-    public function getOldPluginStructure($nameSpace, $pluginsRegistry)
+    public function getAttributes()
     {
-        $pluginRegistry = clone $pluginsRegistry;
-        $structurePlugins =  $pluginRegistry->_aPluginDetails->{$nameSpace};
-        unset($pluginRegistry->_aPluginDetails);
-        $aPlugins = isset($pluginRegistry->_aPlugins->{$nameSpace}) ? $pluginRegistry->_aPlugins->{$nameSpace} : [];
-        $structurePlugins = array_merge((array)$structurePlugins, (array)$aPlugins);
-        unset($pluginRegistry->_aPlugins);
-        foreach ($pluginRegistry as $propertyName => $propertyValue) {
-            foreach ($propertyValue as $key => $plugin) {
-                if (is_object($plugin) &&
-                    (
-                        (property_exists($plugin, 'sNamespace') && $plugin->sNamespace == $nameSpace) ||
-                        (!is_int($key) && $key == $nameSpace)
-                    )
-                ) {
-                    $structurePlugins[$propertyName][] = $plugin;
-                } elseif (is_object($plugin) &&
-                    property_exists($plugin, 'pluginName') &&
-                    $plugin->pluginName == $nameSpace
-                ) {
-                    $structurePlugins[$propertyName][] = $plugin;
-                } elseif (is_string($plugin) && $plugin == $nameSpace) {
-                    $structurePlugins[$propertyName][] = $plugin;
-                }
-            }
-        }
-        return $structurePlugins;
+        return $this->attributes;
     }
 
     /**
-     * @param string $nameSpace
-     * @param object $pluginsRegistry
-     * @return array
+     * Migrate the singleton plugin to tables
+     * @param PMPluginRegistry $PMPluginsSingleton
      */
-    public function getPluginStructure($nameSpace, $pluginsRegistry)
+    public function migrate($PMPluginsSingleton)
     {
-        $pluginRegistry = clone $pluginsRegistry;
-        $structurePlugins =  $pluginRegistry->_aPluginDetails[$nameSpace];
-        unset($pluginRegistry->_aPluginDetails);
-        $aPlugins = isset($pluginRegistry->_aPlugins[$nameSpace]) ? $pluginRegistry->_aPlugins[$nameSpace] : [];
-        $structurePlugins = array_merge((array)$structurePlugins, get_object_vars($aPlugins));
-        unset($pluginRegistry->_aPlugins);
-        foreach ($pluginRegistry as $propertyName => $propertyValue) {
-            foreach ($propertyValue as $key => $plugin) {
-                if (is_object($plugin) &&
-                    (
-                        (property_exists($plugin, 'sNamespace') && $plugin->sNamespace == $nameSpace) ||
-                        (!is_int($key) && $key == $nameSpace)
-                    )
-                ) {
-                    $structurePlugins[$propertyName][] = $plugin;
-                } elseif (is_object($plugin) &&
-                    property_exists($plugin, 'pluginName') &&
-                    $plugin->pluginName == $nameSpace
-                ) {
-                    $structurePlugins[$propertyName][] = $plugin;
-                } elseif (is_array($plugin) && $key == $nameSpace) {
-                    $structurePlugins[$propertyName][$key] = $plugin;
-                } elseif (is_bool($plugin) && $key == $nameSpace) {
-                    $structurePlugins[$propertyName][$key] = $plugin;
-                } elseif (is_string($plugin) && $plugin == $nameSpace) {
-                    $structurePlugins[$propertyName][] = $plugin;
-                }
-            }
+        $this->PMPluginRegistry = \G::json_decode(\G::json_encode($PMPluginsSingleton->getAttributes()), true);
+        $this->parserNameKey();
+        foreach ($this->PMPluginRegistry['_aPluginDetails'] as $nameSpace => $value) {
+            $this->saveInTable($nameSpace, $this->PMPluginRegistry);
         }
-        return $structurePlugins;
     }
 
     /**
-     * @param $plugin
-     * @return array
-     */
-    public function diffFieldTable($plugin)
-    {
-        $fields = [];
-        $map = \PluginsRegistryPeer::getTableMap();
-        $columns = $map->getColumns();
-        $attributes = array_diff_key((array)$plugin, $this->aliasNameAttributes);
-        $fieldsTMP = array_intersect_key((array)$plugin, $this->aliasNameAttributes);
-        foreach ($this->aliasNameAttributes as $name => $nameTable) {
-            if (array_key_exists($name, $fieldsTMP)) {
-                switch (gettype($fieldsTMP[$name])) {
-                    case 'string':
-                        $valueField = array_key_exists($name, $fieldsTMP) ? $fieldsTMP[$name] : '';
-                        break;
-                    case 'array':
-                        $valueField = array_key_exists($name, $fieldsTMP) ? $fieldsTMP[$name] : [];
-                        $valueField = \G::json_encode($valueField);
-                        break;
-                    case 'integer':
-                        $valueField = array_key_exists($name, $fieldsTMP) ? $fieldsTMP[$name] : 0;
-                        break;
-                    case 'boolean':
-                        $valueField = array_key_exists($name, $fieldsTMP) ? ($fieldsTMP[$name] ? true : false ): false;
-                        break;
-                    case 'NULL':
-                    default:
-                        $valueField = array_key_exists($name, $fieldsTMP) ?
-                            $fieldsTMP[$name] :
-                            $this->getDefaultValueType($columns[$nameTable]->getType());
-                        break;
-                }
-            } else {
-                $valueField = $this->getDefaultValueType($columns[$nameTable]->getType());
-            }
-            $fields[$nameTable] = $valueField;
-        }
-        $fields['PLUGIN_ATTRIBUTES'] = \G::json_encode($attributes);
-        return $fields;
-    }
-
-    public function getDefaultValueType($var)
-    {
-        switch ($var) {
-            case 'string':
-                $response = '';
-                break;
-            case 'int':
-                $response = 0;
-                break;
-            case 'boolean':
-                $response = false;
-                break;
-            default:
-                $response = '';
-                break;
-        }
-        return $response;
-    }
-
-    /**
-     * @param PluginsRegistry $oPlugins
+     * Change to new key property $keyNames
      * @return mixed
      */
-    public function getPluginsDefinition($oPlugins)
+    private function parserNameKey()
     {
-        $oldStructure = $this->convertArrayStructure();
-        $oPlugins->setPlugins($oldStructure);
-        $oPlugins = $this->populateAttributes($oPlugins, $oldStructure);
-        return $oPlugins;
-    }
-
-    public function convertArrayStructure()
-    {
-        $invertAlias = array_flip($this->aliasNameAttributes);
-        $plugins = \PluginsRegistry::loadPlugins();
-        $pluginsRegistry = [];
-        foreach ($plugins as $index => $plugin) {
-            $namePlugin = $plugin['PLUGIN_NAMESPACE'];
-            $pluginsRegistry[$namePlugin] = new \stdClass();
-            array_walk($plugin, function ($value, $key) use ($invertAlias, &$pluginsRegistry, $namePlugin) {
-                if (array_key_exists($key, $invertAlias)) {
-                    $pluginsRegistry[$namePlugin]->{$invertAlias[$key]} = !is_null($data = \G::json_decode($value)) ?
-                        $data :
-                        (!empty($value) ? $value : []);
-                }
-            });
-            $moreAttributes = \G::json_decode($plugin['PLUGIN_ATTRIBUTES']);
-            $pluginsRegistry[$namePlugin] = Plugins::setter(array_merge(
-                (array)$pluginsRegistry[$namePlugin],
-                $moreAttributes ? (array)$moreAttributes : []
-            ));
-        }
-        return $pluginsRegistry;
-    }
-
-    public function populateAttributes($oPlugins, $structures)
-    {
-        foreach ($structures as $namePlugin => $plugin) {
-            foreach ($plugin as $nameAttribute => $detail) {
-                if ($detail &&
-                    property_exists($oPlugins, $nameAttribute) &&
-                    $plugin->_aPluginDetails[$namePlugin]->enabled
-                ) {
-                    $oPlugins->{$nameAttribute} = array_merge($oPlugins->{$nameAttribute}, (array)$detail);
+        $aPluginDetails = $this->PMPluginRegistry['_aPluginDetails'];
+        unset($this->PMPluginRegistry['_aPluginDetails']);
+        $aPlugins = $this->PMPluginRegistry['_aPlugins'];
+        unset($this->PMPluginRegistry['_aPlugins']);
+        foreach ($this->PMPluginRegistry as $propertyKey => $propertyValue) {
+            foreach ($propertyValue as $attKey => $attributes) {
+                if (is_array($attributes)) {
+                    foreach ($attributes as $index => $attribute) {
+                        if (array_key_exists($index, $this->keyNames)) {
+                            $newKey = $this->keyNames[$index];
+                            $value = $this->PMPluginRegistry[$propertyKey][$attKey][$index];
+                            $this->PMPluginRegistry[$propertyKey][$attKey][$newKey] = $value;
+                            unset($this->PMPluginRegistry[$propertyKey][$attKey][$index]);
+                        }
+                    }
                 }
             }
         }
-        return $oPlugins;
+        $this->PMPluginRegistry['_aPluginDetails'] = $aPluginDetails;
+        $this->PMPluginRegistry['_aPlugins'] = $aPlugins;
+        return $this->PMPluginRegistry;
+    }
+
+    /**
+     * Save plugin in table PLUGINS_REGISTRY
+     * @param string $Namespace Name of plugin
+     * @param array $PMPluginRegistry
+     */
+    public function saveInTable($Namespace, $PMPluginRegistry)
+    {
+        $newStructurePlugin = $this->getAllAttributes($Namespace, $PMPluginRegistry);
+        $plugin = $this->convertFieldTable($newStructurePlugin);
+        if ($plugin['PLUGIN_NAMESPACE'] && $plugin['PLUGIN_CLASS_NAME'] && $plugin['PLUGIN_FILE']) {
+            $fieldPlugin = \PluginsRegistry::loadOrCreateIfNotExists(md5($plugin['PLUGIN_NAMESPACE']), $plugin);
+            \PluginsRegistry::update($fieldPlugin);
+        }
+    }
+
+    /**
+     * Extracts all attributes corresponding to a plugin
+     * @param string $Namespace Name Plugin
+     * @param array $PMPluginRegistry
+     * @return array
+     */
+    private function getAllAttributes($Namespace, $PMPluginRegistry)
+    {
+        $PluginDetails = $PMPluginRegistry['_aPluginDetails'][$Namespace];
+        unset($PMPluginRegistry['_aPluginDetails']);
+        $Plugin = isset($PMPluginRegistry['_aPlugins'][$Namespace]) ? $PMPluginRegistry['_aPlugins'][$Namespace] : [];
+        unset($PMPluginRegistry['_aPlugins']);
+        $newStructurePlugin = array_merge($PluginDetails, $Plugin);
+        foreach ($PMPluginRegistry as $propertyName => $propertyValue) {
+            foreach ($propertyValue as $key => $plugin) {
+                if (is_array($plugin) &&
+                    ((array_key_exists('Namespace', $plugin) && $plugin['Namespace'] == $Namespace) ||
+                        (!is_int($key) && $key == $Namespace))
+                ) {
+                    $newStructurePlugin[$propertyName][] = $plugin;
+                } elseif (is_array($plugin) &&
+                    array_key_exists('pluginName', $plugin) &&
+                    $plugin['pluginName'] == $Namespace
+                ) {
+                    $newStructurePlugin[$propertyName][] = $plugin;
+                } elseif (is_string($plugin) && $plugin == $Namespace) {
+                    $newStructurePlugin[$propertyName][] = $plugin;
+                }
+            }
+        }
+        return $newStructurePlugin;
+    }
+
+    /**
+     * Convert de attributes to field of table PLUGINS_REGISTRY
+     * @param array $plugin
+     * @return array
+     */
+    private function convertFieldTable($plugin)
+    {
+        $fields = [];
+        $extraAttributes = array_diff_key($plugin, $this->attributes);
+        $fieldsInTable = array_intersect_key($plugin, $this->attributes);
+        foreach ($this->attributes as $name => $property) {
+            switch ($property['type']) {
+                case 'string':
+                    $valueField = array_key_exists($name, $fieldsInTable) ? $fieldsInTable[$name] : '';
+                    break;
+                case 'array':
+                    $valueField = (array_key_exists($name, $fieldsInTable) && $fieldsInTable[$name]) ?
+                        $fieldsInTable[$name] :
+                        [];
+                    $valueField = \G::json_encode($valueField);
+                    break;
+                case 'int':
+                    $valueField = array_key_exists($name, $fieldsInTable) ? $fieldsInTable[$name] : 0;
+                    break;
+                case 'bool':
+                    $valueField = array_key_exists($name, $fieldsInTable) ?
+                        ($fieldsInTable[$name] ? true : false) :
+                        false;
+                    break;
+                default:
+                    $valueField = array_key_exists($name, $fieldsInTable) ?
+                        $fieldsInTable[$name] :
+                        [];
+                    break;
+            }
+            $fields[$property['name']] = $valueField;
+        }
+        $fields['PLUGIN_ATTRIBUTES'] = \G::json_encode($extraAttributes);
+        return $fields;
     }
 }

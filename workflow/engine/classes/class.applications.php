@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 class Applications
 {
     /**
@@ -1133,12 +1136,12 @@ class Applications
         $caseSteps = $step->getAllCaseSteps( $proUid, $tasUid, $appUid );
 
         //getting externals steps
-        $oPluginRegistry = &PMPluginRegistry::getSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         $eSteps = $oPluginRegistry->getSteps();
         $externalSteps = array ();
-
+        /** @var \ProcessMaker\Plugins\Interfaces\StepDetail $externalStep */
         foreach ($eSteps as $externalStep) {
-            $externalSteps[$externalStep->sStepId] = $externalStep;
+            $externalSteps[$externalStep->getStepId()] = $externalStep;
         }
 
         //getting the case record
@@ -1195,11 +1198,11 @@ class Applications
                     break;
                 case 'EXTERNAL':
                     $stepTitle = 'unknown ' . $caseStep->getStepUidObj();
-                    $oPluginRegistry = PMPluginRegistry::getSingleton();
+                    $oPluginRegistry = PluginRegistry::loadSingleton();
                     $externalStep = $externalSteps[$caseStep->getStepUidObj()];
-                    $stepItem['id'] = $externalStep->sStepId;
-                    $stepItem['title'] = $externalStep->sStepTitle;
-                    $stepItem['url'] = "cases/cases_Step?UID={$externalStep->sStepId}&TYPE=EXTERNAL&POSITION=$stepPosition&ACTION=EDIT";
+                    $stepItem['id'] = $externalStep->getStepId();
+                    $stepItem['title'] = $externalStep->getStepTitle();
+                    $stepItem['url'] = "cases/cases_Step?UID={$externalStep->getStepId()}&TYPE=EXTERNAL&POSITION=$stepPosition&ACTION=EDIT";
                     break;
             }
 

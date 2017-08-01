@@ -42,7 +42,7 @@ $filter = new InputFilter();
 $pluginName = $_REQUEST['pluginUid'];
 $pluginName = $filter->xssFilterHard($pluginName);
 
-$pluginRegistry =& ProcessMaker\Plugins\PluginsRegistry::loadSingleton();
+$pluginRegistry =& ProcessMaker\Plugins\PluginRegistry::loadSingleton();
 $pluginRegistry->uninstallPlugin($pluginName);
 
 G::auditLog('RemovePlugin','Plugin Name: '.$pluginName);

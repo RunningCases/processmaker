@@ -1098,6 +1098,7 @@ function run_migrate_indexing_acv($args, $opts) {
 function run_migrate_plugin($args, $opts) {
     $workspaces = get_workspaces_from_args($args);
     //Check if the command is executed by a specific workspace
+    /** @var workspaceTools $workspace */
     if (count($workspaces) === 1) {
         $workspace = array_shift($workspaces);
         print_r('Regenerating Singleton in: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
@@ -1106,7 +1107,6 @@ function run_migrate_plugin($args, $opts) {
     } else {
         CLI::logging("> Migrating and populating data...\n");
         $start = microtime(true);
-        /** @var workspaceTools $workspace */
         foreach ($workspaces as $workspace) {
             passthru('./processmaker migrate-plugins-singleton-information '.$workspace->name);
         }

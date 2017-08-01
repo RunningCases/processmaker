@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 class caseSchedulerProxy extends HttpProxyController
 {
 
@@ -507,11 +509,11 @@ class caseSchedulerProxy extends HttpProxyController
 
         if ((isset( $_POST['form']['CASE_SH_PLUGIN_UID'] )) && ($_POST['form']['CASE_SH_PLUGIN_UID'] != "")) {
             $params = explode( "--", $_REQUEST['form']['CASE_SH_PLUGIN_UID'] );
-            $oPluginRegistry = & PMPluginRegistry::getSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
             $activePluginsForCaseScheduler = $oPluginRegistry->getCaseSchedulerPlugins();
-
-            foreach ($activePluginsForCaseScheduler as $key => $caseSchedulerPluginDetail) {
-                if (($caseSchedulerPluginDetail->sNamespace == $params[0]) && ($caseSchedulerPluginDetail->sActionId == $params[1])) {
+            /** @var \ProcessMaker\Plugins\Interfaces\CaseSchedulerPlugin $caseSchedulerPluginDetail */
+            foreach ($activePluginsForCaseScheduler as $caseSchedulerPluginDetail) {
+                if (($caseSchedulerPluginDetail->equalNamespaceTo($params[0])) && ($caseSchedulerPluginDetail->equalActionIdTo($params[1]))) {
                     $caseSchedulerSelected = $caseSchedulerPluginDetail;
                 }
             }
@@ -519,7 +521,7 @@ class caseSchedulerProxy extends HttpProxyController
                 //Save the form
                 $oData = $_POST['pluginFields'];
                 $oData['SCH_UID'] = $aData['SCH_UID'];
-                $oPluginRegistry->executeMethod( $caseSchedulerPluginDetail->sNamespace, $caseSchedulerPluginDetail->sActionSave, $oData );
+                $oPluginRegistry->executeMethod( $caseSchedulerPluginDetail->getNamespace(), $caseSchedulerPluginDetail->getActionSave(), $oData );
             }
         }
 

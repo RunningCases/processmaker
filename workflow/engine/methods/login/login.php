@@ -109,7 +109,7 @@ if (isset ($_SESSION['USER_LOGGED'])) {
     }
 } else {
     // Execute SSO trigger
-    $pluginRegistry =& PMPluginRegistry::getSingleton();
+    $pluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
     if (defined('PM_SINGLE_SIGN_ON')) {
         /*----------------------------------********---------------------------------*/
         $licensedFeatures = & PMLicensedFeatures::getSingleton();

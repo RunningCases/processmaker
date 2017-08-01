@@ -73,13 +73,19 @@ class PluginsRegistryMapBuilder
 
         $tMap->addColumn('PLUGIN_DESCRIPTION', 'PluginDescription', 'string', CreoleTypes::VARCHAR, false, 200);
 
-        $tMap->addColumn('CLASS_NAME', 'ClassName', 'string', CreoleTypes::VARCHAR, true, 100);
+        $tMap->addColumn('PLUGIN_CLASS_NAME', 'PluginClassName', 'string', CreoleTypes::VARCHAR, true, 100);
 
-        $tMap->addColumn('FRIENDLY_NAME', 'FriendlyName', 'string', CreoleTypes::VARCHAR, false, 150);
+        $tMap->addColumn('PLUGIN_FRIENDLY_NAME', 'PluginFriendlyName', 'string', CreoleTypes::VARCHAR, false, 150);
 
-        $tMap->addColumn('FILE_NAME', 'FileName', 'string', CreoleTypes::VARCHAR, true, 250);
+        $tMap->addColumn('PLUGIN_FILE', 'PluginFile', 'string', CreoleTypes::VARCHAR, true, 250);
 
         $tMap->addColumn('PLUGIN_FOLDER', 'PluginFolder', 'string', CreoleTypes::VARCHAR, true, 100);
+
+        $tMap->addColumn('PLUGIN_SETUP_PAGE', 'PluginSetupPage', 'string', CreoleTypes::VARCHAR, false, 100);
+
+        $tMap->addColumn('PLUGIN_COMPANY_LOGO', 'PluginCompanyLogo', 'string', CreoleTypes::VARCHAR, false, 100);
+
+        $tMap->addColumn('PLUGIN_WORKSPACES', 'PluginWorkspaces', 'string', CreoleTypes::VARCHAR, false, 100);
 
         $tMap->addColumn('PLUGIN_VERSION', 'PluginVersion', 'string', CreoleTypes::VARCHAR, false, 50);
 

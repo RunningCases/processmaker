@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 unset($_SESSION['APPLICATION']);
 
 //get the action from GET or POST, default is todo
@@ -194,12 +197,13 @@ $oHeadPublisher->assign('extJsViewState', $oHeadPublisher->getExtJsViewState());
 $oHeadPublisher->assign('isIE', Bootstrap::isIE());
 $oHeadPublisher->assign('__OPEN_APPLICATION_UID__', $openApplicationUid);
 
-$oPluginRegistry =& PMPluginRegistry::getSingleton();
+$oPluginRegistry = PluginRegistry::loadSingleton();
 $fromPlugin = $oPluginRegistry->getOpenReassignCallback();
 $jsFunction = false;
 if(sizeof($fromPlugin)) {
-    foreach($fromPlugin as $key => $jsFile) {
-        $jsFile = $jsFile->callBackFile;
+    /** @var \ProcessMaker\Plugins\Interfaces\OpenReassignCallback $jsFile */
+    foreach($fromPlugin as $jsFile) {
+        $jsFile = $jsFile->getCallBackFile();
         if(is_file($jsFile)) {
             $jsFile = file_get_contents($jsFile);
             if(!empty($jsFile)) {

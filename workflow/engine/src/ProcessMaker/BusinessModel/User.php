@@ -1,6 +1,7 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 use \G;
+use ProcessMaker\Plugins\PluginRegistry;
 
 class User
 {
@@ -872,7 +873,7 @@ class User
         require_once (PATH_RBAC_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "model" . PATH_SEP . "RbacUsers.php");
         $this->userObj = new \RbacUsers();
         if (class_exists('PMPluginRegistry')) {
-            $pluginRegistry = & \PMPluginRegistry::getSingleton();
+            $pluginRegistry = PluginRegistry::loadSingleton();
             if ($pluginRegistry->existsTrigger(PM_BEFORE_CREATE_USER)) {
                 try {
                     $pluginRegistry->executeTriggers(PM_BEFORE_CREATE_USER, null);

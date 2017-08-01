@@ -28,7 +28,7 @@
   $c->add ( StepPeer::TAS_UID, $_SESSION['TASK'] );
   $c->addAscendingOrderByColumn ( StepPeer::STEP_POSITION );
 
-  $oPluginRegistry = &PMPluginRegistry::getSingleton();
+  $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
   $externalSteps   = $oPluginRegistry->getSteps();
 
   $oTree           = new Tree();
@@ -71,10 +71,11 @@
       case 'EXTERNAL':
         $stepTitle          = 'unknown ' . $aRow->getStepUidObj();
         $oPluginRegistry = &PMPluginRegistry::getSingleton ();
-        foreach ( $externalSteps as $key=>$val ) {
-          if ( $val->sStepId == $aRow->getStepUidObj() ) {
-            $stepTitle = $val->sStepTitle; //default title
-            $sNamespace = $val->sNamespace;
+        /** @var \ProcessMaker\Plugins\Interfaces\StepDetail $val */
+          foreach ( $externalSteps as $val ) {
+            if ($val->equalStepIdTo($aRow->getStepUidObj())) {
+            $stepTitle = $val->getStepTitle(); //default title
+            $sNamespace = $val->getNamespace();
             $oPlugin =& $oPluginRegistry->getPlugin($sNamespace);
             $classFile = PATH_PLUGINS . $oPlugin->sNamespace . PATH_SEP . 'class.' . $oPlugin->sNamespace .'.php';
             if ( file_exists ( $classFile ) ) {

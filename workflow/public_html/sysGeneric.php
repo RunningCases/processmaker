@@ -680,7 +680,7 @@ if (defined( 'DEBUG_SQL_LOG' ) && DEBUG_SQL_LOG) {
 
 //here we are loading all plugins registered
 //the singleton has a list of enabled plugins
-$oPluginRegistry = &ProcessMaker\Plugins\PluginsRegistry::loadSingleton();
+$oPluginRegistry = ProcessMaker\Plugins\PluginRegistry::loadSingleton();
 $attributes = $oPluginRegistry->getAttributes();
 Bootstrap::LoadTranslationPlugins( defined( 'SYS_LANG' ) ? SYS_LANG : "en" , $attributes);
 

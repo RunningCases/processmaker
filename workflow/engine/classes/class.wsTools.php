@@ -6,6 +6,8 @@
  * @author Alexandre Rosenfeld
  */
 
+use ProcessMaker\Plugins\Adapters\PluginAdapter;
+
 /**
  * class workspaceTools
  *
@@ -1892,8 +1894,6 @@ class workspaceTools
         }
 
         if ($swv == 1) {
-
-
             //Extract
             $tar = new Archive_Tar($f);
 
@@ -2862,7 +2862,6 @@ class workspaceTools
     public function checkRbacPermissions(){
         CLI::logging("-> Verifying roles permissions in RBAC \n");
         //Update table RBAC permissions
-
         $RBAC = &RBAC::getSingleton();
         $RBAC->initRBAC();
         $result = $RBAC->verifyPermissions();
@@ -3887,15 +3886,15 @@ class workspaceTools
         if (!$bExist = $conf->exists('MIGRATED_PLUGIN', 'singleton')) {
             $pathSingleton = PATH_DATA . 'sites' . PATH_SEP . $workspace . PATH_SEP . 'plugin.singleton';
             $oPluginRegistry = unserialize(file_get_contents($pathSingleton));
-            $pluginAdapter = new \ProcessMaker\Plugins\Adapters\PluginAdapter();
-            $pluginAdapter->save($oPluginRegistry);
-            $data["CFG_UID"] = 'MIGRATED_PLUGIN';
-            $data["OBJ_UID"] = 'singleton';
-            $data["CFG_VALUE"] = 'true';
-            $data["PRO_UID"] = '';
-            $data["USR_UID"] = '';
-            $data["APP_UID"] = '';
-            $conf->create($data);
+            $pluginAdapter = new PluginAdapter();
+            $pluginAdapter->migrate($oPluginRegistry);
+//            $data["CFG_UID"] = 'MIGRATED_PLUGIN';
+//            $data["OBJ_UID"] = 'singleton';
+//            $data["CFG_VALUE"] = 'true';
+//            $data["PRO_UID"] = '';
+//            $data["USR_UID"] = '';
+//            $data["APP_UID"] = '';
+//            $conf->create($data);
         }
     }
 }

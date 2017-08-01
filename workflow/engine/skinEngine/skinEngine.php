@@ -7,6 +7,8 @@
  * @author Hugo Loza
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 define('SE_LAYOUT_NOT_FOUND', 6);
 
 class SkinEngine
@@ -450,7 +452,7 @@ class SkinEngine
       $smarty->assign('tpl_submenu', PATH_TEMPLATE . 'submenu.html');
 
       if (class_exists('PMPluginRegistry')) {
-        $oPluginRegistry = &PMPluginRegistry::getSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         $sCompanyLogo = $oPluginRegistry->getCompanyLogo('/images/processmaker.logo.jpg');
       }
       else {
@@ -534,7 +536,7 @@ class SkinEngine
       $smarty->assign('tpl_submenu', PATH_TEMPLATE . 'submenu.html' );
 
       if (class_exists('PMPluginRegistry')) {
-        $oPluginRegistry = &PMPluginRegistry::getSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         $sCompanyLogo = $oPluginRegistry->getCompanyLogo ( '/images/processmaker.logo.jpg' );
       }
       else
@@ -791,7 +793,7 @@ class SkinEngine
         }
       }
       if (class_exists('PMPluginRegistry') && defined("SYS_SYS")) {
-        $oPluginRegistry = &PMPluginRegistry::getSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         if ( isset($sFotoSelect) && $sFotoSelect!='' && !(strcmp($sWspaceSelect, SYS_SYS)) ){
           $sCompanyLogo = $oPluginRegistry->getCompanyLogo($sFotoSelect);
           $sCompanyLogo = "/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/setup/showLogoFile.php?id=".base64_encode($sCompanyLogo);

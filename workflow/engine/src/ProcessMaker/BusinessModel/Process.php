@@ -794,16 +794,6 @@ class Process
         switch ($option) {
             case "CREATE":
                 $processUid = $process->create($arrayProcessData, false);
-
-                //Call plugins
-                //$arrayData = array(
-                //    "PRO_UID"      => $processUid,
-                //    "PRO_TEMPLATE" => (isset($arrayProcessData["PRO_TEMPLATE"]) && $arrayProcessData["PRO_TEMPLATE"] != "")? $arrayProcessData["PRO_TEMPLATE"] : "",
-                //    "PROCESSMAP"   => $this //?
-                //);
-                //
-                //$oPluginRegistry = &PMPluginRegistry::getSingleton();
-                //$oPluginRegistry->executeTriggers(PM_NEW_PROCESS_SAVE, $arrayData);
                 break;
             case "UPDATE":
                 $result = $process->update($arrayProcessData);

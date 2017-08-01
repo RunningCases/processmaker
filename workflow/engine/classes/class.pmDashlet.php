@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 require_once 'classes/interfaces/dashletInterface.php';
 require_once 'classes/model/Dashlet.php';
 require_once 'classes/model/DashletInstance.php';
@@ -361,7 +363,7 @@ class PMDashlet extends DashletInstance implements DashletInterface
 
         //---- verify the name plugin of the class
         $pluginName = '';
-        $oPluginRegistry = &PMPluginRegistry::getSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         $pluginsDashlets = $oPluginRegistry->getDashlets();
 
         foreach ($pluginsDashlets as $pluginDashlet) {
@@ -381,12 +383,8 @@ class PMDashlet extends DashletInstance implements DashletInterface
                     if (strpos( $file, '.php', 1 ) && is_file( PATH_PLUGINS . $file )) {
                         include_once (PATH_PLUGINS . $file);
                         $pluginDetail = $oPluginRegistry->getPluginDetails( $file );
-                        if ($pluginDetail->sNamespace == $pluginName) {
-                            if ($pluginDetail->enabled == '1') {
-                                return true;
-                            } else {
-                                return false;
-                            }
+                        if ($pluginDetail->getNamespace() == $pluginName) {
+                            return $pluginDetail->isEnabled();
                         }
                     }
                 }
@@ -398,7 +396,7 @@ class PMDashlet extends DashletInstance implements DashletInterface
 
     private static function setIncludePath ()
     {
-        $oPluginRegistry = &PMPluginRegistry::getSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         $pluginsDashlets = $oPluginRegistry->getDashlets();
         foreach ($pluginsDashlets as $pluginDashlet) {
             set_include_path( get_include_path() . PATH_SEPARATOR . PATH_PLUGINS . $pluginDashlet . PATH_SEP );

@@ -138,7 +138,7 @@ if (isset( $_FILES ) && $_FILES["ATTACH_FILE"]["error"] == 0) {
 
 
         //Plugin Hook PM_UPLOAD_DOCUMENT for upload document
-        $oPluginRegistry = &PMPluginRegistry::getSingleton();
+        $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
 
         if ($oPluginRegistry->existsTrigger( PM_UPLOAD_DOCUMENT ) && class_exists( "uploadDocumentData" )) {
             $triggerDetail = $oPluginRegistry->getTriggerInfo( PM_UPLOAD_DOCUMENT );
@@ -146,7 +146,7 @@ if (isset( $_FILES ) && $_FILES["ATTACH_FILE"]["error"] == 0) {
             $uploadReturn = $oPluginRegistry->executeTriggers( PM_UPLOAD_DOCUMENT, $documentData );
 
             if ($uploadReturn) {
-                $aFields["APP_DOC_PLUGIN"] = $triggerDetail->sNamespace;
+                $aFields["APP_DOC_PLUGIN"] = $triggerDetail->getNamespace();
 
                 if (! isset( $aFields["APP_DOC_UID"] )) {
                     $aFields["APP_DOC_UID"] = $sAppDocUid;

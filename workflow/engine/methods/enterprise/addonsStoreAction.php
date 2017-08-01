@@ -80,11 +80,11 @@ try {
                     BasePeer::doUpdate($oCriteriaSelect, $oCriteriaUpdate, $cnn);
 
                     //are all the plugins that are enabled in the workspace
-                    $pluginRegistry =& ProcessMaker\Plugins\PluginsRegistry::loadSingleton();
-                    foreach ($pluginRegistry->_aPluginDetails as $plugin) {
+                    $pluginRegistry = ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+                    foreach ($pluginRegistry->getPlugins() as $plugin) {
                         if ($plugin->enabled && !in_array($plugin->sNamespace, $licenseManager->features)) {
                             $pluginRegistry->disablePlugin($plugin->sNamespace);
-                            $pluginRegistry->pluginAdapter->savePlugin($plugin->sNamespace, $pluginRegistry);
+                            $pluginRegistry->savePlugin($plugin->sNamespace);
                         }
                     }
                 }

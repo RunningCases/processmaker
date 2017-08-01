@@ -43,7 +43,7 @@ if ($access != 1) {
     }
 }
 
-$oPluginRegistry = & PMPluginRegistry::getSingleton();
+$oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
 $G_MAIN_MENU = 'processmaker';
 $G_ID_MENU_SELECTED = 'SETUP';
 $G_SUB_MENU = 'setup';

@@ -292,7 +292,7 @@ class AppDelegation extends BaseAppDelegation
             }
 
             if ($flagActionsByEmail) {
-                $oPluginRegistry = &PMPluginRegistry::getSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 $oPluginRegistry->executeTriggers(PM_CREATE_NEW_DELEGATION, $data);
             }
         }

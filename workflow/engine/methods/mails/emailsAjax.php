@@ -36,10 +36,8 @@ switch($req){
 
         $arrayType = [];
 
-        $pluginRegistry = PMPluginRegistry::getSingleton();
-        $statusEr = $pluginRegistry->getStatusPlugin('externalRegistration');
-
-        $flagEr = (preg_match('/^enabled$/', $statusEr))? 1 : 0;
+        $pluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+        $flagEr = $pluginRegistry->isEnable('externalRegistration') ? 1 : 0;
 
         if ($flagEr == 0) {
             $arrayType[] = 'EXTERNAL_REGISTRATION';

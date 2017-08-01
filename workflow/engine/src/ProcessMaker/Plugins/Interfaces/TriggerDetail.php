@@ -2,22 +2,67 @@
 
 namespace ProcessMaker\Plugins\Interfaces;
 
+use ProcessMaker\Plugins\Traits\Attributes;
+
+/**
+ * Class TriggerDetail
+ * @package ProcessMaker\Plugins\Interfaces
+ */
 class TriggerDetail
 {
-    public $sNamespace;
-    public $sTriggerId;
-    public $sTriggerName;
+    use Attributes;
+    private $Namespace;
+    private $TriggerId;
+    private $TriggerName;
 
     /**
-     * This function is the constructor of the triggerDetail class
-     * @param string $sNamespace
-     * @param string $sTriggerId
-     * @param string $sTriggerName
+     * This function is the constructor of the TriggerDetail class
+     * @param string $Namespace
+     * @param string $TriggerId
+     * @param string $TriggerName
      */
-    public function __construct($sNamespace, $sTriggerId, $sTriggerName)
+    public function __construct($Namespace, $TriggerId, $TriggerName)
     {
-        $this->sNamespace = $sNamespace;
-        $this->sTriggerId = $sTriggerId;
-        $this->sTriggerName = $sTriggerName;
+        $this->Namespace = $Namespace;
+        $this->TriggerId = $TriggerId;
+        $this->TriggerName = $TriggerName;
+    }
+
+    /**
+     * Get name of plugin
+     * @return string
+     */
+    public function getNamespace()
+    {
+        return $this->Namespace;
+    }
+
+    /**
+     * Get trigger name
+     * @return string
+     */
+    public function getTriggerName()
+    {
+        return $this->TriggerName;
+    }
+
+    /**
+     * Check if trigger id is equal to params
+     * @param string $triggerId
+     * @return bool
+     */
+    public function equalTriggerId($triggerId)
+    {
+        return $triggerId == $this->TriggerId;
+    }
+
+    /**
+     * Check if nmae of plugin is equal to params
+     * @param string $Namespace
+     * @return bool
+     */
+    public function equalNamespaceTo($Namespace)
+    {
+        return $Namespace == $this->Namespace;
     }
 }

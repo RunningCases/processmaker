@@ -24,11 +24,11 @@
 
 $pluginFile = $_GET['id'];
 
-$oPluginRegistry = & PMPluginRegistry::getSingleton();
+$oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
 
 $details = $oPluginRegistry->getPluginDetails( $pluginFile );
 try {
-    $Fields = $oPluginRegistry->updateFieldsForPageSetup( $details->sNamespace, $_POST );
+    $Fields = $oPluginRegistry->updateFieldsForPageSetup( $details->getNamespace(), $_POST );
     $str = "$Fields fields saved successfully!";
     G::SendTemporalMessage( $str, 'info', 'string', 3, 100 );
     G::Header( "location: pluginsSetup?id=$pluginFile" );

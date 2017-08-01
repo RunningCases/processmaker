@@ -22,6 +22,9 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 global $G_TMP_MENU;
 global $RBAC;
 $partnerFlag = (defined('PARTNER_FLAG')) ? PARTNER_FLAG : false;
@@ -288,7 +291,7 @@ if ($RBAC->userCanAccess('PM_SETUP') == 1) {
 }
 
 /*----------------------------------********---------------------------------*/
-$pluginRegistry = &PMPluginRegistry::getSingleton(); //lsl
+$pluginRegistry = PluginRegistry::loadSingleton(); //lsl
 $status = $pluginRegistry->getStatusPlugin('actionsByEmail');
 
 if ((string)($status) !== 'enabled' &&

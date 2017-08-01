@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 require_once 'classes/model/om/BaseUsersProperties.php';
 
 /**
@@ -320,7 +322,7 @@ class UsersProperties extends BaseUsersProperties
                 $userRole = $RBAC->aUserInfo['PROCESSMAKER']['ROLE']['ROL_CODE'];
             }
 
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
             $aRedirectLogin = $oPluginRegistry->getRedirectLogins();
             if (isset( $aRedirectLogin ) && is_array( $aRedirectLogin )) {
                 foreach ($aRedirectLogin as $key => $detail) {

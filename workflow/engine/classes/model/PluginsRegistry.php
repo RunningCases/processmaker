@@ -17,23 +17,44 @@ require_once 'classes/model/om/BasePluginsRegistry.php';
 class PluginsRegistry extends BasePluginsRegistry
 {
     /**
+     * Load all Plugins
+     * @param string $keyType
      * @return array
-     * @throws Exception
+     * @throws \Exception
      */
-    public static function loadPlugins()
+    public static function loadPlugins($keyType = BasePeer::TYPE_FIELDNAME)
     {
-        $oCriteria = new Criteria();
-        $oDataset = PluginsRegistryPeer::doSelectRS($oCriteria);
-        $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-        $rows = array();
-        while ($oDataset->next()) {
-            $rows[] = $oDataset->getRow();
+        $criteria = new Criteria();
+        $dataSet = PluginsRegistryPeer::doSelect($criteria);
+        $plugins = [];
+        /** @var PluginsRegistry $row */
+        foreach ($dataSet as $row) {
+            $plugins[] = $row->toArray($keyType);
         }
-        return $rows;
+        return $plugins;
     }
 
     /**
-     * @param $prUid
+     * Get all Plugins Enabled
+     * @param string $keyType
+     * @return array
+     */
+    public static function getPluginsEnabled($keyType = BasePeer::TYPE_FIELDNAME)
+    {
+        $criteria = new Criteria();
+        $criteria->add(PluginsRegistryPeer::PLUGIN_ENABLE, true);
+        $dataSet = PluginsRegistryPeer::doSelect($criteria);
+        $plugins = [];
+        /** @var PluginsRegistry $row */
+        foreach ($dataSet as $row) {
+            $plugins[] = $row->toArray($keyType);
+        }
+        return $plugins;
+    }
+
+    /**
+     * Load plugin with Uid
+     * @param string $prUid
      * @return array
      * @throws Exception
      */
@@ -50,6 +71,7 @@ class PluginsRegistry extends BasePluginsRegistry
     }
 
     /**
+     * Check if there is a plugin uid
      * @param $prUid
      * @return mixed|bool
      */
@@ -64,11 +86,14 @@ class PluginsRegistry extends BasePluginsRegistry
     }
 
     /**
-     * @param $prUid
+     * Load or creates if the record does not exist
+     * Load and makes a union with the data sent
+     *
+     * @param string $prUid
      * @param array $pluginData
-     * @return mixed|array|bool
+     * @return array
      */
-    public static function loadOrCreateIfNotExists($prUid, $pluginData = array())
+    public static function loadOrCreateIfNotExists($prUid, $pluginData = [])
     {
         if (!self::exists($prUid)) {
             $pluginData['PR_UID'] = $prUid;
@@ -129,6 +154,66 @@ class PluginsRegistry extends BasePluginsRegistry
                 }
             } else {
                 throw (new Exception('This row doesn\'t exist!'));
+            }
+        } catch (Exception $oError) {
+            $oConnection->rollback();
+            throw ($oError);
+        }
+    }
+
+    public static function enable($Namespace)
+    {
+        $oConnection = Propel::getConnection(PluginsRegistryPeer::DATABASE_NAME);
+        try {
+            $oPluginsRegistry = PluginsRegistryPeer::retrieveByPK(md5($Namespace));
+            if ($oPluginsRegistry) {
+                $oPluginsRegistry->fromArray(['PLUGIN_ENABLE' => true], BasePeer::TYPE_FIELDNAME);
+                if ($oPluginsRegistry->validate()) {
+                    $oConnection->begin();
+                    $iResult = $oPluginsRegistry->save();
+                    $oConnection->commit();
+                    return $iResult;
+                } else {
+                    $sMessage = '';
+                    $aValidationFailures = $oPluginsRegistry->getValidationFailures();
+                    /** @var ValidationFailed $oValidationFailure */
+                    foreach ($aValidationFailures as $oValidationFailure) {
+                        $sMessage .= $oValidationFailure->getMessage() . '<br />';
+                    }
+                    throw (new Exception('The registry cannot be updated!<br />' . $sMessage));
+                }
+            } else {
+                throw (new Exception('This Plugin doesn\'t exist!'));
+            }
+        } catch (Exception $oError) {
+            $oConnection->rollback();
+            throw ($oError);
+        }
+    }
+
+    public static function disable($Namespace)
+    {
+        $oConnection = Propel::getConnection(PluginsRegistryPeer::DATABASE_NAME);
+        try {
+            $oPluginsRegistry = PluginsRegistryPeer::retrieveByPK(md5($Namespace));
+            if ($oPluginsRegistry) {
+                $oPluginsRegistry->fromArray(['PLUGIN_ENABLE' => false], BasePeer::TYPE_FIELDNAME);
+                if ($oPluginsRegistry->validate()) {
+                    $oConnection->begin();
+                    $iResult = $oPluginsRegistry->save();
+                    $oConnection->commit();
+                    return $iResult;
+                } else {
+                    $sMessage = '';
+                    $aValidationFailures = $oPluginsRegistry->getValidationFailures();
+                    /** @var ValidationFailed $oValidationFailure */
+                    foreach ($aValidationFailures as $oValidationFailure) {
+                        $sMessage .= $oValidationFailure->getMessage() . '<br />';
+                    }
+                    throw (new Exception('The registry cannot be updated!<br />' . $sMessage));
+                }
+            } else {
+                throw (new Exception('This Plugin doesn\'t exist!'));
             }
         } catch (Exception $oError) {
             $oConnection->rollback();

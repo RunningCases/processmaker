@@ -47,9 +47,8 @@ $status = array(
     array("pending", G::LoadTranslation('ID_PENDING'))
 );
 
-$pluginRegistry = PMPluginRegistry::getSingleton();
-$statusER = $pluginRegistry->getStatusPlugin('externalRegistration');
-$flagER = (preg_match('/^enabled$/', $statusER))? 1 : 0;
+$pluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+$flagER = $pluginRegistry->isEnable('externalRegistration') ? 1 : 0;
 
 $processes = getProcessArray($userUid);
 

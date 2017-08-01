@@ -519,7 +519,7 @@ function run_pack_plugin($task, $args) {
 
   require_once ($pluginFilename);
 
-  $oPluginRegistry = & PMPluginRegistry::getSingleton();
+  $oPluginRegistry = PluginsRegistry::loadSingleton();
   $pluginDetail = $oPluginRegistry->getPluginDetails($pluginName . '.php');
   $fileTar = $pluginHome . PATH_SEP . $pluginName . '-' . $pluginDetail->iVersion . '.tar';
 
@@ -2228,7 +2228,7 @@ function run_update_plugin_attributes($task, $args)
         $pluginName = $args[0];
 
         //Update plugin attributes
-        $pmPluginRegistry = &PMPluginRegistry::getSingleton();
+        $pmPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
 
         $pmPluginRegistry->updatePluginAttributesInAllWorkspaces($pluginName);
 

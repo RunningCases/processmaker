@@ -37,11 +37,12 @@ if ($aux['extension'] != 'dat') {
         BasePeer::doUpdate($oCriteriaSelect, $oCriteriaUpdate, $cnn);
 
         //are all the plugins that are enabled in the workspace
-        $pluginRegistry =& ProcessMaker\Plugins\PluginsRegistry::loadSingleton();
-        foreach ($pluginRegistry->_aPluginDetails as $plugin) {
-            if ($plugin->enabled && !in_array($plugin->sNamespace, $licenseManager->features)) {
-                $pluginRegistry->disablePlugin($plugin->sNamespace);
-                $pluginRegistry->pluginAdapter->savePlugin($plugin->sNamespace, $pluginRegistry);
+        $pluginRegistry = ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+        /** @var \ProcessMaker\Plugins\Interfaces\PluginDetail $plugin */
+        foreach ($pluginRegistry->getPlugins() as $plugin) {
+            if ($plugin->isEnabled() && !in_array($plugin->getNamespace(), $licenseManager->features)) {
+                $pluginRegistry->disablePlugin($plugin->getNamespace());
+                $pluginRegistry->savePlugin($plugin->getNamespace());
             }
         }
 

@@ -389,8 +389,9 @@ class headPublisher
         if (class_exists('PMPluginRegistry') && defined('SYS_SYS')) {
             $oPluginRegistry = & PMPluginRegistry::getSingleton();
             $registeredCss = $oPluginRegistry->getRegisteredCss();
+            /** @var \ProcessMaker\Plugins\Interfaces\CssFile $cssFile */
             foreach ($registeredCss as $cssFile) {
-                $script .= "  <link rel='stylesheet' type='text/css' href='" . $cssFile->sCssFile . ".css' />\n";
+                $script .= "  <link rel='stylesheet' type='text/css' href='" . $cssFile->getCssFile() . ".css' />\n";
             }
         }
         return $script;
@@ -551,7 +552,7 @@ class headPublisher
 
         //hook for registered javascripts from plugins
         if (class_exists('PMPluginRegistry') && defined('SYS_SYS')) {
-            $oPluginRegistry = & PMPluginRegistry::getSingleton();
+            $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
             $pluginJavascripts = $oPluginRegistry->getRegisteredJavascriptBy($filename);
         } else {
             $pluginJavascripts = array();

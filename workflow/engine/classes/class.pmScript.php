@@ -33,6 +33,7 @@
 // License: LGPL, see LICENSE
 ////////////////////////////////////////////////////
 
+use ProcessMaker\Plugins\PluginRegistry;
 
 /**
  * PMScript - PMScript class
@@ -59,7 +60,7 @@ if (defined('SYS_SYS') && (!defined('PATH_DATA_SITE') || !defined('PATH_WORKSPAC
 //call plugin
 if (class_exists( 'folderData' )) {
     //$folderData = new folderData($sProUid, $proFields['PRO_TITLE'], $sAppUid, $Fields['APP_TITLE'], $sUsrUid);
-    $oPluginRegistry = &PMPluginRegistry::getSingleton();
+    $oPluginRegistry = PluginRegistry::loadSingleton();
     $aAvailablePmFunctions = $oPluginRegistry->getPmFunctions();
     foreach ($aAvailablePmFunctions as $key => $class) {
         $filePlugin = PATH_PLUGINS . $class . PATH_SEP . 'classes' . PATH_SEP . 'class.pmFunctions.php';

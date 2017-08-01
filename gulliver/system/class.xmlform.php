@@ -24,6 +24,9 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * Class XmlForm_Field
  *
@@ -5492,7 +5495,7 @@ class XmlForm
                 $aux[1] = $filename;
             }
             if (count( $aux ) == 2 && defined( 'G_PLUGIN_CLASS' )) {
-                $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 if ($response = $oPluginRegistry->isRegisteredFolder( $aux[0] )) {
                     if ($response !== true) {
                         $sPath = PATH_PLUGINS . $response . PATH_SEP;

@@ -23,6 +23,8 @@
  *
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 try {
     $usr = '';
     $pwd = '';
@@ -172,7 +174,7 @@ try {
         }
 
         //Execute the SSO Script from plugin
-        $oPluginRegistry =& PMPluginRegistry::getSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         $lSession="";
         $loginInfo = new loginInfo ($usr, $pwd, $lSession  );
         if ($oPluginRegistry->existsTrigger ( PM_LOGIN )) {
@@ -425,7 +427,7 @@ try {
         setcookie("PM-TabPrimary", 101010010, time() + (24 * 60 * 60), '/');
     }
 
-    $oPluginRegistry =& PMPluginRegistry::getSingleton();
+    $oPluginRegistry = PluginRegistry::loadSingleton();
     if ($oPluginRegistry->existsTrigger ( PM_AFTER_LOGIN )) {
         $oPluginRegistry->executeTriggers ( PM_AFTER_LOGIN , $_SESSION['USER_LOGGED'] );
     }

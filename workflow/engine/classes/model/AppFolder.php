@@ -7,6 +7,7 @@
 
 //require_once 'classes/model/om/BaseAppFolder.php';
 //require_once 'classes/model/Application.php';
+use ProcessMaker\Plugins\PluginRegistry;
 
 /**
  * Skeleton subclass for representing a row from the 'APP_FOLDER' table.
@@ -724,7 +725,7 @@ class AppFolder extends BaseAppFolder
                     }
 
                     if (! empty( $row1["APP_DOC_PLUGIN"] )) {
-                        $pluginRegistry = &PMPluginRegistry::getSingleton();
+                        $pluginRegistry = PluginRegistry::loadSingleton();
                         $pluginName = $row1["APP_DOC_PLUGIN"];
                         $fieldValue = "";
 
@@ -732,7 +733,7 @@ class AppFolder extends BaseAppFolder
                             $pluginDetail = $pluginRegistry->getPluginDetails( $pluginName . ".php" );
 
                             if ($pluginDetail) {
-                                if ($pluginDetail->enabled) {
+                                if ($pluginDetail->isEnabled()) {
                                     require_once (PATH_PLUGINS . $pluginName . ".php");
                                     $pluginNameClass = $pluginName . "Plugin";
                                     $objPluginClass = new $pluginNameClass( $pluginName );

@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 require_once 'classes/model/om/BaseAddonsStore.php';
 
 define("STORE_VERSION", 1);
@@ -348,7 +351,7 @@ class AddonsStore extends BaseAddonsStore
         //Fill with local information
 
         //List all plugins installed
-        $oPluginRegistry = &PMPluginRegistry::getSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         $aPluginsPP = array();
 
         if (file_exists(PATH_DATA_SITE . 'ee')) {
@@ -368,10 +371,10 @@ class AddonsStore extends BaseAddonsStore
                     $oDetails = $oPluginRegistry->getPluginDetails($sClassName . '.php');
 
                     if ($oDetails) {
-                        $sStatus = $oDetails->enabled ? G::LoadTranslation('ID_ENABLED') : G::LoadTranslation('ID_DISABLED');
+                        $sStatus = $oDetails->isEnabled() ? G::LoadTranslation('ID_ENABLED') : G::LoadTranslation('ID_DISABLED');
 
-                        if (isset($oDetails->aWorkspaces)) {
-                            if (!in_array(SYS_SYS, $oDetails->aWorkspaces)) {
+                        if ($oDetails->getWorkspaces()) {
+                            if (!in_array(SYS_SYS, $oDetails->getWorkspaces())) {
                                 continue;
                             }
                         }
@@ -380,16 +383,16 @@ class AddonsStore extends BaseAddonsStore
                             continue;
                         }
 
-                        $sEdit = (($oDetails->sSetupPage != '') && ($oDetails->enabled)? G::LoadTranslation('ID_SETUP') : ' ');
+                        $sEdit = (($oDetails->getSetupPage() != '') && ($oDetails->isEnabled())? G::LoadTranslation('ID_SETUP') : ' ');
                         $aPlugin = array();
                         $aPluginId = $sClassName;
-                        $aPluginTitle = $oDetails->sFriendlyName;
-                        $aPluginDescription = $oDetails->sDescription;
-                        $aPluginVersion = $oDetails->iVersion;
+                        $aPluginTitle = $oDetails->getFriendlyName();
+                        $aPluginDescription = $oDetails->getDescription();
+                        $aPluginVersion = $oDetails->getVersion();
 
                         if (@in_array($sClassName, $pmLicenseManagerO->features)) {
                             $aPluginStatus = $sStatus;
-                            $aPluginLinkStatus = 'pluginsChange?id=' . $sClassName . '.php&status=' . $oDetails->enabled;
+                            $aPluginLinkStatus = 'pluginsChange?id=' . $sClassName . '.php&status=' . $oDetails->isEnabled();
                             $aPluginEdit = $sEdit;
                             $aPluginLinkEdit = 'pluginsSetup?id=' . $sClassName . '.php';
                             $aPluginStatusA = $sStatus == "Enabled" ? "installed" : 'disabled';

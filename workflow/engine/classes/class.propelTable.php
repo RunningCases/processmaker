@@ -25,6 +25,8 @@
  *
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * Class pagedTable
  *
@@ -581,7 +583,7 @@ class propelTable
         $time = $time_end - $time_start;
         // verify if there are templates folders registered, template and method folders are the same
         $folderTemplate = explode( '/', $this->template );
-        $oPluginRegistry = & PMPluginRegistry::getSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         if ($oPluginRegistry->isRegisteredFolder( $folderTemplate[0] )) {
             $templateFile = PATH_PLUGINS . $this->template . '.html';
         } else {

@@ -22,7 +22,6 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 try {
-
     $filter = new InputFilter();
     $_POST = $filter->xssFilterHard($_POST);
     
@@ -136,7 +135,7 @@ try {
 
             //If plugin and trigger are defined for listing
             if ($oPluginRegistry->existsTrigger( PM_CASE_DOCUMENT_LIST_ARR )) {
-                $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 $filesPluginArray = $oPluginRegistry->executeTriggers( PM_CASE_DOCUMENT_LIST_ARR, $_SESSION['APPLICATION'] );
                 //Now search for the file, if exists the change the download URL
                 foreach ($filesPluginArray as $file) {
@@ -179,7 +178,7 @@ try {
 
             //If plugin and trigger are defined for listing
             if ($oPluginRegistry->existsTrigger( PM_CASE_DOCUMENT_LIST_ARR )) {
-                $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
                 $filesPluginArray = $oPluginRegistry->executeTriggers( PM_CASE_DOCUMENT_LIST_ARR, $aFields['APP_UID'] );
                 //Now search for the file, if exists the change the download URL
                 foreach ($filesPluginArray as $file) {

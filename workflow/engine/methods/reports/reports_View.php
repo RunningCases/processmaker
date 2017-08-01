@@ -210,7 +210,7 @@ try {
             break;
         default:
             $foundReport = false;
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
+            $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
             $aAvailableReports = $oPluginRegistry->getReports();
             foreach ($aAvailableReports as $sReportClass) {
 

@@ -142,7 +142,7 @@ class PMPluginRegistry
      */
     public static function getSingleton()
     {
-        return \ProcessMaker\Plugins\PluginsRegistry::loadSingleton();
+        return \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
     }
 
     /**
@@ -154,7 +154,7 @@ class PMPluginRegistry
      */
     public static function loadSingleton($file)
     {
-        return \ProcessMaker\Plugins\PluginsRegistry::loadSingleton();
+        return \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
     }
 
     /**

@@ -28,6 +28,8 @@
  * @access public
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * Skeleton subclass for representing a row from the 'USERS' table.
  *
@@ -196,7 +198,7 @@ class RbacUsers extends BaseRbacUsers
     public function create($aData)
     {
         if (class_exists('PMPluginRegistry')) {
-            $pluginRegistry = & PMPluginRegistry::getSingleton();
+            $pluginRegistry = PluginRegistry::loadSingleton();
             if ($pluginRegistry->existsTrigger(PM_BEFORE_CREATE_USER)) {
                 try {
                     $pluginRegistry->executeTriggers(PM_BEFORE_CREATE_USER, null);

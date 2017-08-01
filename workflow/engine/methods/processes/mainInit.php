@@ -21,6 +21,7 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
+use ProcessMaker\Plugins\PluginRegistry;
 
 //$oHeadPublisher = & headPublisher::getSingleton();
 global $RBAC;
@@ -47,12 +48,12 @@ if ($pmVersion != "") {
     $arrayFlagMenuNewOption       = (version_compare($pmVersion . "", "3", ">="))? array("bpmn" => true) : array("pm" => true);
 }
 
-$pluginRegistry = &PMPluginRegistry::getSingleton();
+$oPluginRegistry = PluginRegistry::loadSingleton();
 
 $arrayMenuNewOptionPlugin     = array();
 $arrayContextMenuOptionPlugin = array();
 
-foreach ($pluginRegistry->getDesignerMenu() as $value) {
+foreach ($oPluginRegistry->getDesignerMenu() as $value) {
     if (file_exists($value->file)) {
         require_once($value->file);
 
@@ -102,11 +103,11 @@ if($RBAC->userCanAccess('PM_DELETE_PROCESS_CASES') === 1) {
 }
 $oHeadPublisher->assign('deleteCasesFlag', $deleteCasesFlag);
 
-$oPluginRegistry = & PMPluginRegistry::getSingleton();
+$oPluginRegistry = PluginRegistry::loadSingleton();
 $callBackFile = $oPluginRegistry->getImportProcessCallback();
 $file = false; 
 if(sizeof($callBackFile)) {
-    $file = $callBackFile[0]->callBackFile != "" ? $callBackFile[0]->callBackFile : false;
+    $file = $callBackFile[0]->getCallBackFile() != "" ? $callBackFile[0]->getCallBackFile() : false;
 }
 $oHeadPublisher->assign("importProcessCallbackFile", $file);
 

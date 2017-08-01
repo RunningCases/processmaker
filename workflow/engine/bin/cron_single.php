@@ -256,9 +256,6 @@ try {
 
         define('TIME_ZONE', ini_get('date.timezone'));
 
-        //Enable Monolog
-
-
         //Processing
         eprintln('Processing workspace: ' . $workspace, 'green');
 
@@ -314,7 +311,7 @@ function processWorkspace()
 {
     try {
 
-        $oPluginRegistry =& PMPluginRegistry::getSingleton();
+        $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
         if (file_exists(PATH_DATA_SITE . 'plugin.singleton')) {
             $oPluginRegistry->unSerializeInstance(file_get_contents(PATH_DATA_SITE . 'plugin.singleton'));
         }
@@ -422,8 +419,6 @@ function unpauseApplications()
     setExecutionMessage("Unpausing applications");
 
     try {
-
-
         $oCases = new Cases();
         $oCases->ThrowUnpauseDaemon($sNow, 1);
 
@@ -467,7 +462,7 @@ function executePlugins()
     // Executing registered cron files
 
     // -> Get registered cron files
-    $oPluginRegistry =& PMPluginRegistry::getSingleton();
+    $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
     $cronFiles = $oPluginRegistry->getCronFiles();
 
     // -> Execute functions
