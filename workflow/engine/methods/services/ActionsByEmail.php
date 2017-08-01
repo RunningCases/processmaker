@@ -94,7 +94,7 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
                             throw $e;
                         }
 
-                        $message = '<strong>The answer has been submited. Thank you</strong>';
+                        $message = '<strong>' . G::loadTranslation('ID_ABE_ANSWER_SUBMITTED') . '</strong>';
 
                         //Save Cases Notes
                         G::LoadClass('actionsByEmailUtils');
@@ -115,7 +115,7 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
                         $dataAbeRequests['ABE_REQ_ANSWERED'] = 1;
                         $code == 0 ? uploadAbeRequest($dataAbeRequests) : '';
                     } else {
-                        $message = '<strong>The response has already been sent.</strong>';
+                        $message = '<strong>' . G::loadTranslation('ID_ABE_RESPONSE_SENT') . '</strong>';
                     }
 
                     $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/showInfo', '', array('MESSAGE' => $message));
