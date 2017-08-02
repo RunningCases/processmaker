@@ -828,28 +828,50 @@ function run_migrate_itee_to_dummytask($args, $opts){
 }
 
 /*----------------------------------********---------------------------------*/
-function run_check_workspace_disabled_code($args, $opts)
+/**
+ * Check if we need to execute an external program for each workspace
+ * If we apply the command for all workspaces we will need to execute one by one by redefining the constants
+ * @param string $args, workspaceName that we need to apply the database-upgrade
+ * @param string $opts
+ *
+ * @return void
+*/
+function run_check_workspace_disabled_code($args, $opts) {
+    //Check if the command is executed by a specific workspace
+    if (count($args) === 1) {
+        check_workspace_disabled_code($args, $opts);
+    } else {
+        $workspaces = get_workspaces_from_args($args);
+        foreach ($workspaces as $workspace) {
+            passthru('./processmaker check-workspace-disabled-code ' . $workspace->name);
+        }
+    }
+}
+/**
+ * This function is executed only by one workspace
+ * Code Security Scanner related to the custom blacklist
+ * @param array $args, the specific actions must be: upgrade|check
+ * @param array $opts, workspaceName for to apply the database-upgrade
+ *
+ * @return void
+*/
+function check_workspace_disabled_code($args, $opts)
 {
     try {
+        //Load the attributes for the workspace
         $arrayWorkspace = get_workspaces_from_args($args);
+        //Loop, read all the attributes related to the one workspace
+        $wsName = $arrayWorkspace[key($arrayWorkspace)]->name;
+        Bootstrap::setConstantsRelatedWs($wsName);
 
         foreach ($arrayWorkspace as $value) {
             $workspace = $value;
-
-            if (!defined("SYS_SYS")) {
-                define("SYS_SYS", $workspace->name);
-            }
-
-            if (!defined("PATH_DATA_SITE")) {
-                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
-            }
 
             if (!$workspace->pmLicensedFeaturesVerifyFeature("B0oWlBLY3hHdWY0YUNpZEtFQm5CeTJhQlIwN3IxMEkwaG4=")) {
                 throw new Exception("Error: This command cannot be used because your license does not include it.");
             }
 
             echo "> Workspace: " . $workspace->name . "\n";
-
             try {
                 $arrayFoundDisabledCode = $workspace->getDisabledCode();
 
@@ -858,24 +880,20 @@ function run_check_workspace_disabled_code($args, $opts)
 
                     foreach ($arrayFoundDisabledCode as $value2) {
                         $arrayProcessData = $value2;
-
                         $strFoundDisabledCode .= ($strFoundDisabledCode != "")? "\n" : "";
                         $strFoundDisabledCode .= "  Process: " . $arrayProcessData["processTitle"] . "\n";
                         $strFoundDisabledCode .= "  Triggers:\n";
 
                         foreach ($arrayProcessData["triggers"] as $value3) {
                             $arrayTriggerData = $value3;
-
                             $strCodeAndLine = "";
 
                             foreach ($arrayTriggerData["disabledCode"] as $key4 => $value4) {
                                 $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . $key4 . " (Lines " . implode(", ", $value4) . ")";
                             }
-
                             $strFoundDisabledCode .= "    - " . $arrayTriggerData["triggerTitle"] . ": " . $strCodeAndLine . "\n";
                         }
                     }
-
                     echo $strFoundDisabledCode . "\n";
                 } else {
                     echo "The workspace it's OK\n\n";
@@ -883,11 +901,9 @@ function run_check_workspace_disabled_code($args, $opts)
             } catch (Exception $e) {
                 G::outRes( "Errors to check disabled code: " . CLI::error($e->getMessage()) . "\n\n" );
             }
-
             $workspace->close();
         }
-
-        echo "Done!\n";
+        echo "Done!\n\n";
     } catch (Exception $e) {
         G::outRes( CLI::error($e->getMessage()) . "\n" );
     }

@@ -34,6 +34,11 @@ if (isset( $_FILES ) && $_FILES["ATTACH_FILE"]["error"] == 0) {
     try {
         G::LoadClass( "case" );
 
+        $application = new Application();
+        if (!$application->exists($_POST["APPLICATION"])) {
+            throw new Exception(G::LoadTranslation("ID_CASE_NOT_EXISTS") . ": {$_POST['APPLICATION']}");
+        }
+
         $folderId = "";
         $fileTags = "";
 
@@ -122,7 +127,6 @@ if (isset( $_FILES ) && $_FILES["ATTACH_FILE"]["error"] == 0) {
         print ("* The file " . $_FILES["ATTACH_FILE"]["name"] . " was uploaded successfully in case " . $sAppUid . " as input document..\n") ;
 
         //Get current Application Fields
-        $application = new Application();
         $appFields = $application->Load( $_POST["APPLICATION"] );
         $appFields = unserialize( $appFields["APP_DATA"] );
 
