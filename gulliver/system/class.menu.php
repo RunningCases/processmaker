@@ -283,7 +283,7 @@ class Menu
      */
     public function DisableOptionId($id)
     {
-        if (array_search($id, $this->Id) !== FALSE) {
+        if (array_search($id, $this->Id)) {
             $this->Enabled[array_search($id, $this->Id)] = 0;
         }
     }

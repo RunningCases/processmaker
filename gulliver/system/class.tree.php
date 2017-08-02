@@ -30,7 +30,7 @@
  *
  * @package gulliver.system
  */
-G::LoadSystem('objectTemplate');
+
 
 class Tree extends Xml_Node
 {

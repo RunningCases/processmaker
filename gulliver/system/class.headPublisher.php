@@ -542,7 +542,6 @@ class headPublisher
             $cacheFilename = PATH_C . 'ExtJs' . PATH_SEP . $cacheName . '.js';
 
             if (!file_exists($cacheFilename)) {
-                require_once (PATH_THIRDPARTY . 'jsmin/jsmin.php');
                 $content = JSMin::minify(file_get_contents($jsFilename));
                 file_put_contents($cacheFilename, $content);
             }
@@ -587,7 +586,6 @@ class headPublisher
                         $cacheFilename = PATH_C . 'ExtJs' . PATH_SEP . $jsPluginCacheName . '.js';
 
                         if (!file_exists($cacheFilename)) {
-                            require_once (PATH_THIRDPARTY . 'jsmin/jsmin.php');
                             $content = JSMin::minify(file_get_contents(PATH_PLUGINS . $pluginJsFile));
                             file_put_contents($cacheFilename, $content);
                         }

@@ -1,4 +1,9 @@
 <?php
+$filter = new InputFilter();
+$_GET = $filter->xssFilterHard($_GET,"url");
+$_POST = $filter->xssFilterHard($_POST,"url");
+$_REQUEST = $filter->xssFilterHard($_REQUEST,"url");
+$_SESSION = $filter->xssFilterHard($_SESSION,"url");
 
 $request = isset($_POST['request'])? $_POST['request']: null;
 if( !isset($request) ){
@@ -32,6 +37,7 @@ if( isset($request) ){
 
           $_SESSION[$_POST["formID"]][$_POST["gridname"]] = $oFields;
       }
+
     break;
     /** widgets **/
     case 'suggest':
@@ -55,7 +61,6 @@ if( isset($request) ){
         }
 
         // Parsed SQL Structure
-        G::LoadClass('phpSqlParser');
 
         $parser = new PHPSQLParser($SQL);
         $searchType = $_GET["searchType"];

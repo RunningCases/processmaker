@@ -281,12 +281,6 @@ define( 'PML_WSDL_URL', PML_SERVER . '/syspmLibrary/en/green/services/wsdl' );
 define( 'PML_UPLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/uploadProcess' );
 define( 'PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/download' );
 
-//Call Gulliver Classes
-Bootstrap::LoadThirdParty("smarty/libs", "Smarty.class");
-
-//Loading the autoloader libraries feature
-Bootstrap::registerSystemClasses();
-
 $config = Bootstrap::getSystemConfiguration();
 
 // starting session
