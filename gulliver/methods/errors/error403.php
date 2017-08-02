@@ -1,6 +1,6 @@
 <?php
 
-$http = G::is_https() ? "https" : "http";
+$http = (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on")? "https" : "http";
 $host = $_SERVER["SERVER_NAME"] . (($_SERVER["SERVER_PORT"] != "80")? ":" . $_SERVER["SERVER_PORT"] : "");
 
 $urlLogin = $http . "://" . $host . "/sys/en/neoclassic/login/login";

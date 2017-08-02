@@ -191,13 +191,7 @@ function run_generate_unit_test_class($task, $args) {
   }
 
   include ('test' . PATH_SEP . 'bootstrap' . PATH_SEP . 'unit.php');
-  G::LoadThirdParty('smarty/libs', 'Smarty.class');
-  G::LoadSystem('error');
-  G::LoadSystem('xmlform');
-  G::LoadSystem('xmlDocument');
-  G::LoadSystem('form');
-  G::LoadClass('application');
-  require_once ('propel/Propel.php');
+
 
   require_once ($classFilename);
 
@@ -340,9 +334,8 @@ function run_generate_crud($task, $args) {
     printf("class %s not found \n", pakeColor::colorize($class, 'ERROR'));
     exit(0);
   }
-  require_once ("propel/Propel.php");
+
   require_once ($classFilename);
-  G::LoadSystem('templatePower');
 
   Propel::init(PATH_CORE . "config/databases.php");
 
@@ -512,9 +505,6 @@ function run_pack_plugin($task, $args) {
   }
   $pluginName = $args[0];
 
-  require_once ("propel/Propel.php");
-  G::LoadSystem('templatePower');
-
   $pluginDirectory = PATH_PLUGINS . $pluginName;
   $pluginOutDirectory = PATH_OUTTRUNK . 'plugins' . PATH_SEP . $pluginName;
   $pluginHome = PATH_OUTTRUNK . 'plugins' . PATH_SEP . $pluginName;
@@ -526,13 +516,13 @@ function run_pack_plugin($task, $args) {
     printf("The plugin %s does not exist in this file %s \n", pakeColor::colorize($pluginName, 'ERROR'), pakeColor::colorize($pluginClassFilename, 'INFO'));
     die();
   }
-  G::LoadClass('plugin');
+
   require_once ($pluginFilename);
 
   $oPluginRegistry = & PMPluginRegistry::getSingleton();
   $pluginDetail = $oPluginRegistry->getPluginDetails($pluginName . '.php');
   $fileTar = $pluginHome . PATH_SEP . $pluginName . '-' . $pluginDetail->iVersion . '.tar';
-  G::LoadThirdParty('pear/Archive', 'Tar');
+
   $tar = new Archive_Tar($fileTar);
   $tar->_compress = false;
 
@@ -562,9 +552,6 @@ function run_new_plugin($task, $args) {
     exit(0);
   }
   $pluginName = $args[0];
-
-  require_once ("propel/Propel.php");
-  G::LoadSystem('templatePower');
 
   Propel::init(PATH_CORE . "config/databases.php");
   $configuration = Propel::getConfiguration();
@@ -762,10 +749,10 @@ function run_create_poedit_file($task, $args) {
   $countryOutId = isset($args[1]) ? strtoupper($args[1]) : 'US';
   $verboseFlag = isset($args[2]) ? $args[2] == true : false;
 
-  require_once ("propel/Propel.php");
-  require_once ("classes/model/Translation.php");
-  require_once ("classes/model/Language.php");
-  require_once ("classes/model/IsoCountry.php");
+
+
+
+
 
   Propel::init(PATH_CORE . "config/databases.php");
   $configuration = Propel::getConfiguration();
@@ -901,13 +888,6 @@ function run_create_poedit_file($task, $args) {
   printf("checking xmlform\n");
   printf("using directory %s \n", pakeColor::colorize(PATH_XMLFORM, 'INFO'));
 
-  G::LoadThirdParty('pear/json', 'class.json');
-  G::LoadThirdParty('smarty/libs', 'Smarty.class');
-  G::LoadSystem('xmlDocument');
-  G::LoadSystem('xmlform');
-  G::LoadSystem('xmlformExtension');
-  G::LoadSystem('form');
-  G::LoadSystem('inputfilter');
   $filter = new InputFilter();
 
   $langIdOut = $langId; //the output language, later we'll include the country too.
@@ -1168,9 +1148,7 @@ function run_propel_build_crud($task, $args) {
   }
   printf("TableName : %s \n", pakeColor::colorize($tableName, 'INFO'));
 
-  require_once ("propel/Propel.php");
   require_once ($classFilename);
-  G::LoadSystem('templatePower');
 
   global $G_ENVIRONMENTS;
   $aux = explode(PATH_SEP, PATH_HOME);
@@ -1521,8 +1499,7 @@ function get_infoOnPM($workspace) {
   $Fields['WORKSPACE_NAME'] = $workspace;
 
   if( defined("DB_HOST") ) {
-    G::LoadClass('net');
-    G::LoadClass('dbConnections');
+
     $dbNetView = new NET(DB_HOST);
     $dbNetView->loginDbServer(DB_USER, DB_PASS);
 
@@ -1747,7 +1724,6 @@ function run_workspace_backup($task, $args) {
     }
 
     $dbOpt = @explode(SYSTEM_HASH, G::decrypt(HASH_INSTALLATION, SYSTEM_HASH));
-    G::LoadSystem('dbMaintenance');
     $oDbMaintainer = new DataBaseMaintenance($dbOpt[0], $dbOpt[1], $dbOpt[2]);
     try{
       $oDbMaintainer->connect("mysql");
@@ -1757,8 +1733,6 @@ function run_workspace_backup($task, $args) {
     }
 
     require_once ($dbFile);
-    require_once ("propel/Propel.php");
-    G::LoadSystem('templatePower');
 
     Propel::init(PATH_CORE . "config/databases.php");
     $configuration = Propel::getConfiguration();
@@ -1799,7 +1773,7 @@ function run_workspace_backup($task, $args) {
       throw new Exception("Metadata file could not be written");
     }
 
-    G::LoadThirdParty('pear/Archive', 'Tar');
+
 
     $tar = new Archive_Tar($fileTar);
     if (!isset($gzipPath))
@@ -1964,7 +1938,7 @@ function workspaceRestore($backupFilename, $targetWorkspace, $overwrite) {
     G::rm_dir($tempDirectory);
   G::mk_dir($tempDirectory);
 
-  G::LoadThirdParty('pear/Archive', 'Tar');
+
   $tar = new Archive_Tar($backupFilename);
   $res = $tar->extract($tempDirectory);
 
@@ -2027,7 +2001,6 @@ function workspaceRestore($backupFilename, $targetWorkspace, $overwrite) {
   /* TODO: Check if database exists after updateDBfile */
   $config = updateDBfile($targetWorkspaceDir, $targetWorkspace, $dbHostname, $changeWorkspace);
 
-  G::LoadSystem('dbMaintenance');
   $oDbMaintainer = new DataBaseMaintenance($dbOpt[0], $dbOpt[1], $dbOpt[2]);
 
   $dbName = $config['DB_NAME'];
@@ -2064,8 +2037,7 @@ function get_DirDB($workspace) {
   }
 
   require_once ($dbFile);
-  require_once ("propel/Propel.php");
-  G::LoadSystem('templatePower');
+
 
   Propel::init(PATH_CORE . "config/databases.php");
   $configuration = Propel::getConfiguration();
@@ -2246,7 +2218,6 @@ function run_check_standard_code ( $task, $options) {
 function run_update_plugin_attributes($task, $args)
 {
     try {
-        G::LoadClass("plugin");
 
         //Verify data
         if (!isset($args[0])) {
@@ -2338,7 +2309,6 @@ function run_check_plugin_disabled_code($task, $args)
 
                 //Check disabled code
                 if (count($arrayData) > 0) {
-                    G::LoadClass("codeScanner");
 
                     $cs = new CodeScanner(true);
 

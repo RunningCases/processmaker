@@ -1,49 +1,71 @@
 {
-    "name": "processmaker/processmaker",
-    "description": "BPM PHP Software",
-    "keywords": [
-        "php bpm processmaker"
-    ],
-    "homepage": "http://processmaker.com",
-    "license": "GNU Affero General Public License version 3",
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://packagist.org/"
-        },
-        {
-            "type": "git",
-            "url": "git@bitbucket.org:colosa/pmdynaform.git"
-        },
-        {
-            "type": "git",
-            "url": "git@bitbucket.org:colosa/michelangelofe.git"
-        },
-        {
-            "type": "git",
-            "url": "git@bitbucket.org:colosa/pmui.git"
-        }
-    ],
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "require": {
-        "luracast/restler": "^3.0",
-        "bshaffer/oauth2-server-php": "v1.0",
-        "colosa/pmUI": "develop-dev",
-        "colosa/MichelangeloFE": "develop-dev",
-        "colosa/pmdynaform": "develop-dev",
-        "google/apiclient": "1.1.6",
-        "dapphp/securimage": "^3.6",
-        "psr/log":"1.0.0",
-        "monolog/monolog": "1.19.0"
+  "name": "processmaker/processmaker",
+  "description": "BPM PHP Software",
+  "keywords": [
+    "php bpm processmaker"
+  ],
+  "homepage": "http://processmaker.com",
+  "license": "GNU Affero General Public License version 3",
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://packagist.org/"
     },
-    "require-dev": {
-        "guzzle/guzzle": "~3.1.1",
-        "behat/behat": "2.4.*@stable"
+    {
+      "type": "git",
+      "url": "git@bitbucket.org:colosa/pmdynaform.git"
     },
-    "autoload": {
-        "psr-0": {
-            "ProcessMaker\\": "workflow/engine/src"
-        }
+    {
+      "type": "git",
+      "url": "git@bitbucket.org:colosa/michelangelofe.git"
+    },
+    {
+      "type": "git",
+      "url": "git@bitbucket.org:colosa/pmui.git"
     }
+  ],
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "luracast/restler": "^3.0",
+    "bshaffer/oauth2-server-php": "v1.0",
+    "colosa/pmUI": "develop-dev",
+    "colosa/MichelangeloFE": "develop-dev",
+    "colosa/pmdynaform": "develop-dev",
+    "google/apiclient": "1.1.6",
+    "dapphp/securimage": "^3.6",
+    "psr/log":"1.0.0",
+    "monolog/monolog": "1.19.0"
+  },
+  "require-dev": {
+    "guzzle/guzzle": "~3.1.1",
+    "behat/behat": "2.4.*@stable"
+  },
+  "autoload": {
+
+    "psr-0": {
+      "ProcessMaker\\": "workflow/engine/src"
+    },
+    "psr-4": {
+      "Maveriks\\": "framework/src/Maveriks/"
+    },
+    "classmap": [
+      "gulliver/system/",
+      "thirdparty/propel",
+      "thirdparty/creole",
+      "workflow/engine/classes/",
+      "thirdparty/smarty/libs/Smarty.class.php",
+      "thirdparty/jsmin/jsmin.php",
+      "thirdparty/libchart/classes/",
+      "thirdparty/pear",
+      "rbac/engine/classes/"
+    ],
+    "files": [
+      "gulliver/includes/inc.ajax.php",
+      "gulliver/includes/smarty_plugins/function.pmos.php",
+      "thirdparty/pear/PEAR.php",
+      "thirdparty/HTMLPurifier/HTMLPurifier.auto.php"
+    ]
+
+  }
 }

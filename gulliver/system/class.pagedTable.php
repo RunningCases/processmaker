@@ -25,8 +25,6 @@
  *
  */
 
-G::LoadClass( 'filterForm' );
-G::LoadClass( 'xmlMenu' );
 
 /**
  * Class pagedTable
@@ -778,7 +776,7 @@ class pagedTable
      */
     public function renderTable ($block = '')
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $this->orderBy  = $filter->xssFilterHard($this->orderBy);
         $this->currentPage  = $filter->xssFilterHard($this->currentPage);

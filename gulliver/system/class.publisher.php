@@ -289,7 +289,7 @@ class Publisher
                  */
                 if ($this->publishType == 'dynaform') {
                     if (isset($_SESSION['CURRENT_DYN_UID']) || isset($_SESSION['CONDITION_DYN_UID'])) {
-                        require_once "classes/model/FieldCondition.php";
+
                         $oFieldCondition = new FieldCondition();
 
                         //This dynaform has show/hide field conditions
@@ -333,7 +333,7 @@ class Publisher
                     $_SESSION[$G_FORM->id] = $G_FORM->values;
                 }
 
-                G::LoadSystem( 'pagedTable' );
+
                 $oTable = new pagedTable();
                 $oTable->template = 'templates/' . $Part['Template'] . '.html';
                 $G_FORM->xmlform = '';
@@ -348,7 +348,6 @@ class Publisher
                     $oTable->ajaxServer = $Part['ajaxServer'];
                 }
                 /* Start Block: Load user configuration for the pagedTable */
-                G::LoadClass( 'configuration' );
                 $objUID = $Part['File'];
                 $conf = new Configurations();
                 $conf->loadConfig( $oTable, 'pagedTable', $objUID, '', (isset( $_SESSION['USER_LOGGED'] ) ? $_SESSION['USER_LOGGED'] : ''), '' );
@@ -356,7 +355,6 @@ class Publisher
                 /* End Block */
 
                 /* Start Block: PagedTable Right Click */
-                G::LoadClass( 'popupMenu' );
                 $pm = new popupMenu( 'gulliver/pagedTable_PopupMenu' );
                 $pm->name = $oTable->id;
                 $fields = array_keys( $oTable->fields );
@@ -432,8 +430,6 @@ class Publisher
                     $_SESSION[$G_FORM->id] = $G_FORM->values;
                 }
 
-                G::LoadClass( 'propelTable' );
-
                 $oTable = new propelTable();
                 $oTable->template = $Part['Template'];
                 $oTable->criteria = $Part['Content'];
@@ -455,7 +451,7 @@ class Publisher
 
                 $oTable->setupFromXmlform( $G_FORM );
                 /* Start Block: Load user configuration for the pagedTable */
-                G::LoadClass( 'configuration' );
+
                 $objUID = $Part['File'];
                 $conf = new Configurations( $oTable );
                 $conf->loadConfig( $oTable, 'pagedTable', $objUID, '', (isset( $_SESSION['USER_LOGGED'] ) ? $_SESSION['USER_LOGGED'] : ''), '' );
@@ -465,7 +461,6 @@ class Publisher
                 /* End Block */
 
                 /* Start Block: PagedTable Right Click */
-                G::LoadClass( 'popupMenu' );
                 $pm = new popupMenu( 'gulliver/pagedTable_PopupMenu' );
                 $sc = $pm->renderPopup( $oTable->id, $oTable->fields );
                 /* End Block */
@@ -491,7 +486,7 @@ class Publisher
                 global $mainPanelScript;
                 global $panelName;
                 global $tabCount;
-                //G::LoadThirdParty( 'pear/json', 'class.json' );
+
                 //$json = new Services_JSON();
                 $tabCount = 0;
                 $panelName = $Part['Template'];
@@ -551,7 +546,7 @@ class Publisher
             case 'varform':
                 global $G_FORM;
                 $G_FORM = new Form();
-                G::LoadSystem( "varform" );
+
                 $xml = new varForm();
                 //$xml->parseFile (  );
                 $xml->renderForm( $G_FORM, $Part['File'] );
@@ -595,7 +590,7 @@ class Publisher
                 break;
             case 'template': //To do: Please check it 26/06/07
                 if (gettype( $Part['Data'] ) == 'array') {
-                    G::LoadSystem( 'template' ); //template phpBB
+ //template phpBB
                     $template = new Template();
                     $template->set_filenames( array ('body' => $Part['Template'] . '.html' ) );
                     $dataArray = $Part['Data'];

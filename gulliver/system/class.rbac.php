@@ -70,84 +70,9 @@ class RBAC
     public $singleSignOn = false;
 
     private static $instance = null;
-    public $authorizedActions = array();
 
     public function __construct ()
     {
-        $this->authorizedActions = array(
-            'users_Ajax.php' => array(
-                'availableUsers' => array('PM_FACTORY'),
-                'assign' => array('PM_FACTORY'),
-                'changeView' => array(),
-                'ofToAssign' => array('PM_FACTORY'),
-                'usersGroup' => array('PM_FACTORY'),
-                'canDeleteUser' => array('PM_USERS'),
-                'deleteUser' => array('PM_USERS'),
-                'changeUserStatus' => array('PM_USERS'),
-                'availableGroups' => array('PM_USERS'),
-                'assignedGroups' => array('PM_USERS'),
-                'assignGroupsToUserMultiple' => array('PM_USERS'),
-                'deleteGroupsToUserMultiple' => array('PM_USERS'),
-                'authSources' => array('PM_USERS'),
-                'loadAuthSourceByUID' => array('PM_USERS'),
-                'updateAuthServices' => array('PM_USERS'),
-                'usersList' => array('PM_USERS'),
-                'updatePageSize' => array(),
-                'summaryUserData' => array('PM_USERS'),
-                'verifyIfUserAssignedAsSupervisor' => array('PM_USERS')
-            ),
-            'skin_Ajax.php' => array(
-                'updatePageSize' => array(),
-                'skinList' => array('PM_SETUP_SKIN'),
-                'newSkin' => array('PM_SETUP_SKIN'),
-                'importSkin' => array('PM_SETUP_SKIN'),
-                'exportSkin' => array('PM_SETUP_SKIN'),
-                'deleteSkin' => array('PM_SETUP_SKIN'),
-                'streamSkin' => array('PM_SETUP_SKIN'),
-                'addTarFolder' => array('PM_SETUP_SKIN'),
-                'copy_skin_folder' => array('PM_SETUP_SKIN')
-            ),
-            'processes_DownloadFile.php' => array(
-                'downloadFileHash' => array('PM_FACTORY')
-            ),
-            'processProxy.php' => array(
-                'categoriesList' => array(),
-                'getCategoriesList' => array(),
-                'saveProcess' => array('PM_FACTORY'),
-                'changeStatus' => array(),
-                'changeDebugMode' => array(),
-                'getUsers' => array(),
-                'getGroups' => array(),
-                'assignActorsTask' => array(),
-                'removeActorsTask' => array(),
-                'getActorsTask' => array(),
-                'getProcessDetail' => array(),
-                'getProperties' => array(),
-                'saveProperties' => array(),
-                'getCaledarList' => array(),
-                'getPMVariables' => array(),
-                'generateBpmn' => array()
-            ),
-            'home.php' => array(
-                'login' => array('PM_LOGIN'),
-                'index' => array('PM_CASES'),
-                'indexSingle' => array('PM_CASES'),
-                'appList' => array('PM_CASES'),
-                'appAdvancedSearch' => array('PM_ALLCASES'),
-                'getApps' => array('PM_ALLCASES'),
-                'getAppsData' => array('PM_ALLCASES'),
-                'startCase' => array('PM_CASES'),
-                'error' => array(),
-                'getUserArray' => array('PM_ALLCASES'),
-                'getCategoryArray' => array('PM_ALLCASES'),
-                'getAllUsersArray' => array('PM_ALLCASES'),
-                'getStatusArray' => array('PM_ALLCASES'),
-                'getProcessArray' => array('PM_ALLCASES'),
-                'getProcesses' => array('PM_ALLCASES'),
-                'getUsers' => array('PM_ALLCASES')
-            )
-
-        );
     }
 
     /**
@@ -173,37 +98,37 @@ class RBAC
     public function initRBAC ()
     {
         if (is_null( $this->userObj )) {
-            require_once ("classes/model/RbacUsers.php");
+
             $this->userObj = new RbacUsers();
         }
 
         if (is_null( $this->systemObj )) {
-            require_once ("classes/model/Systems.php");
+
             $this->systemObj = new Systems();
         }
 
         if (is_null( $this->usersRolesObj )) {
-            require_once ("classes/model/UsersRoles.php");
+
             $this->usersRolesObj = new UsersRoles();
         }
 
         if (is_null( $this->rolesObj )) {
-            require_once ("classes/model/Roles.php");
+
             $this->rolesObj = new Roles();
         }
 
         if (is_null( $this->permissionsObj )) {
-            require_once ("classes/model/Permissions.php");
+
             $this->permissionsObj = new Permissions();
         }
 
         if (is_null( $this->rolesPermissionsObj )) {
-            require_once ("classes/model/RolesPermissions.php");
+
             $this->rolesPermissionsObj = new RolesPermissions();
         }
 
         if (is_null( $this->authSourcesObj )) {
-            require_once 'classes/model/AuthenticationSource.php';
+
             $this->authSourcesObj = new AuthenticationSource();
         }
         //hook for RBAC plugins
@@ -222,7 +147,6 @@ class RBAC
             }
         }
         if (!in_array('ldapAdvanced', $this->aRbacPlugins)) {
-            G::LoadClass('ldapAdvanced');
             if (class_exists('ldapAdvanced')) {
                 $this->aRbacPlugins[] = 'ldapAdvanced';
             }
@@ -358,8 +282,6 @@ class RBAC
             "PER_NAME" => "Edit User profile Default Cases Menu Options"
         ), array("PER_UID" => "00000000000000000000000000000064", "PER_CODE" => "PM_REASSIGNCASE_SUPERVISOR",
             "PER_NAME" => "Reassign case supervisor"
-        ), array("PER_UID" => "00000000000000000000000000000065", "PER_CODE" => "PM_SETUP_CUSTOM_CASES_LIST",
-            "PER_NAME" => "Setup Custom Cases List"
         )
         );
         return $permissionsAdmin;
@@ -502,9 +424,7 @@ class RBAC
     public function VerifyLogin ($strUser, $strPass)
     {
         /*----------------------------------********---------------------------------*/
-        if (!class_exists('pmLicenseManager')) {
-            G::LoadClass('pmLicenseManager');
-        }
+
         $licenseManager =& pmLicenseManager::getSingleton();
         if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
             return -7;
@@ -1518,37 +1438,6 @@ class RBAC
                     }
                 }
             }
-        }
-    }
-    /**
-     * This function verify if the user allows to the file with a specific action
-     * If the action is not defined in the authorizedActions we give the allow
-     * @param string $file
-     * @param string $action
-     *
-     * @return void
-     */
-    public function allows($file, $action)
-    {
-        $access = false;
-        if (isset($this->authorizedActions[$file][$action])) {
-            $permissions = $this->authorizedActions[$file][$action];
-            $totalPermissions = count($permissions);
-            $countAccess = 0;
-            foreach ($permissions as $key => $value) {
-                if ($this->userCanAccess($value) == 1) {
-                    $countAccess++;
-                }
-            }
-            //Check if the user has all permissions that needed
-            if ($countAccess == $totalPermissions) {
-                $access = true;
-            }
-        }
-
-        if (!$access) {
-            G::header('Location: /errors/error403.php');
-            die();
         }
     }
 }

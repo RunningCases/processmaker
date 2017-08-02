@@ -1,5 +1,5 @@
 <?php
-G::LoadClass("plugin");
+;
 
 class {className}Plugin extends PMPlugin
 {
@@ -83,7 +83,7 @@ class {className}Plugin extends PMPlugin
   <!-- START BLOCK : dashboard -->
   public function dashletInsert()
   {
-    require_once ("classes/model/Dashlet.php");
+
     
     $connection = Propel::getConnection(DashletPeer::DATABASE_NAME);
     
@@ -101,7 +101,7 @@ class {className}Plugin extends PMPlugin
   
   public function dashletDelete()
   {
-    require_once ("classes/model/Dashlet.php");
+
     
     foreach ($this->dashletsUids as $dashletData) {
       $criteria = new Criteria("workflow");

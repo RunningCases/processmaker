@@ -26,7 +26,7 @@
 if (isset( $_SESSION['CURRENT_PAGE_INITILIZATION'] ))
     eval( $_SESSION['CURRENT_PAGE_INITILIZATION'] );
 
-   // G::LoadThirdParty('pear/json','class.json');
+
    // $json=new Services_JSON();
 if (! defined( 'XMLFORM_AJAX_PATH' ))
     define( 'XMLFORM_AJAX_PATH', PATH_XMLFORM );

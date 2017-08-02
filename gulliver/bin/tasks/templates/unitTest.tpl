@@ -5,7 +5,7 @@
   require_once( PATH_THIRDPARTY . '/lime/lime.php');
   require_once( PATH_THIRDPARTY.'lime/yaml.class.php');
  
-  G::LoadThirdParty('smarty/libs','Smarty.class');
+
   G::LoadSystem ( 'xmlform');
   G::LoadSystem ( 'xmlDocument');
   G::LoadSystem ( 'form');

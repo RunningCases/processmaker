@@ -31,7 +31,7 @@
  *
  */
 
-G::LoadSystem( 'database_base' );
+
 
 class database extends database_base
 {
@@ -207,16 +207,12 @@ class database extends database_base
             }
         }
         if (isset( $aParameters['AutoIncrement'] ) && $aParameters['AutoIncrement']) {
-            $sSQL .= ' AUTO_INCREMENT';
+            $sSQL .= ' AUTO_INCREMENT PRIMARY KEY';
         }
-        if (isset( $aParameters['PrimaryKey'] ) && $aParameters['PrimaryKey']) {
-            $sSQL .= ' PRIMARY KEY';
-        }
-        if (isset( $aParameters['Unique'] ) && $aParameters['Unique']) {
-            $sSQL .= ' UNIQUE';
-        }
-
-        //we need to check the property AI
+        /*if ($aParameters['Key'] == 'PRI') {
+         $sKeys .= 'ALTER TABLE ' . $this->sQuoteCharacter . $sTable . $this->sQuoteCharacter .
+                ' ADD PRIMARY KEY (' . $this->sQuoteCharacter . $sColumn . $this->sQuoteCharacter . ')' . $this->sEndLine;
+         }*/
         if (isset( $aParameters['AI'] )) {
             if ($aParameters['AI'] == 1) {
                 $sSQL .= ' AUTO_INCREMENT';
@@ -909,7 +905,6 @@ class database extends database_base
      */
     public function reportTableExist ()
     {
-        G::LoadSystem('inputfilter');
         $filter = new InputFilter();
         $DB_NAME = $filter->validateInput(DB_NAME);
         $bExists = true;
