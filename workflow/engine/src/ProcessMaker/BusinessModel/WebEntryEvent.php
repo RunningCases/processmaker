@@ -280,19 +280,19 @@ class WebEntryEvent
                 $this->arrayFieldDefinition['WE_LINK_SKIN']['empty'] = false;
                 $this->arrayFieldDefinition['WE_LINK_LANGUAGE']['empty'] = false;
                 $this->arrayFieldDefinition['WE_LINK_DOMAIN']['empty'] = false;
+                $modelSkins = new \ProcessMaker\BusinessModel\Skins();
+                $skins = [];
+                foreach ($modelSkins->getSkins() as $mSkin) {
+                    $skins[] = $mSkin['SKIN_FOLDER_ID'];
+                }
+                $this->arrayFieldDefinition['WE_LINK_SKIN']['defaultValues'] = $skins;
+                $modelLanguages = new \ProcessMaker\BusinessModel\Language();
+                $languages = [];
+                foreach ($modelLanguages->getLanguageList() as $mLang) {
+                    $languages[] = $mLang['LANG_ID'];
+                }
+                $this->arrayFieldDefinition['WE_LINK_LANGUAGE']['defaultValues'] = $languages;
             }
-            $modelSkins = new \ProcessMaker\BusinessModel\Skins();
-            $skins = [];
-            foreach ($modelSkins->getSkins() as $mSkin) {
-                $skins[] = $mSkin['SKIN_FOLDER_ID'];
-            }
-            $this->arrayFieldDefinition['WE_LINK_SKIN']['defaultValues'] = $skins;
-            $modelLanguages = new \ProcessMaker\BusinessModel\Language();
-            $languages = [];
-            foreach ($modelLanguages->getLanguageList() as $mLang) {
-                $languages[] = $mLang['LANG_ID'];
-            }
-            $this->arrayFieldDefinition['WE_LINK_LANGUAGE']['defaultValues'] = $languages;
 
             $process->throwExceptionIfDataNotMetFieldDefinition($arrayData, $this->arrayFieldDefinition, $this->arrayFieldNameForException, $flagInsert);
 
