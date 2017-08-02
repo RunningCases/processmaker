@@ -13,29 +13,29 @@ class PluginDetail
     use Attributes;
 
     /** @var string */
-    private $sNamespace;
+    public $sNamespace;
     /** @var string */
-    private $sDescription = '';
+    public $sDescription = '';
     /** @var string */
-    private $sClassName;
+    public $sClassName;
     /** @var string */
-    private $sFriendlyName = '';
+    public $sFriendlyName = '';
     /** @var string */
-    private $sFilename;
+    public $sFilename;
     /** @var string */
-    private $sPluginFolder = '';
+    public $sPluginFolder = '';
     /** @var string */
-    private $sSetupPage = '';
+    public $sSetupPage = '';
     /** @var string */
-    private $sCompanyLogo = '';
+    public $sCompanyLogo = '';
     /** @var array */
-    private $aWorkspaces = [];
+    public $aWorkspaces = [];
     /** @var bool */
-    private $enabled = false;
+    public $enabled = false;
     /** @var bool */
-    private $bPrivate = false;
+    public $bPrivate = false;
     /** @var int */
-    private $iVersion = 0;
+    public $iVersion = 0;
 
     /**
      * This function is the constructor of the pluginDetail class

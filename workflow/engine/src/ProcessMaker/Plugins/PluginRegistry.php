@@ -797,11 +797,11 @@ class PluginRegistry
                 }
                 if ($found) {
                     require_once($classFile);
-                    $sClassName = substr($this->_aPluginDetails[$trigger->getNamespace()]->sClassName, 0, 1) .
+                    $sClassName = substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 0, 1) .
                         str_replace(
-                            'plugin',
-                            'class',
-                            substr($this->_aPluginDetails[$trigger->getNamespace()]->sClassName, 1)
+                            'Plugin',
+                            'Class',
+                            substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 1)
                         );
                     $obj = new $sClassName();
                     $methodName = $trigger->getTriggerName();

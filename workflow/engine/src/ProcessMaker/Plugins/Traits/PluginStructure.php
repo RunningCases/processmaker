@@ -81,11 +81,11 @@ trait PluginStructure
 
     /**
      * Ser information of all Plugins
-     * @param array $_aPlugins
+     * @param array $plugins
      */
-    public function setPlugins($_aPlugins)
+    public function setPlugins($plugins)
     {
-        $this->_aPlugins = $_aPlugins;
+        $this->_aPlugins = $plugins;
     }
 
     /**
@@ -93,19 +93,21 @@ trait PluginStructure
      */
     private function constructStructure()
     {
-        $Plugins = PluginsRegistry::getPluginsEnabled(BasePeer::TYPE_PHPNAME);
+        $Plugins = PluginsRegistry::loadPlugins(BasePeer::TYPE_PHPNAME);
         foreach ($Plugins as $plugin) {
             $this->_aPluginDetails[$plugin['PluginNamespace']] = $this->buildPluginDetails($plugin);
-            $this->buildMenus(\G::json_decode($plugin['PluginMenus'], true));
-            $this->buildFolders(\G::json_decode($plugin['PluginFolders'], true));
-            $this->buildTriggers(\G::json_decode($plugin['PluginTriggers'], true));
-            $this->buildPmFunctions(\G::json_decode($plugin['PluginPmFunctions'], true));
-            $this->buildRedirectLogin(\G::json_decode($plugin['PluginRedirectLogin'], true));
-            $this->buildSteps(\G::json_decode($plugin['PluginSteps'], true));
-            $this->buildCss(\G::json_decode($plugin['PluginCss'], true));
-            $this->buildJs(\G::json_decode($plugin['PluginJs'], true));
-            $this->buildRestService(\G::json_decode($plugin['PluginRestService'], true));
-            $this->buildAttributes($plugin['PluginNamespace'], \G::json_decode($plugin['PluginAttributes'], true));
+            if ($plugin['PluginEnable']) {
+                $this->buildMenus(\G::json_decode($plugin['PluginMenus'], true));
+                $this->buildFolders(\G::json_decode($plugin['PluginFolders'], true));
+                $this->buildTriggers(\G::json_decode($plugin['PluginTriggers'], true));
+                $this->buildPmFunctions(\G::json_decode($plugin['PluginPmFunctions'], true));
+                $this->buildRedirectLogin(\G::json_decode($plugin['PluginRedirectLogin'], true));
+                $this->buildSteps(\G::json_decode($plugin['PluginSteps'], true));
+                $this->buildCss(\G::json_decode($plugin['PluginCss'], true));
+                $this->buildJs(\G::json_decode($plugin['PluginJs'], true));
+                $this->buildRestService(\G::json_decode($plugin['PluginRestService'], true));
+                $this->buildAttributes($plugin['PluginNamespace'], \G::json_decode($plugin['PluginAttributes']));
+            }
         }
     }
 
@@ -139,7 +141,7 @@ trait PluginStructure
     private function buildMenus($menus)
     {
         $response = [];
-        foreach ($menus as $index => $menu) {
+        foreach ($menus as $menu) {
             $response[] = new MenuDetail($menu['Namespace'], $menu['MenuId'], $menu['Filename']);
         }
         $this->_aMenus = array_merge($this->_aMenus, $response);
@@ -152,7 +154,7 @@ trait PluginStructure
     private function buildFolders($folders)
     {
         $response = [];
-        foreach ($folders as $index => $folder) {
+        foreach ($folders as $folder) {
             $response[] = new FolderDetail($folder['Namespace'], $folder['FolderId'], $folder['FolderName']);
         }
         $this->_aFolders = array_merge($this->_aFolders, $response);
@@ -165,7 +167,7 @@ trait PluginStructure
     private function buildTriggers($triggers)
     {
         $response = [];
-        foreach ($triggers as $index => $trigger) {
+        foreach ($triggers as $trigger) {
             $response[] = new TriggerDetail($trigger['Namespace'], $trigger['TriggerId'], $trigger['TriggerName']);
         }
         $this->_aTriggers = array_merge($this->_aTriggers, $response);
@@ -177,7 +179,7 @@ trait PluginStructure
      */
     private function buildPmFunctions($pmFunctions)
     {
-        foreach ($pmFunctions as $index => $pmFunction) {
+        foreach ($pmFunctions as $pmFunction) {
             $this->_aPmFunctions = array_merge($this->_aPmFunctions, [$pmFunction]);
         }
     }
@@ -189,7 +191,7 @@ trait PluginStructure
     private function buildRedirectLogin($redirectLogin)
     {
         $response = [];
-        foreach ($redirectLogin as $index => $trigger) {
+        foreach ($redirectLogin as $trigger) {
             $response[] = new RedirectDetail($trigger['Namespace'], $trigger['RoleCode'], $trigger['PathMethod']);
         }
         $this->_aRedirectLogin = array_merge($this->_aRedirectLogin, $response);
@@ -202,7 +204,7 @@ trait PluginStructure
     private function buildSteps($steps)
     {
         $response = [];
-        foreach ($steps as $index => $step) {
+        foreach ($steps as $step) {
             $response[] = new StepDetail(
                 $step['Namespace'],
                 $step['StepId'],
@@ -221,7 +223,7 @@ trait PluginStructure
     private function buildCss($css)
     {
         $response = [];
-        foreach ($css as $index => $c) {
+        foreach ($css as $c) {
             $response[] = new CssFile($c['Namespace'], $c['CssFile']);
         }
         $this->_aCss = array_merge($this->_aCss, $response);
@@ -234,7 +236,7 @@ trait PluginStructure
     private function buildJs($js)
     {
         $response = [];
-        foreach ($js as $index => $j) {
+        foreach ($js as $j) {
             $response[] = new JsFile($j['Namespace'], $j['CoreJsFile'], $j['PluginJsFile']);
         }
         $this->_aJs = array_merge($this->_aJs, $response);
@@ -246,7 +248,7 @@ trait PluginStructure
      */
     private function buildRestService($restServices)
     {
-        foreach ($restServices as $index => $restService) {
+        foreach ($restServices as $restService) {
             $this->_restServices = array_merge($this->_restServices, $restService);
         }
     }
