@@ -350,6 +350,10 @@ class WebEntryEvent
             if (!empty($arrayData["USR_UID"])) {
                 $process->throwExceptionIfNotExistsUser($arrayData["USR_UID"], $this->arrayFieldNameForException["userUid"]);
             }
+            
+            if ($arrayData["WE_CALLBACK"] === "CUSTOM" && empty($arrayData["WE_CALLBACK_URL"])) {
+                throw new \Exception(\G::LoadTranslation("ENTER_VALID_URL"));
+            }
         } catch (\Exception $e) {
             throw $e;
         }

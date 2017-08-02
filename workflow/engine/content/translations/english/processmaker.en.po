@@ -15440,6 +15440,12 @@ msgid "Remove selected"
 msgstr "Remove selected"
 
 # TRANSLATION
+# LABEL/ENTER_VALID_URL
+#: LABEL/ENTER_VALID_URL
+msgid "Enter a valid URL to redirect the browser after the web entry is completed"
+msgstr "Enter a valid URL to redirect the browser after the web entry is completed"
+
+# TRANSLATION
 # LABEL/ID_EVENT_ADD_DYNAVAR
 #: LABEL/ID_EVENT_ADD_DYNAVAR
 msgid "Add dynavar"
