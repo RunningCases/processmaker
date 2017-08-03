@@ -625,7 +625,6 @@ class SkinEngine
 
   private function _default($enableJsScript=true)
   {
-    require_once PATH_THIRDPARTY . 'smarty/libs/Smarty.class.php'; // put full path to Smarty.class.php
     global $G_ENABLE_BLANK_SKIN;
     //menu
     global $G_PUBLISH;

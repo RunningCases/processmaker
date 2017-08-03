@@ -891,9 +891,6 @@ if (! $avoidChangedWorkspaceValidation && isset( $_SESSION['WORKSPACE'] ) && $_S
 $RBAC = &RBAC::getSingleton( PATH_DATA, session_id() );
 $RBAC->sSystem = 'PROCESSMAKER';
 
-//Enable Monolog
-Bootstrap::initVendors();
-
 // define and send Headers for all pages
 if (! defined( 'EXECUTE_BY_CRON' )) {
     header( "Expires: " . gmdate( "D, d M Y H:i:s", mktime( 0, 0, 0, date( 'm' ), date( 'd' ) - 1, date( 'Y' ) ) ) . " GMT" );
