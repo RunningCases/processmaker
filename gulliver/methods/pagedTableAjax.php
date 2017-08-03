@@ -24,7 +24,7 @@
  */
 
 
-require_once ( 'classes/class.xmlfield_InputPM.php' );
+
 	$id=get_ajax_value('ptID');
 	$ntable = unserialize(base64_decode($_SESSION['pagedTable[' . $id . ']']));
 	$page=get_ajax_value('page');

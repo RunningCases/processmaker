@@ -191,7 +191,7 @@ function run_generate_unit_test_class($task, $args) {
   }
 
   include ('test' . PATH_SEP . 'bootstrap' . PATH_SEP . 'unit.php');
-  require_once ('propel/Propel.php');
+
 
   require_once ($classFilename);
 
@@ -2037,7 +2037,7 @@ function get_DirDB($workspace) {
   }
 
   require_once ($dbFile);
-  require_once ("propel/Propel.php");
+
 
   Propel::init(PATH_CORE . "config/databases.php");
   $configuration = Propel::getConfiguration();
