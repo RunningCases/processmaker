@@ -447,7 +447,7 @@ class WebEntry
                     $template->assign("dynaform", $arrayDynaFormData["DYN_TITLE"]);
                     $template->assign("timestamp", date("l jS \of F Y h:i:s A"));
                     $template->assign("ws", $this->sysSys);
-                    $template->assign("version", \System::getVersion());
+                    $template->assign("version", \PMSystem::getVersion());
 
                     $fileName = $pathDataPublicProcess . PATH_SEP . $weTitle . "Post.php";
 

@@ -504,8 +504,6 @@ if (defined( 'PATH_DATA' ) && file_exists( PATH_DATA )) {
     //Instance Server Configuration Singleton
     $oServerConf = & serverConf::getSingleton();
 }
-$pathFile = PATH_THIRDPARTY . '/pear/PEAR.php';
-require_once $pathFile;
 
 
 

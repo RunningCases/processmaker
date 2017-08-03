@@ -144,7 +144,7 @@ if (! defined ('SYS_SYS')) {
       // ****************************************
       // read initialize file
       require_once PATH_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'class.system.php';
-      $config = System::getSystemConfiguration ('', '', SYS_SYS);
+      $config = PMSystem::getSystemConfiguration ('', '', SYS_SYS);
       define ('MEMCACHED_ENABLED', $config ['memcached']);
       define ('MEMCACHED_SERVER', $config ['memcached_server']);
       define ('TIME_ZONE', $config ['time_zone']);
@@ -260,7 +260,7 @@ function processWorkspace()
 
   try {
 
-    if (($solrConf = System::solrEnv (SYS_SYS)) !== false) {
+    if (($solrConf = PMSystem::solrEnv (SYS_SYS)) !== false) {
       print "Solr Configuration file: " . PATH_DATA_SITE . "env.ini\n";
       print "solr_enabled: " . $solrConf ['solr_enabled'] . "\n";
       print "solr_host: " . $solrConf ['solr_host'] . "\n";

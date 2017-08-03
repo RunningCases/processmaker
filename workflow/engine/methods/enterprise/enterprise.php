@@ -16,7 +16,7 @@ class enterprisePlugin extends PMPlugin
     {
         $pathPluginTrunk = PATH_CORE . "enterprise";
 
-        $VERSION = System::getVersion();
+        $VERSION = PMSystem::getVersion();
 
         $res = parent::PMPlugin($sNamespace, $sFilename);
         $this->sFriendlyName = "ProcessMaker Enterprise Core Edition";

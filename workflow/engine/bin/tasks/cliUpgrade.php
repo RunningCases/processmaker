@@ -87,7 +87,7 @@ function run_upgrade($command, $args)
     }
     $flag = G::isPMUnderUpdating(1, $oneWorkspace);
     //start to upgrade
-    $checksum = System::verifyChecksum();
+    $checksum = PMSystem::verifyChecksum();
     if ($checksum === false) {
         CLI::logging(CLI::error("checksum.txt not found, integrity check is not possible") . "\n");
         if (!CLI::question("Integrity check failed, do you want to continue the upgrade?")) {
@@ -177,7 +177,7 @@ function run_upgrade($command, $args)
             }
         }
     } else {
-        CLI::logging('ProcessMaker ' . System::getVersion(). ' installed', PATH_DATA . 'log/upgrades.log');
+        CLI::logging('ProcessMaker ' . PMSystem::getVersion(). ' installed', PATH_DATA . 'log/upgrades.log');
     }
 
     //Safe upgrade for JavaScript files

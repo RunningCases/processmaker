@@ -280,8 +280,8 @@ try {
             $oClass->iPMVersion = 0;
         }
         if ($oClass->iPMVersion > 0) {
-            if (System::getVersion() > 0) {
-                if ($oClass->iPMVersion > System::getVersion()) {
+            if (PMSystem::getVersion() > 0) {
+                if ($oClass->iPMVersion > PMSystem::getVersion()) {
                     //throw new Exception('This plugin needs version ' . $oClass->iPMVersion . ' or higher of ProcessMaker');
                 }
             }

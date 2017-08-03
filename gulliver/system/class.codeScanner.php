@@ -29,7 +29,7 @@ class CodeScanner
                         $workspace = new workspaceTools($option);
 
                         if ($workspace->workspaceExists()) {
-                            $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspace->name);
+                            $arraySystemConfiguration = PMSystem::getSystemConfiguration('', '', $workspace->name);
                             $flag = (int)($arraySystemConfiguration['enable_blacklist']) == 1;
                         }
                         break;

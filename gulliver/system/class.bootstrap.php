@@ -20,12 +20,7 @@ class Bootstrap
 
     public static function getSystemConfiguration($globalIniFile = '', $wsIniFile = '', $wsName = '')
     {
-        // (!) Backward compatibility, the original function is in System class
-        if (! class_exists("System")) {
-
-        }
-
-        return System::getSystemConfiguration($globalIniFile, $wsIniFile, $wsName);
+        return PMSystem::getSystemConfiguration($globalIniFile, $wsIniFile, $wsName);
     }
 
     //below this line, still not approved methods
@@ -988,7 +983,7 @@ class Bootstrap
      */
     public function getCheckSum($files)
     {
-        $key = System::getVersion();
+        $key = PMSystem::getVersion();
 
         if (!is_array($files)) {
             $tmp = $files;
@@ -1881,7 +1876,7 @@ class Bootstrap
         /* Fix to prevent use uxs skin outside siplified interface,
           because that skin is not compatible with others interfaces */
         if ($args['SYS_SKIN'] == 'uxs' && $args['SYS_COLLECTION'] != 'home' && $args['SYS_COLLECTION'] != 'cases') {
-            $config = System::getSystemConfiguration();
+            $config = PMSystem::getSystemConfiguration();
             $args['SYS_SKIN'] = $config['default_skin'];
         }
 

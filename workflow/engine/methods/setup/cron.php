@@ -62,7 +62,7 @@ $cronInfo["fileLogSize"] = $fileLogSize;
 $cronInfo["fileLogPath"] = $fileLog;
 
 //Workspaces
-$workspaces = System::listWorkspaces();
+$workspaces = PMSystem::listWorkspaces();
 $arrayAux = array ();
 
 foreach ($workspaces as $index => $workspace) {

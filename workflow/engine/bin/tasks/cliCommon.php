@@ -47,7 +47,7 @@ function get_workspaces_from_args($args, $includeAll = true) {
     $workspaces[] = new workspaceTools($arg);
   }
   if (empty($workspaces) && $includeAll) {
-    $workspaces = System::listWorkspaces();
+    $workspaces = PMSystem::listWorkspaces();
   }
   return $workspaces;
 }

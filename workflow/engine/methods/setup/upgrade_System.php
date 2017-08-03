@@ -49,7 +49,7 @@ $G_ID_MENU_SELECTED = 'SETUP';
 $G_ID_SUB_MENU_SELECTED = 'UPGRADE';
 
 require_once "classes/class.system.php";
-$oSystem = new System();
+$oSystem = new PMSystem();
 
 try {
     if (! $oSystem->verifyFileForUpgrade()) {

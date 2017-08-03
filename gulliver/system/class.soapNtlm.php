@@ -200,7 +200,7 @@ class soapNtlm
         curl_setopt( $this->ch, CURLOPT_USERPWD, $this->getuser() . ':' . $this->getpassword() ); // Ankit's code
         //Apply proxy settings
         if (class_exists( 'System' )) {
-            $sysConf = System::getSystemConfiguration();
+            $sysConf = PMSystem::getSystemConfiguration();
             $sysConf = $filter->xssFilterHard($sysConf);
             if ($sysConf['proxy_host'] != '') {
                 curl_setopt( $this->ch, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : '') );
@@ -243,7 +243,7 @@ class NTLMSoapClient extends SoapClient
 
         //Apply proxy settings
         if (class_exists( 'System' )) {
-            $sysConf = System::getSystemConfiguration();
+            $sysConf = PMSystem::getSystemConfiguration();
             if ($sysConf['proxy_host'] != '') {
                 curl_setopt( $ch, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : '') );
                 if ($sysConf['proxy_port'] != '') {

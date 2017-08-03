@@ -785,7 +785,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         $data = $oCase->getHistoryMessagesTrackerView( $_POST['APP_UID'], $_POST['APP_MSG_UID'] );
         //print_r($data);
 
-        $aSetup = System::getEmailConfiguration();
+        $aSetup = PMSystem::getEmailConfiguration();
 
         $passwd = $aSetup['MESS_PASSWORD'];
         $passwdDec = G::decrypt( $passwd, 'EMAILENCRYPT' );

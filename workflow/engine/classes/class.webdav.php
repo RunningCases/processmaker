@@ -742,7 +742,7 @@ class ProcessMakerWebDav extends HTTP_WebDAV_Server
         if (is_dir($path)) {
             $query = "DELETE FROM properties WHERE path LIKE '" . $this->_slashify($options["path"]) . "%'";
             mysql_query($query);
-            System::rm("-rf $path");
+            PMSystem::rm("-rf $path");
         } else {
             unlink($path);
         }
@@ -845,7 +845,7 @@ class ProcessMakerWebDav extends HTTP_WebDAV_Server
             mysql_query($query);
         } else {
             if (is_dir($source)) {
-                $files = System::find($source);
+                $files = PMSystem::find($source);
                 $files = array_reverse($files);
             } else {
                 $files = array($source

@@ -183,7 +183,7 @@ class webEntryProxy extends HttpProxyController
         $template->assign( 'dynaform', $dynTitle );
         $template->assign( 'timestamp', date( 'l jS \of F Y h:i:s A' ) );
         $template->assign( 'ws', SYS_SYS );
-        $template->assign( 'version', System::getVersion() );
+        $template->assign( 'version', PMSystem::getVersion() );
 
         $fileName = $pathProcess . $dynTitle . 'Post.php';
         file_put_contents( $fileName, $template->getOutputContent() );

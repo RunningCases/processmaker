@@ -118,7 +118,7 @@ $oAppCache->confCasesList = $confCasesList;
 $solrEnabled = 0;
 if ($action == "todo" || $action == "draft" || $action == "sent" || $action == "selfservice" ||
     $action == "unassigned" || $action == "search") {
-    $solrConfigured = ($solrConf = System::solrEnv()) !== false ? 1 : 0;
+    $solrConfigured = ($solrConf = PMSystem::solrEnv()) !== false ? 1 : 0;
     if ($solrConfigured == 1) {
         $applicationSolrIndex = new AppSolr(
             $solrConf['solr_enabled'],

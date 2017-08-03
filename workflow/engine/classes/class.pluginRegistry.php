@@ -596,7 +596,7 @@ class PMPluginRegistry
 
     public function uninstallPluginWorkspaces ($arrayPlugin)
     {
-        $workspace = System::listWorkspaces();
+        $workspace = PMSystem::listWorkspaces();
 
         foreach ($workspace as $indexWS => $ws) {
             $wsPathDataSite = PATH_DATA . "sites" . PATH_SEP . $ws->name . PATH_SEP;
@@ -1640,7 +1640,7 @@ class PMPluginRegistry
             if (isset($pluginDetails->aWorkspaces) && is_array($pluginDetails->aWorkspaces) && count($pluginDetails->aWorkspaces) > 0) {
                 $arrayWorkspace = array();
 
-                foreach (System::listWorkspaces() as $value) {
+                foreach (PMSystem::listWorkspaces() as $value) {
                     $workspaceTools = $value;
 
                     $arrayWorkspace[] = $workspaceTools->name;

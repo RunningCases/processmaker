@@ -404,7 +404,7 @@ class ActionsByEmail
                     $arrayConfigAux = $row;
                     $arrayConfigAux["SMTPSecure"] = $row["SMTPSECURE"];
                 }
-                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : \System::getEmailConfiguration();
+                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : \PMSystem::getEmailConfiguration();
 
                 $spool = new \spoolRun();
                 $spool->setConfig($aSetup);

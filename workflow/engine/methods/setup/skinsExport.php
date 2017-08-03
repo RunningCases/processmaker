@@ -150,7 +150,7 @@ G::mk_dir( $pathPublic . 'images' );
 $fields['className'] = $id;
 $fields['version'] = $oConf->version;
 $fields['description'] = $oConf->description;
-$fields['PMversion'] = System::getVersion();
+$fields['PMversion'] = PMSystem::getVersion();
 savePluginFile( 'skinPluginMainClass', $pathHome . $id . '.php', $fields );
 
 savePluginFile( 'skinPluginClass', $pathBase . 'class.' . $id . '.php', $fields );

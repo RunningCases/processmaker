@@ -102,7 +102,7 @@ class Home extends Controller
         $userProperty = new UsersProperties();
         $process = new Process();
         $case = new Cases();
-        $sysConf = System::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
+        $sysConf = PMSystem::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
 
         //Get ProcessStatistics Info
         $start = 0;
@@ -186,7 +186,7 @@ class Home extends Controller
 
         $solrEnabled = false;
 
-        if (($solrConf = System::solrEnv()) !== false) {
+        if (($solrConf = PMSystem::solrEnv()) !== false) {
 
             $ApplicationSolrIndex = new AppSolr(
                 $solrConf["solr_enabled"],
@@ -411,7 +411,7 @@ class Home extends Controller
             $type == "todo" || $type == "draft" || $type == "paused" || $type == "sent" ||
             $type == "selfservice" || $type == "unassigned" || $type == "search"
         ) &&
-        (($solrConf = System::solrEnv()) !== false)
+        (($solrConf = PMSystem::solrEnv()) !== false)
         ) {
 
             $ApplicationSolrIndex = new AppSolr(

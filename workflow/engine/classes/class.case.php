@@ -42,7 +42,7 @@ class Cases
     public function __construct()
     {
         //get Solr initialization variables
-        if (($solrConf = System::solrEnv()) !== false) {
+        if (($solrConf = PMSystem::solrEnv()) !== false) {
             $this->appSolr = new AppSolr($solrConf['solr_enabled'], $solrConf['solr_host'], $solrConf['solr_instance']);
         }
     }

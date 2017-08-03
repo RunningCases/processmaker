@@ -192,7 +192,7 @@ if ($actionAjax == 'sendMailMessage_JXP') {
         $oCase = new Cases();
         $data = $oCase->getHistoryMessagesTrackerView( $_POST['APP_UID'], $_POST['APP_MSG_UID'] );
 
-        $aSetup = System::getEmailConfiguration();
+        $aSetup = PMSystem::getEmailConfiguration();
 
         $oSpool = new spoolRun();
 

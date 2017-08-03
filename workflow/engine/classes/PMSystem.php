@@ -36,7 +36,7 @@
  *
  */
 
-class System
+class PMSystem
 {
     public $sFilename;
     public $sFilesList;
@@ -232,7 +232,7 @@ class System
         $Fields['IP'] = isset($ipe[0]) ? $ipe[0] : ''; //lookup($ipe[0]);
 
 
-        $Fields['PLUGINS_LIST'] = System::getPlugins();
+        $Fields['PLUGINS_LIST'] = PMSystem::getPlugins();
 
         return $Fields;
     }
@@ -723,7 +723,7 @@ class System
      */
     public static function getSystemSchema ()
     {
-        return System::getSchema( PATH_TRUNK . "workflow/engine/config/schema.xml" );
+        return PMSystem::getSchema( PATH_TRUNK . "workflow/engine/config/schema.xml" );
     }
 
     /**
@@ -733,7 +733,7 @@ class System
      */
     public static function getSystemSchemaRbac ()
     {
-    	return System::getSchema( PATH_TRUNK . "rbac/engine/config/schema.xml" );
+    	return PMSystem::getSchema( PATH_TRUNK . "rbac/engine/config/schema.xml" );
     }
 
     /**
@@ -748,7 +748,7 @@ class System
         $filter = new InputFilter();
         $pathFile = $filter->xssFilterHard(PATH_PLUGINS . $pluginName . "/config/schema.xml", 'path');
         if (file_exists( $pathFile )) {
-            return System::getSchema( $pathFile );
+            return PMSystem::getSchema( $pathFile );
         } else {
             return false;
         }
@@ -1231,9 +1231,9 @@ class System
     public static function solrEnv ($sysName = '')
     {
         if (empty( $sysName )) {
-            $conf = System::getSystemConfiguration();
+            $conf = PMSystem::getSystemConfiguration();
         } else {
-            $conf = System::getSystemConfiguration( '', '', $sysName );
+            $conf = PMSystem::getSystemConfiguration( '', '', $sysName );
         }
 
         if (! isset( $conf['solr_enabled'] ) || ! isset( $conf['solr_host'] ) || ! isset( $conf['solr_instance'] )) {
@@ -1251,7 +1251,7 @@ class System
     public static function getInstance()
     {
         if (is_null(self::$instance)) {
-            self::$instance = new System();
+            self::$instance = new PMSystem();
         }
 
         return self::$instance;

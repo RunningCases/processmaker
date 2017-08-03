@@ -262,7 +262,7 @@ class Main extends Controller
         }
 
         $this->setVar( 'logo_company', $this->getCompanyLogo() );
-        $this->setVar( 'pmos_version', System::getVersion() );
+        $this->setVar( 'pmos_version', PMSystem::getVersion() );
 
         $footerText = 'Copyright &copy; 2003-' . date( 'Y' ) . ' Colosa, Inc. All rights reserved.';
         $adviseText = 'Supplied free of charge with no support, certification, warranty,
@@ -312,7 +312,7 @@ class Main extends Controller
         $this->includeExtJS( 'main/sysLogin' );
 
         $this->setVar( 'logo_company', $this->getCompanyLogo() );
-        $this->setVar( 'pmos_version', System::getVersion() );
+        $this->setVar( 'pmos_version', PMSystem::getVersion() );
 
         $footerText = G::LoadTranslation('ID_COPYRIGHT_FROM') . date( 'Y' ) . G::LoadTranslation('ID_COPYRIGHT_COL');
         $adviseText = G::LoadTranslation('ID_COLOSA_AND_CERTIFIED_PARTNERS');
@@ -382,7 +382,7 @@ class Main extends Controller
             $template->assign( 'passwd', $newPass );
             $template->assign( 'poweredBy', G::loadTranslation( 'ID_PROCESSMAKER_SLOGAN1' ) );
             $template->assign( 'versionLabel', G::loadTranslation( 'ID_VERSION' ) );
-            $template->assign( 'version', System::getVersion() );
+            $template->assign( 'version', PMSystem::getVersion() );
             $template->assign( 'visit', G::loadTranslation( 'ID_VISIT' ) );
 
             $template->assign( 'footer', '' );
@@ -731,7 +731,7 @@ class Main extends Controller
         if (defined('SYSTEM_NAME')) {
             $systemName = SYSTEM_NAME;
         }
-        $properties[] = array ($systemName. ' Ver.', System::getVersion() . $ee, $pmSection);
+        $properties[] = array ($systemName. ' Ver.', PMSystem::getVersion() . $ee, $pmSection);
         $properties[] = array("PMUI JS Lib. Ver.", $pmuiVer, $pmSection);
         $properties[] = array("MAFE JS Lib. Ver.", $mafeVer, $pmSection);
         $properties[] = array("PM Dynaform JS Lib. Ver.", $pmdynaformVer, $pmSection);

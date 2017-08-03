@@ -798,7 +798,7 @@ class G
         /* Fix to prevent use uxs skin outside siplified interface,
         because that skin is not compatible with others interfaces*/
         if ($args['SYS_SKIN'] == 'uxs' && $args['SYS_COLLECTION'] != 'home' && $args['SYS_COLLECTION'] != 'cases') {
-            $config = System::getSystemConfiguration();
+            $config = PMSystem::getSystemConfiguration();
             $args['SYS_SKIN'] = $config['default_skin'];
         }
 
@@ -4551,7 +4551,7 @@ class G
      */
     public function getCheckSum ($files)
     {
-        $key = System::getVersion();
+        $key = PMSystem::getVersion();
 
         if (! is_array( $files )) {
             $tmp = $files;
@@ -5182,7 +5182,7 @@ class G
 
     public static function browserCacheFilesGetUid()
     {
-        $sysConf = System::getSystemConfiguration(PATH_CONFIG . "env.ini");
+        $sysConf = PMSystem::getSystemConfiguration(PATH_CONFIG . "env.ini");
 
         return (isset($sysConf["browser_cache_files_uid"]))? $sysConf["browser_cache_files_uid"] : null;
     }
@@ -5307,7 +5307,7 @@ class G
      */
     public static function log($message, $pathData = PATH_DATA, $file = 'cron.log')
     {
-        $config = System::getSystemConfiguration();
+        $config = PMSystem::getSystemConfiguration();
 
 
         $oLogger = Logger::getSingleton($pathData, PATH_SEP, $file);
