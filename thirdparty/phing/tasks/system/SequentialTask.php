@@ -39,7 +39,7 @@ class SequentialTask extends TaskPhing implements TaskContainer {
 
     /**
      * Add a nested task to Sequential.
-     * @param Task $nestedTask  Nested task to execute Sequential
+     * @param PhingTask $nestedTask  Nested task to execute Sequential
      */
     public function addTask(TaskPhing $nestedTask) {
         $this->nestedTasks[] = $nestedTask;

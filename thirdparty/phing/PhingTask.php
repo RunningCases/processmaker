@@ -28,12 +28,12 @@ include_once 'phing/RuntimeConfigurable.php';
  * Use {@link Project#createTask} to register a new Task.
  *
  * @author    Andreas Aderhold <andi@binarycloud.com>
- * @copyright © 2001,2002 THYRELL. All rights reserved
+ * @copyright Â© 2001,2002 THYRELL. All rights reserved
  * @version   $Revision: 1.11 $
  * @see       Project#createTask()
  * @package   phing
  */
-abstract class Task extends ProjectComponent {
+abstract class PhingTask extends ProjectComponent {
 
     /** owning Target object */
     protected $target;

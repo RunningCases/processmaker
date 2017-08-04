@@ -171,7 +171,7 @@ class UnknownElement extends TaskPhing {
      * @param UnknownElement $ue The unknwon element to create a task from
      * @param RuntimeConfigurable $w The wrapper object
      * @param boolean $onTopLevel Whether to treat this task as if it is top-level.
-     * @return Task The freshly created task
+     * @return PhingTask The freshly created task
      */
     protected function makeTask(UnknownElement $ue, RuntimeConfigurable $w, $onTopLevel = false) {
 

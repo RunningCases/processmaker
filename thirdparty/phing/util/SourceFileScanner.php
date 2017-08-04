@@ -37,7 +37,7 @@ class SourceFileScanner {
     private $task;
 
     /**
-     * @param task The task we should log messages through
+     * @param PhingTask The task we should log messages through
      */
     function __construct($task) {
         $this->task = $task;
