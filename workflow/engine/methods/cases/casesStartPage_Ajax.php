@@ -133,10 +133,6 @@ function ellipsis ($text, $numb)
 
 function lookinginforContentProcess ($sproUid)
 {
-    require_once 'classes/model/Content.php';
-    require_once 'classes/model/Task.php';
-    require_once 'classes/model/Content.php';
-
     $oContent = new Content();
     ///we are looking for a pro title for this process $sproUid
     $oCriteria = new Criteria( 'workflow' );

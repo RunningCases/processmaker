@@ -44,6 +44,91 @@ class G
     public static $httpHost;
 
     /**
+     * Load Gulliver Classes
+     * @access public
+     * @param string $strClass
+     * @return void
+     * @deprecated 08-04-2017
+     */
+    public static function LoadSystem($strClass)
+    {
+        //For backward compatibilities
+    }
+
+    /**
+     * Load System Classes
+     * @access public
+     * @param string $strClass
+     * @return void
+     * @deprecated 08-04-2017
+     */
+    public static function LoadSystemExist($strClass)
+    {
+        //For backward compatibilities
+    }
+
+    /**
+     * Include javascript files
+     * @access public
+     * @param string $strClass
+     * @return void
+     * @deprecated 08-04-2017
+     */
+    public static function LoadInclude($strClass)
+    {
+        //For backward compatibilities
+    }
+
+    /**
+     * Include all model files
+     * @access public
+     * @param string $strClass
+     * @return void
+     * @deprecated 08-04-2017
+     */
+    public static function LoadAllModelClasses($strClass)
+    {
+        //For backward compatibilities
+    }
+
+    /**
+     * public function LoadClassRBAC
+     * @access public
+     * @param string $strClass
+     * @return void
+     * @deprecated 08-04-2017
+     */
+    public static function LoadClassRBAC($strClass)
+    {
+        //For backward compatibilities
+    }
+
+    /**
+     * If the class is not defined by the aplication, it
+     * attempt to load the class from gulliver.system
+     * @access public
+     * @param string $strClass
+     * @return void
+     * @deprecated 08-04-2017
+     */
+    public static function LoadClass($strClass)
+    {
+        //For backward compatibilities
+    }
+
+    /**
+     * public function LoadThirdParty
+     * @access public
+     * @param string $strClass
+     * @return void
+     * @deprecated 08-04-2017
+     */
+    public static function LoadThirdParty($strClass)
+    {
+        //For backward compatibilities
+    }
+
+    /**
      * is_https
      * @return bool
      */
