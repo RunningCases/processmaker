@@ -198,8 +198,6 @@ class SkinEngine
 
   private function _raw()
   {
-    require_once PATH_THIRDPARTY . 'smarty/libs/Smarty.class.php'; // put full path to Smarty.class.php
-
     G::verifyPath ( PATH_SMARTY_C,   true );
     G::verifyPath ( PATH_SMARTY_CACHE, true );
 
@@ -322,8 +320,6 @@ class SkinEngine
 
   private function _blank()
   {
-    require_once PATH_THIRDPARTY . 'smarty/libs/Smarty.class.php'; // put full path to Smarty.class.php
-
     G::verifyPath(PATH_SMARTY_C,   true);
     G::verifyPath(PATH_SMARTY_CACHE, true);
 
@@ -350,7 +346,6 @@ class SkinEngine
 
   private function _submenu()
   {
-    require_once PATH_THIRDPARTY . 'smarty/libs/Smarty.class.php'; // put full path to Smarty.class.php
     global $G_ENABLE_BLANK_SKIN;
     //menu
     global $G_MAIN_MENU;
@@ -469,7 +464,6 @@ class SkinEngine
 
   private function _tracker()
   {
-    require_once PATH_THIRDPARTY . 'smarty/libs/Smarty.class.php'; // put full path to Smarty.class.php
     global $G_ENABLE_BLANK_SKIN;
 
     G::verifyPath ( PATH_SMARTY_C,   true );
@@ -761,7 +755,6 @@ class SkinEngine
       }
 
         if (defined('SYS_SYS')) {
-            require_once ("classes" . PATH_SEP . "class.pmLicenseManager.php");
             $pmLicenseManagerO = &pmLicenseManager::getSingleton();
             $expireIn          = $pmLicenseManagerO->getExpireIn();
             $expireInLabel     = $pmLicenseManagerO->getExpireInLabel();
