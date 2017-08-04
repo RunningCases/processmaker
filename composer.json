@@ -34,8 +34,16 @@
         "colosa/pmdynaform": "develop-dev",
         "google/apiclient": "1.1.6",
         "dapphp/securimage": "^3.6",
-        "psr/log": "1.0.0",
-        "monolog/monolog": "1.19.0"
+        "psr/log":"1.0.0",
+        "monolog/monolog": "1.19.0",
+        "ezyang/htmlpurifier": "4.8.0",
+        "geshi/geshi": "dev-master",
+        "libchart/libchart": "1.4.0",
+        "indeyets/pake": "1.99.*",
+        "phpmailer/phpmailer": "5.2.*",
+        "tecnickcom/tcpdf": "6.2.*",
+        "pear/archive_tar": "1.4.*",
+        "pear/console_getopt": "1.4.*"
     },
     "require-dev": {
         "guzzle/guzzle": "~3.1.1",
@@ -59,7 +67,6 @@
             "thirdparty/pear",
             "thirdparty/html2ps_pdf",
             "thirdparty/phing",
-            "thirdparty/phpmailer",
             "rbac/engine/classes/"
         ],
         "files": [

@@ -3,10 +3,10 @@
 require_once(HTML2PS_DIR.'path.point.php');
 require_once(HTML2PS_DIR.'path.rectangle.php');
 
-class Path {
+class HtmlPsPath {
   var $_points;
 
-  function Path() {
+  function HtmlPsPath() {
     $this->clear();
   }
 
@@ -101,7 +101,7 @@ class Path {
   }
 }
 
-class PathCircle extends Path {
+class PathCircle extends HtmlPsPath {
   var $_x;
   var $_y;
   var $_r;
