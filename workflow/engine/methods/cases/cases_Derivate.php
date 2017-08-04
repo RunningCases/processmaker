@@ -65,10 +65,6 @@ switch ($RBAC->userCanAccess( 'PM_CASES' )) {
 }
 
 /* Includes */
-G::LoadClass( 'pmScript' );
-G::LoadClass( 'case' );
-G::LoadClass( 'derivation' );
-
 //If no variables are submitted and the $_POST variable is empty
 if (!isset($_POST['form'])) {
     $_POST['form'] = array();

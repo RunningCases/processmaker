@@ -5330,9 +5330,6 @@ class Cases
                 } else {
                     $sBody = nl2br($aTaskInfo['TAS_DEF_MESSAGE']);
                 }
-                if (!class_exists('System')) {
-                    G::LoadClass('system');
-                }
                 $aConfiguration = (!is_null(\EmailServerPeer::retrieveByPK($aTaskInfo['TAS_EMAIL_SERVER_UID']))) ?
                     $eServer->getEmailServer($aTaskInfo['TAS_EMAIL_SERVER_UID'], true) :
                     $eServer->getEmailServerDefault();
@@ -5413,9 +5410,6 @@ class Cases
                     $sBody = file_get_contents($fileTemplate);
                 } else {
                     $sBody = nl2br($aTaskInfo['TAS_RECEIVE_MESSAGE']);
-                }
-                if (!class_exists('System')) {
-                    G::LoadClass('system');
                 }
                 $aConfiguration = (!is_null(\EmailServerPeer::retrieveByPK($aTaskInfo['TAS_RECEIVE_SERVER_UID']))) ?
                     $eServer->getEmailServer($aTaskInfo['TAS_RECEIVE_SERVER_UID'], true) :

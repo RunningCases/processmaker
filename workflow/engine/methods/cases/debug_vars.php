@@ -5,7 +5,6 @@ switch ($request) {
     case 'getRows':
 
         $fieldname = $_POST['fieldname'];
-        G::LoadClass('case');
         $oApp = new Cases();
         $aFields = $oApp->loadCase($_SESSION['APPLICATION']);
         $aVars = Array();

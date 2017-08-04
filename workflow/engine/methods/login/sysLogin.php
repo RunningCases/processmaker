@@ -62,9 +62,6 @@ session_regenerate_id();
 $_SESSION = array_merge($_SESSION, $arraySession);
 
 //Required classes for dbArray work
-//require_once ("propel/Propel.php");
-//require_once ("creole/Creole.php");
-//G::LoadThirdParty ("pake", "pakeColor.class");
 Propel::init (PATH_CORE . "config/databases.php");
 Creole::registerDriver ('dbarray', 'creole.contrib.DBArrayConnection');
 

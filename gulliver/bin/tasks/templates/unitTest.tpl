@@ -13,9 +13,6 @@
   require_once ( "creole/Creole.php" );
   require_once (  PATH_CORE . "config/databases.php");  
 
-  G::LoadClass ( '{$classFile}');
-
-
   $obj = new {$className} ($dbc); 
   $t   = new lime_test( {$testItems}, new lime_output_color() );
 

@@ -808,7 +808,6 @@ class Variable
             //This value is required to be able to query the database.
             $_SESSION["PROCESS"] = $proUid;
             //The pmdynaform class is instantiated
-            \G::LoadClass("pmDynaform");
             $pmDynaform = new \pmDynaform(array("APP_DATA" => $params));
 
             //Get control from dynaform.

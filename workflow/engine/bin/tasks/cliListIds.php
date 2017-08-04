@@ -2,7 +2,6 @@
 
 function cliListIds($command, $args)
 {
-    G::LoadClass("wsTools");
     CLI::logging("list-ids INIT\n");
 
     $workspaces = get_workspaces_from_args($command);

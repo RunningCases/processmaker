@@ -208,7 +208,6 @@ class ObjectPermission extends BaseObjectPermission
      */
     public function verifyObjectPermissionPerGroup ($usrUid, $proUid, $tasUid = '', $action = '')
     {
-        G::loadClass('groups');
         $gr = new Groups();
         $records = $gr->getActiveGroupsForAnUser($usrUid);
         $groupPermissions = array();

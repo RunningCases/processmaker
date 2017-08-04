@@ -592,7 +592,6 @@ class Home extends Controller
 
     function getUserArray($action, $userUid, $search = null)
     {
-        G::LoadClass("configuration");
         $conf = new Configurations();
         $confEnvSetting = $conf->getFormats();
         $users = array();

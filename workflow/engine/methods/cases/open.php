@@ -40,7 +40,6 @@ if (!isset($_GET['APP_UID']) && !isset($_GET['APP_NUMBER']) && !isset($_GET['DEL
 }
 //Get the APP_UID related to APP_NUMBER
 if (!isset($_GET['APP_UID']) && isset($_GET['APP_NUMBER'])) {
-    G::LoadClass('case');
     $oCase = new Cases();
     $appUid = $oCase->getApplicationUIDByNumber(htmlspecialchars($_GET['APP_NUMBER']));
     if (is_null( $appUid )) {
@@ -51,7 +50,6 @@ if (!isset($_GET['APP_UID']) && isset($_GET['APP_NUMBER'])) {
 }
 //If we don't have the DEL_INDEX we get the current delIndex. Data reporting tool does not have this information
 if (!isset($_GET['DEL_INDEX'])) {
-    G::LoadClass('case');
     $oCase = new Cases();
     $delIndex = $oCase->getCurrentDelegation($appUid, $_SESSION['USER_LOGGED']);
     if (is_null( $delIndex )) {

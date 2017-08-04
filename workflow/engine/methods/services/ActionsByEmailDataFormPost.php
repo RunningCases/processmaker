@@ -52,8 +52,6 @@ if (PMLicensedFeatures
         $aber = G::decrypt($_REQUEST['ABER'], URL_KEY);
         $forms = isset($_REQUEST['form']) ? $_REQUEST['form'] : [];
 
-        G::LoadClass('case');
-
         $case = new Cases();
         $casesFields = $case->loadCase($appUid, $delIndex);
 

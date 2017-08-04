@@ -24,6 +24,5 @@
  */
 $RBAC->requirePermissions('PM_SETUP_ADVANCE');
 
-G::LoadClass('plugin');
 $items = \PMPlugin::getListPluginsManager(SYS_SYS);
 echo G::json_encode($items);

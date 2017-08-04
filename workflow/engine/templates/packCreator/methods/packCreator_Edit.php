@@ -25,9 +25,6 @@
 
   //G::genericForceLogin( 'WF_MYINFO' , 'login/noViewPage', $urlLogin = 'login/login' );
 
-  // How do we fix this?
-  // G::LoadClass('{$pack->classFile}');
-  
   $dbc = new DBConnection();
   $ses = new DBSession($dbc);
 

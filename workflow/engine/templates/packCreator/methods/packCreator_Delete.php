@@ -25,11 +25,6 @@
 
   //G::genericForceLogin( 'WF_MYINFO' , 'login/noViewPage', $urlLogin = 'login/login' );
 
-// What does this do and how can we do this dynamically?
-// -chloe deguzman
-
-// G::LoadClass('{$pack->classFile}');
-  
   $dbc = new DBConnection();
   $ses = new DBSession($dbc);
 

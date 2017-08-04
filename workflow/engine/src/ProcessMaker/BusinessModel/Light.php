@@ -846,8 +846,6 @@ class Light
     public function getInfoResume($userUid, $Fields, $type)
     {
         /* Prepare page before to show */
-        G::LoadClass( 'case' );
-
         $objProc = new \Process();
         $aProc = $objProc->load( $Fields['PRO_UID'] );
         $Fields['PRO_TITLE'] = $aProc['PRO_TITLE'];

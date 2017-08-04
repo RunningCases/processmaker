@@ -528,7 +528,6 @@ class Cases
                     throw (new \Exception($arrayData));
                 }
             } else {
-                \G::LoadClass("wsBase");
                 $ws = new \wsBase();
                 $fields = $ws->getCaseInfo($applicationUid, 0);
                 $array = json_decode(json_encode($fields), true);

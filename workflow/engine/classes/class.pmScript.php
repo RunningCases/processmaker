@@ -748,7 +748,6 @@ function handleFatalErrors ($buffer)
     }
 
     if (preg_match( '/(error<\/b>:)(.+)(<br)/', $buffer, $regs )) {
-        G::LoadClass( 'case' );
         $oCase = new Cases();
         $err = preg_replace( '/<.*?>/', '', $regs[2] );
         $aAux = explode( ' in ', $err );

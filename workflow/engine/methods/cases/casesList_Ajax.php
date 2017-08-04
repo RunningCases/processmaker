@@ -47,7 +47,6 @@ if ($actionAjax == "userValues") {
     $action = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : null;
     $query = isset( $_REQUEST['query'] ) ? $_REQUEST['query'] : null;
 
-    G::LoadClass("configuration");
     $conf = new Configurations();
     $confEnvSetting = $conf->getFormats();
     $users = array();

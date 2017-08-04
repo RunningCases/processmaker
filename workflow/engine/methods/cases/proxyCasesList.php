@@ -67,7 +67,6 @@ try {
             break;
     }
 
-    G::LoadClass("applications");
     $apps = new Applications();
 
     if ($action == 'search') {

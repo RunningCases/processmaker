@@ -1009,7 +1009,6 @@ class Light extends Api
                 $caseVariables = DateTime::convertUtcToTimeZone($caseVariables);
             }
 
-            \G::LoadClass("pmDynaform");
             $pmDynaform = new \pmDynaform(array("APP_DATA" => $caseVariables, "CURRENT_DYNAFORM" => $dyn_uid));
             $pmDynaform->jsonr($result['formContent']);
             return $result;
