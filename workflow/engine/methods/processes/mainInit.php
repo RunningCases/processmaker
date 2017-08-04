@@ -88,6 +88,13 @@ $oHeadPublisher->assign("arrayMenuNewOptionPlugin", $arrayMenuNewOptionPlugin);
 $oHeadPublisher->assign("arrayContextMenuOptionPlugin", $arrayContextMenuOptionPlugin);
 $oHeadPublisher->assign('extJsViewState', $oHeadPublisher->getExtJsViewState());
 
+$designer = new Designer();
+$oHeadPublisher->assign('SYS_SYS', SYS_SYS);
+$oHeadPublisher->assign('SYS_LANG', SYS_LANG);
+$oHeadPublisher->assign('SYS_SKIN', SYS_SKIN);
+$oHeadPublisher->assign('HTTP_SERVER_HOSTNAME', PmSystem::getHttpServerHostnameRequestsFrontEnd());
+$oHeadPublisher->assign('credentials', base64_encode(json_encode($designer->getCredentials())));
+
 $deleteCasesFlag = false;
 global $RBAC;
 if($RBAC->userCanAccess('PM_DELETE_PROCESS_CASES') === 1) {
