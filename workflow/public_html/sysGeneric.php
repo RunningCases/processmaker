@@ -799,7 +799,7 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
         }
 
         Bootstrap::initVendors();
-        Bootstrap::LoadSystem('monologProvider');
+
         $isWebEntry = \ProcessMaker\BusinessModel\WebEntry::isWebEntry(SYS_COLLECTION, $phpFile);
         if (\Bootstrap::getDisablePhpUploadExecution() === 1 && !$isWebEntry) {
             $message = \G::LoadTranslation('THE_PHP_FILES_EXECUTION_WAS_DISABLED');
