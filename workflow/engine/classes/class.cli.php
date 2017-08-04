@@ -257,7 +257,7 @@ EOT;
         $short = "h" . $taskData['opt']['short'];
         $long = array_merge( array ("help"
         ), $taskData['opt']['long'] );
-        $getopt = Console_GetOpt::getopt2( $args, $short, $long );
+        $getopt = Console_Getopt::getopt2( $args, $short, $long );
         if (! is_array( $getopt )) {
             echo self::error( "Invalid options (" . $getopt->getMessage() . ")" ) . "\n\n";
             self::help( $taskName );
