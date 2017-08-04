@@ -47,7 +47,7 @@ try {
     $oFieldCondition = new FieldCondition();
     $aConditions = $oFieldCondition->getAllByDynUid( $DYN_UID );
 
-    $dynaform = new dynaform();
+    $dynaform = new Dynaform();
     $arrayData = array();
 
     $arrayData["PRO_UID"] = $PRO_UID;
