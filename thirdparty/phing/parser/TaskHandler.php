@@ -52,7 +52,7 @@ class TaskHandler extends AbstractHandler {
     /**
      * Reference to the task object that represents the currently parsed
      * target.
-     * @var PhingTask
+     * @var AbstractTask
      */
     private $task;
 	
