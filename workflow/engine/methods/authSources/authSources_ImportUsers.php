@@ -98,7 +98,7 @@ foreach ($_POST['aUsers'] as $sUser) {
             }
         }
     }
-    require_once 'classes/model/Users.php';
+
     $oUser = new Users();
     $oUser->create( $aData );
 }

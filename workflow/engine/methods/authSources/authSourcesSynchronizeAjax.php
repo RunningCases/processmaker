@@ -34,8 +34,6 @@ class treeNode extends stdclass
 }
 
 try {
-    require_once ("classes" . PATH_SEP . "model" . PATH_SEP . "Department.php");
-
 
     $json = new Services_JSON();
     header("Content-Type: application/json;");

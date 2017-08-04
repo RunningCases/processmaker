@@ -62,7 +62,7 @@ class G
      * @return void
      * @deprecated 08-04-2017
      */
-    public static function LoadSystemExist($strClass)
+    public function LoadSystemExist($strClass)
     {
         //For backward compatibilities
     }
@@ -74,19 +74,7 @@ class G
      * @return void
      * @deprecated 08-04-2017
      */
-    public static function LoadInclude($strClass)
-    {
-        //For backward compatibilities
-    }
-
-    /**
-     * Include all model files
-     * @access public
-     * @param string $strClass
-     * @return void
-     * @deprecated 08-04-2017
-     */
-    public static function LoadAllModelClasses($strClass)
+    public function LoadInclude($strClass)
     {
         //For backward compatibilities
     }
@@ -98,7 +86,7 @@ class G
      * @return void
      * @deprecated 08-04-2017
      */
-    public static function LoadClassRBAC($strClass)
+    public function LoadClassRBAC($strClass)
     {
         //For backward compatibilities
     }
@@ -119,13 +107,31 @@ class G
     /**
      * public function LoadThirdParty
      * @access public
-     * @param string $strClass
+     * @param string $sPath
+     * @param string $sFile
      * @return void
      * @deprecated 08-04-2017
      */
-    public static function LoadThirdParty($strClass)
+    public static function LoadThirdParty($sPath, $sFile)
     {
         //For backward compatibilities
+    }
+
+    /**
+     * Include all model files
+     * @access public
+     * @return void
+     */
+    public function LoadAllModelClasses()
+    {
+        $baseDir = PATH_CORE . 'classes' . PATH_SEP . 'model';
+        if ($handle = opendir( $baseDir )) {
+            while (false !== ($file = readdir( $handle ))) {
+                if (strpos( $file, '.php', 1 ) && ! strpos( $file, 'Peer.php', 1 )) {
+                    require_once ($baseDir . PATH_SEP . $file);
+                }
+            }
+        }
     }
 
     /**
