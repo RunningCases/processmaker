@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "35836ebb77107e7338c78794991a6839",
-    "content-hash": "424bb8a0e92654cd5b169e15fb87b92c",
+    "hash": "a1e42b4c6d3e8a5c67a43b9022973a66",
+    "content-hash": "9fed6081049070197591b4a9f96f5dcb",
     "packages": [
         {
             "name": "bshaffer/oauth2-server-php",
@@ -52,14 +52,14 @@
         },
         {
             "name": "colosa/MichelangeloFE",
-            "version": "dev-release/3.2",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/michelangelofe.git",
-                "reference": "cc19932a095b2232bef7998d2c90b2408ad9be19"
+                "reference": "0b57867011b1a34a2cca68148a0b0a534470f5ca"
             },
             "require": {
-                "colosa/pmui": "release/3.2-dev"
+                "colosa/pmui": "develop-dev"
             },
             "type": "library",
             "description": "ProcessMaker Michelangelo Front End",
@@ -67,15 +67,15 @@
             "keywords": [
                 "js app ProcessMaker"
             ],
-            "time": "2017-04-11 15:29:24"
+            "time": "2017-08-02 01:48:02"
         },
         {
             "name": "colosa/pmDynaform",
-            "version": "dev-release/3.2",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/pmdynaform.git",
-                "reference": "0e7e26b50b40fa04003ff4013c2a87c08d0a691d"
+                "reference": "e5798e5682038ebbdeaeef5cebba8ddf3d6191ac"
             },
             "type": "library",
             "description": "JS Library to render ProcessMaker Dynaforms",
@@ -83,15 +83,15 @@
             "keywords": [
                 "js lib ProcessMaker Dynaforms"
             ],
-            "time": "2017-04-27 21:51:51"
+            "time": "2017-08-03 18:50:34"
         },
         {
             "name": "colosa/pmUI",
-            "version": "dev-release/3.2",
+            "version": "dev-develop",
             "source": {
                 "type": "git",
                 "url": "git@bitbucket.org:colosa/pmui.git",
-                "reference": "92a59a33da5d53753da641debf140a1e3babc5f3"
+                "reference": "e59fc66317949f4253511cbf6a095482f871418f"
             },
             "type": "library",
             "description": "JS UI Library",
@@ -99,7 +99,7 @@
             "keywords": [
                 "js lib ProcessMaker UI"
             ],
-            "time": "2017-02-24 20:50:27"
+            "time": "2017-08-02 01:49:11"
         },
         {
             "name": "dapphp/securimage",
