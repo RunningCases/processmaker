@@ -36,7 +36,6 @@
         "dapphp/securimage": "^3.6",
         "psr/log":"1.0.0",
         "monolog/monolog": "1.19.0",
-        "ezyang/htmlpurifier": "4.8.0",
         "geshi/geshi": "dev-master",
         "libchart/libchart": "1.4.0",
         "indeyets/pake": "1.99.*",
