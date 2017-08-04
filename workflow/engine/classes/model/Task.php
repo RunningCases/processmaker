@@ -489,7 +489,7 @@ class Task extends BaseTask
                 $this->setNew(false);
 
                 /*----------------------------------********---------------------------------*/
-                $indicator = new indicatorsCalculator();
+                $indicator = new IndicatorsCalculator();
                 $data = $indicator->suggestedTimeForTask($TasUid);
                 $aFields["TAS_AVERAGE"] = $data['average'];
                 $aFields["TAS_SDV"]     = $data['sdv'];
