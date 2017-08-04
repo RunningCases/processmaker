@@ -25,7 +25,7 @@
 if (isset( $_POST['form']['NW_TITLE'] )) {
     $action = (isset( $_POST['form']['ACTION'] )) ? trim( $_POST['form']['ACTION'] ) : 'test';
     $name = trim( $_POST['form']['NW_TITLE'] );
-    $inst = new Installer();
+    $inst = new PmInstaller();
 
     $isset = $inst->isset_site( $name );
 

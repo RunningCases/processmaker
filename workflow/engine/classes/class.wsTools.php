@@ -1690,7 +1690,7 @@ class workspaceTools
             }
             $workspace = new workspaceTools($workspaceName);
 
-            if (Installer::isset_site($workspaceName)) {
+            if (PmInstaller::isset_site($workspaceName)) {
                 if ($overwrite) {
                     if (!$workspace->workspaceExists()) {
                         throw new Exception('We can not overwrite this workspace because the workspace ' . $workspaceName . ' does not exist please check the lower case and upper case.');
