@@ -84,8 +84,6 @@ class actionsByEmailCoreClass extends PMPlugin
                 $emailServer->getEmailServerDefault();
 
             if (!empty($emailSetup)) {
-                require_once 'classes/model/AbeConfiguration.php';
-
                 $cases = new Cases();
                 $caseFields = $cases->loadCase($data->APP_UID);
                 $criteria = new Criteria();
@@ -113,8 +111,6 @@ class actionsByEmailCoreClass extends PMPlugin
                     if ($configuration['ABE_EMAIL_FIELD'] != '' && isset($caseFields['APP_DATA'][$configuration['ABE_EMAIL_FIELD']])) {
                         $email = trim($caseFields['APP_DATA'][$configuration['ABE_EMAIL_FIELD']]);
                     } else {
-                        require_once 'classes/model/Users.php';
-
                         $userInstance = new Users();
                         $userInfo     = $userInstance->getAllInformation($data->USR_UID);
                         $email        = $userInfo['mail'];
@@ -125,9 +121,6 @@ class actionsByEmailCoreClass extends PMPlugin
                         if($subject == ''){
                             $subject = $caseFields['APP_TITLE'];
                         }
-
-                        // Create
-                        require_once 'classes/model/AbeRequests.php';
 
                         $abeRequest = array();
                         $abeRequest['ABE_REQ_UID']      = '';
