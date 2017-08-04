@@ -952,7 +952,6 @@ function check_workspace_disabled_code($args, $opts)
 }
 
 function migrate_new_cases_lists($command, $args, $opts) {
-    G::LoadSystem('inputfilter');
     $filter = new InputFilter();
     $opts = $filter->xssFilterHard($opts);
     $args = $filter->xssFilterHard($args);
@@ -1034,7 +1033,6 @@ function run_migrate_content($args, $opts) {
 */
 function migrate_content($args, $opts)
 {
-    G::LoadSystem('inputfilter');
     $filter = new InputFilter();
     $args = $filter->xssFilterHard($args);
     $workspaces = get_workspaces_from_args($args);
@@ -1071,7 +1069,6 @@ function run_migrate_self_service_value($args, $opts) {
 }
 
 function run_migrate_indexing_acv($args, $opts) {
-    G::LoadSystem('inputfilter');
     $filter = new InputFilter();
     $args = $filter->xssFilterHard($args);
     $workspaces = get_workspaces_from_args($args);
