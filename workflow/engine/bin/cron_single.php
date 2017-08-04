@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 register_shutdown_function(
     create_function(
         '',
@@ -310,11 +313,7 @@ try {
 function processWorkspace()
 {
     try {
-
-        $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
-        if (file_exists(PATH_DATA_SITE . 'plugin.singleton')) {
-            $oPluginRegistry->unSerializeInstance(file_get_contents(PATH_DATA_SITE . 'plugin.singleton'));
-        }
+        $oPluginRegistry = PluginRegistry::loadSingleton();
 
         global $sObject;
         global $sLastExecution;
@@ -354,7 +353,6 @@ function resendEmails()
     setExecutionMessage("Resending emails");
 
     try {
-
         $dateResend = $sNow;
 
         if ($sNow == $dateSystem) {
@@ -462,7 +460,7 @@ function executePlugins()
     // Executing registered cron files
 
     // -> Get registered cron files
-    $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+    $oPluginRegistry = PluginRegistry::loadSingleton();
     $cronFiles = $oPluginRegistry->getCronFiles();
 
     // -> Execute functions
