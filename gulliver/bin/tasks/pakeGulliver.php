@@ -2228,7 +2228,7 @@ function run_update_plugin_attributes($task, $args)
         $pluginName = $args[0];
 
         //Update plugin attributes
-        $pmPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+        $pmPluginRegistry = PluginRegistry::loadSingleton();
 
         $pmPluginRegistry->updatePluginAttributesInAllWorkspaces($pluginName);
 
