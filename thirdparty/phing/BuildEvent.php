@@ -57,7 +57,7 @@ class BuildEvent extends EventObject {
     /**
      *  A reference to the task
      *
-     *  @var Task
+     *  @var PhingTask
      */
     protected $task;
 
