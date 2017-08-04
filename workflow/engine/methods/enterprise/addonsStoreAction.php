@@ -81,10 +81,11 @@ try {
 
                     //are all the plugins that are enabled in the workspace
                     $pluginRegistry = ProcessMaker\Plugins\PluginRegistry::loadSingleton();
-                    foreach ($pluginRegistry->getPlugins() as $plugin) {
-                        if ($plugin->enabled && !in_array($plugin->sNamespace, $licenseManager->features)) {
-                            $pluginRegistry->disablePlugin($plugin->sNamespace);
-                            $pluginRegistry->savePlugin($plugin->sNamespace);
+                    /** @var \ProcessMaker\Plugins\Interfaces\PluginDetail $plugin */
+                    foreach ($pluginRegistry->getAllPluginsDetails() as $plugin) {
+                        if ($plugin->isEnabled() && !in_array($plugin->getNamespace(), $licenseManager->features)) {
+                            $pluginRegistry->disablePlugin($plugin->getNamespace());
+                            $pluginRegistry->savePlugin($plugin->getNamespace());
                         }
                     }
                 }

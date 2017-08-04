@@ -74,6 +74,15 @@ trait PluginStructure
      * Get information of all Plugins
      * @return array
      */
+    public function getAllPluginsDetails()
+    {
+        return $this->_aPluginDetails;
+    }
+
+    /**
+     * Get information of all Plugins
+     * @return array
+     */
     public function getPlugins()
     {
         return $this->_aPlugins;

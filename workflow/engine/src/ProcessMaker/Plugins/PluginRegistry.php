@@ -269,6 +269,19 @@ class PluginRegistry
     }
 
     /**
+     * @param $Namespace
+     * @return bool
+     */
+    public function checkFilePlugin($Namespace)
+    {
+        if (is_file(PATH_PLUGINS . $Namespace . ".php") && is_dir(PATH_PLUGINS . $Namespace)) {
+            require_once(PATH_PLUGINS . $Namespace . ".php");
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Get status plugin
      * @param string $name Name of Plugin
      * @return string Return a string with status plugin
