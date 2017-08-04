@@ -185,7 +185,7 @@ class OutputDriverPNG extends OutputDriverGeneric {
 
     $this->_color    = array();
     $this->_font     = array();
-    $this->_path     = new Path;
+    $this->_path     = new HtmlPsPath;
     $this->_clipping = array();
 
     $this->_font_factory = new FontFactory();
@@ -266,7 +266,7 @@ class OutputDriverPNG extends OutputDriverGeneric {
     /**
      * Reset path after clipping have been applied
      */
-    $this->_path = new Path;
+    $this->_path = new HtmlPsPath;
   }
 
   function close() { 
@@ -311,7 +311,7 @@ class OutputDriverPNG extends OutputDriverGeneric {
 
   function fill() { 
     $this->_path->fill($this->_transform, $this->_image, $this->_getCurrentColor());
-    $this->_path = new Path;
+    $this->_path = new HtmlPsPath;
   }
 
   function font_ascender($name, $encoding) {
@@ -524,7 +524,7 @@ class OutputDriverPNG extends OutputDriverGeneric {
 
   function stroke() { 
     $this->_path->stroke($this->_transform, $this->_image, $this->_getCurrentColor());
-    $this->_path = new Path;
+    $this->_path = new HtmlPsPath;
   }
 }
 ?>
