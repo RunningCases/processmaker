@@ -63,7 +63,8 @@
             "gulliver/includes/inc.ajax.php",
             "gulliver/includes/smarty_plugins/function.pmos.php",
             "thirdparty/pear/PEAR.php",
-            "thirdparty/HTMLPurifier/HTMLPurifier.auto.php"
+            "thirdparty/HTMLPurifier/HTMLPurifier.auto.php",
+            "workflow/engine/classes/class.pmFunctions.php"
         ]
     }
 }
