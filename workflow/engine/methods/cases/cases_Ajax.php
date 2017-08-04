@@ -97,7 +97,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         $G_PUBLISH->AddContent( 'template', '', '', '', $oTemplatePower );
         $oHeadPublisher = & headPublisher::getSingleton();
         $oHeadPublisher->addScriptCode( '
-            var maximunX = ' . processMap::getMaximunTaskX( $_SESSION['PROCESS'] ) . ';
+            var maximunX = ' . ProcessMap::getMaximunTaskX( $_SESSION['PROCESS'] ) . ';
             var pb=leimnud.dom.capture("tag.body 0");
             Pm=new processmap();
 

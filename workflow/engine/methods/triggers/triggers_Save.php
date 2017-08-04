@@ -48,7 +48,7 @@ if (isset( $sfunction ) && $sfunction == 'lookforNameTrigger') {
     try {
         $oTrigger = new Triggers();
 
-        $oProcessMap = new processMap( new DBConnection() );
+        $oProcessMap = new ProcessMap( new DBConnection() );
         if (isset( $_POST['form'] )) {
             $value = $_POST['form'];
         } else {

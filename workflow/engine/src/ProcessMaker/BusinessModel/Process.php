@@ -706,7 +706,7 @@ class Process
     {
         //Copy of processmaker/workflow/engine/methods/processes/processes_Ajax.php //case 'saveNewPattern':
 
-        $processMap = new \processMap();
+        $processMap = new \ProcessMap();
 
         if ($type != "SEQUENTIAL" && $type != "SEC-JOIN" && $type != "DISCRIMINATOR") {
             if ($processMap->getNumberOfRoutes($processUid, $taskUid, $nextTaskUid, $type) > 0) {
@@ -1046,7 +1046,7 @@ class Process
         );
 
         //Load data
-        $processMap = new \processMap();
+        $processMap = new \ProcessMap();
 
         $arrayData = (array)(\Bootstrap::json_decode($processMap->load($processUid)));
 

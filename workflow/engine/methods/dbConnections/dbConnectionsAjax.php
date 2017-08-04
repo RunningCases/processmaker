@@ -56,7 +56,7 @@ switch ($action) {
         return print ($oStep->loadInfoAssigConnecctionDB( $_POST['PRO_UID'], $_POST['DBS_UID'] )) ;
         break;
     case 'showDbConnectionsList':
-        $oProcess = new processMap();
+        $oProcess = new ProcessMap();
         $oCriteria = $oProcess->getConditionProcessList();
         if (ProcessPeer::doCount( $oCriteria ) > 0) {
             $aProcesses = array ();

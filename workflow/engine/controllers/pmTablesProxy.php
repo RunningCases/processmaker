@@ -26,7 +26,7 @@ class pmTablesProxy extends HttpProxyController
     public function getList ($httpData)
     {
         $configurations = new Configurations();
-        $processMap = new processMap();
+        $processMap = new ProcessMap();
 
         // setting parameters
         $config = $configurations->getConfiguration( 'additionalTablesList', 'pageSize', '', $_SESSION['USER_LOGGED'] );

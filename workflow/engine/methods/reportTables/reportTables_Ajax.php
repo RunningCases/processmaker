@@ -288,7 +288,7 @@ switch ($action) {
     case 'list':
 
         $configigurations = new Configurations();
-        $oProcessMap = new processMap();
+        $oProcessMap = new ProcessMap();
 
         $config = $configigurations->getConfiguration( 'additionalTablesList', 'pageSize', '', $_SESSION['USER_LOGGED'] );
         $env = $configigurations->getConfiguration( 'ENVIRONMENT_SETTINGS', '' );

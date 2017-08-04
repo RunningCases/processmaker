@@ -84,7 +84,7 @@ try {
                 $oOP->removeByObject( 'INPUT', $_POST['INP_DOC_UID'] );
 
                 //refresh dbarray with the last change in inputDocument
-                $oMap = new processMap();
+                $oMap = new ProcessMap();
                 $oCriteria = $oMap->getInputDocumentsCriteria( $fields['PRO_UID'] );
 
                 $result->success = true;

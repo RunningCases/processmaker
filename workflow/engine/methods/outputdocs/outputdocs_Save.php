@@ -77,7 +77,7 @@ try {
 
     if (isset( $aData['PRO_UID'] )) {
         //refresh dbarray with the last change in outputDocument
-        $oMap = new processMap();
+        $oMap = new ProcessMap();
         $oCriteria = $oMap->getOutputDocumentsCriteria( $aData['PRO_UID'] );
     }
 

@@ -263,7 +263,7 @@ class ProcessProxy extends HttpProxyController
         switch ($httpData->type) {
             case 'process':
 
-                $oProcessMap = new processMap( new DBConnection() );
+                $oProcessMap = new ProcessMap( new DBConnection() );
                 $process = $oProcessMap->editProcessNew( $httpData->UID );
                 $category = ProcessCategoryPeer::retrieveByPk( $process['PRO_CATEGORY'] );
                 $categoryName = is_object( $category ) ? $category->getCategoryName() : '';
@@ -388,7 +388,7 @@ class ProcessProxy extends HttpProxyController
      */
     public function getPMVariables ($param)
     {
-        $oProcessMap = new processMap( new DBConnection() );
+        $oProcessMap = new ProcessMap( new DBConnection() );
         $rows = getDynaformsVars( $param->PRO_UID );
         foreach ($rows as $i => $var) {
             $rows[$i]['sName'] = "@@{$var['sName']}";

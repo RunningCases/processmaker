@@ -165,7 +165,7 @@ class XmlForm_Field_toolButton extends XmlForm_Field
                 $html = '';
                 if (isset($this->owner->values['PRO_UID'])) {
 
-                    $criteria = processMap::getDynaformsCriteria($this->owner->values['PRO_UID']);
+                    $criteria = ProcessMap::getDynaformsCriteria($this->owner->values['PRO_UID']);
                     $dataset = DynaformPeer::doSelectRS($criteria);
                     if ($dataset->getRecordCount() > 0) {
                         $html .= '<span style="display:inline-block; font-size: 8pt;margin-left: 5px;margin-bottom: 3px;">' . G::LoadTranslation('ID_DYNAFORM');

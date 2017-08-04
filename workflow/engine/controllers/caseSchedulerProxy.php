@@ -14,7 +14,7 @@ class caseSchedulerProxy extends HttpProxyController
         $sch_uid = $oData['EVN_ACTION'];
 
         if ($sch_uid != '') {
-            $oProcessMap = new processMap( new DBConnection() );
+            $oProcessMap = new ProcessMap( new DBConnection() );
             $rows = $oProcessMap->caseNewSchedulerList( $sch_uid );
             if ($rows['SCH_OPTION'] == '3') {
                 $sch_start_day = explode( '|', $rows['SCH_START_DAY'] );

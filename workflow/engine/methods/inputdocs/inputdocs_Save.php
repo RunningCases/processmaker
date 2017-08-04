@@ -94,7 +94,7 @@ try {
             }
 
             //refresh dbarray with the last change in inputDocument
-            $oMap = new processMap();
+            $oMap = new ProcessMap();
             $oCriteria = $oMap->getInputDocumentsCriteria( $aData['PRO_UID'] );
             break;
     }

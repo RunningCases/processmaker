@@ -1140,7 +1140,7 @@ class ProcessSupervisor
         try {
             $oDynaformSupervidor = \StepSupervisorPeer::retrieveByPK($sPudUID);
             if (!is_null($oDynaformSupervidor)) {
-                $oProcessMap = new \processMap();
+                $oProcessMap = new \ProcessMap();
                 $oProcessMap->removeSupervisorStep( $oDynaformSupervidor->getStepUid(), $sProcessUID, 'DYNAFORM', $oDynaformSupervidor->getStepUidObj(), $oDynaformSupervidor->getStepPosition() );
             } else {
                 throw new \Exception(\G::LoadTranslation("ID_ROW_DOES_NOT_EXIST"));
@@ -1162,7 +1162,7 @@ class ProcessSupervisor
         try {
             $oInputDocumentSupervidor = \StepSupervisorPeer::retrieveByPK($sPuiUID);
             if (!is_null($oInputDocumentSupervidor)) {
-                $oProcessMap = new \processMap();
+                $oProcessMap = new \ProcessMap();
                 $oProcessMap->removeSupervisorStep( $oInputDocumentSupervidor->getStepUid(), $sProcessUID, 'INPUT_DOCUMENT', $oInputDocumentSupervidor->getStepUidObj(), $oInputDocumentSupervidor->getStepPosition() );
             } else {
                 throw new \Exception(\G::LoadTranslation("ID_ROW_DOES_NOT_EXIST"));
