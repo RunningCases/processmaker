@@ -27,7 +27,7 @@
  */
 //dont work mb_internal_encoding('UTF-8');
 
-
+use ProcessMaker\Plugins\PluginRegistry;
 
 
 pake_desc('gulliver version');
@@ -519,7 +519,7 @@ function run_pack_plugin($task, $args) {
 
   require_once ($pluginFilename);
 
-  $oPluginRegistry = PluginsRegistry::loadSingleton();
+  $oPluginRegistry = PluginRegistry::loadSingleton();
   $pluginDetail = $oPluginRegistry->getPluginDetails($pluginName . '.php');
   $fileTar = $pluginHome . PATH_SEP . $pluginName . '-' . $pluginDetail->iVersion . '.tar';
 

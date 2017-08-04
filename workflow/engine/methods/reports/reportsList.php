@@ -22,6 +22,9 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 global $RBAC;
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 switch ($RBAC->userCanAccess( 'PM_REPORTS' )) {
     case - 2:
         G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_SYSTEM', 'error', 'labels' );
@@ -74,7 +77,7 @@ $reports[] = array ('RPT_NUMBER' => count( $reports ),'RPT_UID' => 5,'RPT_TITLE'
       	                'RPT_TITLE' => "Report 9",//G::LoadTranslation('ID_REPORT6'),
       	                'VIEW'  => G::LoadTranslation('ID_VIEW'));*/
 
-$oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+$oPluginRegistry = PluginRegistry::loadSingleton();
 $aAvailableReports = $oPluginRegistry->getReports();
 
 //$aReports = array();

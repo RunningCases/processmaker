@@ -1101,7 +1101,7 @@ function run_migrate_plugin($args, $opts) {
     /** @var workspaceTools $workspace */
     if (count($workspaces) === 1) {
         $workspace = array_shift($workspaces);
-        print_r('Regenerating Singleton in: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
+        CLI::logging('Regenerating Singleton in: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
         $workspace->migrateSingleton($workspace->name);
         CLI::logging("-> Regenerating Singleton \n");
     } else {

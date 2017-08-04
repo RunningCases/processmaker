@@ -21,6 +21,9 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 try {
     $filter = new InputFilter();
     $_POST = $filter->xssFilterHard($_POST);
@@ -178,7 +181,7 @@ try {
 
             //If plugin and trigger are defined for listing
             if ($oPluginRegistry->existsTrigger( PM_CASE_DOCUMENT_LIST_ARR )) {
-                $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 $filesPluginArray = $oPluginRegistry->executeTriggers( PM_CASE_DOCUMENT_LIST_ARR, $aFields['APP_UID'] );
                 //Now search for the file, if exists the change the download URL
                 foreach ($filesPluginArray as $file) {

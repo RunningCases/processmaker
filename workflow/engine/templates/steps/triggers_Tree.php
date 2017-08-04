@@ -23,10 +23,12 @@
  *
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 try {
 
   //call plugin
-  $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+  $oPluginRegistry = PluginRegistry::loadSingleton();
   $externalSteps   = $oPluginRegistry->getSteps();
 
 	$oProcessMap = new ProcessMap();

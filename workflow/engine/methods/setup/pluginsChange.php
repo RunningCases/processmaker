@@ -23,6 +23,8 @@
  */
 
 // lets display the items
+use ProcessMaker\Plugins\PluginRegistry;
+
 $pluginFile = $_GET['id'];
 $pluginStatus = $_GET['status'];
 
@@ -32,7 +34,7 @@ $filter = new InputFilter();
 $path = PATH_PLUGINS . $pluginFile;
 $path = $filter->validateInput($path, 'path');
 
-$oPluginRegistry =& ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+$oPluginRegistry = PluginRegistry::loadSingleton();
 
 if ($handle = opendir(PATH_PLUGINS)) {
     while (false !== ($file = readdir($handle))) {
@@ -41,7 +43,7 @@ if ($handle = opendir(PATH_PLUGINS)) {
                 // change to disable
                 $details = $oPluginRegistry->getPluginDetails($pluginFile);
                 $oPluginRegistry->disablePlugin($details->getNamespace());
-                //$oPluginRegistry->adapter->savePlugin($details->sNamespace, $oPluginRegistry);
+                $oPluginRegistry->savePlugin($details->sNamespace);
                 G::auditLog("DisablePlugin", "Plugin Name: " . $details->getNamespace());
             } else {
                 $pluginName = str_replace(".php", "", $pluginFile);

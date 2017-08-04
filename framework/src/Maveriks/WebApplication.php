@@ -2,6 +2,7 @@
 namespace Maveriks;
 
 use Maveriks\Util;
+use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services;
 use ProcessMaker\Services\Api;
 use Luracast\Restler\RestException;
@@ -358,8 +359,8 @@ class WebApplication
         }
 
         // hook to get rest api classes from plugins
-        if (class_exists('PMPluginRegistry')) {
-            $pluginRegistry = \PMPluginRegistry::loadSingleton(PATH_DATA_SITE . 'plugin.singleton');
+        if (class_exists('ProcessMaker\Plugins\PluginRegistry')) {
+            $pluginRegistry = PluginRegistry::loadSingleton();
             $plugins = $pluginRegistry->getRegisteredRestServices();
 
             if (! empty($plugins)) {

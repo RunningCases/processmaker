@@ -3888,13 +3888,13 @@ class workspaceTools
             $oPluginRegistry = unserialize(file_get_contents($pathSingleton));
             $pluginAdapter = new PluginAdapter();
             $pluginAdapter->migrate($oPluginRegistry);
-//            $data["CFG_UID"] = 'MIGRATED_PLUGIN';
-//            $data["OBJ_UID"] = 'singleton';
-//            $data["CFG_VALUE"] = 'true';
-//            $data["PRO_UID"] = '';
-//            $data["USR_UID"] = '';
-//            $data["APP_UID"] = '';
-//            $conf->create($data);
+            $data["CFG_UID"] = 'MIGRATED_PLUGIN';
+            $data["OBJ_UID"] = 'singleton';
+            $data["CFG_VALUE"] = 'true';
+            $data["PRO_UID"] = '';
+            $data["USR_UID"] = '';
+            $data["APP_UID"] = '';
+            $conf->create($data);
         }
     }
 }

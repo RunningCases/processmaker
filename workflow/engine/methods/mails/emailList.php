@@ -23,6 +23,9 @@
  */
 
 global $RBAC;
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 $resultRbac  = $RBAC->requirePermissions('PM_SETUP_ADVANCE', 'PM_SETUP_LOGS');
 if (!$resultRbac) {
     G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels');
@@ -47,7 +50,7 @@ $status = array(
     array("pending", G::LoadTranslation('ID_PENDING'))
 );
 
-$pluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+$pluginRegistry = PluginRegistry::loadSingleton();
 $flagER = $pluginRegistry->isEnable('externalRegistration') ? 1 : 0;
 
 $processes = getProcessArray($userUid);

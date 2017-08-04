@@ -43,13 +43,13 @@ trait PluginStructure
     private $_restServices = array();
     /** @var array Reports added */
     private $_aReports = array();
-    /** @var array  */
+    /** @var array */
     private $_aDashboardPages = array();
     /** @var array Dashlets added */
     private $_aDashlets = array();
     /** @var array Toolbar file added */
     private $_aToolbarFiles = array();
-    /** @var array Case Scheduler added  */
+    /** @var array Case Scheduler added */
     private $_aCaseSchedulerPlugin = array();
     /** @var array Task Extended added */
     private $_aTaskExtendedProperties = array();
@@ -248,9 +248,7 @@ trait PluginStructure
      */
     private function buildRestService($restServices)
     {
-        foreach ($restServices as $restService) {
-            $this->_restServices = array_merge($this->_restServices, $restService);
-        }
+        $this->_restServices = array_merge($this->_restServices, $restServices);
     }
 
     /**
@@ -264,7 +262,7 @@ trait PluginStructure
         foreach ($attributes as $key => $value) {
             $this->_aPlugins[$namespace]->{$key} = $value;
             if (property_exists($this, $key)) {
-                $this->{$key} = array_merge($this->{$key}, $value);
+                $this->{$key} = array_merge($this->{$key}, (array)$value);
             }
         }
     }
@@ -288,8 +286,7 @@ trait PluginStructure
         foreach ($PluginRegistry as $propertyName => $propertyValue) {
             foreach ($propertyValue as $key => $plugin) {
                 if (is_object($plugin) &&
-                    ((property_exists($plugin, 'Namespace') && $plugin->equalNamespaceTo($Namespace)) ||
-                        (!is_int($key) && $key == $Namespace))
+                    property_exists($plugin, 'Namespace') && $plugin->equalNamespaceTo($Namespace)
                 ) {
                     $newStructurePlugin[$propertyName][] = $plugin;
                 } elseif (is_object($plugin) &&
@@ -297,6 +294,8 @@ trait PluginStructure
                     $plugin->pluginName == $Namespace
                 ) {
                     $newStructurePlugin[$propertyName][] = $plugin;
+                } elseif (is_string($key) && $key == $Namespace) {
+                    $newStructurePlugin[$propertyName][$key] = $plugin;
                 } elseif (is_string($plugin) && $plugin == $Namespace) {
                     $newStructurePlugin[$propertyName][] = $plugin;
                 }

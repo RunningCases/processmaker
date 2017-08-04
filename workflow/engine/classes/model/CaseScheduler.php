@@ -5,10 +5,6 @@
  * @package workflow.engine.classes.model
  */
 
-//require_once 'classes/model/om/BaseCaseScheduler.php';
-
-//require_once 'classes/model/Process.php';
-//require_once 'classes/model/Task.php';
 use ProcessMaker\Plugins\PluginRegistry;
 
 /**

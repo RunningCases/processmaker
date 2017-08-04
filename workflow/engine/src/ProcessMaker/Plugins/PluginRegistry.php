@@ -61,8 +61,22 @@ class PluginRegistry
      */
     public static function loadSingleton()
     {
-        if (self::$instance == null) {
+        if (self::$instance === null) {
             self::$instance = new PluginRegistry();
+        }
+        return self::$instance;
+    }
+
+    /**
+     * Load the singleton instance from a serialized stored file
+     * @return PluginRegistry
+     * @throws Exception
+     */
+    public static function newInstance()
+    {
+        self::$instance = new PluginRegistry();
+        if (! is_object(self::$instance) || get_class(self::$instance) != "ProcessMaker\Plugins\PluginRegistry") {
+            throw new Exception("Can't load main PluginRegistry object.");
         }
         return self::$instance;
     }
@@ -113,7 +127,8 @@ class PluginRegistry
                 if ($pluginDetail->isEnabled()) {
                     if (!empty($pluginDetail->getFile()) && file_exists($pluginDetail->getFile())) {
                         $arrayFileInfo = pathinfo($pluginDetail->getFile());
-                        $Filename = (($pluginDetail->getNamespace() == "enterprise") ?
+                        $Filename = (
+                            ($pluginDetail->getNamespace() == "enterprise") ?
                                 PATH_CORE . "methods" . PATH_SEP . "enterprise" . PATH_SEP :
                                 PATH_PLUGINS
                             ) . $arrayFileInfo["basename"];
@@ -403,7 +418,6 @@ class PluginRegistry
                     $pluginRegistry->savePlugin($value);
                 }
             }
-
         }
     }
 
@@ -840,7 +854,6 @@ class PluginRegistry
                         $found = true;
                     }
                 }
-
             }
         }
         return $found;

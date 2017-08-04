@@ -25,6 +25,8 @@
  *
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * Skeleton subclass for representing a row from the 'APP_DELEGATION' table.
  *

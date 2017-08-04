@@ -25,6 +25,8 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  *
  * @package workflow.engine.classes
@@ -142,7 +144,7 @@ class PMPluginRegistry
      */
     public static function getSingleton()
     {
-        return \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+        return PluginRegistry::loadSingleton();
     }
 
     /**
@@ -154,7 +156,7 @@ class PMPluginRegistry
      */
     public static function loadSingleton($file)
     {
-        return \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+        return PluginRegistry::loadSingleton();
     }
 
     /**

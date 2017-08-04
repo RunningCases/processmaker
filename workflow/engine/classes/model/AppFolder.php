@@ -5,8 +5,6 @@
  * @package workflow.engine.classes.model
  */
 
-//require_once 'classes/model/om/BaseAppFolder.php';
-//require_once 'classes/model/Application.php';
 use ProcessMaker\Plugins\PluginRegistry;
 
 /**

@@ -291,7 +291,7 @@ if ($RBAC->userCanAccess('PM_SETUP') == 1) {
 }
 
 /*----------------------------------********---------------------------------*/
-$pluginRegistry = PluginRegistry::loadSingleton(); //lsl
+$pluginRegistry = PluginRegistry::loadSingleton();
 $status = $pluginRegistry->getStatusPlugin('actionsByEmail');
 
 if ((string)($status) !== 'enabled' &&

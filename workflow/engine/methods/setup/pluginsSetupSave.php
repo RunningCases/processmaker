@@ -22,9 +22,11 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 $pluginFile = $_GET['id'];
 
-$oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+$oPluginRegistry = PluginRegistry::loadSingleton();
 
 $details = $oPluginRegistry->getPluginDetails( $pluginFile );
 try {

@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 $req = (isset($_POST['request']))? $_POST['request']:((isset($_REQUEST['request']))? $_REQUEST['request'] : 'No hayyy tal');
 
 require_once 'classes/model/Content.php';
@@ -36,7 +39,7 @@ switch($req){
 
         $arrayType = [];
 
-        $pluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+        $pluginRegistry = PluginRegistry::loadSingleton();
         $flagEr = $pluginRegistry->isEnable('externalRegistration') ? 1 : 0;
 
         if ($flagEr == 0) {

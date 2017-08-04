@@ -22,6 +22,8 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * @Updated Dec 14, 2009 by Erik <erik@colosa.com>
  *
@@ -138,7 +140,7 @@ if (isset( $_FILES ) && $_FILES["ATTACH_FILE"]["error"] == 0) {
 
 
         //Plugin Hook PM_UPLOAD_DOCUMENT for upload document
-        $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
 
         if ($oPluginRegistry->existsTrigger( PM_UPLOAD_DOCUMENT ) && class_exists( "uploadDocumentData" )) {
             $triggerDetail = $oPluginRegistry->getTriggerInfo( PM_UPLOAD_DOCUMENT );

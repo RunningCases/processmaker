@@ -66,7 +66,7 @@ class PluginsRegistry extends BasePluginsRegistry
             $aFields = $oPluginsRegistry->toArray(BasePeer::TYPE_FIELDNAME);
             return $aFields;
         } else {
-            throw new Exception("Plugin with $prUid does not exist!");
+            throw new Exception("Plugin does not exist!");
         }
     }
 
@@ -105,6 +105,12 @@ class PluginsRegistry extends BasePluginsRegistry
         return $pluginData;
     }
 
+    /**
+     * Creates a record in the PLUGINS_REGISTRY table
+     * @param array $aData
+     * @return bool
+     * @throws Exception
+     */
     public static function create($aData)
     {
         $oConnection = Propel::getConnection(PluginsRegistryPeer::DATABASE_NAME);
@@ -131,6 +137,12 @@ class PluginsRegistry extends BasePluginsRegistry
         }
     }
 
+    /**
+     * Modifies a record in the PLUGINS_REGISTRY table
+     * @param array $aData
+     * @return int
+     * @throws Exception
+     */
     public static function update($aData)
     {
         $oConnection = Propel::getConnection(PluginsRegistryPeer::DATABASE_NAME);
@@ -161,6 +173,12 @@ class PluginsRegistry extends BasePluginsRegistry
         }
     }
 
+    /**
+     * Activate a plugin with your name
+     * @param string $Namespace
+     * @return int
+     * @throws Exception
+     */
     public static function enable($Namespace)
     {
         $oConnection = Propel::getConnection(PluginsRegistryPeer::DATABASE_NAME);
@@ -191,6 +209,12 @@ class PluginsRegistry extends BasePluginsRegistry
         }
     }
 
+    /**
+     * Disable a plugin with your name
+     * @param string $Namespace
+     * @return int
+     * @throws Exception
+     */
     public static function disable($Namespace)
     {
         $oConnection = Propel::getConnection(PluginsRegistryPeer::DATABASE_NAME);

@@ -22,29 +22,15 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
-/*
-global $RBAC;
-switch ($RBAC->userCanAccess('PM_SETUP_ADVANCE'))
-{
-	case -2:
-	  G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_SYSTEM', 'error', 'labels');
-	  G::header('location: ../login/login');
-	  die;
-	break;
-	case -1:
-	  G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels');
-	  G::header('location: ../login/login');
-	  die;
-	break;
-}*/
+use ProcessMaker\Plugins\PluginRegistry;
 
 $filter = new InputFilter();
 $pluginName = $_REQUEST['pluginUid'];
 $pluginName = $filter->xssFilterHard($pluginName);
 
-$pluginRegistry =& ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+$pluginRegistry = PluginRegistry::loadSingleton();
 $pluginRegistry->uninstallPlugin($pluginName);
 
-G::auditLog('RemovePlugin','Plugin Name: '.$pluginName);
-echo $pluginName . ' ' . nl2br( $filter->xssFilterHard(G::LoadTranslation( 'ID_MSG_REMOVE_PLUGIN_SUCCESS' )) );
+G::auditLog('RemovePlugin', 'Plugin Name: ' . $pluginName);
+echo $pluginName . ' ' . nl2br($filter->xssFilterHard(G::LoadTranslation('ID_MSG_REMOVE_PLUGIN_SUCCESS')));
 

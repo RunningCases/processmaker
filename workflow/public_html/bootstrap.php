@@ -23,6 +23,8 @@
  *
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * sysGeneric - ProcessMaker Bootstrap
  * this file is used initialize main variables, redirect and dispatch all requests
@@ -419,7 +421,7 @@
 
   //here we are loading all plugins registered
   //the singleton has a list of enabled plugins
-  $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+  $oPluginRegistry = PluginRegistry::loadSingleton();
 
   // setup propel definitions and logging
   require_once ( "propel/Propel.php" );

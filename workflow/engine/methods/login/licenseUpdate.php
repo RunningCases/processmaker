@@ -40,9 +40,9 @@ if ($aux['extension'] != 'dat') {
         $pluginRegistry = ProcessMaker\Plugins\PluginRegistry::loadSingleton();
         /** @var \ProcessMaker\Plugins\Interfaces\PluginDetail $plugin */
         foreach ($pluginRegistry->getPlugins() as $plugin) {
-            if ($plugin->isEnabled() && !in_array($plugin->getNamespace(), $licenseManager->features)) {
-                $pluginRegistry->disablePlugin($plugin->getNamespace());
-                $pluginRegistry->savePlugin($plugin->getNamespace());
+            if ($plugin->enabled && !in_array($plugin->sNamespace, $licenseManager->features)) {
+                $pluginRegistry->disablePlugin($plugin->sNamespace);
+                $pluginRegistry->savePlugin($plugin->sNamespace);
             }
         }
 
