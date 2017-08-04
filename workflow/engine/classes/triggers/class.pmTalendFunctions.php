@@ -47,7 +47,7 @@ function executeTalendWebservice ($wsdl, $message, $params = array())
     ) );
 
     //Apply proxy settings
-    $sysConf = PMSystem::getSystemConfiguration();
+    $sysConf = PmSystem::getSystemConfiguration();
     if ($sysConf['proxy_host'] != '') {
         curl_setopt( $client, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : '') );
         if ($sysConf['proxy_port'] != '') {

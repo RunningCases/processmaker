@@ -43,7 +43,6 @@ try {
 
     require_once 'classes/model/StepTrigger.php';
     require_once 'classes/model/Triggers.php';
-    G::LoadInclude( 'ajax' );
     if (! empty( $_GET )) {
         if (! isset( $_GET['form'] )) {
             $aData = urldecode_values( $_GET );

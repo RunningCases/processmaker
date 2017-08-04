@@ -252,7 +252,7 @@ function sendTestMail ()
   <tbody><tr><td><img id='logo' src='http://" . $_SERVER['SERVER_NAME'] . "/images/processmaker.logo.jpg' /></td></tr>
   <tr><td style='font-size: 14px;'>$msg [" . date( 'H:i:s' ) . "] - $engine</td></tr>
   <tr><td style='vertical-align:middel;'>
-  <br /><hr><b>This Business Process is powered by ProcessMaker ver. " . PMSystem::getVersion() . ".<b><br />
+  <br /><hr><b>This Business Process is powered by ProcessMaker ver. " . PmSystem::getVersion() . ".<b><br />
   <a href='http://www.processmaker.com' style='color:#c40000;'>www.processmaker.com</a><br /></td>
   </tr></tbody></table>";
 

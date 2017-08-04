@@ -19,7 +19,7 @@ class Admin extends Controller
         $RBAC->requirePermissions( 'PM_SETUP' );
         require_once PATH_CONTROLLERS . 'main.php';
 
-        $skinsList = PMSystem::getSkingList();
+        $skinsList = PmSystem::getSkingList();
         foreach ($skinsList['skins'] as $key => $value) {
             if ($value['SKIN_WORKSPACE'] != 'Global') {
                 unset( $skinsList['skins'][$key] );
@@ -29,7 +29,7 @@ class Admin extends Controller
         $mainController = new Main();
         $languagesList = $mainController->getLanguagesList();
         $languagesList[] = array ("", G::LoadTranslation("ID_USE_LANGUAGE_URL"));
-        $sysConf = PMSystem::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
+        $sysConf = PmSystem::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
 
         foreach ($skinsList['skins'] as $skin) {
             $skins[] = array ($skin['SKIN_FOLDER_ID'],$skin['SKIN_NAME']);
@@ -268,7 +268,7 @@ class Admin extends Controller
         if (defined('SYSTEM_NAME')) {
             $systemName = SYSTEM_NAME;
         }
-        $properties[] = array ($systemName. ' Ver.', PMSystem::getVersion() . $ee, $pmSection);
+        $properties[] = array ($systemName. ' Ver.', PmSystem::getVersion() . $ee, $pmSection);
         $properties[] = array("PMUI JS Lib. Ver.", $pmuiVer, $pmSection);
         $properties[] = array("MAFE JS Lib. Ver.", $mafeVer, $pmSection);
         $properties[] = array("PM Dynaform JS Lib. Ver.", $pmdynaformVer, $pmSection);

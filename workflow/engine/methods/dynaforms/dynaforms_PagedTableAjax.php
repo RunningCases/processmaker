@@ -40,8 +40,6 @@ function pagedTable_BeforeQuery (&$ntable)
 require_once (PATH_GULLIVER_HOME . 'methods/pagedTableAjax.php');
 die();
 
-G::LoadInclude( 'ajax' );
-
 $id = get_ajax_value( 'ptID' );
 $ntable = unserialize(base64_decode($_SESSION['pagedTable[' . $id . ']']));
 $page = get_ajax_value( 'page' );

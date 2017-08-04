@@ -58,6 +58,7 @@
             "thirdparty/libchart/classes/",
             "thirdparty/pear",
             "thirdparty/html2ps_pdf",
+            "thirdparty/phing",
             "rbac/engine/classes/"
         ],
         "files": [

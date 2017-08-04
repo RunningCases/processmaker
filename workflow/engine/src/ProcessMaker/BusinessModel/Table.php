@@ -130,7 +130,7 @@ class Table
         $table = $additionalTables->load($rep_uid);
         $additionalTables->populateReportTable(
             $table['ADD_TAB_NAME'],
-            \pmTable::resolveDbSource( $table['DBS_UID'] ),
+            \PmTable::resolveDbSource( $table['DBS_UID'] ),
             $table['ADD_TAB_TYPE'],
             $table['PRO_UID'],
             $table['ADD_TAB_GRID'],
@@ -361,7 +361,7 @@ class Table
             throw (new \Exception("The fields must have a key 'fld_key'"));
         }
 
-        $pmTable = new \pmTable($tableName);
+        $pmTable = new \PmTable($tableName);
         $pmTable->setDataSource($tableCon);
         $pmTable->setColumns($columnsStd);
         $pmTable->setAlterTable(true);

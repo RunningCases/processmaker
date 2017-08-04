@@ -590,7 +590,7 @@ class spoolRun
      */
     public function resendEmails ($dateResend = null, $cron = 0)
     {
-        $aConfiguration = PMSystem::getEmailConfiguration();
+        $aConfiguration = PmSystem::getEmailConfiguration();
 
         if (!isset($aConfiguration["MESS_ENABLED"])) {
             $aConfiguration["MESS_ENABLED"] = '0';

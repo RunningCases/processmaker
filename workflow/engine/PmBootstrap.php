@@ -25,7 +25,7 @@ class PmBootstrap extends Bootstrap
     {
         parent::configure();
 
-        $this->pmConfig = PMSystem::getSystemConfiguration();
+        $this->pmConfig = PmSystem::getSystemConfiguration();
 
         $e_all  = defined('E_DEPRECATED') ? E_ALL  & ~E_DEPRECATED : E_ALL;
         $e_all  = defined('E_STRICT')     ? $e_all & ~E_STRICT     : $e_all;

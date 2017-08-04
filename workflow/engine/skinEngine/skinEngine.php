@@ -42,7 +42,7 @@ class SkinEngine
     $this->content = $content;
     $this->skinVariants = array('blank','extjs','raw','tracker','submenu');
     $this->skinsBasePath = G::ExpandPath("skinEngine");
-    $sysConf = PMSystem::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
+    $sysConf = PmSystem::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
     $this->skinDefault = (isset($sysConf['default_skin']) && $sysConf['default_skin'] != '') ? $sysConf['default_skin'] : 'classic';
     $this->_init();
   }

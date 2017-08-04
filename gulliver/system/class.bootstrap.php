@@ -20,7 +20,7 @@ class Bootstrap
 
     public static function getSystemConfiguration($globalIniFile = '', $wsIniFile = '', $wsName = '')
     {
-        return PMSystem::getSystemConfiguration($globalIniFile, $wsIniFile, $wsName);
+        return PmSystem::getSystemConfiguration($globalIniFile, $wsIniFile, $wsName);
     }
 
     //below this line, still not approved methods
@@ -983,7 +983,7 @@ class Bootstrap
      */
     public function getCheckSum($files)
     {
-        $key = PMSystem::getVersion();
+        $key = PmSystem::getVersion();
 
         if (!is_array($files)) {
             $tmp = $files;
@@ -1876,7 +1876,7 @@ class Bootstrap
         /* Fix to prevent use uxs skin outside siplified interface,
           because that skin is not compatible with others interfaces */
         if ($args['SYS_SKIN'] == 'uxs' && $args['SYS_COLLECTION'] != 'home' && $args['SYS_COLLECTION'] != 'cases') {
-            $config = PMSystem::getSystemConfiguration();
+            $config = PmSystem::getSystemConfiguration();
             $args['SYS_SKIN'] = $config['default_skin'];
         }
 

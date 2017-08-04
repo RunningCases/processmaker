@@ -31,7 +31,7 @@ class StrategicDashboard extends Controller
         $user = new Users();
         $user = $user->load($RBAC->aUserInfo['USER_INFO']['USR_UID']);
         $this->usrUnitCost = $this->currencySymbolToShow($user);
-        $this->urlProxy = PMSystem::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . SYS_SYS . '/';
+        $this->urlProxy = PmSystem::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . SYS_SYS . '/';
         //change
         $clientId = 'x-pm-local-client';
         $client = $this->getClientCredentials($clientId);

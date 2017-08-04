@@ -46,7 +46,7 @@ function skinList ()
         $textFilter = '';
     }
 
-    $skinList = PMSystem::getSkingList();
+    $skinList = PmSystem::getSkingList();
     $wildcard = '';
     if (isset( $_REQUEST['activeskin'] )) {
         $wildcard = '@';

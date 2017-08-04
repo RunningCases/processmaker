@@ -30,7 +30,7 @@ class Pmgmail {
 
         //getting the skin
         require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.system.php");
-        $sysConf = new \PMSystem();
+        $sysConf = new \PmSystem();
         $responseSysConfig = $sysConf->getSystemConfiguration( PATH_CONFIG . 'env.ini' );
         $response['enviroment'] = $responseSysConfig['default_skin'];
 

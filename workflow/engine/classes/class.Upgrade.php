@@ -123,7 +123,7 @@ class Upgrade
             G::rm_dir(PATH_C);
             mkdir(PATH_C, 0777, true);
         }
-        $workspaces = PMSystem::listWorkspaces();
+        $workspaces = PmSystem::listWorkspaces();
         $count = count($workspaces);
         $first = true;
         $num = 0;

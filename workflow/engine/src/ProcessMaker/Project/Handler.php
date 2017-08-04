@@ -110,21 +110,21 @@ abstract class Handler
      */
     public static function logstr($str)
     {
-        if (\PMSystem::isDebugMode()) {
+        if (\PmSystem::isDebugMode()) {
             Logger::getInstance()->setLog($str);
         }
     }
 
     public static function logInline()
     {
-        if (\PMSystem::isDebugMode()) {
+        if (\PmSystem::isDebugMode()) {
             call_user_func_array(array(Logger::getInstance(), 'setLogInline'), func_get_args());
         }
     }
 
     public static function log()
     {
-        if (\PMSystem::isDebugMode()) {
+        if (\PmSystem::isDebugMode()) {
             $logger = Logger::getInstance();
             call_user_func_array(array($logger, 'setLogLine'), func_get_args());
         }

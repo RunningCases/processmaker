@@ -20,7 +20,7 @@ if ($postMaxSize < $uploadMaxSize) {
 $expirationDate = 1;
 $envFile = PATH_CONFIG . 'env.ini';
 if (file_exists($envFile) ) {
-    $sysConf = PMSystem::getSystemConfiguration($envFile);
+    $sysConf = PmSystem::getSystemConfiguration($envFile);
     if(isset($sysConf['expiration_year']) && $sysConf['expiration_year']>0){
        $expirationDate = abs($sysConf['expiration_year']);
     }
@@ -35,7 +35,7 @@ if ($licensedFeatures->verifyfeature('w2LL3o4NFNiaDRXcFFCYVpJS3Jsall5dmh0ZWtBTkd
 }
 /*----------------------------------********---------------------------------*/
 
-$arraySystemConfiguration = PMSystem::getSystemConfiguration('', '', SYS_SYS);
+$arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', SYS_SYS);
 
 $oHeadPublisher = & headPublisher::getSingleton();
 $oHeadPublisher->addExtJsScript( 'users/users', true ); //adding a javascript file .js
