@@ -329,7 +329,7 @@ class OutputDocument
             $oOP = new \ObjectPermission();
             $oOP->removeByObject( 'OUTPUT', $sOutputDocumentUID );
             //refresh dbarray with the last change in outputDocument
-            $oMap = new \processMap();
+            $oMap = new \ProcessMap();
             $oCriteria = $oMap->getOutputDocumentsCriteria( $fields['PRO_UID'] );
         } catch (\Exception $e) {
                 throw $e;

@@ -273,7 +273,7 @@ class Ajax
 
         //$oHeadPublisher->addScriptfile('/jscore/processmap/core/processmap.js');
         $oHeadPublisher->addScriptCode('
-    var maximunX = ' . processMap::getMaximunTaskX($_SESSION['PROCESS']) . ';
+    var maximunX = ' . ProcessMap::getMaximunTaskX($_SESSION['PROCESS']) . ';
     window.onload = function(){
       var pb=leimnud.dom.capture("tag.body 0");
       Pm=new processmap();

@@ -44,7 +44,7 @@ try {
     $oOP = new ObjectPermission();
     $oOP->removeByObject( 'OUTPUT', $_POST['OUT_DOC_UID'] );
     //refresh dbarray with the last change in outputDocument
-    $oMap = new processMap();
+    $oMap = new ProcessMap();
     $oCriteria = $oMap->getOutputDocumentsCriteria( $fields['PRO_UID'] );
 
     $result = new stdClass();

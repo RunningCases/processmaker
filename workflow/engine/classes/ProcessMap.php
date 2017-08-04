@@ -35,7 +35,7 @@
  * @author Julio Cesar Laura Avendano
  * @copyright 2007 COLOSA
  */
-class processMap
+class ProcessMap
 {
     /*
      * Load the process map data
@@ -2567,7 +2567,7 @@ class processMap
             //Getting Gateway UID after saving gateway
             //if($sType != 'SEQUENTIAL' && $sGatewayUID == '' && $sDelete == '1')
             if ($sType != 'SEQUENTIAL') {
-                $oProcessMap = new processMap();
+                $oProcessMap = new ProcessMap();
                 $sGatewayUID = $oProcessMap->saveNewGateway($sProcessUID, $sTaskUID, $sNextTask);
             }
 

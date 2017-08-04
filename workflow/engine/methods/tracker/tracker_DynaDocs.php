@@ -35,7 +35,7 @@ if (! isset( $_SESSION['PROCESS'] ) || ! isset( $_SESSION['APPLICATION'] )) {
 $G_MAIN_MENU = 'caseTracker';
 $G_ID_MENU_SELECTED = 'DYNADOC';
 
-$oProcessMap = new processMap();
+$oProcessMap = new ProcessMap();
 
 $oCase = new Cases();
 

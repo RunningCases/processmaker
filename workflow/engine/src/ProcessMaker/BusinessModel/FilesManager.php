@@ -608,7 +608,7 @@ class FilesManager
                 $sMainDirectory = 'public';
             }
             if (file_exists($path)) {
-                $oProcessMap = new \processMap(new \DBConnection());
+                $oProcessMap = new \ProcessMap(new \DBConnection());
                 $oProcessMap->downloadFile($sProcessUID,$sMainDirectory,$sSubDirectory,$sFile);
                 die();
             } else {

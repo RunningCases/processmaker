@@ -124,7 +124,7 @@ class ProcessMakerWebDav extends HTTP_WebDAV_Server
         if (count($paths) == 1 && $paths[0] == 'processes' && is_dir($pathProcesses)) {
             // try to get the process directory list
 
-            $oProcessMap = new processMap();
+            $oProcessMap = new ProcessMap();
             $oProcess = new Process();
             $c = $oProcessMap->getConditionProcessList();
             $oDataset = ProcessPeer::doSelectRS($c);

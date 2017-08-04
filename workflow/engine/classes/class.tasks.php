@@ -206,7 +206,7 @@ class Tasks
         foreach ($aRoutes as $key => $row) {
             $sRouteType = $row['ROU_TYPE'];
             $oRoute = new Route();
-            $oProcessMap = new processMap();
+            $oProcessMap = new ProcessMap();
             $oTask = new Task();
             $oEvent = new Event();
             //unset ($row['ROU_UID']);

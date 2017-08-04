@@ -192,7 +192,7 @@ class Tracker
 
     public function objects($idProcess, $appUid)
     {
-        $oProcessMap = new \processMap();
+        $oProcessMap = new \ProcessMap();
 
         $oCase = new \Cases();
 

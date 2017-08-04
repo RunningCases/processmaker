@@ -674,7 +674,7 @@ class wsBase
 
             $_DBArray = (isset( $_SESSION['_DBArray'] ) ? $_SESSION['_DBArray'] : '');
 
-            $oMap = new processMap();
+            $oMap = new ProcessMap();
             $oCriteria = $oMap->getInputDocumentsCriteria( $sProcessUID );
             $oDataset = InputDocumentPeer::doSelectRS( $oCriteria );
             $oDataset->setFetchmode( ResultSet::FETCHMODE_ASSOC );

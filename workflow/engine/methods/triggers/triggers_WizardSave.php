@@ -28,7 +28,7 @@ if (($RBAC_Response = $RBAC->userCanAccess("PM_FACTORY")) != 1) {
 require_once ('classes/model/Triggers.php');
 $oTrigger = new Triggers();
 
-$oProcessMap = new processMap(new DBConnection());
+$oProcessMap = new ProcessMap(new DBConnection());
 
 $aDataTriggers = $_POST;
 
