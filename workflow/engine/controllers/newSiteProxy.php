@@ -15,7 +15,7 @@ class newSiteProxy extends HttpProxyController
             $ao_db_drop = (isset( $_POST['AO_DB_DROP'] )) ? true : false;
 
             $name = trim( $_POST['NW_TITLE'] );
-            $inst = new Installer();
+            $inst = new PmInstaller();
             if ($inst->isset_site($name)) {
                 if($ao_db_drop === true){
                    if(!file_exists(PATH_DATA . "sites/" . $name)){

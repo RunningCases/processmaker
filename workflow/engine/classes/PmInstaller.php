@@ -40,7 +40,7 @@
  * @author maborak
  * @copyright 2008 COLOSA
  */
-class Installer
+class PmInstaller
 {
 
     public $options = Array();
