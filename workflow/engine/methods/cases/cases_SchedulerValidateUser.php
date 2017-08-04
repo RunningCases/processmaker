@@ -50,9 +50,6 @@ $params = array ('userid' => $user,'password' => $pass);
 $result = $client->__SoapCall( 'login', array ($params) );
 
 if ($result->status_code == 0) {
-    if (! class_exists( 'Users' )) {
-        require ("classes/model/UsersPeer.php");
-    }
     $oCriteria = new Criteria( 'workflow' );
     $oCriteria->addSelectColumn( 'USR_UID' );
     $oCriteria->add( UsersPeer::USR_USERNAME, $sWS_USER );
