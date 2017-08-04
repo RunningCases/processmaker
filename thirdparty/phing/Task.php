@@ -33,7 +33,7 @@ include_once 'phing/RuntimeConfigurable.php';
  * @see       Project#createTask()
  * @package   phing
  */
-abstract class PhingTask extends ProjectComponent {
+abstract class AbstractTask extends ProjectComponent {
 
     /** owning Target object */
     protected $target;
