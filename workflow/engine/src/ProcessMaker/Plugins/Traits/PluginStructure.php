@@ -291,7 +291,7 @@ trait PluginStructure
             \G::json_decode(\G::json_encode($PluginRegistry->_aPlugins[$Namespace]), true) :
             [];
         unset($PluginRegistry->_aPlugins);
-        $newStructurePlugin = array_merge($PluginDetails->getAttributes(), $Plugin);
+        $newStructurePlugin = array_merge($Plugin, $PluginDetails->getAttributes());
         foreach ($PluginRegistry as $propertyName => $propertyValue) {
             foreach ($propertyValue as $key => $plugin) {
                 if (is_object($plugin) &&
