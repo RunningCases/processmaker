@@ -1290,6 +1290,9 @@ class PluginRegistry
         return $this->_aTaskExtendedProperties;
     }
 
+    /**
+     * Register a dashboard plugin to be served by processmaker
+     */
     public function registerDashboard()
     {
         // Dummy function for backwards compatibility
@@ -1585,6 +1588,10 @@ class PluginRegistry
         return $this->_aOpenReassignCallback;
     }
 
+    /**
+     * Return all plugins
+     * @return array
+     */
     public function getPluginsData()
     {
         return $this->_aPlugins;
