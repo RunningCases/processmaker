@@ -39,7 +39,7 @@ switch ($_POST['action']) {
         $limit = isset( $_REQUEST['limit'] ) ? $_REQUEST['limit'] : $limit_size;
         $filter = isset( $_REQUEST['textFilter'] ) ? $_REQUEST['textFilter'] : '';
 
-        $calendar = new calendar();
+        $calendar = new Calendar();
         $CRI = $calendar->getCalendarCriterias( $filter, $start, $limit );
 
         $aUsers = $calendar->getAllCounterByCalendar( 'USER' );
@@ -73,7 +73,7 @@ switch ($_POST['action']) {
         break;
     case 'canDeleteCalendar':
         $cal_uid = $_POST['CAL_UID'];
-        $cal = new calendar();
+        $cal = new Calendar();
         $total = 0;
         $u = $cal->getAllCounterByCalendar( 'USER' );
         $t_u = isset( $u[$cal_uid] ) ? $u[$cal_uid] : 0;
@@ -87,7 +87,7 @@ switch ($_POST['action']) {
         break;
     case 'deleteCalendar':
         $CalendarUid = $_POST['CAL_UID'];
-        $calendarObj = new calendar();
+        $calendarObj = new Calendar();
         $calendarObj->deleteCalendar( $CalendarUid );
         echo '{success: true}';
         break;

@@ -293,7 +293,7 @@ class adminProxy extends HttpProxyController
         //]
 
         $form = $_POST;
-        $calendarObj=new calendar();
+        $calendarObj=new Calendar();
         $calendarObj->saveCalendarInfo($form);
         echo "{success: true}";
     }

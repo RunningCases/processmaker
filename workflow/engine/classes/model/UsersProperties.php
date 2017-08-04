@@ -171,7 +171,7 @@ class UsersProperties extends BaseUsersProperties
             }
         }
         if (PPP_EXPIRATION_IN > 0) {
-            $oCalendar = new calendar();
+            $oCalendar = new Calendar();
 
             if ($oCalendar->pmCalendarUid == '') {
             	$oCalendar->pmCalendarUid = '00000000000000000000000000000001';

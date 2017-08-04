@@ -84,7 +84,7 @@ class Admin extends Controller
         //$RBAC->requirePermissions('PM_SETUP_ADVANCE');
 
         $CalendarUid = str_replace( '"', '', isset( $_GET['id'] ) ? $_GET['id'] : G::GenerateUniqueID() );
-        $calendarObj = new calendar();
+        $calendarObj = new Calendar();
 
         if ((isset( $_GET['id'] )) && ($_GET['id'] != "")) {
             $fields = $calendarObj->getCalendarInfoE( $CalendarUid );

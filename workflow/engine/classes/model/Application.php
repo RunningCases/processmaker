@@ -447,7 +447,7 @@ class Application extends BaseApplication
     			@file_put_contents( PATH_DATA . "cron", serialize( $arrayCron ) );
     		}
 
-    		$calendar = new calendar();
+    		$calendar = new Calendar();
 
     		$c = new Criteria( 'workflow' );
     		$c->clearSelectColumns();
