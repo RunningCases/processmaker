@@ -34,7 +34,6 @@
 	global $RBAC;
 	$oDataset = $RBAC->getAllPermissions($ROL_UID,$RBAC->sSystem);
 	$roleCode = $RBAC->getRoleCode($ROL_UID);
-	G::LoadClass('tree');
 	
 	$tree = new Tree();
 	$tree->name = 'Users';

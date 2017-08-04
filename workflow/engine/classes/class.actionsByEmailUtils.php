@@ -27,7 +27,6 @@ function postNote($httpData)
     //return true;
     //send notification in background
     $noteRecipientsList = array();
-    G::LoadClass('case');
     $oCase = new Cases();
 
     $p = $oCase->getUsersParticipatedInCase($appUid);

@@ -30,7 +30,7 @@ class Pmgmail {
 
         //getting the skin
         require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.system.php");
-        $sysConf = new \System();
+        $sysConf = new \PMSystem();
         $responseSysConfig = $sysConf->getSystemConfiguration( PATH_CONFIG . 'env.ini' );
         $response['enviroment'] = $responseSysConfig['default_skin'];
 
@@ -356,7 +356,6 @@ class Pmgmail {
             error_log(G::LoadTranslation('ID_EMAIL_ENGINE_IS_NOT_ENABLED'));
             return false;
         }
-        \G::LoadClass("wsBase");
 
         $ws = new \wsBase();
         $resultMail = $ws->sendMessage(

@@ -36,7 +36,7 @@ if (! class_exists( "FieldCondition" )) {
 
 try {
 
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     $frm = $_POST['form'];
     $PRO_UID = $frm['PRO_UID'];

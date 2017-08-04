@@ -59,7 +59,6 @@ try {
     }
     switch ($aData['action']) {
         case 'showTriggers':
-            G::LoadClass( 'processMap' );
             $oProcessMap = new ProcessMap();
             global $G_PUBLISH;
             $G_PUBLISH = new Publisher();
@@ -106,7 +105,6 @@ try {
                 $aFields['STEP_UID'] = $aData['sStep'];
                 $aFields['ST_TYPE'] = $aData['sType'];
                 global $G_PUBLISH;
-                G::LoadClass( 'xmlfield_InputPM' );
                 $G_PUBLISH = new Publisher();
                 $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'steps/triggers_Assign', '', $aFields, '../steps/steps_Ajax' );
                 G::RenderPage( 'publish', 'raw' );
@@ -148,7 +146,6 @@ try {
             $aFields['action'] = 'saveTriggerCondition';
             $aFields['PROCESS'] = $aRow['PRO_UID'];
             global $G_PUBLISH;
-            G::LoadClass( 'xmlfield_InputPM' );
             $G_PUBLISH = new Publisher();
             $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'steps/triggersCondition_Edit', '', $aFields, '../steps/steps_Ajax' );
             G::RenderPage( 'publish', 'raw' );
@@ -177,7 +174,6 @@ try {
             $oStepTrigger->remove( $aData['sStep'], $_SESSION['TASK'], $aData['sTrigger'], $aData['sType'] );
             break;
         case 'counterTriggers':
-            G::LoadClass("processMap");
 
             $processMap = new ProcessMap();
 

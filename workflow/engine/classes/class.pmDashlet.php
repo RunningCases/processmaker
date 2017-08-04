@@ -21,7 +21,6 @@ class PMDashlet extends DashletInstance implements DashletInterface
                 self::setIncludePath();
                 require_once 'classes' . PATH_SEP . 'class.' . $className . '.php';
             }
-            G::LoadClass( $className );
             eval( "\$additionalFields = $className::getAdditionalFields(\$className);" );
             return $additionalFields;
         } catch (Exception $error) {
@@ -38,7 +37,7 @@ class PMDashlet extends DashletInstance implements DashletInterface
                 throw new Exception( G::LoadTranslation( 'ID_ERROR_OBJECT_NOT_EXISTS' ) . ' - Probably the plugin related is disabled' );
             }
             $className = $this->dashletInstance['DAS_CLASS'];
-            G::LoadClass( $className );
+
             if (! class_exists( $className )) {
                 self::setIncludePath();
                 require_once 'classes' . PATH_SEP . 'class.' . $className . '.php';
@@ -292,7 +291,6 @@ class PMDashlet extends DashletInstance implements DashletInterface
                 }
             }
             // Check for group assignments
-            G::LoadClass( 'groups' );
             $groupsInstance = new Groups();
             $groups = $groupsInstance->getGroupsForUser( $userUid );
             foreach ($groups as $grpUid => $group) {
@@ -343,7 +341,7 @@ class PMDashlet extends DashletInstance implements DashletInterface
                 self::setIncludePath();
                 require_once 'classes' . PATH_SEP . 'class.' . $className . '.php';
             }
-            G::LoadClass( $className );
+
             eval( "\$additionalFields = $className::getXTemplate(\$className);" );
             return $additionalFields;
         } catch (Exception $error) {

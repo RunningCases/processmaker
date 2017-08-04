@@ -361,7 +361,6 @@ class Content extends BaseContent
                 FROM CONTENT
                 ORDER BY CON_ID, CON_CATEGORY, CON_PARENT, CON_LANG";
 
-        G::LoadClass( "wsTools" );
         $workSpace = new workspaceTools( $workSpace );
         $workSpace->getDBInfo();
 

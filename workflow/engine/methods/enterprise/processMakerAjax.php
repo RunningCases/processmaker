@@ -19,7 +19,7 @@ if (!defined("BUFSIZE")) {
 
 function install($file)
 {
-    G::LoadThirdParty("pear/Archive", "Tar");
+
 
     $result = array();
     $status = 1;
@@ -43,7 +43,7 @@ function install($file)
         );
 
         // Proxy settings
-        $sysConf = System::getSystemConfiguration();
+        $sysConf = PMSystem::getSystemConfiguration();
         if (isset($sysConf['proxy_host'])) {
             if ($sysConf['proxy_host'] != '') {
                 if (!is_array($option['http'])) {
@@ -150,7 +150,7 @@ switch ($option) {
             );
 
             // Proxy settings
-            $sysConf = System::getSystemConfiguration();
+            $sysConf = PMSystem::getSystemConfiguration();
             if (isset($sysConf['proxy_host'])) {
                 if ($sysConf['proxy_host'] != '') {
                     if (!is_array($option['http'])) {
@@ -319,7 +319,7 @@ switch ($option) {
             );
 
             // Proxy settings
-            $sysConf = System::getSystemConfiguration();
+            $sysConf = PMSystem::getSystemConfiguration();
             if (isset($sysConf['proxy_host'])) {
                 if ($sysConf['proxy_host'] != '') {
                     if (!is_array($option['http'])) {

@@ -410,7 +410,7 @@ class InputDocument
         try {
             $sApplicationUID = $applicationUid;
             $sUserUID = $userUid;
-            \G::LoadClass('case');
+
             $oCase = new \Cases();
             $fields = $oCase->loadCase( $sApplicationUID );
             $sProcessUID = $fields['PRO_UID'];
@@ -698,7 +698,7 @@ class InputDocument
             if (is_null( $oAppDocument ) || $oAppDocument->getAppDocStatus() == 'DELETED') {
                 throw new \Exception(\G::LoadTranslation("ID_CASES_INPUT_DOES_NOT_EXIST", array($inputDocumentUid)));
             }
-            \G::LoadClass('wsBase');
+
             $ws = new \wsBase();
             $ws->removeDocument($inputDocumentUid);
         } catch (\Exception $e) {
@@ -753,7 +753,7 @@ class InputDocument
                 \G::header( "location: " . "/sys" . SYS_SYS . $backUrlObj[1] );
                 die();
             }
-            \G::LoadClass("case");
+
             $appDocUid = \G::generateUniqueID();
             $docVersion = '';
             $appDocType = 'INPUT';

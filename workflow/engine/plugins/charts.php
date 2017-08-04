@@ -1,5 +1,4 @@
-<?php 
-  G::LoadClass( "plugin");
+<?php
   
  class chartsPlugin extends PMPlugin 
  {

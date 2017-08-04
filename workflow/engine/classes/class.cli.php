@@ -253,7 +253,7 @@ EOT;
             self::help( null, null );
             return;
         }
-        G::LoadThirdParty( 'pear/Console', 'Getopt' );
+
         $short = "h" . $taskData['opt']['short'];
         $long = array_merge( array ("help"
         ), $taskData['opt']['long'] );

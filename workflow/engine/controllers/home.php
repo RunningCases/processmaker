@@ -99,15 +99,10 @@ class Home extends Controller
             return;
         }
 
-        require_once 'classes/model/UsersProperties.php';
-        G::LoadClass( 'process' );
-        G::LoadClass( 'case' );
-
         $userProperty = new UsersProperties();
         $process = new Process();
         $case = new Cases();
-        G::loadClass( 'system' );
-        $sysConf = System::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
+        $sysConf = PMSystem::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
 
         //Get ProcessStatistics Info
         $start = 0;
@@ -191,8 +186,7 @@ class Home extends Controller
 
         $solrEnabled = false;
 
-        if (($solrConf = System::solrEnv()) !== false) {
-            G::LoadClass("AppSolr");
+        if (($solrConf = PMSystem::solrEnv()) !== false) {
 
             $ApplicationSolrIndex = new AppSolr(
                 $solrConf["solr_enabled"],
@@ -212,7 +206,6 @@ class Home extends Controller
         if ($solrEnabled) {
             $cases = $ApplicationSolrIndex->getAppGridData($this->userUid, 0, 1, 'todo');
         } else {
-            G::LoadClass( 'applications' );
 
             $apps = new Applications();
 
@@ -418,9 +411,8 @@ class Home extends Controller
             $type == "todo" || $type == "draft" || $type == "paused" || $type == "sent" ||
             $type == "selfservice" || $type == "unassigned" || $type == "search"
         ) &&
-        (($solrConf = System::solrEnv()) !== false)
+        (($solrConf = PMSystem::solrEnv()) !== false)
         ) {
-            G::LoadClass("AppSolr");
 
             $ApplicationSolrIndex = new AppSolr(
                 $solrConf["solr_enabled"],
@@ -537,7 +529,6 @@ class Home extends Controller
             }
 
             if (isset( $row['DEL_DELEGATE_DATE'] )) {
-                G::LoadClass( "configuration" );
                 $conf = new Configurations();
                 $generalConfCasesList = $conf->getConfiguration( 'ENVIRONMENT_SETTINGS', '' );
                 $cases['data'][$i]['DEL_DELEGATE_DATE'] = '';
@@ -565,7 +556,6 @@ class Home extends Controller
 
     public function startCase ($httpData)
     {
-        G::LoadClass( 'case' );
         $case = new Cases();
         $aData = $case->startCase( $httpData->id, $_SESSION['USER_LOGGED'] );
 
@@ -602,7 +592,6 @@ class Home extends Controller
 
     function getUserArray($action, $userUid, $search = null)
     {
-        G::LoadClass("configuration");
         $conf = new Configurations();
         $confEnvSetting = $conf->getFormats();
         $users = array();

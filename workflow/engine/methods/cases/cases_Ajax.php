@@ -1,5 +1,5 @@
 <?php
-G::LoadSystem('inputfilter');
+
 $filter = new InputFilter();
 $_GET = $filter->xssFilterHard($_GET);
 $_POST = $filter->xssFilterHard($_POST);
@@ -35,7 +35,6 @@ if (!isset($_SESSION['USER_LOGGED'])) {
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
-G::LoadClass( 'case' );
 $oCase = new Cases();
 
 //if($RBAC->userCanAccess('PM_ALLCASES') < 0) {
@@ -91,7 +90,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         G::RenderPage( 'publish', 'raw' );
         break;
     case 'showProcessMap':
-        G::LoadClass( 'processMap' );
+
         $oTemplatePower = new TemplatePower( PATH_TPL . 'processes/processes_Map.html' );
         $oTemplatePower->prepare();
         $G_PUBLISH = new Publisher();
@@ -179,7 +178,6 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         G::RenderPage( 'publish', 'raw' );
         break;
     case 'showTransferHistory':
-        G::LoadClass( "case" );
         $c = Cases::getTransferHistoryCriteria( $_SESSION['APPLICATION'] );
         $G_PUBLISH = new Publisher();
         $G_PUBLISH->AddContent( 'propeltable', 'paged-table', 'cases/cases_TransferHistory', $c, array () );
@@ -254,7 +252,6 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
             // switch verify $_POST['TAS_ASSIGN_TYPE']
             case 'BALANCED':
                 $USR_UID = $filter->xssFilterHard($_POST['USR_UID']);
-                G::LoadClass( 'user' );
                 $oUser = new User( new DBConnection() );
                 $oUser->load( $USR_UID );
                 $oUser->Fields['USR_FIRSTNAME'] = $filter->xssFilterHard($oUser->Fields['USR_FIRSTNAME']);
@@ -283,7 +280,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
                 */
                 $sDataBase = 'database_' . strtolower( DB_ADAPTER );
                 if (G::LoadSystemExist( $sDataBase )) {
-                    G::LoadSystem( $sDataBase );
+
                     $oDataBase = new database();
                     $sConcat = $oDataBase->concatString( "U.USR_LASTNAME", "' '", "U.USR_FIRSTNAME" );
                 }
@@ -312,7 +309,6 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
             case 'EVALUATE':
                 $TAS_ASSIGN_VARIABLE = $filter->xssFilterHard($_POST['TAS_ASSIGN_VARIABLE']);
                 $APPLICATION = $filter->xssFilterHard($_SESSION['APPLICATION']);
-                G::LoadClass( 'application' );
                 $oApplication = new Application( new DBConnection() );
                 $oApplication->load( $APPLICATION );
                 $sUser = '';
@@ -322,7 +318,6 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
                     }
                 }
                 if ($sUser != '') {
-                    G::LoadClass( 'user' );
                     $oUser = new User( new DBConnection() );
                     $oUser->load( $sUser );
                     echo $oUser->Fields['USR_FIRSTNAME'] . ' ' . $oUser->Fields['USR_LASTNAME'] . '<input type="hidden" name="form[TASKS][1][USR_UID]" id="form[TASKS][1][USR_UID]" value="' . $sUser . '">';
@@ -420,8 +415,6 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         $oCase->removeCase( $sApplicationUID );
         break;
     case 'view_reassignCase':
-        G::LoadClass( 'groups' );
-        G::LoadClass( 'tasks' );
 
         $oTasks = new Tasks();
         $aAux = $oTasks->getGroupsOfTask( $_SESSION['TASK'], 1 );
@@ -547,8 +540,6 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         G::RenderPage( 'publish', 'raw' );
         break;
     case 'uploadDocumentGrid_Ajax':
-        G::LoadClass('case');
-        G::LoadClass("BasePeer");
         global $G_PUBLISH;
 
         $arrayToTranslation = array(
@@ -600,9 +591,6 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         break;
     case 'generateDocumentGrid_Ajax':
 
-        G::LoadClass( 'case' );
-        G::LoadClass( "BasePeer" );
-        G::LoadClass( 'configuration' );
         global $G_PUBLISH;
 
         $oCase = new Cases();
@@ -729,8 +717,7 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         G::RenderPage( 'publish', 'raw' );
         break;
     case 'adhocAssignmentUsers':
-        G::LoadClass( 'groups' );
-        G::LoadClass( 'tasks' );
+
         $oTasks = new Tasks();
         $aAux = $oTasks->getGroupsOfTask( $_SESSION['TASK'], 2 );
         $aAdhocUsers = array ();
@@ -793,16 +780,12 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
     /* @Author Erik Amaru Ortiz <erik@colosa.com> */
     case 'resendMessage':
         //require_once 'classes/model/Configuration.php';
-        G::LoadClass( 'spool' );
 
         $oCase = new Cases();
         $data = $oCase->getHistoryMessagesTrackerView( $_POST['APP_UID'], $_POST['APP_MSG_UID'] );
         //print_r($data);
 
-
-        G::LoadClass("system");
-
-        $aSetup = System::getEmailConfiguration();
+        $aSetup = PMSystem::getEmailConfiguration();
 
         $passwd = $aSetup['MESS_PASSWORD'];
         $passwdDec = G::decrypt( $passwd, 'EMAILENCRYPT' );
@@ -848,10 +831,6 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
     case 'reassignByUserList':
         $APP_UIDS = explode( ',', $_POST['APP_UIDS'] );
         $sReassignFromUser = $_POST['FROM_USR_ID'];
-
-        G::LoadClass( 'tasks' );
-        G::LoadClass( 'groups' );
-        G::LoadClass( 'case' );
 
         $oTasks = new Tasks();
         $oGroups = new Groups();
@@ -900,7 +879,6 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
 
         global $_DBArray;
         $_DBArray['reassign_byuser'] = $aCasesList;
-        G::LoadClass( 'ArrayPeer' );
         $oCriteria = new Criteria( 'dbarray' );
         $oCriteria->setDBArrayTable( 'reassign_byuser' );
         $G_PUBLISH = new Publisher();
@@ -909,7 +887,6 @@ switch (($_POST['action']) ? $_POST['action'] : $_REQUEST['action']) {
         break;
     /* @Author Erik Amaru Ortiz <erik@colosa.com> */
     case 'reassignByUser':
-        G::LoadClass( 'case' );
 
         $oCases = new Cases();
         $aCases = Array ();

@@ -22,7 +22,7 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 try {
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     $_POST = $filter->xssFilterHard($_POST);
     
@@ -32,12 +32,10 @@ try {
     
     switch ($_POST['action']) {
         case 'availableCaseTrackerObjects':
-            G::LoadClass( 'processMap' );
             $oProcessMap = new ProcessMap();
             $oProcessMap->availableCaseTrackerObjects( $_POST['PRO_UID'] );
             break;
         case 'assignCaseTrackerObject':
-            G::LoadClass( 'processMap' );
             $oProcessMap = new ProcessMap();
             $cto_UID = $oProcessMap->assignCaseTrackerObject( $_POST['PRO_UID'], $_POST['OBJECT_TYPE'], $_POST['OBJECT_UID'] );
             $oProcessMap->getCaseTrackerObjectsCriteria( $_POST['PRO_UID'] );
@@ -47,7 +45,6 @@ try {
             echo $cto_UID;
             break;
         case 'removeCaseTrackerObject':
-            G::LoadClass( 'processMap' );
             $oProcessMap = new ProcessMap();
             $oProcessMap->removeCaseTrackerObject( $_POST['CTO_UID'], $_POST['PRO_UID'], $_POST['STEP_POSITION'] );
             $oProcessMap->getCaseTrackerObjectsCriteria( $_POST['PRO_UID'] );
@@ -56,7 +53,6 @@ try {
             G::auditLog('CaseTrackers','Remove Case Tracker Object ('.$_POST['CTO_UID'].') in Process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'upCaseTrackerObject':
-            G::LoadClass( 'processMap' );
             $oProcessMap = new ProcessMap();
             $oProcessMap->upCaseTrackerObject( $_POST['CTO_UID'], $_POST['PRO_UID'], $_POST['STEP_POSITION'] );
             $oProcessMap->getCaseTrackerObjectsCriteria( $_POST['PRO_UID'] );
@@ -65,7 +61,6 @@ try {
             G::auditLog('CaseTrackers','Move Up Case Tracker Object ('.$_POST['CTO_UID'].') in Process "'.$resultProcess['PRO_TITLE'].'"');
             break;
         case 'downCaseTrackerObject':
-            G::LoadClass( 'processMap' );
             $oProcessMap = new ProcessMap();
             $oProcessMap->downCaseTrackerObject( $_POST['CTO_UID'], $_POST['PRO_UID'], $_POST['STEP_POSITION'] );
             $oProcessMap->getCaseTrackerObjectsCriteria( $_POST['PRO_UID'] );

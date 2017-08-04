@@ -262,7 +262,6 @@ class Tracker
                 $arrayDynaFormData = $dynaForm->Load($obj_uid);
 
                 if (isset($arrayDynaFormData["DYN_VERSION"]) && $arrayDynaFormData["DYN_VERSION"] == 2) {
-                    \G::LoadClass("pmDynaform");
 
                     $Fields["PRO_UID"] = $pro_uid;
                     $Fields["CURRENT_DYNAFORM"] = $obj_uid;
@@ -276,7 +275,7 @@ class Tracker
                 }
                 break;
             case 'INPUT_DOCUMENT':
-                //G::LoadClass( 'case' );
+
                 $oCase = new \Cases();
                 $c = $oCase->getAllUploadedDocumentsCriteriaTracker( $pro_uid, $app_uid, $obj_uid );
 
@@ -297,7 +296,7 @@ class Tracker
                 break;
 
             case 'OUTPUT_DOCUMENT':
-                //G::LoadClass( 'case' );
+
                 $oCase = new \Cases();
                 $c = $oCase->getAllGeneratedDocumentsCriteriaTracker( $pro_uid, $app_uid, $obj_uid );
                 $response = $c;

@@ -42,7 +42,6 @@ if ($access != 1) {
             break;
     }
 }
-G::LoadClass( 'plugin' );
 
 $oPluginRegistry = & PMPluginRegistry::getSingleton();
 $G_MAIN_MENU = 'processmaker';

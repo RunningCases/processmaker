@@ -293,7 +293,7 @@ class Installer
                 foreach ($fileTar as $value) {
                     $dataFile = pathinfo($value);
                     $nameSkinTmp = $dataFile['filename'];
-                    G::LoadThirdParty( 'pear/Archive', 'Tar' );
+
                     $tar = new Archive_Tar( $value );
 
                     $pathSkinTmp = $pathSkinPartner . 'tmp' . PATH_SEP;

@@ -30,8 +30,6 @@ if ($RBAC->userCanAccess( 'PM_SETUP' ) != 1) {
 }
 
 global $_DBArray;
-G::LoadClass( 'tasks' );
-G::LoadClass( 'processMap' );
 
 $oTasks = new Tasks();
 $aAux1 = $oTasks->getAllTasks( $_GET['PRO_UID'] );

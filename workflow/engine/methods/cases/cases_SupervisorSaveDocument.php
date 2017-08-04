@@ -23,9 +23,6 @@
  */
 
 try {
-    //save info
-    G::LoadClass( 'case' );
-    G::LoadClass( 'tasks' );
 
     $oAppDocument = new AppDocument();
     $aFields = array (

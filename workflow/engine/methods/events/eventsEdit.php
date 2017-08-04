@@ -28,8 +28,6 @@ if ($RBAC->userCanAccess( 'PM_SETUP' ) != 1) {
     die();
 }
 
-G::LoadClass( 'tasks' );
-G::LoadClass( 'processMap' );
 global $_DBArray;
 
 if (isset( $_GET['EVN_UID'] )) {

@@ -46,7 +46,6 @@ $G_ID_SUB_MENU_SELECTED = 'DB_CONNECTIONS';
 
 $G_PUBLISH = new Publisher();
 
-G::LoadClass( 'processMap' );
 $oProcess = new processMap();
 $oCriteria = $oProcess->getConditionProcessList();
 if (ProcessPeer::doCount( $oCriteria ) > 0) {

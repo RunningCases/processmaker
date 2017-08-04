@@ -74,7 +74,6 @@ class dates
     {
         //$oldDate=$this->calculateDate_noCalendar( $sInitDate, $iDuration, $sTimeUnit, $iTypeDay, $UsrUid, $ProUid, $TasUid);
         //Set Calendar when the object is instanced in this order/priority (Task, User, Process, Default)
-        G::LoadClass('calendar');
         $calendarObj = new calendar($UsrUid, $ProUid, $TasUid);
         //Get next Business Hours/Range based on :
         switch (strtoupper($sTimeUnit)) {

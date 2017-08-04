@@ -164,7 +164,7 @@ class XmlForm_Field_toolButton extends XmlForm_Field
             case 'dropdown':
                 $html = '';
                 if (isset($this->owner->values['PRO_UID'])) {
-                    G::LoadClass('processMap');
+
                     $criteria = processMap::getDynaformsCriteria($this->owner->values['PRO_UID']);
                     $dataset = DynaformPeer::doSelectRS($criteria);
                     if ($dataset->getRecordCount() > 0) {

@@ -3,7 +3,6 @@
  * class.pmSso.php
  *  
  */
-G::LoadClass ('pmFunctions');
  
   class pmSsoClass extends PMPlugin {
     function __construct() {

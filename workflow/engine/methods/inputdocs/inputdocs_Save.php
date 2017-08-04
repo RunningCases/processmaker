@@ -66,8 +66,6 @@ try {
             print $flag;
             break;
         default:
-            //require_once 'classes/model/InputDocument.php';
-            G::LoadClass( 'processMap' );
 
             $oInputDocument = new InputDocument();
             if (isset( $_POST['form'] )) {

@@ -650,7 +650,6 @@ class indicatorsCalculator
 	}
 
 	private function pdoConnection() {
-		G::loadClass('wsTools');
 	    $currentWS = defined('SYS_SYS') ? SYS_SYS : 'Wokspace Undefined';
 		$workSpace = new workspaceTools($currentWS);
   	        $arrayHost = explode(':', $workSpace->dbHost);

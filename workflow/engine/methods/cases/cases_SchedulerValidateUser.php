@@ -61,7 +61,6 @@ if ($result->status_code == 0) {
     $user_id = $resultSet->getRow();
     $result->message = $user_id[0];
 
-    G::LoadClass( 'case' );
     $caseInstance = new Cases();
     if (! $caseInstance->canStartCase( $result->message, $_REQUEST['PRO_UID'] )) {
         $result->status_code = - 1000;

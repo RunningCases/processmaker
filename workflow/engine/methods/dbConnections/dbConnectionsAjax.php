@@ -30,7 +30,7 @@
  * @Param  var action from POST request
  */
 
-G::LoadSystem('inputfilter');
+
 $filter = new InputFilter();
 $_POST = $filter->xssFilterHard($_POST);
 
@@ -45,13 +45,9 @@ if (isset( $_POST['PROCESS'] )) {
 }
 
     #Global Definitions
-require_once 'classes/model/DbSource.php';
-require_once 'classes/model/Content.php';
 
 $G_PUBLISH = new Publisher();
-G::LoadClass( 'processMap' );
-G::LoadClass( 'ArrayPeer' );
-G::LoadClass( 'dbConnections' );
+
 global $_DBArray;
 
 switch ($action) {
@@ -210,8 +206,6 @@ switch ($action) {
     case 'testConnection':
         sleep( 0 );
 
-        G::LoadClass("net");
-
         define("SUCCESSFULL", "SUCCESSFULL");
         define("FAILED", "FAILED");
 
@@ -344,7 +338,7 @@ switch ($action) {
         }
         break;
     case 'showEncodes':
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $engine = $_POST['engine'];
 

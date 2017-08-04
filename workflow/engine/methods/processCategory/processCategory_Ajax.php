@@ -25,9 +25,6 @@
 if (isset( $_REQUEST['action'] )) {
     switch ($_REQUEST['action']) {
         case 'processCategoryList':
-            require_once 'classes/model/ProcessCategory.php';
-            require_once 'classes/model/Process.php';
-            G::LoadClass( 'configuration' );
             $co = new Configurations();
             $config = $co->getConfiguration( 'processCategoryList', 'pageSize', '', $_SESSION['USER_LOGGED'] );
             $limit_size = isset( $config['pageSize'] ) ? $config['pageSize'] : 20;
@@ -83,7 +80,6 @@ if (isset( $_REQUEST['action'] )) {
             echo G::json_encode( $result );
             break;
         case 'updatePageSize':
-            G::LoadClass( 'configuration' );
             $c = new Configurations();
             $arr['pageSize'] = $_REQUEST['size'];
             $arr['dateSave'] = date( 'Y-m-d H:i:s' );

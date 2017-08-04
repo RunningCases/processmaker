@@ -33,7 +33,7 @@ if (isset($aFields['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE'])) {
     $aAttributes = $aFields['AUTH_SOURCE_DATA']['AUTH_SOURCE_GRID_ATTRIBUTE'];    
 }
 
-//G::LoadThirdParty( 'pear/json', 'class.json' );
+
 //$oJSON = new Services_JSON();
 
 foreach ($_POST['aUsers'] as $sUser) {

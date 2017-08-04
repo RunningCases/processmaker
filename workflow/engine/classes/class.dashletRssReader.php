@@ -54,7 +54,7 @@ class dashletRssReader implements DashletInterface
         curl_setopt( $pCurl, CURLOPT_VERBOSE, false );
 
         //Apply proxy settings
-        $sysConf = System::getSystemConfiguration();
+        $sysConf = PMSystem::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             curl_setopt( $pCurl, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : '') );
             if ($sysConf['proxy_port'] != '') {

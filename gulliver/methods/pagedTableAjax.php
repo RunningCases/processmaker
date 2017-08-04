@@ -23,12 +23,8 @@
  * 
  */
 
-	G::LoadSystem('pagedTable');
-	G::LoadClass('propelTable');
-	G::LoadInclude('ajax');
-  G::LoadAllModelClasses();
-  G::LoadAllPluginModelClasses();
-require_once ( 'classes/class.xmlfield_InputPM.php' );
+
+
 	$id=get_ajax_value('ptID');
 	$ntable = unserialize(base64_decode($_SESSION['pagedTable[' . $id . ']']));
 	$page=get_ajax_value('page');
@@ -96,7 +92,6 @@ require_once ( 'classes/class.xmlfield_InputPM.php' );
 		return ;
 	}
 	$ntable->renderTable( 'content' );
-  G::LoadClass('configuration');
   $conf = new Configurations();
   $conf->setConfig($ntable->__Configuration,$ntable,$conf->aConfig);
   $conf->saveConfig('pagedTable',$ntable->__OBJ_UID,'',$_SESSION['USER_LOGGED'],'');

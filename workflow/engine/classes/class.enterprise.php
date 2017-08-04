@@ -108,7 +108,6 @@ class enterpriseClass extends PMPlugin
 
     public function enterpriseLimitCreateUser()
     {
-        G::LoadClass('serverConfiguration');
         $oServerConf = &serverConf::getSingleton();
         $infoLicense =$oServerConf->getProperty('LICENSE_INFO');
         if (isset($infoLicense[SYS_SYS]['LIMIT_USERS'])) {
@@ -129,7 +128,6 @@ class enterpriseClass extends PMPlugin
             return false;
         }
 
-        G::LoadClass( "configuration" );
         $config = new Configurations();
         $typeEncrypt = $config->getConfiguration('ENTERPRISE_SETTING_ENCRYPT', '');
         if ($typeEncrypt == null) {
@@ -143,8 +141,6 @@ class enterpriseClass extends PMPlugin
             $config->saveConfig('ENTERPRISE_SETTING_ENCRYPT', '');
         }
 
-        require_once 'classes/model/RbacUsersPeer.php';
-        require_once 'classes/model/UsersProperties.php';
         $userProperty = new UsersProperties();
 
         $criteria = new Criteria($object->workspace->dbInfo['DB_RBAC_NAME']);

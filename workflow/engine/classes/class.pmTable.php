@@ -902,8 +902,6 @@ class PmTable
      */
     public static function callPhing ($target, $buildFile = '', $options = array(), $verbose = true)
     {
-        G::loadClass( 'pmPhing' );
-
         $args = array ();
         foreach ($options as $key => $value) {
             $args[] = "-D$key=$value";

@@ -195,7 +195,7 @@ class Zimbra
         curl_setopt($this->_curl, CURLOPT_SSL_VERIFYHOST, false);
 
         //Apply proxy settings
-        $sysConf = System::getSystemConfiguration();
+        $sysConf = PMSystem::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             curl_setopt($this->_curl, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : ''));
             if ($sysConf['proxy_port'] != '') {
@@ -807,7 +807,7 @@ class Zimbra
     protected function message($message)
     {
         if ($this->debug) {
-            G::LoadSystem('inputfilter');
+
             $filter = new InputFilter();
             $message = $filter->xssFilterHard($message);
             echo $message;
@@ -830,7 +830,7 @@ class Zimbra
      */
     protected function soapRequest($body, $header = false, $connecting = false)
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
 
         if (!$connecting && !$this->_connected) {

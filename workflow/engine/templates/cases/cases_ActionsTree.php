@@ -22,10 +22,6 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
-require_once 'classes/model/AppThread.php';
-require_once 'classes/model/AppDelay.php';
-G::LoadClass('tree');
-G::LoadClass('case');
 
 $APP_UID = $_SESSION['APPLICATION'];
 

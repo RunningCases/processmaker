@@ -62,7 +62,6 @@ switch ($REQUEST) {
         echo '{success: true}';
         break;
     case 'show':
-        G::LoadClass( 'ArrayPeer' );
         $aRoles = $RBAC->getAllRoles();
 
         $fields = Array ('ROL_UID' => 'char','ROL_PARENT' => 'char','ROL_SYSTEM' => 'char','ROL_CREATE_DATE' => 'char','ROL_UPDATE_DATE' => 'char','ROL_STATUS' => 'char'
@@ -239,9 +238,6 @@ switch ($REQUEST) {
         }
         break;
     case 'rolesList':
-        require_once (PATH_RBAC . "model/RolesPeer.php");
-        require_once ("classes/model/Content.php");
-        G::LoadClass( 'configuration' );
         $co = new Configurations();
         $config = $co->getConfiguration( 'rolesList', 'pageSize', '', $_SESSION['USER_LOGGED'] );
         $limit_size = isset( $config['pageSize'] ) ? $config['pageSize'] : 20;
@@ -284,7 +280,6 @@ switch ($REQUEST) {
         echo '{roles: ' . G::json_encode( $aRows ) . ', total_roles: ' . $total_roles . '}';
         break;
     case 'updatePageSize':
-        G::LoadClass( 'configuration' );
         $c = new Configurations();
         $arr['pageSize'] = $_REQUEST['size'];
         $arr['dateSave'] = date( 'Y-m-d H:i:s' );

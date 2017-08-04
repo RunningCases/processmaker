@@ -281,12 +281,6 @@ define( 'PML_WSDL_URL', PML_SERVER . '/syspmLibrary/en/green/services/wsdl' );
 define( 'PML_UPLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/uploadProcess' );
 define( 'PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/download' );
 
-//Call Gulliver Classes
-Bootstrap::LoadThirdParty("smarty/libs", "Smarty.class");
-
-//Loading the autoloader libraries feature
-Bootstrap::registerSystemClasses();
-
 $config = Bootstrap::getSystemConfiguration();
 
 // starting session
@@ -508,16 +502,13 @@ define( 'SYS_URI', '/sys' . SYS_TEMP . '/' . SYS_LANG . '/' . SYS_SKIN . '/' );
 // defining the serverConf singleton
 if (defined( 'PATH_DATA' ) && file_exists( PATH_DATA )) {
     //Instance Server Configuration Singleton
-    Bootstrap::LoadClass( 'serverConfiguration' );
     $oServerConf = & serverConf::getSingleton();
 }
-$pathFile = PATH_THIRDPARTY . '/pear/PEAR.php';
-require_once $pathFile;
 
-//Bootstrap::LoadSystem( 'pmException' );
+
 
 // Create headPublisher singleton
-//Bootstrap::LoadSystem( 'headPublisher' );
+
 $oHeadPublisher = & headPublisher::getSingleton();
 
 // Installer, redirect to install if we don't have a valid shared data folder
@@ -643,11 +634,9 @@ define( 'SERVER_PORT', $_SERVER['SERVER_PORT'] );
 
 
 // create memcached singleton
-Bootstrap::LoadClass( 'memcached' );
 $memcache = & PMmemcached::getSingleton( SYS_SYS );
 
 // load Plugins base class
-Bootstrap::LoadClass( 'plugin' );
 
 //here we are loading all plugins registered
 //the singleton has a list of enabled plugins
@@ -810,7 +799,7 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
         }
 
         Bootstrap::initVendors();
-        Bootstrap::LoadSystem('monologProvider');
+
         $isWebEntry = \ProcessMaker\BusinessModel\WebEntry::isWebEntry(SYS_COLLECTION, $phpFile);
         if (\Bootstrap::getDisablePhpUploadExecution() === 1 && !$isWebEntry) {
             $message = \G::LoadTranslation('THE_PHP_FILES_EXECUTION_WAS_DISABLED');
@@ -828,7 +817,7 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
 
     //erik: verify if it is a Controller Class or httpProxyController Class
     if (is_file( PATH_CONTROLLERS . SYS_COLLECTION . '.php' )) {
-        Bootstrap::LoadSystem( 'controller' );
+
         $pathFile = PATH_CONTROLLERS . SYS_COLLECTION . '.php';
         require_once $pathFile;
         $controllerClass = SYS_COLLECTION;
@@ -898,13 +887,10 @@ if (! $avoidChangedWorkspaceValidation && isset( $_SESSION['WORKSPACE'] ) && $_S
 }
 
 // enable rbac
-Bootstrap::LoadSystem( 'rbac' );
+
 $RBAC = &RBAC::getSingleton( PATH_DATA, session_id() );
 $RBAC->sSystem = 'PROCESSMAKER';
 
-//Enable Monolog
-Bootstrap::initVendors();
-Bootstrap::LoadSystem( 'monologProvider' );
 // define and send Headers for all pages
 if (! defined( 'EXECUTE_BY_CRON' )) {
     header( "Expires: " . gmdate( "D, d M Y H:i:s", mktime( 0, 0, 0, date( 'm' ), date( 'd' ) - 1, date( 'Y' ) ) ) . " GMT" );
@@ -978,7 +964,6 @@ if (! defined( 'EXECUTE_BY_CRON' )) {
         if (! in_array( SYS_TARGET, $noLoginFiles ) && ! in_array( SYS_COLLECTION, $noLoginFolders ) && $bWE != true && $collectionPlugin != 'services') {
             $bRedirect = true;
             if (isset( $_GET['sid'] )) {
-                Bootstrap::LoadClass( 'sessions' );
                 $oSessions = new Sessions();
                 if ($aSession = $oSessions->verifySession( $_GET['sid'] )) {
                     require_once 'classes/model/Users.php';

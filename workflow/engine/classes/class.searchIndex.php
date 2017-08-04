@@ -294,8 +294,6 @@ class BpmnEngine_Services_SearchIndex
    */
   public function updateIndexDocument($solrUpdateDocumentEntity)
   {
-    G::LoadClass ('solr');
-    
     $solr = new BpmnEngine_SearchIndexAccess_Solr ($this->_solrIsEnabled, $this->_solrHost);
     
     // create list of facets
@@ -309,8 +307,6 @@ class BpmnEngine_Services_SearchIndex
    */
   public function deleteDocumentFromIndex($workspace, $idQuery)
   {
-    G::LoadClass ('solr');
-    
     $solr = new BpmnEngine_SearchIndexAccess_Solr ($this->_solrIsEnabled, $this->_solrHost);
     
     // create list of facets
@@ -323,8 +319,6 @@ class BpmnEngine_Services_SearchIndex
    */
   public function commitIndexChanges($workspace)
   {
-    G::LoadClass ('solr');
-    
     $solr = new BpmnEngine_SearchIndexAccess_Solr ($this->_solrIsEnabled, $this->_solrHost);
     
     // commit
@@ -337,8 +331,6 @@ class BpmnEngine_Services_SearchIndex
    */
   public function optimizeIndexChanges($workspace)
   {
-    G::LoadClass ('solr');
-  
     $solr = new BpmnEngine_SearchIndexAccess_Solr ($this->_solrIsEnabled, $this->_solrHost);
   
     // commit

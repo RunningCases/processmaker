@@ -34,12 +34,11 @@ class adminProxy extends HttpProxyController
      */
     public function saveSystemConf($httpData)
     {
-        G::loadClass('system');
         $envFile = PATH_CONFIG . 'env.ini';
         $updateRedirector = false;
         $restart = false;
         self::validateDataSystemConf($httpData, $envFile);
-        $sysConf = System::getSystemConfiguration($envFile);
+        $sysConf = PMSystem::getSystemConfiguration($envFile);
         $updatedConf = array();
 
         if ($sysConf['default_lang'] != $httpData->default_lang) {
@@ -97,7 +96,7 @@ class adminProxy extends HttpProxyController
                 }
             }
 
-            System::updateIndexFile(array(
+            PMSystem::updateIndexFile(array(
               'lang' => $sysConf['default_lang'],
               'skin' => $sysConf['default_skin']
             ));
@@ -211,7 +210,6 @@ class adminProxy extends HttpProxyController
 
     public function uxGroupUpdate($httpData)
     {
-        G::LoadClass('groups');
         $groups = new Groups();
         $users = $groups->getUsersOfGroup($httpData->GRP_UID);
         $success = true;
@@ -295,7 +293,6 @@ class adminProxy extends HttpProxyController
         //]
 
         $form = $_POST;
-        G::LoadClass('calendar');
         $calendarObj=new calendar();
         $calendarObj->saveCalendarInfo($form);
         echo "{success: true}";
@@ -368,9 +365,6 @@ class adminProxy extends HttpProxyController
     */
     public function testConnection($params)
     {
-        G::LoadClass('net');
-        G::LoadThirdParty('phpmailer', 'class.smtp');
-
         if ($_POST['typeTest'] == 'MAIL') {
             $eregMail = "/^[0-9a-zA-Z]+(?:[._][0-9a-zA-Z]+)*@[0-9a-zA-Z]+(?:[._-][0-9a-zA-Z]+)*\.[0-9a-zA-Z]{2,3}$/";
 
@@ -583,8 +577,6 @@ class adminProxy extends HttpProxyController
     public function sendTestMail()
     {
         global $G_PUBLISH;
-        G::LoadClass("system");
-        G::LoadClass('spool');
 
         $aConfiguration = array(
             'MESS_ENGINE'    => $_POST['MESS_ENGINE'],
@@ -619,7 +611,7 @@ class adminProxy extends HttpProxyController
         $sBodyPre->prepare();
         $sBodyPre->assign('server', $_SERVER['SERVER_NAME']);
         $sBodyPre->assign('date', date('H:i:s'));
-        $sBodyPre->assign('ver', System::getVersion());
+        $sBodyPre->assign('ver', PMSystem::getVersion());
         $sBodyPre->assign('engine', $engine);
         $sBodyPre->assign('msg', $msg);
         $sBody = $sBodyPre->getOutputContent();
@@ -766,8 +758,6 @@ class adminProxy extends HttpProxyController
      */
     public function loadFields()
     {
-        G::loadClass('configuration');
-
         $oConfiguration = new Configurations();
         $oConfiguration->loadConfig($x, 'Emails','','','','');
         $fields = $oConfiguration->aConfig;
@@ -795,7 +785,6 @@ class adminProxy extends HttpProxyController
      */
     public function getListImage($httpData)
     {
-        G::LoadClass('replacementLogo');
         $uplogo       = PATH_TPL . 'setup' . PATH_SEP . 'uplogo.html';
         $width        = "100%";
         $upload       = new replacementLogo();
@@ -1005,7 +994,7 @@ class adminProxy extends HttpProxyController
     public function uploadImage()
     {
         //!dataSystem
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $_SERVER["REQUEST_URI"] = $filter->xssFilterHard($_SERVER["REQUEST_URI"]);
         $_FILES = $filter->xssFilterHard($_FILES);
@@ -1101,7 +1090,6 @@ class adminProxy extends HttpProxyController
      */
     public function getNameCurrentLogo()
     {
-        G::LoadClass('replacementLogo');
         $upload       = new replacementLogo();
         $aPhotoSelect = $upload->getNameLogo($_SESSION['USER_LOGGED']);
         $sPhotoSelect = trim($aPhotoSelect['DEFAULT_LOGO_NAME']);
@@ -1197,7 +1185,6 @@ class adminProxy extends HttpProxyController
                     $snameLogo = urldecode($_GET['NAMELOGO']);
                     $snameLogo = trim($snameLogo);
                     $snameLogo = self::changeNamelogo($snameLogo);
-                    G::loadClass('configuration');
                     $oConf = new Configurations;
                     $aConf = Array(
                         'WORKSPACE_LOGO_NAME' => SYS_SYS,
@@ -1213,7 +1200,6 @@ class adminProxy extends HttpProxyController
                     break;
                 case 'restoreLogo':
                     $snameLogo = $_GET['NAMELOGO'];
-                    G::loadClass('configuration');
                     $oConf = new Configurations;
                     $aConf = Array(
                       'WORKSPACE_LOGO_NAME' => '',
@@ -1243,7 +1229,7 @@ class adminProxy extends HttpProxyController
     {
         $info = @getimagesize($imagen);
         
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $imagen = $filter->validateInput($imagen, "path");
             
@@ -1307,7 +1293,7 @@ class adminProxy extends HttpProxyController
             $newDir .= PATH_SEP.$base64Id;
             $dir    .= PATH_SEP.$base64Id;
             
-            G::LoadSystem('inputfilter');
+
             $filter = new InputFilter();
             $dir = $filter->validateInput($dir, "path");
         
@@ -1429,7 +1415,7 @@ class adminProxy extends HttpProxyController
         $params['lt'] = isset($licInfo[SYS_SYS]) ? isset($licInfo[SYS_SYS]['TYPE'])? $licInfo[SYS_SYS]['TYPE'] : ''  : '';
 
         //ProcessMaker Version
-        $params['v'] = System::getVersion();
+        $params['v'] = PMSystem::getVersion();
         if (file_exists(PATH_DATA. 'log/upgrades.log')) {
             $params['pmu'] = serialize(file_get_contents(PATH_DATA. 'log/upgrades.log', 'r'));
         } else {
@@ -1519,7 +1505,7 @@ class adminProxy extends HttpProxyController
 
         //Country/city (Timezone)
         $params['t'] = (defined('TIME_ZONE') && TIME_ZONE != "Unknown") ? TIME_ZONE : date_default_timezone_get();
-        $params['w'] = count(System::listWorkspaces());
+        $params['w'] = count(PMSystem::listWorkspaces());
 
         $support = PATH_DATA_SITE . G::sanitizeString($licenseManager->info['FIRST_NAME'] . '-' . $licenseManager->info['LAST_NAME'] . '-' . SYS_SYS . '-' . date('YmdHis'), false, false) . '.spm';
         file_put_contents($support, serialize($params));

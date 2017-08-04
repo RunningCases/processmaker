@@ -465,7 +465,7 @@ class PMPluginRegistry
      */
     public function installPluginArchive ($filename, $pluginName)
     {
-        G::LoadThirdParty( "pear/Archive", "Tar" );
+
         $tar = new Archive_Tar( $filename );
         $files = $tar->listContent();
         $plugins = array ();
@@ -530,7 +530,7 @@ class PMPluginRegistry
         if (! file_exists( PATH_PLUGINS . $pluginFile )) {
             throw (new Exception( "File \"$pluginFile\" doesn't exist" ));
         }
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $path = PATH_PLUGINS . $pluginFile;
         //$path = $filter->validateInput($path, 'path');
@@ -554,7 +554,7 @@ class PMPluginRegistry
 
         ///////
         $path = PATH_PLUGINS . $pluginFile;
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $path = $filter->validateInput($path, 'path');
         require_once ($path);
@@ -596,19 +596,12 @@ class PMPluginRegistry
 
     public function uninstallPluginWorkspaces ($arrayPlugin)
     {
-        G::LoadClass( "system" );
-        G::LoadClass( "wsTools" );
-
-        $workspace = System::listWorkspaces();
+        $workspace = PMSystem::listWorkspaces();
 
         foreach ($workspace as $indexWS => $ws) {
             $wsPathDataSite = PATH_DATA . "sites" . PATH_SEP . $ws->name . PATH_SEP;
 
             if (file_exists( $wsPathDataSite . "plugin.singleton" )) {
-                //G::LoadClass("plugin");
-                //Here we are loading all plug-ins registered
-                //The singleton has a list of enabled plug-ins
-
 
                 $pluginRegistry = &PMPluginRegistry::getSingleton();
                 $pluginRegistry->unSerializeInstance( file_get_contents( $wsPathDataSite . "plugin.singleton" ) );
@@ -1030,7 +1023,7 @@ class PMPluginRegistry
      */
     public function executeTriggers ($triggerId, $oData)
     {
-        G::LoadThirdParty( "pear", "PEAR" );
+
         foreach ($this->_aTriggers as $row => $detail) {
             if ($triggerId == $detail->sTriggerId) {
                 //review all folders registered for this namespace
@@ -1628,8 +1621,6 @@ class PMPluginRegistry
     public function updatePluginAttributesInAllWorkspaces($pluginName)
     {
         try {
-            G::LoadClass("system");
-            G::LoadClass("wsTools");
 
             //Set variables
             $pluginFileName = $pluginName . ".php";
@@ -1649,7 +1640,7 @@ class PMPluginRegistry
             if (isset($pluginDetails->aWorkspaces) && is_array($pluginDetails->aWorkspaces) && count($pluginDetails->aWorkspaces) > 0) {
                 $arrayWorkspace = array();
 
-                foreach (System::listWorkspaces() as $value) {
+                foreach (PMSystem::listWorkspaces() as $value) {
                     $workspaceTools = $value;
 
                     $arrayWorkspace[] = $workspaceTools->name;

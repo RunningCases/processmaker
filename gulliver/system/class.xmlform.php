@@ -733,7 +733,7 @@ class XmlForm_Field
         if (isset( $oOwner->fields[$this->pmconnection] )) {
             if (defined( 'PATH_CORE' )) {
                 if (file_exists( PATH_CORE . 'classes' . PATH_SEP . 'model' . PATH_SEP . 'AdditionalTables.php' )) {
-                    require_once PATH_CORE . 'classes' . PATH_SEP . 'model' . PATH_SEP . 'AdditionalTables.php';
+
                     $oAdditionalTables = new AdditionalTables();
                     try {
                         $aData = $oAdditionalTables->load( $oOwner->fields[$this->pmconnection]->pmtable, true );
@@ -758,7 +758,6 @@ class XmlForm_Field
                     				// check if a case are running in order to prevent that preview is
                     				// erroneous rendered.
                     				if (isset( $_SESSION['APPLICATION'] )) {
-                    					G::LoadClass( 'case' );
                     					$oApp = new Cases();
                     					if ($oApp->loadCase( $_SESSION['APPLICATION'] ) != null) {
                     						$aFields = $oApp->loadCase( $_SESSION['APPLICATION'] );
@@ -1367,7 +1366,7 @@ class XmlForm_Field_Suggest extends XmlForm_Field_SimpleText //by neyek
 
         $formVariableValue = '';
         $formVariableKeyValue = '';
-        G::LoadClass( 'case' );
+
         $oApp = new Cases();
         if (isset( $_SESSION['APPLICATION'] ) && ($_SESSION['APPLICATION'] != null && $oApp->loadCase( $_SESSION['APPLICATION'] ) != null)) {
             $aFields = $oApp->loadCase( $_SESSION['APPLICATION'] );
@@ -1571,7 +1570,7 @@ class XmlForm_Field_Suggest extends XmlForm_Field_SimpleText //by neyek
 
         $formVariableValue = '';
         $formVariableKeyValue = '';
-        G::LoadClass( 'case' );
+
         $oApp = new Cases();
         if (isset( $_SESSION['APPLICATION'] ) && ($_SESSION['APPLICATION'] != null && $oApp->loadCase( $_SESSION['APPLICATION'] ) != null)) {
             $aFields = $oApp->loadCase( $_SESSION['APPLICATION'] );
@@ -2987,7 +2986,7 @@ class XmlForm_Field_File extends XmlForm_Field
 
         if (isset( $_SESSION["APPLICATION"] ) && isset( $_SESSION["USER_LOGGED"] ) && isset( $_SESSION["TASK"] ) && isset( $this->input ) && $this->input != null && $this->mode == "view") {
             require_once ("classes/model/AppDocument.php");
-            G::LoadClass( "case" );
+
 
             $case = new Cases();
             $arrayField = $case->loadCase( $_SESSION["APPLICATION"] );
@@ -3039,7 +3038,7 @@ class XmlForm_Field_File extends XmlForm_Field
         $inpDocMaxFilesize = "";
 
         if (isset($this->input) && $this->input != null) {
-            require_once ("classes" . PATH_SEP . "model" . PATH_SEP . "InputDocument.php");
+
 
             try {
                 $inputDocument = new InputDocument();

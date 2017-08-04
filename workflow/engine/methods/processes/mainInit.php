@@ -26,10 +26,9 @@
 global $RBAC;
 $RBAC->requirePermissions( 'PM_FACTORY' );
 
-G::loadClass( 'configuration' );
 $conf = new Configurations();
 
-$pmVersion = (preg_match("/^([\d\.]+).*$/", System::getVersion(), $arrayMatch))? $arrayMatch[1] : ""; //Otherwise: Branch master
+$pmVersion = (preg_match("/^([\d\.]+).*$/", PMSystem::getVersion(), $arrayMatch))? $arrayMatch[1] : ""; //Otherwise: Branch master
 
 /*----------------------------------********---------------------------------*/
 if (true) {

@@ -170,7 +170,6 @@ class Trigger
             isset($dataTrigger["TRI_WEBBOT"])
         ) {
             //Check disabled code
-            \G::LoadClass("codeScanner");
 
             $cs = new \CodeScanner(SYS_SYS);
 

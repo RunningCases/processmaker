@@ -69,8 +69,6 @@ class Consolidated
      */
     public function postDerivate($app_uid, $app_number, $del_index, $usr_uid, $fieldName = '', $fieldValue = '')
     {
-        G::LoadClass("wsBase");
-        G::LoadClass("case");
         $ws = new \wsBase();
         $oCase = new \Cases();
 
@@ -251,11 +249,6 @@ class Consolidated
         $dropdownList = isset($_REQUEST ["dropList"]) ? G::json_decode($_REQUEST ["dropList"]) : array();
 
         try {
-            G::LoadClass("pmFunctions");
-            G::LoadClass("BasePeer");
-            G::LoadClass("configuration");
-            G::LoadClass("case");
-            G::LoadClass("reportTables");
 
             $response = array();
             $searchFields = array();
@@ -363,8 +356,8 @@ class Consolidated
                     $oCriteria->add($oCriteria->getNewCriterion(\ListInboxPeer::APP_NUMBER, $search, Criteria::LIKE));
                 }
             }
+            
 
-            G::LoadSystem('inputfilter');
             $filter = new \InputFilter();
 
             if ($sort != "") {
@@ -461,9 +454,6 @@ class Consolidated
      */
     public function getDataGenerate($pro_uid, $tas_uid, $dyn_uid)
     {
-        G::LoadClass('case');
-        G::LoadClass('pmFunctions');
-        G::LoadClass("configuration");
         $hasTextArea = false;
 
         $conf = new \Configurations();
@@ -477,7 +467,6 @@ class Consolidated
         $oDyna = new \Dynaform();
         $dataTask = $oDyna->load($dyn_uid);
         if ($dataTask['DYN_VERSION'] > 0) {
-            G::LoadClass("pmDynaform");
             $_SESSION['PROCESS'] = $pro_uid;
             $pmDyna = new \pmDynaform(array('APP_DATA' => array(), "CURRENT_DYNAFORM" => $dyn_uid));
             $json = G::json_decode($dataTask["DYN_CONTENT"]);
@@ -1042,8 +1031,6 @@ class Consolidated
      */
     function consolidatedUpdate($dynaformUid, $dataUpdate, $usr_uid)
     {
-        G::LoadClass("case");
-        G::LoadClass("pmFunctions");
 
         $delIndex = 1;
         $oCase = new \Cases();

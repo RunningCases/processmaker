@@ -23,10 +23,6 @@
  *
  */
 
-
-G::LoadClass('groups');
-G::LoadClass('tree');
-
 $tree = new Tree();
 $tree->name = 'Groups';
 $tree->nodeType = "base";
@@ -45,8 +41,6 @@ $tree->value = '
 	<div class="boxBottomBlue"><div class="a"></div><div class="b"></div><div class="c"></div></div>
 	';
 $tree->showSign = false;
-
-G::LoadClass('case');
 
 $o = new Cases();
 $steps = $o->getAllDynaformsStepsToRevise($_GET['APP_UID']);

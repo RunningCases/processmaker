@@ -132,9 +132,6 @@ try {
     $oForm = new Form( $_SESSION["PROCESS"] . "/" . $_GET["UID"], PATH_DYNAFORM );
     $oForm->validatePost();
 
-    //Includes
-    G::LoadClass( "case" );
-
     //Load the variables
     $oCase = new Cases();
     $oCase->thisIsTheCurrentUser( $_SESSION["APPLICATION"], $_SESSION["INDEX"], $_SESSION["USER_LOGGED"], "REDIRECT", "casesListExtJs" );
@@ -144,7 +141,6 @@ try {
         $dataFields = $Fields["APP_DATA"];
         $dataFields["CURRENT_DYNAFORM"] = $_GET['UID'];
 
-        G::LoadClass('pmDynaform');
         $oPmDynaform = new pmDynaform($dataFields);
         $pmdynaform = $oPmDynaform->validatePost($pmdynaform);
 

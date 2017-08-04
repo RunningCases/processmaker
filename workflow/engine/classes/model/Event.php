@@ -425,7 +425,6 @@ class Event extends BaseEvent
         try {
             $rowsCreated = 0;
             $rowsRejected = 0;
-            G::LoadClass( 'calendar' );
             $oCalendar = new calendar();
 
             //SELECT
@@ -551,7 +550,6 @@ class Event extends BaseEvent
         try {
             $rowsCreated = 0;
             $rowsRejected = 0;
-            G::LoadClass( 'calendar' );
             $oCalendar = new calendar();
             // SELECT TASK2.* ,
             //   EVENT.EVN_UID, EVENT.PRO_UID, EVENT.EVN_TAS_UID_FROM,
@@ -686,7 +684,6 @@ class Event extends BaseEvent
         foreach ($aRows as $aData) {
             // if the events has a condition
             if (trim( $aData['EVN_CONDITIONS'] ) != '') {
-                G::LoadClass( 'case' );
                 $oCase = new Cases();
                 $aFields = $oCase->loadCase( $APP_UID );
 
@@ -875,7 +872,6 @@ class Event extends BaseEvent
 
     public function toCalculateTime ($aData, $iDate = null)
     {
-        G::LoadClass( 'calendar' );
         $oCalendar = new calendar();
 
         $iDate = isset( $iDate ) ? $iDate : date( 'Y-m-d H:i:s' );

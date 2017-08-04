@@ -35,8 +35,6 @@
    /**
    * require_once pakeFunction.php
    */
-    require_once( PATH_THIRDPARTY . 'pake' . PATH_SEP . 'pakeFunction.php');
-    require_once( PATH_THIRDPARTY . 'pake' . PATH_SEP . 'pakeGetopt.class.php');
     require_once( PATH_CORE . 'config' . PATH_SEP . 'environments.php');
 
   // trap -V before pake

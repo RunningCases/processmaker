@@ -32,8 +32,6 @@
 
 if (isset( $_FILES ) && $_FILES["ATTACH_FILE"]["error"] == 0) {
     try {
-        G::LoadClass( "case" );
-
         $application = new Application();
         if (!$application->exists($_POST["APPLICATION"])) {
             throw new Exception(G::LoadTranslation("ID_CASE_NOT_EXISTS") . ": {$_POST['APPLICATION']}");

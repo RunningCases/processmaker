@@ -1,6 +1,4 @@
 <?php
-require_once PATH_TRUNK . 'vendor' . PATH_SEP . 'google' . PATH_SEP . 'apiclient' . PATH_SEP . 'src' . PATH_SEP . 'Google' . PATH_SEP . 'autoload.php';
-G::LoadClass("pmGoogleApi");
 
 class labelsGmail
 {

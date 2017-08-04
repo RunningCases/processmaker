@@ -30,7 +30,6 @@ if (!class_exists('Triggers')) {
 }
 $oTrigger = new Triggers();
 
-G::LoadClass('processMap');
 $oProcessMap = new processMap(new DBConnection());
 
 $aDataTriggers = $_POST;

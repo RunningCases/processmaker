@@ -42,7 +42,7 @@ class SkinEngine
     $this->content = $content;
     $this->skinVariants = array('blank','extjs','raw','tracker','submenu');
     $this->skinsBasePath = G::ExpandPath("skinEngine");
-    $sysConf = System::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
+    $sysConf = PMSystem::getSystemConfiguration( PATH_CONFIG . 'env.ini' );
     $this->skinDefault = (isset($sysConf['default_skin']) && $sysConf['default_skin'] != '') ? $sysConf['default_skin'] : 'classic';
     $this->_init();
   }
@@ -228,7 +228,7 @@ class SkinEngine
 
   private function _extjs()
   {
-    G::LoadClass('serverConfiguration');
+
     $oServerConf    =& serverConf::getSingleton();
     $oHeadPublisher =& headPublisher::getSingleton();
 
@@ -435,7 +435,6 @@ class SkinEngine
         $uws = (isset($_SESSION['USR_ROLENAME']) && $_SESSION['USR_ROLENAME'] != '')? strtolower(G::LoadTranslation('ID_WORKSPACE_USING')): G::LoadTranslation('ID_WORKSPACE_USING');
         $smarty->assign('workspace_label', $uws);
 
-        G::LoadClass( "configuration" );
         $conf = new Configurations();
         $conf->getFormats();
         $name = $conf->userNameFormat(isset($_SESSION['USR_USERNAME']) ? $_SESSION['USR_USERNAME']: '', isset($_SESSION['USR_FULLNAME']) ? htmlentities($_SESSION['USR_FULLNAME'] , ENT_QUOTES, 'UTF-8'): '', isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : '');
@@ -555,9 +554,7 @@ class SkinEngine
 
   private function _mvc()
   {
-    require_once PATH_THIRDPARTY . 'smarty/libs/Smarty.class.php'; // put full path to Smarty.class.php
-    require_once PATH_GULLIVER_HOME . 'includes' . PATH_SEP . 'smarty_plugins' . PATH_SEP . 'function.pmos.php';
-    G::LoadClass('serverConfiguration');
+
     $oServerConf =& serverConf::getSingleton();
     $oHeadPublisher =& headPublisher::getSingleton();
 
@@ -628,7 +625,6 @@ class SkinEngine
 
   private function _default($enableJsScript=true)
   {
-    require_once PATH_THIRDPARTY . 'smarty/libs/Smarty.class.php'; // put full path to Smarty.class.php
     global $G_ENABLE_BLANK_SKIN;
     //menu
     global $G_PUBLISH;
@@ -651,7 +647,7 @@ class SkinEngine
     $smarty->config_dir = PATH_THIRDPARTY . 'smarty/configs';
 
     //To setup en extJS Theme for this Skin
-    G::LoadClass('serverConfiguration');
+
     $oServerConf =& serverConf::getSingleton();
     $extSkin = $oServerConf->getProperty("extSkin");
 
@@ -758,7 +754,6 @@ class SkinEngine
         $uws = (isset($_SESSION['USR_ROLENAME']) && $_SESSION['USR_ROLENAME'] != '')? strtolower(G::LoadTranslation('ID_WORKSPACE_USING')): G::LoadTranslation('ID_WORKSPACE_USING');
         $smarty->assign('workspace_label', $uws);
 
-        G::LoadClass( "configuration" );
         $conf = new Configurations();
         $conf->getFormats();
         $name = $conf->userNameFormat(isset($_SESSION['USR_USERNAME']) ? $_SESSION['USR_USERNAME']: '', isset($_SESSION['USR_FULLNAME']) ? htmlentities($_SESSION['USR_FULLNAME'] , ENT_QUOTES, 'UTF-8'): '', isset($_SESSION['USER_LOGGED']) ? $_SESSION['USER_LOGGED'] : '');
@@ -792,7 +787,6 @@ class SkinEngine
       $smarty->assign('tpl_menu', PATH_TEMPLATE . 'menu.html');
       $smarty->assign('tpl_submenu', PATH_TEMPLATE . 'submenu.html');
 
-      G::LoadClass( 'replacementLogo' );
       $oLogoR = new replacementLogo();
 
       if(defined("SYS_SYS")){

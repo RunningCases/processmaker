@@ -489,7 +489,6 @@ class Task extends BaseTask
                 $this->setNew(false);
 
                 /*----------------------------------********---------------------------------*/
-                G::LoadClass("indicatorsCalculator");
                 $indicator = new indicatorsCalculator();
                 $data = $indicator->suggestedTimeForTask($TasUid);
                 $aFields["TAS_AVERAGE"] = $data['average'];
@@ -724,7 +723,6 @@ class Task extends BaseTask
     public function setTasCalendar($taskUid, $calendarUid)
     {
         //Save Calendar ID for this process
-        G::LoadClass("calendar");
         $calendarObj = new Calendar();
         $calendarObj->assignCalendarTo($taskUid, $calendarUid, 'TASK');
     }

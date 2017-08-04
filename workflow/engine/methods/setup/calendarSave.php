@@ -37,7 +37,6 @@ switch ($RBAC->userCanAccess( 'PM_SETUP_ADVANCE' )) {
 try {
     $form = $_POST['form'];
 
-    G::LoadClass( 'calendar' );
     $calendarObj = new calendar();
     $calendarObj->saveCalendarInfo( $form );
 

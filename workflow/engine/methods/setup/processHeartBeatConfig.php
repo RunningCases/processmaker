@@ -25,7 +25,6 @@ global $RBAC;
 $RBAC->requirePermissions( 'PM_SETUP', 'PM_SETUP_HEART_BEAT');
 
 $oHeadPublisher = & headPublisher::getSingleton();
-G::LoadClass( 'serverConfiguration' );
 $oServerConf = & serverConf::getSingleton();
 
 //you can use SYS_TEMP or SYS_SYS ON HEAR_BEAT_CONF to save for each workspace

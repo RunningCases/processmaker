@@ -208,7 +208,7 @@ class NET
      */
     public function tryConnectServer($pDbDriver, array $arrayServerData = array(), $dbsEncode = "")
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $this->ip = $filter->validateInput($this->ip);
         $this->db_port = $filter->validateInput($this->db_port,'int');
@@ -331,7 +331,7 @@ class NET
      */
     public function tryOpenDataBase($pDbDriver, array $arrayServerData = array(), $dbsEncode = "")
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $this->ip = $filter->validateInput($this->ip);
         $this->db_port = $filter->validateInput($this->db_port,'int');
@@ -489,7 +489,7 @@ class NET
                 $value = 'none';
                 $sDataBase = 'database_' . strtolower( DB_ADAPTER );
                 if (G::LoadSystemExist( $sDataBase )) {
-                    G::LoadSystem( $sDataBase );
+
                     $oDataBase = new database();
                     $value = $oDataBase->getServerVersion( $driver, $this->ip, $this->db_port, $this->db_user, $this->db_passwd, $this->db_sourcename );
                 }

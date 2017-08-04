@@ -300,8 +300,6 @@ class ListUnassigned extends BaseListUnassigned
     public function getSelfServiceCasesByEvaluate($userUid)
     {
         try {
-            G::LoadClass("groups");
-
             $arrayAppAssignSelfServiceValueData = array();
 
             //Get APP_UIDs
@@ -379,8 +377,6 @@ class ListUnassigned extends BaseListUnassigned
             $row = $rs->getRow();
         }
 
-        //check groups assigned to SelfService task
-        G::LoadClass('groups');
         $group = new Groups();
         $aGroups = $group->getActiveGroupsForAnUser($userUid);
 

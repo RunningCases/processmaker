@@ -38,8 +38,6 @@ switch ($RBAC->userCanAccess('PM_SETUP_ADVANCE'))
 	break;
 }*/
 
-G::LoadClass( "plugin" );
-G::LoadSystem('inputfilter');
 $filter = new InputFilter();
 $pluginName = $_REQUEST['pluginUid'];
 $pluginName = $filter->xssFilterHard($pluginName);

@@ -26,7 +26,6 @@ if ($RBAC->userCanAccess( 'PM_SETUP' ) != 1 && $RBAC->userCanAccess( 'PM_SETUP_A
     die();
 }
 
-G::LoadClass( 'configuration' );
 $c = new Configurations();
 $configPage = $c->getConfiguration( 'processCategoryList', 'pageSize', '', $_SESSION['USER_LOGGED'] );
 $Config['pageSize'] = isset( $configPage['pageSize'] ) ? $configPage['pageSize'] : 20;

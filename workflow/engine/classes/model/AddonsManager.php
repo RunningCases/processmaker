@@ -132,7 +132,7 @@ class AddonsManager extends BaseAddonsManager
 
         $oPluginRegistry = &PMPluginRegistry::getSingleton();
 
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $requiredPath = PATH_PLUGINS . $this->getAddonName() . ".php";
         $requiredPath = $filter->validateInput($requiredPath, 'path');
@@ -163,8 +163,7 @@ class AddonsManager extends BaseAddonsManager
     public function getInstalledVersion()
     {
         if ($this->isCore()) {
-            G::LoadClass("system");
-            return (EnterpriseUtils::pmVersion(System::getVersion()));
+            return (EnterpriseUtils::pmVersion(PMSystem::getVersion()));
         } else {
             if ($this->isPlugin()) {
                 if (!$this->isInstalled()) {
@@ -252,7 +251,7 @@ class AddonsManager extends BaseAddonsManager
         );
 
         // Proxy settings
-        $sysConf = System::getSystemConfiguration();
+        $sysConf = PMSystem::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             if (!is_array($option['http'])) {
                 $option['http'] = array();

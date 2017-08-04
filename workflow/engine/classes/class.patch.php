@@ -1,8 +1,5 @@
 <?php
 
-G::LoadClass("Task");
-G::LoadClass("TaskUser");
-
 /**
  * class, helping to set some not desirable settings but necesary
  * @author reav
@@ -26,10 +23,6 @@ class p11835 extends patch
      */
     static public function isApplicable()
     {
-        if (! class_exists('System')) {
-            G::LoadClass("System");
-        }
-
         patch::$isPathchable = false;
         $con = Propel::getConnection("workflow");
         $stmt = $con->prepareStatement("describe TASK;");
@@ -37,7 +30,7 @@ class p11835 extends patch
         $rs->next();
         while($row = $rs->getRow()) {
             if ($row ['Field'] == "TAS_GROUP_VARIABLE") {
-                $version = System::getVersion ();
+                $version = PMSystem::getVersion ();
                 $version = explode('-',$version);
                 if ($version[0] == '2.5.1') {
                     echo "Version " . $version[0] . " Patch\n";
@@ -94,10 +87,6 @@ class p11835 extends patch
             }
         }
         
-        //Fix BUG-15394
-        
-        G::LoadClass("configuration");
-        
         $conf = new Configurations();
         
         if (!$conf->exists("HOTFIX")) {
@@ -109,7 +98,7 @@ class p11835 extends patch
         $arrayHotfix = $conf->getConfiguration("HOTFIX", "");
         $arrayHotfix = (is_array($arrayHotfix))? $arrayHotfix : array($arrayHotfix);
         
-        $pmVersion = self::pmVersion(System::getVersion()) . "";
+        $pmVersion = self::pmVersion(PMSystem::getVersion()) . "";
         
         if (($pmVersion == "2.5.2.4" || $pmVersion == "2.8") && !in_array("15394", $arrayHotfix)) {
             $cnn = Propel::getConnection("workflow");

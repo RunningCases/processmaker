@@ -98,8 +98,6 @@ $app->loadEnvironment();
 require PATH_THIRDPARTY . "pake" . PATH_SEP . "pakeFunction.php";
 require PATH_THIRDPARTY . "pake" . PATH_SEP . "pakeGetopt.class.php";
 
-G::LoadClass("cli");
-
   // trap -V before pake
   if (in_array('-v', $argv) || in_array('-V', $argv) || in_array('--version', $argv))
   {

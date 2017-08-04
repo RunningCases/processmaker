@@ -1,8 +1,5 @@
 <?php
 
-G::LoadSystem( 'dbMaintenance' );
-G::LoadClass( "cli" );
-
 /**
  * Class MultipleFilesBackup
  * create a backup of this workspace

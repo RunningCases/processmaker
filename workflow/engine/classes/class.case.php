@@ -25,7 +25,6 @@
  *
  */
 
-G::LoadClass("pmScript");
 
 /**
  * A Cases object where you can do start, load, update, refresh about cases
@@ -43,8 +42,7 @@ class Cases
     public function __construct()
     {
         //get Solr initialization variables
-        if (($solrConf = System::solrEnv()) !== false) {
-            G::LoadClass('AppSolr');
+        if (($solrConf = PMSystem::solrEnv()) !== false) {
             $this->appSolr = new AppSolr($solrConf['solr_enabled'], $solrConf['solr_host'], $solrConf['solr_instance']);
         }
     }
@@ -80,7 +78,6 @@ class Cases
         }
 
         //check groups
-        G::LoadClass('groups');
         $group = new Groups();
         $aGroups = $group->getActiveGroupsForAnUser($sUIDUser);
 
@@ -138,7 +135,6 @@ class Cases
         }
 
         //check groups
-        G::LoadClass('groups');
         $group = new Groups();
         $aGroups = $group->getActiveGroupsForAnUser($sUIDUser);
 
@@ -223,7 +219,6 @@ class Cases
         }
 
         //check groups
-        G::LoadClass('groups');
         $group = new Groups();
         $aGroups = $group->getActiveGroupsForAnUser($sUIDUser);
 
@@ -349,7 +344,6 @@ class Cases
         }
 
         //check groups
-        G::LoadClass('groups');
         $group = new Groups();
         $aGroups = $group->getActiveGroupsForAnUser($sUIDUser);
 
@@ -952,7 +946,6 @@ class Cases
             $DEL_INDEX = isset($Fields['DEL_INDEX']) ? $Fields['DEL_INDEX'] : '';
             $TAS_UID = isset($Fields['TAS_UID']) ? $Fields['TAS_UID'] : '';
 
-            G::LoadClass('reportTables');
             require_once 'classes/model/AdditionalTables.php';
             $oReportTables = new ReportTables();
             $addtionalTables = new additionalTables();
@@ -1095,7 +1088,6 @@ class Cases
                 $oCriteria2->add(SubApplicationPeer::SA_STATUS, 'ACTIVE');
 
                 if (SubApplicationPeer::doCount($oCriteria2) > 0) {
-                    G::LoadClass('derivation');
                     $oDerivation = new Derivation();
                     $oDerivation->verifyIsCaseChild($sAppUid);
                 }
@@ -2144,7 +2136,6 @@ class Cases
                 $AppThread = new AppThread;
                 $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex, 0);
 
-                G::LoadClass('derivation');
                 $oDerivation = new Derivation();
 
                 //Multiple Instance
@@ -2299,7 +2290,6 @@ class Cases
 
     public function getNextStep($sProUid = '', $sAppUid = '', $iDelIndex = 0, $iPosition = 0)
     {
-        G::LoadClass('pmScript');
         $oPMScript = new PMScript();
         $oApplication = new Application();
         $aFields    = $oApplication->Load($sAppUid);
@@ -2338,11 +2328,7 @@ class Cases
             $iPosition += 1;
             $aNextStep = null;
             if ($iPosition <= $iLastStep) {
-                //to do:      $oApplication = new Application($this->_dbc);
-                //to do:      $oApplication->load($sApplicationUID);
-                //to do:      G::LoadClass('pmScript');
-                //to do:      $oPMScript = new PMScript();
-                //to do:      $oPMScript->setFields($oApplication->Fields['APP_DATA']);
+
                 while ($iPosition <= $iLastStep) {
                     $bAccessStep = false;
                     //step
@@ -2436,7 +2422,6 @@ class Cases
     public function getPreviousStep($sProUid = '', $sAppUid = '', $iDelIndex = 0, $iPosition = 0)
     {
         //Note: Depreciated, delete in the future
-        G::LoadClass('pmScript');
         $oPMScript = new PMScript();
         $oApplication = new Application();
         //$aFields = $oApplication->load($sAppUid);
@@ -2621,7 +2606,7 @@ class Cases
         ///-- $c->addAsColumn('USR_NAME', "CONCAT(USR_LASTNAME, ' ', USR_FIRSTNAME)");
         $sDataBase = 'database_' . strtolower(DB_ADAPTER);
         if (G::LoadSystemExist($sDataBase)) {
-            G::LoadSystem($sDataBase);
+
             $oDataBase = new database();
             $c->addAsColumn('USR_NAME', $oDataBase->concatString("USR_LASTNAME", "' '", "USR_FIRSTNAME"));
             $c->addAsColumn(
@@ -3443,10 +3428,6 @@ class Cases
 
     public function executeTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType, $aFields = array())
     {
-        /*----------------------------------********---------------------------------*/
-        G::LoadClass("codeScanner");
-        /*----------------------------------********---------------------------------*/
-
         $aTriggers = $this->loadTriggers($sTasUid, $sStepType, $sStepUidObj, $sTriggerType);
 
         if (count($aTriggers) > 0) {
@@ -3657,7 +3638,6 @@ class Cases
             global $_DBArray;
             $_DBArray['inputDocuments'] = $aInputDocuments;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass('ArrayPeer');
             $oCriteria = new Criteria('dbarray');
             $oCriteria->setDBArrayTable('inputDocuments');
             // $oCriteria->addAscendingOrderByColumn(AppDocumentPeer::APP_DOC_CREATE_DATE);
@@ -3721,7 +3701,6 @@ class Cases
             global $_DBArray;
             $_DBArray['inputDocuments'] = $aInputDocuments;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass('ArrayPeer');
             $oCriteria = new Criteria('dbarray');
             $oCriteria->setDBArrayTable('inputDocuments');
             $oCriteria->addAscendingOrderByColumn(AppDocumentPeer::APP_DOC_INDEX);
@@ -3887,7 +3866,7 @@ class Cases
                     G::verifyPath($strPathName, true);
                 }
 
-                G::LoadSystem('inputfilter');
+
                 $filter = new InputFilter();
                 $file = $filter->xssFilterHard($file, 'path');
 
@@ -3983,7 +3962,6 @@ class Cases
             global $_DBArray;
             $_DBArray['outputDocuments'] = $aOutputDocuments;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass('ArrayPeer');
             $oCriteria = new Criteria('dbarray');
             $oCriteria->setDBArrayTable('outputDocuments');
             $oCriteria->addAscendingOrderByColumn(AppDocumentPeer::APP_DOC_INDEX);
@@ -4244,7 +4222,6 @@ class Cases
             $aFields['APP_STATUS'] = 'CANCELLED';
             $oApplication->update($aFields);
 
-            G::LoadClass('reportTables');
             require_once 'classes/model/AdditionalTables.php';
             $oReportTables = new ReportTables();
             $addtionalTables = new additionalTables();
@@ -4294,7 +4271,6 @@ class Cases
         $oCriteria2->add(SubApplicationPeer::APP_UID, $sApplicationUID);
         $oCriteria2->add(SubApplicationPeer::SA_STATUS, 'ACTIVE');
         if (SubApplicationPeer::doCount($oCriteria2) > 0) {
-            G::LoadClass('derivation');
             $oDerivation = new Derivation();
             $oDerivation->verifyIsCaseChild($sApplicationUID, $iIndex);
         }
@@ -4653,8 +4629,6 @@ class Cases
 
     public function getAllUploadedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex = 0)
     {
-        G::LoadClass("configuration");
-
         $conf = new Configurations();
 
         $confEnvSetting = $conf->getFormats();
@@ -4944,7 +4918,6 @@ class Cases
         global $_DBArray;
         $_DBArray['inputDocuments'] = $aInputDocuments;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass('ArrayPeer');
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('inputDocuments');
         $oCriteria->addDescendingOrderByColumn('CREATE_DATE');
@@ -4964,8 +4937,6 @@ class Cases
 
     public function getAllGeneratedDocumentsCriteria($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID, $delIndex =0)
     {
-        G::LoadClass("configuration");
-
         $conf = new Configurations();
 
         $confEnvSetting = $conf->getFormats();
@@ -5184,7 +5155,6 @@ class Cases
         global $_DBArray;
         $_DBArray['outputDocuments'] = $aOutputDocuments;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass('ArrayPeer');
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('outputDocuments');
         $oCriteria->addDescendingOrderByColumn('CREATE_DATE');
@@ -5291,7 +5261,6 @@ class Cases
         global $_DBArray;
         $_DBArray['Dynaforms'] = $aInputDocuments;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass('ArrayPeer');
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('Dynaforms');
         $oCriteria->setDistinct();
@@ -5320,7 +5289,6 @@ class Cases
                     $sSubject = G::LoadTranslation('ID_MESSAGE_SUBJECT_DERIVATION');
                 }
 
-                G::loadClass('configuration');
                 $oConf = new Configurations;
                 $oConf->loadConfig($x, 'TAS_EXTRA_PROPERTIES', $aTaskInfo['TAS_UID'], '', '');
                 $conf = $oConf->aConfig;
@@ -5361,9 +5329,6 @@ class Cases
                     $sBody = file_get_contents($fileTemplate);
                 } else {
                     $sBody = nl2br($aTaskInfo['TAS_DEF_MESSAGE']);
-                }
-                if (!class_exists('System')) {
-                    G::LoadClass('system');
                 }
                 $aConfiguration = (!is_null(\EmailServerPeer::retrieveByPK($aTaskInfo['TAS_EMAIL_SERVER_UID']))) ?
                     $eServer->getEmailServer($aTaskInfo['TAS_EMAIL_SERVER_UID'], true) :
@@ -5446,9 +5411,6 @@ class Cases
                 } else {
                     $sBody = nl2br($aTaskInfo['TAS_RECEIVE_MESSAGE']);
                 }
-                if (!class_exists('System')) {
-                    G::LoadClass('system');
-                }
                 $aConfiguration = (!is_null(\EmailServerPeer::retrieveByPK($aTaskInfo['TAS_RECEIVE_SERVER_UID']))) ?
                     $eServer->getEmailServer($aTaskInfo['TAS_RECEIVE_SERVER_UID'], true) :
                     $eServer->getEmailServerDefault();
@@ -5497,7 +5459,6 @@ class Cases
      */
     public function sendMessage($dataLastEmail, $arrayData, $arrayTask)
     {
-        G::LoadClass("spool");
         foreach ($arrayTask as $aTask) {
             //Check and fix if Task Id is complex
             if (strpos($aTask['TAS_UID'], "/") !== false) {
@@ -6218,7 +6179,6 @@ class Cases
         global $_DBArray;
         $_DBArray['inputDocuments'] = $aInputDocuments;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass('ArrayPeer');
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('inputDocuments');
         $oCriteria->addAscendingOrderByColumn(AppDocumentPeer::APP_DOC_CREATE_DATE);
@@ -6298,7 +6258,6 @@ class Cases
         global $_DBArray;
         $_DBArray['outputDocuments'] = $aOutputDocuments;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass('ArrayPeer');
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('outputDocuments');
         $oCriteria->addAscendingOrderByColumn(AppDocumentPeer::APP_DOC_CREATE_DATE);
@@ -6364,7 +6323,6 @@ class Cases
         global $_DBArray;
         $_DBArray['messages'] = $aMessages;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass('ArrayPeer');
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('messages');
 
@@ -6381,7 +6339,6 @@ class Cases
 
     public function getHistoryMessagesTrackerExt($sApplicationUID, $onlyVisibles = false, $start = null, $limit = null)
     {
-        G::LoadClass('ArrayPeer');
         global $_DBArray;
 
         $oAppDocument = new AppDocument();
@@ -6919,9 +6876,6 @@ class Cases
 
     public function getUsersToReassign($TAS_UID, $USR_UID, $PRO_UID=null)
     {
-        G::LoadClass('groups');
-        G::LoadClass('tasks');
-
         $oTasks = new Tasks();
         $aAux = $oTasks->getGroupsOfTask($TAS_UID, 1);
         $row = array();
@@ -7204,7 +7158,6 @@ class Cases
         $rsCriteria2 = AdditionalTablesPeer::doSelectRS($criteria2);
         $rsCriteria2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-        G::LoadClass("pmTable");
         $pmTable = new PmTable();
 
         while ($rsCriteria2->next()) {

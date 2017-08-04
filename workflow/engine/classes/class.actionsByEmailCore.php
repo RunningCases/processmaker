@@ -76,7 +76,6 @@ class actionsByEmailCoreClass extends PMPlugin
                 G::outRes( G::LoadTranslation("ID_EXCEPTION_LOG_INTERFAZ", array($token)) );
                 die;
             }
-            G::LoadClass('pmFunctions');
 
             $emailServer = new \ProcessMaker\BusinessModel\EmailServer();
 
@@ -86,7 +85,6 @@ class actionsByEmailCoreClass extends PMPlugin
 
             if (!empty($emailSetup)) {
                 require_once 'classes/model/AbeConfiguration.php';
-                G::LoadClass('case');
 
                 $cases = new Cases();
                 $caseFields = $cases->loadCase($data->APP_UID);
@@ -178,7 +176,7 @@ class actionsByEmailCoreClass extends PMPlugin
                                     $field = new stdClass();
                                     $field->label = '';
                                     $actionField = str_replace(array('@@', '@#', '@=', '@%', '@?', '@$'), '', $configuration['ABE_ACTION_FIELD']);
-                                    G::LoadClass('pmDynaform');
+
                                     $obj = new pmDynaform($configuration['DYN_UID']);
                                     $configuration['CURRENT_DYNAFORM'] = $configuration['DYN_UID'];
                                     $file = $obj->printPmDynaformAbe($configuration);
@@ -229,7 +227,7 @@ class actionsByEmailCoreClass extends PMPlugin
                                                 }
                                             }
                                         }
-                                        G::LoadClass('pmDynaform');
+
                                         $obj = new pmDynaform($configuration['DYN_UID']);
                                         $configuration['CURRENT_DYNAFORM'] = $configuration['DYN_UID'];
                                         $file = $obj->printPmDynaformAbe($configuration);
@@ -280,8 +278,6 @@ class actionsByEmailCoreClass extends PMPlugin
                             $__ABE__ = preg_replace('/class="tableGrid_view" /', 'class="tableGrid_view" width="100%" ', $__ABE__);
                             $caseFields['APP_DATA']['__ABE__'] = $__ABE__;
 
-                            G::LoadClass("Users");
-
                             $user = new Users();
 
                             if (!$configuration['ABE_MAILSERVER_OR_MAILCURRENT'] && $configuration['ABE_TYPE'] !== '') {
@@ -301,7 +297,6 @@ class actionsByEmailCoreClass extends PMPlugin
                                 }
                             }
 
-                            G::LoadClass('wsBase');
                             $wsBaseInstance = new wsBase();
                             $result = $wsBaseInstance->sendMessage(
                                 $data->APP_UID,

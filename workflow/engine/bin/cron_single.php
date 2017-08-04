@@ -64,36 +64,7 @@ try {
 
     $classLoader->addModelClassPath(PATH_TRUNK . 'workflow' . PATH_SEP . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'model' . PATH_SEP);
 
-    //Load classes
-    G::LoadThirdParty('pear/json', 'class.json');
-    G::LoadThirdParty('smarty/libs', 'Smarty.class');
-    G::LoadThirdParty('propel', 'Propel');
-    G::LoadSystem('error');
-    G::LoadSystem('dbconnection');
-    G::LoadSystem('dbsession');
-    G::LoadSystem('dbrecordset');
-    G::LoadSystem('dbtable');
-    G::LoadSystem('rbac' );
-    G::LoadSystem('publisher');
-    G::LoadSystem('templatePower');
-    G::LoadSystem('xmlDocument');
-    G::LoadSystem('xmlform');
-    G::LoadSystem('xmlformExtension');
-    G::LoadSystem('form');
-    G::LoadSystem('menu');
-    G::LoadSystem('xmlMenu');
-    G::LoadSystem('table');
-    G::LoadSystem('pagedTable');
-    G::LoadSystem('httpProxyController');
-    G::LoadClass('system');
-    G::LoadClass('tasks');
-
-    require_once('propel/Propel.php');
-    require_once('creole/Creole.php');
-
-    //TODO: get rid of the global variable improving the timezone activation when this feature is enabled
-    global $arraySystemConfiguration;
-    $arraySystemConfiguration = System::getSystemConfiguration('', '', $workspace);
+    $arraySystemConfiguration = PMSystem::getSystemConfiguration('', '', $workspace);
 
     $e_all = (defined('E_DEPRECATED'))?            E_ALL  & ~E_DEPRECATED : E_ALL;
     $e_all = (defined('E_STRICT'))?                $e_all & ~E_STRICT     : $e_all;
@@ -150,12 +121,6 @@ try {
     /*----------------------------------********---------------------------------*/
     Bootstrap::registerClass('dashboards', PATH_HOME . 'engine/classes/class.dashboards.php');
     /*----------------------------------********---------------------------------*/
-
-    G::LoadClass('processes');
-    G::LoadClass('derivation');
-    G::LoadClass('dates'); //Load Criteria
-    G::LoadClass('spool');
-    G::LoadClass('pmException');
 
     //Set variables
     /*----------------------------------********---------------------------------*/
@@ -216,7 +181,6 @@ try {
         if (file_exists($sSerializedFile)) {
             $pluginRegistry = PMPluginRegistry::loadSingleton($sSerializedFile);
         }
-        G::LoadClass('pmScript');
 
         //DB
         $phpCode = '';
@@ -293,7 +257,7 @@ try {
         define('TIME_ZONE', ini_get('date.timezone'));
 
         //Enable Monolog
-        Bootstrap::LoadSystem( 'monologProvider' );
+
 
         //Processing
         eprintln('Processing workspace: ' . $workspace, 'green');
@@ -349,12 +313,11 @@ try {
 function processWorkspace()
 {
     try {
-        Bootstrap::LoadClass("plugin");
+
         $oPluginRegistry =& PMPluginRegistry::getSingleton();
         if (file_exists(PATH_DATA_SITE . 'plugin.singleton')) {
             $oPluginRegistry->unSerializeInstance(file_get_contents(PATH_DATA_SITE . 'plugin.singleton'));
         }
-        Bootstrap::LoadClass("case");
 
         global $sObject;
         global $sLastExecution;
@@ -394,7 +357,6 @@ function resendEmails()
     setExecutionMessage("Resending emails");
 
     try {
-        G::LoadClass("spool");
 
         $dateResend = $sNow;
 
@@ -460,7 +422,7 @@ function unpauseApplications()
     setExecutionMessage("Unpausing applications");
 
     try {
-        G::LoadClass('case');
+
 
         $oCases = new Cases();
         $oCases->ThrowUnpauseDaemon($sNow, 1);
@@ -1033,7 +995,6 @@ function synchronizeDrive ()
         }
         $licensedFeatures = &PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
-            G::LoadClass('AppDocumentDrive');
             $drive = new AppDocumentDrive();
             if ($drive->getStatusDrive()) {
                 setExecutionMessage("Synchronize documents to Drive");
@@ -1063,11 +1024,9 @@ function synchronizeGmailLabels()
         }
         $licensedFeatures = &PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            G::LoadClass("pmGoogleApi");
             $pmGoogle = new PMGoogleApi();
             if ($pmGoogle->getServiceGmailStatus()) {
                 setExecutionMessage("Synchronize labels in Gmail");
-                G::LoadClass('labelsGmail');
                 $labGmail = new labelsGmail();
                 $labGmail->processPendingRelabelingInQueue();
             } else {

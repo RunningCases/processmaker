@@ -24,8 +24,6 @@
  */
 
 try {
-    G::LoadClass("tree");
-    G::LoadClass("triggerLibrary");
 
     $triggerLibrary = triggerLibrary::getSingleton();
     $triggerLibraryO = $triggerLibrary->getRegisteredClasses();

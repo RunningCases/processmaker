@@ -21,7 +21,6 @@ require_once (PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP . "class.la
 $oLabels = new labelsGmail();
 $oLabels->addRelabelingToQueue($caseId, $actualIndex, $actualLastIndex, false);
 
-G::LoadClass( "pmGoogleApi" );
 $pmGoogle = new PMGoogleApi();
 if(array_key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $pmGoogle->getServiceGmailStatus() ){
 	$_SESSION['gmail'] = 0;

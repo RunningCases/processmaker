@@ -46,7 +46,7 @@ try {
             }
 
             $aFields = $RBAC->getAuthSource( $_POST['sUID'] );
-            //G::LoadThirdParty( 'pear/json', 'class.json' );
+
             //$oJSON = new Services_JSON();
             $i = 0;
             $oUser = new Users();
@@ -72,7 +72,6 @@ try {
             global $_DBArray;
             $_DBArray['users'] = $aUsers;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass( 'ArrayPeer' );
             $oCriteria = new Criteria( 'dbarray' );
             $oCriteria->setDBArrayTable( 'users' );
             $aData = Array ('Checkbox' => '0','FullName' => '0'
@@ -95,9 +94,9 @@ try {
             G::RenderPage( 'publish', 'raw' );
             break;
         case 'authSourcesList':
-            require_once PATH_RBAC . 'model/AuthenticationSource.php';
+
             global $RBAC;
-            G::LoadClass( 'configuration' );
+
             $co = new Configurations();
             $config = $co->getConfiguration( 'authSourcesList', 'pageSize', '', $_SESSION['USER_LOGGED'] );
             $limit_size = isset( $config['pageSize'] ) ? $config['pageSize'] : 20;

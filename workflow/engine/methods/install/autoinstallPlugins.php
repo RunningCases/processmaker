@@ -21,10 +21,8 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
-G::LoadClass( 'Installer' );
 $inst = new Installer();
 
-G::LoadClass( 'processes' );
 $oProcess = new Processes();
 
 //Get Available autoinstall process
@@ -36,7 +34,7 @@ $path = PATH_OUTTRUNK . "autoinstall" . PATH_SEP;
 $message = "";
 foreach ($availablePlugins as $filename) {
 
-    G::LoadThirdParty( 'pear/Archive', 'Tar' );
+
     $tar = new Archive_Tar( $path . $filename );
     $sFileName = substr( $filename, 0, strrpos( $filename, '.' ) );
     $sClassName = substr( $filename, 0, strpos( $filename, '-' ) );

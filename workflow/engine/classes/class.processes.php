@@ -24,39 +24,6 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
-//require_once 'classes/model/Content.php';
-//require_once 'classes/model/Process.php';
-//require_once 'classes/model/Task.php';
-//require_once 'classes/model/Route.php';
-//require_once 'classes/model/SwimlanesElements.php';
-//require_once 'classes/model/InputDocument.php';
-//require_once 'classes/model/ObjectPermission.php';
-//require_once 'classes/model/OutputDocument.php';
-//require_once 'classes/model/Step.php';
-//require_once 'classes/model/StepTrigger.php';
-//require_once 'classes/model/Dynaform.php';
-//require_once 'classes/model/Triggers.php';
-//require_once 'classes/model/Groupwf.php';
-//require_once 'classes/model/ReportTable.php';
-//require_once 'classes/model/ReportVar.php';
-//require_once 'classes/model/DbSource.php';
-//require_once 'classes/model/StepSupervisor.php';
-//require_once 'classes/model/SubProcess.php';
-//require_once 'classes/model/CaseTracker.php';
-//require_once 'classes/model/CaseTrackerObject.php';
-//require_once 'classes/model/Stage.php';
-//require_once 'classes/model/TaskUser.php';
-//require_once 'classes/model/FieldCondition.php';
-//require_once 'classes/model/Event.php';
-//require_once 'classes/model/CaseScheduler.php';
-//require_once 'classes/model/ProcessCategory.php';
-//require_once 'classes/model/Configuration.php';
-
-//G::LoadClass( 'tasks' );
-//G::LoadClass( 'reportTables' );
-//G::LoadClass( 'processMap' );
-//G::LoadThirdParty( 'pear/json', 'class.json' );
-
 class Processes
 {
 
@@ -5804,7 +5771,7 @@ class Processes
         $endpoint = PML_WSDL_URL;
         $sessionId = '';
         $proxy = array();
-        $sysConf = System::getSystemConfiguration();
+        $sysConf = PMSystem::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             $proxy['proxy_host'] = $sysConf['proxy_host'];
             if ($sysConf['proxy_port'] != '') {
@@ -5846,7 +5813,7 @@ class Processes
         ini_set("soap.wsdl_cache_enabled", "0"); // enabling WSDL cache
         try {
             $proxy = array();
-            $sysConf = System::getSystemConfiguration();
+            $sysConf = PMSystem::getSystemConfiguration();
             if ($sysConf['proxy_host'] != '') {
                 $proxy['proxy_host'] = $sysConf['proxy_host'];
                 if ($sysConf['proxy_port'] != '') {
@@ -5878,7 +5845,7 @@ class Processes
 
         $endpoint = PML_WSDL_URL;
         $proxy = array();
-        $sysConf = System::getSystemConfiguration();
+        $sysConf = PMSystem::getSystemConfiguration();
 
         if ($sysConf['proxy_host'] != '') {
             $proxy['proxy_host'] = $sysConf['proxy_host'];
@@ -5955,7 +5922,7 @@ class Processes
 
         $endpoint = PML_WSDL_URL;
         $proxy = array();
-        $sysConf = System::getSystemConfiguration();
+        $sysConf = PMSystem::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             $proxy['proxy_host'] = $sysConf['proxy_host'];
             if ($sysConf['proxy_port'] != '') {
@@ -6101,10 +6068,6 @@ class Processes
     public function getDisabledCode($processUid = null, $workspaceName = null)
     {
         try {
-            /*----------------------------------********---------------------------------*/
-            G::LoadClass("codeScanner");
-            /*----------------------------------********---------------------------------*/
-
             $arrayDisabledCode = array();
 
             /*----------------------------------********---------------------------------*/

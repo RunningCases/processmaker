@@ -178,7 +178,6 @@ try {
         if ($oPluginRegistry->existsTrigger ( PM_LOGIN )) {
             $oPluginRegistry->executeTriggers ( PM_LOGIN , $loginInfo );
         }
-        G::LoadClass("enterprise");
         enterpriseClass::enterpriseSystemUpdate($loginInfo);
         $_SESSION['USER_LOGGED']  = $uid;
         $_SESSION['USR_USERNAME'] = $usr;
@@ -246,7 +245,7 @@ try {
         $userTimeZone = $user->getUsrTimeZone();
 
         if (trim($userTimeZone) == '') {
-            $arraySystemConfiguration = System::getSystemConfiguration('', '', SYS_SYS);
+            $arraySystemConfiguration = PMSystem::getSystemConfiguration('', '', SYS_SYS);
 
             $userTimeZone = $arraySystemConfiguration['time_zone'];
         }
@@ -292,7 +291,6 @@ try {
     unset($_SESSION['FAILED_LOGINS']);
 
     // increment logins in heartbeat
-    G::LoadClass('serverConfiguration');
     $oServerConf =& serverConf::getSingleton();
     $oServerConf->sucessfulLogin();
 
@@ -421,7 +419,7 @@ try {
         die;
     }
 
-    $configS = System::getSystemConfiguration('', '', SYS_SYS);
+    $configS = PMSystem::getSystemConfiguration('', '', SYS_SYS);
     $activeSession = isset($configS['session_block']) ? !(int)$configS['session_block']:true;
     if ($activeSession){
         setcookie("PM-TabPrimary", 101010010, time() + (24 * 60 * 60), '/');

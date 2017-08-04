@@ -62,14 +62,14 @@
   ini_set('session.cookie_lifetime', $timelife);
   session_start();
 
-  $config = System::getSystemConfiguration();
+  $config = PMSystem::getSystemConfiguration();
 
   //$e_all  = defined('E_DEPRECATED') ? E_ALL  & ~E_DEPRECATED : E_ALL;
   //$e_all  = defined('E_STRICT')     ? $e_all & ~E_STRICT     : $e_all;
   //$e_all  = $config['debug']        ? $e_all                 : $e_all & ~E_NOTICE;
   //$e_all = E_ALL & ~ E_DEPRECATED & ~ E_STRICT & ~ E_NOTICE  & ~E_WARNING;
 
-  G::LoadSystem('inputfilter');
+
   $filter = new InputFilter();
   $config['display_errors'] = $filter->validateInput($config['display_errors']);
   $config['error_reporting'] = $filter->validateInput($config['error_reporting']);
@@ -245,37 +245,36 @@
   // defining the serverConf singleton
   if (defined('PATH_DATA') && file_exists(PATH_DATA)) {
     //Instance Server Configuration Singleton
-    G::LoadClass('serverConfiguration');
     $oServerConf =& serverConf::getSingleton();
   }
 
   // Call Gulliver Classes
-  G::LoadThirdParty('smarty/libs','Smarty.class');
-  G::LoadSystem('error');
-  G::LoadSystem('dbconnection');
-  G::LoadSystem('dbsession');
-  G::LoadSystem('dbrecordset');
-  G::LoadSystem('dbtable');
-  G::LoadSystem('rbac' );
-  G::LoadSystem('publisher');
-  G::LoadSystem('templatePower');
-  G::LoadSystem('xmlDocument');
-  G::LoadSystem('xmlform');
-  G::LoadSystem('xmlformExtension');
-  G::LoadSystem('form');
-  G::LoadSystem('menu');
-  G::LoadSystem("xmlMenu");
-  G::LoadSystem('wysiwygEditor');
-  G::LoadSystem('controller');
-  G::LoadSystem('httpProxyController');
-  G::LoadSystem('pmException');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // Create headPublisher singleton
-  G::LoadSystem('headPublisher');
+
   $oHeadPublisher =& headPublisher::getSingleton();
 
   //Load filter class
-  G::LoadSystem('inputfilter');
+
   $filter = new InputFilter();
 
   // Installer, redirect to install if we don't have a valid shared data folder
@@ -393,7 +392,6 @@
   define('SERVER_PORT',  $_SERVER ['SERVER_PORT']);
 
   // create memcached singleton
-  G::LoadClass ( 'memcached' );
   $memcache = & PMmemcached::getSingleton(SYS_SYS);
 
   // verify configuration for rest service
@@ -418,9 +416,6 @@
           }
       }
   }
-
-  // load Plugins base class
-  G::LoadClass('plugin');
 
   //here we are loading all plugins registered
   //the singleton has a list of enabled plugins
@@ -647,7 +642,6 @@
         $bRedirect = true;
 
         if (isset($_GET['sid'])) {
-          G::LoadClass('sessions');
           $oSessions = new Sessions();
           if ($aSession = $oSessions->verifySession($_GET['sid'])) {
             require_once 'classes/model/Users.php';

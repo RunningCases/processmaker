@@ -65,8 +65,6 @@ $aFields['ACTION'] = isset( $_GET['ACTION'] ) ? $_GET['ACTION'] : '';
 //$aFields['READ_ONLY'] = ($_GET['ACTION']=='normal')?0:1;
 $aFields["LANG"] = SYS_LANG;
 
-G::LoadClass( 'xmlfield_InputPM' );
-
 $G_PUBLISH = new Publisher();
 $G_PUBLISH->AddContent( 'xmlform', 'xmlform', 'dynaforms/dynaforms_Edit', '', $aFields, SYS_URI . 'dynaforms/dynaforms_Save' );
 

@@ -25,7 +25,6 @@
  *
  */
 
-G::LoadClass( 'case' );
 
 /**
  * ReportTables - Report tables class
@@ -822,7 +821,7 @@ class ReportTables
         $bExists = true;
         $sDataBase = 'database_' . strtolower( DB_ADAPTER );
         if (G::LoadSystemExist( $sDataBase )) {
-            G::LoadSystem( $sDataBase );
+
             $oDataBase = new database();
             $bExists = $oDataBase->reportTableExist();
         }

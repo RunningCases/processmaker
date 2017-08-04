@@ -24,8 +24,6 @@
 
 if (isset( $_POST['form']['NW_TITLE'] )) {
     $action = (isset( $_POST['form']['ACTION'] )) ? trim( $_POST['form']['ACTION'] ) : 'test';
-    G::LoadClass( 'Installer' );
-    G::LoadClass( 'json' );
     $name = trim( $_POST['form']['NW_TITLE'] );
     $inst = new Installer();
 
@@ -71,7 +69,6 @@ if (isset( $_POST['form']['NW_TITLE'] )) {
     }
     $G_PUBLISH = new Publisher();
 
-    G::LoadClass( 'configuration' );
     $c = new Configurations();
     $configPage = $c->getConfiguration( 'usersList', 'pageSize', '', $_SESSION['USER_LOGGED'] );
     $Config['pageSize'] = isset( $configPage['pageSize'] ) ? $configPage['pageSize'] : 20;

@@ -25,11 +25,6 @@
  *
  */
 
-G::LoadClass( 'filterForm' );
-G::LoadClass( 'xmlMenu' );
-G::LoadClass( "BasePeer" );
-G::LoadClass( "ArrayPeer" );
-
 /**
  * Class pagedTable
  *
@@ -560,7 +555,7 @@ class propelTable
      */
     public function renderTable ($block = '', $fields = '')
     { 
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         $fields = $filter->xssFilterHard($fields);
         $this->orderBy = $filter->xssFilterHard($this->orderBy);

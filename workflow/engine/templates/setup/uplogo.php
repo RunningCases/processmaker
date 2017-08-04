@@ -24,7 +24,7 @@
  */
 
 try {
-  G::LoadClass('replacementLogo');
+
   $uplogo = PATH_TPL . 'setup' . PATH_SEP . 'uplogo.html' ;
   $template = new TemplatePower( $uplogo );
   $template->prepare();

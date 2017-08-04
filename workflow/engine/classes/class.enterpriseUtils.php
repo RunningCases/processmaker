@@ -40,7 +40,7 @@ class EnterpriseUtils
                 curl_setopt($ch, CURLOPT_VERBOSE, true);
 
                 //Apply proxy settings
-                $sysConf = System::getSystemConfiguration();
+                $sysConf = PMSystem::getSystemConfiguration();
                 if (isset($sysConf['proxy_host'])) {
                     if ($sysConf['proxy_host'] != '') {
                         curl_setopt($ch, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : ''));

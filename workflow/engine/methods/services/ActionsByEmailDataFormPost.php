@@ -52,8 +52,6 @@ if (PMLicensedFeatures
         $aber = G::decrypt($_REQUEST['ABER'], URL_KEY);
         $forms = isset($_REQUEST['form']) ? $_REQUEST['form'] : [];
 
-        G::LoadClass('case');
-
         $case = new Cases();
         $casesFields = $case->loadCase($appUid, $delIndex);
 
@@ -102,8 +100,6 @@ if (PMLicensedFeatures
 
         //Update case info
         $case->updateCase($appUid, $casesFields);
-
-        G::LoadClass('wsBase');
 
         $wsBaseInstance = new wsBase();
         $result = $wsBaseInstance->derivateCase($casesFields['CURRENT_USER_UID'], $appUid, $delIndex, true);

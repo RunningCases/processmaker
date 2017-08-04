@@ -23,7 +23,7 @@
  */
 try {
 
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     $_POST = $filter->xssFilterHard($_POST);
 
@@ -46,10 +46,6 @@ try {
             }
             break;
         case 'languagesList':
-            require_once 'classes/model/Language.php';
-            require_once 'classes/model/IsoCountry.php';
-            require_once 'classes/model/Translation.php';
-            G::loadClass( 'configuration' );
 
             $isoCountry = new isoCountry();
             $translationRow = new Translation();
@@ -68,8 +64,6 @@ try {
                     $flag = 'international';
                     $countryName = G::LoadTranslation( 'ID_INTERNATIONAL' );
                 }
-
-                G::LoadClass( 'configuration' );
 
                 $conf = new Configurations();
                 $confCasesList = $conf->getConfiguration( 'casesList', 'todo' );

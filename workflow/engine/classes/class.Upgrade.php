@@ -1,8 +1,5 @@
 <?php
 
-G::LoadClass("system");
-G::LoadClass("wsTools");
-
 function ls_dir($dir, $basename = null)
 {
     $files = array();
@@ -33,13 +30,13 @@ class Upgrade
 
     public function install()
     {
-        G::LoadSystem('inputfilter');
+
         $filter = new InputFilter();
         //echo "Starting core installation...\n";
         $start = microtime(1);
         $filename = $this->addon->getDownloadFilename();
         $time = microtime(1);
-        G::LoadThirdParty( 'pear/Archive','Tar');
+
         $archive = new Archive_Tar ($filename);
         //printf("Time to open archive: %f\n", microtime(1) - $time);
         $time = microtime(1);
@@ -126,7 +123,7 @@ class Upgrade
             G::rm_dir(PATH_C);
             mkdir(PATH_C, 0777, true);
         }
-        $workspaces = System::listWorkspaces();
+        $workspaces = PMSystem::listWorkspaces();
         $count = count($workspaces);
         $first = true;
         $num = 0;

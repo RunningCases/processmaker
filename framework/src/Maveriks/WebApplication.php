@@ -285,7 +285,7 @@ class WebApplication
         Services\Api::setWorkspace(SYS_SYS);
         $cacheDir = defined("PATH_WORKSPACE") ? PATH_WORKSPACE : (defined("PATH_C")? PATH_C: sys_get_temp_dir());
 
-        $sysConfig = \System::getSystemConfiguration();
+        $sysConfig = \PMSystem::getSystemConfiguration();
 
         \Luracast\Restler\Defaults::$cacheDirectory = $cacheDir;
         $productionMode = (bool) !(isset($sysConfig["service_api_debug"]) && $sysConfig["service_api_debug"]);
@@ -445,11 +445,7 @@ class WebApplication
         define("PATH_CONTROLLERS", PATH_CORE . "controllers" . PATH_SEP);
         define("PATH_SERVICES_REST", PATH_CORE . "services" . PATH_SEP . "rest" . PATH_SEP);
 
-        \Bootstrap::registerSystemClasses();
-        \Bootstrap::initVendors();
-        \Bootstrap::LoadSystem( 'monologProvider' );
-
-        $arraySystemConfiguration = \System::getSystemConfiguration();
+        $arraySystemConfiguration = \PMSystem::getSystemConfiguration();
 
         ini_set('date.timezone', $arraySystemConfiguration['time_zone']); //Set Time Zone
 
@@ -497,7 +493,7 @@ class WebApplication
             exit(0);
         }
 
-        $arraySystemConfiguration = \System::getSystemConfiguration('', '', SYS_SYS);
+        $arraySystemConfiguration = \PMSystem::getSystemConfiguration('', '', SYS_SYS);
 
         //Do not change any of these settings directly, use env.ini instead
         ini_set('display_errors', $arraySystemConfiguration['display_errors']);
@@ -565,10 +561,6 @@ class WebApplication
         define( 'PML_WSDL_URL', PML_SERVER . '/syspmLibrary/en/green/services/wsdl' );
         define( 'PML_UPLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/uploadProcess' );
         define( 'PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/download' );
-
-        // create memcached singleton
-        //\Bootstrap::LoadClass("memcached");
-        //$memcache = PMmemcached::getSingleton( SYS_SYS );
 
         \Propel::init(PATH_CONFIG . "databases.php");
 

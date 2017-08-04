@@ -65,8 +65,7 @@ switch (($aCaseTracker['CT_MAP_TYPE'])) {
         //Nothing
         break;
     case 'PROCESSMAP':
-        G::LoadClass( 'case' );
-        G::LoadClass( 'processMap' );
+
         $oCase = new Cases();
         $aFields = $oCase->loadCase( $_SESSION['APPLICATION'] );
         if (in_array($aFields['PRO_UID'], $bpmnProjects)) {
@@ -196,7 +195,7 @@ switch (($aCaseTracker['CT_MAP_TYPE'])) {
         G::RenderPage( 'publish' );
         break;
     case 'STAGES':
-        G::LoadClass( 'case' );
+
         $oCase = new Cases();
         $aFields = $oCase->loadCase( $_SESSION['APPLICATION'] );
         if (in_array($aFields['PRO_UID'], $bpmnProjects)) {

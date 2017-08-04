@@ -7,10 +7,6 @@ $oCriteria = new Criteria("workflow");
 $oCriteria->add(CaseConsolidatedCorePeer::CON_STATUS, 'ACTIVE');
 $activeNumRows = CaseConsolidatedCorePeer::doCount($oCriteria);
 
-G::LoadClass("BasePeer");
-G::LoadClass("configuration");
-G::loadClass("pmFunctions");
-
 $headPublisher = &headPublisher::getSingleton();
 $usrUid = $_SESSION["USER_LOGGED"];
 $conf = new Configurations();
@@ -73,7 +69,7 @@ while ($rsSql->next()) {
 }
 
 if (count($arrayTabItem) > 0) {
-    $urlProxy = System::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . SYS_SYS . '/consolidated/';
+    $urlProxy = PMSystem::getHttpServerHostnameRequestsFrontEnd() . '/api/1.0/' . SYS_SYS . '/consolidated/';
     $clientId = 'x-pm-local-client';
     $client = getClientCredentials($clientId);
     $authCode = getAuthorizationCode($client);

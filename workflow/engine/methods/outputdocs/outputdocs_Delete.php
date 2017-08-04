@@ -35,10 +35,7 @@ try {
             die();
             break;
     }
-    require_once 'classes/model/OutputDocument.php';
-    require_once 'classes/model/ObjectPermission.php';
-    require_once 'classes/model/Step.php';
-    G::LoadClass( 'processMap' );
+
     $oOutputDocument = new OutputDocument();
     $fields = $oOutputDocument->load( $_POST['OUT_DOC_UID'] );
     $oOutputDocument->remove( $_POST['OUT_DOC_UID'] );

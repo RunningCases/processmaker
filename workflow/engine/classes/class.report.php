@@ -81,7 +81,6 @@ class Report
         global $_DBArray;
         $_DBArray['reports'] = $aProcess;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass( 'ArrayPeer' );
         $oCriteria = new Criteria( 'dbarray' );
         $oCriteria->setDBArrayTable( 'reports' );
 
@@ -150,7 +149,6 @@ class Report
         global $_DBArray;
         $_DBArray['reports'] = $aProcess;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass( 'ArrayPeer' );
         $oCriteria = new Criteria( 'dbarray' );
         $oCriteria->setDBArrayTable( 'reports' );
 
@@ -204,7 +202,6 @@ class Report
         global $_DBArray;
         $_DBArray['reports'] = $aProcess;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass( 'ArrayPeer' );
         $oCriteria = new Criteria( 'dbarray' );
         $oCriteria->setDBArrayTable( 'reports' );
 
@@ -293,7 +290,6 @@ class Report
         global $_DBArray;
         $_DBArray['reports'] = $aProcess;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass( 'ArrayPeer' );
         $oCriteria = new Criteria( 'dbarray' );
         $oCriteria->setDBArrayTable( 'reports' );
         return $oCriteria;
@@ -447,7 +443,6 @@ class Report
         global $_DBArray;
         $_DBArray['reports'] = $aProcess;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass( 'ArrayPeer' );
         $oCriteria = new Criteria( 'dbarray' );
         $oCriteria->setDBArrayTable( 'reports' );
         return $oCriteria;
@@ -495,7 +490,6 @@ class Report
         global $_DBArray;
         $_DBArray['reports'] = $ROW;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass( 'ArrayPeer' );
         $oCriteria = new Criteria( 'dbarray' );
         $oCriteria->setDBArrayTable( 'reports' );
 
@@ -554,7 +548,6 @@ class Report
         global $_DBArray;
         $_DBArray['reports'] = $ROW;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass( 'ArrayPeer' );
         $oCriteria = new Criteria( 'dbarray' );
         $oCriteria->setDBArrayTable( 'reports' );
 
@@ -606,7 +599,6 @@ class Report
         global $_DBArray;
         $_DBArray['reports'] = $ROW;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass( 'ArrayPeer' );
         $oCriteria = new Criteria( 'dbarray' );
         $oCriteria->setDBArrayTable( 'reports' );
 
@@ -672,7 +664,6 @@ class Report
         global $_DBArray;
         $_DBArray['reports'] = $ROW;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass( 'ArrayPeer' );
         $oCriteria = new Criteria( 'dbarray' );
         $oCriteria->setDBArrayTable( 'reports' );
 
@@ -725,7 +716,6 @@ class Report
         global $_DBArray;
         $_DBArray['reports'] = $ROW;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass( 'ArrayPeer' );
         $oCriteria = new Criteria( 'dbarray' );
         $oCriteria->setDBArrayTable( 'reports' );
 
@@ -790,7 +780,6 @@ class Report
         global $_DBArray;
         $_DBArray['reports'] = $ROW;
         $_SESSION['_DBArray'] = $_DBArray;
-        G::LoadClass( 'ArrayPeer' );
         $oCriteria = new Criteria( 'dbarray' );
         $oCriteria->setDBArrayTable( 'reports' );
 
@@ -852,7 +841,6 @@ class Report
             }
                 //$aData['DEL_FINISH_DATE']=$aRow['DEL_FINISH_DATE'];
             if ($aRow['DEL_DURATION'] != 0) {
-                G::LoadClass( 'dates' );
                 $oDates = new dates();
                 $aData['DEL_DURATION'] = $oDates->calculateDuration( $aData['DEL_INIT_DATE'], $aRow['DEL_FINISH_DATE'], null, null, $aRow['TAS_UID'] );
             }

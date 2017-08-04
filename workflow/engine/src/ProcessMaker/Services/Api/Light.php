@@ -74,7 +74,7 @@ class Light extends Api
              */
             global $RBAC;
             if (!isset($RBAC)) {
-                \Bootstrap::LoadSystem('rbac');
+
                 $RBAC = \RBAC::getSingleton(PATH_DATA, session_id());
                 $RBAC->sSystem = 'PROCESSMAKER';
                 $RBAC->initRBAC();
@@ -866,7 +866,7 @@ class Light extends Api
             $_SESSION['PROCESS'] = $prj_uid;
             $response = $process->getDynaForms($prj_uid);
             $result   = $this->parserDataDynaForm($response);
-            \G::LoadClass("pmDynaform");
+
             $pmDynaForm = new \pmDynaform();
             foreach ($result as $k => $form) {
                 $result[$k]['formContent'] = (isset($form['formContent']) && $form['formContent'] != null)?json_decode($form['formContent']):"";
@@ -1009,7 +1009,6 @@ class Light extends Api
                 $caseVariables = DateTime::convertUtcToTimeZone($caseVariables);
             }
 
-            \G::LoadClass("pmDynaform");
             $pmDynaform = new \pmDynaform(array("APP_DATA" => $caseVariables, "CURRENT_DYNAFORM" => $dyn_uid));
             $pmDynaform->jsonr($result['formContent']);
             return $result;
@@ -1033,7 +1032,7 @@ class Light extends Api
             $response = $dynaForm->getDynaForm($dyn_uid);
             $result = $this->parserDataDynaForm($response);
             $result['formContent'] = (isset($result['formContent']) && $result['formContent'] != null) ? \G::json_decode($result['formContent']) : "";
-            \G::LoadClass("pmDynaform");
+
             $pmDynaForm = new \pmDynaform(["CURRENT_DYNAFORM" => $dyn_uid]);
             $pmDynaForm->jsonr($result['formContent']);
             return $result;
@@ -1053,7 +1052,7 @@ class Light extends Api
         try {
             $dynaForm = new \ProcessMaker\BusinessModel\DynaForm();
             $dynaForm->setFormatFieldNameInUppercase(false);
-            \G::LoadClass("pmDynaform");
+
             $_SESSION['PROCESS'] = $prj_uid;
             $return = array();
             foreach ($request_data['formId'] as $dyn_uid) {

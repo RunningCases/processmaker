@@ -25,11 +25,6 @@
  * @package workflow-engine-bin-tasks
  */
 
-G::LoadClass("system");
-G::LoadClass("wsTools");
-G::LoadSystem("dbMaintenance");
-G::LoadClass("cli");
-
 CLI::taskName('upgrade');
 CLI::taskDescription("Upgrade workspaces.\n\n This command should be run after upgrading ProcessMaker to a new version so that all workspaces are also upgraded to the\n  new version.");
 
@@ -92,7 +87,7 @@ function run_upgrade($command, $args)
     }
     $flag = G::isPMUnderUpdating(1, $oneWorkspace);
     //start to upgrade
-    $checksum = System::verifyChecksum();
+    $checksum = PMSystem::verifyChecksum();
     if ($checksum === false) {
         CLI::logging(CLI::error("checksum.txt not found, integrity check is not possible") . "\n");
         if (!CLI::question("Integrity check failed, do you want to continue the upgrade?")) {
@@ -182,7 +177,7 @@ function run_upgrade($command, $args)
             }
         }
     } else {
-        CLI::logging('ProcessMaker ' . System::getVersion(). ' installed', PATH_DATA . 'log/upgrades.log');
+        CLI::logging('ProcessMaker ' . PMSystem::getVersion(). ' installed', PATH_DATA . 'log/upgrades.log');
     }
 
     //Safe upgrade for JavaScript files

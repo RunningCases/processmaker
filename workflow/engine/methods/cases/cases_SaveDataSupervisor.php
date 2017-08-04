@@ -39,9 +39,6 @@ if ($flagDynaFormNewVersion) {
 $oForm = new Form( $_SESSION['PROCESS'] . '/' . $_GET['UID'], PATH_DYNAFORM );
 $oForm->validatePost();
 
-/* Includes */
-G::LoadClass( 'case' );
-
 //load the variables
 $oCase = new Cases();
 $Fields = $oCase->loadCase( $_SESSION['APPLICATION'] );

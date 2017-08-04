@@ -25,7 +25,6 @@
 
 try {
 
-    G::LoadClass ( 'triggerLibrary' );
     $triggerLibrary = triggerLibrary::getSingleton ();
     $libraryClassName = $_GET ['LIBRARY'];
     $libraryMethod = $_GET ['NAME_FUN'];

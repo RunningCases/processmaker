@@ -49,7 +49,6 @@ if (isset( $_POST['form']['BTN_CANCEL'] )) {
 }
 
 /* Includes */
-G::LoadClass( 'case' );
 
 $oCase = new Cases();
 $sAppUid = $_SESSION['APPLICATION'];
@@ -73,7 +72,6 @@ if ($aDelegation['USR_UID'] == "") {
     }
 
     if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
-        G::LoadClass("AppDocumentDrive");
         $drive = new AppDocumentDrive();
         if ($drive->getStatusDrive()) {
             //add users email next task

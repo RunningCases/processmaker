@@ -1,6 +1,6 @@
 <?php
-//require_once ("classes/model/class.case.php");
-G::LoadClass("case");
+
+;
 
 try {
   //SYS_SYS     //Workspace name

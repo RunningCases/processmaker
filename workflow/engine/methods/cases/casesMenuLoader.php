@@ -2,8 +2,6 @@
 
 $action = isset( $_GET['action'] ) ? G::sanitizeInput($_GET['action'])  : 'default';
 
-G::LoadClass( 'case' );
-G::LoadClass( 'configuration' );
 $userId = isset( $_SESSION['USER_LOGGED'] ) ? $_SESSION['USER_LOGGED'] : '00000000000000000000000000000000';
 switch ($action) {
     case 'getAllCounters':

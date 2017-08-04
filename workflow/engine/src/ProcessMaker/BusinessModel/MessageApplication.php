@@ -366,7 +366,6 @@ class MessageApplication
     public function catchMessageEvent($frontEnd = false)
     {
         try {
-            \G::LoadClass("wsBase");
 
             //Set variables
             $ws = new \wsBase();

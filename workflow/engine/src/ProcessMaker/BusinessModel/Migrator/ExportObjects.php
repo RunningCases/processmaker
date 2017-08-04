@@ -77,7 +77,6 @@ class ExportObjects
 
     public function processMigrablePlugins()
     {
-        \G::LoadClass("pluginRegistry");
         $plugins = array();
         $registry = \PMPluginRegistry::getSingleton();
         $data = $registry->getPluginsData();

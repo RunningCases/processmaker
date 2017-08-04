@@ -25,7 +25,7 @@ class PmBootstrap extends Bootstrap
     {
         parent::configure();
 
-        $this->pmConfig = System::getSystemConfiguration();
+        $this->pmConfig = PMSystem::getSystemConfiguration();
 
         $e_all  = defined('E_DEPRECATED') ? E_ALL  & ~E_DEPRECATED : E_ALL;
         $e_all  = defined('E_STRICT')     ? $e_all & ~E_STRICT     : $e_all;
@@ -317,7 +317,6 @@ class PmBootstrap extends Bootstrap
         $bRedirect = true;
 
         if (isset($_GET['sid'])) {
-          G::LoadClass('sessions');
           $oSessions = new Sessions();
           if ($aSession = $oSessions->verifySession($_GET['sid'])) {
             require_once 'classes/model/Users.php';

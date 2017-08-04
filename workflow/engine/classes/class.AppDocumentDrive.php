@@ -1,6 +1,5 @@
 <?php
 
-G::LoadClass( "pmDrive" );
 
 /**
  * Class InputDocumentDrive

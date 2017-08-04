@@ -104,8 +104,6 @@ class EmailServer
     public function sendTestMail(array $arrayData)
     {
         try {
-            \G::LoadClass("system");
-            \G::LoadClass("spool");
 
             $aConfiguration = array(
                 "MESS_ENGINE"    => $arrayData["MESS_ENGINE"],
@@ -141,7 +139,7 @@ class EmailServer
             $sBodyPre->prepare();
             $sBodyPre->assign("server", $_SERVER["SERVER_NAME"]);
             $sBodyPre->assign("date", date("H:i:s"));
-            $sBodyPre->assign("ver", \System::getVersion());
+            $sBodyPre->assign("ver", \PMSystem::getVersion());
             $sBodyPre->assign("engine", $engine);
             $sBodyPre->assign("msg", $msg);
             $sBody = $sBodyPre->getOutputContent();
@@ -201,8 +199,6 @@ class EmailServer
     public function testConnectionByStep(array $arrayData, $step = 0)
     {
         try {
-            \G::LoadClass("net");
-            \G::LoadThirdParty("phpmailer", "class.smtp");
 
             //MAIL
             if ($arrayData["MESS_ENGINE"] == "MAIL") {

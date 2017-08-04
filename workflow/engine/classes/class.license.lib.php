@@ -236,7 +236,7 @@ class padl
         }
 
         // Proxy settings
-        $sysConf = System::getSystemConfiguration();
+        $sysConf = PMSystem::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             if (!is_array($params['http'])) {
                 $params['http'] = array();

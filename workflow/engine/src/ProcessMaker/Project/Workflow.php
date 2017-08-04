@@ -92,7 +92,6 @@ class Workflow extends Handler
 
             // Save Calendar ID for this process
             if (! empty($data["PRO_CALENDAR"])) {
-                //G::LoadClass( "calendar" );
                 $calendar = new \Calendar();
                 $calendar->assignCalendarTo($this->proUid, $data["PRO_CALENDAR"], 'PROCESS');
             }
@@ -581,8 +580,6 @@ class Workflow extends Handler
     public function deleteProcess($sProcessUID, $flagRemoveCases = true, $onlyDiagram = false)
     {
         try {
-            //G::LoadClass('case');
-            //G::LoadClass('reportTables');
 
             //Instance all classes necesaries
             $oProcess = new \Process();

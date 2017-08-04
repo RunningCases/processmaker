@@ -5,8 +5,8 @@
  *
  * This class Helps registering and implementing Wizard for Triggers
  */
-G::LoadThirdParty( 'html2ps_pdf/classes', 'include' );
-G::LoadThirdParty( 'html2ps_pdf/classes/org/active-link/doc', 'PHPClass' );
+
+
 
 /**
  *

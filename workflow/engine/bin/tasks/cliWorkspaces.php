@@ -162,6 +162,8 @@ CLI::taskDescription(<<<EOT
 EOT
 );
 CLI::taskArg('workspace-name', true, true);
+CLI::taskOpt('noxml', 'If this option is enabled, the XML files will not be modified.', 'NoXml', 'no-xml');
+CLI::taskOpt('nomafe', 'If this option is enabled, the Front End (BPMN Designer and Bootstrap Forms) translation file will not be modified.', 'NoMafe', 'no-mafe');
 CLI::taskRun("run_translation_upgrade");
 
 CLI::taskName('migrate-cases-folders');
@@ -341,7 +343,7 @@ function run_info($args, $opts) {
 }
 
 function run_workspace_upgrade($args, $opts) {
-  G::LoadSystem('inputfilter');
+
   $filter = new InputFilter();
   $opts = $filter->xssFilterHard($opts);
   $args = $filter->xssFilterHard($args);
@@ -370,26 +372,66 @@ function run_workspace_upgrade($args, $opts) {
   }
 }
 
+/**
+ * We will repair the translation in the languages defined in the workspace
+ * Verify if we need to execute an external program for each workspace
+ * If we apply the command for all workspaces, we will need to execute one by one by redefining the constants
+ * @param string $args, workspaceName that we need to apply the database-upgrade
+ * @param string $opts
+ *
+ * @return void
+ */
 function run_translation_upgrade($args, $opts) {
-  G::LoadSystem('inputfilter');
-  $filter = new InputFilter();
-  $opts = $filter->xssFilterHard($opts);
-  $args = $filter->xssFilterHard($args);
-  $workspaces = get_workspaces_from_args($args);
-  $first = true;
-  foreach ($workspaces as $workspace) {
-    try {
-      G::outRes( "Upgrading translation for " . pakeColor::colorize($workspace->name, "INFO") . "\n" );
-      $workspace->upgradeTranslation($first, $first);
-      $first = false;
-    } catch (Exception $e) {
-      G::outRes( "Errors upgrading translation of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n" );
+    $noXml = array_key_exists('noxml', $opts) ? '--no-xml' : '';
+    $noMafe = array_key_exists('nomafe', $opts) ? '--no-mafe' : '';
+    if (!empty($noXml)) {
+        $noMafe = ' ' . $noMafe;
     }
-  }
+    //Check if the command is executed by a specific workspace
+    if (count($args) === 1) {
+        translation_upgrade($args, $opts);
+    } else {
+        $workspaces = get_workspaces_from_args($args);
+        foreach ($workspaces as $workspace) {
+            passthru('./processmaker translation-repair ' . $noXml . $noMafe . ' ' . $workspace->name);
+        }
+    }
+}
+
+/**
+ * This function will regenerate the translation for a workspace
+ * This function is executed only for one workspace
+ * @param array $args, workspaceName that we will to apply the command
+ * @param array $opts, noxml and nomafe flags
+ *
+ * @return void
+ */
+function translation_upgrade($args, $opts)
+{
+    try {
+        //Load the attributes for the workspace
+        $arrayWorkspace = get_workspaces_from_args($args);
+        //Loop, read all the attributes related to the one workspace
+        $wsName = $arrayWorkspace[key($arrayWorkspace)]->name;
+        Bootstrap::setConstantsRelatedWs($wsName);
+        $workspaces = get_workspaces_from_args($args);
+        $flagUpdateXml = (!array_key_exists('noxml', $opts));
+        $flagUpdateMafe = (!array_key_exists('nomafe', $opts));
+        foreach ($workspaces as $workspace) {
+            try {
+                G::outRes("Upgrading translation for " . pakeColor::colorize($workspace->name, "INFO") . "\n");
+                $workspace->upgradeTranslation($flagUpdateXml, $flagUpdateMafe);
+            } catch (Exception $e) {
+                G::outRes("Errors upgrading translation of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n");
+            }
+        }
+    } catch (Exception $e) {
+        G::outRes(CLI::error($e->getMessage()) . "\n");
+    }
 }
 
 function run_cacheview_upgrade($args, $opts) {
-  G::LoadSystem('inputfilter');
+
   $filter = new InputFilter();
   $opts = $filter->xssFilterHard($opts);
   $args = $filter->xssFilterHard($args);
@@ -471,7 +513,7 @@ function run_migrate_list_unassigned($args, $opts) {
  * @return void
 */
 function database_upgrade($command, $args) {
-  G::LoadSystem('inputfilter');
+
   $filter = new InputFilter();
   $command = $filter->xssFilterHard($command);
   $args = $filter->xssFilterHard($args);
@@ -730,7 +772,7 @@ function runStructureDirectories($command, $args) {
 
 function run_database_generate_self_service_by_value($args, $opts)
 {
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     $opts = $filter->xssFilterHard($opts);
     $args = $filter->xssFilterHard($args);
@@ -812,7 +854,7 @@ function verifyMigratedDataConsistency($args)
 }
 
 function run_migrate_itee_to_dummytask($args, $opts){
-  G::LoadSystem('inputfilter');
+
   $filter = new InputFilter();
   $opts = $filter->xssFilterHard($opts);
   $args = $filter->xssFilterHard($args);
@@ -910,7 +952,6 @@ function check_workspace_disabled_code($args, $opts)
 }
 
 function migrate_new_cases_lists($command, $args, $opts) {
-    G::LoadSystem('inputfilter');
     $filter = new InputFilter();
     $opts = $filter->xssFilterHard($opts);
     $args = $filter->xssFilterHard($args);
@@ -944,7 +985,7 @@ function migrate_counters($command, $args) {
 }
 
 function migrate_list_unassigned($command, $args, $opts) {
-  G::LoadSystem('inputfilter');
+
   $filter = new InputFilter();
   $opts = $filter->xssFilterHard($opts);
   $args = $filter->xssFilterHard($args);
@@ -992,7 +1033,6 @@ function run_migrate_content($args, $opts) {
 */
 function migrate_content($args, $opts)
 {
-    G::LoadSystem('inputfilter');
     $filter = new InputFilter();
     $args = $filter->xssFilterHard($args);
     $workspaces = get_workspaces_from_args($args);
@@ -1013,7 +1053,7 @@ function migrate_content($args, $opts)
 }
 
 function run_migrate_self_service_value($args, $opts) {
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     $args = $filter->xssFilterHard($args);
     $workspaces = get_workspaces_from_args($args);
@@ -1029,7 +1069,6 @@ function run_migrate_self_service_value($args, $opts) {
 }
 
 function run_migrate_indexing_acv($args, $opts) {
-    G::LoadSystem('inputfilter');
     $filter = new InputFilter();
     $args = $filter->xssFilterHard($args);
     $workspaces = get_workspaces_from_args($args);

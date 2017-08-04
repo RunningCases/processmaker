@@ -28,7 +28,6 @@ $functionName();
 
 function updatePageSize ()
 {
-    G::LoadClass( 'configuration' );
     $c = new Configurations();
     $arr['pageSize'] = $_REQUEST['size'];
     $arr['dateSave'] = date( 'Y-m-d H:i:s' );
@@ -47,9 +46,7 @@ function skinList ()
         $textFilter = '';
     }
 
-    G::loadClass( 'system' );
-
-    $skinList = System::getSkingList();
+    $skinList = PMSystem::getSkingList();
     $wildcard = '';
     if (isset( $_REQUEST['activeskin'] )) {
         $wildcard = '@';
@@ -246,7 +243,7 @@ function importSkin ()
         G::verifyPath( $tempPath, true );
         $tempName = $tmp;
         G::uploadFile( $tempName, $tempPath, $filename );
-        G::LoadThirdParty( 'pear/Archive', 'Tar' );
+
         $tar = new Archive_Tar( $tempPath . $filename );
         $aFiles = $tar->listContent();
         $swConfigFile = false;
@@ -314,7 +311,7 @@ function importSkin ()
 
 function exportSkin ($skinToExport = "")
 {
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     try {
         if (! isset( $_REQUEST['SKIN_FOLDER_ID'] )) {
@@ -342,7 +339,7 @@ function exportSkin ($skinToExport = "")
         }
 
         //Try to generate tar file
-        G::LoadThirdParty( 'pear/Archive', 'Tar' );
+
         $tar = new Archive_Tar( $skinTar );
         $tar->_compress = false;
 
@@ -365,7 +362,7 @@ function exportSkin ($skinToExport = "")
 
 function deleteSkin ()
 {
-    G::LoadSystem('inputfilter');
+
     $filter = new InputFilter();
     try {
         $_REQUEST['SKIN_FOLDER_ID'] = $filter->xssFilterHard($_REQUEST['SKIN_FOLDER_ID']);

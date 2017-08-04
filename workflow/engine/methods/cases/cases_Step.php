@@ -121,10 +121,6 @@ if (! isset( $_DBArray )) {
     $_DBArray = array ();
 }
 
-/* Includes */
-G::LoadClass( 'case' );
-G::LoadClass( 'derivation' );
-
 /* GET , POST & $_SESSION Vars */
 if (isset( $_GET['POSITION'] )) {
     $_SESSION['STEP_POSITION'] = (int) $_GET['POSITION'];
@@ -329,12 +325,10 @@ try {
              * Added By erik 16-05-08
              * Description: this was added for the additional database connections
              */
-            G::LoadClass( 'dbConnections' );
             $oDbConnections = new dbConnections( $_SESSION['PROCESS'] );
             $oDbConnections->loadAdditionalConnections();
             $_SESSION['CURRENT_DYN_UID'] = $_GET['UID'];
 
-            G::LoadClass('pmDynaform');
             $FieldsPmDynaform = $Fields;
             $FieldsPmDynaform["PM_RUN_OUTSIDE_MAIN_APP"] = (!isset($_SESSION["PM_RUN_OUTSIDE_MAIN_APP"])) ? "true" : "false";
             $FieldsPmDynaform["STEP_MODE"] = $oStep->getStepMode();
@@ -575,7 +569,6 @@ try {
                             $xmlData .= "</dynaform>\n";
                             $iSize = file_put_contents( $javaOutput . 'addressBook.xml', $xmlData );
 
-                            G::LoadClass( 'javaBridgePM' );
                             $JBPM = new JavaBridgePM();
                             $JBPM->checkJavaExtension();
 
@@ -583,7 +576,7 @@ try {
                             $util->setInputPath( $javaInput );
                             $util->setOutputPath( $javaOutput );
 
-                            G::LoadSystem('inputfilter');
+
                             $filter = new InputFilter();
 
                             //$content = file_get_contents ( PATH_DYNAFORM . $aOD['PRO_UID'] . PATH_SEP . $aOD['OUT_DOC_UID'] . '.jrxml' );
@@ -610,7 +603,6 @@ try {
                             $xmlData .= "</dynaform>\n";
                             //$iSize = file_put_contents ( $javaOutput .  'addressBook.xml' , $xmlData );
 
-                            G::LoadClass( 'javaBridgePM' );
                             $JBPM = new JavaBridgePM();
                             $JBPM->checkJavaExtension();
 
@@ -618,7 +610,7 @@ try {
                             $util->setInputPath( $javaInput );
                             $util->setOutputPath( $javaOutput );
 
-                            G::LoadSystem('inputfilter');
+
                             $filter = new InputFilter();
 
                             $locationFrom = PATH_DYNAFORM . $aOD['PRO_UID'] . PATH_SEP . $aOD['OUT_DOC_UID'] . '.pdf';
@@ -1032,7 +1024,7 @@ try {
                         $aFields['TASK'][$sKey]['NEXT_TASK']['TAS_TYPE_DAY'] = $sAux;
 
                         //Check for
-                        G::LoadClass( 'calendar' );
+
                         $calendar = new Calendar();
                         $calendarObj = $calendar->getCalendarList( true, true );
                         $availableCalendar = $calendarObj['array'];
@@ -1153,7 +1145,7 @@ try {
                  * Added By erik date: 16-05-08
                  * Description: this was added for the additional database connections
                  */
-                G::LoadClass( 'dbConnections' );
+
                 $oDbConnections = new dbConnections( $_SESSION['PROCESS'] );
                 $oDbConnections->loadAdditionalConnections();
                 $stepFilename = "$sNamespace/$sStepName";

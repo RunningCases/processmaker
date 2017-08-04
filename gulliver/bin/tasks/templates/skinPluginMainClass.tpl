@@ -4,7 +4,7 @@
  *  
  */
 
-  G::LoadClass('plugin');
+;
 
 class {className}Plugin extends PMPlugin {
   

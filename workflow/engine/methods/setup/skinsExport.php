@@ -83,7 +83,7 @@ function packPlugin ($pluginName, $version)
     $pathHome = PATH_DATA . 'skins' . PATH_SEP . $pluginName;
     $fileTar = PATH_DATA . 'skins' . PATH_SEP . $pluginName . '-' . $version . '.tar';
 
-    G::LoadSystem( 'templatePower' );
+
     /*
     $pluginDirectory    = PATH_PLUGINS  . $pluginName;
     $pluginOutDirectory = PATH_OUTTRUNK . 'plugins' . PATH_SEP . $pluginName;
@@ -96,7 +96,7 @@ function packPlugin ($pluginName, $version)
       die ;
     }
     */
-    G::LoadThirdParty( 'pear/Archive', 'Tar' );
+
     $tar = new Archive_Tar( $fileTar );
     $tar->_compress = false;
 
@@ -119,8 +119,6 @@ switch ($RBAC->userCanAccess( 'PM_SETUP' )) {
         die();
         break;
 }
-
-G::LoadClass( "system" );
 
 $id = $_GET['id'];
 
@@ -152,7 +150,7 @@ G::mk_dir( $pathPublic . 'images' );
 $fields['className'] = $id;
 $fields['version'] = $oConf->version;
 $fields['description'] = $oConf->description;
-$fields['PMversion'] = System::getVersion();
+$fields['PMversion'] = PMSystem::getVersion();
 savePluginFile( 'skinPluginMainClass', $pathHome . $id . '.php', $fields );
 
 savePluginFile( 'skinPluginClass', $pathBase . 'class.' . $id . '.php', $fields );

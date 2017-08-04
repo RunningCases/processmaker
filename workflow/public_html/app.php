@@ -1,4 +1,5 @@
 <?php
+require_once(__DIR__ . '/../../bootstrap/autoload.php');
 register_shutdown_function(
     create_function(
         "",
@@ -18,36 +19,6 @@ if (isset($_SERVER['UNENCODED_URL'])) {
 
 try {
     $rootDir = realpath(__DIR__ . "/../../") . DIRECTORY_SEPARATOR;
-
-    require $rootDir . "framework/src/Maveriks/Util/ClassLoader.php";
-    $loader = Maveriks\Util\ClassLoader::getInstance();
-    $loader->add($rootDir . 'framework/src/', "Maveriks");
-
-    if (! is_dir($rootDir . 'vendor')) {
-        if (file_exists($rootDir . 'composer.phar')) {
-            throw new Exception(
-                "ERROR: Vendors are missing!" . PHP_EOL .
-                "Please execute the following command to install vendors:" .PHP_EOL.PHP_EOL.
-                "$>php composer.phar install"
-            );
-        } else {
-            throw new Exception(
-                "ERROR: Vendors are missing!" . PHP_EOL .
-                "Please execute the following commands to prepare/install vendors:" .PHP_EOL.PHP_EOL.
-                "$>curl -sS https://getcomposer.org/installer | php" . PHP_EOL .
-                "$>php composer.phar install"
-            );
-        }
-    }
-    $loader->add($rootDir . 'workflow/engine/src/', "ProcessMaker");
-    $loader->add($rootDir . 'workflow/engine/src/');
-
-    // add vendors to autoloader
-    $loader->add($rootDir . 'vendor/luracast/restler/vendor', "Luracast");
-    $loader->add($rootDir . 'vendor/bshaffer/oauth2-server-php/src/', "OAuth2");
-    $loader->addClass("Bootstrap", $rootDir . 'gulliver/system/class.bootstrap.php');
-
-    $loader->addModelClassPath($rootDir . "workflow/engine/classes/model/");
 
     $app = new Maveriks\WebApplication();
 

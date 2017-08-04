@@ -1,10 +1,6 @@
 <?php
 $data = $_POST['form'];
 global $RBAC;
-require_once PATH_RBAC."model/RbacUsers.php";
-G::LoadClass('pmFunctions');
-require_once 'classes/model/Users.php';
-G::LoadClass("system");
 
 $rbacUser = new RbacUsers();
 $user = new Users();
@@ -12,7 +8,7 @@ $data['USR_USERNAME'] = strip_tags($data['USR_USERNAME']);
 $userData = $rbacUser->getByUsername($data['USR_USERNAME']);
 
 if ($userData['USR_EMAIL'] != '' && $userData['USR_EMAIL'] === $data['USR_EMAIL'] && ($userData['USR_AUTH_TYPE'] === '' || $userData['USR_AUTH_TYPE'] == 'MYSQL') ) {
-    $aSetup = System::getEmailConfiguration();
+    $aSetup = PMSystem::getEmailConfiguration();
     if (count($aSetup) == 0 || !isset($aSetup['MESS_ENGINE'])) {
         G::SendTemporalMessage ('ID_EMAIL_ENGINE_IS_NOT_ENABLED', "warning");
         G::header('location: forgotPassword');
@@ -57,11 +53,9 @@ if ($userData['USR_EMAIL'] != '' && $userData['USR_EMAIL'] === $data['USR_EMAIL'
   <tbody><tr><td><img id='logo' src='http://".$_SERVER['SERVER_NAME']."/images/processmaker.logo.jpg' /></td></tr>
   <tr><td style='font-size: 14px;'>$msg</td></tr>
   <tr><td style='vertical-align:middel;'>
-  <br /><hr><b>This Business Process is powered by ProcessMaker ver. ".System::getVersion().".<b><br />
+  <br /><hr><b>This Business Process is powered by ProcessMaker ver. ".PMSystem::getVersion().".<b><br />
   <a href='http://www.processmaker.com' style='color:#c40000;'>www.processmaker.com</a><br /></td>
   </tr></tbody></table>";
-
-    G::LoadClass('spool');
 
     $oSpool = new spoolRun();
 

@@ -25,43 +25,7 @@
  */
 
 //It works with the table CONFIGURATION in a WF dataBase
-//require_once ("classes/model/Application.php");
-//require_once ("classes/model/AppCacheView.php");
-//require_once ("classes/model/AppDelegation.php");
-//require_once ("classes/model/AppDocument.php");
-//require_once ("classes/model/AppDelay.php");
-//require_once ("classes/model/AppNotes.php");
-//require_once ("classes/model/AppThread.php");
-//require_once ("classes/model/Department.php");
-//require_once ("classes/model/Dynaform.php");
-//require_once ("classes/model/Groupwf.php");
-//require_once ("classes/model/InputDocument.php");
-//require_once ("classes/model/Language.php");
-//require_once ("classes/model/OutputDocument.php");
-//require_once ("classes/model/Process.php");
-//require_once ("classes/model/ReportTable.php");
-//require_once ("classes/model/ReportVar.php");
-//require_once ("classes/model/Route.php");
-//require_once ("classes/model/Step.php");
-//require_once ("classes/model/StepTrigger.php");
-//require_once ("classes/model/Task.php");
-//require_once ("classes/model/TaskUser.php");
-//require_once ("classes/model/Triggers.php");
-//require_once ("classes/model/Users.php");
-//require_once ("classes/model/Session.php");
-//require_once ("classes/model/Content.php");
-//G::LoadClass( "ArrayPeer" );
-//G::LoadClass( "BasePeer" );
-G::LoadClass( 'case' );
-//G::LoadClass( 'derivation' );
-//G::LoadClass( 'groups' );
-//G::LoadClass( 'sessions' );
-//G::LoadClass( 'processes' );
-//G::LoadClass( 'processMap' );
-//G::LoadClass( 'pmScript' );
-//G::LoadClass( 'spool' );
-//G::LoadClass( 'tasks' );
-//G::LoadClass( 'wsResponse' );
+
 
 /**
  * Copyright (C) 2009 COLOSA
@@ -326,8 +290,7 @@ class wsBase
         try {
             $solrEnabled = 0;
 
-            if (($solrEnv = System::solrEnv()) !== false) {
-                G::LoadClass("AppSolr");
+            if (($solrEnv = PMSystem::solrEnv()) !== false) {
 
                 $appSolr = new AppSolr(
                     $solrEnv["solr_enabled"],
@@ -345,7 +308,6 @@ class wsBase
 
             if ($solrEnabled == 1) {
                 try {
-                    G::LoadClass("searchIndex");
 
                     $arrayData = array();
 
@@ -833,7 +795,6 @@ class wsBase
     public function taskList ($userId)
     {
         try {
-            G::LoadClass( 'groups' );
             $oGroup = new Groups();
             $aGroups = $oGroup->getActiveGroupsForAnUser( $userId );
 
@@ -903,9 +864,6 @@ class wsBase
         $gmail = 0
     ) {
         try {
-            if (!class_exists('System')) {
-                G::LoadClass('system');
-            }
 
             /*----------------------------------********---------------------------------*/
             if (!empty($config)) {
@@ -935,7 +893,7 @@ class wsBase
                     }
                 }
 
-                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : System::getEmailConfiguration();
+                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : PMSystem::getEmailConfiguration();
 
                 if (!isset($aSetup['MESS_ENABLED'])) {
                     $aSetup['MESS_ENABLED'] = 1;
@@ -944,7 +902,7 @@ class wsBase
                 }
             } else {
             /*----------------------------------********---------------------------------*/
-                $aSetup = System::getEmailConfiguration();
+                $aSetup = PMSystem::getEmailConfiguration();
             /*----------------------------------********---------------------------------*/
             }
             /*----------------------------------********---------------------------------*/
@@ -1599,7 +1557,6 @@ class wsBase
     public function removeUserFromGroup ($userId, $groupId)
     {
         try {
-            G::LoadClass( 'groups' );
             global $RBAC;
 
             $RBAC->initRBAC();
@@ -1639,10 +1596,6 @@ class wsBase
 
             return $result;
         }
-
-        //G::LoadClass('groups');
-        //$oGroup = new Groups();
-        //$oGroup->removeUserOfGroup($_POST['GRP_UID'], $_POST['USR_UID']);
     }
 
     /**
@@ -2893,8 +2846,7 @@ class wsBase
             $result->status_code = 0;
             $result->message = G::loadTranslation( 'ID_SUCESSFUL' );
             $result->timestamp = date( 'Y-m-d H:i:s' );
-            G::LoadClass( "system" );
-            $result->version = System::getVersion();
+            $result->version = PMSystem::getVersion();
             $result->operatingSystem = $redhat;
             $result->webServer = getenv( 'SERVER_SOFTWARE' );
             $result->serverName = getenv( 'SERVER_NAME' );
@@ -2930,8 +2882,6 @@ class wsBase
     public function getCaseNotes ($applicationID, $userUid = '')
     {
         try {
-            G::LoadClass( 'case' );
-
             $result = new wsGetCaseNotesResponse( 0, G::loadTranslation( 'ID_SUCCESS' ), Cases::getCaseNotes( $applicationID, 'array', $userUid ) );
 
             $var = array ();
@@ -3299,7 +3249,6 @@ class wsBase
     public function claimCase($userId, $guid, $delIndex)
     {
         try {
-            G::LoadClass('case');
             $oCase = new Cases();
             $oCase->loadCase($guid);
             $oCase->setCatchUser($guid, $delIndex, $userId);

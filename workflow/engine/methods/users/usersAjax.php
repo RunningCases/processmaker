@@ -1,5 +1,5 @@
 <?php
-G::LoadSystem('inputfilter');
+
 $filter = new InputFilter();
 $_POST = $filter->xssFilterHard($_POST);
 if(isset($_SESSION['USER_LOGGED'])) {
@@ -87,7 +87,6 @@ switch ($_POST['action']) {
         echo G::json_encode($arrayUser);
         break;
     case 'availableCalendars':
-        G::LoadClass('calendar');
         $calendar = new Calendar();
         $calendarObj = $calendar->getCalendarList(true, true);
         $oData[] = array('CALENDAR_UID' => '', 'CALENDAR_NAME' => '- ' . G::LoadTranslation('ID_NONE') . ' -');
@@ -176,7 +175,6 @@ switch ($_POST['action']) {
 
             $user->auditLog($auditLogType, array_merge(['USR_UID' => $userUid, 'USR_USERNAME' => $arrayUserData['USR_USERNAME']], $form));
             /* Saving preferences */
-            G::loadClass('configuration');
             $def_lang = isset($form['PREF_DEFAULT_LANG']) ? $form['PREF_DEFAULT_LANG'] : '';
             $def_menu = isset($form['PREF_DEFAULT_MENUSELECTED']) ? $form['PREF_DEFAULT_MENUSELECTED'] : '';
             $def_cases_menu = isset($form['PREF_DEFAULT_CASES_MENUSELECTED']) ? $form['PREF_DEFAULT_CASES_MENUSELECTED'] : '';
@@ -221,7 +219,6 @@ switch ($_POST['action']) {
         $aFields = $oUser->loadDetailed($_POST['USR_UID']);
 
         //Load Calendar options and falue for this user
-        G::LoadClass('calendar');
         $calendar = new Calendar();
         $calendarInfo = $calendar->getCalendarFor($_POST['USR_UID'], $_POST['USR_UID'], $_POST['USR_UID']);
         //If the function returns a DEFAULT calendar it means that this object doesn't have assigned any calendar
@@ -229,7 +226,6 @@ switch ($_POST['action']) {
         $aFields['CALENDAR_NAME'] = $calendarInfo['CALENDAR_NAME'];
 
         #verifying if it has any preferences on the configurations table
-        G::loadClass('configuration');
         $oConf = new Configurations();
         $oConf->loadConfig($x, 'USER_PREFERENCES', '', '', $aFields['USR_UID'], '');
 

@@ -171,7 +171,6 @@ class UsersProperties extends BaseUsersProperties
             }
         }
         if (PPP_EXPIRATION_IN > 0) {
-            G::LoadClass( 'calendar' );
             $oCalendar = new calendar();
 
             if ($oCalendar->pmCalendarUid == '') {
@@ -263,7 +262,6 @@ class UsersProperties extends BaseUsersProperties
                 $url = '/sys' . SYS_SYS . '/' . $this->lang . '/' . SYS_SKIN . '/main';
             }
             global $RBAC;
-            G::loadClass( 'configuration' );
             $oConf = new Configurations();
             $oConf->loadConfig( $x, 'USER_PREFERENCES', '', '', $_SESSION['USER_LOGGED'], '' );
             if (sizeof( $oConf->aConfig ) > 0) {
@@ -388,7 +386,6 @@ class UsersProperties extends BaseUsersProperties
     public function _getDefaultLocation ()
     {
         global $RBAC;
-        G::loadClass( 'configuration' );
         $oConf = new Configurations();
         $oConf->loadConfig( $x, 'USER_PREFERENCES', '', '', $_SESSION['USER_LOGGED'], '' );
 

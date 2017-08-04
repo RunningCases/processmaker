@@ -407,7 +407,6 @@ class WebEntry
                     $fileContent .= "\$_SESSION[\"CURRENT_DYN_UID\"] = \"" . $dynaFormUid . "\";\n";
                     $fileContent .= "\$G_PUBLISH = new Publisher();\n";
 
-                    $fileContent .= "G::LoadClass(\"pmDynaform\");\n";
                     $fileContent .= "\$a = new pmDynaform(array(\"CURRENT_DYNAFORM\" => \"" . $arrayWebEntryData["DYN_UID"] . "\"));\n";
                     $fileContent .= "if (\$a->isResponsive()) {\n";
                     $fileContent .= "    \$a->printWebEntry(\"" . $fileName . "Post.php\");\n";
@@ -448,7 +447,7 @@ class WebEntry
                     $template->assign("dynaform", $arrayDynaFormData["DYN_TITLE"]);
                     $template->assign("timestamp", date("l jS \of F Y h:i:s A"));
                     $template->assign("ws", $this->sysSys);
-                    $template->assign("version", \System::getVersion());
+                    $template->assign("version", \PMSystem::getVersion());
 
                     $fileName = $pathDataPublicProcess . PATH_SEP . $weTitle . "Post.php";
 

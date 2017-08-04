@@ -56,9 +56,6 @@ if (defined('SYS_SYS') && (!defined('PATH_DATA_SITE') || !defined('PATH_WORKSPAC
     Bootstrap::setConstantsRelatedWs(SYS_SYS);
 }
 
-//Start - Custom functions
-G::LoadClass( 'pmFunctions' );
-//End - Custom functions
 //call plugin
 if (class_exists( 'folderData' )) {
     //$folderData = new folderData($sProUid, $proFields['PRO_TITLE'], $sAppUid, $Fields['APP_TITLE'], $sUsrUid);
@@ -729,7 +726,6 @@ function handleErrors($errno, $errstr, $errfile, $errline)
             unset( $_SESSION['_CODE_'] );
             global $oPMScript;
             if (isset($oPMScript) && isset($_SESSION['APPLICATION'])) {
-                G::LoadClass( 'case' );
                 $oCase = new Cases();
                 $oPMScript->aFields['__ERROR__'] = $errstr;
                 $oCase->updateCase($_SESSION['APPLICATION'], array('APP_DATA' => $oPMScript->aFields));
@@ -752,7 +748,6 @@ function handleFatalErrors ($buffer)
     }
 
     if (preg_match( '/(error<\/b>:)(.+)(<br)/', $buffer, $regs )) {
-        G::LoadClass( 'case' );
         $oCase = new Cases();
         $err = preg_replace( '/<.*?>/', '', $regs[2] );
         $aAux = explode( ' in ', $err );

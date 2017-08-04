@@ -133,7 +133,7 @@ class GranularExporter
         $data["version"] = "3.1";
         $data["container"] = "ProcessMaker-Project";
         $data["metadata"] = array(
-            "vendor_version" => \System::getVersion(),
+            "vendor_version" => \PMSystem::getVersion(),
             "vendor_version_code" => "Michelangelo",
             "export_timestamp" => date("U"),
             "export_datetime" => date("Y-m-d\TH:i:sP"),

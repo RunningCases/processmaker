@@ -70,7 +70,6 @@ class RBAC
     public $singleSignOn = false;
 
     private static $instance = null;
-    public $authorizedActions = array();
 
     public function __construct ()
     {
@@ -173,37 +172,37 @@ class RBAC
     public function initRBAC ()
     {
         if (is_null( $this->userObj )) {
-            require_once ("classes/model/RbacUsers.php");
+
             $this->userObj = new RbacUsers();
         }
 
         if (is_null( $this->systemObj )) {
-            require_once ("classes/model/Systems.php");
+
             $this->systemObj = new Systems();
         }
 
         if (is_null( $this->usersRolesObj )) {
-            require_once ("classes/model/UsersRoles.php");
+
             $this->usersRolesObj = new UsersRoles();
         }
 
         if (is_null( $this->rolesObj )) {
-            require_once ("classes/model/Roles.php");
+
             $this->rolesObj = new Roles();
         }
 
         if (is_null( $this->permissionsObj )) {
-            require_once ("classes/model/Permissions.php");
+
             $this->permissionsObj = new Permissions();
         }
 
         if (is_null( $this->rolesPermissionsObj )) {
-            require_once ("classes/model/RolesPermissions.php");
+
             $this->rolesPermissionsObj = new RolesPermissions();
         }
 
         if (is_null( $this->authSourcesObj )) {
-            require_once 'classes/model/AuthenticationSource.php';
+
             $this->authSourcesObj = new AuthenticationSource();
         }
         //hook for RBAC plugins
@@ -222,7 +221,6 @@ class RBAC
             }
         }
         if (!in_array('ldapAdvanced', $this->aRbacPlugins)) {
-            G::LoadClass('ldapAdvanced');
             if (class_exists('ldapAdvanced')) {
                 $this->aRbacPlugins[] = 'ldapAdvanced';
             }
@@ -358,8 +356,6 @@ class RBAC
             "PER_NAME" => "Edit User profile Default Cases Menu Options"
         ), array("PER_UID" => "00000000000000000000000000000064", "PER_CODE" => "PM_REASSIGNCASE_SUPERVISOR",
             "PER_NAME" => "Reassign case supervisor"
-        ), array("PER_UID" => "00000000000000000000000000000065", "PER_CODE" => "PM_SETUP_CUSTOM_CASES_LIST",
-            "PER_NAME" => "Setup Custom Cases List"
         )
         );
         return $permissionsAdmin;
@@ -502,9 +498,7 @@ class RBAC
     public function VerifyLogin ($strUser, $strPass)
     {
         /*----------------------------------********---------------------------------*/
-        if (!class_exists('pmLicenseManager')) {
-            G::LoadClass('pmLicenseManager');
-        }
+
         $licenseManager =& pmLicenseManager::getSingleton();
         if (in_array(G::encryptOld($licenseManager->result), array('38afd7ae34bd5e3e6fc170d8b09178a3', 'ba2b45bdc11e2a4a6e86aab2ac693cbb'))) {
             return -7;
@@ -1520,6 +1514,7 @@ class RBAC
             }
         }
     }
+
     /**
      * This function verify if the user allows to the file with a specific action
      * If the action is not defined in the authorizedActions we give the allow

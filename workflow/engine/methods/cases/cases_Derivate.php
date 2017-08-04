@@ -65,10 +65,6 @@ switch ($RBAC->userCanAccess( 'PM_CASES' )) {
 }
 
 /* Includes */
-G::LoadClass( 'pmScript' );
-G::LoadClass( 'case' );
-G::LoadClass( 'derivation' );
-
 //If no variables are submitted and the $_POST variable is empty
 if (!isset($_POST['form'])) {
     $_POST['form'] = array();
@@ -194,7 +190,6 @@ try {
     /*----------------------------------********---------------------------------*/
     $licensedFeatures = &PMLicensedFeatures::getSingleton ();
     if ($licensedFeatures->verifyfeature ( '7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09' )) {
-        G::LoadClass ( "pmGoogleApi" );
         $pmGoogle = new PMGoogleApi ();
         if ($pmGoogle->getServiceGmailStatus ()) {
             $flagGmail = true;
@@ -249,7 +244,7 @@ try {
     // Set users drive - start
     $licensedFeatures = &PMLicensedFeatures::getSingleton();
     if ($licensedFeatures->verifyfeature('AhKNjBEVXZlWUFpWE8wVTREQ0FObmo0aTdhVzhvalFic1M=')) {
-        G::LoadClass("AppDocumentDrive");
+
         $drive = new AppDocumentDrive();
         if ($drive->getStatusDrive()) {
             //add users email next task

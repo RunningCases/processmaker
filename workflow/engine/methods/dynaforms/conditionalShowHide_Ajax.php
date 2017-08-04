@@ -47,8 +47,8 @@ try {
             //echo '<script>+alert(getField("FCD_CONDITION").value)</script>';
             break;
         case 'getDynaFieds':
-            G::LoadThirdParty( 'pear/json', 'class.json' );
-            G::LoadSystem( 'dynaformhandler' );
+
+
 
             $_DYN_FILENAME = $_SESSION['Current_Dynafom']['Parameters']['FILE'];
             $sFilter = isset( $_POST['filter'] ) ? $_POST['filter'] : '';
@@ -63,7 +63,7 @@ try {
             print (Bootstrap::json_encode( $aAvailableFields )) ;
             break;
         case 'showDynavars':
-            G::LoadSystem( 'dynaformhandler' );
+
 
             $_DYN_FILENAME = $_SESSION['Current_Dynafom']['Parameters']['FILE'];
             $sFilter = isset( $_POST['filter'] ) ? $_POST['filter'] : '';
@@ -84,7 +84,6 @@ try {
             global $_DBArray;
             $_DBArray['DYNAFIELDS'] = $rows;
             $_SESSION['_DBArray'] = $_DBArray;
-            G::LoadClass( 'ArrayPeer' );
             $oCriteria = new Criteria( 'dbarray' );
             $oCriteria->setDBArrayTable( 'DYNAFIELDS' );
 

@@ -26,7 +26,6 @@ class pmTables extends Controller
         global $RBAC;
         $RBAC->requirePermissions( 'PM_SETUP_ADVANCE', 'PM_SETUP_PM_TABLES' );
 
-        G::LoadClass( 'configuration' );
         $c = new Configurations();
         $configPage = $c->getConfiguration( 'additionalTablesList', 'pageSize', '', $_SESSION['USER_LOGGED'] );
         $Config['pageSize'] = isset( $configPage['pageSize'] ) ? $configPage['pageSize'] : 20;
@@ -62,10 +61,6 @@ class pmTables extends Controller
      */
     public function edit ($httpData)
     {
-        require_once PATH_CONTROLLERS . 'pmTablesProxy.php';
-        require_once 'classes/model/AdditionalTables.php';
-        G::loadClass( 'pmTable' );
-
         $additionalTables = new AdditionalTables();
         $table = false;
         $addTabUid = isset( $httpData->id ) ? $httpData->id : false;

@@ -23,21 +23,10 @@
  *
  */
 
-  require_once ( "classes/model/Step.php" );
-  require_once ( "classes/model/Content.php" );
-  require_once ( "classes/model/AppDocumentPeer.php" );
-  require_once ( "classes/model/InputDocumentPeer.php" );
-  require_once ( "classes/model/OutputDocumentPeer.php" );
-  require_once ( "classes/model/DynaformPeer.php" );
   $c = new Criteria();
   $c->add ( StepPeer::PRO_UID, $_SESSION['PROCESS'] );
   $c->add ( StepPeer::TAS_UID, $_SESSION['TASK'] );
   $c->addAscendingOrderByColumn ( StepPeer::STEP_POSITION );
-
-  // classes
-  G::LoadClass('tree');
-  G::LoadClass('pmScript');
-  G::LoadClass('case');
 
   $oPluginRegistry = &PMPluginRegistry::getSingleton();
   $externalSteps   = $oPluginRegistry->getSteps();
