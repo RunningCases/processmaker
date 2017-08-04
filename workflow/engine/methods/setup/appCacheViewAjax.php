@@ -1,5 +1,4 @@
 <?php
-require_once('classes/model/AppCacheView.php');
 
 $filter = new InputFilter();
 $_POST = $filter->xssFilterHard($_POST);

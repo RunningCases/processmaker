@@ -34,7 +34,6 @@ try {
     $_POST['function'] = $filter->xssFilterHard($_POST['function']);
     switch ($_POST['function']) {
         case 'savePredetermined':
-            require_once "classes/model/Translation.php";
             $tranlationsList = Translation::getTranslationEnvironments();
             g::pr( $tranlationsList );
             die();
@@ -46,7 +45,7 @@ try {
             break;
         case 'languagesList':
 
-            $isoCountry = new isoCountry();
+            $isoCountry = new IsoCountry();
             $translationRow = new Translation();
             $response = new stdClass();
             $translationsEnvList = $translationRow->getTranslationEnvironments();
