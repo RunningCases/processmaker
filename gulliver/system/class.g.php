@@ -80,18 +80,6 @@ class G
     }
 
     /**
-     * Include all model files
-     * @access public
-     * @param string $strClass
-     * @return void
-     * @deprecated 08-04-2017
-     */
-    public static function LoadAllModelClasses($strClass)
-    {
-        //For backward compatibilities
-    }
-
-    /**
      * public function LoadClassRBAC
      * @access public
      * @param string $strClass
@@ -126,6 +114,24 @@ class G
     public static function LoadThirdParty($strClass)
     {
         //For backward compatibilities
+    }
+
+    /**
+     * Include all model files
+     * @access public
+     * @param string $strClass
+     * @return void
+     */
+    public static function LoadAllModelClasses($strClass)
+    {
+        $baseDir = PATH_CORE . 'classes' . PATH_SEP . 'model';
+        if ($handle = opendir( $baseDir )) {
+            while (false !== ($file = readdir( $handle ))) {
+                if (strpos( $file, '.php', 1 ) && ! strpos( $file, 'Peer.php', 1 )) {
+                    require_once ($baseDir . PATH_SEP . $file);
+                }
+            }
+        }
     }
 
     /**

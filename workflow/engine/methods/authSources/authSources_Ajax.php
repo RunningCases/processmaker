@@ -31,7 +31,6 @@ try {
 
     switch ($_REQUEST['action']) {
         case 'searchUsers':
-            require_once 'classes/model/Users.php';
             $criteria = new Criteria( 'workflow' );
             $criteria->addSelectColumn( UsersPeer::USR_USERNAME );
             $criteria->add( UsersPeer::USR_STATUS, array ('CLOSED'

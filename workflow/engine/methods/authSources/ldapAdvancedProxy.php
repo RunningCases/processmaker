@@ -312,7 +312,6 @@ switch ($function) {
                     }
                 }
             }
-            require_once 'classes/model/Users.php';
             $oUser = new Users();
             $oUser->create( $aData );
         }

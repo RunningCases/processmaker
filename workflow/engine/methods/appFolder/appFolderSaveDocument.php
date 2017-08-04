@@ -34,10 +34,6 @@ try {
 
     //save info
 
-    require_once ("classes/model/AppDocument.php");
-    require_once ('classes/model/AppFolder.php');
-    require_once ('classes/model/InputDocument.php');
-
     $oInputDocument = new InputDocument();
     if ($_GET['UID'] != -1) {
         $aID = $oInputDocument->load($_GET['UID']);

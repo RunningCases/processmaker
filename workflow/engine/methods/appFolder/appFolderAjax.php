@@ -829,7 +829,6 @@ function getPMFolderContent()
     $c->setDBArrayTable ('PM_FOLDER_DOC');
     $c->addAscendingOrderByColumn ('id');
     $G_PUBLISH = new Publisher ();
-    require_once ('classes/class.xmlfield_InputPM.php');
 
     $labelFolderAddFile = "";
     $labelFolderAddFolder = "";
@@ -1157,7 +1156,6 @@ function findChilds($uidFolder, $path, $arrayPath)
 }
 function copyMoveAction($type)
 {
-    require_once ("classes/model/AppFolder.php");
     $oPMFolder = new AppFolder ();
 
     $dir=$_REQUEST['dir'];
@@ -1327,7 +1325,6 @@ function documentVersionHistory()
     $c->setDBArrayTable ('PM_FOLDER_DOC_HISTORY');
     $c->addAscendingOrderByColumn ('id');
     $G_PUBLISH = new Publisher ();
-    require_once ('classes/class.xmlfield_InputPM.php');
 
     $G_PUBLISH->AddContent ('propeltable', 'paged-table', 'appFolder/appFolderDocumentListHistory', $c,
         array ('folderID' => $_POST ['folderID'] != '0' ? $_POST ['folderID'] == 'NA' ?
@@ -1339,8 +1336,7 @@ function documentVersionHistory()
 function overwriteFile($node, $fileName)
 {
     global $RBAC;
-    require_once ("classes/model/AppFolder.php");
-    require_once ("classes/model/AppDocument.php");
+
     $appDocument = new AppDocument();
     $pMFolder = new AppFolder();
     $user = ($RBAC->userCanAccess('PM_ALLCASES') == 1) ? '' : $_SESSION['USER_LOGGED'];
@@ -1355,9 +1351,6 @@ function overwriteFile($node, $fileName)
 
 function copyMoveExecuteTree($uidFolder, $newUidFolder)
 {
-    require_once ("classes/model/AppDocument.php");
-    require_once ('classes/model/AppFolder.php');
-
     $appFoder = new AppFolder ();
     $folderContent = $appFoder->getFolderContent($uidFolder);
     $folderOrigin = $appFoder->getFolderStructure($uidFolder);
@@ -1412,7 +1405,6 @@ function copyMoveExecuteTree($uidFolder, $newUidFolder)
 
 function checkTree ($uidOriginFolder, $uidNewFolder)
 {
-    require_once ('classes/model/AppFolder.php');
     $appFoder = new AppFolder ();
     $newFoldercontent = copyMoveExecuteTree($uidOriginFolder, $uidNewFolder);
     $listfolder = $appFoder->getFolderList($uidOriginFolder);
@@ -1495,7 +1487,6 @@ function uploadExternalDocument()
                 }
                 $_POST['selitems'] = array();
             } else {
-                require_once ("classes/model/AppDocument.php");
                 $oAppDocument = new AppDocument();
                 if (isset($_POST['selitems']) && is_array($_POST['selitems'])) {
                     foreach ($_POST['selitems'] as $docId) {
@@ -1532,10 +1523,6 @@ function uploadExternalDocument()
             $appId=$_POST['appId'];
             $docType=isset($_POST['docType'])?$_GET['docType']:"INPUT";
             //save info
-
-            require_once ("classes/model/AppDocument.php");
-            require_once ('classes/model/AppFolder.php');
-            require_once ('classes/model/InputDocument.php');
 
             $oInputDocument = new InputDocument();
             if ($docUid != -1) {
@@ -1679,7 +1666,6 @@ function uploadExternalDocument()
 
 function newFolder()
 {
-    require_once ("classes/model/AppFolder.php");
     $oPMFolder = new AppFolder ();
     //G::pr($_POST);
     if ($_POST ['dir']=="") {
@@ -1792,22 +1778,10 @@ function newFolder()
     $response=str_replace('"handlerCancel"',$handlerCancel,$response);
     print_r($response);
 
-    /*
-     $oFolder = new AppFolder ();
-     $folderStructure = $oPMFolder->getFolderStructure ($_POST ['folderID']);
-     $Fields ['FOLDER_PATH'] = $folderStructure ['PATH'];
-     $Fields ['FOLDER_PARENT_UID'] = $_POST ['folderID'];
-     $Fields ['FOLDER_UID'] = G::GenerateUniqueID ();
-     $G_PUBLISH = new Publisher ();
-
-     $G_PUBLISH->AddContent ('xmlform', 'xmlform', 'appFolder/appFolderEdit', '', $Fields, 'appFolderSave');
-     G::RenderPage ('publish', 'raw');
-     */
 }
 
 function appFolderSave()
 {
-    require_once ("classes/model/AppFolder.php");
     $oPMFolder = new AppFolder ();
     $form = $_POST['form'];
     $FolderUid = $form['FOLDER_UID'];
