@@ -745,7 +745,7 @@ function executeCaseSelfService()
         setExecutionMessage("Unassigned case");
         saveLog("unassignedCase", "action", "Unassigned case", "c");
 
-        $calendar = new calendar();
+        $calendar = new Calendar();
 
         while ($rsCriteria->next()) {
 

@@ -425,7 +425,7 @@ class Event extends BaseEvent
         try {
             $rowsCreated = 0;
             $rowsRejected = 0;
-            $oCalendar = new calendar();
+            $oCalendar = new Calendar();
 
             //SELECT
             //  EVENT.PRO_UID,
@@ -550,7 +550,7 @@ class Event extends BaseEvent
         try {
             $rowsCreated = 0;
             $rowsRejected = 0;
-            $oCalendar = new calendar();
+            $oCalendar = new Calendar();
             // SELECT TASK2.* ,
             //   EVENT.EVN_UID, EVENT.PRO_UID, EVENT.EVN_TAS_UID_FROM,
             //   EVENT.EVN_TAS_ESTIMATED_DURATION, EVENT.EVN_WHEN,
@@ -872,7 +872,7 @@ class Event extends BaseEvent
 
     public function toCalculateTime ($aData, $iDate = null)
     {
-        $oCalendar = new calendar();
+        $oCalendar = new Calendar();
 
         $iDate = isset( $iDate ) ? $iDate : date( 'Y-m-d H:i:s' );
 

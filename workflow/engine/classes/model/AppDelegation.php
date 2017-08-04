@@ -467,7 +467,7 @@ class AppDelegation extends BaseAppDelegation
         }
 
         //Calendar - Use the dates class to calculate dates
-        $calendar = new calendar();
+        $calendar = new Calendar();
 
         $arrayCalendarData = $calendar->getCalendarData($aCalendarUID);
 
@@ -503,7 +503,7 @@ class AppDelegation extends BaseAppDelegation
             $riskTime = $data['TAS_DURATION'] - ($data['TAS_DURATION'] * $risk);
 
             //Calendar - Use the dates class to calculate dates
-            $calendar = new calendar();
+            $calendar = new Calendar();
 
             $arrayCalendarData = array();
 
@@ -537,11 +537,11 @@ class AppDelegation extends BaseAppDelegation
 		$rs->next();
 		$row = $rs->getRow();
 		$i = 0;
-		$calendar = new calendar();
+		$calendar = new Calendar();
 		$now = new DateTime();
 		while (is_array ($row)) {
 			$oAppDel = AppDelegationPeer::retrieveByPk( $row['APP_UID'], $row['DEL_INDEX'] );
-            $calendar = new calendar();
+            $calendar = new Calendar();
             $calendar->getCalendar($row['USR_UID'], $row['PRO_UID'], $row['TAS_UID']);
             $calData = $calendar->getCalendarData();
             $calculatedValues = $this->getValuesToStoreForCalculateDuration($row, $calendar, $calData, $now);

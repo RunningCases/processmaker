@@ -3,7 +3,7 @@ try {
 
     $CalendarUid = $_GET['id'];
 
-    $calendarObj = new calendar();
+    $calendarObj = new Calendar();
     $calendarObj->deleteCalendar( $CalendarUid );
 
     G::Header( 'location: calendarList' );
