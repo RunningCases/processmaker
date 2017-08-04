@@ -69,7 +69,7 @@ class pmTablesProxy extends HttpProxyController
 
         foreach ($addTables['rows'] as $i => $table) {
             try {
-                $con = Propel::getConnection( pmTable::resolveDbSource( $table['DBS_UID'] ) );
+                $con = Propel::getConnection( PmTable::resolveDbSource( $table['DBS_UID'] ) );
                 $stmt = $con->createStatement();
                 $rs = $stmt->executeQuery( 'SELECT COUNT(*) AS NUM_ROWS from ' . $table['ADD_TAB_NAME'] );
                 if ($rs->next()) {
@@ -1177,7 +1177,7 @@ class pmTablesProxy extends HttpProxyController
         $additionalTables = new AdditionalTables();
         $table = $additionalTables->load( $httpData->id );
         if ($table['PRO_UID'] != '') {
-            $additionalTables->populateReportTable( $table['ADD_TAB_NAME'], pmTable::resolveDbSource( $table['DBS_UID'] ), $table['ADD_TAB_TYPE'], $table['PRO_UID'], $table['ADD_TAB_GRID'], $table['ADD_TAB_UID'] );
+            $additionalTables->populateReportTable( $table['ADD_TAB_NAME'], PmTable::resolveDbSource( $table['DBS_UID'] ), $table['ADD_TAB_TYPE'], $table['PRO_UID'], $table['ADD_TAB_GRID'], $table['ADD_TAB_UID'] );
             $result->message = 'generated for table ' . $table['ADD_TAB_NAME'];
         }
 

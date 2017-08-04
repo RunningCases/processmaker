@@ -57,6 +57,7 @@
             "thirdparty/jsmin/jsmin.php",
             "thirdparty/libchart/classes/",
             "thirdparty/pear",
+            "thirdparty/phing",
             "rbac/engine/classes/"
         ],
         "files": [

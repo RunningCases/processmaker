@@ -305,7 +305,7 @@ class AdditionalTables extends BaseAdditionalTables
         FieldsPeer::doDelete($criteria);
 
         //remove all related to pmTable
-        $pmTable = new pmTable($additionalTable['ADD_TAB_NAME']);
+        $pmTable = new PmTable($additionalTable['ADD_TAB_NAME']);
         $pmTable->setDataSource($additionalTable['DBS_UID']);
         $pmTable->remove();
     }
@@ -865,7 +865,7 @@ class AdditionalTables extends BaseAdditionalTables
             // the class exists then load it.
             require_once PATH_WORKSPACE . 'classes/' . $className . '.php';
             // create a criteria object of report table class
-            $c = new Criteria(pmTable::resolveDbSource($row['DBS_UID']));
+            $c = new Criteria(PmTable::resolveDbSource($row['DBS_UID']));
             // select all related records with this $appUid
             eval('$c->add(' . $className . 'Peer::APP_UID, \'' . $appUid . '\');');
             eval('$records = ' . $className . 'Peer::doSelect($c);');

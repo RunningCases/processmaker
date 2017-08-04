@@ -187,7 +187,7 @@ define( 'PATH_GULLIVER_HOME', PATH_TRUNK . 'gulliver' . PATH_SEP );
 define( 'PATH_GULLIVER', PATH_GULLIVER_HOME . 'system' . PATH_SEP ); //gulliver system classes
 define( 'PATH_GULLIVER_BIN', PATH_GULLIVER_HOME . 'bin' . PATH_SEP ); //gulliver bin classes
 define( 'PATH_TEMPLATE', PATH_GULLIVER_HOME . 'templates' . PATH_SEP );
-define( 'PATH_THIRDPARTY', PATH_GULLIVER_HOME . 'thirdparty' . PATH_SEP );
+define( 'PATH_THIRDPARTY', PATH_TRUNK . 'thirdparty' . PATH_SEP );
 define( 'PATH_RBAC', PATH_RBAC_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP ); //to enable rbac version 2
 define( 'PATH_RBAC_CORE', PATH_RBAC_HOME . 'engine' . PATH_SEP );
 

@@ -33,7 +33,6 @@ if ($RBAC->userCanAccess( 'PM_SETUP' ) != 1 && $RBAC->userCanAccess( 'PM_FACTORY
     die();
 }
 
-G::LoadInclude( 'ajax' );
 //G::pr($_SESSION);
 $_POST['action'] = get_ajax_value( 'action' );
 if ($_POST['action'] == '') {
