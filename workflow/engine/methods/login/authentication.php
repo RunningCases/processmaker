@@ -245,7 +245,7 @@ try {
         $userTimeZone = $user->getUsrTimeZone();
 
         if (trim($userTimeZone) == '') {
-            $arraySystemConfiguration = PMSystem::getSystemConfiguration('', '', SYS_SYS);
+            $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', SYS_SYS);
 
             $userTimeZone = $arraySystemConfiguration['time_zone'];
         }
@@ -419,7 +419,7 @@ try {
         die;
     }
 
-    $configS = PMSystem::getSystemConfiguration('', '', SYS_SYS);
+    $configS = PmSystem::getSystemConfiguration('', '', SYS_SYS);
     $activeSession = isset($configS['session_block']) ? !(int)$configS['session_block']:true;
     if ($activeSession){
         setcookie("PM-TabPrimary", 101010010, time() + (24 * 60 * 60), '/');

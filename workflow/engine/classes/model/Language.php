@@ -355,7 +355,7 @@ class Language extends BaseLanguage
         $sLanguage = $langRecord['LAN_NAME'];
 
         //setting headers
-        $poFile->addHeader( 'Project-Id-Version', 'ProcessMaker ' . PMSystem::getVersion() );
+        $poFile->addHeader( 'Project-Id-Version', 'ProcessMaker ' . PmSystem::getVersion() );
         $poFile->addHeader( 'POT-Creation-Date', '' );
         $poFile->addHeader( 'PO-Revision-Date', date( 'Y-m-d H:i:s' ) );
         $poFile->addHeader( 'Last-Translator', '' );

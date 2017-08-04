@@ -64,7 +64,7 @@ try {
 
     $classLoader->addModelClassPath(PATH_TRUNK . 'workflow' . PATH_SEP . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'model' . PATH_SEP);
 
-    $arraySystemConfiguration = PMSystem::getSystemConfiguration('', '', $workspace);
+    $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', $workspace);
 
     $e_all = (defined('E_DEPRECATED'))?            E_ALL  & ~E_DEPRECATED : E_ALL;
     $e_all = (defined('E_STRICT'))?                $e_all & ~E_STRICT     : $e_all;

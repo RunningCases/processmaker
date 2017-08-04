@@ -33,7 +33,6 @@ if ($RBAC->userCanAccess( 'PM_SETUP' ) != 1 && $RBAC->userCanAccess( 'PM_FACTORY
     die();
 }
 
-G::LoadInclude( 'ajax' );
 //G::pr($_SESSION);
 $_POST['action'] = get_ajax_value( 'action' );
 if ($_POST['action'] == '') {
@@ -150,7 +149,7 @@ try {
 
         //Apply proxy settings
         $proxy = array ();
-        $sysConf = PMSystem::getSystemConfiguration();
+        $sysConf = PmSystem::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             $proxy['proxy_host'] = $sysConf['proxy_host'];
             if ($sysConf['proxy_port'] != '') {

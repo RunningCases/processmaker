@@ -241,7 +241,7 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
     $aContext = \Bootstrap::getDefaultContextLog();
     $con = Propel::getConnection( $DBConnectionUID );
     $con->begin();
-    $blackList = PMSystem::getQueryBlackList();
+    $blackList = PmSystem::getQueryBlackList();
     $aListQueries = explode('|', $blackList['queries']);
     $aListAllTables = explode(
         '|',
@@ -905,7 +905,7 @@ function WSProcessList ()
 //private function to get current email configuration
 function getEmailConfiguration ()
 {
-    return PMSystem::getEmailConfiguration();
+    return PmSystem::getEmailConfiguration();
 }
 
 /**

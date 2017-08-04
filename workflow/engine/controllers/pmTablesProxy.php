@@ -69,7 +69,7 @@ class pmTablesProxy extends HttpProxyController
 
         foreach ($addTables['rows'] as $i => $table) {
             try {
-                $con = Propel::getConnection( pmTable::resolveDbSource( $table['DBS_UID'] ) );
+                $con = Propel::getConnection( PmTable::resolveDbSource( $table['DBS_UID'] ) );
                 $stmt = $con->createStatement();
                 $rs = $stmt->executeQuery( 'SELECT COUNT(*) AS NUM_ROWS from ' . $table['ADD_TAB_NAME'] );
                 if ($rs->next()) {
@@ -940,7 +940,7 @@ class pmTablesProxy extends HttpProxyController
             $result = new stdClass();
             $net = new NET( G::getIpAddress() );
 
-            $META = " \n-----== ProcessMaker Open Source Private Tables ==-----\n" . " @Ver: 1.0 Oct-2009\n" . " @Processmaker version: " . PMSystem::getVersion() . "\n" . " -------------------------------------------------------\n" . " @Export Date: " . date( "l jS \of F Y h:i:s A" ) . "\n" . " @Server address: " . getenv( 'SERVER_NAME' ) . " (" . getenv( 'SERVER_ADDR' ) . ")\n" . " @Client address: " . $net->hostname . "\n" . " @Workspace: " . SYS_SYS . "\n" . " @Export trace back:\n\n";
+            $META = " \n-----== ProcessMaker Open Source Private Tables ==-----\n" . " @Ver: 1.0 Oct-2009\n" . " @Processmaker version: " . PmSystem::getVersion() . "\n" . " -------------------------------------------------------\n" . " @Export Date: " . date( "l jS \of F Y h:i:s A" ) . "\n" . " @Server address: " . getenv( 'SERVER_NAME' ) . " (" . getenv( 'SERVER_ADDR' ) . ")\n" . " @Client address: " . $net->hostname . "\n" . " @Workspace: " . SYS_SYS . "\n" . " @Export trace back:\n\n";
 
             $EXPORT_TRACEBACK = Array ();
             $c = 0;
@@ -1177,7 +1177,7 @@ class pmTablesProxy extends HttpProxyController
         $additionalTables = new AdditionalTables();
         $table = $additionalTables->load( $httpData->id );
         if ($table['PRO_UID'] != '') {
-            $additionalTables->populateReportTable( $table['ADD_TAB_NAME'], pmTable::resolveDbSource( $table['DBS_UID'] ), $table['ADD_TAB_TYPE'], $table['PRO_UID'], $table['ADD_TAB_GRID'], $table['ADD_TAB_UID'] );
+            $additionalTables->populateReportTable( $table['ADD_TAB_NAME'], PmTable::resolveDbSource( $table['DBS_UID'] ), $table['ADD_TAB_TYPE'], $table['PRO_UID'], $table['ADD_TAB_GRID'], $table['ADD_TAB_UID'] );
             $result->message = 'generated for table ' . $table['ADD_TAB_NAME'];
         }
 

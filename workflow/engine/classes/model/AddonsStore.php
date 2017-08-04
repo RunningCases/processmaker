@@ -494,7 +494,7 @@ class AddonsStore extends BaseAddonsStore
                     "header" => "Content-type: application/x-www-form-urlencoded\r\n",
                     "content" => http_build_query(
                         array(
-                            "pmVersion" => PMSystem::getVersion(),
+                            "pmVersion" => PmSystem::getVersion(),
                             "version" => STORE_VERSION
                         )
                     )
@@ -502,7 +502,7 @@ class AddonsStore extends BaseAddonsStore
             );
 
             // Proxy settings
-            $sysConf = PMSystem::getSystemConfiguration();
+            $sysConf = PmSystem::getSystemConfiguration();
             if (isset($sysConf['proxy_host'])) {
                 if ($sysConf['proxy_host'] != '') {
                     if (!is_array($option['http'])) {

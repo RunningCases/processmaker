@@ -11,7 +11,7 @@ class NotificationDevice
 
     public function checkMobileNotifications()
     {
-        $conf = \PMSystem::getSystemConfiguration('', '', SYS_SYS);
+        $conf = \PmSystem::getSystemConfiguration('', '', SYS_SYS);
         $activeNotifications = true;
         if (isset($conf['mobileNotifications'])) {
             $activeNotifications = $conf['mobileNotifications'] == 1 ? true : false;

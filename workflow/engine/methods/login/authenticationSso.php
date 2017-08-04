@@ -38,7 +38,7 @@ try {
     }
     /*----------------------------------********---------------------------------*/
 
-    $arraySystemConfiguration = PMSystem::getSystemConfiguration('', '', SYS_SYS);
+    $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', SYS_SYS);
 
     //Set User Time Zone
     $user = UsersPeer::retrieveByPK($userUid);

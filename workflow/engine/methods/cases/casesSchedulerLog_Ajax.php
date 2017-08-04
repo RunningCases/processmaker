@@ -23,7 +23,6 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 //if (($RBAC_Response=$RBAC->userCanAccess("PM_USERS"))!=1) return $RBAC_Response;
-G::LoadInclude( 'ajax' );
 $_POST['action'] = get_ajax_value( 'action' );
 
 switch ($_POST['action']) {

@@ -38,7 +38,7 @@ class adminProxy extends HttpProxyController
         $updateRedirector = false;
         $restart = false;
         self::validateDataSystemConf($httpData, $envFile);
-        $sysConf = PMSystem::getSystemConfiguration($envFile);
+        $sysConf = PmSystem::getSystemConfiguration($envFile);
         $updatedConf = array();
 
         if ($sysConf['default_lang'] != $httpData->default_lang) {
@@ -96,7 +96,7 @@ class adminProxy extends HttpProxyController
                 }
             }
 
-            PMSystem::updateIndexFile(array(
+            PmSystem::updateIndexFile(array(
               'lang' => $sysConf['default_lang'],
               'skin' => $sysConf['default_skin']
             ));
@@ -611,7 +611,7 @@ class adminProxy extends HttpProxyController
         $sBodyPre->prepare();
         $sBodyPre->assign('server', $_SERVER['SERVER_NAME']);
         $sBodyPre->assign('date', date('H:i:s'));
-        $sBodyPre->assign('ver', PMSystem::getVersion());
+        $sBodyPre->assign('ver', PmSystem::getVersion());
         $sBodyPre->assign('engine', $engine);
         $sBodyPre->assign('msg', $msg);
         $sBody = $sBodyPre->getOutputContent();
@@ -1415,7 +1415,7 @@ class adminProxy extends HttpProxyController
         $params['lt'] = isset($licInfo[SYS_SYS]) ? isset($licInfo[SYS_SYS]['TYPE'])? $licInfo[SYS_SYS]['TYPE'] : ''  : '';
 
         //ProcessMaker Version
-        $params['v'] = PMSystem::getVersion();
+        $params['v'] = PmSystem::getVersion();
         if (file_exists(PATH_DATA. 'log/upgrades.log')) {
             $params['pmu'] = serialize(file_get_contents(PATH_DATA. 'log/upgrades.log', 'r'));
         } else {
@@ -1505,7 +1505,7 @@ class adminProxy extends HttpProxyController
 
         //Country/city (Timezone)
         $params['t'] = (defined('TIME_ZONE') && TIME_ZONE != "Unknown") ? TIME_ZONE : date_default_timezone_get();
-        $params['w'] = count(PMSystem::listWorkspaces());
+        $params['w'] = count(PmSystem::listWorkspaces());
 
         $support = PATH_DATA_SITE . G::sanitizeString($licenseManager->info['FIRST_NAME'] . '-' . $licenseManager->info['LAST_NAME'] . '-' . SYS_SYS . '-' . date('YmdHis'), false, false) . '.spm';
         file_put_contents($support, serialize($params));

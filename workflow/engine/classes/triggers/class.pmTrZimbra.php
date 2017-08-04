@@ -402,7 +402,7 @@ function uploadZimbraFile($ServerUrl, $username, $preAuthKey, $folderName, $file
     curl_setopt ($ch, CURLOPT_HTTPHEADER,$header_array);
 
     //Apply proxy settings
-    $sysConf = PMSystem::getSystemConfiguration();
+    $sysConf = PmSystem::getSystemConfiguration();
     if ($sysConf['proxy_host'] != '') {
         curl_setopt($ch, CURLOPT_PROXY, $sysConf['proxy_host'] . ($sysConf['proxy_port'] != '' ? ':' . $sysConf['proxy_port'] : ''));
         if ($sysConf['proxy_port'] != '') {
