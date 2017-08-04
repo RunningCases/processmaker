@@ -61,6 +61,8 @@
             "thirdparty/propel",
             "thirdparty/creole",
             "workflow/engine/classes/",
+            "workflow/engine/controllers/",
+            "workflow/engine/includes/",
             "thirdparty/smarty/libs/Smarty.class.php",
             "thirdparty/jsmin/jsmin.php",
             "thirdparty/libchart/classes/",
