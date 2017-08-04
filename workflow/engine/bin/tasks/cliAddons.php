@@ -57,7 +57,6 @@ function run_addon_core_install($args)
         }
 
         ///////
-        //echo "** Installation starting... (workspace: $workspace, store: $storeId, id: $addonName)\n";
         $ws = new workspaceTools($workspace);
         $ws->initPropel(false);
 
