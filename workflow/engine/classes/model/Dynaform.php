@@ -37,7 +37,9 @@
  *
  * @package workflow.engine.classes.model
  */
-class Dynaform extends BaseDynaform
+class Dynaform
+
+    extends BaseDynaform
 {
     /**
      * This value goes in the content table

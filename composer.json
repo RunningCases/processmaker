@@ -57,6 +57,7 @@
             "thirdparty/jsmin/jsmin.php",
             "thirdparty/libchart/classes/",
             "thirdparty/pear",
+            "thirdparty/html2ps_pdf",
             "rbac/engine/classes/"
         ],
         "files": [
