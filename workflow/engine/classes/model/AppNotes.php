@@ -148,7 +148,7 @@ class AppNotes extends BaseAppNotes
     {
         try {
 
-            $aConfiguration = PMSystem::getEmailConfiguration();
+            $aConfiguration = PmSystem::getEmailConfiguration();
 
             $msgError = "";
             if (! isset( $aConfiguration['MESS_ENABLED'] ) || $aConfiguration['MESS_ENABLED'] != '1') {

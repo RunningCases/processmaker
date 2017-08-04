@@ -28,7 +28,7 @@ $RBAC->requirePermissions( 'PM_FACTORY' );
 
 $conf = new Configurations();
 
-$pmVersion = (preg_match("/^([\d\.]+).*$/", PMSystem::getVersion(), $arrayMatch))? $arrayMatch[1] : ""; //Otherwise: Branch master
+$pmVersion = (preg_match("/^([\d\.]+).*$/", PmSystem::getVersion(), $arrayMatch))? $arrayMatch[1] : ""; //Otherwise: Branch master
 
 /*----------------------------------********---------------------------------*/
 if (true) {

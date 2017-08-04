@@ -163,7 +163,7 @@ class AddonsManager extends BaseAddonsManager
     public function getInstalledVersion()
     {
         if ($this->isCore()) {
-            return (EnterpriseUtils::pmVersion(PMSystem::getVersion()));
+            return (EnterpriseUtils::pmVersion(PmSystem::getVersion()));
         } else {
             if ($this->isPlugin()) {
                 if (!$this->isInstalled()) {
@@ -251,7 +251,7 @@ class AddonsManager extends BaseAddonsManager
         );
 
         // Proxy settings
-        $sysConf = PMSystem::getSystemConfiguration();
+        $sysConf = PmSystem::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             if (!is_array($option['http'])) {
                 $option['http'] = array();

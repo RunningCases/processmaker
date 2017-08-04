@@ -285,7 +285,7 @@ class WebApplication
         Services\Api::setWorkspace(SYS_SYS);
         $cacheDir = defined("PATH_WORKSPACE") ? PATH_WORKSPACE : (defined("PATH_C")? PATH_C: sys_get_temp_dir());
 
-        $sysConfig = \PMSystem::getSystemConfiguration();
+        $sysConfig = \PmSystem::getSystemConfiguration();
 
         \Luracast\Restler\Defaults::$cacheDirectory = $cacheDir;
         $productionMode = (bool) !(isset($sysConfig["service_api_debug"]) && $sysConfig["service_api_debug"]);
@@ -445,7 +445,7 @@ class WebApplication
         define("PATH_CONTROLLERS", PATH_CORE . "controllers" . PATH_SEP);
         define("PATH_SERVICES_REST", PATH_CORE . "services" . PATH_SEP . "rest" . PATH_SEP);
 
-        $arraySystemConfiguration = \PMSystem::getSystemConfiguration();
+        $arraySystemConfiguration = \PmSystem::getSystemConfiguration();
 
         ini_set('date.timezone', $arraySystemConfiguration['time_zone']); //Set Time Zone
 
@@ -493,7 +493,7 @@ class WebApplication
             exit(0);
         }
 
-        $arraySystemConfiguration = \PMSystem::getSystemConfiguration('', '', SYS_SYS);
+        $arraySystemConfiguration = \PmSystem::getSystemConfiguration('', '', SYS_SYS);
 
         //Do not change any of these settings directly, use env.ini instead
         ini_set('display_errors', $arraySystemConfiguration['display_errors']);

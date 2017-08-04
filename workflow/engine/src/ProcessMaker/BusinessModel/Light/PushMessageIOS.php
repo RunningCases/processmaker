@@ -67,7 +67,7 @@ class PushMessageIOS
      */
     public function setSettingNotification()
     {
-        $conf = \PMSystem::getSystemConfiguration(PATH_CONFIG . 'mobile.ini');
+        $conf = \PmSystem::getSystemConfiguration(PATH_CONFIG . 'mobile.ini');
         $this->setUrl($conf['apple']['url']);
         $this->setKey($conf['apple']['passphrase']);
         $this->setPemFile($conf['apple']['pemFile']);

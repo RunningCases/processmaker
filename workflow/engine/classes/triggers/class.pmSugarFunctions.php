@@ -22,7 +22,7 @@ function getSoapClientOptions ()
     $options = array ('trace' => 1);
 
     //Apply proxy settings
-    $sysConf = PMSystem::getSystemConfiguration();
+    $sysConf = PmSystem::getSystemConfiguration();
     if ($sysConf['proxy_host'] != '') {
         $options['proxy_host'] = $sysConf['proxy_host'];
         if ($sysConf['proxy_port'] != '') {

@@ -30,7 +30,7 @@ class p11835 extends patch
         $rs->next();
         while($row = $rs->getRow()) {
             if ($row ['Field'] == "TAS_GROUP_VARIABLE") {
-                $version = PMSystem::getVersion ();
+                $version = PmSystem::getVersion ();
                 $version = explode('-',$version);
                 if ($version[0] == '2.5.1') {
                     echo "Version " . $version[0] . " Patch\n";
@@ -98,7 +98,7 @@ class p11835 extends patch
         $arrayHotfix = $conf->getConfiguration("HOTFIX", "");
         $arrayHotfix = (is_array($arrayHotfix))? $arrayHotfix : array($arrayHotfix);
         
-        $pmVersion = self::pmVersion(PMSystem::getVersion()) . "";
+        $pmVersion = self::pmVersion(PmSystem::getVersion()) . "";
         
         if (($pmVersion == "2.5.2.4" || $pmVersion == "2.8") && !in_array("15394", $arrayHotfix)) {
             $cnn = Propel::getConnection("workflow");

@@ -43,7 +43,7 @@ function install($file)
         );
 
         // Proxy settings
-        $sysConf = PMSystem::getSystemConfiguration();
+        $sysConf = PmSystem::getSystemConfiguration();
         if (isset($sysConf['proxy_host'])) {
             if ($sysConf['proxy_host'] != '') {
                 if (!is_array($option['http'])) {
@@ -150,7 +150,7 @@ switch ($option) {
             );
 
             // Proxy settings
-            $sysConf = PMSystem::getSystemConfiguration();
+            $sysConf = PmSystem::getSystemConfiguration();
             if (isset($sysConf['proxy_host'])) {
                 if ($sysConf['proxy_host'] != '') {
                     if (!is_array($option['http'])) {
@@ -319,7 +319,7 @@ switch ($option) {
             );
 
             // Proxy settings
-            $sysConf = PMSystem::getSystemConfiguration();
+            $sysConf = PmSystem::getSystemConfiguration();
             if (isset($sysConf['proxy_host'])) {
                 if ($sysConf['proxy_host'] != '') {
                     if (!is_array($option['http'])) {

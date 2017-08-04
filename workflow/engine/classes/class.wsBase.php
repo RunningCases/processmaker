@@ -290,7 +290,7 @@ class wsBase
         try {
             $solrEnabled = 0;
 
-            if (($solrEnv = PMSystem::solrEnv()) !== false) {
+            if (($solrEnv = PmSystem::solrEnv()) !== false) {
 
                 $appSolr = new AppSolr(
                     $solrEnv["solr_enabled"],
@@ -893,7 +893,7 @@ class wsBase
                     }
                 }
 
-                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : PMSystem::getEmailConfiguration();
+                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : PmSystem::getEmailConfiguration();
 
                 if (!isset($aSetup['MESS_ENABLED'])) {
                     $aSetup['MESS_ENABLED'] = 1;
@@ -902,7 +902,7 @@ class wsBase
                 }
             } else {
             /*----------------------------------********---------------------------------*/
-                $aSetup = PMSystem::getEmailConfiguration();
+                $aSetup = PmSystem::getEmailConfiguration();
             /*----------------------------------********---------------------------------*/
             }
             /*----------------------------------********---------------------------------*/
@@ -2846,7 +2846,7 @@ class wsBase
             $result->status_code = 0;
             $result->message = G::loadTranslation( 'ID_SUCESSFUL' );
             $result->timestamp = date( 'Y-m-d H:i:s' );
-            $result->version = PMSystem::getVersion();
+            $result->version = PmSystem::getVersion();
             $result->operatingSystem = $redhat;
             $result->webServer = getenv( 'SERVER_SOFTWARE' );
             $result->serverName = getenv( 'SERVER_NAME' );

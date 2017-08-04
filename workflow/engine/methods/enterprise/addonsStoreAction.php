@@ -285,7 +285,7 @@ try {
                 );
 
                 // Proxy settings
-                $sysConf = PMSystem::getSystemConfiguration();
+                $sysConf = PmSystem::getSystemConfiguration();
                 if ($sysConf['proxy_host'] != '') {
                     if (!is_array($option['http'])) {
                         $option['http'] = array();

@@ -149,7 +149,7 @@ try {
 
         //Apply proxy settings
         $proxy = array ();
-        $sysConf = PMSystem::getSystemConfiguration();
+        $sysConf = PmSystem::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
             $proxy['proxy_host'] = $sysConf['proxy_host'];
             if ($sysConf['proxy_port'] != '') {

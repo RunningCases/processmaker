@@ -1,42 +1,15 @@
 <?php
 
 /**
- * upgrade_System.php
+ * class Processmaker System for workflow mantanance routines
  *
- * @package workflow.engine.classes
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2011 Colosa Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
- */
-
-/**
- * class system for workflow mantanance routines
- *
- * author Erik A.O.<erik@colosa.com>
  * date May 12th, 2010
  *
  * @package workflow.engine.classes
  *
  */
 
-class PMSystem
+class PmSystem
 {
     public $sFilename;
     public $sFilesList;
@@ -232,7 +205,7 @@ class PMSystem
         $Fields['IP'] = isset($ipe[0]) ? $ipe[0] : ''; //lookup($ipe[0]);
 
 
-        $Fields['PLUGINS_LIST'] = PMSystem::getPlugins();
+        $Fields['PLUGINS_LIST'] = PmSystem::getPlugins();
 
         return $Fields;
     }
@@ -723,7 +696,7 @@ class PMSystem
      */
     public static function getSystemSchema ()
     {
-        return PMSystem::getSchema( PATH_TRUNK . "workflow/engine/config/schema.xml" );
+        return PmSystem::getSchema( PATH_TRUNK . "workflow/engine/config/schema.xml" );
     }
 
     /**
@@ -733,7 +706,7 @@ class PMSystem
      */
     public static function getSystemSchemaRbac ()
     {
-    	return PMSystem::getSchema( PATH_TRUNK . "rbac/engine/config/schema.xml" );
+    	return PmSystem::getSchema( PATH_TRUNK . "rbac/engine/config/schema.xml" );
     }
 
     /**
@@ -748,7 +721,7 @@ class PMSystem
         $filter = new InputFilter();
         $pathFile = $filter->xssFilterHard(PATH_PLUGINS . $pluginName . "/config/schema.xml", 'path');
         if (file_exists( $pathFile )) {
-            return PMSystem::getSchema( $pathFile );
+            return PmSystem::getSchema( $pathFile );
         } else {
             return false;
         }
@@ -1231,9 +1204,9 @@ class PMSystem
     public static function solrEnv ($sysName = '')
     {
         if (empty( $sysName )) {
-            $conf = PMSystem::getSystemConfiguration();
+            $conf = PmSystem::getSystemConfiguration();
         } else {
-            $conf = PMSystem::getSystemConfiguration( '', '', $sysName );
+            $conf = PmSystem::getSystemConfiguration( '', '', $sysName );
         }
 
         if (! isset( $conf['solr_enabled'] ) || ! isset( $conf['solr_host'] ) || ! isset( $conf['solr_instance'] )) {
@@ -1251,7 +1224,7 @@ class PMSystem
     public static function getInstance()
     {
         if (is_null(self::$instance)) {
-            self::$instance = new PMSystem();
+            self::$instance = new PmSystem();
         }
 
         return self::$instance;
