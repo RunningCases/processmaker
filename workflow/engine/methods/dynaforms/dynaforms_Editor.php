@@ -59,7 +59,7 @@ if ($process->exists( $PRO_UID )) {
     print ("$PRO_UID doesn't exist, continue? yes") ;
 }
 
-$dynaform = new dynaform();
+$dynaform = new Dynaform();
 
 if ($dynaform->exists( $DYN_UID )) {
     $dynaform->load( $DYN_UID );

@@ -53,7 +53,7 @@ $_DBArray['ADDITIONAL_TABLES'] = $aTablesList;
 $_SESSION['_DBArray'] = $_DBArray;
 
 $dynUid = (isset( $_GET['DYN_UID'] )) ? urldecode( $_GET['DYN_UID'] ) : '';
-$dynaform = new dynaform();
+$dynaform = new Dynaform();
 if ($dynUid == '') {
     $aFields['DYN_UID'] = $dynUid;
 } else {

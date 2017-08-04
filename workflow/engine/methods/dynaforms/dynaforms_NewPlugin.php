@@ -53,7 +53,7 @@ if (($RBAC_Response = $RBAC->userCanAccess( "PM_FACTORY" )) != 1) {
 require_once ('classes/model/Dynaform.php');
 
 $dynUid = (isset( $_GET['DYN_UID'] )) ? urldecode( $_GET['DYN_UID'] ) : '';
-$dynaform = new dynaform();
+$dynaform = new Dynaform();
 if ($dynUid == '') {
     $aFields['DYN_UID'] = $dynUid;
 } else {

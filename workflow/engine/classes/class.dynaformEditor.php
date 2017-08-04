@@ -686,7 +686,7 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
         $file = G::decrypt($A, URL_KEY);
         $tmp = self::_getTmpData();
         if (!(isset($tmp['Properties']) && isset($tmp['useTmpCopy']))) {
-            $dynaform = new dynaform();
+            $dynaform = new Dynaform();
             $dynaform->load($DYN_UID);
             $form = new Form($file, PATH_DYNAFORM, SYS_LANG, true);
             $Properties = array('A' => $A, 'DYN_UID' => $dynaform->getDynUid(), 'PRO_UID' => $dynaform->getProUid(), 'DYN_TITLE' => $dynaform->getDynTitle(), 'DYN_TYPE' => $dynaform->getDynType(), 'DYN_DESCRIPTION' => $dynaform->getDynDescription(), 'WIDTH' => $form->width,
@@ -727,7 +727,7 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
             $file = G::decrypt($A, URL_KEY);
             $tmp = self::_getTmpData();
             if (!isset($tmp['useTmpCopy'])) {
-                $dynaform = new dynaform();
+                $dynaform = new Dynaform();
                 $dynaform->update($Fields);
             } else {
                 $tmp['Properties'] = $Fields;
@@ -828,7 +828,7 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
             }
             if (isset($tmp['useTmpCopy'])) {
                 /* Save Register */
-                $dynaform = new dynaform();
+                $dynaform = new Dynaform();
                 $dynaform->update($tmp['Properties']);
                 /* Save file */
                 $copyFirst = implode('', file(PATH_DYNAFORM . $fileFirst . '.xml'));
@@ -958,7 +958,7 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
         $file = G::decrypt($A, URL_KEY);
         try {
             /* Compare Properties */
-            $dynaform = new dynaform();
+            $dynaform = new Dynaform();
             $dynaform->load($DYN_UID);
             $form = new Form($file, PATH_DYNAFORM, SYS_LANG, true);
             $sp = array('A' => $A, 'DYN_UID' => $dynaform->getDynUid(), 'PRO_UID' => $dynaform->getProUid(), 'DYN_TITLE' => $dynaform->getDynTitle(), 'DYN_TYPE' => $dynaform->getDynType(), 'DYN_DESCRIPTION' => $dynaform->getDynDescription(), 'WIDTH' => $form->width, 'ENABLETEMPLATE' => $form->enableTemplate, 'MODE' => $form->mode
