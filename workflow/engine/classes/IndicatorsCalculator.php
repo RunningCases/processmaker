@@ -74,7 +74,7 @@ abstract class ReportingIndicatorTypeEnum extends BasicEnum {
 	const INBOX_STATUS = 1050;
 }
 
-class indicatorsCalculator
+class IndicatorsCalculator
 {
 	private $userReportingMetadata = array("tableName" => "USR_REPORTING", "keyField" => "PRO_UID");
 	private $processReportingMetadata = array("tableName" => "PRO_REPORTING", "keyField" => "PRO_UID");
