@@ -5,7 +5,6 @@
         "This file is @generated automatically"
     ],
     "content-hash": "b1965af4146852b5ea1aba13a19df7b6",
-    "hash": "36f7e39f89d6876f941a3d71c76261c1",
     "packages": [
         {
             "name": "bshaffer/oauth2-server-php",
@@ -480,7 +479,7 @@
                     "Monolog\\": "src/Monolog"
                 }
             },
-            "notification-url": "http://packagist.org/downloads/",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -809,7 +808,7 @@
                     "Psr\\Log\\": ""
                 }
             },
-            "notification-url": "http://packagist.org/downloads/",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
