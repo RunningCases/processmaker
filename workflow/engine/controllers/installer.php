@@ -80,36 +80,42 @@ class Installer extends Controller
         G::RenderPage( 'publish', 'extJs' );
     }
 
+    /**
+     * This function can be create a new workspace
+     * The user need permission PM_SETUP_ADVANCE for this action
+     * @return void
+    */
     public function newSite ()
     {
-        $textStep1 = G::LoadTranslation('ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP4_1');
-        $textStep2 = G::LoadTranslation('ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5');
+        if (!$this->pmIsInstalled()) {
+            $textStep1 = G::LoadTranslation('ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP4_1');
+            $textStep2 = G::LoadTranslation('ID_PROCESSMAKER_REQUIREMENTS_DESCRIPTION_STEP5');
 
-        $this->includeExtJS( 'installer/CardLayout', false );
-        $this->includeExtJS( 'installer/Wizard', false );
-        $this->includeExtJS( 'installer/Header', false );
-        $this->includeExtJS( 'installer/Card', false );
-        $this->includeExtJS( 'installer/newSite', false );
+            $this->includeExtJS('installer/CardLayout', false);
+            $this->includeExtJS('installer/Wizard', false);
+            $this->includeExtJS('installer/Header', false);
+            $this->includeExtJS('installer/Card', false);
+            $this->includeExtJS('installer/newSite', false);
+            $this->setJSVar('textStep1', $textStep1);
+            $this->setJSVar('textStep2', $textStep2);
+            $this->setJSVar('DB_ADAPTER', DB_ADAPTER);
+            $aux = explode(':', DB_HOST);
+            $this->setJSVar('DB_HOST', $aux[0]);
+            $this->setJSVar('DB_PORT', isset( $aux[1] ) ? $aux[1] : (DB_ADAPTER == 'mssql' ? '1433' : '3306'));
+            $this->setJSVar('DB_NAME', 'workflow');
+            $this->setJSVar('DB_USER', '');
+            $this->setJSVar('DB_PASS', '');
+            $this->setJSVar('pathConfig', PATH_CORE . 'config' . PATH_SEP);
+            $this->setJSVar('pathLanguages', PATH_LANGUAGECONT);
+            $this->setJSVar('pathPlugins', PATH_PLUGINS);
+            $this->setJSVar('pathXmlforms', PATH_XMLFORM);
+            $this->setJSVar('pathShared', PATH_DATA);
+            $this->setView('installer/newSite');
 
-        $this->setJSVar( 'textStep1', $textStep1 );
-        $this->setJSVar( 'textStep2', $textStep2 );
-
-        $this->setJSVar( 'DB_ADAPTER', DB_ADAPTER );
-        $aux = explode( ':', DB_HOST );
-        $this->setJSVar( 'DB_HOST', $aux[0] );
-        $this->setJSVar( 'DB_PORT', isset( $aux[1] ) ? $aux[1] : (DB_ADAPTER == 'mssql' ? '1433' : '3306') );
-        $this->setJSVar( 'DB_NAME', 'workflow' );
-        $this->setJSVar( 'DB_USER', '' );
-        $this->setJSVar( 'DB_PASS', '' );
-        $this->setJSVar( 'pathConfig', PATH_CORE . 'config' . PATH_SEP );
-        $this->setJSVar( 'pathLanguages', PATH_LANGUAGECONT );
-        $this->setJSVar( 'pathPlugins', PATH_PLUGINS );
-        $this->setJSVar( 'pathXmlforms', PATH_XMLFORM );
-        $this->setJSVar( 'pathShared', PATH_DATA );
-
-        $this->setView( 'installer/newSite' );
-
-        G::RenderPage( 'publish', 'extJs' );
+            G::RenderPage('publish', 'extJs');
+        } else {
+            $this->displayError();
+        }
     }
 
     public function getSystemInfo ()
@@ -414,22 +420,49 @@ class Installer extends Controller
     /**
      * function to create a workspace
      * in fact this function is calling appropiate functions for mysql and mssql
+     * need permission PM_SETUP_ADVANCE for this action
+     * @return void
      */
     public function createWorkspace ()
     {
-        $pathSharedPartner = trim( $_REQUEST['pathShared'] );
-        if (file_exists(trim($pathSharedPartner,PATH_SEP). PATH_SEP .'partner.info')) {
-            $this->systemName = $this->getSystemName($pathSharedPartner);
-            $_REQUEST["PARTNER_FLAG"] = true;
-        }
-        $this->setResponseType( 'json' );
-        if ($_REQUEST['db_engine'] == 'mysql') {
-            $info = $this->createMySQLWorkspace();
-        } else {
-            $info = $this->createMSSQLWorkspace();
-        }
+        if (!$this->pmIsInstalled()) {
+            $pathSharedPartner = trim($_REQUEST['pathShared']);
+            if (file_exists(trim($pathSharedPartner, PATH_SEP) . PATH_SEP . 'partner.info')) {
+                $this->systemName = $this->getSystemName($pathSharedPartner);
+                $_REQUEST["PARTNER_FLAG"] = true;
+            }
+            $this->setResponseType('json');
+            if ($_REQUEST['db_engine'] == 'mysql') {
+                $info = $this->createMySQLWorkspace();
+            } else {
+                $info = $this->createMSSQLWorkspace();
+            }
 
-        return $info;
+            return $info;
+        } else {
+            $this->displayError();
+        }
+    }
+
+    /**
+     * We check if processMaker is not installed
+     *
+     * @return boolean
+    */
+    private function pmIsInstalled(){
+        return file_exists(FILE_PATHS_INSTALLED);
+    }
+
+    /**
+     * Display an error when processMaker is already installed
+     *
+     * @return void
+     */
+    private function displayError(){
+        $this->setJSVar('messageError', G::LoadTranslation('ID_PROCESSMAKER_ALREADY_INSTALLED'));
+        $this->includeExtJS('installer/stopInstall');
+        $this->setView('installer/mainStopInstall');
+        G::RenderPage('publish', 'extJs');
     }
 
     public function forceTogenerateTranslationsFiles ($url)
