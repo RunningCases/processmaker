@@ -7,9 +7,9 @@
  * @access public
  */
 
-use \ProcessMaker\BusinessModel\Light\Tracker;
 use Maveriks\Util\ClassLoader;
 use \OAuth2\Request;
+use \ProcessMaker\BusinessModel\Light\Tracker;
 use \ProcessMaker\Services\OAuth2\Server;
 
 class Designer extends Controller
@@ -222,7 +222,6 @@ class Designer extends Controller
             }
             $client["tracker_designer"] = 1;
         }
-
 
         $authCode = $this->getAuthorizationCode($client);
 

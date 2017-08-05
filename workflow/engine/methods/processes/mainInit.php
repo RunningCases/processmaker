@@ -93,7 +93,7 @@ $oHeadPublisher->assign('SYS_SYS', SYS_SYS);
 $oHeadPublisher->assign('SYS_LANG', SYS_LANG);
 $oHeadPublisher->assign('SYS_SKIN', SYS_SKIN);
 $oHeadPublisher->assign('HTTP_SERVER_HOSTNAME', PmSystem::getHttpServerHostnameRequestsFrontEnd());
-$oHeadPublisher->assign('credentials', base64_encode(json_encode($designer->getCredentials())));
+$oHeadPublisher->assign('credentials', base64_encode(G::json_encode($designer->getCredentials())));
 
 $deleteCasesFlag = false;
 global $RBAC;
