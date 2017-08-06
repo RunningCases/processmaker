@@ -146,7 +146,8 @@ class RBAC
                 'getUsers' => array('PM_ALLCASES')
             ),
             'emailsAjax.php' => array(
-                'MessageList' => array('PM_USERS')
+                'MessageList' => array('PM_USERS'),
+                'updateStatusMessage' => array('PM_USERS'),
             )
         );
     }
