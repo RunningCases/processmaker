@@ -6,6 +6,22 @@ require_once 'classes/model/AppMessage.php';
 require_once 'classes/model/AppDelegation.php';
 require_once 'classes/model/Application.php';
 
+/** @var RBAC $RBAC */
+global $RBAC;
+switch ($RBAC->userCanAccess('PM_LOGIN')) {
+    case -2:
+        G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_SYSTEM', 'error', 'labels');
+        G::header('location: ../login/login');
+        die();
+        break;
+    case -1:
+        G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels');
+        G::header('location: ../login/login');
+        die();
+        break;
+}
+$RBAC->allows(basename(__FILE__), $req);
+
 switch($req){
     case 'MessageList':
         $start      = (isset($_REQUEST['start']))?      $_REQUEST['start']      : '0';

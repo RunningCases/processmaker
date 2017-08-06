@@ -144,8 +144,10 @@ class RBAC
                 'getProcessArray' => array('PM_ALLCASES'),
                 'getProcesses' => array('PM_ALLCASES'),
                 'getUsers' => array('PM_ALLCASES')
+            ),
+            'emailsAjax.php' => array(
+                'MessageList' => array('PM_USERS')
             )
-
         );
     }
 

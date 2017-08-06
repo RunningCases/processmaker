@@ -1981,7 +1981,7 @@ class G
      *
      * @return void
      */
-    public function SendTemporalMessage ($msgID, $strType, $sType = 'LABEL', $time = null, $width = null, $customLabels = null)
+    public static function SendTemporalMessage ($msgID, $strType, $sType = 'LABEL', $time = null, $width = null, $customLabels = null)
     {
         if (isset( $width )) {
             $_SESSION['G_MESSAGE_WIDTH'] = $width;
