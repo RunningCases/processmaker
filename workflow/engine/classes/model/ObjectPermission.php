@@ -383,10 +383,10 @@ class ObjectPermission extends BaseObjectPermission
         }
         switch ($obType) {
             case 'INPUT':
-                $oCriteria->add(
-                    $oCriteria->getNewCriterion(AppDocumentPeer::APP_DOC_TYPE, 'INPUT')->
-                    addOr($oCriteria->getNewCriterion(AppDocumentPeer::APP_DOC_TYPE, 'ATTACHED'))
-                );
+                $oCriteria->add(AppDocumentPeer::APP_DOC_TYPE, 'INPUT');
+                break;
+            case 'ATTACHED':
+                $oCriteria->add(AppDocumentPeer::APP_DOC_TYPE, 'ATTACHED');
                 break;
             case 'OUTPUT':
                 $oCriteria->add(AppDocumentPeer::APP_DOC_TYPE, 'OUTPUT');
@@ -399,9 +399,6 @@ class ObjectPermission extends BaseObjectPermission
         $result = array();
         while ($oDataset->next()) {
             $aRow = $oDataset->getRow();
-            if ($aRow['APP_DOC_TYPE'] == "ATTACHED") {
-                $aRow['APP_DOC_TYPE'] = "INPUT";
-            }
             if (!in_array($aRow['APP_DOC_UID'], $result)) {
                 array_push($result, $aRow['APP_DOC_UID']);
             }
