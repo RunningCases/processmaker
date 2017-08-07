@@ -178,8 +178,7 @@ class PluginAdapter
         foreach ($PMPluginRegistry as $propertyName => $propertyValue) {
             foreach ($propertyValue as $key => $plugin) {
                 if (is_array($plugin) &&
-                    ((array_key_exists('Namespace', $plugin) && $plugin['Namespace'] == $Namespace) ||
-                        (!is_int($key) && $key == $Namespace))
+                    (array_key_exists('Namespace', $plugin) && $plugin['Namespace'] == $Namespace)
                 ) {
                     $newStructurePlugin[$propertyName][] = $plugin;
                 } elseif (is_array($plugin) &&
@@ -187,6 +186,8 @@ class PluginAdapter
                     $plugin['pluginName'] == $Namespace
                 ) {
                     $newStructurePlugin[$propertyName][] = $plugin;
+                } elseif (!is_int($key) && $key == $Namespace) {
+                    $newStructurePlugin[$propertyName][$key] = $plugin;
                 } elseif (is_string($plugin) && $plugin == $Namespace) {
                     $newStructurePlugin[$propertyName][] = $plugin;
                 }

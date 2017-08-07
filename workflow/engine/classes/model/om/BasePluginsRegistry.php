@@ -67,13 +67,13 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
      * The value for the plugin_file field.
      * @var        string
      */
-    protected $plugin_file = '';
+    protected $plugin_file;
 
     /**
      * The value for the plugin_folder field.
      * @var        string
      */
-    protected $plugin_folder = '';
+    protected $plugin_folder;
 
     /**
      * The value for the plugin_setup_page field.
@@ -103,13 +103,13 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
      * The value for the plugin_enable field.
      * @var        boolean
      */
-    protected $plugin_enable = true;
+    protected $plugin_enable = false;
 
     /**
      * The value for the plugin_private field.
      * @var        boolean
      */
-    protected $plugin_private = true;
+    protected $plugin_private = false;
 
     /**
      * The value for the plugin_menus field.
@@ -596,7 +596,7 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->plugin_file !== $v || $v === '') {
+        if ($this->plugin_file !== $v) {
             $this->plugin_file = $v;
             $this->modifiedColumns[] = PluginsRegistryPeer::PLUGIN_FILE;
         }
@@ -618,7 +618,7 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
             $v = (string) $v;
         }
 
-        if ($this->plugin_folder !== $v || $v === '') {
+        if ($this->plugin_folder !== $v) {
             $this->plugin_folder = $v;
             $this->modifiedColumns[] = PluginsRegistryPeer::PLUGIN_FOLDER;
         }
@@ -722,7 +722,7 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
     public function setPluginEnable($v)
     {
 
-        if ($this->plugin_enable !== $v || $v === true) {
+        if ($this->plugin_enable !== $v || $v === false) {
             $this->plugin_enable = $v;
             $this->modifiedColumns[] = PluginsRegistryPeer::PLUGIN_ENABLE;
         }
@@ -738,7 +738,7 @@ abstract class BasePluginsRegistry extends BaseObject implements Persistent
     public function setPluginPrivate($v)
     {
 
-        if ($this->plugin_private !== $v || $v === true) {
+        if ($this->plugin_private !== $v || $v === false) {
             $this->plugin_private = $v;
             $this->modifiedColumns[] = PluginsRegistryPeer::PLUGIN_PRIVATE;
         }
