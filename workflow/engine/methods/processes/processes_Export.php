@@ -42,7 +42,7 @@ try {
             $projectName = $exporter->getProjectName();
             $getProjectName = $exporter->truncateName($projectName, false);
 
-            $version = ProcessMaker\Util\Common::getLastVersion($outputDir . $getProjectName . "-*.pmx") + 1;
+            $version = ProcessMaker\Util\Common::getLastVersionSpecialCharacters($outputDir, $getProjectName, "pmx") + 1;
             $outputFilename = sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx");
             $outputFilename = $exporter->saveExport($outputDir . $outputFilename);
         /*----------------------------------********---------------------------------*/
