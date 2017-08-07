@@ -152,6 +152,11 @@ class pmTables extends Controller
         $sFileName = $httpData->f;
 
         $realPath = $PUBLIC_ROOT_PATH . $sFileName;
+
+        if ($this->isValidFileToBeStreamed($realPath, $PUBLIC_ROOT_PATH) === false) {
+            throw new Exception("You are trying to access an unauthorized resource.");
+        }
+
         G::streamFile( $realPath, true );
         unlink( $realPath );
     }
@@ -205,6 +210,36 @@ class pmTables extends Controller
         }
         $tableSize = $tableSize - 8; // Prefix PMT_
         return $tableSize;
+    }
+
+    /**
+     * Validates if the file with the path $filePath is a valid one,
+     * that is, it must be a file within the temporal directory where the
+     * exported pmt files are created and must have one of the valid file
+     * extensions.
+     *
+     * @param $filePath, full path to the temporal file that will be streamed
+     * @param $tempDir, directory's path where the temporal files are created.
+     * @return bool
+     */
+    private function isValidFileToBeStreamed($filePath, $tempDir)
+    {
+        $result = true;
+        $validExtensionsForExporting = ['csv', 'pmt'];
+        $fileRealPath = realpath($filePath);
+        $tempDirRealPath = realpath($tempDir);
+
+        $pathInfo = pathinfo($fileRealPath);
+
+        if ($pathInfo ['dirname'] !== $tempDirRealPath) {
+            $result =  false;
+        }
+
+        if (!in_array($pathInfo['extension'], $validExtensionsForExporting)) {
+            $result =  false;
+        }
+
+        return $result;
     }
 }
 
