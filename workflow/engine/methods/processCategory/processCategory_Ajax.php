@@ -22,6 +22,20 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
+use ProcessMaker\Exception\RBACException;
+
+/** @var RBAC $RBAC */
+global $RBAC;
+switch ($RBAC->userCanAccess('PM_LOGIN')) {
+    case -2:
+        throw new RBACException('ID_USER_HAVENT_RIGHTS_SYSTEM', -2);
+        break;
+    case -1:
+        throw new RBACException('ID_USER_HAVENT_RIGHTS_PAGE', -1);
+        break;
+}
+$RBAC->allows(basename(__FILE__), $_REQUEST['action']);
+
 if (isset( $_REQUEST['action'] )) {
     switch ($_REQUEST['action']) {
         case 'processCategoryList':

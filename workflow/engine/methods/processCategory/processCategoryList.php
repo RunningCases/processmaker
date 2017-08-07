@@ -21,9 +21,12 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
+use ProcessMaker\Exception\RBACException;
+
+/** @var RBAC $RBAC */
+global $RBAC;
 if ($RBAC->userCanAccess( 'PM_SETUP' ) != 1 && $RBAC->userCanAccess( 'PM_SETUP_ADVANCE' ) != 1) {
-    G::SendTemporalMessage( 'krlos', 'error', 'labels' );
-    die();
+    throw new RBACException('ID_USER_HAVENT_RIGHTS_PAGE', -1);
 }
 
 $c = new Configurations();
