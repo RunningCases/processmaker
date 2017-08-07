@@ -9327,6 +9327,12 @@ msgid "[LABEL/ID_PASSWORD] Password"
 msgstr "Password"
 
 # TRANSLATION
+# LABEL/ID_PASSWORD_CONFIRM
+#: LABEL/ID_PASSWORD_CONFIRM
+msgid "[LABEL/ID_PASSWORD_CONFIRM] Confirm Password"
+msgstr "Confirm Password"
+
+# TRANSLATION
 # LABEL/ID_NOT_DEFINED
 #: LABEL/ID_NOT_DEFINED
 msgid "Not defined"
