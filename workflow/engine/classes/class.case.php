@@ -5788,8 +5788,8 @@ class Cases
      * @param string $tasUid
      * @param string $usrUid
      * @param string $action some action [VIEW, BLOCK, RESEND]
-     * @param string $delIndex
-     * @return Array within all user permitions all objects' types
+     * @param integer $delIndex
+     * @return array within all user permissions all objects' types
      */
     public function getAllObjectsFrom($proUid, $appUid, $tasUid = '', $usrUid = '', $action = '', $delIndex = 0)
     {
@@ -5808,6 +5808,7 @@ class Cases
         $result = array(
             "DYNAFORM" => array(),
             "INPUT" => array(),
+            "ATTACHMENT" => array(),
             "OUTPUT" => array(),
             "CASES_NOTES" => 0,
             "MSGS_HISTORY" => array()
@@ -5878,6 +5879,15 @@ class Cases
                             $opObjUid,
                             $aCase['APP_STATUS']
                         );
+                        //For Attachment
+                        $result['ATTACHMENT'] = $oObjectPermission->objectPermissionByOutputInput(
+                            $appUid,
+                            $proUid,
+                            $opTaskSource,
+                            'ATTACHED',
+                            $opObjUid,
+                            $aCase['APP_STATUS']
+                        );
 
                         $result['CASES_NOTES'] = 1;
                         /*----------------------------------********---------------------------------*/
@@ -5910,6 +5920,16 @@ class Cases
                             $proUid,
                             $opTaskSource,
                             'INPUT',
+                            $opObjUid,
+                            $aCase['APP_STATUS']
+                        );
+                        break;
+                    case 'ATTACHMENT':
+                        $result['ATTACHMENT'] = $oObjectPermission->objectPermissionByOutputInput(
+                            $appUid,
+                            $proUid,
+                            $opTaskSource,
+                            'ATTACHED',
                             $opObjUid,
                             $aCase['APP_STATUS']
                         );
@@ -5948,9 +5968,10 @@ class Cases
             }
         }
 
-        return Array(
+        return array(
             "DYNAFORMS" => $result['DYNAFORM'],
             "INPUT_DOCUMENTS" => $result['INPUT'],
+            "ATTACHMENTS" => $result['ATTACHMENT'],
             "OUTPUT_DOCUMENTS" => $result['OUTPUT'],
             "CASES_NOTES" => $result['CASES_NOTES'],
             "MSGS_HISTORY" => $result['MSGS_HISTORY']

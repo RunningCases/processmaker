@@ -1,6 +1,7 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
+use Behat\Behat\Exception\Exception;
 use \G;
 use \Cases;
 use \Criteria;
@@ -207,24 +208,22 @@ class ProcessPermissions
     /**
      * Save Process Permission
      *
-     * @var array $data. Data for Process Permission
-     * @var string $op_uid. Uid for Process Permission
+     * @var array $data, Data for Process Permission
+     * @var string $opUid, Uid for Process Permission
      *
      * @access public
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
      *
      * @return void
+     * @throws Exception
      */
-
-    public function saveProcessPermission($data, $op_uid = '')
+    public function saveProcessPermission($data, $opUid = '')
     {
         try {
             $data = array_change_key_case($data, CASE_UPPER);
 
             $this->validateProUid($data['PRO_UID']);
-            if ($op_uid != '') {
-                $op_uid  = $this->validateOpUid($op_uid);
+            if ($opUid != '') {
+                $opUid  = $this->validateOpUid($opUid);
             }
             if ($data['OP_USER_RELATION'] == "1") {
                 $this->validateUsrUid($data['USR_UID']);
@@ -257,6 +256,9 @@ class ProcessPermissions
                     }
                     $sObjectUID = $data['DYNAFORMS'];
                     break;
+                case 'ATTACHED':
+                    $sObjectUID = '';
+                    break;
                 case 'INPUT':
                     $data['INPUTS'] = $data['INPUTS'] == 0 ? '': $data['INPUTS'];
                     if ($data['INPUTS'] != '') {
@@ -273,11 +275,11 @@ class ProcessPermissions
                     break;
             }
             $oOP = new \ObjectPermission();
-            $permissionUid = ($op_uid != '') ? $op_uid : G::generateUniqueID();
+            $permissionUid = ($opUid != '') ? $opUid : G::generateUniqueID();
             $data['OP_UID'] = $permissionUid;
             $data['OP_OBJ_UID'] = $sObjectUID;
 
-            if ($op_uid == '') {
+            if ($opUid == '') {
                 $oOP->fromArray( $data, \BasePeer::TYPE_FIELDNAME );
                 $oOP->save();
                 $daraRes = $oOP->load($permissionUid);
