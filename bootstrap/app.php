@@ -12,11 +12,8 @@
 */
 
 $app = new Illuminate\Foundation\Application(
-    realpath(__DIR__.'/../')
+    realpath(__DIR__ . '/../')
 );
-
-// Change storage path
-$app->useStoragePath(realpath(__DIR__.'/../shared/'));
 
 /*
 |--------------------------------------------------------------------------
@@ -44,11 +41,11 @@ $app->singleton(
     Illuminate\Foundation\Exceptions\Handler::class
 );
 
-$app->configureMonologUsing(function($monolog) use ($app) {
+$app->configureMonologUsing(function ($monolog) use ($app) {
     $monolog->pushHandler(
         (new Monolog\Handler\RotatingFileHandler(
         // Set the log path
-            $app->storagePath().'/logs/processmaker.log',
+            $app->storagePath() . '/logs/processmaker.log',
             // Set the number of daily files you want to keep
             $app->make('config')->get('app.log_max_files', 5)
         ))->setFormatter(new Monolog\Formatter\LineFormatter(null, null, true, true))

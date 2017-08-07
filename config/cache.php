@@ -56,8 +56,13 @@ return [
                 env('MEMCACHED_USERNAME'),
                 env('MEMCACHED_PASSWORD'),
             ],
+            /**
+             * Memcached options, example:
+             *      Memcached::OPT_CONNECT_TIMEOUT  => 2000,
+             *
+             * @link http://php.net/manual/en/memcached.constants.php
+             */
             'options' => [
-                // Memcached::OPT_CONNECT_TIMEOUT  => 2000,
             ],
             'servers' => [
                 [

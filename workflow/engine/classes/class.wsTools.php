@@ -202,7 +202,7 @@ class workspaceTools
 
         $start = microtime(true);
         CLI::logging("> Update framework paths...\n");
-        $this->updatingFrameworkPaths($workSpace);
+        $this->updateFrameworkPaths($workSpace);
         $stop = microtime(true);
         CLI::logging("<*>   Update framework paths took " . ($stop - $start) . " seconds.\n");
     }
@@ -3909,17 +3909,17 @@ class workspaceTools
      * Updating framework directory structure
      *
      */
-    private function updatingFrameworkPaths($workSpace = SYS_SYS)
+    private function updateFrameworkPaths($workSpace = SYS_SYS)
     {
         $paths = [
             PATH_DATA.'framework' => 0770,
-            PATH_DATA.'framework'.DIRECTORY_SEPARATOR.'cache' => 0770,
+            PATH_DATA.'framework' . DIRECTORY_SEPARATOR.'cache' => 0770,
         ];
         foreach ($paths as $path => $permission) {
             if (!file_exists($path)) {
                 G::mk_dir($path, $permission);
             }
-            CLI::logging("    $path [".(file_exists($path) ? 'OK' : 'MISSING')."]\n");
+            CLI::logging("    $path [" . (file_exists($path) ? 'OK' : 'MISSING') . "]\n");
         }
     }
 }

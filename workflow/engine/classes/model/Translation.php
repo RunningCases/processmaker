@@ -285,7 +285,7 @@ class Translation extends BaseTranslation
     /* Load strings from plugin translation.php.
      * @parameter $languageId   (es|en|...).
     */
-    public function generateFileTranslationPlugin ($plugin, $languageId = '')
+    public static function generateFileTranslationPlugin ($plugin, $languageId = '')
     {
         if (!file_exists(PATH_PLUGINS . $plugin . PATH_SEP . 'translations' . PATH_SEP . 'translations.php')) {
             return;
