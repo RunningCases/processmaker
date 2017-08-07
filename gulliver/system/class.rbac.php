@@ -125,7 +125,7 @@ class RBAC
                 'saveProperties' => array(),
                 'getCaledarList' => array(),
                 'getPMVariables' => array(),
-                'generateBpmn' => array()
+                'generateBpmn' => array('PM_FACTORY')
             ),
             'home.php' => array(
                 'login' => array('PM_LOGIN'),
