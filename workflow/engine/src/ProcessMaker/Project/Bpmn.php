@@ -428,9 +428,13 @@ class Bpmn extends Handler
             self::log("Remove Activity: $actUid");
 
             $activity = ActivityPeer::retrieveByPK($actUid);
-            $activity->delete();
-            //TODO if the activity was removed, the related flows to that activity must be removed
+            if (isset($activity)) {
+                $activity->delete();
+                \BpmnFlow::removeAllRelated($actUid);
 
+            } else {
+                throw new \Exception(\G::LoadTranslation("ID_ACTIVITY_DOES_NOT_EXIST", array("act_uid", $actUid)));
+            }
             self::log("Remove Activity Success!");
         } catch (\Exception $e) {
             self::log("Exception: ", $e->getMessage(), "Trace: ", $e->getTraceAsString());

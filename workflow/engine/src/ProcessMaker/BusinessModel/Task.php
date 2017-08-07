@@ -1894,7 +1894,7 @@ class Task
         }
     }
 
-    public function getValidateSelfService($data)
+    public function hasPendingCases($data)
     {
         $paused = false;
         $data = array_change_key_case($data, CASE_LOWER);
