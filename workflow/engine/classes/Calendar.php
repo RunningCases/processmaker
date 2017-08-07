@@ -799,6 +799,10 @@ class Calendar extends CalendarDefinition
         return $return;
     }
 
+
+
+
+
     /**************SLA classes***************/
     public function dashCalculateDate ($iniDate, $duration, $formatDuration, $calendarData = array())
     {
@@ -824,7 +828,7 @@ class Calendar extends CalendarDefinition
     			$newDate = $onlyDate;
     			$hoursDuration -= (float)($secondRes/3600);
     		} else {
-    			$newDate = date('Y-m-d H:i:s', strtotime('+' . round((((float)$hoursDuration)*3600), 5) . ' seconds', strtotime($newDate)));
+    			$newDate = date('Y-m-d H:i:s', strtotime('+' . (((float)$hoursDuration)*3600) . ' seconds', strtotime($newDate)));
     			$hoursDuration = 0;
     		}
     	}
@@ -837,6 +841,8 @@ class Calendar extends CalendarDefinition
     	if ((is_null($finDate)) || ($finDate == '')) {
     		$finDate = date('Y-m-d H:i:s');
     	}
+    
+
         if ((strtotime($finDate)) <= (strtotime($iniDate))) {
             return 0.00;
         }
