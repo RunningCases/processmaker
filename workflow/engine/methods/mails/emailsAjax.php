@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Exception\RBACException;
+
 $req = (isset($_POST['request']))? $_POST['request']:((isset($_REQUEST['request']))? $_REQUEST['request'] : 'No hayyy tal');
 
 require_once 'classes/model/Content.php';
@@ -10,14 +13,10 @@ require_once 'classes/model/Application.php';
 global $RBAC;
 switch ($RBAC->userCanAccess('PM_LOGIN')) {
     case -2:
-        G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_SYSTEM', 'error', 'labels');
-        G::header('location: ../login/login');
-        die();
+        throw new RBACException('ID_USER_HAVENT_RIGHTS_SYSTEM', -2);
         break;
     case -1:
-        G::SendTemporalMessage('ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels');
-        G::header('location: ../login/login');
-        die();
+        throw new RBACException('ID_USER_HAVENT_RIGHTS_PAGE', -1);
         break;
 }
 $RBAC->allows(basename(__FILE__), $req);
