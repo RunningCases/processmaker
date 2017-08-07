@@ -110,11 +110,11 @@ class RBAC
                 'downloadFileHash' => array('PM_FACTORY')
             ),
             'processProxy.php' => array(
-                'categoriesList' => array(),
-                'getCategoriesList' => array(),
+                'categoriesList' => array('PM_SETUP_PROCESS_CATEGORIES'),
+                'getCategoriesList' => array('PM_FACTORY'),
                 'saveProcess' => array('PM_FACTORY'),
-                'changeStatus' => array(),
-                'changeDebugMode' => array(),
+                'changeStatus' => array('PM_FACTORY'),
+                'changeDebugMode' => array('PM_FACTORY'),
                 'getUsers' => array(),
                 'getGroups' => array(),
                 'assignActorsTask' => array(),
@@ -125,7 +125,7 @@ class RBAC
                 'saveProperties' => array(),
                 'getCaledarList' => array(),
                 'getPMVariables' => array(),
-                'generateBpmn' => array()
+                'generateBpmn' => array('PM_FACTORY')
             ),
             'home.php' => array(
                 'login' => array('PM_LOGIN'),
@@ -144,6 +144,9 @@ class RBAC
                 'getProcessArray' => array('PM_ALLCASES'),
                 'getProcesses' => array('PM_ALLCASES'),
                 'getUsers' => array('PM_ALLCASES')
+            ),
+            'newSite.php' => array(
+                'newSite.php' => array('PM_SETUP_ADVANCE')
             )
 
         );
