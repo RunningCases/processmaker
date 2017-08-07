@@ -21,18 +21,16 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
+use ProcessMaker\Exception\RBACException;
+
 global $RBAC;
-switch ($RBAC->userCanAccess( 'PM_USERS' )) {
-    case - 2:
-        G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_SYSTEM', 'error', 'labels' );
-        G::header( 'location: ../login/login' );
-        die();
+switch ($RBAC->userCanAccess('PM_USERS')) {
+    case -2:
+        throw new RBACException('ID_USER_HAVENT_RIGHTS_SYSTEM', -2);
         break;
-    case - 1:
-    case - 3:
-        G::SendTemporalMessage( 'ID_USER_HAVENT_RIGHTS_PAGE', 'error', 'labels' );
-        G::header( 'location: ../login/login' );
-        die();
+    case -1:
+    case -3:
+        throw new RBACException('ID_USER_HAVENT_RIGHTS_PAGE', -1);
         break;
 }
 
