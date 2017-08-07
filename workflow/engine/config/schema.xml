@@ -5537,7 +5537,7 @@
         <column name="EVN_UID" type="VARCHAR" size="32" required="true" />
         <column name="EMAIL_EVENT_FROM" type="VARCHAR" size="100" required="true" default="" />
         <column name="EMAIL_EVENT_TO" type="LONGVARCHAR" required="true" />
-        <column name="EMAIL_EVENT_SUBJECT" type="VARCHAR" size="150" required="false" default=""/>
+        <column name="EMAIL_EVENT_SUBJECT" type="VARCHAR" size="255" required="false" default=""/>
         <column name="PRF_UID" type="VARCHAR" size="32" required="false" default="" />
         <column name="EMAIL_SERVER_UID" type="VARCHAR" size="32" required="false" default="" />
     </table>
