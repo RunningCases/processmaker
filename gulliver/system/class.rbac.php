@@ -111,11 +111,11 @@ class RBAC
                 'downloadFileHash' => array('PM_FACTORY')
             ),
             'processProxy.php' => array(
-                'categoriesList' => array(),
-                'getCategoriesList' => array(),
+                'categoriesList' => array('PM_SETUP_PROCESS_CATEGORIES'),
+                'getCategoriesList' => array('PM_FACTORY'),
                 'saveProcess' => array('PM_FACTORY'),
-                'changeStatus' => array(),
-                'changeDebugMode' => array(),
+                'changeStatus' => array('PM_FACTORY'),
+                'changeDebugMode' => array('PM_FACTORY'),
                 'getUsers' => array(),
                 'getGroups' => array(),
                 'assignActorsTask' => array(),
@@ -126,7 +126,7 @@ class RBAC
                 'saveProperties' => array(),
                 'getCaledarList' => array(),
                 'getPMVariables' => array(),
-                'generateBpmn' => array()
+                'generateBpmn' => array('PM_FACTORY')
             ),
             'home.php' => array(
                 'login' => array('PM_LOGIN'),
@@ -145,6 +145,9 @@ class RBAC
                 'getProcessArray' => array('PM_ALLCASES'),
                 'getProcesses' => array('PM_ALLCASES'),
                 'getUsers' => array('PM_ALLCASES')
+            ),
+            'newSite.php' => array(
+                'newSite.php' => array('PM_SETUP_ADVANCE')
             )
 
         );
@@ -357,8 +360,6 @@ class RBAC
             "PER_NAME" => "Edit User profile Default Cases Menu Options"
         ), array("PER_UID" => "00000000000000000000000000000064", "PER_CODE" => "PM_REASSIGNCASE_SUPERVISOR",
             "PER_NAME" => "Reassign case supervisor"
-        ), array("PER_UID" => "00000000000000000000000000000065", "PER_CODE" => "PM_SETUP_CUSTOM_CASES_LIST",
-            "PER_NAME" => "Setup Custom Cases List"
         )
         );
         return $permissionsAdmin;
