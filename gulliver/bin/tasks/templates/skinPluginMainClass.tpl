@@ -4,8 +4,6 @@
  *  
  */
 
-;
-
 class {className}Plugin extends PMPlugin {
   
   function {className}Plugin($sNamespace, $sFilename = null) {

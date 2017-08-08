@@ -1,7 +1,5 @@
 <?php
 
-;
-
 try {
   //SYS_SYS     //Workspace name
   //PROCESS     //Process UID
