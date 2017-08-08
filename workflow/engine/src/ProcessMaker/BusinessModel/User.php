@@ -1220,7 +1220,7 @@ class User
             if (!is_null($sortField) && trim($sortField) != "") {
                 //SQL Injection via 'sortField' parameter
                 if (!in_array($sortField, UsersPeer::getFieldNames(BasePeer::TYPE_FIELDNAME))) {
-                    throw new Exception('Invalid sortField parameter');
+                    throw new Exception(G::LoadTranslation('ID_INVALID_VALUE_FOR', array('$sortField')));
                 }
                 $sortField = strtoupper($sortField);
 
@@ -1598,7 +1598,7 @@ class User
         if ($sort != '') {
             //SQL Injection via 'sort' parameter
             if (!in_array($sort, UsersPeer::getFieldNames(BasePeer::TYPE_FIELDNAME))) {
-                throw new Exception('Invalid sort parameter');
+                throw new Exception(G::LoadTranslation('ID_INVALID_VALUE_FOR', array('$sort')));
             }
             if ($dir == 'ASC') {
                 $oCriteria->addAscendingOrderByColumn($sort);
