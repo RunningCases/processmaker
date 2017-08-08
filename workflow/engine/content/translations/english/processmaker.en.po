@@ -15440,8 +15440,13 @@ msgid "Remove selected"
 msgstr "Remove selected"
 
 # TRANSLATION
-# LABEL/ENTER_VALID_URL
-#: LABEL/ENTER_VALID_URL
+# LABEL/ID_SELECT_DYNAFORM_USE_IN_CASE
+#: LABEL/ID_SELECT_DYNAFORM_USE_IN_CASE
+msgid "The \"dyn_uid\" parameter is required to configure a Web Entry of type \"Single Dynaform\""
+msgstr "The \"dyn_uid\" parameter is required to configure a Web Entry of type \"Single Dynaform\""
+
+# LABEL/ID_ENTER_VALID_URL
+#: LABEL/ID_ENTER_VALID_URL
 msgid "Enter a valid URL to redirect the browser after the web entry is completed"
 msgstr "Enter a valid URL to redirect the browser after the web entry is completed"
 
