@@ -153,7 +153,7 @@ class RBAC
             ),
             'emailsAjax.php' => array(
                 'MessageList' => array('PM_SETUP', 'PM_SETUP_LOGS'),
-                'updateStatusMessage' => array(),
+                'updateStatusMessage' => array('PM_SETUP', 'PM_SETUP_LOGS'),
             )
         );
     }
