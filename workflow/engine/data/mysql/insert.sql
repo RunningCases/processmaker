@@ -3823,6 +3823,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_INSTRUCTIONS','en','Instructions','2014-01-15') ,
 ( 'LABEL','ID_NOT_REQUIRED','en','Not Required','2014-01-15') ,
 ( 'LABEL','DYNAFIELD_ALREADY_EXIST','en','The variable name already exists!','2015-04-24') ,
+( 'LABEL','DYNAFIELD_PHPNAME_ALREADY_EXIST','en','Name error encountered when creating the variable: {0}. Please rename the variable you are creating with a unique name. Avoid differentiating similarly-named variables with only capitalization and ''_'' characters.','2017-08-09') ,
 ( 'LABEL','DYNAFIELD_EMPTY','en','The Field Name is empty','2014-10-21') ,
 ( 'LABEL','DYNAFIELD_NODENAME_NUMBER','en','The field name should not start with a number','2014-01-15') ,
 ( 'LABEL','ID_EMPTY_NODENAME','en','The name field is empty','2014-01-15') ,
