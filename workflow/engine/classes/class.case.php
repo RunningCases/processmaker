@@ -1386,35 +1386,44 @@ class Cases
      *
      * @name searchOpenPreviousTasks,
      * @param string $taskUid
-     * @param string $sAppUid
-     * @param array $aPreviousTasks optional array that serves to trace the task routes and avoid infinite loops.
-     * @return $aThreads
+     * @param string $appUid
+     * @param array $previousTasks, optional array that serves to trace the task routes and avoid infinite loops.
+     * @return array, information about the threads in the case
      */
-    public function searchOpenPreviousTasks($taskUid, $sAppUid, $aPreviousTasks = array())
+    public function searchOpenPreviousTasks($taskUid, $appUid, $previousTasks = array())
     {
-        //in this array we are storing all open delegation rows.
-        $aTaskReviewed = array();
+        //In this array we are storing all open delegation rows.
+        $threads = array();
 
-        //check if this task ( $taskUid ) has open delegations
-        $delegations = $this->getReviewedTasks($taskUid, $sAppUid);
+        //Check if this $taskUid has open delegations, this is a single review
+        $threads = $this->getReviewedTasks($taskUid, $appUid);
 
-        if ($delegations !== false) {
-            if (count($delegations['open']) > 0) {
-                //there is an open delegation, so we need to return the delegation row
-                return $delegations['open'];
+        if ($threads !== false) {
+            if (count($threads['open']) > 0) {
+                //There is an open delegation, so we need to return the delegation row
+                return $threads['open'];
             } else {
-                if(count($delegations['paused']) > 0){
+                if (count($threads['paused']) > 0) {
                     //there is an paused delegation, so we need to return the delegation row
-                    return $delegations['paused'];
-                }else{
-                    return array(); //returning empty array
+                    return $threads['paused'];
                 }
             }
         }
-        // if not we check previous tasks
-        // until here this task has not appdelegations records.
-        // get all previous task from $taskUid, and return open delegations rows, if there are
+        //Search the open delegations in the previous task, this is a recursive review
+        $threads = $this->getReviewedTasksRecursive($taskUid, $appUid, $previousTasks);
+        return $threads;
+    }
 
+    /**
+     * This function get the last open task
+     * Usually is used when we have a SEC-JOIN and need to review if we need to route the case
+     * @param string $taskUid
+     * @param string $appUid
+     * @param array $previousTasks
+     * @return array $taskReviewed
+    */
+    public function getReviewedTasksRecursive($taskUid, $appUid, $previousTasks) {
+        $taskReviewed = array();
         $oCriteria = new Criteria('workflow');
         $oCriteria->add(RoutePeer::ROU_NEXT_TASK, $taskUid);
         $oDataset = RoutePeer::doSelectRs($oCriteria);
@@ -1422,33 +1431,27 @@ class Cases
 
         while ($oDataset->next()) {
             $aRow = $oDataset->getRow();
-
-            $delegations = $this->getReviewedTasks($aRow['TAS_UID'], $sAppUid);
+            $delegations = $this->getReviewedTasks($aRow['TAS_UID'], $appUid);
 
             if ($delegations !== false) {
                 if (count($delegations['open']) > 0) {
                     //there is an open delegation, so we need to return the delegation row
-                    $aTaskReviewed = array_merge($aTaskReviewed, $delegations['open']);
-                } else {
-                    if ($aRow['ROU_TYPE'] == 'PARALLEL-BY-EVALUATION') {
-                        $aTaskReviewed = array();
-                    } else {
-                        //$aTaskReviewed = array_merge($aTaskReviewed, $delegations['closed']);
-                    }
+                    $taskReviewed = array_merge($taskReviewed, $delegations['open']);
+                } elseif ($aRow['ROU_TYPE'] == 'PARALLEL-BY-EVALUATION') {
+                    $taskReviewed = array();
                 }
-            } else {
-                if (!in_array($aRow['TAS_UID'], $aPreviousTasks)) {
-                    // storing the current task uid of the task currently checked
-                    $aPreviousTasks[] = $aRow['TAS_UID'];
-                    // passing the array of previous tasks in oprder to avoid an infinite loop that prevents
-                    $openPreviousTask = $this->searchOpenPreviousTasks($aRow['TAS_UID'], $sAppUid, $aPreviousTasks);
-                    if (count($aPreviousTasks) > 0) {
-                        $aTaskReviewed = array_merge($aTaskReviewed, $openPreviousTask);
-                    }
+            } elseif (!in_array($aRow['TAS_UID'], $previousTasks)) {
+                //Storing the current task uid of the task currently checked
+                $previousTasks[] = $aRow['TAS_UID'];
+                //Passing the array of previous tasks in order to avoid an infinite loop that prevents
+                $openPreviousTask = $this->searchOpenPreviousTasks($aRow['TAS_UID'], $appUid, $previousTasks);
+                if (count($previousTasks) > 0) {
+                    $taskReviewed = array_merge($taskReviewed, $openPreviousTask);
                 }
             }
         }
-        return $aTaskReviewed;
+
+        return $taskReviewed;
     }
 
     /**
