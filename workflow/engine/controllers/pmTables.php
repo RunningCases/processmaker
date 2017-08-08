@@ -228,7 +228,7 @@ class pmTables extends Controller
 
         $pathInfo = pathinfo($fileName);
 
-        if ($pathInfo ['dirname'] !== '.') {
+        if ($pathInfo['dirname'] !== '.') {
             $result =  false;
         }
 
