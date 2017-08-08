@@ -38,7 +38,8 @@ $aFields['URL'] = '';
 if (!empty($_GET['u'])) {
     //clean url with protocols
     $flagUrl = true;
-    $protocols = ['https://', 'http://', 'ftp://', 'www.'];
+    //Most used protocols
+    $protocols = ['https://', 'http://', 'ftp://', 'sftp://','smb://', 'file:', 'mailto:'];
     foreach ($protocols as $protocol) {
         if (strpos($_GET['u'], $protocol) !== false) {
             $_GET['u'] = '';
