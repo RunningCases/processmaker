@@ -31,7 +31,8 @@ use \BpmnLanePeer as LanePeer;
 use \BasePeer;
 use \Criteria as Criteria;
 use \ResultSet as ResultSet;
-
+use \BpmnFlow;
+use \G;
 use ProcessMaker\Util\Common;
 use ProcessMaker\Exception;
 
@@ -430,10 +431,10 @@ class Bpmn extends Handler
             $activity = ActivityPeer::retrieveByPK($actUid);
             if (isset($activity)) {
                 $activity->delete();
-                \BpmnFlow::removeAllRelated($actUid);
+                BpmnFlow::removeAllRelated($actUid);
 
             } else {
-                throw new \Exception(\G::LoadTranslation("ID_ACTIVITY_DOES_NOT_EXIST", array("act_uid", $actUid)));
+                throw new \Exception(G::LoadTranslation("ID_ACTIVITY_DOES_NOT_EXIST", array("act_uid", $actUid)));
             }
             self::log("Remove Activity Success!");
         } catch (\Exception $e) {

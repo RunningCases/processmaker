@@ -1894,6 +1894,11 @@ class Task
         }
     }
 
+    /**
+     * This method verify if an activity has cases
+     * @param $data
+     * @return \stdclass
+     */
     public function hasPendingCases($data)
     {
         $paused = false;

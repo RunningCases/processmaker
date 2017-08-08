@@ -139,8 +139,6 @@ class Activity extends Api
      * This method remove an activity and all related components
      * @param string $prj_uid {@min 32} {@max 32}
      * @param string $act_uid {@min 32} {@max 32}
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
      * @return array
      * @access protected
      * @class  AccessControl {@permission PM_FACTORY}
@@ -154,7 +152,7 @@ class Activity extends Api
             $task->setArrayParamException(array("taskUid" => "act_uid"));
 
             $response = $task->hasPendingCases(array("act_uid" => $act_uid, "case_type" => "assigned"));
-            if ($response->result != false) {
+            if ($response->result !== false) {
                 $project = new \ProcessMaker\Project\Adapter\BpmnWorkflow();
                 $prj = $project->load($prj_uid);
                 $prj->removeActivity($act_uid);
