@@ -3025,6 +3025,7 @@ INSERT INTO TRANSLATION (TRN_CATEGORY,TRN_ID,TRN_LANG,TRN_VALUE,TRN_UPDATE_DATE 
 ( 'LABEL','ID_CONFIRM_DELETE_WEB_ENTRY','en','Do you want to delete current web entry?','2014-01-15') ,
 ( 'LABEL','ID_WEB_ENTRY_SUCCESS_DELETE','en','Web Entry deleted correctly','2014-01-15') ,
 ( 'LABEL','ID_PASSWORD','en','Password','2014-01-15') ,
+( 'LABEL','ID_PASSWORD_CONFIRM','en','Confirm Password','2017-07-25') ,
 ( 'LABEL','ID_NOT_DEFINED','en','Not defined','2014-01-15') ,
 ( 'LABEL','ID_WEB_ENTRY_SUCCESS_NEW','en','Web Entry has been created correctly.','2014-01-15') ,
 ( 'LABEL','ID_REMOVE_ALL_BUTTON_FACE','en','<<','2014-01-15') ,

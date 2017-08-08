@@ -530,10 +530,16 @@ class AppDocument extends BaseAppDocument
         return $documents;
     }
 
-    public function exists ($sAppDocUid, $iVersion)
+    /**
+     * This function check if exist a document
+     * @param string $appDocUid, Uid of the document
+     * @param integer $version,
+     * @return object
+    */
+    public function exists ($appDocUid, $version = 1)
     {
-        $oAppDocument = AppDocumentPeer::retrieveByPK( $sAppDocUid, $iVersion );
-        return (is_object( $oAppDocument ) && get_class( $oAppDocument ) == 'AppDocument');
+        $oAppDocument = AppDocumentPeer::retrieveByPK($appDocUid, $version);
+        return (is_object($oAppDocument) && get_class($oAppDocument) == 'AppDocument');
     }
 
     /**
