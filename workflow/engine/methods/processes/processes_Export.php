@@ -21,6 +21,7 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
+use  ProcessMaker\Util\Common;
 
 $response = new StdClass();
 $outputDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
@@ -42,7 +43,7 @@ try {
             $projectName = $exporter->getProjectName();
             $getProjectName = $exporter->truncateName($projectName, false);
 
-            $version = ProcessMaker\Util\Common::getLastVersionSpecialCharacters($outputDir, $getProjectName, "pmx") + 1;
+            $version = Common::getLastVersionSpecialCharacters($outputDir, $getProjectName, "pmx") + 1;
             $outputFilename = sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx");
             $outputFilename = $exporter->saveExport($outputDir . $outputFilename);
         /*----------------------------------********---------------------------------*/

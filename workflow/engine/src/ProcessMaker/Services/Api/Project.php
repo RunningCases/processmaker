@@ -10,6 +10,7 @@ use \ProcessMaker\BusinessModel\Validator;
 use \ProcessMaker\BusinessModel\Migrator\GranularExporter;
 use \ProcessMaker\BusinessModel\Migrator\ExportObjects;
 use \ProcessMaker\Util\IO\HttpStream;
+use \ProcessMaker\Util\Common;
 
 /**
  * Class Project
@@ -182,7 +183,7 @@ class Project extends Api
         $getProjectName = $exporter->truncateName($exporter->getProjectName(), false);
 
         $outputDir = PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP . "files" . PATH_SEP . "output" . PATH_SEP;
-        $version = \ProcessMaker\Util\Common::getLastVersionSpecialCharacters($outputDir, $getProjectName, "pmx") + 1;
+        $version = Common::getLastVersionSpecialCharacters($outputDir, $getProjectName, "pmx") + 1;
         $outputFilename = $outputDir . sprintf("%s-%s.%s", str_replace(" ", "_", $getProjectName), $version, "pmx");
 
         $exporter->setMetadata("export_version", $version);
