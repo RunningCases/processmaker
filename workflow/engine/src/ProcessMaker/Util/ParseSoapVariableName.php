@@ -15,6 +15,7 @@ class ParseSoapVariableName
      * @param array  $field
      * @param string $name
      * @param object $value
+     * @return void
      */
     public function buildVariableName(&$field, $name, $value)
     {
