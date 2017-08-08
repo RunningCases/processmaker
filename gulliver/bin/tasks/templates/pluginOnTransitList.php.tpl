@@ -8,8 +8,6 @@
   //if (($RBAC_Response = $RBAC->userCanAccess("PM_CASES"))!=1) return $RBAC_Response;
 
   /* Includes */
-;
-;
 
   /* GET , POST & $_SESSION Vars */
   $conf = new Configurations();

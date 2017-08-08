@@ -1,5 +1,4 @@
 <?php 
-;
   
   print "this is a default step for {className}";
   krumo::session ();

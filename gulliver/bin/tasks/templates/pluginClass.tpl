@@ -83,7 +83,6 @@
       $_DBArray['users']  = $aUsers;
       $_SESSION['_DBArray'] = $_DBArray;
       
-;
       $oCriteria = new Criteria('dbarray');
       $oCriteria->setDBArrayTable('users');
       $oCriteria->addDescendingOrderByColumn('USR_USERNAME');

@@ -70,6 +70,7 @@ class RBAC
     public $singleSignOn = false;
 
     private static $instance = null;
+    public $authorizedActions = array();
 
     public function __construct ()
     {
