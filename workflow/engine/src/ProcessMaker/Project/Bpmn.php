@@ -34,7 +34,7 @@ use \ResultSet as ResultSet;
 use \BpmnFlow;
 use \G;
 use ProcessMaker\Util\Common;
-use ProcessMaker\Exception;
+use \Exception;
 
 /**
  * Class Bpmn
@@ -432,9 +432,8 @@ class Bpmn extends Handler
             if (isset($activity)) {
                 $activity->delete();
                 BpmnFlow::removeAllRelated($actUid);
-
             } else {
-                throw new \Exception(G::LoadTranslation("ID_ACTIVITY_DOES_NOT_EXIST", array("act_uid", $actUid)));
+                throw new Exception(G::LoadTranslation("ID_ACTIVITY_DOES_NOT_EXIST", array("act_uid", $actUid)));
             }
             self::log("Remove Activity Success!");
         } catch (\Exception $e) {

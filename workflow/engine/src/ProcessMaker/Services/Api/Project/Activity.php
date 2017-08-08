@@ -3,6 +3,9 @@ namespace ProcessMaker\Services\Api\Project;
 
 use \ProcessMaker\Services\Api;
 use \Luracast\Restler\RestException;
+use ProcessMaker\Project\Adapter\BpmnWorkflow;
+use ProcessMaker\BusinessModel\Task;
+use \Exception;
 
 /**
  * Project\Activity Api Controller
@@ -147,19 +150,19 @@ class Activity extends Api
     public function doDeleteProjectActivity($prj_uid, $act_uid)
     {
         try {
-            $task = new \ProcessMaker\BusinessModel\Task();
+            $task = new Task();
             $task->setFormatFieldNameInUppercase(false);
             $task->setArrayParamException(array("taskUid" => "act_uid"));
 
             $response = $task->hasPendingCases(array("act_uid" => $act_uid, "case_type" => "assigned"));
             if ($response->result !== false) {
-                $project = new \ProcessMaker\Project\Adapter\BpmnWorkflow();
+                $project = new BpmnWorkflow();
                 $prj = $project->load($prj_uid);
                 $prj->removeActivity($act_uid);
             } else {
                 throw new RestException(403, $response->message);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $resCode = $e->getCode() == 0 ? Api::STAT_APP_EXCEPTION : $e->getCode();
             throw new RestException($resCode, $e->getMessage());
         }
