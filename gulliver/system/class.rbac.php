@@ -149,14 +149,14 @@ class RBAC
                 'newSite.php' => array('PM_SETUP_ADVANCE')
             ),
             'processCategory_Ajax.php' => array(
-                'processCategoryList' => array('PM_SETUP', 'PM_SETUP_ADVANCE'),
-                'updatePageSize' => array('PM_SETUP', 'PM_SETUP_ADVANCE'),
-                'checkCategoryName' => array('PM_SETUP', 'PM_SETUP_ADVANCE'),
-                'saveNewCategory' => array('PM_SETUP', 'PM_SETUP_ADVANCE'),
-                'checkEditCategoryName' => array('PM_SETUP', 'PM_SETUP_ADVANCE'),
-                'updateCategory' => array('PM_SETUP', 'PM_SETUP_ADVANCE'),
-                'canDeleteCategory' => array('PM_SETUP', 'PM_SETUP_ADVANCE'),
-                'deleteCategory' => array('PM_SETUP', 'PM_SETUP_ADVANCE')
+                'processCategoryList' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
+                'updatePageSize' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
+                'checkCategoryName' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
+                'saveNewCategory' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
+                'checkEditCategoryName' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
+                'updateCategory' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
+                'canDeleteCategory' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
+                'deleteCategory' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES')
             )
         );
     }

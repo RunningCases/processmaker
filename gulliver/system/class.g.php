@@ -638,7 +638,7 @@ class G
      * @param string $strSkin
      * @return void
      */
-    public function RenderPage ($strTemplate = "default", $strSkin = SYS_SKIN, $objContent = null, $layout = '')
+    public static function RenderPage ($strTemplate = "default", $strSkin = SYS_SKIN, $objContent = null, $layout = '')
     {
         global $G_CONTENT;
         global $G_TEMPLATE;
@@ -5701,7 +5701,7 @@ class G
     *
     * @return showRes($string)
     */
-    public function outRes ($sInfVar)
+    public static function outRes ($sInfVar)
     {
         echo $sInfVar;
     }
