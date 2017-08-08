@@ -36,6 +36,10 @@ class WebEntryEventTest extends \WorkflowTestCase
                               'ID_UNDEFINED_VALUE_IS_REQUIRED({0})');
         $this->setTranslation('ID_WEB_ENTRY_EVENT_DOES_NOT_EXIST',
                               'ID_WEB_ENTRY_EVENT_DOES_NOT_EXIST({0})');
+        $this->setTranslation('ID_INVALID_VALUE_ONLY_ACCEPTS_VALUES',
+                              'ID_INVALID_VALUE_ONLY_ACCEPTS_VALUES({0},{1})');
+        $this->setTranslation('ID_DYNAFORM_IS_NOT_ASSIGNED_TO_ACTIVITY',
+                              'ID_DYNAFORM_IS_NOT_ASSIGNED_TO_ACTIVITY({0},{1})');
     }
 
     /**
@@ -58,7 +62,7 @@ class WebEntryEventTest extends \WorkflowTestCase
         $this->assertNotNull($entryEvents[0]['TAS_UID']);
         $this->assertNull($entryEvents[0]['WE_CUSTOM_TITLE']);
         $this->assertEquals($entryEvents[0]['WE_AUTHENTICATION'], 'ANONYMOUS');
-        $this->assertEquals($entryEvents[0]['WE_HIDE_INFORMATION_BAR'], '0');
+        $this->assertEquals($entryEvents[0]['WE_HIDE_INFORMATION_BAR'], '1');
         $this->assertEquals($entryEvents[0]['WE_CALLBACK'], 'PROCESSMAKER');
         $this->assertNull($entryEvents[0]['WE_CALLBACK_URL']);
         $this->assertEquals($entryEvents[0]['WE_LINK_GENERATION'], 'DEFAULT');
@@ -76,7 +80,7 @@ class WebEntryEventTest extends \WorkflowTestCase
         $this->assertCount(3, $entryEvents);
         $this->assertNull($entryEvents[0]['WE_CUSTOM_TITLE']);
         $this->assertEquals($entryEvents[0]['WE_AUTHENTICATION'], 'ANONYMOUS');
-        $this->assertEquals($entryEvents[0]['WE_HIDE_INFORMATION_BAR'], '0');
+        $this->assertEquals($entryEvents[0]['WE_HIDE_INFORMATION_BAR'], '1');
         $this->assertEquals($entryEvents[0]['WE_CALLBACK'], 'PROCESSMAKER');
         $this->assertNull($entryEvents[0]['WE_CALLBACK_URL']);
         $this->assertEquals($entryEvents[0]['WE_LINK_GENERATION'], 'DEFAULT');
@@ -158,7 +162,6 @@ class WebEntryEventTest extends \WorkflowTestCase
             $processUid,
             $entryEvents,
             [
-                'WEE_URL'                 => $this->domain."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
                 'WE_TYPE'                 => "MULTIPLE",
                 'WE_CUSTOM_TITLE'         => $this->customTitle,
                 'WE_AUTHENTICATION'       => 'ANONYMOUS',
@@ -213,14 +216,11 @@ class WebEntryEventTest extends \WorkflowTestCase
         $this->assertCount(1, $entryEvents);
         $rows = $this->getCombinationsFor([
             'WE_LINK_GENERATION' => ['DEFAULT', 'ADVANCED'],
-            'WEE_URL'            => [
-                $this->domain."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
-                null
-            ],
             'WEE_STATUS'         => ['ENABLED', null],
             'WE_TYPE'            => ['MULTIPLE'],
-            'WE_LINK_SKIN'       => [SYS_SKIN, null],
-            'WE_LINK_LANGUAGE'   => [SYS_LANG, null],
+            'WE_LINK_SKIN'       => [SYS_SKIN],
+            'WE_LINK_LANGUAGE'   => [SYS_LANG],
+            'WE_LINK_DOMAIN'     => ['domain.localhost'],
         ]);
         $criteria = new \Criteria();
         $criteria->add(\BpmnEventPeer::PRJ_UID, $processUid);
@@ -323,12 +323,11 @@ class WebEntryEventTest extends \WorkflowTestCase
 
         $rows = $this->getCombinationsFor([
             'WE_LINK_GENERATION' => ['DEFAULT', 'ADVANCED'],
-            'WEE_URL'            => [
-                $this->domain."/sys".SYS_SYS."/".SYS_LANG."/".SYS_SKIN."/".$processUid."/custom.php",
-                null
-            ],
             'DYN_UID'            => $dynaformIds,
             'USR_UID'            => [null, $this->adminUid, static::SKIP_VALUE],
+            'WE_LINK_SKIN'       => [SYS_SKIN],
+            'WE_LINK_LANGUAGE'   => [SYS_LANG],
+            'WE_LINK_DOMAIN'     => [$this->domain],
         ]);
         foreach ($rows as $row) {
             try {

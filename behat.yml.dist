@@ -1,37 +1,15 @@
 # behat.yml
 default:
-    context:
-        parameters:
-            base_url: http://processmaker-ip-or-domain/api/1.0/[workspace]/
-            access_token: e79057f4276661bedb6154eed3834f6cbd738853
-            client_id: x-pm-local-client
-            client_secret: 179ad45c6ce2cb97cf1029e212046e81
-            #uploadFilesFolder: /opt/uploadfiles
-            #cd5cff9b2e3ebabf49e276e47e977fab5988c00e
-            login_url: http://processmaker-ip-or-domain/sys[workspace]/en/neoclassic/login/login
-            authentication_url: http://processmaker-ip-or-domain/sys[workspace]/en/neoclassic/login/authentication.php
-            oauth_app_url: http://processmaker-ip-or-domain/sys[workspace]/en/neoclassic/oauth2/clientSetupAjax
-            oauth_authorization_url: http://processmaker-ip-or-domain/[workspace]/oauth2/authorize
-            user_name: <your-admin-username>
-            user_password: <your-admin-password>
-
-            # Database connection parameters
-            # To Mysql
-            mys_db_type: mysql
-            mys_db_server: <your-mysql-server-ip>
-            mys_db_name: <your-db-name>
-            mys_db_username: <your-db-username>
-            mys_db_password:<your-db-password>
-            mys_db_port: 3306
-            mys_db_encode: utf8
-            mys_db_description: Mysql connection
-
-            # To SQL Server
-            sqlsrv_db_type: mssql
-            sqlsrv_db_server: <your-myssql-server-ip>
-            sqlsrv_db_name: <your-db-name>
-            sqlsrv_db_username: <your-db-username>
-            sqlsrv_db_password: <your-db-password>
-            sqlsrv_db_port: 1433
-            sqlsrv_db_encode: utf8
-            sqlsrv_db_description: Microsoft SQL Server connection
+    suites:
+        webentry2_features:
+            paths:
+                - %paths.base%/features/webentry2
+                - %paths.base%/features/test
+            contexts:
+                - FeatureContext:
+                    parameters:
+                        webDriverHost: "http://localhost:4444"
+                        browser: "chrome"
+                        capabilities:
+                            browserName: chrome
+                            platform: ANY

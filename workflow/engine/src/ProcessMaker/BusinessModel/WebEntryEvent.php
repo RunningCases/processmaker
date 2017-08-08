@@ -542,6 +542,12 @@ class WebEntryEvent
             unset($arrayData["PRJ_UID"]);
             unset($arrayData["WEE_WE_UID"]);
             unset($arrayData["WEE_WE_TAS_UID"]);
+            if (empty($arrayData["WE_LINK_SKIN"])) {
+                unset($arrayData["WE_LINK_SKIN"]);
+            }
+            if (empty($arrayData["WE_LINK_LANGUAGE"])) {
+                unset($arrayData["WE_LINK_LANGUAGE"]);
+            }
 
             if (!isset($arrayData["WEE_DESCRIPTION"])) {
                 $arrayData["WEE_DESCRIPTION"] = "";
@@ -686,7 +692,8 @@ class WebEntryEvent
                     $task = new \Tasks();
 
                     //Task - Step for WE_TYPE=SINGLE
-                    if (isset($arrayData["DYN_UID"]) && $arrayData["DYN_UID"] != $arrayWebEntryEventData["DYN_UID"] && $arrayData["WE_TYPE"]==='SINGLE') {
+                    if (isset($arrayData["DYN_UID"]) && $arrayData["DYN_UID"] != $arrayWebEntryEventData["DYN_UID"] && 
+                        ((isset($arrayData["WE_TYPE"]) && $arrayData["WE_TYPE"]==='SINGLE') || ($arrayWebEntryEventData["WE_TYPE"]==='SINGLE'))) {
                         //Delete
                         $step = new \Step();
 
