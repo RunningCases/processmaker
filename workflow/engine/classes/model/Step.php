@@ -374,7 +374,7 @@ class Step extends BaseStep
             while ($oDataset->next()) {
                 $aRow1 = $oDataset->getRow();
                 //print_r($aRow1);
-                $dynHandler = new dynaFormHandler(PATH_DYNAFORM . $sproUid . PATH_SEP . $aRow1["DYN_UID"] . ".xml");
+                $dynHandler = new DynaformHandler(PATH_DYNAFORM . $sproUid . PATH_SEP . $aRow1["DYN_UID"] . ".xml");
                 $dynFields = $dynHandler->getFields();
                 $sxmlgrid = '';
                 $sType = '';
@@ -477,7 +477,7 @@ class Step extends BaseStep
         $oDataset->next();
         while ($aRow = $oDataset->getRow()) {
             if ($aRow['DYN_TYPE'] == 'xmlform') {
-                $dynHandler = new dynaFormHandler( PATH_DYNAFORM . $aRow['DYN_FILENAME'] . ".xml" );
+                $dynHandler = new DynaformHandler( PATH_DYNAFORM . $aRow['DYN_FILENAME'] . ".xml" );
                 $dynFields = $dynHandler->getFields();
                 $sxmlgrid = '';
                 $sType = '';
@@ -547,7 +547,7 @@ class Step extends BaseStep
             while ($oDataset->next()) {
                 $aRow1 = $oDataset->getRow();
 
-                $dynHandler = new dynaFormHandler( PATH_DYNAFORM . $sproUid . "/" . $sObjUID . ".xml" );
+                $dynHandler = new DynaformHandler( PATH_DYNAFORM . $sproUid . "/" . $sObjUID . ".xml" );
                 $dynFields = $dynHandler->getFields();
                 $sxmlgrid = '';
                 $sType = '';

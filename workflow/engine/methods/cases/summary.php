@@ -75,7 +75,7 @@ try {
     }
     if (file_exists( PATH_DYNAFORM . $applicationFields['PRO_UID'] . PATH_SEP . $_REQUEST['DYN_UID'] . '.xml' )) {
         $_SESSION['PROCESS'] = $applicationFields['PRO_UID'];
-        $dbConnections = new dbConnections( $_SESSION['PROCESS'] );
+        $dbConnections = new DbConnections( $_SESSION['PROCESS'] );
         $dbConnections->loadAdditionalConnections();
         $_SESSION['CURRENT_DYN_UID'] = $_REQUEST['DYN_UID'];
 

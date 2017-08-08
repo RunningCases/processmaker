@@ -179,7 +179,7 @@ class DynaFormField extends DBTable
 
     public function saveField($Fields, $attributes = array(), $options = array())
     {
-        $dynaform = new dynaFormHandler($this->getFileName());
+        $dynaform = new DynaformHandler($this->getFileName());
         if ($Fields['TYPE'] === 'javascript') {
             $Fields['XMLNODE_VALUE'] = $Fields['CODE'];
             unset($Fields['CODE']);

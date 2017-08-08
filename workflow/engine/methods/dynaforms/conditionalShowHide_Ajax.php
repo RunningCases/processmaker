@@ -54,7 +54,7 @@ try {
             $sFilter = isset( $_POST['filter'] ) ? $_POST['filter'] : '';
 
             //$oJSON = new Services_JSON();
-            $oDynaformHandler = new dynaFormHandler( PATH_DYNAFORM . $_DYN_FILENAME . '.xml' );
+            $oDynaformHandler = new DynaformHandler( PATH_DYNAFORM . $_DYN_FILENAME . '.xml' );
 
             $aFilter = explode( ',', $sFilter );
 
@@ -68,7 +68,7 @@ try {
             $_DYN_FILENAME = $_SESSION['Current_Dynafom']['Parameters']['FILE'];
             $sFilter = isset( $_POST['filter'] ) ? $_POST['filter'] : '';
 
-            $oDynaformHandler = new dynaFormHandler( PATH_DYNAFORM . $_DYN_FILENAME . '.xml' );
+            $oDynaformHandler = new DynaformHandler( PATH_DYNAFORM . $_DYN_FILENAME . '.xml' );
             $aFilter = explode( ',', $sFilter );
             $aAvailableFields = $oDynaformHandler->getFieldNames( $aFilter );
 

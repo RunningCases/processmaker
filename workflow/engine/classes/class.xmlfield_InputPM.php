@@ -531,7 +531,7 @@ function getVarsGrid ($proUid, $dynUid)
     $dynaformFields = array ();
 
     if (is_file( PATH_DATA . '/sites/'. SYS_SYS .'/xmlForms/'. $proUid .'/'.$dynUid. '.xml' ) && filesize( PATH_DATA . '/sites/'. SYS_SYS .'/xmlForms/'. $proUid .'/'. $dynUid .'.xml' ) > 0) {
-        $dyn = new dynaFormHandler( PATH_DATA . '/sites/'. SYS_SYS .'/xmlForms/' .$proUid. '/' . $dynUid .'.xml' );
+        $dyn = new DynaformHandler( PATH_DATA . '/sites/'. SYS_SYS .'/xmlForms/' .$proUid. '/' . $dynUid .'.xml' );
         $dynaformFields[] = $dyn->getFields();
     }
 
