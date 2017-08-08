@@ -415,7 +415,7 @@ class DataBaseMaintenance
             $dbPort = $aHost[1];
             $command = 'mysqldump'
                 . ' --user=' . $this->user
-                    . ' --password=' . $password
+                . ' --password=' . $password
                 . ' --host=' . $dbHost
                 . ' --port=' . $dbPort
                 . ' --opt'
@@ -428,7 +428,7 @@ class DataBaseMaintenance
                 . ' --user=' . $this->user
                 . ' --opt'
                 . ' --skip-comments'
-                    . ' --password=' . $password
+                . ' --password=' . $password
                 . ' ' . $this->dbName
                 . ' > ' . $outfile;
         }
