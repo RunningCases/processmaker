@@ -654,83 +654,57 @@ function NewCaseImpersonate ($params)
     return $res;
 }
 
-function NewCase ($params)
+/**
+ * Begins a new case under the name of the logged-in user.
+ * Where the parameter value is:
+ * - string sessionId: The ID of the session, which is obtained during login.
+ * - string processId: The ID of the process where the case should start, which
+ *   can be obtained with processList().
+ * - string taskId: The ID of the task where the case should start. This will
+ *   generally be the first task in a process, which can be obtained with taskList().
+ * - array variables: An array of variableStruct objects which contain information
+ *   to start the case. This array has the following format.
+ *
+ * @param object $params
+ *
+ * @return object
+ */
+function NewCase($params)
 {
-    $filter = new InputFilter();
+    $parseSoapVariableVame = new ParseSoapVariableName();
 
-    $vsResult = isValidSession( $params->sessionId );
+    $vsResult = isValidSession($params->sessionId);
 
     if ($vsResult->status_code !== 0) {
         return $vsResult;
     }
 
-    if (ifPermission( $params->sessionId, "PM_CASES" ) == 0) {
-        $result = new wsResponse( 2, G::LoadTranslation('ID_NOT_PRIVILEGES') );
+    if (ifPermission($params->sessionId, 'PM_CASES') == 0) {
+        $result = new wsResponse(2, G::LoadTranslation('ID_NOT_PRIVILEGES'));
 
         return $result;
     }
 
     $oSession = new Sessions();
-    $session = $oSession->getSessionUser( $params->sessionId );
-    $userId = $session["USR_UID"];
+    $session = $oSession->getSessionUser($params->sessionId);
+    $userId = $session['USR_UID'];
     $variables = $params->variables;
 
-    /* this code is for previous version of ws, and apparently this will work for grids inside the variables..
-    if (!isset($params->variables) ) {
-      $variables = array();
-      $field = array();
-    }
-    else {
-      if ( is_object ($variables) ) {
-        $field[ $variables->name ]= $variables->value ;
-      }
+    $field = array();
 
-      if ( is_array ( $variables) ) {
-        foreach ( $variables as $key=>$val ) {
-          $name  = $val->name;
-          $value = $val->value;
-          if (!is_object($val->value))
-          {
-            eval('$field[ ' . $val->name . ' ]= $val->value ;');
-          }
-          else
-          {
-            if (is_array($val->value->item)) {
-              $i = 1;
-              foreach ($val->value->item as $key1 => $val1) {
-                if (isset($val1->value)) {
-                  if (is_array($val1->value->item)) {
-                    foreach ($val1->value->item as $key2 => $val2) {
-                      $field[$val->name][$i][$val2->key] = $val2->value;
-                    }
-                  }
-                }
-                $i++;
-              }
-            }
-          }
-        }
-      }
-    }
-    */
-
-    $variables = $params->variables;
-
-    $field = array ();
-    
-    if ($variables->name === "__POST_VARIABLES__") {
+    if (is_object($variables) && $variables->name === '__POST_VARIABLES__') {
         $field = G::json_decode($variables->value, true);
         $variables = null;
     }
 
-    if (is_object( $variables )) {
+    if (is_object($variables)) {
         $field[$variables->name] = $variables->value;
     }
 
-    if (is_array( $variables )) {
-        foreach ($variables as $key => $val) {
-            if (! is_object( $val->value )) {
-                @eval( "\$field[" . $val->name . "]= \$val->value;" );
+    if (is_array($variables)) {
+        foreach ($variables as $val) {
+            if (!is_object($val->value)) {
+                $parseSoapVariableVame->buildVariableName($field, $val->name, $val->value);
             }
         }
     }
@@ -739,10 +713,10 @@ function NewCase ($params)
 
     $ws = new wsBase();
 
-    $res = $ws->newCase($params->processId, $userId, $params->taskId, $params->variables, (isset($params->executeTriggers))? (int)($params->executeTriggers) : 0);
+    $res = $ws->newCase($params->processId, $userId, $params->taskId, $params->variables, (isset($params->executeTriggers)) ? (int) ($params->executeTriggers) : 0);
 
     // we need to register the case id for a stored session variable. like a normal Session.
-    $oSession->registerGlobal( "APPLICATION", $res->caseId );
+    $oSession->registerGlobal('APPLICATION', $res->caseId);
 
     return $res;
 }
