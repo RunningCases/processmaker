@@ -33,10 +33,23 @@ if ($browserSupported==false){
 /*----------------------------------********---------------------------------*/
 $aFields = array();
 
-if (!isset($_GET['u'])) {
-    $aFields['URL'] = '';
-} else {
-    $aFields['URL'] = htmlspecialchars(addslashes(stripslashes(strip_tags(trim(urldecode($_GET['u']))))));
+//Validated redirect url
+$aFields['URL'] = '';
+if (!empty($_GET['u'])) {
+    //clean url with protocols
+    $flagUrl = true;
+    //Most used protocols
+    $protocols = ['https://', 'http://', 'ftp://', 'sftp://','smb://', 'file:', 'mailto:'];
+    foreach ($protocols as $protocol) {
+        if (strpos($_GET['u'], $protocol) !== false) {
+            $_GET['u'] = '';
+            $flagUrl = false;
+            break;
+        }
+    }
+    if ($flagUrl) {
+        $aFields['URL'] = htmlspecialchars(addslashes(stripslashes(strip_tags(trim(urldecode($_GET['u']))))));
+    }
 }
 
 if (!isset($_SESSION['G_MESSAGE'])) {
