@@ -1,5 +1,15 @@
 <?php
 
+use Illuminate\Contracts\Console\Kernel as Kernel2;
+use Illuminate\Contracts\Debug\ExceptionHandler;
+use Illuminate\Contracts\Http\Kernel as Kernel4;
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Console\Kernel;
+use Illuminate\Foundation\Exceptions\Handler;
+use Illuminate\Foundation\Http\Kernel as Kernel3;
+use Monolog\Formatter\LineFormatter;
+use Monolog\Handler\RotatingFileHandler;
+
 /*
 |--------------------------------------------------------------------------
 | Create The Application
@@ -11,7 +21,7 @@
 |
 */
 
-$app = new Illuminate\Foundation\Application(
+$app = new Application(
     realpath(__DIR__ . '/../')
 );
 
@@ -27,28 +37,28 @@ $app = new Illuminate\Foundation\Application(
 */
 
 $app->singleton(
-    Illuminate\Contracts\Http\Kernel::class,
-    Illuminate\Foundation\Http\Kernel::class
+    Kernel4::class,
+    Kernel3::class
 );
 
 $app->singleton(
-    Illuminate\Contracts\Console\Kernel::class,
-    Illuminate\Foundation\Console\Kernel::class
+    Kernel2::class,
+    Kernel::class
 );
 
 $app->singleton(
-    Illuminate\Contracts\Debug\ExceptionHandler::class,
-    Illuminate\Foundation\Exceptions\Handler::class
+    ExceptionHandler::class,
+    Handler::class
 );
 
 $app->configureMonologUsing(function ($monolog) use ($app) {
     $monolog->pushHandler(
-        (new Monolog\Handler\RotatingFileHandler(
+        (new RotatingFileHandler(
         // Set the log path
             $app->storagePath() . '/logs/processmaker.log',
             // Set the number of daily files you want to keep
             $app->make('config')->get('app.log_max_files', 5)
-        ))->setFormatter(new Monolog\Formatter\LineFormatter(null, null, true, true))
+        ))->setFormatter(new LineFormatter(null, null, true, true))
     );
 });
 

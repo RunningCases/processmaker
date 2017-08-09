@@ -1,5 +1,9 @@
 <?php
 
+use Illuminate\Cache\CacheServiceProvider;
+use Illuminate\Filesystem\FilesystemServiceProvider;
+use Illuminate\View\ViewServiceProvider;
+
 return [
     'name' => env('APP_NAME', 'ProcessMaker'),
     'env' => env('APP_ENV', 'production'),
@@ -8,9 +12,9 @@ return [
     'log_level' => env('APP_LOG_LEVEL', 'debug'),
 
     'providers' => [
-        Illuminate\Filesystem\FilesystemServiceProvider::class,
-        Illuminate\Cache\CacheServiceProvider::class,
-        Illuminate\View\ViewServiceProvider::class,
+        FilesystemServiceProvider::class,
+        CacheServiceProvider::class,
+        ViewServiceProvider::class,
     ],
 
     'aliases' => [

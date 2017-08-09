@@ -3913,7 +3913,7 @@ class workspaceTools
     {
         $paths = [
             PATH_DATA.'framework' => 0770,
-            PATH_DATA.'framework' . DIRECTORY_SEPARATOR.'cache' => 0770,
+            PATH_DATA.'framework' . DIRECTORY_SEPARATOR . 'cache' => 0770,
         ];
         foreach ($paths as $path => $permission) {
             if (!file_exists($path)) {
