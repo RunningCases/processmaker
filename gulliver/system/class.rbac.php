@@ -25,6 +25,9 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
+
+use ProcessMaker\Exception\RBACException;
+
 /**
  * File: $Id$
  *
@@ -70,6 +73,7 @@ class RBAC
     public $singleSignOn = false;
 
     private static $instance = null;
+    public $authorizedActions = array();
 
     public function __construct ()
     {
@@ -147,6 +151,10 @@ class RBAC
             ),
             'newSite.php' => array(
                 'newSite.php' => array('PM_SETUP_ADVANCE')
+            ),
+            'emailsAjax.php' => array(
+                'MessageList' => array('PM_SETUP', 'PM_SETUP_LOGS'),
+                'updateStatusMessage' => array('PM_SETUP', 'PM_SETUP_LOGS'),
             ),
             'processCategory_Ajax.php' => array(
                 'processCategoryList' => array('PM_SETUP', 'PM_SETUP_PROCESS_CATEGORIES'),
@@ -1554,8 +1562,7 @@ class RBAC
         }
 
         if (!$access) {
-            G::header('Location: /errors/error403.php');
-            die();
+            throw new RBACException('ID_ACCESS_DENIED', 403);
         }
     }
 }
