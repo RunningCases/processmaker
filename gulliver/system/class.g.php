@@ -638,7 +638,7 @@ class G
      * @param string $strSkin
      * @return void
      */
-    public function RenderPage ($strTemplate = "default", $strSkin = SYS_SKIN, $objContent = null, $layout = '')
+    public static function RenderPage ($strTemplate = "default", $strSkin = SYS_SKIN, $objContent = null, $layout = '')
     {
         global $G_CONTENT;
         global $G_TEMPLATE;
@@ -1989,7 +1989,7 @@ class G
      *
      * @return void
      */
-    public function SendTemporalMessage ($msgID, $strType, $sType = 'LABEL', $time = null, $width = null, $customLabels = null)
+    public static function SendTemporalMessage ($msgID, $strType, $sType = 'LABEL', $time = null, $width = null, $customLabels = null)
     {
         if (isset( $width )) {
             $_SESSION['G_MESSAGE_WIDTH'] = $width;
@@ -5736,7 +5736,7 @@ class G
     *
     * @return showRes($string)
     */
-    public function outRes ($sInfVar)
+    public static function outRes ($sInfVar)
     {
         echo $sInfVar;
     }
