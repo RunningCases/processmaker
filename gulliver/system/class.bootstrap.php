@@ -2582,10 +2582,10 @@ class Bootstrap
         $passwordHashConfig = Bootstrap::getPasswordHashConfig();
         $hashTypeCurrent = $passwordHashConfig['current'];
         $hashTypePrevious = $passwordHashConfig['previous'];
-        if ((Bootstrap::hashPassword($pass, $hashTypeCurrent) == $userPass) || ($pass === $hashTypeCurrent . ':' . $userPass)) {
+        if (Bootstrap::hashPassword($pass, $hashTypeCurrent) == $userPass) {
             return true;
         }
-        if ((Bootstrap::hashPassword($pass, $hashTypePrevious) == $userPass) || ($pass === $hashTypePrevious . ':' . $userPass)) {
+        if (Bootstrap::hashPassword($pass, $hashTypePrevious) == $userPass) {
             return true;
         }
         return false;
