@@ -692,8 +692,9 @@ class WebEntryEvent
                     $task = new \Tasks();
 
                     //Task - Step for WE_TYPE=SINGLE
-                    if (isset($arrayData["DYN_UID"]) && $arrayData["DYN_UID"] != $arrayWebEntryEventData["DYN_UID"] && 
-                        ((isset($arrayData["WE_TYPE"]) && $arrayData["WE_TYPE"]==='SINGLE') || ($arrayWebEntryEventData["WE_TYPE"]==='SINGLE'))) {
+                    if (isset($arrayData["DYN_UID"]) &&
+                            ((isset($arrayData["WE_TYPE"]) && $arrayData["WE_TYPE"] === 'SINGLE') || ($arrayWebEntryEventData["WE_TYPE"] === 'SINGLE'))) {
+
                         //Delete
                         $step = new \Step();
 
