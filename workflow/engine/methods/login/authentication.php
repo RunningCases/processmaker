@@ -41,18 +41,6 @@ try {
             die();
         }
 
-        //Check if the password contains the password hashes
-        if (!empty($_POST['form']['USR_PASSWORD']) && strlen($_POST['form']['USR_PASSWORD']) > 32) {
-            $pass = trim($_POST['form']['USR_PASSWORD']);
-            foreach (Bootstrap::getPasswordHashConfig() as $key => $hash) {
-                $search = substr($pass, 0, strlen($hash) + 1);
-                if ($search == $hash . ':') {
-                    $pass = substr($pass, strlen($hash) + 1);
-                }
-            }
-            $_POST['form']['USR_PASSWORD'] = $pass;
-        }
-
         $frm = $_POST['form'];
 
         if (isset($frm['USR_USERNAME'])) {
