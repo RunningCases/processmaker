@@ -330,6 +330,22 @@ CLI::taskArg('workspace');
 CLI::taskRun("cliListIds");
 
   /**
+ * 
+ */
+CLI::taskName('regenerate-pmtable-classes');
+CLI::taskDescription(<<<EOT
+    Regenerate the class with incorrect reference
+
+    This method recursively finds all PHP files that reference the path PATH_DATA 
+    incorrectly, which is caused by importing processes where the data directory 
+    of ProcessMaker has different routes. Modified files are backed up with the 
+    extension '.backup' in the same directory.
+EOT
+);
+CLI::taskArg('workspace');
+CLI::taskRun("regenerate_pmtable_classes");
+
+  /**
    * Function run_info
    * access public
    */
@@ -1080,4 +1096,32 @@ function run_migrate_indexing_acv($args, $opts) {
     }
     $stop = microtime(true);
     CLI::logging("<*>   Migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
+}
+
+/**
+ * This method recursively finds all PHP files that reference the path PATH_DATA 
+ * incorrectly, which is caused by importing processes where the data directory 
+ * of ProcessMaker has different routes. Modified files are backed up with the 
+ * extension '.backup' in the same directory.
+ * 
+ * @param array $args
+ * @param array $opts
+ * @throws Exception
+ * @return void
+ */
+function regenerate_pmtable_classes($args, $opts)
+{
+    if (sizeof($args) > 0) {
+        $start = microtime(true);
+        CLI::logging("> Updating generated class files for PM Tables...\n");
+
+        Bootstrap::setConstantsRelatedWs($args[0]);
+        $workspaceTools = new workspaceTools($args[0]);
+        $workspaceTools->fixReferencePathFiles(PATH_DATA_SITE . "classes", PATH_DATA);
+
+        $stop = microtime(true);
+        CLI::logging("<*>   Updating generated class files for PM Tables took " . ($stop - $start) . " seconds.\n");
+    } else {
+        throw new Exception("No workspace specified for updating generated class files.");
+    }
 }

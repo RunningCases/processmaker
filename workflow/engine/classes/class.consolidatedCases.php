@@ -17,7 +17,7 @@ class ConsolidatedCases
         $RepTabUid = $data['rep_uid'];
         $TableName = $data['table_name'];
         $Title = $data['title'];
-        if($this->isUpdateFields($data) && $Status) {
+        if ($this->isUpdateFields($data) && $Status) {
             return true;
         }
         if ($this->existTable && $Status) {
@@ -26,14 +26,14 @@ class ConsolidatedCases
 
         if ($RepTabUid != '') {
             $this->deleteRepTab($RepTabUid, $Status, $TasUid, $TableName);
-            if(!$Status){
+            if (!$Status) {
                 return true;
             }
             $RepTabUid = '';
         }
 
         $_POST['form']['PRO_UID'] = $ProUid;
-        $_POST['form']['REP_TAB_UID']  = $RepTabUid;
+        $_POST['form']['REP_TAB_UID'] = $RepTabUid;
         $_POST['form']['REP_TAB_NAME'] = $TableName;
         $_POST['form']['REP_TAB_TYPE'] = "NORMAL";
         $_POST['form']['REP_TAB_GRID'] = '';
@@ -43,7 +43,7 @@ class ConsolidatedCases
         $_POST['form']['REP_TAB_TITLE'] = $Title;
         $_POST['form']['FIELDS'] = array();
 
-        $sOldTableName  = $_POST['form']['REP_TAB_NAME'];
+        $sOldTableName = $_POST['form']['REP_TAB_NAME'];
         $sOldConnection = $_POST['form']['REP_TAB_CONNECTION'];
 
         $_POST['form']['REP_TAB_UID'] = $this->createReportTable($_POST['form']);
@@ -174,7 +174,7 @@ class ConsolidatedCases
         if ($this->existTableName) {
             $diff = array_diff($data, $this->rowRepTab);
         }
-        if ($this->existCaseConsolidate){
+        if ($this->existCaseConsolidate) {
             $diff = array_diff($diff, $this->rowCaseConsCore);
         }
         return count($diff) <= 0;
@@ -213,9 +213,23 @@ class ConsolidatedCases
         return $oReportTable->getRepTabUid();
     }
 
-    public function createReportVariables($RepTabUid, $ProUid, $formFields)
+    public function createReportVariables($repTabUid, $proUid, $formFields)
     {
-        $oReportVar = new ReportVar();
+        list($fieldsClass, $fields) = $this->buildReportVariables($formFields, function ($repVarName, $repVarType) use ($repTabUid, $proUid) {
+            $reportVar = new ReportVar();
+            $reportVar->create(array(
+                'REP_TAB_UID' => $repTabUid,
+                'PRO_UID' => $proUid,
+                'REP_VAR_NAME' => $repVarName,
+                'REP_VAR_TYPE' => $repVarType)
+            );
+        });
+
+        return array($fieldsClass, $fields);
+    }
+
+    public function buildReportVariables($formFields, $callbackFunction = null)
+    {
         $fieldsClass = array();
         $fields = array();
         $i = 1;
@@ -224,7 +238,7 @@ class ConsolidatedCases
         $fieldsClass[$i]['FLD_KEY'] = 'on';
         $fieldsClass[$i]['FLD_AUTO_INCREMENT'] = 'off';
         $fieldsClass[$i]['FLD_DESCRIPTION'] = '';
-        $fieldsClass[$i]['FLD_TYPE'] = 'VARCHAR' ;
+        $fieldsClass[$i]['FLD_TYPE'] = 'VARCHAR';
         $fieldsClass[$i]['FLD_SIZE'] = 32;
         $i++;
         $fieldsClass[$i]['FLD_NAME'] = 'APP_NUMBER';
@@ -232,26 +246,26 @@ class ConsolidatedCases
         $fieldsClass[$i]['FLD_KEY'] = 'on';
         $fieldsClass[$i]['FLD_AUTO_INCREMENT'] = 'off';
         $fieldsClass[$i]['FLD_DESCRIPTION'] = '';
-        $fieldsClass[$i]['FLD_TYPE'] = 'VARCHAR' ;
+        $fieldsClass[$i]['FLD_TYPE'] = 'VARCHAR';
         $fieldsClass[$i]['FLD_SIZE'] = 255;
 
-        foreach ($formFields as $sField) {
-            $aField = explode('-', $sField);
-            if ($aField[1] == 'title' || $aField[1] == 'submit') {
+        foreach ($formFields as $field) {
+            $fieldProperty = explode('-', $field);
+            if ($fieldProperty[1] == 'title' || $fieldProperty[1] == 'submit') {
                 continue;
             }
             $i++;
-            $fieldsClass[$i]['FLD_NAME'] = $aField[0];
+            $fieldsClass[$i]['FLD_NAME'] = $fieldProperty[0];
             $fieldsClass[$i]['FLD_NULL'] = 'off';
             $fieldsClass[$i]['FLD_KEY'] = 'off';
             $fieldsClass[$i]['FLD_AUTO_INCREMENT'] = 'off';
             $fieldsClass[$i]['FLD_DESCRIPTION'] = '';
 
-            switch ($aField[1]) {
+            switch ($fieldProperty[1]) {
                 case 'currency':
                 case 'percentage':
-                    $sType = 'number';
-                    $fieldsClass[$i]['FLD_TYPE'] = 'FLOAT' ;
+                    $type = 'number';
+                    $fieldsClass[$i]['FLD_TYPE'] = 'FLOAT';
                     $fieldsClass[$i]['FLD_SIZE'] = 255;
                     break;
                 case 'text':
@@ -262,34 +276,32 @@ class ConsolidatedCases
                 case 'radiogroup':
                 case 'hidden':
                 case "link":
-                    $sType = 'char';
-                    $fieldsClass[$i]['FLD_TYPE'] = 'VARCHAR' ;
+                    $type = 'char';
+                    $fieldsClass[$i]['FLD_TYPE'] = 'VARCHAR';
                     $fieldsClass[$i]['FLD_SIZE'] = 255;
                     break;
                 case 'textarea':
-                    $sType = 'text';
-                    $fieldsClass[$i]['FLD_TYPE'] = 'TEXT' ;
+                    $type = 'text';
+                    $fieldsClass[$i]['FLD_TYPE'] = 'TEXT';
                     $fieldsClass[$i]['FLD_SIZE'] = '';
                     break;
                 case 'date':
-                    $sType = 'date';
-                    $fieldsClass[$i]['FLD_TYPE'] = 'DATE' ;
+                    $type = 'date';
+                    $fieldsClass[$i]['FLD_TYPE'] = 'DATE';
                     $fieldsClass[$i]['FLD_SIZE'] = '';
                     break;
                 default:
-                    $sType = 'char';
-                    $fieldsClass[$i]['FLD_TYPE'] = 'VARCHAR' ;
+                    $type = 'char';
+                    $fieldsClass[$i]['FLD_TYPE'] = 'VARCHAR';
                     $fieldsClass[$i]['FLD_SIZE'] = 255;
                     break;
             }
 
-            $oReportVar->create(array(
-                    'REP_TAB_UID' => $RepTabUid,
-                    'PRO_UID' => $ProUid,
-                    'REP_VAR_NAME' => $aField[0],
-                    'REP_VAR_TYPE' => $sType)
-            );
-            $fields[] = array('sFieldName' => $aField[0], 'sType' => $sType);
+            if (!empty($callbackFunction) && is_callable($callbackFunction)) {
+                $callbackFunction($fieldProperty[0], $type);
+            }
+
+            $fields[] = array('sFieldName' => $fieldProperty[0], 'sType' => $type);
         }
         return array($fieldsClass, $fields);
     }
