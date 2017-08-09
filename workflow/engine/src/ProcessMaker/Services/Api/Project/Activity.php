@@ -1,11 +1,11 @@
 <?php
 namespace ProcessMaker\Services\Api\Project;
 
-use \ProcessMaker\Services\Api;
-use \Luracast\Restler\RestException;
-use ProcessMaker\Project\Adapter\BpmnWorkflow;
-use ProcessMaker\BusinessModel\Task;
 use \Exception;
+use \Luracast\Restler\RestException;
+use \ProcessMaker\BusinessModel\Task;
+use \ProcessMaker\Project\Adapter\BpmnWorkflow;
+use \ProcessMaker\Services\Api;
 
 /**
  * Project\Activity Api Controller

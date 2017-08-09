@@ -1,40 +1,36 @@
 <?php
 namespace ProcessMaker\Project;
 
-use \BpmnProject as Project;
-use \BpmnProcess as Process;
-use \BpmnDiagram as Diagram;
+use \BasePeer;
 use \BpmnActivity as Activity;
-use \BpmnBound as Bound;
-use \BpmnEvent as Event;
-use \BpmnGateway as Gateway;
-use \BpmnFlow as Flow;
 use \BpmnArtifact as Artifact;
-
-use \BpmnProjectPeer as ProjectPeer;
-use \BpmnProcessPeer as ProcessPeer;
-use \BpmnDiagramPeer as DiagramPeer;
-
 use \BpmnActivityPeer as ActivityPeer;
-use \BpmnBoundPeer as BoundPeer;
-use \BpmnEventPeer as EventPeer;
-use \BpmnGatewayPeer as GatewayPeer;
-use \BpmnFlowPeer as FlowPeer;
 use \BpmnArtifactPeer as ArtifactPeer;
-use \BpmnParticipant as Participant;
-use \BpmnParticipantPeer as ParticipantPeer;
+use \BpmnBound as Bound;
+use \BpmnBoundPeer as BoundPeer;
+use \BpmnDiagram as Diagram;
+use \BpmnDiagramPeer as DiagramPeer;
+use \BpmnEvent as Event;
+use \BpmnEventPeer as EventPeer;
+use \BpmnFlow as Flow;
+use \BpmnFlowPeer as FlowPeer;
+use \BpmnGateway as Gateway;
+use \BpmnGatewayPeer as GatewayPeer;
 use \BpmnLaneset as Laneset;
 use \BpmnLanesetPeer as LanesetPeer;
 use \BpmnLane as Lane;
 use \BpmnLanePeer as LanePeer;
-
-use \BasePeer;
+use \BpmnParticipant as Participant;
+use \BpmnParticipantPeer as ParticipantPeer;
+use \BpmnProject as Project;
+use \BpmnProcess as Process;
+use \BpmnProjectPeer as ProjectPeer;
+use \BpmnProcessPeer as ProcessPeer;
 use \Criteria as Criteria;
-use \ResultSet as ResultSet;
-use \BpmnFlow;
-use \G;
-use ProcessMaker\Util\Common;
 use \Exception;
+use \G;
+use \ResultSet as ResultSet;
+use \ProcessMaker\Util\Common;
 
 /**
  * Class Bpmn
@@ -431,7 +427,7 @@ class Bpmn extends Handler
             $activity = ActivityPeer::retrieveByPK($actUid);
             if (isset($activity)) {
                 $activity->delete();
-                BpmnFlow::removeAllRelated($actUid);
+                Flow::removeAllRelated($actUid);
             } else {
                 throw new Exception(G::LoadTranslation("ID_ACTIVITY_DOES_NOT_EXIST", array("act_uid", $actUid)));
             }
