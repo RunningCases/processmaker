@@ -382,7 +382,7 @@ class WebEntry
                     $arrayUserData = $user->load($arrayWebEntryData["USR_UID"]);
 
                     $usrUsername = $arrayUserData["USR_USERNAME"];
-                    $usrPassword = $arrayUserData["USR_PASSWORD"];
+                    $usrPassword = $user->getUsrPassword();
 
                     $dynaForm = new \Dynaform();
 

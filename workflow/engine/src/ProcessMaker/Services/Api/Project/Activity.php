@@ -1,8 +1,11 @@
 <?php
 namespace ProcessMaker\Services\Api\Project;
 
-use \ProcessMaker\Services\Api;
+use \Exception;
 use \Luracast\Restler\RestException;
+use \ProcessMaker\BusinessModel\Task;
+use \ProcessMaker\Project\Adapter\BpmnWorkflow;
+use \ProcessMaker\Services\Api;
 
 /**
  * Project\Activity Api Controller
@@ -136,22 +139,32 @@ class Activity extends Api
 
 
     /**
+     * This method remove an activity and all related components
      * @param string $prj_uid {@min 32} {@max 32}
      * @param string $act_uid {@min 32} {@max 32}
-     *
-     * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
-     * @copyright Colosa - Bolivia
      * @return array
-     *
+     * @access protected
+     * @class  AccessControl {@permission PM_FACTORY}
      * @url DELETE /:prj_uid/activity/:act_uid
      */
     public function doDeleteProjectActivity($prj_uid, $act_uid)
     {
         try {
-            $task = new \ProcessMaker\BusinessModel\Task();
-            $task->deleteTask($prj_uid, $act_uid);
-        } catch (\Exception $e) {
-            throw new RestException(Api::STAT_APP_EXCEPTION, $e->getMessage());
+            $task = new Task();
+            $task->setFormatFieldNameInUppercase(false);
+            $task->setArrayParamException(array("taskUid" => "act_uid"));
+
+            $response = $task->hasPendingCases(array("act_uid" => $act_uid, "case_type" => "assigned"));
+            if ($response->result !== false) {
+                $project = new BpmnWorkflow();
+                $prj = $project->load($prj_uid);
+                $prj->removeActivity($act_uid);
+            } else {
+                throw new RestException(403, $response->message);
+            }
+        } catch (Exception $e) {
+            $resCode = $e->getCode() == 0 ? Api::STAT_APP_EXCEPTION : $e->getCode();
+            throw new RestException($resCode, $e->getMessage());
         }
     }
 
@@ -215,7 +228,7 @@ class Activity extends Api
             $task->setFormatFieldNameInUppercase(false);
             $task->setArrayParamException(array("taskUid" => "act_uid"));
 
-            $response = $task->getValidateSelfService($request_data);
+            $response = $task->hasPendingCases($request_data);
 
             return $response;
         } catch (\Exception $e) {

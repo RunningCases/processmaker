@@ -187,7 +187,7 @@ class G
      * @param string $symbol
      * @return string
      */
-    public function generate_password($length = 15, $availableSets = "luns", $symbol = "_-+=!@#$%*&,.")
+    public function generate_password($length = 15, $availableSets = "luns", $symbol = "_-$!")
     {
         $chars = "";
         if (strpos($availableSets, "l") !== false) {
@@ -638,7 +638,7 @@ class G
      * @param string $strSkin
      * @return void
      */
-    public function RenderPage ($strTemplate = "default", $strSkin = SYS_SKIN, $objContent = null, $layout = '')
+    public static function RenderPage ($strTemplate = "default", $strSkin = SYS_SKIN, $objContent = null, $layout = '')
     {
         global $G_CONTENT;
         global $G_TEMPLATE;
@@ -1825,6 +1825,14 @@ class G
 
             $arrayGrid = array_unique($arrayGrid);
 
+            //Given the set: 'valueOne', 'valueOneTwo', where the second string 
+            //contains the first string, this causes the larger string to take 
+            //the second, resulting in a delimitation error, to avoid this problem 
+            //we first search the string larger size.
+            usort($arrayGrid, function($a, $b) {
+                return strlen($b) - strlen($a);
+            });
+
             foreach ($arrayGrid as $index => $value) {
                 if($value !== "") {
                     $grdName = $value;
@@ -1981,7 +1989,7 @@ class G
      *
      * @return void
      */
-    public function SendTemporalMessage ($msgID, $strType, $sType = 'LABEL', $time = null, $width = null, $customLabels = null)
+    public static function SendTemporalMessage ($msgID, $strType, $sType = 'LABEL', $time = null, $width = null, $customLabels = null)
     {
         if (isset( $width )) {
             $_SESSION['G_MESSAGE_WIDTH'] = $width;
@@ -2913,6 +2921,16 @@ class G
     }
 
     /**
+     * Verify if the input string is a valid UID of size 32
+     * @param string $uid
+     * @return boolean
+     */
+    public static function verifyUniqueID32($uid)
+    {
+        return (bool) preg_match('/^[0-9A-Za-z]{32,32}$/', $uid);
+    }
+
+    /**
      * is_utf8
      *
      * @param string $string
@@ -2921,11 +2939,10 @@ class G
      */
     public function is_utf8 ($string)
     {
-        if (is_array( $string )) {
-            $enc = implode( '', $string );
-            return @! ((ord( $enc[0] ) != 239) && (ord( $enc[1] ) != 187) && (ord( $enc[2] ) != 191));
+        if (preg_match('//u', $string)) {
+            return true;
         } else {
-            return (utf8_encode( utf8_decode( $string ) ) == $string);
+            return false;
         }
     }
 
@@ -3221,20 +3238,34 @@ class G
      * @param (array) additional characteres map
      *
      */
-    public function inflect ($string, $replacement = '_', $map = array())
+    public function inflect($string, $replacement = '_', $map = array())
     {
-        if (is_array( $replacement )) {
+        if (is_array($replacement)) {
             $map = $replacement;
             $replacement = '_';
         }
 
-        $quotedReplacement = preg_quote( $replacement, '/' );
+        $quotedReplacement = preg_quote($replacement, '/');
 
-        $default = array ('/à|á|å|â/' => 'a','/è|é|ê|ẽ|ë/' => 'e','/ì|í|î/' => 'i','/ò|ó|ô|ø/' => 'o','/ù|ú|ů|û/' => 'u','/ç/' => 'c','/ñ/' => 'n','/ä|æ/' => 'ae','/ö/' => 'oe','/ü/' => 'ue','/Ä/' => 'Ae','/Ü/' => 'Ue','/Ö/' => 'Oe','/ß/' => 'ss','/\.|\,|\:|\-|\\|\//' => " ",'/\\s+/' => $replacement
-        );
+        $default = array('/à|á|å|â/' => 'a',
+            '/è|é|ê|ẽ|ë/' => 'e',
+            '/ì|í|î/' => 'i',
+            '/ò|ó|ô|ø/' => 'o',
+            '/ù|ú|ů|û/' => 'u',
+            '/ç/' => 'c',
+            '/ñ/' => 'n',
+            '/ä|æ/' => 'ae',
+            '/ö/' => 'oe',
+            '/ü/' => 'ue',
+            '/Ä/' => 'Ae',
+            '/Ü/' => 'Ue',
+            '/Ö/' => 'Oe',
+            '/ß/' => 'ss',
+            '/[\.|\,|\+|\"|\:|\;|\-|\\|\/]/' => " ",
+            '/\\s+/' => $replacement);
 
-        $map = array_merge( $default, $map );
-        return preg_replace( array_keys( $map ), array_values( $map ), $string );
+        $map = array_merge($default, $map);
+        return preg_replace(array_keys($map), array_values($map), $string);
     }
 
     /**
@@ -5408,6 +5439,12 @@ class G
     }
 
     /**
+     * This function save history about some actions in the file audit.log
+     * The data is used in the Audit Log functionality
+     *
+     * @param string $actionToLog
+     * @param string $valueToLog
+     * @return void
     */
     public static function auditLog($actionToLog, $valueToLog = "")
     {
@@ -5416,13 +5453,25 @@ class G
         $sflag = $conf->getConfiguration('AUDIT_LOG', 'log');
         $sflagAudit = $sflag == 'true' ? true : false;
         $ipClient = G::getIpAddress();
+        $userUid = 'Unknow User';
+        $fullName = '-';
 
         /*----------------------------------********---------------------------------*/
         $licensedFeatures = PMLicensedFeatures::getSingleton();
         if ($sflagAudit && $licensedFeatures->verifyfeature('vtSeHNhT0JnSmo1bTluUVlTYUxUbUFSVStEeXVqc1pEUG5EeXc0MGd2Q3ErYz0=')) {
-            $username = isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '' ? $_SESSION['USER_LOGGED'] : 'Unknow User';
-            $fullname = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : '-';
-            G::log("|". $workspace ."|". $ipClient ."|". $username . "|" . $fullname ."|" . $actionToLog . "|" . $valueToLog, PATH_DATA, "audit.log");
+            if (isset($_SESSION['USER_LOGGED']) && $_SESSION['USER_LOGGED'] != '') {
+                $userUid = $_SESSION['USER_LOGGED'];
+            } else {
+                //Get the usrUid related to the accessToken
+                $userUid = \ProcessMaker\Services\OAuth2\Server::getUserId();
+                if (!empty($userUid)) {
+                    $oUserLogged = new \Users();
+                    $user = $oUserLogged->loadDetails($userUid);
+                    $fullName = $user['USR_FULLNAME'];
+                }
+            }
+            $fullName = isset($_SESSION['USR_FULLNAME']) && $_SESSION['USR_FULLNAME'] != '' ? $_SESSION['USR_FULLNAME'] : $fullName;
+            G::log("|". $workspace ."|". $ipClient ."|". $userUid . "|" . $fullName ."|" . $actionToLog . "|" . $valueToLog, PATH_DATA, "audit.log");
         }
         /*----------------------------------********---------------------------------*/
     }
@@ -5701,7 +5750,7 @@ class G
     *
     * @return showRes($string)
     */
-    public function outRes ($sInfVar)
+    public static function outRes ($sInfVar)
     {
         echo $sInfVar;
     }
