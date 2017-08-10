@@ -65,6 +65,12 @@ class wsBase
         global $RBAC;
 
         try {
+            //To enable compatibility with hash login, method Enable.
+            //It's necessary to enable the hash start session because there are use cases in both,
+            //the web entry and in the case planner, where the password is still used in the hash
+            //format so that is possible to start a session. Thiw way we will mantain the
+            //compatibility with this type of loggin.
+            $RBAC->enableLoginWithHash();
             $uid = $RBAC->VerifyLogin( $userid, $password );
 
             switch ($uid) {
@@ -113,14 +119,13 @@ class wsBase
             $session->Save();
 
             //save the session in DataBase
-
-
-            return $wsResponse;
         } catch (Exception $e) {
             $wsResponse = unserialize( $e->getMessage() );
-
-            return $wsResponse;
         }
+
+        //To enable compatibility with hash login, method disable.
+        $RBAC->disableLoginWithHash();
+        return $wsResponse;
     }
 
     /**
