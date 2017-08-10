@@ -14001,6 +14001,12 @@ msgid "The variable name already exists!"
 msgstr "The variable name already exists!"
 
 # TRANSLATION
+# LABEL/DYNAFIELD_PHPNAME_ALREADY_EXIST
+#: LABEL/DYNAFIELD_PHPNAME_ALREADY_EXIST
+msgid "Name error encountered when creating the variable: {0}. Please rename the variable you are creating with a unique name. Avoid differentiating similarly-named variables with only capitalization and '_' characters."
+msgstr "Name error encountered when creating the variable: {0}. Please rename the variable you are creating with a unique name. Avoid differentiating similarly-named variables with only capitalization and '_' characters."
+
+# TRANSLATION
 # LABEL/DYNAFIELD_EMPTY
 #: LABEL/DYNAFIELD_EMPTY
 msgid "The Field Name is empty"
