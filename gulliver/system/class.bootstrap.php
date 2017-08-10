@@ -14,6 +14,27 @@ class Bootstrap
 
     //below here only approved methods
 
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function autoloadClass($class)
+    {
+    }
+
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function registerClass($className, $includePath)
+    {
+    }
+
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function registerDir($name, $dir)
+    {
+    }
+
     /*
      * these functions still under revision
      */
@@ -21,6 +42,12 @@ class Bootstrap
     public static function getSystemConfiguration($globalIniFile = '', $wsIniFile = '', $wsName = '')
     {
         return PmSystem::getSystemConfiguration($globalIniFile, $wsIniFile, $wsName);
+    }
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function registerSystemClasses()
+    {
     }
 
     //below this line, still not approved methods
@@ -120,6 +147,13 @@ class Bootstrap
         }
 
         $smarty->display($template);
+    }
+
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function LoadSystem($strClass)
+    {
     }
 
     /**
@@ -410,6 +444,19 @@ class Bootstrap
         ob_get_clean();
 
         return $content;
+    }
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function LoadClass($strClass)
+    {
+    }
+
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function LoadThirdParty($sPath, $sFile)
+    {
     }
 
     /**
@@ -1949,6 +1996,13 @@ class Bootstrap
     }
 
     /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public function getModel($model)
+    {
+    }
+
+    /**
      * Create an encrypted unique identifier based on $id and the selected scope id.
      *
      * @author David S. Callizaya S. <davidsantos@colosa.com>
@@ -2425,6 +2479,13 @@ class Bootstrap
     public function isLinuxOs()
     {
         return strtoupper(PHP_OS) == "LINUX";
+    }
+
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+    */
+    public static function initVendors()
+    {
     }
 
     public static function parseIniFile($filename)

@@ -110,7 +110,7 @@ try {
     Bootstrap::registerClass('Entity_Base',         PATH_HOME . 'engine/classes/entities/Base.php');
     Bootstrap::registerClass('Entity_AppSolrQueue', PATH_HOME . 'engine/classes/entities/AppSolrQueue.php');
     Bootstrap::registerClass('XMLDB',               PATH_HOME . 'engine/classes/class.xmlDb.php');
-    Bootstrap::registerClass('dynaFormHandler',     PATH_GULLIVER . 'class.dynaformhandler.php');
+    Bootstrap::registerClass('DynaformHandler',     PATH_GULLIVER . 'class.dynaformhandler.php');
     Bootstrap::registerClass('DynaFormField',       PATH_HOME . 'engine/classes/class.dynaFormField.php');
     Bootstrap::registerClass('SolrRequestData',     PATH_HOME . 'engine/classes/entities/SolrRequestData.php');
     Bootstrap::registerClass('SolrUpdateDocument',  PATH_HOME . 'engine/classes/entities/SolrUpdateDocument.php');

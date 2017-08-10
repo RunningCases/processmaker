@@ -38,7 +38,7 @@ switch ($request) {
             $tmpfilename = $filter->xssFilterHard($tmpfilename);
 
 
-            $o = new dynaFormHandler( PATH_DYNAFORM . "{$tmpfilename}.xml" );
+            $o = new DynaformHandler( PATH_DYNAFORM . "{$tmpfilename}.xml" );
 
             $list_elements = explode( ',', $items );
 
@@ -59,7 +59,7 @@ switch ($request) {
         $tmpfilename = $_SESSION['Current_Dynafom']['Parameters']['FILE'];
         $tmpfilename = $filter->xssFilterHard($tmpfilename);
 
-        $o = new dynaFormHandler( PATH_DYNAFORM . "{$tmpfilename}.xml" );
+        $o = new DynaformHandler( PATH_DYNAFORM . "{$tmpfilename}.xml" );
         $hidden_items = Array ();
 
         $has_hidden_items = false;

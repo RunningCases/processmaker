@@ -21,7 +21,7 @@ require_once 'model/Content.php';
  * @package workflow.engine.classes
  *
  */
-class dbConnections
+class DbConnections
 {
     private $PRO_UID;
     public $connections;

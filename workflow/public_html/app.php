@@ -53,6 +53,8 @@ try {
             break;
     }
 
+} catch (ProcessMaker\Exception\RBACException $e) {
+    G::header('location: ' . $e->getPath());
 } catch (Exception $e) {
     $view = new Maveriks\Pattern\Mvc\PhtmlView($rootDir . "framework/src/templates/Exception.phtml");
     $view->set("message", $e->getMessage());

@@ -1894,7 +1894,12 @@ class Task
         }
     }
 
-    public function getValidateSelfService($data)
+    /**
+     * This method verify if an activity has cases
+     * @param $data
+     * @return \stdclass
+     */
+    public function hasPendingCases($data)
     {
         $paused = false;
         $data = array_change_key_case($data, CASE_LOWER);

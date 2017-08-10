@@ -9,7 +9,7 @@
 if (isset( $_SESSION['PROCESS'] )) {
     $pro = include (PATH_CORE . "config/databases.php");
 
-    $oDbConnections = new dbConnections( $_SESSION['PROCESS'] );
+    $oDbConnections = new DbConnections( $_SESSION['PROCESS'] );
     foreach ($oDbConnections->connections as $db) {
         $db['DBS_PASSWORD'] = $oDbConnections->getPassWithoutEncrypt( $db );
 
