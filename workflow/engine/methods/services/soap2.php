@@ -1,7 +1,7 @@
 <?php
-ini_set("soap.wsdl_cache_enabled", 0); //disabling WSDL cache
-
 use ProcessMaker\Util\ParseSoapVariableName;
+
+ini_set("soap.wsdl_cache_enabled", 0); //disabling WSDL cache
 
 define( 'WEB_SERVICE_VERSION', '2.0' );
 
