@@ -8,7 +8,6 @@ use ProcessMaker\Util\FixReferencePath;
  * Utility functions to manage a workspace.
  *
  * @package workflow.engine.classes
- * @author Alexandre Rosenfeld
  */
 class workspaceTools
 {
