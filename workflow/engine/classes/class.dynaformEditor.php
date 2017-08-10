@@ -664,7 +664,7 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
 
 
             $pathFile = $filter->xssFilterHard(PATH_DYNAFORM . "{$file}.xml", 'path');
-            $dynaform = new dynaFormHandler($pathFile);
+            $dynaform = new DynaformHandler($pathFile);
             $dynaform->replace($fieldName, $fieldName, Array('type' => 'javascript', 'meta' => $meta, '#cdata' => $sCode
             ));
 
@@ -734,7 +734,7 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
                 self::_setTmpData($tmp);
             }
             $pathFile = $filter->xssFilterHard(PATH_DYNAFORM . "{$file}.xml", 'path');
-            $dynaform = new dynaFormHandler($pathFile);
+            $dynaform = new DynaformHandler($pathFile);
             $dbc2 = new DBConnection($pathFile, '', '', '', 'myxml');
             $ses2 = new DBSession($dbc2);
             //if (!isset($Fields['ENABLETEMPLATE'])) $Fields['ENABLETEMPLATE'] ="0";
@@ -804,7 +804,7 @@ class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
         // $ses2 = new DBSession( $dbc2 );
         // $ses2->execute( "UPDATE . SET ENABLETEMPLATE = '$value'" );
         $pathFile = $filter->xssFilterHard(PATH_DYNAFORM . "{$file}.xml", 'path');
-        $dynaform = new dynaFormHandler($pathFile);
+        $dynaform = new DynaformHandler($pathFile);
         $dynaform->modifyHeaderAttribute('enabletemplate', $value);
 
         return $value;

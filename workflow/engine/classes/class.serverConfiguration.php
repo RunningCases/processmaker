@@ -349,7 +349,7 @@ class serverConf
             $dbNetView = new NET(DB_HOST);
             $dbNetView->loginDbServer(DB_USER, DB_PASS);
 
-            $dbConns = new dbConnections('');
+            $dbConns = new DbConnections('');
             $availdb = '';
             foreach ($dbConns->getDbServicesAvailables() as $key => $val) {
                 if ($availdb != '') {

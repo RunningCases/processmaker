@@ -1269,7 +1269,7 @@ class pmTablesProxy extends HttpProxyController
 
             while ($aRow = $oDataset->getRow()) {
                 if (file_exists( PATH_DYNAFORM . PATH_SEP . $aRow['DYN_FILENAME'] . '.xml' )) {
-                    $dynaformHandler = new dynaformHandler( PATH_DYNAFORM . $aRow['DYN_FILENAME'] . '.xml' );
+                    $dynaformHandler = new DynaformHandler( PATH_DYNAFORM . $aRow['DYN_FILENAME'] . '.xml' );
                     $nodeFieldsList = $dynaformHandler->getFields();
 
                     foreach ($nodeFieldsList as $node) {
@@ -1579,7 +1579,7 @@ class pmTablesProxy extends HttpProxyController
                         }
                     }
                 } else {
-                    $dynaformHandler = new dynaformHandler(PATH_DYNAFORM . $record['DYN_FILENAME'] . '.xml');
+                    $dynaformHandler = new DynaformHandler(PATH_DYNAFORM . $record['DYN_FILENAME'] . '.xml');
                     $nodeFieldsList = $dynaformHandler->getFields();
 
                     foreach ($nodeFieldsList as $node) {

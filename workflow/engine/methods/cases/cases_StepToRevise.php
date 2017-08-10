@@ -139,7 +139,7 @@ if (! isset( $_GET['ex'] )) {
     $_GET['ex'] = $_GET['position'];
 }
 
-$oDbConnections = new dbConnections( $_SESSION['PROCESS'] );
+$oDbConnections = new DbConnections( $_SESSION['PROCESS'] );
 $oDbConnections->loadAdditionalConnections();
 
 $G_PUBLISH = new Publisher();
