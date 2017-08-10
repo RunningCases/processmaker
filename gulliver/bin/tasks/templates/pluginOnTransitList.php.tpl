@@ -27,7 +27,6 @@
   $xmlfile = '{className}/{className}OnTransitList';
   /* Render page */
 
-  //require_once ( 'classes/class.extendGulliver.php' );
   $G_PUBLISH = new Publisher;
   $G_PUBLISH->AddContent( 'propeltable', '{className}/paged-table', '{className}/{className}OnTransitList', $Criteria );
   G::RenderPage( "publish" );

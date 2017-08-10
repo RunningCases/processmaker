@@ -218,7 +218,6 @@ define( 'PATH_RBAC_MSSQL_DATA', PATH_RBAC_CORE . 'data' . PATH_SEP . 'mssql' . P
 define( 'PATH_CONTROLLERS', PATH_CORE . 'controllers' . PATH_SEP );
 
 // include Gulliver Class
-require_once (PATH_GULLIVER . "class.bootstrap.php");
 
 if (file_exists( FILE_PATHS_INSTALLED )) {
 
@@ -651,8 +650,6 @@ if (file_exists( $sSerializedFile )) {
 }
 // setup propel definitions and logging
 //changed to autoloader
-//require_once ("propel/Propel.php");
-//require_once ("creole/Creole.php");
 
 if (defined( 'DEBUG_SQL_LOG' ) && DEBUG_SQL_LOG) {
     define( 'PM_PID', mt_rand( 1, 999999 ) );
@@ -797,8 +794,6 @@ if (substr( SYS_COLLECTION, 0, 8 ) === 'gulliver') {
             Bootstrap::streamFile($phpFile);
             die();
         }
-
-        Bootstrap::initVendors();
 
         $isWebEntry = \ProcessMaker\BusinessModel\WebEntry::isWebEntry(SYS_COLLECTION, $phpFile);
         if (\Bootstrap::getDisablePhpUploadExecution() === 1 && !$isWebEntry) {

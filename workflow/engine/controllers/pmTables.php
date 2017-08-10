@@ -122,7 +122,6 @@ class pmTables extends Controller
      */
     public function data ($httpData)
     {
-        require_once 'classes/model/AdditionalTables.php';
         $additionalTables = new AdditionalTables();
         $tableDef = $additionalTables->load( $httpData->id, true );
 
