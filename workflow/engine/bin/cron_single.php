@@ -1,4 +1,5 @@
 <?php
+require_once(__DIR__ . '/../../../bootstrap/autoload.php');
 register_shutdown_function(
     create_function(
         '',

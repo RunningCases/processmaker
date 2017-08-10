@@ -1,4 +1,5 @@
 <?php
+require_once(__DIR__ . '/../../../bootstrap/autoload.php');
 try {
     //Set variables
     $cronName = pathinfo($_SERVER['SCRIPT_FILENAME'], PATHINFO_FILENAME);
