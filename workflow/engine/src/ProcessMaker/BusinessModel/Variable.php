@@ -1,9 +1,9 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
-use \G;
-use \Exception;
-use \AdditionalTables;
+use G;
+use Exception;
+use AdditionalTables;
 
 class Variable
 {
