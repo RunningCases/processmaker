@@ -303,7 +303,6 @@ try {
     }
 
     //Save files
-    //require_once ("classes/model/AppDocument.php");
 
     if (isset( $_FILES["form"]["name"] ) && count( $_FILES["form"]["name"] ) > 0) {
         $oInputDocument = new \ProcessMaker\BusinessModel\Cases\InputDocument();

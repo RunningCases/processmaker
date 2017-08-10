@@ -160,8 +160,6 @@ function sendJsonResultGeneric($response, $callback)
 
 function expandNode()
 {
-    //require_once ("classes/model/AppFolder.php");
-
     extract(getExtJSParams());
 
     $oPMFolder = new AppFolder();

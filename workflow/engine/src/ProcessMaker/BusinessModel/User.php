@@ -785,7 +785,7 @@ class User
                     $oUser = new Users();
                     $aUser = $oUser->load($userUid);
                     $oUserProperty = new UsersProperties();
-                    $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($userUid, array("USR_PASSWORD_HISTORY" => serialize(array($aUser["USR_PASSWORD"]))));
+                    $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($userUid, array("USR_PASSWORD_HISTORY" => serialize(array($oUser->getUsrPassword()))));
                     $aUserProperty["USR_LOGGED_NEXT_TIME"] = $arrayData["USR_LOGGED_NEXT_TIME"];
                     $oUserProperty->update($aUserProperty);
                 }
