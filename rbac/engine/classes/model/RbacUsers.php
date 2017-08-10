@@ -75,12 +75,13 @@ class RbacUsers extends BaseRbacUsers
         try {
             $c = new Criteria('rbac');
             $c->add(RbacUsersPeer::USR_USERNAME, $sUsername);
+            /* @var $rs RbacUsers[] */
             $rs = RbacUsersPeer::doSelect($c, Propel::getDbConnection('rbac_ro'));
             if (is_array($rs) && isset($rs[0]) && is_object($rs[0]) && get_class($rs[0]) == 'RbacUsers') {
                 $aFields = $rs[0]->toArray(BasePeer::TYPE_FIELDNAME);
                 //verify password with md5, and md5 format
                 if (mb_strtoupper($sUsername, 'utf-8') === mb_strtoupper($aFields['USR_USERNAME'], 'utf-8')) {
-                    if( Bootstrap::verifyHashPassword($sPassword, $aFields['USR_PASSWORD']) ) {
+                    if( Bootstrap::verifyHashPassword($sPassword, $rs[0]->getUsrPassword()) ) {
                         if ($aFields['USR_DUE_DATE'] < date('Y-m-d')) {
                             return -4;
                         }
@@ -316,6 +317,25 @@ class RbacUsers extends BaseRbacUsers
         catch (Exception $oError) {
           throw($oError);
         }
+    }
+
+    /**
+     * {@inheritdoc} except USR_PASSWORD, for security reasons.
+     *
+     * @param string $keyType One of the class type constants TYPE_PHPNAME,
+     *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+     * @return an associative array containing the field names (as keys) and field values
+     */
+    public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+    {
+        $key = RbacUsersPeer::translateFieldName(
+            RbacUsersPeer::USR_PASSWORD,
+            BasePeer::TYPE_COLNAME,
+            $keyType
+        );
+        $array = parent::toArray($keyType);
+        unset($array[$key]);
+        return $array;
     }
 }
 
