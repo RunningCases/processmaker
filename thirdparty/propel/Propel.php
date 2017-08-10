@@ -495,8 +495,6 @@ class Propel {
     				throw new PropelException("No connection params set for " . $name);
     			}
 			}
-
-			include_once 'creole/Creole.php';
 			// if specified, use custom driver
 			if (isset(self::$configuration['datasources'][$name]['driver'])) {
 				Creole::registerDriver($dsn['phptype'], self::$configuration['datasources'][$name]['driver']);

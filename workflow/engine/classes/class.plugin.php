@@ -504,7 +504,7 @@ class PMPlugin
                 $aPluginsPP[] = substr($aPlugin['sFilename'], 0, strpos($aPlugin['sFilename'], '-')) . '.php';
             }
         }
-        $oPluginRegistry = PMPluginRegistry::getSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         if ($handle = opendir(PATH_PLUGINS)) {
             while (false !== ($file = readdir($handle))) {
                 if (in_array($file, $aPluginsPP)) {
@@ -512,23 +512,24 @@ class PMPlugin
                 }
                 if (strpos($file, '.php', 1) && is_file(PATH_PLUGINS . $file)) {
                     include_once (PATH_PLUGINS . $file);
+                    /** @var \ProcessMaker\Plugins\Interfaces\PluginDetail $pluginDetail */
                     $pluginDetail = $oPluginRegistry->getPluginDetails($file);
                     if ($pluginDetail === null) {
                         continue;
                     }
-                    $status_label = $pluginDetail->enabled ? G::LoadTranslation('ID_ENABLED') : G::LoadTranslation('ID_DISABLED');
-                    $status = $pluginDetail->enabled ? 1 : 0;
-                    if (isset($pluginDetail->aWorkspaces)) {
-                        if (!is_array($pluginDetail->aWorkspaces)) {
-                            $pluginDetail->aWorkspaces = array();
+                    $status_label = $pluginDetail->isEnabled() ? G::LoadTranslation('ID_ENABLED') : G::LoadTranslation('ID_DISABLED');
+                    $status = $pluginDetail->isEnabled();
+                    if ($pluginDetail->getWorkspaces()) {
+                        if (!is_array($pluginDetail->getWorkspaces())) {
+                            $pluginDetail->setWorkspaces(array());
                         }
-                        if (!in_array($workspace, $pluginDetail->aWorkspaces)) {
+                        if (!in_array($workspace, $pluginDetail->getWorkspaces())) {
                             continue;
                         }
                     }
-                    $setup = $pluginDetail->sSetupPage != '' && $pluginDetail->enabled ? '1' : '0';
+                    $setup = $pluginDetail->getSetupPage() != '' && $pluginDetail->isEnabled() ? '1' : '0';
 
-                    if (isset($pluginDetail) && !$pluginDetail->bPrivate) {
+                    if (isset($pluginDetail) && !$pluginDetail->isPrivate()) {
                         $items[] = [
                             'id' => (count($items) + 1),
                             'namespace' => $pluginDetail->sNamespace,
@@ -559,14 +560,13 @@ class PMPlugin
      */
     public static function getListAllPlugins($workspace)
     {
-        PMPluginRegistry::saveState();
-        $pathSingleton = PATH_DATA . "sites" . PATH_SEP . $workspace . PATH_SEP . "plugin.singleton";
-        $oPluginRegistry = PMPluginRegistry::loadSingleton($pathSingleton);
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         $items = [];
         if ($handle = opendir(PATH_PLUGINS)) {
             while (false !== ($file = readdir($handle))) {
                 if (strpos($file, '.php', 1) && is_file(PATH_PLUGINS . $file)) {
                     include_once (PATH_PLUGINS . $file);
+                    /** @var \ProcessMaker\Plugins\Interfaces\PluginDetail $detail */
                     $detail = $oPluginRegistry->getPluginDetails($file);
                     if ($detail !== null) {
                         $items[] = $detail;
@@ -575,7 +575,6 @@ class PMPlugin
             }
             closedir($handle);
         }
-        PMPluginRegistry::restoreState();
         return $items;
     }
 

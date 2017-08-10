@@ -474,7 +474,7 @@ class Main extends Controller
                 $sWspaceSelect = trim( $aFotoSelect['WORKSPACE_LOGO_NAME'] );
             }
         }
-        if (class_exists( 'PMPluginRegistry' )) {
+        if (class_exists( 'ProcessMaker\Plugins\PluginRegistry' )) {
             $oPluginRegistry = PluginRegistry::loadSingleton();
             $logoPlugin = $oPluginRegistry->getCompanyLogo( $sCompanyLogo );
             if ($logoPlugin != '/images/processmaker2.logo2.png') {

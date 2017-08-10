@@ -1654,7 +1654,7 @@ class workspaceTools
         if (count($metaFiles) > 1 && (!isset($srcWorkspace))) {
             throw new Exception("Multiple workspaces in backup but no workspace specified to restore");
         }
-        if (isset($srcWorkspace) && !in_array("$srcWorkspace.meta", array_map(BASENAME, $metaFiles))) {
+        if (isset($srcWorkspace) && !in_array("$srcWorkspace.meta", array_map('basename', $metaFiles))) {
             throw new Exception("Workspace $srcWorkspace not found in backup");
         }
 

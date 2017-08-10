@@ -826,8 +826,8 @@ class PluginRegistry
                     require_once($classFile);
                     $sClassName = substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 0, 1) .
                         str_replace(
-                            'Plugin',
-                            'Class',
+                            'plugin',
+                            'class',
                             substr($this->_aPluginDetails[$trigger->getNamespace()]->getClassName(), 1)
                         );
                     $obj = new $sClassName();

@@ -93,7 +93,7 @@ class triggerLibrary
     function unSerializeInstance ($serialized)
     {
         if (self::$instance == NULL) {
-            self::$instance = new PMPluginRegistry();
+            self::$instance = new PluginRegistry();
         }
 
         $instance = unserialize( $serialized );

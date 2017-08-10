@@ -179,12 +179,6 @@ try {
             eprintln('WARNING! No server info found!', 'red');
         }
 
-        $sSerializedFile = PATH_DATA_SITE . 'plugin.singleton';
-
-        if (file_exists($sSerializedFile)) {
-            $pluginRegistry = PMPluginRegistry::loadSingleton($sSerializedFile);
-        }
-
         //DB
         $phpCode = '';
 

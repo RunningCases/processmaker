@@ -25,6 +25,8 @@
  *
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * Class headPublisher
  *
@@ -387,7 +389,7 @@ class headPublisher
         // Load external/plugin css
         // NOTE is necesary to move this to decorator server
         if (class_exists('PMPluginRegistry') && defined('SYS_SYS')) {
-            $oPluginRegistry = & PMPluginRegistry::getSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
             $registeredCss = $oPluginRegistry->getRegisteredCss();
             /** @var \ProcessMaker\Plugins\Interfaces\CssFile $cssFile */
             foreach ($registeredCss as $cssFile) {
@@ -505,7 +507,7 @@ class headPublisher
                 $flagPlugin = false;
                 $keyPlugin = count($aux)-2;
 
-                $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 if ($oPluginRegistry->isRegisteredFolder($aux[$keyPlugin])) {
                     $flagPlugin = true;
                 } else {
@@ -682,7 +684,7 @@ class headPublisher
                     $aux = explode(PATH_SEP, $file);
                     //check if G_PLUGIN_CLASS is defined, because publisher can be called without an environment
                     if (count($aux) == 2 && defined('G_PLUGIN_CLASS')) {
-                        $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                        $oPluginRegistry = PluginRegistry::loadSingleton();
                         if ($oPluginRegistry->isRegisteredFolder($aux[0])) {
                             $sPath = PATH_PLUGINS;
                         }

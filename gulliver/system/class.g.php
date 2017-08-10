@@ -24,6 +24,8 @@
  *
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * @package gulliver.system
  */
@@ -502,7 +504,7 @@ class G
      *
      * @return void
      */
-    public function rm_dir ($dirName)
+    public static function rm_dir ($dirName)
     {
         if (! is_writable( $dirName )) {
             return false;
@@ -5042,9 +5044,9 @@ class G
             $restClasses = array_merge( $restClasses, $pluginRestClasses );
         }
         // hook to get rest api classes from plugins
-        if (class_exists( 'PMPluginRegistry' )) {
-            $pluginRegistry = & PMPluginRegistry::getSingleton();
-            $pluginClasses = $pluginRegistry->getRegisteredRestClassFiles();
+        if (class_exists( 'ProcessMaker\Plugins\PluginRegistry' )) {
+            $pluginRegistry = PluginRegistry::loadSingleton();
+            $pluginClasses = $pluginRegistry->getRegisteredRestServices();
             $restClasses = array_merge( $restClasses, $pluginClasses );
         }
         foreach ($restClasses as $key => $classFile) {

@@ -269,7 +269,7 @@ class pmLicenseManager
     public function unSerializeInstance($serialized)
     {
         if (self::$instance == null) {
-            self::$instance = new PMPluginRegistry ();
+            self::$instance = new PluginRegistry();
         }
         $instance = unserialize ( $serialized );
         self::$instance = $instance;

@@ -84,7 +84,7 @@ class PmInstaller
      * @param string $name Default value "workflow"
      * @return string file_exists(PATH_DATA."sites/".$name);
      */
-    public function isset_site($name = "workflow")
+    public static function isset_site($name = "workflow")
     {
         $pathSites = PATH_DATA . 'sites/'. '*';
         $directories = glob($pathSites, GLOB_ONLYDIR);

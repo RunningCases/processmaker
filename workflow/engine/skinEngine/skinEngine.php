@@ -451,7 +451,7 @@ class SkinEngine
       $smarty->assign('tpl_menu', PATH_TEMPLATE . 'menu.html');
       $smarty->assign('tpl_submenu', PATH_TEMPLATE . 'submenu.html');
 
-      if (class_exists('PMPluginRegistry')) {
+      if (class_exists('ProcessMaker\Plugins\PluginRegistry')) {
         $oPluginRegistry = PluginRegistry::loadSingleton();
         $sCompanyLogo = $oPluginRegistry->getCompanyLogo('/images/processmaker.logo.jpg');
       }
@@ -535,7 +535,7 @@ class SkinEngine
       $smarty->assign('tpl_menu', PATH_TEMPLATE . 'menu.html' );
       $smarty->assign('tpl_submenu', PATH_TEMPLATE . 'submenu.html' );
 
-      if (class_exists('PMPluginRegistry')) {
+      if (class_exists('ProcessMaker\Plugins\PluginRegistry')) {
         $oPluginRegistry = PluginRegistry::loadSingleton();
         $sCompanyLogo = $oPluginRegistry->getCompanyLogo ( '/images/processmaker.logo.jpg' );
       }
