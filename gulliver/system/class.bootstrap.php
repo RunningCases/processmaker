@@ -14,6 +14,27 @@ class Bootstrap
 
     //below here only approved methods
 
+    /**
+     * @deprecated
+     */
+    public static function autoloadClass($class)
+    {
+    }
+
+    /**
+     * @deprecated
+     */
+    public static function registerClass($className, $includePath)
+    {
+    }
+
+    /**
+     * @deprecated
+     */
+    public static function registerDir($name, $dir)
+    {
+    }
+
     /*
      * these functions still under revision
      */
@@ -21,6 +42,12 @@ class Bootstrap
     public static function getSystemConfiguration($globalIniFile = '', $wsIniFile = '', $wsName = '')
     {
         return PmSystem::getSystemConfiguration($globalIniFile, $wsIniFile, $wsName);
+    }
+    /**
+     * @deprecated
+     */
+    public static function registerSystemClasses()
+    {
     }
 
     //below this line, still not approved methods
@@ -120,6 +147,19 @@ class Bootstrap
         }
 
         $smarty->display($template);
+    }
+
+    /**
+     * Load Gulliver Classes
+     *
+     * @author Fernando Ontiveros Lira <fernando@colosa.com>
+     * @access public
+     * @param string $strClass
+     * @return void
+     * @deprecated
+     */
+    public static function LoadSystem($strClass)
+    {
     }
 
     /**
@@ -410,6 +450,34 @@ class Bootstrap
         ob_get_clean();
 
         return $content;
+    }
+    /**
+     * If the class is not defined by the aplication, it
+     * attempt to load the class from gulliver.system
+     *
+     * @author Fernando Ontiveros Lira <fernando@colosa.com>, David S. Callizaya
+     * @access public
+     * @param string $strClass
+     * @return void
+     * @deprecated
+     */
+    public static function LoadClass($strClass)
+    {
+    }
+
+    /**
+     * Loads a Class.
+     * If the class is not defined by the aplication, it
+     * attempt to load the class from gulliver.system
+     *
+     * @author Fernando Ontiveros Lira <fernando@colosa.com>, David S. Callizaya
+     * @access public
+     * @param string $strClass
+     * @return void
+     * @deprecated
+     */
+    public static function LoadThirdParty($sPath, $sFile)
+    {
     }
 
     /**
@@ -1949,6 +2017,16 @@ class Bootstrap
     }
 
     /**
+     *
+     * @param unknown_type $model
+     * @return unknown
+     * @deprecated
+     */
+    public function getModel($model)
+    {
+    }
+
+    /**
      * Create an encrypted unique identifier based on $id and the selected scope id.
      *
      * @author David S. Callizaya S. <davidsantos@colosa.com>
@@ -2425,6 +2503,13 @@ class Bootstrap
     public function isLinuxOs()
     {
         return strtoupper(PHP_OS) == "LINUX";
+    }
+
+    /**
+     * @deprecated
+    */
+    public static function initVendors()
+    {
     }
 
     public static function parseIniFile($filename)
