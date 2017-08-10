@@ -1671,6 +1671,7 @@ CREATE TABLE `WEB_ENTRY`
 	`WE_LINK_SKIN` VARCHAR(255),
 	`WE_LINK_LANGUAGE` VARCHAR(255),
 	`WE_LINK_DOMAIN` MEDIUMTEXT,
+	`WE_SHOW_IN_NEW_CASE` CHAR(1) default '1',
 	PRIMARY KEY (`WE_UID`)
 )ENGINE=InnoDB  DEFAULT CHARSET='utf8';
 #-----------------------------------------------------------------------------

@@ -1,6 +1,12 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
+use WebEntryEventPeer;
+use ProcessPeer;
+use Criteria;
+use WebEntryPeer;
+use Exception;
+
 class WebEntryEvent
 {
     private $arrayFieldDefinition = array(
@@ -457,6 +463,7 @@ class WebEntryEvent
                     'WE_LINK_SKIN',
                     'WE_LINK_LANGUAGE',
                     'WE_LINK_DOMAIN',
+                    'WE_SHOW_IN_NEW_CASE',
                 ]);
                 if ($exists !== false) {
                     $data0[$k] = $v;
@@ -772,6 +779,7 @@ class WebEntryEvent
                         'WE_LINK_LANGUAGE' => 'WE_LINK_LANGUAGE',
                         'WE_LINK_DOMAIN' => 'WE_LINK_DOMAIN',
                         'WE_DATA' => 'WEE_URL',
+                        'WE_SHOW_IN_NEW_CASE' => 'WE_SHOW_IN_NEW_CASE',
                     ];
                     foreach ($webEntryMap as $k => $v) {
                         if (array_key_exists($v, $arrayData)) {
@@ -902,6 +910,7 @@ class WebEntryEvent
             $criteria->addSelectColumn(\WebEntryPeer::WE_LINK_LANGUAGE);
             $criteria->addSelectColumn(\WebEntryPeer::WE_LINK_DOMAIN);
             $criteria->addSelectColumn(\WebEntryPeer::TAS_UID);
+            $criteria->addSelectColumn(\WebEntryPeer::WE_SHOW_IN_NEW_CASE);
             $criteria->addJoin(\WebEntryEventPeer::WEE_WE_UID, \WebEntryPeer::WE_UID, \Criteria::LEFT_JOIN);
             return $criteria;
         } catch (\Exception $e) {
@@ -948,6 +957,7 @@ class WebEntryEvent
                 $this->getFieldNameByFormatFieldName("WE_LINK_SKIN")            => $record["WE_LINK_SKIN"],
                 $this->getFieldNameByFormatFieldName("WE_LINK_LANGUAGE")        => $record["WE_LINK_LANGUAGE"],
                 $this->getFieldNameByFormatFieldName("WE_LINK_DOMAIN")          => $record["WE_LINK_DOMAIN"],
+                $this->getFieldNameByFormatFieldName("WE_SHOW_IN_NEW_CASE")     => $record["WE_SHOW_IN_NEW_CASE"],
                 $this->getFieldNameByFormatFieldName("TAS_UID")                 => $record["TAS_UID"],
             );
         } catch (\Exception $e) {
@@ -996,24 +1006,36 @@ class WebEntryEvent
     /**
      * Get all WebEntry-Events
      * Return an array with all WebEntry-Events
+     * @param boolean $considerShowInCase
      * @return array
      * @throws \Exception
      */
-    public function getAllWebEntryEvents()
+    public function getAllWebEntryEvents($considerShowInCase = false)
     {
         try {
             $result = array();
             $criteria = $this->getWebEntryEventCriteria();
-            $criteria->addJoin(\WebEntryEventPeer::PRJ_UID, \ProcessPeer::PRO_UID, \Criteria::JOIN);
-            $criteria->add(\ProcessPeer::PRO_STATUS, 'ACTIVE', \Criteria::EQUAL);
-            $rsCriteria = \WebEntryEventPeer::doSelectRS($criteria);
+            $criteria->addJoin(
+                WebEntryEventPeer::PRJ_UID,
+                ProcessPeer::PRO_UID,
+                Criteria::JOIN
+            );
+            if ($considerShowInCase) {
+                $criteria->add(
+                    WebEntryPeer::WE_SHOW_IN_NEW_CASE,
+                    "0",
+                    Criteria::EQUAL
+                );
+            }
+            $criteria->add(ProcessPeer::PRO_STATUS, 'ACTIVE', Criteria::EQUAL);
+            $rsCriteria = WebEntryEventPeer::doSelectRS($criteria);
             $rsCriteria->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
             while ($rsCriteria->next()) {
                 $row = $rsCriteria->getRow();
                 $result[] = $this->getWebEntryEventDataFromRecord($row);
             }
             return $result;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw $e;
         }
     }

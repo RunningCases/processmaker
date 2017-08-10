@@ -3353,6 +3353,7 @@
         <column name="WE_LINK_SKIN" type="VARCHAR" size="255" />
         <column name="WE_LINK_LANGUAGE" type="VARCHAR" size="255" />
         <column name="WE_LINK_DOMAIN" type="LONGVARCHAR" />
+        <column name="WE_SHOW_IN_NEW_CASE" type="CHAR" size="1" default="1"/>
         <validator column="WE_TYPE">
             <rule name="validValues" value="SINGLE|MULTIPLE" message="Please enter a valid value for WE_TYPE" />
         </validator>
