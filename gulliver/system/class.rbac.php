@@ -75,6 +75,12 @@ class RBAC
     private static $instance = null;
     public $authorizedActions = array();
 
+    /**
+     * To enable compatibility with soap login.
+     * @var bool
+     */
+    private $enableLoginHash = false;
+
     public function __construct ()
     {
         $this->authorizedActions = array(
@@ -1571,6 +1577,32 @@ class RBAC
         if (!$access) {
             throw new RBACException('ID_ACCESS_DENIED', 403);
         }
+    }
+
+    /**
+     * Enable compatibility with soap login
+     */
+    public function enableLoginSoapWithHash()
+    {
+        $this->enableLoginHash = true;
+    }
+
+    /**
+     * Disable compatibility with soap login
+     */
+    public function disableLoginSoapWithHash ()
+    {
+        $this->enableLoginHash = false;
+    }
+
+    /**
+     * Return status login with soap
+     *
+     * @return bool
+     */
+    public function getStatusLoginHash ()
+    {
+        return $this->enableLoginHash;
     }
 }
 

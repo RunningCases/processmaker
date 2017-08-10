@@ -65,6 +65,8 @@ class wsBase
         global $RBAC;
 
         try {
+            //To enable compatibility with soap login, method Enable.
+            $RBAC->enableLoginSoapWithHash();
             $uid = $RBAC->VerifyLogin( $userid, $password );
 
             switch ($uid) {
@@ -113,14 +115,13 @@ class wsBase
             $session->Save();
 
             //save the session in DataBase
-
-
-            return $wsResponse;
         } catch (Exception $e) {
             $wsResponse = unserialize( $e->getMessage() );
-
-            return $wsResponse;
         }
+
+        //To enable compatibility with soap login, method disable.
+        $RBAC->disableLoginSoapWithHash();
+        return $wsResponse;
     }
 
     /**
