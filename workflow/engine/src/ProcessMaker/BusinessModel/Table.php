@@ -798,7 +798,7 @@ class Table
         while ($oDataset->next()) {
             $aRow = $oDataset->getRow();
             if (file_exists( PATH_DYNAFORM . PATH_SEP . $aRow['DYN_FILENAME'] . '.xml' )) {
-                $dynaformHandler = new \DynaformHandler( PATH_DYNAFORM . $aRow['DYN_FILENAME'] . '.xml' );
+                $dynaformHandler = new DynaformHandler( PATH_DYNAFORM . $aRow['DYN_FILENAME'] . '.xml' );
                 $nodeFieldsList = $dynaformHandler->getFields();
 
                 foreach ($nodeFieldsList as $node) {
@@ -1052,7 +1052,7 @@ class Table
 
         while ($oDataset->next()) {
             $aRow = $oDataset->getRow();
-            $dynaformHandler = new \DynaformHandler( PATH_DYNAFORM . $aRow['DYN_FILENAME'] . '.xml' );
+            $dynaformHandler = new DynaformHandler( PATH_DYNAFORM . $aRow['DYN_FILENAME'] . '.xml' );
             $nodeFieldsList = $dynaformHandler->getFields();
             foreach ($nodeFieldsList as $node) {
                 $arrayNode = $dynaformHandler->getArray( $node );
