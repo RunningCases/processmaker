@@ -3,6 +3,7 @@ namespace ProcessMaker\BusinessModel;
 
 use G;
 use Criteria;
+use DynaformHandler;
 
 class Process
 {

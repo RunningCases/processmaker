@@ -1,9 +1,10 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
-use \G;
-use \AdditionalTables;
-use \Fields;
+use G;
+use AdditionalTables;
+use Fields;
+use DynaformHandler;
 
 class Table
 {
