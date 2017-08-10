@@ -1,4 +1,5 @@
 <?php
+require_once(__DIR__ . '/../../../bootstrap/autoload.php');
 
 use ProcessMaker\Plugins\PluginRegistry;
 
@@ -92,38 +93,6 @@ try {
     //define('PATH_GULLIVER_HOME', PATH_TRUNK . 'gulliver' . PATH_SEP);
 
     spl_autoload_register(['Bootstrap', 'autoloadClass']);
-
-    //DATABASE propel classes used in 'Cases' Options
-    Bootstrap::registerClass('AuthenticationSourcePeer', PATH_RBAC . 'model' . PATH_SEP . 'AuthenticationSourcePeer.php');
-    Bootstrap::registerClass('BaseAuthenticationSource', PATH_RBAC . 'model' . PATH_SEP . 'om' . PATH_SEP . 'BaseAuthenticationSource.php');
-    Bootstrap::registerClass('AuthenticationSource',     PATH_RBAC . 'model' . PATH_SEP . 'AuthenticationSource.php');
-    Bootstrap::registerClass('RolesPeer',                PATH_RBAC . 'model' . PATH_SEP . 'RolesPeer.php');
-    Bootstrap::registerClass('BaseRoles',                PATH_RBAC . 'model' . PATH_SEP . 'om' . PATH_SEP . 'BaseRoles.php');
-    Bootstrap::registerClass('Roles',                    PATH_RBAC . 'model' . PATH_SEP . 'Roles.php');
-
-    require_once(PATH_RBAC . 'model' . PATH_SEP . 'UsersRolesPeer.php');
-    require_once(PATH_RBAC . 'model' . PATH_SEP . 'om' . PATH_SEP . 'BaseUsersRoles.php');
-    require_once(PATH_RBAC . 'model' . PATH_SEP . 'UsersRoles.php');
-
-    Bootstrap::registerClass('PMLicensedFeatures', PATH_CLASSES . 'class.licensedFeatures.php');
-    Bootstrap::registerClass('serverConf',         PATH_CLASSES . 'class.serverConfiguration.php');
-    Bootstrap::registerClass('calendar',           PATH_CLASSES . 'class.calendar.php');
-    Bootstrap::registerClass('groups',             PATH_CLASSES . 'class.groups.php');
-
-    Bootstrap::registerClass('Entity_Base',         PATH_HOME . 'engine/classes/entities/Base.php');
-    Bootstrap::registerClass('Entity_AppSolrQueue', PATH_HOME . 'engine/classes/entities/AppSolrQueue.php');
-    Bootstrap::registerClass('XMLDB',               PATH_HOME . 'engine/classes/class.xmlDb.php');
-    Bootstrap::registerClass('dynaFormHandler',     PATH_GULLIVER . 'class.dynaformhandler.php');
-    Bootstrap::registerClass('DynaFormField',       PATH_HOME . 'engine/classes/class.dynaFormField.php');
-    Bootstrap::registerClass('SolrRequestData',     PATH_HOME . 'engine/classes/entities/SolrRequestData.php');
-    Bootstrap::registerClass('SolrUpdateDocument',  PATH_HOME . 'engine/classes/entities/SolrUpdateDocument.php');
-    Bootstrap::registerClass('Xml_Node',            PATH_GULLIVER . 'class.xmlDocument.php');
-    Bootstrap::registerClass('wsResponse',          PATH_HOME . 'engine' . PATH_SEP . 'classes' . PATH_SEP . 'class.wsResponse.php');
-    Bootstrap::initVendors();
-
-    /*----------------------------------********---------------------------------*/
-    Bootstrap::registerClass('dashboards', PATH_HOME . 'engine/classes/class.dashboards.php');
-    /*----------------------------------********---------------------------------*/
 
     //Set variables
     /*----------------------------------********---------------------------------*/

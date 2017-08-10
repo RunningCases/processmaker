@@ -45,9 +45,6 @@ try {
     // Bootstrap::mylog("post:".$_POST['function']);
     switch ($sfunction) {
         case 'lookForNameInput':
-            //require_once ('classes/model/Content.php');
-            //require_once ("classes/model/InputDocument.php");
-
             $snameInput = urldecode( $_POST['NAMEINPUT'] );
             $sPRO_UID = urldecode( $_POST['proUid'] );
 

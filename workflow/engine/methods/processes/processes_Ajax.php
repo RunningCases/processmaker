@@ -901,7 +901,7 @@ try {
             $proUid = isset($_REQUEST['PRO_UID']) ? $_REQUEST['PRO_UID'] : '';
             $dynUid = isset($_REQUEST['DYN_UID']) ? $_REQUEST['DYN_UID'] : '';
             if (is_file(PATH_DATA . '/sites/' . SYS_SYS . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml') && filesize(PATH_DATA . '/sites/' . SYS_SYS . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml') > 0) {
-                $dyn = new dynaFormHandler(PATH_DATA . '/sites/' . SYS_SYS . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml');
+                $dyn = new DynaformHandler(PATH_DATA . '/sites/' . SYS_SYS . '/xmlForms/' . $proUid . '/' . $dynUid . '.xml');
                 $dynaformFields[] = $dyn->getFields();
             }
             foreach ($dynaformFields as $aDynFormFields) {

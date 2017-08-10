@@ -3,6 +3,7 @@ namespace ProcessMaker\BusinessModel;
 
 use G;
 use Criteria;
+use DynaformHandler;
 
 class Process
 {
@@ -1676,7 +1677,7 @@ class Process
 
         while ($aRow = $oDataset->getRow()) {
             if (is_file(PATH_DYNAFORM . $aRow['DYN_FILENAME'] . ".xml")) {
-                $dyn = new \dynaFormHandler(PATH_DYNAFORM . $aRow['DYN_FILENAME'] . ".xml");
+                $dyn = new DynaformHandler(PATH_DYNAFORM . $aRow['DYN_FILENAME'] . ".xml");
 
                 if ($dyn->getHeaderAttribute("type") !== "xmlform" && $dyn->getHeaderAttribute("type") !== "") {
                     // skip it, if that is not a xmlform
@@ -1729,7 +1730,7 @@ class Process
         $oDataset->next();
         while ($aRow = $oDataset->getRow()) {
             if (is_file(PATH_DYNAFORM . $aRow['DYN_FILENAME'] . ".xml")) {
-                $dyn = new \dynaFormHandler(PATH_DYNAFORM . $aRow['DYN_FILENAME'] . ".xml");
+                $dyn = new DynaformHandler(PATH_DYNAFORM . $aRow['DYN_FILENAME'] . ".xml");
 
                 if ($dyn->getHeaderAttribute("type") === "xmlform") {
                     // skip it, if that is not a xmlform
@@ -1775,7 +1776,7 @@ class Process
         $aMultipleSelectionFields = array("listbox", "checkgroup", "grid");
 
         if (is_file( PATH_DATA . '/sites/'. SYS_SYS .'/xmlForms/'. $proUid .'/'.$dynUid. '.xml' ) && filesize( PATH_DATA . '/sites/'. SYS_SYS .'/xmlForms/'. $proUid .'/'. $dynUid .'.xml' ) > 0) {
-            $dyn = new \dynaFormHandler( PATH_DATA . '/sites/'. SYS_SYS .'/xmlForms/' .$proUid. '/' . $dynUid .'.xml' );
+            $dyn = new DynaformHandler( PATH_DATA . '/sites/'. SYS_SYS .'/xmlForms/' .$proUid. '/' . $dynUid .'.xml' );
             $dynaformFields[] = $dyn->getFields();
 
             $fields = $dyn->getFields();

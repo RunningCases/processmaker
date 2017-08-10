@@ -130,8 +130,6 @@ if (isset( $_FILES["form"]["name"] ) && count( $_FILES["form"]["name"] ) > 0) {
 				}
 
 				if ($indocUid != null) {
-					//require_once ("classes/model/AppFolder.php");
-					//require_once ("classes/model/InputDocument.php");
 
 					$oInputDocument = new InputDocument();
 					$aID = $oInputDocument->load( $indocUid );

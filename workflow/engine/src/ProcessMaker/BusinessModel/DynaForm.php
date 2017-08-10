@@ -1,5 +1,6 @@
 <?php
 namespace ProcessMaker\BusinessModel;
+use DynaformHandler;
 
 class DynaForm
 {
@@ -155,7 +156,7 @@ class DynaForm
 
             while ($oDataset->next()) {
                 $dataForms = $oDataset->getRow();
-                $dynHandler = new \dynaFormHandler(PATH_DYNAFORM . $proUid . PATH_SEP . $dataForms["DYN_UID"] . ".xml");
+                $dynHandler = new DynaformHandler(PATH_DYNAFORM . $proUid . PATH_SEP . $dataForms["DYN_UID"] . ".xml");
                 $dynFields = $dynHandler->getFields();
                 foreach ($dynFields as $field) {
                     $sType = \Step::getAttribute( $field, 'type' );

@@ -328,7 +328,7 @@ try {
              * Added By erik 16-05-08
              * Description: this was added for the additional database connections
              */
-            $oDbConnections = new dbConnections( $_SESSION['PROCESS'] );
+            $oDbConnections = new DbConnections( $_SESSION['PROCESS'] );
             $oDbConnections->loadAdditionalConnections();
             $_SESSION['CURRENT_DYN_UID'] = $_GET['UID'];
 
@@ -1137,7 +1137,7 @@ try {
                  * Description: this was added for the additional database connections
                  */
 
-                $oDbConnections = new dbConnections( $_SESSION['PROCESS'] );
+                $oDbConnections = new DbConnections( $_SESSION['PROCESS'] );
                 $oDbConnections->loadAdditionalConnections();
                 $stepFilename = "$sNamespace/$sStepName";
                 G::evalJScript( "

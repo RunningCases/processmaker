@@ -86,8 +86,6 @@ if (! defined ('PATH_HOME')) {
 
   require_once PATH_TRUNK . "framework/src/Maveriks/Util/ClassLoader.php";
   require_once (PATH_HOME . 'engine' . PATH_SEP . 'config' . PATH_SEP . 'paths.php');
-  require_once (PATH_GULLIVER . "class.bootstrap.php");
-  Bootstrap::registerSystemClasses();
   spl_autoload_register(array('Bootstrap', 'autoloadClass'));
 
 

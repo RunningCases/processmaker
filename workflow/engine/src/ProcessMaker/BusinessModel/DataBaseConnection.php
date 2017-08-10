@@ -1,9 +1,9 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
-use \G;
-use \DbSource;
-use \dbConnections;
+use G;
+use DbSource;
+use DbConnections;
 
 class DataBaseConnection
 {
@@ -61,7 +61,7 @@ class DataBaseConnection
                 $dbs_uid = $this->validateDbsUid($dbs_uid, $pro_uid);
             }
 
-            $dbs = new dbConnections($pro_uid);
+            $dbs = new DbConnections($pro_uid);
             $oDBConnection = new DbSource();
             $aFields = $oDBConnection->load($dbs_uid, $pro_uid);
             if ($aFields['DBS_PORT'] == '0') {
@@ -162,7 +162,7 @@ class DataBaseConnection
 
         if (isset($dataDBConnection['DBS_ENCODE'])) {
             $encodesExists = array();
-            $dbs = new dbConnections();
+            $dbs = new DbConnections();
             $dbEncodes = $dbs->getEncondeList($dataDBConnection['DBS_TYPE']);
             foreach ($dbEncodes as $value) {
                 $encodesExists[] = $value['0'];
@@ -423,7 +423,7 @@ class DataBaseConnection
      */
     public function getDbEngines ()
     {
-        $dbs = new dbConnections();
+        $dbs = new DbConnections();
         $dbServices = $dbs->getDbServicesAvailables();
         return $dbServices;
     }

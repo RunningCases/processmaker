@@ -203,9 +203,6 @@ class PMPluginRegistry
      */
     public function registerPlugin ($sNamespace, $sFilename = null)
     {
-        //require_once ($sFilename);
-
-
         $sClassName = $sNamespace . "plugin";
         $plugin = new $sClassName( $sNamespace, $sFilename );
 
@@ -278,7 +275,6 @@ class PMPluginRegistry
                 $pluginSrcDir = PATH_PLUGINS . $detail->sNamespace . PATH_SEP . 'src';
 
                 if (is_dir($pluginSrcDir)) {
-                    //Bootstrap::registerDir($detail->sNamespace.'/src', $pluginSrcDir);
                     $loader = \Maveriks\Util\ClassLoader::getInstance();
                     $loader->add($pluginSrcDir);
                 }

@@ -14,6 +14,27 @@ class Bootstrap
 
     //below here only approved methods
 
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function autoloadClass($class)
+    {
+    }
+
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function registerClass($className, $includePath)
+    {
+    }
+
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function registerDir($name, $dir)
+    {
+    }
+
     /*
      * these functions still under revision
      */
@@ -21,6 +42,12 @@ class Bootstrap
     public static function getSystemConfiguration($globalIniFile = '', $wsIniFile = '', $wsName = '')
     {
         return PmSystem::getSystemConfiguration($globalIniFile, $wsIniFile, $wsName);
+    }
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function registerSystemClasses()
+    {
     }
 
     //below this line, still not approved methods
@@ -120,6 +147,13 @@ class Bootstrap
         }
 
         $smarty->display($template);
+    }
+
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function LoadSystem($strClass)
+    {
     }
 
     /**
@@ -410,6 +444,19 @@ class Bootstrap
         ob_get_clean();
 
         return $content;
+    }
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function LoadClass($strClass)
+    {
+    }
+
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public static function LoadThirdParty($sPath, $sFile)
+    {
     }
 
     /**
@@ -1949,6 +1996,13 @@ class Bootstrap
     }
 
     /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+     */
+    public function getModel($model)
+    {
+    }
+
+    /**
      * Create an encrypted unique identifier based on $id and the selected scope id.
      *
      * @author David S. Callizaya S. <davidsantos@colosa.com>
@@ -2427,6 +2481,13 @@ class Bootstrap
         return strtoupper(PHP_OS) == "LINUX";
     }
 
+    /**
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
+    */
+    public static function initVendors()
+    {
+    }
+
     public static function parseIniFile($filename)
     {
         $data = @parse_ini_file($filename, true);
@@ -2516,18 +2577,37 @@ class Bootstrap
         return $var;
     }
 
-    public function verifyHashPassword ($pass, $userPass)
+    /**
+     * Verify Hash password with password entered
+     *
+     * @param string $pass password
+     * @param string $userPass hash of password
+     * @return bool true or false
+     */
+    public function verifyHashPassword($pass, $userPass)
     {
+        global $RBAC;
         $passwordHashConfig = Bootstrap::getPasswordHashConfig();
         $hashTypeCurrent = $passwordHashConfig['current'];
         $hashTypePrevious = $passwordHashConfig['previous'];
-        if ((Bootstrap::hashPassword($pass, $hashTypeCurrent) == $userPass) || ($pass === $hashTypeCurrent . ':' . $userPass)) {
-            return true;
+        $acceptance = false;
+
+        if ($RBAC->loginWithHash()) {
+            //To enable compatibility with soap login
+            if ((Bootstrap::hashPassword($pass, $hashTypeCurrent) == $userPass) || ($pass === $hashTypeCurrent . ':' . $userPass)) {
+                $acceptance = true;
+            } else if ((Bootstrap::hashPassword($pass, $hashTypePrevious) == $userPass) || ($pass === $hashTypePrevious . ':' . $userPass)) {
+                $acceptance = true;
+            }
+        } else {
+            if (Bootstrap::hashPassword($pass, $hashTypeCurrent) == $userPass) {
+                $acceptance = true;
+            } else if (Bootstrap::hashPassword($pass, $hashTypePrevious) == $userPass) {
+                $acceptance = true;
+            }
         }
-        if ((Bootstrap::hashPassword($pass, $hashTypePrevious) == $userPass) || ($pass === $hashTypePrevious . ':' . $userPass)) {
-            return true;
-        }
-        return false;
+
+        return $acceptance;
     }
 
     /**

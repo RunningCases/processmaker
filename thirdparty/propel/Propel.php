@@ -488,7 +488,7 @@ class Propel {
 					* @date: 27-05-08 11:48                                                *
 					* @Description: this was added for the additional database connections *
 					***********************************************************************/
-					$oDbConnections = new dbConnections($_SESSION['PROCESS']);
+					$oDbConnections = new DbConnections($_SESSION['PROCESS']);
     				$oDbConnections->loadAdditionalConnections();
     				$dsn = isset(self::$configuration['datasources'][$name]['connection']) ? self::$configuration['datasources'][$name]['connection'] : null;
 				} else {

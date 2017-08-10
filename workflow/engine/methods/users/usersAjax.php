@@ -318,7 +318,7 @@ switch ($_POST['action']) {
 
         require_once 'classes/model/UsersProperties.php';
         $oUserProperty = new UsersProperties();
-        $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($aFields['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array($aFields['USR_PASSWORD']))));
+        $aUserProperty = $oUserProperty->loadOrCreateIfNotExists($aFields['USR_UID'], array('USR_PASSWORD_HISTORY' => serialize(array($oUser->getUsrPassword()))));
         $aFields['USR_LOGGED_NEXT_TIME'] = $aUserProperty['USR_LOGGED_NEXT_TIME'];
 
         if (array_key_exists('USR_PASSWORD', $aFields)) {

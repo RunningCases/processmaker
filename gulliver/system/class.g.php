@@ -46,11 +46,7 @@ class G
     public static $httpHost;
 
     /**
-     * Load Gulliver Classes
-     * @access public
-     * @param string $strClass
-     * @return void
-     * @deprecated 08-04-2017
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public static function LoadSystem($strClass)
     {
@@ -58,11 +54,7 @@ class G
     }
 
     /**
-     * Load System Classes
-     * @access public
-     * @param string $strClass
-     * @return void
-     * @deprecated 08-04-2017
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public function LoadSystemExist($strClass)
     {
@@ -70,11 +62,7 @@ class G
     }
 
     /**
-     * Include javascript files
-     * @access public
-     * @param string $strClass
-     * @return void
-     * @deprecated 08-04-2017
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public function LoadInclude($strClass)
     {
@@ -82,11 +70,7 @@ class G
     }
 
     /**
-     * public function LoadClassRBAC
-     * @access public
-     * @param string $strClass
-     * @return void
-     * @deprecated 08-04-2017
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public function LoadClassRBAC($strClass)
     {
@@ -94,12 +78,7 @@ class G
     }
 
     /**
-     * If the class is not defined by the aplication, it
-     * attempt to load the class from gulliver.system
-     * @access public
-     * @param string $strClass
-     * @return void
-     * @deprecated 08-04-2017
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public static function LoadClass($strClass)
     {
@@ -107,12 +86,7 @@ class G
     }
 
     /**
-     * public function LoadThirdParty
-     * @access public
-     * @param string $sPath
-     * @param string $sFile
-     * @return void
-     * @deprecated 08-04-2017
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public static function LoadThirdParty($sPath, $sFile)
     {

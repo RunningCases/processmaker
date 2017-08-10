@@ -2365,7 +2365,7 @@ class AppSolr
       foreach ($dynaformFileNames as $dynaformFileName) {
           if (is_file(PATH_DYNAFORM . $dynaformFileName ['DYN_FILENAME'] . '.xml') && 
              filesize(PATH_DYNAFORM . $dynaformFileName ['DYN_FILENAME'] . '.xml') >0 ) {
-              $dyn = new dynaFormHandler (PATH_DYNAFORM . $dynaformFileName ['DYN_FILENAME'] . '.xml');
+              $dyn = new DynaformHandler (PATH_DYNAFORM . $dynaformFileName ['DYN_FILENAME'] . '.xml');
               $dynaformFields [] = $dyn->getFields ();
           }
           if (is_file(PATH_DYNAFORM . $dynaformFileName ['DYN_FILENAME'] . '.xml') && 
