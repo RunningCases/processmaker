@@ -388,7 +388,7 @@ class headPublisher
          */
         // Load external/plugin css
         // NOTE is necesary to move this to decorator server
-        if (class_exists('PMPluginRegistry') && defined('SYS_SYS')) {
+        if (class_exists('ProcessMaker\Plugins\PluginRegistry') && defined('SYS_SYS')) {
             $oPluginRegistry = PluginRegistry::loadSingleton();
             $registeredCss = $oPluginRegistry->getRegisteredCss();
             /** @var \ProcessMaker\Plugins\Interfaces\CssFile $cssFile */
