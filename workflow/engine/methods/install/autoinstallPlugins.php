@@ -21,6 +21,9 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 $inst = new PmInstaller();
 
 $oProcess = new Processes();
@@ -57,7 +60,7 @@ foreach ($availablePlugins as $filename) {
     }
 
     //print "change to ENABLED";
-    $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+    $oPluginRegistry = PluginRegistry::loadSingleton();
 
     $pluginFile = $sClassName . '.php';
     if (! file_exists( PATH_PLUGINS . $sClassName . '.php' )) {

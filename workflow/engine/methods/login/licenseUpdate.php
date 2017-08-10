@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 $aInfoLoadFile = array();
 $aInfoLoadFile['name'] = $_FILES['form']['name']['licenseFile'];
 $aInfoLoadFile['tmp_name'] = $_FILES['form']['tmp_name']['licenseFile'];
@@ -37,7 +39,7 @@ if ($aux['extension'] != 'dat') {
         BasePeer::doUpdate($oCriteriaSelect, $oCriteriaUpdate, $cnn);
 
         //are all the plugins that are enabled in the workspace
-        $pluginRegistry = ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+        $pluginRegistry = PluginRegistry::loadSingleton();
         /** @var \ProcessMaker\Plugins\Interfaces\PluginDetail $plugin */
         foreach ($pluginRegistry->getAllPluginsDetails() as $plugin) {
             if ($plugin->isEnabled() && !in_array($plugin->getNamespace(), $licenseManager->features)) {

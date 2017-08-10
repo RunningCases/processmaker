@@ -1,8 +1,10 @@
 <?php
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 $pluginFile   = $_GET['id'];
 
-$oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+$oPluginRegistry = PluginRegistry::loadSingleton();
 
 $details = $oPluginRegistry->getPluginDetails( $pluginFile );
 $folder = $details->getFolder();

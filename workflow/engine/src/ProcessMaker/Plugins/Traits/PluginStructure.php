@@ -3,6 +3,7 @@
 namespace ProcessMaker\Plugins\Traits;
 
 use BasePeer;
+use G;
 use PluginsRegistry;
 use ProcessMaker\Plugins\Interfaces\CssFile;
 use ProcessMaker\Plugins\Interfaces\FolderDetail;
@@ -106,16 +107,16 @@ trait PluginStructure
         foreach ($Plugins as $plugin) {
             $this->_aPluginDetails[$plugin['PluginNamespace']] = $this->buildPluginDetails($plugin);
             if ($plugin['PluginEnable']) {
-                $this->buildMenus(\G::json_decode($plugin['PluginMenus'], true));
-                $this->buildFolders(\G::json_decode($plugin['PluginFolders'], true));
-                $this->buildTriggers(\G::json_decode($plugin['PluginTriggers'], true));
-                $this->buildPmFunctions(\G::json_decode($plugin['PluginPmFunctions'], true));
-                $this->buildRedirectLogin(\G::json_decode($plugin['PluginRedirectLogin'], true));
-                $this->buildSteps(\G::json_decode($plugin['PluginSteps'], true));
-                $this->buildCss(\G::json_decode($plugin['PluginCss'], true));
-                $this->buildJs(\G::json_decode($plugin['PluginJs'], true));
-                $this->buildRestService(\G::json_decode($plugin['PluginRestService'], true));
-                $this->buildAttributes($plugin['PluginNamespace'], \G::json_decode($plugin['PluginAttributes']));
+                $this->buildMenus(G::json_decode($plugin['PluginMenus'], true));
+                $this->buildFolders(G::json_decode($plugin['PluginFolders'], true));
+                $this->buildTriggers(G::json_decode($plugin['PluginTriggers'], true));
+                $this->buildPmFunctions(G::json_decode($plugin['PluginPmFunctions'], true));
+                $this->buildRedirectLogin(G::json_decode($plugin['PluginRedirectLogin'], true));
+                $this->buildSteps(G::json_decode($plugin['PluginSteps'], true));
+                $this->buildCss(G::json_decode($plugin['PluginCss'], true));
+                $this->buildJs(G::json_decode($plugin['PluginJs'], true));
+                $this->buildRestService(G::json_decode($plugin['PluginRestService'], true));
+                $this->buildAttributes($plugin['PluginNamespace'], G::json_decode($plugin['PluginAttributes']));
             }
         }
     }
@@ -137,7 +138,7 @@ trait PluginStructure
             $plugin['PluginSetupPage'],
             $plugin['PluginVersion'],
             $plugin['PluginCompanyLogo'],
-            \G::json_decode($plugin['PluginWorkspaces']),
+            G::json_decode($plugin['PluginWorkspaces']),
             $plugin['PluginEnable'],
             $plugin['PluginPrivate']
         );
@@ -288,7 +289,7 @@ trait PluginStructure
         $PluginDetails = $PluginRegistry->_aPluginDetails[$Namespace];
         unset($PluginRegistry->_aPluginDetails);
         $Plugin = isset($PluginRegistry->_aPlugins[$Namespace]) ?
-            \G::json_decode(\G::json_encode($PluginRegistry->_aPlugins[$Namespace]), true) :
+            G::json_decode(G::json_encode($PluginRegistry->_aPlugins[$Namespace]), true) :
             [];
         unset($PluginRegistry->_aPlugins);
         $newStructurePlugin = array_merge($Plugin, $PluginDetails->getAttributes());
@@ -339,7 +340,7 @@ trait PluginStructure
                             }
                         }
                     }
-                    $valueField = \G::json_encode($valueField);
+                    $valueField = G::json_encode($valueField);
                     break;
                 case 'int':
                     $valueField = array_key_exists($name, $fieldsInTable) ? $fieldsInTable[$name] : 0;
@@ -357,7 +358,7 @@ trait PluginStructure
             }
             $fields[$property['name']] = $valueField;
         }
-        $fields['PLUGIN_ATTRIBUTES'] = \G::json_encode($extraAttributes);
+        $fields['PLUGIN_ATTRIBUTES'] = G::json_encode($extraAttributes);
         return $fields;
     }
 }

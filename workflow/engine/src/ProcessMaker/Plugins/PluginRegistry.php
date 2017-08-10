@@ -2,8 +2,15 @@
 
 namespace ProcessMaker\Plugins;
 
+use Archive_Tar;
 use enterprisePlugin;
 use Exception;
+use G;
+use InputFilter;
+use Language;
+use PEAR;
+use PluginsRegistry;
+use PmSystem;
 use ProcessMaker\Plugins\Adapters\PluginAdapter;
 use ProcessMaker\Plugins\Interfaces\CaseSchedulerPlugin;
 use ProcessMaker\Plugins\Interfaces\CronFile;
@@ -24,6 +31,9 @@ use ProcessMaker\Plugins\Interfaces\ToolbarDetail;
 use ProcessMaker\Plugins\Interfaces\TriggerDetail;
 use ProcessMaker\Plugins\Traits\Attributes;
 use ProcessMaker\Plugins\Traits\PluginStructure;
+use Publisher;
+use stdClass;
+use System;
 
 /**
  * Class PluginRegistry
@@ -151,9 +161,9 @@ class PluginRegistry
         } catch (Exception $e) {
             global $G_PUBLISH;
             $Message['MESSAGE'] = $e->getMessage();
-            $G_PUBLISH = new \Publisher();
+            $G_PUBLISH = new Publisher();
             $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/showMessage', '', $Message);
-            \G::RenderPage('publish');
+            G::RenderPage('publish');
             die();
         }
     }
@@ -167,8 +177,8 @@ class PluginRegistry
         $newStructurePlugin = $this->getAllAttributes($Namespace);
         $plugin = $this->convertFieldTable($newStructurePlugin);
         if ($plugin['PLUGIN_NAMESPACE'] && $plugin['PLUGIN_CLASS_NAME'] && $plugin['PLUGIN_FILE']) {
-            $fieldPlugin = \PluginsRegistry::loadOrCreateIfNotExists(md5($plugin['PLUGIN_NAMESPACE']), $plugin);
-            \PluginsRegistry::update($fieldPlugin);
+            $fieldPlugin = PluginsRegistry::loadOrCreateIfNotExists(md5($plugin['PLUGIN_NAMESPACE']), $plugin);
+            PluginsRegistry::update($fieldPlugin);
         }
     }
     /**
@@ -323,8 +333,7 @@ class PluginRegistry
      */
     public function installPluginArchive($Filename, $Namespace)
     {
-        \G::LoadThirdParty("pear/Archive", "Tar");
-        $tar = new \Archive_Tar($Filename);
+        $tar = new Archive_Tar($Filename);
         $files = $tar->listContent();
         $plugins = array();
         $namePlugin = array();
@@ -375,7 +384,7 @@ class PluginRegistry
         }
 
         $path = PATH_PLUGINS . $pluginFile;
-        $filter = new \InputFilter();
+        $filter = new InputFilter();
         $path = $filter->validateInput($path, 'path');
         require_once($path);
 
@@ -402,7 +411,7 @@ class PluginRegistry
                 }
 
                 if (isset($detail->sPluginFolder) && !empty($detail->sPluginFolder) && file_exists($pluginDir)) {
-                    \G::rm_dir($pluginDir);
+                    G::rm_dir($pluginDir);
                 }
 
                 ///////
@@ -419,7 +428,7 @@ class PluginRegistry
      */
     public function uninstallPluginWorkspaces($arrayPlugin)
     {
-        $workspace = \System::listWorkspaces();
+        $workspace = PmSystem::listWorkspaces();
 
         foreach ($workspace as $indexWS => $ws) {
             $pluginRegistry = PluginRegistry::loadSingleton();
@@ -456,9 +465,9 @@ class PluginRegistry
         } catch (Exception $e) {
             global $G_PUBLISH;
             $Message['MESSAGE'] = $e->getMessage();
-            $G_PUBLISH = new \Publisher();
+            $G_PUBLISH = new Publisher();
             $G_PUBLISH->AddContent('xmlform', 'xmlform', 'login/showMessage', '', $Message);
-            \G::RenderPage('publish');
+            G::RenderPage('publish');
             die();
         }
     }
@@ -805,7 +814,6 @@ class PluginRegistry
      */
     public function executeTriggers($TriggerId, $oData)
     {
-        \G::LoadThirdParty("pear", "PEAR");
         /** @var TriggerDetail $trigger */
         foreach ($this->_aTriggers as $trigger) {
             if ($trigger->equalTriggerId($TriggerId)) {
@@ -833,7 +841,7 @@ class PluginRegistry
                     $obj = new $sClassName();
                     $methodName = $trigger->getTriggerName();
                     $response = $obj->{$methodName}($oData);
-                    if (\PEAR::isError($response)) {
+                    if (PEAR::isError($response)) {
                         print $response->getMessage();
                         return;
                     }
@@ -1304,7 +1312,7 @@ class PluginRegistry
      */
     public function verifyTranslation($Namespace)
     {
-        $language = new \Language();
+        $language = new Language();
         $pathPluginTranslations = PATH_PLUGINS . $Namespace . PATH_SEP . 'translations' . PATH_SEP;
         if (file_exists($pathPluginTranslations . 'translations.php')) {
             if (!file_exists($pathPluginTranslations . $Namespace . '.' . SYS_LANG . '.po')) {
@@ -1362,7 +1370,7 @@ class PluginRegistry
     public function updatePluginAttributesInAllWorkspaces($Namespace)
     {
         try {
-            \G::LoadClass("wsTools");
+            G::LoadClass("wsTools");
 
             //Set variables
             $pluginFileName = $Namespace . ".php";
@@ -1384,7 +1392,7 @@ class PluginRegistry
             ) {
                 $arrayWorkspace = array();
 
-                foreach (\System::listWorkspaces() as $value) {
+                foreach (PmSystem::listWorkspaces() as $value) {
                     $workspaceTools = $value;
 
                     $arrayWorkspace[] = $workspaceTools->name;
@@ -1459,7 +1467,7 @@ class PluginRegistry
             }
 
             if (!$flagFound) {
-                $obj = new \stdClass();
+                $obj = new stdClass();
                 $obj->pluginName = $pluginName;
                 $obj->file = $file;
 
@@ -1606,7 +1614,7 @@ class PluginRegistry
      */
     public function getPluginByCode($code)
     {
-        $plugin = new \stdClass();
+        $plugin = new stdClass();
         foreach ($this->_aPlugins as $plugin) {
             $plugin = (array)$plugin;
             if (strtoupper($plugin['sNamespace']) == $code) {
@@ -1655,7 +1663,7 @@ class PluginRegistry
             }
 
             if (!$flagFound) {
-                $obj = new \stdClass();
+                $obj = new stdClass();
                 $obj->pluginName = $pluginName;
                 $obj->pathFile = $pathFile;
 

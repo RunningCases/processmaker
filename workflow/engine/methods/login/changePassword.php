@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 require_once 'classes/model/Users.php';
 $oUser = new Users();
 $aUser = $oUser->load($_SESSION['USER_LOGGED']);
@@ -50,7 +53,7 @@ if (class_exists('redirectDetail')) {
     if (isset($RBAC->aUserInfo['PROCESSMAKER']['ROLE']['ROL_CODE'])) {
         $userRole = $RBAC->aUserInfo['PROCESSMAKER']['ROLE']['ROL_CODE'];
     }
-    $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+    $oPluginRegistry = PluginRegistry::loadSingleton();
     //$oPluginRegistry->showArrays();
     $aRedirectLogin = $oPluginRegistry->getRedirectLogins();
     if (isset($aRedirectLogin)) {

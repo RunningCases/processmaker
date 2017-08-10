@@ -4,6 +4,8 @@ require_once PATH_CORE . 'classes' . PATH_SEP . 'class.pmLicenseManager.php';
 require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
 require_once PATH_CORE . 'classes' . PATH_SEP . 'model' . PATH_SEP . 'AddonsManagerPeer.php';
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 function runBgProcessmaker($task, $log)
 {
     require_once (PATH_CORE . "bin/tasks/cliAddons.php");
@@ -80,7 +82,7 @@ try {
                     BasePeer::doUpdate($oCriteriaSelect, $oCriteriaUpdate, $cnn);
 
                     //are all the plugins that are enabled in the workspace
-                    $pluginRegistry = ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+                    $pluginRegistry = PluginRegistry::loadSingleton();
                     /** @var \ProcessMaker\Plugins\Interfaces\PluginDetail $plugin */
                     foreach ($pluginRegistry->getAllPluginsDetails() as $plugin) {
                         if ($plugin->isEnabled() && !in_array($plugin->getNamespace(), $licenseManager->features)) {

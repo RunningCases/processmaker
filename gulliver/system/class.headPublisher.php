@@ -554,7 +554,7 @@ class headPublisher
 
         //hook for registered javascripts from plugins
         if (class_exists('ProcessMaker\Plugins\PluginRegistry') && defined('SYS_SYS')) {
-            $oPluginRegistry = \ProcessMaker\Plugins\PluginRegistry::loadSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
             $pluginJavascripts = $oPluginRegistry->getRegisteredJavascriptBy($filename);
         } else {
             $pluginJavascripts = array();

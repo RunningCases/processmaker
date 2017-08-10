@@ -2,6 +2,8 @@
 
 namespace ProcessMaker\Plugins\Adapters;
 
+use G;
+use PluginsRegistry;
 use PMPluginRegistry;
 
 /**
@@ -111,7 +113,7 @@ class PluginAdapter
      */
     public function migrate($PMPluginsSingleton)
     {
-        $this->PMPluginRegistry = \G::json_decode(\G::json_encode($PMPluginsSingleton->getAttributes()), true);
+        $this->PMPluginRegistry = G::json_decode(G::json_encode($PMPluginsSingleton->getAttributes()), true);
         $this->parserNameKey();
         foreach ($this->PMPluginRegistry['_aPluginDetails'] as $nameSpace => $value) {
             $this->saveInTable($nameSpace, $this->PMPluginRegistry);
@@ -157,8 +159,8 @@ class PluginAdapter
         $newStructurePlugin = $this->getAllAttributes($Namespace, $PMPluginRegistry);
         $plugin = $this->convertFieldTable($newStructurePlugin);
         if ($plugin['PLUGIN_NAMESPACE'] && $plugin['PLUGIN_CLASS_NAME'] && $plugin['PLUGIN_FILE']) {
-            $fieldPlugin = \PluginsRegistry::loadOrCreateIfNotExists(md5($plugin['PLUGIN_NAMESPACE']), $plugin);
-            \PluginsRegistry::update($fieldPlugin);
+            $fieldPlugin = PluginsRegistry::loadOrCreateIfNotExists(md5($plugin['PLUGIN_NAMESPACE']), $plugin);
+            PluginsRegistry::update($fieldPlugin);
         }
     }
 
@@ -215,7 +217,7 @@ class PluginAdapter
                     $valueField = (array_key_exists($name, $fieldsInTable) && $fieldsInTable[$name]) ?
                         $fieldsInTable[$name] :
                         [];
-                    $valueField = \G::json_encode($valueField);
+                    $valueField = G::json_encode($valueField);
                     break;
                 case 'int':
                     $valueField = array_key_exists($name, $fieldsInTable) ? $fieldsInTable[$name] : 0;
@@ -233,7 +235,7 @@ class PluginAdapter
             }
             $fields[$property['name']] = $valueField;
         }
-        $fields['PLUGIN_ATTRIBUTES'] = \G::json_encode($extraAttributes);
+        $fields['PLUGIN_ATTRIBUTES'] = G::json_encode($extraAttributes);
         return $fields;
     }
 }
