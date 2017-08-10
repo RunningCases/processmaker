@@ -81,16 +81,47 @@ class FixReferencePath
             $doSelect = \ReportTablePeer::doSelectRS($criteria);
             $doSelect->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
 
+            $consolidatedCases = new \ConsolidatedCases();
             while ($doSelect->next()) {
                 $row = $doSelect->getRow();
                 $fields = $this->getReportTableFields($row["REP_TAB_UID"]);
-                $this->regeneratePropelClasses($row["REP_TAB_NAME"], $fields, $row["TAS_UID"]);
-                $this->outVerboseln("* Regenerate classes for table: " . $row["REP_TAB_NAME"]);
+                list($fields, $outFields) = $consolidatedCases->buildReportVariables($fields);
+                try {
+                    $this->regeneratePropelClasses($row["REP_TAB_NAME"], $row["REP_TAB_NAME"], $fields, $row["TAS_UID"]);
+                    $this->outVerboseln("* Regenerate classes for table: " . $row["REP_TAB_NAME"]);
+                } catch (Exception $e) {
+                    CLI::logging(CLI::error("Error:" . "Error in regenerate classes for table: " . $row["REP_TAB_NAME"] . ". " . $e));
+                }
+            }
+
+            $criteria = new \Criteria("workflow");
+            $criteria->addSelectColumn(\AdditionalTablesPeer::ADD_TAB_UID);
+            $criteria->addSelectColumn(\AdditionalTablesPeer::ADD_TAB_NAME);
+            $criteria->addSelectColumn(\AdditionalTablesPeer::ADD_TAB_CLASS_NAME);
+            $criteria->addSelectColumn(\AdditionalTablesPeer::DBS_UID);
+            $doSelect = \AdditionalTablesPeer::doSelectRS($criteria);
+            $doSelect->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+
+            while ($doSelect->next()) {
+                $row = $doSelect->getRow();
+                $fields = $this->getAdditionalTablesFields($row["ADD_TAB_UID"]);
+                try {
+                    $pmTable = new \PmTable($row["ADD_TAB_NAME"]);
+                    $pmTable->setDbConfigAdapter("mysql");
+                    $pmTable->setColumns($fields);
+                    $pmTable->prepare();
+                    $pmTable->preparePropelIniFile();
+                    $pmTable->buildSchema();
+                    $pmTable->phingbuildModel();
+                    $this->outVerboseln("* Regenerate classes for table: " . $row["ADD_TAB_NAME"]);
+                } catch (Exception $e) {
+                    CLI::logging(CLI::error("Error:" . "Error in regenerate classes for table: " . $row["ADD_TAB_NAME"] . ". " . $e));
+                }
             }
 
             unset($_SERVER["REQUEST_URI"]);
         } catch (Exception $e) {
-            CLI::logging(CLI::error("Error:" . "Error in updating consolidated files, proceed to regenerate manually: " . $e));
+            CLI::logging(CLI::error("Error:" . "Error in regenerate classes files, proceed to regenerate manually: " . $e));
         }
     }
 
@@ -117,6 +148,35 @@ class FixReferencePath
     }
 
     /**
+     * Gets the fields of the 'Additional Table'.
+     *
+     * @param string $addTabUid
+     * @return object
+     */
+    public function getAdditionalTablesFields($addTabUid)
+    {
+        $fields = array();
+        $criteria = new \Criteria("workflow");
+        $criteria->add(\FieldsPeer::ADD_TAB_UID, $addTabUid);
+        $doSelect = \FieldsPeer::doSelectRS($criteria);
+        $doSelect->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        while ($doSelect->next()) {
+            $row = $doSelect->getRow();
+            $object = new \stdClass();
+            $object->field_index = $row["FLD_INDEX"];
+            $object->field_name = $row["FLD_NAME"];
+            $object->field_description = $row["FLD_DESCRIPTION"];
+            $object->field_type = $row["FLD_TYPE"];
+            $object->field_size = $row["FLD_SIZE"];
+            $object->field_null = $row["FLD_NULL"];
+            $object->field_autoincrement = $row["FLD_AUTO_INCREMENT"];
+            $object->field_key = $row["FLD_KEY"];
+            $fields[] = $object;
+        }
+        return $fields;
+    }
+
+    /**
      * Regenerate 'Propel' classes for 'Report Tables'. The name of the 'Report Table',
      * the fields and the related task are required.
      *
@@ -125,12 +185,8 @@ class FixReferencePath
      * @param string $guid
      * @return void
      */
-    public function regeneratePropelClasses($repTabName, $fields, $guid)
+    public function regeneratePropelClasses($repTabName, $className, $fields, $guid)
     {
-        $consolidatedCases = new \ConsolidatedCases();
-        list($outFieldsClass, $outFields) = $consolidatedCases->buildReportVariables($fields);
-
-        $className = $repTabName;
         $sourcePath = PATH_DB . SYS_SYS . PATH_SEP . 'classes' . PATH_SEP;
 
         @unlink($sourcePath . $className . '.php');
@@ -140,7 +196,7 @@ class FixReferencePath
         @unlink($sourcePath . PATH_SEP . 'om' . PATH_SEP . 'Base' . $className . 'Peer.php');
 
         $additionalTables = new \AdditionalTables();
-        $additionalTables->createPropelClasses($repTabName, $className, $outFieldsClass, $guid);
+        $additionalTables->createPropelClasses($repTabName, $className, $fields, $guid);
     }
 
     /**
