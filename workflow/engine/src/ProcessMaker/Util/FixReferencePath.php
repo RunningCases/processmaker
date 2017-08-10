@@ -2,6 +2,19 @@
 
 namespace ProcessMaker\Util;
 
+use Configurations;
+use Criteria;
+use ResultSet;
+use FieldsPeer;
+use ReportTablePeer;
+use CaseConsolidatedCorePeer;
+use ConsolidatedCases;
+use AdditionalTablesPeer;
+use PmTable;
+use ReportVarPeer;
+use AdditionalTables;
+use stdClass;
+
 /**
  * This class regenerates the 'Propel' classes that are necessary for the
  * administration of a 'Report Table', this is caused by the import of processes
@@ -68,20 +81,20 @@ class FixReferencePath
             //task, it is removed at the end of the method.
             $_SERVER["REQUEST_URI"] = "";
             if (!defined("SYS_SKIN")) {
-                $conf = new \Configurations();
+                $conf = new Configurations();
                 define("SYS_SKIN", $conf->getConfiguration('SKIN_CRON', ''));
             }
 
-            $criteria = new \Criteria("workflow");
-            $criteria->addSelectColumn(\ReportTablePeer::REP_TAB_UID);
-            $criteria->addSelectColumn(\CaseConsolidatedCorePeer::TAS_UID);
-            $criteria->addSelectColumn(\ReportTablePeer::REP_TAB_NAME);
-            $criteria->addJoin(\ReportTablePeer::REP_TAB_UID, \CaseConsolidatedCorePeer::REP_TAB_UID, \Criteria::JOIN);
-            $criteria->add(\CaseConsolidatedCorePeer::CON_STATUS, "ACTIVE", \Criteria::EQUAL);
-            $doSelect = \ReportTablePeer::doSelectRS($criteria);
-            $doSelect->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $criteria = new Criteria("workflow");
+            $criteria->addSelectColumn(ReportTablePeer::REP_TAB_UID);
+            $criteria->addSelectColumn(CaseConsolidatedCorePeer::TAS_UID);
+            $criteria->addSelectColumn(ReportTablePeer::REP_TAB_NAME);
+            $criteria->addJoin(ReportTablePeer::REP_TAB_UID, CaseConsolidatedCorePeer::REP_TAB_UID, Criteria::JOIN);
+            $criteria->add(CaseConsolidatedCorePeer::CON_STATUS, "ACTIVE", Criteria::EQUAL);
+            $doSelect = ReportTablePeer::doSelectRS($criteria);
+            $doSelect->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-            $consolidatedCases = new \ConsolidatedCases();
+            $consolidatedCases = new ConsolidatedCases();
             while ($doSelect->next()) {
                 $row = $doSelect->getRow();
                 $fields = $this->getReportTableFields($row["REP_TAB_UID"]);
@@ -94,19 +107,19 @@ class FixReferencePath
                 }
             }
 
-            $criteria = new \Criteria("workflow");
-            $criteria->addSelectColumn(\AdditionalTablesPeer::ADD_TAB_UID);
-            $criteria->addSelectColumn(\AdditionalTablesPeer::ADD_TAB_NAME);
-            $criteria->addSelectColumn(\AdditionalTablesPeer::ADD_TAB_CLASS_NAME);
-            $criteria->addSelectColumn(\AdditionalTablesPeer::DBS_UID);
-            $doSelect = \AdditionalTablesPeer::doSelectRS($criteria);
-            $doSelect->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+            $criteria = new Criteria("workflow");
+            $criteria->addSelectColumn(AdditionalTablesPeer::ADD_TAB_UID);
+            $criteria->addSelectColumn(AdditionalTablesPeer::ADD_TAB_NAME);
+            $criteria->addSelectColumn(AdditionalTablesPeer::ADD_TAB_CLASS_NAME);
+            $criteria->addSelectColumn(AdditionalTablesPeer::DBS_UID);
+            $doSelect = AdditionalTablesPeer::doSelectRS($criteria);
+            $doSelect->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
             while ($doSelect->next()) {
                 $row = $doSelect->getRow();
                 $fields = $this->getAdditionalTablesFields($row["ADD_TAB_UID"]);
                 try {
-                    $pmTable = new \PmTable($row["ADD_TAB_NAME"]);
+                    $pmTable = new PmTable($row["ADD_TAB_NAME"]);
                     $pmTable->setDbConfigAdapter("mysql");
                     $pmTable->setColumns($fields);
                     $pmTable->prepare();
@@ -134,12 +147,12 @@ class FixReferencePath
     public function getReportTableFields($repTabUid)
     {
         $fields = array();
-        $criteria = new \Criteria("workflow");
-        $criteria->addSelectColumn(\ReportVarPeer::REP_VAR_NAME);
-        $criteria->addSelectColumn(\ReportVarPeer::REP_VAR_TYPE);
-        $criteria->add(\ReportVarPeer::REP_TAB_UID, $repTabUid, \Criteria::EQUAL);
-        $doSelect = \ReportVarPeer::doSelectRS($criteria);
-        $doSelect->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $criteria = new Criteria("workflow");
+        $criteria->addSelectColumn(ReportVarPeer::REP_VAR_NAME);
+        $criteria->addSelectColumn(ReportVarPeer::REP_VAR_TYPE);
+        $criteria->add(ReportVarPeer::REP_TAB_UID, $repTabUid, Criteria::EQUAL);
+        $doSelect = ReportVarPeer::doSelectRS($criteria);
+        $doSelect->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         while ($doSelect->next()) {
             $row = $doSelect->getRow();
             $fields[] = $row['REP_VAR_NAME'] . '-' . $row['REP_VAR_TYPE'];
@@ -156,13 +169,13 @@ class FixReferencePath
     public function getAdditionalTablesFields($addTabUid)
     {
         $fields = array();
-        $criteria = new \Criteria("workflow");
-        $criteria->add(\FieldsPeer::ADD_TAB_UID, $addTabUid);
-        $doSelect = \FieldsPeer::doSelectRS($criteria);
-        $doSelect->setFetchmode(\ResultSet::FETCHMODE_ASSOC);
+        $criteria = new Criteria("workflow");
+        $criteria->add(FieldsPeer::ADD_TAB_UID, $addTabUid);
+        $doSelect = FieldsPeer::doSelectRS($criteria);
+        $doSelect->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         while ($doSelect->next()) {
             $row = $doSelect->getRow();
-            $object = new \stdClass();
+            $object = new stdClass();
             $object->field_index = $row["FLD_INDEX"];
             $object->field_name = $row["FLD_NAME"];
             $object->field_description = $row["FLD_DESCRIPTION"];
@@ -195,7 +208,7 @@ class FixReferencePath
         @unlink($sourcePath . PATH_SEP . 'om' . PATH_SEP . 'Base' . $className . '.php');
         @unlink($sourcePath . PATH_SEP . 'om' . PATH_SEP . 'Base' . $className . 'Peer.php');
 
-        $additionalTables = new \AdditionalTables();
+        $additionalTables = new AdditionalTables();
         $additionalTables->createPropelClasses($repTabName, $className, $fields, $guid);
     }
 
