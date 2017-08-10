@@ -467,7 +467,6 @@ class workspaceTools
         foreach ($information as $key => $value) {
             $arrayLang[] = trim($value['LOCALE']);
         }
-        //require_once ('classes/model/Content.php');
         $regenerateContent = new Content();
         $regenerateContent->regenerateContent($arrayLang, $workSpace);
     }
@@ -662,7 +661,6 @@ class workspaceTools
     {
         $this->initPropel(true);
 
-        //require_once ('classes/model/AppCacheView.php');
         //check the language, if no info in config about language, the default is 'en'
 
         $oConf = new Configurations();

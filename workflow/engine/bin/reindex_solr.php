@@ -115,7 +115,6 @@ if (! defined ('PATH_HOME')) {
   define( 'PATH_CLASSES', PATH_HOME . "engine" . PATH_SEP . "classes" . PATH_SEP );
 
   require_once (PATH_HOME . 'engine' . PATH_SEP . 'config' . PATH_SEP . 'paths.php');
-  require_once (PATH_GULLIVER . "class.bootstrap.php");
   spl_autoload_register(array('Bootstrap', 'autoloadClass'));
 }
 

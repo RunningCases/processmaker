@@ -91,8 +91,6 @@ class AppProxy extends HttpProxyController
             );
         }
 
-        //require_once ("classes/model/AppNotes.php");
-
         $usrUid = isset( $_SESSION['USER_LOGGED'] ) ? $_SESSION['USER_LOGGED'] : "";
         $appNotes = new AppNotes();
         $response = $appNotes->getNotesList( $appUid, '', $httpData->start, $httpData->limit );
@@ -113,9 +111,6 @@ class AppProxy extends HttpProxyController
      */
     function postNote ($httpData)
     {
-        //require_once ("classes/model/AppNotes.php");
-
-        //extract(getExtJSParams());
         if (isset( $httpData->appUid ) && trim( $httpData->appUid ) != "") {
             $appUid = $httpData->appUid;
         } else {

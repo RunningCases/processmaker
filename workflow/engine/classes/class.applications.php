@@ -236,14 +236,6 @@ class Applications
         $dateFrom = isset($dateFrom)? $dateFrom : "";
         $dateTo = isset($dateTo)? $dateTo : "";
 
-        //require_once ("classes/model/AppCacheView.php");
-        //require_once ("classes/model/AppDelegation.php");
-        //require_once ("classes/model/AdditionalTables.php");
-        //require_once ("classes/model/AppDelay.php");
-        //require_once ("classes/model/Fields.php");
-        //require_once ("classes/model/Users.php");
-        //require_once ("classes/model/Process.php");
-
         $oAppCache = new AppCacheView();
 
         if ($configuration == true) {

@@ -180,8 +180,6 @@ class Home extends Controller
 
     public function indexSingle ($httpData)
     {
-        require_once 'classes/model/Step.php';
-
         $step = new Step();
 
         $solrEnabled = false;
@@ -377,7 +375,6 @@ class Home extends Controller
         $sort = "APP_CACHE_VIEW.APP_NUMBER",
         $category = null)
     {
-        require_once ("classes/model/AppNotes.php");
 
         $appNotes = new AppNotes();
 
@@ -638,7 +635,6 @@ class Home extends Controller
 
     function getCategoryArray ()
     {
-        require_once 'classes/model/ProcessCategory.php';
         $category = array();
         $category[] = array ("",G::LoadTranslation( "ID_ALL_CATEGORIES" ));
 
