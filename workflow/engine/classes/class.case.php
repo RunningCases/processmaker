@@ -1,5 +1,7 @@
 <?php
 
+use \ProcessMaker\BusinessModel\WebEntryEvent;
+
 /**
  * class.case.php
  * @package    workflow.engine.classes
@@ -197,10 +199,17 @@ class Cases
     {
         $rows[] = array('uid' => 'char', 'value' => 'char');
         $tasks = array();
-        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT",
-            "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT",
-            "SCRIPT-TASK", "START-TIMER-EVENT", "INTERMEDIATE-CATCH-TIMER-EVENT");
-        $webEntryEvent = new \ProcessMaker\BusinessModel\WebEntryEvent();
+        $arrayTaskTypeToExclude = array(
+            "WEBENTRYEVENT",
+            "END-MESSAGE-EVENT",
+            "START-MESSAGE-EVENT",
+            "INTERMEDIATE-THROW-MESSAGE-EVENT",
+            "INTERMEDIATE-CATCH-MESSAGE-EVENT",
+            "SCRIPT-TASK",
+            "START-TIMER-EVENT",
+            "INTERMEDIATE-CATCH-TIMER-EVENT"
+        );
+        $webEntryEvent = new WebEntryEvent();
         $arrayWebEntryEvent = array();
         //Set the parameter $considerShowInCase=true, to consider the WE_SHOW_IN_CASE
         //configuration to filter the Start events with WebEntry.
