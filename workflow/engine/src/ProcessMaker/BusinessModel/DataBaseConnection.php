@@ -1,9 +1,9 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
-use \G;
-use \DbSource;
-use \DbConnections;
+use G;
+use DbSource;
+use DbConnections;
 
 class DataBaseConnection
 {

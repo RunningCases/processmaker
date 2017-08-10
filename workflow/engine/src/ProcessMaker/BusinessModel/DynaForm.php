@@ -1,5 +1,6 @@
 <?php
 namespace ProcessMaker\BusinessModel;
+use DynaformHandler;
 
 class DynaForm
 {
