@@ -2584,7 +2584,7 @@ class Bootstrap
      * @param string $userPass hash of password
      * @return bool true or false
      */
-    public function verifyHashPassword ($pass, $userPass)
+    public function verifyHashPassword($pass, $userPass)
     {
         global $RBAC;
         $passwordHashConfig = Bootstrap::getPasswordHashConfig();
@@ -2592,11 +2592,11 @@ class Bootstrap
         $hashTypePrevious = $passwordHashConfig['previous'];
         $acceptance = false;
 
-        if ($RBAC->getStatusLoginHash()) {
+        if ($RBAC->loginWithHash()) {
             //To enable compatibility with soap login
-            if ($pass === $hashTypeCurrent . ':' . $userPass) {
+            if ((Bootstrap::hashPassword($pass, $hashTypeCurrent) == $userPass) || ($pass === $hashTypeCurrent . ':' . $userPass)) {
                 $acceptance = true;
-            } else if ($pass === $hashTypePrevious . ':' . $userPass) {
+            } else if ((Bootstrap::hashPassword($pass, $hashTypePrevious) == $userPass) || ($pass === $hashTypePrevious . ':' . $userPass)) {
                 $acceptance = true;
             }
         } else {

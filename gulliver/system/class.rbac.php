@@ -1580,27 +1580,27 @@ class RBAC
     }
 
     /**
-     * Enable compatibility with soap login
+     * Enable compatibility with hash login
      */
-    public function enableLoginSoapWithHash()
+    public function enableLoginWithHash()
     {
         $this->enableLoginHash = true;
     }
 
     /**
-     * Disable compatibility with soap login
+     * Disable compatibility with hash login
      */
-    public function disableLoginSoapWithHash ()
+    public function disableLoginWithHash()
     {
         $this->enableLoginHash = false;
     }
 
     /**
-     * Return status login with soap
+     * Return status login with hash
      *
      * @return bool
      */
-    public function getStatusLoginHash ()
+    public function loginWithHash()
     {
         return $this->enableLoginHash;
     }
