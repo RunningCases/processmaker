@@ -15,21 +15,21 @@ class Bootstrap
     //below here only approved methods
 
     /**
-     * @deprecated
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public static function autoloadClass($class)
     {
     }
 
     /**
-     * @deprecated
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public static function registerClass($className, $includePath)
     {
     }
 
     /**
-     * @deprecated
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public static function registerDir($name, $dir)
     {
@@ -44,7 +44,7 @@ class Bootstrap
         return PmSystem::getSystemConfiguration($globalIniFile, $wsIniFile, $wsName);
     }
     /**
-     * @deprecated
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public static function registerSystemClasses()
     {
@@ -150,13 +150,7 @@ class Bootstrap
     }
 
     /**
-     * Load Gulliver Classes
-     *
-     * @author Fernando Ontiveros Lira <fernando@colosa.com>
-     * @access public
-     * @param string $strClass
-     * @return void
-     * @deprecated
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public static function LoadSystem($strClass)
     {
@@ -452,29 +446,14 @@ class Bootstrap
         return $content;
     }
     /**
-     * If the class is not defined by the aplication, it
-     * attempt to load the class from gulliver.system
-     *
-     * @author Fernando Ontiveros Lira <fernando@colosa.com>, David S. Callizaya
-     * @access public
-     * @param string $strClass
-     * @return void
-     * @deprecated
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public static function LoadClass($strClass)
     {
     }
 
     /**
-     * Loads a Class.
-     * If the class is not defined by the aplication, it
-     * attempt to load the class from gulliver.system
-     *
-     * @author Fernando Ontiveros Lira <fernando@colosa.com>, David S. Callizaya
-     * @access public
-     * @param string $strClass
-     * @return void
-     * @deprecated
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public static function LoadThirdParty($sPath, $sFile)
     {
@@ -2017,10 +1996,7 @@ class Bootstrap
     }
 
     /**
-     *
-     * @param unknown_type $model
-     * @return unknown
-     * @deprecated
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
      */
     public function getModel($model)
     {
@@ -2506,7 +2482,7 @@ class Bootstrap
     }
 
     /**
-     * @deprecated
+     * @deprecated 3.2.2, We keep this function only for backwards compatibility because is used in the plugin manager
     */
     public static function initVendors()
     {
