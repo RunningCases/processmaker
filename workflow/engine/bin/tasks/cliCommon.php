@@ -41,15 +41,9 @@ if(sizeof($output) == 3 && isset($output[2]) && isset($output[2][0])) {
  *                          returns all available workspaces
  * @return array of workspace objects
  */
-function get_workspaces_from_args($args, $includeAll = true) {
-  $workspaces = array();
-  foreach ($args as $arg) {
-    $workspaces[] = new workspaceTools($arg);
-  }
-  if (empty($workspaces) && $includeAll) {
-    $workspaces = System::listWorkspaces();
-  }
-  return $workspaces;
+function get_workspaces_from_args($args, $includeAll = true)
+{
+    return \ProcessMaker\Util\System::getWorkspacesFromArgs($args, $includeAll);
 }
 
 ?>
