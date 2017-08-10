@@ -160,6 +160,12 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
     protected $we_link_domain;
 
     /**
+     * The value for the we_show_in_new_case field.
+     * @var        string
+     */
+    protected $we_show_in_new_case = '1';
+
+    /**
      * Flag to prevent endless save loop, if this object is referenced
      * by another object which falls in this transaction.
      * @var        boolean
@@ -455,6 +461,17 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
     {
 
         return $this->we_link_domain;
+    }
+
+    /**
+     * Get the [we_show_in_new_case] column value.
+     * 
+     * @return     string
+     */
+    public function getWeShowInNewCase()
+    {
+
+        return $this->we_show_in_new_case;
     }
 
     /**
@@ -956,6 +973,28 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
     } // setWeLinkDomain()
 
     /**
+     * Set the value of [we_show_in_new_case] column.
+     * 
+     * @param      string $v new value
+     * @return     void
+     */
+    public function setWeShowInNewCase($v)
+    {
+
+        // Since the native PHP type for this column is string,
+        // we will cast the input to a string (if it is not).
+        if ($v !== null && !is_string($v)) {
+            $v = (string) $v;
+        }
+
+        if ($this->we_show_in_new_case !== $v || $v === '1') {
+            $this->we_show_in_new_case = $v;
+            $this->modifiedColumns[] = WebEntryPeer::WE_SHOW_IN_NEW_CASE;
+        }
+
+    } // setWeShowInNewCase()
+
+    /**
      * Hydrates (populates) the object variables with values from the database resultset.
      *
      * An offset (1-based "start column") is specified so that objects can be hydrated
@@ -1016,12 +1055,14 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
 
             $this->we_link_domain = $rs->getString($startcol + 21);
 
+            $this->we_show_in_new_case = $rs->getString($startcol + 22);
+
             $this->resetModified();
 
             $this->setNew(false);
 
             // FIXME - using NUM_COLUMNS may be clearer.
-            return $startcol + 22; // 22 = WebEntryPeer::NUM_COLUMNS - WebEntryPeer::NUM_LAZY_LOAD_COLUMNS).
+            return $startcol + 23; // 23 = WebEntryPeer::NUM_COLUMNS - WebEntryPeer::NUM_LAZY_LOAD_COLUMNS).
 
         } catch (Exception $e) {
             throw new PropelException("Error populating WebEntry object", $e);
@@ -1291,6 +1332,9 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             case 21:
                 return $this->getWeLinkDomain();
                 break;
+            case 22:
+                return $this->getWeShowInNewCase();
+                break;
             default:
                 return null;
                 break;
@@ -1333,6 +1377,7 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $keys[19] => $this->getWeLinkSkin(),
             $keys[20] => $this->getWeLinkLanguage(),
             $keys[21] => $this->getWeLinkDomain(),
+            $keys[22] => $this->getWeShowInNewCase(),
         );
         return $result;
     }
@@ -1429,6 +1474,9 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
                 break;
             case 21:
                 $this->setWeLinkDomain($value);
+                break;
+            case 22:
+                $this->setWeShowInNewCase($value);
                 break;
         } // switch()
     }
@@ -1541,6 +1589,10 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $this->setWeLinkDomain($arr[$keys[21]]);
         }
 
+        if (array_key_exists($keys[22], $arr)) {
+            $this->setWeShowInNewCase($arr[$keys[22]]);
+        }
+
     }
 
     /**
@@ -1640,6 +1692,10 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
             $criteria->add(WebEntryPeer::WE_LINK_DOMAIN, $this->we_link_domain);
         }
 
+        if ($this->isColumnModified(WebEntryPeer::WE_SHOW_IN_NEW_CASE)) {
+            $criteria->add(WebEntryPeer::WE_SHOW_IN_NEW_CASE, $this->we_show_in_new_case);
+        }
+
 
         return $criteria;
     }
@@ -1735,6 +1791,8 @@ abstract class BaseWebEntry extends BaseObject implements Persistent
         $copyObj->setWeLinkLanguage($this->we_link_language);
 
         $copyObj->setWeLinkDomain($this->we_link_domain);
+
+        $copyObj->setWeShowInNewCase($this->we_show_in_new_case);
 
 
         $copyObj->setNew(true);

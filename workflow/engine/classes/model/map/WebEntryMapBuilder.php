@@ -109,6 +109,8 @@ class WebEntryMapBuilder
 
         $tMap->addColumn('WE_LINK_DOMAIN', 'WeLinkDomain', 'string', CreoleTypes::LONGVARCHAR, false, null);
 
+        $tMap->addColumn('WE_SHOW_IN_NEW_CASE', 'WeShowInNewCase', 'string', CreoleTypes::CHAR, false, 1);
+
         $tMap->addValidator('WE_TYPE', 'validValues', 'propel.validator.ValidValuesValidator', 'SINGLE|MULTIPLE', 'Please enter a valid value for WE_TYPE');
 
         $tMap->addValidator('WE_AUTHENTICATION', 'validValues', 'propel.validator.ValidValuesValidator', 'ANONYMOUS|LOGIN_REQUIRED', 'Please enter a valid value for WE_AUTHENTICATION');
