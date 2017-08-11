@@ -93,7 +93,7 @@ class PmSystem
         $aWorkspaces = array ();
         foreach (glob( PATH_DB . "*" ) as $filename) {
             if (is_dir( $filename ) && file_exists( $filename . "/db.php" )) {
-                $aWorkspaces[] = new workspaceTools( basename( $filename ) );
+                $aWorkspaces[] = new WorkspaceTools( basename( $filename ) );
             }
         }
         return $aWorkspaces;

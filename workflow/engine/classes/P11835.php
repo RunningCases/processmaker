@@ -1,13 +1,6 @@
 <?php
 
-/**
- * class, helping to set some not desirable settings but necesary
- * @author reav
- *
- */
-
-abstract 
-class p11835 extends patch 
+class P11835 extends patch
 {
     /*
      * Note.- Use before upgrade DB.

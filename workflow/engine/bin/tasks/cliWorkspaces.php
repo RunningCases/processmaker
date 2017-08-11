@@ -364,7 +364,7 @@ CLI::taskRun("regenerate_pmtable_classes");
    */
 function run_info($args, $opts) {
   $workspaces = get_workspaces_from_args($args);
-  workspaceTools::printSysInfo();
+  WorkspaceTools::printSysInfo();
   foreach ($workspaces as $workspace) {
     echo "\n";
     $workspace->printMetadata(false);
@@ -490,7 +490,7 @@ function run_plugins_database_upgrade($args, $opts) {
 function run_database_export($args, $opts) {
   if (count($args) < 2)
     throw new Exception ("Please provide a workspace name and a directory for export");
-  $workspace = new workspaceTools($args[0]);
+  $workspace = new WorkspaceTools($args[0]);
   $workspace->exportDatabase($args[1]);
 }
 
@@ -670,10 +670,10 @@ function run_workspace_backup($args, $opts) {
     if (sizeof($args) > 2) {
         $filename = array_pop($args);
         foreach ($args as $arg) {
-            $workspaces[] = new workspaceTools($arg);
+            $workspaces[] = new WorkspaceTools($arg);
         }
     } else if (sizeof($args) > 0) {
-        $workspace = new workspaceTools($args[0]);
+        $workspace = new WorkspaceTools($args[0]);
         $workspaces[] = $workspace;
         if (sizeof($args) == 2) {
             $filename = $args[1];
@@ -712,14 +712,14 @@ function run_workspace_backup($args, $opts) {
         $multipleBackup->letsBackup();
     } else {
         //ansient method to backup into one large file
-        $backup = workspaceTools::createBackup($filename);
+        $backup = WorkspaceTools::createBackup($filename);
 
         foreach ($workspaces as $workspace) {
             $workspace->backup($backup);
         }
     }
     CLI::logging("\n");
-    workspaceTools::printSysInfo();
+    WorkspaceTools::printSysInfo();
     foreach ($workspaces as $workspace) {
         CLI::logging("\n");
         $workspace->printMetadata(false);
@@ -747,7 +747,7 @@ function run_workspace_restore($args, $opts) {
     $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
     $port = array_key_exists("port", $opts) ? $opts['port'] : '';
     if ($info) {
-      workspaceTools::getBackupInfo($filename);
+      WorkspaceTools::getBackupInfo($filename);
     } else {
       CLI::logging("Restoring from $filename\n");
       $workspace = array_key_exists("workspace", $opts) ? $opts['workspace'] : NULL;
@@ -773,7 +773,7 @@ function run_workspace_restore($args, $opts) {
               CLI::error("Please, you should use -m parameter to restore them.\n");
               return;
           }
-          workspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang, $port );
+          WorkspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang, $port );
       }
     }
   } else {
@@ -890,7 +890,7 @@ function run_migrate_itee_to_dummytask($args, $opts){
   $arrayWorkspace = get_workspaces_from_args($args);
   foreach ($arrayWorkspace as $workspace) {
     try {
-        $ws = new workspaceTools($workspace->name);
+        $ws = new WorkspaceTools($workspace->name);
         $res = $ws->migrateIteeToDummytask($workspace->name);
     } catch (Exception $e) {
       G::outRes( "> Error: ".CLI::error($e->getMessage()) . "\n" );
@@ -1114,7 +1114,7 @@ function run_migrate_indexing_acv($args, $opts) {
 function run_migrate_plugin($args, $opts) {
     $workspaces = get_workspaces_from_args($args);
     //Check if the command is executed by a specific workspace
-    /** @var workspaceTools $workspace */
+    /** @var WorkspaceTools $workspace */
     if (count($workspaces) === 1) {
         $workspace = array_shift($workspaces);
         CLI::logging('Regenerating Singleton in: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
@@ -1148,7 +1148,7 @@ function regenerate_pmtable_classes($args, $opts)
         CLI::logging("> Updating generated class files for PM Tables...\n");
 
         Bootstrap::setConstantsRelatedWs($args[0]);
-        $workspaceTools = new workspaceTools($args[0]);
+        $workspaceTools = new WorkspaceTools($args[0]);
         $workspaceTools->fixReferencePathFiles(PATH_DATA_SITE . "classes", PATH_DATA);
 
         $stop = microtime(true);

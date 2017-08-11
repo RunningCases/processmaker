@@ -219,10 +219,10 @@ function run_unify_database($args)
     if (sizeof($args) > 2) {
         $filename = array_pop($args);
         foreach ($args as $arg) {
-            $workspaces[] = new workspaceTools($arg);
+            $workspaces[] = new WorkspaceTools($arg);
         }
     } else if (sizeof($args) > 0) {
-        $workspace = new workspaceTools($args[0]);
+        $workspace = new WorkspaceTools($args[0]);
         $workspaces[] = $workspace;
     }
 

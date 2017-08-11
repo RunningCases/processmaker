@@ -524,7 +524,7 @@ class Light
                 $delIndex = \AppDelegation::getCurrentIndex($applicationUid);
             }
 
-            $ws = new \wsBase();
+            $ws = new \WsBase();
             $fields = $ws->derivateCase($userUid, $applicationUid, $delIndex, $bExecuteTriggersBeforeAssignment = false, $tasks);
             $array = json_decode(json_encode($fields), true);
             $array['message'] = trim(strip_tags($array['message']));

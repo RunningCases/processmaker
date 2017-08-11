@@ -135,7 +135,7 @@
         if (empty( $metaFiles )) {
             $metaFiles = glob( $tempDirectory . "/*.txt" );
             if (! empty( $metaFiles )) {
-                return workspaceTools::restoreLegacy( $tempDirectory );
+                return WorkspaceTools::restoreLegacy( $tempDirectory );
             } else {
                 throw new Exception( "No metadata found in backup" );
             }
@@ -170,7 +170,7 @@
             } else {
                 CLI::logging( "> Restoring " . CLI::info( $backupWorkspace ) . " to " . CLI::info( $workspaceName ) . "\n" );
             }
-            $workspace = new workspaceTools( $workspaceName );
+            $workspace = new WorkspaceTools( $workspaceName );
             if ($workspace->workspaceExists()) {
                 if ($overwrite) {
                     CLI::logging( CLI::warning( "> Workspace $workspaceName already exist, overwriting!" ) . "\n" );
@@ -194,7 +194,7 @@
             CLI::logging( "> Changing file permissions\n" );
             $shared_stat = stat( PATH_DATA );
             if ($shared_stat !== false) {
-                workspaceTools::dirPerms( $workspace->path, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode'] );
+                WorkspaceTools::dirPerms( $workspace->path, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode'] );
             } else {
                 CLI::logging( CLI::error( "Could not get the shared folder permissions, not changing workspace permissions" ) . "\n" );
             }

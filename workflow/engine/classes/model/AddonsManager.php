@@ -387,7 +387,6 @@ class AddonsManager extends BaseAddonsManager
             $this->setState();
         } else {
             if ($this->getAddonType() == "core") {
-                require_once PATH_CORE . 'classes' . PATH_SEP . 'class.Upgrade.php';
                 $upgrade = new Upgrade($this);
 
                 $upgrade->install();

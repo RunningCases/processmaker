@@ -1,9 +1,7 @@
 <?php
 
-require_once 'classes/interfaces/DashletInterface.php';
 
-
-class dashletOpenVSCompleted implements DashletInterface
+class DashletOpenVsCompleted implements DashletInterface
 {
 
     const version = '1.0';

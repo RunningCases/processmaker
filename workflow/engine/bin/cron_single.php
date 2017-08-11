@@ -980,7 +980,7 @@ function synchronizeGmailLabels()
         }
         $licensedFeatures = &PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-            $pmGoogle = new PMGoogleApi();
+            $pmGoogle = new PmGoogleApi();
             if ($pmGoogle->getServiceGmailStatus()) {
                 setExecutionMessage("Synchronize labels in Gmail");
                 $labGmail = new labelsGmail();

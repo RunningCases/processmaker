@@ -3,13 +3,10 @@
 /**
  * class.pmDrive.php
  *
- * @package workflow.engine.
-/**
- * class.pmDrive.php
- *
  * @package workflow.engine.class
  *
- */class PMDrive extends PMGoogleApi
+ */
+class PmDrive extends PmGoogleApi
 {
     private $folderIdPMDrive = '';
     private $folderNamePMDrive;

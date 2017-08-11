@@ -281,7 +281,7 @@ class AppDelegation extends BaseAppDelegation
                 $licensedFeatures = &PMLicensedFeatures::getSingleton ();
                 if ($licensedFeatures->verifyfeature ( '7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09' )) {
                     try{
-                        $pmGoogle = new PMGoogleApi ();
+                        $pmGoogle = new PmGoogleApi ();
                         if ($pmGoogle->getServiceGmailStatus()) {
                             $Pmgmail = new \ProcessMaker\BusinessModel\Pmgmail();
                             $Pmgmail->gmailsForRouting($sUsrUid, $sTasUid, $sAppUid, $delIndex, $isSubprocess);
