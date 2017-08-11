@@ -1,6 +1,6 @@
 <?php
 
-class license_application extends padl
+class license_application extends Padl
 {
     /**
      * The number of allowed differences between the $_SERVER vars and the vars

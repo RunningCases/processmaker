@@ -337,7 +337,7 @@ class PMLicensedFeatures
         $licenseManager = pmLicenseManager::getSingleton(false);
 
         $_SESSION['__sw__'] = true;
-        $padl = new padl();
+        $padl = new Padl();
         $value = $padl->_decrypt($featureName);
 
         if (is_array($value)) {
