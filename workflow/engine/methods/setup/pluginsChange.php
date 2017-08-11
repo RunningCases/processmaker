@@ -39,11 +39,11 @@ $oPluginRegistry = PluginRegistry::loadSingleton();
 if ($handle = opendir(PATH_PLUGINS)) {
     while (false !== ($file = readdir($handle))) {
         if (strpos($file, '.php', 1) && $file == $pluginFile) {
-            if ($pluginStatus == '1') {
+            if ($pluginStatus === 'true') {
                 // change to disable
                 $details = $oPluginRegistry->getPluginDetails($pluginFile);
                 $oPluginRegistry->disablePlugin($details->getNamespace());
-                $oPluginRegistry->savePlugin($details->sNamespace);
+                $oPluginRegistry->savePlugin($details->getNamespace());
                 G::auditLog("DisablePlugin", "Plugin Name: " . $details->getNamespace());
             } else {
                 $pluginName = str_replace(".php", "", $pluginFile);

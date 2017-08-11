@@ -965,7 +965,7 @@ class PluginRegistry
         $CompanyLogo = $default;
         /** @var PluginDetail $detail */
         foreach ($this->_aPluginDetails as $detail) {
-            if (trim($detail->getCompanyLogo()) != '') {
+            if (trim($detail->getCompanyLogo()) != '' && $detail->isEnabled()) {
                 $CompanyLogo = $detail->getCompanyLogo();
             }
         }
