@@ -39,7 +39,7 @@ $oPluginRegistry = PluginRegistry::loadSingleton();
 if ($handle = opendir(PATH_PLUGINS)) {
     while (false !== ($file = readdir($handle))) {
         if (strpos($file, '.php', 1) && $file == $pluginFile) {
-            if ($pluginStatus === 'true') {
+            if ($pluginStatus == '1') {
                 // change to disable
                 $details = $oPluginRegistry->getPluginDetails($pluginFile);
                 $oPluginRegistry->disablePlugin($details->getNamespace());
