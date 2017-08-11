@@ -5468,6 +5468,78 @@ class XmlForm
     public $fieldContentWidth = 450;
 
     /**
+     * List of xmlform controls and its classes.
+     *
+     * @var string[] 
+     */
+    private static $controls = [
+        'button'            => XmlForm_Field_Button::class,
+        'caption'           => XmlForm_Field_Caption::class,
+        'captioncurrency'   => XmlForm_Field_CaptionCurrency::class,
+        'captionpercentage' => XmlForm_Field_CaptionPercentage::class,
+        'cellmark'          => XmlForm_Field_cellMark::class,
+        'checkbox2'         => XmlForm_Field_Checkbox2::class,
+        'checkbox'          => XmlForm_Field_Checkbox::class,
+        'checkboxpt'        => XmlForm_Field_Checkboxpt::class,
+        'checkboxtable'     => XmlForm_Field_CheckBoxTable::class,
+        'checkgroup'        => XmlForm_Field_CheckGroup::class,
+        'checkgroupview'    => XmlForm_Field_CheckGroupView::class,
+        'currency'          => XmlForm_Field_Currency::class,
+        'date2'             => XmlForm_Field_Date2::class,
+        'date5'             => XmlForm_Field_Date5::class,
+        'date'              => XmlForm_Field_Date::class,
+        'dateview'          => XmlForm_Field_DateView::class,
+        'dropdown'          => XmlForm_Field_Dropdown::class,
+        'dropdownpt'        => XmlForm_Field_Dropdownpt::class,
+        'dveditor'          => XmlForm_Field_DVEditor::class,
+        'fastsearch'        => XmlForm_Field_FastSearch::class,
+        'file'              => XmlForm_Field_File::class,
+        'grid'              => XmlForm_Field_Grid::class,
+        'hidden'            => XmlForm_Field_Hidden::class,
+        'hours'             => XmlForm_Field_hours::class,
+        'html'              => XmlForm_Field_HTML::class,
+        'image'             => XmlForm_Field_Image::class,
+        'javascript'        => XmlForm_Field_JavaScript::class,
+        'label'             => XmlForm_Field_Label::class,
+        'link'              => XmlForm_Field_Link::class,
+        'listbox'           => XmlForm_Field_Listbox::class,
+        'password'          => XmlForm_Field_Password::class,
+        'percentage'        => XmlForm_Field_Percentage::class,
+        'popupoption'       => XmlForm_Field_popupOption::class,
+        'print'             => XmlForm_Field_Print::class,
+        'radiogroup'        => XmlForm_Field_RadioGroup::class,
+        'radiogroupview'    => XmlForm_Field_RadioGroupView::class,
+        'reset'             => XmlForm_Field_Reset::class,
+        'simpletext'        => XmlForm_Field_SimpleText::class,
+        'submit'            => XmlForm_Field_Submit::class,
+        'subtitle'          => XmlForm_Field_Subtitle::class,
+        'suggest'           => XmlForm_Field_Suggest::class,
+        'text'              => XmlForm_Field_Text::class,
+        'textarea'          => XmlForm_Field_Textarea::class,
+        'textareapm'        => XmlForm_Field_TextareaPM::class,
+        'textpm'            => XmlForm_Field_TextPM::class,
+        'title'             => XmlForm_Field_Title::class,
+        'toolbar'           => XmlForm_Field_ToolBar::class,
+        'toolbutton'        => XmlForm_Field_toolButton::class,
+        'wysiwyg_editor'    => XmlForm_Field_WYSIWYG_EDITOR::class,
+        'xmlform'           => XmlForm_Field_Xmlform::class,
+        'xmlmenu'           => XmlForm_Field_XmlMenu::class,
+        'yesno'             => XmlForm_Field_YesNo::class,
+    ];
+
+    /**
+     * Get xmlform control class by type.
+     *
+     * @param string $type
+     * @return string
+     */
+    private function getClassByControlType($type)
+    {
+        $key = strtolower($type);
+        return isset(self::$controls[$key]) ? self::$controls[$key] : 'XmlForm_Field';
+    }
+
+    /**
      * Function xmlformTemplate
      *
      * @author David S. Callizaya S. <davidsantos@colosa.com>
@@ -5567,14 +5639,8 @@ class XmlForm
 
             foreach ($xmlNode as $k => $v) {
                 if (($xmlNode[$k]->type !== 'cdata') && isset( $xmlNode[$k]->attributes['type'] )) {
-                    if (class_exists( 'XmlForm_Field_' . $xmlNode[$k]->attributes['type'] )) {
-                        $x = '$field = new XmlForm_Field_' . $xmlNode[$k]->attributes['type'] . '( $xmlNode[$k], $language, $this->home, $this);';
-
-                        eval( $x );
-                    } else {
-                        $field = new XmlForm_Field( $xmlNode[$k], $language, $this->home, $this );
-                    }
-
+                    $class = $this->getClassByControlType($xmlNode[$k]->attributes['type']);
+                    $field = new $class( $xmlNode[$k], $language, $this->home, $this );
                     $field->language = $this->language;
                     $this->fields[$field->name] = $field;
                 }
