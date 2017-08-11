@@ -184,9 +184,10 @@ class RbacUsers extends BaseRbacUsers
         try {
             $c = new Criteria('rbac');
             $c->add(RbacUsersPeer::USR_UID, $sUsrUid);
-            $rs = RbacUsersPeer::doSelect($c, Propel::getDbConnection('rbac_ro'));
-            if (is_array($rs) && isset($rs[0]) && is_object($rs[0]) && get_class($rs[0]) == 'RbacUsers') {
-                $aFields = $rs[0]->toArray(BasePeer::TYPE_FIELDNAME);
+            $resultSet = RbacUsersPeer::doSelectRS($c, Propel::getDbConnection('rbac_ro'));
+            if ($resultSet->next()) {
+                $this->hydrate($resultSet);
+                $aFields = $this->toArray(BasePeer::TYPE_FIELDNAME);
                 return $aFields;
             }
             return false;
@@ -326,10 +327,14 @@ class RbacUsers extends BaseRbacUsers
      *
      * @param string $keyType One of the class type constants TYPE_PHPNAME,
      *                        TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM
+     * @param boolean $original If true return de original verion of fields.
      * @return an associative array containing the field names (as keys) and field values
      */
-    public function toArray($keyType = BasePeer::TYPE_PHPNAME)
+    public function toArray($keyType = BasePeer::TYPE_PHPNAME, $original = false)
     {
+        if ($original) {
+            return parent::toArray($keyType);
+        }
         $key = RbacUsersPeer::translateFieldName(
             RbacUsersPeer::USR_PASSWORD,
             BasePeer::TYPE_COLNAME,
