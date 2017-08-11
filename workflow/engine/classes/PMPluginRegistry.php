@@ -1207,7 +1207,7 @@ class PMPluginRegistry
             //Found a License
             if (class_exists( 'pmLicenseManager' )) {
                 $sSerializedFile = PATH_DATA_SITE . 'lmn.singleton';
-                $pmLicenseManagerO = & pmLicenseManager::getSingleton();
+                $pmLicenseManagerO = & PmLicenseManager::getSingleton();
                 if (file_exists( $sSerializedFile )) {
                     $pmLicenseManagerO->unSerializeInstance( file_get_contents( $sSerializedFile ) );
                 }

@@ -334,7 +334,7 @@ class PMLicensedFeatures
     /*----------------------------------********---------------------------------*/
     public function verifyfeature ($featureName)
     {
-        $licenseManager = pmLicenseManager::getSingleton(false);
+        $licenseManager = PmLicenseManager::getSingleton(false);
 
         $_SESSION['__sw__'] = true;
         $padl = new Padl();

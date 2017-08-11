@@ -757,7 +757,7 @@ class SkinEngine
       }
 
         if (defined('SYS_SYS')) {
-            $pmLicenseManagerO = &pmLicenseManager::getSingleton();
+            $pmLicenseManagerO = &PmLicenseManager::getSingleton();
             $expireIn          = $pmLicenseManagerO->getExpireIn();
             $expireInLabel     = $pmLicenseManagerO->getExpireInLabel();
 

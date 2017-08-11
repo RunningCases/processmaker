@@ -51,12 +51,12 @@ try {
                     $dir = PATH_DATA_SITE;
                     G::uploadFile($aInfoLoadFile["tmp_name"], $dir, $aInfoLoadFile["name"]);
                     //reading the file that was uploaded
-                    $oPmLicenseManager = &pmLicenseManager::getSingleton();
+                    $oPmLicenseManager = &PmLicenseManager::getSingleton();
                     $response = $oPmLicenseManager->installLicense($dir . $aInfoLoadFile["name"]);
 
                     ///////
                     //This command also find the following file "AddonsStore.php"
-                    $licenseManager = &pmLicenseManager::getSingleton();
+                    $licenseManager = &PmLicenseManager::getSingleton();
 
                     preg_match("/^license_(.*).dat$/", $licenseManager->file, $matches);
                     $realId = urlencode($matches[1]);
@@ -210,7 +210,7 @@ try {
                 }
 
                 ///////
-                $licenseManager = &pmLicenseManager::getSingleton();
+                $licenseManager = &PmLicenseManager::getSingleton();
                 $server = $licenseManager->server;
                 $workspace = (isset($licenseManager->workspace)) ? $licenseManager->workspace : 'pmLicenseSrv';
                 $url = "http://$server/sys".$workspace."/en/green/services/rest";

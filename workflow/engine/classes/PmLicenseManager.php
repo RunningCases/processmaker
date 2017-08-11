@@ -11,7 +11,7 @@ use ProcessMaker\Plugins\PluginRegistry;
 /**
  * class.pmLicenseManager.php
  *
- */class pmLicenseManager
+ */class PmLicenseManager
 {
 
     private static $instance = null;
@@ -120,7 +120,7 @@ use ProcessMaker\Plugins\PluginRegistry;
     public static function getSingleton($flagActivatePlugins = true)
     {
         if (self::$instance == null) {
-            self::$instance = new pmLicenseManager($flagActivatePlugins);
+            self::$instance = new PmLicenseManager($flagActivatePlugins);
         }
         return self::$instance;
     }

@@ -255,7 +255,7 @@ if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
     $enterprise->enable();
     $enterprise->setup();
 }
-$pmLicenseManagerO = &pmLicenseManager::getSingleton();
+$pmLicenseManagerO = &PmLicenseManager::getSingleton();
 $licenseStatusInfo = $pmLicenseManagerO->getCurrentLicenseStatus();
 $licStatusMsg = null;
 
