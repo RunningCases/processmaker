@@ -33,8 +33,6 @@ class AddonsStore extends BaseAddonsStore
      */
     public static function checkLicenseStore()
     {
-        require_once PATH_CORE . 'classes' . PATH_SEP . 'class.pmLicenseManager.php';
-
         //getting the licenseManager....
         $licenseManager = &pmLicenseManager::getSingleton();
 
@@ -331,12 +329,6 @@ class AddonsStore extends BaseAddonsStore
      */
     public function update($force = false, $type = 'plugin')
     {
-        require_once PATH_CORE . 'classes' . PATH_SEP . 'class.pmLicenseManager.php';
-
-        if (!class_exists('AddonsManagerPeer')) {
-            require_once ('classes/model/AddonsManager.php');
-        }
-
         //If we have any addon that is installing or updating, don't update store
         $criteria = new Criteria(AddonsManagerPeer::DATABASE_NAME);
         $criteria->add(AddonsManagerPeer::ADDON_STATE, '', Criteria::NOT_EQUAL);

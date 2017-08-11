@@ -1,9 +1,4 @@
 <?php
-require_once PATH_CORE . 'classes' . PATH_SEP . 'class.enterpriseUtils.php';
-require_once PATH_CORE . 'classes' . PATH_SEP . 'class.pmLicenseManager.php';
-require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
-require_once PATH_CORE . 'classes' . PATH_SEP . 'model' . PATH_SEP . 'AddonsManagerPeer.php';
-
 use ProcessMaker\Plugins\PluginRegistry;
 
 function runBgProcessmaker($task, $log)

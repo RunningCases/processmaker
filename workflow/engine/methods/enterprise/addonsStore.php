@@ -1,8 +1,4 @@
 <?php
-require_once PATH_CORE . 'classes' . PATH_SEP . 'class.pmLicenseManager.php';
-require_once PATH_CORE . "classes" . PATH_SEP . "model" . PATH_SEP . "AddonsStore.php";
-require_once PATH_CORE . "classes" . PATH_SEP . "class.enterpriseUtils.php";
-
 
 AddonsStore::checkLicenseStore();
 

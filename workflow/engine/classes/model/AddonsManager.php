@@ -198,8 +198,6 @@ class AddonsManager extends BaseAddonsManager
      */
     public function download()
     {
-        require_once PATH_CORE . 'classes' . PATH_SEP . 'class.pmLicenseManager.php';
-
         $this->setState("download");
 
         ///////

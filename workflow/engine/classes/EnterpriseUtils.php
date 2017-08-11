@@ -1,6 +1,4 @@
 <?php
-require_once ("classes/model/Configuration.php");
-
 
 class EnterpriseUtils
 {
