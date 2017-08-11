@@ -1,51 +1,6 @@
 <?php
 
-/**
- * class.tasks.php
- *
- * @package workflow.engine.ProcessMaker
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2008 Colosa Inc.23
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- */
-require_once 'classes/model/GroupUser.php';
-require_once 'classes/model/Groupwf.php';
-require_once 'classes/model/ObjectPermission.php';
-require_once 'classes/model/Process.php';
-require_once 'classes/model/Route.php';
-require_once 'classes/model/Event.php';
-require_once 'classes/model/Step.php';
-require_once 'classes/model/StepTrigger.php';
-require_once 'classes/model/Task.php';
-require_once 'classes/model/TaskUser.php';
-require_once 'classes/model/Users.php';
-require_once 'classes/model/Gateway.php';
-
-/**
- * Tasks - Tasks 
-/**
- * Tasks - Tasks class
- *
- * @package workflow.engine.ProcessMaker
- * @author Julio Cesar Laura Avenda�o
- * @copyright 2007 COLOSA
- */class Tasks
+class Tasks
 {
 
     /**
@@ -89,7 +44,7 @@ require_once 'classes/model/Gateway.php';
         try {
             $aTasks = array();
             $oCriteria = new Criteria('workflow');
-            $oCriteria->addSelectColumn( TaskPeer::TAS_UID );
+            $oCriteria->addSelectColumn(TaskPeer::TAS_UID);
             $oCriteria->add(TaskPeer::PRO_UID, $sProUid);
             $oCriteria->addAscendingOrderByColumn(TaskPeer::TAS_TITLE);
             $oDataset = TaskPeer::doSelectRS($oCriteria);
@@ -162,7 +117,6 @@ require_once 'classes/model/Gateway.php';
         return;
     }
 
-
     /**
      * Get all Routes for any Process
      *
@@ -210,7 +164,7 @@ require_once 'classes/model/Gateway.php';
             $oProcessMap = new ProcessMap();
             $oTask = new Task();
             $oEvent = new Event();
-            //unset ($row['ROU_UID']);
+
             //Saving Gateway into the GATEWAY table
             $idTask = $row['TAS_UID'];
             $nextTask = $row['ROU_NEXT_TASK'];
@@ -306,7 +260,7 @@ require_once 'classes/model/Gateway.php';
     {
         foreach ($aRoutes as $key => $row) {
             $oRoute = new Route();
-            //krumo ($row);
+
             if (is_array($oRoute->load($row['ROU_UID']))) {
                 $oRoute->remove($row['ROU_UID']);
             } else {
@@ -384,15 +338,6 @@ require_once 'classes/model/Gateway.php';
             $oDataset1->next();
             while ($aRow1 = $oDataset1->getRow()) {
                 //Delete the triggers assigned to step
-                /* $oCriteria = new Criteria('workflow');
-                  $oCriteria->add(StepTriggerPeer::STEP_UID, $aRow1['STEP_UID']);
-                  $oDataset2 = StepTriggerPeer::doSelectRS($oCriteria);
-                  $oDataset2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                  $oDataset2->next();
-                  while ($aRow2 = $oDataset2->getRow()) {
-                  $oStepTrigger->remove($aRow2['STEP_UID'], $aRow2['TAS_UID'], $aRow2['TRI_UID'], $aRow2['ST_TYPE']);
-                  $oDataset2->next();
-                  } */
                 $oStep->remove($aRow1['STEP_UID']);
                 $oDataset1->next();
             }
@@ -565,24 +510,6 @@ require_once 'classes/model/Gateway.php';
     {
         try {
             $oTaskUser = new TaskUser();
-            /* $oCriteria = new Criteria('workflow');
-              $oCriteria->add(GroupUserPeer::GRP_UID, $sGroupUID);
-              $oDataset = GroupUserPeer::doSelectRS($oCriteria);
-              $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-              $oDataset->next();
-              while ($aGroupUser = $oDataset->getRow()) {
-              $oCriteria = new Criteria('workflow');
-              $oCriteria->add(TaskUserPeer::TAS_UID, $sTaskUID);
-              $oCriteria->add(TaskUserPeer::USR_UID, $aGroupUser['USR_UID']);
-              $oDataset2 = TaskUserPeer::doSelectRS($oCriteria);
-              $oDataset2->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-              $oDataset2->next();
-              $aRow = $oDataset2->getRow();
-              if (!is_array($aRow)) {
-              $this->assignUser($sTaskUID, $aGroupUser['USR_UID'], $iType);
-              }
-              $oDataset->next();
-              } */
             return $oTaskUser->create(array('TAS_UID' => $sTaskUID, 'USR_UID' => $sGroupUID, 'TU_TYPE' => $iType, 'TU_RELATION' => 2
             ));
         } catch (Exception $oError) {
@@ -680,10 +607,6 @@ require_once 'classes/model/Gateway.php';
     {
         try {
             $oCriteria = new Criteria('workflow');
-            //$oCriteria->add(StepPeer::PRO_UID, $sProcessUID);
-            //$oDataset = StepPeer::doSelectRS($oCriteria);
-            //$oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-            //$oDataset->next();
             return true;
         } catch (Exception $oError) {
             throw ($oError);
@@ -701,9 +624,8 @@ require_once 'classes/model/Gateway.php';
         try {
             $aTasks = array();
             $oCriteria = new Criteria('workflow');
-            $oCriteria->addSelectColumn( TaskPeer::TAS_UID );
+            $oCriteria->addSelectColumn(TaskPeer::TAS_UID);
             $oCriteria->add(TaskPeer::PRO_UID, $sProUid);
-            //$oCriteria->add(TaskPeer::TAS_USER,    $sUsrUid);
             $oCriteria->add(TaskPeer::TAS_START, 'TRUE');
             $oDataset = TaskPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);

@@ -64,7 +64,7 @@
      */
     public function render($value)
     {
-        $this->toolBar = new toolBar($this->xmlfile, $this->home);
+        $this->toolBar = new ToolBar($this->xmlfile, $this->home);
         $template = PATH_CORE . 'templates/' . $this->type . '.html';
         $out = $this->toolBar->render($template, $scriptCode);
         $oHeadPublisher = & headPublisher::getSingleton();

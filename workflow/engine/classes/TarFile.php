@@ -1,25 +1,10 @@
 <?php
-/*--------------------------------------------------
- * TAR/GZIP/BZIP2/ZIP ARCHIVE CLASSES 2.1
- * By Devin Doucette
- * Copyright (c) 2005 Devin Doucette
- * Email: darksnoopy@shaw.ca
- *--------------------------------------------------
- * Email bugs/suggestions to darksnoopy@shaw.ca
- *--------------------------------------------------
- * This script has been created and released under
- * the GNU GPL and is free to use and redistribute
- * only if this copyright statement is not removed
- *--------------------------------------------------*/
 
 /**
  * This class is derived from the class archive, is imployed to use files .
  * tar
- *
- * @package workflow.engine.classes
- *
  */
-class tar_file extends Archive
+class TarFile extends Archive
 {
 
     /**
@@ -27,7 +12,7 @@ class tar_file extends Archive
      *
      * @param string $name
      */
-    public function tar_file($name)
+    public function TarFile($name)
     {
         $this->archive($name);
         $this->options['type'] = "tar";
@@ -102,7 +87,7 @@ class tar_file extends Archive
             while ($block = fread($fp, 512)) {
                 $temp = unpack("a100name/a8mode/a8uid/a8gid/a12size/a12mtime/a8checksum/a1type/a100symlink/a6magic/a2temp/a32temp/a32temp/a8temp/a8temp/a155prefix/a12temp", $block);
                 $file = array('name' => $this->options['basedir'] . '/' . $temp['prefix'] . $temp['name'], 'stat' => array(2 => $temp['mode'], 4 => octdec($temp['uid']), 5 => octdec($temp['gid']), 7 => octdec($temp['size']), 9 => octdec($temp['mtime'])
-                ), 'checksum' => octdec($temp['checksum']), 'type' => $temp['type'], 'magic' => $temp['magic']
+                    ), 'checksum' => octdec($temp['checksum']), 'type' => $temp['type'], 'magic' => $temp['magic']
                 );
                 if ($file['checksum'] == 0x00000000) {
                     break;
@@ -125,7 +110,6 @@ class tar_file extends Archive
                     $this->files[] = $file;
                 } elseif ($file['type'] == 5) {
                     if (!is_dir($file['name'])) {
-                        //mkdir($file['name'], $file['stat'][2]);
                         mkdir($file['name'], 0775);
                     }
                 } elseif ($this->options['overwrite'] == 0 && file_exists($file['name'])) {
@@ -133,23 +117,18 @@ class tar_file extends Archive
                     continue;
                 } elseif ($file['type'] == 2) {
                     symlink($temp['symlink'], $file['name']);
-                    //chmod($file['name'], $file['stat'][2]);
                 } elseif ($new = @fopen($file['name'], "wb")) {
                     fwrite($new, fread($fp, $file['stat'][7]));
                     if ((512 - $file['stat'][7] % 512) != 512) {
                         fread($fp, (512 - $file['stat'][7] % 512));
                     }
-                    //fread($fp, (512 - $file['stat'][7] % 512) == 512 ? 0 : (512 - $file['stat'][7] % 512));
                     fclose($new);
-                    //chmod($file['name'], $file['stat'][2]);
                     chmod($file['name'], 0777);
                     $this->files[] = $file['name'];
                 } else {
                     $this->error[] = "Could not open {$file['name']} for writing.";
                     continue;
                 }
-                //chown($file['name'], $file['stat'][4]);
-                //chgrp($file['name'], $file['stat'][5]);
                 @touch($file['name'], $file['stat'][9]);
                 unset($file);
             }
