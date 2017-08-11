@@ -42,7 +42,7 @@
      * @param string $get
      * @return void
      */
-    public function DynaformEditor($get)
+    public function __construct($get)
     {
         $this->panelConf = array_merge($this->panelConf, $this->defaultConfig['Editor']);
         //'title' => G::LoadTranslation('ID_DYNAFORM_EDITOR').' - ['.$this->title.']',
@@ -117,7 +117,7 @@
                 $openDoc->parseXmlFile($fileName);
             }
             //$form = new Form( $this->file , $this->home, SYS_LANG, true );
-            $Properties = dynaformEditorAjax::get_properties($A, $this->dyn_uid);
+            $Properties = DynaformEditorAjax::get_properties($A, $this->dyn_uid);
             /* Start Block: Prepare the XMLDB connection */
             define('DB_XMLDB_HOST', PATH_DYNAFORM . $this->file . '.xml');
             define('DB_XMLDB_USER', '');
