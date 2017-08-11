@@ -70,7 +70,7 @@ try {
     if ($result->next()) {
         $FieldsPmDynaform = $applicationFields;
         $FieldsPmDynaform["CURRENT_DYNAFORM"] = $_REQUEST['DYN_UID'];
-        $a = new pmDynaform(\ProcessMaker\Util\DateTime::convertUtcToTimeZone($FieldsPmDynaform));
+        $a = new PmDynaform(\ProcessMaker\Util\DateTime::convertUtcToTimeZone($FieldsPmDynaform));
         $a->printView();
     }
     if (file_exists( PATH_DYNAFORM . $applicationFields['PRO_UID'] . PATH_SEP . $_REQUEST['DYN_UID'] . '.xml' )) {

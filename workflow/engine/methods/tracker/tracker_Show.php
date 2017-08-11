@@ -63,7 +63,7 @@ switch ($_GET['CTO_TYPE_OBJ']) {
             $Fields["PRO_UID"] = $_SESSION["PROCESS"];
             $Fields["CURRENT_DYNAFORM"] = $_GET["CTO_UID_OBJ"];
 
-            $pmDynaForm = new pmDynaform($Fields);
+            $pmDynaForm = new PmDynaform($Fields);
 
             if ($pmDynaForm->isResponsive()) {
                 $pmDynaForm->printTracker();

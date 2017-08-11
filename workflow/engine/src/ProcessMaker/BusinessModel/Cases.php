@@ -10,6 +10,7 @@ use Exception;
 use WsBase;
 use RBAC;
 use Applications;
+use PmDynaform;
 
 class Cases
 {
@@ -1632,7 +1633,7 @@ class Cases
                     if (isset($field['type'])) {
                         if ($field['type'] != 'form') {
                             foreach ($field as &$val) {
-                                if (is_string($val) && in_array(substr($val, 0, 2), \pmDynaform::$prefixs)) {
+                                if (is_string($val) && in_array(substr($val, 0, 2), PmDynaform::$prefixs)) {
                                     $val = substr($val, 2);
                                 }
                             }
@@ -1695,7 +1696,7 @@ class Cases
         if (!is_null($dynaFormUid)) {
 
             $data["CURRENT_DYNAFORM"] = $dynaFormUid;
-            $pmDynaForm = new \pmDynaform($data);
+            $pmDynaForm = new PmDynaform($data);
             $arrayDynaFormData = $pmDynaForm->getDynaform();
             $arrayDynContent = \G::json_decode($arrayDynaFormData['DYN_CONTENT']);
             $pmDynaForm->jsonr($arrayDynContent);

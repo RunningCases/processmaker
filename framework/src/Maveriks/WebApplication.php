@@ -7,6 +7,7 @@ use ProcessMaker\Services;
 use ProcessMaker\Services\Api;
 use Luracast\Restler\RestException;
 use Illuminate\Foundation\Http\Kernel;
+use G;
 
 /**
  * Web application bootstrap

@@ -1,20 +1,10 @@
 <?php
 
 /**
- * class.pmDynaform.php
  * Implementing pmDynaform library in the running case.
  *
- * @author Roly Rudy Gutierrez Pinto
  * @package engine.classes
- */
-
-/**
- * class.pmDynaform.php
- * Implementing pmDynaform library in the running case.
- *
- * @author Roly Rudy Gutierrez Pinto
- * @package engine.classes
- */class pmDynaform
+ */class PmDynaform
 {
 
     public static $instance = null;

@@ -1,13 +1,14 @@
 <?php
 namespace ProcessMaker\BusinessModel;
 
-use \G;
-use \Smarty;
-use \Criteria;
-use \ReportTablePeer;
-use \ResultSet;
-use \CaseConsolidatedCorePeer;
-use \ContentPeer;
+use G;
+use Smarty;
+use Criteria;
+use ReportTablePeer;
+use ResultSet;
+use CaseConsolidatedCorePeer;
+use ContentPeer;
+use PmDynaform;
 
 /**
  * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -468,7 +469,7 @@ class Consolidated
         $dataTask = $oDyna->load($dyn_uid);
         if ($dataTask['DYN_VERSION'] > 0) {
             $_SESSION['PROCESS'] = $pro_uid;
-            $pmDyna = new \pmDynaform(array('APP_DATA' => array(), "CURRENT_DYNAFORM" => $dyn_uid));
+            $pmDyna = new PmDynaform(array('APP_DATA' => array(), "CURRENT_DYNAFORM" => $dyn_uid));
             $json = G::json_decode($dataTask["DYN_CONTENT"]);
             $pmDyna->jsonr($json);
             $fieldsDyna = $json->items[0]->items;

@@ -2,12 +2,13 @@
 
 namespace ProcessMaker\Services\Api;
 
-use \G;
-use \ProcessMaker\Project\Adapter;
-use \ProcessMaker\Services\Api;
-use \Luracast\Restler\RestException;
-use \ProcessMaker\BusinessModel\Validator;
-use \ProcessMaker\Util\DateTime;
+use G;
+use ProcessMaker\Project\Adapter;
+use ProcessMaker\Services\Api;
+use Luracast\Restler\RestException;
+use ProcessMaker\BusinessModel\Validator;
+use ProcessMaker\Util\DateTime;
+use PmDynaform;
 
 /**
  *
@@ -867,7 +868,7 @@ class Light extends Api
             $response = $process->getDynaForms($prj_uid);
             $result   = $this->parserDataDynaForm($response);
 
-            $pmDynaForm = new \pmDynaform();
+            $pmDynaForm = new PmDynaform();
             foreach ($result as $k => $form) {
                 $result[$k]['formContent'] = (isset($form['formContent']) && $form['formContent'] != null)?json_decode($form['formContent']):"";
                 $pmDynaForm->jsonr($result[$k]['formContent']);
@@ -1009,7 +1010,7 @@ class Light extends Api
                 $caseVariables = DateTime::convertUtcToTimeZone($caseVariables);
             }
 
-            $pmDynaform = new \pmDynaform(array("APP_DATA" => $caseVariables, "CURRENT_DYNAFORM" => $dyn_uid));
+            $pmDynaform = new PmDynaform(array("APP_DATA" => $caseVariables, "CURRENT_DYNAFORM" => $dyn_uid));
             $pmDynaform->jsonr($result['formContent']);
             return $result;
         } catch (\Exception $e) {
@@ -1033,7 +1034,7 @@ class Light extends Api
             $result = $this->parserDataDynaForm($response);
             $result['formContent'] = (isset($result['formContent']) && $result['formContent'] != null) ? \G::json_decode($result['formContent']) : "";
 
-            $pmDynaForm = new \pmDynaform(["CURRENT_DYNAFORM" => $dyn_uid]);
+            $pmDynaForm = new PmDynaform(["CURRENT_DYNAFORM" => $dyn_uid]);
             $pmDynaForm->jsonr($result['formContent']);
             return $result;
         } catch (\Exception $e) {
@@ -1057,7 +1058,7 @@ class Light extends Api
             $return = array();
             foreach ($request_data['formId'] as $dyn_uid) {
                 $response = $dynaForm->getDynaForm($dyn_uid);
-                $pmDynaForm = new \pmDynaform(array("CURRENT_DYNAFORM" => $dyn_uid));
+                $pmDynaForm = new PmDynaform(array("CURRENT_DYNAFORM" => $dyn_uid));
                 $result   = $this->parserDataDynaForm($response);
                 $result['formContent'] = (isset($result['formContent']) && $result['formContent'] != null)?json_decode($result['formContent']):"";
                 $pmDynaForm->jsonr($result['formContent']);

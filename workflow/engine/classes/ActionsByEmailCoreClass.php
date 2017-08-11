@@ -171,7 +171,7 @@ class ActionsByEmailCoreClass extends PMPlugin
                                     $field->label = '';
                                     $actionField = str_replace(array('@@', '@#', '@=', '@%', '@?', '@$'), '', $configuration['ABE_ACTION_FIELD']);
 
-                                    $obj = new pmDynaform($configuration['DYN_UID']);
+                                    $obj = new PmDynaform($configuration['DYN_UID']);
                                     $configuration['CURRENT_DYNAFORM'] = $configuration['DYN_UID'];
                                     $file = $obj->printPmDynaformAbe($configuration);
                                     $__ABE__ .= $file;
@@ -222,7 +222,7 @@ class ActionsByEmailCoreClass extends PMPlugin
                                             }
                                         }
 
-                                        $obj = new pmDynaform($configuration['DYN_UID']);
+                                        $obj = new PmDynaform($configuration['DYN_UID']);
                                         $configuration['CURRENT_DYNAFORM'] = $configuration['DYN_UID'];
                                         $file = $obj->printPmDynaformAbe($configuration);
                                         $__ABE__ .= $file;

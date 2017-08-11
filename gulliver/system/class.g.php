@@ -5833,9 +5833,8 @@ class G
         //Moved from Enterprise class.
         if (file_exists(PATH_METHODS . "login/version-pmos.php")) {
             include (PATH_METHODS . "login/version-pmos.php");
-        } else {
-            define("PM_VERSION", "2.0.0");
         }
+        //Removed default version from code.
     }
 }
 

@@ -127,7 +127,7 @@ if ($sStatus == "1" && $sDynUid != "") {
 
     if ($isBPMN) {
 
-        $pmDyna = new pmDynaform(array());
+        $pmDyna = new PmDynaform(array());
         $pmDyna->fields["CURRENT_DYNAFORM"] = $sDynUid;
         $dataDyna = $pmDyna->getDynaform();
         $json = G::json_decode($dataDyna["DYN_CONTENT"]);
