@@ -303,6 +303,19 @@ CLI::taskArg('workspace', true, true);
 CLI::taskOpt("lang", "Specify the language to migrate the content data. If not specified, then 'en' (English) will be used by default.\n        Ex: -lfr (French) Ex: --lang=zh-CN (Mainland Chinese)", "l:","lang=");
 CLI::taskRun("run_migrate_content");
 
+CLI::taskName('migrate-plugins-singleton-information');
+CLI::taskDescription(<<<EOT
+  Migrating the content schema to match the latest version
+
+  Specify the WORKSPACE to migrate from an existing workspace.
+
+  If no workspace is specified, then the tables schema will be upgraded or
+  migrated to all available workspaces.
+EOT
+);
+CLI::taskArg('workspace', true, true);
+CLI::taskRun("run_migrate_plugin");
+
 CLI::taskName('migrate-self-service-value');
 CLI::taskDescription(<<<EOT
   Migrate the Self-Service values to a new related table APP_ASSIGN_SELF_SERVICE_VALUE_GROUPS
@@ -330,7 +343,7 @@ CLI::taskArg('workspace');
 CLI::taskRun("cliListIds");
 
   /**
- * 
+ *
  */
 CLI::taskName('regenerate-pmtable-classes');
 CLI::taskDescription(<<<EOT
@@ -1098,12 +1111,31 @@ function run_migrate_indexing_acv($args, $opts) {
     CLI::logging("<*>   Migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
 }
 
+function run_migrate_plugin($args, $opts) {
+    $workspaces = get_workspaces_from_args($args);
+    //Check if the command is executed by a specific workspace
+    /** @var workspaceTools $workspace */
+    if (count($workspaces) === 1) {
+        $workspace = array_shift($workspaces);
+        CLI::logging('Regenerating Singleton in: ' . pakeColor::colorize($workspace->name, 'INFO') . "\n");
+        $workspace->migrateSingleton($workspace->name);
+        CLI::logging("-> Regenerating Singleton \n");
+    } else {
+        CLI::logging("> Migrating and populating data...\n");
+        $start = microtime(true);
+        foreach ($workspaces as $workspace) {
+            passthru('./processmaker migrate-plugins-singleton-information '.$workspace->name);
+        }
+        $stop = microtime(true);
+        CLI::logging("<*>   Migrating and populating data Singleton took " . ($stop - $start) . " seconds.\n");
+    }
+}
 /**
- * This method recursively finds all PHP files that reference the path PATH_DATA 
- * incorrectly, which is caused by importing processes where the data directory 
- * of ProcessMaker has different routes. Modified files are backed up with the 
+ * This method recursively finds all PHP files that reference the path PATH_DATA
+ * incorrectly, which is caused by importing processes where the data directory
+ * of ProcessMaker has different routes. Modified files are backed up with the
  * extension '.backup' in the same directory.
- * 
+ *
  * @param array $args
  * @param array $opts
  * @throws Exception

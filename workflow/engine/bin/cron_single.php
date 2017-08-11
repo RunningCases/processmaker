@@ -1,5 +1,8 @@
 <?php
 require_once(__DIR__ . '/../../../bootstrap/autoload.php');
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 register_shutdown_function(
     create_function(
         '',
@@ -145,12 +148,6 @@ try {
             eprintln('WARNING! No server info found!', 'red');
         }
 
-        $sSerializedFile = PATH_DATA_SITE . 'plugin.singleton';
-
-        if (file_exists($sSerializedFile)) {
-            $pluginRegistry = PMPluginRegistry::loadSingleton($sSerializedFile);
-        }
-
         //DB
         $phpCode = '';
 
@@ -225,9 +222,6 @@ try {
 
         define('TIME_ZONE', ini_get('date.timezone'));
 
-        //Enable Monolog
-
-
         //Processing
         eprintln('Processing workspace: ' . $workspace, 'green');
 
@@ -282,11 +276,7 @@ try {
 function processWorkspace()
 {
     try {
-
-        $oPluginRegistry =& PMPluginRegistry::getSingleton();
-        if (file_exists(PATH_DATA_SITE . 'plugin.singleton')) {
-            $oPluginRegistry->unSerializeInstance(file_get_contents(PATH_DATA_SITE . 'plugin.singleton'));
-        }
+        $oPluginRegistry = PluginRegistry::loadSingleton();
 
         global $sObject;
         global $sLastExecution;
@@ -326,7 +316,6 @@ function resendEmails()
     setExecutionMessage("Resending emails");
 
     try {
-
         $dateResend = $sNow;
 
         if ($sNow == $dateSystem) {
@@ -391,8 +380,6 @@ function unpauseApplications()
     setExecutionMessage("Unpausing applications");
 
     try {
-
-
         $oCases = new Cases();
         $oCases->ThrowUnpauseDaemon($sNow, 1);
 
@@ -436,7 +423,7 @@ function executePlugins()
     // Executing registered cron files
 
     // -> Get registered cron files
-    $oPluginRegistry =& PMPluginRegistry::getSingleton();
+    $oPluginRegistry = PluginRegistry::loadSingleton();
     $cronFiles = $oPluginRegistry->getCronFiles();
 
     // -> Execute functions

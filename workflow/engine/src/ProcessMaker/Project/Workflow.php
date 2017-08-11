@@ -2,6 +2,7 @@
 namespace ProcessMaker\Project;
 
 use \Criteria;
+use ProcessMaker\Plugins\PluginRegistry;
 use \ResultSet;
 
 use \Process;
@@ -87,7 +88,7 @@ class Workflow extends Handler
             $pluginData['PRO_TEMPLATE'] = empty($data["PRO_TEMPLATE"]) ? "" : $data["PRO_TEMPLATE"];
             $pluginData['PROCESSMAP'] = null;
 
-            $pluginRegistry = \PMPluginRegistry::getSingleton();
+            $pluginRegistry = PluginRegistry::loadSingleton();
             $pluginRegistry->executeTriggers(PM_NEW_PROCESS_SAVE, $pluginData);
 
             // Save Calendar ID for this process
@@ -230,7 +231,7 @@ class Workflow extends Handler
             }
 
             if ($tasType == "SERVICE-TASK") {
-                $registry = \PMPluginRegistry::getSingleton();
+                $registry = PluginRegistry::loadSingleton();
                 //The plugin pmConnectors will be moved to the core in pm.3.3
                 if ($registry->getStatusPlugin('pmConnectors') === 'enabled') {
                     $pathFile = PATH_PLUGINS . 'pmConnectors' . PATH_SEP . 'src' . PATH_SEP . 'Services' . PATH_SEP . 'BusinessModel' . PATH_SEP . 'PmConnectors' . PATH_SEP . 'ServiceTaskBM.php';

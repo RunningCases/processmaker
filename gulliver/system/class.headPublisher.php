@@ -25,6 +25,8 @@
  *
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * Class headPublisher
  *
@@ -386,11 +388,12 @@ class headPublisher
          */
         // Load external/plugin css
         // NOTE is necesary to move this to decorator server
-        if (class_exists('PMPluginRegistry')) {
-            $oPluginRegistry = & PMPluginRegistry::getSingleton();
+        if (class_exists('ProcessMaker\Plugins\PluginRegistry') && defined('SYS_SYS')) {
+            $oPluginRegistry = PluginRegistry::loadSingleton();
             $registeredCss = $oPluginRegistry->getRegisteredCss();
+            /** @var \ProcessMaker\Plugins\Interfaces\CssFile $cssFile */
             foreach ($registeredCss as $cssFile) {
-                $script .= "  <link rel='stylesheet' type='text/css' href='" . $cssFile->sCssFile . ".css' />\n";
+                $script .= "  <link rel='stylesheet' type='text/css' href='" . $cssFile->getCssFile() . ".css' />\n";
             }
         }
         return $script;
@@ -504,7 +507,7 @@ class headPublisher
                 $flagPlugin = false;
                 $keyPlugin = count($aux)-2;
 
-                $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 if ($oPluginRegistry->isRegisteredFolder($aux[$keyPlugin])) {
                     $flagPlugin = true;
                 } else {
@@ -550,8 +553,8 @@ class headPublisher
         $this->extJsScript[] = '/extjs/' . $cacheName;
 
         //hook for registered javascripts from plugins
-        if (class_exists('PMPluginRegistry')) {
-            $oPluginRegistry = & PMPluginRegistry::getSingleton();
+        if (class_exists('ProcessMaker\Plugins\PluginRegistry') && defined('SYS_SYS')) {
+            $oPluginRegistry = PluginRegistry::loadSingleton();
             $pluginJavascripts = $oPluginRegistry->getRegisteredJavascriptBy($filename);
         } else {
             $pluginJavascripts = array();
@@ -681,7 +684,7 @@ class headPublisher
                     $aux = explode(PATH_SEP, $file);
                     //check if G_PLUGIN_CLASS is defined, because publisher can be called without an environment
                     if (count($aux) == 2 && defined('G_PLUGIN_CLASS')) {
-                        $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                        $oPluginRegistry = PluginRegistry::loadSingleton();
                         if ($oPluginRegistry->isRegisteredFolder($aux[0])) {
                             $sPath = PATH_PLUGINS;
                         }

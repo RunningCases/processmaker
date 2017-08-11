@@ -5,6 +5,7 @@ use G;
 use UsersPeer;
 use CasesPeer;
 use AppDelegation;
+use ProcessMaker\Plugins\PluginRegistry;
 use Exception;
 use wsBase;
 use RBAC;
@@ -1108,12 +1109,11 @@ class Cases
         $cases = new \cases();
 
         $listing = false;
-        $oPluginRegistry = & \PMPluginRegistry::getSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         if ($oPluginRegistry->existsTrigger(PM_CASE_DOCUMENT_LIST)) {
             $folderData = new \folderData(null, null, $sApplicationUID, null, $sUserUID);
             $folderData->PMType = "INPUT";
             $folderData->returnList = true;
-            //$oPluginRegistry      = & PMPluginRegistry::getSingleton();
             $listing = $oPluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST, $folderData);
         }
         $aObjectPermissions = $cases->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);
@@ -1406,12 +1406,11 @@ class Cases
         $cases = new \cases();
 
         $listing = false;
-        $oPluginRegistry = & \PMPluginRegistry::getSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         if ($oPluginRegistry->existsTrigger(PM_CASE_DOCUMENT_LIST)) {
             $folderData = new \folderData(null, null, $sApplicationUID, null, $sUserUID);
             $folderData->PMType = "OUTPUT";
             $folderData->returnList = true;
-            //$oPluginRegistry = & PMPluginRegistry::getSingleton();
             $listing = $oPluginRegistry->executeTriggers(PM_CASE_DOCUMENT_LIST, $folderData);
         }
         $aObjectPermissions = $cases->getAllObjects($sProcessUID, $sApplicationUID, $sTasKUID, $sUserUID);

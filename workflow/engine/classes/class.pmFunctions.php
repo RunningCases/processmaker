@@ -28,6 +28,7 @@
 //
 // License: LGPL, see LICENSE
 ////////////////////////////////////////////////////
+use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Util\ElementTranslation;
 
 
@@ -248,9 +249,6 @@ function executeQuery ($SqlStatement, $DBConnectionUID = 'workflow', $aParameter
         ((isset($blackList['tables']))? $blackList['tables'] : '') .
         ((isset($blackList['pmtables']))? $blackList['pmtables'] : '')
     );
-    if (!class_exists('PHPSQLParser')) {
-
-    }
     $parseSqlStm = new PHPSQLParser($SqlStatement);
     try {
         //Parsing queries and check the blacklist
@@ -1840,10 +1838,11 @@ function PMFGenerateOutputDocument ($outputID, $sApplication = null, $index = nu
 
     //Plugin Hook PM_UPLOAD_DOCUMENT for upload document
 
-    $oPluginRegistry = & PMPluginRegistry::getSingleton();
+    $oPluginRegistry = PluginRegistry::loadSingleton();
     if ($oPluginRegistry->existsTrigger( PM_UPLOAD_DOCUMENT ) && class_exists( 'uploadDocumentData' )) {
+        /** @var \ProcessMaker\Plugins\Interfaces\TriggerDetail $triggerDetail */
         $triggerDetail = $oPluginRegistry->getTriggerInfo( PM_UPLOAD_DOCUMENT );
-        $aFields['APP_DOC_PLUGIN'] = $triggerDetail->sNamespace;
+        $aFields['APP_DOC_PLUGIN'] = $triggerDetail->getNamespace();
 
         $oAppDocument1 = new AppDocument();
         $oAppDocument1->update( $aFields );

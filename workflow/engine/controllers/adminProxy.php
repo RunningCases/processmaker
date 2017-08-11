@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * adminProxy.php
  *
@@ -1382,7 +1385,7 @@ class adminProxy extends HttpProxyController
         $params = array ();
 
         $oServerConf = &serverConf::getSingleton();
-        $pluginRegistry = &PMPluginRegistry::getSingleton();
+        $pluginRegistry = PluginRegistry::loadSingleton();
         $licenseManager = &pmLicenseManager::getSingleton();
 
         //License Information:
@@ -1455,10 +1458,10 @@ class adminProxy extends HttpProxyController
             if (file_exists( PATH_PLUGINS . $sFileName . ".php" )) {
                 $plugin = array();
                 $addonDetails = $pluginRegistry->getPluginDetails( $sFileName . ".php" );
-                $plugin['name'] = $addonDetails->sNamespace;
-                $plugin['description'] = $addonDetails->sDescription;
-                $plugin['version'] = $addonDetails->iVersion;
-                $plugin['enable'] = $addonDetails->enabled;
+                $plugin['name'] = $addonDetails->getNamespace();
+                $plugin['description'] = $addonDetails->getDescription();
+                $plugin['version'] = $addonDetails->getVersion();
+                $plugin['enable'] = $addonDetails->isEnabled();
                 $plugins[] = $plugin;
             }
         }

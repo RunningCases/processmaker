@@ -21,6 +21,9 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 try {
     global $RBAC;
     if ($RBAC->userCanAccess( 'PM_SETUP_ADVANCE' ) != 1) {
@@ -153,7 +156,7 @@ try {
             }
             break;
         case 'authSourcesNew':
-            $pluginRegistry = &PMPluginRegistry::getSingleton();
+            $pluginRegistry = PluginRegistry::loadSingleton();
 
             $arr = Array ();
             $oDirectory = dir( PATH_RBAC . 'plugins' . PATH_SEP );

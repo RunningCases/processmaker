@@ -25,6 +25,8 @@
  *
  */
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * Skeleton subclass for representing a row from the 'APP_DELEGATION' table.
  *
@@ -292,7 +294,7 @@ class AppDelegation extends BaseAppDelegation
             }
 
             if ($flagActionsByEmail) {
-                $oPluginRegistry = &PMPluginRegistry::getSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 $oPluginRegistry->executeTriggers(PM_CREATE_NEW_DELEGATION, $data);
             }
         }

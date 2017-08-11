@@ -21,6 +21,9 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 $inst = new PmInstaller();
 
 $oProcess = new Processes();
@@ -57,7 +60,7 @@ foreach ($availablePlugins as $filename) {
     }
 
     //print "change to ENABLED";
-    $oPluginRegistry = & PMPluginRegistry::getSingleton();
+    $oPluginRegistry = PluginRegistry::loadSingleton();
 
     $pluginFile = $sClassName . '.php';
     if (! file_exists( PATH_PLUGINS . $sClassName . '.php' )) {
@@ -67,10 +70,10 @@ foreach ($availablePlugins as $filename) {
     require_once (PATH_PLUGINS . $pluginFile);
     $details = $oPluginRegistry->getPluginDetails( $pluginFile );
 
-    $oPluginRegistry->installPlugin( $details->sNamespace );
-    $oPluginRegistry->enablePlugin( $details->sNamespace );
+    $oPluginRegistry->installPlugin($details->getNamespace());
+    $oPluginRegistry->enablePlugin($details->getNamespace());
     $oPluginRegistry->setupPlugins(); //get and setup enabled plugins
-    $size = file_put_contents( PATH_DATA_SITE . 'plugin.singleton', $oPluginRegistry->serializeInstance() );
+    $oPluginRegistry->savePlugin($details->getNamespace());
 
     $message .= "$filename - OK<br>";
 

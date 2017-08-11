@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * Designer Controller
  *
@@ -134,10 +136,10 @@ class Designer extends Controller
         $sourceCss = array();
         $sourceJs = array();
 
-        $pluginRegistry = &PMPluginRegistry::getSingleton();
+        $pluginRegistry = PluginRegistry::loadSingleton();
         $srcPath = $pluginRegistry->getDesignerSourcePath();
 
-        foreach ($srcPath as $key => $value) {
+        foreach ($srcPath as $value) {
             $ext = pathinfo($value->pathFile, PATHINFO_EXTENSION);
             if ($ext === "css") {
                 $sourceCss[] = $value->pathFile;

@@ -23,6 +23,7 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
+use ProcessMaker\Plugins\PluginRegistry;
 
 global $RBAC;
 $RBAC->requirePermissions( 'PM_SETUP_ADVANCE' );
@@ -67,7 +68,7 @@ try {
             $tar->extractList( $listFiles,  PATH_PLUGINS . 'data');
             $tar->extractList( $licenseName, PATH_PLUGINS);
 
-            $pluginRegistry = &PMPluginRegistry::getSingleton();
+            $pluginRegistry = PluginRegistry::loadSingleton();
             $autoPlugins = glob(PATH_PLUGINS . "data/enterprise/data/*.tar");
             $autoPluginsA = array();
 
@@ -91,10 +92,9 @@ try {
                 }
 
                 $pluginDetail = $pluginRegistry->getPluginDetails($sClassName . ".php");
-                $pluginRegistry->installPlugin($pluginDetail->sNamespace); //error
+                $pluginRegistry->installPlugin($pluginDetail->getNamespace()); //error
+                $pluginRegistry->savePlugin($pluginDetail->getNamespace());
             }
-
-            file_put_contents(PATH_DATA_SITE . "plugin.singleton", $pluginRegistry->serializeInstance());
             $licfile = glob(PATH_PLUGINS . "*.dat");
 
             if ((isset($licfile[0])) && ( is_file($licfile[0]) )) {
@@ -141,7 +141,7 @@ try {
             $tar->extractList( $listFiles,  PATH_PLUGINS . 'data');
             $tar->extractList( $licenseName, PATH_PLUGINS);
 
-            $pluginRegistry = &PMPluginRegistry::getSingleton();
+            $pluginRegistry = PluginRegistry::loadSingleton();
             $autoPlugins = glob(PATH_PLUGINS . "data/plugins/*.tar");
             $autoPluginsA = array();
 
@@ -165,10 +165,9 @@ try {
                 }
 
                 $pluginDetail = $pluginRegistry->getPluginDetails($sClassName . ".php");
-                $pluginRegistry->installPlugin($pluginDetail->sNamespace); //error
+                $pluginRegistry->installPlugin($pluginDetail->getNamespace()); //error
+                $pluginRegistry->savePlugin($pluginDetail->getNamespace());
             }
-
-            file_put_contents(PATH_DATA_SITE . "plugin.singleton", $pluginRegistry->serializeInstance());
 
             $licfile = glob(PATH_PLUGINS . "*.dat");
 
@@ -222,7 +221,7 @@ try {
         file_put_contents($pathFileFlag, 'New Enterprise');
     }
 
-    $oPluginRegistry = & PMPluginRegistry::getSingleton();
+    $oPluginRegistry = PluginRegistry::loadSingleton();
     $pluginFile = $sClassName . '.php';
 
     if ($bMainFile && $bClassFile) {
@@ -323,17 +322,16 @@ try {
     require_once (PATH_PLUGINS . $pluginFile);
 
     $oPluginRegistry->registerPlugin( $sClassName, PATH_PLUGINS . $sClassName . ".php" );
-    $size = file_put_contents( PATH_DATA_SITE . "plugin.singleton", $oPluginRegistry->serializeInstance() );
 
     $details = $oPluginRegistry->getPluginDetails( $pluginFile );
 
-    $oPluginRegistry->installPlugin( $details->sNamespace );
+    $oPluginRegistry->installPlugin($details->getNamespace());
 
     $oPluginRegistry->setupPlugins(); //get and setup enabled plugins
-    $size = file_put_contents( PATH_DATA_SITE . "plugin.singleton", $oPluginRegistry->serializeInstance() );
+    $oPluginRegistry->savePlugin($details->getNamespace());
 
-    $response = $oPluginRegistry->verifyTranslation( $details->sNamespace);
-    G::auditLog("InstallPlugin", "Plugin Name: ".$details->sNamespace );
+    $response = $oPluginRegistry->verifyTranslation($details->getNamespace());
+    G::auditLog("InstallPlugin", "Plugin Name: " . $details->getNamespace());
 
     //if ($response->recordsCountSuccess <= 0) {
         //throw (new Exception( 'The plugin ' . $details->sNamespace . ' couldn\'t verify any translation item. Verified Records:' . $response->recordsCountSuccess));

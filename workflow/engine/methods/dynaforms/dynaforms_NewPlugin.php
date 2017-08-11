@@ -22,11 +22,6 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
-//call plugin
-//  $oPluginRegistry = &PMPluginRegistry::getSingleton();
-//  $existsDynaforms = $oPluginRegistry->existsTrigger(PM_NEW_DYNAFORM_LIST );
-
-
 //for now, we are going with the default list, because the plugin is not complete
 include ('dynaforms_Edit.php');
 die();

@@ -23,6 +23,8 @@
  */
 //validate the data post
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 $dynaForm = DynaformPeer::retrieveByPK($_GET["UID"]);
 
 $flagDynaFormNewVersion = !is_null($dynaForm) && $dynaForm->getDynVersion() == 2;
@@ -178,7 +180,7 @@ if (isset( $_FILES["form"]["name"] ) && count( $_FILES["form"]["name"] ) > 0) {
 				G::uploadFile( $arrayFileTmpName[$i], $sPathName, $sFileName );
 
 				//Plugin Hook PM_UPLOAD_DOCUMENT for upload document
-				$oPluginRegistry = &PMPluginRegistry::getSingleton();
+				$oPluginRegistry = PluginRegistry::loadSingleton();
 
 				if ($oPluginRegistry->existsTrigger( PM_UPLOAD_DOCUMENT ) && class_exists( "uploadDocumentData" )) {
 					$triggerDetail = $oPluginRegistry->getTriggerInfo( PM_UPLOAD_DOCUMENT );
@@ -186,7 +188,7 @@ if (isset( $_FILES["form"]["name"] ) && count( $_FILES["form"]["name"] ) > 0) {
 					$uploadReturn = $oPluginRegistry->executeTriggers( PM_UPLOAD_DOCUMENT, $documentData );
 
 					if ($uploadReturn) {
-						$aFields["APP_DOC_PLUGIN"] = $triggerDetail->sNamespace;
+						$aFields["APP_DOC_PLUGIN"] = $triggerDetail->getNamespace();
 
 						if (! isset( $aFields["APP_DOC_UID"] )) {
 							$aFields["APP_DOC_UID"] = $sAppDocUid;

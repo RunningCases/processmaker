@@ -24,6 +24,9 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  *
  * @package workflow.engine.ProcessMaker
@@ -368,12 +371,13 @@ class ProcessMap
             $oPM->derivation = array('Sequential', 'Evaluate (manual)', 'Evaluate (auto)', 'Parallel (fork)', 'Parallel by evaluation (fork)', 'Parallel (sequential join)', 'Parallel (sequential main join)' );
 
             //Load extended task properties from plugin. By JHL Jan 18, 2011
-            $oPluginRegistry = & PMPluginRegistry::getSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
+            /** @var \ProcessMaker\Plugins\Interfaces\TaskExtendedProperty[] $activePluginsForTaskProperties */
             $activePluginsForTaskProperties = $oPluginRegistry->getTaskExtendedProperties();
             $oPM->taskOptions = array();
-            foreach ($activePluginsForTaskProperties as $key => $taskPropertiesInfo) {
-                $taskOption['title'] = $taskPropertiesInfo->sName;
-                $taskOption['id'] = $taskPropertiesInfo->sNamespace . "--" . $taskPropertiesInfo->sName;
+            foreach ($activePluginsForTaskProperties as $taskPropertiesInfo) {
+                $taskOption['title'] = $taskPropertiesInfo->getName();
+                $taskOption['id'] = $taskPropertiesInfo->getNamespace() . "--" . $taskPropertiesInfo->getName();
                 $oPM->taskOptions[] = $taskOption;
             }
 
@@ -745,7 +749,8 @@ class ProcessMap
     {
         try {
             //call plugin
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
+            /** @var \ProcessMaker\Plugins\Interfaces\StepDetail[] $externalSteps */
             $externalSteps = $oPluginRegistry->getSteps();
 
             $aSteps = array();
@@ -795,9 +800,9 @@ class ProcessMap
                     case 'EXTERNAL':
                         $sTitle = 'unknown ' . $aRow['STEP_UID'];
                         foreach ($externalSteps as $key => $val) {
-                            if ($val->sStepId == $aRow['STEP_UID_OBJ']) {
-                                $sTitle = $val->sStepTitle;
-                                if (trim($val->sSetupStepPage) != '') {
+                            if ($val->equalStepIdTo($aRow['STEP_UID_OBJ'])) {
+                                $sTitle = $val->getStepTitle();
+                                if (trim($val->getSetupStepPage()) != '') {
                                     $urlEdit = "externalStepEdit('" . $aRow['STEP_UID'] . "', '" . $val->sSetupStepPage . "');";
                                     $linkEditValue = 'Edit';
                                 } else {
@@ -929,11 +934,17 @@ class ProcessMap
             }
 
             //call plugin
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
+            /** @var \ProcessMaker\Plugins\Interfaces\StepDetail[] $externalSteps */
             $externalSteps = $oPluginRegistry->getSteps();
             if (is_array($externalSteps) && count($externalSteps) > 0) {
                 foreach ($externalSteps as $key => $stepVar) {
-                    $aBB[] = array('STEP_UID' => $stepVar->sStepId, 'STEP_TITLE' => $stepVar->sStepTitle, 'STEP_TYPE_OBJ' => 'EXTERNAL', 'STEP_MODE' => '<input type="hidden" id="STEP_MODE_' . $stepVar->sStepId . '">' );
+                    $aBB[] = array(
+                        'STEP_UID' => $stepVar->getStepId(),
+                        'STEP_TITLE' => $stepVar->getStepTitle(),
+                        'STEP_TYPE_OBJ' => 'EXTERNAL',
+                        'STEP_MODE' => '<input type="hidden" id="STEP_MODE_' . $stepVar->getStepId() . '">'
+                    );
                 }
             }
             global $_DBArray;
@@ -1363,12 +1374,13 @@ class ProcessMap
                     break;
                 default:
                     //if the $iForm is not one of the defaults then search under Plugins for an extended property. By JHL Jan 18, 2011
-                    $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                    $oPluginRegistry = PluginRegistry::loadSingleton();
+                    /** @var \ProcessMaker\Plugins\Interfaces\TaskExtendedProperty[] $activePluginsForTaskProperties */
                     $activePluginsForTaskProperties = $oPluginRegistry->getTaskExtendedProperties();
                     foreach ($activePluginsForTaskProperties as $key => $taskPropertiesInfo) {
-                        $id = $taskPropertiesInfo->sNamespace . "--" . $taskPropertiesInfo->sName;
+                        $id = $taskPropertiesInfo->getNamespace() . "--" . $taskPropertiesInfo->getName();
                         if ($id == $iForm) {
-                            $sFilename = $taskPropertiesInfo->sPage;
+                            $sFilename = $taskPropertiesInfo->getPage();
                             $sw_template = true;
                         }
                     }
@@ -4697,10 +4709,6 @@ class ProcessMap
     public function getDynaformList($sTaskUID = '')
     {
         try {
-            //call plugin
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
-            $externalSteps = $oPluginRegistry->getSteps();
-
             $aSteps = array();
             //$aSteps [] = array ('STEP_TITLE' => 'char', 'STEP_UID' => 'char', 'STEP_TYPE_OBJ' => 'char', 'STEP_CONDITION' => 'char', 'STEP_POSITION' => 'integer' );
             $oCriteria = new Criteria('workflow');
@@ -5131,11 +5139,17 @@ class ProcessMap
             }
 
             //call plugin
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
+            /** @var \ProcessMaker\Plugins\Interfaces\StepDetail[] $externalSteps */
             $externalSteps = $oPluginRegistry->getSteps();
             if (is_array($externalSteps) && count($externalSteps) > 0) {
                 foreach ($externalSteps as $key => $stepVar) {
-                    $aBB[] = array('STEP_UID' => $stepVar->sStepId, 'STEP_TITLE' => $stepVar->sStepTitle, 'STEP_TYPE_OBJ' => 'EXTERNAL', 'STEP_MODE' => '<input type="hidden" id="STEP_MODE_' . $stepVar->sStepId . '">' );
+                    $aBB[] = array(
+                        'STEP_UID' => $stepVar->getStepId(),
+                        'STEP_TITLE' => $stepVar->getStepTitle(),
+                        'STEP_TYPE_OBJ' => 'EXTERNAL',
+                        'STEP_MODE' => '<input type="hidden" id="STEP_MODE_' . $stepVar->getStepId() . '">'
+                    );
                 }
             }
 
@@ -5180,7 +5194,8 @@ class ProcessMap
     {
         try {
             //call plugin
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
+            /** @var \ProcessMaker\Plugins\Interfaces\StepDetail[] $externalSteps */
             $externalSteps = $oPluginRegistry->getSteps();
 
             $aSteps = array();
@@ -5239,10 +5254,10 @@ class ProcessMap
                     case 'EXTERNAL':
                         $sTitle = 'unknown ' . $aRow['STEP_UID'];
                         foreach ($externalSteps as $key => $val) {
-                            if ($val->sStepId == $aRow['STEP_UID_OBJ']) {
-                                $sTitle = $val->sStepTitle;
-                                if (trim($val->sSetupStepPage) != '') {
-                                    $urlEdit = "externalStepEdit('" . $aRow['STEP_UID'] . "', '" . $val->sSetupStepPage . "');";
+                            if ($val->equalStepIdTo($aRow['STEP_UID_OBJ'])) {
+                                $sTitle = $val->getStepTitle();
+                                if (trim($val->getSetupStepPage()) != '') {
+                                    $urlEdit = "externalStepEdit('" . $aRow['STEP_UID'] . "', '" . $val->getSetupStepPage() . "');";
                                     $linkEditValue = 'Edit';
                                 } else {
                                     $urlEdit = "";

@@ -26,6 +26,8 @@
 
 global $RBAC;
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 $RBAC->requirePermissions("PM_SETUP_ADVANCE");
 require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
 
@@ -75,7 +77,7 @@ try {
         throw (new Exception($str));
     }
 
-    $oPluginRegistry = &PMPluginRegistry::getSingleton();
+    $oPluginRegistry = PluginRegistry::loadSingleton();
     $pluginFile = $sClassName . '.php';
 
     if ($bMainFile && $bClassFile) {
@@ -136,9 +138,9 @@ try {
 
     $details = $oPluginRegistry->getPluginDetails($pluginFile);
 
-    $oPluginRegistry->installPlugin($details->sNamespace);
+    $oPluginRegistry->installPlugin($details->getNamespace());
     $oPluginRegistry->setupPlugins(); //get and setup enabled plugins
-    $size = file_put_contents(PATH_DATA_SITE . "plugin.singleton", $oPluginRegistry->serializeInstance());
+    $oPluginRegistry->savePlugin($details->getNamespace());
 
     //G::header("Location: pluginsList");
     //die;

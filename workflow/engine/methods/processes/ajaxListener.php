@@ -22,6 +22,9 @@
  * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  *
  * @author Erik Amaru Ortiz <erik@colosa.com>
@@ -112,7 +115,7 @@ class Ajax
                 $oData['PRO_TEMPLATE'] = (isset($_POST['PRO_TEMPLATE']) && $_POST['PRO_TEMPLATE'] != '') ? $_POST['form']['PRO_TEMPLATE'] : '';
                 $oData['PROCESSMAP'] = $oProcessMap;
 
-                $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 $oPluginRegistry->executeTriggers(PM_NEW_PROCESS_SAVE, $oData);
             } else {
                 //$oProcessMap->updateProcess($_POST['form']);

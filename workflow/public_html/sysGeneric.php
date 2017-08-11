@@ -23,6 +23,7 @@
  */
 
 use Illuminate\Foundation\Http\Kernel;
+use ProcessMaker\Plugins\PluginRegistry;
 
 /**
  * bootstrap - ProcessMaker Bootstrap
@@ -651,17 +652,6 @@ $memcache = & PMmemcached::getSingleton( SYS_SYS );
 
 // load Plugins base class
 
-//here we are loading all plugins registered
-//the singleton has a list of enabled plugins
-$sSerializedFile = PATH_DATA_SITE . 'plugin.singleton';
-
-if (file_exists( $sSerializedFile )) {
-    $oPluginRegistry = PMPluginRegistry::loadSingleton($sSerializedFile);
-    $attributes = $oPluginRegistry->getAttributes();
-    Bootstrap::LoadTranslationPlugins( defined( 'SYS_LANG' ) ? SYS_LANG : "en" , $attributes);
-} else{
-    $oPluginRegistry = PMPluginRegistry::getSingleton();
-}
 // setup propel definitions and logging
 //changed to autoloader
 
@@ -699,6 +689,12 @@ if (defined( 'DEBUG_SQL_LOG' ) && DEBUG_SQL_LOG) {
 } else {
     Propel::init( PATH_CORE . "config/databases.php" );
 }
+
+//here we are loading all plugins registered
+//the singleton has a list of enabled plugins
+$oPluginRegistry = PluginRegistry::loadSingleton();
+$attributes = $oPluginRegistry->getAttributes();
+Bootstrap::LoadTranslationPlugins( defined( 'SYS_LANG' ) ? SYS_LANG : "en" , $attributes);
 
 //Set Time Zone
 /*----------------------------------********---------------------------------*/

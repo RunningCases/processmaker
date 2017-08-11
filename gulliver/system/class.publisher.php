@@ -25,7 +25,7 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
-
+use ProcessMaker\Plugins\PluginRegistry;
 /**
  * Publisher class definition
  * It is to publish all content in a page
@@ -174,7 +174,7 @@ class Publisher
                         $aux[1] = $filename;
                     }
                     if (count( $aux ) == 2 && defined( 'G_PLUGIN_CLASS' )) {
-                        $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                        $oPluginRegistry = PluginRegistry::loadSingleton();
                         if ($response = $oPluginRegistry->isRegisteredFolder( $aux[0] )) {
                             if ($response !== true) {
                                 $sPath = PATH_PLUGINS . $response . PATH_SEP;
@@ -314,7 +314,7 @@ class Publisher
                 if (! is_file( $sPath . $Part['File'] )) {
                     $aux = explode( PATH_SEP, $Part['File'] );
                     if (count( $aux ) == 2) {
-                        $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                        $oPluginRegistry = PluginRegistry::loadSingleton();
                         if ($oPluginRegistry->isRegisteredFolder( $aux[0] )) {
                             $sPath = PATH_PLUGINS; // . $aux[0] . PATH_SEP ;
                         }
@@ -400,7 +400,7 @@ class Publisher
 
                     //search in PLUGINS folder, probably the file is in plugin
                     if (count( $aux ) == 2) {
-                        $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                        $oPluginRegistry = PluginRegistry::loadSingleton();
                         if ($oPluginRegistry->isRegisteredFolder( $aux[0] )) {
                             $sPath = PATH_PLUGINS; // . $aux[0] . PATH_SEP ;
                         }
@@ -573,7 +573,7 @@ class Publisher
 
                 // verify if there are templates folders registered, template and method folders are the same
                 $folderTemplate = explode( '/', $Part['Template'] );
-                $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 if ($oPluginRegistry->isRegisteredFolder( $folderTemplate[0] )) {
                     $template->templateFile = PATH_PLUGINS . $Part['Template'] . '.html';
                 } else {
@@ -621,7 +621,7 @@ class Publisher
                     $userTemplate = G::ExpandPath( 'templates' ) . $Part['Template'];
                     $globalTemplate = PATH_TEMPLATE . $Part['Template'];
                     if (! is_file( $userTemplate ) && ! is_file( $globalTemplate )) {
-                        $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                        $oPluginRegistry = PluginRegistry::loadSingleton();
                         if ($oPluginRegistry->isRegisteredFolder( $aux[0] )) {
                             $pluginTemplate = PATH_PLUGINS . $Part['Template'] . '.php';
                             include ($pluginTemplate);

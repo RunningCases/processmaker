@@ -1,6 +1,7 @@
 <?php
 
 use ProcessMaker\Util\FixReferencePath;
+use ProcessMaker\Plugins\Adapters\PluginAdapter;
 
 /**
  * class workspaceTools.
@@ -205,6 +206,12 @@ class workspaceTools
         $this->updateFrameworkPaths($workSpace);
         $stop = microtime(true);
         CLI::logging("<*>   Update framework paths took " . ($stop - $start) . " seconds.\n");
+
+        $start = microtime(true);
+        CLI::logging("> Migrating and populating plugin singleton data...\n");
+        $this->migrateSingleton($workSpace);
+        $stop = microtime(true);
+        CLI::logging("<*>   Migrating and populating plugin singleton data took " . ($stop - $start) . " seconds.\n");
     }
 
     /**
@@ -1644,7 +1651,7 @@ class workspaceTools
         if (count($metaFiles) > 1 && (!isset($srcWorkspace))) {
             throw new Exception("Multiple workspaces in backup but no workspace specified to restore");
         }
-        if (isset($srcWorkspace) && !in_array("$srcWorkspace.meta", array_map(BASENAME, $metaFiles))) {
+        if (isset($srcWorkspace) && !in_array("$srcWorkspace.meta", array_map('basename', $metaFiles))) {
             throw new Exception("Workspace $srcWorkspace not found in backup");
         }
 
@@ -1890,8 +1897,6 @@ class workspaceTools
         }
 
         if ($swv == 1) {
-
-
             //Extract
             $tar = new Archive_Tar($f);
 
@@ -2870,7 +2875,6 @@ class workspaceTools
     {
         CLI::logging("-> Verifying roles permissions in RBAC \n");
         //Update table RBAC permissions
-
         $RBAC = &RBAC::getSingleton();
         $RBAC->initRBAC();
         $result = $RBAC->verifyPermissions();
@@ -3884,7 +3888,32 @@ class workspaceTools
         $this->initPropel(true);
         $this->upgradeTriggersOfTables($flagRecreate, $lang);
     }
-    
+
+    /**
+     * @param $workspace
+     */
+    public function migrateSingleton($workspace)
+    {
+        if ((!class_exists('Memcache') || !class_exists('Memcached')) && !defined('MEMCACHED_ENABLED')) {
+            define('MEMCACHED_ENABLED', false);
+        }
+        $this->initPropel(true);
+        $conf  = new Configuration();
+        if (!$bExist = $conf->exists('MIGRATED_PLUGIN', 'singleton')) {
+            $pathSingleton = PATH_DATA . 'sites' . PATH_SEP . $workspace . PATH_SEP . 'plugin.singleton';
+            $oPluginRegistry = unserialize(file_get_contents($pathSingleton));
+            $pluginAdapter = new PluginAdapter();
+            $pluginAdapter->migrate($oPluginRegistry);
+            $data["CFG_UID"] = 'MIGRATED_PLUGIN';
+            $data["OBJ_UID"] = 'singleton';
+            $data["CFG_VALUE"] = 'true';
+            $data["PRO_UID"] = '';
+            $data["USR_UID"] = '';
+            $data["APP_UID"] = '';
+            $conf->create($data);
+        }
+    }
+
     /**
      * This method finds all recursively PHP files that have the path PATH_DATA,
      * poorly referenced, this is caused by the import of processes where the data

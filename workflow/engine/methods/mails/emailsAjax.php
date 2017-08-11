@@ -1,5 +1,6 @@
 <?php
 
+use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Exception\RBACException;
 
 $req = (isset($_REQUEST['request']) ? $_REQUEST['request'] : '');
@@ -46,10 +47,8 @@ switch ($req) {
 
         $arrayType = [];
 
-        $pluginRegistry = PMPluginRegistry::getSingleton();
-        $statusEr = $pluginRegistry->getStatusPlugin('externalRegistration');
-
-        $flagEr = (preg_match('/^enabled$/', $statusEr)) ? 1 : 0;
+        $pluginRegistry = PluginRegistry::loadSingleton();
+        $flagEr = $pluginRegistry->isEnable('externalRegistration') ? 1 : 0;
 
         if ($flagEr == 0) {
             $arrayType[] = 'EXTERNAL_REGISTRATION';

@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * Main Controller for processMaker v2.1
  * @date Jul 17, 2011
@@ -156,7 +158,7 @@ class Main extends Controller
             $this->memcache->delete( 'rbacSession' . session_id() );
         } else {
             // Execute SSO trigger
-            $pluginRegistry = & PMPluginRegistry::getSingleton();
+            $pluginRegistry = PluginRegistry::loadSingleton();
             if (defined( 'PM_SINGLE_SIGN_ON' )) {
                 if ($pluginRegistry->existsTrigger( PM_SINGLE_SIGN_ON )) {
                     if ($pluginRegistry->executeTriggers( PM_SINGLE_SIGN_ON, null )) {
@@ -472,8 +474,8 @@ class Main extends Controller
                 $sWspaceSelect = trim( $aFotoSelect['WORKSPACE_LOGO_NAME'] );
             }
         }
-        if (class_exists( 'PMPluginRegistry' )) {
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
+        if (class_exists( 'ProcessMaker\Plugins\PluginRegistry' )) {
+            $oPluginRegistry = PluginRegistry::loadSingleton();
             $logoPlugin = $oPluginRegistry->getCompanyLogo( $sCompanyLogo );
             if ($logoPlugin != '/images/processmaker2.logo2.png') {
                 $sCompanyLogo = $logoPlugin;

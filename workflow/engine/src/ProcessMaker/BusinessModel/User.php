@@ -22,7 +22,7 @@ use IsoLocationPeer;
 use IsoSubdivisionPeer;
 use ListParticipatedLast;
 use PMmemcached;
-use PMPluginRegistry;
+use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Util\DateTime;
 use ProcessMaker\Util\System;
 use Propel;
@@ -869,8 +869,8 @@ class User
     public function createUser($userData)
     {
         $this->userObj = new RbacUsers();
-        if (class_exists('PMPluginRegistry')) {
-            $pluginRegistry = &PMPluginRegistry::getSingleton();
+        if (class_exists('ProcessMaker\Plugins\PluginRegistry')) {
+            $pluginRegistry = PluginRegistry::loadSingleton();
             if ($pluginRegistry->existsTrigger(PM_BEFORE_CREATE_USER)) {
                 try {
                     $pluginRegistry->executeTriggers(PM_BEFORE_CREATE_USER, null);

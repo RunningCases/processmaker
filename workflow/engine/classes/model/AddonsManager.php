@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 require_once 'classes/model/om/BaseAddonsManager.php';
 require_once PATH_CORE . 'classes' . PATH_SEP . 'class.enterpriseUtils.php';
 
@@ -113,9 +116,8 @@ class AddonsManager extends BaseAddonsManager
             if (!$this->isInstalled()) {
                 return false;
             }
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
-            $status = $oPluginRegistry->getStatusPlugin($this->getAddonName());
-            return (strcmp($status, "enabled") == 0);
+            $oPluginRegistry = PluginRegistry::loadSingleton();
+            return $oPluginRegistry->isEnable($this->getAddonName());
         } else {
             throw new Exception("Addon type '{$this->getAddonType()}' unsupported");
         }
@@ -130,7 +132,7 @@ class AddonsManager extends BaseAddonsManager
             return false;
         }
 
-        $oPluginRegistry = &PMPluginRegistry::getSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
 
 
         $filter = new InputFilter();
@@ -139,19 +141,12 @@ class AddonsManager extends BaseAddonsManager
         require_once ($requiredPath);
 
         if ($enable) {
-            //$oDetails = $oPluginRegistry->getPluginDetails($this->getAddonName());
-            //$oPluginRegistry->enablePlugin($oDetails->sNamespace);
-            //require_once (PATH_PLUGINS . $this->getAddonName() . ".php"); //ok
             $oPluginRegistry->enablePlugin($this->getAddonName());
             $oPluginRegistry->setupPlugins(); //get and setup enabled plugins
         } else {
-            //$oDetails = $oPluginRegistry->getPluginDetails($this->getAddonName());
-            //$oPluginRegistry->disablePlugin($oDetails->sNamespace);
             $oPluginRegistry->disablePlugin($this->getAddonName());
         }
-
-        //$oPluginRegistry->setupPlugins();
-        file_put_contents(PATH_DATA_SITE . "plugin.singleton", $oPluginRegistry->serializeInstance());
+        $oPluginRegistry->savePlugin($this->getAddonName());
         return true;
     }
 
@@ -170,9 +165,9 @@ class AddonsManager extends BaseAddonsManager
                     return (null);
                 }
 
-                $oPluginRegistry = &PMPluginRegistry::getSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 $details = $oPluginRegistry->getPluginDetails($this->getAddonName() . ".php");
-                $v = (!($details == null))? $details->iVersion : null;
+                $v = (!($details == null))? $details->getVersion() : null;
 
                 if ($v != "") {
                     return ($v);
@@ -387,7 +382,7 @@ class AddonsManager extends BaseAddonsManager
                 $_SESSION["__ENTERPRISE_INSTALL__"] = 1;
             }
 
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
             $oPluginRegistry->installPluginArchive($filename, $this->getAddonName());
 
             $this->setState();
@@ -410,7 +405,7 @@ class AddonsManager extends BaseAddonsManager
                 return false;
             }
 
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
             $oPluginRegistry->uninstallPlugin($this->getAddonName());
 
             return true;

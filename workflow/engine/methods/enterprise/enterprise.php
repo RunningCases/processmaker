@@ -1,5 +1,7 @@
 <?php
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 if (!defined("PATH_PM_ENTERPRISE")) {
     define("PATH_PM_ENTERPRISE", PATH_CORE . "enterprise/");
 }
@@ -103,10 +105,10 @@ class enterprisePlugin extends PMPlugin
 
     public function install()
     {
-        $pluginRegistry = &PMPluginRegistry::getSingleton();
+        $pluginRegistry = PluginRegistry::loadSingleton();
 
         $pluginDetail = $pluginRegistry->getPluginDetails("enterprise.php");
-        $pluginRegistry->enablePlugin($pluginDetail->sNamespace);
+        $pluginRegistry->enablePlugin($pluginDetail->getNamespace());
 
         file_put_contents(PATH_DATA_SITE . "plugin.singleton", $pluginRegistry->serializeInstance());
     }
@@ -117,11 +119,11 @@ class enterprisePlugin extends PMPlugin
 
     public function setup()
     {
-        if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
-            $pluginRegistry = &PMPluginRegistry::getSingleton();
+        if (!PluginsRegistryPeer::retrieveByPK(md5('enterprise'))) {
+            $pluginRegistry = PluginRegistry::loadSingleton();
             $pluginDetail = $pluginRegistry->getPluginDetails("enterprise.php");
-            $pluginRegistry->enablePlugin($pluginDetail->sNamespace);
-            file_put_contents(PATH_DATA_SITE . "plugin.singleton", $pluginRegistry->serializeInstance());
+            $pluginRegistry->enablePlugin($pluginDetail->getNamespace());
+            $pluginRegistry->savePlugin($pluginDetail->getNamespace());
         }
     }
 
@@ -176,16 +178,17 @@ class enterprisePlugin extends PMPlugin
         if (file_exists(PATH_CORE . "plugins" . PATH_SEP . $pluginName . ".php")) {
             require_once (PATH_CORE . "plugins" . PATH_SEP . $pluginName . ".php");
 
-            $pluginRegistry = &PMPluginRegistry::getSingleton();
+            $pluginRegistry = PluginRegistry::loadSingleton();
 
             $pluginDetail = $pluginRegistry->getPluginDetails($pluginName . ".php");
 
             if ($pluginDetail) {
-                $pluginRegistry->enablePlugin($pluginDetail->sNamespace);
-                $pluginRegistry->disablePlugin($pluginDetail->sNamespace);
+                $pluginRegistry->enablePlugin($pluginDetail->getNamespace());
+                $pluginRegistry->disablePlugin($pluginDetail->getNamespace());
 
                 ///////
-                $plugin = new $pluginDetail->sClassName($pluginDetail->sNamespace, $pluginDetail->sFilename);
+                $className = $pluginDetail->getClassName();
+                $plugin = new $className($pluginDetail->getNamespace(), $pluginDetail->getFile());
                 //$this->_aPlugins[$pluginDetail->sNamespace] = $plugin;
 
                 if (method_exists($plugin, "uninstall")) {
@@ -193,7 +196,7 @@ class enterprisePlugin extends PMPlugin
                 }
 
                 ///////
-                file_put_contents(PATH_DATA_SITE . "plugin.singleton", $pluginRegistry->serializeInstance());
+                $pluginRegistry->savePlugin($pluginDetail->getNamespace());
             }
 
             ///////
@@ -323,7 +326,7 @@ class enterprisePlugin extends PMPlugin
     }
 }
 
-$oPluginRegistry = &PMPluginRegistry::getSingleton();
+$oPluginRegistry = PluginRegistry::loadSingleton();
 $oPluginRegistry->registerPlugin('enterprise', __FILE__); //<- enterprise string must be in single quote, otherwise generate error
 
 //since we are placing pmLicenseManager and EE together.. after register EE, we need to require_once the pmLicenseManager

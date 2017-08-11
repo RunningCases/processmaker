@@ -22,6 +22,9 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  *
  */
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 /*----------------------------------********---------------------------------*/
 //Browser Compatibility
 $browserSupported = G::checkBrowserCompatibility();
@@ -122,7 +125,7 @@ if (isset ($_SESSION['USER_LOGGED'])) {
     }
 } else {
     // Execute SSO trigger
-    $pluginRegistry =& PMPluginRegistry::getSingleton();
+    $pluginRegistry = PluginRegistry::loadSingleton();
     if (defined('PM_SINGLE_SIGN_ON')) {
         /*----------------------------------********---------------------------------*/
         $licensedFeatures = & PMLicensedFeatures::getSingleton();

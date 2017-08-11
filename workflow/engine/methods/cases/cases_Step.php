@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 $filter = new InputFilter();
 
 list($_GET['UID'], $_GET['TYPE'], $_GET['POSITION'], $_GET['ACTION']) = $filter->xssRegexFilter(
@@ -386,7 +389,7 @@ try {
                     $Fields['MESSAGE1'] = G::LoadTranslation( 'ID_PLEASE_ENTER_COMMENTS' );
                     $Fields['MESSAGE2'] = G::LoadTranslation( 'ID_PLEASE_SELECT_FILE' );
                     //START: If there is a Break Step registered from Plugin Similar as a Trigger debug
-                    $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                    $oPluginRegistry = PluginRegistry::loadSingleton();
                     if ($oPluginRegistry->existsTrigger( PM_UPLOAD_DOCUMENT_BEFORE )) {
                         //If a Plugin has registered a Break Page Evaluator
                         $oPluginRegistry->executeTriggers( PM_UPLOAD_DOCUMENT_BEFORE, array ('USR_UID' => $_SESSION['USER_LOGGED']) );
@@ -394,18 +397,6 @@ try {
                     //END: If there is a Break Step registered from Plugin
                     $G_PUBLISH->AddContent( 'propeltable', 'cases/paged-table-inputDocuments', 'cases/cases_InputdocsList', $oCase->getInputDocumentsCriteria( $_SESSION['APPLICATION'], $_SESSION['INDEX'], $_GET['UID'] ), array_merge( array ('DOC_UID' => $_GET['UID']
                     ), $Fields ) ); //$aFields
-
-
-                    //call plugin
-                    //if ( $oPluginRegistry->existsTrigger ( PM_CASE_DOCUMENT_LIST ) ) {
-                    //  $folderData = new folderData (null, null, $_SESSION['APPLICATION'], null, $_SESSION['USER_LOGGED'] );
-                    //  $oPluginRegistry =& PMPluginRegistry::getSingleton();
-                    //  $oPluginRegistry->executeTriggers ( PM_CASE_DOCUMENT_LIST , $folderData );
-                    //  //end plugin
-                    //}
-                    //else
-                    //  $G_PUBLISH->AddContent('propeltable', 'cases/paged-table-inputDocuments', 'cases/cases_InputdocsList', $oCase->getInputDocumentsCriteria($_SESSION['APPLICATION'], $_SESSION['INDEX'], $_GET['UID']), array_merge(array('DOC_UID'=>$_GET['UID']),$Fields));//$aFields
-
 
                     $oHeadPublisher = & headPublisher::getSingleton();
                     $titleDocument = "<h3>" . htmlspecialchars($Fields['INP_DOC_TITLE'], ENT_QUOTES) . "<br><small>" . G::LoadTranslation('ID_INPUT_DOCUMENT') . "</small></h3>";
@@ -458,7 +449,7 @@ try {
             switch ($_GET['ACTION']) {
                 case 'GENERATE':
                     //START: If there is a Break Step registered from Plugin Similar as a Trigger debug
-                    $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                    $oPluginRegistry = PluginRegistry::loadSingleton();
                     if ($oPluginRegistry->existsTrigger( PM_UPLOAD_DOCUMENT_BEFORE )) {
                         //If a Plugin has registered a Break Page Evaluator
                         $oPluginRegistry->executeTriggers( PM_UPLOAD_DOCUMENT_BEFORE, array ('USR_UID' => $_SESSION['USER_LOGGED']) );
@@ -650,7 +641,7 @@ try {
                     //Save data - End
 
                     //Plugin Hook PM_UPLOAD_DOCUMENT for upload document
-                    $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                    $oPluginRegistry = PluginRegistry::loadSingleton();
                     if ($oPluginRegistry->existsTrigger( PM_UPLOAD_DOCUMENT ) && class_exists( 'uploadDocumentData' )) {
                         $triggerDetail = $oPluginRegistry->getTriggerInfo( PM_UPLOAD_DOCUMENT );
 
@@ -667,7 +658,7 @@ try {
                                 $uploadReturn = $oPluginRegistry->executeTriggers( PM_UPLOAD_DOCUMENT, $documentData );
                                 if ($uploadReturn) {
                                     //Only delete if the file was saved correctly
-                                    $aFields['APP_DOC_PLUGIN'] = $triggerDetail->sNamespace;
+                                    $aFields['APP_DOC_PLUGIN'] = $triggerDetail->getNamespace();
                                     //$oAppDocument = new AppDocument();
                                     //$oAppDocument->update($aFields);
                                     unlink( $pathOutput . $sFilename . '.pdf' );
@@ -722,7 +713,7 @@ try {
                     $lastVersion = $oAppDocument->getLastAppDocVersion( $_GET['DOC'], $_SESSION['APPLICATION'] );
                     $aFields = $oAppDocument->load( $_GET['DOC'], $lastVersion );
                     $listing = false;
-                    $oPluginRegistry = & PMPluginRegistry::getSingleton();
+                    $oPluginRegistry = PluginRegistry::loadSingleton();
                     if ($oPluginRegistry->existsTrigger( PM_CASE_DOCUMENT_LIST )) {
                         $folderData = new folderData( null, null, $_SESSION['APPLICATION'], null, $_SESSION['USER_LOGGED'] );
                         $folderData->PMType = "OUTPUT";
@@ -1144,7 +1135,7 @@ try {
             if ($noShowTitle == 0) {
                 $G_PUBLISH->AddContent( 'smarty', 'cases/cases_title', '', '', $array );
             }
-            $oPluginRegistry = &PMPluginRegistry::getSingleton();
+            $oPluginRegistry = PluginRegistry::loadSingleton();
             $externalSteps = $oPluginRegistry->getSteps();
 
             $sNamespace = '';

@@ -25,6 +25,8 @@
  */
 
 
+use ProcessMaker\Util\System;
+
 CLI::taskName('flush-cache');
 CLI::taskDescription(<<<EOT
     Flush cache of all workspaces of a given workspace
@@ -72,7 +74,7 @@ function flush_cache($workspace)
         echo " Update singleton in workspace " . $workspace->name . " ... ";
         echo PHP_EOL;
         echo " Flush workspace " . pakeColor::colorize($workspace->name, "INFO") . " cache ... " . PHP_EOL;
-        $status = \ProcessMaker\Util\System::flushCache($workspace);
+        System::flushCache($workspace);
         echo "DONE" . PHP_EOL;
     } catch (Exception $e) {
         echo $e->getMessage() . PHP_EOL;

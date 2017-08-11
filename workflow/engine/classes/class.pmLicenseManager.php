@@ -1,4 +1,7 @@
 <?php
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 require_once PATH_CORE . 'classes' . PATH_SEP . 'class.enterpriseUtils.php';
 
 /**
@@ -133,20 +136,20 @@ class pmLicenseManager
             if ($this->result=="OK") {
                 //Disable
                 if (file_exists ( PATH_PLUGINS . 'enterprise/data/data' )) {
-                    $oPluginRegistry = & PMPluginRegistry::getSingleton ();
+                    $oPluginRegistry = PluginRegistry::loadSingleton();
                     $aPlugins = unserialize ( trim ( file_get_contents ( PATH_PLUGINS . 'enterprise/data/data' ) ) );
                     foreach ($aPlugins as $aPlugin) {
                         $sClassName = substr ( $aPlugin ['sFilename'], 0, strpos ( $aPlugin ['sFilename'], '-' ) );
                         require_once PATH_PLUGINS . $sClassName . '.php';
                         $oDetails = $oPluginRegistry->getPluginDetails ( $sClassName . '.php' );
-                        $oPluginRegistry->disablePlugin ( $oDetails->sNamespace );
-                        file_put_contents ( PATH_DATA_SITE . 'plugin.singleton', $oPluginRegistry->serializeInstance () );
+                        $oPluginRegistry->disablePlugin ( $oDetails->getNamespace() );
+                        $oPluginRegistry->savePlugin($oDetails->getNamespace());
                     }
                     unlink(PATH_PLUGINS . 'enterprise/data/data');
                 }
 
                 //Enable
-                $oPluginRegistry = &PMPluginRegistry::getSingleton();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 $aPlugins = unserialize(trim(file_get_contents(PATH_PLUGINS . "enterprise/data/default")));
 
                 foreach ($aPlugins as $aPlugin) {
@@ -154,8 +157,8 @@ class pmLicenseManager
                         $sClassName = substr($aPlugin["sFilename"], 0, strpos($aPlugin["sFilename"], "-"));
                         require_once (PATH_PLUGINS . $sClassName . ".php");
                         $oDetails = $oPluginRegistry->getPluginDetails($sClassName . ".php");
-                        $oPluginRegistry->enablePlugin($oDetails->sNamespace);
-                        file_put_contents ( PATH_DATA_SITE . 'plugin.singleton', $oPluginRegistry->serializeInstance () );
+                        $oPluginRegistry->enablePlugin($oDetails->getNamespace());
+                        $oPluginRegistry->savePlugin($oDetails->getNamespace());
                     }
                 }
 
@@ -168,9 +171,9 @@ class pmLicenseManager
                             if (file_exists(PATH_PLUGINS . $sClassName . '.php')) {
                                 require_once PATH_PLUGINS . $sClassName . '.php';
                                 $oDetails = $oPluginRegistry->getPluginDetails ( $sClassName . '.php' );
-                                $oPluginRegistry->disablePlugin ( $oDetails->sNamespace );
-                                file_put_contents ( PATH_DATA_SITE . 'plugin.singleton', $oPluginRegistry->serializeInstance () );
-                                $aDenied[]=$oDetails->sNamespace;
+                                $oPluginRegistry->disablePlugin($oDetails->getNamespace());
+                                $oPluginRegistry->savePlugin($oDetails->getNamespace());
+                                $aDenied[]=$oDetails->getNamespace();
                             }
                         }
                     }
@@ -182,7 +185,7 @@ class pmLicenseManager
                 }
             } else {
                 //Disable
-                $oPluginRegistry = & PMPluginRegistry::getSingleton ();
+                $oPluginRegistry = PluginRegistry::loadSingleton();
                 $aPlugins = unserialize ( trim ( file_get_contents ( PATH_PLUGINS . 'enterprise/data/default' ) ) );
                 foreach ($aPlugins as $aPlugin) {
                     $sClassName = substr ( $aPlugin ['sFilename'], 0, strpos ( $aPlugin ['sFilename'], '-' ) );
@@ -190,13 +193,14 @@ class pmLicenseManager
                     if (($sClassName != "pmLicenseManager") && ($sClassName != "pmTrial") && ($sClassName != "enterprise")) {
                         require_once PATH_PLUGINS . $sClassName . '.php';
                         $oDetails = $oPluginRegistry->getPluginDetails ( $sClassName . '.php' );
-                        $oPluginRegistry->disablePlugin ( $oDetails->sNamespace );
+                        $oPluginRegistry->disablePlugin($oDetails->getNamespace());
                     } else {
                         //Enable default and required plugins
                         require_once PATH_PLUGINS . $sClassName . '.php';
                         $oDetails = $oPluginRegistry->getPluginDetails ( $sClassName . '.php' );
-                        $oPluginRegistry->enablePlugin ( $oDetails->sNamespace );
+                        $oPluginRegistry->enablePlugin($oDetails->getNamespace());
                     }
+                    $oPluginRegistry->savePlugin($oDetails->getNamespace());
                 }
 
                 if (file_exists(PATH_DATA_SITE.'ee')) {
@@ -210,12 +214,12 @@ class pmLicenseManager
                             }
                             $oDetails = $oPluginRegistry->getPluginDetails ( $sClassName . '.php' );
                             if ($oDetails) {
-                                $oPluginRegistry->disablePlugin ( $oDetails->sNamespace );
+                                $oPluginRegistry->disablePlugin($oDetails->getNamespace());
+                                $oPluginRegistry->savePlugin($oDetails->getNamespace());
                             }
                         }
                     }
                 }
-                file_put_contents ( PATH_DATA_SITE . 'plugin.singleton', $oPluginRegistry->serializeInstance () );
             }
         }
     }
@@ -265,7 +269,7 @@ class pmLicenseManager
     public function unSerializeInstance($serialized)
     {
         if (self::$instance == null) {
-            self::$instance = new PMPluginRegistry ();
+            self::$instance = new PluginRegistry();
         }
         $instance = unserialize ( $serialized );
         self::$instance = $instance;

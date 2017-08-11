@@ -2,6 +2,8 @@
 
 namespace ProcessMaker\BusinessModel;
 
+use ProcessMaker\Plugins\PluginRegistry;
+
 /**
  * Description of ActionsByEmailService
  *
@@ -688,7 +690,7 @@ class ActionsByEmail
                         /*----------------------------------********---------------------------------*/
 
                         if (defined('PM_SINGLE_SIGN_ON')) {
-                            $pluginRegistry = &\PMPluginRegistry::getSingleton();
+                            $pluginRegistry = PluginRegistry::loadSingleton();
 
                             if ($pluginRegistry->existsTrigger(PM_SINGLE_SIGN_ON)) {
                                 if ($pluginRegistry->executeTriggers(PM_SINGLE_SIGN_ON, null)) {

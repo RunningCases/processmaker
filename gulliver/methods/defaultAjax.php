@@ -23,6 +23,9 @@
  */
 
 /*NEXT LINE: Runs any configuration defined to be executed before dependent fields recalc*/
+
+use ProcessMaker\Plugins\PluginRegistry;
+
 if (isset( $_SESSION['CURRENT_PAGE_INITILIZATION'] ))
     eval( $_SESSION['CURRENT_PAGE_INITILIZATION'] );
 
@@ -44,7 +47,7 @@ if (! is_file( XMLFORM_AJAX_PATH . $xmlFile )) {
     $aux = explode( PATH_SEP, $xmlFile );
     //check if G_PLUGIN_CLASS is defined, because publisher can be called without an environment
     if (count( $aux ) == 2 && defined( 'G_PLUGIN_CLASS' )) {
-        $oPluginRegistry = & PMPluginRegistry::getSingleton();
+        $oPluginRegistry = PluginRegistry::loadSingleton();
         if ($oPluginRegistry->isRegisteredFolder( $aux[0] )) {
             $sPath = PATH_PLUGINS;
         }
