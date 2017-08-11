@@ -5536,7 +5536,15 @@ class XmlForm
     private function getClassByControlType($type)
     {
         $key = strtolower($type);
-        return isset(self::$controls[$key]) ? self::$controls[$key] : 'XmlForm_Field';
+        if (isset(self::$controls[$key])) {
+            return self::$controls[$key];
+        } elseif (class_exists('XmlForm_Field_' . $type)) {
+            return 'XmlForm_Field_' . $type;
+        } elseif (class_exists('XmlForm_Field_' . $key)) {
+            return 'XmlForm_Field_' . $key;
+        } else {
+            return 'XmlForm_Field';
+        }
     }
 
     /**
