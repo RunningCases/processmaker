@@ -34,6 +34,7 @@ class ListParticipatedLast extends BaseListParticipatedLast
         $aRow = $dataset->getRow();
         $data['APP_STATUS'] = $aRow['APP_STATUS'];
 
+        $currentInformation = array();
         if ($data['USR_UID'] != 'SELF_SERVICES') {
             if ($data['USR_UID'] != '') {
                 $criteria = new Criteria();
@@ -90,7 +91,9 @@ class ListParticipatedLast extends BaseListParticipatedLast
             $data['APP_STATUS_ID'] = Application::$app_status_values[$data['APP_STATUS']];
         }
         //We will update the current information
-        $this->updateCurrentInfoByAppUid($data['APP_UID'], $currentInformation);
+        if (count($currentInformation) > 0) {
+            $this->updateCurrentInfoByAppUid($data['APP_UID'], $currentInformation);
+        }
 
         $con = Propel::getConnection(ListParticipatedLastPeer::DATABASE_NAME);
         try {
