@@ -114,7 +114,7 @@ class pmTablesProxy extends HttpProxyController
         $dbConn = new DbConnections();
         $dbConnections = $dbConn->getConnectionsProUid( $proUid, array('mysql') );
 
-        $workSpace = new workspaceTools(SYS_SYS);
+        $workSpace = new WorkspaceTools(SYS_SYS);
         $workspaceDB = $workSpace->getDBInfo();
 
         if ($workspaceDB['DB_NAME'] == $workspaceDB['DB_RBAC_NAME']) {

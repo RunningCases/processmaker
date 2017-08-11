@@ -1,24 +1,5 @@
 <?php
 
-function ls_dir($dir, $basename = null)
-{
-    $files = array();
-    //if (substr($dir, -1) != "/")
-    //  $dir .= "/";
-    if ($basename == null) {
-        $basename = $dir;
-    }
-    foreach (glob("$dir/*") as $filename) {
-        //var_dump(substr($filename, strlen($basename) + 1));
-        if (is_dir($filename)) {
-            $files = array_merge($files, ls_dir($filename, $basename));
-        } else {
-            $files[] = substr($filename, strlen($basename) + 1);
-        }
-    }
-    return $files;
-}
-
 
 class Upgrade
 {
@@ -80,7 +61,7 @@ class Upgrade
         $checksum = array();
         $changedFiles = array();
         $time = microtime(1);
-        $files = ls_dir($extractDir);
+        $files = $this->ls_dir($extractDir);
         //printf("Time to list files: %f\n", microtime(1) - $time);
         echo "Updating ProcessMaker files...\n";
         $time = microtime(1);
@@ -142,4 +123,24 @@ class Upgrade
         }
         //printf("Time to install: %f\n", microtime(1) - $start);
     }
+
+    private function ls_dir($dir, $basename = null)
+    {
+        $files = array();
+        //if (substr($dir, -1) != "/")
+        //  $dir .= "/";
+        if ($basename == null) {
+            $basename = $dir;
+        }
+        foreach (glob("$dir/*") as $filename) {
+            //var_dump(substr($filename, strlen($basename) + 1));
+            if (is_dir($filename)) {
+                $files = array_merge($files, $this->ls_dir($filename, $basename));
+            } else {
+                $files[] = substr($filename, strlen($basename) + 1);
+            }
+        }
+        return $files;
+    }
+
 }

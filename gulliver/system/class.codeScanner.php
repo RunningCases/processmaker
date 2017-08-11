@@ -26,7 +26,7 @@ class CodeScanner
             if (!is_null($option)) {
                 switch (gettype($option)) {
                     case 'string':
-                        $workspace = new workspaceTools($option);
+                        $workspace = new WorkspaceTools($option);
 
                         if ($workspace->workspaceExists()) {
                             $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', $workspace->name);

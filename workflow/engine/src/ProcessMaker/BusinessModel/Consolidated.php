@@ -69,7 +69,7 @@ class Consolidated
      */
     public function postDerivate($app_uid, $app_number, $del_index, $usr_uid, $fieldName = '', $fieldValue = '')
     {
-        $ws = new \wsBase();
+        $ws = new \WsBase();
         $oCase = new \Cases();
 
         if (!isset($Fields["DEL_INIT_DATE"])) {

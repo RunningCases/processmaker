@@ -1,38 +1,7 @@
 <?php
-/**
- * class.wsBase.php
- *
- * @package workflow.engine.classes
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2011 Colosa Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- */
 
 //It works with the table CONFIGURATION in a WF dataBase
 
-
-/**
- * Copyright (C) 2009 COLOSA
- * License: LGPL, see LICENSE
- * Last Modify: 26.06.2008 10:05:00
- * Last modify by: Erik Amaru Ortiz <erik@colosa.com>
- * Last Modify comment(26.06.2008): the session expired verification was removed from here to soap 
 /**
  * Copyright (C) 2009 COLOSA
  * License: LGPL, see LICENSE
@@ -41,7 +10,8 @@
  * Last Modify comment(26.06.2008): the session expired verification was removed from here to soap class
  *
  * @package workflow.engine.classes
- */class wsBase
+ */
+class WsBase
 {
     public $stored_system_variables; //boolean
     public $wsSessionId; //web service session id, if the wsbase function is used from a WS request
@@ -1488,7 +1458,7 @@
     {
         try {
             if (trim( $groupName ) == '') {
-                $result = new wsCreateGroupResponse( 25, G::loadTranslation( 'ID_GROUP_NAME_REQUIRED' ), '' );
+                $result = new WsCreateGroupResponse( 25, G::loadTranslation( 'ID_GROUP_NAME_REQUIRED' ), '' );
                 return $result;
             }
 
@@ -1498,7 +1468,7 @@
 
             $data['GROUP_NAME'] = $groupName;
 
-            $result = new wsCreateGroupResponse( 0, G::loadTranslation( 'ID_GROUP_CREATED_SUCCESSFULLY', SYS_LANG, $data ), $groupId );
+            $result = new WsCreateGroupResponse( 0, G::loadTranslation( 'ID_GROUP_CREATED_SUCCESSFULLY', SYS_LANG, $data ), $groupId );
 
             return $result;
         } catch (Exception $e) {
@@ -1519,7 +1489,7 @@
     {
         try {
             if (trim( $departmentName ) == '') {
-                $result = new wsCreateDepartmentResponse( 25, G::loadTranslation( 'ID_DEPARTMENT_NAME_REQUIRED' ), '' );
+                $result = new WsCreateDepartmentResponse( 25, G::loadTranslation( 'ID_DEPARTMENT_NAME_REQUIRED' ), '' );
 
                 return $result;
             }
@@ -1527,13 +1497,13 @@
             $department = new Department();
 
             if (($parentUID != '') && ! ($department->existsDepartment( $parentUID ))) {
-                $result = new wsCreateDepartmentResponse( 26, G::loadTranslation( 'ID_PARENT_DEPARTMENT_NOT_EXIST' ), $parentUID );
+                $result = new WsCreateDepartmentResponse( 26, G::loadTranslation( 'ID_PARENT_DEPARTMENT_NOT_EXIST' ), $parentUID );
 
                 return $result;
             }
 
             if ($department->checkDepartmentName( $departmentName, $parentUID )) {
-                $result = new wsCreateDepartmentResponse( 27, G::loadTranslation( 'ID_DEPARTMENT_EXISTS' ), '' );
+                $result = new WsCreateDepartmentResponse( 27, G::loadTranslation( 'ID_DEPARTMENT_EXISTS' ), '' );
 
                 return $result;
             }
@@ -1547,7 +1517,7 @@
             $data['PARENT_UID'] = $parentUID;
             $data['DEPARTMENT_NAME'] = $departmentName;
 
-            $result = new wsCreateDepartmentResponse( 0, G::loadTranslation( 'ID_DEPARTMENT_CREATED_SUCCESSFULLY', SYS_LANG, $data ), $departmentId );
+            $result = new WsCreateDepartmentResponse( 0, G::loadTranslation( 'ID_DEPARTMENT_CREATED_SUCCESSFULLY', SYS_LANG, $data ), $departmentId );
 
             return $result;
         } catch (Exception $e) {

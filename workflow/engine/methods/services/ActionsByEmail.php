@@ -64,7 +64,7 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
 
                         $case->updateCase($_REQUEST['APP_UID'], $caseFieldsABE);
 
-                        $ws = new wsBase();
+                        $ws = new WsBase();
 
                         $result = $ws->derivateCase(
                             $caseFieldsABE['CURRENT_USER_UID'], $_REQUEST['APP_UID'], $_REQUEST['DEL_INDEX'], true

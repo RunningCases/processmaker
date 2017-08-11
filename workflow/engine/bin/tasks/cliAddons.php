@@ -57,7 +57,7 @@ function run_addon_core_install($args)
         }
 
         ///////
-        $ws = new workspaceTools($workspace);
+        $ws = new WorkspaceTools($workspace);
         $ws->initPropel(false);
 
         require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
@@ -73,7 +73,7 @@ function run_addon_core_install($args)
         $addon->install();
 
         if ($addon->isCore()) {
-            $ws = new workspaceTools($workspace);
+            $ws = new WorkspaceTools($workspace);
             $ws->initPropel(false);
             $addon->setState("install-finish");
         } else {
