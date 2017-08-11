@@ -128,7 +128,7 @@ class PMPluginRegistry
             return;
         }
 
-        $detail = new pluginDetail( $sNamespace, $sClassName, $sFilename, $plugin->sFriendlyName, $plugin->sPluginFolder, $plugin->sDescription, $plugin->sSetupPage, $plugin->iVersion );
+        $detail = new PluginDetail( $sNamespace, $sClassName, $sFilename, $plugin->sFriendlyName, $plugin->sPluginFolder, $plugin->sDescription, $plugin->sSetupPage, $plugin->iVersion );
 
         if (isset( $plugin->aWorkspaces )) {
             $detail->aWorkspaces = $plugin->aWorkspaces;
