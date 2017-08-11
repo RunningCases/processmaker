@@ -15477,6 +15477,17 @@ msgid "Remove selected"
 msgstr "Remove selected"
 
 # TRANSLATION
+# LABEL/ID_SELECT_DYNAFORM_USE_IN_CASE
+#: LABEL/ID_SELECT_DYNAFORM_USE_IN_CASE
+msgid "The \"dyn_uid\" parameter is required to configure a Web Entry of type \"Single Dynaform\""
+msgstr "The \"dyn_uid\" parameter is required to configure a Web Entry of type \"Single Dynaform\""
+
+# LABEL/ID_ENTER_VALID_URL
+#: LABEL/ID_ENTER_VALID_URL
+msgid "Enter a valid URL to redirect the browser after the web entry is completed"
+msgstr "Enter a valid URL to redirect the browser after the web entry is completed"
+
+# TRANSLATION
 # LABEL/ID_EVENT_ADD_DYNAVAR
 #: LABEL/ID_EVENT_ADD_DYNAVAR
 msgid "Add dynavar"
@@ -17879,14 +17890,14 @@ msgstr "Sending a test mail to: {0}"
 # TRANSLATION
 # LABEL/ID_EVENT_NOT_IS_START_EVENT
 #: LABEL/ID_EVENT_NOT_IS_START_EVENT
-msgid "The event with {0}: {1} not is \"Start Event\"."
-msgstr "The event with {0}: {1} not is \"Start Event\"."
+msgid "The event with {0}: {1} is not a \"Start Event\"."
+msgstr "The event with {0}: {1} is not a \"Start Event\"."
 
 # TRANSLATION
 # LABEL/ID_WEB_ENTRY_EVENT_DOES_NOT_IS_REGISTERED
 #: LABEL/ID_WEB_ENTRY_EVENT_DOES_NOT_IS_REGISTERED
-msgid "The event with {0}: {1} does not is registered."
-msgstr "The event with {0}: {1} does not is registered."
+msgid "The event with {0}: {1} is not registered."
+msgstr "The event with {0}: {1} is not registered."
 
 # TRANSLATION
 # LABEL/ID_WEB_ENTRY_EVENT_TITLE_ALREADY_EXISTS
@@ -27827,6 +27838,18 @@ msgstr "View Response"
 #: LABEL/ID_ERROR_MESSAGE
 msgid "Error Message"
 msgstr "Error Message"
+
+# TRANSLATION
+# LABEL/ID_CASE_CREATED
+#: LABEL/ID_CASE_CREATED
+msgid "Case created"
+msgstr "Case created"
+
+# TRANSLATION
+# LABEL/ID_CASE_ROUTED_TO
+#: LABEL/ID_CASE_ROUTED_TO
+msgid "Case routed to"
+msgstr "Case routed to"
 
 # additionalTables/additionalTablesData.xml?ADD_TAB_NAME
 # additionalTables/additionalTablesData.xml

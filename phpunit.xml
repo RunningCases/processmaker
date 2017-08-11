@@ -4,14 +4,47 @@
          bootstrap="vendor/autoload.php"
          colors="true"
          convertErrorsToExceptions="true"
-         convertNoticesToExceptions="true"
-         convertWarningsToExceptions="true"
+         convertNoticesToExceptions="false"
+         convertWarningsToExceptions="false"
          processIsolation="false"
-         stopOnFailure="false">
-  <testsuites>
-    <testsuite name="Feature">
-      <directory suffix="Test.php">./tests/Feature</directory>
-    </testsuite>
+         stopOnFailure="false"
+         syntaxCheck="true"
+         bootstrap="tests/bootstrap.php"
+>
+    <testsuites>
+        <testsuite name="workflow">
+            <directory>./tests/workflow/engine/src/</directory>
+        </testsuite>
+    </testsuites>
+
+    <filter>
+        <whitelist addUncoveredFilesFromWhitelist="true" processUncoveredFilesFromWhitelist="false">
+            <directory suffix=".php">./workflow/engine/classes</directory>
+            <directory suffix=".php">./workflow/engine/src</directory>
+        </whitelist>
+        <exclude>
+            <directory>./workflow/engine/classes/model/map</directory>
+            <directory>./workflow/engine/classes/model/om</directory>
+            <directory>./workflow/engine/src/Tests</directory>
+            <directory>./workflow/public_html</directory>
+        </exclude>
+    </filter>
+
+    <php>
+        <var name="SYS_SYS" value="test" />
+        <var name="SYS_LANG" value="en" />
+        <var name="SYS_SKIN" value="neoclassic" />
+        <var name="DB_ADAPTER" value="mysql" />
+        <var name="DB_HOST" value="processmaker3" />
+        <var name="DB_NAME" value="wf_test" />
+        <var name="DB_USER" value="root" />
+        <var name="DB_PASS" value="" />
+        <var name="PATH_DB" value="./shared/sites/" />
+        <var name="PATH_DATA" value="./shared/" />
+        <var name="APP_HOST" value="processmaker3.local" />
+        <var name="HTTPS" value="off" />
+        <var name="SERVER_PORT" value="8080" />
+    </php>
 
     <testsuite name="Unit">
       <directory suffix="Test.php">./tests/Unit</directory>
