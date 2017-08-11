@@ -269,7 +269,7 @@ class AppDelegation extends BaseAppDelegation
                         $dataAbe = $resultAbe->getRow();
                         $flagActionsByEmail = false;
                         if($dataAbe['ABE_TYPE']!='' && $data->USR_UID!=''){
-                            $actionsByEmail = new actionsByEmailCoreClass();
+                            $actionsByEmail = new ActionsByEmailCoreClass();
                             $actionsByEmail->sendActionsByEmail($data, $dataAbe);
                         }
                     }

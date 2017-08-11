@@ -7,7 +7,8 @@
 
 /**
  * Class InputDocumentDrive
- */class AppDocumentDrive
+ */
+class AppDocumentDrive
 {
     /**
      * @var PMDrive $drive

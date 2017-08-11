@@ -7,14 +7,12 @@
  */
 
 /**
- * Dynaform file corrupt
- *
- * @author Herbert Saal Gutierrez
+ * Application APP_DATA could not be unserialized exception
  *
  * @category Colosa
  * @copyright Copyright (c) 2005-2012 Colosa Inc. (http://www.colosa.com)
  */
-class ApplicationWithCorruptDynaformException extends Exception
+class ApplicationAppDataUnserializeException extends Exception
 {
   // Redefine the exception so message isn't optional
   public function __construct($message, $code = 0)

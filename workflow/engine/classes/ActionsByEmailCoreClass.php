@@ -2,7 +2,7 @@
 
 
 
-class actionsByEmailCoreClass extends PMPlugin
+class ActionsByEmailCoreClass extends PMPlugin
 {
     public function __construct()
     {
