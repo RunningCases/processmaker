@@ -36,6 +36,26 @@ class System
     }
 
     /**
+     * Returns workspace objects from an array of workspace names.
+     *
+     * @param array $args an array of workspace names
+     * @param bool $includeAll if true and no workspace is specified in args,
+     *                          returns all available workspaces
+     * @return array of workspace objects
+     */
+    public static function getWorkspacesFromArgs($args, $includeAll = true)
+    {
+        $workspaces = array();
+        foreach ($args as $arg) {
+            $workspaces[] = new \workspaceTools($arg);
+        }
+        if (empty($workspaces) && $includeAll) {
+            $workspaces = \System::listWorkspaces();
+        }
+        return $workspaces;
+    }
+
+    /**
      * Flush the cache files for the specified workspace.
      *
      * @param object $workspace
