@@ -3,12 +3,7 @@
  * class.pmSso.php
  *  
  */
- 
-  
-/**
- * class.pmSso.php
- *  
- */  class pmSsoClass extends PMPlugin {
+class PmSsoClass extends PMPlugin {
     function __construct() {
     }
 

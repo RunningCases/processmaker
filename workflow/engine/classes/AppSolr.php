@@ -10,11 +10,6 @@
 /**
  * Implementation to display application data in the PMOS2 grids using Solr
  * search service
- *
- * @author Herbert Saal Gutierrez
- * @category Colosa
- * @copyright Copyright (c) 2005-2011 Colosa Inc. (http://www.colosa.com)
- *
  */
 class AppSolr
 {

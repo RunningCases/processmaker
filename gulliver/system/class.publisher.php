@@ -355,7 +355,7 @@ class Publisher
                 /* End Block */
 
                 /* Start Block: PagedTable Right Click */
-                $pm = new popupMenu( 'gulliver/pagedTable_PopupMenu' );
+                $pm = new PopupMenu( 'gulliver/pagedTable_PopupMenu' );
                 $pm->name = $oTable->id;
                 $fields = array_keys( $oTable->fields );
                 foreach ($fields as $f) {
@@ -430,7 +430,7 @@ class Publisher
                     $_SESSION[$G_FORM->id] = $G_FORM->values;
                 }
 
-                $oTable = new propelTable();
+                $oTable = new PropelTable();
                 $oTable->template = $Part['Template'];
                 $oTable->criteria = $Part['Content'];
                 if (isset( $Part['ajaxServer'] ) && ($Part['ajaxServer'] !== '')) {
@@ -461,7 +461,7 @@ class Publisher
                 /* End Block */
 
                 /* Start Block: PagedTable Right Click */
-                $pm = new popupMenu( 'gulliver/pagedTable_PopupMenu' );
+                $pm = new PopupMenu( 'gulliver/pagedTable_PopupMenu' );
                 $sc = $pm->renderPopup( $oTable->id, $oTable->fields );
                 /* End Block */
                 //krumo ( $Part );

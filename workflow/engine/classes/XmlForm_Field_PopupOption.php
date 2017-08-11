@@ -1,7 +1,7 @@
 <?php
 
 /**
- * class.popupMenu.php
+ * class.PopupMenu.php
  *
  * @package workflow.engine.ProcessMaker
  *
@@ -27,7 +27,7 @@
  */
 
 /**
- * popupMenu - popupMenu 
+ * PopupMenu - PopupMenu
 /**
  * XmlForm_Field_popupOption - XmlForm_Field_popupOption class
  *

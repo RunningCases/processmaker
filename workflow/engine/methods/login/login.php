@@ -131,7 +131,7 @@ if (isset ($_SESSION['USER_LOGGED'])) {
         $licensedFeatures = & PMLicensedFeatures::getSingleton();
         if ($licensedFeatures->verifyfeature('x4TTzlISnp2K2tnSTJoMC8rTDRMTjlhMCtZeXV0QnNCLzU=')) {
             //Check in SSO class
-            $oSso = new pmSsoClass();
+            $oSso = new PmSsoClass();
             $res = $oSso->ssocVerifyUser();
             if($res){
                 // Start new session

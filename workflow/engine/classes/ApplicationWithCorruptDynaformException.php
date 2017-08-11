@@ -8,11 +8,6 @@
 
 /**
  * Dynaform file corrupt
- *
- * @author Herbert Saal Gutierrez
- *
- * @category Colosa
- * @copyright Copyright (c) 2005-2012 Colosa Inc. (http://www.colosa.com)
  */
 class ApplicationWithCorruptDynaformException extends Exception
 {

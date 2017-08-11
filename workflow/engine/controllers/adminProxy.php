@@ -790,7 +790,7 @@ class adminProxy extends HttpProxyController
     {
         $uplogo       = PATH_TPL . 'setup' . PATH_SEP . 'uplogo.html';
         $width        = "100%";
-        $upload       = new replacementLogo();
+        $upload       = new ReplacementLogo();
         $aPhotoSelect = $upload->getNameLogo($_SESSION['USER_LOGGED']);
         $sPhotoSelect = trim($aPhotoSelect['DEFAULT_LOGO_NAME']);
         $check        = '';
@@ -1093,7 +1093,7 @@ class adminProxy extends HttpProxyController
      */
     public function getNameCurrentLogo()
     {
-        $upload       = new replacementLogo();
+        $upload       = new ReplacementLogo();
         $aPhotoSelect = $upload->getNameLogo($_SESSION['USER_LOGGED']);
         $sPhotoSelect = trim($aPhotoSelect['DEFAULT_LOGO_NAME']);
         return $sPhotoSelect;

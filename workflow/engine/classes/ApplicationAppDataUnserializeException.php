@@ -1,16 +1,10 @@
 <?php
 /**
  * Invalid search text for Solr exception
- *
- * @author Herbert Saal Gutierrez
- *        
  */
 
 /**
  * Application APP_DATA could not be unserialized exception
- *
- * @category Colosa
- * @copyright Copyright (c) 2005-2012 Colosa Inc. (http://www.colosa.com)
  */
 class ApplicationAppDataUnserializeException extends Exception
 {
