@@ -448,6 +448,7 @@ class WebApplication
         define("PATH_CONTROLLERS", PATH_CORE . "controllers" . PATH_SEP);
         define("PATH_SERVICES_REST", PATH_CORE . "services" . PATH_SEP . "rest" . PATH_SEP);
 
+        G::defineConstants();
         $arraySystemConfiguration = \PmSystem::getSystemConfiguration();
 
         ini_set('date.timezone', $arraySystemConfiguration['time_zone']); //Set Time Zone

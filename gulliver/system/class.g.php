@@ -5823,6 +5823,20 @@ class G
             $_SESSION['_DATA_TRIGGER_']['_TRI_LOG_'] = true;
         }
     }
+
+    /**
+     * Define the Processmaker constants.
+     *
+     */
+    public static function defineConstants()
+    {
+        //Moved from Enterprise class.
+        if (file_exists(PATH_METHODS . "login/version-pmos.php")) {
+            include (PATH_METHODS . "login/version-pmos.php");
+        } else {
+            define("PM_VERSION", "2.0.0");
+        }
+    }
 }
 
 /**
