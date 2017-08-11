@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit backupGlobals="false"
          backupStaticAttributes="false"
-         bootstrap="vendor/autoload.php"
          colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="false"
@@ -15,7 +14,10 @@
         <testsuite name="workflow">
             <directory>./tests/workflow/engine/src/</directory>
         </testsuite>
-    </testsuites>
+        <testsuite name="Unit">
+          <directory suffix="Test.php">./tests/Unit</directory>
+        </testsuite>
+  </testsuites>
 
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true" processUncoveredFilesFromWhitelist="false">
@@ -45,18 +47,4 @@
         <var name="HTTPS" value="off" />
         <var name="SERVER_PORT" value="8080" />
     </php>
-
-    <testsuite name="Unit">
-      <directory suffix="Test.php">./tests/Unit</directory>
-    </testsuite>
-  </testsuites>
-  <filter>
-    <whitelist processUncoveredFilesFromWhitelist="true">
-      <directory suffix=".php">./app</directory>
-    </whitelist>
-  </filter>
-  <php>
-    <env name="APP_ENV" value="testing"/>
-    <env name="CACHE_DRIVER" value="array"/>
-  </php>
 </phpunit>
