@@ -6,6 +6,7 @@
 class BpmnEngineSearchIndexAccessSolr
 {
     const SOLR_VERSION = '&version=2.2';
+
     private $_solrIsEnabled = false;
     private $_solrHost = "";
 
@@ -78,7 +79,7 @@ class BpmnEngineSearchIndexAccessSolr
         // verify the result of solr
         $responseSolrTotal = G::json_decode($responseTotal);
         if ($responseSolrTotal->responseHeader->status != 0) {
-            throw new Exception (date('Y-m-d H:i:s:u') . " Error returning the total number of documents in Solr." . $solrIntruct . " response error: " . $response . "\n");
+            throw new Exception(date('Y-m-d H:i:s:u') . " Error returning the total number of documents in Solr." . $solrIntruct . " response error: " . $response . "\n");
         }
         $numTotalDocs = $responseSolrTotal->response->numFound;
         return $numTotalDocs;
@@ -99,13 +100,13 @@ class BpmnEngineSearchIndexAccessSolr
         $workspace = $solrRequestData->workspace;
 
         // format request
-        $query = empty ($solrRequestData->searchText) ? '*:*' : $solrRequestData->searchText;
+        $query = empty($solrRequestData->searchText) ? '*:*' : $solrRequestData->searchText;
         $query = rawurlencode($query);
         $start = '&start=' . $solrRequestData->startAfter;
         $rows = '&rows=' . $solrRequestData->pageSize;
         $fieldList = '';
         $cols = $solrRequestData->includeCols;
-        if (!empty ($cols)) {
+        if (!empty($cols)) {
             $fieldList = "&fl=" . implode(",", $cols);
         }
         $sort = '';
@@ -117,7 +118,7 @@ class BpmnEngineSearchIndexAccessSolr
 
             $sort = substr_replace($sort, "", -1);
         }
-        $resultFormat = empty ($solrRequestData->resultFormat) ? '' : '&wt=' . $solrRequestData->resultFormat;
+        $resultFormat = empty($solrRequestData->resultFormat) ? '' : '&wt=' . $solrRequestData->resultFormat;
         $filters = '';
         $aFilters = explode(',', $solrRequestData->filterText);
         foreach ($aFilters as $value) {
@@ -159,7 +160,7 @@ class BpmnEngineSearchIndexAccessSolr
         // decode
         $responseSolr = G::json_decode($response);
         if ($responseSolr->responseHeader->status != 0) {
-            throw new Exception (date('Y-m-d H:i:s:u') . " Error executing query to Solr." . $solrIntruct . " response error: " . $response . "\n");
+            throw new Exception(date('Y-m-d H:i:s:u') . " Error executing query to Solr." . $solrIntruct . " response error: " . $response . "\n");
         }
 
         return $responseSolr;
@@ -186,9 +187,8 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_HTTPHEADER, array(
             'Content-type:application/xml'
         ));
-        curl_setopt($handler, CURLOPT_BINARYTRANSFER, TRUE); // --data-binary
+        curl_setopt($handler, CURLOPT_BINARYTRANSFER, true); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, $solrUpdateDocument->document); // data
-
         //Apply proxy settings
         $sysConf = PmSystem::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
@@ -207,7 +207,7 @@ class BpmnEngineSearchIndexAccessSolr
 
         $swOk = strpos($response, '<int name="status">0</int>');
         if (!$swOk) {
-            throw new Exception (date('Y-m-d H:i:s:u') . " Error updating document in Solr." . $solrIntruct . " response error: " . $response . "\n");
+            throw new Exception(date('Y-m-d H:i:s:u') . " Error updating document in Solr." . $solrIntruct . " response error: " . $response . "\n");
         }
     }
 
@@ -232,9 +232,8 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_HTTPHEADER, array(
             'Content-type:application/xml'
         ));
-        curl_setopt($handler, CURLOPT_BINARYTRANSFER, TRUE); // --data-binary
+        curl_setopt($handler, CURLOPT_BINARYTRANSFER, true); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, "<commit/>"); // data
-
         //Apply proxy settings
         $sysConf = PmSystem::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
@@ -253,7 +252,7 @@ class BpmnEngineSearchIndexAccessSolr
 
         $swOk = strpos($response, '<int name="status">0</int>');
         if (!$swOk) {
-            throw new Exception (date('Y-m-d H:i:s:u') . " Error commiting changes in Solr." . $solrIntruct . " response error: " . $response . "\n");
+            throw new Exception(date('Y-m-d H:i:s:u') . " Error commiting changes in Solr." . $solrIntruct . " response error: " . $response . "\n");
         }
     }
 
@@ -278,9 +277,8 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_HTTPHEADER, array(
             'Content-type:application/xml'
         ));
-        curl_setopt($handler, CURLOPT_BINARYTRANSFER, TRUE); // --data-binary
+        curl_setopt($handler, CURLOPT_BINARYTRANSFER, true); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, "<rollback/>"); // data
-
         //Apply proxy settings
         $sysConf = PmSystem::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
@@ -299,7 +297,7 @@ class BpmnEngineSearchIndexAccessSolr
 
         $swOk = strpos($response, '<int name="status">0</int>');
         if (!$swOk) {
-            throw new Exception (date('Y-m-d H:i:s:u') . " Error rolling back changes in Solr." . $solrIntruct . " response error: " . $response . "\n");
+            throw new Exception(date('Y-m-d H:i:s:u') . " Error rolling back changes in Solr." . $solrIntruct . " response error: " . $response . "\n");
         }
     }
 
@@ -324,9 +322,8 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_HTTPHEADER, array(
             'Content-type:application/xml'
         ));
-        curl_setopt($handler, CURLOPT_BINARYTRANSFER, TRUE); // --data-binary
+        curl_setopt($handler, CURLOPT_BINARYTRANSFER, true); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, "<optimize/>"); // data
-
         //Apply proxy settings
         $sysConf = PmSystem::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
@@ -345,7 +342,7 @@ class BpmnEngineSearchIndexAccessSolr
 
         $swOk = strpos($response, '<int name="status">0</int>');
         if (!$swOk) {
-            throw new Exception (date('Y-m-d H:i:s:u') . " Error optimizing changes in Solr." . $solrIntruct . " response error: " . $response . "\n");
+            throw new Exception(date('Y-m-d H:i:s:u') . " Error optimizing changes in Solr." . $solrIntruct . " response error: " . $response . "\n");
         }
     }
 
@@ -386,7 +383,7 @@ class BpmnEngineSearchIndexAccessSolr
         // decode
         $responseSolr = G::json_decode($response);
         if ($responseSolr->responseHeader->status != 0) {
-            throw new Exception (date('Y-m-d H:i:s:u') . " Error getting index fields in Solr." . $solrIntruct . " response error: " . $response . "\n");
+            throw new Exception(date('Y-m-d H:i:s:u') . " Error getting index fields in Solr." . $solrIntruct . " response error: " . $response . "\n");
         }
         return $responseSolr;
     }
@@ -413,13 +410,14 @@ class BpmnEngineSearchIndexAccessSolr
         curl_close($handler);
 
         //there's no response
-        if (!$response)
+        if (!$response) {
             return false;
+        }
 
         // decode
         $responseSolr = G::json_decode($response);
         if ($responseSolr->responseHeader->status != "OK") {
-            throw new Exception (date('Y-m-d H:i:s:u') . " Error pinging Solr server." . $solrIntruct . " response error: " . $response . "\n");
+            throw new Exception(date('Y-m-d H:i:s:u') . " Error pinging Solr server." . $solrIntruct . " response error: " . $response . "\n");
         }
         return true;
     }
@@ -445,9 +443,8 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_HTTPHEADER, array(
             'Content-type:application/xml'
         ));
-        curl_setopt($handler, CURLOPT_BINARYTRANSFER, TRUE); // --data-binary
+        curl_setopt($handler, CURLOPT_BINARYTRANSFER, true); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, "<delete><query>*:*</query></delete>"); // data
-
         //Apply proxy settings
         $sysConf = PmSystem::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
@@ -467,7 +464,7 @@ class BpmnEngineSearchIndexAccessSolr
 
         $swOk = strpos($response, '<int name="status">0</int>');
         if (!$swOk) {
-            throw new Exception (date('Y-m-d H:i:s:u') . " Error deleting all documents in Solr." . $solrIntruct . " response error: " . $response . "\n");
+            throw new Exception(date('Y-m-d H:i:s:u') . " Error deleting all documents in Solr." . $solrIntruct . " response error: " . $response . "\n");
         }
     }
 
@@ -492,9 +489,8 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_HTTPHEADER, array(
             'Content-type:application/xml'
         ));
-        curl_setopt($handler, CURLOPT_BINARYTRANSFER, TRUE); // --data-binary
+        curl_setopt($handler, CURLOPT_BINARYTRANSFER, true); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, "<delete><query>" . $idQuery . "</query></delete>"); // data
-
         //Apply proxy settings
         $sysConf = PmSystem::getSystemConfiguration();
         if ($sysConf['proxy_host'] != '') {
@@ -514,14 +510,14 @@ class BpmnEngineSearchIndexAccessSolr
 
         $swOk = strpos($response, '<int name="status">0</int>');
         if (!$swOk) {
-            throw new Exception (date('Y-m-d H:i:s:u') . " Error deleting document in Solr." . $solrIntruct . " response error: " . $response . "\n");
+            throw new Exception(date('Y-m-d H:i:s:u') . " Error deleting document in Solr." . $solrIntruct . " response error: " . $response . "\n");
         }
     }
 
     /**
      * Execute a query in base to Request data
      *
-     * @param Entity_FacetRequest $facetRequestEntity
+     * @param EntityFacetRequest $facetRequestEntity
      * @return solr response: list of facets array
      */
     public function getFacetsList($facetRequest)
@@ -531,7 +527,7 @@ class BpmnEngineSearchIndexAccessSolr
         $workspace = $facetRequest->workspace;
 
         // format request
-        $query = empty ($facetRequest->searchText) ? '*:*' : $facetRequest->searchText;
+        $query = empty($facetRequest->searchText) ? '*:*' : $facetRequest->searchText;
         $query = rawurlencode($query);
         $start = '&start=0';
         $rows = '&rows=0';
@@ -545,12 +541,12 @@ class BpmnEngineSearchIndexAccessSolr
         foreach ($facetRequest->facetQueries as $value) {
             $facets .= '&facet.query=' . $value;
         }
-        if (!empty ($facetRequest->facetDates)) {
+        if (!empty($facetRequest->facetDates)) {
             foreach ($facetRequest->facetDates as $value) {
                 $facets .= '&facet.date=' . $value;
             }
             $facets .= '&facet.date.start=' . $facetRequest->facetDatesStart;
-            $facets .= '&facet.date.end=' . $facetRequest->facet | DatesEnd;
+            $facets .= '&facet.date.end=' . $facetRequest->facetDatesEnd;
             $facets .= '&facet.date.gap=' . $facetRequest->facetDateGap;
         }
         $filters = '';
@@ -595,7 +591,7 @@ class BpmnEngineSearchIndexAccessSolr
         // decode
         $responseSolr = G::json_decode($response);
         if ($responseSolr->responseHeader->status != 0) {
-            throw new Exception (date('Y-m-d H:i:s:u') . " Error getting faceted list from Solr." . $solrIntruct . " response error: " . $response . "\n");
+            throw new Exception(date('Y-m-d H:i:s:u') . " Error getting faceted list from Solr." . $solrIntruct . " response error: " . $response . "\n");
         }
 
         return $responseSolr;

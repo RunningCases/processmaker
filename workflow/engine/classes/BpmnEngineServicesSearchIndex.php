@@ -74,7 +74,7 @@ class BpmnEngineServicesSearchIndex
                 'selectedFacetRemoveCondition' => $removeCondition
             );
 
-            $aSelectedFacetGroups [] = Entity_SelectedFacetGroupItem::createForRequest($selectedFacetGroupData);
+            $aSelectedFacetGroups [] = EntitySelectedFacetGroupItem::createForRequest($selectedFacetGroupData);
         }
 
         // convert request to index request
@@ -127,11 +127,11 @@ class BpmnEngineServicesSearchIndex
                         $dataItem ['facetPrintName'] = $facetvalues [$i];
                         $dataItem ['facetCount'] = $facetvalues [$i + 1];
                         $dataItem ['facetSelectCondition'] = $facetRequestEntity->selectedFacetsString . (empty($facetRequestEntity->selectedFacetsString) ? '' : ',') . $data ['facetGroupName'] . '::' . $data ['facetGroupPrintName'] . ':::' . $dataItem ['facetName'] . '::' . $dataItem ['facetPrintName'];
-                        $newFacetItem = Entity_FacetItem::createForInsert($dataItem);
+                        $newFacetItem = EntityFacetItem::createForInsert($dataItem);
                         $facetItems [] = $newFacetItem;
                     }
                     $data ['facetItems'] = $facetItems;
-                    $newFacetGroup = Entity_FacetGroup::createForInsert($data);
+                    $newFacetGroup = EntityFacetGroup::createForInsert($data);
 
                     $facetGroups [] = $newFacetGroup;
                 }
@@ -165,13 +165,13 @@ class BpmnEngineServicesSearchIndex
 
                             $dataItem ['facetCount'] = $facetvalues->$k;
                             $dataItem ['facetSelectCondition'] = $facetRequestEntity->selectedFacetsString . (empty($facetRequestEntity->selectedFacetsString) ? '' : ',') . $data ['facetGroupName'] . '::' . $data ['facetGroupPrintName'] . ':::' . $dataItem ['facetName'] . '::' . $dataItem ['facetPrintName'];
-                            $newFacetItem = Entity_FacetItem::createForInsert($dataItem);
+                            $newFacetItem = EntityFacetItem::createForInsert($dataItem);
                             $facetItems [] = $newFacetItem;
                         }
                     }
 
                     $data ['facetItems'] = $facetItems;
-                    $newFacetGroup = Entity_FacetGroup::createForInsert($data);
+                    $newFacetGroup = EntityFacetGroup::createForInsert($data);
 
                     $facetGroups [] = $newFacetGroup;
                 }
@@ -185,14 +185,14 @@ class BpmnEngineServicesSearchIndex
             $filterText .= $selectedFacetGroup->selectedFacetGroupName . ':' . urlencode($selectedFacetGroup->selectedFacetItemName) . ',';
         }
         $filterText = substr_replace($filterText, '', - 1);
-        
+
         // Create result
         $dataFacetResult = array(
             'aFacetGroups' => $facetGroups,
             'aSelectedFacetGroups' => $aSelectedFacetGroups,
             'sFilterText' => $filterText
         );
-        $facetResult = Entity_FacetResult::createForRequest($dataFacetResult);
+        $facetResult = EntityFacetResult::createForRequest($dataFacetResult);
 
         return $facetResult;
     }
@@ -266,7 +266,7 @@ class BpmnEngineServicesSearchIndex
     /**
      * Call Solr server to return the list of paginated pages.
      * @param FacetRequest $solrRequestData
-     * @return Entity_SolrQueryResult
+     * @return EntitySolrQueryResult
      */
     public function getDataTablePaginatedList($solrRequestData)
     {
@@ -285,7 +285,7 @@ class BpmnEngineServicesSearchIndex
         $numFound = $solrPaginatedResult->response->numFound;
 
         $docs = $solrPaginatedResult->response->docs;
-        
+
         // insert list of names in docs result
         $data = array(
             "sEcho" => '', // must be completed in response
@@ -310,7 +310,7 @@ class BpmnEngineServicesSearchIndex
             }
         }
 
-        $solrQueryResponse = Entity_SolrQueryResult::createForRequest($data);
+        $solrQueryResponse = EntitySolrQueryResult::createForRequest($data);
 
         return $solrQueryResponse;
     }
@@ -332,7 +332,7 @@ class BpmnEngineServicesSearchIndex
         foreach ($solrFieldsData->fields as $key => $fieldData) {
             if (array_key_exists('dynamicBase', $fieldData)) {
                 $originalFieldName = substr($key, 0, - strlen($fieldData->dynamicBase) + 1);
-                
+
                 // Maintain case sensitive variable names
                 $listFields [$originalFieldName] = $key;
             } else {

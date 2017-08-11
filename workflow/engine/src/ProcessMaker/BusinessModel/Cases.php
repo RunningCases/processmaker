@@ -402,7 +402,7 @@ class Cases
                     $solrSearchText = "($solrSearchText)";
                     //Add del_index dynamic fields to list of resulting columns
                     $columsToIncludeFinal = array_merge($columsToInclude, $delegationIndexes);
-                    $solrRequestData = \Entity_SolrRequestData::createForRequestPagination(
+                    $solrRequestData = \EntitySolrRequestData::createForRequestPagination(
                         array(
                             "workspace"  => $solrEnv["solr_instance"],
                             "startAfter" => 0,
