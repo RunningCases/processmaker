@@ -1,5 +1,7 @@
 <?php
 
+use \ProcessMaker\BusinessModel\WebEntryEvent;
+
 /**
  * class.case.php
  * @package    workflow.engine.classes
@@ -184,18 +186,33 @@ class Cases
     }
 
     /*
-     * get user starting tasks, but per type (dropdown, radio and category type)
+     * Get user starting tasks, but per type (dropdown, radio and category type)
+     *
      * @param string $sUIDUser
      * @return $rows
      */
-
     public function getStartCasesPerType($sUIDUser = '', $typeView = null)
     {
         $rows[] = array('uid' => 'char', 'value' => 'char');
         $tasks = array();
-
-        $arrayTaskTypeToExclude = array("WEBENTRYEVENT", "END-MESSAGE-EVENT", "START-MESSAGE-EVENT", "INTERMEDIATE-THROW-MESSAGE-EVENT", "INTERMEDIATE-CATCH-MESSAGE-EVENT", "SCRIPT-TASK", "START-TIMER-EVENT", "INTERMEDIATE-CATCH-TIMER-EVENT");
-
+        $arrayTaskTypeToExclude = array(
+            "WEBENTRYEVENT",
+            "END-MESSAGE-EVENT",
+            "START-MESSAGE-EVENT",
+            "INTERMEDIATE-THROW-MESSAGE-EVENT",
+            "INTERMEDIATE-CATCH-MESSAGE-EVENT",
+            "SCRIPT-TASK",
+            "START-TIMER-EVENT",
+            "INTERMEDIATE-CATCH-TIMER-EVENT"
+        );
+        $webEntryEvent = new WebEntryEvent();
+        $arrayWebEntryEvent = array();
+        //Set the parameter $considerShowInCase=true, to consider the WE_SHOW_IN_CASE
+        //configuration to filter the Start events with WebEntry.
+        $allWebEntryEvents = $webEntryEvent->getAllWebEntryEvents(true);
+        foreach ($allWebEntryEvents as $webEntryEvents) {
+            $arrayWebEntryEvent[] = $webEntryEvents["ACT_UID"];
+        }
         $c = new Criteria();
         $c->clearSelectColumns();
         $c->addSelectColumn(TaskPeer::TAS_UID);
@@ -205,6 +222,7 @@ class Cases
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
         $c->add(ProcessPeer::PRO_SUBPROCESS, '0');
         $c->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
+        $c->add(TaskPeer::TAS_UID, $arrayWebEntryEvent, Criteria::NOT_IN);
         $c->add(TaskPeer::TAS_START, 'TRUE');
         $c->add(TaskUserPeer::USR_UID, $sUIDUser);
         $c->add(TaskUserPeer::TU_TYPE, 1);
@@ -217,11 +235,9 @@ class Cases
             $rs->next();
             $row = $rs->getRow();
         }
-
         //check groups
         $group = new Groups();
         $aGroups = $group->getActiveGroupsForAnUser($sUIDUser);
-
         $c = new Criteria();
         $c->clearSelectColumns();
         $c->addSelectColumn(TaskPeer::TAS_UID);
@@ -231,6 +247,7 @@ class Cases
         $c->add(ProcessPeer::PRO_STATUS, 'ACTIVE');
         $c->add(ProcessPeer::PRO_SUBPROCESS, '0');
         $c->add(TaskPeer::TAS_TYPE, $arrayTaskTypeToExclude, Criteria::NOT_IN);
+        $c->add(TaskPeer::TAS_UID, $arrayWebEntryEvent, Criteria::NOT_IN);
         $c->add(TaskPeer::TAS_START, 'TRUE');
         $c->add(TaskUserPeer::USR_UID, $aGroups, Criteria::IN);
         $c->add(TaskUserPeer::TU_TYPE, 1);
@@ -243,7 +260,6 @@ class Cases
             $rs->next();
             $row = $rs->getRow();
         }
-
         $c = new Criteria();
         $c->addSelectColumn(TaskPeer::TAS_UID);
         $c->addSelectColumn(TaskPeer::TAS_TITLE);
@@ -261,20 +277,17 @@ class Cases
             $aConditions[] = array('PCS.PRO_CATEGORY', 'PCSCAT.CATEGORY_UID');
             $c->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         }
-
         $c->addJoin (TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->add(TaskPeer::TAS_UID, $tasks, Criteria::IN);
         $c->add(ProcessPeer::PRO_SUBPROCESS, '0');
-
         $c->addAscendingOrderByColumn(ProcessPeer::PRO_TITLE);
         $c->addAscendingOrderByColumn(TaskPeer::TAS_TITLE);
-
         $rs = TaskPeer::doSelectRS($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
         $rs->next();
         $countTaskLabel = 1;
         while ($row = $rs->getRow()) {
-            if($row['TAS_TITLE'] != ''){
+            if ($row['TAS_TITLE'] != '') {
                 $taskTitleLabel = $row['TAS_TITLE'];
             } else {
                 $taskTitleLabel = G::LoadTranslation('ID_UNTITLED_TASK').' '.$countTaskLabel;
@@ -284,7 +297,7 @@ class Cases
                 $taskTitle = TaskPeer::retrieveByPK($row['TAS_UID']);
                 $row['TAS_TITLE'] = $taskTitle->getTasTitle();
                 $row['CATEGORY_NAME'] = ($row['CATEGORY_NAME'] == '') ?
-                        G::LoadTranslation('ID_PROCESS_NOCATEGORY') : $row['CATEGORY_NAME'];
+                    G::LoadTranslation('ID_PROCESS_NOCATEGORY') : $row['CATEGORY_NAME'];
                 $rows[] = array(
                     'uid' => $row['TAS_UID'],
                     'value' => $row['PRO_TITLE'] . ' (' . $taskTitleLabel . ')',
@@ -302,12 +315,10 @@ class Cases
             $rs->next();
             $row = $rs->getRow();
         }
-
         $rowsToReturn = $rows;
         if ($typeView === 'category') {
             $rowsToReturn = $this->orderStartCasesByCategoryAndName($rows);
         }
-
         return $rowsToReturn;
     }
 
