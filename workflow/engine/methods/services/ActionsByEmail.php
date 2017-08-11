@@ -1,4 +1,5 @@
 <?php
+
 /*----------------------------------********---------------------------------*/
 if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
     if (PMLicensedFeatures::getSingleton()->verifyfeature('zLhSk5TeEQrNFI2RXFEVktyUGpnczV1WEJNWVp6cjYxbTU3R29mVXVZNWhZQT0=')) {
@@ -54,8 +55,6 @@ if (isset($_GET['BROWSER_TIME_ZONE_OFFSET'])) {
                         $dataResponses['ABE_RES_MESSAGE'] = '';
 
                         try {
-                            require_once 'classes/model/AbeResponses.php';
-
                             $abeAbeResponsesInstance = new AbeResponses();
                             $dataResponses['ABE_RES_UID'] = $abeAbeResponsesInstance->createOrUpdate($dataResponses);
                         } catch (Exception $e) {

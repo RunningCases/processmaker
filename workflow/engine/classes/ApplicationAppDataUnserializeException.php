@@ -1,15 +1,12 @@
 <?php
 /**
  * Invalid search text for Solr exception
- *
- * @author Herbert Saal Gutierrez
- *        
  */
 
 /**
- * Dynaform file corrupt
+ * Application APP_DATA could not be unserialized exception
  */
-class ApplicationWithCorruptDynaformException extends Exception
+class ApplicationAppDataUnserializeException extends Exception
 {
   // Redefine the exception so message isn't optional
   public function __construct($message, $code = 0)

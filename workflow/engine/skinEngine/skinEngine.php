@@ -782,7 +782,7 @@ class SkinEngine
       $smarty->assign('tpl_menu', PATH_TEMPLATE . 'menu.html');
       $smarty->assign('tpl_submenu', PATH_TEMPLATE . 'submenu.html');
 
-      $oLogoR = new replacementLogo();
+      $oLogoR = new ReplacementLogo();
 
       if(defined("SYS_SYS")){
         $aFotoSelect = $oLogoR->getNameLogo((isset($_SESSION['USER_LOGGED']))?$_SESSION['USER_LOGGED']:'');

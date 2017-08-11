@@ -465,7 +465,7 @@ class Main extends Controller
 
         if (defined( "SYS_SYS" )) {
             if (($aFotoSelect = $this->memcache->get( 'aFotoSelect' )) === false) {
-                $oLogoR = new replacementLogo();
+                $oLogoR = new ReplacementLogo();
                 $aFotoSelect = $oLogoR->getNameLogo( (isset( $_SESSION['USER_LOGGED'] )) ? $_SESSION['USER_LOGGED'] : '' );
                 $this->memcache->set( 'aFotoSelect', $aFotoSelect, 1 * 3600 );
             }

@@ -670,7 +670,7 @@ class ActionsByEmail
                         //SSO
                         if (\PMLicensedFeatures::getSingleton()->verifyfeature('x4TTzlISnp2K2tnSTJoMC8rTDRMTjlhMCtZeXV0QnNCLzU=')) {
 
-                            $sso = new \pmSsoClass();
+                            $sso = new \PmSsoClass();
 
                             if ($sso->ssocVerifyUser()) {
                                 global $RBAC;
