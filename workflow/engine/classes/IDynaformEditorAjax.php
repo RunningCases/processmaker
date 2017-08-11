@@ -1,6 +1,6 @@
 <?php
 
-interface iDynaformEditorAjax
+interface IDynaformEditorAjax
 {
-//public function render_preview($A);
+
 }
