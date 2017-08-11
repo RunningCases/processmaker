@@ -1,6 +1,5 @@
 <?php
 
-
 class PMLicensedFeatures
 {
     private $featuresDetails = array ();
@@ -335,10 +334,6 @@ class PMLicensedFeatures
     /*----------------------------------********---------------------------------*/
     public function verifyfeature ($featureName)
     {
-        if (!class_exists("pmLicenseManager")) {
-            require_once ("classes" . PATH_SEP . "class.pmLicenseManager.php");
-        }
-
         $licenseManager = pmLicenseManager::getSingleton(false);
 
         $_SESSION['__sw__'] = true;

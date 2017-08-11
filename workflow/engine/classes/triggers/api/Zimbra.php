@@ -20,7 +20,8 @@
  * @module zimbra.class.php
  * @author Zachary Tirrell <zbtirrell@plymouth.edu>
  * @GPL 2007, Plymouth State University, ITS
- */class Zimbra
+ */
+class Zimbra
 {
 
     public $debug = false;

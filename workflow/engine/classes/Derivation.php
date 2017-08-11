@@ -1,13 +1,6 @@
 <?php
 
-/**
- * derivation - derivation 
-/**
- * derivation - derivation class
- *
- * @package workflow.engine.ProcessMaker
- *
- */class Derivation
+class Derivation
 {
     var $case;
     protected $flagControl;
@@ -1701,7 +1694,6 @@
 
     function getGrpUser ($aData)
     {
-        require_once 'classes/model/Content.php';
         $oTasks = new Tasks();
         $oGroups = new Groups();
         $oContent = new Content();

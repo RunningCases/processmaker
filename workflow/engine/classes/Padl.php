@@ -53,7 +53,8 @@
  * @version 0.1
  * @history---------------------------------------------
  * see CHANGELOG
- */class padl
+ */
+class Padl
 {
     /**
      * hash key 1 used to encrypt the generate key data.

@@ -1,50 +1,14 @@
 <?php
 
-
 /**
- * class.configuration.php
- *
- * @package workflow.engine.ProcessMaker
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2011 Colosa Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
- */
-//
-// It works with the table CONFIGURATION in a WF dataBase
-// Copyright (C) 2007 COLOSA
-// License: LGPL, see LICENSE
-////////////////////////////////////////////////////
-
-
-/**
- * ProcessConfiguration - ProcessConfiguration 
-/**
+ * ProcessConfiguration - ProcessConfiguration
  * Extends Configuration
  *
- *
- * @copyright 2007 COLOSA
  * @version Release: @package_version@
  * @package workflow.engine.ProcessMaker
- */class Configurations // extends Configuration
+ */
+class Configurations // extends Configuration
 {
-
     public $aConfig        = array();
     private $Configuration = null;
     private $UserConfig    = null;
@@ -74,16 +38,16 @@
                 $this->arrayClone($object[$k], $cloneObject[$k]);
             }
         } else {
-            if (is_object( $object )) {
+            if (is_object($object)) {
             } else {
                 $cloneObject = null;
             }
         }
     }
 
-    public function exists($cfgID,$objID='')
+    public function exists($cfgID, $objID='')
     {
-        return $this->Configuration->exists($cfgID,$objID,'','','');
+        return $this->Configuration->exists($cfgID, $objID, '', '', '');
     }
 
     /**
@@ -162,7 +126,6 @@
         try {
             $this->Fields = $this->Configuration->load($cfg, $obj, $pro, $usr, $app);
         } catch (Exception $e) {
-
         } // the configuration does not exist
 
 
@@ -171,7 +134,7 @@
         }
 
         if (!is_array($this->aConfig)) {
-            $this->aConfig = Array();
+            $this->aConfig = array();
         }
 
         return $this->aConfig;
@@ -318,8 +281,8 @@
             $theFormat = $this->UserConfig['format'];
             $fname = $oUser->getUsrFirstname();
             $lname = $oUser->getUsrLastname();
-            if (strpos($theFormat, ',') !== false && ( trim($fname) == '' || trim($lname) == '')) {
-              $theFormat = str_replace(',', '', $theFormat);
+            if (strpos($theFormat, ',') !== false && (trim($fname) == '' || trim($lname) == '')) {
+                $theFormat = str_replace(',', '', $theFormat);
             }
 
             $aux = str_replace('@userName', trim($username), $theFormat);
@@ -530,15 +493,15 @@
 
     public function getUserNameFormats()
     {
-        $formats[] = Array('id' => '@firstName @lastName', //the id , don't translate
+        $formats[] = array('id' => '@firstName @lastName', //the id , don't translate
             'name' => G::loadTranslation('ID_USERNAME_FORMAT_1')  //label displayed, can be translated
         );
-        $formats[] = Array('id' => '@firstName @lastName (@userName)', 'name' => G::loadTranslation('ID_USERNAME_FORMAT_2'));
-        $formats[] = Array('id' => '@userName', 'name' => G::loadTranslation('ID_USERNAME_FORMAT_3'));
-        $formats[] = Array('id' => '@userName (@firstName @lastName)', 'name' => G::loadTranslation('ID_USERNAME_FORMAT_4'));
-        $formats[] = Array('id' => '@lastName @firstName', 'name' => G::loadTranslation('ID_USERNAME_FORMAT_5'));
-        $formats[] = Array('id' => '@lastName, @firstName', 'name' => G::loadTranslation('ID_USERNAME_FORMAT_6'));
-        $formats[] = Array('id' => '@lastName, @firstName (@userName)', 'name' => G::loadTranslation('ID_USERNAME_FORMAT_7'));
+        $formats[] = array('id' => '@firstName @lastName (@userName)', 'name' => G::loadTranslation('ID_USERNAME_FORMAT_2'));
+        $formats[] = array('id' => '@userName', 'name' => G::loadTranslation('ID_USERNAME_FORMAT_3'));
+        $formats[] = array('id' => '@userName (@firstName @lastName)', 'name' => G::loadTranslation('ID_USERNAME_FORMAT_4'));
+        $formats[] = array('id' => '@lastName @firstName', 'name' => G::loadTranslation('ID_USERNAME_FORMAT_5'));
+        $formats[] = array('id' => '@lastName, @firstName', 'name' => G::loadTranslation('ID_USERNAME_FORMAT_6'));
+        $formats[] = array('id' => '@lastName, @firstName (@userName)', 'name' => G::loadTranslation('ID_USERNAME_FORMAT_7'));
 
         return $formats;
     }
@@ -553,9 +516,9 @@
         $creationDateMask = ($creationDateMask == '') ? $dateFormat : $creationDateMask;
         if ($creationDateMask != '') {
             if (strpos($dateTime, ' ') !== false) {
-                list ($date, $time) = explode(' ', $dateTime);
-                list ($y, $m, $d) = explode('-', $date);
-                list ($h, $i, $s) = explode(':', $time);
+                list($date, $time) = explode(' ', $dateTime);
+                list($y, $m, $d) = explode('-', $date);
+                list($h, $i, $s) = explode(':', $time);
                 $newCreation = '';
                 $maskTime = array('d' => '%d', 'D' => '%A', 'j' => '%d', 'l' => '%A', 'G' => '%I', 'g' => '%i', 'N' => '%u', 'S' => '%d', 'w' => '%w', 'z' => '%j', 'W' => '%W', 'F' => '%B', 'm' => '%m', 'M' => '%B', 'n' => '%m', 'o' => '%Y', 'Y' => '%Y', 'y' => '%g', 'a' => '%p', 'A' => '%p', 'g' => '%I', 'G' => '%H', 'h' => '%I', 'H' => '%H', 'i' => '%M', 's' => '%S');
                 $creationDateMask = trim($creationDateMask);
@@ -582,9 +545,9 @@
                 if (G::toLower(PHP_OS) == 'linux' || G::toLower(PHP_OS) == 'darwin') {
                     if (SYS_LANG == 'es') {
                         $langLocate = 'es_ES';
-                    } else if (strlen(SYS_LANG) > 2) {
+                    } elseif (strlen(SYS_LANG) > 2) {
                         $langLocate = str_replace('-', '_', SYS_LANG);
-                    } else if ($location != '') {
+                    } elseif ($location != '') {
                         $langLocate = SYS_LANG.'_'.$location;
                     } else {
                         $langLocate = 'en_US';

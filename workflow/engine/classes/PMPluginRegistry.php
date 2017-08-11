@@ -1,45 +1,7 @@
 <?php
-
-/**
- * class.pluginRegistry.php
- *
- * @package workflow.engine.classes
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2011 Colosa Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- */
-
 use ProcessMaker\Plugins\PluginRegistry;
 
-/**
- *
- * @package workflow.engine.classes
- */
-
-require_once 'class.plugin.php';
-
-
-
-/**
- *
- * @package workflow.engine.classes
- */class PMPluginRegistry
+class PMPluginRegistry
 {
     private $_aPluginDetails = array ();
     private $_aPlugins = array ();
@@ -1137,9 +1099,6 @@ require_once 'class.plugin.php';
     public function setupPlugins ()
     {
         try {
-            require_once(PATH_CORE . "methods" . PATH_SEP . "enterprise" . PATH_SEP . "enterprise.php");
-            require_once("class.serverConfiguration.php");
-
             $iPlugins = 0;
             $oServerConf = & serverConf::getSingleton();
             $oServerConf->addPlugin( SYS_SYS, $this->_aPluginDetails );

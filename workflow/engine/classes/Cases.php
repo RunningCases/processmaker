@@ -1,32 +1,6 @@
 <?php
 
 use \ProcessMaker\BusinessModel\WebEntryEvent;
-
-/**
- * class.case.php
- * @package    workflow.engine.classes
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2008 Colosa Inc.23
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
- */
-
 use ProcessMaker\Plugins\PluginRegistry;
 
 /**
@@ -34,14 +8,8 @@ use ProcessMaker\Plugins\PluginRegistry;
  * This object is applied to Task
  * @package    workflow.engine.classes
  */
-
-/**
- * A Cases object where you can do start, load, update, refresh about cases
- * This object is applied to Task
- * @package    workflow.engine.classes
- */class Cases
+class Cases
 {
-
     private $appSolr = null;
     public $dir = 'ASC';
     public $sort = 'APP_MSG_DATE';
@@ -172,7 +140,7 @@ use ProcessMaker\Plugins\PluginRegistry;
         $c->addSelectColumn(TaskPeer::TAS_TITLE);
         $c->addSelectColumn(TaskPeer::PRO_UID);
         $c->addSelectColumn(ProcessPeer::PRO_TITLE);
-        $c->addJoin (TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
+        $c->addJoin(TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->add(TaskPeer::TAS_UID, $tasks, Criteria::IN);
         $c->addAscendingOrderByColumn(ProcessPeer::PRO_TITLE);
         $c->addAscendingOrderByColumn(TaskPeer::TAS_TITLE);
@@ -283,7 +251,7 @@ use ProcessMaker\Plugins\PluginRegistry;
             $aConditions[] = array('PCS.PRO_CATEGORY', 'PCSCAT.CATEGORY_UID');
             $c->addJoinMC($aConditions, Criteria::LEFT_JOIN);
         }
-        $c->addJoin (TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
+        $c->addJoin(TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->add(TaskPeer::TAS_UID, $tasks, Criteria::IN);
         $c->add(ProcessPeer::PRO_SUBPROCESS, '0');
         $c->addAscendingOrderByColumn(ProcessPeer::PRO_TITLE);
@@ -390,7 +358,7 @@ use ProcessMaker\Plugins\PluginRegistry;
         $c->addSelectColumn(TaskPeer::TAS_TITLE);
         $c->addSelectColumn(TaskPeer::PRO_UID);
         $c->addSelectColumn(ProcessPeer::PRO_TITLE);
-        $c->addJoin (TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
+        $c->addJoin(TaskPeer::PRO_UID, ProcessPeer::PRO_UID, Criteria::LEFT_JOIN);
         $c->add(TaskPeer::TAS_UID, $tasks, Criteria::IN);
         $c->addAscendingOrderByColumn(ProcessPeer::PRO_TITLE);
         $c->addAscendingOrderByColumn(TaskPeer::TAS_TITLE);
@@ -543,14 +511,13 @@ use ProcessMaker\Plugins\PluginRegistry;
                         $aFields['CURRENT_USER'] = implode(" - ", array_values($aFields['CURRENT_USER']));
                         $tasksArray = array_filter(explode('|', $aFields['TAS_UID']));
 
-                        if(count($tasksArray) == 1) {
+                        if (count($tasksArray) == 1) {
                             $aFields['TAS_UID'] = $tasksArray[0];
                         }
                     } else {
                         $oCurUser->load($aAppDel['USR_UID']);
                         $aFields['CURRENT_USER'] = $oCurUser->getUsrFirstname() . ' ' . $oCurUser->getUsrLastname();
                     }
-
                 } catch (Exception $oError) {
                     $aFields['CURRENT_USER'] = '';
                 }
@@ -719,7 +686,7 @@ use ProcessMaker\Plugins\PluginRegistry;
         $cri->addSelectColumn(AppDelegationPeer::TAS_UID);
         $cri->add(AppDelegationPeer::APP_UID, $sAppUid);
         $cri->add(AppDelegationPeer::DEL_THREAD_STATUS, "OPEN");
-        if(isset($fields['DEL_INDEX'])){
+        if (isset($fields['DEL_INDEX'])) {
             $cri->add(AppDelegationPeer::DEL_INDEX, $fields['DEL_INDEX']);
         }
         $rsCri = AppDelegationPeer::doSelectRS($cri);
@@ -848,7 +815,8 @@ use ProcessMaker\Plugins\PluginRegistry;
         return $aReturn;
     }
 
-    public function array_key_intersect(&$a, &$b) {
+    public function array_key_intersect(&$a, &$b)
+    {
         $array = array();
         while (list($key, $value) = each($a)) {
             if (isset($b[$key])) {
@@ -898,7 +866,7 @@ use ProcessMaker\Plugins\PluginRegistry;
             if (isset($Fields['APP_DESCRIPTION'])) {
                 $appFields['APP_DESCRIPTION'] = $Fields['APP_DESCRIPTION'];
             }
-            if(isset($Fields['DEL_INDEX'])){
+            if (isset($Fields['DEL_INDEX'])) {
                 $appFields['DEL_INDEX'] = $Fields['DEL_INDEX'];
             }
 
@@ -913,9 +881,9 @@ use ProcessMaker\Plugins\PluginRegistry;
                 //Add fields that weren't in previous version
                 foreach ($aApplicationFields as $key => $value) {
                     if (is_array($value) && isset($fieldsOnBoth[$key]) && is_array($fieldsOnBoth[$key])) {
-                        $afieldDifference = $this->arrayRecursiveDiff($value,$fieldsOnBoth[$key]);
-                        $dfieldDifference = $this->arrayRecursiveDiff($fieldsOnBoth[$key],$value);
-                        if ($afieldDifference || $dfieldDifference){
+                        $afieldDifference = $this->arrayRecursiveDiff($value, $fieldsOnBoth[$key]);
+                        $dfieldDifference = $this->arrayRecursiveDiff($fieldsOnBoth[$key], $value);
+                        if ($afieldDifference || $dfieldDifference) {
                             $FieldsDifference[$key] = $value;
                         }
                     } else {
@@ -1020,8 +988,8 @@ use ProcessMaker\Plugins\PluginRegistry;
             }
 
             /*----------------------------------********---------------------------------*/
-            if(!isset($Fields['DEL_INDEX'])){
-              $Fields['DEL_INDEX'] = 1;
+            if (!isset($Fields['DEL_INDEX'])) {
+                $Fields['DEL_INDEX'] = 1;
             }
             $inbox = new ListInbox();
             unset($Fields['DEL_INIT_DATE']);
@@ -1051,7 +1019,7 @@ use ProcessMaker\Plugins\PluginRegistry;
 
             $oAppDocument = new AppDocument();
 
-            if($deleteDelegation) {
+            if ($deleteDelegation) {
                 //Delete the delegations of a application
                 $this->deleteDelegation($sAppUid);
             }
@@ -1108,7 +1076,7 @@ use ProcessMaker\Plugins\PluginRegistry;
                     $oDerivation = new Derivation();
                     $oDerivation->verifyIsCaseChild($sAppUid);
                 }
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 Bootstrap::registerMonolog('DeleteCases', 200, 'Error in sub-process when trying to route a child case related to the case', ['application_uid' => $sAppUid, 'error' => $e->getMessage()], SYS_SYS, 'processmaker.log');
             }
 
@@ -1251,13 +1219,13 @@ use ProcessMaker\Plugins\PluginRegistry;
     }
 
 
-  /*
-  * Determines if the all threads of a multiinstance task are closed
-  *
-  * @$appUid string appUid of the instance to be tested
-  * @$tasUid string task uid of the multiinstance task
-  * @$previousDelIndex int previous del index of the instance corresponding to the multiinstance task
-  */
+    /*
+    * Determines if the all threads of a multiinstance task are closed
+    *
+    * @$appUid string appUid of the instance to be tested
+    * @$tasUid string task uid of the multiinstance task
+    * @$previousDelIndex int previous del index of the instance corresponding to the multiinstance task
+    */
 
     public function multiInstanceIsCompleted($appUid, $tasUid, $previousDelIndex)
     {
@@ -1272,15 +1240,14 @@ use ProcessMaker\Plugins\PluginRegistry;
             $rs = AppDelegationPeer::doSelectRs($c);
 
             if ($rs->next()) {
-               $result = false;
+                $result = false;
             } else {
                 $result = true;
             }
-
         } catch (exception $e) {
             throw ($e);
         } finally {
-           return $result;
+            return $result;
         }
     }
 
@@ -1439,7 +1406,8 @@ use ProcessMaker\Plugins\PluginRegistry;
      * @param array $previousTasks
      * @return array $taskReviewed
     */
-    public function getReviewedTasksRecursive($taskUid, $appUid, $previousTasks) {
+    public function getReviewedTasksRecursive($taskUid, $appUid, $previousTasks)
+    {
         $taskReviewed = array();
         $oCriteria = new Criteria('workflow');
         $oCriteria->add(RoutePeer::ROU_NEXT_TASK, $taskUid);
@@ -1499,11 +1467,11 @@ use ProcessMaker\Plugins\PluginRegistry;
                 //If exist paused cases
                 $closedTasks[] = $row;
                 $aIndex[] = $row['DEL_INDEX'];
-                $res = $this->GetAllOpenDelegation( array('APP_UID'=>$sAppUid, 'APP_THREAD_PARENT'=>$row['DEL_PREVIOUS']), 'NONE' );
+                $res = $this->GetAllOpenDelegation(array('APP_UID'=>$sAppUid, 'APP_THREAD_PARENT'=>$row['DEL_PREVIOUS']), 'NONE');
                 foreach ($res as $in) {
                     $aIndex[] = $in['DEL_INDEX'];
                 }
-                $pausedTasks = $this->getReviewedTasksPaused($sAppUid,$aIndex);
+                $pausedTasks = $this->getReviewedTasksPaused($sAppUid, $aIndex);
             }
         }
 
@@ -1521,7 +1489,7 @@ use ProcessMaker\Plugins\PluginRegistry;
      * @return array within the paused tasks
      *         false -> when has not any delegation started for that task
      */
-    public function getReviewedTasksPaused($sAppUid,$aDelIndex)
+    public function getReviewedTasksPaused($sAppUid, $aDelIndex)
     {
         $oCriteria = new Criteria('workflow');
         $oCriteria->add(AppDelayPeer::APP_UID, $sAppUid);
@@ -2162,19 +2130,19 @@ use ProcessMaker\Plugins\PluginRegistry;
                 $aUserFields = array();
                 $taskAssignType = $task->getTasAssignType();
                 $nextTaskAssignVariable = $task->getTasAssignVariable();
-                if($taskAssignType == "MULTIPLE_INSTANCE" || $taskAssignType == "MULTIPLE_INSTANCE_VALUE_BASED"){
+                if ($taskAssignType == "MULTIPLE_INSTANCE" || $taskAssignType == "MULTIPLE_INSTANCE_VALUE_BASED") {
                     switch ($taskAssignType) {
                        case 'MULTIPLE_INSTANCE':
                             $userFields = $oDerivation->getUsersFullNameFromArray($oDerivation->getAllUsersFromAnyTask($sTasUid));
                             break;
                        default:
-                            throw (new Exception( 'Invalid Task Assignment method' ));
+                            throw (new Exception('Invalid Task Assignment method'));
                             break;
                     }
                     $userFields = $oDerivation->getUsersFullNameFromArray($oDerivation->getAllUsersFromAnyTask($sTasUid));
                     $count = 0;
-                    foreach($userFields as $rowUser){
-                        if($rowUser["USR_UID"] != $sUsrUid){
+                    foreach ($userFields as $rowUser) {
+                        if ($rowUser["USR_UID"] != $sUsrUid) {
                             //appDelegation
                             $AppDelegation = new AppDelegation;
                             $iAppThreadIndex ++; // Start Thread
@@ -2198,13 +2166,13 @@ use ProcessMaker\Plugins\PluginRegistry;
                                 (empty($user)) ? 0 : $user->getUsrId(),
                                 $this->Process->getProId()
                            );
-                           //appThread
-                           $AppThread = new AppThread;
-                           $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex1, 0);
-                           //Save Information
-                           $aUserFields[$count] = $rowUser;
-                           $aUserFields[$count]["DEL_INDEX"] = $iDelIndex1;
-                           $count++;
+                            //appThread
+                            $AppThread = new AppThread;
+                            $iAppThreadIndex = $AppThread->createAppThread($sAppUid, $iDelIndex1, 0);
+                            //Save Information
+                            $aUserFields[$count] = $rowUser;
+                            $aUserFields[$count]["DEL_INDEX"] = $iDelIndex1;
+                            $count++;
                         }
                     }
                 }
@@ -2348,7 +2316,6 @@ use ProcessMaker\Plugins\PluginRegistry;
             $iPosition += 1;
             $aNextStep = null;
             if ($iPosition <= $iLastStep) {
-
                 while ($iPosition <= $iLastStep) {
                     $bAccessStep = false;
                     //step
@@ -2379,25 +2346,25 @@ use ProcessMaker\Plugins\PluginRegistry;
                                     $sAction = '';
                                     break;
                             }
-                            if(array_key_exists('gmail',$_SESSION) || (array_key_exists('gmail',$_GET) && $_GET['gmail'] == 1)){
-                            	$aNextStep = array(
-                            			'TYPE' => $oStep->getStepTypeObj(),
-                            			'UID' => $oStep->getStepUidObj(),
-                            			'POSITION' => $oStep->getStepPosition(),
-                            			'PAGE' => 'cases_Step?TYPE=' . $oStep->getStepTypeObj() . '&UID=' .
-                            			$oStep->getStepUidObj() . '&POSITION=' . $oStep->getStepPosition() .
-                            			'&ACTION=' . $sAction .
-                            			'&gmail=1'
-                            	);
-                            } else{
-	                            $aNextStep = array(
-	                                'TYPE' => $oStep->getStepTypeObj(),
-	                                'UID' => $oStep->getStepUidObj(),
-	                                'POSITION' => $oStep->getStepPosition(),
-	                                'PAGE' => 'cases_Step?TYPE=' . $oStep->getStepTypeObj() . '&UID=' .
-	                                $oStep->getStepUidObj() . '&POSITION=' . $oStep->getStepPosition() .
-	                                '&ACTION=' . $sAction
-	                            );
+                            if (array_key_exists('gmail', $_SESSION) || (array_key_exists('gmail', $_GET) && $_GET['gmail'] == 1)) {
+                                $aNextStep = array(
+                                        'TYPE' => $oStep->getStepTypeObj(),
+                                        'UID' => $oStep->getStepUidObj(),
+                                        'POSITION' => $oStep->getStepPosition(),
+                                        'PAGE' => 'cases_Step?TYPE=' . $oStep->getStepTypeObj() . '&UID=' .
+                                        $oStep->getStepUidObj() . '&POSITION=' . $oStep->getStepPosition() .
+                                        '&ACTION=' . $sAction .
+                                        '&gmail=1'
+                                );
+                            } else {
+                                $aNextStep = array(
+                                    'TYPE' => $oStep->getStepTypeObj(),
+                                    'UID' => $oStep->getStepUidObj(),
+                                    'POSITION' => $oStep->getStepPosition(),
+                                    'PAGE' => 'cases_Step?TYPE=' . $oStep->getStepTypeObj() . '&UID=' .
+                                    $oStep->getStepUidObj() . '&POSITION=' . $oStep->getStepPosition() .
+                                    '&ACTION=' . $sAction
+                                );
                             }
                             $iPosition = $iLastStep;
                         }
@@ -2406,21 +2373,21 @@ use ProcessMaker\Plugins\PluginRegistry;
                 }
             }
             if (!$aNextStep) {
-            	if(array_key_exists('gmail',$_SESSION) || (array_key_exists('gmail',$_GET) && $_GET['gmail'] == 1)){
-	                $aNextStep = array(
-	                    'TYPE' => 'DERIVATION',
-	                    'UID' => -1,
-	                    'POSITION' => ($iLastStep + 1),
-	                    'PAGE' => 'cases_Step?TYPE=ASSIGN_TASK&UID=-1&POSITION=10000&ACTION=ASSIGN&gmail=1'
-	                );
-            	}else {
-            		$aNextStep = array(
-            				'TYPE' => 'DERIVATION',
-            				'UID' => -1,
-            				'POSITION' => ($iLastStep + 1),
-            				'PAGE' => 'cases_Step?TYPE=ASSIGN_TASK&UID=-1&POSITION=10000&ACTION=ASSIGN'
-            		);
-            	}
+                if (array_key_exists('gmail', $_SESSION) || (array_key_exists('gmail', $_GET) && $_GET['gmail'] == 1)) {
+                    $aNextStep = array(
+                        'TYPE' => 'DERIVATION',
+                        'UID' => -1,
+                        'POSITION' => ($iLastStep + 1),
+                        'PAGE' => 'cases_Step?TYPE=ASSIGN_TASK&UID=-1&POSITION=10000&ACTION=ASSIGN&gmail=1'
+                    );
+                } else {
+                    $aNextStep = array(
+                            'TYPE' => 'DERIVATION',
+                            'UID' => -1,
+                            'POSITION' => ($iLastStep + 1),
+                            'PAGE' => 'cases_Step?TYPE=ASSIGN_TASK&UID=-1&POSITION=10000&ACTION=ASSIGN'
+                    );
+                }
             }
             return $aNextStep;
         } catch (exception $e) {
@@ -2626,7 +2593,6 @@ use ProcessMaker\Plugins\PluginRegistry;
         ///-- $c->addAsColumn('USR_NAME', "CONCAT(USR_LASTNAME, ' ', USR_FIRSTNAME)");
         $sDataBase = 'database_' . strtolower(DB_ADAPTER);
         if (G::LoadSystemExist($sDataBase)) {
-
             $oDataBase = new database();
             $c->addAsColumn('USR_NAME', $oDataBase->concatString("USR_LASTNAME", "' '", "USR_FIRSTNAME"));
             $c->addAsColumn(
@@ -3378,7 +3344,7 @@ use ProcessMaker\Plugins\PluginRegistry;
         if (!is_null($oApplication)) {
             return $oApplication->getDelIndex();
         }
-        throw ( new Exception('This case has 0 current delegations') );
+        throw (new Exception('This case has 0 current delegations'));
     }
 
     /*
@@ -4016,11 +3982,12 @@ use ProcessMaker\Plugins\PluginRegistry;
      * @param string $iDelegation
      * @return boolean
      */
-    public static function isUnassignedPauseCase($sAppUid, $iDelegation){
+    public static function isUnassignedPauseCase($sAppUid, $iDelegation)
+    {
         $oAppDelegation = new AppDelegation();
         $aFieldsDel = $oAppDelegation->Load($sAppUid, $iDelegation);
         $usrUid = $aFieldsDel['USR_UID'];
-        if($usrUid === ''){
+        if ($usrUid === '') {
             return true;
         } else {
             return false;
@@ -4041,8 +4008,8 @@ use ProcessMaker\Plugins\PluginRegistry;
     public function pauseCase($sApplicationUID, $iDelegation, $sUserUID, $sUnpauseDate = null, $appTitle = null)
     {
         // Check if the case is unassigned
-        if($this->isUnassignedPauseCase($sApplicationUID, $iDelegation)){
-            throw new Exception( G::LoadTranslation("ID_CASE_NOT_PAUSED", array(G::LoadTranslation("ID_UNASSIGNED_STATUS"))) );
+        if ($this->isUnassignedPauseCase($sApplicationUID, $iDelegation)) {
+            throw new Exception(G::LoadTranslation("ID_CASE_NOT_PAUSED", array(G::LoadTranslation("ID_UNASSIGNED_STATUS"))));
         }
 
         $oApplication = new Application();
@@ -4300,7 +4267,7 @@ use ProcessMaker\Plugins\PluginRegistry;
             $this->appSolr->updateApplicationSearchIndex($sApplicationUID);
         }
         /*----------------------------------********---------------------------------*/
-        $data = array (
+        $data = array(
             'APP_UID'            => $sApplicationUID,
             'DEL_INDEX'          => $iIndex,
             'USR_UID'            => $user_logged,
@@ -5604,10 +5571,10 @@ use ProcessMaker\Plugins\PluginRegistry;
     {
         $sTo = null;
         $sCc = null;
-        $arrayResp = array ();
+        $arrayResp = array();
         $tasks = new Tasks();
-        $group = new Groups ();
-        $oUser = new Users ();
+        $group = new Groups();
+        $oUser = new Users();
 
         $task = TaskPeer::retrieveByPK($taskUid);
 
@@ -5698,14 +5665,14 @@ use ProcessMaker\Plugins\PluginRegistry;
                 $arrayResp['to'] = $to;
                 $arrayResp['cc'] = $cc;
                 break;
-            case "MULTIPLE_INSTANCE" :
+            case "MULTIPLE_INSTANCE":
                 $to = null;
                 $cc = null;
                 $sw = 1;
-                $oDerivation = new Derivation ();
-                $userFields = $oDerivation->getUsersFullNameFromArray ( $oDerivation->getAllUsersFromAnyTask ( $taskUid ) );
-                if (isset ( $userFields )) {
-                    foreach ( $userFields as $row ) {
+                $oDerivation = new Derivation();
+                $userFields = $oDerivation->getUsersFullNameFromArray($oDerivation->getAllUsersFromAnyTask($taskUid));
+                if (isset($userFields)) {
+                    foreach ($userFields as $row) {
                         $toAux = ((($row ["USR_FIRSTNAME"] != "") || ($row ["USR_LASTNAME"] != "")) ? $row ["USR_FIRSTNAME"] . " " . $row ["USR_LASTNAME"] . " " : "") . "<" . $row ["USR_EMAIL"] . ">";
                         if ($sw == 1) {
                             $to = $toAux;
@@ -5718,19 +5685,19 @@ use ProcessMaker\Plugins\PluginRegistry;
                     $arrayResp ['cc'] = $cc;
                 }
                 break;
-            case "MULTIPLE_INSTANCE_VALUE_BASED" :
-                $oTask = new Task ();
-                $aTaskNext = $oTask->load ( $taskUid );
-                if (isset ( $aTaskNext ["TAS_ASSIGN_VARIABLE"] ) && ! empty ( $aTaskNext ["TAS_ASSIGN_VARIABLE"] )) {
+            case "MULTIPLE_INSTANCE_VALUE_BASED":
+                $oTask = new Task();
+                $aTaskNext = $oTask->load($taskUid);
+                if (isset($aTaskNext ["TAS_ASSIGN_VARIABLE"]) && ! empty($aTaskNext ["TAS_ASSIGN_VARIABLE"])) {
                     $to = null;
                     $cc = null;
                     $sw = 1;
-                    $nextTaskAssignVariable = trim ( $aTaskNext ["TAS_ASSIGN_VARIABLE"], " @#" );
+                    $nextTaskAssignVariable = trim($aTaskNext ["TAS_ASSIGN_VARIABLE"], " @#");
                     $arrayUsers = $arrayData [$nextTaskAssignVariable];
-                    $oDerivation = new Derivation ();
-                    $userFields = $oDerivation->getUsersFullNameFromArray ( $arrayUsers );
+                    $oDerivation = new Derivation();
+                    $userFields = $oDerivation->getUsersFullNameFromArray($arrayUsers);
 
-                    foreach ( $userFields as $row ) {
+                    foreach ($userFields as $row) {
                         $toAux = ((($row ["USR_FIRSTNAME"] != "") || ($row ["USR_LASTNAME"] != "")) ? $row ["USR_FIRSTNAME"] . " " . $row ["USR_LASTNAME"] . " " : "") . "<" . $row ["USR_EMAIL"] . ">";
                         if ($sw == 1) {
                             $to = $toAux;
@@ -5743,7 +5710,7 @@ use ProcessMaker\Plugins\PluginRegistry;
                     $arrayResp ['cc'] = $cc;
                 }
                 break;
-            default :
+            default:
                 if (isset($userUid) && !empty($userUid)) {
                     $aUser = $oUser->load($userUid);
 
@@ -5767,9 +5734,9 @@ use ProcessMaker\Plugins\PluginRegistry;
      */
     public function getAllObjects($PRO_UID, $APP_UID, $TAS_UID = '', $USR_UID = '', $delIndex = 0)
     {
-        $ACTIONS = Array('VIEW', 'BLOCK', 'DELETE'); //TO COMPLETE
-        $MAIN_OBJECTS = Array();
-        $RESULT_OBJECTS = Array();
+        $ACTIONS = array('VIEW', 'BLOCK', 'DELETE'); //TO COMPLETE
+        $MAIN_OBJECTS = array();
+        $RESULT_OBJECTS = array();
 
         foreach ($ACTIONS as $action) {
             $MAIN_OBJECTS[$action] = $this->getAllObjectsFrom($PRO_UID, $APP_UID, $TAS_UID, $USR_UID, $action, $delIndex);
@@ -5993,9 +5960,9 @@ use ProcessMaker\Plugins\PluginRegistry;
             "OUTPUT_DOCUMENTS" => $result['OUTPUT'],
             "CASES_NOTES" => $result['CASES_NOTES'],
             "MSGS_HISTORY" => $result['MSGS_HISTORY']
-        	/*----------------------------------********---------------------------------*/
+            /*----------------------------------********---------------------------------*/
             ,"SUMMARY_FORM" => $result['SUMMARY_FORM']
-        	/*----------------------------------********---------------------------------*/
+            /*----------------------------------********---------------------------------*/
         );
     }
 
@@ -6421,7 +6388,7 @@ use ProcessMaker\Plugins\PluginRegistry;
         $oCriteria = new Criteria('dbarray');
         $oCriteria->setDBArrayTable('messages');
 
-        usort( $aMessages, array($this, "ordProcess") );
+        usort($aMessages, array($this, "ordProcess"));
         return $aMessages;
     }
 
@@ -6460,7 +6427,7 @@ use ProcessMaker\Plugins\PluginRegistry;
 
     public function getAllObjectsFromProcess($PRO_UID, $OBJ_TYPE = '%')
     {
-        $RESULT = Array();
+        $RESULT = array();
         $oCriteria = new Criteria('workflow');
         $oCriteria->addSelectColumn(AppDocumentPeer::APP_DOC_UID);
         $oCriteria->addSelectColumn(AppDocumentPeer::APP_UID);
@@ -6758,7 +6725,7 @@ use ProcessMaker\Plugins\PluginRegistry;
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
         if (isset($sumary) && $sumary === true) {
-            $sumary = Array();
+            $sumary = array();
             while ($rs->next()) {
                 $nCount++;
                 $row = $rs->getRow();
@@ -6769,7 +6736,7 @@ use ProcessMaker\Plugins\PluginRegistry;
                     $sumary[$row['PRO_UID']]['name'] = $row['APP_PRO_TITLE'];
                 }
             }
-            return Array('count' => $nCount, 'sumary' => $sumary);
+            return array('count' => $nCount, 'sumary' => $sumary);
         } else {
             while ($rs->next()) {
                 $nCount++;
@@ -6788,7 +6755,7 @@ use ProcessMaker\Plugins\PluginRegistry;
      */
     public function getAllConditionCasesCount($types, $sumary = null)
     {
-        $aResult = Array();
+        $aResult = array();
         foreach ($types as $type) {
             $aResult[$type] = $this->getConditionCasesCount($type, $sumary);
         }
@@ -6895,7 +6862,7 @@ use ProcessMaker\Plugins\PluginRegistry;
             $c = new Criteria();
             $c->add(AppDelegationPeer::APP_UID, $aData['APP_UID']);
             $c->add(AppDelegationPeer::DEL_PREVIOUS, $aData['APP_THREAD_PARENT']);
-            if($status === 'OPEN'){
+            if ($status === 'OPEN') {
                 $c->add(AppDelegationPeer::DEL_THREAD_STATUS, 'OPEN');
             }
             $rs = AppDelegationPeer::doSelectRs($c);
@@ -6959,7 +6926,7 @@ use ProcessMaker\Plugins\PluginRegistry;
         global $RBAC;
         //Adding the actual user if this has the PM_SUPERVISOR permission assigned.
         if ($RBAC->userCanAccess('PM_SUPERVISOR') == 1) {
-            if(!in_array($RBAC->aUserInfo['USER_INFO']['USR_UID'], $row)) {
+            if (!in_array($RBAC->aUserInfo['USER_INFO']['USR_UID'], $row)) {
                 $row[] = $RBAC->aUserInfo['USER_INFO']['USR_UID'];
             }
         }
@@ -6974,7 +6941,7 @@ use ProcessMaker\Plugins\PluginRegistry;
         $rs = UsersPeer::doSelectRs($c);
         $rs->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
-        $rows = Array();
+        $rows = array();
         while ($rs->next()) {
             $rows[] = $rs->getRow();
         }
@@ -7000,8 +6967,8 @@ use ProcessMaker\Plugins\PluginRegistry;
             $flagSupervisors = false;
 
             if ($oDataset->next()) {
-                if (!in_array($USR_UID,$row)) {
-                        $rows[] = $oDataset->getRow();
+                if (!in_array($USR_UID, $row)) {
+                    $rows[] = $oDataset->getRow();
                 }
                 $flagSupervisors = true;
             }
@@ -7030,7 +6997,7 @@ use ProcessMaker\Plugins\PluginRegistry;
                 $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
 
                 if ($oDataset->next()) {
-                    if (!in_array($USR_UID,$row)) {
+                    if (!in_array($USR_UID, $row)) {
                         $rows[] = $oDataset->getRow();
                     }
                 }
@@ -7056,7 +7023,7 @@ use ProcessMaker\Plugins\PluginRegistry;
         $c->addSelectColumn(UsersPeer::USR_USERNAME);
         $c->addSelectColumn(UsersPeer::USR_EMAIL);
 
-        if($usrStatus != '') {
+        if ($usrStatus != '') {
             $c->add(UsersPeer::USR_STATUS, $usrStatus, CRITERIA::EQUAL);
         }
 
@@ -7069,7 +7036,7 @@ use ProcessMaker\Plugins\PluginRegistry;
         $rs->next();
         while ($row = $rs->getRow()) {
             //In some cases the thread does not have a User Script task, Itee
-            if($row['USR_UID'] !== ''){
+            if ($row['USR_UID'] !== '') {
                 $rows[$row['USR_UID']] = $row;
             }
             $rs->next();
@@ -7081,7 +7048,7 @@ use ProcessMaker\Plugins\PluginRegistry;
 
     public function getCaseNotes($applicationID, $type = 'array', $userUid = '')
     {
-        require_once ( "classes/model/AppNotes.php" );
+        require_once("classes/model/AppNotes.php");
         $appNotes = new AppNotes();
         $appNotes = $appNotes->getNotesList($applicationID, $userUid);
         $response = '';
@@ -7206,27 +7173,26 @@ use ProcessMaker\Plugins\PluginRegistry;
                 $pmTableName = $pmTable->toCamelCase($tableName);
 
                 //DELETE
-                require_once (PATH_WORKSPACE . "classes" . PATH_SEP . "$pmTableName.php");
+                require_once(PATH_WORKSPACE . "classes" . PATH_SEP . "$pmTableName.php");
 
                 $criteria3 = new Criteria("workflow");
 
                 eval("\$criteria3->add(" . $pmTableName . "Peer::APP_UID, \$applicationUid);");
                 eval($pmTableName . "Peer::doDelete(\$criteria3);");
-
             } catch (Exception $e) {
                 throw $e;
             }
         }
     }
 
-    public function ordProcess ($a, $b)
+    public function ordProcess($a, $b)
     {
-    	if ($this->sort == '') {
-    		$this->sort = 'APP_MSG_DATE';
-    	}
-	    if ($this->dir=='ASC') {
-		    if ($a[$this->sort] > $b[$this->sort]) {
-		        return 1;
+        if ($this->sort == '') {
+            $this->sort = 'APP_MSG_DATE';
+        }
+        if ($this->dir=='ASC') {
+            if ($a[$this->sort] > $b[$this->sort]) {
+                return 1;
             } elseif ($a[$this->sort] < $b[$this->sort]) {
                 return - 1;
             } else {
@@ -7234,16 +7200,17 @@ use ProcessMaker\Plugins\PluginRegistry;
             }
         } else {
             if ($a[$this->sort] > $b[$this->sort]) {
-               return - 1;
+                return - 1;
             } elseif ($a[$this->sort] < $b[$this->sort]) {
-               return 1;
+                return 1;
             } else {
-               return 0;
+                return 0;
             }
         }
     }
 
-    public function unserializeData($data) {
+    public function unserializeData($data)
+    {
         $unserializedData = @unserialize($data);
 
         // BUG 8134, FIX!// for single/double quote troubles // Unserialize with utf8 content get trouble
@@ -7315,26 +7282,27 @@ use ProcessMaker\Plugins\PluginRegistry;
         }
     }
 
-    private function orderStartCasesByCategoryAndName ($rows) {
+    private function orderStartCasesByCategoryAndName($rows)
+    {
         //now we order in category, proces_name order:
         $comparatorSequence = array(
-            function($a, $b) {
+            function ($a, $b) {
                 $retval = 0;
-                if(array_key_exists('catname', $a) && array_key_exists('catname', $b)) {
+                if (array_key_exists('catname', $a) && array_key_exists('catname', $b)) {
                     $retval =  strcmp($a['catname'], $b['catname']);
                 }
                 return $retval;
             }
-        , function($a, $b) {
-                $retval = 0;
-                if(array_key_exists('value', $a) && array_key_exists('value', $b)) {
-                    $retval =  strcmp($a['value'], $b['value']);
-                }
-                return $retval;
+        , function ($a, $b) {
+            $retval = 0;
+            if (array_key_exists('value', $a) && array_key_exists('value', $b)) {
+                $retval =  strcmp($a['value'], $b['value']);
             }
+            return $retval;
+        }
         );
 
-        usort($rows, function($a, $b) use ($comparatorSequence) {
+        usort($rows, function ($a, $b) use ($comparatorSequence) {
             foreach ($comparatorSequence as $cmpFn) {
                 $diff = call_user_func($cmpFn, $a, $b);
                 if ($diff !== 0) {

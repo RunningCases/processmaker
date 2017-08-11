@@ -5,12 +5,7 @@
  * @author reav
  *
  */
-
-/**
- * class, helping to set some not desirable settings but necesary
- * @author reav
- *
- */abstract class patch
+abstract class Patch
 {
     static protected $isPathchable = false;
     static public $dbAdapter = 'mysql';

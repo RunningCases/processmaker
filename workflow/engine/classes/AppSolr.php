@@ -77,7 +77,7 @@ require_once "classes/model/AppSolrQueue.php";
    */
   public function isSolrEnabled()
   {
-    $searchIndex = new BpmnEngine_Services_SearchIndex ($this->_solrIsEnabled, $this->_solrHost);
+    $searchIndex = new BpmnEngineServicesSearchIndex ($this->_solrIsEnabled, $this->_solrHost);
     // execute query
     $solrStatusResult = $searchIndex->isEnabled ($this->_solrInstance);    
     return $solrStatusResult;
@@ -409,7 +409,7 @@ require_once "classes/model/AppSolrQueue.php";
       );
       $solrRequestData = Entity_SolrRequestData::createForRequestPagination ($data);
       // use search index to return list of cases
-      $searchIndex = new BpmnEngine_Services_SearchIndex ($this->_solrIsEnabled, $this->_solrHost);
+      $searchIndex = new BpmnEngineServicesSearchIndex ($this->_solrIsEnabled, $this->_solrHost);
       // execute query
       $solrQueryResult = $searchIndex->getDataTablePaginatedList ($solrRequestData);
       if($this->debug)
@@ -946,7 +946,7 @@ require_once "classes/model/AppSolrQueue.php";
     
     // search the first
 
-      $searchIndex = new BpmnEngine_Services_SearchIndex ($this->_solrIsEnabled, $this->_solrHost);
+      $searchIndex = new BpmnEngineServicesSearchIndex ($this->_solrIsEnabled, $this->_solrHost);
       // execute query
       $ListFieldsInfo = $searchIndex->getIndexFields ($this->_solrInstance);
     
@@ -1240,7 +1240,7 @@ require_once "classes/model/AppSolrQueue.php";
       );
       $oSolrUpdateDocument = Entity_SolrUpdateDocument::createForRequest ($data);
       
-      $oSearchIndex = new BpmnEngine_Services_SearchIndex ($this->_solrIsEnabled, $this->_solrHost);
+      $oSearchIndex = new BpmnEngineServicesSearchIndex ($this->_solrIsEnabled, $this->_solrHost);
 
       $oSearchIndex->updateIndexDocument ($oSolrUpdateDocument);
           
@@ -1350,7 +1350,7 @@ require_once "classes/model/AppSolrQueue.php";
     
     try{
 
-      $oSearchIndex = new BpmnEngine_Services_SearchIndex ($this->_solrIsEnabled, $this->_solrHost);
+      $oSearchIndex = new BpmnEngineServicesSearchIndex ($this->_solrIsEnabled, $this->_solrHost);
 
       foreach ($aaAPPUIDs as $aAPPUID) {
         $idQuery = "APP_UID:" . $aAPPUID ['APP_UID'];
@@ -2889,7 +2889,7 @@ require_once "classes/model/AppSolrQueue.php";
    */
   public function getCountApplicationsSearchIndex()
   {
-    $searchIndex = new BpmnEngine_Services_SearchIndex ($this->_solrIsEnabled, $this->_solrHost);
+    $searchIndex = new BpmnEngineServicesSearchIndex ($this->_solrIsEnabled, $this->_solrHost);
     // execute query
     $count = $searchIndex->getNumberDocuments ($this->_solrInstance);
   
@@ -2903,7 +2903,7 @@ require_once "classes/model/AppSolrQueue.php";
    */
   public function optimizeSearchIndex()
   {
-    $searchIndex = new BpmnEngine_Services_SearchIndex ($this->_solrIsEnabled, $this->_solrHost);
+    $searchIndex = new BpmnEngineServicesSearchIndex ($this->_solrIsEnabled, $this->_solrHost);
     // execute query
     $searchIndex->optimizeIndexChanges ($this->_solrInstance);
   }  
