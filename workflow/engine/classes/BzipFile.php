@@ -1,12 +1,9 @@
 <?php
 
 /**
- *
  * This class is derived from the class archive, is employed to use files .bzip
- *
- * @package workflow.engine.classes
- *
- */class BzipFile extends tar_file
+ */
+class BzipFile extends tar_file
 {
 
     /**
@@ -59,5 +56,4 @@
     {
         return @bzopen($this->options['name'], "rb");
     }
-
 }
