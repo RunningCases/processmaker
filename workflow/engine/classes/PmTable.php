@@ -914,7 +914,7 @@ class PmTable
         Phing::startup();
         Phing::setProperty('phing.home', getenv('PHING_HOME'));
 
-        $m = new pmPhing();
+        $m = new PmPhing();
         $m->execute($args);
         $m->runBuild();
     }
