@@ -4,7 +4,7 @@
  * Class XmlForm_Field_hours
  *
  */
-class XmlForm_Field_hours extends XmlForm_Field_SimpleText
+class XmlForm_Field_Hours extends XmlForm_Field_SimpleText
 {
     public $size = 15;
     public $maxLength = 64;

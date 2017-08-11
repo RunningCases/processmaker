@@ -5496,7 +5496,7 @@ class XmlForm
         'file'              => XmlForm_Field_File::class,
         'grid'              => XmlForm_Field_Grid::class,
         'hidden'            => XmlForm_Field_Hidden::class,
-        'hours'             => XmlForm_Field_hours::class,
+        'hours'             => XmlForm_Field_Hours::class,
         'html'              => XmlForm_Field_HTML::class,
         'image'             => XmlForm_Field_Image::class,
         'javascript'        => XmlForm_Field_JavaScript::class,
