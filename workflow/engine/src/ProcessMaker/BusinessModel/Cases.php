@@ -419,7 +419,7 @@ class Cases
                         )
                     );
                     //Use search index to return list of cases
-                    $searchIndex = new \BpmnEngine_Services_SearchIndex($appSolr->isSolrEnabled(), $solrEnv["solr_host"]);
+                    $searchIndex = new \BpmnEngineServicesSearchIndex($appSolr->isSolrEnabled(), $solrEnv["solr_host"]);
                     //Execute query
                     $solrQueryResult = $searchIndex->getDataTablePaginatedList($solrRequestData);
                     //Get the missing data from database
