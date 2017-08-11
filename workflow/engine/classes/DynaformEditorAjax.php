@@ -31,7 +31,7 @@
  * DynaformEditorAjax - DynaformEditorAjax class
  *
  * @package workflow.engine.classes
- */class dynaformEditorAjax extends dynaformEditor implements iDynaformEditorAjax
+ */class dynaformEditorAjax extends DynaformEditor implements iDynaformEditorAjax
 {
 
     /**
@@ -589,7 +589,7 @@
                 if (file_exists(PATH_DYNAFORM . $file . '.html')) {
                     $copyHtml = implode('', file(PATH_DYNAFORM . $file . '.html'));
                 }
-                $file = dynaformEditor::_getFilename($file);
+                $file = DynaformEditor::_getFilename($file);
                 $fcopy = fopen(PATH_DYNAFORM . $file . '.xml', "w");
                 fwrite($fcopy, $copy);
                 fclose($fcopy);
@@ -629,7 +629,7 @@
             //return(array('response'=>$tmp['useTmpCopy']));
             if (isset($tmp['useTmpCopy'])) {
                 //return(array('response'=>PATH_DYNAFORM  . $file . '.xml'));
-                if ($file !== dynaformEditor::_getFilename($file)) {
+                if ($file !== DynaformEditor::_getFilename($file)) {
                     //          return(array('response'=>PATH_DYNAFORM  . $file . '.xml'));
                     if (file_exists($xmlFile)) {
                         unlink($xmlFile);
@@ -687,7 +687,7 @@
             ($sp['ENABLETEMPLATE']!=$P['ENABLETEMPLATE']) ||
             ($sp['MODE']!=$P['MODE']) */
             /* Compare copies */
-            $fileOrigen = dynaformEditor::_getFilename($file);
+            $fileOrigen = DynaformEditor::_getFilename($file);
             $copy = implode('', file(PATH_DYNAFORM . $file . '.xml'));
             $origen = implode('', file(PATH_DYNAFORM . $fileOrigen . '.xml'));
             $copyHTML = file_exists(PATH_DYNAFORM . $file . '.html') ? implode('', file(PATH_DYNAFORM . $file . '.html')) : false;
