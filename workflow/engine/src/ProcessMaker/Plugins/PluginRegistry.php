@@ -3,7 +3,6 @@
 namespace ProcessMaker\Plugins;
 
 use Archive_Tar;
-use BasePeer;
 use enterprisePlugin;
 use Exception;
 use G;
