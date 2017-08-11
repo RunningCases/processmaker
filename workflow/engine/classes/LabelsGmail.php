@@ -98,9 +98,9 @@ class labelsGmail
         //The Subject to search the email
         $subject = "[PM] " . $proName . " (" . $index . ") Case: " . $appNumber;
 
-        $pmGoogle = new PMGoogleApi();
+        $pmGoogle = new PmGoogleApi();
         $pmGoogle->setUser($mail);
-        $pmGoogle->setScope(PMGoogleApi::GMAIL_MODIFY);
+        $pmGoogle->setScope(PmGoogleApi::GMAIL_MODIFY);
         $client = $pmGoogle->serviceClient();
         $service = new Google_Service_Gmail($client);
         $labelsIds = $this->getLabelsIds($service);
@@ -148,9 +148,9 @@ class labelsGmail
         //The Subject to search the email
         $subject = "[PM] " . $proName . " (" . $index . ") Case: " . $appNumber;
 
-        $pmGoogle = new PMGoogleApi();
+        $pmGoogle = new PmGoogleApi();
         $pmGoogle->setUser($mail);
-        $pmGoogle->setScope(PMGoogleApi::GMAIL_MODIFY);
+        $pmGoogle->setScope(PmGoogleApi::GMAIL_MODIFY);
         $client = $pmGoogle->serviceClient();
         $service = new Google_Service_Gmail($client);
         $labelsIds = $this->getLabelsIds($service);
@@ -202,11 +202,11 @@ class labelsGmail
             //The Subject to search the email
             $subject = "[PM] " . $proName . " (" . $index . ") Case: " . $appNumber;
 
-            $pmGoogle = new PMGoogleApi();
+            $pmGoogle = new PmGoogleApi();
 
             $pmGoogle->setUser($mail);
 
-            $pmGoogle->setScope(PMGoogleApi::GMAIL_MODIFY);
+            $pmGoogle->setScope(PmGoogleApi::GMAIL_MODIFY);
             $client = $pmGoogle->serviceClient();
 
             $service = new Google_Service_Gmail($client);
@@ -281,9 +281,9 @@ class labelsGmail
 
         //The Subject to search the email
         $subject = "[PM] " . $proName . " (" . $index . ") Case: " . $appNumber;
-        $pmGoogle = new PMGoogleApi();
+        $pmGoogle = new PmGoogleApi();
         $pmGoogle->setUser($mail);
-        $pmGoogle->setScope(PMGoogleApi::GMAIL_MODIFY);
+        $pmGoogle->setScope(PmGoogleApi::GMAIL_MODIFY);
         $client = $pmGoogle->serviceClient();
         $service = new Google_Service_Gmail($client);
         $labelsIds = $this->getLabelsIds($service);
@@ -329,11 +329,11 @@ class labelsGmail
      */
     public function deletePMGmailLabels($mail)
     {
-        $pmGoogle = new PMGoogleApi();
+        $pmGoogle = new PmGoogleApi();
 
         $pmGoogle->setUser($mail);
 
-        $pmGoogle->setScope(PMGoogleApi::GMAIL_MODIFY);
+        $pmGoogle->setScope(PmGoogleApi::GMAIL_MODIFY);
         $client = $pmGoogle->serviceClient();
 
         $service = new Google_Service_Gmail($client);

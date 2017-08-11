@@ -10,7 +10,7 @@
  */class AppDocumentDrive
 {
     /**
-     * @var PMDrive $drive
+     * @var PmDrive $drive
      */
     private $drive;
     /**
@@ -31,7 +31,7 @@
      */
     public function __construct()
     {
-        $this->drive = new PMDrive();
+        $this->drive = new PmDrive();
         $status = $this->drive->getServiceDriveStatus();
         $status = !empty($status) ? ($status == 1 ? true : false): false;
         $this->usersEmail = '';

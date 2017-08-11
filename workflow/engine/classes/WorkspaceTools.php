@@ -868,8 +868,8 @@ use ProcessMaker\Plugins\Adapters\PluginAdapter;
     public function upgradeDatabase($onedb = false, $checkOnly = false)
     {
         $this->initPropel(true);
-        p11835::$dbAdapter = $this->dbAdapter;
-        p11835::isApplicable();
+        P11835::$dbAdapter = $this->dbAdapter;
+        P11835::isApplicable();
         $systemSchema = PmSystem::getSystemSchema($this->dbAdapter);
         $systemSchemaRbac = PmSystem::getSystemSchemaRbac($this->dbAdapter);// get the Rbac Schema
         $this->registerSystemTables(array_merge($systemSchema, $systemSchemaRbac));
@@ -943,7 +943,7 @@ use ProcessMaker\Plugins\Adapters\PluginAdapter;
             }
         }
 
-        p11835::execute();
+        P11835::execute();
 
         return true;
     }

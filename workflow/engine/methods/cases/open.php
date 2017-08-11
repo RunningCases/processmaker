@@ -72,7 +72,7 @@ $urlToRedirectAfterPause = 'casesListExtJs';
 /*----------------------------------********---------------------------------*/
 $licensedFeatures = &PMLicensedFeatures::getSingleton();
 if ($licensedFeatures->verifyfeature('7qhYmF1eDJWcEdwcUZpT0k4S0xTRStvdz09')) {
-    $pmGoogle = new PMGoogleApi();
+    $pmGoogle = new PmGoogleApi();
     if (array_key_exists('gmail', $_SESSION) && $_SESSION['gmail'] == 1 && $pmGoogle->getServiceGmailStatus()) {
         $_SESSION['gmail'] = 0;
         $urlToRedirectAfterPause = '/sys'. $_SESSION['WORKSPACE'] .'/en/neoclassic/cases/cases_Open?APP_UID='.$_SESSION['APPLICATION'].'&DEL_INDEX='.$_SESSION['INDEX'].'&action=sent';
