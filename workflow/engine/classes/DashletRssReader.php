@@ -1,9 +1,6 @@
 <?php
 
-require_once 'classes/interfaces/DashletInterface.php';
-
-
-class dashletRssReader implements DashletInterface
+class DashletRssReader implements DashletInterface
 {
 
     const version = '1.0';

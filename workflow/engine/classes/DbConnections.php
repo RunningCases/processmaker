@@ -1,15 +1,6 @@
 <?php
-/**
- * Author: Erik Amaru Ortiz <erik@colosa.com>
- * Description:This is a 
-/**
- * dbConnections
- *
- *
- * @copyright 2008 Colosa
- * @package workflow.engine.classes
- *
- */class DbConnections
+
+class DbConnections
 {
     private $PRO_UID;
     public $connections;
