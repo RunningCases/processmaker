@@ -518,7 +518,7 @@ class PMPlugin
                         continue;
                     }
                     $status_label = $pluginDetail->isEnabled() ? G::LoadTranslation('ID_ENABLED') : G::LoadTranslation('ID_DISABLED');
-                    $status = $pluginDetail->isEnabled()? 1 : 0;
+                    $status = $pluginDetail->isEnabled() ? 1 : 0;
                     if ($pluginDetail->getWorkspaces()) {
                         if (!is_array($pluginDetail->getWorkspaces())) {
                             $pluginDetail->setWorkspaces(array());
