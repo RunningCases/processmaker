@@ -1,7 +1,7 @@
 <?php
 
 
-class pmGauge
+class PmGauge
 {
 
     /**

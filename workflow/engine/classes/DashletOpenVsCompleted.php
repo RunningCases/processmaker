@@ -274,7 +274,7 @@ class DashletOpenVsCompleted implements DashletInterface
 
     public function render ($width = 300)
     {
-        $g = new pmGauge();
+        $g = new PmGauge();
         $g->w = $width;
         $g->value = $this->value;
 
