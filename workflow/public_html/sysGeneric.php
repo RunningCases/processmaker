@@ -22,6 +22,7 @@
  * Coral Gables, FL, 33134, USA, or email info@colosa.com.
  */
 
+use Illuminate\Foundation\Http\Kernel;
 use ProcessMaker\Plugins\PluginRegistry;
 
 /**
@@ -547,6 +548,18 @@ if (! defined( 'PATH_DATA' ) || ! file_exists( PATH_DATA )) {
     }
     die();
 }
+
+app()->useStoragePath(realpath(PATH_DATA));
+app()->make(Kernel::class)->bootstrap();
+//Overwrite with the Processmaker env.ini configuration used in production environments
+//@todo: move env.ini configuration to .env
+ini_set( 'display_errors', $config['display_errors']);
+ini_set( 'error_reporting', $config['error_reporting']);
+ini_set( 'short_open_tag', 'On' );
+ini_set( 'default_charset', "UTF-8" );
+ini_set( 'memory_limit', $config['memory_limit'] );
+ini_set( 'soap.wsdl_cache_enabled', $config['wsdl_cache'] );
+ini_set('date.timezone', $config['time_zone']); //Set Time Zone
 
 // Load Language Translation
 Bootstrap::LoadTranslationObject( defined( 'SYS_LANG' ) ? SYS_LANG : "en" );

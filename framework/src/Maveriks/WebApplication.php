@@ -6,6 +6,7 @@ use ProcessMaker\Plugins\PluginRegistry;
 use ProcessMaker\Services;
 use ProcessMaker\Services\Api;
 use Luracast\Restler\RestException;
+use Illuminate\Foundation\Http\Kernel;
 
 /**
  * Web application bootstrap
@@ -477,6 +478,10 @@ class WebApplication
         define("PATH_CUSTOM_SKINS", PATH_DATA . "skins" . PATH_SEP );
         define("PATH_TEMPORAL", PATH_C . "dynEditor/");
         define("PATH_DB", PATH_DATA . "sites" . PATH_SEP);
+
+        // Change storage path
+        app()->useStoragePath(realpath(PATH_DATA));
+        app()->make(Kernel::class)->bootstrap();
 
         \Bootstrap::setLanguage();
 
