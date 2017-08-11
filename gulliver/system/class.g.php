@@ -5913,8 +5913,3 @@ function eprintln ($s = "", $c = null)
         print "$s\n";
     }
 }
-
-function __ ($msgID, $lang = SYS_LANG, $data = null)
-{
-    return G::LoadTranslation( $msgID, $lang, $data );
-}

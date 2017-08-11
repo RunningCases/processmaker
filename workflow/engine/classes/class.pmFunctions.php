@@ -2773,7 +2773,7 @@ function PMFCancelCase ($caseUid, $delIndex, $userUid)
                     G::header('Location: ../cases/casesListExtJsRedirector');
                     die();
                 } else {
-                    die(__('ID_PM_FUNCTION_CHANGE_CASE', SYS_LANG, array('PMFCancelCase', G::LoadTranslation('ID_CANCELLED'))));
+                    die(G::LoadTranslation('ID_PM_FUNCTION_CHANGE_CASE', SYS_LANG, array('PMFCancelCase', G::LoadTranslation('ID_CANCELLED'))));
                 }
             }
         }
@@ -2812,7 +2812,7 @@ function PMFPauseCase ($caseUid, $delIndex, $userUid, $unpauseDate = null)
                     G::header('Location: ../cases/casesListExtJsRedirector');
                     die();
                 } else {
-                    die(__('ID_PM_FUNCTION_CHANGE_CASE', SYS_LANG, array('PMFPauseCase', G::LoadTranslation('ID_PAUSED'))));
+                    die(G::LoadTranslation('ID_PM_FUNCTION_CHANGE_CASE', SYS_LANG, array('PMFPauseCase', G::LoadTranslation('ID_PAUSED'))));
                 }
             }
         }
