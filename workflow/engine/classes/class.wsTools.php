@@ -1,15 +1,12 @@
 <?php
 
-/**
- * Utility functions to manage a workspace.
- *
- * @author Alexandre Rosenfeld
- */
-
+use ProcessMaker\Util\FixReferencePath;
 use ProcessMaker\Plugins\Adapters\PluginAdapter;
 
 /**
- * class workspaceTools
+ * class workspaceTools.
+ *
+ * Utility functions to manage a workspace.
  *
  * @package workflow.engine.classes
  */
@@ -712,7 +709,7 @@ class workspaceTools
             $res = $appCache->fillAppCacheView($lang);
         }
         //set status in config table
-        $confParams = Array('LANG' => $lang, 'STATUS' => 'active');
+        $confParams = array('LANG' => $lang, 'STATUS' => 'active');
         $oConf->aConfig = $confParams;
         $oConf->saveConfig('APP_CACHE_VIEW_ENGINE', '', '', '');
 
@@ -868,7 +865,7 @@ class workspaceTools
         p11835::isApplicable();
         $systemSchema = PmSystem::getSystemSchema($this->dbAdapter);
         $systemSchemaRbac = PmSystem::getSystemSchemaRbac($this->dbAdapter);// get the Rbac Schema
-        $this->registerSystemTables(array_merge($systemSchema,$systemSchemaRbac));
+        $this->registerSystemTables(array_merge($systemSchema, $systemSchemaRbac));
         $this->upgradeSchema($systemSchema);
         $this->upgradeSchema($systemSchemaRbac, false, true, $onedb); // perform Upgrade to Rbac
         $this->upgradeData();
@@ -989,7 +986,7 @@ class workspaceTools
         $oDataBase = $this->getDatabase($rbac);
 
         if (!$onedb) {
-            if($rbac){
+            if ($rbac) {
                 $rename = PmSystem::verifyRbacSchema($workspaceSchema);
                 if (count($rename) > 0) {
                     foreach ($rename as $tableName) {
@@ -1142,7 +1139,6 @@ class workspaceTools
         $Fields['WORKSPACE_NAME'] = $this->name;
 
         if (isset($this->dbHost)) {
-
             $dbNetView = new NET($this->dbHost);
             $dbNetView->loginDbServer($this->dbUser, $this->dbPass);
             try {
@@ -1211,7 +1207,7 @@ class workspaceTools
         if ($fields['DB_NAME'] == $fields['DB_RBAC_NAME']) {
             $info = array('Workspace Name' => $fields['WORKSPACE_NAME'], 'Workflow Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_USER'], $fields['DB_PASS'], $fields['DB_HOST'], $fields['DB_NAME']), 'MySql Version' => $fields['DATABASE']);
         } else {
-        $info = array('Workspace Name' => $fields['WORKSPACE_NAME'],
+            $info = array('Workspace Name' => $fields['WORKSPACE_NAME'],
             //'Available Databases'  => $fields['AVAILABLE_DB'],
             'Workflow Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_USER'], $fields['DB_PASS'], $fields['DB_HOST'], $fields['DB_NAME']), 'RBAC Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_RBAC_USER'], $fields['DB_RBAC_PASS'], $fields['DB_RBAC_HOST'], $fields['DB_RBAC_NAME']), 'Report Database' => sprintf("%s://%s:%s@%s/%s", $fields['DB_ADAPTER'], $fields['DB_REPORT_USER'], $fields['DB_REPORT_PASS'], $fields['DB_REPORT_HOST'], $fields['DB_REPORT_NAME']), 'MySql Version' => $fields['DATABASE']
         );
@@ -1253,7 +1249,7 @@ class workspaceTools
 
         if ($onedb) {
             $databases = array("rb", "rp");
-        } else if ($dbInfo['DB_NAME'] == $dbInfo['DB_RBAC_NAME']) {
+        } elseif ($dbInfo['DB_NAME'] == $dbInfo['DB_RBAC_NAME']) {
             $databases = array("wf");
         } else {
             $databases = array("wf", "rp", "rb");
@@ -1296,9 +1292,8 @@ class workspaceTools
      * @param string $filename the backup filename
      * @param bool $compress wheter to compress or not
      */
-    static public function createBackup($filename, $compress = true)
+    public static function createBackup($filename, $compress = true)
     {
-
         if (!file_exists(dirname($filename))) {
             mkdir(dirname($filename));
         }
@@ -1389,7 +1384,7 @@ class workspaceTools
         }
         $users = mysql_num_rows($result);
         if ($users === 0) {
-        CLI::logging("Creating user $username for $hostname\n");
+            CLI::logging("Creating user $username for $hostname\n");
             $result = mysql_query("CREATE USER '$username'@'$hostname' IDENTIFIED BY '$password'");
             if ($result === false) {
                 throw new Exception("Unable to create user $username: " . mysql_error());
@@ -1442,10 +1437,10 @@ class workspaceTools
         
         if (!$flag && !is_null($flagFunction)) {
             //Replace TYPE by ENGINE
-            if( $versionBackupEngine == 1) {
+            if ($versionBackupEngine == 1) {
                 $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
                 file_put_contents($filename, $script."\nCOMMIT;");
-            }else{
+            } else {
                 $arrayRegExpEngineSearch = array("/\)\s*TYPE\s*=\s*(InnoDB)/i", "/\)\s*TYPE\s*=\s*(MyISAM)/i");
                 $arrayRegExpEngineReplace = array(") ENGINE=\\1 DEFAULT CHARSET=utf8", ") ENGINE=\\1");
                 $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
@@ -1481,7 +1476,7 @@ class workspaceTools
 
                 //Replace TYPE by ENGINE
                 $script = preg_replace($arrayRegExpEngineSearch, $arrayRegExpEngineReplace, file_get_contents($filename));
-                if( $versionBackupEngine == 1) {
+                if ($versionBackupEngine == 1) {
                     $script = $script."\nCOMMIT;";
                 }
 
@@ -1546,14 +1541,13 @@ class workspaceTools
         return true;
     }
 
-    static public function restoreLegacy($directory)
+    public static function restoreLegacy($directory)
     {
         throw new Exception("Use gulliver to restore backups from old versions");
     }
 
-    static public function getBackupInfo($filename)
+    public static function getBackupInfo($filename)
     {
-
         $backup = new Archive_Tar($filename);
         //Get a temporary directory in the upgrade directory
         $tempDirectory = PATH_DATA . "upgrade/" . basename(tempnam(__FILE__, ''));
@@ -1581,7 +1575,7 @@ class workspaceTools
         G::rm_dir($tempDirectory);
     }
 
-    static public function dirPerms($filename, $owner, $group, $perms)
+    public static function dirPerms($filename, $owner, $group, $perms)
     {
         $chown = @chown($filename, $owner);
         $chgrp = @chgrp($filename, $group);
@@ -1617,9 +1611,8 @@ class workspaceTools
      * @param string $lang for define the language
      * @param string $port of database if is empty take 3306
      */
-    static public function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en', $port = '')
+    public static function restore($filename, $srcWorkspace, $dstWorkspace = null, $overwrite = true, $lang = 'en', $port = '')
     {
-
         $backup = new Archive_Tar($filename);
         //Get a temporary directory in the upgrade directory
         $tempDirectory = PATH_DATA . "upgrade/" . basename(tempnam(__FILE__, ''));
@@ -1731,7 +1724,7 @@ class workspaceTools
             } else {
                 CLI::logging(CLI::error("Could not get the shared folder permissions, not changing workspace permissions") . "\n");
             }
-            list ($dbHost, $dbUser, $dbPass) = @explode(SYSTEM_HASH, G::decrypt(HASH_INSTALLATION, SYSTEM_HASH));
+            list($dbHost, $dbUser, $dbPass) = @explode(SYSTEM_HASH, G::decrypt(HASH_INSTALLATION, SYSTEM_HASH));
             if ($port != '') {
                 $dbHost = $dbHost . $port; //127.0.0.1:3306
             }
@@ -1764,7 +1757,7 @@ class workspaceTools
             foreach ($metadata->databases as $db) {
                 if ($dbName != $newDBNames[$db->name]) {
                     $dbName = $dbUser = $newDBNames[$db->name];
-                    if(isset($newDBNames['DB_USER'])){
+                    if (isset($newDBNames['DB_USER'])) {
                         $dbUser = $newDBNames['DB_USER'];
                     }
                     if (mysql_select_db($dbName, $link)) {
@@ -1854,6 +1847,12 @@ class workspaceTools
             $stop = microtime(true);
             CLI::logging("<*>   Migrating an populating indexing for APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
 
+            $start = microtime(true);
+            CLI::logging("> Updating generated class files for PM Tables...\n");
+            self::fixReferencePathFiles(PATH_DATA_SITE . "classes", PATH_DATA);
+            $stop = microtime(true);
+            CLI::logging("<*>   Updating generated class files for PM Tables took " . ($stop - $start) . " seconds.\n");
+
             mysql_close($link);
         }
 
@@ -1928,7 +1927,8 @@ class workspaceTools
         }
     }
 
-    public function checkMafeRequirements ($workspace,$lang) {
+    public function checkMafeRequirements($workspace, $lang)
+    {
         $this->initPropel(true);
         $pmRestClient = OauthClientsPeer::retrieveByPK('x-pm-local-client');
         if (empty($pmRestClient)) {
@@ -1945,7 +1945,7 @@ class workspaceTools
 
                 $envFile = PATH_CONFIG . 'env.ini';
                 $skin ='neoclassic';
-                if (file_exists($envFile) ) {
+                if (file_exists($envFile)) {
                     $sysConf = PmSystem::getSystemConfiguration($envFile);
                     $lang = $sysConf['default_lang'];
                     $skin = $sysConf['default_skin'];
@@ -1973,9 +1973,9 @@ class workspaceTools
         }
     }
 
-    public function changeHashPassword ($workspace, $response)
+    public function changeHashPassword($workspace, $response)
     {
-        $this->initPropel( true );
+        $this->initPropel(true);
         $licensedFeatures = & PMLicensedFeatures::getSingleton();
         /*----------------------------------********---------------------------------*/
         if ($licensedFeatures->verifyfeature('95OY24wcXpEMzIyRmlNSnF0STNFSHJzMG9wYTJKekpLNmY2ZmRCeGtuZk5oUDloaUNhUGVjTDJBPT0=')) {
@@ -1987,9 +1987,9 @@ class workspaceTools
         return true;
     }
 
-    public function verifyFilesOldEnterprise ($workspace)
+    public function verifyFilesOldEnterprise($workspace)
     {
-        $this->initPropel( true );
+        $this->initPropel(true);
         $pathBackup = PATH_DATA . 'backups';
         if (!file_exists($pathBackup)) {
             G::mk_dir($pathBackup, 0777);
@@ -2034,7 +2034,7 @@ class workspaceTools
                 CLI::logging(CLI::error("Could not get shared folder permissions, workspace permissions couldn't be changed") . "\n");
             }
             CLI::logging("    Removing $pathFileEnterprise...\n");
-            copy($pathFileEnterprise , $pathNewFile. PATH_SEP . 'enterprise.php');
+            copy($pathFileEnterprise, $pathNewFile. PATH_SEP . 'enterprise.php');
             G::rm_dir($pathFileEnterprise);
             if (file_exists($pathFileEnterprise)) {
                 CLI::logging(CLI::info("    Remove manually $pathFileEnterprise...\n"));
@@ -2227,7 +2227,8 @@ class workspaceTools
         CLI::logging("> Completed table LIST_CANCELED\n");
     }
 
-    public function regenerateListCompleted($lang = 'en'){
+    public function regenerateListCompleted($lang = 'en')
+    {
         $this->initPropel(true);
         $query = 'INSERT INTO '.$this->dbName.'.LIST_COMPLETED
                     (APP_UID,
@@ -2289,7 +2290,8 @@ class workspaceTools
         CLI::logging("> Completed table LIST_COMPLETED\n");
     }
 
-    public function regenerateListMyInbox(){
+    public function regenerateListMyInbox()
+    {
         $this->initPropel(true);
         $query = 'INSERT INTO '.$this->dbName.'.LIST_MY_INBOX
                     (APP_UID,
@@ -2358,7 +2360,8 @@ class workspaceTools
         CLI::logging("> Completed table LIST_MY_INBOX\n");
     }
 
-    public function regenerateListInbox(){
+    public function regenerateListInbox()
+    {
         $this->initPropel(true);
         $query = 'INSERT INTO '.$this->dbName.'.LIST_INBOX
                     (APP_UID,
@@ -2415,7 +2418,8 @@ class workspaceTools
         CLI::logging("> Completed table LIST_INBOX\n");
     }
 
-    public function regenerateListParticipatedHistory(){
+    public function regenerateListParticipatedHistory()
+    {
         $this->initPropel(true);
         $query = 'INSERT INTO '.$this->dbName.'.LIST_PARTICIPATED_HISTORY
                     (APP_UID,
@@ -2589,7 +2593,8 @@ class workspaceTools
      * For the labels we use the tables user, process, task and application
      * @return void
      */
-    public function regenerateListPaused(){
+    public function regenerateListPaused()
+    {
         $this->initPropel(true);
         $query =  'INSERT INTO '.$this->dbName.'.LIST_PAUSED
                   (
@@ -2672,7 +2677,8 @@ class workspaceTools
     }
 
     /*----------------------------------********---------------------------------*/
-    public function regenerateListUnassigned(){
+    public function regenerateListUnassigned()
+    {
         $this->initPropel(true);
         $truncate = 'TRUNCATE '.$this->dbName.'.LIST_UNASSIGNED';
         //This executeQuery is very fast than Propel
@@ -2731,12 +2737,13 @@ class workspaceTools
      *
      * return boolean value
      */
-    public function listFirstExecution ($action, $list='all'){
+    public function listFirstExecution($action, $list='all')
+    {
         $this->initPropel(true);
         switch ($action) {
             case 'insert':
                 $conf  = new Configuration();
-                if($list==='all'){
+                if ($list==='all') {
                     if (!($conf->exists('MIGRATED_LIST', 'list', 'list', 'list', 'list'))) {
                         $data["CFG_UID"]  ='MIGRATED_LIST';
                         $data["OBJ_UID"]  ='list';
@@ -2747,7 +2754,7 @@ class workspaceTools
                         $conf->create($data);
                     }
                 }
-                if($list==='unassigned'){
+                if ($list==='unassigned') {
                     if (!($conf->exists('MIGRATED_LIST_UNASSIGNED', 'list', 'list', 'list', 'list'))) {
                         $data["CFG_UID"]  ='MIGRATED_LIST_UNASSIGNED';
                         $data["OBJ_UID"]  ='list';
@@ -2763,19 +2770,19 @@ class workspaceTools
             case 'check':
                 $criteria = new Criteria("workflow");
                 $criteria->addSelectColumn(ConfigurationPeer::CFG_UID);
-                if($list==='all'){
+                if ($list==='all') {
                     $criteria->add(ConfigurationPeer::CFG_UID, "MIGRATED_LIST", CRITERIA::EQUAL);
                 }
-                if($list==='unassigned'){
+                if ($list==='unassigned') {
                     $criteria->add(ConfigurationPeer::CFG_UID, "MIGRATED_LIST_UNASSIGNED", CRITERIA::EQUAL);
                 }
                 $rsCriteria = AppCacheViewPeer::doSelectRS($criteria);
                 $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
-                $aRows = array ();
+                $aRows = array();
                 while ($rsCriteria->next()) {
                     $aRows[] = $rsCriteria->getRow();
                 }
-                if(empty($aRows)){
+                if (empty($aRows)) {
                     return false; //If is false continue with the migrated
                 } else {
                     return true; //Stop
@@ -2840,7 +2847,8 @@ class workspaceTools
      *
      * return void
      */
-    public static function registerSystemTables($aSquema){
+    public static function registerSystemTables($aSquema)
+    {
         //Register all tables
         $sListTables = '';
         foreach ($aSquema as $key => $value) {
@@ -2848,16 +2856,17 @@ class workspaceTools
         }
 
         $sysTablesIniFile= PATH_CONFIG . 'system-tables.ini';
-        $contents = file_put_contents( $sysTablesIniFile, sprintf( "%s '%s'\n", "tables = ", $sListTables ) );
+        $contents = file_put_contents($sysTablesIniFile, sprintf("%s '%s'\n", "tables = ", $sListTables));
         if ($contents === null) {
-            throw (new Exception( G::LoadTranslation('ID_FILE_NOT_WRITEABLE', SYS_LANG, array($sysTablesIniFile) ) ));
+            throw (new Exception(G::LoadTranslation('ID_FILE_NOT_WRITEABLE', SYS_LANG, array($sysTablesIniFile))));
         }
     }
 
     /**
      *return void
      */
-    public function checkRbacPermissions(){
+    public function checkRbacPermissions()
+    {
         CLI::logging("-> Verifying roles permissions in RBAC \n");
         //Update table RBAC permissions
         $RBAC = &RBAC::getSingleton();
@@ -3129,7 +3138,6 @@ class workspaceTools
                 PATH_DATA."/post-missing-inbox-".$this->name.".txt",
                 "[".$item['APP_UID']."] has not been found"
             );
-
         }
 
         CLI::logging("> Number of missing inbox cases for workspace " . CLI::info($this->name) . ": " . CLI::info($counter) . "\n");
@@ -3276,7 +3284,7 @@ class workspaceTools
 
     public function verifyListData($type)
     {
-        switch($type) {
+        switch ($type) {
             case 'LIST_CANCELLED':
                 $response = $this->verifyMissingCancelled();
                 break;
@@ -3325,7 +3333,7 @@ class workspaceTools
         $this->initPropel(true);
         $conf  = new Configuration();
         $blackList = array();
-        if($bExist = $conf->exists('MIGRATED_CONTENT', 'content')){
+        if ($bExist = $conf->exists('MIGRATED_CONTENT', 'content')) {
             $oConfig = $conf->load('MIGRATED_CONTENT', 'content');
             $blackList = $oConfig['CFG_VALUE'] == 'true' ? array('Groupwf', 'Process', 'Department', 'Task', 'InputDocument', 'Application') : unserialize($oConfig['CFG_VALUE']);
         }
@@ -3374,14 +3382,14 @@ class workspaceTools
                 $oTable = new $className();
                 $that = array($oTable, $methods['exists']);
                 $params = array($row[$fieldUidName]);
-                if (isset($row['CON_PARENT']) && $row['CON_PARENT'] != ''){
+                if (isset($row['CON_PARENT']) && $row['CON_PARENT'] != '') {
                     array_push($params, $row['CON_PARENT']);
                     $fieldName = isset($fields['alias']) && isset($fields['alias']['CON_PARENT']) ? $fields['alias']['CON_PARENT'] : 'CON_PARENT';
                     $row[$fieldName] = $row['CON_PARENT'];
                 }
                 unset($row['CON_PARENT']);
-                if (call_user_func_array($that, $params)){
-                    if (isset($methods['update'])){
+                if (call_user_func_array($that, $params)) {
+                    if (isset($methods['update'])) {
                         $fn = $methods['update'];
                         $fn($row);
                     } else {
@@ -3508,7 +3516,8 @@ class workspaceTools
         CLI::logging("|--> Clean data in table " . OauthRefreshTokensPeer::TABLE_NAME . " rows ".$refreshToken."\n");
     }
 
-    public function migrateIteeToDummytask($workspaceName){
+    public function migrateIteeToDummytask($workspaceName)
+    {
         $this->initPropel(true);
         $arraySystemConfiguration = PmSystem::getSystemConfiguration('', '', $workspaceName);
         $conf = new Configurations();
@@ -3531,8 +3540,8 @@ class workspaceTools
 
         //Search All process
         $oCriteria = new Criteria("workflow");
-        $oCriteria->addSelectColumn( ProcessPeer::PRO_UID );
-        $oCriteria->addSelectColumn( ProcessPeer::PRO_ITEE );
+        $oCriteria->addSelectColumn(ProcessPeer::PRO_UID);
+        $oCriteria->addSelectColumn(ProcessPeer::PRO_ITEE);
         $oCriteria->add(ProcessPeer::PRO_ITEE, '0', Criteria::EQUAL);
         $rsCriteria = ProcessPeer::doSelectRS($oCriteria);
         $rsCriteria->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -3542,7 +3551,7 @@ class workspaceTools
             $row = $rsCriteria->getRow();
             $prj_uid = $row['PRO_UID'];
             $bpmnProcess = new Process();
-            if($bpmnProcess->isBpmnProcess($prj_uid)){
+            if ($bpmnProcess->isBpmnProcess($prj_uid)) {
                 $project = new \ProcessMaker\Project\Adapter\BpmnWorkflow();
                 $diagram = $project->getStruct($prj_uid);
                 $res = $project->updateFromStruct($prj_uid, $diagram);
@@ -3568,9 +3577,10 @@ class workspaceTools
         $conf->saveConfig('SKIN_CRON', '');
     }
 
-    public function upgradeAuditLog($workspace){
+    public function upgradeAuditLog($workspace)
+    {
         $conf = new Configurations();
-        if (!$conf->exists('AUDIT_LOG','log')) {
+        if (!$conf->exists('AUDIT_LOG', 'log')) {
             CLI::logging("> Updating Auditlog Config \n");
             $oServerConf = &serverConf::getSingleton();
             $sAudit = $oServerConf->getAuditLogProperty('AL_OPTION', $workspace);
@@ -3579,7 +3589,8 @@ class workspaceTools
         }
     }
 
-    public function migrateSelfServiceRecordsRun($workspace) {
+    public function migrateSelfServiceRecordsRun($workspace)
+    {
         // Initializing
         $this->initPropel(true);
 
@@ -3597,7 +3608,7 @@ class workspaceTools
             $row = $rsCriteria->getRow();
             $temp = @unserialize($row['GRP_UID']);
             if (is_array($temp)) {
-                foreach($temp as $groupUid) {
+                foreach ($temp as $groupUid) {
                     if ($groupUid != '') {
                         $appAssignSelfServiceValueGroup = new AppAssignSelfServiceValueGroup();
                         $appAssignSelfServiceValueGroup->setId($row['ID']);
@@ -3625,7 +3636,8 @@ class workspaceTools
         CLI::logging("   Migrating Self-Service by Value Cases Done \n");
     }
 
-    public function migratePopulateIndexingACV($workspace) {
+    public function migratePopulateIndexingACV($workspace)
+    {
         // Migrating and populating new indexes
         CLI::logging("-> Migrating an populating indexing for avoiding the use of table APP_CACHE_VIEW Start \n");
 
@@ -3752,7 +3764,7 @@ class workspaceTools
         CLI::logging("->   Populating PRO_ID, USR_ID at LIST_* \n");
         $con->begin();
         $stmt = $con->createStatement();
-        foreach(workspaceTools::$populateIdsQueries as $query) {
+        foreach (workspaceTools::$populateIdsQueries as $query) {
             $stmt->executeQuery($query);
         }
         $con->commit();
@@ -3761,14 +3773,14 @@ class workspaceTools
     }
     
     /**
-     * It populates the WEB_ENTRY table for the classic processes, this procedure 
-     * is done to verify the execution of php files generated when the WebEntry 
+     * It populates the WEB_ENTRY table for the classic processes, this procedure
+     * is done to verify the execution of php files generated when the WebEntry
      * is configured.
      * @param type $workSpace
      */
     public function updatingWebEntryClassicModel($workSpace, $force = false)
     {
-        //We obtain from the configuration the list of proUids obtained so that 
+        //We obtain from the configuration the list of proUids obtained so that
         //we do not go through again.
         $cfgUid = 'UPDATING_ROWS_WEB_ENTRY';
         $objUid = 'blackList';
@@ -3780,7 +3792,7 @@ class workspaceTools
             $blackList = unserialize($oConfig['CFG_VALUE']);
         }
 
-        //The following query returns all the classic processes that do not have 
+        //The following query returns all the classic processes that do not have
         //a record in the WEB_ENTRY table.
         $oCriteria = new Criteria("workflow");
         $oCriteria->addSelectColumn(ProcessPeer::PRO_UID);
@@ -3821,7 +3833,7 @@ class workspaceTools
                             $row1 = $stepRs->getRow();
                             $content = file_get_contents($path . "/" . $fileName);
                             if (strpos($content, $proUid . "/" . $row1["STEP_UID_OBJ"]) !== false) {
-                                //The default user admin is set. This task is 
+                                //The default user admin is set. This task is
                                 //carried out by the system administrator.
                                 $userUid = "00000000000000000000000000000001";
                                 //save data in table WEB_ENTRY
@@ -3843,7 +3855,7 @@ class workspaceTools
             }
         }
 
-        //The list of proUids obtained is saved in the configuration so that it 
+        //The list of proUids obtained is saved in the configuration so that it
         //does not go through again.
         $data = [
             "CFG_UID" => $cfgUid,
@@ -3893,6 +3905,26 @@ class workspaceTools
             $data["USR_UID"] = '';
             $data["APP_UID"] = '';
             $conf->create($data);
+        }
+    }
+
+    /**
+     * This method finds all recursively PHP files that have the path PATH_DATA,
+     * poorly referenced, this is caused by the import of processes where the data
+     * directory of ProcessMaker has different routes. Modified files are backed
+     * up with the extension '.backup' in the same directory.
+     *
+     * @return void
+     */
+    public function fixReferencePathFiles($pathClasses, $pathData)
+    {
+        try {
+            $this->initPropel(true);
+            $fixReferencePath = new FixReferencePath();
+            $fixReferencePath->runProcess($pathClasses, $pathData);
+            CLI::logging($fixReferencePath->getResumeDebug());
+        } catch (Exception $e) {
+            CLI::logging(CLI::error("Error:" . "Error updating generated class files for PM Tables, proceed to regenerate manually: " . $e));
         }
     }
 }

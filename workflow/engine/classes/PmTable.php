@@ -114,6 +114,17 @@ class PmTable
     }
 
     /**
+     * 
+     * 
+     * @param string $adapter
+     * @return void
+     */
+    public function setDbConfigAdapter($adapter)
+    {
+        $this->dbConfig->adapter = $adapter;
+    }
+
+    /**
      * Backward compatibility function
      * Resolve a propel data source
      *
