@@ -1,7 +1,6 @@
 <?php
 
-
-class featuresDetail
+class FeaturesDetail
 {
     public $featureName;
     public $description = null;

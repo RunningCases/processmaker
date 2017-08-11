@@ -313,7 +313,7 @@ class PMLicensedFeatures
         $addons = AddonsManagerPeer::doSelect($criteria);
         foreach ($addons as $addon) {
             $this->features[] = $addon->getAddonId();
-            $detail = new featuresDetail($addon->getAddonNick(), $addon->getAddonDescription());
+            $detail = new FeaturesDetail($addon->getAddonNick(), $addon->getAddonDescription());
             $this->featuresDetails[$addon->getAddonId()] = $detail;
         }
     }

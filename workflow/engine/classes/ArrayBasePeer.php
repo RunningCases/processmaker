@@ -1,49 +1,18 @@
 <?php
-/**
- * class.ArrayPeer.php
- *
- * @package workflow.engine.classes
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2004 - 2011 Colosa Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
- */
 
 require_once 'propel/util/BasePeer.php';
-// The object 
+
 /**
  * Base static class for performing query and update operations on the 'APPLICATION' table.
  *
  * @package workflow.engine.classes
- */abstract class ArrayBasePeer
+ */
+abstract class ArrayBasePeer
 {
-
     /**
      * The default database name for this class
      */
     const DATABASE_NAME = 'dbarray';
-
-    /**
-     * The table name for this class
-     */
-    //const TABLE_NAME = 'APPLICATION';
-
 
     /**
      * A class that can be returned by this peer.
@@ -146,10 +115,10 @@ require_once 'propel/util/BasePeer.php';
      * First dimension keys are the type constants
      * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
      */
-    private static $fieldNames = array (BasePeer::TYPE_PHPNAME => array ('AppUid','AppNumber','AppParent','AppStatus','ProUid','AppProcStatus','AppProcCode','AppParallel','AppInitUser','AppCurUser','AppCreateDate','AppInitDate','AppFinishDate','AppUpdateDate','AppData'
-    ),BasePeer::TYPE_COLNAME => array (ApplicationPeer::APP_UID,ApplicationPeer::APP_NUMBER,ApplicationPeer::APP_PARENT,ApplicationPeer::APP_STATUS,ApplicationPeer::PRO_UID,ApplicationPeer::APP_PROC_STATUS,ApplicationPeer::APP_PROC_CODE,ApplicationPeer::APP_PARALLEL,ApplicationPeer::APP_INIT_USER,ApplicationPeer::APP_CUR_USER,ApplicationPeer::APP_CREATE_DATE,ApplicationPeer::APP_INIT_DATE,ApplicationPeer::APP_FINISH_DATE,ApplicationPeer::APP_UPDATE_DATE,ApplicationPeer::APP_DATA
-    ),BasePeer::TYPE_FIELDNAME => array ('APP_UID','APP_NUMBER','APP_PARENT','APP_STATUS','PRO_UID','APP_PROC_STATUS','APP_PROC_CODE','APP_PARALLEL','APP_INIT_USER','APP_CUR_USER','APP_CREATE_DATE','APP_INIT_DATE','APP_FINISH_DATE','APP_UPDATE_DATE','APP_DATA'
-    ),BasePeer::TYPE_NUM => array (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14
+    private static $fieldNames = array(BasePeer::TYPE_PHPNAME => array('AppUid', 'AppNumber', 'AppParent', 'AppStatus', 'ProUid', 'AppProcStatus', 'AppProcCode', 'AppParallel', 'AppInitUser', 'AppCurUser', 'AppCreateDate', 'AppInitDate', 'AppFinishDate', 'AppUpdateDate', 'AppData'
+    ), BasePeer::TYPE_COLNAME => array(ApplicationPeer::APP_UID, ApplicationPeer::APP_NUMBER, ApplicationPeer::APP_PARENT, ApplicationPeer::APP_STATUS, ApplicationPeer::PRO_UID, ApplicationPeer::APP_PROC_STATUS, ApplicationPeer::APP_PROC_CODE, ApplicationPeer::APP_PARALLEL, ApplicationPeer::APP_INIT_USER, ApplicationPeer::APP_CUR_USER, ApplicationPeer::APP_CREATE_DATE, ApplicationPeer::APP_INIT_DATE, ApplicationPeer::APP_FINISH_DATE, ApplicationPeer::APP_UPDATE_DATE, ApplicationPeer::APP_DATA
+    ), BasePeer::TYPE_FIELDNAME => array('APP_UID', 'APP_NUMBER', 'APP_PARENT', 'APP_STATUS', 'PRO_UID', 'APP_PROC_STATUS', 'APP_PROC_CODE', 'APP_PARALLEL', 'APP_INIT_USER', 'APP_CUR_USER', 'APP_CREATE_DATE', 'APP_INIT_DATE', 'APP_FINISH_DATE', 'APP_UPDATE_DATE', 'APP_DATA'
+    ), BasePeer::TYPE_NUM => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
     )
     );
 
@@ -159,10 +128,10 @@ require_once 'propel/util/BasePeer.php';
      * First dimension keys are the type constants
      * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
      */
-    private static $fieldKeys = array (BasePeer::TYPE_PHPNAME => array ('AppUid' => 0,'AppNumber' => 1,'AppParent' => 2,'AppStatus' => 3,'ProUid' => 4,'AppProcStatus' => 5,'AppProcCode' => 6,'AppParallel' => 7,'AppInitUser' => 8,'AppCurUser' => 9,'AppCreateDate' => 10,'AppInitDate' => 11,'AppFinishDate' => 12,'AppUpdateDate' => 13,'AppData' => 14
-    ),BasePeer::TYPE_COLNAME => array (ApplicationPeer::APP_UID => 0,ApplicationPeer::APP_NUMBER => 1,ApplicationPeer::APP_PARENT => 2,ApplicationPeer::APP_STATUS => 3,ApplicationPeer::PRO_UID => 4,ApplicationPeer::APP_PROC_STATUS => 5,ApplicationPeer::APP_PROC_CODE => 6,ApplicationPeer::APP_PARALLEL => 7,ApplicationPeer::APP_INIT_USER => 8,ApplicationPeer::APP_CUR_USER => 9,ApplicationPeer::APP_CREATE_DATE => 10,ApplicationPeer::APP_INIT_DATE => 11,ApplicationPeer::APP_FINISH_DATE => 12,ApplicationPeer::APP_UPDATE_DATE => 13,ApplicationPeer::APP_DATA => 14
-    ),BasePeer::TYPE_FIELDNAME => array ('APP_UID' => 0,'APP_NUMBER' => 1,'APP_PARENT' => 2,'APP_STATUS' => 3,'PRO_UID' => 4,'APP_PROC_STATUS' => 5,'APP_PROC_CODE' => 6,'APP_PARALLEL' => 7,'APP_INIT_USER' => 8,'APP_CUR_USER' => 9,'APP_CREATE_DATE' => 10,'APP_INIT_DATE' => 11,'APP_FINISH_DATE' => 12,'APP_UPDATE_DATE' => 13,'APP_DATA' => 14
-    ),BasePeer::TYPE_NUM => array (0,1,2,3,4,5,6,7,8,9,10,11,12,13,14
+    private static $fieldKeys = array(BasePeer::TYPE_PHPNAME => array('AppUid' => 0, 'AppNumber' => 1, 'AppParent' => 2, 'AppStatus' => 3, 'ProUid' => 4, 'AppProcStatus' => 5, 'AppProcCode' => 6, 'AppParallel' => 7, 'AppInitUser' => 8, 'AppCurUser' => 9, 'AppCreateDate' => 10, 'AppInitDate' => 11, 'AppFinishDate' => 12, 'AppUpdateDate' => 13, 'AppData' => 14
+    ), BasePeer::TYPE_COLNAME => array(ApplicationPeer::APP_UID => 0, ApplicationPeer::APP_NUMBER => 1, ApplicationPeer::APP_PARENT => 2, ApplicationPeer::APP_STATUS => 3, ApplicationPeer::PRO_UID => 4, ApplicationPeer::APP_PROC_STATUS => 5, ApplicationPeer::APP_PROC_CODE => 6, ApplicationPeer::APP_PARALLEL => 7, ApplicationPeer::APP_INIT_USER => 8, ApplicationPeer::APP_CUR_USER => 9, ApplicationPeer::APP_CREATE_DATE => 10, ApplicationPeer::APP_INIT_DATE => 11, ApplicationPeer::APP_FINISH_DATE => 12, ApplicationPeer::APP_UPDATE_DATE => 13, ApplicationPeer::APP_DATA => 14
+    ), BasePeer::TYPE_FIELDNAME => array('APP_UID' => 0, 'APP_NUMBER' => 1, 'APP_PARENT' => 2, 'APP_STATUS' => 3, 'PRO_UID' => 4, 'APP_PROC_STATUS' => 5, 'APP_PROC_CODE' => 6, 'APP_PARALLEL' => 7, 'APP_INIT_USER' => 8, 'APP_CUR_USER' => 9, 'APP_CREATE_DATE' => 10, 'APP_INIT_DATE' => 11, 'APP_FINISH_DATE' => 12, 'APP_UPDATE_DATE' => 13, 'APP_DATA' => 14
+    ), BasePeer::TYPE_NUM => array(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
     )
     );
 
@@ -172,10 +141,10 @@ require_once 'propel/util/BasePeer.php';
      * @throws PropelException Any exceptions caught during processing will be
      * rethrown wrapped into a PropelException.
      */
-    public static function getMapBuilder ()
+    public static function getMapBuilder()
     {
         include_once 'classes/model/map/ApplicationMapBuilder.php';
-        return BasePeer::getMapBuilder( 'classes.model.map.ApplicationMapBuilder' );
+        return BasePeer::getMapBuilder('classes.model.map.ApplicationMapBuilder');
     }
 
     /**
@@ -186,12 +155,12 @@ require_once 'propel/util/BasePeer.php';
      * rethrown wrapped into a PropelException.
      * @deprecated Use the getFieldNames() and translateFieldName() methods instead of this.
      */
-    public static function getPhpNameMap ()
+    public static function getPhpNameMap()
     {
         if (self::$phpNameMap === null) {
             $map = ApplicationPeer::getTableMap();
             $columns = $map->getColumns();
-            $nameMap = array ();
+            $nameMap = array();
             foreach ($columns as $column) {
                 $nameMap[$column->getPhpName()] = $column->getColumnName();
             }
@@ -209,12 +178,12 @@ require_once 'propel/util/BasePeer.php';
      * @param string $toType One of the class type constants
      * @return string translated name of the field.
      */
-    static public function translateFieldName ($name, $fromType, $toType)
+    static public function translateFieldName($name, $fromType, $toType)
     {
-        $toNames = self::getFieldNames( $toType );
-        $key = isset( self::$fieldKeys[$fromType][$name] ) ? self::$fieldKeys[$fromType][$name] : null;
+        $toNames = self::getFieldNames($toType);
+        $key = isset(self::$fieldKeys[$fromType][$name]) ? self::$fieldKeys[$fromType][$name] : null;
         if ($key === null) {
-            throw new PropelException( "'$name' could not be found in the field names of type '$fromType'. These are: " . print_r( self::$fieldKeys[$fromType], true ) );
+            throw new PropelException("'$name' could not be found in the field names of type '$fromType'. These are: " . print_r(self::$fieldKeys[$fromType], true));
         }
         return $toNames[$key];
     }
@@ -228,10 +197,10 @@ require_once 'propel/util/BasePeer.php';
      * @return array A list of field names
      */
 
-    static public function getFieldNames ($type = BasePeer::TYPE_PHPNAME)
+    static public function getFieldNames($type = BasePeer::TYPE_PHPNAME)
     {
-        if (! array_key_exists( $type, self::$fieldNames )) {
-            throw new PropelException( 'Method getFieldNames() expects the parameter $type to be one of the class constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM. ' . $type . ' was given.' );
+        if (!array_key_exists($type, self::$fieldNames)) {
+            throw new PropelException('Method getFieldNames() expects the parameter $type to be one of the class constants TYPE_PHPNAME, TYPE_COLNAME, TYPE_FIELDNAME, TYPE_NUM. ' . $type . ' was given.');
         }
         return self::$fieldNames[$type];
     }
@@ -249,9 +218,9 @@ require_once 'propel/util/BasePeer.php';
      * @param string $column The column name for current table. (i.e. ApplicationPeer::COLUMN_NAME).
      * @return string
      */
-    public static function alias ($alias, $column)
+    public static function alias($alias, $column)
     {
-        return str_replace( ApplicationPeer::TABLE_NAME . '.', $alias . '.', $column );
+        return str_replace(ApplicationPeer::TABLE_NAME . '.', $alias . '.', $column);
     }
 
     /**
@@ -265,7 +234,7 @@ require_once 'propel/util/BasePeer.php';
      * @throws PropelException Any exceptions caught during processing will be
      * rethrown wrapped into a PropelException.
      */
-    public static function addSelectColumns (Criteria $criteria)
+    public static function addSelectColumns(Criteria $criteria)
     {
 
     }
@@ -282,7 +251,7 @@ require_once 'propel/util/BasePeer.php';
      * @return int Number of matching rows.
      * @todo Review declarated constant d'not used COUNT, COUNT_DISTINCT
      */
-    public static function doCount (Criteria $criteria, $distinct = false, $con = null)
+    public static function doCount(Criteria $criteria, $distinct = false, $con = null)
     {
         // we're going to modify criteria, so copy it first
         $criteria = clone $criteria;
@@ -297,14 +266,14 @@ require_once 'propel/util/BasePeer.php';
       $criteria->addSelectColumn(ApplicationPeer::COUNT);
     }
     */
-        $criteria->addSelectColumn( 'COUNT(*)' );
+        $criteria->addSelectColumn('COUNT(*)');
 
         // just in case we're grouping: add those columns to the select statement
         foreach ($criteria->getGroupByColumns() as $column) {
-            $criteria->addSelectColumn( $column );
+            $criteria->addSelectColumn($column);
         }
 
-        $rs = ArrayBasePeer::doSelectRS( $criteria, $con );
+        $rs = ArrayBasePeer::doSelectRS($criteria, $con);
         if ($rs->next()) {
             $row = $rs->getRow();
             return $row[1];
@@ -323,11 +292,11 @@ require_once 'propel/util/BasePeer.php';
      * @throws PropelException Any exceptions caught during processing will be
      * rethrown wrapped into a PropelException.
      */
-    public static function doSelectOne (Criteria $criteria, $con = null)
+    public static function doSelectOne(Criteria $criteria, $con = null)
     {
         $critcopy = clone $criteria;
-        $critcopy->setLimit( 1 );
-        $objects = ApplicationPeer::doSelect( $critcopy, $con );
+        $critcopy->setLimit(1);
+        $objects = ApplicationPeer::doSelect($critcopy, $con);
         if ($objects) {
             return $objects[0];
         }
@@ -343,18 +312,18 @@ require_once 'propel/util/BasePeer.php';
      * @throws PropelException Any exceptions caught during processing will be
      * rethrown wrapped into a PropelException.
      */
-    private function createSelectSql ($criteria, $tableName, &$params)
+    private function createSelectSql($criteria, $tableName, &$params)
     {
-        $db = Propel::getDB( $criteria->getDbName() );
+        $db = Propel::getDB($criteria->getDbName());
 
         // redundant definition $selectModifiers = array();
-        $selectClause = array ();
-        $fromClause = array ();
-        $joinClause = array ();
-        $joinTables = array ();
-        $whereClause = array ();
-        $orderByClause = array ();
-        $groupByClause = array ();
+        $selectClause = array();
+        $fromClause = array();
+        $joinClause = array();
+        $joinTables = array();
+        $whereClause = array();
+        $orderByClause = array();
+        $groupByClause = array();
 
         $orderBy = $criteria->getOrderByColumns();
         $groupBy = $criteria->getGroupByColumns();
@@ -372,8 +341,8 @@ require_once 'propel/util/BasePeer.php';
             $selectClause[] = $columnName; // the full column name: e.g. MAX(books.price)
 
 
-            $parenPos = strpos( $columnName, '(' );
-            $dotPos = strpos( $columnName, '.' );
+            $parenPos = strpos($columnName, '(');
+            $dotPos = strpos($columnName, '.');
 
             // [HL] I think we really only want to worry about adding stuff to
             // the fromClause if this function has a TABLE.COLUMN in it at all.
@@ -382,18 +351,18 @@ require_once 'propel/util/BasePeer.php';
             if ($dotPos !== false) {
 
                 if ($parenPos === false) { // table.column
-                    $tableName = substr( $columnName, 0, $dotPos );
+                    $tableName = substr($columnName, 0, $dotPos);
                 } else { // FUNC(table.column)
-                    $tableName = substr( $columnName, $parenPos + 1, $dotPos - ($parenPos + 1) );
+                    $tableName = substr($columnName, $parenPos + 1, $dotPos - ($parenPos + 1));
                     // functions may contain qualifiers so only take the last
                     // word as the table name.
                     // COUNT(DISTINCT books.price)
-                    $lastSpace = strpos( $tableName, ' ' );
+                    $lastSpace = strpos($tableName, ' ');
                     if ($lastSpace !== false) { // COUNT(DISTINCT books.price)
-                        $tableName = substr( $tableName, $lastSpace + 1 );
+                        $tableName = substr($tableName, $lastSpace + 1);
                     }
                 }
-                $tableName2 = $criteria->getTableForAlias( $tableName );
+                $tableName2 = $criteria->getTableForAlias($tableName);
                 if ($tableName2 !== null) {
                     $fromClause[] = $tableName2 . ' ' . $tableName;
                 } else {
@@ -411,13 +380,13 @@ require_once 'propel/util/BasePeer.php';
         // add the criteria to WHERE clause
         foreach ($criteria->keys() as $key) {
 
-            $criterion = $criteria->getCriterion( $key );
+            $criterion = $criteria->getCriterion($key);
             $someCriteria = $criterion->getAttachedCriterion();
-            $someCriteriaLength = count( $someCriteria );
+            $someCriteriaLength = count($someCriteria);
             $table = null;
-            for ($i = 0; $i < $someCriteriaLength; $i ++) {
+            for ($i = 0; $i < $someCriteriaLength; $i++) {
                 $tableName = $someCriteria[$i]->getTable();
-                $table = $criteria->getTableForAlias( $tableName );
+                $table = $criteria->getTableForAlias($tableName);
                 if ($table !== null) {
                     $fromClause[] = $table . ' ' . $tableName;
                 } else {
@@ -425,11 +394,11 @@ require_once 'propel/util/BasePeer.php';
                     $table = $tableName;
                 }
 
-                $ignoreCase = (($criteria->isIgnoreCase() || $someCriteria[$i]->isIgnoreCase()) && ($dbMap->getTable( $table )->getColumn( $someCriteria[$i]->getColumn() )->getType() == "string"));
+                $ignoreCase = (($criteria->isIgnoreCase() || $someCriteria[$i]->isIgnoreCase()) && ($dbMap->getTable($table)->getColumn($someCriteria[$i]->getColumn())->getType() == "string"));
 
-                $someCriteria[$i]->setIgnoreCase( $ignoreCase );
+                $someCriteria[$i]->setIgnoreCase($ignoreCase);
             }
-            $criterion->setDB( $db );
+            $criterion->setDB($db);
 
             $cri['table'] = $criterion->table;
             $cri['field'] = $criterion->column;
@@ -445,41 +414,41 @@ require_once 'propel/util/BasePeer.php';
 
         }
         // Unique from clause elements
-        $fromClause = array_unique( $fromClause );
+        $fromClause = array_unique($fromClause);
 
-        if (! empty( $orderBy )) {
+        if (!empty($orderBy)) {
 
             foreach ($orderBy as $orderByColumn) {
                 // Add function expression as-is.
-                if (strpos( $orderByColumn, '(' ) !== false) {
+                if (strpos($orderByColumn, '(') !== false) {
                     $orderByClause[] = $orderByColumn;
                     continue;
                 }
 
                 // Split orderByColumn (i.e. "table.column DESC")
-                $dotPos = strpos( $orderByColumn, '.' );
+                $dotPos = strpos($orderByColumn, '.');
                 if ($dotPos !== false) {
-                    $tableName = substr( $orderByColumn, 0, $dotPos );
-                    $columnName = substr( $orderByColumn, $dotPos + 1 );
+                    $tableName = substr($orderByColumn, 0, $dotPos);
+                    $columnName = substr($orderByColumn, $dotPos + 1);
                 } else {
                     $tableName = '';
                     $columnName = $orderByColumn;
                 }
 
-                $spacePos = strpos( $columnName, ' ' );
+                $spacePos = strpos($columnName, ' ');
                 if ($spacePos !== false) {
-                    $direction = substr( $columnName, $spacePos );
-                    $columnName = substr( $columnName, 0, $spacePos );
+                    $direction = substr($columnName, $spacePos);
+                    $columnName = substr($columnName, 0, $spacePos);
                 } else {
                     $direction = '';
                 }
-                $orderByClause[] = array ('columnName' => $columnName,'direction' => $direction
+                $orderByClause[] = array('columnName' => $columnName, 'direction' => $direction
                 );
             }
         }
 
         // Build the SQL from the arrays we compiled
-        $sql = "SELECT " . ($selectModifiers ? implode( " ", $selectModifiers ) . " " : "") . implode( ", ", $selectClause ) . " FROM " . $fromClause[0] . ($whereClause ? " WHERE " . implode( " AND ", $whereClause ) : "") . ($groupByClause ? " GROUP BY " . implode( ",", $groupByClause ) : "");
+        $sql = "SELECT " . ($selectModifiers ? implode(" ", $selectModifiers) . " " : "") . implode(", ", $selectClause) . " FROM " . $fromClause[0] . ($whereClause ? " WHERE " . implode(" AND ", $whereClause) : "") . ($groupByClause ? " GROUP BY " . implode(",", $groupByClause) : "");
 
         $dataSql['selectClause'] = $selectClause;
         $dataSql['fromClause'] = $fromClause;
@@ -499,27 +468,27 @@ require_once 'propel/util/BasePeer.php';
      * @throws PropelException Any exceptions caught during processing will be
      * rethrown wrapped into a PropelException.
      */
-    public static function doSelect (Criteria $criteria, $tableName, $con = null)
+    public static function doSelect(Criteria $criteria, $tableName, $con = null)
     {
-        $dbMap = Propel::getDatabaseMap( $criteria->getDbName() );
+        $dbMap = Propel::getDatabaseMap($criteria->getDbName());
 
         $stmt = null;
 
         try {
-            $params = array ();
-            $sql = self::createSelectSql( $criteria, $tableName, $params );
+            $params = array();
+            $sql = self::createSelectSql($criteria, $tableName, $params);
             $sql['params'] = $params;
-            $stmt = $con->prepareStatement( $sql );
+            $stmt = $con->prepareStatement($sql);
             //$stmt->setLimit($criteria->getLimit());
             $sql['limit'] = $criteria->getLimit();
             //$stmt->setOffset($criteria->getOffset());
             $sql['offset'] = $criteria->getOffset();
             //$rs = $stmt->executeQuery(ResultSet::FETCHMODE_NUM);
-            $rs = $con->executeQuery( $sql, ResultSet::FETCHMODE_NUM );
+            $rs = $con->executeQuery($sql, ResultSet::FETCHMODE_NUM);
         } catch (Exception $e) {
             if ($stmt)
                 $stmt->close();
-            throw new PropelException( $e );
+            throw new PropelException($e);
         }
 
         return $rs;
@@ -539,34 +508,34 @@ require_once 'propel/util/BasePeer.php';
      * @return ResultSet The resultset object with numerically-indexed fields.
      * @see BasePeer::doSelect()
      */
-    public static function doSelectRS (Criteria $criteria, $con = null)
+    public static function doSelectRS(Criteria $criteria, $con = null)
     {
         global $_DBArray;
-        if (! isset( $_DBArray )) {
+        if (!isset($_DBArray)) {
             $_DBArray = $_SESSION['_DBArray'];
         }
         $tableName = $criteria->getDBArrayTable();
-        if (! isset( $_DBArray[$tableName] )) {
-            throw new Exception( "Error: the table '$tableName' doesn't exist in DBArray " );
+        if (!isset($_DBArray[$tableName])) {
+            throw new Exception("Error: the table '$tableName' doesn't exist in DBArray ");
         }
 
         $arrayTable = $_DBArray[$tableName];
 
         if ($con === null) {
-            $con = Propel::getConnection( self::DATABASE_NAME );
+            $con = Propel::getConnection(self::DATABASE_NAME);
         }
 
-        if (! $criteria->getSelectColumns()) {
-            foreach (array_keys( $_DBArray[$tableName][0] ) as $key => $val)
-                $criteria->addSelectColumn( $tableName . '.' . $val );
+        if (!$criteria->getSelectColumns()) {
+            foreach (array_keys($_DBArray[$tableName][0]) as $key => $val)
+                $criteria->addSelectColumn($tableName . '.' . $val);
         }
 
         // Set the correct dbName
-        $criteria->setDbName( self::DATABASE_NAME );
+        $criteria->setDbName(self::DATABASE_NAME);
 
         // BasePeer returns a Creole ResultSet, set to return
         // rows indexed numerically.
-        return ArrayBasePeer::doSelect( $criteria, $tableName, $con );
+        return ArrayBasePeer::doSelect($criteria, $tableName, $con);
     }
 
     /**
@@ -576,17 +545,17 @@ require_once 'propel/util/BasePeer.php';
      * @throws PropelException Any exceptions caught during processing will be
      * rethrown wrapped into a PropelException.
      */
-    public static function populateObjects (ResultSet $rs)
+    public static function populateObjects(ResultSet $rs)
     {
-        $results = array ();
+        $results = array();
 
         // set the class once to avoid overhead in the loop
         $cls = ApplicationPeer::getOMClass();
-        $cls = Propel::import( $cls );
+        $cls = Propel::import($cls);
         // populate the object(s)
         while ($rs->next()) {
             $obj = new $cls();
-            $obj->hydrate( $rs );
+            $obj->hydrate($rs);
             $results[] = $obj;
         }
         return $results;
@@ -600,9 +569,9 @@ require_once 'propel/util/BasePeer.php';
      * @throws PropelException Any exceptions caught during processing will be
      * rethrown wrapped into a PropelException.
      */
-    public static function getTableMap ()
+    public static function getTableMap()
     {
-        return Propel::getDatabaseMap( self::DATABASE_NAME )->getTable( self::TABLE_NAME );
+        return Propel::getDatabaseMap(self::DATABASE_NAME)->getTable(self::TABLE_NAME);
     }
 
     /**
@@ -614,7 +583,7 @@ require_once 'propel/util/BasePeer.php';
      *
      * @return string path.to.ClassName
      */
-    public static function getOMClass ()
+    public static function getOMClass()
     {
         return ApplicationPeer::CLASS_DEFAULT;
     }
@@ -628,10 +597,10 @@ require_once 'propel/util/BasePeer.php';
      * @throws PropelException Any exceptions caught during processing will be
      * rethrown wrapped into a PropelException.
      */
-    public static function doInsert ($values, $con = null)
+    public static function doInsert($values, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection( self::DATABASE_NAME );
+            $con = Propel::getConnection(self::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
@@ -641,13 +610,13 @@ require_once 'propel/util/BasePeer.php';
         }
 
         // Set the correct dbName
-        $criteria->setDbName( self::DATABASE_NAME );
+        $criteria->setDbName(self::DATABASE_NAME);
 
         try {
             // use transaction because $criteria could contain info
             // for more than one table (I guess, conceivably)
             $con->begin();
-            $pk = BasePeer::doInsert( $criteria, $con );
+            $pk = BasePeer::doInsert($criteria, $con);
             $con->commit();
         } catch (PropelException $e) {
             $con->rollback();
@@ -666,20 +635,20 @@ require_once 'propel/util/BasePeer.php';
      * @throws PropelException Any exceptions caught during processing will be
      * rethrown wrapped into a PropelException.
      */
-    public static function doUpdate ($values, $con = null)
+    public static function doUpdate($values, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection( self::DATABASE_NAME );
+            $con = Propel::getConnection(self::DATABASE_NAME);
         }
 
-        $selectCriteria = new Criteria( self::DATABASE_NAME );
+        $selectCriteria = new Criteria(self::DATABASE_NAME);
 
         if ($values instanceof Criteria) {
             $criteria = clone $values; // rename for clarity
 
 
-            $comparison = $criteria->getComparison( ApplicationPeer::APP_UID );
-            $selectCriteria->add( ApplicationPeer::APP_UID, $criteria->remove( ApplicationPeer::APP_UID ), $comparison );
+            $comparison = $criteria->getComparison(ApplicationPeer::APP_UID);
+            $selectCriteria->add(ApplicationPeer::APP_UID, $criteria->remove(ApplicationPeer::APP_UID), $comparison);
 
         } else { // $values is Application object
             $criteria = $values->buildCriteria(); // gets full criteria
@@ -687,9 +656,9 @@ require_once 'propel/util/BasePeer.php';
         }
 
         // set the correct dbName
-        $criteria->setDbName( self::DATABASE_NAME );
+        $criteria->setDbName(self::DATABASE_NAME);
 
-        return BasePeer::doUpdate( $selectCriteria, $criteria, $con );
+        return BasePeer::doUpdate($selectCriteria, $criteria, $con);
     }
 
     /**
@@ -698,17 +667,17 @@ require_once 'propel/util/BasePeer.php';
      * @param Connection $con The connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
-    public static function doDeleteAll ($con = null)
+    public static function doDeleteAll($con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection( self::DATABASE_NAME );
+            $con = Propel::getConnection(self::DATABASE_NAME);
         }
         $affectedRows = 0; // initialize var to track total num of affected rows
         try {
             // use transaction because $criteria could contain info
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->begin();
-            $affectedRows += BasePeer::doDeleteAll( ApplicationPeer::TABLE_NAME, $con );
+            $affectedRows += BasePeer::doDeleteAll(ApplicationPeer::TABLE_NAME, $con);
             $con->commit();
             return $affectedRows;
         } catch (PropelException $e) {
@@ -728,10 +697,10 @@ require_once 'propel/util/BasePeer.php';
      * @throws PropelException Any exceptions caught during processing will be
      * rethrown wrapped into a PropelException.
      */
-    public static function doDelete ($values, $con = null)
+    public static function doDelete($values, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection( ApplicationPeer::DATABASE_NAME );
+            $con = Propel::getConnection(ApplicationPeer::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
@@ -741,12 +710,12 @@ require_once 'propel/util/BasePeer.php';
                 $criteria = $values->buildPkeyCriteria();
             } else {
                 // it must be the primary key
-                $criteria = new Criteria( self::DATABASE_NAME );
-                $criteria->add( ApplicationPeer::APP_UID, (array) $values, Criteria::IN );
+                $criteria = new Criteria(self::DATABASE_NAME);
+                $criteria->add(ApplicationPeer::APP_UID, (array)$values, Criteria::IN);
             }
         }
         // Set the correct dbName
-        $criteria->setDbName( self::DATABASE_NAME );
+        $criteria->setDbName(self::DATABASE_NAME);
 
         $affectedRows = 0; // initialize var to track total num of affected rows
 
@@ -756,7 +725,7 @@ require_once 'propel/util/BasePeer.php';
             // for more than one table or we could emulating ON DELETE CASCADE, etc.
             $con->begin();
 
-            $affectedRows += BasePeer::doDelete( $criteria, $con );
+            $affectedRows += BasePeer::doDelete($criteria, $con);
             $con->commit();
             return $affectedRows;
         } catch (PropelException $e) {
@@ -777,33 +746,33 @@ require_once 'propel/util/BasePeer.php';
      *
      * @return mixed TRUE if all columns are valid or the error message of the first invalid column.
      */
-    public static function doValidate (Application $obj, $cols = null)
+    public static function doValidate(Application $obj, $cols = null)
     {
-        $columns = array ();
+        $columns = array();
 
         if ($cols) {
-            $dbMap = Propel::getDatabaseMap( ApplicationPeer::DATABASE_NAME );
-            $tableMap = $dbMap->getTable( ApplicationPeer::TABLE_NAME );
+            $dbMap = Propel::getDatabaseMap(ApplicationPeer::DATABASE_NAME);
+            $tableMap = $dbMap->getTable(ApplicationPeer::TABLE_NAME);
 
-            if (! is_array( $cols )) {
-                $cols = array ($cols
+            if (!is_array($cols)) {
+                $cols = array($cols
                 );
             }
 
             foreach ($cols as $colName) {
-                if ($tableMap->containsColumn( $colName )) {
-                    $get = 'get' . $tableMap->getColumn( $colName )->getPhpName();
+                if ($tableMap->containsColumn($colName)) {
+                    $get = 'get' . $tableMap->getColumn($colName)->getPhpName();
                     $columns[$colName] = $obj->$get();
                 }
             }
         } else {
 
-            if ($obj->isNew() || $obj->isColumnModified( ApplicationPeer::APP_STATUS ))
+            if ($obj->isNew() || $obj->isColumnModified(ApplicationPeer::APP_STATUS))
                 $columns[ApplicationPeer::APP_STATUS] = $obj->getAppStatus();
 
         }
 
-        return BasePeer::doValidate( ApplicationPeer::DATABASE_NAME, ApplicationPeer::TABLE_NAME, $columns );
+        return BasePeer::doValidate(ApplicationPeer::DATABASE_NAME, ApplicationPeer::TABLE_NAME, $columns);
     }
 
     /**
@@ -813,19 +782,19 @@ require_once 'propel/util/BasePeer.php';
      * @param Connection $con the connection to use
      * @return Application
      */
-    public static function retrieveByPK ($pk, $con = null)
+    public static function retrieveByPK($pk, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection( self::DATABASE_NAME );
+            $con = Propel::getConnection(self::DATABASE_NAME);
         }
 
-        $criteria = new Criteria( ApplicationPeer::DATABASE_NAME );
+        $criteria = new Criteria(ApplicationPeer::DATABASE_NAME);
 
-        $criteria->add( ApplicationPeer::APP_UID, $pk );
+        $criteria->add(ApplicationPeer::APP_UID, $pk);
 
-        $v = ApplicationPeer::doSelect( $criteria, $con );
+        $v = ApplicationPeer::doSelect($criteria, $con);
 
-        return ! empty( $v ) > 0 ? $v[0] : null;
+        return !empty($v) > 0 ? $v[0] : null;
     }
 
     /**
@@ -836,19 +805,19 @@ require_once 'propel/util/BasePeer.php';
      * @throws PropelException Any exceptions caught during processing will be
      * rethrown wrapped into a PropelException.
      */
-    public static function retrieveByPKs ($pks, $con = null)
+    public static function retrieveByPKs($pks, $con = null)
     {
         if ($con === null) {
-            $con = Propel::getConnection( self::DATABASE_NAME );
+            $con = Propel::getConnection(self::DATABASE_NAME);
         }
 
         $objs = null;
-        if (empty( $pks )) {
-            $objs = array ();
+        if (empty($pks)) {
+            $objs = array();
         } else {
             $criteria = new Criteria();
-            $criteria->add( ApplicationPeer::APP_UID, $pks, Criteria::IN );
-            $objs = ApplicationPeer::doSelect( $criteria, $con );
+            $criteria->add(ApplicationPeer::APP_UID, $pks, Criteria::IN);
+            $objs = ApplicationPeer::doSelect($criteria, $con);
         }
         return $objs;
     }
