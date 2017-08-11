@@ -5505,7 +5505,7 @@ class XmlForm
         'listbox'           => XmlForm_Field_Listbox::class,
         'password'          => XmlForm_Field_Password::class,
         'percentage'        => XmlForm_Field_Percentage::class,
-        'popupoption'       => XmlForm_Field_popupOption::class,
+        'popupoption'       => XmlForm_Field_PopupOption::class,
         'print'             => XmlForm_Field_Print::class,
         'radiogroup'        => XmlForm_Field_RadioGroup::class,
         'radiogroupview'    => XmlForm_Field_RadioGroupView::class,
