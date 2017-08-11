@@ -1,6 +1,5 @@
 <?php
 
-
 class PMLicensedFeatures
 {
     private $featuresDetails = array ();
