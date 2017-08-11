@@ -249,7 +249,6 @@ if ($RBAC->userCanAccess('PM_SETUP') === 1) {
     /*----------------------------------********---------------------------------*/
 }
 /*----------------------------------********---------------------------------*/
-require_once 'classes/class.pmLicenseManager.php';
 if (!file_exists(PATH_DATA_SITE . "plugin.singleton")) {
     require_once PATH_CORE . 'methods' . PATH_SEP . 'enterprise' . PATH_SEP . 'enterprise.php';
     $enterprise = new enterprisePlugin('enterprise');

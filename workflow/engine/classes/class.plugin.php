@@ -25,7 +25,6 @@
 
 use ProcessMaker\Plugins\PluginRegistry;
 
-require_once 'class.pluginRegistry.php';
 
 define('G_PLUGIN_CLASS',             1);
 define('PM_CREATE_CASE',             1001);

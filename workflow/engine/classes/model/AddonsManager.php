@@ -3,7 +3,6 @@
 use ProcessMaker\Plugins\PluginRegistry;
 
 require_once 'classes/model/om/BaseAddonsManager.php';
-require_once PATH_CORE . 'classes' . PATH_SEP . 'class.enterpriseUtils.php';
 
 
 if (!defined("BUFSIZE")) {
