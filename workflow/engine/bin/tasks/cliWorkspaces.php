@@ -1,29 +1,4 @@
 <?php
-/**
- * cliWorkspaces.php
- *
- * ProcessMaker Open Source Edition
- * Copyright (C) 2011 Colosa Inc.
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
- * For more information, contact Colosa Inc, 2566 Le Jeune Rd.,
- * Coral Gables, FL, 33134, USA, or email info@colosa.com.
- *
- * @author Alexandre Rosenfeld <alexandre@colosa.com>
- * @package workflow-engine-bin-tasks
- */
 
 CLI::taskName('info');
 CLI::taskDescription(<<<EOT
@@ -51,7 +26,7 @@ EOT
 );
 CLI::taskArg('workspace', false);
 CLI::taskArg('backup-file', true);
-CLI::taskOpt("filesize", "Split the backup file in multiple files which are compressed. The maximum size of these files is set to MAX-SIZE in megabytes. If MAX-SIZE is not set, then it is 1000 megabytes by default. It may be necessary to use this option if using a 32 bit Linux/UNIX system which limits its maximum file size to 2GB. This option does not work on Windows systems.", "s:","filesize=");
+CLI::taskOpt("filesize", "Split the backup file in multiple files which are compressed. The maximum size of these files is set to MAX-SIZE in megabytes. If MAX-SIZE is not set, then it is 1000 megabytes by default. It may be necessary to use this option if using a 32 bit Linux/UNIX system which limits its maximum file size to 2GB. This option does not work on Windows systems.", "s:", "filesize=");
 CLI::taskRun("run_workspace_backup");
 
 CLI::taskName('workspace-restore');
@@ -72,9 +47,8 @@ CLI::taskOpt("overwrite", "If a workspace already exists, overwrite it.", "o", "
 CLI::taskOpt("info", "Show information about backup file, but do not restore any workspaces.", "i");
 CLI::taskOpt("multiple", "Restore from multiple compressed backup files which are numbered.", "m");
 CLI::taskOpt("workspace", "Specify which workspace to restore if multiple workspaces are present in the backup file.
-        Ex: -wworkflow.",
-             "w:", "workspace=");
-CLI::taskOpt("lang", "Specify the language which will be used to rebuild the case cache list. If this option isn't included, then 'en' (English) will be used by default.", "l:","lang=");
+        Ex: -wworkflow.", "w:", "workspace=");
+CLI::taskOpt("lang", "Specify the language which will be used to rebuild the case cache list. If this option isn't included, then 'en' (English) will be used by default.", "l:", "lang=");
 CLI::taskOpt("port", "Specify the port number used by MySQL. If not specified, then the port 3306 will be used by default.", "p:");
 CLI::taskRun("run_workspace_restore");
 
@@ -93,7 +67,7 @@ CLI::taskDescription(<<<EOT
 EOT
 );
 CLI::taskArg('workspace', true, true);
-CLI::taskOpt("lang", "Specify the language to rebuild the case cache list. If not specified, then 'en' (English) will be used by default.\n        Ex: -lfr (French) Ex: --lang=zh-CN (Mainland Chinese)", "l:","lang=");
+CLI::taskOpt("lang", "Specify the language to rebuild the case cache list. If not specified, then 'en' (English) will be used by default.\n        Ex: -lfr (French) Ex: --lang=zh-CN (Mainland Chinese)", "l:", "lang=");
 CLI::taskRun("run_cacheview_upgrade");
 
 CLI::taskName('database-upgrade');
@@ -174,8 +148,7 @@ CLI::taskDescription(<<<EOT
 EOT
 );
 //CLI::taskArg('workspace', true);
-CLI::taskOpt("workspace", "Select the workspace whose case folders will be migrated, if multiple workspaces are present in the server.\n        Ex: -wworkflow.        Ex: --workspace=workflow",
-             "w:", "workspace=");
+CLI::taskOpt("workspace", "Select the workspace whose case folders will be migrated, if multiple workspaces are present in the server.\n        Ex: -wworkflow.        Ex: --workspace=workflow", "w:", "workspace=");
 CLI::taskRun("runStructureDirectories");
 
 CLI::taskName("database-generate-self-service-by-value");
@@ -236,7 +209,7 @@ EOT
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_itee_to_dummytask");
 
-/*----------------------------------********---------------------------------*/
+/* ----------------------------------********--------------------------------- */
 CLI::taskName("check-workspace-disabled-code");
 CLI::taskDescription(<<<EOT
   Check disabled code for the specified workspace(s).
@@ -275,7 +248,7 @@ EOT
 );
 CLI::taskArg('workspace', true, true);
 CLI::taskRun("run_migrate_list_unassigned");
-/*----------------------------------********---------------------------------*/
+/* ----------------------------------********--------------------------------- */
 
 CLI::taskName('migrate-indexing-acv');
 CLI::taskDescription(<<<EOT
@@ -300,7 +273,7 @@ CLI::taskDescription(<<<EOT
 EOT
 );
 CLI::taskArg('workspace', true, true);
-CLI::taskOpt("lang", "Specify the language to migrate the content data. If not specified, then 'en' (English) will be used by default.\n        Ex: -lfr (French) Ex: --lang=zh-CN (Mainland Chinese)", "l:","lang=");
+CLI::taskOpt("lang", "Specify the language to migrate the content data. If not specified, then 'en' (English) will be used by default.\n        Ex: -lfr (French) Ex: --lang=zh-CN (Mainland Chinese)", "l:", "lang=");
 CLI::taskRun("run_migrate_content");
 
 CLI::taskName('migrate-plugins-singleton-information');
@@ -342,7 +315,7 @@ CLI::taskOpt("lang", "", "lLANG", "lang=LANG");
 CLI::taskArg('workspace');
 CLI::taskRun("cliListIds");
 
-  /**
+/**
  *
  */
 CLI::taskName('regenerate-pmtable-classes');
@@ -358,47 +331,48 @@ EOT
 CLI::taskArg('workspace');
 CLI::taskRun("regenerate_pmtable_classes");
 
-  /**
-   * Function run_info
-   * access public
-   */
-function run_info($args, $opts) {
-  $workspaces = get_workspaces_from_args($args);
-  WorkspaceTools::printSysInfo();
-  foreach ($workspaces as $workspace) {
-    echo "\n";
-    $workspace->printMetadata(false);
-  }
+/**
+ * Function run_info
+ * access public
+ */
+function run_info($args, $opts)
+{
+    $workspaces = get_workspaces_from_args($args);
+    WorkspaceTools::printSysInfo();
+    foreach ($workspaces as $workspace) {
+        echo "\n";
+        $workspace->printMetadata(false);
+    }
 }
 
-function run_workspace_upgrade($args, $opts) {
+function run_workspace_upgrade($args, $opts)
+{
+    $filter = new InputFilter();
+    $opts = $filter->xssFilterHard($opts);
+    $args = $filter->xssFilterHard($args);
+    $workspaces = get_workspaces_from_args($args);
+    $first = true;
+    $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
+    $buildCacheView = array_key_exists('buildACV', $opts);
+    $flagUpdateXml = !array_key_exists('noxml', $opts);
 
-  $filter = new InputFilter();
-  $opts = $filter->xssFilterHard($opts);
-  $args = $filter->xssFilterHard($args);
-  $workspaces = get_workspaces_from_args($args);
-  $first = true;
-  $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
-  $buildCacheView = array_key_exists('buildACV', $opts);
-  $flagUpdateXml  = !array_key_exists('noxml', $opts);
+    foreach ($workspaces as $workspace) {
+        try {
+            if (!defined("SYS_SYS")) {
+                define("SYS_SYS", $workspace->name);
+            }
 
-  foreach ($workspaces as $workspace) {
-    try {
-      if (!defined("SYS_SYS")) {
-          define("SYS_SYS", $workspace->name);
-      }
+            if (!defined("PATH_DATA_SITE")) {
+                define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
+            }
 
-      if (!defined("PATH_DATA_SITE")) {
-          define("PATH_DATA_SITE", PATH_DATA . "sites" . PATH_SEP . SYS_SYS . PATH_SEP);
-      }
-
-      $workspace->upgrade($buildCacheView, $workspace->name, false, $lang, ['updateXml' => $flagUpdateXml, 'updateMafe' => $first]);
-      $first = false;
-      $flagUpdateXml = false;
-    } catch (Exception $e) {
-      G::outRes( "Errors upgrading workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n" );
+            $workspace->upgrade($buildCacheView, $workspace->name, false, $lang, ['updateXml' => $flagUpdateXml, 'updateMafe' => $first]);
+            $first = false;
+            $flagUpdateXml = false;
+        } catch (Exception $e) {
+            G::outRes("Errors upgrading workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n");
+        }
     }
-  }
 }
 
 /**
@@ -410,7 +384,8 @@ function run_workspace_upgrade($args, $opts) {
  *
  * @return void
  */
-function run_translation_upgrade($args, $opts) {
+function run_translation_upgrade($args, $opts)
+{
     $noXml = array_key_exists('noxml', $opts) ? '--no-xml' : '';
     $noMafe = array_key_exists('nomafe', $opts) ? '--no-mafe' : '';
     if (!empty($noXml)) {
@@ -459,43 +434,48 @@ function translation_upgrade($args, $opts)
     }
 }
 
-function run_cacheview_upgrade($args, $opts) {
-
-  $filter = new InputFilter();
-  $opts = $filter->xssFilterHard($opts);
-  $args = $filter->xssFilterHard($args);
-  $workspaces = get_workspaces_from_args($args);
-  $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
-  foreach ($workspaces as $workspace) {
-    try {
-      G::outRes( "Upgrading cache view for " . pakeColor::colorize($workspace->name, "INFO") . "\n" );
-      $workspace->upgradeCacheView(true, false, $lang);
-    } catch (Exception $e) {
-      G::outRes( "Errors upgrading cache view of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n" );
+function run_cacheview_upgrade($args, $opts)
+{
+    $filter = new InputFilter();
+    $opts = $filter->xssFilterHard($opts);
+    $args = $filter->xssFilterHard($args);
+    $workspaces = get_workspaces_from_args($args);
+    $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
+    foreach ($workspaces as $workspace) {
+        try {
+            G::outRes("Upgrading cache view for " . pakeColor::colorize($workspace->name, "INFO") . "\n");
+            $workspace->upgradeCacheView(true, false, $lang);
+        } catch (Exception $e) {
+            G::outRes("Errors upgrading cache view of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n");
+        }
     }
-  }
 }
-function run_plugins_database_upgrade($args, $opts) {
-  $workspaces = get_workspaces_from_args($args);
-  foreach ($workspaces as $workspace) {
-    try {
-      CLI::logging("Upgrading plugins database for " . CLI::info($workspace->name) . "\n");
-      $workspace->upgradePluginsDatabase();
-    } catch (Exception $e) {
-      CLI::logging("Errors upgrading plugins database: " . CLI::error($e->getMessage()));
+
+function run_plugins_database_upgrade($args, $opts)
+{
+    $workspaces = get_workspaces_from_args($args);
+    foreach ($workspaces as $workspace) {
+        try {
+            CLI::logging("Upgrading plugins database for " . CLI::info($workspace->name) . "\n");
+            $workspace->upgradePluginsDatabase();
+        } catch (Exception $e) {
+            CLI::logging("Errors upgrading plugins database: " . CLI::error($e->getMessage()));
+        }
     }
-  }
 }
 
-function run_database_export($args, $opts) {
-  if (count($args) < 2)
-    throw new Exception ("Please provide a workspace name and a directory for export");
-  $workspace = new WorkspaceTools($args[0]);
-  $workspace->exportDatabase($args[1]);
+function run_database_export($args, $opts)
+{
+    if (count($args) < 2) {
+        throw new Exception("Please provide a workspace name and a directory for export");
+    }
+    $workspace = new WorkspaceTools($args[0]);
+    $workspace->exportDatabase($args[1]);
 }
 
-function run_database_import($args, $opts) {
-  throw new Exception("Not implemented");
+function run_database_import($args, $opts)
+{
+    throw new Exception("Not implemented");
 }
 
 /**
@@ -505,33 +485,38 @@ function run_database_import($args, $opts) {
  * @param string $opts
  *
  * @return void
-*/
-function run_database_upgrade($args, $opts) {
+ */
+function run_database_upgrade($args, $opts)
+{
     //Check if the command is executed by a specific workspace
     if (count($args) === 1) {
         database_upgrade('upgrade', $args);
     } else {
         $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
-            passthru('./processmaker database-upgrade '.$workspace->name);
+            passthru('./processmaker database-upgrade ' . $workspace->name);
         }
     }
 }
 
-function run_database_check($args, $opts) {
-  database_upgrade("check", $args);
+function run_database_check($args, $opts)
+{
+    database_upgrade("check", $args);
 }
 
-function run_migrate_new_cases_lists($args, $opts) {
-  migrate_new_cases_lists("migrate", $args, $opts);
+function run_migrate_new_cases_lists($args, $opts)
+{
+    migrate_new_cases_lists("migrate", $args, $opts);
 }
 
-function run_migrate_counters($args, $opts) {
-  migrate_counters("migrate", $args);
+function run_migrate_counters($args, $opts)
+{
+    migrate_counters("migrate", $args);
 }
 
-function run_migrate_list_unassigned($args, $opts) {
-  migrate_list_unassigned("migrate", $args, $opts);
+function run_migrate_list_unassigned($args, $opts)
+{
+    migrate_list_unassigned("migrate", $args, $opts);
 }
 
 /**
@@ -540,139 +525,145 @@ function run_migrate_list_unassigned($args, $opts) {
  * @param array $args, workspaceName for to apply the database-upgrade
  *
  * @return void
-*/
-function database_upgrade($command, $args) {
+ */
+function database_upgrade($command, $args)
+{
+    $filter = new InputFilter();
+    $command = $filter->xssFilterHard($command);
+    $args = $filter->xssFilterHard($args);
+    //Load the attributes for the workspace
+    $workspaces = get_workspaces_from_args($args);
+    $checkOnly = (strcmp($command, "check") == 0);
+    //Loop, read all the attributes related to the one workspace
+    $wsName = $workspaces[key($workspaces)]->name;
+    Bootstrap::setConstantsRelatedWs($wsName);
+    if ($checkOnly) {
+        print_r("Checking database in " . pakeColor::colorize($wsName, "INFO") . "\n");
+    } else {
+        print_r("Upgrading database in " . pakeColor::colorize($wsName, "INFO") . "\n");
+    }
 
-  $filter = new InputFilter();
-  $command = $filter->xssFilterHard($command);
-  $args = $filter->xssFilterHard($args);
-  //Load the attributes for the workspace
-  $workspaces = get_workspaces_from_args($args);
-  $checkOnly = (strcmp($command, "check") == 0);
-  //Loop, read all the attributes related to the one workspace
-  $wsName = $workspaces[key($workspaces)]->name;
-  Bootstrap::setConstantsRelatedWs($wsName);
-  if ($checkOnly) {
-    print_r("Checking database in ".pakeColor::colorize($wsName, "INFO")."\n");
-  } else {
-    print_r("Upgrading database in ".pakeColor::colorize($wsName, "INFO")."\n");
-  }
-
-  foreach ($workspaces as $workspace) {
-    try {
-      $changes = $workspace->upgradeDatabase($checkOnly);
-      if ($changes != false) {
-        if ($checkOnly) {
-          echo "> ".pakeColor::colorize("Run upgrade", "INFO")."\n";
-          echo "  Tables (add = " . count($changes['tablesToAdd']);
-          echo ", alter = " . count($changes['tablesToAlter']) . ") ";
-          echo "- Indexes (add = " . count($changes['tablesWithNewIndex'])."";
-          echo ", alter = " . count($changes['tablesToAlterIndex']).")\n";
-        } else {
-          echo "-> Schema fixed\n";
+    foreach ($workspaces as $workspace) {
+        try {
+            $changes = $workspace->upgradeDatabase($checkOnly);
+            if ($changes != false) {
+                if ($checkOnly) {
+                    echo "> " . pakeColor::colorize("Run upgrade", "INFO") . "\n";
+                    echo "  Tables (add = " . count($changes['tablesToAdd']);
+                    echo ", alter = " . count($changes['tablesToAlter']) . ") ";
+                    echo "- Indexes (add = " . count($changes['tablesWithNewIndex']) . "";
+                    echo ", alter = " . count($changes['tablesToAlterIndex']) . ")\n";
+                } else {
+                    echo "-> Schema fixed\n";
+                }
+            } else {
+                echo "> OK\n";
+            }
+        } catch (Exception $e) {
+            G::outRes("> Error: " . CLI::error($e->getMessage()) . "\n");
         }
-      } else {
-        echo "> OK\n";
-      }
-    } catch (Exception $e) {
-      G::outRes( "> Error: ".CLI::error($e->getMessage()) . "\n" );
     }
-  }
 }
 
-function delete_app_from_table($con, $tableName, $appUid, $col="APP_UID") {
-  $stmt = $con->createStatement();
-  $sql = "DELETE FROM " . $tableName . " WHERE " . $col . "='" . $appUid . "'";
-  $rs = $stmt->executeQuery($sql, ResultSet::FETCHMODE_NUM);
+function delete_app_from_table($con, $tableName, $appUid, $col = "APP_UID")
+{
+    $stmt = $con->createStatement();
+    $sql = "DELETE FROM " . $tableName . " WHERE " . $col . "='" . $appUid . "'";
+    $rs = $stmt->executeQuery($sql, ResultSet::FETCHMODE_NUM);
 }
 
-function run_drafts_clean($args, $opts) {
-  echo "Cleaning drafts\n";
+function run_drafts_clean($args, $opts)
+{
+    echo "Cleaning drafts\n";
 
-  if (count($args) < 1)
-    throw new Exception ("Please specify a workspace name");
-  $workspace = $args[0];
-
-  if (!file_exists(PATH_DB . $workspace . '/db.php')) {
-    throw new Exception('Could not find workspace ' . $workspace);
-  }
-
-  $allDrafts = false;
-  if (count($args) < 2) {
-    echo "Cases older them this much days will be deleted (ENTER for all): ";
-    $days = rtrim( fgets( STDIN ), "\n" );
-    if ($days == "") {
-      $allDrafts = true;
+    if (count($args) < 1) {
+        throw new Exception("Please specify a workspace name");
     }
-  } else {
-    $days = $args[1];
-    if (strcmp($days, "all") == 0) {
-      $allDrafts = true;
+    $workspace = $args[0];
+
+    if (!file_exists(PATH_DB . $workspace . '/db.php')) {
+        throw new Exception('Could not find workspace ' . $workspace);
     }
-  }
 
-  if (!$allDrafts && (!is_numeric($days) || intval($days) <= 0)) {
-    throw new Exception("Days value is not valid: " . $days);
-  }
-
-  if ($allDrafts)
-    echo "Removing all drafts\n";
-  else
-    echo "Removing drafts older than " . $days . " days\n";
-
-  /* Load the configuration from the workspace */
-  require_once( PATH_DB . $workspace . '/db.php' );
-  require_once( PATH_THIRDPARTY . 'propel/Propel.php');
-
-  PROPEL::Init ( PATH_METHODS.'dbConnections/rootDbConnections.php' );
-  $con = Propel::getConnection("root");
-
-  $stmt = $con->createStatement();
-
-  if (!$allDrafts)
-    $dateSql = "AND DATE_SUB(CURDATE(),INTERVAL " . $days . " DAY) >= APP_CREATE_DATE";
-  else
-    $dateSql = "";
-  /* Search for all the draft cases */
-  $sql = "SELECT APP_UID FROM APPLICATION WHERE APP_STATUS='DRAFT'" . $dateSql;
-  $appRows = $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
-
-  /* Tables to remove the cases from */
-  $tables = array(
-      "APPLICATION",
-      "APP_DELEGATION",
-      "APP_CACHE_VIEW",
-      "APP_THREAD",
-      "APP_DOCUMENT",
-      "APP_EVENT",
-      "APP_HISTORY",
-      "APP_MESSAGE"
-  );
-
-  echo "Found " . $appRows->getRecordCount() . " cases to remove";
-  foreach ($appRows as $row) {
-    echo ".";
-    $appUid = $row['APP_UID'];
-    foreach ($tables as $table) {
-      delete_app_from_table($con, $table, $appUid);
+    $allDrafts = false;
+    if (count($args) < 2) {
+        echo "Cases older them this much days will be deleted (ENTER for all): ";
+        $days = rtrim(fgets(STDIN), "\n");
+        if ($days == "") {
+            $allDrafts = true;
+        }
+    } else {
+        $days = $args[1];
+        if (strcmp($days, "all") == 0) {
+            $allDrafts = true;
+        }
     }
-    delete_app_from_table($con, "CONTENT", $appUid, "CON_ID");
-    if (file_exists(PATH_DB . $workspace . '/files/'. $appUid)) {
-      echo "\nRemoving files from " . $appUid . "\n";
-      G::rm_dir(PATH_DB . $workspace . '/files/'. $appUid);
+
+    if (!$allDrafts && (!is_numeric($days) || intval($days) <= 0)) {
+        throw new Exception("Days value is not valid: " . $days);
     }
-  }
-  echo "\n";
+
+    if ($allDrafts) {
+        echo "Removing all drafts\n";
+    } else {
+        echo "Removing drafts older than " . $days . " days\n";
+    }
+
+    /* Load the configuration from the workspace */
+    require_once(PATH_DB . $workspace . '/db.php');
+    require_once(PATH_THIRDPARTY . 'propel/Propel.php');
+
+    PROPEL::Init(PATH_METHODS . 'dbConnections/rootDbConnections.php');
+    $con = Propel::getConnection("root");
+
+    $stmt = $con->createStatement();
+
+    if (!$allDrafts) {
+        $dateSql = "AND DATE_SUB(CURDATE(),INTERVAL " . $days . " DAY) >= APP_CREATE_DATE";
+    } else {
+        $dateSql = "";
+    }
+    /* Search for all the draft cases */
+    $sql = "SELECT APP_UID FROM APPLICATION WHERE APP_STATUS='DRAFT'" . $dateSql;
+    $appRows = $stmt->executeQuery($sql, ResultSet::FETCHMODE_ASSOC);
+
+    /* Tables to remove the cases from */
+    $tables = array(
+        "APPLICATION",
+        "APP_DELEGATION",
+        "APP_CACHE_VIEW",
+        "APP_THREAD",
+        "APP_DOCUMENT",
+        "APP_EVENT",
+        "APP_HISTORY",
+        "APP_MESSAGE"
+    );
+
+    echo "Found " . $appRows->getRecordCount() . " cases to remove";
+    foreach ($appRows as $row) {
+        echo ".";
+        $appUid = $row['APP_UID'];
+        foreach ($tables as $table) {
+            delete_app_from_table($con, $table, $appUid);
+        }
+        delete_app_from_table($con, "CONTENT", $appUid, "CON_ID");
+        if (file_exists(PATH_DB . $workspace . '/files/' . $appUid)) {
+            echo "\nRemoving files from " . $appUid . "\n";
+            G::rm_dir(PATH_DB . $workspace . '/files/' . $appUid);
+        }
+    }
+    echo "\n";
 }
 
-function run_workspace_backup($args, $opts) {
+function run_workspace_backup($args, $opts)
+{
     $workspaces = array();
     if (sizeof($args) > 2) {
         $filename = array_pop($args);
         foreach ($args as $arg) {
             $workspaces[] = new WorkspaceTools($arg);
         }
-    } else if (sizeof($args) > 0) {
+    } elseif (sizeof($args) > 0) {
         $workspace = new WorkspaceTools($args[0]);
         $workspaces[] = $workspace;
         if (sizeof($args) == 2) {
@@ -692,7 +683,7 @@ function run_workspace_backup($args, $opts) {
     }
 
     //If this is a relative path, put the file in the backups directory
-    if (strpos($filename, "/") === false && strpos($filename, '\\') === false){
+    if (strpos($filename, "/") === false && strpos($filename, '\\') === false) {
         $filename = PATH_DATA . "backups/$filename";
     }
     CLI::logging("Backing up to $filename\n");
@@ -704,7 +695,7 @@ function run_workspace_backup($args, $opts) {
             CLI::error("This is not a Linux enviroment, cannot use this filesize [-s] feature.\n");
             return;
         }
-        $multipleBackup = new multipleFilesBackup ($filename,$filesize);//if filesize is 0 the default size will be took
+        $multipleBackup = new MultipleFilesBackup($filename, $filesize); //if filesize is 0 the default size will be took
         //using new method
         foreach ($workspaces as $workspace) {
             $multipleBackup->addToBackup($workspace);
@@ -726,62 +717,62 @@ function run_workspace_backup($args, $opts) {
     }
 }
 
-function run_workspace_restore($args, $opts) {
-  if (sizeof($args) > 0) {
+function run_workspace_restore($args, $opts)
+{
+    if (sizeof($args) > 0) {
+        $filename = $args[0];
 
-    $filename = $args[0];
+        G::verifyPath(PATH_DATA . 'upgrade', true);
 
-    G::verifyPath(PATH_DATA . 'upgrade', true);
+        if (isset($args[1]) && strlen($args[1]) >= 30) {
+            eprintln("Invalid workspace name, insert a maximum of 30 characters.", 'red');
+            return;
+        }
 
-      if(isset($args[1]) && strlen($args[1])>=30){
-          eprintln("Invalid workspace name, insert a maximum of 30 characters.", 'red');
-          return;
-      }
-
-    if (strpos($filename, "/") === false && strpos($filename, '\\') === false) {
-      $filename = PATH_DATA . "backups/$filename";
-      if (!file_exists($filename) && substr_compare($filename, ".tar", -4, 4, true) != 0)
-        $filename .= ".tar";
-    }
-    $info = array_key_exists("info", $opts);
-    $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
-    $port = array_key_exists("port", $opts) ? $opts['port'] : '';
-    if ($info) {
-      WorkspaceTools::getBackupInfo($filename);
+        if (strpos($filename, "/") === false && strpos($filename, '\\') === false) {
+            $filename = PATH_DATA . "backups/$filename";
+            if (!file_exists($filename) && substr_compare($filename, ".tar", -4, 4, true) != 0) {
+                $filename .= ".tar";
+            }
+        }
+        $info = array_key_exists("info", $opts);
+        $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
+        $port = array_key_exists("port", $opts) ? $opts['port'] : '';
+        if ($info) {
+            WorkspaceTools::getBackupInfo($filename);
+        } else {
+            CLI::logging("Restoring from $filename\n");
+            $workspace = array_key_exists("workspace", $opts) ? $opts['workspace'] : null;
+            $overwrite = array_key_exists("overwrite", $opts);
+            $multiple = array_key_exists("multiple", $opts);
+            $dstWorkspace = isset($args[1]) ? $args[1] : null;
+            if (!empty($multiple)) {
+                if (!Bootstrap::isLinuxOs()) {
+                    CLI::error("This is not a Linux enviroment, cannot use this multiple [-m] feature.\n");
+                    return;
+                }
+                MultipleFilesBackup::letsRestore($filename, $workspace, $dstWorkspace, $overwrite);
+            } else {
+                $anotherExtention = ".*"; //if there are files with and extra extention: e.g. <file>.tar.number
+                $multiplefiles = glob($filename . $anotherExtention); // example: //shared/workflow_data/backups/myWorkspace.tar.*
+                if (count($multiplefiles) > 0) {
+                    CLI::error("Processmaker found these files: .\n");
+                    foreach ($multiplefiles as $index => $value) {
+                        CLI::logging($value . "\n");
+                    }
+                    CLI::error("Please, you should use -m parameter to restore them.\n");
+                    return;
+                }
+                WorkspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang, $port);
+            }
+        }
     } else {
-      CLI::logging("Restoring from $filename\n");
-      $workspace = array_key_exists("workspace", $opts) ? $opts['workspace'] : NULL;
-      $overwrite = array_key_exists("overwrite", $opts);
-      $multiple = array_key_exists("multiple", $opts);
-      $dstWorkspace = isset($args[1]) ? $args[1] : null;
-      if(!empty($multiple)){
-          if(!Bootstrap::isLinuxOs()){
-              CLI::error("This is not a Linux enviroment, cannot use this multiple [-m] feature.\n");
-              return;
-          }
-          multipleFilesBackup::letsRestore ($filename,$workspace,$dstWorkspace,$overwrite);
-      }
-      else{
-          $anotherExtention = ".*"; //if there are files with and extra extention: e.g. <file>.tar.number
-          $multiplefiles = glob($filename . $anotherExtention);// example: //shared/workflow_data/backups/myWorkspace.tar.*
-          if(count($multiplefiles) > 0)
-          {
-              CLI::error("Processmaker found these files: .\n");
-              foreach($multiplefiles as $index => $value){
-                  CLI::logging($value . "\n");
-              }
-              CLI::error("Please, you should use -m parameter to restore them.\n");
-              return;
-          }
-          WorkspaceTools::restore($filename, $workspace, $dstWorkspace, $overwrite, $lang, $port );
-      }
-    }
-  } else {
         throw new Exception("No workspace specified for restore");
-  }
+    }
 }
 
-function runStructureDirectories($command, $args) {
+function runStructureDirectories($command, $args)
+{
     $workspaces = get_workspaces_from_args($command);
     $count = count($workspaces);
     $errors = false;
@@ -801,7 +792,6 @@ function runStructureDirectories($command, $args) {
 
 function run_database_generate_self_service_by_value($args, $opts)
 {
-
     $filter = new InputFilter();
     $opts = $filter->xssFilterHard($opts);
     $args = $filter->xssFilterHard($args);
@@ -812,10 +802,10 @@ function run_database_generate_self_service_by_value($args, $opts)
             $workspace = $value;
 
             try {
-                G::outRes( "Generating the table \"self-service by value\" for " . pakeColor::colorize($workspace->name, "INFO") . "\n" );
+                G::outRes("Generating the table \"self-service by value\" for " . pakeColor::colorize($workspace->name, "INFO") . "\n");
                 $workspace->appAssignSelfServiceValueTableGenerateData();
             } catch (Exception $e) {
-                G::outRes( "Errors generating the table \"self-service by value\" of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n" );
+                G::outRes("Errors generating the table \"self-service by value\" of workspace " . CLI::info($workspace->name) . ": " . CLI::error($e->getMessage()) . "\n");
             }
 
             echo "\n";
@@ -823,82 +813,82 @@ function run_database_generate_self_service_by_value($args, $opts)
 
         echo "Done!\n";
     } catch (Exception $e) {
-        G::outRes( CLI::error($e->getMessage()) . "\n" );
+        G::outRes(CLI::error($e->getMessage()) . "\n");
     }
 }
 
 function run_database_verify_consistency($args, $opts)
 {
-  verifyAppCacheConsistency($args);
+    verifyAppCacheConsistency($args);
 }
 
 function run_database_verify_migration_consistency($args, $opts)
 {
-  verifyMigratedDataConsistency($args);
+    verifyMigratedDataConsistency($args);
 }
 
 function verifyAppCacheConsistency($args)
 {
-  $workspaces = get_workspaces_from_args($args);
-  foreach ($workspaces as $workspace) {
-    verifyWorkspaceConsistency($workspace);
-  }
+    $workspaces = get_workspaces_from_args($args);
+    foreach ($workspaces as $workspace) {
+        verifyWorkspaceConsistency($workspace);
+    }
 }
 
 function verifyWorkspaceConsistency($workspace)
 {
-  $isConsistent = true;
-  print_r("Verifying data in workspace " . pakeColor::colorize($workspace->name, "INFO") . "\n");
-  $inconsistentUsers = $workspace->hasMissingUsers();
-  $inconsistentTasks = $workspace->hasMissingTasks();
-  $inconsistentProcesses = $workspace->hasMissingProcesses();
-  $inconsistentDelegations = $workspace->hasMissingAppDelegations();
+    $isConsistent = true;
+    print_r("Verifying data in workspace " . pakeColor::colorize($workspace->name, "INFO") . "\n");
+    $inconsistentUsers = $workspace->hasMissingUsers();
+    $inconsistentTasks = $workspace->hasMissingTasks();
+    $inconsistentProcesses = $workspace->hasMissingProcesses();
+    $inconsistentDelegations = $workspace->hasMissingAppDelegations();
 
-  if ($inconsistentUsers || $inconsistentTasks || $inconsistentProcesses || $inconsistentDelegations) {
-    $isConsistent = false;
-  }
-  return $isConsistent;
+    if ($inconsistentUsers || $inconsistentTasks || $inconsistentProcesses || $inconsistentDelegations) {
+        $isConsistent = false;
+    }
+    return $isConsistent;
 }
 
 function verifyMigratedDataConsistency($args)
 {
-  $workspaces = get_workspaces_from_args($args);
-  $inconsistentRecords = 0;
-  foreach ($workspaces as $workspace) {
-    print_r("Verifying data in workspace " . pakeColor::colorize($workspace->name, "INFO") . "\n");
-    $lists = array(
-        'LIST_CANCELLED',
-        'LIST_COMPLETED',
-        'LIST_INBOX',
-        'LIST_PARTICIPATED_HISTORY',
-        'LIST_PARTICIPATED_LAST',
-        'LIST_MY_INBOX',
-        'LIST_UNASSIGNED',
-    );
-    foreach ($lists as $list) {
-      $inconsistentRecords += $workspace->verifyListData($list);
+    $workspaces = get_workspaces_from_args($args);
+    $inconsistentRecords = 0;
+    foreach ($workspaces as $workspace) {
+        print_r("Verifying data in workspace " . pakeColor::colorize($workspace->name, "INFO") . "\n");
+        $lists = array(
+            'LIST_CANCELLED',
+            'LIST_COMPLETED',
+            'LIST_INBOX',
+            'LIST_PARTICIPATED_HISTORY',
+            'LIST_PARTICIPATED_LAST',
+            'LIST_MY_INBOX',
+            'LIST_UNASSIGNED',
+        );
+        foreach ($lists as $list) {
+            $inconsistentRecords += $workspace->verifyListData($list);
+        }
     }
-  }
-  return $inconsistentRecords;
+    return $inconsistentRecords;
 }
 
-function run_migrate_itee_to_dummytask($args, $opts){
-
-  $filter = new InputFilter();
-  $opts = $filter->xssFilterHard($opts);
-  $args = $filter->xssFilterHard($args);
-  $arrayWorkspace = get_workspaces_from_args($args);
-  foreach ($arrayWorkspace as $workspace) {
-    try {
-        $ws = new WorkspaceTools($workspace->name);
-        $res = $ws->migrateIteeToDummytask($workspace->name);
-    } catch (Exception $e) {
-      G::outRes( "> Error: ".CLI::error($e->getMessage()) . "\n" );
+function run_migrate_itee_to_dummytask($args, $opts)
+{
+    $filter = new InputFilter();
+    $opts = $filter->xssFilterHard($opts);
+    $args = $filter->xssFilterHard($args);
+    $arrayWorkspace = get_workspaces_from_args($args);
+    foreach ($arrayWorkspace as $workspace) {
+        try {
+            $ws = new WorkspaceTools($workspace->name);
+            $res = $ws->migrateIteeToDummytask($workspace->name);
+        } catch (Exception $e) {
+            G::outRes("> Error: " . CLI::error($e->getMessage()) . "\n");
+        }
     }
-  }
 }
+/* ----------------------------------********--------------------------------- */
 
-/*----------------------------------********---------------------------------*/
 /**
  * Check if we need to execute an external program for each workspace
  * If we apply the command for all workspaces we will need to execute one by one by redefining the constants
@@ -906,8 +896,9 @@ function run_migrate_itee_to_dummytask($args, $opts){
  * @param string $opts
  *
  * @return void
-*/
-function run_check_workspace_disabled_code($args, $opts) {
+ */
+function run_check_workspace_disabled_code($args, $opts)
+{
     //Check if the command is executed by a specific workspace
     if (count($args) === 1) {
         check_workspace_disabled_code($args, $opts);
@@ -918,6 +909,7 @@ function run_check_workspace_disabled_code($args, $opts) {
         }
     }
 }
+
 /**
  * This function is executed only by one workspace
  * Code Security Scanner related to the custom blacklist
@@ -925,7 +917,7 @@ function run_check_workspace_disabled_code($args, $opts) {
  * @param array $opts, workspaceName for to apply the database-upgrade
  *
  * @return void
-*/
+ */
 function check_workspace_disabled_code($args, $opts)
 {
     try {
@@ -951,7 +943,7 @@ function check_workspace_disabled_code($args, $opts)
 
                     foreach ($arrayFoundDisabledCode as $value2) {
                         $arrayProcessData = $value2;
-                        $strFoundDisabledCode .= ($strFoundDisabledCode != "")? "\n" : "";
+                        $strFoundDisabledCode .= ($strFoundDisabledCode != "") ? "\n" : "";
                         $strFoundDisabledCode .= "  Process: " . $arrayProcessData["processTitle"] . "\n";
                         $strFoundDisabledCode .= "  Triggers:\n";
 
@@ -960,7 +952,7 @@ function check_workspace_disabled_code($args, $opts)
                             $strCodeAndLine = "";
 
                             foreach ($arrayTriggerData["disabledCode"] as $key4 => $value4) {
-                                $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . $key4 . " (Lines " . implode(", ", $value4) . ")";
+                                $strCodeAndLine .= (($strCodeAndLine != "") ? ", " : "") . $key4 . " (Lines " . implode(", ", $value4) . ")";
                             }
                             $strFoundDisabledCode .= "    - " . $arrayTriggerData["triggerTitle"] . ": " . $strCodeAndLine . "\n";
                         }
@@ -970,17 +962,18 @@ function check_workspace_disabled_code($args, $opts)
                     echo "The workspace it's OK\n\n";
                 }
             } catch (Exception $e) {
-                G::outRes( "Errors to check disabled code: " . CLI::error($e->getMessage()) . "\n\n" );
+                G::outRes("Errors to check disabled code: " . CLI::error($e->getMessage()) . "\n\n");
             }
             $workspace->close();
         }
         echo "Done!\n\n";
     } catch (Exception $e) {
-        G::outRes( CLI::error($e->getMessage()) . "\n" );
+        G::outRes(CLI::error($e->getMessage()) . "\n");
     }
 }
 
-function migrate_new_cases_lists($command, $args, $opts) {
+function migrate_new_cases_lists($command, $args, $opts)
+{
     $filter = new InputFilter();
     $opts = $filter->xssFilterHard($opts);
     $args = $filter->xssFilterHard($args);
@@ -992,45 +985,46 @@ function migrate_new_cases_lists($command, $args, $opts) {
             $workspace->migrateList($workspace->name, true, $lang);
             echo "> List tables are done\n";
         } catch (Exception $e) {
-            G::outRes( "> Error: ".CLI::error($e->getMessage()) . "\n" );
+            G::outRes("> Error: " . CLI::error($e->getMessage()) . "\n");
         }
     }
 }
 
-function migrate_counters($command, $args) {
-  $workspaces = get_workspaces_from_args($args);
+function migrate_counters($command, $args)
+{
+    $workspaces = get_workspaces_from_args($args);
 
-  foreach ($workspaces as $workspace) {
-    print_r("Regenerating counters in: " . pakeColor::colorize($workspace->name, "INFO") . "\n");
+    foreach ($workspaces as $workspace) {
+        print_r("Regenerating counters in: " . pakeColor::colorize($workspace->name, "INFO") . "\n");
 
-    try {
-        $workspace->migrateCounters($workspace->name, true);
+        try {
+            $workspace->migrateCounters($workspace->name, true);
 
-        echo "> Counters are done\n";
-    } catch (Exception $e) {
-      G::outRes( "> Error: ".CLI::error($e->getMessage()) . "\n" );
+            echo "> Counters are done\n";
+        } catch (Exception $e) {
+            G::outRes("> Error: " . CLI::error($e->getMessage()) . "\n");
+        }
     }
-  }
 }
 
-function migrate_list_unassigned($command, $args, $opts) {
-
-  $filter = new InputFilter();
-  $opts = $filter->xssFilterHard($opts);
-  $args = $filter->xssFilterHard($args);
-  $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
-  $workspaces = get_workspaces_from_args($args);
-  foreach ($workspaces as $workspace) {
-    print_r("Upgrading Unassigned List in" . pakeColor::colorize($workspace->name, "INFO") . "\n");
-    try {
-        $workspace->regenerateListUnassigned();
-        echo "> Unassigned List is done\n";
-    } catch (Exception $e) {
-      G::outRes( "> Error: ".CLI::error($e->getMessage()) . "\n" );
+function migrate_list_unassigned($command, $args, $opts)
+{
+    $filter = new InputFilter();
+    $opts = $filter->xssFilterHard($opts);
+    $args = $filter->xssFilterHard($args);
+    $lang = array_key_exists("lang", $opts) ? $opts['lang'] : 'en';
+    $workspaces = get_workspaces_from_args($args);
+    foreach ($workspaces as $workspace) {
+        print_r("Upgrading Unassigned List in" . pakeColor::colorize($workspace->name, "INFO") . "\n");
+        try {
+            $workspace->regenerateListUnassigned();
+            echo "> Unassigned List is done\n";
+        } catch (Exception $e) {
+            G::outRes("> Error: " . CLI::error($e->getMessage()) . "\n");
+        }
     }
-  }
 }
-/*----------------------------------********---------------------------------*/
+/* ----------------------------------********--------------------------------- */
 
 /**
  * Check if we need to execute an external program for each workspace
@@ -1039,8 +1033,9 @@ function migrate_list_unassigned($command, $args, $opts) {
  * @param string $opts, specify the language
  *
  * @return void
-*/
-function run_migrate_content($args, $opts) {
+ */
+function run_migrate_content($args, $opts)
+{
     //Check the additional parameters
     $lang = array_key_exists("lang", $opts) ? '--lang=' . $opts['lang'] : '--lang=' . SYS_LANG;
     //Check if the command is executed by a specific workspace
@@ -1049,17 +1044,18 @@ function run_migrate_content($args, $opts) {
     } else {
         $workspaces = get_workspaces_from_args($args);
         foreach ($workspaces as $workspace) {
-            passthru('./processmaker migrate-content ' . $lang . ' '.$workspace->name);
+            passthru('./processmaker migrate-content ' . $lang . ' ' . $workspace->name);
         }
     }
 }
+
 /**
  * This function is executed only by one workspace
  * @param array $args, workspaceName for to apply the migrate-content
  * @param array $opts, specify the language
  *
  * @return void
-*/
+ */
 function migrate_content($args, $opts)
 {
     $filter = new InputFilter();
@@ -1081,8 +1077,8 @@ function migrate_content($args, $opts)
     CLI::logging("<*>   Optimizing content data Process took " . ($stop - $start) . " seconds.\n");
 }
 
-function run_migrate_self_service_value($args, $opts) {
-
+function run_migrate_self_service_value($args, $opts)
+{
     $filter = new InputFilter();
     $args = $filter->xssFilterHard($args);
     $workspaces = get_workspaces_from_args($args);
@@ -1097,7 +1093,8 @@ function run_migrate_self_service_value($args, $opts) {
     CLI::logging("<*>   Migrating Self-Service records Process took " . ($stop - $start) . " seconds.\n");
 }
 
-function run_migrate_indexing_acv($args, $opts) {
+function run_migrate_indexing_acv($args, $opts)
+{
     $filter = new InputFilter();
     $args = $filter->xssFilterHard($args);
     $workspaces = get_workspaces_from_args($args);
@@ -1111,7 +1108,8 @@ function run_migrate_indexing_acv($args, $opts) {
     CLI::logging("<*>   Migrating and populating indexing for avoiding the use of table APP_CACHE_VIEW process took " . ($stop - $start) . " seconds.\n");
 }
 
-function run_migrate_plugin($args, $opts) {
+function run_migrate_plugin($args, $opts)
+{
     $workspaces = get_workspaces_from_args($args);
     //Check if the command is executed by a specific workspace
     /** @var WorkspaceTools $workspace */
@@ -1124,12 +1122,13 @@ function run_migrate_plugin($args, $opts) {
         CLI::logging("> Migrating and populating data...\n");
         $start = microtime(true);
         foreach ($workspaces as $workspace) {
-            passthru('./processmaker migrate-plugins-singleton-information '.$workspace->name);
+            passthru('./processmaker migrate-plugins-singleton-information ' . $workspace->name);
         }
         $stop = microtime(true);
         CLI::logging("<*>   Migrating and populating data Singleton took " . ($stop - $start) . " seconds.\n");
     }
 }
+
 /**
  * This method recursively finds all PHP files that reference the path PATH_DATA
  * incorrectly, which is caused by importing processes where the data directory

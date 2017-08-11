@@ -433,7 +433,7 @@ class adminProxy extends HttpProxyController
         $Mailto = $_POST['eMailto'];
         $SMTPSecure  = $_POST['UseSecureCon'];
 
-        $Server = new NET($server);
+        $Server = new Net($server);
         $smtp = new SMTP;
 
         $timeout = 10;

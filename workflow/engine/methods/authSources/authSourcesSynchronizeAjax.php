@@ -235,7 +235,7 @@ try {
 function getLDAPAdvanceInstance($authUid)
 {
     $RBAC = &RBAC::getSingleton();
-    $ldapAdvanced = new ldapAdvanced();
+    $ldapAdvanced = new LdapAdvanced();
     $ldapAdvanced->sAuthSource = $authUid;
     $ldapAdvanced->sSystem = $RBAC->sSystem;
 

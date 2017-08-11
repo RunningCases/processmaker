@@ -26,7 +26,7 @@ function testConnection($type, $server, $user, $passwd, $port = 'none', $dbName 
         }
     }
 
-    $Server = new NET($server);
+    $Server = new Net($server);
     $filter = new InputFilter();
 
     if ($Server->getErrno() == 0) {

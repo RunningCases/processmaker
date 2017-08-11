@@ -1145,7 +1145,7 @@ class WorkspaceTools
         $Fields['WORKSPACE_NAME'] = $this->name;
 
         if (isset($this->dbHost)) {
-            $dbNetView = new NET($this->dbHost);
+            $dbNetView = new Net($this->dbHost);
             $dbNetView->loginDbServer($this->dbUser, $this->dbPass);
             try {
                 if (!defined('DB_ADAPTER')) {

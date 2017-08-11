@@ -316,7 +316,7 @@ class EmailServer
             $mailTo = $arrayData["MAIL_TO"];
             $smtpSecure = $arrayData["SMTPSECURE"];
 
-            $serverNet = new \NET($server);
+            $serverNet = new \Net($server);
             $smtp = new \SMTP();
 
             $timeout = 10;
