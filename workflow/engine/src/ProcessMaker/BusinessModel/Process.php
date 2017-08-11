@@ -1617,7 +1617,7 @@ class Process
             $triggerWizard->setFormatFieldNameInUppercase($this->formatFieldNameInUppercase);
             $triggerWizard->setArrayFieldNameForException($this->arrayFieldNameForException);
 
-            $triggerLibrary = \triggerLibrary::getSingleton();
+            $triggerLibrary = \TriggerLibrary::getSingleton();
             $library = $triggerLibrary->getRegisteredClasses();
 
             ksort($library);

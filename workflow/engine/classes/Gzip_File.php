@@ -23,7 +23,7 @@
  *
  * @package workflow.engine.classes
  *
- */class gzip_file extends tar_file
+ */class gzip_file extends TarFile
 {
 
     /**

@@ -3,7 +3,7 @@
 /**
  * This class is derived from the class archive, is employed to use files .bzip
  */
-class BzipFile extends tar_file
+class BzipFile extends TarFile
 {
 
     /**
