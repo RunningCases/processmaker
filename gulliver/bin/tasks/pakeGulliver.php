@@ -491,52 +491,57 @@ function addTarFolder($tar, $pathBase, $pluginHome) {
   }
 }
 
-function run_pack_plugin($task, $args) {
-  ini_set('display_errors', 'on');
-  ini_set('error_reporting', E_ERROR);
+function run_pack_plugin($task, $args)
+{
+    ini_set('display_errors', 'on');
+    ini_set('error_reporting', E_ERROR);
 
-  // the environment for poedit always is Development
-  define('G_ENVIRONMENT', G_DEV_ENV);
+    // the environment for poedit always is Development
+    define('G_ENVIRONMENT', G_DEV_ENV);
 
-  //the plugin name in the first argument
-  if( ! isset($args[0]) ) {
-    printf("Error: %s\n", pakeColor::colorize('you must specify a valid name for the plugin', 'ERROR'));
-    exit(0);
-  }
-  $pluginName = $args[0];
+    //the plugin name in the first argument
+    if (!isset($args[0])) {
+        printf("Error: %s\n", pakeColor::colorize('you must specify a valid name for the plugin', 'ERROR'));
+        exit(0);
+    }
+    $pluginName = $args[0];
 
-  $pluginDirectory = PATH_PLUGINS . $pluginName;
-  $pluginOutDirectory = PATH_OUTTRUNK . 'plugins' . PATH_SEP . $pluginName;
-  $pluginHome = PATH_OUTTRUNK . 'plugins' . PATH_SEP . $pluginName;
+    $pluginHome = PATH_OUTTRUNK . 'plugins' . PATH_SEP . $pluginName;
 
-  //verify if plugin exists,
-  $pluginClassFilename = PATH_PLUGINS . $pluginName . PATH_SEP . 'class.' . $pluginName . '.php';
-  $pluginFilename = PATH_PLUGINS . $pluginName . '.php';
-  if( ! is_file($pluginClassFilename) ) {
-    printf("The plugin %s does not exist in this file %s \n", pakeColor::colorize($pluginName, 'ERROR'), pakeColor::colorize($pluginClassFilename, 'INFO'));
-    die();
-  }
+    //verify if plugin exists,
+    $pluginClassFilename = PATH_PLUGINS . $pluginName . PATH_SEP . 'class.' . $pluginName . '.php';
+    $pluginFilename = PATH_PLUGINS . $pluginName . '.php';
+    if (!is_file($pluginClassFilename)) {
+        printf("The plugin %s does not exist in this file %s \n", pakeColor::colorize($pluginName, 'ERROR'), pakeColor::colorize($pluginClassFilename, 'INFO'));
+        die();
+    }
 
-  require_once ($pluginFilename);
+    if (!file_exists($pluginFilename)) {
+        printf("Error: %s\n", pakeColor::colorize('you must specify a valid name for the plugin', 'ERROR'));
+        exit(0);
+    }
 
-  $oPluginRegistry = PluginRegistry::loadSingleton();
-  $pluginDetail = $oPluginRegistry->getPluginDetails($pluginName . '.php');
-  $fileTar = $pluginHome . PATH_SEP . $pluginName . '-' . $pluginDetail->iVersion . '.tar';
+    if (preg_match_all('/->iVersion(.*)=(.*);/i', file_get_contents($pluginFilename), $result)) {
+        $version = trim($result[2][0], ' "');
+    } else {
+        $version = 1;
+    }
+    $fileTar = $pluginHome . PATH_SEP . $pluginName . '-' . $version . '.tar';
 
-  $tar = new Archive_Tar($fileTar);
-  $tar->_compress = false;
+    $tar = new Archive_Tar($fileTar);
+    $tar->_compress = false;
 
-  $pathBase = $pluginHome . PATH_SEP . $pluginName . PATH_SEP;
-  $tar->createModify($pluginHome . PATH_SEP . $pluginName . '.php', '', $pluginHome);
-  addTarFolder($tar, $pathBase, $pluginHome);
-  $aFiles = $tar->listContent();
+    $pathBase = $pluginHome . PATH_SEP . $pluginName . PATH_SEP;
+    $tar->createModify($pluginHome . PATH_SEP . $pluginName . '.php', '', $pluginHome);
+    addTarFolder($tar, $pathBase, $pluginHome);
+    $aFiles = $tar->listContent();
 
-  foreach( $aFiles as $key => $val ) {
-    printf(" %6d %s \n", $val['size'], pakeColor::colorize($val['filename'], 'INFO'));
-  }
-  printf("File created in  %s \n", pakeColor::colorize($fileTar, 'INFO'));
-  $filesize = sprintf("%5.2f", filesize($fileTar) / 1024);
-  printf("Filesize  %s Kb \n", pakeColor::colorize($filesize, 'INFO'));
+    foreach ($aFiles as $key => $val) {
+        printf(" %6d %s \n", $val['size'], pakeColor::colorize($val['filename'], 'INFO'));
+    }
+    printf("File created in  %s \n", pakeColor::colorize($fileTar, 'INFO'));
+    $filesize = sprintf("%5.2f", filesize($fileTar) / 1024);
+    printf("Filesize  %s Kb \n", pakeColor::colorize($filesize, 'INFO'));
 }
 
 function run_new_plugin($task, $args) {
