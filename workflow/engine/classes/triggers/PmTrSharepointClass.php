@@ -1,12 +1,6 @@
 <?php
 
-/**
- * class.pmTrSharepoint.php
- */
-
-
-
-class pmTrSharepointClass
+class PmTrSharepointClass
 {
 
     public function __construct($server, $auth)

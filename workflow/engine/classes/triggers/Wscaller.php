@@ -1,14 +1,6 @@
 <?php
 
-/**
- * class.pmTrSharepoint.php
- */
-
-
-
-/**
- * class.pmTrSharepoint.php
- */class wscaller
+class Wscaller
 {
 
     private $wsdlurl;
