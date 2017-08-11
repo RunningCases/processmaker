@@ -9,6 +9,7 @@ use ProcessMaker\Plugins\PluginRegistry;
 use Exception;
 use wsBase;
 use RBAC;
+use Applications;
 
 /**
  * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
@@ -261,7 +262,7 @@ class Cases
         $newerThan = (!empty($dataList['newerThan']))? $dataList['newerThan'] : '';
         $oldestThan = (!empty($dataList['oldestthan']))? $dataList['oldestthan'] : '';
 
-        $apps = new \Applications();
+        $apps = new Applications();
         $response = $apps->getAll(
                 $userUid,
                 $start,
@@ -335,7 +336,7 @@ class Cases
         $dateTo = (!empty( $dataList["dateTo"] )) ? substr( $dataList["dateTo"], 0, 10 ) : "";
         $filterStatus = isset( $dataList["filterStatus"] ) ? strtoupper( $dataList["filterStatus"] ) : "";
 
-        $apps = new \Applications();
+        $apps = new Applications();
         $response = $apps->searchAll(
             $userId,
             $start,
@@ -2317,7 +2318,7 @@ class Cases
         $tas_uid  = $aCaseField["TAS_UID"];
         $pro_uid  = $aCaseField["PRO_UID"];
 
-        $oApplication = new \Applications();
+        $oApplication = new Applications();
         $aField = $oApplication->getSteps($app_uid, $del_index, $tas_uid, $pro_uid);
 
         return $aField;

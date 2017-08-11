@@ -73,7 +73,7 @@
     // require_once (ROOT_PATH .
     // '/businessLogic/modules/SearchIndexAccess/Solr.php');
     require_once ('class.solr.php');
-    $solr = new BpmnEngine_SearchIndexAccess_Solr ($this->_solrIsEnabled, $this->_solrHost);
+    $solr = new BpmnEngineSearchIndexAccessSolr ($this->_solrIsEnabled, $this->_solrHost);
     return $solr->isEnabled ($workspace);
   }
   
@@ -160,7 +160,7 @@
     }
     $facetRequestEntity->filters = $filters;
     
-    $solr = new BpmnEngine_SearchIndexAccess_Solr ($this->_solrIsEnabled, $this->_solrHost);
+    $solr = new BpmnEngineSearchIndexAccessSolr ($this->_solrIsEnabled, $this->_solrHost);
     
     // create list of facets
     $facetsList = $solr->getFacetsList ($facetRequestEntity);
@@ -286,7 +286,7 @@
     require_once ('class.solr.php');
     // require_once (ROOT_PATH .
     // '/businessLogic/modules/SearchIndexAccess/Solr.php');
-    $solr = new BpmnEngine_SearchIndexAccess_Solr ($this->_solrIsEnabled, $this->_solrHost);
+    $solr = new BpmnEngineSearchIndexAccessSolr ($this->_solrIsEnabled, $this->_solrHost);
     
     // create list of facets
     $numberDocuments = $solr->getNumberDocuments ($workspace);
@@ -300,7 +300,7 @@
    */
   public function updateIndexDocument($solrUpdateDocumentEntity)
   {
-    $solr = new BpmnEngine_SearchIndexAccess_Solr ($this->_solrIsEnabled, $this->_solrHost);
+    $solr = new BpmnEngineSearchIndexAccessSolr ($this->_solrIsEnabled, $this->_solrHost);
     
     // create list of facets
     $solr->updateDocument ($solrUpdateDocumentEntity);
@@ -313,7 +313,7 @@
    */
   public function deleteDocumentFromIndex($workspace, $idQuery)
   {
-    $solr = new BpmnEngine_SearchIndexAccess_Solr ($this->_solrIsEnabled, $this->_solrHost);
+    $solr = new BpmnEngineSearchIndexAccessSolr ($this->_solrIsEnabled, $this->_solrHost);
     
     // create list of facets
     $solr->deleteDocument ($workspace, $idQuery);
@@ -325,7 +325,7 @@
    */
   public function commitIndexChanges($workspace)
   {
-    $solr = new BpmnEngine_SearchIndexAccess_Solr ($this->_solrIsEnabled, $this->_solrHost);
+    $solr = new BpmnEngineSearchIndexAccessSolr ($this->_solrIsEnabled, $this->_solrHost);
     
     // commit
     $solr->commitChanges ($workspace);
@@ -337,7 +337,7 @@
    */
   public function optimizeIndexChanges($workspace)
   {
-    $solr = new BpmnEngine_SearchIndexAccess_Solr ($this->_solrIsEnabled, $this->_solrHost);
+    $solr = new BpmnEngineSearchIndexAccessSolr ($this->_solrIsEnabled, $this->_solrHost);
   
     // commit
     $solr->optimizeChanges ($workspace);
@@ -373,7 +373,7 @@
     // array(''));
     
     // execute query
-    $solr = new BpmnEngine_SearchIndexAccess_Solr ($this->_solrIsEnabled, $this->_solrHost);
+    $solr = new BpmnEngineSearchIndexAccessSolr ($this->_solrIsEnabled, $this->_solrHost);
     $solrPaginatedResult = $solr->executeQuery ($solrRequestData);
     
     // get total number of documents in index
@@ -426,7 +426,7 @@
   {
     require_once ('class.solr.php');
 
-    $solr = new BpmnEngine_SearchIndexAccess_Solr ($this->_solrIsEnabled, $this->_solrHost);
+    $solr = new BpmnEngineSearchIndexAccessSolr ($this->_solrIsEnabled, $this->_solrHost);
     
     // print "SearchIndex!!!!";
     // create list of facets
