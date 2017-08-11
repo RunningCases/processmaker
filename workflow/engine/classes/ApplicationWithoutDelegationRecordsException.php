@@ -2,11 +2,6 @@
 
 /**
  * Application without Delegations exception
- *
- * @author Herbert Saal Gutierrez
- *
- * @category Colosa
- * @copyright Copyright (c) 2005-2012 Colosa Inc. (http://www.colosa.com)
  */
 class ApplicationWithoutDelegationRecordsException extends Exception
 {

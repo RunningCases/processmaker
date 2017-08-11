@@ -2,8 +2,6 @@
 
 /**
  * Interface to the Solr Search server
- * @author Herbert Saal Gutierrez
- *
  */
 class BpmnEngineSearchIndexAccessSolr
 {
@@ -29,10 +27,6 @@ class BpmnEngineSearchIndexAccessSolr
     public function isEnabled($workspace)
     {
         $resultServerStatus = false;
-
-        //if($this->_solrIsEnabled != true)
-        //return $resultServerStatus;
-
         // verify solr server response
         try {
             $resultServerStatus = $this->ping($workspace);
@@ -55,10 +49,6 @@ class BpmnEngineSearchIndexAccessSolr
      */
     public function getNumberDocuments($workspace)
     {
-        //if (! $this->_solrIsEnabled)
-        //return;
-        // get configuration information in base to workspace parameter
-
         // get total number of documents in registry
         $solrIntruct = (substr($this->_solrHost, -1) == "/") ? $this->_solrHost : $this->_solrHost . "/";
         $solrIntruct .= $workspace;
@@ -104,8 +94,6 @@ class BpmnEngineSearchIndexAccessSolr
      */
     public function executeQuery($solrRequestData)
     {
-        //if (! $this->_solrIsEnabled)
-        //return;
         $solrIntruct = '';
         // get configuration information in base to workspace parameter
         $workspace = $solrRequestData->workspace;
@@ -187,8 +175,6 @@ class BpmnEngineSearchIndexAccessSolr
      */
     public function updateDocument($solrUpdateDocument)
     {
-        //if (! $this->_solrIsEnabled)
-        //return;
         $solrIntruct = '';
         // get configuration information in base to workspace parameter
         $solrIntruct = (substr($this->_solrHost, -1) == "/") ? $this->_solrHost : $this->_solrHost . "/";
@@ -199,7 +185,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($handler, CURLOPT_HTTPHEADER, array(
             'Content-type:application/xml'
-        )); // -H
+        ));
         curl_setopt($handler, CURLOPT_BINARYTRANSFER, TRUE); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, $solrUpdateDocument->document); // data
 
@@ -235,8 +221,6 @@ class BpmnEngineSearchIndexAccessSolr
      */
     public function commitChanges($workspace)
     {
-        //if (! $this->_solrIsEnabled)
-        //return;
         $solrIntruct = '';
         // get configuration information in base to workspace parameter
         $solrIntruct = (substr($this->_solrHost, -1) == "/") ? $this->_solrHost : $this->_solrHost . "/";
@@ -247,7 +231,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($handler, CURLOPT_HTTPHEADER, array(
             'Content-type:application/xml'
-        )); // -H
+        ));
         curl_setopt($handler, CURLOPT_BINARYTRANSFER, TRUE); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, "<commit/>"); // data
 
@@ -283,9 +267,6 @@ class BpmnEngineSearchIndexAccessSolr
      */
     public function rollbackChanges($workspace)
     {
-        //if (! $this->_solrIsEnabled)
-        //return;
-
         $solrIntruct = '';
         // get configuration information in base to workspace parameter
         $solrIntruct = (substr($this->_solrHost, -1) == "/") ? $this->_solrHost : $this->_solrHost . "/";
@@ -296,7 +277,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($handler, CURLOPT_HTTPHEADER, array(
             'Content-type:application/xml'
-        )); // -H
+        ));
         curl_setopt($handler, CURLOPT_BINARYTRANSFER, TRUE); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, "<rollback/>"); // data
 
@@ -332,9 +313,6 @@ class BpmnEngineSearchIndexAccessSolr
      */
     public function optimizeChanges($workspace)
     {
-        //if (! $this->_solrIsEnabled)
-        //return;
-
         $solrIntruct = '';
         // get configuration information in base to workspace parameter
         $solrIntruct = (substr($this->_solrHost, -1) == "/") ? $this->_solrHost : $this->_solrHost . "/";
@@ -345,7 +323,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($handler, CURLOPT_HTTPHEADER, array(
             'Content-type:application/xml'
-        )); // -H
+        ));
         curl_setopt($handler, CURLOPT_BINARYTRANSFER, TRUE); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, "<optimize/>"); // data
 
@@ -381,9 +359,6 @@ class BpmnEngineSearchIndexAccessSolr
      */
     public function getListIndexedStoredFields($workspace)
     {
-        //if (! $this->_solrIsEnabled)
-        //return;
-
         $solrIntruct = '';
         // get configuration information in base to workspace parameter
         $solrIntruct = (substr($this->_solrHost, -1) == "/") ? $this->_solrHost : $this->_solrHost . "/";
@@ -426,9 +401,6 @@ class BpmnEngineSearchIndexAccessSolr
      */
     public function ping($workspace)
     {
-        //if (! $this->_solrIsEnabled)
-        //return;
-
         $solrIntruct = '';
         // get configuration information in base to workspace parameter
         $solrIntruct = (substr($this->_solrHost, -1) == "/") ? $this->_solrHost : $this->_solrHost . "/";
@@ -462,10 +434,6 @@ class BpmnEngineSearchIndexAccessSolr
      */
     public function deleteAllDocuments($workspace)
     {
-        //if (! $this->_solrIsEnabled)
-        //return;
-        // $registry = Zend_Registry::getInstance();
-
         $solrIntruct = '';
         // get configuration information in base to workspace parameter
         $solrIntruct = (substr($this->_solrHost, -1) == "/") ? $this->_solrHost : $this->_solrHost . "/";
@@ -476,7 +444,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($handler, CURLOPT_HTTPHEADER, array(
             'Content-type:application/xml'
-        )); // -H
+        ));
         curl_setopt($handler, CURLOPT_BINARYTRANSFER, TRUE); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, "<delete><query>*:*</query></delete>"); // data
 
@@ -513,10 +481,6 @@ class BpmnEngineSearchIndexAccessSolr
      */
     public function deleteDocument($workspace, $idQuery)
     {
-        //if (! $this->_solrIsEnabled)
-        //return;
-        // $registry = Zend_Registry::getInstance();
-
         $solrIntruct = '';
         // get configuration information in base to workspace parameter
         $solrIntruct = (substr($this->_solrHost, -1) == "/") ? $this->_solrHost : $this->_solrHost . "/";
@@ -527,7 +491,7 @@ class BpmnEngineSearchIndexAccessSolr
         curl_setopt($handler, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($handler, CURLOPT_HTTPHEADER, array(
             'Content-type:application/xml'
-        )); // -H
+        ));
         curl_setopt($handler, CURLOPT_BINARYTRANSFER, TRUE); // --data-binary
         curl_setopt($handler, CURLOPT_POSTFIELDS, "<delete><query>" . $idQuery . "</query></delete>"); // data
 
@@ -562,9 +526,6 @@ class BpmnEngineSearchIndexAccessSolr
      */
     public function getFacetsList($facetRequest)
     {
-        //if (! $this->_solrIsEnabled)
-        //return;
-
         $solrIntruct = '';
         // get configuration information in base to workspace parameter
         $workspace = $facetRequest->workspace;
@@ -589,14 +550,13 @@ class BpmnEngineSearchIndexAccessSolr
                 $facets .= '&facet.date=' . $value;
             }
             $facets .= '&facet.date.start=' . $facetRequest->facetDatesStart;
-            $facets .= '&facet.date.end=' . $facetRequest->facetDatesEnd;
+            $facets .= '&facet.date.end=' . $facetRequest->facet | DatesEnd;
             $facets .= '&facet.date.gap=' . $facetRequest->facetDateGap;
         }
         $filters = '';
         foreach ($facetRequest->filters as $value) {
             $filters .= '&fq=' . $value;
         }
-        // echo "<pre>";
 
         $resultFormat = '&wt=json';
 

@@ -11,10 +11,6 @@ use wsBase;
 use RBAC;
 use Applications;
 
-/**
- * @author Brayan Pereyra (Cochalo) <brayan@colosa.com>
- * @copyright Colosa - Bolivia
- */
 class Cases
 {
     private $formatFieldNameInUppercase = true;
