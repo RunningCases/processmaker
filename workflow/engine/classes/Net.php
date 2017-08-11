@@ -1,19 +1,6 @@
 <?php
 
-/**
- * LastModification 30/05/2008
- */
-
-/**
- *
- * @package workflow.engine.classes
- */
-
-
-/**
- *
- * @package workflow.engine.classes
- */class NET
+class Net
 {
     public $hostname;
     public $ip;
@@ -62,9 +49,9 @@
         $this->errstr = "";
         $this->db_instance = "";
 
-        unset( $this->db_user );
-        unset( $this->db_passwd );
-        unset( $this->db_sourcename );
+        unset($this->db_user);
+        unset($this->db_passwd);
+        unset($this->db_sourcename);
 
         #verifing valid param
         if ($pHost == "") {
@@ -72,7 +59,7 @@
             $this->errstr = "NET::You must specify a host";
             //$this->showMsg();
         }
-        $this->resolv( $pHost );
+        $this->resolv($pHost);
     }
 
     /**
@@ -81,31 +68,31 @@
      * @param string $pHost
      * @return void
      */
-    public function resolv ($pHost)
+    public function resolv($pHost)
     {
-        $aHost = explode( "\\", $pHost );
-        if (count( $aHost ) > 1) {
+        $aHost = explode("\\", $pHost);
+        if (count($aHost) > 1) {
             $ipHost = $aHost[0];
             $this->db_instance = $aHost[1];
         } else {
             $ipHost = $pHost;
         }
-        if ($this->is_ipaddress( $ipHost )) {
+        if ($this->is_ipaddress($ipHost)) {
             $this->ip = $ipHost;
-            if (! $this->hostname = @gethostbyaddr( $ipHost )) {
+            if (! $this->hostname = @gethostbyaddr($ipHost)) {
                 $this->errno = 2000;
                 $this->errstr = "NET::Host down";
                 $this->error = G::loadTranslation('ID_HOST_UNREACHABLE');
             }
         } else {
-            $ip = @gethostbyname( $ipHost );
-            $long = ip2long( $ip );
+            $ip = @gethostbyname($ipHost);
+            $long = ip2long($ip);
             if ($long == - 1 || $long === false) {
                 $this->errno = 2000;
                 $this->errstr = "NET::Host down";
                 $this->error = G::loadTranslation('ID_HOST_UNREACHABLE');
             } else {
-                $this->ip = @gethostbyname( $ipHost );
+                $this->ip = @gethostbyname($ipHost);
                 $this->hostname = $pHost;
             }
         }
@@ -117,14 +104,14 @@
      * @param string $pPort
      * @return true
      */
-    public function scannPort ($pPort)
+    public function scannPort($pPort)
     {
-        define( 'TIMEOUT', 5 );
-        $hostip = @gethostbyname( $host ); // resloves IP from Hostname returns hostname on failure
+        define('TIMEOUT', 5);
+        $hostip = @gethostbyname($host); // resloves IP from Hostname returns hostname on failure
         // attempt to connect
-        if (@fsockopen( $this->ip, $pPort, $this->errno, $this->errstr, TIMEOUT )) {
+        if (@fsockopen($this->ip, $pPort, $this->errno, $this->errstr, TIMEOUT)) {
             return true;
-            @fclose( $x ); //close connection (i dont know if this is needed or not).
+            @fclose($x); //close connection (i dont know if this is needed or not).
         } else {
             $this->errno = 9999;
             $this->errstr = "NET::Port Host Unreachable";
@@ -139,16 +126,16 @@
      * @param string $pHost
      * @return true
      */
-    public function is_ipaddress ($pHost)
+    public function is_ipaddress($pHost)
     {
         $key = true;
         #verifing if is a ip address
-        $tmp = explode( ".", $pHost );
+        $tmp = explode(".", $pHost);
         #if have a ip address format
-        if (count( $tmp ) == 4) {
+        if (count($tmp) == 4) {
             #if a correct ip address
-            for ($i = 0; $i < count( $tmp ); $i ++) {
-                if (! is_int( $tmp[$i] )) {
+            for ($i = 0; $i < count($tmp); $i ++) {
+                if (! is_int($tmp[$i])) {
                     $key = false;
                     break;
                 }
@@ -165,12 +152,12 @@
      * @param string $pHost
      * @return true
      */
-    public function ping ($pTTL = 3000)
+    public function ping($pTTL = 3000)
     {
         $cmd = "ping -w $pTTL $this->ip";
-        $output = exec( $cmd, $a, $a1 );
+        $output = exec($cmd, $a, $a1);
         $this->errstr = "";
-        for ($i = 0; $i < count( $a ); $i ++) {
+        for ($i = 0; $i < count($a); $i ++) {
             $this->errstr += $a[$i];
         }
         $this->errno = $a1;
@@ -183,7 +170,7 @@
      * @param string $pPasswd
      * @return void
      */
-    public function loginDbServer ($pUser, $pPasswd)
+    public function loginDbServer($pUser, $pPasswd)
     {
         $this->db_user = $pUser;
         $this->db_passwd = $pPasswd;
@@ -196,7 +183,7 @@
      * @param string $pPort
      * @return void
      */
-    public function setDataBase ($pDb, $pPort = '')
+    public function setDataBase($pDb, $pPort = '')
     {
         $this->db_sourcename = $pDb;
         $this->db_port = $pPort;
@@ -212,10 +199,9 @@
      */
     public function tryConnectServer($pDbDriver, array $arrayServerData = array(), $dbsEncode = "")
     {
-
         $filter = new InputFilter();
         $this->ip = $filter->validateInput($this->ip);
-        $this->db_port = $filter->validateInput($this->db_port,'int');
+        $this->db_port = $filter->validateInput($this->db_port, 'int');
         $this->db_user = $filter->validateInput($this->db_user);
         $this->db_passwd = $filter->validateInput($this->db_passwd);
         $this->db_sourcename = $filter->validateInput($this->db_sourcename);
@@ -227,10 +213,10 @@
         if (array_key_exists("connectionType", $arrayServerData) || array_key_exists("DBS_TYPEORACLE", $arrayServerData)) {
             if ($arrayServerData["connectionType"] == "TNS" || $arrayServerData["DBS_TYPEORACLE"] == "TNS") {
                 $flagTns=1;
-            }else{
+            } else {
                 $flagTns=0;
             }
-        }else{
+        } else {
             $flagTns=0;
         }
 
@@ -238,12 +224,12 @@
             switch ($pDbDriver) {
                 case 'mysql':
                     if ($this->db_passwd == '') {
-                        $link = @mysql_connect( $this->ip . (($this->db_port != '') && ($this->db_port != 0) ? ':' . $this->db_port : ''), $this->db_user );
+                        $link = @mysql_connect($this->ip . (($this->db_port != '') && ($this->db_port != 0) ? ':' . $this->db_port : ''), $this->db_user);
                     } else {
-                        $link = @mysql_connect( $this->ip . (($this->db_port != '') && ($this->db_port != 0) ? ':' . $this->db_port : ''), $this->db_user, $this->db_passwd );
+                        $link = @mysql_connect($this->ip . (($this->db_port != '') && ($this->db_port != 0) ? ':' . $this->db_port : ''), $this->db_user, $this->db_passwd);
                     }
                     if ($link) {
-                        if (@mysql_ping( $link )) {
+                        if (@mysql_ping($link)) {
                             $stat->status = 'SUCCESS';
                             $this->errstr = "";
                             $this->errno = 0;
@@ -260,7 +246,7 @@
                     break;
                 case 'pgsql':
                     $this->db_port = ($this->db_port == "") ? "5432" : $this->db_port;
-                    $link = @pg_connect( "host='$this->ip' port='$this->db_port' user='$this->db_user' password='$this->db_passwd' dbname='$this->db_sourcename'" );
+                    $link = @pg_connect("host='$this->ip' port='$this->db_port' user='$this->db_user' password='$this->db_passwd' dbname='$this->db_sourcename'");
                     if ($link) {
                         $stat->status = 'SUCCESS';
                         $this->errstr = "";
@@ -274,10 +260,10 @@
                 case 'mssql':
                     if ($this->db_instance != "") {
                         $str_port = "";
-                        $link = @mssql_connect( $this->ip . "\\" . $this->db_instance, $this->db_user, $this->db_passwd );
+                        $link = @mssql_connect($this->ip . "\\" . $this->db_instance, $this->db_user, $this->db_passwd);
                     } else {
                         $str_port = (($this->db_port == "") || ($this->db_port == 0) || ($this->db_port == 1433)) ? "" : ":" . $this->db_port;
-                        $link = @mssql_connect( $this->ip . $str_port, $this->db_user, $this->db_passwd );
+                        $link = @mssql_connect($this->ip . $str_port, $this->db_user, $this->db_passwd);
                     }
 
                     if ($link) {
@@ -310,7 +296,7 @@
                             $this->errno = 30001;
                         }
                     } catch (Exception $e) {
-                        throw new Exception( "[erik] Couldn't connect to Oracle Server! - " . $e->getMessage() );
+                        throw new Exception("[erik] Couldn't connect to Oracle Server! - " . $e->getMessage());
                     }
                     break;
                 case 'informix':
@@ -319,7 +305,7 @@
                     break;
             }
         } else {
-            throw new Exception( "CLASS::NET::ERROR: No connections param." );
+            throw new Exception("CLASS::NET::ERROR: No connections param.");
         }
 
         return $stat;
@@ -335,10 +321,9 @@
      */
     public function tryOpenDataBase($pDbDriver, array $arrayServerData = array(), $dbsEncode = "")
     {
-
         $filter = new InputFilter();
         $this->ip = $filter->validateInput($this->ip);
-        $this->db_port = $filter->validateInput($this->db_port,'int');
+        $this->db_port = $filter->validateInput($this->db_port, 'int');
         $this->db_user = $filter->validateInput($this->db_user);
         $this->db_passwd = $filter->validateInput($this->db_passwd);
         $this->db_sourcename = $filter->validateInput($this->db_sourcename);
@@ -346,32 +331,32 @@
             return 0;
         }
 
-        set_time_limit( 0 );
+        set_time_limit(0);
         $stat = new Stat();
 
         if (array_key_exists("connectionType", $arrayServerData) || array_key_exists("DBS_TYPEORACLE", $arrayServerData)) {
             if ($arrayServerData["connectionType"] == "TNS" || $arrayServerData["DBS_TYPEORACLE"] == "TNS") {
                 $flagTns=1;
-            }else{
+            } else {
                 $flagTns=0;
             }
-        }else{
+        } else {
             $flagTns=0;
         }
 
         if (isset($this->db_user) && (isset($this->db_passwd) || $this->db_passwd == "") && (isset($this->db_sourcename) || $flagTns == 1)) {
             switch ($pDbDriver) {
                 case 'mysql':
-                    $link = @mysql_connect( $this->ip . (($this->db_port != '') && ($this->db_port != 0) ? ':' . $this->db_port : ''), $this->db_user, $this->db_passwd );
-                    $db = @mysql_select_db( $this->db_sourcename );
+                    $link = @mysql_connect($this->ip . (($this->db_port != '') && ($this->db_port != 0) ? ':' . $this->db_port : ''), $this->db_user, $this->db_passwd);
+                    $db = @mysql_select_db($this->db_sourcename);
                     if ($link) {
                         if ($db) {
-                            $result = @mysql_query( "show tables;" );
+                            $result = @mysql_query("show tables;");
                             if ($result) {
                                 $stat->status = 'SUCCESS';
                                 $this->errstr = "";
                                 $this->errno = 0;
-                                @mysql_free_result( $result );
+                                @mysql_free_result($result);
                             } else {
                                 $this->error = "the user $this->db_user doesn't have privileges to run queries!";
                                 $this->errstr = "NET::MYSQL->Test query failed";
@@ -390,9 +375,9 @@
                     break;
                 case 'pgsql':
                     $this->db_port = (($this->db_port == "") || ($this->db_port == 0)) ? "5432" : $this->db_port;
-                    $link = @pg_connect( "host='$this->ip' port='$this->db_port' user='$this->db_user' password='$this->db_passwd' dbname='$this->db_sourcename'" );
+                    $link = @pg_connect("host='$this->ip' port='$this->db_port' user='$this->db_user' password='$this->db_passwd' dbname='$this->db_sourcename'");
                     if ($link) {
-                        if (@pg_ping( $link )) {
+                        if (@pg_ping($link)) {
                             $stat->status = 'SUCCESS';
                             $this->errstr = "";
                             $this->errno = 0;
@@ -412,13 +397,13 @@
                     //          $link = @mssql_connect($this->ip . $str_port, $this->db_user, $this->db_passwd);
                     if ($this->db_instance != "") {
                         $str_port = "";
-                        $link = @mssql_connect( $this->ip . "\\" . $this->db_instance, $this->db_user, $this->db_passwd );
+                        $link = @mssql_connect($this->ip . "\\" . $this->db_instance, $this->db_user, $this->db_passwd);
                     } else {
                         $str_port = (($this->db_port == "") || ($this->db_port == 0) || ($this->db_port == 1433)) ? "" : ":" . $this->db_port;
-                        $link = @mssql_connect( $this->ip . $str_port, $this->db_user, $this->db_passwd );
+                        $link = @mssql_connect($this->ip . $str_port, $this->db_user, $this->db_passwd);
                     }
                     if ($link) {
-                        $db = @mssql_select_db( $this->db_sourcename, $link );
+                        $db = @mssql_select_db($this->db_sourcename, $link);
                         if ($db) {
                             $stat->status = 'SUCCESS';
                             $this->errstr = "";
@@ -445,7 +430,7 @@
 
                     if ($cnn) {
                         $stid = @oci_parse($cnn, 'select AUTHENTICATION_TYPE from v$session_connect_info');
-                        $result = @oci_execute( $stid, OCI_DEFAULT );
+                        $result = @oci_execute($stid, OCI_DEFAULT);
                         if ($result) {
                             $stat->status = 'SUCCESS';
                             $this->errstr = "";
@@ -468,7 +453,7 @@
                     break;
             }
         } else {
-            throw new Exception( "CLASS::NET::ERROR: No connections param." );
+            throw new Exception("CLASS::NET::ERROR: No connections param.");
         }
         return $stat;
     }
@@ -479,30 +464,29 @@
      * @param string $driver
      * @return void
      */
-    public function getDbServerVersion ($driver)
+    public function getDbServerVersion($driver)
     {
-        if (! isset( $this->ip )) {
-            $this->ip = getenv( 'HTTP_CLIENT_IP' );
+        if (! isset($this->ip)) {
+            $this->ip = getenv('HTTP_CLIENT_IP');
         }
 
-        if (isset( $this->ip ) && isset( $this->db_user ) && isset( $this->db_passwd )) {
+        if (isset($this->ip) && isset($this->db_user) && isset($this->db_passwd)) {
             try {
-                if (! isset( $this->db_sourcename )) {
+                if (! isset($this->db_sourcename)) {
                     $this->db_sourcename = DB_NAME;
                 }
                 $value = 'none';
-                $sDataBase = 'database_' . strtolower( DB_ADAPTER );
-                if (G::LoadSystemExist( $sDataBase )) {
-
+                $sDataBase = 'database_' . strtolower(DB_ADAPTER);
+                if (G::LoadSystemExist($sDataBase)) {
                     $oDataBase = new database();
-                    $value = $oDataBase->getServerVersion( $driver, $this->ip, $this->db_port, $this->db_user, $this->db_passwd, $this->db_sourcename );
+                    $value = $oDataBase->getServerVersion($driver, $this->ip, $this->db_port, $this->db_user, $this->db_passwd, $this->db_sourcename);
                 }
                 return $value;
             } catch (Exception $e) {
-                throw new Exception( $e->getMessage() );
+                throw new Exception($e->getMessage());
             }
         } else {
-            throw new Exception( 'NET::Error->No params for Data Base Server!' );
+            throw new Exception('NET::Error->No params for Data Base Server!');
         }
     }
 
@@ -512,7 +496,7 @@
      * @param string $pAdapter
      * @return void
      */
-    public function dbName ($pAdapter)
+    public function dbName($pAdapter)
     {
         switch ($pAdapter) {
             case 'mysql':
@@ -542,7 +526,7 @@
      * @param string $pAdapter
      * @return void
      */
-    public function showMsg ()
+    public function showMsg()
     {
         if ($this->errno != 0) {
             $msg = "
@@ -556,7 +540,7 @@
       </div>
     </fieldset>
     <center>";
-            print ($msg) ;
+            print($msg) ;
         }
     }
 
@@ -566,7 +550,7 @@
      *
      * @return string
      */
-    public function getErrno ()
+    public function getErrno()
     {
         return $this->errno;
     }
@@ -577,7 +561,7 @@
      *
      * @return string
      */
-    public function getErrmsg ()
+    public function getErrmsg()
     {
         return $this->errstr;
     }

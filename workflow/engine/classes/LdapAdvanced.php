@@ -1,8 +1,10 @@
 <?php
+
 /**
  * class.ldapAdvanced.php
- * LDAP plugin for the RBAC class. This 
-class ldapAdvanced
+ * LDAP plugin for the RBAC class. This
+ */
+class LdapAdvanced
 {
     /**
      * The authsource id
@@ -38,7 +40,7 @@ class ldapAdvanced
      * Object where an rbac instance is set
      * @var Object
      */
-    static private $instance = null;
+    private static $instance = null;
 
     private $arrayObjectClassFilter = array(
         "user"       => "|(objectclass=inetorgperson)(objectclass=organizationalperson)(objectclass=person)(objectclass=user)",
@@ -457,14 +459,14 @@ class ldapAdvanced
         $logFile = PATH_DATA . "log/ldapAdvanced.log";
 
         if (!file_exists($logFile) || is_writable($logFile)) {
-            $fpt= fopen ($logFile, "a");
+            $fpt= fopen($logFile, "a");
             $ldapErrorMsg = "";
             $ldapErrorNr = 0;
 
             if ($link != null) {
                 $ldapErrorNr = ldap_errno($link);
 
-                if ( $ldapErrorNr != 0 ) {
+                if ($ldapErrorNr != 0) {
                     $ldapErrorMsg = ldap_error($link);
                     $text = $ldapErrorMsg . " : " . $text;
                 }
@@ -474,7 +476,7 @@ class ldapAdvanced
             fwrite($fpt, sprintf("%s %s %s %s %s \n", date("Y-m-d H:i:s"), getenv("REMOTE_ADDR"), SYS_SYS, $ldapErrorNr, $text));
             fclose($fpt);
         } else {
-            error_log ("file $logFile is not writable ");
+            error_log("file $logFile is not writable ");
         }
     }
 
@@ -505,11 +507,11 @@ class ldapAdvanced
      */
     public function ldapConnection($aAuthSource)
     {
-        $pass = explode("_",$aAuthSource["AUTH_SOURCE_PASSWORD"]);
+        $pass = explode("_", $aAuthSource["AUTH_SOURCE_PASSWORD"]);
 
         foreach ($pass as $index => $value) {
             if ($value == "2NnV3ujj3w") {
-                $aAuthSource["AUTH_SOURCE_PASSWORD"] = G::decrypt($pass[0],$aAuthSource["AUTH_SOURCE_SERVER_NAME"]);
+                $aAuthSource["AUTH_SOURCE_PASSWORD"] = G::decrypt($pass[0], $aAuthSource["AUTH_SOURCE_SERVER_NAME"]);
             }
         }
 
@@ -1045,11 +1047,11 @@ class ldapAdvanced
             $strUser     = trim($strUser);
         }
 
-        if ( $strUser == "" ) {
+        if ($strUser == "") {
             return -1;
         }
 
-        if ( strlen( $strPass ) == 0) {
+        if (strlen($strPass) == 0) {
             return -2;
         }
 
@@ -1140,7 +1142,7 @@ class ldapAdvanced
 
             $ldapcnn = $this->ldapConnection($arrayAuthSource);
             $flagUpdate = false;
-            switch(ldap_errno($ldapcnn)) {
+            switch (ldap_errno($ldapcnn)) {
                 case '0x00':
                     $flagUpdate = true;
                     $statusRbac = 1;
@@ -1195,7 +1197,7 @@ class ldapAdvanced
             $validUserPass = -5;
         }
 
-        if ( $validUserPass == 1 ) {
+        if ($validUserPass == 1) {
             $this->log($ldapcnn, "sucessful login user " . $verifiedUser["sDN"]);
         } else {
             $this->log($ldapcnn, "failure authentication for user $strUser");
@@ -1295,7 +1297,7 @@ class ldapAdvanced
                 $entries = ldap_count_entries($ldapcnn, $oSearch);
                 $totalUser = $entries;
 
-                if ( $entries > 0) {
+                if ($entries > 0) {
                     $oEntry = ldap_first_entry($ldapcnn, $oSearch);
 
                     $countEntries=0;
@@ -1546,11 +1548,11 @@ class ldapAdvanced
         $res = 0;
 
         if (!empty($user)) {
-            if ($this->VerifyLogin( $user['sUsername'], $strPass) === true) {
+            if ($this->VerifyLogin($user['sUsername'], $strPass) === true) {
                 $res = 1;
             }
 
-            if ($res == 0 &&  $this->VerifyLogin( $user['sDN'], $strPass) === true) {
+            if ($res == 0 &&  $this->VerifyLogin($user['sDN'], $strPass) === true) {
                 $res = 1;
             }
         } else {
@@ -1583,8 +1585,8 @@ class ldapAdvanced
 
             if (!empty($aAttributes)) {
                 foreach ($aAttributes as $value) {
-                    if (isset( $user[$value['attributeUser']] )) {
-                        $aData[$value['attributeUser']] = str_replace( "*", "'", $user[$value['attributeUser']] );
+                    if (isset($user[$value['attributeUser']])) {
+                        $aData[$value['attributeUser']] = str_replace("*", "'", $user[$value['attributeUser']]);
                         if ($value['attributeUser'] == 'USR_STATUS') {
                             $evalValue = $aData[$value['attributeUser']];
                             $statusValue = (isset($user['USR_STATUS'])) ? $user['USR_STATUS'] :'ACTIVE';
@@ -1595,7 +1597,7 @@ class ldapAdvanced
             }
 
             //req - accountexpires
-            if (isset($user["USR_DUE_DATE"]) && $user["USR_DUE_DATE"]!='' ) {
+            if (isset($user["USR_DUE_DATE"]) && $user["USR_DUE_DATE"]!='') {
                 $aData["USR_DUE_DATE"] = $this->convertDateADtoPM($user["USR_DUE_DATE"]);
             }
             //end
@@ -1768,12 +1770,12 @@ class ldapAdvanced
      * @param <type> $currentDN
      * @return <type>
      */
-    public function getDepUidIfExistsDN ($currentDN)
+    public function getDepUidIfExistsDN($currentDN)
     {
         try {
             $oCriteria = new Criteria('workflow');
-            $oCriteria->add(DepartmentPeer::DEP_STATUS ,  'ACTIVE' );
-            $oCriteria->add(DepartmentPeer::DEP_LDAP_DN,  $currentDN );
+            $oCriteria->add(DepartmentPeer::DEP_STATUS, 'ACTIVE');
+            $oCriteria->add(DepartmentPeer::DEP_LDAP_DN, $currentDN);
 
             $oDataset = DepartmentPeer::doSelectRS($oCriteria);
             $oDataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);
@@ -1888,7 +1890,7 @@ class ldapAdvanced
         BasePeer::doUpdate($c1, $c2, $con);
     }
 
-    public function deactivateUser ($userUid)
+    public function deactivateUser($userUid)
     {
         if (!class_exists('RbacUsers')) {
             require_once(PATH_RBAC.'model/RbacUsers.php');
@@ -2045,7 +2047,7 @@ class ldapAdvanced
 
                 $criteriaCount = new Criteria('workflow');
                 $criteriaCount->clearSelectColumns();
-                $criteriaCount->addSelectColumn( 'COUNT(*)' );
+                $criteriaCount->addSelectColumn('COUNT(*)');
                 $criteriaCount->add(DepartmentPeer::DEP_PARENT, $oDepartment->getDepUid(), Criteria::EQUAL);
                 $rs = DepartmentPeer::doSelectRS($criteriaCount);
                 $rs->next();
@@ -2054,7 +2056,7 @@ class ldapAdvanced
                 $result[] = $node;
             }
 
-            if ( count($result) >= 1 ) {
+            if (count($result) >= 1) {
                 $result[ count($result) -1 ]['DEP_LAST'] = 1;
             }
 
@@ -2108,11 +2110,11 @@ class ldapAdvanced
         $attributes = $aAuthSource["AUTH_SOURCE_DATA"];
         $this->sTerminatedOu = isset($attributes['AUTH_SOURCE_RETIRED_OU'])? trim($attributes['AUTH_SOURCE_RETIRED_OU']) : '';
 
-        if ($this->sTerminatedOu == '' ) {
+        if ($this->sTerminatedOu == '') {
             return $aUsers;
         }
 
-        return $this->getUsersFromDepartmentByName( $this->sTerminatedOu );
+        return $this->getUsersFromDepartmentByName($this->sTerminatedOu);
     }
 
     /**
@@ -2142,8 +2144,8 @@ class ldapAdvanced
         $con = Propel::getConnection('rbac');
         // select set
         $c1 = new Criteria('rbac');
-        $c1->add(RbacUsersPeer::USR_USERNAME, $aUsrUid, Criteria::IN );
-        $c1->add(RbacUsersPeer::USR_STATUS, 1 );
+        $c1->add(RbacUsersPeer::USR_USERNAME, $aUsrUid, Criteria::IN);
+        $c1->add(RbacUsersPeer::USR_STATUS, 1);
         // update set
         $c2 = new Criteria('rbac');
         $c2->add(RbacUsersPeer::USR_STATUS, '0');
@@ -2152,7 +2154,7 @@ class ldapAdvanced
         $con = Propel::getConnection('workflow');
         // select set
         $c1 = new Criteria('workflow');
-        $c1->add(UsersPeer::USR_USERNAME, $aUsrUid, Criteria::IN );
+        $c1->add(UsersPeer::USR_USERNAME, $aUsrUid, Criteria::IN);
         // update set
         $c2 = new Criteria('workflow');
         $c2->add(UsersPeer::USR_STATUS, 'INACTIVE');
@@ -2360,7 +2362,7 @@ class ldapAdvanced
     {
         try {
             $criteria = new Criteria('workflow');
-            $criteria->add(GroupwfPeer::GRP_STATUS , 'ACTIVE');
+            $criteria->add(GroupwfPeer::GRP_STATUS, 'ACTIVE');
             $criteria->add(GroupwfPeer::GRP_LDAP_DN, $currentDN);
             $dataset = GroupwfPeer::doSelectRS($criteria);
             $dataset->setFetchmode(ResultSet::FETCHMODE_ASSOC);

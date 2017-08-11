@@ -47,7 +47,7 @@ $html = '
 $flagTns = ($_POST["type"] == "oracle" && $_POST["connectionType"] == "TNS")? 1 : 0;
 
 if ($flagTns == 0) {
-    $host = new NET($_POST["server"]);
+    $host = new Net($_POST["server"]);
 
     $port = $_POST["port"];
 

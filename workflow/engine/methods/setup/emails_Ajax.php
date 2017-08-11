@@ -92,7 +92,7 @@ switch ($request) {
         $SMTPSecure = $_POST['SMTPSecure'];
         $timeout = 10;
 
-        $Server = new NET( $srv );
+        $Server = new Net( $srv );
         $smtp = new SMTP();
 
         switch ($step) {

@@ -695,7 +695,7 @@ class Main extends Controller
 
         $redhat .= " (" . PHP_OS . ")";
         if (defined( "DB_HOST" )) {
-            $dbNetView = new NET( DB_HOST );
+            $dbNetView = new Net( DB_HOST );
             $dbNetView->loginDbServer( DB_USER, DB_PASS );
 
             $dbConns = new DbConnections( '' );
