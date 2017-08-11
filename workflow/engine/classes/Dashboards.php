@@ -5,13 +5,7 @@ class Dashboards
 {
 	public function getListDashboards ($start=0, $limit=20, $sort='', $dir='DESC', $search='')
     {
-        require_once 'classes/model/Dashboard.php';
-        require_once 'classes/model/DashboardIndicator.php';
-        require_once 'classes/model/Users.php';
-        require_once 'classes/model/Groupwf.php';
-        require_once 'classes/model/DashboardDasInd.php';
 
-        
         $limit_size = isset($limit) ? $limit: 20;
         $start = isset($_REQUEST['start']) ? $_REQUEST['start'] : 0;
         $limit = isset($_REQUEST['limit']) ? $_REQUEST['limit'] : $limit_size;

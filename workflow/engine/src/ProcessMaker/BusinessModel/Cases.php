@@ -7,7 +7,7 @@ use CasesPeer;
 use AppDelegation;
 use ProcessMaker\Plugins\PluginRegistry;
 use Exception;
-use wsBase;
+use WsBase;
 use RBAC;
 use Applications;
 
@@ -463,7 +463,7 @@ class Cases
                             if (!isset($row)) {
                                 continue;
                             }
-                            $ws = new wsBase();
+                            $ws = new WsBase();
                             $fields = $ws->getCaseInfo($applicationUid, $row["DEL_INDEX"]);
                             $array = json_decode(json_encode($fields), true);
                             if ($array ["status_code"] != 0) {
@@ -530,7 +530,7 @@ class Cases
                     throw (new Exception($arrayData));
                 }
             } else {
-                $ws = new wsBase();
+                $ws = new WsBase();
                 $fields = $ws->getCaseInfo($applicationUid, 0);
                 $array = json_decode(json_encode($fields), true);
 
@@ -676,7 +676,7 @@ class Cases
     {
         try {
 
-            $ws = new wsBase();
+            $ws = new WsBase();
             if ($variables) {
                 $variables = array_shift($variables);
             }
@@ -720,7 +720,7 @@ class Cases
     {
         try {
 
-            $ws = new wsBase();
+            $ws = new WsBase();
             if ($variables) {
                 $variables = array_shift($variables);
             } elseif ($variables == null) {
@@ -775,7 +775,7 @@ class Cases
                 $delIndex = AppDelegation::getCurrentIndex($applicationUid);
             }
 
-            $ws = new wsBase();
+            $ws = new WsBase();
             $fields = $ws->reassignCase($userUid, $applicationUid, $delIndex, $userUidSource, $userUidTarget);
             $array = json_decode(json_encode($fields), true);
             if (array_key_exists("status_code", $array)) {
@@ -1006,7 +1006,7 @@ class Cases
             $RBAC->sSystem = 'PROCESSMAKER';
         }
 
-        $case = new wsBase();
+        $case = new WsBase();
         $result = $case->executeTrigger($userUid, $appUid, $triUid, $delIndex);
 
         if ($result->status_code != 0) {
@@ -1073,7 +1073,7 @@ class Cases
                 }
             }
 
-            $ws = new wsBase();
+            $ws = new WsBase();
             $fields = $ws->derivateCase($userUid, $applicationUid, $delIndex, $bExecuteTriggersBeforeAssignment = false);
             $array = json_decode(json_encode($fields), true);
             if ($array ["status_code"] != 0) {

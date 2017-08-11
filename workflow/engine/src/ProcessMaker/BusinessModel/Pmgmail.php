@@ -357,7 +357,7 @@ class Pmgmail {
             return false;
         }
 
-        $ws = new \wsBase();
+        $ws = new \WsBase();
         $resultMail = $ws->sendMessage(
             $application['APP_UID'],
             $defaultEmail, //From,

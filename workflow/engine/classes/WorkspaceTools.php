@@ -4,14 +4,13 @@ use ProcessMaker\Util\FixReferencePath;
 use ProcessMaker\Plugins\Adapters\PluginAdapter;
 
 /**
- * 
-/**
  * class workspaceTools.
  *
  * Utility functions to manage a workspace.
  *
  * @package workflow.engine.classes
- */class workspaceTools
+ */
+class WorkspaceTools
 {
     public $name = null;
     public $path = null;
@@ -868,8 +867,8 @@ use ProcessMaker\Plugins\Adapters\PluginAdapter;
     public function upgradeDatabase($onedb = false, $checkOnly = false)
     {
         $this->initPropel(true);
-        p11835::$dbAdapter = $this->dbAdapter;
-        p11835::isApplicable();
+        P11835::$dbAdapter = $this->dbAdapter;
+        P11835::isApplicable();
         $systemSchema = PmSystem::getSystemSchema($this->dbAdapter);
         $systemSchemaRbac = PmSystem::getSystemSchemaRbac($this->dbAdapter);// get the Rbac Schema
         $this->registerSystemTables(array_merge($systemSchema, $systemSchemaRbac));
@@ -943,7 +942,7 @@ use ProcessMaker\Plugins\Adapters\PluginAdapter;
             }
         }
 
-        p11835::execute();
+        P11835::execute();
 
         return true;
     }
@@ -1236,11 +1235,11 @@ use ProcessMaker\Plugins\Adapters\PluginAdapter;
     public function printMetadata($printSysInfo = true)
     {
         if ($printSysInfo) {
-            workspaceTools::printSysInfo();
+            WorkspaceTools::printSysInfo();
             CLI::logging("\n");
         }
 
-        workspaceTools::printInfo($this->getMetadata());
+        WorkspaceTools::printInfo($this->getMetadata());
     }
 
     /**
@@ -1576,7 +1575,7 @@ use ProcessMaker\Plugins\Adapters\PluginAdapter;
             $data = file_get_contents($metafile);
             $workspaceData = G::json_decode($data);
             CLI::logging("\n");
-            workspaceTools::printInfo((array)$workspaceData);
+            WorkspaceTools::printInfo((array)$workspaceData);
         }
 
         G::rm_dir($tempDirectory);
@@ -1600,7 +1599,7 @@ use ProcessMaker\Plugins\Adapters\PluginAdapter;
                 if (basename($item) == "." || basename($item) == "..") {
                     continue;
                 }
-                workspaceTools::dirPerms($item, $owner, $group, $perms);
+                WorkspaceTools::dirPerms($item, $owner, $group, $perms);
             }
         }
     }
@@ -1639,7 +1638,7 @@ use ProcessMaker\Plugins\Adapters\PluginAdapter;
         if (empty($metaFiles)) {
             $metaFiles = glob($tempDirectory . "/*.txt");
             if (!empty($metaFiles)) {
-                return workspaceTools::restoreLegacy($tempDirectory);
+                return WorkspaceTools::restoreLegacy($tempDirectory);
             } else {
                 throw new Exception("No metadata found in backup");
             }
@@ -1694,7 +1693,7 @@ use ProcessMaker\Plugins\Adapters\PluginAdapter;
             } else {
                 CLI::logging("> Restoring " . CLI::info($backupWorkspace) . " to " . CLI::info($workspaceName) . "\n");
             }
-            $workspace = new workspaceTools($workspaceName);
+            $workspace = new WorkspaceTools($workspaceName);
 
             if (PmInstaller::isset_site($workspaceName)) {
                 if ($overwrite) {
@@ -1727,7 +1726,7 @@ use ProcessMaker\Plugins\Adapters\PluginAdapter;
             $shared_stat = stat(PATH_DATA);
 
             if ($shared_stat !== false) {
-                workspaceTools::dirPerms($workspace->path, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
+                WorkspaceTools::dirPerms($workspace->path, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
             } else {
                 CLI::logging(CLI::error("Could not get the shared folder permissions, not changing workspace permissions") . "\n");
             }
@@ -2019,7 +2018,7 @@ use ProcessMaker\Plugins\Adapters\PluginAdapter;
             CLI::logging("    Copying Enterprise Directory to $pathNewFile...\n");
 
             if ($shared_stat !== false) {
-                workspaceTools::dirPerms($pathDirectoryEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
+                WorkspaceTools::dirPerms($pathDirectoryEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
             } else {
                 CLI::logging(CLI::error("Could not get shared folder permissions, workspace permissions couldn't be changed") . "\n");
             }
@@ -2036,7 +2035,7 @@ use ProcessMaker\Plugins\Adapters\PluginAdapter;
         if (file_exists($pathFileEnterprise)) {
             CLI::logging("    Copying Enterprise.php file to $pathNewFile...\n");
             if ($shared_stat !== false) {
-                workspaceTools::dirPerms($pathFileEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
+                WorkspaceTools::dirPerms($pathFileEnterprise, $shared_stat['uid'], $shared_stat['gid'], $shared_stat['mode']);
             } else {
                 CLI::logging(CLI::error("Could not get shared folder permissions, workspace permissions couldn't be changed") . "\n");
             }
@@ -3771,7 +3770,7 @@ use ProcessMaker\Plugins\Adapters\PluginAdapter;
         CLI::logging("->   Populating PRO_ID, USR_ID at LIST_* \n");
         $con->begin();
         $stmt = $con->createStatement();
-        foreach (workspaceTools::$populateIdsQueries as $query) {
+        foreach (WorkspaceTools::$populateIdsQueries as $query) {
             $stmt->executeQuery($query);
         }
         $con->commit();

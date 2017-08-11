@@ -291,7 +291,7 @@ class actionsByEmailCoreClass extends PMPlugin
                                 }
                             }
 
-                            $wsBaseInstance = new wsBase();
+                            $wsBaseInstance = new WsBase();
                             $result = $wsBaseInstance->sendMessage(
                                 $data->APP_UID,
                                 $emailFrom,

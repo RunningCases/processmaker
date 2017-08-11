@@ -1,24 +1,5 @@
 <?php
 
-function ls_dir($dir, $basename = null)
-{
-    $files = array();
-    //if (substr($dir, -1) != "/")
-    //  $dir .= "/";
-    if ($basename == null) {
-        $basename = $dir;
-    }
-    foreach (glob("$dir/*") as $filename) {
-        //var_dump(substr($filename, strlen($basename) + 1));
-        if (is_dir($filename)) {
-            $files = array_merge($files, ls_dir($filename, $basename));
-        } else {
-            $files[] = substr($filename, strlen($basename) + 1);
-        }
-    }
-    return $files;
-}
-
 
 class Upgrade
 {
@@ -33,13 +14,11 @@ class Upgrade
     {
 
         $filter = new InputFilter();
-        //echo "Starting core installation...\n";
         $start = microtime(1);
         $filename = $this->addon->getDownloadFilename();
         $time = microtime(1);
 
         $archive = new Archive_Tar ($filename);
-        //printf("Time to open archive: %f\n", microtime(1) - $time);
         $time = microtime(1);
         $extractDir = dirname($this->addon->getDownloadFilename()) . "/extract";
         $extractDir = $filter->xssFilterHard($extractDir);
@@ -54,34 +33,22 @@ class Upgrade
         if (!is_dir($backupDir)) {
             mkdir($backupDir);
         }
-        //printf("Time to remove old directory: %f\n", microtime(1) - $time);
+
         $time = microtime(1);
         echo "Extracting files...\n";
         $archive->extractModify($extractDir, 'processmaker');
-        //printf("Time to extract all files: %f\n", microtime(1) - $time);
-        //$time = microtime(1);
-        //$files = $archive->listContent();
-        //printf("Time to get list of contents: %f\n", microtime(1) - $time);
-        /*$time = microtime(1);
-        foreach ($files as $fileinfo)
-          if (basename($fileinfo['filename']) == 'checksum.txt') {
-            $checksumFile = $archive->extractInString($fileinfo['filename']);
-            break;
-          }
-        printf("Time to get checksum.txt: %f\n", microtime(1) - $time);
-        */
         $checksumFile = file_get_contents("$extractDir/checksum.txt");
         $time = microtime(1);
         $checksums = array();
         foreach (explode("\n", $checksumFile) as $line) {
             $checksums[trim(substr($line, 33))] = substr($line, 0, 32);
         }
-        //printf("Time to assemble list of checksums: %f\n", microtime(1) - $time);
+
         $checksum = array();
         $changedFiles = array();
         $time = microtime(1);
-        $files = ls_dir($extractDir);
-        //printf("Time to list files: %f\n", microtime(1) - $time);
+        $files = $this->ls_dir($extractDir);
+
         echo "Updating ProcessMaker files...\n";
         $time = microtime(1);
         $checksumTime = 0;
@@ -116,8 +83,7 @@ class Upgrade
                 }
             }
         }
-        //printf("Time to create all checksums: %f\n", $checksumTime);
-        //printf("Time to copy files: %f\n", microtime(1) - $time);
+
         printf("Updated %d files\n", count($changedFiles));
         printf("Clearing cache...\n");
         if (defined('PATH_C')) {
@@ -137,9 +103,24 @@ class Upgrade
                 $first = false;
             } catch (Exception $e) {
                 printf("Errors upgrading workspace {$workspace->name}: {$e->getMessage()}\n");
-                //$errors = true;
             }
         }
-        //printf("Time to install: %f\n", microtime(1) - $start);
     }
+
+    private function ls_dir($dir, $basename = null)
+    {
+        $files = array();
+        if ($basename == null) {
+            $basename = $dir;
+        }
+        foreach (glob("$dir/*") as $filename) {
+            if (is_dir($filename)) {
+                $files = array_merge($files, $this->ls_dir($filename, $basename));
+            } else {
+                $files[] = substr($filename, strlen($basename) + 1);
+            }
+        }
+        return $files;
+    }
+
 }

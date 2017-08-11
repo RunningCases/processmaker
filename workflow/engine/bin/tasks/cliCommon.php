@@ -44,7 +44,7 @@ if(sizeof($output) == 3 && isset($output[2]) && isset($output[2][0])) {
 function get_workspaces_from_args($args, $includeAll = true) {
   $workspaces = array();
   foreach ($args as $arg) {
-    $workspaces[] = new workspaceTools($arg);
+    $workspaces[] = new WorkspaceTools($arg);
   }
   if (empty($workspaces) && $includeAll) {
     $workspaces = PmSystem::listWorkspaces();

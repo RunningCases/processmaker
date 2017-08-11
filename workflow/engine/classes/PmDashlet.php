@@ -2,12 +2,8 @@
 
 use ProcessMaker\Plugins\PluginRegistry;
 
-require_once 'classes/interfaces/DashletInterface.php';
-require_once 'classes/model/Dashlet.php';
-require_once 'classes/model/DashletInstance.php';
 
-
-class PMDashlet extends DashletInstance implements DashletInterface
+class PmDashlet extends DashletInstance implements DashletInterface
 {
 
     // Own properties

@@ -1,9 +1,8 @@
 <?php
 
-require_once 'classes/interfaces/DashletInterface.php';
 
 
-class dashletProcessMakerCommunity implements DashletInterface
+class DashletProcessMakerCommunity implements DashletInterface
 {
 
     const version = '1.0';
