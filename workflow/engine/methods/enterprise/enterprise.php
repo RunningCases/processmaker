@@ -133,7 +133,7 @@ class enterprisePlugin extends PMPlugin
 
         require_once (PATH_CORE . 'classes/model/AddonsStore.php');
         AddonsStore::checkLicenseStore();
-        $licenseManager = &pmLicenseManager::getSingleton();
+        $licenseManager = &PmLicenseManager::getSingleton();
         AddonsStore::updateAll(false);
     }
 

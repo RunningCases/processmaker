@@ -37,7 +37,7 @@ class PopupMenu extends form
                     $label = str_replace( "\n", ' ', $label );
                     $pmXmlNode = new Xml_Node( $f, 'complete', '', array ('label' => $label,'type' => 'popupOption','launch' => $tableId . '.showHideField("' . $f . '")'
                     ) );
-                    $this->fields[$f] = new XmlForm_Field_popupOption( $pmXmlNode );
+                    $this->fields[$f] = new XmlForm_Field_PopupOption( $pmXmlNode );
                     $this->values[$f] = '';
             }
         }

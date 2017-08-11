@@ -46,7 +46,7 @@ class Main extends Controller
         $expireInLabel = '';
 
         require_once ("classes" . PATH_SEP . "class.pmLicenseManager.php");
-        $pmLicenseManager = &pmLicenseManager::getSingleton();
+        $pmLicenseManager = &PmLicenseManager::getSingleton();
         $expireIn = $pmLicenseManager->getExpireIn();
         $expireInLabel = $pmLicenseManager->getExpireInLabel();
 

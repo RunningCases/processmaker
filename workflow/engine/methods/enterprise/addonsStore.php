@@ -2,7 +2,7 @@
 
 AddonsStore::checkLicenseStore();
 
-$licenseManager = &pmLicenseManager::getSingleton();
+$licenseManager = &PmLicenseManager::getSingleton();
 $oHeadPublisher = &headPublisher::getSingleton();
 
 if (isset($licenseManager->date) && is_array($licenseManager->date)) {

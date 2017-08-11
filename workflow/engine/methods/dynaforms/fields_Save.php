@@ -282,7 +282,7 @@ $_SESSION['_DBArray'] = $_DBArray;
 // Additions to javascript
 if (isset($sType) && $sType === 'javascript') {
     $sCode = urlencode($pmeCode);
-    $editor = new dynaformEditorAjax($_POST);
+    $editor = new DynaformEditorAjax($_POST);
     $editor->set_javascript($A, $fieldName, $sCode);
 }
 

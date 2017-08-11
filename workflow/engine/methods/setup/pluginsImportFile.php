@@ -105,12 +105,12 @@ try {
 
             require_once ('classes/model/AddonsStore.php');
             AddonsStore::checkLicenseStore();
-            $licenseManager = &pmLicenseManager::getSingleton();
+            $licenseManager = &PmLicenseManager::getSingleton();
             AddonsStore::updateAll(false);
 
             $message = G::loadTranslation( 'ID_ENTERPRISE_INSTALLED') . ' ' . G::loadTranslation( 'ID_LOG_AGAIN');
             G::SendMessageText($message, "INFO");
-            $licenseManager = &pmLicenseManager::getSingleton();
+            $licenseManager = &PmLicenseManager::getSingleton();
             die('<script type="text/javascript">parent.parent.location = "../login/login";</script>');
         }
     }
@@ -179,12 +179,12 @@ try {
 
             require_once ('classes/model/AddonsStore.php');
             AddonsStore::checkLicenseStore();
-            $licenseManager = &pmLicenseManager::getSingleton();
+            $licenseManager = &PmLicenseManager::getSingleton();
             AddonsStore::updateAll(false);
 
             $message = G::loadTranslation( 'ID_ENTERPRISE_INSTALLED') . ' ' . G::loadTranslation( 'ID_LOG_AGAIN');
             G::SendMessageText($message, "INFO");
-            $licenseManager = &pmLicenseManager::getSingleton();
+            $licenseManager = &PmLicenseManager::getSingleton();
             die('<script type="text/javascript">parent.parent.location = "../login/login";</script>');
         }
     }

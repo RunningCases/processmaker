@@ -1985,7 +1985,7 @@ class WorkspaceTools
         $licensedFeatures = & PMLicensedFeatures::getSingleton();
         /*----------------------------------********---------------------------------*/
         if ($licensedFeatures->verifyfeature('95OY24wcXpEMzIyRmlNSnF0STNFSHJzMG9wYTJKekpLNmY2ZmRCeGtuZk5oUDloaUNhUGVjTDJBPT0=')) {
-            enterpriseClass::setHashPassword($response);
+            EnterpriseClass::setHashPassword($response);
         } else {
             return false;
         }

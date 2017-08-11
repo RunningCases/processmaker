@@ -283,6 +283,8 @@ define( 'PML_WSDL_URL', PML_SERVER . '/syspmLibrary/en/green/services/wsdl' );
 define( 'PML_UPLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/uploadProcess' );
 define( 'PML_DOWNLOAD_URL', PML_SERVER . '/syspmLibrary/en/green/services/download' );
 
+G::defineConstants();
+
 $config = Bootstrap::getSystemConfiguration();
 
 // starting session

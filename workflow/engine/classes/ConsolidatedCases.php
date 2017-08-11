@@ -52,7 +52,7 @@ class ConsolidatedCases
         $oReportTables = new ReportTables();
         $oReportTables->deleteAllReportVars($_POST['form']['REP_TAB_UID']);
 
-        $pmDyna = new pmDynaform(array());
+        $pmDyna = new PmDynaform(array());
         $pmDyna->fields["CURRENT_DYNAFORM"] = $DynUid;
         $dataDyna = $pmDyna->getDynaform();
         $json = G::json_decode($dataDyna["DYN_CONTENT"]);

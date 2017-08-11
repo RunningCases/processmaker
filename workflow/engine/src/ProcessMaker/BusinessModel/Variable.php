@@ -4,6 +4,7 @@ namespace ProcessMaker\BusinessModel;
 use G;
 use Exception;
 use AdditionalTables;
+use PmDynaform;
 
 class Variable
 {
@@ -194,7 +195,7 @@ class Variable
                         "VAR_ACCEPTED_VALUES" => $variable->getVarAcceptedValues()
                     );
 
-                    $pmDynaform = new \pmDynaform();
+                    $pmDynaform = new PmDynaform();
                     $pmDynaform->synchronizeVariable($processUid, $newVariable, $oldVariable);
                 } else {
 
@@ -236,7 +237,7 @@ class Variable
             $this->throwExceptionIfVariableIsAssociatedAditionalTable($variableUid);
             $variable = $this->getVariable($processUid, $variableUid);
 
-            $pmDynaform = new \pmDynaform();
+            $pmDynaform = new PmDynaform();
             $isUsed = $pmDynaform->isUsed($processUid, $variable);
             if ($isUsed !== false) {
                 $titleDynaform=$pmDynaform->getDynaformTitle($isUsed);
@@ -783,7 +784,7 @@ class Variable
             //This value is required to be able to query the database.
             $_SESSION["PROCESS"] = $proUid;
             //The pmdynaform class is instantiated
-            $pmDynaform = new \pmDynaform(array("APP_DATA" => $params));
+            $pmDynaform = new PmDynaform(array("APP_DATA" => $params));
 
             //Get control from dynaform.
             //The parameters: queryFilter, queryStart, queryLimit, are only necessary 

@@ -1365,7 +1365,7 @@ class pmTablesProxy extends HttpProxyController
                         $arrayDynaFormData = $dynaForm->getDynaFormRecordByPk($dynaFormUid, [], false);
 
                         if ($arrayDynaFormData !== false) {
-                            $arrayGrid = pmDynaform::getGridsAndFields($arrayDynaFormData['DYN_CONTENT']);
+                            $arrayGrid = PmDynaform::getGridsAndFields($arrayDynaFormData['DYN_CONTENT']);
 
                             if ($arrayGrid !== false && isset($arrayGrid[$gridId])) {
                                 $grid = $arrayGrid[$gridId];
@@ -1545,7 +1545,7 @@ class pmTablesProxy extends HttpProxyController
                 $record = $rsCriteria->getRow();
 
                 if ($flagIsBpmn) {
-                    $arrayGrid = pmDynaform::getGridsAndFields($record['DYN_CONTENT']);
+                    $arrayGrid = PmDynaform::getGridsAndFields($record['DYN_CONTENT']);
 
                     if ($arrayGrid !== false) {
                         foreach ($arrayGrid as $value) {

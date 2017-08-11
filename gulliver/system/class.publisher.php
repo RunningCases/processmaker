@@ -369,7 +369,7 @@ class Publisher
                         default:
                             $label = ($oTable->fields[$f]['Label'] != '') ? $oTable->fields[$f]['Label'] : $f;
                             $label = str_replace( "\n", ' ', $label );
-                            $pm->fields[$f] = new XmlForm_Field_popupOption( new Xml_Node( $f, 'complete', '', array ('label' => $label,'type' => 'popupOption','launch' => $oTable->id . '.showHideField("' . $f . '")' ) ) );
+                            $pm->fields[$f] = new XmlForm_Field_PopupOption( new Xml_Node( $f, 'complete', '', array ('label' => $label,'type' => 'popupOption','launch' => $oTable->id . '.showHideField("' . $f . '")' ) ) );
                             $pm->values[$f] = '';
                     }
                 }

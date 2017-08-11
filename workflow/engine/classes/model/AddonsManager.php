@@ -222,7 +222,7 @@ class AddonsManager extends BaseAddonsManager
         }
 
         ///////
-        $licenseManager = &pmLicenseManager::getSingleton();
+        $licenseManager = &PmLicenseManager::getSingleton();
         $activeLicense = $licenseManager->getActiveLicense();
 
         $data = $data . "Content-Disposition: form-data; name=\"licenseFile\"; filename=\"" . $licenseManager->file . "\"\n";

@@ -2387,7 +2387,7 @@ function PMFgetLabelOption ($PROCESS, $DYNAFORM_UID, $FIELD_NAME, $FIELD_SELECTE
 {
     $data = array();
     $data["CURRENT_DYNAFORM"] = $DYNAFORM_UID;
-    $dynaform = new pmDynaform($data);
+    $dynaform = new PmDynaform($data);
     if ($dynaform->isResponsive()) {
         $json = $dynaform->searchFieldByName($DYNAFORM_UID, $FIELD_NAME);
         $options = $json->options + $json->optionsSql;
@@ -3127,7 +3127,7 @@ function PMFDynaFormFields($dynUid, $appUid = false, $delIndex = 0)
     }
     $data["CURRENT_DYNAFORM"] = $dynUid;
 
-    $dynaform = new pmDynaform(\ProcessMaker\Util\DateTime::convertUtcToTimeZone($data));
+    $dynaform = new PmDynaform(\ProcessMaker\Util\DateTime::convertUtcToTimeZone($data));
     $dynaform->onPropertyRead = function(&$json, $key, $value) {
         if (isset($json->data) && !isset($json->value)) {
             $json->value = $json->data->value;

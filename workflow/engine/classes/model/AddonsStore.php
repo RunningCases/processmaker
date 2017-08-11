@@ -34,7 +34,7 @@ class AddonsStore extends BaseAddonsStore
     public static function checkLicenseStore()
     {
         //getting the licenseManager....
-        $licenseManager = &pmLicenseManager::getSingleton();
+        $licenseManager = &PmLicenseManager::getSingleton();
 
         if (isset($licenseManager->id)) {
             //Remove any license store that is not the active license
@@ -71,7 +71,7 @@ class AddonsStore extends BaseAddonsStore
 
         AddonsStore::checkLicenseStore();
 
-        $licenseManager = &pmLicenseManager::getSingleton(); //Getting the licenseManager
+        $licenseManager = &PmLicenseManager::getSingleton(); //Getting the licenseManager
 
         $result["store_errors"] = array();
         list($stores, $errors)  = AddonsStore::updateAll(false, $type);
@@ -183,7 +183,7 @@ class AddonsStore extends BaseAddonsStore
 
         AddonsStore::checkLicenseStore();
 
-        $licenseManager = &pmLicenseManager::getSingleton(); //Getting the licenseManager
+        $licenseManager = &PmLicenseManager::getSingleton(); //Getting the licenseManager
 
         $result["store_errors"] = array();
         list($stores, $errors)  = AddonsStore::updateAll(false);
@@ -350,7 +350,7 @@ class AddonsStore extends BaseAddonsStore
             $aPluginsPP = unserialize(trim(file_get_contents(PATH_DATA_SITE . 'ee')));
         }
 
-        $pmLicenseManagerO = &pmLicenseManager::getSingleton();
+        $pmLicenseManagerO = &PmLicenseManager::getSingleton();
         $localPlugins = array();
 
         if ($type == 'plugin') {

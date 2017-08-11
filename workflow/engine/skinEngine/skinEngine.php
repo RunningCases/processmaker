@@ -701,7 +701,7 @@ class SkinEngine
         $freeOfChargeText = "";
         if (! defined('SKIP_FREE_OF_CHARGE_TEXT'))
         $freeOfChargeText = "Supplied free of charge with no support, certification, warranty, maintenance nor indemnity by ProcessMaker and its Certified Partners.";
-        if(file_exists(PATH_CLASSES."class.pmLicenseManager.php")) $freeOfChargeText="";
+        if(file_exists(PATH_CLASSES."PmLicenseManager.php")) $freeOfChargeText="";
 
         $fileFooter = PATH_SKINS . SYS_SKIN . PATH_SEP . 'footer.html';
         if (file_exists($fileFooter)) {
@@ -757,7 +757,7 @@ class SkinEngine
       }
 
         if (defined('SYS_SYS')) {
-            $pmLicenseManagerO = &pmLicenseManager::getSingleton();
+            $pmLicenseManagerO = &PmLicenseManager::getSingleton();
             $expireIn          = $pmLicenseManagerO->getExpireIn();
             $expireInLabel     = $pmLicenseManagerO->getExpireInLabel();
 

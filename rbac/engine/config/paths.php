@@ -81,4 +81,4 @@
   if (!is_dir(PATH_SMARTY_C)) G::mk_dir(PATH_SMARTY_C);
   if (!is_dir(PATH_SMARTY_CACHE)) G::mk_dir(PATH_SMARTY_CACHE);
 
-?>
+G::defineConstants();

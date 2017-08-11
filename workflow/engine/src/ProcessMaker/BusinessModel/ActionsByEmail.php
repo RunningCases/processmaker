@@ -3,6 +3,7 @@
 namespace ProcessMaker\BusinessModel;
 
 use ProcessMaker\Plugins\PluginRegistry;
+use PmDynaform;
 
 /**
  * Description of ActionsByEmailService
@@ -579,7 +580,7 @@ class ActionsByEmail
         $configuration = $resultD->getRow();
 
         $field = new \stdClass();
-        $obj = new \pmDynaform($configuration);
+        $obj = new PmDynaform($configuration);
 
         if ($dataRes['ABE_RES_DATA'] !== '') {
             $value       = unserialize($dataRes['ABE_RES_DATA']);

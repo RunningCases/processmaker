@@ -1,6 +1,12 @@
 <?php
 
-class DynaformEditor extends WebResource
+/**
+ * Created on 21/12/2007
+ * Dynaform - Dynaform 
+/**
+ *
+ * @package workflow.engine.classes
+ */class DynaformEditor extends WebResource
 {
 
     private $isOldCopy = false;
@@ -36,7 +42,7 @@ class DynaformEditor extends WebResource
      * @param string $get
      * @return void
      */
-    public function dynaformEditor($get)
+    public function __construct($get)
     {
         $this->panelConf = array_merge($this->panelConf, $this->defaultConfig['Editor']);
         //'title' => G::LoadTranslation('ID_DYNAFORM_EDITOR').' - ['.$this->title.']',
@@ -111,7 +117,7 @@ class DynaformEditor extends WebResource
                 $openDoc->parseXmlFile($fileName);
             }
             //$form = new Form( $this->file , $this->home, SYS_LANG, true );
-            $Properties = dynaformEditorAjax::get_properties($A, $this->dyn_uid);
+            $Properties = DynaformEditorAjax::get_properties($A, $this->dyn_uid);
             /* Start Block: Prepare the XMLDB connection */
             define('DB_XMLDB_HOST', PATH_DYNAFORM . $this->file . '.xml');
             define('DB_XMLDB_USER', '');

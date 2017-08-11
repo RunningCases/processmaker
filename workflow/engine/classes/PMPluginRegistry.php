@@ -128,7 +128,7 @@ class PMPluginRegistry
             return;
         }
 
-        $detail = new pluginDetail( $sNamespace, $sClassName, $sFilename, $plugin->sFriendlyName, $plugin->sPluginFolder, $plugin->sDescription, $plugin->sSetupPage, $plugin->iVersion );
+        $detail = new PluginDetail( $sNamespace, $sClassName, $sFilename, $plugin->sFriendlyName, $plugin->sPluginFolder, $plugin->sDescription, $plugin->sSetupPage, $plugin->iVersion );
 
         if (isset( $plugin->aWorkspaces )) {
             $detail->aWorkspaces = $plugin->aWorkspaces;
@@ -1207,7 +1207,7 @@ class PMPluginRegistry
             //Found a License
             if (class_exists( 'pmLicenseManager' )) {
                 $sSerializedFile = PATH_DATA_SITE . 'lmn.singleton';
-                $pmLicenseManagerO = & pmLicenseManager::getSingleton();
+                $pmLicenseManagerO = & PmLicenseManager::getSingleton();
                 if (file_exists( $sSerializedFile )) {
                     $pmLicenseManagerO->unSerializeInstance( file_get_contents( $sSerializedFile ) );
                 }

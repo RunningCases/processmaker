@@ -180,7 +180,7 @@ try {
         if ($oPluginRegistry->existsTrigger ( PM_LOGIN )) {
             $oPluginRegistry->executeTriggers ( PM_LOGIN , $loginInfo );
         }
-        enterpriseClass::enterpriseSystemUpdate($loginInfo);
+        EnterpriseClass::enterpriseSystemUpdate($loginInfo);
         $_SESSION['USER_LOGGED']  = $uid;
         $_SESSION['USR_USERNAME'] = $usr;
     } else {

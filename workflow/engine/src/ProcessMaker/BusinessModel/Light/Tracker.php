@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\BusinessModel\Light;
 
+use PmDynaform;
 
 class Tracker
 {
@@ -266,7 +267,7 @@ class Tracker
                     $Fields["PRO_UID"] = $pro_uid;
                     $Fields["CURRENT_DYNAFORM"] = $obj_uid;
 
-                    $pmDynaForm = new \pmDynaform($Fields);
+                    $pmDynaForm = new PmDynaform($Fields);
 
 //                    if ($pmDynaForm->isResponsive()) {
 //                        $pmDynaForm->printTracker();

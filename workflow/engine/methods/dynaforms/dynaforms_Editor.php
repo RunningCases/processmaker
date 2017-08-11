@@ -80,7 +80,7 @@ if (isset( $_GET['bpmn'] ) && $_GET['bpmn'] == '1') {
     $_SESSION['dynaform_editor'] = 'processmap';
 }
 
-$editor = new dynaformEditor( $_POST );
+$editor = new DynaformEditor( $_POST );
 $editor->file = $dynaform->getDynFilename();
 $editor->home = PATH_DYNAFORM;
 $editor->title = $dynaform->getDynTitle();

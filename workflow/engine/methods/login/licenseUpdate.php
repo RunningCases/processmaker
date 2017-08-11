@@ -15,11 +15,11 @@ if ($aux['extension'] != 'dat') {
     G::uploadFile($aInfoLoadFile["tmp_name"], $dir, $aInfoLoadFile["name"]);
     //reading the file that was uploaded
 
-    $licenseManager =& pmLicenseManager::getSingleton();
+    $licenseManager =& PmLicenseManager::getSingleton();
     $response = $licenseManager->installLicense($dir . $aInfoLoadFile["name"], false, false);
 
     if ($response) {
-        $licenseManager = new pmLicenseManager();
+        $licenseManager = new PmLicenseManager();
         preg_match("/^license_(.*).dat$/", $licenseManager->file, $matches);
         $realId = urlencode($matches[1]);
         $workspace = (isset($licenseManager->workspace)) ? $licenseManager->workspace : 'pmLicenseSrv';
