@@ -1,6 +1,6 @@
 <?php
 
-class P11835 extends patch
+class P11835 extends Patch
 {
     /*
      * Note.- Use before upgrade DB.
