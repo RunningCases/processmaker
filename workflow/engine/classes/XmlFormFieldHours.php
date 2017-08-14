@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Class XmlForm_Field_hours
+ * Class XmlFormFieldHours
  *
  */
-class XmlForm_Field_Hours extends XmlForm_Field_SimpleText
+class XmlFormFieldHours extends XmlFormFieldSimpleText
 {
     public $size = 15;
     public $maxLength = 64;

@@ -54,7 +54,7 @@ if (! is_file( XMLFORM_AJAX_PATH . $xmlFile )) {
     }
 }
 
-$G_FORM = new form( $xmlFile, $sPath );
+$G_FORM = new Form( $xmlFile, $sPath );
 $G_FORM->id = urlDecode( $_POST['form'] );
 $G_FORM->values = isset( $_SESSION[$G_FORM->id] ) ? $_SESSION[$G_FORM->id] : array ();
 

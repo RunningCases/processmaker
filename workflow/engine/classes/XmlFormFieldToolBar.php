@@ -6,7 +6,7 @@
  *
  * @package workflow.engine.ProcessMaker
  */
-class XmlFormFieldToolBar extends XmlForm_Field
+class XmlFormFieldToolBar extends XmlFormField
 {
     public $xmlfile = '';
     public $type = 'toolbar';
@@ -15,7 +15,7 @@ class XmlFormFieldToolBar extends XmlForm_Field
     public $withoutLabel = true;
 
     /**
-     * Constructor of the class XmlForm_Field_ToolBar
+     * Constructor of the class XmlFormFieldToolBar
      *
      * @param string $xmlNode
      * @param string $lang
@@ -25,7 +25,7 @@ class XmlFormFieldToolBar extends XmlForm_Field
      */
     public function XmlFormFieldToolBar($xmlNode, $lang = 'en', $home = '', $owner = ' ')
     {
-        parent::XmlForm_Field($xmlNode, $lang, $home, $owner);
+        parent::__construct($xmlNode, $lang, $home, $owner);
         $this->home = $home;
     }
 

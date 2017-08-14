@@ -26,7 +26,7 @@
  */
 
 /**
- * XmlForm_Field_HTML class definition
+ * XmlFormFieldWYSIWYGEditor class definition
  * It is useful to see dynaforms how are built
  *
  * @package gulliver.system
@@ -36,7 +36,7 @@
  *
  */
 
-class XmlForm_Field_WYSIWYG_EDITOR extends XmlForm_Field
+class XmlFormFieldWYSIWYGEditor extends XmlFormField
 {
     public $width = '100%';
     public $height = '300';

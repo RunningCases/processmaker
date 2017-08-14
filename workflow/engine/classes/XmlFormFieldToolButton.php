@@ -6,7 +6,7 @@
  *
  * @package workflow.engine.ProcessMaker
  */
-class XmlFormFieldToolButton extends XmlForm_Field
+class XmlFormFieldToolButton extends XmlFormField
 {
     public $file = '';
     public $fileAlt = '';

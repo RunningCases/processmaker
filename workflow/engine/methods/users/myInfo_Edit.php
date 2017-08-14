@@ -25,7 +25,7 @@ try {
     global $RBAC;
     $RBAC->requirePermissions( 'PM_LOGIN' );
 
-    // deprecated the class XmlForm_Field_Image is currently part of the class.xmlform.php package
+    // deprecated the class XmlFormFieldImage is currently part of the class.xmlform.php package
     // the use of the external xmlfield_Image is highly discouraged
 
     unset( $_SESSION['CURRENT_USER'] );

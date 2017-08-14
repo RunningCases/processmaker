@@ -117,7 +117,7 @@
             $form = new Form($fileTmp, PATH_DYNAFORM, SYS_LANG, true);
 
             //Navigation Bar
-            $form->fields = G::array_merges(array("__DYNAFORM_OPTIONS" => new XmlForm_Field_XmlMenu(new Xml_Node("__DYNAFORM_OPTIONS", "complete", "", array("type" => "xmlmenu", "xmlfile" => "gulliver/dynaforms_Options"
+            $form->fields = G::array_merges(array("__DYNAFORM_OPTIONS" => new XmlFormFieldXmlMenu(new Xml_Node("__DYNAFORM_OPTIONS", "complete", "", array("type" => "xmlmenu", "xmlfile" => "gulliver/dynaforms_Options"
                                         )), SYS_LANG, PATH_XMLFORM, $form)
                             ), $form->fields);
 
@@ -187,7 +187,7 @@
         $form = new Form($fileTmp, PATH_DYNAFORM, SYS_LANG, true);
 
         //Navigation Bar
-        $form->fields = G::array_merges(array("__DYNAFORM_OPTIONS" => new XmlForm_Field_XmlMenu(new Xml_Node("__DYNAFORM_OPTIONS", "complete", "", array("type" => "xmlmenu", "xmlfile" => "gulliver/dynaforms_Options"
+        $form->fields = G::array_merges(array("__DYNAFORM_OPTIONS" => new XmlFormFieldXmlMenu(new Xml_Node("__DYNAFORM_OPTIONS", "complete", "", array("type" => "xmlmenu", "xmlfile" => "gulliver/dynaforms_Options"
                                     )), SYS_LANG, PATH_XMLFORM, $form)
                         ), $form->fields);
 

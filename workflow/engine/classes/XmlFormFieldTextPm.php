@@ -1,6 +1,6 @@
 <?php
 
-class XmlFormFieldTextPm extends XmlForm_Field_SimpleText
+class XmlFormFieldTextPm extends XmlFormFieldSimpleText
 {
     public $size = 15;
     public $maxLength = 64;

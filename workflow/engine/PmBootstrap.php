@@ -82,7 +82,7 @@ class PmBootstrap extends Bootstrap
         $this->autoloader->registerClass('publisher', PATH_GULLIVER . 'class.publisher');
         $this->autoloader->registerClass('templatePower', PATH_GULLIVER . 'class.templatePower');
         $this->autoloader->registerClass('xmlDocument', PATH_GULLIVER . 'class.xmlDocument');
-        $this->autoloader->registerClass('XmlForm_Field_XmlMenu', PATH_GULLIVER . 'class.xmlMenu');
+        $this->autoloader->registerClass('XmlFormFieldXmlMenu', PATH_GULLIVER . 'class.xmlMenu');
         $this->autoloader->registerClass('xmlform', PATH_GULLIVER . 'class.xmlform');
 
         $this->autoloader->registerClass('xmlformExtension', PATH_GULLIVER . 'class.xmlformExtension');
@@ -96,7 +96,7 @@ class PmBootstrap extends Bootstrap
         $this->autoloader->registerClass('headPublisher', PATH_GULLIVER . 'class.headPublisher');
         $this->autoloader->registerClass('Xml_Node', PATH_GULLIVER . 'class.xmlDocument');
         $this->autoloader->registerClass('Xml_document', PATH_GULLIVER . 'class.xmlDocument');
-        $this->autoloader->registerClass('XmlForm_Field_*', PATH_GULLIVER . 'class.xmlform');
+        $this->autoloader->registerClass('XmlFormField*', PATH_GULLIVER . 'class.xmlform');
         $this->autoloader->registerClass('ServerConf', PATH_CORE . 'classes/class.serverConfiguration');
     }
 
