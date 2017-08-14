@@ -1344,14 +1344,12 @@ class WebEntryEvent
         $weData
     ) {
         $http = (G::is_https()) ? "https://" : "http://";
-        $port = $_SERVER['SERVER_PORT'] == '80' ? '' : ':' . $_SERVER['SERVER_PORT'];
         if ($weLinkGeneration === 'ADVANCED') {
             $domain = $weLinkDomain;
             $hasProtocol = strpos($domain, 'http://') === 0 ||
                 strpos($domain, 'https://') === 0;
-            $hasPort = preg_match('/\:\d+$/', $domain);
             $url = ($hasProtocol ? '' : $http) .
-                $domain . ($hasPort ? '' : $port) .
+                $domain .
                 "/sys" . SYS_SYS . "/" .
                 $weLinkLanguage . "/" .
                 $weLinkSkin . "/" . $prj_uid;
