@@ -2223,23 +2223,23 @@ function run_check_standard_code ( $task, $options) {
 function run_update_plugin_attributes($task, $args)
 {
     try {
-
         //Verify data
         if (!isset($args[0])) {
             throw new Exception("Error: You must specify the name of a plugin");
         }
-
         //Set variables
         $pluginName = $args[0];
-
-        //Update plugin attributes
-        $pmPluginRegistry = PluginRegistry::loadSingleton();
-
-        $pmPluginRegistry->updatePluginAttributesInAllWorkspaces($pluginName);
+        define('SYS_SYS', uniqid());
+        foreach (PmSystem::listWorkspaces() as $value) {
+            \ProcessMaker\Util\Cnn::connect($value->name);
+            //Update plugin attributes
+            $pmPluginRegistry = PluginRegistry::newInstance();
+            $pmPluginRegistry->updatePluginAttributesInAllWorkspaces($value->name, $pluginName);
+        }
 
         echo "Done!\n";
     } catch (Exception $e) {
-        error_log( $e->getMessage() . "\n" );
+        error_log($e->getMessage() . "\n");
     }
 }
 
@@ -2247,7 +2247,7 @@ function run_check_plugin_disabled_code($task, $args)
 {
     try {
         //Set variables
-        $option = (isset($args[0]))? trim($args[0]) : "";
+        $option = (isset($args[0])) ? trim($args[0]) : "";
         $option2 = strtoupper($option);
 
         switch ($option2) {
@@ -2273,10 +2273,10 @@ function run_check_plugin_disabled_code($task, $args)
 
                         if (is_file(PATH_PLUGINS . $pluginName . ".php") && is_dir(PATH_PLUGINS . $pluginName)) {
                             if (preg_match(
-                                    '/^.*class\s+' . $pluginName . 'Plugin\s+extends\s+(\w*)\s*\{.*$/i',
-                                    str_replace(["\n", "\r", "\t"], ' ', file_get_contents(PATH_PLUGINS . $pluginName . '.php')),
-                                    $arrayMatch
-                                )
+                                '/^.*class\s+' . $pluginName . 'Plugin\s+extends\s+(\w*)\s*\{.*$/i',
+                                str_replace(["\n", "\r", "\t"], ' ', file_get_contents(PATH_PLUGINS . $pluginName . '.php')),
+                                $arrayMatch
+                            )
                             ) {
                                 $pluginParentClassName = $arrayMatch[1];
 
@@ -2325,13 +2325,13 @@ function run_check_plugin_disabled_code($task, $args)
                         $arrayFoundDisabledCode = array_merge($cs->checkDisabledCode("FILE", PATH_PLUGINS . $pluginName . ".php"), $cs->checkDisabledCode("PATH", PATH_PLUGINS . $pluginName));
 
                         if (!empty($arrayFoundDisabledCode)) {
-                            $strFoundDisabledCode .= (($strFoundDisabledCode != "")? "\n\n" : "") . "> " . $pluginName;
+                            $strFoundDisabledCode .= (($strFoundDisabledCode != "") ? "\n\n" : "") . "> " . $pluginName;
 
                             foreach ($arrayFoundDisabledCode as $key2 => $value2) {
                                 $strCodeAndLine = "";
 
                                 foreach ($value2 as $key3 => $value3) {
-                                    $strCodeAndLine .= (($strCodeAndLine != "")? ", " : "") . $key3 . " (Lines " . implode(", ", $value3) . ")";
+                                    $strCodeAndLine .= (($strCodeAndLine != "") ? ", " : "") . $key3 . " (Lines " . implode(", ", $value3) . ")";
                                 }
 
                                 $strFoundDisabledCode .= "\n- " . str_replace(PATH_PLUGINS, "", $key2) . ": " . $strCodeAndLine;
@@ -2350,7 +2350,7 @@ function run_check_plugin_disabled_code($task, $args)
 
         echo "Done!\n";
     } catch (Exception $e) {
-        error_log( $e->getMessage() . "\n" );
+        error_log($e->getMessage() . "\n");
     }
 }
 

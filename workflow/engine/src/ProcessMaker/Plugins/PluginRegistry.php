@@ -130,6 +130,21 @@ class PluginRegistry
     }
 
     /**
+     * Unregister the plugin in the class
+     * @param string $Namespace Name Plugin
+     * @return PluginDetail
+     */
+    public function unregisterPlugin($Namespace)
+    {
+        $detail = null;
+        if (isset($this->_aPluginDetails[$Namespace])) {
+            $detail = $this->_aPluginDetails[$Namespace];
+            unset($this->_aPluginDetails[$Namespace]);
+        }
+        return $detail;
+    }
+
+    /**
      * Get setup Plugins
      * @return int
      */
@@ -1371,14 +1386,13 @@ class PluginRegistry
 
     /**
      * Update the plugin attributes in all workspaces
+     * @param string $Workspace Name workspace
      * @param string $Namespace Name of Plugin
      * @throws Exception
      */
-    public function updatePluginAttributesInAllWorkspaces($Namespace)
+    public function updatePluginAttributesInAllWorkspaces($Workspace, $Namespace)
     {
         try {
-            G::LoadClass("wsTools");
-
             //Set variables
             $pluginFileName = $Namespace . ".php";
 
@@ -1387,69 +1401,17 @@ class PluginRegistry
                 throw new Exception("Error: The plugin not exists");
             }
 
-            //Update plugin attributes
+            //remove old data plugin
+            $pmPluginRegistry = PluginRegistry::loadSingleton();
+            $pluginDetails = $pmPluginRegistry->unregisterPlugin($Namespace);
+
+            //Load plugin attributes
             require_once(PATH_PLUGINS . $pluginFileName);
 
-            $pmPluginRegistry = PluginRegistry::loadSingleton();
-
-            $pluginDetails = $pmPluginRegistry->getPluginDetails($pluginFileName);
-
-            if (is_array($pluginDetails->getWorkspaces()) &&
-                count($pluginDetails->getWorkspaces()) > 0
-            ) {
-                $arrayWorkspace = array();
-
-                foreach (PmSystem::listWorkspaces() as $value) {
-                    $workspaceTools = $value;
-
-                    $arrayWorkspace[] = $workspaceTools->name;
-                }
-                //Workspaces to update
-                $arrayWorkspaceAux = array_diff($arrayWorkspace, $pluginDetails->getWorkspaces());
-                $strWorkspaceNoWritable = "";
-
-                $arrayWorkspace = array();
-
-                foreach ($arrayWorkspaceAux as $value) {
-                    $workspace = $value;
-
-                    $workspacePathDataSite = PATH_DATA . "sites" . PATH_SEP . $workspace . PATH_SEP;
-
-                    if (file_exists($workspacePathDataSite . "plugin.singleton")) {
-                        $pmPluginRegistry = PluginRegistry::loadSingleton();
-
-                        if (isset($pmPluginRegistry->_aPluginDetails[$Namespace])) {
-                            if (!is_writable($workspacePathDataSite . "plugin.singleton")) {
-                                $strWorkspaceNoWritable .= (($strWorkspaceNoWritable != "") ? ", " : "") . $workspace;
-                            }
-
-                            $arrayWorkspace[] = $workspace;
-                        }
-                    }
-                }
-
-                //Verify data
-                if ($strWorkspaceNoWritable != "") {
-                    throw new Exception(
-                        'Error: The workspaces ' .
-                        $strWorkspaceNoWritable .
-                        ' has problems of permissions of write in file "plugin.singleton", solve this problem'
-                    );
-                }
-
-                //Update plugin attributes
-                foreach ($arrayWorkspace as $value) {
-                    $workspace = $value;
-
-                    $workspacePathDataSite = PATH_DATA . "sites" . PATH_SEP . $workspace . PATH_SEP;
-
-                    $pmPluginRegistry = PluginRegistry::loadSingleton();
-
-                    $pmPluginRegistry->disablePlugin($Namespace);
-
-                    $pmPluginRegistry->savePlugin($Namespace);
-                }
+            if (is_array($pluginDetails->getWorkspaces()) && !in_array($Workspace, $pluginDetails->getWorkspaces())) {
+                $pmPluginRegistry->disablePlugin($Namespace);
             }
+            $pmPluginRegistry->savePlugin($Namespace);
         } catch (Exception $e) {
             throw $e;
         }
