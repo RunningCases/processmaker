@@ -49,15 +49,6 @@ if(flagForgotPassword == 'on' || flagForgotPassword == '1') {
 
 var panel;
 
-function processHbInfo() {
-  ajax_server = "../services/processHeartBeat_Ajax.php";
-  parameters = "action=processInformation";
-  method = "POST";
-  callback = "";
-  asynchronous = true;
-  ajax_post(ajax_server, parameters, method, callback, asynchronous);
-};
-
 function showGettingStarted() {
   panel = new leimnud.module.panel();
   panel.options = {
@@ -95,9 +86,6 @@ var saveConfig = function() {
 
 var dynaformOnload = function() {
   setFocus(getField('USR_USERNAME'));
-  if (flagHeartBeat) {
-    processHbInfo();
-  }
   if (flagGettingStarted) {
     showGettingStarted();
   }
