@@ -205,9 +205,9 @@ class Ajax
 
             $result->success = true;
             if (count($UIDS) > 1) {
-                $result->msg = __('ID_ACTORS_ASSIGNED_SUCESSFULLY', SYS_LANG, Array(count($UIDS), $task->getTasTitle()));
+                $result->msg = G::LoadTranslation('ID_ACTORS_ASSIGNED_SUCESSFULLY', SYS_LANG, Array(count($UIDS), $task->getTasTitle()));
             } else {
-                $result->msg = __('ID_ACTOR_ASSIGNED_SUCESSFULLY', SYS_LANG, Array('tas_title' => $task->getTasTitle()));
+                $result->msg = G::LoadTranslation('ID_ACTOR_ASSIGNED_SUCESSFULLY', SYS_LANG, Array('tas_title' => $task->getTasTitle()));
             }
         } catch (Exception $e) {
             $result->success = false;
