@@ -1,6 +1,7 @@
 <?php
 namespace ProcessMaker\Project;
 
+use Processmaker\Core\System;
 use ProcessMaker\Util\Logger;
 
 /**
@@ -110,21 +111,21 @@ abstract class Handler
      */
     public static function logstr($str)
     {
-        if (\ProcessMaker\Core\System::isDebugMode()) {
+        if (System::isDebugMode()) {
             Logger::getInstance()->setLog($str);
         }
     }
 
     public static function logInline()
     {
-        if (\ProcessMaker\Core\System::isDebugMode()) {
+        if (System::isDebugMode()) {
             call_user_func_array(array(Logger::getInstance(), 'setLogInline'), func_get_args());
         }
     }
 
     public static function log()
     {
-        if (\ProcessMaker\Core\System::isDebugMode()) {
+        if (System::isDebugMode()) {
             $logger = Logger::getInstance();
             call_user_func_array(array($logger, 'setLogLine'), func_get_args());
         }

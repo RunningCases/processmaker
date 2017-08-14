@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\BusinessModel;
 
+use Processmaker\Core\System;
 use ProcessMaker\Plugins\PluginRegistry;
 use PmDynaform;
 use SpoolRun;
@@ -408,7 +409,7 @@ class ActionsByEmail
                     $arrayConfigAux = $row;
                     $arrayConfigAux["SMTPSecure"] = $row["SMTPSECURE"];
                 }
-                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : \ProcessMaker\Core\System::getEmailConfiguration();
+                $aSetup = (!empty($arrayConfigAux))? $arrayConfigAux : System::getEmailConfiguration();
 
                 $spool = new SpoolRun();
                 $spool->setConfig($aSetup);

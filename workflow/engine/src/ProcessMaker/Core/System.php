@@ -10,15 +10,6 @@ use InputFilter;
 use schema;
 use WorkspaceTools;
 
-/**
- * class Processmaker System for workflow mantanance routines
- *
- * date May 12th, 2010
- *
- * @package workflow.engine.classes
- *
- */
-
 class System
 {
     public $sFilename;

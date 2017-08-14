@@ -7,6 +7,7 @@ use Criteria;
 use UsersPeer;
 use AppDelegationPeer;
 use AppDelayPeer;
+use Processmaker\Core\System;
 use ProcessMaker\Util\DateTime;
 use PmLicenseManager;
 
@@ -1260,7 +1261,7 @@ class Light
         $offset = timezone_offset_get( new \DateTimeZone( $tz ), new \DateTime() );
         $response['timeZone'] = sprintf( "GMT%s%02d:%02d", ( $offset >= 0 ) ? '+' : '-', abs( $offset / 3600 ), abs( ($offset % 3600) / 60 ) );
         $response['multiTimeZone'] = $multiTimeZone;
-        $fields = \ProcessMaker\Core\System::getSysInfo();
+        $fields = System::getSysInfo();
         $response['version'] = $fields['PM_VERSION'];
 
         $buildType = 'Community';

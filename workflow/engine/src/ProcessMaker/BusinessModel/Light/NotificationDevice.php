@@ -2,6 +2,7 @@
 
 namespace ProcessMaker\BusinessModel\Light;
 
+use Processmaker\Core\System;
 use \ProcessMaker\Services\Api;
 use G;
 
@@ -11,7 +12,7 @@ class NotificationDevice
 
     public function checkMobileNotifications()
     {
-        $conf = \ProcessMaker\Core\System::getSystemConfiguration('', '', SYS_SYS);
+        $conf = System::getSystemConfiguration('', '', SYS_SYS);
         $activeNotifications = true;
         if (isset($conf['mobileNotifications'])) {
             $activeNotifications = $conf['mobileNotifications'] == 1 ? true : false;
