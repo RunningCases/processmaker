@@ -1,16 +1,9 @@
 <?php
 
-/**
- * Install Controller
- *
- * @author Erik A. O. <erik@colosa.com>
- */
-global
-
 use ProcessMaker\Core\System;
+global $translation;
 
-$translation;
-include PATH_LANGUAGECONT."translation.".SYS_LANG;
+include PATH_LANGUAGECONT . "translation." . SYS_LANG;
 
 class Installer extends Controller
 {
